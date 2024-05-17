@@ -1,96 +1,141 @@
-Return-Path: <linux-kernel+bounces-182039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881968C8571
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:18:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B59E8C8575
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29AFF1F22EF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:18:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0729B2815F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63EB3D56D;
-	Fri, 17 May 2024 11:18:05 +0000 (UTC)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D5F3D546;
+	Fri, 17 May 2024 11:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="HGCg061F"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2B13B78B;
-	Fri, 17 May 2024 11:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052733B78B;
+	Fri, 17 May 2024 11:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715944685; cv=none; b=aMigegvaP7zHkGKIcGp81equsYbFKRzW4kSXJQGXin8rVnjk2RDAhCf5m/XyXV2Gg8qYv4c65fFrpyzuoq8wboRVZhhTlot2wrlN7c6ysTUe/OvlRO7CfvkqqDN/cZFOFIx/5ZsV1nS9OWmyIQ7RE/H9+thCqjoiTSXYMVkJGkE=
+	t=1715944748; cv=none; b=RldVElgDMFhkilnLxr5nvR+4FFkUFTFyh9NoyYTHxSY1IMyXW2HdCPda7+CHC0GXgj5HVRUvKTIKZhYbbHmNpiPCrC1KLZefbHy7D2IrLTqj9jx8WLDG0hSTMRtnpmdkzQ93bu3ds3P7Oa4XfagEj4o6T0pcIsfS3Z+3dw0HoLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715944685; c=relaxed/simple;
-	bh=wfHpHnQqgnNSn7YCwv9m9HcQPovFXltGWKsPEmdAunM=;
+	s=arc-20240116; t=1715944748; c=relaxed/simple;
+	bh=cO2vSdqcGJpMPi+yEXm6Pdtgj69gONnYZVOEhF5dVBM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iKNQoF5QZtpEYFuOJyK2OgnaUbZ1kvtwBBFu4oodcFaDmVdmyN7e+Y1MfJEWZN2JvMNADmNO87o12Q1bkQU2B9PvF8vEf7T+ktqgWJxncPSqbQPlYQmmkRnjk4kwg7AooqnplQZ+5yR7nobouLS8UwTMbqDUEDfesLc1TOhPunM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f08442b7bcso4833645ad.1;
-        Fri, 17 May 2024 04:18:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715944683; x=1716549483;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sg/FBsZBDfXOHm/J/YMr0AFImmpjs5YKstuD+GBKpXk=;
-        b=EJ27qeVpqHvCVkJmPAk1QVmtPNv/Lv8FdCPhUpSZzRUOLDC/FqVT1T/P/mBtQFs+3p
-         fRv5M+r3DkpQ6fMNUKU8geEPc8wMGvP4VmtJ2u7iOPhhlA7mO5VeviAliNV0fp71F8UX
-         AZSL7FZfNHQzQSzPJaNocMHnjwfXq744OptTNqV0bxfD/76Rpr9sU4+qKyGfn3FDTnF8
-         +ca7b4CE+KLmxKUXZlztUwxvGeV2eU2FeAMPhxQPzd69oCZ01Y9kcY+mfZKRq/9bucvg
-         836jvf0u42HyD5+0tH4hpGfbgaAjNCh5bfYxkY7lSrzM/a+0OKhkJ2VvTOnwNLw59W8L
-         sUSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdjCQj/k0YDYeisme+aEpwxHtpysRfnQ8xcx8XWWEqyKsVopRgVoBRZ4VRrrB8VjIysF+9e8yLXK8AQZ2HHgEVwEJZE0imrJrAHmmAqZqY6GjEo7PrAD05cNlojMYUkf3Hi04khhlkpPl039padiqrtrjudtPkCv2Ui4NwB6kh
-X-Gm-Message-State: AOJu0YxBei53opMDCs/yudiU5E/bj/djPbbTvQikqJpymSTh/CVGOmRA
-	SUB1+zlIFr0Gp4us4mkWujc8/oJo2ly+GTj6nTJXdbXX4fnWiJMC
-X-Google-Smtp-Source: AGHT+IGLCMl5Tz+z4zgIma4FE1efOHYJkIWhZpHWnn6EOooX40/8TI3S0B+Ebm6UayoulagUE+YyWA==
-X-Received: by 2002:a05:6a20:6f0e:b0:1b0:66d:1596 with SMTP id adf61e73a8af0-1b0066d17b0mr12990949637.57.1715944683500;
-        Fri, 17 May 2024 04:18:03 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67158c39dsm15203894a91.35.2024.05.17.04.18.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 04:18:03 -0700 (PDT)
-Date: Fri, 17 May 2024 20:18:01 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Cc: rick.wertenbroek@heig-vd.ch, dlemoal@kernel.org, stable@vger.kernel.org,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: rockchip-ep: Remove wrong mask on subsys_vendor_id
-Message-ID: <20240517111801.GQ202520@rocinante>
-References: <20240403144508.489835-1-rick.wertenbroek@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GI9oN2ZLc41Pdgl44YSjLy+HATt6FdpwGLHB2hKt8au3QervD1GARige6zgMt8Flc77a9W+SrIt87ZKrDmOqA35VOWOTOQmnGwdPua5jOYdZWw7r9eOPOcbVOe7ylVbHBcgcxS1bQzlRQx3IbXLxP95Yps+YfwxBenmO34TNf3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=HGCg061F; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=8fWvTVdamGkUuRsdVgUf56VkvVX12PzmdijVreLfbOY=; b=HGCg061FjpQGYi68
+	ux0lHPT0iTNJWGYwicTiV0q6ItNJDnmGwkf62XqhoIJqCOClIHhnhulIFQF6oQz+Z6G3pMJnihR/N
+	BgTbwF2D1MWAxgv1XK1+u/wtiPpOp85cbrFbY9o8OU92rT8LdfjDO0ssXQE/frARhKUmfYtFw1jUj
+	H9tmkfhigG6TR/1nPuS0r7glwYJOFGB52PLkzzXMbKOMjbRdmjQcPGfPHk9ZcHWf9i1+tItq21F/H
+	WIzu1vbhtjIITEOJhaPd9wZDfDRQrMM3E7vQ9vOSqWk5q3SbVhYaCpbkmnSCR57Yczn+wuWtsSAZz
+	WL9vglftOgTaHO98KQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1s7vc7-001NSk-0s;
+	Fri, 17 May 2024 11:19:03 +0000
+Date: Fri, 17 May 2024 11:19:03 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Frank.li@nxp.com, vkoul@kernel.org, linux-arm-msm@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dmaengine: qcom: gpi: remove unused struct 'reg_info'
+Message-ID: <Zkc9J4vbQdeCmTpO@gallifrey>
+References: <20240516152537.262354-1-linux@treblig.org>
+ <39b66355-f67e-49e9-a64b-fdd87340f787@linaro.org>
+ <Zkc69sMlwawV8Z7l@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240403144508.489835-1-rick.wertenbroek@gmail.com>
+In-Reply-To: <Zkc69sMlwawV8Z7l@gallifrey>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 11:18:40 up 8 days, 22:32,  1 user,  load average: 0.10, 0.05, 0.01
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-> Remove wrong mask on subsys_vendor_id. Both the Vendor ID and Subsystem
-> Vendor ID are u16 variables and are written to a u32 register of the
-> controller. The Subsystem Vendor ID was always 0 because the u16 value
-> was masked incorrectly with GENMASK(31,16) resulting in all lower 16
-> bits being set to 0 prior to the shift.
+* Dr. David Alan Gilbert (linux@treblig.org) wrote:
+> * Bryan O'Donoghue (bryan.odonoghue@linaro.org) wrote:
+> > On 16/05/2024 17:25, linux@treblig.org wrote:
+> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > > 
+> > > Remove unused struct 'reg_info'
+> > > 
+> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > > ---
+> > >   drivers/dma/qcom/gpi.c | 6 ------
+> > >   1 file changed, 6 deletions(-)
+> > > 
+> > > diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+> > > index 1c93864e0e4d..639ab304db9b 100644
+> > > --- a/drivers/dma/qcom/gpi.c
+> > > +++ b/drivers/dma/qcom/gpi.c
+> > > @@ -476,12 +476,6 @@ struct gpi_dev {
+> > >   	struct gpii *gpiis;
+> > >   };
+> > > -struct reg_info {
+> > > -	char *name;
+> > > -	u32 offset;
+> > > -	u32 val;
+> > > -};
+> > > -
+> > >   struct gchan {
+> > >   	struct virt_dma_chan vc;
+> > >   	u32 chid;
 > 
-> Remove both masks as they are unnecessary and set the register correctly
-> i.e., the lower 16-bits are the Vendor ID and the upper 16-bits are the
-> Subsystem Vendor ID.
+> Hi Bryan,
 > 
-> This is documented in the RK3399 TRM section 17.6.7.1.17
+> > More detail in the commit log please - is the structure unused ? What is the
+> > provenance of it being added and becoming dead code.
+> > 
+> > More detail required here.
+> 
+> If you look at the V1 I had
+> ''gpi_desc' seems like it was never used.
+> Remove it.'
+> 
+> but Frank suggested copying the subject line; so I'm not sure
+> whether you want more or less!
+> 
+> I could change this to:
+> 
+> 'gpi_desc' was never used since it's initial
+> commit 5d0c3533a19f ("dmaengine: qcom: Add GPI dma driver")
 
-Applied to controller/rockchip, thank you!
+Oops, of course I mean 'reg_info' which is what I fixed in v2.
 
-[1/1] PCI: rockchip-ep: Remove wrong mask on subsys_vendor_id
-      https://git.kernel.org/pci/pci/c/2f014bf195ae
+> Would you be OK with that?
 
-	Krzysztof
+Dave
+
+> Dave
+> 
+> 
+> > 
+> > ---
+> > bod
+> > 
+> -- 
+>  -----Open up your eyes, open up your mind, open up your code -------   
+> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+> \        dave @ treblig.org |                               | In Hex /
+>  \ _________________________|_____ http://www.treblig.org   |_______/
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
