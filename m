@@ -1,186 +1,202 @@
-Return-Path: <linux-kernel+bounces-181831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A798C81EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C84318C81FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 509D9B2180B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:59:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D3F6B220E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C795C3BBD2;
-	Fri, 17 May 2024 07:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2991A2BAFA;
+	Fri, 17 May 2024 08:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZTT3xFjJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="djaxws3o"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D19A39FFD
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 07:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680D922318;
+	Fri, 17 May 2024 08:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715932634; cv=none; b=puBQaNMe5eCn73ZRLd2d9X7rWnnYxWQpSUIpDzy0t1MvpUfYobKLq0oSNO1b/litQ1sRzz3nfv8m/DySmKdo8Ddi9dJKxI1b1INihrJxJ3DRP54RS6BqMYFqVQVbfbEN/LiC3MP19dEvnfnFvhB7Q5DP5KLTL/DJ/U0VCYJxo8M=
+	t=1715932839; cv=none; b=fGCN4zoWBkBwUf8eOdh8W4HPQx+DZXAxXXDLtJF7LRFdjiEPgw564hRwLzHu9+f0FfQIk/szUIeJo3LWM4L6UYo4qij+X9ZAbfZmwesaatGu3dylVpN0s08zwKAsM+hRJ8huB7a+NKgFaZH6mAh3hW8CdZoixG+RgMUOJtvKRQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715932634; c=relaxed/simple;
-	bh=9gA8C7scapzQkOpcYTVUyzOG+DKqZe9FF6oObQonZLs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XqozSi+PLJ1hqddnJ5Rt3H+tZqLSFUssSHNYRdw5kVjRGInCFnh26Ghsxgj4/KaWKYkmlVv4ryBdhSnraXRdutp4clC4vMXJ227jkxqXcCBP2vHOHjuEz5izC8wbaSHhTfOSLZ16vpE+lCZa0ie/VgbI1W5hoZ2uXCFy6Ags7Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZTT3xFjJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715932631;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ojtsOOMpEVSQ1qTErBfqA1ZFUuWuw8zuknPaEwojp0k=;
-	b=ZTT3xFjJNojnHslG9pBJVicicyD+63hcpzzbZufcxNRxmjyrkCXmbyeOzOgu4UVG6Z93zu
-	R/vsAxINjG42cushyNUUmONDzVdmj07mQFqMLgSzKzmZ8EZEQqSsx4Y48tETp8THpAxUit
-	QeSqaPCZl+yQ2NJD7WfnOSO3TCPPmvw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-492-E7lV0bIaOeCWPztpMpSOSg-1; Fri, 17 May 2024 03:57:06 -0400
-X-MC-Unique: E7lV0bIaOeCWPztpMpSOSg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4540B8001F7;
-	Fri, 17 May 2024 07:57:06 +0000 (UTC)
-Received: from alecto.usersys.redhat.com (unknown [10.43.17.36])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id AB50C740F;
-	Fri, 17 May 2024 07:57:04 +0000 (UTC)
-From: Artem Savkov <asavkov@redhat.com>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Artem Savkov <asavkov@redhat.com>
-Subject: [PATCH 5/5] powerpc64/bpf: jit support for signed division and modulo
-Date: Fri, 17 May 2024 09:56:50 +0200
-Message-ID: <20240517075650.248801-6-asavkov@redhat.com>
-In-Reply-To: <20240517075650.248801-1-asavkov@redhat.com>
-References: <20240517075650.248801-1-asavkov@redhat.com>
+	s=arc-20240116; t=1715932839; c=relaxed/simple;
+	bh=QxgA8GZnoup8zGH9AmZ4cladIL6JafKC2tee8EIHg/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i2kLWD9hhOMT3BflT2LL0i7B5+4VR8230BV429is5oIaFT9262p4MfJSmFjOFZOCRjw0B2697OqEm0pKlGzZm1ck3lKsev2ROZoseL41ujzXuDzsDoKcD8qnaJtBwrD22FMgJ3ClwLRfTmE8hHaW3IY/AAr7BIGMxvEwQqmXUtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=djaxws3o; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715932838; x=1747468838;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QxgA8GZnoup8zGH9AmZ4cladIL6JafKC2tee8EIHg/o=;
+  b=djaxws3oJzRB4mp9eq2cYEWXO3wu+1dlnJkR+DTPCkg6I2W1dIIHBBqC
+   B4QC/lhWQJpDP9ctTqZH1So3aZKvwE3PP7b3lOrnmTnQ0E1u96qSBEtZp
+   lXnaoRf2nzZzm/DRiawKLXjOMgF08S6M73v/ctP38+4yDQeu7aI+hbu33
+   Gelvh8p4ux3Zz5slSUvtVZaA18hB/DcQKXW+QmVTXKJGCGf9Fpcc911PZ
+   rN62dYnNHK8HEpOCMGgFZeigLZyO/47Wk9dp7EmZNxfoNCpadhtyi8vb4
+   i0KxlrdGWKWQ9x5X+qk1VB7VlT5dAKSdXitbjsu3HNZnf0B+GPLyjz4YN
+   Q==;
+X-CSE-ConnectionGUID: hMHaV31sSyWuAcfDFjxfTQ==
+X-CSE-MsgGUID: Q0tWMaZLRtC3fkK25ZhO5A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11936373"
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="11936373"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 01:00:37 -0700
+X-CSE-ConnectionGUID: a9vvjHZlRoqS19wgv+zALQ==
+X-CSE-MsgGUID: Hetpc9OuS2iqE3maXU0NqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="62918843"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 01:00:35 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 34A9B11FA44;
+	Fri, 17 May 2024 11:00:32 +0300 (EEST)
+Date: Fri, 17 May 2024 08:00:32 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: ChiYuan Huang <cy_huang@richtek.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: v4l: async: Fix NULL pointer when v4l2 flash
+ subdev binding
+Message-ID: <ZkcOoLQQRdRYYacd@kekkonen.localdomain>
+References: <e2f9f2b7b7de956d70b8567a2ab285409fff988b.1715136478.git.cy_huang@richtek.com>
+ <ZkXi_U5Js34dUQsA@kekkonen.localdomain>
+ <20240517063150.GA12245@linuxcarl2.richtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517063150.GA12245@linuxcarl2.richtek.com>
 
-Add jit support for sign division and modulo. Tested using test_bpf
-module.
+Hi Chi Yuan,
 
-Signed-off-by: Artem Savkov <asavkov@redhat.com>
----
- arch/powerpc/include/asm/ppc-opcode.h |  1 +
- arch/powerpc/net/bpf_jit_comp64.c     | 41 +++++++++++++++++++++------
- 2 files changed, 34 insertions(+), 8 deletions(-)
+On Fri, May 17, 2024 at 02:31:50PM +0800, ChiYuan Huang wrote:
+> Hi, Sakari:
+> 
+> 	Thanks for your reply.
+> If any misunderstanding, please correct me.
+> 
+> On Thu, May 16, 2024 at 10:42:05AM +0000, Sakari Ailus wrote:
+> > Hi Chi Yuan,
+> > 
+> > On Wed, May 08, 2024 at 10:51:49AM +0800, cy_huang@richtek.com wrote:
+> > > From: ChiYuan Huang <cy_huang@richtek.com>
+> > > 
+> > > In v4l2_async_create_ancillary_links(), if v4l2 async notifier is
+> > > created from v4l2 device, the v4l2 flash subdev async binding will enter
+> > > the logic to create media link. Due to the subdev of notifier is NULL,
+> > > this will cause NULL pointer to access the subdev entity. Therefore, add
+> > > the check to bypass it.
+> > > 
+> > > Fixes: aa4faf6eb271 ("media: v4l2-async: Create links during v4l2_async_match_notify()")
+> > > Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+> > > ---
+> > > Hi,
+> > > 
+> > >   I'm trying to bind the v4l2 subdev for flashlight testing. It seems
+> > > some logic in v4l2 asynd binding is incorrect.
+> > > 
+> > > From the change, I modified vim2m as the test driver to bind mt6370 flashlight.
+> > > 
+> > > Here's the backtrace log.
+> > > 
+> > >  vim2m soc:vim2m: bound [white:flash-2]
+> > >  Unable to handle kernel NULL pointer dereference at virtual address 0000000000000058
+> > >  ......skipping
+> > >  Call trace:
+> > >   media_create_ancillary_link+0x48/0xd8 [mc]
+> > >   v4l2_async_match_notify+0x17c/0x208 [v4l2_async]
+> > >   v4l2_async_register_subdev+0xb8/0x1d0 [v4l2_async]
+> > 
+> > There's something wrong obviously somewhere but wherea?
+> > 
+> In vim2m driver, I added v4l2_async_nf_init -> v4l2_async_nf_add_fwnode_remote ->
+> v4l2_async_nf_register.
+> 
+> From the async flow, in notifier complete ops to create v4l-subdevX node for the 
+> specified subdev.
+> > A sub-notifier does have a sub-device after the notifier initialisation.
+> 
+> Why? Are you saying to the notifier can only be used for subdev and subdev binding, 
+> not v4l2 and subdev binding?
+> 
+> But to create v4l-subdevX, the key is only v4l2 device and its needed subdev.
+> 
+> > Maybe the initialisation does not happen in the right order?
+> AFAIK, Async flow can solve the probe order and makes the user no need to care
+> the probe order.
+> 
+> From the stacktrace, I'm pretty sure it's not the probe order issue.
+> > 
+> > >   __v4l2_flash_init.part.0+0x3b4/0x4b0 [v4l2_flash_led_class]
+> > >   v4l2_flash_init+0x28/0x48 [v4l2_flash_led_class]
+> > >   mt6370_led_probe+0x348/0x690 [leds_mt6370_flash]
+> > > 
+> > > After tracing the code, it will let the subdev labeled as F_LENS or
+> > > F_FLASH function to create media link. To prevent the NULL pointer
+> > > issue, the simplest way is add a check when 'n->sd' is NULL and bypass
+> > > the later media link creataion.
+> > > ---
+> > >  drivers/media/v4l2-core/v4l2-async.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > > 
+> > > diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+> > > index 3ec323bd528b..9d3161c51954 100644
+> > > --- a/drivers/media/v4l2-core/v4l2-async.c
+> > > +++ b/drivers/media/v4l2-core/v4l2-async.c
+> > > @@ -324,6 +324,9 @@ static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
+> > >  	    sd->entity.function != MEDIA_ENT_F_FLASH)
+> > >  		return 0;
+> > >  
+> > > +	if (!n->sd)
+> > > +		return 0;
+> > 
+> > This isn't the right fix: the ancillary link won't be created as a result.
+> > 
+> Due to the notifier is created by v4l2 device not subdev, this 'n->sd' is NULL.
+> The NULL 'n->sd' will be referenced by the next flow 'media_create_ancillary_link'.
 
-diff --git a/arch/powerpc/include/asm/ppc-opcode.h b/arch/powerpc/include/asm/ppc-opcode.h
-index 76cc9a2d82065..b98a9e982c03b 100644
---- a/arch/powerpc/include/asm/ppc-opcode.h
-+++ b/arch/powerpc/include/asm/ppc-opcode.h
-@@ -536,6 +536,7 @@
- #define PPC_RAW_MULI(d, a, i)		(0x1c000000 | ___PPC_RT(d) | ___PPC_RA(a) | IMM_L(i))
- #define PPC_RAW_DIVW(d, a, b)		(0x7c0003d6 | ___PPC_RT(d) | ___PPC_RA(a) | ___PPC_RB(b))
- #define PPC_RAW_DIVWU(d, a, b)		(0x7c000396 | ___PPC_RT(d) | ___PPC_RA(a) | ___PPC_RB(b))
-+#define PPC_RAW_DIVD(d, a, b)		(0x7c0003d2 | ___PPC_RT(d) | ___PPC_RA(a) | ___PPC_RB(b))
- #define PPC_RAW_DIVDU(d, a, b)		(0x7c000392 | ___PPC_RT(d) | ___PPC_RA(a) | ___PPC_RB(b))
- #define PPC_RAW_DIVDE(t, a, b)		(0x7c000352 | ___PPC_RT(t) | ___PPC_RA(a) | ___PPC_RB(b))
- #define PPC_RAW_DIVDE_DOT(t, a, b)	(0x7c000352 | ___PPC_RT(t) | ___PPC_RA(a) | ___PPC_RB(b) | 0x1)
-diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
-index 811775cfd3a1b..1f5f93926e424 100644
---- a/arch/powerpc/net/bpf_jit_comp64.c
-+++ b/arch/powerpc/net/bpf_jit_comp64.c
-@@ -510,20 +510,33 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
- 		case BPF_ALU | BPF_DIV | BPF_X: /* (u32) dst /= (u32) src */
- 		case BPF_ALU | BPF_MOD | BPF_X: /* (u32) dst %= (u32) src */
- 			if (BPF_OP(code) == BPF_MOD) {
--				EMIT(PPC_RAW_DIVWU(tmp1_reg, dst_reg, src_reg));
-+				if (off)
-+					EMIT(PPC_RAW_DIVW(tmp1_reg, dst_reg, src_reg));
-+				else
-+					EMIT(PPC_RAW_DIVWU(tmp1_reg, dst_reg, src_reg));
-+
- 				EMIT(PPC_RAW_MULW(tmp1_reg, src_reg, tmp1_reg));
- 				EMIT(PPC_RAW_SUB(dst_reg, dst_reg, tmp1_reg));
- 			} else
--				EMIT(PPC_RAW_DIVWU(dst_reg, dst_reg, src_reg));
-+				if (off)
-+					EMIT(PPC_RAW_DIVW(dst_reg, dst_reg, src_reg));
-+				else
-+					EMIT(PPC_RAW_DIVWU(dst_reg, dst_reg, src_reg));
- 			goto bpf_alu32_trunc;
- 		case BPF_ALU64 | BPF_DIV | BPF_X: /* dst /= src */
- 		case BPF_ALU64 | BPF_MOD | BPF_X: /* dst %= src */
- 			if (BPF_OP(code) == BPF_MOD) {
--				EMIT(PPC_RAW_DIVDU(tmp1_reg, dst_reg, src_reg));
-+				if (off)
-+					EMIT(PPC_RAW_DIVD(tmp1_reg, dst_reg, src_reg));
-+				else
-+					EMIT(PPC_RAW_DIVDU(tmp1_reg, dst_reg, src_reg));
- 				EMIT(PPC_RAW_MULD(tmp1_reg, src_reg, tmp1_reg));
- 				EMIT(PPC_RAW_SUB(dst_reg, dst_reg, tmp1_reg));
- 			} else
--				EMIT(PPC_RAW_DIVDU(dst_reg, dst_reg, src_reg));
-+				if (off)
-+					EMIT(PPC_RAW_DIVD(dst_reg, dst_reg, src_reg));
-+				else
-+					EMIT(PPC_RAW_DIVDU(dst_reg, dst_reg, src_reg));
- 			break;
- 		case BPF_ALU | BPF_MOD | BPF_K: /* (u32) dst %= (u32) imm */
- 		case BPF_ALU | BPF_DIV | BPF_K: /* (u32) dst /= (u32) imm */
-@@ -544,19 +557,31 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
- 			switch (BPF_CLASS(code)) {
- 			case BPF_ALU:
- 				if (BPF_OP(code) == BPF_MOD) {
--					EMIT(PPC_RAW_DIVWU(tmp2_reg, dst_reg, tmp1_reg));
-+					if (off)
-+						EMIT(PPC_RAW_DIVW(tmp2_reg, dst_reg, tmp1_reg));
-+					else
-+						EMIT(PPC_RAW_DIVWU(tmp2_reg, dst_reg, tmp1_reg));
- 					EMIT(PPC_RAW_MULW(tmp1_reg, tmp1_reg, tmp2_reg));
- 					EMIT(PPC_RAW_SUB(dst_reg, dst_reg, tmp1_reg));
- 				} else
--					EMIT(PPC_RAW_DIVWU(dst_reg, dst_reg, tmp1_reg));
-+					if (off)
-+						EMIT(PPC_RAW_DIVW(dst_reg, dst_reg, tmp1_reg));
-+					else
-+						EMIT(PPC_RAW_DIVWU(dst_reg, dst_reg, tmp1_reg));
- 				break;
- 			case BPF_ALU64:
- 				if (BPF_OP(code) == BPF_MOD) {
--					EMIT(PPC_RAW_DIVDU(tmp2_reg, dst_reg, tmp1_reg));
-+					if (off)
-+						EMIT(PPC_RAW_DIVD(tmp2_reg, dst_reg, tmp1_reg));
-+					else
-+						EMIT(PPC_RAW_DIVDU(tmp2_reg, dst_reg, tmp1_reg));
- 					EMIT(PPC_RAW_MULD(tmp1_reg, tmp1_reg, tmp2_reg));
- 					EMIT(PPC_RAW_SUB(dst_reg, dst_reg, tmp1_reg));
- 				} else
--					EMIT(PPC_RAW_DIVDU(dst_reg, dst_reg, tmp1_reg));
-+					if (off)
-+						EMIT(PPC_RAW_DIVD(dst_reg, dst_reg, tmp1_reg));
-+					else
-+						EMIT(PPC_RAW_DIVDU(dst_reg, dst_reg, tmp1_reg));
- 				break;
- 			}
- 			goto bpf_alu32_trunc;
+Ah, right. I took a new look into the code and agree this is a problem.
+This probably hasn't been hit previously as the root notifier driver tends
+not to have any lens or flash devices.
+
+I'd change the commit message slightly:
+
+--------8<-------------
+In v4l2_async_create_ancillary_links(), ancillary links are created for
+lens and flash sub-devices. These are sub-device to sub-device links and if
+the async notifier is related to a V4L2 device, the source sub-device of
+the ancillary link is NULL, leading to a NULL pointer dereference. Check
+the notifier's sd field is non-NULL in v4l2_async_create_ancillary_links().
+--------8<-------------
+
+> 
+> Or is it caused by the wrong usage? 
+> 
+> > > +
+> > >  	link = media_create_ancillary_link(&n->sd->entity, &sd->entity);
+> > >  
+> > >  #endif
+> > 
+
 -- 
-2.45.0
+Kind regards,
 
+Sakari Ailus
 
