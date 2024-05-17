@@ -1,430 +1,132 @@
-Return-Path: <linux-kernel+bounces-182570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514998C8CD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:34:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC408C8CDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0719A281D28
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:34:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AECD51F221B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DF1140375;
-	Fri, 17 May 2024 19:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7AA140368;
+	Fri, 17 May 2024 19:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Sw62eIp8"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2054.outbound.protection.outlook.com [40.107.92.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y6g3Z4Je"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572FE1A2C19;
-	Fri, 17 May 2024 19:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715974479; cv=fail; b=ug1bi4FMDY7LeO6IxetVh8FOJ7TlDJSBEmyZz7Lhq1vwX4s8/o5fzDARYmjnlM+MXjauoCtKsw7d/ETs58ZfP3fhfLzTfe6dYR+l6Sdilwyehn/JFPEf+0wXW5E29T7OHo3dhuUFI5AnWmYU+cIHsZYMO+24EWO7kvRMc5iZ4cU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715974479; c=relaxed/simple;
-	bh=veYcGErAars0dQHYbF4osItCHaNFcqyUccdaplJYQgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=BZGFFJuyWjRe1+/OWzlWfD28oJdU5GLUKXbSfs6mj3SofddE3jKGpKF32cRmKsfWs9r4Pxh5GEuzZkzPPR3Fjc24OhIxiNsrPQLBuhMiI1whH/6F2wfeqnMnRBw2s5e5CpPOrgBNhhfHhOF9WakCjJROAZw+Xnxa+PcaRCFMhCk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Sw62eIp8; arc=fail smtp.client-ip=40.107.92.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SWnwJjXNapmh9qIz2/WEOKmvxTm/ougJJfFR/rux4FMzijy3KRk2AK/fxYBxxKEFOSrBYQragk5SAADHG4LYO42PU0KyoazcJTFwt6BEsXlBGaEtg4dw9NpSrvtXiErrwY/gBmM4vz9PKFImF4iIbejJcccdYEHab3KpDe1rDMfDOnlnp8zRS0htWgntxt9m7yV2ieLAMruZekjXHweNDVQftG0/1cHIxkQqNCdxYJxJV3UXgprG9TenSp730lyzbFvF858v4SM6u9YNyte+vNeYCUtOiswoVeza9kuGpj8iFAln9LM0g6/642Qu00YcixYAlu/RlhdlMF+WJ1TupQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+3A71csoHjYBIRt5mqWhucMhTk+Bhrq9seTXYRfKOso=;
- b=kdl8mFcrHyogNfCOnx74xWhP270SgKuR/c+FfZJJyeAffOypna611qfXPSkjDatPY038eaomkCRv5v4zY9UUm8hWte0H2ELVwaKupWXwMyTmurKoK1EMBkYNOO+Tdu8PNERYheyFFzHJS/2vEu60FTkKbCHMYUrXxk1rwW9Ha/cYMdtCHy2zy6uKs0angwMv/vhyZbroFVUpWIeJQmVZym2DUFPQPnSY81BYF1OvropZOcVGnHs7etSfIjgGimsVKXQ/vSG26KxvcxnpgY10tENg0J09GsirCeJFsqXQe3xQhEqUeFD5M/MTyy5UqGgYmXnTn3uJG3fgtzV1cPnzOQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+3A71csoHjYBIRt5mqWhucMhTk+Bhrq9seTXYRfKOso=;
- b=Sw62eIp8xwiSBCvORWPJye3oXBddWkyFnfYC2A3kyd9luOHmgRVi/j8YUBKXjJJmPChuYeTnakP83LWCRaZEsZpHToPBwVT2tWfsXQQCyWpQekx7E1jYIhJIytzPgMVpMUqupKuFadt3+JY9A7ZHZAte2QN8qR14lGWTGuHRuqieCxqaVxpEEFCt2JpozX20X+Y2Bx2u20BZ1iqVLTx3j7EYt7seIodSRI2X2HKBRW7O5yOXyFpZTr/CDvfCb88eOClMXwMk7ixEim8yyn1jaYCOl/ykjXakXKo8umdOxZEA2ODh6cyYfu6JvfGSa04jNlp99rsMbHI7IvaICo0Kjg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by CYYPR12MB8855.namprd12.prod.outlook.com (2603:10b6:930:bb::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.30; Fri, 17 May
- 2024 19:34:33 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7587.028; Fri, 17 May 2024
- 19:34:33 +0000
-Date: Fri, 17 May 2024 16:34:32 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Leon Romanovsky <leonro@nvidia.com>
-Subject: [GIT PULL] Please pull RDMA subsystem changes
-Message-ID: <20240517193432.GA129526@nvidia.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7eivyqra7RH6GoON"
-Content-Disposition: inline
-X-ClientProxiedBy: YT4PR01CA0075.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:ff::17) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DFB60B9C
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 19:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715974782; cv=none; b=j9HExS5ZI+zCmbD1ZvPmhwJ9oc6i+DszkJx6HiwP/t4WEWo8fP07ZOeZtp551XF8iVg0i6FVhBCh/CIfQY3mHE2F9xB3PkuT+hM6ilNWSZ2S0ahKhgvwXpAZYjRQyh19aA7b5aZjhx9B9bNMS2RZuf9Meb0VHMMaoLCffZIlBSM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715974782; c=relaxed/simple;
+	bh=C8pKzvw/5hNHJKtlhX6/Y7v+Xr0n3EsItrpKEUodDHw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Wc5rkrqk/L+jko2jxrlpD6aL75DpI0PWsvLyp7I06w33kKhrD5bReZFykCc6zlZqH2gPQmVKkhZWKQ26lo4s3I9mgPnICq6hWhu04/uaWnJSXnAsJJlrEd50OSVuWUnQh7t1sGkbw46sJ6ESofGXBUAPYLQaeNxsjH/KQ2ude3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y6g3Z4Je; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-34d7b0dac54so322348f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 12:39:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715974779; x=1716579579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WUzOmIQGxK6ydFQshiBfQGlmu9MnDcgDBCtLK/DC/PU=;
+        b=y6g3Z4JeCb7ZYY05nbH+e61DBAUsoXnkXT2P+O8O+VrME22pZgofEoYw+8C0SLDeKu
+         fr3QFjGbpVlhs4yQkvWxOCdjM4QugwwGzYg/qr6JvCMBEN8xz2dxgxI0BPbUh3wXaCpN
+         sZbMSb6kFQWBswW2yWruOv2aKkQg68TMjtPGAZF/3cPxO5zcEKCrJnlQjI9fl5gCV77z
+         K14uOF4cItJIBfAt5US3cVFJDddcEKklbetN7JcC1ZTuD7VWj6LiwWKQE6NeG/7zAJ2A
+         E9biuOfIxUXiQ22zOMI+eVQRQjpUYHUh99CxKdga1E1vMxVeJkyBkO5qw2Zl8X6zusVW
+         L0xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715974779; x=1716579579;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WUzOmIQGxK6ydFQshiBfQGlmu9MnDcgDBCtLK/DC/PU=;
+        b=Rh3SdwgJOs/jRt/hs+p+xyzuFV/mS6THIohntH8y5qzFZFOnmRcIlExkM/glZC7cVz
+         3KWRyUotjef4Sg9BoHXeQ10iNwOnzq4c/jNpXSVH59g06qymD8/99E7Ob5OILvxP1yLI
+         5f69hHUcg6a3u6S6+K1X7udPSjkdkFnhiZ8VxB7rFfug1TnwdSBla8qIYyCCIxgoPY2Q
+         w2cTbzRmq/zVsFoASaQBlYgygDL+46aKqhr7xIOzBNGL40kryyF0qG5ZG/nktCAhz6WM
+         RM1HKmuEoezmtrR8JN3Ns/uv+6zNH68oQUh65UrTmyjuzzlx2UL8pQpsgQolr/ROajix
+         3adg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTNLPrZOs0lPjNjGsumtfV4zsVMkVSRJOuMPsz+eoF1RT2lt5i4d696zsLdF3FKtbJEKbfE3Ayg6h4+NYmjsk1aYG5AqADMcSMOUql
+X-Gm-Message-State: AOJu0Yx03n8pN1bA7c1y0oRYJzNebMwK3V8rGS3UIC03a4hC3Yd2tirp
+	Hd1q7c3XI4qitc4a1z9GZ+kig/DOzoiSWAAlJaC8wfvyHF98jO7FQXXxBXuHja0=
+X-Google-Smtp-Source: AGHT+IFhShctHyp8EaDT1M5vh90xyK1Rl4BoMfuMGmFlgl4IyMT0z2z4s9u4Lc/iZXmU6IVZDQbEcw==
+X-Received: by 2002:adf:f652:0:b0:34d:7bbb:8d73 with SMTP id ffacd0b85a97d-354b8deacd1mr80637f8f.2.1715974778795;
+        Fri, 17 May 2024 12:39:38 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a7748sm22436970f8f.49.2024.05.17.12.39.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 12:39:38 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Douglas Anderson <dianders@chromium.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ Caleb Connolly <caleb.connolly@linaro.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Vinod Koul <vkoul@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Cong Yang <yangcong5@huaqin.corp-partner.google.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240512-dsi-panels-upd-api-v2-0-e31ca14d102e@linaro.org>
+References: <20240512-dsi-panels-upd-api-v2-0-e31ca14d102e@linaro.org>
+Subject: Re: [PATCH v2 0/7] drm/mipi-dsi: simplify MIPI DSI init/cleanup
+ even more
+Message-Id: <171597477767.956878.712053114259327285.b4-ty@linaro.org>
+Date: Fri, 17 May 2024 21:39:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|CYYPR12MB8855:EE_
-X-MS-Office365-Filtering-Correlation-Id: f0712d7d-f3cc-4056-d8b3-08dc76a860c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZzdPMUt2N2hNb21CZ0VYZWVybFE1SStLRkxPNHJKZGZMeDFwWklEdk5wOWs1?=
- =?utf-8?B?eTVLYnE5bStoM3Y2K2loQU12bnFQamo3K3lCODl6bG96OXd0LzNtc092S3p1?=
- =?utf-8?B?aDkzbUZLYTlKeFlOd3lGcXJuVnJTMEVzcXNGa1JRWmRFa01pL2RZTEtzSks0?=
- =?utf-8?B?eHF2Z0J5Wm1sdnVHN0YxRkVQWnNmVFdmcnVqa2puQ0JxQXlMOVpYaFFPSWJO?=
- =?utf-8?B?bitxVG5BSnhjeTE1dUxVYzEzZmJrM2paMDB5bjQwaU92T0kyVnpzZk5mWkE5?=
- =?utf-8?B?ZCsyQkcrWFJBL3k3cEVpRGdjeXl1MHBjZHd0ZlNDUUVSZ0N5MG43eVl5eXJG?=
- =?utf-8?B?eEs1WW9zQ094VzB0SjBNcEYyUWNsMWM0MXJCMkhZYTg1WFFiUk9sN2pyWW5U?=
- =?utf-8?B?Nlc3SEZoQTM3cHVvYWhYRGlia0JERllkRllUdkJoQmhoR05ielRCV0lZK2x2?=
- =?utf-8?B?eEkvMGdVNkh2R0tzdThnWDM4OVlDbFF4aUg1c0JTc1JLeHlOVE91UVNhaWxI?=
- =?utf-8?B?bTRvWDJORWxtNjUxQldBaytCL1JaQUcySnlJTjhVeGlOaXJEZG5ONlMvMmIx?=
- =?utf-8?B?dS90RUNheHlGWHphb3pLUU1tT2NXQ3YzREswN0FpcUx4eE5NbFBoVTZiK05V?=
- =?utf-8?B?Tm1NcVNLWkhnSUdsZTBLNjQveFp5Q00zOW1kT2I0bnVoTHh5cnZaSVZVWjZE?=
- =?utf-8?B?QnhYRWVQdklWNjl5Q0loVVlyKyszM3RsZmRheGhKbTl5NHNSeHVFUHBhZkJ2?=
- =?utf-8?B?YTJBRm50WUZRWitwaDErTTZHSkhpK3czN2UvVXVIMEhzbGFWSW1sM05OenFH?=
- =?utf-8?B?eE82SXZGMnR5a1JJM0M0MG5hTHRma3ozanN5K2V0NnlVcHBCZndRam1qZm1R?=
- =?utf-8?B?N2lETGNGT2Q0MW1QZFIxM3hZQ3JVLzRCak1LZ1hPUFNaaTZUWmh3YzQ1Rkxl?=
- =?utf-8?B?OEIrUUMyT2pueEQwUUpiQ0kxUXcvaHlKcDJHcjhRR29WdjVMWVV2UkZmK0VX?=
- =?utf-8?B?aUs1aWgycG9mUVRBYXFtZG9aU3dvQVNVUGIzcGJNTFgra0ljcythekhoU2tV?=
- =?utf-8?B?MExVNDZka3BKVXlLWWw3MHpvL1F6YWNIYjA4Mkx3U2xWV0JOYjBVMDgvMys3?=
- =?utf-8?B?RUNxUEUwdXN1UkJXTkRiTnhPeXRFaWpNZ2dtUWVCYWFtcFdoaFloR3ZNUDc1?=
- =?utf-8?B?MytaTUt5WWtmWlhFVmdUdUQ2VnpFMDh0dndOM1pNTE5SWXR4ZDluSVRpQjA0?=
- =?utf-8?B?cklJai9Wd3Y3SE5yL2N5S0VmRmlPYzFuaW42Q3I2TTdMUGlJZm1LREpwSGVW?=
- =?utf-8?B?dlBnMWVaejRYOWwwaDhBV055TGZHZzZra1NQSEtiSE1wNVpTTEs0dDhacFIz?=
- =?utf-8?B?T3dWWVByclJCdU51c1R4ZjJNcFJacVpXMlpsdEZrMUp1UzJlQjZKNVc0Wkh5?=
- =?utf-8?B?Z09JRVMzOU4wcTJqUUU3Rm0zVklZMEZtY3VISmRWZVFjOUZXTUpZekNWK0FP?=
- =?utf-8?B?cjU3cVhLSlIzWm0vNTVaVE04ODJ2eGoraXpjRnNzc2x4U0JYMEdFc25RMnAz?=
- =?utf-8?B?SnFXM0xCclN0d3FOSEFpakxxTlRVRDNnSVlna0FKdFhGVmoyakJKVjlram1x?=
- =?utf-8?B?dHIwOHR3ZkkyNUpIZDVEUC9qelNvSWlJMyt2QnBTY3NqTzgwcjdTRTR6cnJK?=
- =?utf-8?B?QW5rd2tWSmNzZ1FxNndidk5QNHFvb3NPWkx2Tjk1UmIyOVFIQ0Z2WGd3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WDU5bGp6OHk3dzhLdFVBeDBlajU2Mk9TdzdRekJhTUJmd2RJZ0c3dUJSY2pC?=
- =?utf-8?B?S0U4a1JNV1lLUkhMZ2F1RU5JL0FxWENqelllL0xramN4dXF3ZkxLdlZFd3pm?=
- =?utf-8?B?eE1ZQ2JLNml3a2NpM044ajFoTVpiOHdBbUthM3JSTXpQdEFGcG1jSlV4L1lF?=
- =?utf-8?B?Q1pVVGtHVlpHY0RDVmtwMXNlS0d3aHdoa0ZsMG5Wd0YxeEdPVjNoSnFuOWVG?=
- =?utf-8?B?YlBhM1Q2ZTUrNzVXQWE0T3N2b2Y1M1FxSUZmNUZIUVN2TTE1R01HYk16RktD?=
- =?utf-8?B?NTY0SE9yYmMzd2wxcS9wTTZQTVR4WjNrdXhEQjRTWFRvMFU1T3locm5JSG9J?=
- =?utf-8?B?NElRRGlicG8zdnFXMHk3NDUxRlVoUWN2MVVwTXZYSXNIbW9wQVZ0NlNmb2Iy?=
- =?utf-8?B?dEwwTVdWMlhkZThFWFM0WnR2cFcxazZmSDM3ZWVKQ0cyYmhwaXkwNFQ0YXdG?=
- =?utf-8?B?b1RTa3d6ZHBNYjNHVGFraE5Yb3preExRcndCYnZPWkJqRUhWdjViMHNiQytm?=
- =?utf-8?B?c1RhSENkcHZqNWZBaStTZTc0a3p5eG0yS0RLYVVJVjBHVTZ2Rmo5QVI2OUxt?=
- =?utf-8?B?Y0sxNFBEalhvVnNjeENiT2ZmYlVZTEl6NDZVV0pGc3dOVnZ3TTQrMG5DaVhy?=
- =?utf-8?B?TjVENjZTY3hwbHlBMSt4LzJzZ1QxbGJDODhSdzUyYzZuUUg0S2p5a2VjOWhs?=
- =?utf-8?B?bGdac1ZveXp5ZXBhL2ZxK3RXaXZPdEZ4UDZ5ajVpekFFSzBaa1lDcjBWdmVR?=
- =?utf-8?B?MW9tQU13K1BhR0VSNlEyL1lzT1JoZjczZmxTMVNqeHRPWjVFc3dTMVk1NjRk?=
- =?utf-8?B?YUQzOC80V1VMT1VFbFBnRzFUUldsTTlKV2g1ZGx0RVM0MitrU0h2ZW4zeUxj?=
- =?utf-8?B?VEZOR0VCdlZaUmZyc1dWTHlJREFENmVFWDNmclJJblpYRnZCMGdTOE1lUmhM?=
- =?utf-8?B?TGl1Tzk1dVFJdis4N3RsNVdkdEc3NzRKN0xnd1FGREsrOUhKcHJEQU82ZGN1?=
- =?utf-8?B?UWxXTUk4Slh0Q3JUWUZrbmRKclR1WEgvSXE0UzJMM0pBNmExTGpna0tuKzUx?=
- =?utf-8?B?TGtjVm9JYWE5bGVFUUhlenNRYTJtU1BpNm16NEdDOWYwSUhXNFNNajVXam41?=
- =?utf-8?B?aTRFUm1seGd6bFIxQldUQ1hlcUlWcXlQYmlNS2ZlUlRYc05oK3RhcmM0S3lE?=
- =?utf-8?B?aGY4U2Z5Y3pxN2xObWhFbVY5bnJGZDNMNE1MaUVFdzgxeUlaZXZDOHFxOS9m?=
- =?utf-8?B?MTJXWmt6WHNFMlpwUzY4ajBYZkg3OHJwanJ1V2hFK2Z6RGl0ZjgzN0ZoalhK?=
- =?utf-8?B?dHcvNWsrWWNCei9oQnd4djFhYVN5MUpXV2lTZ055bXE0RHUrOHpFb0pyK3Iw?=
- =?utf-8?B?SExHRGJOVVFlU0I5VEg1ZlEyMnZLVGR6ZEZndXdGam1yd3JGMkFMdzlPVG00?=
- =?utf-8?B?SmhIUCs3aU9uSHdaTFVMN2JiVE5Ra2ttbklLcDF2a216K290UU9QMVdKSFBN?=
- =?utf-8?B?bDk3MWdJVDY1NDZUL1NvR1dzWHVjNkxIRm00VzllUVpTMTRDbHdYUXBDWFFX?=
- =?utf-8?B?ak9wN3p1MUhERHdxMmhzMGFYOXM0alpyLzJWQ0FNSDErNUE4VlV5Q1NjRERD?=
- =?utf-8?B?VWU4d2F0TTlVdURjSjVrcThyMjNBdXllcVdpaWg2TUl3MTdiMU9lSERoOHlL?=
- =?utf-8?B?bGIvakdQa3kvcUJpa3BNU1VwSjRnTkUzb29xV1ZoaTlHcUxySGoyc0tuZHh2?=
- =?utf-8?B?MmZlK1FmQWtDVTAxMW52ZlZlTS80MG9QVkZ6MldNR2xZd0dRb0dlc2Rsamgr?=
- =?utf-8?B?TlVGYU1oUS85TThqbm56aHN0aHR6YmFMdjVPa3pKY0ZIYjg2RDdoc1dHMXlT?=
- =?utf-8?B?YnFOenBpa1hocHd0cDNpbnNxeUpkdFFjVG1ObjZ5QlBYZTRhUnJFaFlLYnhj?=
- =?utf-8?B?Y0VvUXNSNTkyems5WUJIVWgxdlZrV2hqYVVWQjllbEp4ZG1yVEEzWTdBS3BV?=
- =?utf-8?B?VmlNMkUyM01wSGlscnp4WG85bytuS0Y4K2FqK2FBSytsb0dmbFo4ak5RV0VL?=
- =?utf-8?B?L2VLKytnMytoWHhrL1B6cUtTSUREM2hSOWhhOCtmQ20vL3VxWXg4T0RnUUUr?=
- =?utf-8?Q?tqhYsL0WWbrfoh87Yp1LS/lAY?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0712d7d-f3cc-4056-d8b3-08dc76a860c5
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2024 19:34:33.2193
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fRocGUh1k6naKJ0NezNySvVlRgRwyM/E50ZRemj5Af8tXvuw28Fz50Hdwz+cy792
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8855
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
---7eivyqra7RH6GoON
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Linus,
+On Sun, 12 May 2024 02:00:17 +0300, Dmitry Baryshkov wrote:
+> Follow the example of mipi_dsi_generic_write_multi(),
+> mipi_dsi_dcs_write_buffer_multi(), mipi_dsi_generic_write_seq_multi()
+> and mipi_dsi_dcs_write_seq_multi(). Define _multi variants for several
+> other common MIPI DSI functions and use these functions in the panel
+> code.
+> 
+> This series also includes a fix for the LG SW43408. If the proposed
+> approach is declined, the fix will be submitted separately.
+> 
+> [...]
 
-Aside from the usual things this has an arch update for
-__iowrite64_copy() used by the RDMA drivers. This API was intended to
-generate large 64 byte MemWr TLPs on PCI. These days most processors
-had done this by just repeating writel() in a loop. S390 and some new
-ARM64 designs require a special helper to get this to generate.
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-Thanks,
-Jason
+[1/7] drm/panel: lg-sw43408: add missing error handling
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/51f9183e4af8c7f00e81180cbb9ee4a98a0f0aa1
+[2/7] drm/mipi-dsi: wrap more functions for streamline handling
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/f79d6d28d8fe77b14beeaebe5393d9f294f8d09d
+[3/7] drm/panel: boe-tv101wum-nl6: use wrapped MIPI DCS functions
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/91329f921283b995ac125a0c6e61be0c1399f66f
+[4/7] drm/panel: ilitek-ili9882t: use wrapped MIPI DCS functions
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/510ba36e86eeb3ca89326dd51da32806e1ede693
+[5/7] drm/panel: innolux-p079zca: use mipi_dsi_dcs_nop_multi()
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0f43988fb9c1c0a0c2f5ccf2d1bdb914f6e4e79b
+[6/7] drm/panel: novatek-nt36672e: use wrapped MIPI DCS functions
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/67ba7a82d99a8a8b4bcc1b8124b5640c63dd51bf
+[7/7] drm/panel: lg-sw43408: use new streamlined MIPI DSI API
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/85cb9d603953d77de5cb311d229a79c439ff6bfb
 
-The following changes since commit a68292eb431619a5f8db9d4868346837c5606424:
+-- 
+Neil
 
-  net: mana: Avoid open coded arithmetic (2024-04-11 13:46:47 +0300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
-
-for you to fetch changes up to 9c0731832d3b7420cbadba6a7f334363bc8dfb15:
-
-  RDMA/cma: Fix kmemleak in rdma_core observed during blktests nvme/rdma us=
-e siw (2024-05-12 13:04:11 +0300)
-
-----------------------------------------------------------------
-RDMA v6.10 merge window
-
-Normal set of driver updates and small fixes:
-
-- Small improvements and fixes for erdma, efa, hfi1, bnxt_re
-
-- Fix a UAF crash after module unload on leaking restrack entry
-
-- Continue adding full RDMA support in mana with support for EQs, GID's
-  and CQs
-
-- Improvements to the mkey cache in mlx5
-
-- DSCP traffic class support in hns and several bug fixes
-
-- Cap the maximum number of MADs in the receive queue to avoid OOM
-
-- Another batch of rxe bug fixes from large scale testing
-
-- __iowrite64_copy() optimizations for write combining MMIO memory
-
-- Remove NULL checks before dev_put/hold()
-
-- EFA support for receive with immediate
-
-- Fix a recent memleaking regression in a cma error path
-
-----------------------------------------------------------------
-Bob Pearson (12):
-      RDMA/rxe: Fix seg fault in rxe_comp_queue_pkt
-      RDMA/rxe: Allow good work requests to be executed
-      RDMA/rxe: Remove redundant scheduling of rxe_completer
-      RDMA/rxe: Merge request and complete tasks
-      RDMA/rxe: Remove save/rollback_state in rxe_requester
-      RDMA/rxe: Don't schedule rxe_completer from rxe_requester
-      RDMA/rxe: Don't call rxe_requester from rxe_completer
-      RDMA/rxe: Don't call direct between tasks
-      RDMA/rxe: Fix incorrect rxe_put in error path
-      RDMA/rxe: Make rxe_loopback match rxe_send behavior
-      RDMA/rxe: Get rid of pkt resend on err
-      RDMA/rxe: Let destroy qp succeed with stuck packet
-
-Boshi Yu (3):
-      RDMA/erdma: Allocate doorbell records from dma pool
-      RDMA/erdma: Unify the names related to doorbell records
-      RDMA/erdma: Remove unnecessary __GFP_ZERO flag
-
-Breno Leitao (2):
-      IB/hfi1: Do not use custom stat allocator
-      IB/hfi1: Remove generic .ndo_get_stats64
-
-Chengchang Tang (7):
-      RDMA/hns: Remove unused parameters and variables
-      RDMA/hns: Add max_ah and cq moderation capacities in query_device()
-      RDMA/hns: Fix deadlock on SRQ async events.
-      RDMA/hns: Fix UAF for cq async event
-      RDMA/hns: Fix GMV table pagesize
-      RDMA/hns: Use complete parentheses in macros
-      RDMA/hns: Modify the print level of CQE error
-
-Chiara Meiohas (2):
-      RDMA/core: Add an option to display driver-specific QPs in the rdmato=
-ol
-      RDMA/mlx5: Track DCT, DCI and REG_UMR QPs as diver_detail resources.
-
-Ilpo J=C3=A4rvinen (1):
-      RDMA/hfi1: Use RMW accessors for changing LNKCTL2
-
-Jason Gunthorpe (6):
-      x86: Stop using weak symbols for __iowrite32_copy()
-      s390: Implement __iowrite32_copy()
-      s390: Stop using weak symbols for __iowrite64_copy()
-      arm64/io: Provide a WC friendly __iowriteXX_copy()
-      net: hns3: Remove io_stop_wc() calls after __iowrite64_copy()
-      IB/mlx5: Use __iowrite64_copy() for write combining stores
-
-Jules Irenge (3):
-      RDMA/mlx5: Remove NULL check before dev_{put, hold}
-      RDMA/ipoib: Remove NULL check before dev_{put, hold}
-      RDMA/core: Remove NULL check before dev_{put, hold}
-
-Junxian Huang (1):
-      RDMA/hns: Support DSCP
-
-Konstantin Taranov (18):
-      RDMA/mana_ib: Introduce helpers to create and destroy mana queues
-      RDMA/mana_ib: Use struct mana_ib_queue for CQs
-      RDMA/mana_ib: Use struct mana_ib_queue for WQs
-      RDMA/mana_ib: Use struct mana_ib_queue for RAW QPs
-      RDMA/mana_ib: remove useless return values from dbg prints
-      RDMA/mana_ib: Use num_comp_vectors of ib_device
-      RDMA/mana_ib: Add EQ creation for rnic adapter
-      RDMA/mana_ib: Create and destroy rnic adapter
-      RDMA/mana_ib: Implement port parameters
-      RDMA/mana_ib: Enable RoCE on port 1
-      RDMA/mana_ib: Adding and deleting GIDs
-      RDMA/mana_ib: Configure mac address in RNIC
-      RDMA/mana_ib: Fix missing ret value
-      RDMA/mana_ib: create EQs for RNIC CQs
-      RDMA/mana_ib: create and destroy RNIC cqs
-      RDMA/mana_ib: introduce a helper to remove cq callbacks
-      RDMA/mana_ib: boundary check before installing cq callbacks
-      RDMA/mana_ib: implement uapi for creation of rnic cq
-
-Leon Romanovsky (2):
-      RDMA/mana_ib: Add flex array to struct mana_cfg_rx_steer_req_v2
-      RDMA/IPoIB: Fix format truncation compilation errors
-
-Michael Guralnik (1):
-      IB/core: Implement a limit on UMAD receive List
-
-Michael Margolin (2):
-      RDMA/efa: Add shutdown notifier
-      RDMA/efa: Support QP with unsolicited write w/ imm. receive
-
-Michal Schmidt (1):
-      bnxt_re: avoid shift undefined behavior in bnxt_qplib_alloc_init_hwq
-
-Or Har-Toov (3):
-      RDMA/mlx5: Uncacheable mkey has neither rb_key or cache_ent
-      RDMA/mlx5: Change check for cacheable mkeys
-      RDMA/mlx5: Adding remote atomic access flag to updatable flags
-
-Wenchao Hao (1):
-      RDMA/restrack: Fix potential invalid address access
-
-Yangyang Li (1):
-      RDMA/hns: Use macro instead of magic number
-
-Zhengchao Shao (1):
-      RDMA/hns: Fix return value in hns_roce_map_mr_sg
-
-Zhu Yanjun (2):
-      RDMA/rxe: Return the correct errno
-      RDMA/cma: Fix kmemleak in rdma_core observed during blktests nvme/rdm=
-a use siw
-
-wenglianfa (2):
-      RDMA/hns: Fix mismatch exception rollback
-      RDMA/hns: Add mutex_destroy()
-
- arch/arm64/include/asm/io.h                     | 132 ++++++++++
- arch/arm64/kernel/io.c                          |  42 +++
- arch/s390/include/asm/io.h                      |  15 ++
- arch/s390/pci/pci.c                             |   6 -
- arch/x86/include/asm/io.h                       |  17 ++
- arch/x86/lib/Makefile                           |   1 -
- arch/x86/lib/iomap_copy_64.S                    |  15 --
- drivers/infiniband/core/cma.c                   |   4 +-
- drivers/infiniband/core/device.c                |  10 +-
- drivers/infiniband/core/lag.c                   |   3 +-
- drivers/infiniband/core/nldev.c                 |  23 +-
- drivers/infiniband/core/restrack.c              |  63 +----
- drivers/infiniband/core/roce_gid_mgmt.c         |   3 +-
- drivers/infiniband/core/user_mad.c              |  21 +-
- drivers/infiniband/hw/bnxt_re/qplib_fp.c        |   3 +-
- drivers/infiniband/hw/efa/efa_admin_cmds_defs.h |  11 +-
- drivers/infiniband/hw/efa/efa_com_cmd.c         |   3 +
- drivers/infiniband/hw/efa/efa_com_cmd.h         |   1 +
- drivers/infiniband/hw/efa/efa_main.c            |  11 +
- drivers/infiniband/hw/efa/efa_verbs.c           |  19 +-
- drivers/infiniband/hw/erdma/erdma.h             |  13 +-
- drivers/infiniband/hw/erdma/erdma_cmdq.c        |  99 +++----
- drivers/infiniband/hw/erdma/erdma_cq.c          |   2 +-
- drivers/infiniband/hw/erdma/erdma_eq.c          |  54 ++--
- drivers/infiniband/hw/erdma/erdma_hw.h          |   6 +-
- drivers/infiniband/hw/erdma/erdma_main.c        |  15 +-
- drivers/infiniband/hw/erdma/erdma_qp.c          |   4 +-
- drivers/infiniband/hw/erdma/erdma_verbs.c       | 105 ++++----
- drivers/infiniband/hw/erdma/erdma_verbs.h       |  16 +-
- drivers/infiniband/hw/hfi1/ipoib_main.c         |  20 +-
- drivers/infiniband/hw/hfi1/pcie.c               |  30 +--
- drivers/infiniband/hw/hns/hns_roce_ah.c         |  33 ++-
- drivers/infiniband/hw/hns/hns_roce_alloc.c      |   3 +-
- drivers/infiniband/hw/hns/hns_roce_cq.c         |  25 +-
- drivers/infiniband/hw/hns/hns_roce_device.h     |  14 +-
- drivers/infiniband/hw/hns/hns_roce_hem.c        |  17 +-
- drivers/infiniband/hw/hns/hns_roce_hem.h        |  12 +-
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c      | 154 +++++++----
- drivers/infiniband/hw/hns/hns_roce_hw_v2.h      |  15 +-
- drivers/infiniband/hw/hns/hns_roce_main.c       |  32 ++-
- drivers/infiniband/hw/hns/hns_roce_mr.c         |  19 +-
- drivers/infiniband/hw/hns/hns_roce_qp.c         |  29 ++-
- drivers/infiniband/hw/hns/hns_roce_srq.c        |  12 +-
- drivers/infiniband/hw/mana/cq.c                 | 111 ++++----
- drivers/infiniband/hw/mana/device.c             |  51 +++-
- drivers/infiniband/hw/mana/main.c               | 328 ++++++++++++++++++++=
-+++-
- drivers/infiniband/hw/mana/mana_ib.h            | 147 ++++++++++-
- drivers/infiniband/hw/mana/mr.c                 |   2 +-
- drivers/infiniband/hw/mana/qp.c                 | 114 +++-----
- drivers/infiniband/hw/mana/wq.c                 |  31 +--
- drivers/infiniband/hw/mlx5/main.c               |   3 +-
- drivers/infiniband/hw/mlx5/mem.c                |   8 +-
- drivers/infiniband/hw/mlx5/mlx5_ib.h            |   3 +-
- drivers/infiniband/hw/mlx5/mr.c                 |  35 ++-
- drivers/infiniband/hw/mlx5/qp.c                 |   3 +-
- drivers/infiniband/hw/mlx5/restrack.c           |  29 +++
- drivers/infiniband/sw/rxe/rxe_comp.c            |  32 +--
- drivers/infiniband/sw/rxe/rxe_hw_counters.c     |   2 +-
- drivers/infiniband/sw/rxe/rxe_hw_counters.h     |   2 +-
- drivers/infiniband/sw/rxe/rxe_loc.h             |   3 +-
- drivers/infiniband/sw/rxe/rxe_net.c             |  69 ++---
- drivers/infiniband/sw/rxe/rxe_pool.c            |   4 +-
- drivers/infiniband/sw/rxe/rxe_qp.c              |  46 ++--
- drivers/infiniband/sw/rxe/rxe_req.c             |  82 ++----
- drivers/infiniband/sw/rxe/rxe_resp.c            |  14 +-
- drivers/infiniband/sw/rxe/rxe_verbs.c           |  17 +-
- drivers/infiniband/sw/rxe/rxe_verbs.h           |   7 +-
- drivers/infiniband/ulp/ipoib/ipoib_main.c       |   3 +-
- drivers/infiniband/ulp/ipoib/ipoib_vlan.c       |   8 +-
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c |   4 -
- include/linux/io.h                              |   8 +-
- include/rdma/restrack.h                         |   7 +-
- include/uapi/rdma/efa-abi.h                     |   7 +
- include/uapi/rdma/hns-abi.h                     |   9 +-
- include/uapi/rdma/mana-abi.h                    |  12 +
- include/uapi/rdma/rdma_netlink.h                |   6 +
- lib/iomap_copy.c                                |  13 +-
- 77 files changed, 1584 insertions(+), 768 deletions(-)
- delete mode 100644 arch/x86/lib/iomap_copy_64.S
-
---7eivyqra7RH6GoON
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRRRCHOFoQz/8F5bUaFwuHvBreFYQUCZkexRAAKCRCFwuHvBreF
-YbzxAQD2gi3f8iLSHpTKaPOHIXWiM6x7+LYWHYrgcEvEF8MnYgD/avE6Wj2mL2cQ
-i/H3ZQpzVel9vK79Ou3k/VUHnsy5sgg=
-=EW+n
------END PGP SIGNATURE-----
-
---7eivyqra7RH6GoON--
 
