@@ -1,124 +1,113 @@
-Return-Path: <linux-kernel+bounces-181805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43EA48C819C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:45:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4193B8C819F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 738831C21183
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:45:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6269B2165B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8DA17BB6;
-	Fri, 17 May 2024 07:45:39 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432C717BD5;
+	Fri, 17 May 2024 07:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ns/c29ZO"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DB821A0C;
-	Fri, 17 May 2024 07:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C6017BA5;
+	Fri, 17 May 2024 07:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715931939; cv=none; b=L5x+5dQCIAB6QxCWxj/JsKNZtyjN3OlxpCPbjKIcPr/JWkV7fwkSbPDIAadovyveiwApVitC1WttmaiawiFh/GSaq5LpZIkKZX3IULU9DCvnQYJ/hBLyPQjOk16tDUdrKP/yNKM5ZGjHOVv6CBTKAGmDBspUKyV6LnUFK11HeGk=
+	t=1715932077; cv=none; b=bSvUXiTTUkTdBs8A6U65msVBZn0XWYdvGD2QZ3hxCZV/f9Emgiu4bUAD1dGCWwM1CzUnzey1tlZVXEO0HoKKB4l+Ap65Yy8oy0uACQMFFUBK7xZPL/kVSLOuRMoONEp5P9nT7ES7H9KM+kovgX3wNW5dwZEZYzIoWt8OLpXLPM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715931939; c=relaxed/simple;
-	bh=NIUqWEH+uSM7abt6BRHzGWYIu+/xBzUmrnsC0dtANhI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bO8qvlkGrKGT30QoXcfU6i/IbUTzsObM4lLmcUmnjyQwACAwiKv0mjeeyJgAorVwJcwWMoui5I6dfyQPqtn2hbnopcbMW9UPUk14Xj+eGa97e21tT+Lddlk5fmjzX+vohs6b04zxqLR3rxRmHfMak2iJG3XXRXORtRtCv72uqCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4VgdqH4dQPz9v7Hy;
-	Fri, 17 May 2024 15:28:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 5F1291401EA;
-	Fri, 17 May 2024 15:45:32 +0800 (CST)
-Received: from [10.45.153.237] (unknown [10.45.153.237])
-	by APP1 (Coremail) with SMTP id LxC2BwBH8RkTC0dmBZpWCA--.58599S2;
-	Fri, 17 May 2024 08:45:31 +0100 (CET)
-Message-ID: <99da3934-2c44-4a1f-832f-3f182ddadefa@huaweicloud.com>
-Date: Fri, 17 May 2024 09:45:20 +0200
+	s=arc-20240116; t=1715932077; c=relaxed/simple;
+	bh=qE+/k0B7V6egRjbqmOye7yr70PCHiNMYWyP+oM9TdGU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fneN9lxuz7XyLYGSFwWMCwzUAFhx4Ah8kWW9S/8rLhA5n+uJdHSEnXi49Mp5s7FbQLP3WMb40ZHrJo2vA3KB5j5Sl0kWITSWFXfo0xCKBKBVTp3w3vdYmrTxUz0lJMGWNrr99AWeoDzWGLNk95FlZz3iqhC+waS5Y6tZbvL1coY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ns/c29ZO; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4200ee78e56so45460705e9.3;
+        Fri, 17 May 2024 00:47:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715932074; x=1716536874; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JoBzN9djlJxpJaXKm3xKHuIL+i4B9g57qXebcYydQSs=;
+        b=ns/c29ZOkelm0xm9FZOQ2M2a1FSdP+vDMnff38q9Qeag6ZENHsQ51u/ESk7dwiwCjd
+         P1w2tpoX7Crbl3WpZ3iNpMLbIgRTOMyOEwXc1BEOSFdqcHc0/XZXjAsf3+Jke2fPxBDJ
+         7J4eZ0tszXqcWXw1qD9hmvDkzLcbWhWOwmWzMYbw3XDBR7x/00KgOnSpm3y60swHmiKr
+         hC/QBgejJbZLdnCMRNKLrc2k2M0BD8F8PHTg1zhge/srOZgtZZZnYyYXB6FZteajm3/G
+         nrYmATIMBYpmOTOr5d2HtMRdZe05et/2vcM/VY+7JoduqqTnw8yjmNjzi8wWt6wvHmfF
+         vLcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715932074; x=1716536874;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JoBzN9djlJxpJaXKm3xKHuIL+i4B9g57qXebcYydQSs=;
+        b=O4OVxbM+3sc2xf0GRVOmfsklfssnstc8ZLx6+ejkwjnK/0oQcs6rfZIdmKgVOkrs/W
+         ikuWwpP+J2Tg1CPV9Trww4VgqCi4Kzi0/gVimWkwDxJi0imcUAB0xpz2X+VsU9gFGHEm
+         xtNzOlvNQIjYRj53DhMEyEROiWZ1n2zYujSazc4e2DggIR+D+QnBblILoJ9gBruKcSeg
+         fvQsp9qesT4lGB+gfv4ssDuw/XpPP8kF6Y/b2Wh2yyOrn/HM21QePT3uhjVCD1pqtzbJ
+         EBAbBKD22PT3xrKyhNGgRB6vkXP+6GG8v3hUAkATNzO6pplWJ8kCWzVh8JnrYfhoGHjz
+         /AOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXATQumzMeMYfXmRQfC1Tth6zOFKZYR5CneK+WArN+oElmA+7OdfRVqCb0AWjJmtuiFqiPxcwvcRejnDA153N8suzkl5WdSLuEncNyiDX32V4tJAayBS95TE0x+uj+VbjBkw5mo8A==
+X-Gm-Message-State: AOJu0YysFKBQgxVDXCVje6k2W0Y0R4FojMHpQw6XlauG+dThyIH0w0Ks
+	UnHA4mc8+3k0HrTHclco3/AA/n5Tz31e4FGdcQmssiyrGf+cwYjYop3GJNksEds=
+X-Google-Smtp-Source: AGHT+IGVGOu3Gwg6UKzMcRLe19shTT5VlFaOsI9y9rQAhRSZkPS1HxjFu8di27ShTBxXuvKzAXQZrA==
+X-Received: by 2002:a05:6000:798:b0:351:b7c8:3f08 with SMTP id ffacd0b85a97d-351b7c83fa5mr15729302f8f.10.1715932073602;
+        Fri, 17 May 2024 00:47:53 -0700 (PDT)
+Received: from rbolboac.. ([2a02:2f0e:350b:4500:569e:359d:dfe4:922e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baacef2sm21104207f8f.85.2024.05.17.00.47.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 00:47:53 -0700 (PDT)
+From: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	jic23@kernel.org,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	conor+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	robh@kernel.org,
+	nuno.sa@analog.com
+Cc: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+Subject: [PATCH v3 0/9] adis16501 and adis1657x support
+Date: Fri, 17 May 2024 10:47:41 +0300
+Message-Id: <20240517074750.87376-1-ramona.bolboaca13@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Kees Cook <keescook@chromium.org>
-Cc: Justin Stitt <justinstitt@google.com>,
- Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>,
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev
-References: <202404291502.612E0A10@keescook>
- <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
- <202405081144.D5FCC44A@keescook>
- <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwBH8RkTC0dmBZpWCA--.58599S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFW3Cr4ruryrJrWUGw4xXrb_yoW8Gr1kpF
-	Z8GF4jyrn5Ja97u348Aw4ktayruwn3Ga98Cr9Ygw4DAF4rKrs2kFn0krsI9ryrGrZ5Z3yU
-	Xr4Utr9I9FyUuaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-	cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
-	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
-	KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+Content-Transfer-Encoding: 8bit
 
+Add adis16501 and adis1657x support in adis16475.
 
+Ramona Gradinariu (9):
+  dt-bindings: iio: imu: Add ADIS16501 compatibles
+  drivers: iio: imu: Add support for ADIS16501
+  iio: imu: adis16475: Re-define ADIS16475_DATA
+  iio: imu: adis_buffer: Add buffer setup API with buffer attributes
+  iio: imu: adis16475: Create push single sample API
+  drivers: iio: imu: adis16475: generic computation for sample rate
+  iio: imu: adis_trigger: Allow level interrupts
+  dt-bindings: iio: imu: Add ADIS1657X family devices compatibles
+  drivers: iio: imu: Add support for adis1657x family
 
-Am 5/8/2024 um 10:07 PM schrieb Linus Torvalds:
-> And no, the answer is ABSOLUTELY NOT to add cognitive load on kernel
-> developers by adding yet more random helper types and/or functions.
+ .../bindings/iio/imu/adi,adis16475.yaml       |  31 +
+ drivers/iio/imu/Kconfig                       |   4 +-
+ drivers/iio/imu/adis16475.c                   | 788 +++++++++++++++---
+ drivers/iio/imu/adis_buffer.c                 |  32 +-
+ drivers/iio/imu/adis_trigger.c                |  39 +-
+ include/linux/iio/imu/adis.h                  |  19 +-
+ 6 files changed, 767 insertions(+), 146 deletions(-)
 
-
-Just to show an option without "more types and helper functions", one 
-could also instead add a coverage requirement:
-
-Every arithmetic operation should either:
-- have a test case where the wrap around happens, or
-- have a static analyser say that overflow can not happen, or
-- have a static analyser say that overflow is fine (e.g., your a+b < a case)
-
-Then the answer to safe wrap situations isn't to make the kernel code 
-less readable, but to have a component-level test that shows that the 
-behavior on overflow (in at least one case :)) ) is what the developer 
-expected.
-
-For static analysis to prove that overflow can not happen, one sometimes 
-would need to add BUG_ON() assertions to let the analyser know the 
-assumptions on surrounding code, which has its own benefits.
-
-
-static inline u32 __item_offset(u32 val)
-{
-         BUG_ON(val > INT_MAX / ITEM_SIZE_PER_UNIT);
-         return val * ITEM_SIZE_PER_UNIT;
-}
-
-
-Obviously, the effort involved is still high. Maybe if someone as a pet 
-project proves first that something in this direction is actually worth 
-the effort (by uncovering a heap of bugs), one could offer this kind of 
-check as an opt-in.
-
-
-Best wishes,
-
-   jonas
+--
+2.34.1
 
 
