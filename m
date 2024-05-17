@@ -1,116 +1,106 @@
-Return-Path: <linux-kernel+bounces-182363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6B98C8A5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:54:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A852C8C8A64
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38BD12852D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:54:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C0591F23967
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8406E13D8B1;
-	Fri, 17 May 2024 16:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F0913D8B6;
+	Fri, 17 May 2024 16:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lxm7NGDb"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rYPq6X2N"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB0912F398
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 16:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE57512F398;
+	Fri, 17 May 2024 16:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715964862; cv=none; b=mVf7yBWr6iHWNqYax/Yk7P2iJaguPgJHcex8PmzakhSuFUYaU1SO4MheYlsuMJ1U7iwc5X1BLccrEDgn9Bnh0KZu/zy+6wLOKSeG62sPZyc1907/VUasRvv6ChtghNHvLMKbiPrP+TyBdhMfuqhIZCVifdOMyhcOTPw/GqG9x2U=
+	t=1715964957; cv=none; b=tah1HunL1Ywltktf5CLXO52dt1yeOfqRrCviTgAk+2P/2gUb/8FPjSA5qcExFR7Ndnwb2EMGTtynLVvBPPnPIvKYnX/xG5AwtIEqbvpvQgXGFzBO6i1pFbZ4TxTp/Dx/aqHR3fUQZbQVE1cBp/SKFEv85nQqoeBofX2C9ATyfGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715964862; c=relaxed/simple;
-	bh=Ios/qIb+dAGtBg6fFTFVGgEPbgKIjA52c6SRWwKUdHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eOBdO0BJ6COC2bd5XHAesqK/jYnl/wfcGBk/c+jhw5KhbOKmn/mCuScbChV/yRBW57moEyIHZSr0kYGwzR6Iinnirn13Aw3/7VrTsvozW6/KPRl9+/1hfpyNx+c992PGCKKgTcab/CQo869G0lCdtCkd9KoPMr9m5b6zY3qSiiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lxm7NGDb; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ed835f3c3cso16520115ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:54:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715964860; x=1716569660; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XUW7eqgO+826a5qt9L3dew1D8xFQbXN74Fpu1KSFh38=;
-        b=Lxm7NGDbxZFN5Rhnqk/VZVm5i2nWiXv/ktyCtzZbo4t4Kx/J5HrUaM+3hSICic4FpD
-         Z+3BnZA8Z5fOd+cD9OvtYdQZU+/VbMoekDFXn3VsKcz+6M1muM0i2thsv5LRzaus8SkE
-         lZoQ2pC2JXfpD+5nMcFmWmd2JKOrway3ttP4V8ZqNAy+D4PHHurwwFQpIWhM46y6KI8L
-         Bhxz/U6mD1CKA7A844qoBN4QO8+EIH946oT2wBUPDMqyvM3Gfzk4yuj2ILzD4vxouC70
-         7/eAnm3rOgVmjiqf6HlB4VixK24PfhyXik3c8gw6uB1EM6XRx0XiqAlxosVXWP3oIvO3
-         z1Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715964860; x=1716569660;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XUW7eqgO+826a5qt9L3dew1D8xFQbXN74Fpu1KSFh38=;
-        b=i1zM2DSn+Rsnd0gpcoJjl3oIsWfxPsopYuwmzog4mOqD/WTjtBlyh+jY3mTNbMNnyr
-         iv43HLc/gJHJNsTx5VMC9suV6brBjqD95+kCUtjdS4DNlN4xH5jESXtujlA3D2vLtEFn
-         trF5K9mrhjUHfs3/bOnC422vz0OIWtKj9y3PK6WHviGSED2FiYmvDPWGgbEWbrtNjyg/
-         yvfu917Qm4f0/z2JGSypEoMSmHjuEJEGRA0IQPE01ORq78RNMN49dQF4Rxbm5xAnKFh5
-         GXvyhrSMEiH5fcKY8dVTI2vqYO6LwRqKtT5lYl5EibPbNtl0RCvMI4nWOk/hFkx+BD9H
-         Z74Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWYW6qAOh5qu8aWm4C/amRDIVeb187mVZ4Xoh7eCNrYapPPNALkq9WBkS1qg1urF4qWmmLZiqfkzrjwVK7h/6i8SRhVWl6Etj4ZNTP0
-X-Gm-Message-State: AOJu0YxFwYOC2guELWwbWmgR8XwMX05Soc8F/ftpURF3M402Qv4wpbj/
-	cJE2Uh7TMhnbqFT7YH/Yxsiw7AYcZyslaJM8qcVkTjRKj4+CIWxb
-X-Google-Smtp-Source: AGHT+IE+UbueQ6CMOrEjQJj4dpwa4MmX9uVTOjdtUv+ZA+PRtKfknmGxlx+JzDG9+4TV58nM/aq2tg==
-X-Received: by 2002:a17:902:650f:b0:1e5:9391:1d44 with SMTP id d9443c01a7336-1ef4404a352mr252664945ad.47.1715964860538;
-        Fri, 17 May 2024 09:54:20 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad9eb8sm159891335ad.77.2024.05.17.09.54.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 09:54:19 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 17 May 2024 09:54:17 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: broonie@kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: Re: [PATCH] regmap: kunit: Fix array overflow in stride() test
-Message-ID: <f7612643-87d6-4217-ab7b-b8bcccb72175@roeck-us.net>
-References: <20240517144703.1200995-1-rf@opensource.cirrus.com>
+	s=arc-20240116; t=1715964957; c=relaxed/simple;
+	bh=oS+zk2HYc2BOzJVr2+JxzzDk4PthvgRnZztNAdo8rGM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=qCW3JALVhI3TQUlphSO9UIxADVo3RtikWyFgC4kR4ccRivk3qTqY/iP/wth775xCwGNGA7aFeZhRvqTr9785GYiHhyS7VBqu/9bnIZzXce+XdQuBHUAghnd0k+11+5DEKjue40/YWSFfPmXR3uKvVnHB9GAmHF4dCPCQ8FITmlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rYPq6X2N; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715964921; x=1716569721; i=markus.elfring@web.de;
+	bh=opJ3yzwn4W/yGFt1CijxFGqOb7XueZ6TGIqHxjcuutE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=rYPq6X2Nm3ZNWdgRT56yWY1UNvOnzO/3D0uY+m91uIkGYi2DHkhQUvl8ScoVvN1k
+	 vXX4N21+6TSnxw1Gi1j9mHQZOUj6jQrvHkp119OEhtmN9X+j6VQppa9pKgsBO0O7T
+	 6nx386VFiPY0phbLlCftuhMzxaLaHvOZ8ZDMIkMp402+bVheNAq0an7bSbfDaYSnF
+	 GEgvza4Hvn/DK2OL1wLC746u7Xf+sQ2PreOkmj4/R+05M6DGiPakVE24LUaQhpVsA
+	 UHHodsFafoPoPebIYHCK/+1EMcS+EGj1SCVA4T2ILp90VhOrYSSt3TYorIzRBZlc6
+	 NnBafwdaoS9r0A0M/w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKdHE-1rrZuH0mpo-00TEYo; Fri, 17
+ May 2024 18:55:21 +0200
+Message-ID: <81a50343-34e3-4a4d-80e9-0c674876cdb8@web.de>
+Date: Fri, 17 May 2024 18:55:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517144703.1200995-1-rf@opensource.cirrus.com>
+User-Agent: Mozilla Thunderbird
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org,
+ Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Hao_hao.Wang@unisoc.com,
+ =?UTF-8?B?546L56eRIChLZSBXYW5nKQ==?= <Ke.Wang@unisoc.com>,
+ Zhiguo Niu <niuzhiguo84@gmail.com>
+References: <1715945202-30045-1-git-send-email-zhiguo.niu@unisoc.com>
+Subject: Re: [PATCH] f2fs: fix to check return value of
+ f2fs_allocate_new_section
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <1715945202-30045-1-git-send-email-zhiguo.niu@unisoc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:F5vmjCW5AwisAA6fyRSakYagc++ce9s74l6fZprZXTpp00HIYJ9
+ ZPVZZxE8Ppth6r+STxzWbnVtuy86HwVhP+V9kKlQQz4xmAQM8aQQorcVkxuIh8n/ELIMVlu
+ yyZQDFGQcO/ohrju1o9n4jZSwl1SaYIln0gvIvgkurlqBdH8Bw+YpWMa7y/BwyMBIuuf2gW
+ mO2yhHD+4mL4lyVcU2I3Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/BR6hDIGdNA=;YrAo6ZeUPbgYxIb9yjqSQRcXuE8
+ EdOcrOthGfV2mqTsHCyjDj4RVAsyaAa7hKmV0BaoaScDPXMKjX5NxSPtOpRMqygwltGUBJyB0
+ fNIFBslKb7KJjb6laFkDBWcouWZ5LTV0aC/EfuFYRTekkOsmPHJ9ySrEC8tFrptwrYbfd/6Hk
+ 6uOWHuLck0UMdI6Q6fMEdHjSJXdJEeTnMBp0kYjgKd4nndRel80+DiA3AkF/2Wy780xvItGOU
+ 97RHNmK+ZHAlq28v9ZI9FNsRD9NR2UBPdVQnVnqauB12KUvsGisKYHAjJl4pejTRInUM5PMyM
+ QN5yWZpnb+GyiCRm9hbOv44HaEbFDLXtk64KKPCuoCke9BkpQfmNZTPKeIFsuySomBOqWmOpy
+ QZNcfEUK7mokuxJzJE1EwDH0s/nAKlA8z2k9l9HnRT5h4EwntB7Cs6qQv9y4Lygbu1c7/WjZR
+ Jpms47riUmEiFjRpXsGbL9ZrKWCArHbUWv3nOUGZ3q/sGygojZHWpGquF9zE6iACXf3NvFLbW
+ PmvzoX7d/Q2OHWIBDMALZjL9/5ZPYX++ula/p3oCJCdwW6u4qKaimVFNKd9qS7Lj21oBpg16W
+ 5Wz4AwALbWiXn+isBkwWRhbXqHNJ2PMjEJudZEQc2OYd1cuCFTU8S2T+6YE9icovNBjoldu5Z
+ GGgYmCtVKtZXr5K97TRSlIFb70xc6nUd7KCiPVCQmBwBwkEwig6n5EaswclRtUZyFgwW98Jvc
+ de96CE88C+euWU4i2waTWpd8iwOMPV5aTJkSVGV6AO8gHxHUCpWBL7303BMd/8T/TCVSW2N3I
+ 60KNP29o317ojSYDcQAWRsY+G4Ob+wGZFKytB9VGvvumc=
 
-On Fri, May 17, 2024 at 03:47:03PM +0100, Richard Fitzgerald wrote:
-> Force the max_register of the test regmap to be one register longer
-> than the number of test registers, to prevent an array overflow in
-> the test loop.
-> 
-> The test defines num_reg_defaults = 6. With 6 registers and
-> stride == 2 the valid register addresses would be 0, 2, 4, 6, 8, 10.
-> However the loop checks attempting to access the odd address, so on
-> the final register it accesses address 11, and it writes entry [11]
-> of the read/written arrays.
-> 
-> Originally this worked because the max_register of the regmap was
-> hardcoded to be BLOCK_TEST_SIZE (== 12).
-> 
-> commit 710915743d53 ("regmap: kunit: Run sparse cache tests at non-zero
-> register addresses")
-> introduced the ability to start the test address range from any address,
-> which means adjusting the max_register. If max_register was not forced,
-> it was calculated either from num_reg_defaults or BLOCK_TEST_SIZE. This
-> correctly calculated that with num_reg_defaults == 6 and stride == 2 the
-> final valid address is 10. So the read/written arrays are allocated to
-> contain entries [0..10]. When stride attempted to access [11] it was
-> overflowing the array.
-> 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> Fixes: 710915743d53 ("regmap: kunit: Run sparse cache tests at non-zero register addresses")
+=E2=80=A6
+> missed this allocated path, fix it.
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+* Will another imperative wording be desirable for an improved change desc=
+ription?
+
+* Would you like to add the tag =E2=80=9CFixes=E2=80=9D?
+
+* How do you think about to append parentheses to the function name
+  in the summary phrase?
+
+
+Regards,
+Markus
 
