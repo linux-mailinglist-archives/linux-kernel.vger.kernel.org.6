@@ -1,209 +1,274 @@
-Return-Path: <linux-kernel+bounces-182266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D621B8C88F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBA78C8900
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9E91F21C62
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:04:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F281F21E34
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECB069DF7;
-	Fri, 17 May 2024 15:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNF4CVWG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3C837149;
-	Fri, 17 May 2024 15:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D846A008;
+	Fri, 17 May 2024 15:04:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EC464CE1;
+	Fri, 17 May 2024 15:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715958238; cv=none; b=iq2ym5I8oDxxNj7RLTr3BEBy1qMwb3wCLP9rPaYDoozZUjUpK9OgdgQ7krwDFN0kTPEWL6PPLNO2F/RAX11jlT07GbcURGYvLDC6ybvQiovWUGsGx/Fdi2xAmnMGTgZgV6+wahE0tnLsEtzhqbCFnDY2dpDhxQ2owXx+7ZhYzAs=
+	t=1715958249; cv=none; b=J5LKj+d3FHBQGUvAdF4/LjinAJUzHWKp4vh2BAw7MvcQwaDi23COzfofEPKKWFdK8nCQ0eSUOiY9sS4Vg1QlhFFGUm85G3S4LrQddDyvT6vvSYujv1tbelkr3bCJG0ng7YFG3WBxdkBOgLtxVE0qwJpfvEY6YnsA5YpdpW6tu9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715958238; c=relaxed/simple;
-	bh=ows2zNDPZTSEXPPVIIdIEYEbYQxQQ5Em7kepFx0r25E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XR5OjhJCAdpu/Lb/qZoh/og8UeTo1j5DgWSxqzJwFGWmC4uYyidr9jWbl3NrFzSz8rSyr+roHVxKg4XSGMCJWjItJGCFoCV61X69ftPlXpNZ7mjs5LR0+BlSuP9k8Mebuolw4tk77MTBY7FYgq/qsfacpfkE1ITI5d0tps5j+aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NNF4CVWG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12A19C2BD10;
-	Fri, 17 May 2024 15:03:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715958238;
-	bh=ows2zNDPZTSEXPPVIIdIEYEbYQxQQ5Em7kepFx0r25E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NNF4CVWGtKc6iIOYp3g1LWKKBE1c2KJenyE9HXOHCRjKtXOeY+OzwO9VeYLzxM2Lh
-	 wK9/ar0Au/ImNeJigUkICKaXfl8oFOxRNfVY7NofT4C9tPu6+z6EDGVctbjClhs8XF
-	 U3aANBZrX8VBqW/GXcKvcv3w/l0Fi5DeaPRPdN1EwTP5X/gR6K18WQTe9EW0Jb4k4e
-	 kgN8ntW2UiiBi/D5Gd7DFkBW3eAADgys4DbMVqcE/3kFUkKY9xOPM1qED6o6/mLMcA
-	 2f8CI+oJsQdy0hzims9EATeSxIqmLFpvXoXcOf1JcIa13JXK/CK1wVTRHDVYHto4OD
-	 gO0lhNytwliAw==
-Date: Fri, 17 May 2024 16:03:50 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Emil Svendsen <emas@bang-olufsen.dk>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH 07/13] ASoC: codecs: add AD24xx codec driver
-Message-ID: <e5782aef-d64d-46f3-ab5c-dc01285e08c2@sirena.org.uk>
-References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
- <20240517-a2b-v1-7-b8647554c67b@bang-olufsen.dk>
+	s=arc-20240116; t=1715958249; c=relaxed/simple;
+	bh=rmCP6QYgkI9Sl3Ub1SJ2idoZZMhLo/H/14aEl6gI9G4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TTJZ1hv1o4fOvSqIDRVSO7ZGsOlk1WH+TDYX/sKSSr87SuE3Wp+rxKZINuKQbWuNfcLAUmKWybO3ys4WkSBF1Zznig4vhazkwEBNcCiQMrWFkZm7xR+DYC4G480WIvaveXZoHDBuFQ0+rGWX+JsSZbDklu7cKpsdYDBwpc8iw70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2BE01424;
+	Fri, 17 May 2024 08:04:27 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 85E6D3F762;
+	Fri, 17 May 2024 08:03:59 -0700 (PDT)
+Message-ID: <981c85f3-6d43-4c2b-a440-88bf81a18e55@arm.com>
+Date: Fri, 17 May 2024 16:03:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="skuonK/bS9x9MsEH"
-Content-Disposition: inline
-In-Reply-To: <20240517-a2b-v1-7-b8647554c67b@bang-olufsen.dk>
-X-Cookie: Function reject.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/7] iommu/dma: Make limit checks self-contained
+To: Jon Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Christoph Hellwig <hch@lst.de>
+Cc: Vineet Gupta <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
+ Niklas Schnelle <schnelle@linux.ibm.com>,
+ Matthew Rosato <mjrosato@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-acpi@vger.kernel.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <cover.1713523152.git.robin.murphy@arm.com>
+ <e28a114243d1e79eb3609aded034f8529521333f.1713523152.git.robin.murphy@arm.com>
+ <243d441d-dda8-442a-a495-83bf9725a14c@nvidia.com>
+ <48c39306-c226-4e7f-a013-d679ca80157e@arm.com>
+ <46fc1b7f-7d10-4233-b089-aa173ad3bbeb@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <46fc1b7f-7d10-4233-b089-aa173ad3bbeb@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 17/05/2024 3:21 pm, Jon Hunter wrote:
+> 
+> On 15/05/2024 15:59, Robin Murphy wrote:
+>> Hi Jon,
+>>
+>> On 2024-05-14 2:27 pm, Jon Hunter wrote:
+>>> Hi Robin,
+>>>
+>>> On 19/04/2024 17:54, Robin Murphy wrote:
+>>>> It's now easy to retrieve the device's DMA limits if we want to check
+>>>> them against the domain aperture, so do that ourselves instead of
+>>>> relying on them being passed through the callchain.
+>>>>
+>>>> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>>>> Tested-by: Hanjun Guo <guohanjun@huawei.com>
+>>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>>>> ---
+>>>>   drivers/iommu/dma-iommu.c | 21 +++++++++------------
+>>>>   1 file changed, 9 insertions(+), 12 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+>>>> index a3039005b696..f542eabaefa4 100644
+>>>> --- a/drivers/iommu/dma-iommu.c
+>>>> +++ b/drivers/iommu/dma-iommu.c
+>>>> @@ -660,19 +660,16 @@ static void iommu_dma_init_options(struct 
+>>>> iommu_dma_options *options,
+>>>>   /**
+>>>>    * iommu_dma_init_domain - Initialise a DMA mapping domain
+>>>>    * @domain: IOMMU domain previously prepared by 
+>>>> iommu_get_dma_cookie()
+>>>> - * @base: IOVA at which the mappable address space starts
+>>>> - * @limit: Last address of the IOVA space
+>>>>    * @dev: Device the domain is being initialised for
+>>>>    *
+>>>> - * @base and @limit + 1 should be exact multiples of IOMMU page 
+>>>> granularity to
+>>>> - * avoid rounding surprises. If necessary, we reserve the page at 
+>>>> address 0
+>>>> + * If the geometry and dma_range_map include address 0, we reserve 
+>>>> that page
+>>>>    * to ensure it is an invalid IOVA. It is safe to reinitialise a 
+>>>> domain, but
+>>>>    * any change which could make prior IOVAs invalid will fail.
+>>>>    */
+>>>> -static int iommu_dma_init_domain(struct iommu_domain *domain, 
+>>>> dma_addr_t base,
+>>>> -                 dma_addr_t limit, struct device *dev)
+>>>> +static int iommu_dma_init_domain(struct iommu_domain *domain, 
+>>>> struct device *dev)
+>>>>   {
+>>>>       struct iommu_dma_cookie *cookie = domain->iova_cookie;
+>>>> +    const struct bus_dma_region *map = dev->dma_range_map;
+>>>>       unsigned long order, base_pfn;
+>>>>       struct iova_domain *iovad;
+>>>>       int ret;
+>>>> @@ -684,18 +681,18 @@ static int iommu_dma_init_domain(struct 
+>>>> iommu_domain *domain, dma_addr_t base,
+>>>>       /* Use the smallest supported page size for IOVA granularity */
+>>>>       order = __ffs(domain->pgsize_bitmap);
+>>>> -    base_pfn = max_t(unsigned long, 1, base >> order);
+>>>> +    base_pfn = 1;
+>>>>       /* Check the domain allows at least some access to the 
+>>>> device... */
+>>>> -    if (domain->geometry.force_aperture) {
+>>>> +    if (map) {
+>>>> +        dma_addr_t base = dma_range_map_min(map);
+>>>>           if (base > domain->geometry.aperture_end ||
+>>>> -            limit < domain->geometry.aperture_start) {
+>>>> +            dma_range_map_max(map) < 
+>>>> domain->geometry.aperture_start) {
+>>>>               pr_warn("specified DMA range outside IOMMU 
+>>>> capability\n");
+>>>>               return -EFAULT;
+>>>>           }
+>>>>           /* ...then finally give it a kicking to make sure it fits */
+>>>> -        base_pfn = max_t(unsigned long, base_pfn,
+>>>> -                domain->geometry.aperture_start >> order);
+>>>> +        base_pfn = max(base, domain->geometry.aperture_start) >> 
+>>>> order;
+>>>>       }
+>>>>       /* start_pfn is always nonzero for an already-initialised 
+>>>> domain */
+>>>> @@ -1760,7 +1757,7 @@ void iommu_setup_dma_ops(struct device *dev, 
+>>>> u64 dma_base, u64 dma_limit)
+>>>>        * underlying IOMMU driver needs to support via the dma-iommu 
+>>>> layer.
+>>>>        */
+>>>>       if (iommu_is_dma_domain(domain)) {
+>>>> -        if (iommu_dma_init_domain(domain, dma_base, dma_limit, dev))
+>>>> +        if (iommu_dma_init_domain(domain, dev))
+>>>>               goto out_err;
+>>>>           dev->dma_ops = &iommu_dma_ops;
+>>>>       }
+>>>
+>>>
+>>> I have noticed some random test failures on Tegra186 and Tegra194 and 
+>>> bisect is pointing to this commit. Reverting this along with the 
+>>> various dependencies does fix the problem. On Tegra186 CPU hotplug is 
+>>> failing and on Tegra194 suspend is failing. Unfortunately, on neither 
+>>> platform do I see any particular crash but the boards hang somewhere.
+>>
+>> That is... thoroughly bemusing :/ Not only is there supposed to be no 
+>> real functional change here - we should merely be recalculating the 
+>> same information from dev->dma_range_map that the callers were already 
+>> doing to generate the base/limit arguments - but the act of initially 
+>> setting up a default domain for a device behind an IOMMU should have 
+>> no connection whatsoever to suspend and especially not to CPU hotplug.
+> 
+> 
+> Yes it does look odd, but this is what bisect reported ...
+> 
+> git bisect start
+> # good: [a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6] Linux 6.9
+> git bisect good a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+> # bad: [6ba6c795dc73c22ce2c86006f17c4aa802db2a60] Add linux-next 
+> specific files for 20240513
+> git bisect bad 6ba6c795dc73c22ce2c86006f17c4aa802db2a60
+> # good: [29e7f949865a023a21ecdfbd82d68ac697569f34] Merge branch 'main' 
+> of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+> git bisect good 29e7f949865a023a21ecdfbd82d68ac697569f34
+> # skip: [150e6cc14e51f2a07034106a4529cdaafd812c46] Merge branch 'next' 
+> of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git
+> git bisect skip 150e6cc14e51f2a07034106a4529cdaafd812c46
+> # good: [f5d75327d30af49acf2e4b55f35ce2e6c45d1287] drm/amd/display: Fix 
+> invalid Copyright notice
+> git bisect good f5d75327d30af49acf2e4b55f35ce2e6c45d1287
+> # skip: [f1ec9a9ffc526df7c9523006c2abbb8ea554cdd8] Merge branch 
+> 'for-next' of 
+> git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git
+> git bisect skip f1ec9a9ffc526df7c9523006c2abbb8ea554cdd8
+> # bad: [f091e93306e0429ebb7589b9874590b6a9705e64] dma-mapping: Simplify 
+> arch_setup_dma_ops()
+> git bisect bad f091e93306e0429ebb7589b9874590b6a9705e64
+> # good: [91cfd679f9e8b9a7bf2f26adf66eff99dbe2026b] ACPI/IORT: Handle 
+> memory address size limits as limits
+> git bisect good 91cfd679f9e8b9a7bf2f26adf66eff99dbe2026b
+> # bad: [ad4750b07d3462ce29a0c9b1e88b2a1f9795290e] iommu/dma: Make limit 
+> checks self-contained
+> git bisect bad ad4750b07d3462ce29a0c9b1e88b2a1f9795290e
+> # good: [fece6530bf4b59b01a476a12851e07751e73d69f] dma-mapping: Add 
+> helpers for dma_range_map bounds
+> git bisect good fece6530bf4b59b01a476a12851e07751e73d69f
+> # first bad commit: [ad4750b07d3462ce29a0c9b1e88b2a1f9795290e] 
+> iommu/dma: Make limit checks self-contained
+> 
+> There is a couple skips in there and so I will try this again.
+> 
+>>> If you have any ideas on things we can try let me know.
+>>
+>> Since the symptom seems inexplicable, I'd throw the usual memory 
+>> debugging stuff like KASAN at it first. I'd also try 
+>> "no_console_suspend" to check whether any late output is being missed 
+>> in the suspend case (and if it's already broken, then any additional 
+>> issues that may be caused by the console itself hopefully shouldn't 
+>> matter).
+>>
+>> For more base-covering, do you have the "arm64: Properly clean up 
+>> iommu-dma remnants" fix in there already as well? That bug has 
+>> bisected to patch #6 each time though, so I do still suspect that what 
+>> you're seeing is likely something else. It does seem potentially 
+>> significant that those Tegra platforms are making fairly wide use of 
+>> dma-ranges, but there's no clear idea forming out of that observation 
+>> just yet...
+> 
+> I was hoping it was the same issue other people had reported,
+> but the fix provided did not help. I have also tried today's
+> -next and I am still seeing the issue.
+> 
+> I should have more time next week to look at this further. Let
+> me confirm which change is causing this and add more debug.
 
---skuonK/bS9x9MsEH
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks. From staring at the code I think I've spotted one subtlety which
+may not be quite as intended - can you see if the diff below helps? It
+occurs to me that suspend and CPU hotplug may not *cause* the symptom,
+but they could certainly stall if one or more relevant CPUs is *already*
+stuck in a loop somewhere...
 
-On Fri, May 17, 2024 at 02:58:05PM +0200, Alvin =C5=A0ipraga wrote:
+Thanks,
+Robin.
 
-> +++ b/sound/soc/codecs/ad24xx-codec.c
-> @@ -0,0 +1,665 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * AD24xx codec driver
-
-Please make the whole comment a C++ comment.
-
-> +static const char *const ad24xx_codec_slot_size_text[] =3D {
-> +	"8 bits",  "12 bits", "16 bits", "20 bits",
-> +	"24 bits", "28 bits", "32 bits",
-> +};
-
-Why is this configured by the user rather than via set_tdm_slot(), and
-how would one usefully use this at runtime?
-
-> +static int ad24xx_codec_slot_config_put(struct snd_kcontrol *kcontrol,
-> +					struct snd_ctl_elem_value *ucontrol)
-> +{
-
-> +	} else if (priv =3D=3D &ad24xx_codec_up_slot_format_enum ||
-> +		   priv =3D=3D &ad24xx_codec_dn_slot_format_enum) {
-> +		if (val >=3D ARRAY_SIZE(ad24xx_codec_slot_format_text))
-> +			return -EINVAL;
-> +		slot_config->format[direction] =3D val;
-> +	} else
-> +		return -ENOENT;
-
-If one side has {} both sides should, see coding-style.rst.
-
-> +
-> +	return 0;
-> +}
-
-This won't flag changes by returning 1 which will mean no events are
-generated and break some UIs.  Please show the output of the mixer-test
-selftest on new submissions, it will check for this and other issues.
-
-> +	/* Main node must be BCLK/FSYNC consumer, subordinate node provider */
-> +	if ((fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) !=3D
-> +	    (is_a2b_main(adc->node) ? SND_SOC_DAIFMT_CBC_CFC :
-> +				      SND_SOC_DAIFMT_CBP_CFP))
-> +		return -EINVAL;
-
-Please don't use the ternery operator like this, it just makes things
-harder to read.
-
-> +	val =3D bclk_invert ? A2B_I2SCFG_RXBCLKINV_MASK :
-> +			    A2B_I2SCFG_TXBCLKINV_MASK;
-
-Similarly, please use normal conditional statements.
-
-> +static int ad24xx_codec_hw_params(struct snd_pcm_substream *substream,
-> +				  struct snd_pcm_hw_params *params,
-> +				  struct snd_soc_dai *dai)
-
-> +
-> +	/* Finally, request slots */
-> +	ret =3D a2b_node_request_slots(adc->node, &slot_req);
-> +	if (ret)
-> +		return ret;
-
-Note that hw_params() can be called multiple times before starting the
-audio stream, will this leak?
-
-> +				struct snd_soc_dai *dai)
-> +{
-> +	struct snd_soc_component *component =3D dai->component;
-> +	struct ad24xx_codec *adc =3D snd_soc_component_get_drvdata(component);
-> +	int ret;
-> +
-> +	ret =3D a2b_node_free_slots(adc->node);
-> +	if (ret)
-> +		return ret;
-
-What if we close without having called hw_params()?
-
-> +static const struct snd_soc_dai_driver ad24xx_codec_dai_drv[] =3D {
-> +	[AD24XX_DAI_I2S] =3D {
-> +		.name =3D "ad24xx-i2s",
-> +		.playback =3D {
-> +			.stream_name =3D "I2S Playback",
-> +			.channels_min =3D 1,
-> +			.channels_max =3D 32,
-> +		},
-> +		.capture =3D {
-> +			.stream_name =3D "I2S Capture",
-> +			.channels_min =3D 1,
-> +			.channels_max =3D 32,
-> +		},
-> +		.ops =3D &ad24xx_codec_dai_ops,
-> +		.symmetric_rate =3D 1,
-> +	},
-> +};
-
-Why is this an array?
-
-> +static const struct regmap_config ad24xx_codec_regmap_config =3D {
-> +	.reg_bits =3D 8,
-> +	.val_bits =3D 8,
-> +	.cache_type =3D REGCACHE_RBTREE,
-> +};
-
-New code should use _MAPLE unless there's a strong reason to use
-something else.
-
---skuonK/bS9x9MsEH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZHcdUACgkQJNaLcl1U
-h9ABtwf9HncflXNFY8QIXgA4cSV8pllWbpngmZChE9+u+sfBWesth1fTKTC9ejk+
-lvIb3qtIDq9BorlQlfdfX8/arFQYpgrXcEhDIpGccNO2OrNZXHSNxnbz90q70XNX
-MEil8c3aa9ciM2+g8z3855vKmv+pRCB+GZNbfW/zlmr4pTyumWRIjWI+RWCa5CeV
-7w5xGqfedug4xGxlplhyM8Yyu9YDbY5C9GELhAlz0zPBJ+W8yCclZJSsJNYI+jcs
-pPPel76R4NsKy7UGqOLoDgFDUFs1Ps5N0wxkeXg3lTUpsLHdu0JH0uifkz8evQ9L
-u9RBNxjmWhezCSsPkWCgUbwzjSdCTQ==
-=QFB6
------END PGP SIGNATURE-----
-
---skuonK/bS9x9MsEH--
+----->8-----
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 89a53c2f2cf9..85eb1846c637 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -686,6 +686,7 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, struct device *dev
+  	/* Check the domain allows at least some access to the device... */
+  	if (map) {
+  		dma_addr_t base = dma_range_map_min(map);
++		base = max(base, (dma_addr_t)1 << order);
+  		if (base > domain->geometry.aperture_end ||
+  		    dma_range_map_max(map) < domain->geometry.aperture_start) {
+  			pr_warn("specified DMA range outside IOMMU capability\n");
 
