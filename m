@@ -1,135 +1,123 @@
-Return-Path: <linux-kernel+bounces-182263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F088C88EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:01:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C8218C8803
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E707E289053
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28978287A88
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6F66BB47;
-	Fri, 17 May 2024 14:59:42 +0000 (UTC)
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4041626DF;
+	Fri, 17 May 2024 14:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hCAAGTvD"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1723665194;
-	Fri, 17 May 2024 14:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37E05EE82
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715957981; cv=none; b=FRUEjW8s85prfks01xROpmRw0aaoG/OLMgWl4vUnLjI8sRrIPhO4YYtev7aP1Mc5K1flBEDg01BAAXROkT6bNBIv+9p4TRCM7qIFvWjphc4c3aZDdi49adIv3Coj+x6dj2k6PG9mjT+G+IZ4C9PESiZBA4GIo1GKVUHjP3F1Bc4=
+	t=1715955772; cv=none; b=DEJPcfpwws7avrxp5jpVIiOr0YbneqTt3cJrUVZ27KW7kB0RjMyHP8eCigbrb6j8BumEaECtc68sJ+vsK6/8iErhNCmxCU8UnubcGzibya4I8LyorYyG7uEUAvteIzcE0xQOdVnECQQny3sxtFGoRFpFIaJetoZf/NShuEqZAjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715957981; c=relaxed/simple;
-	bh=avilw900f6d/x8c9K8ZiuzFANTi4g2LTrG2nEouV5+A=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=AMxUw1V68VZCn8y1DvJP1Q4FhhHkDBsD+jnxQ/GqdmErol+DU1lXqGV5Jxu/iYbpEHre4JfZjN8kwe83qQJahkmnFx1RLjNrPM8uD9S1upzShSZDQOLWxOwMnSpzOw+jE8rPZQj8FcW8LJ+o+BgfycbiH1BKnqV0wMCBW3ou11s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:51178)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1s7yTv-00G0Ui-NK; Fri, 17 May 2024 08:22:47 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:32812 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1s7yTu-00FFhy-O4; Fri, 17 May 2024 08:22:47 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org,  Luis Chamberlain <mcgrof@kernel.org>,  Kees Cook
- <keescook@chromium.org>,  Joel Granados <j.granados@samsung.com>,  Serge
- Hallyn <serge@hallyn.com>,  Paul Moore <paul@paul-moore.com>,  James
- Morris <jmorris@namei.org>,  David Howells <dhowells@redhat.com>,  Jarkko
- Sakkinen <jarkko@kernel.org>,  containers@lists.linux.dev,
-  linux-kernel@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-security-module@vger.kernel.org,  keyrings@vger.kernel.org
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
-	<20240516092213.6799-2-jcalmels@3xx0.net>
-	<878r08brmp.fsf@email.froward.int.ebiederm.org>
-	<xv52m5xu5tgwpckkcvyjvefbvockmb7g7fvhlky5yjs2i2jhsp@dcuovgkys4eh>
-Date: Fri, 17 May 2024 09:22:23 -0500
-In-Reply-To: <xv52m5xu5tgwpckkcvyjvefbvockmb7g7fvhlky5yjs2i2jhsp@dcuovgkys4eh>
-	(Jonathan Calmels's message of "Fri, 17 May 2024 04:55:03 -0700")
-Message-ID: <87jzjsa57k.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1715955772; c=relaxed/simple;
+	bh=3HO4qcYXJgZg4FhjGTJW3cruo/JKZwmUPV9ToBYsSAo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EDYHGeB+J3m5PtpsHgi9aK5coSbFmSjr7aCZTrJQZl2vg+XZzUcUknc+hniyYV3wskph4d9berZ8tjgzVmboK7tjJ4W7rrMi4rQdDhZpdOofAQOh6xxpNjj1DUEfHVO9mW12GbmyAITlIy560Y+yIIpFDjr8Ap5Pb3TE3ZRJXF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hCAAGTvD; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-56e69888a36so4902188a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 07:22:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715955768; x=1716560568; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wof1SP6Ref2uPP1r74EXX3SjtI/nnHeBDVdJ5oPu2bE=;
+        b=hCAAGTvDgjrhIms6gFi5YbRnJFYWE33SskuofW9QFge6pabMYIOKG3ax1z50604RHO
+         cUNiQj4GRFWQFF+4Q/08w40uvi4AvsNzh3jQxi4yXSbcnHoYmAyOKryYRDhpylUouhqb
+         WzDKMWbigNKWp0SGBH5gUAVMxNVt/uUWzFcItRA9puBQYqHt5juiohiRRPLG1nDQUGXi
+         0NWQMNoS/tY3OSkiTHpu8Mk30fXiwDWNSEZOaqzhsHjVhuqLoXGEqjujQ+VguSmYD9V4
+         9tGcIhjyhashpviINBhxrfODMyBC85oF/pJn+LrdJ3BNkh8ljVQR/o9BTRmZabHS6fgY
+         d/vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715955768; x=1716560568;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wof1SP6Ref2uPP1r74EXX3SjtI/nnHeBDVdJ5oPu2bE=;
+        b=GhkBMD6J8S/hbCCRWIb+XJT8DmFbIT/HfXVR3iYyoF6N4PSw/6AUoJ6zBLLPi91YW/
+         OTEghCZ7ejR+q1x+4OZND7v6Jfr+oKPdKu6i/SpdCwTxX9sjC3/SHAg54kYoSF0Cl5j3
+         0vQMELZSHdLqRkmNkGu405QHh0pC1AnxMzwR4yTBjPGfDwoJjSQBsHIqfMjjx1a6erW2
+         LTr9f5m+xSeGuDjYi+M7hvidvjW4KEmbMQywkE6dJ8w2kE/0Z/mHzno4y2ooZK3IxbEt
+         wp8FAoCiaCzybqps6VC1NkpXVB3GbfJVWknFWPaOf1kXW1k56lEvp2mPgxNjTOsAdRIt
+         e54Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXLhPd+90I/itR3uzu7Syxrk9Kqo+TyaKbpahA4JnSPMKDEKNYtNQrwqEy85tPwO2VQehV96Ds3nUCMomrz94b/OvLnlfiBW763EcML
+X-Gm-Message-State: AOJu0YxmNZFtdXD54BuKCt7gNdI+LFhUbwvJNCFnpSMqrJ0Vo6aWoyS5
+	bka2MvdgaUT9gu10RXtgkftA6cWAied81rJszFKtDTCJ+SufPw/SstYqOM9xh2VpsSAPeTSQDlJ
+	t62k=
+X-Google-Smtp-Source: AGHT+IEkGFHVxFI3gRZzrlJGe980Qfv7LG73mPGQFgV214HRmjJFEmkOWFb/l5SnJ8wpr5zF8KkFKw==
+X-Received: by 2002:a50:cdcd:0:b0:575:954:7ef with SMTP id 4fb4d7f45d1cf-57509540de0mr3627635a12.3.1715955768236;
+        Fri, 17 May 2024 07:22:48 -0700 (PDT)
+Received: from krzk-bin.. ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea65aasm12016784a12.5.2024.05.17.07.22.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 07:22:47 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: soc: sti: st,sti-syscon: document codec node
+Date: Fri, 17 May 2024 16:22:45 +0200
+Message-ID: <20240517142245.178556-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1s7yTu-00FFhy-O4;;;mid=<87jzjsa57k.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX18IkHUj49fRJqM7REx3ND8lhM0yvX7TxF4=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: *
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4999]
-	*  1.5 XMNoVowels Alpha-numberic number with no vowels
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Jonathan Calmels <jcalmels@3xx0.net>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 365 ms - load_scoreonly_sql: 0.05 (0.0%),
-	signal_user_changed: 11 (3.0%), b_tie_ro: 10 (2.6%), parse: 0.86
-	(0.2%), extract_message_metadata: 19 (5.2%), get_uri_detail_list: 1.95
-	(0.5%), tests_pri_-2000: 15 (4.2%), tests_pri_-1000: 2.9 (0.8%),
-	tests_pri_-950: 1.21 (0.3%), tests_pri_-900: 1.01 (0.3%),
-	tests_pri_-90: 70 (19.1%), check_bayes: 68 (18.6%), b_tokenize: 7
-	(2.0%), b_tok_get_all: 6 (1.7%), b_comp_prob: 2.2 (0.6%),
-	b_tok_touch_all: 49 (13.5%), b_finish: 0.87 (0.2%), tests_pri_0: 231
-	(63.4%), check_dkim_signature: 0.52 (0.1%), check_dkim_adsp: 2.4
-	(0.7%), poll_dns_idle: 0.44 (0.1%), tests_pri_10: 2.1 (0.6%),
-	tests_pri_500: 7 (2.0%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
 
-Jonathan Calmels <jcalmels@3xx0.net> writes:
+st,stih407-core-syscfg syscon block comes with a child - the audio
+codec, whose binding is still in TXT format.  Document the child to fix
+dtbs_check validation errors, while allowing later the binding to be
+converted to DT schema:
 
-> On Fri, May 17, 2024 at 06:32:46AM GMT, Eric W. Biederman wrote:
->> 
->> Pointers please?
->> 
->> That sentence sounds about 5 years out of date.
->
-> The link referenced is from last year.
-> Here are some others often cited by distributions:
->
-> https://nvd.nist.gov/vuln/detail/CVE-2022-0185
-> https://nvd.nist.gov/vuln/detail/CVE-2022-1015
-> https://nvd.nist.gov/vuln/detail/CVE-2022-2078
-> https://nvd.nist.gov/vuln/detail/CVE-2022-24122
-> https://nvd.nist.gov/vuln/detail/CVE-2022-25636
->
-> Recent thread discussing this too:
-> https://seclists.org/oss-sec/2024/q2/128
+  stih410-b2260.dtb: core-syscfg@92b0000: 'sti-sasg-codec' does not match any of the regexes: 'pinctrl-[0-9]+'
 
-My apologies perhaps I trimmed too much.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../devicetree/bindings/soc/sti/st,sti-syscon.yaml       | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-I know that user namespaces enlarge the attack surface.
-How much and how serious could be debated but for unprivileged
-users the attack surface is undoubtedly enlarged.
-
-As I read your introduction you were justifying the introduction
-of a new security mechanism with the observation that distributions
-were carrying distribution specific patches.
-
-To the best of my knowledge distribution specific patches and
-distributions disabling user namespaces have been gone for quite a
-while.  So if that has changed recently I would like to know.
-
-Thank you,
-Eric
-
+diff --git a/Documentation/devicetree/bindings/soc/sti/st,sti-syscon.yaml b/Documentation/devicetree/bindings/soc/sti/st,sti-syscon.yaml
+index 5f97d9ff17fb..fc933d70d138 100644
+--- a/Documentation/devicetree/bindings/soc/sti/st,sti-syscon.yaml
++++ b/Documentation/devicetree/bindings/soc/sti/st,sti-syscon.yaml
+@@ -30,6 +30,15 @@ properties:
+   reg:
+     maxItems: 1
+ 
++  sti-sasg-codec:
++    description: STi internal audio codec
++    type: object
++    additionalProperties: true
++
++    properties:
++      compatible:
++        const: st,stih407-sas-codec
++
+ required:
+   - compatible
+   - reg
+-- 
+2.43.0
 
 
