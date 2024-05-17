@@ -1,157 +1,155 @@
-Return-Path: <linux-kernel+bounces-182374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44588C8A7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:05:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB7E28C8A7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57A24285208
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:05:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70E51282803
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C3D13DB9B;
-	Fri, 17 May 2024 17:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZzmFZOeJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA6A13DBA2;
+	Fri, 17 May 2024 17:05:04 +0000 (UTC)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17AD12F5A3
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA6312F5A3;
+	Fri, 17 May 2024 17:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715965511; cv=none; b=LJYVR6PNlfK6C+ey4yjpNX5UoPsKxkvoQBfMz5IpZQ6D6dA8g2rGsimTNLcgOsKNQXrwzI6zVhHSg27suutvbjBFoGA4ocsHOkjwqDiWyhT+mEqgTdSFyEd4iu8JFwUC6FECXiqhzhDP2m/nn/wQq4fDbWDsi+BrFeY0hSsQhDA=
+	t=1715965503; cv=none; b=aun2bsP7wLeprPcirlVtLEvTxyhFvhxwZrPrfwd09AykzSyuBV79AgcxD4WLH5zl9pn356sFpRJgUvk/IiJzx2ZVCb2tiJuFrxnoPofPkllGg+mLScsErwWqu+a6bCsTNg1k6p9qokvYHYn7J182sBcLAyisk8qtnHVvgpPaMb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715965511; c=relaxed/simple;
-	bh=cicBuaDXb0+iJuraKbqW3IUKE/RHOlM5V7//N93fDUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s/RZO1qFWGVxzCKxw0y3nx55n7VeL2zTSvkuR4JqeEXmW0TUsu5zxeOaloJec3r/35kgh/Ujle3fLhMiFSXAySq/0kv8UQQbk+2J/lijgGmOOzx1tBh6kuMsUffUlIJeCnlnNVZ3E58bGgnxH+0GiWFOwfpd5hxM0UJLX9Yymjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZzmFZOeJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715965508;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NWyzI/owlrZS3OdD2++L32ikBFzAP0809WyjNtkngNs=;
-	b=ZzmFZOeJkVlklJJGzPP8OAZnsLuzSRtqJKq+e6pqJzRGGupxfXrXjchj/yhxK/LDzLsP1c
-	VrVsNvg7tCvk0U+dKUS08F+s+E1FWOP8yfZIS0tHfEV985zn87GfcSUuee6GfipaMQLbs8
-	PlV+bGOUilbTdjUxbPSFDyLz4kcfz/k=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-486-u54_WeD_MD2YgKX5AYSIgw-1; Fri, 17 May 2024 13:05:07 -0400
-X-MC-Unique: u54_WeD_MD2YgKX5AYSIgw-1
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-56c1ac93679so4094182a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:05:06 -0700 (PDT)
+	s=arc-20240116; t=1715965503; c=relaxed/simple;
+	bh=2saU97BMp6H+PskEfO8ECL2dYQUoDkmrv2Pt6mDwnvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TuL1glGh52t1JnTkqK/TtuiT3wJ5Ak+9yZ832QxBhPwTrMD9QutHfUl9zeXvtPDGFw0M0y/qC4cNIQpLzS+8qVxNaNyXz7Cu2LLYcJzKudHu24iiej4PEMItsaCYEqF1BY54oZlGK3tKLyav+MIsFWdD+gyEDelp847K0xb4z5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6f43ee95078so1207177b3a.1;
+        Fri, 17 May 2024 10:05:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715965506; x=1716570306;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NWyzI/owlrZS3OdD2++L32ikBFzAP0809WyjNtkngNs=;
-        b=DRmBrSMUDXw70cs0VoGo91vGQp4tvzneDHBxo50hDxY7KWeNh3FYTtkdCn7/bfNbIz
-         A5fnyyvKrmZqDRus+iZAq2Sg9RocuUrKAmCenKWkuIAuoPce/r0kkdVJmYpnSuRfdIVC
-         usoes6jRWeYqGhSNMXkhSqgrnfEVJUhZAXTUCBEM9oWu3lkwF3hdxXEbl+j+aPIHiRzd
-         0pYBxiTZvE4Jeo7HEybMrBhJmLlkEzZ6Dnvqp5ypEcO1RTuE2uexIi95BHGWOhxbhu6W
-         /PnrlxqOmJVNvA4Sc3lCHzQcWJKjxpqVUsHbY+FBXMAJcyT+F5ZmPHgo5B6PeN3grKeJ
-         xdBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVizTdXsw4GN/bjxbxUFhVdoh/a+Y+tw/X0zhRo90RhY7Wqk4MiYaXCGmC5g2a14kHFJyqP2NqLVMwpNORNb9I6HBCBSJh/Dw/NGiHG
-X-Gm-Message-State: AOJu0YwIzWJP/qWhVXJtQXLAm6G9gNPpwmnCWOQP0JDE6h2vm0FmGwpt
-	HtoHEox1uBtyFqj8cfJc2I9KLmJfdRXaJmLwbO5N8v+zyUBWhyAPS+6C90tk09NYY0WJDES3rnk
-	bLWqaZVE4dwAnNlcr+FG6fBbJzygWxVYWIu4CJ2ahK67o5rouBZGbJaEaxMBUXA==
-X-Received: by 2002:a50:d7c2:0:b0:572:68a6:97c with SMTP id 4fb4d7f45d1cf-5734d5ccb06mr14616434a12.11.1715965506088;
-        Fri, 17 May 2024 10:05:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBkw0YYpSkt2yxgiSoGJntzhzh4riVN4usDdXUeWQ9Z+S4uipkj5tqYjRErSZduDCSpNGBXg==
-X-Received: by 2002:a50:d7c2:0:b0:572:68a6:97c with SMTP id 4fb4d7f45d1cf-5734d5ccb06mr14616416a12.11.1715965505723;
-        Fri, 17 May 2024 10:05:05 -0700 (PDT)
-Received: from [192.168.10.81] ([151.95.155.52])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea65e2sm12095404a12.19.2024.05.17.10.04.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 May 2024 10:05:04 -0700 (PDT)
-Message-ID: <05277f00-d5a9-46a4-b11e-8ed6e8885e73@redhat.com>
-Date: Fri, 17 May 2024 19:04:49 +0200
+        d=1e100.net; s=20230601; t=1715965501; x=1716570301;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZAF2nClB9tdRe2nZvO7iQeg/IDzJ4PErDPhyqSEtfbs=;
+        b=DSJxJQebzWu5xSgI6UnReibZT/cbSLtcO7vjcMtmv6SAYggz7hUGggTuwrrLQQzP3C
+         tedQf9tOtSJKALUj+oIFuR6IbZvWtiqM0H1IsDe1qTxQtEXiv/bw5FY+91rkb/Crij+m
+         C63833qMtVdnRiCo1zXYZNncW04Q6pnz97C2x8Sn4xZWz4XKA3V/ZpDtCLEonmrQU52C
+         HK+CfXMzujTv4NSymJ4ceXCCZzGyCc+qC+hmcEdTG8fawG3N9PSEnO6FUoV6e2TDQxWq
+         hMDlGWBUL+9ijCpaKpwMQb09MPhMov8yod1ZUGGQP5LzGxkB0vqT58fbOZPp+uIfGMPO
+         50kw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwnI9FrHb9P2V1Tt/Mlo+skvseXbrUYIWFwcT4Ai1ofbdFT0iQdfp44mL0kucH4d9X8e7AMGyV2FWm/bCgnAqQgycl3+VRXthgYZAEiWIGbf9I77V5pmtgKO16NgLCiUZtWlitQFdBvMsyqzW76u69rTEL+t3WSv9N1vSGW+7bpXNfpnIR8GRIoN6bpSYpfhkxgjD8LhCXE/pkQQiQNe5xyrkW14oTjBBlak02CK0WD99yZp0Eqlbok2ZJxGEIKjNN+yXYGn6cTO018iRepc+zLJ0l/KHJSFKEoNvKh1aL4jDl
+X-Gm-Message-State: AOJu0YwDLnAW0dRTbZfHhstbo3bIqRm7W/7scm02X1604Jqb7vLmpbgn
+	9Yqo786Hzg0niJ36B98IjvJxEVQAZWXzECkMLvPfkdT+n5pWpjak
+X-Google-Smtp-Source: AGHT+IGDk5wz8T58ydDnsgGbyCZmHKCAeGjDn9utiYyGXMhzVl4Lcok/JS9rF8CQMUTTLF/lj2nWEQ==
+X-Received: by 2002:a05:6a00:238b:b0:6ea:afdb:6d03 with SMTP id d2e1a72fcca58-6f4e02d3ef9mr24111615b3a.19.1715965501417;
+        Fri, 17 May 2024 10:05:01 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f68c7d3651sm1904783b3a.183.2024.05.17.10.04.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 10:04:59 -0700 (PDT)
+Date: Sat, 18 May 2024 02:04:58 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Vidya Sagar <vidyas@nvidia.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Srikanth Thokala <srikanth.thokala@intel.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, Niklas Cassel <cassel@kernel.org>,
+	linux-arm-kernel@axis.com, linux-rockchip@lists.infradead.org,
+	Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v12 0/8] PCI: dwc: ep: Fix DBI access failure for drivers
+ requiring refclk from host
+Message-ID: <20240517170458.GA1947919@rocinante>
+References: <20240327-pci-dbi-rework-v12-0-082625472414@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/20] x86/tdx: Add macros to generate TDCALL wrappers
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Sean Christopherson <seanjc@google.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-hyperv@vger.kernel.org
-References: <20240517141938.4177174-1-kirill.shutemov@linux.intel.com>
- <20240517141938.4177174-15-kirill.shutemov@linux.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240517141938.4177174-15-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240327-pci-dbi-rework-v12-0-082625472414@linaro.org>
 
-On 5/17/24 16:19, Kirill A. Shutemov wrote:
-> Introduce a set of macros that allow to generate wrappers for TDCALL
-> leafs.
+
+Hello,
+
+> This series is the continuation of previous work by Vidya Sagar [1] to fix the
+> issues related to accessing DBI register space before completing the core
+> initialization in some EP platforms like Tegra194/234 and Qcom EP.
 > 
-> There are three macros differentiated by number of return parameters.
+> Since Vidya is busy, I took over the series based on his consent (off-list
+> discussion).
 > 
-> Signed-off-by: Kirill A. Shutemov<kirill.shutemov@linux.intel.com>
-> ---
->   arch/x86/include/asm/shared/tdx.h | 58 +++++++++++++++++++++++++++++++
->   1 file changed, 58 insertions(+)
+> NOTE
+> ====
+> 
+> Based on the comments received in v7 [2], I've heavily modified the series
+> to fix several other issues reported by Bjorn and Niklas. One noticeable
+> change is getting rid of the 'core_init_notifer' flag added to differentiate
+> between glue drivers requiring refclk from host and drivers getting refclk
+> locally.
+> 
+> By getting rid of this flag, now both the DWC EP driver and the EPF drivers
+> can use a single flow and need not distinguish between the glue drivers.
+> 
+> We can also get rid of the 'link_up_notifier' flag in the future by following
+> the same convention.
+> 
+> Testing
+> =======
+> 
+> I've tested the series on Qcom SM8450 based dev board that depends on refclk
+> from host with EPF_MHI driver. It'd be good to test this series on platforms
+> that generate refclk locally and also with EPF_TEST driver.
 
-Can you explain in the commit message why you picked a different 
-approach?  That is, a sequence of inlined movq instructions here vs. 
-compiler-generated movqs + a trampoline for TDVMCALL.
+Applied to controller/dwc, thank you!
 
-Paolo
+[01/08] PCI: dwc: ep: Fix DBI access failure for drivers requiring refclk from host
+        https://git.kernel.org/pci/pci/c/869bc5253406
+[02/08] PCI: dwc: ep: Add Kernel-doc comments for APIs
+        https://git.kernel.org/pci/pci/c/7cbebc86c72a
+[03/08] PCI: dwc: ep: Remove deinit() callback from struct dw_pcie_ep_ops
+        https://git.kernel.org/pci/pci/c/b7dec6b85089
+[04/08] PCI: dwc: ep: Rename dw_pcie_ep_exit() to dw_pcie_ep_deinit()
+        https://git.kernel.org/pci/pci/c/c8682a3314c1
+[05/08] PCI: dwc: ep: Introduce dw_pcie_ep_cleanup() API for drivers supporting PERST#
+        https://git.kernel.org/pci/pci/c/570d7715eed8
+[06/08] PCI: dwc: ep: Rename dw_pcie_ep_init_complete() to dw_pcie_ep_init_registers()
+        https://git.kernel.org/pci/pci/c/7d6e64c443ea
+[07/08] PCI: dwc: ep: Call dw_pcie_ep_init_registers() API directly from all glue drivers
+        https://git.kernel.org/pci/pci/c/df69e17ccc2f
+[08/08] PCI: endpoint: Remove "core_init_notifier" flag
+        https://git.kernel.org/pci/pci/c/a01e7214bef9
 
+	Krzysztof
 
