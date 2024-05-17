@@ -1,348 +1,268 @@
-Return-Path: <linux-kernel+bounces-182084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574568C8612
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:01:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1618E8C861A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:02:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BDBAB2158C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 395C71C2330E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7B955774;
-	Fri, 17 May 2024 11:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E754086F;
+	Fri, 17 May 2024 11:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qTv4HM0t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ECINu236"
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8FC548EF;
-	Fri, 17 May 2024 11:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDB05FDA5;
+	Fri, 17 May 2024 11:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715947150; cv=none; b=r7VUPdP1BQUI/yWkRq3jY5Ioi6+ibDAf3RUJgXqR+/PgjsLKVZGlf7cmhLETeACa38yesEUBH5c9sBNsPX2aItC/tNymhkaGEMN8NgAHCc7gQMccQ6eVGVZYLIQE1IgP9QgneQBmmZV4kluu49n8cFUfTJAKiqWEwDKK4M+4c0M=
+	t=1715947187; cv=none; b=Zb7I0mOVofy2OzP8j/Wh8PzwHeZxIk8yNu1YPwx++Ba9mVOtoo6cCTvX/HpJM6EkMVYY9JuWEl4NW3bE3m28WnayuiaLwp1mXxzSlui6fGIDSAJipiKj/6z2YsictySreKMgHLm6GLDyJuCm6g8UMQHyFOchghuTf0/PUJdor5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715947150; c=relaxed/simple;
-	bh=+z+O+7/kMOu9JC+RQLMr3FYn0ofWr2Eu5H0Z5QlRmTw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UOaXSLZTXLXCpwzAZbWNAc7+x6HPCwDbYR8W0D33YlTdZvSHp0gunpWxU62oebqVC/40RCRCwG9EVzqdx228R8S+RPcJg/azaLz6Nen3Fjs+4AbBILcOezG41GLvAzhOKPD/WIkyUl7PYtDhssssI+CORZMN+KB4LnkJVOxP7xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qTv4HM0t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A65F4C4AF0E;
-	Fri, 17 May 2024 11:59:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715947150;
-	bh=+z+O+7/kMOu9JC+RQLMr3FYn0ofWr2Eu5H0Z5QlRmTw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qTv4HM0t6D80VGRsT/0SnZnmSuQEs9kpy/7OwdpeerPzM7EVN49HfFS9qLc47U6Vu
-	 xXC0uhdytjMWj/UnAIPs41Rl4imZ7RpBC1dsYc5ZRJ5lC6LgOkojpkvk3n2h26Tgc+
-	 n5Pr1vplfrLhe/BLLDatoukvZN1QPXZtSDhVJ81Q=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	torvalds@linux-foundation.org,
-	stable@vger.kernel.org
-Cc: lwn@lwn.net,
-	jslaby@suse.cz,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: Linux 6.9.1
-Date: Fri, 17 May 2024 13:58:58 +0200
-Message-ID: <2024051758-landfill-wielder-933b@gregkh>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <2024051758-parchment-unadorned-15ed@gregkh>
-References: <2024051758-parchment-unadorned-15ed@gregkh>
+	s=arc-20240116; t=1715947187; c=relaxed/simple;
+	bh=TvBGTTdVnDV+b4Yl5iLq0qnZcplU/ybcNrcwUEiKzbI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uNGSBT7MyFewiPvla+nYVp9uLGbXF/He9CEZA8CAJcSSiPziJoeFvFFfx32YG+gkiSDC4BsTPGMvsxtGkL2s7GmsY5ueIpynsQsA+bPValzLBgFK2qntjs/qvLwMDswzeSs8MTT8C6YcLc1vheaFSUW3zbf/QQdxiwJbZi7QV34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ECINu236; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [10.55.0.156] (unknown [149.11.192.251])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 301E83F764;
+	Fri, 17 May 2024 11:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1715947183;
+	bh=bxYKAh9DncLSWIwt/nYavWMG6zn2ybxfgSMkcb9j328=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=ECINu236ay7xBFBlcVmlIC1CgdSi1M4l4lYbYap+wZHovT8tQshlPPOG0CVdzKzoi
+	 OkUEpJj/Yw4/3qYL6xhLAQwjyGg5tDmNrgX/Ok30KFWImXulxHmVao6JuaVJZtKIn1
+	 09aktOgrmwqJNe/crDjO2WArcPfFYraPZXIparu72+PIdLFsUBStuEnRiCPAQTDGTy
+	 rnx7he7GUB0nYZYNGetqeR+RwRFleUkx3PiSXa44mLpK0qL9dvC8qFnbGkwz6aZnJI
+	 dlZlwDiOio6x+A08xjckndaIhar7btulg86/vj6MMCFc6a7BHfT0UazPOsUs+F64Zb
+	 VyebFN8ATw7yQ==
+Message-ID: <be62b80f-2e86-4cbc-82ce-c9f62098ef60@canonical.com>
+Date: Fri, 17 May 2024 04:59:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
+To: Jonathan Calmels <jcalmels@3xx0.net>
+Cc: brauner@kernel.org, ebiederm@xmission.com,
+ Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
+ Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+ containers@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ keyrings@vger.kernel.org
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-2-jcalmels@3xx0.net>
+ <641a34bd-e702-4f02-968e-4f71e0957af1@canonical.com>
+ <jwuknxmitht42ghsy6nkoegotte5kxi67fh6cbei7o5w3bv5jy@eyphufkqwaap>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ xsFNBE5mrPoBEADAk19PsgVgBKkImmR2isPQ6o7KJhTTKjJdwVbkWSnNn+o6Up5knKP1f49E
+ BQlceWg1yp/NwbR8ad+eSEO/uma/K+PqWvBptKC9SWD97FG4uB4/caomLEU97sLQMtnvGWdx
+ rxVRGM4anzWYMgzz5TZmIiVTZ43Ou5VpaS1Vz1ZSxP3h/xKNZr/TcW5WQai8u3PWVnbkjhSZ
+ PHv1BghN69qxEPomrJBm1gmtx3ZiVmFXluwTmTgJOkpFol7nbJ0ilnYHrA7SX3CtR1upeUpM
+ a/WIanVO96WdTjHHIa43fbhmQube4txS3FcQLOJVqQsx6lE9B7qAppm9hQ10qPWwdfPy/+0W
+ 6AWtNu5ASiGVCInWzl2HBqYd/Zll93zUq+NIoCn8sDAM9iH+wtaGDcJywIGIn+edKNtK72AM
+ gChTg/j1ZoWH6ZeWPjuUfubVzZto1FMoGJ/SF4MmdQG1iQNtf4sFZbEgXuy9cGi2bomF0zvy
+ BJSANpxlKNBDYKzN6Kz09HUAkjlFMNgomL/cjqgABtAx59L+dVIZfaF281pIcUZzwvh5+JoG
+ eOW5uBSMbE7L38nszooykIJ5XrAchkJxNfz7k+FnQeKEkNzEd2LWc3QF4BQZYRT6PHHga3Rg
+ ykW5+1wTMqJILdmtaPbXrF3FvnV0LRPcv4xKx7B3fGm7ygdoowARAQABzStKb2huIEpvaGFu
+ c2VuIDxqb2huLmpvaGFuc2VuQGNhbm9uaWNhbC5jb20+wsF3BBMBCgAhBQJOjRdaAhsDBQsJ
+ CAcDBRUKCQgLBRYCAwEAAh4BAheAAAoJEAUvNnAY1cPYi0wP/2PJtzzt0zi4AeTrI0w3Rj8E
+ Waa1NZWw4GGo6ehviLfwGsM7YLWFAI8JB7gsuzX/im16i9C3wHYXKs9WPCDuNlMc0rvivqUI
+ JXHHfK7UHtT0+jhVORyyVVvX+qZa7HxdZw3jK+ROqUv4bGnImf31ll99clzo6HpOY59soa8y
+ 66/lqtIgDckcUt/1ou9m0DWKwlSvulL1qmD25NQZSnvB9XRZPpPd4bea1RTa6nklXjznQvTm
+ MdLq5aJ79j7J8k5uLKvE3/pmpbkaieEsGr+azNxXm8FPcENV7dG8Xpd0z06E+fX5jzXHnj69
+ DXXc3yIvAXsYZrXhnIhUA1kPQjQeNG9raT9GohFPMrK48fmmSVwodU8QUyY7MxP4U6jE2O9L
+ 7v7AbYowNgSYc+vU8kFlJl4fMrX219qU8ymkXGL6zJgtqA3SYHskdDBjtytS44OHJyrrRhXP
+ W1oTKC7di/bb8jUQIYe8ocbrBz3SjjcL96UcQJecSHu0qmUNykgL44KYzEoeFHjr5dxm+DDg
+ OBvtxrzd5BHcIbz0u9ClbYssoQQEOPuFmGQtuSQ9FmbfDwljjhrDxW2DFZ2dIQwIvEsg42Hq
+ 5nv/8NhW1whowliR5tpm0Z0KnQiBRlvbj9V29kJhs7rYeT/dWjWdfAdQSzfoP+/VtPRFkWLr
+ 0uCwJw5zHiBgzsFNBE5mrPoBEACirDqSQGFbIzV++BqYBWN5nqcoR+dFZuQL3gvUSwku6ndZ
+ vZfQAE04dKRtIPikC4La0oX8QYG3kI/tB1UpEZxDMB3pvZzUh3L1EvDrDiCL6ef93U+bWSRi
+ GRKLnNZoiDSblFBST4SXzOR/m1wT/U3Rnk4rYmGPAW7ltfRrSXhwUZZVARyJUwMpG3EyMS2T
+ dLEVqWbpl1DamnbzbZyWerjNn2Za7V3bBrGLP5vkhrjB4NhrufjVRFwERRskCCeJwmQm0JPD
+ IjEhbYqdXI6uO+RDMgG9o/QV0/a+9mg8x2UIjM6UiQ8uDETQha55Nd4EmE2zTWlvxsuqZMgy
+ W7gu8EQsD+96JqOPmzzLnjYf9oex8F/gxBSEfE78FlXuHTopJR8hpjs6ACAq4Y0HdSJohRLn
+ 5r2CcQ5AsPEpHL9rtDW/1L42/H7uPyIfeORAmHFPpkGFkZHHSCQfdP4XSc0Obk1olSxqzCAm
+ uoVmRQZ3YyubWqcrBeIC3xIhwQ12rfdHQoopELzReDCPwmffS9ctIb407UYfRQxwDEzDL+m+
+ TotTkkaNlHvcnlQtWEfgwtsOCAPeY9qIbz5+i1OslQ+qqGD2HJQQ+lgbuyq3vhefv34IRlyM
+ sfPKXq8AUTZbSTGUu1C1RlQc7fpp8W/yoak7dmo++MFS5q1cXq29RALB/cfpcwARAQABwsFf
+ BBgBCgAJBQJOZqz6AhsMAAoJEAUvNnAY1cPYP9cP/R10z/hqLVv5OXWPOcpqNfeQb4x4Rh4j
+ h/jS9yjes4uudEYU5xvLJ9UXr0wp6mJ7g7CgjWNxNTQAN5ydtacM0emvRJzPEEyujduesuGy
+ a+O6dNgi+ywFm0HhpUmO4sgs9SWeEWprt9tWrRlCNuJX+u3aMEQ12b2lslnoaOelghwBs8IJ
+ r998vj9JBFJgdeiEaKJLjLmMFOYrmW197As7DTZ+R7Ef4gkWusYFcNKDqfZKDGef740Xfh9d
+ yb2mJrDeYqwgKb7SF02Hhp8ZnohZXw8ba16ihUOnh1iKH77Ff9dLzMEJzU73DifOU/aArOWp
+ JZuGJamJ9EkEVrha0B4lN1dh3fuP8EjhFZaGfLDtoA80aPffK0Yc1R/pGjb+O2Pi0XXL9AVe
+ qMkb/AaOl21F9u1SOosciy98800mr/3nynvid0AKJ2VZIfOP46nboqlsWebA07SmyJSyeG8c
+ XA87+8BuXdGxHn7RGj6G+zZwSZC6/2v9sOUJ+nOna3dwr6uHFSqKw7HwNl/PUGeRqgJEVu++
+ +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
+ p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
+Organization: Canonical
+In-Reply-To: <jwuknxmitht42ghsy6nkoegotte5kxi67fh6cbei7o5w3bv5jy@eyphufkqwaap>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-diff --git a/Makefile b/Makefile
-index 967e97878ecd..a7045435151e 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 6
- PATCHLEVEL = 9
--SUBLEVEL = 0
-+SUBLEVEL = 1
- EXTRAVERSION =
- NAME = Hurr durr I'ma ninja sloth
- 
-diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
-index c095a2c8f659..39935071174a 100644
---- a/drivers/dma/idxd/cdev.c
-+++ b/drivers/dma/idxd/cdev.c
-@@ -400,6 +400,18 @@ static int idxd_cdev_mmap(struct file *filp, struct vm_area_struct *vma)
- 	int rc;
- 
- 	dev_dbg(&pdev->dev, "%s called\n", __func__);
-+
-+	/*
-+	 * Due to an erratum in some of the devices supported by the driver,
-+	 * direct user submission to the device can be unsafe.
-+	 * (See the INTEL-SA-01084 security advisory)
-+	 *
-+	 * For the devices that exhibit this behavior, require that the user
-+	 * has CAP_SYS_RAWIO capabilities.
-+	 */
-+	if (!idxd->user_submission_safe && !capable(CAP_SYS_RAWIO))
-+		return -EPERM;
-+
- 	rc = check_vma(wq, vma, __func__);
- 	if (rc < 0)
- 		return rc;
-@@ -414,6 +426,70 @@ static int idxd_cdev_mmap(struct file *filp, struct vm_area_struct *vma)
- 			vma->vm_page_prot);
- }
- 
-+static int idxd_submit_user_descriptor(struct idxd_user_context *ctx,
-+				       struct dsa_hw_desc __user *udesc)
-+{
-+	struct idxd_wq *wq = ctx->wq;
-+	struct idxd_dev *idxd_dev = &wq->idxd->idxd_dev;
-+	const uint64_t comp_addr_align = is_dsa_dev(idxd_dev) ? 0x20 : 0x40;
-+	void __iomem *portal = idxd_wq_portal_addr(wq);
-+	struct dsa_hw_desc descriptor __aligned(64);
-+	int rc;
-+
-+	rc = copy_from_user(&descriptor, udesc, sizeof(descriptor));
-+	if (rc)
-+		return -EFAULT;
-+
-+	/*
-+	 * DSA devices are capable of indirect ("batch") command submission.
-+	 * On devices where direct user submissions are not safe, we cannot
-+	 * allow this since there is no good way for us to verify these
-+	 * indirect commands.
-+	 */
-+	if (is_dsa_dev(idxd_dev) && descriptor.opcode == DSA_OPCODE_BATCH &&
-+		!wq->idxd->user_submission_safe)
-+		return -EINVAL;
-+	/*
-+	 * As per the programming specification, the completion address must be
-+	 * aligned to 32 or 64 bytes. If this is violated the hardware
-+	 * engine can get very confused (security issue).
-+	 */
-+	if (!IS_ALIGNED(descriptor.completion_addr, comp_addr_align))
-+		return -EINVAL;
-+
-+	if (wq_dedicated(wq))
-+		iosubmit_cmds512(portal, &descriptor, 1);
-+	else {
-+		descriptor.priv = 0;
-+		descriptor.pasid = ctx->pasid;
-+		rc = idxd_enqcmds(wq, portal, &descriptor);
-+		if (rc < 0)
-+			return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+static ssize_t idxd_cdev_write(struct file *filp, const char __user *buf, size_t len,
-+			       loff_t *unused)
-+{
-+	struct dsa_hw_desc __user *udesc = (struct dsa_hw_desc __user *)buf;
-+	struct idxd_user_context *ctx = filp->private_data;
-+	ssize_t written = 0;
-+	int i;
-+
-+	for (i = 0; i < len/sizeof(struct dsa_hw_desc); i++) {
-+		int rc = idxd_submit_user_descriptor(ctx, udesc + i);
-+
-+		if (rc)
-+			return written ? written : rc;
-+
-+		written += sizeof(struct dsa_hw_desc);
-+	}
-+
-+	return written;
-+}
-+
- static __poll_t idxd_cdev_poll(struct file *filp,
- 			       struct poll_table_struct *wait)
- {
-@@ -436,6 +512,7 @@ static const struct file_operations idxd_cdev_fops = {
- 	.open = idxd_cdev_open,
- 	.release = idxd_cdev_release,
- 	.mmap = idxd_cdev_mmap,
-+	.write = idxd_cdev_write,
- 	.poll = idxd_cdev_poll,
- };
- 
-diff --git a/drivers/dma/idxd/idxd.h b/drivers/dma/idxd/idxd.h
-index 7b98944135eb..868b724a3b75 100644
---- a/drivers/dma/idxd/idxd.h
-+++ b/drivers/dma/idxd/idxd.h
-@@ -288,6 +288,7 @@ struct idxd_driver_data {
- 	int evl_cr_off;
- 	int cr_status_off;
- 	int cr_result_off;
-+	bool user_submission_safe;
- 	load_device_defaults_fn_t load_device_defaults;
- };
- 
-@@ -374,6 +375,8 @@ struct idxd_device {
- 
- 	struct dentry *dbgfs_dir;
- 	struct dentry *dbgfs_evl_file;
-+
-+	bool user_submission_safe;
- };
- 
- static inline unsigned int evl_ent_size(struct idxd_device *idxd)
-diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-index 264c4e47d7cc..a7295943fa22 100644
---- a/drivers/dma/idxd/init.c
-+++ b/drivers/dma/idxd/init.c
-@@ -47,6 +47,7 @@ static struct idxd_driver_data idxd_driver_data[] = {
- 		.align = 32,
- 		.dev_type = &dsa_device_type,
- 		.evl_cr_off = offsetof(struct dsa_evl_entry, cr),
-+		.user_submission_safe = false, /* See INTEL-SA-01084 security advisory */
- 		.cr_status_off = offsetof(struct dsa_completion_record, status),
- 		.cr_result_off = offsetof(struct dsa_completion_record, result),
- 	},
-@@ -57,6 +58,7 @@ static struct idxd_driver_data idxd_driver_data[] = {
- 		.align = 64,
- 		.dev_type = &iax_device_type,
- 		.evl_cr_off = offsetof(struct iax_evl_entry, cr),
-+		.user_submission_safe = false, /* See INTEL-SA-01084 security advisory */
- 		.cr_status_off = offsetof(struct iax_completion_record, status),
- 		.cr_result_off = offsetof(struct iax_completion_record, error_code),
- 		.load_device_defaults = idxd_load_iaa_device_defaults,
-@@ -774,6 +776,8 @@ static int idxd_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	dev_info(&pdev->dev, "Intel(R) Accelerator Device (v%x)\n",
- 		 idxd->hw.version);
- 
-+	idxd->user_submission_safe = data->user_submission_safe;
-+
- 	return 0;
- 
-  err_dev_register:
-diff --git a/drivers/dma/idxd/registers.h b/drivers/dma/idxd/registers.h
-index 315c004f58e4..e16dbf9ab324 100644
---- a/drivers/dma/idxd/registers.h
-+++ b/drivers/dma/idxd/registers.h
-@@ -6,9 +6,6 @@
- #include <uapi/linux/idxd.h>
- 
- /* PCI Config */
--#define PCI_DEVICE_ID_INTEL_DSA_SPR0	0x0b25
--#define PCI_DEVICE_ID_INTEL_IAX_SPR0	0x0cfe
--
- #define DEVICE_VERSION_1		0x100
- #define DEVICE_VERSION_2		0x200
- 
-diff --git a/drivers/dma/idxd/sysfs.c b/drivers/dma/idxd/sysfs.c
-index 7f28f01be672..f706eae0e76b 100644
---- a/drivers/dma/idxd/sysfs.c
-+++ b/drivers/dma/idxd/sysfs.c
-@@ -1197,12 +1197,35 @@ static ssize_t wq_enqcmds_retries_store(struct device *dev, struct device_attrib
- static struct device_attribute dev_attr_wq_enqcmds_retries =
- 		__ATTR(enqcmds_retries, 0644, wq_enqcmds_retries_show, wq_enqcmds_retries_store);
- 
-+static ssize_t op_cap_show_common(struct device *dev, char *buf, unsigned long *opcap_bmap)
-+{
-+	ssize_t pos;
-+	int i;
-+
-+	pos = 0;
-+	for (i = IDXD_MAX_OPCAP_BITS/64 - 1; i >= 0; i--) {
-+		unsigned long val = opcap_bmap[i];
-+
-+		/* On systems where direct user submissions are not safe, we need to clear out
-+		 * the BATCH capability from the capability mask in sysfs since we cannot support
-+		 * that command on such systems.
-+		 */
-+		if (i == DSA_OPCODE_BATCH/64 && !confdev_to_idxd(dev)->user_submission_safe)
-+			clear_bit(DSA_OPCODE_BATCH % 64, &val);
-+
-+		pos += sysfs_emit_at(buf, pos, "%*pb", 64, &val);
-+		pos += sysfs_emit_at(buf, pos, "%c", i == 0 ? '\n' : ',');
-+	}
-+
-+	return pos;
-+}
-+
- static ssize_t wq_op_config_show(struct device *dev,
- 				 struct device_attribute *attr, char *buf)
- {
- 	struct idxd_wq *wq = confdev_to_wq(dev);
- 
--	return sysfs_emit(buf, "%*pb\n", IDXD_MAX_OPCAP_BITS, wq->opcap_bmap);
-+	return op_cap_show_common(dev, buf, wq->opcap_bmap);
- }
- 
- static int idxd_verify_supported_opcap(struct idxd_device *idxd, unsigned long *opmask)
-@@ -1455,7 +1478,7 @@ static ssize_t op_cap_show(struct device *dev,
- {
- 	struct idxd_device *idxd = confdev_to_idxd(dev);
- 
--	return sysfs_emit(buf, "%*pb\n", IDXD_MAX_OPCAP_BITS, idxd->opcap_bmap);
-+	return op_cap_show_common(dev, buf, idxd->opcap_bmap);
- }
- static DEVICE_ATTR_RO(op_cap);
- 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/main.c b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-index 3709d18da0e6..075d04ba3ef2 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-@@ -1657,6 +1657,10 @@ mt7915_net_fill_forward_path(struct ieee80211_hw *hw,
- #endif
- 
- const struct ieee80211_ops mt7915_ops = {
-+	.add_chanctx = ieee80211_emulate_add_chanctx,
-+	.remove_chanctx = ieee80211_emulate_remove_chanctx,
-+	.change_chanctx = ieee80211_emulate_change_chanctx,
-+	.switch_vif_chanctx = ieee80211_emulate_switch_vif_chanctx,
- 	.tx = mt7915_tx,
- 	.start = mt7915_start,
- 	.stop = mt7915_stop,
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index cb5b7f865d58..e727941f589d 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -71,6 +71,8 @@ static bool vfio_pci_dev_in_denylist(struct pci_dev *pdev)
- 		case PCI_DEVICE_ID_INTEL_QAT_C62X_VF:
- 		case PCI_DEVICE_ID_INTEL_QAT_DH895XCC:
- 		case PCI_DEVICE_ID_INTEL_QAT_DH895XCC_VF:
-+		case PCI_DEVICE_ID_INTEL_DSA_SPR0:
-+		case PCI_DEVICE_ID_INTEL_IAX_SPR0:
- 			return true;
- 		default:
- 			return false;
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index c547d1d4feb1..4beb29907c2b 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -2687,8 +2687,10 @@
- #define PCI_DEVICE_ID_INTEL_I960	0x0960
- #define PCI_DEVICE_ID_INTEL_I960RM	0x0962
- #define PCI_DEVICE_ID_INTEL_HDA_HSW_0	0x0a0c
-+#define PCI_DEVICE_ID_INTEL_DSA_SPR0	0x0b25
- #define PCI_DEVICE_ID_INTEL_HDA_HSW_2	0x0c0c
- #define PCI_DEVICE_ID_INTEL_CENTERTON_ILB	0x0c60
-+#define PCI_DEVICE_ID_INTEL_IAX_SPR0	0x0cfe
- #define PCI_DEVICE_ID_INTEL_HDA_HSW_3	0x0d0c
- #define PCI_DEVICE_ID_INTEL_HDA_BYT	0x0f04
- #define PCI_DEVICE_ID_INTEL_SST_BYT	0x0f28
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 560790038329..0aa5f01d16ff 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -463,7 +463,8 @@ static int __key_instantiate_and_link(struct key *key,
- 			if (authkey)
- 				key_invalidate(authkey);
- 
--			key_set_expiry(key, prep->expiry);
-+			if (prep->expiry != TIME64_MAX)
-+				key_set_expiry(key, prep->expiry);
- 		}
- 	}
- 
+On 5/17/24 03:51, Jonathan Calmels wrote:
+> On Thu, May 16, 2024 at 03:07:28PM GMT, John Johansen wrote:
+>> agreed, though it really is application dependent. Some applications handle
+>> the denial at userns creation better, than the capability after. Others
+>> like anything based on QTWebEngine will crash on denial of userns creation
+>> but handle denial of the capability within the userns just fine, and some
+>> applications just crash regardless.
+> 
+> Yes this is application specific, but I would argue that the latter is
+> much more preferable. For example, having one application crash in a
+> container is probably ok, but not being able to start the container in
+> the first place is probably not. Similarly, preventing the network
+> namespace creation breaks services which rely on systemd’s
+> PrivateNetwork, even though they most likely use it to prevent any
+> networking from being done.
+> 
+Agred the solution has to be application/usage model specific. Some of
+them are easy, and others not so much.
+
+>> The userns cred from the LSM hook can be modified, yes it is currently
+>> specified as const but is still under construction so it can be safely
+>> modified the LSM hook just needs a small update.
+>>
+>> The advantage of doing it under the LSM is an LSM can have a richer policy
+>> around what can use them and tracking of what is allowed. That is to say the
+>> LSM has the capability of being finer grained than doing it via capabilities.
+> 
+> Sure, we could modify the LSM hook to do all sorts of things, but
+> leveraging it would be quite cumbersome, will take time to show up in
+> userspace, or simply never be adopted.
+> We’re already seeing it in Ubuntu which started requiring Apparmor profiles.
+> 
+
+yes, I would argue that is a metric of adoption.
+
+> This new capability set would be a universal thing that could be
+> leveraged today without modification to userspace. Moreover, it’s a
+> simple framework that can be extended.
+
+I would argue that is a problem. Userspace has to change for this to be
+secure. Is it an improvement over the current state yes.
+
+> As you mentioned, LSMs are even finer grained, and that’s the idea,
+> those could be used hand in hand eventually. You could envision LSM
+> hooks controlling the userns capability set, and thus enforce policies
+> on the creation of nested namespaces without limiting the other tasks’
+> capabilities.
+> 
+>> I am not opposed to adding another mechanism to control user namespaces,
+>> I am just not currently convinced that capabilities are the right
+>> mechanism.
+> 
+> Well that’s the thing, from past conversations, there is a lot of
+> disagreement about restricting namespaces. By restricting the
+> capabilities granted by namespaces instead, we’re actually treating the
+> root cause of most concerns.
+> 
+no disagreement there. This is actually Ubuntu's posture with user namespaces
+atm. Where the user namespace is allowed but the capabilities within it
+are denied.
+
+It does however when not handled correctly result in some very odd failures
+and would be easier to debug if the use of user namespaces were just
+cleanly denied.
+
+> Today user namespaces are "special" and always grant full caps. Adding a
+> new capability set to limit this behavior is logical; same way it's done
+> for usual process transitions.
+> Essentially this set is to namespaces what the inheritable set is to
+> root.
+> 
+its not so much the capabilities set as the inheritable part that is
+problematic. Yes I am well aware of where that is required but I question
+that capabilities provides the needed controls here.
+
+>> this should be bounded by the creating task's bounding set, other wise
+>> the capability model's bounding invariant will be broken, but having the
+>> capabilities that the userns want to access in the task's bounding set is
+>> a problem for all the unprivileged processes wanting access to user
+>> namespaces.
+> 
+> This is possible with the security bit introduced in the second patch.
+> The idea of having those separate is that a service which has dropped
+> its capabilities can still create a fully privileged user namespace.
+
+yes, which is the problem. Not that we don't do that with say setuid
+applications, but the difference is that they were known to be doing
+something dangerous and took measures around that.
+
+We are starting from a different posture here. Where applications have
+assumed that user namespaces where safe and no measures were needed.
+Tools like unshare and bwrap if set to allow user namespaces in their
+fcaps will allow exploits a trivial by-pass.
+
+> For example, systemd’s machined drops capabilities from its bounding set,
+> yet it should be able to create unprivileged containers.
+> The invariant is sound because a child userns can never regain what it
+> doesn’t have in its bounding set. If it helps you can view the userns
+> set as a “namespace bounding set” since it defines the future bounding
+> sets of namespaced tasks.
+> 
+sure I get it, some of the use cases work, some not so well
+
+>> If I am reading this right for unprivileged processes the capabilities in
+>> the userns are bounded by the processes permitted set before the userns is
+>> created?
+> 
+> Yes, unprivileged processes that want to raise a capability in their
+> userns set need it in their permitted set (as well as their bounding
+> set). This is similar to inheritable capabilities.
+
+Right.
+
+> Recall that processes start with a full set of userns capabilities, so
+> if you drop a userns capability (or something else did, e.g.
+> init/pam/sysctl/parent) you will never be able to regain it, and
+> namespaces you create won't have it included.
+
+sure, that part of the behavior is fine
+
+> Now, if you’re root (or cap privileged) you can always regain it.
+> 
+yes
+
+What I was trying to get at is two points.
+1. The written description wasn't clear enough, leaving room for
+    ambiguity.
+2. That I quest that the behavior should be allowed given the
+    current set of tools that use user namespaces. It reduces exploit
+    codes ability to directly use unprivileged user namespaces but
+    makes it all to easy to by-pass the restriction because of the
+    behavior of the current tool set. ie. user space has to change.
+
+>> This is only being respected in PR_CTL, the user mode helper is straight
+>> setting the caps.
+> 
+> Usermod helper requires CAP_SYS_MODULE and CAP_SETPCAP in the initns so
+> the permitted set is irrelevant there. It starts with a full set but from
+> there you can only lower caps, so the invariant holds.
+> 
+sure, I get what is happening. Again the description needs work. It was
+ambiguous as to whether it was applying to the fcaps or only the pcaps.
+
+But again, I believe the fcaps behavior is wrong, because of the state of
+current software. If this had been a proposal where there was no existing
+software infrastructure I would be starting from a different stance.
 
