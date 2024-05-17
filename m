@@ -1,149 +1,90 @@
-Return-Path: <linux-kernel+bounces-182513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC888C8C33
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:18:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5478C8C35
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 873B8B22EA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:18:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3BC72845F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286AC13E02C;
-	Fri, 17 May 2024 18:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FD913DDD3;
+	Fri, 17 May 2024 18:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yTRYcepZ"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CAJXcxHI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C951FC8
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 18:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93ED41FC8;
+	Fri, 17 May 2024 18:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715969886; cv=none; b=opy2b/2ychvbFP1JDrcwljTdnx0KjNkhe2tVFo5qYqDS7Xx4AtrJletL/Qh3jAK638gwg3dGllEaAMtrtbtkkqPy+B6ZNU6LYqGnGSrzoOUab2T1fh9KkAC7Od7f1EhBFofGk3VzKrHGAxJ46BJUxP0iDxOKfKsdh+rMPsWPvkY=
+	t=1715970134; cv=none; b=YEP8JVoBa/tFVaO6JvYZYwETa7ZRY94145YKyNzS6i8KGPFv73NyZHxGvhKrBbH6Y9eRPkQtR/wp1de3wPW8AgPWWmdYFk/0sZVVhfSTvRdvItaV+g2AA+1DGv4K2V9e8IJYi0PiXLoHjxIeGY8HU0rLpfeXzIB7OhwBHqtUdrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715969886; c=relaxed/simple;
-	bh=aky1cahglAB1y4MqK2Iamwqc//KM6c7IOYkdVF4P1To=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=D0xZSZOn9WKQ9hbYT29Ee1NTOnW18DIshq6yY/+5iKq2OLpQ0/3mNAXVSg/NQGaCK0DES6FBRUusSmuhqcMhz/amil2kN6pUBak63w83arBwJWfFIcEkDZXVJT9O6Qe5riffIXbOQ73L99ssmoXEn+ay+8i58g9ZF1yx4d9cGO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yTRYcepZ; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2b96f302d84so4489201a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 11:18:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715969883; x=1716574683; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8xVzAsGv+y30edk8rMoB9eS/H+1j0ce9hhs1hSlbOiw=;
-        b=yTRYcepZciaXZLDku/OgRdY1s5CMUiMTWIFFVUQh0LSEVZkIf6tXsea3aI/uAiHmRF
-         1lEobEXReNUCvDxXZA15LhLSr7VpOao9wMYW2Wi9D2fdYGAVdivvzMPoDDty61LzG/Q1
-         Bc/t75Cb5CcY1sZDHjyoBRixunt3ORQ71VW/3asQrtirJLYorPAw4WmHFP/t5amSwwNW
-         gIcAytjV4bGfna6vCojcRUDkEzJD1mrkKEySzkL2gC/hK8alwLCzCu1Vv4fr/qWVn3sw
-         ZjexkwQkO7M1v94FTIfVdL2WYxO6FW+DRT5X7XGLBP5x8M/lEQNtz2mcuSYicxFzedsf
-         RmBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715969883; x=1716574683;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8xVzAsGv+y30edk8rMoB9eS/H+1j0ce9hhs1hSlbOiw=;
-        b=XXwUnzky7HQmA1+COnNnd/PpiRiT7xDiPXtFKPyYPoxQw+DjPqKfY3sFTjL3/9toDa
-         mS8WjmvT7ht2S444qitkE90rY6sANqPUpLTkbjKvvdh6cyr4+c9Ows0aeeRia0x3wBPl
-         XtrrG1xDscvQxc1O+AEXtezrD8M23B8RcuHSsKCeJvroGXBtiFpsERI+Xb1XyIbTxrzc
-         v9DRPRmF9N1/ITzhaAAMI3fg5INFzgak0ZxhMmwDouSOkvdKrtXctjtE04+0zv4ifSJg
-         UAlBoP/k/AIQFSFTPJb1wEBWA4jMg7rbfcCWGJbYZgPDymES/M0DcrUFkuzgflffL1WF
-         BLEg==
-X-Gm-Message-State: AOJu0YwX7GWV1BSqS6I2v3N1GJfocfxYXGeXjwxqd4u+qRw67bF3eeQh
-	W5smV5h62ljgQOcd60sQmJ2ZWmULq+1IoSYkNXUR1vGkfMJWj9GNNWC0ssbveQ/jLU7cz61yx8e
-	b4Q==
-X-Google-Smtp-Source: AGHT+IGPkl9n5BpMbeHRuLtgY41tMM51adcGfN6Aj5GCBRsJDZjY2oEAyerlriT9sgOl6jtQP/0tAMw8Kdc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:440b:b0:2b1:6a65:c73a with SMTP id
- 98e67ed59e1d1-2b6cc03b3bemr78411a91.2.1715969883448; Fri, 17 May 2024
- 11:18:03 -0700 (PDT)
-Date: Fri, 17 May 2024 11:17:55 -0700
-In-Reply-To: <2450ce49-2230-45a2-bc0d-b21071f2cce6@redhat.com>
+	s=arc-20240116; t=1715970134; c=relaxed/simple;
+	bh=EwkmU5I4ug4JOYE7xX0QXVZ/KNP0gdUYZGWe5VRcPLI=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=ql+qTSO90hkBbsb35jogh5wcRaQA0oTf7Z/FJA6TOqTvu2uzWN9w07uLPcMMy93Jq3ikD++GMVR+adKv8p+tHFZVDIAKeNcueQnVJjUlaXLfdmB/68QE3F0gXRjNQTnabVjPcZ05yityBCrQrtm5IFNqMq4PlLMuBW2G5+D0x6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CAJXcxHI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B16C5C2BD10;
+	Fri, 17 May 2024 18:22:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715970134;
+	bh=EwkmU5I4ug4JOYE7xX0QXVZ/KNP0gdUYZGWe5VRcPLI=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=CAJXcxHIx8NJrDAea5sluXd0jcn3DnG/W72bOyKcI1cSxur8crcoakSNzVoCMFbL/
+	 mc+INzNvgdbxXuefnmlya83RELKQzzADN+TFJHAFTMmkokP9MwG6sMw6DS6WQfFzF1
+	 0tXMOCvMbiNPE1kHyB6dAqQMvuLL7g+pgC4oevh0uIKazXiiQHy0UaiTH09rE7yaKD
+	 rwN56OpPecWDy+sNZesU1Wit5dzy8qhyLTLIA8f+VgycIaTw7YEQhjohyEBtyBcrZn
+	 hl6CNHmVAHPmM8pRMC6W4kGakVqQsvCZhV4O+h9JkVq+C5Z5CnMjGCu2QgThDIk0dp
+	 RrGItsdQVObYw==
+From: Kalle Valo <kvalo@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,  Thomas Gleixner
+ <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,  Dave Hansen
+ <dave.hansen@linux.intel.com>,  "Rafael J. Wysocki" <rafael@kernel.org>,
+  x86@kernel.org,  linux-pm@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  regressions@lists.linux.dev,  Jeff Johnson <quic_jjohnson@quicinc.com>
+Subject: Re: [regression] suspend stress test stalls within 30 minutes
+References: <87o79cjjik.fsf@kernel.org>
+	<20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
+	<20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
+	<87h6f4jdrq.fsf@kernel.org> <878r0djxgc.fsf@kernel.org>
+	<874jb0jzx5.fsf@kernel.org>
+	<20240514160555.GCZkOL41oB3hBt45eO@fat_crate.local>
+	<87msoofjg1.fsf@kernel.org>
+	<20240517172603.GEZkeTK246tBvGEtgF@fat_crate.local>
+Date: Fri, 17 May 2024 21:22:09 +0300
+In-Reply-To: <20240517172603.GEZkeTK246tBvGEtgF@fat_crate.local> (Borislav
+	Petkov's message of "Fri, 17 May 2024 19:26:03 +0200")
+Message-ID: <875xvcfgdq.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240507154459.3950778-1-pbonzini@redhat.com> <20240507154459.3950778-8-pbonzini@redhat.com>
- <ZkVHh49Hn8gB3_9o@google.com> <7c0bbec7-fa5c-4f55-9c08-ca0e94e68f7c@redhat.com>
- <ZkeH8agqiHzay5r9@google.com> <2450ce49-2230-45a2-bc0d-b21071f2cce6@redhat.com>
-Message-ID: <ZkefU_PhjvnaEE7Q@google.com>
-Subject: Re: [PATCH 7/7] KVM: VMX: Introduce test mode related to EPT
- violation VE
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Fri, May 17, 2024, Paolo Bonzini wrote:
-> On 5/17/24 18:38, Sean Christopherson wrote:
-> > > > I've hit this three times now when running KVM-Unit-Tests (I'm pretty sure it's
-> > > > the EPT test, unsurprisingly).  And unless I screwed up my testing, I verified it
-> > > > still fires with Isaku's fix[*], though I'm suddenly having problems repro'ing.
-> > > > 
-> > > > I'll update tomorrow as to whether I botched my testing of Isaku's fix, or if
-> > > > there's another bug lurking.
-> > > > 
-> > > > https://lore.kernel.org/all/20240515173209.GD168153@ls.amr.corp.intel.com
-> > > I cannot reproduce it on a Skylake (Xeon Gold 5120), with or without Isaku's
-> > > fix, with either ./runtests.sh or your reproducer line.
-> > > 
-> > > However I can reproduce it only if eptad=0 and with the following line:
-> > > 
-> > > ./x86/run x86/vmx.flat -smp 1 -cpu max,host-phys-bits,+vmx -m 2560 \
-> > >    -append 'ept_access_test_not_present ept_access_test_read_only'
-> > 
-> > FWIW, I tried that on RPL, still no failure.
-> 
-> Ok, so it does look like a CPU issue.  Even with the fixes you identified, I
-> don't see any other solution than adding scary text in Kconfig, defaulting
-> it to "n", and adding an also-very-scary pr_err_once("...") the first time
-> VMPTRLD is executed with CONFIG_KVM_INTEL_PROVE_VE.
+Borislav Petkov <bp@alien8.de> writes:
 
-I don't think we need to make it super scary, at least not yet.  KVM just needs
-to not kill the VM, which thanks to the BUSY flag is trivial: just resume the guest.
-Then the failure is "just" a WARN, which won't be anywhere near as problematic for
-KVM developers.  I doubt syzbot will hit this, purely because syzbot runs almost
-exclusively in VMs, i.e. won't have #VE support.
+> On Fri, May 17, 2024 at 08:15:58PM +0300, Kalle Valo wrote:
+>> So the weird part is that when the bug happens (ie. suspend stalls) I
+>> can access the box normally using ssh and I don't see anything special
+>> in dmesg. Below is a full copy of dmesg output after the suspend
+>> stalled. Do note that I copied this dmesg before I updated microcode so
+>> it will still show the old microcode version.
+>
+> Does that mean that you'd still see the stall even with the latest
+> microcode revision 0xf8?
 
-If we don't have a resolution by rc6 or so, then maybe consider doing something
-more drastic?
+Yeah, no luck with that. I have more information in my other email.
 
-I agree that it should be off by default though.  And the help text should be
-more clear that this intended only for developers and testing environments.
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-I have a handful of patches, including one to not kill the VM.  I'll try to post
-them later today, mostly just need to write changelogs.
-
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index 75082c4a9ac4..5c22186671e9 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -98,15 +98,15 @@ config KVM_INTEL
- 
- config KVM_INTEL_PROVE_VE
-         bool "Check that guests do not receive #VE exceptions"
--        default KVM_PROVE_MMU || DEBUG_KERNEL
--        depends on KVM_INTEL
-+        depends on KVM_INTEL && KVM_PROVE_MMU
-         help
--
-           Checks that KVM's page table management code will not incorrectly
-           let guests receive a virtualization exception.  Virtualization
-           exceptions will be trapped by the hypervisor rather than injected
-           in the guest.
- 
-+          This should never be enabled in a production environment.
-+
-           If unsure, say N.
- 
- config X86_SGX_KVM
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
