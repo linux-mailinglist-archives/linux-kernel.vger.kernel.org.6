@@ -1,133 +1,88 @@
-Return-Path: <linux-kernel+bounces-181986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BDE28C84A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:18:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 848C08C84A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6CC11F24371
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:18:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B124D1C22C27
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B12364BE;
-	Fri, 17 May 2024 10:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4108364AB;
+	Fri, 17 May 2024 10:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JcSCPqgd"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2J9P/An"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C58879FE;
-	Fri, 17 May 2024 10:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAD82E636;
+	Fri, 17 May 2024 10:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715941110; cv=none; b=D0nYTSHZKJt28+kMWROdr/gssfKZ/5Js4xazYOn+estWPfP2NPU5ews7ofTNLRAcXCiDw23H/ir7+Tefafya+8gTg6Oh6ynvV86jXF3QodvF1+oIHpQx6gdy/KEVDsNgEPNzoRiUju+rwLZr1Cg3byuPrS/j22D+waUBZD7//xg=
+	t=1715941142; cv=none; b=MSg5YQZ3vXgyKfVhVCTe5zXYixt1BtNYoYPHs/WyG55rdLr1gKbeWER5aF1+CrH5nbN/4m2MTrQehiiGiwkn6OA2ZdxV9uFqqzMyCaMAb13asVPJuVs6tnrocftaj9O23xKQmDn7uSqj2vEm1R1yD+XU5oVZcpoS70W5fLgWOjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715941110; c=relaxed/simple;
-	bh=SpQPJgD5ifcMb7DMXQffQ8OLyoliyiYJJKgW+mO9s+Y=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AMTyqEJVKASko5Zt+JoZfWphiU02llpTQZMIDtWUh3m8R4O6ED+K+CJ8BC0PbRZuWK5zSexdlzVX/OE539FyfU8i6DXI/B9ytTZnTD4HtZT8+7ZTxTVgQll6ZEVnF13stoOTXq2lD9JdayzP4N/2oYskWfgdpZ7q4edW2pKzzLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=JcSCPqgd; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1715941108; x=1747477108;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SpQPJgD5ifcMb7DMXQffQ8OLyoliyiYJJKgW+mO9s+Y=;
-  b=JcSCPqgd0y49KRPXYTC8+DbVqQ0A0W/u9H2Khu0XqSc4OZfoAgQhso+y
-   TG1j7alXV8liFxkL11m0tQl+fIt1xkXw/sTdtZ+0/x3egOoYv7NeLsxan
-   OkOQiO64+QQLUqsdCAw1KYRUTO1YUbm8ILA85Ortnf2qSgBhA6vzLTRoi
-   UB/UPfut8RG+zUn1EkY7Wn5VCwxwK0CtGJ7t8XjAN/qZU4Fc55vx+31Yp
-   O5DiuVrRv4LPJibL1h4OKxLkYMFbSQa45WjbS+w0wA5cLy0SJvhrTyi+t
-   tV88uOd9k2jwdqovGntUhfvAOMqmqcoWdw4gK+Q5j1hCjKVBDfc34i5Tq
-   g==;
-X-CSE-ConnectionGUID: Azrk/14wTjiVmxHBQWS5nQ==
-X-CSE-MsgGUID: KU0HZz42QG22qF0FR+jm3A==
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="25633951"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 May 2024 03:18:21 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 17 May 2024 03:18:12 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Fri, 17 May 2024 03:18:12 -0700
-Date: Fri, 17 May 2024 12:18:11 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <jacob.e.keller@intel.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<UNGLinuxDriver@microchip.com>
-Subject: Re: [PATCH net] net: lan966x: Remove ptp traps in case the ptp is
- not enabled.
-Message-ID: <20240517101811.vsqcg7moapixlfpj@DEN-DL-M31836.microchip.com>
-References: <20240514193500.577403-1-horatiu.vultur@microchip.com>
- <20240514222149.mhwtp3kduebb4zzs@skbuf>
- <20240516064855.ne6uf3xanns4hh2o@DEN-DL-M31836.microchip.com>
- <20240517100425.l5ddxbuyxbgx42ti@skbuf>
+	s=arc-20240116; t=1715941142; c=relaxed/simple;
+	bh=Ev2QxGS+nYbwzvGq7dvuwAZN+qqi89Mpk5JkIVj85wI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jUrSx8SfwR+9J7OJzwFf3eiy/HNMLJRPNtbpW3SpScFYtCF7XwBTOjUlfAONDQJx6x5YxRNNwoH2+Q4NRNubdiKx9Ys4mTdV37iW7iXgPwQOcBDh14rBCvTRKxJFhDEZQT1/gtBrMNRWC9lYN9eop9D4z1zfAzrkyipCz0g8QQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2J9P/An; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62D5BC2BD10;
+	Fri, 17 May 2024 10:19:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715941141;
+	bh=Ev2QxGS+nYbwzvGq7dvuwAZN+qqi89Mpk5JkIVj85wI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O2J9P/An142PttNMhiYSBtQn/7wv7KwaO2pU6C2D/Lk3U3VQG2oXzVQ3h0s40VvrC
+	 D8j2sY93fvRCPzaXYWF8yXSCrwGfGyKuJHhBbhIvjDZ8SSfe9Fs1Id3mfw0zYOAm4g
+	 ITtI00n/7xqXGtGtUE2fk8XPyQnyU/73OzdRhA/jO/YVY6vLUWTjd9X4P38zfA99E/
+	 8AWrp0WU/mt5WlD2EmTZiqNOzJSp5nLP/nw9LQrKkR82FRdryV/p6EIaWN8mPdm7UZ
+	 NT4fOyVS31q7ys3s54SjVWUR7VKP3arC4gLYvqyOpVmsMlXnlHJSZyIR9Dlywbi8eR
+	 OUanComm1zTeg==
+Message-ID: <4f7f992f-0c68-4760-ac9d-37a5c6c948cd@kernel.org>
+Date: Fri, 17 May 2024 12:18:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20240517100425.l5ddxbuyxbgx42ti@skbuf>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] rv: Update rv_en(dis)able_monitor doc to match
+ kernel-doc
+To: Yang Li <yang.lee@linux.alibaba.com>, rostedt@goodmis.org,
+ mhiramat@kernel.org
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240517091452.47703-1-yang.lee@linux.alibaba.com>
+Content-Language: en-US, pt-BR, it-IT
+From: Daniel Bristot de Oliveira <bristot@kernel.org>
+In-Reply-To: <20240517091452.47703-1-yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The 05/17/2024 13:04, Vladimir Oltean wrote:
-> 
-> On Thu, May 16, 2024 at 08:48:55AM +0200, Horatiu Vultur wrote:
-> > > Alternatively, the -EOPNOTSUPP check could be moved before programming
-> > > the traps in the first place.
-> >
-> > Thanks for the review.
-> > Actually I don't think this alternative will work. In case of PHY
-> > timestamping, we would still like to add those rules regardless if
-> > ptp is enabled on lan966x.
-> >
-> > >
-> > > Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> >
-> > --
-> > /Horatiu
-> 
-> I don't understand why this would not have worked?
-> 
-> diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-> index b12d3b8a64fd..1439a36e8394 100644
-> --- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-> +++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-> @@ -474,14 +474,14 @@ static int lan966x_port_hwtstamp_set(struct net_device *dev,
->             cfg->source != HWTSTAMP_SOURCE_PHYLIB)
->                 return -EOPNOTSUPP;
-> 
-> +       if (cfg->source == HWTSTAMP_SOURCE_NETDEV && !port->lan966x->ptp)
-> +               return -EOPNOTSUPP;
-> +
+Hi Yang
 
-This should also work.
-Initially I thought you wanted to have only the check for
-port->lan966x->ptp here. And that is why I said it would not work.
-
->         err = lan966x_ptp_setup_traps(port, cfg);
->         if (err)
->                 return err;
+On 5/17/24 11:14, Yang Li wrote:
+> The patch updates the function documentation comment for
+> rv_en(dis)able_monitor to adhere to the kernel-doc specification.
 > 
->         if (cfg->source == HWTSTAMP_SOURCE_NETDEV) {
-> -               if (!port->lan966x->ptp)
-> -                       return -EOPNOTSUPP;
-> -
->                 err = lan966x_ptp_hwtstamp_set(port, cfg, extack);
->                 if (err) {
->                         lan966x_ptp_del_traps(port);
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> ---
+>  kernel/trace/rv/rv.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
+> index 2f68e93fff0b..df0745a42a3f 100644
+> --- a/kernel/trace/rv/rv.c
+> +++ b/kernel/trace/rv/rv.c
+> @@ -245,6 +245,7 @@ static int __rv_disable_monitor(struct rv_monitor_def *mdef, bool sync)
+>  
+>  /**
+>   * rv_disable_monitor - disable a given runtime monitor
+> + * @mdef: Pointer to the monitor definition structure.
 
--- 
-/Horatiu
+This change is in for mainline kernel, why are you using the -next on the Subject?
+
+-- Daniel
 
