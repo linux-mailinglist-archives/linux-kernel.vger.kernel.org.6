@@ -1,134 +1,118 @@
-Return-Path: <linux-kernel+bounces-182554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC248C8C99
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:09:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6268C8C9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DD3C1C22557
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:09:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE19F1C224FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB3313E401;
-	Fri, 17 May 2024 19:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729FF13E417;
+	Fri, 17 May 2024 19:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1SYVzmP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ngmpevGL"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477FD6A005;
-	Fri, 17 May 2024 19:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4413D6A005;
+	Fri, 17 May 2024 19:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715972933; cv=none; b=QQ/i0pRgj0D7kWG+RRZYaomOdeGHizHE9aRCxVXU8jVWBwY0+iiSMfOYF2TaxseAIfbJ6LbOKKBy9ZIZgiNaeU6yhf3xDeaR8ABYlp+SlgYIhWRNEON58eTqxuZ5bzpQ0VbYj1KuCmeaqMCe1YNv0l3lLiKgL3UGb8Sy2M56m3k=
+	t=1715973017; cv=none; b=sj9AbRL5bMTvXgpdhmhZUyC1xPwnrWGEt3iSHWp2esFwWsB6aGehfjtDP5QL+OryxtS7YnAHm6XmESQXrSLYhdlaRZkBR5Iq2U8Pycy7RpKoqajqUZOhXFqBmMXjoqah8p5bjRG18esmkPeswvjMHT7N2VBAyiiR10fJqGdDOXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715972933; c=relaxed/simple;
-	bh=uWb+bOSKwQLJn2Jz1qSkQVUr71jyyOc0xxanYUgAxrI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KFJA9BwKNdljJgKRbFqQkPAp8A2gWEN8Ot7/7faFXPxRlrhUfGRd/SzfoOhzqYIdeY+wqpCxZp396KbcZLafpMvuTnWu/PBmwLB9iBA0aoz81IxxDj1SGBbe0+FYJSKQDGg9TWXPV4g38gH8uZDuZc8QBnEE5Ixc6SdJnrbzmTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B1SYVzmP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B611DC32789;
-	Fri, 17 May 2024 19:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715972932;
-	bh=uWb+bOSKwQLJn2Jz1qSkQVUr71jyyOc0xxanYUgAxrI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=B1SYVzmPVa95dii8iiNGtWbLnTRYHsNyGY7TVnPycTDXAk3DJBlQppLj44zNGyc+U
-	 GhhVRlWsBkN8LPYPURcukRIiJAahNyMthuUXayDEb4WqQRzn0M04aWAU5ImLEZuq/K
-	 pwmGci4Y122Pc+Vo2PEp72j/FNFr4gAXtGLRV4n2lDjvTvpejpG1jMmtM2OS5IjlYS
-	 7fT4VlfMOBYtTk4i1UdHsRho9A6uz3Zkz/dDt30lXty9sGoz0Sm4qf5BrNy6Vf+A5u
-	 Y9Q+/QffY2SZ6DizYsyRgYveRTXtsmY0xVTm7gdTXty/Y+fo6NIVRZtWIlAnDSc4Iz
-	 2EKG2LaWZVelg==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5ac4470de3bso67475eaf.0;
-        Fri, 17 May 2024 12:08:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV4mENtBuqDt2koXhnTscw/9Ji7dJk3uMGwi5eIRNIQKc4Gq6k41pPiLwfzxQgQ7GkwpNJDBq1iDrFlGn/vCLkRJ+uaht5LkSta9Etpf5BAZn7pedMPM6WIMsbLFfyMqJUX7BSfM20=
-X-Gm-Message-State: AOJu0YxZW6/o71188Y90/ok8IA6W/ltN0AbcGvq0JI6Se/Bn54q/Qvwa
-	6rknc+bwk2JJ0CtGoyTixOwH1TpQOMSOcn+wOsG/U1MA/NKRYH//TeAjZdbf3yupSEUZBArMADy
-	FECabuVYxXLOWRhi+/2i1URpgrp8=
-X-Google-Smtp-Source: AGHT+IG+4u8KxAGrrysp6nvFWeu9dDnGpa/wsXf20CS/0o0U1GC6cHp5W7yqKNQ3oZ2MRrdPXCbVMkds2yJkFSkH1do=
-X-Received: by 2002:a05:6820:1f16:b0:5b2:7d9f:e708 with SMTP id
- 006d021491bc7-5b28193e476mr24576900eaf.1.1715972931992; Fri, 17 May 2024
- 12:08:51 -0700 (PDT)
+	s=arc-20240116; t=1715973017; c=relaxed/simple;
+	bh=RnfZxyi5GFAJQ38oEY9ABJuJmpfE8TDy13wT1rkOv34=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sj51xb6qoLt6XU8S/+LNqGDkvsA7PsXfut0woiYBnC1REQWBTYyp8ucLlCxAU6oed+codo7xu+A4CgGB6ID/smK5kKO8185gPaRhwTTU3l7WL+7vIZ9KwHFw//9mI8GfzAKrnc8fBP0fO75/UasKloeOqeiBL/C1goItxX+5vy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ngmpevGL; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59c448b44aso508622466b.2;
+        Fri, 17 May 2024 12:10:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715973014; x=1716577814; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+VVOSJH9quqoX1VyGoo0FEpVRC1dS3g2ohGA4GxPEWU=;
+        b=ngmpevGL/a3GInK/mrD4zrtxKv65N7z3dbjv3XngQ+IjSBQy8Gnz0xm4nZkeRFZgJ6
+         PatfNBNs/79MyJiEgEq30YrTHaOw+n1/yz3yuQ1jm7nfk4mvGJWQEfXxeVg4ogs6PoWR
+         RjzeV/IZyQXVA9p5tJsdAd+B9W7Thzp7waWY1ib4dcNJBeiMBZOg6ImIP0ccgaaN2vxW
+         SXqDS672dIyx2CD/vbAg79g5k97VGMBvbQTNNAMfWTvnXPWsdAYFQt+YnvgTg/9Jii2q
+         NZFR8s1A4Due3gIpbd4Y6a2CUqx6UJpnI9AyUIHAMeGkJdkQPUiT3gjsbnrlh+330Rgq
+         nIaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715973014; x=1716577814;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+VVOSJH9quqoX1VyGoo0FEpVRC1dS3g2ohGA4GxPEWU=;
+        b=hTrOEeALkqKiVD2ZlW8cwFb1toWctzdVc5CqyeWOrcvRBgItsMLieRCZHDBTxG8ejx
+         zDBS9exJMRCVtjRVMm+OsMslSb9C5Cd44piWXFM1Z3kZNvVySbxXeOpjWw4PIczh+7ZC
+         X4Owmt3KIAk9SWCAK038LCa2dcQFGcIMLYL/6lmWv8j/fo56m4I4+UNhf8+8srM5m9yY
+         eKw657BEIhj54doKDaiR5VGYhHGmvmg7Gyr+mSiAy1/+IYwKgeP5DOvNQuG5Mcq5BT4x
+         zlB6b/oTl0dzKChvDme017xGKRZIc6f/edxlfT97X12VaAkPkE6c1hzpeE1qRYNMQ/LS
+         Vihw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgY/CXynHawdHhHe7feitDjRiArumsBaPAIfk/+Ojk6wrhFh4XP5GZsJPjt6ru2MIjxbmlo7cHGK4JlxUFP73P1/vFdFm+8Q5F5fvGN4R6E55jSRxORQa+H9f6/im/ZFSuLYuvT8jQ
+X-Gm-Message-State: AOJu0YwxhXMJ+b823/iWhj6Fu64KSkWGYGRTbLkd9iLw7THlLl+Sohdj
+	+6zXPcX6nGg5vNfjXFhxRF9DGlyUDCx0IZwzocIAsTGNgeZ9MPRB
+X-Google-Smtp-Source: AGHT+IFc6wkTpM9J8XhB/tHdDw+l9yJH+vIYD9N3+ZIFrDSI4eMBEpNV+wR+nZS8NJ25GVit+N2IWg==
+X-Received: by 2002:a17:906:aad1:b0:a59:c23d:85d2 with SMTP id a640c23a62f3a-a5a2d66b4b8mr1429573866b.55.1715973014495;
+        Fri, 17 May 2024 12:10:14 -0700 (PDT)
+Received: from think.fritz.box (2001-8e0-3c0d-4001-4e1d-96ff-fe13-2153.bbcs.ip6.as8758.net. [2001:8e0:3c0d:4001:4e1d:96ff:fe13:2153])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7e2bsm1144631566b.110.2024.05.17.12.10.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 12:10:13 -0700 (PDT)
+From: Grygorii Tertychnyi <grembeter@gmail.com>
+X-Google-Original-From: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>
+To: Peter Korsgaard <peter@korsgaard.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: grembeter@gmail.com,
+	bsp-development.geo@leica-geosystems.com,
+	Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>
+Subject: [PATCH] i2c: ocores: set IACK bit after core is enabled
+Date: Fri, 17 May 2024 21:10:00 +0200
+Message-ID: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87o79cjjik.fsf@kernel.org> <20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
- <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local> <87h6f4jdrq.fsf@kernel.org>
- <878r0djxgc.fsf@kernel.org> <874jb0jzx5.fsf@kernel.org> <20240514160555.GCZkOL41oB3hBt45eO@fat_crate.local>
- <87msoofjg1.fsf@kernel.org> <35086bb6-ee11-4ac6-b8ba-5fab20065b54@intel.com>
- <871q60ffnr.fsf@kernel.org> <7813dff5-b140-48c4-bc15-ed25c7a07591@intel.com> <87eda0cljg.fsf@kernel.org>
-In-Reply-To: <87eda0cljg.fsf@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 17 May 2024 21:08:40 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hJnXPMq5cjEs=yPrSU1hpJ3H3cMce8fOGQCripYfbeGQ@mail.gmail.com>
-Message-ID: <CAJZ5v0hJnXPMq5cjEs=yPrSU1hpJ3H3cMce8fOGQCripYfbeGQ@mail.gmail.com>
-Subject: Re: [regression] suspend stress test stalls within 30 minutes
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 17, 2024 at 8:59=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wrote=
-:
->
-> Dave Hansen <dave.hansen@intel.com> writes:
->
-> > On 5/17/24 11:37, Kalle Valo wrote:
-> >> While writing this email I found another way to continue the suspend
-> >> after a stall: terminate rtcwake with CTRL-C in the ssh session runnin=
-g
-> >> the for loop. That explains why 'sudo shutdown -h now' makes the suspe=
-nd
-> >> go forward, it most likely kills the stalled rtcwake process.
-> >
-> > Could we try and figure out what rtcwake is doing during its stall?  A
-> > couple of ideas:
-> >
-> > You could strace it to see if it's hung in the kernel:
-> >
-> >       strace -o strace.log rtcwake ... <args here>
-> >
-> > You could look at its stack in /proc, like this:
-> >
-> > # cat /proc/`pidof sleep`/stack
-> > [<0>] hrtimer_nanosleep+0xb5/0x190
-> > [<0>] common_nsleep+0x44/0x50
-> > [<0>] __x64_sys_clock_nanosleep+0xcb/0x140
-> > [<0>] do_syscall_64+0x65/0x140
-> > [<0>] entry_SYSCALL_64_after_hwframe+0x6e/0x76
-> >
-> > Or you can use sysrq:
-> >
-> >       echo t > /proc/sysrq-trigger
-> >
-> > to get *all* tasks' stacks dumped out to dmesg.
-> >
-> > I'd probably do all three in that order.
-> >
-> > Getting a function-graph trace of rtcwake during the stall would also b=
-e
-> > nice, but that's a lot of data so let's try the easier things first.
->
-> I can do all that but most probably not this week. Luckily it's quite
-> easy to reproduce the bug, one time I even saw it in the first iteration
-> and usually within 15 minutes or so.
->
-> And do let me know if there's anything else I should try.
+Setting IACK bit when core is disabled does not clear the "Interrupt Flag"
+bit in the status register, and the interrupt remains pending.
 
-My somewhat educated guess is that pm_notifier_call_chain_robust()
-blocks for you, so you can add debug printk()s around the call to this
-in suspend_prepare().
+Sometimes it causes failure for the very first message transfer, that is
+usually a device probe.
 
-It is also possible that pm_prepare_console() does something weird and
-your description of the problem indicates that it doesn't get to user
-space freezing.
+Hence, set IACK bit after core is enabled to clear pending interrupt.
+
+Signed-off-by: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>
+---
+ drivers/i2c/busses/i2c-ocores.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
+index a0af027db04c..a52f8fd4e2fe 100644
+--- a/drivers/i2c/busses/i2c-ocores.c
++++ b/drivers/i2c/busses/i2c-ocores.c
+@@ -439,8 +439,8 @@ static int ocores_init(struct device *dev, struct ocores_i2c *i2c)
+ 	oc_setreg(i2c, OCI2C_PREHIGH, prescale >> 8);
+
+ 	/* Init the device */
+-	oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_IACK);
+ 	oc_setreg(i2c, OCI2C_CONTROL, ctrl | OCI2C_CTRL_EN);
++	oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_IACK);
+
+ 	return 0;
+ }
+--
+2.43.0
 
