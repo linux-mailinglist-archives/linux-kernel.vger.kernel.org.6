@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-181706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0907E8C8002
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 04:40:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 054C58C8004
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 04:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9843C1F2288D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 02:40:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B16CB20F1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 02:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF02DDD8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1631DF42;
 	Fri, 17 May 2024 02:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbCl65c8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RL/EGBnb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1D78BEC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFBA79E1;
 	Fri, 17 May 2024 02:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715913631; cv=none; b=pZ9vms7F6xSQ8wxF1lIMr6Cj9nwiyhZ6F6VBDneNJXijnyJmdPXT3cXgN5wh4ILfffMqijKEQHVMZ6iwN+rQjSlckj2XXpgklpFvB/SztFBRwupnoIPxCPCqfaD9WlRBtdEAl2IeSlwXvDpMEkYyUuaO4worB9yH6aO2Lw1GNuk=
+	t=1715913631; cv=none; b=NhSDbdBOcmYogJ6YKhPHaw3XMlFWqaEwhc6pmzDpLfK+erC1MxlyfM8VOl3WGoWhNuJnh1WlSYECDdh1S8fgTrgSwkKcAUlbGKoLbmOWeACjHcTP+jszfoVZw6+zliAAxb4EgHwT74zIhC7E0x1LklxCxc17V07hSm5+vX7otJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715913631; c=relaxed/simple;
-	bh=VCrb7UnnkO5S0CtIrGnADeHi98LkHpUqkncSHeHWXI4=;
+	bh=9kebVBdlBKzKUV6X1NAINiwksxB8q5L+utQ7ykLIosI=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=lDney9GBjBBSIBZAJKCxilB+MhuHp20tgtU3Xh/w4wXYQIMSuPPLIGOvqMCnEznMIfFCHfcbr0UY8y6px21L85bFRPZ3z79l+VdhVIO2Qiko85oLKWPcAkxfsOqyLpu8KlgYcPD++codMJAeBw51H2UlFtd4ljeSoLtnB7BDQ00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbCl65c8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AE3ADC2BD11;
+	 In-Reply-To:To:Cc; b=sQVy96X1FhgainN3U1h3efVm+im59DfCPuH0GLYd/TIxc2J4lZAiJhoG8oXY8ScbiJoSKfMLsbaUMfaUxs5sh3Dx2N1t0Yb35zSkxwD/8SBqsW0YBeSeOf7GdnMDfWlCHAOuz3rQ2fMXg0gYqwd2+dmGAupmV7UUIeruZYdPYJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RL/EGBnb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A4388C32781;
 	Fri, 17 May 2024 02:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1715913630;
-	bh=VCrb7UnnkO5S0CtIrGnADeHi98LkHpUqkncSHeHWXI4=;
+	bh=9kebVBdlBKzKUV6X1NAINiwksxB8q5L+utQ7ykLIosI=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=lbCl65c8KF+k0SbNnpm9D9nhd+IUxfzDEBknfJhvFIYBxUPyxLLVXXNy0Pg1B53o6
-	 IzwydIAjR+XGs0/3jQ62sVcyu6qHkK4k1SGWUNRa4U5V8zHo6i7l04xqjEDiNXglBq
-	 4i0q15zEmdxxVHUaGCaNaXF0YMEgkk906VUz2Moyj5c7KNtlUH+sLaa7DN3xBu2MTh
-	 EpQJbyloBD0gqF9Fxe9LFT+ZcADd6j6PodoLr1Z6IdQbVljHbAOILQXA+Lo9ziMUhv
-	 gJ/3u0lYCpVhqYjYaUQ2L89Bq/IVKhUXeky42Dv+se+TCaDfJnWmFYCcrsIPhpu/+r
-	 NafwWAmQUdhEQ==
+	b=RL/EGBnbcdhx9FrZXV+Po0BC//Qgt+qBLT24e1Zms+PiO+aiMLc7efcGIqw2mxLr/
+	 l+0PpgTeFEB1C8Z8L7QN7SRFS3fu7+YKPZvtHNDg9LMFTIuKoxPxh9HntI5TU52891
+	 6bt0/gGyEU2aAQQ3x0r2VeQEf/uMdlNbsRfimNMjP8fDC7kWID7YTz+bwvviXZZx5c
+	 qb+07imcdlfgyMLRk1D5Dn4BpJWyT3HInI4JHW4mg8RNweEBvDU2MufVKYwnRhWTaw
+	 mrN2tMUOkWvVaDFnt7AM+6nhaLb07+TyJsvKjBm/WKtmzzgM2ID1/zf+V9HRgegfeI
+	 lIhShMYEI6nEA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A18D7C54BDA;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 96856C41620;
 	Fri, 17 May 2024 02:40:30 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,42 +51,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] idpf: don't skip over ethtool tcp-data-split setting
+Subject: Re: [PATCH v4 0/2] Mark Ethernet devices on sa8775p as DMA-coherent
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171591363065.2697.11756234770145638064.git-patchwork-notify@kernel.org>
+ <171591363061.2697.10528707593141147774.git-patchwork-notify@kernel.org>
 Date: Fri, 17 May 2024 02:40:30 +0000
-References: <20240515092414.158079-1-mschmidt@redhat.com>
-In-Reply-To: <20240515092414.158079-1-mschmidt@redhat.com>
-To: Michal Schmidt <mschmidt@redhat.com>
-Cc: jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- przemyslaw.kitszel@intel.com, michal.kubiak@intel.com,
- aleksander.lobakin@intel.com, xudu@redhat.com,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+References: <20240514-mark_ethernet_devices_dma_coherent-v4-0-04e1198858c5@quicinc.com>
+In-Reply-To: <20240514-mark_ethernet_devices_dma_coherent-v4-0-04e1198858c5@quicinc.com>
+To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, bartosz.golaszewski@linaro.org,
+ ahalaney@redhat.com, vkoul@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ bhupesh.sharma@linaro.org, kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This series was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 15 May 2024 11:24:14 +0200 you wrote:
-> Disabling tcp-data-split on idpf silently fails:
->   # ethtool -G $NETDEV tcp-data-split off
->   # ethtool -g $NETDEV | grep 'TCP data split'
->   TCP data split:        on
-> 
-> But it works if you also change 'tx' or 'rx':
->   # ethtool -G $NETDEV tcp-data-split off tx 256
->   # ethtool -g $NETDEV | grep 'TCP data split'
->   TCP data split:        off
+On Tue, 14 May 2024 17:06:50 -0700 you wrote:
+> To: Bjorn Andersson <andersson@kernel.org>
+> To: Konrad Dybcio <konrad.dybcio@linaro.org>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> To: Andrew Halaney <ahalaney@redhat.com>
+> To: Vinod Koul <vkoul@kernel.org>
+> To: David S. Miller <davem@davemloft.net>
+> To: Eric Dumazet <edumazet@google.com>
+> To: Jakub Kicinski <kuba@kernel.org>
+> To: Paolo Abeni <pabeni@redhat.com>
+> To: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> Cc: kernel@quicinc.com
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: netdev@vger.kernel.org
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] idpf: don't skip over ethtool tcp-data-split setting
-    https://git.kernel.org/netdev/net/c/67708158e732
+  - [v4,1/2] arm64: dts: qcom: sa8775p: mark ethernet devices as DMA-coherent
+    (no matching commit)
+  - [v4,2/2] dt-bindings: net: qcom: ethernet: Allow dma-coherent
+    https://git.kernel.org/netdev/net/c/fe32622763d8
 
 You are awesome, thank you!
 -- 
