@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-181906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D760E8C831D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:15:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FFD78C8329
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C2A12829A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:15:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 582D4281599
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B117020DCC;
-	Fri, 17 May 2024 09:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745C520313;
+	Fri, 17 May 2024 09:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLA6sKzQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWVriPPJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15C323758;
-	Fri, 17 May 2024 09:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1661DDDB;
+	Fri, 17 May 2024 09:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715937320; cv=none; b=Gu406ULYg9vaIMrD3bdm2+vHleC3gH9rxGah8Uktpe63FAfQWCLv4u6tDHABL+hcZ6UYObejMENOn3V8FAyz0e3I+XU3hD10+sCYhVEy2hb6VHQCLNIo14ssCiUsqbI5AKTEoyg4mBT1yVIrvR3ylpixY3VTGjjkw7tipYmpaeE=
+	t=1715937465; cv=none; b=FFNCQ3fUz2FeThHRFhwzvKxYnavoBsUzYW48TiQPq91hsY21stP32EFI1DZ9Bv9z5nP9zoFCkdGbqZfZv0uiegOE/ec5xxO1u9FTQGdw/vcwkZNk10kIkqJR/A+V7Rd9KS6FRSJiSAcpXr5I69/6mO+f1hRAzQ4v4l9Txr6P4iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715937320; c=relaxed/simple;
-	bh=FW5Dq52kI/4tqHDdl7rHYWj6hQF7PsNPsyYt4vRar0M=;
+	s=arc-20240116; t=1715937465; c=relaxed/simple;
+	bh=PH0+m7B2XUeSInY+T38VdjzfDLnpX53dQVeTatGhnRg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dP+vCfsCZnK3fCASWGNZNHqkH8/PTdVROXA7FeBwYl1LKSNiAkrH74vvc3TbdESLBOi1m1DcemOZo2s3yNi5nOrwX2Yw0QBqXiarZ8MfFovrVXI8268HJL+fOmGspjB+pMxlY4vUf8+Y4shue2vjFfiF1wuEJxENyHY833K3QUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nLA6sKzQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94E7FC2BD10;
-	Fri, 17 May 2024 09:15:15 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=o2IXKfr4gmHi6WaXl48UCmIhlVZte6rLjeOoXhVg1eU3VCjeMBaIYRjHRN5J0Wc5guOK/EUG5SD/VRW84REpnscXRpMBwXDA/YIGn31bKZKhOSKWYkkPfr+1LI46p4/l1tGrLnX4gGs8A+FLTMbcs20kCSxcViswzc2yWD+iTLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWVriPPJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B1A6C2BD10;
+	Fri, 17 May 2024 09:17:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715937320;
-	bh=FW5Dq52kI/4tqHDdl7rHYWj6hQF7PsNPsyYt4vRar0M=;
+	s=k20201202; t=1715937465;
+	bh=PH0+m7B2XUeSInY+T38VdjzfDLnpX53dQVeTatGhnRg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nLA6sKzQqMy8zQLBOxVbt/Rb+OzB9MDr3+LiHfUs9tzlyqy5BO+TvYWkGdxkgAQXm
-	 5NcdY4go2Rjmc2vYDpC/rViDH8EX1j4rHfPtsbYTva0LvRds0ZXVL5u8ew3aiFkFr9
-	 qCho+p2tSkhe7VR8C6RbylzAdSkiANoYEcDvrO6MULn05HA7mTmSeUJeseDx3oUTgW
-	 8isj20iEZXrlQrhYvTiVurW8Hz8TKCwheoZC5f37ZthM6j/ieEaRqLMqDyY14Zd8Ev
-	 /2MzCp9H7YbzA0Ed5XbkNUiGsciX3NaOjnBRJ3FIcRLFTs0FFyMkLoMYt5RLRGTS8G
-	 fAVrDWuMMRb2A==
-Message-ID: <d719b331-84ed-4889-9959-0d7dde270804@kernel.org>
-Date: Fri, 17 May 2024 11:15:13 +0200
+	b=aWVriPPJ57nLu5vE4RIQhh8UV+H+XWuOocJwj/lLqfmnuAhMHVuf7jDFyNrRA/SFS
+	 kXm20A9srgZJPNJQ7hfxyawegGrmGHP+GxDOclm0ATHguTlqwEg5e52B+ttEzdKmns
+	 1t8PTDc6zgzDw/lQB+F3CgVdDf0YwnUSNCfEVyfSkQtCY5gU4LhvoijivFL7xYemtP
+	 Gbfh4o9jT+zg8qUCCFLOuU01ZFm4zsZ1lB73rc8ftvZf1HS0oOzZOBR5pkg0h6thmz
+	 1InAjQg4onWLAoKDqKzka+XjwDPLGZn2OoaWsZVstd4P9RY7ypsS4Td4lepmQsfXqF
+	 yTjYFtH2voiGA==
+Message-ID: <d570bf46-f3a3-4a01-b554-1c1c76b55e16@kernel.org>
+Date: Fri, 17 May 2024 11:17:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,30 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
-To: Johan Hovold <johan@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
- Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Das Srinagesh <quic_gurus@quicinc.com>,
- Satya Priya <quic_c_skakit@quicinc.com>, Stephen Boyd <swboyd@chromium.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20240506150830.23709-1-johan+linaro@kernel.org>
- <20240506150830.23709-13-johan+linaro@kernel.org>
- <Zjkq_nWyvc6bUtiu@surfacebook.localdomain>
- <ZjpMeVk_HiixZUEu@hovoldconsulting.com>
- <CAHp75VdUFMvkj-r76H7GFZdpcoh_nb8v6CBj4wBHztNhiaWULQ@mail.gmail.com>
- <8d2ea17c-f91e-4e14-a239-e5e999f6ac50@linaro.org>
- <ZjyQFrqHT2HBOWY6@hovoldconsulting.com>
- <1df61b7c-29c4-4537-a0b6-75785606eeae@kernel.org>
- <ZjzBAvgFt4UnPapk@hovoldconsulting.com>
+Subject: Re: [PATCH v5 5/9] dt-bindings: fsi: Document the FSI controller
+ common properties
+To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au
+References: <20240514195435.155372-1-eajames@linux.ibm.com>
+ <20240514195435.155372-6-eajames@linux.ibm.com>
+ <9200e46a-3cb5-4363-a560-ee3d88e05ced@kernel.org>
+ <a219f01e-a856-46cb-83c4-4fde99b8addd@linux.ibm.com>
+ <eb6e2b5b-f341-404b-9215-6e80f21a6842@kernel.org>
+ <80713a00-9574-4ae0-8af7-3fe12affcfc1@linux.ibm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -118,40 +106,88 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <ZjzBAvgFt4UnPapk@hovoldconsulting.com>
+In-Reply-To: <80713a00-9574-4ae0-8af7-3fe12affcfc1@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/05/2024 14:26, Johan Hovold wrote:
-> On Thu, May 09, 2024 at 12:48:18PM +0200, Krzysztof Kozlowski wrote:
->> On 09/05/2024 10:57, Johan Hovold wrote:
->>> On Tue, May 07, 2024 at 08:14:43PM +0200, Krzysztof Kozlowski wrote:
->>>> On 07/05/2024 19:22, Andy Shevchenko wrote:
+On 15/05/2024 17:02, Eddie James wrote:
 > 
->>>> Yeah, please use ID table, since this is a driver (unless I missed
->>>> something). Module alias does not scale, leads to stale and duplicated
->>>> entries, so should not be used as substitute of ID table. Alias is
->>>> suitable for different cases.
+> On 5/15/24 09:35, Krzysztof Kozlowski wrote:
+>> On 15/05/2024 16:28, Eddie James wrote:
+>>> On 5/15/24 09:18, Krzysztof Kozlowski wrote:
+>>>> On 14/05/2024 21:54, Eddie James wrote:
+>>>>> Since there are multiple FSI controllers documented, the common
+>>>>> properties should be documented separately and then referenced
+>>>>> from the specific controller documentation.
+>>>>>
+>>>>> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+>>>>> ---
+>>>>> Changes since v4:
+>>>>>    - Add interrupt controller properties
+>>>>>    - Add clock-frequency property to FSI controller and CFAM
+>>>>>    - Add detail to chip-id property description
+>>>>>
+>>>>>    .../bindings/fsi/fsi-controller.yaml          | 66 +++++++++++++++++++
+>>>>>    1 file changed, 66 insertions(+)
+>>>>>    create mode 100644 Documentation/devicetree/bindings/fsi/fsi-controller.yaml
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/fsi/fsi-controller.yaml b/Documentation/devicetree/bindings/fsi/fsi-controller.yaml
+>>>>> new file mode 100644
+>>>>> index 0000000000000..8620e4da6de77
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/fsi/fsi-controller.yaml
+>>>>> @@ -0,0 +1,66 @@
+>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>>> +%YAML 1.2
+>>>>> +---
+>>>>> +$id: http://devicetree.org/schemas/fsi/fsi-controller.yaml#
+>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>>> +
+>>>>> +title: FSI Controller Common Properties
+>>>>> +
+>>>>> +maintainers:
+>>>>> +  - Eddie James <eajames@linux.ibm.com>
+>>>>> +
+>>>>> +description:
+>>>>> +  FSI (FRU (Field Replaceable Unit) Service Interface) is a two wire bus. The
+>>>>> +  FSI bus is connected to a CFAM (Common FRU Access Macro) which contains
+>>>>> +  various engines such as I2C controllers, SPI controllers, etc.
+>>>>> +
+>>>>> +properties:
+>>>>> +  "#address-cells":
+>>>>> +    const: 2
+>>>>> +
+>>>>> +  "#size-cells":
+>>>>> +    const: 0
+>>>>> +
+>>>>> +  '#interrupt-cells':
+>>>>> +    const: 1
+>>>>> +
+>>>>> +  clock-frequency:
+>>>>> +    minimum: 1
+>>>>> +    maximum: 200000000
+>>>> This is a deprecated property in general. Why did it appear? It does not
+>>>> exist in current bindings and nothing in commit msg suggests changes in
+>>>> the bindings themselves.
 >>>
->>> There's no scalability issue here. If the driver uses driver name
->>> matching then there will always be exactly one alias needed.
+>>> OK, is there some document that describes what properties are
+>>> deprecated? Because it's used all over the place in the bindings. Anyway
+>> dtschema: dtschema/schemas/clock/clock.yaml
 >>
->> And then we add one more ID with driver data and how does it scale?
+>> buses anyway should use bus-frequency but it is also legacy one.
+>>
+>>> I need this property, I can rename it if you like. I can also update the
+>> Why do you need it? Why clocks cannot be chosen by drivers and initial
+>> state selected by assigned-clock-rates?
 > 
-> That's what I wrote in the part of my reply that you left out. If a
-> driver is going to be used for multiple devices, then a module id table
-> makes sense, but there is no need to go around adding redundant tables
-> just for the sake of it when a simple alias will do.
 > 
+> Well, I could use assigned-clock-rates, though it seems like I'd then 
+> have to implement the clock provider framework for both the FSI 
+> controller driver and the CFAM driver, which is a lot of extra work. FSI 
+> controller isn't really a clock provider, it's a bus like i2c (which 
+> uses clock-frequency), so it doesn't quite fit in my opinion...
 
-I still in general prefer ID tables, because I saw many times people
-copy existing code while not understanding above subtleties thus they
-just keep multiplying MODULE_ALIAS, but I understand your explanation
-and it is reasonable.
-
-FWIW:
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+OK, it's fine in such case.
 
 Best regards,
 Krzysztof
