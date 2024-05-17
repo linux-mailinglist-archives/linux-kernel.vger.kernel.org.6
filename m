@@ -1,190 +1,219 @@
-Return-Path: <linux-kernel+bounces-182049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9FA8C8595
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:25:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D922B8C8563
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20EE31F21FA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:25:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DF4C2834A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B98446C8;
-	Fri, 17 May 2024 11:24:51 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEEE3D3BB;
+	Fri, 17 May 2024 11:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="AHCgqxK1"
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01on2081.outbound.protection.outlook.com [40.107.13.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC33E3D56D;
-	Fri, 17 May 2024 11:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715945091; cv=none; b=ODQMmNEuQOLxyIRNvOsixGGZoAsQcq55p+j1aHpobjPDVm0HKM4JWwYlkYq0y5yQeHvMKNbB7mI6b83StVlB25Mj/hmh6vp/9rqgTcNeiFMqVLo3+71+n+z1+7N+yW4JCAPgBwrnedpQJ2KB8ZIiW0m4ClO5+9nDvOnB9Up/uO8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715945091; c=relaxed/simple;
-	bh=xuIlfY/3HVCtD8t5rWUv44jPGANtnz30uK1KfBywpWA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NgRyEdZgiFna2AdfLptB9Mc5NkUXmuHT4BgEaRDbZTbF63KO15WME43oAqJK8SXwsE7dqO87gQVug9gvh6884oWwHn1zY4xRpMvsPLbWHbQatuhbU1xZq3qiu0zMPusu3Xar0iloWDCDyWLw1p2zyECrRleByFnOFrHU2tTj/y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vgl3r0kSrz4f3jqB;
-	Fri, 17 May 2024 19:24:40 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id B214B1A0199;
-	Fri, 17 May 2024 19:24:45 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBHGBFrPkdm3V+kMw--.2732S7;
-	Fri, 17 May 2024 19:24:45 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	chandanbabu@kernel.org,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v3 3/3] xfs: correct the zeroing truncate range
-Date: Fri, 17 May 2024 19:13:55 +0800
-Message-Id: <20240517111355.233085-4-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240517111355.233085-1-yi.zhang@huaweicloud.com>
-References: <20240517111355.233085-1-yi.zhang@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D9025750;
+	Fri, 17 May 2024 11:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.13.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715944528; cv=fail; b=ahq0ABBwTLtsFpGoN6N9ZjizVwhWETadUtszkCeXP0mr4r2apSpCLPcDgdzud2zkBApHEle8rdqdzCtYTkYmKVQHU4rn0DMrpQlKWlfPmnWAhApCrkVuKwDJvjD28K3MrVYbpFa7d+0sD9hCXOnfOFzc/k6X3F+DoDzzfMZyhD0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715944528; c=relaxed/simple;
+	bh=A+OG/nzFbfPfox94dfpGTvEC1Dd8+zoYgcQTgfmEuZU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=rJOYfBg1vRczm3C7LoFRIeOTFnkNMBdrbnBCf32Ebkfrbu6bu0U+2/tvxzfUnFjfDQ8hTlRlOSvcwPPO36+GBfO+jcwswY/iDGHNarovACeUcRtdTx59mTKP57B8hGyQyk6uabrlOB3iIBkNuIlX2kWl7SsDM6lBUWgZgMg8pDA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=AHCgqxK1; arc=fail smtp.client-ip=40.107.13.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Pndu0IhEOfVOZwVoWiMJ4APvb5/Yj99iANYTmK37T7Ptesu+6MZVBP9PWir3wkGJagP/QjIdjFwTStskFqrXWrCWXV/LWHWgUdrfIMmMTpHVDPhFc1EgZhqnstK+RKoj1R5i7tFHy9g/p9jKjrTWe5lpMbGmkP932hJBUbZTptXG/awZ/Q62+M65Y2FZhYyD/jqikSA6UvmnoEOU4z+E7BzkPOvTDKs4a7O/EyA43x+ecT5f99Q29NnqmGlSUXs1uFLItzDP6u/l+sJRRlG0Td7NQoevWenjLnb1yabSyuvlSao75SG/UU6l2JLCZonMB5+AyRfTanixU/Wgf8pbeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uNd0AxzmjkVG+XQaOEYgGmjrw87eyw54tLK+Tm5/TXY=;
+ b=oXfQxO3C+Gp1bMVZ8iX6rjSrC8qvrlrR10s+GmzgROuEXvFJQ9Pl35Z1BbJHtkkmssfJHQg8VkZK0K7kl3TCd1tgYSZklzZhmWpk5XrmJ6yBHcOu6XhgtWO7EmLUlu8xsDXIwTsNaNxE5gnpljHJY9oO8Oh7g8rM0stNozmAiv5LHFuKIvFJeUwXjCOJT8zJaXEgTOU09cjEHnAkO8YSsxuypf4ivavhdSktk/2qRAu6BerXWecD/k1Q2XcG24XXupUFlirgzhFaoqn/3Wkvue+eWRyNBp2zZgOcCe2oGjCzMhyrDTEe+3xdMRFtmVjGZqoJdReveLuklJrQlGReXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uNd0AxzmjkVG+XQaOEYgGmjrw87eyw54tLK+Tm5/TXY=;
+ b=AHCgqxK1F+mJQT7aTxo6xrWxSmRYk6tiJgONAp0DvmF0XnEMqPESUYNlRc9M1INUB5OFgK8X3e0+mz0FBtbBMCGLMVd8t8jBf4835TBT9xpPPiUg4Nl/ftDZcPn1dDBMGkr/vB3qFdLY5qABoF+E0GALTVseZPwHmJ650PVu7n8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DU2PR04MB8567.eurprd04.prod.outlook.com (2603:10a6:10:2d6::21)
+ by VI2PR04MB10978.eurprd04.prod.outlook.com (2603:10a6:800:27e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45; Fri, 17 May
+ 2024 11:15:22 +0000
+Received: from DU2PR04MB8567.eurprd04.prod.outlook.com
+ ([fe80::4db:3dc0:c292:493a]) by DU2PR04MB8567.eurprd04.prod.outlook.com
+ ([fe80::4db:3dc0:c292:493a%6]) with mapi id 15.20.7544.052; Fri, 17 May 2024
+ 11:15:22 +0000
+From: ziniu.wang_1@nxp.com
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amitkumar.karwar@nxp.com,
+	rohit.fule@nxp.com,
+	neeraj.sanjaykale@nxp.com,
+	sherry.sun@nxp.com,
+	haibo.chen@nxp.com,
+	jun.li@nxp.com,
+	guillaume.legoupil@nxp.com,
+	salim.chebbo@nxp.com,
+	imx@lists.linux.dev
+Subject: [PATCH] Bluetooth: btnxpuart: Shutdown timer and prevent rearming when driver unloading
+Date: Fri, 17 May 2024 19:15:35 +0800
+Message-Id: <20240517111535.856723-1-ziniu.wang_1@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM0PR03CA0050.eurprd03.prod.outlook.com (2603:10a6:208::27)
+ To DU2PR04MB8567.eurprd04.prod.outlook.com (2603:10a6:10:2d6::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHGBFrPkdm3V+kMw--.2732S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxGrW7uF4UAw1DCr4fGFW8Xrb_yoWrGry5pr
-	s7K3Z8CrsrK347ZF1kXF1jvw1Fy3WrAF409ryfGrn7Za4DXr1Iyrn2gF4rKa1Utr4DXw4Y
-	qFs5tayUuas5AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBE14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM2
-	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
-	xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
-	vE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
-	r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04
-	v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_
-	Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x
-	0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWx
-	JVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
-	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd8n5UUUUU
-	=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8567:EE_|VI2PR04MB10978:EE_
+X-MS-Office365-Filtering-Correlation-Id: 236a58e1-6019-436f-16e7-08dc7662a46c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|52116005|376005|1800799015|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?pIjR4YKiOZSQ7VOvyPl3EsXGy/bX915KAJ2cEBfBbwPoL8Nq1SpE2a9N/hJ4?=
+ =?us-ascii?Q?FEWzRvz94xLHEyoWfI8QlnlDZtFN8kf/4VoNXqnTPuHiGsXVlVtlgC+5EJo9?=
+ =?us-ascii?Q?oGSfSuVm8UCYtEH6P6y/zQXv5PHGrpdpBz5jeaXEBx4BJOmqKU9pvQBIgYII?=
+ =?us-ascii?Q?8sRtB9n3Zr0rVmF5nt8AHsxnz+5ef9s9rMvRuh5SW/NvRnJl8CFuOqGCOwPt?=
+ =?us-ascii?Q?ToH4bjYK1y4mjfWPNUmPzUr2rf/yUTJ+U/ga4P5RlndRHnVKI9jZVLCGvp2L?=
+ =?us-ascii?Q?basFrrvHlB1ouCdC9HQZKf5UJByrb6zOJsYUHROYUMX79EYkwW4r6LqbK+QH?=
+ =?us-ascii?Q?UK7EM0s2gdMY6Fog9AQnYhdikJuY6rZ5NhEZazl3+mq0E1LE9hOorbFnk3Dr?=
+ =?us-ascii?Q?Rl2kbzcjuXc4XN8a5L/HrgUn4IUd+vfwh0AqO1nQ6a6NLg9jH4xWV1VbJ37k?=
+ =?us-ascii?Q?bUlW6fZnouKpdLMbDESpAgwB22ZS8UbySW1zqwf7eEEXDazle0+/nEYKsAFN?=
+ =?us-ascii?Q?/DNnX4ioPLZ/cwZWVAWkcfJtW+oOozum9YtsGw/UbzwaFi56uV86nwqpMJN2?=
+ =?us-ascii?Q?0D17oUVY4XwXQ9zc9g4zG+p2jsKZmy146AN+x3ZFZyq2eaavRzdDq+59yb+X?=
+ =?us-ascii?Q?9WKS/+ZSWCPbPNffuYpeC4qB/V4EpMVF0TO6vwDofWLxWKplfG+ZudhH9ZKD?=
+ =?us-ascii?Q?hhc8j9CznSk3VxiGPW/oVFpwF+2Tu7y+VMqdVPutxZehhx6pJ+b5yi6LLjAv?=
+ =?us-ascii?Q?YgBWz/u4LXL+pdnvrjPW/ziShBUiyNVzMoJpupDewjXuFJdFBOzwCBR++1CW?=
+ =?us-ascii?Q?5JRbzI6oCG/jpFPtR4ANGShC+aysy+TwHZWkSd9vPSjIgw9eX/QRthrcoCOJ?=
+ =?us-ascii?Q?rOM/QHe0bKzJhOlPYz3dAJ/IAMPDL29Qd1LOL4dlISZLgB/EygpPvPPgps0Z?=
+ =?us-ascii?Q?ZiwaR8x0VNvBQF7NhDO5rLKWlSxP38m1Cq43jTJrFy7bDvBWrgeN+2Cb6eAu?=
+ =?us-ascii?Q?z4PcDQUCfcUf5uJvgdorTRt89cZdc9w7lDYtgJvQy+pOUW1ulWNhMKUP6tc8?=
+ =?us-ascii?Q?TgnKu8hPdZNXEjlNi0ZYlIQOXvq//B5C/22MhOM7errg39dtNCYpET31G7az?=
+ =?us-ascii?Q?CayY8B3RI9q0OQ5N3jupievHdjloP1Bz0sOOwYW/pNjFlgox3smTs9S/gAtC?=
+ =?us-ascii?Q?7G0WD8AGpvoWJhX7Gvdmf54rYagFnvggOtOMQPP/Px9aqrSvEiBU8UNjoBEM?=
+ =?us-ascii?Q?yNJ2aDXhwdcGq4bPMA35w93he3tJIQCa1ztt4KRbMOwAZEyBOWXv0ud6QVbY?=
+ =?us-ascii?Q?7vBOm7MBq6YDvvQicAjvrVIMg7URs6Rdkgd+VFxZHZXiCg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8567.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(52116005)(376005)(1800799015)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?C75rsabimkniidpKhjdD6DpS+6mYE4m4QCzrMmIT0hoe1+Juf67tIyBZm6QM?=
+ =?us-ascii?Q?Az8+hje3AX/+1MeMWVggx4YzMqpr/8uUkZcuwi4NeUKl6hPaIjADdFn522uj?=
+ =?us-ascii?Q?6CC3359Sh33FhZ1CMpSejYse5bfrGZwuHlErQO0K8cSqN0BTAWZSX90yRnKQ?=
+ =?us-ascii?Q?8sKGvon91410KpErqmlPq8EB3i82W+eNHSGsDPQE1hCQ8jgKbdDjI+V0DVaW?=
+ =?us-ascii?Q?A/BNWPY+R3pF7Ks6ZR2k/9yl9Ceo7AKhj/MgbyWqY8mziJ5SdhrpKmdrlUmy?=
+ =?us-ascii?Q?0Q27IH/ZeFB8Mkp4V6G17roBz+61Yf+UqF782P0KxcIie976Ej3M3AZVht5b?=
+ =?us-ascii?Q?0T5o3NF7qsICNyfWy4GQT+HFFPPkdrJPGB8gLS+qR7zE2AFCczp41yDTi3rq?=
+ =?us-ascii?Q?mbyTFtFUO4Y/ey89nO/vImdYfwOEObBgFnKsYvhR+ImSsw+MCAglTJAdDnxF?=
+ =?us-ascii?Q?oUncN/ahGKa2rTtROo9kripgjst0FwEu7xPZoDh8YVrPYSdrQBh1Mvsowwdh?=
+ =?us-ascii?Q?OrZPJjy44/XSH6mew0sawBy2XTUjEvllCgkM9C6BdcH+BniqW/6m0sGaoIZZ?=
+ =?us-ascii?Q?A7kQdzZiUOQqkpJ0AKuYnJch0i7R0IP1fvgZov7I11MQvSlZKmTdN3L25C1f?=
+ =?us-ascii?Q?1FSR8LPbO3qrREE7Mb2Gb4TGebEdF9q1D1nffJ8k819WP4o5i9uWXFsyoVjk?=
+ =?us-ascii?Q?ZNg+YujvIjLnzoWYK2qzeC9OKybUcZX835KJTKDdEKuDx4EJoEVO93V4N2VB?=
+ =?us-ascii?Q?1W3DqsUuxHsPlpsF0BB7pN6xav6OSzK2/irvzPxPOaCibFCmdzVA4hCmUaA6?=
+ =?us-ascii?Q?R5plPSwmpcOHOZD/fQ5avCWAFwkYIZZ1U52Oive6rL3EAsdjr6AmL4DIC72v?=
+ =?us-ascii?Q?PPj3rXZQR2KifP9L/y7qmHqdOmFOKQDUtQKjJVtFkEVeeQCVs/dgVFHv0oPo?=
+ =?us-ascii?Q?ShTlv9XpRUAJdJbgNZThDwQ1dfhTuctd4DGUSFYarEwOl6eh/4xZXb924wm4?=
+ =?us-ascii?Q?e5TNix+jexL03nUgaoEg3U/eDuNL2gyf8uyxKPxdzEnM6Dz2ZtNU+zbAtKCh?=
+ =?us-ascii?Q?nDatu6L1v3edzQ9mmrb88ZB3tzcAZC7dyqXsPC4R7AHf6RbP8BG+12QCbUPa?=
+ =?us-ascii?Q?r80JKXUBs9vDbf1C6wNEPMiJxG8Jhkoz24EwtWDlMHl59l9o3oj1gdiRIyom?=
+ =?us-ascii?Q?9dwk798ZGG80zfEX57wb+5RF6yt6bLZO3p34qbh+WemoIVamDcO9bXO15+Wf?=
+ =?us-ascii?Q?lbcljclYEIH1LWwcX8K9g3HgVPox97onDhRBuSBaigqQGudcTCrr7NyZ2mSy?=
+ =?us-ascii?Q?HhdUojEQHDBo72Vhshcub+MsByWFj2H/zrrNiJNY7rTnIvDua3Be2vVee3dG?=
+ =?us-ascii?Q?Gw9AaEp+DwWYlzQI1u47oo4fEFK9Gg7yWvG7kyZZTaMvjxUMR0n87w0oP0xk?=
+ =?us-ascii?Q?VkR51MboP1KRzbv4Mk1bg699hfs568IKUozjDIvbgTEknVjrZDS6VcTEovhv?=
+ =?us-ascii?Q?vLLED7exX8TKuuVEHG6yIdpyI73goINRJ5EDiEw3o58pTke0fr6yAhj2Xc7h?=
+ =?us-ascii?Q?ivpuyRc7frtyUebieeXoROdteMcsQh/WY5f0QmTR?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 236a58e1-6019-436f-16e7-08dc7662a46c
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8567.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2024 11:15:22.1052
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: G9jq57Ls6o3tRdZEmKuA/MMgpdpbBpI+MVQ3V/vUU9rqqGaRrM5PCpXfcR+gKdeKc9QH0lalz6D6g2WP/Yeg9Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10978
 
-From: Zhang Yi <yi.zhang@huawei.com>
+From: Luke Wang <ziniu.wang_1@nxp.com>
 
-When truncating a realtime file unaligned to a shorter size,
-xfs_setattr_size() only flush the EOF page before zeroing out, and
-xfs_truncate_page() also only zeros the EOF block. This could expose
-stale data since 943bc0882ceb ("iomap: don't increase i_size if it's not
-a write operation").
+When unload the btnxpuart driver, its associated timer will be deleted.
+If the timer happens to be modified at this moment, it leads to the
+kernel call this timer even after the driver unloaded, resulting in
+kernel panic.
+Use timer_shutdown_sync() instead of del_timer_sync() to prevent rearming.
 
-If the sb_rextsize is bigger than one block, and we have a realtime
-inode that contains a long enough written extent. If we unaligned
-truncate into the middle of this extent, xfs_itruncate_extents() could
-split the extent and align the it's tail to sb_rextsize, there maybe
-have more than one blocks more between the end of the file. Since
-xfs_truncate_page() only zeros the trailing portion of the i_blocksize()
-value, so it may leftover some blocks contains stale data that could be
-exposed if we append write it over a long enough distance later.
+panic log:
+  Internal error: Oops: 0000000086000007 [#1] PREEMPT SMP
+  Modules linked in: algif_hash algif_skcipher af_alg moal(O) mlan(O) crct10dif_ce polyval_ce polyval_generic   snd_soc_imx_card snd_soc_fsl_asoc_card snd_soc_imx_audmux mxc_jpeg_encdec v4l2_jpeg snd_soc_wm8962 snd_soc_fsl_micfil   snd_soc_fsl_sai flexcan snd_soc_fsl_utils ap130x rpmsg_ctrl imx_pcm_dma can_dev rpmsg_char pwm_fan fuse [last unloaded:   btnxpuart]
+  CPU: 5 PID: 723 Comm: memtester Tainted: G           O       6.6.23-lts-next-06207-g4aef2658ac28 #1
+  Hardware name: NXP i.MX95 19X19 board (DT)
+  pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+  pc : 0xffff80007a2cf464
+  lr : call_timer_fn.isra.0+0x24/0x80
+..
+  Call trace:
+   0xffff80007a2cf464
+   __run_timers+0x234/0x280
+   run_timer_softirq+0x20/0x40
+   __do_softirq+0x100/0x26c
+   ____do_softirq+0x10/0x1c
+   call_on_irq_stack+0x24/0x4c
+   do_softirq_own_stack+0x1c/0x2c
+   irq_exit_rcu+0xc0/0xdc
+   el0_interrupt+0x54/0xd8
+   __el0_irq_handler_common+0x18/0x24
+   el0t_64_irq_handler+0x10/0x1c
+   el0t_64_irq+0x190/0x194
+  Code: ???????? ???????? ???????? ???????? (????????)
+  ---[ end trace 0000000000000000 ]---
+  Kernel panic - not syncing: Oops: Fatal exception in interrupt
+  SMP: stopping secondary CPUs
+  Kernel Offset: disabled
+  CPU features: 0x0,c0000000,40028143,1000721b
+  Memory Limit: none
+  ---[ end Kernel panic - not syncing: Oops: Fatal exception in interrupt ]---
 
-xfs_truncate_page() should flush, zeros out the entire rtextsize range,
-and make sure the entire zeroed range have been flushed to disk before
-updating the inode size.
-
-Fixes: 943bc0882ceb ("iomap: don't increase i_size if it's not a write operation")
-Reported-by: Chandan Babu R <chandanbabu@kernel.org>
-Link: https://lore.kernel.org/linux-xfs/0b92a215-9d9b-3788-4504-a520778953c2@huaweicloud.com
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Signed-off-by: Luke Wang <ziniu.wang_1@nxp.com>
 ---
- fs/xfs/xfs_iomap.c | 35 +++++++++++++++++++++++++++++++----
- fs/xfs/xfs_iops.c  | 10 ----------
- 2 files changed, 31 insertions(+), 14 deletions(-)
+ drivers/bluetooth/btnxpuart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 4958cc3337bc..fc379450fe74 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -1466,12 +1466,39 @@ xfs_truncate_page(
- 	loff_t			pos,
- 	bool			*did_zero)
- {
-+	struct xfs_mount	*mp = ip->i_mount;
- 	struct inode		*inode = VFS_I(ip);
- 	unsigned int		blocksize = i_blocksize(inode);
-+	int			error;
-+
-+	if (XFS_IS_REALTIME_INODE(ip))
-+		blocksize = XFS_FSB_TO_B(mp, mp->m_sb.sb_rextsize);
-+
-+	/*
-+	 * iomap won't detect a dirty page over an unwritten block (or a
-+	 * cow block over a hole) and subsequently skips zeroing the
-+	 * newly post-EOF portion of the page. Flush the new EOF to
-+	 * convert the block before the pagecache truncate.
-+	 */
-+	error = filemap_write_and_wait_range(inode->i_mapping, pos,
-+					     roundup_64(pos, blocksize));
-+	if (error)
-+		return error;
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index 7f88b6f52f26..77f974a5251b 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -328,7 +328,7 @@ static void ps_cancel_timer(struct btnxpuart_dev *nxpdev)
+ 	struct ps_data *psdata = &nxpdev->psdata;
  
- 	if (IS_DAX(inode))
--		return dax_truncate_page(inode, pos, blocksize, did_zero,
--					&xfs_dax_write_iomap_ops);
--	return iomap_truncate_page(inode, pos, blocksize, did_zero,
--				   &xfs_buffered_write_iomap_ops);
-+		error = dax_truncate_page(inode, pos, blocksize, did_zero,
-+					  &xfs_dax_write_iomap_ops);
-+	else
-+		error = iomap_truncate_page(inode, pos, blocksize, did_zero,
-+					    &xfs_buffered_write_iomap_ops);
-+	if (error)
-+		return error;
-+
-+	/*
-+	 * Write back path won't write dirty blocks post EOF folio,
-+	 * flush the entire zeroed range before updating the inode
-+	 * size.
-+	 */
-+	return filemap_write_and_wait_range(inode->i_mapping, pos,
-+					    roundup_64(pos, blocksize));
+ 	flush_work(&psdata->work);
+-	del_timer_sync(&psdata->ps_timer);
++	timer_shutdown_sync(&psdata->ps_timer);
  }
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 66f8c47642e8..baeeddf4a6bb 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -845,16 +845,6 @@ xfs_setattr_size(
- 		error = xfs_zero_range(ip, oldsize, newsize - oldsize,
- 				&did_zeroing);
- 	} else {
--		/*
--		 * iomap won't detect a dirty page over an unwritten block (or a
--		 * cow block over a hole) and subsequently skips zeroing the
--		 * newly post-EOF portion of the page. Flush the new EOF to
--		 * convert the block before the pagecache truncate.
--		 */
--		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
--						     newsize);
--		if (error)
--			return error;
- 		error = xfs_truncate_page(ip, newsize, &did_zeroing);
- 	}
  
+ static void ps_control(struct hci_dev *hdev, u8 ps_state)
 -- 
-2.39.2
+2.34.1
 
 
