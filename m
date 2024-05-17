@@ -1,105 +1,137 @@
-Return-Path: <linux-kernel+bounces-182004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746348C84F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:41:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 912648C84FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157851F21351
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 461C9281E76
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0A539FE0;
-	Fri, 17 May 2024 10:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="adyVflj7"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485523AC2F;
+	Fri, 17 May 2024 10:41:32 +0000 (UTC)
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C48364AB;
-	Fri, 17 May 2024 10:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E093BBD6;
+	Fri, 17 May 2024 10:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715942478; cv=none; b=dmyX/ORfK7jE+c4E/sWvGvm60dKTkulmvwhIXhD4jBLa0KKbKGAlAVXUzw4xGk6fnYSPd+zkG7FpdWU7SQeSGX76Gejmp+xkaOgIxn/keIeizPtPErS4rrRLXZ3gRkzNGHOsKV98c63qRekxo7vBmJfYAZRGSBFZ5ikcD0PPT+o=
+	t=1715942491; cv=none; b=ITlZ6vHYSXsJGkkKRvn4ArNZuwzkJ+8Y59DNhOO7Qkf840PagJYR1jHFG8Ee18loQMoPUIlXXGh9BoOP83C2KLE9UsTI9HG7xwlLTbPzoFfo7eMbC2quGgh2+of1a7kZmjoqu7JX8Rh2G4ZhUOTXuHPPda7b3oKDCx0+Wq1h/6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715942478; c=relaxed/simple;
-	bh=HnELnEyUYaEKQpflPqcDhBPrjVZ6I+K13o1A83gtzZg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JQ/oq6foEjL/hAdnSIffQBgjEWBcOpGIFTQavFf/OEehOkn+NBXEcNA/jFqR0+yG8gK2ssWHyiKUfZM679YjzyFz5ERhhCf7Im2yW6YRjkDcctmLzhmEhvIH562G6WTLE0nNmGyAVUnvb0nQ61xfUtRpo8zaETL0ED2hp5qkkKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=adyVflj7; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1715942491; c=relaxed/simple;
+	bh=k3G9L96yDt5S3vX+qLFsoaeZaw/80iveTPwMckiRdjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IRGW5nSAJ/XEIsyIWzxhdPsubOaJyHhczXh+BJQRaCmFbmRkpGVPzkOuQemg56YtLqiNwXYZGuT3Xzwh9n8PptGEATCrlDigCScKU9uZwodflUo2GY5lLTxrySDsLg4xocXzR1b+VPjTitBX1f/JuDJ9OQJmJ9xhoPCV0P2eOyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1e83a2a4f2cso2602545ad.1;
-        Fri, 17 May 2024 03:41:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715942477; x=1716547277; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HnELnEyUYaEKQpflPqcDhBPrjVZ6I+K13o1A83gtzZg=;
-        b=adyVflj7nCc+6gD08I6huhizTRHZgdCB7YkH81R3p3WshtwccUvD0KkFdwYxWwAnaP
-         huoMB5eGUsxOkulZYb4QjSfaXFoe0khyzrOfd0KMZnBN4GnqCmSI5K2n6/w1/HPF/Epr
-         kcx9ndK/U3gExZYW0pVBZmCkIH3ttjVY+7TseEFDNIexQRF9saYyadvYxd5KEylx6aMp
-         jvlKgsa8LVHOzvON2RccyppMUUGBl2pt6CFII8+CKB8W6PIytv3mXE2fm1e2AqOPk3IT
-         LKqSfAGgSeS1qCNKlSENgyYoTY3YdX7LDQTSj4WOZIOoJbEw+qj0EsW78u7cyzPBDGrF
-         6KOw==
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5b2733389f9so662135eaf.1;
+        Fri, 17 May 2024 03:41:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715942477; x=1716547277;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HnELnEyUYaEKQpflPqcDhBPrjVZ6I+K13o1A83gtzZg=;
-        b=H1JYb03oPGazrOS+892rwCBkuEyaMs++OJMKXqQUtXgW4g4jXjz33LLvkYWMd8G0zG
-         2Bm9Zrjobrm0sxV125PmlHRjidO1QGarQfWfBM7/eHcxknF4kJA0NlqXhOYpaCbiwYzt
-         bEMV6tZu7DUDEkBjUtCf5QP1+GWj3LbuTAOhxz15i13n6LNYH03NNi2AUa/Ro+HAHVrZ
-         hVyJYBGhfK8T04r1ySvEKdCq6pMQ4XEOgFec6U57ZItNacbijKhDsjqvoHOZOZwMB2Qe
-         APdqGLaJsnJNCk8JF+vimWPB1/QRkxNIbzoqVB3Wu06qYagWwzGIdZYDzISHKrcTopKy
-         3RZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvrHuKYdUHEaVrmBTyEPXtC1YV6iVtaFq7KNc1QvFANN1+YXY4gPdlhI8AebYW6AmsaCdU54svSUr84J3BLAWgswve6CuMVEujJQxWsakszOaBy3eKNQLaFNH/O+91tum62MBa
-X-Gm-Message-State: AOJu0YwXQ4X765rDuO4y4H5O5+vd23Oh4vAOa/xNQkblW1qd2lhyG5ro
-	EgLr/9XR3yIgTfG1ueHUGAvx3ackzGweTol0jMevyOiRtxeMjPBzc676Kno7RxML2g2NBdZqSxi
-	JDYGB/JowNhn8mdLc8oxedTl+jZk=
-X-Google-Smtp-Source: AGHT+IHuZeKXtTVhGQKp1k29cbNkxgUfOuOsqfJ7eybmj4e6pQ5Rztp131C+Gw30g0TdCnnwnVqbyby7gn/y+vnmB+Y=
-X-Received: by 2002:a17:90b:1d05:b0:2b8:e75c:c7e3 with SMTP id
- 98e67ed59e1d1-2b8e75cc8abmr13712438a91.6.1715942476620; Fri, 17 May 2024
- 03:41:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715942489; x=1716547289;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8ep6WjZ/XECenrwVHNZ6CdFGyjtlB5or+xofNQVT1ak=;
+        b=PzWYfdf83hT2gBixdJijrHJgZUu0NL9U4wppwYHCmIOf5ajCjRj/uRtoAwu/CxeZPS
+         xfxHWLoiXz7qDtFcuV1xPOgduXLjRS8ci1njhTIn43M3l+UoDlzBsqFp9wyA2qda+uHP
+         69J6tf92Zi3LDRQ8IGEOEt4+ZFVuDjQG6lDSy6z2j76HvZNp0j9qondWaQUJGtYJ4LGU
+         y92Lc+jyQLO+RB1bvzFxDEMwARLcOi0GjqWduG3UfuF3JQzeZOQFt2dMFP/kV/HfbnR5
+         yZo3id1I6IwQOg3gVTxlznqDolqv2ubjKWqQeXR0nIE5yPIQmGVBT2R4Axvy7hOSQ+I4
+         tmVw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1T5Jzzi5YWeDpa9AzrJn0UoNm3ltKj+OFo81AGoIkY1mPuC0bZLsOCD2H5YIdVxA+G07zl0q0ivPAkKEQO2GgblP7mIn7MfStxt1R36VK/xUOBD2E3g8SI8V96B4+tifkI8F6EKnzDP0qJJiGf7B2coX80YL/r0f/+pbsaMg0M4JFafkxWHz0BXtgDH9TidhCrWVoZN7W/VM7R0jNuvlVXOHikxadvWQaOqypo+27h1Ko6kL46NgJGDi69bSBn+YmZubvEw==
+X-Gm-Message-State: AOJu0YzJn/pyqDE9JfprPMbEAzv6Tt5i6XpTSVqWdcDhx0Q2fWrKkrkS
+	2rkmdAGuPyGxjXIddfsmapxmgw5tm8Kj5YcRsqbZ9cFFY8bpeIbw
+X-Google-Smtp-Source: AGHT+IHryVBDZpZ02HKgPHTEO7zKqNKHDK8Mg2XTift9Qc3NF8SYMoDnU3GekdswLqk1/o4nC69OcQ==
+X-Received: by 2002:a05:6358:c005:b0:18a:78c2:7ccf with SMTP id e5c5f4694b2df-193bb628645mr2477851655d.13.1715942489450;
+        Fri, 17 May 2024 03:41:29 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-658764fda40sm3257811a12.5.2024.05.17.03.41.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 03:41:28 -0700 (PDT)
+Date: Fri, 17 May 2024 19:41:25 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Srikanth Thokala <srikanth.thokala@intel.com>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Mark Kettenis <kettenis@openbsd.org>,
+	Tom Joseph <tjoseph@cadence.com>,
+	Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: PCI: cdns,cdns-pcie-host: drop
+ redundant msi-parent and pci-bus.yaml
+Message-ID: <20240517104125.GJ202520@rocinante>
+References: <20240413151617.35630-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516091232.619851361@linuxfoundation.org> <ZkYCYxoxqrwlVSI5@duo.ucw.cz>
-In-Reply-To: <ZkYCYxoxqrwlVSI5@duo.ucw.cz>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 17 May 2024 12:41:04 +0200
-Message-ID: <CANiq72k_JQVy=xYeFYb4h-gds=_4HPcV_1uBmUnaveSXVBPkdA@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/244] 6.1.91-rc3 review
-To: Pavel Machek <pavel@denx.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, richard.weiyang@gmail.com, 
-	masahiroy@kernel.org, ojeda@kernel.org, stable@vger.kernel.org, 
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
-	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240413151617.35630-1-krzysztof.kozlowski@linaro.org>
 
-On Thu, May 16, 2024 at 2:56=E2=80=AFPM Pavel Machek <pavel@denx.de> wrote:
->
-> These are marked as Stable-dep-of: ded103c7eb23 ("kbuild: rust: force
-> `alloc` extern to allow "empty" Rust files"), but we don't have
-> ded103c7eb23 in 6.1-stable, so we should not need these.
+Hello,
 
-I think what happened is that I asked for ded103c7eb23 to be dropped,
-but its deps didn't get dropped.
+> The binding reference common cdns-pcie-host.yaml, which already defines
+> msi-parent and has a reference to pci-bus.yaml schema.  Drop redundant
+> pieces here to make it a bit smaller.
 
-Having said that, "kbuild: specify output names" was a fix in its own,
-so we may want to keep it anyway (with its fix).
+Applied to dt-bindings, thank you!
 
-Cheers,
-Miguel
+[01/04] dt-bindings: PCI: cdns,cdns-pcie-host: Drop redundant msi-parent and pci-bus.yaml
+        https://git.kernel.org/pci/pci/c/51ef0538d4e1
+[02/04] dt-bindings: PCI: mediatek,mt7621: Add missing child node reg
+        https://git.kernel.org/pci/pci/c/36fbed38549c
+[03/04] dt-bindings: PCI: host-bridges: Switch from deprecated pci-bus.yaml
+        https://git.kernel.org/pci/pci/c/5db62b7d3c37
+[04/04] dt-bindings: PCI: mediatek,mt7621-pcie: Switch from deprecated pci-bus.yaml
+        https://git.kernel.org/pci/pci/c/d3fa4be9033b
+
+	Krzysztof
 
