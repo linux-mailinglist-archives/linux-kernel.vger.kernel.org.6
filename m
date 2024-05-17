@@ -1,122 +1,101 @@
-Return-Path: <linux-kernel+bounces-182167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6AE8C87A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:58:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6F08C87AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 613221F23058
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:58:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4131C20F9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8336556742;
-	Fri, 17 May 2024 13:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C3F56742;
+	Fri, 17 May 2024 14:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KB3cZuft"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bkOxqJIf";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J9LyTOl7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09FB3B1AE;
-	Fri, 17 May 2024 13:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5A52F36
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715954301; cv=none; b=t8LlFNz+kZb2+Bl+1ako4umPB5f+EVA7/uDBKMK7MvxuKSdJ7IZXJVkpX7IvJj3ncyQBp2NOGXW5AlyceO7N+fcn67ljv9yfMgdTVRKrSexcdkTvULq4wYIOi+mupIoMDYkCoBbqxcC3PrD3UtrLopLA7hIKQfcAsa+BUiNRko0=
+	t=1715954441; cv=none; b=DhV81pLMX901qr6eUUwUuC1lN2c/jyckOJi6dMjo6BdOFvmz4ap5JrDImrl3FsG0Z8uAUVu0JvdtxfcjK5LCSDniDjRzPqmIVXHi3nOUs57fMGMrWlkhMi9wR/erkSUXOpXH20fYTmejc8V+Q21J2R9+UdxI0tVtGcc+DCQR5to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715954301; c=relaxed/simple;
-	bh=+dsbdBjhGrjm4WBAkfNNWSaDLuo2cRZvTPsNHLA+HzM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qsZgYdWxgu2fIaEKQ+vRs0+HRuUxRWeb+FnjGdQiT9pcD3ljuasJdsG2fl2SNUwoEMovepBYh+J1yK0keTDAKKolL5bIcfViDfB+SGB5GUYoV3I8cP9yT2WF5t6KtAunvmRlDOWNTPr117kcD7iFpkFtfWpa0q12eiuLNYz5oWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KB3cZuft; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1715954300; x=1747490300;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+dsbdBjhGrjm4WBAkfNNWSaDLuo2cRZvTPsNHLA+HzM=;
-  b=KB3cZuftFQW/AdUrm3kFtkMbHGK0LoWT262YTfYYefJk9hcgDVE9QsMp
-   tnddwFR1V8sXslRKW7ebrxo8cnCygsQmQ+ZntxnyY1qCxz1vpLX6GvCju
-   isk8tC18MymYvwWTaRPTvyB7YmUT4t4CxnfsonxMAKIXC7eR9E3z5mJa5
-   U1FDj6oqkTB39jB+0UI3vA/nq1S/DmCAGnBOhfiUDYKi4rWRGcoFE8TDB
-   mNjavp/lC9c5oUeMP1TmzhQLzMIEcCuyTJ41pvkpiJ3yazjMy6DLOUxQ9
-   aRYn402olCqBxJlUI0XfR2nmBOiihJxcFjjlJamJXnPVNr/eyUMN94M/G
-   w==;
-X-CSE-ConnectionGUID: ufAfKQToSxqUayt+FPsL2A==
-X-CSE-MsgGUID: 27KVWmirSw2qpnX6nz50SQ==
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="25061077"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 May 2024 06:58:18 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 17 May 2024 06:58:15 -0700
-Received: from DEN-DL-M31836.microsemi.net (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 17 May 2024 06:58:12 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <vladimir.oltean@nxp.com>,
-	<jacob.e.keller@intel.com>
-CC: <UNGLinuxDriver@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Horatiu Vultur <horatiu.vultur@microchip.com>
-Subject: [PATCH net v2] net: lan966x: Remove ptp traps in case the ptp is not enabled.
-Date: Fri, 17 May 2024 15:58:08 +0200
-Message-ID: <20240517135808.3025435-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715954441; c=relaxed/simple;
+	bh=ytdeAf0glZLyve4PWQhSbfcQygB6RzOA8XdVccE6Tew=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FZr03wTkKd79IJPLEYiyjK/a2nj9/mS8SDFkVhtwVw06EHOy9VIsFa/QdtMjPu3c0yKMO04XKyXxxBG7ySFLxEb0cW9Uj/uftAC//swgRuIXdItWFfdICuLVD2r35N2DgPck74c7kV0yX4bVyzbxpIZmSNwQBD/+54Hc2Vr9CQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bkOxqJIf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J9LyTOl7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715954432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q4wyyBXc4N3xqeEACKaiHFG8PL3HToOEG4cld2DUxs4=;
+	b=bkOxqJIfaFocP7nbNqpXGe85oC/EjKmt+gi9SRcXpA84N3hFlMe9i2k7MV8l43oWCn1SSJ
+	jQM9uZGN7IwKG9rkNJOgevJM86Q1oiiYNecndQrjqo+pxGbspd4DmVfLditlKVNtv+i/WC
+	lIdiKdRdO7/DQclXA7CJjkaD20bEJK5ZQshImv9wn9UeRuZWnWC4a6FyWLT7Yvbx0ek2YP
+	gjwAAxdyJIxDtsLAjYzrYdPNQgTdyNkTGjh11fLbpzB9Qrf0PzunBS/TNhA2uSpCsf4SOX
+	PxvmfSyFGn0EiZSHMf+4PIGrqYbZcFffQF2TKFg+gW9gzqsBQxqNxoacPkEjOw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715954432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q4wyyBXc4N3xqeEACKaiHFG8PL3HToOEG4cld2DUxs4=;
+	b=J9LyTOl7z2P9OQ2yEuZLxu9UAKPramcI31ENF2utUPm04FeNNOS1mzfmi2UwYru/NGQW1b
+	gDEHiNideqBQbpAA==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v5 06/30] printk: nbcon: Add callbacks to
+ synchronize with driver
+In-Reply-To: <ZkdcFxW-e9LVmMd8@pathway.suse.cz>
+References: <20240502213839.376636-1-john.ogness@linutronix.de>
+ <20240502213839.376636-7-john.ogness@linutronix.de>
+ <ZkdcFxW-e9LVmMd8@pathway.suse.cz>
+Date: Fri, 17 May 2024 16:06:30 +0206
+Message-ID: <87bk54y1vl.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Lan966x is adding ptp traps to redirect the ptp frames to the CPU such
-that the HW will not forward these frames anywhere. The issue is that in
-case ptp is not enabled and the timestamping source is et to
-HWTSTAMP_SOURCE_NETDEV then these traps would not be removed on the
-error path.
-Fix this by removing the traps in this case as they are not needed.
+On 2024-05-17, Petr Mladek <pmladek@suse.com> wrote:
+> BTW: I wonder if you use AI for generating the commit message.
+>      My experience is that AI produces longer fancy sentences
+>      which might be good for a novel but they sometimes hide
+>      the important details.
 
-Fixes: 54e1ed69c40a ("net: lan966x: convert to ndo_hwtstamp_get() and ndo_hwtstamp_set()")
-Suggested-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
-v1->v2:
-- as suggested by Vladimir, add the check before programming the traps
-  in the first place
----
- drivers/net/ethernet/microchip/lan966x/lan966x_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I do not know if that is a compliment or an insult.
 
-diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-index 2635ef8958c80..fbff37067ab78 100644
---- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-+++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-@@ -474,14 +474,14 @@ static int lan966x_port_hwtstamp_set(struct net_device *dev,
- 	    cfg->source != HWTSTAMP_SOURCE_PHYLIB)
- 		return -EOPNOTSUPP;
- 
-+	if (cfg->source == HWTSTAMP_SOURCE_NETDEV && !port->lan966x->ptp)
-+		return -EOPNOTSUPP;
-+
- 	err = lan966x_ptp_setup_traps(port, cfg);
- 	if (err)
- 		return err;
- 
- 	if (cfg->source == HWTSTAMP_SOURCE_NETDEV) {
--		if (!port->lan966x->ptp)
--			return -EOPNOTSUPP;
--
- 		err = lan966x_ptp_hwtstamp_set(port, cfg, extack);
- 		if (err) {
- 			lan966x_ptp_del_traps(port);
--- 
-2.34.1
+For the record, I do not use AI. The "long fancy sentences hiding
+important details" are coming from a sober brain... mine.
 
+> My attempt of a more strightforwward explanation:
+
+[...]
+
+Your version does not mention why the generic code now needs to use the
+driver-specific locking, but I suppose that does not matter (and only
+adds confusion instead of explanation).
+
+I will use your version.
+
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+Thanks.
+
+John
 
