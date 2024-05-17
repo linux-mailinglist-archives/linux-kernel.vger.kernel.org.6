@@ -1,178 +1,96 @@
-Return-Path: <linux-kernel+bounces-181977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E52108C8486
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:07:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E801E8C8487
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13E1AB22BD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0AE28157F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6602C861;
-	Fri, 17 May 2024 10:07:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B311D2C69C;
-	Fri, 17 May 2024 10:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84B62E646;
+	Fri, 17 May 2024 10:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EsGD6JFd"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4FC2C69C
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715940437; cv=none; b=Y8UYxLZCUiFfjJ65UiKJF4ZfU6HS3TQ2CQg/E1C5S2P0I17XurRZNDstJQQCuiGpS/s4Hr89cExelH4mrixn0puBxDUoA9sw+BijzPe2F0u4HodA/jzvipxhnprFHNb6KYVmE2bf9WQWDwbI3BGAuQp2a/TH4V24zgCQnlEX9Ko=
+	t=1715940460; cv=none; b=lVX0EF8UrCVQHobFm5iW9UyRxnnDMVkbcz0NPZaLeN/eDqMnLGkW+o7xMlmYbUOWKTB82UC04HQCsxYE7kDBzqxns3QAyadVJR29O7d5KWvTgN6KRYDfpDwj/r22EBJ0TXF2N42UJJxmA/FYZB00g6dsbnZ0dWbH/qPZ7iNVwaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715940437; c=relaxed/simple;
-	bh=BJqMsVB43bEaeQTzv6ayAG8SZ7MmQLOamms5y4MGl+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f2cr5FAc061yxzxgF/Ln1sew6RHwZ4D8SHrruVPdKSPnw9oeyYoQsuEoqAbhVgFBJmlg1WndkBBi2zDZBNrMKvF9oLDA47aimrcYpXbXc60ETQqILX3MWsoHNXpW86gg/WFpm7OIYnht/AJp4Ol8WecSQwlnw4TPkxx9YGqDwi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB4251424;
-	Fri, 17 May 2024 03:07:38 -0700 (PDT)
-Received: from [10.91.2.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 286F83F762;
-	Fri, 17 May 2024 03:07:12 -0700 (PDT)
-Message-ID: <97c57424-6242-4ba1-8b46-6405c084645c@arm.com>
-Date: Fri, 17 May 2024 12:07:10 +0200
+	s=arc-20240116; t=1715940460; c=relaxed/simple;
+	bh=QBT+qEM2pjZjgyv+4u9pdeganrrxkRsrU8ojAFlzxVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nDTVQthh9kHy50/WY9FinSiw5n1EG3CztYXNjms1H3sM1rqg4ucF28Ij0nJC7z0vkdCGzexnGnHWetEOeYWEpzuLu+SlgymnO2RX+Yz8dCxuhwWdk7JOYLGRwOl2ItXtVLI73yjYhfkGPNzF8OwHK7TLEj8MlnxytZu2TwjpHS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EsGD6JFd; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B0B9040E0177;
+	Fri, 17 May 2024 10:07:35 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id J_hDZ4ChGJYP; Fri, 17 May 2024 10:07:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715940451; bh=fgsksDGvpkbJix4G3B/ukq5St7H0Tecp7h0VFNE9OKM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EsGD6JFdWu9djOpVDPQjfAulQGOZTQLNrkh3c+NuoidKKzrDFyNHXp0NyxP0emG5R
+	 lbJx1CyLDSVeeSbROqVwJ5b8T9s7piQEmz4ZEdikDdEvAXB+g7olLOXKfw4DF8mFLp
+	 kDnn+q9tu+JU1lgQVT9AsC9s38YhRhoy6dBGzM/y/nPZxAqn2bQPbK8+z9YDpGzkRo
+	 afWX9YFSEdX5o794dkx7jXHHb8b1s1nQYMgju8PHypj2s3LtKwWHEQtW866HyYrMHq
+	 ZZXsuSFSQKc+3sZeHHxTFAhml22GPTK5dGwaU7xhVdH+yBmDhjGQb7YZY66wqYpPd9
+	 2S29u1JFv8TSd1Gtfj2PH8Y7L3/3+GCZy+ZByIpsmGEPaxtMh0HPF6JP9mxv9kJ2bB
+	 i7I/XKdTNueq9sGk7BIC2+IQgHvyYiD7BbPLkvFMvdhDAn0lfI4MPGTRnhXURiN260
+	 KcTc0s7SCsU5KpUXtWtskHMtboAy9UZOU57NZb5trrIbZMdgOsotc8OuOyqaCQ541P
+	 8sT3zD7y9YpPBEgJldZZTy34m95S73Onm54RNyXwBwOd1rxQTtSZET2/10wXH/+d22
+	 FLqomnthGsfTaP/Wp1fKQ99eH6Z7hQthrJSkfXOk/4IyLsuddEOfJnYwRom0Abp4gh
+	 ebHl+79B+tLgV4C7CXZ/USik=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B4C7740E01E8;
+	Fri, 17 May 2024 10:07:20 +0000 (UTC)
+Date: Fri, 17 May 2024 12:07:14 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Jordan Niethe <jniethe@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, jgross@suse.com, ajay.kaher@broadcom.com,
+	alexey.amakhalov@broadcom.com, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	peterz@infradead.org
+Subject: Re: [PATCH] x86/paravirt: Ensure calls to pv_op functions are RIP
+ relative
+Message-ID: <20240517100714.GAZkcsUqHxScXJErxP@fat_crate.local>
+References: <20240517024224.995517-1-jniethe@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/17] coresight: Use per-sink trace ID maps for Perf
- sessions
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, John Garry
- <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-perf-users@vger.kernel.org, gankulkarni@os.amperecomputing.com,
- scclevenger@os.amperecomputing.com, coresight@lists.linaro.org,
- mike.leach@linaro.org
-References: <20240429152207.479221-1-james.clark@arm.com>
- <20240429152207.479221-16-james.clark@arm.com>
- <3923dc07-c037-452a-9e77-d407703876cd@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <3923dc07-c037-452a-9e77-d407703876cd@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240517024224.995517-1-jniethe@nvidia.com>
 
+On Fri, May 17, 2024 at 12:42:24PM +1000, Jordan Niethe wrote:
+> This has been observed at lower levels of compiler optimisation but
+> there is nothing preventing it from occurring generally.
 
+How can I reproduce this?
 
-On 07/05/2024 12:52, Suzuki K Poulose wrote:
-> On 29/04/2024 16:22, James Clark wrote:
->> This will allow sessions with more than CORESIGHT_TRACE_IDS_MAX ETMs
->> as long as there are fewer than that many ETMs connected to each sink.
->>
->> Each sink owns its own trace ID map, and any Perf session connecting to
->> that sink will allocate from it, even if the sink is currently in use by
->> other users. This is similar to the existing behavior where the dynamic
->> trace IDs are constant as long as there is any concurrent Perf session
->> active. It's not completely optimal because slightly more IDs will be
->> used than necessary, but the optimal solution involves tracking the PIDs
->> of each session and allocating ID maps based on the session owner. This
->> is difficult to do with the combination of per-thread and per-cpu modes
->> and some scheduling issues. The complexity of this isn't likely to worth
->> it because even with multiple users they'd just see a difference in the
->> ordering of ID allocations rather than hitting any limits (unless the
->> hardware does have too many ETMs connected to one sink).
->>
->> Signed-off-by: James Clark <james.clark@arm.com>
->> ---
->>   drivers/hwtracing/coresight/coresight-core.c     | 10 ++++++++++
->>   drivers/hwtracing/coresight/coresight-etm-perf.c | 15 ++++++++-------
->>   include/linux/coresight.h                        |  1 +
->>   3 files changed, 19 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-core.c
->> b/drivers/hwtracing/coresight/coresight-core.c
->> index 9fc6f6b863e0..d1adff467670 100644
->> --- a/drivers/hwtracing/coresight/coresight-core.c
->> +++ b/drivers/hwtracing/coresight/coresight-core.c
->> @@ -902,6 +902,7 @@ static void coresight_device_release(struct device
->> *dev)
->>       struct coresight_device *csdev = to_coresight_device(dev);
->>         fwnode_handle_put(csdev->dev.fwnode);
->> +    free_percpu(csdev->perf_id_map.cpu_map);
->>       kfree(csdev);
->>   }
->>   @@ -1159,6 +1160,14 @@ struct coresight_device
->> *coresight_register(struct coresight_desc *desc)
->>       csdev->dev.fwnode = fwnode_handle_get(dev_fwnode(desc->dev));
->>       dev_set_name(&csdev->dev, "%s", desc->name);
->>   +    if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
->> +        csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
->> +        csdev->perf_id_map.cpu_map = alloc_percpu(atomic_t);
->> +        if (!csdev->perf_id_map.cpu_map) {
->> +            ret = -ENOMEM;
->> +            goto err_out;
->> +        }
->> +    }
->>       /*
->>        * Make sure the device registration and the connection fixup
->>        * are synchronised, so that we don't see uninitialised devices
->> @@ -1216,6 +1225,7 @@ struct coresight_device
->> *coresight_register(struct coresight_desc *desc)
->>   err_out:
->>       /* Cleanup the connection information */
->>       coresight_release_platform_data(NULL, desc->dev, desc->pdata);
->> +    kfree(csdev);
->>       return ERR_PTR(ret);
->>   }
->>   EXPORT_SYMBOL_GPL(coresight_register);
->> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c
->> b/drivers/hwtracing/coresight/coresight-etm-perf.c
->> index 177cecae38d9..86ca1a9d09a7 100644
->> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
->> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
->> @@ -229,10 +229,13 @@ static void free_event_data(struct work_struct
->> *work)
->>           struct list_head **ppath;
->>             ppath = etm_event_cpu_path_ptr(event_data, cpu);
->> -        if (!(IS_ERR_OR_NULL(*ppath)))
->> +        if (!(IS_ERR_OR_NULL(*ppath))) {
->> +            struct coresight_device *sink = coresight_get_sink(*ppath);
->> +
->> +            coresight_trace_id_put_cpu_id(cpu, &sink->perf_id_map);
->>               coresight_release_path(*ppath);
->> +        }
->>           *ppath = NULL;
->> -        coresight_trace_id_put_cpu_id(cpu,
->> coresight_trace_id_map_default());
->>       }
->>         /* mark perf event as done for trace id allocator */
->> @@ -401,8 +404,7 @@ static void *etm_setup_aux(struct perf_event
->> *event, void **pages,
->>           }
->>             /* ensure we can allocate a trace ID for this CPU */
->> -        trace_id = coresight_trace_id_get_cpu_id(cpu,
->> -                             coresight_trace_id_map_default());
->> +        trace_id = coresight_trace_id_get_cpu_id(cpu,
->> &sink->perf_id_map);
-> 
-> We could either store the perf_id_map or the traceid itself in the
-> event_data isn't it ? Rather than passing the idmap to enable_source ?
-> 
-> Suzuki
-> 
+Thx.
 
-Yes the end result would be the same. By doing it this way I was keeping
-in mind the potential change for sysfs mode in the future. This way
-there is common path between the two modes.
+-- 
+Regards/Gruss,
+    Boris.
 
-IMO an argument is easier to understand, rather than having to know
-where/how/at what point the ID is initialised before calling
-enable_source().
-
-James
+https://people.kernel.org/tglx/notes-about-netiquette
 
