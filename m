@@ -1,123 +1,102 @@
-Return-Path: <linux-kernel+bounces-182522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0CF8C8C4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:39:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8E888C8C52
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 503801F21073
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:39:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0E21F2313B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282F813E04C;
-	Fri, 17 May 2024 18:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A8E13E02B;
+	Fri, 17 May 2024 18:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IFUQN0+f"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VBg5Yt1F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475CA433A6;
-	Fri, 17 May 2024 18:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67F8DDD2;
+	Fri, 17 May 2024 18:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715971152; cv=none; b=go5zxfueeAwavQlqX+fD6YaLyiwoywMdl5HBVNQodlVjodLRHbHfLiNjNrb5mQ5nnJei1Xn4zyHmtVoz8qq31R5ycQo9/qlXXbxA8tnMHYhQkGp1YhHLYNgXuKuU1Qg9fA07893uSfFObIhsqTxwy4BZTHCOEF3woUz0/64YbR4=
+	t=1715971436; cv=none; b=P71xOugPGZmIr/yZ9MhKh146LCqT7RXBk7Pp0O8S2xg3gNFaNhWYkC+771xIFke7skBR2HvQjXQxEPc2iXKRpSpeyllwVfzsX4I6vD0hOFT7LTNOXgnAtb/N33eGkls+Jkyc89DxKV19huchLtQnIfFbIb0Qtpi/ejZMDZXTLLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715971152; c=relaxed/simple;
-	bh=XjbV/dDMibbGeaSWigHuyPox9WqyXpKxSJ9Fnk5PmIg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SJo8joEoZHg8LvFjkjRgQiwrto8IWj/6dNd5Pp+s5rW/EWp276tNNH5v7UiZOMOQp84vmRj4TWHtK1av7t6JsKSAfI8jy1KScBaABk/z3WctjIA7qRmmdAdbU3Fyy6GqRlp9VVHcAD0K2ayWpluIsaBuFrMFJBWeX9yoNoLVJIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IFUQN0+f; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6343F60005;
-	Fri, 17 May 2024 18:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715971148;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MQ7u9L9F7F+dadEFYVniuXHGpmQQ9IaDZC1coQKlN20=;
-	b=IFUQN0+fQySFvQs40/92OM4Rw9bpLf2T3FAWIbtByl/HZ1fSz6CflMrs1uuekDlGVkf+rH
-	XivWXqepQgAO8O4sQ0VXDcPV44h/OSCdX5nA/uaOFb2UxpLSvdL8jE6kSAFhzb2CKVEbaR
-	6ghyt/pnaqxnFJD3I9RH4K8ebiojEepfpmBQbqW/COW+Kkcx31zG6RTstU8umeRaBxR6gC
-	+Y7kPqIm1RNkrkfSaCRT1n1vgJJ896xM+6Oj6P6+zUv6zZvys4KkePGixR3kvg8RdAUrDI
-	Bmb9MSoetIJIzJ6zIbKZFKieN8pF6hNRs579apctpFv2FKMVQrxYoxvcImulDw==
-Date: Fri, 17 May 2024 20:39:04 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Han Xu
- <han.xu@nxp.com>, Vinod Koul <vkoul@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Marek Vasut <marex@denx.de>, linux-mtd@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dmaengine@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/5] mtd: rawnand: gpmi: add iMX8QXP support.
-Message-ID: <20240517203904.2879419a@xps-13>
-In-Reply-To: <20240517-gpmi_nand-v1-3-73bb8d2cd441@nxp.com>
-References: <20240517-gpmi_nand-v1-0-73bb8d2cd441@nxp.com>
-	<20240517-gpmi_nand-v1-3-73bb8d2cd441@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715971436; c=relaxed/simple;
+	bh=rXPQJygbC0DMISP7QXzLWaPWajAHo71QuVi0X8fQ/pA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=o5JLPUiYGQUpDFSwY0df2RGFTjbX+BlzfEWfhOud6mOUUYMsClCMyH8tTUW+dyUBxtkIU6Hd+ldbkX//7uH69veBNjg5vOvVnm5/y+M9ap7bsM9HZZZTppYyA8dXAzmY02HpNnBlug3v8xS+sfADq7y8nSnMkIuu7yztBYlFEOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VBg5Yt1F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F235C2BD10;
+	Fri, 17 May 2024 18:43:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715971434;
+	bh=rXPQJygbC0DMISP7QXzLWaPWajAHo71QuVi0X8fQ/pA=;
+	h=Date:From:To:Subject:From;
+	b=VBg5Yt1FpfyOZusa/16xesupKHDQUs11gDGAIja2miCvaBHrkZJrc/7VYKJrIr59/
+	 sRqvnVuaXaxtJqVZohHtX5vC5fKr25WOH+c4VZ+m4Y/qmioB4Wny0CTOTAVZMWYMjo
+	 UtuXMj9tJiayNM2DgA5FCEM1qgvdguaP0VJFfyQgEpKRwCyJk0ldllxcKOHD3f3C2G
+	 K1nIgYI0H8anWrguwfcKwfEaBTdGi7ZA4mX9GxZOE5LiZghLUEqo8Oz2Jaa1Ls+1Yb
+	 be4kVto5HhMchNbUR3F1qYjN7HMbGICG3s74oCVNNfKL9pPMAhUseZapDjHyOXNWnD
+	 B8F+j/1DS2VBQ==
+Date: Fri, 17 May 2024 20:43:50 +0200
+From: Helge Deller <deller@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	John David Anglin <dave.anglin@bell.net>
+Subject: [GIT PULL] parisc architecture fixes for v6.10-rc1
+Message-ID: <ZkelZteEp_Cgqwo1@p100>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Frank,
+Hi Linus,
 
-Frank.Li@nxp.com wrote on Fri, 17 May 2024 14:09:50 -0400:
+Please pull a few small fixes & updates for the parisc architecture for 6.10-rc1.
 
-> From: Han Xu <han.xu@nxp.com>
->=20
-> Add "fsl,imx8qxp-gpmi-nand" compatible string. iMX8QXP gpmi nand is simil=
-ar
-> with iMX7D. But it using 4 clock: "gpmi_io", "gpmi_apb", "gpmi_bch" and
+Fix sigset_t in uapi headers and silence one compiler warning in hugetlb code.
 
-  to?             is         clocks
+Thanks!
+Helge
 
-> "gpmi_bch_apb".
->=20
-> Signed-off-by: Han Xu <han.xu@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c | 20 +++++++++++++++++---
->  drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.h |  4 ++++
->  2 files changed, 21 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c b/drivers/mtd/nan=
-d/raw/gpmi-nand/gpmi-nand.c
-> index e71ad2fcec232..f90c5207bacb6 100644
-> --- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
-> +++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
-> @@ -983,7 +983,8 @@ static int gpmi_setup_interface(struct nand_chip *chi=
-p, int chipnr,
->  		return PTR_ERR(sdr);
-> =20
->  	/* Only MX28/MX6 GPMI controller can reach EDO timings */
-> -	if (sdr->tRC_min <=3D 25000 && !GPMI_IS_MX28(this) && !GPMI_IS_MX6(this=
-))
-> +	if (sdr->tRC_min <=3D 25000 && !GPMI_IS_MX28(this) &&
-> +	    !(GPMI_IS_MX6(this) || GPMI_IS_MX8(this)))
+----------------------------------------------------------------
+The following changes since commit e67572cd2204894179d89bd7b984072f19313b03:
 
-Feels completely redundant, no? If it's not an imx6 nor an imx28, it
-already returns -ENOTSUPP.
+  Linux 6.9-rc6 (2024-04-28 13:47:24 -0700)
 
->  		return -ENOTSUPP;
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git tags/parisc-for-6.10-1
 
-Fine otherwise.
+for you to fetch changes up to d4a599910193b85f76c100e30d8551c8794f8c2a:
 
-Thanks,
-Miqu=C3=A8l
+  parisc: Define HAVE_ARCH_HUGETLB_UNMAPPED_AREA (2024-05-15 17:14:26 +0200)
+
+----------------------------------------------------------------
+parisc architecture fixes and updates for kernel v6.10-rc1:
+
+- Define sigset_t in parisc uapi header to fix build of util-linux
+- Define HAVE_ARCH_HUGETLB_UNMAPPED_AREA to avoid compiler warning
+- Drop unused 'exc_reg' struct in math-emu code
+
+----------------------------------------------------------------
+Dr. David Alan Gilbert (1):
+      parisc/math-emu: Remove unused struct 'exc_reg'
+
+Helge Deller (2):
+      parisc: Define sigset_t in parisc uapi header
+      parisc: Define HAVE_ARCH_HUGETLB_UNMAPPED_AREA
+
+ arch/parisc/include/asm/page.h        |  1 +
+ arch/parisc/include/asm/signal.h      | 12 ------------
+ arch/parisc/include/uapi/asm/signal.h | 10 ++++++++++
+ arch/parisc/math-emu/driver.c         |  6 ------
+ 4 files changed, 11 insertions(+), 18 deletions(-)
 
