@@ -1,160 +1,145 @@
-Return-Path: <linux-kernel+bounces-182282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CAA8C8933
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:18:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 442628C892E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E58412866CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:18:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 676261C23E28
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F2C12DDAB;
-	Fri, 17 May 2024 15:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDDA12D74F;
+	Fri, 17 May 2024 15:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="KfJGnobH"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aEZEz9sT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9A712D74D
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC29512D1EF;
+	Fri, 17 May 2024 15:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715959115; cv=none; b=S5wNJdNivr2CUDlOYKYChwcoRtXoRPCq/cLThZmsfKbxu047OsSsvpl6+gGYMsI1LwUnX/z1+wp9z61b9OWzU/l9G5CVxRLxNF2kl2Jk+KEDXDYAEcmnbV7awWGd0B5gsvFGzgexN+bFYS3Ia/nZsBlxTBaVVZ6BriyLfZ7rwgI=
+	t=1715959113; cv=none; b=imcqxGbTTxegakOIo6lMi+GaXUP2HPI//WY9bkTZBGeQ3nU7Aj5JKuqLKP+gLXlgEahbrd5B9rFVSknC7mBczL3Ym/RNsYO+EyCRiijOCUi4t9SciiGH9Cu8oyNMUFc+SB6XxhfwvfCWdAxq/jC0rYbM9JhR9FoGiyRFAl+oLA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715959115; c=relaxed/simple;
-	bh=mpYs6UtAF6g4uCYv3WzchVCd0TLckL19zbzZwRq8vNI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uvJNb6J81ixMrZ/iEZgOtsaWCzdPs5vaPPFoJxMEzTX+rCkJLILDj7K/WjOCOaF37QWi4rc3sNOXUclYHXaBvTwbJ3cD+DmYRD6ZjasdpdIeO0ze91EEV7pmZOLMInFfuQcRJbCOAhzCBgffavrWMCItaFdKrLHktnrIsUdnQLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=KfJGnobH; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-36c7b7b995fso4971095ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 08:18:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1715959113; x=1716563913; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1m4CFwHLpmZnHQVhxg9Ce7GcAxeNjySCi2dNUZGyOug=;
-        b=KfJGnobHwephIp5j76CaJ6cQEdiFRclnJJFhgSdFrZDnoVbnjVQmTe7GgN4IFd0Vxo
-         lRqMhihiV02kjtcq8ckGlqzQzP/tZb/yWZ8/UUFq7C1DeQ/nEaGpTl4AVGj0adpm6Em5
-         ane58fcXjmjMA2+ZwErmpxVWb4YXra4kX+WsFzouLI7BL+MzTsHIuf41YEbGlHzureB7
-         KAhqJ9EP5bAqa9z2MK0WAmjweThigKfD5Gqw3n/t0lEvKyXOPwGQUboUasRG9oVFzFuG
-         8UL+vnwa08Isf7iVVSSkygwU//mAq8b81pc3dc/c/sr9Jd7pBvC+/53Uz5tN3mmcwk/R
-         wnCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715959113; x=1716563913;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1m4CFwHLpmZnHQVhxg9Ce7GcAxeNjySCi2dNUZGyOug=;
-        b=RQaHxBthmgFpyp+BBN9NPX8GhWecMK15jrKM9IO3W9JPjx5uf4YAXh3mw11qZF9Whk
-         mxDtJOlKafxQxtIn0Z6a7jpx/n8snd+2XD6B3TjXoy29g3Ug0fA0RODFuDnkik4N95M0
-         BLqvbdA7jba/YhT6R3Rp2Vr6ZDbccE3bd/tKvKQhMaLfFFe9yU8aWEa8/kq/Lqrxt85q
-         EbRY87y8ObEPF5VLWlPMVEGcwvQ216EOTQ93WQ1szlJOYf7LXjJ/llFPbsljgxYz4lxQ
-         2et3blBy5HZe6a/q6JTcn6oT9nk3FJZMm56I11iPrMJpK13gV5gn1xv83HiwbrxXO57B
-         IxZg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8kz9DRucsc/6Qw4sM4N9viIAquyIMBX7xwTH68HEABwYBk53Rk4BJPGuTss6+JUjm4k5PVHBMrJRiMsU327Oe6e8Ik966nwmigG3+
-X-Gm-Message-State: AOJu0YzRljH7ln3DnqUs5+ZEPGjE8CLpAmVBOhkgcWZCxUQPefb6c8Jr
-	3y/2LUxY+opsbsRXjvxEruiKC9Mitgf5GUn879VUtI5w6G2gPLmUv3B4rDotUryJCu1lpi9qT40
-	456fMi9bsR/LAwhuljpyk71ixm0N4lZbPpCV+2g==
-X-Google-Smtp-Source: AGHT+IGJK8XCJzTVXEsiGdlO5wjVs7wX6BOSuvwLSEKG+jooZHMnH9FoE3Bzx4WPWeKRmsJRiTZQBEo5qN0POnnENhQ=
-X-Received: by 2002:a05:6e02:16cf:b0:36d:b398:aa92 with SMTP id
- e9e14a558f8ab-36db398ac57mr108119485ab.8.1715959113504; Fri, 17 May 2024
- 08:18:33 -0700 (PDT)
+	s=arc-20240116; t=1715959113; c=relaxed/simple;
+	bh=T9GQWbhT4UmQtK64OZ6UxRaZXk6G7MbRm/XQXvD53qA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tc8EbJDsdWY7XBaSTzUXDOGP34/jDpX0JIio90hLBHN4GDpzvDBSAJcNiv8nnkKzQwKZ6Au4RtJhtFm1w71AF5KLReIANBHjz+87yWNG+cjJXiOi3OS/zcQnKyK9aphA9Dc5Ev0UCnuYcyP6gj3ar36b1s9lLs53kobFHEHaDD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aEZEz9sT; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715959112; x=1747495112;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=T9GQWbhT4UmQtK64OZ6UxRaZXk6G7MbRm/XQXvD53qA=;
+  b=aEZEz9sTV0TRB2moW0d7hvSYM1qI9b0pvZiKtTW5gGpx84Y6QFlN3gMQ
+   ZimssA9OvEdgcx/EOISabVaTpXJkH1WJ00cW0y7DbL6vIYW4Mz28XxrbE
+   kk/cLB903S2DLn9aHdHhZt9pddHwUF4JKL3b9v60STBDWhFpvTjdLlB4z
+   KCYEi7QQSOtStANPhDc8vG2VsaZC8lWhmJemhH55q8BSl8e06LQL+Rv00
+   jEkWNrjkVyXErqT1+Ixx+YcS7ISa7kHJGj738iVhp9EayB+Sw5ekHNfuw
+   Tfe8kjimAtdK0qucPn54DH4uoSTfqDExkSCGpjkLFlNcSp0CBG8q3D7uE
+   Q==;
+X-CSE-ConnectionGUID: nTI3+mSNRnGd3rDZVqMVCg==
+X-CSE-MsgGUID: Y0P/8gjgS8Wl0wS6iVUPqg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="15930212"
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="15930212"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 08:18:31 -0700
+X-CSE-ConnectionGUID: 4LzS0qkVTx+ojVmtkWESEg==
+X-CSE-MsgGUID: Y9Q0YWuySzqYwbFEYozPDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="36236912"
+Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.108.204]) ([10.125.108.204])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 08:18:31 -0700
+Message-ID: <a8628846-1d87-4191-92b8-c7a1e70cb196@intel.com>
+Date: Fri, 17 May 2024 08:18:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240517145302.971019-1-cleger@rivosinc.com> <20240517145302.971019-6-cleger@rivosinc.com>
-In-Reply-To: <20240517145302.971019-6-cleger@rivosinc.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 17 May 2024 20:48:21 +0530
-Message-ID: <CAAhSdy0XADKcLS_iFdTzpYDY+KAL2+v91xFcjWUu8LofknQWMA@mail.gmail.com>
-Subject: Re: [PATCH v5 05/16] KVM: riscv: selftests: Add Zimop extension to
- get-reg-list test
-To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Shuah Khan <shuah@kernel.org>, 
-	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/20] x86/tdx: Rewrite TDCALL wrappers
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-hyperv@vger.kernel.org
+References: <20240517141938.4177174-1-kirill.shutemov@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240517141938.4177174-1-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 17, 2024 at 8:23=E2=80=AFPM Cl=C3=A9ment L=C3=A9ger <cleger@riv=
-osinc.com> wrote:
->
-> The KVM RISC-V allows Zimop extension for Guest/VM so add this
-> extension to get-reg-list test.
->
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
+On 5/17/24 07:19, Kirill A. Shutemov wrote:
+>  arch/x86/boot/compressed/tdx.c    |  32 +---
+>  arch/x86/coco/tdx/tdcall.S        | 145 ++++++++++-----
+>  arch/x86/coco/tdx/tdx-shared.c    |  26 +--
+>  arch/x86/coco/tdx/tdx.c           | 298 ++++++++----------------------
+>  arch/x86/hyperv/ivm.c             |  33 +---
+>  arch/x86/include/asm/shared/tdx.h | 159 +++++++++++-----
+>  arch/x86/include/asm/tdx.h        |   2 +
+>  arch/x86/virt/vmx/tdx/tdxcall.S   |  29 +--
+>  tools/objtool/noreturns.h         |   2 +-
+>  9 files changed, 322 insertions(+), 404 deletions(-)
 
-LGTM.
-
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Acked-by: Anup Patel <anup@brainfault.org>
-
-Regards,
-Anup
-
-> ---
->  tools/testing/selftests/kvm/riscv/get-reg-list.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/tes=
-ting/selftests/kvm/riscv/get-reg-list.c
-> index b882b7b9b785..40107bb61975 100644
-> --- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
-> +++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-> @@ -67,6 +67,7 @@ bool filter_reg(__u64 reg)
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_ZIHINTNTL:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_ZIHINTPAUSE:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_ZIHPM:
-> +       case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_ZIMOP:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_ZKND:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_ZKNE:
->         case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV=
-_ISA_EXT_ZKNH:
-> @@ -432,6 +433,7 @@ static const char *isa_ext_single_id_to_str(__u64 reg=
-_off)
->                 KVM_ISA_EXT_ARR(ZIHINTNTL),
->                 KVM_ISA_EXT_ARR(ZIHINTPAUSE),
->                 KVM_ISA_EXT_ARR(ZIHPM),
-> +               KVM_ISA_EXT_ARR(ZIMOP),
->                 KVM_ISA_EXT_ARR(ZKND),
->                 KVM_ISA_EXT_ARR(ZKNE),
->                 KVM_ISA_EXT_ARR(ZKNH),
-> @@ -955,6 +957,7 @@ KVM_ISA_EXT_SIMPLE_CONFIG(zifencei, ZIFENCEI);
->  KVM_ISA_EXT_SIMPLE_CONFIG(zihintntl, ZIHINTNTL);
->  KVM_ISA_EXT_SIMPLE_CONFIG(zihintpause, ZIHINTPAUSE);
->  KVM_ISA_EXT_SIMPLE_CONFIG(zihpm, ZIHPM);
-> +KVM_ISA_EXT_SIMPLE_CONFIG(zimop, ZIMOP);
->  KVM_ISA_EXT_SIMPLE_CONFIG(zknd, ZKND);
->  KVM_ISA_EXT_SIMPLE_CONFIG(zkne, ZKNE);
->  KVM_ISA_EXT_SIMPLE_CONFIG(zknh, ZKNH);
-> @@ -1010,6 +1013,7 @@ struct vcpu_reg_list *vcpu_configs[] =3D {
->         &config_zihintntl,
->         &config_zihintpause,
->         &config_zihpm,
-> +       &config_zimop,
->         &config_zknd,
->         &config_zkne,
->         &config_zknh,
-> --
-> 2.43.0
->
+I was going to grumble about this being a waste of time, but it looks
+like this gives smaller binaries and less code.  Looks promising so far!
 
