@@ -1,133 +1,186 @@
-Return-Path: <linux-kernel+bounces-182275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7282F8C891D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:15:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C68D88C8904
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A1B1F22222
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:15:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77CA52813C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5A412CDB6;
-	Fri, 17 May 2024 15:15:36 +0000 (UTC)
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497676A339;
+	Fri, 17 May 2024 15:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TH3VLfoZ"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CFD1F93E;
-	Fri, 17 May 2024 15:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26EE69DF7
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715958936; cv=none; b=Z3rEy1bJri2zaQqsMJpU5drb4fJbW1w7DUOVk7dwTDyxC+7EX19bGE7BmLvSX91j3+TrwSsUmmGB2iZL3GNkc2z8LTp56+TQgYUMn2w0sufOfObfgn+Gt9W02WI/JuqeqOPM1CO8XMY6RrAz63ytxKsuHfHvLIqKqT4Ch9wM2E4=
+	t=1715958459; cv=none; b=m8cQWKSBWBU74m7SVUSwXZiBvnet0mQg8R6lk+7z4aZLFmvFymU3U/mlYo32e4hMIJb3xp6eeBl06u+mTkyIwiTytcB0YBn7ScOfXMrOPos0MNsy+lpfLS0ykwZOuFykol/3f5Jwle1pkHtSn7sOOo0kDl8i2dbDdlFpNSahZIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715958936; c=relaxed/simple;
-	bh=tzkeAutgHKDvtezMaRFIFQ1vOKGxq4NGB23kr6qrPCE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NI4PbtxFjKBzBBKfazPnlMDCjISSNrRK3l8PhRF0KKoo/FCxjwor8agjswJtkcvS9R3+TI7MGCuu/1GVheHznJMBLIP5EA6K7hOd+SxVldsET6OHJUs4mlGtyEV+OVfKQbFl7pVw5WCVN7mnzpfidRyYm6KNNOXwGGvH6Oq2OwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=link.tyut.edu.cn; spf=pass smtp.mailfrom=link.tyut.edu.cn; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=link.tyut.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=link.tyut.edu.cn
-Received: from localhost.localdomain (unknown [120.208.127.153])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 2CDA0920119;
-	Fri, 17 May 2024 23:05:50 +0800 (CST)
-From: Hu Haowen <2023002089@link.tyut.edu.cn>
-To: corbet@lwn.net
-Cc: Hu Haowen <2023002089@link.tyut.edu.cn>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] docs/zh_TW: add translation for glossary
-Date: Fri, 17 May 2024 23:05:28 +0800
-Message-ID: <20240517150529.102958-1-2023002089@link.tyut.edu.cn>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715958459; c=relaxed/simple;
+	bh=eny8eu9H9qezFc4DsJLtVNwX8CqUTQ0ivx/im31CVv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KgxwjTdJ9NhLksB4NytdPAsbWj767OZSO4DARDYvL4YIV5CXzKF/K2jN7gcl2MjqKGRs2O15na1DW8WJ7tXlnL35u5wI2n5V4uiEWCnZ6GQ9Lz7zlFSd55ETXlLme4GnLQwH3IOSwj9jIsiqAjQTAMw6LrnpVIQlrk/D+vE8UCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TH3VLfoZ; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51f99f9e0faso2441998e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 08:07:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715958456; x=1716563256; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e2IpcqFuguhkshSycy+14Kc4bI4lgV1eoYcFaNGuWgI=;
+        b=TH3VLfoZMp3Mj8iMMqCBMFrjCeWJbjjivIgOPMwlhD5APUA4E/LH7OUZXJvyK6ScAJ
+         QOAWQfMqah/DaqkBzoauDZiZ/gYGXtCBBDD5wiZZactMOdYOQd7sUNBwuk0UDJwk+sIz
+         Nz8ezQYJEPMQR2FNZ65acUKXgm0t/2pyBDsEKNJZb3wtj8Dx57mBbg5be1S0SRvp6UBI
+         HJUnvM0gJbxxjr8A2szE3WDme4jPle3pkfa5aeExecGGsMcc17/nOzykhbK/gRy+okrb
+         v68pgk0+JpxAPmUs3me1T8AMhjJ/nr2XftPdt/j0+DZx3jqA2k+BYFRTn1ZUyQTK2Hv3
+         uYQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715958456; x=1716563256;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e2IpcqFuguhkshSycy+14Kc4bI4lgV1eoYcFaNGuWgI=;
+        b=T/Xv8f6wCggohbJlASie8t+T6v25Lb4AekhI2xnRIdFQiVFFIyDvVlbvE0RZTsawKZ
+         +NgxZ7BVfPI+j6XlvvYkmXFX9/gwstBn4OAW1n2OG5Du/fyIUfz7Kry8uqHqtQ964LVk
+         SY6ZOkCHJ5ytfPO6IGH7vFPPHc+dhW+ZcmSvmHeiYkXnFzyO+M+ghtspZ4Ee5233/vtX
+         hN/gMC3WYeftSRvbxgBZ6ag0zHUtn8wYHXxEEtd/QBfzcZW7NFxKMB8vAevrUiPNiodO
+         m0/8mkUF5m187ktjoMSw4ZDgwzjy3XWoBfetBxdFH9SBKtrSwow/AXvwA2Wv7VAglvHh
+         DVHg==
+X-Gm-Message-State: AOJu0Yxlez+zo6aLZ9R5/wOMRZ7obGEaztfQMbS0DeyRi4CY8X2sTAkH
+	JJjMeqrXbNDTpsuDryoI/sw2REDcYQLZfTeAVnmKvsvx1NGBhzkIq7CEn11NF6Ntll+iQjBFWZx
+	L1w==
+X-Google-Smtp-Source: AGHT+IHl8G1Pv0ELVow4czV1iE+a6fx2dTWRemZUhtz+vu03Dn0Skt9D9cqMJ+o3lWoS05lHw0k4VQ==
+X-Received: by 2002:a05:6512:3b86:b0:518:a55b:b612 with SMTP id 2adb3069b0e04-52210579225mr18978308e87.54.1715958455570;
+        Fri, 17 May 2024 08:07:35 -0700 (PDT)
+Received: from google.com (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b79be1dsm22040543f8f.10.2024.05.17.08.07.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 08:07:35 -0700 (PDT)
+Date: Fri, 17 May 2024 16:07:31 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>, rostedt@goodmis.org
+Subject: Re: [PATCH v1 1/2] mm/memory: cleanly support zeropage in
+ vm_insert_page*(), vm_map_pages*() and vmf_insert_mixed()
+Message-ID: <Zkdys7YKC5pe1vAu@google.com>
+References: <20240430204044.52755-1-david@redhat.com>
+ <20240430204044.52755-2-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHx4dVh5LGU0dTxgZQx8ZSVUTARMWGhIXJBQOD1
-	lXWRgSC1lBWUpJS1VJS0NVSklMVUpOSFlXWRYaDxIVHRRZQVlPS0hVSk1DTExPVUpLS1VKQktLWQ
-	Y+
-X-HM-Tid: 0a8f8716f93303a1kunm2cda0920119
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MU06Cio4MzMMOTQUMQ46MAoB
-	DxYwCQxVSlVKTEpOQk5DSENDS09PVTMWGhIXVUlLSUhLS0lLQ0I7FxIVEFUPAg4PVR4fDlUYFUVZ
-	V1kSC1lBWUpJS1VJS0NVSklMVUpOSFlXWQgBWUFITUxJNwY+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240430204044.52755-2-david@redhat.com>
 
-Add translation for glossary and add it to index according to commit
-cac02cbb91f31e28 ("docs/zh_CN: Add a glossary of Chinese translation
-terms").
+Hi David,
 
-Signed-off-by: Hu Haowen <2023002089@link.tyut.edu.cn>
----
- Documentation/translations/zh_TW/glossary.rst | 36 +++++++++++++++++++
- Documentation/translations/zh_TW/index.rst    |  5 +--
- 2 files changed, 39 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/translations/zh_TW/glossary.rst
+[...] 
 
-diff --git a/Documentation/translations/zh_TW/glossary.rst b/Documentation/translations/zh_TW/glossary.rst
-new file mode 100644
-index 000000000000..6ff2a5a460ea
---- /dev/null
-+++ b/Documentation/translations/zh_TW/glossary.rst
-@@ -0,0 +1,36 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+術語表
-+======
-+
-+這不是一個完善的術語表，我們只是將有爭議的和陌生的翻譯詞彙記錄於此，
-+它的篇幅應該根據內核文檔翻譯的需求而增加。新詞條最好隨翻譯補丁一起
-+提交，且僅在以下情況下收錄新詞條：
-+
-+        - 在翻譯過程中遇到陌生詞彙，且尚無翻譯先例的；
-+        - 在審閱過程中，針對某詞條出現了不同的翻譯意見；
-+        - 使用頻率不高的詞條和首字母縮寫類型的詞條；
-+        - 已經存在且有歧義的詞條翻譯。
-+
-+
-+* atomic: 原子的，一般指不可中斷的極小的臨界區操作。
-+* DVFS: 動態電壓頻率升降。（Dynamic Voltage and Frequency Scaling）
-+* EAS: 能耗感知調度。（Energy Aware Scheduling）
-+* flush: 刷新，一般指對cache的沖洗操作。
-+* fork: 創建, 通常指父進程創建子進程。
-+* futex: 快速用戶互斥鎖。（fast user mutex）
-+* guest halt polling: 客戶機停機輪詢機制。
-+* HugePage: 巨頁。
-+* hypervisor: 虛擬機超級管理器。
-+* memory barriers: 內存屏障。
-+* MIPS: 每秒百萬指令。（Millions of Instructions Per Second）,注意與mips指令集區分開。
-+* mutex: 互斥鎖。
-+* NUMA: 非統一內存訪問。
-+* OpenCAPI: 開放相干加速器處理器接口。（Open Coherent Accelerator Processor Interface）
-+* OPP: 操作性能值。
-+* overhead: 開銷，一般指需要消耗的計算機資源。
-+* PELT: 實體負載跟蹤。（Per-Entity Load Tracking）
-+* sched domain: 調度域。
-+* semaphores: 信號量。
-+* spinlock: 自旋鎖。
-+* watermark: 水位，一般指頁表的消耗水平。
-diff --git a/Documentation/translations/zh_TW/index.rst b/Documentation/translations/zh_TW/index.rst
-index 660a74d2023c..95809012a9ef 100644
---- a/Documentation/translations/zh_TW/index.rst
-+++ b/Documentation/translations/zh_TW/index.rst
-@@ -119,9 +119,10 @@ TODOList:
- 術語表
- ------
- 
--TODOList:
-+.. toctree::
-+   :maxdepth: 1
- 
--* glossary
-+   glossary
- 
- 
- 索引和表格
--- 
-2.45.0
+> -static int validate_page_before_insert(struct page *page)
+> +static bool vm_mixed_zeropage_allowed(struct vm_area_struct *vma)
+> +{
+> +	VM_WARN_ON_ONCE(vma->vm_flags & VM_PFNMAP);
+> +	/*
+> +	 * Whoever wants to forbid the zeropage after some zeropages
+> +	 * might already have been mapped has to scan the page tables and
+> +	 * bail out on any zeropages. Zeropages in COW mappings can
+> +	 * be unshared using FAULT_FLAG_UNSHARE faults.
+> +	 */
+> +	if (mm_forbids_zeropage(vma->vm_mm))
+> +		return false;
+> +	/* zeropages in COW mappings are common and unproblematic. */
+> +	if (is_cow_mapping(vma->vm_flags))
+> +		return true;
+> +	/* Mappings that do not allow for writable PTEs are unproblematic. */
+> +	if (!(vma->vm_flags & (VM_WRITE | VM_MAYWRITE)))
+> +		return false;
 
+Shouldn't we return true here?
+
+> +	/*
+> +	 * Why not allow any VMA that has vm_ops->pfn_mkwrite? GUP could
+> +	 * find the shared zeropage and longterm-pin it, which would
+> +	 * be problematic as soon as the zeropage gets replaced by a different
+> +	 * page due to vma->vm_ops->pfn_mkwrite, because what's mapped would
+> +	 * now differ to what GUP looked up. FSDAX is incompatible to
+> +	 * FOLL_LONGTERM and VM_IO is incompatible to GUP completely (see
+> +	 * check_vma_flags).
+> +	 */
+> +	return vma->vm_ops && vma->vm_ops->pfn_mkwrite &&
+> +	       (vma_is_fsdax(vma) || vma->vm_flags & VM_IO);
+> +}
+> +
+
+[...]
+
+>  
+> -/*
+> - * This is the old fallback for page remapping.
+> - *
+> - * For historical reasons, it only allows reserved pages. Only
+> - * old drivers should use this, and they needed to mark their
+> - * pages reserved for the old functions anyway.
+> - */
+>  static int insert_page(struct vm_area_struct *vma, unsigned long addr,
+>  			struct page *page, pgprot_t prot)
+>  {
+> @@ -2023,7 +2065,7 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
+>  	pte_t *pte;
+>  	spinlock_t *ptl;
+>  
+> -	retval = validate_page_before_insert(page);
+> +	retval = validate_page_before_insert(vma, page);
+>  	if (retval)
+>  		goto out;
+>  	retval = -ENOMEM;
+> @@ -2043,7 +2085,7 @@ static int insert_page_in_batch_locked(struct vm_area_struct *vma, pte_t *pte,
+>  
+>  	if (!page_count(page))
+>  		return -EINVAL;
+
+This test here prevents inserting the zero-page.
+
+> -	err = validate_page_before_insert(page);
+> +	err = validate_page_before_insert(vma, page);
+>  	if (err)
+>  		return err;
+>  	return insert_page_into_pte_locked(vma, pte, addr, page, prot);
+> @@ -2149,7 +2191,8 @@ EXPORT_SYMBOL(vm_insert_pages);
+>   * @page: source kernel page
+>   *
+>   * This allows drivers to insert individual pages they've allocated
+> - * into a user vma.
+> + * into a user vma. The zeropage is supported in some VMAs,
+> + * see vm_mixed_zeropage_allowed().
+>   *
+>   * The page has to be a nice clean _individual_ kernel allocation.
+>   * If you allocate a compound page, you need to have marked it as
+> @@ -2195,6 +2238,8 @@ EXPORT_SYMBOL(vm_insert_page);
+>   * @offset: user's requested vm_pgoff
+>   *
+>   * This allows drivers to map range of kernel pages into a user vma.
+> + * The zeropage is supported in some VMAs, see
+> + * vm_mixed_zeropage_allowed().
+>   *
+>   * Return: 0 on success and error code otherwise.
+>   */
+> @@ -2410,8 +2455,11 @@ vm_fault_t vmf_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
+>  }
+>  EXPORT_SYMBOL(vmf_insert_pfn);
+>  
+> -static bool vm_mixed_ok(struct vm_area_struct *vma, pfn_t pfn)
 
