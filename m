@@ -1,113 +1,108 @@
-Return-Path: <linux-kernel+bounces-182489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E5F8C8BBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:56:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2938C8BD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 506781C210B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:56:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAB67285C1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4A313DDD4;
-	Fri, 17 May 2024 17:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="GFgwwms4"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795AC142659;
+	Fri, 17 May 2024 17:48:15 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A10213DDB6
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8F113E40B;
+	Fri, 17 May 2024 17:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715968030; cv=none; b=o69r5fBcaRE9bMPwa0H20HCmhn6pNqjKmXOpcs4GZ85FGLzalCRTlDLhwbniawkPipfyGUyA0C4eAY6GhyceisVTh1RYJk/fYjGxe1T0esWCJ6yRfaYXhec3jP6yMjzJjIq8ovJE+6jlNmi/xuq9EouuutwpYwvandkil87TpLc=
+	t=1715968094; cv=none; b=lFnKrgookhOgcn8vA4fQ/6Swm8jZydG2RzUdYhAqQcUnHKNOflsCQ3CJxyAEs2JU11qHOM+zxRO0bGVwUhWuAFepAzvB+hgmGsS2pMca59lL1RJL9zUG27FYOYdnwn+YidGMftMaO7Yz1pDdQ0jVSCFXSqFpR1JUNf09y1MhEj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715968030; c=relaxed/simple;
-	bh=s953sk5n/NeAVDdd0aV9BvqgcCqXLRcDa7PuZ5KTB2Y=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=aYIHJ94r3J5U9Q7gs/TnGv/gHyp8uLvLwlNXFFmzl4G9CRfqyMmqhi6MfGsbnZXyxIVE0bNw6qUSrrV2wzDRldyHCUnueWdRpNUqHTTr1rntaAMwhGNo8dlv3m45DCWc4J3cwEcD2ld9jUoqw6GUszhbob37BIi9Id7GfTx104c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=GFgwwms4; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 44HHkXfw2564600
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 17 May 2024 10:46:33 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 44HHkXfw2564600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024051501; t=1715967994;
-	bh=szLPbiQdc8E9uUoOZsNWX0bh8PnKr+5DS2+bIeNO6nI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=GFgwwms4oINnKXr9a1/WH2hk+eP/pBzaMX5lPQ6flzW7Cy7jq4tPYL1i6vbwlGv8X
-	 kj0gUpJhasAfTqxccA70htdQZxbjQpUZ6Q3cEx7nreeMjp7d7/P5KSWArDSGGeQqJM
-	 hIAkDvZ0jED5Me86FZs4Sw2eZoNLFOfpyKX7lZRed3NGJZKr3i2qJHdDscIU8l+MNA
-	 Mc0kJlhU9iSfoxxE2pnP7jXmUxVzVrt5vdi/eqXFXsgPdd9KNpOJZBiJUyUQ/iFB0j
-	 mqdgnAS3GnsjKcmek0rMEUNFZvQGiHS5LDY7w6LIGruFG0McAUwUnPq/hfyfKw8Fyg
-	 h5aa/mWoTFMFQ==
-Date: Fri, 17 May 2024 10:46:29 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Uros Bizjak <ubizjak@gmail.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik <mjguzik@gmail.com>,
-        Thomas Renninger <trenn@suse.de>, Greg Kroah-Hartman <gregkh@suse.de>,
-        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-        patches@lists.linux.dev
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3=5D_x86/cpu=3A_Fix_x86=5Fmatch?=
- =?US-ASCII?Q?=5Fcpu=28=29_to_match_just_X86=5FVENDOR=5FINTEL?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240517173811.GFZkeWAzKjYtEMwe1e@fat_crate.local>
-References: <20240517172134.7255-1-tony.luck@intel.com> <20240517173811.GFZkeWAzKjYtEMwe1e@fat_crate.local>
-Message-ID: <EEEDDDD9-3514-4246-B506-6A1DBD5CF794@zytor.com>
+	s=arc-20240116; t=1715968094; c=relaxed/simple;
+	bh=gAAJJFKRq7ZuXBKuhjvNoKHrIa1D3KibBfY1qYrv3Ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YaX6YbjwexKJK35JXhMSWL4SGWOba3YpVqmK90Aprk9dIxmcCy2FA0yhv11mnkhbqAKT0UaGg9FSteQIA6eVq8tHil5EHi2L5fTYnXKlWTjEmqG5rLjnSR3h8R2uTiDVYJB/U1YRBVK2UV4mVh+OGo9EyCAeuc7V75VKBeP6XcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 424EAC2BD10;
+	Fri, 17 May 2024 17:48:06 +0000 (UTC)
+Date: Fri, 17 May 2024 13:48:34 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, virtualization@lists.linux.dev,
+ linux-rdma@vger.kernel.org, linux-pm@vger.kernel.org,
+ iommu@lists.linux.dev, linux-tegra@vger.kernel.org, netdev@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, ath10k@lists.infradead.org,
+ linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+ ath12k@lists.infradead.org, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, linux-usb@vger.kernel.org,
+ linux-bcachefs@vger.kernel.org, linux-nfs@vger.kernel.org,
+ ocfs2-devel@lists.linux.dev, linux-cifs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-edac@vger.kernel.org,
+ selinux@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-hwmon@vger.kernel.org, io-uring@vger.kernel.org,
+ linux-sound@vger.kernel.org, bpf@vger.kernel.org,
+ linux-wpan@vger.kernel.org, dev@openvswitch.org,
+ linux-s390@vger.kernel.org, tipc-discussion@lists.sourceforge.net, Julia
+ Lawall <Julia.Lawall@inria.fr>
+Subject: Re: [PATCH] tracing/treewide: Remove second parameter of
+ __assign_str()
+Message-ID: <20240517134834.43e726dd@gandalf.local.home>
+In-Reply-To: <5080f4c5-e0b3-4c2e-9732-f673d7e6ca66@roeck-us.net>
+References: <20240516133454.681ba6a0@rorschach.local.home>
+	<5080f4c5-e0b3-4c2e-9732-f673d7e6ca66@roeck-us.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On May 17, 2024 10:38:11 AM PDT, Borislav Petkov <bp@alien8=2Ede> wrote:
->On Fri, May 17, 2024 at 10:21:34AM -0700, Tony Luck wrote:
->> diff --git a/arch/x86/kernel/cpu/match=2Ec b/arch/x86/kernel/cpu/match=
-=2Ec
->> index 8651643bddae=2E=2E996f96cfce68 100644
->> --- a/arch/x86/kernel/cpu/match=2Ec
->> +++ b/arch/x86/kernel/cpu/match=2Ec
->> @@ -39,7 +39,7 @@ const struct x86_cpu_id *x86_match_cpu(const struct x=
-86_cpu_id *match)
->>  	struct cpuinfo_x86 *c =3D &boot_cpu_data;
->> =20
->>  	for (m =3D match;
->> -	     m->vendor | m->family | m->model | m->steppings | m->feature;
->> +	     m->vendor | m->family | m->model | m->steppings | m->feature | m=
-->flags;
->
->I think this should not do anything implicit even if it is correct but
->should explicitly check
->
->	if (!(m->flags & X86_CPU_ID_FLAG_VENDOR_VALID))
->		continue;
->
->I don't have a clear idea how exactly yet - I need to play with it=2E
->
->Maybe this stupid flow in the loop should be finally fixed into
->something more readable and sensible=2E=2E=2E
->
->Thx=2E
->
+On Fri, 17 May 2024 10:36:37 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-Thought: why don't we add VENDOR and CPUID as synthetic CPU feature flags =
-as well? Not saying it necessarily solves this specific problem but it migh=
-t make some other code more uniform=2E=20
+> Building csky:allmodconfig (and others) ... failed
+> --------------
+> Error log:
+> In file included from include/trace/trace_events.h:419,
+>                  from include/trace/define_trace.h:102,
+>                  from drivers/cxl/core/trace.h:737,
+>                  from drivers/cxl/core/trace.c:8:
+> drivers/cxl/core/./trace.h:383:1: error: macro "__assign_str" passed 2 arguments, but takes just 1
+> 
+> This is with the patch applied on top of v6.9-8410-gff2632d7d08e.
+> So far that seems to be the only build failure.
+> Introduced with commit 6aec00139d3a8 ("cxl/core: Add region info to
+> cxl_general_media and cxl_dram events"). Guess we'll see more of those
+> towards the end of the commit window.
 
-Obviously on x86-64 CPUID is baseline; VENDOR might not be known, however=
-=2E
+Looks like I made this patch just before this commit was pulled into
+Linus's tree.
+
+Which is why I'll apply and rerun the above again probably on Tuesday of
+next week against Linus's latest.
+
+This patch made it through both an allyesconfig and an allmodconfig, but on
+the commit I had applied it to, which was:
+
+  1b294a1f3561 ("Merge tag 'net-next-6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next")
+
+I'll be compiling those two builds after I update it then.
+
+-- Steve
 
