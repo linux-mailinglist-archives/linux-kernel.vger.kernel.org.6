@@ -1,238 +1,158 @@
-Return-Path: <linux-kernel+bounces-181718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82CDF8C8030
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 05:30:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B6818C8032
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 05:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 396D1282055
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 03:30:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F9A41F229BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 03:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADE310A25;
-	Fri, 17 May 2024 03:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gihMkjok"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7066BC13B;
+	Fri, 17 May 2024 03:31:24 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DFD10A09
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 03:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3E8B661
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 03:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715916618; cv=none; b=isnheUgNwLUF/iw7Nyple9qspH0BYMnwo2KL4Sc+Lohd5rUArI/hkuOLJH7aq5xq7NE1c0HoXo+dDKq2VKApdAw4t3TMcocMBtKmeGkotpZykXvfODIrmfh0WIMy5Nd32M7R78sM+omvF0wSlrDhCs7UeJQLIjljD7OjlClKSyc=
+	t=1715916683; cv=none; b=BRBN3f863fT5rPkBgb1wT++twwp2k0WmHSWAsyK10vLgVyKanWlDwANTjA1v7DKbibbSy+nY3XvAdoE+iLlktB8mU3n1gTuj6l/ld6rOR4wuA1FgCTx3JdcNdKCjRK2C99y3I535jE8KkSjMz3tB+Zk3RIXZSP8ST3RxFgDQctA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715916618; c=relaxed/simple;
-	bh=Xm9gOqUBaf688SaRu8s+Kakp+APap5QeqRhDKUwrOlM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ldoq+ngyZfaVYnH2Uy+faAw7UdUBibQSTxt1BSWKM4DhuA3vqLclu87DRgCcCvqYHX4Y0cVbK3Wi8ngDYfKqi442K0z85oV1TMlAXbDdFQgT+rg2rGIP4ba0FnC7uph+KP3iUX1/W43dRt6Q4IVUy7NgnqRSO0fXZVgkyugyugs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gihMkjok; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e2b468ea12so13067111fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 20:30:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715916615; x=1716521415; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Cz7/vI1LH0f2WLQEBvwGZZcGzYd1g9y6LcZk4JclSo=;
-        b=gihMkjokOXP8g7kbB2+83rv7ejT94BnJHEnaTuJ0xVs9HfVPXE1ES1HJgIaTfVHKZr
-         AFltd+/UT0cFu6bcJap1NsEP1DjDs+/cAT45AYONbwAMa7QcHk26/hJIPpBZHwppf7Cr
-         Un95dDeWpn6VwpU6SGLnH06hNzlsfHqD4ywoKvOHOq5XSSRxbNJ0BqR/LnkNwxAYjyn5
-         96HO8nRLP7DgqpwgfwyKztWkvNSZ7KBeKo0CL8HND+Qevleo+bkoLMKqBxKkikz3EVvj
-         2Kv7EOA4vzSFphqy683LnAXmilUlH8aVsuqPdsVfC5cBQUookz+v8gAkN8s6INQdXql4
-         olXA==
+	s=arc-20240116; t=1715916683; c=relaxed/simple;
+	bh=0QmeCmlVErKS62a4/tGvvWUBV+JBXYVJvjQ4QdPkyh4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qMv+3OEEGYRUIanMvTv2hGRvn81YEPxbL8PXE37vSBj6TmG0Ma2vQnP8yNqGfYrg4eKPy+IDKWdSi7SduXVkWpKWiHf6EFERGpx+kwgGViDeW9R1WZS/DbjrWJvdvkFLpP5fwCv81Pz0m7Dnnajo8mSrIqnd5qydcCeErixM9ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e1de4c052aso626510139f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 20:31:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715916615; x=1716521415;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5Cz7/vI1LH0f2WLQEBvwGZZcGzYd1g9y6LcZk4JclSo=;
-        b=gHY9Wr4Ps/xRr3tbZ5FCRSvT+2jfVQSxF2KE6Woe9m8SAiMGd38oVhDPoQCWH5R+dj
-         yr+URi8inrZgQeEOakfp3/Hqoy2ee2bYzJc8zmxO/KfOD0I7L7LEKMlfJKd1KWhLNP9d
-         s0LoSokPOR9B8RYg5JAJHbwvpeaLLM0f3coPpKUuoRn7P13oQvJ08l/mX7l9XVzx72Bq
-         aEZ1fF9Qkdks+I3f1KmgEtGnfGFze9NYm83g3swp6gdn4fVMBMJDArwGfSb9ViGPOqIS
-         p7NDWZt3m56zdk13eNTeb7Hi+48Ubd0B5jfUX5hKUYcITxCdxtb4adnjlajZIa+ciI0B
-         lkpg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/dAHhZ103KY+9dyGwfHvgWHVlQ2oG1IWQR3PO7fHy3sY8UPkMCjPEvYJqfH9+hUpqOkdkaSorl3WZv1Ws6fiEPAu8KG4fd0qnJil0
-X-Gm-Message-State: AOJu0YzaBm7Yg4L2UneZ0WsbJJQKxbNs0/DECN/3l7AlsoMcJ0Q11S3w
-	lHGM+e1z4MW+QMKz3yYDeqIMiOrkceD4KjijLD21akacr2I/nT1KElI7Th8Nu/7teNKjSOA+4eC
-	WUyKfBf+0xGSvcJU2bNWcMpuYcoo=
-X-Google-Smtp-Source: AGHT+IHxdGRowkhI8JyVI/R/U+n2YMZLnVoEbowchZjFVvm0PTMlqKjRrbJSZNvULmQ438LX58zIBcV/whp7Xh2hA08=
-X-Received: by 2002:a2e:3518:0:b0:2e5:67a8:10fc with SMTP id
- 38308e7fff4ca-2e567a811e0mr56894041fa.9.1715916614622; Thu, 16 May 2024
- 20:30:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715916681; x=1716521481;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1A04SA3kvGvqA+VQ5AOkTR/5eUh6W6sRfdim7zdnZ3g=;
+        b=ApxqtRuXBOjPJ1GLwfUuoXYo7OnlOdI2QU3XLtVQly8V98+pnv4WdiFwwkHsIuYJix
+         8rQNH/sAsy1Utbxt0OfzXAE4aNaTGhHicloARdmUsnmbdKKuQJ45C6wbsjvIP2pjhsu+
+         vxK9LZLpk2KevfSS3FJDO8mUyKwTg1kS3woHBC6zCLcUcZly3m3uxVyj+smQkfFoChOo
+         3KScre7KzHl76fvQqwGXCjRSVU8AE6x1925W33J39bUjCwH73e6P7KvN+vXELXjkEDGx
+         AhfKRcse12uD00DEzcnaOSwx5qpzcdTu3OB+81W4lgmHrJkY9eu1kXVjItxDwcY/PG2w
+         xDUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKf3/msnRy5mmLWxgv8LOq4qvz5YlYG+VSfWlPv3dfXy79KZpUiih3O93KmBtHC7ERvwmDo9V6iG32Wtw6RxUmj1sHiCimBz2bClmM
+X-Gm-Message-State: AOJu0Yy38BiHJ2kSdeT6vCzGvghES4OWvtdYLfAKPYsqM+rLvlCpUCBy
+	jhL6Y4zD1ksczgdi+dGAyNAlVkHdPKHO1FHVgsc/Xcr/XUYJzoZ1L/qKlrmWgvx+Cqo+8KDqCSF
+	GeSlnVJImjRl33OUGMQIJNEFMUWlBeJGw7YaPj0iVsSm0KJyNUCSpuME=
+X-Google-Smtp-Source: AGHT+IGPR2FqyrnkAH/efnF4P3adpKR3lgLF2BGh+qmsfxUKfLhqtV0Kztl3DKzvDg7eD/kcVkdkOwrAqAUfnHZjAKZwUcu7O71/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240418142008.2775308-1-zhangpeng362@huawei.com>
- <20240418142008.2775308-3-zhangpeng362@huawei.com> <ec2b110b-fb85-4af2-942b-645511a32297@gmail.com>
- <c1c79eb5-4d48-40e5-6f17-f8bc42f2d274@huawei.com> <CAMgjq7DHUgyR0vtkYXH4PuzBHUVZ5cyCzi58TfShL57TUSL+Tg@mail.gmail.com>
- <5nv3r7qilsye5jgqcjrrbiry6on7wtjmce6twqbxg6nmvczue3@ikc22ggphg3h>
-In-Reply-To: <5nv3r7qilsye5jgqcjrrbiry6on7wtjmce6twqbxg6nmvczue3@ikc22ggphg3h>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Fri, 17 May 2024 11:29:57 +0800
-Message-ID: <CAMgjq7DgE6NZPR8Sf2nq3vpVG8ZoC03e8aXi-QKbiievi3BB_g@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/2] mm: convert mm's rss stats to use atomic mode
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: "zhangpeng (AS)" <zhangpeng362@huawei.com>, Rongwei Wang <rongwei.wrw@gmail.com>, linux-mm@kvack.org, 
-	LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	dennisszhou@gmail.com, shakeelb@google.com, jack@suse.cz, 
-	Suren Baghdasaryan <surenb@google.com>, kent.overstreet@linux.dev, mhocko@suse.cz, 
-	vbabka@suse.cz, Yu Zhao <yuzhao@google.com>, yu.ma@intel.com, 
-	wangkefeng.wang@huawei.com, sunnanyong@huawei.com
+X-Received: by 2002:a05:6602:1351:b0:7cc:2522:f5fd with SMTP id
+ ca18e2360f4ac-7e1b51a9835mr124024639f.1.1715916681748; Thu, 16 May 2024
+ 20:31:21 -0700 (PDT)
+Date: Thu, 16 May 2024 20:31:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000047b2a506189dfc1a@google.com>
+Subject: [syzbot] [bcachefs?] WARNING in bch2_trans_put
+From: syzbot <syzbot+291aef749c5cbb9ca2fd@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Mateusz Guzik <mjguzik@gmail.com> =E4=BA=8E 2024=E5=B9=B45=E6=9C=8816=E6=97=
-=A5=E5=91=A8=E5=9B=9B 23:14=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Thu, May 16, 2024 at 07:50:52PM +0800, Kairui Song wrote:
-> > > > On 2024/4/18 22:20, Peng Zhang wrote:
-> > > >> From: ZhangPeng <zhangpeng362@huawei.com>
-> > > >>
-> > > >> Since commit f1a7941243c1 ("mm: convert mm's rss stats into
-> > > >> percpu_counter"), the rss_stats have converted into percpu_counter=
-,
-> > > >> which convert the error margin from (nr_threads * 64) to approxima=
-tely
-> > > >> (nr_cpus ^ 2). However, the new percpu allocation in mm_init() cau=
-ses a
-> > > >> performance regression on fork/exec/shell. Even after commit
-> > > >> 14ef95be6f55
-> > > >> ("kernel/fork: group allocation/free of per-cpu counters for mm
-> > > >> struct"),
-> > > >> the performance of fork/exec/shell is still poor compared to previ=
-ous
-> > > >> kernel versions.
-> > > >>
-> > > >> To mitigate performance regression, we delay the allocation of per=
-cpu
-> > > >> memory for rss_stats. Therefore, we convert mm's rss stats to use
-> > > >> percpu_counter atomic mode. For single-thread processes, rss_stat =
-is in
-> > > >> atomic mode, which reduces the memory consumption and performance
-> > > >> regression caused by using percpu. For multiple-thread processes,
-> > > >> rss_stat is switched to the percpu mode to reduce the error margin=
-.
-> > > >> We convert rss_stats from atomic mode to percpu mode only when the
-> > > >> second thread is created.
-> >
-> > I've a patch series that is earlier than commit f1a7941243c1 ("mm:
-> > convert mm's rss stats into
-> > percpu_counter"):
-> >
-> > https://lwn.net/ml/linux-kernel/20220728204511.56348-1-ryncsn@gmail.com=
-/
-> >
-> > Instead of a per-mm-per-cpu cache, it used only one global per-cpu
-> > cache, and flush it on schedule. Or, if the arch supports, flush and
-> > fetch it use mm bitmap as an optimization (like tlb shootdown).
-> >
->
-> I just spotted this thread.
->
-> I have a rather long rant to write about the entire ordeal, but don't
-> have the time at the moment. I do have time to make some remarks though.
->
-> Rolling with a centralized counter and only distributing per-cpu upon
-> creation of a thread is something which was discussed last time and
-> which I was considering doing. Then life got it in the way and in the
-> meantime I managed to conclude it's a questionable idea anyway.
->
-> The state prior to the counters moving to per-cpu was not that great to
-> begin with, with quite a few serialization points. As far as allocating
-> stuff goes one example is mm_alloc_cid, with the following:
->         mm->pcpu_cid =3D alloc_percpu(struct mm_cid);
->
-> Converting the code to avoid per-cpu rss counters in the common case or
-> the above patchset only damage-control the state back to what it was,
-> don't do anything to push things further.
->
-> Another note is that unfortunately userspace is increasingly
-> multithreaded for no good reason, see the Rust ecosystem as an example.
->
-> All that to say is that the multithreaded case is what has to get
-> faster, as a side effect possibly obsoleting both approaches proposed
-> above. I concede if there is nobody wiling to commit to doing the work
-> in the foreseeable future then indeed a damage-controlling solution
-> should land.
+Hello,
 
-Hi, Mateusz,
+syzbot found the following issue on:
 
-Which patch are you referencing? My series didn't need any allocations
-on thread creation or destruction. Also RSS update is extremely
-lightweight (pretty much just read GS and do a few ADD/INC, that's
-all), performance is better than all even with micro benchmarks. RSS
-read only collects info from CPUs that may contain real updates.
+HEAD commit:    ba16c1cf11c9 Merge tag 'edac_urgent_for_v6.9' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13791cf4980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
+dashboard link: https://syzkaller.appspot.com/bug?extid=291aef749c5cbb9ca2fd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-I understand you may not have time to go through my series... but I
-think I should add some details here.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> On that note in check_mm there is this loop:
->         for (i =3D 0; i < NR_MM_COUNTERS; i++) {
->                 long x =3D percpu_counter_sum(&mm->rss_stat[i]);
->
-> This avoidably walks all cpus 4 times with a preemption and lock trip
-> for each round. Instead one can observe all modifications are supposed
-> to have already stopped and that this is allocated in a banch. A
-> routine, say percpu_counter_sum_many_unsafe, could do one iteration
-> without any locks or interrupt play and return an array. This should be
-> markedly faster and I perhaps will hack it up.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bf33b57f5750/disk-ba16c1cf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5656c2dd228d/vmlinux-ba16c1cf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8807d572a9fd/bzImage-ba16c1cf.xz
 
-Which is similar to the RSS read in my earlier series... It is based
-on the assumption that updates are likely stopped so just read the
-counter "unsafely" with a double (and fast) check to ensure no race.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+291aef749c5cbb9ca2fd@syzkaller.appspotmail.com
 
-And even more, when coupled with mm shootdown
-(CONFIG_ARCH_PCP_RSS_USE_CPUMASK), it doesn't need to collect RSS info
-on thread exit at all.
+------------[ cut here ]------------
+btree trans held srcu lock (delaying memory reclaim) for 14 seconds
+WARNING: CPU: 0 PID: 29792 at fs/bcachefs/btree_iter.c:2873 check_srcu_held_too_long fs/bcachefs/btree_iter.c:2871 [inline]
+WARNING: CPU: 0 PID: 29792 at fs/bcachefs/btree_iter.c:2873 bch2_trans_put+0xd8c/0xf90 fs/bcachefs/btree_iter.c:3113
+Modules linked in:
+CPU: 0 PID: 29792 Comm: syz-executor.3 Not tainted 6.9.0-rc7-syzkaller-00188-gba16c1cf11c9 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:check_srcu_held_too_long fs/bcachefs/btree_iter.c:2871 [inline]
+RIP: 0010:bch2_trans_put+0xd8c/0xf90 fs/bcachefs/btree_iter.c:3113
+Code: 2b 1e 48 c1 eb 02 48 b9 c3 f5 28 5c 8f c2 f5 28 48 89 d8 48 f7 e1 48 c1 ea 02 48 c7 c7 40 28 11 8c 48 89 d6 e8 c5 71 49 fd 90 <0f> 0b 90 90 e9 2d f8 ff ff e8 86 ff 86 fd 90 0f 0b 90 e9 70 f8 ff
+RSP: 0018:ffffc9000504ef78 EFLAGS: 00010246
+RAX: 25f7e0a65c980f00 RBX: 000000000000015e RCX: 0000000000040000
+RDX: ffffc9000b21b000 RSI: 000000000003ffff RDI: 0000000000040000
+RBP: dffffc0000000000 R08: ffffffff81587c52 R09: fffffbfff1c39b5c
+R10: dffffc0000000000 R11: fffffbfff1c39b5c R12: 1ffff11003daf808
+R13: 1ffff11003daf80d R14: ffff88801ed7c068 R15: ffff88801ed7c041
+FS:  00007f0b753806c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd53b17db38 CR3: 000000007c3e4000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_btree_root_read+0x8b2/0x970 fs/bcachefs/btree_io.c:1772
+ read_btree_roots+0x22d/0x7b0 fs/bcachefs/recovery.c:457
+ bch2_fs_recovery+0x4334/0x63b0 fs/bcachefs/recovery.c:785
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1043
+ bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2105
+ bch2_mount+0x71d/0x1320 fs/bcachefs/fs.c:1903
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1779
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0b7467f46a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f0b7537fef8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f0b7537ff80 RCX: 00007f0b7467f46a
+RDX: 0000000020011a00 RSI: 0000000020011a40 RDI: 00007f0b7537ff40
+RBP: 0000000020011a00 R08: 00007f0b7537ff80 R09: 0000000001200014
+R10: 0000000001200014 R11: 0000000000000202 R12: 0000000020011a40
+R13: 00007f0b7537ff40 R14: 00000000000119fc R15: 0000000020000100
+ </TASK>
 
->
-> A part of The Real Solution(tm) would make counter allocations scale
-> (including mcid, not just rss) or dodge them (while maintaining the
-> per-cpu distribution, see below for one idea), but that boils down to
-> balancing scalability versus total memory usage. It is trivial to just
-> slap together a per-cpu cache of these allocations and have the problem
-> go away for benchmarking purposes, while being probably being too memory
-> hungry for actual usage.
->
-> I was pondering an allocator with caches per some number of cores (say 4
-> or 8). Microbenchmarks aside I suspect real workloads would not suffer
-> from contention at this kind of granularity. This would trivially reduce
-> memory usage compared to per-cpu caching. I suspect things like
-> mm_struct, task_struct, task stacks and similar would be fine with it.
->
-> Suppose mm_struct is allocated from a more coarse grained allocator than
-> per-cpu. Total number of cached objects would be lower than it is now.
-> That would also mean these allocated but not currently used mms could
-> hold on to other stuff, for example per-cpu rss and mcid counters. Then
-> should someone fork or exit, alloc/free_percpu would be avoided for most
-> cases. This would scale better and be faster single-threaded than the
-> current state.
 
-And what is the issue with using only one CPU cache, and flush on mm
-switch? No more alloc after boot, and the total (and fixed) memory
-usage is just about a few unsigned long per CPU, which should be even
-lower that the old RSS cache solution (4 unsigned long per task). And
-it scaled very well with many kinds of microbench or workload I've
-tested.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Unless the workload keeps doing something like "alloc one page then
-switch to another mm", I think the performance will be horrible
-already due to cache invalidations and many switch_*()s, RSS isn't
-really a concern there.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
->
-> (believe it or not this is not the actual long rant I have in mind)
->
-> I can't commit to work on the Real Solution though.
->
-> In the meantime I can submit percpu_counter_sum_many_unsafe as described
-> above if Denis likes the idea.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
