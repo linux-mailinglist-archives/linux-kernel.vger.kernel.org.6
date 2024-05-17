@@ -1,236 +1,101 @@
-Return-Path: <linux-kernel+bounces-182002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0596D8C84F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:37:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C11D8C84F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE4912820F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB84A2815D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E1439851;
-	Fri, 17 May 2024 10:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8978A3A1DA;
+	Fri, 17 May 2024 10:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IwCDPTGM"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aooNHHqd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D81B28680
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94CF2E852;
+	Fri, 17 May 2024 10:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715942228; cv=none; b=XCk+AamiEldRMti2XLX+pT5okahKABhVd1+ZkMcaV8MlZFS4bZ6Gv7HSEO1ZiQ+ALhh2k6oZWLLgIx3MVoSG8YLnEaL0FulNzwkfXf6a9OymMJVckU/qdfvpltRuPuesE8YMP06iWW6IAXqbrbr3slb0TpFsLYXOFsjut/2ICfM=
+	t=1715942248; cv=none; b=Dm9FEr+KQIdX3UAhOeSwDKoA8WAzJDmbq4JRb5h1e/qp+ai1m6PgrWtA2XiCDf2lD+nwJuolbGCIKzmFTu1KvdAWUxBbUDR76gAhvsQnFeE37Od174gLkNYN07TZDIwk6vqMFggqrrXaS0DSYt8aR9wGwWFFj/YGevtKm6sRC68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715942228; c=relaxed/simple;
-	bh=nr2RVcaS3Fx7M56dgJm7Q03MlI3yuezRRQRfyTmjjG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=q16Ts41nH1awz8CSLucEDbDDX5ue8alTX8nRqvb/Nwc53lGXaAo31dfjsbi3/+iDs+Sauff7UwiVR55E4DW45kJtRX0XCzdWYF5LIf6RDBv4CSEzyuSNEVdctW5q+26zT2JT5EjGzHpT11AzhMm4MyAKcf6h+3btjBUOwlxCbxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IwCDPTGM; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715942225;
-	bh=nr2RVcaS3Fx7M56dgJm7Q03MlI3yuezRRQRfyTmjjG0=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=IwCDPTGMfccHM/2vWg8g8i52O1ausYB1KEmwgL1WRtt7ge3k+PLBaejjocEboqIKa
-	 jyfhWLezqxiwx+9hOxUOEafgEfQrD7JyaLmNBlAB4UOtTNFakqQWXxqoTNcrHENn5k
-	 zp+Z/+DHIL/dvHiwiNYGvPVSnzxMwT0uqYA24h7acU///le41H3vWS8eJBRVHdJdZp
-	 vs1N0Yit6sn1b/cNf8zrPmBGTnSbLT1miGZitdcFUY8ElxRVdi16girpbeZ2xpSYup
-	 VuVNGSW+3gGHiIb8r+ZDS4MttyLr5/ErH1O2W7awu9WXf2UtSm8RBgMSgFxrLRFFD+
-	 g33erZ6DLtgVQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 39E313782198;
-	Fri, 17 May 2024 10:37:04 +0000 (UTC)
-Message-ID: <ec3cea1f-86c7-4e9d-b538-57862c358c2f@collabora.com>
-Date: Fri, 17 May 2024 12:37:03 +0200
+	s=arc-20240116; t=1715942248; c=relaxed/simple;
+	bh=d5E76zfP3E0SHs8WUgh0FmgpKxv/WsJK3P6aN0GbnU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bb8rK69uyd+1IX9axTCadzyKq/Q+WW5cpElQwuwOvOOq1jBW1BP7fT+RBhxV3eQgE56wdJ34focDMgGJCRQyouo4acrgEb31Z6Blwmy3YFV5IG4ZF5PWNFOb7MEGs1L4BpjFHLOkCM4NUKJPvugdG6nc06S2yIpOSpoMPQ17Nes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aooNHHqd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4E41C2BD10;
+	Fri, 17 May 2024 10:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715942248;
+	bh=d5E76zfP3E0SHs8WUgh0FmgpKxv/WsJK3P6aN0GbnU0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aooNHHqde0cqMrfTRwq/b2sMdrcXrdYV3JHneEzavO1I9/KMrSG47hYxIjMVqKD9j
+	 NnyElFF3JvKbv8nxRo21hcHy/L0VqTaaXXxWgyTBuClNBoqjsRuH8NujMNcSVrUMNc
+	 b6EfbhSjNI9qvn5i5SK2X+7kmm5Zka/SjgVobgnA=
+Date: Fri, 17 May 2024 12:37:15 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+	Linux kernel regressions list <regressions@lists.linux.dev>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: three commits you might or might not want to pick up for 6.9.y
+Message-ID: <2024051709-pretty-rambling-fc7e@gregkh>
+References: <9e40badb-c4fa-4828-a4c5-3a170f624215@leemhuis.info>
+ <2024051501-dropkick-landmark-5db0@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9] drm/bridge: it6505: This patch fixes hibernate to
- resume no display issue
-To: kuro <kuro.chung@ite.com.tw>, Pin-yen Lin <treapking@chromium.org>,
- Kenneth Haung <kenneth.hung@ite.com.tw>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Hermes Wu <hermes.wu@ite.com.tw>, Allen Chen <allen.chen@ite.com.tw>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240517021654.1034218-1-kuro.chung@ite.com.tw>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240517021654.1034218-1-kuro.chung@ite.com.tw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024051501-dropkick-landmark-5db0@gregkh>
 
-Il 17/05/24 04:16, kuro ha scritto:
-> From: Kuro Chung <kuro.chung@ite.com.tw>
+On Wed, May 15, 2024 at 04:09:17PM +0200, Greg KH wrote:
+> On Wed, May 15, 2024 at 03:49:30PM +0200, Thorsten Leemhuis wrote:
+> > Hi Greg. Here are three reports for regressions introduced during the
+> > 6.9 cycle that were not fixed for 6.9 for one reason or another, but are
+> > fixed in mainline now. So they might be good candidates to pick up early
+> > for 6.9.y -- or maybe not, not sure. You are the better judge here. I
+> > just thought you might wanted to know about them.
+> > 
+> > 
+> > * net: Bluetooth: firmware loading problems with older firmware:
+> > https://lore.kernel.org/lkml/20240401144424.1714-1-mike@fireburn.co.uk/
+> > 
+> > Fixed by 958cd6beab693f ("Bluetooth: btusb: Fix the patch for MT7920 the
+> > affected to MT7921") – which likely should have gone into 6.9, but did
+> > not due to lack of fixes: an stable tags:
+> > https://lore.kernel.org/all/CABBYNZK1QWNHpmXUyne1Vmqqvy7csmivL7q7N2Mu=2fmrUV4jg@mail.gmail.com/
+> > 
+> > 
+> > * leds/iwlwifi: hangs on boot:
+> > https://lore.kernel.org/lkml/30f757e3-73c5-5473-c1f8-328bab98fd7d@candelatech.com/
+> > 
+> > Fixed by 3d913719df14c2 ("wifi: iwlwifi: Use request_module_nowait") –
+> > not sure if that one is worth it, the regression might be an exotic
+> > corner case.
+> > 
+> > 
+> > * Ryzen 7840HS CPU single core never boosts to max frequency:
+> > https://bugzilla.kernel.org/show_bug.cgi?id=218759
+> > 
+> > Fixed by bf202e654bfa57 ("cpufreq: amd-pstate: fix the highest frequency
+> > issue which limits performance") – which was broken out of a patch-set
+> > by the developers to send it in for 6.9, but then was only merged for
+> > 6.10 by the maintainer.
 > 
-> This patch added a FIFO reset bit for input video. When system power resume,
-> the TTL input of it6505 may get some noise before video signal stable
-> and the hardware function reset is required.
-> But the input FIFO reset will also trigger error interrupts of output
-> module rising.Thus, it6505 have to wait a period can clear those
-> expected error interrupts caused by manual hardware reset in one
-> interrupt handler calling to avoid interrupt looping.
-> 
-> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-> 
+> Nice, thanks for these!  I'll look at them after this round of -rcs is
+> out.
 
-Your Signed-off-by tag is missing.
+All now queued up.
 
-Regards,
-Angelo
-
-> ---
->   drivers/gpu/drm/bridge/ite-it6505.c | 73 +++++++++++++++++++----------
->   1 file changed, 49 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-> index 469157341f3ab..5703fcf4b7b00 100644
-> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> @@ -1307,9 +1307,15 @@ static void it6505_video_reset(struct it6505 *it6505)
->   	it6505_link_reset_step_train(it6505);
->   	it6505_set_bits(it6505, REG_DATA_MUTE_CTRL, EN_VID_MUTE, EN_VID_MUTE);
->   	it6505_set_bits(it6505, REG_INFOFRAME_CTRL, EN_VID_CTRL_PKT, 0x00);
-> -	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET);
-> +
-> +	it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, TX_FIFO_RESET);
-> +	it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, 0x00);
-> +
->   	it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, RST_501_FIFO);
->   	it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, 0x00);
-> +
-> +	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET);
-> +	usleep_range(1000, 2000);
->   	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, 0x00);
->   }
->   
-> @@ -2245,12 +2251,11 @@ static void it6505_link_training_work(struct work_struct *work)
->   	if (ret) {
->   		it6505->auto_train_retry = AUTO_TRAIN_RETRY;
->   		it6505_link_train_ok(it6505);
-> -		return;
->   	} else {
->   		it6505->auto_train_retry--;
-> +		it6505_dump(it6505);
->   	}
->   
-> -	it6505_dump(it6505);
->   }
->   
->   static void it6505_plugged_status_to_codec(struct it6505 *it6505)
-> @@ -2471,31 +2476,53 @@ static void it6505_irq_link_train_fail(struct it6505 *it6505)
->   	schedule_work(&it6505->link_works);
->   }
->   
-> -static void it6505_irq_video_fifo_error(struct it6505 *it6505)
-> +static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
->   {
-> -	struct device *dev = it6505->dev;
-> -
-> -	DRM_DEV_DEBUG_DRIVER(dev, "video fifo overflow interrupt");
-> -	it6505->auto_train_retry = AUTO_TRAIN_RETRY;
-> -	flush_work(&it6505->link_works);
-> -	it6505_stop_hdcp(it6505);
-> -	it6505_video_reset(it6505);
-> +	return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
->   }
->   
-> -static void it6505_irq_io_latch_fifo_overflow(struct it6505 *it6505)
-> +static void it6505_irq_video_handler(struct it6505 *it6505, const int *int_status)
->   {
->   	struct device *dev = it6505->dev;
-> +	int reg_0d, reg_int03;
->   
-> -	DRM_DEV_DEBUG_DRIVER(dev, "IO latch fifo overflow interrupt");
-> -	it6505->auto_train_retry = AUTO_TRAIN_RETRY;
-> -	flush_work(&it6505->link_works);
-> -	it6505_stop_hdcp(it6505);
-> -	it6505_video_reset(it6505);
-> -}
-> +	/*
-> +	 * When video SCDT change with video not stable,
-> +	 * Or video FIFO error, need video reset
-> +	 */
->   
-> -static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
-> -{
-> -	return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
-> +	if ((!it6505_get_video_status(it6505) &&
-> +		(it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *) int_status))) ||
-> +		(it6505_test_bit(BIT_INT_IO_FIFO_OVERFLOW, (unsigned int *) int_status)) ||
-> +		(it6505_test_bit(BIT_INT_VID_FIFO_ERROR, (unsigned int *) int_status))) {
-> +
-> +		it6505->auto_train_retry = AUTO_TRAIN_RETRY;
-> +		flush_work(&it6505->link_works);
-> +		it6505_stop_hdcp(it6505);
-> +		it6505_video_reset(it6505);
-> +
-> +		usleep_range(10000, 11000);
-> +
-> +		/*
-> +		 * Clear FIFO error IRQ to prevent fifo error -> reset loop
-> +		 * HW will trigger SCDT change IRQ again when video stable
-> +		 */
-> +
-> +		reg_int03 = it6505_read(it6505, INT_STATUS_03);
-> +		reg_0d = it6505_read(it6505, REG_SYSTEM_STS);
-> +
-> +		reg_int03 &= (BIT(INT_VID_FIFO_ERROR) | BIT(INT_IO_LATCH_FIFO_OVERFLOW));
-> +		it6505_write(it6505, INT_STATUS_03, reg_int03);
-> +
-> +		DRM_DEV_DEBUG_DRIVER(dev, "reg08 = 0x%02x", reg_int03);
-> +		DRM_DEV_DEBUG_DRIVER(dev, "reg0D = 0x%02x", reg_0d);
-> +
-> +		return;
-> +	}
-> +
-> +
-> +	if (it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *) int_status))
-> +		it6505_irq_scdt(it6505);
->   }
->   
->   static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
-> @@ -2508,15 +2535,12 @@ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
->   	} irq_vec[] = {
->   		{ BIT_INT_HPD, it6505_irq_hpd },
->   		{ BIT_INT_HPD_IRQ, it6505_irq_hpd_irq },
-> -		{ BIT_INT_SCDT, it6505_irq_scdt },
->   		{ BIT_INT_HDCP_FAIL, it6505_irq_hdcp_fail },
->   		{ BIT_INT_HDCP_DONE, it6505_irq_hdcp_done },
->   		{ BIT_INT_AUX_CMD_FAIL, it6505_irq_aux_cmd_fail },
->   		{ BIT_INT_HDCP_KSV_CHECK, it6505_irq_hdcp_ksv_check },
->   		{ BIT_INT_AUDIO_FIFO_ERROR, it6505_irq_audio_fifo_error },
->   		{ BIT_INT_LINK_TRAIN_FAIL, it6505_irq_link_train_fail },
-> -		{ BIT_INT_VID_FIFO_ERROR, it6505_irq_video_fifo_error },
-> -		{ BIT_INT_IO_FIFO_OVERFLOW, it6505_irq_io_latch_fifo_overflow },
->   	};
->   	int int_status[3], i;
->   
-> @@ -2546,6 +2570,7 @@ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
->   			if (it6505_test_bit(irq_vec[i].bit, (unsigned int *)int_status))
->   				irq_vec[i].handler(it6505);
->   		}
-> +		it6505_irq_video_handler(it6505, (unsigned int *) int_status);
->   	}
->   
->   	pm_runtime_put_sync(dev);
-
-
+greg k-h
 
