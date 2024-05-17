@@ -1,116 +1,161 @@
-Return-Path: <linux-kernel+bounces-182377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654818C8A88
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:07:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 772468C8A8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 766FA1C22346
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 277972821DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DC513DB8C;
-	Fri, 17 May 2024 17:06:57 +0000 (UTC)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A1313D8BF;
+	Fri, 17 May 2024 17:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b0yTdLDU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B56313D8A8;
-	Fri, 17 May 2024 17:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A422712F5A3
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715965616; cv=none; b=OmWdJ6/f5vNsxzw/S4NrZVq/QP/LfLn69aWg6sSJ9aKLYSWuaRG8/hgHYyWmVNez2sp8BdMzs248QSyiXUZ4waGirmeuQq0Ftjn1JvOXJPlevZMvvG4pzdrnZMbi3ws3Rir52xajsEjXjI822/hua9DZQ4cH6SMja8AWzbV6na8=
+	t=1715965797; cv=none; b=VwaLkzayW211Y32ZS473z1HQdEgcsD2R8y3IDtuyVZrE70VBOSWDK5qsHWRBgWo9idG7rLjbgheZulKcWjZI9q9mPr3CTHU4hhZcN//4V1nk4lp0XvcLaPdvGn+4taVGesCIPb7D6HQQZ8H2TGIfhzQtIBVcN3MSx+JauClh9C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715965616; c=relaxed/simple;
-	bh=cmXJHYt0n27WurVX5CSCRo0/J6W6YEmPq397ULn1iWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p0nwyQaJWckuXA1/CuZMIP7Y0FfAvFaxLjgqgbk/qQudC4+d/WeMjGkmRY/UoOaNLxv3n+QgLlIBi4lwtayefHPJqLAFrDkUc+xRtSvsyHPIG91ionibp2BGT8+DP5zJP6hv/kjUVeXUVCxQgqv45L2Hyo6InRZSANiwaNbCuqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1ed904c2280so13473135ad.2;
-        Fri, 17 May 2024 10:06:55 -0700 (PDT)
+	s=arc-20240116; t=1715965797; c=relaxed/simple;
+	bh=x7Bw4tG2gXrUHLF36e6j3ojXvbwM76d82R/kfpkt0DI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CFIR1ffHa4lu6tMd6zIkJN7YnnnuWvXYppAQMbUje/86GfrUntRb4Q2S5MWR/cdZN8c4a9+QQDRW7yji/lQKRop/n2q4kJCHtToTC1las97dcpYouml58q+4e6dJ9ijXMeqrpLcEKiVF4Hq+PjUHXXL+ZkaNMiuM5quY+D+VSUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b0yTdLDU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715965794;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+pdp9Fgv06c5uCl9iN53c2RFQnQI9vJm8SjFQl4B3n8=;
+	b=b0yTdLDUlU8skMJHbdCiKrnAMvye1sAflKsOCklhygm+urh/xsUssIe+9t5lzt+IOtfj86
+	WLGpcjZ0fLg3A4WmA+5BCBoNnaXuPWvCcKR5HIDq8g4EimAm3IdGSae3rIH/Xa+8Y+BgPv
+	lthjxGYqHQpoeXyW71dFl3vsqDVpp4A=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-oD-mcOygM5yL2wr6n5S2ww-1; Fri, 17 May 2024 13:09:52 -0400
+X-MC-Unique: oD-mcOygM5yL2wr6n5S2ww-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a59bfd32b8fso565166366b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:09:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715965615; x=1716570415;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tX2V3zugpj22RtcaxmCt5d+IZOg/f7yrPNcCBjnFxnU=;
-        b=M3tgSX5FeNxu4oqoJ8ORQ739u+V27ZMqm0BvAsuiqZ7Nbd6AouEGLLIcAf1GjljoBD
-         I/6gEbDDaAp/F3sJFxEwrXQ/cATn5Nk5mplGhzGGEvkYkNfzZk0kjvLRuYdInIP4EzxB
-         hMjdxsfLCL8Yg2kKP3RWYCVHa/mD4Cty7Xe6zlVDaP8z4V5bQExyyc80rokAYMrLdkyy
-         qMXWdwHpdmcPKXUiVjeDPr/ZQHQdN8ESbMN8+1YQfrsAmfMcyZJ7/RpyMPPmJbYDWQTt
-         2xecLV+4pAiKyFXzqisPu6X3AnIJv5jPjvfQIW3WBejK3BwZt8yn2qTwCklcyLkVwxaK
-         omQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDMTn+bA9PO2HxtEXBLtQLCP6ZLZvaevJ2bfVrLBNWztBybNQQ5mAeCC7tS3CXIYXjqrJIJnjts0VMInvFoGByFfaz8mWpxPS7/FoEYG7Ts8BlFX0a0acso8BjvcbSzRSNWTawTuqE
-X-Gm-Message-State: AOJu0YzmRNHuAsfoB+PzEDdQWeqh380tAL28PnLno6h3FPTHNrk9Yuo3
-	PhaDkRmOilAQxHhAENo8Zktiob0tuOV3aRkRHm32SYcCsWrBicU2
-X-Google-Smtp-Source: AGHT+IGcpPnQ6L8AUKPL7T4eaD+5vSlhDjJypWgo2jQ4+KxJfz3d5egB8JUeE4n7pXKePdQoJXgdpw==
-X-Received: by 2002:a17:903:1210:b0:1f0:6f32:e13d with SMTP id d9443c01a7336-1f06f32e236mr164155385ad.21.1715965614547;
-        Fri, 17 May 2024 10:06:54 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d3b0fsm159107075ad.22.2024.05.17.10.06.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 10:06:53 -0700 (PDT)
-Date: Sat, 18 May 2024 02:06:50 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: cassel@kernel.org, bhelgaas@google.com, gustavo.pimentel@synopsys.com,
-	helgaas@kernel.org, imx@lists.linux.dev, jdmason@kudzu.us,
-	jingoohan1@gmail.com, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, lpieralisi@kernel.org, mani@kernel.org,
-	robh@kernel.org
-Subject: Re: [PATCH v4 1/1] PCI: dwc: Fix index 0 incorrectly being
- interpreted as a free ATU slot
-Message-ID: <20240517170650.GC1947919@rocinante>
-References: <20240412160841.925927-1-Frank.Li@nxp.com>
+        d=1e100.net; s=20230601; t=1715965791; x=1716570591;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+pdp9Fgv06c5uCl9iN53c2RFQnQI9vJm8SjFQl4B3n8=;
+        b=u3AyI+/G2IY+YHYoi7vOQgk/2xzq60zuphTljSYKC3rZzpMaVTVNXIj/AoYDLbQKCH
+         m5QLy/Pg4P3nGHmwEsqFCz0hHtjpcRhhVRB3Z/2+98+iRXwJExM/ZqR2SSB9rAGOh7v5
+         G82bknATkSqcZGOruVptzckqnZpPSz3yui3C2kQWSzW1VG3eeG5b3KeSwfDGnhzJGlLi
+         zKZS/E3AEm+EgvYX6tgFtkeDOVnGMZ7ZqgNNPziH4LvBYms8mR+2k2N2uVw4vIQE/h+y
+         8MbJ33pFwAzO0wgTqOHHet0Wodlkhiw4n6wafQgKLmDF1hu7mu1Tg+KaHj6OA0t3x6qO
+         GhpQ==
+X-Gm-Message-State: AOJu0YwPUKlSm1P9oFM57D+nRcRuHBoc1XdT5wGfvyugnF0VHqs108ac
+	crzDrpmHObs2Y4hURFS83lv3KvhwfAg41hrK6Ub6ZyVbsnCxoXTmvG6L/jRv6Ozd6Rbz5WGpT5e
+	TcHUp6YEwjCpMefxwZH9ngKQ9IzwR5bE5ZW7h5yjnp//mXU/VZLNIorp0BuH32A==
+X-Received: by 2002:a17:907:2d86:b0:a5a:423:a69f with SMTP id a640c23a62f3a-a5a2d53b9bemr1782609566b.9.1715965791658;
+        Fri, 17 May 2024 10:09:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYcIyM25DJsjwG8pQ3v5lZeUr/4DXwGSEQJ5iM9+qxyiEshE0I9OVO/et+WIqR/gWd+drwyA==
+X-Received: by 2002:a17:907:2d86:b0:a5a:423:a69f with SMTP id a640c23a62f3a-a5a2d53b9bemr1782608366b.9.1715965791307;
+        Fri, 17 May 2024 10:09:51 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.155.52])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a5a55275e80sm856667566b.8.2024.05.17.10.09.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 May 2024 10:09:50 -0700 (PDT)
+Message-ID: <2450ce49-2230-45a2-bc0d-b21071f2cce6@redhat.com>
+Date: Fri, 17 May 2024 19:09:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240412160841.925927-1-Frank.Li@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/7] KVM: VMX: Introduce test mode related to EPT
+ violation VE
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ Isaku Yamahata <isaku.yamahata@intel.com>
+References: <20240507154459.3950778-1-pbonzini@redhat.com>
+ <20240507154459.3950778-8-pbonzini@redhat.com> <ZkVHh49Hn8gB3_9o@google.com>
+ <7c0bbec7-fa5c-4f55-9c08-ca0e94e68f7c@redhat.com>
+ <ZkeH8agqiHzay5r9@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <ZkeH8agqiHzay5r9@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 5/17/24 18:38, Sean Christopherson wrote:
+>>> I've hit this three times now when running KVM-Unit-Tests (I'm pretty sure it's
+>>> the EPT test, unsurprisingly).  And unless I screwed up my testing, I verified it
+>>> still fires with Isaku's fix[*], though I'm suddenly having problems repro'ing.
+>>>
+>>> I'll update tomorrow as to whether I botched my testing of Isaku's fix, or if
+>>> there's another bug lurking.
+>>>
+>>> https://lore.kernel.org/all/20240515173209.GD168153@ls.amr.corp.intel.com
+>> I cannot reproduce it on a Skylake (Xeon Gold 5120), with or without Isaku's
+>> fix, with either ./runtests.sh or your reproducer line.
+>>
+>> However I can reproduce it only if eptad=0 and with the following line:
+>>
+>> ./x86/run x86/vmx.flat -smp 1 -cpu max,host-phys-bits,+vmx -m 2560 \
+>>    -append 'ept_access_test_not_present ept_access_test_read_only'
+>
+> FWIW, I tried that on RPL, still no failure.
 
-> When PERST# assert and deassert happens on the PERST# supported platforms,
-> the both iATU0 and iATU6 will map inbound window to BAR0. DMA will access
-> to the area that was previously allocated (iATU0) for BAR0, instead of the
-> new area (iATU6) for BAR0.
-> 
-> Right now, we dodge the bullet because both iATU0 and iATU6 should
-> currently translate inbound accesses to BAR0 to the same allocated memory
-> area. However, having two separate inbound mappings for the same BAR is a
-> disaster waiting to happen.
-> 
-> The mapping between PCI BAR and iATU inbound window are maintained in the
-> dw_pcie_ep::bar_to_atu[] array. While allocating a new inbound iATU map for
-> a BAR, dw_pcie_ep_inbound_atu() API will first check for the availability
-> of the existing mapping in the array and if it is not found (i.e., value in
-> the array indexed by the BAR is found to be 0), then it will allocate a new
-> map value using find_first_zero_bit().
-> 
-> The issue here is, the existing logic failed to consider the fact that the
-> map value '0' is a valid value for BAR0. Because, find_first_zero_bit()
-> will return '0' as the map value for BAR0 (note that it returns the first
-> zero bit position).
-> 
-> Due to this, when PERST# assert + deassert happens on the PERST# supported
-> platforms, the inbound window allocation restarts from BAR0 and the
-> existing logic to find the BAR mapping will return '6' for BAR0 instead of
-> '0' due to the fact that it considers '0' as an invalid map value.
-> 
-> So fix this issue by always incrementing the map value before assigning to
-> bar_to_atu[] array and then decrementing it while fetching. This will make
-> sure that the map value '0' always represents the invalid mapping."
+Ok, so it does look like a CPU issue.  Even with the fixes you 
+identified, I don't see any other solution than adding scary text in 
+Kconfig, defaulting it to "n", and adding an also-very-scary 
+pr_err_once("...") the first time VMPTRLD is executed with 
+CONFIG_KVM_INTEL_PROVE_VE.
 
-Applied to controller/dwc, thank you!
+Paolo
 
-[1/1] PCI: dwc: Fix index 0 incorrectly being interpreted as a free ATU slot
-      https://git.kernel.org/pci/pci/c/cd3c2f0fff46
-
-	Krzysztof
 
