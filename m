@@ -1,438 +1,245 @@
-Return-Path: <linux-kernel+bounces-182160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5064F8C877D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:53:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC3A8C877E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D66BA1F2149B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D29D61C21923
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEE455E49;
-	Fri, 17 May 2024 13:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRfzu44M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940C754FAF;
+	Fri, 17 May 2024 13:54:36 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD804F896;
-	Fri, 17 May 2024 13:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA4346B9A
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 13:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715954005; cv=none; b=PG0lSheDqtkDWkuIl92nG6oxfsKW44I8BcUn01DLsxsayMspKz2yUZIrDdzr6w/T7z3rl35j3KKEMvsZKAxu0DfGey/UR4qhq7AwnDd8xhxd0K9b3ZPu8As8yRWdQCDYir5p7TBPZWoANcvXBvHf94gb8tZ3qG4E1nEu6k7w5/w=
+	t=1715954076; cv=none; b=bARAHHxZmZOpLMPZpnwY5bSOhC8rOTwUoiKQx3isSSiOFjooZ6/Sgnfsn9XPBxLIC8NM3qPgt7LZGBTE3c2mC5qpuUFCjS3J7HAlR3eyevqJcbifik4aD1RXxjBqtfpOBW3qKsZ2ZONT+5oL6qNZDDbB/LOGMdU+cu7pxl3mM7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715954005; c=relaxed/simple;
-	bh=Yyh0Uj9+41K/rG4aw95IIWmOeWYmMDJLjQFcuqVick4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=hdxxt3DTTREtmaPRXbAvH2ypwASV8wl+3K7X8DigEz65LEN1xYespz0tmOUPzdnCm670SnAZR1/UAT4OqANpYGXF4rqF9mvJNNihoUXyE/KpnrJ/ARxDGM3rl7PplPgWPptkR/+GKJAR9QF3pAgzvf0k182Ui3R6gEMwCNuS/fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRfzu44M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EDBFC2BD10;
-	Fri, 17 May 2024 13:53:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715954004;
-	bh=Yyh0Uj9+41K/rG4aw95IIWmOeWYmMDJLjQFcuqVick4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=JRfzu44Mm1YIB26kKJT3HjLJ4RpTbj2CiXRZ16idsDo1y+uXwRWBCg7a9T7/FrCTq
-	 kPbcBL430fYR7ZW40EX1gxfqzadSYgS6yU2+ht9MLJ0x31QbxTjFzcZFGJZYAbbGQ/
-	 G1yWHT0UB8K+nrcCGLhDjlPNQdAKSwaFmIn9joTLZySQcFCnmDdTZnkelqsMPqPoHR
-	 CGk3KGcI/owG73GAIxu/CEpfBDftwwzO0LDdzL1XLF2s0EXvLutPJ7X5drugiN9wyG
-	 rr9/Vlycq9qQsRU5SBkH6M9VI750APfvl6VHu5X07Xwn3WlCdJfICkUvpfqOL9x5YW
-	 jAQkVxGsEuWLQ==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52327368e59so2158445e87.1;
-        Fri, 17 May 2024 06:53:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVW8Yzj2IvNbXQ1EY0uK297YOydpci6OvgIdMJaXOmI1L+LaaWDDKtbw6PJxKM+lnFdVZ6qBc8O1yvVfqcufAzvLegs0NXsiXJNwaor
-X-Gm-Message-State: AOJu0YypQCfpD8WS3R0jfZJLI3e4nB0ZFY2sxEimYWbppqmcFCdcpRQK
-	lI33B+JsJq68cOGBP6hKuZzSdmAkmyY4Mj8hDNzgPCgkvz5/9fOjPvb5sd/G0EvEh37CYEpvQlZ
-	+Hv1Ahh+u5+gzldHHmTw++L/P9As=
-X-Google-Smtp-Source: AGHT+IGFZuTSR5vI6kI7phN+jd+ubxKcz1/2FbCWLUeKpSiVSc4WPA2KCs4JNLqJXbeKW6d5Lc7TscmzpsYCZ/ENbeQ=
-X-Received: by 2002:ac2:5a4a:0:b0:519:1e33:9d85 with SMTP id
- 2adb3069b0e04-5220fd7ad22mr12558469e87.36.1715954002931; Fri, 17 May 2024
- 06:53:22 -0700 (PDT)
+	s=arc-20240116; t=1715954076; c=relaxed/simple;
+	bh=d5B6wu4PJwgE4+gEmazIiE4q1EyzjNwUaJMGd5ydVZo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bcj1NR+2av7UvVgMYpzBfRglvbQv1OWZ5WmPdDKkaWPa7/xQ6hIZwFNAdmNw7a6f5phro0WSXyrOrqILnZjEovchb3SA7rM2ZS547CQKPUAjiPIVSWp7B/9D8KWSXra/oawFLLCr1zW+5CgZThtTOJYiIdRvV8jqB/kTn8zu/Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e1be009e6eso892259939f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 06:54:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715954073; x=1716558873;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GRI7rMZcwU1RNVH7EUxut7F9F2EtbNepc7wNWtnYSV4=;
+        b=XUG6rruQRAmSkSlO54U1rsfNJzXizE8UFD+dO0AYFKbmzB8j3V2ZksX6x20nQ6iOHZ
+         ixJCaT+QJeztvKUpDF0r2xYlelc0QT8gsYHLBWd13TJUz4eG9alodAf+nV372kWG8ziZ
+         xPLFGkjmKPoet41aeqJxftzKaQo84crj3ZVRlZ2csaiRgFO68Smuq01jG5i7BcahTwgh
+         cKV6HewcXHWw/GyQK13fCuix2/0MS9vYfVMwFOTfbRmZzyi4D5OCfV/oX17WZpvAfZln
+         b0dHSEBbVLwparRa5QJiwSmCZ+hsm9OU+SeEhh5RG07vpILo++gM8NjCewdKp65qjEEo
+         u96w==
+X-Forwarded-Encrypted: i=1; AJvYcCUZDfj/YjFIb4ngRbjr4q4ZLIW3OwrIcAVKA/mFW4gUuHf3bY9x0kKLD5lw02Yn8SU4OxXY1CN4bAo9/ET6tLEsWgZmy0kDAVzkSAUY
+X-Gm-Message-State: AOJu0Yxl1BfsyQjdg8rhbr0KGxni/e6u6KznVbIsvLc61ZJ7c2fH/HwG
+	6EY8L+ZIVLp8e32zwRmy0a2fn8AhAqc+mw+bcMRC+VWrcKK3Lc2tQUou843m3PHtLbnzaswrjXx
+	OoM5bx8bvZPuS1Va1lZDqCBvWIbE/Yx2mVsNT1uiNFm/Oovh+aGY8OEc=
+X-Google-Smtp-Source: AGHT+IF1pEZ5+bGSb50Vmm04V8USD5yJ/oDyU3gt5GwPswHgjBcRBmWjxFZfVPwyOM6k8Sx8fK2uCvHDW9rlzlM6RYokIUAot2n1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 17 May 2024 22:52:45 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ6HRC42sL7TT05k6Y8N4jFcxfz5JY4EYAGLeP2sNGgRg@mail.gmail.com>
-Message-ID: <CAK7LNAQ6HRC42sL7TT05k6Y8N4jFcxfz5JY4EYAGLeP2sNGgRg@mail.gmail.com>
-Subject: [GIT PULL] Kbuild updates for v6.10-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+X-Received: by 2002:a05:6602:3f85:b0:7da:9d28:6578 with SMTP id
+ ca18e2360f4ac-7e1b521c6famr79259239f.3.1715954073515; Fri, 17 May 2024
+ 06:54:33 -0700 (PDT)
+Date: Fri, 17 May 2024 06:54:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000000cc8f0618a6b15d@google.com>
+Subject: [syzbot] [udf?] possible deadlock in udf_setsize
+From: syzbot <syzbot+0333a6f4b88bcd68a62f@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello Linus,
-
-
-Please pull Kbuild updates for v6.10-rc1.
-
-
-You will see conflicts in 4 files.
-
-All of them are properly resolved in linux-next.
-
-
-
-After merging this pull request, just in case, please run
-
-  $ git grep '$(srctree)/$(src)'
-
-If you get a hit, please replace $(srctree)/$(src) with $(src).
-
-
-My commit b1992c3772e6 needs to consistently replace $(srctree)/$(src),
-but I cannot touch in-flight patches merged in other subsystems.
-
-
-
-The following are the merge conflicts I am aware of:
-
-
-
-[1] drivers/gpu/drm/msm/Makefile
-
-conflict between 0fddd045f88e between b1992c3772e6
-
-addressed by:
-https://lore.kernel.org/all/20240507125132.2af57c71@canb.auug.org.au/
-
-
-[2] drivers/misc/lkdtm/Makefile
-
-conflict between fb28a8862dc4 between 7f7f6f7ad654
-
-addressed by:
-https://lore.kernel.org/all/20240513151316.6bd6fc87@canb.auug.org.au/
-
-
-[3] drivers/net/wireless/intel/iwlwifi/mvm/Makefile
-
-conflict between 2887af4d22f9 and b1992c3772e6
-
-addressed by:
-https://lore.kernel.org/all/20240506112810.02ae6c17@canb.auug.org.au/
-
-
-[4] rust/Makefile
-
-conflict between 11795ae4cc43 and b1992c3772e6
-
-addressed by:
-https://lore.kernel.org/all/20240506153333.7b36a0e6@canb.auug.org.au/
-
-
-
-
-
-
-
-Thank you.
-
-
-
-
-The following changes since commit ed30a4a51bb196781c8058073ea720133a65596f:
-
-  Linux 6.9-rc5 (2024-04-21 12:35:54 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-v6.10
-
-for you to fetch changes up to 6ffe4fdf8901dc0a15d7278531503ecd4522ae15:
-
-  kconfig: use sym_get_choice_menu() in sym_check_prop() (2024-05-16
-03:18:41 +0900)
-
-----------------------------------------------------------------
-Kbuild updates for v6.10
-
- - Avoid 'constexpr', which is a keyword in C23
-
- - Allow 'dtbs_check' and 'dt_compatible_check' run independently of
-   'dt_binding_check'
-
- - Fix weak references to avoid GOT entries in position-independent
-   code generation
-
- - Convert the last use of 'optional' property in arch/sh/Kconfig
-
- - Remove support for the 'optional' property in Kconfig
-
- - Remove support for Clang's ThinLTO caching, which does not work with
-   the .incbin directive
-
- - Change the semantics of $(src) so it always points to the source
-   directory, which fixes Makefile inconsistencies between upstream and
-   downstream
-
- - Fix 'make tar-pkg' for RISC-V to produce a consistent package
-
- - Provide reasonable default coverage for objtool, sanitizers, and
-   profilers
-
- - Remove redundant OBJECT_FILES_NON_STANDARD, KASAN_SANITIZE, etc.
-
- - Remove the last use of tristate choice in drivers/rapidio/Kconfig
-
- - Various cleanups and fixes in Kconfig
-
-----------------------------------------------------------------
-Ard Biesheuvel (2):
-      kallsyms: Avoid weak references for kallsyms symbols
-      vmlinux: Avoid weak reference to notes section
-
-Arnd Bergmann (1):
-      scripts/unifdef: avoid constexpr keyword
-
-Emil Renner Berthing (1):
-      kbuild: buildtar: install riscv compressed images as vmlinuz
-
-Masahiro Yamada (37):
-      parisc: vdso: remove unused C build rule in vdso32/Makefile
-      kbuild: buildtar: add comments about inconsistent package generation
-      kconfig: add menu_next() function and menu_for_each(_sub)_entry macros
-      kconfig: use menu_for_each_entry() to traverse menu tree
-      kconfig: remove unneeded if-conditional in conf_choice()
-      kbuild: buildtar: remove warning for the default case
-      kconfig: remove SYMBOL_CHOICE flag
-      sh: Convert the last use of 'optional' property in Kconfig
-      kconfig: remove 'optional' property support
-      kconfig: remove SYMBOL_NO_WRITE flag
-      arch: use $(obj)/ instead of $(src)/ for preprocessed linker scripts
-      kbuild: do not add $(srctree) or $(objtree) to header search paths
-      kbuild: use $(obj)/ instead of $(src)/ for common pattern rules
-      kbuild: use $(src) instead of $(srctree)/$(src) for source directory
-      kbuild: remove redundant $(wildcard ) for rm-files
-      kbuild: add 'private' to target-specific variables
-      kbuild: simplify generic vdso installation code
-      kconfig: gconf: update pane correctly after loading a config file
-      kconfig: gconf: remove debug code
-      kconfig: gconf: use MENU_CHANGED instead of SYMBOL_CHANGED
-      kconfig: use linked list in sym_set_changed()
-      kconfig: turn conf_choice() into void function
-      kconfig: turn missing prompt for choice members into error
-      kconfig: turn defaults and additional prompt for choice members into error
-      kconfig: add sym_get_choice_menu() helper
-      kconfig: use sym_get_choice_menu() in conf_write_defconfig()
-      kconfig: use menu_list_for_each_sym() in sym_check_choice_deps()
-      kbuild: provide reasonable defaults for tool coverage
-      Makefile: remove redundant tool coverage variables
-      kbuild: use GCOV_PROFILE and KCSAN_SANITIZE in scripts/Makefile.modfinal
-      kconfig: gconf: show checkbox for choice correctly
-      kconfig: m/nconf: remove dead code to display children of choice members
-      kconfig: m/nconf: remove dead code to display value of bool choice
-      kconfig: m/nconf: merge two item_add_str() calls
-      kconfig: lxdialog: remove initialization with A_NORMAL
-      rapidio: remove choice for enumeration
-      kconfig: use sym_get_choice_menu() in sym_check_prop()
-
-Nathan Chancellor (1):
-      kbuild: Remove support for Clang's ThinLTO caching
-
-Rob Herring (3):
-      dt-bindings: kbuild: Simplify examples target patsubst
-      dt-bindings: kbuild: Split targets out to separate rules
-      dt-bindings: kbuild: Add separate target/dependency for
-processed-schema.json
-
-Wang Yao (1):
-      modules: Drop the .export_symbol section from the final modules
-
- Documentation/Makefile                                        |   8 +--
- Documentation/devicetree/bindings/Makefile                    |  36 ++++++----
- Documentation/kbuild/kconfig-language.rst                     |   3 -
- Documentation/kbuild/makefiles.rst                            |  12 ++--
- Makefile                                                      |  44
-+++++++-----
- arch/arc/boot/dts/Makefile                                    |   3 +-
- arch/arm/Kbuild                                               |   2 +-
- arch/arm/boot/Makefile                                        |   3 +-
- arch/arm/boot/bootp/Makefile                                  |   1 -
- arch/arm/boot/compressed/Makefile                             |   7 --
- arch/arm/mach-s3c/Makefile                                    |   2 +-
- arch/arm/plat-orion/Makefile                                  |   2 +-
- arch/arm/tools/Makefile                                       |   2 +-
- arch/arm/vdso/Makefile                                        |   9 ---
- arch/arm64/kernel/pi/Makefile                                 |   6 --
- arch/arm64/kernel/vdso/Makefile                               |  10 +--
- arch/arm64/kernel/vdso32/Makefile                             |   2 +-
- arch/arm64/kvm/Makefile                                       |   4 +-
- arch/arm64/kvm/hyp/Makefile                                   |   2 +-
- arch/arm64/kvm/hyp/nvhe/Makefile                              |  13 ----
- arch/csky/boot/dts/Makefile                                   |   4 +-
- arch/csky/kernel/vdso/Makefile                                |   8 +--
- arch/loongarch/kvm/Makefile                                   |   2 +-
- arch/loongarch/vdso/Makefile                                  |   9 +--
- arch/mips/boot/compressed/Makefile                            |   6 --
- arch/mips/kernel/syscalls/Makefile                            |   2 +-
- arch/mips/vdso/Makefile                                       |  11 +--
- arch/nios2/boot/dts/Makefile                                  |   3 +-
- arch/parisc/boot/compressed/Makefile                          |   4 --
- arch/parisc/kernel/vdso32/Makefile                            |   9 +--
- arch/parisc/kernel/vdso64/Makefile                            |   4 +-
- arch/powerpc/boot/Makefile                                    |   6 +-
- arch/powerpc/boot/dts/Makefile                                |   3 +-
- arch/powerpc/boot/dts/fsl/Makefile                            |   3 +-
- arch/powerpc/kernel/vdso/Makefile                             |  16 ++---
- arch/powerpc/purgatory/Makefile                               |   3 -
- arch/riscv/boot/Makefile                                      |   2 -
- arch/riscv/kernel/compat_vdso/Makefile                        |   8 +--
- arch/riscv/kernel/pi/Makefile                                 |   6 --
- arch/riscv/kernel/vdso/Makefile                               |   8 +--
- arch/riscv/kvm/Makefile                                       |   2 +-
- arch/riscv/purgatory/Makefile                                 |   8 ---
- arch/s390/kernel/syscalls/Makefile                            |   4 +-
- arch/s390/kernel/vdso32/Makefile                              |  12 +---
- arch/s390/kernel/vdso64/Makefile                              |  12 +---
- arch/s390/purgatory/Makefile                                  |   8 ---
- arch/sh/Kconfig                                               |   6 +-
- arch/sh/boot/compressed/Makefile                              |   3 -
- arch/sh/configs/apsh4a3a_defconfig                            |   1 +
- arch/sh/configs/apsh4ad0a_defconfig                           |   1 +
- arch/sh/configs/edosk7705_defconfig                           |   1 +
- arch/sh/configs/hp6xx_defconfig                               |   1 +
- arch/sh/configs/landisk_defconfig                             |   1 +
- arch/sh/configs/magicpanelr2_defconfig                        |   1 +
- arch/sh/configs/rsk7264_defconfig                             |   1 +
- arch/sh/configs/rsk7269_defconfig                             |   1 +
- arch/sh/configs/se7619_defconfig                              |   1 +
- arch/sh/configs/se7705_defconfig                              |   1 +
- arch/sh/configs/se7722_defconfig                              |   1 +
- arch/sh/configs/se7750_defconfig                              |   1 +
- arch/sh/configs/secureedge5410_defconfig                      |   1 +
- arch/sh/configs/sh7710voipgw_defconfig                        |   1 +
- arch/sh/configs/sh7724_generic_defconfig                      |   1 +
- arch/sh/configs/sh7770_generic_defconfig                      |   1 +
- arch/sh/configs/sh7785lcr_32bit_defconfig                     |   1 +
- arch/sh/configs/sh7785lcr_defconfig                           |   1 +
- arch/sh/configs/urquell_defconfig                             |   1 +
- arch/sh/kernel/vsyscall/Makefile                              |   4 +-
- arch/sparc/vdso/Makefile                                      |   4 +-
- arch/um/kernel/Makefile                                       |   2 +-
- arch/x86/boot/Makefile                                        |  17 +----
- arch/x86/boot/compressed/Makefile                             |  11 ---
- arch/x86/entry/vdso/Makefile                                  |  28 +-------
- arch/x86/kernel/Makefile                                      |   2 +-
- arch/x86/kernel/cpu/Makefile                                  |   2 +-
- arch/x86/mm/Makefile                                          |   2 +-
- arch/x86/purgatory/Makefile                                   |   9 ---
- arch/x86/realmode/rm/Makefile                                 |  11 ---
- arch/x86/um/vdso/Makefile                                     |   9 +--
- arch/xtensa/boot/dts/Makefile                                 |   3 +-
- certs/Makefile                                                |   4 +-
- drivers/Makefile                                              |   5 --
- drivers/crypto/intel/qat/qat_420xx/Makefile                   |   2 +-
- drivers/crypto/intel/qat/qat_4xxx/Makefile                    |   2 +-
- drivers/crypto/intel/qat/qat_c3xxx/Makefile                   |   2 +-
- drivers/crypto/intel/qat/qat_c3xxxvf/Makefile                 |   2 +-
- drivers/crypto/intel/qat/qat_c62x/Makefile                    |   2 +-
- drivers/crypto/intel/qat/qat_c62xvf/Makefile                  |   2 +-
- drivers/crypto/intel/qat/qat_dh895xcc/Makefile                |   2 +-
- drivers/crypto/intel/qat/qat_dh895xccvf/Makefile              |   2 +-
- drivers/firmware/efi/libstub/Makefile                         |  11 ---
- drivers/gpu/drm/amd/amdgpu/Makefile                           |   2 +-
- drivers/gpu/drm/arm/display/komeda/Makefile                   |   4 +-
- drivers/gpu/drm/i915/Makefile                                 |   4 +-
- drivers/gpu/drm/imagination/Makefile                          |   2 +-
- drivers/gpu/drm/msm/Makefile                                  |   8 +--
- drivers/gpu/drm/nouveau/Kbuild                                |  10 ++-
- drivers/gpu/drm/xe/Makefile                                   |  10 +--
- drivers/hid/amd-sfh-hid/Makefile                              |   2 +-
- drivers/hid/intel-ish-hid/Makefile                            |   2 +-
- drivers/md/dm-vdo/Makefile                                    |   2 +-
- drivers/misc/lkdtm/Makefile                                   |   4 --
- drivers/net/ethernet/aquantia/atlantic/Makefile               |   2 +-
- drivers/net/ethernet/chelsio/libcxgb/Makefile                 |   2 +-
- drivers/net/ethernet/fungible/funeth/Makefile                 |   2 +-
- drivers/net/ethernet/hisilicon/hns3/Makefile                  |   2 +-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/Makefile     |   4 +-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/bca/Makefile |   6 +-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/cyw/Makefile |   6 +-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/wcc/Makefile |   6 +-
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/Makefile     |   6 +-
- drivers/net/wireless/broadcom/brcm80211/brcmutil/Makefile     |   2 +-
- drivers/net/wireless/intel/iwlwifi/dvm/Makefile               |   2 +-
- drivers/net/wireless/intel/iwlwifi/mei/Makefile               |   2 +-
- drivers/net/wireless/intel/iwlwifi/mvm/Makefile               |   2 +-
- drivers/net/wireless/intel/iwlwifi/tests/Makefile             |   2 +-
- drivers/net/wireless/realtek/rtl818x/rtl8180/Makefile         |   2 +-
- drivers/net/wireless/realtek/rtl818x/rtl8187/Makefile         |   2 +-
- drivers/rapidio/Kconfig                                       |  17 +----
- drivers/scsi/aic7xxx/Makefile                                 |  12 ++--
- drivers/staging/rtl8723bs/Makefile                            |   2 +-
- fs/iomap/Makefile                                             |   2 +-
- fs/unicode/Makefile                                           |  14 ++--
- fs/xfs/Makefile                                               |   4 +-
- include/asm-generic/vmlinux.lds.h                             |  19 +++++
- init/Makefile                                                 |   5 +-
- kernel/kallsyms.c                                             |   6 --
- kernel/kallsyms_internal.h                                    |  30 ++++----
- kernel/ksysfs.c                                               |   4 +-
- lib/Makefile                                                  |   6 +-
- lib/buildid.c                                                 |   4 +-
- lib/raid6/Makefile                                            |   2 +-
- net/wireless/Makefile                                         |   2 +-
- rust/Makefile                                                 |   6 +-
- samples/bpf/Makefile                                          |   2 +-
- samples/hid/Makefile                                          |   2 +-
- scripts/Kbuild.include                                        |   3 +-
- scripts/Makefile.asm-generic                                  |   6 +-
- scripts/Makefile.build                                        |  36 +++++-----
- scripts/Makefile.clean                                        |   2 +-
- scripts/Makefile.host                                         |   4 +-
- scripts/Makefile.lib                                          |  34 +++++----
- scripts/Makefile.modfinal                                     |   4 +-
- scripts/Makefile.modpost                                      |   2 +-
- scripts/Makefile.vdsoinst                                     |   7 +-
- scripts/Makefile.vmlinux                                      |   3 -
- scripts/dtc/Makefile                                          |   6 +-
- scripts/gdb/linux/Makefile                                    |   2 +-
- scripts/genksyms/Makefile                                     |   4 +-
- scripts/kconfig/Makefile                                      |   8 +--
- scripts/kconfig/conf.c                                        |  16 ++---
- scripts/kconfig/confdata.c                                    |  46
-++++--------
- scripts/kconfig/expr.h                                        |   6 +-
- scripts/kconfig/gconf.c                                       |  80
-++++-----------------
- scripts/kconfig/lexer.l                                       |   1 -
- scripts/kconfig/lkc.h                                         |  13 ++--
- scripts/kconfig/lkc_proto.h                                   |   1 +
- scripts/kconfig/lxdialog/util.c                               |   9 ---
- scripts/kconfig/mconf.c                                       | 104
-+++++++++++----------------
- scripts/kconfig/menu.c                                        |  51
-++++++-------
- scripts/kconfig/nconf.c                                       | 118
-++++++++++++-------------------
- scripts/kconfig/parser.y                                      |  76
-++++++++++++++------
- scripts/kconfig/symbol.c                                      |  73
-++++++++++++++-----
- scripts/kconfig/tests/choice/Kconfig                          |  26 -------
- scripts/kconfig/tests/choice/__init__.py                      |   2 -
- scripts/kconfig/tests/choice/allmod_expected_config           |   4 --
- scripts/kconfig/tests/choice/allyes_expected_config           |   4 --
- scripts/kconfig/tests/choice/oldask0_expected_stdout          |   2 -
- scripts/kconfig/tests/choice/oldask1_config                   |   1 -
- scripts/kconfig/tests/choice/oldask1_expected_stdout          |   6 --
- scripts/mod/Makefile                                          |   1 -
- scripts/module.lds.S                                          |   1 +
- scripts/package/buildtar                                      |  34 ++++-----
- scripts/unifdef.c                                             |  12 ++--
- security/tomoyo/Makefile                                      |   2 +-
- usr/Makefile                                                  |   2 +-
- usr/include/Makefile                                          |   2 +-
- 177 files changed, 610 insertions(+), 945 deletions(-)
-
-
---
-Best Regards
-Masahiro Yamada
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    a38297e3fb01 Linux 6.9
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13228d24980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=edefe34e4544d70e
+dashboard link: https://syzkaller.appspot.com/bug?extid=0333a6f4b88bcd68a62f
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-a38297e3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/eb6ef4d9e74f/vmlinux-a38297e3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ce2fb6bcfd40/bzImage-a38297e3.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0333a6f4b88bcd68a62f@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.9.0-syzkaller #0 Not tainted
+------------------------------------------------------
+kswapd0/110 is trying to acquire lock:
+ffff88804a5cbdf0 (mapping.invalidate_lock#4){++++}-{3:3}, at: filemap_invalidate_lock include/linux/fs.h:840 [inline]
+ffff88804a5cbdf0 (mapping.invalidate_lock#4){++++}-{3:3}, at: udf_setsize+0x256/0x1180 fs/udf/inode.c:1254
+
+but task is already holding lock:
+ffffffff8d937180 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10 mm/vmscan.c:6782
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
+       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3712
+       might_alloc include/linux/sched/mm.h:312 [inline]
+       prepare_alloc_pages.constprop.0+0x155/0x560 mm/page_alloc.c:4346
+       __alloc_pages+0x194/0x2460 mm/page_alloc.c:4564
+       alloc_pages_mpol+0x275/0x610 mm/mempolicy.c:2264
+       folio_alloc+0x1e/0x40 mm/mempolicy.c:2342
+       filemap_alloc_folio+0x3ba/0x490 mm/filemap.c:984
+       __filemap_get_folio+0x527/0xa90 mm/filemap.c:1926
+       filemap_fault+0x610/0x38c0 mm/filemap.c:3299
+       __do_fault+0x10a/0x490 mm/memory.c:4531
+       do_shared_fault mm/memory.c:4954 [inline]
+       do_fault mm/memory.c:5028 [inline]
+       do_pte_missing mm/memory.c:3880 [inline]
+       handle_pte_fault mm/memory.c:5300 [inline]
+       __handle_mm_fault+0x3148/0x4a80 mm/memory.c:5441
+       handle_mm_fault+0x476/0xa00 mm/memory.c:5606
+       do_user_addr_fault+0x426/0x1030 arch/x86/mm/fault.c:1331
+       handle_page_fault arch/x86/mm/fault.c:1474 [inline]
+       exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1532
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+-> #0 (mapping.invalidate_lock#4){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       down_write+0x3a/0x50 kernel/locking/rwsem.c:1579
+       filemap_invalidate_lock include/linux/fs.h:840 [inline]
+       udf_setsize+0x256/0x1180 fs/udf/inode.c:1254
+       udf_evict_inode+0x361/0x590 fs/udf/inode.c:144
+       evict+0x2ed/0x6c0 fs/inode.c:667
+       iput_final fs/inode.c:1741 [inline]
+       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x440 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       shrink_kill fs/dcache.c:1048 [inline]
+       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+       super_cache_scan+0x32a/0x550 fs/super.c:221
+       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+       shrink_slab_memcg mm/shrinker.c:548 [inline]
+       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+       shrink_one+0x493/0x7c0 mm/vmscan.c:4774
+       shrink_many mm/vmscan.c:4835 [inline]
+       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
+       shrink_node mm/vmscan.c:5894 [inline]
+       kswapd_shrink_node mm/vmscan.c:6704 [inline]
+       balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
+       kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
+       kthread+0x2c1/0x3a0 kernel/kthread.c:388
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(mapping.invalidate_lock#4);
+                               lock(fs_reclaim);
+  lock(mapping.invalidate_lock#4);
+
+ *** DEADLOCK ***
+
+2 locks held by kswapd0/110:
+ #0: ffffffff8d937180 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10 mm/vmscan.c:6782
+ #1: ffff88801cd260e0 (&type->s_umount_key#57){++++}-{3:3}, at: super_trylock_shared fs/super.c:561 [inline]
+ #1: ffff88801cd260e0 (&type->s_umount_key#57){++++}-{3:3}, at: super_cache_scan+0x96/0x550 fs/super.c:196
+
+stack backtrace:
+CPU: 2 PID: 110 Comm: kswapd0 Not tainted 6.9.0-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ down_write+0x3a/0x50 kernel/locking/rwsem.c:1579
+ filemap_invalidate_lock include/linux/fs.h:840 [inline]
+ udf_setsize+0x256/0x1180 fs/udf/inode.c:1254
+ udf_evict_inode+0x361/0x590 fs/udf/inode.c:144
+ evict+0x2ed/0x6c0 fs/inode.c:667
+ iput_final fs/inode.c:1741 [inline]
+ iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+ iput+0x5c/0x80 fs/inode.c:1757
+ dentry_unlink_inode+0x295/0x440 fs/dcache.c:400
+ __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+ shrink_kill fs/dcache.c:1048 [inline]
+ shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+ prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+ super_cache_scan+0x32a/0x550 fs/super.c:221
+ do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+ shrink_slab_memcg mm/shrinker.c:548 [inline]
+ shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+ shrink_one+0x493/0x7c0 mm/vmscan.c:4774
+ shrink_many mm/vmscan.c:4835 [inline]
+ lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
+ shrink_node mm/vmscan.c:5894 [inline]
+ kswapd_shrink_node mm/vmscan.c:6704 [inline]
+ balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
+ kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
+ kthread+0x2c1/0x3a0 kernel/kthread.c:388
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
