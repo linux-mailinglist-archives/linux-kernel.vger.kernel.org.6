@@ -1,220 +1,149 @@
-Return-Path: <linux-kernel+bounces-182607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED3F8C8D37
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:14:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0E98C8D3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 679D11C221A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:14:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7552728893A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B34F1411C1;
-	Fri, 17 May 2024 20:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B20F1411C1;
+	Fri, 17 May 2024 20:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJlAWmsQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SnPeFEJF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C324A65F;
-	Fri, 17 May 2024 20:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4B265F;
+	Fri, 17 May 2024 20:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715976866; cv=none; b=KdZnhtPnWatu5ZrOWx7Q74jr2crumhfWQYh3RTnJ5XMDZ+Iet238V5svZ2q/GRYVI/Mtu0Lv4PCL4ZYovJhBvV4aqTqTy6TojfmiZsuE5+rpuDkJfZaixGvqjXrTVicRGjimXoA5QVj9C+U33uKi1YNhI4RtN9hgc2O2MZlmco0=
+	t=1715976880; cv=none; b=EcQMHa6R1u7TzicfGhKL70s1qM7924pLVkilFz0AUY/i3tZ316RfRWslhY/Q0WrbcW+PbUq8IpKwdcVb1zQJAsaA+YlXJo1e3sV5hylpQT5OuOl0nIy6BTN+B1HMbKIP63Zl85h58JjwjKz7BC4VCcLP7dwCVi6G5Jq+3yJQUyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715976866; c=relaxed/simple;
-	bh=AsAtcPWfIsP/bcM2zWmQJXqUBcqm2UxloNpGZgcPfMk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S/b4jIwbTGdaLZH+F48QOmW1WL9Zx2K4S6sbnbJoTkMmKEtkrFy8TXsh+ubShWCtBuq9IOxfbEz++yC2RUditkh9s3PBuLOcRUJQ7iHWUGutg3lHIjy4CKKx7VIIyjWUD58F8RM5xoGk9rxAbh47qGZfMrpgDa0hwXhxO2FigqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJlAWmsQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6131FC2BD10;
-	Fri, 17 May 2024 20:14:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715976866;
-	bh=AsAtcPWfIsP/bcM2zWmQJXqUBcqm2UxloNpGZgcPfMk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kJlAWmsQXHARBSzpy+qzQUO2VA7IuUxC9Md73or2OoIUiMTmAf6JvZc3i+JmLqElz
-	 kg2wNWygGSVywt0xfWSr0Ada7B+Mr8MhCaFbSbHVHhVTJNH2F9pTBdkYg/0Q3JkxAN
-	 l7wNNYMzIQmAlh3uCcV/Qet3/o41aFpJwbJPVKK+bpG+1qT3sYuHIE5tcTViKIGdod
-	 2ZirvQyd/OiwpjAW2XWchSmU2LQvkO0OZ4Lq/Of4kf8QWOZ+F4ix7IFmFQM7/RO5jw
-	 mMObhEs+GxIlNG6ktI71N4cDM4SwdHvN8tuvQ/jQnC/aGomIo3/coK4/W/P2fzTOGo
-	 R1vrV254hYlFg==
-From: Jakub Kicinski <kuba@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pabeni@redhat.com
-Subject: [GIT PULL] Networking merge window fixes
-Date: Fri, 17 May 2024 13:14:25 -0700
-Message-ID: <20240517201425.3080823-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715976880; c=relaxed/simple;
+	bh=CMo0WJMBF0rNZkT1/Sd8atUX0pOmKxbrbHh8DwrNGLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KYL2QI1OFasMfEMpuFZpGUPEUZW/45wj1BLc38VlWvODOWUpDfRvm5r1i+XHeD7fQRVtofW+U967NbGnaJj31V9txQUtaMG3EzxqV7bYDGsi3OWGNDYTAY8m9CL3Q9IlGhYckd9D+Am3bA75X2xv1oc1Wmw91Aha7igDeIo7za0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SnPeFEJF; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715976879; x=1747512879;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CMo0WJMBF0rNZkT1/Sd8atUX0pOmKxbrbHh8DwrNGLM=;
+  b=SnPeFEJF/Wq8eeLncbQick1leaqbI/KiQGFX+wFcJ9+hIz5wHlmO28+9
+   7wZIpnjiCnHUGhzDGkI/WlqtOqXaBUtLOgpRB3HxwfyZ2vAnMzT8juAx2
+   tTMoriFBT5lPTSOIFhZmxyILYy8W+V6uxQydGfBXinN0q7N1jUSBFVEd5
+   KpkHa/gIqnYzvUH+C6J65AeYmcs93xwhjstglNrWpYavlPBbZvKhzCGv+
+   ptWf5hOhBFfyfZxOJnNPp9xxcn2nbk4yjF6OMU8e2Ui+04ClDHIRBSJKS
+   42stdx06DN1j5eUvizPACU+khEMFnHtOjqoH8BeoFFwKMcKsVzuN20Fo+
+   Q==;
+X-CSE-ConnectionGUID: y2xfiRD3TyehnWHiQBXcGQ==
+X-CSE-MsgGUID: cj2/mlLoTZCD93xhVNqGbw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="12363857"
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="12363857"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 13:14:38 -0700
+X-CSE-ConnectionGUID: uQN1YsdERpalYkIRHbnWkw==
+X-CSE-MsgGUID: VzG7v7+/Rdy7n3ygv6cxLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="62739448"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 13:14:31 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s83yG-00000008cHX-0b7U;
+	Fri, 17 May 2024 23:14:28 +0300
+Date: Fri, 17 May 2024 23:14:27 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	benjamin.gaignard@collabora.com, sebastian.fricke@collabora.com,
+	akpm@linux-foundation.org, gregkh@linuxfoundation.org,
+	adobriyan@gmail.com, jani.nikula@intel.com, p.zabel@pengutronix.de,
+	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+	laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
+	vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
+	detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
+	andrzej.p@collabora.com, nicolas@ndufresne.ca, davidgow@google.com,
+	dlatypov@google.com
+Subject: Re: [PATCH v8 07/10] lib: add basic KUnit test for lib/math
+Message-ID: <Zke6o3HYnUrgtD0K@smile.fi.intel.com>
+References: <20240517171532.748684-1-devarsht@ti.com>
+ <20240517173607.800549-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517173607.800549-1-devarsht@ti.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Linus!
+On Fri, May 17, 2024 at 11:06:07PM +0530, Devarsh Thakkar wrote:
+> From: Daniel Latypov <dlatypov@google.com>
+> 
+> Add basic test coverage for files that don't require any config options:
+> * part of math.h (what seem to be the most commonly used macros)
+> * gcd.c
+> * lcm.c
+> * int_sqrt.c
+> * reciprocal_div.c
+> (Ignored int_pow.c since it's a simple textbook algorithm.)
+> 
+> These tests aren't particularly interesting, but they
+> * provide short and simple examples of parameterized tests
+> * provide a place to add tests for any new files in this dir
+> * are written so adding new test cases to cover edge cases should be
+>   easy
+>   * looking at code coverage, we hit all the branches in the .c files
 
-The following changes since commit 1b294a1f35616977caddaddf3e9d28e576a1adbc:
+..
 
-  Merge tag 'net-next-6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next (2024-05-14 19:42:24 -0700)
+> [devarsht: Rebase to 6.9 and change license to GPL]
 
-are available in the Git repository at:
+I'm not sure that you may change license. It needs the author's confirmation.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.10-rc0
+> ---
+> Changes since v6:
+> * Rebase to linux-next, change license to GPL as suggested by checkpatch.
 
-for you to fetch changes up to fe56d6e4a99a40f50e64d5a8043f1fa838b1f7a1:
+Note, checkpatch.pl is not false positives free. Be careful
+with what it suggests.
 
-  selftests: net: local_termination: annotate the expected failures (2024-05-17 12:26:35 -0700)
+> +#include <kunit/test.h>
+> +#include <linux/gcd.h>
 
-----------------------------------------------------------------
-Including fix from Andrii for the issue mentioned in our net-next PR,
-the rest is unremarkable.
+> +#include <linux/kernel.h>
 
-Current release - regressions:
+Do you know why this header is included?
 
- - virtio_net: fix missed error path rtnl_unlock after control queue
-   locking rework
+> +#include <linux/lcm.h>
 
-Current release - new code bugs:
++ math.h // obviously
++ module.h
 
- - bpf: fix KASAN slab-out-of-bounds in percpu_array_map_gen_lookup,
-   caused by missing nested map handling
+> +#include <linux/reciprocal_div.h>
 
- - drv: dsa: correct initialization order for KSZ88x3 ports
++ types.h
 
-Previous releases - regressions:
+..
 
- - af_packet: do not call packet_read_pending() from tpacket_destruct_skb()
-   fix performance regression
+Other than above, LGTM.
 
- - ipv6: fix route deleting failure when metric equals 0, don't assume
-   0 means not set / default in this case
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Previous releases - always broken:
 
- - bridge: couple of syzbot-driven fixes
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-
-----------------------------------------------------------------
-Andrii Nakryiko (3):
-      libbpf: fix feature detectors when using token_fd
-      bpf: save extended inner map info for percpu array maps as well
-      selftests/bpf: add more variations of map-in-map situations
-
-Chris Lew (1):
-      net: qrtr: ns: Fix module refcnt
-
-Daniel Jurgens (1):
-      virtio_net: Fix missed rtnl_unlock
-
-David S. Miller (1):
-      Merge branch 'wangxun-fixes'
-
-Eric Dumazet (2):
-      netrom: fix possible dead-lock in nr_rt_ioctl()
-      af_packet: do not call packet_read_pending() from tpacket_destruct_skb()
-
-Hangbin Liu (2):
-      selftests/net/lib: no need to record ns name if it already exist
-      selftests/net: reduce xfrm_policy test time
-
-Herve Codina (1):
-      net: lan966x: remove debugfs directory in probe() error path
-
-Jakub Kicinski (3):
-      Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next
-      Merge tag 'for-netdev' of https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf
-      selftests: net: local_termination: annotate the expected failures
-
-Jiawen Wu (3):
-      net: wangxun: fix to change Rx features
-      net: wangxun: match VLAN CTAG and STAG features
-      net: txgbe: fix to control VLAN strip
-
-Martin KaFai Lau (2):
-      selftests/bpf: Adjust test_access_variable_array after a kernel function name change
-      selftests/bpf: Adjust btf_dump test to reflect recent change in file_operations
-
-Michal Schmidt (1):
-      idpf: don't skip over ethtool tcp-data-split setting
-
-Nikolay Aleksandrov (3):
-      net: bridge: xmit: make sure we have at least eth header len bytes
-      selftests: net: bridge: increase IGMP/MLD exclude timeout membership interval
-      net: bridge: mst: fix vlan use-after-free
-
-Oleksij Rempel (1):
-      net: dsa: microchip: Correct initialization order for KSZ88x3 ports
-
-Puranjay Mohan (2):
-      bpf, docs: Fix the description of 'src' in ALU instructions
-      MAINTAINERS: Update ARM64 BPF JIT maintainer
-
-Ravi Gunasekaran (2):
-      dt-bindings: net: ti: Update maintainers list
-      MAINTAINERS: net: Update reviewers for TI's Ethernet drivers
-
-Ronald Wahl (1):
-      net: ks8851: Fix another TX stall caused by wrong ISR flag handling
-
-Sagar Cheluvegowda (1):
-      dt-bindings: net: qcom: ethernet: Allow dma-coherent
-
-Tom Parkin (1):
-      l2tp: fix ICMP error handling for UDP-encap sockets
-
-Tony Battersby (1):
-      bonding: fix oops during rmmod
-
-xu xin (1):
-      net/ipv6: Fix route deleting failure when metric equals 0
-
- .../bpf/standardization/instruction-set.rst        |  5 +-
- .../devicetree/bindings/net/qcom,ethqos.yaml       |  2 +
- .../devicetree/bindings/net/ti,cpsw-switch.yaml    |  1 -
- .../bindings/net/ti,k3-am654-cpsw-nuss.yaml        |  1 -
- .../devicetree/bindings/net/ti,k3-am654-cpts.yaml  |  1 -
- MAINTAINERS                                        |  3 +-
- drivers/net/bonding/bond_main.c                    | 13 ++---
- drivers/net/dsa/microchip/ksz_dcb.c                | 10 ++++
- drivers/net/ethernet/intel/idpf/idpf_ethtool.c     |  3 +-
- drivers/net/ethernet/micrel/ks8851_common.c        | 18 +------
- .../net/ethernet/microchip/lan966x/lan966x_main.c  |  6 ++-
- drivers/net/ethernet/wangxun/libwx/wx_hw.c         |  2 +
- drivers/net/ethernet/wangxun/libwx/wx_lib.c        | 56 ++++++++++++++++++++--
- drivers/net/ethernet/wangxun/libwx/wx_lib.h        |  2 +
- drivers/net/ethernet/wangxun/libwx/wx_type.h       | 22 +++++++++
- drivers/net/ethernet/wangxun/ngbe/ngbe_ethtool.c   | 18 +++++--
- drivers/net/ethernet/wangxun/ngbe/ngbe_main.c      |  1 +
- drivers/net/ethernet/wangxun/txgbe/txgbe_ethtool.c | 18 +++++--
- drivers/net/ethernet/wangxun/txgbe/txgbe_main.c    | 31 ++++++++++++
- drivers/net/ethernet/wangxun/txgbe/txgbe_type.h    |  1 +
- drivers/net/virtio_net.c                           |  6 +--
- kernel/bpf/map_in_map.c                            |  4 +-
- net/bridge/br_device.c                             |  6 +++
- net/bridge/br_mst.c                                | 16 ++++---
- net/ipv6/route.c                                   |  5 +-
- net/l2tp/l2tp_core.c                               | 44 ++++++++++++-----
- net/netrom/nr_route.c                              | 19 +++-----
- net/packet/af_packet.c                             |  3 +-
- net/qrtr/ns.c                                      | 27 +++++++++++
- tools/lib/bpf/bpf.c                                |  2 +-
- tools/lib/bpf/features.c                           |  2 +-
- tools/testing/selftests/bpf/prog_tests/btf_dump.c  |  2 +-
- tools/testing/selftests/bpf/progs/map_kptr.c       | 10 ++++
- .../bpf/progs/test_access_variable_array.c         |  2 +-
- .../selftests/net/forwarding/bridge_igmp.sh        |  6 +--
- .../testing/selftests/net/forwarding/bridge_mld.sh |  6 +--
- .../selftests/net/forwarding/local_termination.sh  | 30 +++++++-----
- tools/testing/selftests/net/lib.sh                 |  6 ++-
- tools/testing/selftests/net/xfrm_policy.sh         |  4 +-
- 39 files changed, 304 insertions(+), 110 deletions(-)
 
