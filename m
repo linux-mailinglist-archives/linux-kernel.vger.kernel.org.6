@@ -1,150 +1,230 @@
-Return-Path: <linux-kernel+bounces-182495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E428C8BE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:58:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 588148C8BEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 454311F2937C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B3061C2283C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D5C14389D;
-	Fri, 17 May 2024 17:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55A913E04C;
+	Fri, 17 May 2024 17:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eXH8b6kX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U31g4s4X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB8813FD9A
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43E512C492;
+	Fri, 17 May 2024 17:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715968458; cv=none; b=JO/Lmwnw67EjFux70p9F+K5Hx5vAVg5QKflXbpXMA5XM+BBrdxNYYb0fN3IIfGVvvciblDfMCHK3G81/1Lut2ENAHz/X0/AYXUdC9QypWwvvPniPA0/U2bhNPqUoQfBUhWTIXoOO7n7OOo6yKoZkACb/PDlkvsWhEiZNbeVYGAs=
+	t=1715968741; cv=none; b=I0cXRAJTmLDyanMdmvTql6U9gviqXhg3PR98I7dsteuqZHzD6PjuJeVXE1akTXKpliB4o13FWnEYh7uiP8N2eyEEQIDu37oITh6Ut5qorl0gTZfSfqhw0M44JyRolmLO3Wt7Z5D74Ra1xmxpSZVphGifqcCk9xsDUzK7yNYwUwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715968458; c=relaxed/simple;
-	bh=fIE6oholh89hcyn+Mle9O7jrGtzYqHfvDqdxqhyIcuI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YvxUUIVcgkYC+y0ywlqszgstTiBNgN6c7Ma40q3ptQPOpBE7+ueGhfXYnWQsXh4MNrNffLW8+sFo0LNQW3+vw2rC62aenG6F2Po3GRBp2LMHYjpPKxQMMr8aQVf6BKyGks5DifY1/hBGM5NWcTrQJM8SyTZcQ/TX1PXNcjaiC8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eXH8b6kX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715968455;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Me9x3IUsC1z+bCQEZVRKdGqYAG/0M8JKwxm1DyG55YY=;
-	b=eXH8b6kXGHUYlpalRTDr0y9SdiBZhblmeds34a4Zg/WMubJm7XDu/fMZ5aMZHy77lYQPGK
-	jnUqZtQe44zBpvckmXxx8BQni71CucKg70jNz0O2AsJqlnhULX06HYxiHVcnZxkev9vv8P
-	qOg+/X1W9yBpaiXOO4q9Dttc01YEXBI=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-295-s610DBGjNHqfu8Z9etiwOQ-1; Fri, 17 May 2024 13:54:14 -0400
-X-MC-Unique: s610DBGjNHqfu8Z9etiwOQ-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-34f1b148725so4310499f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:54:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715968453; x=1716573253;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Me9x3IUsC1z+bCQEZVRKdGqYAG/0M8JKwxm1DyG55YY=;
-        b=EsUREq6IAP8NWZab5LSLVFyj6D8C5OtQ0EE08+JOlH/UP0d2SnMPzfwvOYtbwABkyC
-         Xgjd2egUKJ8IIv2lTUYXeibb0cZwsXd9GsWw1036X9p5jJfeiOjpnKzHmQH9gultL5yF
-         4XopbQsdBoJEtWqf4MUuJL5BY5LoiMz1zqYHWO2IvH70fmKNtpbz28kv1WXEeFd7C4RZ
-         Uon5ttTlrI4LOq+0CDjvpaf0UKFOwZoug4soGhJkT7tbt/HVu8Y33jxV3UDpcdWXgmkF
-         gEH1iHcWBP742foJiYhnza+J5CLBgs6rIh7gkUfNOI7gCdtc5/FXfWjnokgJJHt8YOYy
-         YaQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXz4zrPQGF/dYRk+x9gNxruAvFXi8ZnYxJAWpASJ1ItKQbBmcRN1M8773tb/HJ46lmwn0VF3AXL/xVlu61b32wT8IguVLr4swGgQKay
-X-Gm-Message-State: AOJu0YxXwjfrTHtW46iTQghm1pj+MiqnHMKAa50y2hYeisSMYh3bl+Jo
-	DxmzFVzxnSURL3mywMTzaHRBnky/z+g5mHZc0MOgw1pQpe1Aj1b7+vRvsS1VbpO7UlzRIofoeiZ
-	sOn6vOYyWOf3RooniVthd588XERqyV0j+cPWuI4ZR5uCQyisan7f+wazvVf94vg4Goa3XawfO+B
-	flEWYzgKZmyOGJS+YXhZE/sVsypy4czNYeryLt
-X-Received: by 2002:adf:f683:0:b0:351:d2e6:9296 with SMTP id ffacd0b85a97d-351d2e69673mr5014787f8f.41.1715968452885;
-        Fri, 17 May 2024 10:54:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElctJ7kRvI21RK2MiLgARCr0ZBPBVbvh3h/+iaUMpetOWOrRkVEQ5gzIhclzKnEFCdM7or0B/27rXrZqW8hcI=
-X-Received: by 2002:adf:f683:0:b0:351:d2e6:9296 with SMTP id
- ffacd0b85a97d-351d2e69673mr5014770f8f.41.1715968452489; Fri, 17 May 2024
- 10:54:12 -0700 (PDT)
+	s=arc-20240116; t=1715968741; c=relaxed/simple;
+	bh=pKB07h4tYYQycvmYl0AAJgDHfhFWfWr/tJd2D4E2uEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UA0SL4ByrqYVSMkfjEaM3LqxVEwU0aim4ke/Cf6zUqotUV4RpuA+CRX8YXSk7s/WISO3R/S2VitbT6OPVgWrrwDC23osQjDs18iftq/+21dY6D0wwUVVL/nqHP2Co34Kq3uxBIeoJ8GhXaz9/fsZg5xObZjC7Qtj0WA01VkNZtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U31g4s4X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A92C2BD10;
+	Fri, 17 May 2024 17:59:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715968741;
+	bh=pKB07h4tYYQycvmYl0AAJgDHfhFWfWr/tJd2D4E2uEw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U31g4s4XCO5YTLBcwQ7q82QmZmEBAxjcSq8FwCtOiIhJOR8Q/dnJJEzFeFly6SwKA
+	 qF0AwCq+MLkmsGGcbjv+QQu3P8Ndj3wob1NKChP9+LqBP3ne+1gcliI+Qx5kmmlFI8
+	 sYPpqr5StZ+FfHsRAQA5gi7aWfF3Q8G/QdWZsbkcYMGz7Q6UMrHwSIVkjoI934ICt2
+	 InEamXPV/GYar8V5FatSI4kb+Pm9WRNLmJvdg1319diM+wZbl6BfegwT3fwzQ6T7wK
+	 eKHVzxhUwD9NbQmuki4gf+3sgQT9q4TXBV26tiigDFVxGg7+X1s92jvOv3oqqdano9
+	 XCnak9gvigYyQ==
+Date: Fri, 17 May 2024 10:59:00 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	hch@infradead.org, brauner@kernel.org, david@fromorbit.com,
+	chandanbabu@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v3 3/3] xfs: correct the zeroing truncate range
+Message-ID: <20240517175900.GC360919@frogsfrogsfrogs>
+References: <20240517111355.233085-1-yi.zhang@huaweicloud.com>
+ <20240517111355.233085-4-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com>
-In-Reply-To: <20240517173926.965351-1-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Fri, 17 May 2024 19:54:00 +0200
-Message-ID: <CABgObfbYL-8KN8naUtm7PcA2z06aqshcSJ_5TyswtiA4hN0yaA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/49] KVM: x86: CPUID overhaul, fixes, and caching
-To: Sean Christopherson <seanjc@google.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517111355.233085-4-yi.zhang@huaweicloud.com>
 
-On Fri, May 17, 2024 at 7:39=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->  * Disallow KVM_CAP_X86_DISABLE_EXITS after vCPU creation
->  * Reject disabling of MWAIT/HLT interception when not allowed
->  * Advertise TSC_DEADLINE_TIMER in KVM_GET_SUPPORTED_CPUID.
+On Fri, May 17, 2024 at 07:13:55PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> When truncating a realtime file unaligned to a shorter size,
+> xfs_setattr_size() only flush the EOF page before zeroing out, and
+> xfs_truncate_page() also only zeros the EOF block. This could expose
+> stale data since 943bc0882ceb ("iomap: don't increase i_size if it's not
+> a write operation").
+> 
+> If the sb_rextsize is bigger than one block, and we have a realtime
+> inode that contains a long enough written extent. If we unaligned
+> truncate into the middle of this extent, xfs_itruncate_extents() could
+> split the extent and align the it's tail to sb_rextsize, there maybe
+> have more than one blocks more between the end of the file. Since
+> xfs_truncate_page() only zeros the trailing portion of the i_blocksize()
+> value, so it may leftover some blocks contains stale data that could be
+> exposed if we append write it over a long enough distance later.
 
-This is technically a breaking change, and it's even documented in
-api.rst under "KVM_GET_SUPPORTED_CPUID issues":
+IOWs, any time we truncate down, we need to zero every byte from the new
+EOF all the way to the end of the allocation unit, correct?
 
----
-CPU[EAX=3D1]:ECX[21] (X2APIC) is reported by
-``KVM_GET_SUPPORTED_CPUID``, but it can only be enabled if
-``KVM_CREATE_IRQCHIP`` or ``KVM_ENABLE_CAP(KVM_CAP_IRQCHIP_SPLIT)``
-are used to enable in-kernel emulation of the local APIC.
+Maybe pictures would be easier to reason with.  Say you have
+rextsize=30 and a partially written rtextent; each 'W' is a written
+fsblock and 'u' is an unwritten fsblock:
 
-The same is true for the ``KVM_FEATURE_PV_UNHALT`` paravirtualized feature.
+WWWWWWWWWWWWWWWWWWWWWuuuuuuuuu
+                    ^ old EOF
 
-CPU[EAX=3D1]:ECX[24] (TSC_DEADLINE) is not reported by
-``KVM_GET_SUPPORTED_CPUID``. It can be enabled if
-``KVM_CAP_TSC_DEADLINE_TIMER`` is present and the kernel has enabled
-in-kernel emulation of the local APIC.
----
+Now you want to truncate down:
 
-However I think we can get away with it. QEMU source code on one hand does
+WWWWWWWWWWWWWWWWWWWWWuuuuuuuuu
+     ^ new EOF      ^ old EOF
 
-        /* tsc-deadline flag is not returned by GET_SUPPORTED_CPUID, but it
-         * can be enabled if the kernel has KVM_CAP_TSC_DEADLINE_TIMER,
-         * and the irqchip is in the kernel.
-         */
-        if (kvm_irqchip_in_kernel() &&
-                kvm_check_extension(s, KVM_CAP_TSC_DEADLINE_TIMER)) {
-            ret |=3D CPUID_EXT_TSC_DEADLINE_TIMER;
-        }
+Currently, iomap_truncate_blocks only zeroes up to the next i_blocksize,
+so the truncate leaves the file in this state:
 
-        /* x2apic is reported by GET_SUPPORTED_CPUID, but it can't be enabl=
-ed
-         * without the in-kernel irqchip
-         */
-        if (!kvm_irqchip_in_kernel()) {
-            ret &=3D ~CPUID_EXT_X2APIC;
-        }
+WWWWWzWWWWWWWWWWWWWWWuuuuuuuuu
+     ^ new EOF      ^ old EOF
 
-so it has to cope with existing mess but it's not expecting the
-opposite mess (understandable).
+(where 'z' is a written block with zeroes after EOF)
 
-However, in practice userspace APIC has always been utterly broken and
-even deprecated in QEMU, so we might get away with it. I don't see why
-one would use no kernel APIC unless the guest has no APIC whatsoever.
+This is bad because the "W"s between the new and old EOF still contain
+old credit card info or whatever.  Now if we mmap the file or whatever,
+we can access those old contents.
 
-And no guest that doesn't find an APIC is going to use the TSC
-deadline timer (sure the MSR is outside x2APIC space but how in the
-world would you configure LVTT), likewise for X2APIC since you need to
-turn it on at 0xFEE0_0000 first.
+So your new patch amends iomap_truncate_page so that it'll zero all the
+way to the end of the @blocksize parameter.  That fixes the exposure by 
+writing zeroes to the pagecache before we truncate down:
 
-Paolo
+WWWWWzzzzzzzzzzzzzzzzuuuuuuuuu
+     ^ new EOF      ^ old EOF
 
+Is that correct?
+
+If so, then why don't we make xfs_truncate_page convert the post-eof
+rtextent blocks back to unwritten status:
+
+WWWWWzuuuuuuuuuuuuuuuuuuuuuuuu
+     ^ new EOF      ^ old EOF
+
+If we can do that, then do we need the changes to iomap_truncate_page?
+Converting the mapping should be much faster than dirtying potentially
+a lot of data (rt extents can be 1GB in size).
+
+> xfs_truncate_page() should flush, zeros out the entire rtextsize range,
+> and make sure the entire zeroed range have been flushed to disk before
+> updating the inode size.
+> 
+> Fixes: 943bc0882ceb ("iomap: don't increase i_size if it's not a write operation")
+> Reported-by: Chandan Babu R <chandanbabu@kernel.org>
+> Link: https://lore.kernel.org/linux-xfs/0b92a215-9d9b-3788-4504-a520778953c2@huaweicloud.com
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+>  fs/xfs/xfs_iomap.c | 35 +++++++++++++++++++++++++++++++----
+>  fs/xfs/xfs_iops.c  | 10 ----------
+>  2 files changed, 31 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index 4958cc3337bc..fc379450fe74 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -1466,12 +1466,39 @@ xfs_truncate_page(
+>  	loff_t			pos,
+>  	bool			*did_zero)
+>  {
+> +	struct xfs_mount	*mp = ip->i_mount;
+>  	struct inode		*inode = VFS_I(ip);
+>  	unsigned int		blocksize = i_blocksize(inode);
+> +	int			error;
+> +
+> +	if (XFS_IS_REALTIME_INODE(ip))
+> +		blocksize = XFS_FSB_TO_B(mp, mp->m_sb.sb_rextsize);
+
+Don't opencode xfs_inode_alloc_unitsize, please.
+
+> +
+> +	/*
+> +	 * iomap won't detect a dirty page over an unwritten block (or a
+> +	 * cow block over a hole) and subsequently skips zeroing the
+> +	 * newly post-EOF portion of the page. Flush the new EOF to
+> +	 * convert the block before the pagecache truncate.
+> +	 */
+> +	error = filemap_write_and_wait_range(inode->i_mapping, pos,
+> +					     roundup_64(pos, blocksize));
+> +	if (error)
+> +		return error;pos_in_block
+
+Ok so this is hoisting the filemap_write_and_wait_range call from
+xfs_setattr_size.  It's curious that we need to need to twiddle anything
+other than the EOF block itself though?
+
+>  
+>  	if (IS_DAX(inode))
+> -		return dax_truncate_page(inode, pos, blocksize, did_zero,
+> -					&xfs_dax_write_iomap_ops);
+> -	return iomap_truncate_page(inode, pos, blocksize, did_zero,
+> -				   &xfs_buffered_write_iomap_ops);
+> +		error = dax_truncate_page(inode, pos, blocksize, did_zero,
+> +					  &xfs_dax_write_iomap_ops);
+> +	else
+> +		error = iomap_truncate_page(inode, pos, blocksize, did_zero,
+> +					    &xfs_buffered_write_iomap_ops);
+> +	if (error)
+> +		return error;
+> +
+> +	/*
+> +	 * Write back path won't write dirty blocks post EOF folio,
+> +	 * flush the entire zeroed range before updating the inode
+> +	 * size.
+> +	 */
+> +	return filemap_write_and_wait_range(inode->i_mapping, pos,
+> +					    roundup_64(pos, blocksize));
+
+..but what is the purpose of the second filemap_write_and_wait_range
+call?  Is that to flush the bytes between new and old EOF to disk before
+truncate_setsize invalidates the (zeroed) pagecache?
+
+--D
+
+>  }
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 66f8c47642e8..baeeddf4a6bb 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -845,16 +845,6 @@ xfs_setattr_size(
+>  		error = xfs_zero_range(ip, oldsize, newsize - oldsize,
+>  				&did_zeroing);
+>  	} else {
+> -		/*
+> -		 * iomap won't detect a dirty page over an unwritten block (or a
+> -		 * cow block over a hole) and subsequently skips zeroing the
+> -		 * newly post-EOF portion of the page. Flush the new EOF to
+> -		 * convert the block before the pagecache truncate.
+> -		 */
+> -		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
+> -						     newsize);
+> -		if (error)
+> -			return error;
+>  		error = xfs_truncate_page(ip, newsize, &did_zeroing);
+>  	}
+>  
+> -- 
+> 2.39.2
+> 
+> 
 
