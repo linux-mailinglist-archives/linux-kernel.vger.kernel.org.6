@@ -1,113 +1,95 @@
-Return-Path: <linux-kernel+bounces-182494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3D08C8BDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:58:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B0428C8BDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6B81F290F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:57:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C1441C22035
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACA7143727;
-	Fri, 17 May 2024 17:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5A913FD94;
+	Fri, 17 May 2024 17:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BiJJFotS"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="zOQCDy+J"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F53C142E83
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDE913DDCF;
+	Fri, 17 May 2024 17:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715968433; cv=none; b=uTjl2GD1qqyF4wztFpyo0YXH7W2DK9pa3DnsuC5wE4RgoIj3Lhxi5lIL9A1sX/mqeehChOdpMs7rvNtdiZvNq8Ji+OxsnkQyoXyxIrY9oghG9pACevD2axPreHbQ7nTuys80khf4e5IqMs10mZjV7qpMShliYO+1EyxRQTDZqKc=
+	t=1715968430; cv=none; b=ZTYQHropLJQEWqtdt+N+bUTLHHLvspycXgOtUHzox286CSlde+Cjkmp0/qgieHUCyF1d9abgfsxg5ublj7Vg7DYBs9V1o8DxVqXQ11xQOiboQjzY6/SFn7BhM3hnWj1QpQYAXgpC2yXg0CvQZIQgDMRLIFgu9eGMLT7+I1645C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715968433; c=relaxed/simple;
-	bh=Pj3XqwCP/tWyNk1MTxRUoT5OZi3EKwTxbKbZWc4jLRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AAqIan+oBblgczBmTukxe50ifFd7N/IA7U/K619inAHQdknx9QViaNPNd7zDNWzOwC4vvIl5Eea5JPamfykh1He3JGkpIvynOgA0fsNPiz4F1IEPocavj1ASzL+1XTRWgWu/qSsCcfiWbmnmGFjtLpyCVl5tvmjlQ469/P7Szk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BiJJFotS; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3E8BE40E01E8;
-	Fri, 17 May 2024 17:53:49 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id H0VWSqlu61N5; Fri, 17 May 2024 17:53:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715968426; bh=BklJ0Xy1NwJgkxAFnP/a6AerOzCrYYikftsLx1c6YRo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BiJJFotSKGK3qH/tIdBxj01UL2ZC1FN17eQ4IXKlyPgIpFCj4/A1ZQZgXqMn+U5in
-	 LX+pS60VjFg9CtSkLIKigDBTZmhgaS6WJvwTN5ChKraij4y1eFsxX5SeISeiRG8/NY
-	 Yp0UoNZyuxJUq0tmzGrjBGZkHXWMD9IlegnPvn/kU6/Jioz/mRQBiuZt1an+jsdXky
-	 yHop8mXx439mohzl93AX7vlvIZyCMg9AMKmIYOjZfkRYevTUqNN+T1Pf54HwI1MrZf
-	 PDyZ2RyQpGzrCM87AyWhVGNYozXgjqeS08GM9ie2tJh8V5DpK65BBvbki1nVnGD3BL
-	 nPsgeSbLlgT7dZmKY0WyqVGdmqXGU+2Z60oflzorrmkaAVK+CYAbGVlIy3InOHK4RA
-	 zbWhazdc3K6Qd/lx514pee6vsT5iAlsD9JlLKDW7RmhwvYZr0Olv3I8LszpQjMFKKE
-	 0S1aIKge9IIzyFuuVqriA4OHcFBdYcV6rrTGKbuEISAwysmAQo55jdQbDRlqcAgMSK
-	 jWKb97u4h/IQLRQN7QwCkbCL43S/6NP2+4MJFaXjj9F5DckwlopEYeVJDG2ovY8+OR
-	 4z6r+s0m1ICB9qomj2EV+4ZyjBxj2WatSMTpuVMaXcnaKjZCY90q7XYJ4VhOy/wHVo
-	 J2cFSWgsGEMBuGQGtVMuMEDM=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	s=arc-20240116; t=1715968430; c=relaxed/simple;
+	bh=jQXTQPeZqoXtx1IhRfOgOt67vYHFNjCd5WEjfEKAqBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k3H8/E1qw/l1SSdsm0oomy+RkEaP5C1m82Y7dMrAAt4Buh7wfJr5C/0vhHl0907xZaT6UkYcVOE1j2e+wVXzYNnUdPXw+Ue84oaHfyOGVPuuFDmiyXc/wDe2Je/wE4ktReq3Fh5qLgaNonO39M4q+xvoCWB/IJfYX1PxONnqQtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=zOQCDy+J; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Vgvhk527TzlgMVL;
+	Fri, 17 May 2024 17:53:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1715968420; x=1718560421; bh=jQXTQPeZqoXtx1IhRfOgOt67
+	vYHFNjCd5WEjfEKAqBg=; b=zOQCDy+JXun87BS5Zf1SeRYgIF8oquMBhmi2cI2s
+	T/GNXav015FLvig8Zf3b4+9nRFMOGWb1AFqXz4WazCD6cQEnWgbdT7twa69+XjK8
+	6fSMg8c+fVFdT51/1k+Ik+sTZJrGk0fVCGMgQR19jz5Wl8jjbj/UMn7hIwaov7wX
+	0PRZbf7N8K2P770egm5CcbcUYakflh5PpGCkHW60kBJqDntyKU5h9ZmLhjp/RnCe
+	HO6z8GYSQUB9hgOPKUACsgDGehN/kYqekm8PvO2CR13JWeNhn7RDtDY/Q0k4wZK/
+	JyWW8efzUmYLGZgSobKFedWmEc9fVyUto6l9bU51+glh+Q==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id DHFzKuMgcXiC; Fri, 17 May 2024 17:53:40 +0000 (UTC)
+Received: from [100.96.154.26] (unknown [104.132.0.90])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E87D340E0244;
-	Fri, 17 May 2024 17:53:29 +0000 (UTC)
-Date: Fri, 17 May 2024 19:53:24 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik <mjguzik@gmail.com>,
-	Thomas Renninger <trenn@suse.de>,
-	Greg Kroah-Hartman <gregkh@suse.de>,
-	Andi Kleen <ak@linux.intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: Re: [PATCH v3] x86/cpu: Fix x86_match_cpu() to match just
- X86_VENDOR_INTEL
-Message-ID: <20240517175324.GGZkeZlNgjGxwfumLu@fat_crate.local>
-References: <20240517172134.7255-1-tony.luck@intel.com>
- <20240517173811.GFZkeWAzKjYtEMwe1e@fat_crate.local>
- <SJ1PR11MB608386716D1DA533791DE7A2FCEE2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Vgvhg0kSczlgT1K;
+	Fri, 17 May 2024 17:53:38 +0000 (UTC)
+Message-ID: <a1da2c7e-1b29-49cf-a45f-255d3b8b0da2@acm.org>
+Date: Fri, 17 May 2024 10:53:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB608386716D1DA533791DE7A2FCEE2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH stable] block/mq-deadline: fix different priority request
+ on the same zone
+To: Wu Bo <bo.wu@vivo.com>
+Cc: axboe@kernel.dk, dlemoal@kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, wubo.oduw@gmail.com
+References: <a1c24153-007c-4510-9cb3-bc207e9a75e8@acm.org>
+ <20240517014456.1919588-1-bo.wu@vivo.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240517014456.1919588-1-bo.wu@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 17, 2024 at 05:43:10PM +0000, Luck, Tony wrote:
-> What if the bit in flags was named " X86_CPU_ID_FLAG_ENTRY_VALID"
-> 
-> Then the loop in x86_match_cpu() could just be:
-> 
-> 	for (m = match; m->flags & X86_CPU_ID_FLAG_ENTRY_VALID; m++) {
+On 5/16/24 18:44, Wu Bo wrote:
+> So I figured this solution to fix this priority issue on zoned device. It sure
+> raises the overhead but can do fix it.
 
-Yeah, makes sense at a first glance.
+Something I should have realized earlier is that this patch is not
+necessary with the latest upstream kernel (v6.10-rc1). Damien's zoned
+write plugging patch series has been merged. Hence, I/O schedulers,
+including the mq-deadline I/O schedulers, will only see a single
+zoned write at a time per zone. So it is no longer possible that
+zoned writes are reordered by the I/O scheduler because of their I/O
+priorities.
 
-This'll keep the terminators "{}" unchanged so that we don't have to
-touch all those gazillion places and it'll explicitly state that an
-entry is valid or not.
+Thanks,
 
-But the devil's in the detail, as always...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Bart.
 
