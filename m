@@ -1,181 +1,223 @@
-Return-Path: <linux-kernel+bounces-181788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA388C814A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:20:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288CE8C8140
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B91C72828FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C83B1C20F02
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F5917597;
-	Fri, 17 May 2024 07:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE6D171C9;
+	Fri, 17 May 2024 07:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FqQIaaU7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="JiHkGtGC"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7675C171C8;
-	Fri, 17 May 2024 07:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C887168C4
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 07:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715930431; cv=none; b=lMT91jZqSO3ciKahVrwSeXTWSSFIrRGmovHSjXK/kxZRyTiSVAFpbnu9wV75bJ7QEjolhgnjz8Rk8wrby1yWtBAh7mZGI90RHkqZmdPKnT5+j69ADMzRBrPaJ6c+VIED/oaoOZi3hiVXGUCQRMFD+n3hiHKfoK194H2DduxKCzg=
+	t=1715930400; cv=none; b=c/u8dz417smx8goCyeAxFGzbK0szDD7Tr58qUphpoHmPSnBG/4O2QotfuDSr81algJ8M80kRyh2xbfb2Qakb9jfJwXu8zvM8p1+dZRTy1zG/Zn3fgX5pDwPJfS+oq5EAhJGRUR0tRk06g85mrQ33530PO8uVxI7KXmZROFDeLXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715930431; c=relaxed/simple;
-	bh=r7NLOcVOLcY+DFIoJzb0OFwv9OcP/ogxNDe9/qB2lVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cyNw6faKRL/wL2j8Q5Elg7qK51ZinFcpac/okIK4LP6mp0MK0rwgWS7WFMqbpARwubgZ6nw+iNlenClBuUlLbDci14F1Qgcx//4syn+IscHbBkgh3HcGhPmx+VQ7a6TFKdmCQHmaA9lVb1KME92IzGrEyIof7hao+Cbms9lWOGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FqQIaaU7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44GKMaQW007096;
-	Fri, 17 May 2024 07:20:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=uY1zTHz8LU8EGSAVc2VKG3qcU0iZZ32JvHNT0TH28cA=; b=Fq
-	QIaaU7nFCC+93sdCNvEA+Nujl2gGyfvHHp00O2fAZI/8BJ7M8FfILsxVLw4OBzvK
-	rhZ6cFVMM7ful5O1TdXo4jixidLegTnC+VnZZJpnPPMnR4XKQsqkuQnDb0bhaaQd
-	X55P3+R9oweYP1wRX1asLxbkBk53PCutsVSU5VPzrD0/i3XHKDVkM700SysN7vrh
-	xlQvO6GHzgoj2LwVuT86kDZw5W2matDUODMU2CXO4GOIkxOSYJKLOmdJ6zedvpiC
-	qFjszYAmjzmnFbrpnMpVnoq1TXC8iKptiiuAMnDOY5NGcEyyMwpV5M8p8JgZzOrR
-	+13+5a6YrP4TWO7m71Ng==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y47egfmf0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 07:20:06 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44H7K489016321
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 07:20:04 GMT
-Received: from [10.216.53.65] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
- 2024 00:19:56 -0700
-Message-ID: <be23b02d-d2b5-2bec-487b-35caf90f29f7@quicinc.com>
-Date: Fri, 17 May 2024 12:49:47 +0530
+	s=arc-20240116; t=1715930400; c=relaxed/simple;
+	bh=VPdVtsCdvH0FWtAzjEnwbG4aKW0bLBPevKsTmJFxsLQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YR/MqaJlHeHkAXINmEbiPPLszj6BoH03XLsFp/dHGkSMyAlhozkj0R7py5WV8afEgVsJfaTD2y+nMr1eF1XZOoO4VWC8mB4JGgD5YuxVLg79bfQcfMNstRsEPFMGD2iuGu6zGkMdgQtxozvLe1tPcpXJBLMkIBRyli4LWQFO2uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=JiHkGtGC; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7da04b08b82so5246439f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 00:19:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1715930398; x=1716535198; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DARwQ7xcLW9SgOpwsz1tepc/1IVi/5Qc1nde5sSyF/U=;
+        b=JiHkGtGCwSU1Vz/XfBPZPfzwKoadUiYN9oZG9igGduOUDhkcGOy/+Wv6ikiiL8TPYu
+         e6qcY7KwiU7bH/bqpRCygjoMu2+FHh5RVLghvtb4XbZlJBHgtFc1IbOB+0ZLkd/PfT/k
+         +1eQTY2AfMQPzIlWwjqM8KTX2Y8cr2fbASPC0keVnCJNCXT3+Q71jjRznpbhzwmoxwn1
+         1fv1EV4c9v/4HE7EH0CQFORDNK9dBJtk2WX5wqidfqmMPMrlVAess3/eJAWMh6qhKFVp
+         c+C1kreFBbavigdD95j6w6T7ON/prBGmuhADmawd4mlLkJqsBJ66e0uOMr7JyNqA9VmX
+         KjdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715930398; x=1716535198;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DARwQ7xcLW9SgOpwsz1tepc/1IVi/5Qc1nde5sSyF/U=;
+        b=s52A1ULUQy6cyhiXLEs0C3E28sXpBSiCfY7VsChm9cS1sIldZJNe4cMQAhOXVFITdX
+         zKskuxNo4Z0FUXDu95b22mc1TQDPro5xdarrZY0i3HGS4XjbQTFEA32KzrrhgI9SY3iw
+         0M4ogwuwYnYQxm+ns8AYVvTR0ULO7wh1tabhE0mgMVFZBXVy1WXIvYnkpPbOEybfYdgc
+         mknrdiLAkNOCTNXDY2J7nxAFcnajyYyWHj1IKT8JKkwTXzPbes9NV4EAuTXDYL9CsuNK
+         rX0NNvuqaAgunRwz6a1TJpoV2pHwBhbIrnpQoUVV1+/zxR5UiCc5SsQsFgR2J0RwhoHx
+         BGSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWl7E5t67k5Xn03OGyVEt0+vUojA0aUApp1i18KeRoJC+p0LjglHD5f11STNnaQVKBMXFiTDRbPgho7pyapCowYePHNOsV1CfIe/OIB
+X-Gm-Message-State: AOJu0Yw/tzYsNRi7AkVMhe40OeqqT966UlEQe3dmuudu5syWGszxg3Ax
+	BKO1pYyplAc2eUG+tMCWS6e6aTDn6er5M+zhs5ekkCMVBXa2rJXUVDMDatLmpbfk5REER4q6zF2
+	N35RIC0aeuBYt0ZUJheCcW/v4ykmox2yEhWbXCA==
+X-Google-Smtp-Source: AGHT+IG1fjp7xxbg2syelNzLcWdSnkAmZ5HEN4zUxVFk7Uehy8tOYpkomfU3wpTuk49Q+M+PRGzHlSGJOXy2iAV7KzU=
+X-Received: by 2002:a6b:7f42:0:b0:7e1:839e:5ab3 with SMTP id
+ ca18e2360f4ac-7e1b51ba8a6mr2350130739f.6.1715930398577; Fri, 17 May 2024
+ 00:19:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 6/7] remoteproc: qcom_q6v5_pas: Add hwspinlock bust on
- stop
-Content-Language: en-US
-To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon
-	<will@kernel.org>, Waiman Long <longman@redhat.com>,
-        Boqun Feng
-	<boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Richard Maina <quic_rmaina@quicinc.com>
-References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
- <20240516-hwspinlock-bust-v1-6-47a90a859238@quicinc.com>
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20240516-hwspinlock-bust-v1-6-47a90a859238@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Ji2uEMqRe5cnnI3ZhmT3R5tX19g0KEvH
-X-Proofpoint-ORIG-GUID: Ji2uEMqRe5cnnI3ZhmT3R5tX19g0KEvH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- malwarescore=0 phishscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0
- clxscore=1011 impostorscore=0 suspectscore=0 priorityscore=1501
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405170057
+References: <cover.1715708679.git.tjeznach@rivosinc.com> <518a4b0bf651707a9508c169fe3868e669ec2c6d.1715708679.git.tjeznach@rivosinc.com>
+In-Reply-To: <518a4b0bf651707a9508c169fe3868e669ec2c6d.1715708679.git.tjeznach@rivosinc.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Fri, 17 May 2024 15:19:48 +0800
+Message-ID: <CANXhq0q60CeN7nx7ubG580HgSOmPQZgu5oJLfcUf0wRhSj-z9g@mail.gmail.com>
+Subject: Re: [PATCH v5 4/7] iommu/riscv: Enable IOMMU registration and device probe.
+To: Tomasz Jeznach <tjeznach@rivosinc.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Anup Patel <apatel@ventanamicro.com>, devicetree@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, linux@rivosinc.com, 
+	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, 
+	Sebastien Boeuf <seb@rivosinc.com>, iommu@lists.linux.dev, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Nick Kossifidis <mick@ics.forth.gr>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-riscv@lists.infradead.org, 
+	Lu Baolu <baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 5/17/2024 4:28 AM, Chris Lew wrote:
-> From: Richard Maina <quic_rmaina@quicinc.com>
-> 
-> When remoteproc goes down unexpectedly this results in a state where any
-> acquired hwspinlocks will remain locked possibly resulting in deadlock.
-> In order to ensure all locks are freed we include a call to
-> hwspin_lock_bust() during remoteproc shutdown.
-> 
-> For qcom_q6v5_pas remoteprocs, each remoteproc has an assigned id that
-> is used to take the hwspinlock. Remoteproc should use this id to try and
-> bust the lock on remoteproc stop.
-> 
-> This edge case only occurs with q6v5_pas watchdog crashes. The error
-> fatal case has handling to clear the hwspinlock before the error fatal
-> interrupt is triggered.
-> 
-> Signed-off-by: Richard Maina <quic_rmaina@quicinc.com>
-> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+On Wed, May 15, 2024 at 2:17=E2=80=AFAM Tomasz Jeznach <tjeznach@rivosinc.c=
+om> wrote:
+>
+> Advertise IOMMU device and its core API.
+> Only minimal implementation for single identity domain type, without
+> per-group domain protection.
+>
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Tomasz Jeznach <tjeznach@rivosinc.com>
 > ---
->   drivers/remoteproc/qcom_q6v5_pas.c | 28 ++++++++++++++++++++++++++++
->   1 file changed, 28 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 54d8005d40a3..57178fcb9aa3 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -10,6 +10,7 @@
->   #include <linux/clk.h>
->   #include <linux/delay.h>
->   #include <linux/firmware.h>
-> +#include <linux/hwspinlock.h>
->   #include <linux/interrupt.h>
->   #include <linux/kernel.h>
->   #include <linux/module.h>
-> @@ -52,6 +53,7 @@ struct adsp_data {
->   	const char *ssr_name;
->   	const char *sysmon_name;
->   	int ssctl_id;
-> +	int hwlock_id;
->   
->   	int region_assign_idx;
->   	int region_assign_count;
-> @@ -84,6 +86,9 @@ struct qcom_adsp {
->   	bool decrypt_shutdown;
->   	const char *info_name;
->   
-> +	struct hwspinlock *hwlock;
-> +	int hwlock_id;
+>  drivers/iommu/riscv/iommu.c | 66 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>
+> diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+> index 3c5a6b49669d..b8e0e4b62585 100644
+> --- a/drivers/iommu/riscv/iommu.c
+> +++ b/drivers/iommu/riscv/iommu.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/init.h>
+>  #include <linux/iommu.h>
+>  #include <linux/kernel.h>
+> +#include <linux/pci.h>
+>
+>  #include "iommu-bits.h"
+>  #include "iommu.h"
+> @@ -36,6 +37,60 @@ static void riscv_iommu_disable(struct riscv_iommu_dev=
+ice *iommu)
+>         riscv_iommu_writel(iommu, RISCV_IOMMU_REG_PQCSR, 0);
+>  }
+>
+> +static int riscv_iommu_attach_identity_domain(struct iommu_domain *iommu=
+_domain,
+> +                                             struct device *dev)
+> +{
+> +       /* Global pass-through already enabled, do nothing for now. */
+> +       return 0;
+> +}
 > +
->   	const struct firmware *firmware;
->   	const struct firmware *dtb_firmware;
->   
-> @@ -399,6 +404,12 @@ static int adsp_stop(struct rproc *rproc)
->   	if (handover)
->   		qcom_pas_handover(&adsp->q6v5);
->   
-> +	if (adsp->hwlock) {
-> +		ret = hwspin_lock_bust(adsp->hwlock, adsp->hwlock_id);
-> +		if (ret)
-> +			dev_info(adsp->dev, "failed to bust hwspinlock\n");
-> +	}
+> +static struct iommu_domain riscv_iommu_identity_domain =3D {
+> +       .type =3D IOMMU_DOMAIN_IDENTITY,
+> +       .ops =3D &(const struct iommu_domain_ops) {
+> +               .attach_dev =3D riscv_iommu_attach_identity_domain,
+> +       }
+> +};
 > +
+> +static int riscv_iommu_device_domain_type(struct device *dev)
+> +{
+> +       return IOMMU_DOMAIN_IDENTITY;
+> +}
+> +
+> +static struct iommu_group *riscv_iommu_device_group(struct device *dev)
+> +{
+> +       if (dev_is_pci(dev))
+> +               return pci_device_group(dev);
+> +       return generic_device_group(dev);
+> +}
+> +
+> +static int riscv_iommu_of_xlate(struct device *dev, const struct of_phan=
+dle_args *args)
+> +{
+> +       return iommu_fwspec_add_ids(dev, args->args, 1);
+> +}
+> +
+> +static struct iommu_device *riscv_iommu_probe_device(struct device *dev)
+> +{
+> +       struct iommu_fwspec *fwspec =3D dev_iommu_fwspec_get(dev);
+> +       struct riscv_iommu_device *iommu;
+> +
+> +       if (!fwspec || !fwspec->iommu_fwnode->dev || !fwspec->num_ids)
+> +               return ERR_PTR(-ENODEV);
+> +
+> +       iommu =3D dev_get_drvdata(fwspec->iommu_fwnode->dev);
+> +       if (!iommu)
+> +               return ERR_PTR(-ENODEV);
+> +
+> +       return &iommu->iommu;
+> +}
+> +
+> +static const struct iommu_ops riscv_iommu_ops =3D {
+> +       .of_xlate =3D riscv_iommu_of_xlate,
+> +       .identity_domain =3D &riscv_iommu_identity_domain,
+> +       .def_domain_type =3D riscv_iommu_device_domain_type,
+> +       .device_group =3D riscv_iommu_device_group,
+> +       .probe_device =3D riscv_iommu_probe_device,
+> +};
+> +
+>  static int riscv_iommu_init_check(struct riscv_iommu_device *iommu)
+>  {
+>         u64 ddtp;
+> @@ -71,6 +126,7 @@ static int riscv_iommu_init_check(struct riscv_iommu_d=
+evice *iommu)
+>
+>  void riscv_iommu_remove(struct riscv_iommu_device *iommu)
+>  {
+> +       iommu_device_unregister(&iommu->iommu);
+>         iommu_device_sysfs_remove(&iommu->iommu);
+>  }
+>
+> @@ -95,5 +151,15 @@ int riscv_iommu_init(struct riscv_iommu_device *iommu=
+)
+>                 return dev_err_probe(iommu->dev, rc,
+>                                      "cannot register sysfs interface\n")=
+;
+>
+> +       rc =3D iommu_device_register(&iommu->iommu, &riscv_iommu_ops, iom=
+mu->dev);
+> +       if (rc) {
+> +               dev_err_probe(iommu->dev, rc, "cannot register iommu inte=
+rface\n");
+> +               goto err_remove_sysfs;
+> +       }
+> +
+>         return 0;
+> +
+> +err_remove_sysfs:
+> +       iommu_device_sysfs_remove(&iommu->iommu);
+> +       return rc;
+>  }
 
-What if recovery is disabled, fatal case is clearing the hwspinlock but
-wdog case is not, right ?
+Reviewed-by: Zong Li <zong.li@sifive.com>
 
--Mukesh
+Thanks
+
+> --
+> 2.34.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
