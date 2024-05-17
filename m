@@ -1,152 +1,127 @@
-Return-Path: <linux-kernel+bounces-182256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8258C88D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:59:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E0C8C88A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06EB6B28C98
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:59:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D0B92868CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E69824A1;
-	Fri, 17 May 2024 14:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC48B745F4;
+	Fri, 17 May 2024 14:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="IW/nW2rM"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gyP+hOW6"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F6881727
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730D473165;
+	Fri, 17 May 2024 14:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715957620; cv=none; b=DWLHMKlQ33aJ3/sj2x5cCD8z3WGhqCQA5tB4chIQRjoItWT9ffJcMKNeuX4M14KghRA5qgw1U+GezONwzbm2wVB+KIZbC2qJLnrW55Z07A4bcII5HfVC0T3qLSzUqacWrUS41LHh0Q7ghfp+g7gqD0ZkQGTkWbIn3Qs35NwzO+Q=
+	t=1715957607; cv=none; b=odq6qNtjqmacha+pRXaRUONDJtLegCLXcvH30oNmfexjIk+VtMGxeChmdnbbVazJoknq1+LOWr6aWWRFu16EtfB0uT5ToyjRY7O4d6HAbyHoRTzyScEh1ialyjs9AcCG6KKJr+2+Ci53V9Aan82HD4R4iHwHk/44ASMP5rByhkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715957620; c=relaxed/simple;
-	bh=x/hf7mR8S0PaebbZDXn5tmxtag3p7rdZEs+HYwpAhAM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gj20HkaOGfvBkg0NiqJliVd9/lpS1Oz1fVYBOtlIYu+7b4vUnZr+hX3+kvMR+b2papqa0ccuI+uUUltNpg4VMNBVeDoznffezXtfL5ADq5+euvZNqUSPJA9S6RBdp7wa+MSjTZk+iNU5n86QujjZV61Z+wB+p2lwe6jlvrdKTtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=IW/nW2rM; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-351c2c48effso46324f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 07:53:38 -0700 (PDT)
+	s=arc-20240116; t=1715957607; c=relaxed/simple;
+	bh=BiV3QU1AT/xes+kLUBL9MgFm921WrEPqSiZSWGVCR98=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=gxRfzYlWduESndvvG+z/tr+SKZy09h6lWvOU5iuFIh2v7cImGb3lm4XSg2Ga7pyZ35DSxdKcTfIGTXNwRVBPx05d+9QQYjB+MZj7is/DHxACV13gfdI+B7qt+EhhXHAyRmX6nM+6rBkvxT/4iiQruy/k6cS3q0DW0ad0DOqH5j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gyP+hOW6; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a5a89787ea4so457716366b.2;
+        Fri, 17 May 2024 07:53:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715957617; x=1716562417; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OClMR/8Jm3sCmLbe455uZIaBUTeeLegIVNx5rAADYDc=;
-        b=IW/nW2rMR73xnHm8jNZUQbrWlFqyJhCMuIepyZZVXuNbWIZ3a4t3ph7lQdVEQJiXG2
-         CAWO2GaRObB0229zeN0GTEfVywrOX7emWOBV1S8BLh8bdPYNcbKiTEuKhJXq6uDjIFgU
-         uvmbLxlpkuDp30MGCBEHCGklSu1GbqARKbrsXe5u17kyCYLYHdd0UQI1gg5uPjtT3Vj7
-         HSLSQA4uyDDTUh6yv9xiSm/3MNIX0UhI8Jag8MdE3TwxF+jYgbpfJ02yiGeCUvT9GlNS
-         //aXyfZbtOZzNXtuMZQ3APskpxf4i41VaTT810rwNKE1fZxijXuRgyUDg4FECZsXnw7u
-         6sDw==
+        d=gmail.com; s=20230601; t=1715957604; x=1716562404; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=KYyhvUNfZdQUyjcK8lugFY801XaI//MGY8IupV8s60k=;
+        b=gyP+hOW6Q7xqKUuPdKfYLyrQPLjtj8BIcNX+Y0R8pJO4xfPg5V/B1oYfPJVPGIbBW/
+         c5H7etnyQkQ2kgjEi8mBrx7F46S4DO6Bw7n2WMVxlfC+6AN8RC2exgujP0gqx1zRsxxP
+         gzGJ3GaBTnMMz+VsndExJtk8cAGASDdP+tHLDpIAcJWXc5ekw3jIz4i2S/VGVD5W8Qs7
+         Y3HRCNq5e0Kypt7VBGnhH5tjJcbyT0BHJsJeGM3ZkXeTmMIxWjatl+tE9D6ECpAbYcAW
+         1NKTfHXPiJ03jzkrV2YJYOjQmNNSvSynT8weHHVENwuz4rCx2dAU+lx9cBliePLNC7ON
+         W7eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715957617; x=1716562417;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OClMR/8Jm3sCmLbe455uZIaBUTeeLegIVNx5rAADYDc=;
-        b=N/HpaQnMVasdiQzpZ/ByQ3RoHAnpJJgeqlldQJKs8w61rmfNcUsG1XDry1k9kghhDe
-         bowPYQN1xmTa9SAExg0ZXI7o0gO3DMzww+dUi9EPnys0cP7MkzHksTm8HkH8UHdc/nIV
-         4NT66u4cmvzr2aPyTRwuHOpS9DyODCiqIGmRJQyhU4Nc+0/59ycLRF5mzf+QPY0Pkuvh
-         +9j4r30U5plvdQBRGU27k/92H1SxdfvRXJld9X+9OrnjztMzQlWbw6BO/scZPWDTvbDR
-         aFxVNILnd5WBcObGXCEC36TQsKz8lZB+3IYIDAokB6ajMLP0Ysa7TFp/5hNvrFy2uwf2
-         Ql3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXhOUx+WhRajyENF9XeRBrQIH/6fGxk/LMwvF+FRn2e1IdET5jO9PJCCfo92GWQbh+M8YHAntVB/k9xnqREuC40IY0IYb0EAWH7Wrwg
-X-Gm-Message-State: AOJu0Yz3uKSMBlGwcNU1RzfA3hnFMLRRXm10sp+KRUb0weWQA4ritRL5
-	OJGVnkPR9dcgurY1IfvM/wO5q2E39pX9gNJ/s1TYEvpijwUZG58NIUxCYTv5yD4=
-X-Google-Smtp-Source: AGHT+IFOQbqpkXAFZ+YravAaGBjZr48UyjitjGy6UF5iu6XOF0ZSxSlCzpVIUM9l+O9Eld2jghPS1w==
-X-Received: by 2002:a05:600c:3b86:b0:418:f770:ba0 with SMTP id 5b1f17b1804b1-41fea52ef14mr167166955e9.0.1715957617104;
-        Fri, 17 May 2024 07:53:37 -0700 (PDT)
-Received: from carbon-x1.. ([2a01:e0a:999:a3a0:46f0:3724:aa77:c1f8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce9431sm301723695e9.28.2024.05.17.07.53.35
+        d=1e100.net; s=20230601; t=1715957604; x=1716562404;
+        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KYyhvUNfZdQUyjcK8lugFY801XaI//MGY8IupV8s60k=;
+        b=vT2hYM0eRXkVr/qwkjbhN5HMGKCMqIyi7r5BZl/UoOCkh59ZE0xhxLIEjCmksMIJ7P
+         Y/JmyvbKd2daM83I3/7rlT7mAQzoajtP3Vl0BF7ZJ2fWmcJr95KUSohU5HwyDLyZ1I0k
+         uBqM4c4jWLDiAK39hcLzh1mOKR7vBf+VglYbkX+Y1RPJKFZYhvSWluB50nJI5xb0RGkg
+         ki5m4dWhQK6LhNB5BXVvfmTITCLvsQjmkV/T4qqrjI5+iQhwn7P3Za7oKgMblEX631vV
+         x/cmCJooboLeY0tStLuz89dB/4T9M2meamYUE9YBGeNYBc2sveGbIa3Rto6z1m0TVxYI
+         nbuw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4xggE7XHzuSVv52SbNE6/QdrPJM2ZztdHh4a0TIZkb3EipZ2gS6CDuUZEkxG7ePVtscX4HtLfzX4FYquQRooFeVhco2/+J/rli6C2
+X-Gm-Message-State: AOJu0YytSGmAS9IewhwoF3SKfjeDP8PyXEfSjMJKJ6CcEQQ08sP5/zc1
+	dgZYDKuQm7gd+bP2ddRkWIrHznqxQElmvkL7RUJIyr1qBan002usfDE8s1I5Sr8=
+X-Google-Smtp-Source: AGHT+IFZ5aqjl34jdp0iFNScBSo81K86cI1cStF9FYz9DzT6j9Ui8qw88E/R/j6+5xreDtYChmVl2A==
+X-Received: by 2002:a17:906:4808:b0:a59:c31a:91be with SMTP id a640c23a62f3a-a5a2d54c571mr1427809766b.16.1715957603540;
+        Fri, 17 May 2024 07:53:23 -0700 (PDT)
+Received: from [192.168.10.8] (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781ce5dsm1116168766b.42.2024.05.17.07.53.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 07:53:36 -0700 (PDT)
-From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Anup Patel <anup@brainfault.org>,
-	Shuah Khan <shuah@kernel.org>
-Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v5 16/16] KVM: riscv: selftests: Add Zcmop extension to get-reg-list test
-Date: Fri, 17 May 2024 16:52:56 +0200
-Message-ID: <20240517145302.971019-17-cleger@rivosinc.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240517145302.971019-1-cleger@rivosinc.com>
-References: <20240517145302.971019-1-cleger@rivosinc.com>
+        Fri, 17 May 2024 07:53:23 -0700 (PDT)
+Message-ID: <bf67346ef623ff3c452c4f968b7d900911e250c3.camel@gmail.com>
+Subject: tpm_tis_spi takes minutes to probe
+From: Vitor Soares <ivitro@gmail.com>
+To: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: jgg@ziepe.ca, jarkko@kernel.org, peterhuewe@gmx.de,
+ vitor.soares@toradex.com
+Date: Fri, 17 May 2024 15:53:22 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-The KVM RISC-V allows Zcmop extension for Guest/VM so add this
-extension to get-reg-list test.
+Greetings,
 
-Signed-off-by: Clément Léger <cleger@rivosinc.com>
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Acked-by: Anup Patel <anup@brainfault.org>
----
- tools/testing/selftests/kvm/riscv/get-reg-list.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I'm using the tpm_tis_spi.ko module and it is taking several minutes to pro=
+be on
+kernel:
+ - commit ea5f6ad9ad96 ("Merge tag 'platform-drivers-x86-v6.10-1' of
+git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86")
 
-diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-index 61cad4514197..9604c8ece787 100644
---- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
-+++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-@@ -59,6 +59,7 @@ bool filter_reg(__u64 reg)
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCB:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCD:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCF:
-+	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCMOP:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFA:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFH:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFHMIN:
-@@ -429,6 +430,7 @@ static const char *isa_ext_single_id_to_str(__u64 reg_off)
- 		KVM_ISA_EXT_ARR(ZCB),
- 		KVM_ISA_EXT_ARR(ZCD),
- 		KVM_ISA_EXT_ARR(ZCF),
-+		KVM_ISA_EXT_ARR(ZCMOP),
- 		KVM_ISA_EXT_ARR(ZFA),
- 		KVM_ISA_EXT_ARR(ZFH),
- 		KVM_ISA_EXT_ARR(ZFHMIN),
-@@ -957,6 +959,7 @@ KVM_ISA_EXT_SIMPLE_CONFIG(zca, ZCA),
- KVM_ISA_EXT_SIMPLE_CONFIG(zcb, ZCB),
- KVM_ISA_EXT_SIMPLE_CONFIG(zcd, ZCD),
- KVM_ISA_EXT_SIMPLE_CONFIG(zcf, ZCF),
-+KVM_ISA_EXT_SIMPLE_CONFIG(zcmop, ZCMOP);
- KVM_ISA_EXT_SIMPLE_CONFIG(zfa, ZFA);
- KVM_ISA_EXT_SIMPLE_CONFIG(zfh, ZFH);
- KVM_ISA_EXT_SIMPLE_CONFIG(zfhmin, ZFHMIN);
-@@ -1017,6 +1020,7 @@ struct vcpu_reg_list *vcpu_configs[] = {
- 	&config_zcb,
- 	&config_zcd,
- 	&config_zcf,
-+	&config_zcmop,
- 	&config_zfa,
- 	&config_zfh,
- 	&config_zfhmin,
--- 
-2.43.0
+root@verdin-imx8mm-07317726:~# time modprobe tpm_tis_spi=20
+[   57.534597] SPI driver tpm_tis_spi has no spi_device_id for atmel,attpm2=
+0p
+[   57.560684] tpm_tis_spi spi2.1: 2.0 TPM (device-id 0x3205, rev-id 1)
+[   57.584943] tpm tpm0: A TPM error (256) occurred attempting the self tes=
+t
+[   57.591797] tpm tpm0: starting up the TPM manually
+real    8m6.438s
+user    0m0.007s
+sys     0m0.013s
 
+..And after probing, sometimes the system becames unresponsive.
+
+
+I did the same test with kernel:
+ - commit a38297e3fb01 ("Linux 6.9")
+
+root@verdin-imx8mm-07317726:~# time modprobe tpm_tis_spi
+[   53.643744] SPI driver tpm_tis_spi has no spi_device_id for atmel,attpm2=
+0p
+[   53.668404] tpm_tis_spi spi2.1: 2.0 TPM (device-id 0x3205, rev-id 1)
+[   53.692997] tpm tpm0: A TPM error (256) occurred attempting the self tes=
+t
+[   53.699879] tpm tpm0: starting up the TPM manually
+
+real    0m2.809s
+user    0m0.001s
+sys     0m0.022s
+
+I tested on kernel v6.8 and same it takes same time. Do you know anything a=
+bout
+this?
+
+Best regards,
+Vitor Soares
 
