@@ -1,118 +1,98 @@
-Return-Path: <linux-kernel+bounces-182218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7B18C8835
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:41:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488688C8838
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 892BDB213CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04428288843
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4315779F5;
-	Fri, 17 May 2024 14:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1143219F;
+	Fri, 17 May 2024 14:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FAn/xIrt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUflN7Bx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401F91A2C2E
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F861863F;
+	Fri, 17 May 2024 14:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715956873; cv=none; b=tZySEISI7s9miDofFPujimMMMEYml0zaQvcxciLOoFxFHZnqUAWnfdCez+1EP2frCLOeKUaAf9gy/zkwAKFClpSD9YRCFdIcEbodDTFREP81iMUFAd7kd9b8Q7tv/HiKIUHeOscf4akWRp5jQXw8PEOk/UtQn9lVuAUL8UVAq4I=
+	t=1715956889; cv=none; b=DE3aYHZXCIbk6DzSqeR4SrQV777z+SUl34DLlyEQ0aJj5xCvooklI5T9Pndlo2Nk5LxFJCP+y5zNZHF7ROUbyk2Tciw3bWLgi+nLJpeYP6mFghb+qPCfwLQtnTv3Lx9OSTisEPXSZJ2TmLDU2wUBsP2l1Ea1Mor7cKXtrRwzG7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715956873; c=relaxed/simple;
-	bh=rW+AcPY2tzXirbdA/kRmX80I2r8guayIOpJV3BkKouw=;
+	s=arc-20240116; t=1715956889; c=relaxed/simple;
+	bh=76Nt0O2hctz5gqI5NrYMMVOVC+VAz16TUsv7w9gd1iY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YB8xTap4mFRbB8vHyYFoBwrjuQmuLb2pzWxKImse3DvaFVrhPEZZy65VmwTgDZsv9JdvP2k7bYmUElLeptlSFYlCtsRx6m53noYmBRkA2SO+TU+cE8/DfxOf7hl9FNGwjNeDuc/ull4+erpPLRBkrv1BfElJFTQ/fp2DIywH5OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FAn/xIrt; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715956872; x=1747492872;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rW+AcPY2tzXirbdA/kRmX80I2r8guayIOpJV3BkKouw=;
-  b=FAn/xIrtf2Y5HSbGGR5Bxc2aq8zam+W9yH1Wlw0LpUj2MdeJTOY02TrV
-   CgMH6X/VG/kibsGEd52uGNW86ZlL7rWkGv2AvSIiyeHIZp/hhFxnkIDBp
-   TwfcR4eTBM0u/E+WZ7RrNd2B9qt1KrafVehJn7GsY+h+3Q8oxfkYyhE6H
-   igH9nUZUhk1OAglsPHn57nxWvAOlRWd3DSerqpuDAak3ylKCvk3vYKXu1
-   vkgDabx6NyulxOADeYUOPfCpRdsPapCz3WJQbYX5xaU9okRwLlgY1OIk+
-   6laQUEHm0yH2TcS2nedYyDzJfJT8ZvdBo1pj7sUEZCRAxIkFv71GU1acb
-   A==;
-X-CSE-ConnectionGUID: ybGnZyB5TRSFBfFrKLHaxg==
-X-CSE-MsgGUID: ++KG4bqcRiCS6brARPXAXg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="11575324"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="11575324"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 07:41:12 -0700
-X-CSE-ConnectionGUID: 0Uv71e+2R3Oe3+tlO1mslg==
-X-CSE-MsgGUID: rHDQmHarTUaby29111YBiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="63014232"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa001.fm.intel.com with ESMTP; 17 May 2024 07:41:09 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 2693819E; Fri, 17 May 2024 17:41:08 +0300 (EEST)
-Date: Fri, 17 May 2024 17:41:08 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Juergen Gross <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-coco@lists.linux.dev, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86/kvm/tdx: Save %rbp in TDX_MODULE_CALL
-Message-ID: <756f73joovi4i4mwn2r2cfhvxhsbejj4ymz653mi6djkyhzxts@mcnzn2amuunr>
-References: <20240517121450.20420-1-jgross@suse.com>
- <ohvjbokpaxagc26kxmlrujab7cw3bekgi5ln7dt46cbsaxcqqh@crvqeohfazmf>
- <f63e1217-3dbe-458d-8c14-7880811d30ba@suse.com>
- <2a2guben2ysyeb43rzg6zelzpa57o24ufai3mi6ocewwvgu63l@c7dle47q7hzw>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cG2IbGolpebmiWWylJmt/QpYAfc/RHIgJuW/UhBV5q4PxLpnQckN9IkYawHL6nKez2kthSw7rGOwB8Rx/F82rl6tFJ3HAdYrqHUHER2cQQJqmmjnj8jgmu5Y14d3+D/UfVeJgDl4PPcN+NtJVCISKmqU2C9mlGMR2FAQ/mIJdJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUflN7Bx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 376B1C2BD10;
+	Fri, 17 May 2024 14:41:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715956888;
+	bh=76Nt0O2hctz5gqI5NrYMMVOVC+VAz16TUsv7w9gd1iY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TUflN7BxRMGJTVijHZpyqwKnd6B/W90RmJmUGRJmKbk2QeYjM7SjmPB+dKpVx5yNU
+	 RgPl/hZuI734O8eyUe2k8kB48/lWR3sgSFdbsByc8Lj1og86bmAA+DS9Jnu5parkpy
+	 8KnE93m8MmEhenEYZH3M0UclX5WnmR7pIGDCpMD4Z7UkB/4m/wg04Kz0KWp/2pxuMd
+	 ELG1wNnngskTUu9eKCGo6FxLyQzkjOIJfzP8vB8m/kDSq0ZJUEj37FaXRWTVMOLvQB
+	 FX/OiWMld1wx7c9ndnBsd5Ljy7pCtCO89nHz9Wz3RNvqKyTLSzmXZXMZwfBVUcyOzm
+	 wupiO3BAmEIUw==
+Date: Fri, 17 May 2024 15:41:24 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Udit Kumar <u-kumar1@ti.com>
+Cc: vigneshr@ti.com, nm@ti.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kip Broadhurst <kbroadhurst@ti.com>
+Subject: Re: [PATCH] dt-bindings: net: dp8386x: Add MIT license along with
+ GPL-2.0
+Message-ID: <20240517-fastball-stable-9332cae850ea@spud>
+References: <20240517104226.3395480-1-u-kumar1@ti.com>
+ <20240517-poster-purplish-9b356ce30248@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="SwZyRbd43sg29RgW"
+Content-Disposition: inline
+In-Reply-To: <20240517-poster-purplish-9b356ce30248@spud>
+
+
+--SwZyRbd43sg29RgW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2a2guben2ysyeb43rzg6zelzpa57o24ufai3mi6ocewwvgu63l@c7dle47q7hzw>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 17, 2024 at 05:39:51PM +0300, Kirill A. Shutemov wrote:
-> On Fri, May 17, 2024 at 04:08:03PM +0200, Juergen Gross wrote:
-> > On 17.05.24 15:55, Kirill A. Shutemov wrote:
-> > > On Fri, May 17, 2024 at 02:14:50PM +0200, Juergen Gross wrote:
-> > > > While testing TDX host support patches, a crash of the host has been
-> > > > observed a few instructions after doing a seamcall. Reason was a
-> > > > clobbered %rbp (set to 0), which occurred in spite of the TDX module
-> > > > offering the feature NOT to modify %rbp across TDX module calls.
-> > > > 
-> > > > In order not having to build the host kernel with CONFIG_FRAME_POINTER,
-> > > > save %rbp across a seamcall/tdcall.
-> > > 
-> > > There's a feature in TDX module 1.5 that prevents RBP modification across
-> > > TDH.VP.ENTER SEAMCALL. See NO_RBP_MOD in TDX Module 1.5 ABI spec.
-> > > 
-> > > I think it has to be enabled for all TDs and TDX modules that don't
-> > > support it need to be rejected.
-> > > 
-> > 
-> > Yes, I know. I'm using the patch series:
-> > 
-> >   [PATCH v19 000/130] KVM TDX basic feature support
-> > 
-> > which I think does exactly that (see setup_tdparams() and tdx_module_setup()).
-> 
-> Looks like the check is broken:
-> 
-> https://lore.kernel.org/all/46mh5hinsv5mup2x7jv4iu2floxmajo2igrxb3haru3cgjukbg@v44nspjozm4h/
+On Fri, May 17, 2024 at 03:39:20PM +0100, Conor Dooley wrote:
+> On Fri, May 17, 2024 at 04:12:26PM +0530, Udit Kumar wrote:
+> > Modify license to include dual licensing as GPL-2.0-only OR MIT
+> > license for TI specific phy header files. This allows for Linux
+> > kernel files to be used in other Operating System ecosystems
+> > such as Zephyr or FreeBSD.
+>=20
+> What's wrong with BSD-2-Clause, why not use that?
 
-Err.. I think I confused myself. Please ignore.
+I cut myself off, I meant to say:
+What's wrong with BSD-2-Clause, the standard dual license for
+bindings, why not use that?
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+--SwZyRbd43sg29RgW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkdslAAKCRB4tDGHoIJi
+0kTrAQDJ7y89owej/45s2YYuPVZOx3PEXF5YdiHU463IdepEaAEAkgZueywNtp2R
+mfeQk9vGdrOgG7SojmF/AuMPTL0j2Qk=
+=PCfe
+-----END PGP SIGNATURE-----
+
+--SwZyRbd43sg29RgW--
 
