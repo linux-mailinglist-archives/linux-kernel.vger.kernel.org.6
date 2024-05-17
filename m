@@ -1,108 +1,215 @@
-Return-Path: <linux-kernel+bounces-181746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4C88C8097
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:22:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 098B88C809B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B37181F21B92
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 05:22:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2C932822FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 05:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDDF10A1B;
-	Fri, 17 May 2024 05:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ltts.com header.i=@ltts.com header.b="oXrcqdOW";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="CNm0dYFs"
-Received: from c180-40.smtp-out.ap-south-1.amazonses.com (c180-40.smtp-out.ap-south-1.amazonses.com [76.223.180.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BD1111A5;
+	Fri, 17 May 2024 05:28:22 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E4B1095A;
-	Fri, 17 May 2024 05:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.223.180.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957F810A0B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 05:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715923336; cv=none; b=nhOOE218us0jQz1GVtbR0TdxyUfz59+od6CIUVibISQWk7g8ECM0eok+CC1wxA8uGPuzYJug0by4gecwwdUn+YdCbhA6nrrHGXW/GoJ1m//MBuQYXFEaS390YHpbJNweEJLNSF7TIq9M59WVMwwPOZPTMZrh8ZpWAJvNvt75DzE=
+	t=1715923702; cv=none; b=VT5fsABJ6+UskViW1fazriDrE3icv4mHh6qtP5UgjzImUlF2FovDHkTD9l2pyY1k68GLdvZ24fKKjintdzAfETHCVYJ9hCVfhtHd61VNSN5t/nwng9bwVne9s8wHzFo1u4lfljK+VOUWFi4fsERWABqRlAZCiVzpPFi6rZ4KNYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715923336; c=relaxed/simple;
-	bh=lclVx6WfAVXVWLfHGAr9HA/dSg48QUSA0LJIVcukNkQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G82628hgS5jDhQYDG41R56NNF29Vt9QopiiSDBSJje20j13q7r2KzcIWy9hUIv450II3VIy9CGysOrCYY0dEArshcNKpItwCwG+MumsTHdOesodFvodIxfK0AY8WmJalmOt2Om/McXiZ8sjN67jP7K3ABv4LZoGGXByEbRzy3YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ltts.com; spf=pass smtp.mailfrom=ap-south-1.amazonses.com; dkim=pass (2048-bit key) header.d=ltts.com header.i=@ltts.com header.b=oXrcqdOW; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=CNm0dYFs; arc=none smtp.client-ip=76.223.180.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ltts.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ap-south-1.amazonses.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=i3fe3efcd4pbz7ipgssfqjhzqx347xbc; d=ltts.com; t=1715923331;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Transfer-Encoding;
-	bh=lclVx6WfAVXVWLfHGAr9HA/dSg48QUSA0LJIVcukNkQ=;
-	b=oXrcqdOWaeFdXfu2V5tSR1qlEI76HUzIVIhLCHlXxG2umyKEzFlN+YhZQUwso6FR
-	8zPQiSl6LA36nHghcP9+nk0001XxRnLssqHdB9vO3Z0EPQRTaGa2iIinkyWRbPDCs7M
-	tgTy0m2kHt1EeUH1eRkOl6sQta8p+zjlSopRj03TByZ+KdubiyGyr6W6aHiHqzOOqwN
-	OoESsM7DEotMpZk2QqOI6I6Gl2u3y+3xoSRFu+vJdVqbce4RjUWurO4jRqfHq3RSt80
-	5YnJFwZBA0jcswdiaPlQS/56X8bzyh1VabEg8o2jtcLl+COXLBucSQ6mUWtSP9OPLu7
-	azX8Dj0oqw==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=zpkik46mrueu52d3326ufxxchortqmoc; d=amazonses.com; t=1715923331;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
-	bh=lclVx6WfAVXVWLfHGAr9HA/dSg48QUSA0LJIVcukNkQ=;
-	b=CNm0dYFs1Kld/3jueJlAGfNWihlsSxRPMWFBLZ2ufQH+DELMnzk7ZxbOaPordhFr
-	bNFzyTKoG/aH8eCXajwTwVgvQq6PMwFaSHTIamnhCpjjz+DzsIWb4v1qDb4a27jW/S5
-	kqFh7GkfM58bn9fNaxww7wT9Lb6ulV7dwyFncfw4=
-From: Nirmala devi Mal Nadar <m.nirmaladevi@ltts.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, lee@kernel.org, 
-	Nirmala Devi Mal Nadar <m.nirmaladevi@ltts.com>, 
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] pinctrl: pinctrl-tps6594: make tps65224_muxval_remap and tps6594_muxval_remap as static to fix sparse warning
-Date: Fri, 17 May 2024 05:22:11 +0000
-Message-ID: <0109018f85002ae1-6fb831b2-74c2-4559-98f1-a3ef25e72558-000000@ap-south-1.amazonses.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715923702; c=relaxed/simple;
+	bh=WdPDTrPOYwIReFs/yP1Dk1hqdo/yDLeNtQnXTHtn0H8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=V7fhJNHCMGv/dvtOIPZ3TM4Ojv/RrwXWmB1O4h01a8gaxB6IJR7Twuzc7TeapzgTd67FzxGxo6Ypy2AagCEVgmrCfXYsc2trMOc8DuShocNsN8RF3LMBpxlPO2adgCCi8jFZX0YXQEioonw8ms6URV5UtqG8fNC3Z64Q6WEm0mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7da4360bbacso1059919839f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 22:28:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715923700; x=1716528500;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bzxdQzRd67YyX5sYt9wLAcGm6uG/rusPbHHDRJfvy/M=;
+        b=nEJBISe+zPsLeZ08U0kTEYDoM8shw58PCIh3NHhh4Udbx73FEuxzlxrY9gwX97AphU
+         wnWFhUjVk5FAU6B9lBPqjZtMd9zbShs3VGgrRXn966z+z0hBCUphs2axFeqH3vyfqDqu
+         yZ4b7EyfBARQHZDQ8tDc6n5u0k/dKw5mP5kD3c3U3HBkjo82zq30ixqKiu3QwcAHMXtV
+         dCnZr+mErDnDk6QzjnVKtu93kjfa/Z22nffP2fh9Xo7KJu8n+/hB2vhLgVTEWB2P6Q7O
+         9VsEQrCYFK1duaLt+Df58YUNYvJDMrUhfSkCPkg9zyug7B4/TC/mW6WvaYVFzpxjwrGa
+         mC7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVQEgnX23P1Pi34McVSh51TvqeRptffYNFbb9pBLI563aLJffQOBhhJyTcYRJ2O3boQfmv9ArWmWdf67cRoMgkwGO87p9dgXrZhWqBJ
+X-Gm-Message-State: AOJu0YzGkWzdzfOqCEmGQkVEsA//IwDcFVuvb3UYmxfcngkAr6dkYKhq
+	+kiGm9MCmWTgfdmhRLDFY+PAFlEXlYsP0PvtgCNE7AlmYdHSlGAAFiiTTOxrFK1YTihAmlYYQHx
+	TBmo2TOIN1ro1qrzEJTOvXzlXHFw/6RQBoNkzwGqM/zwyinTln9zqdEE=
+X-Google-Smtp-Source: AGHT+IGpaoA6Mn6vDc6NmzFiL4Q+Ag/NP0AVv0TDpxzoBeiUh5/XMofiTpJQ/iSbpQeTNeVYk8PQ4ty1tmWs4K5FKrg1bNtMmM//
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.ap-south-1./RC/PI2M8xOxQmTMPi0M1Q8h2FX69egpT62QKSaMPIA=:AmazonSES
-X-SES-Outgoing: 2024.05.17-76.223.180.40
+X-Received: by 2002:a05:6602:2c0f:b0:7de:a1dc:bf36 with SMTP id
+ ca18e2360f4ac-7e1b521c4dcmr97738939f.4.1715923699834; Thu, 16 May 2024
+ 22:28:19 -0700 (PDT)
+Date: Thu, 16 May 2024 22:28:19 -0700
+In-Reply-To: <0000000000001a94c3061747fabd@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009731e206189f9e5b@google.com>
+Subject: Re: [syzbot] [ntfs3?] possible deadlock in ntfs_mark_rec_free (2)
+From: syzbot <syzbot+016b09736213e65d106e@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Nirmala Devi Mal Nadar <m.nirmaladevi@ltts.com>
+syzbot has found a reproducer for the following issue on:
 
-pinctrl: tps6594: Fix sparse warning.
+HEAD commit:    fda5695d692c Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=15248fb8980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=95dc1de8407c7270
+dashboard link: https://syzkaller.appspot.com/bug?extid=016b09736213e65d106e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13787684980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a93c92980000
 
-warning: symbol 'tps65224_muxval_remap' was not declared. Should it be static?
-warning: symbol 'tps6594_muxval_remap' was not declared. Should it be static?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/07f3214ff0d9/disk-fda5695d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/70e2e2c864e8/vmlinux-fda5695d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b259942a16dc/Image-fda5695d.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/0c9ec56039c3/mount_0.gz
 
-Signed-off-by: Nirmala Devi Mal Nadar <m.nirmaladevi@ltts.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202405111523.9yt759uX-lkp@intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+016b09736213e65d106e@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.9.0-rc7-syzkaller-gfda5695d692c #0 Not tainted
+------------------------------------------------------
+kworker/u8:7/652 is trying to acquire lock:
+ffff0000d80fa128 (&wnd->rw_lock/1){+.+.}-{3:3}, at: ntfs_mark_rec_free+0x48/0x270 fs/ntfs3/fsntfs.c:742
+
+but task is already holding lock:
+ffff0000decb6fa0 (&ni->ni_lock#3){+.+.}-{3:3}, at: ni_trylock fs/ntfs3/ntfs_fs.h:1143 [inline]
+ffff0000decb6fa0 (&ni->ni_lock#3){+.+.}-{3:3}, at: ni_write_inode+0x168/0xda4 fs/ntfs3/frecord.c:3265
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&ni->ni_lock#3){+.+.}-{3:3}:
+       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+       __mutex_lock kernel/locking/mutex.c:752 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+       ntfs_set_state+0x1a4/0x5c0 fs/ntfs3/fsntfs.c:947
+       mi_read+0x3e0/0x4d8 fs/ntfs3/record.c:185
+       mi_format_new+0x174/0x514 fs/ntfs3/record.c:420
+       ni_add_subrecord+0xd0/0x3c4 fs/ntfs3/frecord.c:372
+       ntfs_look_free_mft+0x4c8/0xd1c fs/ntfs3/fsntfs.c:715
+       ni_create_attr_list+0x764/0xf54 fs/ntfs3/frecord.c:876
+       ni_ins_attr_ext+0x300/0xa0c fs/ntfs3/frecord.c:974
+       ni_insert_attr fs/ntfs3/frecord.c:1141 [inline]
+       ni_insert_resident fs/ntfs3/frecord.c:1525 [inline]
+       ni_add_name+0x658/0xc14 fs/ntfs3/frecord.c:3047
+       ni_rename+0xc8/0x1d8 fs/ntfs3/frecord.c:3087
+       ntfs_rename+0x610/0xae0 fs/ntfs3/namei.c:334
+       vfs_rename+0x9bc/0xc84 fs/namei.c:4880
+       do_renameat2+0x9c8/0xe40 fs/namei.c:5037
+       __do_sys_renameat2 fs/namei.c:5071 [inline]
+       __se_sys_renameat2 fs/namei.c:5068 [inline]
+       __arm64_sys_renameat2+0xe0/0xfc fs/namei.c:5068
+       __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+-> #0 (&wnd->rw_lock/1){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
+       lock_acquire+0x248/0x73c kernel/locking/lockdep.c:5754
+       down_write_nested+0x58/0xcc kernel/locking/rwsem.c:1695
+       ntfs_mark_rec_free+0x48/0x270 fs/ntfs3/fsntfs.c:742
+       ni_write_inode+0xa28/0xda4 fs/ntfs3/frecord.c:3365
+       ntfs3_write_inode+0x70/0x98 fs/ntfs3/inode.c:1046
+       write_inode fs/fs-writeback.c:1498 [inline]
+       __writeback_single_inode+0x5f0/0x1548 fs/fs-writeback.c:1715
+       writeback_sb_inodes+0x700/0x101c fs/fs-writeback.c:1941
+       wb_writeback+0x404/0x1048 fs/fs-writeback.c:2117
+       wb_do_writeback fs/fs-writeback.c:2264 [inline]
+       wb_workfn+0x394/0x104c fs/fs-writeback.c:2304
+       process_one_work+0x7b8/0x15d4 kernel/workqueue.c:3267
+       process_scheduled_works kernel/workqueue.c:3348 [inline]
+       worker_thread+0x938/0xef4 kernel/workqueue.c:3429
+       kthread+0x288/0x310 kernel/kthread.c:388
+       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ni->ni_lock#3);
+                               lock(&wnd->rw_lock/1);
+                               lock(&ni->ni_lock#3);
+  lock(&wnd->rw_lock/1);
+
+ *** DEADLOCK ***
+
+3 locks held by kworker/u8:7/652:
+ #0: ffff0000c20c6948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work+0x668/0x15d4 kernel/workqueue.c:3241
+ #1: ffff800098d87c20 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work+0x6b4/0x15d4 kernel/workqueue.c:3241
+ #2: ffff0000decb6fa0 (&ni->ni_lock#3){+.+.}-{3:3}, at: ni_trylock fs/ntfs3/ntfs_fs.h:1143 [inline]
+ #2: ffff0000decb6fa0 (&ni->ni_lock#3){+.+.}-{3:3}, at: ni_write_inode+0x168/0xda4 fs/ntfs3/frecord.c:3265
+
+stack backtrace:
+CPU: 1 PID: 652 Comm: kworker/u8:7 Not tainted 6.9.0-rc7-syzkaller-gfda5695d692c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Workqueue: writeback wb_workfn (flush-7:0)
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
+ dump_stack+0x1c/0x28 lib/dump_stack.c:123
+ print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2060
+ check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
+ lock_acquire+0x248/0x73c kernel/locking/lockdep.c:5754
+ down_write_nested+0x58/0xcc kernel/locking/rwsem.c:1695
+ ntfs_mark_rec_free+0x48/0x270 fs/ntfs3/fsntfs.c:742
+ ni_write_inode+0xa28/0xda4 fs/ntfs3/frecord.c:3365
+ ntfs3_write_inode+0x70/0x98 fs/ntfs3/inode.c:1046
+ write_inode fs/fs-writeback.c:1498 [inline]
+ __writeback_single_inode+0x5f0/0x1548 fs/fs-writeback.c:1715
+ writeback_sb_inodes+0x700/0x101c fs/fs-writeback.c:1941
+ wb_writeback+0x404/0x1048 fs/fs-writeback.c:2117
+ wb_do_writeback fs/fs-writeback.c:2264 [inline]
+ wb_workfn+0x394/0x104c fs/fs-writeback.c:2304
+ process_one_work+0x7b8/0x15d4 kernel/workqueue.c:3267
+ process_scheduled_works kernel/workqueue.c:3348 [inline]
+ worker_thread+0x938/0xef4 kernel/workqueue.c:3429
+ kthread+0x288/0x310 kernel/kthread.c:388
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+
+
 ---
- drivers/pinctrl/pinctrl-tps6594.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-tps6594.c b/drivers/pinctrl/pinctrl-tps6594.c
-index 085047320..95ec21d0f 100644
---- a/drivers/pinctrl/pinctrl-tps6594.c
-+++ b/drivers/pinctrl/pinctrl-tps6594.c
-@@ -237,13 +237,13 @@ struct muxval_remap {
- 	u8 remap;
- };
- 
--struct muxval_remap tps65224_muxval_remap[] = {
-+static struct muxval_remap tps65224_muxval_remap[] = {
- 	{5, TPS6594_PINCTRL_DISABLE_WDOG_FUNCTION, TPS65224_PINCTRL_WKUP_FUNCTION_GPIO5},
- 	{5, TPS65224_PINCTRL_SYNCCLKIN_FUNCTION, TPS65224_PINCTRL_SYNCCLKIN_FUNCTION_GPIO5},
- 	{5, TPS65224_PINCTRL_NSLEEP2_FUNCTION, TPS65224_PINCTRL_NSLEEP2_FUNCTION_GPIO5},
- };
- 
--struct muxval_remap tps6594_muxval_remap[] = {
-+static struct muxval_remap tps6594_muxval_remap[] = {
- 	{8, TPS6594_PINCTRL_DISABLE_WDOG_FUNCTION, TPS6594_PINCTRL_DISABLE_WDOG_FUNCTION_GPIO8},
- 	{8, TPS6594_PINCTRL_SYNCCLKOUT_FUNCTION, TPS6594_PINCTRL_SYNCCLKOUT_FUNCTION_GPIO8},
- 	{9, TPS6594_PINCTRL_CLK32KOUT_FUNCTION, TPS6594_PINCTRL_CLK32KOUT_FUNCTION_GPIO9},
-
-base-commit: 1482489b5196f4203576ae1dc2ba4ce3ada381c7
--- 
-2.34.1
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
