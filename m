@@ -1,114 +1,143 @@
-Return-Path: <linux-kernel+bounces-182307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE0D8C8979
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:41:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 269248C8980
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B751286DCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:41:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376051C20D6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D4512F597;
-	Fri, 17 May 2024 15:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC66E12F588;
+	Fri, 17 May 2024 15:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="oCzD0Rda"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNbjwofJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8943E12F58E
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097BB1A2C26;
+	Fri, 17 May 2024 15:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715960463; cv=none; b=DnWuaJ+PnL4+O18CChslD8konsuLMVkybEAPuVaaef+d134qPPbCqeqcwl0Qr1xoibJV/k9nx0mV38iOMg/zmjN50ZP8K0Otv1xOgRIcjTsWQKc9aOYcmHmzhfl0RkIJuR70ijnusvaJH/o2n18BWo24H/N0VJBuDwgivw3paZc=
+	t=1715960528; cv=none; b=DEFWivAO44FEv2xDkS2LFmrxhlK74/vW1y0fOG20vqOpYKLFQuhGIOdG/0M7MK+t0z4op4pU9RWKLReSMGJwt5+yDyTvSg5BaHM0wEUkVwfDH+WqaTiL/MISjabZ5psKHQ1x0IXADva5M5hTKT/AmctgkNpU+fQx2H0tMTkZ73E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715960463; c=relaxed/simple;
-	bh=kbohzPnLDgM7IQeXd/1NEXoC927SZZmUiT2bGewMcxE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qI6fv8pKqYmgLcAy/ToUKiX+spRp/UXxdIGP7x7G4QEsnwA5VV6lNeA6faNwCLSJ1Y81Wnhq3k6ALD9ibMNDBJWmYQ/f1NoCN70mHFLyuG1RWTPDNXbXqHVVkCC7gYicQ8mKFmNfJ2wIkh/z53/GvZecKqGuMyiw5z+594JNkwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=oCzD0Rda; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e576057c2bso31818971fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 08:41:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1715960458; x=1716565258; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g3uvQyOXC6DzeBtn7J3OOKoxKJZ1WzPonWgDGOVCz4o=;
-        b=oCzD0Rda1SfrLYY31uuo5837EUhU6svEFFk/AHonTFSyLOHE/AmTA2L3S6Eu7V6Lxy
-         bNBd/Hf21+V+sx7LMrpwnyeM8bPy4aTQWvQsRg3ZNhmJbFBOwdi0f3y8HLrxafGcDRb9
-         q7JGTolMM9Iow49uIoXknaQhSesfe8+vagEes=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715960458; x=1716565258;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g3uvQyOXC6DzeBtn7J3OOKoxKJZ1WzPonWgDGOVCz4o=;
-        b=xLOzYtRVHwDOUsPQ73edvsUrWukYAAL3Tm04fktv3f/7hMA8bw4YJkX+tZp2rZuJ9T
-         lBGzyJG4IFECf7wSHjBmqtzLuE7Wuu/phM4TrdvVus1DhqFY1+ZF6hrpEnmbaVfWazSz
-         89UZrN7Hw6pJYkRqviiLaWf/cCbP9NHOR7mpugj8Wc/118W1J1d5M9BSr50/lBL0tghA
-         5t4ge4v7nP2YqCpzLabeUcUwtYNJ0W77ea01fGMRT6EB7XZU40jiNrnvTmD+j1UaLcPl
-         lyulGUxghOBeoFZEj1F9ANzK1yQaoTNQlPicb90ZeutUQsWDX6aAO/SDHtTxmIRsRhHM
-         D/FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSgs2lnhiR1gKJXkAR2ts9hngUpM6KwbYYVOOvqvFiYmpUgVp+KJ5W/URb4aDrqAWB6frWHbPBX7vqlwBy1qSWrbLgCq+iyRFh7qwI
-X-Gm-Message-State: AOJu0YzR0oxLb72b1tEB3ENeMmO/NBkIOMkZNzKh2Ul83wGkU+vyZVhO
-	kiyniLek/aY0SuWBZRvI6I+YBIMESOpbWrYgrp967/PljnQ5mmwZVdom+Xfyl7F1vTOXO7xmTee
-	bifT8LxmfT/fi81NG38j3xo+63G961Ztjk9POcQ==
-X-Google-Smtp-Source: AGHT+IHIxRZ5GfZcmKjumiPucJds6t+FhJ8wB4Mamt8S570wQWI0fT8nNgPZioDyP96HF/02QrdoeGI3bfESt/M+OG0=
-X-Received: by 2002:a2e:d09:0:b0:2e5:2eaf:b09c with SMTP id
- 38308e7fff4ca-2e52eafb202mr168442591fa.37.1715960458664; Fri, 17 May 2024
- 08:40:58 -0700 (PDT)
+	s=arc-20240116; t=1715960528; c=relaxed/simple;
+	bh=yhVafEpOeiyybflVBl8GoHvZIG0y5kH+I19BIPviMXc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=rEaWmxBxBux6HuNz4SF9Kvf2j3ONWaeSFp8V0vdNEgfSVPiaiLJnE3FegX3JOYlA5YCF2o1pnQ9sG8ecKweHGm94z2KKuvmeQGwZ7IF4kq2bQOWydVqOAKTwWZ4l81m3likXYspQhHv8z+dn3vIZIqH6iEzEc4rtsSV99FKXkZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNbjwofJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40A77C2BD10;
+	Fri, 17 May 2024 15:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715960527;
+	bh=yhVafEpOeiyybflVBl8GoHvZIG0y5kH+I19BIPviMXc=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=tNbjwofJiNnKlnVFDsr71EjVgjioaMGbmamWTE0eSuUVX9/VZz405WwHrrO0Q8+ri
+	 3urfYHww0vHbDt8pqX9fnSNkagJluRBSPDl02wI4NbKE5jCy066T1zY+yb+8FEXMfs
+	 J0anOqVG71CQCC/45kqkfPA6/FaQXFltcvzbD1NrX6VjTJ8+s9F9nPKf4PDhomtcb4
+	 qdUC5dv499PXXAaMmqEY13bd5986SXq6RM39RyC+7e0tACYWxKqdz+9IRi+eA1XIMC
+	 sR9T+oC8mSmunAUpuw/EL+s7Q/xEXNTzQRV4FtMx9b5WzFE5AEX7Le4eDOv7jh+FDi
+	 9HoPwzcmcG9Fw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <000000000000141e8306185a0daa@google.com>
-In-Reply-To: <000000000000141e8306185a0daa@google.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 17 May 2024 17:40:47 +0200
-Message-ID: <CAJfpegtwuOgundfkCdh4c4-scJjBEgHjNzJ8Vq2VUxjxWWQPHQ@mail.gmail.com>
-Subject: Re: [syzbot] [overlayfs?] WARNING in ovl_workdir_create (3)
-To: syzbot <syzbot+8aa3f99a6acb9f8fd429@syzkaller.appspotmail.com>
-Cc: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 17 May 2024 18:42:04 +0300
+Message-Id: <D1C18M92CMJ1.GNLD51L95OHV@kernel.org>
+Subject: Re: tpm_tis_spi takes minutes to probe
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Vitor Soares" <ivitro@gmail.com>, <linux-integrity@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Cc: <jgg@ziepe.ca>, <peterhuewe@gmx.de>, <vitor.soares@toradex.com>
+X-Mailer: aerc 0.17.0
+References: <bf67346ef623ff3c452c4f968b7d900911e250c3.camel@gmail.com>
+In-Reply-To: <bf67346ef623ff3c452c4f968b7d900911e250c3.camel@gmail.com>
 
-On Mon, 13 May 2024 at 20:28, syzbot
-<syzbot+8aa3f99a6acb9f8fd429@syzkaller.appspotmail.com> wrote:
+On Fri May 17, 2024 at 5:53 PM EEST, Vitor Soares wrote:
+> Greetings,
 >
-> Hello,
+> I'm using the tpm_tis_spi.ko module and it is taking several minutes to p=
+robe on
+> kernel:
+>  - commit ea5f6ad9ad96 ("Merge tag 'platform-drivers-x86-v6.10-1' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86"=
+)
 >
-> syzbot found the following issue on:
->
-> HEAD commit:    45db3ab70092 Merge tag '6.9-rc7-ksmbd-fixes' of git://git...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=169b934c980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=2f7a2b43b9e58995
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8aa3f99a6acb9f8fd429
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/0c2a8034002c/disk-45db3ab7.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/807e35e2b3a9/vmlinux-45db3ab7.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/4868b2eab91a/bzImage-45db3ab7.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+8aa3f99a6acb9f8fd429@syzkaller.appspotmail.com
->
-> ------------[ cut here ]------------
-> DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff888077f311f0, owner = 0x0, curr 0xffff8880787ebc00, list empty
+> root@verdin-imx8mm-07317726:~# time modprobe tpm_tis_spi=20
+> [   57.534597] SPI driver tpm_tis_spi has no spi_device_id for atmel,attp=
+m20p
 
-This is lock corruption on the upper filesystem, definitely not an
-overlayfs issue.
+This was added in 6.9:
 
-#syz unset subsystems
+$ git --no-pager log -1 3c45308c44eda
+commit 3c45308c44eda6cc3343a48341a82b96753c8a13
+Author: Lukas Wunner <lukas@wunner.de>
+Date:   Sat Jan 13 18:10:52 2024 +0100
 
-Thanks,
-Miklos
+    tpm_tis_spi: Add compatible string atmel,attpm20p
+   =20
+    Commit 4f2a348aa365 ("arm64: dts: imx8mm-venice-gw73xx: add TPM device"=
+)
+    added a devicetree node for the Trusted Platform Module on certain
+    Gateworks boards.
+   =20
+    The commit only used the generic "tcg,tpm_tis-spi" compatible string,
+    but public documentation shows that the chip is an ATTPM20P from Atmel
+    (nowadays Microchip):
+    https://trac.gateworks.com/wiki/tpm
+   =20
+    Add the chip to the supported compatible strings of the TPM TIS SPI
+    driver.
+   =20
+    For reference, a datasheet is available at:
+    https://ww1.microchip.com/downloads/en/DeviceDoc/ATTPM20P-Trusted-Platf=
+orm-Module-TPM-2.0-SPI-Interface-Summary-Data-Sheet-DS40002082A.pdf
+   =20
+    Signed-off-by: Lukas Wunner <lukas@wunner.de>
+    Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@kernel.org>
+    Cc: Tim Harvey <tharvey@gateworks.com>
+    Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+linux-tpmdd on =EE=82=A0 tpm2_key=20
+$ git describe --contains 3c45308c44eda
+tpmdd-v6.9-rc1~2
+
+> [   57.560684] tpm_tis_spi spi2.1: 2.0 TPM (device-id 0x3205, rev-id 1)
+> [   57.584943] tpm tpm0: A TPM error (256) occurred attempting the self t=
+est
+
+Course of event is I think:
+
+	rc =3D tpm2_do_selftest(chip);
+	if (rc && rc !=3D TPM2_RC_INITIALIZE)
+		goto out;
+
+	/* 1. TPM_RC_INITIALIZE */
+	if (rc =3D=3D TPM2_RC_INITIALIZE) {
+		/* 2. Branches here. */
+		rc =3D tpm2_startup(chip);
+		if (rc)
+			goto out;
+
+		rc =3D tpm2_do_selftest(chip);
+		if (rc)
+			goto out;
+	}
+
+	/* 4. Second self-test successful. */
+
+It is possible that there is a performance regression given multitude
+of HMAC changes. It would likely had to be in tpm2_do_selftest(), since
+it is the most time-consuming function.
+
+I checked the timeouts etc. but in the first seek did find anything
+obvious.
+
+BR, Jarkko
 
