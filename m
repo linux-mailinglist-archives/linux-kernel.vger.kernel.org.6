@@ -1,188 +1,96 @@
-Return-Path: <linux-kernel+bounces-181924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719298C836D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:27:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B908C8372
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF720282746
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:27:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DF95B22970
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A8D23770;
-	Fri, 17 May 2024 09:27:00 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FB5224EA;
+	Fri, 17 May 2024 09:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="cQ87vlEp"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EF636120;
-	Fri, 17 May 2024 09:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB602375B;
+	Fri, 17 May 2024 09:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715938020; cv=none; b=UfKUzPkw9Y4csZjQszm4p3q18nfr45e3ZMLGELx/8bVCqHTFpLKB0m0WtBGjy6tqUYJDM3g8ABYl8ggcf8KWqv3k5Lw6rzl4j+/bFRd79m/COeMsBwSuhccl1PAwyFcf9ElUnFtZSK+2INia4LY2iDnw56WL41MhnE6Ym7fDuBk=
+	t=1715938071; cv=none; b=hRTN8wvPBAuIF4avvP90B/JIlsSwHZ8bOU8rfn172AD9bScxHUxz32dCKWXrY3YSj+4F9KL+/F0mhpNQTwFUfgaxAQXD3TqhshOqG3zDCRWBWU6qgKofmzeuT3ijjMvO0cUdNNuPQhMfMOfbI7EtbHxCuQ5YNNtdhf6/H1QpgC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715938020; c=relaxed/simple;
-	bh=dDE02QwcEJgIaN7EsPYpJ/E8ZjuShWfIOgaAUYFyGrI=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=a98cMfGdPPq6D2zLx62mfYil3PiSSrytH6ifJgnsiZM3XI24+hADVXAe/uSW2SSaXhGXOLCuNsS/5a6iUtHwrFmSl33YlRvqCXZYPMeYM8P3RUcyNoUNF0lgrjwZj0O5nV/sIQD9EYlBepKlDeMg0pLXZYC04sPfInKoEy8Q+h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VghRs6vrLz5R9kB;
-	Fri, 17 May 2024 17:26:49 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 44H9Qa5F065180;
-	Fri, 17 May 2024 17:26:36 +0800 (+08)
-	(envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid31;
-	Fri, 17 May 2024 17:26:39 +0800 (CST)
-Date: Fri, 17 May 2024 17:26:39 +0800 (CST)
-X-Zmail-TransId: 2af9664722cf5bc-59194
-X-Mailer: Zmail v1.0
-Message-ID: <20240517172639229ec5bN7VBV7SGEHkSK5K6f@zte.com.cn>
+	s=arc-20240116; t=1715938071; c=relaxed/simple;
+	bh=QEFcnNgSW7VFtUZqNDydUFcpK6MlFDy6iAS+JARgbiI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S4XwOMxShV2/i4h1PsHnD3aY2DcGUCAbp0RD4EzR8PEMlLLuWMsPs93cX0bFAvDPrtSHntLqzykPqTd+ffk/++QhFkogGUo/2/bndUwsHWg3ZdCKis4f8/Y7KqsqGk0ycaBHt5QoZ/yq9YAqzU4SjC7jg9jg3F7ZncaxVXd6uNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=cQ87vlEp; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1715938070; x=1747474070;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Qyol9/0fjUwTBCD/lu/C9S5eG6ZgCLgdeBC9QyKdG8E=;
+  b=cQ87vlEpylFBo2562e+4PY3LRBChwOKpdzOdmzpar47O/fs72i/vH6LB
+   9zryhUMKNt2koINo5iKs2PHPVa2rXVu9xsjN5bP8b2SA0WS8DLydtW4dO
+   wXlSQpZOi3wj6tFr/xpQ5crk6CT9Onvr6RfBB4Bm8CEGwrSr9nF/ICTNO
+   U=;
+X-IronPort-AV: E=Sophos;i="6.08,167,1712620800"; 
+   d="scan'208";a="401796677"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 09:27:46 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:5031]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.57.175:2525] with esmtp (Farcaster)
+ id 2f9ded0c-3c22-44e3-8595-2cae7b44526a; Fri, 17 May 2024 09:27:45 +0000 (UTC)
+X-Farcaster-Flow-ID: 2f9ded0c-3c22-44e3-8595-2cae7b44526a
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 17 May 2024 09:27:43 +0000
+Received: from 88665a182662.ant.amazon.com.com (10.119.6.241) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 17 May 2024 09:27:39 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <samsun1006219@gmail.com>
+CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <syzkaller-bugs@googlegroups.com>,
+	<xrivendell7@gmail.com>, <kuniyu@amazon.com>
+Subject: Re: [Linux kernel bug] UBSAN: shift-out-of-bounds in dctcp_update_alpha
+Date: Fri, 17 May 2024 18:27:30 +0900
+Message-ID: <20240517092730.34061-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <CAEkJfYNJM=cw-8x7_Vmj1J6uYVCWMbbvD=EFmDPVBGpTsqOxEA@mail.gmail.com>
+References: <CAEkJfYNJM=cw-8x7_Vmj1J6uYVCWMbbvD=EFmDPVBGpTsqOxEA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <ye.xingchen@zte.com.cn>
-To: <davem@davemloft.net>
-Cc: <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <corbet@lwn.net>, <dsahern@kernel.org>, <ncardwell@google.com>,
-        <soheil@google.com>, <mfreemon@cloudflare.com>, <lixiaoyan@google.com>,
-        <david.laight@aculab.com>, <haiyangz@microsoft.com>,
-        <ye.xingchen@zte.com.cn>, <netdev@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <xu.xin16@zte.com.cn>, <zhang.yunkai@zte.com.cn>, <fan.yu9@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIG5ldC1uZXh0XSBpY21wOiBBZGQgaWNtcF90aW1lc3RhbXBfaWdub3JlX2FsbCB0byBjb250cm9sIElDTVBfVElNRVNUQU1Q?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 44H9Qa5F065180
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 664722D9.002/4VghRs6vrLz5R9kB
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D046UWB001.ant.amazon.com (10.13.139.187) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-From: YeXingchen <ye.xingchen@zte.com.cn>
+From: Sam Sun <samsun1006219@gmail.com>
+Date: Fri, 17 May 2024 13:03:18 +0800
+> Dear developers and maintainers,
+> 
+> We encountered a shift-out-of-bounds bug while using our modified
+> syzkaller. It was tested against the latest upstream kernel (6.9). The
+> kernel was compiled by clang 14.0.0, and kernel config and C repro are
+> attached to this email. Kernel crash log is listed below.
+> ------------[ cut here ]------------
+> UBSAN: shift-out-of-bounds in net/ipv4/tcp_dctcp.c:143:12
 
-The CVE-1999-0524 became a medium risk vulnerability in May of this year.
+Just for the record, I posted a patch:
 
-In some embedded systems, firewalls such as iptables maybe cannot to use.
-For embedded systems where firewalls can't be used and devices that don't
-require icmp timestamp, provide the icmp_timestamp_ignore_all interface,
-which ignores all icmp timestamp messages to circumvent the vulnerability.
-
-Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
----
- Documentation/networking/ip-sysctl.rst                   | 6 ++++++
- .../networking/net_cachelines/netns_ipv4_sysctl.rst      | 1 +
- include/net/netns/ipv4.h                                 | 1 +
- include/uapi/linux/sysctl.h                              | 1 +
- net/ipv4/icmp.c                                          | 8 ++++++++
- net/ipv4/sysctl_net_ipv4.c                               | 9 +++++++++
- 6 files changed, 26 insertions(+)
-
-diff --git a/Documentation/networking/ip-sysctl.rst b/Documentation/networking/ip-sysctl.rst
-index bd50df6a5a42..41eb3de61659 100644
---- a/Documentation/networking/ip-sysctl.rst
-+++ b/Documentation/networking/ip-sysctl.rst
-@@ -1441,6 +1441,12 @@ icmp_ratelimit - INTEGER
-
- 	Default: 1000
-
-+icmp_timestamp_ignore_all - BOOLEAN
-+	If set non-zero, then the kernel will ignore all ICMP TIMESTAMP
-+	requests sent to it.
-+
-+	Default: 0
-+
- icmp_msgs_per_sec - INTEGER
- 	Limit maximal number of ICMP packets sent per second from this host.
- 	Only messages whose type matches icmp_ratemask (see below) are
-diff --git a/Documentation/networking/net_cachelines/netns_ipv4_sysctl.rst b/Documentation/networking/net_cachelines/netns_ipv4_sysctl.rst
-index 9b87089a84c6..ed72f67c8f72 100644
---- a/Documentation/networking/net_cachelines/netns_ipv4_sysctl.rst
-+++ b/Documentation/networking/net_cachelines/netns_ipv4_sysctl.rst
-@@ -38,6 +38,7 @@ u8                              sysctl_icmp_ignore_bogus_error_responses
- u8                              sysctl_icmp_errors_use_inbound_ifaddr                                                
- int                             sysctl_icmp_ratelimit                                                                
- int                             sysctl_icmp_ratemask                                                                 
-+u8                              sysctl_icmp_timestamp_ignore_all
- u32                             ip_rt_min_pmtu                               -                   -                   
- int                             ip_rt_mtu_expires                            -                   -                   
- int                             ip_rt_min_advmss                             -                   -                   
-diff --git a/include/net/netns/ipv4.h b/include/net/netns/ipv4.h
-index c356c458b340..7364c469e7eb 100644
---- a/include/net/netns/ipv4.h
-+++ b/include/net/netns/ipv4.h
-@@ -113,6 +113,7 @@ struct netns_ipv4 {
- 	u8 sysctl_icmp_echo_ignore_broadcasts;
- 	u8 sysctl_icmp_ignore_bogus_error_responses;
- 	u8 sysctl_icmp_errors_use_inbound_ifaddr;
-+	u8 sysctl_icmp_timestamp_ignore_all;
- 	int sysctl_icmp_ratelimit;
- 	int sysctl_icmp_ratemask;
-
-diff --git a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
-index 8981f00204db..ef8640947f4e 100644
---- a/include/uapi/linux/sysctl.h
-+++ b/include/uapi/linux/sysctl.h
-@@ -426,6 +426,7 @@ enum
- 	NET_TCP_ALLOWED_CONG_CONTROL=123,
- 	NET_TCP_MAX_SSTHRESH=124,
- 	NET_TCP_FRTO_RESPONSE=125,
-+	NET_IPV4_ICMP_TIMESTAMP_IGNORE_ALL = 126,
- };
-
- enum {
-diff --git a/net/ipv4/icmp.c b/net/ipv4/icmp.c
-index ab6d0d98dbc3..6fa5c26cf402 100644
---- a/net/ipv4/icmp.c
-+++ b/net/ipv4/icmp.c
-@@ -1152,6 +1152,11 @@ EXPORT_SYMBOL_GPL(icmp_build_probe);
- static enum skb_drop_reason icmp_timestamp(struct sk_buff *skb)
- {
- 	struct icmp_bxm icmp_param;
-+	struct net *net;
-+
-+	if (READ_ONCE(net->ipv4.sysctl_icmp_timestamp_ignore_all))
-+		return SKB_NOT_DROPPED_YET;
-+
- 	/*
- 	 *	Too short.
- 	 */
-@@ -1469,6 +1474,9 @@ static int __net_init icmp_sk_init(struct net *net)
- 	net->ipv4.sysctl_icmp_echo_enable_probe = 0;
- 	net->ipv4.sysctl_icmp_echo_ignore_broadcasts = 1;
-
-+	/* Control parameters for TIMESTAMP replies. */
-+	net->ipv4.sysctl_icmp_timestamp_ignore_all = 0;
-+
- 	/* Control parameter - ignore bogus broadcast responses? */
- 	net->ipv4.sysctl_icmp_ignore_bogus_error_responses = 1;
-
-diff --git a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
-index 162a0a3b6ba5..b002426c3d9c 100644
---- a/net/ipv4/sysctl_net_ipv4.c
-+++ b/net/ipv4/sysctl_net_ipv4.c
-@@ -651,6 +651,15 @@ static struct ctl_table ipv4_net_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= ipv4_ping_group_range,
- 	},
-+	{
-+		.procname	= "icmp_timestamp_ignore_all",
-+		.data		= &init_net.ipv4.sysctl_icmp_timestamp_ignore_all,
-+		.maxlen		= sizeof(u8),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dou8vec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE
-+	},
- #ifdef CONFIG_NET_L3_MASTER_DEV
- 	{
- 		.procname	= "raw_l3mdev_accept",
--- 
-2.25.1
+https://lore.kernel.org/netdev/20240517091626.32772-1-kuniyu@amazon.com/
 
