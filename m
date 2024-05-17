@@ -1,172 +1,217 @@
-Return-Path: <linux-kernel+bounces-181764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3FD8C80F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:32:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E3EE8C80FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C641C20AB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 06:32:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9997A1F21911
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 06:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BEA14A99;
-	Fri, 17 May 2024 06:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E1A14AB0;
+	Fri, 17 May 2024 06:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="OcB2CdCM"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E988472;
-	Fri, 17 May 2024 06:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715927534; cv=none; b=BCXxgsquqE0g44NHfOw+MDAPhV27R2R6yx7jmRcmXkVUFMFF1/73i1BGD+2VEvKAOnnT8O7YawGKuBBQMOY17CGXxYhiKHElQu6UZnd5mvu/Je1ltTYiNl9rUrojZ0lPXcHH1GLPboVX3B8M0WiSPGiI/WfvmI3vSFmZGHuUuJg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715927534; c=relaxed/simple;
-	bh=SAb9BPrFdCY6bm78BVJ5rnJLzeV2qvsVCBYu6rx2eq4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WmWOC0x+c/ECEfEGKOBUqN/9wvR1hQo72wOupC70bNHiGnaFTNT0bCLoCNc6jKHSeZ72SIrNt0Ajxt+87O3QFCkKO5Angh9bTL3bW+dCq31xAOQO61894wPmO4pLG9xhjbq2+w+O1KYye/s0fOZOn5wXsxaO2Yybju6F6lSyWps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=OcB2CdCM; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1715927528;
-	bh=+tnHjAdOwn7MTvQ9Izy5ZraLSNprRXQmhSoT/2DAs2U=; l=3581;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=OcB2CdCM3Q2KLqdKTI/5YvcUYvx+1AmRoZ5uqDDtoYGMDU8KgxcUnO0USl90U22Eh
-	 v/bYFrW9wfaQFMgzOmR7CvgihC2U2s+6e96385J02T9fZCjvegWL3zZiXzR4aW0I9k
-	 wLdQR7apFBu33YENd6r6s2MOJlCwXzk8buPflw0PH7+eWZXiC79LpYGmddAerXDxRE
-	 20mXdZ+yyXbSIbpal4fHv+Ig870lSvzQDQn3umwhjzaU+uNiK1JDmB3zmHcVlTlIme
-	 x5rM6cXdrZLrbnHTu0GWQF5v8fQYpwIg6Mpno2DhCjHjxIcwymoqUtOn29uQF95EOB
-	 8Ab+bj/HG6b+A==
-Received: from 192.168.10.46
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(3213210:0:AUTH_RELAY)
-	(envelope-from <cy_huang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Fri, 17 May 2024 14:31:50 +0800 (CST)
-Received: from ex4.rt.l (192.168.10.47) by ex3.rt.l (192.168.10.46) with
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KwL5toIp"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2083.outbound.protection.outlook.com [40.107.92.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5C014A83
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 06:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715927717; cv=fail; b=FxF5aerNIquUJOkNCIjj1DorNP8k5G27vUdpX8wKXBiAjcCa10qNHv9KNVoMJW6taLDKJxGuIwT2aJBKJVmYyXgfeyiLdxwyBEhZG8g2IM5Y+1E+607ZvNSdIWycT07hMwD2hXaPRg2yskOO543pD7RK1bDS/pAfjaynZrDt1OI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715927717; c=relaxed/simple;
+	bh=IqwJvFXnO46u7tkXvX0NJ8zhJ2+cMNt6PYYWO4Oh/Yc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=CglDG8a6mjvyLO/TcpFZr7TL+x0n81ql4ScbLnf+HHUMZLurpokusnSEKm/5YT36U7mfhhspp1+79vTmrOEZKfAdJReGu3vTBn97N+lfAhuLorV0Rb6XUJS4CXXh6ycCjOeRq1dRbJv3s76hC4fMlp76ioI1mPceORXXaje00vI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KwL5toIp; arc=fail smtp.client-ip=40.107.92.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NnsTdCdIRLV/YFuc6Gs7YsCoKBEWS8M3j4KiwXYFXmmYNi9UaAod1pXnOi0CflWrIo82vYO6wwFProxiWZ4aDk88fPec10OJpmeYMyyXkz9Dw7bn/ZXlVps4BZQwH16W1Bm6j9Eyy4SaZnLPM0LGWIb085QrLbdQITd4hB2QQduA/h6z8Ms/YIAgJEJjKP3bzVm2wGY4sTPKjMJNTFidqpSRRKNEm26eIJsR2eiR1YBbdAaNxP6vxrH7ozkLJgV5kAU9dPd8q8QI66D4/+fe2WQLhmNM903f32QsuLOAzRz5ynLmdoF4fMXXwnZ/GodpNJCkkwNmvius4pjM+5fa7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wqtSXDp0qm38ybix+VyHTAb/GIKWPWONI3BPN+mcyGY=;
+ b=hqGP0BOIEA4v72UC+MrDC/8NSeURsOVR1Ui8pkNsNlSDMWWGNVoQWGLN6DNz9jWTWBi0b1BPxAWm837Y80CoMYVC0DoQCyRJyudBBc/6U++Sp8o7t+Ket6t7y08qrO9I95dEdh+dTisv5Hm4c70mPc6pZsFhRWOyEHTGh9kYIEt1yi/7WNB+1ZEveHk3h2gWe6zVjULa/K2yKmqBi1OlML4TM8JWvkMT1qiCqGRBALRUHSZe2XTUa5OjMGZBzH7KN2j+S6sr8TS1B9iuXgE33czmXTrsPTQ9BwexWrMhTwgRdyMIz+S4D9Fhnpi3bMYP84NDU+32RaZclNnb4FT6sw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wqtSXDp0qm38ybix+VyHTAb/GIKWPWONI3BPN+mcyGY=;
+ b=KwL5toIpK/zYNmRR7HFPk9oLntYVMQMinDlu8+jvsrB1iH2sz6JL6OxZ8l2GtmhXFTGcgPRiQoaD3oOV14OvX0SvPZQY/cjFq1PiUd6Diwu0fSNWiWuLZiwavsHoK4B5ntQfRGCaiIa2yPYjRmjIPLArzLcfJD6ObSpc6O8kOo0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by CH3PR12MB9170.namprd12.prod.outlook.com (2603:10b6:610:199::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 17 May
- 2024 14:31:50 +0800
-Received: from linuxcarl2.richtek.com (192.168.10.154) by ex4.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 17 May 2024 14:31:50 +0800
-Date: Fri, 17 May 2024 14:31:50 +0800
-From: ChiYuan Huang <cy_huang@richtek.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-CC: Mauro Carvalho Chehab <mchehab@kernel.org>, Daniel Scally
-	<djrscally@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
-	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: v4l: async: Fix NULL pointer when v4l2 flash
- subdev binding
-Message-ID: <20240517063150.GA12245@linuxcarl2.richtek.com>
-References: <e2f9f2b7b7de956d70b8567a2ab285409fff988b.1715136478.git.cy_huang@richtek.com>
- <ZkXi_U5Js34dUQsA@kekkonen.localdomain>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.28; Fri, 17 May
+ 2024 06:35:11 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.7587.025; Fri, 17 May 2024
+ 06:35:10 +0000
+Message-ID: <9dd1cfd1-fe13-4434-a7cc-e14113dcaf53@amd.com>
+Date: Fri, 17 May 2024 08:35:03 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amdgpu: Remove GC HW IP 9.3.0 from noretry=1
+To: Tim Van Patten <timvp@chromium.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: alexander.deucher@amd.com, prathyushi.nangia@amd.com,
+ Tim Van Patten <timvp@google.com>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>, Felix Kuehling <Felix.Kuehling@amd.com>,
+ Ikshwaku Chauhan <ikshwaku.chauhan@amd.com>, Le Ma <le.ma@amd.com>,
+ Lijo Lazar <lijo.lazar@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ "Pan, Xinhui" <Xinhui.Pan@amd.com>, "Shaoyun.liu" <Shaoyun.liu@amd.com>,
+ Shiwu Zhang <shiwu.zhang@amd.com>,
+ Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20240516115721.1.I8d413e641239c059d018d46cc569048b813a5d9b@changeid>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20240516115721.1.I8d413e641239c059d018d46cc569048b813a5d9b@changeid>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0081.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1e::7) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZkXi_U5Js34dUQsA@kekkonen.localdomain>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CH3PR12MB9170:EE_
+X-MS-Office365-Filtering-Correlation-Id: 29c17430-480e-46a2-3e2d-08dc763b8039
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TkVhSi9wRjNndkc2dWgvQXkxVWNub3pFcmpEYVB1elhxZGJlQ1MveEdtSndW?=
+ =?utf-8?B?alJZRk5MZE9WaGFZd05XSG5nRU1zTy9wN1ZNYzFVNWpUTTgrTU40NGpKRUpu?=
+ =?utf-8?B?Q1RtMXJpSGtYb2dxdkQvSFJqMmNtVXFkUnBKRWZIQ3JlclhRaXgrN3h4RlMr?=
+ =?utf-8?B?VXhLVDQ3YXNwV3ZweEo2QnVOT3F4MDMxOEtISGloZy9NaUVtUkp6NmMyMFFE?=
+ =?utf-8?B?MkZhTUFuWVBpLzA2eEZXTjlMK2dML00zalA3YTlKVUVLUmx6VWxGQWp6VUxr?=
+ =?utf-8?B?eCt4Zlc3eC9HVnQzUjFwakNyR3pBZ09yczBYNW9ocnRLdEo1aWdnaG40dzhC?=
+ =?utf-8?B?OWtzQUIvMUU0VGxndGxoWHZvdlFaUGZBMmZ4M05SVUJQaXZVUXQ1TkM0RE9B?=
+ =?utf-8?B?V0NHenJiQkJlWU53cmZuelU2ZzdyVTFyelp5OStoL0ZZR3g4d29rZXRENVF3?=
+ =?utf-8?B?R3c1cXZ3Z3Uvdy83WnhQRzN2NXExaGFoQUFlVHJ6WmNJTG00M0dQaXhDVWdF?=
+ =?utf-8?B?bTNyd0dpS3I3K2tnZDIwMjFWQXFXV3NtK28zSFVsVEt6Q1EvWDRJODNHT3p5?=
+ =?utf-8?B?ZDU3K3pqYVdTeGVmaGZiSTJzdGpRblNiRmViZ3ZsckxqQTdqMGpoNG9uWVE0?=
+ =?utf-8?B?OUF3Rk9qUXlVRjBucU1rUWFUL1NwRnZOMjNTMmZJaWxkbFNsQjdhbVlrcEpM?=
+ =?utf-8?B?eHZDTlVqbFg2Mndzc1NrTzNmL0hTM3Yzdm5OblpRblNYTzNSQTZpSnFPL2JO?=
+ =?utf-8?B?T3Y3YUg5Z29BVU5wbGtISXhGeGhITGE2SmppWXcveVQzM3RXVnJpeXBPT2tN?=
+ =?utf-8?B?aVpaZEJHbzIxVmMvNUdIYk1XSDVmeUk0aWhVcDlmMmhTVUxWZXFsb2pWQWd1?=
+ =?utf-8?B?NFJWU0g3c2dHM0hxcDJ4MmNpZjRuTnZGZ2RibmFCaHVyUFJJLzNEUWdId3Y3?=
+ =?utf-8?B?WSt1ZUxmbEdaSzJrRVdvb3NoQTZTTS9ZQWUveUVTaUtxM0FMRDU0NW4zMUVS?=
+ =?utf-8?B?R01ZSkVjZG9FdjBCZkY2eDM1TzZCRHk2aEdtQ3haQlZURzhoNEQxQUdQamw2?=
+ =?utf-8?B?a0ZDWnQxREFTM1VTWjhrYTVUbUlMQ2JRQlc4WndscCswK3FKTXEzWnpZVVI0?=
+ =?utf-8?B?aXkrYVp0SFA2UDROempIQ0Z0Zm1nb25NVkVSejRJQmJSUHZIaVpFd2pWNjVE?=
+ =?utf-8?B?dHkxMHkrN0Z0bmc3ODJKMm50Tm1haG1jbzdiT29YMFdEVVFJT1BicktNb1hQ?=
+ =?utf-8?B?NkhSdDhzVmRUZE43a0VZRmlQZk1zR2lTR0hVTGNqYytxN3dvOWgvaUR3OVRG?=
+ =?utf-8?B?V1NQVHlXWWlLN0JqMWlpc3FBWlhNYmEvMHBoSGpjTmdJaFlVMHVBVzA5aXk1?=
+ =?utf-8?B?RVlMWHIxMm13a3kzQStIMXU2U3RudmdsY1Q3MG5HSDY2TEFhOGhqT0toNld1?=
+ =?utf-8?B?R0RQVU1hNzhhSEcvcjVYaG5YeXpoc2ZJRXdNTHhzb3RIRXRVZEhXZGlHQTkv?=
+ =?utf-8?B?akNuN3o3WkxHWEVESnEzYlJKVVByNmR0K2xzVER2WUdFcTNwM0VoOEpkemtC?=
+ =?utf-8?B?dlJ2OTlaRnNsV0NVQ0tYQ1pZRkFXRXhKeHNENWptcUZtTzV2VXVLWGJYTG5Q?=
+ =?utf-8?B?eVdtZ0NhUEh4OTN3OG45NlNZamhMSksxQlRKK1A3WWxIMzVqbDBUanpOTE9v?=
+ =?utf-8?B?eDBaYUFIZkNEUUp2KzNCRWlPUE1iTlVwNmx6aUN2YllXZ1A3MExUd0hBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eTIxWXROTzFnbDhFL1VEOXJEUlRWaWp3OEJMNWJReXNZbmlGWC9qcVFIZFpl?=
+ =?utf-8?B?Vmt2aGlkVlNWQzFyTUVCeDRnZFdjS1BpVVg4Zi9mcU5FMGY3dEc4a2tJV3o4?=
+ =?utf-8?B?WGxiYnMwcGVYaWZ1S1ZDOXpPa3RlTm1HZkl6bFlEeTdhM09hbzZtNHh0S1g3?=
+ =?utf-8?B?VVhOY0NvYTRVZWx4ZjhyOTU1aU5YZXRxVk8ybGlIWmVRS2Nlajd2SG40RUM4?=
+ =?utf-8?B?WGkvc093R3RzSHU0ekVhMmhqWEpYZFRhMC8zcjNnZnNyVnZmMmg4Z0YvSUMv?=
+ =?utf-8?B?d2RWVy8xdUJMbEVlYUtnem9CRnV0ZW9VaFJTS053Zy82UmVoODQyRGZ6T2ti?=
+ =?utf-8?B?RnBrY0lCT29JNDVBbW1hWVlHVzg4eE5NbUlXWC80WDdlelNtNkQ2ZEFrZXNS?=
+ =?utf-8?B?NEg1NGZPRVg0NFc2YkQ2bTBsWk8rNUVsOUZSREZIMGc5elFqWmpOV001eUh4?=
+ =?utf-8?B?Qkc0bS9CaytHNjVPVER1eG9QZVNES2tpbk9qcVZXYXVGSW96bXZHRlF6NExM?=
+ =?utf-8?B?N1k0TWhvQ21WU0JIU3FiMFdNcXpDY1kvcGlPZ01kaW1sUGUvdFFIUDlFTWJH?=
+ =?utf-8?B?THkxTCtTcWpycHN5K25vdFduL0NYUWpzMUtlZm15TUJ5K3Y2SGNXUDRxVVd3?=
+ =?utf-8?B?OGdCLzBsaklFVTJFZDh5UkpKM0RmVlNEaTV2S2ljakR5YThkbk5mR2JjUHl3?=
+ =?utf-8?B?anlYRXJTQUVUWDNETi9LYWszVUhQSFJOOGRLKzNJbWRYbS96cldsa1BlZERn?=
+ =?utf-8?B?N2tmMWtjTE9PUkt4aDhrY0ZtQTFTTFVIQ29qUUR3VEZyMVpXbnNuU1pnL1M2?=
+ =?utf-8?B?OUZTRnh3UDltOWg0QTdtR2NXcFZWQ0FUMmdrQ3JCcFp3bXhpZW11SkFITTIr?=
+ =?utf-8?B?a0xzbVZqK3NTVm5mZmVoTWQvZ29iaTlFY0pzcXF0bHhwTVYzd0VzRG1abG1G?=
+ =?utf-8?B?SHBXa0hRQzdGbkp0VW5jcmdMSjRUWXQyTVBLUHZsUGJNQWE5SElvWHRLdFRN?=
+ =?utf-8?B?a0ttWFlsQVo1eTNkbWpPdkV4MXI2bGhMeHR3cjRzb2tyRzN6b2VleDNxa3dS?=
+ =?utf-8?B?RkNMOW1mSWF0U0xQd2hLcFVtc0NCZzNiK0dZVEtaanE5WlVsaGZsVTJLK3Rh?=
+ =?utf-8?B?Y3N6dTgrSFo4bE9Md3dPSWJNUllIYlUwMTRCcXh5dzNzVklRZFZPSlZRMlV5?=
+ =?utf-8?B?OVdlS2ZMWSsvbGlGTC9sdGlyeDZiUUxtR0lXTDV4NHFPK284ZEp2WUZkbDA4?=
+ =?utf-8?B?eWVsSkIxekJNejlXcEduQ1UwdUFpQ0wxdHJSdGRQSFRjQko4TVhKeDZScU1O?=
+ =?utf-8?B?YVlUdlpsbmhzekl1RUdScmRkTmlubGFzcHo5ZWp5SVhENG16SzAza1daQ0FG?=
+ =?utf-8?B?MWJUc1ovZzZ3N2twWE5lQVBJeEVEWHdGU0QxNWpjY2xyZEs4L0xvcXFxdkpq?=
+ =?utf-8?B?SU1zN2xKYTZEbzBYU2RXVk9uRjlJeXZTZVZHV1J4OHRpVndZbFlPM3dLaTkr?=
+ =?utf-8?B?RVl6R05MVUpDWmhWYVdFa3phZUxCWkJoQnk3QWFwRk5hd3BYOEQrNWVoZ3NL?=
+ =?utf-8?B?V3NPTUxGb0w3YnBLM25pTXBCTjV2bVpHTG1UM2Y3di92aWRHaGllcFV1WlVS?=
+ =?utf-8?B?Kzd6cDNYMXB4M2Y0b2RweHhlRllZRzFVanhFdzhUL0d0SC8wZ0paZDllcC9R?=
+ =?utf-8?B?RjdvNVowUnAyOWN6VlpWWStIQ2pLcEdCN1FZdjkyeFJvdzY1bHBJdnZ1NEp6?=
+ =?utf-8?B?Ujc3YVZiSWdQaStNSTJsdENkYUV6SFFJbG4rdTVwM0YwMndmcHljemw5T0sr?=
+ =?utf-8?B?eXdvNy93MDJiaVprbUs0blZmaVNwd3FTdUdrQVFTdXB3YnZaSkdmR0o0dG93?=
+ =?utf-8?B?TXdGWVBUK2ZaczdKZ1RoWmQ4V01GMnloTld5RERBK3paNEcrN1B5YzcrZ0Vx?=
+ =?utf-8?B?NVBrcGR2Rm9zaDJqOVd4M3FHTnIwUHJFTXY4WXRRUlpmR2RFelQ4eEM0dmNN?=
+ =?utf-8?B?RXcxRnBObFlyRXJ3QnNoTTdRQU9wUU5INDVPc3N0V25FQVg2dXFKam5IMFZx?=
+ =?utf-8?B?cDNRbkxWa2VuR0Uyd1luakpkM2wreDVpcHFjbFFiYldUMVJSOVFCYXAvUDBq?=
+ =?utf-8?Q?gosPNbimI6/ZRzQwHfq5e05vV?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 29c17430-480e-46a2-3e2d-08dc763b8039
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2024 06:35:10.8685
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HyseEo47LzA/fBzzKU3nsAvPOpIR2aJfijS5hCSauYE1VS0uqAlIes056ilv/0pB
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9170
 
-Hi, Sakari:
+Am 16.05.24 um 19:57 schrieb Tim Van Patten:
+> From: Tim Van Patten <timvp@google.com>
+>
+> The following commit updated gmc->noretry from 0 to 1 for GC HW IP
+> 9.3.0:
+>
+>      commit 5f3854f1f4e2 ("drm/amdgpu: add more cases to noretry=1")
+>
+> This causes the device to hang when a page fault occurs, until the
+> device is rebooted. Instead, revert back to gmc->noretry=0 so the device
+> is still responsive.
 
-	Thanks for your reply.
-If any misunderstanding, please correct me.
+Wait a second. Why does the device hang on a page fault? That shouldn't 
+happen independent of noretry.
 
-On Thu, May 16, 2024 at 10:42:05AM +0000, Sakari Ailus wrote:
-> Hi Chi Yuan,
-> 
-> On Wed, May 08, 2024 at 10:51:49AM +0800, cy_huang@richtek.com wrote:
-> > From: ChiYuan Huang <cy_huang@richtek.com>
-> > 
-> > In v4l2_async_create_ancillary_links(), if v4l2 async notifier is
-> > created from v4l2 device, the v4l2 flash subdev async binding will enter
-> > the logic to create media link. Due to the subdev of notifier is NULL,
-> > this will cause NULL pointer to access the subdev entity. Therefore, add
-> > the check to bypass it.
-> > 
-> > Fixes: aa4faf6eb271 ("media: v4l2-async: Create links during v4l2_async_match_notify()")
-> > Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
-> > ---
-> > Hi,
-> > 
-> >   I'm trying to bind the v4l2 subdev for flashlight testing. It seems
-> > some logic in v4l2 asynd binding is incorrect.
-> > 
-> > From the change, I modified vim2m as the test driver to bind mt6370 flashlight.
-> > 
-> > Here's the backtrace log.
-> > 
-> >  vim2m soc:vim2m: bound [white:flash-2]
-> >  Unable to handle kernel NULL pointer dereference at virtual address 0000000000000058
-> >  ......skipping
-> >  Call trace:
-> >   media_create_ancillary_link+0x48/0xd8 [mc]
-> >   v4l2_async_match_notify+0x17c/0x208 [v4l2_async]
-> >   v4l2_async_register_subdev+0xb8/0x1d0 [v4l2_async]
-> 
-> There's something wrong obviously somewhere but wherea?
-> 
-In vim2m driver, I added v4l2_async_nf_init -> v4l2_async_nf_add_fwnode_remote ->
-v4l2_async_nf_register.
+So that strongly sounds like this is just hiding a bug elsewhere.
 
-From the async flow, in notifier complete ops to create v4l-subdevX node for the 
-specified subdev.
-> A sub-notifier does have a sub-device after the notifier initialisation.
+Regards,
+Christian.
 
-Why? Are you saying to the notifier can only be used for subdev and subdev binding, 
-not v4l2 and subdev binding?
+>
+> Fixes: 5f3854f1f4e2 ("drm/amdgpu: add more cases to noretry=1")
+> Signed-off-by: Tim Van Patten <timvp@google.com>
+> ---
+>
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c | 1 -
+>   1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
+> index be4629cdac049..bff54a20835f1 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
+> @@ -876,7 +876,6 @@ void amdgpu_gmc_noretry_set(struct amdgpu_device *adev)
+>   	struct amdgpu_gmc *gmc = &adev->gmc;
+>   	uint32_t gc_ver = amdgpu_ip_version(adev, GC_HWIP, 0);
+>   	bool noretry_default = (gc_ver == IP_VERSION(9, 0, 1) ||
+> -				gc_ver == IP_VERSION(9, 3, 0) ||
+>   				gc_ver == IP_VERSION(9, 4, 0) ||
+>   				gc_ver == IP_VERSION(9, 4, 1) ||
+>   				gc_ver == IP_VERSION(9, 4, 2) ||
 
-But to create v4l-subdevX, the key is only v4l2 device and its needed subdev.
-
-> Maybe the initialisation does not happen in the right order?
-AFAIK, Async flow can solve the probe order and makes the user no need to care
-the probe order.
-
-From the stacktrace, I'm pretty sure it's not the probe order issue.
-> 
-> >   __v4l2_flash_init.part.0+0x3b4/0x4b0 [v4l2_flash_led_class]
-> >   v4l2_flash_init+0x28/0x48 [v4l2_flash_led_class]
-> >   mt6370_led_probe+0x348/0x690 [leds_mt6370_flash]
-> > 
-> > After tracing the code, it will let the subdev labeled as F_LENS or
-> > F_FLASH function to create media link. To prevent the NULL pointer
-> > issue, the simplest way is add a check when 'n->sd' is NULL and bypass
-> > the later media link creataion.
-> > ---
-> >  drivers/media/v4l2-core/v4l2-async.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-> > index 3ec323bd528b..9d3161c51954 100644
-> > --- a/drivers/media/v4l2-core/v4l2-async.c
-> > +++ b/drivers/media/v4l2-core/v4l2-async.c
-> > @@ -324,6 +324,9 @@ static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
-> >  	    sd->entity.function != MEDIA_ENT_F_FLASH)
-> >  		return 0;
-> >  
-> > +	if (!n->sd)
-> > +		return 0;
-> 
-> This isn't the right fix: the ancillary link won't be created as a result.
-> 
-Due to the notifier is created by v4l2 device not subdev, this 'n->sd' is NULL.
-The NULL 'n->sd' will be referenced by the next flow 'media_create_ancillary_link'.
-
-Or is it caused by the wrong usage? 
-
-> > +
-> >  	link = media_create_ancillary_link(&n->sd->entity, &sd->entity);
-> >  
-> >  #endif
-> 
-> -- 
-> Regards,
-> 
-> Sakari Ailus
 
