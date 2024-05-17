@@ -1,118 +1,131 @@
-Return-Path: <linux-kernel+bounces-181962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2175E8C8455
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:57:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4AD8C8458
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0F85B226D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:57:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37CD2284F0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01832C68F;
-	Fri, 17 May 2024 09:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1512E36137;
+	Fri, 17 May 2024 09:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nbBbDwom"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FgjE81uD"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A072561F;
-	Fri, 17 May 2024 09:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9079C2E852
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715939813; cv=none; b=HUuC9hW6hM80EhKu1QbxZgalt4QSYd0ueyMvDD5GvdeKnEwrjTh2era1I2LTxYIT6FmrK9JM+231n6uLh0vT6WcJVOk/0I8oI1N9Q62OTPcKH7AQ/FrRe4JzPayoM2ZLQjwhAgK4IbQ/6h7+voghHlWs08kaAf5KwZxFSgXWavE=
+	t=1715939820; cv=none; b=TyGMWYk1aBjRITrkSTYiin929pEqOBvB+0JxzVXLCog4FKuBzDKyOaFHKjuXpkRUVeYTBedgMmy+NDqhO/KxRRf9mxYLe/BW1ZU3wZA21m2wIRjU2NoPwxbGnMTx1zwxvEGF4npeBzCduT3HhJLDJWqD00KlSO1IB87AGYny5Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715939813; c=relaxed/simple;
-	bh=KUl64RGT5p1k4DfrRgABpkdROBGYZ7VEd5IkWTHMINw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ssA6V2XMrAQ6BH9mIFfPfHIdHMw7U4RZfI6O4t5pOmdP/0r1xdA/duUGs87gWiIEoPXMP/i1V88Vat7JJyqPBQSnGVw0lVfXYBoBGbCxfXYYVYI1vJ+zhor1A8d/yH07TT51AFXB0uq+k8svXN3LmgjBufv0Xq0lqbKYzusWzYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nbBbDwom; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715939812; x=1747475812;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KUl64RGT5p1k4DfrRgABpkdROBGYZ7VEd5IkWTHMINw=;
-  b=nbBbDwomt3PT8FDUdfTH/kNtUQrMw6domVJhkoakKkc00L/SOQYOMRk/
-   WFcOmpvRgP3UjDvWc7rG3akU6tyK6ufawTiWUkOBRKlMQOG+c03YvHZXh
-   V0CeZVoReNg1NFYpYJOb+UL19P19Fe3cKjjMcuwMkDNzpcVuQ+NZ3B+zW
-   IMY5XYbN5kPbAvB8aY7ZR313abaoqk+WgrMcR8Y4NiVVWjjiKyxKAzIJE
-   Xos0LYLBNqIKwo5lJy51GCDmA3j+gqCZJCDM7aO+xTyalOmiWqjyXQ9NK
-   oWYr4zZ+Maln47ZOe1u87HPV8QMOtumo0CjUdDGLZwudPUt+2z9rGHIh+
-   A==;
-X-CSE-ConnectionGUID: EI9PrTJwSHSy09c0zpM2Ew==
-X-CSE-MsgGUID: lvS1hlnYRkmOyOaWeUCd8g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12218195"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="12218195"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 02:56:51 -0700
-X-CSE-ConnectionGUID: yTxcteB6QFaIFYfsYrnX0Q==
-X-CSE-MsgGUID: PRUoyf06SmaUfh/6w6JRSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="32163178"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 02:56:50 -0700
-Date: Fri, 17 May 2024 02:56:49 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, Isaku Yamahata <isaku.yamahata@intel.com>,
-	rick.p.edgecombe@intel.com
-Subject: Re: [PATCH 7/7] KVM: VMX: Introduce test mode related to EPT
- violation VE
-Message-ID: <20240517095649.GB412700@ls.amr.corp.intel.com>
-References: <20240507154459.3950778-1-pbonzini@redhat.com>
- <20240507154459.3950778-8-pbonzini@redhat.com>
- <ZkVHh49Hn8gB3_9o@google.com>
- <Zka1cub00xu37mHP@google.com>
+	s=arc-20240116; t=1715939820; c=relaxed/simple;
+	bh=6dv1ARr8AfSeat6L7IDqLiV12HzGwVJ0hWWWehC6BRs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PaMsVMJWqm79tfvrcZRvAUBPxBwoSfnR9B74k3vEMgqJpDWPCpWwcarnFiFn6Zv4vE0ab7+tbfwMg7GWp0gEYhnLdw2mk+2830WMN0rSPc/WLYojmpUuMqPTpU/hDXIZCqU3KdGCvf+GTC8ylqBZr9BgxhsEdvuqL5BD2UWq2fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FgjE81uD; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715939815; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=hdb/3TvARJVZ7RhOX63ITgXZ/E5Lk4N24+C/9grOEmc=;
+	b=FgjE81uDttziQ+J8maIJEwy1a+FLXj+8UVYShcOWqcIhNSAoQWKD8ELDGocbVH8DuFQKx1HlKbXtV4cyyYyPiHTwvjFoaSFzqoY0hxm7GYYCiCrRoslPjUDg7TySttS4ByOglcTyGfq/DpHScI+EU/RbzhQTtxasWJdQaOsKw64=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R821e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=hongzhen@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W6eF9U7_1715939813;
+Received: from localhost(mailfrom:hongzhen@linux.alibaba.com fp:SMTPD_---0W6eF9U7_1715939813)
+          by smtp.aliyun-inc.com;
+          Fri, 17 May 2024 17:56:55 +0800
+From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+To: xiang@kernel.org,
+	chao@kernel.org,
+	linux-erofs@lists.ozlabs.org
+Cc: huyue2@coolpad.com,
+	jefflexu@linux.alibaba.com,
+	linux-kernel@vger.kernel.org,
+	Hongzhen Luo <hongzhen@linux.alibaba.com>
+Subject: [PATCH] erofs: clean up erofs_show_options()
+Date: Fri, 17 May 2024 17:56:52 +0800
+Message-Id: <20240517095652.2282972-1-hongzhen@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zka1cub00xu37mHP@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 16, 2024 at 06:40:02PM -0700,
-Sean Christopherson <seanjc@google.com> wrote:
+Avoid unnecessary #ifdefs and simplify the code a bit.
 
-> On Wed, May 15, 2024, Sean Christopherson wrote:
-> > On Tue, May 07, 2024, Paolo Bonzini wrote:
-> > > @@ -5200,6 +5215,9 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
-> > >  	if (is_invalid_opcode(intr_info))
-> > >  		return handle_ud(vcpu);
-> > >  
-> > > +	if (KVM_BUG_ON(is_ve_fault(intr_info), vcpu->kvm))
-> > > +		return -EIO;
-> > 
-> > I've hit this three times now when running KVM-Unit-Tests (I'm pretty sure it's
-> > the EPT test, unsurprisingly).  And unless I screwed up my testing, I verified it
-> > still fires with Isaku's fix[*], though I'm suddenly having problems repro'ing.
-> > 
-> > I'll update tomorrow as to whether I botched my testing of Isaku's fix, or if
-> > there's another bug lurking.
-> 
-> *sigh*
-> 
-> AFAICT, I'm hitting a hardware issue.  The #VE occurs when the CPU does an A/D
-> assist on an entry in the L2's PML4 (L2 GPA 0x109fff8).  EPT A/D bits are disabled,
-> and KVM has write-protected the GPA (hooray for shadowing EPT entries).  The CPU
-> tries to write the PML4 entry to do the A/D assist and generates what appears to
-> be a spurious #VE.
-> 
-> Isaku, please forward this to the necessary folks at Intel.  I doubt whatever
-> is broken will block TDX, but it would be nice to get a root cause so we at least
-> know whether or not TDX is a ticking time bomb.
+Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+---
+ fs/erofs/internal.h |  3 ---
+ fs/erofs/super.c    | 28 ++++++++--------------------
+ 2 files changed, 8 insertions(+), 23 deletions(-)
 
-Sure, let me forward it.
-I tested it lightly myself.  but I couldn't reproduce it.
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 39c67119f43b..16097d95501a 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -64,15 +64,12 @@ enum {
+ };
+ 
+ struct erofs_mount_opts {
+-#ifdef CONFIG_EROFS_FS_ZIP
+ 	/* current strategy of how to use managed cache */
+ 	unsigned char cache_strategy;
+ 	/* strategy of sync decompression (0 - auto, 1 - force on, 2 - force off) */
+ 	unsigned int sync_decompress;
+-
+ 	/* threshold for decompression synchronously */
+ 	unsigned int max_sync_decompress_pages;
+-#endif
+ 	unsigned int mount_opt;
+ };
+ 
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 69308fd73e4a..14822642e2f6 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -948,26 +948,14 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
+ 	struct erofs_sb_info *sbi = EROFS_SB(root->d_sb);
+ 	struct erofs_mount_opts *opt = &sbi->opt;
+ 
+-#ifdef CONFIG_EROFS_FS_XATTR
+-	if (test_opt(opt, XATTR_USER))
+-		seq_puts(seq, ",user_xattr");
+-	else
+-		seq_puts(seq, ",nouser_xattr");
+-#endif
+-#ifdef CONFIG_EROFS_FS_POSIX_ACL
+-	if (test_opt(opt, POSIX_ACL))
+-		seq_puts(seq, ",acl");
+-	else
+-		seq_puts(seq, ",noacl");
+-#endif
+-#ifdef CONFIG_EROFS_FS_ZIP
+-	if (opt->cache_strategy == EROFS_ZIP_CACHE_DISABLED)
+-		seq_puts(seq, ",cache_strategy=disabled");
+-	else if (opt->cache_strategy == EROFS_ZIP_CACHE_READAHEAD)
+-		seq_puts(seq, ",cache_strategy=readahead");
+-	else if (opt->cache_strategy == EROFS_ZIP_CACHE_READAROUND)
+-		seq_puts(seq, ",cache_strategy=readaround");
+-#endif
++	if (IS_ENABLED(CONFIG_EROFS_FS_XATTR))
++		seq_puts(seq, test_opt(opt, XATTR_USER) ?
++				",user_xattr" : ",nouser_xattr");
++	if (IS_ENABLED(CONFIG_EROFS_FS_POSIX_ACL))
++		seq_puts(seq, test_opt(opt, POSIX_ACL) ? ",acl" : ",noacl");
++	if (IS_ENABLED(CONFIG_EROFS_FS_ZIP))
++		seq_printf(seq, ",cache_strategy=%s",
++			  erofs_param_cache_strategy[opt->cache_strategy].name);
+ 	if (test_opt(opt, DAX_ALWAYS))
+ 		seq_puts(seq, ",dax=always");
+ 	if (test_opt(opt, DAX_NEVER))
 -- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+2.39.3
+
 
