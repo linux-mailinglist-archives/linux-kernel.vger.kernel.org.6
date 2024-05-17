@@ -1,155 +1,164 @@
-Return-Path: <linux-kernel+bounces-182485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0795E8C8BB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:55:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FEB38C8BBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D3B81C20401
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:55:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 434C51C20B09
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FEB1411D1;
-	Fri, 17 May 2024 17:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC161411EA;
+	Fri, 17 May 2024 17:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="QrW8C06o";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="gjRCT2/7"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+gXZ9eq"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8679F13FD87;
-	Fri, 17 May 2024 17:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E47913E02F;
+	Fri, 17 May 2024 17:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715967740; cv=none; b=aqH7fu4pUeeeoibLfqzX+iZXt4Gdtj3A9afliPUg8U/qy4lWi4hW0BndxxhHz41M2Kv0gYnm2XAHqlawzcSPlJG9k5V8Cvs3SQp3xWwD37n+AEG+yA26oODs/OZX7oMwm+9hbh0RN1lkw7zf9d5G3QLXA+q5C2AVkKrvanL0Fec=
+	t=1715967793; cv=none; b=CDfM9c95J2babnYf17zN4E4KURJUDTLBGoWqhvErHo/7JzvAmhGr1bCZe7mxjDMDO49ZQznjs6aHxfZV4S7/M9ozCH2g3uENFu2U1zM7TLCCD7AXYHIIXos8Kw7kpImvsKZ1al46N+SIlaBkYTVKdcVhIx9SnCRi3EnM32ZUw0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715967740; c=relaxed/simple;
-	bh=LdlqTwe/mO4GC3DW1gY14MWjg0vJJEYkMXUv2/W5k30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZMaFyLRn5n+H2gODAeNQU+yIZtn9sO0dXxSnpmjgPuobqjhbo6Z8EkByvRvUOGKW05L7hKbDp8X/XrLlE6ZXp9++bcsrWmAaQTz3fsLUNVx7GMraPi9R2+4vmVQOfHjD9DZfKO+WOKYNamJoqee/ttSiUPhi8jGhDGC/QEnmlkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=QrW8C06o; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=gjRCT2/7; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 578135D64A;
-	Fri, 17 May 2024 17:42:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715967736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uI2N/LU7fmAr1C+mGRMoNgvCi87LviYVMcbAgfVaCtw=;
-	b=QrW8C06oht8OpaOw/EY/VRJ8pAz/OvSySyEaZY+WhP09eVF8A/4yFtZgXVFH1hyTW53HeX
-	O6C9/99mfhll/5qxtAEwAuDF69EXawXfX0a6qnyvzo1Sd0s8h/J+f1tPkmXQdJZ3bp54Vx
-	cJ1ciH1goigbQEOybPbmfeW+OrMMYzo=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b="gjRCT2/7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715967735; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uI2N/LU7fmAr1C+mGRMoNgvCi87LviYVMcbAgfVaCtw=;
-	b=gjRCT2/7GRS5jHmCniIfr3VsDyhJGuiT4bFGGOLkNmbiDXKTmQaGbqdDrMDILaCKVXqLkA
-	VjapRHSkWYI0M3onX3tTuyECTlrCFqJ5mBaGe3/nGSCjJdLLGOowxRKVbOZh+rfgmc//EL
-	Zru+zG7/bxoY4d4VqY0tLVet4wNwJ0Q=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D33013991;
-	Fri, 17 May 2024 17:42:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VtapEveWR2YqUQAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Fri, 17 May 2024 17:42:15 +0000
-Date: Fri, 17 May 2024 19:42:14 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-cve-announce@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: CVE-2024-27406: lib/Kconfig.debug: TEST_IOV_ITER depends on MMU
-Message-ID: <ot4g5zxesgwpzbgvb7yjazsgdxojktdph42qbw6pik3tvyswhj@kdo44nmnwwcq>
-References: <2024051739-CVE-2024-27406-cfc3@gregkh>
+	s=arc-20240116; t=1715967793; c=relaxed/simple;
+	bh=cKe09rwHn+hvO59C80d/OIasI62hIJZbA5Eb140c1Vc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MElrFt7i6Dl+2EcKXyRdvPhyU1xw4dE53wB72MZsxcu0dXKbV4aiheppwP14RPkuLYnzVG2UcB/sPQagmvxbP+8FzNvPuigqrcyl2p2unEXeq7LNrQi9ZvEdg9Bpl+ha+lWD4STV/DzUYczhSdEfVNKmDbubNMLAgh+Y+HKHoWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+gXZ9eq; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-43defa9d4f9so4032151cf.0;
+        Fri, 17 May 2024 10:43:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715967791; x=1716572591; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ryqqSgZ4nUH3oYGevXgTxRYsY6XPeTcaQtxxGQHDrRM=;
+        b=Q+gXZ9eqcO6qH6/vWW583ky6VGc1JtBoGrMiigAJdtlRGRNsYPHCMl4OZa9/xpdeXw
+         xGAoHG5GTTKTaj/dit/i5i4WofZFIm347xKwXXf7knKvXQHvWX/NbjwLFCxlnVibYTJx
+         ugcRB3EXs9u1gyBoHg3qW3WuEjG8JvcLk1kRHPz+wt5iD5eXdKHTHwufJh6tKf28RORx
+         GQ8ayoRXz8H4IOxOxWSIr/kDsyWt3gu7KzETgdSO+Kc97A0S0l/PqYvZ96/dtRAgjNBh
+         r7dSVqwxhi1lvkjh+tzC/SaERkbWRjROF9ypviWDlKVs3Cy/OpoeLzRF5skNg8ws7Cmc
+         IgUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715967791; x=1716572591;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ryqqSgZ4nUH3oYGevXgTxRYsY6XPeTcaQtxxGQHDrRM=;
+        b=KMsjruzbGSDV9eIxKwI6C2K3TZZb0qjLP0fXeBy6tn+W0uZwKj/F+jNxuPUdPNbUho
+         9wtd2OKkv79gmpAqLO6EgDOBx1KxV/PZLLz0TrILJIryYMCZ6HgRKUKnw3ZdbcjUx9De
+         UhXVy5XBLN+kQCzpFydxzOFQYtAChTW41nejzYldZm210CbBTdIDv2evlIWmKDyFnqWx
+         LjpHOZiHfX0FwMctGBr2ajNwEKQpsImXJPeyTWo2wiy+vhHNsrPv7DNSX4ipyNDHiyI2
+         XU3/0OBxmMWtimEKqERVnz93nAbxQ0RPzgSfZpsCi4IsSl+850/tIoBXDaHzaYT1IQgY
+         c2tw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIQrkPNd+7buFqrCDDz8g7K5qXNr179nEI83nrJAHMNFsMSYozPKwO2SO1HseVevXpW9WNSPSqNLganToW3ry5cw/Xt8RylYrI9v1DzCnvwEOlx1qSZx3lUObhMEZUIQr1gzZSf3yqyxzEeuk=
+X-Gm-Message-State: AOJu0YyErSdKYHn/BSFwfavPiHdTh1/+xcGNAbf5nx6u62r4cq9LUKMJ
+	4g/xdL4oA3Hgp/XSK5YPuCqZRXFa+04SsJQMobUuknsu2AHhf8g2
+X-Google-Smtp-Source: AGHT+IGgAE1IEXNbRI6p1LgGM0yXpCZR7R1i36UUUKT0OsOO1YDtfrzFBYamNQezxB3WHoNFZC/Hmg==
+X-Received: by 2002:a05:622a:6:b0:43d:f86a:4e3b with SMTP id d75a77b69052e-43dfdd0cc51mr241105931cf.58.1715967790831;
+        Fri, 17 May 2024 10:43:10 -0700 (PDT)
+Received: from [10.7.1.107] (static-74-103-39-5.bltmmd.fios.verizon.net. [74.103.39.5])
+        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-43dfd2dbd68sm102430101cf.12.2024.05.17.10.43.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 May 2024 10:43:10 -0700 (PDT)
+Message-ID: <aa9abbd9-32c7-1f4d-34e8-a07956e775a5@gmail.com>
+Date: Fri, 17 May 2024 13:43:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q2prxzht2io4igc6"
-Content-Disposition: inline
-In-Reply-To: <2024051739-CVE-2024-27406-cfc3@gregkh>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-8.08 / 50.00];
-	BAYES_HAM(-2.97)[99.85%];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	SIGNED_PGP(-2.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,linuxfoundation.org:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 578135D64A
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -8.08
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH] thermal: adding check if the thermal firmware is running
+Content-Language: en-US
+To: =?UTF-8?Q?Guilherme_Gi=c3=a1como_Sim=c3=b5es?= <trintaeoitogc@gmail.com>
+Cc: miriam.rachel.korenblit@intel.com, kvalo@kernel.org,
+ rafael.j.wysocki@intel.com, daniel.lezcano@linaro.org,
+ johannes.berg@intel.com, dmantipov@yandex.ru,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240517141655.2797-1-trintaeoitogc@gmail.com>
+ <a1cd16d2-1fbc-6543-c17c-a321ac72a2f3@gmail.com>
+ <CAM_Rzfb8f4ki4UB2+9EtnpJL8oMY6x0q=HmDm92mdbhLQafFOQ@mail.gmail.com>
+From: Jonathan Bither <jonbither@gmail.com>
+In-Reply-To: <CAM_Rzfb8f4ki4UB2+9EtnpJL8oMY6x0q=HmDm92mdbhLQafFOQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---q2prxzht2io4igc6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 17, 2024 at 01:40:41PM GMT, Greg Kroah-Hartman <gregkh@linuxfou=
-ndation.org> wrote:
-> BUG: failure at mm/nommu.c:318/vmap()!
-> Kernel panic - not syncing: BUG!
->=20
-> The test calls vmap() directly, but vmap() is not supported on nommu
-> systems, causing the crash.  TEST_IOV_ITER therefore needs to depend on
-> MMU.
-
-This is fixing mising assumption of a testing module.
-The BUG is deserved AFAIU. The CVE should be reverted IMO.
-
-
-Thanks,
-Michal
-
---q2prxzht2io4igc6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZkeW9AAKCRAGvrMr/1gc
-jiCgAPsE6bEHzqHkZz/5Qsi4IIuq1AGOE5pAFUGGsTjj5yH+UwEA53XWDAdBJnDM
-eyKSRH0pVQkqEUBSMz7vz3BWuoMRnQo=
-=6mTW
------END PGP SIGNATURE-----
-
---q2prxzht2io4igc6--
+On 5/17/24 13:25, Guilherme Giácomo Simões wrote:
+> Em sex., 17 de mai. de 2024 às 13:57, Jonathan Bither
+> <jonbither@gmail.com> escreveu:
+>>
+>> On 5/17/24 10:16, Guilherme Giacomo Simoes wrote:
+>>> In the dmesg is showing the message "failed to read out thermal zone"
+>>> as if the temperature read is failed by don't find the thermal zone.
+>>>
+>>> After researching and debugging, I see that this specific error is
+>>> occurrenced because the thermal try read the temperature when is started,
+>>> but the firmware is not running yet.
+>>>
+>>> For more legibiliti i change the tt.c for return EAGAIN when this was occurrence.
+>>> After this change, in my computer I compile and install kernel in /boot
+>>> and in my dmesg the message "failed to read out thermal zone" is not show
+>>> any more.
+>>>
+>>> I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> for
+>>> your suggestions in mu first patch that results in this another patch.
+>>> ---
+>>>    drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 10 ++++++++--
+>>>    1 file changed, 8 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+>>> index 8083c4b2ab6b..68ab9966330c 100644
+>>> --- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+>>> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+>>> @@ -620,8 +620,14 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
+>>>
+>>>        mutex_lock(&mvm->mutex);
+>>>
+>>> -     if (!iwl_mvm_firmware_running(mvm) ||
+>>> -         mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+>>> +     const int res = iwl_mvm_firmware_running(mvm);
+>>> +
+>>> +     if (!res) {
+>>> +             ret = -EAGAIN;
+>>> +             goto out;
+>>> +     }
+>>> +
+>> You could skip using the res variable and move the mutex lock here and
+>> simplify the above a bit. Ex:
+>>
+>>           int temp;
+>>
+>> -       mutex_lock(&mvm->mutex);
+>> +       if (!iwl_mvm_firmware_running(mvm))
+>> +               return -EAGAIN;
+>>
+>> -       if (!iwl_mvm_firmware_running(mvm) ||
+>> -           mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+>> +       mutex_lock(&mvm->mutex);
+>> +       if (mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+>>                   ret = -ENODATA;
+>>                   goto out;
+>>           }
+>>
+>>> +     if (mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+>>>                ret = -ENODATA;
+>>>                goto out;
+>>>        }
+> Hey Jonathan, Thank you for your suggestion.
+> I sended a v2 patch of this patch
+> https://patchwork.kernel.org/project/linux-wireless/patch/20240517171311.3705-1-trintaeoitogc@gmail.com/
+>
+> If you want, you can send this suggestion in this patch v2.
+Hey Guilherme, no worries.
+>
+> Thanks.
 
