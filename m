@@ -1,141 +1,189 @@
-Return-Path: <linux-kernel+bounces-182040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B59E8C8575
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:19:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A94548C8578
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0729B2815F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:19:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356D81F231DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D5F3D546;
-	Fri, 17 May 2024 11:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8FF3D961;
+	Fri, 17 May 2024 11:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="HGCg061F"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Corjv+R+"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052733B78B;
-	Fri, 17 May 2024 11:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C733F8D6;
+	Fri, 17 May 2024 11:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715944748; cv=none; b=RldVElgDMFhkilnLxr5nvR+4FFkUFTFyh9NoyYTHxSY1IMyXW2HdCPda7+CHC0GXgj5HVRUvKTIKZhYbbHmNpiPCrC1KLZefbHy7D2IrLTqj9jx8WLDG0hSTMRtnpmdkzQ93bu3ds3P7Oa4XfagEj4o6T0pcIsfS3Z+3dw0HoLg=
+	t=1715944798; cv=none; b=SW0s5k9pEs4SirUFbkCLbL9upqW9iVMs7khhoMLW8AI53ICGZOLnrX+ov3gRSx0WrgC4vjey5HwEktXrH5a5a2+dhz4uVcGjw3VC2h1YVQywQmikMrHDN9gCDtmKTr53JJ7K42V5dl2+2YzrxW8TJUR7lMliTCAjn4gbjB9FDHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715944748; c=relaxed/simple;
-	bh=cO2vSdqcGJpMPi+yEXm6Pdtgj69gONnYZVOEhF5dVBM=;
+	s=arc-20240116; t=1715944798; c=relaxed/simple;
+	bh=bVBSHHTwjk7r5Ay2aMI6ZrBecR5S06CsKavj2yj6LG0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GI9oN2ZLc41Pdgl44YSjLy+HATt6FdpwGLHB2hKt8au3QervD1GARige6zgMt8Flc77a9W+SrIt87ZKrDmOqA35VOWOTOQmnGwdPua5jOYdZWw7r9eOPOcbVOe7ylVbHBcgcxS1bQzlRQx3IbXLxP95Yps+YfwxBenmO34TNf3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=HGCg061F; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=8fWvTVdamGkUuRsdVgUf56VkvVX12PzmdijVreLfbOY=; b=HGCg061FjpQGYi68
-	ux0lHPT0iTNJWGYwicTiV0q6ItNJDnmGwkf62XqhoIJqCOClIHhnhulIFQF6oQz+Z6G3pMJnihR/N
-	BgTbwF2D1MWAxgv1XK1+u/wtiPpOp85cbrFbY9o8OU92rT8LdfjDO0ssXQE/frARhKUmfYtFw1jUj
-	H9tmkfhigG6TR/1nPuS0r7glwYJOFGB52PLkzzXMbKOMjbRdmjQcPGfPHk9ZcHWf9i1+tItq21F/H
-	WIzu1vbhtjIITEOJhaPd9wZDfDRQrMM3E7vQ9vOSqWk5q3SbVhYaCpbkmnSCR57Yczn+wuWtsSAZz
-	WL9vglftOgTaHO98KQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1s7vc7-001NSk-0s;
-	Fri, 17 May 2024 11:19:03 +0000
-Date: Fri, 17 May 2024 11:19:03 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Frank.li@nxp.com, vkoul@kernel.org, linux-arm-msm@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dmaengine: qcom: gpi: remove unused struct 'reg_info'
-Message-ID: <Zkc9J4vbQdeCmTpO@gallifrey>
-References: <20240516152537.262354-1-linux@treblig.org>
- <39b66355-f67e-49e9-a64b-fdd87340f787@linaro.org>
- <Zkc69sMlwawV8Z7l@gallifrey>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ghX75+kf1sCb9Qtm8jCY9IZx6gSWwZNHXbBaf+3pUDPccY1frV5g8GVW6yjNzBLvLc/nTtrju8su3aoWsIwgALkfkKq3Pd7xAdIE2lvmJzi/RYENTkxPqsxpJ/7EayCCoHYKX73RxBXXFXSdaxkzA3erB5b6avbwlIo416Lpxpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Corjv+R+; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0DA2DA9A;
+	Fri, 17 May 2024 13:19:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1715944785;
+	bh=bVBSHHTwjk7r5Ay2aMI6ZrBecR5S06CsKavj2yj6LG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Corjv+R+2zZ6IJvjwnyiMNKnavpJEKaA1rondWAfOpRYGBbOfJzI2jUG3W6q7SXjM
+	 6csSmc+yFGE6mEG7hDh2Td3j6tVLcbWB9i2DIzNqEBrArjwT0cdHAx0u1iLa4TBxz1
+	 xO9JRm/G7/8X0meZoODHd9csWHlMc8/PYpNkRzXA=
+Date: Fri, 17 May 2024 14:19:44 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: ChiYuan Huang <cy_huang@richtek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: v4l: async: Fix NULL pointer when v4l2 flash
+ subdev binding
+Message-ID: <20240517111944.GD19755@pendragon.ideasonboard.com>
+References: <e2f9f2b7b7de956d70b8567a2ab285409fff988b.1715136478.git.cy_huang@richtek.com>
+ <ZkXi_U5Js34dUQsA@kekkonen.localdomain>
+ <20240517063150.GA12245@linuxcarl2.richtek.com>
+ <ZkcOoLQQRdRYYacd@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zkc69sMlwawV8Z7l@gallifrey>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 11:18:40 up 8 days, 22:32,  1 user,  load average: 0.10, 0.05, 0.01
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <ZkcOoLQQRdRYYacd@kekkonen.localdomain>
 
-* Dr. David Alan Gilbert (linux@treblig.org) wrote:
-> * Bryan O'Donoghue (bryan.odonoghue@linaro.org) wrote:
-> > On 16/05/2024 17:25, linux@treblig.org wrote:
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > 
-> > > Remove unused struct 'reg_info'
-> > > 
-> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > > ---
-> > >   drivers/dma/qcom/gpi.c | 6 ------
-> > >   1 file changed, 6 deletions(-)
-> > > 
-> > > diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
-> > > index 1c93864e0e4d..639ab304db9b 100644
-> > > --- a/drivers/dma/qcom/gpi.c
-> > > +++ b/drivers/dma/qcom/gpi.c
-> > > @@ -476,12 +476,6 @@ struct gpi_dev {
-> > >   	struct gpii *gpiis;
-> > >   };
-> > > -struct reg_info {
-> > > -	char *name;
-> > > -	u32 offset;
-> > > -	u32 val;
-> > > -};
-> > > -
-> > >   struct gchan {
-> > >   	struct virt_dma_chan vc;
-> > >   	u32 chid;
+On Fri, May 17, 2024 at 08:00:32AM +0000, Sakari Ailus wrote:
+> Hi Chi Yuan,
 > 
-> Hi Bryan,
-> 
-> > More detail in the commit log please - is the structure unused ? What is the
-> > provenance of it being added and becoming dead code.
+> On Fri, May 17, 2024 at 02:31:50PM +0800, ChiYuan Huang wrote:
+> > Hi, Sakari:
 > > 
-> > More detail required here.
-> 
-> If you look at the V1 I had
-> ''gpi_desc' seems like it was never used.
-> Remove it.'
-> 
-> but Frank suggested copying the subject line; so I'm not sure
-> whether you want more or less!
-> 
-> I could change this to:
-> 
-> 'gpi_desc' was never used since it's initial
-> commit 5d0c3533a19f ("dmaengine: qcom: Add GPI dma driver")
-
-Oops, of course I mean 'reg_info' which is what I fixed in v2.
-
-> Would you be OK with that?
-
-Dave
-
-> Dave
-> 
-> 
+> > 	Thanks for your reply.
+> > If any misunderstanding, please correct me.
 > > 
-> > ---
-> > bod
+> > On Thu, May 16, 2024 at 10:42:05AM +0000, Sakari Ailus wrote:
+> > > Hi Chi Yuan,
+> > > 
+> > > On Wed, May 08, 2024 at 10:51:49AM +0800, cy_huang@richtek.com wrote:
+> > > > From: ChiYuan Huang <cy_huang@richtek.com>
+> > > > 
+> > > > In v4l2_async_create_ancillary_links(), if v4l2 async notifier is
+> > > > created from v4l2 device, the v4l2 flash subdev async binding will enter
+> > > > the logic to create media link. Due to the subdev of notifier is NULL,
+> > > > this will cause NULL pointer to access the subdev entity. Therefore, add
+> > > > the check to bypass it.
+> > > > 
+> > > > Fixes: aa4faf6eb271 ("media: v4l2-async: Create links during v4l2_async_match_notify()")
+> > > > Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+> > > > ---
+> > > > Hi,
+> > > > 
+> > > >   I'm trying to bind the v4l2 subdev for flashlight testing. It seems
+> > > > some logic in v4l2 asynd binding is incorrect.
+> > > > 
+> > > > From the change, I modified vim2m as the test driver to bind mt6370 flashlight.
+> > > > 
+> > > > Here's the backtrace log.
+> > > > 
+> > > >  vim2m soc:vim2m: bound [white:flash-2]
+> > > >  Unable to handle kernel NULL pointer dereference at virtual address 0000000000000058
+> > > >  ......skipping
+> > > >  Call trace:
+> > > >   media_create_ancillary_link+0x48/0xd8 [mc]
+> > > >   v4l2_async_match_notify+0x17c/0x208 [v4l2_async]
+> > > >   v4l2_async_register_subdev+0xb8/0x1d0 [v4l2_async]
+> > > 
+> > > There's something wrong obviously somewhere but wherea?
+> >
+> > In vim2m driver, I added v4l2_async_nf_init -> v4l2_async_nf_add_fwnode_remote ->
+> > v4l2_async_nf_register.
 > > 
-> -- 
->  -----Open up your eyes, open up your mind, open up your code -------   
-> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-> \        dave @ treblig.org |                               | In Hex /
->  \ _________________________|_____ http://www.treblig.org   |_______/
+> > From the async flow, in notifier complete ops to create v4l-subdevX node for the 
+> > specified subdev.
+> >
+> > > A sub-notifier does have a sub-device after the notifier initialisation.
+> > 
+> > Why? Are you saying to the notifier can only be used for subdev and subdev binding, 
+> > not v4l2 and subdev binding?
+> > 
+> > But to create v4l-subdevX, the key is only v4l2 device and its needed subdev.
+> > 
+> > > Maybe the initialisation does not happen in the right order?
+> >
+> > AFAIK, Async flow can solve the probe order and makes the user no need to care
+> > the probe order.
+> > 
+> > From the stacktrace, I'm pretty sure it's not the probe order issue.
+> >
+> > > >   __v4l2_flash_init.part.0+0x3b4/0x4b0 [v4l2_flash_led_class]
+> > > >   v4l2_flash_init+0x28/0x48 [v4l2_flash_led_class]
+> > > >   mt6370_led_probe+0x348/0x690 [leds_mt6370_flash]
+> > > > 
+> > > > After tracing the code, it will let the subdev labeled as F_LENS or
+> > > > F_FLASH function to create media link. To prevent the NULL pointer
+> > > > issue, the simplest way is add a check when 'n->sd' is NULL and bypass
+> > > > the later media link creataion.
+> > > > ---
+> > > >  drivers/media/v4l2-core/v4l2-async.c | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+> > > > index 3ec323bd528b..9d3161c51954 100644
+> > > > --- a/drivers/media/v4l2-core/v4l2-async.c
+> > > > +++ b/drivers/media/v4l2-core/v4l2-async.c
+> > > > @@ -324,6 +324,9 @@ static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
+> > > >  	    sd->entity.function != MEDIA_ENT_F_FLASH)
+> > > >  		return 0;
+> > > >  
+> > > > +	if (!n->sd)
+> > > > +		return 0;
+> > > 
+> > > This isn't the right fix: the ancillary link won't be created as a result.
+> >
+> > Due to the notifier is created by v4l2 device not subdev, this 'n->sd' is NULL.
+> > The NULL 'n->sd' will be referenced by the next flow 'media_create_ancillary_link'.
 > 
+> Ah, right. I took a new look into the code and agree this is a problem.
+> This probably hasn't been hit previously as the root notifier driver tends
+> not to have any lens or flash devices.
+> 
+> I'd change the commit message slightly:
+> 
+> --------8<-------------
+> In v4l2_async_create_ancillary_links(), ancillary links are created for
+> lens and flash sub-devices. These are sub-device to sub-device links and if
+> the async notifier is related to a V4L2 device, the source sub-device of
+> the ancillary link is NULL, leading to a NULL pointer dereference. Check
+> the notifier's sd field is non-NULL in v4l2_async_create_ancillary_links().
+> --------8<-------------
+
+What's the use case for including lens or flash devices in the root
+notifier ? Shouldn't lens and flash subdevices always be linked to
+something ? We should of course not crash, but it seems that simply
+ignoring the subdevs and not linking them isn't a great idea either.
+
+> > Or is it caused by the wrong usage? 
+> > 
+> > > > +
+> > > >  	link = media_create_ancillary_link(&n->sd->entity, &sd->entity);
+> > > >  
+> > > >  #endif
+
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Regards,
+
+Laurent Pinchart
 
