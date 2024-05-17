@@ -1,123 +1,147 @@
-Return-Path: <linux-kernel+bounces-182582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52BC28C8CF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:50:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B476C8C8CFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84A811C21CD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:50:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5A491C21B38
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B849F140389;
-	Fri, 17 May 2024 19:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E324140E2E;
+	Fri, 17 May 2024 19:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kRWFqIQF"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QSFXmsaV"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80D7321D;
-	Fri, 17 May 2024 19:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EFA13DDB0;
+	Fri, 17 May 2024 19:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715975430; cv=none; b=IBwAIO3jtLZYOghfR89g4dNTvUO/6eqYb5sVpmwbfBd7wrH76+4JzAAQ0FMItmHaQxzsjoygxcjw5E51A7/dLFpNdeubegTyPj22lI7lRVlf5mWagvRmvUkZQuc4zJStM1MZq1jWEqX3pFnYkgG9NIRXSZeVhmZMb1UVBM7j5RA=
+	t=1715975470; cv=none; b=kNKU4SyNvraNyI9rWAZI3Kx+TDKXdIMHdvbULlX7jCin1oi41bXzLUPijjcCq8ojzgnE9Bxly+4okjkFqfNOvwTrGT9Yb/wdPQT/k4onuJuGc+eUgqchOQQpsoUOQ/An/p1qP7hy31wdu5K6S4AjK2K/WbGmewxqrCQdsylwzOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715975430; c=relaxed/simple;
-	bh=j+QC3kOhZwJKkXX5mPM4HY+DrnVzET6HccRVfuZP43Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jpf9AOgh0wD3jG6kjsMcuLGsJT7eWKOn8m9mTGJalQ/j7jabR1rhObKwzlveg38hWg5h8eA86t512T30eWjiSUXobKRRbFEE34ROAmN2pK9HluFmhHCjAWr394Gk11oAqLfqVYxJVmesaqD4bbkmnD70/Xu+iw6l1wKVifnECzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kRWFqIQF; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1ecd9a81966so7086895ad.0;
-        Fri, 17 May 2024 12:50:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715975428; x=1716580228; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vGDwCwwhr9iyyZbcO2LNbRmyKSJnbSVS/UCD4IYwGr8=;
-        b=kRWFqIQFG1DuUVCLGEmakJneRpaarX/FdIXoIaeRR7om4a8z46CCe7LAUAPoWBIkKc
-         qVz0sBLC92mEPlUiq/eAy+cSab/HZ3VaVJ5bQUrN5/EqAGGzDFFbpZmJg6MBnH/8Fy3V
-         hM+af8ZQpHiJkn19Ro7Iv9jO7mYF6smEiE1Qi7VopEfUG8JQ3kGkruC91dHoBY6yJ/rV
-         k3GbrpKqXHk28XXceRmhOhC1i3pcIiF68RihqtoqUzz7cMyiyOZeYzJnX0EU6NhuccO0
-         pI9GzzfEY7cuf4acksZ9nhO7NDSkRPpY3kavlGb5d+CnXsarlZKQSUz77rKf9QCPsnzV
-         auDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715975428; x=1716580228;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vGDwCwwhr9iyyZbcO2LNbRmyKSJnbSVS/UCD4IYwGr8=;
-        b=VJlGM1xJk1PA+wUcmIdaKQ6tuUy0GTw3pfWZof20TNllYktDdkriCsvCMM+ydmztMN
-         QhdpuA21e7oBggK/E+97m7zE2EViK+8lgKGVQfa9hcEchcCcbOGdyzvAB8ArFksLr0Ke
-         Wfh8UBylaxk6Ha4hf+XEpbXcnKMm9NCTksLcCrkJboz4ssvRlFzdL1E6vh1NO+UHAE2z
-         JZkHuuo8X0mQith7YG186Z5HtNlA6QCe6rmRKYL56/qZv0cMYd91pmMUvL8UkdIfZTNT
-         VTH7dbiwP4IpvdRzVrj9P2WhVQPUcD17koGcdI7oG7Aqf42T7kLe+9I+kO9sUrBPIold
-         AfDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPqPLjiIHoU2L2psZZ02iW7jBKmqkiOTkme2fkAee8GRkDHBamQWYlcCvYxAx17ajUd3e634uiqH1cctXM55Ss0mgiqtr1kJnXq8sJAYoAkznrFRi/7hPisXz6MzXJgyZN4U7UPmsYG6m7TA==
-X-Gm-Message-State: AOJu0YzJPmyXPC+vhBpO23oj4Jh1dKylQO+opl6qp7aapdXCvTxS+lDh
-	Joj9QLYFW9f/rbBuiZYGQYf+8oAfhi3P0ijGt+HP6baT415vdZCx
-X-Google-Smtp-Source: AGHT+IGED0PKOMspRHBg/lO86eagMfaS1Pal7MYA8gYSpyUm/2pAAGCaWIEFdpCNBk+5VKC7GhGXlA==
-X-Received: by 2002:a17:902:d4ca:b0:1eb:3d68:fc2b with SMTP id d9443c01a7336-1f2ed3f863amr1029215ad.34.1715975427744;
-        Fri, 17 May 2024 12:50:27 -0700 (PDT)
-Received: from localhost ([2a00:79e1:2e00:1301:e1c5:6354:b45d:8ffc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d188dsm160529775ad.2.2024.05.17.12.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 12:50:26 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	Rob Clark <robdclark@chromium.org>,
-	Nikita Travkin <nikita@trvn.ru>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Connor Abbott <cwabbott0@gmail.com>,
-	Ruan Jinjie <ruanjinjie@huawei.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/msm/adreno: Check for zap node availability
-Date: Fri, 17 May 2024 12:50:19 -0700
-Message-ID: <20240517195021.8873-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1715975470; c=relaxed/simple;
+	bh=rmu3HQK5IMzJ2YBCSpWscJn3wukuD4WnaUXI3S2kyBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XStkM8y0T+31tUbOKNOpar8jbhKrTO5To0ySBdFBus5sth2pc5We/Zpythq+Hx0VoKAvsu81y9LRfaBgX0XXq8mr+NhEnY1iQ7iz20UWkBijQ/qh/ztev9+oSIl+KOtF+fBkRGP1eK0RQJFkyZ1RIff3a3wzNZLMVyGveHoKzi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QSFXmsaV; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E8C7BFF803;
+	Fri, 17 May 2024 19:50:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715975460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QlP3PK23BxpttVUOU8FsAkJILKdtrU2gUyyrnf+ZS/Y=;
+	b=QSFXmsaVERvB0isdMhxp1MzMnwr57OGNI00otZAQqzk95G1OG2DZXWOPdxN3iFj524NAss
+	PXlV5t5b1+oiUzmJTq+BbMwM3+EsiR+tROgxM/A85pJVIktMj6XBepj31fJYqWcd2fw1fk
+	3T2W9KCMu2URjBIkukDhMOtRrz/LWNCieQpkMlXZ0oTMe2TM7O0sdj/fXSMI7BsAJIC0wc
+	oZE5/se95lpTcSDRUquO51JS4p18WZtgv8+8r60jO44Th8gL275xumbrT1DOz+xuR/4u4Y
+	8+r9w/HXGdBDYX8i9YVRvSNRj+HcAvO23OIxBRg/UFkmLwSxJ+Ef1O/vfn8BnA==
+Date: Fri, 17 May 2024 21:50:55 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Han Xu
+ <han.xu@nxp.com>, Vinod Koul <vkoul@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Marek Vasut <marex@denx.de>, linux-mtd@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dmaengine@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/5] dt-bindings: mtd: gpmi-nand: Add
+ 'fsl,imx8qxp-gpmi-nand' compatible string
+Message-ID: <20240517215055.02622324@xps-13>
+In-Reply-To: <Zkes3n6ZLjIFFQUK@lizhi-Precision-Tower-5810>
+References: <20240517-gpmi_nand-v1-0-73bb8d2cd441@nxp.com>
+	<20240517-gpmi_nand-v1-1-73bb8d2cd441@nxp.com>
+	<20240517203621.72b8b9c7@xps-13>
+	<Zkes3n6ZLjIFFQUK@lizhi-Precision-Tower-5810>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-From: Rob Clark <robdclark@chromium.org>
+Hi Frank,
 
-This should allow disabling the zap node via an overlay, for slbounce.
+Frank.li@nxp.com wrote on Fri, 17 May 2024 15:15:42 -0400:
 
-Suggested-by: Nikita Travkin <nikita@trvn.ru>
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/msm/adreno/adreno_gpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Fri, May 17, 2024 at 08:36:21PM +0200, Miquel Raynal wrote:
+> > Hi Frank,
+> >=20
+> > Frank.Li@nxp.com wrote on Fri, 17 May 2024 14:09:48 -0400:
+> >  =20
+> > > Add 'fsl,imx8qxp-gpmi-nand' compatible string and clock-names restric=
+tion.
+> > >=20
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > >  .../devicetree/bindings/mtd/gpmi-nand.yaml         | 22 ++++++++++++=
+++++++++++
+> > >  1 file changed, 22 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/mtd/gpmi-nand.yaml b/D=
+ocumentation/devicetree/bindings/mtd/gpmi-nand.yaml
+> > > index 021c0da0b072f..f9eb1868ca1f4 100644
+> > > --- a/Documentation/devicetree/bindings/mtd/gpmi-nand.yaml
+> > > +++ b/Documentation/devicetree/bindings/mtd/gpmi-nand.yaml
+> > > @@ -24,6 +24,7 @@ properties:
+> > >            - fsl,imx6q-gpmi-nand
+> > >            - fsl,imx6sx-gpmi-nand
+> > >            - fsl,imx7d-gpmi-nand
+> > > +          - fsl,imx8qxp-gpmi-nand
+> > >        - items:
+> > >            - enum:
+> > >                - fsl,imx8mm-gpmi-nand
+> > > @@ -151,6 +152,27 @@ allOf:
+> > >              - const: gpmi_io
+> > >              - const: gpmi_bch_apb
+> > > =20
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            enum:
+> > > +              - fsl,imx8qxp-gpmi-nand
+> > > +    then:
+> > > +      properties:
+> > > +        clocks:
+> > > +          items:
+> > > +            - description: SoC gpmi io clock
+> > > +            - description: SoC gpmi apb clock =20
+> >=20
+> > I believe these two clocks are mandatory? =20
+>=20
+> minItems default is equal to items numbers, here is 4. So all 4 clock are
+> mandatory.
+>=20
+> Anything wrong here?
 
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-index d9ea15994ae9..a00241e3373b 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-@@ -46,7 +46,7 @@ static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname,
- 	}
- 
- 	np = of_get_child_by_name(dev->of_node, "zap-shader");
--	if (!np) {
-+	if (!np || !of_device_is_available(np)) {
- 		zap_available = false;
- 		return -ENODEV;
- 	}
--- 
-2.45.1
+I'd say that the two "bch" clocks are only used if you decide to
+configure the on-host hardware ECC engine and thus are not needed with
+software corrections, but I'm fine keeping the fourth described in all
+cases if that's simpler.
 
+Also,here the diff just shows that "if we provide a clocks property
+with this compatible, then we need to provide 4 members", I believe the
+"required" property is already filled somewhere with the
+clocks/clock-names properties?
+
+Thanks,
+Miqu=C3=A8l
 
