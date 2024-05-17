@@ -1,113 +1,271 @@
-Return-Path: <linux-kernel+bounces-182389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21EEB8C8AB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:15:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D62A18C8ABD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EBECB22899
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:15:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08006B20D33
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1924713DBB7;
-	Fri, 17 May 2024 17:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5129313D8BA;
+	Fri, 17 May 2024 17:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L26Qd1ky"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hfZTxmgh"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434C112F5A3;
-	Fri, 17 May 2024 17:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D2C13DBA7;
+	Fri, 17 May 2024 17:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715966114; cv=none; b=aGA750FvHdSlEyDjd3uH8C8i1gvrF/ihhJIWF7+2oZbV4nkVRgar9s+l7o5CRFTkq1SoBXd3L20zGNa74C3z4aSIiKXSCxLLRwUjrpB2nqwgMGVTgvEHkuXgUlnYj/y/8R6/ag5GHwMJPmIk6uqVtx5o+HsWBy3+1/ejbHVYiUc=
+	t=1715966169; cv=none; b=excKuu9LzBQdr9CwvoGWAbmgBL5TCB+ScMga6nstULOdQEr2+XDo+CmIYFITm9XM+nAs0BRpZOvSvKfRes6jwiIBlcYTFTiryGIqa7N6HT3hGbio72sxUzKO5sSgriqYIA49QB5iajpgPBif7sTSYthhmkgJ89ermIXdNj/Zj1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715966114; c=relaxed/simple;
-	bh=8niseAwEvm4eufhgATrW3AOhRGKDVc/i+YYWQsWeM7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rX0FNicvKj/HaOgvbn55cMEfbqtfK/wdz7GtiPd40huNnE2/cIJWcEfOmnkrwjgV/oZiEqnOJHAltlLB/WEjju5ou3DfQ9RRY9kBaP52AVvKWWzP+cwfC5rT3Io4aa0sGWRNCdUHOYzH9P0yBP/cNCn5XYm9ZPmJrUtcd9DcNy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L26Qd1ky; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB656C4AF0E;
-	Fri, 17 May 2024 17:15:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715966113;
-	bh=8niseAwEvm4eufhgATrW3AOhRGKDVc/i+YYWQsWeM7Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=L26Qd1kyalzbhAN7I58oIXCoMGliFeN10tRbJywsR7G7832jC/g5AmuXZ3OYaRuav
-	 KNaOX5qBPGdgXrS/dcYCW4tC9ZFk/O4U1MyTnqAHcASLOQ3IsdnWaFLJMzVeSoxnFH
-	 JWTZoUmBiC/OrYwutQ0Qdbsf/qI+hAmoUcAiv7AolTnjhqaoDXLbT0j/c52VLqfXOS
-	 j0bRAd6LC+/NE7+SiINnnT85UxoaPJlx1ssny0OQqZgKzh47ykuVNsyUV0D9EFI3HM
-	 /KUjfoheuJp849m7k8FCDXkgTFDRYNSZifMnH15EtZFtCrrLJrYUxoMMCZM8SmChAJ
-	 Ss6/MOR9E/FSA==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-523b017a5c6so3459100e87.1;
-        Fri, 17 May 2024 10:15:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV4UBHDUxpkVDomeboGU6nj4NyznefjpK1+cH1Mz6sTXAGQjdMcCWVgwbmkDlB+GozE/z1YhlqDBQyA+0MsqVeRGdNvBBp2sqGcC+rIc5ngXwF0zxJ2DMH6W6ggqwZvnxHiqiJxuPjqW9P63cDyKl9QcVixuNZbpb5UZIkmq1PgRgLD2nnF+QmqLuJlQmw2I6QonNxRprk0jDVbALLb2eKJ1wJn+o/d3x8YUkgVYp3K8RwNSXuP06fiCgiVYxw=
-X-Gm-Message-State: AOJu0Yz9AHyjP/UJiViRFYYCOqLT33Ds/y4gzGd/qq+JMbrhEOhNwWwU
-	GoLCAXdWLc8KRqa+DFXMv1Gus+iH0MaRVNxG6QDT6QQWY5xJsPuMR5QS6LIiAutWG8TF1bJJbGV
-	b0xDzGdBgcckQiMHQXI7svRDd3w==
-X-Google-Smtp-Source: AGHT+IGUUWb0QqBy4GPMsKWcCTpt3kRDK3vukBnYnUPOMugpsBxrcXJSiRK62s1g28Bx/g92dGHcLhVZALfpiK1lJOw=
-X-Received: by 2002:ac2:4643:0:b0:523:ae99:b333 with SMTP id
- 2adb3069b0e04-523ae99b3c5mr5613808e87.64.1715966112010; Fri, 17 May 2024
- 10:15:12 -0700 (PDT)
+	s=arc-20240116; t=1715966169; c=relaxed/simple;
+	bh=5SF0CeCWwV6LZXuz1ZpmJ/axrMdJGeySKiV+1NdDH7k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WPv2vwkgUUISc2uPuX8jzkTO4rV7k5GK68e45VRB+0BuEKXDSkGmwj5PZRUbpHs0qWDfuW8kWZhGRJc+apQXVmC542QPX/cXsf+T5N33YIk8OwDhfVtG8kCbtHN9T9sz08XRiSYTwx7seFXCwk9/GhRrE8vBNmokFJfUxSDLxLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hfZTxmgh; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44HHFXro002873;
+	Fri, 17 May 2024 12:15:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715966134;
+	bh=t8moko48WHwLaYXtZeG1loeYfbAEGTbnPD1sU1i82L0=;
+	h=From:To:CC:Subject:Date;
+	b=hfZTxmghkPiT6kevmt5lLE+qDkrLgEXUkuDnSqsVsdcqrdKDdo0zTHYmfZYxoFSVO
+	 OvIm5W5WBWEAh6ogEX84zkVIrEpELDT3/Hd5qlHg8t21Rp8bpC/WuuI7WJHcKoVYZq
+	 4pcnnFrta/mEgc/UKcsp19Z2EAgDehiB/3jCHoQE=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44HHFXWd126445
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 17 May 2024 12:15:33 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 17
+ May 2024 12:15:33 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 17 May 2024 12:15:33 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44HHFWXr106902;
+	Fri, 17 May 2024 12:15:33 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>, <akpm@linux-foundation.org>,
+        <gregkh@linuxfoundation.org>, <andriy.shevchenko@linux.intel.com>,
+        <adobriyan@gmail.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <jani.nikula@intel.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-rockchip@lists.infradead.org>, <davidgow@google.com>,
+        <dlatypov@google.com>
+Subject: [PATCH v8 00/10] Add V4L2 M2M Driver for E5010 JPEG Encoder
+Date: Fri, 17 May 2024 22:45:32 +0530
+Message-ID: <20240517171532.748684-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514224508.212318-1-romank@linux.microsoft.com> <20240514224508.212318-6-romank@linux.microsoft.com>
-In-Reply-To: <20240514224508.212318-6-romank@linux.microsoft.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 17 May 2024 12:14:58 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKXejxzixzwQO4U_00WAaV_iaEh8Mndf6R5BhLQsgVwLQ@mail.gmail.com>
-Message-ID: <CAL_JsqKXejxzixzwQO4U_00WAaV_iaEh8Mndf6R5BhLQsgVwLQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] drivers/hv/vmbus: Get the irq number from DeviceTree
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com, 
-	dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com, 
-	hpa@zytor.com, kw@linux.com, kys@microsoft.com, lenb@kernel.org, 
-	lpieralisi@kernel.org, mingo@redhat.com, mhklinux@outlook.com, 
-	rafael@kernel.org, tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org, 
-	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org, 
-	ssengar@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, May 14, 2024 at 5:45=E2=80=AFPM Roman Kisel <romank@linux.microsoft=
-com> wrote:
->
-> The vmbus driver uses ACPI for interrupt assignment on
-> arm64 hence it won't function in the VTL mode where only
-> DeviceTree can be used.
->
-> Update the vmbus driver to discover interrupt configuration
-> via DeviceTree.
->
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> ---
->  drivers/hv/vmbus_drv.c | 37 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index e25223cee3ab..52f01bd1c947 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -36,6 +36,7 @@
->  #include <linux/syscore_ops.h>
->  #include <linux/dma-map-ops.h>
->  #include <linux/pci.h>
-> +#include <linux/of_irq.h>
+This adds support for V4L2 M2M based driver for E5010 JPEG Encoder
+which is a stateful JPEG encoder from Imagination technologies
+and is present in TI AM62A SoC.
 
-If you are using this header in a driver, you are doing it wrong. We
-have common functions which work on both ACPI or DT, so use them if
-you have a need to support both.
+While adding support for it, following additional framework changes were
+made:
+ - Moved reference quantization and huffman tables provided in
+   ITU-T-REC-T.81 to v4l2-jpeg.c as suggested in mailing list [1].
+ - Add macros to round to closest integer (either higher or lower) while
+   rounding in order of 2.
+ - Add KUnit tests for math functions.
 
-Though my first question on a binding will be the same as on every
-'hypervisor binding'.  Why can't you make your hypervisor interfaces
-discoverable? It's all s/w, not some h/w device which is fixed.
+v4l2-compliance test :
+Link: https://gist.github.com/devarsht/1f039c631ca953a57f405cfce1b69e49
 
-Rob
+E5010 JPEG Encoder Manual tests :
+
+Performance:
+Link: https://gist.github.com/devarsht/c40672944fd71c9a53ab55adbfd9e28b
+
+Functionality:
+Link: https://gist.github.com/devarsht/8e88fcaabff016bb2bac83d89c9d23ce
+
+Compression Quality:
+Link: https://gist.github.com/devarsht/cbcc7cd97e8c48ba1486caa2b7884655
+
+Multi Instance:
+Link: https://gist.github.com/devarsht/22c2fca08cd3441fb40f2c7a4cebc95a
+
+Crop support:
+Link: https://gist.github.com/devarsht/de6f5142f678bb1a5338abfd9f814abd
+
+Runtime PM:
+Link: https://gist.github.com/devarsht/70cd95d4440ddc678489d93885ddd4dd
+
+Math lib KUnit tests:
+Link: https://gist.github.com/devarsht/3f9042825be3da4e133b8f4eda067876
+
+[1]: 
+https://lore.kernel.org/all/de46aefe-36da-4e1a-b4fa-b375b2749181@xs4all.nl/
+
+Changelog:
+V7->V8:
+ - Add KUnit tests for math functions
+ - Add roundclosest() for supporting rounding for non-multiple of 2
+ - Update commit message as suggested
+ - Add Reviewed-by and Acked-by tags to patches as received
+
+V6->V7:
+ - Fix cropping support
+ - Move reference huffman and quantization tables to v4l2-jpeg.c
+ - Fix suspend/resume use-case
+ - Add Reviewed-by
+
+V5->V6:
+ - Fix sparse warnings
+
+V4->V5:
+ - Sort the #includes in driver file alphabetically
+ - Rename huffman and quantization tables to not use '_'
+ - Add Reviewed-by tag
+
+V3->V4:
+- Use ti-specific compatible ti,am62a-jpeg-enc as secondary one in
+  dt-binding
+- Remove clock-names as only single clock in dt-binding
+- Fix issue with default params setting
+- Correct v4l2 error prints
+- Simplify register write functions with single statement return values
+- Remove unrequired error checks from get_queue()
+- Drop explicit device_caps setting as it is already taken care by v4l2
+  core
+- Remove unrequired multiplanar checks and memset from s_fmt, g_fmt
+  callback functions
+- Fix try_fmt callback to not update the queues
+- Remove unrequired contiguous format attribute from queue_init
+- Use dynamic allocation for video_device and remove unrequired
+  assignments in probe()
+- Remove unrequired checks from queue_setup function
+- Return queued buffers back if start_streaming fails
+- Use ARRAY_SIZE in place of hard-coding
+- Use huffman and quantization tables from reference header file
+
+V2->V3:
+- Add DONOTMERGE patches for dts and defconfig
+- Update driver with below changes :
+  - Correct license headers
+  - Use more generic name core instead of jasper for base registers
+  - Add Comment for forward declarations
+  - Simplify quantization table calculations
+  - Use v4l2_apply_frmsize_constraints for updating framesize and remove
+    unrequired functions
+  - Place TODO at top of file and in commit message too
+  - Use dev_err_probe helper in probe function
+  - Fix return value checking for failure scenarios in probe function
+  - Use v4l2_err/info/warn helpers instead of dev_err/info/warn helpers
+  - Fix unexpected indentation
+  - Correct commit message
+- Update dt-bindings with below changes :
+  - Add vendor specific compatible 
+  - Fix commit title and message
+  - Update reg names
+  - Update clocks to 1
+  - Fix dts example with proper naming
+
+V1->V2:
+ - Send dt-bindings and driver together
+
+Patch-Diff between the series :
+V7->V8 Range diff :
+https://gist.github.com/devarsht/3fd6c4e8031ab114248f93d01c8dfc74
+
+V6->V7 Range diff :
+https://gist.github.com/devarsht/1db185b1e187eaf397e9e4c37066777e
+
+V5->V6 Range diff :
+https://gist.github.com/devarsht/c89180ac2b0d2814614f2b59d0705c19
+
+V4->V5 Range diff :
+https://gist.github.com/devarsht/298790af819f299a0a05fec89371097b
+
+V3->V4 Range diff :
+https://gist.github.com/devarsht/22a744d999080de6e813bcfb5a596272
+
+Previous patch series:
+V7: https://lore.kernel.org/all/20240510082603.1263256-1-devarsht@ti.com/
+V6: https://lore.kernel.org/all/20240228141140.3530612-1-devarsht@ti.com/
+V5: https://lore.kernel.org/all/20240215134641.3381478-1-devarsht@ti.com/
+V4: https://lore.kernel.org/all/20240205114239.924697-1-devarsht@ti.com/
+V3: https://lore.kernel.org/all/20230816152210.4080779-1-devarsht@ti.com/
+V2: https://lore.kernel.org/all/20230727112546.2201995-1-devarsht@ti.com/
+
+Daniel Latypov (1):
+  lib: add basic KUnit test for lib/math
+
+Devarsh Thakkar (9):
+  media: dt-bindings: Add Imagination E5010 JPEG Encoder
+  media: imagination: Add E5010 JPEG Encoder driver
+  media: v4l2-jpeg: Export reference quantization and huffman tables
+  media: imagination: Use exported tables from v4l2-jpeg core
+  media: verisilcon : Use exported tables from v4l2-jpeg for hantro
+    codec
+  math.h: Add macros for rounding to closest value
+  lib: math_kunit: Add tests for new macros related to rounding to
+    nearest value
+  media: imagination: Round to closest multiple for cropping region
+  gpu: ipu-v3: Use generic macro for rounding closest to specified value
+
+ .../bindings/media/img,e5010-jpeg-enc.yaml    |   75 +
+ MAINTAINERS                                   |    7 +
+ drivers/gpu/ipu-v3/ipu-image-convert.c        |    4 +-
+ drivers/media/platform/Kconfig                |    1 +
+ drivers/media/platform/Makefile               |    1 +
+ drivers/media/platform/imagination/Kconfig    |   12 +
+ drivers/media/platform/imagination/Makefile   |    3 +
+ .../platform/imagination/e5010-core-regs.h    |  585 ++++++
+ .../platform/imagination/e5010-jpeg-enc-hw.c  |  267 +++
+ .../platform/imagination/e5010-jpeg-enc-hw.h  |   42 +
+ .../platform/imagination/e5010-jpeg-enc.c     | 1646 +++++++++++++++++
+ .../platform/imagination/e5010-jpeg-enc.h     |  168 ++
+ .../platform/imagination/e5010-mmu-regs.h     |  311 ++++
+ .../media/platform/verisilicon/hantro_jpeg.c  |  128 +-
+ drivers/media/v4l2-core/v4l2-jpeg.c           |  162 +-
+ include/linux/math.h                          |   65 +
+ include/media/v4l2-jpeg.h                     |   11 +
+ lib/math/Kconfig                              |   11 +
+ lib/math/Makefile                             |    1 +
+ lib/math/math_kunit.c                         |  326 ++++
+ 20 files changed, 3708 insertions(+), 118 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+ create mode 100644 drivers/media/platform/imagination/Kconfig
+ create mode 100644 drivers/media/platform/imagination/Makefile
+ create mode 100644 drivers/media/platform/imagination/e5010-core-regs.h
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.c
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.h
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.c
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.h
+ create mode 100644 drivers/media/platform/imagination/e5010-mmu-regs.h
+ create mode 100644 lib/math/math_kunit.c
+
+-- 
+2.39.1
+
 
