@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-182458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48DEE8C8B7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:47:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 139758C8B7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBFF91F24D53
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:47:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74CBEB24686
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A42152500;
-	Fri, 17 May 2024 17:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628DE152E0C;
+	Fri, 17 May 2024 17:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a5FjFnp1"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rHqiOYdp"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB981514C6
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF1D152188
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715967633; cv=none; b=sH7Th50e0Uv1jx5MooFvvJoSE2dGz2j8g5zx9KIFH6y3T8ZnJidKq1p+VSoyKoLtFEJCCoKZKZ5bulloFp4BXZk6Apsj0RF6/qYV7da5VNNERBmIsIqFxL+kiJ9Jyc/hmbkbxJ8nuhuOakAYDTQkPgDrMc1NVLI3eYqYz1pyfNs=
+	t=1715967636; cv=none; b=HI3j4NfPF8NFfWFE6jnR5/IQ/khLFDIB3IzFcCMkUzT3xjNb0mvDafG0QYAjCT+SPHe7qdRlHubXe+zir/6Ili6MnbrGP4F1lYdqOje3CXqmDmL+rcVmMIZXxSXc75fgoMdAeGZsBAwlzOr4WPFnMepoo6Th3TAna2xhv73i574=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715967633; c=relaxed/simple;
-	bh=NqsRgHWRN6F44HPpFxnftLqdK5RpQV2+BDjK35Q0DRk=;
+	s=arc-20240116; t=1715967636; c=relaxed/simple;
+	bh=oxejklLlbBEENy3IfZNQJ8hlgrGXAQmHeztU44XlEA4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kTc++v/tXsuF7zo3ayt73HuTfZ0arx3bThYjku6FkM8BBrdnjCWxFxxYBNtQcQq7Xs/w03OtzCmHofhcaOI4N2iln1yzkgWJSRVIXaDN7X9GLbH0fyfPBN6iekZepMsV/OH+b8Zh8yKWmV7JtINOyV209+by5Xta9YjAvlZuFEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a5FjFnp1; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=Vo20iZJjmFfglOdfnrumAVpbzEDsnqGtMDAxi6w3rnYrhmaK5BYalq7tTIvl650SyOALLrRaMidrU5h9/msFOooXATK8irX0Ecn0Jh/xtpu6D7WheRJIFGWXIzN+MnIn+af793i9ZUnPf4w9Hru+7sbZFHv0yMqernJVLvb1/tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rHqiOYdp; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61be23bb01aso199165627b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:40:31 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc6b26783b4so12739299276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:40:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715967631; x=1716572431; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715967633; x=1716572433; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=afJWK5FLO96r/JX5VZZ/glVEZp394HL111OEQ71TOyU=;
-        b=a5FjFnp1Bg5CKZHs7JdTMQX9kWpDCxxXPvvlC+J/im9hOuJTDGyN2RohASe4fuIIqD
-         h6yQ0rgoQ7vy9dwLHav3GT6XO8P6ZtRlhjQ6X6ySQ7MUC++cAmZVIPSYBE90QTiq2P6b
-         Wacya9p03eks1DJctOc5eDTkI3TD0andW/zS28Y80Z0OceJY8Kb2zgX3Qupiv0RMVVJf
-         k/vmxTfYF6PwYItgMPIQs0rYAv3kDK8YowEDgW9GZHLBEgrLQ7ytXTkw+d8Oc4ssV7GI
-         r6NJSBV0nFwD+DC/wUmeaa1RFnjbX4YACWwJ65M1z75A4epmDkSOpAN51f12q1x1h+dY
-         92PA==
+        bh=IIpzTjnpYWvr4z4L+FkXXo9hR1khs/BwnW5TGVqv/IQ=;
+        b=rHqiOYdpjW6Lwf3LFpflpCO//4QrXb0oRLwNT1VG9kmvFlr+BzVQdGNJyARlNoWgS3
+         lmfSqI5jQrasik/h3zrJyvI0/awwKhl0KlzY6JDD1pJLkhS5+SoYG7G9L9qxilotphac
+         J3zWUMHP9rqvNytL8R3EN5E4kYmYL29EtJqawyyV2xtNNkvLScVloEJHqrf+KPCpd6fH
+         gLnru4I4/YlekCs3co+ETL3kZ1chp4+zkUTqYVReCKA/toZJsTwERVs0AfZ1+Nn9wBXX
+         m7KYGUrDL2o7XplkQSpGrJwKQ4o80yZSNaM9KXR2PS0Ozhh3OeqGoDhljYW76DBLooVV
+         DN4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715967631; x=1716572431;
+        d=1e100.net; s=20230601; t=1715967633; x=1716572433;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=afJWK5FLO96r/JX5VZZ/glVEZp394HL111OEQ71TOyU=;
-        b=Z3n7iX9FRMzkw/+xqikiHKRPqak2TtKBCE7UhtTU+Ci5VFacifXHCgLgtvVbiPBsKV
-         NyDuY0wQVshokjtG/I45mKXv2imTDO4OR9KyvC3aJ2fEqdtwqOk5omdEAraLEIz+sLHW
-         FAEcjdmCZCsKEeDm728tlekeH+oGdopf0Lto2ifV09STZjxsoagSeVLiI40fUVASbMYr
-         fc0olUjVzGxeAgwKlbU/8Eudjgf+8qmrLX82sjwx2+Iy7xAFG8xvbVpbTW/kl0rHfKnG
-         nckeIRRSnU5uh2wWUHavHjGCfbkH59a084apyl/5hAYZvjDFTYag+LbhcLhDAtZ2v6P1
-         GVmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyNcCMwVRZWSjV1o3Q4LB2ZyBb7FumsUVIq4VvJkhfUzHSBh9wDsaIXO4kIO5NTz7ee4Xg3Avo7Q64ggHF1hTc124cgkHxW8NHWGLc
-X-Gm-Message-State: AOJu0YxUGaWpKoItQ781NBhg2k3fXOteRRHdxeqn99UFIpWOzMbAg9BH
-	Y+sVq6Wu98igCitZyoo4mDo3W3SDxy9Xj0eW261aGDMpXgPEtXA0CB0FUnEbF1nKo/3dOZ5vTiA
-	sBg==
-X-Google-Smtp-Source: AGHT+IFrZKsGEJGS1S/CwuQF2ov/IS775/VqwG2RQf97kyUSXSruoGHTyK8ovIRSZ6CHbafgkW04DSAj4mQ=
+        bh=IIpzTjnpYWvr4z4L+FkXXo9hR1khs/BwnW5TGVqv/IQ=;
+        b=W74YY9NWQQuufzZt5REgw/CunlUWaNekF+m3B4y+Ap5iZgqF+RuhQy8SNpup7tUJJm
+         BdNYyqTaV0ECiI2dSutoRciOt/au9bzt02xBS6tIMR1BYk7x0GhOABvEWBLTZ/t6iqQp
+         nFyoFtEFBFonIr+JE9dmZCO317qsDs+gUWKovTkVERIGbViAX4RvczphVg/IRbBKmBDW
+         Cc/mDUrjhxMigbfKnFYiHMiOXiywv5X69yhOLgAFRg49hs4bvkvTWYwKhsYKeEjtDsUg
+         o/LVV9tA2+kwiIHaF5vpRZLo+gZihUe87K1HLP1bG2nO1e4i5vdyRLrbMa/Y6jgVu3Mg
+         Zxjw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5eym1WGm9yXIzX2rHSgNI1K9uLvPvzrMdvdOqHHMSN/Oe5PNMxBZweH0iQtLuObkLK/USqdYjTTxkGWK5rs0XFzHi0jOpfd0Rua21
+X-Gm-Message-State: AOJu0YwkP5kZB0ref2J13tnl2PYHmkuZeaufoC/mxhZy3yjIo5itOoXn
+	KduZl+GUzmZBpBkj+CAEZbxDC965vql32mdVxkIStkBCBljHeXu5aHym2EDP+UAxK/8a+q+cY9b
+	pKQ==
+X-Google-Smtp-Source: AGHT+IHcMIoOJ01ehqIHGlvwd0sggE3znPLNKcQXWO67WrF3qyfm+l3LvlnPUSRXbx688hga9I6i/VG+rfQ=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:6687:b0:61b:e73d:bea2 with SMTP id
- 00721157ae682-622aff9bee6mr55768057b3.5.1715967631297; Fri, 17 May 2024
- 10:40:31 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:6902:70a:b0:dee:615c:ac3a with SMTP id
+ 3f1490d57ef6-dee615cb53fmr1728101276.5.1715967633201; Fri, 17 May 2024
+ 10:40:33 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 17 May 2024 10:39:02 -0700
+Date: Fri, 17 May 2024 10:39:03 -0700
 In-Reply-To: <20240517173926.965351-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240517173926.965351-1-seanjc@google.com>
 X-Mailer: git-send-email 2.45.0.215.g3402c0e53f-goog
-Message-ID: <20240517173926.965351-26-seanjc@google.com>
-Subject: [PATCH v2 25/49] KVM: x86: Harden CPU capabilities processing against
- out-of-scope features
+Message-ID: <20240517173926.965351-27-seanjc@google.com>
+Subject: [PATCH v2 26/49] KVM: x86: Add a macro to init CPUID features that
+ KVM emulates in software
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>
@@ -88,131 +88,108 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Add compile-time assertions to verify that usage of F() and friends in
-kvm_set_cpu_caps() is scoped to the correct CPUID word, e.g. to detect
-bugs where KVM passes a feature bit from word X into word y.
-
-Add a one-off assertion in the aliased feature macro to ensure that only
-word 0x8000_0001.EDX aliased the features defined for 0x1.EDX.
-
-To do so, convert kvm_cpu_cap_init() to a macro and have it define a
-local variable to track which CPUID word is being initialized that is
-then used to validate usage of F() (all of the inputs are compile-time
-constants and thus can be fed into BUILD_BUG_ON()).
-
-Redefine KVM_VALIDATE_CPU_CAP_USAGE after kvm_set_cpu_caps() to be a nop
-so that F() can be used in other flows that aren't as easily hardened,
-e.g. __do_cpuid_func_emulated() and __do_cpuid_func().
-
-Invoke KVM_VALIDATE_CPU_CAP_USAGE() in SF() and X86_64_F() to ensure the
-validation occurs, e.g. if the usage of F() is completely compiled out
-(which shouldn't happen for boot_cpu_has(), but could happen in the future,
-e.g. if KVM were to use cpu_feature_enabled()).
+Now that kvm_cpu_cap_init() is a macro with its own scope, add EMUL_F() to
+OR-in features that KVM emulates in software, i.e. that don't depend on
+the feature being available in hardware.  The contained scope
+of kvm_cpu_cap_init() allows using a local variable to track the set of
+emulated leaves, which in addition to avoiding confusing and/or
+unnecessary variables, helps prevent misuse of EMUL_F().
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/cpuid.c | 55 +++++++++++++++++++++++++++++++-------------
- 1 file changed, 39 insertions(+), 16 deletions(-)
+ arch/x86/kvm/cpuid.c | 36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index a16d6e070c11..1064e4d68718 100644
+index 1064e4d68718..33e3e77de1b7 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -61,18 +61,24 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
- 	return ret;
- }
+@@ -94,6 +94,16 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
+ 	F(name);						\
+ })
  
--#define F feature_bit
-+#define F(name)							\
++/*
++ * Emulated Feature - For features that KVM emulates in software irrespective
++ * of host CPU/kernel support.
++ */
++#define EMUL_F(name)						\
 +({								\
-+	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
-+	feature_bit(name);					\
++	kvm_cpu_cap_emulated |= F(name);			\
++	F(name);						\
 +})
- 
- /* Scattered Flag - For features that are scattered by cpufeatures.h. */
- #define SF(name)						\
- ({								\
- 	BUILD_BUG_ON(X86_FEATURE_##name >= MAX_CPU_FEATURES);	\
-+	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
- 	(boot_cpu_has(X86_FEATURE_##name) ? F(name) : 0);	\
- })
- 
- /* Features that KVM supports only on 64-bit kernels. */
- #define X86_64_F(name)						\
- ({								\
-+	KVM_VALIDATE_CPU_CAP_USAGE(name);			\
- 	(IS_ENABLED(CONFIG_X86_64) ? F(name) : 0);		\
- })
- 
-@@ -95,6 +101,7 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
- #define AF(name)								\
- ({										\
- 	BUILD_BUG_ON(__feature_leaf(X86_FEATURE_##name) != CPUID_1_EDX);	\
-+	BUILD_BUG_ON(kvm_cpu_cap_init_in_progress != CPUID_8000_0001_EDX);	\
- 	feature_bit(name);							\
- })
- 
-@@ -622,22 +629,34 @@ static __always_inline u32 raw_cpuid_get(struct cpuid_reg cpuid)
- 	return *__cpuid_entry_get_reg(&entry, cpuid.reg);
- }
- 
--static __always_inline void kvm_cpu_cap_init(u32 leaf, u32 mask)
--{
--	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);
-+/*
-+ * Assert that the feature bit being declared, e.g. via F(), is in the CPUID
-+ * word that's being initialized.  Exempt 0x8000_0001.EDX usage of 0x1.EDX
-+ * features, as AMD duplicated many 0x1.EDX features into 0x8000_0001.EDX.
-+ */
-+#define KVM_VALIDATE_CPU_CAP_USAGE(name)				\
-+do {									\
-+	u32 __leaf = __feature_leaf(X86_FEATURE_##name);		\
-+									\
-+	BUILD_BUG_ON(__leaf != kvm_cpu_cap_init_in_progress);		\
-+} while (0)
- 
--	/*
--	 * For kernel-defined leafs, mask the boot CPU's pre-populated value.
--	 * For KVM-defined leafs, explicitly set the leaf, as KVM is the one
--	 * and only authority.
--	 */
--	if (leaf < NCAPINTS)
--		kvm_cpu_caps[leaf] &= mask;
--	else
--		kvm_cpu_caps[leaf] = mask;
--
--	kvm_cpu_caps[leaf] &= raw_cpuid_get(cpuid);
--}
-+/*
-+ * For kernel-defined leafs, mask the boot CPU's pre-populated value.  For KVM-
-+ * defined leafs, explicitly set the leaf, as KVM is the one and only authority.
-+ */
-+#define kvm_cpu_cap_init(leaf, mask)					\
-+do {									\
-+	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);	\
-+	const u32 __maybe_unused kvm_cpu_cap_init_in_progress = leaf;	\
-+									\
-+	if (leaf < NCAPINTS)						\
-+		kvm_cpu_caps[leaf] &= (mask);				\
-+	else								\
-+		kvm_cpu_caps[leaf] = (mask);				\
-+									\
-+	kvm_cpu_caps[leaf] &= raw_cpuid_get(cpuid);			\
-+} while (0)
++
+ /*
+  * Aliased Features - For features in 0x8000_0001.EDX that are duplicates of
+  * identical 0x1.EDX features, and thus are aliased from 0x1 to 0x8000_0001.
+@@ -649,6 +659,7 @@ do {									\
+ do {									\
+ 	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);	\
+ 	const u32 __maybe_unused kvm_cpu_cap_init_in_progress = leaf;	\
++	u32 kvm_cpu_cap_emulated = 0;					\
+ 									\
+ 	if (leaf < NCAPINTS)						\
+ 		kvm_cpu_caps[leaf] &= (mask);				\
+@@ -656,6 +667,7 @@ do {									\
+ 		kvm_cpu_caps[leaf] = (mask);				\
+ 									\
+ 	kvm_cpu_caps[leaf] &= raw_cpuid_get(cpuid);			\
++	kvm_cpu_caps[leaf] |= kvm_cpu_cap_emulated;			\
+ } while (0)
  
  /*
-  * Undefine the MSR bit macro to avoid token concatenation issues when
-@@ -870,6 +889,10 @@ void kvm_set_cpu_caps(void)
- }
- EXPORT_SYMBOL_GPL(kvm_set_cpu_caps);
+@@ -684,12 +696,10 @@ void kvm_set_cpu_caps(void)
+ 		0 /* TM2 */ | F(SSSE3) | 0 /* CNXT-ID */ | 0 /* Reserved */ |
+ 		F(FMA) | F(CX16) | 0 /* xTPR Update */ | F(PDCM) |
+ 		F(PCID) | 0 /* Reserved, DCA */ | F(XMM4_1) |
+-		F(XMM4_2) | F(X2APIC) | F(MOVBE) | F(POPCNT) |
++		F(XMM4_2) | EMUL_F(X2APIC) | F(MOVBE) | F(POPCNT) |
+ 		0 /* Reserved*/ | F(AES) | F(XSAVE) | 0 /* OSXSAVE */ | F(AVX) |
+ 		F(F16C) | F(RDRAND)
+ 	);
+-	/* KVM emulates x2apic in software irrespective of host support. */
+-	kvm_cpu_cap_set(X86_FEATURE_X2APIC);
  
-+#undef kvm_cpu_cap_init
-+#undef KVM_VALIDATE_CPU_CAP_USAGE
-+#define KVM_VALIDATE_CPU_CAP_USAGE(name)
-+
- struct kvm_cpuid_array {
- 	struct kvm_cpuid_entry2 *entries;
- 	int maxnent;
+ 	kvm_cpu_cap_init(CPUID_1_EDX,
+ 		F(FPU) | F(VME) | F(DE) | F(PSE) |
+@@ -703,13 +713,13 @@ void kvm_set_cpu_caps(void)
+ 	);
+ 
+ 	kvm_cpu_cap_init(CPUID_7_0_EBX,
+-		F(FSGSBASE) | F(SGX) | F(BMI1) | F(HLE) | F(AVX2) |
+-		F(FDP_EXCPTN_ONLY) | F(SMEP) | F(BMI2) | F(ERMS) | F(INVPCID) |
+-		F(RTM) | F(ZERO_FCS_FDS) | 0 /*MPX*/ | F(AVX512F) |
+-		F(AVX512DQ) | F(RDSEED) | F(ADX) | F(SMAP) | F(AVX512IFMA) |
+-		F(CLFLUSHOPT) | F(CLWB) | 0 /*INTEL_PT*/ | F(AVX512PF) |
+-		F(AVX512ER) | F(AVX512CD) | F(SHA_NI) | F(AVX512BW) |
+-		F(AVX512VL));
++		F(FSGSBASE) | EMUL_F(TSC_ADJUST) | F(SGX) | F(BMI1) | F(HLE) |
++		F(AVX2) | F(FDP_EXCPTN_ONLY) | F(SMEP) | F(BMI2) | F(ERMS) |
++		F(INVPCID) | F(RTM) | F(ZERO_FCS_FDS) | 0 /*MPX*/ |
++		F(AVX512F) | F(AVX512DQ) | F(RDSEED) | F(ADX) | F(SMAP) |
++		F(AVX512IFMA) | F(CLFLUSHOPT) | F(CLWB) | 0 /*INTEL_PT*/ |
++		F(AVX512PF) | F(AVX512ER) | F(AVX512CD) | F(SHA_NI) |
++		F(AVX512BW) | F(AVX512VL));
+ 
+ 	kvm_cpu_cap_init(CPUID_7_ECX,
+ 		F(AVX512VBMI) | RAW_F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
+@@ -728,16 +738,12 @@ void kvm_set_cpu_caps(void)
+ 
+ 	kvm_cpu_cap_init(CPUID_7_EDX,
+ 		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
+-		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
++		F(SPEC_CTRL_SSBD) | EMUL_F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
+ 		F(MD_CLEAR) | F(AVX512_VP2INTERSECT) | F(FSRM) |
+ 		F(SERIALIZE) | F(TSXLDTRK) | F(AVX512_FP16) |
+ 		F(AMX_TILE) | F(AMX_INT8) | F(AMX_BF16) | F(FLUSH_L1D)
+ 	);
+ 
+-	/* TSC_ADJUST and ARCH_CAPABILITIES are emulated in software. */
+-	kvm_cpu_cap_set(X86_FEATURE_TSC_ADJUST);
+-	kvm_cpu_cap_set(X86_FEATURE_ARCH_CAPABILITIES);
+-
+ 	if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_IBRS))
+ 		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL);
+ 	if (boot_cpu_has(X86_FEATURE_STIBP))
 -- 
 2.45.0.215.g3402c0e53f-goog
 
