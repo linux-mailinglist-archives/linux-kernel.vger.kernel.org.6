@@ -1,150 +1,92 @@
-Return-Path: <linux-kernel+bounces-182088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A82E8C8625
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:08:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA568C8621
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B4371C20EFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:08:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8A38B21358
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D11641A89;
-	Fri, 17 May 2024 12:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35345405FC;
+	Fri, 17 May 2024 12:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOf1Vzmu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="uRBsT+Kn"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6423FB2F;
-	Fri, 17 May 2024 12:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B7840BFE;
+	Fri, 17 May 2024 12:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715947685; cv=none; b=L5W1VZkHoO5rB6xLx2KoW5WumMLuskl7MH1/WzEGayge0XXABRu9hsGIrlWpHusQYPNlPhvP18yj5ZjHL3VOQg0bG6ofnKjzBhTPurm5UHhiyHdhxM/lvDfbGuCKNNonpKFdpitvrS5Aklb6Q/V00/Mx/kPZ33SfpWoeKawezyc=
+	t=1715947639; cv=none; b=fbk+ocjwOyZYoX2+g/A96L3HZSBh7PEWjqP+JIPDKwaQVbQyOu1ztMMN0rw3kGalyP1nGb9DsWveyP8ROevElVogBtJ4sN2WzgXadSZQ5R6yK42WE0TamicK5adU3983oIemwNg+7+73bLsUZcdKyYJthXHDthRtGV011tdkV7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715947685; c=relaxed/simple;
-	bh=zC56IzlilEBxkuSnH3rPZXwuKG/OnaJ38XUHw1B6ISc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hklOcumsARoJ3fu9vZ/kezIjLXSDkeihWv4Vc8ogrJWvT54U7MHEC1W92LCtNQvc5UIEuSapRakGYw8P1uVU8NwVxcTqyGnEw+PNzkMSpa/wYPn4zXfO9e4n7CuJBmGMqeRss6sECDdwqzUCYyA48j0BmhsaqcT0YtoxPnW2yHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOf1Vzmu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF0A5C2BD10;
-	Fri, 17 May 2024 12:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715947684;
-	bh=zC56IzlilEBxkuSnH3rPZXwuKG/OnaJ38XUHw1B6ISc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dOf1Vzmu/ZIMNtm7QkjK28wmbTDC0u5Ln9syDWmpSjpV5j3kbBze2RMGlD5KlRVRj
-	 icqj8wW9aJOurtQu5ygXw/V4MLFF4Pg3d/5YaPMKFrApx4eZPQtA2NoWf6Pn8nFKp/
-	 i/edhbu4N48y0eo1ihE2OXZLpsYbpRPNyf53lL939nQbZJe2l3QXmlAMzVxQcsWQVR
-	 1IzNBozJf4eNmNpYZzggcDxSePc+uvkt0Jd/aqMWDDvcH013uc6/DBHkamf+IjAC+d
-	 eZyz8Z7AEiIlmYN4FKZ2zl5xbJ+sDZ+VT5MhrI/2HhN0WlYXHYqxAGLX/ooYK6LU5R
-	 UOLayVxuYYLgg==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Alex Shi <alexs@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Pawel Laszczak <pawell@cadence.com>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	linux-doc@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH] PCI: use array for .id_table consistently
-Date: Fri, 17 May 2024 21:04:58 +0900
-Message-Id: <20240517120458.1260489-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1715947639; c=relaxed/simple;
+	bh=dmMdDLN3YgL1qMEqV22WwccWKGPvTDnUyQtKaq9KA84=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=hBqd8qIV/iznlHZmA/dDHGnXrrhIZsujjpEBp1satUUFbeTrRTVDS9ORwbdTulXIuX/yCucRIBH8L+asCFvuUyzKyGSgH/Dgo87nZgjCTVbKlJ3po5lmxV1a4moBynryN7XfcXE9Tx/U4y8bXPkpAC0jq3YY0+dWNrC77YmALL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=uRBsT+Kn; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1715947634; x=1716552434; i=rwarsow@gmx.de;
+	bh=dmMdDLN3YgL1qMEqV22WwccWKGPvTDnUyQtKaq9KA84=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=uRBsT+KnrKOJInNQPt1GhtEXaecdNjniEjuZR3tahHz4abQ8zSd/Jvo5+4NA61uY
+	 53+lRtNL0dhHOCYTFDXJJSjP5zBopw0BGL37wUe99xT2OsiDhZqkoWPnkcsQGcbqd
+	 0lxCJP4IjvdccvfbqE9DQTZSvLVzIBxSmkPJoQbryeB3GqWCAa5HqXrGFL06ylN1g
+	 NTk6Mlz78eGU7VnVeoAH6VIfuB3jg42kcs7+NZKXmbaYCV2ep6FSMebulVm86i/OP
+	 KQ7xVEJcKABjVU5BQE0D4B5lxhBCQnwLibGH/XnX0lbeyKCpijAXR2WzuEk/Y3scr
+	 HJnHxkbJby5dFbgT8w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.100.20] ([46.142.33.192]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mn2aD-1soBzp1veR-00lEfY; Fri, 17
+ May 2024 14:07:14 +0200
+Message-ID: <2f091444-b48c-4170-90ae-c8449ebf66c4@gmx.de>
+Date: Fri, 17 May 2024 14:07:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Ronald Warsow <rwarsow@gmx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Language: de-DE, en-US
+Subject: Re: [PATCH 6.9 0/5] 6.9.1-rc1 review
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:M0+scqx4DmQ6QBqKMm4542s1zUzd0jAHabjxdxqRbkacYXhwxGd
+ NXwu370cS8szVwkzZjkUF1WTM/1B5NjvpxuiFq3jovdH6N/fGUnL8ftsqAz1g/53wYv7lTP
+ 0Kaeic5qFOuLWj7AMJ1otrmJhpfr/RkMEhbMaZKeAKOr9r3knuiqzt0NIVJAQRCheiqvUAC
+ /Zd4gvZP3OPYSZrRsR/fg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:MgLpCTcrkcc=;Qv66Xf4DKyfSCulz+oPVsZxHf4x
+ R00aH6IpPdpmPWD86zEL3EEQckuhXuoeKwjBvkAKYJUje9j+cklUtZz4+L2XyOgi4PYmuU9Dt
+ m5c/AGv0yinW7iUn2P/P6dwPGUeGuzVYu0Yyz4g7DH7tlU0qIpvl5ejYAM3x/NDRn32TT+Kp1
+ CrVtuFUdKbL8BTjf/lGzOfAus1sb1o7v5s1BtMqXtKhTyNTjPsI3+k/+PQLbb0o8sMqsz5rTO
+ k22KWyjXpJh2ABmWcOg8U2n7r7Ui4H9tWfVaqLxooHWWWTSMgKE2JvDopf7iLJcP291lwZM7z
+ InboyNxXA7RrTC43uT6C6d2Wc7WeA/elG22p06aQIse3+jUqwXNoNkFDVvP+lMf2BXlOk93YK
+ rLkF97QImUjkwmRX/POPIz8sjyarzZ6+ZfVkXZvzvsYDl5TK/vN8DBQBnzyzUDrFhWixkwyo8
+ u/MUfUb3fSFzNu9VuMdz54cyzzCaXTj/IFrh/xwKBF7KEeAd6JcObfNwQmdf4PSEonxIKQ1Hf
+ RzqTFmMbS3Igu2cKg/ably84PO+Lju1kgep7p10L6HdnJtkA4PkX2nCAD5D7jAd0tj6/UQkDY
+ QMTGz5HK7QiP6oY3G5/jnsUrSJMgU7iSHBvvKvf5ygqr1coHyBkjoKHKP7dOjBavETOMV5PCp
+ W2PTKsIvACpBLH2OqSWhRMli8N6KMKMghV/2qbdMV+oPsSmHCxVoWJzzOwR+OLXHbGAldfuWO
+ IUZuiDBe5pzkqce0Kp3Oyq0JH6Bt5Im7QUWBh2xsm5d6Yn5g8bQvaXJBPFL3iil2rK72v+eP1
+ rdXypY6RZjRx2rs1tEGEv2OmTx9kGuqA4AcGoi/wb8VuU=
 
-While 'x' and '&x[0]' are equivalent, most of the PCI drivers use the
-former form for the .id_table.
+Hi Greg
 
-Update some drivers and documentation for consistency.
+*no* regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+Thanks
 
- Documentation/PCI/pciebus-howto.rst                    | 2 +-
- Documentation/translations/zh_CN/PCI/pciebus-howto.rst | 2 +-
- drivers/pci/pcie/portdrv.c                             | 2 +-
- drivers/usb/cdns3/cdnsp-pci.c                          | 2 +-
- drivers/usb/gadget/udc/cdns2/cdns2-pci.c               | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/PCI/pciebus-howto.rst b/Documentation/PCI/pciebus-howto.rst
-index a0027e8fb0d0..f344452651e1 100644
---- a/Documentation/PCI/pciebus-howto.rst
-+++ b/Documentation/PCI/pciebus-howto.rst
-@@ -139,7 +139,7 @@ driver data structure.
- 
-   static struct pcie_port_service_driver root_aerdrv = {
-     .name		= (char *)device_name,
--    .id_table	= &service_id[0],
-+    .id_table	= service_id,
- 
-     .probe		= aerdrv_load,
-     .remove		= aerdrv_unload,
-diff --git a/Documentation/translations/zh_CN/PCI/pciebus-howto.rst b/Documentation/translations/zh_CN/PCI/pciebus-howto.rst
-index 65c4301f12cd..c6ffda62af21 100644
---- a/Documentation/translations/zh_CN/PCI/pciebus-howto.rst
-+++ b/Documentation/translations/zh_CN/PCI/pciebus-howto.rst
-@@ -124,7 +124,7 @@ pcie_port_service_unregister取代了Linux驱动模型的pci_unregister_driver
- 
-   static struct pcie_port_service_driver root_aerdrv = {
-     .name		= (char *)device_name,
--    .id_table	= &service_id[0],
-+    .id_table	= service_id,
- 
-     .probe		= aerdrv_load,
-     .remove		= aerdrv_unload,
-diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
-index 14a4b89a3b83..2faca06ff67c 100644
---- a/drivers/pci/pcie/portdrv.c
-+++ b/drivers/pci/pcie/portdrv.c
-@@ -786,7 +786,7 @@ static const struct pci_error_handlers pcie_portdrv_err_handler = {
- 
- static struct pci_driver pcie_portdriver = {
- 	.name		= "pcieport",
--	.id_table	= &port_pci_ids[0],
-+	.id_table	= port_pci_ids,
- 
- 	.probe		= pcie_portdrv_probe,
- 	.remove		= pcie_portdrv_remove,
-diff --git a/drivers/usb/cdns3/cdnsp-pci.c b/drivers/usb/cdns3/cdnsp-pci.c
-index 0725668ffea4..225540fc81ba 100644
---- a/drivers/usb/cdns3/cdnsp-pci.c
-+++ b/drivers/usb/cdns3/cdnsp-pci.c
-@@ -231,7 +231,7 @@ static const struct pci_device_id cdnsp_pci_ids[] = {
- 
- static struct pci_driver cdnsp_pci_driver = {
- 	.name = "cdnsp-pci",
--	.id_table = &cdnsp_pci_ids[0],
-+	.id_table = cdnsp_pci_ids,
- 	.probe = cdnsp_pci_probe,
- 	.remove = cdnsp_pci_remove,
- 	.driver = {
-diff --git a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
-index 1691541c9413..50c3d0974d9b 100644
---- a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
-+++ b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
-@@ -121,7 +121,7 @@ static const struct pci_device_id cdns2_pci_ids[] = {
- 
- static struct pci_driver cdns2_pci_driver = {
- 	.name = "cdns2-pci",
--	.id_table = &cdns2_pci_ids[0],
-+	.id_table = cdns2_pci_ids,
- 	.probe = cdns2_pci_probe,
- 	.remove = cdns2_pci_remove,
- 	.driver = {
--- 
-2.40.1
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
 
