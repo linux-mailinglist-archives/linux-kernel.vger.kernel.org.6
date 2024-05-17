@@ -1,207 +1,99 @@
-Return-Path: <linux-kernel+bounces-182152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0DD08C8760
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:41:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0244B8C8762
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2001D1C20D43
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:41:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6B701F2320B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79675916B;
-	Fri, 17 May 2024 13:40:32 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026A156742;
+	Fri, 17 May 2024 13:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kIYLngtL"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A7C58105;
-	Fri, 17 May 2024 13:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1F151C59;
+	Fri, 17 May 2024 13:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715953232; cv=none; b=FYPqEkF7TF6dHZ2Icnn6Zxsp48EzB4xufjfs+7yrmeFknNo1kPkNhNOjd1JuxGQOjWRQqg2Ip5oXe2OmUmrxoYRM2ji5T9BsxibcC6DQTBfmRnS4zxgqcAxdQSdWSrqsO+VnlfWxUaVs5dlXgDzRpq+mcH6tdaaikPbYyhvz5CA=
+	t=1715953242; cv=none; b=tdkFAJY75DDFloo3ckTLRZ0fqF1VXZK9gMylDqAOrqFeQaeG29oI4dHyBwqlUsD9wfOs9arQkiiqnuC1VnvQaOKWxu2S0SJM2TcB6slNWY+01BN2sycJH71LtgvTRR5ur+inNpkX/6JNJZSDuU3Tf+LOGvDjH+uTEwg1RbZuoqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715953232; c=relaxed/simple;
-	bh=5kgjrijhfGwPzSc5a+g4Ifwj/qoSboNEoSqq9Epsm4U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NiGbLwHRGKEdojtok8W/JP9onfJDQxcjKL7c47SR0IvVppa4rXz8BFrk72ZBa/5UJB5T/HPOpePSbkhBzwqgD4fVfnGuNZR3fThMC0jNndDrylNy8YUaNYc+NIMF+XLmD4phiPxDxyBZr/HWTVQ+kiJbQU+pva9WK7E8iT6Y2Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 72688374EC;
-	Fri, 17 May 2024 13:40:28 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 64E3013A6A;
-	Fri, 17 May 2024 13:40:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iDB6GExeR2Z/BQAAD6G6ig
-	(envelope-from <petr.pavlu@suse.com>); Fri, 17 May 2024 13:40:28 +0000
-From: Petr Pavlu <petr.pavlu@suse.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Petr Pavlu <petr.pavlu@suse.com>
-Subject: [PATCH 2/2] ring-buffer: Fix a race between readers and resize checks
-Date: Fri, 17 May 2024 15:40:08 +0200
-Message-Id: <20240517134008.24529-3-petr.pavlu@suse.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20240517134008.24529-1-petr.pavlu@suse.com>
-References: <20240517134008.24529-1-petr.pavlu@suse.com>
+	s=arc-20240116; t=1715953242; c=relaxed/simple;
+	bh=jRB4DFDYIgGJdog/TnNTKHjvMVc/J5rFjPzWCkUQzpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TPvmrZiH2XiKvldhjkUzFNQXUVVG4whyhMgrAMKeseB8nB8ic8KJ+oZ0SGjjxSEHwuvabU2tGxV2bOJIExFFCMMe8bQLz9a+LBmjeDXXif/zpg0Zwq5lfXpwUICU4nn/amz9e/h35qqAhi1iu6sWhS76BncDDWNm2NQjwEtsX1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kIYLngtL; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=d4NSt8RefTI8xT6Xm8e0JVcpnTT5ymNkrmyBhHQ984g=; b=kIYLngtLoL2ffYbNAMhv6HONKg
+	4mmqTLZ9WVVwTLHprILWTGi5/Qx3fn1ljw8fYqQ1IwygmqEDXwiEEORycT6rxbUFQW0PO1lb5EodD
+	ZufYVGfSwKyq5C1nqG5A/JGfooQk19un/fZlg7FUhJqgMP0q7pkj/5o29ZEj4S1jcgdw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s7xp3-00FZs2-1P; Fri, 17 May 2024 15:40:33 +0200
+Date: Fri, 17 May 2024 15:40:33 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, jiri@resnulli.us, horms@kernel.org,
+	rkannoth@marvell.com, pkshih@realtek.com, larry.chiu@realtek.com
+Subject: Re: [PATCH net-next v19 13/13] MAINTAINERS: Add the rtase ethernet
+ driver entry
+Message-ID: <a11391f3-4bb4-40a1-8060-ed095014ec0e@lunn.ch>
+References: <20240517075302.7653-1-justinlai0215@realtek.com>
+ <20240517075302.7653-14-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 72688374EC
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517075302.7653-14-justinlai0215@realtek.com>
 
-The reader code in rb_get_reader_page() swaps a new reader page into the
-ring buffer by doing cmpxchg on old->list.prev->next to point it to the
-new page. Following that, if the operation is successful,
-old->list.next->prev gets updated too. This means the underlying
-doubly-linked list is temporarily inconsistent, page->prev->next or
-page->next->prev might not be equal back to page for some page in the
-ring buffer.
+On Fri, May 17, 2024 at 03:53:02PM +0800, Justin Lai wrote:
+> Add myself and Larry Chiu as the maintainer for the rtase ethernet driver.
+> 
+> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+> ---
+>  MAINTAINERS | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 94fddfcec2fb..5ee95a083591 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19296,6 +19296,13 @@ L:	linux-remoteproc@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/tty/rpmsg_tty.c
+>  
+> +RTASE ETHERNET DRIVER
+> +M:	Justin Lai <justinlai0215@realtek.com>
+> +M:	Larry Chiu <larry.chiu@realtek.com>
 
-The resize operation in ring_buffer_resize() can be invoked in parallel.
-It calls rb_check_pages() which can detect the described inconsistency
-and stop further tracing:
+There is no indication that Larry Chiu actually did anything with this
+driver. There are no Co-developed: etc. Larry needs to become active
+to maintain this entry. If there are no emails from this address in
+the next few years, the entry will be removed.
 
-[  190.271762] ------------[ cut here ]------------
-[  190.271771] WARNING: CPU: 1 PID: 6186 at kernel/trace/ring_buffer.c:1467 rb_check_pages.isra.0+0x6a/0xa0
-[  190.271789] Modules linked in: [...]
-[  190.271991] Unloaded tainted modules: intel_uncore_frequency(E):1 skx_edac(E):1
-[  190.272002] CPU: 1 PID: 6186 Comm: cmd.sh Kdump: loaded Tainted: G            E      6.9.0-rc6-default #5 158d3e1e6d0b091c34c3b96bfd99a1c58306d79f
-[  190.272011] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.0-0-gd239552c-rebuilt.opensuse.org 04/01/2014
-[  190.272015] RIP: 0010:rb_check_pages.isra.0+0x6a/0xa0
-[  190.272023] Code: [...]
-[  190.272028] RSP: 0018:ffff9c37463abb70 EFLAGS: 00010206
-[  190.272034] RAX: ffff8eba04b6cb80 RBX: 0000000000000007 RCX: ffff8eba01f13d80
-[  190.272038] RDX: ffff8eba01f130c0 RSI: ffff8eba04b6cd00 RDI: ffff8eba0004c700
-[  190.272042] RBP: ffff8eba0004c700 R08: 0000000000010002 R09: 0000000000000000
-[  190.272045] R10: 00000000ffff7f52 R11: ffff8eba7f600000 R12: ffff8eba0004c720
-[  190.272049] R13: ffff8eba00223a00 R14: 0000000000000008 R15: ffff8eba067a8000
-[  190.272053] FS:  00007f1bd64752c0(0000) GS:ffff8eba7f680000(0000) knlGS:0000000000000000
-[  190.272057] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  190.272061] CR2: 00007f1bd6662590 CR3: 000000010291e001 CR4: 0000000000370ef0
-[  190.272070] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  190.272073] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  190.272077] Call Trace:
-[  190.272098]  <TASK>
-[  190.272189]  ring_buffer_resize+0x2ab/0x460
-[  190.272199]  __tracing_resize_ring_buffer.part.0+0x23/0xa0
-[  190.272206]  tracing_resize_ring_buffer+0x65/0x90
-[  190.272216]  tracing_entries_write+0x74/0xc0
-[  190.272225]  vfs_write+0xf5/0x420
-[  190.272248]  ksys_write+0x67/0xe0
-[  190.272256]  do_syscall_64+0x82/0x170
-[  190.272363]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  190.272373] RIP: 0033:0x7f1bd657d263
-[  190.272381] Code: [...]
-[  190.272385] RSP: 002b:00007ffe72b643f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[  190.272391] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f1bd657d263
-[  190.272395] RDX: 0000000000000002 RSI: 0000555a6eb538e0 RDI: 0000000000000001
-[  190.272398] RBP: 0000555a6eb538e0 R08: 000000000000000a R09: 0000000000000000
-[  190.272401] R10: 0000555a6eb55190 R11: 0000000000000246 R12: 00007f1bd6662500
-[  190.272404] R13: 0000000000000002 R14: 00007f1bd6667c00 R15: 0000000000000002
-[  190.272412]  </TASK>
-[  190.272414] ---[ end trace 0000000000000000 ]---
+Part of being listed as Maintainer is showing you actually know how to
+be a Maintainer, know the code, know the processes, give useful
+feedback, and so build a level of respect with the community. So
+please be active with respect to this.
 
-Note that ring_buffer_resize() calls rb_check_pages() only if the parent
-trace_buffer has recording disabled. Recent commit d78ab792705c
-("tracing: Stop current tracer when resizing buffer") causes that it is
-now always the case which makes it more likely to experience this issue.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-The window to hit this race is nonetheless very small. To help
-reproducing it, one can add a delay loop in rb_get_reader_page():
-
- ret = rb_head_page_replace(reader, cpu_buffer->reader_page);
- if (!ret)
- 	goto spin;
- for (unsigned i = 0; i < 1U << 26; i++)  /* inserted delay loop */
- 	__asm__ __volatile__ ("" : : : "memory");
- rb_list_head(reader->list.next)->prev = &cpu_buffer->reader_page->list;
-
-. and then run the following commands on the target system:
-
- echo 1 > /sys/kernel/tracing/events/sched/sched_switch/enable
- while true; do
- 	echo 16 > /sys/kernel/tracing/buffer_size_kb; sleep 0.1
- 	echo 8 > /sys/kernel/tracing/buffer_size_kb; sleep 0.1
- done &
- while true; do
- 	for i in /sys/kernel/tracing/per_cpu/*; do
- 		timeout 0.1 cat $i/trace_pipe; sleep 0.2
- 	done
- done
-
-To fix the problem, make sure ring_buffer_resize() doesn't invoke
-rb_check_pages() concurrently with a reader operating on the same
-ring_buffer_per_cpu by taking its cpu_buffer->reader_lock.
-
-Fixes: 659f451ff213 ("ring-buffer: Add integrity check at end of iter read")
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
----
- kernel/trace/ring_buffer.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 0ae569eae55a..967655591719 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1449,6 +1449,11 @@ static void rb_check_bpage(struct ring_buffer_per_cpu *cpu_buffer,
-  *
-  * As a safety measure we check to make sure the data pages have not
-  * been corrupted.
-+ *
-+ * Callers of this function need to guarantee that the list of pages doesn't get
-+ * modified during the check. In particular, if it's possible that the function
-+ * is invoked with concurrent readers which can swap in a new reader page then
-+ * the caller should take cpu_buffer->reader_lock.
-  */
- static void rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
- {
-@@ -2200,8 +2205,13 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
- 		 */
- 		synchronize_rcu();
- 		for_each_buffer_cpu(buffer, cpu) {
-+			unsigned long flags;
-+
- 			cpu_buffer = buffer->buffers[cpu];
-+			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
- 			rb_check_pages(cpu_buffer);
-+			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock,
-+						   flags);
- 		}
- 		atomic_dec(&buffer->record_disabled);
- 	}
--- 
-2.35.3
-
+    Andrew
 
