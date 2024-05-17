@@ -1,259 +1,151 @@
-Return-Path: <linux-kernel+bounces-181946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189EE8C83FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:40:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51E88C83FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C306E28447C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:39:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F5E1F23E63
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7CE2D044;
-	Fri, 17 May 2024 09:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906C6364AB;
+	Fri, 17 May 2024 09:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fx/jV5PU"
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ye47qP03"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1559F2C68C
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816FA29437;
+	Fri, 17 May 2024 09:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715938755; cv=none; b=rcP8JrRu+Si5LS0pKNOgRJfMFt8TrVI5M+Dscm82nBREzc8PptbEy9BZvtAjQi7WfIMiPaLPxFgRpkKOySZIrGnwXm2DR+x7wXGyQ1Au1IEFRDju6ZJHskOlKfTkc3vYFU4/nSCrsXkm4n2VSwQmHYIz4UdYZV6yUKadWf5y3rU=
+	t=1715938770; cv=none; b=d6muNwFyiBMVqsrLO4zU3U/GBKhGDyu5wGHJoxHkpwwUH2qRxwdXLi+ZzklGnXlJl8Ozriku5zHtCrdIZn178vSgCwtwHDOvEwcwBzShrjqJtolo/XOnK/jt4IYX9IyZf/crdvrpB55EOfbFaa8hpKvbtLY0cCZZZ2Df2yyN+h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715938755; c=relaxed/simple;
-	bh=vwMdcDIQvua8QfAz0KCBvSIyqK+oD1woVdY8EEgI43A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j/eBk2Z51FPAyOxZsti6WGCpZmx9lvI6o7Yq0V+eMbsx13X9lfg47ZSGxjnULBp5/jhKNpfatEwAVDq9hQfgYvPz9Oz/cHB6X+otI2F5n1cq0ilUq1NtBDuz3/IFXf3gEOJY8NSdFATK/rYgfyw2NcTDMLTYlaYfrdbnhlp2/oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fx/jV5PU; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-47f3e985a84so3165629137.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 02:39:12 -0700 (PDT)
+	s=arc-20240116; t=1715938770; c=relaxed/simple;
+	bh=FdikcfHL3VvTqnXtwWMqag4N1YbLOOeOD0V2nQdPNQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EVNMqapCJViU1KL29TCDW8oq0DuPGPOfKoyxH8eIXRD8ezk2yvUJi7at3X+o75pwUBuwvhdovQqMggBNEao8bLv49OuWIBjtkDOYxMUYubszUu1f5Ke9mEJgOQYoAT7H4mq3xJRsjo6apvCPXAayjUgUvqweqZbWQZwRAdHGK6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ye47qP03; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f447976de7so1036227b3a.1;
+        Fri, 17 May 2024 02:39:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715938752; x=1716543552; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FuD+vaTVxp4rifybaa+fTKWXuMMvJfia8QWk97uGpDQ=;
-        b=Fx/jV5PUOOz64lpbJ+yW8NS172NgmydL28FAP3u/DLt+fl2CA+zgGn72Wqyj7GTq8Z
-         bqeb5rMwbDqhqM9UcHsJ3O4bn/ck4u+F+hXNx5TYVomkc2/5u6KxCbbs6NvEOhXBS/lm
-         RTrplPQ0EjLCtvXxF9YzSmAH82OR6mBsfx2g4nP1DcLcr4dfcmD7HFZrhhZYjqnlSt2D
-         APXeJulOcG0LBf+F4cfSGs4gyAyToYFjw7CgYzf4EBfgJ0H9VD8pC2w8ZllTNkKw2vOL
-         q5v5I71NUWliPZPrAakcTjXUQBC23Uh+RUMlo0kyt3pHlFfKnwi+HkU4Zaumb+tJjOaf
-         u+UA==
+        d=gmail.com; s=20230601; t=1715938769; x=1716543569; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oc2uBF5T8zF0ET39Oe1WycC/ZOj2j52tx2g3ICPIqhc=;
+        b=Ye47qP03UeNAi1abK03b8u+TBFf79HKQTMEQ+5uBfW+lBYNEGKUF6XWRTtOXhWIesK
+         TprhhDpCPnOwjuvWzILrD19rjiN29Cc0bR6TNzBtzVh+705Ni6ie5I/l4NHi4LboJfZ7
+         cawJ7JxZXpzGf8Rr4FlI46++hdo2N4OdvJRIvMFICC26SItkhltr2eeWiUbxG0SMnDWw
+         Ke8pGnONVXKmIMUM8qBsQIsfH3oVKEs91tNO7ONuc2az7qH4KUVKpSbRCQtEjRVN4TDR
+         p4ZjCYnkQVKyycuejXaPE6Qa8BmQLsmNmi1I8LWeIWpd0obvn1ShYDGweVaS5hre0Ni4
+         xi1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715938752; x=1716543552;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FuD+vaTVxp4rifybaa+fTKWXuMMvJfia8QWk97uGpDQ=;
-        b=YHLVp+nHU4aCcy6flvbUTxhMRJ6b9R6TMaLfTDuf4Z3S9kQyd5bf+v8T/64kbHlGCp
-         tW7RSn0JLmU9h7PZ1WB8eYw8rKet0oilULTEpTaSY5cD9JtIv5trsVK9G0SEscxvM5Q9
-         OlMeuoWCYfT7ytC1KB0CEbi9KNmmUS6mg5hqu5TJymmzxwji5G9rDvUgCe9w5ynNnzXP
-         ufCNEQOS0R+QJZ+ZcHiANP/XUQd43QBN5rwfh2C8jpTtiNd9Wf+yBuPdta9rDhRCJvI2
-         5qRNGoCYpFwaAcAQ5NxUvVPLaze6ioSWQMXAzGWRjEXXC2kpqdx8Jw5lJ7mp84XoyjNJ
-         TqLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVUqawWggzcBeTkc4tZbX2MZ7hG7ZF5kr1lRBJg0FqS/bF3qbYEsf4aox8i8WcQg6R2ld569qpciFl5rC+1u5+rRKmQJvjqJIO44DH
-X-Gm-Message-State: AOJu0YyKMQOTEZTs7QLX83BFThfva7KIjR0Nqualk5wClybFLPqZNmPJ
-	U/xPgWlmJLKA12Tzv/phsXwJFF1Pid6gQtcGdoV6/fSpPdoiVXk9NHvRy7OuCv18EVzNv+l2miD
-	Pw1SQjoMb5UcRrTzC/up7Mx+G3opC4l5RD2pQ1g==
-X-Google-Smtp-Source: AGHT+IHrWpEjQ4MuHn+1UCMXMvxo6TPAysFNBFiBtwi3VvVlxttL5ISqmS+xmbCxdfUzOtLRd9U5BMTsS7DqrGFH434=
-X-Received: by 2002:a05:6102:38cb:b0:47b:bea0:bdf7 with SMTP id
- ada2fe7eead31-48077e8625cmr21291823137.27.1715938751847; Fri, 17 May 2024
- 02:39:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715938769; x=1716543569;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oc2uBF5T8zF0ET39Oe1WycC/ZOj2j52tx2g3ICPIqhc=;
+        b=U+WA/auREFL/IgxbVVycvuK+WhYKUcDt3Qm1Ee/EqHndA3i4k9FJvfgK0WfI79ItPB
+         Uhtwsir3CuMTyXGQt+Kf7CganxCfe6xsHEHJ8kmzfkYqvH4pB+MsGRn2pVAd+WIROPS5
+         rjm6es0hbX5jXlIJRV3YXpTA+CopwacQmIoP9zQxmvSXGA6uXa+O+YxppXcnuxc8DaiC
+         dkBBWGhKyaRxq4f9geiIfUpjwbScgutyp7zziYSufjoESqs6XpcUPJfHFVXZts4tdenr
+         wBLHAkoYMN0U32JQUfYJNLJcOAbCt+JUmMAMLnwGjROqolMZyCfjmhtIAj0ruVr59kRa
+         pECg==
+X-Forwarded-Encrypted: i=1; AJvYcCWipro9a0kxW93lxofLqT7lvlDes1qtMwfr+oZYuFb/hgADc/fqttPlWx9KH4RzJk8o92ZRYGgR2Xx5bw3HFrKJ91zAQs2Bcmp+KRIhh8v0TKW855xAxWPaGmzYXPLLpgZBKn9rTMaCrA==
+X-Gm-Message-State: AOJu0YxJrXK6Pm2EoCw08OOzNc38MOhaZTqlxcop9lbEzNbVpYINGlIV
+	T/xkIrpwG6Rup7bibPZSB7+ua+BPqc9lKoRF84qXTYKyrvRxVt1H
+X-Google-Smtp-Source: AGHT+IFPhSxDqxZRvQG9PjdOXJJT7QyE9XyM8BeWhaaq1lU2bP5iBoGBO8qiVU1mcasmMzIpmmILgA==
+X-Received: by 2002:a05:6a00:2195:b0:6ec:db05:36c3 with SMTP id d2e1a72fcca58-6f4e029bb2bmr21169676b3a.4.1715938768667;
+        Fri, 17 May 2024 02:39:28 -0700 (PDT)
+Received: from rigel (60-241-107-82.static.tpgi.com.au. [60.241.107.82])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af2a77sm14883698b3a.144.2024.05.17.02.39.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 02:39:28 -0700 (PDT)
+Date: Fri, 17 May 2024 17:39:22 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Hagar Hemdan <hagarhem@amazon.com>
+Cc: Norbert Manthey <nmanthey@amazon.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] gpio: prevent potential speculation leaks in
+ gpio_device_get_desc()
+Message-ID: <20240517093922.GA337309@rigel>
+References: <20240517090904.22812-1-hagarhem@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516121335.906510573@linuxfoundation.org>
-In-Reply-To: <20240516121335.906510573@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 17 May 2024 11:38:59 +0200
-Message-ID: <CA+G9fYvG=8z_8+zuOaWVSW7_XZFGuGTxsLY_wzy33S8SL990gA@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/308] 6.6.31-rc3 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517090904.22812-1-hagarhem@amazon.com>
 
-On Thu, 16 May 2024 at 14:15, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Fri, May 17, 2024 at 09:09:04AM +0000, Hagar Hemdan wrote:
+> Users can call the gpio_ioctl() interface to get information about gpio
+> chip lines.
+> Lines on the chip are identified by an offset in the range
+> of [0,chip.lines).
+> Offset is copied from user and then used as an array index to get
+> the gpio descriptor without sanitization.
 >
-> This is the start of the stable review cycle for the 6.6.31 release.
-> There are 308 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> This change ensures that the offset is sanitized by
+> "using array_index_nospec" to mitigate any possibility of speculative
+> information leaks.
 >
-> Responses should be made by Sat, 18 May 2024 12:12:33 +0000.
-> Anything received after that time might be too late.
+
+This could better describe the problem.  I'm still not 100% sure I
+understand it, so it would be great if the comment could clarify it,
+specifically what "speculation leaks" means.
+
+And when referencing functions use (), so array_index_nospec(), rather
+than quotes.
+
+> This bug was discovered and resolved using Coverity Static Analysis
+> Security Testing (SAST) by Synopsys, Inc.
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.31-rc3.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
+> Fixes: aad955842d1c ("gpiolib: cdev: support GPIO_V2_GET_LINEINFO_IOCTL and GPIO_V2_GET_LINEINFO_WATCH_IOCTL")
+
+This is not the correct commit(s) - the bug would've been present in the
+character device uAPI since it was first added.
+In fact two out of three places you patched in v1 pre-date this commit.
+
+> Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
+> ---
+> v2: call array_index_nospec() after the bounds check.
+> ---
+>  drivers/gpio/gpiolib.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> thanks,
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index fa50db0c3605..b58e4fe78cec 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/list.h>
+>  #include <linux/lockdep.h>
+>  #include <linux/module.h>
+> +#include <linux/nospec.h>
+>  #include <linux/of.h>
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/seq_file.h>
+> @@ -201,7 +202,7 @@ gpio_device_get_desc(struct gpio_device *gdev, unsigned int hwnum)
+>  	if (hwnum >= gdev->ngpio)
+>  		return ERR_PTR(-EINVAL);
 >
-> greg k-h
+> -	return &gdev->descs[hwnum];
+> +	return &gdev->descs[array_index_nospec(hwnum, gdev->ngpio)];
+>  }
+>  EXPORT_SYMBOL_GPL(gpio_device_get_desc);
+>
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+That makes more sense to me, so I no problem with the code change.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.6.31-rc3
-* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
-* git branch: linux-6.6.y
-* git commit: 2379391bdb9dd9e503c33379d81b96ea5ed321a8
-* git describe: v6.6.30-309-g2379391bdb9d
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.3=
-0-309-g2379391bdb9d
-
-## Test Regressions (compared to v6.6.30)
-
-## Metric Regressions (compared to v6.6.30)
-
-## Test Fixes (compared to v6.6.30)
-
-## Metric Fixes (compared to v6.6.30)
-
-## Test result summary
-total: 173996, pass: 150566, fail: 2409, skip: 20778, xfail: 243
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 129 total, 129 passed, 0 failed
-* arm64: 38 total, 38 passed, 0 failed
-* i386: 29 total, 29 passed, 0 failed
-* mips: 24 total, 24 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 34 total, 34 passed, 0 failed
-* riscv: 17 total, 17 passed, 0 failed
-* s390: 12 total, 12 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 33 total, 33 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-android
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-drivers-dma-buf
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-ir
-* kselftest-kcmp
-* kselftest-kexec
-* kselftest-kvm
-* kselftest-lib
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-memory-hotplug
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mount
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-forwarding
-* kselftest-net-mptcp
-* kselftest-netfilter
-* kselftest-nsfs
-* kselftest-openat2
-* kselftest-pid_namespace
-* kselftest-pidfd
-* kselftest-proc
-* kselftest-pstore
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-splice
-* kselftest-static_keys
-* kselftest-sync
-* kselftest-sysctl
-* kselftest-tc-testing
-* kselftest-timens
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kselftest-zram
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-cap_bounds
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-filecaps
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-io
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-securebits
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Cheers,
+Kent.
 
