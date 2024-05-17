@@ -1,194 +1,114 @@
-Return-Path: <linux-kernel+bounces-182306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4E68C8977
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:41:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE0D8C8979
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5814286678
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:41:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B751286DCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7223F12F583;
-	Fri, 17 May 2024 15:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D4512F597;
+	Fri, 17 May 2024 15:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efgBE+zA"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="oCzD0Rda"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5248112F5A9;
-	Fri, 17 May 2024 15:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8943E12F58E
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715960439; cv=none; b=dRKzplkEDPpCA66HGRt+ycJIpdfq7BL615PN4n4lij8Bl+n5b3MvbtCLT9x1A+DL8gV04ybQixNI5rLtjXMXh44KdKyhaz0MbkSUyNK75TrMqSCh2hZQTz8vQbrm+bZ0SBhgxEED+KjsPsPH2kKWiWww+kFb19AMYFhIaTqwOVQ=
+	t=1715960463; cv=none; b=DnWuaJ+PnL4+O18CChslD8konsuLMVkybEAPuVaaef+d134qPPbCqeqcwl0Qr1xoibJV/k9nx0mV38iOMg/zmjN50ZP8K0Otv1xOgRIcjTsWQKc9aOYcmHmzhfl0RkIJuR70ijnusvaJH/o2n18BWo24H/N0VJBuDwgivw3paZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715960439; c=relaxed/simple;
-	bh=iNsDA5SLvPhu0JbRwQ06u+xbMDVE3hHQVYQf02Bb1H0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tyUA5M+cTPveD5vGrb3UicsbPxY8cq9aMc1HHu+VMWba5D/gI16FGOEFA4JqzZ/Z6zolGk9G0ygz41FNebho8KIhCeLyApB3ypgcGcKd75F8fs40HZEXTlGwYSkx8XpluHAAOGl6ay0IJ4wPYZVzJtAo0Wn1OZ4z7SUI79hs0Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=efgBE+zA; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-1eb0e08bfd2so12868965ad.1;
-        Fri, 17 May 2024 08:40:38 -0700 (PDT)
+	s=arc-20240116; t=1715960463; c=relaxed/simple;
+	bh=kbohzPnLDgM7IQeXd/1NEXoC927SZZmUiT2bGewMcxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qI6fv8pKqYmgLcAy/ToUKiX+spRp/UXxdIGP7x7G4QEsnwA5VV6lNeA6faNwCLSJ1Y81Wnhq3k6ALD9ibMNDBJWmYQ/f1NoCN70mHFLyuG1RWTPDNXbXqHVVkCC7gYicQ8mKFmNfJ2wIkh/z53/GvZecKqGuMyiw5z+594JNkwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=oCzD0Rda; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e576057c2bso31818971fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 08:41:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715960437; x=1716565237; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KeBHstQjIre4Wfpl7kdLCjbinS3o2KJnHNzvvNjFeMA=;
-        b=efgBE+zAOPgMAKpKlPDdN+a1doIdMBMnA5PCJe5gL/1y8bYfNlHc06+ssAStNXrvpN
-         /xuInGfFxot7ehI8gDm7OdWH/7EGSa+FbNwk5C4DG5Jc2rAwEDYGEu10gFKgH1YbFcJX
-         uINa+/7EWO2WDBPqSzG0RJhVrPq54daq6VdxFqqEtNDXFeIx4RQwk9Yla5TXOnBIKkVS
-         /yXgxp4oJsTT+2G/8nKPeVrxgCoRZ/phmZSjWv9Ahb+Odu5ZJOfFwL5LgPRdMU5yPKXZ
-         p8/o4ze3yJyXY4emVi33GM5Xr5Zw+PlXhJ7pgWm5VlFg5umQJWt59UQyFw0SAbsxhoaF
-         5y0g==
+        d=szeredi.hu; s=google; t=1715960458; x=1716565258; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g3uvQyOXC6DzeBtn7J3OOKoxKJZ1WzPonWgDGOVCz4o=;
+        b=oCzD0Rda1SfrLYY31uuo5837EUhU6svEFFk/AHonTFSyLOHE/AmTA2L3S6Eu7V6Lxy
+         bNBd/Hf21+V+sx7LMrpwnyeM8bPy4aTQWvQsRg3ZNhmJbFBOwdi0f3y8HLrxafGcDRb9
+         q7JGTolMM9Iow49uIoXknaQhSesfe8+vagEes=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715960437; x=1716565237;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KeBHstQjIre4Wfpl7kdLCjbinS3o2KJnHNzvvNjFeMA=;
-        b=BuXnFlWVr+UD+awvsJlTkkdw1w8TbSr+UBU7+JWUEBTKJkACFtIBsD9M4cN3tCR6Ta
-         KgQ5uM805FO2tG4EOmY1GsGFxXBcr5kBwXCRRv2XBxlV7HvvOSr96SVYafooPnKfx/Uj
-         f8Qwz1vFOofGkEsAOkZZ4mjAaCn4qJ4l7lQ0QNfW81z6BD3CYpEt4E0deXQ6+rQp3HJt
-         GGoE05nIlqs2woojCHSQhO0aNPHBp2HazNuvfOAft2CCY2f8Ixrcut8iBYc4Hb9KEIw+
-         Uh9bSJlySEosTuMly5M8TCjGX7iSrnWQAVdW0Xp6Tw/QgdelT3bLRrVerDpX7iBNGS9T
-         ClOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIFZ5nUeLzRHcqOmXiJFh+0vLGKB3jaDddPJ9bPdZTUWfUAF0WOkHk/vgA5kt3CxNHM061og0Zjz2uC2JRQZRCQyff3Uiml4ngdwbUv8tG1XwaAVe8K1p4jWhAOR4ryV1Xsu8DykkyUOdN+TI4MXyGdxY+S6SYoizs
-X-Gm-Message-State: AOJu0YxTD2v+vRZouAMyfMN4mUmvBjDALfGypfdXoJaw3D42pKp6E0po
-	zwG7GPp7Wv/e+vRJg2IzOYLwHHSTe953e6NU+XMTgmyfytflrZY4
-X-Google-Smtp-Source: AGHT+IFAxssLZ3RlB8pKZO/643cGL8ZseaQ/GUvaESDKuEXqQJ08vNFDKkMH7OAtEz24bk4QezyrPA==
-X-Received: by 2002:a05:6a00:1824:b0:6ec:ff1b:aa0b with SMTP id d2e1a72fcca58-6f4e02d3698mr24977798b3a.18.1715960437452;
-        Fri, 17 May 2024 08:40:37 -0700 (PDT)
-Received: from localhost.localdomain ([2409:8a00:26be:370:d9bb:b9a0:16e:48c8])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f66e4bed05sm6328779b3a.100.2024.05.17.08.40.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 08:40:37 -0700 (PDT)
-From: Fred Li <dracodingfly@gmail.com>
-To: dracodingfly@gmail.com
-Cc: andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	davem@davemloft.net,
-	john.fastabend@gmail.com,
-	kafai@fb.com,
-	kpsingh@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	songliubraving@fb.com,
-	yhs@fb.com
-Subject: [PATCH] test_bpf: Add an skb_segment test for a non linear frag_list whose head_frag=1 and gso_size was mangled
-Date: Fri, 17 May 2024 23:40:28 +0800
-Message-Id: <20240517154028.70588-1-dracodingfly@gmail.com>
-X-Mailer: git-send-email 2.32.1 (Apple Git-133)
-In-Reply-To: <20240515144313.61680-1-dracodingfly@gmail.com>
-References: <20240515144313.61680-1-dracodingfly@gmail.com>
+        d=1e100.net; s=20230601; t=1715960458; x=1716565258;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g3uvQyOXC6DzeBtn7J3OOKoxKJZ1WzPonWgDGOVCz4o=;
+        b=xLOzYtRVHwDOUsPQ73edvsUrWukYAAL3Tm04fktv3f/7hMA8bw4YJkX+tZp2rZuJ9T
+         lBGzyJG4IFECf7wSHjBmqtzLuE7Wuu/phM4TrdvVus1DhqFY1+ZF6hrpEnmbaVfWazSz
+         89UZrN7Hw6pJYkRqviiLaWf/cCbP9NHOR7mpugj8Wc/118W1J1d5M9BSr50/lBL0tghA
+         5t4ge4v7nP2YqCpzLabeUcUwtYNJ0W77ea01fGMRT6EB7XZU40jiNrnvTmD+j1UaLcPl
+         lyulGUxghOBeoFZEj1F9ANzK1yQaoTNQlPicb90ZeutUQsWDX6aAO/SDHtTxmIRsRhHM
+         D/FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSgs2lnhiR1gKJXkAR2ts9hngUpM6KwbYYVOOvqvFiYmpUgVp+KJ5W/URb4aDrqAWB6frWHbPBX7vqlwBy1qSWrbLgCq+iyRFh7qwI
+X-Gm-Message-State: AOJu0YzR0oxLb72b1tEB3ENeMmO/NBkIOMkZNzKh2Ul83wGkU+vyZVhO
+	kiyniLek/aY0SuWBZRvI6I+YBIMESOpbWrYgrp967/PljnQ5mmwZVdom+Xfyl7F1vTOXO7xmTee
+	bifT8LxmfT/fi81NG38j3xo+63G961Ztjk9POcQ==
+X-Google-Smtp-Source: AGHT+IHIxRZ5GfZcmKjumiPucJds6t+FhJ8wB4Mamt8S570wQWI0fT8nNgPZioDyP96HF/02QrdoeGI3bfESt/M+OG0=
+X-Received: by 2002:a2e:d09:0:b0:2e5:2eaf:b09c with SMTP id
+ 38308e7fff4ca-2e52eafb202mr168442591fa.37.1715960458664; Fri, 17 May 2024
+ 08:40:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <000000000000141e8306185a0daa@google.com>
+In-Reply-To: <000000000000141e8306185a0daa@google.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 17 May 2024 17:40:47 +0200
+Message-ID: <CAJfpegtwuOgundfkCdh4c4-scJjBEgHjNzJ8Vq2VUxjxWWQPHQ@mail.gmail.com>
+Subject: Re: [syzbot] [overlayfs?] WARNING in ovl_workdir_create (3)
+To: syzbot <syzbot+8aa3f99a6acb9f8fd429@syzkaller.appspotmail.com>
+Cc: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The patch was based on kernel 6.6.8, the skb properties as
-mentioned in [1]. This test will cause system crash without
-the patch described in [1].
+On Mon, 13 May 2024 at 20:28, syzbot
+<syzbot+8aa3f99a6acb9f8fd429@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    45db3ab70092 Merge tag '6.9-rc7-ksmbd-fixes' of git://git...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=169b934c980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2f7a2b43b9e58995
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8aa3f99a6acb9f8fd429
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/0c2a8034002c/disk-45db3ab7.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/807e35e2b3a9/vmlinux-45db3ab7.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/4868b2eab91a/bzImage-45db3ab7.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+8aa3f99a6acb9f8fd429@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff888077f311f0, owner = 0x0, curr 0xffff8880787ebc00, list empty
 
-[1] https://lore.kernel.org/netdev/20240515144313.61680-1-dracodingfly@gmail.com/
+This is lock corruption on the upper filesystem, definitely not an
+overlayfs issue.
 
-Signed-off-by: Fred Li <dracodingfly@gmail.com>
----
- lib/test_bpf.c | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+#syz unset subsystems
 
-diff --git a/lib/test_bpf.c b/lib/test_bpf.c
-index ecde42162..a38d2d09c 100644
---- a/lib/test_bpf.c
-+++ b/lib/test_bpf.c
-@@ -14706,6 +14706,63 @@ static __init struct sk_buff *build_test_skb_linear_no_head_frag(void)
- 	return NULL;
- }
- 
-+static __init struct sk_buff *build_test_skb_head_frag(void)
-+{
-+	u32 headroom = 192, doffset = 66, alloc_size = 1536;
-+	struct sk_buff *skb[2];
-+	struct page *page[17];
-+	int i, data_size = 125;
-+	int j;
-+
-+	skb[0] = dev_alloc_skb(headroom + alloc_size);
-+	if (!skb[0])
-+		return NULL;
-+
-+	skb_reserve(skb[0], headroom + doffset);
-+	skb_put(skb[0], data_size);
-+	skb[0]->mac_header = 192;
-+
-+	skb[0]->protocol = htons(ETH_P_IP);
-+	skb[0]->network_header = 206;
-+
-+	for (i = 0; i < 17; i++) {
-+		page[i] = alloc_page(GFP_KERNEL);
-+		if (!page[i])
-+			goto err_page;
-+
-+		skb_add_rx_frag(skb[0], i, page[i], 0, data_size, data_size);
-+	}
-+
-+	skb[1] = dev_alloc_skb(headroom + alloc_size);
-+	if (!skb[1])
-+		goto err_page;
-+
-+	skb_reserve(skb[1], headroom + doffset);
-+	skb_put(skb[1], data_size);
-+
-+	/* setup shinfo */
-+	skb_shinfo(skb[0])->gso_size = 75;
-+	skb_shinfo(skb[0])->gso_type = SKB_GSO_TCPV4;
-+	skb_shinfo(skb[0])->gso_type |= SKB_GSO_UDP_TUNNEL|SKB_GSO_TCP_FIXEDID|SKB_GSO_DODGY;
-+	skb_shinfo(skb[0])->gso_segs = 0;
-+	skb_shinfo(skb[0])->frag_list = skb[1];
-+	skb_shinfo(skb[0])->hwtstamps.hwtstamp = 1000;
-+
-+	/* adjust skb[0]'s len */
-+	skb[0]->len += skb[1]->len;
-+	skb[0]->data_len += skb[1]->len;
-+	skb[0]->truesize += skb[1]->truesize;
-+
-+	return skb[0];
-+
-+err_page:
-+	kfree_skb(skb[0]);
-+	for (j = 0; j < i; j++)
-+		__free_page(page[j]);
-+
-+	return NULL;
-+}
-+
- struct skb_segment_test {
- 	const char *descr;
- 	struct sk_buff *(*build_skb)(void);
-@@ -14727,6 +14784,13 @@ static struct skb_segment_test skb_segment_tests[] __initconst = {
- 			    NETIF_F_LLTX | NETIF_F_GRO |
- 			    NETIF_F_IPV6_CSUM | NETIF_F_RXCSUM |
- 			    NETIF_F_HW_VLAN_STAG_TX
-+	},
-+	{
-+		.descr = "gso_with_head_frag",
-+		.build_skb = build_test_skb_head_frag,
-+		.features = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_GSO_SHIFT |
-+			    NETIF_F_TSO_ECN | NETIF_F_TSO_MANGLEID | NETIF_F_TSO6 |
-+			    NETIF_F_GSO_SCTP | NETIF_F_GSO_UDP_L4 | NETIF_F_GSO_FRAGLIST
- 	}
- };
- 
--- 
-2.33.0
-
+Thanks,
+Miklos
 
