@@ -1,137 +1,117 @@
-Return-Path: <linux-kernel+bounces-182005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912648C84FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:41:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89DA18C8500
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 461C9281E76
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:41:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33F19281F0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485523AC2F;
-	Fri, 17 May 2024 10:41:32 +0000 (UTC)
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD133AC01;
+	Fri, 17 May 2024 10:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="W5yVvBpd"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E093BBD6;
-	Fri, 17 May 2024 10:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81CB39AEA
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715942491; cv=none; b=ITlZ6vHYSXsJGkkKRvn4ArNZuwzkJ+8Y59DNhOO7Qkf840PagJYR1jHFG8Ee18loQMoPUIlXXGh9BoOP83C2KLE9UsTI9HG7xwlLTbPzoFfo7eMbC2quGgh2+of1a7kZmjoqu7JX8Rh2G4ZhUOTXuHPPda7b3oKDCx0+Wq1h/6E=
+	t=1715942534; cv=none; b=tmzF1tFyCiUVRRXE61kTmo67tqguLpYpWnTuV4gP1opcMJqQiqAebysqtSvqHrPN5qtu4LckfPranU43EnBAicg8KjKal3UtSauiN62d7ezdso0atOo3eVqVCTYgXPoWgnYduBKzMOAnlCY/1QXeMb4T9Zxx+yknDmCpGXp/XUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715942491; c=relaxed/simple;
-	bh=k3G9L96yDt5S3vX+qLFsoaeZaw/80iveTPwMckiRdjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IRGW5nSAJ/XEIsyIWzxhdPsubOaJyHhczXh+BJQRaCmFbmRkpGVPzkOuQemg56YtLqiNwXYZGuT3Xzwh9n8PptGEATCrlDigCScKU9uZwodflUo2GY5lLTxrySDsLg4xocXzR1b+VPjTitBX1f/JuDJ9OQJmJ9xhoPCV0P2eOyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5b2733389f9so662135eaf.1;
-        Fri, 17 May 2024 03:41:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715942489; x=1716547289;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1715942534; c=relaxed/simple;
+	bh=Tn3gqGvORrVVvUWeX/AlaSoh4Q4PaVl79FZuGUvXRVM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=XfLexUSh/rQOsCGzq69ur3Y4sd0KgsxUcV+1usBLmJxjoCJH3NAWlQ0aB1ijmL66LPxCAHnvFiwaRCPm75L1hotnGjhBSbKySkrAvqYd10P4WIOucjxMusz1etANSaPgLBaD4yaLaw6FxV92E5m3/yVImHz0QEmgPreiYaiu6rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=W5yVvBpd; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-351d3898640so1680756f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 03:42:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1715942531; x=1716547331; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8ep6WjZ/XECenrwVHNZ6CdFGyjtlB5or+xofNQVT1ak=;
-        b=PzWYfdf83hT2gBixdJijrHJgZUu0NL9U4wppwYHCmIOf5ajCjRj/uRtoAwu/CxeZPS
-         xfxHWLoiXz7qDtFcuV1xPOgduXLjRS8ci1njhTIn43M3l+UoDlzBsqFp9wyA2qda+uHP
-         69J6tf92Zi3LDRQ8IGEOEt4+ZFVuDjQG6lDSy6z2j76HvZNp0j9qondWaQUJGtYJ4LGU
-         y92Lc+jyQLO+RB1bvzFxDEMwARLcOi0GjqWduG3UfuF3JQzeZOQFt2dMFP/kV/HfbnR5
-         yZo3id1I6IwQOg3gVTxlznqDolqv2ubjKWqQeXR0nIE5yPIQmGVBT2R4Axvy7hOSQ+I4
-         tmVw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1T5Jzzi5YWeDpa9AzrJn0UoNm3ltKj+OFo81AGoIkY1mPuC0bZLsOCD2H5YIdVxA+G07zl0q0ivPAkKEQO2GgblP7mIn7MfStxt1R36VK/xUOBD2E3g8SI8V96B4+tifkI8F6EKnzDP0qJJiGf7B2coX80YL/r0f/+pbsaMg0M4JFafkxWHz0BXtgDH9TidhCrWVoZN7W/VM7R0jNuvlVXOHikxadvWQaOqypo+27h1Ko6kL46NgJGDi69bSBn+YmZubvEw==
-X-Gm-Message-State: AOJu0YzJn/pyqDE9JfprPMbEAzv6Tt5i6XpTSVqWdcDhx0Q2fWrKkrkS
-	2rkmdAGuPyGxjXIddfsmapxmgw5tm8Kj5YcRsqbZ9cFFY8bpeIbw
-X-Google-Smtp-Source: AGHT+IHryVBDZpZ02HKgPHTEO7zKqNKHDK8Mg2XTift9Qc3NF8SYMoDnU3GekdswLqk1/o4nC69OcQ==
-X-Received: by 2002:a05:6358:c005:b0:18a:78c2:7ccf with SMTP id e5c5f4694b2df-193bb628645mr2477851655d.13.1715942489450;
-        Fri, 17 May 2024 03:41:29 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-658764fda40sm3257811a12.5.2024.05.17.03.41.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 03:41:28 -0700 (PDT)
-Date: Fri, 17 May 2024 19:41:25 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>, Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Mark Kettenis <kettenis@openbsd.org>,
-	Tom Joseph <tjoseph@cadence.com>,
-	Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: PCI: cdns,cdns-pcie-host: drop
- redundant msi-parent and pci-bus.yaml
-Message-ID: <20240517104125.GJ202520@rocinante>
-References: <20240413151617.35630-1-krzysztof.kozlowski@linaro.org>
+        bh=wVVuKeze+/l/m/6SZ6VdHyTwnjR9+FVuJKaedifARXs=;
+        b=W5yVvBpd/7OUn1ILgmrsHHpwBps/y4ZoF5IxCHhI36HCYs2P2DclUN0IibsfDugno4
+         8NP54E0VkzBNNgeDHY/EyAjcAomYn8DcDTtBhKmwE/1a4PNBwQ3Duk07YbDJj5NsON0L
+         xse9GNn5uQkE5F9h+svANAAeRb2ga2MX7UaYGLlbBO3Acr2bYYJ1gqsFcL+0n0NZ2c3l
+         M3idv+hO2FGo9220K2R0q/jJQTF2fPZTu0x52Djtuu7AJwSwcj5YlFRwj5+dPuDcbx9B
+         kE2T0kVv3Qt9HuXc0+ZTS5jMDxqXKxHJEJvQEvcVYO8BKLMdBKXpKyYBRtLVshvA5qxX
+         Vrgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715942531; x=1716547331;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wVVuKeze+/l/m/6SZ6VdHyTwnjR9+FVuJKaedifARXs=;
+        b=Zr1fP6Zj3Sr5x7GhZA3sieiB7BCL4G0xU0Mj9GlD/bK7svey+vRwrfTO0t6fsJuc+W
+         vy55IHHg4lpPQquyKramxf5Se4faBv0YyvtZ7gAone/z/21cJTi55dYTonoMtYaFOFN/
+         Nrbnq6YlqCDxBU/E8LrrjrXKqhY94+/DlFAicfvNLrmbY0DQCEqyZvg2fxym/rB7hCjR
+         LjWCAo71ue6wuGJJYm6Y/ABhx5IudfB4kFptvIjZs7JVgKg2heN1fa2ZDe4O0UIyr49O
+         D0uWvj/wDFc3ZH3FDzb4T0H+urNaBP76ce31WhpRwiWSpFhVXzbojykvBRapGMqbSDqp
+         HsVA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+0OBozgprFszKG0BGN1k6wa3dZkXRmLirGjIIWtLhPIT7HkodAaKp0QItDqxUC9euPCRavBCHNSOpj2g8X9VsMx1YT8B+Mb+nATU0
+X-Gm-Message-State: AOJu0Yy9HwVtXCKYYb8CIomAl68tVNMrbwV6ExGPpud0u0m1JVWzixUI
+	vvrz4/xBg7+4owjyaK3kvl1BS0oUEFwCqz0htmSeh9pFgtLNks9B9LzvoCcEa6A=
+X-Google-Smtp-Source: AGHT+IEjp9qU1QWmuNE004NYUawbuKUIq/KMDMvkPFdBJndlTyNLfoME36VKIbnsStbPx3wk0bzvww==
+X-Received: by 2002:adf:fd0d:0:b0:34c:ab55:bf1 with SMTP id ffacd0b85a97d-3504a62ffb2mr15439295f8f.2.1715942530954;
+        Fri, 17 May 2024 03:42:10 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:aa3:5c01:15a2:d0b5:26bc:4a17])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-351b55b4655sm14658221f8f.76.2024.05.17.03.42.10
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 May 2024 03:42:10 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240413151617.35630-1-krzysztof.kozlowski@linaro.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v3] net: smc91x: Fix pointer types
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <66AB9A6F-4D24-4033-96B9-E5F2F700029D@toblux.com>
+Date: Fri, 17 May 2024 12:41:59 +0200
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>,
+ glaubitz@physik.fu-berlin.de,
+ kuba@kernel.org,
+ linux-kernel@vger.kernel.org,
+ lkp@intel.com,
+ netdev@vger.kernel.org,
+ nico@fluxnic.net,
+ pabeni@redhat.com
+Content-Transfer-Encoding: 7bit
+Message-Id: <BB22F3F9-BB2E-45B2-A3C3-8A4218B018B2@toblux.com>
+References: <0efd687d-3df5-49dd-b01c-d5bd977ae12e@lunn.ch>
+ <20240516223004.350368-2-thorsten.blum@toblux.com>
+ <f192113c-9aee-47be-85f6-cd19fcb81a5e@lunn.ch>
+ <66AB9A6F-4D24-4033-96B9-E5F2F700029D@toblux.com>
+To: Andrew Lunn <andrew@lunn.ch>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-Hello,
+On 17. May 2024, at 01:21, Thorsten Blum <thorsten.blum@toblux.com> wrote:
+> On 17. May 2024, at 00:51, Andrew Lunn <andrew@lunn.ch> wrote:
+>> It would also be good if you read:
+>> 
+>> https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+> 
+> Will do.
 
-> The binding reference common cdns-pcie-host.yaml, which already defines
-> msi-parent and has a reference to pci-bus.yaml schema.  Drop redundant
-> pieces here to make it a bit smaller.
+Reading this was helpful and I learned that:
+- net-next is closed during a merge window
+- patches should be prefixed with the tree name
 
-Applied to dt-bindings, thank you!
+I'll submit the patch that cleans up ioaddr from all SMC_* macros when
+net-next is open again.
 
-[01/04] dt-bindings: PCI: cdns,cdns-pcie-host: Drop redundant msi-parent and pci-bus.yaml
-        https://git.kernel.org/pci/pci/c/51ef0538d4e1
-[02/04] dt-bindings: PCI: mediatek,mt7621: Add missing child node reg
-        https://git.kernel.org/pci/pci/c/36fbed38549c
-[03/04] dt-bindings: PCI: host-bridges: Switch from deprecated pci-bus.yaml
-        https://git.kernel.org/pci/pci/c/5db62b7d3c37
-[04/04] dt-bindings: PCI: mediatek,mt7621-pcie: Switch from deprecated pci-bus.yaml
-        https://git.kernel.org/pci/pci/c/d3fa4be9033b
-
-	Krzysztof
+Thanks,
+Thorsten
 
