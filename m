@@ -1,126 +1,120 @@
-Return-Path: <linux-kernel+bounces-182206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A438C8815
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:31:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B52908C8816
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EB031F27DE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE63285FD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C4379F0;
-	Fri, 17 May 2024 14:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178F579F0;
+	Fri, 17 May 2024 14:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gQcIhi8R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VOEjG4cK"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E0C384;
-	Fri, 17 May 2024 14:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04774384
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715956278; cv=none; b=Tp55HCF/GxBzmKHl24cjD/BjBn8UE50usKC1a3VI65wsjIXp+mksJFajOHEv1wzu4+/LLv72aS1f432EHuUu7vRdtzzK7vLh3wyZfE0o7PEW94LU6niJaw2jB8iqoCFNZCRICrDVNCow1AWapXv1PSrLXOC9CHIpxsLFQ0lpAPs=
+	t=1715956319; cv=none; b=VhMJ7UIWiZU/e2wPlmMvNelTKAO2DyX8ljnT/ihhbLL+m3oNUtNCo+kBP6VY0KsvanyORK/bg7Xh4NFDA7XWXMtX3JGMVebAKQGLcetcISN7NPsIaqB3T2jW1uJexvFHhxHhNmQ1D+GPYuvX6Tk0rllN0PjN3ynEfjqDrI5BbKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715956278; c=relaxed/simple;
-	bh=+XVwr27g6xpRhArVMCmv1QypsuQvE/ONQgMImM0GOuQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HHgzynU7fmPsiHwwvUwbMvKh02F9xT74vgp6R5rtrpkkKsqPnAls9Uy1ILrERLz8unrlfLKCSb1YKwLEICwEq8eLeJax947bEAcIAqUrQr3mTC0K7HmyOmMLbxHGd3gZysZxuGkinTlVvJoFcE4L6BIDEDwN8kYKUJzk/63ixfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gQcIhi8R; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715956277; x=1747492277;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=+XVwr27g6xpRhArVMCmv1QypsuQvE/ONQgMImM0GOuQ=;
-  b=gQcIhi8RehN+R62F8jBJCcUywWwhcUvquZP/DawFRtTcH6/X5ddL56Wh
-   4gki50wDPwizRotdTER/sf+vrprQLK0YifuUlZsqnZMBRCQtDs+6lATvy
-   tbVb24ZCSLXpPN2HtyjnKRgQe/rZzYq5Ty9GnOax6wOxgbTR7pSZO6T7Q
-   T+sEuiqlH806lojEh2oLRgeBnSzrCqsy+26AweBroFb5fgquKc8AXtMGx
-   lxazGMSqUuRR/VsMs03a+XEheAvcio5N2Fwmky/B4GVtkaaEwn7aqJOXg
-   o2hfhfaokynkPT8jIn+1CxcZFG++pff+4h3zWRUZKyE5f/jUmX3zHsk45
-   Q==;
-X-CSE-ConnectionGUID: tF0M2h9yS1K0bGv7X8SASA==
-X-CSE-MsgGUID: H75z8426QtqNI1OMxDf/3g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="15083948"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="15083948"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 07:31:16 -0700
-X-CSE-ConnectionGUID: W4xs4OT+QE6hymWIEef/RA==
-X-CSE-MsgGUID: aSvBzR9gT6mi0Ue4OpWj8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="32359554"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.212.227.54])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 07:31:15 -0700
-Message-ID: <48377484a8a9e479b301e9a9772653a3bc6ccf81.camel@linux.intel.com>
-Subject: Re: [PATCH] platform/x86: ISST: fix use-after-free in
- tpmi_sst_dev_remove()
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, Hans de Goede
-	 <hdegoede@redhat.com>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
-	 <ilpo.jarvinen@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, 
-	error27@gmail.com
-Date: Fri, 17 May 2024 07:31:14 -0700
-In-Reply-To: <20240514092656.3462832-1-harshit.m.mogalapalli@oracle.com>
-References: <20240514092656.3462832-1-harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1715956319; c=relaxed/simple;
+	bh=lPwyFvnA8RFfjSZrTOFb1sNPxW2YnANTbVeCPsbbj5Q=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NLcup1YvT2mu9qJMYJXw18oK/qoVt0gi21FCrQMZdR2hFoypl+5njN4FjZ6GY2Yst9o90E6+bEsjm7SRb5OaGsIvjh10hqwbrt2NjXMs/mgeom2uJkQ8pefZTBjGPQaXw7kVHlu9Dvazc2l3mfJ+UJH7TuuWAUR0102d6lDHMTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VOEjG4cK; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de615257412so16087879276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 07:31:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715956317; x=1716561117; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cCwbxCdw0tA0OWIMCvHgG1A0QngcvUL1VDqvLH7GRrk=;
+        b=VOEjG4cKlb0wom//cRurdkUwqhCis7G0cX8JcGSlercKnyXmquTVfiI/iM2UPX9NxV
+         7IQuyZHNnYnxLoJtpOajnqjrYyCzrCVlh9VCgcpnFIC6gDH+3nRhaLZM5kFlqSSNPloT
+         DrgxiG1LJUgBAfSA6pHIcVIezuW68V1L8fWvbl/TRMNdqdL+wAwSX5hCk0M8aNufut81
+         MnNmuQvRrZ8Cy1t/47z5a2vS4r9B9Y0OkYjX8QKhb0tLE1opXICy1h0qhR2GXDsJVOSh
+         0l5bFbVL1c1A2LhxD7ckozH5SFD4Hd8z3syTudwlLoEczQ5nu8mTuBYNpjU0SEqEWEQX
+         aTNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715956317; x=1716561117;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cCwbxCdw0tA0OWIMCvHgG1A0QngcvUL1VDqvLH7GRrk=;
+        b=lfnRFe0/65mxsmUdbhluGdDTq96WiJaBOBKYn8SWBw5/OCmbb3saYh/XWws3Wdyyzz
+         HcSf+ovamYLBVzcwzHJb0oLVUZugsz4rGeB8xIx4mso/tlqlcd2sMtgAWNDGzSzPDoKI
+         Ww9+dU0pz/l6sM/x/Tk1XG2h0ITDUXYJ8k1ehKn9oUO5qPDTRESKRlB0EwfS6e+s0yiO
+         3Q7luZ7dkT+ew4xKBXtpuM/wgbkipGGdA8mG2Vh05faRNJneLKjnjIofbIM2XX0WLCzV
+         IbY0Or4abZdM+LPXPLoECoxqDDJa0fMgPLlh5vP1QsDNi6zC9nWaDydP4LdNxJa0f+cb
+         XWpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxyB+6ZCiWvWcLzDI2GxzhbE28T9ka8LJyY/OGs6SrFyNwRVFbAQH0EIGuC5Ufvye03NJuKtpuEOqDWiUNHFjKk4dkJ3K0yhw0GPCi
+X-Gm-Message-State: AOJu0Yx9jATTyaY1Kpcgu+dLgsXsyYDC6oRX2S1UHN9IYqVBDGAgw9Q7
+	ln0lu5pN5Ur2YdKlmdS4+66RayrS2Ye+6H6DmUH4KlMjR5PQdQGKeCfRqfOEqnHP8p6dF1rSkbf
+	ALA==
+X-Google-Smtp-Source: AGHT+IHLjidjnVKCRgVsbOQRuGq6YCBv6kcYe9eKuoEpWWaMygWWv1uxvhLDxQB6N0CQU0egpLT9mXsaZpQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:2b88:b0:dc6:d233:ffdd with SMTP id
+ 3f1490d57ef6-dee4f0d9077mr5954597276.0.1715956317088; Fri, 17 May 2024
+ 07:31:57 -0700 (PDT)
+Date: Fri, 17 May 2024 07:31:55 -0700
+In-Reply-To: <305b84aa-3897-40f4-873b-dc512a2da61f@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20240416050338.517-1-ravi.bangoria@amd.com> <ZjQnFO9Pf4OLZdLU@google.com>
+ <9252b68e-2b6a-6173-2e13-20154903097d@amd.com> <Zjp8AIorXJ-TEZP0@google.com> <305b84aa-3897-40f4-873b-dc512a2da61f@amd.com>
+Message-ID: <ZkdqW8JGCrUUO3RA@google.com>
+Subject: Re: [PATCH v2] KVM: SEV-ES: Don't intercept MSR_IA32_DEBUGCTLMSR for
+ SEV-ES guests
+From: Sean Christopherson <seanjc@google.com>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, michael.roth@amd.com, nikunj.dadhania@amd.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, santosh.shukla@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 2024-05-14 at 02:26 -0700, Harshit Mogalapalli wrote:
-> In tpmi_sst_dev_remove(), tpmi_sst is dereferenced after being freed.
-> Fix this by reordering the kfree() post the dereference.
->=20
-> Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned
-> systems")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+On Fri, May 17, 2024, Ravi Bangoria wrote:
+> On 08-May-24 12:37 AM, Sean Christopherson wrote:
+> > So unless I'm missing something, the only reason to ever disable LBRV would be
+> > for performance reasons.  Indeed the original commits more or less says as much:
+> > 
+> >   commit 24e09cbf480a72f9c952af4ca77b159503dca44b
+> >   Author:     Joerg Roedel <joerg.roedel@amd.com>
+> >   AuthorDate: Wed Feb 13 18:58:47 2008 +0100
+> > 
+> >     KVM: SVM: enable LBR virtualization
+> >     
+> >     This patch implements the Last Branch Record Virtualization (LBRV) feature of
+> >     the AMD Barcelona and Phenom processors into the kvm-amd module. It will only
+> >     be enabled if the guest enables last branch recording in the DEBUG_CTL MSR. So
+> >     there is no increased world switch overhead when the guest doesn't use these
+> >     MSRs.
+> > 
+> > but what it _doesn't_ say is what the world switch overhead is when LBRV is
+> > enabled.  If the overhead is small, e.g. 20 cycles?, then I see no reason to
+> > keep the dynamically toggling.
+> > 
+> > And if we ditch the dynamic toggling, then this patch is unnecessary to fix the
+> > LBRV issue.  It _is_ necessary to actually let the guest use the LBRs, but that's
+> > a wildly different changelog and justification.
+> 
+> The overhead might be less for legacy LBR. But upcoming hw also supports
+> LBR Stack Virtualization[1]. LBR Stack has total 34 MSRs (two control and
+> 16*2 stack). Also, Legacy and Stack LBR virtualization both are controlled
+> through the same VMCB bit. So I think I still need to keep the dynamic
+> toggling for LBR Stack virtualization.
 
-> ---
-> This is found by smatch and only compile tested.
-> ---
-> =C2=A0drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git
-> a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> index 7bac7841ff0a..7fa360073f6e 100644
-> --- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> +++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> @@ -1610,8 +1610,8 @@ void tpmi_sst_dev_remove(struct
-> auxiliary_device *auxdev)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpmi_sst->partition_mask_=
-current &=3D ~BIT(plat_info-
-> >partition);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Free the package insta=
-nce when the all partitions are
-> removed */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!tpmi_sst->partition_=
-mask_current) {
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0kfree(tpmi_sst);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0isst_common.sst_inst[tpmi_sst->package_id] =3D NULL=
-;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0kfree(tpmi_sst);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_unlock(&isst_tpmi_d=
-ev_lock);
-> =C2=A0}
-
+Please get performance number so that we can make an informed decision.  I don't
+want to carry complexity because we _think_ the overhead would be too high.
 
