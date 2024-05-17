@@ -1,127 +1,132 @@
-Return-Path: <linux-kernel+bounces-181704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E794C8C7FF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 04:37:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14FB78C8013
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 04:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4186EB2256B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 02:37:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 182E8B212BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 02:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572658F6A;
-	Fri, 17 May 2024 02:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fcvu5ebm"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E98B664;
+	Fri, 17 May 2024 02:51:23 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6844D8F54;
-	Fri, 17 May 2024 02:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614FA8F55;
+	Fri, 17 May 2024 02:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715913457; cv=none; b=C1H4LNFFGvx42HnK7N2qSVkoIFRqR3VmtOCUKbFbwMNaRZQEAxeZmuDhOlj1KldSOkN1RA/SQ/XekDKrA4xq9elkPq207GntRnsi+TqCQ22y+uwyMqLkDJjas9oA1u47ge+Zqfy8+QDPNclN1uXrPj0FisOZobQV1+cF+mAL+Ic=
+	t=1715914282; cv=none; b=XZT2FyRtVCNbEF9fBJTOv6hw38LNlg4Mtgfx+i7IDF28F14/jlztmVtiiE6ELdC2buKl7e79uGHT4GMbbc3s9UytcmgVr1BmWKVPKgQ6LjrbnNTC5kdLOG3uraTQeDYMYuUp7iIeQRgGflCuNM6StRW9rTf1gQ+LcG8nE95YhJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715913457; c=relaxed/simple;
-	bh=2dKSI6wqijqA7agrm8EhcqT8ikiKT0WeullcDAYN1lI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uweOXJMyxS0NEhFtCVT3Ehbqxi6pk6kS+DOb4waBbpZ8IMQvngpBxDfu1o04XMuOgEJdZZ7k3wceOZeHLqnbnRZ+s7dQmzbla+ZAwfbektBqXZaStSIKrJ2qUbGti8i1paiflR69sS9AS0UnGa27ZNhvq9jcTidkqokkvwC4OJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fcvu5ebm; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2b9702e05easo731192a91.1;
-        Thu, 16 May 2024 19:37:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715913455; x=1716518255; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N1bV36pJMdeLqi57LPsIILR9dVkyUf6MNsXvOWFVqDc=;
-        b=fcvu5ebmEWxcH/l8DYH+jkdui441uBkA1m1VeHHAKUk4vU0nhA8Em9ml0T26sqV/eI
-         v3U3hefO3E1J1W5KClzimms+ApDPhcsC7t/NCkLL6rh8TXxMD46L3y0OVXRGzYQ5IxV8
-         EzKinp8GB7XQmV1EjRj0UU+NyKDj7TVKuXfOKOWVDXj8fmxbuuVE/xFktN1sJiYhfGmf
-         6JGoBYvQ6L0GcAgyyKQkNp2Z5fVTckjY8XLGb/KcQ0Lks3l+WJy87tXBrPEtGOASoKrG
-         6l9wzKKC9jpzrfhAnjnRojaVhYs3lCsdAjCElGugcCibI4z/N+mxxN6tyVpqxrRsahwh
-         TgJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715913455; x=1716518255;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N1bV36pJMdeLqi57LPsIILR9dVkyUf6MNsXvOWFVqDc=;
-        b=um3zRj4fEQ8rfS/28JySqdihzDhoEmY1ElFeeHzXtM8gMmeYRcn4tkS5hpYh9VvC0V
-         6cEOfmIGvKVPx4VnW2MuNihJtKV+/9KsdFKBWpjlwJIVwignyxMYRyjXLQSipul0uQoC
-         /BpLNy/qe7A8jG96vQOXXYGXOB99l+v7FO6HAE9SC345VEDK/EFOL/SElPT/CPGHhg/m
-         Sh5tpVOq14mO8GWI1BScQdTgRk3FTUlz6Fos0XE95N1zzRff6napkgiimlkb+U+VqAan
-         UF5CciV0VOmXAVAAbhrYtAFVgMSrWiLBVch3MJ1VD3Dg61IaLPCvXUmfgE+Xv0gkVg7N
-         jNqA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1/ou8uB+7fC7mfhiwOApu8FppMqY6Pqij07Zl4i/hc4BxZYErEbZW8ASZZz9a/+4iB7y+pgYYWEx8Yf2G8fo1FupcrBgQHAh54f2DBBQexfQZSYwPAZa8GlzKOM4C3Fmq0dkF
-X-Gm-Message-State: AOJu0YwyxRq4eXGffEhKHfsLOmvMKPz2dKSGu8OF8If4AftBGRDHoeOO
-	lVPcqHbY8EIACQL573/y70vSSRHhLc1yh4gnxS1JovoQcmTFiw5y
-X-Google-Smtp-Source: AGHT+IEx2E3lPYmU6R303wxd59YlljM+e4ZAMrpQgif5X9zHASJgK2YsiVwb5fSOSYVP/d/X7kLY0w==
-X-Received: by 2002:a17:90b:3708:b0:2b6:2069:f825 with SMTP id 98e67ed59e1d1-2b6cc03f442mr19519560a91.8.1715913455409;
-        Thu, 16 May 2024 19:37:35 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b62863a5fbsm16469563a91.4.2024.05.16.19.37.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 19:37:34 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 2B644186DD434; Fri, 17 May 2024 09:37:32 +0700 (WIB)
-Date: Fri, 17 May 2024 09:37:31 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.9 0/5] 6.9.1-rc1 review
-Message-ID: <ZkbC61CKkOPIZsFY@archie.me>
-References: <20240515082345.213796290@linuxfoundation.org>
+	s=arc-20240116; t=1715914282; c=relaxed/simple;
+	bh=zzzCp1QUm1wKcYmoJU9X68oy67/XfeJKxY6LghtApFw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JduQVZFBlQogMTBZwfpd9/hNV4v8RvSOYylOw+YkYKtfjSawjYWJsgjlzNrbcrsmR3fKF0uVpey1mmkAggfXLsEib/5eJunZ+2oPJWSV5zSAjX4xC74Be6mOzRNrwb9BKa9g4Cj7TQWmHwI9HsT2OAjopXQ6vVSB+YEN2lr9MKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowAC3v5MIxkZmdCJ_Cw--.63667S2;
+	Fri, 17 May 2024 10:50:49 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: nbd@nbd.name,
+	sean.wang@mediatek.com,
+	Mark-MC.Lee@mediatek.com,
+	lorenzo@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH net-next v2] net: ethernet: mtk_eth_soc: add missing check for rhashtable_init
+Date: Fri, 17 May 2024 10:39:22 +0800
+Message-Id: <20240517023922.362327-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="L4pKaacYqaHosWha"
-Content-Disposition: inline
-In-Reply-To: <20240515082345.213796290@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAC3v5MIxkZmdCJ_Cw--.63667S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF1rZrWftF4UWw17ArWxXrb_yoW8AFWDpr
+	4Yya47ZF1rJw4UWa1kAa1xZFW5Ga1xK34DGFyfZw1Sv345Ar47JF1Utay5ZrW0yrWDKFsI
+	yr1jv3sxCFZ8Jw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUq38
+	nUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
+Add check for the return value of rhashtable_init() and return the error
+if it fails in order to catch the error.
 
---L4pKaacYqaHosWha
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 33fc42de3327 ("net: ethernet: mtk_eth_soc: support creating mac address based offload entries")
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+Changelog:
 
-On Wed, May 15, 2024 at 10:26:37AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.1 release.
-> There are 5 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
+v1 -> v2:
 
-Successfully compiled and installed the kernel on my computer (Acer
-Aspire E15, Intel Core i3 Haswell). No noticeable regressions.
+1. Rewrite the error handling.
+---
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 2 +-
+ drivers/net/ethernet/mediatek/mtk_ppe.c     | 5 ++++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+index cae46290a7ae..f9b8956a8726 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -4957,7 +4957,7 @@ static int mtk_probe(struct platform_device *pdev)
+ 
+ 			eth->ppe[i] = mtk_ppe_init(eth, eth->base + ppe_addr, i);
+ 
+-			if (!eth->ppe[i]) {
++			if (IS_ERR_OR_NULL(eth->ppe[i])) {
+ 				err = -ENOMEM;
+ 				goto err_deinit_ppe;
+ 			}
+diff --git a/drivers/net/ethernet/mediatek/mtk_ppe.c b/drivers/net/ethernet/mediatek/mtk_ppe.c
+index 0acee405a749..4895c6febaf8 100644
+--- a/drivers/net/ethernet/mediatek/mtk_ppe.c
++++ b/drivers/net/ethernet/mediatek/mtk_ppe.c
+@@ -884,12 +884,15 @@ struct mtk_ppe *mtk_ppe_init(struct mtk_eth *eth, void __iomem *base, int index)
+ 	struct mtk_ppe *ppe;
+ 	u32 foe_flow_size;
+ 	void *foe;
++	int ret;
+ 
+ 	ppe = devm_kzalloc(dev, sizeof(*ppe), GFP_KERNEL);
+ 	if (!ppe)
+ 		return NULL;
+ 
+-	rhashtable_init(&ppe->l2_flows, &mtk_flow_l2_ht_params);
++	ret = rhashtable_init(&ppe->l2_flows, &mtk_flow_l2_ht_params);
++	if (ret)
++		return ERR_PTR(ret);
+ 
+ 	/* need to allocate a separate device, since it PPE DMA access is
+ 	 * not coherent.
+-- 
+2.25.1
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---L4pKaacYqaHosWha
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZkbC6AAKCRD2uYlJVVFO
-o5eRAQDkJz6MyxYm59PTs4d8+39lgNKUgZtIRN7KBZlF5BPElAD/axDvZtbWhhNs
-hQtZ/GkPLPnlA4Nyyk0US4omlilyWgQ=
-=V7ou
------END PGP SIGNATURE-----
-
---L4pKaacYqaHosWha--
 
