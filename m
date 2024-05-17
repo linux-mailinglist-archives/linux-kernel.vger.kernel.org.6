@@ -1,127 +1,163 @@
-Return-Path: <linux-kernel+bounces-182679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E788C8E60
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:58:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8C68C8E61
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF58D1F22BC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:58:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FAED1F222A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6CA266A7;
-	Fri, 17 May 2024 22:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35D11411CD;
+	Fri, 17 May 2024 22:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wKwKUEP8"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfdxB9f5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3221E86F
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 22:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E51D14036E;
+	Fri, 17 May 2024 22:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715986726; cv=none; b=sSmMtFTQHboW5pVUav7CnpNFMayM9XGKZQnIKGMXpCAAqH7VfSrb5HdChWmOs8Ci6tNLQfi8Y0aedu8bVLTE61MY49V6HZulHELQLH+r6A4gvmpE+ors2bEIpKcXBCoC8N4fnSGY/iG6Y6FoKJ4aA4nEwpKokE0dA4PH4e60CoE=
+	t=1715986765; cv=none; b=CA/7N1gcCZm8/BUgpvz1K7gk/sz0Ciyrj6bkU9OkYsOvp6xZx7bYsQ0YcNvWE6sYdH9iHR8giQuvx9ufMCXJc3GiRMVKlEpYhCse7wc8SfmS+NcFSRNLiFvHwdn4EsqoxN82cKGU3Q2XpcIySG9o+0xt+3I3FW0IoEHQ7oScCVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715986726; c=relaxed/simple;
-	bh=b3HEzdbmvtrX5WdGd9rjQfRwTpx8tZmqQi4EvaEALuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uXpqEwTN6Btq7vObEF+Pvl5mjdClaZUtIQnv7OLLRawfNhnwUf5KVcVbd6YD96PMIEjwBdDrNXwfiaSMnK3Yjs+schnGGBVoBDIDd5hEj3AieHq64aSxkl/3W4300lspyU8sdGnE16/hKjz/cOe5oVnI5SD0mvL8ldfN+23aE5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wKwKUEP8; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3504f34a086so552961f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715986723; x=1716591523; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zxt5WSyPNmlFYnh1kzF3WbtIYIDZ+lmJH/CiUrzIcLM=;
-        b=wKwKUEP8hOsGDf8mIyWwP08Eg/OGmaHKYcLz0Xcs4kqXKLx3hZLugsmf3NQXtBWODx
-         1d3QwVlbRV+i2nR6/OPPi6BLvkxwUGYOwfrWGUp601bXXdejDBzUQTKz02T+OuM/+G/O
-         zx8Iakk14oG2eZUFVR9GiO3SJRoKOWD9qN6NCZXbzFVDrcEgsB6AGp+CWZKKKHZhs7wl
-         eK09j9YmkNtUV//+Cw8Zc7UCFP+gTI12RMYpMUe6I5Gdx42QLZsqayN07C6vEFHgwoFx
-         ubDduvko201G3ToONBTQ9FeG+ab5OmFIy/SxPV7MQpEB9qNFeGr6CF4MClSqv5DhwOSa
-         kVCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715986723; x=1716591523;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zxt5WSyPNmlFYnh1kzF3WbtIYIDZ+lmJH/CiUrzIcLM=;
-        b=c7DD2XnA4Ba7YV5IRSC6Ct9lqrmuGkAM8WMKRwLAndbNxE8ujWFB/gDjmcwURheVuJ
-         HoGlvbGhZHiY5w43xjTxQ7Dy2pdchjpJsDJRYLT2HgrzEBDgTkZC5ofQ/pOdDjMHqt7y
-         iDMOPx2YiuhFxpOrwVA95kqL9au0j2pjAe1o1KBSpbJzxVDoCwqUNoUSw1c/Rz8Vfg2h
-         RxqurHV+mG+g4hyRYzpAARRSQzeGjkg/NJV8CSqeJeVuL0vlEkwfOM8QhCopJjTJx6TQ
-         cTxOu5Z2sh6NqrLJTZ6clWHjeEhFbt6iApMFS6tzrCX+Ka+Vo6V11kqFU6QZmKg3VUQv
-         j//g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ65u7hC+KlupPoBM5YNznd2SwYEJmlONqpqa9hSDltnpwm2/wungBAzP5mjJO9nlBlH+ow36u/ZEsdkLLBEiCvTYFKrfwaxcToF/3
-X-Gm-Message-State: AOJu0YzM4A01XXS9KXm9C40ZuykHG8i35KTTxGLwGfnTj7jtUfVvw0Eb
-	yXVPhjZa1k7lo6MkHsfl0yyQrgIZHRIfn7PCxvE9J9nC/n79k8eb+r4Q2Hogkm5DLa40+U9eqv/
-	2zjvyTQ==
-X-Google-Smtp-Source: AGHT+IE6e2aENPVFCzrjc2I0B5zRRsvgtx95F6JJIdCaV3ViherGH3/B7Gcz5xrvw9dnsNCNeyaV9A==
-X-Received: by 2002:adf:f683:0:b0:351:d2e6:9296 with SMTP id ffacd0b85a97d-351d2e69673mr5333036f8f.41.1715986722995;
-        Fri, 17 May 2024 15:58:42 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3525f7f7d88sm3315262f8f.57.2024.05.17.15.58.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 May 2024 15:58:42 -0700 (PDT)
-Message-ID: <3fe6e86d-5b4d-4b3c-a5d7-59f01dc6b0bc@linaro.org>
-Date: Fri, 17 May 2024 23:58:41 +0100
+	s=arc-20240116; t=1715986765; c=relaxed/simple;
+	bh=i/lf2TVxejq4yug3FFuoGpl/sEmPNn8np1eVzk7EMx0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=d2XIa5Jl6o6RXbTeAYI7PUBBS4fbQalvr8tro4CPAL7n5J1SQsftvE9s3HUOHGC2TKKVDx6rdGerTj6vOUkV5OKLb8KeOpbOIYHoF4GD+h9KfzGT4Fqao6DdIKCB6a7Mfog7+jZ4tyEcjLgYAeser9zAtwu1G9dIE1e7G9L3sMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfdxB9f5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34440C2BD10;
+	Fri, 17 May 2024 22:59:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715986764;
+	bh=i/lf2TVxejq4yug3FFuoGpl/sEmPNn8np1eVzk7EMx0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VfdxB9f5UkPBi+DVIpPNNx1wh81JGtsYu2nbc/+ACQtcMligzURaYIG5SvChMswLe
+	 Cf2HHR5Dy4FS/SH+1ft1ngHqNSSsgsQlLr2mTwD0CKuQ04ua+/0bs0qwemDBVceAng
+	 GiWKCUqXL4HG/ojnBJ3y+AU0va9YxScuBtZn/OmjnNphbm9x9dCK8Xc8GhnsdnzqKs
+	 t49qjD71YJMe/17NEuRmVPyYKkKFlCMbCa8eo0xT4qXRnzynXxXJPKo4KfRnVHVg9x
+	 OutgHRJ20LyAbf0Yoj+BQOokoFf9qqGo6CG1SPv0tXZyKtumbqcCe4UI78wPac32ae
+	 o7oGKOjVJmv9g==
+From: SeongJae Park <sj@kernel.org>
+To: Alex Rusuf <yorha.op@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH v1 0/7] DAMON multiple contexts support
+Date: Fri, 17 May 2024 15:59:21 -0700
+Message-Id: <20240517225921.128477-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240517085151.630844-1-yorha.op@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dmaengine: qcom: gpi: remove unused struct 'reg_info'
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: Frank.li@nxp.com, vkoul@kernel.org, linux-arm-msm@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240516152537.262354-1-linux@treblig.org>
- <39b66355-f67e-49e9-a64b-fdd87340f787@linaro.org>
- <Zkc69sMlwawV8Z7l@gallifrey> <Zkc9J4vbQdeCmTpO@gallifrey>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <Zkc9J4vbQdeCmTpO@gallifrey>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17/05/2024 12:19, Dr. David Alan Gilbert wrote:
->> If you look at the V1 I had
->> ''gpi_desc' seems like it was never used.
->> Remove it.'
->>
->> but Frank suggested copying the subject line; so I'm not sure
->> whether you want more or less!
->>
->> I could change this to:
->>
->> 'gpi_desc' was never used since it's initial
->> commit 5d0c3533a19f ("dmaengine: qcom: Add GPI dma driver")
-> Oops, of course I mean 'reg_info' which is what I fixed in v2.
+On Fri, 17 May 2024 11:51:51 +0300 Alex Rusuf <yorha.op@gmail.com> wrote:
+
+> Hi SJ
 > 
->> Would you be OK with that?
-> Dave
+> > Hello Alex,
+> > 
+> > 
+> > Adding high level comments first.  I will try to read each patch and add
+> > detailed comments to those as soon as I get some time.
+> > 
+> > Also, please Cc linux-mm@ for DAMON patches.  I'd also recommend cc-ing
+> > linux-kernel@.
 > 
->> Dave
+> Thank you for clarification, I'll add them!
+> 
+> > 
+> > On Wed, 15 May 2024 18:24:50 +0300 Alex Rusuf <yorha.op@gmail.com> wrote:
+> > > Currently kdamond uses only one context per kthread
+> > > and most of its time it sleeps, so utilizing several
+> > > contexts can scale kdamond and allow it to use
+> > > another set of operations.
+[...]
+> > > 	[3] https://github.com/onlyoneofme/damon-multi-contexts-tests.git
+> > 
+> > Do you have a plan to integrate this into DAMON selftests or damon-tests?
+> 
+> Not in the form they are for time being. These are just simple shell scripts
+> that set up kdamond to use multiple contexts and these scripts only
+> collect information like DAMO (but only as perf.data).
+> 
+> Anyway, I think we can integrate them with damon-tests with some modifications
+> to be able to actually _test_ if multiple contexts work.
+> 
+> As for DAMON selftests, I didn't touch them for time being, so they truly
+> need to be modified and expanded, but before doing that I would like
+> you to look at implementation first, because changes in implementation
+> could affect selftests, so once we agree on that I will implement selftests.
+> 
+> Also note, that I didn't integrate changes with debugfs. I remember this is
+> deprecated interface, but I'm not sure if compatibility need to be preseved
+> with it, so do we need to expand debugfs for this?
 
-Hi Dave,
+I think we should keep debugfs work as was.  So I think we should ensure it's
+not broken, but don't need to expand it to support this new feature.
 
-I saw your v1 interaction after commenting but, I still think commits 
-that say "this removes a data structure" should elaborate more.
+> 
+> > 
+> > > Alex Rusuf (7):
+> > >   mm/damon/core: kdamond_struct abstraction layer
+> > 
+> > Let's make the subjects clear what it does.  For example, this patch's
+> > subject could be "add kdamonds_struct abstraction layer".  Similar comment
+> > for other patches.  Also, I think '_struct' suffix of 'kdamond_struct' is
+> > not really needed.  Let's remove it if there is no special reason to add
+> > it.
+> 
+> Sure, I'll change that in next version, thanks!
+> 
+> > 
+> > >   mm/damon/core: list-based contexts organization
+> > 
+> > I think this can be squashed into the first patch?  If not, could you please
+> > let clarify?
+> 
+> I just tried to separate those patches for them to be as simple as
+> possible (actually I failed at that...), but sure, we can squash them.
+> 
+> > 
+> > >   mm/damon/lru_sort: kdamond_struct abstraction layer
+> > >   mm/damon/reclaim: kdamon_struct abstraction layer
+> > 
+> > Does these two patches mean lru_sort and reclaim are broken by the first
+> > patch? Let's keep everything unbroken in middle of the patchset, to help
+> > bisect.
+> 
+> Yes, they're broken by the first patch, I'll squash them, thanks!
+> 
+> > >   mm/damon/core: rename nr_running_ctxs -> nr_running_kdamonds
+> > 
+> > I think this would also better to be together with the first patch?  I know
+> > this does not break something, but makes reading patch bit complex.
+> 
+> No problem, thanks!
+> 
+> > 
+> > >   mm/damon/core: multi-context support
+> > >   mm/damon/core: multi-context awarness for trace events
+> > 
+> > I think these two patches should be squashed into one patch.  Otherwise, the
+> > trace point is broken in the middle of the patch series, right?
+> 
+> You're right, I'll squash them, thanks!
 
-"This structure is no longer used since commit: 12charsubshahere" or 
-"This structure was never used and should be considered dead code"
+Cool, I'm looking forward to the next version of this great patchset!
 
-I generally hope the intention of my commits is clear from the code with 
-the commit log adding whatever context or elaboration on top.
 
-So that's what I'm suggesting here. A bit of commit log sugar on top 
-which elaborates on and justifies the change.
+Thanks,
+SJ
 
----
-bod
+[...]
 
