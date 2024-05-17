@@ -1,109 +1,114 @@
-Return-Path: <linux-kernel+bounces-181887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519C08C82D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6012B8C82DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 081AE1F21320
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:58:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 143181F211D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224D11DDDB;
-	Fri, 17 May 2024 08:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8221C69E;
+	Fri, 17 May 2024 08:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S5JvALA+"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V85PeP3h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA30523770
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 08:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB691DDC9
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 08:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715936304; cv=none; b=HBvSmatIuhV1UQEYAzOQ2twJwCST75IXMeM+68W67TkOcLbi/gAW6DKHjTkD8li+QlyCrSlvb1pjWNgKtNBVIMcSMX54dNQut2giAKj9dgTRXC81xiWU32Nwds+rvTDaHWya3BSZihHr7K1iFwZYFDmlsemtkGKjpjxnTkQh8GI=
+	t=1715936362; cv=none; b=fd8Xi2gH08MdbzmuptslFJkhsOLIkXQtRfWJjPrNzctsTWZqEWpveVcAqMhnM+dJMTMMNpvN5DUhuTjlavLswW/5vzdnLis7o73HkCyHe+Al2DFdZAQDTg1o328zxKJqJ8VOKJN0GLHhz+RuZHWrZWZ+PiI3VVGTupliWkc+cYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715936304; c=relaxed/simple;
-	bh=fh/EhHYv7kPstMXk8bNVt+vHBJv+tYraANwKXrpuKLE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Axb/s2j/05Wr88ZmwpJgRB0Nv0fVegBhcj9GgKpT50ElcQ+2Cb12RSqGBtzvl7bHJGkMqQbVa1v2KgrDQPEsmsM8C8M+57nY7A8Du7AyDj6OiJFzvpXAe0aUuJ+WnKd0rU/IO+a2pngTrxxzSj1rVPQ7nTzuIHY6ZNO2z3K21X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S5JvALA+; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51ffff16400so2792262e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 01:58:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715936301; x=1716541101; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WXEIiwHqeogB7g3eJChPlM4JmbteA+j2Ygd7KOJ9e/w=;
-        b=S5JvALA+XsizQSD+TZyYEIBf3CNIFZuinBO7TYWOlKfYtokAK2zH2d6Ds4TevMVcVd
-         YVeOKMyxFT4CooMl44Z4tpPliKUpSRdxjJgwW3+YFeQu45fihGxQTidxFNlgFXtEUF6j
-         2YhKT08x9cr/xnSr0pqFGhnNMb3TBB0IUclSM9e8XYSSRSjZqrkyy33XCwiGkh1hcaO1
-         w2RVFWIs7W+CEcxJlxxs3ieBEDngnOZObdD8f9/lXbF7KJa9a0Gp0k4nCResfakWdw5U
-         8YlgDbW0cROeUOQQE2GrBeIxdR1zYXAZbXvSRzqEnmEjRz5meseZf2KnyU2UhmKnbPpN
-         v7pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715936301; x=1716541101;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WXEIiwHqeogB7g3eJChPlM4JmbteA+j2Ygd7KOJ9e/w=;
-        b=L2dXcmr01EpedpEyO0Gc5N1S6y+13Gz/Ra5yl8pXTVWzIOAMxcIbgQrF5cihAMIuGm
-         DlJM27hOrZV/tT2x+Z9Uh0+CjnGABEYh5ah43M9Y3wADRnuLo714KMnOu2FIKP1fuGN1
-         kOFEhVBVje7Bf6FguYvE5YHcoPQ570IhxsDFC9GlvyKhShxzQsno+/VUYjXKyAX09T5b
-         oiRFkZ4BMNThsOxmpHaqAuFBDRTvDJekTP4xDJ89WF6/JT5S1NSx+iI6iFI0XSQGadFb
-         2rJZ6xuhFbVgJ7EdzRZT3IzM2N8qawhFIUTxY5xEOlexigFlrmNwa3q5CDjdSlyEC8vZ
-         e3CA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpojDr3WjvdOOZKTYGb/ESYufk5PC04TnnP50PAqFy8uOCztdv1riL8Bzgi/wfks39Dv7v1OLovwkOBSCKqa0m/Trsj5qNTJebyWbP
-X-Gm-Message-State: AOJu0YzTv9qD05MOQml0ypkk7gTe7a0AELvwlLhfG0A8U3kPVo4P6CAt
-	HTWorsS4+V0NjNvgBRfOkeN1JgbdeHvYpxKgKXOVDtxxEMTDZb3xcgvZvolVNM8=
-X-Google-Smtp-Source: AGHT+IHkfIzP+hj8dP0Dt3WefFPm0Nq5vUF7+ysNW0I2MuifC2v/wA6VP1/jj8rSAmxAM+Ky7YAGHg==
-X-Received: by 2002:a05:6512:542:b0:51d:9e17:29f0 with SMTP id 2adb3069b0e04-5220fd7c89emr16576217e87.24.1715936301003;
-        Fri, 17 May 2024 01:58:21 -0700 (PDT)
-Received: from [10.91.1.133] ([149.14.240.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a69148b97sm637788566b.114.2024.05.17.01.58.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 May 2024 01:58:20 -0700 (PDT)
-Message-ID: <edfb049a-b56e-424f-bca7-556dffa6c87d@linaro.org>
-Date: Fri, 17 May 2024 10:58:18 +0200
+	s=arc-20240116; t=1715936362; c=relaxed/simple;
+	bh=lw2YM73uV4pxb1rCLnOwSpJITikfz/PrwQdE9eVB05s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qPJs9jwuj50cQE4Ivbepy1dLQXoL3uG3c35d+erhEpQbqlrgQj+1UGySGRmSV6DxgH0Y1QTc9h+79AoCHLbqGahVu33ZF5RFRDDkMZT7ee2hQF76iBQ3tGzdqSGKEO1ifpuc/r6HJU2syuHTAa02eAKNGyEBknmhlEMLeQO4G3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V85PeP3h; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715936362; x=1747472362;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lw2YM73uV4pxb1rCLnOwSpJITikfz/PrwQdE9eVB05s=;
+  b=V85PeP3h/BPwU78FnPog9ZX5aElrINkAAOv40vm1tspR72m6XLTulqgF
+   L0Z+YLjqFdfbAQZoeugAJnaIvHs/zLABx4cXnQimpZQw7NQmkNI5J29Lc
+   LQvX83D2z4HJLOm9woRpTtdfkhmozFhVoVoQn94VA6FVJkXwRmGD1z85U
+   EQgTLkmYdH2+pO1NWhoLeYbPCJC0fZb0ZvLCnekFEwpnJLInjkb3EnRqG
+   0HT7DmeVnyGljYKH6kQzCKLTWLggv+8OwsFSiXXiJ5op/bv9aVvbo+rXX
+   tEm5Q7GrKyzHp7eI8Sj+XdT5IKHT1b9O20mq45ZEWeHt7XxyOsMiKKlY9
+   Q==;
+X-CSE-ConnectionGUID: rP8HkexwRiuR86KpNron1Q==
+X-CSE-MsgGUID: IYmEhEBJQ8eL9OPV5+IUaA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11972567"
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="11972567"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 01:59:21 -0700
+X-CSE-ConnectionGUID: vdRPa5+vQQeEYS7RuqrBGQ==
+X-CSE-MsgGUID: Ur0iTOcVSq2xou8CBAXdbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="31823546"
+Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 17 May 2024 01:59:20 -0700
+Received: from kbuild by 108735ec233b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s7tQq-0000Uq-1Q;
+	Fri, 17 May 2024 08:59:16 +0000
+Date: Fri, 17 May 2024 16:58:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mukesh Ojha <quic_mojha@quicinc.com>, tglx@linutronix.de
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: Re: [PATCH] genirq/chip: Fix the warn for non-SMP system
+Message-ID: <202405171655.T2VuGylp-lkp@intel.com>
+References: <1715887825-1031-1-git-send-email-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] hwspinlock: Introduce refcount
-Content-Language: en-US
-To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, Richard Maina <quic_rmaina@quicinc.com>
-References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
- <20240516-hwspinlock-bust-v1-1-47a90a859238@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240516-hwspinlock-bust-v1-1-47a90a859238@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1715887825-1031-1-git-send-email-quic_mojha@quicinc.com>
 
-On 17/05/2024 00:58, Chris Lew wrote:
-> +	unsigned int refcnt;
+Hi Mukesh,
 
-Why int and not refcount_t ?
+kernel test robot noticed the following build errors:
 
-Have you an argument for or against use of one over another ?
+[auto build test ERROR on tip/irq/core]
+[also build test ERROR on linus/master v6.9 next-20240517]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
----
-bod
+url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Ojha/genirq-chip-Fix-the-warn-for-non-SMP-system/20240517-033251
+base:   tip/irq/core
+patch link:    https://lore.kernel.org/r/1715887825-1031-1-git-send-email-quic_mojha%40quicinc.com
+patch subject: [PATCH] genirq/chip: Fix the warn for non-SMP system
+config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240517/202405171655.T2VuGylp-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240517/202405171655.T2VuGylp-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405171655.T2VuGylp-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   or1k-linux-ld: kernel/irq/chip.o: in function `irq_startup':
+>> chip.c:(.text+0x14d8): undefined reference to `irq_do_set_affinity'
+>> chip.c:(.text+0x14d8): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `irq_do_set_affinity'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
