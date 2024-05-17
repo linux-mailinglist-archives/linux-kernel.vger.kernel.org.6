@@ -1,196 +1,108 @@
-Return-Path: <linux-kernel+bounces-182407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26CA38C8AF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:26:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D91E8C8AF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 497171C2130B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:26:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED641C222DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CE213DDB0;
-	Fri, 17 May 2024 17:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFFA13E036;
+	Fri, 17 May 2024 17:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kd0yH2xr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DI2/sOIS"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E437038DD6;
-	Fri, 17 May 2024 17:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BF313DB9B;
+	Fri, 17 May 2024 17:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715966776; cv=none; b=no9d+u5u9aww1YiaBAGEANgAcgppkcLfa5aHC/lvX9u2KPfGckGhOq6NE0IyZODcYhBVpKXYNRHW9YwkQp88QlriGs8lIp+ojUNqnwPpScISxs22pj4YuZt2ETlXuqvJO8zGZiZ4hS+e9Ai02cF8D8S7QyL3sF38j5LEbzPQ0o4=
+	t=1715966788; cv=none; b=QCDVWAOGYOrGcl+SZ6nb9DO61bVI0fpD9M5PjN0FZzyq4ut5G7qZ5u7SKPE4udVjCqV+h0gDO202fggt2vJulQGanR6DjEvpKocGixZxyJYxiba78RUe6R3v9f0ilkRDzPFePwADRZImiwikgE2b8ctK8llVYH7zEVAiEi8yjYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715966776; c=relaxed/simple;
-	bh=0M3HYSdEmubxOzs/jcX7oAnPF/iNS8AiC7WXi8DwIRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fpumou0DLaxTSj3P4FVrLLjt0cWdEwWXW7r16U88q24mt3si3ZvX4IR8g+dirYjYTH0t7pBuhRgMx5Iq8dkjYYnz/BL2hP7qwcNRU6aLylvg0vigkcoe07MXjdkXvZ9xaY/Vz0+Q/ZNKnF+04hb8ZERI0orz41TIPi2SezHz03U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kd0yH2xr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44H887hm007325;
-	Fri, 17 May 2024 17:25:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=gLVVj3IpTMDOAfQJiNsX9fmZxMsVPG8Kxu10qlV2sjY=; b=Kd
-	0yH2xrdS7mqMMysI3ADZYa8rRXZdNSY5mbAn4DrvuIngbUa9FS/98CqDqHshw8Ee
-	cQzTeilZ7/HuT9O8OlG83JKw6bidRJnWPDwwK2B0y1LJibh8iN9bjMaIrkWlIVsb
-	ACjj1ck65ByXm4pB0zIo7eigOg7UyIY9QqrqfawBSfcb3fU/8oAB7+XZV9EZEc0h
-	GhXFWcHLUtSjLTQo+/xQWAnwif0BRVD675S6TOzqRHvNfRpqd6aepbsiYA1U0wvM
-	KQZIp/OEu4blXaGHGSQFMVy4KRrmUeuTA9z29zHS78XzNKRMj/bmTRRJfzrOFA3I
-	asf3q13i1tG8//uYYKOg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y51tunesg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 17:25:58 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44HHPvSn025836
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 17:25:57 GMT
-Received: from [10.110.27.85] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
- 2024 10:25:56 -0700
-Message-ID: <87e2a55c-4b8c-40e0-b371-aaae40e5e876@quicinc.com>
-Date: Fri, 17 May 2024 10:25:55 -0700
+	s=arc-20240116; t=1715966788; c=relaxed/simple;
+	bh=L01yknndEnuYphVPNzv32AM8AKWTkpUwEh/WTz0L6Vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQjAbkGL4PnCf155+PjvlAAembYClG9TDgR3AIWEFANr1iUJK/ixAAAsZGL6+5MEGGZoNpz6TB9lIOZ0CX3UQ/FbCJnxPYr1sVR7IC0vGWSv8NYFZzN3RrMg84adwFNKB/Osv5sH1UmfStTmaBq6MhRvaBLQBJuthHKSkRDRkIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DI2/sOIS; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6FF8840E01E8;
+	Fri, 17 May 2024 17:26:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id QUTAxFpwmxTl; Fri, 17 May 2024 17:26:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715966780; bh=JxAsV7mx2TJYX+9cLdcRXg8LbfpFXpxmKwDrIX6yx2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DI2/sOISPGLdODF0BiGocWEe/0U2MNVG8oNI+5pw4AX0o3DocNcEi2jD28MsRvtly
+	 LLfpEjN2T0Eh6AZE5KUZfA5/t0wiQ/p0pJXeXz5jCCiJOrwMiqrVpFmDpaFBkPfu8n
+	 zNKfbCYRm3x1HiNnw7Vx0kgVZgqiVLEaY2pipCEj+Dj0th9shVMPJhIFcHEHfDXPEK
+	 WdnGLssQYNWw4prkWdEgsVXM407HYRxxxdQv6oJhFl88uqyfsoPsI6my01zVwmFVGK
+	 i4Vvt2Kje2+NfihI7muhCq3ukKA+l+/JQ2RUU9Db/cH1pXBmcs5H+oltqJn+sEwKMs
+	 Tq4raj3xeDDQ9GGwisXKDd0XLB5yhUa30bxtEqJQYZrw1gylg2T7yziWnfnq/FpSYT
+	 y6DjTjIx//ixAdBFj+JYXBEQe/roXr7LToeSf3DXSZRGtlENmqLFTUfJwP2GobgZDV
+	 MXdaW/MZ5i35OCiKryPq6MvUKyaHeIAlO0wDuRA+bI60UsGRA0gaDmOBT1SJY1kO9T
+	 qoIOmIQnRDPs8BURUKBrkkMFhHVHfnP1eeXiPcyggk00pq42mr31bwex7k9hQa8/a+
+	 ijjVw3w6MRUmSqEiEJosV+NfW1CNX1+SSjm6HK7nEklPBRWX6n+jzYw1hf2aUyGIOt
+	 ggrnG3vW0HjE0rbC/dR/iImg=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DEB4440E0244;
+	Fri, 17 May 2024 17:26:08 +0000 (UTC)
+Date: Fri, 17 May 2024 19:26:03 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev,
+	Jeff Johnson <quic_jjohnson@quicinc.com>
+Subject: Re: [regression] suspend stress test stalls within 30 minutes
+Message-ID: <20240517172603.GEZkeTK246tBvGEtgF@fat_crate.local>
+References: <87o79cjjik.fsf@kernel.org>
+ <20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
+ <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
+ <87h6f4jdrq.fsf@kernel.org>
+ <878r0djxgc.fsf@kernel.org>
+ <874jb0jzx5.fsf@kernel.org>
+ <20240514160555.GCZkOL41oB3hBt45eO@fat_crate.local>
+ <87msoofjg1.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] remoteproc: qcom_q6v5_pas: Add hwspinlock bust on
- stop
-To: Mukesh Ojha <quic_mojha@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Peter
- Zijlstra" <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon
-	<will@kernel.org>,
-        Waiman Long <longman@redhat.com>, Boqun Feng
-	<boqun.feng@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Richard Maina <quic_rmaina@quicinc.com>
-References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
- <20240516-hwspinlock-bust-v1-6-47a90a859238@quicinc.com>
- <1238fa39-f0da-fb4c-0668-caa946505373@quicinc.com>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <1238fa39-f0da-fb4c-0668-caa946505373@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hUOpJDWfPmO--lYc7lk1l-UrlwupcZOQ
-X-Proofpoint-GUID: hUOpJDWfPmO--lYc7lk1l-UrlwupcZOQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-17_07,2024-05-17_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- mlxscore=0 lowpriorityscore=0 mlxlogscore=999 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405170136
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87msoofjg1.fsf@kernel.org>
 
+On Fri, May 17, 2024 at 08:15:58PM +0300, Kalle Valo wrote:
+> So the weird part is that when the bug happens (ie. suspend stalls) I
+> can access the box normally using ssh and I don't see anything special
+> in dmesg. Below is a full copy of dmesg output after the suspend
+> stalled. Do note that I copied this dmesg before I updated microcode so
+> it will still show the old microcode version.
 
+Does that mean that you'd still see the stall even with the latest
+microcode revision 0xf8?
 
-On 5/17/2024 12:21 AM, Mukesh Ojha wrote:
-> 
-> 
-> On 5/17/2024 4:28 AM, Chris Lew wrote:
->> From: Richard Maina <quic_rmaina@quicinc.com>
->>
->> When remoteproc goes down unexpectedly this results in a state where any
->> acquired hwspinlocks will remain locked possibly resulting in deadlock.
->> In order to ensure all locks are freed we include a call to
->> hwspin_lock_bust() during remoteproc shutdown.
->>
->> For qcom_q6v5_pas remoteprocs, each remoteproc has an assigned id that
->> is used to take the hwspinlock. Remoteproc should use this id to try and
->> bust the lock on remoteproc stop.
->>
->> This edge case only occurs with q6v5_pas watchdog crashes. The error
->> fatal case has handling to clear the hwspinlock before the error fatal
->> interrupt is triggered.
->>
->> Signed-off-by: Richard Maina <quic_rmaina@quicinc.com>
->> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
->> ---
->>   drivers/remoteproc/qcom_q6v5_pas.c | 28 ++++++++++++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>
->> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c 
->> b/drivers/remoteproc/qcom_q6v5_pas.c
->> index 54d8005d40a3..57178fcb9aa3 100644
->> --- a/drivers/remoteproc/qcom_q6v5_pas.c
->> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
->> @@ -10,6 +10,7 @@
->>   #include <linux/clk.h>
->>   #include <linux/delay.h>
->>   #include <linux/firmware.h>
->> +#include <linux/hwspinlock.h>
->>   #include <linux/interrupt.h>
->>   #include <linux/kernel.h>
->>   #include <linux/module.h>
->> @@ -52,6 +53,7 @@ struct adsp_data {
->>       const char *ssr_name;
->>       const char *sysmon_name;
->>       int ssctl_id;
->> +    int hwlock_id;
->>       int region_assign_idx;
->>       int region_assign_count;
->> @@ -84,6 +86,9 @@ struct qcom_adsp {
->>       bool decrypt_shutdown;
->>       const char *info_name;
->> +    struct hwspinlock *hwlock;
->> +    int hwlock_id;
->> +
->>       const struct firmware *firmware;
->>       const struct firmware *dtb_firmware;
->> @@ -399,6 +404,12 @@ static int adsp_stop(struct rproc *rproc)
->>       if (handover)
->>           qcom_pas_handover(&adsp->q6v5);
->> +    if (adsp->hwlock) {
->> +        ret = hwspin_lock_bust(adsp->hwlock, adsp->hwlock_id);
->> +        if (ret)
->> +            dev_info(adsp->dev, "failed to bust hwspinlock\n");
->> +    }
->> +
-> 
-> As you said above, you seem to cover only wdog case and fatal cases
-> are already handled at remote;
-> 
-> You are clearing here for both ? is this right understanding ?
-> 
+-- 
+Regards/Gruss,
+    Boris.
 
-Yes that is correct. While the firmware is able to handle error fatal 
-cases, I think it is still the responsibility of the remoteproc driver 
-to try and bust the lock on behalf of the rproc in both cases.
-
-The bust will only clear the spinlock if it has the token (specific id 
-for that rproc) that is passed into hwspin_lock_bust, so it is safe to 
-attempt this even if the value has been cleared by the rproc in the 
-error fatal case.
-
-> -Mukesh
+https://people.kernel.org/tglx/notes-about-netiquette
 
