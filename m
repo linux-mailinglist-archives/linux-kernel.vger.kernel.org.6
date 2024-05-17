@@ -1,285 +1,167 @@
-Return-Path: <linux-kernel+bounces-182651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B548C8DCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:39:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D2F68C8DD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86D8BB2350B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:39:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EABF1C21DAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39431428FC;
-	Fri, 17 May 2024 21:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A561420A2;
+	Fri, 17 May 2024 21:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ds13V/0I"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pbL1P25V";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ljOPtLVG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD7C1428ED
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 21:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457D11419AA;
+	Fri, 17 May 2024 21:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715981872; cv=none; b=Bk+6a7otSRFsSuvPb4ZCYQZ4FCpbsnPIMRcp82eLQplh9Ebjft1Ss1GGnaxCNGzc9ZIYzkRgi4yLtUHFUp+nTagNwXGakEmo8I6o8ZZy6rrSyfVxWSd/cJAmTdqS27CQRrVyr9FRauTLEvDc3u7Vcjw63JSz3mJlHJ3llI64u9A=
+	t=1715981881; cv=none; b=rQQxlzVFP9ZL8PMBBCgeCervdEkwt7mp38FZRKOZW5gHChbkpK/WzZYLwWhhRvjJFxGausybQEAInqbHc+6LBQpxz5McnMKWO5IWfhmT/DBCT7U+9UGqJkq0lh4ZVBzsHA3Owkmq9XnlwYjlhjOUWRTPi3JTB+J2teKZjX2VrLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715981872; c=relaxed/simple;
-	bh=IJ0tu0n33u7l2czqvINqi/D9BsxunlVpd9Ueto7k4Ew=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=StLIoHcBXEYJzcdWD23qOUGeV9jsfkilMh0U0Stu3ll0mfMVehqW1WnjCA0wQJu0uZxtCkhTsa0ZTi7jpVN/Qr8mwt5npIXmEIv57FNXg8w0ph+w1PziKa1t3dw5U9XiUcuh7CyiqhRefoIIIJ4hoGKc4EEfV4TZG50emgBmEM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ds13V/0I; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-662aeb8d157so85466a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:37:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715981870; x=1716586670; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Idck8NJaJ/+Vpl/CRWABV0vclOOqdIkStHcxSg1So4=;
-        b=Ds13V/0Ie6IX5risax3pfabpkZamxKquwGgj733NcjdI+UoQ5nTCtW3szxp0b3pTAl
-         KfZT5PPXKDKIQiQvxUMC8yM7S/MRijL9N36lbegwtI3pLXrmxcrsquH9maVgEJ1zRIMF
-         EfO2xNjVr7h4ovJMn1X6WHHKMeccOGOF8ZpqQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715981870; x=1716586670;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Idck8NJaJ/+Vpl/CRWABV0vclOOqdIkStHcxSg1So4=;
-        b=lAj2FK6fuwP7AdXMSNnTJoWNBlXqrkQ++hHrzy4nN9oU6VfcGApnkgxHLecolEw90m
-         3d0UONho2859qhwBMIdmhyHZJNgvNc0Fu2MNZx/caAKemsT/7dlOHND8QvUMcBYkWvaO
-         2VQVaFluK9u6XQkfayz3haBOHK5p7YELPMNhUmPAsNzkVsUsPgIDfivN4qZEjAW0X++4
-         pi6LwROPNprsUbvKOrqEkJrP6MELveawFDFGzzwoiWoo8xUDpKXAdu9DzfAAZwFFomMw
-         lo1He5Tj8R8jys/8xUEiwCTuOb+xgD9z121287HFXK1HvkLL3cg0aQas91DzD2drmIwo
-         GkwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfz2NOOPCvIeGZK66MAzEe7gLhLPA3HHzkT3BAMO2pykRccoGed/oLfuS6WYvuGfP4M3YHEXSkzckmo66VfeWVaKM5B2ffC24xn3Jk
-X-Gm-Message-State: AOJu0YwBaDbZxXlfSc53TLhyhOJ06mUw7pUrK0zLHse1OUv3ED4S3TVa
-	2UN6a3EtM2AriDXmU9+spZ9tK3F1i3ZXfxMHZJe4CRAjCcqXx6bmzBKUo+l48w==
-X-Google-Smtp-Source: AGHT+IFTf9mztHoG3W0qKI9PMVLR156uygC1Rq1UbvG0b5tcufO2fDgf17EUnFOGEMDC1IYVyFm+4g==
-X-Received: by 2002:a05:6a00:14cb:b0:6f3:ea39:a56a with SMTP id d2e1a72fcca58-6f4e0299776mr26311621b3a.1.1715981870627;
-        Fri, 17 May 2024 14:37:50 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:26de:b1dd:5:771c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b2f8b3sm15168736b3a.211.2024.05.17.14.37.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 14:37:50 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] drm/panel: himax-hx83102: use wrapped MIPI DCS functions
-Date: Fri, 17 May 2024 14:36:43 -0700
-Message-ID: <20240517143643.8.If761d37b5d511867ac8207fe8220ae48d444a04f@changeid>
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-In-Reply-To: <20240517213712.3135166-1-dianders@chromium.org>
-References: <20240517213712.3135166-1-dianders@chromium.org>
+	s=arc-20240116; t=1715981881; c=relaxed/simple;
+	bh=O59K4hbDSsfiQU0mSa0j9lbI6l1M9YPmNCHJAuUsARc=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IXOaKBCKpx+vuMd+F9Cw6tGll//1OW+GrZJVhaw28BVziC+JqwESaRjTMv/eIFn+CMU6JRmvGRlOfEiJ6sMB1A5GcZT9p6V0mAjpnJiFyozHySX/B+Nql++uSU3Q4ccC/jsVJzNiBGYKQ/AHWGmDgfF2rRAQAIciQbxilW1g0MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pbL1P25V; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ljOPtLVG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715981878;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DXtrA5LLFohLOjGP/edadyudWrEZRBECLedxJJ0rcYI=;
+	b=pbL1P25VT61HHZRS50rO5Gwpx0znpq5MQBGNgqKMYKYleyJZOtQx/eoVHjlw/zuCRaSnJC
+	ULNr2b2vZQ7C8CJO34JuGGF5mWaWHGTOB2t2RNmso+xBL8Oo4zlEbAlXHkIMwS4hFtwlIz
+	2wdHQ3Wf3U5sCusbJzVXSrZnf+mQuntB6pjpF1nXhmp14eCOWy3OUCsyCOsLF0HUtsTcNI
+	+E11XF1xFIS/0YWOW1JlCrgmm706qH6lj3GAIaEkqqEZhydbpekZh6nnAMxIuWVhc8WcFe
+	dRco29ASa07t9RPrZ//V0G43K+YJ4zFOSZWBUnempkruDisMuCKTTuBP3LHF7w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715981878;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DXtrA5LLFohLOjGP/edadyudWrEZRBECLedxJJ0rcYI=;
+	b=ljOPtLVGpxmk0jU3L4UqfG5IrEz0yayhXyrM3c/ZgIIHuhN+I+V36vHKQAxVndVuIuwDKX
+	O1HriLIZJtakL3Bw==
+To: Costa Shulyupin <costa.shul@redhat.com>, longman@redhat.com,
+ pauld@redhat.com, juri.lelli@redhat.com, prarit@redhat.com,
+ vschneid@redhat.com, Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, Zefan Li
+ <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner
+ <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
+ <mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, Petr
+ Mladek <pmladek@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Masahiro Yamada <masahiroy@kernel.org>, Randy Dunlap
+ <rdunlap@infradead.org>, Yoann Congal <yoann.congal@smile.fr>, "Gustavo A.
+ R. Silva" <gustavoars@kernel.org>, Nhat Pham <nphamcs@gmail.com>, Costa
+ Shulyupin <costa.shul@redhat.com>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org
+Subject: Re: [PATCH v1 1/7] sched/isolation: Add infrastructure to adjust
+ affinity for dynamic CPU isolation
+In-Reply-To: <20240516190437.3545310-2-costa.shul@redhat.com>
+References: <20240516190437.3545310-1-costa.shul@redhat.com>
+ <20240516190437.3545310-2-costa.shul@redhat.com>
+Date: Fri, 17 May 2024 23:37:57 +0200
+Message-ID: <877cfsjf0q.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Take advantage of some of the new wrapped routines introduced by
-commit f79d6d28d8fe ("drm/mipi-dsi: wrap more functions for streamline
-handling") to simplify the himax-hx83102 driver a bit more. This gets
-rid of some extra error prints (since the _multi functions all print
-errors for you) and simplifies the code a bit.
+On Thu, May 16 2024 at 22:04, Costa Shulyupin wrote:
+> Introduce infrastructure function housekeeping_update() to change
+> housekeeping_cpumask during runtime and adjust affinities of depended
+> subsystems.
+>
+> Affinity adjustments of subsystems follow in subsequent patches.
+>
+> Parent patch:
+> "sched/isolation: Exclude dynamically isolated CPUs from housekeeping masks"
+> https://lore.kernel.org/lkml/20240229021414.508972-2-longman@redhat.com/
+>
+> Test example for cgroup2:
+>
+> cd /sys/fs/cgroup/
+> echo +cpuset > cgroup.subtree_control
+> mkdir test
+> echo isolated > test/cpuset.cpus.partition
+> echo $isolate > test/cpuset.cpus
 
-One thing here that isn't just refactoring is that in a few places we
-now check with errors with "if (err)" instead of "if (err < 0)". All
-errors are expected to be negative so this is not expected to have any
-impact. The _multi code internally considers anything non-zero to be
-an error so this just makes things consistent.
+This changelog is not telling me anything. Please see
+Documentation/process/ what changelogs should contain.
 
-It can also be noted that hx83102_prepare() has a mix of things that
-can take advantage of _multi calls and things that can't. The cleanest
-seemed to be to use the multi_ctx still but consistently use the
-"accum_err" variable for error returns, though that's definitely a
-style decision with pros and cons.
+> +/*
+> + * housekeeping_update - change housekeeping.cpumasks[type] and propagate the
+> + * change.
+> + *
+> + * Assuming cpuset_mutex is held in sched_partition_write or
+> + * cpuset_write_resmask.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+Locking cannot be assumed. lockdep_assert_held() is there to document
+and enforce such requirements.
 
- drivers/gpu/drm/panel/panel-himax-hx83102.c | 92 +++++++--------------
- 1 file changed, 28 insertions(+), 64 deletions(-)
+> + */
+> +static int housekeeping_update(enum hk_type type, cpumask_var_t update)
 
-diff --git a/drivers/gpu/drm/panel/panel-himax-hx83102.c b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-index 1ba623e41924..6009a3fe1b8f 100644
---- a/drivers/gpu/drm/panel/panel-himax-hx83102.c
-+++ b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-@@ -285,12 +285,10 @@ static int boe_nv110wum_init(struct hx83102 *ctx)
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x00);
- 	hx83102_enable_extended_cmds(&dsi_ctx, false);
--	if (dsi_ctx.accum_err)
--		return dsi_ctx.accum_err;
- 
--	msleep(50);
-+	mipi_dsi_msleep(dsi_ctx, 50);
- 
--	return 0;
-+	return dsi_ctx.accum_err;
- };
- 
- static int ivo_t109nw41_init(struct hx83102 *ctx)
-@@ -392,12 +390,10 @@ static int ivo_t109nw41_init(struct hx83102 *ctx)
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x00);
- 	hx83102_enable_extended_cmds(&dsi_ctx, false);
--	if (dsi_ctx.accum_err)
--		return dsi_ctx.accum_err;
- 
--	msleep(60);
-+	mipi_dsi_msleep(dsi_ctx, 60);
- 
--	return 0;
-+	return dsi_ctx.accum_err;
- };
- 
- static const struct drm_display_mode starry_mode = {
-@@ -472,40 +468,20 @@ static int hx83102_enable(struct drm_panel *panel)
- 	return 0;
- }
- 
--static int hx83102_panel_enter_sleep_mode(struct hx83102 *ctx)
--{
--	struct mipi_dsi_device *dsi = ctx->dsi;
--	int ret;
--
--	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
--
--	ret = mipi_dsi_dcs_set_display_off(dsi);
--	if (ret < 0)
--		return ret;
--
--	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
--	if (ret < 0)
--		return ret;
--
--	return 0;
--}
--
- static int hx83102_disable(struct drm_panel *panel)
- {
- 	struct hx83102 *ctx = panel_to_hx83102(panel);
- 	struct mipi_dsi_device *dsi = ctx->dsi;
--	struct device *dev = &dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
- 
--	ret = hx83102_panel_enter_sleep_mode(ctx);
--	if (ret < 0) {
--		dev_err(dev, "failed to set panel off: %d\n", ret);
--		return ret;
--	}
-+	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
- 
--	msleep(150);
-+	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
- 
--	return 0;
-+	mipi_dsi_msleep(&dsi_ctx, 150);
-+
-+	return dsi_ctx.accum_err;
- }
- 
- static int hx83102_unprepare(struct drm_panel *panel)
-@@ -526,32 +502,30 @@ static int hx83102_prepare(struct drm_panel *panel)
- {
- 	struct hx83102 *ctx = panel_to_hx83102(panel);
- 	struct mipi_dsi_device *dsi = ctx->dsi;
--	struct device *dev = &dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
- 
- 	gpiod_set_value(ctx->enable_gpio, 0);
- 	usleep_range(1000, 1500);
- 
--	ret = regulator_enable(ctx->pp1800);
--	if (ret < 0)
--		return ret;
-+	dsi_ctx.accum_err = regulator_enable(ctx->pp1800);
-+	if (dsi_ctx.accum_err)
-+		return dsi_ctx.accum_err;
- 
- 	usleep_range(3000, 5000);
- 
--	ret = regulator_enable(ctx->avdd);
--	if (ret < 0)
-+	dsi_ctx.accum_err = regulator_enable(ctx->avdd);
-+	if (dsi_ctx.accum_err)
- 		goto poweroff1v8;
--	ret = regulator_enable(ctx->avee);
--	if (ret < 0)
-+	dsi_ctx.accum_err = regulator_enable(ctx->avee);
-+	if (dsi_ctx.accum_err)
- 		goto poweroffavdd;
- 
- 	usleep_range(10000, 11000);
- 
--	ret = mipi_dsi_dcs_nop(ctx->dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to send NOP: %d\n", ret);
-+	mipi_dsi_dcs_nop_multi(&dsi_ctx);
-+	if (dsi_ctx.accum_err)
- 		goto poweroff;
--	}
-+
- 	usleep_range(1000, 2000);
- 
- 	gpiod_set_value(ctx->enable_gpio, 1);
-@@ -561,23 +535,13 @@ static int hx83102_prepare(struct drm_panel *panel)
- 	gpiod_set_value(ctx->enable_gpio, 1);
- 	usleep_range(6000, 10000);
- 
--	ret = ctx->desc->init(ctx);
--	if (ret < 0)
--		goto poweroff;
--
--	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
--	if (ret) {
--		dev_err(dev, "Failed to exit sleep mode: %d\n", ret);
--		goto poweroff;
--	}
--
--	msleep(120);
-+	dsi_ctx.accum_err = ctx->desc->init(ctx);
- 
--	ret = mipi_dsi_dcs_set_display_on(dsi);
--	if (ret) {
--		dev_err(dev, "Failed to turn on the display: %d\n", ret);
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(dsi_ctx, 120);
-+	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-+	if (dsi_ctx.accum_err)
- 		goto poweroff;
--	}
- 
- 	return 0;
- 
-@@ -590,7 +554,7 @@ static int hx83102_prepare(struct drm_panel *panel)
- 	usleep_range(5000, 7000);
- 	regulator_disable(ctx->pp1800);
- 
--	return ret;
-+	return dsi_ctx.accum_err;
- }
- 
- static int hx83102_get_modes(struct drm_panel *panel,
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+Please us 'struct cpumask *update' as it makes it clear what this is
+about. cpumask_var_t is a hack to make onstack and embedded cpumask and
+their allocated counterparts possible without #ifdeffery in the code.
 
+But any function which is not related to alloc/free of cpumask_var_t
+should simply use 'struct cpumask *' as argument type.
+
+> +	housekeeping.flags |= BIT(type);
+
+The existing code uses WRITE_ONCE() probably for a reason. Why is that
+not longer required here?
+
+>  static int __init housekeeping_setup(char *str, unsigned long flags)
+>  {
+>  	cpumask_var_t non_housekeeping_mask, housekeeping_staging;
+> @@ -314,9 +347,12 @@ int housekeeping_exlude_isolcpus(const struct cpumask *isolcpus, unsigned long f
+>  		/*
+>  		 * Reset housekeeping to bootup default
+>  		 */
+> -		for_each_set_bit(type, &housekeeping_boot.flags, HK_TYPE_MAX)
+> -			cpumask_copy(housekeeping.cpumasks[type],
+> -				     housekeeping_boot.cpumasks[type]);
+> +		for_each_set_bit(type, &housekeeping_boot.flags, HK_TYPE_MAX) {
+> +			int err = housekeeping_update(type, housekeeping_boot.cpumasks[type]);
+> +
+> +			if (err)
+> +				return err;
+> +		}
+>  
+>  		WRITE_ONCE(housekeeping.flags, housekeeping_boot.flags);
+>  		if (!housekeeping_boot.flags &&
+> @@ -344,9 +380,11 @@ int housekeeping_exlude_isolcpus(const struct cpumask *isolcpus, unsigned long f
+>  		cpumask_andnot(tmp_mask, src_mask, isolcpus);
+>  		if (!cpumask_intersects(tmp_mask, cpu_online_mask))
+>  			return -EINVAL;	/* Invalid isolated CPUs */
+> -		cpumask_copy(housekeeping.cpumasks[type], tmp_mask);
+> +		int err = housekeeping_update(type, tmp_mask);
+> +
+> +		if (err)
+> +			return err;
+
+Do we really need two places to define 'int err' or might it be possible
+to have one instance defined at function scope?
+
+Thanks,
+
+        tglx
 
