@@ -1,96 +1,86 @@
-Return-Path: <linux-kernel+bounces-182052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C91F8C85A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:26:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F4C8C85AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538421F22002
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:26:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32E501F2416E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142603FBB0;
-	Fri, 17 May 2024 11:25:55 +0000 (UTC)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46A93E471;
+	Fri, 17 May 2024 11:28:11 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE3C3EA96;
-	Fri, 17 May 2024 11:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74A72BCFD
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 11:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715945154; cv=none; b=p8xtTDjjqrcLult0bYcMblAG073afedfHeF6ZnTE2mFy4TkBKiTEj9VlSCA1+xM5o2z637uXhNQGw4OA1lv5OmwMsXMLvNkFS0Bcib0lzj4U+YQT+M99rDLjFgrbzDIVtidA6P7ROh3FSOvD739bsfubecws3rCwWGHYZpRVeXo=
+	t=1715945291; cv=none; b=jTyXkTBL1a+qUrahjxmIcThund3mlblm5H8oRvK3qIdbUGMcaVTfLKHu7jbB2tz0XK5CSQRA7ZR8z4dL7ovSLKg04BK1AKPh5btnI4JJ+JxmkXPvP0rBEHwRfyvD5o7FS3o2rQ/wWqA7WjtW9uxHx/+JJRv18BVji2s4yxEy1iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715945154; c=relaxed/simple;
-	bh=YQD6Oa1cvhYYwr0pr6C99jnus7JsR3UQ5GTpM2jcU0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ORCLnid006ZfpUoR1jcF4lO3Ims190sd+HbAnP7zdSxHeGx02QFcKIAa6blN9X/WVmyfHa5rtG9zegA66805wIG/J+WfWnardjcQL26RmrUrQbj+HtzYigr9cc7cegnYKoztFqpMS0/H2Qd6sL0bvKe1PtqWbZG8P0TD6qgt+yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1e651a9f3ffso3663005ad.1;
-        Fri, 17 May 2024 04:25:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715945152; x=1716549952;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t4GCEW7v7eGQqDO26j+0ZU9xZzL+oZKID2CvFQ0zRWY=;
-        b=M5UetKMpp8LBV172ZAqcMcwHXz0y3YHB61zKda/9Boj7Lsu7qCbqRBlPRHmn2G1yu4
-         rnlRDZLW+vCvPYlvW2dC5DMzCEWUDMjyCtXfvWpQeThwf3qxCInpNxyRkTVlZz4iRHKR
-         ouLuK5/h9HP0y8tv94urhT01UzHp/DodjUTN3TNBVg8lLLZ0d5fHX31LP2057cnibM0w
-         kiABkgbjIJXuGg5V/RKE4l1mC7pMbHyG6sI/LUXB/NFl/iULzSt5ApJ3gqnYyAxUJSoY
-         MEfXKjXafPXHxPAF+tmHBCaY3/jf9MFehV8fKW4YdTPnLsjzBFmOER5Pdbc2e5pB4kWy
-         eSyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQdX4GXkV/DCKMSsSSbFu8y/N1CwjIpzAbgl+zinUqCo1PzZjkevMu+a15sjRGmahBXO2nznhgpyWJriEk22rQ8g/DvY8vWdDHwtaexkYlshjFhVSLJ4lKXCRaj92WX5l2i4gTXYV+MhcZhfZqiZTs+iEAIzWHoELhSY1rhu158cdmZOBsc+lLdOc=
-X-Gm-Message-State: AOJu0YzcN2l31VhHly8VWwhhl7kCCpo+PcUKxhWIKxLAHW7nH7QnwWNG
-	ZqwbrHD3TK+GcEKt7tqTuPbCbUBJHfq6rmbdsby6zzJxPZsvb2qI
-X-Google-Smtp-Source: AGHT+IGPMFl/9tHC0W4aLrDbJxxtvZ3LF8vKCdbg3fSTX9TNDbvUg3HTztrjjFNchvAnQVoYDZNYeA==
-X-Received: by 2002:a17:902:fc4f:b0:1e8:c962:4f6e with SMTP id d9443c01a7336-1ef43d27f6fmr242204245ad.20.1715945152598;
-        Fri, 17 May 2024 04:25:52 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf31a93sm157485665ad.134.2024.05.17.04.25.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 04:25:52 -0700 (PDT)
-Date: Fri, 17 May 2024 20:25:50 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, jingoohan1@gmail.com, lpieralisi@kernel.org,
-	robh@kernel.org, bhelgaas@google.com,
-	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-	linux@armlinux.org.uk, m.szyprowski@samsung.com,
-	manivannan.sadhasivam@linaro.org, pankaj.dubey@samsung.com,
-	gost.dev@samsung.com
-Subject: Re: [PATCH v6 2/2] PCI: exynos: Adapt to clk_bulk_* APIs
-Message-ID: <20240517112550.GW202520@rocinante>
-References: <20240220084046.23786-1-shradha.t@samsung.com>
- <CGME20240220084125epcas5p28c6d886685006800fc26c11918d5d1dd@epcas5p2.samsung.com>
- <20240220084046.23786-3-shradha.t@samsung.com>
+	s=arc-20240116; t=1715945291; c=relaxed/simple;
+	bh=cXA+wMh0DoUH+aNA0HoHewqoDE2nsQtINGtHwe1mWUM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PwBsrh1uXEsZnpSCPJbAkn9qhBnRLB/4Y/tIzI61sEEyWcehBGdUwiGX33RRHQK+k4wlcV1mwfSXaAWbuAxAN+mzYyY2/TygkKHyT8fcCwuTA8ygUrvUhMNMhXLhUwqzKuVkaOS6NU7J4E26WXhLY7WD4I4a6PGOhWprK8ILg6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 44HBRIr9071358;
+	Fri, 17 May 2024 19:27:18 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Vgl300WpXz2PdW2s;
+	Fri, 17 May 2024 19:23:56 +0800 (CST)
+Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 17 May 2024 19:27:10 +0800
+From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
+        <Hao_hao.Wang@unisoc.com>
+Subject: [PATCH] f2fs: fix to check return value of f2fs_allocate_new_section
+Date: Fri, 17 May 2024 19:26:42 +0800
+Message-ID: <1715945202-30045-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240220084046.23786-3-shradha.t@samsung.com>
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 44HBRIr9071358
 
-Hello,
+commit 245930617c9b ("f2fs: fix to handle error paths of {new,change}_curseg()")
+missed this allocated path, fix it.
 
-> There is no need to hardcode the clock info in the driver as driver can
-> rely on the devicetree to supply the clocks required for the functioning
-> of the peripheral. Get rid of the static clock info and obtain the
-> platform supplied clocks. All the clocks supplied is obtained and enabled
-> using the devm_clk_bulk_get_all_enable() API.
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+---
+ fs/f2fs/segment.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applied to controller/exynos, thank you!
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index a0ce3d0..71dc8042 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -5190,7 +5190,9 @@ static int fix_curseg_write_pointer(struct f2fs_sb_info *sbi, int type)
+ 	if (cs->next_blkoff) {
+ 		unsigned int old_segno = cs->segno, old_blkoff = cs->next_blkoff;
+ 
+-		f2fs_allocate_new_section(sbi, type, true);
++		err = f2fs_allocate_new_section(sbi, type, true);
++		if (err)
++			return err;
+ 		f2fs_notice(sbi, "Assign new section to curseg[%d]: "
+ 				"[0x%x,0x%x] -> [0x%x,0x%x]",
+ 				type, old_segno, old_blkoff,
+-- 
+1.9.1
 
-[1/1] PCI: exynos: Adapt to use bulk clock APIs
-      https://git.kernel.org/pci/pci/c/358e579a9da2
-
-	Krzysztof
 
