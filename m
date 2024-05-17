@@ -1,173 +1,245 @@
-Return-Path: <linux-kernel+bounces-181979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890508C8488
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:09:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D498C848B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28AD32813E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:09:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAF481F245B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8569A2E417;
-	Fri, 17 May 2024 10:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pbev1wbq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD6A2C69C;
-	Fri, 17 May 2024 10:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F592E646;
+	Fri, 17 May 2024 10:09:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5322436B00;
+	Fri, 17 May 2024 10:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715940533; cv=none; b=lG/3f37AsMJQUbl5o+PeDa6Dot/uQ42K3/bFH6XQ2ANwF37/ska9BC8/ZZzCVu2lUC6Lfq+4zpHbEaTIS/BqAJX6xNMlERsdJKmuqjboESwJzMOCVgQhvhpCVcCqO0DusI2Ho+INV2yQH517mrzF9N2ubnFvgLdPDibZiAFU/og=
+	t=1715940549; cv=none; b=JXfD58zFIpneAJBI/d+z+Kr/qV0LIrm6FE74zQ1tuMy02Ys3oZdnxrlqijvjLRBPy7h2eKyGerPSaqv8aV4WzVAgW3i4N0TJRrB6/BoqPBoXPzlphyrqRdEa95/kQaEKh7C8pk/QSEQoPETE8fCTm0IZFj2QaQuMn2OXf1DE2Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715940533; c=relaxed/simple;
-	bh=pfuCaal2BbH2H2hAduZ+yPJwkOr35rv6GubynynOKNs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XEGrk6DO/HtLyDuShdqmfBFNiURuHSKqzF4MyrChUlKEU0l5TnveN0n4FMyml+C2zprg6Up1awkwy6wqWThRYmrHAxWLtYglRPwzyx5qE79jrXxsQnEDFpMRpEHfJB02DEipCu+if5xc25adIoqG1/krImFL33v4klERyM7AggA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pbev1wbq; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715940533; x=1747476533;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=pfuCaal2BbH2H2hAduZ+yPJwkOr35rv6GubynynOKNs=;
-  b=Pbev1wbqIcHUvtorJeWO6z2sOdpx59AE68pxNIgljVF2amXVEfNBGdqn
-   WFqYMmnzA4fcyYWW+feuV2EwcqV4D8UqlAqGZ1oScQeBdbQKx3iYEKTCi
-   TgwULxDjEXuzEl1WvY+E4QUtnpcvtO11vXjwL2Gt+kg0VGWfiiQbpcKZb
-   J4FqASJe+37Vyb92OMZT4IvVjz5QKF3xU67KKO5ifHVa429vAnQBuQUaI
-   S6u2CoBCy+rbUlEYIB7/qbyIw1ebYjzZ7a3bbqaS1Bw6PqxsdxGBiwkht
-   RZQaHgDUoEf99E+RguMyFbpC6pP2fOl8Dq+a2oDUQBZGpCBrPv2mdSUFb
-   w==;
-X-CSE-ConnectionGUID: BTgj9ey/Tmu/6pWl9wgTTQ==
-X-CSE-MsgGUID: c1HcfxBySPGO0vwKF/dEpA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11950421"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="11950421"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 03:08:52 -0700
-X-CSE-ConnectionGUID: 0KBlDWPsRzq3yu15syg1rw==
-X-CSE-MsgGUID: 43lF/XZvQ8yTvCWhav0Ytw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="31571973"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.21])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 03:08:49 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2] cxl/events: Use a common struct for DRAM and General Media
- events
-Date: Fri, 17 May 2024 12:08:45 +0200
-Message-ID: <6226704.vuYhMxLoTh@fdefranc-mobl3>
-In-Reply-To: <20240516173319.00007429@Huawei.com>
-References:
- <20240516102116.3512377-1-fabio.m.de.francesco@linux.intel.com>
- <20240516173319.00007429@Huawei.com>
+	s=arc-20240116; t=1715940549; c=relaxed/simple;
+	bh=zhggTY2nIl5vIhlVGrmdHythtN1EM7xcW8vbjkWiZ5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nvC8Oz+ItuUYru/JALNMje9n+W1YYqXk9WjUsdJDX3vOauZzPUBKgI/R0KoZJExW8Jg0TM0qEvIBz86MIKF+dmuMO/9/LI3o7qFSytdZNdte4pifbeiGKAf0mkDwxwCvV+lr+3CKMGYgJ4GAEKR2c2V3xHBQkQa74wyWeJMZcxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87C2A1424;
+	Fri, 17 May 2024 03:09:30 -0700 (PDT)
+Received: from [10.91.2.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9856A3F762;
+	Fri, 17 May 2024 03:09:03 -0700 (PDT)
+Message-ID: <9b7a5afb-63b9-4dd2-8a43-32ae725c42bf@arm.com>
+Date: Fri, 17 May 2024 12:09:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-
-Jonathan,
-
-Thanks for your comments.
-
-On Thursday, May 16, 2024 6:33:19=E2=80=AFPM GMT+2 Jonathan Cameron wrote:
-> On Thu, 16 May 2024 12:19:53 +0200
->=20
-> "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
-> > cxl_event_common was a poor naming choice and caused confusion with the
-> > existing Common Event Record.
-> >=20
-> > Use cxl_event_media as a common structure to record information about D=
-RAM
-> > and General Media events because it simplifies handling the two events.
-> >=20
-> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> > Fixes: 6aec00139d3a ("cxl/core: Add region info to cxl_general_media and
-> > cxl_dram events") Signed-off-by: Fabio M. De Francesco
-> > <fabio.m.de.francesco@linux.intel.com> ---
->=20
-> Packing question inline.
->
-> > [...]
-> >=20
-> > -struct cxl_event_dram {
-> > +struct cxl_event_media {
-> >=20
-> >  	struct cxl_event_record_hdr hdr;
-> >=20
-> > -	__le64 phys_addr;
-> > -	u8 descriptor;
-> > -	u8 type;
-> > -	u8 transaction_type;
-> > -	u8 validity_flags[2];
-> > -	u8 channel;
-> > -	u8 rank;
-> > -	u8 nibble_mask[3];
-> > -	u8 bank_group;
-> > -	u8 bank;
-> > -	u8 row[3];
-> > -	u8 column[2];
-> > -	u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
-> > -	u8 reserved[0x17];
-> > +	struct_group_tagged(cxl_event_media_hdr, media_hdr,
-> > +		__le64 phys_addr;
-> > +		u8 descriptor;
-> > +		u8 type;
-> > +		u8 transaction_type;
-> > +		u8 validity_flags[2];
-> > +		u8 channel;
-> > +		u8 rank;
-> > +	);
->=20
-> Does the struct that is created end up __packed?
-
-No, I should have noticed it.
-
-> Also, why is tagged useful here?
-
-It is not useful. I'll rework it not tagged.
-
-Again thanks,
-
-=46abio
-
-> > +	union {
-> > +		struct_group(general,
-> > +			u8 device[3];
-> > +			u8=20
-component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
-> > +			u8 gen_reserved[46];
-> > +		);
-> > +		struct_group(dram,
-> > +			u8 nibble_mask[3];
-> > +			u8 bank_group;
-> > +			u8 bank;
-> > +			u8 row[3];
-> > +			u8 column[2];
-> > +			u8=20
-correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
-> > +			u8 dram_reserved[0x17];
-> > +		);
-> > +	};
-> >=20
-> >  } __packed;
-> > =20
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/17] coresight: Expose map argument in trace ID API
+To: Mike Leach <mike.leach@linaro.org>
+Cc: linux-perf-users@vger.kernel.org, gankulkarni@os.amperecomputing.com,
+ scclevenger@os.amperecomputing.com, coresight@lists.linaro.org,
+ suzuki.poulose@arm.com,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, John Garry
+ <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20240429152207.479221-1-james.clark@arm.com>
+ <20240429152207.479221-12-james.clark@arm.com>
+ <CAJ9a7Vjj++Bvu2EFVxpXvW4nes0qxVqjxgBWwi1L904p86a7gw@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <CAJ9a7Vjj++Bvu2EFVxpXvW4nes0qxVqjxgBWwi1L904p86a7gw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
+
+On 01/05/2024 12:31, Mike Leach wrote:
+> Hi James,
+> 
+> On Mon, 29 Apr 2024 at 16:25, James Clark <james.clark@arm.com> wrote:
+>>
+>> The trace ID API is currently hard coded to always use the global map.
+>> The functions that take the map as an argument aren't currently public.
+>> Make them public so that Perf mode can pass in its own maps. At the
+>> moment all usages are still hard coded to use the global map, but now
+>> on the caller side.
+>>
+>> System ID functions are unchanged because they will always use the
+>> default map.
+>>
+>> Signed-off-by: James Clark <james.clark@arm.com>
+>> ---
+>>  .../hwtracing/coresight/coresight-etm-perf.c  |  5 +++--
+>>  .../coresight/coresight-etm3x-core.c          |  5 +++--
+>>  .../coresight/coresight-etm4x-core.c          |  5 +++--
+>>  .../hwtracing/coresight/coresight-trace-id.c  | 22 +++++++------------
+>>  .../hwtracing/coresight/coresight-trace-id.h  |  9 +++++---
+>>  5 files changed, 23 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> index c0c60e6a1703..4afb9d29f355 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> @@ -232,7 +232,7 @@ static void free_event_data(struct work_struct *work)
+>>                 if (!(IS_ERR_OR_NULL(*ppath)))
+>>                         coresight_release_path(*ppath);
+>>                 *ppath = NULL;
+>> -               coresight_trace_id_put_cpu_id(cpu);
+>> +               coresight_trace_id_put_cpu_id(cpu, coresight_trace_id_map_default());
+>>         }
+>>
+>>         /* mark perf event as done for trace id allocator */
+>> @@ -401,7 +401,8 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
+>>                 }
+>>
+>>                 /* ensure we can allocate a trace ID for this CPU */
+>> -               trace_id = coresight_trace_id_get_cpu_id(cpu);
+>> +               trace_id = coresight_trace_id_get_cpu_id(cpu,
+>> +                                                        coresight_trace_id_map_default());
+>>                 if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>>                         cpumask_clear_cpu(cpu, mask);
+>>                         coresight_release_path(path);
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> index 9d5c1391ffb1..4149e7675ceb 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> @@ -465,7 +465,8 @@ int etm_read_alloc_trace_id(struct etm_drvdata *drvdata)
+>>          *
+>>          * trace id function has its own lock
+>>          */
+>> -       trace_id = coresight_trace_id_get_cpu_id(drvdata->cpu);
+>> +       trace_id = coresight_trace_id_get_cpu_id(drvdata->cpu,
+>> +                                                coresight_trace_id_map_default());
+>>         if (IS_VALID_CS_TRACE_ID(trace_id))
+>>                 drvdata->traceid = (u8)trace_id;
+>>         else
+>> @@ -477,7 +478,7 @@ int etm_read_alloc_trace_id(struct etm_drvdata *drvdata)
+>>
+>>  void etm_release_trace_id(struct etm_drvdata *drvdata)
+>>  {
+>> -       coresight_trace_id_put_cpu_id(drvdata->cpu);
+>> +       coresight_trace_id_put_cpu_id(drvdata->cpu, coresight_trace_id_map_default());
+>>  }
+>>
+>>  static int etm_enable_perf(struct coresight_device *csdev,
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> index a0bdfabddbc6..f32c8cd7742d 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> @@ -241,7 +241,8 @@ int etm4_read_alloc_trace_id(struct etmv4_drvdata *drvdata)
+>>          * or return the one currently allocated.
+>>          * The trace id function has its own lock
+>>          */
+>> -       trace_id = coresight_trace_id_get_cpu_id(drvdata->cpu);
+>> +       trace_id = coresight_trace_id_get_cpu_id(drvdata->cpu,
+>> +                                                coresight_trace_id_map_default());
+>>         if (IS_VALID_CS_TRACE_ID(trace_id))
+>>                 drvdata->trcid = (u8)trace_id;
+>>         else
+>> @@ -253,7 +254,7 @@ int etm4_read_alloc_trace_id(struct etmv4_drvdata *drvdata)
+>>
+>>  void etm4_release_trace_id(struct etmv4_drvdata *drvdata)
+>>  {
+>> -       coresight_trace_id_put_cpu_id(drvdata->cpu);
+>> +       coresight_trace_id_put_cpu_id(drvdata->cpu, coresight_trace_id_map_default());
+>>  }
+>>
+>>  struct etm4_enable_arg {
+>> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
+>> index 19005b5b4dc4..45ddd50d09a6 100644
+>> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
+>> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+>> @@ -12,7 +12,7 @@
+>>
+>>  #include "coresight-trace-id.h"
+>>
+>> -/* Default trace ID map. Used on systems that don't require per sink mappings */
+>> +/* Default trace ID map. Used in sysfs mode and for system sources */
+>>  static struct coresight_trace_id_map id_map_default;
+>>
+>>  /* maintain a record of the mapping of IDs and pending releases per cpu */
+>> @@ -152,7 +152,7 @@ static void coresight_trace_id_release_all_pending(void)
+>>         DUMP_ID_MAP(id_map);
+>>  }
+>>
+>> -static int coresight_trace_id_map_get_cpu_id(int cpu, struct coresight_trace_id_map *id_map)
+>> +int coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map *id_map)
+>>  {
+>>         unsigned long flags;
+>>         int id;
+>> @@ -195,8 +195,9 @@ static int coresight_trace_id_map_get_cpu_id(int cpu, struct coresight_trace_id_
+>>         DUMP_ID_MAP(id_map);
+>>         return id;
+>>  }
+>> +EXPORT_SYMBOL_GPL(coresight_trace_id_get_cpu_id);
+>>
+>> -static void coresight_trace_id_map_put_cpu_id(int cpu, struct coresight_trace_id_map *id_map)
+>> +void coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_map *id_map)
+>>  {
+>>         unsigned long flags;
+>>         int id;
+>> @@ -222,6 +223,7 @@ static void coresight_trace_id_map_put_cpu_id(int cpu, struct coresight_trace_id
+>>         DUMP_ID_CPU(cpu, id);
+>>         DUMP_ID_MAP(id_map);
+>>  }
+>> +EXPORT_SYMBOL_GPL(coresight_trace_id_put_cpu_id);
+>>
+>>  static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map)
+>>  {
+>> @@ -250,19 +252,11 @@ static void coresight_trace_id_map_put_system_id(struct coresight_trace_id_map *
+>>         DUMP_ID_MAP(id_map);
+>>  }
+>>
+>> -/* API functions */
+>> -
+> 
+> Rather than remove the existing default trace ID functions, simply add
+> a few new ones...
+> 
+> e.g. given the existing...
+> 
+> void coresight_trace_id_put_cpu_id(int cpu)
+> {
+>     coresight_trace_id_map_put_cpu_id(cpu, &id_map_default);
+> }
+> EXPORT_SYMBOL_GPL(coresight_trace_id_put_cpu_id);
+> 
+> add:-
+> 
+> void coresight_trace_id_put_cpu_id_map(int cpu, struct
+> coresight_trace_id_map *id_map)
+> {
+>     coresight_trace_id_map_put_cpu_id(cpu, id_map);
+> }
+> EXPORT_SYMBOL_GPL(coresight_trace_id_put_cpu_id_map);
+> 
+> This avoids a whole lot of churn in exposing the default map to
+> external functions, putting it in there and then removing it later.
+> When any location that was using coresight_trace_id_put_cpu_id() needs
+> to supply its own map, change the function name at that point to
+> coresight_trace_id_put_cpu_id_map()
+> 
+> Mike
+> 
+> 
+
+Yeah I was on the fence about this one when writing it, but I agree I
+can make this change.
+
+James
 
