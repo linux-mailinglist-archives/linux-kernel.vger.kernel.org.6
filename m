@@ -1,134 +1,89 @@
-Return-Path: <linux-kernel+bounces-182015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D318C8521
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:53:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7F78C8526
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B64B1F24370
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:53:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60F641C22F29
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADF93BB35;
-	Fri, 17 May 2024 10:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jUHeZ22+"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E12C3BBD2;
+	Fri, 17 May 2024 10:57:44 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448773AC01;
-	Fri, 17 May 2024 10:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73773AC25;
+	Fri, 17 May 2024 10:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715943227; cv=none; b=fIE+xlS1rnKVbyAxICaP9kP21rbAzizXqLzmi9FWZQ5k+zfTWs99eAGv300OjIKn0bf8DfgCEbr0/yJyyoI4/Dw/c5/ph/OCLmEhpP07w+RuPSQ1KT16fMHtoxSXOZhS5AaAXCuyl5UX24p7/Qp1CD4bik6k8z3mxytHevYNYQg=
+	t=1715943464; cv=none; b=R1wDR2BY/cBV98S4sSgZYDGs4VVdUk79tkC4JGAa5WjYwsdfR3gJvnd5TdmpT01lwyFDS7OB8/IE/mMuNkyBtdB7I7dOKxaXwUdMFOKmkzwXcKIbWV6++18nBuAPxEj0/ZVu5OX7mR28+EQ67twspxoWHngmoU+CDO6RCU2RuO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715943227; c=relaxed/simple;
-	bh=cbiQBZy2De/m3cV+GNTDOXSmIL6b0Vw8lm2BYiT840E=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLqH6VaaHEt2oW93EE04qyeSIQZsQvj/fLfbVc2VH18pUQUs7AtjDv95HnQrXSYorbEb1D67Qmpkjxw96ZqlcL7J9sycZPmlX4AQA8TZpHBAiEua1IIvVFtdJgxhRCsm9QE1oorwg9pcWaMWHlfYdnhsz9xCJcssksgvjkuHDZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jUHeZ22+; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1715943225; x=1747479225;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cbiQBZy2De/m3cV+GNTDOXSmIL6b0Vw8lm2BYiT840E=;
-  b=jUHeZ22+H62LGifIjxGUj4Gas1bZXyMRdVCAbuFtVsPjFa31f25Y61Lt
-   HR9hG1dhGcLkxMUfssxRHZWQmCgsap2r5N7ZIEECC8nrLUMpJoGXX0crd
-   iTumkiQKLYYfWXPUDCP3GZi5J3LfOaASDOqKX6JF0KuQ1wEfdPcbEPd3y
-   AYIXO41givfqc/9cc/gzal2O3sgLCAYGE7B3k4d33GWBKF3ODzMmobxkH
-   h0JgxuN5fVxFseP7m3cCn3mEM8jn0RNwlY2WDxPpKUraiO75TCCT7w+5T
-   934T5ihap1wiLIKcr9IHenZ5EIoDiTuSQYQMh7ngc/oUC3z9ZXtmpPziw
-   w==;
-X-CSE-ConnectionGUID: 8/AyTWloQsq9+IZ75FlhEg==
-X-CSE-MsgGUID: fRuB+mRcSBeRvzdCZ+FE/w==
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="25039004"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 May 2024 03:53:44 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 17 May 2024 03:53:33 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Fri, 17 May 2024 03:53:33 -0700
-Date: Fri, 17 May 2024 12:53:33 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <jacob.e.keller@intel.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<UNGLinuxDriver@microchip.com>
-Subject: Re: [PATCH net] net: lan966x: Remove ptp traps in case the ptp is
- not enabled.
-Message-ID: <20240517105333.y62xzytnebpapayl@DEN-DL-M31836.microchip.com>
-References: <20240514193500.577403-1-horatiu.vultur@microchip.com>
- <20240514222149.mhwtp3kduebb4zzs@skbuf>
- <20240516064855.ne6uf3xanns4hh2o@DEN-DL-M31836.microchip.com>
- <20240517100425.l5ddxbuyxbgx42ti@skbuf>
- <20240517101811.vsqcg7moapixlfpj@DEN-DL-M31836.microchip.com>
- <20240517102307.7we5psrgbf56mden@skbuf>
+	s=arc-20240116; t=1715943464; c=relaxed/simple;
+	bh=SUFy1YwSeXt/BK/QChjzi3KKhYCdsOqTHDS/t45oRV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ro9OaHLnPH5sUPRAAPh+sE9r3AiBdwXy0RAQ3JPsdkBHalTwMe8M7HCeQsxASy1k3VonW1fvv+hIH0+ZDm0YK+3xBoqZmiE1TGO6H9u/z6y138zhQswfhZSKCSk4mNoWuUYaWCwZwJpuH4s/mqiCT74aDrqfHlcRwmY4se5GKM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1s7vHH-00GjMI-25;
+	Fri, 17 May 2024 18:57:32 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 17 May 2024 18:57:32 +0800
+Date: Fri, 17 May 2024 18:57:32 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	davem@davemloft.net, linux-kernel@vger.kernel.org, lukas@wunner.de,
+	jarkko@kernel.org
+Subject: Re: [PATCH v3] crypto: ecc - Prevent ecc_digits_from_bytes from
+ reading too many bytes
+Message-ID: <Zkc4HKGhDMV4cVOC@gondor.apana.org.au>
+References: <20240510015921.179175-1-stefanb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240517102307.7we5psrgbf56mden@skbuf>
+In-Reply-To: <20240510015921.179175-1-stefanb@linux.ibm.com>
 
-The 05/17/2024 13:23, Vladimir Oltean wrote:
+On Thu, May 09, 2024 at 09:59:21PM -0400, Stefan Berger wrote:
+> Prevent ecc_digits_from_bytes from reading too many bytes from the input
+> byte array in case an insufficient number of bytes is provided to fill the
+> output digit array of ndigits. Therefore, initialize the most significant
+> digits with 0 to avoid trying to read too many bytes later on. Convert the
+> function into a regular function since it is getting too big for an inline
+> function.
 > 
-> On Fri, May 17, 2024 at 12:18:11PM +0200, Horatiu Vultur wrote:
-> > The 05/17/2024 13:04, Vladimir Oltean wrote:
-> > >
-> > > On Thu, May 16, 2024 at 08:48:55AM +0200, Horatiu Vultur wrote:
-> > > > > Alternatively, the -EOPNOTSUPP check could be moved before programming
-> > > > > the traps in the first place.
-> > > >
-> > > > Thanks for the review.
-> > > > Actually I don't think this alternative will work. In case of PHY
-> > > > timestamping, we would still like to add those rules regardless if
-> > > > ptp is enabled on lan966x.
-> > > >
-> > > > >
-> > > > > Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> > > >
-> > > > --
-> > > > /Horatiu
-> > >
-> > > I don't understand why this would not have worked?
-> > >
-> > > diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-> > > index b12d3b8a64fd..1439a36e8394 100644
-> > > --- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-> > > +++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-> > > @@ -474,14 +474,14 @@ static int lan966x_port_hwtstamp_set(struct net_device *dev,
-> > >             cfg->source != HWTSTAMP_SOURCE_PHYLIB)
-> > >                 return -EOPNOTSUPP;
-> > >
-> > > +       if (cfg->source == HWTSTAMP_SOURCE_NETDEV && !port->lan966x->ptp)
-> > > +               return -EOPNOTSUPP;
-> > > +
-> >
-> > This should also work.
-> > Initially I thought you wanted to have only the check for
-> > port->lan966x->ptp here. And that is why I said it would not work.
+> If too many bytes are provided on the input byte array the extra bytes
+> are ignored since the input variable 'ndigits' limits the number of digits
+> that will be filled.
 > 
-> Ok. I see the patch was marked as "changes requested". I think the
-> second alternative would be better anyway, because a requested
-> configuration which cannot be supported will be rejected outright,
-> rather than doing some stuff, figuring out it cannot be done, then
-> undoing what was done. Would you mind sending a v2 like this?
+> Fixes: d67c96fb97b5 ("crypto: ecdsa - Convert byte arrays with key coordinates to digits")
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> 
+> ---
+> v3:
+>  - Applied Jarkko's tag
+> 
+> v2:
+>  - un-inline function
+>  - use memset
+> ---
+>  crypto/ecc.c                  | 22 ++++++++++++++++++++++
+>  include/crypto/internal/ecc.h | 15 ++-------------
+>  2 files changed, 24 insertions(+), 13 deletions(-)
 
-I will send a v2 as you suggested.
-
+Patch applied.  Thanks.
 -- 
-/Horatiu
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
