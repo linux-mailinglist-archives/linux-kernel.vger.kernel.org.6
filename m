@@ -1,114 +1,135 @@
-Return-Path: <linux-kernel+bounces-181878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3AA8C82BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:48:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6668C82BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9612C28332A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:48:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AC561C20D50
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E7817C69;
-	Fri, 17 May 2024 08:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AAF14003;
+	Fri, 17 May 2024 08:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K2cKc34z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4aNoSl0x";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="87ZEWj6b"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FDF14003
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 08:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F306C1EB25;
+	Fri, 17 May 2024 08:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715935715; cv=none; b=gyneemjrk6RR/1Ne3ybujmo3nuUL27eg0rvCx7iUJM84xq0NvkyzQc5NwR/LhNpzZfNixCajlv1Ptw/o0l1yZvdXidGQ+U17u4I2OvEceZh7hzKiZdeSHiICm7+3GPDcyEYeMhmF7/LjsLwQBQBOBV8BWQppOjs35SNdS1I5n7o=
+	t=1715935783; cv=none; b=usHSHjtP/gxKXlFr65LbPHSS319fpdjxQfn+NtoQn9jr4l9WsKc2LPjCQwIDfeUPv2GksnX7UNxl4XdP4NZlAIXmnnYiqfjeY3qpjhJzeYN/Pflweg9CBUGjVwZdFCyW6WEEeiumxncJWXC2NTxrXCKi/YAEmh+gPXwzIjsJmlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715935715; c=relaxed/simple;
-	bh=kh7f4XVJlekTgFQfSrA3xaox9KnnolyD8OejBPxU2rc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HsHKPtF23zGA7QFGjpv9EQlhq2AXFBx0b11M7lQgGHvVcDeXEZkd8JfHA653cWMAFCKjtVYBWga+BgffKSJA5hOvfoZ15roxYqB3ppzWTllqWE9QcAcMhkdNrYf5eKzWcNNdjjRDmxrcBxPhE7+WowFzvQK3LVg0lFaPb7sDdzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K2cKc34z; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715935714; x=1747471714;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kh7f4XVJlekTgFQfSrA3xaox9KnnolyD8OejBPxU2rc=;
-  b=K2cKc34z1XEcAPDnu5JGJdAQ+jD2e/ZZxwCH3tnnUDYxlBQIhz7zKgPA
-   zc4ZpLKtBEqx5I0Apz2BMoGDEm4qSz0PkHPDajXnu4oFye0+NDJucsHfK
-   g9emIh4JkdptdpFCkFckaQ731gAPXIqsSM1pzQWQfsijDmFl/qJkexmmK
-   IV0ng93ySbDgv1wPsAw8pIfp7ZFqyTOsBGRBg3Qsst5CN78bnv39ygYLt
-   yGbZbnQdwF/DL8sWxjRVhmVCoAvh/eTeZIOq4SbTkxhTzU0jOY7a5wcCS
-   TkiEJDwjHymkPg+CH4r52K+FFCFT76JrRMiqOUo8XfiycJyGZZ7SQJ/R8
-   g==;
-X-CSE-ConnectionGUID: ladX3xtjSkqYzw1EB9MffQ==
-X-CSE-MsgGUID: 0Tvw39Z1QsKvhKxc+TZj4A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12043569"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="12043569"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 01:48:24 -0700
-X-CSE-ConnectionGUID: b/DQDFUTQR+FeldUD3/CKw==
-X-CSE-MsgGUID: wVe4fkLURC2HgGqWTTQM3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="36628943"
-Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 17 May 2024 01:48:22 -0700
-Received: from kbuild by 108735ec233b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s7tGG-0000TQ-0K;
-	Fri, 17 May 2024 08:48:20 +0000
-Date: Fri, 17 May 2024 16:48:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mukesh Ojha <quic_mojha@quicinc.com>, tglx@linutronix.de
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: Re: [PATCH] genirq/chip: Fix the warn for non-SMP system
-Message-ID: <202405171649.ZHgcLqIQ-lkp@intel.com>
-References: <1715887825-1031-1-git-send-email-quic_mojha@quicinc.com>
+	s=arc-20240116; t=1715935783; c=relaxed/simple;
+	bh=bHB9Jyod00NwPI/ne8odhL2AXmhmNsER6T4TKlS22BE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rUhNZ+wpTj2Du0o5wNLN1OCyuPJ3Uhj8NhrGs813gcO/UapHlYBMoHBuqgLlsiP/qVTwIjUjq/EGq0vnZaJb2ygNA0AQZZrh+I10eFMr5Cw7gwH+WGDGTpXZXBIRFoJGm42JWOx6zgo1zDsZUzKaPlLJLLNQ+pE86br5c319FTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4aNoSl0x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=87ZEWj6b; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715935780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Deoi2GZ+KDWE4R9eV3dkdUKvxWuoHOIQHWloV/mCKL4=;
+	b=4aNoSl0xm0exphB7zLPX4O07pTlF7cp+mBPwN/zAxbZqJIbC8lckN9/vs4IsFyD6ldzLUw
+	B64g3UhkXU6++iwIRip4SIjXYXfCs1tfb79f/rYZ/Fq+86OjpcKn9ZeBYsrejidJO65BvK
+	ruNAVnKvaRVQ6K6Usqq8hZcknyXlWPpV6E3zMQ+gTdMl8LrIIlrikycUB3RePTyy6nIF8I
+	kLkBqA3mM5tDWWCPzvj2CEBFr+KecCpbH9giWbljmgZMDazagn7l8VNN77q8bBcAPrrdHN
+	hDX5pqzl29PQEwBkZGoS3BENzfz2K/xZxVQUZUT4y4uBpD8savGmdFX41l6oKw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715935780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Deoi2GZ+KDWE4R9eV3dkdUKvxWuoHOIQHWloV/mCKL4=;
+	b=87ZEWj6b2Wq4yvgsK9yoA17pwUSQUTuSHPGEib5DWhmlaRGQG+Gm6gWqR+2hCtuVF+0TZZ
+	UYNvqs88L5fWLKBw==
+To: Justin Stitt <justinstitt@google.com>
+Cc: John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] ntp: remove accidental integer wrap-around
+In-Reply-To: <CAFhGd8p94sHpDc8MApZK7q9iEQ_C8c5frwZx9v_bTnhwtAM=HQ@mail.gmail.com>
+References: <20240507-b4-sio-ntp-usec-v1-1-15003fc9c2b4@google.com>
+ <87v83gllv8.ffs@tglx>
+ <CAFhGd8p94sHpDc8MApZK7q9iEQ_C8c5frwZx9v_bTnhwtAM=HQ@mail.gmail.com>
+Date: Fri, 17 May 2024 10:49:39 +0200
+Message-ID: <87ttiwkel8.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1715887825-1031-1-git-send-email-quic_mojha@quicinc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mukesh,
+On Thu, May 16 2024 at 16:40, Justin Stitt wrote:
+> On Tue, May 14, 2024 at 3:38=E2=80=AFAM Thomas Gleixner <tglx@linutronix.=
+de> wrote:
+>> So how can 0xf42400 + 500000/1000 overflow in the first place?
+>>
+>> It can't unless time_maxerror is somehow initialized to a bogus
+>> value and indeed it is:
+>>
+>> process_adjtimex_modes()
+>>         ....
+>>         if (txc->modes & ADJ_MAXERROR)
+>>                 time_maxerror =3D txc->maxerror;
+>>
+>> So that wants to be fixed and not the symptom.
+>
+> Isn't this usually supplied from the user and can be some pretty
+> random stuff?
 
-kernel test robot noticed the following build errors:
+Sure it comes from user space and can contain random nonsense as
+syzkaller demonstrated.
 
-[auto build test ERROR on tip/irq/core]
-[also build test ERROR on linus/master v6.9 next-20240517]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Are you suggesting we update timekeeping_validate_timex() to include a
+> check to limit the maxerror field to (NTP_PHASE_LIMIT-(MAXFREQ /
+> NSEC_PER_USEC))? It seems like we should handle the overflow case
+> where it happens: in second_overflow().
+>
+> The clear intent of the existing code was to saturate at
+> NTP_PHASE_LIMIT, they just did it in a way where the check itself
+> triggers overflow sanitizers.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Ojha/genirq-chip-Fix-the-warn-for-non-SMP-system/20240517-033251
-base:   tip/irq/core
-patch link:    https://lore.kernel.org/r/1715887825-1031-1-git-send-email-quic_mojha%40quicinc.com
-patch subject: [PATCH] genirq/chip: Fix the warn for non-SMP system
-config: alpha-allnoconfig (https://download.01.org/0day-ci/archive/20240517/202405171649.ZHgcLqIQ-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240517/202405171649.ZHgcLqIQ-lkp@intel.com/reproduce)
+The clear intent of the code is to do saturation of a bound value.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405171649.ZHgcLqIQ-lkp@intel.com/
+Clearly the user space interface fails to validate the input to be in a
+sane range and that makes you go and prevent the resulting overflow at
+the usage site. Seriously?
 
-All errors (new ones prefixed by >>):
+Obviously the sanitizer detects the stupid in second_overflow(), but
+that does not mean that the proper solution is to add overflow
+protection to that code.
 
-   alpha-linux-ld: kernel/irq/chip.o: in function `irq_startup':
->> (.text+0x17f8): undefined reference to `irq_do_set_affinity'
->> alpha-linux-ld: (.text+0x1808): undefined reference to `irq_do_set_affinity'
+Tools are good to pin-point symptoms, but they are by definition
+patently bad in root cause analysis. Otherwise we could just let the
+tool write the "fix".
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+The obvious first question in such a case is to ask _WHY_ does
+time_maxerror have a bogus value, which clearly cannot be achieved from
+regular operation.
+
+Once you figured out that the only way to set time_maxerror to a bogus
+value is the user space interface the obvious follow up question is
+whether such a value has to be considered as valid or not.
+
+As it is obviously invalid the logical consequence is to add a sanity
+check and reject that nonsense at that boundary, no?
+
+Thanks,
+
+        tglx
 
