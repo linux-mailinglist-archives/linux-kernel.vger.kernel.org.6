@@ -1,107 +1,88 @@
-Return-Path: <linux-kernel+bounces-182018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B7A8C852B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:02:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD6D8C8536
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 658CC1F21D1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:02:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 329571F22DB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6023B78B;
-	Fri, 17 May 2024 11:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHrZ/UuR"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705463D3BB;
+	Fri, 17 May 2024 11:05:38 +0000 (UTC)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F07B3A29B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 11:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDC11DA23;
+	Fri, 17 May 2024 11:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715943715; cv=none; b=pAaYHBS8+tM98QavjG5tpIoz5Wp4oxIjtoVrdW1YwwBI/3ymzuHSu5sd9eSizN0k8k1UGVENHdN1XSpbucx1WJ7ZpWoiDg1T10t4qX+4QeIYodHwbwLO3LBUmpu7Lj+snQnMC2nb5yphoJgfc7yHPhg6rdW8dYJA7ivmMOfO8hE=
+	t=1715943938; cv=none; b=cL16z7HeYwALSenrSq7f8l4E8EZZIaboE9lpPRTANCyYxROuSnU+ccGXyHCAI8OIChDKa9wEijMBSZvQnlMJnPxdXaiWB0Y87ka34ZtP7gOCgaEd9Wu1f3sFNom0kdwEYzhN0beYvGxawIaNNh77eIMPbQB3yY6q9eMQG41mUFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715943715; c=relaxed/simple;
-	bh=lkqTJqCIQGb5vjON63LNNjW9FCtTXs5UHpoEAB4xeC8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cOzm/odIEhGHJoM0/iMbr0Qh8d16/VFf4KB/tD+l4nkM/5FoHWG6PpceXGdPJnyx84vS2jgqkZBc0THEFHEaN3pCE4IDcWE+cgSJ6/DsvfFrJ+v5TLwPC+erhUtWW900d6okeYNwz+im8QcAkdGgm6nfKTqF8vX/EA7xcVD9qG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHrZ/UuR; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1715943938; c=relaxed/simple;
+	bh=joiLGwoaKTuni3oVmgyg7NhIzlp5h0zbna1gE4Ju7BM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/sGqFSf6qZ7C1WBvZZsXHWGmPAvYV9vFKWnmZBJygqhA7B4R1WZ0VYoyNF5e879qVnfs9JjUgbhYkQ9Q5qmjZU00/59dizT0McXcdsJf+SvkZ4Ikamx3Y6EW3dcBnW7RiU+g0XcccwQ14D5GXPB2ptACAqj4XaLmtn5TyaLg00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e43c481b53so21197991fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 04:01:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715943712; x=1716548512; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=soH3v7AjKgEzN9pDh9CRbKA35VUs2CBjMotD1Xr5BgQ=;
-        b=AHrZ/UuROx+YpfTj0YdCAIaQZ94ssMepRuLFv8BGJ7dHgWw1cu/PV5eHd9eYfDT2/M
-         uctpm31ZrNZKvnhASzGJcD51n7uNEhwTKqHLyTBaywK2pRvm02ZvNsQh7bwg3kXmd17H
-         f4+L0P+6vIfbeQMAbzuhIdy1HxzNcHXNB5IlyhWzWSN7DaEiDHUYvCjlrbNPgvljTAwK
-         WHASmI2puq6zVSCQjjIQrdrIyeFBxwBGHLG9BfUbBBQ7PFrU+MyjgfAK5B/s4Ha0XN/G
-         05hnnu9M3GwZeL4QyoFOs+Ln+E7mrqc7gw7ITFEOxV364z5tyqna0TLtO8zFYrnhCTwN
-         S5Xw==
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1ed835f3c3cso5280995ad.3;
+        Fri, 17 May 2024 04:05:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715943712; x=1716548512;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=soH3v7AjKgEzN9pDh9CRbKA35VUs2CBjMotD1Xr5BgQ=;
-        b=HRi8YC66J+QCZoVbKtZIhI7tFCgf3tlN1/lkUbqXDmabT35boewLDBQlhX9FZMOqoG
-         pTAveQQ7CGSCK3QA/AE3HiAv+rEfYs5Gon8fASDzzWmAmHYPNUgmoDZISZx8YZXhfCdp
-         4bAEFnQMgKamrCckCoVSai5FNRdb37YIzlA6ODXte6D5neEKb2dnUOggQMDBCw2Et+l7
-         Sp2aS6JoD6YfRI4S2eCRmgwsFi0oQwrL4Jm0hRa7CyTISk3eX1+D0ufF1VJooRgBKV9x
-         EIlTbYZ9gkt/gEyxt9SCFlDyA86cL0JIl7eXBX72fznOoBkxU/gLyfN0LE+2kDw4uYO1
-         z4ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9LrDiocs6mPJifwyth7g1BNoeNLBBiMmLtHctj0CbArPf6Q4f/1MqdWhOJFnXkr1dCyn9Ud9qYZyP0Ou3hjh12GJRrkeO7VhGAHk8
-X-Gm-Message-State: AOJu0Yx0LaA80X7D4hxfel73l1k/vOEzZzKKi+sIPmyZcpKGoprVcnnh
-	gvr7FBbQsnHx/QK2sHThUkxHo5/1HO4NTx7ObYI60OWuCn4/e2/b
-X-Google-Smtp-Source: AGHT+IGWRUI+KkrY4q7GRyBZy+q4rOsmvMAtes0ZmS+o6XW+GOfg3unezpuOnZ6Zm1Gka0+HWIkwwQ==
-X-Received: by 2002:a2e:9b4e:0:b0:2e3:8fa:6438 with SMTP id 38308e7fff4ca-2e52028daa2mr138676361fa.33.1715943712034;
-        Fri, 17 May 2024 04:01:52 -0700 (PDT)
-Received: from ubuntu-thinkpad-x1-carbon-6th.. ([105.99.23.217])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe8fc6sm301201665e9.4.2024.05.17.04.01.51
+        d=1e100.net; s=20230601; t=1715943936; x=1716548736;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9C2Iabb3KviDiU9pcCXgYKqv3XsqyMThgxMVc/vM2p4=;
+        b=l7TPVuhAxQhXsprfVy10u6UOPcYg6srOOUyzyDkuMQlfLV8Kt5eQ3frS0UFzmvnQry
+         VpcSkvirJXSn2FE7L+Gmi/sgSX93t3cq/e1nXctH7GwEwzfodjlKLVJbGuGzuWmMcRqw
+         0wiW4IhceECrQu33kFYwpEJ2ZsoU92xk+XbWAuH+GjGKiUdCT3OTXkuPxMzHlFghioZV
+         siKrR5BGrzMOJHuTxCWNWFDkgdb3l1P3mCRwnaOWNo4QdkgXYWm6OH0FlObuggptqQIg
+         3Ul8lIETwyB61g9s+Fxfkzu5D3sjzz1cqoaAdKzvwFRprAhB91fXoRbGMleSfZmJSLF6
+         OdRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUClWl43oX5cyQYBDOa64oIaW5HzVTC/K5MN/v9dWNzXgm5S3kXiDBLsk3L3l62JIwetQzNtboUy5rhWKriKhfDoaA92BE1D3bdihwfrwdnhiTlJv2jlUUioakTWY0iZWBq6rbLBhs/t/0ggy0qwgpcMqzETq/3u6Gurl1y42NoB0cPzA==
+X-Gm-Message-State: AOJu0YzjZnuIBzHyhcvhZrV4xBEOq7cpYNoP9W3naeholxG1g0g/+mYK
+	Ehc8Vppja0xuD8Y3XoQcydFBg161KsVyKkpkG+hGwAFZWZEHDju6
+X-Google-Smtp-Source: AGHT+IFVZdoYJON530fO2X5rbONRy5CjwQQ+lZEF08uQn3U+A5Sjp3qY7qXlWDjUU4wnnrZPzKSgXg==
+X-Received: by 2002:a17:902:74c8:b0:1ea:cc:b59e with SMTP id d9443c01a7336-1ef43d2e3ccmr209410165ad.19.1715943935982;
+        Fri, 17 May 2024 04:05:35 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad7dc1sm154334805ad.89.2024.05.17.04.05.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 04:01:51 -0700 (PDT)
-From: Mohamed Karaoui <moharaka@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mohamed Karaoui <moharaka@gmail.com>,
-	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8192e: Fixes a coding style error
-Date: Fri, 17 May 2024 12:01:40 +0100
-Message-Id: <20240517110140.81732-1-moharaka@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Fri, 17 May 2024 04:05:35 -0700 (PDT)
+Date: Fri, 17 May 2024 20:05:33 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: pci: layerscape-pci: Convert to yaml
+ file
+Message-ID: <20240517110533.GL202520@rocinante>
+References: <20240207231550.2663689-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240207231550.2663689-1-Frank.Li@nxp.com>
 
-Adds a space before if statement's condition
+> Convert layerscape pcie bind document to yaml file.
 
-Signed-off-by: Mohamed Karaoui <moharaka@gmail.com>
----
- drivers/staging/rtl8192e/rtllib_crypt_ccmp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to dt-bindings, thank you!
 
-diff --git a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
-index 0cbf4a1a326b..b2af802b9451 100644
---- a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
-+++ b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
-@@ -278,7 +278,7 @@ static int rtllib_ccmp_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 		int aad_len, ret;
- 
- 		req = aead_request_alloc(key->tfm, GFP_ATOMIC);
--		if(!req)
-+		if (!req)
- 			return -ENOMEM;
- 
- 		aad_len = ccmp_init_iv_and_aad(hdr, pn, iv, aad);
--- 
-2.34.1
+[1/1] dt-bindings: PCI: layerscape-pci: Convert to YAML format
+      https://git.kernel.org/pci/pci/c/24cd7ecb3886
 
+	Krzysztof
 
