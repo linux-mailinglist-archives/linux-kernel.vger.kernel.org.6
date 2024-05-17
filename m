@@ -1,119 +1,151 @@
-Return-Path: <linux-kernel+bounces-182367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18A78C8A6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:58:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A218C8A67
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0B42819E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:58:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 829E91F243D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6467213DB8A;
-	Fri, 17 May 2024 16:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DC013D8B7;
+	Fri, 17 May 2024 16:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="LlWxPsbj"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCvO2tws"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC1712F5A3;
-	Fri, 17 May 2024 16:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B6712F5A3;
+	Fri, 17 May 2024 16:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715965084; cv=none; b=MDbKne30dv5urTKFwumbjkHw9x8f0tC89t+zSIuURrE7/20TH10egMF4zptzr1I4hZS2j/lsIgj/BZGuTbfka2s7EsIGg+s68yD4gBhAnDytPunWApk6NJQOBOKRJahY6s5LhTV9T5e4OIewnG7NuVCR9JlYvDSQfFtCDmvgU4k=
+	t=1715965061; cv=none; b=VmjnQ8718FQOw2nIkkU9QEQe+4Dw2gjdJivmMGORxHB74WszpB8dMxLia/fqlnPLeq3bXDPTaf1vfbo7XhD/9irPb7EKFWXntbaLl9kw1HvyiXsx4tBJt8bV34xAgMhSMHW4Rp34U+baX2rA+hdPJckTU/TlP/xI1TtXQSowjdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715965084; c=relaxed/simple;
-	bh=N1jRIc/DBq8MLb90YRps/mPuCZbB3kUgLV3pTCDOQJo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qGi8ZImS2WkrqSqWWuol2Gvhejt60F74cdFn0D1kMusx2+xEvlFCkKYOKJxDQrVfPrxIcZgrK/94mXmKqkjUHexi3Y8Y1/wx80SBhML25Sfz51PdpwVoFyS9JPx1czAZAGx2b7nopCEgAClLtT/MkqCOY+O3eijWYCPj2r3w2/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=LlWxPsbj; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44HB5Q50030594;
-	Fri, 17 May 2024 18:57:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding:content-type; s=selector1; bh=1x3zNv0
-	wWyw7cTZL90zUJ++UJYF71S4Lfwa4wuiTe/Q=; b=LlWxPsbjkwgETGOhbaETgRJ
-	Yf+VExUD/jsQLWreFofcrhZuwrR5P4M4fHJ4oFZrjUF7MGG3vi0cUPXTxYvtCanV
-	YJ4hss9p5gC5cd5vaE6korNe5/9qipUQl6Xx97t6vOQJRadkV9N3i1d9Lz5tXKmX
-	jcxdiJigPIfYoJZp+v4a/r+Ky3hQJ3aRV7uDLcUXsgY4STSFdCn3v5YRx7YLGYeF
-	T56YVZNzTqTVCtUWWe2Z/ER6Z2nXpE75Ws0nj8TqTueLxbBtm9MB0vGdkJlyiOg+
-	zztbtpOZzK5lFEPj1p4NzAXhfToRm680ZdROItthkdbDK4Kl/8uExrb+GvnixTg=
-	=
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y6628h8jd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 18:57:35 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BBBB140044;
-	Fri, 17 May 2024 18:57:30 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3054C223F00;
-	Fri, 17 May 2024 18:57:08 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 17 May
- 2024 18:57:08 +0200
-Received: from localhost (10.252.31.224) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 17 May
- 2024 18:57:07 +0200
-From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH] rpmsg: char: fix rpmsg_eptdev structure documentation
-Date: Fri, 17 May 2024 18:56:54 +0200
-Message-ID: <20240517165654.427746-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1715965061; c=relaxed/simple;
+	bh=G5y7fYlCIS/vQUhWu9GANqMr1dvW8z6d76b7fq7R1Q8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=goqXs4yUmYG6/Jynk8GZfa3Zkm9Grr4x3c95kkaQYPqKBkXwpnLXvFMN6FGmgY0sVwTnKS8rkHpTg/un3ymkDrWl9gfRCQYHwYW3qR9fh0xuYj0oikTUZZY+q8ow9MUqvW/c0MArARxiicaYAv9BkIcIhg3coPIn2NZ7q6zgOHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mCvO2tws; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-69b24162dd6so5009996d6.2;
+        Fri, 17 May 2024 09:57:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715965059; x=1716569859; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=siRLjok91NGHey9v30Ita/YRAFgeSTbR5TDyJ6gAeEU=;
+        b=mCvO2twsl5MZFAIcWFPqe9C7TLNgdrQiVY6+PQwOLs8yKc2jJ0keE8POuB2s38mCRl
+         CYhFEOrO/WVDEtEd6sK0wIl2ZH9eVgF0ihJewfWSByobGuJhgBJzKoKk0xBtwLvXK6dH
+         Oqo/hbJ47CpIRD2yXopKVuBRVwH0g89Wg6exgnKwtjkSczGVtJ2WXsIirCXmH5R2hbAz
+         w/pN+KCnlvbdFVDepH0kZzRvya3dv8TcCcDyq0xhTPqIoo2uTs8KPqPDYqYBMKrP3ZFW
+         6eGKexACkAEHAFbFO17af+Ux0lUZx7bf9v/AEWqp8U3XZSdsiNFxoS6t9N+d8uMki/CA
+         BxKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715965059; x=1716569859;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=siRLjok91NGHey9v30Ita/YRAFgeSTbR5TDyJ6gAeEU=;
+        b=YsCN75u3ALwulfOYgWym6jjxZH7IRo75HFIUcZ+CKrTJqs69QvShKfDv8ylswqrtby
+         sk912Vv5VgHqJMpk3RPWrxSzeygfJW52unbtM3z+vzexAaglg2LVBcnnbi5e5v4IZp1A
+         M7/yw3P5pljJ4nKFOqkfFDUf5DdQ4Z+uAzInnAx1xBtTwnci4WiRyq4B8Mps5hV+R7lD
+         eo7J0+QIAwRY7gz8VXsr+IOim5vnk+vl7lEgzAATj70zumQ2fXTTE3kvNi0mFw0++G2Q
+         Mmk+XPf+vc3+avISxCgZOlmG9ZCBDqdZsCXZmyeemuUzAloSEE0Iq9G1tGGZ0Ox3pRvJ
+         kiUg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+VFlz6ZpiWMw++74RaVN09ZfxsPTcmHZ4qmqRPd18xDxOABcLEOVaWxo2bPrNNsYlurNJSPrfjf4nEcebTHqpMxAiNFi9aeA0RvT9
+X-Gm-Message-State: AOJu0YweLZqnq+84Alh2/bL3kfAUZ0y4Out4doe8ZY/EvVw7SEVvSjYN
+	I10FpPb9/jmEBwKPqxpZNcrOr9VJ4cHf9mTFhzxQaHKftEvlrkhuIbwUUlSD
+X-Google-Smtp-Source: AGHT+IF109mu25s47I7e8THQ48j4SsbIhIwhRuyyjhRDH5DT41RX6HzVXp/6L5wbvd6oxFryTX2Jcg==
+X-Received: by 2002:a05:6214:498d:b0:6a0:b3cc:ee0f with SMTP id 6a1803df08f44-6a16820682emr279546906d6.43.1715965059156;
+        Fri, 17 May 2024 09:57:39 -0700 (PDT)
+Received: from [10.7.1.107] (static-74-103-39-5.bltmmd.fios.verizon.net. [74.103.39.5])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6a3e849f8e9sm11703836d6.33.2024.05.17.09.57.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 May 2024 09:57:38 -0700 (PDT)
+Message-ID: <a1cd16d2-1fbc-6543-c17c-a321ac72a2f3@gmail.com>
+Date: Fri, 17 May 2024 12:57:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH] thermal: adding check if the thermal firmware is running
+Content-Language: en-US
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
+ miriam.rachel.korenblit@intel.com, kvalo@kernel.org,
+ rafael.j.wysocki@intel.com, daniel.lezcano@linaro.org,
+ johannes.berg@intel.com, dmantipov@yandex.ru
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240517141655.2797-1-trintaeoitogc@gmail.com>
+From: Jonathan Bither <jonbither@gmail.com>
+In-Reply-To: <20240517141655.2797-1-trintaeoitogc@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-17_07,2024-05-17_03,2023-05-22_02
 
-Add missing @ tags for some rpmsg_eptdev structure parameters.
 
-This fixes warning messages on build:
-drivers/rpmsg/rpmsg_char.c:75: warning: Function parameter or struct member 'remote_flow_restricted' not described in 'rpmsg_eptdev'
-drivers/rpmsg/rpmsg_char.c:75: warning: Function parameter or struct member 'remote_flow_updated' not described in 'rpmsg_eptdev'
+On 5/17/24 10:16, Guilherme Giacomo Simoes wrote:
+> In the dmesg is showing the message "failed to read out thermal zone"
+> as if the temperature read is failed by don't find the thermal zone.
+>
+> After researching and debugging, I see that this specific error is
+> occurrenced because the thermal try read the temperature when is started,
+> but the firmware is not running yet.
+>
+> For more legibiliti i change the tt.c for return EAGAIN when this was occurrence.
+> After this change, in my computer I compile and install kernel in /boot
+> and in my dmesg the message "failed to read out thermal zone" is not show
+> any more.
+>
+> I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> for
+> your suggestions in mu first patch that results in this another patch.
+> ---
+>   drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 10 ++++++++--
+>   1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> index 8083c4b2ab6b..68ab9966330c 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> @@ -620,8 +620,14 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
+>   
+>   	mutex_lock(&mvm->mutex);
+>   
+> -	if (!iwl_mvm_firmware_running(mvm) ||
+> -	    mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+> +	const int res = iwl_mvm_firmware_running(mvm);
+> +
+> +	if (!res) {
+> +		ret = -EAGAIN;
+> +		goto out;
+> +	}
+> +
 
-Fixes: 5550201c0fe2 ("rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL support")
+You could skip using the res variable and move the mutex lock here and 
+simplify the above a bit. Ex:
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/rpmsg/rpmsg_char.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+         int temp;
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 1cb8d7474428..98d95ce5b6fb 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -52,8 +52,8 @@ static DEFINE_IDA(rpmsg_minor_ida);
-  * @readq:	wait object for incoming queue
-  * @default_ept: set to channel default endpoint if the default endpoint should be re-used
-  *              on device open to prevent endpoint address update.
-- * remote_flow_restricted: to indicate if the remote has requested for flow to be limited
-- * remote_flow_updated: to indicate if the flow control has been requested
-+ * @remote_flow_restricted: to indicate if the remote has requested for flow to be limited
-+ * @remote_flow_updated: to indicate if the flow control has been requested
-  */
- struct rpmsg_eptdev {
- 	struct device dev;
--- 
-2.25.1
+-       mutex_lock(&mvm->mutex);
++       if (!iwl_mvm_firmware_running(mvm))
++               return -EAGAIN;
 
+-       if (!iwl_mvm_firmware_running(mvm) ||
+-           mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
++       mutex_lock(&mvm->mutex);
++       if (mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+                 ret = -ENODATA;
+                 goto out;
+         }
+
+> +	if (mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+>   		ret = -ENODATA;
+>   		goto out;
+>   	}
 
