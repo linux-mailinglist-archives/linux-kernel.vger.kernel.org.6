@@ -1,150 +1,127 @@
-Return-Path: <linux-kernel+bounces-181882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3649A8C82C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:52:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF74D8C82C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6758C1C211FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:52:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E5981C219A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14161DA3A;
-	Fri, 17 May 2024 08:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B27424A04;
+	Fri, 17 May 2024 08:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIQ7H1Zw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=xjmz-com.20200927.dkim.feishu.cn header.i=@xjmz-com.20200927.dkim.feishu.cn header.b="nCyoAPeY"
+Received: from va-2-52.ptr.blmpb.com (va-2-52.ptr.blmpb.com [209.127.231.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4C8E572;
-	Fri, 17 May 2024 08:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BA823754
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 08:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.231.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715935955; cv=none; b=ur4JWOi8a5CvFARKZzDspRsmdjXUHdqKcLLZ7qgetfcAiXxCqbQ53/7dRM9r1v8n26yNGl5NR1pIS3IwpOiCIBD5UrTQYGuafQbZuYxM6So16yqLMo2aRxQWkA83s8G99EXRcid2PehquxwUd3G/5MtcFOAmzSWz/4Yvjjkk9oI=
+	t=1715936026; cv=none; b=AEOt/OKczeHklNsFNnybQnJ1CEkOzzO2cqnXNXMcoZLc4YeC0j5dzPLbA5G02vGSXF3qbotx3xOabl+cQn2I6FIWIat9RIqkO/zoyiw3xYNASW1QDNjaOB0YYlRAQMQnchs0Ur6emfhaOOyNEImewotuAb39wsRbl3BhQnWC0lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715935955; c=relaxed/simple;
-	bh=OQVoTWse2zVyZLUZZY0IQ3FmeZD7K5/Q/qilVQc8qmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ebp2eXLz81Sg0nRQyG8wcs3fWEW0vk6mkiROlLig/nDlBet3mVk/cReRZiSaR+HOvZb4IDzUO3TScHf8JIIuyGdyhOMx5FhVx/Z3Huvpg5gSc64qPUjP1bWJvMwOcv668pFOSLePqBaBaem1yau4W9KLOdjEPM1OVgd9nOX8G0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIQ7H1Zw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B2AC2BD10;
-	Fri, 17 May 2024 08:52:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715935955;
-	bh=OQVoTWse2zVyZLUZZY0IQ3FmeZD7K5/Q/qilVQc8qmI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TIQ7H1ZwlGcqHPS3zWahL7nsSEEup0FUrBwTxSUSgMak2iahHmfnz6AYJ6dlXw1Oo
-	 r7g/Ven7wmg1ZAREazzRA5qSKTcI/fngAA2megMLy/RzyLDxyudVqiSxAGn52p83rs
-	 SOirBH1QGeKtfrnD2Gp85F+Ouw1H47Yx+ZeQZDl4XMdukFtiWoMb4EJFOniW3+0k+W
-	 Wxv+3BiNbWKq2XjzPlYMmJeGu6qfPumiP+AGgg+ySrseNF+M16m4np7SG5vE/pPGG2
-	 V9SI7xrh8Fbt26VNJEVt3KSkkwtJt2hcii94ccAosWhTILCK3F0mq9fEhoPUY6vpBP
-	 CZGhMfTQbvLwg==
-Message-ID: <743c2a10-0ce6-4b84-8127-f3d762976366@kernel.org>
-Date: Fri, 17 May 2024 10:52:30 +0200
+	s=arc-20240116; t=1715936026; c=relaxed/simple;
+	bh=z+tJOzT6G7uLGllHiRzwPeRmqIDSWu7BS5oK45nuVCU=;
+	h=Content-Type:Cc:From:Date:To:Message-Id:Subject:Mime-Version; b=Q/p+YVW54yQRs7SHiNrXgf4yN2yklBKhINnRnu7ybQaY8DEErtFhyEODL1CrSxjswPqUtrpaGjNuO+9fhlVnQpidX7L8R9UJom19txyM074+Nbh4KGcG01Jt/R7NZlcBU8OIK5q9bXG/f4Y0uxbpoJHKNWKQUxlQGX2s6pQ9PeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xjmz.com; spf=pass smtp.mailfrom=xjmz.com; dkim=pass (2048-bit key) header.d=xjmz-com.20200927.dkim.feishu.cn header.i=@xjmz-com.20200927.dkim.feishu.cn header.b=nCyoAPeY; arc=none smtp.client-ip=209.127.231.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xjmz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xjmz.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=xjmz-com.20200927.dkim.feishu.cn; t=1715936010;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=eNuRp/dEoB8FHHvBWNozzZFQrAyVqRVVHo1Xz6xq4eM=;
+ b=nCyoAPeYbJA25VMER2rXqk9/h/NHm9gULAe8lanOGitYMI4IurCrkkkHIgMA63KnUZaTZ7
+ 5UDovZ032rd1j/nQM3B+jd5rC+f9yDB/InT6akehOY9HLr0fBCkg/R6rr84JScPmNnA6o9
+ lJsE/P3PNFatucvvqH5vGGK2v+lvogKd3nA6iMkYEOuXoVlHed0OrbECLh7kDZcyV/A9P+
+ pKBUB/rupQFTiHq3lT5TojOZeOhHiymM7mhyiqhIDVEJtcNCtLmHiJ0bTd2uixCkOGqUQC
+ sWcGqCqHpWZ59qwRJNj/LY4HojeiVI1mlESSF30arZvv+kcC6/0peYxwceuH6Q==
+Content-Type: text/plain; charset=UTF-8
+Cc: <linux-kernel@vger.kernel.org>
+From: "chenyuwen" <yuwen.chen@xjmz.com>
+Date: Fri, 17 May 2024 16:53:27 +0800
+X-Original-From: chenyuwen <yuwen.chen@xjmz.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+Message-Id: <20240517085327.1188515-1-yuwen.chen@xjmz.com>
+X-Lms-Return-Path: <lba+266471b09+4159d5+vger.kernel.org+yuwen.chen@xjmz.com>
+Subject: null pointer exception at fscrypt_set_bio_crypt_ctx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sdx75-idp: add SDHCI for SD Card
-To: Naina Mehta <quic_nainmeht@quicinc.com>, ulf.hansson@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konrad.dybcio@linaro.org, bhupesh.sharma@linaro.org
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20240515120958.32032-1-quic_nainmeht@quicinc.com>
- <20240515120958.32032-4-quic_nainmeht@quicinc.com>
- <a5833628-65f3-493d-9de5-33ba87a18875@kernel.org>
- <2ed5326a-b2ea-220a-2a9b-0478df0c6f12@quicinc.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2ed5326a-b2ea-220a-2a9b-0478df0c6f12@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: git-send-email 2.34.1
+Received: from meizu-Precision-3660.meizu.com ([112.91.84.73]) by smtp.feishu.cn with ESMTPS; Fri, 17 May 2024 16:53:28 +0800
 
-On 16/05/2024 07:21, Naina Mehta wrote:
-> 
-> 
-> On 5/15/2024 7:53 PM, Krzysztof Kozlowski wrote:
->> On 15/05/2024 14:09, Naina Mehta wrote:
->>> Enable SDHCI on sdx75-idp to support SD card.
->>> Also add the required regulators.
->>>
->>> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/sdx75-idp.dts | 45 ++++++++++++++++++++++++++
->>>   1 file changed, 45 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sdx75-idp.dts b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
->>> index f76e72fb2072..6f94278cf837 100644
->>> --- a/arch/arm64/boot/dts/qcom/sdx75-idp.dts
->>> +++ b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
->>> @@ -41,6 +41,29 @@
->>>
->>>   		vin-supply = <&vph_ext>;
->>>   	};
->>> +
->>> +	vreg_sd_vccb: sd-vccb {
->>
->> Please use name for all fixed regulators which matches current format
->> recommendation: 'regulator-[0-9]+v[0-9]+'
-> 
-> Did you mean that vreg_sd_vdd should be updated according to the 
-> suggested format because vreg_sd_vccb is not a fixed regulator?
-> 
+Hi jaegeuk & chao:
 
-Yeah, it should be about sd-vdd, but then this one should be named as
-well with a similar prefix to have it consistent.
+We are facing an issue on 6.1 kernel while using f2fs filesystem at startup=
+.
+The call stack as follows:
 
+[   14.904678][ T1116] Unable to handle kernel NULL pointer dereference at =
+virtual address 0000000000000011
+[   14.904986][ T1116]  fscrypt_set_bio_crypt_ctx+0x78/0x1e8
+[   14.904988][ T1116]  f2fs_grab_read_bio+0x78/0x208
+[   14.904990][ T1116]  f2fs_submit_page_read+0x44/0x154
+[   14.904992][ T1116]  f2fs_get_read_data_page+0x288/0x5f4
+[   14.904993][ T1116]  f2fs_get_lock_data_page+0x60/0x190
+[   14.904995][ T1116]  truncate_partial_data_page+0x108/0x4fc
+[   14.904998][ T1116]  f2fs_do_truncate_blocks+0x344/0x5f0
+[   14.904999][ T1116]  f2fs_truncate_blocks+0x6c/0x134
+[   14.905000][ T1116]  f2fs_truncate+0xd8/0x200
+[   14.905002][ T1116]  f2fs_iget+0x20c/0x5ac
+[   14.905004][ T1116]  do_garbage_collect+0x5d0/0xf6c
+[   14.905005][ T1116]  f2fs_gc+0x22c/0x6a4
+[   14.905007][ T1116]  f2fs_disable_checkpoint+0xc8/0x310
+[   14.905009][ T1116]  f2fs_fill_super+0x14bc/0x1764
+[   14.905011][ T1116]  mount_bdev+0x1b4/0x21c
+[   14.905014][ T1116]  f2fs_mount+0x20/0x30
+[   14.905016][ T1116]  legacy_get_tree+0x50/0xbc
+[   14.905018][ T1116]  vfs_get_tree+0x5c/0x1b0
+[   14.905020][ T1116]  do_new_mount+0x298/0x4cc
+[   14.905022][ T1116]  path_mount+0x33c/0x5fc
+[   14.905024][ T1116]  __arm64_sys_mount+0xcc/0x15c
+[   14.905025][ T1116]  invoke_syscall+0x60/0x150
+[   14.905028][ T1116]  el0_svc_common+0xb8/0xf8
+[   14.905029][ T1116]  do_el0_svc+0x28/0xa0
+[   14.905030][ T1116]  el0_svc+0x24/0x84
+[   14.905033][ T1116]  el0t_64_sync_handler+0x88/0xec
 
+According to ramdump, we found that inode->i_crypt_info is NULL.
+The error occurred in the following function:
 
-Best regards,
-Krzysztof
+bool __fscrypt_inode_uses_inline_crypto(const struct inode *inode)
+{                              =20
+        return inode->i_crypt_info->ci_inlinecrypt;
+}
+EXPORT_SYMBOL_GPL(__fscrypt_inode_uses_inline_crypto);
 
+The inode->i_crypt_info variable was initialized through the fscryptget_enc=
+ryption_info
+function. Can the f2fs_truncate be called at f2fs_iget when opening file en=
+cryption?
+______________________________________________________________________
+=E6=9C=AC=E7=94=B5=E5=AD=90=E9=82=AE=E4=BB=B6=E4=BB=85=E4=BE=9B=E9=A2=84=E6=
+=9C=9F=E6=94=B6=E4=BB=B6=E4=BA=BA=E4=BD=BF=E7=94=A8=EF=BC=8C=E6=9C=AC=E9=82=
+=AE=E4=BB=B6=E5=8F=8A=E9=99=84=E4=BB=B6=E4=B8=AD=E5=8F=AF=E8=83=BD=E5=8C=85=
+=E5=90=AB=E4=BF=9D=E5=AF=86=E5=92=8C=E4=B8=93=E6=9C=89=E4=BF=A1=E6=81=AF=E3=
+=80=82=E7=A6=81=E6=AD=A2=E4=BB=BB=E4=BD=95=E6=9C=AA=E7=BB=8F=E6=8E=88=E6=9D=
+=83=E7=9A=84=E6=9F=A5=E9=98=85=E3=80=81=E4=BD=BF=E7=94=A8=E3=80=81=E6=8A=AB=
+=E9=9C=B2=E6=88=96=E5=88=86=E5=8F=91=E3=80=82=E5=A6=82=E6=9E=9C=E6=82=A8=E4=
+=B8=8D=E6=98=AF=E9=A2=84=E6=9C=9F=E7=9A=84=E6=94=B6=E4=BB=B6=E4=BA=BA=EF=BC=
+=8C=E8=AF=B7=E9=80=9A=E8=BF=87=E5=9B=9E=E5=A4=8D=E7=94=B5=E5=AD=90=E9=82=AE=
+=E4=BB=B6=E4=B8=8E=E5=8F=91=E4=BB=B6=E4=BA=BA=E8=81=94=E7=B3=BB=EF=BC=8C=E5=
+=B9=B6=E9=94=80=E6=AF=81=E5=8E=9F=E5=A7=8B=E9=82=AE=E4=BB=B6=E7=9A=84=E6=89=
+=80=E6=9C=89=E5=89=AF=E6=9C=AC=E3=80=82
+This email is for the intended recipient's use only. This email and its att=
+achments may contain confidential and privileged information. Any unauthori=
+zed review, use, disclosure or distribution is prohibited. If you are not t=
+he intended recipient, please contact the sender by reply email and destroy=
+ all copies of the original message.
 
