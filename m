@@ -1,121 +1,110 @@
-Return-Path: <linux-kernel+bounces-182170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1DD8C87B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:03:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F21D8C87BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C98EB22B95
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:03:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6E35B2337B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAFD5BACB;
-	Fri, 17 May 2024 14:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FR67lSmG"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060F05B1E9;
+	Fri, 17 May 2024 14:07:29 +0000 (UTC)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1DF5787B;
-	Fri, 17 May 2024 14:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5FC57319;
+	Fri, 17 May 2024 14:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715954582; cv=none; b=YE25Jll1CKlcsT7SUi6Rdg5wkxxhywkbmb9Kbxh/GE82+FJiIPngqci37RGlnK+8dvJW14AWArfDqmOWcdU+/GSBbo1GsM/0RHrtFzFFvSBza0LWUgoCY8y2A/v/3dEagsynYEGZHGpKArp86JVMTupND4JI/bH1xwIpVh7/Qdo=
+	t=1715954848; cv=none; b=LrEK/hIAWysDZYL2TUZ7e/d0+5TiSKzydOOCvkzCzYm9poZftoMlvYC0sjdsX9x3SLXWe5yyWLeGTI3SUloG2SHB1f/hBCb3/B0FdkMhOYTTN+rdlC8WjlaR3mwseSCoDNueh4pYUEKdQbdGAfgwZ6BmJcse/6u9hiDwZIVZyVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715954582; c=relaxed/simple;
-	bh=WAM7xYlzVR8/mJBSMLMh9WVrBCq4FxrxrccuaVGKlZ8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=VRsCH/cIIcI7M9oCGeqkXu05iac/7xdsuGaytesWbebZjv7jtb4MRYehXjSqIjYd6G2XjMRU5e4ck5fKpNR/0KqHKsmQyf9cyekj2WdKUTzwsN18G2RCWzGtEfRV2vMyanTTBa1VZLtpbV2PWYpQorYpBxgJ72dn85BHS++xP6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=fail (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FR67lSmG reason="signature verification failed"; arc=none smtp.client-ip=209.85.219.46; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1715954848; c=relaxed/simple;
+	bh=tPP1Ft8vq89Koa9tWajFWgaUGoekzB0kwKoXTXQ9q6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mkCzU5Ck4NBunNeZy0LZ8kuf1yIloNQ9u3e47fv2lHC2ZT6r/evQDmzbwPKLN37pi5BkJSwruVjqacKflkwwokZTJjNrqV2cewDwhy/VW8UW4umDi7pxhoSWNJvbF+X99HtvldnduPnF/yNHC35vDBMWcFbGJpjOo0GFLrXWZEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-1ed96772f92so9572015ad.0;
-        Fri, 17 May 2024 07:03:00 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-572af0b12b8so4835371a12.2;
+        Fri, 17 May 2024 07:07:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715954580; x=1716559380;
-        h=content-transfer-encoding:mime-version:list-unsubscribe
-         :list-subscribe:list-id:precedence:dkim-signature:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NYEnl5IGwmHfOFYX4u078jOFfacX6kSGq8wXy29c6Vo=;
-        b=JY2PrbKaLkaqlTUUTfSD9Y1NO+79lgmu1YVf3LfKli9LKi8idukkjR7l96trB2/MVw
-         2IHgw3/zBiqRPKqXMTcvdI9Tq/2UwKjZlrO5bR3YB0UYFpFxB+DrNKTf6aKheTqJiDQg
-         v8tiwhVub0rSTaoayjHu6CsAI3+4KyJiUZFWU5haYuz5EV7NT0DxbzYynE/qSDzNgevk
-         YWkWRs1rZmXd8YoaUMFDC+fYS9fh8KzkqmAgG2Xa3wLg9NcA76fkv+9qJAOTJ9fuiVX6
-         tFhfutgdTugIheAmzhHYD39kDZdW4Ef6JVHwlQkWnRXt48Kz9uRBUn5X/765Y8VWGwga
-         KnNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgCkfmjZElVLqryMbIwa7bBOncVPbvbFuNyCPDetzzmwZLF0JYEYAX0JqBDnEE3TA3Su82hyYPnr/iWHW8g5IxIN/0SECtleakEW/z9UJBYuYjakE9eFdt7TzxeDFjuLiFHPgW
-X-Gm-Message-State: AOJu0YyqiKlQ/2nO0fafhbij7VfelSmVCf8Xax2LZU1zZ/EZFIWyb3hj
-	YB7FY2uzOHq+4WGBOlmfVy2ckcRzct8FakgpnnDTyz7v11Cgnlwl
-X-Google-Smtp-Source: AGHT+IG3fNJCxjGxm1jcmR1pmrtVMtoQdGVRbgHYoCA+YWDA59b3UnRiVNLkVdzoJvtGw4yIK3S1Dg==
-X-Received: by 2002:a17:90b:30cc:b0:2b4:fcfd:7b5b with SMTP id 98e67ed59e1d1-2b6cc759306mr20281516a91.24.1715954580308;
-        Fri, 17 May 2024 07:03:00 -0700 (PDT)
-Received: from localhost.localdomain ([2409:8a00:26be:370:d9bb:b9a0:16e:48c8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b6d0b8c887sm13888234a91.21.2024.05.17.07.02.56
+        d=1e100.net; s=20230601; t=1715954845; x=1716559645;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EPfvxDe6Hhh3qL31CNKs/kZFZpYqVBGETPWyqK12Ri0=;
+        b=pQ8Fh6V7TSceo3tui2HSYdOZ+HSDv1+RO6L7JR70fUi2f2HlrHOaA/4J+XcgvIycFU
+         jYB5VkEcMe1jHnz+inBxeGrvTVUbHAf6vyjC0QgUbwYGRpZtjrAL4+lXl82Qcp4jTm/5
+         Ko5NjZRiIpE6TJl8BoQrKsJVOGAJ8BlGLntkwyNGFn6Tt/Mb9g8ZUdChZS+9S/TJuCQ8
+         oX96uUra7eR1WToIaOTdvPnsifWRLOd8CsBrfeB9GEe2rKZAmj5M9iVWRkvwxsO1vEIY
+         5MjNNl/tADBS/+Hc3DKkJV2IK49I0U53SCk6KZ+qE4Xw/y6lEgUqOnF2YTP0exDn90kk
+         TeRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ3ExaN/4L3U7dC2h8vU3bMf3++eqNLf6Voat65q50bIt4mU/z7hQGcDh1vtBF/43to30q2gkL5mhRTFPBY2Q1Pu/imh3VirIEkbjDOTtG3wAlcxgIt7XLm6N/G4fU+Ob2dFAKyL8deWFkt4JvVQ==
+X-Gm-Message-State: AOJu0YybmelCkXgGV4G124xB/GDvrdRS/Dp+n1Aan9jxjMGPTHGL852Q
+	wpm1dauRG8BqImGzGJFGfkMoF/Hm+o2jCxg2ra74otCxkId6/t1/
+X-Google-Smtp-Source: AGHT+IHaXLkzhWLWiltJv7xtEQ0SXk4PJtfEb85xpaHpPioktaNs0x03plQbbjNWGCkV27c/Kxch0g==
+X-Received: by 2002:a50:cddc:0:b0:572:67ee:d3d9 with SMTP id 4fb4d7f45d1cf-5734d5ce8e7mr15049601a12.17.1715954845131;
+        Fri, 17 May 2024 07:07:25 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea65b5sm12118612a12.6.2024.05.17.07.07.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 07:02:59 -0700 (PDT)
-From: Fred Li <dracodingfly@gmail.com>
-To: willemdebruijn.kernel@gmail.com,
-	dracoding <dracodingfly@gmail.com>,
-	davem@davemloft.net,
-	kuba@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	kafai@fb.com,
-	songliubraving@fb.com,
-	yhs@fb.com,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH] net: Fix the gso BUG_ON that treat the skb which head_frag is true as non head_frag
-Date: Fri, 17 May 2024 22:02:51 +0800
-Message-Id: <66464991ac8ea_54e932947a@willemb.c.googlers.com.notmuch>
-X-Mailer: git-send-email 2.32.1 (Apple Git-133)
-In-Reply-To: <20240515144313.61680-1-dracodingfly@gmail.com>
-References: <20240515144313.61680-1-dracodingfly@gmail.com>
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46]) (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits)) (No client certificate requested) by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B5B145A06; Thu, 16 May 2024 17:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6a3652a74f9so3484026d6.2; Thu, 16 May 2024 10:59:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20230601; t=1715882386; x=1716487186; darn=vger.kernel.org; h=content-transfer-encoding:mime-version:subject:references :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date :message-id:reply-to; bh=c2+WnzvsrG3q05AgFPxDjhS97HlYQRIW0WgMF8TeUeo=; b=FR67lSmG+viUYDkDT6xwHR5ayK1pQRZdqwHJSGA1mbsI4DXrTSYKOD7mo7I8zY8Yxj CEEP8IPKSj9ZpVy3Os1nqjSeMJAy1B+FIGhYT2gmpDlUrqDCOfdSsTWQdh3xMMlj7NMw prFXeiU57uAjcN/osBgLfS32XXZ0ZG8kui/fcD5rsSYANXA64uH/x3rDYNYDeQsvG9de G8MMtpIr1uiST4ACbansycEzu4Xv0PLnRXl1bCRZ7tMEUeyXW98Sb6JR04bMAu+XYAoV /gy/Ph2VyMA5VMSdZmGhY/b2NbLl+0bmiOyZgDfO5mXvi3QnLJ2bJkA1z+GzdbKiZ0Z7 pBkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtkhtjcGgA2shL+FGFbrPX8lAbsRYK6do47tumH6KpqM9/QcWOffw7PpajU4QEUBUcs8oSFJdflvOagMyh1kzl7hXKtQvjg5NmTKYEaJziWYiDJMXzz5cdn4c/XVrKrVJY
-X-Received: by 2002:a05:6214:5a08:b0:6a0:b594:177e with SMTP id 6a1803df08f44-6a16825a4b1mr207278616d6.57.1715882386314; Thu, 16 May 2024 10:59:46 -0700 (PDT)
-Received: from localhost (112.49.199.35.bc.googleusercontent.com. [35.199.49.112]) by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f187c47sm77551616d6.48.2024.05.16.10.59.45 (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256); Thu, 16 May 2024 10:59:45 -0700 (PDT)
-Precedence: bulk
+        Fri, 17 May 2024 07:07:24 -0700 (PDT)
+Date: Fri, 17 May 2024 07:06:29 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>, leit@meta.com,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] perf list: Fix the --no-desc option
+Message-ID: <ZkdkZfdj4IewIns4@gmail.com>
+References: <20240516131544.2885917-1-leitao@debian.org>
+ <CAP-5=fUaUGJ-09N-u39YyZgJOnj_WE91-hUc8dv+tf7ozA3K2Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUaUGJ-09N-u39YyZgJOnj_WE91-hUc8dv+tf7ozA3K2Q@mail.gmail.com>
 
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-
-> dracoding wrote:
-> > From: Fred Li <dracodingfly@gmail.com>
-> > 
-> > The crashed kernel version is 5.16.20, and I have not test this patch
-> > because I dont find a way to reproduce it, and the mailine may be
-> > has the same problem.
+On Thu, May 16, 2024 at 01:15:23PM -0700, Ian Rogers wrote:
+> On Thu, May 16, 2024 at 6:18 AM Breno Leitao <leitao@debian.org> wrote:
+> >
+> > Currently, the --no-desc option in perf list isn't functioning as
+> > intended.
+> >
+> > This issue arises from the overwriting of struct option->desc with the
+> > opposite value of struct option->long_desc. Consequently, whatever
+> > parse_options() returns at struct option->desc gets overridden later,
+> > rendering the --desc or --no-desc arguments ineffective.
+> >
+> > To resolve this, set ->desc as true by default and allow parse_options()
+> > to adjust it accordingly. This adjustment will fix the --no-desc
+> > option while preserving the functionality of the other parameters.
+> >
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > ---
+> > Changelog:
+> >
+> > v3:
+> >         * Applied the same logic to default_print_metric() and
+> >           json_print_event() functions, as identified by Ian Rogers.
 > 
-> That is a pretty old kernel.
-> 
-> There has been work in this space in the meantime. Such as commit
-> 3dcbdb134f32 ("net: gso: Fix skb_segment splat when splitting gso_size
-> mangled skb having linear-headed frag_list") or commit 9e4b7a99a03a
-> ("net: gso: fix panic on frag_list with mixed head alloc types").
+> I don't think we should change the json behavior. We're generating a
+> dictionary and the consumer of the dictionary isn't obligated to read
+> all of it. I tested the non-json output and it all looks good.
 
-The mainline kernel is using the commit 9e4b7a99a03a("net: gso: fix panic
-on frag_list with mixed head alloc types") version, but it not work for me.
-It disable NETIF_F_SG only if it has non head_frag skb. This case is it has
-only one head_frag frag_list skb. I will send a test case which will cause 
-the system crash, also in a newest kernel 6.6.8.
- 
+Thanks. Let me remove the json part then, and send a new version.
 
