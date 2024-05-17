@@ -1,258 +1,244 @@
-Return-Path: <linux-kernel+bounces-182630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BF08C8D86
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:05:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C693E8C8D8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A031F22926
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:05:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BAC62824A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF56360B9C;
-	Fri, 17 May 2024 21:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070861411CB;
+	Fri, 17 May 2024 21:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ainBj5Ga"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Aoi8VpKP"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2071.outbound.protection.outlook.com [40.107.247.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243EF2F30
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 21:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715979906; cv=none; b=DtI4t6/H9Sjf4TjEhWuw9Wds8n6D/ZBQL9oa+A+CHTSHc3yEXKiHrhesbg85EKXccsFtcR/snKIWl1gPFojOSWL2Txm86rSicW7j4fnMMcGpKKenWc1itVmn2rgmSoDUSjpULFXPaXRLfkEipbHOa5dQddyW8f1YOClDRkMSm6o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715979906; c=relaxed/simple;
-	bh=jwm5d7c0FPHAQdtFzv2L3yxm+UOx5J8jba6GP6nf0Hk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RAT/3F8+aqZuO2wPtDABYsWADPedqXvabNoX9pt2Pcqn3kP/bQHxFjqWxzK+KxG0/iArq9m+xBEjmWoomfJgevDOi7dKte764L4XK4vBm3yWg4Aelgzia6hQ4AuHWBqAxjB0w3vkALDLhChYhLFeyu8xAWxSsrkGh9AwjmgkMiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ainBj5Ga; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715979904; x=1747515904;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=jwm5d7c0FPHAQdtFzv2L3yxm+UOx5J8jba6GP6nf0Hk=;
-  b=ainBj5Ga5X2CioMQNO0gVLymc0HzGmF8NVZul/Sz/Er9cUS8ceIg4yoS
-   NrpKqjf3rsxngPNojVxyXSnWp6ZRu5/9ZGihQX2FbL/7xsqL4RSojCtf1
-   LRc+AzC83PnYTIK45s+QzfvLwC73jDuQr2KQrAH0ZRt1fixK49JztqNkE
-   zoxc0O8cuaaDbHVP7QDpnNnc7Dfs5WKyBo35/36V3/ojTltTY3hR/NEnK
-   AeIok6Mpok4uIMP3asyHSoiymcLeVPz0WwpW18LQX5hQCVK2cuA30hwEd
-   7ioKQ1QTucp8Tws9uqVx1F0lh6zEItJlDvLyo8KtY6WbLvNos5g7RVkW7
-   Q==;
-X-CSE-ConnectionGUID: e2l/HvD8RGORXyCxhfxwIg==
-X-CSE-MsgGUID: x6LEnA/oSd6Jtbov9L6eJg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="34691831"
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="34691831"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 14:05:03 -0700
-X-CSE-ConnectionGUID: w5DNbwUZTKOokIxhdwKyew==
-X-CSE-MsgGUID: Kpr25AmASlaKfZN+/BIhYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="36820155"
-Received: from vcostago-mobl3.jf.intel.com (HELO vcostago-mobl3) ([10.241.229.15])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 14:05:03 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, Linux List Kernel
- Mailing <linux-kernel@vger.kernel.org>, vinschen@redhat.com,
- hkelam@marvell.com, naamax.meir@linux.intel.com,
- anthony.l.nguyen@intel.com
-Cc: intel-wired-lan@lists.osuosl.org
-Subject: Re: 6.10;regression;bisected - commit 86167183a17e cause info msg
- "trying to register non-static key"
-In-Reply-To: <CABXGCsOkiGxAfA9tPKjYX7wqjBZQxqK2PzTcW-RgLfgo8G74EQ@mail.gmail.com>
-References: <CABXGCsOkiGxAfA9tPKjYX7wqjBZQxqK2PzTcW-RgLfgo8G74EQ@mail.gmail.com>
-Date: Fri, 17 May 2024 14:05:03 -0700
-Message-ID: <87zfso6tfk.fsf@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE167E76D;
+	Fri, 17 May 2024 21:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715980176; cv=fail; b=rGb131KBXWbQ0l49/XXXnhwN7OISzeuTn3VBWr0myK4cSXqIOzTMfjESK7oJhAMIoc3FSl1BisY520ymMvdxEyHYKWtm/TdJngH1KyFMt+Wqx0i0B90L2ZRqoeBQlsosREHnmvEfyO6L1+OqonL0ScVVZZetcuqnCEg+p+FwKWI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715980176; c=relaxed/simple;
+	bh=boFMxbHIy1XB30+eFCCeqYI50shUL0zNwPLxcJAyxT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=doUQfdtxutyKIOVLEZkqMflaPenqkSaiG4/DMvJZ3Z7ABSsD4Djw6SH28Bf69PZdX2m1D/YAhnObCxCbhbCR4OlRwFiYIqY/9fyJx4EfsjZ/TAkIi+J+UkvFv49lc/3VbgmFT7SW/Xk1J5oHsdFYV+pVSXg1LmlGwi5s7/C+muY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Aoi8VpKP reason="signature verification failed"; arc=fail smtp.client-ip=40.107.247.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=V6XbpmWB6A1ZkvABxOjhb3ol7E95vYBsz/J68Gi76OFvP9/yKYM89ztwnKDiPH85GFL1CcO673Jn84yf+5CZmYcBsOyRBSYDdByOrQUR8IlU2Y/+cw01dz1ndBhcPrqoNQfZjRY+xvD/WRig3YXXnfrppUsFHsqxSI4n0dt+dxm9uPAyxg56npOg7cpLSKpPJuhrp0183lVPKENTNHRuE4Igj2Jfd08G2BwdyMNUH7LIi9GognoRKnIow1G/oWamIXhJ3inYIIhoE7BmCSDfrwG4hXlGhOoAj8N7ekx46YHXRHqGRLe+SUUwWNsHxYe01WR2gshLnWUtQtHCaIFWaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LqNPSzCRMHWx+5iWddn8r1TvXQ1QU7NJ2NJRGs9zZF8=;
+ b=ZEUJI35VwtA37jcbKFp7zYHqSBE4E9WuWjmTSmjYDyRgk3C41iei/XuALpdct6j4IP/1/JxNUJQJaNmAgC1l7PN21+/mV25J3Uc8mT0nyFeJ7EV9maefAZQOk0mA4xBUAvR0oOFh8UUMHoYRAeKsBIGeIcjWhVzQgmLTQPt+b33pS/gdoFnNDwVkqT9cK9Ivbi50OJyi2GJuSngBdgtvT0OsF2VCigY3TdMKXpo4c7pDAZZp4znkfdwKKHlQPEbFl5PSNuBOtoMR4sYaZGmxM5uXD59tpKlhkUoDfp8RSkpwNKwp82uv8ziSdp7ClIVza7rilYuXdNzQwscWctnefQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LqNPSzCRMHWx+5iWddn8r1TvXQ1QU7NJ2NJRGs9zZF8=;
+ b=Aoi8VpKPrc80L8TiDLAPFumD2tztn4bLPHrfHbWBQeaeBhCyMD2ZMNdkNlzLLgPnsX8kgDB87avGV0AIfY5X5Ps5/chQsxBVCJ0JeB18pXYD7RCvy8uzh3D2TMtadsfSrWwhwGt3WlDKTWjbg+Ar7BVH/iQfAvTMqz0QJ+rd40A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS5PR04MB10020.eurprd04.prod.outlook.com (2603:10a6:20b:682::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.27; Fri, 17 May
+ 2024 21:09:29 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::1e67:dfc9:d0c1:fe58]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::1e67:dfc9:d0c1:fe58%7]) with mapi id 15.20.7587.026; Fri, 17 May 2024
+ 21:09:29 +0000
+Date: Fri, 17 May 2024 17:09:20 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Han Xu <han.xu@nxp.com>,
+	Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Marek Vasut <marex@denx.de>,
+	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/5] dt-bindings: mtd: gpmi-nand: Add
+ 'fsl,imx8qxp-gpmi-nand' compatible string
+Message-ID: <ZkfHgGhc5821c9Ma@lizhi-Precision-Tower-5810>
+References: <20240517-gpmi_nand-v1-0-73bb8d2cd441@nxp.com>
+ <20240517-gpmi_nand-v1-1-73bb8d2cd441@nxp.com>
+ <20240517203621.72b8b9c7@xps-13>
+ <Zkes3n6ZLjIFFQUK@lizhi-Precision-Tower-5810>
+ <20240517215055.02622324@xps-13>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240517215055.02622324@xps-13>
+X-ClientProxiedBy: BY3PR05CA0054.namprd05.prod.outlook.com
+ (2603:10b6:a03:39b::29) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS5PR04MB10020:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0236998b-f49b-4c1c-7794-08dc76b5a3fc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|7416005|52116005|376005|366007|1800799015|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?3JNW9WxeqDyK184yCywP2dh/sqNDlvKnpjOsa/tBmNmXRSj633G8TiCdcG?=
+ =?iso-8859-1?Q?sXopiIWDftNQqZc0Sm/t1ocvREHTY3eFVEIED+gt95FE3ImRFUgBo6aHWt?=
+ =?iso-8859-1?Q?gv3PT/nvN0exfNg71WugqZbxheEfN4fSsVFDucImon6+S0E0hu3yF89T8U?=
+ =?iso-8859-1?Q?fHrhuyv/yalNy6XQF/2y4f5BY3HId9x3oq9AThKnElHewZTmgDelBnXo88?=
+ =?iso-8859-1?Q?mP33AVNAtQRK1OoGdE5Pw617nnlqlSZnjxOmh6p1do7YUkQQcUxi+nA6RG?=
+ =?iso-8859-1?Q?s1X+AyEjSjeaKTu+btXezB5X7mYtM2K45vzzFA6APvAz9duwvuHpMZYCwE?=
+ =?iso-8859-1?Q?pmjsWLchtwy5bWIaQKJ7eEBVwDdamb8SymtnD8MxRA4je+iz1+8NAhLhbW?=
+ =?iso-8859-1?Q?WuK/DwlbTZpj4Ej/243Hti11PND8yBSrxZ7/84fx5DO68v8b6ATr8XRrkQ?=
+ =?iso-8859-1?Q?bSldOJJ4aD3X3qDWkd2SUltmv3Gd5CRMM0K52oylnjtuHZBXIDktsBE6G8?=
+ =?iso-8859-1?Q?ifFewRh/Cf3gqTBuzOV3mTPj0Q4GoN83OxgdvkAD1jIS0y7a9vzygb53Fw?=
+ =?iso-8859-1?Q?ctE2SvM4mwkylEUGoaElKoduUyKY+mWMiuMIXYh76i5xDwOQkigFIHLSom?=
+ =?iso-8859-1?Q?JHXCJuebfFs59ISHu9nT/BNpJhbvM3cZ6ibgDytUJSP65L6JmkMcIlVqS3?=
+ =?iso-8859-1?Q?6O/y+N2OZb936/r7Roby1DTfxUAAntEE+HxYjBkOH6/f83hnntKnimzbRw?=
+ =?iso-8859-1?Q?AEvgzTkuFE0BYDgRV/QhqLGXKjzgUhUIzKfLsKaNecSJyg2mp3y24yC5C0?=
+ =?iso-8859-1?Q?wLPCyBB2mV7okAWtezRaCCDnnrxHi6yvIlQ3zxPqW3MMlxdmlhodTlCnTz?=
+ =?iso-8859-1?Q?+plpuwOJUKyYCFTUeqK2Hw82pp9dGl0lmhvfaRlYUFsuaAJ+KTMR8cUyLJ?=
+ =?iso-8859-1?Q?MyvxHKc7axcC9zzdbp2S3dDesh9WYgbbYXSUOo0DFgzNfqvs+3To0vj7N7?=
+ =?iso-8859-1?Q?bq5we9h6K3J86NsIYiLQa2orDMZwN87zfvNCJMiqRAyY8exXRK2ExukT1C?=
+ =?iso-8859-1?Q?tdYEXD/5pq7NBUN4pqmmWWG7tkCTpACmowBuJDXOa2icemhqktfI/YOh03?=
+ =?iso-8859-1?Q?cU0QWN6LRwzY1PAkDJucZJN0F5FRXsDJ6WVAWiztDOv1KvytxaF4AFJyp3?=
+ =?iso-8859-1?Q?ayE6BNnVhpoI2Sdu4WpgntT7OPBI3N7VAY+54HTl08lUJxOxCJMgYpm55j?=
+ =?iso-8859-1?Q?9ynsyHI3LkZAyH81TiGEOrYoWSLgtLAP8TahFjs8HRpxfugr+orxrVu/39?=
+ =?iso-8859-1?Q?WR/4i01+yqXnk01GupvpzBTBnzfOkA4pighs8kD3kiCwPqekZEtD9w5JlO?=
+ =?iso-8859-1?Q?2JxngFaXeE6M+zA/vrzRy2H2wygFyGCA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(52116005)(376005)(366007)(1800799015)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?AHxWyhhk754Ho2y6jukQ+kGkvwIhpYS3co2e92QxIr80hsxduXONj6Nco4?=
+ =?iso-8859-1?Q?b/1EIqauwfDziTh+t8wYCcfrXpemGI2+Z2Ppd7I4I28YG1Sazd7LqeRmp8?=
+ =?iso-8859-1?Q?KPAZSLDH0oJ5rK1omfRjZF1WlHDQFuefZ1D+RQec0pfHEh6xQ7rLHnLpbU?=
+ =?iso-8859-1?Q?tFjZHm+slEPNf6qp2sajD0uqd3qEogFaNQeS+F4XE1RHV0LaoYt9zqJ5Ki?=
+ =?iso-8859-1?Q?gDmRC7djDfdTm+fNO+hja04nt+MyA8w9t4ZumiTJxw8SwIMeQzEro0cgii?=
+ =?iso-8859-1?Q?hkmyddiZbxjEfxmasQrERJs4Hb7r0VWYXYsfsd9V1SpF9iA849ZWDJcjaW?=
+ =?iso-8859-1?Q?1IuhcskILCEMbOd5wsGtP3VFJP3R8Sik7ZQrwgea+/zBmYx15QWolTMJFV?=
+ =?iso-8859-1?Q?HqKltGDDREqoaVpd+J2S0gwN9+3Y2kUDumcWob7NKogvhPERmsfVsryEYM?=
+ =?iso-8859-1?Q?cJzrNzdW0iz1tiqJ4wzJxEZhP4lJXqZHEaUkZqzAr33f2duFQzB08pevha?=
+ =?iso-8859-1?Q?Aui89I1TYlahVYT7gmxH2CPknC7PbOxnQuN2HF35yqapcgEZT34M8Oba1h?=
+ =?iso-8859-1?Q?9lGhUpS7XTqPC93weHAW5VPfZWtcJY7hLtOhD1yODDffs5IriXNpGwVjyN?=
+ =?iso-8859-1?Q?UG64KkGzMHB5Z+9mwqrhGaKIiRPwU2hysxymmTiLxvu7SecsvYf0psJlKp?=
+ =?iso-8859-1?Q?B+B5smKwUxJacqXVVnLZ8FOJK0fVeSxGqenST1OXwe65FMBn+YC//GFVb4?=
+ =?iso-8859-1?Q?RWyGKRlnVieYpVlPSJhVCVU2ScFTx+j43GlKrf7LQGlsTYFUIVs3Xm2o4Y?=
+ =?iso-8859-1?Q?QJb7CCNesJWvwqxEBlJDY1PU1JPZExa4kuqVEYukn7J0nb6vbd/IfiiHf/?=
+ =?iso-8859-1?Q?DFtKLo2w4qt2ul7fuc042F1DDuo1yHmQMinqXmkPkH8NiSs8Oo4rfVAKa9?=
+ =?iso-8859-1?Q?bRbkAzlrQ29BkpJZ9tBahxZEqR6ymRBK2Lzogu4MJXnGNmYFvC4iQl9PUT?=
+ =?iso-8859-1?Q?XgbQSsvdOmjVwrQwtJXmxq9xcB/If0H/0qY64KPioRNjNWRSOxvsGoy45i?=
+ =?iso-8859-1?Q?jEN7x3KRXG8+iVjR+/50ASie17QY1U2rZ848hqYHeo3AfxYMsm7yCEbhGv?=
+ =?iso-8859-1?Q?32bs8TEwDLCmt9cCTCHEZlIt+WEUIv+2CxpH3xhi5Tb55179WpBizLH+jY?=
+ =?iso-8859-1?Q?NYpIg8yxFzMyM/iNv84fvRwiHN3l2SwhJ+XNYxdcjGg8VqOOkDs3q4LCLd?=
+ =?iso-8859-1?Q?7/l4u9K28NfHh52pHo95VD5G4TpB4f38RdWwUXpoU/RokRg/pJtMBpwSxl?=
+ =?iso-8859-1?Q?cqvet2EdiZWM/Igr4BvKyScbhViazuEM3eaKXLyiBfxl9O0lpxOCfsBHHR?=
+ =?iso-8859-1?Q?8XvhwyG4srpyLHIOGz8qShJs4IQTiAQ6ahbTh/v70pRth+rR8EaSkAspQ3?=
+ =?iso-8859-1?Q?6202Oa4VvJ/kYAflU4ylKu1Y+XTmb0Ydz3e/roWmzPyMSma9oK98K9m3LL?=
+ =?iso-8859-1?Q?lGV9gTntaH3xQD5lmLMKWHC+z7rOTf6FQMKDhrEHItc/pnAb14TzsnAB/6?=
+ =?iso-8859-1?Q?hV5nLQxxtbgHjZZWfcx2wW1m4u/g7CF3ldgvx9UAFZZ1Hibhm3Ijk08ZBc?=
+ =?iso-8859-1?Q?qcY4Mr/8ooIWQpNwBJQyudE28p3KSzaPRh?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0236998b-f49b-4c1c-7794-08dc76b5a3fc
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2024 21:09:29.3745
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oQxRNba2UrgUhoSFThYh9Yxm/R6V6t6vrOa95pp1IS62i6fc07iHVY+DjJAC+5nes9AAfcjqo99F4SIG3585rg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB10020
 
-Hi,
+On Fri, May 17, 2024 at 09:50:55PM +0200, Miquel Raynal wrote:
+> Hi Frank,
+> 
+> Frank.li@nxp.com wrote on Fri, 17 May 2024 15:15:42 -0400:
+> 
+> > On Fri, May 17, 2024 at 08:36:21PM +0200, Miquel Raynal wrote:
+> > > Hi Frank,
+> > > 
+> > > Frank.Li@nxp.com wrote on Fri, 17 May 2024 14:09:48 -0400:
+> > >   
+> > > > Add 'fsl,imx8qxp-gpmi-nand' compatible string and clock-names restriction.
+> > > > 
+> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > > ---
+> > > >  .../devicetree/bindings/mtd/gpmi-nand.yaml         | 22 ++++++++++++++++++++++
+> > > >  1 file changed, 22 insertions(+)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/mtd/gpmi-nand.yaml b/Documentation/devicetree/bindings/mtd/gpmi-nand.yaml
+> > > > index 021c0da0b072f..f9eb1868ca1f4 100644
+> > > > --- a/Documentation/devicetree/bindings/mtd/gpmi-nand.yaml
+> > > > +++ b/Documentation/devicetree/bindings/mtd/gpmi-nand.yaml
+> > > > @@ -24,6 +24,7 @@ properties:
+> > > >            - fsl,imx6q-gpmi-nand
+> > > >            - fsl,imx6sx-gpmi-nand
+> > > >            - fsl,imx7d-gpmi-nand
+> > > > +          - fsl,imx8qxp-gpmi-nand
+> > > >        - items:
+> > > >            - enum:
+> > > >                - fsl,imx8mm-gpmi-nand
+> > > > @@ -151,6 +152,27 @@ allOf:
+> > > >              - const: gpmi_io
+> > > >              - const: gpmi_bch_apb
+> > > >  
+> > > > +  - if:
+> > > > +      properties:
+> > > > +        compatible:
+> > > > +          contains:
+> > > > +            enum:
+> > > > +              - fsl,imx8qxp-gpmi-nand
+> > > > +    then:
+> > > > +      properties:
+> > > > +        clocks:
+> > > > +          items:
+> > > > +            - description: SoC gpmi io clock
+> > > > +            - description: SoC gpmi apb clock  
+> > > 
+> > > I believe these two clocks are mandatory?  
+> > 
+> > minItems default is equal to items numbers, here is 4. So all 4 clock are
+> > mandatory.
+> > 
+> > Anything wrong here?
+> 
+> I'd say that the two "bch" clocks are only used if you decide to
+> configure the on-host hardware ECC engine and thus are not needed with
+> software corrections, but I'm fine keeping the fourth described in all
+> cases if that's simpler.
+> 
+> Also,here the diff just shows that "if we provide a clocks property
+> with this compatible, then we need to provide 4 members", I believe the
+> "required" property is already filled somewhere with the
+> clocks/clock-names properties?
 
-+ intel-wired-lan
+yes, before allOf
 
-Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com> writes:
+required:
+..                                                                 
+  - clocks                                                                 
+  - clock-names                                                            
+..
 
-> Hi,
-> I am here to test unstable kernels.
-> Yesterday at Fedora Rawhide arrived the new kernel
-> 20240515git1b294a1f3561 and I spotter in kernel log new "red" message
-> with follow stacktrace:
-> [    8.471610] nvme nvme1: pci function 0000:0e:00.0
-> [    8.471616] nvme nvme0: pci function 0000:04:00.0
-> [    8.492638] nvme nvme1: 32/0/0 default/read/poll queues
-> [    8.496190] nvme nvme0: 31/0/0 default/read/poll queues
-> [    8.507051]  nvme0n1: p1 p2 p3
-> [    8.522270] INFO: trying to register non-static key.
-> [    8.522273] The code is fine but needs lockdep annotation, or maybe
-> [    8.522274] you didn't initialize this object before use?
-> [    8.522275] turning off the locking correctness validator.
-> [    8.522276] CPU: 31 PID: 683 Comm: (udev-worker) Not tainted
-> 6.10.0-0.rc0.20240515git1b294a1f3561.4.fc41.x86_64+debug #1
-> [    8.522278] Hardware name: ASUS System Product Name/ROG STRIX
-> B650E-I GAMING WIFI, BIOS 2611 04/07/2024
-> [    8.522280] Call Trace:
-> [    8.522281]  <TASK>
-> [    8.522282]  dump_stack_lvl+0x84/0xd0
-> [    8.522287]  register_lock_class+0xd84/0x1000
-> [    8.522291]  ? __pfx_register_lock_class+0x10/0x10
-> [    8.522293]  __lock_acquire+0x3d2/0x5c70
-> [    8.522295]  ? debug_object_free+0x298/0x550
-> [    8.522297]  ? __pfx_debug_object_free+0x10/0x10
-> [    8.522299]  ? __pfx_lock_release+0x10/0x10
-> [    8.522301]  ? __pfx___lock_acquire+0x10/0x10
-> [    8.522302]  ? hrtimer_try_to_cancel+0x22/0x460
-> [    8.522305]  lock_acquire+0x1ae/0x540
-> [    8.522307]  ? igc_ptp_clear_tx_tstamp+0x38/0x1b0 [igc]
-> [    8.522321]  ? __pfx_lock_acquire+0x10/0x10
-> [    8.522323]  ? seqcount_lockdep_reader_access.constprop.0+0xa5/0xb0
-> [    8.522325]  ? lockdep_hardirqs_on+0x7c/0x100
-> [    8.522326]  ? seqcount_lockdep_reader_access.constprop.0+0xa5/0xb0
-> [    8.522329]  _raw_spin_lock_irqsave+0x51/0xa0
-> [    8.522330]  ? igc_ptp_clear_tx_tstamp+0x38/0x1b0 [igc]
-> [    8.522337]  igc_ptp_clear_tx_tstamp+0x38/0x1b0 [igc]
-> [    8.522344]  igc_ptp_set_timestamp_mode+0x3cc/0x700 [igc]
-> [    8.522350]  ? igc_power_down_phy_copper+0xf1/0x140 [igc]
-> [    8.522358]  igc_ptp_reset+0x3b/0x5e0 [igc]
-> [    8.530693]  ? igc_set_eee_i225+0xfd/0x1e0 [igc]
-> [    8.530706]  igc_reset+0x2d9/0x3d0 [igc]
-> [    8.531707]  igc_probe+0x14ca/0x1e20 [igc]
-> [    8.531715]  ? _raw_spin_unlock_irqrestore+0x4f/0x80
-> [    8.531717]  ? __pfx_igc_probe+0x10/0x10 [igc]
-> [    8.531723]  local_pci_probe+0xdc/0x180
-> [    8.531727]  pci_device_probe+0x23c/0x810
-> [    8.531729]  ? kernfs_add_one+0x3ab/0x4a0
-> [    8.534068]  ? kernfs_new_node+0x13d/0x240
-> [    8.534070]  ? __pfx_pci_device_probe+0x10/0x10
-> [    8.534072]  ? kernfs_create_link+0x16e/0x240
-> [    8.534074]  ? kernfs_put+0x1c/0x40
-> [    8.534076]  ? sysfs_do_create_link_sd+0x8e/0x100
-> [    8.534078]  really_probe+0x1e0/0x8a0
-> [    8.536433]  __driver_probe_device+0x18c/0x370
-> [    8.536436]  driver_probe_device+0x4a/0x120
-> [    8.536438]  __driver_attach+0x194/0x4a0
-> [    8.536439]  ? __pfx___driver_attach+0x10/0x10
-> [    8.536441]  bus_for_each_dev+0x106/0x190
-> [    8.536443]  ? __pfx_bus_for_each_dev+0x10/0x10
-> [    8.536445]  bus_add_driver+0x2ff/0x530
-> [    8.536448]  driver_register+0x1a5/0x360
-> [    8.536449]  ? __pfx_igc_init_module+0x10/0x10 [igc]
-> [    8.536456]  do_one_initcall+0xd6/0x460
-> [    8.536459]  ? __pfx_do_one_initcall+0x10/0x10
-> [    8.536461]  ? kasan_unpoison+0x44/0x70
-> [    8.536464]  do_init_module+0x296/0x7c0
-> [    8.536466]  load_module+0x567b/0x74f0
-> [    8.536470]  ? __pfx_load_module+0x10/0x10
-> [    8.536473]  ? __might_fault+0x9d/0x120
-> [    8.536475]  ? local_clock_noinstr+0xd/0x100
-> [    8.536478]  ? __pfx___might_resched+0x10/0x10
-> [    8.536481]  ? __do_sys_init_module+0x1ef/0x220
-> [    8.536482]  __do_sys_init_module+0x1ef/0x220
-> [    8.536483]  ? __pfx___do_sys_init_module+0x10/0x10
-> [    8.536487]  do_syscall_64+0x97/0x190
-> [    8.536490]  ? lockdep_hardirqs_on_prepare+0x171/0x400
-> [    8.536492]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [    8.536494] RIP: 0033:0x7f29997265ae
-> [    8.536499] Code: 48 8b 0d 85 a8 0c 00 f7 d8 64 89 01 48 83 c8 ff
-> c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 af 00 00
-> 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 52 a8 0c 00 f7 d8 64 89
-> 01 48
-
-It seems I have missed this following flow (in reverse):
-
-+ igc_ptp_clear_tx_tstamp
-  + igc_ptp_disable_tx_timestamp
-    + igc_ptp_set_timestamp_mode
-      + igc_ptp_reset
-        + igc_reset
-          + igc_probe
-
-And that in igc_ptp_clear_tx_tstamp(), it uses ->ptp_tx_lock. So
-igc_ptp_init() needs to be called before igc_reset().
-
-I think that is what this splat is telling us.
-
-Don't know what's the best way forward, reverting the commit in question
-or trying to fix the initial problem some other way?
-
-> [    8.536500] RSP: 002b:00007ffee505bff8 EFLAGS: 00000246 ORIG_RAX:
-> 00000000000000af
-> [    8.536502] RAX: ffffffffffffffda RBX: 000055eafe4a2ac0 RCX: 00007f29997265ae
-> [    8.536503] RDX: 00007f2998e6007d RSI: 00000000001067d6 RDI: 00007f299828c010
-> [    8.536504] RBP: 00007ffee505c0b0 R08: 000055eafe43a010 R09: 0000000000000007
-> [    8.536505] R10: 0000000000000007 R11: 0000000000000246 R12: 00007f2998e6007d
-> [    8.536506] R13: 0000000000020000 R14: 000055eafe476280 R15: 000055eafe4a25a0
-> [    8.536508]  </TASK>
-> [    8.542741] pps pps0: new PPS source ptp0
-> [    8.550932] igc 0000:0a:00.0 eth0: PHC added
-> [    8.550992] igc 0000:0a:00.0: 4.000 Gb/s available PCIe bandwidth
-> (5.0 GT/s PCIe x1 link)
-> [    8.550996] igc 0000:0a:00.0 eth0: MAC: e8:9c:25:6c:40:75
-> [    8.558160] igc 0000:0a:00.0 eno1: renamed from eth0
->
-> Of course, I immediately wanted to find the first bad commit.
-> And now it has already been found:
-> 86167183a17e03ec77198897975e9fdfbd53cb0b is the first bad commit
-> commit 86167183a17e03ec77198897975e9fdfbd53cb0b (HEAD)
-> Author: Corinna Vinschen <vinschen@redhat.com>
-> Date:   Tue Apr 23 12:24:54 2024 +0200
->
->     igc: fix a log entry using uninitialized netdev
->
->     During successful probe, igc logs this:
->
->     [    5.133667] igc 0000:01:00.0 (unnamed net_device)
-> (uninitialized): PHC added
->                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->     The reason is that igc_ptp_init() is called very early, even before
->     register_netdev() has been called. So the netdev_info() call works
->     on a partially uninitialized netdev.
->
->     Fix this by calling igc_ptp_init() after register_netdev(), right
->     after the media autosense check, just as in igb.  Add a comment,
->     just as in igb.
->
->     Now the log message is fine:
->
->     [    5.200987] igc 0000:01:00.0 eth0: PHC added
->
->     Signed-off-by: Corinna Vinschen <vinschen@redhat.com>
->     Reviewed-by: Hariprasad Kelam <hkelam@marvell.com>
->     Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
->     Tested-by: Naama Meir <naamax.meir@linux.intel.com>
->     Signed-off-by: Tony Nguyen <anthony.l.nguyen@intel.com>
->
->  drivers/net/ethernet/intel/igc/igc_main.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> The next step I was convinced that reverting the commit 86167183a17e
-> removed this info message.
-
-Thank you for the effort.
-
->
-> I also attach here a full kernel log and build config.
->
-> My hardware specs: https://linux-hardware.org/?probe=98ecbf3636
->
-> I hope it helps.
->
-> -- 
-> Best Regards,
-> Mike Gavrilov.
-
-
-Cheers,
--- 
-Vinicius
+> 
+> Thanks,
+> Miquèl
 
