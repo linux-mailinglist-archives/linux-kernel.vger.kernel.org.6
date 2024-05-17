@@ -1,88 +1,70 @@
-Return-Path: <linux-kernel+bounces-182231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCAD8C8862
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:48:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7C18C896F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3527B2897C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:48:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AAE91F21DBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2641973186;
-	Fri, 17 May 2024 14:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5DA12F586;
+	Fri, 17 May 2024 15:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixvJ17XS"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="iulV5qwE"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB05971757;
-	Fri, 17 May 2024 14:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC9D399
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715957196; cv=none; b=oU/EF1EfBsZNuvMpDat4g7S1NjGEUeOvDDNbxIQ8OwSDFzQWRSIP7Efmiudab9YzAb+Zcwh8Zm/6EhvLPwwPoaPP6AD1DNGk2Tu7UvJqjBKU5InZA4ilZ2Y3vrWNNUEdjc80BeGjR+yO8yfIdgzKzBsMKHh+bZGBcQX0wmB0Nj4=
+	t=1715960346; cv=none; b=WNrhxLBcagyvmJ2v/5vCeIB0De7Ocd0E6CsdX+Gyxj/w0wkkzJPfruJFo9ZkcsjQLWC5Ipm+nZknAbLkUIX+dJ3jC4WUKKOicgXjpgYYGZX3pTDqHtEj7kK4dNr7SCCXX8MHE9jNx5X9KPTGimuahxggVFpCmvvtf7+mMnwZx8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715957196; c=relaxed/simple;
-	bh=WnxVwjgYGJtcoPZ87tCxtUxpJqNACgXajD6ezrDCG4I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Eh3ia+mZJJTMNG3+hHLTKvpUQbdfPyuufT5X0vyZSrdtkQjEuGa01fAG55onTh7SmBzRk+1zoWzrt6Za8+HO+w/uoUXGSpx8Yg59A9EQWSkUgBJQNpmvj/XQHgtvcKIklmda87vKGsI3dFPV10eRUrvyqtap3ZMx2YIw4dcEjjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ixvJ17XS; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1eb0e08bfd2so11077705ad.1;
-        Fri, 17 May 2024 07:46:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715957194; x=1716561994; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1E5gdZlICe3lq/gDwWvHR3o2K94KvkxWORr8jEuKK78=;
-        b=ixvJ17XSuqQ4El0fKozGFftyw1b7Us6lI6k8Diupf+u7bUCx+/f5FBGwgMvgoRVqCK
-         e0itaRRP0i6NZHZG6vsR6ERILlUJw+viW9FTlJtFVgSVlR3L6EBwJ4ZwI/xcsOg6r1f5
-         uZZScjg8UA9/AZBftVl+vE1GlQ00feJ2oBv0DwW3Fj6gvKgq553iVFZ6Pa9bQl7IpmBL
-         1oinH+cNgYADno6g0WHJ5ChpT0+55e5iczPoU8FgnIzgBwZWiShKFoHIWtwjf7L0KqeL
-         WII3+2Vn6nS6WrIB+vHl4mo9jgVuCK8nYiQVaboNmuMoRa3jE0oXHTYEXrBpFz0yAdqv
-         IDgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715957194; x=1716561994;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1E5gdZlICe3lq/gDwWvHR3o2K94KvkxWORr8jEuKK78=;
-        b=bi6plwDmXjOfb9Ln8IQ0k6K5JMvK2/GwhtAgbCJ2+6Ctgqd7+ujEYbADe6PiwAb9AQ
-         a656Zr025mOsS0l0HuMrgaoDOiFCERtsZZkGRL8v/+GQg2cIcAyaap120go0cKy4snzb
-         2GIlfKiul+2wTYUJqHiru4dF7uakOv+DxnibqV3ktFcJtgnyarqCp8hN2J6lZGABwjoY
-         SgLfQJmKnc+WNoRJkK2gjwVYKZfUeA8iMc55YprPC94B8P331ixEh/3GNWyLKuHacMvo
-         qbegto55MzRHaG8F3PecNuxM4qMfoptGClo09oTytPY4f+eEjBBee50ywiVBTpzdILBa
-         qWyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWlGEET3N/PVtFvgbZkf419Rx5jPekR9UZfypb2acyK7vPQP9FArPcKNYWnacMvBKg72NuzP9pQMu3wvRRodmmTR3H6kt24vv0vZXM6Rvqvx7obHBX+2zQeJY7KdJWcMJpRHRGVkYCMYowSg2s4+ue9it3pfMGQfWS
-X-Gm-Message-State: AOJu0YwYnnCt/AtyxXgQ6TYn2cwLHS2/vsdUodCexQKlR5Aq23TL9qBo
-	9+GDGKE3OX4Mp49Fi3P/6ZovNL3iU0RkTP57DqNk1f62VLM9tVL5lMd+Jc9zuZo29szv
-X-Google-Smtp-Source: AGHT+IGlrB2ABZOfxviKuEq2qAGBP9HT0HFRenQskQ3kOdrAUJQmjATvt0uOz+tRWRqVGbrjhLcsCA==
-X-Received: by 2002:a17:902:e889:b0:1f0:9938:d260 with SMTP id d9443c01a7336-1f09938d438mr74524725ad.50.1715957194441;
-        Fri, 17 May 2024 07:46:34 -0700 (PDT)
-Received: from devant.hz.ali.com ([47.89.83.81])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c160a1esm158504985ad.279.2024.05.17.07.46.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 07:46:34 -0700 (PDT)
-From: Xuewei Niu <niuxuewei97@gmail.com>
-X-Google-Original-From: Xuewei Niu <niuxuewei.nxw@antgroup.com>
-To: stefanha@redhat.com,
-	sgarzare@redhat.com
-Cc: mst@redhat.com,
-	davem@davemloft.net,
-	kvm@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xuewei Niu <niuxuewei.nxw@antgroup.com>
-Subject: [RFC PATCH 5/5] vsock: Add an ioctl request to get all CIDs
-Date: Fri, 17 May 2024 22:46:07 +0800
-Message-Id: <20240517144607.2595798-6-niuxuewei.nxw@antgroup.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240517144607.2595798-1-niuxuewei.nxw@antgroup.com>
-References: <20240517144607.2595798-1-niuxuewei.nxw@antgroup.com>
+	s=arc-20240116; t=1715960346; c=relaxed/simple;
+	bh=mIWuLHQXFJA3fPsK/2/DpeMWfr4s5/DPccEXuN3UTwk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t4TQpRgc4vvALpMqE7+DS0dTucMMpKgiUC+EQcNlkIophkYGcw19tXLO9Phk44wAe9Ix0yJX4nCu5bqjYZFI1ZJTW8FapEqkeod+sPRtARvb3s3Bq4RROvUolNZBGz3vScguoQx9zOdf66S32U8JefFWD72sHlrcw/tmHzMFQ0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=iulV5qwE; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44H9IA1X031613;
+	Fri, 17 May 2024 09:47:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=PODMain02222019; bh=9
+	HFJH8HtJRV3b6jFWJ0QFKdL+PkB882/okW3yMr/QCE=; b=iulV5qwEaGSGYyX3T
+	vFFgD6Jn78m2ithdqKdOMCsG0787dkg5dqJpKWUpmLfOJycOgp8rEz98od2yUJq8
+	wFJcDQX+oMUaIfByG8pZL6fxMHSDuttbCPJ5ZyITNUwEAUUhYQfBIKyirl3WFVxF
+	q4lwTtW62aa6WtL3iedvrVtvXy5O+70KuG6VH8W/eqc4Ni1sBTJMRsX1K9R/AOHl
+	rAGAm7NOn1hSICP5B6h7Jm7F2q04Qev8ogyHi9yFWh7ZOO1tnIGfNcuitRXNM3Cq
+	Ggnwit0ZS+N/QkKfgUBEAW6QCJsQSRBubjD+Kqe+XOvMxND5YVuCuyUqWgywXM5F
+	+n1Hg==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3y253hpgyu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 09:47:19 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
+ 2024 15:47:03 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9
+ via Frontend Transport; Fri, 17 May 2024 15:47:03 +0100
+Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 4EEB7820244;
+	Fri, 17 May 2024 14:47:03 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <linux@roeck-us.net>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH] regmap: kunit: Fix array overflow in stride() test
+Date: Fri, 17 May 2024 15:47:03 +0100
+Message-ID: <20240517144703.1200995-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,112 +72,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 6UvhAdmPS5elTTw3XAj2WCvYz_O6eEm3
+X-Proofpoint-GUID: 6UvhAdmPS5elTTw3XAj2WCvYz_O6eEm3
+X-Proofpoint-Spam-Reason: safe
 
-The new request is called `IOCTL_VM_SOCKETS_GET_LOCAL_CIDS`. And the old
-one, `IOCTL_VM_SOCKETS_GET_LOCAL_CID` is retained.
+Force the max_register of the test regmap to be one register longer
+than the number of test registers, to prevent an array overflow in
+the test loop.
 
-For the transport that supports multi-devices:
+The test defines num_reg_defaults = 6. With 6 registers and
+stride == 2 the valid register addresses would be 0, 2, 4, 6, 8, 10.
+However the loop checks attempting to access the odd address, so on
+the final register it accesses address 11, and it writes entry [11]
+of the read/written arrays.
 
-* `IOCTL_VM_SOCKETS_GET_LOCAL_CID` returns "-1";
-* `IOCTL_VM_SOCKETS_GET_LOCAL_CIDS` returns a vector of CIDS. The usage is
-shown as following.
+Originally this worked because the max_register of the regmap was
+hardcoded to be BLOCK_TEST_SIZE (== 12).
 
-```
-struct vsock_local_cids local_cids;
-if ((ret = ioctl(fd, IOCTL_VM_SOCKETS_GET_LOCAL_CIDS, &local_cids))) {
-    perror("failed to get cids");
-    exit(1);
-}
-for (i = 0; i<local_cids.nr; i++) {
-    if (i == (local_cids.nr - 1))
-        printf("%u", local_cids.data[i]);
-    else
-        printf("%u,", local_cids.data[i]);
-}
-```
+commit 710915743d53 ("regmap: kunit: Run sparse cache tests at non-zero
+register addresses")
+introduced the ability to start the test address range from any address,
+which means adjusting the max_register. If max_register was not forced,
+it was calculated either from num_reg_defaults or BLOCK_TEST_SIZE. This
+correctly calculated that with num_reg_defaults == 6 and stride == 2 the
+final valid address is 10. So the read/written arrays are allocated to
+contain entries [0..10]. When stride attempted to access [11] it was
+overflowing the array.
 
-Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Fixes: 710915743d53 ("regmap: kunit: Run sparse cache tests at non-zero register addresses")
 ---
- include/net/af_vsock.h          |  7 +++++++
- include/uapi/linux/vm_sockets.h |  8 ++++++++
- net/vmw_vsock/af_vsock.c        | 19 +++++++++++++++++++
- 3 files changed, 34 insertions(+)
+ drivers/base/regmap/regmap-kunit.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
-index 25f7dc3d602d..2febc816e388 100644
---- a/include/net/af_vsock.h
-+++ b/include/net/af_vsock.h
-@@ -264,4 +264,11 @@ static inline bool vsock_msgzerocopy_allow(const struct vsock_transport *t)
- {
- 	return t->msgzerocopy_allow && t->msgzerocopy_allow();
- }
-+
-+/**** IOCTL ****/
-+/* Type of return value of IOCTL_VM_SOCKETS_GET_LOCAL_CIDS. */
-+struct vsock_local_cids {
-+	int nr;
-+	unsigned int data[MAX_VSOCK_NUM];
-+};
- #endif /* __AF_VSOCK_H__ */
-diff --git a/include/uapi/linux/vm_sockets.h b/include/uapi/linux/vm_sockets.h
-index 36ca5023293a..01f73fb7af5a 100644
---- a/include/uapi/linux/vm_sockets.h
-+++ b/include/uapi/linux/vm_sockets.h
-@@ -195,8 +195,16 @@ struct sockaddr_vm {
+diff --git a/drivers/base/regmap/regmap-kunit.c b/drivers/base/regmap/regmap-kunit.c
+index 9c5314785fc2..be32cd4e84da 100644
+--- a/drivers/base/regmap/regmap-kunit.c
++++ b/drivers/base/regmap/regmap-kunit.c
+@@ -609,12 +609,19 @@ static void stride(struct kunit *test)
+ 	config.reg_stride = 2;
+ 	config.num_reg_defaults = BLOCK_TEST_SIZE / 2;
  
- #define MAX_VSOCK_NUM 16
++	/*
++	 * Allow one extra register so that the read/written arrays
++	 * are sized big enough to include an entry for the odd
++	 * address past the final reg_default register.
++	 */
++	config.max_register = BLOCK_TEST_SIZE;
++
+ 	map = gen_regmap(test, &config, &data);
+ 	KUNIT_ASSERT_FALSE(test, IS_ERR(map));
+ 	if (IS_ERR(map))
+ 		return;
  
-+/* Return actual context id if the transport not support vsock
-+ * multi-devices. Otherwise, return `-1U`.
-+ */
-+
- #define IOCTL_VM_SOCKETS_GET_LOCAL_CID		_IO(7, 0xb9)
- 
-+/* Only available in transports that support multiple devices. */
-+
-+#define IOCTL_VM_SOCKETS_GET_LOCAL_CIDS     _IOR(7, 0xba, struct vsock_local_cids)
-+
- /* MSG_ZEROCOPY notifications are encoded in the standard error format,
-  * sock_extended_err. See Documentation/networking/msg_zerocopy.rst in
-  * kernel source tree for more details.
-diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
-index 3b34be802bf2..2ea2ff52f15b 100644
---- a/net/vmw_vsock/af_vsock.c
-+++ b/net/vmw_vsock/af_vsock.c
-@@ -2454,6 +2454,7 @@ static long vsock_dev_do_ioctl(struct file *filp,
- 	u32 __user *p = ptr;
- 	u32 cid = VMADDR_CID_ANY;
- 	int retval = 0;
-+	struct vsock_local_cids local_cids;
- 
- 	switch (cmd) {
- 	case IOCTL_VM_SOCKETS_GET_LOCAL_CID:
-@@ -2469,6 +2470,24 @@ static long vsock_dev_do_ioctl(struct file *filp,
- 			retval = -EFAULT;
- 		break;
- 
-+	case IOCTL_VM_SOCKETS_GET_LOCAL_CIDS:
-+		if (!transport_g2h || !transport_g2h->get_local_cids)
-+			goto fault;
-+
-+		rcu_read_lock();
-+		local_cids.nr = transport_g2h->get_local_cids(local_cids.data);
-+		rcu_read_unlock();
-+
-+		if (local_cids.nr < 0 ||
-+		    copy_to_user(p, &local_cids, sizeof(local_cids)))
-+			goto fault;
-+
-+		break;
-+
-+fault:
-+		retval = -EFAULT;
-+		break;
-+
- 	default:
- 		retval = -ENOIOCTLCMD;
- 	}
+-	/* Only even registers can be accessed, try both read and write */
++	/* Only even addresses can be accessed, try both read and write */
+ 	for (i = 0; i < BLOCK_TEST_SIZE; i++) {
+ 		data->read[i] = false;
+ 		data->written[i] = false;
 -- 
-2.34.1
+2.39.2
 
 
