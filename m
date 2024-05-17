@@ -1,176 +1,146 @@
-Return-Path: <linux-kernel+bounces-182666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03DC68C8E3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:04:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB248C8E3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC27828619B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:04:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AA9AB21B7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F26814198A;
-	Fri, 17 May 2024 22:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4B71411FF;
+	Fri, 17 May 2024 22:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FfIx+HD5"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cs65yOiU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBA01411D1
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 22:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F492208F
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 22:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715983476; cv=none; b=YVEAgKKhln4lxPEMB1576ItYdfz+Ae+dc/lGOpeuLZAMDPmJ1oa1Eqh1VmSn5OQO/E/LKG6wgNaMzJL2W1Jbd9h9Nm1wwja5w8Rnly3nDSkhPTzEigmfZ4wPs3+3xpy4Lx1Q6Os6QTZn2+5ExgHHcUGpu0qVE3+titBYimSLQJM=
+	t=1715983520; cv=none; b=rmeVVIqdjGv2GbSUJGF6ENHJ3PBn8iiSon1axC3z58Db5vFY6fQicFNjKqFtlUaKEbZ/D0E5x/yGJEaPWxJoO/jQPZMXfgQISq/1GB4OfFwN3OIcRyMD9gBWPOzCK6AlgFtNaDV0uxL6kdLBc/O2dNhsiZpMc9LY99dPtXg8hvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715983476; c=relaxed/simple;
-	bh=BdhITRnNU+REXc7LnQZeK8vjGpGDGI/srKqx0YLNYAk=;
+	s=arc-20240116; t=1715983520; c=relaxed/simple;
+	bh=AHx8CIhs2HHm+fB0sCzYsJzW+7XsKO52cFDTr2C0qY0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AFQTd4CkyFzoKBK35h8pSdKhLm4asgAFGI923ZyVtvwroQvKypcPEXmSX53tFNaPQWPaJy0iugOfizwNrUv6QSv4XY3qL2DL34gX9gX2xttW42dVm3aeRWibVz1imk6u6b5+uKZirpqeC1Js6kS+CHsAtcGcqQoBpY56WVQo/lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FfIx+HD5; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso1018a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:04:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715983473; x=1716588273; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LPcNSrh3uuZ5e6UcUtMkeuMK0XXETcsLkcdKBYaf5FE=;
-        b=FfIx+HD5VxCqbtJM9KXjjvO9XI5GzPZfAlDQf8RnsSIzu4Gb0lS1x2IV0/4+gdpbUW
-         4AsagMwj2YWrrTEGahhJlKxihFXGewmN5Qk7DL/eHo+y+QYRFR8hA0JdyCrAsClOcmzZ
-         RGxZZOwWZlJVb5r+C9QQu93QNrh6DmXY/6RbOIN16oERqLOm+jf/HUMkWv9hKFE0nDuR
-         IZn5nYhBIm/edSol7rdhqz6LlHYXbNpBK5uNnUMs0Ip/R26hGFdyte59muCdzW2dQhCV
-         vV4RyJ1bE2efqPJ8SgZAClF6llkEY3LYgxYAWjYbTV9wH/S+1ZUyZk+25lGEaYQtVGZ0
-         FM3g==
+	 To:Cc:Content-Type; b=KmrMsiMs6EOOG6Smk2T3N8roZoRtnAtSvIrkwX8vhzkuRIaWsyfbJ/mn1cPAlerNSwkB9HUtzHl58FWhcWCIrqg8adNWQZzzv5VE1obbLJ96fPcl3aiBK2rF86jSRDJmyKVqGvDzZ18V4Jp1s/n8P4QqosTD/yyEd8LaaKinBR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cs65yOiU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715983518;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zt2YQ8as06qnba86WmttjcIU7BwJ2cSLKT1s3ZSljEo=;
+	b=Cs65yOiUvFNlreTHDFQS9TOKfsYJsf7xBE8mH86xFPPfui6KT63kZg/FTLCvMsyG6HbUzb
+	ldcY5SBMYKdMKKXRpVDW2gGgeivxmAMiFZDyUk7YYPsZ/Ml0UeKpVDTx9rxhB1rxssZwat
+	QLdBDp+GE5y3A8zL9vJja/H87tKVRzs=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-32-zJaLiAmLOa2sZ-YsAklFAQ-1; Fri, 17 May 2024 18:05:16 -0400
+X-MC-Unique: zJaLiAmLOa2sZ-YsAklFAQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-34e0d47c9b7so4499646f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:05:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715983473; x=1716588273;
+        d=1e100.net; s=20230601; t=1715983515; x=1716588315;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LPcNSrh3uuZ5e6UcUtMkeuMK0XXETcsLkcdKBYaf5FE=;
-        b=l/JvNbP9YWMaK+GpS2saGvd0i4apT+sxA1cdSsKj9Xa4vt8s7dp80pyCBtkIGIIY4z
-         /O7xF7XCRT/7KZsEtY+uqAd48WjhDX2wvp2gCzmEQlkpXo4atTQ/bwT6vvO/b21AAkVY
-         LQqOfevSpZxHDTIGHMT8HJ6oL7eksUIvvTfzL/zyF6qjH1FOG2HrlMHOFyy3fLXceQ1T
-         yC9O7tGjYAZXml602uouC8/VHa/Ad2/lJgOBadMSf0246bErUSg6wu+4DdjCEftoyvsw
-         ApXb9O9di6OZNQ/CKoD8MtBvp2AAEpEgD4rCisrvv/yuDZOhD+IjAEog7Sudy7sUDMfe
-         4ymA==
-X-Forwarded-Encrypted: i=1; AJvYcCUf0M3PipbCOR9I1it7OdBZSehxxRJ/BEKcSWIPLvS5ix8LdsL9ZntnjTrlYinM8yAT/ooO9IXI6s+3zUMgFdyUBBioMNvLLzg5b4/l
-X-Gm-Message-State: AOJu0YwVR0MwWFB3s9aDnbXk9JiANuAGckYEMS+wM+Y4WvRuvHXt0g03
-	taJRoXkWpd4SN/VfxQNvYnuyPRyRB/cN31MwM9wh2uDnFLs2It8ikXgaqWtJ8+lOwrmkMry2yWm
-	b11pEP0upiVjYdDE2IWPBLOEHNijzCKP28TgD
-X-Google-Smtp-Source: AGHT+IHDGePJQkBnkoeUr2NjZz8xln85qYzCfOTxtm5xhcDt6tF1xHyaN0XWlD6rZ7LpWmCymVL1628hdIUkS3q51ro=
-X-Received: by 2002:a05:6402:44b:b0:572:e6fb:ab07 with SMTP id
- 4fb4d7f45d1cf-5752c7d36e8mr24826a12.7.1715983473042; Fri, 17 May 2024
- 15:04:33 -0700 (PDT)
+        bh=Zt2YQ8as06qnba86WmttjcIU7BwJ2cSLKT1s3ZSljEo=;
+        b=wY6OFGqOgtnX7ikVyzk7lPOCqxlCvLbU4bYfQ3uq9V38own38H4b1UrtW+TWQyCyY5
+         2QhHGdkqbBvA2wa7ipQMUJcieUARr2T86V3qVM8LVJ3pd7Cz3TVh3zoHuLE9bDA5hV8c
+         LrTyZ2gAvEAh1Cnd9jMuWm9OXysbtbOigo+CrNiJ6dMZmsNEz9ZQyDpEzrVJTQMr2cFa
+         yYylkG3E29Mw42lRxOWZOYrgX8OvCVP18t8GzA99o16DW4skaalMXK/CXk2BCOfy1KMT
+         yuf3MUpPyrmG1c9Meq/MY69Ho+FgcSzGpDJWlz2dnmORkTGRbrUORxf1HFhzNM/EFsCC
+         pkbQ==
+X-Gm-Message-State: AOJu0YyvO7L+LemNDkndrhy05OPw6rRtdFpJzlcSzYmibXwETIMN9Gy7
+	uVU2Sb50gC74PjPaQ+fDIoXX4Terb4uPJ8EiLeghP9lhxDUEzaj3yoHzyHoyDiKsdphkgKO4Ouy
+	egCRfZS1au3HleKjSEyeUt64eLBHgcwR/X9ax/a5qo5mWJF/krHucLhEHRVvm3q8WpMDegdZzjI
+	mdkfVHZdoD2xiwuIhnA6YC6ru9De2GHIcoPArq
+X-Received: by 2002:adf:cb14:0:b0:34c:f87b:f9fb with SMTP id ffacd0b85a97d-354b8e677aamr269061f8f.25.1715983515289;
+        Fri, 17 May 2024 15:05:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHCykS6wvyjHIXN8dpfn4UDJzkZBOEpL4smez8eBByWg6Ebpx8Upm7/QjviJimReTQbmgO7ksC6tbxtT31lW1g=
+X-Received: by 2002:adf:cb14:0:b0:34c:f87b:f9fb with SMTP id
+ ffacd0b85a97d-354b8e677aamr269052f8f.25.1715983514904; Fri, 17 May 2024
+ 15:05:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202404291502.612E0A10@keescook> <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
- <202405081144.D5FCC44A@keescook> <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
- <202405081354.B0A8194B3C@keescook> <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
- <20240515073636.GY40213@noisy.programming.kicks-ass.net> <25882715-FE44-44C0-BB9B-57F2E7D1F0F9@kernel.org>
- <20240516140951.GK22557@noisy.programming.kicks-ass.net> <CAFhGd8qCCCrccQ2z5bjBD5YcMWHkym9aVz_qYkyyj662XEeHvA@mail.gmail.com>
-In-Reply-To: <CAFhGd8qCCCrccQ2z5bjBD5YcMWHkym9aVz_qYkyyj662XEeHvA@mail.gmail.com>
-From: Fangrui Song <maskray@google.com>
-Date: Fri, 17 May 2024 15:04:21 -0700
-Message-ID: <CAFP8O3Jq9kxx8xp4hK42+FwL3KnibDqpke5S7zT40kwmaEfXcA@mail.gmail.com>
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-To: Justin Stitt <justinstitt@google.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Kees Cook <kees@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Kees Cook <keescook@chromium.org>, Mark Rutland <mark.rutland@arm.com>, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
+References: <20240507154459.3950778-1-pbonzini@redhat.com> <20240507154459.3950778-8-pbonzini@redhat.com>
+ <ZkVHh49Hn8gB3_9o@google.com> <7c0bbec7-fa5c-4f55-9c08-ca0e94e68f7c@redhat.com>
+ <ZkeH8agqiHzay5r9@google.com> <2450ce49-2230-45a2-bc0d-b21071f2cce6@redhat.com>
+ <ZkefU_PhjvnaEE7Q@google.com>
+In-Reply-To: <ZkefU_PhjvnaEE7Q@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Sat, 18 May 2024 00:05:01 +0200
+Message-ID: <CABgObfYwxN7yoRUDfYVPb57=p90nUqfW9+y_=Ndeg4oXKaZNQg@mail.gmail.com>
+Subject: Re: [PATCH 7/7] KVM: VMX: Introduce test mode related to EPT
+ violation VE
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Isaku Yamahata <isaku.yamahata@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16, 2024 at 12:49=E2=80=AFPM Justin Stitt <justinstitt@google.c=
-om> wrote:
+On Fri, May 17, 2024 at 8:18=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+> > Ok, so it does look like a CPU issue.  Even with the fixes you identifi=
+ed, I
+> > don't see any other solution than adding scary text in Kconfig, default=
+ing
+> > it to "n", and adding an also-very-scary pr_err_once("...") the first t=
+ime
+> > VMPTRLD is executed with CONFIG_KVM_INTEL_PROVE_VE.
 >
-> Hi,
+> I don't think we need to make it super scary, at least not yet.  KVM just=
+ needs
+> to not kill the VM, which thanks to the BUSY flag is trivial: just resume=
+ the guest.
+> Then the failure is "just" a WARN, which won't be anywhere near as proble=
+matic for
+> KVM developers.
 >
-> On Thu, May 16, 2024 at 7:09=E2=80=AFAM Peter Zijlstra <peterz@infradead.=
-org> wrote:
-> >
-> > On Thu, May 16, 2024 at 06:30:32AM -0700, Kees Cook wrote:
-> > >
-> > > I am a broken record. :) This is _not_ about undefined behavior.
-> >
-> > And yet you introduced CONFIG_UBSAN_SIGNED_WRAP... *UB*san, get it?
+> If we don't have a resolution by rc6 or so, then maybe consider doing som=
+ething
+> more drastic?
 >
-> We should think of UBSAN as an "Unexpected Behavior" Sanitizer. Clang
-> has evolved to provide instrumentation for things that are not
-> *technically* undefined behavior.
+> I agree that it should be off by default though.  And the help text shoul=
+d be
+> more clear that this intended only for developers and testing environment=
+s.
 >
-> Go to [1] and grep for some phrases like "not undefined behavior" and
-> see that we have quite a few sanitizers that aren't *technically*
-> handling undefined behavior.
+> I have a handful of patches, including one to not kill the VM.  I'll try =
+to post
+> them later today, mostly just need to write changelogs.
 >
-> >
-> > > This is about finding a way to make the intent of C authors
-> > > unambiguous. That overflow wraps is well defined. It is not always
-> > > _desired_. C has no way to distinguish between the two cases.
-> >
-> > The current semantics are (and have been for years, decades at this
-> > point) that everything wraps nicely and code has been assuming this. Yo=
-u
-> > cannot just change this.
+> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> index 75082c4a9ac4..5c22186671e9 100644
+> --- a/arch/x86/kvm/Kconfig
+> +++ b/arch/x86/kvm/Kconfig
+> @@ -98,15 +98,15 @@ config KVM_INTEL
 >
-> Why not :>)
->
-> Lots and lots of exploits are caused by unintentional arithmetic overflow=
- [2].
->
-> >
-> > So what you do is do a proper language extension and add a type
-> > qualifier that makes overflows trap and annotate all them cases where
-> > people do not expect overflows (so that we can put the
-> > __builtin_*_overflow() things where the sun don't shine).
->
-> It is incredibly important that the exact opposite approach is taken;
-> we need to be annotating (or adding type qualifiers to) the _expected_
-> overflow cases. The omniscience required to go and properly annotate
-> all the spots that will cause problems would suggest that we should
-> just fix the bug outright. If only it was that easy.
->
-> I don't think we're capable of identifying every single problematic
-> overflow/wraparound case in the kernel, this is pretty obvious
-> considering we've had decades to do so. Instead, it seems much more
-> feasible that we annotate (very, very minimally so as not to disrupt
-> code readability and style) the spots where we _know_ overflow should
-> happen.
->
-> [1]: https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html#ubsan-ch=
-ecks
-> [2]: https://cwe.mitre.org/data/definitions/190.html
->
-> Thanks
-> Justin
+>  config KVM_INTEL_PROVE_VE
+>          bool "Check that guests do not receive #VE exceptions"
+> -        default KVM_PROVE_MMU || DEBUG_KERNEL
+> -        depends on KVM_INTEL
+> +        depends on KVM_INTEL && KVM_PROVE_MMU
+>          help
 
-FWIW I have made -fsanitize=3Dundefined -fwrapv not imply
--fsanitize=3Dsigned-integer-overflow in
-https://github.com/llvm/llvm-project/pull/85501 .
-The change is not included in the LLVM 18.1.* releases.
-This might encourage projects using both -fwrapv and
--fsanitize=3Dundefined to re-evaluate whether -fwrapv aligns with their
-needs.
+"depends on KVM_PROVE_MMU" is wrong, I think.  I'd like to keep it
+enabled without slowing down too much the VMs, for example.
 
-The description of #85501 contains more information about my
-understanding of kernel security folks' mind:
+On the other hand "default DEBUG_KERNEL" is definitely too heavy
+with these CPU issues.
 
-> Linux kernel uses -fwrapv to change signed integer overflows from undefin=
-ed behaviors to defined behaviors. However, the security folks still want -=
-fsanitize=3Dsigned-integer-overflow diagnostics. Their intention can be exp=
-ressed with -fwrapv -fsanitize=3Dsigned-integer-overflow (#80089). This mod=
-e by default reports recoverable errors while still making signed integer o=
-verflows defined (most UBSan checks are recoverable by default: you get err=
-ors in stderr, but the  program is not halted).
+Paolo
 
-
---=20
-=E5=AE=8B=E6=96=B9=E7=9D=BF
 
