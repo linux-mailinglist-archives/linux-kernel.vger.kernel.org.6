@@ -1,101 +1,175 @@
-Return-Path: <linux-kernel+bounces-182611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DFD38C8D43
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:20:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76A88C8D45
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A5C1F23577
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:20:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 011181F23793
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390B51411C1;
-	Fri, 17 May 2024 20:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6334A140E55;
+	Fri, 17 May 2024 20:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MlL1C+Mt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="0cGDEcla"
+Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E15C65C;
-	Fri, 17 May 2024 20:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CDD4C6E
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 20:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715977206; cv=none; b=e4jz0TxTqMFd54kWk9Q8TiR8HIiWCwJhx/oqG9sOX9JbaacBgIldbDKovFaEG6ebPuu4b2JZyApyr37E22g8w126/nXk3Ms9C766wRoJOyrZ5aGR0pLrNL7W2FB4cNDtOJa1AEA9riXrnO3yBs59mddFgzF6JqnDiegOveCTojY=
+	t=1715977369; cv=none; b=IMAf/hhnpi2pKfR2v+FQFx45YxbAyo8CfpoAoBFRAs5CvcfNeBhQ2QZsVBlsl9XNAyYb7NDTAkLflpekjygG3H/Lf59nDLgapXBkHXAWYZiZfYyoIHGfulN+FElK6gqwuJMcT3wnMW83zCorDpr2Xqwq6oc8XWdRl+i9hJYWVS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715977206; c=relaxed/simple;
-	bh=BGwNRIISgQSkHmoJSBhmrJrk4vCNSWwuXR4DAyTef54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qQZDnUdCDRTEslaNfZZbA1kRhRyAX1HSxus0tIjVHiR1AExU9RYaoSH9iL9vrY71cg+VodSisdxZmPufFh/gA6GOedhUue5i8rqR9Tseiwr7C7zjGLBD4oEhO6xbph5P2j9OCofx9Wt9uDVrFOIZe/JjDzaU807hiLp4hVe+9/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MlL1C+Mt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08EA8C32782;
-	Fri, 17 May 2024 20:20:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715977206;
-	bh=BGwNRIISgQSkHmoJSBhmrJrk4vCNSWwuXR4DAyTef54=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MlL1C+Mt1DHtArvmks8rMrGPGlLmFUY6LrvweiQXmY1q7TdqQ+pxQNvPpeE+e28wW
-	 /JiFz0xGlmi/XCpG5dy9HAPdmWCeLq0qKkEuyl2mExnrp3kw73ozfFw5QdP7+my/x4
-	 8g0ZS+z7+wikeaYLkvKjVPS+xLLVdD+sZm4tpvnt5bx7K1V8IDsImagEiHExOe6Tni
-	 uIqiPz1SArZ92Luxm+YzhsTYlM6tY+dlZFbX69FPKHLetgGzBae9sFkM+JenFQFJ2v
-	 jcW/p3QtAZZSIMAKFFpipRuhzpEwIXJ0vFWDBGw9tLCKXH88mK02xjDoTyyNmNOyF0
-	 R4GF6XI+YNWWw==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e4939c5323so30491931fa.2;
-        Fri, 17 May 2024 13:20:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUNythbaiK2OPZJnVcqMVi6LI1zWB+DHb/2cUjb9k292hZIgFGMC0/lU+EiMvRExVkyzxAad4G4Qalqm9JOLCmeO58m9reIZ9kLRN6Rrpz7Sa9VEJggOFH/TZuoPlCoOHQlFn0NQl3hHBcOc/ddBCauv9uJ32149v2JY09QK9Bo+MsDlZesXW6MlnR4WKMu+RvZJGizPtLCbYsvjP9dvDy4QA==
-X-Gm-Message-State: AOJu0YzZAnMO4ns1FTn5W0gPukIvANLeT8OOD3DroNCZWf1quc+us3pm
-	UjxGcFBwt0yTLyVsVl2jPA6wtr0KAUct7Ixny0eoM22L8JGPvQ+lRnOSFIzh2AHGVI8K9+C3giQ
-	8ZOrdBYmYtqRNzVP8fr7Jf9o7Bg==
-X-Google-Smtp-Source: AGHT+IFk8AjiL1RWAIi95XurBPNyz5qdQJF8LP4PkZuThVdVGLwtwTKQfKkVOXDZgkpoqwIbIwtecqPeys5N59CT7Bo=
-X-Received: by 2002:a2e:a54c:0:b0:2e2:9416:a63f with SMTP id
- 38308e7fff4ca-2e5205ec6bamr234086661fa.53.1715977204296; Fri, 17 May 2024
- 13:20:04 -0700 (PDT)
+	s=arc-20240116; t=1715977369; c=relaxed/simple;
+	bh=zCP9p5DazSmD8jpaLDilhAropKLjmvEgx/aHY8ray1k=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QCsbAaxnOfYwbEqvACtqu6spCQytnt5MhHoJ4ZHsGRLHJ45VQuLAISy1mopXaMSBJFG+7Phw5LGl4e7gzspimpU13xY7Z8uEXWiNKHzHeb5Vxl8ZWuE5HwXfg9bbHZ/pXM/NcvlkhlrNQCzXaOS9vIYtyVc2qkdBvplsDBKzY2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0cGDEcla; arc=none smtp.client-ip=209.85.166.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-7e1ac2fbcb7so1128348839f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 13:22:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715977366; x=1716582166; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=D7DM0Nh6MbSVPhbmkBCW9PHR6CHMneFfFGcAG6fF5BM=;
+        b=0cGDEclaSnhNAKLSNwEcm0TLKXUrx5Ew9m1fbd3h0yQaw/2k8NnKZLg+ALKTMQIGNC
+         9vl8UlEAtb6+wqrz/iSE3dZRXjDCwypGpLwltZta1bg2u77ATCo+m2rG4Hnis9Cj43Tw
+         phvwUXIU2Vt7ey06hBVtmkVpDuYQ26Nq6OGk+Aq+VU4TaqwxtJltuKg0jRHp9Tk8uwVr
+         E0alXlOaxaYwAMCbZJea1pP2d6RckDD4AxNhx7NR5+uY+Hg/7TG6yNEjjZpzO0PjJXh6
+         Ze77MwsQRaN+jtHsOGMz7nmOBfITbxBQioEcqx9FECJthevsaxzc7H1BuV31d7fRlbey
+         KO3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715977366; x=1716582166;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D7DM0Nh6MbSVPhbmkBCW9PHR6CHMneFfFGcAG6fF5BM=;
+        b=ogKgrdKc79EmlxqAYMWRtCj9xQJon9/m+GQtFaRHaKXbCYnjwIQyELBw9WprYHLFax
+         C0PWd/aIOtlmejWHFQwqib48A6ob4haXSmrD7VXvimnoX5IDk8mXoeA7/qWyhQ+vNJy1
+         sr3Sk9Y3LHdvCh73rHEZ6w0quhM5Z5IM4jIH5K17GY0IEAcO8EDsW2iFcIWeDtKbyYqA
+         KeUI+otkU3Ob+bHN0LqmdYsbeWGKxDxMJN4NaFs8P7URwjjpbebRSnQDPKOaaQPwqwG+
+         27E0tiq7JGSQcG7jqjw7C8JR5gDeCZQF8tqSg7VlMrCDAhV8Q/y7lV4W3SwstxjPgtr3
+         f7QQ==
+X-Gm-Message-State: AOJu0Yy9yaFaBXZ93I0lk69x/FIyFGgNdYQqjl/61dCDwMuerzdJrpvH
+	wUkVWzVQi/F5oGG8B4AUjmQGefMo2/LiRwQV+vuviaP+vbweHP8KSBd1z1k7JAh66h00nTvKPAT
+	iqUQeOE9zDBt9h/uK49kFVg==
+X-Google-Smtp-Source: AGHT+IEfzcIHL3aw4YYGj6jIF23GXxwmDFMKDO2f0kNIal/VHLvCveT/oVQ6Bz6/dmvmREEIyJ0p9emzA+0NcVytQg==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a05:6602:3f85:b0:7da:9d28:6578 with
+ SMTP id ca18e2360f4ac-7e1b521c6famr81756139f.3.1715977365684; Fri, 17 May
+ 2024 13:22:45 -0700 (PDT)
+Date: Fri, 17 May 2024 20:22:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240517171103.221856-1-andriy.shevchenko@linux.intel.com>
- <e81d43f8-a3ba-41b4-a86f-af2d6943e917@sirena.org.uk> <Zke2yG-WPkaWg5PV@smile.fi.intel.com>
-In-Reply-To: <Zke2yG-WPkaWg5PV@smile.fi.intel.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 17 May 2024 15:19:51 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKA7AnY7w3sjrT+khrat348v7uNpAP1+FZ=mdYMhJkf3Q@mail.gmail.com>
-Message-ID: <CAL_JsqKA7AnY7w3sjrT+khrat348v7uNpAP1+FZ=mdYMhJkf3Q@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] spi: pxa2xx: Move PXA SSP bindings to the correct folder
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-spi@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAJO8R2YC/3WNTQ7CIBCFr9LM2jFAqY2ueg/TBdApJVFooBJNw
+ 93F7s1bfS/vZ4dE0VGCW7NDpOySC76CODVgFuUtoZsqg2BCso71qCXWDPptxVcig1y1Sl96PRn iUFtrpNm9j8X7WHlxaQvxcxxk/nP/b2WOVR1j7WyuRmg52BDsg84mPGEspXwBVUmrHa8AAAA=
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715977364; l=3277;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=zCP9p5DazSmD8jpaLDilhAropKLjmvEgx/aHY8ray1k=; b=8vlKBluIsE/OTHUNTS0iYpLHyH5gn9756JcxqGcKKnz4w4qVnCZ/gwGWo5e0kNu4zgcQAfvTW
+ roM1h0fyCt/A4Rci9/I0rO/OOSMd6u+5uK4XrMe/stqDGC7K4YOi1Z1
+X-Mailer: b4 0.12.3
+Message-ID: <20240517-b4-sio-ntp-usec-v2-1-d539180f2b79@google.com>
+Subject: [PATCH v2] ntp: remove accidental integer wrap-around
+From: Justin Stitt <justinstitt@google.com>
+To: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
+	Nick Desaulniers <ndesaulniers@google.com>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	linux-hardening@vger.kernel.org, Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, May 17, 2024 at 2:58=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Fri, May 17, 2024 at 06:24:37PM +0100, Mark Brown wrote:
-> > On Fri, May 17, 2024 at 08:11:03PM +0300, Andy Shevchenko wrote:
-> > > SSP stands for Serial Synchronous Protocol and has nothing to do with
-> > > UART, also known as USART, where 'A' stands for Asynchronous.
-> > >
-> > > Move the SSP bindings to where it belongs.
-> >
-> > It's a serial device which is also used for other applications (the
-> > other one upstream being audio) so I can see where the current binding
-> > comes from and it's not super obvious that spi is especially better
-> > here.
->
-> Hmm... okay. Then it's question to DT people. Consider this as a report.
-> Because UART (aka serial) is definitely not the place for SPI/SSP binding=
-s
-> either.
+Using syzkaller alongside the newly reintroduced signed integer overflow
+sanitizer spits out this report:
 
-Move it when it is converted. Until then, I don't care too much. SPI
-seems better than serial at least. The sound part is its own
-binding/node (something we wouldn't do today).
+UBSAN: signed-integer-overflow in ../kernel/time/ntp.c:461:16
+9223372036854775807 + 500 cannot be represented in type 'long'
+Call Trace:
+ <IRQ>
+ dump_stack_lvl+0x93/0xd0
+ handle_overflow+0x171/0x1b0
+ second_overflow+0x2d6/0x500
+ accumulate_nsecs_to_secs+0x60/0x160
+ timekeeping_advance+0x1fe/0x890
+ update_wall_time+0x10/0x30
+..
 
-Rob
+time_maxerror is unconditionally incremented and the result is checked
+against NTP_PHASE_LIMIT, but the increment itself can overflow,
+resulting in wrap-around to negative space.
+
+The user can supply some crazy values which is causing the overflow. Add
+an extra validation step checking that maxerror is reasonable.
+
+Link: https://github.com/llvm/llvm-project/pull/82432 [1]
+Closes: https://github.com/KSPP/linux/issues/354
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+Changes in v2:
+- update commit log (thanks Thomas)
+- check for sane user input during validation (thanks Thomas)
+- Link to v1: https://lore.kernel.org/r/20240507-b4-sio-ntp-usec-v1-1-15003fc9c2b4@google.com
+---
+
+Historically, the signed integer overflow sanitizer did not work in the
+kernel due to its interaction with `-fwrapv` but this has since been
+changed [1] in the newest version of Clang. It was re-enabled in the
+kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+sanitizer").
+
+Here's the syzkaller reproducer:
+| #{Threaded:false Repeat:false RepeatTimes:0 Procs:1 Slowdown:1 Sandbox:
+| #SandboxArg:0 Leak:false NetInjection:false NetDevices:false
+| #NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false KCSAN:false
+| #DevlinkPCI:false NicVF:false USB:false VhciInjection:false Wifi:false
+| #IEEE802154:false Sysctl:false Swap:false UseTmpDir:false
+| #HandleSegv:false Repro:false Trace:false LegacyOptions:{Collide:false
+| #Fault:false FaultCall:0 FaultNth:0}}
+| clock_adjtime(0x0, &(0x7f0000000000)={0x5, 0x1, 0x40,
+| 0x7fffffffffffffff, 0x8, 0xb2, 0x256, 0x6, 0x5, 0x8001, 0x9, 0x3f, 0x0,
+| 0x8000, 0x800, 0x64d, 0x50000, 0x7ff, 0x8000000000000001, 0x1f, 0x3,
+| 0xfff, 0x7fffffff, 0x5, 0x100, 0x4})
+
+.. which was used against Kees' tree here (v6.8rc2):
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
+
+.. with this config:
+https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
+---
+ kernel/time/timekeeping.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index b58dffc58a8f..321f251c02aa 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -2388,6 +2388,11 @@ static int timekeeping_validate_timex(const struct __kernel_timex *txc)
+ 		}
+ 	}
+ 
++	if (txc->modes & ADJ_MAXERROR) {
++		if (txc->maxerror < 0 || txc->maxerror > NTP_PHASE_LIMIT)
++			return -EINVAL;
++	}
++
+ 	/*
+ 	 * Check for potential multiplication overflows that can
+ 	 * only happen on 64-bit systems:
+
+---
+base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
+change-id: 20240507-b4-sio-ntp-usec-1a3ab67bdce1
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
+
 
