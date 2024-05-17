@@ -1,104 +1,92 @@
-Return-Path: <linux-kernel+bounces-181845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C500B8C8244
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:04:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3DB38C8249
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 446F4B231E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:04:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ED801C21F00
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113D81B95E;
-	Fri, 17 May 2024 08:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F70720DCC;
+	Fri, 17 May 2024 08:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Da9yXPqd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J93yxSwB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC762260A;
-	Fri, 17 May 2024 08:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD8725632;
+	Fri, 17 May 2024 08:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715933026; cv=none; b=rlEd4oFUc0CtHcczv0+KCCqGOvz7kDTKN/CmCIGiqkBS3iWbKozweTEHnY/QQO6Mz16s5LeJ0vR8C6ZvYQmFhLxV5xy7eLUPiFyBtPJEVcNvOg6yz+OxPFJMGAte5IKIE5XJ7OfcKnkMuWWaEKDoV+grTvxocN2pw9MICEvfx8U=
+	t=1715933067; cv=none; b=FTZP6i/R4UDcEGW5ze7LnxfEMXFrC0YAwaTofzdn1oGT/pX6XCGMLJexDyVF3dvONNJLXqWxsHBg0uOZHzJhE/z1sl5DNhuF93EXvUxGuOW2LJyfcJjC45eJr5SOdCaQuOC4nBo9S2YPdgt942cGtoWhbhMouOGChGKQbWtqotk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715933026; c=relaxed/simple;
-	bh=G/srp7uTaTSo3ien65VwLzBGNovcOAUtexLcayUN5hk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQys7OJfjpxwVIeA6femBr53npU8Yv8bEgvf8sWP2m7E/ibIhK2/jt2uhsUwSisglFYNFQEyu2lHMURdma9JsA7QbMtYomJbL/7z3LyMcK49FXOFrBCkTWIPjF+80kF/LAXtz4Vl6SZt7GhzwyR2HTOiovX/I0OXz14K3GrK7FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Da9yXPqd; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715933025; x=1747469025;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=G/srp7uTaTSo3ien65VwLzBGNovcOAUtexLcayUN5hk=;
-  b=Da9yXPqdZ4eT2iyjt2mly5sFo+WbVFcFYxymKDkyndblIQvhGN8FJKWa
-   qYBacmwxEbcfIeooYjFLQf3dBMsu+Qd6tmdGJmBxjtGhi+Y8AxbXpE1KL
-   31JvHcSHe+75LQ12qbQ45mSxg0QTxizJUnHOE8mgx4GTZA4n4bhEGS2k7
-   LsfECym5obaW5VaVqnEXlSSXHpGzdnSF4IfKNVg7ujW6a6YGFnwqgnI4d
-   pipmf9WHwZMEccZNe8Zf6AYYY4QPhb44RNUWLLqNHOdD2wU/C8UHsrFb5
-   lii6faqfcZzFB47hpze1lJg7XCTCkY/kYycPq5t2CHG+rSCSTvr6CDhtZ
-   Q==;
-X-CSE-ConnectionGUID: Hkqu6OQDT52vaq+sz2IBcw==
-X-CSE-MsgGUID: qcjzzc8aQI6rD54JbfkV/g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="11936895"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="11936895"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 01:03:44 -0700
-X-CSE-ConnectionGUID: /CziZxrwSVukmBOEmE6LHw==
-X-CSE-MsgGUID: lVKBLj8HRcOy9D0z8RZBcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="36149923"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 01:03:32 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id A0C2F11FA44;
-	Fri, 17 May 2024 11:03:27 +0300 (EEST)
-Date: Fri, 17 May 2024 08:03:27 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: ChiYuan Huang <cy_huang@richtek.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: v4l: async: Fix NULL pointer when v4l2 flash
- subdev binding
-Message-ID: <ZkcPT8lBtEHETb96@kekkonen.localdomain>
-References: <e2f9f2b7b7de956d70b8567a2ab285409fff988b.1715136478.git.cy_huang@richtek.com>
- <ZkXi_U5Js34dUQsA@kekkonen.localdomain>
- <20240517063150.GA12245@linuxcarl2.richtek.com>
- <ZkcOoLQQRdRYYacd@kekkonen.localdomain>
+	s=arc-20240116; t=1715933067; c=relaxed/simple;
+	bh=lcsdTwwDB11JUOFdYAsiNPSGzqe1+RPigLkU1Tmc66U=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=kiSLKbUMy9fH6vogG3OObWzCxeF9qLCqmZUS2DbYbR/xezBSksSpD1AJ8J8wRH8K3QTr9R+ka7zkNV/2HSwb1m90d0TBIyP8iG62+4HCdWQ2ItEvG3xRrybkoHqGbWl3inUKVb0XjLTWsxdk4kPnH6gmK6XCi3x4JlwD9Hf79ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J93yxSwB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DECACC2BD10;
+	Fri, 17 May 2024 08:04:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715933067;
+	bh=lcsdTwwDB11JUOFdYAsiNPSGzqe1+RPigLkU1Tmc66U=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=J93yxSwB4s0J4kRIh5DyQorBe0m6Ul4Wsln75JeAv5l4yM6nGFxkvIYSAjLZCDnNt
+	 W3V74BG3xWpftFmK/bNqlfkbgFokzaARn/ffc5jmp9s+R7njeFqpLsHPQd2wXP5CkB
+	 3pOnIx/HT6XAnv29F4O/AoU4c4f3+RZBMyvXkn9hMOAvgs08+HuyFZat1sWi04GUOQ
+	 dUa92NJUda15TSG0bcmQBemi72nIUCYlJ1sR5JlFm58QDYTFgsmquFdohvTZ51O0E3
+	 BdRsuXKr/g1RtS1UalDAgce6NR7Tz+oJ2s5GGPLDuW5erBk6F5tTiTZ6UI/X76hSUO
+	 p5TSlkcujvebw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkcOoLQQRdRYYacd@kekkonen.localdomain>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [v1] wifi: mwifiex: Fix interface type change
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240510110458.15475-1-francesco@dolcini.it>
+References: <20240510110458.15475-1-francesco@dolcini.it>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Brian Norris <briannorris@chromium.org>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Rafael Beims <rafael.beims@toradex.com>, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tsung-hsien.hsieh@nxp.com,
+ David Lin <yu-hao.lin@nxp.com>, stable@vger.kernel.org,
+ Francesco Dolcini <francesco.dolcini@toradex.com>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <171593306296.3274748.4179889716794962474.kvalo@kernel.org>
+Date: Fri, 17 May 2024 08:04:24 +0000 (UTC)
 
-On Fri, May 17, 2024 at 08:00:32AM +0000, Sakari Ailus wrote:
-> --------8<-------------
-> In v4l2_async_create_ancillary_links(), ancillary links are created for
-> lens and flash sub-devices. These are sub-device to sub-device links and if
-> the async notifier is related to a V4L2 device, the source sub-device of
-> the ancillary link is NULL, leading to a NULL pointer dereference. Check
-> the notifier's sd field is non-NULL in v4l2_async_create_ancillary_links().
-> --------8<-------------
+Francesco Dolcini <francesco@dolcini.it> wrote:
 
-And a slightly different subject, too: "media: v4l: async: Fix NULL pointer
-dereference in adding ancillary links".
+> From: Rafael Beims <rafael.beims@toradex.com>
+> 
+> When changing the interface type we also need to update the bss_num, the
+> driver private data is searched based on a unique (bss_type, bss_num)
+> tuple, therefore every time bss_type changes, bss_num must also change.
+> 
+> This fixes for example an issue in which, after the mode changed, a
+> wireless scan on the changed interface would not finish, leading to
+> repeated -EBUSY messages to userspace when other scan requests were
+> sent.
+> 
+> Fixes: c606008b7062 ("mwifiex: Properly initialize private structure on interface type changes")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Rafael Beims <rafael.beims@toradex.com>
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-No need to send v2.
+BTW I removed the Reviewed-by from the commit message, I don't see the need to
+have both Reviewed-by and s-o-b.
 
 -- 
-Sakari Ailus
+https://patchwork.kernel.org/project/linux-wireless/patch/20240510110458.15475-1-francesco@dolcini.it/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
 
