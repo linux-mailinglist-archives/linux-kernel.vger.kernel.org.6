@@ -1,120 +1,108 @@
-Return-Path: <linux-kernel+bounces-182086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CCA8C861B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:02:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE928C8629
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD6C1F272E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:02:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13E1828467C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD1540BE2;
-	Fri, 17 May 2024 12:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glxgZeLp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9284503C;
+	Fri, 17 May 2024 12:13:15 +0000 (UTC)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC4D3FBBD
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 12:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3978446D5;
+	Fri, 17 May 2024 12:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715947360; cv=none; b=I8OdOVtjdjowDqv08y3Nje354cf1s5Qm4YUpE7+BvuVGNiyNKGStAfUDBqLAksYHXxHzD3FYajHOoOoMsLJWTFPA6TmcVuembll7utnlVIBV1DAiBbM6XD/8OaJvwrgXVvTRTNEa04JglXqHcp8I56C2pekn5P2xKOp+60enLfw=
+	t=1715947995; cv=none; b=th75XBgsL5uqZ6I2rBiVjTGJMV9kBskwD3VuDHIlIJ6XKmPnyOiKO94Cn9jyYiEvAmftPW0S3lXJXl6Io9SmJjwZzWdbavslvTuVj8BacwqC1WSnKLP/mbuYP+SVER2uYk3DCP41LavCXDVbeambXyLS7gF2ZFXTw5qUAotlv24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715947360; c=relaxed/simple;
-	bh=Aj995U25J5UbB1WP0fjOwm2XJjRFPFEAj+XFyuAV13o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D/UZK/EoWVlLVvi6WNex5KogLHJMuSB8V/km81ZM6clfpN5jMsx4CpNjWwm8CHdoeBv06H8MAYMvllAtFVNiXuaDxFNmchkSQIr+l7lmwj7cpIQLs4w0vJHyh2hRjcI+R4aYUE3CdQv0I/vhPaG5Auf6HeArfKO/I++LMVQiqxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glxgZeLp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C99A6C32786;
-	Fri, 17 May 2024 12:02:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715947359;
-	bh=Aj995U25J5UbB1WP0fjOwm2XJjRFPFEAj+XFyuAV13o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=glxgZeLpP1uLmV4GBnYAiTerOc6h4T+R96O1PurnqCi/R8mFeRKSfXTyy57zbZCF9
-	 u62t3dhnkqcVEXQqUZd76ITjG7wlJSWUfrqU8agoKARxrSu1R8w0WgsNwheRRW2gCY
-	 UdTsYEowBotGDj+MwCstPfvBj5+mZaDHmEAtSOnWj4ng5drK5lHCuL+keMB3HcHhud
-	 45ur3p/t+QEG6pxL0CXUTjkjbGD7VZ5B4y2I8d6gJekxUxAN8d9pi7vpViiFH8r89o
-	 R6UU4qt3qoOAnQ4Iv8qeDFy+AtUYb0GVF9GGZppgpo/XdO9A/oZEGD1EacwkG6aq9R
-	 QJHIt9JUoNb3A==
-Date: Fri, 17 May 2024 13:02:34 +0100
-From: Will Deacon <will@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Greg Thelen <gthelen@google.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Tuan Phan <tuanphan@os.amperecomputing.com>
-Subject: Re: [PATCH] perf/arm-dmc620: Fix lockdep assert in ->event_init()
-Message-ID: <20240517120234.GA32598@willie-the-truck>
-References: <20240514180050.182454-1-namhyung@kernel.org>
+	s=arc-20240116; t=1715947995; c=relaxed/simple;
+	bh=QY+w7+/xsuNVPLbOX6z71RjMaYe9IzwtylqSW3cExss=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=SCwIwGb1dH2qr9XL6HoqGFmbUU6H4mzUP77tMO3Z1yX7Y6qCAZAjA+jqAdvMUsNaUPNQY8812IEMqgBtaKc3+2toPSaD9wF7XvVtKL7Kc9ej4KqIdRC17ws/5kVMYixMAZ3BXmzKOSocIbtBLGicTnawmidYJQIyY/tC/5AnOwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:38640)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1s7vq9-00ELc2-8z; Fri, 17 May 2024 05:33:33 -0600
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:56464 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1s7vq7-00HC6p-QA; Fri, 17 May 2024 05:33:32 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Jonathan Calmels <jcalmels@3xx0.net>
+Cc: brauner@kernel.org,  Luis Chamberlain <mcgrof@kernel.org>,  Kees Cook
+ <keescook@chromium.org>,  Joel Granados <j.granados@samsung.com>,  Serge
+ Hallyn <serge@hallyn.com>,  Paul Moore <paul@paul-moore.com>,  James
+ Morris <jmorris@namei.org>,  David Howells <dhowells@redhat.com>,  Jarkko
+ Sakkinen <jarkko@kernel.org>,  containers@lists.linux.dev,
+  linux-kernel@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-security-module@vger.kernel.org,  keyrings@vger.kernel.org
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+	<20240516092213.6799-2-jcalmels@3xx0.net>
+Date: Fri, 17 May 2024 06:32:46 -0500
+In-Reply-To: <20240516092213.6799-2-jcalmels@3xx0.net> (Jonathan Calmels's
+	message of "Thu, 16 May 2024 02:22:03 -0700")
+Message-ID: <878r08brmp.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514180050.182454-1-namhyung@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-XM-SPF: eid=1s7vq7-00HC6p-QA;;;mid=<878r08brmp.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+q9LcYdBDppWToICMQt2uOx8uVr0xZ4BI=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: *
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4980]
+	*  1.5 XMNoVowels Alpha-numberic number with no vowels
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Jonathan Calmels <jcalmels@3xx0.net>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 587 ms - load_scoreonly_sql: 0.07 (0.0%),
+	signal_user_changed: 13 (2.1%), b_tie_ro: 11 (1.8%), parse: 1.07
+	(0.2%), extract_message_metadata: 14 (2.4%), get_uri_detail_list: 0.73
+	(0.1%), tests_pri_-2000: 7 (1.2%), tests_pri_-1000: 3.2 (0.5%),
+	tests_pri_-950: 1.38 (0.2%), tests_pri_-900: 1.26 (0.2%),
+	tests_pri_-90: 244 (41.5%), check_bayes: 236 (40.2%), b_tokenize: 6
+	(0.9%), b_tok_get_all: 6 (1.0%), b_comp_prob: 1.81 (0.3%),
+	b_tok_touch_all: 219 (37.4%), b_finish: 1.02 (0.2%), tests_pri_0: 155
+	(26.5%), check_dkim_signature: 0.56 (0.1%), check_dkim_adsp: 2.7
+	(0.5%), poll_dns_idle: 129 (22.0%), tests_pri_10: 3.9 (0.7%),
+	tests_pri_500: 140 (23.8%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 
-On Tue, May 14, 2024 at 11:00:50AM -0700, Namhyung Kim wrote:
-> for_each_sibling_event() checks leader's ctx but it doesn't have the ctx
-> yet if it's the leader.  Like in perf_event_validate_size(), we should
-> skip checking siblings in that case.
-> 
-> Fixes: f3c0eba287049 ("perf: Add a few assertions")
-> Reported-by: Greg Thelen <gthelen@google.com>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Tuan Phan <tuanphan@os.amperecomputing.com>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  drivers/perf/arm_dmc620_pmu.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/perf/arm_dmc620_pmu.c b/drivers/perf/arm_dmc620_pmu.c
-> index 8a81be2dd5ec..88c17c1d6d49 100644
-> --- a/drivers/perf/arm_dmc620_pmu.c
-> +++ b/drivers/perf/arm_dmc620_pmu.c
-> @@ -542,12 +542,16 @@ static int dmc620_pmu_event_init(struct perf_event *event)
->  	if (event->cpu < 0)
->  		return -EINVAL;
->  
-> +	hwc->idx = -1;
-> +
-> +	if (event->group_leader == event)
-> +		return 0;
-> +
->  	/*
->  	 * We can't atomically disable all HW counters so only one event allowed,
->  	 * although software events are acceptable.
->  	 */
-> -	if (event->group_leader != event &&
-> -			!is_software_event(event->group_leader))
-> +	if (!is_software_event(event->group_leader))
->  		return -EINVAL;
->  
->  	for_each_sibling_event(sibling, event->group_leader) {
-> @@ -556,7 +560,6 @@ static int dmc620_pmu_event_init(struct perf_event *event)
->  			return -EINVAL;
->  	}
->  
-> -	hwc->idx = -1;
->  	return 0;
->  }
+Jonathan Calmels <jcalmels@3xx0.net> writes:
 
-Thanks, I'll pick this up, although Mark reckoned he'd found some other
-issues over at:
+> Attackers often rely on user namespaces to get elevated (yet confined)
+> privileges in order to target specific subsystems (e.g. [1]). Distributions
+> have been pretty adamant that they need a way to configure these, most of
+> them carry out-of-tree patches to do so, or plainly refuse to enable
+> them.
 
-https://lore.kernel.org/r/Zg0l642PgQ7T3a8Z@FVFF77S0Q05N
+Pointers please?
 
-but didn't elaborate on what exactly he'd found :/
+That sentence sounds about 5 years out of date.
 
-Will
+Eric
 
