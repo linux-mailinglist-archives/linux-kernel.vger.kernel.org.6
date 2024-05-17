@@ -1,116 +1,139 @@
-Return-Path: <linux-kernel+bounces-182560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C1D8C8CB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:19:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B508C8CBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837401F22C49
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:19:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19481F23AA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7405E13FD9D;
-	Fri, 17 May 2024 19:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B4513FD9F;
+	Fri, 17 May 2024 19:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jzFbfdw3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YRUk4TGw"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B45813E88B;
-	Fri, 17 May 2024 19:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9368E13DDCE
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 19:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715973543; cv=none; b=RjYLHVX5gsmvDx45hO0jsE9pi/Df6uWX8B72K3EfFS5SiwmSFjOX/I9pG4cmCSCnNqSrd8AWbRsYvowq1XbEQR1pe58rN44KkPWhEWnmTVQ28L7Hmj75S8jH1GVyPoAhXemoyWO6sJzlSfl6WTA8POdOGB77UM32Xo559gfqyLU=
+	t=1715973766; cv=none; b=fBEf/CEIcADhyR2mm5jxXcgFrNKcJuTxiYgPR4q6SgoBz7gdjahCX8Qox034M9EwsTrSUr72n0Iw1vWrHddxljz3mRm8Xkxw/cxSCYPTI7Lpws4CnrOWoNrGXIjisSlPE0XRajf4SxnL9pC4hyOwMuHStT0M4lPyxbWYigN26gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715973543; c=relaxed/simple;
-	bh=C56LQKRTjnVnJG3YwZzJraSuqgQKogoB9XvmcKydv0M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Fly29YnjY+8hWHNiQDgjj30zBulePqxkVwJzM1AkzQqs/tAFrTUltIekvEKDgRmdmC4otWD0kd+gsbQ7l47WwqYnG4RUUvom/wgZUBJ4CljgqBTNHgIL6HXDECjJPKY8eMr1xuP8EXgj0Fd22LR2Lk+uJ4iej0AOSuZPmDH+884=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jzFbfdw3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44HI07ua022358;
-	Fri, 17 May 2024 19:18:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:date:subject:mime-version:content-type
-	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=BDh
-	CaFuutonQDkWjUPolgJamStWN/o8ldxvcLtdYTRI=; b=jzFbfdw3KY6kvKbwhoB
-	CBsRONONFgjo912rzmdrSWouQLBMrD/FiQgIQ8SIZ40OzEQ+5075NiUmHnsnluz9
-	9S9MTKwD+WvfrBLLezOP+I8Sey1WpsqK5EcCWoVkWiwLAUAcdXU/FmCcqbtUaQ68
-	8kNOfJq4MBvyoQ9G96jjrae/8C6IdoZKO0BFFBXD23hFdS37G0QUM1BVBiMmyMxj
-	prLRi9iCBuOniDIBG59Ly+AoKxc7hJqDIZpM6xuhCVybfh77RCQSigH/znRXnDnT
-	ZsL+ZMrlKFsV5X4Y539YAB1ovnKE3j05H+9btXBk21nk744VZ/8IvgAkiIhQTI8u
-	+2Q==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y62a818sh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 19:18:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44HJIpiW029578
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 19:18:51 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
- 2024 12:18:50 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Fri, 17 May 2024 12:18:49 -0700
-Subject: [PATCH] leds: rt4505: add MODULE_DESCRIPTION()
+	s=arc-20240116; t=1715973766; c=relaxed/simple;
+	bh=5NZhUebD+jwTapS+lCj4nfvqfbRZkD+FQvIfY19k6Qg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t6M25Dx5uEml5ys98SrGnt26YxD4vTT3qJ281hXU303F/HpJdy9pFFUNUS4nAjtGBta7OhEUp2zm5mA80JVj4ppvlTPKyK0uPahBmkefY1JXVsHlO96HtyS0kT7gyrs+MWRcH8L64p8He/4LR+Ez2mF1dVDPjBKaHVdQza1vwtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YRUk4TGw; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51fdc9af005so1986981e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 12:22:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715973761; x=1716578561; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sh8TQN24HdRct7EWlhzUHnCJ0TtfqGC3HskYLHQN1S4=;
+        b=YRUk4TGwcKSSBLVBB+ruAF/3rQUD+cWnYMcYnYpF+AjX33UIuJ/9XAvNlQzSTeNMf7
+         966IOE0o8ZQn0Un6DL7j04ueEKxAJ0QJfDatbF4e3jgg5g8/CbY7m0DDoDeHH8ag8WLA
+         NaaknjNR59Umkvt2RSfU2SXgPtzsuEJDUB18I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715973761; x=1716578561;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sh8TQN24HdRct7EWlhzUHnCJ0TtfqGC3HskYLHQN1S4=;
+        b=eC4rrd/KwVw3DIS3WE6W11ExioniN6IcJtt9sj5R7ZEnB0ifKLXON3qE9c2ODBaTDh
+         L3728ZL04/7KKj8r+BBTkSBjBJskPm/tmu+vGPHPI6RkbNVxldShs0V0O39xVXUFMUht
+         /lZ9FRKmfZRrhPlGUL/ueWJpGXejmxMAtljhvO3CzlqipZmG1cXalE7GNFMZT95rAfUt
+         CNrzQTd6d1W+wqyVxNdbyhXmtbVBl5hnKDX24/afc7MClVSCN/7x90ljuCbFWABwFE08
+         DlxEKODZlVBbKlumDcWluHBn1DimcMktDbFERoxNIVYxI+0Q94kac+ic3ys2ugeKNt6L
+         jkMg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/4GBnxxBNWyr4wJD7APE+DFt6iIGM9/hqALTA3VgMiGQCzuEVp8Y3FLa9pDjZrhQ2LCuKNJ4qcITtBGUGPIj8MpK5oiADCaJAmYnN
+X-Gm-Message-State: AOJu0Yzhf+Ezw71fAfw4QcMOywN7VeVZrWEThoVkMAjMRVFkTmXQvlo1
+	AdiKNe8GM2UbFK7+J17krHroxdTug7ny6gvqB542SxPP0a3ILJzqMNSbD3dNaME7n29+nA1YRXP
+	DhCHfKw==
+X-Google-Smtp-Source: AGHT+IGXZBO69btvK7h4gDjvcpznyEBsqVCi1yMC5DaYs24lc11LnF+EgY3y+b81K0Hn8S0u7uRpEw==
+X-Received: by 2002:a05:6512:3e17:b0:51d:605e:f0ce with SMTP id 2adb3069b0e04-52210278698mr26639876e87.50.1715973761327;
+        Fri, 17 May 2024 12:22:41 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f39d2be2sm3362246e87.254.2024.05.17.12.22.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 May 2024 12:22:40 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51fdc9af005so1986925e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 12:22:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWxtJykWPXTYCTM5pxxiH4cH7lAe2QbgLHkigAi3G7kvNWdaUXmZF6Oii0hmqWrcpawJ6/WOoSk0dEWmMMYM3eu/rOkk7SIny4l1pH+
+X-Received: by 2002:ac2:4a84:0:b0:51d:9aa7:23e with SMTP id
+ 2adb3069b0e04-52210475801mr17957902e87.65.1715973760408; Fri, 17 May 2024
+ 12:22:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240517-md-leds-rt4505-v1-1-2f388ff6b672@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAJitR2YC/x3MQQqDMBCF4avIrDuQpAkVr1K6iMlYBzSVGS0W8
- e5Nu/zgvf8AJWFS6JoDhN6s/CoV9tJAGmN5EnKuBmecN8HecM44UVaU1QcT0MTU+uFqnHUJ6mk
- RGnj/B++P6j4qYS+xpPGXmbhsO85RVxJcPnUK5/kF+RWiHIUAAAA=
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jeff Johnson
-	<quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: s8RjBnKt9u0Uch6uN4aby8kOD3BfuhwM
-X-Proofpoint-ORIG-GUID: s8RjBnKt9u0Uch6uN4aby8kOD3BfuhwM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-17_09,2024-05-17_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 suspectscore=0 mlxlogscore=769 impostorscore=0
- phishscore=0 clxscore=1011 mlxscore=0 spamscore=0 malwarescore=0
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405170150
+References: <CAPM=9tx_KS1qc8E1kUB5PPBvO9EKHNkk7hYWu-WwWJ6os=otJA@mail.gmail.com>
+ <CAHk-=wjdyimk4t2C7xfqLYFX1HUH92yTRTFQXAitJJT+REvF3Q@mail.gmail.com>
+ <CADnq5_NmC9bYkPFUD35gBtxsk_9jYhOTugni-q4WGXggf6=rLA@mail.gmail.com>
+ <6225ecf4-f4ca-4ed7-a316-69c86f4ade7f@amd.com> <CAPM=9tyJCJ+D4h7BZ3dBpm6R33gTfwtigDtmt6g9KX25Jun9Hg@mail.gmail.com>
+In-Reply-To: <CAPM=9tyJCJ+D4h7BZ3dBpm6R33gTfwtigDtmt6g9KX25Jun9Hg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 17 May 2024 12:22:23 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whp9ixiDVNvSXRcVWYifXfQaZH9taHxD-i5noppY30e1w@mail.gmail.com>
+Message-ID: <CAHk-=whp9ixiDVNvSXRcVWYifXfQaZH9taHxD-i5noppY30e1w@mail.gmail.com>
+Subject: Re: [git pull] drm urgent for 6.10-rc1
+To: Dave Airlie <airlied@gmail.com>
+Cc: "Paneer Selvam, Arunpravin" <arunpravin.paneerselvam@amd.com>, Alex Deucher <alexdeucher@gmail.com>, 
+	Daniel Vetter <daniel.vetter@ffwll.ch>, "Deucher, Alexander" <Alexander.Deucher@amd.com>, 
+	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Fix the 'make W=1" issue:
+On Thu, 16 May 2024 at 18:08, Dave Airlie <airlied@gmail.com> wrote:
+>
+> Linus, do you see it a boot straight away?
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/flash/leds-rt4505.o
+Ok, back at that computer now, and yes, I see those messages right
+away. In fact, they seem to happen before gnome even starts up, ie I
+see those messages long before the first messages from gnome-session:
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/leds/flash/leds-rt4505.c | 1 +
- 1 file changed, 1 insertion(+)
+    May 17 12:07:17 tr3970x kernel: WARNING: CPU: 4 PID: 1067 at
+drivers/gpu/drm/drm_buddy.c:198 __force_merge+0x184/0x1b0 [drm_buddy]
+    .. lots and lots and lots of them ..
+    ...
+    May 17 12:07:23 tr3970x systemd-cryptsetup[982]: ...
+    ...
+    May 17 12:07:25 tr3970x systemd[1]: Reached target basic.target
+    ...
+    May 17 12:07:25 tr3970x systemd[1]: Mounted sysroot.mount - /sysroot.
+    ...
+    May 17 12:07:25 tr3970x systemd[1]: Switching root.
+    ...
+    May 17 12:07:36 tr3970x gnome-session[2824]: ..
+    ...
+    May 17 12:07:36 tr3970x gnome-shell[2836]: Obtained a high
+priority EGL context
+    May 17 12:07:36 tr3970x kernel: WARNING: CPU: 31 PID: 2836 at
+drivers/gpu/drm/drm_buddy.c:198 __force_merge+0x184/0x1b0 [drm_buddy]
+    .. lots of warnings resume ...
 
-diff --git a/drivers/leds/flash/leds-rt4505.c b/drivers/leds/flash/leds-rt4505.c
-index 1ae5b387f4a5..f16358b8dfc1 100644
---- a/drivers/leds/flash/leds-rt4505.c
-+++ b/drivers/leds/flash/leds-rt4505.c
-@@ -426,4 +426,5 @@ static struct i2c_driver rt4505_driver = {
- module_i2c_driver(rt4505_driver);
- 
- MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
-+MODULE_DESCRIPTION("Richtek RT4505 LED driver");
- MODULE_LICENSE("GPL v2");
+IOW, it happens already during the graphical boot before I have even
+typed in my disk encryption password.
 
----
-base-commit: d75ca803d4950826f6a1227f9ece9eec44b2f360
-change-id: 20240517-md-leds-rt4505-0ac84f30212c
+Then it starts again when gnome starts.
 
+I just checked: I have exactly 8192 warnings from the early boot
+before the first gnome warning. Which sounds like too round a number
+to be an accident.
+
+I will try the patch Alex pointed at next:
+
+    https://patchwork.freedesktop.org/patch/594539/
+
+and see if that fixes it for me.
+
+                 Linus
 
