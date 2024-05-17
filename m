@@ -1,140 +1,158 @@
-Return-Path: <linux-kernel+bounces-182658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C84C8C8DDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:51:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6968C8DE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08621285E1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:51:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA451C21D08
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6B91411FE;
-	Fri, 17 May 2024 21:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3321411CD;
+	Fri, 17 May 2024 21:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="BtMAgW4J"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xveNHRdu"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC291A2C20
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 21:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AF01A2C20
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 21:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715982664; cv=none; b=ejEAtSymmBUgFEGggS04bq0GNIc69XASx/yVFMztVweI645C7K8O7Z8gCK+jjrPAfyIzA2kA21HajnomFKpQOJYUT/MZRHsgX5tVi2BjdI2h4qActeBJRA+QN2GUWYqd7Z/WLRCSFTa4KbWv+1FQDHgSv683kUToA9KyaPOnozY=
+	t=1715982704; cv=none; b=oqP9NtzBMaqrzCLUYrgV3b15KmnVp/S/EtwG4DrbC8p5HAVLv02ODoeRvItPAGlzy+py0GaagEtvg6x2ZATtDfRzH/JkoWpqIE9zfsIUTkWxWMQoiOxy+ASgVfP93LMgl3NmW7NKM42bhjoa9Tno8IBJTuklMZEbgmNwR1hJfnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715982664; c=relaxed/simple;
-	bh=0E7eaNTn25VPZND5g23qK/Ao2qthaQCAHj3l7eXug3g=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mPs8fE2M71VBIYL3GaDIrh7iE2/GD9eJvoRpf+uyn6IDQc8lj+X8h3PVO6VsQJTWpPWHaJyxURYZqR8TAe2YR+RsxRF9oTMteqOdT7TFSfLVBVx4NA7dPZVX1Rv4BbzEn1IQFY0X9hH35lR0nr37AtfM22NVu/MmE5QU7pk8Cug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=BtMAgW4J; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-61816fc256dso6703127b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:51:03 -0700 (PDT)
+	s=arc-20240116; t=1715982704; c=relaxed/simple;
+	bh=0BnsCVzy0id/M//gXYNHDgKFcuT3ZsFHq/dlbbTEOFo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fw65wDagAx0NOUOPE7hGzXttcuybzLcCNqHGCpRMYp5Vy/8B1qmOUDHavhB1l8x/UphJ5IwObC/6N+kh9Lf/a7OPf/zc+5dASijvoHe/18w2zCjegxJfcxFyxLX+2xCYkwkYZ67vldaJaE2cWugN9K+eYQCdqk17XViou+gVYVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xveNHRdu; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1ee0ccf9c2fso5415ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:51:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1715982662; x=1716587462; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JqVu/kA6Go97evFIK242c0lkRDXDcl7LbF0LEfPVfNg=;
-        b=BtMAgW4J1m5/fx4z19KHk8SIDxTkAbaqBfjlHEgqx54xq6p5P4KHcvf+OgL/KlGwM1
-         1EfBe/kXM0dCgygoYu35o6sjdYfstiPfGqxFC+3vzXDuuGRI4dOzKBBB7vrXT1XpSOAl
-         Xe/cGkvWrnLpRpe194X4NRel8KRmwqUAF5AcdNJsgeoKubXVQU8Q+N83lEpzVGPLvtrC
-         majuekPkaEvoUvUz6L2OEDhAteQu0waRwsprjALvmb36FgvX/k9nhW8b4WSORjKgROKY
-         fvm6i95OJebRZjA0cH9undWkPBXCZrWj/U2HVgUnP4XrzU7Sv9JD2K2RRnyrklWNkbfd
-         WKsw==
+        d=google.com; s=20230601; t=1715982703; x=1716587503; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0BnsCVzy0id/M//gXYNHDgKFcuT3ZsFHq/dlbbTEOFo=;
+        b=xveNHRduf9vHMQT0zku245gxxkXc5VxYLQgni79eiuLEJdgIM6k6eI9EOLI/6FMtc7
+         5eki17w0dP69P2lJvbsJ1JWA2N4FM1KG7baQtNnFt2Ohug8yTqJcyfSuT33g1NtUmw8W
+         Nih2bX8uFtmcexi5DKbzDilt9rZZDdkiT0958RxygA/gtBURhq50wpVNFyXo/UB4KQdX
+         efoNhhkw1D/4rU7XNXrP61RdY4FA4ATSvUzQ21WOt3JQUfWj2BvpXoBaYd9Niv+kLQXn
+         o/EZr7egZdtJhK3GgaZKTnrCzIaDbznMZTeak9SNQeusu/3gk2c74zNF4VpJULHgLYeJ
+         96fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715982662; x=1716587462;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JqVu/kA6Go97evFIK242c0lkRDXDcl7LbF0LEfPVfNg=;
-        b=sA6ytUiHrGEPaRYwByBDBmfz+uLneQMxeyGhAOvwxwXbuFkOQKmMz4XL+4lZU5vBfh
-         5pzwh5PHc+BiJOj9JWNE+zcAiXazPPYcivOO6CxYuDPiYFwLkGt+qipaoBfnhv6LOxMz
-         TCJ0CpMnLg9vEcwGaoLImCIOKX+lRwquke34qsaIYz+pUf+O4n2mdpHm7OB208sAUM9X
-         jehTqfhW6epijjPYNgqtAJnCu/bCTlnSYG/KnM5PjhQ56jk/njLTZfRZ8PWkK58FnNq3
-         ldi+Zw/nxJhdjru4pkWo8BVNiU0l9UFdPc8gLDAz7ZYZbgtSEtRvE7vMuqv4Ic3RIOkS
-         uslA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgtgsOH7h7AuC7/MOXsuhPUCOcEw6+Na8opgC/YqRzeO8e2aBkYsmOV5NHUWW9pzCEggvuXduXd2uQNivp4Zp1E0Xv0E3DbLAcFq4e
-X-Gm-Message-State: AOJu0YyX+LnPIFyAPvmT0qvPzSe3590kp2n/ULEDOpm51mOZLeBXI7sN
-	sFqDEahVMaC1FBkbaDSzCKQ5Ju7Mu5MHh1MjOI56qP219MFg1PpeUALbKdhQ+9o+unErefcT+Be
-	8+FdJ/73O+BuUD5mbOU+6/R9em/lNmbLhWVB4AWA/b+z7jIZTRVY=
-X-Google-Smtp-Source: AGHT+IEe+nZ2KnnP6vARg4nvWdn1LICCt7qYyk2XbAACiY4Suxq8FXGH4FZW8lOfg1gNUOlq+6kGwbcqxVUklqhTOmo=
-X-Received: by 2002:a81:ac23:0:b0:61b:3348:34c0 with SMTP id
- 00721157ae682-622b016d1a7mr216119787b3.50.1715982662218; Fri, 17 May 2024
- 14:51:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715982703; x=1716587503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0BnsCVzy0id/M//gXYNHDgKFcuT3ZsFHq/dlbbTEOFo=;
+        b=Z7cA4ttr0Ag/Q3wPMHa2Nl+J1v5JiJ1ShMAvHaZ7Pd3l8+fIyLmYdnOQTIfTsYdJqv
+         AMj3mnTJLOYnW4aXneBbtSAF2ettet9kOnlg7o7vuQyMBKaCGUfW6+mNcec19zsadP++
+         Pw95wVLyZbtoBgcb1N0+T5HAjEkcTPd3nXa40z8AInu5I67MtCVSqErEu2C3k7QlJHrC
+         JN3ceXYMDquRGAZIfeHQ5SdBUE+IUdL6GF/a1dqGV+xIFvoFhCwB1mx7edqxRb8+2f9z
+         T1mVReJIEji6YG4I98Ovvy6wTsFvi8QeLsj+l/SnwQSotI2YwZA+GmCSboNJSKSm2o4Q
+         /Urw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlYVFZUskMpUuFuX8ILnGTJcuH9IXqvBCvlZku9uzdV0gNdW3xNEjQTnUzAjfKtsYU24+MQYZn7vVCSpOY379qXZ4W7dIG0vXiCLU+
+X-Gm-Message-State: AOJu0Yw3nOGvSqROW9Hp/ZoL0Vv4fBLbfFre5GdcOu4yeabeymace6z6
+	DmRwkQZVk9s0CEB3zB5wIbMNfEx97EHSH+bBWKyUpwuziK8BQJuEQ19knJM+6E16ANMozfJLcv0
+	CbQCniEykKN9mIkzzrrgbzE/gW988ANJTshji
+X-Google-Smtp-Source: AGHT+IG+91I7rOKF2t9bNu6iWny0Jc+Pde2JFYBdmetZyANUcgW1VcEP8hO1J4SqD4XvoLgf2WRbUrcQCYEpWmxMRQM=
+X-Received: by 2002:a17:903:8c3:b0:1e2:73a9:7df6 with SMTP id
+ d9443c01a7336-1f2ee0b1ebdmr195265ad.23.1715982702348; Fri, 17 May 2024
+ 14:51:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Ivan Babrou <ivan@cloudflare.com>
-Date: Fri, 17 May 2024 14:50:51 -0700
-Message-ID: <CABWYdi0ymezpYsQsPv7qzpx2fWuTkoD1-wG1eT-9x-TSREFrQg@mail.gmail.com>
-Subject: bpftool does not print full names with LLVM 17 and newer
-To: bpf <bpf@vger.kernel.org>
-Cc: kernel-team <kernel-team@cloudflare.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	llvm@lists.linux.dev
+References: <cover.1711674410.git.babu.moger@amd.com> <CALPaoCjZ3oLdKymJjASt0aqtd0GGOme7LavvYOtPYTb_rA-mYQ@mail.gmail.com>
+ <b35dc4e9-7e8b-42ed-9a51-ae50d521cf4b@amd.com> <CALPaoChxYoJx8eR48EkSKf-hu2p2myQJLZEhj_Pq6O4R15-=5A@mail.gmail.com>
+ <6edffe1b-e9a9-4995-8172-353efc189666@amd.com> <ab2a6a4b-3740-47c6-9443-e6bb7a0c1adb@intel.com>
+ <CALPaoCiYFKeASPMDwzzaHLw4JiMtBB6DTyVPgt0Voe3c3Tav_A@mail.gmail.com>
+ <b725e4ca-8602-eb26-9d47-914526621f52@amd.com> <CALPaoCiu2_UHyGjsyitz28BL1N93TSn28E1r-6nhXg--bzmU+Q@mail.gmail.com>
+ <d7f3c5b1-c39d-4c66-92c3-5b096b9e0579@intel.com>
+In-Reply-To: <d7f3c5b1-c39d-4c66-92c3-5b096b9e0579@intel.com>
+From: Peter Newman <peternewman@google.com>
+Date: Fri, 17 May 2024 14:51:28 -0700
+Message-ID: <CALPaoCiJ9ELXkij-zsAhxC1hx8UUR+KMPJH6i8c8AT6_mtXs+Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/17] x86/resctrl : Support AMD Assignable
+ Bandwidth Monitoring Counters (ABMC)
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: babu.moger@amd.com, corbet@lwn.net, fenghua.yu@intel.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	paulmck@kernel.org, rdunlap@infradead.org, tj@kernel.org, 
+	peterz@infradead.org, yanjiewtw@gmail.com, kim.phillips@amd.com, 
+	lukas.bulwahn@gmail.com, seanjc@google.com, jmattson@google.com, 
+	leitao@debian.org, jpoimboe@kernel.org, rick.p.edgecombe@intel.com, 
+	kirill.shutemov@linux.intel.com, jithu.joseph@intel.com, kai.huang@intel.com, 
+	kan.liang@linux.intel.com, daniel.sneddon@linux.intel.com, 
+	pbonzini@redhat.com, sandipan.das@amd.com, ilpo.jarvinen@linux.intel.com, 
+	maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Reinette, Babu,
 
-We recently bumped LLVM used for bpftool compilation from 15 to 18 and
-our alerting system notified us about some unknown bpf programs. It
-turns out, the names were truncated to 15 chars, whereas before they
-were longer.
+On Fri, May 3, 2024 at 2:15=E2=80=AFPM Reinette Chatre
+<reinette.chatre@intel.com> wrote:
+>
+> Hi Peter,
+>
+> On 5/3/2024 2:00 PM, Peter Newman wrote:
+> > Hi Babu,
+> >
+> > On Fri, May 3, 2024 at 1:44=E2=80=AFPM Moger, Babu <bmoger@amd.com> wro=
+te:
+> >>
+> >> Hi Peter,
+> >>
+> >> On 5/2/2024 7:57 PM, Peter Newman wrote:
+> >>> Hi Reinette,
+> >>>
+> >>> On Thu, May 2, 2024 at 4:21=E2=80=AFPM Reinette Chatre
+> >>>> I do think ABMC should be enabled by default when available and it l=
+ooks
+> >>>> to be what this series aims to do [1]. The way I reason about this i=
+s
+> >>>> that legacy user space gets more reliable monitoring behavior withou=
+t
+> >>>> needing to change behavior.
+> >>>
+> >>> I don't like that for a monitor assignment-aware user, following the
+> >>> creation of new monitoring groups, there will be less monitors
+> >>> available for assignment. If the user wants precise control over wher=
+e
+> >>> monitors are allocated, they would need to manually unassign the
+> >>> automatically-assigned monitor after creating new groups.
+> >>>
+> >>> It's an annoyance, but I'm not sure if it would break any realistic
+> >>> usage model. Maybe if the monitoring agent operates independently of
+> >>
+> >> Yes. Its annoyance.
+> >>
+> >> But if you think about it, normal users don't create too many groups.
+> >> They wont have to worry about assign/unassign headache if we enable
+> >> monitor assignment automatically. Also there is pqos tool which uses
+> >> this interface. It does not have to know about assign/unassign stuff.
+> >
+> > Thinking about this again, I don't think it's much of a concern
+> > because the automatic assignment on mongroup creation behavior can be
+> > trivially disabled using a boolean flag.
+>
+> This could be a config option.
 
-After some investigation, I was able to see that the following code:
+I'd like to work out the details of this option.
 
-    diff --git a/src/common.c b/src/common.c
-    index 958e92a..ac38506 100644
-    --- a/src/common.c
-    +++ b/src/common.c
-    @@ -435,7 +435,9 @@ void get_prog_full_name(const struct
-bpf_prog_info *prog_info, int prog_fd,
-        if (!prog_btf)
-            goto copy_name;
+info/L3_MON/mbm_assign_on_mkdir?
 
-    +    printf("[0] finfo.type_id = %x\n", finfo.type_id);
-        func_type = btf__type_by_id(prog_btf, finfo.type_id);
-    +    printf("[1] finfo.type_id = %x\n", finfo.type_id);
-        if (!func_type || !btf_is_func(func_type))
-            goto copy_name;
+boolean (parsed with kstrtobool()), defaulting to true?
 
-When ran under gdb, shows:
-
-    (gdb) b common.c:439
-    Breakpoint 1 at 0x16859: file common.c, line 439.
-
-    (gdb) r
-    3403: tracing  [0] finfo.type_id = 0
-
-    Breakpoint 1, get_prog_full_name (prog_info=0x7fffffffe160,
-prog_fd=3, name_buff=0x7fffffffe030 "", buff_len=128) at common.c:439
-    439        func_type = btf__type_by_id(prog_btf, finfo.type_id);
-    (gdb) print finfo
-    $1 = {insn_off = 0, type_id = 1547}
-
-
-Notice that finfo.type_id is printed as zero, but in gdb it is in fact 1547.
-
-Disassembly difference looks like this:
-
-    -    8b 75 cc                 mov    -0x34(%rbp),%esi
-    -    e8 47 8d 02 00           call   3f5b0 <btf__type_by_id>
-    +    31 f6                    xor    %esi,%esi
-    +    e8 a9 8c 02 00           call   3f510 <btf__type_by_id>
-
-This can be avoided if one removes "const" during finfo initialization:
-
-    const struct bpf_func_info finfo = {};
-
-This seems like a pretty annoying miscompilation, and hopefully
-there's a way to make clang complain about this loudly, but that's
-outside of my expertise. There might be other places like this that we
-just haven't noticed yet.
-
-I can send a patch to fix this particular issue, but I'm hoping for a
-more comprehensive approach from people who know better.
-
-Thanks.
+-Peter
 
