@@ -1,129 +1,151 @@
-Return-Path: <linux-kernel+bounces-181775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B794C8C8127
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:02:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66CAF8C8125
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F732828B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:02:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31F7B1F220DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 07:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DA015E83;
-	Fri, 17 May 2024 07:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DsR8dTEH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53E814A9F;
-	Fri, 17 May 2024 07:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BF614F65;
+	Fri, 17 May 2024 07:02:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE57010A1B
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 07:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715929366; cv=none; b=K+YK0adrXvX4RL9xWyMLnuiL4GkbyMp8ZsfBB4kXBjtb8xwo9f7opmNioPH280K9saHsMQJ2qa1cji1blE2V86W4dX5qo2fKEmV+2HjefSw3PTcox7xFapO82rglqP/AZZb7MKZ/ZpyyltIsNrLa0T7ys5icL4xZJBS2lHmdWcw=
+	t=1715929320; cv=none; b=HOJ58Xgbmm4cN1tD7x0I9St59VjBp8CXKXaCa++2FPc4vMFr4tC82mtDM77KSfOi4oA4gsi6nv+4HoH8b7p9gguDghNf9oQFfuO6a/sRepsK47wpCPYKL0jCuUBvKoTJfQ4D/86WGPiFpxwpT3xs1j/oBy6khuYZbTUcVhuIhf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715929366; c=relaxed/simple;
-	bh=yfF8T0qSQyJNeBh2GE62uu/f4rsUpxn6cGIf7Wi5s6Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WuYa11GCwDPbqFWvHeUnJH60ZnOPZuwpT2J8C+Z4RhXpMgwjiZTAW30u/H37MyglNSlJdi7SrhbXGWKWsK8/Q2edtO3upQhoRvkarSj70maLqi6GlawgOSsBmY4aP3C+tn0b2Vorl42qUCJrJyym/ucuM65DB5hmdWyACuqP484=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DsR8dTEH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44GKMq0H020849;
-	Fri, 17 May 2024 07:02:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding:content-type; s=qcppdkim1; bh=EdfTodF
-	m2OFLJ/9JBCUXk4QT9oTn5vS52O0Pgs8Cyqg=; b=DsR8dTEHmUYrF3uGJq2W0+S
-	e5NBd8hJWGy1UX7GxkEKX6ORcTAaTodP4A3UtQZv0ESKxqyYJP0mTB+HcJ07yfHN
-	u9FUn1ghijsNsa8ebplg/7Hu1qVefE2Wnwdm680lEnjVb8zbDJOkWh7YVX0kLpMO
-	QB0ZQ+j5noNKLKnwLu1ozH4fcE4HiU0hIjbDNo6tyF80djukRQPKsvQnPCbemZzC
-	e3BetdMIaWPE81ml+tZ4AN39rmCwyiSW/lD/iw+IRMKAb8Qh8Yw9ikC6HxFWxMaQ
-	hsjAPHb3houB46xYhAB+OUmd7YDs45+r+Kd19qP8gs7gl2T0pgo3AMRWHS7SMOg=
-	=
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y42kw082p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 07:02:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44H72M09007517
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 07:02:22 GMT
-Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 17 May 2024 00:02:18 -0700
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-To: Sudeep Holla <sudeep.holla@arm.com>,
-        Viresh Kumar
-	<viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        "Cristian Marussi" <cristian.marussi@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        "Ajit
- Pandey" <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Vivek Aknurwar <quic_viveka@quicinc.com>,
-        Mike Tipton
-	<quic_mdtipton@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-Subject: [PATCH] cpufreq: scmi: Avoid overflow of target_freq in fast switch
-Date: Fri, 17 May 2024 12:31:57 +0530
-Message-ID: <20240517070157.19553-1-quic_jkona@quicinc.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715929320; c=relaxed/simple;
+	bh=kAYjYYsJ6/944CRMmlWAvYHZSEQ2PMTd1Ly9WBMLWW8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O+5pugDCRlFcLg4ahLE+cKoV9YCYiIQEc44SPFR649gbOpi7LKQdNNp437ENm3TshEHffEmXi2pnk3Uv10XUhkmjhd6/bbgNhuTpTKDUqi661r1m+lIvQ+epfoS5ePki6stUQt4l2/n6R2GmLm9KXXWXMISx2j3+irS9T5PbYLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB8731424;
+	Fri, 17 May 2024 00:02:20 -0700 (PDT)
+Received: from [10.163.37.42] (unknown [10.163.37.42])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 833643F7A6;
+	Fri, 17 May 2024 00:01:53 -0700 (PDT)
+Message-ID: <ea14ad49-b094-451a-8e4f-560010868930@arm.com>
+Date: Fri, 17 May 2024 12:32:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: VtqDQfNAvGcP8u5ca1Ejpm2-7TMNedd7
-X-Proofpoint-ORIG-GUID: VtqDQfNAvGcP8u5ca1Ejpm2-7TMNedd7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- mlxlogscore=831 phishscore=0 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 spamscore=0 adultscore=0 mlxscore=0 impostorscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405170054
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mm/huge_memory: don't unpoison huge_zero_folio
+To: Miaohe Lin <linmiaohe@huawei.com>, akpm@linux-foundation.org
+Cc: shy828301@gmail.com, nao.horiguchi@gmail.com, xuyu@linux.alibaba.com,
+ david@redhat.com, osalvador@suse.de, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240516122608.22610-1-linmiaohe@huawei.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240516122608.22610-1-linmiaohe@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Conversion of target_freq to HZ in scmi_cpufreq_fast_switch()
-can lead to overflow if the multiplied result is greater than
-UINT_MAX, since type of target_freq is unsigned int. Avoid this
-overflow by assigning target_freq to u64 variable for converting
-it to HZ.
+On 5/16/24 17:56, Miaohe Lin wrote:
+> When I did memory failure tests recently, below panic occurs:
+> 
+>  kernel BUG at include/linux/mm.h:1135!
+>  invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+>  CPU: 9 PID: 137 Comm: kswapd1 Not tainted 6.9.0-rc4-00491-gd5ce28f156fe-dirty #14
+>  RIP: 0010:shrink_huge_zero_page_scan+0x168/0x1a0
+>  RSP: 0018:ffff9933c6c57bd0 EFLAGS: 00000246
+>  RAX: 000000000000003e RBX: 0000000000000000 RCX: ffff88f61fc5c9c8
+>  RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff88f61fc5c9c0
+>  RBP: ffffcd7c446b0000 R08: ffffffff9a9405f0 R09: 0000000000005492
+>  R10: 00000000000030ea R11: ffffffff9a9405f0 R12: 0000000000000000
+>  R13: 0000000000000000 R14: 0000000000000000 R15: ffff88e703c4ac00
+>  FS:  0000000000000000(0000) GS:ffff88f61fc40000(0000) knlGS:0000000000000000
+>  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  CR2: 000055f4da6e9878 CR3: 0000000c71048000 CR4: 00000000000006f0
+>  Call Trace:
+>   <TASK>
+>   do_shrink_slab+0x14f/0x6a0
+>   shrink_slab+0xca/0x8c0
+>   shrink_node+0x2d0/0x7d0
+>   balance_pgdat+0x33a/0x720
+>   kswapd+0x1f3/0x410
+>   kthread+0xd5/0x100
+>   ret_from_fork+0x2f/0x50
+>   ret_from_fork_asm+0x1a/0x30
+>   </TASK>
+>  Modules linked in: mce_inject hwpoison_inject
+>  ---[ end trace 0000000000000000 ]---
+>  RIP: 0010:shrink_huge_zero_page_scan+0x168/0x1a0
+>  RSP: 0018:ffff9933c6c57bd0 EFLAGS: 00000246
+>  RAX: 000000000000003e RBX: 0000000000000000 RCX: ffff88f61fc5c9c8
+>  RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff88f61fc5c9c0
+>  RBP: ffffcd7c446b0000 R08: ffffffff9a9405f0 R09: 0000000000005492
+>  R10: 00000000000030ea R11: ffffffff9a9405f0 R12: 0000000000000000
+>  R13: 0000000000000000 R14: 0000000000000000 R15: ffff88e703c4ac00
+>  FS:  0000000000000000(0000) GS:ffff88f61fc40000(0000) knlGS:0000000000000000
+>  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  CR2: 000055f4da6e9878 CR3: 0000000c71048000 CR4: 00000000000006f0
+> 
+> The root cause is that HWPoison flag will be set for huge_zero_folio
+> without increasing the folio refcnt. But then unpoison_memory() will
+> decrease the folio refcnt unexpectly as it appears like a successfully
 
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
----
- drivers/cpufreq/scmi-cpufreq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Small nit, a typo in here   ^^^^^ s/unexpectly/unexpectedly/.
 
-diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-index 3b4f6bfb2f4c..42be87aebe6f 100644
---- a/drivers/cpufreq/scmi-cpufreq.c
-+++ b/drivers/cpufreq/scmi-cpufreq.c
-@@ -63,9 +63,9 @@ static unsigned int scmi_cpufreq_fast_switch(struct cpufreq_policy *policy,
- 					     unsigned int target_freq)
- {
- 	struct scmi_data *priv = policy->driver_data;
-+	u64 freq = target_freq;
- 
--	if (!perf_ops->freq_set(ph, priv->domain_id,
--				target_freq * 1000, true))
-+	if (!perf_ops->freq_set(ph, priv->domain_id, freq * 1000, true))
- 		return target_freq;
- 
- 	return 0;
--- 
-2.43.0
+> hwpoisoned folio leading to VM_BUG_ON_PAGE(page_ref_count(page) == 0)
+> when releasing huge_zero_folio.
+> 
+> Skip unpoisoning huge_zero_folio in unpoison_memory() to fix this issue.
+> We're not prepared to unpoison huge_zero_folio yet.
+> 
+> Fixes: 478d134e9506 ("mm/huge_memory: do not overkill when splitting huge_zero_page")
 
+The target commit looks right.
+
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Yang Shi <shy828301@gmail.com>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> Cc: <stable@vger.kernel.org>
+> ---
+> v3:
+>  Move up is_huge_zero_folio() check and change return value to
+> -EOPNOTSUPP per Oscar.
+>  Collect Reviewed-by and Acked-by tag. Thanks.
+> v2:
+>  Change to simply check for the huge zero page per David. Thanks.
+> ---
+>  mm/memory-failure.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 16ada4fb02b7..a9fe9eda593f 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -2546,6 +2546,13 @@ int unpoison_memory(unsigned long pfn)
+>  		goto unlock_mutex;
+>  	}
+>  
+> +	if (is_huge_zero_folio(folio)) {
+> +		unpoison_pr_info("Unpoison: huge zero page is not supported %#lx\n",
+> +				 pfn, &unpoison_rs);
+> +		ret = -EOPNOTSUPP;
+> +		goto unlock_mutex;
+> +	}
+> +
+>  	if (!PageHWPoison(p)) {
+>  		unpoison_pr_info("Unpoison: Page was already unpoisoned %#lx\n",
+>  				 pfn, &unpoison_rs);
+
+This patch applies on latest linux-next but not on latest mainline as
+is_huge_zero_folio() is absent there.
+
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
