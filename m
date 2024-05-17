@@ -1,91 +1,120 @@
-Return-Path: <linux-kernel+bounces-182212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DADD88C882D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:39:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C8478C882E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A66D28619C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:39:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8F31C21E54
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499B479F6;
-	Fri, 17 May 2024 14:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6E7748E;
+	Fri, 17 May 2024 14:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2tmIfLw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="StVEgwD2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D05657C6;
-	Fri, 17 May 2024 14:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0262579F0
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715956765; cv=none; b=rM+aowf6aP1aVx7/QIYJDaq4NuoiakGlkRpeYq6L1N76TQ9EQmLIopkRk47HcVm2o7SjXGd4gDM6B265CaianR67UygRb1rXcmvss9wkHB/K5cpef/j+7XvMsVJt/aaNGfS6rpiO+GNKuL+d7pVoYSpMC84yUo0fWyg2ABQsV4M=
+	t=1715956797; cv=none; b=ZnVRCaFXCVqqIm+qdICAnQnpqteSpeRzjesbx4m6LR9dSRSPZ+LENnPUCMXx0kb3QCoRd+LaSTXUrcZAEPwicyXtRqAJ8vKKVdVjqLMHfRYAPYkbtXXIFNtmLxklIm20CH9Yhi8VM/fMA6tSphQvAEaU1uyn73NxUZ8v/IQlC2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715956765; c=relaxed/simple;
-	bh=3cdbI//fG9tefYk9dE1HYEleskFp8c3t8dyT3UHix8M=;
+	s=arc-20240116; t=1715956797; c=relaxed/simple;
+	bh=d2i5dDPqJkx8adnPFZl0itpyVtJmwwMOhCHco1pt43E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AKQWkaKo+n5AkNwsJOWMdRcgbmD9lv33Os64JC1dcdZzCI3bMToRJy27e54xkMTAUP0DIhiOJAUZdMZU0DkAGSw/nyUUhRGKeCOzWMvnRiqL2qRGE1pfupYl8t1ICp0J5OGzEdFukDzrB+DEr2OodBl5jA7w3CGXBvfhCLW1QSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2tmIfLw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41BD3C2BD10;
-	Fri, 17 May 2024 14:39:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715956765;
-	bh=3cdbI//fG9tefYk9dE1HYEleskFp8c3t8dyT3UHix8M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O2tmIfLw5UuLh29Odt878FWDbCbSZLoYg0RSTNlyySrGFGMRApFn8XmrVAGWrWGqX
-	 6uAgH/40n+pQ6I0S0BQ4goJkw1YCaEAQSlDW6I3/bCg2FESY4wcHDCA4+kTkiR9aMn
-	 RNOM4PhSRClOzhXvWnAEx9y5jq9dY5Q4UPbuQ0Ep1lKFYdVtrmLwLRFr2OAyT9nwT8
-	 6fDs55X0g5id9d2OqWU01mjyQLlBbD63wGQxT9TOyZjFKJl6aKqmWUb5Z2vmyE9t83
-	 WGEMAT/sfSlBfCsMbzC1ZwnF/a8exox9jhFkMF6BMXrK7afj2F3GCllwhKitgCESYM
-	 tA4wEyWfRx+7A==
-Date: Fri, 17 May 2024 15:39:20 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Udit Kumar <u-kumar1@ti.com>
-Cc: vigneshr@ti.com, nm@ti.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kip Broadhurst <kbroadhurst@ti.com>
-Subject: Re: [PATCH] dt-bindings: net: dp8386x: Add MIT license along with
- GPL-2.0
-Message-ID: <20240517-poster-purplish-9b356ce30248@spud>
-References: <20240517104226.3395480-1-u-kumar1@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZM4tyax8wVTEa/gAMQgy09tDGF8S8+MRExgCxcW1bf17pYFPyIoqrEvWEgbWgL4/JYFp7rIdVEQEKnqUBvxQn3IrChuZlT7jgaYElNwNGB7/nKL2C96l8P3qCSo3quTrxYyALi6/eOzCFHyqosrBiWuSCdZcBRTEmrcd5ooER4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=StVEgwD2; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715956796; x=1747492796;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=d2i5dDPqJkx8adnPFZl0itpyVtJmwwMOhCHco1pt43E=;
+  b=StVEgwD2w8lPgWqrH/2nz7KIOBI7IJ651bL/5OpDp3GJsqnfb8pnDXz6
+   /27T25N6Ih1FA/xVRiWCMMST3pNHo+jT4JLc1kbiRWaa4ICIfS/2hjQdo
+   R0zmtrQ7JFMbr0Nuzu+I1QRdpoysu34YXlO4jvseGVzLn0tX4sVmUfjrz
+   48kKxRuXwDjRZNmWcypqJVhz8jbHuzGTiTVYZDw5zB8VuVuxJP/vik0aP
+   x4036fCJNAjXFyiBwNSyXAzMf2HbtuUX94wAWosZQFiO/c+mS/HJSsrAy
+   61ChMf54ovTCyN7JbHPETMS9kHQww2SMYz1zfTFO2HWymWnlkTPELBxD5
+   w==;
+X-CSE-ConnectionGUID: 7Es76E/ESsOndGeYmGoZeg==
+X-CSE-MsgGUID: 1YDdRMx8QxevDMrw81vfbw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="11940203"
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="11940203"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 07:39:55 -0700
+X-CSE-ConnectionGUID: 2dIMDUYbRJOUBO7ndmZjJA==
+X-CSE-MsgGUID: jAfqlXhtSbef9aoXD2Du1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="31639195"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 17 May 2024 07:39:53 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id AE0E419E; Fri, 17 May 2024 17:39:51 +0300 (EEST)
+Date: Fri, 17 May 2024 17:39:51 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Juergen Gross <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	linux-coco@lists.linux.dev, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/kvm/tdx: Save %rbp in TDX_MODULE_CALL
+Message-ID: <2a2guben2ysyeb43rzg6zelzpa57o24ufai3mi6ocewwvgu63l@c7dle47q7hzw>
+References: <20240517121450.20420-1-jgross@suse.com>
+ <ohvjbokpaxagc26kxmlrujab7cw3bekgi5ln7dt46cbsaxcqqh@crvqeohfazmf>
+ <f63e1217-3dbe-458d-8c14-7880811d30ba@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BFsU5jMUN2WDtALy"
-Content-Disposition: inline
-In-Reply-To: <20240517104226.3395480-1-u-kumar1@ti.com>
-
-
---BFsU5jMUN2WDtALy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <f63e1217-3dbe-458d-8c14-7880811d30ba@suse.com>
 
-On Fri, May 17, 2024 at 04:12:26PM +0530, Udit Kumar wrote:
-> Modify license to include dual licensing as GPL-2.0-only OR MIT
-> license for TI specific phy header files. This allows for Linux
-> kernel files to be used in other Operating System ecosystems
-> such as Zephyr or FreeBSD.
+On Fri, May 17, 2024 at 04:08:03PM +0200, Juergen Gross wrote:
+> On 17.05.24 15:55, Kirill A. Shutemov wrote:
+> > On Fri, May 17, 2024 at 02:14:50PM +0200, Juergen Gross wrote:
+> > > While testing TDX host support patches, a crash of the host has been
+> > > observed a few instructions after doing a seamcall. Reason was a
+> > > clobbered %rbp (set to 0), which occurred in spite of the TDX module
+> > > offering the feature NOT to modify %rbp across TDX module calls.
+> > > 
+> > > In order not having to build the host kernel with CONFIG_FRAME_POINTER,
+> > > save %rbp across a seamcall/tdcall.
+> > 
+> > There's a feature in TDX module 1.5 that prevents RBP modification across
+> > TDH.VP.ENTER SEAMCALL. See NO_RBP_MOD in TDX Module 1.5 ABI spec.
+> > 
+> > I think it has to be enabled for all TDs and TDX modules that don't
+> > support it need to be rejected.
+> > 
+> 
+> Yes, I know. I'm using the patch series:
+> 
+>   [PATCH v19 000/130] KVM TDX basic feature support
+> 
+> which I think does exactly that (see setup_tdparams() and tdx_module_setup()).
 
-What's wrong with BSD-2-Clause, why not use that?
+Looks like the check is broken:
 
---BFsU5jMUN2WDtALy
-Content-Type: application/pgp-signature; name="signature.asc"
+https://lore.kernel.org/all/46mh5hinsv5mup2x7jv4iu2floxmajo2igrxb3haru3cgjukbg@v44nspjozm4h/
 
------BEGIN PGP SIGNATURE-----
+> Nevertheless the clobbering happened, and saving/restoring %rbp made the
+> issue to go away. I suspect there is a path left still clobbering %rbp.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkdsGAAKCRB4tDGHoIJi
-0kciAQDK14E8urYqaI3ZlTzZh6PZzWSnKCy3CCLh+0+DDJIULwEAymLHRIHihVUF
-V8M02LksJM6/Ar0BzCk+9r/bSAOmzgE=
-=0N2C
------END PGP SIGNATURE-----
+What is your TDX module version? My guess is that NOM_RBP_MOD is not
+supported by it and given that the check is broken nobody enforces it.
 
---BFsU5jMUN2WDtALy--
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
