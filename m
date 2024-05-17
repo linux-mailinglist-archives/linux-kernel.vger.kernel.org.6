@@ -1,91 +1,177 @@
-Return-Path: <linux-kernel+bounces-182663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CFDB8C8E37
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:00:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A018C8E38
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C1B91F23A1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:00:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A528286148
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8D11411F0;
-	Fri, 17 May 2024 22:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B4B1411FD;
+	Fri, 17 May 2024 22:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="oBVgypP0"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z6wzOec0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D1A4C69;
-	Fri, 17 May 2024 22:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E8C4C69
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 22:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715983245; cv=none; b=oLaBQmVFSacrbu5aG+mBKSqdUA4UKaKSo5EwXPJnm2QgOpnSENkIvLEWptX0G/O5QSH2SJd3ufYXobxtid1Xd40OE7uBBpiuw87ubTdNkg7ZLbayzf6O5dwoN+XEDa9lptdgU6ayVhefOwDygoXL2gX/a/nvMgSCgcCFq2MrPqQ=
+	t=1715983272; cv=none; b=p4gKw8Y8hTIalP2xDPOyh3z7jyq4xz62ZhECO8Vi1uW/3Hn+NpFe3TZRRcKwKnjjRxkumL0Lp1ZdPPJOP9ruPBCALH+nOcaB7rpA8dFJrqyUt46mAA4fWeeHZ3folG+Iuij9m3ydnSC9+lJPo7dA1OFNTVZU5/XYayBqJdyyghg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715983245; c=relaxed/simple;
-	bh=0yxqIjgr6bvtqQ/rzyd8UYI0B7lEklxten+qoHj5f44=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oW5I3mZdEv0oG0MmUEkXaJz/hZFCdoKoE2Z/9D32Au/LtRdDz3g4NhHL3Qp7g3U+AXZSXQ8IWDBXE0TCEVPNfkJ2p/pHH1CkMQMQmcf7GCKiPi1POqUAWc7SnhOSKN4XBugu62/167c/NLo7Ig3SC1jLVjvx5abemOK/Sm7PITI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=oBVgypP0; arc=none smtp.client-ip=192.19.144.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id A3159C0000FC;
-	Fri, 17 May 2024 15:00:36 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com A3159C0000FC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1715983236;
-	bh=0yxqIjgr6bvtqQ/rzyd8UYI0B7lEklxten+qoHj5f44=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oBVgypP0BsjU2kHvbHGEnmBgjya0DaZxwIeNVJ1ZF+WbJVNoN7VLB5UKqRoM7dI6M
-	 +AyMWvGrFLx00FQ/KKyJpsb6+eWPFC5ZvVxpVusLdwCQILnu3gSfoKHWZ+LIxJJqPQ
-	 hU8zdbDf8AzzF+rzUdr3qtMAt/2bvVEg1pCdcT+Y=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 9BEDA18041CAC4;
-	Fri, 17 May 2024 15:00:34 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: bcm-kernel-feedback-list@broadcom.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH] dt-bindings: soc: bcm: document brcm,bcm2711-avs-monitor
-Date: Fri, 17 May 2024 15:00:35 -0700
-Message-Id: <20240517220035.2017272-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240517125138.53441-1-krzysztof.kozlowski@linaro.org>
-References: <20240517125138.53441-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1715983272; c=relaxed/simple;
+	bh=tKFUvI5gt7hLN6dkyDdXMdQUukxhrEOMhNZL9hIIlpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VDoumU6zSidV6xKfszESRf9o2SszhbL+R1fH5dVBnyZgArQVGouYom3jyth4lSyarkCI687pmZnC7gth5p1hCYv5+EGRVH6vPeE7wENtr8lyUKbSqa4P7fnmgr+7WACX8CzSFK3Dhi2y8W756Yxc3POsq8aol8WTZq133cBWFIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z6wzOec0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715983269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qdpUFXRIVfL52195MnmJDcIlCYPzvNX7uOwOv3Xc+XA=;
+	b=Z6wzOec0L4AIPo2nU3bXjszdl0yozFbwEVxYBc5hmHqDNFOrR7Y1bQBxrLj/Nri1FbJ5Hd
+	IMrBGb8JtxWO/9lGcNXttzzeD4bQbgnRMRgoliic6/m26ZZTe2ssDG8KCcuGSNwjypchwN
+	6Q6utoAtYeMT6Z64zeokbttZTKF+yho=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-99-j546UfodNQ62tI6Jq76CAQ-1; Fri, 17 May 2024 18:01:08 -0400
+X-MC-Unique: j546UfodNQ62tI6Jq76CAQ-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a59c2583f0bso524041566b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:01:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715983267; x=1716588067;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qdpUFXRIVfL52195MnmJDcIlCYPzvNX7uOwOv3Xc+XA=;
+        b=jNI3/3NxlqWSsWYJwWcdXIz7t5DRalCbmdBGsO/HzUT6OJ+nF4svkmnqDgmr8zcKtt
+         P+I36kLyzE8rNgiCqS8BUVc2oyB12JLprLiVGc82zVitHBcNLOHTkY5SDqZ4Wo60jUa/
+         VouM3GYFxg2+L61VJPcik8QorHZSo1VO6leVf6jrXmPorGUExNd3vlSr+ohA6u4S3IXY
+         VE3pKOkaV/VoZD9VLlK4mT/6NQFTTB1WRYxo4qycHGbnfklCO6FWIrivOosSTH0V7ntQ
+         oxDz4T/C5cdP+4ySANTjFM2BTVbNl4MtHw05LkOYpS7HANW+Oh/OgyxXTq2MqkXCynX4
+         A1rA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjmUr4jxfSQe+Tu0cNZMheIvjH8E62sC1kQikQqdfARTM771INXL589HOptk1fTt4XEtJ/ZJ3rUuS+6PyvcQD+CvEzaFbU3ZqW/a/O
+X-Gm-Message-State: AOJu0YxoNBalJ/XBdFwdedxwx68l3HD1E83ABxhY5g9QhZKSHZZN/gQZ
+	hNfj9B/2MN6H1jWgxsUbU3eIfYRhMlCIj/01OfwZ8JHq3rmw45pupa/ci7OYlzD+WIc/r36mQnV
+	97Zk2Kxas6pcSIR56e1tE8ohhFoXqQYkDhaAv0vOUOSZ2KsYbD35P13qgRdF7KQ==
+X-Received: by 2002:a17:907:7da3:b0:a59:d063:f5f3 with SMTP id a640c23a62f3a-a5a2d673401mr2047180266b.63.1715983267336;
+        Fri, 17 May 2024 15:01:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbO3RNBBJvjrmQrsSy2cv7ekGE/kUJSCKL4dwshp50q+y+7KPL9PGYTVFI+tQB68Or25mBGg==
+X-Received: by 2002:a17:907:7da3:b0:a59:d063:f5f3 with SMTP id a640c23a62f3a-a5a2d673401mr2047178366b.63.1715983266873;
+        Fri, 17 May 2024 15:01:06 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.155.52])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a5a69148b97sm701619366b.114.2024.05.17.15.01.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 May 2024 15:01:06 -0700 (PDT)
+Message-ID: <58492a1a-63bb-47d2-afef-164557d15261@redhat.com>
+Date: Sat, 18 May 2024 00:01:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PULL 17/19] KVM: SEV: Provide support for SNP_GUEST_REQUEST NAE
+ event
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "michael.roth@amd.com" <michael.roth@amd.com>
+Cc: "aik@amd.com" <aik@amd.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "ashish.kalra@amd.com" <ashish.kalra@amd.com>,
+ "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "seanjc@google.com" <seanjc@google.com>,
+ "brijesh.singh@amd.com" <brijesh.singh@amd.com>
+References: <20240510211024.556136-1-michael.roth@amd.com>
+ <20240510211024.556136-18-michael.roth@amd.com>
+ <96cf4b4929f489f291b3ae8385bb3527cbdf9400.camel@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <96cf4b4929f489f291b3ae8385bb3527cbdf9400.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Florian Fainelli <f.fainelli@gmail.com>
-
-On Fri, 17 May 2024 14:51:38 +0200, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> Document alreasdy used binding for Syscon / AVS monitor:
-> brcm,bcm2711-avs-monitor to fix dt_binding_check and dtbs_check warnings
-> like:
+On 5/17/24 22:41, Edgecombe, Rick P wrote:
+> I get a build error in kvm-coco-queue with W=1:
 > 
->   brcm,avs-ro-thermal.example.dtb: /example-0/avs-monitor@7d5d2000: failed to match any schema with compatible: ['brcm,bcm2711-avs-monitor', 'syscon', 'simple-mfd']
+> arch/x86/kvm/svm/sev.c: In function ‘__snp_handle_guest_req’:
+> arch/x86/kvm/svm/sev.c:3968:30: error: variable ‘sev’ set but not used [-
+> Werror=unused-but-set-variable]
+>   3968 |         struct kvm_sev_info *sev;
+>        |                              ^~~
+> cc1: all warnings being treated as errors
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+> To fix it:
+> 
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 57c2c8025547..6beaa6d42de9 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -3965,14 +3965,11 @@ static int __snp_handle_guest_req(struct kvm *kvm, gpa_t
+> req_gpa, gpa_t resp_gpa
+>                                    sev_ret_code *fw_err)
+>   {
+>          struct sev_data_snp_guest_request data = {0};
+> -       struct kvm_sev_info *sev;
+>          int ret;
+>   
+>          if (!sev_snp_guest(kvm))
+>                  return -EINVAL;
+>   
+> -       sev = &to_kvm_svm(kvm)->sev_info;
+> -
+>          ret = snp_setup_guest_buf(kvm, &data, req_gpa, resp_gpa);
+>          if (ret)
+>                  return ret;
 
-Applied to https://github.com/Broadcom/stblinux/commits/devicetree/next, thanks!
---
-Florian
+I'll post a fully updated version tomorrow with all the pending fixes. 
+Or today depending on the timezone.
+
+Paolo
+
 
