@@ -1,127 +1,135 @@
-Return-Path: <linux-kernel+bounces-182517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0148C8C3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:32:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF1078C8C43
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52CA284E34
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:32:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F25EB22830
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4744597F;
-	Fri, 17 May 2024 18:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8FFD534;
+	Fri, 17 May 2024 18:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XweNs9D3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Vg79+cHH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B35A23;
-	Fri, 17 May 2024 18:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15771A2C19;
+	Fri, 17 May 2024 18:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715970730; cv=none; b=un1HzapwBlYuMyNkhkxJH8yWUkoOl+QR9KH58BEpHm1Thy3ad23T58H4LiZaopBUKgbisOT3a2M8xqjwAlteLM3UicsJ5kl5yKO/xf+DCy4AyeHH6MsRt8lGQsoUpk6Cc3Wu3vD5ggU3xAWftyKlsinJqovOtKR+idgHZq30Y/Q=
+	t=1715970784; cv=none; b=WtmqlXDOMEytUsNfn9+cZeUyg9kAoUT1fkESm6YKMB04q44adJ1K7pYQdd0z8iGhsfe4zCLBFKdqehWU8/cGSPKsb3o8ozKpQR6mgkRcy7IIE1qiqGu+VMA2miLzBqL9FSSSeRcwwc78ulXMeopNqO6rQos5qSv9WNRhiOzmwc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715970730; c=relaxed/simple;
-	bh=LPdjY38JS7daA139bDVZZYDgoD5tLx+11TEOosNg/4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YPfKSCb1CoK2pTY7c0hY0gvVUa4xbyn/8HB0AP6d4s9KtBufRlG8K2OEF8OH8hhQ3fXjDGiLFVathsuT9U1iHUI9w+JILjuQ9VuVYuMCzLzRRrbxndeHGg5Bf5KY+Gw+80lodEIrvIiEpzlN6L/1w5/U0KVq9TEOx+HR6uQod14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XweNs9D3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FB42C2BD10;
-	Fri, 17 May 2024 18:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715970730;
-	bh=LPdjY38JS7daA139bDVZZYDgoD5tLx+11TEOosNg/4U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XweNs9D36pUfQquUW5ankP2N1gE//qJoeFrOwZJEG5N8B7IM5Od7mo74SsqUwLdoZ
-	 3319ybnlwnivN+0jT/XtGBcOPb3CGoXcYc1zpTy32HWXqD6FtUSxFU1CE5jasJvdzW
-	 VXI9xKppZmtv21AvzNct2ONPK99sbmn6hwcUPC4MIu/A2/ee4pd1Hi8PeyBcvrKBy2
-	 11H6hDeCuNYS6XKGZEe98Tx3iRFpfSYVOX/jWVye47Rg2ltoGGaQDyRUIZ+LCRvq9g
-	 LNYwsYCzFR8Z6Icj1T7SyuLzg4pcbhpUOpaLPGl4Uv9RrykA9bype6tteHq1Wv0oJH
-	 XdkBI3ii85C5A==
-Date: Fri, 17 May 2024 11:32:08 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] kunit: tool: Build compile_commands.json
-Message-ID: <20240517183208.GA3699823@thelio-3990X>
-References: <20240516-kunit-compile-commands-v1-1-86e61857c820@google.com>
+	s=arc-20240116; t=1715970784; c=relaxed/simple;
+	bh=IpHKn100vUjrZafmZKJ1y8v2H5IiPMdG53S1ZMl4E+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JZBaN1w1C4Z15A0SGIW36kQ6DFv2+fd5nxMyLqQay5WxT+iArhHmSPFZzHjWU25SS7hNbQdiLqcQiXH3+C93mdVvuZrYBStqalYuR/8uJQ9988JfH0pSQRgZpDdMIjuO5VMnDUt8k1nYNKiy4VfmyIJBGp4kal+/LaC+RMkdzXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Vg79+cHH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44H98KQL007278;
+	Fri, 17 May 2024 18:32:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=trmdsobqOMWDgc1D8NKUUfFAo9qR0PrBuwm8lSkrz3c=; b=Vg
+	79+cHHTr16tp9TBmcnGCAcEW4MomLM4m1TKiTIMTQjhQhCHjjJmqRKuVQpASP1VN
+	gxPAIarbirbphn6E+t149eDVGIc8hRdrMDvVL2EPWF0/JqMPMC+sDo22wQMCLsD9
+	TaDEpjCGVD6MyiiC+Zypj2Qh8NGx1wx/BT6qe8gGgVukepc9SfhRSypj9nwj2AXF
+	pdjF1XthSOHFf1ZIDamd8/2hyO6puG00UnQXR3gmAhQeqdI7avackgQZta38hLf+
+	F7v7kO4aoxLR8t6au8FWW0Go2wxeAf7yXaKYIS9GNA8dwVz211WwZI8AzmkmrsoI
+	kP19QtIyiZjB95ADFoOA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y49ge0tmx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 18:32:48 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44HIWlH1005033
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 18:32:47 GMT
+Received: from [10.110.126.2] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
+ 2024 11:32:46 -0700
+Message-ID: <8000851c-f3e2-4fcb-b4d4-9acaf9763fdb@quicinc.com>
+Date: Fri, 17 May 2024 11:32:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516-kunit-compile-commands-v1-1-86e61857c820@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] hwspinlock: Introduce refcount
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Peter
+ Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon
+	<will@kernel.org>, Waiman Long <longman@redhat.com>,
+        Boqun Feng
+	<boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Richard Maina <quic_rmaina@quicinc.com>
+References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
+ <20240516-hwspinlock-bust-v1-1-47a90a859238@quicinc.com>
+ <edfb049a-b56e-424f-bca7-556dffa6c87d@linaro.org>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <edfb049a-b56e-424f-bca7-556dffa6c87d@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: iv9sI3L20wtxJZlWpyoVobWcaFr13M2_
+X-Proofpoint-ORIG-GUID: iv9sI3L20wtxJZlWpyoVobWcaFr13M2_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-17_08,2024-05-17_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=888
+ impostorscore=0 clxscore=1011 priorityscore=1501 phishscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405170144
 
-Hi Brendan,
 
-On Thu, May 16, 2024 at 07:40:53PM +0000, Brendan Jackman wrote:
-> compile_commands.json is used by clangd[1] to provide code navigation
-> and completion functionality to editors. See [2] for an example
-> configuration that includes this functionality for VSCode.
-> 
-> It can currently be built manually when using kunit.py, by running:
-> 
->   ./scripts/clang-tools/gen_compile_commands.py -d .kunit
-> 
-> With this change however, it's built automatically so you don't need to
-> manually keep it up to date.
-> 
-> Unlike the manual approach, having make build the compile_commands.json
-> means that it appears in the build output tree instead of at the root of
-> the source tree, so you'll need to add --compile-commands-dir=.kunit to
-> your clangd args for it to be found. This might turn out to be pretty
-> annoying, I'm not sure yet. If so maybe we can later add some hackery to
-> kunit.py to work around it.
-> 
-> [1] https://clangd.llvm.org/
-> [2] https://github.com/FlorentRevest/linux-kernel-vscode
-> 
-> Signed-off-by: Brendan Jackman <jackmanb@google.com>
 
-This makes sense to do automatically in my opinion, as Python will
-already be available (which is the only dependency of
-gen_compile_commands.py as far as I am aware) and it should not take
-that long to generate.
+On 5/17/2024 1:58 AM, Bryan O'Donoghue wrote:
+> On 17/05/2024 00:58, Chris Lew wrote:
+>> +    unsigned int refcnt;
+> 
+> Why int and not refcount_t ?
+> 
+> Have you an argument for or against use of one over another ?
+> 
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+I wanted to avoid the warning if you try to do a refcount_inc on 0. In 
+this case, 0 means the the hwlock is unused but the hwlock should 
+persist while waiting for another request. It seemed like refcount_t 
+expected the associated object to be released once the count hit 0.
+
+Also the count here is serialized by hwspinlock_tree_lock so the need 
+for the atomicity provided by refcount_t was unneeded. Using unsigned 
+int here seemed simpler.
 
 > ---
->  tools/testing/kunit/kunit_kernel.py | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
-> index 7254c110ff23..61931c4926fd 100644
-> --- a/tools/testing/kunit/kunit_kernel.py
-> +++ b/tools/testing/kunit/kunit_kernel.py
-> @@ -72,7 +72,8 @@ class LinuxSourceTreeOperations:
->  			raise ConfigError(e.output.decode())
->  
->  	def make(self, jobs: int, build_dir: str, make_options: Optional[List[str]]) -> None:
-> -		command = ['make', 'ARCH=' + self._linux_arch, 'O=' + build_dir, '--jobs=' + str(jobs)]
-> +		command = ['make', 'all', 'compile_commands.json', 'ARCH=' + self._linux_arch,
-> +			   'O=' + build_dir, '--jobs=' + str(jobs)]
->  		if make_options:
->  			command.extend(make_options)
->  		if self._cross_compile:
-> 
-> ---
-> base-commit: 3c999d1ae3c75991902a1a7dad0cb62c2a3008b4
-> change-id: 20240516-kunit-compile-commands-d994074fc2be
-> 
-> Best regards,
-> -- 
-> Brendan Jackman <jackmanb@google.com>
-> 
-> 
+> bod
 
