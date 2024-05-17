@@ -1,129 +1,114 @@
-Return-Path: <linux-kernel+bounces-181899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5B48C8303
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:09:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC1A8C8308
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E105C1F2326A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:09:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31FCC1C224C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABE41EB36;
-	Fri, 17 May 2024 09:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0C6200A9;
+	Fri, 17 May 2024 09:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="WD/OW2C+"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Z3XVq7HT"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0484E1EB26;
-	Fri, 17 May 2024 09:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33541EB26;
+	Fri, 17 May 2024 09:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715936982; cv=none; b=m7+FNXEtWY6keyOdVek/oGdG9RgBbsnlGPFE/hlqOh8qWGkKCTRJMAHVpwh20oqyQ+ah34S9JvjUWHlmNxQkR0mH+dujdBFfZvpuMw0Kf9a/qS4DA2Ve8j8l9xCCssYyPSaJGm0O+5xBdj6+taI4HYXElM73q3zvePSpZZK2Eyk=
+	t=1715937023; cv=none; b=V5LYY2u3rCLUGvZB7p9vIe07xbp57IvujZlk8ZG4V5K0p0M5QA1G/0WYDqjkXV8LEv08RV4gmsX2p67RGYEY4Ay2Bq+iTVqQ+YW3TdEpBONZ/I2Y1GCv6kNFF7XJ0oL5wxoQ+yUz+TjhpHXx16btiHpToHXmYz9xJSlom0SfBNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715936982; c=relaxed/simple;
-	bh=tniEtfsi5V9FE9TVnUHbY0dOa1eHuV1iWAmiiFrBCIw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OKBCSksYjSNGMIAHYyXs4VG6Ws8058Pt+YAF4Ri+0ZOgzuxatwKGMxqcjeIQ7ghlyCiJ6LndHtqxXifvpb0D/vAhN4aQKrwOffPzWViofJIWnbN1YO7Phwx2PwudXj3Sppymsf0sO6nDbbLRgYH7Vd/Lx0DVx5dqaGacLn8W/xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=WD/OW2C+; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1715936981; x=1747472981;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=5Ba8ICHWwdNpQ0y5aYfPooTOCldSdI7hhNa1Qp6LBI8=;
-  b=WD/OW2C+MLjw+xB9yYXfdO7mnHm1xU79MgsyNb8+B6Wqmut3bIyB7118
-   ZBOcJQ6p7bF1C+SJ0yEJfUN4CKPUCMJLy9UWp8KUP5La+RtaRzVk6hcCX
-   JoHWDTR5/L5+pC0dtN67EcZEDfdz66MA9rYQMuPYWUgSGiuk5H21XUtj/
-   Y=;
-X-IronPort-AV: E=Sophos;i="6.08,167,1712620800"; 
-   d="scan'208";a="407387397"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 09:09:38 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.43.254:33542]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.18.108:2525] with esmtp (Farcaster)
- id 304138a9-3ff4-49f5-942a-3d354180ede7; Fri, 17 May 2024 09:09:36 +0000 (UTC)
-X-Farcaster-Flow-ID: 304138a9-3ff4-49f5-942a-3d354180ede7
-Received: from EX19D002EUC004.ant.amazon.com (10.252.51.230) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 17 May 2024 09:09:36 +0000
-Received: from EX19MTAUEC001.ant.amazon.com (10.252.135.222) by
- EX19D002EUC004.ant.amazon.com (10.252.51.230) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 17 May 2024 09:09:36 +0000
-Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
- (10.253.65.58) by mail-relay.amazon.com (10.252.135.200) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Fri, 17 May 2024 09:09:36
- +0000
-Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
-	id CF60F20C24; Fri, 17 May 2024 09:09:35 +0000 (UTC)
-From: Hagar Hemdan <hagarhem@amazon.com>
-To:
-CC: Norbert Manthey <nmanthey@amazon.de>, Hagar Hemdan <hagarhem@amazon.com>,
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
-	<brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>,
-	<linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] gpio: prevent potential speculation leaks in gpio_device_get_desc()
-Date: Fri, 17 May 2024 09:09:04 +0000
-Message-ID: <20240517090904.22812-1-hagarhem@amazon.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1715937023; c=relaxed/simple;
+	bh=BMycXKMVC3HpLwk8KGm1ckRBUv6vbXZF1bf3OI+h9x0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ubj3HNy/Kwwsmg+b/qsgOzoQt0z79rYyQ13UksqNBjzb+UEMWRV8eBLaRJSZPs1JzAdw+yqOww6uUFQiJoMix2C2G91wAtCLzVUiGQGVtYcIX2xOvwbeiPsitIjIomhItuTW4/ZzdgJNeaCUFHwAlLwYt/KBudXPWDtnjxu6Dfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Z3XVq7HT; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2A19320003;
+	Fri, 17 May 2024 09:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715937013;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=E9YI5IhJQd+9CPiNZ2Juj0hyKn1eM6koEnskZ7nXuGk=;
+	b=Z3XVq7HTZDQDQNn5t+fzpekKxhSYeQR0NMJsT0E7v0NazyG3Hhd6Ij3FodPhpxYXezfIJR
+	2iP1ZwBWYEj0iyUI8ijZEwnm48MU51UBF03xMCZoYiUDom7zrRfo1hVhg5btwgXAtzgOhI
+	pmN/L9ci8XIRqwztOOBo8FPD9KAh0SSVD8rK6Nx83JFtMi4WwT1BPClN9Ns8R3uxdmfVG+
+	X3o+kD1tMz9+rUJuLHDj7wDntCwSCawoO0D58y5bLO4+5lUT/mj40cIaUkmxMke2JovFD+
+	G8vxkgmp4Wo1KEBaFpH+hY33JP/IK31HHo6WnSDonQ7Us7wvzslv4xCJG3adXw==
+From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Subject: [PATCH v2 0/3] Add I2C support on TH1520
+Date: Fri, 17 May 2024 11:09:52 +0200
+Message-Id: <20240517-i2c-th1520-v2-0-d364d135ccc6@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOAeR2YC/1XMQQ7CIBCF4as0sxYDI6TElfcwXRRKZRIFA4RoG
+ u4u1pXL/yXv2yC7RC7DedgguUqZYuiBhwGsn8PNMVp6A3KUXKJihJYVLxRyttqTdWLWRo4I/fB
+ MbqXXjl2n3p5yiem92xW/649R4o+pyDgzRokF9agk1xcTY7lTONr4gKm19gGCJDUwpgAAAA==
+To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, 
+ Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+ Drew Fustini <dfustini@tenstorrent.com>, 
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+ Conor Dooley <conor@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+X-Mailer: b4 0.13.0
+X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-Users can call the gpio_ioctl() interface to get information about gpio
-chip lines.
-Lines on the chip are identified by an offset in the range
-of [0,chip.lines).
-Offset is copied from user and then used as an array index to get
-the gpio descriptor without sanitization.
+This adds I2C support in the device tree of the T-Head TH1520 RISCV-SoC
+and a default configuration for the BeagleV-Ahead. It appears that the
+TH1520 I2C is already supported in the upstream kernel through the
+Synopsis Designware I2C adapter driver.
 
-This change ensures that the offset is sanitized by
-"using array_index_nospec" to mitigate any possibility of speculative
-information leaks.
+This patch depends on the clock patch from Drew Fustini
+Link: https://lore.kernel.org/linux-riscv/20240426-th1520-clk-v2-v2-0-96b829e6fcee@tenstorrent.com
+and the pinctrl patch from Emil Renner Berthing
+Link: https://lore.kernel.org/linux-riscv/20240103132852.298964-1-emil.renner.berthing@canonical.com
 
-This bug was discovered and resolved using Coverity Static Analysis
-Security Testing (SAST) by Synopsys, Inc.
+Changed from v1:
+1. Remove redundant example for Synopsis DesignWare-I2C bindings
+2. Remove Node Ordering commit as it has already been taken
+3. Remove EEPROM label
+4. Rebase on pinctrl and clock driver patches
+5. Add pinctrl configuration
+6. Replaced the fixed-clock with a correct configuration
 
-Fixes: aad955842d1c ("gpiolib: cdev: support GPIO_V2_GET_LINEINFO_IOCTL and GPIO_V2_GET_LINEINFO_WATCH_IOCTL")
-Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
+Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 ---
-v2: call array_index_nospec() after the bounds check. 
----
- drivers/gpio/gpiolib.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thomas Bonnefille (3):
+      dt-bindings: i2c: dw: Document compatible thead,th1520-i2c
+      riscv: dts: thead: Add TH1520 I2C nodes
+      riscv: dts: thead: Enable I2C on the BeagleV-Ahead
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index fa50db0c3605..b58e4fe78cec 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -17,6 +17,7 @@
- #include <linux/list.h>
- #include <linux/lockdep.h>
- #include <linux/module.h>
-+#include <linux/nospec.h>
- #include <linux/of.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/seq_file.h>
-@@ -201,7 +202,7 @@ gpio_device_get_desc(struct gpio_device *gdev, unsigned int hwnum)
- 	if (hwnum >= gdev->ngpio)
- 		return ERR_PTR(-EINVAL);
- 
--	return &gdev->descs[hwnum];
-+	return &gdev->descs[array_index_nospec(hwnum, gdev->ngpio)];
- }
- EXPORT_SYMBOL_GPL(gpio_device_get_desc);
- 
+ .../bindings/i2c/snps,designware-i2c.yaml          |  4 ++
+ arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts | 84 ++++++++++++++++++++++
+ arch/riscv/boot/dts/thead/th1520.dtsi              | 50 +++++++++++++
+ 3 files changed, 138 insertions(+)
+---
+base-commit: e1fb0b71c746f863fa49ff359d58c949538ce181
+change-id: 20240425-i2c-th1520-fc3ce1a8b472
+
+Best regards,
 -- 
-2.40.1
+Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 
 
