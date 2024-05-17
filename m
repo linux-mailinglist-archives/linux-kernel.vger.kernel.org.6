@@ -1,108 +1,131 @@
-Return-Path: <linux-kernel+bounces-181681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF8848C7F9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 03:36:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD768C7F8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 03:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1E71F23565
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 01:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D3201C20B3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 01:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9AA7490;
-	Fri, 17 May 2024 01:36:11 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DFD5228;
+	Fri, 17 May 2024 01:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ii3boDjS"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81921C32;
-	Fri, 17 May 2024 01:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD831C32;
+	Fri, 17 May 2024 01:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715909771; cv=none; b=fxg0UYyKO4oYyXiJdmZx4E8KXM+f4msWflm+V7s4ibMOmA5HG1sX/I29qiX6cm10FNevAVrzztnUnkJSHq3LMrF5hDBaBXCqVfrq0seQN+yBrRm7NBaRflmA8j/G+QsqjFFAD59D0a7pOKL4P4rI7f9ZZD6kSyHeBsv9OSujZ2o=
+	t=1715909443; cv=none; b=lA2cXcv64GW7xPqRhnV2KXTR7XrJRLss4lN6YPSVQokYsg2nrijhqPjQpGPjDLgiWTbnXe8c/6NM9K5eTYoyOMHg1HLwkdKn+BbGF7I6hnH04XdhooI/LtIaRx4ImHYZ1CWyuHhVkRVg2Wpm3zj1SiFp4g1SRsQDSD6XzHrAgAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715909771; c=relaxed/simple;
-	bh=9nsWiDoqMP+bv7hNgD63p3KLfvgHyLkg/2/dE4fN4Vc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ESCekR/n3ZcdrNCVGWVX2PjfFn5p3pVra7iqow1CrZ6J+by+A3x52hfKuRZFNVCDbMRkKgw1UgZtJVlH7hMqaXw8Hjkjx0SyPkPrHYaFMeEDe6GEHni7nCnA85ca8ef1PNUyNgf26Xd8l0LqlhTnvn1PTBrG0hhcQx1q/SN4lag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VgTzF3zCYzchgY;
-	Fri, 17 May 2024 09:34:49 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9C6A0140384;
-	Fri, 17 May 2024 09:36:04 +0800 (CST)
-Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.28; Fri, 17 May
- 2024 09:36:00 +0800
-From: Chen Ridong <chenridong@huawei.com>
-To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>
-CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<cyphar@cyphar.com>
-Subject: [PATCH -next] cgroup/pids: remove pids_cancel_attach
-Date: Fri, 17 May 2024 01:30:01 +0000
-Message-ID: <20240517013001.215350-1-chenridong@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715909443; c=relaxed/simple;
+	bh=kqjrdijFeAZ22pbjuQJ10fMPLgeVuG4Mm8I5at6+H0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Zw8DrCalCYiNTEEVA6ClIik1tL5JIww08TNGswDDoD6zV7cTVaHknNWZk4MKenpN835ayCYCBBA4zSjCR7i0IF8k11pWJnK6fl9bBHGLvxOCxMrxBSozJXRxMIFdYLOgLj4VYaksqaqFqOrx281/G0V0VnKhn57mECUxt0I1Q6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ii3boDjS; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715909437;
+	bh=gnoWvDn7FRC/YoZdc8y7W/Uj1F6woTCT5nDimx/r8yc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ii3boDjSiB5Pv/R0qT5i8xwNa2EB+eJR/TH4UCQorbug4vy8e+eSpG0yPADiQbFEt
+	 q0ActbpEPImkUbadOz4hjl2neUaiLgBxHpGu9Tr60G/oZ2zczaYrkZ13l+y2bn8GjF
+	 5foAoFQcihywqDP37bpR+yEzUP/CHl4yrFdh1z7DvIoggqKIHrRJcyroy6ZYYP6YHQ
+	 SXBJ2g27CbEbHIxpV8/+A5K3ONDEmAsllS+pcdtgPNao8+/8cLD0tX7uLl71gUJLqg
+	 GBJodNXEzI0tJvkWqSWAcVXqdLkoGLN/v3CgO+n97cMSrx1doKBwMJYoFn67/ewQ9N
+	 cLMLzRVssgbew==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VgTtM4WnLz4wc8;
+	Fri, 17 May 2024 11:30:35 +1000 (AEST)
+Date: Fri, 17 May 2024 11:30:31 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Masahiro Yamada <masahiroy@kernel.org>
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Borislav Petkov <bp@suse.de>,
+ Ingo Molnar <mingo@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the tip tree with the kbuild tree
+Message-ID: <20240517113031.27f233a6@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+Content-Type: multipart/signed; boundary="Sig_/Kq6kwh+O+jes1HMMvVJ.Ad4";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-In pids subsystem, pids_can_attach never returns an error.
-Therefore, pids_cancel_attach is unnecessary and is never called.
-As a result, it should be removed.
+--Sig_/Kq6kwh+O+jes1HMMvVJ.Ad4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/pids.c | 19 -------------------
- 1 file changed, 19 deletions(-)
+Hi all,
 
-diff --git a/kernel/cgroup/pids.c b/kernel/cgroup/pids.c
-index 0e5ec7d59b4d..a7a719495547 100644
---- a/kernel/cgroup/pids.c
-+++ b/kernel/cgroup/pids.c
-@@ -211,24 +211,6 @@ static int pids_can_attach(struct cgroup_taskset *tset)
- 	return 0;
- }
- 
--static void pids_cancel_attach(struct cgroup_taskset *tset)
--{
--	struct task_struct *task;
--	struct cgroup_subsys_state *dst_css;
--
--	cgroup_taskset_for_each(task, dst_css, tset) {
--		struct pids_cgroup *pids = css_pids(dst_css);
--		struct cgroup_subsys_state *old_css;
--		struct pids_cgroup *old_pids;
--
--		old_css = task_css(task, pids_cgrp_id);
--		old_pids = css_pids(old_css);
--
--		pids_charge(old_pids, 1);
--		pids_uncharge(pids, 1);
--	}
--}
--
- /*
-  * task_css_check(true) in pids_can_fork() and pids_cancel_fork() relies
-  * on cgroup_threadgroup_change_begin() held by the copy_process().
-@@ -375,7 +357,6 @@ struct cgroup_subsys pids_cgrp_subsys = {
- 	.css_alloc	= pids_css_alloc,
- 	.css_free	= pids_css_free,
- 	.can_attach 	= pids_can_attach,
--	.cancel_attach 	= pids_cancel_attach,
- 	.can_fork	= pids_can_fork,
- 	.cancel_fork	= pids_cancel_fork,
- 	.release	= pids_release,
--- 
-2.34.1
+Today's linux-next merge of the tip tree got a conflict in:
 
+  arch/x86/boot/Makefile
+
+between commit:
+
+  7f7f6f7ad654 ("Makefile: remove redundant tool coverage variables")
+
+from the kbuild tree and commit:
+
+  dd0716c2b877 ("x86/boot: Add a fallthrough annotation")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/boot/Makefile
+index 1cf24ff6acac,343aef6d752f..000000000000
+--- a/arch/x86/boot/Makefile
++++ b/arch/x86/boot/Makefile
+@@@ -56,6 -69,9 +56,7 @@@ KBUILD_CFLAGS	:=3D $(REALMODE_CFLAGS) -D_
+  KBUILD_AFLAGS	:=3D $(KBUILD_CFLAGS) -D__ASSEMBLY__
+  KBUILD_CFLAGS	+=3D $(call cc-option,-fmacro-prefix-map=3D$(srctree)/=3D)
+  KBUILD_CFLAGS	+=3D -fno-asynchronous-unwind-tables
++ KBUILD_CFLAGS	+=3D $(CONFIG_CC_IMPLICIT_FALLTHROUGH)
+ -GCOV_PROFILE :=3D n
+ -UBSAN_SANITIZE :=3D n
+ =20
+  $(obj)/bzImage: asflags-y  :=3D $(SVGA_MODE)
+ =20
+
+--Sig_/Kq6kwh+O+jes1HMMvVJ.Ad4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZGszgACgkQAVBC80lX
+0GxzJwgAl05C0jMr+C0bSL5PWLdKAU/EAQK4/puC005sP3kaVlhC0Q2RJRjNqLgO
+l1aTujovKR4xpuyGzTjEerxleVFZuy3AgwEODTh1SM4GfXApRldA8NJPbESpM1yZ
+oyLcd5S5Iam8UES4NKOc0ZdgHam68KqZ+raK0ZHnQoTrWyBUtGl1eVVtlsBoP+BV
+fG7Tuq51MNpkYSMS97hrSafP5x+cB3vvmQfVWJ/XlGR6SwM54/WNbXJEp7Rp5Xeg
+lB4YvW7n8uvwtbzyvxlWUv0qi3MH4yzC3j8C8ce90SeliHMXLIX1jXaCLE5h0BA9
+kQd50GKJ98nJOovM9lPt7u1jBfEAtQ==
+=YAzs
+-----END PGP SIGNATURE-----
+
+--Sig_/Kq6kwh+O+jes1HMMvVJ.Ad4--
 
