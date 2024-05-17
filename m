@@ -1,126 +1,119 @@
-Return-Path: <linux-kernel+bounces-182233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555508C886A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:49:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9518C886E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 16:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF16DB26735
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:49:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEBCC2860F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5469D634EA;
-	Fri, 17 May 2024 14:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D2E64CE1;
+	Fri, 17 May 2024 14:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="T6OLDccb"
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TSyIPQqa"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77528846B
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793368F5D;
+	Fri, 17 May 2024 14:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715957370; cv=none; b=ncBxkqaVPosnTwBgK3XdciyO7sIxTfZ8TI9vJt0//rJpRbnUN6F5VIMQWqGBbzkqhEo/TeUTAOxZ9GceTnCluUm7sWIPlKM8KSDjbwHN/rbc7NF9t1AaUgbTUTiO3zhI8iFdaOePfsG9AcGpiAMYkgeNDse26VgconV+fXoOR4k=
+	t=1715957398; cv=none; b=hPQ19XybFRr8tDPI28iyjLIkVndB9snRnM4OoGGR4Q59AvR1+sCPVNTfpw7mHT0VFnD7fIMrDsz72nonyTm2q6OSHAdSupULxqmqCDOBJH6RE2ZR8nLohPLJrqPU0ji//XzLavNu2+HVobAar57/xH2uezTYQTZ3YM8xnkje2rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715957370; c=relaxed/simple;
-	bh=Oxw+nuKA9rnYPKRIGfenJc3ay8ovsXLycrgw3KYUz34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iy8IGMwnbQjzTRK6DjrmPmGGtill6PR6906FRAai6NmsisGspupwTXgrzV6K4VbgrRwmohcYUDbuf6L3i6blsG5zCVBp62ad4KfkBF3fsSggyFjp+x/ujXOXZdFD8NgiWUnYfXiZsJ4LF2FMvlJvOss1hicArcGgJCVA8KJQiWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=T6OLDccb; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=ZLjM
-	Tcq7/ZFNTdNivNN26gmdDNwnrL40lhfEgqQilyA=; b=T6OLDccbTOBPHNx85Yb3
-	7LHMIiuVJHeHnrh438m6msQG/HAx8iQFzcLrd6zD7Dzk5c1Sr0+y+DVpBqTqjmHL
-	FieA/7DcfMK77UgOq+bP+5HOj/CU0zuOEYYA4fPHGZuFBtOBwwCJpFYFT7ljhi00
-	SwFWhtStET0DVJoPDhZM8S3RdwyYhrJordDhjjznT1+85Y4/4uUWTpVRMphrCZX1
-	dkF9RyBmt/iBlNWeZtF+ecjSN9umVrMplQBo75rhBI6Q9eTcdT4QewNodO0NbVS0
-	Dx5rFr1bjjKUKUQkyQIDJE2tAFfERuKgQHqFxdntzgqYzBkPiKS3DxHFadJWflyI
-	PA==
-Received: (qmail 3527947 invoked from network); 17 May 2024 16:49:20 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 May 2024 16:49:20 +0200
-X-UD-Smtp-Session: l3s3148p1@At/tdKcYlqVehhtP
-Date: Fri, 17 May 2024 16:49:20 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Andi Shyti <andi.shyti@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Emil Svendsen <emas@bang-olufsen.dk>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-sound@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH 04/13] a2b: add AD24xx I2C interface driver
-Message-ID: <iyxpcmz5okfzvplla4glmuqsoky4cd6fv7orhsgqjepvdrivnp@63z64jwlsks4>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>, Mark Brown <broonie@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Andi Shyti <andi.shyti@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Emil Svendsen <emas@bang-olufsen.dk>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-sound@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
- <20240517-a2b-v1-4-b8647554c67b@bang-olufsen.dk>
+	s=arc-20240116; t=1715957398; c=relaxed/simple;
+	bh=uEP6bXRLC9q12FEscst8/uN+p2kIkISUr6VerTGNwpA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LGxz/e6FKAuDonv0jZS8t42eBBnPwf2lqWvaH9csYCPq8oegyzpfIE54ky9VRLvwo8dVJOdGQ4rizZ6OmFvkwHhwVZ0iNrSMk70SJZXzoPnjlYMFoJbHKi3dLcALYUpkChjELiOq27LF6gPByk/dM0DrF2kL7dtnuriMiti8fzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TSyIPQqa; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44HEIEvm017164;
+	Fri, 17 May 2024 14:49:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-11-20; bh=7qz+qAuahyAyYpbecn6fNefqgMPIWZYlNiXJm0v6E2k=;
+ b=TSyIPQqar7lMPL8t8y7pL2ELNXy59EXnAsCvrSkZNIosxpyGEf5or24JN25TTUtdlM8b
+ C6AxP2iSUtHstYzM+N/eemQTWCWaqmp1YT3wlElQQ+qhQ5MiBcL4JcpCXmpa1N65+bKQ
+ /7bJ92io4+/3KtX///xB5oNgCRSqVMgQ+tErBmMo5PdWA+pxDxNRhXZ7oqVuMn7cAZvo
+ XYOUXDTSxTg+O/u6ycUGwX6ss/f7ljQtOgt7EDKzQfu4sp5xZK6ruWgg66vAgNmb5x0S
+ JnusmGldUG6E7VOzh2uqtPV50Gi2+FGaz9sLwx++cI5QvkptbNzacQ8oW9eJOzgEAoVZ 4g== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3tx39snx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 17 May 2024 14:49:50 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44HEdYAE038282;
+	Fri, 17 May 2024 14:49:49 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3y24q1emg8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 17 May 2024 14:49:49 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44HEnnRQ001723;
+	Fri, 17 May 2024 14:49:49 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3y24q1emfh-1;
+	Fri, 17 May 2024 14:49:49 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Zhang Rui <rui.zhang@intel.com>, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH v2] platform/x86: ISST: fix use-after-free in tpmi_sst_dev_remove()
+Date: Fri, 17 May 2024 07:49:46 -0700
+Message-ID: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dorvg4mucua5ph6e"
-Content-Disposition: inline
-In-Reply-To: <20240517-a2b-v1-4-b8647554c67b@bang-olufsen.dk>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-17_06,2024-05-17_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
+ spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405170117
+X-Proofpoint-GUID: yZy3wlnQfHYtgSl2ettVygdbmE3T5hw8
+X-Proofpoint-ORIG-GUID: yZy3wlnQfHYtgSl2ettVygdbmE3T5hw8
 
+In tpmi_sst_dev_remove(), tpmi_sst is dereferenced after being freed.
+Fix this by reordering the kfree() post the dereference.
 
---dorvg4mucua5ph6e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned systems")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+---
+v1->v2: Add R.B from Hans and fix commit message wrapping to 75 chars.
+This is found by smatch and only compile tested.
+---
+ drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+index 7bac7841ff0a..7fa360073f6e 100644
+--- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
++++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+@@ -1610,8 +1610,8 @@ void tpmi_sst_dev_remove(struct auxiliary_device *auxdev)
+ 	tpmi_sst->partition_mask_current &= ~BIT(plat_info->partition);
+ 	/* Free the package instance when the all partitions are removed */
+ 	if (!tpmi_sst->partition_mask_current) {
+-		kfree(tpmi_sst);
+ 		isst_common.sst_inst[tpmi_sst->package_id] = NULL;
++		kfree(tpmi_sst);
+ 	}
+ 	mutex_unlock(&isst_tpmi_dev_lock);
+ }
+-- 
+2.39.3
 
-> +	/*
-> +	 * Enforce some basic assumptions this function makes about the
-> +	 * transfer. If this proves insufficient, some more complex logic will
-> +	 * be needed.
-> +	 */
-> +	if (num > 2 || (num == 2 && msgs[0].addr != msgs[1].addr))
-> +		return -EOPNOTSUPP;
-
-As you populated 'ad24xx_i2c_adapter_quirks' in the I2C driver, you can
-drop this. The I2C core will do the checks for you.
-
-
---dorvg4mucua5ph6e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZHbnAACgkQFA3kzBSg
-KbZ4cw//UnCNrCAjv+QHEiqmbznWqnH2N8ZbotvveAWo1o9CG2q5H7qtEMABxRJM
-Ga0FDhpW815gVCjjjeMQ4d3e7g3rE3kutQOSqPXquB6BbOzYMU2NI3MRnNyuZ4GU
-vi8VQ0LO4fpUtK4VimfSXF60MeI2M6dSf7KYx9vd5GG30nlfv3Uru82dzxi4b0WV
-bk6tIaViAK4sNvKAnK+WDZnEhptZ3Fpzi0TNjAuqvPWoL61SAAZCvwzrFcbnlenY
-Nia81UoDvKT8vi3I9ckhi0QUV6gU8xec4DmkUZDRhi8W4pmBtfto2Lo+nQcLkpVH
-UcDB2ZDKfjlRvoIDuPLOhdL2vkl5l5weVVU0X9/cQ9Ej8Iv+KiNhNep5GfMisCw0
-I0MUtQEtvxr7O3Pa4J+AEVfDPojmY1pSPMidxrVwmrClN11LQQmroplAbyFBLDER
-lziCL5EkExgbguvmWsZpDPzTJUCmanXrvTJiFnAOptbzkShNNvpCnvj/HALU4T1d
-biP5v5CMroDnOQZNK5RwrPVj0fKp1gYnkW/CAd15Hl/YzIcfjvpR+qeBozJsxSAP
-s+2EgsMRGyDpAkm0Y7S5eSAzYdfFq4qAzYarLMCq2PNWFFkmBVltklW5VF1kneXG
-o4b1vZNEfzEu1+RlbOF9UcKRpti0s4s8Qp4lc1bpgfozWNh86S0=
-=x2If
------END PGP SIGNATURE-----
-
---dorvg4mucua5ph6e--
 
