@@ -1,128 +1,215 @@
-Return-Path: <linux-kernel+bounces-182618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07828C8D5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:41:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2550C8C8D62
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B2F3284694
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:41:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93FEB1F23C79
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C08741C6E;
-	Fri, 17 May 2024 20:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1139812FF8B;
+	Fri, 17 May 2024 20:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n0E5/zDO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="55g4QL0b"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B2ZTNkED"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3F51CAA9
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 20:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E371DFF2;
+	Fri, 17 May 2024 20:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715978485; cv=none; b=hNAnoaN2zY2RGUnhu6Pw3GWG7KeSpIxcsn2XpQ1N+fMx1yZY9W6ss+xB8CTlqr22lB4++Mo8K6m2OhCxwrcsfTZ+y+usrZr3tFIxHRXGQhVVN1kSqsKwDKHC4kVftGdpYYdKkJyg5ELAs+z2RSd7K/ZVdP/dxLS1fXhs0RHO0Dw=
+	t=1715978522; cv=none; b=Pg/vjSNMRPSMpzGw5XCZZDGhbOE/TtbxzZRFnA/OJl2FgWqxH+6QE2SStndwKgekrQPJd7rIgAhwaebDEv248QKuKPqr54PqPJiFLuHoRae9VfqE+LTAQv2B1hNMbXSldxkAcfYdLqdz6DeZXSefjs035FVP+vC4dAur6UYuauo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715978485; c=relaxed/simple;
-	bh=zyOuYSC78p7yIHSIK3YPMOawrAe8CDN7YBWgxS3A4DQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nqhASKkJkzxqMicawa0CmLJJAbfK6PDhwoekNth3mG0CzaKrAEWH1R0wJ53/NbN7bSR1It/OFBS4qAG58Gf63EeDZU3eGxetSpRfBo9T4puFNcvvtfimKHLzgcc1TuTu7BWtYCh2gGyoArUqWynL+cFydzkmJ2jKHhVXwCwWDT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n0E5/zDO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=55g4QL0b; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715978482;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QZ4h1wQmVnSiPurtyO10mrFNnm7uledEHoSaoAVavPw=;
-	b=n0E5/zDOzUr/2cjZmyqgrTpcWoh1DlfH4ji1W+cmuZgXmfqW95WmnY+F6sEDjnrkfFbyte
-	c+ZxJJ7/u7RPWRShl81Wy8uLGeB+FswNIj5w/OYC3rW4p0FuFQ8aj4Gq9yUBgw0qGDmOCw
-	5aPzMSXxziu9kRh2W1LI/AIBkn/cmvUtLmM4RYFPnd05GeZFd1ou6uVf0SkKReFoL0YzVZ
-	9W+LlP3OWNQK/XfLt6IFvpwFd37rGSAIvTDUhUEWaCnpWqJR8nShglK/nFphstG+U2YCPv
-	JN0XxScEjqEv9YPT7oyoI2EbwGJMCbfoKGfzHXw5tOKZWAkw5lOJIA9twvIr2g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715978482;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QZ4h1wQmVnSiPurtyO10mrFNnm7uledEHoSaoAVavPw=;
-	b=55g4QL0bLJxk3dZjc4ExSoZPUHzrPkGPNSdsBkZjhanf8L8la2xMotYhnf58itwaB0iUEf
-	hwXf/NpJjRgo2/BA==
-To: "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>, Tony
- Luck <tony.luck@intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "Peter Zijlstra (Intel)"
- <peterz@infradead.org>, Uros Bizjak <ubizjak@gmail.com>, Rick Edgecombe
- <rick.p.edgecombe@intel.com>, Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik
- <mjguzik@gmail.com>, Thomas Renninger <trenn@suse.de>, Greg Kroah-Hartman
- <gregkh@suse.de>, Andi Kleen <ak@linux.intel.com>,
- linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v2] x86/cpu: Fix x86_match_cpu() to match just
- X86_VENDOR_INTEL
-In-Reply-To: <863D0F06-1217-4C94-B2CA-816FC4ABB103@zytor.com>
-References: <20240516162925.79245-1-tony.luck@intel.com>
- <20240517144312.GBZkdtAOuJZCvxhFbJ@fat_crate.local>
- <863D0F06-1217-4C94-B2CA-816FC4ABB103@zytor.com>
-Date: Fri, 17 May 2024 22:41:21 +0200
-Message-ID: <87h6ewjhn2.ffs@tglx>
+	s=arc-20240116; t=1715978522; c=relaxed/simple;
+	bh=fTLlBh/SXIsodMAbJv3M2TGMj8laRiQ9ZRfXN0CjfPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VaUxkcLYuUwIEyDPZBzeGCLLOoAyY5Yc2CVkJf2uKIZCe/vfEhGFnbTz2rvnh+e1iglEVHFBCdwbkoxAzqff/KcSPzukIcOdb/zEyg5ley2tAidCqVpb5JS8wFPfFanpQYignb6XkY1QkYQCdIHR6PKtkECztqQn0iVk6SxHve4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B2ZTNkED; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715978520; x=1747514520;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fTLlBh/SXIsodMAbJv3M2TGMj8laRiQ9ZRfXN0CjfPo=;
+  b=B2ZTNkED8EjPfee/7aw1xbZ/91ki/oxZRq+V4m+FSLQWaYJnugzFROVy
+   mynb/hmh6XY81GfHdDLPKjupk9IrQIImUsOXoMhxQKQT/Da1rHiJ47Vy0
+   njl0PYOMfl7YRfyJciPCKBkHphqJ1pedWDUL2oJzqb6ZbnHlXEa7eFquj
+   tcJhhY7KiRaLCLscLsVX31bLbnMfPnPXIbCPLEo4Hp0ebrR8HnyRn1+cI
+   hl3s0O/XA2USrkxVD49kHk9IgpD5J03n1u/DMOPCk0VIcZdakzebsCqax
+   A14muRk2PZu1afU6+X4FrE2DzuywCJGAeI97tI613MOSvHdkGkNmIzl4C
+   A==;
+X-CSE-ConnectionGUID: 55z1nzctSxeV2yNqIB8mjQ==
+X-CSE-MsgGUID: VIcVdaIPRuCpf30+r7FqlA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="12048953"
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="12048953"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 13:41:59 -0700
+X-CSE-ConnectionGUID: y+SjdyIaRaask8/8bfqisA==
+X-CSE-MsgGUID: ef7r0LDeSwezKkbA/3uf4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="36644147"
+Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 17 May 2024 13:41:55 -0700
+Received: from kbuild by 108735ec233b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s84Om-00017U-1u;
+	Fri, 17 May 2024 20:41:52 +0000
+Date: Sat, 18 May 2024 04:41:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
+	broonie@kernel.org, andi.shyti@kernel.org, joel@jms.id.au,
+	alistair@popple.id.au, jk@ozlabs.org, andrew@codeconstruct.com.au,
+	linux-aspeed@lists.ozlabs.org, eajames@linux.ibm.com
+Subject: Re: [PATCH v3 23/40] fsi: core: Add interrupt support
+Message-ID: <202405180410.FkV8wPos-lkp@intel.com>
+References: <20240516181907.3468796-24-eajames@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516181907.3468796-24-eajames@linux.ibm.com>
 
-On Fri, May 17 2024 at 10:35, H. Peter Anvin wrote:
-> On May 17, 2024 7:43:12 AM PDT, Borislav Petkov <bp@alien8.de> wrote:
->>And then do:
->>
->>struct x86_cpu_id {
->>        __u16 vendor;
->>        __u16 family;
->>        __u16 model;
->>        __u16 steppings;
->>        __u16 feature;  /* bit index */
->>	__u16 flags;
->>        kernel_ulong_t driver_data;
->>};
->>
->>#define X86_CPU_ID_FLAG_VENDOR_VALID		BIT(0)
->>
->>and then have the macros in arch/x86/include/asm/cpu_device_id.h set
->>that valid flag and then have x86_match_cpu() check it.
->>
->>Then you don't risk a userspace breakage and that x86_match_cpu() crap
->>thing is fixed.
->
-> I'm confused. Why not simply use say -1 for wildcard vendor match, -2
-> for no vendor ID (no CPUID or other known probing mechanism) and -3
-> for unrecognized vendor (vendor detectable but not known.)
+Hi Eddie,
 
-This has nothing to do with wildcards.
+kernel test robot noticed the following build errors:
 
-The problem at hand is about loop termination. Making that explicit by
-having a valid bit in the existing struct hole is trivial, straight
-forward and just works obviously correct.
+[auto build test ERROR on andi-shyti/i2c/i2c-host]
+[also build test ERROR on robh/for-next broonie-spi/for-next linus/master v6.9 next-20240517]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> I *hate* these strings with the passion of a thousand suns: they are a
-> classic case of how just blindly converting binary information to hex
-> adds absolutely no value, and often makes the result worse than what
-> one started with. And yes, I complained about that when they first
-> went in as a classic case of exposing what was always simply intended
-> as a kernel internal interface to user space.
+url:    https://github.com/intel-lab-lkp/linux/commits/Eddie-James/fsi-hub-Set-master-index-to-link-number-plus-one/20240517-023205
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20240516181907.3468796-24-eajames%40linux.ibm.com
+patch subject: [PATCH v3 23/40] fsi: core: Add interrupt support
+config: x86_64-randconfig-102-20240517 (https://download.01.org/0day-ci/archive/20240518/202405180410.FkV8wPos-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240518/202405180410.FkV8wPos-lkp@intel.com/reproduce)
 
-You obviously did not complain loud enough :)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405180410.FkV8wPos-lkp@intel.com/
 
-> This is particularly pathetic as there already is a canonical string
-> representation of the vendor ID!
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-I agree, but that train has left the station long ago,
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/locktorture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcutorture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcuscale.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/refscale.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/torture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test_module.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in mm/zsmalloc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp437.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp737.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp775.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp857.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp860.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp865.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp1251.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-2.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-3.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp1255.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-15.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-r.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-u.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-ru.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_utf8.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-croatian.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-gaelic.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-greek.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-iceland.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-romanian.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-turkish.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ucs2_utils.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_arc4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_md4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/autofs/autofs4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-keys/trusted.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/ecc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in block/t10-pi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libdes.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_firmware.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_sysctl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_min_heap.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_module.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_rhashtable.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_user_copy.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bitmap.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_memcat_p.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_meminit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_free_pages.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/asn1_decoder.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/asn1_encoder.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_i2c.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_spi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/dmatest.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/ttynull.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/nvram.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/ppdev.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-spmi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-w1.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/misc/open-dice.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/scsi_common.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_util.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/rtc-tps65910.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/corsair-cpro.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_emmc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-apple.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-aureal.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-cypress.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-emsff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ezkey.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ite.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-keytouch.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lcpower.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-magicmouse.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-mf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-microsoft.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-primax.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-gaff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-topseed.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-zydacron.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-viewsonic.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-spilib.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-log.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-power-supply.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-raw.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-gbphy.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-i2c.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-sdio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-spi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/goldfish/goldfish_pipe.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-controller.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-scom.o
+>> ERROR: modpost: "handle_irq_desc" [drivers/fsi/fsi-core.ko] undefined!
 
-Thanks,
-
-        tglx
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
