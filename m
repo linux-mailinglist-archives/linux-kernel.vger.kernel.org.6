@@ -1,79 +1,58 @@
-Return-Path: <linux-kernel+bounces-182156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7378C876F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:48:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C844B8C8771
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F5DF1C21E9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:48:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 476B3B22AF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 13:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB5E54FA3;
-	Fri, 17 May 2024 13:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5948954FBD;
+	Fri, 17 May 2024 13:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ia/4QcC2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ehP7IVIY"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D975491A;
-	Fri, 17 May 2024 13:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DEB548EF;
+	Fri, 17 May 2024 13:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715953716; cv=none; b=H3LURNWfBbouSZxnyrBezg5yRpx4BkXTWgA9/6HJ0sWXP8TfvPo2zRC1/BDvO0nbylWfhsLHQbIMekmObla5EtkrHFik8rha7rxWA3x0NS/XHLEfcly38QckSU/i1UtIWrUbJibJnlWyFRLl3bZLwYa87pf1NhJ/JGuABg2wVY8=
+	t=1715953788; cv=none; b=d+0So2haPNQFKFGHU+HQthkg0Tmfsd/8JetX4U2tFr7WPZtJZMltePUFri6Qcm+R5rp1eHNF/hB5t6WTGyh5QcEfoR1q8COvoc1UEOOmG1Ndrxspv83o60tYkTibu9Nsx2aEmfOfRODHYaVX1HTMIylDFr7vkDARm05pCxR52/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715953716; c=relaxed/simple;
-	bh=s93ATeDVRQTEUX7ypkN+F/Ibrc7HgOQIkHgV3WSgzNQ=;
+	s=arc-20240116; t=1715953788; c=relaxed/simple;
+	bh=zfMkOZOZZjgIRP4nwmmYsQYWA3FLGwCB0g70lmT6LcQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rzXe/1JXrKVOe6BGrHIl8y6X/pX3ccVrX81kTZeE7D4XJdAu4u+2HXNhTWfHPvbpenoNZj6quLyUO9r4qLa0QNpdakNlRPdq7YkRNkCfl+4k/jDiZLRtIZKJrQOQNZEx9t42iBpWtse2n8YZlUultOX9hcuRdRLo5UpDcoAJKj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ia/4QcC2; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715953715; x=1747489715;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s93ATeDVRQTEUX7ypkN+F/Ibrc7HgOQIkHgV3WSgzNQ=;
-  b=ia/4QcC2HdaNJd8sZdOiTX4c1XP9B5kjacgxfoc/zIhe6sI1pa7rAZ6b
-   uTQPLU4n8OmcvbESbf0KEqIHUyL985lseo+FO2aot1GwzsxIxr8mtgyO/
-   5KFei+UILq0890SKwkNQNrUxMfOKQNx0uAQUfcI/swnIcf7rq2L5mjkkz
-   hq4KRGtF2yqipGZJVbdhlKPxm+X1KSGHO4bPmFc1TLsKP2jlwCXlxnBSI
-   QS9lrmFDteLyS2o0k+aK1VqQ7HCZUREuKL4tq1YkeJr3KLpeIlsexFmkd
-   aoLMQQf+VSPqNq5FZI8M6J6W+uNlmwJ0jzqybPOj6GvPWsfTXWJBLDWBP
-   g==;
-X-CSE-ConnectionGUID: GvSEZaFMTIGtuBhDG19SFA==
-X-CSE-MsgGUID: 2DQ7RC2cR6aiUd8z/NS6xg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="29647282"
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="29647282"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 06:48:34 -0700
-X-CSE-ConnectionGUID: nLI3sxIGQmqHciyW5bgI9A==
-X-CSE-MsgGUID: HxKfErc+RX64gcA27homYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
-   d="scan'208";a="31786507"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 06:48:31 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s7xwi-00000008Lyl-3UwN;
-	Fri, 17 May 2024 16:48:28 +0300
-Date: Fri, 17 May 2024 16:48:28 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Adam Dunlap <acdunlap@google.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] x86/cpu: Fix boot on Intel Quark X1000
-Message-ID: <ZkdgLI8PGutkQGKK@smile.fi.intel.com>
-References: <20240516173928.3960193-1-andriy.shevchenko@linux.intel.com>
- <8286f8b9-488c-418f-8bad-d23871a8afab@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r1y1ZfoUwgJVJBYANtakXIhb3kslKkqD9vIPRMQRAGWoeOqhObYq88TPKOurCBtjDggjHm6nDVH+Y4KdH4xyX8/cA2HcLDE2dKTlrpxT62QVeqDsG+gVv2Y2HIZZrZhcZRReiDqvo1PoIgk33wSU+xq6jdPMo5ziN3w7IoDgOpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ehP7IVIY; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=/ICNmatV/n196PbAHkCh3rR4p2kraFQbw8tCOH/qr2M=; b=ehP7IVIYPNQvBLiyDwvrI7zodb
+	s1dqK41wqH0mETbvXWzraag2uqumIGbWTif/zaERrUVs8YIN7T9V7AVr0/YaYirK8cCFgqBazEBme
+	ju8TTUc0vzI2vNMEzu3zP3j9dXkTDXqRZKIVI2kyUMBljoDUip5POvdKGYHAX+5O1ECo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s7xxr-00FZu4-4B; Fri, 17 May 2024 15:49:39 +0200
+Date: Fri, 17 May 2024 15:49:39 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, jiri@resnulli.us, horms@kernel.org,
+	rkannoth@marvell.com, pkshih@realtek.com, larry.chiu@realtek.com
+Subject: Re: [PATCH net-next v19 01/13] rtase: Add pci table supported in
+ this module
+Message-ID: <d840e007-c819-42df-bc71-536328d4f5d7@lunn.ch>
+References: <20240517075302.7653-1-justinlai0215@realtek.com>
+ <20240517075302.7653-2-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,79 +61,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8286f8b9-488c-418f-8bad-d23871a8afab@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240517075302.7653-2-justinlai0215@realtek.com>
 
-On Thu, May 16, 2024 at 11:21:13AM -0700, Dave Hansen wrote:
-> On 5/16/24 10:39, Andy Shevchenko wrote:
-> > The initial change to set x86_virt_bits to the correct value straight
-> > away broke boot on Intel Quark X1000 CPUs (which are family 5, model 9,
-> > stepping 0)
-> 
-> Do you know what _actually_ broke?  Like was there a crash somewhere?
+> + *  Below is a simplified block diagram of the chip and its relevant interfaces.
+> + *
+> + *               *************************
+> + *               *                       *
+> + *               *  CPU network device   *
+> + *               *                       *
+> + *               *   +-------------+     *
+> + *               *   |  PCIE Host  |     *
+> + *               ***********++************
+> + *                          ||
+> + *                         PCIE
+> + *                          ||
+> + *      ********************++**********************
+> + *      *            | PCIE Endpoint |             *
+> + *      *            +---------------+             *
+> + *      *                | GMAC |                  *
+> + *      *                +--++--+  Realtek         *
+> + *      *                   ||     RTL90xx Series  *
+> + *      *                   ||                     *
+> + *      *     +-------------++----------------+    *
+> + *      *     |           | MAC |             |    *
+> + *      *     |           +-----+             |    *
+> + *      *     |                               |    *
+> + *      *     |     Ethernet Switch Core      |    *
+> + *      *     |                               |    *
+> + *      *     |   +-----+           +-----+   |    *
+> + *      *     |   | MAC |...........| MAC |   |    *
+> + *      *     +---+-----+-----------+-----+---+    *
+> + *      *         | PHY |...........| PHY |        *
+> + *      *         +--++-+           +--++-+        *
+> + *      *************||****************||***********
+> + *
+> + *  The block of the Realtek RTL90xx series is our entire chip architecture,
+> + *  the GMAC is connected to the switch core, and there is no PHY in between.
 
-Nope, I have no a single character to tell anything about this.
-Note, earlyprintk may not be helpful as this SoC doesn't have legacy UARTs.
+Given this architecture, this driver cannot be used unless there is a
+switch driver as well. This driver is nearly ready to be merged. So
+what are your plans for the switch driver? Do you have a first version
+you can post? That will reassure us you do plan to release a switch
+driver, and not use a SDK in userspace.
 
-> > With deeper investigation it appears that the Quark doesn't have
-> > the bit 19 set in 0x01 CPUID leaf, which means it doesn't provide
-> > any clflush instructions and hence the cache alignment is set to 0.
-> > The actual cache line size is 16 bytes, hence we may set the alignment
-> > accordingly. At the same time the physical and virtual address bits
-> > are retrieved via 0x80000008 CPUID leaf.
-> 
-> This seems to be saying that ->x86_clflush_size must come from CPUID.
-> But there _are_ CPUID-independent defaults set in identify_cpu().  How
-> do those fit in?
-
-Where? The mentioned fbf6449f84bf dropped those for this case.
-
-> > Note, we don't really care about the value of x86_clflush_size as it
-> > is either used with a proper check for the instruction to be present,
-> > or, like in PCI case, it assumes 32 bytes for all supported 32-bit CPUs
-> > that have actually smaller cache line sizes and don't advertise it.
-> 
-> Are you trying to say that having ->x86_clflush_size==0 is not fatal
-> while having ->x86_cache_alignment==0 _is_ fatal?
-
-I'm only saying that clflush is not implemented there and having
-a dangled value is not a problem.
-
-But it indeed implies what you are saying.
-
-> > The commit fbf6449f84bf ("x86/sev-es: Set x86_virt_bits to the correct
-> > value straight away, instead of a two-phase approach") basically
-> > revealed the issue that has been present from day 1 of introducing
-> > the Quark support.
-> 
-> How did it do that, exactly?  It's still not crystal clear.
-
-See above, it removes, like you said, the CPUID independent defaults which
-were set unconditionally and implied that cache alignment should come from
-CPUID (clflush bits).
-
-..
-
-> > +	/*
-> > +	 * The Quark doesn't have bit 19 set in 0x01 CPUID leaf, which means
-> > +	 * it doesn't provide any clflush instructions and hence the cache
-> > +	 * alignment is set to 0. The actual cache line size is 16 bytes,
-> > +	 * hence set the alignment accordingly. At the same time the physical
-> > +	 * and virtual address bits are retrieved via 0x80000008 CPUID leaf.
-> > +	 */
-> > +	if (c->x86 == 5 && c->x86_model == 9)
-> > +		c->x86_cache_alignment = 16;
-> 
-> What are the odds that another CPU has this issue?
-
-I'm not sure I follow.
-
-> I'm thinking we should just set a default in addition to hacking around this
-> for Quark.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+	Andrew
 
