@@ -1,169 +1,314 @@
-Return-Path: <linux-kernel+bounces-182415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE0858C8B05
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:31:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B1B8C8B07
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C70A1C20ABD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:31:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C05D1C20BBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0F913DDC1;
-	Fri, 17 May 2024 17:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E0113DDB8;
+	Fri, 17 May 2024 17:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="JtFMb3r/"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SOEYfBK3"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A0813DDA0
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E11912FB3E;
+	Fri, 17 May 2024 17:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715967053; cv=none; b=srvHz3CXWhzOGXTQVJDlDH5mkF3dKAPOt7wQLzGD7dL0DMEsG7dlqnFwQ7GsqgrOO2ChhO2Vy41Gc9/JdzvXCTBxtoqXvTxe/keASnycMdi6ucJ2eSxXud3BQT4QxIoKJMV83JYL5kxryLKlLGkuU6Bse2Y73rz9qEhMZy1MTGI=
+	t=1715967100; cv=none; b=SNGW8anCLU+yS0V4QA9306IFz8/YYia+EQKSv+sCPmrYXLtCxQ+DhNgo1b3LMMseypHTsBCzW72k8pEvbU24OYyntGl+oVUdNskNBlzBJ+3RPtj/hcTr/C1BFofVfFUSf5yQ8IWHgEby54DaPey10L6MCgah8QcsQQVxAc8Q5Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715967053; c=relaxed/simple;
-	bh=c2QtSZdCkA5RFZOYVJWDhlgUfVfylInXYEoMha5QZYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ogwQTLM9Uc2r0WzEAUXaiCuXtiMKezi39lDmH/eL1HTnmlG9zEQurRtD59UHtofmab+b6Tr5/gVql3S+IyMuVwyzdzJHah198KkV1bcYMpBaCXnovTpNyAxltW5fgD87XZyg2CS3mjHwiQV2NvIu970BMVRo54+ww9yaivvI9+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=JtFMb3r/; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6a0ffaa079dso7411976d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 10:30:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1715967050; x=1716571850; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4G1AoFSIpqiKBdHTLG/UG3KtMvn8GSyLhR2c4jHS3UM=;
-        b=JtFMb3r/IWgBydXEXsMo+KkL09GnZn6UTWU4leMB/1jYSI76vDBnTTWzsvcwis1qYA
-         BX5TrmI+9X7OTa8s6Q8pfSCNUqVLsavwh+kdLO7rv3l36QUPMvR5c0ytfnkJ7KiAbRkF
-         AHMy56JBvJ4K/AeV8JeXKewXcCpBE1x+DrDqmQNwrUwhUbE4RUR9WauZ6G7LcbSjD/SR
-         b4ULMu8KZdnvidq88tzyjoMqTu8wo8ONiHpFsrhb/HE12Is2h3Kr1GrQuPjudIKcr3hr
-         mofLy/YNB5QOiVfnMH1utgQuBWKHWfgP2wlqOgB1W7Ao36TTG8S7H/pVRgQm5eIAqqKz
-         2pNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715967050; x=1716571850;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4G1AoFSIpqiKBdHTLG/UG3KtMvn8GSyLhR2c4jHS3UM=;
-        b=c3++ELNGb39PdGx8tECPv0PuJ81ftiL0qh811fVVbM8Eg4FcefcnZ2EiYCr7GmaOGd
-         65KRbFm4xHA8pkFmiJoNLL6HCUMaQmZJVBj7i1MyLNqqbll1bOfMvVASUgDUbtFzelPB
-         qVBqA5mGM+Dr0xoeHD6Gwu8fDZX+nDv6CCiqWRnYE2/6UB9azdqgQ2WgajhVmU6UHmyN
-         ymajYJckL+lY3sWsjbrIHPbwD/8+IbAOA4RBhmHbp6y+a6EcngOs9GiFrqGW2SqwUvP/
-         FlJCyk4NWOp8mcT897QQaL6b5idtZOUMd3XcMH1DrAkcY3C+758GfF52CbTjmMy0kyNg
-         SuQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrk3LVGqFDazRH89k/tQkneC7J33ZZ4e6kOrFiylwCST73GBzqeSFKM+8so71ZLnbSvbhHJmFYQhv2ZitpzaJ0FGGfJ28MpcB2LlBm
-X-Gm-Message-State: AOJu0YzsEYKDWqCyDjEkshunGQDTBLLYL2IbwjGLCCnCBF8RNzerPSDb
-	l/NfXiwcX3vBzbS96SgUVZ/Vx+3sLw3JJsZAqshAA9F3zW327QNGmvFHHtYJdU8=
-X-Google-Smtp-Source: AGHT+IGXKdXJA0lkwUcO26Y+9UlF6kGxU18scjw4rEAVIldCihU6dVWbhtXLf3Gbw+DaS0FLrN4qtw==
-X-Received: by 2002:a0c:f889:0:b0:6a0:9607:a441 with SMTP id 6a1803df08f44-6a15cc965f2mr477287196d6.28.1715967050326;
-        Fri, 17 May 2024 10:30:50 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a465aed09bsm10136526d6.29.2024.05.17.10.30.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 10:30:49 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1s81Ps-000Ixn-JM;
-	Fri, 17 May 2024 14:30:48 -0300
-Date: Fri, 17 May 2024 14:30:48 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Haakon Bugge <haakon.bugge@oracle.com>
-Cc: OFED mailing list <linux-rdma@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	netdev <netdev@vger.kernel.org>,
-	"rds-devel@oss.oracle.com" <rds-devel@oss.oracle.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Allison Henderson <allison.henderson@oracle.com>,
-	Manjunath Patil <manjunath.b.patil@oracle.com>,
-	Mark Zhang <markzhang@nvidia.com>,
-	Chuck Lever III <chuck.lever@oracle.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>,
-	Yang Li <yang.lee@linux.alibaba.com>
-Subject: Re: [PATCH 0/6] rds: rdma: Add ability to force GFP_NOIO
-Message-ID: <20240517173048.GA69273@ziepe.ca>
-References: <20240513125346.764076-1-haakon.bugge@oracle.com>
- <ZkKcOogJpI0PU2l3@ziepe.ca>
- <72BE64EC-3CB8-469C-85CB-F97671C0E867@oracle.com>
+	s=arc-20240116; t=1715967100; c=relaxed/simple;
+	bh=G9A6N82Zc6yF+ZndgpjsULZXMn9s3jOFHYqlAzgfJtg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VDr66xn6XrSV+fwcFHg9hig9GGrpJdJPEfjXYmQmFo6HoArJz5dx2a88hSXBvpgx2oyQt0+djeSuZw9uHEM2nUy/EvrZ2jUzNv/LwcqqT90XXEGgwNtSkrNBB59xYs7QOHCNNxhZGTHzbBgir2Ogj59cfresPUc2vtPG3s+0Z3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SOEYfBK3; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44HHVU27070176;
+	Fri, 17 May 2024 12:31:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715967090;
+	bh=72hKEtYDGWkwRyJgZRNQu7qA5HizmKqkH68ZHoLEiX0=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=SOEYfBK3FcJbaccuLiuZt+F2v7kQWx+yEEAaD3yy4Nu0a0s6pLwJ01PbD8Z+juTLy
+	 +ZcmpFLRynvTxF5KGV4BTwe32p2pXePtoXhXr974WsOwQJ5YEoceWEY1M8uTDZr3di
+	 vMdSP335ElUunxy5+JeLsHLCkUcJVt2OeDicm/E8=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44HHVUXK041181
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 17 May 2024 12:31:30 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 17
+ May 2024 12:31:29 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 17 May 2024 12:31:29 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44HHVSuf000959;
+	Fri, 17 May 2024 12:31:29 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>
+Subject: [PATCH v8 03/10] media: v4l2-jpeg: Export reference quantization and huffman tables
+Date: Fri, 17 May 2024 23:01:28 +0530
+Message-ID: <20240517173128.788583-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240517171532.748684-1-devarsht@ti.com>
+References: <20240517171532.748684-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <72BE64EC-3CB8-469C-85CB-F97671C0E867@oracle.com>
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, May 14, 2024 at 06:19:53PM +0000, Haakon Bugge wrote:
-> Hi Jason,
-> 
-> 
-> > On 14 May 2024, at 01:03, Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > 
-> > On Mon, May 13, 2024 at 02:53:40PM +0200, Håkon Bugge wrote:
-> >> This series enables RDS and the RDMA stack to be used as a block I/O
-> >> device. This to support a filesystem on top of a raw block device
-> >> which uses RDS and the RDMA stack as the network transport layer.
-> >> 
-> >> Under intense memory pressure, we get memory reclaims. Assume the
-> >> filesystem reclaims memory, goes to the raw block device, which calls
-> >> into RDS, which calls the RDMA stack. Now, if regular GFP_KERNEL
-> >> allocations in RDS or the RDMA stack require reclaims to be fulfilled,
-> >> we end up in a circular dependency.
-> >> 
-> >> We break this circular dependency by:
-> >> 
-> >> 1. Force all allocations in RDS and the relevant RDMA stack to use
-> >>   GFP_NOIO, by means of a parenthetic use of
-> >>   memalloc_noio_{save,restore} on all relevant entry points.
-> > 
-> > I didn't see an obvious explanation why each of these changes was
-> > necessary. I expected this:
-> > 
-> >> 2. Make sure work-queues inherits current->flags
-> >>   wrt. PF_MEMALLOC_{NOIO,NOFS}, such that work executed on the
-> >>   work-queue inherits the same flag(s).
-> 
-> When the modules initialize, it does not help to have 2., unless
-> PF_MEMALLOC_NOIO is set in current->flags. That is most probably not
-> set, e.g. considering modprobe. That is why we have these steps in
-> all the five modules. During module initialization, work queues are
-> allocated in all mentioned modules. Therefore, the module
-> initialization functions need the paranthetic use of
-> memalloc_noio_{save,restore}.
+Export reference quantization and huffman tables as provided in ITU-T.81 so
+that they can be re-used by other JPEG drivers.
 
-And why would I need these work queues to have noio? they are never
-called under a filesystem.
+These are example tables provided in ITU-T.81 as reference tables and the
+JPEG encoders are free to use either these or their own proprietary tables.
 
-You need to explain in every single case how something in a NOIO
-context becomes entangled with the unrelated thing you are taggin NIO.
+Also add necessary prefixes to be used for huffman tables in global header
+file.
 
-Historically when we've tried to do this we gave up because the entire
-subsystem end up being NOIO.
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+---
+V1->V8: No change (Patch introduced in V7)
+---
+ drivers/media/v4l2-core/v4l2-jpeg.c | 162 +++++++++++++++++++++++++++-
+ include/media/v4l2-jpeg.h           |  11 ++
+ 2 files changed, 172 insertions(+), 1 deletion(-)
 
-> > And further, is there any validation of this? There is some lockdep
-> > tracking of reclaim, I feel like it should be more robustly hooked up
-> > in RDMA if we expect this to really work..
-> 
-> Oracle is about to launch a product using this series, so the
-> techniques used have been thoroughly validated, allthough on an
-> older kernel version.
+diff --git a/drivers/media/v4l2-core/v4l2-jpeg.c b/drivers/media/v4l2-core/v4l2-jpeg.c
+index 94435a7b6816..b21a78142710 100644
+--- a/drivers/media/v4l2-core/v4l2-jpeg.c
++++ b/drivers/media/v4l2-core/v4l2-jpeg.c
+@@ -16,7 +16,7 @@
+ #include <linux/types.h>
+ #include <media/v4l2-jpeg.h>
+ 
+-MODULE_DESCRIPTION("V4L2 JPEG header parser helpers");
++MODULE_DESCRIPTION("V4L2 JPEG helpers");
+ MODULE_AUTHOR("Philipp Zabel <kernel@pengutronix.de>");
+ MODULE_LICENSE("GPL");
+ 
+@@ -52,6 +52,115 @@ MODULE_LICENSE("GPL");
+ #define COM	0xfffe	/* comment */
+ #define TEM	0xff01	/* temporary */
+ 
++/* Luma and chroma qp tables to achieve 50% compression quality
++ * This is as per example in Annex K.1 of ITU-T.81
++ */
++const u8 luma_qt[] = {
++	16, 11, 10, 16, 24, 40, 51, 61,
++	12, 12, 14, 19, 26, 58, 60, 55,
++	14, 13, 16, 24, 40, 57, 69, 56,
++	14, 17, 22, 29, 51, 87, 80, 62,
++	18, 22, 37, 56, 68, 109, 103, 77,
++	24, 35, 55, 64, 81, 104, 113, 92,
++	49, 64, 78, 87, 103, 121, 120, 101,
++	72, 92, 95, 98, 112, 100, 103, 99
++};
++
++const u8 chroma_qt[] = {
++	17, 18, 24, 47, 99, 99, 99, 99,
++	18, 21, 26, 66, 99, 99, 99, 99,
++	24, 26, 56, 99, 99, 99, 99, 99,
++	47, 66, 99, 99, 99, 99, 99, 99,
++	99, 99, 99, 99, 99, 99, 99, 99,
++	99, 99, 99, 99, 99, 99, 99, 99,
++	99, 99, 99, 99, 99, 99, 99, 99,
++	99, 99, 99, 99, 99, 99, 99, 99
++};
++
++/* Zigzag scan pattern */
++const u8 zigzag[] = {
++	0,   1,  8, 16,  9,  2,  3, 10,
++	17, 24, 32, 25, 18, 11,  4,  5,
++	12, 19, 26, 33, 40, 48, 41, 34,
++	27, 20, 13,  6,  7, 14, 21, 28,
++	35, 42, 49, 56, 57, 50, 43, 36,
++	29, 22, 15, 23, 30, 37, 44, 51,
++	58, 59, 52, 45, 38, 31, 39, 46,
++	53, 60, 61, 54, 47, 55, 62, 63
++};
++
++/*
++ * Contains the data that needs to be sent in the marker segment of an
++ * interchange format JPEG stream or an abbreviated format table specification
++ * data stream. Specifies the huffman table used for encoding the luminance DC
++ * coefficient differences. The table represents Table K.3 of ITU-T.81
++ */
++const u8 luma_dc_ht[] = {
++	0x00, 0x01, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01,
++	0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B
++};
++
++/*
++ * Contains the data that needs to be sent in the marker segment of an
++ * interchange format JPEG stream or an abbreviated format table specification
++ * data stream. Specifies the huffman table used for encoding the luminance AC
++ * coefficients. The table represents Table K.5 of ITU-T.81
++ */
++const u8 luma_ac_ht[] = {
++	0x00, 0x02, 0x01, 0x03, 0x03, 0x02, 0x04, 0x03, 0x05, 0x05, 0x04, 0x04,
++	0x00, 0x00, 0x01, 0x7D, 0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12,
++	0x21, 0x31, 0x41, 0x06, 0x13, 0x51, 0x61, 0x07, 0x22, 0x71, 0x14, 0x32,
++	0x81, 0x91, 0xA1, 0x08, 0x23, 0x42, 0xB1, 0xC1, 0x15, 0x52, 0xD1, 0xF0,
++	0x24, 0x33, 0x62, 0x72, 0x82, 0x09, 0x0A, 0x16, 0x17, 0x18, 0x19, 0x1A,
++	0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
++	0x3A, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x53, 0x54, 0x55,
++	0x56, 0x57, 0x58, 0x59, 0x5A, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69,
++	0x6A, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x83, 0x84, 0x85,
++	0x86, 0x87, 0x88, 0x89, 0x8A, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98,
++	0x99, 0x9A, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xB2,
++	0xB3, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8, 0xB9, 0xBA, 0xC2, 0xC3, 0xC4, 0xC5,
++	0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8,
++	0xD9, 0xDA, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA,
++	0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA
++};
++
++/*
++ * Contains the data that needs to be sent in the marker segment of an interchange format JPEG
++ * stream or an abbreviated format table specification data stream.
++ * Specifies the huffman table used for encoding the chrominance DC coefficient differences.
++ * The table represents Table K.4 of ITU-T.81
++ */
++const u8 chroma_dc_ht[] = {
++	0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
++	0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B
++};
++
++/*
++ * Contains the data that needs to be sent in the marker segment of an
++ * interchange format JPEG stream or an abbreviated format table specification
++ * data stream. Specifies the huffman table used for encoding the chrominance
++ * AC coefficients. The table represents Table K.6 of ITU-T.81
++ */
++const u8 chroma_ac_ht[] = {
++	0x00, 0x02, 0x01, 0x02, 0x04, 0x04, 0x03, 0x04, 0x07, 0x05, 0x04, 0x04,
++	0x00, 0x01, 0x02, 0x77, 0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21,
++	0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61, 0x71, 0x13, 0x22, 0x32, 0x81,
++	0x08, 0x14, 0x42, 0x91, 0xA1, 0xB1, 0xC1, 0x09, 0x23, 0x33, 0x52, 0xF0,
++	0x15, 0x62, 0x72, 0xD1, 0x0A, 0x16, 0x24, 0x34, 0xE1, 0x25, 0xF1, 0x17,
++	0x18, 0x19, 0x1A, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x35, 0x36, 0x37, 0x38,
++	0x39, 0x3A, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x53, 0x54,
++	0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
++	0x69, 0x6A, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x82, 0x83,
++	0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x92, 0x93, 0x94, 0x95, 0x96,
++	0x97, 0x98, 0x99, 0x9A, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9,
++	0xAA, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8, 0xB9, 0xBA, 0xC2, 0xC3,
++	0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6,
++	0xD7, 0xD8, 0xD9, 0xDA, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9,
++	0xEA, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA
++};
++
+ /**
+  * struct jpeg_stream - JPEG byte stream
+  * @curr: current position in stream
+@@ -675,3 +784,54 @@ int v4l2_jpeg_parse_huffman_tables(void *buf, size_t len,
+ 	return jpeg_parse_huffman_tables(&stream, huffman_tables);
+ }
+ EXPORT_SYMBOL_GPL(v4l2_jpeg_parse_huffman_tables);
++
++/**
++ * v4l2_jpeg_get_reference_quantization_tables - Get reference quantization
++ *						 tables as defined in ITU-T.81
++ * @*ref_luma_qt: Output variable pointing to luma quantization table
++ * @*ref_chroma_qt: Output variable pointint to chroma quantization table
++ */
++void v4l2_jpeg_get_reference_quantization_tables(const u8 **ref_luma_qt, const
++						 u8 **ref_chroma_qt)
++{
++	if (ref_luma_qt)
++		*ref_luma_qt = luma_qt;
++	if (ref_chroma_qt)
++		*ref_chroma_qt = chroma_qt;
++}
++EXPORT_SYMBOL_GPL(v4l2_jpeg_get_reference_quantization_tables);
++
++/**
++ * v4l2_jpeg_get_zig_zag_scan - Get zigzag scan table as defined in ITU-T.81
++ * @*ref_zigzag: Output variable pointing to zigzag scan table
++ */
++void v4l2_jpeg_get_zig_zag_scan(const u8 **ref_zigzag)
++{
++	if (ref_zigzag)
++		*ref_zigzag = zigzag;
++}
++EXPORT_SYMBOL_GPL(v4l2_jpeg_get_zig_zag_scan);
++
++/**
++ * v4l2_jpeg_get_reference_huffman_tables - Get reference huffman tables as
++ *					    defined in ITU-T.81
++ * @*ref_luma_dc_ht : Output variable pointing to huffman table for luma DC
++ * @*ref_luma_ac_ht : Output variable pointing to huffman table for luma AC
++ * @*ref_chroma_dc_ht : Output variable pointing to huffman table for chroma DC
++ * @*ref_chroma_ac_ht : Output variable pointing to huffman table for chroma AC
++ */
++void v4l2_jpeg_get_reference_huffman_tables(const u8 **ref_luma_dc_ht,
++					    const u8 **ref_luma_ac_ht,
++					    const u8 **ref_chroma_dc_ht,
++					    const u8 **ref_chroma_ac_ht)
++{
++	if (ref_luma_dc_ht)
++		*ref_luma_dc_ht = luma_dc_ht;
++	if (ref_luma_ac_ht)
++		*ref_luma_ac_ht = luma_ac_ht;
++	if (ref_chroma_dc_ht)
++		*ref_chroma_dc_ht = chroma_dc_ht;
++	if (ref_chroma_ac_ht)
++		*ref_chroma_ac_ht = chroma_ac_ht;
++}
++EXPORT_SYMBOL_GPL(v4l2_jpeg_get_reference_huffman_tables);
+diff --git a/include/media/v4l2-jpeg.h b/include/media/v4l2-jpeg.h
+index 2dba843ce3bd..7cc9a9febcd4 100644
+--- a/include/media/v4l2-jpeg.h
++++ b/include/media/v4l2-jpeg.h
+@@ -14,6 +14,13 @@
+ 
+ #define V4L2_JPEG_MAX_COMPONENTS	4
+ #define V4L2_JPEG_MAX_TABLES		4
++#define V4L2_JPEG_LUM_HT		0x00
++#define V4L2_JPEG_CHR_HT		0x01
++#define V4L2_JPEG_DC_HT			0x00
++#define V4L2_JPEG_AC_HT			0x10
++#define V4L2_JPEG_REF_HT_AC_LEN		178
++#define V4L2_JPEG_REF_HT_DC_LEN		28
++#define V4L2_JPEG_PIXELS_IN_BLOCK	64
+ 
+ /**
+  * struct v4l2_jpeg_reference - reference into the JPEG buffer
+@@ -154,4 +161,8 @@ int v4l2_jpeg_parse_quantization_tables(void *buf, size_t len, u8 precision,
+ int v4l2_jpeg_parse_huffman_tables(void *buf, size_t len,
+ 				   struct v4l2_jpeg_reference *huffman_tables);
+ 
++void v4l2_jpeg_get_reference_quantization_tables(const u8 **luma_qt, const u8 **chroma_qt);
++void v4l2_jpeg_get_zig_zag_scan(const u8 **zigzag);
++void v4l2_jpeg_get_reference_huffman_tables(const u8 **luma_dc_ht, const u8 **luma_ac_ht,
++					    const u8 **chroma_dc_ht, const u8 **chroma_ac_ht);
+ #endif
+-- 
+2.39.1
 
-That doesn't really help keep it working. I want to see some kind of
-lockdep scheme to enforce this that can validate without ever
-triggering reclaim.
-
-Jason
 
