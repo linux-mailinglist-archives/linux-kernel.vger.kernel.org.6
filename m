@@ -1,220 +1,116 @@
-Return-Path: <linux-kernel+bounces-181858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210268C826D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:09:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5288C8271
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4460A1C20A09
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:08:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F3551F2191F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01FD20B2E;
-	Fri, 17 May 2024 08:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1DD208D1;
+	Fri, 17 May 2024 08:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ugytkyag"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iS/Z4/ob"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B98EC4;
-	Fri, 17 May 2024 08:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3568516415;
+	Fri, 17 May 2024 08:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715933329; cv=none; b=SoWtzRxecwt0/YykL7gyn4FJFNb/y4MQGNE6dSNX56lvb80OJP5QfeR/Le4abIooc/bWwFn8NMAPHsGGHscvbvBToI+YqSvbJ46Yza0vgkcVZyTX8VtP9+bLmBdVB3TRuPA2GRJLCwLTUsJh0ldkDtLhNfXwi6z0gg7m89zNsyk=
+	t=1715933457; cv=none; b=HA37HtuyWpdfORm115Q6S1WWx4slzMyD+esvNt/C+pYuKOLMhXODt0+JInGws5fvinG8dKl7gCEVq6FozrSAbFsQ/e7b8+ACNzDY/vDGUKSIpCtD2IkXxoMzc5jLFj23+1sz9uLGQBk28+vpTa1c54Fn91EPKN0jZtywlfuzNbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715933329; c=relaxed/simple;
-	bh=/GZC7I1iQgQbBCYI1nHiijMoVtVuU+3h4tz2KzRmCtY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d0V+9SO4osje47titlQWgVCRHneqijJyCavb4erT1W39S9BqdChoNIT9GAyiPrhy6Fj40/ZE4FsTG1qsavabXmYTlXJn+GBsxhvFXz3xYZJGon8F4W4B3RE7aSxRM4M3+KfiFNeGo8fOv1lr+uHD0rCkhn4ARXNqnRCLNrH92XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ugytkyag; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6A537FF80C;
-	Fri, 17 May 2024 08:08:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715933323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Oj78yYCBgvj/zAVon1VfCSSs40udj3FUCdRnvFOfm0=;
-	b=UgytkyagotipbBlKbxj2+28X3zFusXNY2lFaFbCWe8lP+3JF9ysNWMZ0nq4xv6xpbNqc2+
-	rsgO83qU9aO7pkeaB1v6iKfp3l5Omqq/YWyv1RdJl5FGssrpRvVjD3T7vsozciGKhhfGJg
-	hr29U4MS0Gh/TlaT5zutak00paf+oxy++thnWCr+5kGNVXroJHIa0lasL6rOGysb+ljeaS
-	daXls87Tq1sx6hLXbb3Wbko4Sre7QV1S7t8bxQfYtc1uKnMtZy2mFIDx0Quzzk4jAnr/6l
-	1HZyk5/OwMZSDddzcer1BifpsilMt6ruSxszTz4krws3I2dfN3fTpDL8opwWcA==
-Date: Fri, 17 May 2024 10:08:43 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Joseph Jang <jjang@nvidia.com>
-Cc: shuah@kernel.org, avagin@google.com, amir73il@gmail.com,
-	brauner@kernel.org, mochs@nvidia.com, jszu@nvidia.com,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] selftest: rtc: Add to check rtc alarm status for alarm
- related test
-Message-ID: <20240517080843aeb408e4@mail.local>
-References: <20240517022847.4094731-1-jjang@nvidia.com>
- <202405170719515a9c6d2f@mail.local>
- <ea0bacc0-2765-4d8f-8b62-0e9c45c560fc@nvidia.com>
+	s=arc-20240116; t=1715933457; c=relaxed/simple;
+	bh=2jUER4iVF4Ci2sbFwXRZy9Fy49bUQFnHWIEQp5KneL0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dWC2cXFa0lnpoGN25u4ycH/fEt3FJBo3ude3ZoQrcwq3ignOZj6TH9zFurFLuYEE34cqQWS2gCSUZxmx7X/R+mgUL/kfIeDsKpwzwbUXr4GupKEM4U8YTgB2rmLUgVbMjnC9gPIIPIqtt5eYagw8b5g2MS3HitZEYfuZTaexFxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iS/Z4/ob; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-523b017a5c6so2555667e87.1;
+        Fri, 17 May 2024 01:10:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715933454; x=1716538254; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/BiBMbqhJzf7qFAm8xRj3DsNK6Or5mWWpiqpUg1D30Y=;
+        b=iS/Z4/obar9h9Dpk5H1+38e8Y4NgTBTCw/8grjTTx39QV/johl0MT/vjdnt+spm0qK
+         C/PHZs6vIAU8l69kkdnzjsT5OhFNfV/nB8eYjyqGO6rnKR4vB5wcYOQkcgwAlKLwpERV
+         etnmCea+uhZp5OI//9VN5f3+99hMX2wgPo8k3/Wj/Q7f2d+UqXbYI0Aj0kKnwky3f+B0
+         9cw9UY8lvtouGoDcJhw5lh7nXKuOPYbvcd2nGimKBfHRP068/aNsHkBhaysJXMxcnQid
+         ZgISafu1L/ZZYaYxFPWV7uJyQgJWdn3iH38++Te+a2BRv3U40V2U5+BtComGct7oRH9C
+         WDLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715933454; x=1716538254;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/BiBMbqhJzf7qFAm8xRj3DsNK6Or5mWWpiqpUg1D30Y=;
+        b=Cu6zzpuX6jKePYutA6FzlPY3z+BOEgzBifHyzZdAw+w9jRPbKnjBhfTOvpu6z6myzQ
+         LgCVMY9klcuz4UaRknbfbWNTLlbNFf2UIeDuo0hCDR1KWIgYsqL3aveKwgRAZLvkhZtT
+         4A3m/00ar0Cz7C528IKa+Hq/Co1Qa7Fu4b+mB5AclBgVnt/GrK4qvMeKyXmh1BNkvWJR
+         atItFrl4xFMUnAXmgvzAV6N0DwpBdcjKFf5XJizDCuvjnUta4w8UmP3qzh3JmhLwvAB1
+         xUNbdJJlJrV9IZfttCYb7eOYXQ5od7x+sl/bPx78ocNDfYb8oV9t6A+OYuoPs80wsG/M
+         TOIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6LLlMQOqBfkMrV4MND0crDMxxdMbILufA8wdAmb+y+XoFbKQ6W0ATSYl02ODd4nVF9nICfZ94mpzB8zKbuNO7Oa83hk7mBvtK6XYrv6BCqJXhzuikzkIwEMw3npkm6cQRL/YKWvPg
+X-Gm-Message-State: AOJu0Yxdd5Y0mu0n2TTQ6lR23/s5xdLSVVrVKoee3eYKvsFX2A2Agpbh
+	TArwmRzvSk8ttcpx1RWRV8hDSz5PxejRYSa/bD0mVu5bkt1E7F/H
+X-Google-Smtp-Source: AGHT+IFicIEMWV0V0nY1tIQ3C7/YiUadLI/iVH/Sb7RhqMQtYImLofB6/nHkVT4U/mhl5JopQ0AwGA==
+X-Received: by 2002:a05:6512:1087:b0:523:78de:11a3 with SMTP id 2adb3069b0e04-52378de12bbmr10921766e87.2.1715933454045;
+        Fri, 17 May 2024 01:10:54 -0700 (PDT)
+Received: from debian.fritz.box ([93.184.186.109])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a90d0e919sm360867866b.85.2024.05.17.01.10.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 01:10:53 -0700 (PDT)
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: 
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Andrew Hepp <andrew.hepp@ahepp.dev>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Add threshold events support
+Date: Fri, 17 May 2024 10:10:48 +0200
+Message-Id: <20240517081050.168698-1-dima.fedrau@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea0bacc0-2765-4d8f-8b62-0e9c45c560fc@nvidia.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On 17/05/2024 15:53:58+0800, Joseph Jang wrote:
-> 
-> 
-> On 2024/5/17 3:19 PM, Alexandre Belloni wrote:
-> > On 16/05/2024 19:28:47-0700, Joseph Jang wrote:
-> > > In alarm_wkalm_set and alarm_wkalm_set_minute test, they use different
-> > > ioctl (RTC_ALM_SET/RTC_WKALM_SET) for alarm feature detection. They will
-> > > skip testing if RTC_ALM_SET/RTC_WKALM_SET ioctl returns an EINVAL error
-> > > code. This design may miss detecting real problems when the
-> > > efi.set_wakeup_time() return errors and then RTC_ALM_SET/RTC_WKALM_SET
-> > > ioctl returns an EINVAL error code with RTC_FEATURE_ALARM enabled.
-> > > 
-> > > In order to make rtctest more explicit and robust, we propose to use
-> > > RTC_PARAM_GET ioctl interface to check rtc alarm feature state before
-> > > running alarm related tests. If the kernel does not support RTC_PARAM_GET
-> > > ioctl interface, we will fallback to check the presence of "alarm" in
-> > > /proc/driver/rtc.
-> > > 
-> > > The rtctest requires the read permission on /dev/rtc0. The rtctest will
-> > > be skipped if the /dev/rtc0 is not readable.
-> > > 
-> > 
-> > This change as to be separated. Also, I'm not sure what happened with
-> > https://lore.kernel.org/all/20230717175251.54390-1-atulpant.linux@gmail.com/
-> > 
-> 
-> I apply above patch and seems like still cannot detect the read
-> permission on /dev/rtc0. I guess the 'F_OK' just check the `/dev/rtc0`
-> was there.
-> 
-> I share the error logs by following for your reference.
-> 
-> TAP version 13
-> 1..1
-> # timeout set to 210
-> # selftests: rtc: rtctest
-> # TAP version 13
-> # 1..8
-> # # Starting 8 tests from 1 test cases.
-> # #  RUN           rtc.date_read ...
-> # # rtctest.c:53:date_read:Expected -1 (-1) != self->fd (-1)
-> # # date_read: Test terminated by assertion
-> # #          FAIL  rtc.date_read
-> 
-> Not sure if we could skip the testing by following change ?
-> 
-> FIXTURE_SETUP(rtc) {
-> +     if (access(rtc_file, R_OK) != 0)
-> +             SKIP(return, "Skipping test since cannot access %s, perhaps
-> miss sudo",
-> +                      rtc_file)
-> +
->       self->fd = open(rtc_file, O_RDONLY);
-> }
-> 
-> And I make sure we need root permission to access `/dev/rtc0`.
-> 
+Add patch for providing index for both channels and add patch for threshold
+events support for the MCP9600 device.
 
-There is no need to test for every tests of the suite, the check could
-be done once. To be clear, you don't need to be root to access the RTC,
-you need CAP_SYS_TIME and CAP_SYS_RESOURCE.
+Changes in V2:
+  - Remove pretty printing patches from series
+  - Add patch for providing index for both channels(ABI change)!
+    Suggested by Jonathan, hope this okay.
+  - Remove formatting in a precursor patch
+  - Add lock documentation
+  - Add define MCP9600_TEMP_SCALE_NUM and use it instead of MICRO. MICRO is
+    type unsigned long which we have to cast to int when using
+    multiplication or division, because we are handling negative values.
+  - Use switch statement in mcp9600_write_thresh
+  - Replaced generic interrupt handler with four separate interrupt handler
+  - Use one lock instead of four
+  - Added error check for mcp9600_probe_alerts
+     
 
-> 
-> 
-> > > Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services
-> > > as optional")
-> > > 
-> > > Reviewed-by: Jeremy Szu <jszu@nvidia.com>
-> > > Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
-> > > Signed-off-by: Joseph Jang <jjang@nvidia.com>
-> > > ---
-> > >   tools/testing/selftests/rtc/Makefile  |  2 +-
-> > >   tools/testing/selftests/rtc/rtctest.c | 72 +++++++++++++++++++--------
-> > >   2 files changed, 53 insertions(+), 21 deletions(-)
-> > > 
-> > > diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
-> > > index 55198ecc04db..6e3a98fb24ba 100644
-> > > --- a/tools/testing/selftests/rtc/Makefile
-> > > +++ b/tools/testing/selftests/rtc/Makefile
-> > > @@ -1,5 +1,5 @@
-> > >   # SPDX-License-Identifier: GPL-2.0
-> > > -CFLAGS += -O3 -Wl,-no-as-needed -Wall
-> > > +CFLAGS += -O3 -Wl,-no-as-needed -Wall -I../../../../usr/include/
-> > >   LDLIBS += -lrt -lpthread -lm
-> > >   TEST_GEN_PROGS = rtctest
-> > > diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
-> > > index 63ce02d1d5cc..aa47b17fbd1a 100644
-> > > --- a/tools/testing/selftests/rtc/rtctest.c
-> > > +++ b/tools/testing/selftests/rtc/rtctest.c
-> > > @@ -8,6 +8,7 @@
-> > >   #include <errno.h>
-> > >   #include <fcntl.h>
-> > >   #include <linux/rtc.h>
-> > > +#include <stdbool.h>
-> > >   #include <stdio.h>
-> > >   #include <stdlib.h>
-> > >   #include <sys/ioctl.h>
-> > > @@ -24,12 +25,17 @@
-> > >   #define READ_LOOP_SLEEP_MS 11
-> > >   static char *rtc_file = "/dev/rtc0";
-> > > +static char *rtc_procfs = "/proc/driver/rtc";
-> > >   FIXTURE(rtc) {
-> > >   	int fd;
-> > >   };
-> > >   FIXTURE_SETUP(rtc) {
-> > > +	if (access(rtc_file, R_OK) != 0)
-> > > +		SKIP(return, "Skipping test since cannot access %s, perhaps miss sudo",
-> > > +			 rtc_file);
-> > 
-> > > +
-> > >   	self->fd = open(rtc_file, O_RDONLY);
-> > >   }
-> > > @@ -82,6 +88,36 @@ static void nanosleep_with_retries(long ns)
-> > >   	}
-> > >   }
-> > > +static bool is_rtc_alarm_supported(int fd)
-> > > +{
-> > > +	struct rtc_param param = { 0 };
-> > > +	int rc;
-> > > +	char buf[1024] = { 0 };
-> > > +
-> > > +	/* Validate kernel reflects unsupported RTC alarm state */
-> > > +	param.param = RTC_PARAM_FEATURES;
-> > > +	param.index = 0;
-> > > +	rc = ioctl(fd, RTC_PARAM_GET, &param);
-> > > +	if (rc < 0) {
-> > > +		/* Fallback to read rtc procfs */
-> > > +		fd = open(rtc_procfs, O_RDONLY);
-> > 
-> > I think I was clear on the previous thread, no new users of the procfs
-> > interface. You can carry this n your own tree but that can't be
-> > upstream.
-> > 
-> 
-> Okay ~ If we use RTC_PARAM_GET ioctl to detect rtc feature only, not
-> sure if that is okay for upstream ?
+Dimitri Fedrau (2):
+  iio: temperature: mcp9600: Provide index for both channels
+  iio: temperature: mcp9600: add threshold events support
 
-Yes, using RTC_PARAM_GET is ok but I'm pretty sure this is not solving
-you are seeing following the efi patch you are pointing to.
-
-The patch clears RTC_FEATURE_ALARM when the alarm is not present which
-will ensure the ioctl fails and so the test will already be skipped. My
-guess is that your ssue ias actually when the alarm is present and the
-test will run and wait forever for an interrupt that will never come.
-
+ drivers/iio/temperature/mcp9600.c | 398 +++++++++++++++++++++++++++++-
+ 1 file changed, 396 insertions(+), 2 deletions(-)
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.39.2
+
 
