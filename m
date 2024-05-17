@@ -1,96 +1,167 @@
-Return-Path: <linux-kernel+bounces-182524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E678C8C53
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:47:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B5D48C8C5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B49F1C22222
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF7B5284156
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 18:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B235A13DDDE;
-	Fri, 17 May 2024 18:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB1C13E046;
+	Fri, 17 May 2024 18:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlf+SEjN"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S0KuzdJy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDBDDDD2
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 18:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E2412FF62;
+	Fri, 17 May 2024 18:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715971619; cv=none; b=l/HtapiJpdhpafWlnMGLmmoR7Wr+IG7aVs+R/AXXaVZ0DLx5Pa+GSF80FICVNe5m/l9pxXUJRFK4Ak8gX+HTPv9ye4AgUw11iKSo0Qzs4aR4FwCuyPnft8JJbFV/604EGYl+3eLDZzB9Q52LaeKf3lKWN1vmjEHO60HYpFB1+eE=
+	t=1715971733; cv=none; b=Z7FAJ8v64PQiM3zID8x10Lk08h7H5CD+Qu79+cp/fYs3KIWZBDle2s74VZ9FdfQ/pcsLwhPoDpMUPNy69kZSPr+Uib+b3uC/3WxF3n5dkbirilPwYwhJOm+johCOAN4fNDF3kvN54Cl0aZnxe9U1kei9kuLRxYkwl7UPCNGRfE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715971619; c=relaxed/simple;
-	bh=6gZk5G9ksuxMBjlE42/DbLKVatGkz/eNfmbiqI5K4YI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Drs1vAdwPTLr/my1D0lOipFinP5Cyl95zhdyUd0lJOEhGMJnOUfk5X2ciP38qbcF1B04QXMBvVpOndi7cE+Nu4K/rzBrTDlwLEeM1QQSoeQrufiqv8YGaNC790/hlES60EVlYyIvy3OQr3NbU8CcE4/QOswhd2mxTMXO8xT7/QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlf+SEjN; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1ed904c2280so16184585ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 11:46:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715971617; x=1716576417; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oXhAaCaiYyOHYqit9rnfiuIAuuuhWQ3ya3X2a8yBXBw=;
-        b=dlf+SEjNQw925gwDJoDecV9JBpu9ohWACiiK6LpKyEjICP3uRRd2K13/rguXm4l4Dg
-         wbhON/aH2kpWulRMSQKmdJmNwHB7+fXP23t5OMPxBbQ7hsKhd6ErqiaJn/Ycn94KLEAq
-         aUV4dby+PscGq2qL6v5Q2VweFGGLnlzGe80V4A1Na8S2eit0NxLDA67Q6tJ6mGRex/5d
-         EhKS3bsW0leqL8BVzSeOd0e8sCJdSdp8E4qx7dK2pIvc6CkjpGs96XMfPAYgpzWs6zgA
-         iKzcO3+TY4VJD3ZKcxC+QzZvk1CQMWOIjbVueuYBohDlzs687F2zKYlhYgmK26vobNrl
-         DVmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715971617; x=1716576417;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oXhAaCaiYyOHYqit9rnfiuIAuuuhWQ3ya3X2a8yBXBw=;
-        b=dPJ3cCZC4NiQ1oQzp2zx1pIQ/tKNytTQAJn1cR48IkoK5job3ufedlND7I0svZl6m/
-         DFUQs+MznTUmUAWGz7jGlF+blE4ckCiRCM5aFex6nBv7GVvejJwNDxiL+0HP6VIK+aPY
-         LlIXXwWdHS3CuIwSsyAkiKml/RzZilWh6BuybGD+lCLmWbrhRBTg6rIOIHtXTbAylAKi
-         AKkTKJitm9vHC66PH1wgi3QOyDp0yJMUUg2grRXqU1LLs41tuKTjNF3D6ijCk6n54Ms0
-         40jksK2JNpUbB3Cfbl5XIGcb547TIErIJdG5nSdM8MIVnnPw88dLIqwnDoj4iSTONi1y
-         jFDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVH6X6zzpbcN3a4ipQs5p2nT17g4InSIPDWShE1x+3aZWGoo204a+cuOuEmWgsRKtxaKxCXF8Ho96VBb7q+YwesZGWhYA+gNJtbnaT3
-X-Gm-Message-State: AOJu0YyqFAIQFUJVWWnroc1bRuLz9YQWUIDRyT6gpN9M6TZCycpfavoR
-	z/eLO5YA1u5nKjMFwIgkWywoaR+p44u05phnobMrno4l7NtYBOq40zA10+Wm
-X-Google-Smtp-Source: AGHT+IGuK4tlv6elKQLXlpqv9JaWkwcM0ZHTpJYNGXMIbwPWXWCLJmWYp8OxQ9zflGZIdBjxOs5nFA==
-X-Received: by 2002:a17:903:2310:b0:1f0:99c9:c8b with SMTP id d9443c01a7336-1f099c90e93mr69759345ad.22.1715971616815;
-        Fri, 17 May 2024 11:46:56 -0700 (PDT)
-Received: from fedora (c-73-170-51-167.hsd1.ca.comcast.net. [73.170.51.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c03646asm159891105ad.212.2024.05.17.11.46.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 11:46:56 -0700 (PDT)
-Date: Fri, 17 May 2024 11:46:54 -0700
-From: Vishal Moola <vishal.moola@gmail.com>
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Muchun Song <muchun.song@linux.dev>,
-	Peter Xu <peterx@redhat.com>
-Subject: Re: [PATCH] mm/hugetlb: Drop node_alloc_noretry from
- alloc_fresh_hugetlb_folio
-Message-ID: <ZkemHlBorivxl5-I@fedora>
-References: <20240516081035.5651-1-osalvador@suse.de>
+	s=arc-20240116; t=1715971733; c=relaxed/simple;
+	bh=UM6gQoNMVQIJoDJk0WcpEkgp07QTJ6kBNj+xs+mDh60=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RzVdIEheFMaRTL8zx8zmWm5VSNPe3shgV0oWzKawv1mKozAs1cNm0HSiR/uWQjC5Jol3u3lSxYHrGKbTqlD32WcYA8hogdkgjV0XINI6i3SN1gceLcQWpcVC0JXDTSJjhUvArM7IJc3LO7laRpvogszqZhSHV25UXZEfaa0vDNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S0KuzdJy; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715971732; x=1747507732;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UM6gQoNMVQIJoDJk0WcpEkgp07QTJ6kBNj+xs+mDh60=;
+  b=S0KuzdJy7huaro3qXIScytiHF77fm2c8e1yl+KPcurHG8zv4Fqfcwz35
+   1JFVX+ogZaaIRl3F+mlHhs9bHqrEyOPq1wUUYb6m5KxDMMHOvvTvs5H+f
+   VFjvQWDdSIc+4+8JW1q1oyWH+Z2wcX1rc3p34a+A+Xt+TEV/XO2dOuVjW
+   Mx5FdHF+Czghdk72kIjQeRGrdWonPEqZTH00g2naOSIUC+pwmmZUgKs/I
+   UtTzUqgL3zprRnyFJwfPBWFHsLjsMVh+ktNdtslDQg2BS5nf1lTnKYDDV
+   aTP6/r/q510ZsFacH+nuO7z4vMjQRcovD2OdOqQhOyXwruM3oMbIDepW0
+   g==;
+X-CSE-ConnectionGUID: GFHJM0iPQaGrsJiDf9Nwwg==
+X-CSE-MsgGUID: cromf7c+QyyXYrBNB8F+dg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="15999371"
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="15999371"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 11:48:46 -0700
+X-CSE-ConnectionGUID: WenvWQ8IS5OlWKsBuz0FEQ==
+X-CSE-MsgGUID: L8+RYOSYRc+cji2ySaAQIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
+   d="scan'208";a="36614910"
+Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.108.204]) ([10.125.108.204])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 11:48:45 -0700
+Message-ID: <7813dff5-b140-48c4-bc15-ed25c7a07591@intel.com>
+Date: Fri, 17 May 2024 11:48:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516081035.5651-1-osalvador@suse.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [regression] suspend stress test stalls within 30 minutes
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev, Jeff Johnson <quic_jjohnson@quicinc.com>
+References: <87o79cjjik.fsf@kernel.org>
+ <20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
+ <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
+ <87h6f4jdrq.fsf@kernel.org> <878r0djxgc.fsf@kernel.org>
+ <874jb0jzx5.fsf@kernel.org>
+ <20240514160555.GCZkOL41oB3hBt45eO@fat_crate.local>
+ <87msoofjg1.fsf@kernel.org> <35086bb6-ee11-4ac6-b8ba-5fab20065b54@intel.com>
+ <871q60ffnr.fsf@kernel.org>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <871q60ffnr.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 16, 2024 at 10:10:35AM +0200, Oscar Salvador wrote:
-> Since commit d67e32f26713 ("hugetlb: restructure pool allocations"),
-> the parameter node_alloc_noretry from alloc_fresh_hugetlb_folio()
-> is not used, so drop it.
-> 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+On 5/17/24 11:37, Kalle Valo wrote:
+> While writing this email I found another way to continue the suspend
+> after a stall: terminate rtcwake with CTRL-C in the ssh session running
+> the for loop. That explains why 'sudo shutdown -h now' makes the suspend
+> go forward, it most likely kills the stalled rtcwake process.
 
-Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Could we try and figure out what rtcwake is doing during its stall?  A
+couple of ideas:
+
+You could strace it to see if it's hung in the kernel:
+
+	strace -o strace.log rtcwake ... <args here>
+
+You could look at its stack in /proc, like this:
+
+# cat /proc/`pidof sleep`/stack
+[<0>] hrtimer_nanosleep+0xb5/0x190
+[<0>] common_nsleep+0x44/0x50
+[<0>] __x64_sys_clock_nanosleep+0xcb/0x140
+[<0>] do_syscall_64+0x65/0x140
+[<0>] entry_SYSCALL_64_after_hwframe+0x6e/0x76
+
+Or you can use sysrq:
+
+	echo t > /proc/sysrq-trigger
+
+to get *all* tasks' stacks dumped out to dmesg.
+
+I'd probably do all three in that order.
+
+Getting a function-graph trace of rtcwake during the stall would also be
+nice, but that's a lot of data so let's try the easier things first.
 
