@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-182647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E647E8C8DCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:38:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479E78C8DCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 23:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E1EF285D2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:38:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1CC1F225BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 21:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3731422CC;
-	Fri, 17 May 2024 21:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948711411E0;
+	Fri, 17 May 2024 21:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mFo7Gl7Y"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mi7xV7Sd"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E7913E048
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 21:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896511422C9
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 21:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715981864; cv=none; b=kP1rDFzpSmu3o3Jmi4vD3Du8roYdJtAqkgVIYpsE3S3hV2uYDmYSI/hpdR5GiS0EXVHydJEo9xHEO/X9oTihfdihuCuRFWN0eLuKv9fVVYjANzn5ivzFsZyEwoiaL+jGvu3lu/3w0NZdC+JJ4TE0lmEgub0Y8gEnlwGlk3/nH/M=
+	t=1715981865; cv=none; b=FMATqh6065+Up1UAaDdkhcYUy1oTVcBWlNatnp7Ng76Ipiy0RyvyOXPARcDHdcxVDeCN/hfgsaTV1pUMLZTzUI0d1DcRk/7RvcvmjO2chI5KGHOnDDTZg2iIjiZySIwCDUHj1KcYdr0AexGX3p8kF8Uea+e+2oXKe7d4dSIk9bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715981864; c=relaxed/simple;
-	bh=ckWQJuqXlhrd6HsiKwZ31CHUqWA+QXm9Sn8Kntfaoik=;
+	s=arc-20240116; t=1715981865; c=relaxed/simple;
+	bh=K70MRhubaL7E70O+JgiR7Yf5st7HgO2JT92PC9Ya7Zk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lPEoUOLnzI9KI8ViKU75EjCFkVASeuSG7JdH2+o4+RU4XUlsz//1CfM2VfG++ZBWgYNvDDix2mEqMYFChEMSalI48JtlRqAIYvF72xhUV6JXoEMo/nyAJy/wl97+ZWslWq/c3CHf7ACiljgroWN8lzdczkqWlv4eAJ7zSOr5pJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mFo7Gl7Y; arc=none smtp.client-ip=209.85.210.177
+	 MIME-Version; b=SNHJesSh62x0MNkzDh+89b8ZJ7TTncqpcw39VdpoAt5bx2G9b1EM8Jk5XnScjWGpWEHcn0Yr3u4wfYn5xGPSZUTtH3LDwAnLyyn9BazLZuLKPeNLVcDXH+7xc5PtRxxzGXE4i+wfWMNTjy0xb7W1db4ak/p/dXqXrtCJpCMnpwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mi7xV7Sd; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f457853950so426325b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:37:42 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1edf506b216so22082845ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 14:37:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715981862; x=1716586662; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1715981864; x=1716586664; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qdxmCQIjRAvO8BCfViIMJHCflXvR2bqDUxHByEsJNv0=;
-        b=mFo7Gl7Y5iATgGbX6iD92/I1S6PMcpFFVs07aKCH0FsXMTdGkENwl5nz60X88MQRk/
-         bdVkYDWGnbbGEJ0qiP0RDdmfnjryqlaadDKejyxTLRilWYfsftsxbj6WCya2xJhU5hAN
-         F5GdYPEhRdOankhQ35zIfk47EGsLqJFW6cVvo=
+        bh=VOCpqzi3HqgLjpNBxA0mBkV791uaa9LyaeXWVqamirw=;
+        b=mi7xV7SdU0Vbr7A1Nj1ysyC7NOh08wna9siJ7wD/jdJ/XrJUuheQStOR4iw+TEWI2z
+         w09dZCcpa9KZDqwMQJ+wbAWAtzPslBLUL5YuylAeGWCsv+fn6QRJAhd6XUUDIftvvqiN
+         hh2zn9cTSxxNLQ3Jz0UVf7dauHsPa/FzlEMo4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715981862; x=1716586662;
+        d=1e100.net; s=20230601; t=1715981864; x=1716586664;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qdxmCQIjRAvO8BCfViIMJHCflXvR2bqDUxHByEsJNv0=;
-        b=AJ5vqhFQFXBGy1Yg09pgueRvCyGXT2mSryi3ypkxONKLkLAqPIaKv/FhSn5lGOKyQQ
-         Lo41v+zWitpwm3INjomfyK4A2ax8vbdF+hWKbNm9UKJt8UvGD69JCx00Lno2nnBFa4/4
-         LIwrRq404kvWsutgaAFh9WswEf3Y80R+rpxpeZTDDZ+7QaUZ9IMES05d8gyn2nz8WXUz
-         Eszk+TItDFZjKqutag3nDc0Junyojtjmn2yszVa0StaY2FkIl9Px4HNuWMmWq3w0o4qb
-         JqJwVDHrHpxIb0h0pzRWpsFBVgty+fsLO3WEWT5qxsCQ2TQnQriVZ0zGmZUCnJfjnDj5
-         rfng==
-X-Forwarded-Encrypted: i=1; AJvYcCXHA1e1aI7qQkGqZraxuNCzXCshXLu/CvyzSzyQCxCbHxRqxJ2k8VSjUqkiapFeop+W0cyt1jzPD9i5HDsSKiJcnu7C6tqnj+qOtpE1
-X-Gm-Message-State: AOJu0YxTbdQhWj0Cf+Ch4JwcygYkpTm/yxf0rUDQNo/fW4bmmkthLIiw
-	WsEzG2lUjjzdA4KV6j0kBLjG8OPH/ZOVWMKYF2KoXFc46N1UP3sfd8c7nSmCqA==
-X-Google-Smtp-Source: AGHT+IHX2L9EVLQc886otDLXwIh9pr9UtYuwXLoQCTn5ubCeZ2plNpUi+ivhbdW42Vwp09Y6f6yc9w==
-X-Received: by 2002:a05:6a20:d80b:b0:1af:37bf:d7de with SMTP id adf61e73a8af0-1b1ca3bca44mr433294637.7.1715981862038;
-        Fri, 17 May 2024 14:37:42 -0700 (PDT)
+        bh=VOCpqzi3HqgLjpNBxA0mBkV791uaa9LyaeXWVqamirw=;
+        b=r4CgTdpKOuAdpCvglVIpAOjDpbpn4a+wYyogJrwcOIh2ih5ktdO8S5SzgXi9Dhfuf2
+         ddgMtvGDwwmviRI5t9XnfET7LUy/hOX9EOUKaeb5M2M3b/gXUyRKienEwYJ+NNx4/rTP
+         0S1qHqjtB4my3F7iMcq/sPgn2q/43ActyhAHWnDhHbCxgGuGOKqiVxxAGycErUjJ8MXm
+         PH23ZKlsyrGsACC/Hdmf21QUthPS273smEVrmYi07NDl9U6ZeCqmu8ztvCh5UDKWvppf
+         OJXO18LLQ+nFbFiArTksZ1a9AT5z6thTOZQnrrKn/6avpsk4fp6SI5xfn2bk4+V5LHHC
+         lfkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVoJrYj0tvVlIXUFLHECt5fwmMEpy0UL+vJbKUjSSHxbRrJ7Cq2cYu4Qs10+CvRmE3qQ+pB0hg17lHeQ2eAc03kG3CHpcOCjvkTFtVX
+X-Gm-Message-State: AOJu0YxOSaI36Zu8nGpY1P56YrRqVG9nPzv5RwB298TJ38HGxINhEQc4
+	M8FvEwrz4m1ceuHCNDZ+K0ZPZbsXxLh6ytjUC6124K71v2gkR3ybAAC5q9JJcQ==
+X-Google-Smtp-Source: AGHT+IHQeVpOpHuWwPDHwj5Y2EyRQy9AOFOGAMnBVeq9k04cNJAbxX1fcU7hJFn6i0+Z3n4aXjp8KA==
+X-Received: by 2002:a05:6a00:1ad0:b0:6e6:9f47:c18c with SMTP id d2e1a72fcca58-6f4e03858b3mr27717561b3a.33.1715981863806;
+        Fri, 17 May 2024 14:37:43 -0700 (PDT)
 Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:26de:b1dd:5:771c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b2f8b3sm15168736b3a.211.2024.05.17.14.37.40
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b2f8b3sm15168736b3a.211.2024.05.17.14.37.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 14:37:41 -0700 (PDT)
+        Fri, 17 May 2024 14:37:43 -0700 (PDT)
 From: Douglas Anderson <dianders@chromium.org>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <quic_jesszhan@quicinc.com>,
@@ -78,9 +78,9 @@ Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] drm/panel: ilitek-ili9882t: If prepare fails, disable GPIO before regulators
-Date: Fri, 17 May 2024 14:36:39 -0700
-Message-ID: <20240517143643.4.Ieb0179065847972a0f13e9a8574a80a5f65f3338@changeid>
+Subject: [PATCH 5/8] drm/panel: ilitek-ili9882t: Check for errors on the NOP in prepare()
+Date: Fri, 17 May 2024 14:36:40 -0700
+Message-ID: <20240517143643.5.I323476ba9fa8cc7a5adee4c1ec95202785cc5686@changeid>
 X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
 In-Reply-To: <20240517213712.3135166-1-dianders@chromium.org>
 References: <20240517213712.3135166-1-dianders@chromium.org>
@@ -92,36 +92,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The enable GPIO should clearly be set low before turning off
-regulators. That matches both the inverse order that things were
-enabled and also the order in unprepare().
+The mipi_dsi_dcs_nop() function returns an error but we weren't
+checking it in ili9882t_prepare(). Add a check. This is highly
+unlikely to matter in practice. If the NOP failed then likely later
+MIPI commands would fail too.
+
+Found by code inspection.
 
 Fixes: e2450d32e5fb ("drm/panel: ili9882t: Break out as separate driver")
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
- drivers/gpu/drm/panel/panel-ilitek-ili9882t.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/panel/panel-ilitek-ili9882t.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c b/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
-index 830d7cfbe857..a2ea25bb6624 100644
+index a2ea25bb6624..266a087fe14c 100644
 --- a/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
 +++ b/drivers/gpu/drm/panel/panel-ilitek-ili9882t.c
-@@ -495,13 +495,13 @@ static int ili9882t_prepare(struct drm_panel *panel)
- 	return 0;
+@@ -478,7 +478,11 @@ static int ili9882t_prepare(struct drm_panel *panel)
+ 	usleep_range(10000, 11000);
  
- poweroff:
-+	gpiod_set_value(ili->enable_gpio, 0);
- 	regulator_disable(ili->avee);
- poweroffavdd:
- 	regulator_disable(ili->avdd);
- poweroff1v8:
- 	usleep_range(5000, 7000);
- 	regulator_disable(ili->pp1800);
--	gpiod_set_value(ili->enable_gpio, 0);
+ 	// MIPI needs to keep the LP11 state before the lcm_reset pin is pulled high
+-	mipi_dsi_dcs_nop(ili->dsi);
++	ret = mipi_dsi_dcs_nop(ili->dsi);
++	if (ret < 0) {
++		dev_err(&ili->dsi->dev, "Failed to send NOP: %d\n", ret);
++		goto poweroff;
++	}
+ 	usleep_range(1000, 2000);
  
- 	return ret;
- }
+ 	gpiod_set_value(ili->enable_gpio, 1);
 -- 
 2.45.0.rc1.225.g2a3ae87e7f-goog
 
