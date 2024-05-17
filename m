@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-182614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F798C8D58
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C95CD8C8D59
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 485AD1C222EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6939D1F23A33
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 20:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4D01411F4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCBC1411FD;
 	Fri, 17 May 2024 20:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUPJroVQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEnd9VM3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB9C1CAA9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8FEF4EE;
 	Fri, 17 May 2024 20:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715978310; cv=none; b=otdGbkTy7v7c4PyMbRdftDnBPQP85kyR1cqXpF+XH+VrOf4EUT3PJzViYtVjyqiU2Io5S7YY4ddIH5h72Aju6/GHNfAXPOMGkA57aXi7h5NzLA59l/+KkUbWsmw6L5sfmuf4BWieY2YMeuoZi1qMIkIkWYV+LvuUffs7n82zE98=
+	t=1715978310; cv=none; b=QNoOLEUw5IzRTF0hbWToEyWHxuMHmuWZklSFRShv0y5Fm15z1bHnWN8XG8frOUP0ky+2ZdOY4eqt+h8smxZRNwP6Ptlggfad9hUqCapQ6HVr31M0upJw71jQ4l4fTwIEKZCDTHjxfAsF+vFQ361qmlcT3fJAThVUM+XC313LZI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715978310; c=relaxed/simple;
-	bh=rjXgBf9SXm9iJZB7YQT2V26iQljWZCNDD8RD97X8MY8=;
+	bh=qZxGEu1hAOMmpvEJRGTMEizv4knrf8goXPzI+KOUMZ4=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=B4xQoQKxxlAMdRpsPoX3G0zKPTb5drlqbsYkhnI93k2Lc8LNdpBbjehkx+Ag0Qou5KWjjxUfPuOIsLdMN6j9F0Bk1RPeABe+exVGFQX2pWKMmhPl0siHULaRdnAM4LHVAQ/dps+j+IL28HDLiESuaAs8zCX6dbx7IQYCfvlWR6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUPJroVQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A5BE4C2BD10;
+	 In-Reply-To:To:Cc; b=QC5jTYi4VLowJ6hH2fkXlP6oYt/Bbg/98jKimmOwCl9D5sDrNB4KpKKXbdF+jyTrS+78urnV6c+RPRi2pPXZ2gmoco6UX0pk2+pbGGwtjaz4eu7Uxb38dbvdK8nmCEmx33HBHDQRKFIOrlyrf0kXih9lTa2uR12bfwaAQ7UFPWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bEnd9VM3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9EC14C32786;
 	Fri, 17 May 2024 20:38:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1715978309;
-	bh=rjXgBf9SXm9iJZB7YQT2V26iQljWZCNDD8RD97X8MY8=;
+	bh=qZxGEu1hAOMmpvEJRGTMEizv4knrf8goXPzI+KOUMZ4=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hUPJroVQ5Kj6AV04VCin3eTymgh6ea1Kz6huBswXme5ZumhjmHKyX7sd5lryRWhCB
-	 N+JEc7kf3j2hjmIvetJclTeq0poiq5hudFQmmqMJft4GgzbjkOHvb97xEdFRZla+g0
-	 fvFRb5fM/sq0tgamwLAz9N40Hi73A8PHH5vkXdZDhTy/lPWT3AkZGCX2BOaK/kLywo
-	 +CIASrfGqdP4qn5O6Mll63dMe3c7zFxxDFslWPRmNdotbSzJVDGGezI8zTytJFNF40
-	 l1vkviSBH2KfP1MzHyCmYFgdq+fCuFDGeGRvGTnrsUSaLIUR79AUIt0BUUi0jcyNk0
-	 qQ1jZmgyDUK+w==
+	b=bEnd9VM3U/qZtWjrIsDwmUE0L42Qh55OPmYP4nL1IvXRjySNl+FqTith8kqdcZR3g
+	 oBPjZe9ASSV0CvMUAYJ1gs0q2ERuNDG+/UPQDSvafulJ8ln5u4VtY9D1namgHUA0gk
+	 J74WDJ1AG6zoOTjZ4L2gTLPx6MUskfOcIcbppRH9+1tQJtA4FS7Uy8/i4hyIwsa9rH
+	 pvs+V8oEgIXwpDYD6b73OQsKhIcyclreBz1iOi9hhh97olqfMvdVAGWtodQINhEIiC
+	 SdRBjS3GTPpOWHjnIid1Yw2m+7VEYx3DoPMKQJtKA3cBY4CBFNOUve3Zyrp0DGnVyI
+	 cHCwH81nnLZew==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 95E00C54BD4;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8C09FC43336;
 	Fri, 17 May 2024 20:38:29 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,40 +51,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2 1/1] net: dsa: microchip: Correct initialization order
- for KSZ88x3 ports
+Subject: Re: [PATCH] MAINTAINERS: net: Update reviewers for TI's Ethernet drivers
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171597830961.5541.4864481930303671659.git-patchwork-notify@kernel.org>
+ <171597830956.5541.6328372782096647166.git-patchwork-notify@kernel.org>
 Date: Fri, 17 May 2024 20:38:29 +0000
-References: <20240517050121.2174412-1-o.rempel@pengutronix.de>
-In-Reply-To: <20240517050121.2174412-1-o.rempel@pengutronix.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: davem@davemloft.net, andrew@lunn.ch, edumazet@google.com,
- f.fainelli@gmail.com, kuba@kernel.org, pabeni@redhat.com, olteanv@gmail.com,
- woojung.huh@microchip.com, arun.ramadoss@microchip.com, hkelam@marvell.com,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- UNGLinuxDriver@microchip.com, dsahern@kernel.org, horms@kernel.org,
- willemb@google.com, san@skov.dk
+References: <20240516082545.6412-1-r-gunasekaran@ti.com>
+In-Reply-To: <20240516082545.6412-1-r-gunasekaran@ti.com>
+To: Ravi Gunasekaran <r-gunasekaran@ti.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org, s-vadapalli@ti.com, rogerq@kernel.org
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri, 17 May 2024 07:01:21 +0200 you wrote:
-> Adjust the initialization sequence of KSZ88x3 switches to enable
-> 802.1p priority control on Port 2 before configuring Port 1. This
-> change ensures the apptrust functionality on Port 1 operates
-> correctly, as it depends on the priority settings of Port 2. The
-> prior initialization sequence incorrectly configured Port 1 first,
-> which could lead to functional discrepancies.
+On Thu, 16 May 2024 13:55:45 +0530 you wrote:
+> Remove myself as reviewer for TI's ethernet drivers
+> 
+> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
+> ---
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v2,1/1] net: dsa: microchip: Correct initialization order for KSZ88x3 ports
-    https://git.kernel.org/netdev/net/c/f0fa84116434
+  - MAINTAINERS: net: Update reviewers for TI's Ethernet drivers
+    https://git.kernel.org/netdev/net/c/31279b0cb45f
 
 You are awesome, thank you!
 -- 
