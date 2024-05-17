@@ -1,146 +1,124 @@
-Return-Path: <linux-kernel+bounces-182667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB248C8E3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:05:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7026D8C8E42
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AA9AB21B7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:05:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96ECF1C211F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 22:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4B71411FF;
-	Fri, 17 May 2024 22:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288BE1411FD;
+	Fri, 17 May 2024 22:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cs65yOiU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SM+yHknU"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F492208F
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 22:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8871C14036E;
+	Fri, 17 May 2024 22:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715983520; cv=none; b=rmeVVIqdjGv2GbSUJGF6ENHJ3PBn8iiSon1axC3z58Db5vFY6fQicFNjKqFtlUaKEbZ/D0E5x/yGJEaPWxJoO/jQPZMXfgQISq/1GB4OfFwN3OIcRyMD9gBWPOzCK6AlgFtNaDV0uxL6kdLBc/O2dNhsiZpMc9LY99dPtXg8hvw=
+	t=1715983757; cv=none; b=lcQJzA8tyNu7fxXKxBSAindpDEGBMFrdcTQBdJxZfXjo7VXUbLI0VI+pIfOkopdAD4qISbnIxbtmH9c1VOKqZ06TcjXdbdTjPwP5T/+FIjbVk4/4kzy9xcXLOWJBcIscHnXXEJURPwHSWoBTFfoyqt6ClxrkObyEuTUjeQuS6cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715983520; c=relaxed/simple;
-	bh=AHx8CIhs2HHm+fB0sCzYsJzW+7XsKO52cFDTr2C0qY0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KmrMsiMs6EOOG6Smk2T3N8roZoRtnAtSvIrkwX8vhzkuRIaWsyfbJ/mn1cPAlerNSwkB9HUtzHl58FWhcWCIrqg8adNWQZzzv5VE1obbLJ96fPcl3aiBK2rF86jSRDJmyKVqGvDzZ18V4Jp1s/n8P4QqosTD/yyEd8LaaKinBR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cs65yOiU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715983518;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zt2YQ8as06qnba86WmttjcIU7BwJ2cSLKT1s3ZSljEo=;
-	b=Cs65yOiUvFNlreTHDFQS9TOKfsYJsf7xBE8mH86xFPPfui6KT63kZg/FTLCvMsyG6HbUzb
-	ldcY5SBMYKdMKKXRpVDW2gGgeivxmAMiFZDyUk7YYPsZ/Ml0UeKpVDTx9rxhB1rxssZwat
-	QLdBDp+GE5y3A8zL9vJja/H87tKVRzs=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-32-zJaLiAmLOa2sZ-YsAklFAQ-1; Fri, 17 May 2024 18:05:16 -0400
-X-MC-Unique: zJaLiAmLOa2sZ-YsAklFAQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-34e0d47c9b7so4499646f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 15:05:16 -0700 (PDT)
+	s=arc-20240116; t=1715983757; c=relaxed/simple;
+	bh=p7VQrt0hVF85r4m78hml7+feoryJV2oP7cwJcWERmvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cU9oKna+3mHsSkInmCZsyapx/wY+aa8hqLLez/KZ0N2yfrPKYx+QPZgfgeXhUUe/Z89v2mZZKzVo7MZQ1IrW1H7mThgjT7sJpS0wOuI6jAb4JK7dX06c5EQTWi98WXfaETpmr4B5iHk3DuzUcgzwMsuFejYoB7xn/69EutBdPPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SM+yHknU; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1eca195a7c8so23346935ad.2;
+        Fri, 17 May 2024 15:09:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715983755; x=1716588555; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F5FbSn9s1tKydRJA9pzDZNSE1X7qwTwIhhD2Dj3Awq0=;
+        b=SM+yHknURpFs2EbRKkYkhrH9x2qJvdMc5A5w4GxKJH7OUEf28FgRVVn+E/ouC6i5au
+         9sezYq8hdpaHlSVoEJt2npad3JtT1unPx8mjiCTXAFni8aB1E8mIyjU0obnbTNPYQ66y
+         aPSiE7p4sNTD7jxHUM2Aj2tKYsLw2ZIK4znszpgsgRX6UtgBOX6qZu9/ta5ymCRxXyQ/
+         U/xcXFwITscLrOIMo+Os5BnxheaS8zdlguzvy+Ewg6epr5k5/rW1MOwCZObZDxT10WQ0
+         FxmQeh82Fhi86rzReFbw2Pd2Ccr6EPS2uJesTA08pvEB7XFRxx4UOVbFwrQtxwQ3QfO7
+         7L3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715983515; x=1716588315;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1715983755; x=1716588555;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Zt2YQ8as06qnba86WmttjcIU7BwJ2cSLKT1s3ZSljEo=;
-        b=wY6OFGqOgtnX7ikVyzk7lPOCqxlCvLbU4bYfQ3uq9V38own38H4b1UrtW+TWQyCyY5
-         2QhHGdkqbBvA2wa7ipQMUJcieUARr2T86V3qVM8LVJ3pd7Cz3TVh3zoHuLE9bDA5hV8c
-         LrTyZ2gAvEAh1Cnd9jMuWm9OXysbtbOigo+CrNiJ6dMZmsNEz9ZQyDpEzrVJTQMr2cFa
-         yYylkG3E29Mw42lRxOWZOYrgX8OvCVP18t8GzA99o16DW4skaalMXK/CXk2BCOfy1KMT
-         yuf3MUpPyrmG1c9Meq/MY69Ho+FgcSzGpDJWlz2dnmORkTGRbrUORxf1HFhzNM/EFsCC
-         pkbQ==
-X-Gm-Message-State: AOJu0YyvO7L+LemNDkndrhy05OPw6rRtdFpJzlcSzYmibXwETIMN9Gy7
-	uVU2Sb50gC74PjPaQ+fDIoXX4Terb4uPJ8EiLeghP9lhxDUEzaj3yoHzyHoyDiKsdphkgKO4Ouy
-	egCRfZS1au3HleKjSEyeUt64eLBHgcwR/X9ax/a5qo5mWJF/krHucLhEHRVvm3q8WpMDegdZzjI
-	mdkfVHZdoD2xiwuIhnA6YC6ru9De2GHIcoPArq
-X-Received: by 2002:adf:cb14:0:b0:34c:f87b:f9fb with SMTP id ffacd0b85a97d-354b8e677aamr269061f8f.25.1715983515289;
-        Fri, 17 May 2024 15:05:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHCykS6wvyjHIXN8dpfn4UDJzkZBOEpL4smez8eBByWg6Ebpx8Upm7/QjviJimReTQbmgO7ksC6tbxtT31lW1g=
-X-Received: by 2002:adf:cb14:0:b0:34c:f87b:f9fb with SMTP id
- ffacd0b85a97d-354b8e677aamr269052f8f.25.1715983514904; Fri, 17 May 2024
- 15:05:14 -0700 (PDT)
+        bh=F5FbSn9s1tKydRJA9pzDZNSE1X7qwTwIhhD2Dj3Awq0=;
+        b=n6DsLGKvYTHJa6XjcGf/KNJHh3HLw7o3Ny89q+XlsVHs2aUBf8GIE7gQr9P/cc4Pxa
+         XJhToNuLY8IwFb9+zqwtDULCAQXHkLfjelHe6GkWiFS/WPqNdX+FLsYfSBzHWRUWPUtw
+         UafBRtkHpYJCUdk/zV0zVCPYZV9Fk9QmQWRtGfWTLuyJW9xFGD+pFgyF+jP9OUvZJeJ8
+         8wrgkw8MryvDBxsQqBjyinuwbGCXAYDOTOktLJBVlYKBxIqYB8kiY6RG0A6Py6XBocAa
+         Kq3VpTEx6qVaxjkBKFYyaiHE47NsUoKbgTEaQZBxKqevFyel+lLWQYw7EiQI29Cc/8Yh
+         8ISg==
+X-Forwarded-Encrypted: i=1; AJvYcCXL6n9+YAdKaPIhmAznu3zpfEo3wqUpPrqwL0tdp2nS8R8Y/hPnGnb7zxOfR9RNlXXT0+R07ZU0BPFQe2MJwYP4jV/AflP36GDigaTvUkTUt+iaUWlI57hSnJG2Qs1Tcg23ucuI9o1y
+X-Gm-Message-State: AOJu0YyTW0QUiMqWPR9GS9lKSxi61sk3AYsybBAJ/Y/255XBzGdalvTm
+	TSiXLJRD7h3xSUN+Gt1coR2BdIPlx7IMaxhL3fO6zSRvJA3AaYVC
+X-Google-Smtp-Source: AGHT+IHw0SSxGbgWgUfIQ48u5aCrMJ6NxXHY/lsXY2qPFDOykt16gP2/9vDERX5jfEkmQg6e7+nhmA==
+X-Received: by 2002:a05:6a00:845:b0:6f4:4723:98b3 with SMTP id d2e1a72fcca58-6f4e02ada39mr25737638b3a.13.1715983754717;
+        Fri, 17 May 2024 15:09:14 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ae0f7fsm15181332b3a.120.2024.05.17.15.09.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 15:09:13 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 17 May 2024 15:09:12 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Duanqiang Wen <duanqiangwen@net-swift.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
+ entries
+Message-ID: <7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net>
+References: <E1rl62V-004UFh-Te@rmk-PC.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507154459.3950778-1-pbonzini@redhat.com> <20240507154459.3950778-8-pbonzini@redhat.com>
- <ZkVHh49Hn8gB3_9o@google.com> <7c0bbec7-fa5c-4f55-9c08-ca0e94e68f7c@redhat.com>
- <ZkeH8agqiHzay5r9@google.com> <2450ce49-2230-45a2-bc0d-b21071f2cce6@redhat.com>
- <ZkefU_PhjvnaEE7Q@google.com>
-In-Reply-To: <ZkefU_PhjvnaEE7Q@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Sat, 18 May 2024 00:05:01 +0200
-Message-ID: <CABgObfYwxN7yoRUDfYVPb57=p90nUqfW9+y_=Ndeg4oXKaZNQg@mail.gmail.com>
-Subject: Re: [PATCH 7/7] KVM: VMX: Introduce test mode related to EPT
- violation VE
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <E1rl62V-004UFh-Te@rmk-PC.armlinux.org.uk>
 
-On Fri, May 17, 2024 at 8:18=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
-> > Ok, so it does look like a CPU issue.  Even with the fixes you identifi=
-ed, I
-> > don't see any other solution than adding scary text in Kconfig, default=
-ing
-> > it to "n", and adding an also-very-scary pr_err_once("...") the first t=
-ime
-> > VMPTRLD is executed with CONFIG_KVM_INTEL_PROVE_VE.
->
-> I don't think we need to make it super scary, at least not yet.  KVM just=
- needs
-> to not kill the VM, which thanks to the BUSY flag is trivial: just resume=
- the guest.
-> Then the failure is "just" a WARN, which won't be anywhere near as proble=
-matic for
-> KVM developers.
->
-> If we don't have a resolution by rc6 or so, then maybe consider doing som=
-ething
-> more drastic?
->
-> I agree that it should be off by default though.  And the help text shoul=
-d be
-> more clear that this intended only for developers and testing environment=
-s.
->
-> I have a handful of patches, including one to not kill the VM.  I'll try =
-to post
-> them later today, mostly just need to write changelogs.
->
-> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-> index 75082c4a9ac4..5c22186671e9 100644
-> --- a/arch/x86/kvm/Kconfig
-> +++ b/arch/x86/kvm/Kconfig
-> @@ -98,15 +98,15 @@ config KVM_INTEL
->
->  config KVM_INTEL_PROVE_VE
->          bool "Check that guests do not receive #VE exceptions"
-> -        default KVM_PROVE_MMU || DEBUG_KERNEL
-> -        depends on KVM_INTEL
-> +        depends on KVM_INTEL && KVM_PROVE_MMU
->          help
+Hi,
 
-"depends on KVM_PROVE_MMU" is wrong, I think.  I'd like to keep it
-enabled without slowing down too much the VMs, for example.
+On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
+> Report an error when an attempt to register a clkdev entry results in a
+> truncated string so the problem can be easily spotted.
+> 
+> Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
+> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
-On the other hand "default DEBUG_KERNEL" is definitely too heavy
-with these CPU issues.
+With this patch in the mainline kernel, I get
 
-Paolo
+10000000.clock-controller:corepll: device ID is greater than 24
+sifive-clk-prci 10000000.clock-controller: Failed to register clkdev for corepll: -12
+sifive-clk-prci 10000000.clock-controller: could not register clocks: -12
+sifive-clk-prci 10000000.clock-controller: probe with driver sifive-clk-prci failed with error -12
+..
+platform 10060000.gpio: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+platform 10010000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+platform 10011000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+platform 10040000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+platform 10050000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+platform 10090000.ethernet: deferred probe pending: platform: supplier 10000000.clock-controller not ready
 
+when trying to boot sifive_u in qemu.
+
+Apparently, "10000000.clock-controller" is too long. Any suggestion on
+how to solve the problem ? I guess using dev_name(dev) as dev_id parameter
+for clk_hw_register_clkdev() is not or no longer a good idea.
+What else should be used instead ?
+
+Thanks,
+Guenter
 
