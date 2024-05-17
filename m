@@ -1,219 +1,217 @@
-Return-Path: <linux-kernel+bounces-182418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E8288C8B0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:34:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD8E8C8B10
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 19:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31C7C1C21229
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:34:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C30251C20E36
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBC313DDAB;
-	Fri, 17 May 2024 17:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EBE13DDBD;
+	Fri, 17 May 2024 17:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hRx/x4GZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PcxsyGNJ"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E9213DDAA
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715967254; cv=fail; b=BBtywfZAgjJVwj5lYmEUi62yxuRzACNyqRsbqqty4pauE+1ONWCyp6xF6rC3y/gfdi2vljS3YxXe55MWAfN2RfHC5Cr5ARFpLzilv6aerbtXWL76AKZuAJoHurcUYi8oldQ9gez35fJyZWzlgixHrjfw7h7c7nhJsSlVhMD3tU8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715967254; c=relaxed/simple;
-	bh=eHM/cGN/ra+h/pjGDBgAitE0l8YbOjfigVLPWeO1vX8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ea8RwXWr/oXVsSSxlx9n5AYzASiKRJv3HJwGN2ycwawSdOABxeX7elujXsC0QYwFb32z3d/5kc5mCwmsCbTHCPu0yButNa22BTMsjAloVLn2GTMhEU4ZH0mLF4NDPDPRmEhRId/aXlbnIyB1sRn/8WSO8X4Jxd53LsqQ8ZV55jg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hRx/x4GZ; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715967253; x=1747503253;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=eHM/cGN/ra+h/pjGDBgAitE0l8YbOjfigVLPWeO1vX8=;
-  b=hRx/x4GZiJ6v3zySl/uOQKh0nLOcsopygtqxENWq1xDTuWCMI0JTv/cB
-   11+fzZF4K5XldswiHQLm/5+mqySE5c1NHrqt/JMThA50oPhWua+gir+qh
-   DBxaWhIfGmdWVq5gAecBJ+HC/0RUKGVquXQPzMKebdgJxjeU8lY6oFed+
-   rckycXSvMMQVBIoVcmsH5+fXNf/r/6qoZBREJ11vUhHv0NTA9uNr6n2KV
-   pjhHfvqxJwiitiOABD/Zz53iH6vJuJGIeA8nhxIgUcbWyJw+lKtFoI2IN
-   13PzPgIEg4lyxEgdv6tdqhRT9MYZi2x41QPXzeTxnZqZnQrxpZk/2aWvi
-   Q==;
-X-CSE-ConnectionGUID: 2lhGkGhbQj6BaXHH0ZjA/w==
-X-CSE-MsgGUID: H5MzFaOdSDu6/vEm8CVGJw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="15989662"
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="15989662"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 10:34:12 -0700
-X-CSE-ConnectionGUID: OJNVBta+TOqlhUzU90RXBA==
-X-CSE-MsgGUID: 4n8RrjJwQfG0lQ71lerwww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="36669135"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 May 2024 10:34:12 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 17 May 2024 10:34:10 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 17 May 2024 10:34:10 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.101)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 17 May 2024 10:34:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fYySl+qIqlfIRVJ5u9qRaalQRRCMK2M5cmqRhBZrQvgEpznN7vBc3ls5p0vJDg/iBbGgNZPpWTRCj9ZKFGlRnLgQUVlYI+kNF1LlxdJAD7BlBBlUCH8hV4W/hFx51Hwwap8UOHGjmhFymPOVFf22+D+O7hjV7McCd2CCrCihdgvf1v4HCjnE+JyqlGZd3btYshGXQ2D5m2s6sHhb5yan8AUchu9AIaQtG23JWN1fqFoaSJIlOAxoBcRs0Mda50cpH4h0PSzlB8r90sd2kNXxlARRfuOU2UmvC9H/vglOvufeRsxs6jJVPCb4nCPmOtQpfqWIGvgF/MOByKOdScCX3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YlQwzNMi/kAlbERZCQVpRn+2VuXlXril5bSzMjoUMG4=;
- b=OKCVUjBvoQTwlLcWukjCdHo8vJ9TYdApIpPnwEt7KOsaNtu4R0ctfSu/w9OvcryxoDshaqPIDJ7MWV0meErE6Hoky5D9fkAh0xlQnyzPMerg9OUyRx1qQPTmZ4FxiihelaEeAP+jxIRPqlb00dG39teztMf6pwTT2adanoGzdIVTi7ABnMlCU6aX4LaL2h1rYBwYDYdGfpb9dWOPHaYsDICjoWnECOzh/PU2eqhwkuHbQZQQqST6+F15KfIuCmx92adfDfK6NCWoFZ9uOveiuN1jRVwGgc3BahdM9AWs7q5h1PfB5LaiL4feX49WKRpRXkj6jhUvDLgqiAXErzVvjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by PH8PR11MB6975.namprd11.prod.outlook.com (2603:10b6:510:224::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.27; Fri, 17 May
- 2024 17:34:00 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.7587.028; Fri, 17 May 2024
- 17:34:00 +0000
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>
-CC: "H. Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)"
-	<peterz@infradead.org>, Uros Bizjak <ubizjak@gmail.com>, "Edgecombe, Rick P"
-	<rick.p.edgecombe@intel.com>, Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik
-	<mjguzik@gmail.com>, Thomas Renninger <trenn@suse.de>, Greg Kroah-Hartman
-	<gregkh@suse.de>, Andi Kleen <ak@linux.intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: RE: [PATCH v3] x86/cpu: Fix x86_match_cpu() to match just
- X86_VENDOR_INTEL
-Thread-Topic: [PATCH v3] x86/cpu: Fix x86_match_cpu() to match just
- X86_VENDOR_INTEL
-Thread-Index: AQHaqH6zwUWGNcLDPEWX8DDSkF3v67GbrzUQ
-Date: Fri, 17 May 2024 17:34:00 +0000
-Message-ID: <SJ1PR11MB60836FA552BC0DFF4FDDD449FCEE2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20240517172134.7255-1-tony.luck@intel.com>
-In-Reply-To: <20240517172134.7255-1-tony.luck@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|PH8PR11MB6975:EE_
-x-ms-office365-filtering-correlation-id: 13bf6e88-9e00-45ee-ab00-08dc76978a15
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|366007|7416005|376005|38070700009;
-x-microsoft-antispam-message-info: =?us-ascii?Q?/fno5y0noCqBtPL2VpwkC5p4AxST8XtOaJHbPuqMPXMd7EUnuVbVugOscS80?=
- =?us-ascii?Q?ngA5pqlfYwYwE9n89B1OqQj9S0e+5etRUZhNSXRCh2gmw/eF4HypDbM6v8zo?=
- =?us-ascii?Q?0HFcLB8u9li7KYvNynQszXXn8Mv7qITvvR8EhdBkmWwH5n5oi3xH5zvKZsNd?=
- =?us-ascii?Q?1gy1FiF0Oc1bwRMgUfVAglC02vCZsyODFwwUchQe4A/YbfRkGbXH1VHKF/Y9?=
- =?us-ascii?Q?FsdQv6+1nF4Vog8zuhQhdy834P49/kSgCnDOhRJfPNLgT5FxlM3T6pTwJl8Z?=
- =?us-ascii?Q?pvlAjR0sKIssCNMT0g5Z2cggpea3+vJnsuM75lcThovT7SjTYezSczdgSaRy?=
- =?us-ascii?Q?Hj8p5xFohjn2PAeQRttPpr9QuxpHtTORBYxDeSDwzokGcUS8rthy0CwnE76I?=
- =?us-ascii?Q?OzSRHKin2GLcMvu0v4HmEAzt6YSqPe/tUVKo5OSEdJ6zzeA6iWcznp2OTJNT?=
- =?us-ascii?Q?fCGwfw5RqU3oTH25c4G1NII/2dUd+Cd2bZEKT+RokoRQTXOFwPbnCsWd6c3I?=
- =?us-ascii?Q?GsmMxCpCd4pNaW8/gUldn1xy+rK0umU+YLI/kZE4FyOorJVI1ufFdKkBlHeV?=
- =?us-ascii?Q?BfmCFOa96J2y71cnAXYgUql56841Qhx+pqy/HCLE+W1A+JRPW7R8odROMllQ?=
- =?us-ascii?Q?gy007tQNKj9fQxWczlRcwpd8U61ynEKDNCpY15pFojQDG2b+Hac9MuIJ7iEr?=
- =?us-ascii?Q?bQ3GiyOrxv6lh1eXJpfcHWhBdr87Lm20pUnyRQl6PiF3HZR+IR2Rm0zxplQ7?=
- =?us-ascii?Q?V5SZ4S9hxjHoxQsY4UxpzJQO9/kS/VZHfnLYduI/BfR8RCw7/RokEUDoITED?=
- =?us-ascii?Q?8ugkBvRKVgYlW4DNMhFStY42Ki2U2x7xicTFToMgkEcA0wXJk6GAUCYs68um?=
- =?us-ascii?Q?iuxPxKP7HmE687pCCd5tk1sU26oe4/WbYGIdzGr7Z6szCcuJR/rQdiC8mUov?=
- =?us-ascii?Q?H6lA3a1xy/BjL67XGPByDT7GIVw+Gqg3NQLHBUISD9xb25XfdzhYKZ4PlDvx?=
- =?us-ascii?Q?8dff4/JOAQFMT+fA+qQEz26awqeRnFBwRRJsmx/vxf1quNBhBqsLCkKpIRd/?=
- =?us-ascii?Q?4VL9F46BXyw69MstE+rE2xQCRp9tSSqTuW7X4o2I+XWdSoTgk7cbg0ffp4yU?=
- =?us-ascii?Q?j8K38fVUT35qRDYJNnPWUVizIeJEfEQc7TTwNUtdyR8RVgU+9jRSoTfW1nte?=
- =?us-ascii?Q?oJWhWEKGyKAJiVNAE3Lt/ro5bUZKcVHWRPhaWFB0/LCUb5SzyimFnSWN1FGq?=
- =?us-ascii?Q?0Ihz6Q6v2hpmhGkHO1A1Vpd6rGIzlfpidbKB/um3VdU9YSbldrx2iINXKMdR?=
- =?us-ascii?Q?9Ut/a4w2Xojd4p52Pjz2uubErFgcwDqx7B4dj6HfuimhIQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(7416005)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?E0QRTYQjBtrJXWHbU+0qpxURFYN41a3CBq3yYHP2Fozari1xl1xUuF9ip2HY?=
- =?us-ascii?Q?FEBIjkbxm0vaCeN6LfalEkjKBw3jp3pSL31Pd0JZ8gBTLnm4YgbM7mhqcfkK?=
- =?us-ascii?Q?fvYE72PHtVEAQefTCmVbsJMInZGJd5z9uN7kwB9xxOoA6P5zn4MYcrAjD3S0?=
- =?us-ascii?Q?RXb8Zrpc68+8fdcwK9TGvayVCxA/048GQVQ7iSdDbttfy2JyjkY0tY3thhlf?=
- =?us-ascii?Q?jiKp2wdq9gSrKnn7C2CO3LGP8kLsoayLnUitgCn23CiTeJf2kZdiIoxmuFsj?=
- =?us-ascii?Q?APDW4+bGBVZB/8H8VH3M7s6SnQ2ja5TY4/rz1SZvQX7fZq5wZl1wAQraJdH1?=
- =?us-ascii?Q?tg/RrRpxOP/7ywQb9AvvdO+kGuL6sVAH4O1QlpExNzGSLSQ/RpyH9eDXjmzk?=
- =?us-ascii?Q?2Vu2D/71DyDjFouv/OzWgTbisH8o9lGd09jnqnfq+nDVFp3Ox+T51yk4d6nD?=
- =?us-ascii?Q?p3s65bX8L7QXnok/PeNKXjjCheGwHbfH5SuX1NnJc4zEc4YWVOsXoVYNZtjR?=
- =?us-ascii?Q?8VCxDFG/Fw5C1urvooicRMw/5KWNvOEmAHiSNKwcKpY5X7UNAHrGln+T7JFV?=
- =?us-ascii?Q?0vQzXp47CrLBActG6No1iqtlCRqK+olOPMpfE0fF+qYMzBRuQeQQMdPsfup6?=
- =?us-ascii?Q?wWcJR59oZBPoVs9r+/RGxUpIy7MRjFIPYLFiQuK2XMVu7n1Q089uRxieWmpc?=
- =?us-ascii?Q?j2TSz2jEA+DZJjssdk0orZ05h/bGLu9FfoyL7tW/+K0Husc+mMmKeQR+xI+U?=
- =?us-ascii?Q?d5LdbonbPdrCnu/ezOWo4s29JJl9wrG9GUVoZfgVemLvJ+7STXSxv0FxxsLK?=
- =?us-ascii?Q?pmx73TkdfboFcoxln3B/HvyJIWk8D5Le6UdA941MS2jjZzlf4smNEiZtYKdt?=
- =?us-ascii?Q?zOQiQmgAFEB6nc+olqSuONpRQ3wW8dYSrAhPWAkspdwKJJN98wFz0/EiUIkI?=
- =?us-ascii?Q?SH1KUFXwyvko8W1e9d+X83SzwrBUvdKHfrv/LvUgJbKYuQQi6C6WEkCyGY62?=
- =?us-ascii?Q?zM92w7mYh6RaFM+e3ghISYzQWCdEJmy+d2PTPeUDwHVTtPi9xJs2BYnz3ct1?=
- =?us-ascii?Q?VMzA2xe51gO8IE+An6dMUvIJ/o6Z5TeZnqS4aQrGFyhWH4t5RAQhtaMITliV?=
- =?us-ascii?Q?C2x9ssIKVGlJSdzcNYNJjH4xZzd9Heoh+yXolvs5znFp5KyRPhj/UyJ3FvQy?=
- =?us-ascii?Q?X0ux0yqXs4NKYCuPVpbedRHp2Z6CkESPlJxmhPkDyF3UbF9qNc5pVrHY9Xt8?=
- =?us-ascii?Q?jhn7TppmryKDBmqA9wfAREHLlGHHCPwWhoFyTtvQmSx18ti2puWc9V0asmud?=
- =?us-ascii?Q?O22Ino6VfHMawNhZvpt4YHJ3908SpvLu2tD4GAupPXMqcSweEwOspU3m3FNh?=
- =?us-ascii?Q?2JZBa8tHG2E5YnKXpt2uxRsaDW75WJnu0o8k4QFIeXg9gENTpEGJDsNCK+6V?=
- =?us-ascii?Q?Z1guRIaTQ0KgmA+Va6rAlkn6ybcCHJyO3mQR58GrvuQn4sYce0GzHno1zckD?=
- =?us-ascii?Q?ZIZTUn0z5gdxSJHV5adSRgf3CbOqd8zhNn/AL1CPuqMRCa8nV2xUJIciA0jf?=
- =?us-ascii?Q?s0OEoX/9XQXbtjv4d+4UbiRPlnj/1CSvOrvj3277?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1167B12FB3E;
+	Fri, 17 May 2024 17:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715967309; cv=none; b=IN21uufPQWGbbFpL520ASGyYq9kp4ktQ6YG14YX7yzElyd8Kwb8HGiDI865YmbFClG6HV2cVHnXlIykZ24k0/SVcRnr+UmaJ1ioHlnytMaNGUxsTzp/RYT6vrUPszEP78HBq3p9cFLCTENZdtutwf/5z5MPw7x5+LHUBVQH/aG4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715967309; c=relaxed/simple;
+	bh=ts8Xsyq+0uTJeMUWAzUoeOyXLXbXHL5nEoRZTz2x9Nw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HyjzklPkwuWsH/qTLhuWuBinG2Y5crRFiFDhY/i3D2feLWgSVimYuVjPB9c0vL3dy9IsmvvQP4jRFlm1GgXKjFkpaWDk44erWRZ9SEmqiZGAd1dyqaMDYQwoJHWdwVs+2fNCu6wyv86E5ECWL3hcTwLET//9rVvuGosP3HVmbPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PcxsyGNJ; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44HHYkYk070619;
+	Fri, 17 May 2024 12:34:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715967286;
+	bh=7lH6XgebuD5+cOHM5Ouf6iH8SCTXIhgdzzJycOb4RnI=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=PcxsyGNJScK4zjIqid0H0S9mIbHgYMgpC+nuQUM1BujXtCrYh1JlAD3nvwPES2tIS
+	 d20JI3FdDpx4pmBaOjdVDsz0tjYTXf2x6fg07ipBYcuhR3xb6Yo1PnaNJhkkzK1ZIE
+	 FLej0fv1jG1WMHJOiwI1hwcl/K5+leAi5e7/R5HE=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44HHYkUG116515
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 17 May 2024 12:34:46 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 17
+ May 2024 12:34:46 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 17 May 2024 12:34:46 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44HHYjE4129547;
+	Fri, 17 May 2024 12:34:45 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
+        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
+        <andriy.shevchenko@linux.intel.com>, <adobriyan@gmail.com>,
+        <jani.nikula@intel.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>, <davidgow@google.com>, <dlatypov@google.com>
+Subject: [PATCH v8 06/10] math.h: Add macros for rounding to closest value
+Date: Fri, 17 May 2024 23:04:45 +0530
+Message-ID: <20240517173445.797071-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240517171532.748684-1-devarsht@ti.com>
+References: <20240517171532.748684-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13bf6e88-9e00-45ee-ab00-08dc76978a15
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 May 2024 17:34:00.8262
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YkECBMKFQDhOKMJozGd1NAs8TYnYlkbvBmDio6JKjkjdHEJnp3V7mE2OPYtHkoBw4AOontlga40uXzPbPBjCtg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6975
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/proc=
-essor.h
-> index cb4f6c513c48..271c4c95bc37 100644
-> --- a/arch/x86/include/asm/processor.h
-> +++ b/arch/x86/include/asm/processor.h
-> @@ -175,10 +175,10 @@ struct cpuinfo_x86 {
->       unsigned                initialized : 1;
->  } __randomize_layout;
->
-> -#define X86_VENDOR_INTEL     0
->  #define X86_VENDOR_CYRIX     1
->  #define X86_VENDOR_AMD               2
->  #define X86_VENDOR_UMC               3
-> +#define X86_VENDOR_INTEL     4
->  #define X86_VENDOR_CENTAUR   5
->  #define X86_VENDOR_TRANSMETA 7
->  #define X86_VENDOR_NSC               8
+Add below rounding related macros:
 
-Bother ... I pasted in the whole of old patch to get the change log.=20
-Obviously this part isn't needed in v3
+round_closest_up(x, y) : Rounds x to closest multiple of y where y is a
+power of 2, with a preference to round up in case two nearest values are
+possible.
 
-Sorry.
+round_closest_down(x, y) : Rounds x to closest multiple of y where y is a
+power of 2, with a preference to round down in case two nearest values are
+possible.
 
--Tony
+roundclosest(x, y) : Rounds x to closest multiple of y, this macro should
+generally be used only when y is not multiple of 2 as otherwise
+round_closest* macros should be used which are much faster.
+
+Examples:
+ * round_closest_up(17, 4) = 16
+ * round_closest_up(15, 4) = 16
+ * round_closest_up(14, 4) = 16
+ * round_closest_down(17, 4) = 16
+ * round_closest_down(15, 4) = 16
+ * round_closest_down(14, 4) = 12
+ * roundclosest(21, 5) = 20
+ * roundclosest(19, 5) = 20
+ * roundclosest(17, 5) = 15
+
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+---
+NOTE: This patch is inspired from the Mentor Graphics IPU driver [1]
+which uses similar macro locally and which is updated in further patch
+in the series to use this generic macro instead along with other drivers
+having similar requirements.
+
+[1]:
+https://elixir.bootlin.com/linux/v6.8.9/source/drivers/gpu/ipu-v3/ipu-image-convert.c#L480
+
+V8:
+- Add new macro to round to nearest value for non-multiple of 2
+- Update commit message as suggested
+
+V1->V6 (No change, patch introduced in V7)
+---
+ include/linux/math.h | 65 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+
+diff --git a/include/linux/math.h b/include/linux/math.h
+index dd4152711de7..e2cc3769ed0e 100644
+--- a/include/linux/math.h
++++ b/include/linux/math.h
+@@ -34,6 +34,54 @@
+  */
+ #define round_down(x, y) ((x) & ~__round_mask(x, y))
+ 
++/**
++ * round_closest_up - round closest to be multiple of specified value (which is
++ *                    power of 2) with preference to rounding up
++
++ * @x: the value to round
++ * @y: multiple to round closest to (must be a power of 2)
++ *
++ * Rounds @x to closest multiple of @y (which must be a power of 2).
++ * The value can be either rounded up or rounded down depending upon rounded
++ * value's closeness to the specified value. If there are two closest possible
++ * values, i.e. the difference between the specified value and it's rounded up
++ * and rounded down values is same then preference is given to rounded up
++ * value.
++ *
++ * To perform arbitrary rounding to closest value (not multiple of 2), use
++ * roundclosest().
++ *
++ * Examples :
++ * round_closest_up(17, 4) = 16
++ * round_closest_up(15, 4) = 16
++ * round_closest_up(14, 4) = 16
++ */
++#define round_closest_up(x, y) round_down((x) + (y) / 2, (y))
++
++/**
++ * round_closest_down - round closest to be multiple of specified value (which
++ *			is power of 2) with preference to rounding down
++ *
++ * @x: the value to round
++ * @y: multiple to round closest to (must be a power of 2)
++ *
++ * Rounds @x to closest multiple of @y (which must be a power of 2).
++ * The value can be either rounded up or rounded down depending upon rounded
++ * value's closeness to the specified value. If there are two closest possible
++ * values, i.e. the difference between the specified value and it's rounded up
++ * and rounded down values is same then preference is given to rounded up
++ * value.
++ *
++ * To perform arbitrary rounding to closest value (not multiple of 2), use
++ * roundclosest().
++ *
++ * Examples :
++ * round_closest_down(17, 4) = 16
++ * round_closest_down(15, 4) = 16
++ * round_closest_down(14, 4) = 12
++ */
++#define round_closest_down(x, y) round_up((x) - (y) / 2, (y))
++
+ #define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
+ 
+ #define DIV_ROUND_DOWN_ULL(ll, d) \
+@@ -77,6 +125,23 @@
+ }							\
+ )
+ 
++/**
++ * roundclosest - round to nearest multiple
++ * @x: the value to round
++ * @y: multiple to round nearest to
++ *
++ * Rounds @x to nearest multiple of @y.
++ * The rounded value can be greater than or less than @x depending
++ * upon it's nearness to @x. If @y will always be a power of 2, consider
++ * using the faster round_closest_up() or round_closest_down().
++ *
++ * Examples :
++ * roundclosest(21, 5) = 20
++ * roundclosest(19, 5) = 20
++ * roundclosest(17, 5) = 15
++ */
++#define roundclosest(x, y) rounddown((x) + (y) / 2, (y))
++
+ /*
+  * Divide positive or negative dividend by positive or negative divisor
+  * and round to closest integer. Result is undefined for negative
+-- 
+2.39.1
+
 
