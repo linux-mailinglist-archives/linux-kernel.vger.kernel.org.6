@@ -1,274 +1,133 @@
-Return-Path: <linux-kernel+bounces-182267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBA78C8900
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:04:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7282F8C891D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 17:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F281F21E34
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:04:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A1B1F22222
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 15:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D846A008;
-	Fri, 17 May 2024 15:04:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EC464CE1;
-	Fri, 17 May 2024 15:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5A412CDB6;
+	Fri, 17 May 2024 15:15:36 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CFD1F93E;
+	Fri, 17 May 2024 15:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715958249; cv=none; b=J5LKj+d3FHBQGUvAdF4/LjinAJUzHWKp4vh2BAw7MvcQwaDi23COzfofEPKKWFdK8nCQ0eSUOiY9sS4Vg1QlhFFGUm85G3S4LrQddDyvT6vvSYujv1tbelkr3bCJG0ng7YFG3WBxdkBOgLtxVE0qwJpfvEY6YnsA5YpdpW6tu9k=
+	t=1715958936; cv=none; b=Z3rEy1bJri2zaQqsMJpU5drb4fJbW1w7DUOVk7dwTDyxC+7EX19bGE7BmLvSX91j3+TrwSsUmmGB2iZL3GNkc2z8LTp56+TQgYUMn2w0sufOfObfgn+Gt9W02WI/JuqeqOPM1CO8XMY6RrAz63ytxKsuHfHvLIqKqT4Ch9wM2E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715958249; c=relaxed/simple;
-	bh=rmCP6QYgkI9Sl3Ub1SJ2idoZZMhLo/H/14aEl6gI9G4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TTJZ1hv1o4fOvSqIDRVSO7ZGsOlk1WH+TDYX/sKSSr87SuE3Wp+rxKZINuKQbWuNfcLAUmKWybO3ys4WkSBF1Zznig4vhazkwEBNcCiQMrWFkZm7xR+DYC4G480WIvaveXZoHDBuFQ0+rGWX+JsSZbDklu7cKpsdYDBwpc8iw70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2BE01424;
-	Fri, 17 May 2024 08:04:27 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 85E6D3F762;
-	Fri, 17 May 2024 08:03:59 -0700 (PDT)
-Message-ID: <981c85f3-6d43-4c2b-a440-88bf81a18e55@arm.com>
-Date: Fri, 17 May 2024 16:03:57 +0100
+	s=arc-20240116; t=1715958936; c=relaxed/simple;
+	bh=tzkeAutgHKDvtezMaRFIFQ1vOKGxq4NGB23kr6qrPCE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NI4PbtxFjKBzBBKfazPnlMDCjISSNrRK3l8PhRF0KKoo/FCxjwor8agjswJtkcvS9R3+TI7MGCuu/1GVheHznJMBLIP5EA6K7hOd+SxVldsET6OHJUs4mlGtyEV+OVfKQbFl7pVw5WCVN7mnzpfidRyYm6KNNOXwGGvH6Oq2OwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=link.tyut.edu.cn; spf=pass smtp.mailfrom=link.tyut.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=link.tyut.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=link.tyut.edu.cn
+Received: from localhost.localdomain (unknown [120.208.127.153])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 2CDA0920119;
+	Fri, 17 May 2024 23:05:50 +0800 (CST)
+From: Hu Haowen <2023002089@link.tyut.edu.cn>
+To: corbet@lwn.net
+Cc: Hu Haowen <2023002089@link.tyut.edu.cn>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs/zh_TW: add translation for glossary
+Date: Fri, 17 May 2024 23:05:28 +0800
+Message-ID: <20240517150529.102958-1-2023002089@link.tyut.edu.cn>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/7] iommu/dma: Make limit checks self-contained
-To: Jon Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Christoph Hellwig <hch@lst.de>
-Cc: Vineet Gupta <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
- Niklas Schnelle <schnelle@linux.ibm.com>,
- Matthew Rosato <mjrosato@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-acpi@vger.kernel.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <cover.1713523152.git.robin.murphy@arm.com>
- <e28a114243d1e79eb3609aded034f8529521333f.1713523152.git.robin.murphy@arm.com>
- <243d441d-dda8-442a-a495-83bf9725a14c@nvidia.com>
- <48c39306-c226-4e7f-a013-d679ca80157e@arm.com>
- <46fc1b7f-7d10-4233-b089-aa173ad3bbeb@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <46fc1b7f-7d10-4233-b089-aa173ad3bbeb@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHx4dVh5LGU0dTxgZQx8ZSVUTARMWGhIXJBQOD1
+	lXWRgSC1lBWUpJS1VJS0NVSklMVUpOSFlXWRYaDxIVHRRZQVlPS0hVSk1DTExPVUpLS1VKQktLWQ
+	Y+
+X-HM-Tid: 0a8f8716f93303a1kunm2cda0920119
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MU06Cio4MzMMOTQUMQ46MAoB
+	DxYwCQxVSlVKTEpOQk5DSENDS09PVTMWGhIXVUlLSUhLS0lLQ0I7FxIVEFUPAg4PVR4fDlUYFUVZ
+	V1kSC1lBWUpJS1VJS0NVSklMVUpOSFlXWQgBWUFITUxJNwY+
 
-On 17/05/2024 3:21 pm, Jon Hunter wrote:
-> 
-> On 15/05/2024 15:59, Robin Murphy wrote:
->> Hi Jon,
->>
->> On 2024-05-14 2:27 pm, Jon Hunter wrote:
->>> Hi Robin,
->>>
->>> On 19/04/2024 17:54, Robin Murphy wrote:
->>>> It's now easy to retrieve the device's DMA limits if we want to check
->>>> them against the domain aperture, so do that ourselves instead of
->>>> relying on them being passed through the callchain.
->>>>
->>>> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
->>>> Tested-by: Hanjun Guo <guohanjun@huawei.com>
->>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->>>> ---
->>>>   drivers/iommu/dma-iommu.c | 21 +++++++++------------
->>>>   1 file changed, 9 insertions(+), 12 deletions(-)
->>>>
->>>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
->>>> index a3039005b696..f542eabaefa4 100644
->>>> --- a/drivers/iommu/dma-iommu.c
->>>> +++ b/drivers/iommu/dma-iommu.c
->>>> @@ -660,19 +660,16 @@ static void iommu_dma_init_options(struct 
->>>> iommu_dma_options *options,
->>>>   /**
->>>>    * iommu_dma_init_domain - Initialise a DMA mapping domain
->>>>    * @domain: IOMMU domain previously prepared by 
->>>> iommu_get_dma_cookie()
->>>> - * @base: IOVA at which the mappable address space starts
->>>> - * @limit: Last address of the IOVA space
->>>>    * @dev: Device the domain is being initialised for
->>>>    *
->>>> - * @base and @limit + 1 should be exact multiples of IOMMU page 
->>>> granularity to
->>>> - * avoid rounding surprises. If necessary, we reserve the page at 
->>>> address 0
->>>> + * If the geometry and dma_range_map include address 0, we reserve 
->>>> that page
->>>>    * to ensure it is an invalid IOVA. It is safe to reinitialise a 
->>>> domain, but
->>>>    * any change which could make prior IOVAs invalid will fail.
->>>>    */
->>>> -static int iommu_dma_init_domain(struct iommu_domain *domain, 
->>>> dma_addr_t base,
->>>> -                 dma_addr_t limit, struct device *dev)
->>>> +static int iommu_dma_init_domain(struct iommu_domain *domain, 
->>>> struct device *dev)
->>>>   {
->>>>       struct iommu_dma_cookie *cookie = domain->iova_cookie;
->>>> +    const struct bus_dma_region *map = dev->dma_range_map;
->>>>       unsigned long order, base_pfn;
->>>>       struct iova_domain *iovad;
->>>>       int ret;
->>>> @@ -684,18 +681,18 @@ static int iommu_dma_init_domain(struct 
->>>> iommu_domain *domain, dma_addr_t base,
->>>>       /* Use the smallest supported page size for IOVA granularity */
->>>>       order = __ffs(domain->pgsize_bitmap);
->>>> -    base_pfn = max_t(unsigned long, 1, base >> order);
->>>> +    base_pfn = 1;
->>>>       /* Check the domain allows at least some access to the 
->>>> device... */
->>>> -    if (domain->geometry.force_aperture) {
->>>> +    if (map) {
->>>> +        dma_addr_t base = dma_range_map_min(map);
->>>>           if (base > domain->geometry.aperture_end ||
->>>> -            limit < domain->geometry.aperture_start) {
->>>> +            dma_range_map_max(map) < 
->>>> domain->geometry.aperture_start) {
->>>>               pr_warn("specified DMA range outside IOMMU 
->>>> capability\n");
->>>>               return -EFAULT;
->>>>           }
->>>>           /* ...then finally give it a kicking to make sure it fits */
->>>> -        base_pfn = max_t(unsigned long, base_pfn,
->>>> -                domain->geometry.aperture_start >> order);
->>>> +        base_pfn = max(base, domain->geometry.aperture_start) >> 
->>>> order;
->>>>       }
->>>>       /* start_pfn is always nonzero for an already-initialised 
->>>> domain */
->>>> @@ -1760,7 +1757,7 @@ void iommu_setup_dma_ops(struct device *dev, 
->>>> u64 dma_base, u64 dma_limit)
->>>>        * underlying IOMMU driver needs to support via the dma-iommu 
->>>> layer.
->>>>        */
->>>>       if (iommu_is_dma_domain(domain)) {
->>>> -        if (iommu_dma_init_domain(domain, dma_base, dma_limit, dev))
->>>> +        if (iommu_dma_init_domain(domain, dev))
->>>>               goto out_err;
->>>>           dev->dma_ops = &iommu_dma_ops;
->>>>       }
->>>
->>>
->>> I have noticed some random test failures on Tegra186 and Tegra194 and 
->>> bisect is pointing to this commit. Reverting this along with the 
->>> various dependencies does fix the problem. On Tegra186 CPU hotplug is 
->>> failing and on Tegra194 suspend is failing. Unfortunately, on neither 
->>> platform do I see any particular crash but the boards hang somewhere.
->>
->> That is... thoroughly bemusing :/ Not only is there supposed to be no 
->> real functional change here - we should merely be recalculating the 
->> same information from dev->dma_range_map that the callers were already 
->> doing to generate the base/limit arguments - but the act of initially 
->> setting up a default domain for a device behind an IOMMU should have 
->> no connection whatsoever to suspend and especially not to CPU hotplug.
-> 
-> 
-> Yes it does look odd, but this is what bisect reported ...
-> 
-> git bisect start
-> # good: [a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6] Linux 6.9
-> git bisect good a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-> # bad: [6ba6c795dc73c22ce2c86006f17c4aa802db2a60] Add linux-next 
-> specific files for 20240513
-> git bisect bad 6ba6c795dc73c22ce2c86006f17c4aa802db2a60
-> # good: [29e7f949865a023a21ecdfbd82d68ac697569f34] Merge branch 'main' 
-> of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-> git bisect good 29e7f949865a023a21ecdfbd82d68ac697569f34
-> # skip: [150e6cc14e51f2a07034106a4529cdaafd812c46] Merge branch 'next' 
-> of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git
-> git bisect skip 150e6cc14e51f2a07034106a4529cdaafd812c46
-> # good: [f5d75327d30af49acf2e4b55f35ce2e6c45d1287] drm/amd/display: Fix 
-> invalid Copyright notice
-> git bisect good f5d75327d30af49acf2e4b55f35ce2e6c45d1287
-> # skip: [f1ec9a9ffc526df7c9523006c2abbb8ea554cdd8] Merge branch 
-> 'for-next' of 
-> git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git
-> git bisect skip f1ec9a9ffc526df7c9523006c2abbb8ea554cdd8
-> # bad: [f091e93306e0429ebb7589b9874590b6a9705e64] dma-mapping: Simplify 
-> arch_setup_dma_ops()
-> git bisect bad f091e93306e0429ebb7589b9874590b6a9705e64
-> # good: [91cfd679f9e8b9a7bf2f26adf66eff99dbe2026b] ACPI/IORT: Handle 
-> memory address size limits as limits
-> git bisect good 91cfd679f9e8b9a7bf2f26adf66eff99dbe2026b
-> # bad: [ad4750b07d3462ce29a0c9b1e88b2a1f9795290e] iommu/dma: Make limit 
-> checks self-contained
-> git bisect bad ad4750b07d3462ce29a0c9b1e88b2a1f9795290e
-> # good: [fece6530bf4b59b01a476a12851e07751e73d69f] dma-mapping: Add 
-> helpers for dma_range_map bounds
-> git bisect good fece6530bf4b59b01a476a12851e07751e73d69f
-> # first bad commit: [ad4750b07d3462ce29a0c9b1e88b2a1f9795290e] 
-> iommu/dma: Make limit checks self-contained
-> 
-> There is a couple skips in there and so I will try this again.
-> 
->>> If you have any ideas on things we can try let me know.
->>
->> Since the symptom seems inexplicable, I'd throw the usual memory 
->> debugging stuff like KASAN at it first. I'd also try 
->> "no_console_suspend" to check whether any late output is being missed 
->> in the suspend case (and if it's already broken, then any additional 
->> issues that may be caused by the console itself hopefully shouldn't 
->> matter).
->>
->> For more base-covering, do you have the "arm64: Properly clean up 
->> iommu-dma remnants" fix in there already as well? That bug has 
->> bisected to patch #6 each time though, so I do still suspect that what 
->> you're seeing is likely something else. It does seem potentially 
->> significant that those Tegra platforms are making fairly wide use of 
->> dma-ranges, but there's no clear idea forming out of that observation 
->> just yet...
-> 
-> I was hoping it was the same issue other people had reported,
-> but the fix provided did not help. I have also tried today's
-> -next and I am still seeing the issue.
-> 
-> I should have more time next week to look at this further. Let
-> me confirm which change is causing this and add more debug.
+Add translation for glossary and add it to index according to commit
+cac02cbb91f31e28 ("docs/zh_CN: Add a glossary of Chinese translation
+terms").
 
-Thanks. From staring at the code I think I've spotted one subtlety which
-may not be quite as intended - can you see if the diff below helps? It
-occurs to me that suspend and CPU hotplug may not *cause* the symptom,
-but they could certainly stall if one or more relevant CPUs is *already*
-stuck in a loop somewhere...
+Signed-off-by: Hu Haowen <2023002089@link.tyut.edu.cn>
+---
+ Documentation/translations/zh_TW/glossary.rst | 36 +++++++++++++++++++
+ Documentation/translations/zh_TW/index.rst    |  5 +--
+ 2 files changed, 39 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/translations/zh_TW/glossary.rst
 
-Thanks,
-Robin.
+diff --git a/Documentation/translations/zh_TW/glossary.rst b/Documentation/translations/zh_TW/glossary.rst
+new file mode 100644
+index 000000000000..6ff2a5a460ea
+--- /dev/null
++++ b/Documentation/translations/zh_TW/glossary.rst
+@@ -0,0 +1,36 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++術語表
++======
++
++這不是一個完善的術語表，我們只是將有爭議的和陌生的翻譯詞彙記錄於此，
++它的篇幅應該根據內核文檔翻譯的需求而增加。新詞條最好隨翻譯補丁一起
++提交，且僅在以下情況下收錄新詞條：
++
++        - 在翻譯過程中遇到陌生詞彙，且尚無翻譯先例的；
++        - 在審閱過程中，針對某詞條出現了不同的翻譯意見；
++        - 使用頻率不高的詞條和首字母縮寫類型的詞條；
++        - 已經存在且有歧義的詞條翻譯。
++
++
++* atomic: 原子的，一般指不可中斷的極小的臨界區操作。
++* DVFS: 動態電壓頻率升降。（Dynamic Voltage and Frequency Scaling）
++* EAS: 能耗感知調度。（Energy Aware Scheduling）
++* flush: 刷新，一般指對cache的沖洗操作。
++* fork: 創建, 通常指父進程創建子進程。
++* futex: 快速用戶互斥鎖。（fast user mutex）
++* guest halt polling: 客戶機停機輪詢機制。
++* HugePage: 巨頁。
++* hypervisor: 虛擬機超級管理器。
++* memory barriers: 內存屏障。
++* MIPS: 每秒百萬指令。（Millions of Instructions Per Second）,注意與mips指令集區分開。
++* mutex: 互斥鎖。
++* NUMA: 非統一內存訪問。
++* OpenCAPI: 開放相干加速器處理器接口。（Open Coherent Accelerator Processor Interface）
++* OPP: 操作性能值。
++* overhead: 開銷，一般指需要消耗的計算機資源。
++* PELT: 實體負載跟蹤。（Per-Entity Load Tracking）
++* sched domain: 調度域。
++* semaphores: 信號量。
++* spinlock: 自旋鎖。
++* watermark: 水位，一般指頁表的消耗水平。
+diff --git a/Documentation/translations/zh_TW/index.rst b/Documentation/translations/zh_TW/index.rst
+index 660a74d2023c..95809012a9ef 100644
+--- a/Documentation/translations/zh_TW/index.rst
++++ b/Documentation/translations/zh_TW/index.rst
+@@ -119,9 +119,10 @@ TODOList:
+ 術語表
+ ------
+ 
+-TODOList:
++.. toctree::
++   :maxdepth: 1
+ 
+-* glossary
++   glossary
+ 
+ 
+ 索引和表格
+-- 
+2.45.0
 
------>8-----
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 89a53c2f2cf9..85eb1846c637 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -686,6 +686,7 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, struct device *dev
-  	/* Check the domain allows at least some access to the device... */
-  	if (map) {
-  		dma_addr_t base = dma_range_map_min(map);
-+		base = max(base, (dma_addr_t)1 << order);
-  		if (base > domain->geometry.aperture_end ||
-  		    dma_range_map_max(map) < domain->geometry.aperture_start) {
-  			pr_warn("specified DMA range outside IOMMU capability\n");
 
