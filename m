@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-181707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054C58C8004
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 04:41:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EC88C8003
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 04:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B16CB20F1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 02:40:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F870B20DEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 02:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1631DF42;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCF9DDD2;
 	Fri, 17 May 2024 02:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RL/EGBnb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Po7b/PJj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFBA79E1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFE48BEA;
 	Fri, 17 May 2024 02:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715913631; cv=none; b=NhSDbdBOcmYogJ6YKhPHaw3XMlFWqaEwhc6pmzDpLfK+erC1MxlyfM8VOl3WGoWhNuJnh1WlSYECDdh1S8fgTrgSwkKcAUlbGKoLbmOWeACjHcTP+jszfoVZw6+zliAAxb4EgHwT74zIhC7E0x1LklxCxc17V07hSm5+vX7otJ8=
+	t=1715913631; cv=none; b=Pcnd/yOorbxkga7rmgtMNpPFI8bXsqM/3BKIbQjGAdy1QzA21KhD7BPLXbaZgzjOLseWE4/62XdPYL+LPEODx2QFxP/ONytJzm367Xw4AJEBWrOdtyY4Jx4uOGTM8jjUzXGUs6wl4PGr81JJiOApQtblKK2IkmZq+11Aj9jsLTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715913631; c=relaxed/simple;
-	bh=9kebVBdlBKzKUV6X1NAINiwksxB8q5L+utQ7ykLIosI=;
+	bh=oAldkRBtUxjPHDz+AtQSCkvv5HrTRcyLzu2sgj+V6CM=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=sQVy96X1FhgainN3U1h3efVm+im59DfCPuH0GLYd/TIxc2J4lZAiJhoG8oXY8ScbiJoSKfMLsbaUMfaUxs5sh3Dx2N1t0Yb35zSkxwD/8SBqsW0YBeSeOf7GdnMDfWlCHAOuz3rQ2fMXg0gYqwd2+dmGAupmV7UUIeruZYdPYJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RL/EGBnb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A4388C32781;
+	 In-Reply-To:To:Cc; b=HhAv1Kmgq3oba4v4RuegdF+ouBUoVS9NFE/liafkBPRP1VyV2ruAbVcK+gUU/WG+27/L5GKJtgpuFfno0aR1E/dNwTlz6uESuqQIQYlW0Rr0bXIrUs4+cLg0xs2iABEMC+PbR4Q3nh7CIfFBigUSc4CBXpOyfBwCzi/blIr4+S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Po7b/PJj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BA83EC4AF09;
 	Fri, 17 May 2024 02:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1715913630;
-	bh=9kebVBdlBKzKUV6X1NAINiwksxB8q5L+utQ7ykLIosI=;
+	bh=oAldkRBtUxjPHDz+AtQSCkvv5HrTRcyLzu2sgj+V6CM=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RL/EGBnbcdhx9FrZXV+Po0BC//Qgt+qBLT24e1Zms+PiO+aiMLc7efcGIqw2mxLr/
-	 l+0PpgTeFEB1C8Z8L7QN7SRFS3fu7+YKPZvtHNDg9LMFTIuKoxPxh9HntI5TU52891
-	 6bt0/gGyEU2aAQQ3x0r2VeQEf/uMdlNbsRfimNMjP8fDC7kWID7YTz+bwvviXZZx5c
-	 qb+07imcdlfgyMLRk1D5Dn4BpJWyT3HInI4JHW4mg8RNweEBvDU2MufVKYwnRhWTaw
-	 mrN2tMUOkWvVaDFnt7AM+6nhaLb07+TyJsvKjBm/WKtmzzgM2ID1/zf+V9HRgegfeI
-	 lIhShMYEI6nEA==
+	b=Po7b/PJjbga8YLbQ91PEeWQTMfzL+gsYjTRbxSiaCpHKD6mbY65iDu8VzPAs63Sg4
+	 lwvCpiGLeiL/zJWB0V7IcALX72M9hew2QFrzCdBrtG6C4YfxxpCxbZwINHDwFoHTHT
+	 lkud9BSAfpUxeWnjIs2v4J/qo1dqWSelAZNtLVAQrM0aw9UMikAkDySLm5eZ98UWe4
+	 DDo/rjYw1XhfvOfwuww0BpSHpEYBvOv+OHrZMBL6TfyOTfT7ao6z9J7rllFhLCZLJW
+	 vo6jLHwibzCNOPV/2YlUkWALuo7tDIPw5htyp30ZIqNY+CXkA5U4BcoiqQKWq7xRur
+	 8i6Xp8MufyFhQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 96856C41620;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id ABB8DC54BBB;
 	Fri, 17 May 2024 02:40:30 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,54 +51,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 0/2] Mark Ethernet devices on sa8775p as DMA-coherent
+Subject: Re: =?utf-8?q?=5BPATCH=5D_net/ipv6=3A_Fix_route_deleting_failure_when_m?=
+	=?utf-8?q?etric_equals_0?=
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171591363061.2697.10528707593141147774.git-patchwork-notify@kernel.org>
+ <171591363070.2697.1355959441685915624.git-patchwork-notify@kernel.org>
 Date: Fri, 17 May 2024 02:40:30 +0000
-References: <20240514-mark_ethernet_devices_dma_coherent-v4-0-04e1198858c5@quicinc.com>
-In-Reply-To: <20240514-mark_ethernet_devices_dma_coherent-v4-0-04e1198858c5@quicinc.com>
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, bartosz.golaszewski@linaro.org,
- ahalaney@redhat.com, vkoul@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- bhupesh.sharma@linaro.org, kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
+References: <20240514201102055dD2Ba45qKbLlUMxu_DTHP@zte.com.cn>
+In-Reply-To: <20240514201102055dD2Ba45qKbLlUMxu_DTHP@zte.com.cn>
+To:  <xu.xin16@zte.com.cn>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dsahern@gmail.com, fan.yu9@zte.com.cn,
+ yang.yang29@zte.com.cn, si.hao@zte.com.cn, zhang.yunkai@zte.com.cn,
+ he.peilin@zte.com.cn
 
 Hello:
 
-This series was applied to netdev/net.git (main)
+This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 14 May 2024 17:06:50 -0700 you wrote:
-> To: Bjorn Andersson <andersson@kernel.org>
-> To: Konrad Dybcio <konrad.dybcio@linaro.org>
-> To: Rob Herring <robh@kernel.org>
-> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> To: Conor Dooley <conor+dt@kernel.org>
-> To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> To: Andrew Halaney <ahalaney@redhat.com>
-> To: Vinod Koul <vkoul@kernel.org>
-> To: David S. Miller <davem@davemloft.net>
-> To: Eric Dumazet <edumazet@google.com>
-> To: Jakub Kicinski <kuba@kernel.org>
-> To: Paolo Abeni <pabeni@redhat.com>
-> To: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> Cc: kernel@quicinc.com
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: netdev@vger.kernel.org
+On Tue, 14 May 2024 20:11:02 +0800 (CST) you wrote:
+> From: xu xin <xu.xin16@zte.com.cn>
+> 
+> Problem
+> =========
+> After commit 67f695134703 ("ipv6: Move setting default metric for routes"),
+> we noticed that the logic of assigning the default value of fc_metirc
+> changed in the ioctl process. That is, when users use ioctl(fd, SIOCADDRT,
+> rt) with a non-zero metric to add a route,  then they may fail to delete a
+> route with passing in a metric value of 0 to the kernel by ioctl(fd,
+> SIOCDELRT, rt). But iproute can succeed in deleting it.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v4,1/2] arm64: dts: qcom: sa8775p: mark ethernet devices as DMA-coherent
-    (no matching commit)
-  - [v4,2/2] dt-bindings: net: qcom: ethernet: Allow dma-coherent
-    https://git.kernel.org/netdev/net/c/fe32622763d8
+  - net/ipv6: Fix route deleting failure when metric equals 0
+    https://git.kernel.org/netdev/net/c/bb487272380d
 
 You are awesome, thank you!
 -- 
