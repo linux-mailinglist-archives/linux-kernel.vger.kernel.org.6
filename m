@@ -1,131 +1,150 @@
-Return-Path: <linux-kernel+bounces-182095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF98D8C8634
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:25:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A82E8C8625
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 14:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44D5AB21CD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:25:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B4371C20EFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0AC42059;
-	Fri, 17 May 2024 12:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D11641A89;
+	Fri, 17 May 2024 12:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="XuucxtbC"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOf1Vzmu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CB041C68
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 12:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6423FB2F;
+	Fri, 17 May 2024 12:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715948706; cv=none; b=Du5iZRE6PWCiLXYMnM+JoYwV/yCfVg2a/zjwQYKylyY5PHj8H68QwOvK3vQpd/1G/vQuo+pLzmFudYpqnYiaMJ0v4ZJweGaDsi9mp3193VEhkoy5fVox5409cnZIHefJ8dE4AYZgjfh3ykfqMp+dMZtqFGIE7o3g6qwRS4sRmcc=
+	t=1715947685; cv=none; b=L5W1VZkHoO5rB6xLx2KoW5WumMLuskl7MH1/WzEGayge0XXABRu9hsGIrlWpHusQYPNlPhvP18yj5ZjHL3VOQg0bG6ofnKjzBhTPurm5UHhiyHdhxM/lvDfbGuCKNNonpKFdpitvrS5Aklb6Q/V00/Mx/kPZ33SfpWoeKawezyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715948706; c=relaxed/simple;
-	bh=auN0caH7D6wVUHe+HwaFcQrcS3XrqjErEzQRs7BVtbs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BPP3+pumlzGRwZiBaankoYgjsKjBiTnPnHNDfwqkPjiBFbU4gia/eKB8wb9D8pk0nowioT2TBUqJhOBkUjeD3vpsPA109jtVmHyb1+1qyynehETztPzHEVZq1v6md5bpAtEepckms3KWpZfikhjp1OcBf6qllz0RWH3IWlFGJyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=XuucxtbC; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44HBl9kK019146;
-	Fri, 17 May 2024 06:58:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	PODMain02222019; bh=n/U1T0up33AqvYftHIrXa/+1I2+X8aJw6y0lb6mwEz8=; b=
-	XuucxtbCbY6q1DpvOo9lNtqkpW3+YL7G+hrwyQd9MkMEFUuNUpTckXchnfou9yzR
-	gGgcr0vaRLnrCmYpyxOr1OtUO5ifTv1DZPU+V1SZGff4FpYcasN1nUtwBjyNuBAi
-	Aa/szo2dCdMbs7QED4GDEUm92uc36YmA273E9ZNO8vd1aSTFW2Hp6bFFrioBDB2W
-	Q0qPf17M7IwMckfmfAbkHPp6o03G88f2xxsplNpz7EtV0hKrtuHo5frdnzKoVkL9
-	d6bb6yQMFGkxnW180M7KYcxEkTVIWd6Mfz03KZFIM6MPv2KDM5Cmlb7V/YWHI9xY
-	TY8BkSt9TxnQErw/qKC5UQ==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3y3qveve4b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 06:58:33 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
- 2024 12:58:30 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Fri, 17 May 2024 12:58:30 +0100
-Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id CE563820244;
-	Fri, 17 May 2024 11:58:30 +0000 (UTC)
-Message-ID: <ffa73a17-ac32-493f-b0a4-32d3ac4c9027@opensource.cirrus.com>
-Date: Fri, 17 May 2024 12:58:30 +0100
+	s=arc-20240116; t=1715947685; c=relaxed/simple;
+	bh=zC56IzlilEBxkuSnH3rPZXwuKG/OnaJ38XUHw1B6ISc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hklOcumsARoJ3fu9vZ/kezIjLXSDkeihWv4Vc8ogrJWvT54U7MHEC1W92LCtNQvc5UIEuSapRakGYw8P1uVU8NwVxcTqyGnEw+PNzkMSpa/wYPn4zXfO9e4n7CuJBmGMqeRss6sECDdwqzUCYyA48j0BmhsaqcT0YtoxPnW2yHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOf1Vzmu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF0A5C2BD10;
+	Fri, 17 May 2024 12:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715947684;
+	bh=zC56IzlilEBxkuSnH3rPZXwuKG/OnaJ38XUHw1B6ISc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dOf1Vzmu/ZIMNtm7QkjK28wmbTDC0u5Ln9syDWmpSjpV5j3kbBze2RMGlD5KlRVRj
+	 icqj8wW9aJOurtQu5ygXw/V4MLFF4Pg3d/5YaPMKFrApx4eZPQtA2NoWf6Pn8nFKp/
+	 i/edhbu4N48y0eo1ihE2OXZLpsYbpRPNyf53lL939nQbZJe2l3QXmlAMzVxQcsWQVR
+	 1IzNBozJf4eNmNpYZzggcDxSePc+uvkt0Jd/aqMWDDvcH013uc6/DBHkamf+IjAC+d
+	 eZyz8Z7AEiIlmYN4FKZ2zl5xbJ+sDZ+VT5MhrI/2HhN0WlYXHYqxAGLX/ooYK6LU5R
+	 UOLayVxuYYLgg==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Alex Shi <alexs@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Pawel Laszczak <pawell@cadence.com>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	linux-doc@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH] PCI: use array for .id_table consistently
+Date: Fri, 17 May 2024 21:04:58 +0900
+Message-Id: <20240517120458.1260489-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/11] regmap: kunit: Run sparse cache tests at non-zero
- register addresses
-To: Guenter Roeck <linux@roeck-us.net>
-CC: <broonie@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-References: <20240408144600.230848-1-rf@opensource.cirrus.com>
- <20240408144600.230848-5-rf@opensource.cirrus.com>
- <5c1daddb-d8b3-420a-839f-208e0a6e168b@roeck-us.net>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <5c1daddb-d8b3-420a-839f-208e0a6e168b@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: jQyPbB5cl9eiAX21IbeZVOX5_cO30Wqz
-X-Proofpoint-GUID: jQyPbB5cl9eiAX21IbeZVOX5_cO30Wqz
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 16/05/2024 20:53, Guenter Roeck wrote:
-> Hi,
-> 
-> On Mon, Apr 08, 2024 at 03:45:53PM +0100, Richard Fitzgerald wrote:
->> Run the cache_drop() and cache_present() tests at blocks of addresses
->> that don't start at zero.
->>
->> This adds a from_reg parameter to struct regmap_test_param. This is
->> used to set the base address of the register defaults created by
->> gen_regmap().
->>
->> Extra entries are added to sparse_cache_types_list[] to test at non-zero
->> from_reg values. The cache_drop() and cache_present() tests are updated
->> to test at the given offset.
->>
->> The aim here is to add test cases to cache_drop() for the bug fixed by
->> commit 00bb549d7d63 ("regmap: maple: Fix cache corruption in
->> regcache_maple_drop()")
->>
->> But the same parameter table is used by the cache_present() test so
->> let's also update that to use from_reg.
->>
->> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> 
-> With this patch in mainline, I get lots of errors such as
-> 
-> [   23.494308] =============================================================================
-> [   23.496391] BUG kmalloc-64 (Tainted: G                 N): kmalloc Redzone overwritten
-> 
+While 'x' and '&x[0]' are equivalent, most of the PCI drivers use the
+former form for the .id_table.
 
-Just a random thought, I wonder whether in gen_regmap() this:
+Update some drivers and documentation for consistency.
 
-   if (config->num_reg_defaults)
-	config->max_register += (config->num_reg_defaults - 1) *
-				config->reg_stride;
-   else
-	config->max_register += (BLOCK_TEST_SIZE * config->reg_stride);
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-should be:
+ Documentation/PCI/pciebus-howto.rst                    | 2 +-
+ Documentation/translations/zh_CN/PCI/pciebus-howto.rst | 2 +-
+ drivers/pci/pcie/portdrv.c                             | 2 +-
+ drivers/usb/cdns3/cdnsp-pci.c                          | 2 +-
+ drivers/usb/gadget/udc/cdns2/cdns2-pci.c               | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-config->max_register += max(config->num_reg_defaults - 1,
-			    BLOCK_TEST_SIZE) * config->reg_stride;
+diff --git a/Documentation/PCI/pciebus-howto.rst b/Documentation/PCI/pciebus-howto.rst
+index a0027e8fb0d0..f344452651e1 100644
+--- a/Documentation/PCI/pciebus-howto.rst
++++ b/Documentation/PCI/pciebus-howto.rst
+@@ -139,7 +139,7 @@ driver data structure.
+ 
+   static struct pcie_port_service_driver root_aerdrv = {
+     .name		= (char *)device_name,
+-    .id_table	= &service_id[0],
++    .id_table	= service_id,
+ 
+     .probe		= aerdrv_load,
+     .remove		= aerdrv_unload,
+diff --git a/Documentation/translations/zh_CN/PCI/pciebus-howto.rst b/Documentation/translations/zh_CN/PCI/pciebus-howto.rst
+index 65c4301f12cd..c6ffda62af21 100644
+--- a/Documentation/translations/zh_CN/PCI/pciebus-howto.rst
++++ b/Documentation/translations/zh_CN/PCI/pciebus-howto.rst
+@@ -124,7 +124,7 @@ pcie_port_service_unregister取代了Linux驱动模型的pci_unregister_driver
+ 
+   static struct pcie_port_service_driver root_aerdrv = {
+     .name		= (char *)device_name,
+-    .id_table	= &service_id[0],
++    .id_table	= service_id,
+ 
+     .probe		= aerdrv_load,
+     .remove		= aerdrv_unload,
+diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
+index 14a4b89a3b83..2faca06ff67c 100644
+--- a/drivers/pci/pcie/portdrv.c
++++ b/drivers/pci/pcie/portdrv.c
+@@ -786,7 +786,7 @@ static const struct pci_error_handlers pcie_portdrv_err_handler = {
+ 
+ static struct pci_driver pcie_portdriver = {
+ 	.name		= "pcieport",
+-	.id_table	= &port_pci_ids[0],
++	.id_table	= port_pci_ids,
+ 
+ 	.probe		= pcie_portdrv_probe,
+ 	.remove		= pcie_portdrv_remove,
+diff --git a/drivers/usb/cdns3/cdnsp-pci.c b/drivers/usb/cdns3/cdnsp-pci.c
+index 0725668ffea4..225540fc81ba 100644
+--- a/drivers/usb/cdns3/cdnsp-pci.c
++++ b/drivers/usb/cdns3/cdnsp-pci.c
+@@ -231,7 +231,7 @@ static const struct pci_device_id cdnsp_pci_ids[] = {
+ 
+ static struct pci_driver cdnsp_pci_driver = {
+ 	.name = "cdnsp-pci",
+-	.id_table = &cdnsp_pci_ids[0],
++	.id_table = cdnsp_pci_ids,
+ 	.probe = cdnsp_pci_probe,
+ 	.remove = cdnsp_pci_remove,
+ 	.driver = {
+diff --git a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
+index 1691541c9413..50c3d0974d9b 100644
+--- a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
++++ b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
+@@ -121,7 +121,7 @@ static const struct pci_device_id cdns2_pci_ids[] = {
+ 
+ static struct pci_driver cdns2_pci_driver = {
+ 	.name = "cdns2-pci",
+-	.id_table = &cdns2_pci_ids[0],
++	.id_table = cdns2_pci_ids,
+ 	.probe = cdns2_pci_probe,
+ 	.remove = cdns2_pci_remove,
+ 	.driver = {
+-- 
+2.40.1
 
-I've only had a quick scan through the code without seeing any other
-obvious problem.
 
