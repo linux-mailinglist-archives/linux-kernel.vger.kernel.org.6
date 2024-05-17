@@ -1,183 +1,92 @@
-Return-Path: <linux-kernel+bounces-181662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA86A8C7F54
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 02:53:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 621658C7F56
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 02:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D33A3283305
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 00:52:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 913731C20F07
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 00:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D2C811;
-	Fri, 17 May 2024 00:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gvKGGnuy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E909F53BE;
+	Fri, 17 May 2024 00:53:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FA5622
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 00:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162314C69
+	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 00:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715907174; cv=none; b=dZAxLaLzdfynGOjS+pGWcFkAy66QzGFlI1AjKQ9EUnQQaW+YaK6Dn7IhND9QcLOAB3gIycJTETBNF6seCnBr/b0JebzuuVYarFC4ovooBRytv/LZxhC2skZ8a2DIw6ca3t0MO2nyrZWiujcrDZDiFLX2KLHRtPLv+UHEHQz4/ag=
+	t=1715907187; cv=none; b=oI0uwTP1OEUuuNhaws5F9GUeDHA90I5K13+RMu5bQxBrx9lTqt+4nR8ixy1jrZkMBb5moSIm4ZsltD1JV8dRCj7uKh+7PU9mV3B58h2OvuBO33Oh7EFFHyIOI2UxhK1JHa0oGRaixp7jZmYVrNMUo8RZWyolsXxqvGKF36ZHjuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715907174; c=relaxed/simple;
-	bh=TegGSMyB0JVbO6jlmENdPDoxx20cRA2GXqpfoyUXYVk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=FdRy1f6zjINYG8kpiyLyErjRJXdWAEpbtdc2v2xZvrQParnHV2ICZdXeDPDNuBdvIT+URFCAJlCK088v7C7u/P/KMvBD1LUjl0yJAsLpH6G9gljhmGEQDKajWqX4saE5kAPXm2ZsoRZ/6Fjr0EQ5VUXtBXaHqCIHrSS+r3ejjjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gvKGGnuy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10DAFC113CC;
-	Fri, 17 May 2024 00:52:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715907174;
-	bh=TegGSMyB0JVbO6jlmENdPDoxx20cRA2GXqpfoyUXYVk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=gvKGGnuyc4WhtBlCJuhbccSsXprf1zrb45rBV9rU6MXH0h7E4npLggND/8prIh3n5
-	 K7JEMSUkE4XcEo4u9g1ewA+wlynihMT99qyPZB13/mfI4jbJbb9FRlpGFG5qLar9mc
-	 xyhX1+h33s9YED2fgglcV3pZkRRlJ9Uah4wjuf+dTYijQwCtoLhvOkgEg1ijMcpHnU
-	 Aw3eYvTbFutAx6hVWW6WSw3g5YI+m6riav9Jduf2VKXWM0FXSVKov2441NZOZc+FqV
-	 d//YZdCaSdsze9BwKzw6StxG7qsrDLjUg5IC/eLX6DqsARE5O5dhDY2pSkfi2leVMu
-	 YRWyR2ZHYrAqg==
-Date: Thu, 16 May 2024 17:52:51 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: Henry Wang <xin.wang2@amd.com>
-cc: Stefano Stabellini <sstabellini@kernel.org>, 
-    xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org, 
-    Juergen Gross <jgross@suse.com>, 
-    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
-    Michal Orzel <michal.orzel@amd.com>
-Subject: Re: [PATCH] drivers/xen: Improve the late XenStore init protocol
-In-Reply-To: <028f29be-0393-4a57-83e2-ea27fe0320d5@amd.com>
-Message-ID: <alpine.DEB.2.22.394.2405161743170.2544314@ubuntu-linux-20-04-desktop>
-References: <20240515014330.1044617-1-xin.wang2@amd.com> <alpine.DEB.2.22.394.2405151524270.2544314@ubuntu-linux-20-04-desktop> <028f29be-0393-4a57-83e2-ea27fe0320d5@amd.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1715907187; c=relaxed/simple;
+	bh=sZkfRGx81PNy4l8XcKS/rTxCpOgCjpidypqeWZKggj8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kDIxxnhvfmGjoT2QPiEt2iEzUTlR+oyewJOEN7cghKGK8eRim1XMO8eKRmiCL+/ebLhZTPX/unZXtdfOIgYvFIVMpyET0KsLEKtxAycAt13wTwdhRJEFKP60NgTjmKT0ZL1Gj0pr8fhOGV7CztBEbL4zsDIurJm4pTKPNzYPZng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7da4360bbacso1039705239f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 May 2024 17:53:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715907185; x=1716511985;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IjdWI0lJRz5eaa2H8IbUT/eaNWS9H4r38Ph856qRU5U=;
+        b=YgsbvmyAZJXaonpAjUyLawfROnUP5Mbg5/bKBwAqZ0ds/7zWmRQ3SmtNPTXO6U79fs
+         ftppYmh0TjM3IEJZ0F1tNjBmaBZBlqzg81YTsT3IvxMItXqx1dJAi/SXsE9j1DelQxfo
+         ySkOdkOq/ZkaVWVRZzPqr7V2w2486ZTBaxXaliJAQJfxYwfpTwLQNULpmftzHGY5V7Z3
+         jOhcoU9yEMvUCVg3nxNphUg8NZFBoFq3m6ZV5oM0t8YWAVYnQzjeQd8yE1gPkxLtzP+u
+         ryh+jAxITaXBqsUXdhajHxNrHb/PexuqtMM3lLWa7hzM6/fKrAwb7Jz1zLkIS4fWbD5g
+         n7HQ==
+X-Gm-Message-State: AOJu0YzcreX1LbrjJGNWSamaiXq7g0aLXHyl4nIk5MUE/92nzR+CJAc7
+	4JGWjs43dpw+g1thKGu+mdJ3eUfKKB4BfR8+DDBt1I0OqzmgZ87Vnas22jOyQ3DWewBb+PGzPSs
+	TKuSJmEajhA+qHadF8M2BNaR0F7RO+SwQr3GNVlCn005v/EWMQhI3JEk=
+X-Google-Smtp-Source: AGHT+IHRYRoEWHkjd9xLm9lAYmqsocJ3lI59iMwIlG8sUiWuSGbh7mLPu/AvDStztcPWKexd2ztckpC+F3KiDeWlyOrrCNwlSKl9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-217339045-1715907173=:2544314"
+X-Received: by 2002:a05:6638:8404:b0:488:c345:73c4 with SMTP id
+ 8926c6da1cb9f-48958e13eb1mr1643674173.5.1715907183749; Thu, 16 May 2024
+ 17:53:03 -0700 (PDT)
+Date: Thu, 16 May 2024 17:53:03 -0700
+In-Reply-To: <00000000000001ab730616f23768@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000027bd8a06189bc622@google.com>
+Subject: Re: [syzbot] [syzbot] [jfs?] KASAN: slab-out-of-bounds Write in diWrite
+From: syzbot <syzbot+aa6df9d3b383bf5f047f@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
---8323329-217339045-1715907173=:2544314
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+***
 
-On Thu, 16 May 2024, Henry Wang wrote:
-> Hi Stefano,
-> 
-> On 5/16/2024 6:30 AM, Stefano Stabellini wrote:
-> > On Wed, 15 May 2024, Henry Wang wrote:
-> > > Currently, the late XenStore init protocol is only triggered properly
-> > > for the case that HVM_PARAM_STORE_PFN is ~0ULL (invalid). For the
-> > > case that XenStore interface is allocated but not ready (the connection
-> > > status is not XENSTORE_CONNECTED), Linux should also wait until the
-> > > XenStore is set up properly.
-> > > 
-> > > Introduce a macro to describe the XenStore interface is ready, use
-> > > it in xenbus_probe_initcall() and xenbus_probe() to select the code
-> > > path of doing the late XenStore init protocol or not.
-> > > 
-> > > Take the opportunity to enhance the check of the allocated XenStore
-> > > interface can be properly mapped, and return error early if the
-> > > memremap() fails.
-> > > 
-> > > Signed-off-by: Henry Wang <xin.wang2@amd.com>
-> > > Signed-off-by: Michal Orzel <michal.orzel@amd.com>
-> > Please add a Fixes: tag
-> 
-> Sure. Will do.
-> 
-> > > ---
-> > >   drivers/xen/xenbus/xenbus_probe.c | 21 ++++++++++++++++-----
-> > >   1 file changed, 16 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/drivers/xen/xenbus/xenbus_probe.c
-> > > b/drivers/xen/xenbus/xenbus_probe.c
-> > > index 3205e5d724c8..8aec0ed1d047 100644
-> > > --- a/drivers/xen/xenbus/xenbus_probe.c
-> > > +++ b/drivers/xen/xenbus/xenbus_probe.c
-> > > @@ -72,6 +72,10 @@ EXPORT_SYMBOL_GPL(xen_store_evtchn);
-> > >   struct xenstore_domain_interface *xen_store_interface;
-> > >   EXPORT_SYMBOL_GPL(xen_store_interface);
-> > >   +#define XS_INTERFACE_READY \
-> > > +	((xen_store_interface != NULL) && \
-> > > +	 (xen_store_interface->connection == XENSTORE_CONNECTED))
-> > > +
-> > >   enum xenstore_init xen_store_domain_type;
-> > >   EXPORT_SYMBOL_GPL(xen_store_domain_type);
-> > >   @@ -751,9 +755,10 @@ static void xenbus_probe(void)
-> > >   {
-> > >   	xenstored_ready = 1;
-> > >   -	if (!xen_store_interface) {
-> > > -		xen_store_interface = memremap(xen_store_gfn <<
-> > > XEN_PAGE_SHIFT,
-> > > -					       XEN_PAGE_SIZE, MEMREMAP_WB);
-> > > +	if (!xen_store_interface || XS_INTERFACE_READY) {
-> > > +		if (!xen_store_interface)
-> > These two nested if's don't make sense to me. If XS_INTERFACE_READY
-> > succeeds, it means that  ((xen_store_interface != NULL) &&
-> > (xen_store_interface->connection == XENSTORE_CONNECTED)).
-> > 
-> > So it is not possible that xen_store_interface == NULL immediately
-> > after. Right?
-> 
-> I think this is because we want to free the irq for the late init case,
-> otherwise the init-dom0less will fail. For the xenstore PFN allocated case,
-> the connection is already set to CONNECTED when we execute init-dom0less. But
-> I agree with you, would below diff makes more sense to you?
-> 
-> diff --git a/drivers/xen/xenbus/xenbus_probe.c
-> b/drivers/xen/xenbus/xenbus_probe.c
-> index 8aec0ed1d047..b8005b651a29 100644
-> --- a/drivers/xen/xenbus/xenbus_probe.c
-> +++ b/drivers/xen/xenbus/xenbus_probe.c
-> @@ -76,6 +76,8 @@ EXPORT_SYMBOL_GPL(xen_store_interface);
->         ((xen_store_interface != NULL) && \
->          (xen_store_interface->connection == XENSTORE_CONNECTED))
-> 
-> +static bool xs_late_init = false;
-> +
->  enum xenstore_init xen_store_domain_type;
->  EXPORT_SYMBOL_GPL(xen_store_domain_type);
-> 
-> @@ -755,7 +757,7 @@ static void xenbus_probe(void)
->  {
->         xenstored_ready = 1;
-> 
-> -       if (!xen_store_interface || XS_INTERFACE_READY) {
-> +       if (xs_late_init) {
->                 if (!xen_store_interface)
->                         xen_store_interface = memremap(xen_store_gfn <<
+Subject: [syzbot] [jfs?] KASAN: slab-out-of-bounds Write in diWrite
+Author: lizhi.xu@windriver.com
 
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git ed30a4a51bb1
 
-I would just remove the outer 'if' and do this:
-
-
-	if (!xen_store_interface)
-		xen_store_interface = memremap(xen_store_gfn << XEN_PAGE_SHIFT,
-				XEN_PAGE_SIZE, MEMREMAP_WB);
-	/*
-	 * Now it is safe to free the IRQ used for xenstore late
-	 * initialization. No need to unbind: it is about to be
-	 * bound again from xb_init_comms. Note that calling
-	 * unbind_from_irqhandler now would result in xen_evtchn_close()
-	 * being called and the event channel not being enabled again
-	 * afterwards, resulting in missed event notifications.
-	 */
-	if (xs_init_irq > 0)
-		free_irq(xs_init_irq, &xb_waitq);
-
-
-I think this should work fine in all cases. I am unsure if
-xs_init_irq==0 is possible valid value for xs_init_irq. If it is not,
-then we are fine. If 0 is a possible valid irq number, then we should
-initialize xs_init_irq to -1, and here check for xs_init_irq >= 0.
---8323329-217339045-1715907173=:2544314--
+diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
+index 2ec35889ad24..84c9abb0fa71 100644
+--- a/fs/jfs/jfs_imap.c
++++ b/fs/jfs/jfs_imap.c
+@@ -746,7 +746,9 @@ int diWrite(tid_t tid, struct inode *ip)
+ 		p = (dtpage_t *) &jfs_ip->i_dtroot;
+ 		xp = (dtpage_t *) & dp->di_dtroot;
+ 		lv = ilinelock->lv;
+-		for (n = 0; n < ilinelock->index; n++, lv++) {
++		printk("sp ms: %d, dp ms: %d, %s\n", p->header.maxslot, xp->header.maxslot, __func__);
++		if (p->header.maxslot < DTPAGEMAXSLOT && xp->header.maxslot < DTPAGEMAXSLOT)
++		for (n = 0; n < ilinelock->index && lv->offset < DTPAGEMAXSLOT; n++, lv++) {
+ 			memcpy(&xp->slot[lv->offset], &p->slot[lv->offset],
+ 			       lv->length << L2DTSLOTSIZE);
+ 		}
 
