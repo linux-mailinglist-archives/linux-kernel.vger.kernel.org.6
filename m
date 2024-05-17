@@ -1,583 +1,99 @@
-Return-Path: <linux-kernel+bounces-181861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEA88C8275
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:11:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107178C827B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6D5B28338D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41ABA1C21D0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 08:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CC81805E;
-	Fri, 17 May 2024 08:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B39E224EA;
+	Fri, 17 May 2024 08:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DsXnyUD3"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Y0/6Bnqg"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B25E20DCC;
-	Fri, 17 May 2024 08:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A6710A25;
+	Fri, 17 May 2024 08:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715933460; cv=none; b=ramAtEzPxLFdjgPYW1PzMZmRpn4v1TjWyQCuXS4sp+HuTly5u1lKGRhNSpTlyYAgpqUoKwY0MTk2cmH9NnmZNGJG3mzDHtRdwBQNe9fvQCsejvU/TtvYAMK8VqDQTsDrQzclksBAf7qWOhpn6gl6jGCgi4mPBZQNCz0fQsfKQW8=
+	t=1715933611; cv=none; b=MoSyGvSGgUTZtlAYpZfv+CBp3hRwAh5cQ7iJHbgsBTjGw80TgJZRweirg5rqYpCw/wXXUioYRqdIC7fKegOFXz7JIS2jfNa00gJe9LFldfGKjTZcZpF/tfGuZYLVbNpJ3SA/awR3ZDMsHxwXBDVxTLJdbndiRcCDw6tHcYWIQkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715933460; c=relaxed/simple;
-	bh=qXw5ko4n8qqOov9dwA8bnMX9jAPjqa/fBKKn4VOhDGU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TGlC1wR6phTk1h7UAXnVlS9hwpa5jt1UfYbbyw51JvIAWh/tMpJNShKk+HOwHHM46CfUnTTsVhK9xQKVOcrYJB8lC0/UfxaVuJVjLZa6tEKoPx7XYRapwJNKnN9YOsg4nxKmHOtmCY75PmoY3a4MrzsJbwLFNwZf56C68dB/cAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DsXnyUD3; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a5a5c930cf6so406912066b.0;
-        Fri, 17 May 2024 01:10:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715933457; x=1716538257; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SCQlIq3bUeSXGbvzvLqm91OUPJg4r+AueBXrJBzAHIA=;
-        b=DsXnyUD3u5+M61sqapypYzxBZ96xKnvNNxCG3VgYK4xUCQaXRtCQt98asvKFL5ApJ+
-         2R9EljvYKMF2t4n9YqlxqFj5SGhKpo39iSYc7MDcqo7sIe3E+LEWUNxTlzjRQwOkRKh6
-         tLz5RjKwiYO0teCTIDXIKuI4cGMLwA1ASmaZlNyBqF8aO+8TbQn5szlbefYl9fTeLmDb
-         g4UcYQG9Gtv10dLsoJL/EDR0tSdROkmTGpJPgk1pItdB8OJLp44aVwYhGGH8t6sVoEt1
-         CeABiE6u8z7xIYlM1h4q5r6zGiu8jg1n5CRewHmnR4aKVJOm/2QV5M2juCPbow1dcmQN
-         h7Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715933457; x=1716538257;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SCQlIq3bUeSXGbvzvLqm91OUPJg4r+AueBXrJBzAHIA=;
-        b=A8pHsupoGMh5B6dorCsbH8UIidXJwYqmSLAF19tTd77bi+fGU/ZfHLUq+oE+1TuMJf
-         zWdvgt1wD3/3cdrEJaZey6hDxW7vHx322TC7Wg9U+PtM/jm9dIJXWpL+axWCakxFdm6Q
-         yjH5QqZprvtLfTlF1RXEBQXbj6Iy0V74rV/8/R54hpSPxCMphZEGnvXJaYBqgwOHwGj0
-         FRBKxB7OgXBpYS1k8nzqaREj4BnTZbDOyUrp7nc0xSxLJYmlz1kTfXjBZMiOfYQ43qQJ
-         HRDT6B6Ojxkfk9vxin7Ycdh0ZOsVzhSM4rAVGK3Gkevbkb2QVltAJCvwDOESaeFhOWcg
-         X3Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2vKP6Al0fjgo8f2Wq4LUDrIRTDxqIhWVMzjqe1zNEJd27lVUSSScNXm2ybBrXRuoeWjG1OFOCcDLZeLOGTMeFTuUnkRSM9Hdonm/QO5mMSCz2Z0OAL9eV823lSb0Z7ebxqo5i4fRV
-X-Gm-Message-State: AOJu0Yx9cSqyHRAh3KXxwfKSErrUfJSR/oz07MD4SLyqBfYdGZSnOMCX
-	EdyRerVhonrvFTyYfur08nHnkL97lIrAd9zjclX2cOtN7wdvBiP1ms9UzA==
-X-Google-Smtp-Source: AGHT+IHqZ6Q3ql3Pj1QU6p9PKQAb6AIaFMGaR6ms9iyuyUcfh/kcoj6m23VmF3bpg7aSSiPbF/Jw7Q==
-X-Received: by 2002:a17:906:a18f:b0:a5a:234d:98ee with SMTP id a640c23a62f3a-a5a2d5cd8a7mr1320035766b.44.1715933456617;
-        Fri, 17 May 2024 01:10:56 -0700 (PDT)
-Received: from debian.fritz.box ([93.184.186.109])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a90d0e919sm360867866b.85.2024.05.17.01.10.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 01:10:55 -0700 (PDT)
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: 
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Andrew Hepp <andrew.hepp@ahepp.dev>,
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] iio: temperature: mcp9600: add threshold events support
-Date: Fri, 17 May 2024 10:10:50 +0200
-Message-Id: <20240517081050.168698-3-dima.fedrau@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240517081050.168698-1-dima.fedrau@gmail.com>
-References: <20240517081050.168698-1-dima.fedrau@gmail.com>
+	s=arc-20240116; t=1715933611; c=relaxed/simple;
+	bh=UGCSH19/QQFayopTinwL3UHdf3P2cCPKLv7liUHXfMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pL23Yzsa9/TzzKHHi52aZfOws/KWt8mAE/GniFGieChvzMEKVgINPwLQLfrntrq2u8Bz980Qgwp6MdEMxkLl5FW0CAAe8cB+XqPUv3VbBjf6RGOmqjvpzATRgzKfS/q8aM0dW/Le7HbSf+6kLSQ9ijo6oUBcxTgMbSLANjgJwBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Y0/6Bnqg; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
+	by mail11.truemail.it (Postfix) with ESMTPA id 1BB211F90C;
+	Fri, 17 May 2024 10:13:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1715933597;
+	bh=NREW6bcFroAQWer3qRmT1I+JmMfW1UsPIUtVyqTOHKk=; h=From:To:Subject;
+	b=Y0/6BnqgzDL78DgCwa2SK756a0ho+Irss9R7P0/LE1R5dDKTpFRqEUGh6wH+i3R/j
+	 bDX/YXvFVtxKicgbryJ6m4msKsUBd581wdblcPZo9rXq446tFvJRHAusn05sMizco2
+	 YcsEIebvKjSR2aa6IcRV+tvMa1d8zC03w9IkB4jh4BilfvdyxLOBH87wzFN65ODXIn
+	 DPxBZ9Kp43vp/g5tpObisdYv3oYNjpCVBUg6saS/j6h7DqotpGo1vNHkKxyj1c5EMs
+	 des8iChfVN4LRweOXprfwOObvCkCDpuodaBmN+uWt/rZeuW6povD4sYYjCogm2Wgi3
+	 qm9Qqj7UBt8Kg==
+Date: Fri, 17 May 2024 10:13:12 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Brian Norris <briannorris@chromium.org>,
+	Rafael Beims <rafael.beims@toradex.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tsung-hsien.hsieh@nxp.com, David Lin <yu-hao.lin@nxp.com>,
+	stable@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [v1] wifi: mwifiex: Fix interface type change
+Message-ID: <20240517081312.GA7974@francesco-nb>
+References: <20240510110458.15475-1-francesco@dolcini.it>
+ <171593306296.3274748.4179889716794962474.kvalo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <171593306296.3274748.4179889716794962474.kvalo@kernel.org>
 
-The device has four programmable temperature alert outputs which can be
-used to monitor hot or cold-junction temperatures and detect falling and
-rising temperatures. It supports up to 255 degree celsius programmable
-hysteresis. Each alert can be individually configured by setting following
-options in the associated alert configuration register:
-- monitor hot or cold junction temperature
-- monitor rising or falling temperature
-- set comparator or interrupt mode
-- set output polarity
-- enable alert
+On Fri, May 17, 2024 at 08:04:24AM +0000, Kalle Valo wrote:
+> Francesco Dolcini <francesco@dolcini.it> wrote:
+> 
+> > From: Rafael Beims <rafael.beims@toradex.com>
+> > 
+> > When changing the interface type we also need to update the bss_num, the
+> > driver private data is searched based on a unique (bss_type, bss_num)
+> > tuple, therefore every time bss_type changes, bss_num must also change.
+> > 
+> > This fixes for example an issue in which, after the mode changed, a
+> > wireless scan on the changed interface would not finish, leading to
+> > repeated -EBUSY messages to userspace when other scan requests were
+> > sent.
+> > 
+> > Fixes: c606008b7062 ("mwifiex: Properly initialize private structure on interface type changes")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Rafael Beims <rafael.beims@toradex.com>
+> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> 
+> BTW I removed the Reviewed-by from the commit message, I don't see the need to
+> have both Reviewed-by and s-o-b.
 
-This patch binds alert outputs to iio events:
-- alert1: hot junction, rising temperature
-- alert2: hot junction, falling temperature
-- alert3: cold junction, rising temperature
-- alert4: cold junction, falling temperature
+Sure, I was in doubt about this, in the end I added it because I have seen
+this done in other subsystems, e.g. commit 6a4020b4c639 ("drm/bridge:
+tc358768: fix PLL parameters computation").
 
-All outputs are set in comparator mode and polarity depends on interrupt
-configuration.
+Thanks
+Francesco
 
-Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
----
- drivers/iio/temperature/mcp9600.c | 389 ++++++++++++++++++++++++++++++
- 1 file changed, 389 insertions(+)
-
-diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
-index 22451d1d9e1f..91d811fe9371 100644
---- a/drivers/iio/temperature/mcp9600.c
-+++ b/drivers/iio/temperature/mcp9600.c
-@@ -6,12 +6,21 @@
-  * Author: <andrew.hepp@ahepp.dev>
-  */
- 
-+#include <linux/bitfield.h>
-+#include <linux/bitops.h>
-+#include <linux/bits.h>
- #include <linux/err.h>
- #include <linux/i2c.h>
- #include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/math.h>
-+#include <linux/minmax.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- 
-+#include <linux/iio/events.h>
- #include <linux/iio/iio.h>
- 
- #define MCP9600_CHAN_HOT_JUNCTION	0
-@@ -20,11 +29,65 @@
- /* MCP9600 registers */
- #define MCP9600_HOT_JUNCTION 0x0
- #define MCP9600_COLD_JUNCTION 0x2
-+#define MCP9600_STATUS			0x4
-+#define MCP9600_STATUS_ALERT(x)		BIT(x)
-+#define MCP9600_ALERT_CFG1		0x8
-+#define MCP9600_ALERT_CFG(x)		(MCP9600_ALERT_CFG1 + (x - 1))
-+#define MCP9600_ALERT_CFG_ENABLE	BIT(0)
-+#define MCP9600_ALERT_CFG_ACTIVE_HIGH	BIT(2)
-+#define MCP9600_ALERT_CFG_FALLING	BIT(3)
-+#define MCP9600_ALERT_CFG_COLD_JUNCTION	BIT(4)
-+#define MCP9600_ALERT_HYSTERESIS1	0xc
-+#define MCP9600_ALERT_HYSTERESIS(x)	(MCP9600_ALERT_HYSTERESIS1 + (x - 1))
-+#define MCP9600_ALERT_LIMIT1		0x10
-+#define MCP9600_ALERT_LIMIT(x)		(MCP9600_ALERT_LIMIT1 + (x - 1))
-+#define MCP9600_ALERT_LIMIT_MASK	GENMASK(15, 2)
- #define MCP9600_DEVICE_ID 0x20
- 
- /* MCP9600 device id value */
- #define MCP9600_DEVICE_ID_MCP9600 0x40
- 
-+#define MCP9600_ALERT_COUNT		4
-+
-+#define MCP9600_TEMP_SCALE_NUM		1000000
-+
-+#define MCP9600_MIN_TEMP_HOT_JUNCTION	-200
-+#define MCP9600_MAX_TEMP_HOT_JUNCTION	1800
-+
-+#define MCP9600_MIN_TEMP_COLD_JUNCTION	-40
-+#define MCP9600_MAX_TEMP_COLD_JUNCTION	125
-+
-+enum mcp9600_alert {
-+	MCP9600_ALERT1,
-+	MCP9600_ALERT2,
-+	MCP9600_ALERT3,
-+	MCP9600_ALERT4
-+};
-+
-+static const char * const mcp9600_alert_name[MCP9600_ALERT_COUNT] = {
-+	[MCP9600_ALERT1] = "alert1",
-+	[MCP9600_ALERT2] = "alert2",
-+	[MCP9600_ALERT3] = "alert3",
-+	[MCP9600_ALERT4] = "alert4",
-+};
-+
-+static const struct iio_event_spec mcp9600_events[] = {
-+	{
-+		.type = IIO_EV_TYPE_THRESH,
-+		.dir = IIO_EV_DIR_RISING,
-+		.mask_separate = BIT(IIO_EV_INFO_ENABLE) |
-+				 BIT(IIO_EV_INFO_VALUE) |
-+				 BIT(IIO_EV_INFO_HYSTERESIS),
-+	},
-+	{
-+		.type = IIO_EV_TYPE_THRESH,
-+		.dir = IIO_EV_DIR_FALLING,
-+		.mask_separate = BIT(IIO_EV_INFO_ENABLE) |
-+				 BIT(IIO_EV_INFO_VALUE) |
-+				 BIT(IIO_EV_INFO_HYSTERESIS),
-+	},
-+};
-+
- static const struct iio_chan_spec mcp9600_channels[] = {
- 	{
- 		.type = IIO_TEMP,
-@@ -33,6 +96,8 @@ static const struct iio_chan_spec mcp9600_channels[] = {
- 		.info_mask_separate =
- 			BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
- 		.indexed = 1,
-+		.event_spec = mcp9600_events,
-+		.num_event_specs = ARRAY_SIZE(mcp9600_events),
- 	},
- 	{
- 		.type = IIO_TEMP,
-@@ -41,11 +106,18 @@ static const struct iio_chan_spec mcp9600_channels[] = {
- 		.info_mask_separate =
- 			BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
- 		.indexed = 1,
-+		.event_spec = mcp9600_events,
-+		.num_event_specs = ARRAY_SIZE(mcp9600_events),
- 	},
- };
- 
- struct mcp9600_data {
- 	struct i2c_client *client;
-+	/*
-+	 * Serializes access to threshold and hysteresis values, since the
-+	 * latter are stored as offsets from thresholds on the device.
-+	 */
-+	struct mutex lock;
- };
- 
- static int mcp9600_read(struct mcp9600_data *data,
-@@ -84,10 +156,321 @@ static int mcp9600_read_raw(struct iio_dev *indio_dev,
- 	}
- }
- 
-+static int mcp9600_get_alert_index(int channel, enum iio_event_direction dir)
-+{
-+	if (channel == MCP9600_CHAN_HOT_JUNCTION) {
-+		if (dir == IIO_EV_DIR_RISING)
-+			return MCP9600_ALERT1;
-+		else
-+			return MCP9600_ALERT2;
-+	} else {
-+		if (dir == IIO_EV_DIR_RISING)
-+			return MCP9600_ALERT3;
-+		else
-+			return MCP9600_ALERT4;
-+	}
-+}
-+
-+static int mcp9600_read_event_config(struct iio_dev *indio_dev,
-+				     const struct iio_chan_spec *chan,
-+				     enum iio_event_type type,
-+				     enum iio_event_direction dir)
-+{
-+	struct mcp9600_data *data = iio_priv(indio_dev);
-+	struct i2c_client *client = data->client;
-+	int i, ret;
-+
-+	i = mcp9600_get_alert_index(chan->channel, dir);
-+	ret = i2c_smbus_read_byte_data(client, MCP9600_ALERT_CFG(i + 1));
-+	if (ret < 0)
-+		return ret;
-+
-+	return FIELD_GET(MCP9600_ALERT_CFG_ENABLE, ret);
-+}
-+
-+static int mcp9600_write_event_config(struct iio_dev *indio_dev,
-+				      const struct iio_chan_spec *chan,
-+				      enum iio_event_type type,
-+				      enum iio_event_direction dir,
-+				      int state)
-+{
-+	struct mcp9600_data *data = iio_priv(indio_dev);
-+	struct i2c_client *client = data->client;
-+	int i, ret;
-+
-+	i = mcp9600_get_alert_index(chan->channel, dir);
-+	ret = i2c_smbus_read_byte_data(client, MCP9600_ALERT_CFG(i + 1));
-+	if (ret < 0)
-+		return ret;
-+
-+	if (state)
-+		ret |= MCP9600_ALERT_CFG_ENABLE;
-+	else
-+		ret &= ~MCP9600_ALERT_CFG_ENABLE;
-+
-+	return i2c_smbus_write_byte_data(client, MCP9600_ALERT_CFG(i + 1), ret);
-+}
-+
-+static int mcp9600_read_thresh(struct iio_dev *indio_dev,
-+			       const struct iio_chan_spec *chan,
-+			       enum iio_event_type type,
-+			       enum iio_event_direction dir,
-+			       enum iio_event_info info, int *val, int *val2)
-+{
-+	struct mcp9600_data *data = iio_priv(indio_dev);
-+	struct i2c_client *client = data->client;
-+	s32 ret;
-+	int i;
-+
-+	i = mcp9600_get_alert_index(chan->channel, dir);
-+	guard(mutex)(&data->lock);
-+	ret = i2c_smbus_read_word_swapped(client, MCP9600_ALERT_LIMIT(i + 1));
-+	if (ret < 0)
-+		return ret;
-+
-+	/*
-+	 * Temperature is stored in two’s complement format in bits(15:2),
-+	 * LSB is 0.25 degree celsius.
-+	 */
-+	*val = sign_extend32(FIELD_GET(MCP9600_ALERT_LIMIT_MASK, ret), 13);
-+	*val2 = 4;
-+	if (info == IIO_EV_INFO_VALUE)
-+		return IIO_VAL_FRACTIONAL;
-+
-+	ret = i2c_smbus_read_byte_data(client, MCP9600_ALERT_HYSTERESIS(i + 1));
-+	if (ret < 0)
-+		return ret;
-+
-+	/*
-+	 * Hysteresis is stored as unsigned offset from threshold. The alert
-+	 * direction bit in the alert configuration register defines whether the
-+	 * value is below or above the corresponding threshold.
-+	 */
-+	if (dir == IIO_EV_DIR_RISING)
-+		*val -= (*val2 * ret);
-+	else
-+		*val += (*val2 * ret);
-+
-+	return IIO_VAL_FRACTIONAL;
-+}
-+
-+static int mcp9600_write_thresh(struct iio_dev *indio_dev,
-+				const struct iio_chan_spec *chan,
-+				enum iio_event_type type,
-+				enum iio_event_direction dir,
-+				enum iio_event_info info, int val, int val2)
-+{
-+	struct mcp9600_data *data = iio_priv(indio_dev);
-+	struct i2c_client *client = data->client;
-+	int s_val, s_thresh, i;
-+	s16 thresh;
-+	s32 ret;
-+	u8 hyst;
-+
-+	/* Scale value to include decimal part into calculations */
-+	s_val = (val < 0) ? ((val * MCP9600_TEMP_SCALE_NUM) - val2) :
-+			    ((val * MCP9600_TEMP_SCALE_NUM) + val2);
-+
-+	/* Hot junction temperature range is from –200 to 1800 degree celsius */
-+	if (chan->channel == MCP9600_CHAN_HOT_JUNCTION &&
-+	   (s_val < (MCP9600_MIN_TEMP_HOT_JUNCTION * MCP9600_TEMP_SCALE_NUM) ||
-+	    s_val > (MCP9600_MAX_TEMP_HOT_JUNCTION * MCP9600_TEMP_SCALE_NUM)))
-+		return -EINVAL;
-+
-+	/* Cold junction temperature range is from –40 to 125 degree celsius */
-+	if (chan->channel == MCP9600_CHAN_COLD_JUNCTION &&
-+	   (s_val < (MCP9600_MIN_TEMP_COLD_JUNCTION * MCP9600_TEMP_SCALE_NUM) ||
-+	    s_val > (MCP9600_MAX_TEMP_COLD_JUNCTION * MCP9600_TEMP_SCALE_NUM)))
-+		return -EINVAL;
-+
-+	i = mcp9600_get_alert_index(chan->channel, dir);
-+	guard(mutex)(&data->lock);
-+	switch (info) {
-+	case IIO_EV_INFO_VALUE:
-+		/*
-+		 * Shift length 4 bits = 2(15:2) + 2(0.25 LSB), temperature is
-+		 * stored in two’s complement format.
-+		 */
-+		thresh = (s16)(s_val / (MCP9600_TEMP_SCALE_NUM >> 4));
-+		return i2c_smbus_write_word_swapped(client,
-+						    MCP9600_ALERT_LIMIT(i + 1),
-+						    thresh);
-+	case IIO_EV_INFO_HYSTERESIS:
-+		/* Read out threshold, hysteresis is stored as offset */
-+		ret = i2c_smbus_read_word_swapped(client, MCP9600_ALERT_LIMIT(i + 1));
-+		if (ret < 0)
-+			return ret;
-+
-+		/* Shift length 4 bits = 2(15:2) + 2(0.25 LSB), see above. */
-+		s_thresh = sign_extend32(ret, 15) * (MCP9600_TEMP_SCALE_NUM >> 4);
-+
-+		/*
-+		 * Hysteresis is stored as offset, for rising temperatures, the
-+		 * hysteresis range is below the alert limit where, as for falling
-+		 * temperatures, the hysteresis range is above the alert limit.
-+		 */
-+		hyst = min(255, abs(s_thresh - s_val) / MCP9600_TEMP_SCALE_NUM);
-+
-+		return i2c_smbus_write_byte_data(client,
-+						 MCP9600_ALERT_HYSTERESIS(i + 1),
-+						 hyst);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
- static const struct iio_info mcp9600_info = {
- 	.read_raw = mcp9600_read_raw,
-+	.read_event_config = mcp9600_read_event_config,
-+	.write_event_config = mcp9600_write_event_config,
-+	.read_event_value = mcp9600_read_thresh,
-+	.write_event_value = mcp9600_write_thresh,
-+};
-+
-+static irqreturn_t mcp9600_alert1_handler(int irq, void *private)
-+{
-+	struct iio_dev *indio_dev = private;
-+	struct mcp9600_data *data = iio_priv(indio_dev);
-+	int ret;
-+
-+	ret = i2c_smbus_read_byte_data(data->client, MCP9600_STATUS);
-+	if (ret < 0)
-+		return IRQ_HANDLED;
-+
-+	if (!(ret & MCP9600_STATUS_ALERT(MCP9600_ALERT1)))
-+		return IRQ_NONE;
-+
-+	iio_push_event(indio_dev,
-+		       IIO_MOD_EVENT_CODE(IIO_TEMP, MCP9600_CHAN_HOT_JUNCTION,
-+					  IIO_NO_MOD, IIO_EV_TYPE_THRESH,
-+					  IIO_EV_DIR_RISING),
-+		       iio_get_time_ns(indio_dev));
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t mcp9600_alert2_handler(int irq, void *private)
-+{
-+	struct iio_dev *indio_dev = private;
-+	struct mcp9600_data *data = iio_priv(indio_dev);
-+	int ret;
-+
-+	ret = i2c_smbus_read_byte_data(data->client, MCP9600_STATUS);
-+	if (ret < 0)
-+		return IRQ_HANDLED;
-+
-+	if (!(ret & MCP9600_STATUS_ALERT(MCP9600_ALERT2)))
-+		return IRQ_NONE;
-+
-+	iio_push_event(indio_dev,
-+		       IIO_MOD_EVENT_CODE(IIO_TEMP, MCP9600_CHAN_HOT_JUNCTION,
-+					  IIO_NO_MOD, IIO_EV_TYPE_THRESH,
-+					  IIO_EV_DIR_FALLING),
-+		       iio_get_time_ns(indio_dev));
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t mcp9600_alert3_handler(int irq, void *private)
-+{
-+	struct iio_dev *indio_dev = private;
-+	struct mcp9600_data *data = iio_priv(indio_dev);
-+	int ret;
-+
-+	ret = i2c_smbus_read_byte_data(data->client, MCP9600_STATUS);
-+	if (ret < 0)
-+		return IRQ_HANDLED;
-+
-+	if (!(ret & MCP9600_STATUS_ALERT(MCP9600_ALERT3)))
-+		return IRQ_NONE;
-+
-+	iio_push_event(indio_dev,
-+		       IIO_MOD_EVENT_CODE(IIO_TEMP, MCP9600_CHAN_COLD_JUNCTION,
-+					  IIO_NO_MOD, IIO_EV_TYPE_THRESH,
-+					  IIO_EV_DIR_RISING),
-+		       iio_get_time_ns(indio_dev));
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t mcp9600_alert4_handler(int irq, void *private)
-+{
-+	struct iio_dev *indio_dev = private;
-+	struct mcp9600_data *data = iio_priv(indio_dev);
-+	int ret;
-+
-+	ret = i2c_smbus_read_byte_data(data->client, MCP9600_STATUS);
-+	if (ret < 0)
-+		return IRQ_HANDLED;
-+
-+	if (!(ret & MCP9600_STATUS_ALERT(MCP9600_ALERT4)))
-+		return IRQ_NONE;
-+
-+	iio_push_event(indio_dev,
-+		       IIO_MOD_EVENT_CODE(IIO_TEMP, MCP9600_CHAN_COLD_JUNCTION,
-+					  IIO_NO_MOD, IIO_EV_TYPE_THRESH,
-+					  IIO_EV_DIR_FALLING),
-+		       iio_get_time_ns(indio_dev));
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t (*mcp9600_alert_handler[MCP9600_ALERT_COUNT]) (int, void *) = {
-+	mcp9600_alert1_handler,
-+	mcp9600_alert2_handler,
-+	mcp9600_alert3_handler,
-+	mcp9600_alert4_handler,
- };
- 
-+static int mcp9600_probe_alerts(struct iio_dev *indio_dev)
-+{
-+	struct mcp9600_data *data = iio_priv(indio_dev);
-+	struct i2c_client *client = data->client;
-+	struct device *dev = &client->dev;
-+	struct fwnode_handle *fwnode = dev_fwnode(dev);
-+	unsigned int irq_type;
-+	int ret, irq, i;
-+	u8 val;
-+
-+	/*
-+	 * alert1: hot junction, rising temperature
-+	 * alert2: hot junction, falling temperature
-+	 * alert3: cold junction, rising temperature
-+	 * alert4: cold junction, falling temperature
-+	 */
-+	for (i = 0; i < MCP9600_ALERT_COUNT; i++) {
-+		irq = fwnode_irq_get_byname(fwnode, mcp9600_alert_name[i]);
-+		if (irq <= 0)
-+			continue;
-+
-+		val = 0;
-+		irq_type = irq_get_trigger_type(irq);
-+		if (irq_type == IRQ_TYPE_EDGE_RISING)
-+			val |= MCP9600_ALERT_CFG_ACTIVE_HIGH;
-+
-+		if (i == MCP9600_ALERT2 || i == MCP9600_ALERT4)
-+			val |= MCP9600_ALERT_CFG_FALLING;
-+
-+		if (i == MCP9600_ALERT3 || i == MCP9600_ALERT4)
-+			val |= MCP9600_ALERT_CFG_COLD_JUNCTION;
-+
-+		ret = i2c_smbus_write_byte_data(client,
-+						MCP9600_ALERT_CFG(i + 1),
-+						val);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = devm_request_threaded_irq(dev, irq, NULL,
-+						mcp9600_alert_handler[i],
-+						IRQF_ONESHOT, "mcp9600",
-+						indio_dev);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int mcp9600_probe(struct i2c_client *client)
- {
- 	struct iio_dev *indio_dev;
-@@ -107,6 +490,11 @@ static int mcp9600_probe(struct i2c_client *client)
- 
- 	data = iio_priv(indio_dev);
- 	data->client = client;
-+	mutex_init(&data->lock);
-+
-+	ret = mcp9600_probe_alerts(indio_dev);
-+	if (ret)
-+		return ret;
- 
- 	indio_dev->info = &mcp9600_info;
- 	indio_dev->name = "mcp9600";
-@@ -139,6 +527,7 @@ static struct i2c_driver mcp9600_driver = {
- };
- module_i2c_driver(mcp9600_driver);
- 
-+MODULE_AUTHOR("Dimitri Fedrau <dima.fedrau@gmail.com>");
- MODULE_AUTHOR("Andrew Hepp <andrew.hepp@ahepp.dev>");
- MODULE_DESCRIPTION("Microchip MCP9600 thermocouple EMF converter driver");
- MODULE_LICENSE("GPL");
--- 
-2.39.2
 
 
