@@ -1,133 +1,93 @@
-Return-Path: <linux-kernel+bounces-181981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3172F8C8491
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:10:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C698C8495
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 12:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8EAA1F24601
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6DB31C22E8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 10:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18932E652;
-	Fri, 17 May 2024 10:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FmTE6+RC"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC722E64C;
+	Fri, 17 May 2024 10:11:42 +0000 (UTC)
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853C579FE;
-	Fri, 17 May 2024 10:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9682E403;
+	Fri, 17 May 2024 10:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715940628; cv=none; b=CQpmdLmmzMSy6HwTOoiO39JTkt5H1jS7hPKoNSXG0W2/JZ8bLmmEy3R+oyiFqACpOMhGqrzxrJsV1SWPocQUHrhCT+jbQBACqdHKlX41cgNEgoINKvVlXQzVT4Un2INnf4P4w6slJ0WF5biGoshzdmckUyF6yVeks1bT8A9suBM=
+	t=1715940702; cv=none; b=l18+J30KvOZdfDosj0hOzvXagy0RCa30siZNyrp+ZyAY4sRs/IKB4qHF/8/lw0KnSFzjVgPJVhydsK69ovugjnyDqInMadR7xoxvvqxCo7HmbWV9q3JmjZlLD3ox6x3CIjcIsbU/tJh0WfrT3KxjO/whHNYZ8laqoAWnPrvwY+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715940628; c=relaxed/simple;
-	bh=Evik6onvs6xMRifrorVjfmXNCxhy0LQcjtsDkY6/Kfk=;
+	s=arc-20240116; t=1715940702; c=relaxed/simple;
+	bh=acUQ7zfQHCjjyy18et9/Vc+lz19clZyuRtK6vl/UTgA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jktpDcQGpJhqRkNKApwPWuAQKHV7KIPveybZDEyJHQofeAfYnZsdun3tf0jkUngvtJb+C6sfwXin4yIfg6WA2Y4wbRnC/tf4KUCVcjBVde4gq/GIcsJhEpECUOE0a2sdK/h31KRd5h2ti+s9ZUecC3/7Pg+9RiID24aP8zPma7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FmTE6+RC; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715940624;
-	bh=Evik6onvs6xMRifrorVjfmXNCxhy0LQcjtsDkY6/Kfk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FmTE6+RCX82xGiK8mXi6AhjYKJTKMVQ3OXIWT9H2tTMwZIMaQ8hs/iKUZhQ5zl115
-	 LH9x5aj/tHHSMGzhGGt6zHSkv8o91Y9Iv+K09/X7ZI0vsbnnu0z2xDXjdLXTt6J7cI
-	 LKKSD4uOenesIExSaUKuRIpO8qo8guoCU1cETlktC6DQ8xdw+rdQU3p4jP9CFrioGl
-	 kNVYcQQwxTNf79vw2ubngVAv67xEuWJesetC0DN8tZmr59eljbIPqTegRldkAA4UiU
-	 242MsUJT4zdvXp3xWkm2S7SzuIG7KIk9s8p2ONx+L/vkiXN4GRGftUB2tEnoSAScwz
-	 bljk2kUEeVJkA==
-Received: from localhost (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sebastianfricke)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9AC843781104;
-	Fri, 17 May 2024 10:10:24 +0000 (UTC)
-Date: Fri, 17 May 2024 12:10:23 +0200
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: Nas Chung <nas.chung@chipsnmedia.com>
-Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=MvAbBXztaNBg0TeJUzlKLxWBKMIcPpCsCaEzedDD6gHxdZRbwtss5GDcCJ/Qtysm7N9HKNt8jft5Oe4TtQ9yQInKF0XhJwDTyqR4VQodO8BvcE4Yj/xFe2jDkjNGW5YnuRupu9pNkm95ty4aiU6FmjQzQ64Empg7D/c3yqwVQAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f44ed6e82fso1102252b3a.3;
+        Fri, 17 May 2024 03:11:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715940700; x=1716545500;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MtlmPlf9OZqt8E6ku+EUKnOMZnaMtANpSbkCvNOAF4Q=;
+        b=XWmeMUKrm3nJHWaHK7PrGlr9smyGLPHwy5B9066IYadAzElAAoc553/cK1IrXsXxo8
+         NEuxqddUKAtKJRUWIV+VgGuYYAPicN28fVCe3tdYxhuTetPfAbRUVUN1mHHSNZPk/qw2
+         56YItOjUkS/gbwYtBkz7m1H3C8gd1VT8dMyNaEj3mrDSda2gv2W0FYudL6vkHSfVW+7s
+         DAwFi9c+KrzWDYFejSzmqQUt/XXEExTZt72/rrLqxq2Sei6nBxZOthw3q9QCBUPGQdJ3
+         BxcRK/ElZcWr6+4rNrjBs20C0JvPnTphWdZp0BnU5ZxfH4pt1V81WdKyqIwQO08vAIgH
+         phVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWp3V694MDKBu626f+5g1N3/gSnxd3MHjYeWL6QUTTmy8bVaTZh3c7jL9c3peC4nI/PS5UVgowdJlQ8XCuhr0zkAE/lP5czHDhgihLcO7nRWExP76MuvxU1ulF0iYrW5LMB5YrjVEK+OoQXpU33KjR+C59a+XWuDxiFL08ML5CfMkdk
+X-Gm-Message-State: AOJu0YypF6Fu3LrTTr8yYrN+E85DsXvpDrgGHMAzMmcpcPF2/uNZAUrq
+	SkDQf+roeyUU3SZu5fWIch3CR2um4AxP9TpJvD+HPaP9LhW5shS6
+X-Google-Smtp-Source: AGHT+IE4Q+aqTkzmnEiYSPmcay2pCxc8SkhdJVeC7hYR8imFr0vc/RHNCBOhku19oeJm3wNgDAo3cA==
+X-Received: by 2002:aa7:88c6:0:b0:6ea:dfbf:13d4 with SMTP id d2e1a72fcca58-6f4e02cadacmr27743031b3a.18.1715940700045;
+        Fri, 17 May 2024 03:11:40 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b254cfsm14366680b3a.200.2024.05.17.03.11.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 03:11:39 -0700 (PDT)
+Date: Fri, 17 May 2024 19:11:38 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jonathan Corbet <corbet@lwn.net>, Niklas Cassel <cassel@kernel.org>,
+	linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE condition
-Message-ID: <20240517101023.5hy7kp4j2dmitpav@basti-XPS-13-9310>
-References: <20240517094940.1169-1-nas.chung@chipsnmedia.com>
+Subject: Re: [PATCH v3 1/1] Documentation: PCI: pci-endpoint: Fix EPF ops list
+Message-ID: <20240517101138.GC202520@rocinante>
+References: <20240418084924.1724703-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240517094940.1169-1-nas.chung@chipsnmedia.com>
+In-Reply-To: <20240418084924.1724703-1-alexander.stein@ew.tq-group.com>
 
-Hey Nas,
+Hello,
 
-thanks for the patch, I think making the macro more explicit is
-generally a good idea, but in this case all !OUTPUT are actually CAPTURE
-types (besides the one deprecated type) and when I look at the
-definitions of some of the set commands like S_FMT, I can see that they
-require a type as parameter.
-So, could you explain in the commit message, how it can happen that the
-buf_type is undefined? And if so maybe that case should be fixed
-instead?
-I have improved your commit message below, but please explain why this
-is needed, e.g. which case did you hit where you found an undefined
-buffer.
+> With commit 5779dd0a7dbd7 ("PCI: endpoint: Use notification chain
+> mechanism to notify EPC events to EPF") the linkup callback has been
+> removed and replaced by EPC event notifications.
+> 
+> With commit 256ae475201b1 ("PCI: endpoint: Add pci_epf_ops to expose
+> function-specific attrs") a new (optional) add_cfs callback was added.
+> Update documentation accordingly.
 
-On 17.05.2024 18:49, Nas Chung wrote:
->We expect V4L2_TYPE_IS_CAPTURE() macro allow only CAPTURE type.
->But, Inverting OUTPUT type can allow undefined v4l2_buf_type.
->Check CAPTURE type directly instead of inverting OUTPUT type.
+Applied to misc, thank you!
 
-My suggestion for this commit message:
+[1/1] Documentation: PCI: pci-endpoint: Fix EPF ops list
+      https://git.kernel.org/pci/pci/c/e21fd57bf0c8
 
-"""
-Explicitly compare the type of the buffer with the available CAPTURE
-buffer types, to avoid matching a buffer type outside of the valid
-buffer type set.
-"""
-
-Basically fixing the sentence structure and grammar and focusing more on
-the reason of your action instead of describing what the code does
-(which should hopefully be obvious in most cases)
-
-I hope that helps :)
-
-Regards,
-Sebastian
-
->
->Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
->---
-> include/uapi/linux/videodev2.h | 8 +++++++-
-> 1 file changed, 7 insertions(+), 1 deletion(-)
->
->diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
->index fe6b67e83751..32b10e2b7695 100644
->--- a/include/uapi/linux/videodev2.h
->+++ b/include/uapi/linux/videodev2.h
->@@ -171,7 +171,13 @@ enum v4l2_buf_type {
-> 	 || (type) == V4L2_BUF_TYPE_SDR_OUTPUT			\
-> 	 || (type) == V4L2_BUF_TYPE_META_OUTPUT)
->
->-#define V4L2_TYPE_IS_CAPTURE(type) (!V4L2_TYPE_IS_OUTPUT(type))
->+#define V4L2_TYPE_IS_CAPTURE(type)				\
->+	((type) == V4L2_BUF_TYPE_VIDEO_CAPTURE			\
->+	 || (type) == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE	\
->+	 || (type) == V4L2_BUF_TYPE_VBI_CAPTURE			\
->+	 || (type) == V4L2_BUF_TYPE_SLICED_VBI_CAPTURE		\
->+	 || (type) == V4L2_BUF_TYPE_SDR_CAPTURE			\
->+	 || (type) == V4L2_BUF_TYPE_META_CAPTURE)
->
-> enum v4l2_tuner_type {
-> 	V4L2_TUNER_RADIO	     = 1,
->-- 
->2.25.1
->
->
+	Krzysztof
 
