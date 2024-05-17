@@ -1,142 +1,118 @@
-Return-Path: <linux-kernel+bounces-181960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-181962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635AC8C844E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:56:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2175E8C8455
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 11:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 943E01C22B38
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:56:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0F85B226D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 May 2024 09:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B7D2C85F;
-	Fri, 17 May 2024 09:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01832C68F;
+	Fri, 17 May 2024 09:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="DpILjKRH"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nbBbDwom"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ABE262A8
-	for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 09:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A072561F;
+	Fri, 17 May 2024 09:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715939754; cv=none; b=eQjo239LiOPCHNG8907JBfDqQDGus0nfSbveqUgFdBVk9vJjPLjdJyoVQMsN/bwmsMrR4xdaXKV/HThjBIrKAkhZ8BQVNZqfE3nDXm5i3mnbheh3ilTGrlQardrhEwzdCMqlgxW7701f5GIb+W4rWbP4m9hhqydcudJdROtJjaU=
+	t=1715939813; cv=none; b=HUuC9hW6hM80EhKu1QbxZgalt4QSYd0ueyMvDD5GvdeKnEwrjTh2era1I2LTxYIT6FmrK9JM+231n6uLh0vT6WcJVOk/0I8oI1N9Q62OTPcKH7AQ/FrRe4JzPayoM2ZLQjwhAgK4IbQ/6h7+voghHlWs08kaAf5KwZxFSgXWavE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715939754; c=relaxed/simple;
-	bh=yEo5GShOkRDZDNm8NkQ+gpHhI/5nysUzlnONr9Kdx9s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BRojC8l4npSygDsfliYI/2t7aLKURnSb+EPqe+ztkKU+rneCyiP1Bjl2f2+qY5A6RdTB9qpvIeUMke43CY2gWRbusXNuP6yya8OSGCn9vXlUNXoW38EVbl73rmGNDOXmYVOS2n/QhI+oIsljf/JH7Y6PMoI25oLQCHa7Zrgm2nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=DpILjKRH; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-572669fd9f9so4707582a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 02:55:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1715939751; x=1716544551; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pcObKvA4ZG4W5f3+AevN4kRUemeykWizQkVWPJqy2SU=;
-        b=DpILjKRH3vDhAYA/ARHOtJO01BJvGSVK5u3XIsj2wW9u7ojtsbZVIzdtnMieqnEia3
-         //gIOLPeQ1vncIvQzju+tV9TOQyQDRp48z1kOh7lHwy758BU26Hy108pt8htsKLpAg0f
-         6PvYu8WCDcuJ0iy79GmV5cKOboNxTdTOZb8TU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715939751; x=1716544551;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pcObKvA4ZG4W5f3+AevN4kRUemeykWizQkVWPJqy2SU=;
-        b=N8sP4kXwjwmsAvIBi/Uvtb1RvXTxTdiKk1G7oEAmuM0sSYfMUAFkZryQp7OjAzyH+T
-         ftJomwRZJ7BAsRW76L6et5LdOFdkqSLdK929L2NRJgFFeSRiKiaZ9F+6f5QVpMEVUhb7
-         zG8LvOIeni9udeYzK2Ap/eL6UvQPNILGvxt7fruAa+fRJHS1Xu21QpjMeqMegwDXA4Eo
-         znHFQCDxEgFYy2/ZWzU6kdYmp7efvKbdEmaHnpPHybOh2Ot++MDdfIAQihP2e2XggL0y
-         C+wAKkJ7DJ3ZKCFijbjXjtbI5NBX+Uaadr+bXAAWljbjmYh2zERU1jPjWYEFYaljcUOh
-         clOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfXl6d/l0ygOLB0AEmDrceoDxc2BCP3o7+T11VCY8lPvZpgtfWazSqmZsyIo5VXzHTim26sUnJ+WL0FAqM9kECwU/fpo19anCicS+l
-X-Gm-Message-State: AOJu0YxzPHiPUGWIguw6XK33P3gQpXgg83LbYfa/ksU+bNfJTpKFNtN2
-	mINQVaFlO1MSfSwKU8q1+uz5+cF/DbR0nnG+rwzUJxAyeCZR6JVznGv/lu508aR6/GajsewaZW4
-	jhVnYTaIrtN9bH/Mz2xvjJqCO2c/oA3pR8uSQVQ==
-X-Google-Smtp-Source: AGHT+IGUqRqz0erBi4OJUl6VA4qkH4UEWsCMVotBiO/aEdGp+g7gFrfkzdjDJdKMS20zUZZ4qsB1zgVM9EX7g1H+bTo=
-X-Received: by 2002:a17:907:7f09:b0:a59:b61f:b96d with SMTP id
- a640c23a62f3a-a5a2d53bc6amr1654347366b.5.1715939750690; Fri, 17 May 2024
- 02:55:50 -0700 (PDT)
+	s=arc-20240116; t=1715939813; c=relaxed/simple;
+	bh=KUl64RGT5p1k4DfrRgABpkdROBGYZ7VEd5IkWTHMINw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ssA6V2XMrAQ6BH9mIFfPfHIdHMw7U4RZfI6O4t5pOmdP/0r1xdA/duUGs87gWiIEoPXMP/i1V88Vat7JJyqPBQSnGVw0lVfXYBoBGbCxfXYYVYI1vJ+zhor1A8d/yH07TT51AFXB0uq+k8svXN3LmgjBufv0Xq0lqbKYzusWzYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nbBbDwom; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715939812; x=1747475812;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KUl64RGT5p1k4DfrRgABpkdROBGYZ7VEd5IkWTHMINw=;
+  b=nbBbDwomt3PT8FDUdfTH/kNtUQrMw6domVJhkoakKkc00L/SOQYOMRk/
+   WFcOmpvRgP3UjDvWc7rG3akU6tyK6ufawTiWUkOBRKlMQOG+c03YvHZXh
+   V0CeZVoReNg1NFYpYJOb+UL19P19Fe3cKjjMcuwMkDNzpcVuQ+NZ3B+zW
+   IMY5XYbN5kPbAvB8aY7ZR313abaoqk+WgrMcR8Y4NiVVWjjiKyxKAzIJE
+   Xos0LYLBNqIKwo5lJy51GCDmA3j+gqCZJCDM7aO+xTyalOmiWqjyXQ9NK
+   oWYr4zZ+Maln47ZOe1u87HPV8QMOtumo0CjUdDGLZwudPUt+2z9rGHIh+
+   A==;
+X-CSE-ConnectionGUID: EI9PrTJwSHSy09c0zpM2Ew==
+X-CSE-MsgGUID: lvS1hlnYRkmOyOaWeUCd8g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="12218195"
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="12218195"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 02:56:51 -0700
+X-CSE-ConnectionGUID: yTxcteB6QFaIFYfsYrnX0Q==
+X-CSE-MsgGUID: PRUoyf06SmaUfh/6w6JRSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="32163178"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 02:56:50 -0700
+Date: Fri, 17 May 2024 02:56:49 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, Isaku Yamahata <isaku.yamahata@intel.com>,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH 7/7] KVM: VMX: Introduce test mode related to EPT
+ violation VE
+Message-ID: <20240517095649.GB412700@ls.amr.corp.intel.com>
+References: <20240507154459.3950778-1-pbonzini@redhat.com>
+ <20240507154459.3950778-8-pbonzini@redhat.com>
+ <ZkVHh49Hn8gB3_9o@google.com>
+ <Zka1cub00xu37mHP@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1708709155.git.john@groves.net> <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 17 May 2024 11:55:38 +0200
-Message-ID: <CAJfpegv8XzFvty_x00UehUQxw9ai8BytvGNXE8SL03zfsTN6ag@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/20] Introduce the famfs shared-memory file system
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: John Groves <John@groves.net>, John Groves <jgroves@micron.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Matthew Wilcox <willy@infradead.org>, linux-cxl@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, john@jagalactic.com, 
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com, 
-	gregory.price@memverge.com, Vivek Goyal <vgoyal@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zka1cub00xu37mHP@google.com>
 
-On Thu, 29 Feb 2024 at 07:52, Amir Goldstein <amir73il@gmail.com> wrote:
+On Thu, May 16, 2024 at 06:40:02PM -0700,
+Sean Christopherson <seanjc@google.com> wrote:
 
-> I'm not virtiofs expert, but I don't think that you are wrong about this.
-> IIUC, virtiofsd could map arbitrary memory region to any fuse file mmaped
-> by virtiofs client.
->
-> So what are the gaps between virtiofs and famfs that justify a new filesystem
-> driver and new userspace API?
+> On Wed, May 15, 2024, Sean Christopherson wrote:
+> > On Tue, May 07, 2024, Paolo Bonzini wrote:
+> > > @@ -5200,6 +5215,9 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
+> > >  	if (is_invalid_opcode(intr_info))
+> > >  		return handle_ud(vcpu);
+> > >  
+> > > +	if (KVM_BUG_ON(is_ve_fault(intr_info), vcpu->kvm))
+> > > +		return -EIO;
+> > 
+> > I've hit this three times now when running KVM-Unit-Tests (I'm pretty sure it's
+> > the EPT test, unsurprisingly).  And unless I screwed up my testing, I verified it
+> > still fires with Isaku's fix[*], though I'm suddenly having problems repro'ing.
+> > 
+> > I'll update tomorrow as to whether I botched my testing of Isaku's fix, or if
+> > there's another bug lurking.
+> 
+> *sigh*
+> 
+> AFAICT, I'm hitting a hardware issue.  The #VE occurs when the CPU does an A/D
+> assist on an entry in the L2's PML4 (L2 GPA 0x109fff8).  EPT A/D bits are disabled,
+> and KVM has write-protected the GPA (hooray for shadowing EPT entries).  The CPU
+> tries to write the PML4 entry to do the A/D assist and generates what appears to
+> be a spurious #VE.
+> 
+> Isaku, please forward this to the necessary folks at Intel.  I doubt whatever
+> is broken will block TDX, but it would be nice to get a root cause so we at least
+> know whether or not TDX is a ticking time bomb.
 
-Let me try to fill in some gaps.  I've looked at the famfs driver
-(even tried to set it up in a VM, but got stuck with the EFI stuff).
-
-- famfs has an extent list per file that indicates how each page
-within the file should be mapped onto the dax device, IOW it has the
-following mapping:
-
-  [famfs file, offset] -> [offset, length]
-
-- fuse can currently map a fuse file onto a backing file:
-
-  [fuse file] -> [backing file]
-
-The interface for the latter is
-
-   backing_id = ioctl(dev_fuse_fd, FUSE_DEV_IOC_BACKING_OPEN, backing_map);
-..
-   fuse_open_out.flags |= FOPEN_PASSTHROUGH;
-   fuse_open_out.backing_id = backing_id;
-
-This looks suitable for doing the famfs file - > dax device mapping as
-well.  I wouldn't extend the ioctl with extent information, since
-famfs can just use FUSE_DEV_IOC_BACKING_OPEN once to register the dax
-device.  The flags field could be used to tell the kernel to treat
-this fd as a dax device instead of a a regular file.
-
-Letter, when the file is opened the extent list could be sent in the
-open reply together with the backing id.  The fuse_ext_header
-mechanism seems suitable for this.
-
-And I think that's it as far as API's are concerned.
-
-Note: this is already more generic than the current famfs prototype,
-since multiple dax devices could be used as backing for famfs files,
-with the constraint that a single file can only map data from a single
-dax device.
-
-As for implementing dax passthrough, I think that needs a separate
-source file, the one used by virtiofs (fs/fuse/dax.c) does not appear
-to have many commonalities with this one.  That could be renamed to
-virtiofs_dax.c as it's pretty much virtiofs specific, AFAICT.
-
-Comments?  Am I missing something significant?
-
-Thanks,
-Miklos
+Sure, let me forward it.
+I tested it lightly myself.  but I couldn't reproduce it.
+-- 
+Isaku Yamahata <isaku.yamahata@intel.com>
 
