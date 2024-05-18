@@ -1,260 +1,131 @@
-Return-Path: <linux-kernel+bounces-182734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DDD8C8F2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 03:26:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF8B8C8F30
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 03:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B41282C63
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 01:26:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F8981C2162E
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 01:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70BD4A2D;
-	Sat, 18 May 2024 01:25:30 +0000 (UTC)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B708830;
+	Sat, 18 May 2024 01:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X/lJrsny";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wUEZICMm"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FE017BD8;
-	Sat, 18 May 2024 01:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A5C4C8B;
+	Sat, 18 May 2024 01:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715995530; cv=none; b=rze+DYYa4F+VyxzE89PMuVwWvcf680BixtuqhgR8C74LgMVY3Zew1qPYdfRewy/1AjRI/3gFqDl1OzH1qUfPN/2MqhOwHk81a/aBClYlmi5wRv0+aK4c9Oi7IRCbT0ZOC4mA8YyYc6AcbkTB5iZIEv2sSJ6W9vgHbpJ3n6zNzMk=
+	t=1715995544; cv=none; b=Y5zHDW6uHr88YWtilIxgK9/l+VqwOSZ+C0yVsbdn2fTasxK7wUpVMZ56ZzRIe9vdCjQqDgvQnYXbb/loqxxt/A1fwLFoZ7OoVKFE7Ryb/NZawqkYsRfXqEOIaMJYSbaxdr9Crro7jdJhkw0ktdsC9NXWa45+yEj2+ttatnWahfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715995530; c=relaxed/simple;
-	bh=gGNCAEgaGSxKyK0M3Wz3dzLTm+3bFkC1PBZmGZGNEuQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FW1UIdRH7YU9qqORUZGT+msWlh+bp3YTBiwsCdsO2EHyP7loQy0HSnbHJHupR4ZDINNBF84oZzLfXMFzj95Shc/YkS5Z9FAJlo9SPTR9N/V1Z4Hc7bUIal+Ln4aWvMopzoKpGxKr2xa7QJpovBwfrQhFfmjOhA2CkMYJN0FfHPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ee5235f5c9so26365325ad.2;
-        Fri, 17 May 2024 18:25:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715995528; x=1716600328;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wDQUikeYfqwULYL/qwCY+3xaT+gF8SPJCPZumyWDdUk=;
-        b=FCAiDC5hgfp3+eS6Kb5ODRkvwFOCmYOdyneAe3CiGWUh3e/vC7QGP+m3blZg+BAQnO
-         ksiYVZr/Fh4OxjlQ/5cOCYcR+eiikhDiCgZswvjSie83OV7ThZ7n8zfp1jIQZG31ft7F
-         oAc6w+W9M4QuEDQwTLVqqN1Q+cFK9pbLNKR1lvwZkNTUieHQePTWkDUz9oXH3jjVThRl
-         hEGqL3pzaDrMzEiVDYGoQUn61gxjs6QZ++jmxU8hvPFpfuDxKfiuNMd3CtIRp0AbQ82X
-         Szga1dhxbp9wCxzmydvcoKm/8bgtv+Y5/ROjmZnhP6s91QRF4BQ0Gse0BeXjTC9FHzki
-         WWgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkVBUpOku+RVuqwYNMah7hVQZAjgDmt8grMu2TaMu8MHWavpG5YxeGfqDP5saN4G5wVUT4pwn4SJ8bImGoVhkXEhswjhtmJErgGYq6FB/K5v9eD9WsosFZWv57fVQ12wpJHWwg76f8TDx3YeswIA==
-X-Gm-Message-State: AOJu0YxV46NglVEhprIojIqmYHxl7XZIob2wJ9bn6I17m3Ih3Sqh58oP
-	bpaDNu7YXaVj14ttB4fNeG2ktzcvnXxPKgtgOpOaEc5VClwnpnf2rcmI1zgzHQaPzs9ugp34I3W
-	cQNCL4Y9PE0hOQUN9nDdUrs//DG4=
-X-Google-Smtp-Source: AGHT+IFwOVd1uEMDUiybxFimYcY2r3+FQ7f1CvTi3jQ9aJ4dJZpzWLBu91Wi32U5zPg1qEEqYE7ple4CezomiKO17bc=
-X-Received: by 2002:a05:6a21:18c:b0:1af:8a3a:35d7 with SMTP id
- adf61e73a8af0-1afde1b6ec5mr22884415637.39.1715995527739; Fri, 17 May 2024
- 18:25:27 -0700 (PDT)
+	s=arc-20240116; t=1715995544; c=relaxed/simple;
+	bh=bShbf5InU3Hku1+D50QV7iqSrD5aDAK0nYFxFHxjIT0=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ryqWC1hyllSSidz+4wP4XQ8auh0Plc4Q8AO6ajmu5nYs2MzfhmlSpCQnUog8csy1TIl9V3XrKudNCw9QjG0KOiIehb6tl/ppWRxi6B3VaGQUxAD22S8QcW81+IQ5RbMCRUJ2+IHlztqm7xPe+IQoazrmY1oXZ3SrFVUy9QAPb4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X/lJrsny; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wUEZICMm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715995540;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FjMrzFAps1/5DI6E1pJhCseVkyrxWMsgaCpQLqNIzZo=;
+	b=X/lJrsnyGUlY+3ZKYTovXIRlEOXIlO0BbAxuTC2XCUZpJnzqXKrsS2GCGP0IhlXOAhKAiu
+	oiwZfApTT/xFHuuzPnxJQgKY5Kh2Z1QxB3jS6HO6iRyjdkV/3NYEmzQ4wyD+Icj9kGDe8u
+	gtvnYBEXAGeM7n3fA2UC5QVilkHxFKnkcSnZY6zOx2avdWaXdkcxx5L5Q09QGWUY8q/iWC
+	k3LhnrcE5UnTtOVQCN1s2OSIWc4b9J8OiOz4mHdw5QNHBDeZ9pXO6TSPH0Ai/mTx50wbMI
+	VqmcEIFzIhGSpJTiBs+D/Ctt02iYnf0P0yHVlrFvxxD3cOLcGRVw907SrPE85A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715995540;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FjMrzFAps1/5DI6E1pJhCseVkyrxWMsgaCpQLqNIzZo=;
+	b=wUEZICMmJ76CMNcDJx/e17MYOhK/Gvz4w8qhTeWQSUQ7Qc9RZjjor5fKQ1sxKJ55p9VQRy
+	ojcQhCMjl0shB6CA==
+To: Costa Shulyupin <costa.shul@redhat.com>, longman@redhat.com,
+ pauld@redhat.com, juri.lelli@redhat.com, prarit@redhat.com,
+ vschneid@redhat.com, Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, Zefan Li
+ <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner
+ <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
+ <mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, Petr
+ Mladek <pmladek@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Masahiro Yamada <masahiroy@kernel.org>, Randy Dunlap
+ <rdunlap@infradead.org>, Yoann Congal <yoann.congal@smile.fr>, "Gustavo A.
+ R. Silva" <gustavoars@kernel.org>, Nhat Pham <nphamcs@gmail.com>, Costa
+ Shulyupin <costa.shul@redhat.com>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org
+Subject: Re: [PATCH v1 4/7] sched/isolation: Adjust affinity of managed irqs
+ according to change of housekeeping cpumask
+In-Reply-To: <87wmnrj4uz.ffs@tglx>
+References: <20240516190437.3545310-1-costa.shul@redhat.com>
+ <20240516190437.3545310-5-costa.shul@redhat.com> <87wmnrj4uz.ffs@tglx>
+Date: Sat, 18 May 2024 03:25:40 +0200
+Message-ID: <87seyfj4h7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516222159.3710131-1-irogers@google.com>
-In-Reply-To: <20240516222159.3710131-1-irogers@google.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Fri, 17 May 2024 18:25:16 -0700
-Message-ID: <CAM9d7chsZ3EDRYW=YEJBd7wCYRLWNqMOFt33C=ghaY_UqZvGKA@mail.gmail.com>
-Subject: Re: [PATCH v1] perf top: Make zeroing histogram on refresh the default
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Changbin Du <changbin.du@huawei.com>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Thu, May 16, 2024 at 3:22=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> Instead of decaying histograms over time change it so that they are
-> zero-ed on each perf top refresh. Previously the option '-z', or
-> pressing 'z' in tui mode, would enable this behavior. Decaying samples
-> is non-intuitive as it isn't how "top" works. Make zeroing on refresh
-> the default and rename the command line options from 'z' to 'Z' and
-> 'zero' to 'decay'.
+Costa!
 
-While it may make more sense, I'm afraid of changing the default
-behavior.  I think we can add a config option for this.
+On Sat, May 18 2024 at 03:17, Thomas Gleixner wrote:
+> Impressive...
 
-Also instead of adding a new option, it should be able to use the
-existing --no-zero option.
+Now let's take a step back because none of this makes any sense at all
+conceptually.
+
+Reconfiguring the housekeeping CPUs on a life system is expensive and a
+slow path operation no matter what.
+
+So why inflicting all of this nonsense to the kernel instead of
+cleverly (ab)using CPU hotplug for it in user space:
+
+          for_each_cpu(cpu, new_house_keeping_mask) {
+          	if (cpu_ishk(cpu))
+                	continue;
+                cpu_offline(cpu);
+                set_cpu_in_hkmask(cpu);
+                cpu_online(cpu);
+          }
+
+          for_each_cpu(cpu, new_isolated_mask) {
+          	if (!cpu_ishk(cpu))
+                	continue;
+                cpu_offline(cpu);
+                clear_cpu_in_hkmask(cpu);
+                cpu_online(cpu);
+          }
+
+Or something like that. You get the idea, right?
+
+IOW, the only kernel change which is required to achieve your goal is to
+ensure that changing the housekeeping/isolated property of a CPU at
+runtime is only possible when the CPU is "offline".
+
+Then all of the magic things you try to solve just work out of the box
+because the existing and well exercised hotplug code takes care of it
+already, no?
+
+I might be missing something obvious as always, so feel free to educate
+me on it. 
 
 Thanks,
-Namhyung
 
->
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/Documentation/perf-top.txt |  6 +++---
->  tools/perf/builtin-top.c              | 23 +++++++++++++----------
->  tools/perf/ui/browsers/hists.c        |  7 ++++---
->  tools/perf/util/top.h                 |  2 +-
->  4 files changed, 21 insertions(+), 17 deletions(-)
->
-> diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documenta=
-tion/perf-top.txt
-> index 667e5102075e..f1524cc0d409 100644
-> --- a/tools/perf/Documentation/perf-top.txt
-> +++ b/tools/perf/Documentation/perf-top.txt
-> @@ -124,9 +124,9 @@ Default is to monitor all CPUS.
->  --verbose::
->         Be more verbose (show counter open errors, etc).
->
-> --z::
-> ---zero::
-> -       Zero history across display updates.
-> +-Z::
-> +--decay::
-> +       Decay rather than zero history across display updates.
->
->  -s::
->  --sort::
-> diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-> index e8cbbf10d361..8f06635cb7cd 100644
-> --- a/tools/perf/builtin-top.c
-> +++ b/tools/perf/builtin-top.c
-> @@ -266,10 +266,10 @@ static void perf_top__show_details(struct perf_top =
-*top)
->         more =3D symbol__annotate_printf(&he->ms, top->sym_evsel);
->
->         if (top->evlist->enabled) {
-> -               if (top->zero)
-> -                       symbol__annotate_zero_histogram(symbol, top->sym_=
-evsel->core.idx);
-> -               else
-> +               if (top->decay_samples)
->                         symbol__annotate_decay_histogram(symbol, top->sym=
-_evsel->core.idx);
-> +               else
-> +                       symbol__annotate_zero_histogram(symbol, top->sym_=
-evsel->core.idx);
->         }
->         if (more !=3D 0)
->                 printf("%d lines not displayed, maybe increase display en=
-tries [e]\n", more);
-> @@ -292,11 +292,11 @@ static void perf_top__resort_hists(struct perf_top =
-*t)
->                 hists__unlink(hists);
->
->                 if (evlist->enabled) {
-> -                       if (t->zero) {
-> -                               hists__delete_entries(hists);
-> -                       } else {
-> +                       if (t->decay_samples) {
->                                 hists__decay_entries(hists, t->hide_user_=
-symbols,
->                                                      t->hide_kernel_symbo=
-ls);
-> +                       } else {
-> +                               hists__delete_entries(hists);
->                         }
->                 }
->
-> @@ -460,7 +460,9 @@ static void perf_top__print_mapped_keys(struct perf_t=
-op *top)
->         fprintf(stdout,
->                 "\t[U]     hide user symbols.               \t(%s)\n",
->                 top->hide_user_symbols ? "yes" : "no");
-> -       fprintf(stdout, "\t[z]     toggle sample zeroing.             \t(=
-%d)\n", top->zero ? 1 : 0);
-> +       fprintf(stdout,
-> +               "\t[z]     toggle sample zeroing/decaying.  \t(%s)\n",
-> +               top->decay_samples ? "decay" : "zero");
->         fprintf(stdout, "\t[qQ]    quit.\n");
->  }
->
-> @@ -583,7 +585,7 @@ static bool perf_top__handle_keypress(struct perf_top=
- *top, int c)
->                         top->hide_user_symbols =3D !top->hide_user_symbol=
-s;
->                         break;
->                 case 'z':
-> -                       top->zero =3D !top->zero;
-> +                       top->decay_samples =3D !top->decay_samples;
->                         break;
->                 default:
->                         break;
-> @@ -648,7 +650,7 @@ static void *display_thread_tui(void *arg)
->         ret =3D evlist__tui_browse_hists(top->evlist, help, &hbt, top->mi=
-n_percent,
->                                        &top->session->header.env, !top->r=
-ecord_opts.overwrite);
->         if (ret =3D=3D K_RELOAD) {
-> -               top->zero =3D true;
-> +               top->decay_samples =3D false;
->                 goto repeat;
->         } else
->                 stop_top();
-> @@ -1502,7 +1504,8 @@ int cmd_top(int argc, const char **argv)
->                     "child tasks do not inherit counters"),
->         OPT_STRING(0, "sym-annotate", &top.sym_filter, "symbol name",
->                     "symbol to annotate"),
-> -       OPT_BOOLEAN('z', "zero", &top.zero, "zero history across updates"=
-),
-> +       OPT_BOOLEAN('Z', "decay", &top.decay_samples,
-> +                   "decay rather than zero history across updates"),
->         OPT_CALLBACK('F', "freq", &top.record_opts, "freq or 'max'",
->                      "profile at this frequency",
->                       record__parse_freq),
-> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hist=
-s.c
-> index b7219df51236..bcc4720f8198 100644
-> --- a/tools/perf/ui/browsers/hists.c
-> +++ b/tools/perf/ui/browsers/hists.c
-> @@ -2305,8 +2305,8 @@ static int hists_browser__scnprintf_title(struct hi=
-st_browser *browser, char *bf
->                                      " drop: %" PRIu64 "/%" PRIu64,
->                                      top->drop, top->drop_total);
->
-> -               if (top->zero)
-> -                       printed +=3D scnprintf(bf + printed, size - print=
-ed, " [z]");
-> +               if (top->decay_samples)
-> +                       printed +=3D scnprintf(bf + printed, size - print=
-ed, " [decay]");
->
->                 perf_top__reset_sample_counters(top);
->         }
-> @@ -3209,9 +3209,10 @@ static int evsel__hists_browse(struct evsel *evsel=
-, int nr_events, const char *h
->                         continue;
->                 case 'z':
->                         if (!is_report_browser(hbt)) {
-> +                               /* Toggle between zeroing and decaying sa=
-mples. */
->                                 struct perf_top *top =3D hbt->arg;
->
-> -                               top->zero =3D !top->zero;
-> +                               top->decay_samples =3D !top->decay_sample=
-s;
->                         }
->                         continue;
->                 case 'L':
-> diff --git a/tools/perf/util/top.h b/tools/perf/util/top.h
-> index 4c5588dbb131..b2c199925b36 100644
-> --- a/tools/perf/util/top.h
-> +++ b/tools/perf/util/top.h
-> @@ -32,7 +32,7 @@ struct perf_top {
->         u64                guest_us_samples, guest_kernel_samples;
->         int                print_entries, count_filter, delay_secs;
->         int                max_stack;
-> -       bool               hide_kernel_symbols, hide_user_symbols, zero;
-> +       bool               hide_kernel_symbols, hide_user_symbols, decay_=
-samples;
->  #ifdef HAVE_SLANG_SUPPORT
->         bool               use_tui;
->  #endif
-> --
-> 2.45.0.rc1.225.g2a3ae87e7f-goog
->
+        tglx
 
