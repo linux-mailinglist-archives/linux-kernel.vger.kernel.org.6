@@ -1,111 +1,113 @@
-Return-Path: <linux-kernel+bounces-182904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9E68C918F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 17:48:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86FE98C9191
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 17:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47D8C28214A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:48:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A94A1B2112E
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA294642D;
-	Sat, 18 May 2024 15:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD964644E;
+	Sat, 18 May 2024 15:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YFYszTAW"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GLRV83qm"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44EB2A8CD;
-	Sat, 18 May 2024 15:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527C515AF1
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 15:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716047289; cv=none; b=Uao3Xnzm5d3eQYI6PRsiQQLS2YJ7wo5lDOU490tBKvN5+Bn4m6accJnU9SmOeLTWKpBu9fiD9LeLONHN4rTcu7BBEHX81SweKMhec4h8pwh7J70iUQyeH8HR1ZJfiC+B44hWEeGuBGfqxqcKroN9WrCJ6llTMD/ho93yFEQMGv4=
+	t=1716047777; cv=none; b=DUvpBw+Obn7l9m24cSWi60vx8wSO3tN4le64LT7xpSpc0lnvpO+6wWmlP3xpl4NOzs0KzBq1auHhkdPGPxONJIPIsZ22gXNGqqEXFWMsAsqDTO+ZkKdpbrlUXm+4470tv4sQA9on5+vvH/73adWqw8n9mZ08OEqEOmBsRfQ3cfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716047289; c=relaxed/simple;
-	bh=6CQBI/V+OTu0DG9J0ueZD3P2Z4L50xI4hu465oEEtDk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=stXfKOsc0RxzFB2oKnYr/ex3hJLL05+vBRPWXkM1yc7o2galrVmDTZOn76um/+iqmdr+Jm5K5pse5iikXiZ18lO7HBVoPEZrrn5StX3gzhHMy4Dzs6u458qh80N2CoprePYewc6evnRDkJbn8DQV3pm3LAFZLFK+W7mdb0ahf0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YFYszTAW; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716047263; x=1716652063; i=markus.elfring@web.de;
-	bh=6CQBI/V+OTu0DG9J0ueZD3P2Z4L50xI4hu465oEEtDk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YFYszTAWHMhh+ZHmXEI0ZXxi2StQvVxNr4rdSFrLLFITsbEFiUeKsmxtdxoo9wzU
-	 0G9T0gmbIyZJAR+hR3ZUJMVrMkm+iVRp1lzzWX0gfz00l4tbnVnDm1xk+uSu7P2yM
-	 s2ESAGDBgfpHdHSeX7mc0F7J/os6DfGbmCZMqp8h8s77962OPpl2BMCVX0ncy/Syg
-	 tQrbzGJroGm/UdXGPXLUFzkcUCW7zIHF9isVQ8mzfsotkfUgWM34mTv9WvRq5OJbE
-	 x7qRZOm16ELDs9KdCK4UFXGcGqLHAQEnSdP7XeNgZsLlCXUIGe8y8ZmIK3RQtyCI/
-	 VstJO+0Wl8HJuU9Tkg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MK52w-1rq88n1oMw-00SgTM; Sat, 18
- May 2024 17:47:43 +0200
-Message-ID: <d97d966e-bc95-4d43-83ad-b368ed7d7e71@web.de>
-Date: Sat, 18 May 2024 17:47:12 +0200
+	s=arc-20240116; t=1716047777; c=relaxed/simple;
+	bh=SXfWLsYP4xO1fcibCHqgCOo6Cp6knVav2OwezPj+zsk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C01oNkJ4cOZDjftoqL/nMQNkrVE4+E+/SzkmhTcOoFwlJfu21cmh/YDfur43Tp5JNLYvsb/4iKsUq/ziJbSvc4FEgdXJJrANmhAWQdkoglSaJarLH+XpbrsuB24VhTLUBDPUhVVHTPZeAa93Rpc2ZpaqX2STCqAukGqcOTlt49o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GLRV83qm; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e0a34b2899so23429611fa.3
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 08:56:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1716047773; x=1716652573; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HGl/ypIf9+AIU59blmBwfVnkcczybxZqLcx5RH1o85o=;
+        b=GLRV83qmPm5fIKm8QkEbdrGui0H7+QrdXTlCXc/vnQf2K88Bl1ZVdjKNJYQr5FCPjf
+         3CNuWwn2WtX7IBbsXsPBKmSqGC57kxTanP6I6S6Wt/zU1x6crFdSCQFFdxGhH4WSqyD/
+         az7n/0p+jtpcbh6ys3JLLZIw6nSTGMgcGxiCo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716047773; x=1716652573;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HGl/ypIf9+AIU59blmBwfVnkcczybxZqLcx5RH1o85o=;
+        b=uK9lDTo3e5FS3u1oHhUVAmKVnWp0tcyJKE7E1WKyD/i4qIW0+8VptV0k4JZTcctA47
+         riAeho6luF1bA0Vddz06maQBMLxPdLvLvovprh3tULU6HDoyghNEkobpFRHlmQsFWqpY
+         MatAoYBsza3NWip/mVBtn4QUtqVYYfKegW42y0hLrYHH+0nwroLTT+ui0BMto4VbdtpC
+         A4vNkx35LPxAGTwkLlWPIH+t9Iq5dbxpjnC+ypqXbEIk3822C6d5zvPwC2HOJNA5HQTB
+         dKFx3qNGTw5YAPQNcO6e4LY3CNuOeqCvBHVJ3zpwB1D16LjgoNIygeOdAC6qxYOypxw9
+         nh2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXtamzctEY+JIVlg791Gi7THZ1tKobx5w/zKXDWavM8poHo+v4bIH3UW3CuoJwxjC5NxW53yRKn+uL1MixDNoQXRTYPgNOs4RrKXFdP
+X-Gm-Message-State: AOJu0YzT/q49r1aZ3nGM4RxBY3DyarFUt9Ev1fH3PzeK/nGFxV7CtM13
+	8WIvm0z2tFJkOB/xXPmfFj4G095RzCPESSFjfLTy01DJtQ7ZQav6ma3yltycTLZ1YDrgQCjlYLR
+	WTZUXPA==
+X-Google-Smtp-Source: AGHT+IF7qLjmGlwd/9TdKeUYTfwhF71/L4aeTyQ4EX8Zqfo0NRiUSOHTfZlDdc2CwEjKKLf0rRDFOg==
+X-Received: by 2002:a05:6512:686:b0:522:33bb:ff7f with SMTP id 2adb3069b0e04-52233bbffddmr25075049e87.26.1716047773213;
+        Sat, 18 May 2024 08:56:13 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5225132505csm2610931e87.116.2024.05.18.08.56.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 May 2024 08:56:12 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51f71e4970bso3456592e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 08:56:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX92JtvqU5G6WbqMi3xE3g83slBPN5SToDldmQllrzWRDRoftqmJugrWV8RxXB3p3VM6uSMXOh6CbtqkpOxnnrI1KjBqWj9ngx6YVNo
+X-Received: by 2002:ac2:5e8e:0:b0:522:34a9:a7e7 with SMTP id
+ 2adb3069b0e04-52234a9a8d2mr20924915e87.22.1716047771846; Sat, 18 May 2024
+ 08:56:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Andrea Mayer <andrea.mayer@uniroma2.it>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, David Ahern <dsahern@kernel.org>,
- David Lebrun <david.lebrun@uclouvain.be>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Ahmed Abdelsalam <ahabdels.dev@gmail.com>,
- Paolo Lungaroni <paolo.lungaroni@uniroma2.it>,
- Stefano Salsano <stefano.salsano@uniroma2.it>
-References: <20240517164541.17733-1-andrea.mayer@uniroma2.it>
-Subject: Re: [net] ipv6: sr: fix missing sk_buff release in seg6_input_core
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240517164541.17733-1-andrea.mayer@uniroma2.it>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kQX8iIydzzNB+PxhL2aj41fD8pK1oP6Q2Gruh58RP4/WeX3kQkh
- JiagPXRe8fZbeAjMIjHQ5pc9Hwpg0ES+Y0lxolmHTdGL/s2PUfsYzGD9sXDJ5E+HnVo/woB
- xWMvnicO+gnpNj0oGhGzg4Xz0rxclgpefY8NlDicCvKPLnwUXPAHr/UfzZBOUAMn5GU6AID
- sG4CtCie1jU+ry8j9nNew==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/bf+4/7Ejmg=;nfNAGY9G9W60Ha9S8uKelk0KCyd
- WJxVb92xqA6cyrG9etcs1ZNUOrbnakEpZub5FVPxPK6u7s4zeI55QTTcef6ymopaYSDKVfHeX
- Jm+TJDZw8vbGjr787ZfAUsMnJo48DF04qL34VTTBJhiarn2TQ0PvqNiKzJ77QLrIVwPCKhOTn
- 8oOvtFXq+UlDeD6QwQwLmF/uHKdCy32cFo6ACPv6x3GaXjhRHz4whgsrm+15Ds9m94/ZXQnK/
- bQz9pmgjStKVfrz3ZeAcLwbpN15vTw5tGHBexzpTMOV4ExU0lUhi+4PT3VBINpKeyJ+ZBh9pc
- RKE4ApA/o32gqdlJptPOi9d2/TN20WAZlFPh8AFmgkHARpT8GZdH/0DI/J6dSgqnsYdnhFMhb
- 1GTSnV5RBrudagX3qtjJH2gxbNDkIBse1iVoO9tO/TPpBFObRFDxvKPpbc6929aDWzgZSI/No
- 5jisMsigX79fXOpTNwxyUvBcI1Qxy7s90nD8leXX7LIXZm5Z+q/I1DTd8YTKoiH9Ou+DJXJcj
- RM7ZSpWElouS7xzNpogs8rqgzCZdToTC3olaOQu2pfypy0iD2xtVa1fCulkDTOJsLb5QCWgDA
- 9PUZFjnXMhq2iFjzWCZ395XkK+dxCFam61opKehPUwiPjNO4KxT7svV3VBUVZPxW8NNPjHY7C
- 7B6NM5Flf2LDSYnW0MN+iXCE8g6AUZR96LOKl4N1iJfRsS/kUGUA4s+TJXgJ8v7Ql9sZDJ5Fr
- RrJ3I4JXc04RlplAStyC3uGb5Zu8uamBCSCWhx4BvuRaPNezljncIbdmiWTx4Lh3iTVOlhefn
- mCwqlYl49FoNSXKg+EpIp1XV52W9VmBWxIwElD6nMLd7I=
+References: <20240516095216.ac9a0fd13357450cc5f2e491@kernel.org>
+ <CAHk-=wgQ_MNipb2fOSDmXJ9tYko8OhzA0fPueR-kh6eYT_MbDg@mail.gmail.com> <20240518233824.360de206ba709473495f89d7@kernel.org>
+In-Reply-To: <20240518233824.360de206ba709473495f89d7@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 18 May 2024 08:55:55 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiMwMviFKdSDyTDdgvapN0W9gFB-DH_1FDP3TDpkMOeGw@mail.gmail.com>
+Message-ID: <CAHk-=wiMwMviFKdSDyTDdgvapN0W9gFB-DH_1FDP3TDpkMOeGw@mail.gmail.com>
+Subject: Re: [GIT PULL] probes updates for v6.10
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Jonathan Haslam <jonathan.haslam@gmail.com>, Kui-Feng Lee <thinker.li@gmail.com>, 
+	Stephen Brennan <stephen.s.brennan@oracle.com>, Ye Bin <yebin10@huawei.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-* The message subject would have been a bit nicer with the key word =E2=80=
-=9CPATCH=E2=80=9D.
+On Sat, 18 May 2024 at 07:38, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>
+> Ah, and I missed to build it with W=1.
 
-* How do you think about to append parentheses to the function name?
+Note that I do *not* at all expect people to build with W=1. It gets
+very noisy depending on your compiler version etc, and a lot of the
+W=1 errors are not at all worth worrying about.
 
+But what I do expect is for merge window pull  requests to have been
+in linux-next, which will give it at least reasonable build coverage
+from the bots,
 
-=E2=80=A6
-> The proposed patch addresses the identified memory leak by =E2=80=A6
+I'm not sure whether it was because I built witch clang (which gives
+some warnings that gcc does not, and vice versa) or whether it was
+just that my clang build has a different Kconfig. Regardless, if this
+had been in linux-next, I'm pretty sure that it would have been found
+before I hit it.
 
-Will a corresponding imperative wording be more desirable for
-an improved change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
-
-Regards,
-Markus
+             Linus
 
