@@ -1,267 +1,229 @@
-Return-Path: <linux-kernel+bounces-182938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D9F8C91FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:53:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 700208C9205
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1307281E5D
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 18:53:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C527DB218D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 18:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13B154F95;
-	Sat, 18 May 2024 18:53:35 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6E36A008;
+	Sat, 18 May 2024 18:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="v/AmV8kq"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9884F56454
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 18:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB3A61694
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 18:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716058415; cv=none; b=kadg15THux1uc1jxKWG0BU8XQmugLd+qvBFT6+IcnJZET/dyVQUmf9Nzc3Uuyva3AtBt6rNYFeojIJOO8icQNpPQgxCcarb3fQHQUPh3WACqJcAUwBRXgd/2EPd/KmH+1gjupOTs7S0af4/Mk0vIJ7l3tzgmKPFFCejleM1nGHo=
+	t=1716058651; cv=none; b=defgQLS+3zDExcy89LGJ1UXA67eIJcEZ7rSu3AeB+ciGCxQyvU3Rd7aQtqyLXbbPMKy2Ut+NCZ0xsjO8ZX0GUXzEvnzfuPhPXuUmBMHBgzJY4VvXu8gdftMVM4xTJpGhG4iawV6cj6g6roohYDvPEz2nI3cXn/sXAe2nIF3hn2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716058415; c=relaxed/simple;
-	bh=PzvWtsYxvq9OvEyn5u7y1pLUR9t9O6XwE27nVOaJft0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=n7GlKAQNtxZBZWOliX3LZVFbMRxS1ayX9OI8rbiUt0c6uwTZkXUq+WCkcQ1lSQhA1hfOFZFcA5BiLuM/O4At21VRgXyNgPpnO231lUK5NNEfPut3gDhtgsZcAM6hX2GxducatGleuMcF5kjtZ4zsK56wC7lXUCkjBeNxLkHcs5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7dabc125bddso1186955439f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 11:53:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716058413; x=1716663213;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1716058651; c=relaxed/simple;
+	bh=wAqIRcCabbfn5FNmvGNIGPL+iroeEmFcrvMhrlMZdAE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nE1H8iaZKuEQYnN8gH+4QMLlTZtuV50RoxDGKIwkBUTur5ADembYEU4dd3Ef0gpb+v8t0FyTYm0kTigF7W7ssyq+2DpiY3GehH2D+9DcXz66XoNe5VwFRorlntod1G45T+alj8ZbhNPa4I/yBvPevnQU8JvNjgZO17Vu6+1VlMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=v/AmV8kq; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b3241373adso775232eaf.2
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 11:57:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1716058649; x=1716663449; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jmqBSJMyaQSkwkaSX9SRtYVcBMPda0xro2Wg0fWt3pc=;
-        b=eROm7vnG6MyeQu/g0MnquYGF41/gWlHKHU+XKB2RHIMTgrYR8Kaw6QK6iM0dsO60qs
-         NoCdFEOXAEWFCbr03GSTkZO1EzB6jT62dGL3zrAwEciXe3Oh33OB6O2phsqx7e7OUQbC
-         /0trWaE2OUXSkph0837JwLusWThC/QNpzjd3rOXprvogWOBJEWNGzwz0RounQFc2ctPg
-         aAwxbLOUF+99PDgUv+kSWa6i7A9eLDe5cZN/0fc356+l2xu8vt4i/LVv7VArDvS/81Cm
-         eUgN9cU1ZMYMK39/vSfXgcuS2tlveRYWhsGFTCCTd4J2BdOy8jzQ0e+b2sV0XuI4vb7L
-         w0EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUy+lKx+G0X4jC0fw3JM8kNfSsVxJl15aWwght+dOi1rX64vBqA8+ZLVlLBNn1jFVwX38Dh3aiKMKVekcew3IsNmB3l7T5Dkxl8fl+u
-X-Gm-Message-State: AOJu0Ywfq6MezKSmg3UPtXtjyS8hqeRYUAuQ3ikme6OuuleNx4d1y7KQ
-	4oaOR9YDWSZdDOu7HAvzzfhu2Zv/6FtETUPP0nxNTsKlfzOE1+BQhWcLr/QvF9UANeO4eypEIUQ
-	biajRvrWSEHkq0YjLowp9RPyC2wIhnm11aRrEdJa0Kkt1XcbQoUasX9k=
-X-Google-Smtp-Source: AGHT+IEwgTHnLE/N6ajh52qHQ4jZbewL6olqAZnK+n1knRF9j8yz7bykLNABPQ0Qe1rq4TTXQkuxWoJM01tHsUMTn0BOLEl2r4So
+        bh=YguLbfIUe9SPEVY4PVRNzJgWNLjHIbYrZNjYPjw1wDY=;
+        b=v/AmV8kq3UZnHRDaqHKqhNVypfUF8x6d6yBi1N5G0tcfRYE7ce3MRpUzwl4YK2pDOY
+         0gSkGZswCXm5bMtnmSlhuxkbS/tIUF9okGsjBZ5fby4NKwqYTPIwTzC4ZoclOyTZFLem
+         RT2+G780T4Rvt6sAdooeJFD4Qw3kSZNGJ+JoLSw1NmiZZpBQstNxMDIY5BleC4qlptFg
+         +S8gDOPygxpPebphBpPjxk+hnz5mYSWeMnl3BWZFaLUWoQw272KOFLgpA509meCbeaTc
+         1zy687rDIDcZ+p0a/pi8z2PkHBDskEdl/PpU+UT704u1+W7ImWvpp5WEZODo1Gd2YGEU
+         ZAqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716058649; x=1716663449;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YguLbfIUe9SPEVY4PVRNzJgWNLjHIbYrZNjYPjw1wDY=;
+        b=nSFWfATfe0nShUzabEl6hqsHsbUXHELuxcwIidGswNFURMd5mCmvUVtZ+JOlnmdRy7
+         OCooDvfDKBuE3fByH9xoXCqf15P/UVjohNSAKgMt1H4uunWEb0QXY15/z6mZfC/kBl2W
+         bjlTk0l1IsKvp3tOzy+yR1Ts1/+4fh5pis/BYY1emai8BPHY0fwRm6Hmq2VuktOLvq3i
+         nohgOdNn/WM/R4Os6wA7FCXiyJMZ7SEnWdPpgvDJQdH+Jd189Tn1pyMt207up2qf45CN
+         Ve2nHt7tG5ir8DlAUoQ1bnAYQrxASVe0c2RpJoY5HvlmKSFZgPl8D+QImJRnnG+2lFZj
+         WB5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWbF8ipS81jNy6hAlQ5T4bu5f8zJq/4n4/LrqQUTw+CCsvYnfy1k6fPTOWQ1JLQRDN6DKfS/KRsrx6BNTC4T6FNI1uZLnFSikthYzm3
+X-Gm-Message-State: AOJu0Ywykw1KQwXUDmL7KsrGh/czH7xVJF0il/5eNTL4sdLmLbweFtZx
+	oyDf/wy2w0psn/A6OOSkqHusPl83V+ZX2fWVg1Z1bUg1/eWvkNlbwdbpkq9HjSk=
+X-Google-Smtp-Source: AGHT+IHilXoeJ/w5ohYR0i7AU3401ochXIU5LArEI0v5RdvvJ31YBmDQam4A7KpiPZymCfWrte5bew==
+X-Received: by 2002:a05:6358:3a11:b0:17b:5661:5e2b with SMTP id e5c5f4694b2df-193bb64065bmr2817534555d.18.1716058648846;
+        Sat, 18 May 2024 11:57:28 -0700 (PDT)
+Received: from [192.168.1.16] (174-21-188-197.tukw.qwest.net. [174.21.188.197])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-658764fda40sm5342410a12.5.2024.05.18.11.57.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 May 2024 11:57:28 -0700 (PDT)
+Message-ID: <eeb59c4f-9208-4700-b73b-9652398371d7@davidwei.uk>
+Date: Sat, 18 May 2024 11:57:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3782:b0:488:7748:107a with SMTP id
- 8926c6da1cb9f-48958c02105mr1751686173.4.1716058412951; Sat, 18 May 2024
- 11:53:32 -0700 (PDT)
-Date: Sat, 18 May 2024 11:53:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001e3b5d0618befc84@google.com>
-Subject: [syzbot] [nilfs?] possible deadlock in nilfs_evict_inode (2)
-From: syzbot <syzbot+c48f1971ba117125f94c@syzkaller.appspotmail.com>
-To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 04/14] netdev: support binding dma-buf to
+ netdevice
+Content-Language: en-GB
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski
+ <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
+ <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Pavel Begunkov <asml.silence@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
+ Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+References: <20240510232128.1105145-1-almasrymina@google.com>
+ <20240510232128.1105145-5-almasrymina@google.com>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <20240510232128.1105145-5-almasrymina@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 2024-05-10 16:21, Mina Almasry wrote:
+> -/* Stub */
+>  int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
+>  {
+> -	return 0;
+> +	struct nlattr *tb[ARRAY_SIZE(netdev_queue_dmabuf_nl_policy)];
+> +	struct net_devmem_dmabuf_binding *out_binding;
+> +	struct list_head *sock_binding_list;
+> +	u32 ifindex, dmabuf_fd, rxq_idx;
+> +	struct net_device *netdev;
+> +	struct sk_buff *rsp;
+> +	struct nlattr *attr;
+> +	int rem, err = 0;
+> +	void *hdr;
+> +
+> +	if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_DEV_IFINDEX) ||
+> +	    GENL_REQ_ATTR_CHECK(info, NETDEV_A_BIND_DMABUF_DMABUF_FD) ||
+> +	    GENL_REQ_ATTR_CHECK(info, NETDEV_A_BIND_DMABUF_QUEUES))
+> +		return -EINVAL;
+> +
+> +	ifindex = nla_get_u32(info->attrs[NETDEV_A_DEV_IFINDEX]);
+> +	dmabuf_fd = nla_get_u32(info->attrs[NETDEV_A_BIND_DMABUF_DMABUF_FD]);
+> +
+> +	rtnl_lock();
+> +
+> +	netdev = __dev_get_by_index(genl_info_net(info), ifindex);
+> +	if (!netdev) {
+> +		err = -ENODEV;
+> +		goto err_unlock;
+> +	}
+> +
+> +	err = net_devmem_bind_dmabuf(netdev, dmabuf_fd, &out_binding);
+> +	if (err)
+> +		goto err_unlock;
+> +
+> +	nla_for_each_attr(attr, genlmsg_data(info->genlhdr),
+> +			  genlmsg_len(info->genlhdr), rem) {
+> +		if (nla_type(attr) != NETDEV_A_BIND_DMABUF_QUEUES)
+> +			continue;
+> +
+> +		err = nla_parse_nested(
+> +			tb, ARRAY_SIZE(netdev_queue_dmabuf_nl_policy) - 1, attr,
+> +			netdev_queue_dmabuf_nl_policy, info->extack);
+> +		if (err < 0)
+> +			goto err_unbind;
+> +
+> +		rxq_idx = nla_get_u32(tb[NETDEV_A_QUEUE_DMABUF_IDX]);
+> +		if (rxq_idx >= netdev->num_rx_queues) {
+> +			err = -ERANGE;
+> +			goto err_unbind;
+> +		}
 
-syzbot found the following issue on:
+net_devmem_bind_dmabuf_to_queue() checks for rxq_idx >=
+netdev->num_rx_queues as well. I'd say remove the one in
+netdev_nl_bind_rx_doit().
 
-HEAD commit:    6bfd2d442af5 Merge tag 'irq-core-2024-05-12' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13aefc20980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=395546166dcfe360
-dashboard link: https://syzkaller.appspot.com/bug?extid=c48f1971ba117125f94c
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+Also we may want a generic netdev function e.g. netdev_rx_queue_set_mp()
+since I need the same functionality.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-6bfd2d44.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7ad901fe99c6/vmlinux-6bfd2d44.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8d6ef2df621f/bzImage-6bfd2d44.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c48f1971ba117125f94c@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.9.0-syzkaller-01893-g6bfd2d442af5 #0 Not tainted
-------------------------------------------------------
-kswapd0/111 is trying to acquire lock:
-ffff888018e7e610 (sb_internal#4){.+.+}-{0:0}, at: nilfs_evict_inode+0x157/0x550 fs/nilfs2/inode.c:924
-
-but task is already holding lock:
-ffffffff8d9390c0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10 mm/vmscan.c:6782
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (fs_reclaim){+.+.}-{0:0}:
-       __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
-       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3712
-       might_alloc include/linux/sched/mm.h:312 [inline]
-       prepare_alloc_pages.constprop.0+0x155/0x560 mm/page_alloc.c:4346
-       __alloc_pages+0x194/0x2460 mm/page_alloc.c:4564
-       alloc_pages_mpol+0x275/0x610 mm/mempolicy.c:2264
-       folio_alloc+0x1e/0x40 mm/mempolicy.c:2342
-       filemap_alloc_folio+0x3ba/0x490 mm/filemap.c:984
-       __filemap_get_folio+0x527/0xa90 mm/filemap.c:1926
-       pagecache_get_page+0x2c/0x260 mm/folio-compat.c:93
-       block_write_begin+0x38/0x4a0 fs/buffer.c:2209
-       nilfs_write_begin+0x9f/0x1a0 fs/nilfs2/inode.c:262
-       page_symlink+0x356/0x450 fs/namei.c:5236
-       nilfs_symlink+0x23c/0x3c0 fs/nilfs2/namei.c:153
-       vfs_symlink fs/namei.c:4489 [inline]
-       vfs_symlink+0x3e8/0x630 fs/namei.c:4473
-       do_symlinkat+0x263/0x310 fs/namei.c:4515
-       __do_sys_symlink fs/namei.c:4536 [inline]
-       __se_sys_symlink fs/namei.c:4534 [inline]
-       __ia32_sys_symlink+0x78/0xa0 fs/namei.c:4534
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
--> #1 (&nilfs->ns_segctor_sem){++++}-{3:3}:
-       down_read+0x9a/0x330 kernel/locking/rwsem.c:1526
-       nilfs_transaction_begin+0x326/0xa40 fs/nilfs2/segment.c:223
-       nilfs_symlink+0x114/0x3c0 fs/nilfs2/namei.c:140
-       vfs_symlink fs/namei.c:4489 [inline]
-       vfs_symlink+0x3e8/0x630 fs/namei.c:4473
-       do_symlinkat+0x263/0x310 fs/namei.c:4515
-       __do_sys_symlink fs/namei.c:4536 [inline]
-       __se_sys_symlink fs/namei.c:4534 [inline]
-       __ia32_sys_symlink+0x78/0xa0 fs/namei.c:4534
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
--> #0 (sb_internal#4){.+.+}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain kernel/locking/lockdep.c:3869 [inline]
-       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
-       lock_acquire kernel/locking/lockdep.c:5754 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1661 [inline]
-       sb_start_intwrite include/linux/fs.h:1844 [inline]
-       nilfs_transaction_begin+0x21b/0xa40 fs/nilfs2/segment.c:220
-       nilfs_evict_inode+0x157/0x550 fs/nilfs2/inode.c:924
-       evict+0x2ed/0x6c0 fs/inode.c:667
-       iput_final fs/inode.c:1741 [inline]
-       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
-       iput+0x5c/0x80 fs/inode.c:1757
-       dentry_unlink_inode+0x295/0x440 fs/dcache.c:400
-       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
-       shrink_kill fs/dcache.c:1048 [inline]
-       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
-       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
-       super_cache_scan+0x32a/0x550 fs/super.c:221
-       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
-       shrink_slab_memcg mm/shrinker.c:548 [inline]
-       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
-       shrink_one+0x493/0x7c0 mm/vmscan.c:4774
-       shrink_many mm/vmscan.c:4835 [inline]
-       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
-       shrink_node mm/vmscan.c:5894 [inline]
-       kswapd_shrink_node mm/vmscan.c:6704 [inline]
-       balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
-       kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
-       kthread+0x2c1/0x3a0 kernel/kthread.c:388
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
-Chain exists of:
-  sb_internal#4 --> &nilfs->ns_segctor_sem --> fs_reclaim
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(&nilfs->ns_segctor_sem);
-                               lock(fs_reclaim);
-  rlock(sb_internal#4);
-
- *** DEADLOCK ***
-
-2 locks held by kswapd0/111:
- #0: ffffffff8d9390c0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10 mm/vmscan.c:6782
- #1: ffff888018e7e0e0 (&type->s_umount_key#74){++++}-{3:3}, at: super_trylock_shared fs/super.c:561 [inline]
- #1: ffff888018e7e0e0 (&type->s_umount_key#74){++++}-{3:3}, at: super_cache_scan+0x96/0x550 fs/super.c:196
-
-stack backtrace:
-CPU: 2 PID: 111 Comm: kswapd0 Not tainted 6.9.0-syzkaller-01893-g6bfd2d442af5 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain kernel/locking/lockdep.c:3869 [inline]
- __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
- __sb_start_write include/linux/fs.h:1661 [inline]
- sb_start_intwrite include/linux/fs.h:1844 [inline]
- nilfs_transaction_begin+0x21b/0xa40 fs/nilfs2/segment.c:220
- nilfs_evict_inode+0x157/0x550 fs/nilfs2/inode.c:924
- evict+0x2ed/0x6c0 fs/inode.c:667
- iput_final fs/inode.c:1741 [inline]
- iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
- iput+0x5c/0x80 fs/inode.c:1757
- dentry_unlink_inode+0x295/0x440 fs/dcache.c:400
- __dentry_kill+0x1d0/0x600 fs/dcache.c:603
- shrink_kill fs/dcache.c:1048 [inline]
- shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
- prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
- super_cache_scan+0x32a/0x550 fs/super.c:221
- do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
- shrink_slab_memcg mm/shrinker.c:548 [inline]
- shrink_slab+0xa87/0x1310 mm/shrinker.c:626
- shrink_one+0x493/0x7c0 mm/vmscan.c:4774
- shrink_many mm/vmscan.c:4835 [inline]
- lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
- shrink_node mm/vmscan.c:5894 [inline]
- kswapd_shrink_node mm/vmscan.c:6704 [inline]
- balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
- kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
- kthread+0x2c1/0x3a0 kernel/kthread.c:388
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> +
+> +		err = net_devmem_bind_dmabuf_to_queue(netdev, rxq_idx,
+> +						      out_binding);
+> +		if (err)
+> +			goto err_unbind;
+> +	}
+> +
+> +	sock_binding_list = genl_sk_priv_get(&netdev_nl_family,
+> +					     NETLINK_CB(skb).sk);
+> +	if (IS_ERR(sock_binding_list)) {
+> +		err = PTR_ERR(sock_binding_list);
+> +		goto err_unbind;
+> +	}
+> +
+> +	list_add(&out_binding->list, sock_binding_list);
+> +
+> +	rsp = genlmsg_new(GENLMSG_DEFAULT_SIZE, GFP_KERNEL);
+> +	if (!rsp) {
+> +		err = -ENOMEM;
+> +		goto err_unbind;
+> +	}
+> +
+> +	hdr = genlmsg_iput(rsp, info);
+> +	if (!hdr) {
+> +		err = -EMSGSIZE;
+> +		goto err_genlmsg_free;
+> +	}
+> +
+> +	nla_put_u32(rsp, NETDEV_A_BIND_DMABUF_DMABUF_ID, out_binding->id);
+> +	genlmsg_end(rsp, hdr);
+> +
+> +	rtnl_unlock();
+> +
+> +	return genlmsg_reply(rsp, info);
+> +
+> +err_genlmsg_free:
+> +	nlmsg_free(rsp);
+> +err_unbind:
+> +	net_devmem_unbind_dmabuf(out_binding);
+> +err_unlock:
+> +	rtnl_unlock();
+> +	return err;
+>  }
 
