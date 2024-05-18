@@ -1,84 +1,58 @@
-Return-Path: <linux-kernel+bounces-182955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B630C8C9233
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 22:22:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E378C9237
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 22:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67EE5281DAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:22:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A57651C2098A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A877F62171;
-	Sat, 18 May 2024 20:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547CD60EC4;
+	Sat, 18 May 2024 20:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YOCpMiKG"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ks9HmXPB"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5E160DCF
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 20:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CCC1DA32;
+	Sat, 18 May 2024 20:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716063719; cv=none; b=cO5b3jeSSZnsquR3G9NIWVgB6WmL6l9wUf+JuRfzQX26UQMa096xXo8mKhmy0AUCwmcf5wd5hklzHdURU7TDv/zfbIdhu+A97XeqiDMmBru7BRlxlCHBGQLn9ZcomGFFBxba0CfPREUvC6vwmF6psgQ+n3z7P+YCtW7YceLFQ+M=
+	t=1716063845; cv=none; b=i/ZOrDwoo1yTBQORiB6vQvuLUvooWtDurEj47FNzKMvck3lPVURkcNiOFfw7AfKJ0YuzS83UEj5EAdWIJtkFJajQ8k/qcD8vW66OQ//rg6TSPvAPeLx/GroOlpbEh4ToTAypCQzOEWlbI046a85anZMUvz4ZwaqgJVs9/Q0Wi90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716063719; c=relaxed/simple;
-	bh=TIqCDYP/WZC+8WCV9T+fsdqDELqSHjVL9UHHO59Pw7o=;
+	s=arc-20240116; t=1716063845; c=relaxed/simple;
+	bh=YiD1ycF15N6PaFBhh9tpXdWF4xWXfiVXebccqOFhXVM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iuo4IYVDlZeYaNgiDgKF+T7Iy15fQAyAO3glhxUCVO8ure5uZVfZqSgm+cQnZb6Oh//mef4XPftK8qzj6bYO7/fH1PTrmhzpS4o/N4gbhMPnkRwKWmeouDUVYvwUC4jrxcdT273iryP0GbsyTuSPVnpxxF8H8IwHWaLcQThpXqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YOCpMiKG; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f2f566a7c7so9630685ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 13:21:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716063718; x=1716668518; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YT8k8s66KczJAsNizHEAZ30DCNByiIsnyYkGU9dE27E=;
-        b=YOCpMiKGoCagxA9Q/d+T7HVa9JcZI6hSymcYBNgQeJ1hgvDOaKD4ckeCBP9v5krCNZ
-         EQ4IIAkZadRIgoKxxIdFsYCFcf5SC2OI0NhoC5SpZsNYgsk6TjeFFFRmmeBNfOLnnNeq
-         4GHfKNue0RDwNI8mXRxWNaZ0NxgHxL3pnPID8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716063718; x=1716668518;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YT8k8s66KczJAsNizHEAZ30DCNByiIsnyYkGU9dE27E=;
-        b=W9bXS3+IpZhIkqWvtwmWri9mrDYJAYePlG6H/3QH/sg9OuhvamJZ25y2lHIVf+N0CE
-         PLGPdyuV83jj7EhHBEA1w2aFfLcjxMI4rFA1j0r7apOk2MlZKzU7OVuDmBlj+t7CZWEV
-         fnZinyEmloRzMZytG13CIXLJEdCtG6h5nSTbsf4ref8DSGRsJy7bzoGxRseYNEQRpOgs
-         oBHILwI3Le6Agdd02Yzah6tY9U3u0cs6VyjGA8PtpixtZSIjuONDn3eUE+Q+vTvOxtf3
-         5z2OFhi0OdP1O17RWRP0ka+k54VRwSf5YgUxVV8iYm+7VnobORKW0lIvcTBCbJGE8kMD
-         6LfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVagmfu08AneEKoXzStP4wPJoZ3ir0i66aplfHF7RFEcYKVhjSvIbIsdPEmbxwqJh0vxTbTsAfELzRYH80cpw4iA0//DzvkyGPm96Uk
-X-Gm-Message-State: AOJu0YxADZ4burVnEDm88mXOW5IrHUWgmhlw/4WGXoTyqG+G7awghU+5
-	aZ/woDKgDgi/M12J6QI+p6Rni1IBg8Jp/Zz+jE2GTDb12V3BiuNHXeTkS3ZT9g==
-X-Google-Smtp-Source: AGHT+IFRGo/TZiGmDwrA4Giz9YhglZ2J52uHVSyaj/8zAhYj57i0W4kcw475tSgmL53i3sy/nIfz7g==
-X-Received: by 2002:a17:902:f705:b0:1ee:b47e:7085 with SMTP id d9443c01a7336-1ef43c0c957mr310157785ad.12.1716063717708;
-        Sat, 18 May 2024 13:21:57 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad61c7sm177715425ad.68.2024.05.18.13.21.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 13:21:56 -0700 (PDT)
-Date: Sat, 18 May 2024 13:21:55 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: David Airlie <airlied@gmail.com>, Karol Herbst <kherbst@redhat.com>,
-	Lyude Paul <lyude@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v2] drm/nouveau/nvif: Avoid build error due to potential
- integer overflows
-Message-ID: <202405181321.BE7CB28587@keescook>
-References: <20240518182923.1217111-1-linux@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0pokd0XE84ZXB67jNOcYtG/mXg5OLQ1BLZBPMYrkx1WdmqTx+hTrJhIg5SFmIx6uzdslbuV2LAiAm3cKs0gtf9oWsR+GD5Z24RiCQozA7+1UD+9oINMzu/i15lHsJ6LakVI/SXHCdq1YtEX4c9yW1WYDUb38ZiodTmlFEW8oJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ks9HmXPB; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 63DCF240003;
+	Sat, 18 May 2024 20:23:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1716063834;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RR3IeFPTXcx+EVwTZpzFwWNydln/CbCYUcUKiGCqsiA=;
+	b=ks9HmXPBU71nW4aw0C+/3xXKONfJuSnO7a2sk2xrghhirOLw26OqVzMjF+JvcWBSFQadrf
+	/EVEo+aWhqKz/fdQTnatXV09wVdzGTU/IEiEo0HdERfCa1tZSUrafmYGB3F5/HXZ1B77Aa
+	nlbJlgaQYygquAq5ykjOcGYWwRx3ua1RCQrBa/40Z+mnKETDioxB/PyzFplToGSpOg3gY/
+	hsXMtmeXcJDDXmbE4Ej8rPbvU9RU5fxLgmlMapVJ0RVJbPHR8mbvfehNgKt2QEAESmxshy
+	j7WdX9FwCj/FcgqU/xsLrVsLHU5toViFEjPwHgtLZzOJgEOsOFaLEaEVnkXyqA==
+Date: Sat, 18 May 2024 22:23:54 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: Shuah Khan <shuah@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
+	linux-rtc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] selftests: rtc: rtctest: Do not open-code
+ TEST_HARNESS_MAIN
+Message-ID: <20240518202354d5422c77@mail.local>
+References: <20240518001655.work.053-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,46 +61,193 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240518182923.1217111-1-linux@roeck-us.net>
+In-Reply-To: <20240518001655.work.053-kees@kernel.org>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Sat, May 18, 2024 at 11:29:23AM -0700, Guenter Roeck wrote:
-> Trying to build parisc:allmodconfig with gcc 12.x or later results
-> in the following build error.
-> 
-> drivers/gpu/drm/nouveau/nvif/object.c: In function 'nvif_object_mthd':
-> drivers/gpu/drm/nouveau/nvif/object.c:161:9: error:
-> 	'memcpy' accessing 4294967264 or more bytes at offsets 0 and 32 overlaps 6442450881 bytes at offset -2147483617 [-Werror=restrict]
->   161 |         memcpy(data, args->mthd.data, size);
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/nouveau/nvif/object.c: In function 'nvif_object_ctor':
-> drivers/gpu/drm/nouveau/nvif/object.c:298:17: error:
-> 	'memcpy' accessing 4294967240 or more bytes at offsets 0 and 56 overlaps 6442450833 bytes at offset -2147483593 [-Werror=restrict]
->   298 |                 memcpy(data, args->new.data, size);
-> 
-> gcc assumes that 'sizeof(*args) + size' can overflow, which would result
-> in the problem.
-> 
-> The problem is not new, only it is now no longer a warning but an error
-> since W=1 has been enabled for the drm subsystem and since Werror is
-> enabled for test builds.
-> 
-> Rearrange arithmetic and use check_add_overflow() for validating the
-> allocation size to avoid the overflow.
-> 
-> Fixes: a61ddb4393ad ("drm: enable (most) W=1 warnings by default across the subsystem")
-> Cc: Javier Martinez Canillas <javierm@redhat.com>
-> Cc: Jani Nikula <jani.nikula@intel.com>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Danilo Krummrich <dakr@redhat.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+On 17/05/2024 17:16:58-0700, Kees Cook wrote:
+> Argument processing is specific to the test harness code. Any optional
+> information needs to be passed via environment variables. Move alternate
+> path to the RTC_DEV environment variable. Also do not open-code
+> TEST_HARNESS_MAIN because its definition may change.
 
-Yeah, looks good to me. Thanks!
+Th main issue doing that is that this breaks the main use case of
+rtctest as /dev/rtc1 is usually the main target for those tests. Having
+the RTC_DEV environment variable only documented n this commit message
+is definitively not enough, I'm going to have to handle zillion of
+complaints that this is not working anymore.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+> 
+> Additionally, setup checking can be done in the FIXTURE_SETUP(). With
+> this adjustment, also improve the error reporting when the device cannot
+> be opened.
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: linux-rtc@vger.kernel.org
+> Cc: linux-kselftest@vger.kernel.org
+> ---
+>  tools/testing/selftests/rtc/Makefile  |  2 +-
+>  tools/testing/selftests/rtc/rtctest.c | 66 +++++----------------------
+>  2 files changed, 13 insertions(+), 55 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
+> index 55198ecc04db..654f9d58da3c 100644
+> --- a/tools/testing/selftests/rtc/Makefile
+> +++ b/tools/testing/selftests/rtc/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -CFLAGS += -O3 -Wl,-no-as-needed -Wall
+> +CFLAGS += -O3 -Wl,-no-as-needed -Wall $(KHDR_INCLUDES)
+>  LDLIBS += -lrt -lpthread -lm
+>  
+>  TEST_GEN_PROGS = rtctest
+> diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
+> index 63ce02d1d5cc..41cfefcc20e1 100644
+> --- a/tools/testing/selftests/rtc/rtctest.c
+> +++ b/tools/testing/selftests/rtc/rtctest.c
+> @@ -30,7 +30,18 @@ FIXTURE(rtc) {
+>  };
+>  
+>  FIXTURE_SETUP(rtc) {
+> +	char *alternate = getenv("RTC_DEV");
+> +
+> +	if (alternate)
+> +		rtc_file = alternate;
+> +
+>  	self->fd = open(rtc_file, O_RDONLY);
+> +
+> +	if (self->fd == -1 && errno == ENOENT)
+> +		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+> +	EXPECT_NE(-1, self->fd) {
+> +		TH_LOG("%s: %s\n", rtc_file, strerror(errno));
+> +	}
+>  }
+>  
+>  FIXTURE_TEARDOWN(rtc) {
+> @@ -41,10 +52,6 @@ TEST_F(rtc, date_read) {
+>  	int rc;
+>  	struct rtc_time rtc_tm;
+>  
+> -	if (self->fd == -1 && errno == ENOENT)
+> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+> -	ASSERT_NE(-1, self->fd);
+> -
+>  	/* Read the RTC time/date */
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &rtc_tm);
+>  	ASSERT_NE(-1, rc);
+> @@ -88,10 +95,6 @@ TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
+>  	struct rtc_time rtc_tm;
+>  	time_t start_rtc_read, prev_rtc_read;
+>  
+> -	if (self->fd == -1 && errno == ENOENT)
+> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+> -	ASSERT_NE(-1, self->fd);
+> -
+>  	TH_LOG("Continuously reading RTC time for %ds (with %dms breaks after every read).",
+>  	       READ_LOOP_DURATION_SEC, READ_LOOP_SLEEP_MS);
+>  
+> @@ -126,10 +129,6 @@ TEST_F_TIMEOUT(rtc, uie_read, NUM_UIE + 2) {
+>  	int i, rc, irq = 0;
+>  	unsigned long data;
+>  
+> -	if (self->fd == -1 && errno == ENOENT)
+> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+> -	ASSERT_NE(-1, self->fd);
+> -
+>  	/* Turn on update interrupts */
+>  	rc = ioctl(self->fd, RTC_UIE_ON, 0);
+>  	if (rc == -1) {
+> @@ -155,10 +154,6 @@ TEST_F(rtc, uie_select) {
+>  	int i, rc, irq = 0;
+>  	unsigned long data;
+>  
+> -	if (self->fd == -1 && errno == ENOENT)
+> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+> -	ASSERT_NE(-1, self->fd);
+> -
+>  	/* Turn on update interrupts */
+>  	rc = ioctl(self->fd, RTC_UIE_ON, 0);
+>  	if (rc == -1) {
+> @@ -198,10 +193,6 @@ TEST_F(rtc, alarm_alm_set) {
+>  	time_t secs, new;
+>  	int rc;
+>  
+> -	if (self->fd == -1 && errno == ENOENT)
+> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+> -	ASSERT_NE(-1, self->fd);
+> -
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -256,10 +247,6 @@ TEST_F(rtc, alarm_wkalm_set) {
+>  	time_t secs, new;
+>  	int rc;
+>  
+> -	if (self->fd == -1 && errno == ENOENT)
+> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+> -	ASSERT_NE(-1, self->fd);
+> -
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -308,10 +295,6 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
+>  	time_t secs, new;
+>  	int rc;
+>  
+> -	if (self->fd == -1 && errno == ENOENT)
+> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+> -	ASSERT_NE(-1, self->fd);
+> -
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -366,10 +349,6 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+>  	time_t secs, new;
+>  	int rc;
+>  
+> -	if (self->fd == -1 && errno == ENOENT)
+> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+> -	ASSERT_NE(-1, self->fd);
+> -
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -410,25 +389,4 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+>  	ASSERT_EQ(new, secs);
+>  }
+>  
+> -static void __attribute__((constructor))
+> -__constructor_order_last(void)
+> -{
+> -	if (!__constructor_order)
+> -		__constructor_order = _CONSTRUCTOR_ORDER_BACKWARD;
+> -}
+> -
+> -int main(int argc, char **argv)
+> -{
+> -	switch (argc) {
+> -	case 2:
+> -		rtc_file = argv[1];
+> -		/* FALLTHROUGH */
+> -	case 1:
+> -		break;
+> -	default:
+> -		fprintf(stderr, "usage: %s [rtcdev]\n", argv[0]);
+> -		return 1;
+> -	}
+> -
+> -	return test_harness_run(argc, argv);
+> -}
+> +TEST_HARNESS_MAIN
+> -- 
+> 2.34.1
+> 
 
 -- 
-Kees Cook
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
