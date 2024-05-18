@@ -1,128 +1,108 @@
-Return-Path: <linux-kernel+bounces-182801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A89B8C900B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 10:46:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7A58C900E
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 10:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30C91282C6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 08:46:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2008B20EAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 08:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5EC10A11;
-	Sat, 18 May 2024 08:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2531401B;
+	Sat, 18 May 2024 08:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="DkrpsycO"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YBTt22nx"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC96D53F
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 08:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B81101C5;
+	Sat, 18 May 2024 08:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716021977; cv=none; b=lHBuYnFRWFgQgCoVLvTYuicW+RpURZu1kDNkfAUGwxjP0cuX9y0AZP/jpk+eWlBfoiTzDqfHehH0w+y2sz1CreOew16YSxeP56YpKeM9T7N0O9hgwyXHVuOUKWItWhn7Zg5jokeSQdEuhaToDLyCuudv66oWx0ORwfQn1Cku4H8=
+	t=1716022163; cv=none; b=Kaey154bstIZdWbrSgRXtiPSGcevoEABnv2m+i+ut1T/XgxbQU6sB0+4TxthewSES8HxHQypoYXew6MgbJ2J0oYm8CI090wRxx2aF01itcGh6yNStyXfhJ0m6IC4niwWynvGLM/pkMp6k3ctCsSKYoozPiL7TQifjhOsf5Xjgxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716021977; c=relaxed/simple;
-	bh=n+rd4UdCyI+BaLvkA5VSQVIe4oBJ+kbE0mtFLmAsgdo=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=G8JUQoDMxTFjPXkZx7/zL3gRWHQyuSyRPFmvGyPfLN2zodZgqDGSqZVeZ1aUMvWhUme9PwcLZWIxrd3KXjHwaDnLms6wPznfQBv0N5cYbLzfugOz/UIEULE2i4VluT66i62HVQrPY+TaSjfgDdKLueFFrydRGAlrJcQhbH1+RX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=DkrpsycO; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-deb654482bcso970291276.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 01:46:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1716021974; x=1716626774; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=n+rd4UdCyI+BaLvkA5VSQVIe4oBJ+kbE0mtFLmAsgdo=;
-        b=DkrpsycO069AYhYq9GBOaJ0uKtv1y7uVKOqqstq4wpKCt0BHPdejaA1pywFSJHmxBe
-         lMFY79NlTOiRucxYgbbL3WOcZhxrkY92vNBzWzBLFvasGOU1dw9POI0Jcp2VV5BHTaYV
-         Hh3yl8hYFh7PUYSUL57J0L79tzqFLqIce9PsDRpL/LqZtUBFh/gUF+qv8SDk4sWs0Mbw
-         wYQMBoGcx7M2UP7hX/hp+TkeiTJCp9o5WKPj76NGNPSgxBlJ/gfpqbTDPrduUKHL16Ep
-         spkkIq0hbNU/PGDODU2Zy9homXVUi71vwGduy/8Q6DoFmjWFQbDk2YsnK01R+ACqzAro
-         ohOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716021974; x=1716626774;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n+rd4UdCyI+BaLvkA5VSQVIe4oBJ+kbE0mtFLmAsgdo=;
-        b=kEfMqTnY1YMT0r2RWqTmVko82hkw2h74HDp5+pcNKzSAhWf4LrjStqJH9gl+GyW8N/
-         VLxGRVYX31yHLRJLJazULocOOHiOj1lH7bJhMhl7IFCQfqcy2JodHODMd9wtZumarmdo
-         m0sZqvax7v7Lu97ObrsZzMGN7bCCb8pUayIo+wTesU+xDpRufvEC2CqV5UdnCLNcLmYS
-         B7EL3CsvZoiClpaJ7vmV9WlvRTFv3ypsLLOWJRPxWOLl5uteOoLr3MrTKzG7y5cVGI57
-         ybhh7PC1RofqCde4SFMLuvT725efL/PvIWI/VUgKbU6/K2udDUzH8Wy6KYL8IccEPfcy
-         HpkA==
-X-Gm-Message-State: AOJu0YwnmRQ0pDm30F44h0gg0OIqaodVBtFDBew9sx42m0D78aWrY3UF
-	o6diTAWam/Rh9vy2wP4dccgV26v80QdLKqtxgQmpkDzp79fTeadtse1wJXVFflClIRM6ctCV4nV
-	dRihFEw==
-X-Google-Smtp-Source: AGHT+IEG/Qg9DqrOMcsGkH1NwVS01fWthCqMi/t7m8lw5wBsgjPXSwXeh2aqtg3QoDBT08YMCz3LDw==
-X-Received: by 2002:a25:a428:0:b0:de6:40c:1910 with SMTP id 3f1490d57ef6-dee5229146amr21092641276.50.1716021973874;
-        Sat, 18 May 2024 01:46:13 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-debd382857asm4077650276.45.2024.05.18.01.46.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 May 2024 01:46:13 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-df1cfa7f124so1001260276.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 01:46:13 -0700 (PDT)
-X-Received: by 2002:a5b:5cc:0:b0:dc6:d738:1fa6 with SMTP id
- 3f1490d57ef6-dee4f1b8bdcmr21070438276.6.1716021972694; Sat, 18 May 2024
- 01:46:12 -0700 (PDT)
+	s=arc-20240116; t=1716022163; c=relaxed/simple;
+	bh=IjIvSDsBIS7GEwEEgejfx1W7LzjfEQqGgg6tgJLkiEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fR0b0/6BK9B5E4MdHiNGS8AgVErOxsTueVIGRIcKOBM9PksxS/8hth7DQpo40+a6DMVBHJhJBEDFo8Dzcf7/pdj8NlvLfBvu94tGc6nwPzExiw//L4sU4NUuCwhBN6tw4Mkr7TcG3Tq6Z31mh0UHe/ZA62hwtfFJd2cLnKEZrfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YBTt22nx; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44I8n2f0019546;
+	Sat, 18 May 2024 03:49:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716022143;
+	bh=RiVGj+qep057xak5y+IC3HmFOlnTGitw34djuHIjJkk=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=YBTt22nxQfVts6M0idawB4no+WP/s9q00yanaiL4pC3OvPLuhWsacn8X+8gbJDjtT
+	 Y99d3QfK7VG35zsqCr5wTpfOCiJXc1UNVPvb0fCRWx98/cTj0Ka7WNUpC7ZZjmiPdg
+	 DLt66Hf7QFjgW7/Bfhcck575caGLHTnw+1RfRYX0=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44I8n2km054452
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 18 May 2024 03:49:02 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 18
+ May 2024 03:49:02 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 18 May 2024 03:49:02 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44I8muuj129612;
+	Sat, 18 May 2024 03:48:57 -0500
+Message-ID: <8e56ea52-9e58-4291-8f7f-4721dd74c72f@ti.com>
+Date: Sat, 18 May 2024 14:18:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Sat, 18 May 2024 10:46:01 +0200
-X-Gmail-Original-Message-ID: <CAAObsKAw174AhGaA13Hyw0ANW=TxJHpK10+OwQGNMVca85Urdg@mail.gmail.com>
-Message-ID: <CAAObsKAw174AhGaA13Hyw0ANW=TxJHpK10+OwQGNMVca85Urdg@mail.gmail.com>
-Subject: DRM Accel BoF at Linux Plumbers
-To: open list <linux-kernel@vger.kernel.org>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, David Airlie <airlied@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Christian Gmeiner <christian.gmeiner@gmail.com>, 
-	Oded Gabbay <ogabbay@kernel.org>, Olof Johansson <olof@lixom.net>, 
-	Lucas Stach <l.stach@pengutronix.de>, Jeffrey Hugo <quic_jhugo@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: net: dp8386x: Add MIT license along with
+ GPL-2.0
+To: Conor Dooley <conor@kernel.org>
+CC: <vigneshr@ti.com>, <nm@ti.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Kip Broadhurst <kbroadhurst@ti.com>,
+        <w.egorov@phytec.de>
+References: <20240517104226.3395480-1-u-kumar1@ti.com>
+ <20240517-poster-purplish-9b356ce30248@spud>
+ <20240517-fastball-stable-9332cae850ea@spud>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20240517-fastball-stable-9332cae850ea@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi,
+Hi Conor
 
-I would like to use the chance at the next Plumbers to discuss the
-present challenges related to ML accelerators in mainline.
+On 5/17/2024 8:11 PM, Conor Dooley wrote:
+> On Fri, May 17, 2024 at 03:39:20PM +0100, Conor Dooley wrote:
+>> On Fri, May 17, 2024 at 04:12:26PM +0530, Udit Kumar wrote:
+>>> Modify license to include dual licensing as GPL-2.0-only OR MIT
+>>> license for TI specific phy header files. This allows for Linux
+>>> kernel files to be used in other Operating System ecosystems
+>>> such as Zephyr or FreeBSD.
+>> What's wrong with BSD-2-Clause, why not use that?
+> I cut myself off, I meant to say:
+> What's wrong with BSD-2-Clause, the standard dual license for
+> bindings, why not use that?
 
-I'm myself more oriented towards edge-oriented deployments, and don't
-know enough about how these accelerators are being used in the cloud
-(and maybe desktop?) to tell if there is enough overlap to warrant a
-common BoF.
+want to be inline with License of top level DTS, which is including this 
+header file
 
-In any case, these are the topics I would like to discuss, some
-probably more relevant to the edge than to the cloud or desktop:
+eg
 
-* What is stopping vendors from mainlining their drivers?
+https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/ti/k3-j722s-evm.dts#L1 
 
-* How could we make it easier for them?
 
-* Userspace API: how close are we from a common API that we can ask
-userspace drivers to implement? What can be done to further this goal?
-
-* Automated testing: DRM CI can be used, but would be good to have a
-common test suite to run there. This is probably dependent on a common
-userspace API.
-
-* Other shared userspace infrastructure (compiler, execution,
-synchronization, virtualization, ...)
-
-* Firmware-mediated IP: what should we do about it, if anything?
-
-* Any standing issues in DRM infra (GEM, gpu scheduler, DMABuf, etc)
-that are hurting accel drivers?
-
-What do people think, should we have a drivers/accel-wide BoF at
-Plumbers? If so, what other topics should we have in the agenda?
-
-Cheers,
-
-Tomeu
 
