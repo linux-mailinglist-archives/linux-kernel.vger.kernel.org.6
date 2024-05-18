@@ -1,117 +1,108 @@
-Return-Path: <linux-kernel+bounces-182816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D8F8C9050
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 12:06:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ABB18C9068
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 12:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01D8AB21539
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 10:06:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06FD2825B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 10:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F34618AF9;
-	Sat, 18 May 2024 10:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E35C1D688;
+	Sat, 18 May 2024 10:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NPGyrMmV"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dJ1HM4sV"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE55D8BE2;
-	Sat, 18 May 2024 10:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2707946F
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 10:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716026771; cv=none; b=aDlJKikCxBwYcAUs15Qh3ogWhGU0dhMpmt6DTn9Dovpb3rLXbgGFqnRuK3cuZGKVbFdDN8mFaH7ZaFaa94aPYIB5eXJTYsAR3IC6lGCJQnmszgmBGPxC1SQo0VY+mToohv45XR+Alh8XsZ1mwiY0TYcAtfakUHyUV9/lOP+vBWY=
+	t=1716029067; cv=none; b=YgdvwbXqYHN1CMExEuxTaPVTlnOeHVAbrMEx3b9wATuKqpVZbJNaLpHBERxfOuNTGMNBqu3WFFaIeRxB22ENm7a9N4C7lu3Lc9MKGbLpNHsvDsUemXS1bBVxxTu03umQZnqX50drAGsP31jl04I33dP8FvsVqoIlYM3V+ZHvhoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716026771; c=relaxed/simple;
-	bh=2KLYzi0Quxs3zJMUGfVzy9lVcJJAzfPspjlA12X1dQg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZuI00ScjrT4zvmiFQffHYRExJ5gNurk4qB8VFJTfP0hsYMmXizehStS59tr8MJOrqByVRl6400V/mJJIxwpsqPAT7+GzJRXWZKRtNDaTT/KyF7UauXbqOR6qI5KjkCIIh+Idb5o4r0QaYvJfQSWttcgPGXmE8bjDDyU82OqBEWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NPGyrMmV; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44IA60pD122481;
-	Sat, 18 May 2024 05:06:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716026760;
-	bh=+s027MF9CiDove3Goyu/bsXNM0Zc7/KqIS+GLcrruic=;
-	h=From:To:CC:Subject:Date;
-	b=NPGyrMmVRTfRneZGxYSUvAwP3q1RkrrCFo4YyhOCKt9S8GK+YXpXP5nmXNKCIv4YP
-	 2RSysowDgaOXtLR3YGLw9dnGtu+kH+272OsWvVbBtSQPEsyZZwwqqQZeUNQOP5cf2m
-	 nLXio2o9VEmzrQ7G/w/3moibFOvF2JOfgcvaeeyY=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44IA60FK007642
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 18 May 2024 05:06:00 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 18
- May 2024 05:05:59 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 18 May 2024 05:05:59 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.227.9])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44IA5vR8100665;
-	Sat, 18 May 2024 05:05:57 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <peter.ujfalusi@gmail.com>, <vkoul@kernel.org>
-CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH] dmaengine: ti: k3-udma-glue: Fix of_k3_udma_glue_parse_chn_by_id()
-Date: Sat, 18 May 2024 15:35:56 +0530
-Message-ID: <20240518100556.2551788-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1716029067; c=relaxed/simple;
+	bh=+g0Djet6VPor+0w2My6R6Rpd8gd93fTaLQzxiswyYc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FGuhWUteIBkmiY1qJNB34bNMxES8z4nF47N0R6dC3lrg0deEoicY9qSPjSpNGT1zIEywoFj6dCaYhoIh06J09hsHV/ivhS5Rl3nyWrysN+342dQGiCQPliKiyM+Oc1PMJ4V30sMQibz5tBTUIOxLS2lnMJCPRf6WK6o0ygL98gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dJ1HM4sV; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0661D40003;
+	Sat, 18 May 2024 10:44:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1716029063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+g0Djet6VPor+0w2My6R6Rpd8gd93fTaLQzxiswyYc8=;
+	b=dJ1HM4sVgpsZAO+szA2uDJZWhF2Xaigaf8SQ/cwA6DxsJD9fN3RFW2thSnsxioBdD11sGy
+	m6zCzsjLDg1wSAwYoYRgiJlLNL9RdmRqKXLyfg1Xvmo8Z0uJBrf/agKf0X3vrBcBqnPit3
+	mYxHPYcpDMpZIee5Z1IShXvt8EPkNr1q6v6JsmdVRQL2FCkNSuLAJZtvrYeNKB2akQLd6r
+	+quT7wUKLbNb66kNqBsVo4hweJrp+vOtpd2IBzMFfK1sU+0B1NQdhmuc1KJZoB8LePNocv
+	AUZGzIbI2LbNdabEAX3+TlI1kURXa5IfohYgK5b1glIkgNMAgynbvHeCY9fZNg==
+Date: Sat, 18 May 2024 12:44:19 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Val Packett <val@packett.cool>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, Heiko Stuebner <heiko@sntech.de>, Stephen Rothwell
+ <sfr@canb.auug.org.au>, linux-mtd@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: rawnand: rockchip: reject NVDDR timings when
+ checked
+Message-ID: <20240518124404.472eb60b@xps-13>
+In-Reply-To: <20240518033923.5577-2-val@packett.cool>
+References: <20240518033923.5577-2-val@packett.cool>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-The of_k3_udma_glue_parse_chn_by_id() helper function erroneously
-invokes "of_node_put()" on the "udmax_np" device-node passed to it,
-without having incremented its reference at any point. Fix it.
+Hi Val,
 
-Fixes: 81a1f90f20af ("dmaengine: ti: k3-udma-glue: Add function to parse channel by ID")
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
+I might propose a slightly different title which I think better
+describes the situation:
+"mtd: rawnand: rockchip: ensure NVDDR timings are rejected"
 
-Hello,
+val@packett.cool wrote on Sat, 18 May 2024 00:31:13 -0300:
 
-This patch is based on commit
-4b377b4868ef kprobe/ftrace: fix build error due to bad function definition
-of Mainline Linux.
+> .setup_interface first gets called with a negative "target" value
 
-Regards,
-Siddharth.
+Just as an FYI, the fact that it is negative is an implementation
+detail, but you mention the #define of the value below, so that's fine.
+=20
+> NAND_DATA_IFACE_CHECK_ONLY, in which case an error is expected
+> if the controller driver does not support the timing mode (NVDDR).
+>=20
 
- drivers/dma/ti/k3-udma-glue.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Here I would welcome two tags in order to get this backported as early
+as needed in stable kernels:
 
-diff --git a/drivers/dma/ti/k3-udma-glue.c b/drivers/dma/ti/k3-udma-glue.c
-index c9b93055dc9d..f0a399cf45b2 100644
---- a/drivers/dma/ti/k3-udma-glue.c
-+++ b/drivers/dma/ti/k3-udma-glue.c
-@@ -200,12 +200,9 @@ of_k3_udma_glue_parse_chn_by_id(struct device_node *udmax_np, struct k3_udma_glu
- 
- 	ret = of_k3_udma_glue_parse(udmax_np, common);
- 	if (ret)
--		goto out_put_spec;
-+		return ret;
- 
- 	ret = of_k3_udma_glue_parse_chn_common(common, thread_id, tx_chn);
--
--out_put_spec:
--	of_node_put(udmax_np);
- 	return ret;
- }
- 
--- 
-2.40.1
+Cc: stable@vger.kernel.org
+Fixes: a9ecc8c814e9 ("mtd: rawnand: Choose the best timings, NV-DDR include=
+d")
 
+> Signed-off-by: Val Packett <val@packett.cool>
+> ---
+> Hello everyone, first Linux patch from a long time FreeBSD person :)
+>=20
+> This was required to get the NAND controller to attach on the random
+> old RK3066 tablet I'm bringing up mainline on.
+
+Welcome! The fix looks right besides minor nits in the commit log. I'll
+probably take the v2 when it's out after -rc1 has been tagged.
+
+Thanks,
+Miqu=C3=A8l
 
