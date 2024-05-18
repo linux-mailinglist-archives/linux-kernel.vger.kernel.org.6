@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-182901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BEAF8C9188
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 17:29:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD118C918C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 17:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7571A1C20BB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:29:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D06CD281EED
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A1B4502F;
-	Sat, 18 May 2024 15:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WiZjDZ5o"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908CB45024;
+	Sat, 18 May 2024 15:42:09 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B95E1773A;
-	Sat, 18 May 2024 15:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4639E1DFC5
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 15:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716046146; cv=none; b=YCAYgb4MY1yEW9bbK/UTj6jP2KnxlLv5qnJ/9eaqjvzeV/IwYJKyTN4Jz2bh+tqn7OZU3KXVyyjGJd6ln1cnwUY0hSCoh7Eazl9HSeJOII7psi/QlxzzlwfQbMmOYa/eSKd9neoPIMlT0QSMhGjTHC+idC+UqHzDacUrFujX4Dc=
+	t=1716046929; cv=none; b=CB1+1KGZkRfFpL14RaoQy9vR3H5CzI3wlJ+BYxoXAa//ixn2S3MsT3dVMuJPtEnxMIOpyuKBKO806lOca3gTiTUczMa1tBAsx+Z65h9rHUQCpGtF+tBjBhVBXM7yA5iln1SPZJJ/4y+vXEckoikXANlpj43jg/C5N4zQpiDwhoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716046146; c=relaxed/simple;
-	bh=0oWWlE3oDhEW0XamtqcFvDPIPwOclTeWmexU0R6AMOg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uWJwa7T8aVY2kUe+wmc15VR2eQP7lVjb3RCuQIbeaXfG77Vn1gQaCTmuZF/C8HZSsE8nJj4hKZA3KTJgOXFV9g2xenT1EvoncJHNieXPgQszT7aEwXevV2MoTmhPpmnQI0RbsFkahk3MRm8iXg2KsyYn2OOUJcMRJelZQnjtaX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WiZjDZ5o; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5b277a61f6fso884066eaf.1;
-        Sat, 18 May 2024 08:29:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716046144; x=1716650944; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YcGBSUjyXOA1JpVYvoN1EuahOO06ajza5ZUGXHQ/tYE=;
-        b=WiZjDZ5oVhdv4zkCxQaSDGEMNpfBcex8Q02ep9Zl9XMAv6/GMXLnXTwJMT1IYiXhWh
-         UgEp5DDIInVKQkf/He3FoYL+u4GMyp4QAdLLEqmFEoEXjMj+e46H1+wCCWNdOXY+YQ0t
-         A6JO6ZEFWPAi7azh/PwEqcriAW8jAOmmD6VdtrnuWj9192ugmPLWgK8kA2A6WVfZvjtR
-         THzfjWtfo2l7mWBQr/HWlGrKt6cqcm8sH/o1aubTqXn9ZJ81v/d8A92uiuAG2CuW/Xbl
-         S6mjcO9pVIfCFU7nm4fvzhgDDpgo6UlGgjtfswXBPgfDPVgldZLDDvmMYa5q182SarBT
-         MxIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716046144; x=1716650944;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YcGBSUjyXOA1JpVYvoN1EuahOO06ajza5ZUGXHQ/tYE=;
-        b=ui0m/t/00dN+rO0dKFEiXZeTgbFnvfNSBtqpwftJEk32GJwdVXZJnoXzAIYGvRC6Ea
-         9NGnRVgm/r1F2CVDe9jMNjH46a9De5L0bSa2uiz7qh+0Cb+fDm96GkrJ9/Vw457HGZ9v
-         XVDF7SeTmEU20ymu7k/H1qWkOQjd6V4NNE5TsP8OXp4FW/81tUxmG7vRpmbTH0IOh2lF
-         Slc2g4KdIXhDZMZG14qY+8cq2B/Rv1xDmtsxJhxOBr/i1+mR0RokiiJ+x9qs1rUeMl57
-         obK3leCdPzuIyfO9UdVNp29b6efAoRkaMMuL+HMnZNlvUbDG7+i98vnwUVazUEbVFktU
-         YtwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaBbBn5cSP3mvfLRcBp5XODHHnuAzOS/ho8EQGgj1kmf2+0YkwW0F4h2TlCRvKLbTM48yiY+oSu5JF7MPjckmPOnI6
-X-Gm-Message-State: AOJu0YyBvRxNvYEr3H4/qJJTKsJsBeLcJiyYBWcXCK8abybdnkHWfDUp
-	SOs1b90RZi8RqWWW20zq6Tt1LrTjwn8MoDw/wM2/BNUpUWXeATlh
-X-Google-Smtp-Source: AGHT+IH71oEJiJAd+qKPw7I30ipuzZqOKbfz9SVHCqEDTVEIWdcivJlGSb6FpPimtRapWLRXuy7gDA==
-X-Received: by 2002:a05:6820:248c:b0:5b2:8deb:98cb with SMTP id 006d021491bc7-5b3299ba504mr933215eaf.2.1716046144372;
-        Sat, 18 May 2024 08:29:04 -0700 (PDT)
-Received: from ?IPV6:2603:8080:2300:de:3d70:f8:6869:93de? ([2603:8080:2300:de:3d70:f8:6869:93de])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5b26ddcc6acsm4088141eaf.24.2024.05.18.08.29.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 May 2024 08:29:04 -0700 (PDT)
-Message-ID: <83b2db44-c7bc-49af-8634-d349b91dfab0@gmail.com>
-Date: Sat, 18 May 2024 10:29:03 -0500
+	s=arc-20240116; t=1716046929; c=relaxed/simple;
+	bh=KEiRFn1zMsvA/RzSGsTpNHMl4lP5BT6qwK22Hk4Utow=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=kjgt/HKO8Ejzr7zzwYvvl8QaExQJ0/WamU7IpBSMVI3hT72Z5qGhFspJ2e73SCOJp4MGL+UZQOAxRvDUl8L+RYPA9n7NXwUp5fF2gPJRr8zQWzdo5ZFArpb+uARKjvdh6HlR76u0R55cVsGxK6XBeqk1ibuGeaB80uLMOZqXO/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-8-4PZfaOVqP-eUYUtpx8xdag-1; Sat, 18 May 2024 16:40:13 +0100
+X-MC-Unique: 4PZfaOVqP-eUYUtpx8xdag-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 18 May
+ 2024 16:39:41 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 18 May 2024 16:39:41 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Dan Carpenter' <dan.carpenter@linaro.org>, Kees Cook
+	<keescook@chromium.org>
+CC: Linus Torvalds <torvalds@linux-foundation.org>, Justin Stitt
+	<justinstitt@google.com>, Peter Zijlstra <peterz@infradead.org>, Mark Rutland
+	<mark.rutland@arm.com>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev" <llvm@lists.linux.dev>
+Subject: RE: [RFC] Mitigating unexpected arithmetic overflow
+Thread-Topic: [RFC] Mitigating unexpected arithmetic overflow
+Thread-Index: AQHapdsGNoLb3Ne/oEmjTsfdfTDWz7GdI4ug
+Date: Sat, 18 May 2024 15:39:41 +0000
+Message-ID: <d95664b24ec94436b6cf906fefcc0b4f@AcuMS.aculab.com>
+References: <202404291502.612E0A10@keescook>
+ <039d54d6-8aa2-4e5b-829b-69002cff35d3@moroto.mountain>
+ <202405131203.F7B97F5E38@keescook>
+ <0480d602-3ad7-4f8e-a480-9860d56eab30@suswa.mountain>
+In-Reply-To: <0480d602-3ad7-4f8e-a480-9860d56eab30@suswa.mountain>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: SEV: Fix unused variable in guest request handling
-To: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- linux-coco@lists.linux.dev, Sean Christopherson <seanjc@google.com>
-References: <20240513181928.720979-1-michael.roth@amd.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-In-Reply-To: <20240513181928.720979-1-michael.roth@amd.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 
-On 5/13/24 13:19, Michael Roth wrote:
+RnJvbTogRGFuIENhcnBlbnRlcg0KPiBTZW50OiAxNCBNYXkgMjAyNCAwOTo0NQ0KPiANCj4gU25p
+cHBlZCBhbGwgdGhlIGJpdHMgd2hlcmUgeW91IGFyZSBjbGVhcmx5IGNvcnJlY3QuDQo+IA0KPiBP
+biBNb24sIE1heSAxMywgMjAyNCBhdCAxMjo0MzozN1BNIC0wNzAwLCBLZWVzIENvb2sgd3JvdGU6
+DQo+ID4gPiBkcml2ZXJzL3VzYi9jbGFzcy91c2J0bWMuYzo4NTIgdXNidG1jX2dlbmVyaWNfcmVh
+ZCgpIHdhcm46IHBvdGVudGlhbCBpbnRlZ2VyIG92ZXJmbG93IGZyb20gdXNlcg0KPiAnbWF4X3Ry
+YW5zZmVyX3NpemUgKyAxJw0KPiA+ID4gICAgODQyICAgICAgICAgICAgICAgICAgICogd01heFBh
+Y2tldFNpemUg4oCTIDEpIHRvIGF2b2lkIHNlbmRpbmcgYSB6ZXJvLWxlbmd0aA0KPiA+ID4gICAg
+ODQzICAgICAgICAgICAgICAgICAgICogcGFja2V0DQo+ID4gPiAgICA4NDQgICAgICAgICAgICAg
+ICAgICAgKi8NCj4gPiA+ICAgIDg0NSAgICAgICAgICAgICAgICAgIHJlbWFpbmluZyA9IHRyYW5z
+ZmVyX3NpemU7DQo+ID4gPiAgICA4NDYgICAgICAgICAgICAgICAgICBpZiAoKG1heF90cmFuc2Zl
+cl9zaXplICUgZGF0YS0+d01heFBhY2tldFNpemUpID09IDApDQo+ID4gPiAgICA4NDcgICAgICAg
+ICAgICAgICAgICAgICAgICAgIG1heF90cmFuc2Zlcl9zaXplICs9IChkYXRhLT53TWF4UGFja2V0
+U2l6ZSAtIDEpOw0KPiA+ID4gICAgODQ4ICAgICAgICAgIH0gZWxzZSB7DQo+ID4gPiAgICA4NDkg
+ICAgICAgICAgICAgICAgICAvKiByb3VuZCBkb3duIHRvIGJ1ZnNpemUgdG8gYXZvaWQgdHJ1bmNh
+dGVkIGRhdGEgbGVmdCAqLw0KPiA+ID4gICAgODUwICAgICAgICAgICAgICAgICAgaWYgKG1heF90
+cmFuc2Zlcl9zaXplID4gYnVmc2l6ZSkgew0KPiA+ID4gICAgODUxICAgICAgICAgICAgICAgICAg
+ICAgICAgICBtYXhfdHJhbnNmZXJfc2l6ZSA9DQo+ID4gPiAgICA4NTIgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgcm91bmR1cChtYXhfdHJhbnNmZXJfc2l6ZSArIDEgLSBidWZzaXpl
+LA0KPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+Xl5eXl5eXl5eXl5eXl5eXl5eXl5eDQo+ID4gPiBUaGlzIGNhbiBvdmVyZmxvdy4gIFdlIHNob3Vs
+ZCBtYWtlIGl0IGEgcnVsZSB0aGF0IGFsbCBzaXplIHZhcmlhYmxlcw0KPiA+ID4gaGF2ZSB0byBi
+ZSB1bnNpZ25lZCBsb25nLiAgVGhhdCB3b3VsZCBoYXZlIG1hZGUgdGhpcyBzYWZlIG9uIDY0IGJp
+dA0KPiA+ID4gc3lzdGVtcy4NCj4gPiA+DQo+ID4gPiAgICA4NTMgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBidWZzaXplKTsNCj4gPiA+ICAgIDg1NCAgICAgICAgICAg
+ICAgICAgIH0NCj4gPiA+ICAgIDg1NSAgICAgICAgICAgICAgICAgIHJlbWFpbmluZyA9IG1heF90
+cmFuc2Zlcl9zaXplOw0KPiA+DQo+ID4gQWdhaW4sIGRvIHdlIF93YW50XyB0aGlzIHRvIG92ZXJm
+bG93PyBJdCBsb29rcyBsaWtlIG5vdC4gSSdtIG5vdCBzdXJlDQo+ID4gd2hhdCB0aGlzIGNvZGUg
+aXMgdHJ5aW5nIHRvIGRvLCB0aG91Z2guIFRoZSBjb21tZW50IGRvZXNuJ3Qgc2VlbSB0bw0KPiA+
+IG1hdGNoIHRoZSBjb2RlLiBXaHkgaXNuJ3QgdGhpcyBqdXN0IHJvdW5kdXAobWF4X3RyYW5zZmVy
+X3NpemUsIGJ1ZnNpemUpID8NCj4gPg0KDQpJc24ndCBpdCBqdXN0IG1heF90cmFuc2Zlcl9zaXpl
+IC8gYnVmc2l6ZSAqIGJ1ZnNpemU/DQoNCj4gcm91bmR1cCgpIGhhcyBhbiBpbnRlZ2VyIG92ZXJm
+bG93IGluIGl0Lg0KDQpXaGljaCBpcyBhIGdlbmVyaWMgcHJvYmxlbSB3aXRoIHRoZXNlICdoZWxw
+ZXJzJy4NCklmIHRoZSBmdW5jdGlvbiBpcyBvcGVuIGNvZGVkIGFueSBvdmVyZmxvdyBpcyBvYnZp
+b3VzLg0KQnV0IGhpZGUgaXQgaW4gYSB3cmFwcGVyIGFuZCBpdCBpcyBqdXN0ICdhc3N1bWVkIHRv
+IHdvcmsnLg0KRElWX1JPVU5EVVAoeCwgeSkgY2FuIGJlIGVpdGhlciAoeCArIHkgLSAxKS95IG9y
+ICh4IC0gMSkveSArIDEuDQpUaGUgZmlyc3QgaXMgdmFsaWQgZm9yIDAgYnV0IGNhbiBvdmVyZmxv
+dywgdGhlIHNlY29uZCBpcyB2YWxpZCBmb3IgeCAhPSAwLg0KKFdobyBrbm93cyB3aGF0IGlzIGV4
+cGVjdGVkIGZvciBuZWdhdGl2ZSB2YWx1ZXMhKQ0KSW4gbW9zdCBwbGFjZXMgb25lIG9mIHRoZSBw
+YWlyIHdpbGwgYWx3YXlzIGJlIGNvcnJlY3QuDQoNCk9iZnVzY2F0aW5nIHRoZSBjb2RlIHRlbmQg
+dG8gc3RvcCByZWFkZXJzIChhbmQgdGhlIGtlcm5lbCBjb2RlIGRvZXMgZ2V0IHNvbWUpDQpzcG90
+dGluZyB0aGluZ3MgaW4gcGFzc2luZy4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVz
+cyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEg
+MVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-> The variable 'sev' is assigned, but never used. Remove it.
->
-> Fixes: 449ead2d1edb ("KVM: SEV: Provide support for SNP_GUEST_REQUEST NAE event")
-> Signed-off-by: Michael Roth <michael.roth@amd.com>
-
-
-Reviewed-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-
-
-> ---
->  arch/x86/kvm/svm/sev.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 59c0d89a4d52..6cf665c410b2 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -3965,14 +3965,11 @@ static int __snp_handle_guest_req(struct kvm *kvm, gpa_t req_gpa, gpa_t resp_gpa
->  				  sev_ret_code *fw_err)
->  {
->  	struct sev_data_snp_guest_request data = {0};
-> -	struct kvm_sev_info *sev;
->  	int ret;
->  
->  	if (!sev_snp_guest(kvm))
->  		return -EINVAL;
->  
-> -	sev = &to_kvm_svm(kvm)->sev_info;
-> -
->  	ret = snp_setup_guest_buf(kvm, &data, req_gpa, resp_gpa);
->  	if (ret)
->  		return ret;
 
