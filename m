@@ -1,137 +1,123 @@
-Return-Path: <linux-kernel+bounces-182900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C26C08C9187
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 17:27:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BEAF8C9188
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 17:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0650DB210C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:27:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7571A1C20BB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1226B42042;
-	Sat, 18 May 2024 15:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A1B4502F;
+	Sat, 18 May 2024 15:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="of7ycTYF"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WiZjDZ5o"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4071773A
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 15:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B95E1773A;
+	Sat, 18 May 2024 15:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716046022; cv=none; b=YrwbgYKFBdNq+SBBM2Z0GCfTqrJV+mwDcL5/MgZDG9AU1qU1XzxSWjDW2nbjt6PqE2aIZS47ECdE+4nH2nozlxaoRNxfMM7GqXYz+o33xvfkkw2CK/RQJZcvm0cXaLhlmPWQZIKetZzLCLFEoCM9LfgQh7XBrsqhX35JKMBuPV8=
+	t=1716046146; cv=none; b=YCAYgb4MY1yEW9bbK/UTj6jP2KnxlLv5qnJ/9eaqjvzeV/IwYJKyTN4Jz2bh+tqn7OZU3KXVyyjGJd6ln1cnwUY0hSCoh7Eazl9HSeJOII7psi/QlxzzlwfQbMmOYa/eSKd9neoPIMlT0QSMhGjTHC+idC+UqHzDacUrFujX4Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716046022; c=relaxed/simple;
-	bh=DZy+FWedfRSjJhXJreIAqHEVmdeJOB7Ux1qu6Gfhm60=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CTX7fbD/HJCtNfBnXejMrH9dUSFIAO7Td6jisDbZ/0jBG6EyywB/trO7l+DOAQAtPKEXQ5e+t2law/pm6uRl7d6mrriFBw4YSwLj3GCMXMyoYciFxdz+IIC4UZMsdWvXmDQ+c9/m7Qq45VyjOhQy1xGV/22qD0h3C8tU3CLL5cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=of7ycTYF; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-41fe54cb0e3so8547715e9.2
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 08:27:00 -0700 (PDT)
+	s=arc-20240116; t=1716046146; c=relaxed/simple;
+	bh=0oWWlE3oDhEW0XamtqcFvDPIPwOclTeWmexU0R6AMOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uWJwa7T8aVY2kUe+wmc15VR2eQP7lVjb3RCuQIbeaXfG77Vn1gQaCTmuZF/C8HZSsE8nJj4hKZA3KTJgOXFV9g2xenT1EvoncJHNieXPgQszT7aEwXevV2MoTmhPpmnQI0RbsFkahk3MRm8iXg2KsyYn2OOUJcMRJelZQnjtaX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WiZjDZ5o; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5b277a61f6fso884066eaf.1;
+        Sat, 18 May 2024 08:29:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716046019; x=1716650819; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=gmail.com; s=20230601; t=1716046144; x=1716650944; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=OE8Bab+aQnKnic0ok2i0M7ubhycGFpj9D9/lEUm4HRI=;
-        b=of7ycTYFPISSuN0DJ7BOkbodbW/wqTiiQ4n6TZhRP3q5R07mvZzk9lt8m9My+FlhMu
-         0Xqf0LTSuuU2n9o369Nj9lekqeJAcviO3vdESSckHlLzaHfUDwZ+orPLudfrBY8avKwo
-         h4NxZML3XyWXAS4GRZ9BLYNdu7Al8PZ8MFpYPqySSy6hUS4RMDHHUGRq6/2P4o0MpqsI
-         ebCyBkV8bEgA7d/nU49OXCiDQFPSxgN+O6MpN1q9nviH433I3FgIdPFZmLcVk8SfqSob
-         RmAjR3GvKOyUtjWwCh7LVl3vs39VIuWVnFnOSiX5XLgxPvovJRH2he0lE8ZzPTSUd6ak
-         TmWQ==
+        bh=YcGBSUjyXOA1JpVYvoN1EuahOO06ajza5ZUGXHQ/tYE=;
+        b=WiZjDZ5oVhdv4zkCxQaSDGEMNpfBcex8Q02ep9Zl9XMAv6/GMXLnXTwJMT1IYiXhWh
+         UgEp5DDIInVKQkf/He3FoYL+u4GMyp4QAdLLEqmFEoEXjMj+e46H1+wCCWNdOXY+YQ0t
+         A6JO6ZEFWPAi7azh/PwEqcriAW8jAOmmD6VdtrnuWj9192ugmPLWgK8kA2A6WVfZvjtR
+         THzfjWtfo2l7mWBQr/HWlGrKt6cqcm8sH/o1aubTqXn9ZJ81v/d8A92uiuAG2CuW/Xbl
+         S6mjcO9pVIfCFU7nm4fvzhgDDpgo6UlGgjtfswXBPgfDPVgldZLDDvmMYa5q182SarBT
+         MxIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716046019; x=1716650819;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1716046144; x=1716650944;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OE8Bab+aQnKnic0ok2i0M7ubhycGFpj9D9/lEUm4HRI=;
-        b=upTMsaLBzQP8tM1PaUjB8cmmAuztb/kvhqe7R32I6YBl57ENWLP39tju35cqg42i9/
-         9nd2iG1CUHdA6BIn5uuw9ANz9VF3S3p6EA8ABJY+WJS+NPdU0K746p3mCudnmRMPn9xX
-         WJqVwvwP+hzHDyX8QWDuWlLIKnTC9MXsbUtGwvYa+BTW8eoi0bb3wX/870O6qVvhPKUE
-         HWtDKWeHDtbCXVnK6r/f4WDQrfUkJIoEDumJL3om3yDrK9Bg2htNERLZ15u9uwIwRLHC
-         e+ln/W0+sIMuhuKzDJvqaDslqMa+4yo+eNQkkHcYyx/3xj0eR1/fKQLpI0/ZuRpVRPqR
-         vkUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtbPbvS+kmYJnhTefnRsa2loWgk3gvVs0c7mIxMGqkgZOzp0cf1VaixU7l0a57zNy5Ci92X1Tp99LYu5OyUVh4oR4PAIdTwYkW+7SY
-X-Gm-Message-State: AOJu0Yx4vrV4+rGmDMlxq+KsKrl+z0NYlh7/SrDCsZSnUWzM+vHm6ZdR
-	yluPpoSeOpdeIQg0HD29MamlO4Nufde8G83okKs9DF0XDhH28b7CQyas35g5VwM=
-X-Google-Smtp-Source: AGHT+IE2LBMbm9UMmp01v8qP6lzVyIORp/0rU79NcFZGQPxrqY3NbEU65gobDcsd6f+yrgzPtnLWbw==
-X-Received: by 2002:a05:600c:a44:b0:41a:34c3:2297 with SMTP id 5b1f17b1804b1-41fea93a34cmr215543775e9.5.1716046018398;
-        Sat, 18 May 2024 08:26:58 -0700 (PDT)
-Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42013b4e9aesm242215915e9.40.2024.05.18.08.26.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 08:26:57 -0700 (PDT)
-Date: Sat, 18 May 2024 16:26:55 +0100
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jason Wessel <jason.wessel@windriver.com>, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Thorsten Blum <thorsten.blum@toblux.com>,
-	Justin Stitt <justinstitt@google.com>, Liuye <liu.yeC@h3c.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [GIT PULL] kgdb changes for v6.10
-Message-ID: <20240518152655.GA5820@aspen.lan>
+        bh=YcGBSUjyXOA1JpVYvoN1EuahOO06ajza5ZUGXHQ/tYE=;
+        b=ui0m/t/00dN+rO0dKFEiXZeTgbFnvfNSBtqpwftJEk32GJwdVXZJnoXzAIYGvRC6Ea
+         9NGnRVgm/r1F2CVDe9jMNjH46a9De5L0bSa2uiz7qh+0Cb+fDm96GkrJ9/Vw457HGZ9v
+         XVDF7SeTmEU20ymu7k/H1qWkOQjd6V4NNE5TsP8OXp4FW/81tUxmG7vRpmbTH0IOh2lF
+         Slc2g4KdIXhDZMZG14qY+8cq2B/Rv1xDmtsxJhxOBr/i1+mR0RokiiJ+x9qs1rUeMl57
+         obK3leCdPzuIyfO9UdVNp29b6efAoRkaMMuL+HMnZNlvUbDG7+i98vnwUVazUEbVFktU
+         YtwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaBbBn5cSP3mvfLRcBp5XODHHnuAzOS/ho8EQGgj1kmf2+0YkwW0F4h2TlCRvKLbTM48yiY+oSu5JF7MPjckmPOnI6
+X-Gm-Message-State: AOJu0YyBvRxNvYEr3H4/qJJTKsJsBeLcJiyYBWcXCK8abybdnkHWfDUp
+	SOs1b90RZi8RqWWW20zq6Tt1LrTjwn8MoDw/wM2/BNUpUWXeATlh
+X-Google-Smtp-Source: AGHT+IH71oEJiJAd+qKPw7I30ipuzZqOKbfz9SVHCqEDTVEIWdcivJlGSb6FpPimtRapWLRXuy7gDA==
+X-Received: by 2002:a05:6820:248c:b0:5b2:8deb:98cb with SMTP id 006d021491bc7-5b3299ba504mr933215eaf.2.1716046144372;
+        Sat, 18 May 2024 08:29:04 -0700 (PDT)
+Received: from ?IPV6:2603:8080:2300:de:3d70:f8:6869:93de? ([2603:8080:2300:de:3d70:f8:6869:93de])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5b26ddcc6acsm4088141eaf.24.2024.05.18.08.29.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 May 2024 08:29:04 -0700 (PDT)
+Message-ID: <83b2db44-c7bc-49af-8634-d349b91dfab0@gmail.com>
+Date: Sat, 18 May 2024 10:29:03 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: SEV: Fix unused variable in guest request handling
+To: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ linux-coco@lists.linux.dev, Sean Christopherson <seanjc@google.com>
+References: <20240513181928.720979-1-michael.roth@amd.com>
+Content-Language: en-US
+From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+In-Reply-To: <20240513181928.720979-1-michael.roth@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Linus
+On 5/13/24 13:19, Michael Roth wrote:
 
-The following changes since commit 0bbac3facb5d6cc0171c45c9873a2dc96bea9680:
+> The variable 'sev' is assigned, but never used. Remove it.
+>
+> Fixes: 449ead2d1edb ("KVM: SEV: Provide support for SNP_GUEST_REQUEST NAE event")
+> Signed-off-by: Michael Roth <michael.roth@amd.com>
 
-  Linux 6.9-rc4 (2024-04-14 13:38:39 -0700)
 
-are available in the Git repository at:
+Reviewed-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/danielt/linux.git/ tags/kgdb-6.10-rc1
 
-for you to fetch changes up to b2aba15ad6f908d1a620fd97f6af5620c3639742:
-
-  serial: kgdboc: Fix NMI-safety problems from keyboard reset code (2024-04-26 17:14:10 +0100)
-
-----------------------------------------------------------------
-kgdb patches for 6.10
-
-Nine patches this cycle and they split into just three topics:
-
-1. Adopt coccinelle's recommendation to adopt str_plural().
-2. A set of seven patches to refactor kdb_read() to improve both code clarity
-   and it's discipline with respect to fixed size buffers. This isn't just a
-   refactor. Between them these also fix a cursor movement redraw problem and
-   two buffer overflows (one latent and one real, albeit difficult to
-   tickle).
-3. Fix an NMI-safety problem when enqueuing kdb's keyboard reset code.
-
-I wrote eight of the nine patches in this collection so many thanks to Doug
-Anderson for the reviews. The changes that affects drivers/tty/serial is
-acked by Greg KH.
-
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-
-----------------------------------------------------------------
-Daniel Thompson (8):
-      kdb: Fix buffer overflow during tab-complete
-      kdb: Use format-strings rather than '\0' injection in kdb_read()
-      kdb: Fix console handling when editing and tab-completing commands
-      kdb: Merge identical case statements in kdb_read()
-      kdb: Use format-specifiers rather than memset() for padding in kdb_read()
-      kdb: Replace double memcpy() with memmove() in kdb_read()
-      kdb: Simplify management of tmpbuffer in kdb_read()
-      serial: kgdboc: Fix NMI-safety problems from keyboard reset code
-
-Thorsten Blum (1):
-      kdb: Use str_plural() to fix Coccinelle warning
-
- drivers/tty/serial/kgdboc.c |  30 ++++++++-
- kernel/debug/kdb/kdb_io.c   | 153 ++++++++++++++++++++++----------------------
- kernel/debug/kdb/kdb_main.c |   2 +-
- 3 files changed, 108 insertions(+), 77 deletions(-)
+> ---
+>  arch/x86/kvm/svm/sev.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 59c0d89a4d52..6cf665c410b2 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -3965,14 +3965,11 @@ static int __snp_handle_guest_req(struct kvm *kvm, gpa_t req_gpa, gpa_t resp_gpa
+>  				  sev_ret_code *fw_err)
+>  {
+>  	struct sev_data_snp_guest_request data = {0};
+> -	struct kvm_sev_info *sev;
+>  	int ret;
+>  
+>  	if (!sev_snp_guest(kvm))
+>  		return -EINVAL;
+>  
+> -	sev = &to_kvm_svm(kvm)->sev_info;
+> -
+>  	ret = snp_setup_guest_buf(kvm, &data, req_gpa, resp_gpa);
+>  	if (ret)
+>  		return ret;
 
