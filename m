@@ -1,401 +1,164 @@
-Return-Path: <linux-kernel+bounces-182944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AD7B8C9213
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 21:26:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC09B8C9216
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 21:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41B7281EE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 19:26:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A7C41F2235A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 19:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6C360DFA;
-	Sat, 18 May 2024 19:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7305C613;
+	Sat, 18 May 2024 19:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uzdj9pSx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FGnlxQVS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A68E3211;
-	Sat, 18 May 2024 19:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBFAD6A33E;
+	Sat, 18 May 2024 19:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716060363; cv=none; b=eEig2wwoq3S0Jr99DoFH720x5UboiskQKjFQ520D97pn1ypw/dlwxtfEsf14Dme1vMVxwg330aXORCQU0FsAT5MhuChr2NKkBZ1xpD2+Z/9SWOivKZeW/sgWc8OivzFue2dZF+SdBcidQCtuWORV5+eT/jV2hcKL8OiHYfY+vps=
+	t=1716060375; cv=none; b=XQP5WJML2UqZPTK5JyiWMky18thdUXjPWG1gFbrD4ShpQen6ZaoZgjK/nIfwKqmTBpeQgB7B4N6xc5bhYAZRI6sC6phX1O4MbHyDOdv7u0WRowYNx8WTZj29wFlZdkGJONEXgsCMkkYIQe0L2xLRalG1jyvFcGtkGxn5fzb8m0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716060363; c=relaxed/simple;
-	bh=TfJGYqPIoQbfTwfe6EMNJAP6sNeJCN1pGjeVUU7+qWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AbyWUqQWjbxotxA0kgdYIQx5GANxJVgrJ1KW03achzpn16Tox8ORPX454Y3PxDLVOx0QjVKvDo96t8I6XXGM0AnXr/Quu20hWRUJV+5FXKwNrl+Adn+UIRj+lL03ABL0m0D0IDzAi8GhzBx0vUfcb2oUQL4n4VnWX+BbxTHZf2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uzdj9pSx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 610D5C113CC;
-	Sat, 18 May 2024 19:26:03 +0000 (UTC)
+	s=arc-20240116; t=1716060375; c=relaxed/simple;
+	bh=pS7/FQKAboSjZ4dU+UOgLuhCwuMawr64gb0JWqrROIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tmpCPvvXK4aVBRO+/31CfwMZyt5l85KPUu5tODOfHWRBLaGYN/rQ+OxUKtGJNLAijtxVHVUTzg8JDjKVTCz/rGik5+q9auy72qwsbGnNIGk9T7CA2vywvIZWBaxvrMeqLcAgIvfvdzbSnOs7YuTsvGGtY6RnsAmItKle8cEqGuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FGnlxQVS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73AD9C113CC;
+	Sat, 18 May 2024 19:26:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716060363;
-	bh=TfJGYqPIoQbfTwfe6EMNJAP6sNeJCN1pGjeVUU7+qWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uzdj9pSx393YhDPZU7EM0RlPNAltW8+ncmclYdCt4kfXwjNVRh8Whvyk0Z6Mf1twZ
-	 YanEiwWl4CsiLuqNt73oCYpbHLF8grrJXYVZ/gOgB/1xzCYWfXAggTGN2MNpfgsWtQ
-	 X/K0w86Rdf7/Y9KM/in+5VLtSHjm7GdoIdRKM8x7NrnwqI/o7F8H7l9GvaXIRHJshI
-	 9HsIm4wBfLQUDNwJ8W4WBh0ZHV8VNZkUlXtqYmHrKl3tHrhYZKLtT50gpCvp3t17ab
-	 7E7hHDtz8HYO5d6idN9qLjFTuWi7v6ph2gD0g5YYVT+3S2HKqV5u0zD1xrW66nueCU
-	 7EpRluLhwdUbA==
-Date: Sat, 18 May 2024 12:26:02 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	hch@infradead.org, brauner@kernel.org, david@fromorbit.com,
-	chandanbabu@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v3 3/3] xfs: correct the zeroing truncate range
-Message-ID: <20240518192602.GD360919@frogsfrogsfrogs>
-References: <20240517111355.233085-1-yi.zhang@huaweicloud.com>
- <20240517111355.233085-4-yi.zhang@huaweicloud.com>
- <20240517175900.GC360919@frogsfrogsfrogs>
- <fc050e5c-cdc5-9e3d-2787-ce09ec3b888e@huaweicloud.com>
+	s=k20201202; t=1716060375;
+	bh=pS7/FQKAboSjZ4dU+UOgLuhCwuMawr64gb0JWqrROIQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FGnlxQVSLyGfCh1HpdC3bZZOPEuzKKBdWozEWgsTmwrcyTMKl5Ue4qdREsC9SUTpK
+	 OyO7ymdSgCjqp+7h0emx8YFLY7htd9JTxSsj6ImCQAlCLMZTbjTkAIiZsN0MXyTNgA
+	 mfmynlRTkIf9bJKoMwl17eNNi6xSo2e+RfLU/MwpL3mciYefllRTgVENchg5tkyATA
+	 p6PB7CtBOJBfnNG0Zv8h5/Dni25TtcH4lvv1u65nhHBPHQr5Pcln4VgY+TjuXLuhlo
+	 +m5+iZNlb4BQ86AndXenc7as14rxqmvbYKi56K6rFsRV0O+hwALojnbuzaHjDo9kae
+	 VnhAD0zc1mMXw==
+Message-ID: <418f3270-553b-4b01-b906-2855956b2b4e@kernel.org>
+Date: Sat, 18 May 2024 21:26:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fc050e5c-cdc5-9e3d-2787-ce09ec3b888e@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: mfd: syscon: Add
+ img,boston-platform-regs
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+References: <20240513-boston-syscon-v1-0-93ff557d3548@flygoat.com>
+ <20240513-boston-syscon-v1-1-93ff557d3548@flygoat.com>
+ <c7317ea0-fcd6-40e0-9d90-bb1ff349c0e0@kernel.org>
+ <31769e8d-ab52-4f4c-84ca-2f546287d006@kernel.org>
+ <61445fe0-9137-44a6-ab36-ffb8985254df@app.fastmail.com>
+ <2245e750-0b5d-49d1-88f3-7c1c75f275e7@kernel.org>
+ <2aec4e38-f596-47d7-9e2a-a99e628dff5a@app.fastmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <2aec4e38-f596-47d7-9e2a-a99e628dff5a@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 18, 2024 at 02:35:02PM +0800, Zhang Yi wrote:
-> On 2024/5/18 1:59, Darrick J. Wong wrote:
-> > On Fri, May 17, 2024 at 07:13:55PM +0800, Zhang Yi wrote:
-> >> From: Zhang Yi <yi.zhang@huawei.com>
-> >>
-> >> When truncating a realtime file unaligned to a shorter size,
-> >> xfs_setattr_size() only flush the EOF page before zeroing out, and
-> >> xfs_truncate_page() also only zeros the EOF block. This could expose
-> >> stale data since 943bc0882ceb ("iomap: don't increase i_size if it's not
-> >> a write operation").
-> >>
-> >> If the sb_rextsize is bigger than one block, and we have a realtime
-> >> inode that contains a long enough written extent. If we unaligned
-> >> truncate into the middle of this extent, xfs_itruncate_extents() could
-> >> split the extent and align the it's tail to sb_rextsize, there maybe
-> >> have more than one blocks more between the end of the file. Since
-> >> xfs_truncate_page() only zeros the trailing portion of the i_blocksize()
-> >> value, so it may leftover some blocks contains stale data that could be
-> >> exposed if we append write it over a long enough distance later.
-
-Hum.  Is this an appending write into the next rtextent?  For example,
-if you start with a file like this:
-
-WWWWWWWWWWWWWWWWWWWWWuuuuuuuuu
-                    ^ old EOF
-
-Then truncate it improperly like this:
-
-WWWWWzWWWWWWWWWWWWWWWuuuuuuuuu
-     ^ new EOF               
-
-Then do an extending write like this:
-
-WWWWWzWWWWWWWWWWWWWWWuuuuuuuuuuuuuuuuuuuuuuuuuuuWWWuuuuuuuuu
-     ^ EOF                    ^ next rtx        ^ append here
-
-And now the problem is that we've exposed stale data that should be
-zeroes?
-
-WWWWWzWWWWWWWWWWWWWWWuuuuuuuuuuuuuuuuuuuuuuuuuuuWWWuuuuuuuuu
-      ^^^^^^^^^^^^^^^                             ^ new EOF
-      should be zeroed
-
-> > 
-> > IOWs, any time we truncate down, we need to zero every byte from the new
-> > EOF all the way to the end of the allocation unit, correct?
+On 17/05/2024 12:15, Jiaxun Yang wrote:
+>>>
+>>> Do you mind telling dumb as me how to test bindings properly?
+>>>
+>>> I tried to run make check_dtbs after applying this patch and that's all
+>>> the warnings I got:
+>>> ```
+>>> arch/mips/boot/dts/img/boston.dtb: Warning (interrupt_map): Failed prerequisite 'interrupt_provider'
+>>> /home/flygoat/linux-next/arch/mips/boot/dts/img/boston.dtb: /: 'model' is a required property
+>>>         from schema $id: http://devicetree.org/schemas/root-node.yaml#
+>>> arch/mips/boot/dts/img/boston.dtb: /: failed to match any schema with compatible: ['img,boston']
+>>> arch/mips/boot/dts/img/boston.dtb: /cpus/cpu@0: failed to match any schema with compatible: ['img,mips']
+>>> arch/mips/boot/dts/img/boston.dtb: /system-controller@17ffd000/clock: failed to match any schema with compatible: ['img,boston-clock']
+>>> /home/flygoat/linux-next/arch/mips/boot/dts/img/boston.dtb: uart@17ffe000: $nodename:0: 'uart@17ffe000' does not match '^serial(@.*)?$'
+>>>         from schema $id: http://devicetree.org/schemas/serial/8250.yaml#
+>>> ```
+>>>
+>>> I think there is no new warning introduced by this patch.
+>>> Did I miss anything here?
+>>
+>> Indeed there might be no warning for this, because syscon allows a lot,
+>> including children. You need custom binding anyway.
 > 
-> Yeah.
+> Hi Krzysztof,
 > 
-> > 
-> > Maybe pictures would be easier to reason with.  Say you have
-> > rextsize=30 and a partially written rtextent; each 'W' is a written
-> > fsblock and 'u' is an unwritten fsblock:
-> > 
-> > WWWWWWWWWWWWWWWWWWWWWuuuuuuuuu
-> >                     ^ old EOF
-> > 
-> > Now you want to truncate down:
-> > 
-> > WWWWWWWWWWWWWWWWWWWWWuuuuuuuuu
-> >      ^ new EOF      ^ old EOF
-> > 
-> > Currently, iomap_truncate_blocks only zeroes up to the next i_blocksize,
-> > so the truncate leaves the file in this state:
-> > 
-> > WWWWWzWWWWWWWWWWWWWWWuuuuuuuuu
-> >      ^ new EOF      ^ old EOF
-> > 
-> > (where 'z' is a written block with zeroes after EOF)
-> > 
-> > This is bad because the "W"s between the new and old EOF still contain
-> > old credit card info or whatever.  Now if we mmap the file or whatever,
-> > we can access those old contents.
-> > 
-> > So your new patch amends iomap_truncate_page so that it'll zero all the
-> > way to the end of the @blocksize parameter.  That fixes the exposure by 
-> > writing zeroes to the pagecache before we truncate down:
-> > 
-> > WWWWWzzzzzzzzzzzzzzzzuuuuuuuuu
-> >      ^ new EOF      ^ old EOF
-> > 
-> > Is that correct?
-> > 
+> I really don't understand the reason behind having a custom binding for
+> such device. It even doesn't have a driver and purely rely on generic
+> syscon regmap to work.
 > 
-> Yes, it's correct. However, not only write zeros to the pagecache, but
-> also flush to disk, please see below for details.
+> I can see devices like mediatek,mt8365-syscfg being described by simple
+> binding have a similar nature, they all describe a register bank and with
+> serval sub nodes to describe devices being instanced under that register
+> block.
+> 
+> What makes img,boston-platform-regs special here?
 
-<nod> iomap_truncate_page writes zeroes to any part of the pagecache
-backed by written extents, and then xfs must call
-filemap_write_and_wait_range to write the dirty (zeroed) cache out to
-disk.
+Nothing is special here, I am in writing a patchset which will fix this
+up and all will be treated similarly.
 
-> > If so, then why don't we make xfs_truncate_page convert the post-eof
-> > rtextent blocks back to unwritten status:
-> > 
-> > WWWWWzuuuuuuuuuuuuuuuuuuuuuuuu
-> >      ^ new EOF      ^ old EOF
-> > 
-> > If we can do that, then do we need the changes to iomap_truncate_page?
-> > Converting the mapping should be much faster than dirtying potentially
-> > a lot of data (rt extents can be 1GB in size).
-> 
-> Now that the exposed stale data range (should be zeroed) is only one
-> rtextsize unit, if we convert the post-eof rtextent blocks to unwritten,
-> it breaks the alignment of rtextent and the definition of "extsize is used
-> to specify the size of the blocks in the real-time section of the
-> filesystem", is it fine?
+Bindings for devices should be specific, which then allows to see that
+you do not have dependency of children on the parent, and your current
+patch allows basically anything as a child. It allows also an
+dependency, even if you did not code it.
 
-A written -> unwritten extent conversion doesn't change which physical
-space extent is mapped to the file data extent; it merely marks the
-mapping as unwritten.
+Best regards,
+Krzysztof
 
-For example, if you start with this mapping:
-
-{startoff = 8, startblock 256, blockcount = 8, state = written}
-
-and then convert blocks 13-15 to unwritten, you get:
-
-{startoff = 8, startblock 256, blockcount = 5, state = written}
-{startoff = 13, startblock 261, blockcount = 3, state = unwritten}
-
-File blocks 8-15 still map to physical space 256-263.
-
-In xfs, the entire allocation unit is /always/ mapped to the file, even
-if parts of it have to be unwritten.  Hole punching on rt, for example,
-converts the punched region to unwritten.  This is (iirc) the key
-difference between xfs rt and ext4 bigalloc.  xfs doesn't have or need
-(or want) the implied cluster allocation code that ext4 has.
-
-I can't tell if there's something that you see that I don't see such
-that we really /do/ need to actually write zeroes to the entire tail of
-the rtextent; or if you weren't sure that forcing all the post-eof
-fsblocks in the rtextent to unwritten (and zapping the pagecache) would
-actually preserve the rtextsize alignment.
-
-(Or if there's something else?)
-
->                          And IIUC, the upcoming xfs force alignment
-> extent feature seems also need to follow this alignment, right?
-
-Yes.
-
-> > 
-> >> xfs_truncate_page() should flush, zeros out the entire rtextsize range,
-> >> and make sure the entire zeroed range have been flushed to disk before
-> >> updating the inode size.
-> >>
-> >> Fixes: 943bc0882ceb ("iomap: don't increase i_size if it's not a write operation")
-> >> Reported-by: Chandan Babu R <chandanbabu@kernel.org>
-> >> Link: https://lore.kernel.org/linux-xfs/0b92a215-9d9b-3788-4504-a520778953c2@huaweicloud.com
-> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> >> ---
-> >>  fs/xfs/xfs_iomap.c | 35 +++++++++++++++++++++++++++++++----
-> >>  fs/xfs/xfs_iops.c  | 10 ----------
-> >>  2 files changed, 31 insertions(+), 14 deletions(-)
-> >>
-> >> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> >> index 4958cc3337bc..fc379450fe74 100644
-> >> --- a/fs/xfs/xfs_iomap.c
-> >> +++ b/fs/xfs/xfs_iomap.c
-> >> @@ -1466,12 +1466,39 @@ xfs_truncate_page(
-> >>  	loff_t			pos,
-> >>  	bool			*did_zero)
-> >>  {
-> >> +	struct xfs_mount	*mp = ip->i_mount;
-> >>  	struct inode		*inode = VFS_I(ip);
-> >>  	unsigned int		blocksize = i_blocksize(inode);
-> >> +	int			error;
-> >> +
-> >> +	if (XFS_IS_REALTIME_INODE(ip))
-> >> +		blocksize = XFS_FSB_TO_B(mp, mp->m_sb.sb_rextsize);
-> > 
-> > Don't opencode xfs_inode_alloc_unitsize, please.
-> 
-> Ha, I missed the latest added helper, thanks for pointing this out.
-> 
-> > 
-> >> +
-> >> +	/*
-> >> +	 * iomap won't detect a dirty page over an unwritten block (or a
-> >> +	 * cow block over a hole) and subsequently skips zeroing the
-> >> +	 * newly post-EOF portion of the page. Flush the new EOF to
-> >> +	 * convert the block before the pagecache truncate.
-> >> +	 */
-> >> +	error = filemap_write_and_wait_range(inode->i_mapping, pos,
-> >> +					     roundup_64(pos, blocksize));
-> >> +	if (error)
-> >> +		return error;pos_in_block
-> > 
-> > Ok so this is hoisting the filemap_write_and_wait_range call from
-> > xfs_setattr_size.  It's curious that we need to need to twiddle anything
-> > other than the EOF block itself though?
-> 
-> Since we planed to zero out the dirtied range which is ailgned to the
-> extsize instead of the blocksize, ensure one block is not unwritten is
-> not enough, we should also make sure that the range which is going to
-> zero out is not unwritten, or else the iomap_zero_iter() will skip
-> zeroing out the extra blocks.
-> 
-> For example:
-> 
-> before zeroing:
->            |<-    extszie   ->|
->         ...dddddddddddddddddddd
->         ...UUUUUUUUUUUUUUUUUUUU
->            ^                  ^
->         new EOF             old EOF    (where 'd' means the pagecache is dirty)
-> 
-> if we only flush the new EOF block, the result becomes:
-> 
->            |<-    extszie   ->|
->            zddddddddddddddddddd
->            ZUUUUUUUUUUUUUUUUUUU
->            ^                  ^
->         new EOF             old EOF
-> 
-> 
-> then the dirty extent range that between new EOF block and the old EOF
-> block can't be zeroed sine it's still unwritten. So we have to flush the
-> whole range before zeroing out.
-
-"Z" on the second line of the second diagram is a written fsblock with
-the tail zeroed, correct?
-
-truncate_setsize -> truncate_pagecache unmaps all the pagecache after
-the eof folio and unconditionally zeroes the tail of the eof folio
-without regard to the mappings.  Doesn't that cover us here?  After the
-truncate_setsize finishes, won't we end up in this state:
-
-           |<-   rextsize   ->|
-           zzzzzzzz               
-           ZUUUUUUUUUUUUUUUUUUU
-           ^      ^           ^
-        new EOF   |         old EOF
-                  folio boundary
-
-> > 
-> >>  
-> >>  	if (IS_DAX(inode))
-> >> -		return dax_truncate_page(inode, pos, blocksize, did_zero,
-> >> -					&xfs_dax_write_iomap_ops);
-> >> -	return iomap_truncate_page(inode, pos, blocksize, did_zero,
-> >> -				   &xfs_buffered_write_iomap_ops);
-> >> +		error = dax_truncate_page(inode, pos, blocksize, did_zero,
-> >> +					  &xfs_dax_write_iomap_ops);
-> >> +	else
-> >> +		error = iomap_truncate_page(inode, pos, blocksize, did_zero,
-> >> +					    &xfs_buffered_write_iomap_ops);
-> >> +	if (error)
-> >> +		return error;
-> >> +
-> >> +	/*
-> >> +	 * Write back path won't write dirty blocks post EOF folio,
-> >> +	 * flush the entire zeroed range before updating the inode
-> >> +	 * size.
-> >> +	 */
-> >> +	return filemap_write_and_wait_range(inode->i_mapping, pos,
-> >> +					    roundup_64(pos, blocksize));
-> > 
-> > ...but what is the purpose of the second filemap_write_and_wait_range
-> > call?  Is that to flush the bytes between new and old EOF to disk before
-> > truncate_setsize invalidates the (zeroed) pagecache?
-> > 
-> 
-> The second filemap_write_and_wait_range() call is used to make sure that
-> the zeroed data be flushed to disk before we updating i_size. If we don't
-> add this one, once the i_size is been changed, the zeroed data which
-> beyond the new EOF folio(block) couldn't be write back, because
-> iomap_writepage_map()->iomap_writepage_handle_eof() skip that range, so
-> the stale data problem is still there.
-> 
-> For example:
-> 
-> before zeroing:
->            |<-    extszie   ->|
->            wwwwwwwwwwwwwwwwwwww (pagecache)
->         ...WWWWWWWWWWWWWWWWWWWW (disk)
->            ^                  ^
->         new EOF               EOF   (where 'w' means the pagecache contains data)
-> 
-> then iomap_truncate_page() zeroing out the pagecache:
-> 
->            |<-    extszie   ->|
->            zzzzzzzzzzzzzzzzzzzz (pagecache)
->            WWWWWWWWWWWWWWWWWWWW (disk)
->            ^                  ^
->         new EOF               EOF
-> 
-> then update i_size, sync and drop cache:
-> 
->            |<-    extszie   ->|
->            ZWWWWWWWWWWWWWWWWWWW (disk)
->            ^
->            EOF
-
-<nod> Ok, so this second call to filemap_write_and_wait_range flushes
-the newly written pagecache to disk.  If it doesn't work to
-force-convert the tail fsblocks of the rtextent to unwritten status,
-then I suppose this is necessary if @blocksize != mp->m_sb.blocksize.
-
---D
-
-> Thanks,
-> Yi.
-> 
-> > 
-> >>  }
-> >> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> >> index 66f8c47642e8..baeeddf4a6bb 100644
-> >> --- a/fs/xfs/xfs_iops.c
-> >> +++ b/fs/xfs/xfs_iops.c
-> >> @@ -845,16 +845,6 @@ xfs_setattr_size(
-> >>  		error = xfs_zero_range(ip, oldsize, newsize - oldsize,
-> >>  				&did_zeroing);
-> >>  	} else {
-> >> -		/*
-> >> -		 * iomap won't detect a dirty page over an unwritten block (or a
-> >> -		 * cow block over a hole) and subsequently skips zeroing the
-> >> -		 * newly post-EOF portion of the page. Flush the new EOF to
-> >> -		 * convert the block before the pagecache truncate.
-> >> -		 */
-> >> -		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
-> >> -						     newsize);
-> >> -		if (error)
-> >> -			return error;
-> >>  		error = xfs_truncate_page(ip, newsize, &did_zeroing);
-> >>  	}
-> >>  
-> >> -- 
-> >> 2.39.2
-> >>
-> >>
-> 
-> 
 
