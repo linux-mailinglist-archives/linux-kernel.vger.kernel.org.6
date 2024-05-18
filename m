@@ -1,253 +1,211 @@
-Return-Path: <linux-kernel+bounces-182956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E378C9237
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 22:24:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9B618C9239
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 22:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A57651C2098A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:24:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D1461F218A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547CD60EC4;
-	Sat, 18 May 2024 20:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680604D5A2;
+	Sat, 18 May 2024 20:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ks9HmXPB"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UdWyaWYw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AjTFBSo9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DvNPnqkM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q/VYmSqu"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CCC1DA32;
-	Sat, 18 May 2024 20:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5253DDDDA
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 20:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716063845; cv=none; b=i/ZOrDwoo1yTBQORiB6vQvuLUvooWtDurEj47FNzKMvck3lPVURkcNiOFfw7AfKJ0YuzS83UEj5EAdWIJtkFJajQ8k/qcD8vW66OQ//rg6TSPvAPeLx/GroOlpbEh4ToTAypCQzOEWlbI046a85anZMUvz4ZwaqgJVs9/Q0Wi90=
+	t=1716064402; cv=none; b=bo14hSpWylttkiTDaMwg6EzEolzaF44EgCjF0jo1VjklkAZmuBr4dttEmR+IfQNbbMG1GUDU7+ogClCiXFRqe/Afxt8/N6G/uXPGyKhaDdi0xB1aPIAuOU+iwjfoArIFcbEMReRn4xIjI5uYu+HXHnOce1/xNJZbNAXSS3dLSs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716063845; c=relaxed/simple;
-	bh=YiD1ycF15N6PaFBhh9tpXdWF4xWXfiVXebccqOFhXVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g0pokd0XE84ZXB67jNOcYtG/mXg5OLQ1BLZBPMYrkx1WdmqTx+hTrJhIg5SFmIx6uzdslbuV2LAiAm3cKs0gtf9oWsR+GD5Z24RiCQozA7+1UD+9oINMzu/i15lHsJ6LakVI/SXHCdq1YtEX4c9yW1WYDUb38ZiodTmlFEW8oJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ks9HmXPB; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 63DCF240003;
-	Sat, 18 May 2024 20:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716063834;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RR3IeFPTXcx+EVwTZpzFwWNydln/CbCYUcUKiGCqsiA=;
-	b=ks9HmXPBU71nW4aw0C+/3xXKONfJuSnO7a2sk2xrghhirOLw26OqVzMjF+JvcWBSFQadrf
-	/EVEo+aWhqKz/fdQTnatXV09wVdzGTU/IEiEo0HdERfCa1tZSUrafmYGB3F5/HXZ1B77Aa
-	nlbJlgaQYygquAq5ykjOcGYWwRx3ua1RCQrBa/40Z+mnKETDioxB/PyzFplToGSpOg3gY/
-	hsXMtmeXcJDDXmbE4Ej8rPbvU9RU5fxLgmlMapVJ0RVJbPHR8mbvfehNgKt2QEAESmxshy
-	j7WdX9FwCj/FcgqU/xsLrVsLHU5toViFEjPwHgtLZzOJgEOsOFaLEaEVnkXyqA==
-Date: Sat, 18 May 2024 22:23:54 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: Shuah Khan <shuah@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
-	linux-rtc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] selftests: rtc: rtctest: Do not open-code
- TEST_HARNESS_MAIN
-Message-ID: <20240518202354d5422c77@mail.local>
-References: <20240518001655.work.053-kees@kernel.org>
+	s=arc-20240116; t=1716064402; c=relaxed/simple;
+	bh=7hxGqWgm+stXvuplN6lJjRIr0jEVVpFekZHQyY9r0NQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=szWHVaD9G1c3u1zhVup8P0nLpC59ycQQuePA+dT8uhb/X+f13inNbS6yOxnEDIWVVHSkLAxCSy9dao+WduV2ouZ4NQJmgwEUgUW8mM6UL2D3BX7KVDDLVXD5IiFh+qALRecxXG2rzCaaH30FYLjTYnCQmTP7J4OIZynAuK0pAB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UdWyaWYw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AjTFBSo9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DvNPnqkM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q/VYmSqu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2C3FE223D6;
+	Sat, 18 May 2024 20:33:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716064398; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qaSsbo3DTyrtpsI6RFBOw8TXP+9qMEmMAhHBMd5IsUg=;
+	b=UdWyaWYwfa8hlWlTeXwfR0g+FyvRPwUJsjeLEFM/WU932tgF+Z42Tdf6aeODlgt8YCNRyO
+	DH6OUro2w/DWm1E/VEpLJIMaq8XCo77iPtcr3fnE2GCLH4CLe12JGcuorD7w5c9iEq7va9
+	VQuhsfHau5doZm+Qd2Xec7+QQqgtXA4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716064398;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qaSsbo3DTyrtpsI6RFBOw8TXP+9qMEmMAhHBMd5IsUg=;
+	b=AjTFBSo9rZfC8P5hltR3XW0UFbpyqjsgz7PLoG3pLjkZmo5XK39PTBOkvgk7/BJcJmKYSc
+	/VLzlY3digN8AoCA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=DvNPnqkM;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="q/VYmSqu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716064397; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qaSsbo3DTyrtpsI6RFBOw8TXP+9qMEmMAhHBMd5IsUg=;
+	b=DvNPnqkMjpozi8rEkJ1c/w2O4ZegjZuitj8B1kLFPTIDIOxjs3zEwKvWoDBXGy5+RnNpRl
+	Nb50z8npAHIXFO+QrSz2pgIh01XD9AvTUFnW8jW7PwkuJ4k1ztlHxI01ZW3Vh3wXZCgukm
+	WI9shpsKUGV95a5AQlhY3a65CTiibXQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716064397;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qaSsbo3DTyrtpsI6RFBOw8TXP+9qMEmMAhHBMd5IsUg=;
+	b=q/VYmSquSsJ9ayERb7X3o+8CkFdK2MxMM4rtm2TiBWsXM2aRWBR7/t89Y0uiTsd6Qb3Qr7
+	NLM4h4lY9ckRUvDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 091C1134C3;
+	Sat, 18 May 2024 20:33:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id G0WUAY0QSWZCEgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Sat, 18 May 2024 20:33:17 +0000
+Message-ID: <d0a3338a-4348-48a9-a1e9-427232af0d97@suse.cz>
+Date: Sat, 18 May 2024 22:33:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240518001655.work.053-kees@kernel.org>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched: Fix spelling error in comment
+To: =?UTF-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>,
+ linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
+ <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>
+References: <20240516154449.1154423-1-haakon.bugge@oracle.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240516154449.1154423-1-haakon.bugge@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.62 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	BAYES_HAM(-0.12)[66.81%];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 2C3FE223D6
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -1.62
 
-On 17/05/2024 17:16:58-0700, Kees Cook wrote:
-> Argument processing is specific to the test harness code. Any optional
-> information needs to be passed via environment variables. Move alternate
-> path to the RTC_DEV environment variable. Also do not open-code
-> TEST_HARNESS_MAIN because its definition may change.
-
-Th main issue doing that is that this breaks the main use case of
-rtctest as /dev/rtc1 is usually the main target for those tests. Having
-the RTC_DEV environment variable only documented n this commit message
-is definitively not enough, I'm going to have to handle zillion of
-complaints that this is not working anymore.
-
+On 5/16/24 5:44 PM, Håkon Bugge wrote:
+> Fix minor spelling error in comment.
 > 
-> Additionally, setup checking can be done in the FIXTURE_SETUP(). With
-> this adjustment, also improve the error reporting when the device cannot
-> be opened.
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Fixes: cfb837e84331 ("mm: document memalloc_noreclaim_save() and memalloc_pin_save()")
+> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
 > ---
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: linux-rtc@vger.kernel.org
-> Cc: linux-kselftest@vger.kernel.org
-> ---
->  tools/testing/selftests/rtc/Makefile  |  2 +-
->  tools/testing/selftests/rtc/rtctest.c | 66 +++++----------------------
->  2 files changed, 13 insertions(+), 55 deletions(-)
+>  include/linux/sched.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
-> index 55198ecc04db..654f9d58da3c 100644
-> --- a/tools/testing/selftests/rtc/Makefile
-> +++ b/tools/testing/selftests/rtc/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -CFLAGS += -O3 -Wl,-no-as-needed -Wall
-> +CFLAGS += -O3 -Wl,-no-as-needed -Wall $(KHDR_INCLUDES)
->  LDLIBS += -lrt -lpthread -lm
->  
->  TEST_GEN_PROGS = rtctest
-> diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
-> index 63ce02d1d5cc..41cfefcc20e1 100644
-> --- a/tools/testing/selftests/rtc/rtctest.c
-> +++ b/tools/testing/selftests/rtc/rtctest.c
-> @@ -30,7 +30,18 @@ FIXTURE(rtc) {
->  };
->  
->  FIXTURE_SETUP(rtc) {
-> +	char *alternate = getenv("RTC_DEV");
-> +
-> +	if (alternate)
-> +		rtc_file = alternate;
-> +
->  	self->fd = open(rtc_file, O_RDONLY);
-> +
-> +	if (self->fd == -1 && errno == ENOENT)
-> +		SKIP(return, "Skipping test since %s does not exist", rtc_file);
-> +	EXPECT_NE(-1, self->fd) {
-> +		TH_LOG("%s: %s\n", rtc_file, strerror(errno));
-> +	}
->  }
->  
->  FIXTURE_TEARDOWN(rtc) {
-> @@ -41,10 +52,6 @@ TEST_F(rtc, date_read) {
->  	int rc;
->  	struct rtc_time rtc_tm;
->  
-> -	if (self->fd == -1 && errno == ENOENT)
-> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
-> -	ASSERT_NE(-1, self->fd);
-> -
->  	/* Read the RTC time/date */
->  	rc = ioctl(self->fd, RTC_RD_TIME, &rtc_tm);
->  	ASSERT_NE(-1, rc);
-> @@ -88,10 +95,6 @@ TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
->  	struct rtc_time rtc_tm;
->  	time_t start_rtc_read, prev_rtc_read;
->  
-> -	if (self->fd == -1 && errno == ENOENT)
-> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
-> -	ASSERT_NE(-1, self->fd);
-> -
->  	TH_LOG("Continuously reading RTC time for %ds (with %dms breaks after every read).",
->  	       READ_LOOP_DURATION_SEC, READ_LOOP_SLEEP_MS);
->  
-> @@ -126,10 +129,6 @@ TEST_F_TIMEOUT(rtc, uie_read, NUM_UIE + 2) {
->  	int i, rc, irq = 0;
->  	unsigned long data;
->  
-> -	if (self->fd == -1 && errno == ENOENT)
-> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
-> -	ASSERT_NE(-1, self->fd);
-> -
->  	/* Turn on update interrupts */
->  	rc = ioctl(self->fd, RTC_UIE_ON, 0);
->  	if (rc == -1) {
-> @@ -155,10 +154,6 @@ TEST_F(rtc, uie_select) {
->  	int i, rc, irq = 0;
->  	unsigned long data;
->  
-> -	if (self->fd == -1 && errno == ENOENT)
-> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
-> -	ASSERT_NE(-1, self->fd);
-> -
->  	/* Turn on update interrupts */
->  	rc = ioctl(self->fd, RTC_UIE_ON, 0);
->  	if (rc == -1) {
-> @@ -198,10 +193,6 @@ TEST_F(rtc, alarm_alm_set) {
->  	time_t secs, new;
->  	int rc;
->  
-> -	if (self->fd == -1 && errno == ENOENT)
-> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
-> -	ASSERT_NE(-1, self->fd);
-> -
->  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -256,10 +247,6 @@ TEST_F(rtc, alarm_wkalm_set) {
->  	time_t secs, new;
->  	int rc;
->  
-> -	if (self->fd == -1 && errno == ENOENT)
-> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
-> -	ASSERT_NE(-1, self->fd);
-> -
->  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -308,10 +295,6 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
->  	time_t secs, new;
->  	int rc;
->  
-> -	if (self->fd == -1 && errno == ENOENT)
-> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
-> -	ASSERT_NE(-1, self->fd);
-> -
->  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -366,10 +349,6 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
->  	time_t secs, new;
->  	int rc;
->  
-> -	if (self->fd == -1 && errno == ENOENT)
-> -		SKIP(return, "Skipping test since %s does not exist", rtc_file);
-> -	ASSERT_NE(-1, self->fd);
-> -
->  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -410,25 +389,4 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
->  	ASSERT_EQ(new, secs);
->  }
->  
-> -static void __attribute__((constructor))
-> -__constructor_order_last(void)
-> -{
-> -	if (!__constructor_order)
-> -		__constructor_order = _CONSTRUCTOR_ORDER_BACKWARD;
-> -}
-> -
-> -int main(int argc, char **argv)
-> -{
-> -	switch (argc) {
-> -	case 2:
-> -		rtc_file = argv[1];
-> -		/* FALLTHROUGH */
-> -	case 1:
-> -		break;
-> -	default:
-> -		fprintf(stderr, "usage: %s [rtcdev]\n", argv[0]);
-> -		return 1;
-> -	}
-> -
-> -	return test_harness_run(argc, argv);
-> -}
-> +TEST_HARNESS_MAIN
-> -- 
-> 2.34.1
-> 
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 3c2abbc587b49..61a6019de06c6 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1633,7 +1633,7 @@ extern struct pid *cad_pid;
+>  #define PF_NOFREEZE		0x00008000	/* This thread should not be frozen */
+>  #define PF__HOLE__00010000	0x00010000
+>  #define PF_KSWAPD		0x00020000	/* I am kswapd */
+> -#define PF_MEMALLOC_NOFS	0x00040000	/* All allocations inherit GFP_NOFS. See memalloc_nfs_save() */
+> +#define PF_MEMALLOC_NOFS	0x00040000	/* All allocations inherit GFP_NOFS. See memalloc_nofs_save() */
+>  #define PF_MEMALLOC_NOIO	0x00080000	/* All allocations inherit GFP_NOIO. See memalloc_noio_save() */
+>  #define PF_LOCAL_THROTTLE	0x00100000	/* Throttle writes only against the bdi I write to,
+>  						 * I am cleaning dirty pages from some other bdi. */
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
