@@ -1,163 +1,120 @@
-Return-Path: <linux-kernel+bounces-182993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DBC88C92FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 00:07:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C868C9301
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 00:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8F8F1F211C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 22:07:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7BBF1C20ABA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 22:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2152B6D1C1;
-	Sat, 18 May 2024 22:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0DE6D1BA;
+	Sat, 18 May 2024 22:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ToFpam+K"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ti0wqi7F"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4388F49;
-	Sat, 18 May 2024 22:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C982BB10;
+	Sat, 18 May 2024 22:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716070053; cv=none; b=cA22B4yoBylDpZ02Lo3iBDrICKu/cvuC8JLg9mIzvBnel92skxeRl7KkHpWRtGwATmS3u/28/UrQ4mnKMxnLbp63Miv1NWcGuPB7GPvWdNa0WtZr18KrQ6jC9pUxSfIs4dBMARrDdpmBviZcyYnZXsYuvYo0WdqNa9pDP69HeI0=
+	t=1716072911; cv=none; b=s6Sp5yK8cgeFUpiiwCcYoZc7Z3zrKjgU2VvHBvvKtB0m32/N0ipGx4pOrPHDKGHbsXS1yYnxI1np7T1bcfYz2qba75lv1esMZqIf8bHvJCt7I29Nmo9hbiPsV038kGijE6RZLcn65q2DZLk6tT5y2WjfPvcKi+BFwZmb8SWGWQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716070053; c=relaxed/simple;
-	bh=7WZoC8Cv9EUhQkWgeAytRxfMcPYt+SStwinFuIc4Sy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mcTf/3ryJ3n49G3o9uh+GAR3WwtwYVhRr7oVyT7zsOoVEjCPGcaGNLcRlfCge0p7gw2knjCjlCeCJzyZi3XFIszFSemuQg2CnuKJVzQXENBSrm+8jW2KlKPmyzrN5SQ7e0tbYdqjSHXG42k5odG9iyN/NI4QQDBbk5tZxBG3o/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ToFpam+K; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1716070044;
-	bh=7WZoC8Cv9EUhQkWgeAytRxfMcPYt+SStwinFuIc4Sy0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ToFpam+KIVz5AUTeBcEhAT2PgruryZpzQ+fU+2O06JwRPsg4+BLVX+SbUuenIbL6A
-	 H/4KG0Z3F1C6ODmhqsmKO3GqTbiFKWD9hJ00qc2fsyw17QZEmaW0o+IBEcQ0kpS81V
-	 TVpnC3iHkPUq6hvJXKiy8vlr3ZWntMT27nbldhUA=
-Date: Sun, 19 May 2024 00:07:24 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: stable@vger.kernel.org
-Cc: rafael.j.wysocki@intel.com, Mario.Limonciello@amd.com, 
-	viresh.kumar@linaro.org, Ray.Huang@amd.com, gautham.shenoy@amd.com, 
-	Borislav.Petkov@amd.com, Alexander.Deucher@amd.com, Xinmei.Huang@amd.com, 
-	Xiaojian.Du@amd.com, Li.Meng@amd.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Perry Yuan <perry.yuan@amd.com>
-Subject: Re: [PATCH] cpufreq: amd-pstate: fix the highest frequency issue
- which limit performance
-Message-ID: <4212df0b-5797-42a8-9c64-3e03851293b5@t-8ch.de>
-References: <20240508054703.3728337-1-perry.yuan@amd.com>
+	s=arc-20240116; t=1716072911; c=relaxed/simple;
+	bh=98IygC4khSqKvEBhieD52/i22F2Y9A/DR7XbipdVTMs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=LkeCKOAYTWrPWf5DjMrWuivSv5qveyB3gP2rCxCmBN4nD5KLDt27rprhLIITjNUEvZMOaFdzGmsF8Hzb+Maw9+kGwyR4/WYHNDcwGkfewKl4vM1BRbcrBIAX8SLGVtDF/y67VJq2tVf+f5WCZUeP4xoyJN/AGWEWOfavYOnExZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ti0wqi7F; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44IMCsK2021616;
+	Sat, 18 May 2024 22:54:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=Whq
+	QZT4PPzNDsGPrsaCNycZblGRyU4ILpoVivlMXHdk=; b=Ti0wqi7FagM3B9ZZBEd
+	0xQiWtmDHyvWVJD4wCxyg/xcPjBr40bBMVE1Ghdnt5kW8fhyZVcoB+bACSEaUzMh
+	nnejnYf0+3mhEMaxoFb+QwdLCQRPZ6WJAiy3cMuRBRJ3q38GjVIsiF7ZeV86jNZ7
+	pXQZYuA8CQR0nfLrkrnez6ijXSTm3xLRP90bdNOh9YPWPJgh4REb7Hz3VfFU0FqN
+	TQmpJvaKcfaPS+QTUME0dxCR/3TVJTyoTX54G/ZUH53XOGvtvQ2bQ0tiYAOJTVxI
+	YobA3hFKhDUE4HrrEeonR5V6AsR53Q1XsObsJubyE+vQ5zIMnknlz9lb9+RR6R/j
+	TCw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pqagsbk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 18 May 2024 22:54:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44IMsq83008999
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 18 May 2024 22:54:52 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 18 May
+ 2024 15:54:51 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sat, 18 May 2024 15:54:49 -0700
+Subject: [PATCH] kernel: trace: preemptirq_delay_test: add
+ MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240508054703.3728337-1-perry.yuan@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240518-md-preemptirq_delay_test-v1-1-387d11b30d85@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIALgxSWYC/x2MWwrCMBAAr1L224U0GBSvIlLyWO1CE2s2Skvp3
+ V39HJiZDYQqk8Cl26DSh4WfRaE/dBBHXx6EnJTBGns0rj9jTjhXojw3rq8h0eTXoZE0dM7GZA2
+ dggmguVp3Xv7r6005eCEM1Zc4/oYTl/eC2UujivOqKuz7F/2uGOWPAAAA
+To: Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu
+	<mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EsjHL1m0pHSYB64VXjx8BHz4fim6lQWh
+X-Proofpoint-ORIG-GUID: EsjHL1m0pHSYB64VXjx8BHz4fim6lQWh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-18_14,2024-05-17_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 suspectscore=0 bulkscore=0 mlxscore=0 adultscore=0
+ spamscore=0 malwarescore=0 mlxlogscore=895 clxscore=1015
+ priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405010000 definitions=main-2405180188
 
-Hi stable team,
+Fix the 'make W=1' warning:
 
-Please backport the mainline commit
-bf202e654bfa ("cpufreq: amd-pstate: fix the highest frequency issue which limits performance")
-to the 6.9 stable series.
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/trace/preemptirq_delay_test.o
 
-It fixes a performance regression on AMD Phoenix platforms.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ kernel/trace/preemptirq_delay_test.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-It was meant to get into the 6.9 release or the stable branch shortly
-after, but apparently that didn't happen.
+diff --git a/kernel/trace/preemptirq_delay_test.c b/kernel/trace/preemptirq_delay_test.c
+index 8c4ffd076162..cb0871fbdb07 100644
+--- a/kernel/trace/preemptirq_delay_test.c
++++ b/kernel/trace/preemptirq_delay_test.c
+@@ -215,4 +215,5 @@ static void __exit preemptirq_delay_exit(void)
+ 
+ module_init(preemptirq_delay_init)
+ module_exit(preemptirq_delay_exit)
++MODULE_DESCRIPTION("Preempt / IRQ disable delay thread to test latency tracers");
+ MODULE_LICENSE("GPL v2");
 
-On 2024-05-08 13:47:03+0000, Perry Yuan wrote:
-> To address the performance drop issue, an optimization has been
-> implemented. The incorrect highest performance value previously set by the
-> low-level power firmware for AMD CPUs with Family ID 0x19 and Model ID
-> ranging from 0x70 to 0x7F series has been identified as the cause.
-> 
-> To resolve this, a check has been implemented to accurately determine the
-> CPU family and model ID. The correct highest performance value is now set
-> and the performance drop caused by the incorrect highest performance value
-> are eliminated.
-> 
-> Before the fix, the highest frequency was set to 4200MHz, now it is set
-> to 4971MHz which is correct.
-> 
-> CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE    MAXMHZ   MINMHZ       MHZ
->   0    0      0    0 0:0:0:0          yes 4971.0000 400.0000  400.0000
->   1    0      0    0 0:0:0:0          yes 4971.0000 400.0000  400.0000
->   2    0      0    1 1:1:1:0          yes 4971.0000 400.0000 4865.8140
->   3    0      0    1 1:1:1:0          yes 4971.0000 400.0000  400.0000
-> 
-> v1->v2:
->  * add test by flag from Gaha Bana
-> 
-> Fixes: f3a052391822 ("cpufreq: amd-pstate: Enable amd-pstate preferred core support")
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218759
-> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> Tested-by: Gaha Bana <gahabana@gmail.com>
-> ---
->  drivers/cpufreq/amd-pstate.c | 22 +++++++++++++++++++---
->  1 file changed, 19 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 2db095867d03..6a342b0c0140 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -50,7 +50,8 @@
->  
->  #define AMD_PSTATE_TRANSITION_LATENCY	20000
->  #define AMD_PSTATE_TRANSITION_DELAY	1000
-> -#define AMD_PSTATE_PREFCORE_THRESHOLD	166
-> +#define CPPC_HIGHEST_PERF_PERFORMANCE	196
-> +#define CPPC_HIGHEST_PERF_DEFAULT	166
->  
->  /*
->   * TODO: We need more time to fine tune processors with shared memory solution
-> @@ -326,6 +327,21 @@ static inline int amd_pstate_enable(bool enable)
->  	return static_call(amd_pstate_enable)(enable);
->  }
->  
-> +static u32 amd_pstate_highest_perf_set(struct amd_cpudata *cpudata)
-> +{
-> +	struct cpuinfo_x86 *c = &cpu_data(0);
-> +
-> +	/*
-> +	 * For AMD CPUs with Family ID 19H and Model ID range 0x70 to 0x7f,
-> +	 * the highest performance level is set to 196.
-> +	 * https://bugzilla.kernel.org/show_bug.cgi?id=218759
-> +	 */
-> +	if (c->x86 == 0x19 && (c->x86_model >= 0x70 && c->x86_model <= 0x7f))
-> +		return CPPC_HIGHEST_PERF_PERFORMANCE;
-> +
-> +	return CPPC_HIGHEST_PERF_DEFAULT;
-> +}
-> +
->  static int pstate_init_perf(struct amd_cpudata *cpudata)
->  {
->  	u64 cap1;
-> @@ -342,7 +358,7 @@ static int pstate_init_perf(struct amd_cpudata *cpudata)
->  	 * the default max perf.
->  	 */
->  	if (cpudata->hw_prefcore)
-> -		highest_perf = AMD_PSTATE_PREFCORE_THRESHOLD;
-> +		highest_perf = amd_pstate_highest_perf_set(cpudata);
->  	else
->  		highest_perf = AMD_CPPC_HIGHEST_PERF(cap1);
->  
-> @@ -366,7 +382,7 @@ static int cppc_init_perf(struct amd_cpudata *cpudata)
->  		return ret;
->  
->  	if (cpudata->hw_prefcore)
-> -		highest_perf = AMD_PSTATE_PREFCORE_THRESHOLD;
-> +		highest_perf = amd_pstate_highest_perf_set(cpudata);
->  	else
->  		highest_perf = cppc_perf.highest_perf;
->  
-> -- 
-> 2.34.1
-> 
+---
+base-commit: 674143feb6a8c02d899e64e2ba0f992896afd532
+change-id: 20240518-md-preemptirq_delay_test-552cd20e7b0b
+
 
