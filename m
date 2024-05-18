@@ -1,152 +1,212 @@
-Return-Path: <linux-kernel+bounces-182766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 462A38C8F81
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 05:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF708C8F86
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 05:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C8F2826FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 03:36:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7ACC281C02
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 03:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E94A5C96;
-	Sat, 18 May 2024 03:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A38BA33;
+	Sat, 18 May 2024 03:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TAI54E/1"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="PfbwnRX1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XVmcKXT6"
+Received: from wflow5-smtp.messagingengine.com (wflow5-smtp.messagingengine.com [64.147.123.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C811FBA
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 03:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BC13211;
+	Sat, 18 May 2024 03:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716003381; cv=none; b=jVztz0DPZtRT8ST9vwUZOAqTxNojycl+fdz9i+qeSJLdnP6QXkCQCAwHB9jVRCTOdINyq0WFRdmKHpCZqjl8YW2pqaycbUZ5zUNC9cBgQxI0urNi2vlI/YecNoNuS8gxh/ggsyXtd29Mk+xoADHnMNV9Gatt4skCwg3VtjKXmYM=
+	t=1716003950; cv=none; b=SXj4QSo2lWFgbOuj9L8GnX+fvMwPmjygZ12lAFs9VxdSqXOpsiV3vk/+mK760xGUqUCUOctaT9DGluhvEk1zyDWaJsmprjita4YbJzcIXi9Te50iN3MR+6j1483vUOM6tQ7dgIlMC1UdocAcOKkw4JvB318KlgMHUkgijUvKj2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716003381; c=relaxed/simple;
-	bh=zQOI/zmzrQTsBpk04HK/DvBE+JoTssigUSzA84pspKY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Glj6wR+xvrHLbRZTqfk3DkK1GG83zQqvZ9UZp07DLl/ykfdJu02rhGZrw86R//ZBHpUkqxfWKVfK96G9KykU1AbVj1O4hS+Q163YYrxozvJNlc9kC1Ue9htzIdKN8bcyJLJO+TF/JuuDOWzSDA/PffSTJlfjeN+nemI4JDMQBMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TAI54E/1; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44I3ZRpq016149;
-	Fri, 17 May 2024 22:35:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716003327;
-	bh=aD9gzhys+SQu7Cf8GO3bNI4zQAxyzFqrA4h33Gc2N+0=;
-	h=From:To:CC:Subject:Date;
-	b=TAI54E/1Tpyw6dQPCPjLLR60SVCUMd8g1T0lRce9sFIY0dIZ75XexRyqQaX/FTH31
-	 68PHGr11lniv8DXnAJjLOF+eCKq1+Sqx5uVBEwrBPVv/qHBXEvSHytqxsxJ7+VsZrq
-	 0CHlHrLEQfmUMRzNsVG6xdutdgd3SQ19NSKuKKNM=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44I3ZRUE004573
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 17 May 2024 22:35:27 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 17
- May 2024 22:35:26 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 17 May 2024 22:35:26 -0500
-Received: from LT5CG31242FY.dhcp.ti.com ([10.250.160.158])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44I3ZL6K084573;
-	Fri, 17 May 2024 22:35:22 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <broonie@kernel.org>
-CC: <andriy.shevchenko@linux.intel.com>, <i-salazar@ti.com>,
-        <pierre-louis.bossart@linux.intel.com>, <13916275206@139.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <liam.r.girdwood@intel.com>, <kevin-lu@ti.com>, <tiwai@suse.de>,
-        <baojun.xu@ti.com>, <soyer@irl.hu>, <Baojun.Xu@fpt.com>,
-        Shenghao Ding
-	<shenghao-ding@ti.com>
-Subject: [PATCH v1] ASoC: tas2552: Add TX path for capturing AUDIO-OUT data
-Date: Sat, 18 May 2024 11:35:15 +0800
-Message-ID: <20240518033515.866-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1716003950; c=relaxed/simple;
+	bh=H1m1BdyUYMgwN+gwfrLcTxNjvn3olpd7tI3HsAPsK+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bS7y5mr2ACtbU38SayLK6U/WGHzICjsUu++giDHk+9PlQ7R88cQRfq4M62fd86Ve7MrldQjESWOHWtdKrAGPzYBpBHRaFsY9NB5ZLqwlbnBS+cCycy5XCrjgljJ2uP6xX8JuuAdt2HvntSL0r+onGOkUwlQAIR6+3tHZBrRCXVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=PfbwnRX1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XVmcKXT6; arc=none smtp.client-ip=64.147.123.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailflow.west.internal (Postfix) with ESMTP id 5A6EC2CC01C3;
+	Fri, 17 May 2024 23:45:46 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute7.internal (MEProxy); Fri, 17 May 2024 23:45:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1716003945;
+	 x=1716007545; bh=mN/nOIaCP/p4knGv1KO/mi3cVs62suSyg3pHjkgg3xs=; b=
+	PfbwnRX1H7+B0eEZM5atZ3/BupSoiPRP2QN1Fzdl8460Zh+KtowYd6kx6xEHiMUd
+	tGG4Z9Q8lYvH1SS9Vjh7mmocTg78KO9rU2Nn+L2eyabVn7waMpoEZHQAiXhgcU93
+	tyudGA8LyQrtbAO4dy7WIyoYKE1tHn3bOfiGJqM/Oc2QSDeWIx3oZIjKMK9DjKAI
+	sZqMbOe/Ewev3G8h8GONdtU8E2aJ/NlrW1NNo3AwrxT/6f/5jMdRVYVKT0u28KKB
+	nm9EqDaoJK97qW+mHQEY90pg1INCGPIc5YLZx0/weFvne5tRVFEZ4ACU8zXHxbZJ
+	09S3wHDkE1hHBpRjMJGAfQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=i76614979.fm3; t=
+	1716003945; x=1716007545; bh=mN/nOIaCP/p4knGv1KO/mi3cVs62suSyg3p
+	Hjkgg3xs=; b=XVmcKXT6/Uqc/axLHs/Be2s4ob1FeombGH2tcHDZ4LoR4ubGMzU
+	Nobhx7kyD7uJHoukOgow3HZP/Rgo3Ee1m3nCY0jxQOsm7e2+B6iTCH2iFfwu2OQ0
+	60qzffYuMQQ50fgjpHmJGuMmHNkosMsTLlne8uxRJJP2aJWRADbRTz8zeec6Z2bR
+	rtqwJ13Y2QFbWcsR8DJZFLBKNaIjToiK7bCgUcV/ai1uznq0RwHaiUr3VDiMKHJv
+	NPALjmjTkBNi7rpO0M53C5lVoAAf5ZjssKMLwb2t9KsQPxSovb48Yr2zbqkrrTjC
+	eeAffoxIq5K4388i8cAUJDDxXGycVKDYP5w==
+X-ME-Sender: <xms:aCRIZkYjbS2FMAEw_56pJYTKqDblmgVDVmJJXAz-SzHrzSRE5uGwng>
+    <xme:aCRIZvYEp-Wq5-1gwv2N33xPGI4PtHUHIWkZvIND1VLoajzOAKolQkiyezAPhpEGT
+    L3PgvQwTWH8sI7bJUw>
+X-ME-Received: <xmr:aCRIZu94urRFq1J7-RSFtqJUJmKlBjY8Z8Wxf5mPVNPmwBRiZaqlF4X8OT6zeKD8P_TfYpFI39vfj9f7YNIOIZ4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehhedgjeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeflohhn
+    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
+    ggtffrrghtthgvrhhnpeehleehvedtuedvffffgeegvedvleeufefgheduleefueejtddt
+    jeejffdujeeuffenucffohhmrghinhepphgrmhgptggrphdrshhonecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhgtrghlmhgvlhhsseefgiig
+    tddrnhgvth
+X-ME-Proxy: <xmx:aCRIZuqjQ38gW3pwfIL1G8-7-rh6DFFJNQ9iuEiC3TZII5cVJtgRhg>
+    <xmx:aCRIZvrKDDlaEws4P910ZoLdIVpRhU3oRK9ed-KWeyv2KAwWxZX-Xw>
+    <xmx:aCRIZsSkLTSVZM8QhagW-Zyy_Md8NVSRbNCp28ZIBOB6qptmSabKNA>
+    <xmx:aCRIZvrQxIi--iEzxtuhMKH8MZxAvqY7HCyQJuBytasQkSDkOS8UWA>
+    <xmx:aSRIZo4u2r5-Hc0KR70eTsNpDM2lUCAZgHdSGbts-1zWNoxWBwlhf72a>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 17 May 2024 23:45:42 -0400 (EDT)
+Date: Fri, 17 May 2024 20:50:44 -0700
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: John Johansen <john.johansen@canonical.com>
+Cc: brauner@kernel.org, ebiederm@xmission.com, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
+Message-ID: <txmrzwf2kr6devb5iqghctgvtbccjaspf44entk4fopjbaet2j@zqdfxiy6y6ej>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-2-jcalmels@3xx0.net>
+ <641a34bd-e702-4f02-968e-4f71e0957af1@canonical.com>
+ <jwuknxmitht42ghsy6nkoegotte5kxi67fh6cbei7o5w3bv5jy@eyphufkqwaap>
+ <be62b80f-2e86-4cbc-82ce-c9f62098ef60@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <be62b80f-2e86-4cbc-82ce-c9f62098ef60@canonical.com>
 
-TAS2552 is a Smartamp with I/V sense data, add TX path
-to support capturing I/V data.
+On Fri, May 17, 2024 at 04:59:41AM GMT, John Johansen wrote:
+> On 5/17/24 03:51, Jonathan Calmels wrote:
+> > This new capability set would be a universal thing that could be
+> > leveraged today without modification to userspace. Moreover, it’s a
+> > simple framework that can be extended.
+> 
+> I would argue that is a problem. Userspace has to change for this to be
+> secure. Is it an improvement over the current state yes.
 
-Fixes: 38803ce7b53b ("ASoC: codecs: tas*: merge .digital_mute() into .mute_stream()")
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+Well, yes and no. With those patches, I can lock down things today on my
+system and I don't need to change anything.
 
----
-v1:
- - Changed the copyright year to 2024 in the related files.
- - Add tx device in tas2552_dai.
- - Add Stream Domain Widgets for I/V capture
- - Add INPUT widget
- - Add I/V capture route
----
- sound/soc/codecs/tas2552.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+For example I can decide that none of my rootless containers started
+under SSH will get CAP_NET_ADMIN:
 
-diff --git a/sound/soc/codecs/tas2552.c b/sound/soc/codecs/tas2552.c
-index 40f5f27e74c0..9fd3642b98b3 100644
---- a/sound/soc/codecs/tas2552.c
-+++ b/sound/soc/codecs/tas2552.c
-@@ -2,7 +2,8 @@
- /*
-  * tas2552.c - ALSA SoC Texas Instruments TAS2552 Mono Audio Amplifier
-  *
-- * Copyright (C) 2014 Texas Instruments Incorporated -  https://www.ti.com
-+ * Copyright (C) 2014 - 2024 Texas Instruments Incorporated -
-+ *	https://www.ti.com
-  *
-  * Author: Dan Murphy <dmurphy@ti.com>
-  */
-@@ -119,12 +120,14 @@ static const struct snd_soc_dapm_widget tas2552_dapm_widgets[] =
- 			 &tas2552_input_mux_control),
- 
- 	SND_SOC_DAPM_AIF_IN("DAC IN", "DAC Playback", 0, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("ASI OUT", "DAC Capture", 0, SND_SOC_NOPM, 0, 0),
- 	SND_SOC_DAPM_DAC("DAC", NULL, SND_SOC_NOPM, 0, 0),
- 	SND_SOC_DAPM_OUT_DRV("ClassD", TAS2552_CFG_2, 7, 0, NULL, 0),
- 	SND_SOC_DAPM_SUPPLY("PLL", TAS2552_CFG_2, 3, 0, NULL, 0),
- 	SND_SOC_DAPM_POST("Post Event", tas2552_post_event),
- 
--	SND_SOC_DAPM_OUTPUT("OUT")
-+	SND_SOC_DAPM_OUTPUT("OUT"),
-+	SND_SOC_DAPM_INPUT("DMIC")
- };
- 
- static const struct snd_soc_dapm_route tas2552_audio_map[] = {
-@@ -134,6 +137,7 @@ static const struct snd_soc_dapm_route tas2552_audio_map[] = {
- 	{"ClassD", NULL, "Input selection"},
- 	{"OUT", NULL, "ClassD"},
- 	{"ClassD", NULL, "PLL"},
-+	{"ASI OUT", NULL, "DMIC"}
- };
- 
- #ifdef CONFIG_PM
-@@ -538,6 +542,13 @@ static struct snd_soc_dai_driver tas2552_dai[] = {
- 			.rates = SNDRV_PCM_RATE_8000_192000,
- 			.formats = TAS2552_FORMATS,
- 		},
-+		.capture = {
-+			.stream_name = "Capture",
-+			.channels_min = 2,
-+			.channels_max = 2,
-+			.rates = SNDRV_PCM_RATE_8000_192000,
-+			.formats = TAS2552_FORMATS,
-+		},
- 		.ops = &tas2552_speaker_dai_ops,
- 	},
- };
--- 
-2.34.1
+# echo "auth optional pam_cap.so" >> /etc/pam.d/sshd
+# echo "!cap_net_admin $USER"     >> /etc/security/capability.conf
+# capsh --secbits=$((1 << 8)) -- -c /usr/sbin/sshd
 
+$ ssh localhost 'unshare -r capsh --current'
+Current: =ep cap_net_admin-ep
+Current IAB: !cap_net_admin
+
+Or I can decide than I don't ever want CAP_SYS_RAWIO in my namespaces:
+
+# sysctl -w cap_bound_userns_mask=0x1fffffdffff
+
+This doesn't require changes to userspace.
+Now, granted if you want to have finer-grained controls, it will require
+*some* changes in *some* places (e.g. adding new systemd property like
+UserNSSet=).
+
+> > Well that’s the thing, from past conversations, there is a lot of
+> > disagreement about restricting namespaces. By restricting the
+> > capabilities granted by namespaces instead, we’re actually treating the
+> > root cause of most concerns.
+> > 
+> no disagreement there. This is actually Ubuntu's posture with user namespaces
+> atm. Where the user namespace is allowed but the capabilities within it
+> are denied.
+> 
+> It does however when not handled correctly result in some very odd failures
+> and would be easier to debug if the use of user namespaces were just
+> cleanly denied.
+
+Yes but as we established it depends on the use case, both are not
+mutually exclusive.
+
+> its not so much the capabilities set as the inheritable part that is
+> problematic. Yes I am well aware of where that is required but I question
+> that capabilities provides the needed controls here.
+
+Again, I'm not opposed to doing this with LSMs. I just think both could
+work well together. We already do that with standard capabilities vs
+LSMs, both have their strength and weaknesses.
+
+It's always a tradeoff, do you want a setting that's universal and
+coarse, or do you want one that's tailored to specific things but less
+ubiquitous.
+
+It's also a tradeoff on usability. If this doesn't get used in practice,
+then there is no point.
+I would argue that even though capabilities are complicated, they are
+more widely understood than LSMs. Are capabilities insufficient in
+certain scenarios, absolutely, and that's usually where LSMs come in.
+
+> > This is possible with the security bit introduced in the second patch.
+> > The idea of having those separate is that a service which has dropped
+> > its capabilities can still create a fully privileged user namespace.
+> 
+> yes, which is the problem. Not that we don't do that with say setuid
+> applications, but the difference is that they were known to be doing
+> something dangerous and took measures around that.
+> 
+> We are starting from a different posture here. Where applications have
+> assumed that user namespaces where safe and no measures were needed.
+> Tools like unshare and bwrap if set to allow user namespaces in their
+> fcaps will allow exploits a trivial by-pass.
+
+Agreed, but we can't really walk back this decision unfortunately.
+At least with this patch series system administrators have the ability
+to limit such tools.
+
+> What I was trying to get at is two points.
+> 1. The written description wasn't clear enough, leaving room for
+>    ambiguity.
+> 2. That I quest that the behavior should be allowed given the
+>    current set of tools that use user namespaces. It reduces exploit
+>    codes ability to directly use unprivileged user namespaces but
+>    makes it all to easy to by-pass the restriction because of the
+>    behavior of the current tool set. ie. user space has to change.
+
+> But again, I believe the fcaps behavior is wrong, because of the state of
+> current software. If this had been a proposal where there was no existing
+> software infrastructure I would be starting from a different stance.
+
+As mentioned above, userspace doesn't necessarily have to change. I'm
+also not sure what you mean by easy to by-pass? If I mask off some
+capabilities system wide or in a given process tree, I know for a fact
+that no namespace will ever get those capabilities.
 
