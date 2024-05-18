@@ -1,105 +1,103 @@
-Return-Path: <linux-kernel+bounces-183001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64FD8C9312
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 01:31:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F318C9313
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 01:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78711C20A7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 23:31:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50C6F1F21856
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 23:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6616CDCC;
-	Sat, 18 May 2024 23:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0DE6CDC5;
+	Sat, 18 May 2024 23:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k3OhCE7p"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyX7I3ir"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D954438FB9
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 23:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89E417555
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 23:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716075089; cv=none; b=EGtUwOi0GsiRGiHsB+SF/+rbBfmhlDKp739wggEu2v7Dsz4zSE81HFfs0EFsaO5/X4F5OxohGTIFlqmuOA/k/BHNMnaH9HYBcyQxeKztoiraUj0xAnSGDUb9TymuqhiK6OpTcN4SBvwZO6/2fhcQHg+MmqAXYIihxcFI+Cv1Drs=
+	t=1716075990; cv=none; b=S8hUwuK7rKNPk07Itas/czwfVTYc3I2EpIKMOlS9Ta8PQECicQYCjKhqRB/8XaO/uHLYcnk7fL/rA0Z0YECiE4b/ZfhcBun7QjO69iRSIFq2SFBSuBcFrPxuTAIN5/gw+YYtxToqhl57bmp+SX5AP80Bd4uJjBNTjjSuB2L8kK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716075089; c=relaxed/simple;
-	bh=pPd/g1ahx2EgZLBSSdG/1UWFpzPRQqLD484s0OYtnvY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XygB+buvriu6QDXDPqaT/M7ThymkakRnt9WaO8l2h/AQnGGII2irfEyno7KDDCpmT87rcszGaLY41G6eQxlMxJEdDgja8X+wXuWsdYaVg9UkNajwxYLN+KQs8FRJkVseEhwPu66goBJjOCRaDJve5fuxUeW7nFikWcuDdf+G4G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k3OhCE7p; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3c+zav5RRUM3yh91jgmhYbjJOd21xZVsPB4CAi0Cfzk=; b=k3OhCE7p+QlmQHFC6AZ3SDcEaa
-	g4E385k5EQhYbTnHW1lNLu0tuCokHHw6kiS2GtSAKY8POV/+FZMRLjHk3ty4GiPkh7yuKXH7AFTFH
-	xzAmLv6I/fAflrVqrrV67JtsUJ1oDIPtGCkSYx5KR4bsjFev8HvGCybi5I6mvMkpSVTI9smw2fUSC
-	HaSnNButmTZeSgrPcTrmj0HCRkawDuWZB2D5rDQarnRHEA/MPDMLyEe7UlMqtnKOiW4wdfdXl8GVd
-	2aYs45zO7hWdzQ+v+/kksJGIW7o55rLxSM4nLG9V6/dedktrGC6eBOlJVrOHIbq3S4fTL1p1It38i
-	/h6EKXdA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s8TWK-0000000EXqc-2VQ9;
-	Sat, 18 May 2024 23:31:20 +0000
-Date: Sun, 19 May 2024 00:31:20 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	lstoakes@gmail.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] mm: batch unlink_file_vma calls in free_pgd_range
-Message-ID: <Zkk6SCZl70o3WXpW@casper.infradead.org>
-References: <20240518062005.76129-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1716075990; c=relaxed/simple;
+	bh=02oHHGYpX7gCVO4wWopmeOz4fGVeqAfovE7Q646SFgE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=al/mgT5H/3zoiDniOdkzDOc8LNFtB4lgDM8cY3jJxOXq2+pI/tuN3USd9uW1R+3JM9FHKODcuRFfwVlCFZiXO8vNd2aGxToJaOJFkRkBSxnP97Mh10PzJVxDO7pngW3i8sTNf9pExkCBwdbekVvXhhvfA2+oVvKp3Zc1VuYBU1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyX7I3ir; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5028C113CC;
+	Sat, 18 May 2024 23:46:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716075990;
+	bh=02oHHGYpX7gCVO4wWopmeOz4fGVeqAfovE7Q646SFgE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lyX7I3irqy+wnXesilHpXhLAYvqAdPdWO+ImTdEaP/Lxl/eRkIwvxG2bYfu/LBZpU
+	 W7lR/dHO5f75fPCQVyqnrf7bd3F3oh4NoaCQbUxaCb5EdDjJtfAfKzKXS3RpeO9D7x
+	 mJ/feqabiWrtUxXKFY7MbPuh/HceUfAjqKh4IlrH/EPYzXhPL2VZiyq3JmiVZvvyfp
+	 d1Fyc17jMeMszwmb2ZYUpDu5n2GmqK5x9u7eLzsW62T/IechDt8PVX/hBZuqDWGz9K
+	 Q9yT23nHcJUD6460YU3yII2bCoOVG/NJbAi2YL9RLH7VO5lGcn2g/M8BNa9ByKZuvL
+	 W5qykkFm3y7eg==
+Date: Sun, 19 May 2024 08:46:24 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Jonathan Haslam <jonathan.haslam@gmail.com>, Kui-Feng Lee
+ <thinker.li@gmail.com>, Stephen Brennan <stephen.s.brennan@oracle.com>, Ye
+ Bin <yebin10@huawei.com>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] probes updates for v6.10
+Message-Id: <20240519084624.dce1a405a42684189fb356fe@kernel.org>
+In-Reply-To: <CAHk-=wiMwMviFKdSDyTDdgvapN0W9gFB-DH_1FDP3TDpkMOeGw@mail.gmail.com>
+References: <20240516095216.ac9a0fd13357450cc5f2e491@kernel.org>
+	<CAHk-=wgQ_MNipb2fOSDmXJ9tYko8OhzA0fPueR-kh6eYT_MbDg@mail.gmail.com>
+	<20240518233824.360de206ba709473495f89d7@kernel.org>
+	<CAHk-=wiMwMviFKdSDyTDdgvapN0W9gFB-DH_1FDP3TDpkMOeGw@mail.gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240518062005.76129-1-mjguzik@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 18, 2024 at 08:20:05AM +0200, Mateusz Guzik wrote:
-> Execs of dynamically linked binaries at 20-ish cores are bottlenecked on
-> the i_mmap_rwsem semaphore, while the biggest singular contributor is
-> free_pgd_range inducing the lock acquire back-to-back for all
-> consecutive mappings of a given file.
+On Sat, 18 May 2024 08:55:55 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Sat, 18 May 2024 at 07:38, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >
+> > Ah, and I missed to build it with W=1.
 > 
-> Tracing the count of said acquires while building the kernel shows:
-> [1, 2)     799579 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-> [2, 3)          0 |                                                    |
-> [3, 4)       3009 |                                                    |
-> [4, 5)       3009 |                                                    |
-> [5, 6)     326442 |@@@@@@@@@@@@@@@@@@@@@                               |
+> Note that I do *not* at all expect people to build with W=1. It gets
+> very noisy depending on your compiler version etc, and a lot of the
+> W=1 errors are not at all worth worrying about.
+> 
+> But what I do expect is for merge window pull  requests to have been
+> in linux-next, which will give it at least reasonable build coverage
+> from the bots,
 
-This makes sense.  A snippet of /proc/self/maps:
+This is completely my fault that I forgot to push my probes/for-next
+and made a pull request to you. I will push the for-next before -rc6 and
+if I forgot it I will defer it to next for-next.
 
-7f0a44725000-7f0a4474b000 r--p 00000000 fe:01 100663437                  /usr/lib/x86_64-linux-gnu/libc.so.6
-7f0a4474b000-7f0a448a0000 r-xp 00026000 fe:01 100663437                  /usr/lib/x86_64-linux-gnu/libc.so.6
-7f0a448a0000-7f0a448f4000 r--p 0017b000 fe:01 100663437                  /usr/lib/x86_64-linux-gnu/libc.so.6
-7f0a448f4000-7f0a448f8000 r--p 001cf000 fe:01 100663437                  /usr/lib/x86_64-linux-gnu/libc.so.6
-7f0a448f8000-7f0a448fa000 rw-p 001d3000 fe:01 100663437                  /usr/lib/x86_64-linux-gnu/libc.so.6
+> 
+> I'm not sure whether it was because I built witch clang (which gives
+> some warnings that gcc does not, and vice versa) or whether it was
+> just that my clang build has a different Kconfig. Regardless, if this
+> had been in linux-next, I'm pretty sure that it would have been found
+> before I hit it.
 
-so we frequently have the same file mmaped five times in a row.
+Yes, I missed to build check with clang. I'll make sure to check with
+both clang and gcc for release.
 
-> The lock remains the main bottleneck, I have not looked at other spots
-> yet.
+I'm sorry for causing you trouble and thanks for fixing the it.
 
-You're not the first to report high contention on this lock.
-https://lore.kernel.org/all/20240202093407.12536-1-JonasZhou-oc@zhaoxin.com/
-for example.
+Thank you,
 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index b6bdaa18b9e9..443d0c55df80 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-
-I do object to this going into mm.h.  mm/internal.h would be better.
-
-I haven't reviewed the patch in depth, but I don't have a problem with
-the idea.  I think it's only a stopgap and we really do need a better
-data structure than this.
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
