@@ -1,142 +1,146 @@
-Return-Path: <linux-kernel+bounces-182804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FA458C9011
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:03:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 905708C901B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1E551C20F41
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:03:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A75AB215C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3D7134B6;
-	Sat, 18 May 2024 09:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690D117BBF;
+	Sat, 18 May 2024 09:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TanM45+J"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="JIXWx0jc"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA36110A01
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 09:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58337C8D1;
+	Sat, 18 May 2024 09:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716023029; cv=none; b=N1XWcek0TqQOv4T0wml/kVIOonTnoVsf9yTBW29TmiIQ1OcH7HQc54ShQslzcnKlM1CgQy6c6twb1erhOeSyd87g/vTbCtKgftGvaWn/g2xFbY+gT2YnC/MgXTLSPHQ/mO36UIRmA1WeR4xKOneAhtBAEczpudS4T1v57jnV8No=
+	t=1716023334; cv=none; b=Mf3ugzPE8j8UldbYwNSdm/4Eqq9n/tXVOt7ZkbgIbnpUwgZjWVsTP24mT/1UNuI1++6gc2w+dEoD7ykgS5tSaZ/rvYgTZpM+nS8eetV/PddhIGJ6f2KayAatSgFKF+6HJuRYVVENP1NM6qI1vw8nR6REot0fRe1KN0QC09Y3F2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716023029; c=relaxed/simple;
-	bh=0OOFZMqR6sP/hxy/70KCs+H3XkbQIIGeImrpVTdC+Ko=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZlsWk1oQNx71jixhYgPsvMtv9c0Va3YexaQOsRr8rryM907JyHlbgQ+skYWh2Vq8gSMtejAmS+7DFdbexUSo4x9RmCXFQucN7bDGGPVZanKwdvx44aKV6nDb+OlNNIlPjawOvSXY3Ghje7xm/NKpwtXPalXVXwYVQ4fs034e/xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TanM45+J; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-56e48d0a632so7571604a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 02:03:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716023026; x=1716627826; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=FiTB+7Qtr+IjILLim3W6mVH1GRVNfZDnzR1wfzlYgyc=;
-        b=TanM45+JNh2Ed0zU+BkhiYZ0rmu514z81TQiINWnMbkTFA0Ub9HAA+cudyQ6vxCYbu
-         I2Pmu1oPivSONdttKGSZ6gE/USN+xGOXh10nvtQCElS7nyZj4VeDpRlorwdvAK84fyQm
-         5jrUUxRufYUdEjpwUnUuagPcVEBO+A1GHzYb/JGVSzmnqHT3E/Qx5DQMc63WnrYKSnHn
-         GvTwIftWR0Vko1BeFWBtNXhhxLt1gkneRbL2pCOGRc25QH7VvL2P8+9CuEcEHkhLLVaK
-         maMhL9t6YumoDJTPB7TriAxc0ShLjmZpoQNiRfQw51z1MzR2Ni+ysrQAUI7Hdv171g8i
-         6TpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716023026; x=1716627826;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FiTB+7Qtr+IjILLim3W6mVH1GRVNfZDnzR1wfzlYgyc=;
-        b=CaNikq8lgJZgjYG8QMafAkZjmUz8npo8yoBGiL8pAmm11351N5Lqn4pgdzfeomU/YA
-         pJERVrnoUeLhdWKqrtCWb2NOaJGGAdG7fKz43Y1TECAiLrVZWnIKCMUw7QgneiQMoG0Y
-         4/1aZDmYXvx5aMBCsegCAisjYn6PBcV2125Tc+MNjTYF6ONPZtBXQdmKtnkeHdLufymn
-         nRb9LRHNFWlXGV9Lih/xf0qlibTCZpW2oeOZ0+HMrhIILY29vd9dLRkqc7wkoB4pDhZ+
-         yv5cmZIcDI4VypxYxSN/8wh3E7SEC6Rkg0OjkOQ+UG7wyV2G5ksUG7iUdrfAijuZupgG
-         Tabw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/FINjr5NBxOSm1LcRprEeuTBnx4BiheccQJF0SkwVb/PhEGe2tbfBo9Wl64GWEO6V8Sq4XTn3VovmmBmzsdR278xbTfjw/iXwLnTx
-X-Gm-Message-State: AOJu0YyXc/P51OfR9ZPZuyPVafzTShYgaSTVcPHbBKRbVCNgmbaCmjcG
-	JfPFWXUNHuE6ZUppMp85+KU/IOsVOmtGG/M7wdCdRpOSP1KaMnRq
-X-Google-Smtp-Source: AGHT+IE/y7OhtL8+NO/5lIRaJZvaBc0WhiDU0MMAnGEtIDfDWC6S06h50BjzDgGvWFals1wwRUlbQA==
-X-Received: by 2002:a50:ccc1:0:b0:56c:1696:58a8 with SMTP id 4fb4d7f45d1cf-5734d44fe63mr23312012a12.0.1716023025737;
-        Sat, 18 May 2024 02:03:45 -0700 (PDT)
-Received: from gmail.com (1F2EF1AE.unconfigured.pool.telekom.hu. [31.46.241.174])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bed2059sm12806946a12.56.2024.05.18.02.03.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 02:03:44 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Sat, 18 May 2024 11:03:42 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: [GIT PULL] scheduler fixes
-Message-ID: <Zkhu7l+25+vIOJd4@gmail.com>
+	s=arc-20240116; t=1716023334; c=relaxed/simple;
+	bh=bVysb/cwrM9Pn6QGUWbl+Ro5RzhkM5yqNN7jrETzyyA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hzi8UEq1HgrIRhFvMWjJJEhZGpAggC1EABncXm70uas0u6kgENz6mvwS+kksvCBfHtDGeWSWGdmPeF5mcYjZP8l8/ULYI241RUD79bMps69JGWhaOVvdNfUFBdCk0dXSN9C08cXePOpsmk1mW01+R36jXKt3gxQBxF7X3082B9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=JIXWx0jc; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1a0C79DkdyNfWuSIhpXXfpQISUKfKWxaR+an4LJg0Cw=; t=1716023330; x=1716628130; 
+	b=JIXWx0jctZvXnqcErr+3sSV5apKLlSgTQjonmBZVS45oZcpMNbwEebER5UZJBEzSMGhZDCP7PJN
+	h5jiab7J2xtO7IWJdAdJ1aBJr82y6tZpQ8r7xy+H5ViKn9mzObyFUNO/F9FgWOGFMOhRz2gR0vVr5
+	0/zNv4s2F8amm03ZFsrEnj/EfmsVG+ExiraqgiYRrKam9IKGg+UCC0i2EQDexL4Qz77kXbesE6eUx
+	itj9aMYp28rMvdB7y5sbfMwyGk4kMm6XSyjPdpG9H8EhFTS66NPvRGkOA2beiqLBDPiFkqLGgBQsI
+	L4gAr4tS2+2d1U/BI1N6cAKfkJZU1xRUxXMQ==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1s8G3N-00000002L83-1Dc1; Sat, 18 May 2024 11:08:33 +0200
+Received: from dynamic-077-188-054-221.77.188.pool.telefonica.de ([77.188.54.221] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1s8G3M-00000003h1e-3i5d; Sat, 18 May 2024 11:08:33 +0200
+Message-ID: <455e40c03314294f9c2e64480aa69f8261a3f2d5.camel@physik.fu-berlin.de>
+Subject: Re: [RESEND v7 00/37] Device Tree support for SH7751 based board
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
+Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie
+ <airlied@gmail.com>,  Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner
+ <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Lorenzo
+ Pieralisi <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
+ <kw@linux.com>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri
+ Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,  Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, Lee
+ Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>, Heiko Stuebner
+ <heiko.stuebner@cherry.de>, Shawn Guo <shawnguo@kernel.org>,  Sebastian
+ Reichel <sre@kernel.org>, Chris Morgan <macromorgan@hotmail.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, David
+ Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Stephen Rothwell
+ <sfr@canb.auug.org.au>,  Javier Martinez Canillas <javierm@redhat.com>, Guo
+ Ren <guoren@kernel.org>, Azeem Shaikh <azeemshaikh38@gmail.com>, Max
+ Filippov <jcmvbkbc@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Jacky
+ Huang <ychuang3@nuvoton.com>, Herve Codina <herve.codina@bootlin.com>,
+ Manikanta Guntupalli <manikanta.guntupalli@amd.com>,  Anup Patel
+ <apatel@ventanamicro.com>, Biju Das <biju.das.jz@bp.renesas.com>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Sam
+ Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, Laurent
+ Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ linux-ide@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-pci@vger.kernel.org, linux-serial@vger.kernel.org, 
+ linux-fbdev@vger.kernel.org
+Date: Sat, 18 May 2024 11:08:30 +0200
+In-Reply-To: <cover.1712205900.git.ysato@users.sourceforge.jp>
+References: <cover.1712205900.git.ysato@users.sourceforge.jp>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Linus,
+Hi Yoshinori,
 
-Please pull the latest sched/urgent Git tree from:
+On Thu, 2024-04-04 at 14:14 +0900, Yoshinori Sato wrote:
+> Sorry. previus mail is thread broken.
+>=20
+> This is an updated version of something I wrote about 7 years ago.
+> Minimum support for R2D-plus and LANDISK.
+> I think R2D-1 will work if you add AX88796 to dts.
+> And board-specific functions and SCI's SPI functions are not supported.
+>=20
+> You can get it working with qemu found here.
+> https://gitlab.com/yoshinori.sato/qemu/-/tree/landisk
+>=20
+> v7 changes.
+> - sh/kernel/setup.c: fix kernel parameter handling.
+> - clk-sh7750.c: cleanup.
+> - sh_tmu.c: cleanup.
+> - irq-renesas-sh7751.c: IPR definition move to code.
+> - irq-renesas-sh7751irl.c: update register definition.
+> - pci-sh7751.c: Register initialization fix.=20
+> - sm501 and sm501fb: Re-design Device Tree properties.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-2024-05-18
+Could you push your v7 version to your Gitlab [1] repository so I can fetch
+it from there?
 
-   # HEAD: 49217ea147df7647cb89161b805c797487783fc0 sched/core: Fix incorrect initialization of the 'burst' parameter in cpu_max_write()
+Thanks,
+Adrian
 
-Misc fixes:
+> [1] https://gitlab.com/yoshinori.sato/linux
 
- - Fix a sched_balance_newidle setting bug
-
- - Fix bug in the setting of /sys/fs/cgroup/test/cpu.max.burst
-
- - Fix variable-shadowing build warning
-
- - Extend sched-domains debug output
-
- - Fix documentation
-
- - Fix comments
-
- Thanks,
-
-	Ingo
-
------------------->
-Cheng Yu (1):
-      sched/core: Fix incorrect initialization of the 'burst' parameter in cpu_max_write()
-
-Christian Loehle (1):
-      sched/fair: Remove stale FREQUENCY_UTIL comment
-
-Dawei Li (1):
-      sched/fair: Fix initial util_avg calculation
-
-Vincent Guittot (1):
-      arch/topology: Fix variable naming to avoid shadowing
-
-Vitalii Bursov (3):
-      sched/fair: Allow disabling sched_balance_newidle with sched_relax_domain_level
-      sched/debug: Dump domains' level
-      docs: cgroup-v1: Clarify that domain levels are system-specific
-
-
- Documentation/admin-guide/cgroup-v1/cpusets.rst | 7 ++++++-
- drivers/base/arch_topology.c                    | 8 ++++----
- kernel/cgroup/cpuset.c                          | 2 +-
- kernel/sched/core.c                             | 2 +-
- kernel/sched/debug.c                            | 1 +
- kernel/sched/fair.c                             | 9 +++++----
- kernel/sched/topology.c                         | 2 +-
- 7 files changed, 19 insertions(+), 12 deletions(-)
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
