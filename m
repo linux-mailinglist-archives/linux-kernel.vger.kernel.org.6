@@ -1,79 +1,72 @@
-Return-Path: <linux-kernel+bounces-182786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D7058C8FD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 08:48:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4B4B8C8FDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEE6CB21B0E
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 06:48:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7A831C2115F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 07:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D3FD517;
-	Sat, 18 May 2024 06:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEFDC152;
+	Sat, 18 May 2024 07:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PYW0iaNw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="GvwBS/lG"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC33ABE68;
-	Sat, 18 May 2024 06:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A452F4A;
+	Sat, 18 May 2024 07:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716014886; cv=none; b=nh9mNdSbOjv5XTsR95Uzs8fdeMH41g0iUysuMz6zm2TJItfegPDGjfdBk9Ce1QiPh9NMAG3ow8NBDQUDUpWfxMltmJM9NWHi9BzhCeKlddLg3/kxLzpy9HgMHJg5asNBx5BIT6XHY8VhQcTJ88lyuw1wmTRTA8TR/7tqgZpxZ1k=
+	t=1716015703; cv=none; b=QKNdrd9yytREM7TELGBF9MGC6QSMQDnuKZv/7jnJY53/yNRUsCUsaqYWiWw9TnbqIfn4pxd7AvmGLjiE2LBxZXes5fWVer1GhWvI4lFcbsuVjM5L7Yq7HLvXRXDOa3mAKVfvFXyvGY4ZGyU0/5iG2W2e3EKNdScfogR5sKdQ1Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716014886; c=relaxed/simple;
-	bh=FqnqE+UrA/fKF5auAZ7YdoJp5gk2IOZmUMnphQzmxF8=;
+	s=arc-20240116; t=1716015703; c=relaxed/simple;
+	bh=7gJcAObcPbQw9XW+LduiP1Y3FVVW2Ym0ZJq4JI+/q94=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNyYHVmY5Q2v/h99ff1bwwe6jCYO1kVcf4KTRdfakh0V1/6oSQ3uNHl356Tf4pdKkbE20RrVJtE7OJJSdni43r/GnQhpNOy1w1x5St0vfnvh0eVWhy26P6BSY/tklg2C7Xhe+LinfB4z8rA5c6nPuJkY7QxVPM7E+24yPlhYD/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PYW0iaNw; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716014884; x=1747550884;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FqnqE+UrA/fKF5auAZ7YdoJp5gk2IOZmUMnphQzmxF8=;
-  b=PYW0iaNwQztAkd3gw2pXHFxAw3cEewTMc0e5H0NE4m5AFqD0DCP19Ezb
-   3vhpVSCFbFThoFXOi3+bMgmIARgBC5JL78a5mhMhPWyRvZKS/jZildCrr
-   4KZl12vCtLR29iSfjHim3ioYH2MmOFbsnmJnuwuO3L4LlFgD+RrhSPatB
-   M4WNZ/h/l59CCNwqaipnYyga87GYHUSZ0SwTr0orXuUDUC+wKuuTD3EQM
-   QqzON8WNY3WiW4Y6rQRIS2Gqmuf8/cp6I4+Gb9TjQCMmucn0NkPL9XzUx
-   a1yvmkm3nGXdij/K6ND3fKaAuztsNNPKLasnBuuJ0NTIzae2M8YeXp4Un
-   Q==;
-X-CSE-ConnectionGUID: 7wnIvbooS8y8Y7phEgAxaA==
-X-CSE-MsgGUID: 6suTzOH2Qwq1wFj30dbc3g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="29717423"
-X-IronPort-AV: E=Sophos;i="6.08,170,1712646000"; 
-   d="scan'208";a="29717423"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 23:48:04 -0700
-X-CSE-ConnectionGUID: Cf6NzLpSRaC16HiIPZ+7IQ==
-X-CSE-MsgGUID: GZ4fJXaAQTSnnddtE/LBFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,170,1712646000"; 
-   d="scan'208";a="32037538"
-Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 17 May 2024 23:48:00 -0700
-Received: from kbuild by 108735ec233b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s8DrK-0001hk-1r;
-	Sat, 18 May 2024 06:47:58 +0000
-Date: Sat, 18 May 2024 14:47:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
-	linux-kernel@vger.kernel.org, jic23@kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	robh@kernel.org, nuno.sa@analog.com
-Cc: oe-kbuild-all@lists.linux.dev,
-	Ramona Gradinariu <ramona.bolboaca13@gmail.com>
-Subject: Re: [PATCH v3 9/9] drivers: iio: imu: Add support for adis1657x
- family
-Message-ID: <202405181400.174vWAhr-lkp@intel.com>
-References: <20240517074750.87376-10-ramona.bolboaca13@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bmdkMdeFRdldLAQlEzT1MRjcQhQzw3O5o2jCqxSPzICC+Y9W1JFpJqp+t7vZ9WMM9iU4koWks40DVnm0KrgivTJN3Ur33edBJcNcSz/n3Nle4lg+6MunQkAEaTm3H9W7MZhnk/r+G9sbC7SVaM4BnFpmm/eWhQ1xGPoU9PA/2UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=GvwBS/lG; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=r277yi+Nyo+3nifP8z4BGCRO8hmMLsoW+s546ZKtUG0=; b=GvwBS/lGRWXZq4bL7YXwfpOBIR
+	E0RJEWCEOPhfghLmzPhcIItXA8XtN9/0t1NpfWOKBKqp6j/9fgFMlAr0F7yIquJ2pLQhAEAVjIug5
+	wtGsQtV5w6GCrv7tSRha7MnNRFCDXxN+Q2coKSOIrVLEfeU17RPmTiXxOpfqerDdBBtENgw1hCrIi
+	BLwQawXSug27i/O+UwvZ7r82hzcNR8aj1pq91FiYflk2BQxXCVdC5qGOI477KbSmgZYLbSkvAAgLG
+	TZVoEDe4VkaTUwFB/L09s/Mm1LNHMLEHJsoJvtn7/h7Fd0kyh3D7VMJMPIxWRBAomEzoshnDGNDpe
+	zy96AYqw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57026)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1s8E4F-0008BX-2v;
+	Sat, 18 May 2024 08:01:21 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1s8E4B-0002JK-0a; Sat, 18 May 2024 08:01:15 +0100
+Date: Sat, 18 May 2024 08:01:14 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Duanqiang Wen <duanqiangwen@net-swift.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
+ entries
+Message-ID: <ZkhSOvkaAwsTe7Dm@shell.armlinux.org.uk>
+References: <E1rl62V-004UFh-Te@rmk-PC.armlinux.org.uk>
+ <7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net>
+ <ZkfYqj+OcAxd9O2t@shell.armlinux.org.uk>
+ <4ea9cc83-c7ca-47b8-8d43-dab16193108f@roeck-us.net>
+ <ZkfqKMqkUc/Sr7U2@shell.armlinux.org.uk>
+ <646bd149-f29a-4c91-ab00-4f6d2fce23fd@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,72 +75,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240517074750.87376-10-ramona.bolboaca13@gmail.com>
+In-Reply-To: <646bd149-f29a-4c91-ab00-4f6d2fce23fd@roeck-us.net>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Ramona,
+On Fri, May 17, 2024 at 08:24:19PM -0700, Guenter Roeck wrote:
+> On 5/17/24 16:37, Russell King (Oracle) wrote:
+> > On Fri, May 17, 2024 at 04:34:06PM -0700, Guenter Roeck wrote:
+> > > On 5/17/24 15:22, Russell King (Oracle) wrote:
+> > > > On Fri, May 17, 2024 at 03:09:12PM -0700, Guenter Roeck wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
+> > > > > > Report an error when an attempt to register a clkdev entry results in a
+> > > > > > truncated string so the problem can be easily spotted.
+> > > > > > 
+> > > > > > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
+> > > > > > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> > > > > > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> > > > > 
+> > > > > With this patch in the mainline kernel, I get
+> > > > > 
+> > > > > 10000000.clock-controller:corepll: device ID is greater than 24
+> > > > > sifive-clk-prci 10000000.clock-controller: Failed to register clkdev for corepll: -12
+> > > > > sifive-clk-prci 10000000.clock-controller: could not register clocks: -12
+> > > > > sifive-clk-prci 10000000.clock-controller: probe with driver sifive-clk-prci failed with error -12
+> > > > > ...
+> > > > > platform 10060000.gpio: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+> > > > > platform 10010000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+> > > > > platform 10011000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+> > > > > platform 10040000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+> > > > > platform 10050000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+> > > > > platform 10090000.ethernet: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+> > > > > 
+> > > > > when trying to boot sifive_u in qemu.
+> > > > > 
+> > > > > Apparently, "10000000.clock-controller" is too long. Any suggestion on
+> > > > > how to solve the problem ? I guess using dev_name(dev) as dev_id parameter
+> > > > > for clk_hw_register_clkdev() is not or no longer a good idea.
+> > > > > What else should be used instead ?
+> > > > 
+> > > > It was *never* a good idea. clkdev uses a fixed buffer size of 20
+> > > > characters including the NUL character, and "10000000.clock-controller"
+> > > > would have been silently truncated to "10000000.clock-cont", and thus
+> > > > 
+> > > >                           if (!dev_id || strcmp(p->dev_id, dev_id))
+> > > > 
+> > > > would never have matched.
+> > > > 
+> > > > We need to think about (a) whether your use of clk_hw_register_clkdev()
+> > > > is still appropriate, and (b) whether we need to increase the size of
+> > > > the strings.
+> > > > 
+> > > 
+> > > It isn't _my_ use, really. I only run a variety of boot tests with qemu.
+> > > I expect we'll see reports from others trying to boot the mainline kernel
+> > > on real sifive_u hardware or other hardware using the same driver or other
+> > > drivers using dev_name() as dev_id parameter. Coccinelle finds the
+> > > following callers:
+> > 
+> > Using dev_name() is not an issue. It's when dev_name() exceeds 19
+> > characters that it becomes an issue (and always has been an issue
+> > due to the truncation.) clk_get(dev, ...) uses dev_name(dev) to match
+> > against its entry in the table.
+> > 
+> > As I say, dev_name() itself is not an issue. The length used for the
+> > name is.
+> > 
+> 
+> Maybe, but the existence of best_dev_name() suggests that this has been seen
+> before and that, as you mentioned, it is not a good idea. Anyway, the patch
+> below fixes the problem for me. I don't know if it is acceptable / correct,
+> so it might serve as guidance for others when fixing the problem for real.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on jic23-iio/togreg]
-[cannot apply to linus/master v6.9 next-20240517]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ramona-Gradinariu/dt-bindings-iio-imu-Add-ADIS16501-compatibles/20240517-155051
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20240517074750.87376-10-ramona.bolboaca13%40gmail.com
-patch subject: [PATCH v3 9/9] drivers: iio: imu: Add support for adis1657x family
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240518/202405181400.174vWAhr-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240518/202405181400.174vWAhr-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405181400.174vWAhr-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/iio/imu/adis16475.c:523:9: error: initialization of 'const struct iio_dev_attr *' from incompatible pointer type 'struct attribute *' [-Werror=incompatible-pointer-types]
-     523 |         &iio_dev_attr_hwfifo_watermark_min.dev_attr.attr,
-         |         ^
-   drivers/iio/imu/adis16475.c:523:9: note: (near initialization for 'adis16475_fifo_attributes[0]')
-   drivers/iio/imu/adis16475.c:524:9: error: initialization of 'const struct iio_dev_attr *' from incompatible pointer type 'struct attribute *' [-Werror=incompatible-pointer-types]
-     524 |         &iio_dev_attr_hwfifo_watermark_max.dev_attr.attr,
-         |         ^
-   drivers/iio/imu/adis16475.c:524:9: note: (near initialization for 'adis16475_fifo_attributes[1]')
-   drivers/iio/imu/adis16475.c:525:9: error: initialization of 'const struct iio_dev_attr *' from incompatible pointer type 'struct attribute *' [-Werror=incompatible-pointer-types]
-     525 |         &iio_dev_attr_hwfifo_watermark.dev_attr.attr,
-         |         ^
-   drivers/iio/imu/adis16475.c:525:9: note: (near initialization for 'adis16475_fifo_attributes[2]')
-   drivers/iio/imu/adis16475.c:526:9: error: initialization of 'const struct iio_dev_attr *' from incompatible pointer type 'struct attribute *' [-Werror=incompatible-pointer-types]
-     526 |         &iio_dev_attr_hwfifo_enabled.dev_attr.attr,
-         |         ^
-   drivers/iio/imu/adis16475.c:526:9: note: (near initialization for 'adis16475_fifo_attributes[3]')
-   cc1: some warnings being treated as errors
-
-
-vim +523 drivers/iio/imu/adis16475.c
-
-   514	
-   515	static IIO_DEVICE_ATTR_RO(hwfifo_watermark_min, 0);
-   516	static IIO_DEVICE_ATTR_RO(hwfifo_watermark_max, 0);
-   517	static IIO_DEVICE_ATTR(hwfifo_watermark, 0444,
-   518			       adis16475_get_fifo_watermark, NULL, 0);
-   519	static IIO_DEVICE_ATTR(hwfifo_enabled, 0444,
-   520			       adis16475_get_fifo_enabled, NULL, 0);
-   521	
-   522	static const struct iio_dev_attr *adis16475_fifo_attributes[] = {
- > 523		&iio_dev_attr_hwfifo_watermark_min.dev_attr.attr,
-   524		&iio_dev_attr_hwfifo_watermark_max.dev_attr.attr,
-   525		&iio_dev_attr_hwfifo_watermark.dev_attr.attr,
-   526		&iio_dev_attr_hwfifo_enabled.dev_attr.attr,
-   527		NULL
-   528	};
-   529	
+I get the impression that there's a communication problem here, so I'm
+not going to continue replying. Thanks.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
