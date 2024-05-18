@@ -1,229 +1,196 @@
-Return-Path: <linux-kernel+bounces-182736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A47A8C8F33
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 03:29:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE9C98C8F35
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 03:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DD4A1C2180A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 01:29:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2932C283080
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 01:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862E8322E;
-	Sat, 18 May 2024 01:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D936AD7;
+	Sat, 18 May 2024 01:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="OwEPqBh5"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qaxxSgnC"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1894653;
-	Sat, 18 May 2024 01:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615781FBA;
+	Sat, 18 May 2024 01:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715995761; cv=none; b=Dl8gbZ+y3cT9PeJZfB20UZEqGc3bT7xijtLhR5bPN8COgs8YfXkd3IXyTRb9JIiktNX2ymiNxgDZyUl7EPVuD6asIqR6+ns5GhMjm5kOItGdWBQqeiiPs+70Y5EQOyjX/vcEGT6wUqLk0om9/9JNeFxvvBKwUNzPq8ahARV943Q=
+	t=1715995794; cv=none; b=ZKc51b1E/ViYLCUI8Pj6zG7lMZMQf/CgVrdCOwJYJuoPcXWtIMkyxdyXWxj7mtdeMzV3Qmvn1GVAI5EoBH6jhUJJvoOaDQ2zn9nk2kK/LnjDArGIUdHpehJ5u/4OrGyUU3bQ2dU/6JdWSJAKvn7sIhooU0nzrnxZttHjdXrBbsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715995761; c=relaxed/simple;
-	bh=8G7tL8nD9d2hUGZR4z9MrJFi0euwCo/CgnkUMXelI4U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=U5YOZsY60j9NrEGTxajtKbh3yKEA6EkfVlRosE4Nbyd//ArSlYkOX0Z5S7cdSOMMUCC8sSVOOlPGFHC8OblVSR84z3X+IjInYnyazek9l9NtYLtY50aqneMALTtA70qN5oHhk4mQO1rUZlsxEPjepmD5wJtE5aqCW9qH0iZz4rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=OwEPqBh5; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 25810120009;
-	Sat, 18 May 2024 04:29:07 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 25810120009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715995747;
-	bh=AZKg+0v7j7yA5sSyJOkuQm+dR23h+2ArrHxYVBhrY/I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=OwEPqBh5WFlvxcpgmcDV+4R53+Se/IdjZdTbRaeQAAwS91uU/kYPgmZY2NBe96eRR
-	 Gwoj3/Mt6SRZJuDeSsasD0Nu6yOi9adgr+wTM+VeMh+ICIq5WMXNhm4D12Dyr4lwxp
-	 FphRtZGexpF9XpnwHz5JGhqgM3p+4bHZaes3Ha8k3YyXEBwpz4W3g3CAoypKQ0aVdr
-	 hkkwbXMS3wsxJ5HkHmHKgAmwolvUgqNcdRIGYLwCSOh4o6YjNRvugozwdYZ0E5phjc
-	 TDghzoSB62uMt3RSfTFjiQINVmbJDkBmZB+B+EYgQaK5UP0xX6j1YQqendRNBDchJP
-	 P4fRnOObd33Pw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Sat, 18 May 2024 04:29:06 +0300 (MSK)
-Received: from [192.168.20.2] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Sat, 18 May 2024 04:29:06 +0300
-Message-ID: <da32106a-5768-4ee2-bf96-6dcf4d9aed0f@salutedevices.com>
-Date: Sat, 18 May 2024 04:28:15 +0300
+	s=arc-20240116; t=1715995794; c=relaxed/simple;
+	bh=e/I2R0ex/+zUSG4fYjgegmsp57FKuxraQDKbhee+BMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Irb0thhuBHt3UMjUL093KaRpZtUXf998i1m2xAUBZxbK1EwawcLMCeRdKnPZiFZ51O2lQr8MrULNDQDN3jIZCjumnuc0MrEyxeGIWxlo1v0HQoj+TLV4mAdG9uuzMcWTZNW1AiqI9mbGhTTKlSRAI75dXsI0e26nNtxzrbY3zkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qaxxSgnC; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=NEB3yoSgokyYqC55yoEIejaFuqMNPaLcCTzBCdN9PQQ=; b=qaxxSgnCXlcCLI+/FrV6xJZAxS
+	5mxZyEe5oJ8EM8eoY1tWDcexDNv6Qu46/jcSe+2w2YxvwrFusByPuIKdmOqLVvqOTNXSjoVuOvMGe
+	h0NbUg2pw0OIHfRFJ5nzhiX7PPCUFgJ7R1V+gAOM/tFCNCPJ/EDRCXKW/zTg777ERa2g=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s88tC-00FbTm-F0; Sat, 18 May 2024 03:29:34 +0200
+Date: Sat, 18 May 2024 03:29:34 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next v2 5/5] net: phy: add driver for built-in 2.5G
+ ethernet PHY on MT7988
+Message-ID: <cc0f67de-171e-45e1-90d9-b6b40ec71827@lunn.ch>
+References: <20240517102908.12079-1-SkyLake.Huang@mediatek.com>
+ <20240517102908.12079-6-SkyLake.Huang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 7/9] reset: amlogic: add auxiliary reset driver
- support
-Content-Language: en-US
-To: Jerome Brunet <jbrunet@baylibre.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-References: <20240516150842.705844-1-jbrunet@baylibre.com>
- <20240516150842.705844-8-jbrunet@baylibre.com>
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <20240516150842.705844-8-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185325 [May 18 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, sberdevices.ru:7.1.1,5.0.1;smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/17 20:54:00 #25244128
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517102908.12079-6-SkyLake.Huang@mediatek.com>
 
-
-
-On 5/16/24 18:08, Jerome Brunet wrote:
-> Add support for the reset controller present in the audio clock
-> controller of the g12 and sm1 SoC families, using the auxiliary bus.
-> 
-> This is expected to replace the driver currently present directly
-> within the related clock driver.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/reset/Kconfig                         |  1 +
->  drivers/reset/reset-meson.c                   | 46 ++++++++++++++++++-
->  include/soc/amlogic/meson8b-auxiliary-reset.h | 17 +++++++
->  3 files changed, 63 insertions(+), 1 deletion(-)
->  create mode 100644 include/soc/amlogic/meson8b-auxiliary-reset.h
-> 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 85b27c42cf65..4ceb4dc48fbc 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -134,6 +134,7 @@ config RESET_MCHP_SPARX5
->  config RESET_MESON
->  	tristate "Meson Reset Driver"
->  	depends on ARCH_MESON || COMPILE_TEST
-> +	depends on AUXILIARY_BUS
-
-I don't understand, who enables AUXILIARY_BUS. If I'm not mistaken,
-AUXILIARY_BUS should be selected by something that is going to use it,
-and it is not intended for defconfig.
-
->  	default ARCH_MESON
->  	help
->  	  This enables the reset driver for Amlogic Meson SoCs.
-> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-> index e34a10b15593..b5ddb85296ec 100644
-> --- a/drivers/reset/reset-meson.c
-> +++ b/drivers/reset/reset-meson.c
-> @@ -5,6 +5,7 @@
->   * Copyright (c) 2016 BayLibre, SAS.
->   * Author: Neil Armstrong <narmstrong@baylibre.com>
->   */
-> +#include <linux/auxiliary_bus.h>
->  #include <linux/err.h>
->  #include <linux/init.h>
->  #include <linux/io.h>
-> @@ -16,6 +17,8 @@
->  #include <linux/slab.h>
->  #include <linux/types.h>
->  
-> +#include <soc/amlogic/meson8b-auxiliary-reset.h>
-> +
->  struct meson_reset_param {
->  	const struct reset_control_ops *reset_ops;
->  	unsigned int reset_num;
-> @@ -218,6 +221,47 @@ static struct platform_driver meson_reset_pltf_driver = {
->  };
->  module_platform_driver(meson_reset_pltf_driver);
->  
-> -MODULE_DESCRIPTION("Amlogic Meson Reset Controller driver");
-> +static const struct meson_reset_param meson_g12a_audio_param = {
-> +	.reset_ops	= &meson_reset_toggle_ops,
-> +	.reset_num	= 26,
-> +	.level_offset	= 0x24,
-> +};
-> +
-> +static const struct meson_reset_param meson_sm1_audio_param = {
-> +	.reset_ops	= &meson_reset_toggle_ops,
-> +	.reset_num	= 39,
-> +	.level_offset	= 0x28,
-> +};
-> +
-> +static const struct auxiliary_device_id meson_reset_aux_ids[] = {
-> +	{
-> +		.name = "axg-audio-clkc.rst-g12a",
-> +		.driver_data = (kernel_ulong_t)&meson_g12a_audio_param,
-> +	}, {
-> +		.name = "axg-audio-clkc.rst-sm1",
-> +		.driver_data = (kernel_ulong_t)&meson_sm1_audio_param,
-> +	},
-> +};
-> +MODULE_DEVICE_TABLE(auxiliary, meson_reset_aux_ids);
-> +
-> +static int meson_reset_aux_probe(struct auxiliary_device *adev,
-> +				 const struct auxiliary_device_id *id)
+> +static int mt798x_2p5ge_phy_config_init(struct phy_device *phydev)
 > +{
-> +	const struct meson_reset_param *param =
-> +		(const struct meson_reset_param *)(id->driver_data);
-> +	struct meson8b_reset_adev *raux =
-> +		to_meson8b_reset_adev(adev);
+> +	struct mtk_i2p5ge_phy_priv *priv = phydev->priv;
+> +	struct device *dev = &phydev->mdio.dev;
+> +	const struct firmware *fw;
+> +	struct pinctrl *pinctrl;
+> +	int ret, i;
+> +	u16 reg;
 > +
-> +	return meson_reset_probe(&adev->dev, raux->map, param);
+> +	if (!priv->fw_loaded) {
+> +		if (!priv->md32_en_cfg_base || !priv->pmb_addr) {
+> +			dev_err(dev, "MD32_EN_CFG base & PMB addresses aren't valid\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		ret = request_firmware(&fw, MT7988_2P5GE_PMB, dev);
+> +		if (ret) {
+> +			dev_err(dev, "failed to load firmware: %s, ret: %d\n",
+> +				MT7988_2P5GE_PMB, ret);
+> +			return ret;
+> +		}
+> +
+> +		reg = readw(priv->md32_en_cfg_base);
+> +		if (reg & MD32_EN) {
+> +			phy_set_bits(phydev, MII_BMCR, BMCR_RESET);
+> +			usleep_range(10000, 11000);
+> +		}
+> +		phy_set_bits(phydev, MII_BMCR, BMCR_PDOWN);
+> +
+> +		/* Write magic number to safely stall MCU */
+> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x800e, 0x1100);
+> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x800f, 0x00df);
+> +
+> +		for (i = 0; i < fw->size - 1; i += 4)
+> +			writel(*((uint32_t *)(fw->data + i)), priv->pmb_addr + i);
+
+You should not trust the firmware. At least do a range check. How big
+is the SRAM the firmware is being written into? If you are given a
+firmware which is 1MB in size, what will happen?
+
+> +		release_firmware(fw);
+> +
+> +		writew(reg & ~MD32_EN, priv->md32_en_cfg_base);
+> +		writew(reg | MD32_EN, priv->md32_en_cfg_base);
+> +		phy_set_bits(phydev, MII_BMCR, BMCR_RESET);
+> +		/* We need a delay here to stabilize initialization of MCU */
+> +		usleep_range(7000, 8000);
+> +		dev_info(dev, "Firmware loading/trigger ok.\n");
+
+Is there a version available anywhere for the firmware?
+
+> +static int mt798x_2p5ge_phy_get_features(struct phy_device *phydev)
+> +{
+> +	int ret;
+> +
+> +	ret = genphy_c45_pma_read_abilities(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* We don't support HDX at MAC layer on mt7988.
+
+That is a MAC limitation, so it should be the MAC which disables this,
+not the Phy.
+
+> +	/* FIXME: AN device (MDIO_DEVS_AN)is indeed in this package. However, MDIO_DEVS_AN seems
+> +	 * that it won't be set as we detect phydev->c45_ids.mmds_present. So Autoneg_BIT won't be
+> +	 * set in genphy_c45_pma_read_abilities(), either. Workaround here temporarily.
+> +	 */
+> +	linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, phydev->supported);
+> +
+> +	return 0;
 > +}
 > +
-> +static struct auxiliary_driver meson_reset_aux_driver = {
-> +	.probe		= meson_reset_aux_probe,
-> +	.id_table	= meson_reset_aux_ids,
-> +};
-> +module_auxiliary_driver(meson_reset_aux_driver);
+> +static int mt798x_2p5ge_phy_read_status(struct phy_device *phydev)
+> +{
+> +	u16 bmsr;
+> +	int ret;
 > +
-> +MODULE_DESCRIPTION("Amlogic Meson Reset driver");
->  MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
-> +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
->  MODULE_LICENSE("Dual BSD/GPL");
-> diff --git a/include/soc/amlogic/meson8b-auxiliary-reset.h b/include/soc/amlogic/meson8b-auxiliary-reset.h
-> new file mode 100644
-> index 000000000000..0a465deb4440
-> --- /dev/null
-> +++ b/include/soc/amlogic/meson8b-auxiliary-reset.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __SOC_AMLOGIC_MESON8B_AUX_RESET_H
-> +#define __SOC_AMLOGIC_MESON8B_AUX_RESET_H
-> +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/container_of.h>
-> +#include <linux/regmap.h>
-> +
-> +struct meson8b_reset_adev {
-> +	struct auxiliary_device adev;
-> +	struct regmap *map;
-> +};
-> +
-> +#define to_meson8b_reset_adev(_adev) \
-> +	container_of((_adev), struct meson8b_reset_adev, adev)
-> +
-> +#endif /* __SOC_AMLOGIC_MESON8B_AUX_RESET_H */
+> +	/* Use this instead of genphy_c45_read_link() because MDIO_DEVS_AN bit isn't set in
+> +	 * phydev->c45_ids.mmds_present.
 
--- 
-Best regards
-Jan Dakinevich
+You have this twice now. Is the hardware broken? If so, maybe change
+phydev->c45_ids.mmds_present in the probe function to set the bit?
+
+> +	 */
+> +	ret = genphy_update_link(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	phydev->speed = SPEED_UNKNOWN;
+> +	phydev->duplex = DUPLEX_UNKNOWN;
+> +	phydev->pause = 0;
+> +	phydev->asym_pause = 0;
+> +
+> +	/* We'll read link speed through vendor specific registers down below. So remove
+> +	 * phy_resolve_aneg_linkmode (AN on) & genphy_c45_read_pma (AN off).
+> +	 */
+> +	if (phydev->autoneg == AUTONEG_ENABLE && phydev->autoneg_complete) {
+> +		ret = genphy_c45_read_lpa(phydev);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		/* Clause 45 doesn't define 1000BaseT support. Read the link partner's 1G
+> +		 * advertisement via Clause 22
+> +		 */
+> +		ret = phy_read(phydev, MII_STAT1000);
+> +		if (ret < 0)
+> +			return ret;
+> +		mii_stat1000_mod_linkmode_lpa_t(phydev->lp_advertising, ret);
+> +	} else if (phydev->autoneg == AUTONEG_DISABLE) {
+> +		/* Mask link partner's all advertising capabilities when AN is off. In fact,
+> +		 * if we disable antuneg, we can't link up correctly:
+> +		 *   2.5G/1G: Need AN to exchange master/slave information.
+> +		 *   100M: Without AN, link starts at half duplex, which this phy doesn't support.
+> +		 *   10M: Deprecated in this ethernet phy.
+> +		 */
+
+So it sounds like phydev->autoneg == AUTONEG_DISABLE is broken with
+this hardware. So just don't allow it, return -EOPNOTSUPP in config_aneg()
+
+     Andrew
 
