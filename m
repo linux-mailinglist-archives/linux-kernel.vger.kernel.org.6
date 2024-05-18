@@ -1,189 +1,125 @@
-Return-Path: <linux-kernel+bounces-182981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E498C9278
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 23:31:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE888C927C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 23:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6132CB209A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 21:31:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C852281AF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 21:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B866CDC8;
-	Sat, 18 May 2024 21:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF3E6CDCE;
+	Sat, 18 May 2024 21:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZmAK/gDT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVldWSgx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE449DF58;
-	Sat, 18 May 2024 21:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36036BB26;
+	Sat, 18 May 2024 21:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716067870; cv=none; b=F/M6Zvk52oS8n/IOS6Yy7ViBxiLXUo8X1L3+s9CYMunBdcD99VUF2Nllcjp6hjvB9Su3cacPZ3Y5IEk7V+G3c1UPFfaE52vG6E3nML6pvJwj4xAYz/oWKkQLWyhh/c2GITKIFIMhV75C5Hp2wzvIyhI9lkmgP8Kb5YHmdgJGH04=
+	t=1716068224; cv=none; b=afld8Gs0XpxezUYNz0QC/gLz1LTFr4zXyznzbL+/PE8X2sL8Zbmu3O0QuxAQZoxRn5ROYeJI4mZlfylAZM/5OOFs6wlUebRdeWrxWrR8Txc655g6TZ62fmvsNJuKWEfBHOpXycqbPt2iCZJFbUys8eSQcZJflQ5z//pkG3zgIX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716067870; c=relaxed/simple;
-	bh=YcuHLa93vOsQrMH7qC/ZJuanpLd3bFvl73b4w8gDm7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dg1s6qrCNIIicGO2yOsO7+9R+6Z/qWiEXyUs7IKb9ik4WkmOfe0BfaBFRtaLTi0mPQnggrIQRSOBa0tba5VNLw3Vo7tTVTFNouQOBmhTJxxAqU7HhwiARJBbhRcTwpqDQup6GOZHItxTxjwba8xAXhcjpUX+ngHok2GEGs9coEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZmAK/gDT; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716067869; x=1747603869;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YcuHLa93vOsQrMH7qC/ZJuanpLd3bFvl73b4w8gDm7k=;
-  b=ZmAK/gDTHpailMxmVoa2PJV91OQV+mkZRQjKDicieJ2uozo1LWyYRprR
-   mMujaeO82Ghvs5KHueVG0nX+ViW1nznFyO+SczMaCA/kH9Y0TaeSFpe0F
-   +Z8+By0gXHBlEhpXyH5pGB07QyLbJbyK5Zp9m1lyh7St3lzz2dLsMqkVF
-   JexErG/BdBgogo0TefzWa2Lx53711GarcJcUHQnG5OUwRfDMPU8200wwt
-   mjZKLsvMok/BnzzNA5r1/7ObANMqTUYoDqdYXTSM9flMTRA1zVxyUQ/GW
-   zo1+5aEDZ8kH4Hc8HD4khcN7xQZziFoPPPGBgvQRZAB84OQylsxy1V9m4
-   A==;
-X-CSE-ConnectionGUID: DLRBkHPyRqmNDdBPnXRxjQ==
-X-CSE-MsgGUID: 8lIHNxTxRSCMD04wWbj4ew==
-X-IronPort-AV: E=McAfee;i="6600,9927,11076"; a="37608900"
-X-IronPort-AV: E=Sophos;i="6.08,171,1712646000"; 
-   d="scan'208";a="37608900"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2024 14:31:08 -0700
-X-CSE-ConnectionGUID: sc9c9u6PRKSkFMa9ZLiDIw==
-X-CSE-MsgGUID: ovrQszmMR3mDpHLmAvxfng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,171,1712646000"; 
-   d="scan'208";a="32710517"
-Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 18 May 2024 14:31:03 -0700
-Received: from kbuild by 108735ec233b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s8Rds-0002do-28;
-	Sat, 18 May 2024 21:31:00 +0000
-Date: Sun, 19 May 2024 05:30:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sky Huang <SkyLake.Huang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
+	s=arc-20240116; t=1716068224; c=relaxed/simple;
+	bh=i4wo/8Z7T3kmv6I4NXf5lzXYWB0n3G483Xogj9SqaVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p5GrG7qh0k2jsqUZcad8o53nPIGVN7bnvig5FWiszMUM6QUzaGolw2gwdr5GueBMuHRbIMwvf/LgBySclZFZotSlvC7OSqqCclKZ2kOaFMBWiKhMjiY8Xu3QenGLIk2sa7HOQ4VM2oS6qQOBmcv7Aq1yxcrYFvkd1QyHme8EqWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CVldWSgx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2FF4C113CC;
+	Sat, 18 May 2024 21:37:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716068224;
+	bh=i4wo/8Z7T3kmv6I4NXf5lzXYWB0n3G483Xogj9SqaVA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CVldWSgxGr4g0z5XNEwCL7QcDO+hMOyI9mKV8shYMrMibPSuVxPouloxnVAPcAS9c
+	 w1i8kxWBGddPf3nOPEBG1CWxgtkM9RCmMzAZ3cjSXdCqnMeBF625xlDnVVwnrdLNvu
+	 1elTcuFneynPRM3F8ULcTZTNBTVGnvMhe2xlQ0modf0YAWd6YGNlBF6zj7zsp/kg+z
+	 uHldcs5KdgayiSJRRyxndDAIEoBBZrRXUYdhhbcxB5gxQ0RU6xrUum6MAmwYqtm3vc
+	 psUSwtMIl8JE96e1Jj3hrN00/jOH3eqr41Hy0NXe48SbZ9e/8yxmOV4uoLvUbqRB3N
+	 pPjGDP4md+qwg==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	Andreas.Fuchs@infineon.com,
+	James Prestwood <prestwoj@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	David Howells <dhowells@redhat.com>,
 	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Steven Liu <Steven.Liu@mediatek.com>,
-	"SkyLake.Huang" <skylake.huang@mediatek.com>
-Subject: Re: [PATCH net-next v2 2/5] net: phy: mediatek: Move LED and
- read/write page helper functions into mtk phy lib
-Message-ID: <202405190537.zWJuRc1r-lkp@intel.com>
-References: <20240517102908.12079-3-SkyLake.Huang@mediatek.com>
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	linux-crypto@vger.kernel.org (open list:CRYPTO API),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH RFC 0/5] Asymmetric TPM2 key type
+Date: Sun, 19 May 2024 00:36:20 +0300
+Message-ID: <20240518213700.5960-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517102908.12079-3-SkyLake.Huang@mediatek.com>
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 
-Hi Sky,
+Introduce tpm2_key_rsa implementing asymmetric TPM RSA key.
 
-kernel test robot noticed the following build errors:
+I submit this first as RFC as I could not execute the keyctl padd in the
+following sequence (returns EBADF):
 
-[auto build test ERROR on next-20240517]
-[cannot apply to net-next/main net/main linus/master v6.9 v6.9-rc7 v6.9-rc6 v6.9]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+tpm2_createprimary --hierarchy o -G rsa2048 -c owner.txt
+tpm2_evictcontrol -c owner.txt 0x81000001
+tpm2_getcap handles-persistent
+openssl genrsa -out private.pem 2048
+tpm2_import -C 0x81000001 -G rsa -i private.pem -u key.pub -r key.priv
+tpm2_encodeobject -C 0x81000001 -u key.pub -r key.priv -o key.priv.pem
+openssl asn1parse -inform pem -in key.priv.pem -noout -out key.priv.der
+key_serial=`cat key.priv.der | keyctl padd asymmetric tpm @u`
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sky-Huang/net-phy-mediatek-Re-organize-MediaTek-ethernet-phy-drivers/20240517-184536
-base:   next-20240517
-patch link:    https://lore.kernel.org/r/20240517102908.12079-3-SkyLake.Huang%40mediatek.com
-patch subject: [PATCH net-next v2 2/5] net: phy: mediatek: Move LED and read/write page helper functions into mtk phy lib
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240519/202405190537.zWJuRc1r-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240519/202405190537.zWJuRc1r-lkp@intel.com/reproduce)
+This is derived work from James Prestwood’s earlier work from 2020:
+https://lore.kernel.org/all/20200518172704.29608-1-prestwoj@gmail.com/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405190537.zWJuRc1r-lkp@intel.com/
+James Prestwood (1):
+  keys: asymmetric: ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE
 
-All errors (new ones prefixed by >>):
+Jarkko Sakkinen (4):
+  crypto: rsa-pkcs1pad: export rsa1_asn_lookup()
+  tpm: export tpm2_load_context()
+  KEYS: trusted: Do not use WARN when encode fails
+  KEYS: trusted: Migrate tpm2_key_{encode,decode}() to TPM driver
 
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `mt798x_phy_eee':
-   mtk-ge-soc.c:(.text+0x892): undefined reference to `phy_select_page'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0xaaa): undefined reference to `__phy_modify'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `mt798x_phy_led_hw_control_get':
->> mtk-ge-soc.c:(.text+0x32): undefined reference to `mtk_phy_led_hw_ctrl_get'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `mt798x_phy_led_hw_control_set':
->> mtk-ge-soc.c:(.text+0x64): undefined reference to `mtk_phy_led_hw_ctrl_set'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `mt798x_phy_led_hw_is_supported':
->> mtk-ge-soc.c:(.text+0x88): undefined reference to `mtk_phy_led_hw_is_supported'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `mt798x_phy_led_blink_set':
->> mtk-ge-soc.c:(.text+0xe0): undefined reference to `mtk_phy_hw_led_blink_set'
->> m68k-linux-ld: mtk-ge-soc.c:(.text+0xfa): undefined reference to `mtk_phy_hw_led_on_set'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `mt798x_phy_led_brightness_set':
-   mtk-ge-soc.c:(.text+0x136): undefined reference to `mtk_phy_hw_led_blink_set'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x15a): undefined reference to `mtk_phy_hw_led_on_set'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `mt7981_phy_finetune':
-   mtk-ge-soc.c:(.text+0x19e): undefined reference to `phy_write_mmd'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x1ea): undefined reference to `phy_select_page'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x200): undefined reference to `__mdiobus_write'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x2f4): undefined reference to `phy_restore_page'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x30c): undefined reference to `phy_modify_mmd'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `mt7988_phy_finetune':
-   mtk-ge-soc.c:(.text+0x48a): undefined reference to `phy_write_mmd'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x4c2): undefined reference to `phy_select_page'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x4d8): undefined reference to `__mdiobus_write'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x592): undefined reference to `phy_restore_page'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x5aa): undefined reference to `phy_modify_mmd'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `mt798x_phy_common_finetune':
-   mtk-ge-soc.c:(.text+0x5e6): undefined reference to `phy_select_page'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x5fc): undefined reference to `__mdiobus_write'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x766): undefined reference to `phy_restore_page'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `mt798x_phy_eee':
-   mtk-ge-soc.c:(.text+0x79c): undefined reference to `phy_modify_mmd'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x8ac): undefined reference to `__mdiobus_write'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0xa8a): undefined reference to `phy_restore_page'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `cal_cycle.constprop.0':
-   mtk-ge-soc.c:(.text+0xb1e): undefined reference to `phy_modify_mmd'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0xb50): undefined reference to `phy_read_mmd'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `tx_vcm_cal_sw':
-   mtk-ge-soc.c:(.text+0xc70): undefined reference to `phy_modify_mmd'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `tx_amp_fill_result.isra.0':
-   mtk-ge-soc.c:(.text+0x1016): undefined reference to `phy_modify_mmd'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `rext_cal_efuse':
-   mtk-ge-soc.c:(.text+0x121e): undefined reference to `phy_modify_mmd'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `cal_efuse':
-   mtk-ge-soc.c:(.text+0x12c8): undefined reference to `phy_modify_mmd'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x13e4): undefined reference to `phy_write_mmd'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `mt7988_phy_probe':
-   mtk-ge-soc.c:(.text+0x15ec): undefined reference to `devm_phy_package_join'
->> m68k-linux-ld: mtk-ge-soc.c:(.text+0x1688): undefined reference to `mtk_phy_leds_state_init'
-   m68k-linux-ld: mtk-ge-soc.c:(.text+0x16ba): undefined reference to `phy_modify_mmd'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `mt7981_phy_probe':
->> mtk-ge-soc.c:(.text+0x17b4): undefined reference to `mtk_phy_leds_state_init'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o:(.data+0x7a): undefined reference to `genphy_suspend'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o:(.data+0x7e): undefined reference to `genphy_resume'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o:(.data+0x92): undefined reference to `genphy_handle_interrupt_no_ack'
->> m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o:(.data+0xb2): undefined reference to `mtk_phy_read_page'
->> m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o:(.data+0xb6): undefined reference to `mtk_phy_write_page'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o:(.data+0x18c): undefined reference to `genphy_suspend'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o:(.data+0x190): undefined reference to `genphy_resume'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o:(.data+0x1a4): undefined reference to `genphy_handle_interrupt_no_ack'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o:(.data+0x1c4): undefined reference to `mtk_phy_read_page'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o:(.data+0x1c8): undefined reference to `mtk_phy_write_page'
-   m68k-linux-ld: drivers/net/phy/mediatek/mtk-ge-soc.o: in function `phy_module_init':
-   mtk-ge-soc.c:(.init.text+0x12): undefined reference to `phy_drivers_register'
+ crypto/asymmetric_keys/Kconfig                |  12 +
+ crypto/asymmetric_keys/Makefile               |   1 +
+ crypto/asymmetric_keys/tpm2_key_rsa.c         | 648 ++++++++++++++++++
+ crypto/rsa-pkcs1pad.c                         |  16 +-
+ drivers/char/tpm/Kconfig                      |   5 +
+ drivers/char/tpm/Makefile                     |   5 +
+ drivers/char/tpm/tpm.h                        |   2 -
+ drivers/char/tpm/tpm2-cmd.c                   |  77 +++
+ drivers/char/tpm/tpm2-space.c                 |  61 --
+ drivers/char/tpm/tpm2_key.c                   | 192 ++++++
+ .../char/tpm}/tpm2key.asn1                    |   0
+ include/crypto/rsa-pkcs1pad.h                 |  20 +
+ include/crypto/tpm2_key.h                     |  36 +
+ include/linux/tpm.h                           |   3 +
+ security/keys/trusted-keys/Makefile           |   2 -
+ security/keys/trusted-keys/trusted_tpm2.c     | 183 +----
+ 16 files changed, 1027 insertions(+), 236 deletions(-)
+ create mode 100644 crypto/asymmetric_keys/tpm2_key_rsa.c
+ create mode 100644 drivers/char/tpm/tpm2_key.c
+ rename {security/keys/trusted-keys => drivers/char/tpm}/tpm2key.asn1 (100%)
+ create mode 100644 include/crypto/rsa-pkcs1pad.h
+ create mode 100644 include/crypto/tpm2_key.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.1
+
 
