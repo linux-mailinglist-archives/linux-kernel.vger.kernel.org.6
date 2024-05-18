@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-182817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302898C9060
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 12:14:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D8F8C9050
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 12:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C325D1F21B79
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 10:14:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01D8AB21539
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 10:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B1D266AB;
-	Sat, 18 May 2024 10:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F34618AF9;
+	Sat, 18 May 2024 10:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="lGxkYnWM"
-Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NPGyrMmV"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB8C1773A;
-	Sat, 18 May 2024 10:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE55D8BE2;
+	Sat, 18 May 2024 10:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716027229; cv=none; b=L3l2N8+kEjZossdXAthfgFzNQjErpqFWUW+BzhcVNYMixpGNou5RZ4CItqr6FP+mHW9HzNXyRoWN6p2Qg75bsYwz7/ECs1cvTg04US7cXGwnZVBT4Uu0jSgJgJbWEQraJVesBUv/uDTtzUpnkoogAuaQFqC6bBdbP6JC/wS7tNE=
+	t=1716026771; cv=none; b=aDlJKikCxBwYcAUs15Qh3ogWhGU0dhMpmt6DTn9Dovpb3rLXbgGFqnRuK3cuZGKVbFdDN8mFaH7ZaFaa94aPYIB5eXJTYsAR3IC6lGCJQnmszgmBGPxC1SQo0VY+mToohv45XR+Alh8XsZ1mwiY0TYcAtfakUHyUV9/lOP+vBWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716027229; c=relaxed/simple;
-	bh=JEEGJe7P7TsOOE2g5iqa8BKS6lSw1rmKWvrEVpgafAk=;
-	h=Date:From:To:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RbkVrUhyvVC3P864oZQVUcJuvbCpMtLqszJpFqL3NqCvu6ziac1fO5xuWVRiYbHXb56oxkxjaiX9U4liawbQgiXsZCWiLghGdBBHYqD1TRoAVPL5ctXubs3fH3isHVtz5T1KMKIQrHufxbOtEwDoCkRM97P2w9CinRxbbn2RZsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=lGxkYnWM; arc=none smtp.client-ip=161.97.139.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
-	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1s8GZ6-006VvV-0f;
-	Sat, 18 May 2024 11:41:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:To:From:Date:Sender:
-	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=GZdz7DcQuZNUr0jvTXCmmPFf3gkI4Rtn8V9Cae9sto0=; b=lGxkYnWMYZypqxVrxAGzVjAiff
-	Kjo2o2LPO6tHTj1Oklu3HEz2yTvA23u9m/QBmLKX19/P11xwu4r7KBsnqnHHQprUHybYC0HR0Riwu
-	5vdd5O00bpSO4Vj16/gMC/OG8uu1zgA0sVzzEcd93e+1ZSPi0BkCC1L8Va0hCsZnrSwI7uwgsYmEA
-	/EDOf5MZZFSIP2kUzCvYxWvn7AEn0Z0atDbQVRAznvulNo209aun+PKhbP9d7wEKOnbw7UB0EqpV3
-	W/F2XBoAPR/17liJxkpsDqOwDVp1Pj5/EsSl8Va00Mu0qBXTUXNqRyxlOl4Upqis987gA7gM41iK8
-	O1F0n2+Q==;
-Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1s8GZ4-001KiF-0X;
-	Sat, 18 May 2024 11:41:19 +0200
-Date: Sat, 18 May 2024 11:41:17 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, marex@denx.de, leoyang.li@nxp.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] ARM: dts: imx: Add Kobo Clara HD rev b
-Message-ID: <20240518114117.54d7aa75@aktux>
-In-Reply-To: <20240504215344.861327-3-andreas@kemnade.info>
-References: <20240504215344.861327-1-andreas@kemnade.info>
-	<20240504215344.861327-3-andreas@kemnade.info>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716026771; c=relaxed/simple;
+	bh=2KLYzi0Quxs3zJMUGfVzy9lVcJJAzfPspjlA12X1dQg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZuI00ScjrT4zvmiFQffHYRExJ5gNurk4qB8VFJTfP0hsYMmXizehStS59tr8MJOrqByVRl6400V/mJJIxwpsqPAT7+GzJRXWZKRtNDaTT/KyF7UauXbqOR6qI5KjkCIIh+Idb5o4r0QaYvJfQSWttcgPGXmE8bjDDyU82OqBEWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NPGyrMmV; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44IA60pD122481;
+	Sat, 18 May 2024 05:06:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716026760;
+	bh=+s027MF9CiDove3Goyu/bsXNM0Zc7/KqIS+GLcrruic=;
+	h=From:To:CC:Subject:Date;
+	b=NPGyrMmVRTfRneZGxYSUvAwP3q1RkrrCFo4YyhOCKt9S8GK+YXpXP5nmXNKCIv4YP
+	 2RSysowDgaOXtLR3YGLw9dnGtu+kH+272OsWvVbBtSQPEsyZZwwqqQZeUNQOP5cf2m
+	 nLXio2o9VEmzrQ7G/w/3moibFOvF2JOfgcvaeeyY=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44IA60FK007642
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 18 May 2024 05:06:00 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 18
+ May 2024 05:05:59 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 18 May 2024 05:05:59 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44IA5vR8100665;
+	Sat, 18 May 2024 05:05:57 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <peter.ujfalusi@gmail.com>, <vkoul@kernel.org>
+CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: [PATCH] dmaengine: ti: k3-udma-glue: Fix of_k3_udma_glue_parse_chn_by_id()
+Date: Sat, 18 May 2024 15:35:56 +0530
+Message-ID: <20240518100556.2551788-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Sat,  4 May 2024 23:53:44 +0200
-Andreas Kemnade <andreas@kemnade.info> wrote:
+The of_k3_udma_glue_parse_chn_by_id() helper function erroneously
+invokes "of_node_put()" on the "udmax_np" device-node passed to it,
+without having incremented its reference at any point. Fix it.
 
-> There is a variation of the Kobo Clara HD containing a PMIC with different
-> default settings for the regulators in the OTP and therefore also
-> regulators wired up in a different way, so add a proper devicetree for it
-> to avoid some magic smoke.
-> 
-[...]
-> +&cpu0 {
-> +	arm-supply = <&dcdc5_reg>;
-> +	soc-supply = <&dcdc2_reg>;
-> +};
-> +
-Vendor devicetree has also this snippet for that revision:
+Fixes: 81a1f90f20af ("dmaengine: ti: k3-udma-glue: Add function to parse channel by ID")
+Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+---
 
-       cpus {
-                cpu0: cpu@0 {
-                        operating-points = <    /* Core2_1V3_ARM */
-                                /* kHz    uV */
-                                996000  1062500
-                                792000  1062500
-                                396000  1062500
-                                198000  975000
-                        >;
-                        fsl,soc-operating-points = <    /* Core2_1V3_SOC */
-                                /* ARM kHz      SOC-PU uV */
-                                996000          987500
-                                792000          987500
-                                396000          987500
-                                198000          900000
-                        >;
-                };
+Hello,
 
-        };
-
-Apparently we run into https://gitlab.com/postmarketOS/pmaports/-/issues/2811
-but I cannot find any documentation an alternative voltage ranges for that SoC
-(i.MX6SLL). So not all 6SLLs are created equal? At least we do not mix up 1.XV regulators
-with 3.3 regulators now, that is more healthy.
+This patch is based on commit
+4b377b4868ef kprobe/ftrace: fix build error due to bad function definition
+of Mainline Linux.
 
 Regards,
-Andreas
+Siddharth.
+
+ drivers/dma/ti/k3-udma-glue.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/dma/ti/k3-udma-glue.c b/drivers/dma/ti/k3-udma-glue.c
+index c9b93055dc9d..f0a399cf45b2 100644
+--- a/drivers/dma/ti/k3-udma-glue.c
++++ b/drivers/dma/ti/k3-udma-glue.c
+@@ -200,12 +200,9 @@ of_k3_udma_glue_parse_chn_by_id(struct device_node *udmax_np, struct k3_udma_glu
+ 
+ 	ret = of_k3_udma_glue_parse(udmax_np, common);
+ 	if (ret)
+-		goto out_put_spec;
++		return ret;
+ 
+ 	ret = of_k3_udma_glue_parse_chn_common(common, thread_id, tx_chn);
+-
+-out_put_spec:
+-	of_node_put(udmax_np);
+ 	return ret;
+ }
+ 
+-- 
+2.40.1
+
 
