@@ -1,146 +1,122 @@
-Return-Path: <linux-kernel+bounces-182805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905708C901B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:09:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74008C901C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A75AB215C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:09:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FF04281289
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690D117BBF;
-	Sat, 18 May 2024 09:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51BF17BBE;
+	Sat, 18 May 2024 09:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="JIXWx0jc"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A94ODE2F"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58337C8D1;
-	Sat, 18 May 2024 09:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDED1754B
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 09:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716023334; cv=none; b=Mf3ugzPE8j8UldbYwNSdm/4Eqq9n/tXVOt7ZkbgIbnpUwgZjWVsTP24mT/1UNuI1++6gc2w+dEoD7ykgS5tSaZ/rvYgTZpM+nS8eetV/PddhIGJ6f2KayAatSgFKF+6HJuRYVVENP1NM6qI1vw8nR6REot0fRe1KN0QC09Y3F2s=
+	t=1716023407; cv=none; b=AVfBegNO9hnuNLD12m0uV2gZUru6S+SK9kvqegBntUgj5XePTHRk34V5+NlCPEqsu6Gsq+tGvcNSbfgZch1u3zYB8V/HCXVUoQ/uU+EG5bdb7g1iLKptJWYDAsnhwdViQjtOi5IZboHrxjYbg1Qb2PSBEpvtytZXuBnHAEVUIIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716023334; c=relaxed/simple;
-	bh=bVysb/cwrM9Pn6QGUWbl+Ro5RzhkM5yqNN7jrETzyyA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hzi8UEq1HgrIRhFvMWjJJEhZGpAggC1EABncXm70uas0u6kgENz6mvwS+kksvCBfHtDGeWSWGdmPeF5mcYjZP8l8/ULYI241RUD79bMps69JGWhaOVvdNfUFBdCk0dXSN9C08cXePOpsmk1mW01+R36jXKt3gxQBxF7X3082B9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=JIXWx0jc; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1a0C79DkdyNfWuSIhpXXfpQISUKfKWxaR+an4LJg0Cw=; t=1716023330; x=1716628130; 
-	b=JIXWx0jctZvXnqcErr+3sSV5apKLlSgTQjonmBZVS45oZcpMNbwEebER5UZJBEzSMGhZDCP7PJN
-	h5jiab7J2xtO7IWJdAdJ1aBJr82y6tZpQ8r7xy+H5ViKn9mzObyFUNO/F9FgWOGFMOhRz2gR0vVr5
-	0/zNv4s2F8amm03ZFsrEnj/EfmsVG+ExiraqgiYRrKam9IKGg+UCC0i2EQDexL4Qz77kXbesE6eUx
-	itj9aMYp28rMvdB7y5sbfMwyGk4kMm6XSyjPdpG9H8EhFTS66NPvRGkOA2beiqLBDPiFkqLGgBQsI
-	L4gAr4tS2+2d1U/BI1N6cAKfkJZU1xRUxXMQ==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.97)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1s8G3N-00000002L83-1Dc1; Sat, 18 May 2024 11:08:33 +0200
-Received: from dynamic-077-188-054-221.77.188.pool.telefonica.de ([77.188.54.221] helo=[192.168.178.20])
-          by inpost2.zedat.fu-berlin.de (Exim 4.97)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1s8G3M-00000003h1e-3i5d; Sat, 18 May 2024 11:08:33 +0200
-Message-ID: <455e40c03314294f9c2e64480aa69f8261a3f2d5.camel@physik.fu-berlin.de>
-Subject: Re: [RESEND v7 00/37] Device Tree support for SH7751 based board
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
-Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie
- <airlied@gmail.com>,  Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner
- <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Lorenzo
- Pieralisi <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri
- Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,  Daniel
- Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, Lee
- Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>, Heiko Stuebner
- <heiko.stuebner@cherry.de>, Shawn Guo <shawnguo@kernel.org>,  Sebastian
- Reichel <sre@kernel.org>, Chris Morgan <macromorgan@hotmail.com>, Linus
- Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, David
- Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>, Andrew
- Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Stephen Rothwell
- <sfr@canb.auug.org.au>,  Javier Martinez Canillas <javierm@redhat.com>, Guo
- Ren <guoren@kernel.org>, Azeem Shaikh <azeemshaikh38@gmail.com>, Max
- Filippov <jcmvbkbc@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Jacky
- Huang <ychuang3@nuvoton.com>, Herve Codina <herve.codina@bootlin.com>,
- Manikanta Guntupalli <manikanta.guntupalli@amd.com>,  Anup Patel
- <apatel@ventanamicro.com>, Biju Das <biju.das.jz@bp.renesas.com>, Uwe
- =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Sam
- Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, Laurent
- Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- linux-ide@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-pci@vger.kernel.org, linux-serial@vger.kernel.org, 
- linux-fbdev@vger.kernel.org
-Date: Sat, 18 May 2024 11:08:30 +0200
-In-Reply-To: <cover.1712205900.git.ysato@users.sourceforge.jp>
-References: <cover.1712205900.git.ysato@users.sourceforge.jp>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 
+	s=arc-20240116; t=1716023407; c=relaxed/simple;
+	bh=BS0hGBTnONYffRCWVcBC/4T5eEmn6lIBz+Cc4Z0z2lw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TJ84MKF9skA+Q09GX3RlPF01HX14tt1iz6r5Q6jxK11GPWp7iF/3twv6S/+3GP6UzRU0cMBVkkGzYJlj7Gt7UA4vvGO0XMOzdZX8N4CxaYYfF8kpK3GhHYRbEdglZOQy8pO8WusmLpYzj8KJFjBOXCMl5y+NZve0PU5uo9mK1ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A94ODE2F; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-574bf7ab218so6086667a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 02:10:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716023404; x=1716628204; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=tftqzzSPEX4QSLboSaiUIFGje9Unrb+c3Yg/V8KRFkA=;
+        b=A94ODE2F3XLumjTKz2eCRPYasP0ck13d8dWlQiriXcQs1523hB6f9TrCViDxuMRQv9
+         y8bWwzOpY4+xMr69TwuPDBpFYAmRWikrGn7okDX4lBdPOeRIBwI8m5OT0vRxfs8G8Fm6
+         Y4nQm5lAZdjmspLw2WuuEF8PmZW6TrlovlMIotts0KW3pxBb2xjaV8+rv+3LQZdlje9Q
+         rKkXzm6zGb35Z8j4iyDkXwsTpu9rKqMavd5BRuwtSBnzm970Svtvec/0ilNwELv3era8
+         D8acIkD5lWPQM/iSbYoXfiGZyIPcXT6FEmYcKLmdt+vrxAkZSjJ23sS+zCuA2eFvwenW
+         2dRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716023404; x=1716628204;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tftqzzSPEX4QSLboSaiUIFGje9Unrb+c3Yg/V8KRFkA=;
+        b=K9OJgwrUd66Hg1ezJBemfCrNqGH/U87ey9c5RkEk8KYRK6TL0sovRuVmd3qkpcuOse
+         Ws8ln0HRFXyJONRXTWUxCG5JF8Q7m14mGz5oUGs4In9CdEFpQTyK2PEA9sS5KzmD0zg3
+         jeBzg78zdds8ma2+RpcKyrSeAXLvqDsCxLIlWRaj+TEPyNLGmYpcgOA4ON748e4dCzDi
+         DykjHzvS1hgfiafZKy7dKt5HOLPXz/24ud9lOVWZIeGXwFDLK87JRx7udqppX/42dHar
+         amxyupQ3U5GdBAbT6Hp3G2DWiKfjCobh6MaKAS36ueYJy8TqDZ78fYTbMLYuU+xOsQXR
+         N43w==
+X-Gm-Message-State: AOJu0Yw6LO+I1BdFFqIQjd4qNfn4sPRX8jtVJBVZK4RUdr/pSQXOxFSi
+	cFDSYwQw9jXipUlbcHoQf1UaqW2/gJ/RjBSzDlqiK0HV/zUmzyca
+X-Google-Smtp-Source: AGHT+IH4ZpdvzcHnT2cGokneLZThjNR/YyP3FyAAYkYYgeMtpOqpJcVZ5AJnrRQONG0Lk1JcPDt3Sg==
+X-Received: by 2002:a50:9e6d:0:b0:572:9f60:783d with SMTP id 4fb4d7f45d1cf-5734d6f3366mr14919914a12.36.1716023403547;
+        Sat, 18 May 2024 02:10:03 -0700 (PDT)
+Received: from gmail.com (1F2EF1AE.unconfigured.pool.telekom.hu. [31.46.241.174])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-574f6b8b9d7sm4922597a12.82.2024.05.18.02.10.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 May 2024 02:10:02 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Sat, 18 May 2024 11:10:00 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [GIT PULL] x86 fixes
+Message-ID: <ZkhwaJk7MwLXbtqF@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Yoshinori,
+Linus,
 
-On Thu, 2024-04-04 at 14:14 +0900, Yoshinori Sato wrote:
-> Sorry. previus mail is thread broken.
->=20
-> This is an updated version of something I wrote about 7 years ago.
-> Minimum support for R2D-plus and LANDISK.
-> I think R2D-1 will work if you add AX88796 to dts.
-> And board-specific functions and SCI's SPI functions are not supported.
->=20
-> You can get it working with qemu found here.
-> https://gitlab.com/yoshinori.sato/qemu/-/tree/landisk
->=20
-> v7 changes.
-> - sh/kernel/setup.c: fix kernel parameter handling.
-> - clk-sh7750.c: cleanup.
-> - sh_tmu.c: cleanup.
-> - irq-renesas-sh7751.c: IPR definition move to code.
-> - irq-renesas-sh7751irl.c: update register definition.
-> - pci-sh7751.c: Register initialization fix.=20
-> - sm501 and sm501fb: Re-design Device Tree properties.
+Please pull the latest x86/urgent Git tree from:
 
-Could you push your v7 version to your Gitlab [1] repository so I can fetch
-it from there?
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2024-05-18
 
-Thanks,
-Adrian
+   # HEAD: 9dba9c67e52dbe0978c0e86c994891eba480adf0 x86/alternatives: Use the correct length when optimizing NOPs
 
-> [1] https://gitlab.com/yoshinori.sato/linux
+Miscellaneous fixes:
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+ - Fix a NOP-patching bug that resulted in valid
+   but suboptimal NOP sequences in certain cases.
+
+ - Fix build warnings related to fall-through control flow
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Borislav Petkov (1):
+      x86/boot: Add a fallthrough annotation
+
+Borislav Petkov (AMD) (1):
+      x86/alternatives: Use the correct length when optimizing NOPs
+
+Nathan Chancellor (1):
+      x86/boot: Address clang -Wimplicit-fallthrough in vsprintf()
+
+
+ arch/x86/boot/Makefile        | 1 +
+ arch/x86/boot/printf.c        | 3 +++
+ arch/x86/kernel/alternative.c | 2 +-
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
