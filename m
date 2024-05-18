@@ -1,112 +1,78 @@
-Return-Path: <linux-kernel+bounces-182924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014B98C91CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:06:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F3378C91CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B522821FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 18:06:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0B2E1C20BC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 18:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81AC47F7F;
-	Sat, 18 May 2024 18:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595274F5EC;
+	Sat, 18 May 2024 18:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dypsSydO"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QIoyYv3w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DAE3FE4A
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 18:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FAA47F7F;
+	Sat, 18 May 2024 18:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716055592; cv=none; b=nn8eW726qDBgk1lR1Dzswblv0ujjSZpiQJMHwBpRReACbWFiGtAV8WF1m+XUbtG6OO05d3iYH+G253fym51hkOpedpT1mgE5gdcYed/AZdl0ZU24KHTtyqvkapA8LopL24T6ruLCC7+ZIqamyrzMwJ+7AaauDmbpPDyllxkBSYQ=
+	t=1716055621; cv=none; b=t9FROibnTcucVfTjtU5Lpi0pMdk7i33WM3h0n9E12mtE8CRaRUucrzEqcTNTTapdOXTygfMaPSHwHo+0UE4zbR1NS+wPjaSYAC5QX3c1XplHNXpBU4ImdtZWXtEONxPVf+e3RbChImABjWG9RXP1L74N78rPZWjPJHVxM5E4bAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716055592; c=relaxed/simple;
-	bh=SFtO3a4RKrkjrGHguXWwcDovKIMDazuVdb4cBPkaPTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uRtW+vkSW1+UlPzWy8dp2n05Zc6QP0ml/Qqe6JuaQ1p0hxuded9El8SOSZHmbFv5/HUBhAIldpZIWTptDkZXbGLMLMAcEoPFy+Q+VQ8lWA1dPPTVOU2pI6BAu9vgluZzhLExVlqfPzvYe05tjGe52EtySKJaQA5bclvovqt9D2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dypsSydO; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f4603237e0so838345b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 11:06:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716055589; x=1716660389; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eNjtPFN4gwk8FY4XhBI0pqmWHSzhdefGp6JGYF0RnSc=;
-        b=dypsSydO/wW0nk8lSSROpX0nlTLl0hYxzIVWa8PD8KvF6CVya4v2vQHt83QgCCv467
-         JkY4vrQDAuV7qZqFnkdZ2tV3gi0zz9HT7PvzNoRTUjKMC3PZyvH1KeAyHjebPDfSRxOo
-         z8KZic9m1yBDUulQ1evYi6/Rj9ab2ow+Yxt0s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716055589; x=1716660389;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eNjtPFN4gwk8FY4XhBI0pqmWHSzhdefGp6JGYF0RnSc=;
-        b=Ks6aabzIKc1W8CusM5dpd86U7xRAr+0xXpwXOcLBUomdVVzJtxmGu5RpS4OwA4feue
-         DLc9Nc61wvxIBuOVPyYu9YO9X2qdNQQSdPfp88IH1SwQVf1XqFRQ4P13cEmASwfVcwkg
-         lqIj97LaCKLa40mM0o1eSPiI3/EIrAaIXfbUjIiACgWYAT8xlhz7SCMrR8+nVUWXqlvC
-         cQ3PIFdFNIMUnD+w5wggMWi59fd2QXNMvWR0BX6XuWKeykKS+lhobaIlVMu2qMTwDsug
-         lQ4xlsUt/anSktkUAKmBRJgcsLIg1iEAxOEPr7vxL8NH42J6pwmx2dOlgl0WbHiugCDZ
-         9nuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5c5nolr8HlHvS6zZV3MMxN7IyNONxKVCeC5g3+p7y70N0DhJnzTVX0Jw1GmYTtVePsLI3CZ4XgyCcCG5rGXowj3SGFVP23nQhHb6e
-X-Gm-Message-State: AOJu0YyG34ZGeNdMz+o4LotKuhXHizwN2ARmmuRuMRfHqCvt8XfNTKHA
-	yrvRx9MU43PrMB8zc/8d6xBQWlWf4VwByq1bE3cVfOYWU6GJj/Jb2lhKce5ZmQ==
-X-Google-Smtp-Source: AGHT+IHKKqnL3U4K71hLrs2mUP7g9TMCITdHz9CzBkr4YA8T0fm3oAZPwvplNN097FJEGyMYNzbtLA==
-X-Received: by 2002:a05:6a00:17a7:b0:6f6:7c56:e989 with SMTP id d2e1a72fcca58-6f69fb7d5d7mr3783518b3a.2.1716055588805;
-        Sat, 18 May 2024 11:06:28 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f67a5ffc54sm5978034b3a.34.2024.05.18.11.06.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 11:06:28 -0700 (PDT)
-Date: Sat, 18 May 2024 11:06:27 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>,
-	Gustavo Padovan <gustavo@padovan.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] dma-buf/fence-array: Add flex array to struct
- dma_fence_array
-Message-ID: <202405181106.99C0C03BB@keescook>
-References: <d3204a5b4776553455c2cfb1def72f1dae0dba25.1716054403.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1716055621; c=relaxed/simple;
+	bh=+fYWbrwzH7fNf3RB50idGC+p8fSx3vdXVzTXv8qZLBY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DtFbyiST1DGcNSdJp/E3UkHghI2cV6XT1tXEQlQcH/aZO7/LPvBDF/eYNM+JdyMD8av50/ghGwPmI3IxO2i+FQjJhMK7AwbQaGoLUzKEtHXMiVwhcJ5iO8+RgIRPcXqBCBlQuRxDTV70zKRkkCJrvQV7EivqB4PH7laqfzdCINs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QIoyYv3w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 727A5C2BD11;
+	Sat, 18 May 2024 18:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716055621;
+	bh=+fYWbrwzH7fNf3RB50idGC+p8fSx3vdXVzTXv8qZLBY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=QIoyYv3wxI98mT/SnpyhikVheI+V+8Akf8JujMYGJknW2XU/11s74tiwTivVBzmoH
+	 IzeHN3iKqtTRofuddI2GB2xuE/BSOesf/mQ39YjZEs2oEnqxLUZ4xPmksaEfXqR9c7
+	 lGmSWWyTqJ2lHXqmimxkWTwmMwUX89fIuIDzfA7mtiR5g1ekK5PSqUGJP4S0hrdiME
+	 CoZK5b+3dJ18b23qvBGm/lvFb3w3oU4C0Vsk1z0G0yFJufaMdHAHao9ARcIIJnrFN8
+	 I7QVbNyXBixZdyPrIJZ7yBLzXmB3DEWFPijlUWEMWovg5huYXCXbvB7qqw04aX8kBs
+	 XehsckiAikrkw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 65A26C43339;
+	Sat, 18 May 2024 18:07:01 +0000 (UTC)
+Subject: Re: [git pull] IOMMU Updates for Linux v6.10
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZkcqDrFmd4ZHv7Qf@8bytes.org>
+References: <ZkcqDrFmd4ZHv7Qf@8bytes.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZkcqDrFmd4ZHv7Qf@8bytes.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-updates-v6.10
+X-PR-Tracked-Commit-Id: 2bd5059c6cc04b02073d4d9f57137ab74e1d8e7a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0cc6f45cecb46cefe89c17ec816dc8cd58a2229a
+Message-Id: <171605562141.7011.17834859902168748093.pr-tracker-bot@kernel.org>
+Date: Sat, 18 May 2024 18:07:01 +0000
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d3204a5b4776553455c2cfb1def72f1dae0dba25.1716054403.git.christophe.jaillet@wanadoo.fr>
 
-On Sat, May 18, 2024 at 07:47:02PM +0200, Christophe JAILLET wrote:
-> This is an effort to get rid of all multiplications from allocation
-> functions in order to prevent integer overflows [1][2].
-> 
-> The "struct dma_fence_array" can be refactored to add a flex array in order
-> to have the "callback structures allocated behind the array" be more
-> explicit.
-> 
-> Do so:
->    - makes the code more readable and safer.
->    - allows using __counted_by() for additional checks
->    - avoids some pointer arithmetic in dma_fence_array_enable_signaling()
-> 
-> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments [1]
-> Link: https://github.com/KSPP/linux/issues/160 [2]
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The pull request you sent on Fri, 17 May 2024 11:57:34 +0200:
 
-Yes please! :)
+> git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-updates-v6.10
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0cc6f45cecb46cefe89c17ec816dc8cd58a2229a
+
+Thank you!
 
 -- 
-Kees Cook
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
