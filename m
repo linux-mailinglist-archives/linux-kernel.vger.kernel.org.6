@@ -1,100 +1,321 @@
-Return-Path: <linux-kernel+bounces-182892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CDCB8C9168
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 16:10:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B296D8C916A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 16:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBBE41C20BF9
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:10:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17FC11F216A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6FC3D97A;
-	Sat, 18 May 2024 14:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA7045014;
+	Sat, 18 May 2024 14:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TvkT8kzk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JqedQlvj"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C551DA32
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 14:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F6544C68
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 14:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716041422; cv=none; b=jnQ2iE97veFy9l36MeCySFGMNnwGbK16sjNb15gV/uxRxgqZepdZtrfaSPu+SQT5o9nm5F+uDCTMImQWnFJ7HvrBszvNKFOubSixawDMi7IEagVAlnwvdpXgg8EKI7UbbZ+R14bk6mJNiPB5881Ph3Tju0BT/JepPbadwmlpaV0=
+	t=1716041864; cv=none; b=MZ25cXAew8osrxJeTDqKgji8FoCllKDUjx+do6JQNwUZtfvt2OQcK/6qvYUzIhJCURNVzD24hWDBE8HRbn7+iiE87BHMCu09waJFBsw879wqMvCqtZvBLWk3EfB+8KpAodOXuoWpZjmDdFZcHBGUvnFbjJQi+Iep8qQVD+kvWL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716041422; c=relaxed/simple;
-	bh=yLD0OsCbkI+YpiMeqRS7gCN0eyJxc/7jSzSTKOnaQHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RTni7c9OA+QqiXcgUTp3JqXo8UidBI1Re8nTGi3RT9Hr3QqDaULDhsBiIooVBVwsSHPtSeb0vk0H65ETJdHKzgATasnQ9L8HwxM5i5TH5N5jK8ZGwuzs5Ig2d/Hw4wU/0Fln3dYCZ+hCnv0ArsnFjnLRiQZV7z/jI1H+/TGadvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TvkT8kzk; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716041420; x=1747577420;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=yLD0OsCbkI+YpiMeqRS7gCN0eyJxc/7jSzSTKOnaQHA=;
-  b=TvkT8kzkIlkc7irBiMtCeVl/UoqTdjAIIe1cNB0FGRnxv6wmBqC7IhY6
-   V1OVTFP6xS416qt+tzkt4XvafqlFnqJADQVLdsL1FRu7w+DRf7ug+5Kx3
-   9FOtY//gZ2s8lHX38b7QaKObcjFd0X3xC9Zv13A9ULMhyrDZcbLHg86Xd
-   +so/ceJz6ZDusRlHkhN8COSBjWnd4r0R5QOqS8X4Vw6S3mAiF97lU2Y6X
-   HDQHI30G6Sd2PeEV7xAGCCioDYAI60UZrg5tDdhzi6AJDf3Vk4O31wvvC
-   CjEZefHDBURm3LY4CMsJklyy9TmyE/aEQ6b0TKdTX8ckOWXOv+FOvnOn8
-   Q==;
-X-CSE-ConnectionGUID: MPfHUr6JSHKEifCv45/GxA==
-X-CSE-MsgGUID: YfRtxouZQKKN7YWAZXZPEg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11076"; a="12330032"
-X-IronPort-AV: E=Sophos;i="6.08,171,1712646000"; 
-   d="scan'208";a="12330032"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2024 07:10:19 -0700
-X-CSE-ConnectionGUID: QUYvhp+OQqqsGoUP7dutDA==
-X-CSE-MsgGUID: smuNWGKESFKrRURpUJwTIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,171,1712646000"; 
-   d="scan'208";a="55298246"
-Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 18 May 2024 07:10:18 -0700
-Received: from kbuild by 108735ec233b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s8KlM-0002GD-14;
-	Sat, 18 May 2024 14:10:16 +0000
-Date: Sat, 18 May 2024 22:09:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: other.c:undefined reference to `devm_led_classdev_register_ext'
-Message-ID: <202405182256.FsKBjIzG-lkp@intel.com>
+	s=arc-20240116; t=1716041864; c=relaxed/simple;
+	bh=XBTbPk6LUCg/+KF7yZ3YUKGPU4HVOYeWWP4dER/DvP0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rwxx4IeUwshqZBAx04qn9uFmcWmuSNmee/Vozvv+fS3ayjWW/8iB5plp9VSsal3TOaLybEg0UJ/hO9CNrjLVmmtS4WN52hsbrmAFv02LF7Gi87UfbArykJj+c0F8f+lgyi2IEiE7qLz4Kqe9D2dsUHZm8rydy4htz/k8Qs0zgIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JqedQlvj; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44IEGLoI017554;
+	Sat, 18 May 2024 09:16:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716041781;
+	bh=hE7bJWGco1/V2achyvapsMHYTWD7SY5fsWVMayfRq60=;
+	h=From:To:CC:Subject:Date;
+	b=JqedQlvjazZ7Wtvm4tLQmQ5v3QI0s07YunyeQh386vEAu3M53zUD2L3/qDxbuBHiK
+	 K992PU3i0G0n9huGIs9qaTCH+pB8YFNQc+b+NRvPPiy75B4/+fdQUWdaOGbxZVR/8I
+	 ybF6AN8XF179AK5mkkmwTr6QM8kZQG5dk2Y25vwY=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44IEGLZb055620
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 18 May 2024 09:16:21 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 18
+ May 2024 09:16:21 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 18 May 2024 09:16:21 -0500
+Received: from LT5CG31242FY.dhcp.ti.com ([10.250.160.158])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44IEGFfa038647;
+	Sat, 18 May 2024 09:16:15 -0500
+From: Shenghao Ding <shenghao-ding@ti.com>
+To: <broonie@kernel.org>
+CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
+        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
+        <13916275206@139.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <liam.r.girdwood@intel.com>,
+        <bard.liao@intel.com>, <yung-chuan.liao@linux.intel.com>,
+        <kevin-lu@ti.com>, <cameron.berkenpas@gmail.com>, <tiwai@suse.de>,
+        <baojun.xu@ti.com>, <soyer@irl.hu>, <Baojun.Xu@fpt.com>,
+        Shenghao Ding <shenghao-ding@ti.com>
+Subject: [PATCH v6] ASoC: tas2781: Fix wrong loading calibrated data sequence
+Date: Sat, 18 May 2024 22:15:46 +0800
+Message-ID: <20240518141546.1742-1-shenghao-ding@ti.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   4b377b4868ef17b040065bd468668c707d2477a5
-commit: 9426adb0326a87ed2fa9d010c4c18189047e0c11 platform/x86: x86-android-tablets: Create LED device for Xiaomi Pad 2 bottom bezel touch buttons
-date:   4 days ago
-config: i386-buildonly-randconfig-004-20240118 (https://download.01.org/0day-ci/archive/20240518/202405182256.FsKBjIzG-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240518/202405182256.FsKBjIzG-lkp@intel.com/reproduce)
+Calibrated data will be set to default after loading DSP config params,
+which will cause speaker protection work abnormally. Reload calibrated
+data after loading DSP config params. Remove declaration of unused API
+which load calibrated data in wrong sequence, changed the copyright year
+and correct file name in license
+header.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405182256.FsKBjIzG-lkp@intel.com/
+Fixes: ef3bcde75d06 ("ASoc: tas2781: Add tas2781 driver")
+Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 
-All errors (new ones prefixed by >>):
+---
+v6:
+ - Merge into one patch
+v5:
+ - correct changelog has no much relationship with the patch
+v4:
+ - Use the the culprit of the bug itself as the fixes tag
+ - Better variant for tasdev_load_calibrated_data in order to much easier
+   to read and understand and maintain, as it makes harder to squeeze the
+   code.
+ - Fix the indentation and move operator to the previous line.
+v3:
+ - No changes.
+ - Remove redundant return in tasdev_load_calibrated_data
+ - Put the second function parameter into the previous line for
+   tasdev_load_calibrated_data
+v2:
+ - In the Subject, fixed --> Fix
+ - Add Fixes tag
+ - dsp --> DSP
+ - Changed the copyright year to 2024 in the related files
+ - In tas2781-dsp.h, __TASDEVICE_DSP_H__ --> __TAS2781_DSP_H__
+v1:
+ - Download calibrated data after loading the new DSP config params
+ - Remove tasdevice_prmg_calibdata_load, because it is unnecessary to load
+   calibrated data after loading DSP program.
+ - call tasdevice_prmg_load instead of tasdevice_prmg_calibdata_load, it
+   is unnecessary to load calibrated data after loading DSP program. Load
+   it after loading DSP config params each time.
+---
+ include/sound/tas2781-dsp.h       |   7 +-
+ sound/soc/codecs/tas2781-fmwlib.c | 103 ++++++++----------------------
+ sound/soc/codecs/tas2781-i2c.c    |   4 +-
+ 3 files changed, 32 insertions(+), 82 deletions(-)
 
-   ld: drivers/platform/x86/x86-android-tablets/other.o: in function `xiaomi_mipad2_init':
->> other.c:(.init.text+0x97): undefined reference to `devm_led_classdev_register_ext'
-
+diff --git a/include/sound/tas2781-dsp.h b/include/sound/tas2781-dsp.h
+index ea9af2726a53..7fba7ea26a4b 100644
+--- a/include/sound/tas2781-dsp.h
++++ b/include/sound/tas2781-dsp.h
+@@ -2,7 +2,7 @@
+ //
+ // ALSA SoC Texas Instruments TAS2781 Audio Smart Amplifier
+ //
+-// Copyright (C) 2022 - 2023 Texas Instruments Incorporated
++// Copyright (C) 2022 - 2024 Texas Instruments Incorporated
+ // https://www.ti.com
+ //
+ // The TAS2781 driver implements a flexible and configurable
+@@ -13,8 +13,8 @@
+ // Author: Kevin Lu <kevin-lu@ti.com>
+ //
+ 
+-#ifndef __TASDEVICE_DSP_H__
+-#define __TASDEVICE_DSP_H__
++#ifndef __TAS2781_DSP_H__
++#define __TAS2781_DSP_H__
+ 
+ #define MAIN_ALL_DEVICES			0x0d
+ #define MAIN_DEVICE_A				0x01
+@@ -180,7 +180,6 @@ void tasdevice_calbin_remove(void *context);
+ int tasdevice_select_tuningprm_cfg(void *context, int prm,
+ 	int cfg_no, int rca_conf_no);
+ int tasdevice_prmg_load(void *context, int prm_no);
+-int tasdevice_prmg_calibdata_load(void *context, int prm_no);
+ void tasdevice_tuning_switch(void *context, int state);
+ int tas2781_load_calibration(void *context, char *file_name,
+ 	unsigned short i);
+diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
+index a6be81adcb83..265a8ca25cbb 100644
+--- a/sound/soc/codecs/tas2781-fmwlib.c
++++ b/sound/soc/codecs/tas2781-fmwlib.c
+@@ -2151,6 +2151,24 @@ static int tasdevice_load_data(struct tasdevice_priv *tas_priv,
+ 	return ret;
+ }
+ 
++static void tasdev_load_calibrated_data(struct tasdevice_priv *priv, int i)
++{
++	struct tasdevice_calibration *cal;
++	struct tasdevice_fw *cal_fmw;
++
++	cal_fmw = priv->tasdevice[i].cali_data_fmw;
++
++	/* No calibrated data for current devices, playback will go ahead. */
++	if (!cal_fmw)
++		return;
++
++	cal = cal_fmw->calibrations;
++	if (cal)
++		return;
++
++	load_calib_data(priv, &cal->dev_data);
++}
++
+ int tasdevice_select_tuningprm_cfg(void *context, int prm_no,
+ 	int cfg_no, int rca_conf_no)
+ {
+@@ -2210,21 +2228,9 @@ int tasdevice_select_tuningprm_cfg(void *context, int prm_no,
+ 		for (i = 0; i < tas_priv->ndev; i++) {
+ 			if (tas_priv->tasdevice[i].is_loaderr == true)
+ 				continue;
+-			else if (tas_priv->tasdevice[i].is_loaderr == false
+-				&& tas_priv->tasdevice[i].is_loading == true) {
+-				struct tasdevice_fw *cal_fmw =
+-					tas_priv->tasdevice[i].cali_data_fmw;
+-
+-				if (cal_fmw) {
+-					struct tasdevice_calibration
+-						*cal = cal_fmw->calibrations;
+-
+-					if (cal)
+-						load_calib_data(tas_priv,
+-							&(cal->dev_data));
+-				}
++			if (tas_priv->tasdevice[i].is_loaderr == false &&
++				tas_priv->tasdevice[i].is_loading == true)
+ 				tas_priv->tasdevice[i].cur_prog = prm_no;
+-			}
+ 		}
+ 	}
+ 
+@@ -2245,11 +2251,15 @@ int tasdevice_select_tuningprm_cfg(void *context, int prm_no,
+ 		tasdevice_load_data(tas_priv, &(conf->dev_data));
+ 		for (i = 0; i < tas_priv->ndev; i++) {
+ 			if (tas_priv->tasdevice[i].is_loaderr == true) {
+-				status |= 1 << (i + 4);
++				status |= BIT(i + 4);
+ 				continue;
+-			} else if (tas_priv->tasdevice[i].is_loaderr == false
+-				&& tas_priv->tasdevice[i].is_loading == true)
++			}
++
++			if (tas_priv->tasdevice[i].is_loaderr == false &&
++				tas_priv->tasdevice[i].is_loading == true) {
++				tasdev_load_calibrated_data(tas_priv, i);
+ 				tas_priv->tasdevice[i].cur_conf = cfg_no;
++			}
+ 		}
+ 	} else
+ 		dev_dbg(tas_priv->dev, "%s: Unneeded loading dsp conf %d\n",
+@@ -2308,65 +2318,6 @@ int tasdevice_prmg_load(void *context, int prm_no)
+ }
+ EXPORT_SYMBOL_NS_GPL(tasdevice_prmg_load, SND_SOC_TAS2781_FMWLIB);
+ 
+-int tasdevice_prmg_calibdata_load(void *context, int prm_no)
+-{
+-	struct tasdevice_priv *tas_priv = (struct tasdevice_priv *) context;
+-	struct tasdevice_fw *tas_fmw = tas_priv->fmw;
+-	struct tasdevice_prog *program;
+-	int prog_status = 0;
+-	int i;
+-
+-	if (!tas_fmw) {
+-		dev_err(tas_priv->dev, "%s: Firmware is NULL\n", __func__);
+-		goto out;
+-	}
+-
+-	if (prm_no >= tas_fmw->nr_programs) {
+-		dev_err(tas_priv->dev,
+-			"%s: prm(%d) is not in range of Programs %u\n",
+-			__func__, prm_no, tas_fmw->nr_programs);
+-		goto out;
+-	}
+-
+-	for (i = 0, prog_status = 0; i < tas_priv->ndev; i++) {
+-		if (prm_no >= 0 && tas_priv->tasdevice[i].cur_prog != prm_no) {
+-			tas_priv->tasdevice[i].cur_conf = -1;
+-			tas_priv->tasdevice[i].is_loading = true;
+-			prog_status++;
+-		}
+-		tas_priv->tasdevice[i].is_loaderr = false;
+-	}
+-
+-	if (prog_status) {
+-		program = &(tas_fmw->programs[prm_no]);
+-		tasdevice_load_data(tas_priv, &(program->dev_data));
+-		for (i = 0; i < tas_priv->ndev; i++) {
+-			if (tas_priv->tasdevice[i].is_loaderr == true)
+-				continue;
+-			else if (tas_priv->tasdevice[i].is_loaderr == false
+-				&& tas_priv->tasdevice[i].is_loading == true) {
+-				struct tasdevice_fw *cal_fmw =
+-					tas_priv->tasdevice[i].cali_data_fmw;
+-
+-				if (cal_fmw) {
+-					struct tasdevice_calibration *cal =
+-						cal_fmw->calibrations;
+-
+-					if (cal)
+-						load_calib_data(tas_priv,
+-							&(cal->dev_data));
+-				}
+-				tas_priv->tasdevice[i].cur_prog = prm_no;
+-			}
+-		}
+-	}
+-
+-out:
+-	return prog_status;
+-}
+-EXPORT_SYMBOL_NS_GPL(tasdevice_prmg_calibdata_load,
+-	SND_SOC_TAS2781_FMWLIB);
+-
+ void tasdevice_tuning_switch(void *context, int state)
+ {
+ 	struct tasdevice_priv *tas_priv = (struct tasdevice_priv *) context;
+diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
+index b5abff230e43..9350972dfefe 100644
+--- a/sound/soc/codecs/tas2781-i2c.c
++++ b/sound/soc/codecs/tas2781-i2c.c
+@@ -2,7 +2,7 @@
+ //
+ // ALSA SoC Texas Instruments TAS2563/TAS2781 Audio Smart Amplifier
+ //
+-// Copyright (C) 2022 - 2023 Texas Instruments Incorporated
++// Copyright (C) 2022 - 2024 Texas Instruments Incorporated
+ // https://www.ti.com
+ //
+ // The TAS2563/TAS2781 driver implements a flexible and configurable
+@@ -414,7 +414,7 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+ 				__func__, tas_priv->cal_binaryname[i]);
+ 	}
+ 
+-	tasdevice_prmg_calibdata_load(tas_priv, 0);
++	tasdevice_prmg_load(tas_priv, 0);
+ 	tas_priv->cur_prog = 0;
+ out:
+ 	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
