@@ -1,108 +1,156 @@
-Return-Path: <linux-kernel+bounces-182818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ABB18C9068
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 12:44:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A2168C906A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 12:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06FD2825B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 10:44:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD431C20DB8
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 10:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E35C1D688;
-	Sat, 18 May 2024 10:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9840728370;
+	Sat, 18 May 2024 10:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dJ1HM4sV"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MubZWbbp"
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2707946F
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 10:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A961BC3C;
+	Sat, 18 May 2024 10:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716029067; cv=none; b=YgdvwbXqYHN1CMExEuxTaPVTlnOeHVAbrMEx3b9wATuKqpVZbJNaLpHBERxfOuNTGMNBqu3WFFaIeRxB22ENm7a9N4C7lu3Lc9MKGbLpNHsvDsUemXS1bBVxxTu03umQZnqX50drAGsP31jl04I33dP8FvsVqoIlYM3V+ZHvhoc=
+	t=1716029103; cv=none; b=j4czcIQkxSPOSAwZ+tLIZh/oRofuLuYf4AdWbfSJWKNk9Wlj+I1NZ3sN3NJqpnca3lyEN9jAXI/70U4Bu8X1fOY6pWdUx15KYIcp9M8PyBfaCLgcq43js6g0ZzMXHZNKWwn+bMRNhZVWv2h4dw1oxE6DEeVhBkEdKrkkyRLFaDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716029067; c=relaxed/simple;
-	bh=+g0Djet6VPor+0w2My6R6Rpd8gd93fTaLQzxiswyYc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FGuhWUteIBkmiY1qJNB34bNMxES8z4nF47N0R6dC3lrg0deEoicY9qSPjSpNGT1zIEywoFj6dCaYhoIh06J09hsHV/ivhS5Rl3nyWrysN+342dQGiCQPliKiyM+Oc1PMJ4V30sMQibz5tBTUIOxLS2lnMJCPRf6WK6o0ygL98gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dJ1HM4sV; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0661D40003;
-	Sat, 18 May 2024 10:44:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1716029063;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+g0Djet6VPor+0w2My6R6Rpd8gd93fTaLQzxiswyYc8=;
-	b=dJ1HM4sVgpsZAO+szA2uDJZWhF2Xaigaf8SQ/cwA6DxsJD9fN3RFW2thSnsxioBdD11sGy
-	m6zCzsjLDg1wSAwYoYRgiJlLNL9RdmRqKXLyfg1Xvmo8Z0uJBrf/agKf0X3vrBcBqnPit3
-	mYxHPYcpDMpZIee5Z1IShXvt8EPkNr1q6v6JsmdVRQL2FCkNSuLAJZtvrYeNKB2akQLd6r
-	+quT7wUKLbNb66kNqBsVo4hweJrp+vOtpd2IBzMFfK1sU+0B1NQdhmuc1KJZoB8LePNocv
-	AUZGzIbI2LbNdabEAX3+TlI1kURXa5IfohYgK5b1glIkgNMAgynbvHeCY9fZNg==
-Date: Sat, 18 May 2024 12:44:19 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Val Packett <val@packett.cool>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, Heiko Stuebner <heiko@sntech.de>, Stephen Rothwell
- <sfr@canb.auug.org.au>, linux-mtd@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: rockchip: reject NVDDR timings when
- checked
-Message-ID: <20240518124404.472eb60b@xps-13>
-In-Reply-To: <20240518033923.5577-2-val@packett.cool>
-References: <20240518033923.5577-2-val@packett.cool>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716029103; c=relaxed/simple;
+	bh=w9uO90PEVchWF/KDLtiQBRWtcj+my9bPQ3PyABa0620=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QMMoYTK8a6QHmdeJUhWC/4tsvUYVMQNmik/LBafD64VY806dU9gohFKGEQvtky7xdyIZd/TB6nf/wB3FKsdJu9/BppmioVmFM9lanGvxEfNR8ICQP1naW94/zbPoVbN4QcXIcBNO3pgnT2r81uWactgdNxfxKTGHy74lEjdAh9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MubZWbbp; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 8HYOsF27V8l328HYOsn98a; Sat, 18 May 2024 12:44:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1716029082;
+	bh=CnHWkfDAsDJHSUGxw5qt7rqfqyEiFLAjpWktp56bQ+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=MubZWbbpbZ3c+j/jDwgju82KMsgt+psBSNdHLGfXsH58n04rw1MlW4ZNCTFcY2QGL
+	 yCBkWFWanH+ekkYkHzQKG2+nu4uERUD28J3d/hCtIAUe6rLoSTQSnfnZQ3AIkYz64L
+	 GtJ+CIPBU9Kx1PQ74L2ZlJv0LLnZdflmoG1JSMaTbL/J+AZHZvmJKCJe2RZH4HyTZK
+	 adnu+08kdbp3MQdqfw/xFgy6k1ppyo/D9RIVyw7tyOiSMe8YGVR80DvTLCg+ZYZmMX
+	 7e8e/lpKecQs8hT9O3Q/LHh9T/+YNiVkgg9ZEPQjiMJ+/jYoj7qljJqKdbe7vdKpIP
+	 QXbjpEYyitC+g==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 18 May 2024 12:44:42 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <954f974f-8b97-4ff6-bb57-35501fa9ceb9@wanadoo.fr>
+Date: Sat, 18 May 2024 12:44:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] remoteproc: k3-r5: Do not allow core1 to power up
+ before core0 via sysfs
+To: Beleswar Padhi <b-padhi@ti.com>, andersson@kernel.org
+Cc: mathieu.poirier@linaro.org, s-anna@ti.com,
+ linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ u-kumar1@ti.com, nm@ti.com, devarsht@ti.com, hnagalla@ti.com
+References: <20240430105307.1190615-1-b-padhi@ti.com>
+ <20240430105307.1190615-3-b-padhi@ti.com>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240430105307.1190615-3-b-padhi@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Val,
-
-I might propose a slightly different title which I think better
-describes the situation:
-"mtd: rawnand: rockchip: ensure NVDDR timings are rejected"
-
-val@packett.cool wrote on Sat, 18 May 2024 00:31:13 -0300:
-
-> .setup_interface first gets called with a negative "target" value
-
-Just as an FYI, the fact that it is negative is an implementation
-detail, but you mention the #define of the value below, so that's fine.
-=20
-> NAND_DATA_IFACE_CHECK_ONLY, in which case an error is expected
-> if the controller driver does not support the timing mode (NVDDR).
->=20
-
-Here I would welcome two tags in order to get this backported as early
-as needed in stable kernels:
-
-Cc: stable@vger.kernel.org
-Fixes: a9ecc8c814e9 ("mtd: rawnand: Choose the best timings, NV-DDR include=
-d")
-
-> Signed-off-by: Val Packett <val@packett.cool>
+Le 30/04/2024 à 12:53, Beleswar Padhi a écrit :
+> PSC controller has a limitation that it can only power-up the second
+> core when the first core is in ON state. Power-state for core0 should be
+> equal to or higher than core1.
+> 
+> Therefore, prevent core1 from powering up before core0 during the start
+> process from sysfs. Similarly, prevent core0 from shutting down before
+> core1 has been shut down from sysfs.
+> 
+> Fixes: 6dedbd1d5443 ("remoteproc: k3-r5: Add a remoteproc driver for R5F subsystem")
+> 
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 > ---
-> Hello everyone, first Linux patch from a long time FreeBSD person :)
->=20
-> This was required to get the NAND controller to attach on the random
-> old RK3066 tablet I'm bringing up mainline on.
+>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 23 +++++++++++++++++++++--
+>   1 file changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 6d6afd6beb3a..1799b4f6d11e 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -548,7 +548,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>   	struct k3_r5_rproc *kproc = rproc->priv;
+>   	struct k3_r5_cluster *cluster = kproc->cluster;
+>   	struct device *dev = kproc->dev;
+> -	struct k3_r5_core *core;
+> +	struct k3_r5_core *core0, *core;
+>   	u32 boot_addr;
+>   	int ret;
+>   
+> @@ -574,6 +574,15 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>   				goto unroll_core_run;
+>   		}
+>   	} else {
+> +		/* do not allow core 1 to start before core 0 */
+> +		core0 = list_first_entry(&cluster->cores, struct k3_r5_core,
+> +					 elem);
+> +		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
+> +			dev_err(dev, "%s: can not start core 1 before core 0\n",
+> +				__func__);
+> +			return -EPERM;
+> +		}
+> +
+>   		ret = k3_r5_core_run(core);
+>   		if (ret)
+>   			goto put_mbox;
+> @@ -619,7 +628,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>   {
+>   	struct k3_r5_rproc *kproc = rproc->priv;
+>   	struct k3_r5_cluster *cluster = kproc->cluster;
+> -	struct k3_r5_core *core = kproc->core;
+> +	struct device *dev = kproc->dev;
+> +	struct k3_r5_core *core1, *core = kproc->core;
+>   	int ret;
+>   
+>   	/* halt all applicable cores */
+> @@ -632,6 +642,15 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>   			}
+>   		}
+>   	} else {
+> +		/* do not allow core 0 to stop before core 1 */
+> +		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
+> +					elem);
+> +		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
+> +			dev_err(dev, "%s: can not stop core 0 before core 1\n",
+> +				__func__);
+> +			return -EPERM;
 
-Welcome! The fix looks right besides minor nits in the commit log. I'll
-probably take the v2 when it's out after -rc1 has been tagged.
+Hi,
 
-Thanks,
-Miqu=C3=A8l
+this patch has already reached -next, but should this "return -EPERM;" be :
+	ret = -EPERM;
+	goto put_mbox;
+
+instead?
+
+CJ
+
+> +		}
+> +
+>   		ret = k3_r5_core_halt(core);
+>   		if (ret)
+>   			goto out;
+
 
