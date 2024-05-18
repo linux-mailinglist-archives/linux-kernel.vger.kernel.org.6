@@ -1,319 +1,278 @@
-Return-Path: <linux-kernel+bounces-182933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F038C91E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:31:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D3F8C91EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94958B20DA0
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 18:31:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E92B61C20AD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 18:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5A054907;
-	Sat, 18 May 2024 18:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dw8oQv1X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1E554907;
+	Sat, 18 May 2024 18:31:33 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D010945014
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 18:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA2F53370
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 18:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716057076; cv=none; b=ShMACf9L7f5iuR/f+R5pk90UlYL52BoevgSst4Ilf1wRoM6kWnuMwpf901p/qhRdRWpDWmlFWRVXy+mA32huJPJ0mno8gAMqe+FyOTukOZ+pJmNEQknL0umYFdFs+iNn51KYwnWwnwk4IbrugOVaAENRbnXwJFlTB+EPvm0Zm08=
+	t=1716057093; cv=none; b=kbIA9mAucSIJZL2x7b/zl/d6gPayHBn+rS9aaTwTzemXv4gNvoPLG9ruY78uFbKAY+/PD0461c9l3miXJADG9ZNUozs1J1IAGYV+gRBfMepP7gSXgBMufxqh8VanHdL4m6/qVpFJrr43fkIclq6wk5qnzOVIFLsOEDh3X7+3nA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716057076; c=relaxed/simple;
-	bh=UovyayoFkCBfhvPBJdjyyN06YHmJ3IK6iJ5x6At2WNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hkjx3FNXHJMp3w8TpyHKVIOmjo/vmy1B39A5GcUhM8XpRvH/Hvy24aSx+Eg6SkPpRpOgTP0r5OXseuDStnOwZApCkAz9ryXY/lUtN6/XbM3jlRz4l//0gZlegdtYQcOJAYeS657KVabiBmxK8WLwb1yeAbUez3E6om/LleD5YhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dw8oQv1X; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716057072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HUslDr8lu/3XPoveZQzIdjiiCPoNdpQE2z7ygJnsRGk=;
-	b=Dw8oQv1XS9mYQikVw4SaR7TfFqIHlezgWDc+xG1j72i9zgMBJV/t51G+bhgDnIxpxxflCF
-	ukzLv6WAZ0cHi86WX2Wul1b8hoebsaA5Vk53EGVIBRlZE7mUqS3rmrBMR+dP/GNFZRYgPC
-	H4daAwVKJumsr9nsdeWGg+ltC85jeiU=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-395-uvv6CdDhMEusY7aWhIzT5w-1; Sat, 18 May 2024 14:31:11 -0400
-X-MC-Unique: uvv6CdDhMEusY7aWhIzT5w-1
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1ec5efb0a33so112911475ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 11:31:10 -0700 (PDT)
+	s=arc-20240116; t=1716057093; c=relaxed/simple;
+	bh=tJgHkhuFNie1SuQOCRc4FA/230sI9YFUx1P/L50kQNY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HJKNuVO8/GKmNL7CMbt4wNaZI2DyV3E89kC8q7KIYqtYX0hH/VB+NqmUDRcugJLX00qegrB/ydcEZ4OvjeHVZI/3Te8x4cDzSyKW8+ZgPBTTEViNrGUfczUqC+PtSUHnEYhrmXE7VDBfJ5H098SEcEsQnHuXS666pxVN2QN8ku4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e1d7031f4aso875043539f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 11:31:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716057070; x=1716661870;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HUslDr8lu/3XPoveZQzIdjiiCPoNdpQE2z7ygJnsRGk=;
-        b=teUrPVXO3iIyuL4CzVuXKvL5LarXWZOtywNV3MpSmbj2hn6m6zpJaAXcFzzSOXkqbw
-         8z34aPfYI9Uhd+HxNnkTxYwPRq4V8FQ8lvov+eS/rxYyvkJRoVA6uClZhI0R4IqaiqiA
-         pVz9O5uZWoBb5CLY791uWr12PVTe2h+xy1zYH5Ylv94ro3uvNoxi7Qzep8imlTb0AHq+
-         g8xstwfqS9T+x1Ejx3k6ow8UxO9vXa/dPSfkQcLQI0j3MUvu6Hh1aaixSsG1DOIx+1PY
-         6INfJlnJt002xooxOnyUzdeQZ9tj/83KIeiYc4MqDJsy1HH+cP4Pw+IoFZGzbyKLWYeB
-         I15A==
-X-Forwarded-Encrypted: i=1; AJvYcCXkV7odrPkKDVfvsmriND++4y9Ap40aheFYJz/szUM0EX4ndf94mXTiiv91ey4unQn9Ghuh/wR4goPH33MEyaJKW8QcP6ZdBHB7LJ0W
-X-Gm-Message-State: AOJu0Yzuty8sUdMdOvazziZC2bRYZN9TSpTcsBcaVswy0+6emdapCC+U
-	b9T7CaOvmGKEZZyw8pIf0vv9E9Y6h3aqwKpBbUoU0PE32L2IgbVBG5BA78Y9LF5BZj0PK85yWzn
-	w4lo8zkfEKDWQpvE3JaLL3AgwT/QDJqikTpo2cMWZeM3Pl4QadZgv1HLK84tpRQ==
-X-Received: by 2002:a17:903:11c6:b0:1f0:4611:7ee1 with SMTP id d9443c01a7336-1f046117fcdmr334349205ad.57.1716057069988;
-        Sat, 18 May 2024 11:31:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENJgnUhFfuZ9m0f6jtk1LEFx5Lpk8BL4wYT9V+jVDylXhKHomdZjn5zK5BSm3/Spy8KNzESA==
-X-Received: by 2002:a17:903:11c6:b0:1f0:4611:7ee1 with SMTP id d9443c01a7336-1f046117fcdmr334348795ad.57.1716057069534;
-        Sat, 18 May 2024 11:31:09 -0700 (PDT)
-Received: from localhost (ip98-179-76-110.ph.ph.cox.net. [98.179.76.110])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f0f192db3dsm53685585ad.233.2024.05.18.11.31.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 11:31:08 -0700 (PDT)
-Date: Sat, 18 May 2024 11:31:07 -0700
-From: Jerry Snitselaar <jsnitsel@redhat.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>, 
-	Christoph Hellwig <hch@lst.de>, Vineet Gupta <vgupta@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Lu Baolu <baolu.lu@linux.intel.com>, Niklas Schnelle <schnelle@linux.ibm.com>, 
-	Matthew Rosato <mjrosato@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	Jean-Philippe Brucker <jean-philippe@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
-	Frank Rowand <frowand.list@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, iommu@lists.linux.dev, 
-	devicetree@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v4 5/7] iommu/dma: Make limit checks self-contained
-Message-ID: <o7hp34of3rg2fhbzpnbakaxnr24cfdfdrwf6d3hhxdeq4qqisk@6fqlszyvclhs>
-References: <cover.1713523152.git.robin.murphy@arm.com>
- <e28a114243d1e79eb3609aded034f8529521333f.1713523152.git.robin.murphy@arm.com>
- <243d441d-dda8-442a-a495-83bf9725a14c@nvidia.com>
- <48c39306-c226-4e7f-a013-d679ca80157e@arm.com>
- <46fc1b7f-7d10-4233-b089-aa173ad3bbeb@nvidia.com>
- <981c85f3-6d43-4c2b-a440-88bf81a18e55@arm.com>
+        d=1e100.net; s=20230601; t=1716057090; x=1716661890;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LZVTn15843LKOoA0qurxiaspfnZTru/i/a3hJ54j8+0=;
+        b=Dz8QzV0H82vpzog/QlSeDKenAtNCkhj383bmhZxY3ouRSjZ+3ncs2+pWFhd0MhWSaw
+         4ljD7HMrPyoYmFwAxQqcft7uocOuShEaj/dvDYI3wvfI0IzcD6Eqmqvo4IkwtB/vs9GF
+         Hya6ZC9noT3BpktZiu6eLMRdOFNRloGdfe/HMi2R+YnzXOc956gK82dd6Dg131HgOICM
+         ySc7n8tyxQC5veAQkPlXpafAZlEhyMyNzoczsIB2Iys9JqbnXZNCA5G6YNrAhSLeNMnR
+         4n7kRgxYxqtn3IVjek3LpFqAkxmxzFJQ8wI9OUj3XJADVJ8AKM4k1HEFvQO7g28OARht
+         eCiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNraoHNxUcnO1BP8032tPFDQZ4Fika/8LeUfApPhDTaDGtem1SuGf2mBsiQiBbTVjuGcBreYFevyzo5q+dy0VYWfOu2jDvOtxRyMiu
+X-Gm-Message-State: AOJu0YyrlT8iHViVYcOlLsUVBxJaZoVY3znlRpuVJuNQL2N80v7oXXev
+	R6V0Sre+tQpwRSMTflzbaND4S+//qhNbjE5mBPX7KsTnG5ur1RqOqcPi6NNxP99aUCGazPgp/zB
+	A6+oRuvyvqz0SsY9tkKckdPwlSJ0kGxfMZpUUQlQwyQtqyS5U/V1pk4M=
+X-Google-Smtp-Source: AGHT+IHQgEwx7XPKRDBBXDz3SqVtjePlfZJwNMvv9Zwzccpt5RWnnXq3PDUULeVSiS+rN1Vx7+QW33/Xpk4KRH5LBuw+J4AJnZ1E
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <981c85f3-6d43-4c2b-a440-88bf81a18e55@arm.com>
+X-Received: by 2002:a05:6638:8506:b0:488:d9fb:b418 with SMTP id
+ 8926c6da1cb9f-4895933e5a1mr1419458173.6.1716057090033; Sat, 18 May 2024
+ 11:31:30 -0700 (PDT)
+Date: Sat, 18 May 2024 11:31:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000441aab0618beadc5@google.com>
+Subject: [syzbot] [ext4?] possible deadlock in wait_transaction_locked
+From: syzbot <syzbot+007d621ed59411ae5fd0@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 17, 2024 at 04:03:57PM GMT, Robin Murphy wrote:
-> On 17/05/2024 3:21 pm, Jon Hunter wrote:
-> > 
-> > On 15/05/2024 15:59, Robin Murphy wrote:
-> > > Hi Jon,
-> > > 
-> > > On 2024-05-14 2:27 pm, Jon Hunter wrote:
-> > > > Hi Robin,
-> > > > 
-> > > > On 19/04/2024 17:54, Robin Murphy wrote:
-> > > > > It's now easy to retrieve the device's DMA limits if we want to check
-> > > > > them against the domain aperture, so do that ourselves instead of
-> > > > > relying on them being passed through the callchain.
-> > > > > 
-> > > > > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> > > > > Tested-by: Hanjun Guo <guohanjun@huawei.com>
-> > > > > Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> > > > > ---
-> > > > >   drivers/iommu/dma-iommu.c | 21 +++++++++------------
-> > > > >   1 file changed, 9 insertions(+), 12 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> > > > > index a3039005b696..f542eabaefa4 100644
-> > > > > --- a/drivers/iommu/dma-iommu.c
-> > > > > +++ b/drivers/iommu/dma-iommu.c
-> > > > > @@ -660,19 +660,16 @@ static void
-> > > > > iommu_dma_init_options(struct iommu_dma_options *options,
-> > > > >   /**
-> > > > >    * iommu_dma_init_domain - Initialise a DMA mapping domain
-> > > > >    * @domain: IOMMU domain previously prepared by
-> > > > > iommu_get_dma_cookie()
-> > > > > - * @base: IOVA at which the mappable address space starts
-> > > > > - * @limit: Last address of the IOVA space
-> > > > >    * @dev: Device the domain is being initialised for
-> > > > >    *
-> > > > > - * @base and @limit + 1 should be exact multiples of IOMMU
-> > > > > page granularity to
-> > > > > - * avoid rounding surprises. If necessary, we reserve the
-> > > > > page at address 0
-> > > > > + * If the geometry and dma_range_map include address 0, we
-> > > > > reserve that page
-> > > > >    * to ensure it is an invalid IOVA. It is safe to
-> > > > > reinitialise a domain, but
-> > > > >    * any change which could make prior IOVAs invalid will fail.
-> > > > >    */
-> > > > > -static int iommu_dma_init_domain(struct iommu_domain
-> > > > > *domain, dma_addr_t base,
-> > > > > -                 dma_addr_t limit, struct device *dev)
-> > > > > +static int iommu_dma_init_domain(struct iommu_domain
-> > > > > *domain, struct device *dev)
-> > > > >   {
-> > > > >       struct iommu_dma_cookie *cookie = domain->iova_cookie;
-> > > > > +    const struct bus_dma_region *map = dev->dma_range_map;
-> > > > >       unsigned long order, base_pfn;
-> > > > >       struct iova_domain *iovad;
-> > > > >       int ret;
-> > > > > @@ -684,18 +681,18 @@ static int
-> > > > > iommu_dma_init_domain(struct iommu_domain *domain,
-> > > > > dma_addr_t base,
-> > > > >       /* Use the smallest supported page size for IOVA granularity */
-> > > > >       order = __ffs(domain->pgsize_bitmap);
-> > > > > -    base_pfn = max_t(unsigned long, 1, base >> order);
-> > > > > +    base_pfn = 1;
-> > > > >       /* Check the domain allows at least some access to the
-> > > > > device... */
-> > > > > -    if (domain->geometry.force_aperture) {
-> > > > > +    if (map) {
-> > > > > +        dma_addr_t base = dma_range_map_min(map);
-> > > > >           if (base > domain->geometry.aperture_end ||
-> > > > > -            limit < domain->geometry.aperture_start) {
-> > > > > +            dma_range_map_max(map) <
-> > > > > domain->geometry.aperture_start) {
-> > > > >               pr_warn("specified DMA range outside IOMMU
-> > > > > capability\n");
-> > > > >               return -EFAULT;
-> > > > >           }
-> > > > >           /* ...then finally give it a kicking to make sure it fits */
-> > > > > -        base_pfn = max_t(unsigned long, base_pfn,
-> > > > > -                domain->geometry.aperture_start >> order);
-> > > > > +        base_pfn = max(base,
-> > > > > domain->geometry.aperture_start) >> order;
-> > > > >       }
-> > > > >       /* start_pfn is always nonzero for an
-> > > > > already-initialised domain */
-> > > > > @@ -1760,7 +1757,7 @@ void iommu_setup_dma_ops(struct device
-> > > > > *dev, u64 dma_base, u64 dma_limit)
-> > > > >        * underlying IOMMU driver needs to support via the
-> > > > > dma-iommu layer.
-> > > > >        */
-> > > > >       if (iommu_is_dma_domain(domain)) {
-> > > > > -        if (iommu_dma_init_domain(domain, dma_base, dma_limit, dev))
-> > > > > +        if (iommu_dma_init_domain(domain, dev))
-> > > > >               goto out_err;
-> > > > >           dev->dma_ops = &iommu_dma_ops;
-> > > > >       }
-> > > > 
-> > > > 
-> > > > I have noticed some random test failures on Tegra186 and
-> > > > Tegra194 and bisect is pointing to this commit. Reverting this
-> > > > along with the various dependencies does fix the problem. On
-> > > > Tegra186 CPU hotplug is failing and on Tegra194 suspend is
-> > > > failing. Unfortunately, on neither platform do I see any
-> > > > particular crash but the boards hang somewhere.
-> > > 
-> > > That is... thoroughly bemusing :/ Not only is there supposed to be
-> > > no real functional change here - we should merely be recalculating
-> > > the same information from dev->dma_range_map that the callers were
-> > > already doing to generate the base/limit arguments - but the act of
-> > > initially setting up a default domain for a device behind an IOMMU
-> > > should have no connection whatsoever to suspend and especially not
-> > > to CPU hotplug.
-> > 
-> > 
-> > Yes it does look odd, but this is what bisect reported ...
-> > 
-> > git bisect start
-> > # good: [a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6] Linux 6.9
-> > git bisect good a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-> > # bad: [6ba6c795dc73c22ce2c86006f17c4aa802db2a60] Add linux-next
-> > specific files for 20240513
-> > git bisect bad 6ba6c795dc73c22ce2c86006f17c4aa802db2a60
-> > # good: [29e7f949865a023a21ecdfbd82d68ac697569f34] Merge branch 'main'
-> > of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-> > git bisect good 29e7f949865a023a21ecdfbd82d68ac697569f34
-> > # skip: [150e6cc14e51f2a07034106a4529cdaafd812c46] Merge branch 'next'
-> > of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git
-> > git bisect skip 150e6cc14e51f2a07034106a4529cdaafd812c46
-> > # good: [f5d75327d30af49acf2e4b55f35ce2e6c45d1287] drm/amd/display: Fix
-> > invalid Copyright notice
-> > git bisect good f5d75327d30af49acf2e4b55f35ce2e6c45d1287
-> > # skip: [f1ec9a9ffc526df7c9523006c2abbb8ea554cdd8] Merge branch
-> > 'for-next' of
-> > git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git
-> > git bisect skip f1ec9a9ffc526df7c9523006c2abbb8ea554cdd8
-> > # bad: [f091e93306e0429ebb7589b9874590b6a9705e64] dma-mapping: Simplify
-> > arch_setup_dma_ops()
-> > git bisect bad f091e93306e0429ebb7589b9874590b6a9705e64
-> > # good: [91cfd679f9e8b9a7bf2f26adf66eff99dbe2026b] ACPI/IORT: Handle
-> > memory address size limits as limits
-> > git bisect good 91cfd679f9e8b9a7bf2f26adf66eff99dbe2026b
-> > # bad: [ad4750b07d3462ce29a0c9b1e88b2a1f9795290e] iommu/dma: Make limit
-> > checks self-contained
-> > git bisect bad ad4750b07d3462ce29a0c9b1e88b2a1f9795290e
-> > # good: [fece6530bf4b59b01a476a12851e07751e73d69f] dma-mapping: Add
-> > helpers for dma_range_map bounds
-> > git bisect good fece6530bf4b59b01a476a12851e07751e73d69f
-> > # first bad commit: [ad4750b07d3462ce29a0c9b1e88b2a1f9795290e]
-> > iommu/dma: Make limit checks self-contained
-> > 
-> > There is a couple skips in there and so I will try this again.
-> > 
-> > > > If you have any ideas on things we can try let me know.
-> > > 
-> > > Since the symptom seems inexplicable, I'd throw the usual memory
-> > > debugging stuff like KASAN at it first. I'd also try
-> > > "no_console_suspend" to check whether any late output is being
-> > > missed in the suspend case (and if it's already broken, then any
-> > > additional issues that may be caused by the console itself hopefully
-> > > shouldn't matter).
-> > > 
-> > > For more base-covering, do you have the "arm64: Properly clean up
-> > > iommu-dma remnants" fix in there already as well? That bug has
-> > > bisected to patch #6 each time though, so I do still suspect that
-> > > what you're seeing is likely something else. It does seem
-> > > potentially significant that those Tegra platforms are making fairly
-> > > wide use of dma-ranges, but there's no clear idea forming out of
-> > > that observation just yet...
-> > 
-> > I was hoping it was the same issue other people had reported,
-> > but the fix provided did not help. I have also tried today's
-> > -next and I am still seeing the issue.
-> > 
-> > I should have more time next week to look at this further. Let
-> > me confirm which change is causing this and add more debug.
-> 
-> Thanks. From staring at the code I think I've spotted one subtlety which
-> may not be quite as intended - can you see if the diff below helps? It
-> occurs to me that suspend and CPU hotplug may not *cause* the symptom,
-> but they could certainly stall if one or more relevant CPUs is *already*
-> stuck in a loop somewhere...
-> 
-> Thanks,
-> Robin.
-> 
-> ----->8-----
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index 89a53c2f2cf9..85eb1846c637 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -686,6 +686,7 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, struct device *dev
->  	/* Check the domain allows at least some access to the device... */
->  	if (map) {
->  		dma_addr_t base = dma_range_map_min(map);
-> +		base = max(base, (dma_addr_t)1 << order);
->  		if (base > domain->geometry.aperture_end ||
->  		    dma_range_map_max(map) < domain->geometry.aperture_start) {
->  			pr_warn("specified DMA range outside IOMMU capability\n");
+Hello,
 
-With this in place I no longer see the mapping fail on the nvidia system.
+syzbot found the following issue on:
 
-Regards,
-Jerry
+HEAD commit:    3c999d1ae3c7 Merge tag 'wq-for-6.10' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=134e8ae0980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=60e9f916d152f01c
+dashboard link: https://syzkaller.appspot.com/bug?extid=007d621ed59411ae5fd0
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-3c999d1a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f2cbecb7d711/vmlinux-3c999d1a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f89ef5a44a32/bzImage-3c999d1a.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+007d621ed59411ae5fd0@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.9.0-syzkaller-07726-g3c999d1ae3c7 #0 Not tainted
+------------------------------------------------------
+kswapd0/111 is trying to acquire lock:
+ffff88801dc5c950 (jbd2_handle){++++}-{0:0}, at: wait_transaction_locked+0x188/0x230 fs/jbd2/transaction.c:177
+
+but task is already holding lock:
+ffffffff8dd38f00 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10 mm/vmscan.c:6782
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
+       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3712
+       might_alloc include/linux/sched/mm.h:312 [inline]
+       slab_pre_alloc_hook mm/slub.c:3819 [inline]
+       slab_alloc_node mm/slub.c:3900 [inline]
+       __do_kmalloc_node mm/slub.c:4038 [inline]
+       __kmalloc_node+0xbb/0x480 mm/slub.c:4046
+       kmalloc_node include/linux/slab.h:648 [inline]
+       kvmalloc_node+0x9d/0x1a0 mm/util.c:634
+       kvmalloc include/linux/slab.h:766 [inline]
+       ext4_xattr_inode_cache_find fs/ext4/xattr.c:1535 [inline]
+       ext4_xattr_inode_lookup_create fs/ext4/xattr.c:1581 [inline]
+       ext4_xattr_set_entry+0xdc3/0x3b20 fs/ext4/xattr.c:1718
+       ext4_xattr_block_set+0xd07/0x3080 fs/ext4/xattr.c:2037
+       ext4_xattr_set_handle+0xf24/0x16d0 fs/ext4/xattr.c:2443
+       ext4_xattr_set+0x149/0x380 fs/ext4/xattr.c:2545
+       __vfs_setxattr+0x173/0x1e0 fs/xattr.c:200
+       __vfs_setxattr_noperm+0x127/0x5e0 fs/xattr.c:234
+       __vfs_setxattr_locked+0x182/0x260 fs/xattr.c:295
+       vfs_setxattr+0x146/0x350 fs/xattr.c:321
+       do_setxattr+0x146/0x170 fs/xattr.c:629
+       setxattr+0x15d/0x180 fs/xattr.c:652
+       path_setxattr+0x179/0x1e0 fs/xattr.c:671
+       __do_sys_setxattr fs/xattr.c:687 [inline]
+       __se_sys_setxattr fs/xattr.c:683 [inline]
+       __ia32_sys_setxattr+0xc0/0x160 fs/xattr.c:683
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #1 (&ei->xattr_sem){++++}-{3:3}:
+       down_write+0x3a/0x50 kernel/locking/rwsem.c:1579
+       ext4_write_lock_xattr fs/ext4/xattr.h:155 [inline]
+       ext4_xattr_set_handle+0x156/0x16d0 fs/ext4/xattr.c:2358
+       ext4_set_context+0x400/0x5a0 fs/ext4/crypto.c:202
+       set_encryption_policy+0x2cc/0x470 fs/crypto/policy.c:500
+       fscrypt_ioctl_set_policy+0x4a2/0x500 fs/crypto/policy.c:553
+       __ext4_ioctl+0x2f67/0x4700 fs/ext4/ioctl.c:1520
+       ext4_ioctl fs/ext4/ioctl.c:1627 [inline]
+       ext4_compat_ioctl+0xca/0x460 fs/ext4/ioctl.c:1703
+       __do_compat_sys_ioctl+0x2c3/0x330 fs/ioctl.c:1004
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #0 (jbd2_handle){++++}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       wait_transaction_locked+0x192/0x230 fs/jbd2/transaction.c:177
+       add_transaction_credits+0x10a/0xb80 fs/jbd2/transaction.c:241
+       start_this_handle+0x3a3/0x15e0 fs/jbd2/transaction.c:422
+       jbd2__journal_start+0x394/0x6a0 fs/jbd2/transaction.c:520
+       __ext4_journal_start_sb+0x358/0x660 fs/ext4/ext4_jbd2.c:112
+       __ext4_journal_start fs/ext4/ext4_jbd2.h:326 [inline]
+       ext4_dirty_inode+0xa1/0x130 fs/ext4/inode.c:5939
+       __mark_inode_dirty+0x1f0/0xe70 fs/fs-writeback.c:2486
+       mark_inode_dirty_sync include/linux/fs.h:2426 [inline]
+       iput.part.0+0x5b/0x7f0 fs/inode.c:1764
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x440 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       shrink_kill fs/dcache.c:1048 [inline]
+       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+       super_cache_scan+0x32a/0x550 fs/super.c:221
+       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+       shrink_slab_memcg mm/shrinker.c:548 [inline]
+       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+       shrink_one+0x493/0x7c0 mm/vmscan.c:4774
+       shrink_many mm/vmscan.c:4835 [inline]
+       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
+       shrink_node mm/vmscan.c:5894 [inline]
+       kswapd_shrink_node mm/vmscan.c:6704 [inline]
+       balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
+       kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
+       kthread+0x2c1/0x3a0 kernel/kthread.c:389
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+Chain exists of:
+  jbd2_handle --> &ei->xattr_sem --> fs_reclaim
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&ei->xattr_sem);
+                               lock(fs_reclaim);
+  lock(jbd2_handle);
+
+ *** DEADLOCK ***
+
+2 locks held by kswapd0/111:
+ #0: ffffffff8dd38f00 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10 mm/vmscan.c:6782
+ #1: ffff88801dc580e0 (&type->s_umount_key#33){++++}-{3:3}, at: super_trylock_shared fs/super.c:561 [inline]
+ #1: ffff88801dc580e0 (&type->s_umount_key#33){++++}-{3:3}, at: super_cache_scan+0x96/0x550 fs/super.c:196
+
+stack backtrace:
+CPU: 0 PID: 111 Comm: kswapd0 Not tainted 6.9.0-syzkaller-07726-g3c999d1ae3c7 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ wait_transaction_locked+0x192/0x230 fs/jbd2/transaction.c:177
+ add_transaction_credits+0x10a/0xb80 fs/jbd2/transaction.c:241
+ start_this_handle+0x3a3/0x15e0 fs/jbd2/transaction.c:422
+ jbd2__journal_start+0x394/0x6a0 fs/jbd2/transaction.c:520
+ __ext4_journal_start_sb+0x358/0x660 fs/ext4/ext4_jbd2.c:112
+ __ext4_journal_start fs/ext4/ext4_jbd2.h:326 [inline]
+ ext4_dirty_inode+0xa1/0x130 fs/ext4/inode.c:5939
+ __mark_inode_dirty+0x1f0/0xe70 fs/fs-writeback.c:2486
+ mark_inode_dirty_sync include/linux/fs.h:2426 [inline]
+ iput.part.0+0x5b/0x7f0 fs/inode.c:1764
+ iput+0x5c/0x80 fs/inode.c:1757
+ dentry_unlink_inode+0x295/0x440 fs/dcache.c:400
+ __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+ shrink_kill fs/dcache.c:1048 [inline]
+ shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+ prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+ super_cache_scan+0x32a/0x550 fs/super.c:221
+ do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+ shrink_slab_memcg mm/shrinker.c:548 [inline]
+ shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+ shrink_one+0x493/0x7c0 mm/vmscan.c:4774
+ shrink_many mm/vmscan.c:4835 [inline]
+ lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
+ shrink_node mm/vmscan.c:5894 [inline]
+ kswapd_shrink_node mm/vmscan.c:6704 [inline]
+ balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
+ kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
