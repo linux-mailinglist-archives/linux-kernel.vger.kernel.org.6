@@ -1,114 +1,273 @@
-Return-Path: <linux-kernel+bounces-182721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32CC8C8ED3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 02:15:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37DBC8C8ED6
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 02:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 792E0B21746
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:15:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4BF01F2247B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FFC1FBA;
-	Sat, 18 May 2024 00:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81B529A2;
+	Sat, 18 May 2024 00:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="VX6g6cv0"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UStHqVo3"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A70624;
-	Sat, 18 May 2024 00:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5C336C
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 00:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715991328; cv=none; b=D2JI/fZbJXJ21kn5OA4E+v3M6q/w+PpRn+bS91cEM+mM5qqmgSGhNyOeEknguATwV7205gtuPbHkHaM4B5fjTFy8MOkmvBTiUpoP4m0JDe6EB4v/fV3bUQUAWQ9BSLg/eMVlksDa/J8WlATONyVzYBhAKeXi8wSwdUSiYtzk740=
+	t=1715991423; cv=none; b=tVQhcpHwVVW1dGa0W/I7sBsINX+/lXpT/alQDE6Dh9WD96jKmx76XEwdK5h0RJv+TG5tm5zxzNHSIOcdpERwYW/30+W0lxh202wYBP0c6psWsLAwd/SjDbgdW6frkPlkrFDqZsPBA+i9/oIBp9sEAeciC5B5dl2KGdElK/jNiDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715991328; c=relaxed/simple;
-	bh=V07vTx9Pcc4bKqrXhXzLYwwefe5ErfqlqKXqge1UAWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFsOzCI+4AIgTOcygdwDBim8txBHF35R/rrWV3m8Xpcxu7T3DCgrIqc31dEozYm83A/vFLXINr43W0XrwRY+YCsW/FwHEsBG8dYeWRYqwCSsVNDfjZJjw82jMn9tPM+0+MC6DPhMvdpg3c2BYRL17s/odv6zqIDBmkFY/mRyD8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=VX6g6cv0; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=w9ULlz4UgsU7z8CnXTOJtHaxQ2rpwelEzKXQ6d+PmNo=; b=VX6g6cv0JsUWVWjs
-	/Ipbl7SXrMyZzwhlBfaMW+tvqUGhYSL+EgyHUn7S7b8euSmKdUdDCHvk+Jit2R2Yd7SUDIoJQ9UCP
-	RtvH8GORRDM8YvoqzjWpvda//TkIpwQFntG5VERb1lJLrPBhEetbhKURObL9EBFDqw4gK4gOlblu5
-	ePEaBDdNGa8c08UIrWjWO0yq/0FDVK7gFxPlhUaFCNSAZKpVVyPASqG0x3u6cKFG9hCdEGhlVGGEP
-	/34MWK4PQp0N4j8hrooaG1c6RoJ4catLTP9fgW5iOshkWeJvt1Erpvar/a+tInlErLZVFFehZaWLm
-	DlPEv31cOLytjluf6Q==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1s87jI-001U94-1v;
-	Sat, 18 May 2024 00:15:16 +0000
-Date: Sat, 18 May 2024 00:15:16 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc: sunxi: sram: Remove unused list 'claimed_sram'
-Message-ID: <ZkfzFBpZVaMLH7_f@gallifrey>
-References: <20240504204401.198913-1-linux@treblig.org>
+	s=arc-20240116; t=1715991423; c=relaxed/simple;
+	bh=psb/9cAnhp+Xzaq8lXVTJ+5ogfgNeGdZpdDamrOEPi8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EEEY/LEvojZo/FAo/7OpPau61sxnAbbfpG/s0emEOWVybbVF4eiBIDbm1yOmrhwE/ZbOR2NdwBUSleZs4Lgni8kiEnS4Qp8sz+KRwET8miQdvCOJzEoR3FgjKu4MJqatI+vLJuL9MdN4yUA+RWvADKV4WEKNAq0I97f2GR68zrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UStHqVo3; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ee38966529so8205385ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:17:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715991422; x=1716596222; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=irkVL93e2r7C0Hy5+trw8pmsG8779sgzCHeX9n3CiN0=;
+        b=UStHqVo3wPfQ6HcIsDMF5je4Krpa6DYNHvc+Mt2pIrNdhO+8Xg+4dyqNWpt+5z7h9B
+         OnhYLqPbmpstanrboHbljEM5WcDuZFHRrsmpr6eY+EMv3SOI+9vqApWyI0gbywmC5Ayo
+         /qrUvWWX6cr9JfMnBPf9vcObNemy1ZLY+W90w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715991422; x=1716596222;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=irkVL93e2r7C0Hy5+trw8pmsG8779sgzCHeX9n3CiN0=;
+        b=Qi8DkgI9JNi8o4+65hp0V5sjCL2t7/IvdtVZSK0gqLAW0Lb8xFeGcBfCBipdtzkHMq
+         RRPh5VPuPqhe887Fdv0MxeqqxCZp8RkfPQE44MS0+dyF+uOWDKKmK5o3XzzkA+KKUoFh
+         Vx53JvT2LSAWnB/sNL6nq+Ywh5qfzcTkJWVqbGx3qh7VeJMF2sxgDxkXxWSiTliYJzaI
+         hbnIrms6XiVhdHNC5WmFsSiE8KX5/uxA9pJpIBv3bkJGThhnlh00QeJpXbRNTFEC5fx5
+         qMeIENP4mbikF5menlPZ61F/KnWKc47+HiFrhQK6bX0aBwfU8xuMhDbJ4QNJPGKvq7xE
+         xhtg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfXivm6WLZAaOWgno3s2FnVu4KDxZetzF3wvmH95ViwD8ForX38mF4ENWF/kFvi16xqLTCRsjTMM/1aVkBPWfcaVRtY02YuQlS5ra2
+X-Gm-Message-State: AOJu0Yy6oZImfcXPN/kS5aESAmB3XdAmhIERdP28qIr3nf1FEayJ2R2G
+	lBELuyaMfUO+QG5I8vyeKQPFE3ntH2/wohLKJV0VA6oMPZlW4XXgNBm7aFd59A==
+X-Google-Smtp-Source: AGHT+IGFPQYGhMI5mu4WIG762rhacma10jrth4Odmj51T3CbNjI91oKmi+chX3KkEDy/JeJ4Brsldg==
+X-Received: by 2002:a17:902:e752:b0:1e5:5760:a6c1 with SMTP id d9443c01a7336-1f2ed2ebe08mr7151825ad.21.1715991421580;
+        Fri, 17 May 2024 17:17:01 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad9da4sm162348915ad.107.2024.05.17.17.17.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 17:17:00 -0700 (PDT)
+From: Kees Cook <keescook@chromium.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Kees Cook <keescook@chromium.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-rtc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] selftests: rtc: rtctest: Do not open-code TEST_HARNESS_MAIN
+Date: Fri, 17 May 2024 17:16:58 -0700
+Message-Id: <20240518001655.work.053-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240504204401.198913-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 00:14:40 up 9 days, 11:28,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5223; i=keescook@chromium.org;
+ h=from:subject:message-id; bh=psb/9cAnhp+Xzaq8lXVTJ+5ogfgNeGdZpdDamrOEPi8=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmR/N6s/j5oZN920PNFTll/WpzqmtBDGQzJiKQO
+ WN+Gr07bhaJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZkfzegAKCRCJcvTf3G3A
+ JjXID/wMzWXl2uBgZBj8D9wl0hC56WI14SrF0DqQnjVVOg7LoM/vvq3w1s4e2+ZXB/S3ILG7bmj
+ MU6ATJTr3PXZ8D2KLL0HjPnjAHXetcJ6zsbNbfuPsydkqbAt35MDp0uoAePnq3vEzRWLZdnMpCX
+ 75F/1XL6Nm9f4xFfmq9chfi5Z47h0Zt+UyWhs+udLvtadqk3M6nz3xVg67N9N8RvmpqgAOXVAM8
+ wL4V3CxKhiamcqGuaUmOqQG5ISBPxUPm56WMM/FD524JaiRRv0YKQPU71Xf5wqfh+2idJvoNIG7
+ 1F3KWiieBCi0Hyyy1l8GivFac0+RbslIiHtS6oC4XtqnLn1M1FpsaoeRT3oAYTMaDa4ch8t8wnB
+ GtUxMnCShZyT+DU8/x4WYr2wP1LzT4cEIktWX/Y7uMS0Y4zNDwJCN/lqQAUkZy8nOtFxNvvRGaP
+ DszsKzBQQiBFpq4msqQn8TK2baNbnr97VkD3hu553LBpJlLIIW2AFZj2vWM+8NJE50JOKv6LpY7
+ Sqh7k3tUNxdyzpC8rLKRzXj16sWpdHEohdTmzKcjSk7N/phEwMhraCx7Y1Rr0q59ASm4fx1Udzj
+ 9vUjis3AFvsmdsm1kyESB1sGYgAKnQRnTdWgjmmilHeC/x6DG+U3mELMcmhq+EBtFhhhmD0Nxut
+ uzugFPC 4cjHaSJg==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> The list 'claimed_sram' seems unused, as far as I can tell it always
-> has been.
-> I think the 'list' member of sunxi_sram_data was intended to be
-> used when it was on that list.
-> Remove them.
-> 
-> Build tested only.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Argument processing is specific to the test harness code. Any optional
+information needs to be passed via environment variables. Move alternate
+path to the RTC_DEV environment variable. Also do not open-code
+TEST_HARNESS_MAIN because its definition may change.
 
-Ping
+Additionally, setup checking can be done in the FIXTURE_SETUP(). With
+this adjustment, also improve the error reporting when the device cannot
+be opened.
 
-> ---
->  drivers/soc/sunxi/sunxi_sram.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sram.c
-> index 6eb6cf06278e6..71cc377b5e243 100644
-> --- a/drivers/soc/sunxi/sunxi_sram.c
-> +++ b/drivers/soc/sunxi/sunxi_sram.c
-> @@ -33,7 +33,6 @@ struct sunxi_sram_data {
->  	u8			offset;
->  	u8			width;
->  	struct sunxi_sram_func	*func;
-> -	struct list_head	list;
->  };
->  
->  struct sunxi_sram_desc {
-> @@ -103,7 +102,6 @@ static const struct of_device_id sunxi_sram_dt_ids[] = {
->  };
->  
->  static struct device *sram_dev;
-> -static LIST_HEAD(claimed_sram);
->  static DEFINE_SPINLOCK(sram_lock);
->  static void __iomem *base;
->  
-> -- 
-> 2.45.0
-> 
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-rtc@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+---
+ tools/testing/selftests/rtc/Makefile  |  2 +-
+ tools/testing/selftests/rtc/rtctest.c | 66 +++++----------------------
+ 2 files changed, 13 insertions(+), 55 deletions(-)
+
+diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
+index 55198ecc04db..654f9d58da3c 100644
+--- a/tools/testing/selftests/rtc/Makefile
++++ b/tools/testing/selftests/rtc/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+-CFLAGS += -O3 -Wl,-no-as-needed -Wall
++CFLAGS += -O3 -Wl,-no-as-needed -Wall $(KHDR_INCLUDES)
+ LDLIBS += -lrt -lpthread -lm
+ 
+ TEST_GEN_PROGS = rtctest
+diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
+index 63ce02d1d5cc..41cfefcc20e1 100644
+--- a/tools/testing/selftests/rtc/rtctest.c
++++ b/tools/testing/selftests/rtc/rtctest.c
+@@ -30,7 +30,18 @@ FIXTURE(rtc) {
+ };
+ 
+ FIXTURE_SETUP(rtc) {
++	char *alternate = getenv("RTC_DEV");
++
++	if (alternate)
++		rtc_file = alternate;
++
+ 	self->fd = open(rtc_file, O_RDONLY);
++
++	if (self->fd == -1 && errno == ENOENT)
++		SKIP(return, "Skipping test since %s does not exist", rtc_file);
++	EXPECT_NE(-1, self->fd) {
++		TH_LOG("%s: %s\n", rtc_file, strerror(errno));
++	}
+ }
+ 
+ FIXTURE_TEARDOWN(rtc) {
+@@ -41,10 +52,6 @@ TEST_F(rtc, date_read) {
+ 	int rc;
+ 	struct rtc_time rtc_tm;
+ 
+-	if (self->fd == -1 && errno == ENOENT)
+-		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+-	ASSERT_NE(-1, self->fd);
+-
+ 	/* Read the RTC time/date */
+ 	rc = ioctl(self->fd, RTC_RD_TIME, &rtc_tm);
+ 	ASSERT_NE(-1, rc);
+@@ -88,10 +95,6 @@ TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
+ 	struct rtc_time rtc_tm;
+ 	time_t start_rtc_read, prev_rtc_read;
+ 
+-	if (self->fd == -1 && errno == ENOENT)
+-		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+-	ASSERT_NE(-1, self->fd);
+-
+ 	TH_LOG("Continuously reading RTC time for %ds (with %dms breaks after every read).",
+ 	       READ_LOOP_DURATION_SEC, READ_LOOP_SLEEP_MS);
+ 
+@@ -126,10 +129,6 @@ TEST_F_TIMEOUT(rtc, uie_read, NUM_UIE + 2) {
+ 	int i, rc, irq = 0;
+ 	unsigned long data;
+ 
+-	if (self->fd == -1 && errno == ENOENT)
+-		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+-	ASSERT_NE(-1, self->fd);
+-
+ 	/* Turn on update interrupts */
+ 	rc = ioctl(self->fd, RTC_UIE_ON, 0);
+ 	if (rc == -1) {
+@@ -155,10 +154,6 @@ TEST_F(rtc, uie_select) {
+ 	int i, rc, irq = 0;
+ 	unsigned long data;
+ 
+-	if (self->fd == -1 && errno == ENOENT)
+-		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+-	ASSERT_NE(-1, self->fd);
+-
+ 	/* Turn on update interrupts */
+ 	rc = ioctl(self->fd, RTC_UIE_ON, 0);
+ 	if (rc == -1) {
+@@ -198,10 +193,6 @@ TEST_F(rtc, alarm_alm_set) {
+ 	time_t secs, new;
+ 	int rc;
+ 
+-	if (self->fd == -1 && errno == ENOENT)
+-		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+-	ASSERT_NE(-1, self->fd);
+-
+ 	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+ 	ASSERT_NE(-1, rc);
+ 
+@@ -256,10 +247,6 @@ TEST_F(rtc, alarm_wkalm_set) {
+ 	time_t secs, new;
+ 	int rc;
+ 
+-	if (self->fd == -1 && errno == ENOENT)
+-		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+-	ASSERT_NE(-1, self->fd);
+-
+ 	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+ 	ASSERT_NE(-1, rc);
+ 
+@@ -308,10 +295,6 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
+ 	time_t secs, new;
+ 	int rc;
+ 
+-	if (self->fd == -1 && errno == ENOENT)
+-		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+-	ASSERT_NE(-1, self->fd);
+-
+ 	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+ 	ASSERT_NE(-1, rc);
+ 
+@@ -366,10 +349,6 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+ 	time_t secs, new;
+ 	int rc;
+ 
+-	if (self->fd == -1 && errno == ENOENT)
+-		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+-	ASSERT_NE(-1, self->fd);
+-
+ 	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+ 	ASSERT_NE(-1, rc);
+ 
+@@ -410,25 +389,4 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+ 	ASSERT_EQ(new, secs);
+ }
+ 
+-static void __attribute__((constructor))
+-__constructor_order_last(void)
+-{
+-	if (!__constructor_order)
+-		__constructor_order = _CONSTRUCTOR_ORDER_BACKWARD;
+-}
+-
+-int main(int argc, char **argv)
+-{
+-	switch (argc) {
+-	case 2:
+-		rtc_file = argv[1];
+-		/* FALLTHROUGH */
+-	case 1:
+-		break;
+-	default:
+-		fprintf(stderr, "usage: %s [rtcdev]\n", argv[0]);
+-		return 1;
+-	}
+-
+-	return test_harness_run(argc, argv);
+-}
++TEST_HARNESS_MAIN
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+2.34.1
+
 
