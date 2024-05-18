@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-182794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F918C8FF0
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:52:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 436798C8FED
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82C011C219D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 07:52:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 183901C21165
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 07:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72521B95B;
-	Sat, 18 May 2024 07:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2838DDA9;
+	Sat, 18 May 2024 07:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="AzLk0Rnp"
-Received: from out187-6.us.a.mail.aliyun.com (out187-6.us.a.mail.aliyun.com [47.90.187.6])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="tQzH0J6Q"
+Received: from out0-198.mail.aliyun.com (out0-198.mail.aliyun.com [140.205.0.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE8F15E88
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 07:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF928C0B
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 07:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716018716; cv=none; b=aj3Ef+9i9b9qhvQJGZ15wLaTBFY8QnKz7OfFh5wrXFT/ge5aQcWZ0ptf13M8BFSna9friMOFuerADx41Kz/xxLnFXu8jCjqye1N1FUo+pFHBjPOe5YXxfUmrtA9k3xLFTUpMX+J/4/R/gvMOR8WnALnO3RDFXvJpeBZJIu+yECk=
+	t=1716018710; cv=none; b=QiJgLTMC2xcF+aNUjk3IdsuEhOQpkAH3OsTr2UyEAfKqCS3YGKRxE4nD55Tjw3Oj5WWZAgJS7MhrYtymAMw+dbaZ0IgiBpoPOrG8dAIrZnebV7U+6mHuYOhxRTU3GEfRJQVicFbCQsDxJ7nhI/yCi3eWNykMDiMssWHJZL5JfXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716018716; c=relaxed/simple;
-	bh=6gtRMnaRzMAo6exZJs5FKaI/uLBziV/3VFxpenmnOQs=;
+	s=arc-20240116; t=1716018710; c=relaxed/simple;
+	bh=tt28RIRiqe4eHxuqz7qc6EeeemxSBDg/OmYDRTvOszg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IJ3OTnY9r4c96psyXpLF90vT8J4jhGoLCoAicuZxtuaKKYjZlsYxaUEdOnxeQDs0MLhS9Bz/UyF62prcWaaqF/xVMjyLBxdPwbsl1J9ypd6jx6JIrcc8qsJYPsJ9xIRbfAzgtr1SQc1pCtNWYEMSkzZyVcrypCH9z2JKnqGPaNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=AzLk0Rnp; arc=none smtp.client-ip=47.90.187.6
+	 MIME-Version; b=lzXP96/lb6zrPf+yMXaSHgof3nZAtO7wLPyC5u5MKPmu8MJMMz1zmUGy1aPLoGlZKBneR9Cs1xhQY5RqrSh9nNZMx+g/quBzTjq1ExwM/yLZbI/2LDwSwHoPkw2s7ICbLk+idV/BYeKpo0M21tE+AMfVgPZzBVjhuhODsnQnd48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=tQzH0J6Q; arc=none smtp.client-ip=140.205.0.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=antgroup.com; s=default;
-	t=1716018697; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=+bO7c6Fed9Mvc6QZ6EoE0oDQLTarOYB8F6MuXkDP9CA=;
-	b=AzLk0RnprnZBHaKRrVrIKGKWZ3zjnjh95w7mg6XVEdf0WyROrrm3pKgR55nGOxhPPIvLDJn51z1oNxNsBXsqACYyPYz1TskobQoTXmOe/9lf9e2wTYZIL+T0FqwqKEqkKqJlKLUvZTcILxQrPcWhjpRiq5ye3lYXSyF/Vye//Ko=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047207;MF=libang.li@antgroup.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---.Xg92GHN_1716018694;
-Received: from localhost(mailfrom:libang.li@antgroup.com fp:SMTPD_---.Xg92GHN_1716018694)
+	t=1716018699; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=B0+VTL/IM0NbM2rCCBStVIPALiltW036NQkMXLbs88g=;
+	b=tQzH0J6QWOPay4j1Bxfhhfc0jJ5aWoohj4i3yrOTJORHW94RZKHiurnOOqSKEbLR3tfY+6kQnVo3YnHiC9EZ6tbxYruyk9Fnp/QDtlDjgy71xdkWXPl+mclDAmpPXstiQtJJq3SN8eDDEZpm2U5q02Ia/MMtVXaOHCWtjA3jBts=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047190;MF=libang.li@antgroup.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---.XgA9uMI_1716018696;
+Received: from localhost(mailfrom:libang.li@antgroup.com fp:SMTPD_---.XgA9uMI_1716018696)
           by smtp.aliyun-inc.com;
-          Sat, 18 May 2024 15:51:35 +0800
+          Sat, 18 May 2024 15:51:37 +0800
 From: "Bang Li" <libang.li@antgroup.com>
 To: akpm@linux-foundation.org,
 	chenhuacai@kernel.org,
@@ -56,9 +56,9 @@ Cc:  <linux-kernel@vger.kernel.org>,
    <ioworker0@gmail.com>,
    <libang.linux@gmail.com>,
   "Bang Li" <libang.li@antgroup.com>
-Subject: [PATCH v3 1/3] mm: Add update_mmu_tlb_range()
-Date: Sat, 18 May 2024 15:49:12 +0800
-Message-Id: <20240518074914.52170-2-libang.li@antgroup.com>
+Subject: [PATCH v3 2/3] mm: Refactor update_mmu_tlb()
+Date: Sat, 18 May 2024 15:49:13 +0800
+Message-Id: <20240518074914.52170-3-libang.li@antgroup.com>
 X-Mailer: git-send-email 2.19.1.6.gb485710b
 In-Reply-To: <20240518074914.52170-1-libang.li@antgroup.com>
 References: <20240518074914.52170-1-libang.li@antgroup.com>
@@ -70,88 +70,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Added update_mmu_tlb_range(), we can batch update tlb of an
-address range.
+Remove update_mmu_tlb() from those architectures and define
+generically via update_mmu_tlb_range(), removing the ability
+for arches to override it.
 
 Signed-off-by: Bang Li <libang.li@antgroup.com>
 ---
- arch/loongarch/include/asm/pgtable.h | 2 ++
- arch/mips/include/asm/pgtable.h      | 2 ++
- arch/riscv/include/asm/pgtable.h     | 2 ++
- arch/xtensa/include/asm/pgtable.h    | 3 +++
- arch/xtensa/mm/tlb.c                 | 6 ++++++
- 5 files changed, 15 insertions(+)
+ arch/loongarch/include/asm/pgtable.h |  2 --
+ arch/mips/include/asm/pgtable.h      |  2 --
+ arch/riscv/include/asm/pgtable.h     |  2 --
+ arch/xtensa/include/asm/pgtable.h    |  3 ---
+ arch/xtensa/mm/tlb.c                 |  6 ------
+ include/linux/pgtable.h              | 11 ++++++++---
+ 6 files changed, 8 insertions(+), 18 deletions(-)
 
 diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/include/asm/pgtable.h
-index af3acdf3481a..5ccc2a3a6f7a 100644
+index 5ccc2a3a6f7a..161dd6e10479 100644
 --- a/arch/loongarch/include/asm/pgtable.h
 +++ b/arch/loongarch/include/asm/pgtable.h
-@@ -469,6 +469,8 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+@@ -467,8 +467,6 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+ #define update_mmu_cache(vma, addr, ptep) \
+ 	update_mmu_cache_range(NULL, vma, addr, ptep, 1)
  
- #define __HAVE_ARCH_UPDATE_MMU_TLB
- #define update_mmu_tlb	update_mmu_cache
-+#define update_mmu_tlb_range(vma, addr, ptep, nr) \
-+	update_mmu_cache_range(NULL, vma, addr, ptep, nr)
+-#define __HAVE_ARCH_UPDATE_MMU_TLB
+-#define update_mmu_tlb	update_mmu_cache
+ #define update_mmu_tlb_range(vma, addr, ptep, nr) \
+ 	update_mmu_cache_range(NULL, vma, addr, ptep, nr)
  
- static inline void update_mmu_cache_pmd(struct vm_area_struct *vma,
- 			unsigned long address, pmd_t *pmdp)
 diff --git a/arch/mips/include/asm/pgtable.h b/arch/mips/include/asm/pgtable.h
-index e27a4c83c548..0891ad7d43b6 100644
+index 0891ad7d43b6..c29a551eb0ca 100644
 --- a/arch/mips/include/asm/pgtable.h
 +++ b/arch/mips/include/asm/pgtable.h
-@@ -596,6 +596,8 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+@@ -594,8 +594,6 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+ #define update_mmu_cache(vma, address, ptep) \
+ 	update_mmu_cache_range(NULL, vma, address, ptep, 1)
  
- #define	__HAVE_ARCH_UPDATE_MMU_TLB
- #define update_mmu_tlb	update_mmu_cache
-+#define update_mmu_tlb_range(vma, address, ptep, nr) \
-+	update_mmu_cache_range(NULL, vma, address, ptep, nr)
+-#define	__HAVE_ARCH_UPDATE_MMU_TLB
+-#define update_mmu_tlb	update_mmu_cache
+ #define update_mmu_tlb_range(vma, address, ptep, nr) \
+ 	update_mmu_cache_range(NULL, vma, address, ptep, nr)
  
- static inline void update_mmu_cache_pmd(struct vm_area_struct *vma,
- 	unsigned long address, pmd_t *pmdp)
 diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 661b2b4fe758..fc07b829ac4a 100644
+index fc07b829ac4a..158170442d2f 100644
 --- a/arch/riscv/include/asm/pgtable.h
 +++ b/arch/riscv/include/asm/pgtable.h
-@@ -488,6 +488,8 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+@@ -486,8 +486,6 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+ #define update_mmu_cache(vma, addr, ptep) \
+ 	update_mmu_cache_range(NULL, vma, addr, ptep, 1)
  
- #define __HAVE_ARCH_UPDATE_MMU_TLB
- #define update_mmu_tlb update_mmu_cache
-+#define update_mmu_tlb_range(vma, addr, ptep, nr) \
-+	update_mmu_cache_range(NULL, vma, addr, ptep, nr)
+-#define __HAVE_ARCH_UPDATE_MMU_TLB
+-#define update_mmu_tlb update_mmu_cache
+ #define update_mmu_tlb_range(vma, addr, ptep, nr) \
+ 	update_mmu_cache_range(NULL, vma, addr, ptep, nr)
  
- static inline void update_mmu_cache_pmd(struct vm_area_struct *vma,
- 		unsigned long address, pmd_t *pmdp)
 diff --git a/arch/xtensa/include/asm/pgtable.h b/arch/xtensa/include/asm/pgtable.h
-index 9a7e5e57ee9a..436158bd9030 100644
+index 436158bd9030..1647a7cc3fbf 100644
 --- a/arch/xtensa/include/asm/pgtable.h
 +++ b/arch/xtensa/include/asm/pgtable.h
-@@ -413,6 +413,9 @@ typedef pte_t *pte_addr_t;
- void update_mmu_tlb(struct vm_area_struct *vma,
- 		    unsigned long address, pte_t *ptep);
- #define __HAVE_ARCH_UPDATE_MMU_TLB
-+void update_mmu_tlb_range(struct vm_area_struct *vma,
-+		unsigned long address, pte_t *ptep, unsigned int nr);
-+#define update_mmu_tlb_range update_mmu_tlb_range
+@@ -410,9 +410,6 @@ void update_mmu_cache_range(struct vm_fault *vmf, struct vm_area_struct *vma,
  
- #endif /* !defined (__ASSEMBLY__) */
+ typedef pte_t *pte_addr_t;
  
+-void update_mmu_tlb(struct vm_area_struct *vma,
+-		    unsigned long address, pte_t *ptep);
+-#define __HAVE_ARCH_UPDATE_MMU_TLB
+ void update_mmu_tlb_range(struct vm_area_struct *vma,
+ 		unsigned long address, pte_t *ptep, unsigned int nr);
+ #define update_mmu_tlb_range update_mmu_tlb_range
 diff --git a/arch/xtensa/mm/tlb.c b/arch/xtensa/mm/tlb.c
-index d8b60d6e50a8..05efba86b870 100644
+index 05efba86b870..0a1a815dc796 100644
 --- a/arch/xtensa/mm/tlb.c
 +++ b/arch/xtensa/mm/tlb.c
-@@ -169,6 +169,12 @@ void update_mmu_tlb(struct vm_area_struct *vma,
- 	local_flush_tlb_page(vma, address);
+@@ -163,12 +163,6 @@ void local_flush_tlb_kernel_range(unsigned long start, unsigned long end)
+ 	}
  }
  
-+void update_mmu_tlb_range(struct vm_area_struct *vma,
-+			unsigned long address, pte_t *ptep, unsigned int nr)
+-void update_mmu_tlb(struct vm_area_struct *vma,
+-		    unsigned long address, pte_t *ptep)
+-{
+-	local_flush_tlb_page(vma, address);
+-}
+-
+ void update_mmu_tlb_range(struct vm_area_struct *vma,
+ 			unsigned long address, pte_t *ptep, unsigned int nr)
+ {
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index 18019f037bae..117b807e3f89 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -729,13 +729,18 @@ static inline void clear_full_ptes(struct mm_struct *mm, unsigned long addr,
+  * fault. This function updates TLB only, do nothing with cache or others.
+  * It is the difference with function update_mmu_cache.
+  */
+-#ifndef __HAVE_ARCH_UPDATE_MMU_TLB
++#ifndef update_mmu_tlb_range
++static inline void update_mmu_tlb_range(struct vm_area_struct *vma,
++				unsigned long address, pte_t *ptep, unsigned int nr)
 +{
-+	local_flush_tlb_range(vma, address, address + PAGE_SIZE * nr);
 +}
++#endif
 +
- #ifdef CONFIG_DEBUG_TLB_SANITY
+ static inline void update_mmu_tlb(struct vm_area_struct *vma,
+ 				unsigned long address, pte_t *ptep)
+ {
++	update_mmu_tlb_range(vma, address, ptep, 1);
+ }
+-#define __HAVE_ARCH_UPDATE_MMU_TLB
+-#endif
  
- static unsigned get_pte_for_vaddr(unsigned vaddr)
+ /*
+  * Some architectures may be able to avoid expensive synchronization
 -- 
 2.19.1.6.gb485710b
 
