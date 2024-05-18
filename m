@@ -1,147 +1,134 @@
-Return-Path: <linux-kernel+bounces-182753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4008C8F50
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 04:07:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63918C8F53
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 04:12:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27FBF1C21024
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 02:07:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65288282913
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 02:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA456FB0;
-	Sat, 18 May 2024 02:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E92523A;
+	Sat, 18 May 2024 02:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lnMTP/g7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HsbFmIDj"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B42D6FB1;
-	Sat, 18 May 2024 02:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C071A2C10
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 02:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715998054; cv=none; b=tCFASL+AqOHTZxzsdj5yXdij3m3Y3kFzbj+oAI1/lQavXtqcXTzjgiY9h5r7JETmKEcKolfbmaVcUBGLIMR04J+ywSdp+Mn+vB0GVmyrR23k2frnm5YZguOXvpFtZqd9KnksGBRsa+ES4uRLSMddVJln7BYOzTwz6uQyFw3BH64=
+	t=1715998347; cv=none; b=c4V6DpGcw0wVdL57fp9RAOza2GNTRAtI4Lf505EDmCKVkFkZSUpQYosB0IEEmS9OggzdBf1ym7u9PoYuaq5mPicA+fkthQzeddzKLuUxUiFgvV39qauxFxxB7d0jNSivZMcNcZY/2jBwfkTS3wDaayT+vVYUOw5jlE58RhTz0JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715998054; c=relaxed/simple;
-	bh=Oh7sF9OjA0BSp6JAbwwufKhQSAjtCl7i1HcOwVLPdjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=re4jeVd1z44C+tE/FWGxyEr9wSiLDsDIoqRWEFnyK0laZzNLUdZHeNkQN7QLcn6bNAf4nZvCHji1C67jfYLsWvLUNKd7Md9emtYdJxNnf9D6fEDQ0D2aQYD5cI3Tx3KkU2qcc7PYC2DrcXBtbIBXZ7h/1OqcqKEerBlLy5+OyC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lnMTP/g7; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715998053; x=1747534053;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Oh7sF9OjA0BSp6JAbwwufKhQSAjtCl7i1HcOwVLPdjs=;
-  b=lnMTP/g77rbkGHZWVIAvZ6yrsGkkf69uNjAEHFI8BxMVIeIKU2dmjIKo
-   pkI9Jo7eC3dNpGzg91UcOkznESn2K7xUAMIxQKU/ptaC8FlOZdRDQ8z5/
-   6CbvcY723ZcvQcd30z9dAJGoivTajS0YLDYsLZeCuDPb+eAUSMTvdIL7M
-   NW7A3pj5PDP5GOIq+wYxF/tx6ohw6g11oz0CGBMzawov2V2Eq2Me8ylki
-   nBWajxJu4YhD5UKztABvHhWMBG2/N2TK1oUFTNQe6BD6NQa5R1/0IGaLO
-   Drsd2pJ2DBuI7Zz16wid3WO0wcIwxnMBp/HH2XyRjCzs+G5fD1G5MY21k
-   A==;
-X-CSE-ConnectionGUID: Yk2PxUllSsquWEWnhoqEOg==
-X-CSE-MsgGUID: +ExhwQoiQ3a5bFJgHshy3w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="12049162"
-X-IronPort-AV: E=Sophos;i="6.08,169,1712646000"; 
-   d="scan'208";a="12049162"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 19:07:32 -0700
-X-CSE-ConnectionGUID: OB8/0o0zRWyy9XvXY8ofvA==
-X-CSE-MsgGUID: nqKV49kyRam4/ngQRirs2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,169,1712646000"; 
-   d="scan'208";a="32129202"
-Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 17 May 2024 19:07:31 -0700
-Received: from kbuild by 108735ec233b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s89Ts-0001Wu-0d;
-	Sat, 18 May 2024 02:07:28 +0000
-Date: Sat, 18 May 2024 10:06:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lianjie Shi <Lianjie.Shi@amd.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Lianjie Shi <Lianjie.Shi@amd.com>
-Subject: Re: [PATCH 1/1] PCI: Support VF resizable BAR
-Message-ID: <202405180954.pffoQtM9-lkp@intel.com>
-References: <20240516093334.2266599-2-Lianjie.Shi@amd.com>
+	s=arc-20240116; t=1715998347; c=relaxed/simple;
+	bh=wEqb3ugYw+MxkHvbeVUBC21UpY7oQkGhMAEKRg+APOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EmFN5Gy4g5iAlItPrVE9rDHT9677BLWNLHq1pMVW85rAV/RCPvrjIhQi/WpCoBubNnaVg3daVbsZgeccV9qnbLeFdgfLtZSWKcESgEdvhoX0rWc4GomitTjCWS156G1MHRAF4a6ZOsPzDmNsCIFRXd4HFLZz53Vrh8VwwVtQfGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HsbFmIDj; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51f74fa2a82so1490958e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 19:12:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715998342; x=1716603142; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ah/WS4n5Wflso/zVaZ6tliH5iboXt1JXQylb9EYjTRw=;
+        b=HsbFmIDjWZhxtEVMtQlITMspW18X1rWH0msqU0dNI6tBYHYGdRg8jmewH1/mJjGzhi
+         /OiadTzVD6eZiFS1jUwEiHpS7jMWalCzbH8hsFC+DT//0Ahu59TRzpudJBkbfV8Ph55/
+         gjfKp4MFF2uXiD/vAQpFG+EzFwveCisPDNhT0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715998342; x=1716603142;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ah/WS4n5Wflso/zVaZ6tliH5iboXt1JXQylb9EYjTRw=;
+        b=YXF+HYyVj+qkSg+Z5q6aYz+M8es6DFuGC3ip44j/XJu4WuCYSn8n54LcfdOntlWDNU
+         wCT6BpLOwIn+nDpWhsbodlhVLsDXvChs3tCqdaHjcCG5waYH/sQjpYlEdRGit8nonCMU
+         MXwxrBxwED4goPhOAPwQiEKPM3Lh0voQccMAc4ZV1JMgoI6+2dXjJKAYw2pIkbipZCQ8
+         FJyT9isML9z0vageeNR4m53NYbKJ0h+jxJYzkYorpyXIdIA3PNczLsRfUa4+NxdKDIeu
+         +D2aTkSmUUTEeBuLW1CWW/saipN42/IiHLF9BQm6q9FkNwEfcikrbPTCqz7V9+XYvh7h
+         51+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXDiZYxxFqRo8dsiQRjr3sHzob/DHDsmCf6xg2agIsbjMvxSBm8mTQ27remz/PeqaY6UOG/CpSoKXH4+O9E5ZJ8u9GS69clSc1DqTgK
+X-Gm-Message-State: AOJu0YxuGzvNz4mqmQewzfZ9d1neU2uteEKYO+rRbv/KVQfKRlFA5fLb
+	CXk1QGsBOiqxU4tydDnSLT87D8BVpgZhqsLkExbAlIs1tcCOaJ0+uWA7+n+cc3yuTW2+a2iTVK5
+	T5/EKCQ==
+X-Google-Smtp-Source: AGHT+IEENP/98w4OYOeOebjOAh6VPrxXYG23yjw1mFABMq+72XdPlELgQ2PqCAvJ8Y+/LqsgHFHA8w==
+X-Received: by 2002:ac2:4193:0:b0:521:e967:4e77 with SMTP id 2adb3069b0e04-5220fc7c267mr18808720e87.28.1715998342402;
+        Fri, 17 May 2024 19:12:22 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-573413b2ac3sm12266858a12.38.2024.05.17.19.12.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 May 2024 19:12:21 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a5a4bc9578cso490453366b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 19:12:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUM3O0oBq27W3+z02yw6Q88yGc8cpXPUuPLK7DzTO9rdHziIGrgwYNtux4Pcc1faWl1Q0YF1MCkHV/bAb+oN+r5cEByjymG9ikBSbZP
+X-Received: by 2002:a17:906:684a:b0:a59:a64d:c5b9 with SMTP id
+ a640c23a62f3a-a5a2d67635fmr2183610966b.76.1715998341117; Fri, 17 May 2024
+ 19:12:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516093334.2266599-2-Lianjie.Shi@amd.com>
+References: <20240516095216.ac9a0fd13357450cc5f2e491@kernel.org>
+In-Reply-To: <20240516095216.ac9a0fd13357450cc5f2e491@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 17 May 2024 19:12:04 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgQ_MNipb2fOSDmXJ9tYko8OhzA0fPueR-kh6eYT_MbDg@mail.gmail.com>
+Message-ID: <CAHk-=wgQ_MNipb2fOSDmXJ9tYko8OhzA0fPueR-kh6eYT_MbDg@mail.gmail.com>
+Subject: Re: [GIT PULL] probes updates for v6.10
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Jonathan Haslam <jonathan.haslam@gmail.com>, Kui-Feng Lee <thinker.li@gmail.com>, 
+	Stephen Brennan <stephen.s.brennan@oracle.com>, Ye Bin <yebin10@huawei.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Lianjie,
+On Wed, 15 May 2024 at 17:52, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>
+> Probes updates for v6.10:
 
-kernel test robot noticed the following build errors:
+Grr,
 
-[auto build test ERROR on cf87f46fd34d6c19283d9625a7822f20d90b64a4]
+This doesn't even build right.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Lianjie-Shi/PCI-Support-VF-resizable-BAR/20240516-173624
-base:   cf87f46fd34d6c19283d9625a7822f20d90b64a4
-patch link:    https://lore.kernel.org/r/20240516093334.2266599-2-Lianjie.Shi%40amd.com
-patch subject: [PATCH 1/1] PCI: Support VF resizable BAR
-config: i386-randconfig-014-20240518 (https://download.01.org/0day-ci/archive/20240518/202405180954.pffoQtM9-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240518/202405180954.pffoQtM9-lkp@intel.com/reproduce)
+Yes, it builds cleanly in an allmoconfig build, which is what I did
+before I pushed out.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405180954.pffoQtM9-lkp@intel.com/
+But after pushing out, I notice that it doesn't build in more limited
+configurations and with clang, because:
 
-All errors (new ones prefixed by >>):
+> Stephen Brennan (1):
+>       kprobe/ftrace: bail out if ftrace was killed
 
-   ld: drivers/pci/pci.o: in function `pci_restore_vf_rebar_state':
->> drivers/pci/pci.c:1895:(.text+0x3bff): undefined reference to `__udivdi3'
+This is no longer valid C code, and hasn't been for a long long while:
 
+    void kprobe_ftrace_kill()
+    {
+        kprobe_ftrace_disabled = true;
+    }
 
-vim +1895 drivers/pci/pci.c
+we require proper prototypes, not some ancient per-ANSI K&R syntax.
 
-  1869	
-  1870	static void pci_restore_vf_rebar_state(struct pci_dev *pdev)
-  1871	{
-  1872	#ifdef CONFIG_PCI_IOV
-  1873		unsigned int pos, nbars, i;
-  1874		u32 ctrl;
-  1875		u16 total;
-  1876	
-  1877		pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_VF_REBAR);
-  1878		if (!pos)
-  1879			return;
-  1880	
-  1881		pci_read_config_dword(pdev, pos + PCI_REBAR_CTRL, &ctrl);
-  1882		nbars = FIELD_GET(PCI_REBAR_CTRL_NBAR_MASK, ctrl);
-  1883	
-  1884		for (i = 0; i < nbars; i++, pos += 8) {
-  1885			struct resource *res;
-  1886			int bar_idx, size;
-  1887	
-  1888			pci_read_config_dword(pdev, pos + PCI_REBAR_CTRL, &ctrl);
-  1889			bar_idx = ctrl & PCI_REBAR_CTRL_BAR_IDX;
-  1890			total = pdev->sriov->total_VFs;
-  1891			if (!total)
-  1892				return;
-  1893	
-  1894			res = pdev->resource + bar_idx + PCI_IOV_RESOURCES;
-> 1895			size = pci_rebar_bytes_to_size(resource_size(res) / total);
-  1896			ctrl &= ~PCI_REBAR_CTRL_BAR_SIZE;
-  1897			ctrl |= FIELD_PREP(PCI_REBAR_CTRL_BAR_SIZE, size);
-  1898			pci_write_config_dword(pdev, pos + PCI_REBAR_CTRL, ctrl);
-  1899		}
-  1900	#endif
-  1901	}
-  1902	
+It turns out that gcc apparently still accepts these things, but it
+really shouldn't. But with a clang build, you get a big error:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+    kernel/kprobes.c:1140:24: error: a function declaration without a
+prototype is deprecated in all versions of C
+[-Werror,-Wstrict-prototypes]
+
+and the reason it didn't get noticed in -next is that this commit had
+apparently not *been* in linux-next.
+
+Dammit, that's now how any of this is supposed to work.
+
+Why was this untested crap sent to me?
+
+              Linus
 
