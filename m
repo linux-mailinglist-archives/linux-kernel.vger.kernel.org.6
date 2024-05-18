@@ -1,288 +1,161 @@
-Return-Path: <linux-kernel+bounces-182894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6565F8C916C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 16:18:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E2A8C9173
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 16:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 899DB1C20CED
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:18:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFEB7B213E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC83A4436E;
-	Sat, 18 May 2024 14:18:39 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97883F9CC;
+	Sat, 18 May 2024 14:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpYoODkd"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9373B1AB
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 14:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9BE125CC
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 14:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716041919; cv=none; b=hkvJT0glx8kd0JEGvjX3NjT6I137Nd9ELFeBsI3+i+k6GYgX9B2sfnU6NGdpQcLR8n2n7t/udDWIqkb1Pezdw4wPDCTllDqnNfC2WAXUQBdAMeQeBLF3EqnGwyHX2PMENQ6mDZCJOgwUSLmYfH+EMPKmKot2+k0NC+eWYhruxwI=
+	t=1716043068; cv=none; b=rM4ikVBNMhU1UCO1LLNFmlai2z7k87PWL8GyWVDeeJmdY9UxEmtasT8olrE+7BhuiDsxQmAdpSWxnpkDldxnqo1lKr4b9oa1wzoCRkbZ8UJt43k0E7idVXwd5huS38qu2OWxgsz7JwtQICEri2zim8MqXSEEuHWx0TIPDgxDQpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716041919; c=relaxed/simple;
-	bh=bkOtlhAGwGu5qV1jeigsH45EaGJCKIRA44rktLHO/0E=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZT6S/Jtr6806wm7K8KkP51GIaO3ebxhqOa06XEynWs9WcZ1ce/fEWFkH6T8ABL4V79xjisDGnSKV9fgdeR2HcFt7yjeW0Z9YpT5dX0Ca4lv5h9wxhejWWgMWDr7EepOJjOe4MYaxa5qNc/phzGusBloRSa/+XQ8NNbhv6YJOZSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e17b6ec827so927695239f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 07:18:37 -0700 (PDT)
+	s=arc-20240116; t=1716043068; c=relaxed/simple;
+	bh=7OkjQ0L79LzNPtTFobFn/mgjZvvIp7YvqAVVik9RRyY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=vGCR9VAunjEYQddgZiyyFSCxqT0+zTr79np9OhzBZH+WgaYtpAl249EtrfplED0NR/T9yCB51aowSBI9N/xsyb22d3guldI2P5eh3KpUsBRgNLb+9275HhZOX8HRtl2svLXTSMe76IY/g55zb1KeA4cbEZCaYeqFToRFc0rv8Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CpYoODkd; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1eeabda8590so33978745ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 07:37:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716043066; x=1716647866; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=FKsSBBFxiA0ly77raLTlMP1yScB2JsDo1G9Qw1p73GY=;
+        b=CpYoODkdcrK2h/AACWuDxz1ff2r/8CyLzHluQ5PY3u5AbspK+bn8HLvjnpX7aZlF0T
+         1swHtjnK3y03Cm0cA6jUAQxfP2ix9Txn5u/nw10rkK5IR7stFSlRDcv3LWsqdoAFH3hx
+         osUHgbDdIY0cDoEoAYzZ0cbTlLlJHfx16Dx/EbwYIAA7RbR6hfAG5t1djR5Q3XMT3IMj
+         /iPvfD4jF4RwVo+sa6m54A2Z3BAudZkicqvf1tMc4X4OD+YQhCU0YnvB0drdcilkXVOR
+         Zwp7+h18Rt2MGDxEoizue6kA9oe4Z4bWRUvBrt9CLqXvW4TkIKeFkcRZde9zMivzSRJ+
+         mFew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716041916; x=1716646716;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Td8n7eAsFg5U1JlLsiDY9FO/9R6VpwwWeYUXdaRq1kU=;
-        b=Qj2r4+n8fYGe8ZtaGI2dPbgei+lGYev1TPIfE+R0HqQu6cbqiL3LpUuYG736ZAnjbH
-         0Os61VI5jF9JpcthNg0OyCWjTzmVIqx4O0RrkbDxmPCycc5bGNUNo2wsO/yw90YUh+vx
-         DEadQ+tVVO06oheCIN/avHgGbQpQ+akszHVm9kF/Q5BtksY3lSjH5PHmfDnHZFllRfgS
-         ZDBS6/+oJNtFZyCmuIRZobCWmTr5Ji1fxlFdg6Url/fiE06wqeGw8viOFYMoUCQBXMOG
-         YAKTo1jixIRiWSH7LDKnkmAjNp+dWS1RB5WKEE5iZl/ZVwryqcXkTFD5gTSK+OCY+yE+
-         HeDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUh2NmTB+Ds4prnXDCvaeg33G4stOI/mgU1/+LU3mcYx/NB+T8Euz8cnh9CSuOGbBfS+OyeLUpVzshLW4/f3nvjqFqUmXQLYtlGpsXk
-X-Gm-Message-State: AOJu0YyqAi11kEpdkeJm3jHpOnpAZV7ED/VhNVaXzx3/7azd4iueJUfT
-	64H8cy3nMYnOCwNS2z8D3QSL59JKo+BEGDM7vdfZPYKJ8xlLJk7kSff+ABw+PDLGpacTOLAyACA
-	yoKSSfKePIHPFUDU9XfXnoEE9Tq167TFBn/l/jXvqE79/gzRFv9nPMcU=
-X-Google-Smtp-Source: AGHT+IEqcBdOsLYXbAyX0XV4aY9pAgMxg2QKn4hAmvYKfRkwpWT6VyomsrjiuKoIpV5IZKepQ/Gj3S3wUdSjF4MCowXo1TkaB68y
+        d=1e100.net; s=20230601; t=1716043066; x=1716647866;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FKsSBBFxiA0ly77raLTlMP1yScB2JsDo1G9Qw1p73GY=;
+        b=aDK3i7mxDtfw6HKg8g9L1J0EKE++PzIHxD5tbnc/v2jv4K2p3oY8qLSorxMZ0hPM0j
+         wrQLG/oMi738sn+bF90a2ClQmJ9l8JWJ/pddX17hQ3m45pAJj84fOH9GGvO5BnEJzlSa
+         qTLhzsj9CDL7mEtPUtQu8CrBuga30+Ayabk8R1Mto4HnjyGdOcE0wmdiJDWp3eu+EIuu
+         oeBffrBeduVcvlAz+BerVJhac7GTiMPJ2nHPPfFqD2jJaY/TQeoPW+YMAV7OGDlR0uV5
+         hOuPdI2X9uJheQZRDtaeYIYwgYvx6juozBnn7sePqOfkdkrLL5uktxJlJRvZcb8adOgG
+         4IAA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2cw8Hbq5hxvoCZAZ/ou6K7Xufo3Lw0fsZVGeBX/pMfPG8Rw4jMbsqBo73P1Pfikx5BlFS+OPiRxQv/J83Iln+PveuWFH/9VxUonMY
+X-Gm-Message-State: AOJu0YwyAPrKdacmKS/DwndS6Kv8M8bDK7QtoJpUIiM7VDEt4RIXj13y
+	9i0kgGmdV9AS+9Hjd1kU+IhoqWevugT2th67CD7nyAZ9H9unku1q
+X-Google-Smtp-Source: AGHT+IEU3d5YrWonxdjaRa3pMlUejZK6T/8P9yb9msWLq7aHGLOolYZGTo5U9Gm+a0ELvmk9ix2KMA==
+X-Received: by 2002:a17:902:ecd2:b0:1e3:cf2b:7151 with SMTP id d9443c01a7336-1ef441a6e2cmr283064855ad.59.1716043066561;
+        Sat, 18 May 2024 07:37:46 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bbde9d7sm178417435ad.106.2024.05.18.07.37.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 May 2024 07:37:45 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: David Airlie <airlied@gmail.com>
+Cc: Karol Herbst <kherbst@redhat.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH] drm/nouveau/nvif: Avoid build error due to potential integer overflows
+Date: Sat, 18 May 2024 07:37:43 -0700
+Message-Id: <20240518143743.313872-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13c3:b0:36d:b197:70c1 with SMTP id
- e9e14a558f8ab-36dd09a5911mr410415ab.0.1716041916750; Sat, 18 May 2024
- 07:18:36 -0700 (PDT)
-Date: Sat, 18 May 2024 07:18:36 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000de2ee50618bb2490@google.com>
-Subject: [syzbot] [input?] possible deadlock in evdev_cleanup (2)
-From: syzbot <syzbot+77a2ec57108df22d5c63@syzkaller.appspotmail.com>
-To: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Trying to build parisc:allmodconfig with gcc 12.x or later results
+in the following build error.
 
-syzbot found the following issue on:
+drivers/gpu/drm/nouveau/nvif/object.c: In function 'nvif_object_mthd':
+drivers/gpu/drm/nouveau/nvif/object.c:161:9: error:
+	'memcpy' accessing 4294967264 or more bytes at offsets 0 and 32 overlaps 6442450881 bytes at offset -2147483617 [-Werror=restrict]
+  161 |         memcpy(data, args->mthd.data, size);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/gpu/drm/nouveau/nvif/object.c: In function 'nvif_object_ctor':
+drivers/gpu/drm/nouveau/nvif/object.c:298:17: error:
+	'memcpy' accessing 4294967240 or more bytes at offsets 0 and 56 overlaps 6442450833 bytes at offset -2147483593 [-Werror=restrict]
+  298 |                 memcpy(data, args->new.data, size);
 
-HEAD commit:    fda5695d692c Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=14de17c0980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=95dc1de8407c7270
-dashboard link: https://syzkaller.appspot.com/bug?extid=77a2ec57108df22d5c63
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10298620980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=134d3182980000
+gcc assumes that 'sizeof(*args) + size' can overflow, which would result
+in the problem.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/07f3214ff0d9/disk-fda5695d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/70e2e2c864e8/vmlinux-fda5695d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b259942a16dc/Image-fda5695d.gz.xz
+The problem is not new, only it is now no longer a warning but an error since W=1
+has been enabled for the drm subsystem and since Werror is enabled for test builds.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+77a2ec57108df22d5c63@syzkaller.appspotmail.com
+Rearrange arithmetic and add extra size checks to avoid the overflow.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.9.0-rc7-syzkaller-gfda5695d692c #0 Not tainted
-------------------------------------------------------
-syz-executor144/6248 is trying to acquire lock:
-ffff0000d6b65110 (&evdev->mutex){+.+.}-{3:3}, at: evdev_mark_dead drivers/input/evdev.c:1314 [inline]
-ffff0000d6b65110 (&evdev->mutex){+.+.}-{3:3}, at: evdev_cleanup+0x38/0x16c drivers/input/evdev.c:1323
-
-but task is already holding lock:
-ffff800090ffb888 (input_mutex){+.+.}-{3:3}, at: __input_unregister_device+0x2a4/0x5c0 drivers/input/input.c:2219
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (input_mutex){+.+.}-{3:3}:
-       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
-       __mutex_lock kernel/locking/mutex.c:752 [inline]
-       mutex_lock_interruptible_nested+0x2c/0x38 kernel/locking/mutex.c:826
-       input_register_device+0x8dc/0xde8 drivers/input/input.c:2389
-       uinput_create_device+0x360/0x528 drivers/input/misc/uinput.c:365
-       uinput_ioctl_handler+0x8b0/0x16c0 drivers/input/misc/uinput.c:904
-       uinput_ioctl+0x38/0x4c drivers/input/misc/uinput.c:1075
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:904 [inline]
-       __se_sys_ioctl fs/ioctl.c:890 [inline]
-       __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:890
-       __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #2 (&newdev->mutex){+.+.}-{3:3}:
-       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
-       __mutex_lock kernel/locking/mutex.c:752 [inline]
-       mutex_lock_interruptible_nested+0x2c/0x38 kernel/locking/mutex.c:826
-       uinput_request_send drivers/input/misc/uinput.c:151 [inline]
-       uinput_request_submit+0x188/0x654 drivers/input/misc/uinput.c:182
-       uinput_dev_upload_effect+0x170/0x218 drivers/input/misc/uinput.c:257
-       input_ff_upload+0x49c/0x834 drivers/input/ff-core.c:150
-       evdev_do_ioctl drivers/input/evdev.c:1183 [inline]
-       evdev_ioctl_handler+0x1fd0/0x2d58 drivers/input/evdev.c:1272
-       evdev_ioctl+0x38/0x4c drivers/input/evdev.c:1281
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:904 [inline]
-       __se_sys_ioctl fs/ioctl.c:890 [inline]
-       __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:890
-       __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #1 (&ff->mutex){+.+.}-{3:3}:
-       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
-       __mutex_lock kernel/locking/mutex.c:752 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
-       input_ff_upload+0x31c/0x834 drivers/input/ff-core.c:120
-       evdev_do_ioctl drivers/input/evdev.c:1183 [inline]
-       evdev_ioctl_handler+0x1fd0/0x2d58 drivers/input/evdev.c:1272
-       evdev_ioctl+0x38/0x4c drivers/input/evdev.c:1281
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:904 [inline]
-       __se_sys_ioctl fs/ioctl.c:890 [inline]
-       __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:890
-       __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #0 (&evdev->mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain kernel/locking/lockdep.c:3869 [inline]
-       __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
-       lock_acquire+0x248/0x73c kernel/locking/lockdep.c:5754
-       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
-       __mutex_lock kernel/locking/mutex.c:752 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
-       evdev_mark_dead drivers/input/evdev.c:1314 [inline]
-       evdev_cleanup+0x38/0x16c drivers/input/evdev.c:1323
-       evdev_disconnect+0x58/0xc0 drivers/input/evdev.c:1407
-       __input_unregister_device+0x31c/0x5c0 drivers/input/input.c:2222
-       input_unregister_device+0xb0/0xfc drivers/input/input.c:2440
-       uinput_destroy_device+0x5a4/0x79c drivers/input/misc/uinput.c:299
-       uinput_release+0x44/0x60 drivers/input/misc/uinput.c:744
-       __fput+0x30c/0x738 fs/file_table.c:422
-       ____fput+0x20/0x30 fs/file_table.c:450
-       task_work_run+0x230/0x2e0 kernel/task_work.c:180
-       exit_task_work include/linux/task_work.h:38 [inline]
-       do_exit+0x4e4/0x1ac8 kernel/exit.c:878
-       do_group_exit+0x194/0x22c kernel/exit.c:1027
-       __do_sys_exit_group kernel/exit.c:1038 [inline]
-       __se_sys_exit_group kernel/exit.c:1036 [inline]
-       pid_child_should_wake+0x0/0x1dc kernel/exit.c:1036
-       __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-other info that might help us debug this:
-
-Chain exists of:
-  &evdev->mutex --> &newdev->mutex --> input_mutex
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(input_mutex);
-                               lock(&newdev->mutex);
-                               lock(input_mutex);
-  lock(&evdev->mutex);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor144/6248:
- #0: ffff800090ffb888 (input_mutex){+.+.}-{3:3}, at: __input_unregister_device+0x2a4/0x5c0 drivers/input/input.c:2219
-
-stack backtrace:
-CPU: 0 PID: 6248 Comm: syz-executor144 Not tainted 6.9.0-rc7-syzkaller-gfda5695d692c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
- dump_stack+0x1c/0x28 lib/dump_stack.c:123
- print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2060
- check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain kernel/locking/lockdep.c:3869 [inline]
- __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
- lock_acquire+0x248/0x73c kernel/locking/lockdep.c:5754
- __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
- __mutex_lock kernel/locking/mutex.c:752 [inline]
- mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
- evdev_mark_dead drivers/input/evdev.c:1314 [inline]
- evdev_cleanup+0x38/0x16c drivers/input/evdev.c:1323
- evdev_disconnect+0x58/0xc0 drivers/input/evdev.c:1407
- __input_unregister_device+0x31c/0x5c0 drivers/input/input.c:2222
- input_unregister_device+0xb0/0xfc drivers/input/input.c:2440
- uinput_destroy_device+0x5a4/0x79c drivers/input/misc/uinput.c:299
- uinput_release+0x44/0x60 drivers/input/misc/uinput.c:744
- __fput+0x30c/0x738 fs/file_table.c:422
- ____fput+0x20/0x30 fs/file_table.c:450
- task_work_run+0x230/0x2e0 kernel/task_work.c:180
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0x4e4/0x1ac8 kernel/exit.c:878
- do_group_exit+0x194/0x22c kernel/exit.c:1027
- __do_sys_exit_group kernel/exit.c:1038 [inline]
- __se_sys_exit_group kernel/exit.c:1036 [inline]
- pid_child_should_wake+0x0/0x1dc kernel/exit.c:1036
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-
+Fixes: a61ddb4393ad ("drm: enable (most) W=1 warnings by default across the subsystem")
+Cc: Javier Martinez Canillas <javierm@redhat.com>
+Cc: Jani Nikula <jani.nikula@intel.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Danilo Krummrich <dakr@redhat.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+checkpatch complains about the line length in the description and the (pre-existing)
+assignlemts in if conditions, but I did not want to split lines in the description
+or rearrange the code further.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I don't know why I only see the problem with parisc builds (at least so far).
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ drivers/gpu/drm/nouveau/nvif/object.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+diff --git a/drivers/gpu/drm/nouveau/nvif/object.c b/drivers/gpu/drm/nouveau/nvif/object.c
+index 4d1aaee8fe15..baf623a48874 100644
+--- a/drivers/gpu/drm/nouveau/nvif/object.c
++++ b/drivers/gpu/drm/nouveau/nvif/object.c
+@@ -145,8 +145,9 @@ nvif_object_mthd(struct nvif_object *object, u32 mthd, void *data, u32 size)
+ 	u8 stack[128];
+ 	int ret;
+ 
+-	if (sizeof(*args) + size > sizeof(stack)) {
+-		if (!(args = kmalloc(sizeof(*args) + size, GFP_KERNEL)))
++	if (size > sizeof(stack) - sizeof(*args)) {
++		if (size > INT_MAX ||
++		    !(args = kmalloc(sizeof(*args) + size, GFP_KERNEL)))
+ 			return -ENOMEM;
+ 	} else {
+ 		args = (void *)stack;
+@@ -276,7 +277,8 @@ nvif_object_ctor(struct nvif_object *parent, const char *name, u32 handle,
+ 	object->map.size = 0;
+ 
+ 	if (parent) {
+-		if (!(args = kmalloc(sizeof(*args) + size, GFP_KERNEL))) {
++		if (size > INT_MAX ||
++		    !(args = kmalloc(sizeof(*args) + size, GFP_KERNEL))) {
+ 			nvif_object_dtor(object);
+ 			return -ENOMEM;
+ 		}
+-- 
+2.39.2
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
