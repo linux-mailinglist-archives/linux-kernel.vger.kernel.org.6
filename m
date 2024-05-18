@@ -1,183 +1,177 @@
-Return-Path: <linux-kernel+bounces-182959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DCA68C923F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 22:38:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 695978C9242
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 22:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8D11F21851
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:38:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8C98B21417
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84BEDDDA;
-	Sat, 18 May 2024 20:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27B369D31;
+	Sat, 18 May 2024 20:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ke0JLKnW"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t6pwTSCt"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610B847F7F
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 20:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57629DDDA
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 20:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716064696; cv=none; b=joF56g8DQma8XlHULRvBTuanzyyv6X+P6b0n5NtP51zBv4SDnoYY3rl6QDop2bZ83KoLAFmDd3qyQcOX2xBNAkNrIa9nLYyeipZseNQqBU+zoj6KGishka2z2X0aPacQrwTmXEHDhNLlv3TR3eoXYhrlRyZ4+PGwE2ApVLTGmlo=
+	t=1716064768; cv=none; b=Nsdrei1KeewWVvOKv1JOnV66Rbu0rwakpnGTSQDqhE7cmlPFZUM0Ym/yE/uNEFoo0dp5ModXhtT9uzwQ71TMw2sPTzego1SdEC+9kFghZYmJBYaFcIm/I6+oYDRZNFmih+VQ5bV2V1u18LW9BhFod5UyqjQ60mt87shmjCfS5AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716064696; c=relaxed/simple;
-	bh=01zNubNyHLCBFC9cwXGJVCP4EBPigYzZv0FqU8MlwEc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aI57tScuy45klmux1sk/x/5pMmYq54Y3NhTcqEuLd3bXieCNkpkYUQhNlvXIK5yZpHNN2oKTasMopXojtMj46MbCHrA/Cjm1nk80jJ6KiaYFDNXCwV2JB54WAE/XnWPM6fp+4m/nyjxdVxaB+G+FOVCQbL2nHR+G4PwIrhmi+zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ke0JLKnW; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1716064768; c=relaxed/simple;
+	bh=XcMhQfN7Am8zKPX5i+5RIQbwFF3FyxQ9Q8yVI5QcFss=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uUToYiMl4UWB22CDdol1E65V8qMFHa4iV55N9U/sAxC6fz3HOdJ79prlTDoP0Op7yVvBPbQ3JcIIyk8N2v4kjppvexP0sVomfjeR5ZvUQ1VDcm1M6n0H+QBZiF8RVtstVQC/cTaT8m2wujswZ1PfZvSaNPQgcWoZOzq9Mvbcb7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t6pwTSCt; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a609dd3fso783111266b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 13:38:13 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-574bf7ab218so6461054a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 13:39:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716064692; x=1716669492; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yc3ZIpbjd8JcSrRdvi0o4/daAmqRZmXKwikEyzxCLNM=;
-        b=Ke0JLKnWDdv4ZeS45sKcPsehxDFtT9yWgPnurcPMGQRrE8npXSpYyxWN6MIuBC9U4C
-         tH94RBPNqyl6slxNsZ0GMHOpg60HCFs8JmxcbnsvCbZQ0Nw7LcJU7XiGjT2eCQecW7Sr
-         x6z1FLkvEiYoUW4CpkZZ+/wN7Ll+ij0sBOp5V81+ysLn4fW7WZKADeYMVZsBV7DKEtbW
-         leQjZbuI+fXXrMXDUzCFkiEVrVn96MT+oPzJsvb4CL5ZnejcAulOuKh9aO62kqmBwFkq
-         q3jfQnoePNd9/CgPAwPLXXGkj1hEPjwNauTVFK1n3326kWcHE1ArIxomdGrsy5tHCWQg
-         Lsrg==
+        d=linaro.org; s=google; t=1716064766; x=1716669566; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vra2zeL7tZNPCyev4soGTccFuRymfpD1WOFRkTQfoJU=;
+        b=t6pwTSCtICbiMwkg5XYPWMehI6XWlTAYlhbyr0xpHrwu+2r7AnObyIbt7gakYLV8iA
+         MB4iQm6piRr8aLPdhE06d0r8VMTTAdhlXio1zhv5tJ0Fgze6JjBEbua/jEmKboXQpbiB
+         dSiyMEttujX/epfiG4rUi3lf39n1qLKs9I6HSD1Yw9oGH2RRpd70yMUFeDhe3SQx8Khv
+         Q/CQCgHBG3okELIULj9AYYJrQjd57ktZhNh//yjs0osSUGRTNc0pFOTaaz70H6X3SjjY
+         2iuht0xrVOqNvH7apbRm8+EU98GbthvJRCtwLuFfjkwyJoxbr+KPndrUsmf18uOuTF6c
+         tC6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716064692; x=1716669492;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1716064766; x=1716669566;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Yc3ZIpbjd8JcSrRdvi0o4/daAmqRZmXKwikEyzxCLNM=;
-        b=uLi+Du49Rg2qmT4X1fOWaYQnMAIAYQNzEbTUweLvU1x/XrHg3CokIKJ1XWpyg1ptS+
-         oiE7Rnt40IcpowF6iRKcFODXzXYvPMGB2Ik8EnEp4c7UlnfNRyB6qC4qsPV3etH6PBkw
-         YvJV5zuPwYuqdA6bWY9Hh0+pZWvva7TSw9CA460i2T/gVee1eelsxgnfvNXtqDvJQ0Ar
-         2rMJNGAnsZ64FU3KTujmrbHL+IZmXQE4hOhasnDnN1B2oDH/5HU3siB1RwPb+dfCiD+0
-         3uxVXJQJ34I+FLR68FT6y2Bhb3YB9RCpqSnOKwHGbTQE6S5yMNg238rO+Js2VWvx+ho8
-         FAjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcp2YlZ7DpwWB0cLDRt3le/neb0DSyon4R0Fje4WbEX48ALIyGiYoG4eKIkKfvSFI6+UKKibm7zwFt22kyU0XXM0gW10VakBtEG/RY
-X-Gm-Message-State: AOJu0YxCdFhlqERJWRJgaVXTVsy4otFz2iyLCMn+5o4174aAod7nImJ8
-	fh4VCCiDajb/kBZ5fYL6ZfuXnPLszEfDqaYM/UYiV7uCxpcRcyam21rwsi5s2hI=
-X-Google-Smtp-Source: AGHT+IFR7Fk6ynIa8nZCr/mNfS4JPisDqPqjiipaPLM8Li/X/4U8310uoUxs21M+pDR20escqFvcRw==
-X-Received: by 2002:a17:907:9919:b0:a5a:8673:cccd with SMTP id a640c23a62f3a-a5d5c8270d0mr234923566b.30.1716064691732;
-        Sat, 18 May 2024 13:38:11 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17cd0sm1250324666b.214.2024.05.18.13.38.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 May 2024 13:38:11 -0700 (PDT)
-Message-ID: <5e8fc1da-b340-4c1f-a904-826685bcbb61@linaro.org>
-Date: Sat, 18 May 2024 22:38:09 +0200
+        bh=vra2zeL7tZNPCyev4soGTccFuRymfpD1WOFRkTQfoJU=;
+        b=wEN2WJtZLIVG9WjqLi1m1guf/rPvBpFzu/4oqlCGyAw4vR9YLcJOHlcHmijLR3qpvh
+         kr/DDNbcuOC8ZDywt7NH2/ZcmWy6gvCnz0CXUtw5ZiEINwlNxIWlzHL/i23ZM/VLu5Xx
+         +AwX8C7GgnpE0p6Fa+LIKZ4Ol+nQWzt12sDnATwAc7fa/j66gR+jU4QOTUTJIRDiGl27
+         OP/XQrrzyMcQpYTYQXqU3uM+8BGr3iy4b+/swaPmfioiUZuakTWsR9BnecvCynxJOzZp
+         fTuxp+kJYzPYHHWGWTK+NHz95IVm74sJXGW52EkzC2bVVPAPJQhr/cnrLHmmGjK6sWqE
+         RKQw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1W0WmJ+7sK3lwFTw2swFP2NfpaFIspofX3lpWYrMqvcSv+qjz8xsYpRVxkGr0rW7ILPkoKlLvl0Vd0MroFJ+TYGbT7bYjh4aDQc2j
+X-Gm-Message-State: AOJu0YyYfKgVDNk9oVZI6OOhv8J5feDFRExZFQlTNSticfUf5ZqfWbhS
+	FVpTrZakHTzvfusL+mjb76cYatcbFVpsXZ0FKVZs9rxToeBsLwrTvlVr0NFAmyg=
+X-Google-Smtp-Source: AGHT+IHwxt3y3qbfk5PrbEW7Ji1FqvmX1SLB2RJGTBIAQusDHgQ50K6ImMA2W5PaqD7Uk3W7mRaD3A==
+X-Received: by 2002:a17:906:3154:b0:a5c:d694:bb33 with SMTP id a640c23a62f3a-a5cd694c6a6mr707249666b.45.1716064765707;
+        Sat, 18 May 2024 13:39:25 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a90d0e919sm529625866b.85.2024.05.18.13.39.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 May 2024 13:39:25 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH 1/2] dt-bindings: arm: arm,juno-fpga-apb-regs: document FPGA syscon
+Date: Sat, 18 May 2024 22:39:02 +0200
+Message-ID: <20240518203903.119608-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: gpio: gpio-zevio: convert to dtschema
-To: Pratik Farkase <pratikfarkase94@gmail.com>
-Cc: Pratik Farkase <pratik.farkase@wsisweden.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240518182139.22623-1-pratik.farkase@wsisweden.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240518182139.22623-1-pratik.farkase@wsisweden.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 18/05/2024 20:21, Pratik Farkase wrote:
-> Convert Zevio GPIO Controller from text to dtschema.
-> 
-> Signed-off-by: Pratik Farkase <pratik.farkase@wsisweden.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-zevio.txt   | 16 --------
->  .../devicetree/bindings/gpio/gpio-zevio.yaml  | 41 +++++++++++++++++++
+Add dedicated bindings for the FPGA syscon registers on ARM Juno board,
+to fully document the block and also fix dtbs_check warning:
 
-Use compatible as filename.
+  juno.dtb: apbregs@10000: compatible: ['syscon', 'simple-mfd'] is too short
 
->  2 files changed, 41 insertions(+), 16 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.txt
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.yaml
-> 
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-..
+---
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  gpio-controller: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#gpio-cells"
-> +  - gpio-controller
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +      gpio@90000000 {
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+ .../bindings/arm/arm,juno-fpga-apb-regs.yaml  | 61 +++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/arm,juno-fpga-apb-regs.yaml
 
-Misaligned/indented. Just use 4 space indentation for the example.
-
-
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/arm/arm,juno-fpga-apb-regs.yaml b/Documentation/devicetree/bindings/arm/arm,juno-fpga-apb-regs.yaml
+new file mode 100644
+index 000000000000..97a7a6281d62
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/arm,juno-fpga-apb-regs.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/arm,juno-fpga-apb-regs.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ARM Juno FPGA APB Registers
++
++maintainers:
++  - Linus Walleij <linus.walleij@linaro.org>
++
++properties:
++  compatible:
++    items:
++      - const: arm,juno-fpga-apb-regs
++      - const: syscon
++      - const: simple-mfd
++
++  reg:
++    maxItems: 1
++
++  ranges: true
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 1
++
++patternProperties:
++  "^led@[0-9a-f]+,[0-9a-f]$":
++    $ref: /schemas/leds/register-bit-led.yaml#
++
++required:
++  - compatible
++  - reg
++  - ranges
++  - "#address-cells"
++  - "#size-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    syscon@10000 {
++        compatible = "arm,juno-fpga-apb-regs", "syscon", "simple-mfd";
++        reg = <0x010000 0x1000>;
++        ranges = <0x0 0x10000 0x1000>;
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        led@8,0 {
++            compatible = "register-bit-led";
++            reg = <0x08 0x04>;
++            offset = <0x08>;
++            mask = <0x01>;
++            label = "vexpress:0";
++            linux,default-trigger = "heartbeat";
++            default-state = "on";
++        };
++    };
+-- 
+2.43.0
 
 
