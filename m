@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-182722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37DBC8C8ED6
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 02:17:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923688C8EDA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 02:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4BF01F2247B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:17:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03B7AB21A21
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81B529A2;
-	Sat, 18 May 2024 00:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C49A323D;
+	Sat, 18 May 2024 00:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UStHqVo3"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lMUePSnb"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5C336C
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 00:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5127E653
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 00:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715991423; cv=none; b=tVQhcpHwVVW1dGa0W/I7sBsINX+/lXpT/alQDE6Dh9WD96jKmx76XEwdK5h0RJv+TG5tm5zxzNHSIOcdpERwYW/30+W0lxh202wYBP0c6psWsLAwd/SjDbgdW6frkPlkrFDqZsPBA+i9/oIBp9sEAeciC5B5dl2KGdElK/jNiDI=
+	t=1715991442; cv=none; b=c+0LNf+kWn9xuOuHStv2STcPLd2VD7JRqBnjSoWvTlS/wN1xdOQSjpSpRnWadU/t3ClVi12Ez+tKEDdxIXjj7+EXc2uATuxrGmB8hAV0VHT+Mc4NRZhXJKWD/uaOfaYRc0sei0X32RaL4QrLsZA0D76lQ3k0I847q0B5ctwiP18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715991423; c=relaxed/simple;
-	bh=psb/9cAnhp+Xzaq8lXVTJ+5ogfgNeGdZpdDamrOEPi8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EEEY/LEvojZo/FAo/7OpPau61sxnAbbfpG/s0emEOWVybbVF4eiBIDbm1yOmrhwE/ZbOR2NdwBUSleZs4Lgni8kiEnS4Qp8sz+KRwET8miQdvCOJzEoR3FgjKu4MJqatI+vLJuL9MdN4yUA+RWvADKV4WEKNAq0I97f2GR68zrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UStHqVo3; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1715991442; c=relaxed/simple;
+	bh=Ns+G8cIhe6RmVb+HVSbykTeCqAmMxrZ97rwaVohwt5Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Yz7Xxi8vbPN7QvmBOUz82b/TGka8CmO9uZWzMPFMaF/YkiOkJKTPonJCERLpz1fAZBMD3t2GU4tZrIyraXeHEcgIFbN01f8sl+Axk4CEfQ2YIsyJEv7EtF+yJo2qov3k7p4XPlG0/5aawVIblv7Gv/4RscREfDP3E2AG8WXfFjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lMUePSnb; arc=none smtp.client-ip=209.85.167.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ee38966529so8205385ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:17:02 -0700 (PDT)
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3c9cc66c649so729929b6e.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:17:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715991422; x=1716596222; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1715991440; x=1716596240; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=irkVL93e2r7C0Hy5+trw8pmsG8779sgzCHeX9n3CiN0=;
-        b=UStHqVo3wPfQ6HcIsDMF5je4Krpa6DYNHvc+Mt2pIrNdhO+8Xg+4dyqNWpt+5z7h9B
-         OnhYLqPbmpstanrboHbljEM5WcDuZFHRrsmpr6eY+EMv3SOI+9vqApWyI0gbywmC5Ayo
-         /qrUvWWX6cr9JfMnBPf9vcObNemy1ZLY+W90w=
+        bh=Y9uz2Ul+URJ48Z5Jx7gMVO+5xGSwUIqgOXMNbHju8Pw=;
+        b=lMUePSnb4ZLjYlwcRNMrOv9l6chcHbRsetb85sTqYaY6R0uPklcW4TEvq6d4pb9UZQ
+         xg/U9TPqPtDAY2edJ3GnBmcHKnK4DTIdE6OiATD1ZUI5HPozJGnJmhgq1muZ5EO4TTvg
+         vmD2ADVwkiKkyYU8BFtmmiGmWqwTAvVMRuf64=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715991422; x=1716596222;
+        d=1e100.net; s=20230601; t=1715991440; x=1716596240;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=irkVL93e2r7C0Hy5+trw8pmsG8779sgzCHeX9n3CiN0=;
-        b=Qi8DkgI9JNi8o4+65hp0V5sjCL2t7/IvdtVZSK0gqLAW0Lb8xFeGcBfCBipdtzkHMq
-         RRPh5VPuPqhe887Fdv0MxeqqxCZp8RkfPQE44MS0+dyF+uOWDKKmK5o3XzzkA+KKUoFh
-         Vx53JvT2LSAWnB/sNL6nq+Ywh5qfzcTkJWVqbGx3qh7VeJMF2sxgDxkXxWSiTliYJzaI
-         hbnIrms6XiVhdHNC5WmFsSiE8KX5/uxA9pJpIBv3bkJGThhnlh00QeJpXbRNTFEC5fx5
-         qMeIENP4mbikF5menlPZ61F/KnWKc47+HiFrhQK6bX0aBwfU8xuMhDbJ4QNJPGKvq7xE
-         xhtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfXivm6WLZAaOWgno3s2FnVu4KDxZetzF3wvmH95ViwD8ForX38mF4ENWF/kFvi16xqLTCRsjTMM/1aVkBPWfcaVRtY02YuQlS5ra2
-X-Gm-Message-State: AOJu0Yy6oZImfcXPN/kS5aESAmB3XdAmhIERdP28qIr3nf1FEayJ2R2G
-	lBELuyaMfUO+QG5I8vyeKQPFE3ntH2/wohLKJV0VA6oMPZlW4XXgNBm7aFd59A==
-X-Google-Smtp-Source: AGHT+IGFPQYGhMI5mu4WIG762rhacma10jrth4Odmj51T3CbNjI91oKmi+chX3KkEDy/JeJ4Brsldg==
-X-Received: by 2002:a17:902:e752:b0:1e5:5760:a6c1 with SMTP id d9443c01a7336-1f2ed2ebe08mr7151825ad.21.1715991421580;
-        Fri, 17 May 2024 17:17:01 -0700 (PDT)
+        bh=Y9uz2Ul+URJ48Z5Jx7gMVO+5xGSwUIqgOXMNbHju8Pw=;
+        b=Khfzi2tYLD88+WPWRma9WDQeelcauMAvKQeHm1M8vkH2Zr6FQAYL9s8XTDcMPomMwo
+         vBhbxQ/korfck/QYt+EfinLzgIhEurYtQJZHnF+67PlqDHIwjgAzm04ge4NMsjfC4Wbv
+         GLMekuX10Naswh3jmt9MZgrMbmxmMVZMW+1RQgFTBUN9Aw++7vtn8J97TGT0ELUbplK3
+         pD9/8h15Y+adt/2TYWtnIa3DGk0p45OBsWEgvI75cCn7CQPRC7WMS9HlQQVG6gXt77Z9
+         vzvJaLOTRajglNe9qTc6EjDd7Ym7VOmLwi8NpwMo3I1zgAkhALfYjd2XSXmHhT/zRVnB
+         M46Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXoeoVu8juoS7Uz1ZZGCiumAHVFsAeXWk2u99byL7N0VN/wlNSeM++6tuoDlqFVWsKuki31SGcsAKWFF7nZPhP7tDGPRZiD+NUZCPLT
+X-Gm-Message-State: AOJu0YxoV9xmFojYDG4VzWqIv6aAqz4Q+szh5Je2F0icarvC0Nfd+i/c
+	vxC4PIh9BkVex+2aW/yrLW1unEyuMasugJ1i5g3CMCUNXoccmoiIo7pO7TzyeA==
+X-Google-Smtp-Source: AGHT+IGkwd9uH0wGwcMxYF5ilve69uK7EUyk8Nm8aqaKGpupfm5tsNPxwjiWxHQwx+6ecqpoiq+xvg==
+X-Received: by 2002:a05:6358:724d:b0:192:6a66:63fa with SMTP id e5c5f4694b2df-193bb3fc727mr2661027055d.5.1715991440326;
+        Fri, 17 May 2024 17:17:20 -0700 (PDT)
 Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad9da4sm162348915ad.107.2024.05.17.17.17.00
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-63d9a97247fsm11586021a12.36.2024.05.17.17.17.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 17:17:00 -0700 (PDT)
+        Fri, 17 May 2024 17:17:19 -0700 (PDT)
 From: Kees Cook <keescook@chromium.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Jiri Kosina <jikos@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
 	Shuah Khan <shuah@kernel.org>,
 	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-rtc@vger.kernel.org,
+	linux-input@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
 	linux-hardening@vger.kernel.org
-Subject: [PATCH] selftests: rtc: rtctest: Do not open-code TEST_HARNESS_MAIN
-Date: Fri, 17 May 2024 17:16:58 -0700
-Message-Id: <20240518001655.work.053-kees@kernel.org>
+Subject: [PATCH] selftests: hid: Do not open-code TEST_HARNESS_MAIN
+Date: Fri, 17 May 2024 17:17:16 -0700
+Message-Id: <20240518001715.work.698-kees@kernel.org>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -80,192 +82,61 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5223; i=keescook@chromium.org;
- h=from:subject:message-id; bh=psb/9cAnhp+Xzaq8lXVTJ+5ogfgNeGdZpdDamrOEPi8=;
- b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmR/N6s/j5oZN920PNFTll/WpzqmtBDGQzJiKQO
- WN+Gr07bhaJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZkfzegAKCRCJcvTf3G3A
- JjXID/wMzWXl2uBgZBj8D9wl0hC56WI14SrF0DqQnjVVOg7LoM/vvq3w1s4e2+ZXB/S3ILG7bmj
- MU6ATJTr3PXZ8D2KLL0HjPnjAHXetcJ6zsbNbfuPsydkqbAt35MDp0uoAePnq3vEzRWLZdnMpCX
- 75F/1XL6Nm9f4xFfmq9chfi5Z47h0Zt+UyWhs+udLvtadqk3M6nz3xVg67N9N8RvmpqgAOXVAM8
- wL4V3CxKhiamcqGuaUmOqQG5ISBPxUPm56WMM/FD524JaiRRv0YKQPU71Xf5wqfh+2idJvoNIG7
- 1F3KWiieBCi0Hyyy1l8GivFac0+RbslIiHtS6oC4XtqnLn1M1FpsaoeRT3oAYTMaDa4ch8t8wnB
- GtUxMnCShZyT+DU8/x4WYr2wP1LzT4cEIktWX/Y7uMS0Y4zNDwJCN/lqQAUkZy8nOtFxNvvRGaP
- DszsKzBQQiBFpq4msqQn8TK2baNbnr97VkD3hu553LBpJlLIIW2AFZj2vWM+8NJE50JOKv6LpY7
- Sqh7k3tUNxdyzpC8rLKRzXj16sWpdHEohdTmzKcjSk7N/phEwMhraCx7Y1Rr0q59ASm4fx1Udzj
- 9vUjis3AFvsmdsm1kyESB1sGYgAKnQRnTdWgjmmilHeC/x6DG+U3mELMcmhq+EBtFhhhmD0Nxut
- uzugFPC 4cjHaSJg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1268; i=keescook@chromium.org;
+ h=from:subject:message-id; bh=Ns+G8cIhe6RmVb+HVSbykTeCqAmMxrZ97rwaVohwt5Y=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmR/OLA80fqaRGBX/36O8wyiGjoPwOVeOd9ptC3
+ MGG6b2Ugf+JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZkfziwAKCRCJcvTf3G3A
+ Ju8UD/9pg/NJ7jGrKd81q/3/ZDtc2AGfZ45BLounkSac+UTpI9uCv/ndnDRxYx6emDItyNIZqKP
+ LpK3xTUzPVSGcxkiq0R9SKrSF54gZfNutwM5CyFKQ9/p/0g1/4krpOBZNIgV2vszsdMY0EZqVvj
+ 5hzqz0n9RvOzpHYlkPAKoZ+Y/IQdXL8kh90VFqrOSkVFjPX32V7Fw2B9COoEfciPPYAAhx0PZ7O
+ aONMXVAZBKSdrp4y1jjZprF6y40y2at9BP6lKtdIKMv0xoxyLSWyVT+0W/WoZK7GLWquONBO6xu
+ T3kolc3gHYo5uYK09l3LD0HBEBAgiVkBcOOMdbU9zsPHkLJfX05AYI5Aj1VwXUivuC8PKZRwXP6
+ zklQ8F05oLfPx0dd2RFG4AFl8P6Ls9V1NjdZjgtdAawU4+LQ3r0AJeSH+1ozbn+7VayiOOQ8xUx
+ 9iFf8RXtIhdmKllLOCn+SMCiklwT2+shmwcBL77HTNPLzCVcb6h+TIbJAM2FDrljEzq7DjJvXzm
+ VIgKFT5HFm93snLTm9BOZGBs+Boh8+MOtRxZYLKggabV5Rxr6wI7xLnr3pmVeWpekuG5m2xhP0U
+ Rjc/5ZLIG3u2KdX7ujZcPc6Cw9uqjm4Rf3tTMg2RbGOJ/0UVbjlEavS0YHtE5CQ4/r3zWBszBuN
+ B4BtEWN 7x/h6wDg==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-Argument processing is specific to the test harness code. Any optional
-information needs to be passed via environment variables. Move alternate
-path to the RTC_DEV environment variable. Also do not open-code
-TEST_HARNESS_MAIN because its definition may change.
-
-Additionally, setup checking can be done in the FIXTURE_SETUP(). With
-this adjustment, also improve the error reporting when the device cannot
-be opened.
+Avoid open-coding TEST_HARNESS_MAIN. (It might change, for example.)
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Benjamin Tissoires <bentiss@kernel.org>
 Cc: Shuah Khan <shuah@kernel.org>
 Cc: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-rtc@vger.kernel.org
+Cc: linux-input@vger.kernel.org
 Cc: linux-kselftest@vger.kernel.org
 ---
- tools/testing/selftests/rtc/Makefile  |  2 +-
- tools/testing/selftests/rtc/rtctest.c | 66 +++++----------------------
- 2 files changed, 13 insertions(+), 55 deletions(-)
+ tools/testing/selftests/hid/hid_bpf.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
-index 55198ecc04db..654f9d58da3c 100644
---- a/tools/testing/selftests/rtc/Makefile
-+++ b/tools/testing/selftests/rtc/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--CFLAGS += -O3 -Wl,-no-as-needed -Wall
-+CFLAGS += -O3 -Wl,-no-as-needed -Wall $(KHDR_INCLUDES)
- LDLIBS += -lrt -lpthread -lm
- 
- TEST_GEN_PROGS = rtctest
-diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
-index 63ce02d1d5cc..41cfefcc20e1 100644
---- a/tools/testing/selftests/rtc/rtctest.c
-+++ b/tools/testing/selftests/rtc/rtctest.c
-@@ -30,7 +30,18 @@ FIXTURE(rtc) {
- };
- 
- FIXTURE_SETUP(rtc) {
-+	char *alternate = getenv("RTC_DEV");
-+
-+	if (alternate)
-+		rtc_file = alternate;
-+
- 	self->fd = open(rtc_file, O_RDONLY);
-+
-+	if (self->fd == -1 && errno == ENOENT)
-+		SKIP(return, "Skipping test since %s does not exist", rtc_file);
-+	EXPECT_NE(-1, self->fd) {
-+		TH_LOG("%s: %s\n", rtc_file, strerror(errno));
-+	}
+diff --git a/tools/testing/selftests/hid/hid_bpf.c b/tools/testing/selftests/hid/hid_bpf.c
+index f825623e3edc..943fa62a4f78 100644
+--- a/tools/testing/selftests/hid/hid_bpf.c
++++ b/tools/testing/selftests/hid/hid_bpf.c
+@@ -961,17 +961,11 @@ static int libbpf_print_fn(enum libbpf_print_level level,
+ 	return 0;
  }
  
- FIXTURE_TEARDOWN(rtc) {
-@@ -41,10 +52,6 @@ TEST_F(rtc, date_read) {
- 	int rc;
- 	struct rtc_time rtc_tm;
- 
--	if (self->fd == -1 && errno == ENOENT)
--		SKIP(return, "Skipping test since %s does not exist", rtc_file);
--	ASSERT_NE(-1, self->fd);
--
- 	/* Read the RTC time/date */
- 	rc = ioctl(self->fd, RTC_RD_TIME, &rtc_tm);
- 	ASSERT_NE(-1, rc);
-@@ -88,10 +95,6 @@ TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
- 	struct rtc_time rtc_tm;
- 	time_t start_rtc_read, prev_rtc_read;
- 
--	if (self->fd == -1 && errno == ENOENT)
--		SKIP(return, "Skipping test since %s does not exist", rtc_file);
--	ASSERT_NE(-1, self->fd);
--
- 	TH_LOG("Continuously reading RTC time for %ds (with %dms breaks after every read).",
- 	       READ_LOOP_DURATION_SEC, READ_LOOP_SLEEP_MS);
- 
-@@ -126,10 +129,6 @@ TEST_F_TIMEOUT(rtc, uie_read, NUM_UIE + 2) {
- 	int i, rc, irq = 0;
- 	unsigned long data;
- 
--	if (self->fd == -1 && errno == ENOENT)
--		SKIP(return, "Skipping test since %s does not exist", rtc_file);
--	ASSERT_NE(-1, self->fd);
--
- 	/* Turn on update interrupts */
- 	rc = ioctl(self->fd, RTC_UIE_ON, 0);
- 	if (rc == -1) {
-@@ -155,10 +154,6 @@ TEST_F(rtc, uie_select) {
- 	int i, rc, irq = 0;
- 	unsigned long data;
- 
--	if (self->fd == -1 && errno == ENOENT)
--		SKIP(return, "Skipping test since %s does not exist", rtc_file);
--	ASSERT_NE(-1, self->fd);
--
- 	/* Turn on update interrupts */
- 	rc = ioctl(self->fd, RTC_UIE_ON, 0);
- 	if (rc == -1) {
-@@ -198,10 +193,6 @@ TEST_F(rtc, alarm_alm_set) {
- 	time_t secs, new;
- 	int rc;
- 
--	if (self->fd == -1 && errno == ENOENT)
--		SKIP(return, "Skipping test since %s does not exist", rtc_file);
--	ASSERT_NE(-1, self->fd);
--
- 	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
- 	ASSERT_NE(-1, rc);
- 
-@@ -256,10 +247,6 @@ TEST_F(rtc, alarm_wkalm_set) {
- 	time_t secs, new;
- 	int rc;
- 
--	if (self->fd == -1 && errno == ENOENT)
--		SKIP(return, "Skipping test since %s does not exist", rtc_file);
--	ASSERT_NE(-1, self->fd);
--
- 	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
- 	ASSERT_NE(-1, rc);
- 
-@@ -308,10 +295,6 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
- 	time_t secs, new;
- 	int rc;
- 
--	if (self->fd == -1 && errno == ENOENT)
--		SKIP(return, "Skipping test since %s does not exist", rtc_file);
--	ASSERT_NE(-1, self->fd);
--
- 	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
- 	ASSERT_NE(-1, rc);
- 
-@@ -366,10 +349,6 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
- 	time_t secs, new;
- 	int rc;
- 
--	if (self->fd == -1 && errno == ENOENT)
--		SKIP(return, "Skipping test since %s does not exist", rtc_file);
--	ASSERT_NE(-1, self->fd);
--
- 	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
- 	ASSERT_NE(-1, rc);
- 
-@@ -410,25 +389,4 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
- 	ASSERT_EQ(new, secs);
- }
- 
--static void __attribute__((constructor))
--__constructor_order_last(void)
+-static void __attribute__((constructor)) __constructor_order_last(void)
 -{
 -	if (!__constructor_order)
 -		__constructor_order = _CONSTRUCTOR_ORDER_BACKWARD;
 -}
 -
 -int main(int argc, char **argv)
--{
--	switch (argc) {
--	case 2:
--		rtc_file = argv[1];
--		/* FALLTHROUGH */
--	case 1:
--		break;
--	default:
--		fprintf(stderr, "usage: %s [rtcdev]\n", argv[0]);
--		return 1;
--	}
++static void __attribute__((constructor)) __one_time_init(void)
+ {
+ 	/* Use libbpf 1.0 API mode */
+ 	libbpf_set_strict_mode(LIBBPF_STRICT_ALL);
+ 	libbpf_set_print(libbpf_print_fn);
 -
 -	return test_harness_run(argc, argv);
--}
+ }
++
 +TEST_HARNESS_MAIN
 -- 
 2.34.1
