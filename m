@@ -1,79 +1,84 @@
-Return-Path: <linux-kernel+bounces-182880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7E38C9142
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:59:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646808C9145
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCA8BB210E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 12:59:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959F21C2108C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 13:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C593A8C0;
-	Sat, 18 May 2024 12:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041A23B1A2;
+	Sat, 18 May 2024 12:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWRBHVHC"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k0SzZDXJ"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAD444C68;
-	Sat, 18 May 2024 12:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFE531A8F;
+	Sat, 18 May 2024 12:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716037151; cv=none; b=P30XJuVvePj4BIubxN5YQ0Ogp2Yzplv6leP5qIvU70vyjz3TqB7hC2BHF/8wts02z4eTlhU3/gsz+VxE2lxv9CpxwiMQGFEpP8Bsw8lm8OT0LTiUq4jeUFCBGARJeHVkScHheIL75AZt8PG+nvee3v+zVu3JsNU3v85N0nNfGO4=
+	t=1716037194; cv=none; b=FsJidj+5oFLiGTt5svM42clsBNYFbUdJu+68QQi91qwTUEP3XfdB57nYH+mrCiwjRKr71TF9Y+aukhu07X1CdkUp6m3YcBB5CYpjOKZp34EzK2ppwLomNOpTVc6p8xf5BM1I4PLMiJCYRZQf4yQEFbWjSaWFqPj2rOFpWEa9wPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716037151; c=relaxed/simple;
-	bh=NGJ4jwZUKOAzl+f3mjHvoT5yz5huI75D7VhkMXWjZLo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rv24gf5+SbgnFMP00xGnyJm91a8BzOUkPE74m8tMfxYEmwG199j+xV9kjns8kM+RrLCxoOOXvsD8939PECeVs5WGGZDknykwFwhGX4R3cB/FjhwuHyha8iARMqCa3RiyxipcO52tXfhHYiLeNdErH1dyPEU4hB0NkHsFd90809k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWRBHVHC; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1716037194; c=relaxed/simple;
+	bh=ax35zVvMpZ7YpBaDMktu8RlntdfY/v5JxB/kgwoeI4s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sLpiyCuVAKT90Ge7RmT9aNj+g2AitKEaGSMsr8b86tA2hmnSu4Hsd/SBCd794KGUwDVaTPckiPDZCAAkunHksF8I+a4X8WnD5908bz6xkPSf65HAHmm1dLq/14XEFs5vnwRSBaKNitO+uatRql6KpeFKaGz6bOzJxpCMzPdqDrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k0SzZDXJ; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51f3a49ff7dso3669965e87.2;
-        Sat, 18 May 2024 05:59:09 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-351d309bbecso847244f8f.2;
+        Sat, 18 May 2024 05:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716037148; x=1716641948; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716037191; x=1716641991; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zSRsu/greOiguhxWKwTVAbA1IuBqHC3TjNHFAMMX7g8=;
-        b=VWRBHVHCt+TOQkY2Zje8/zEyJ4Ex0+mQDvuo1j7NeAiiYbt31KddoLCzKR1RHRws8m
-         RJAy+GvlLMUgaKrw/v2mSEmW2AHMEX6HTmx9UTT/BPZ1rdMCrg4IMCuAq4ZN0MkreQax
-         tRI9By7MTcVKddT9FAJ9zjp1k+T2AbdkqPynHnyu27DwFsQx8EJNeW9/tnMb2lsqgGFX
-         m8QvcDWjtvDOsk7H6AT3tKjGv0c5r7B/ATLx44cojMvDDVX7he73EjqUf4GPRRtBC6rQ
-         nahC4LsXYrcVrxTLYeicNF6TI3GI9M+49pLwpveq+qfybAS4XuIlDE9oFlvwAn/yG2Xt
-         QdWQ==
+        bh=3o07VRMVpwb16MqNXJLEDn9KQoBGTq/2iz5EAlrtis4=;
+        b=k0SzZDXJ6h+m3VC1g5PH+BcXA3//rKnSJzlc6HGgHDV5Yg6x1foOSrXNBolLcD/SfB
+         jEpDc+TKBt4DypG2lCCGQw5a2aBv1gXuVS/1+9wvfZlOVRAKjpwRnUOZEb3M4/9RPgwL
+         1RiogKVUOkAHJEEb4eBMUTjNCkYaUaknm2PfiMZEwImacYwDEjBFw43/3LWxYyQQyLP/
+         8UVqcMyzo2a2BeZkmkU3G/FIem/fiMiHbh0oW0KPRQbbH0BQ4C36SeYeRTtVKFkz9F+e
+         08ybWrSswcRWAtq8fWvfPPEKor9SwcOVZP6uvFlqhLJ9pQf7gTHDO1o0UI9PMqwlABDG
+         tIsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716037148; x=1716641948;
+        d=1e100.net; s=20230601; t=1716037191; x=1716641991;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zSRsu/greOiguhxWKwTVAbA1IuBqHC3TjNHFAMMX7g8=;
-        b=TiatzJbhpEflmFN4h/ht1grAZrnLDT0LdoXT3CZ8Stt6Ac7paffcsKoHI0gAt9oXG6
-         qnke+erLa1rfvhRwqFcY9IcpotUi961Svn+HKQYNncUxjbLUL1250pwpXPgopvteBtr+
-         oezxpG1ZKfHFmz/0JG/z8yfockJEzI/q0C3Q3snkqWD6V7LRtIN3BzL7HnMmuGPh8wAS
-         Oc/W2t+NqHaCF6QkhAb++9AmxzJb5na4iUez6aN/UbaItXVDm/APAo3eatpwOnZrBxlz
-         hfCWuPbktlla/f4R6wdrry6P+GELtCgb1SoY8J4c28PnwtDdGfeNeA8tMjKZFDWdDYk9
-         FZ1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVozsoawZA53hxsRjmiljhwSyY3vWMoSN88w7c6FiTiMXWHvMDJk0BGG5VEp+OXDXNu+exVKXJ47uIaK1InCQ2w06WcSHvAjSKZPTof
-X-Gm-Message-State: AOJu0Yw3JulS93KGddWLOY3vd8GdHR3GMqTFeeTPTVTquPrGaZ945j5W
-	JLoPErkLfDf0i6oT4Qd4w+oHmtbJZgA4BKKybnCVBIw/6bEuB7U7
-X-Google-Smtp-Source: AGHT+IGmgDdWyufJS6O/YFZlzO9rFPBXlmgfzmmslRVJ52yFcNLNqtyJBEy3OIDC3SDr5Gf74W4mbw==
-X-Received: by 2002:a05:6512:2254:b0:523:294f:7fe6 with SMTP id 2adb3069b0e04-523294f806bmr13064332e87.44.1716037147727;
-        Sat, 18 May 2024 05:59:07 -0700 (PDT)
-Received: from emdj-bno.. ([147.78.30.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a8967a711sm552263566b.2.2024.05.18.05.59.07
+        bh=3o07VRMVpwb16MqNXJLEDn9KQoBGTq/2iz5EAlrtis4=;
+        b=GaS+qXwt9dnmR37yMJjZu2cY7Xa0cqxizRAfcaTkhNqV8QxJ3XQm8G1NzqPTf+HHSC
+         rputE8r79cXSmn0bvfiioRYg/YlABAwQWqXovQOlglPC5UUAJPfBhhORC/IB1mV8dxHT
+         K62otF3RWp+gRNm3quM1TPWvr4j7kBKPeF8o7kRN1GoCi0z55+LmZecadgMsbHIOh2x6
+         PHLPnQM9+ACvubxq227rLu7wKtMzwcWxcwK4CeDCflFckZnwgNxig2K3s0pWn0knKrMC
+         SfjDWuo1YM2biO5xe5fxSRnGpIB+wYjvWAsdml/Ne76WGbxdlOLd0bauUdVdjcpsxZgV
+         Yvqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUipOH7km2sAxyLWqlUoNJ8sqoKr/A8ZwR1z+Fc+HPUTiNk5o7Jl2Mmm8cQ5dGLjR7REy4x86//Jpy57KA9lB7rQBjYqdupAl3E5DUlefhRG+j/qmFmCO9L4IQRfnno63PKaWQbBNLBtc25czpLOW5361O2rF1Ffo81tIt9PSce9ZpTHbk=
+X-Gm-Message-State: AOJu0Yz6ZI7MJ0y+quvMHqILJ0hYcM7IsUJc3DKZaAe0wJYlYkbRoxTm
+	eSXyWsSFbuaPDyJ45j9ovYmsGKoZROf7HtaBToW1fHVKsoDEn+7N
+X-Google-Smtp-Source: AGHT+IFr/j73PtF+LPJ6yD8z41dCT9PFsEquq3T/uzJC8Q7Tie81IddGmDWOKy1LsfKa6YIBz+qY1w==
+X-Received: by 2002:adf:e40b:0:b0:351:d6f4:5e11 with SMTP id ffacd0b85a97d-351d6f45fc4mr6759154f8f.37.1716037190852;
+        Sat, 18 May 2024 05:59:50 -0700 (PDT)
+Received: from localhost.localdomain ([93.182.74.28])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a5cdc712ae2sm391499366b.19.2024.05.18.05.59.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 05:59:07 -0700 (PDT)
-From: juhl.emildahl@gmail.com
-X-Google-Original-From: emdj@bang-olufsen.dk
-To: daniel.lezcano@linaro.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Emil Dahl Juhl <emdj@bang-olufsen.dk>
-Subject: [PATCH] tools/lib/thermal: fix sampling handler context ptr
-Date: Sat, 18 May 2024 14:57:44 +0200
-Message-ID: <20240518125744.71854-1-emdj@bang-olufsen.dk>
-X-Mailer: git-send-email 2.45.0
+        Sat, 18 May 2024 05:59:50 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v2 1/3] dt-bindings: leds-lp55xx: limit pwr-sel property to ti,lp8501
+Date: Sat, 18 May 2024 14:59:11 +0200
+Message-ID: <20240518125914.2938-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,38 +87,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Emil Dahl Juhl <emdj@bang-olufsen.dk>
+pwr-sel property is specific to ti,lp8501, make it conditional of the
+related compatible.
 
-The sampling handler, provided by the user alongside a void* context,
-was invoked with an internal structure instead of the user context.
-
-Correct the invocation of the sampling handler to pass the user context
-pointer instead.
-
-Note that the approach taken is similar to that in events.c, and will
-reduce the chances of this mistake happening if additional sampling
-callbacks are added.
-
-Fixes: 47c4b0de080a ("tools/lib/thermal: Add a thermal library")
-Signed-off-by: Emil Dahl Juhl <emdj@bang-olufsen.dk>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- tools/lib/thermal/sampling.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../devicetree/bindings/leds/leds-lp55xx.yaml          | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/tools/lib/thermal/sampling.c b/tools/lib/thermal/sampling.c
-index 70577423a9f0..f67c1f9ea1d7 100644
---- a/tools/lib/thermal/sampling.c
-+++ b/tools/lib/thermal/sampling.c
-@@ -16,6 +16,8 @@ static int handle_thermal_sample(struct nl_msg *n, void *arg)
- 	struct thermal_handler_param *thp = arg;
- 	struct thermal_handler *th = thp->th;
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+index e9d4514d0166..77828dedbb9f 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+@@ -151,6 +151,16 @@ patternProperties:
+         $ref: /schemas/types.yaml#/definitions/string
+         description: name of channel
  
-+	arg = thp->arg;
++if:
++  not:
++    properties:
++      compatible:
++        contains:
++          const: ti,lp8501
++then:
++  properties:
++    pwr-sel: false
 +
- 	genlmsg_parse(nlh, 0, attrs, THERMAL_GENL_ATTR_MAX, NULL);
- 
- 	switch (genlhdr->cmd) {
+ required:
+   - compatible
+   - reg
 -- 
-2.45.0
+2.43.0
 
 
