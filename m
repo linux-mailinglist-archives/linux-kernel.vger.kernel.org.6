@@ -1,232 +1,215 @@
-Return-Path: <linux-kernel+bounces-182842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A55C88C90C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:13:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 747EB8C90CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5796F2828DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 12:13:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE920B216F0
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 12:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEBF44C9E;
-	Sat, 18 May 2024 12:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKAN9kP5"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610A03A1B6;
+	Sat, 18 May 2024 12:26:06 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7B238F86;
-	Sat, 18 May 2024 12:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3602CCD0;
+	Sat, 18 May 2024 12:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716034374; cv=none; b=UvFqvANDpyo/NCZLqdb1gkG9XQdA9Zrio/lGG9aaxLz82AWspBnX0pVBCDdHdgBke64hIQwZTOrm92OCKBgVijq3OpDXdUJd6BFalaQCyOJXB5Zp8mOF/MIu2bHw/Dc3JwjSAMmWZ76b7ee3Rb5lNBwgnXwzBQZYO3LXjSVHKXw=
+	t=1716035165; cv=none; b=d9yKua4XiH7ZdL/v7XQMMr8dFHbVeQ9w8Dbhv3RFjprnSegPfG/7x0jPV+OF1f3wFTtCozLxM9HSdqLFsXKH9qdCIVbBMbvvXw12aJIAObFLQu1nb0sjZ+8HWpSjPYqIUsbGx6L8L9Sn1h6mBLkiJsLkDeWGx0ScSTg1UCZsL8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716034374; c=relaxed/simple;
-	bh=puCzSyBrPHewwjdEAZq1RTx7Q2v3HQBbD2CoRPBEE3U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nnJS+a/mfYLpwwPcGve/bAJcwf8VsBC3ivyWH9cISH7aOgCLZWGupJEkBTRVWRO/eyH6r5K5gHECmHXeEPs3PoBERVlk2FYYRNJT0BTD2F8PJqlTVJ+PYZVpDQU0jSxx6XL69yMz9ovkk904WklfdtEbBP4MNPDYbW5zgBbHQEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKAN9kP5; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51f72a29f13so1859475e87.3;
-        Sat, 18 May 2024 05:12:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716034371; x=1716639171; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c+CcrlNbsHEM5IbBF+aEvbweCw5RwAqEr0nCDuf0P80=;
-        b=JKAN9kP5ZusZhA12zRuB65WHsNocMAl3YIwgRzAUB0k37H0uD+NVmFMz+zs3Af4J0r
-         d3rW7jt0DaKYolfpiyWk26OVsot/KlJksYWhXbqhlO+1MrsDkcVn+LkrrivQrNKGdYpb
-         pvq9eOVEVe6BjC/UJynMs0lx+172yDJhpaVLjkFYxhuA0P6NWVhSalHroyLdBORaVe1r
-         qdiJpipD17F/6pMPx2EkWkKLLOrPmh2H0UrBzIUfGo0s0hR7WyyWyn+6PfklbNUpIdDY
-         PPDUhCizGYTeDrcCJyS5ifosGJySgJQVp7aBNTb6yvZUARbpmBFc/abTEwhGiKgueIx7
-         TPyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716034371; x=1716639171;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c+CcrlNbsHEM5IbBF+aEvbweCw5RwAqEr0nCDuf0P80=;
-        b=YxHuP7KUwcveu7MpB9b3AaS41ije01KhON9wKvf+5E/VseO8fmjVk9mplSqx/OIX0F
-         gkT4/maQOdxINL6DIlscwKh/PKgNpIChkZH1a9wd1NM+KbeC+RGZ0RV8U09PXeRIllHs
-         4QJ8xVWzNaUiVZ7ssxLRdT/Q9IcYMbkPETOQXCmMj/l1WbAF/mawflV6cP3gL4Lco9vD
-         5nE9Rxy2IJMMoelBEPlwvxKnzbcxCdc0fmhCeiHvOpXga+GXdJo+QXgEgsMU3BbfbgXO
-         1Bn5TeY4FibyBDybdYfqvFqVjCUlhHQDA2EtLuzamcPG8vXMOvncD4SP//qfSK5TwIiz
-         P3Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXyvKAZvINSHESjRl3nm2UfQ222MW8oL5LabBwSONBN4Gr68Pjm49ry4tns4xuDCQgIREEatBLya8bsht9jB2lrOsbV7KF9KGtQJEUQyuc6N3DCvNSF3NZ+Z2XeNhRL8gaIWwifEqYxxw==
-X-Gm-Message-State: AOJu0Yw9gHEd5octGSqVvBJLUcFAQq2NwtmP9TkD5+m46+fNqq6E5TJC
-	WGiaJD1e/fw5F9E6qLY65Fbp36MVm8TTBgd/FX3ImCbXw140Tv+o
-X-Google-Smtp-Source: AGHT+IGCqom0f/JiQFDnaCldSas0fyciwxHluc+scNBqYPHfPb0Rl7baW0X6/IEtd7zm1t+AwIBO0A==
-X-Received: by 2002:a05:6512:1304:b0:51c:5171:bbed with SMTP id 2adb3069b0e04-5221006e625mr19978831e87.15.1716034371324;
-        Sat, 18 May 2024 05:12:51 -0700 (PDT)
-Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d8688sm3543568e87.213.2024.05.18.05.12.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 05:12:51 -0700 (PDT)
-From: Raphael Gallais-Pou <rgallaispou@gmail.com>
-Date: Sat, 18 May 2024 14:12:06 +0200
-Subject: [PATCH 3/3] ARM: dts: sti: add thermal-zones support on stih418
+	s=arc-20240116; t=1716035165; c=relaxed/simple;
+	bh=QcYD3TRVoSjH3YeusMUss8nu1WzsktIMJpe9lyI3rFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lVDEfMhYMV/TTd950VVeZ59+7c6kLTKonAZQjzSdiKllzQujxD7IWm65AjId/UZX7UFUISQnzxrBO/e5sPbvYeW6wh9dp+Krj2X+DvjMmZEGzlZEVz8XT4m7q03giXNxLch2VTGSQNPHnxJ2QNkpUDU+roCP+EYwfFa2t2EZeV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
+Received: from serge-l-PF3DENS3 (216-177-171-48.block0.gvtc.com [216.177.171.48])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: serge)
+	by mail.hallyn.com (Postfix) with ESMTPSA id CCF6C356;
+	Sat, 18 May 2024 07:20:32 -0500 (CDT)
+Date: Sat, 18 May 2024 07:20:30 -0500
+From: Serge Hallyn <serge@hallyn.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Jonathan Calmels <jcalmels@3xx0.net>,
+	Jarkko Sakkinen <jarkko@kernel.org>, brauner@kernel.org,
+	ebiederm@xmission.com, Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	David Howells <dhowells@redhat.com>, containers@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+	serge@hallyn.com
+Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
+Message-ID: <ZkidDlJwTrUXsYi9@serge-l-PF3DENS3>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
+ <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
+ <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
+ <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
+ <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
+ <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240518-thermal-v1-3-7dfca3ed454b@gmail.com>
-References: <20240518-thermal-v1-0-7dfca3ed454b@gmail.com>
-In-Reply-To: <20240518-thermal-v1-0-7dfca3ed454b@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Patrice Chotard <patrice.chotard@foss.st.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
 
-Add a 'thermal-zones' node for stih418.
+On Fri, May 17, 2024 at 10:53:24AM -0700, Casey Schaufler wrote:
+> On 5/17/2024 4:42 AM, Jonathan Calmels wrote:
+> >>>> On Thu May 16, 2024 at 10:07 PM EEST, Casey Schaufler wrote:
+> >>>>> I suggest that adding a capability set for user namespaces is a bad idea:
+> >>>>> 	- It is in no way obvious what problem it solves
+> >>>>> 	- It is not obvious how it solves any problem
+> >>>>> 	- The capability mechanism has not been popular, and relying on a
+> >>>>> 	  community (e.g. container developers) to embrace it based on this
+> >>>>> 	  enhancement is a recipe for failure
+> >>>>> 	- Capabilities are already more complicated than modern developers
+> >>>>> 	  want to deal with. Adding another, special purpose set, is going
+> >>>>> 	  to make them even more difficult to use.
+> > Sorry if the commit wasn't clear enough.
+> 
+> While, as others have pointed out, the commit description left
+> much to be desired, that isn't the biggest problem with the change
+> you're proposing.
+> 
+> >  Basically:
+> >
+> > - Today user namespaces grant full capabilities.
+> 
+> Of course they do. I have been following the use of capabilities
+> in Linux since before they were implemented. The uptake has been
+> disappointing in all use cases.
+> 
+> >   This behavior is often abused to attack various kernel subsystems.
+> 
+> Yes. The problems of a single, all powerful root privilege scheme are
+> well documented.
+> 
+> >   Only option
+> 
+> Hardly.
+> 
+> >  is to disable them altogether which breaks a lot of
+> >   userspace stuff.
+> 
+> Updating userspace components to behave properly in a capabilities
+> environment has never been a popular activity, but is the right way
+> to address this issue. And before you start on the "no one can do that,
+> it's too hard", I'll point out that multiple UNIX systems supported
+> rootless, all capabilities based systems back in the day. 
+> 
+> >   This goes against the least privilege principle.
+> 
+> If you're going to run userspace that *requires* privilege, you have
+> to have a way to *allow* privilege. If the userspace insists on a root
+> based privilege model, you're stuck supporting it. Regardless of your
+> principles.
 
-A thermal-zone needs three components:
-  - thermal sensors, described in an earlier commit[1]
-  - cooling devices, specified for each CPU
-  - a thermal zone, describing the overall behavior.
+Casey,
 
-The thermal zone needs references to both CPUs and thermal sensors,
-which phandle are also added. The thermal management will then be
-achieved on CPUs using the cpufreq framework.
+I might be wrong, but I think you're misreading this patchset.  It is not
+about limiting capabilities in the init user ns at all.  It's about limiting
+the capabilities which a process in a child userns can get.
 
-[1] https://lore.kernel.org/lkml/20240320-thermal-v3-2-700296694c4a@gmail.com/
+Any unprivileged task can create a new userns, and get a process with
+all capabilities in that namespace.  Always.  User namespaces were a
+great success in that we can do this without any resulting privilege
+against host owned resources.  The unaddressed issue is the expanded
+kernel code surface area.
 
-Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
----
- arch/arm/boot/dts/st/stih407-family.dtsi |  6 +++--
- arch/arm/boot/dts/st/stih418.dtsi        | 41 +++++++++++++++++++++++++++++---
- 2 files changed, 42 insertions(+), 5 deletions(-)
+You say, above, (quoting out of place here)
 
-diff --git a/arch/arm/boot/dts/st/stih407-family.dtsi b/arch/arm/boot/dts/st/stih407-family.dtsi
-index 29302e74aa1d..35a55aef7f4b 100644
---- a/arch/arm/boot/dts/st/stih407-family.dtsi
-+++ b/arch/arm/boot/dts/st/stih407-family.dtsi
-@@ -33,7 +33,7 @@ delta_reserved: rproc@44000000 {
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		cpu@0 {
-+		cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0>;
-@@ -52,8 +52,9 @@ cpu@0 {
- 			clock-latency = <100000>;
- 			cpu0-supply = <&pwm_regulator>;
- 			st,syscfg = <&syscfg_core 0x8e0>;
-+			#cooling-cells = <2>;
- 		};
--		cpu@1 {
-+		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <1>;
-@@ -66,6 +67,7 @@ cpu@1 {
- 					    1200000 0
- 					    800000  0
- 					    500000  0>;
-+			#cooling-cells = <2>;
- 		};
- 	};
- 
-diff --git a/arch/arm/boot/dts/st/stih418.dtsi b/arch/arm/boot/dts/st/stih418.dtsi
-index b35b9b7a7ccc..6622ffa8ecfa 100644
---- a/arch/arm/boot/dts/st/stih418.dtsi
-+++ b/arch/arm/boot/dts/st/stih418.dtsi
-@@ -6,23 +6,26 @@
- #include "stih418-clock.dtsi"
- #include "stih407-family.dtsi"
- #include "stih410-pinctrl.dtsi"
-+#include <dt-bindings/thermal/thermal.h>
- / {
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		cpu@2 {
-+		cpu2: cpu@2 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <2>;
- 			/* u-boot puts hpen in SBC dmem at 0xa4 offset */
- 			cpu-release-addr = <0x94100A4>;
-+			#cooling-cells = <2>;
- 		};
--		cpu@3 {
-+		cpu3: cpu@3 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <3>;
- 			/* u-boot puts hpen in SBC dmem at 0xa4 offset */
- 			cpu-release-addr = <0x94100A4>;
-+			#cooling-cells = <2>;
- 		};
- 	};
- 
-@@ -44,6 +47,38 @@ usb2_picophy2: phy3 {
- 		reset-names = "global", "port";
- 	};
- 
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			polling-delay-passive = <250>;  /* 250ms */
-+			polling-delay = <1000>;         /* 1000ms */
-+
-+			thermal-sensors = <&thermal>;
-+
-+			trips {
-+				cpu_crit: cpu-crit {
-+					temperature = <95000>;  /* 95C */
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+				cpu_alert: cpu-alert {
-+					temperature = <85000>;  /* 85C */
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map {
-+					trip = <&cpu_alert>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+	};
-+
- 	soc {
- 		rng11: rng@8a8a000 {
- 			status = "disabled";
-@@ -107,7 +142,7 @@ mmc0: sdhci@9060000 {
- 			assigned-clock-rates = <200000000>;
- 		};
- 
--		thermal@91a0000 {
-+		thermal: thermal@91a0000 {
- 			compatible = "st,stih407-thermal";
- 			reg = <0x91a0000 0x28>;
- 			clock-names = "thermal";
+> Updating userspace components to behave properly in a capabilities
+> environment has never been a popular activity, but is the right way
+> to address this issue. And before you start on the "no one can do that,
+> it's too hard", I'll point out that multiple UNIX systems supported
 
--- 
-2.45.1
+He's not saying no one can do that.  He's saying, correctly, that the
+kernel currently offers no way for userspace to do this limiting.  His
+patchset offers two ways: one system wide capability mask (which applies
+only to non-initial user namespaces) and on per-process inherited one
+which - yay - userspace can use to limit what its children will be
+able to get if they unshare a user namespace.
 
+> > - It adds a new capability set.
+> 
+> Which is a really, really bad idea. The equation for calculating effective
+> privilege is already more complicated than userspace developers are generally
+> willing to put up with.
+
+This is somewhat true, but I think the semantics of what is proposed here are
+about as straightforward as you could hope for, and you can basically reason
+about them completely independently of the other sets.  Only when reasoning
+about the correctness of this code do you need to consider the other sets.  Not
+when administering a system.
+
+If you want root in a child user namespace to not have CAP_MAC_ADMIN, you drop
+it from your pU.  Simple as that.
+
+> >   This set dictates what capabilities are granted in namespaces (instead
+> >   of always getting full caps).
+> 
+> I would not expect container developers to be eager to learn how to use
+> this facility.
+
+I'm a container developer, and I'm excited about it :)
+
+> >   This brings namespaces in line with the rest of the system, user
+> >   namespaces are no more "special".
+> 
+> I'm sorry, but this makes no sense to me whatsoever. You want to introduce
+> a capability set explicitly for namespaces in order to make them less
+> special?
+
+Yes, exactly.
+
+> Maybe I'm just old and cranky.
+
+That's fine.
+
+> >   They now work the same way as say a transition to root does with
+> >   inheritable caps.
+> 
+> That needs some explanation.
+> 
+> >
+> > - This isn't intended to be used by end users per se (although they could).
+> >   This would be used at the same places where existing capabalities are
+> >   used today (e.g. init system, pam, container runtime, browser
+> >   sandbox), or by system administrators.
+> 
+> I understand that. It is for containers. Containers are not kernel entities.
+
+User namespaces are.
+
+This patch set provides userspace a way of limiting the kernel code exposed
+to untrusted children, which currently does not exist.
+
+> > To give you some ideas of things you could do:
+> >
+> > # E.g. prevent alice from getting CAP_NET_ADMIN in user namespaces under SSH
+> > echo "auth optional pam_cap.so" >> /etc/pam.d/sshd
+> > echo "!cap_net_admin alice" >> /etc/security/capability.conf.
+> >
+> > # E.g. prevent any Docker container from ever getting CAP_DAC_OVERRIDE
+> > systemd-run -p CapabilityBoundingSet=~CAP_DAC_OVERRIDE \
+> >             -p SecureBits=userns-strict-caps \
+> >             /usr/bin/dockerd
+> >
+> > # E.g. kernel could be vulnerable to CAP_SYS_RAWIO exploits
+> > # Prevent users from ever gaining it
+> > sysctl -w cap_bound_userns_mask=0x1fffffdffff
 
