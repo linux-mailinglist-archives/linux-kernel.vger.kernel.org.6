@@ -1,193 +1,114 @@
-Return-Path: <linux-kernel+bounces-182826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE028C9093
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 13:22:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B318C9097
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 13:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 558C4B21563
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:22:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B236F2826EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FF51E494;
-	Sat, 18 May 2024 11:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4938338F9A;
+	Sat, 18 May 2024 11:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="T7t+6AJR"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BygVJarO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DEB1BC3C
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 11:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B12D2E417;
+	Sat, 18 May 2024 11:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716031321; cv=none; b=TX4aFQQtrcCOYOXHheOfdS6OvlzKwAFaGqk/ewLn6XhOrY/p7mzgjO+ATEAFCcrhNNg6Vt119AgPw41sdKM3dNpQeHfxTguQ7S/P2mdqChw9G2iaKuTntedTWLXKLL7/R2OHJm3URU96zcjF5Wi2QF5ETofuk7D2hB7MnWuHIx8=
+	t=1716031324; cv=none; b=f7IL3nk8B58LaoxlFRCUixGopve8Tv5NAdBh+GoDoJKrMD+mdSL+Yyy4lcrundH04U5NivgeuSARqltJwdyuT88Ax8IUFtpljfGbX1LRN6xxiUQ62qJKG7VET0zBv1MbUzyvXvUeWxlIPLalsiC4Lc1N2fmAni5CE7ULsxew8uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716031321; c=relaxed/simple;
-	bh=zHYkd1VuWjjnzZEIuSP/Fnz06nmQVhRTsZ+AdbTD/7U=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=KTdkCP2gzAIp2K+J/ygjf6pfn7MEZ3MjLqSDCweOykBls3xzfwE07Fxb8yapBHg6U/uwzCo/LGFeLni3TaWWGBkRIj6di2U6fSVAX6BpTI1I+49JJIOeERB9hbO6AgoHafHZJRfCM8Dx69y4S2nfNqlyWSfqDRuSXsTWMPLM3MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=T7t+6AJR; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
-	by cmsmtp with ESMTPS
-	id 8FvAsVrxBJXoq8I8Ls039r; Sat, 18 May 2024 11:21:50 +0000
-Received: from md-in-79.webhostbox.net ([43.225.55.182])
-	by cmsmtp with ESMTPS
-	id 8I8IsUd1dWqfj8I8JsJxIM; Sat, 18 May 2024 11:21:48 +0000
-X-Authority-Analysis: v=2.4 cv=GsNE+F1C c=1 sm=1 tr=0 ts=66488f4c
- a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=IkcTkHD0fZMA:10 a=TpHVaj0NuXgA:10 a=oz0wMknONp8A:10 a=bLk-5xynAAAA:8
- a=VwQbUJbxAAAA:8 a=vU9dKmh3AAAA:8 a=VRwkkYsinlBzF09QRo4A:9 a=QEXdDO2ut3YA:10
- a=zSyb8xVVt2t83sZkrLMb:22 a=AjGcO6oz07-iQ99wixmX:22 a=rsP06fVo5MYu2ilr0aT5:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:Subject:From:Cc:To:
-	MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=M8NMo52btDShYrwy22WqU46BbavfaGKTsDr4nRIpSqo=; b=T7t+6AJRBwYpwv/GPWIfCEgCgX
-	yNPia1LJ4/08hJA0kzNuy4oqAT0pb/DQwzQe+jDcSUqEMiSzWOtwA6c9cq/uXAVEODSbcdl/8YCb5
-	/qdKkexFl4hclno6qxKRNglBZ5l0gGZMkhuicKdbx2cD0nU6p/Rz8Z+RgTvO6w2q06zbc2HTTUEmk
-	nlOeu4U11JKojpwv1NBJL4EhnSuM7GVW3A1ugAu9y5m5lXoREpSf/YdZgqxB6UErhfnR6EG5eeAX+
-	VRxYchTGdTBM2KV0EbnwtmVCTiXVTHmw3NagduOzDs40AHSD++T0oWO70bTzbziPdiR+CfnPsXa69
-	cTc8GBDQ==;
-Received: from [122.165.245.213] (port=37884 helo=[192.168.1.5])
-	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <parthiban@linumiz.com>)
-	id 1s8I8G-0020Q2-25;
-	Sat, 18 May 2024 16:51:44 +0530
-Message-ID: <7955419c-ccc2-4a20-8ff5-07b119258415@linumiz.com>
-Date: Sat, 18 May 2024 16:51:36 +0530
+	s=arc-20240116; t=1716031324; c=relaxed/simple;
+	bh=iELBELN+ItTNiOWOJCNO9fLBpmFwctgb5zTuPUdT+jE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=lEN2pEA7WdSCw0Pd0FXeMAcy2P+l5vMjK+YDfdPpQ3FNn2WBunUj3cCJsGqrpNNHnE0q74LXQAUMrAvvYZiZSYvQ6tmn9AYSUqfRPCqExdc+MfTBJDBqf7jq7GWyDVqCIeqjq5ao0tohUKDc85hknMQH1n/z5gBRKz3Z02ar/+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BygVJarO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84605C32782;
+	Sat, 18 May 2024 11:22:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716031324;
+	bh=iELBELN+ItTNiOWOJCNO9fLBpmFwctgb5zTuPUdT+jE=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=BygVJarOdyxgxEoTi4Q6GFh1XwHgWTz+M5G0XqXv5+2vlOnao1Y+E1Obpug7VLlEp
+	 N0JFh7oOJIuqcVVViPEX4LzdsUDS3+jd7lPmhGu91aSpf6Fev/X2sc5CO16Id9iWc9
+	 dzB2n8WN9P+hA/PjNskR+wPNnGsdP3sqpZY7sXMbars+lMeppyofOLSo7LEcZx3lAC
+	 LfTgVPWj/xQxrVhmik+397AUIU978Tw0YwpBbeK9YlUanbPCxAtnjAwstyO2lh3vRl
+	 IPNdka9o22iFyZydhB9XDL/OFnEunFNjXay2z3kq9oSnl13VV0PgQekvT3IHiKKBAO
+	 sG6I9kRV3MLNg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: James.Bottomley@HansenPartnership.com
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
- peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
- Parthiban <parthiban@linumiz.com>
-From: Parthiban <parthiban@linumiz.com>
-Subject: SLB9670 TPM module crash
-Organization: Linumiz
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linumiz.com
-X-BWhitelist: no
-X-Source-IP: 122.165.245.213
-X-Source-L: No
-X-Exim-ID: 1s8I8G-0020Q2-25
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:37884
-X-Source-Auth: parthiban@linumiz.com
-X-Email-Count: 4
-X-Org: HG=dishared_whb_net_legacy;ORG=directi;
-X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfIoft60kJtgZSKuCPwnuw0PCHFsbQg1euNNinZh6KCkVhy+lRyiCYTpxmEDop7P52hNhuyDgzJsFVrENSpF0wGcaIZJCPmGHqxMj7vg7PlC1Wp2xBOiV
- cY9MJfzj08hqOzmPaVQFAMyAIt+OQ+gUsKU/0gVRwaoO/xLpNXkfwUsIXoO92v5z+x0ifz80I5RlS7nguHhD/SKxjW9Sv7wgUuY=
+Date: Sat, 18 May 2024 14:21:58 +0300
+Message-Id: <D1CQC0PTK1G0.124QCO3S041Q@kernel.org>
+Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Jonathan Calmels"
+ <jcalmels@3xx0.net>, "Casey Schaufler" <casey@schaufler-ca.com>
+Cc: <brauner@kernel.org>, <ebiederm@xmission.com>, "Luis Chamberlain"
+ <mcgrof@kernel.org>, "Kees Cook" <keescook@chromium.org>, "Joel Granados"
+ <j.granados@samsung.com>, "Serge Hallyn" <serge@hallyn.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "David Howells"
+ <dhowells@redhat.com>, <containers@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <keyrings@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
+ <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
+ <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
+ <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
+ <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
+ <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
+ <vhpmew3kyay3xq4h3di3euauo43an22josvvz6assex4op3gzw@xeq63mqb2lmh>
+ <D1CQ1FZ72NIW.2U7ZH0GU6C5W5@kernel.org>
+ <D1CQ8J60S7L4.1OVRIWBERNM5Y@kernel.org>
+In-Reply-To: <D1CQ8J60S7L4.1OVRIWBERNM5Y@kernel.org>
 
-Dear James Bottomley,
+On Sat May 18, 2024 at 2:17 PM EEST, Jarkko Sakkinen wrote:
+> On Sat May 18, 2024 at 2:08 PM EEST, Jarkko Sakkinen wrote:
+> > On Fri May 17, 2024 at 10:11 PM EEST, Jonathan Calmels wrote:
+> > > On Fri, May 17, 2024 at 10:53:24AM GMT, Casey Schaufler wrote:
+> > > > Of course they do. I have been following the use of capabilities
+> > > > in Linux since before they were implemented. The uptake has been
+> > > > disappointing in all use cases.
+> > >
+> > > Why "Of course"?
+> > > What if they should not get *all* privileges?
+> >
+> > They do the job given a real-world workload and stress test.
+> >
+> > Here the problem is based on a theory and an experiment.
+> >
+> > Even a formal model does not necessarily map all "unknown unknowns".
+>
+> So this was like the worst "sales pitch" ever:
+>
+> 1. The cover letter starts with the idea of having to argue about name
+> spaces, and have fun while doing that ;-) We all have our own ways to
+> entertain ourselves but "name space duels" are not my thing. Why not
+> just start with why we all want this instead? Maybe we don't want it
+> then. Maybe this is just useless spam given the angle presented?
+> 2. There's shitloads of computer science and set theory but nothing
+> that would make common sense. You need to build more understandable=20
+> model. There's zero "gist" in this work.
+>
+> Maybe this does make sense but the story around it sucks so far.
 
-The following crash is observed in the current mainline kernel and I have tried the
-git bisect to narrow it down. Bisect points to the below commit, which got merged as
-part of [1]. I tried reverting the below commit and the TPM loads fine.
+One tip: I think this is wrong forum to present namespace ideas in the
+first place. It would be probably better to talk about this with e.g.
+systemd or podman developers, and similar groups. There's zero evidence
+of the usefulness. Then when you go that route and come back with actual
+users, things click much more easily. Now this is all in the void.
 
-commit 1b6d7f9eb150305dcb0da4f7101a8d30dcdf0497
-Author: James Bottomley <James.Bottomley@HansenPartnership.com>
-Date:   Mon Apr 29 16:28:07 2024 -0400
-
-    tpm: add session encryption protection to tpm2_get_random()
-    
-    If some entity is snooping the TPM bus, they can see the random
-    numbers we're extracting from the TPM and do prediction attacks
-    against their consumers.  Foil this attack by using response
-    encryption to prevent the attacker from seeing the random sequence.
-    
-    Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-    Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-    Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
-    Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-
- drivers/char/tpm/tpm2-cmd.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
-
-[   11.551988] tpm_tis_spi spi0.1: 2.0 TPM (device-id 0x1B, rev-id 22)
-[   11.563036] spi_master spi0: will run message pump with realtime priority
-[   11.564345] tpm tpm0: A TPM error (256) occurred attempting the self test
-[   11.576709] tpm tpm0: starting up the TPM manually
-[   11.576825] mcp251xfd spi0.0 can0: MCP2518FD rev0.0 (-RX_INT -PLL -MAB_NO_WARN +CRC_REG +CRC_RX +CRC_TX +ECC -HD o:40.00MHz c:40.00MHz m:10.00MHz rs:10.00MHz es:10.00MHz rf:10.00MHz ef:10.00MHz) successfully i
-nitialized.
-[   12.418989] ------------[ cut here ]------------
-[   12.423626] WARNING: CPU: 3 PID: 173 at kernel/module/kmod.c:144 __request_module+0x1b0/0x298
-[   12.432169] Modules linked in: mcp251xfd tpm_tis_spi tpm_tis_core hantro_vpu can_dev v4l2_vp9 v4l2_h264 videobuf2_dma_contig etnaviv videobuf2_memops v4l2_mem2mem videobuf2_v4l2 gpu_sched videobuf2_common drm
-videodev crct10dif_ce mc onboard_usb_hub imx8m_ddrc backlight fsl_imx8_ddr_perf tmp102 rtc_rv3028 caam spi_imx at24 rtc_snvs error imx8mm_thermal pwm_imx27 imx_sdma
-[   12.465135] CPU: 3 PID: 173 Comm: kworker/u16:7 Not tainted 6.9.0-gde8a0c1b43a5 #1
-[   12.472709] Hardware name: PHYTEC phyGATE-Tauri-L-iMX8MM (DT)
-[   12.478458] Workqueue: async async_run_entry_fn
-[   12.482996] pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   12.489964] pc : __request_module+0x1b0/0x298
-[   12.494326] lr : __request_module+0x1a8/0x298
-[   12.498694] sp : ffff800082a0b520
-[   12.502007] x29: ffff800082a0b520 x28: 00000000001b15d1 x27: ffff800081fef212
-[   12.509155] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-[   12.516303] x23: 000000000000200f x22: 0000000000000001 x21: ffff800080601d7c
-[   12.523449] x20: 0000000000000000 x19: ffff80008153a260 x18: 0000000000000014
-[   12.530593] x17: 00000000935207a2 x16: 00000000a4f4335b x15: 0000000098476eec
-[   12.537739] x14: 0000000000000001 x13: 0000000000000000 x12: 0000000000000000
-[   12.544885] x11: 000000006516c2bb x10: ffffffffff2949fe x9 : ffff8000800e3594
-[   12.552031] x8 : ffff800082a0b5c8 x7 : 0000000000000000 x6 : 0c0406065b07370f
-[   12.559175] x5 : 0f37075b0606040c x4 : 0000000000000000 x3 : 0000000000000030
-[   12.566322] x2 : 0000000000000008 x1 : ffff8000800e3468 x0 : 0000000000000001
-[   12.573473] Call trace:
-[   12.575921]  __request_module+0x1b0/0x298
-[   12.579941]  crypto_alg_mod_lookup+0x184/0x230
-[   12.584389]  crypto_alloc_tfm_node+0x5c/0x110
-[   12.588751]  crypto_alloc_shash+0x2c/0x40
-[   12.592768]  drbg_init_hash_kernel+0x30/0xf0
-[   12.597046]  drbg_kcapi_seed+0x218/0x3b0
-[   12.600975]  crypto_rng_reset+0x8c/0xc8
-[   12.604821]  crypto_get_default_rng+0xac/0xe8
-[   12.609186]  ecc_gen_privkey+0x60/0xe0
-[   12.612938]  ecdh_set_secret+0x98/0x1a0
-[   12.616779]  tpm_buf_append_salt+0x198/0x308
-[   12.621055]  tpm2_start_auth_session+0x11c/0x2d0
-[   12.625677]  tpm2_get_random+0x58/0x230
-[   12.629521]  tpm_get_random+0x7c/0xa0
-[   12.633193]  tpm_hwrng_read+0x2c/0x40
-[   12.636862]  add_early_randomness+0x70/0x128
-[   12.641137]  hwrng_register+0x16c/0x220
-[   12.644978]  tpm_chip_register+0x110/0x238
-[   12.649079]  tpm_tis_core_init+0x494/0xf18 [tpm_tis_core]
-[   12.654488]  tpm_tis_spi_probe+0xac/0xe8 [tpm_tis_spi]
-[   12.659639]  tpm_tis_spi_driver_probe+0x3c/0x78 [tpm_tis_spi]
-[   12.665396]  spi_probe+0x8c/0xf8
-[   12.668633]  really_probe+0xc4/0x2a8
-[   12.672219]  __driver_probe_device+0x80/0x140
-[   12.676582]  driver_probe_device+0xe0/0x170
-[   12.680776]  __driver_attach_async_helper+0x54/0xc8
-[   12.685663]  async_run_entry_fn+0x3c/0xf0
-[   12.689677]  process_one_work+0x160/0x3f0
-[   12.693695]  worker_thread+0x304/0x420
-[   12.697449]  kthread+0x11c/0x128
-[   12.700682]  ret_from_fork+0x10/0x20
-[   12.704267] ---[ end trace 0000000000000000 ]---
-
-[1]: https://patchwork.kernel.org/project/linux-integrity/list/?series=804628&state=*
-
--- 
-Thanks,
-Parthiban N
-https://www.linumiz.com
+BR, Jarkko
 
