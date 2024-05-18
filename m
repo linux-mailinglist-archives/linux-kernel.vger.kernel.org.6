@@ -1,59 +1,66 @@
-Return-Path: <linux-kernel+bounces-182772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1518C8FA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 06:46:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80398C8FAC
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 07:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E66C81C21D6A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 04:46:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D071F21B69
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 05:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7215779F5;
-	Sat, 18 May 2024 04:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F848BFC;
+	Sat, 18 May 2024 05:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="pJldRtGU"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fJOMrUGX"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871212F24
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 04:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBA32F43;
+	Sat, 18 May 2024 05:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716007573; cv=none; b=g5gVTa2tmpftLyq9QKQU00J8RDXbrmd4tYFSUNpIwHRt4i0YgW59MIMDMMDX32V1b2m7iLMBou7WhSqgbFdP+CH9PU2hnoS0WKqX4h962GAWEeafRomjQz+NXNqbX9/3BlD5zehOcpek4MNtlE/EKfniVuy7ZQsBPt/vJf1h5g4=
+	t=1716009094; cv=none; b=I/IN6osR/93fEUBYvp7mwa5Xw/S6ckpGuVuQgr9kU5YAxfhptxfyfogWLcM/XTQl1XABaNJAnc2C2epQMzFXZPWrcibErN2jpHLf5NMoflLzQ9f4i3p9gpeRVcyPjeNS9i8H/noK10D1CoOjaCqN4VMpZNpu27MknpnuHHPw+Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716007573; c=relaxed/simple;
-	bh=zko0GQvgQmrQKqUCDztIo20k64rQkCRdQOFf5LVRNOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SGwpItJtXQRiEQQEiO2BoPBCE822JeFdBjH43gfVpjGlUKi19ub8i79JzbOwwmpAIFtgINDcKQ19oCiVAcNLl0ksQ0U6QSwYHI3tGpTqiIDOhyF5FUpaNvb5uuoSTW6661d7kZ3VXaP7sahZnazoEYLefwG+AuT3AC/aGisBD+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=pJldRtGU; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-113-2.bstnma.fios.verizon.net [173.48.113.2])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 44I4k2EV000641
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 18 May 2024 00:46:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1716007563; bh=VXD0kbwWVZnwfsiyxEZxxCdIqZ/+aqzg6M6B03Hd/ps=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=pJldRtGU3aiRbXK7YAvuBFRrbw4anQFUUwswOnNo+O59Bj2j+oeNd25BDldNaiL53
-	 /iYcurizVRTpQ9zRUNlHpZ8Cvke6qqYvbxmZDxIl73iwL6ebvjS4jvv7iTjm7j6j3M
-	 MEDAO7ayG1TA1qfDdziOCJaoQA1c8FdT55BB3maP+ZPhDj/7cZoV7h9lkH4R9Oh8MG
-	 HYQGuyBsNqYvW7D20hvgmExi19DEibVP0F30MBt8Qjq4kuXzDbtAy3KDFQ93j8KXpU
-	 aibupskFnYVv7IjhQa5TkTWxBjL8+nrT+raZCiAL+7byz8f3Z8927Hy90hM9HRGNzc
-	 fgmAOlCwlVLfw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id DF90715C00DC; Sat, 18 May 2024 00:46:01 -0400 (EDT)
-Date: Sat, 18 May 2024 00:46:01 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] ext4 updates for v6.10-rc1
-Message-ID: <20240518044601.GA478319@mit.edu>
+	s=arc-20240116; t=1716009094; c=relaxed/simple;
+	bh=EsXtHbU2yk5VmkzRSlicLeffzpHEB9yQz3OE5uXkSWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iZZ/WwQAXKYUPv1ySxqDtZdsAOn7p+JqKbF9pb+Bd5oemuOPjOBW7BtDq18eRkbWoNE3ROJ7WiXIIHm5t8ss5q+pyvOlZvviiE/xpyeFvrwGCAZrePoVAGXllmsK7FF9n9AbpbtMZEXJQ504cgQHe/oeficj7B8eS6NREbnwbiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fJOMrUGX; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=RoAGfadQ7PdVFjjVcYuXWttxVHnjeRkrlb3syjR3P+0=; b=fJOMrUGXOjxXmyL5KL1dhgWmka
+	EGheI4UAYl0+iPcoNaHQ43zTsjOYaHU7TVJLZwADXTXWhZk5uGgyfoTsjcjbirLkX+TGJmnP791IO
+	7/n7p/ajmhCgw+/V7/+g2HtBGWsxM/FL4vvG13jN6ryuIRYeObpzEihyhX9FFqQef7yp/yAE2te//
+	nU9KcIEHlmvv3+GyvIduCMJNO7UqY24/nAgVZxk4fpcJHmmEb3qvxe0maDgG88Rb64OMz+t+PbiVd
+	pWzHe7e/3T91gTLXiTvGWDdpVD1ulOGHmtwg7i4nAy2pHLfEIpCnVtjV2s7w2wlFvsg6OR9hirClN
+	BMKMoKaA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s8CLu-0000000DhSK-1QJh;
+	Sat, 18 May 2024 05:11:26 +0000
+Date: Sat, 18 May 2024 06:11:26 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Justin Stitt <justinstitt@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
+Message-ID: <Zkg4fl1t6sKGPSb6@casper.infradead.org>
+References: <202404291502.612E0A10@keescook>
+ <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
+ <202405081144.D5FCC44A@keescook>
+ <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
+ <202405081354.B0A8194B3C@keescook>
+ <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
+ <202405081949.0565810E46@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,119 +69,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <202405081949.0565810E46@keescook>
 
-The following changes since commit 0bbac3facb5d6cc0171c45c9873a2dc96bea9680:
+On Wed, May 08, 2024 at 11:11:35PM -0700, Kees Cook wrote:
+> 	Or even just simple math between u8s:
+> 
+> 	while (xas->xa_offset == 255) {
+> 		xas->xa_offset = xas->xa_node->offset - 1;
+> 
+> 	Is it expecting to wrap (truncate)? How is it distinguished from
+> 	the "num_elems++" case?
 
-  Linux 6.9-rc4 (2024-04-14 13:38:39 -0700)
+Hi ;-)
 
-are available in the Git repository at:
+This looks to me like it's walking up the tree, looking to go to the
+'prev' element.  So yes, the wrapping from 0 to 255 is intentional,
+because once we find an offset that's not 0, we've set offset to the
+right one.  Just to give more context, here's the few lines around it:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus-6.10-rc1
+        if (xas->xa_offset != get_offset(xas->xa_index, xas->xa_node))
+                xas->xa_offset--;
 
-for you to fetch changes up to c6a6c9694aadc4c3ab8d89bdd44aed3eab1e43c6:
+        while (xas->xa_offset == 255) {
+                xas->xa_offset = xas->xa_node->offset - 1;
+                xas->xa_node = xa_parent(xas->xa, xas->xa_node);
+                if (!xas->xa_node)
+                        return set_bounds(xas);
+        }
 
-  ext4: fix error pointer dereference in ext4_mb_load_buddy_gfp() (2024-05-17 11:24:38 -0400)
+So it's kind of nasty.  I don't want to write it as:
 
-Note that there is a relatively merge conflict; the relatively simple
-resolution which I used when running regression tests is at the tag
-ext4_merge_resolution in the ext4 git repo,
-https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
+	while (xas->xa_offset == 0) {
+		xas->xa_offset = xas->xa_node->offset;
+		xas->xa_node = xa_parent(xas->xa, xas->xa_node);
+	}
+	xas->xa_offset--;
 
-----------------------------------------------------------------
-Ext4 patches for the 6.10-rc1 merge window:
- - more folio conversion patches
- - add support for FS_IOC_GETFSSYSFSPATH
- - mballoc cleaups and add more kunit tests
- - sysfs cleanups and bug fixes
- - miscellaneous bug fixes and cleanups
-
-----------------------------------------------------------------
-Baokun Li (12):
-      ext4: avoid overflow when setting values via sysfs
-      ext4: refactor out ext4_generic_attr_store()
-      ext4: refactor out ext4_generic_attr_show()
-      ext4: fix slab-out-of-bounds in ext4_mb_find_good_group_avg_frag_lists()
-      ext4: add new attr pointer attr_mb_order
-      ext4: add positive int attr pointer to avoid sysfs variables overflow
-      ext4: set type of ac_groups_linear_remaining to __u32 to avoid overflow
-      ext4: set the type of max_zeroout to unsigned int to avoid overflow
-      ext4: clean up s_mb_rb_lock to fix build warnings with C=1
-      ext4: fix mb_cache_entry's e_refcnt leak in ext4_xattr_block_cache_find()
-      ext4: propagate errors from ext4_sb_bread() in ext4_xattr_block_cache_find()
-      ext4: fix uninitialized ratelimit_state->lock access in __ext4_fill_super()
-
-Christoph Hellwig (1):
-      ext4: set FMODE_CAN_ODIRECT instead of a dummy direct_IO method
-
-Colin Ian King (1):
-      jbd2: remove redundant assignement to variable err
-
-Dan Carpenter (2):
-      ext4: fix potential unnitialized variable
-      ext4: fix error pointer dereference in ext4_mb_load_buddy_gfp()
-
-Jan Kara (3):
-      ext4: avoid excessive credit estimate in ext4_tmpfile()
-      Revert "ext4: drop duplicate ea_inode handling in ext4_xattr_block_set()"
-      ext4: do not create EA inode under buffer lock
-
-Justin Stitt (1):
-      ext4: replace deprecated strncpy with alternatives
-
-Kemeng Shi (6):
-      ext4: implement filesystem specific alloc_inode in unit test
-      ext4: keep "prefetch_grp" and "nr" consistent
-      ext4: add test_mb_mark_used_cost to estimate cost of mb_mark_used
-      ext4: call ext4_mb_mark_free_simple to free continuous bits in found chunk
-      ext4: use correct criteria name instead stale integer number in comment
-      ext4: open coding repeated check in next_linear_group
-
-Kent Overstreet (1):
-      ext4: add support for FS_IOC_GETFSSYSFSPATH
-
-Matthew Wilcox (Oracle) (6):
-      ext4: convert bd_bitmap_page to bd_bitmap_folio
-      ext4: convert bd_buddy_page to bd_buddy_folio
-      ext4: convert ext4_mb_init_cache() to take a folio
-      ext4: convert ac_bitmap_page to ac_bitmap_folio
-      ext4: convert ac_buddy_page to ac_buddy_folio
-      ext4: remove calls to to set/clear the folio error flag
-
-Max Kellermann (1):
-      Revert "ext4: apply umask if ACL support is disabled"
-
-Ritesh Harjani (IBM) (2):
-      ext4: Fixes len calculation in mpage_journal_page_buffers
-      ext4: Remove PAGE_MASK dependency on mpage_submit_folio
-
-Thorsten Blum (1):
-      ext4: remove unneeded if checks before kfree
-
-Ye Bin (2):
-      jbd2: use shrink_type type instead of bool type for __jbd2_journal_clean_checkpoint_list()
-      jbd2: add prefix 'jbd2' for 'shrink_type'
-
-Zhang Yi (1):
-      ext4: remove the redundant folio_wait_stable()
-
- fs/ext4/acl.h          |   5 -
- fs/ext4/ext4.h         |   9 +-
- fs/ext4/extents.c      |   3 +-
- fs/ext4/file.c         |   5 +-
- fs/ext4/inode.c        |  11 +-
- fs/ext4/ioctl.c        |   3 +-
- fs/ext4/mballoc-test.c |  76 +++++++++++++
- fs/ext4/mballoc.c      | 322 +++++++++++++++++++++++++++++---------------------------
- fs/ext4/mballoc.h      |  14 +--
- fs/ext4/move_extent.c  |   4 +-
- fs/ext4/namei.c        |   2 +-
- fs/ext4/page-io.c      |   3 -
- fs/ext4/readpage.c     |   1 -
- fs/ext4/super.c        |  36 +++----
- fs/ext4/sysfs.c        | 174 ++++++++++++++++++------------
- fs/ext4/xattr.c        | 145 +++++++++++++------------
- fs/jbd2/checkpoint.c   |  24 +++--
- fs/jbd2/commit.c       |   3 +-
- include/linux/jbd2.h   |   4 +-
- 19 files changed, 481 insertions(+), 363 deletions(-)
+because there's that conditional subtraction before the loop starts.
+The xarray test-suite is pretty good if anyone thinks they have a clearer
+way to write this loop ...
 
