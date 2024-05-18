@@ -1,108 +1,210 @@
-Return-Path: <linux-kernel+bounces-182727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6BE08C8EE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 02:31:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E688C8EF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 02:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72ED928227B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:31:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC3EA1C21A6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3A229A2;
-	Sat, 18 May 2024 00:31:39 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id D12FA383
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 00:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C078D637;
+	Sat, 18 May 2024 00:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="SV2zemg5"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CD833EC
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 00:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715992298; cv=none; b=CflL4DaFeMk19Wc+ogtYvwTWrHzFCyUb35QXAENHWFGf8A1w9gwowPpXLUNrXaObIuYO9QJMmA4lmJuzd/8nsJ0kM3k73s1+gF2glABugjjLwCBhuAeGzWnWgcfMg0iYZ/DB9FpmIeerf6awZzvGSUl7W/G/qPpG7qWdHc6HAr0=
+	t=1715992774; cv=none; b=mS8J2P//ReG6vnvnfaM+//rOfOd3XsKq+uZDIC0IHWxVunHh3wZQO0K/Nzt67NAahucCruYE9ON7ys8SwVI5qJHt1kWR+thqH+cz6RTkr62Ev04mGfmLrrIsKB5/bCGyl6k36tCMGoqsZqdl2JhP8AqVsqKat4Ok2yOdDvrRVCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715992298; c=relaxed/simple;
-	bh=g3RkVv+t4bcwiCbgF99DVpzGzO44nWwU895QumCSBRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UK2VFUEFpp9jRppIRikXmtjie8b0iXiqDrb1qFMUcoGZhqQHbcLwfYBdSUjV9MRTX83A09dgyW42JAVkyBc3R50JDu3hFyOMpvTlZQTH0UwUCwLARISV+q3ukrxgmoHcy5vb6nanB3Y4UKoXUNItES/FfZwNEd7X39NO2SQMq+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 327208 invoked by uid 1000); 17 May 2024 20:31:35 -0400
-Date: Fri, 17 May 2024 20:31:35 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-  "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
-  linux-arch@vger.kernel.org, kernel-team@meta.com, parri.andrea@gmail.com,
-  boqun.feng@gmail.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-  Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: LKMM: Making RMW barriers explicit
-Message-ID: <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
-References: <72c804c8-2511-4349-a823-bc1de8bb729e@rowland.harvard.edu>
- <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
- <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
+	s=arc-20240116; t=1715992774; c=relaxed/simple;
+	bh=4V5YW8ORGMY45KRj8UEqSm59pF8Y+sc6mDeE+TSeGJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gR0XZj2/WmS4MvBiLKw1GXzSCDiJcrJgPT82eDHsMLMpl9Qz/Q+D5vuMfznhDyOrcw2omaD/2y6VIkzQi1Rp8NCxzWtRY7DlOCw0SRI4yKqEotgIBOIO5dLRaoZy8F289FMS6FBNyBRuhdUDUyqt5qG3SjkE2nM83qQJhF009qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=SV2zemg5; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1edfc57ac0cso24917965ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:39:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1715992772; x=1716597572; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p7Punv+O2VI5RKAkHRkhtEk7CBj9yRK2PJX5XN6bfhc=;
+        b=SV2zemg5NtIR3pbXcUpjQL4Nh2uV808bM0bYra4XbVqoECYENJz6/Yy1du6GUsBF1T
+         XjClNZyHgkq1IjzGsNu0VF4KSRcFvP8duWW93pNhihxONKxIBHEuEju184pzDGSNNupq
+         ib3YMvRdDHjiHmp2OxcZgusnPxfFWYkd34Nlw+eS/M5SIsLUf3Mrx9wPF3j4JbN0L51J
+         8Ns52iIbDMMJzhPw7VAE6tB2RCkaU9f1rM9auoIgPX19Bn4lqARdC5AzZbrjVYBG9xPX
+         cdNuEoJX1TmbwOv4k+7AFSI4ow5gFWRUrYzogvoH4IJNgoo7XBVgU2ba15ADfeNZaYsV
+         sGRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715992772; x=1716597572;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p7Punv+O2VI5RKAkHRkhtEk7CBj9yRK2PJX5XN6bfhc=;
+        b=p096V0Q+SLCLSb2I5R0X46WZSMtOct8colUyDO73CwJDz1YQRGlyaEnZwPx4NpOtKL
+         Y3rjrB75qmH3lLP/uH1q3dGKfO5+skYY/1nhFBV+nRfn6PrXxXBLl/qbG7iPtri4r1kS
+         zihYJA2jRQVSPRA59HUnvPpMVKu/oMx3CGulndMEXrpYAhGYOnPeTwjP+2USVgx7RyNY
+         I+JJadzpXFTc0Vcyw61F+FZQIsw7EFlb6A53bKCgtKFFfsI/i/eIUm1ZS0MVZxvnCWa9
+         oVc5yO/wRll6kFj9UVQh3A6aQpCu69QhT/JlejnoJdfRwNKBDCiZuK4WUP1LFDx29VSU
+         h2Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKia8ihZIJnAtAAxQl49GfCBJITW68u1vB3Wkzo9MTRiQU5iJlJzfOu2yMK2SuICjJ2leQtH9C8Ywmt5g+jMPbQYXGeyRcykPG9ICQ
+X-Gm-Message-State: AOJu0YxNt048P4nTaAoa6k1SnbavefAe67SytiZxA6uTDFUoDZ6xgarf
+	VQK1rRyJ/a1XOjxcDGCbG8k+dLtT0tZxvWt8OqToe7xdAyvehmQ+TkAcY6I8tXE=
+X-Google-Smtp-Source: AGHT+IG2kizdOiSw0uylPEq0qK5Nujj1quEtxgB2wxc39/tXdkGx33RSfpvHjRCh3dNNGsAUN6Msjg==
+X-Received: by 2002:a05:6a00:1397:b0:6e6:89ad:1233 with SMTP id d2e1a72fcca58-6f4e02a6150mr30537733b3a.2.1715992772166;
+        Fri, 17 May 2024 17:39:32 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1156:1:1cbd:da2b:a9f2:881? ([2620:10d:c090:500::6:9fd9])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af2bccsm16503658b3a.170.2024.05.17.17.39.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 May 2024 17:39:31 -0700 (PDT)
+Message-ID: <090be3c0-42e6-4b97-8b03-eb64b06a2911@davidwei.uk>
+Date: Fri, 17 May 2024 17:39:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 05/14] netdev: netdevice devmem allocator
+Content-Language: en-GB
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski
+ <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
+ <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Pavel Begunkov <asml.silence@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
+ Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+References: <20240510232128.1105145-1-almasrymina@google.com>
+ <20240510232128.1105145-6-almasrymina@google.com>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <20240510232128.1105145-6-almasrymina@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 16, 2024 at 10:44:05AM +0200, Hernan Ponce de Leon wrote:
-> On 5/16/2024 10:31 AM, Jonas Oberhauser wrote:
-> > 
-> > 
-> > Am 5/16/2024 um 3:43 AM schrieb Alan Stern:
-> > > Hernan and Jonas:
-> > > 
-> > > Can you explain more fully the changes you want to make to herd7 and/or
-> > > the LKMM?  The goal is to make the memory barriers currently implicit in
-> > > RMW operations explicit, but I couldn't understand how you propose to do
-> > > this.
-> > > 
-> > > Are you going to change herd7 somehow, and if so, how?  It seems like
-> > > you should want to provide sufficient information so that the .bell
-> > > and .cat files can implement the appropriate memory barriers associated
-> > > with each RMW operation.  What additional information is needed?  And
-> > > how (explained in English, not by quoting source code) will the .bell
-> > > and .cat files make use of this information?
-> > > 
-> > > Alan
-> > 
-> > 
-> > I don't know whether herd7 needs to be changed. Probably, herd7 does the
-> > following:
-> > - if a tag called Mb appears on an rmw instruction (by instruction I
-> > mean things like xchg(), atomic_inc_return_relaxed()), replace it with
-> > one of those things:
-> >    * full mb ; once (the rmw) ; full mb, if a value returning
-> > (successful) rmw
-> >    * once (the rmw)   otherwise
-> > - everything else gets translated 1:1 into some internal representation
-> 
-> This is my understanding from reading the source code of CSem.ml in herd7's
-> repo.
-> 
-> Also, this is exactly what dartagnan is currently doing.
-> 
-> > 
-> > What I'm proposing is:
-> > 1. remove this transpilation step,
-> > 2. and instead allow the Mb tag to actually appear on RMW instructions
-> > 3. change the cat file to explicitly define the behavior of the Mb tag
-> > on RMW instructions
-> 
-> These are the exact 3 things I changed in dartagnan for testing what Jonas
-> proposed.
-> 
-> I am not sure if further changes are needed for herd7.
+On 2024-05-10 16:21, Mina Almasry wrote:
+> +/* This returns the absolute dma_addr_t calculated from
+> + * net_iov_owner(niov)->owner->base_dma_addr, not the page_pool-owned
+> + * niov->dma_addr.
+> + *
+> + * The absolute dma_addr_t is a dma_addr_t that is always uncompressed.
+> + *
+> + * The page_pool-owner niov->dma_addr is the absolute dma_addr compressed into
+> + * an unsigned long. Special handling is done when the unsigned long is 32-bit
+> + * but the dma_addr_t is 64-bit.
+> + *
+> + * In general code looking for the dma_addr_t should use net_iov_dma_addr(),
+> + * while page_pool code looking for the unsigned long dma_addr which mirrors
+> + * the field in struct page should use niov->dma_addr.
+> + */
+> +static inline dma_addr_t net_iov_dma_addr(const struct net_iov *niov)
+> +{
+> +	struct dmabuf_genpool_chunk_owner *owner = net_iov_owner(niov);
+> +
+> +	return owner->base_dma_addr +
+> +	       ((dma_addr_t)net_iov_idx(niov) << PAGE_SHIFT);
+> +}
 
-Okay, good.  This answers the first part of what I asked.  What about 
-the second part?  That is, how will the changes to the .def, .bell, and 
-cat files achieve your goals?
+This part feels like devmem TCP specific, yet the function is in
+netmem.h. Please consider moving it into devmem.{h,c} which makes it
+less likely that people not reading your comment will try using it.
 
-Alan
+> +
+> +static inline struct net_devmem_dmabuf_binding *
+> +net_iov_binding(const struct net_iov *niov)
+> +{
+> +	return net_iov_owner(niov)->binding;
+> +}
+> +
+>  /* netmem */
+>  
+>  /**
+> diff --git a/net/core/devmem.c b/net/core/devmem.c
+> index d82f92d7cf9ce..1f90e23a81441 100644
+> --- a/net/core/devmem.c
+> +++ b/net/core/devmem.c
+> @@ -54,6 +54,42 @@ void __net_devmem_dmabuf_binding_free(struct net_devmem_dmabuf_binding *binding)
+>  	kfree(binding);
+>  }
+>  
+> +struct net_iov *
+> +net_devmem_alloc_dmabuf(struct net_devmem_dmabuf_binding *binding)
+> +{
+> +	struct dmabuf_genpool_chunk_owner *owner;
+> +	unsigned long dma_addr;
+> +	struct net_iov *niov;
+> +	ssize_t offset;
+> +	ssize_t index;
+> +
+> +	dma_addr = gen_pool_alloc_owner(binding->chunk_pool, PAGE_SIZE,
+> +					(void **)&owner);
+> +	if (!dma_addr)
+> +		return NULL;
+> +
+> +	offset = dma_addr - owner->base_dma_addr;
+> +	index = offset / PAGE_SIZE;
+> +	niov = &owner->niovs[index];
+> +
+> +	niov->dma_addr = 0;
+> +
+> +	net_devmem_dmabuf_binding_get(binding);
+> +
+> +	return niov;
+> +}
+> +
+> +void net_devmem_free_dmabuf(struct net_iov *niov)
+> +{
+> +	struct net_devmem_dmabuf_binding *binding = net_iov_binding(niov);
+> +	unsigned long dma_addr = net_iov_dma_addr(niov);
+> +
+> +	if (gen_pool_has_addr(binding->chunk_pool, dma_addr, PAGE_SIZE))
+> +		gen_pool_free(binding->chunk_pool, dma_addr, PAGE_SIZE);
+> +
+> +	net_devmem_dmabuf_binding_put(binding);
+> +}
+> +
+>  /* Protected by rtnl_lock() */
+>  static DEFINE_XARRAY_FLAGS(net_devmem_dmabuf_bindings, XA_FLAGS_ALLOC1);
+>  
 
