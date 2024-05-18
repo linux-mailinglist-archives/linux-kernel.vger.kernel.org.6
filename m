@@ -1,188 +1,280 @@
-Return-Path: <linux-kernel+bounces-182878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2598C9139
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:53:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26CE18C9140
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 927B8281494
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 12:53:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77277B2148A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 12:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B9E38FA6;
-	Sat, 18 May 2024 12:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485D33BBE1;
+	Sat, 18 May 2024 12:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMIPjfiC"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D7C0JjLS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A636F1BC59;
-	Sat, 18 May 2024 12:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F41F32C60;
+	Sat, 18 May 2024 12:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716036815; cv=none; b=FOs+HTAj5vfuV07PGc3TV8VdbfzRlVm6LMjUygKyhv4IBHtnXgqpSjxaANjhcpHnMoEVJaRC9WFT5GQ3FH7YHiT19pTGo+eiIZJwnc6wDbI27voac7ynjYKDOCGvcFOgFJLaPxACRw504+p+RkP1c3P5PGcRXR2eDV6ZeCrjpbY=
+	t=1716037042; cv=none; b=Xn6dvnAqX5dLahatmW7T9vZr7CDnZ92T2/oGEAqTD2E9jnIMSe1lGEZSLi5dbk+abyAnrn/iQlwIp9DT0OMWd+7oGb2dTaKAmBxknN1ipktKqtHKsJBzblf3dMLVfpy0woiN55fZLSeZ8Vqg3MH8HKM3QJUtnKDqHhvelenGxMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716036815; c=relaxed/simple;
-	bh=xHr9/P09XCNyXQ2dzA/0yRn8aDeg6Gw0YI+5m8fLZlY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=igjhkpbWrRhR/f9aRfdYguF5U07DizAVcaFt0qr0N0XUwmckir+QFGUD84MQivtzWSrPV/qdCVcseqnDjECN9tGp1YOoLQcvbMhjXXtSNNP1XpYDj8zZIgraBiOrXeSkhmdMIvdXy0W5vqJA9ysN6aO9fQ7fhvkbq4OiOGsyhvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lMIPjfiC; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6a0ffaa079dso13008526d6.1;
-        Sat, 18 May 2024 05:53:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716036812; x=1716641612; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nk8j70B2dyx8rUsXGzOgSRjrOsKA9IRanytRvJF+P2M=;
-        b=lMIPjfiCK6QqbP/ps+S529JojFsrZjMKP6MUjZySBwbdZf0A7YtEPQW94852jLqnJc
-         XDA84K9/BthB1nsAnImKUwJa10e6/BGRf4XDlGjVW2CBzGRCkCQx7X0rVo6oNxz5CVvS
-         HzEGewfRdFgyD27ppbBFNfwDwBmQzZrbfmUAmSa874tMlztEX4iX1KOwILbjFf1wpkVH
-         i4GOIJRvp7ew9DQa4iuoDN6jaEpBp/ZyZfq2yhX9EbCT6O2ClpXu71qymgV1n2MIQ0HZ
-         HO/2HxOf0YRw2fZKk/EdGMrRTsFGFI+jzJ40IIZcD7BevQhVXjOsMVEEHfyq3zn5uj4w
-         2Cdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716036812; x=1716641612;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nk8j70B2dyx8rUsXGzOgSRjrOsKA9IRanytRvJF+P2M=;
-        b=bEMHdThYoQwYxPjl4YYWOu9ExNhVk+wKDrGI+i7N79HseS7ov6qioWUdGDx+fn1+1o
-         pmqzOdxNWqqgO2V0n9se4rG7z9Qvfu1riyv/WOcr0h+tKVZXHJfcohZ5Y5Tm5jQswH7e
-         Lw7f3maTX3w9Dxin14aaxO+VXmlTy6dFeUNtK3QYafHtE4fkB3ouynfqEyqpNxUdKTvv
-         q5IoqGhth8NJvwhqbZcTm9nGJVy47Gphj3myN0PyzpV2vIYItZGeac7KtNBvnk5IsjP9
-         Nl8dbThvWFE6CV+rJp7uWGuy6zbKpcp4Q1oqzKKJnsq0P0BHOzciMxyj+nvKFgwq88Ja
-         nllg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5TPnk1yiPTVUL1SmLLB4Pj45PpFfY26inQbOXNZtyNK2d+aGn+WPjhBf1nEErFExMI5sjqJUq6oEYGvCnXisOWspV4Sgu
-X-Gm-Message-State: AOJu0YwioWP1hQAArt123seE3F9UiMlV7gA1kkhku+lLKGX40DD92fyB
-	jfmS5Wa7FpFQX23AMRr9UdubZMfD06RLeyzsHF/lGYOyetM81s7a7Z0HD8d4xkr94FKJkzWxlY4
-	Pyr+DGDWPP02Gc9SAdtxv6GE3mytItyfEuM4=
-X-Google-Smtp-Source: AGHT+IFx6AN9EBW1dNyhXRV9OpYGMlWlZ90LSXEHSLb7Cm8+ts+Bk5AnUR+gVFsRC9zntPdCY0tOL+oVUoHPHpA+ZYk=
-X-Received: by 2002:ad4:4eeb:0:b0:6a0:deb6:7b0f with SMTP id
- 6a1803df08f44-6a843e6af24mr29148876d6.29.1716036811946; Sat, 18 May 2024
- 05:53:31 -0700 (PDT)
+	s=arc-20240116; t=1716037042; c=relaxed/simple;
+	bh=amiiGJ5NNqNjkmnkE0K+NtLuWVQeOhrXthlSQRlSaks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AevIszVA3q8xtu2X7pRebwWXRUZp2rCKO46k5+r665P6talP+szb0tJiMaozdG4MvoxFL5NJw7pDyqh6C0ar9d6SOUPEy/wWGY/RsIJ3DbBgh7UK7sJQtqXKChKrXk6Moym/dmZlnHAz1pJMEJMjdzIdo9B5/zhtscw5tnLWVyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D7C0JjLS; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716037041; x=1747573041;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=amiiGJ5NNqNjkmnkE0K+NtLuWVQeOhrXthlSQRlSaks=;
+  b=D7C0JjLS0j2jtcnHhnv7HC0gDxcSeDqNZM+P7WOfB3y49rcNTaR+0sR7
+   aT0Hwnhy1n1sArU6NFhik5LQ3/1FKzuzcTB7yFGg9lqAxZyU8w8Dye5B4
+   e7ktp780H4mNS2Rp5SZfFzVfpk8vqv2CrFOJmZF/2AosZW+vTkCxuZ6X5
+   tqOO+IF4di1lrZqrki5tqC8Z8a0RpOxFkLYpo/6iOQai/dH6y34A7IX4N
+   dSHSGiYThkLEdpd6kD4qtryEG8k/FEgZQyrqs7q4SQf5L7vJdUjYYKo9B
+   SyPDa6gQAyZcsigm4Ay/VUzA75KALMzpY5xi2zKb9LLxa80bL3m3GTKFW
+   A==;
+X-CSE-ConnectionGUID: sPXFANx3S5+AzKai8KlY6g==
+X-CSE-MsgGUID: aYnKSi47QUGhamG7cZ2E/Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="12327820"
+X-IronPort-AV: E=Sophos;i="6.08,170,1712646000"; 
+   d="scan'208";a="12327820"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2024 05:57:21 -0700
+X-CSE-ConnectionGUID: sAqm9aeATFOOK+cy2MS03w==
+X-CSE-MsgGUID: Ms4cj+XzQRaW+DbmkSUwKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,170,1712646000"; 
+   d="scan'208";a="36878887"
+Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 18 May 2024 05:57:13 -0700
+Received: from kbuild by 108735ec233b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s8Jcc-0002Dc-0Y;
+	Sat, 18 May 2024 12:57:10 +0000
+Date: Sat, 18 May 2024 20:56:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>,
+	Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Emil Svendsen <emas@bang-olufsen.dk>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH 04/13] a2b: add AD24xx I2C interface driver
+Message-ID: <202405182015.49MmB9gp-lkp@intel.com>
+References: <20240517-a2b-v1-4-b8647554c67b@bang-olufsen.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Chris Rankin <rankincj@gmail.com>
-Date: Sat, 18 May 2024 13:53:20 +0100
-Message-ID: <CAK2bqVJoT3yy2m0OmTnqH9EAKkj6O1iTk42EyyMtvvxKh6YDKg@mail.gmail.com>
-Subject: [BUG] Linux 6.8.10 NPE
-To: LKML <linux-kernel@vger.kernel.org>, Linux Stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517-a2b-v1-4-b8647554c67b@bang-olufsen.dk>
 
-Hi,
+Hi Alvin,
 
-I am using vanilla Linux 6.8.10, and I've just noticed this BUG in my
-dmesg log. I have no idea what triggered it, and especially since I
-have not even mounted any NFS filesystems?!
+kernel test robot noticed the following build errors:
 
-Cheers,
-Chris
+[auto build test ERROR on c75962170e49f24399141276ae119e6a879f36dc]
 
-[ 9114.607417] BUG: kernel NULL pointer dereference, address: 0000000000000068
-[ 9114.613082] #PF: supervisor read access in kernel mode
-[ 9114.616929] #PF: error_code(0x0000) - not-present page
-[ 9114.620775] PGD 0 P4D 0
-[ 9114.622013] Oops: 0000 [#16] PREEMPT SMP PTI
-[ 9114.624987] CPU: 2 PID: 16501 Comm: sadc Tainted: G      D   I
-  6.8.10 #1
-[ 9114.630993] Hardware name: Gigabyte Technology Co., Ltd.
-EX58-UD3R/EX58-UD3R, BIOS FB  05/04/2009
-[ 9114.638561] RIP: 0010:nfsd_show+0x39/0x18e [nfsd]
-[ 9114.642026] Code: fb 48 83 ec 10 48 8b 47 70 8b 2d 34 9b 03 00 48
-8b 80 b0 00 00 00 4c 8b a0 60 02 00 00 e8 99 84 f2 df 49 8b 84 24 f8
-0b 00 00 <48> 8b 2c e8 e8 6d c0 f2 df 48 8d bd 00 03 00 00 e8 8f ff ff
-ff 48
-[ 9114.659472] RSP: 0018:ffffc9000b1afcf8 EFLAGS: 00010202
-[ 9114.663405] RAX: 0000000000000000 RBX: ffff88810cd5de80 RCX: 0000000000001000
-[ 9114.669239] RDX: ffff88813f45b900 RSI: 0000000000000001 RDI: ffff88810cd5de80
-[ 9114.675069] RBP: 000000000000000d R08: 0000000000400cc0 R09: 00000000ffffffff
-[ 9114.680905] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa11e51e0
-[ 9114.686737] R13: ffffc9000b1afef8 R14: ffff88810cd5de80 R15: ffffffff81a2a520
-[ 9114.692586] FS:  00007f3637e49740(0000) GS:ffff888343c80000(0000)
-knlGS:0000000000000000
-[ 9114.699370] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 9114.703809] CR2: 0000000000000068 CR3: 000000027a18c000 CR4: 00000000000006f0
-[ 9114.709642] Call Trace:
-[ 9114.710798]  <TASK>
-[ 9114.711602]  ? __die_body+0x1a/0x5c
-[ 9114.713802]  ? page_fault_oops+0x321/0x36e
-[ 9114.716636]  ? exc_page_fault+0x105/0x117
-[ 9114.719348]  ? asm_exc_page_fault+0x22/0x30
-[ 9114.722237]  ? nfsd_show+0x39/0x18e [nfsd]
-[ 9114.725103]  ? nfsd_show+0x31/0x18e [nfsd]
-[ 9114.727954]  seq_read_iter+0x171/0x353
-[ 9114.730410]  seq_read+0xe0/0x108
-[ 9114.732350]  ? startup_64+0x1/0x60
-[ 9114.734458]  proc_reg_read+0x8c/0xa7
-[ 9114.736746]  vfs_read+0xa6/0x1bf
-[ 9114.738685]  ? __do_sys_newfstat+0x34/0x5c
-[ 9114.741486]  ksys_read+0x74/0xc0
-[ 9114.743418]  do_syscall_64+0x6c/0xdc
-[ 9114.745695]  entry_SYSCALL_64_after_hwframe+0x60/0x68
-[ 9114.749449] RIP: 0033:0x7f3638039cc1
-[ 9114.751752] Code: 00 48 8b 15 59 81 0d 00 f7 d8 64 89 02 b8 ff ff
-ff ff eb bd e8 b0 aa 01 00 f3 0f 1e fa 80 3d 85 03 0e 00 00 74 13 31
-c0 0f 05 <48> 3d 00 f0 ff ff 77 4f c3 66 0f 1f 44 00 00 55 48 89 e5 48
-83 ec
-[ 9114.769198] RSP: 002b:00007ffec523c288 EFLAGS: 00000246 ORIG_RAX:
-0000000000000000
-[ 9114.775499] RAX: ffffffffffffffda RBX: 000055619e0982e0 RCX: 00007f3638039cc1
-[ 9114.781332] RDX: 0000000000000400 RSI: 000055619e0a3b70 RDI: 0000000000000004
-[ 9114.787166] RBP: 00007ffec523c2c0 R08: 0000000000000001 R09: 0000000000000000
-[ 9114.792997] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3638111050
-[ 9114.798830] R13: 00007f3638110f00 R14: 0000000000000000 R15: 000055619e0982e0
-[ 9114.804668]  </TASK>
-[ 9114.805559] Modules linked in: udf usb_storage snd_seq_dummy
-rpcrdma rdma_cm iw_cm ib_cm ib_core nf_nat_ftp nf_conntrack_ftp
-cfg80211 af_packet nf_conntrack_netbios_ns nf_conntrack_broadcast
-nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet
-nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat
-nf_tables ebtable_nat ebtable_broute ip6table_nat ip6table_mangle
-ip6table_raw ip6table_security iptable_nat nf_nat nf_conntrack
-nf_defrag_ipv6 nf_defrag_ipv4 libcrc32c iptable_mangle iptable_raw
-iptable_security ebtable_filter ebtables ip6table_filter ip6_tables
-iptable_filter ip_tables x_tables it87 hwmon_vid bnep binfmt_misc
-snd_hda_codec_realtek snd_hda_codec_generic snd_hda_codec_hdmi
-snd_hda_intel uvcvideo btusb uvc btintel btbcm videobuf2_vmalloc
-snd_intel_dspcfg videobuf2_memops bluetooth videobuf2_v4l2
-snd_hda_codec videodev snd_usb_audio intel_powerclamp coretemp
-snd_virtuoso snd_hda_core kvm_intel snd_oxygen_lib videobuf2_common
-ecdh_generic snd_usbmidi_lib snd_mpu401_uart snd_hwdep mc snd_rawmidi
-[ 9114.805644]  input_leds joydev led_class snd_seq rfkill kvm ecc
-snd_seq_device gpio_ich pktcdvd snd_pcm iTCO_wdt r8169 irqbypass
-i2c_i801 snd_hrtimer realtek snd_timer mdio_devres intel_cstate snd
-libphy acpi_cpufreq i2c_smbus pcspkr intel_uncore psmouse lpc_ich
-i7core_edac mxm_wmi soundcore tiny_power_button button nfsd
-auth_rpcgss nfs_acl lockd grace sunrpc dm_mod loop fuse dax configfs
-nfnetlink zram zsmalloc ext4 crc32c_generic crc16 mbcache jbd2 amdgpu
-video amdxcp i2c_algo_bit mfd_core drm_ttm_helper ttm hid_microsoft
-drm_exec gpu_sched drm_suballoc_helper drm_buddy drm_display_helper
-sr_mod usbhid sd_mod cdrom drm_kms_helper ahci pata_jmicron libahci
-drm uhci_hcd libata ehci_pci ehci_hcd xhci_pci firewire_ohci xhci_hcd
-firewire_core scsi_mod crc32c_intel sha512_ssse3 usbcore
-drm_panel_orientation_quirks sha256_ssse3 cec serio_raw sha1_ssse3
-rc_core crc_itu_t bsg usb_common scsi_common wmi msr [last unloaded:
-sg]
-[ 9114.974386] CR2: 0000000000000068
-[ 9114.976469] ---[ end trace 0000000000000000 ]---
-[ 9114.979859] RIP: 0010:nfsd_show+0x39/0x18e [nfsd]
-[ 9114.983413] Code: fb 48 83 ec 10 48 8b 47 70 8b 2d 34 9b 03 00 48
-8b 80 b0 00 00 00 4c 8b a0 60 02 00 00 e8 99 84 f2 df 49 8b 84 24 f8
-0b 00 00 <48> 8b 2c e8 e8 6d c0 f2 df 48 8d bd 00 03 00 00 e8 8f ff ff
-ff 48
-[ 9115.000909] RSP: 0018:ffffc90002edfcf8 EFLAGS: 00010202
-[ 9115.004850] RAX: 0000000000000000 RBX: ffff88813fee9780 RCX: 0000000000001000
-[ 9115.010725] RDX: ffff88810b474740 RSI: 0000000000000001 RDI: ffff88813fee9780
-[ 9115.016621] RBP: 000000000000000d R08: 0000000000400cc0 R09: 00000000ffffffff
-[ 9115.022507] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa11e51e0
-[ 9115.028414] R13: ffffc90002edfef8 R14: ffff88813fee9780 R15: ffffffff81a2a520
-[ 9115.034338] FS:  00007f3637e49740(0000) GS:ffff888343c00000(0000)
-knlGS:0000000000000000
-[ 9115.041191] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 9115.045739] CR2: 00007f7171a17ef0 CR3: 000000027a18c000 CR4: 00000000000006f0
+url:    https://github.com/intel-lab-lkp/linux/commits/Alvin-ipraga/a2b-add-A2B-driver-core/20240517-211849
+base:   c75962170e49f24399141276ae119e6a879f36dc
+patch link:    https://lore.kernel.org/r/20240517-a2b-v1-4-b8647554c67b%40bang-olufsen.dk
+patch subject: [PATCH 04/13] a2b: add AD24xx I2C interface driver
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240518/202405182015.49MmB9gp-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240518/202405182015.49MmB9gp-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405182015.49MmB9gp-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/a2b/ad24xx-i2c.c:272:3: error: call to undeclared function 'handle_nested_irq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     272 |                 handle_nested_irq(virq);
+         |                 ^
+>> drivers/a2b/ad24xx-i2c.c:281:26: error: call to undeclared function 'irq_data_get_irq_chip_data'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     281 |         struct ad24xx_i2c *ad = irq_data_get_irq_chip_data(irq_data);
+         |                                 ^
+>> drivers/a2b/ad24xx-i2c.c:281:21: error: incompatible integer to pointer conversion initializing 'struct ad24xx_i2c *' with an expression of type 'int' [-Wint-conversion]
+     281 |         struct ad24xx_i2c *ad = irq_data_get_irq_chip_data(irq_data);
+         |                            ^    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/a2b/ad24xx-i2c.c:282:34: error: incomplete definition of type 'struct irq_data'
+     282 |         irq_hw_number_t hwirq = irq_data->hwirq;
+         |                                 ~~~~~~~~^
+   include/linux/irqdomain.h:44:8: note: forward declaration of 'struct irq_data'
+      44 | struct irq_data;
+         |        ^
+   drivers/a2b/ad24xx-i2c.c:289:26: error: call to undeclared function 'irq_data_get_irq_chip_data'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     289 |         struct ad24xx_i2c *ad = irq_data_get_irq_chip_data(irq_data);
+         |                                 ^
+   drivers/a2b/ad24xx-i2c.c:289:21: error: incompatible integer to pointer conversion initializing 'struct ad24xx_i2c *' with an expression of type 'int' [-Wint-conversion]
+     289 |         struct ad24xx_i2c *ad = irq_data_get_irq_chip_data(irq_data);
+         |                            ^    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/a2b/ad24xx-i2c.c:290:34: error: incomplete definition of type 'struct irq_data'
+     290 |         irq_hw_number_t hwirq = irq_data->hwirq;
+         |                                 ~~~~~~~~^
+   include/linux/irqdomain.h:44:8: note: forward declaration of 'struct irq_data'
+      44 | struct irq_data;
+         |        ^
+>> drivers/a2b/ad24xx-i2c.c:295:30: error: variable has incomplete type 'const struct irq_chip'
+     295 | static const struct irq_chip ad24xx_i2c_irq_chip = {
+         |                              ^
+   include/linux/irqdomain.h:43:8: note: forward declaration of 'struct irq_chip'
+      43 | struct irq_chip;
+         |        ^
+>> drivers/a2b/ad24xx-i2c.c:304:2: error: call to undeclared function 'irq_set_chip_data'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     304 |         irq_set_chip_data(irq, irqdomain->host_data);
+         |         ^
+>> drivers/a2b/ad24xx-i2c.c:305:2: error: call to undeclared function 'irq_set_chip_and_handler'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     305 |         irq_set_chip_and_handler(irq, &ad24xx_i2c_irq_chip, handle_simple_irq);
+         |         ^
+>> drivers/a2b/ad24xx-i2c.c:305:54: error: use of undeclared identifier 'handle_simple_irq'
+     305 |         irq_set_chip_and_handler(irq, &ad24xx_i2c_irq_chip, handle_simple_irq);
+         |                                                             ^
+>> drivers/a2b/ad24xx-i2c.c:306:2: error: call to undeclared function 'irq_set_nested_thread'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     306 |         irq_set_nested_thread(irq, 1);
+         |         ^
+>> drivers/a2b/ad24xx-i2c.c:307:2: error: call to undeclared function 'irq_set_noprobe'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     307 |         irq_set_noprobe(irq);
+         |         ^
+   drivers/a2b/ad24xx-i2c.c:315:2: error: call to undeclared function 'irq_set_nested_thread'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     315 |         irq_set_nested_thread(irq, 0);
+         |         ^
+   drivers/a2b/ad24xx-i2c.c:316:2: error: call to undeclared function 'irq_set_chip_and_handler'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     316 |         irq_set_chip_and_handler(irq, NULL, NULL);
+         |         ^
+   drivers/a2b/ad24xx-i2c.c:317:2: error: call to undeclared function 'irq_set_chip_data'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     317 |         irq_set_chip_data(irq, NULL);
+         |         ^
+   16 errors generated.
+
+
+vim +/handle_nested_irq +272 drivers/a2b/ad24xx-i2c.c
+
+   218	
+   219	static irqreturn_t ad24xx_i2c_irq_handler(int irq, void *data)
+   220	{
+   221		struct ad24xx_i2c *ad = data;
+   222		bool handled = false;
+   223		unsigned long hwirq;
+   224		unsigned int val;
+   225		unsigned int virq;
+   226		int ret;
+   227	
+   228		/*
+   229		 * The transceiver asserts the IRQ line as long as there are pending
+   230		 * interrupts. Process them all here so that the interrupt can be
+   231		 * configured with an edge trigger.
+   232		 */
+   233		while (true) {
+   234			mutex_lock(&ad->mutex);
+   235			ret = regmap_read(ad->base_regmap, A2B_INTSRC, &val);
+   236			mutex_unlock(&ad->mutex);
+   237			if (ret) {
+   238				dev_err_ratelimited(
+   239					ad->dev,
+   240					"failed to read interrupt source: %d\n", ret);
+   241				break;
+   242			}
+   243	
+   244			if (val & A2B_INTSRC_MSTINT_MASK)
+   245				hwirq = 0;
+   246			else if (val & A2B_INTSRC_SLVINT_MASK)
+   247				hwirq = (val & A2B_INTSRC_INODE_MASK) + 1;
+   248			else
+   249				break;
+   250	
+   251			/*
+   252			 * Pending interrupts are only cleared when reading the
+   253			 * interrupt type. Normally this is done in the corresponding
+   254			 * node's interrupt handler, but in case the interrupt is
+   255			 * disabled, it has to be read here.
+   256			 */
+   257			if (!(BIT(hwirq) & ad->irqs_enabled)) {
+   258				ret = ad24xx_i2c_get_inttype(&ad->a2b_bus, &val);
+   259				if (ret)
+   260					dev_err_ratelimited(
+   261						ad->dev,
+   262						"failed to read interrupt type: %d\n",
+   263						ret);
+   264				handled = true;
+   265				continue;
+   266			}
+   267	
+   268			virq = irq_find_mapping(ad->irqdomain, hwirq);
+   269			if (!virq)
+   270				break;
+   271	
+ > 272			handle_nested_irq(virq);
+   273			handled = true;
+   274		}
+   275	
+   276		return handled ? IRQ_HANDLED : IRQ_NONE;
+   277	}
+   278	
+   279	static void ad24xx_i2c_irq_enable(struct irq_data *irq_data)
+   280	{
+ > 281		struct ad24xx_i2c *ad = irq_data_get_irq_chip_data(irq_data);
+ > 282		irq_hw_number_t hwirq = irq_data->hwirq;
+   283	
+   284		ad->irqs_enabled |= BIT(hwirq);
+   285	}
+   286	
+   287	static void ad24xx_i2c_irq_disable(struct irq_data *irq_data)
+   288	{
+   289		struct ad24xx_i2c *ad = irq_data_get_irq_chip_data(irq_data);
+   290		irq_hw_number_t hwirq = irq_data->hwirq;
+   291	
+   292		ad->irqs_enabled &= ~BIT(hwirq);
+   293	}
+   294	
+ > 295	static const struct irq_chip ad24xx_i2c_irq_chip = {
+   296		.name = "ad24xx-i2c",
+   297		.irq_enable = ad24xx_i2c_irq_enable,
+   298		.irq_disable = ad24xx_i2c_irq_disable,
+   299	};
+   300	
+   301	static int ad24xx_i2c_irqdomain_map(struct irq_domain *irqdomain,
+   302					    unsigned int irq, irq_hw_number_t hwirq)
+   303	{
+ > 304		irq_set_chip_data(irq, irqdomain->host_data);
+ > 305		irq_set_chip_and_handler(irq, &ad24xx_i2c_irq_chip, handle_simple_irq);
+ > 306		irq_set_nested_thread(irq, 1);
+ > 307		irq_set_noprobe(irq);
+   308	
+   309		return 0;
+   310	}
+   311	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
