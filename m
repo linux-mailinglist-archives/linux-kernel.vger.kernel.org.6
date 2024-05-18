@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-182711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A8E8C8EBE
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 02:05:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85758C8EBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 02:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B037D1F22483
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:05:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F8731F22546
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944D7D529;
-	Sat, 18 May 2024 00:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D43EAD4;
+	Sat, 18 May 2024 00:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="102onJoX"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NhbH19bc"
 Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BF66AD7
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 00:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40161C13C
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 00:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715990682; cv=none; b=uRsUTLswFJZ/YaqY/wyD8zLcCH32qN/bECmhjtw6oqhgZev9FGtKZSicklLYcNCtopcea4ybQTy5m/x1Uq+uOiTfll6xC8kcRshBGPcoS7W6ORkuV+Z1F4bRASgkRnQNAUpnwU5rqCTGDoGaNuBbj8TzxBzPrnJ9OTdmN+qF5CU=
+	t=1715990683; cv=none; b=ctav/fprY5URNuQGtz4nmzI04q+1zmXvVG2WbLX40zwSjCfKBJ76D4nlD52Cq2uYKn9OJnLf7qwwWb0X2GiyMQcbUrbeCvtUSKDAfwSuJItwJTM/zOCxsekIZrBPP/AK2vf2icj36TtcAkApKswXYPYQb8px/ymwTpkGPZ36FIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715990682; c=relaxed/simple;
-	bh=ZZiN6+e15dQN6MMssxaWW8K/IugjsD8kYnxv2JER8Sw=;
+	s=arc-20240116; t=1715990683; c=relaxed/simple;
+	bh=KJtLDlzQg0wy9e57GzodTPJt6UlMTvdQZUilMOrGkZg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Bkl15FkvvTHOZVur9195o5Ren7dECcDKcXMsI/IVJ5GlCLpch3JbmXvXQxv6JetujfOV60CxeVrgUsgBfnZcpB9NuDnPHpkUzdkt80XWu5elw+vsXtoGn+cvbbzDfGTnCA7foFCb82YEOruMIlakPmmx5dXe0OuLx7xDMRjmGEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=102onJoX; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=ufjo+3yHO+ic4Ptia1CVxKBkod2JAnPNQiePGQkqy2q5GQfZ+qOgaXA1LOFGSZD9H75XEaJEsg6CwDiAX/Yxe6sdWuZbjGIa/QpgVRHssQQOAEG3CaN7Tax2Brn8xTsmJAxvvICPszVEDTnHlGczUJHSROqjF9geerFEe5Ozoss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NhbH19bc; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61be23bb01aso205246297b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:04:40 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61dfa4090c1so152972967b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:04:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715990679; x=1716595479; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715990681; x=1716595481; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=55Fpx2MIulH1TJ9s55duhi3yhB4vtlMWdhuL3vC3xBQ=;
-        b=102onJoXcHKtnZIhIvcFD1NxbGYQaWUDYwUBOb5zjT1Twet3+CU98Ozq1ygilfSclm
-         jQDpux1E4rmrG/gGDfrDilnBq5eKZIDze3qjoEl+DhEWMVCMcDAr10IIwIyF8GF9qnym
-         kNZ282emV3bX/dsjxsY8mg0QcuSBfpl+gYKVMa9igy1P6WiOCqfeiL5UoDcZ8JGvLnk5
-         2grc237SlimHtbE4VJtygDVbWF72+4G3rx83003OVjI5XVwe1xPBIZ27hgTNwacnWW+p
-         j9fGSgJBc9fXyvQb+6Sd7T2q3LHl7CaxlJKCXjDEtshat1K96p1gHRb5j34y0zSGYE8c
-         juJA==
+        bh=GM5SO5v27GV7rdeXp4FaIGBag6GhBo/t/KPBUjUr/dw=;
+        b=NhbH19bcmfe4ldcoAO3NE9GVpwtCA6D9eAfUCFgbuyxwEH2yeq/TwObXqgo/sL8Znp
+         7gx9NdSpsG8F7vCFm1kGnzLl104nxADxXwzF4pfn83qTffGUicz8cpG1inMABCQ7EtCE
+         sFS/0mGym5xAIup5YYUqdLtrjqmJQ7FMN/ynlBT/u/RdxShDwKqfNc59BWKWo1ZU7AHj
+         n3O859kUxlvtmZFB7T56pqERplAGe8F73As0/dfJO+aBL5ZMeaibla46nC/swC5NTf6I
+         q74w3wOGfgqr+UMM/8rCW2lt85mfphBemUrvjMcdGIZ+71iGbDBD3pVNKCE1BxFdw3oy
+         tE7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715990679; x=1716595479;
+        d=1e100.net; s=20230601; t=1715990681; x=1716595481;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=55Fpx2MIulH1TJ9s55duhi3yhB4vtlMWdhuL3vC3xBQ=;
-        b=wW4dS/YvOwjqnqFTh8m/HOuJgsTUVrd+aKh2d1z4eAYIWWyL6PCcUce+Dh+jhsjx4B
-         YnrY+6QqLzmCYc0OzojUItdNJYxBQpwp/U5h0XW1MmbLX3P5vs3Gf4/indu0nKowkxuX
-         M+FcKYUriAZRwfPd8nE01nstkMuqkoBcmXI+bC6/sPoveE1TemXzwkD0gObEqg8x911i
-         8lUfTOKJY3lu0YCtFGC4ueENtzKQJxeSmKfkviZAPaKKCnTf3QT6zDRsWRwcIKhi6rHS
-         zfteAmYWUs0CaEWtiHJlNXa0JdRO7timoBpBJCFxU+hTmp5zZQC2DMl/3JhSuFeXTOyt
-         B4jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1qRNFW1JDSPn9gE1axs0eKKpRbRoyFTSBJGSyVteUI5cz7OppNg3GqzM+5sMLUzRrrv7oQd8XSM4+4MrdU1x7PX611Jy5haIe9fAb
-X-Gm-Message-State: AOJu0YwvrhsAgLYJAg2chq//Thx42PRm7KKvX7q0xO0lFWf8/an1z89P
-	Ep5dhtuw9gk2mtpkoqwLmjo8nKtTdEmVVuocw4OTpPFBlDQYxxkR4+71ArL/XHsI78nWkEfPxT7
-	cdw==
-X-Google-Smtp-Source: AGHT+IFiVlGymQzpow3h8j4sNOJKTfw4H5KxXwAelQPEmYeQwtXrj3JO1q9+VPmJJ7oNI5OfSrZMzmiPyrA=
+        bh=GM5SO5v27GV7rdeXp4FaIGBag6GhBo/t/KPBUjUr/dw=;
+        b=ZCcyO7AZdefR03lUcx34vQW5erDBCjFoR0NbiM1PIahtnbwP7qU3aIYax8WEm9JTMd
+         jBBHBeSaRQV17YrnQckmNF/k63naz55qYI+QCazyB7Rf6c0lCA9lYXd85JvxB1NcbYnM
+         yzMAKDFpg6mPE7LF46SxdmAVIBqkXqXK1nNlW2g8QK65w98A/LwGVLWj9UsdoOF+7iZ7
+         igRoqh9Laj4XYsdqfbWKsukM1EF6HU6WM6Noq30pDrn0KaapVc0BqlbG2Wggv9uoEVT+
+         B+7npPK/AMGCFutUgVbVGvfWM6OZoxyLprhRSjDhdbkp1FYBX/LOXhKX+4VBrilz9w8o
+         GM3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXi7ETKsbnCbVvJm02M8CTmIbx/PjGbiTEG6v5IsqJdza59aq89eTeY0U/EgOB0q/xDcoqNFfTblyK8Ive1RdekG9iCyiDUqAoisujY
+X-Gm-Message-State: AOJu0YywFuRaibTLZ4biDGuvC62vrtY0wvUKPHFCn38c31OBbF3KK02X
+	u1usbbqXuCGaY+2q4EMmasxEN6Xqxxv9a0cC8ttBr5JRfd0PZ00qq6CQz1Y5+43i4OMLD5WKQ55
+	opQ==
+X-Google-Smtp-Source: AGHT+IFuoSzVp7PcfFD1Q1RorBxgwCQkq06IFSmtCXpMTO3G31frkl5Q+wTnbphKiOylmI+xCkIbpuIbE84=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:338c:b0:61b:ea08:111f with SMTP id
- 00721157ae682-622aff9d4cdmr58113437b3.6.1715990679473; Fri, 17 May 2024
- 17:04:39 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a0d:dd85:0:b0:627:7563:95b1 with SMTP id
+ 00721157ae682-6277563967cmr14645877b3.5.1715990681328; Fri, 17 May 2024
+ 17:04:41 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 17 May 2024 17:04:23 -0700
+Date: Fri, 17 May 2024 17:04:24 -0700
 In-Reply-To: <20240518000430.1118488-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,38 +75,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240518000430.1118488-1-seanjc@google.com>
 X-Mailer: git-send-email 2.45.0.215.g3402c0e53f-goog
-Message-ID: <20240518000430.1118488-3-seanjc@google.com>
-Subject: [PATCH 2/9] KVM: nVMX: Initialize #VE info page for vmcs02 when
- proving #VE support
+Message-ID: <20240518000430.1118488-4-seanjc@google.com>
+Subject: [PATCH 3/9] KVM: nVMX: Always handle #VEs in L0 (never forward #VEs
+ from L2 to L1)
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Point vmcs02.VE_INFORMATION_ADDRESS at the vCPU's #VE info page when
-initializing vmcs02, otherwise KVM will run L2 with EPT Violation #VE
-enabled and a VE info address pointing at pfn 0.
+Always handle #VEs, e.g. due to prove EPT Violation #VE failures, in L0,
+as KVM does not expose any #VE capabilities to L1, i.e. any and all #VEs
+are KVM's responsibility.
 
 Fixes: 8131cf5b4fd8 ("KVM: VMX: Introduce test mode related to EPT violation VE")
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/vmx/nested.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kvm/vmx/nested.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index d5b832126e34..6798fadaa335 100644
+index 6798fadaa335..643935a0f70a 100644
 --- a/arch/x86/kvm/vmx/nested.c
 +++ b/arch/x86/kvm/vmx/nested.c
-@@ -2242,6 +2242,9 @@ static void prepare_vmcs02_constant_state(struct vcpu_vmx *vmx)
- 		vmcs_write64(EPT_POINTER,
- 			     construct_eptp(&vmx->vcpu, 0, PT64_ROOT_4LEVEL));
- 
-+	if (vmx->ve_info)
-+		vmcs_write64(VE_INFORMATION_ADDRESS, __pa(vmx->ve_info));
-+
- 	/* All VMFUNCs are currently emulated through L0 vmexits.  */
- 	if (cpu_has_vmx_vmfunc())
- 		vmcs_write64(VM_FUNCTION_CONTROL, 0);
+@@ -6233,6 +6233,8 @@ static bool nested_vmx_l0_wants_exit(struct kvm_vcpu *vcpu,
+ 		else if (is_alignment_check(intr_info) &&
+ 			 !vmx_guest_inject_ac(vcpu))
+ 			return true;
++		else if (is_ve_fault(intr_info))
++			return true;
+ 		return false;
+ 	case EXIT_REASON_EXTERNAL_INTERRUPT:
+ 		return true;
 -- 
 2.45.0.215.g3402c0e53f-goog
 
