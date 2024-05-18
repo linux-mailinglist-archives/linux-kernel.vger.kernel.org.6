@@ -1,163 +1,100 @@
-Return-Path: <linux-kernel+bounces-182891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742438C9167
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 16:00:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CDCB8C9168
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 16:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2DC81F21FB4
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBBE41C20BF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868D22BB1C;
-	Sat, 18 May 2024 14:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6FC3D97A;
+	Sat, 18 May 2024 14:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="d3oHzbDP"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TvkT8kzk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B05E560
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 14:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C551DA32
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 14:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716040823; cv=none; b=FnGEAaZEFVoJnDRQobeO57X5cE9o36EdyEujjjL+3QlQiIRR8H3YqLO7fk405ytV0+y8r5yrfsA8cJrG9L3ItK+tdXcVfs9Xbk0z6F1wRvolSN14hwJtLiWO6qGeSwnaJ1Isi/iXI7o/us7x+ZXf3WQNeb1n7s65g8Dkf9GEYJY=
+	t=1716041422; cv=none; b=jnQ2iE97veFy9l36MeCySFGMNnwGbK16sjNb15gV/uxRxgqZepdZtrfaSPu+SQT5o9nm5F+uDCTMImQWnFJ7HvrBszvNKFOubSixawDMi7IEagVAlnwvdpXgg8EKI7UbbZ+R14bk6mJNiPB5881Ph3Tju0BT/JepPbadwmlpaV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716040823; c=relaxed/simple;
-	bh=61bJ2tqEF4n1McZZ9lfES2X9u82Av68XY/fmxSjnnHw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TXAHksVtW5IVkylWDQNBQiWR6p245+53GKUR7u24qlu6zwQeQjXm8zDZIEWETXOs46p5aaRRDpp+5XCsKbFX6wrsPV5SPCbOMJMRdf1/962hHGX+ejxcdKh1D2dnZTtUKFwkQ775ZhhLNGFeAvxhnmc3FwyaDMjG0ajySxF/DSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=d3oHzbDP; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1716040819;
-	bh=61bJ2tqEF4n1McZZ9lfES2X9u82Av68XY/fmxSjnnHw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=d3oHzbDPuXyiPxXwyIkD0wYo5dxCSIOt4VaXpOLQBbeu0YVDPPfV2QrxFjtWWBiIJ
-	 ec05tUXLqqjUR2UPES7usKst15os9tFW/AhGkgGACXd+5eFNcvUYNtpxPsu+vIkOD3
-	 /B+9gQkHOFKMuUcJ0yfY+voDm+TfF+Z3h6xdlbH4=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sat, 18 May 2024 16:00:04 +0200
-Subject: [PATCH] mm/hugetlb: constify ctl_table arguments of utility
- functions
+	s=arc-20240116; t=1716041422; c=relaxed/simple;
+	bh=yLD0OsCbkI+YpiMeqRS7gCN0eyJxc/7jSzSTKOnaQHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RTni7c9OA+QqiXcgUTp3JqXo8UidBI1Re8nTGi3RT9Hr3QqDaULDhsBiIooVBVwsSHPtSeb0vk0H65ETJdHKzgATasnQ9L8HwxM5i5TH5N5jK8ZGwuzs5Ig2d/Hw4wU/0Fln3dYCZ+hCnv0ArsnFjnLRiQZV7z/jI1H+/TGadvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TvkT8kzk; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716041420; x=1747577420;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=yLD0OsCbkI+YpiMeqRS7gCN0eyJxc/7jSzSTKOnaQHA=;
+  b=TvkT8kzkIlkc7irBiMtCeVl/UoqTdjAIIe1cNB0FGRnxv6wmBqC7IhY6
+   V1OVTFP6xS416qt+tzkt4XvafqlFnqJADQVLdsL1FRu7w+DRf7ug+5Kx3
+   9FOtY//gZ2s8lHX38b7QaKObcjFd0X3xC9Zv13A9ULMhyrDZcbLHg86Xd
+   +so/ceJz6ZDusRlHkhN8COSBjWnd4r0R5QOqS8X4Vw6S3mAiF97lU2Y6X
+   HDQHI30G6Sd2PeEV7xAGCCioDYAI60UZrg5tDdhzi6AJDf3Vk4O31wvvC
+   CjEZefHDBURm3LY4CMsJklyy9TmyE/aEQ6b0TKdTX8ckOWXOv+FOvnOn8
+   Q==;
+X-CSE-ConnectionGUID: MPfHUr6JSHKEifCv45/GxA==
+X-CSE-MsgGUID: YfRtxouZQKKN7YWAZXZPEg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11076"; a="12330032"
+X-IronPort-AV: E=Sophos;i="6.08,171,1712646000"; 
+   d="scan'208";a="12330032"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2024 07:10:19 -0700
+X-CSE-ConnectionGUID: QUYvhp+OQqqsGoUP7dutDA==
+X-CSE-MsgGUID: smuNWGKESFKrRURpUJwTIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,171,1712646000"; 
+   d="scan'208";a="55298246"
+Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 18 May 2024 07:10:18 -0700
+Received: from kbuild by 108735ec233b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s8KlM-0002GD-14;
+	Sat, 18 May 2024 14:10:16 +0000
+Date: Sat, 18 May 2024 22:09:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: other.c:undefined reference to `devm_led_classdev_register_ext'
+Message-ID: <202405182256.FsKBjIzG-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240518-sysctl-const-handler-hugetlb-v1-1-47e34e2871b2@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAGO0SGYC/x3MQQqEMAxA0atI1gY0jlS8yuBijFEDpQ5NlRHx7
- pZZPvj8C0yiikFfXBDlUNMtZNRlAbx+wiKoUzZQRa+qrTu00zh55C1YwlxMXiKu+yLJj8jUucY
- xkWsZ8uIbZdbff/8e7vsB9MrC1W4AAAA=
-To: Muchun Song <muchun.song@linux.dev>, 
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Joel Granados <j.granados@samsung.com>, 
- Luis Chamberlain <mcgrof@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716040818; l=3639;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=61bJ2tqEF4n1McZZ9lfES2X9u82Av68XY/fmxSjnnHw=;
- b=rR1MGhjRwrmAdI7KVzpkJ8wR2BDA/vbFj3Q+VN3FPM4Np3zANg44QwQMhTDWrDwThcSH4hjRo
- VCZKmbxyQyGCjExmpL9w5YLFn2Gguund5Y0dOqk6cWyeZcNsBs3tr7e
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The sysctl core is preparing to only expose instances of
-struct ctl_table as "const".
-This will also affect the ctl_table argument of sysctl handlers.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   4b377b4868ef17b040065bd468668c707d2477a5
+commit: 9426adb0326a87ed2fa9d010c4c18189047e0c11 platform/x86: x86-android-tablets: Create LED device for Xiaomi Pad 2 bottom bezel touch buttons
+date:   4 days ago
+config: i386-buildonly-randconfig-004-20240118 (https://download.01.org/0day-ci/archive/20240518/202405182256.FsKBjIzG-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240518/202405182256.FsKBjIzG-lkp@intel.com/reproduce)
 
-As the function prototype of all sysctl handlers throughout the tree
-needs to stay consistent that change will be done in one commit.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405182256.FsKBjIzG-lkp@intel.com/
 
-To reduce the size of that final commit, switch utility functions which
-are not bound by "typedef proc_handler" to "const struct ctl_table".
+All errors (new ones prefixed by >>):
 
-No functional change.
+   ld: drivers/platform/x86/x86-android-tablets/other.o: in function `xiaomi_mipad2_init':
+>> other.c:(.init.text+0x97): undefined reference to `devm_led_classdev_register_ext'
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-This patch(set) is meant to be applied through your subsystem tree.
-Or at your preference through the sysctl tree.
-
-Motivation
-==========
-
-Moving structures containing function pointers into unmodifiable .rodata
-prevents attackers or bugs from corrupting and diverting those pointers.
-
-Also the "struct ctl_table" exposed by the sysctl core were never meant
-to be mutated by users.
-
-For this goal changes to both the sysctl core and "const" qualifiers for
-various sysctl APIs are necessary.
-
-Full Process
-============
-
-* Drop ctl_table modifications from the sysctl core ([0], in mainline)
-* Constify arguments to ctl_table_root::{set_ownership,permissions}
-  ([1], in mainline)
-* Migrate users of "ctl_table_header::ctl_table_arg" to "const".
-  (in mainline)
-* Afterwards convert "ctl_table_header::ctl_table_arg" itself to const.
-  (in mainline)
-* Prepare helpers used to implement proc_handlers throughout the tree to
-  use "const struct ctl_table *". ([2], in progress, this patch)
-* Afterwards switch over all proc_handlers callbacks to use
-  "const struct ctl_table *" in one commit. ([2], in progress)
-  Only custom handlers will be affected, the big commit avoids a
-  disruptive and messy transition phase.
-* Switch over the internals of the sysctl core to "const struct ctl_table *" (to be done)
-* Switch include/linux/sysctl.h to "const struct ctl_table *" (to be done)
-* Transition instances of "struct ctl_table" through the tree to const (to be done)
-
-A work-in-progress view containing all the outlined changes can be found at
-https://git.sr.ht/~t-8ch/linux sysctl-constfy
-
-[0] https://lore.kernel.org/lkml/20240322-sysctl-empty-dir-v2-0-e559cf8ec7c0@weissschuh.net/
-[1] https://lore.kernel.org/lkml/20240315-sysctl-const-ownership-v3-0-b86680eae02e@weissschuh.net/
-[2] https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net/
-
-Cc: Joel Granados <j.granados@samsung.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
----
- mm/hugetlb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index ce7be5c24442..53bb1bb86efa 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4916,7 +4916,7 @@ static unsigned int allowed_mems_nr(struct hstate *h)
- }
- 
- #ifdef CONFIG_SYSCTL
--static int proc_hugetlb_doulongvec_minmax(struct ctl_table *table, int write,
-+static int proc_hugetlb_doulongvec_minmax(const struct ctl_table *table, int write,
- 					  void *buffer, size_t *length,
- 					  loff_t *ppos, unsigned long *out)
- {
-@@ -4933,7 +4933,7 @@ static int proc_hugetlb_doulongvec_minmax(struct ctl_table *table, int write,
- }
- 
- static int hugetlb_sysctl_handler_common(bool obey_mempolicy,
--			 struct ctl_table *table, int write,
-+			 const struct ctl_table *table, int write,
- 			 void *buffer, size_t *length, loff_t *ppos)
- {
- 	struct hstate *h = &default_hstate;
-
----
-base-commit: 4b377b4868ef17b040065bd468668c707d2477a5
-change-id: 20240518-sysctl-const-handler-hugetlb-c28737c2275c
-
-Best regards,
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
