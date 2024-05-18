@@ -1,137 +1,113 @@
-Return-Path: <linux-kernel+bounces-182884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8592B8C9151
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:05:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A8C48C9157
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D9142823A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 13:05:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A24B1C215EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 13:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3576E3B298;
-	Sat, 18 May 2024 13:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="aA/6Gg9G"
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CE33BB4D;
+	Sat, 18 May 2024 13:09:36 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CF81F5FA;
-	Sat, 18 May 2024 13:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA72376E1
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 13:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716037492; cv=none; b=GLtPH+FyDM/8/Df3gBrShcp5AubgXY0jK34Kwmi4jlTX/l57hYEg12yiT6qiu1VHL5I2/Q1tb4Y5ya5B8L0x0+poCEa7ZpHqLqz/LQ/X2E/Hyo68K2InBJPkvnjxnoa4KN0CJfnqmx6vqVitZhjFJ3U6cbB5OIiOGOBM0bVNcqY=
+	t=1716037775; cv=none; b=Xj3T/ZTyDyO1+F+0cb64QkSSByR0+eJMCrNcxE09nwIuntIgaevQpYsG5m9WqvjdwB+gC/Fpy/2SldpDjNFGcKv7ISsIYHxQkD4QQJxV2U5DKqjeV1/YFEnGigh1GRWOxz4Cv1q27LXdK2w9jb/dP6bXgDiNE2eo8yfo4BRV2GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716037492; c=relaxed/simple;
-	bh=RUjfpWzPBaoGkwn/Pmm4roGPCc8ljs1SzamDFRicGT8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kHHpdi39+aUSIZv6JCFuRA1+W4D24iJ3C98oSsvJnxOyWxaAenjGnDIjNO9McnYi8GacwVVmhXpxucoW38B2JUKu32+L4M1RJnpOdam4FB8u/Ksaza7YJqZG5z6m99/eKohaaEWo0dsDy0Hd0e39XBrDt0AsQHob8WuAdo4YWKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=aA/6Gg9G; arc=none smtp.client-ip=99.78.197.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1716037492; x=1747573492;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=mrZuWAfje+0i8K+OD1/L6Iu+gflYcACm+4AEdS34KKY=;
-  b=aA/6Gg9G8KBIgeZtUE0F0y9soPDOUDuAwctjZML6fzc+eHMALjKIGs1C
-   hvTRahj+gjGsrv1ILDp+dM1CB7IEUhvaDm7odKaFZEowbnk6vndDaBHWb
-   ppX4M4m9N0sBgCUvSSAu1SMBA1bgNi/SPLSNukXH3giTzDcd1L8kM3QU+
-   s=;
-X-IronPort-AV: E=Sophos;i="6.08,170,1712620800"; 
-   d="scan'208";a="295903782"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2024 13:04:49 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.17.79:3208]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.5.77:2525] with esmtp (Farcaster)
- id 84f5121c-7057-4153-b2f9-027c2ef572aa; Sat, 18 May 2024 13:04:47 +0000 (UTC)
-X-Farcaster-Flow-ID: 84f5121c-7057-4153-b2f9-027c2ef572aa
-Received: from EX19D002EUA004.ant.amazon.com (10.252.50.181) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Sat, 18 May 2024 13:04:46 +0000
-Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
- EX19D002EUA004.ant.amazon.com (10.252.50.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Sat, 18 May 2024 13:04:45 +0000
-Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
- (10.253.65.58) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Sat, 18 May 2024 13:04:44
- +0000
-Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
-	id 8F75520AC2; Sat, 18 May 2024 13:04:43 +0000 (UTC)
-From: Hagar Hemdan <hagarhem@amazon.com>
-To:
-CC: Norbert Manthey <nmanthey@amazon.de>, Hagar Hemdan <hagarhem@amazon.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu
-	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, David
- Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Sabrina
- Dubroca" <sd@queasysnail.net>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] net: esp: cleanup esp_output_tail_tcp() in case of unsupported ESPINTCP
-Date: Sat, 18 May 2024 13:04:39 +0000
-Message-ID: <20240518130439.20374-1-hagarhem@amazon.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1716037775; c=relaxed/simple;
+	bh=LWTy/AWDIxLug8r/jyGlNA64I7dG0aBjMEbJgOkManU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=q9/hyQ0nvTA8U/52FevRyHm8fZLVio8+nP3uDikTCZkotsckI94xXxYbrqNVtSQo4MI+iTgW0B1N47mclCzj2UjeegScqEA9BK8gKggJK6sh0NpaxvcpqH60MnJ4xZdvVkTWDgjNVEC1coiHIZHwtKpnop1SIvamOTNqSu4Tlhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-319-xOLMYslUNASMd3-nOSLNBA-1; Sat, 18 May 2024 14:09:24 +0100
+X-MC-Unique: xOLMYslUNASMd3-nOSLNBA-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 18 May
+ 2024 14:08:53 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 18 May 2024 14:08:53 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Kees Cook' <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+CC: Kees Cook <keescook@chromium.org>, Justin Stitt <justinstitt@google.com>,
+	Mark Rutland <mark.rutland@arm.com>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev" <llvm@lists.linux.dev>
+Subject: RE: [RFC] Mitigating unexpected arithmetic overflow
+Thread-Topic: [RFC] Mitigating unexpected arithmetic overflow
+Thread-Index: AQHap5VP7Alm1wU+TkWPeIXHcuXX+bGc9guA
+Date: Sat, 18 May 2024 13:08:52 +0000
+Message-ID: <df0a315b68d64b33b5879d31b5bf9432@AcuMS.aculab.com>
+References: <202404291502.612E0A10@keescook>
+ <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
+ <202405081144.D5FCC44A@keescook>
+ <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
+ <202405081354.B0A8194B3C@keescook>
+ <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
+ <20240515073636.GY40213@noisy.programming.kicks-ass.net>
+ <25882715-FE44-44C0-BB9B-57F2E7D1F0F9@kernel.org>
+In-Reply-To: <25882715-FE44-44C0-BB9B-57F2E7D1F0F9@kernel.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-xmit() functions should consume skb or return error codes in error
-paths.
-When the configuration "CONFIG_INET_ESPINTCP" is not set, the
-implementation of the function "esp_output_tail_tcp" violates this rule.
-The function frees the skb and returns the error code.
-This change removes the kfree_skb from both functions, for both
-esp4 and esp6.
-WARN_ON is added because esp_output_tail_tcp() should never be called if
-CONFIG_INET_ESPINTCP is not set.
-
-This bug was discovered and resolved using Coverity Static Analysis
-Security Testing (SAST) by Synopsys, Inc.
-
-Fixes: e27cca96cd68 ("xfrm: add espintcp (RFC 8229)")
-Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
----
- net/ipv4/esp4.c | 3 +--
- net/ipv6/esp6.c | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
-index d33d12421814..e73de3abe37c 100644
---- a/net/ipv4/esp4.c
-+++ b/net/ipv4/esp4.c
-@@ -238,8 +238,7 @@ static int esp_output_tail_tcp(struct xfrm_state *x, struct sk_buff *skb)
- #else
- static int esp_output_tail_tcp(struct xfrm_state *x, struct sk_buff *skb)
- {
--	kfree_skb(skb);
--
-+	WARN_ON(1);
- 	return -EOPNOTSUPP;
- }
- #endif
-diff --git a/net/ipv6/esp6.c b/net/ipv6/esp6.c
-index 7371886d4f9f..600402e54ccd 100644
---- a/net/ipv6/esp6.c
-+++ b/net/ipv6/esp6.c
-@@ -255,8 +255,7 @@ static int esp_output_tail_tcp(struct xfrm_state *x, struct sk_buff *skb)
- #else
- static int esp_output_tail_tcp(struct xfrm_state *x, struct sk_buff *skb)
- {
--	kfree_skb(skb);
--
-+	WARN_ON(1);
- 	return -EOPNOTSUPP;
- }
- #endif
--- 
-2.40.1
+RnJvbTogS2VlcyBDb29rDQo+IFNlbnQ6IDE2IE1heSAyMDI0IDE0OjMxDQo+IA0KPiBPbiBNYXkg
+MTUsIDIwMjQgMTI6MzY6MzYgQU0gUERULCBQZXRlciBaaWpsc3RyYSA8cGV0ZXJ6QGluZnJhZGVh
+ZC5vcmc+IHdyb3RlOg0KPiA+T24gV2VkLCBNYXkgMDgsIDIwMjQgYXQgMDQ6NDc6MjVQTSAtMDcw
+MCwgTGludXMgVG9ydmFsZHMgd3JvdGU6DQo+ID4+IEZvciBleGFtcGxlLCB0aGUgbW9zdCBjb21t
+b24gY2FzZSBvZiBvdmVyZmxvdyB3ZSd2ZSBldmVyIGhhZCBoYXMgdmVyeQ0KPiA+PiBtdWNoIGJl
+ZW4gYXJyYXkgaW5kZXhpbmcuIE5vdywgc29tZXRpbWVzIHRoYXQgaGFzIGFjdHVhbGx5IGJlZW4g
+YWN0dWFsDQo+ID4+IHVuZGVmaW5lZCBiZWhhdmlvciwgYmVjYXVzZSBpdCdzIGJlZW4gb3ZlcmZs
+b3cgaW4gc2lnbmVkIHZhcmlhYmxlcywNCj4gPj4gYW5kIHRob3NlIGFyZSAiZWFzeSIgdG8gZmlu
+ZCBpbiB0aGUgc2Vuc2UgdGhhdCB5b3UganVzdCBzYXkgIm5vLCBjYW4ndA0KPiA+PiBkbyB0aGF0
+Ii4gVUJTQU4gZmluZHMgdGhlbSwgYW5kIHRoYXQncyBnb29kLg0KPiA+DQo+ID5XZSBidWlsZCB3
+aXRoIC1mbm8tc3RyaWN0LW92ZXJmbG93LCB3aGljaCBpbXBsaWVzIC1md3JhcHYsIHdoaWNoIHJl
+bW92ZXMNCj4gPnRoZSBVQiBmcm9tIHNpZ25lZCBvdmVyZmxvdyBieSBtYW5kYXRpbmcgMnMgY29t
+cGxlbWVudC4NCj4gDQo+IEkgYW0gYSBicm9rZW4gcmVjb3JkLiA6KSBUaGlzIGlzIF9ub3RfIGFi
+b3V0IHVuZGVmaW5lZCBiZWhhdmlvci4NCj4gDQo+IFRoaXMgaXMgYWJvdXQgZmluZGluZyBhIHdh
+eSB0byBtYWtlIHRoZSBpbnRlbnQgb2YgQyBhdXRob3JzIHVuYW1iaWd1b3VzLg0KPiBUaGF0IG92
+ZXJmbG93IHdyYXBzIGlzIHdlbGwgZGVmaW5lZC4gSXQgaXMgbm90IGFsd2F5cyBfZGVzaXJlZF8u
+DQo+IEMgaGFzIG5vIHdheSB0byBkaXN0aW5ndWlzaCBiZXR3ZWVuIHRoZSB0d28gY2FzZXMuDQoN
+CkknbSBwcmV0dHkgc3VyZSB0aGF0IHRoZSAndW5kZWZpbmVkJyBiZWhhdmlvdXIgb2Ygc2lnbmVk
+IG92ZXJmbG93DQppdCBzbyB0aGF0IGNwdSBjYW4gZG8gc2F0dXJhdGluZyBhcml0aG1ldGljICh1
+c2VmdWwgb24gYW5hbG9ndWUgZGF0YSkNCm9yIGNhbiBmYXVsdCAoYW5kIG1heWJlIGdlbmVyYXRl
+IGEgc2lnbmFsKSBhbmQgc3RpbGwgYmUgY29tcGxpYW50Lg0KDQpUaGUgTGludXgga2VybmVsIChh
+bmQgcHJldHR5IG11Y2ggYWxsIHVzZXJzcGFjZSkgZG9lc24ndCB3YW50IGVpdGhlcg0KYmVoYXZp
+b3VyLg0KKFVuZXhwZWN0ZWQgc2F0dXJhdGlvbiBsZWFkcyB0byB2ZXJ5IGNvbmZ1c2luZyBidWdz
+IHRoYXQgYXJlIGFzIGJhZA0KYXMgd3JhcHBpbmcgYnV0IG11Y2ggbGVzcyBvYnZpb3VzLikNCg0K
+SSBkbyB3b25kZXIgd2hldGhlciB0cnlpbmcgdG8gcmVtb3ZlIGFsbCBhcml0aG1ldGljIG9uIGNo
+YXIvc2hvcnQNCnZhcmlhYmxlcyBzaG91bGQgYmUgYW4gYWltLg0KVGhlIG9ubHkgcmVhc29uIHRv
+IGhhdmUgY2hhci9zaG9ydCBpcyB0byByZWR1Y2UgdGhlIHNpemUgb2YgYSBzdHJ1Y3R1cmUuDQpB
+IGZpcnN0IHN0YWdlIHdvdWxkIHJlbW92aW5nIGFsbCBzaG9ydCBsb2NhbHMsIGZ1bmN0aW9uIHBh
+cmFtZXRlcnMNCmFuZCBmdW5jdGlvbiByZXR1cm5zLg0KVGhlcmUgd2lsbCBiZSBzb21lIChzZW5z
+aWJsZSkgZmFsc2UgcG9zaXRpdmVzIGZvciBjaGFyLg0KDQpJZiB5b3UgYnJlYXRoIG9uIGEgY2hh
+ci9zaG9ydCBpdCBiZWNvbWVzICdzaWduZWQgaW50JywNCmV2ZW4gKHggPyAnYScgOiAnYicpIGlz
+ICdzaWduZWQgaW50Jy4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lk
+ZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0K
+UmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
 
