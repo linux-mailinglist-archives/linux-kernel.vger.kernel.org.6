@@ -1,100 +1,267 @@
-Return-Path: <linux-kernel+bounces-182937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95988C91F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:46:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D9F8C91FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F047282C81
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 18:46:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1307281E5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 18:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7855A56470;
-	Sat, 18 May 2024 18:46:26 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13B154F95;
+	Sat, 18 May 2024 18:53:35 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD244501C;
-	Sat, 18 May 2024 18:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9884F56454
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 18:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716057986; cv=none; b=q6fVYvjEmiHiAZ2P4/qtu4HWJ0A/Ld86fTj6EZK7v8n9w38JHeNoOGhRPLqCcghZTQrDViAb6K/pjhUnvMabJ/yu5m+QIeRbjVy2BTBrcktR7+8oMvHcvzTmvUzjVivizAck3bavvZfR6Zb8shkXnbQyCT3iXFkW4Hh+58iHRFQ=
+	t=1716058415; cv=none; b=kadg15THux1uc1jxKWG0BU8XQmugLd+qvBFT6+IcnJZET/dyVQUmf9Nzc3Uuyva3AtBt6rNYFeojIJOO8icQNpPQgxCcarb3fQHQUPh3WACqJcAUwBRXgd/2EPd/KmH+1gjupOTs7S0af4/Mk0vIJ7l3tzgmKPFFCejleM1nGHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716057986; c=relaxed/simple;
-	bh=0a34K2H4C4Vm0M1n57HCMou9farWng/dA6As0pDr+Zk=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=GPj1QqaJI49RXPUyXcna1STREQyGwQOlsh8L2b6VGVra1lGhaJHbEPzJVSwbwUDYm+Z1jW0HiCAKlU4AwbBUzOACfOAZ2B3Me9dzDDa3UVYMKy+IK7Rcq+aQc6prHWZ6kaPOzepRau953vnSrzpRhA5DICSgzlnEkZeWjnKfnZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com; spf=pass smtp.mailfrom=korsgaard.com; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=korsgaard.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 56BBA1C0003;
-	Sat, 18 May 2024 18:46:13 +0000 (UTC)
-Received: from peko by dell.be.48ers.dk with local (Exim 4.96)
-	(envelope-from <peter@korsgaard.com>)
-	id 1s8P4O-00Asw1-1z;
-	Sat, 18 May 2024 20:46:12 +0200
-From: Peter Korsgaard <peter@korsgaard.com>
-To: Grygorii Tertychnyi <grembeter@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,  Thomas Gleixner <tglx@linutronix.de>,
-  linux-i2c@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  bsp-development.geo@leica-geosystems.com,  Grygorii Tertychnyi
- <grygorii.tertychnyi@leica-geosystems.com>
-Subject: Re: [PATCH] i2c: ocores: set IACK bit after core is enabled
-References: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com>
-Date: Sat, 18 May 2024 20:46:12 +0200
-In-Reply-To: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com>
-	(Grygorii Tertychnyi's message of "Fri, 17 May 2024 21:10:00 +0200")
-Message-ID: <87wmnrnekr.fsf@dell.be.48ers.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1716058415; c=relaxed/simple;
+	bh=PzvWtsYxvq9OvEyn5u7y1pLUR9t9O6XwE27nVOaJft0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=n7GlKAQNtxZBZWOliX3LZVFbMRxS1ayX9OI8rbiUt0c6uwTZkXUq+WCkcQ1lSQhA1hfOFZFcA5BiLuM/O4At21VRgXyNgPpnO231lUK5NNEfPut3gDhtgsZcAM6hX2GxducatGleuMcF5kjtZ4zsK56wC7lXUCkjBeNxLkHcs5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7dabc125bddso1186955439f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 11:53:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716058413; x=1716663213;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jmqBSJMyaQSkwkaSX9SRtYVcBMPda0xro2Wg0fWt3pc=;
+        b=eROm7vnG6MyeQu/g0MnquYGF41/gWlHKHU+XKB2RHIMTgrYR8Kaw6QK6iM0dsO60qs
+         NoCdFEOXAEWFCbr03GSTkZO1EzB6jT62dGL3zrAwEciXe3Oh33OB6O2phsqx7e7OUQbC
+         /0trWaE2OUXSkph0837JwLusWThC/QNpzjd3rOXprvogWOBJEWNGzwz0RounQFc2ctPg
+         aAwxbLOUF+99PDgUv+kSWa6i7A9eLDe5cZN/0fc356+l2xu8vt4i/LVv7VArDvS/81Cm
+         eUgN9cU1ZMYMK39/vSfXgcuS2tlveRYWhsGFTCCTd4J2BdOy8jzQ0e+b2sV0XuI4vb7L
+         w0EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUy+lKx+G0X4jC0fw3JM8kNfSsVxJl15aWwght+dOi1rX64vBqA8+ZLVlLBNn1jFVwX38Dh3aiKMKVekcew3IsNmB3l7T5Dkxl8fl+u
+X-Gm-Message-State: AOJu0Ywfq6MezKSmg3UPtXtjyS8hqeRYUAuQ3ikme6OuuleNx4d1y7KQ
+	4oaOR9YDWSZdDOu7HAvzzfhu2Zv/6FtETUPP0nxNTsKlfzOE1+BQhWcLr/QvF9UANeO4eypEIUQ
+	biajRvrWSEHkq0YjLowp9RPyC2wIhnm11aRrEdJa0Kkt1XcbQoUasX9k=
+X-Google-Smtp-Source: AGHT+IEwgTHnLE/N6ajh52qHQ4jZbewL6olqAZnK+n1knRF9j8yz7bykLNABPQ0Qe1rq4TTXQkuxWoJM01tHsUMTn0BOLEl2r4So
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: peter@korsgaard.com
+X-Received: by 2002:a05:6638:3782:b0:488:7748:107a with SMTP id
+ 8926c6da1cb9f-48958c02105mr1751686173.4.1716058412951; Sat, 18 May 2024
+ 11:53:32 -0700 (PDT)
+Date: Sat, 18 May 2024 11:53:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001e3b5d0618befc84@google.com>
+Subject: [syzbot] [nilfs?] possible deadlock in nilfs_evict_inode (2)
+From: syzbot <syzbot+c48f1971ba117125f94c@syzkaller.appspotmail.com>
+To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
->>>>> "Grygorii" == Grygorii Tertychnyi <grembeter@gmail.com> writes:
+Hello,
 
- > Setting IACK bit when core is disabled does not clear the "Interrupt Flag"
- > bit in the status register, and the interrupt remains pending.
+syzbot found the following issue on:
 
- > Sometimes it causes failure for the very first message transfer, that is
- > usually a device probe.
+HEAD commit:    6bfd2d442af5 Merge tag 'irq-core-2024-05-12' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13aefc20980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=395546166dcfe360
+dashboard link: https://syzkaller.appspot.com/bug?extid=c48f1971ba117125f94c
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
- > Hence, set IACK bit after core is enabled to clear pending interrupt.
+Unfortunately, I don't have any reproducer for this issue yet.
 
- > Signed-off-by: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-6bfd2d44.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7ad901fe99c6/vmlinux-6bfd2d44.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8d6ef2df621f/bzImage-6bfd2d44.xz
 
-I no longer have access to a device with i2c-ocores, but it sounds
-sensible so:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c48f1971ba117125f94c@syzkaller.appspotmail.com
 
-Acked-by: Peter Korsgaard <peter@korsgaard.com>
+======================================================
+WARNING: possible circular locking dependency detected
+6.9.0-syzkaller-01893-g6bfd2d442af5 #0 Not tainted
+------------------------------------------------------
+kswapd0/111 is trying to acquire lock:
+ffff888018e7e610 (sb_internal#4){.+.+}-{0:0}, at: nilfs_evict_inode+0x157/0x550 fs/nilfs2/inode.c:924
+
+but task is already holding lock:
+ffffffff8d9390c0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10 mm/vmscan.c:6782
+
+which lock already depends on the new lock.
 
 
-> ---
- >  drivers/i2c/busses/i2c-ocores.c | 2 +-
- >  1 file changed, 1 insertion(+), 1 deletion(-)
+the existing dependency chain (in reverse order) is:
 
- > diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
- > index a0af027db04c..a52f8fd4e2fe 100644
- > --- a/drivers/i2c/busses/i2c-ocores.c
- > +++ b/drivers/i2c/busses/i2c-ocores.c
- > @@ -439,8 +439,8 @@ static int ocores_init(struct device *dev, struct ocores_i2c *i2c)
- >  	oc_setreg(i2c, OCI2C_PREHIGH, prescale >> 8);
+-> #2 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:3698 [inline]
+       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3712
+       might_alloc include/linux/sched/mm.h:312 [inline]
+       prepare_alloc_pages.constprop.0+0x155/0x560 mm/page_alloc.c:4346
+       __alloc_pages+0x194/0x2460 mm/page_alloc.c:4564
+       alloc_pages_mpol+0x275/0x610 mm/mempolicy.c:2264
+       folio_alloc+0x1e/0x40 mm/mempolicy.c:2342
+       filemap_alloc_folio+0x3ba/0x490 mm/filemap.c:984
+       __filemap_get_folio+0x527/0xa90 mm/filemap.c:1926
+       pagecache_get_page+0x2c/0x260 mm/folio-compat.c:93
+       block_write_begin+0x38/0x4a0 fs/buffer.c:2209
+       nilfs_write_begin+0x9f/0x1a0 fs/nilfs2/inode.c:262
+       page_symlink+0x356/0x450 fs/namei.c:5236
+       nilfs_symlink+0x23c/0x3c0 fs/nilfs2/namei.c:153
+       vfs_symlink fs/namei.c:4489 [inline]
+       vfs_symlink+0x3e8/0x630 fs/namei.c:4473
+       do_symlinkat+0x263/0x310 fs/namei.c:4515
+       __do_sys_symlink fs/namei.c:4536 [inline]
+       __se_sys_symlink fs/namei.c:4534 [inline]
+       __ia32_sys_symlink+0x78/0xa0 fs/namei.c:4534
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
 
- >  	/* Init the device */
- > -	oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_IACK);
- >  	oc_setreg(i2c, OCI2C_CONTROL, ctrl | OCI2C_CTRL_EN);
- > +	oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_IACK);
+-> #1 (&nilfs->ns_segctor_sem){++++}-{3:3}:
+       down_read+0x9a/0x330 kernel/locking/rwsem.c:1526
+       nilfs_transaction_begin+0x326/0xa40 fs/nilfs2/segment.c:223
+       nilfs_symlink+0x114/0x3c0 fs/nilfs2/namei.c:140
+       vfs_symlink fs/namei.c:4489 [inline]
+       vfs_symlink+0x3e8/0x630 fs/namei.c:4473
+       do_symlinkat+0x263/0x310 fs/namei.c:4515
+       __do_sys_symlink fs/namei.c:4536 [inline]
+       __se_sys_symlink fs/namei.c:4534 [inline]
+       __ia32_sys_symlink+0x78/0xa0 fs/namei.c:4534
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
 
- >  	return 0;
- >  }
- > --
- > 2.43.0
+-> #0 (sb_internal#4){.+.+}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1661 [inline]
+       sb_start_intwrite include/linux/fs.h:1844 [inline]
+       nilfs_transaction_begin+0x21b/0xa40 fs/nilfs2/segment.c:220
+       nilfs_evict_inode+0x157/0x550 fs/nilfs2/inode.c:924
+       evict+0x2ed/0x6c0 fs/inode.c:667
+       iput_final fs/inode.c:1741 [inline]
+       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x440 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       shrink_kill fs/dcache.c:1048 [inline]
+       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+       super_cache_scan+0x32a/0x550 fs/super.c:221
+       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+       shrink_slab_memcg mm/shrinker.c:548 [inline]
+       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+       shrink_one+0x493/0x7c0 mm/vmscan.c:4774
+       shrink_many mm/vmscan.c:4835 [inline]
+       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
+       shrink_node mm/vmscan.c:5894 [inline]
+       kswapd_shrink_node mm/vmscan.c:6704 [inline]
+       balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
+       kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
+       kthread+0x2c1/0x3a0 kernel/kthread.c:388
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
--- 
-Bye, Peter Korsgaard
+other info that might help us debug this:
+
+Chain exists of:
+  sb_internal#4 --> &nilfs->ns_segctor_sem --> fs_reclaim
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&nilfs->ns_segctor_sem);
+                               lock(fs_reclaim);
+  rlock(sb_internal#4);
+
+ *** DEADLOCK ***
+
+2 locks held by kswapd0/111:
+ #0: ffffffff8d9390c0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0x166/0x1a10 mm/vmscan.c:6782
+ #1: ffff888018e7e0e0 (&type->s_umount_key#74){++++}-{3:3}, at: super_trylock_shared fs/super.c:561 [inline]
+ #1: ffff888018e7e0e0 (&type->s_umount_key#74){++++}-{3:3}, at: super_cache_scan+0x96/0x550 fs/super.c:196
+
+stack backtrace:
+CPU: 2 PID: 111 Comm: kswapd0 Not tainted 6.9.0-syzkaller-01893-g6bfd2d442af5 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+ __sb_start_write include/linux/fs.h:1661 [inline]
+ sb_start_intwrite include/linux/fs.h:1844 [inline]
+ nilfs_transaction_begin+0x21b/0xa40 fs/nilfs2/segment.c:220
+ nilfs_evict_inode+0x157/0x550 fs/nilfs2/inode.c:924
+ evict+0x2ed/0x6c0 fs/inode.c:667
+ iput_final fs/inode.c:1741 [inline]
+ iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+ iput+0x5c/0x80 fs/inode.c:1757
+ dentry_unlink_inode+0x295/0x440 fs/dcache.c:400
+ __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+ shrink_kill fs/dcache.c:1048 [inline]
+ shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+ prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+ super_cache_scan+0x32a/0x550 fs/super.c:221
+ do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+ shrink_slab_memcg mm/shrinker.c:548 [inline]
+ shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+ shrink_one+0x493/0x7c0 mm/vmscan.c:4774
+ shrink_many mm/vmscan.c:4835 [inline]
+ lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4935
+ shrink_node mm/vmscan.c:5894 [inline]
+ kswapd_shrink_node mm/vmscan.c:6704 [inline]
+ balance_pgdat+0x10d1/0x1a10 mm/vmscan.c:6895
+ kswapd+0x5ea/0xbf0 mm/vmscan.c:7164
+ kthread+0x2c1/0x3a0 kernel/kthread.c:388
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
