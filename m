@@ -1,122 +1,109 @@
-Return-Path: <linux-kernel+bounces-182906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0AF08C9193
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 17:57:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14878C9196
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 17:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 812301F21783
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:57:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 789A9B2119B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A894779F;
-	Sat, 18 May 2024 15:57:12 +0000 (UTC)
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD1D481C4;
+	Sat, 18 May 2024 15:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="GGT+svEr"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8D43B298;
-	Sat, 18 May 2024 15:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED27047F41;
+	Sat, 18 May 2024 15:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716047832; cv=none; b=k53Zy6DG7dmaeRU8nK/gKOYSLe31aI2MjPs6jR2+snfAL8d9q7hqw5H/8O6ZjhC0NwtsZsr/pOiWC3Eq9PgIr9RzZQFopMxOvNrEjF+23DVa7eycTS7KrIbaETGBAJCv3Mtp6ZDGbIrE5//fkI/Lzs2iRxpsIJDPvQmn4XhNMG4=
+	t=1716047887; cv=none; b=t7CppZQo/ajI/zcRb4BfYkw5SCGuKNrPacrjxAvgjZg/IBkTSpE3JKGE3czqYtgL50FeCfN+04id29dQ32FdjrC+y25/beuJLuGbou0DzKvGIoOZhrR70bo1gDOHA9SY3ht02hZiOrsP/XIqgGb0fs1mNHrOK0GQCdJabFqMRts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716047832; c=relaxed/simple;
-	bh=luwsE8sJj0aAZyR5n1prlcTaj8ZGrd0q17yleeIl4b0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=bz5Go2bLlfa5PdltjEysjdTgoJ7gNoBXAGqeWZWLGbT3JrEkuR/jxIEhVcki+ygFM2uPAcC9hEWGN5hHFBAnGPgOaFEUhQ5M08WcwkXZF1g8zlCUtZpRm609JER7fM60SC4Bh4vS1Xs81ghqoquC6Q3ytG3IxhC95UsYCTRqbPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2451da9b4feso610406fac.0;
-        Sat, 18 May 2024 08:57:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716047829; x=1716652629;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l5oU0oxpGBmiuXxo8TPbNOfb9WkNLqCPN14da9/KZXU=;
-        b=MzosRmCNLs7fPyUvJyjgbLclBghyPRS+tymKF2XdeLz2DApUP/RKP4J1+jgcA8dfAz
-         l4iGAURIfRdZeD7U7Tyy3ve1fycfx5yhZ+N04Hv00Ry5BHDClR3U1mHctwRxnTwlSDXt
-         m2IVe50HfT1EDAtHm8OlnIc2h4vY602FPYQe0qRUvqDTK4kjpKF9EGl3SPCEMWPKWzmu
-         /KygwKwwuXoK9YRjDKcxd6BUBB0BSnaShhDwSS1I5nSyXjzxJcohqBztMShUlzIuMg+D
-         j/v9VIpASOJ0c18IXCuJAIX6sGetiROiEONsktC80H+E5ZJYZg8PndfsLtE/yTABEuIy
-         wpVg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1IbWkWusTxiuOK0fiyafcNebDsvZigrO3+I4IaSMPiyvOVL29sBihDnFG1VUaQbFkTHXNHtfxyaHtSEXogDC/o2HZ7FKuixM1jUug
-X-Gm-Message-State: AOJu0YyOIvTMU1L7SfGyRMIlqV4a9hJvPYB183uyPR81IQvC1B1OiA6C
-	jVA2TcL7eiWylrbgzp90t5/Iil6eoJT/seUTfSQ21DjAJpDVF6Fg9+HBrqTrvTsjgvkSa7Xw5FJ
-	tJuMDR+t9a4p7lueL8lgTn+64vta+4Bsi
-X-Google-Smtp-Source: AGHT+IGpfmXPV7iIGBOjBuqoO3XnNaL5Thr2FWfLExiB5HBIPBCQvDfHPcmG9859LsUxzUXM+wvM1u42r+4lY2VxkV0=
-X-Received: by 2002:a05:6870:4209:b0:22e:bcfd:debc with SMTP id
- 586e51a60fabf-24172a90478mr36457834fac.13.1716047828781; Sat, 18 May 2024
- 08:57:08 -0700 (PDT)
+	s=arc-20240116; t=1716047887; c=relaxed/simple;
+	bh=T0B0o4Ahrip8acK9zV6qCGZ5vdii8VsZwX5YTddlLXo=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=rLzzzSUktcYVqdHz0kXYRkR0TvD6Xb+3rIcIKDgvBDpPyIcJf9xqL3tkkio+BAZzP6WuEuCrA1JhdSXpMCzEZ52IgrQlrFf634khceJe/li+nl+PG03JDjwN0uE5dtQ4boqmMxM10H7JbD8aSkrz/dgUuYnBRixSl6sVOgWiH/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=GGT+svEr; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1716047871; bh=tAscGdrOoDFuMMheeDr7p+FqOHBXTQvTsOI3LnIgptI=;
+	h=From:To:Cc:Subject:Date;
+	b=GGT+svErobVJZ9z26eiVNtR4Y6gTBka8K7cVS2rCPErFlJYbZlMOa8GHsg7yKegNg
+	 ZDvD4Fn5gezQ3yO28YgTuh4ajfGEHSnoJHB6YRpqiiliuP2Z+JUL6OooL7Cb7a42Hg
+	 JTAdWqvKSkC8HRNtBscCH/aXYVKueWczq5bBSbII=
+Received: from cyy-pc.lan ([240e:379:227e:fc00:28c6:7f50:fe33:13fe])
+	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
+	id E6F39492; Sat, 18 May 2024 23:57:47 +0800
+X-QQ-mid: xmsmtpt1716047867td774prpc
+Message-ID: <tencent_9D721BDDF88C04DBB5151D57711D62524209@qq.com>
+X-QQ-XMAILINFO: N1L4R2fPZA3sGxWRvyML2lSmPDupt8TqlCjRvFnm+hC6uaH9gXe0Pm3XD0PSL/
+	 0erheW3tBktAEYY1aGCsZMQ+9Km7EjyMrugsV/1l1P6crb/C1CZff/eKpC/3Wa6GfdIumsU6HVkt
+	 3NZKdmpULhbB7Z1uhNU/adSopXtbLEEk6HRJ8igxn/oNXPX1mOPoWR2PHaU3b5YazgVMHIYDHNjN
+	 MPefZ91iplsmyKG5OKvi97a5lTfhCRCoLnj9VNxIKlrkLs1lPwJM+gxxJ9Vmj4PhxeNohlDZrfd6
+	 XCohexsFERKvzDLN695swbTQX1chHh3r5099is1qYNaI1qn12kd5Icf/G/nZyfICbcxZzES6WRWX
+	 8RJEo42Fkvyj+nN3Q4ZW5FzyDOlvigGNF7OZYI7v4PvRv1Y18NaqHe3aZ/hmXnF3egReKW+WN/dp
+	 cH8LEDAqI/KaCJ9AtAAifV6YOdv8lEtBPJpwq7dIGSEiEP0oWbyCptsU8f1Yk/4lIK+x9K765QyC
+	 QP4mnkX1pDMR/xyDrjtYvDeq6vbcYNLXAiKVLkelPWgsrh0VEyBTUzC7+TPqcfc9i9HCnGzNRZtL
+	 +uIdBB69Shyd9rIG6DWrWKrnu9tFQzvREOEbRxM8xR2622D/lz4+546WyvXa6BuPv/8Umnkp3p4h
+	 8M2F+ssKMuyOFlwgIeCGKAt7RGqUXVOiNngpMDt0EYGO/HruiBz5fSdUO5KjUScmBUK3+ogvESHb
+	 HV3pjo7TwfB+Ov2oNhb8G24QKviYvmn16xcaAJ41J2sA2gd1Qbg830M9VgdtcUtsJyxJRIU/Rbkb
+	 RtIm8wNJtyEL39MubshwbQKPx7kkfqmcnBoiDE7miufs0yTDawZlCrV+1XNplP+ioUY2wOK9JU6y
+	 +kbMc1oN/820cub/UlbrJvLl398C+L34JYi+yxh9d4RGRVLpdOyQ8uVzWom35seoxo4onN1gxdUF
+	 clsrI+752+eW1IvssCTQkEl1vZiv4qqtGPyqXXJx7+xDjBxcRJcedvF6vfDp4PuIb5Ta34AYOa6f
+	 n7aD+rKA==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Yangyu Chen <cyy@cyyself.name>
+To: linux-riscv@lists.infradead.org
+Cc: Elliott Hughes <enh@google.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Evan Green <evan@rivosinc.com>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Yangyu Chen <cyy@cyyself.name>
+Subject: [PATCH 0/2] docs: riscv: Some clarifies on hwprobe misaligned performance
+Date: Sat, 18 May 2024 23:57:45 +0800
+X-OQ-MSGID: <20240518155745.891372-1-cyy@cyyself.name>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Len Brown <lenb@kernel.org>
-Date: Sat, 18 May 2024 11:56:57 -0400
-Message-ID: <CAJvTdKmgOCBUX=O4VvuVZfnXVpZcm5vDU6DtAYykuhBH7+-7ow@mail.gmail.com>
-Subject: [GIT PULL] Turbostat 2024.05.10 for Linux-6.10-merge
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+This patchset clarifies some unclear things about hwprobe's misaligned
+performance. Including:
 
-The following changes since commit a6189a7407795b3f5167ea532ac85931cd26083a:
+- hwprobe misaligned performance is only applied to scalar from patch [1]
+- The defined keys of RISCV_HWPROBE_MISALIGNED_* are values not bitmasks
 
-  Merge tag 'turbostat-2024.04.10' of
-git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux (2024-04-10
-13:13:27 -0700)
+I cherry-picked [1] rather than write dependency because the original patch
+was submitted with a line wrapped to 80 characters. We can't directly apply
+that patch using `git am.` 
 
-are available in the Git repository at:
+[1] https://lore.kernel.org/linux-riscv/CAJgzZorn5anPH8dVPqvjVWmLKqTi5bkLDR=FH-ZAcdXFnNe8Eg@mail.gmail.com/
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git
-tags/turbostat-for-Linux-6.10-merge-window
+Yangyu Chen (1):
+  docs: riscv: hwprobe: Clarify misaligned keys are values not bitmasks
 
-for you to fetch changes up to 256d218ec6aea99855dc5c54af550fcff96fc732:
+enh (1):
+  docs: riscv: Clarify risc-v hwprobe RISCV_HWPROBE_MISALIGNED_* docs.
 
-  tools/power turbostat: version 2024.05.10 (2024-05-15 21:50:17 -0400)
+ Documentation/arch/riscv/hwprobe.rst | 31 ++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 13 deletions(-)
 
-----------------------------------------------------------------
-Turbostat 2024.05.10 update since 2024.04.08:
+-- 
+2.43.0
 
-Survive sparse die id's seen in Linux-6.9.
-
-Handle clustered-uncore topology in new/upcoming hardware.
-
-For non-root use, add ability to see software C-state counters.
-
-Enable reading core and package hardware cstate via perf,
-and prefer perf over the MSR driver access for these counters.
-
-----------------------------------------------------------------
-Len Brown (6):
-      tools/power turbostat: Add "snapshot:" Makefile target
-      tools/power turbostat: Harden probe_intel_uncore_frequency()
-      tools/power turbostat: Remember global max_die_id
-      tools/power turbostat: Survive sparse die_id
-      tools/power turbostat: Add columns for clustered uncore frequency
-      tools/power turbostat: version 2024.05.10
-
-Patryk Wlazlyn (7):
-      tools/power turbostat: Replace _Static_assert with BUILD_BUG_ON
-      tools/power turbostat: Enable non-privileged users to read sysfs counters
-      tools/power turbostat: Avoid possible memory corruption due to
-sparse topology IDs
-      tools/power turbostat: Read Core-cstates via perf
-      tools/power turbostat: Read Package-cstates via perf
-      tools/power turbostat: Fix order of strings in pkg_cstate_limit_strings
-      tools/power turbostat: Ignore pkg_cstate_limit when it is not available
-
-Zhang Rui (2):
-      tools/power turbostat: Enhance ARL/LNL support
-      tools/power turbostat: Add ARL-H support
-
- tools/power/x86/turbostat/Makefile    |   27 +-
- tools/power/x86/turbostat/turbostat.8 |    4 +-
- tools/power/x86/turbostat/turbostat.c | 1169 ++++++++++++++++++++++++---------
- 3 files changed, 899 insertions(+), 301 deletions(-)
 
