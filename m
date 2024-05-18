@@ -1,81 +1,90 @@
-Return-Path: <linux-kernel+bounces-182806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E74008C901C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:10:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B4DB8C901F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FF04281289
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:10:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77355B214CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51BF17BBE;
-	Sat, 18 May 2024 09:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466F916415;
+	Sat, 18 May 2024 09:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A94ODE2F"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D97c34ws"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDED1754B
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 09:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB144A2D;
+	Sat, 18 May 2024 09:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716023407; cv=none; b=AVfBegNO9hnuNLD12m0uV2gZUru6S+SK9kvqegBntUgj5XePTHRk34V5+NlCPEqsu6Gsq+tGvcNSbfgZch1u3zYB8V/HCXVUoQ/uU+EG5bdb7g1iLKptJWYDAsnhwdViQjtOi5IZboHrxjYbg1Qb2PSBEpvtytZXuBnHAEVUIIA=
+	t=1716023745; cv=none; b=PlmvWJ7UHkjjbkm1WePRPEmDOUHb1owRybF4l2A2JLgFV4PFsFrYDs4fKNAbOZRmNm1RLIl2yHbO9alVejhKNC9y0zfaBnCO0fz9DAYa46ESuOxyche2H+Kv8Arz9Zr9D5GzCi4TTnpkKfhy8YFycTX0FblcPG9DA5D/8E1skhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716023407; c=relaxed/simple;
-	bh=BS0hGBTnONYffRCWVcBC/4T5eEmn6lIBz+Cc4Z0z2lw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TJ84MKF9skA+Q09GX3RlPF01HX14tt1iz6r5Q6jxK11GPWp7iF/3twv6S/+3GP6UzRU0cMBVkkGzYJlj7Gt7UA4vvGO0XMOzdZX8N4CxaYYfF8kpK3GhHYRbEdglZOQy8pO8WusmLpYzj8KJFjBOXCMl5y+NZve0PU5uo9mK1ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A94ODE2F; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1716023745; c=relaxed/simple;
+	bh=qmyHIIKcPVB794MM9BsicZz6ygBU5n10mGxUG2Nh+sM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MR5qHLiGY9etdTB7iEwZi0r6LYYN7xToN+S4Wbu3H+je56uEmObOBk8z6QyUxVclwONqHij8HccZzwC6pN2Zl62x6MpkRA8Einj6dVbiOydhvDZcRcmDXZkydF6xl8hQhAHVrwQXoJJa4aLnIPuqvMkSw1ouJR4ajjskDOT7/zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D97c34ws; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-574bf7ab218so6086667a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 02:10:05 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59e4136010so588699366b.3;
+        Sat, 18 May 2024 02:15:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716023404; x=1716628204; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=tftqzzSPEX4QSLboSaiUIFGje9Unrb+c3Yg/V8KRFkA=;
-        b=A94ODE2F3XLumjTKz2eCRPYasP0ck13d8dWlQiriXcQs1523hB6f9TrCViDxuMRQv9
-         y8bWwzOpY4+xMr69TwuPDBpFYAmRWikrGn7okDX4lBdPOeRIBwI8m5OT0vRxfs8G8Fm6
-         Y4nQm5lAZdjmspLw2WuuEF8PmZW6TrlovlMIotts0KW3pxBb2xjaV8+rv+3LQZdlje9Q
-         rKkXzm6zGb35Z8j4iyDkXwsTpu9rKqMavd5BRuwtSBnzm970Svtvec/0ilNwELv3era8
-         D8acIkD5lWPQM/iSbYoXfiGZyIPcXT6FEmYcKLmdt+vrxAkZSjJ23sS+zCuA2eFvwenW
-         2dRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716023404; x=1716628204;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1716023742; x=1716628542; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tftqzzSPEX4QSLboSaiUIFGje9Unrb+c3Yg/V8KRFkA=;
-        b=K9OJgwrUd66Hg1ezJBemfCrNqGH/U87ey9c5RkEk8KYRK6TL0sovRuVmd3qkpcuOse
-         Ws8ln0HRFXyJONRXTWUxCG5JF8Q7m14mGz5oUGs4In9CdEFpQTyK2PEA9sS5KzmD0zg3
-         jeBzg78zdds8ma2+RpcKyrSeAXLvqDsCxLIlWRaj+TEPyNLGmYpcgOA4ON748e4dCzDi
-         DykjHzvS1hgfiafZKy7dKt5HOLPXz/24ud9lOVWZIeGXwFDLK87JRx7udqppX/42dHar
-         amxyupQ3U5GdBAbT6Hp3G2DWiKfjCobh6MaKAS36ueYJy8TqDZ78fYTbMLYuU+xOsQXR
-         N43w==
-X-Gm-Message-State: AOJu0Yw6LO+I1BdFFqIQjd4qNfn4sPRX8jtVJBVZK4RUdr/pSQXOxFSi
-	cFDSYwQw9jXipUlbcHoQf1UaqW2/gJ/RjBSzDlqiK0HV/zUmzyca
-X-Google-Smtp-Source: AGHT+IH4ZpdvzcHnT2cGokneLZThjNR/YyP3FyAAYkYYgeMtpOqpJcVZ5AJnrRQONG0Lk1JcPDt3Sg==
-X-Received: by 2002:a50:9e6d:0:b0:572:9f60:783d with SMTP id 4fb4d7f45d1cf-5734d6f3366mr14919914a12.36.1716023403547;
-        Sat, 18 May 2024 02:10:03 -0700 (PDT)
+        bh=wIcX/mNWbGbXqi1DrcVgyMGxih1ay8vwVcGDjl7azI8=;
+        b=D97c34wsffoVBzmRtjDV2RqxJ/AflERloo2hQPGncW2zycsCOvAwigJPl0CV6/qAwH
+         leqNS/IEML3ljip9CaGYfnorTRzNPcl9xwWRaSQ7XlzAUdv0b4E3o75y1dlphCWaTqdd
+         7tanAD73pWFM6Wqd4fjc9X5hs0qCoN+K1lWof+FdVxfKprDYS2dSI4fcP+7gDQ0J5vzH
+         lN4Do264Qp7+THgUWN5i/LAM0TQbS5ELFU+o95QSSlrNhoWZUoRJfpQO8F7Lxc/ErrIA
+         CQ6RaVh3wHHt0dVrJIEhoP9Nnmtm3n4ISZl6lVmkHP0IiAuFohR4+q5h0A1ekwuM6uZ7
+         pQNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716023742; x=1716628542;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wIcX/mNWbGbXqi1DrcVgyMGxih1ay8vwVcGDjl7azI8=;
+        b=AVk8sXCoVR2ivF16mvJgGAT1ECcJAePdcs5yhhMkLcXUHrXt4lsptlh0bmbU/GQhM1
+         lFK8KDfm4PRmIq4E7cnWoilk6gxQw08kpG81XDNbOy+Xj3L91EgsymsmQfSyFofIMxzC
+         VI8PoOgg15zIC8sDCB0b4FCivrB1kvDNVxuv/2SW4gvRSyY6VifF37EIWxi8z3+N91nz
+         pGVWZ/cYa1/rAnKj3LCkgxOgcvwMDeJbZhbYODUrw0jxHvdzJvB4S6m9tq6lPgTJJYuo
+         oLclBDOzwVF9DDqMzw0kzXOv1bsVlEtt0AgjWnVYzjz4Rc0s8rDwvPVaLDC6Mv+68WWx
+         49Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUY8RYuCWq/S5lXNjkOIvJJy1r5TMk8nEu/sl9XE4tl/qEGnN4J/ZLt9C3oIZxyb7KWS67xyEJBj4wD4MkrK9UfE0rJnqEl043tIKS/zZv60SCHsBzTIV1wxog75K8GVN8Qj2fLd4z3kc41Amgvw==
+X-Gm-Message-State: AOJu0Yy+vfxm84Ls05OzR2x49qhLTPCYKC52RlP6ZhFyCG0LMDS5YFWz
+	ejxV7sN257z3h3yg+K9ps0GeBt3VZ5cwefv/oZeVQBINTLH4GrTp
+X-Google-Smtp-Source: AGHT+IH2qJvBbJ6wUL4UhTv0nNvel2Mx0MyqzvvEBVnb0y3+J7k2Q2D65xKrV+7GS9pibaaaA85Rcw==
+X-Received: by 2002:a17:907:25c5:b0:a5a:6367:717e with SMTP id a640c23a62f3a-a5a6367bc70mr1470315266b.17.1716023741430;
+        Sat, 18 May 2024 02:15:41 -0700 (PDT)
 Received: from gmail.com (1F2EF1AE.unconfigured.pool.telekom.hu. [31.46.241.174])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-574f6b8b9d7sm4922597a12.82.2024.05.18.02.10.02
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1789247csm1199183466b.82.2024.05.18.02.15.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 02:10:02 -0700 (PDT)
+        Sat, 18 May 2024 02:15:40 -0700 (PDT)
 Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Sat, 18 May 2024 11:10:00 +0200
+Date: Sat, 18 May 2024 11:15:38 +0200
 From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: x86@kernel.org, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [GIT PULL] x86 fixes
-Message-ID: <ZkhwaJk7MwLXbtqF@gmail.com>
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] perf/x86/amd: Use try_cmpxchg() in events/amd/{un,}core.c
+Message-ID: <Zkhxuo1yWUUcK11d@gmail.com>
+References: <20240425101708.5025-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,39 +93,124 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240425101708.5025-1-ubizjak@gmail.com>
 
-Linus,
 
-Please pull the latest x86/urgent Git tree from:
+* Uros Bizjak <ubizjak@gmail.com> wrote:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2024-05-18
+> Replace this pattern in events/amd/{un,}core.c:
+> 
+>     cmpxchg(*ptr, old, new) == old
+> 
+> ... with the simpler and faster:
+> 
+>     try_cmpxchg(*ptr, &old, new)
+> 
+> The x86 CMPXCHG instruction returns success in the ZF flag, so this change
+> saves a compare after the CMPXCHG.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> ---
+>  arch/x86/events/amd/core.c   | 3 ++-
+>  arch/x86/events/amd/uncore.c | 6 ++++--
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+> index 1fc4ce44e743..c1b8aeff7bc0 100644
+> --- a/arch/x86/events/amd/core.c
+> +++ b/arch/x86/events/amd/core.c
+> @@ -433,7 +433,8 @@ static void __amd_put_nb_event_constraints(struct cpu_hw_events *cpuc,
+>  	 * when we come here
+>  	 */
+>  	for (i = 0; i < x86_pmu.num_counters; i++) {
+> -		if (cmpxchg(nb->owners + i, event, NULL) == event)
+> +		struct perf_event *tmp = event;
+> +		if (try_cmpxchg(nb->owners + i, &tmp, NULL))
+>  			break;
+>  	}
+>  }
+> diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+> index 4ccb8fa483e6..cac7c20d1aee 100644
+> --- a/arch/x86/events/amd/uncore.c
+> +++ b/arch/x86/events/amd/uncore.c
+> @@ -162,7 +162,8 @@ static int amd_uncore_add(struct perf_event *event, int flags)
+>  	/* if not, take the first available counter */
+>  	hwc->idx = -1;
+>  	for (i = 0; i < pmu->num_counters; i++) {
+> -		if (cmpxchg(&ctx->events[i], NULL, event) == NULL) {
+> +		struct perf_event *tmp = NULL;
+> +		if (try_cmpxchg(&ctx->events[i], &tmp, event)) {
+>  			hwc->idx = i;
+>  			break;
+>  		}
+> @@ -196,7 +197,8 @@ static void amd_uncore_del(struct perf_event *event, int flags)
+>  	event->pmu->stop(event, PERF_EF_UPDATE);
+>  
+>  	for (i = 0; i < pmu->num_counters; i++) {
+> -		if (cmpxchg(&ctx->events[i], event, NULL) == event)
+> +		struct perf_event *tmp = event;
+> +		if (try_cmpxchg(&ctx->events[i], &tmp, NULL))
+>  			break;
+>  	}
 
-   # HEAD: 9dba9c67e52dbe0978c0e86c994891eba480adf0 x86/alternatives: Use the correct length when optimizing NOPs
+Note that's a newline missing between local variable declaration block and 
+the first statement after that. I've added all 3 to this patch (see below), 
+but please keep an eye on this in future patches.
 
-Miscellaneous fixes:
-
- - Fix a NOP-patching bug that resulted in valid
-   but suboptimal NOP sequences in certain cases.
-
- - Fix build warnings related to fall-through control flow
-
- Thanks,
+Thanks,
 
 	Ingo
 
------------------->
-Borislav Petkov (1):
-      x86/boot: Add a fallthrough annotation
+================>
+ arch/x86/events/amd/core.c   | 1 +
+ arch/x86/events/amd/uncore.c | 2 ++
+ 2 files changed, 3 insertions(+)
 
-Borislav Petkov (AMD) (1):
-      x86/alternatives: Use the correct length when optimizing NOPs
-
-Nathan Chancellor (1):
-      x86/boot: Address clang -Wimplicit-fallthrough in vsprintf()
-
-
- arch/x86/boot/Makefile        | 1 +
- arch/x86/boot/printf.c        | 3 +++
- arch/x86/kernel/alternative.c | 2 +-
- 3 files changed, 5 insertions(+), 1 deletion(-)
+diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+index c1b8aeff7bc0..18bfe3451f3a 100644
+--- a/arch/x86/events/amd/core.c
++++ b/arch/x86/events/amd/core.c
+@@ -434,6 +434,7 @@ static void __amd_put_nb_event_constraints(struct cpu_hw_events *cpuc,
+ 	 */
+ 	for (i = 0; i < x86_pmu.num_counters; i++) {
+ 		struct perf_event *tmp = event;
++
+ 		if (try_cmpxchg(nb->owners + i, &tmp, NULL))
+ 			break;
+ 	}
+diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+index cac7c20d1aee..0fafe233bba4 100644
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -163,6 +163,7 @@ static int amd_uncore_add(struct perf_event *event, int flags)
+ 	hwc->idx = -1;
+ 	for (i = 0; i < pmu->num_counters; i++) {
+ 		struct perf_event *tmp = NULL;
++
+ 		if (try_cmpxchg(&ctx->events[i], &tmp, event)) {
+ 			hwc->idx = i;
+ 			break;
+@@ -198,6 +199,7 @@ static void amd_uncore_del(struct perf_event *event, int flags)
+ 
+ 	for (i = 0; i < pmu->num_counters; i++) {
+ 		struct perf_event *tmp = event;
++
+ 		if (try_cmpxchg(&ctx->events[i], &tmp, NULL))
+ 			break;
+ 	}
 
