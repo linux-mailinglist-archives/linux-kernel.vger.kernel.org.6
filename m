@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-182907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14878C9196
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 17:58:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEC88C9199
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 18:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 789A9B2119B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:58:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD747B21469
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 16:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD1D481C4;
-	Sat, 18 May 2024 15:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C5342042;
+	Sat, 18 May 2024 16:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="GGT+svEr"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BeotOVyf"
 Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED27047F41;
-	Sat, 18 May 2024 15:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573906AD7;
+	Sat, 18 May 2024 16:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716047887; cv=none; b=t7CppZQo/ajI/zcRb4BfYkw5SCGuKNrPacrjxAvgjZg/IBkTSpE3JKGE3czqYtgL50FeCfN+04id29dQ32FdjrC+y25/beuJLuGbou0DzKvGIoOZhrR70bo1gDOHA9SY3ht02hZiOrsP/XIqgGb0fs1mNHrOK0GQCdJabFqMRts=
+	t=1716048038; cv=none; b=tszpH8UKETZKZJ3Afw604eTXJ7KUOArdEfnQC7E4I1j8qAuuZ6eEgvtoIIJU/ODJ2FiJ6iOudd3W+JpSdfn451laduurcoAEfuGd7pX7bRDH3SkJttBDGPJgThU8TNEF845DN/ovh2kgoFWU4Jxqbxhr7bK3JgGFFAQ927aIyQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716047887; c=relaxed/simple;
-	bh=T0B0o4Ahrip8acK9zV6qCGZ5vdii8VsZwX5YTddlLXo=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=rLzzzSUktcYVqdHz0kXYRkR0TvD6Xb+3rIcIKDgvBDpPyIcJf9xqL3tkkio+BAZzP6WuEuCrA1JhdSXpMCzEZ52IgrQlrFf634khceJe/li+nl+PG03JDjwN0uE5dtQ4boqmMxM10H7JbD8aSkrz/dgUuYnBRixSl6sVOgWiH/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=GGT+svEr; arc=none smtp.client-ip=162.62.57.252
+	s=arc-20240116; t=1716048038; c=relaxed/simple;
+	bh=bygF6WawJ6ueyBX57zcpvye3rWmVIwdo53C08rU9aPs=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=dJhgK6mMZZ2GwAr8Og/XCMrUHI0WLGrttG4loQVEyRgJXLEIj55WXBx3SFKgC7vHl+RJxy/OXJUWH+QgCoFROfGY7bDp1AIe355MLirbtz2Un8DCh4WpLHkwINvPBfPKIgDlscr3VazYw1lOgrR7k6TB9k5c3wvesPT8ttEDdBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BeotOVyf; arc=none smtp.client-ip=162.62.57.252
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1716047871; bh=tAscGdrOoDFuMMheeDr7p+FqOHBXTQvTsOI3LnIgptI=;
-	h=From:To:Cc:Subject:Date;
-	b=GGT+svErobVJZ9z26eiVNtR4Y6gTBka8K7cVS2rCPErFlJYbZlMOa8GHsg7yKegNg
-	 ZDvD4Fn5gezQ3yO28YgTuh4ajfGEHSnoJHB6YRpqiiliuP2Z+JUL6OooL7Cb7a42Hg
-	 JTAdWqvKSkC8HRNtBscCH/aXYVKueWczq5bBSbII=
+	t=1716048030; bh=G4b7Gy7au2RGDdIfISCbBgIRap2G195EA9qLAZb1j00=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=BeotOVyfXSlQems8W0+Tz8b38pFY3XnZrWbqkmjvXbICw9o+CaJrA0KbxFPAxeutu
+	 HFlSyDsU3AQICxoy/ZOdWEdUkpNEPU14hszQqX9tRJuGxfYPmFQ/QaqQazhwtkZYH0
+	 UNOTZGEQg26b9aw3OI1qwfE0CxJz2fOhZKDgEPtc=
 Received: from cyy-pc.lan ([240e:379:227e:fc00:28c6:7f50:fe33:13fe])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id E6F39492; Sat, 18 May 2024 23:57:47 +0800
-X-QQ-mid: xmsmtpt1716047867td774prpc
-Message-ID: <tencent_9D721BDDF88C04DBB5151D57711D62524209@qq.com>
-X-QQ-XMAILINFO: N1L4R2fPZA3sGxWRvyML2lSmPDupt8TqlCjRvFnm+hC6uaH9gXe0Pm3XD0PSL/
-	 0erheW3tBktAEYY1aGCsZMQ+9Km7EjyMrugsV/1l1P6crb/C1CZff/eKpC/3Wa6GfdIumsU6HVkt
-	 3NZKdmpULhbB7Z1uhNU/adSopXtbLEEk6HRJ8igxn/oNXPX1mOPoWR2PHaU3b5YazgVMHIYDHNjN
-	 MPefZ91iplsmyKG5OKvi97a5lTfhCRCoLnj9VNxIKlrkLs1lPwJM+gxxJ9Vmj4PhxeNohlDZrfd6
-	 XCohexsFERKvzDLN695swbTQX1chHh3r5099is1qYNaI1qn12kd5Icf/G/nZyfICbcxZzES6WRWX
-	 8RJEo42Fkvyj+nN3Q4ZW5FzyDOlvigGNF7OZYI7v4PvRv1Y18NaqHe3aZ/hmXnF3egReKW+WN/dp
-	 cH8LEDAqI/KaCJ9AtAAifV6YOdv8lEtBPJpwq7dIGSEiEP0oWbyCptsU8f1Yk/4lIK+x9K765QyC
-	 QP4mnkX1pDMR/xyDrjtYvDeq6vbcYNLXAiKVLkelPWgsrh0VEyBTUzC7+TPqcfc9i9HCnGzNRZtL
-	 +uIdBB69Shyd9rIG6DWrWKrnu9tFQzvREOEbRxM8xR2622D/lz4+546WyvXa6BuPv/8Umnkp3p4h
-	 8M2F+ssKMuyOFlwgIeCGKAt7RGqUXVOiNngpMDt0EYGO/HruiBz5fSdUO5KjUScmBUK3+ogvESHb
-	 HV3pjo7TwfB+Ov2oNhb8G24QKviYvmn16xcaAJ41J2sA2gd1Qbg830M9VgdtcUtsJyxJRIU/Rbkb
-	 RtIm8wNJtyEL39MubshwbQKPx7kkfqmcnBoiDE7miufs0yTDawZlCrV+1XNplP+ioUY2wOK9JU6y
-	 +kbMc1oN/820cub/UlbrJvLl398C+L34JYi+yxh9d4RGRVLpdOyQ8uVzWom35seoxo4onN1gxdUF
-	 clsrI+752+eW1IvssCTQkEl1vZiv4qqtGPyqXXJx7+xDjBxcRJcedvF6vfDp4PuIb5Ta34AYOa6f
-	 n7aD+rKA==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+	id 198A620; Sun, 19 May 2024 00:00:25 +0800
+X-QQ-mid: xmsmtpt1716048025tb9g5oicz
+Message-ID: <tencent_7C21508D6B7C6C824ADA8E8E28B827310908@qq.com>
+X-QQ-XMAILINFO: Mee1Vp/QiDAWWkXRv90vh1x1lkAExZPbvkAPEF12ooNqsdf4ptrfkOpg3xq8gA
+	 xE1sVpz+ZDPlFvtbiqSl1u3VFgtw0o8lgsV8GL/GnFz1ZaIZyS9Y++AlKlsoH+2LMVNciFYbEubP
+	 zoD+61Iwlyqa2lXQcWYAfRohYJamV+fBDvG4FjGoZR+EUueCIjcihNP6sW/EnDnZkqudqLizU14/
+	 50nxRuNUKBY6NGK97pKArVRB6BdzrHyOqegrsjqaJ82jWhkjGiCnwySr1aIoURIBZhp25swpINQz
+	 8eE7zUTcskMlqGHGhpZl3v1lOJH0pk3zPzO/pKoEi8Xo1Z2TzQbsWApQLli9Bf1WJl7X/VjHCTSW
+	 YAiYTwHMYNSqg9QIiOEaf1PWcWW5TykRu06XTfMxTF7yncyqZ6TaYrKJg0fJuzqVQbSlDulNueuE
+	 GlWJB3N0kLMerljjpQdeSfeTIppxsl4Eo1/lpnMb/69IFq1QcnlmV/9RBBePTsKXBQ5NyeArNGBv
+	 EKRBBhskXbAakmOE5yFEIsisg0j/LUWyQAutsJSfd8Iz10eK9uO3sCPDc1fZbXUINz+EMrKCHURF
+	 mXKDs2MP/YiWxtU/A2JVDGM2oQdQEGrfG1ENyOTssXMbin+cPwrIPtp3IQS7am1fvz464kr2Ci4I
+	 22U6LQBiETfOI9qrySp8hhaGU5QzUi09xQGSlqiqnCH2w1Suor+NdPMBz+DWUVP6/Qr0byY0BTJe
+	 BHT4RjlAp3zZ62rcsAcehBKNvbMPsQ5tOEyQaQQiw3XRuiqX6pIi2WQ0HrfjqJexJqzIlly2f5T3
+	 3Q47RtLTmwBu5xOgllfLbq2ZprFfD7mbf+Et19r+TFoIHbm1OgmaR2npuacdd4NBiUQ+mLAOLdyz
+	 QEBQExwRT8TG+wWuvQvLCVOOD+O1+35TGcP6ntwuJB46StXeCshtIzPzjhcX7LcpyttrH9xx22F2
+	 JKS87RB4lMEjQ2M6boXb3yE7kAOa/EB9bRkZaBC3hLJFz9rmmxkqVRkGZdp7CF
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
 From: Yangyu Chen <cyy@cyyself.name>
 To: linux-riscv@lists.infradead.org
 Cc: Elliott Hughes <enh@google.com>,
@@ -70,10 +70,12 @@ Cc: Elliott Hughes <enh@google.com>,
 	linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	Yangyu Chen <cyy@cyyself.name>
-Subject: [PATCH 0/2] docs: riscv: Some clarifies on hwprobe misaligned performance
-Date: Sat, 18 May 2024 23:57:45 +0800
-X-OQ-MSGID: <20240518155745.891372-1-cyy@cyyself.name>
+Subject: [PATCH 1/2] docs: riscv: Clarify risc-v hwprobe RISCV_HWPROBE_MISALIGNED_* docs.
+Date: Sun, 19 May 2024 00:00:11 +0800
+X-OQ-MSGID: <20240518160012.892135-1-cyy@cyyself.name>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <tencent_9D721BDDF88C04DBB5151D57711D62524209@qq.com>
+References: <tencent_9D721BDDF88C04DBB5151D57711D62524209@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,27 +84,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patchset clarifies some unclear things about hwprobe's misaligned
-performance. Including:
+From: enh <enh@google.com>
 
-- hwprobe misaligned performance is only applied to scalar from patch [1]
-- The defined keys of RISCV_HWPROBE_MISALIGNED_* are values not bitmasks
+These only tell you about scalar accesses, not vector accesses.
 
-I cherry-picked [1] rather than write dependency because the original patch
-was submitted with a line wrapped to 80 characters. We can't directly apply
-that patch using `git am.` 
+Signed-off-by: Elliott Hughes <enh@google.com>
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+---
+ Documentation/arch/riscv/hwprobe.rst | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-[1] https://lore.kernel.org/linux-riscv/CAJgzZorn5anPH8dVPqvjVWmLKqTi5bkLDR=FH-ZAcdXFnNe8Eg@mail.gmail.com/
-
-Yangyu Chen (1):
-  docs: riscv: hwprobe: Clarify misaligned keys are values not bitmasks
-
-enh (1):
-  docs: riscv: Clarify risc-v hwprobe RISCV_HWPROBE_MISALIGNED_* docs.
-
- Documentation/arch/riscv/hwprobe.rst | 31 ++++++++++++++++------------
- 1 file changed, 18 insertions(+), 13 deletions(-)
-
+diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+index b2bcc9eed9aa..239be63f5089 100644
+--- a/Documentation/arch/riscv/hwprobe.rst
++++ b/Documentation/arch/riscv/hwprobe.rst
+@@ -192,21 +192,21 @@ The following keys are defined:
+   information about the selected set of processors.
+ 
+   * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of misaligned
+-    accesses is unknown.
++    scalar accesses is unknown.
+ 
+-  * :c:macro:`RISCV_HWPROBE_MISALIGNED_EMULATED`: Misaligned accesses are
++  * :c:macro:`RISCV_HWPROBE_MISALIGNED_EMULATED`: Misaligned scalar accesses are
+     emulated via software, either in or below the kernel.  These accesses are
+     always extremely slow.
+ 
+-  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SLOW`: Misaligned accesses are slower
+-    than equivalent byte accesses.  Misaligned accesses may be supported
++  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SLOW`: Misaligned scalar accesses are
++    slower than equivalent byte accesses.  Misaligned accesses may be supported
+     directly in hardware, or trapped and emulated by software.
+ 
+-  * :c:macro:`RISCV_HWPROBE_MISALIGNED_FAST`: Misaligned accesses are faster
+-    than equivalent byte accesses.
++  * :c:macro:`RISCV_HWPROBE_MISALIGNED_FAST`: Misaligned scalar accesses are
++    faster than equivalent byte accesses.
+ 
+-  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNSUPPORTED`: Misaligned accesses are
+-    not supported at all and will generate a misaligned address fault.
++  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNSUPPORTED`: Misaligned scalar accesses
++    are not supported at all and will generate a misaligned address fault.
+ 
+ * :c:macro:`RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE`: An unsigned int which
+   represents the size of the Zicboz block in bytes.
 -- 
 2.43.0
 
