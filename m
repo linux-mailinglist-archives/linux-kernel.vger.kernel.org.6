@@ -1,105 +1,183 @@
-Return-Path: <linux-kernel+bounces-182958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA278C923C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 22:36:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DCA68C923F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 22:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C80F1F218EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:36:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8D11F21851
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E4D60DEE;
-	Sat, 18 May 2024 20:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84BEDDDA;
+	Sat, 18 May 2024 20:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NxAvRaw6"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ke0JLKnW"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2F048CFC
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 20:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610B847F7F
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 20:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716064605; cv=none; b=RH5FDiNmCky1bVpqm9xK7w4Li40N3KRgF0K5AUjv2rbC6C5Lw+WHEUf86PBBXvKwGXyU/IA8TydKGJGapqDLc+DQGnwLCNufrbi9lU/AbKRNtYwCr1SBAX5n2ecCy8B7u5F3zFDuD7W0YmBgIpzdWogwM/iluA5205mdkmhvfVY=
+	t=1716064696; cv=none; b=joF56g8DQma8XlHULRvBTuanzyyv6X+P6b0n5NtP51zBv4SDnoYY3rl6QDop2bZ83KoLAFmDd3qyQcOX2xBNAkNrIa9nLYyeipZseNQqBU+zoj6KGishka2z2X0aPacQrwTmXEHDhNLlv3TR3eoXYhrlRyZ4+PGwE2ApVLTGmlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716064605; c=relaxed/simple;
-	bh=axTlcxEqR5hWie4B2KgVAVfPcFQmVZBZ8j+fzB3XLA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bx6md+/kksqHa0pJ4YvdeVtwcVS+7EMOrMesybbIoq58OaOf0J3RA0FjVy8dOh7KycxzFppEnjCbb2inwy+KEaU+0hFJLh/gT83d/IFzGqgPS1zbYTwfGjCqBWWS7COdm6PV/CkIaiGC4Ywa+945J+NRHZJJ+Dw5cD3xkP1udDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NxAvRaw6; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1eb0e08bfd2so42795465ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 13:36:43 -0700 (PDT)
+	s=arc-20240116; t=1716064696; c=relaxed/simple;
+	bh=01zNubNyHLCBFC9cwXGJVCP4EBPigYzZv0FqU8MlwEc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aI57tScuy45klmux1sk/x/5pMmYq54Y3NhTcqEuLd3bXieCNkpkYUQhNlvXIK5yZpHNN2oKTasMopXojtMj46MbCHrA/Cjm1nk80jJ6KiaYFDNXCwV2JB54WAE/XnWPM6fp+4m/nyjxdVxaB+G+FOVCQbL2nHR+G4PwIrhmi+zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ke0JLKnW; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a609dd3fso783111266b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 13:38:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716064603; x=1716669403; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uYrpYXWxhgivrBCHpRYlsgoARFi6ym7CIXKVYYN00dM=;
-        b=NxAvRaw6J4ZcTItRyhOV/WE51I8acFGrx7DkfWw5xb35wQT5zwYDHH/U7jXzYf3HI9
-         0Tpx6uDQs30UamL9MW6/xg98UpAkey+4IuGlUc5nJKCQ9aZtVYa5l91L3oJ8eXFy9SWe
-         28dcUQK2PyO3jBIMhrHqU5jh2DvybI/bGfWlM=
+        d=linaro.org; s=google; t=1716064692; x=1716669492; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yc3ZIpbjd8JcSrRdvi0o4/daAmqRZmXKwikEyzxCLNM=;
+        b=Ke0JLKnWDdv4ZeS45sKcPsehxDFtT9yWgPnurcPMGQRrE8npXSpYyxWN6MIuBC9U4C
+         tH94RBPNqyl6slxNsZ0GMHOpg60HCFs8JmxcbnsvCbZQ0Nw7LcJU7XiGjT2eCQecW7Sr
+         x6z1FLkvEiYoUW4CpkZZ+/wN7Ll+ij0sBOp5V81+ysLn4fW7WZKADeYMVZsBV7DKEtbW
+         leQjZbuI+fXXrMXDUzCFkiEVrVn96MT+oPzJsvb4CL5ZnejcAulOuKh9aO62kqmBwFkq
+         q3jfQnoePNd9/CgPAwPLXXGkj1hEPjwNauTVFK1n3326kWcHE1ArIxomdGrsy5tHCWQg
+         Lsrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716064603; x=1716669403;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uYrpYXWxhgivrBCHpRYlsgoARFi6ym7CIXKVYYN00dM=;
-        b=elrlBI6Ey0JV09f4edqDHISOr/bDikm2B08Tj33zEsVaTvUrh2HB7shoEmdo0zsRkH
-         zeqInyDe4Qk8vaw1KbqLhrms3tPExaf0/5x5+W6E2qtRYLRRPiakzITiAEb8fWJ8aEtR
-         jyxPMtZ9EfyXabNXfAUHYpZY994i6aX0F87xbMwlcsKH9EcMTvZAOOYLZ8DfFiBgHnTU
-         IYM0JDSw6QJ/bLPg9O9XDAmfu7ylvGnMUE+0MyF1jCogLOIJV0RSgOwDfDNG50MpaVrt
-         1IUV3Gbz+IHkn1uVPG4AQ6N/0UAhv8BJZYWSi9T8+vPd+GKKDCpylj0gVdUmpKfUYIkl
-         +NjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYbhAqGc7QbQSDjskWvp8lIgiZWFDGdr2wg8wKLHAWj6ZHc5lA/V4PalVaDdf65JBquQ12xz5b2KPAXjjVqGu/+jyad6SwVCuVGPTk
-X-Gm-Message-State: AOJu0YxsODIIpnvGfB15n/q/b9iBVbqZVBEsE2dHa6LHLCy7RboiYxmP
-	PbAyfaqdUKo9WrwzwUivQZal964bB/KN8DBm4egfUHHHL6frTkRWxHnV90amtg==
-X-Google-Smtp-Source: AGHT+IEB22jyiK+ER1tYr+UtsGjoCL8OfFoTmIVSUAsFzb1M/rFAkGvWMswdV9f9RPckApvf1uXmcQ==
-X-Received: by 2002:a05:6a00:1ac6:b0:6ea:bdbc:614 with SMTP id d2e1a72fcca58-6f4e02b245dmr24104637b3a.13.1716064602761;
-        Sat, 18 May 2024 13:36:42 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2aa01dasm17107542b3a.92.2024.05.18.13.36.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 13:36:42 -0700 (PDT)
-Date: Sat, 18 May 2024 13:36:41 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Shuah Khan <shuah@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
-	linux-rtc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] selftests: rtc: rtctest: Do not open-code
- TEST_HARNESS_MAIN
-Message-ID: <202405181335.00B6D2F@keescook>
-References: <20240518001655.work.053-kees@kernel.org>
- <20240518202354d5422c77@mail.local>
+        d=1e100.net; s=20230601; t=1716064692; x=1716669492;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yc3ZIpbjd8JcSrRdvi0o4/daAmqRZmXKwikEyzxCLNM=;
+        b=uLi+Du49Rg2qmT4X1fOWaYQnMAIAYQNzEbTUweLvU1x/XrHg3CokIKJ1XWpyg1ptS+
+         oiE7Rnt40IcpowF6iRKcFODXzXYvPMGB2Ik8EnEp4c7UlnfNRyB6qC4qsPV3etH6PBkw
+         YvJV5zuPwYuqdA6bWY9Hh0+pZWvva7TSw9CA460i2T/gVee1eelsxgnfvNXtqDvJQ0Ar
+         2rMJNGAnsZ64FU3KTujmrbHL+IZmXQE4hOhasnDnN1B2oDH/5HU3siB1RwPb+dfCiD+0
+         3uxVXJQJ34I+FLR68FT6y2Bhb3YB9RCpqSnOKwHGbTQE6S5yMNg238rO+Js2VWvx+ho8
+         FAjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcp2YlZ7DpwWB0cLDRt3le/neb0DSyon4R0Fje4WbEX48ALIyGiYoG4eKIkKfvSFI6+UKKibm7zwFt22kyU0XXM0gW10VakBtEG/RY
+X-Gm-Message-State: AOJu0YxCdFhlqERJWRJgaVXTVsy4otFz2iyLCMn+5o4174aAod7nImJ8
+	fh4VCCiDajb/kBZ5fYL6ZfuXnPLszEfDqaYM/UYiV7uCxpcRcyam21rwsi5s2hI=
+X-Google-Smtp-Source: AGHT+IFR7Fk6ynIa8nZCr/mNfS4JPisDqPqjiipaPLM8Li/X/4U8310uoUxs21M+pDR20escqFvcRw==
+X-Received: by 2002:a17:907:9919:b0:a5a:8673:cccd with SMTP id a640c23a62f3a-a5d5c8270d0mr234923566b.30.1716064691732;
+        Sat, 18 May 2024 13:38:11 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17cd0sm1250324666b.214.2024.05.18.13.38.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 May 2024 13:38:11 -0700 (PDT)
+Message-ID: <5e8fc1da-b340-4c1f-a904-826685bcbb61@linaro.org>
+Date: Sat, 18 May 2024 22:38:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240518202354d5422c77@mail.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: gpio: gpio-zevio: convert to dtschema
+To: Pratik Farkase <pratikfarkase94@gmail.com>
+Cc: Pratik Farkase <pratik.farkase@wsisweden.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240518182139.22623-1-pratik.farkase@wsisweden.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240518182139.22623-1-pratik.farkase@wsisweden.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 18, 2024 at 10:23:54PM +0200, Alexandre Belloni wrote:
-> On 17/05/2024 17:16:58-0700, Kees Cook wrote:
-> > Argument processing is specific to the test harness code. Any optional
-> > information needs to be passed via environment variables. Move alternate
-> > path to the RTC_DEV environment variable. Also do not open-code
-> > TEST_HARNESS_MAIN because its definition may change.
+On 18/05/2024 20:21, Pratik Farkase wrote:
+> Convert Zevio GPIO Controller from text to dtschema.
 > 
-> Th main issue doing that is that this breaks the main use case of
-> rtctest as /dev/rtc1 is usually the main target for those tests. Having
-> the RTC_DEV environment variable only documented n this commit message
-> is definitively not enough, I'm going to have to handle zillion of
-> complaints that this is not working anymore.
+> Signed-off-by: Pratik Farkase <pratik.farkase@wsisweden.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-zevio.txt   | 16 --------
+>  .../devicetree/bindings/gpio/gpio-zevio.yaml  | 41 +++++++++++++++++++
 
-Hm, maybe switch the default to /dev/rtc1? Maybe there's a better way to
-integrate arguments into a test runner. Right now the core harness code
-is doing the argument parsing...
+Use compatible as filename.
 
--- 
-Kees Cook
+>  2 files changed, 41 insertions(+), 16 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.txt
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.yaml
+> 
+
+..
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +
+> +  gpio-controller: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#gpio-cells"
+> +  - gpio-controller
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +      gpio@90000000 {
+
+Misaligned/indented. Just use 4 space indentation for the example.
+
+
+
+Best regards,
+Krzysztof
+
 
