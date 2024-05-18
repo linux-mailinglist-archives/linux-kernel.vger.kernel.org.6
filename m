@@ -1,161 +1,78 @@
-Return-Path: <linux-kernel+bounces-182966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30C88C9250
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 23:05:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992B68C9252
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 23:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794B92819C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 21:05:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1696B2816DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 21:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73856BB20;
-	Sat, 18 May 2024 21:05:39 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5344C6A8C1;
+	Sat, 18 May 2024 21:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3Bz9DKY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6BB56455
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 21:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8702569D3C;
+	Sat, 18 May 2024 21:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716066339; cv=none; b=FtIohAQi0mAkgaz5lKqq6yP3cgGrnqSRMA9YJQUj2HX96WnCHnnYpRXdecnKk9sdmHj+vCk6JMbcb95znKH1ZezEyBYwRz69vKJrIp7xpn25Rg1FyfnMlRtKXVt830fWGF1duGN/EIcCB66ux6561L2y+okVzDh5uAhd+yaceXE=
+	t=1716066348; cv=none; b=UbhmHnZ0Zeny7sKxvUd1VF47BaAIGF1NsYkJVhxYsMfhb32FqrhLoOoRi/Dt+oKpEdKItVENteqycSFT2pJQT0W9HYLM/4957n7K/UkSKPsSMyUHE7Vm4WuKHmNdh9gv+nPF7rUl96DQkb/M7hJRqmAR54D1L3zIHymhbBeCR8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716066339; c=relaxed/simple;
-	bh=NRgjkBMK4sXVRHAhM0KdWy2Ma87HvsqtCepIc1Mmf+U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oh0Nj0x3RWF+9soxky/UbHiWfh9STOR1OhvHxcIcPDbxBN55A9l4OquwuFolnT6o+EtP3j23gt9VNgBX2efyBu/V3AhCWsfBkOU5A2pyCZ5vPP579E7rfUVZ6wB+dRbVc9iYcqyR/tAUb5MMHTT0Z7iNgfiRQVfXcKD2Lk1C6eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7dabc125bddso1197354639f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 14:05:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716066337; x=1716671137;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gfFjo3BhTE67D3mQ9xMB8FDVigkkGBSudUTv3+vJeFs=;
-        b=Qt+lXQ+PQ4toHqXT6Ukz3aQAbHqS0opB8fU+SM+2s40rzsxIrcDtPahbYFLgU7UNLw
-         WUqAZ9j/S4vlv/MSns1FXYKYwDvvfpEaV5ulDTxQ9EkABts9gRilQU5M4lXHkyVdiuzF
-         t7eJZV1Q/MPcFKnvoMRYgNFELGqvps/XOTOtet5ZqYobzDMkf/1ZV5SXo3DENlvhqT0X
-         mCJYc5FlU4HvfCYZrILwr+p3duMkdqRwIvg270PpGWR8BeeFa3LwZxM/7vewXARFGcQd
-         X4vBx7lmv6OpiZOcz191SVxi8V+KKRfF+Jlgdoh5riOWlHMNPof2gpJGN1Oz7hPIyiX6
-         KuIA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4qCfBuqqfMCpLhagFMeyg7W6HEKRYwy0Htc+Z65klfrYFQ6Gc2fFmsT5O1aomKvlLsc2ePjPuwHASDmnhShm0viU0yliE/4oHyCcH
-X-Gm-Message-State: AOJu0YxS4ky3WaEeBL+CDJRakCM1vobDMKVDBXObuYSV9vFitnLYP105
-	ecebis4Dze+riGgzM0wrb9HItk24aDqsS+gi5/aJAxIwP6SM9k6e2Jpr+aDkdSLUjbE3CqClb5s
-	JWNyPIOtMlzzM/L23TTwsCyzVPvvFHeOKbhmiU36ttIPT6Q6OZoErwUE=
-X-Google-Smtp-Source: AGHT+IH81JS2t4EuaWyDfkKkvdQ+OWubY5WcSldbCKOiadcOGy+6xA3E/2fR+hWaPT/Rs30P1O4E7tnxWdz8RrhitmSScCVpPKsK
+	s=arc-20240116; t=1716066348; c=relaxed/simple;
+	bh=jQLfztyfF8cnqmKfkHbL4AFfJrFQ1JIWCZyab6FwWGo=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=TEGwXZ8wlrc8qohPxew4wE3GZNeQKd+hPMA8TL9tgpLpOneO4pDVNyvzWnykpgtkMRjKUieEOQVMe6myBKDKwzEbESA6tp++UWiSYem6+PKX+ukB8FSuIag+rrP/lHMoJB3UXIouStd8ixsg4B/SX6q6PUCnQFNmPXp4FEiZnSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3Bz9DKY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 67B03C113CC;
+	Sat, 18 May 2024 21:05:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716066348;
+	bh=jQLfztyfF8cnqmKfkHbL4AFfJrFQ1JIWCZyab6FwWGo=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=s3Bz9DKYhWdQM89MT1wZCQApfJUGWpo9iNSideDbWtJ+tzj1zzVsTyXG/fYa7FBF3
+	 YO62nmXoimEovZHycK9aW5d5UJ4WiURv+3ZtC/A1FXk315IKPedTn6hEcCsM/8e5sW
+	 XFakNahcHKlGr9pu5bU4rT9bi/lTiNVuvi/7fTXVkcDwmJ/8r1WntRexqzMm5Yt6Yb
+	 8OKpv3P4ekLMUjBRM+A2/GTCBxZmIP7/0A8d2GsKHJAAuPx+oWeFy36KxIrppp6TzN
+	 0V13/U7DDloldptE5hzWtiBYyWTzcgKLBPUWUichf4MN1Ak8drmKghjWSPs09spY5p
+	 uTFhNKPgqJ8AA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 56E36C43336;
+	Sat, 18 May 2024 21:05:48 +0000 (UTC)
+Subject: Re: [GIT PULL] Kbuild updates for v6.10-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAK7LNAQ6HRC42sL7TT05k6Y8N4jFcxfz5JY4EYAGLeP2sNGgRg@mail.gmail.com>
+References: <CAK7LNAQ6HRC42sL7TT05k6Y8N4jFcxfz5JY4EYAGLeP2sNGgRg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kbuild.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAK7LNAQ6HRC42sL7TT05k6Y8N4jFcxfz5JY4EYAGLeP2sNGgRg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-v6.10
+X-PR-Tracked-Commit-Id: 6ffe4fdf8901dc0a15d7278531503ecd4522ae15
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ff9a79307f89563da6d841da8b7cc4a0afceb0e2
+Message-Id: <171606634834.2260.8505219137566092333.pr-tracker-bot@kernel.org>
+Date: Sat, 18 May 2024 21:05:48 +0000
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8305:b0:487:100b:9212 with SMTP id
- 8926c6da1cb9f-48958af8591mr1771843173.3.1716066336941; Sat, 18 May 2024
- 14:05:36 -0700 (PDT)
-Date: Sat, 18 May 2024 14:05:36 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006cbc570618c0d4a3@google.com>
-Subject: [syzbot] [bpf?] [net?] KMSAN: uninit-value in dev_map_hash_lookup_elem
-From: syzbot <syzbot+80cf9d55d6fd2d6a9838@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
-	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com, 
-	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
-	sdf@google.com, song@kernel.org, syzkaller-bugs@googlegroups.com, 
-	yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+The pull request you sent on Fri, 17 May 2024 22:52:45 +0900:
 
-syzbot found the following issue on:
+> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-v6.10
 
-HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1429a96c980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-dashboard link: https://syzkaller.appspot.com/bug?extid=80cf9d55d6fd2d6a9838
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a53ae4980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=113003d4980000
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ff9a79307f89563da6d841da8b7cc4a0afceb0e2
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
+Thank you!
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+80cf9d55d6fd2d6a9838@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in __dev_map_hash_lookup_elem kernel/bpf/devmap.c:270 [inline]
-BUG: KMSAN: uninit-value in dev_map_hash_lookup_elem+0x116/0x2e0 kernel/bpf/devmap.c:803
- __dev_map_hash_lookup_elem kernel/bpf/devmap.c:270 [inline]
- dev_map_hash_lookup_elem+0x116/0x2e0 kernel/bpf/devmap.c:803
- ____bpf_map_lookup_elem kernel/bpf/helpers.c:42 [inline]
- bpf_map_lookup_elem+0x5c/0x80 kernel/bpf/helpers.c:38
- ___bpf_prog_run+0x13fe/0xe0f0 kernel/bpf/core.c:1997
- __bpf_prog_run64+0xb5/0xe0 kernel/bpf/core.c:2236
- bpf_dispatcher_nop_func include/linux/bpf.h:1234 [inline]
- __bpf_prog_run include/linux/filter.h:657 [inline]
- bpf_prog_run include/linux/filter.h:664 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2381 [inline]
- bpf_trace_run4+0x150/0x340 kernel/trace/bpf_trace.c:2422
- __bpf_trace_sched_switch+0x37/0x50 include/trace/events/sched.h:222
- trace_sched_switch include/trace/events/sched.h:222 [inline]
- __schedule+0x2eca/0x6bc0 kernel/sched/core.c:6743
- __schedule_loop kernel/sched/core.c:6823 [inline]
- schedule+0x13d/0x380 kernel/sched/core.c:6838
- ptrace_stop+0x8eb/0xd60 kernel/signal.c:2358
- ptrace_do_notify kernel/signal.c:2395 [inline]
- ptrace_notify+0x234/0x320 kernel/signal.c:2407
- ptrace_report_syscall include/linux/ptrace.h:415 [inline]
- ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
- syscall_exit_work+0x14e/0x3e0 kernel/entry/common.c:173
- syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
- syscall_exit_to_user_mode+0x135/0x160 kernel/entry/common.c:218
- do_syscall_64+0xdc/0x1e0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Local variable stack created at:
- __bpf_prog_run64+0x45/0xe0 kernel/bpf/core.c:2236
- bpf_dispatcher_nop_func include/linux/bpf.h:1234 [inline]
- __bpf_prog_run include/linux/filter.h:657 [inline]
- bpf_prog_run include/linux/filter.h:664 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2381 [inline]
- bpf_trace_run4+0x150/0x340 kernel/trace/bpf_trace.c:2422
-
-CPU: 0 PID: 5042 Comm: syz-executor593 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
