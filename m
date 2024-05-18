@@ -1,161 +1,288 @@
-Return-Path: <linux-kernel+bounces-182897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB458C9178
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 16:59:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6639D8C917D
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 17:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 611FA1C20C47
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:59:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8904D1C20CB8
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 15:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FED744C9E;
-	Sat, 18 May 2024 14:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2112E42042;
+	Sat, 18 May 2024 15:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="l0JgW8en"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GDERuJWT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A624323BF;
-	Sat, 18 May 2024 14:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141A33B1AB;
+	Sat, 18 May 2024 15:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716044378; cv=none; b=Cw93+Kghpi6P/IawTgN4oxwWqBpuTRWdTFj6vjXYnpQf2n+CfsDDiiEaYEBD7fIKbfgWvGt2IAos5q2eAgUXl18O4pmfS9LFGBNdzTxiKgo+DIO6DizpjBgr2qLrpDIXWUSY7kA/65wI3+XrwoOGPC1nECfp43z3oKq/D5WmxYU=
+	t=1716044586; cv=none; b=u5fL42RrSXphUlMPy/hz1OpdmPZ9GARa5D8BezghxbgCx2DDsk75dMXsWySwgGV0H12p68xyDSUkRgPDOGqJ/A8umDjJ0Z0iyc4sO1nPIg68qGWk9lO6TkizB3Psnbjet8DXlKJa1YVt5MrsGsKYkClqp7fk7/DHOj7w/kFUCPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716044378; c=relaxed/simple;
-	bh=0fGyh51Lxcn7TU6P6lAYPGr2VuGKEWub+IV0YkTSPEQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fGEhRCNvTZ5qho1CMyJYGzD63SWBoPLLrrTrwY9lpejlWw4UFuYSbPGNHwkJA/wuXD+jhE2KqCxRQ9sn+XuBCEnFWkvnTnwPYRAUou53CrBT7Vcm1Mofxs8OP8QDyz8SkqA10d9L8Q/DjFUiSXJMwSIRbM2RZPPboXXpanhLS5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=l0JgW8en; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1716044368;
-	bh=0fGyh51Lxcn7TU6P6lAYPGr2VuGKEWub+IV0YkTSPEQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=l0JgW8enCugBCQJ/JBPSIsKfg36Xouk52zRDlx+aIJiLzJueUXlrsm2iHLrY7vPnu
-	 ycottU6d2t/st2q7/QG4expL/R6PXYqE1uPrpa5w1KaTYYPWie4PHQcAt0yN3r8Oje
-	 OhLeO2R9NHcoADwqhF24Cux1dOlU6fTKS2G/eRv4=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sat, 18 May 2024 16:58:47 +0200
-Subject: [PATCH] bpf: constify member bpf_sysctl_kern::table
+	s=arc-20240116; t=1716044586; c=relaxed/simple;
+	bh=T++rJxpdtYlVGykuO7HeCju3qfjYFKNtMtwqzSPJQAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RAoEjVgDZtTCbJjpWLvJmnWge7uyyxJ83Hj6hCFrqiVyjkc62Q50dT7/IiEtHsG5cF1LbgmBwXfjnePBiBwG9ZfExvqsFWc4fsN/u679MPegDW2QU5nhxQPqg3Rp03gZbiCs+SkZlV+5FSV2QfEFHRzIVRJVBn4eJxS8+BOUMBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GDERuJWT; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716044584; x=1747580584;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T++rJxpdtYlVGykuO7HeCju3qfjYFKNtMtwqzSPJQAY=;
+  b=GDERuJWTNdXLeWge/7/RfFmA5V+0SbcYwbT9JykdW4OyfYSHNlCV2lD6
+   1muaObtggnr/j5KWHfo+V37V9VnZLfyZtPuCqPooDOLUYqxHjuW9+UWij
+   /1ojoS8Cl+dWuU6b0Am99YfIF9PYmRTx+nN2YUscbqTPOxoLEW3Hc0VAj
+   T0vpg90ZxTl++6aJUD4TOHu6RMIRpOXUdOGOM5Y5I+G5Fb/gyhUcHmoAx
+   ppdzamqQ0nRS+KmnpO/pi0JP+ZBG3xorvkq0ESkyUUjnTpqrlLz6R8zHO
+   6fklMZ+leHEjwNl5F+BcDGi29BOMnbcN5FCEKjCBsaU7k9HIHc09DVQ/f
+   Q==;
+X-CSE-ConnectionGUID: A9nSvUokSXWkGk3ou97Pww==
+X-CSE-MsgGUID: 14ZAwKj5TN2C5MVLH9inFg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11076"; a="12437514"
+X-IronPort-AV: E=Sophos;i="6.08,171,1712646000"; 
+   d="scan'208";a="12437514"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2024 08:03:03 -0700
+X-CSE-ConnectionGUID: DLeP4KshTZ+MuSy65M+qZg==
+X-CSE-MsgGUID: FRKinAjcQD2OloZYfV2sGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,171,1712646000"; 
+   d="scan'208";a="32658105"
+Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 18 May 2024 08:02:58 -0700
+Received: from kbuild by 108735ec233b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s8LaI-0002J8-2e;
+	Sat, 18 May 2024 15:02:54 +0000
+Date: Sat, 18 May 2024 23:02:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>,
+	Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, Emil Svendsen <emas@bang-olufsen.dk>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH 04/13] a2b: add AD24xx I2C interface driver
+Message-ID: <202405182210.oMSzcs2I-lkp@intel.com>
+References: <20240517-a2b-v1-4-b8647554c67b@bang-olufsen.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240518-sysctl-const-handler-bpf-v1-1-f0d7186743c1@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIACfCSGYC/x2M2wpAQBBAf0XzbMq6hV+RhzUGU1ra2UTy7zaPp
- 845Dyh7YYUuecDzKSq7i2DSBGi1bmGUKTLkWV5mlTGot1LYkHanAaMxbexxPGYcmdrCmsZS3UD
- MD8+zXP+6H973A0C5YjVqAAAA
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- John Fastabend <john.fastabend@gmail.com>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Joel Granados <j.granados@samsung.com>, 
- Luis Chamberlain <mcgrof@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716044367; l=3245;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=0fGyh51Lxcn7TU6P6lAYPGr2VuGKEWub+IV0YkTSPEQ=;
- b=WlIH2T60uLwnJe/Gqv5eH9YEvtjEs19gROJhYZ5TXXpzV9jKP9H+MH1iOmZGJIzGvgWDUHux7
- e0wDTl7srI3Dat0/4r7qg0dnTF4d+MlAy+6xh/eqe22+wIAPLt8YtbL
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517-a2b-v1-4-b8647554c67b@bang-olufsen.dk>
 
-The sysctl core is preparing to only expose instances of
-struct ctl_table as "const".
-This will also affect the ctl_table argument of sysctl handlers,
-for which bpf_sysctl_kern::table is also used.
+Hi Alvin,
 
-As the function prototype of all sysctl handlers throughout the tree
-needs to stay consistent that change will be done in one commit.
+kernel test robot noticed the following build errors:
 
-To reduce the size of that final commit, switch this utility type which
-is not bound by "typedef proc_handler" to "const struct ctl_table".
+[auto build test ERROR on c75962170e49f24399141276ae119e6a879f36dc]
 
-No functional change.
+url:    https://github.com/intel-lab-lkp/linux/commits/Alvin-ipraga/a2b-add-A2B-driver-core/20240517-211849
+base:   c75962170e49f24399141276ae119e6a879f36dc
+patch link:    https://lore.kernel.org/r/20240517-a2b-v1-4-b8647554c67b%40bang-olufsen.dk
+patch subject: [PATCH 04/13] a2b: add AD24xx I2C interface driver
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240518/202405182210.oMSzcs2I-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240518/202405182210.oMSzcs2I-lkp@intel.com/reproduce)
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-This patch(set) is meant to be applied through your subsystem tree.
-Or at your preference through the sysctl tree.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405182210.oMSzcs2I-lkp@intel.com/
 
-Motivation
-==========
+All error/warnings (new ones prefixed by >>):
 
-Moving structures containing function pointers into unmodifiable .rodata
-prevents attackers or bugs from corrupting and diverting those pointers.
+   drivers/a2b/ad24xx-i2c.c: In function 'ad24xx_i2c_irq_handler':
+>> drivers/a2b/ad24xx-i2c.c:272:17: error: implicit declaration of function 'handle_nested_irq' [-Werror=implicit-function-declaration]
+     272 |                 handle_nested_irq(virq);
+         |                 ^~~~~~~~~~~~~~~~~
+   drivers/a2b/ad24xx-i2c.c: In function 'ad24xx_i2c_irq_enable':
+>> drivers/a2b/ad24xx-i2c.c:281:33: error: implicit declaration of function 'irq_data_get_irq_chip_data'; did you mean 'irq_domain_get_irq_data'? [-Werror=implicit-function-declaration]
+     281 |         struct ad24xx_i2c *ad = irq_data_get_irq_chip_data(irq_data);
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                                 irq_domain_get_irq_data
+>> drivers/a2b/ad24xx-i2c.c:281:33: warning: initialization of 'struct ad24xx_i2c *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+>> drivers/a2b/ad24xx-i2c.c:282:41: error: invalid use of undefined type 'struct irq_data'
+     282 |         irq_hw_number_t hwirq = irq_data->hwirq;
+         |                                         ^~
+   drivers/a2b/ad24xx-i2c.c: In function 'ad24xx_i2c_irq_disable':
+   drivers/a2b/ad24xx-i2c.c:289:33: warning: initialization of 'struct ad24xx_i2c *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     289 |         struct ad24xx_i2c *ad = irq_data_get_irq_chip_data(irq_data);
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/a2b/ad24xx-i2c.c:290:41: error: invalid use of undefined type 'struct irq_data'
+     290 |         irq_hw_number_t hwirq = irq_data->hwirq;
+         |                                         ^~
+   drivers/a2b/ad24xx-i2c.c: At top level:
+>> drivers/a2b/ad24xx-i2c.c:295:21: error: variable 'ad24xx_i2c_irq_chip' has initializer but incomplete type
+     295 | static const struct irq_chip ad24xx_i2c_irq_chip = {
+         |                     ^~~~~~~~
+>> drivers/a2b/ad24xx-i2c.c:296:10: error: 'const struct irq_chip' has no member named 'name'
+     296 |         .name = "ad24xx-i2c",
+         |          ^~~~
+>> drivers/a2b/ad24xx-i2c.c:296:17: warning: excess elements in struct initializer
+     296 |         .name = "ad24xx-i2c",
+         |                 ^~~~~~~~~~~~
+   drivers/a2b/ad24xx-i2c.c:296:17: note: (near initialization for 'ad24xx_i2c_irq_chip')
+>> drivers/a2b/ad24xx-i2c.c:297:10: error: 'const struct irq_chip' has no member named 'irq_enable'
+     297 |         .irq_enable = ad24xx_i2c_irq_enable,
+         |          ^~~~~~~~~~
+   drivers/a2b/ad24xx-i2c.c:297:23: warning: excess elements in struct initializer
+     297 |         .irq_enable = ad24xx_i2c_irq_enable,
+         |                       ^~~~~~~~~~~~~~~~~~~~~
+   drivers/a2b/ad24xx-i2c.c:297:23: note: (near initialization for 'ad24xx_i2c_irq_chip')
+>> drivers/a2b/ad24xx-i2c.c:298:10: error: 'const struct irq_chip' has no member named 'irq_disable'
+     298 |         .irq_disable = ad24xx_i2c_irq_disable,
+         |          ^~~~~~~~~~~
+   drivers/a2b/ad24xx-i2c.c:298:24: warning: excess elements in struct initializer
+     298 |         .irq_disable = ad24xx_i2c_irq_disable,
+         |                        ^~~~~~~~~~~~~~~~~~~~~~
+   drivers/a2b/ad24xx-i2c.c:298:24: note: (near initialization for 'ad24xx_i2c_irq_chip')
+   drivers/a2b/ad24xx-i2c.c: In function 'ad24xx_i2c_irqdomain_map':
+>> drivers/a2b/ad24xx-i2c.c:304:9: error: implicit declaration of function 'irq_set_chip_data' [-Werror=implicit-function-declaration]
+     304 |         irq_set_chip_data(irq, irqdomain->host_data);
+         |         ^~~~~~~~~~~~~~~~~
+>> drivers/a2b/ad24xx-i2c.c:305:9: error: implicit declaration of function 'irq_set_chip_and_handler' [-Werror=implicit-function-declaration]
+     305 |         irq_set_chip_and_handler(irq, &ad24xx_i2c_irq_chip, handle_simple_irq);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/a2b/ad24xx-i2c.c:305:61: error: 'handle_simple_irq' undeclared (first use in this function)
+     305 |         irq_set_chip_and_handler(irq, &ad24xx_i2c_irq_chip, handle_simple_irq);
+         |                                                             ^~~~~~~~~~~~~~~~~
+   drivers/a2b/ad24xx-i2c.c:305:61: note: each undeclared identifier is reported only once for each function it appears in
+>> drivers/a2b/ad24xx-i2c.c:306:9: error: implicit declaration of function 'irq_set_nested_thread' [-Werror=implicit-function-declaration]
+     306 |         irq_set_nested_thread(irq, 1);
+         |         ^~~~~~~~~~~~~~~~~~~~~
+>> drivers/a2b/ad24xx-i2c.c:307:9: error: implicit declaration of function 'irq_set_noprobe' [-Werror=implicit-function-declaration]
+     307 |         irq_set_noprobe(irq);
+         |         ^~~~~~~~~~~~~~~
+   drivers/a2b/ad24xx-i2c.c: At top level:
+>> drivers/a2b/ad24xx-i2c.c:295:30: error: storage size of 'ad24xx_i2c_irq_chip' isn't known
+     295 | static const struct irq_chip ad24xx_i2c_irq_chip = {
+         |                              ^~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
-Also the "struct ctl_table" exposed by the sysctl core were never meant
-to be mutated by users.
 
-For this goal changes to both the sysctl core and "const" qualifiers for
-various sysctl APIs are necessary.
+vim +/handle_nested_irq +272 drivers/a2b/ad24xx-i2c.c
 
-Full Process
-============
+   218	
+   219	static irqreturn_t ad24xx_i2c_irq_handler(int irq, void *data)
+   220	{
+   221		struct ad24xx_i2c *ad = data;
+   222		bool handled = false;
+   223		unsigned long hwirq;
+   224		unsigned int val;
+   225		unsigned int virq;
+   226		int ret;
+   227	
+   228		/*
+   229		 * The transceiver asserts the IRQ line as long as there are pending
+   230		 * interrupts. Process them all here so that the interrupt can be
+   231		 * configured with an edge trigger.
+   232		 */
+   233		while (true) {
+   234			mutex_lock(&ad->mutex);
+   235			ret = regmap_read(ad->base_regmap, A2B_INTSRC, &val);
+   236			mutex_unlock(&ad->mutex);
+   237			if (ret) {
+   238				dev_err_ratelimited(
+   239					ad->dev,
+   240					"failed to read interrupt source: %d\n", ret);
+   241				break;
+   242			}
+   243	
+   244			if (val & A2B_INTSRC_MSTINT_MASK)
+   245				hwirq = 0;
+   246			else if (val & A2B_INTSRC_SLVINT_MASK)
+   247				hwirq = (val & A2B_INTSRC_INODE_MASK) + 1;
+   248			else
+   249				break;
+   250	
+   251			/*
+   252			 * Pending interrupts are only cleared when reading the
+   253			 * interrupt type. Normally this is done in the corresponding
+   254			 * node's interrupt handler, but in case the interrupt is
+   255			 * disabled, it has to be read here.
+   256			 */
+   257			if (!(BIT(hwirq) & ad->irqs_enabled)) {
+   258				ret = ad24xx_i2c_get_inttype(&ad->a2b_bus, &val);
+   259				if (ret)
+   260					dev_err_ratelimited(
+   261						ad->dev,
+   262						"failed to read interrupt type: %d\n",
+   263						ret);
+   264				handled = true;
+   265				continue;
+   266			}
+   267	
+   268			virq = irq_find_mapping(ad->irqdomain, hwirq);
+   269			if (!virq)
+   270				break;
+   271	
+ > 272			handle_nested_irq(virq);
+   273			handled = true;
+   274		}
+   275	
+   276		return handled ? IRQ_HANDLED : IRQ_NONE;
+   277	}
+   278	
+   279	static void ad24xx_i2c_irq_enable(struct irq_data *irq_data)
+   280	{
+ > 281		struct ad24xx_i2c *ad = irq_data_get_irq_chip_data(irq_data);
+ > 282		irq_hw_number_t hwirq = irq_data->hwirq;
+   283	
+   284		ad->irqs_enabled |= BIT(hwirq);
+   285	}
+   286	
+   287	static void ad24xx_i2c_irq_disable(struct irq_data *irq_data)
+   288	{
+   289		struct ad24xx_i2c *ad = irq_data_get_irq_chip_data(irq_data);
+   290		irq_hw_number_t hwirq = irq_data->hwirq;
+   291	
+   292		ad->irqs_enabled &= ~BIT(hwirq);
+   293	}
+   294	
+ > 295	static const struct irq_chip ad24xx_i2c_irq_chip = {
+ > 296		.name = "ad24xx-i2c",
+ > 297		.irq_enable = ad24xx_i2c_irq_enable,
+ > 298		.irq_disable = ad24xx_i2c_irq_disable,
+   299	};
+   300	
+   301	static int ad24xx_i2c_irqdomain_map(struct irq_domain *irqdomain,
+   302					    unsigned int irq, irq_hw_number_t hwirq)
+   303	{
+ > 304		irq_set_chip_data(irq, irqdomain->host_data);
+ > 305		irq_set_chip_and_handler(irq, &ad24xx_i2c_irq_chip, handle_simple_irq);
+ > 306		irq_set_nested_thread(irq, 1);
+ > 307		irq_set_noprobe(irq);
+   308	
+   309		return 0;
+   310	}
+   311	
 
-* Drop ctl_table modifications from the sysctl core ([0], in mainline)
-* Constify arguments to ctl_table_root::{set_ownership,permissions}
-  ([1], in mainline)
-* Migrate users of "ctl_table_header::ctl_table_arg" to "const".
-  (in mainline)
-* Afterwards convert "ctl_table_header::ctl_table_arg" itself to const.
-  (in mainline)
-* Prepare helpers used to implement proc_handlers throughout the tree to
-  use "const struct ctl_table *". ([2], in progress, this patch)
-* Afterwards switch over all proc_handlers callbacks to use
-  "const struct ctl_table *" in one commit. ([2], in progress)
-  Only custom handlers will be affected, the big commit avoids a
-  disruptive and messy transition phase.
-* Switch over the internals of the sysctl core to "const struct ctl_table *" (to be done)
-* Switch include/linux/sysctl.h to "const struct ctl_table *" (to be done)
-* Transition instances of "struct ctl_table" through the tree to const (to be done)
-
-A work-in-progress view containing all the outlined changes can be found at
-https://git.sr.ht/~t-8ch/linux sysctl-constfy
-
-[0] https://lore.kernel.org/lkml/20240322-sysctl-empty-dir-v2-0-e559cf8ec7c0@weissschuh.net/
-[1] https://lore.kernel.org/lkml/20240315-sysctl-const-ownership-v3-0-b86680eae02e@weissschuh.net/
-[2] https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net/
-
-Cc: Joel Granados <j.granados@samsung.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
----
- include/linux/filter.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 0f12cf01070e..b02aea291b7e 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -1406,7 +1406,7 @@ struct bpf_sock_ops_kern {
- 
- struct bpf_sysctl_kern {
- 	struct ctl_table_header *head;
--	struct ctl_table *table;
-+	const struct ctl_table *table;
- 	void *cur_val;
- 	size_t cur_len;
- 	void *new_val;
-
----
-base-commit: 4b377b4868ef17b040065bd468668c707d2477a5
-change-id: 20240511-sysctl-const-handler-bpf-bec93a18ac68
-
-Best regards,
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
