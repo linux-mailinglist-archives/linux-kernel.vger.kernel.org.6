@@ -1,136 +1,161 @@
-Return-Path: <linux-kernel+bounces-182965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BFE38C924C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 22:47:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30C88C9250
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 23:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FE05281FAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:47:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794B92819C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 21:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6617150297;
-	Sat, 18 May 2024 20:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="STTZJUTP"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73856BB20;
+	Sat, 18 May 2024 21:05:39 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892FA3FB88
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 20:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6BB56455
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 21:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716065239; cv=none; b=Z9A8jv7NGa8XWL9VNwGodE3A8OxK3Ym7u1TkM44OC1AMU9gzvapwdaG4zsQzek645DHlhAjZ/8QZ7xyCUSYHS2WC67HpJFk4gn0mWTjQMiFtolMSEBq2exRInoBn55uFeTcIUAJfaiUwVdXrrVqO0CfkWAsr5rw1bHGB7Z7QZlA=
+	t=1716066339; cv=none; b=FtIohAQi0mAkgaz5lKqq6yP3cgGrnqSRMA9YJQUj2HX96WnCHnnYpRXdecnKk9sdmHj+vCk6JMbcb95znKH1ZezEyBYwRz69vKJrIp7xpn25Rg1FyfnMlRtKXVt830fWGF1duGN/EIcCB66ux6561L2y+okVzDh5uAhd+yaceXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716065239; c=relaxed/simple;
-	bh=rznDBSToB52+bJsEeKmwW3jC08WdGdMMMEqdHJrwhgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftahRtCJ/dlb8c3VsQMva3U2GgaL9IdYkGkGcwTubt7Ch+KZi+1VXsoCD6pQn81uUiZHo329C3WQNXqaKlo5L8GH3UadcTe6QDqD2OLaj9Mb8fLfWcSL7b7LI/SFZIEUwQWhfZBqxA+abvlDRVCwSU94jNBJ86SphzEPGLCubBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=STTZJUTP; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f05b669b6cso40616435ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 13:47:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716065237; x=1716670037; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dovlYWU9/q7musU7eTyJn+RHgfUBDCCZTTuGpTV+/mk=;
-        b=STTZJUTP6PCP7mAIICbVQXC303mAScYr8CA3W3+hlDviHwwlNZwB2m2GfVMb7pAC6Z
-         trcNs6/KJsZNmDWGeKj0N23u+pXu98EXmJ8zEjBltLhRfh/2Jg6mksZGE29K1ckVTk04
-         mdhHaSynW7bb37VzDegtGBsP1fcQHlMbOeqLk=
+	s=arc-20240116; t=1716066339; c=relaxed/simple;
+	bh=NRgjkBMK4sXVRHAhM0KdWy2Ma87HvsqtCepIc1Mmf+U=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oh0Nj0x3RWF+9soxky/UbHiWfh9STOR1OhvHxcIcPDbxBN55A9l4OquwuFolnT6o+EtP3j23gt9VNgBX2efyBu/V3AhCWsfBkOU5A2pyCZ5vPP579E7rfUVZ6wB+dRbVc9iYcqyR/tAUb5MMHTT0Z7iNgfiRQVfXcKD2Lk1C6eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7dabc125bddso1197354639f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 14:05:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716065237; x=1716670037;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dovlYWU9/q7musU7eTyJn+RHgfUBDCCZTTuGpTV+/mk=;
-        b=TNNFQOU+9trNSJFMLbOsWleZ8yk8JpeDcfJBpU+1dMQdaXK4ACP810Y/lc+mxU1peN
-         WYat0Hd59GhrNmQXPCT0hOlVZsp10ANJRiE4TOOQO9mdqui2OrUweBE9ENWezdpNefwx
-         rf48rBC9gYV2dK/GjrLB9F3WEpQhqmjc583ScYpNU1Goy2LMNjYGmR5xRW+ILuC+oS86
-         XCytTHfnO6Yxam1olfMmkCaj7Ebb8A2974S+7IOqKFkarURYnk+aOn637B/wgbfwaSRa
-         9MRLP+zLlvLa+/+2S460p6+pmo/aqxh0E0W5F2dZDxNH69Oe6FNjulqSDCErS6FGzCbG
-         SBbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsexZMLQBUzWzsDCGNnJLGMajWQVH/uKEfbrAD8C7nQk0kbfP1ubhOQENmDNeOodMFKCppgDlMpKZorpraHeINlDM+mKAbFn+vFuXx
-X-Gm-Message-State: AOJu0YxlX2gUhxdLOFhwtfqa8ow0jf5egx0pLxDBwCvMxbnYwwuqQLeJ
-	NM6LYkTU2ifhDBU0iz4qkDOEPnTOAg+tFSEUMO41eNUqQ5o2MaZ73wLrgrQk5w==
-X-Google-Smtp-Source: AGHT+IErrX7eTGQo+WffbLOh7zp6AXgmIidyVMZyBccWvtdbFOD4aNfW4ejCnUVAVRtcGXuXKO/5ng==
-X-Received: by 2002:a05:6a00:1a8f:b0:6ed:caf6:6e4b with SMTP id d2e1a72fcca58-6f4e02d3473mr27469433b3a.18.1716065236358;
-        Sat, 18 May 2024 13:47:16 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f6704888c1sm7725286b3a.157.2024.05.18.13.47.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 13:47:15 -0700 (PDT)
-Date: Sat, 18 May 2024 13:47:14 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, linux-security-module@vger.kernel.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] loadpin: Prevent SECURITY_LOADPIN_ENFORCE=y without
- module decompression
-Message-ID: <202405181346.901048F98@keescook>
-References: <20240514224839.2526112-1-swboyd@chromium.org>
+        d=1e100.net; s=20230601; t=1716066337; x=1716671137;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gfFjo3BhTE67D3mQ9xMB8FDVigkkGBSudUTv3+vJeFs=;
+        b=Qt+lXQ+PQ4toHqXT6Ukz3aQAbHqS0opB8fU+SM+2s40rzsxIrcDtPahbYFLgU7UNLw
+         WUqAZ9j/S4vlv/MSns1FXYKYwDvvfpEaV5ulDTxQ9EkABts9gRilQU5M4lXHkyVdiuzF
+         t7eJZV1Q/MPcFKnvoMRYgNFELGqvps/XOTOtet5ZqYobzDMkf/1ZV5SXo3DENlvhqT0X
+         mCJYc5FlU4HvfCYZrILwr+p3duMkdqRwIvg270PpGWR8BeeFa3LwZxM/7vewXARFGcQd
+         X4vBx7lmv6OpiZOcz191SVxi8V+KKRfF+Jlgdoh5riOWlHMNPof2gpJGN1Oz7hPIyiX6
+         KuIA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4qCfBuqqfMCpLhagFMeyg7W6HEKRYwy0Htc+Z65klfrYFQ6Gc2fFmsT5O1aomKvlLsc2ePjPuwHASDmnhShm0viU0yliE/4oHyCcH
+X-Gm-Message-State: AOJu0YxS4ky3WaEeBL+CDJRakCM1vobDMKVDBXObuYSV9vFitnLYP105
+	ecebis4Dze+riGgzM0wrb9HItk24aDqsS+gi5/aJAxIwP6SM9k6e2Jpr+aDkdSLUjbE3CqClb5s
+	JWNyPIOtMlzzM/L23TTwsCyzVPvvFHeOKbhmiU36ttIPT6Q6OZoErwUE=
+X-Google-Smtp-Source: AGHT+IH81JS2t4EuaWyDfkKkvdQ+OWubY5WcSldbCKOiadcOGy+6xA3E/2fR+hWaPT/Rs30P1O4E7tnxWdz8RrhitmSScCVpPKsK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514224839.2526112-1-swboyd@chromium.org>
+X-Received: by 2002:a05:6638:8305:b0:487:100b:9212 with SMTP id
+ 8926c6da1cb9f-48958af8591mr1771843173.3.1716066336941; Sat, 18 May 2024
+ 14:05:36 -0700 (PDT)
+Date: Sat, 18 May 2024 14:05:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006cbc570618c0d4a3@google.com>
+Subject: [syzbot] [bpf?] [net?] KMSAN: uninit-value in dev_map_hash_lookup_elem
+From: syzbot <syzbot+80cf9d55d6fd2d6a9838@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
+	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com, 
+	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	sdf@google.com, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 14, 2024 at 03:48:38PM -0700, Stephen Boyd wrote:
-> If modules are built compressed, and LoadPin is enforcing by default, we
-> must have in-kernel module decompression enabled (MODULE_DECOMPRESS).
-> Modules will fail to load without decompression built into the kernel
-> because they'll be blocked by LoadPin. Add a depends on clause to
-> prevent this combination.
-> 
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  security/loadpin/Kconfig | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
-> index 6724eaba3d36..8c22171088a7 100644
-> --- a/security/loadpin/Kconfig
-> +++ b/security/loadpin/Kconfig
-> @@ -14,6 +14,9 @@ config SECURITY_LOADPIN
->  config SECURITY_LOADPIN_ENFORCE
->  	bool "Enforce LoadPin at boot"
->  	depends on SECURITY_LOADPIN
-> +	# Module compression breaks LoadPin unless modules are decompressed in
-> +	# the kernel.
-> +	depends on MODULE_COMPRESS_NONE || MODULE_DECOMPRESS
->  	help
->  	  If selected, LoadPin will enforce pinning at boot. If not
->  	  selected, it can be enabled at boot with the kernel parameter
-> 
+Hello,
 
-I've folded this change in, since loadpin also works in non-module
-situations:
+syzbot found the following issue on:
 
-diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
-index 8c22171088a7..848f8b4a6019 100644
---- a/security/loadpin/Kconfig
-+++ b/security/loadpin/Kconfig
-@@ -16,7 +16,7 @@ config SECURITY_LOADPIN_ENFORCE
- 	depends on SECURITY_LOADPIN
- 	# Module compression breaks LoadPin unless modules are decompressed in
- 	# the kernel.
--	depends on MODULE_COMPRESS_NONE || MODULE_DECOMPRESS
-+	depends on !MODULES || (MODULE_COMPRESS_NONE || MODULE_DECOMPRESS)
- 	help
- 	  If selected, LoadPin will enforce pinning at boot. If not
- 	  selected, it can be enabled at boot with the kernel parameter
+HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1429a96c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
+dashboard link: https://syzkaller.appspot.com/bug?extid=80cf9d55d6fd2d6a9838
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a53ae4980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=113003d4980000
 
--- 
-Kees Cook
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+80cf9d55d6fd2d6a9838@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in __dev_map_hash_lookup_elem kernel/bpf/devmap.c:270 [inline]
+BUG: KMSAN: uninit-value in dev_map_hash_lookup_elem+0x116/0x2e0 kernel/bpf/devmap.c:803
+ __dev_map_hash_lookup_elem kernel/bpf/devmap.c:270 [inline]
+ dev_map_hash_lookup_elem+0x116/0x2e0 kernel/bpf/devmap.c:803
+ ____bpf_map_lookup_elem kernel/bpf/helpers.c:42 [inline]
+ bpf_map_lookup_elem+0x5c/0x80 kernel/bpf/helpers.c:38
+ ___bpf_prog_run+0x13fe/0xe0f0 kernel/bpf/core.c:1997
+ __bpf_prog_run64+0xb5/0xe0 kernel/bpf/core.c:2236
+ bpf_dispatcher_nop_func include/linux/bpf.h:1234 [inline]
+ __bpf_prog_run include/linux/filter.h:657 [inline]
+ bpf_prog_run include/linux/filter.h:664 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2381 [inline]
+ bpf_trace_run4+0x150/0x340 kernel/trace/bpf_trace.c:2422
+ __bpf_trace_sched_switch+0x37/0x50 include/trace/events/sched.h:222
+ trace_sched_switch include/trace/events/sched.h:222 [inline]
+ __schedule+0x2eca/0x6bc0 kernel/sched/core.c:6743
+ __schedule_loop kernel/sched/core.c:6823 [inline]
+ schedule+0x13d/0x380 kernel/sched/core.c:6838
+ ptrace_stop+0x8eb/0xd60 kernel/signal.c:2358
+ ptrace_do_notify kernel/signal.c:2395 [inline]
+ ptrace_notify+0x234/0x320 kernel/signal.c:2407
+ ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+ syscall_exit_work+0x14e/0x3e0 kernel/entry/common.c:173
+ syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+ syscall_exit_to_user_mode+0x135/0x160 kernel/entry/common.c:218
+ do_syscall_64+0xdc/0x1e0 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Local variable stack created at:
+ __bpf_prog_run64+0x45/0xe0 kernel/bpf/core.c:2236
+ bpf_dispatcher_nop_func include/linux/bpf.h:1234 [inline]
+ __bpf_prog_run include/linux/filter.h:657 [inline]
+ bpf_prog_run include/linux/filter.h:664 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2381 [inline]
+ bpf_trace_run4+0x150/0x340 kernel/trace/bpf_trace.c:2422
+
+CPU: 0 PID: 5042 Comm: syz-executor593 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
