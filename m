@@ -1,173 +1,238 @@
-Return-Path: <linux-kernel+bounces-182930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460908C91D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:21:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EDE88C91DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 20:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 774E21C20BDB
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 18:21:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C813C1F2193F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 18:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A58A4CB36;
-	Sat, 18 May 2024 18:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D2E4E1CA;
+	Sat, 18 May 2024 18:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iT+5fXQv"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cmmlni4J"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6F341C86;
-	Sat, 18 May 2024 18:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC224778E;
+	Sat, 18 May 2024 18:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716056506; cv=none; b=L7NNwD68ZKRZQp52L9D7STy4FSKKXo8wVTZEFX3TwPlsCctYcON7YV4RJCzO0sWJV2KIg9mExrP9GUHH7wkfYW1jDcOOI1qtc1biu2YLdh8+nWKCKjP/Z9lhbvmayRbhK957FXj7OzMODlHvTS15iQYbEiI9vdTFylsFTvVE0RY=
+	t=1716056629; cv=none; b=aRSHtsUdxGXtFFVQpIxgx1PAJFwTq5iirdMrU8kyz8OnqUxcxokXVrxTozbE84qf1M/lVdN1sQ0n5NVVo1XO9Bjke1jElMD7cjb1DXYnfEUcvjr5Q5fYqD4R8v2wDNS7fjyTd7nwQLReSs6hhgVAR3EXWes5FmTqA2frohpUzqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716056506; c=relaxed/simple;
-	bh=p3h5u/IVsvH0vIbr3Xwlv0JzU0DAvSbDNiUA7D2r6pQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d75XzHPWzgydPxql+yGMUVMHbD+9krJ/KnsTcEa16mpmB9gL1xDE5CZYRK4sN7xsOJLQdnLyeKipxfn/w8m6v1/w44h4NIGxfPogrHRashzdAj1EE8lUQqhdJIKzKWZyZHjmssU5Op0U7bl1nyTYQpICgR3E8RCbmavwaYKh6/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iT+5fXQv; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1716056629; c=relaxed/simple;
+	bh=6vfd2VVqFfQOnJgQsovW1LDIKgBF5CdBO4CTuR99WXo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k1cGk1yzczB6AgaBcYVzdR9dMEUxLTTT4ZA+0+EMwmDH6jMFLLFFqM7zyNmdF3hGQ96YJ0vJWfDWTl6yd1oV2GxWugytpFlivPRHCelbUaoESjnjMz97Z05Arq9gupYggVT/gTLoef932P0oW8G02Rxr5WGamibyztwCycXjfzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cmmlni4J; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5231efd80f2so3261264e87.2;
-        Sat, 18 May 2024 11:21:44 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1ee5235f5c9so39112455ad.2;
+        Sat, 18 May 2024 11:23:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716056503; x=1716661303; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pW9B94zJnRhpVNyWNpsuX/D4931Cs7QCYfW0O+N9uiM=;
-        b=iT+5fXQv0VhgCw4DdoRsmGeS/8AMQfsUa6KZdpWhShe0Gb3X1nyIkypO+omfKb72+9
-         jGp1YxADVVcPh1mGyT0v2w6+1vRYxUIYhnX8dkZsXxBP58TlrnSC2Uq4NN7ZZKidlICu
-         HNBdGyYw7rnl2ftc9tEDOldKfaDdurIYFKATHRl17Mvpx5P6N4UJAlwRLAUYYTUgEBMB
-         FK8bqhMSiEi9WMZbIq2xutYbMplHU/WbznAaRnCW6G7mF4/piJgVZ5gGJVtUDKoMFMAs
-         ljfchcAoibGqYUCJEqE2ahCT04F2mtpqrKTMcsDhehsuWYchYa670Ht28CiPXubRtUqf
-         Fr+A==
+        d=gmail.com; s=20230601; t=1716056627; x=1716661427; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=+VKrQ8v4nDq2FqFQMeX2RIFuDjUMEcY8fFPfS8T9+S0=;
+        b=Cmmlni4JhDwpDdcQ1wTiiGNNDSKKgx4lkWHdk+QXJufhkMKPfR9pbygaCOovdFj8YS
+         F1ulR6Sx1LnUTtVLECJyWAr6aqbKlUuF4shcH06x/ezEf/lYk+8tbxYLNYrrEKbWMt9/
+         WJEG1BkLJjScK4lRkOtKHbkt1Oi5f7ZCBFHusQDoxCVS17vwHZgnL2HRlqNB0mF/zjWB
+         EUjzvL2kcVl3l9+bqRWikHRvHOLoNGOxQ8K7ztaH6AX6Sw1nxukW2XJIhCfjNr9VPbM+
+         w5k//DCscZDGOHlrS5q3ry6ycck8iy8M72WE2TAoKGG0xFE1VWKmrKBGWtrCg2HXSCRl
+         OJmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716056503; x=1716661303;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pW9B94zJnRhpVNyWNpsuX/D4931Cs7QCYfW0O+N9uiM=;
-        b=uP+GjEdJfAnTzV7g66l03MAtHHOamJ0zJ2RgX+sLt9+RjKrLizlx/C/7TNvTsyYnnR
-         XdD5usDB+EGFuWs2mwc2aWvRUUwxOCV2jAyvYUhUx8liG3RD+WR8adG8vfcCwhye0tj1
-         u1LztsEo5AgmsAgxFvG0FMGVae/4cy1+ETwG/TRQ1wqj4BFKzpYW2iVq5fYKhmkmxDDp
-         VRpwtTej7fma5r654GXu+cMffyQJBuEwZBjneGXD+O//yx6Jyufj6Jd49MZVEF26JVAL
-         OdLuP6Ppqr4nT7ofaMPiZHbEEArS+KuBVrCcj388oZ+2Zhf3uPRk6FI+3gw2pyAiPpCx
-         lLiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZJGboWl9j5XVYxT6R4O8JqaSSBCTJLTlzpVgdwHe4HY7jPyoW+MBLzS+Qre62RS7k+CsEngubtXnSlfM0F6yi0dg2PFumsjV6kwwNhuoOCb5zk8Detk1Owb4yL8p6ltakc1Ob3Tz684vs8hnV9ZiJkKisQiLmoIOcGqT75+xO5RVyfgM=
-X-Gm-Message-State: AOJu0YyZA32DpczERWZ4ZyLgq48BI4AcWcWUqttOiYTU9GYTBC0E1XUl
-	p5/v8PmuKymjz63X7RwV+f4XjwWA0t5l1SD99LfzdzzK5YRzWGElsYHn9TXI
-X-Google-Smtp-Source: AGHT+IHI5mQSeLUOrN5Uv4YEGmIblQr1Lsj2jigrNR1QVIiH6OqLBKOZKY9Q7HbvOXO6cRn45xUaWQ==
-X-Received: by 2002:a05:6512:3e1e:b0:523:2ed9:edf9 with SMTP id 2adb3069b0e04-5232ed9ef10mr13643052e87.63.1716056502571;
-        Sat, 18 May 2024 11:21:42 -0700 (PDT)
-Received: from pratik-IdeaPad.lan (customer-145-40-29-195.stosn.net. [145.40.29.195])
-        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-521f38d86b3sm3730798e87.210.2024.05.18.11.21.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 11:21:42 -0700 (PDT)
-From: Pratik Farkase <pratikfarkase94@gmail.com>
-X-Google-Original-From: Pratik Farkase <pratik.farkase@wsisweden.com>
-To: 
-Cc: Pratik Farkase <pratik.farkase@wsisweden.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Pratik Farkase <pratikfarkase94@gmail.com>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: gpio: gpio-zevio: convert to dtschema
-Date: Sat, 18 May 2024 20:21:37 +0200
-Message-Id: <20240518182139.22623-1-pratik.farkase@wsisweden.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1716056627; x=1716661427;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+VKrQ8v4nDq2FqFQMeX2RIFuDjUMEcY8fFPfS8T9+S0=;
+        b=sJBubIWvgYiZUYS6CFgcOQbH+c/atLTmCmaK5/VWhJgCTgHhbCzEVfpSHN8hcOS+/x
+         F3YAuDPLnYTkiBP6lKBNkCjPDbvNBHt9oPMG9B8oXkFdrU5zQtZ4js8hlTUJ3GAIFubc
+         MJdnqLVGk98OiWhUy+ag1mEYYXzPJ/ci+gOcv3NGlKs9rmCOQx93OWWbpdbZ0RHKvahf
+         icR4nuAT/2UJQ2G05zeKXCP71gwqP3irwgcdXzoOvudfDkaitINGmL9LhMooNB9Hp3IV
+         bloA2yVjyYVv1eYYUdJ6Yd5EH/eGiaP1pCudSgtYyFei/tB2IadZeZLKKEIAWwpDuRGd
+         /RnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQpr2QMSQpaqWaZF6rwQyqeGrmGhTBcmzt7pfF7P03bX7zTOmda2LA4Jr2m8ULig857ifzFfpMM2LgmjSmAsp11lph2TRAvsQtskfqYdJ18SxxDvKF7A8eeO+Eb5+gcfvQpUVYX6HcRLZWVHjC
+X-Gm-Message-State: AOJu0YxbsFQBsHHHnTFgThiJ8TRUU8lc1v1ViioLmU4ZGrbIDyDzPBcS
+	UiSI/vKRewtcGoooXlOGj1wia9/gBGJt3bZXBW+oyR1R1NlZQLEd
+X-Google-Smtp-Source: AGHT+IGFoyvR173RLXMYz/kWqFXSqO0ZrkvJCjCfM1G80I87V1MgLiaknxpq7LVa8lcRa1SPgeYZbA==
+X-Received: by 2002:a17:90b:3ecd:b0:2bd:7264:ed8d with SMTP id 98e67ed59e1d1-2bd7264f164mr152105a91.17.1716056627196;
+        Sat, 18 May 2024 11:23:47 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bd72b74a49sm70162a91.17.2024.05.18.11.23.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 May 2024 11:23:46 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <a912c2d1-9008-410a-92cc-912e17c63695@roeck-us.net>
+Date: Sat, 18 May 2024 11:23:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/nouveau/nvif: Avoid build error due to potential
+ integer overflows
+To: Kees Cook <keescook@chromium.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: airlied@gmail.com, dakr@redhat.com, daniel@ffwll.ch,
+ dri-devel@lists.freedesktop.org, jani.nikula@intel.com, javierm@redhat.com,
+ kherbst@redhat.com, linux-kernel@vger.kernel.org, lyude@redhat.com,
+ mripard@kernel.org, nouveau@lists.freedesktop.org, tzimmermann@suse.de,
+ linux-hardening@vger.kernel.org
+References: <20240518143743.313872-1-linux@roeck-us.net>
+ <34a6d812-b4ed-4465-b0ec-e641d185b9b1@wanadoo.fr>
+ <202405181020.2D0A364F@keescook>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <202405181020.2D0A364F@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Convert Zevio GPIO Controller from text to dtschema.
+On 5/18/24 10:32, Kees Cook wrote:
+> On Sat, May 18, 2024 at 06:54:36PM +0200, Christophe JAILLET wrote:
+>> (adding linux-hardening@vger.kernel.org)
+>>
+>>
+>> Le 18/05/2024 à 16:37, Guenter Roeck a écrit :
+>>> Trying to build parisc:allmodconfig with gcc 12.x or later results
+>>> in the following build error.
+>>>
+>>> drivers/gpu/drm/nouveau/nvif/object.c: In function 'nvif_object_mthd':
+>>> drivers/gpu/drm/nouveau/nvif/object.c:161:9: error:
+>>> 	'memcpy' accessing 4294967264 or more bytes at offsets 0 and 32 overlaps 6442450881 bytes at offset -2147483617 [-Werror=restrict]
+>>>     161 |         memcpy(data, args->mthd.data, size);
+>>>         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>> drivers/gpu/drm/nouveau/nvif/object.c: In function 'nvif_object_ctor':
+>>> drivers/gpu/drm/nouveau/nvif/object.c:298:17: error:
+>>> 	'memcpy' accessing 4294967240 or more bytes at offsets 0 and 56 overlaps 6442450833 bytes at offset -2147483593 [-Werror=restrict]
+>>>     298 |                 memcpy(data, args->new.data, size);
+>>>
+>>> gcc assumes that 'sizeof(*args) + size' can overflow, which would result
+>>> in the problem.
+>>>
+>>> The problem is not new, only it is now no longer a warning but an error since W=1
+>>> has been enabled for the drm subsystem and since Werror is enabled for test builds.
+>>>
+>>> Rearrange arithmetic and add extra size checks to avoid the overflow.
+>>>
+>>> Fixes: a61ddb4393ad ("drm: enable (most) W=1 warnings by default across the subsystem")
+>>> Cc: Javier Martinez Canillas <javierm-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+>>> Cc: Jani Nikula <jani.nikula-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+>>> Cc: Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>
+>>> Cc: Danilo Krummrich <dakr-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+>>> Cc: Maxime Ripard <mripard-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>>> Signed-off-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+>>> ---
+>>> checkpatch complains about the line length in the description and the (pre-existing)
+>>> assignlemts in if conditions, but I did not want to split lines in the description
+>>> or rearrange the code further.
+>>>
+>>> I don't know why I only see the problem with parisc builds (at least so far).
+>>>
+>>>    drivers/gpu/drm/nouveau/nvif/object.c | 8 +++++---
+>>>    1 file changed, 5 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/nouveau/nvif/object.c b/drivers/gpu/drm/nouveau/nvif/object.c
+>>> index 4d1aaee8fe15..baf623a48874 100644
+>>> --- a/drivers/gpu/drm/nouveau/nvif/object.c
+>>> +++ b/drivers/gpu/drm/nouveau/nvif/object.c
+>>> @@ -145,8 +145,9 @@ nvif_object_mthd(struct nvif_object *object, u32 mthd, void *data, u32 size)
+>>>    	u8 stack[128];
+>>>    	int ret;
+>>> -	if (sizeof(*args) + size > sizeof(stack)) {
+>>> -		if (!(args = kmalloc(sizeof(*args) + size, GFP_KERNEL)))
+>>> +	if (size > sizeof(stack) - sizeof(*args)) {
+>>> +		if (size > INT_MAX ||
+>>> +		    !(args = kmalloc(sizeof(*args) + size, GFP_KERNEL)))
+>>
+>> Hi,
+>>
+>> Would it be cleaner or better to use size_add(sizeof(*args), size)?
+> 
+> I think the INT_MAX test is actually better in this case because
+> nvif_object_ioctl()'s size argument is u32:
+> 
+> ret = nvif_object_ioctl(object, args, sizeof(*args) + size, NULL);
+>                                        ^^^^^^^^^^^^^^^^^^^^
+> 
+> So that could wrap around, even though the allocation may not.
+> 
+> Better yet, since "sizeof(*args) + size" is repeated 3 times in the
+> function, I'd recommend:
+> 
+> 	...
+> 	u32 args_size;
+> 
+> 	if (check_add_overflow(sizeof(*args), size, &args_size))
+> 		return -ENOMEM;
+> 	if (args_size > sizeof(stack)) {
+> 		if (!(args = kmalloc(args_size, GFP_KERNEL)))
+> 			return -ENOMEM;
+>          } else {
+>                  args = (void *)stack;
+>          }
+> 	...
+>          ret = nvif_object_ioctl(object, args, args_size, NULL);
+> 
+> This will catch the u32 overflow to nvif_object_ioctl(), catch an
+> allocation underflow on 32-bits systems, and make the code more
+> readable. :)
+> 
 
-Signed-off-by: Pratik Farkase <pratik.farkase@wsisweden.com>
----
- .../devicetree/bindings/gpio/gpio-zevio.txt   | 16 --------
- .../devicetree/bindings/gpio/gpio-zevio.yaml  | 41 +++++++++++++++++++
- 2 files changed, 41 insertions(+), 16 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.txt
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.yaml
+Makes sense. I'll change that and send v2.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-zevio.txt b/Documentation/devicetree/bindings/gpio/gpio-zevio.txt
-deleted file mode 100644
-index a37bd9ae2730..000000000000
---- a/Documentation/devicetree/bindings/gpio/gpio-zevio.txt
-+++ /dev/null
-@@ -1,16 +0,0 @@
--Zevio GPIO controller
--
--Required properties:
--- compatible: Should be "lsi,zevio-gpio"
--- reg: Address and length of the register set for the device
--- #gpio-cells: Should be two. The first cell is the pin number and the
--  second cell is used to specify optional parameters (currently unused).
--- gpio-controller: Marks the device node as a GPIO controller.
--
--Example:
--	gpio: gpio@90000000 {
--		compatible = "lsi,zevio-gpio";
--		reg = <0x90000000 0x1000>;
--		gpio-controller;
--		#gpio-cells = <2>;
--	};
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-zevio.yaml b/Documentation/devicetree/bindings/gpio/gpio-zevio.yaml
-new file mode 100644
-index 000000000000..3a6e428b7bf1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-zevio.yaml
-@@ -0,0 +1,40 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/gpio-zevio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Zevio GPIO controller
-+
-+maintainers:
-+  - Pratik Farkase <pratikfarkase94@gmail.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: lsi,zevio-gpio
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  gpio-controller: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#gpio-cells"
-+  - gpio-controller
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+      gpio@90000000 {
-+        compatible = "lsi,zevio-gpio";
-+        reg = <0x90000000 0x1000>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+      };
--- 
-2.34.1
+Thanks,
+Guenter
+
 
 
