@@ -1,122 +1,161 @@
-Return-Path: <linux-kernel+bounces-182896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE678C9174
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 16:38:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB458C9178
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 16:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 557501F21947
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:38:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 611FA1C20C47
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351C14502C;
-	Sat, 18 May 2024 14:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FED744C9E;
+	Sat, 18 May 2024 14:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnhtibUk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="l0JgW8en"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DF645014
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 14:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A624323BF;
+	Sat, 18 May 2024 14:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716043109; cv=none; b=Wlj31DMND1QUYyzb2xUguZQ1my9nFpZQPTChwsfYatSmobipIRCvRmW/Szd5IqFAGyO5/aZZVaoZNpQZ30sq16Eybci2qpcEnYyLRPmu1HB8kWzVxuqvmn7c2CunBAVE8EQuVL7IxfDaoU8BCMkdXyHVLxCySAVdfmW/K5IRRG8=
+	t=1716044378; cv=none; b=Cw93+Kghpi6P/IawTgN4oxwWqBpuTRWdTFj6vjXYnpQf2n+CfsDDiiEaYEBD7fIKbfgWvGt2IAos5q2eAgUXl18O4pmfS9LFGBNdzTxiKgo+DIO6DizpjBgr2qLrpDIXWUSY7kA/65wI3+XrwoOGPC1nECfp43z3oKq/D5WmxYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716043109; c=relaxed/simple;
-	bh=cnj/7U6zgoQWAj8/IxfbO4M9Q619934oePW9MUg1IyQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=feC5EtI++zvmyuTqTqkZ7YGGm03Tvk0jhL2msi/i1/b5ZE/ZOMX+0X8cwz+0IRlfrMs4ibpZAFK2nwn9wEJQiPrHJ7SfuMjQCpMxE4uygZ4xDasFcyssGx0TJtqRjuBrYBqJBfkhG/uQKouIBMwa9hZvKrRosb8WL6G71U9vNik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnhtibUk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96312C113CC;
-	Sat, 18 May 2024 14:38:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716043109;
-	bh=cnj/7U6zgoQWAj8/IxfbO4M9Q619934oePW9MUg1IyQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fnhtibUk9ZFi9eJ3owVxvDca8KLdIdoEHJlvKktuCf5nO2VFl3iy6FvddacZuDAM4
-	 T79iFyvPLWWTqtYbwLqgLtEjI9k80rClUNB68sNbVzknJ4qCb/KBcZH+fBI5ipDHFD
-	 aHgsDFAY22IXMI9CbeMlZqCkXajn0BGawm1CKjdSzoco5FHXwbAlLmL1B+6UAbuCpc
-	 2sZNwf6QBylxojeWdnmVG8Y/gag5ZzAEHmgrTW2jvSYkcsbnCnHbjEs7vbuLob0Y6i
-	 fTweaALPovSAyTDjyvwcSu7+b82t1c1KCFy4yPfQtjWc6umJUzi6dOK5XfrGnfHsfy
-	 35SJeBmlDtohw==
-Date: Sat, 18 May 2024 23:38:24 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Jonathan Haslam <jonathan.haslam@gmail.com>, Kui-Feng Lee
- <thinker.li@gmail.com>, Stephen Brennan <stephen.s.brennan@oracle.com>, Ye
- Bin <yebin10@huawei.com>, Steven Rostedt <rostedt@goodmis.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] probes updates for v6.10
-Message-Id: <20240518233824.360de206ba709473495f89d7@kernel.org>
-In-Reply-To: <CAHk-=wgQ_MNipb2fOSDmXJ9tYko8OhzA0fPueR-kh6eYT_MbDg@mail.gmail.com>
-References: <20240516095216.ac9a0fd13357450cc5f2e491@kernel.org>
-	<CAHk-=wgQ_MNipb2fOSDmXJ9tYko8OhzA0fPueR-kh6eYT_MbDg@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716044378; c=relaxed/simple;
+	bh=0fGyh51Lxcn7TU6P6lAYPGr2VuGKEWub+IV0YkTSPEQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fGEhRCNvTZ5qho1CMyJYGzD63SWBoPLLrrTrwY9lpejlWw4UFuYSbPGNHwkJA/wuXD+jhE2KqCxRQ9sn+XuBCEnFWkvnTnwPYRAUou53CrBT7Vcm1Mofxs8OP8QDyz8SkqA10d9L8Q/DjFUiSXJMwSIRbM2RZPPboXXpanhLS5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=l0JgW8en; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1716044368;
+	bh=0fGyh51Lxcn7TU6P6lAYPGr2VuGKEWub+IV0YkTSPEQ=;
+	h=From:Date:Subject:To:Cc:From;
+	b=l0JgW8enCugBCQJ/JBPSIsKfg36Xouk52zRDlx+aIJiLzJueUXlrsm2iHLrY7vPnu
+	 ycottU6d2t/st2q7/QG4expL/R6PXYqE1uPrpa5w1KaTYYPWie4PHQcAt0yN3r8Oje
+	 OhLeO2R9NHcoADwqhF24Cux1dOlU6fTKS2G/eRv4=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sat, 18 May 2024 16:58:47 +0200
+Subject: [PATCH] bpf: constify member bpf_sysctl_kern::table
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240518-sysctl-const-handler-bpf-v1-1-f0d7186743c1@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIACfCSGYC/x2M2wpAQBBAf0XzbMq6hV+RhzUGU1ra2UTy7zaPp
+ 845Dyh7YYUuecDzKSq7i2DSBGi1bmGUKTLkWV5mlTGot1LYkHanAaMxbexxPGYcmdrCmsZS3UD
+ MD8+zXP+6H973A0C5YjVqAAAA
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Joel Granados <j.granados@samsung.com>, 
+ Luis Chamberlain <mcgrof@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716044367; l=3245;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=0fGyh51Lxcn7TU6P6lAYPGr2VuGKEWub+IV0YkTSPEQ=;
+ b=WlIH2T60uLwnJe/Gqv5eH9YEvtjEs19gROJhYZ5TXXpzV9jKP9H+MH1iOmZGJIzGvgWDUHux7
+ e0wDTl7srI3Dat0/4r7qg0dnTF4d+MlAy+6xh/eqe22+wIAPLt8YtbL
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Fri, 17 May 2024 19:12:04 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+The sysctl core is preparing to only expose instances of
+struct ctl_table as "const".
+This will also affect the ctl_table argument of sysctl handlers,
+for which bpf_sysctl_kern::table is also used.
 
-> On Wed, 15 May 2024 at 17:52, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > Probes updates for v6.10:
-> 
-> Grr,
-> 
-> This doesn't even build right.
-> 
-> Yes, it builds cleanly in an allmoconfig build, which is what I did
-> before I pushed out.
-> 
-> But after pushing out, I notice that it doesn't build in more limited
-> configurations and with clang, because:
-> 
-> > Stephen Brennan (1):
-> >       kprobe/ftrace: bail out if ftrace was killed
-> 
-> This is no longer valid C code, and hasn't been for a long long while:
-> 
->     void kprobe_ftrace_kill()
->     {
->         kprobe_ftrace_disabled = true;
->     }
-> 
-> we require proper prototypes, not some ancient per-ANSI K&R syntax.
-> 
-> It turns out that gcc apparently still accepts these things, but it
-> really shouldn't. But with a clang build, you get a big error:
-> 
->     kernel/kprobes.c:1140:24: error: a function declaration without a
-> prototype is deprecated in all versions of C
-> [-Werror,-Wstrict-prototypes]
-> 
-> and the reason it didn't get noticed in -next is that this commit had
-> apparently not *been* in linux-next.
-> 
-> Dammit, that's now how any of this is supposed to work.
-> 
-> Why was this untested crap sent to me?
+As the function prototype of all sysctl handlers throughout the tree
+needs to stay consistent that change will be done in one commit.
 
-Oops, sorry, I missed when I built it in local.
-Ah, and I missed to build it with W=1.
+To reduce the size of that final commit, switch this utility type which
+is not bound by "typedef proc_handler" to "const struct ctl_table".
 
-I appologies that and built in W=1 build test.
+No functional change.
 
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+This patch(set) is meant to be applied through your subsystem tree.
+Or at your preference through the sysctl tree.
 
+Motivation
+==========
 
-> 
->               Linus
+Moving structures containing function pointers into unmodifiable .rodata
+prevents attackers or bugs from corrupting and diverting those pointers.
 
+Also the "struct ctl_table" exposed by the sysctl core were never meant
+to be mutated by users.
 
+For this goal changes to both the sysctl core and "const" qualifiers for
+various sysctl APIs are necessary.
+
+Full Process
+============
+
+* Drop ctl_table modifications from the sysctl core ([0], in mainline)
+* Constify arguments to ctl_table_root::{set_ownership,permissions}
+  ([1], in mainline)
+* Migrate users of "ctl_table_header::ctl_table_arg" to "const".
+  (in mainline)
+* Afterwards convert "ctl_table_header::ctl_table_arg" itself to const.
+  (in mainline)
+* Prepare helpers used to implement proc_handlers throughout the tree to
+  use "const struct ctl_table *". ([2], in progress, this patch)
+* Afterwards switch over all proc_handlers callbacks to use
+  "const struct ctl_table *" in one commit. ([2], in progress)
+  Only custom handlers will be affected, the big commit avoids a
+  disruptive and messy transition phase.
+* Switch over the internals of the sysctl core to "const struct ctl_table *" (to be done)
+* Switch include/linux/sysctl.h to "const struct ctl_table *" (to be done)
+* Transition instances of "struct ctl_table" through the tree to const (to be done)
+
+A work-in-progress view containing all the outlined changes can be found at
+https://git.sr.ht/~t-8ch/linux sysctl-constfy
+
+[0] https://lore.kernel.org/lkml/20240322-sysctl-empty-dir-v2-0-e559cf8ec7c0@weissschuh.net/
+[1] https://lore.kernel.org/lkml/20240315-sysctl-const-ownership-v3-0-b86680eae02e@weissschuh.net/
+[2] https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net/
+
+Cc: Joel Granados <j.granados@samsung.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+---
+ include/linux/filter.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index 0f12cf01070e..b02aea291b7e 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -1406,7 +1406,7 @@ struct bpf_sock_ops_kern {
+ 
+ struct bpf_sysctl_kern {
+ 	struct ctl_table_header *head;
+-	struct ctl_table *table;
++	const struct ctl_table *table;
+ 	void *cur_val;
+ 	size_t cur_len;
+ 	void *new_val;
+
+---
+base-commit: 4b377b4868ef17b040065bd468668c707d2477a5
+change-id: 20240511-sysctl-const-handler-bpf-bec93a18ac68
+
+Best regards,
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thomas Weißschuh <linux@weissschuh.net>
+
 
