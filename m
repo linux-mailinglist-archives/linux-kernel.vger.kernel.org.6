@@ -1,205 +1,108 @@
-Return-Path: <linux-kernel+bounces-182813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518DE8C9045
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:45:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C4C8C904D
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDF041F22096
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:45:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C7E71F217E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F1F38DFC;
-	Sat, 18 May 2024 09:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4AE199C2;
+	Sat, 18 May 2024 09:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Mm4L2Kv/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SZkDVF/p"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lQboQlec"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7D228379;
-	Sat, 18 May 2024 09:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03848BEA;
+	Sat, 18 May 2024 09:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716025496; cv=none; b=QuzL0JdsVormOQz2ksxnavbIg8tf1H9GpkIIFHpIgsvi/CzcVhxjqiyjvQ7gRLV+e5CjEpwPMAywm2T2ovrzdR/zcnRuEDwmSN/SwYDHK7ZqZ6xJPN4L/8WJUhge32U2ZnCoJJOgP8m9gew8vA0j4aBBufG3mqbczyat4PWe2RQ=
+	t=1716026386; cv=none; b=CuX8BfqkcbXs8foueNs+j5uZIrfbGk4yqmUPg5zTgCAKcvZ55tXNFo3k+b1W+zGT0/qJT0GxN3Ebn1XOcOio8lDv8CBQfyQGxyGHJwXlxwbhZTKdw9Q+op/gMaJ/u4Tsb+0e2/sf6lM/dfo/uUx19Lx8KsSIHAg113Om9TBjRGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716025496; c=relaxed/simple;
-	bh=lTgk8x/ZdAHBef1RyPQtkiq/ue++FDWbuXzpUz0Xpv4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=DAwhkJ3dd8rlVRACkrG624Zcze1KqbKgTUr0dZvTwa7LGyJHxzPSyiFBJCjk1rMypfmxzVO0VMUPp1vaI1wrn6xOJS6JG1j/lVAloqAES6jeyUu4TDGh6jOLwaU7uMFISat9BrCHvH81H0+bOXHlv9cIiuAN+Yr8rDM6gM/hDdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Mm4L2Kv/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SZkDVF/p; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 18 May 2024 09:44:53 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716025493;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ruWW4Vdo7I7GyQ4TVGTvYAzJgR8TlyLzPbpxowdXV4c=;
-	b=Mm4L2Kv/KmrWgxfA975tcWh7wOJRUF+jZijEsGxBulgh6luSKKDbbH21X3nml5lMHu/xqC
-	kzYMyOwgVfD2xQHAL/ZopwVPXtATDlhfJrUJKUNTT8F/Q59TOmhA6SMYuggFpkdokrXGJi
-	wZVQL27v60H+MlydKXH0PvYGkiEIwqibUiugVg5rJh4kra46jG0tn/8/g6Mfx5FuUqF8lR
-	xKqz4S8Hyem3DHxn6bFyA7b3uGnFZbzHaNekDpe41Uw79MxN3c3wzddvBK1ydgGaWu1UTa
-	cnFx2O0Cn6I/UGRuXxUPgyiUrJTo7bQtgsFFauUCk0JJqVQNXQDwqs+5/CERvQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716025493;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ruWW4Vdo7I7GyQ4TVGTvYAzJgR8TlyLzPbpxowdXV4c=;
-	b=SZkDVF/pkdiKgoEgJn41gITF22fT7VBSu8HHluOu8JkndD4HSQciGbeAIZVnsUba4R1EiM
-	maKvxzoctEfUZeBw==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/percpu] x86/percpu: Move some percpu macros around for readability
-Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240430091833.196482-2-ubizjak@gmail.com>
-References: <20240430091833.196482-2-ubizjak@gmail.com>
+	s=arc-20240116; t=1716026386; c=relaxed/simple;
+	bh=L3kPstBMv6aXX21Sgvx9YjumHQMWLBhZbrinVkSwwA0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Th82wVPlmwFlJarOFa9r3zMoZYhza+UFS5MILtSTCgf/9SmwuP2kA/gwhs4r3J8RbIydy1xn9JPD4Y9K0b+rB8fcuMLP39IEzkh57L+wZxlq4/UAcZWIWWKwNE3NFMH0F3j32RwjDCEHBZs2y6N63bHk/S0S1YzywsbnALtCmHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lQboQlec; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-51f99f9e0faso3241231e87.2;
+        Sat, 18 May 2024 02:59:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716026383; x=1716631183; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+H5vJpVIpZOz5Cbd499dwyXdB2lEblIJweWz8Bm/60g=;
+        b=lQboQlecR3Pc2FHn+C6Q2mPf33bnpUJy24k+ToYS3a/SdgGNexu0roV5y+3A5T+2z9
+         RZ2O4YSsgvEPEe/VLdDsa+ZdE25cC+7+WPR8Xj1AC/LHo9keW8KxvBr+NO+HFzt3W9R7
+         MeQz2OtXOJoDnJdtMYz1j17M2Ds0SXyAGUNdznBmnxHISFjgxWTvXxFeS/oNKOlnRzBP
+         o6406CYbpkyYsM3BNe+SreiVcugeIeLmlnoC9GCYncT/E75UrlKfK7xXs+Do51DBEVEN
+         u+PRWycdMQ4qajT6ve8jneYNuHp98HXSB4SqW1gV/CVmsIM46wrZh7SvBVdPX6hYJlyV
+         EMBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716026383; x=1716631183;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+H5vJpVIpZOz5Cbd499dwyXdB2lEblIJweWz8Bm/60g=;
+        b=i5V93VcEIcHQwezhZJF9+WgPJXxVPFi/fykceVPdjLTGdmy20QaSkyHHF7r9uhPpTp
+         h7aI7tQXAiqQjE5T314aD8ilVrAO/o9kN/LGie+j+P/+j4tOxCrqJKgyIY0JSVIYgxQk
+         0dOR5PIodoInaDVBVFKgYGAxuHDIXKW5YmEcA3dXRwtnptw9e3MxHm8NSmDbGPBFaoUr
+         iLvVCVTkF2UaJANrmVQVcoOxmJcvEyGsErOOVjvRImn4eM0k2l6ILy+UJ0pOLNyAF1TI
+         9eAZszDnG0xpOOHwr8fq1/uXGe0zx+FvVVmSQm2C8GdtLctE6iDNHOqqof8/BcjXcyID
+         954Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWGfUq42ERhyuTTnnPk5T4wYWmDmRbsQTaEY8b6MDDjvhJGX0G79euqGzwIdi40k6onFD7zJ+opt/hD+/cGMw7IvbFq2J8PeusVuvfD
+X-Gm-Message-State: AOJu0YyaBcqFojq06EQYCvyGScBNyAg8a61x1WaeP917nEXCSbi3ABv2
+	u1yWzbHTpsqqaV4r0FSliHi5Xypa0ABnuRq13FyQL0j8QDMzSRgm1tp11p3OITiIULyRNWViXyL
+	oQTTeblo6ZSkCJnVUU1Ge+aSUYpw=
+X-Google-Smtp-Source: AGHT+IHzRder/JdbsF4YvrMdFF2L4QMJLhsqGsTOwTU0PZdMHJc/yU7HWTv1mFpKTamXj/z3hRiAHgQeE5LqTTMdrz8=
+X-Received: by 2002:a05:6512:32b5:b0:520:76d0:b054 with SMTP id
+ 2adb3069b0e04-522105845ecmr15504233e87.57.1716026382659; Sat, 18 May 2024
+ 02:59:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171602549310.10875.1965265772052609968.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 18 May 2024 04:59:30 -0500
+Message-ID: <CAH2r5msmH0Y=iUcu15eX3DiTS=Xdq=v1nqStWR20oVXYhAnFdA@mail.gmail.com>
+Subject: [GIT PULL] smb3 fix
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the x86/percpu branch of tip:
+Please pull the following changes since commit
+1ab1bd2f6a5fd876d1980d6ade74ce5f83807baf:
 
-Commit-ID:     08d564ad699ef32ceaf99d238b3d9c1f4ce5c998
-Gitweb:        https://git.kernel.org/tip/08d564ad699ef32ceaf99d238b3d9c1f4ce5c998
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Tue, 30 Apr 2024 11:17:21 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sat, 18 May 2024 11:18:41 +02:00
+  Merge tag '6.10-rc-smb3-fixes' of
+git://git.samba.org/sfrench/cifs-2.6 (2024-05-15 11:37:15 -0700)
 
-x86/percpu: Move some percpu macros around for readability
+are available in the Git repository at:
 
-Move some percpu macros around to make a follow-up
-patch more readable.
+  git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc-smb-fix
 
-No functional change intended.
+for you to fetch changes up to a395726cf823fe8f62f1b8c3829010e5652ce98c:
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20240430091833.196482-2-ubizjak@gmail.com
----
- arch/x86/include/asm/percpu.h | 63 ++++++++++++++++++----------------
- 1 file changed, 34 insertions(+), 29 deletions(-)
+  cifs: fix data corruption in read after invalidate (2024-05-15 17:22:59 -0500)
 
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index cc40d8d..08113a2 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -144,6 +144,29 @@
- #define __pcpu_reg_imm_4(x) "ri" (x)
- #define __pcpu_reg_imm_8(x) "re" (x)
- 
-+#ifdef CONFIG_USE_X86_SEG_SUPPORT
-+
-+#define __raw_cpu_read(qual, pcp)					\
-+({									\
-+	*(qual __my_cpu_type(pcp) *)__my_cpu_ptr(&(pcp));		\
-+})
-+
-+#define __raw_cpu_write(qual, pcp, val)					\
-+do {									\
-+	*(qual __my_cpu_type(pcp) *)__my_cpu_ptr(&(pcp)) = (val);	\
-+} while (0)
-+
-+#else /* CONFIG_USE_X86_SEG_SUPPORT */
-+
-+#define percpu_from_op(size, qual, op, _var)				\
-+({									\
-+	__pcpu_type_##size pfo_val__;					\
-+	asm qual (__pcpu_op2_##size(op, __percpu_arg([var]), "%[val]")	\
-+	    : [val] __pcpu_reg_##size("=", pfo_val__)			\
-+	    : [var] "m" (__my_cpu_var(_var)));				\
-+	(typeof(_var))(unsigned long) pfo_val__;			\
-+})
-+
- #define percpu_to_op(size, qual, op, _var, _val)			\
- do {									\
- 	__pcpu_type_##size pto_val__ = __pcpu_cast_##size(_val);	\
-@@ -157,6 +180,17 @@ do {									\
- 	    : [val] __pcpu_reg_imm_##size(pto_val__));			\
- } while (0)
- 
-+#endif /* CONFIG_USE_X86_SEG_SUPPORT */
-+
-+#define percpu_stable_op(size, op, _var)				\
-+({									\
-+	__pcpu_type_##size pfo_val__;					\
-+	asm(__pcpu_op2_##size(op, __force_percpu_arg(a[var]), "%[val]")	\
-+	    : [val] __pcpu_reg_##size("=", pfo_val__)			\
-+	    : [var] "i" (&(_var)));					\
-+	(typeof(_var))(unsigned long) pfo_val__;			\
-+})
-+
- #define percpu_unary_op(size, qual, op, _var)				\
- ({									\
- 	asm qual (__pcpu_op1_##size(op, __percpu_arg([var]))		\
-@@ -198,24 +232,6 @@ do {									\
- 		percpu_binary_op(size, qual, "add", var, val);		\
- } while (0)
- 
--#define percpu_from_op(size, qual, op, _var)				\
--({									\
--	__pcpu_type_##size pfo_val__;					\
--	asm qual (__pcpu_op2_##size(op, __percpu_arg([var]), "%[val]")	\
--	    : [val] __pcpu_reg_##size("=", pfo_val__)			\
--	    : [var] "m" (__my_cpu_var(_var)));				\
--	(typeof(_var))(unsigned long) pfo_val__;			\
--})
--
--#define percpu_stable_op(size, op, _var)				\
--({									\
--	__pcpu_type_##size pfo_val__;					\
--	asm(__pcpu_op2_##size(op, __force_percpu_arg(a[var]), "%[val]")	\
--	    : [val] __pcpu_reg_##size("=", pfo_val__)			\
--	    : [var] "i" (&(_var)));					\
--	(typeof(_var))(unsigned long) pfo_val__;			\
--})
--
- /*
-  * Add return operation
-  */
-@@ -433,17 +449,6 @@ do {									\
- #define this_cpu_read_stable(pcp)	__pcpu_size_call_return(this_cpu_read_stable_, pcp)
- 
- #ifdef CONFIG_USE_X86_SEG_SUPPORT
--
--#define __raw_cpu_read(qual, pcp)					\
--({									\
--	*(qual __my_cpu_type(pcp) *)__my_cpu_ptr(&(pcp));		\
--})
--
--#define __raw_cpu_write(qual, pcp, val)					\
--do {									\
--	*(qual __my_cpu_type(pcp) *)__my_cpu_ptr(&(pcp)) = (val);	\
--} while (0)
--
- #define raw_cpu_read_1(pcp)		__raw_cpu_read(, pcp)
- #define raw_cpu_read_2(pcp)		__raw_cpu_read(, pcp)
- #define raw_cpu_read_4(pcp)		__raw_cpu_read(, pcp)
+----------------------------------------------------------------
+an important fix to address recent netfs regression (data corruption)
+
+----------------------------------------------------------------
+Steve French (1):
+      cifs: fix data corruption in read after invalidate
+
+ fs/smb/client/inode.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+
+-- 
+Thanks,
+
+Steve
 
