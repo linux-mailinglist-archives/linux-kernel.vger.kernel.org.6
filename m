@@ -1,151 +1,155 @@
-Return-Path: <linux-kernel+bounces-182808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719908C9023
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:21:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819C28C903D
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 131151F223E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:21:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98E4C1C20EC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 09:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1280717555;
-	Sat, 18 May 2024 09:21:31 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5360818EB8;
+	Sat, 18 May 2024 09:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XJ0kvMs3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="24WdP9po"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8004A2D
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 09:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58ED17582;
+	Sat, 18 May 2024 09:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716024090; cv=none; b=n+4hH3ELhfWiOJ+/kbKnEEIPm1WoHg61ioANowVbfvoe8TUd9DSq1kgiN2Q8kl3pdNbGqsDnBEjETzwFPA1OpA/9WOc3hzbo6nPRf1uxWHT6fZNP6VcPc9HxVvC0ht77FbiA0ngsrmz8D++k1W8o7MSOASuRrYjDANgjwDILv7Q=
+	t=1716025423; cv=none; b=DfxwcOeYeRvBiwC+4To3774LSDKDtqTeqKPAkKOCGMm7FTSqigrUJnB2Cpgf7Bmminnypb40XMKnGLg7kxSRmADFYF0g9Il43c6yt12sgXJn0iURzf7KGZSx71/muZ+ymu8zpc8Y41Vw4B27yDsUch++zYNz7pLtR+1J1HptM/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716024090; c=relaxed/simple;
-	bh=ueENnLy6R1i73rLrw474/Wjb06OfO9OYMrw3+qQzOJM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ha/1a7BDXLZc2CvArYM0i8NX1WjnmKsspHUpSLl1nRofSkOJ5pX+HkS4NalcEGQrFbDPUiqK7Dgxo/p/9Jamka3CyU4K34Iu4/RYHe8WeU/QC98XmsdPTdH1i+Nfh+UjGG944Z1iubMNx+LmJeEOknEvkzs64bXESk9NFMiaxxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7dabc125bddso1147941539f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 02:21:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716024088; x=1716628888;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7u2sykXclLAuHjZeOQu7w1/FZzOCnzTGbTdJDxNLL/U=;
-        b=DQUxaMpzXJeokz6XzfHqClZCUv3thDiBCd91QWrvfOGROi8NfY9ZJn/dYAS+gDEXWt
-         +IEQA4TtSzYNWuoV+K1naLeZ7nGgVDZIq7iwiDq04Jo64NDXW3d3PEiYSKx2dklvoMAr
-         bRATzievAxEE3WeZfkMTu05nO/KFVCybiX3QoICtguBSThqnv57mRKxQIxR6YWhEsAvp
-         +Ot3o2D7I4rt5A1ac1VQJsViklVUsy7D+9UbAqvW4QaQTHcmgBEsM5Hd0iTVyf7Aiv2H
-         HiPa4D2HMr/UCwtI8H6r/KsQFjgjSwS7AOnoSWGMP2DzaFPa+W6h1rjPu9DlzCtscaxm
-         R6TA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqsBPyiGwKr39DZ2emmA/UyvuwoMNf9B6fSt0ke+0CPEEYpoPrOBTSZjIAT5Mb2yp8o+lk5UqnfN79WneN2yQJly9cnmMqwzZqtKDU
-X-Gm-Message-State: AOJu0YzsubZfuYRgPJ6Yr2J6NESR45E3Yx/ZibQO6KqTPjriXcupy4yw
-	LC6Zp4MzvGO0M81IBiYEgvXncfpv1yg5yZC2lYrJihqlpVOFMy+dYrNoYZZzt56nZ8YbOgOdO75
-	+VomMLeRfpBUXarnEcjBDSQDGhMRPccy7sE07ObUnL620L1tcUGjqiu8=
-X-Google-Smtp-Source: AGHT+IHjizWcP8MG9wxRuuBdba2WI1gcMyvUyfIgNCs8Sh48sJfXSchzsHoJfI/ii4Vx1kkGq+pS4+EwPoM8vBhnTbJ5YutdpVTY
+	s=arc-20240116; t=1716025423; c=relaxed/simple;
+	bh=cN4taKemZXfix9JfNEyfNhnnzUNu1CKiXassiYzK5/g=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=O6ujFG0Fp4ngK07DvkN6hRtfeUSfvdSmtq5ZbmpzHPbbBGWo9wZ8prL4dnGxq9DTGBfdLwmJXH+WGWEHL8KvToanqFtUTAICdhOoq8qfuLpCVsHIuq2CmUl/rNTIKc2o4SfSf9zfVqHGdavAqITRmqAWPUNm6IT1QDBImp5WTfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XJ0kvMs3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=24WdP9po; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 18 May 2024 09:43:38 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716025419;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A+RQLhf8Q7V1V0kAlxyT1Z11xQC04LkQ5kVZhi2K2ws=;
+	b=XJ0kvMs3PbW1LswSh487Ys18FkGIMEvZKLAYW2NIV9MQXmHYdKDvJdHXHNZHtXVrZFCMbc
+	YbuZS0EEXGb6XsHWkieny5Ih3pWtsRQETTOE+CpawybF0y00UKEf2uHovcWkqCcRtKurl6
+	98qW474JIw0s5lUxwBvOYNLXnLEHPKt0CE0P0A+L3FtmQFgvy9OrZl86EeysEscJXZPXlB
+	dBQMnPkz/qWzwIddYdRdaxPGq8KwqAWkvP+S1KAqMS6DK0/XeXvKBi2I6mHbQI5tHkGNEU
+	2KhzxOnvOOsrhRvF3oHl3FG0I6IpuFqeS0xslY1sR6yHHRGvzPjDejLZ090k3w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716025419;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A+RQLhf8Q7V1V0kAlxyT1Z11xQC04LkQ5kVZhi2K2ws=;
+	b=24WdP9pox0lXY4BP9mRsFw9HopQEoufDrv21zlVCaPhxgLiS34tz4NETEHl02mqnU0BI6Y
+	jM8ay1Qb+/EqPRBw==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: perf/urgent] perf/x86/amd: Use try_cmpxchg() in events/amd/{un,}core.c
+Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240425101708.5025-1-ubizjak@gmail.com>
+References: <20240425101708.5025-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8506:b0:488:9082:8dd0 with SMTP id
- 8926c6da1cb9f-48957cb32aemr1631403173.0.1716024088396; Sat, 18 May 2024
- 02:21:28 -0700 (PDT)
-Date: Sat, 18 May 2024 02:21:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000037162f0618b6fefb@google.com>
-Subject: [syzbot] [hfs?] KMSAN: uninit-value in copy_name
-From: syzbot <syzbot+efde959319469ff8d4d7@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <171602541885.10875.9262354688213911942.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello,
+The following commit has been merged into the perf/urgent branch of tip:
 
-syzbot found the following issue on:
+Commit-ID:     cd84351c8c1baec86342d784feb884ace007d51c
+Gitweb:        https://git.kernel.org/tip/cd84351c8c1baec86342d784feb884ace007d51c
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Thu, 25 Apr 2024 12:16:14 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sat, 18 May 2024 11:15:13 +02:00
 
-HEAD commit:    a5131c3fdf26 Merge tag 'x86-shstk-2024-05-13' of git://git..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=16035b70980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=64e100d74625a6a5
-dashboard link: https://syzkaller.appspot.com/bug?extid=efde959319469ff8d4d7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10314fbc980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f47248980000
+perf/x86/amd: Use try_cmpxchg() in events/amd/{un,}core.c
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/81edac548743/disk-a5131c3f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/42f67aa888e5/vmlinux-a5131c3f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2e5cf5b3704d/bzImage-a5131c3f.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/08efa6c23198/mount_0.gz
+Replace this pattern in events/amd/{un,}core.c:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+efde959319469ff8d4d7@syzkaller.appspotmail.com
+    cmpxchg(*ptr, old, new) == old
 
-=====================================================
-BUG: KMSAN: uninit-value in sized_strscpy+0xc4/0x160
- sized_strscpy+0xc4/0x160
- copy_name+0x2af/0x320 fs/hfsplus/xattr.c:411
- hfsplus_listxattr+0x11e9/0x1a50 fs/hfsplus/xattr.c:750
- vfs_listxattr fs/xattr.c:493 [inline]
- listxattr+0x1f3/0x6b0 fs/xattr.c:840
- path_listxattr fs/xattr.c:864 [inline]
- __do_sys_listxattr fs/xattr.c:876 [inline]
- __se_sys_listxattr fs/xattr.c:873 [inline]
- __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
- x64_sys_call+0x2ba0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:195
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+.. with the simpler and faster:
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3877 [inline]
- slab_alloc_node mm/slub.c:3918 [inline]
- kmalloc_trace+0x57b/0xbe0 mm/slub.c:4065
- kmalloc include/linux/slab.h:628 [inline]
- hfsplus_listxattr+0x4cc/0x1a50 fs/hfsplus/xattr.c:699
- vfs_listxattr fs/xattr.c:493 [inline]
- listxattr+0x1f3/0x6b0 fs/xattr.c:840
- path_listxattr fs/xattr.c:864 [inline]
- __do_sys_listxattr fs/xattr.c:876 [inline]
- __se_sys_listxattr fs/xattr.c:873 [inline]
- __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
- x64_sys_call+0x2ba0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:195
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+    try_cmpxchg(*ptr, &old, new)
 
-CPU: 0 PID: 5047 Comm: syz-executor429 Not tainted 6.9.0-syzkaller-01768-ga5131c3fdf26 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-=====================================================
+The x86 CMPXCHG instruction returns success in the ZF flag, so this change
+saves a compare after the CMPXCHG.
 
+No functional change intended.
 
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20240425101708.5025-1-ubizjak@gmail.com
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/x86/events/amd/core.c   | 4 +++-
+ arch/x86/events/amd/uncore.c | 8 ++++++--
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+index 1fc4ce4..18bfe34 100644
+--- a/arch/x86/events/amd/core.c
++++ b/arch/x86/events/amd/core.c
+@@ -433,7 +433,9 @@ static void __amd_put_nb_event_constraints(struct cpu_hw_events *cpuc,
+ 	 * when we come here
+ 	 */
+ 	for (i = 0; i < x86_pmu.num_counters; i++) {
+-		if (cmpxchg(nb->owners + i, event, NULL) == event)
++		struct perf_event *tmp = event;
++
++		if (try_cmpxchg(nb->owners + i, &tmp, NULL))
+ 			break;
+ 	}
+ }
+diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+index 4ccb8fa..0fafe23 100644
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -162,7 +162,9 @@ static int amd_uncore_add(struct perf_event *event, int flags)
+ 	/* if not, take the first available counter */
+ 	hwc->idx = -1;
+ 	for (i = 0; i < pmu->num_counters; i++) {
+-		if (cmpxchg(&ctx->events[i], NULL, event) == NULL) {
++		struct perf_event *tmp = NULL;
++
++		if (try_cmpxchg(&ctx->events[i], &tmp, event)) {
+ 			hwc->idx = i;
+ 			break;
+ 		}
+@@ -196,7 +198,9 @@ static void amd_uncore_del(struct perf_event *event, int flags)
+ 	event->pmu->stop(event, PERF_EF_UPDATE);
+ 
+ 	for (i = 0; i < pmu->num_counters; i++) {
+-		if (cmpxchg(&ctx->events[i], event, NULL) == event)
++		struct perf_event *tmp = event;
++
++		if (try_cmpxchg(&ctx->events[i], &tmp, NULL))
+ 			break;
+ 	}
+ 
 
