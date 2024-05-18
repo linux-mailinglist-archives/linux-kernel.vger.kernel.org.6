@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-182827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B318C9097
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 13:22:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D458C9099
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 13:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B236F2826EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:22:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1D441C20ABD
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 11:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4938338F9A;
-	Sat, 18 May 2024 11:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AE028376;
+	Sat, 18 May 2024 11:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BygVJarO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9XAntuF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B12D2E417;
-	Sat, 18 May 2024 11:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D30208A8;
+	Sat, 18 May 2024 11:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716031324; cv=none; b=f7IL3nk8B58LaoxlFRCUixGopve8Tv5NAdBh+GoDoJKrMD+mdSL+Yyy4lcrundH04U5NivgeuSARqltJwdyuT88Ax8IUFtpljfGbX1LRN6xxiUQ62qJKG7VET0zBv1MbUzyvXvUeWxlIPLalsiC4Lc1N2fmAni5CE7ULsxew8uM=
+	t=1716031527; cv=none; b=dfl5Y6gNa4t1EHps7rgjOtSIQ3zCJJ2GNhMDHB9ffg98tySBcW6hhQcSjEd6EJ014OD1TUaLkdwQpovPCsQUcod2Ko1hU3QktpeFSg7ocYlS35Kyt32Iaj/aL3rjB5AvSCfocXb2U6KRfXgVh91J31w94xdNw8etc952UZV33Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716031324; c=relaxed/simple;
-	bh=iELBELN+ItTNiOWOJCNO9fLBpmFwctgb5zTuPUdT+jE=;
+	s=arc-20240116; t=1716031527; c=relaxed/simple;
+	bh=5FqV7Cj2SOxaN5+kcEyKDYHvv+SB1LEIMZasSmT2cHo=;
 	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=lEN2pEA7WdSCw0Pd0FXeMAcy2P+l5vMjK+YDfdPpQ3FNn2WBunUj3cCJsGqrpNNHnE0q74LXQAUMrAvvYZiZSYvQ6tmn9AYSUqfRPCqExdc+MfTBJDBqf7jq7GWyDVqCIeqjq5ao0tohUKDc85hknMQH1n/z5gBRKz3Z02ar/+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BygVJarO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84605C32782;
-	Sat, 18 May 2024 11:22:00 +0000 (UTC)
+	 References:In-Reply-To; b=aDwhWNsFqIE75oypL+rpZMc0Z/biOu15+BEd+gUpMdAMD5Z/yGuL4m4X1gu10E8K6ma0WsPHYEWlikmdYRS8L4i9vB5P+HiOSlqicyk78E2x4gAYN2tp6rHVtOcmFN51PWwwIMisP7YC+jL7mSpVR+L8udcGXwIuu+kBWaj3NzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9XAntuF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCED9C113CC;
+	Sat, 18 May 2024 11:25:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716031324;
-	bh=iELBELN+ItTNiOWOJCNO9fLBpmFwctgb5zTuPUdT+jE=;
+	s=k20201202; t=1716031527;
+	bh=5FqV7Cj2SOxaN5+kcEyKDYHvv+SB1LEIMZasSmT2cHo=;
 	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=BygVJarOdyxgxEoTi4Q6GFh1XwHgWTz+M5G0XqXv5+2vlOnao1Y+E1Obpug7VLlEp
-	 N0JFh7oOJIuqcVVViPEX4LzdsUDS3+jd7lPmhGu91aSpf6Fev/X2sc5CO16Id9iWc9
-	 dzB2n8WN9P+hA/PjNskR+wPNnGsdP3sqpZY7sXMbars+lMeppyofOLSo7LEcZx3lAC
-	 LfTgVPWj/xQxrVhmik+397AUIU978Tw0YwpBbeK9YlUanbPCxAtnjAwstyO2lh3vRl
-	 IPNdka9o22iFyZydhB9XDL/OFnEunFNjXay2z3kq9oSnl13VV0PgQekvT3IHiKKBAO
-	 sG6I9kRV3MLNg==
+	b=k9XAntuFqR//FvKAziOJHKT0riUxnVEN6nquFzWsv2Ir+JmITjV6htNabMhPrdb0r
+	 xHcXsIGm9vM+uBh3aedee0w213x6LIzy0DJNUEpqwIg4Z+f75nxrK5LiSX2EGJkgEk
+	 64cvmVrwk2YksCCskfsYL4t5bfaDt4yvfbOcERGH5gS3FYhWxz0UpwVt9dkqmEYu7T
+	 eVjpoaH1ZctsxN+1+TByuLfGUpyp4syBp6haiuv8YPaKbtiSuJTX4uNv1lZbhHsLVj
+	 +B6vanavwnA3AGVFkSWR9VRSj6dbvAr/fOGEgZR0W+CkyP54Z3hRqXIF8WpwcPXjGr
+	 4FhKEmfeP6NmA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,67 +48,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 18 May 2024 14:21:58 +0300
-Message-Id: <D1CQC0PTK1G0.124QCO3S041Q@kernel.org>
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
+Date: Sat, 18 May 2024 14:25:24 +0300
+Message-Id: <D1CQEN4ROQFK.1NHMZGCIL1YC5@kernel.org>
+Subject: Re: SLB9670 TPM module crash
 From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Jonathan Calmels"
- <jcalmels@3xx0.net>, "Casey Schaufler" <casey@schaufler-ca.com>
-Cc: <brauner@kernel.org>, <ebiederm@xmission.com>, "Luis Chamberlain"
- <mcgrof@kernel.org>, "Kees Cook" <keescook@chromium.org>, "Joel Granados"
- <j.granados@samsung.com>, "Serge Hallyn" <serge@hallyn.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "David Howells"
- <dhowells@redhat.com>, <containers@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <keyrings@vger.kernel.org>
+To: "Parthiban" <parthiban@linumiz.com>,
+ <James.Bottomley@HansenPartnership.com>
+Cc: <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <peterhuewe@gmx.de>, <jgg@ziepe.ca>
 X-Mailer: aerc 0.17.0
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
- <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
- <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
- <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
- <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
- <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
- <vhpmew3kyay3xq4h3di3euauo43an22josvvz6assex4op3gzw@xeq63mqb2lmh>
- <D1CQ1FZ72NIW.2U7ZH0GU6C5W5@kernel.org>
- <D1CQ8J60S7L4.1OVRIWBERNM5Y@kernel.org>
-In-Reply-To: <D1CQ8J60S7L4.1OVRIWBERNM5Y@kernel.org>
+References: <7955419c-ccc2-4a20-8ff5-07b119258415@linumiz.com>
+In-Reply-To: <7955419c-ccc2-4a20-8ff5-07b119258415@linumiz.com>
 
-On Sat May 18, 2024 at 2:17 PM EEST, Jarkko Sakkinen wrote:
-> On Sat May 18, 2024 at 2:08 PM EEST, Jarkko Sakkinen wrote:
-> > On Fri May 17, 2024 at 10:11 PM EEST, Jonathan Calmels wrote:
-> > > On Fri, May 17, 2024 at 10:53:24AM GMT, Casey Schaufler wrote:
-> > > > Of course they do. I have been following the use of capabilities
-> > > > in Linux since before they were implemented. The uptake has been
-> > > > disappointing in all use cases.
-> > >
-> > > Why "Of course"?
-> > > What if they should not get *all* privileges?
-> >
-> > They do the job given a real-world workload and stress test.
-> >
-> > Here the problem is based on a theory and an experiment.
-> >
-> > Even a formal model does not necessarily map all "unknown unknowns".
+On Sat May 18, 2024 at 2:21 PM EEST, Parthiban wrote:
+> Dear James Bottomley,
 >
-> So this was like the worst "sales pitch" ever:
+> The following crash is observed in the current mainline kernel and I have=
+ tried the
+> git bisect to narrow it down. Bisect points to the below commit, which go=
+t merged as
+> part of [1]. I tried reverting the below commit and the TPM loads fine.
 >
-> 1. The cover letter starts with the idea of having to argue about name
-> spaces, and have fun while doing that ;-) We all have our own ways to
-> entertain ourselves but "name space duels" are not my thing. Why not
-> just start with why we all want this instead? Maybe we don't want it
-> then. Maybe this is just useless spam given the angle presented?
-> 2. There's shitloads of computer science and set theory but nothing
-> that would make common sense. You need to build more understandable=20
-> model. There's zero "gist" in this work.
+> commit 1b6d7f9eb150305dcb0da4f7101a8d30dcdf0497
+> Author: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Date:   Mon Apr 29 16:28:07 2024 -0400
 >
-> Maybe this does make sense but the story around it sucks so far.
+>     tpm: add session encryption protection to tpm2_get_random()
+>    =20
+>     If some entity is snooping the TPM bus, they can see the random
+>     numbers we're extracting from the TPM and do prediction attacks
+>     against their consumers.  Foil this attack by using response
+>     encryption to prevent the attacker from seeing the random sequence.
+>    =20
+>     Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com=
+>
+>     Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+>     Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+>     Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>
+>  drivers/char/tpm/tpm2-cmd.c | 21 +++++++++++++++++----
+>  1 file changed, 17 insertions(+), 4 deletions(-)
+>
+> [   11.551988] tpm_tis_spi spi0.1: 2.0 TPM (device-id 0x1B, rev-id 22)
+> [   11.563036] spi_master spi0: will run message pump with realtime prior=
+ity
 
-One tip: I think this is wrong forum to present namespace ideas in the
-first place. It would be probably better to talk about this with e.g.
-systemd or podman developers, and similar groups. There's zero evidence
-of the usefulness. Then when you go that route and come back with actual
-users, things click much more easily. Now this is all in the void.
+
+Explanation and workaround: https://lore.kernel.org/linux-integrity/D1C1KL7=
+Q27P9.39BH0Z4EMBBUG@kernel.org/
+
+James, this must be fixed by:
+
+diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+index 7c0486e3199c..2d9e2c860ad9 100644
+--- a/drivers/char/tpm/Kconfig
++++ b/drivers/char/tpm/Kconfig
+@@ -34,7 +34,7 @@ if TCG_TPM
+
+ config TCG_TPM2_HMAC
+        bool "Use HMAC and encrypted transactions on the TPM bus"
+-       default y
++       default n
+        select CRYPTO_ECDH
+        select CRYPTO_LIB_AESCFB
+        select CRYPTO_LIB_SHA256
+
+Distributors know how to enable this but given the high volumes of small
+devices still with TPM, this trend needs to be cutted.
 
 BR, Jarkko
+
+
+BR, Jarkko
+
 
