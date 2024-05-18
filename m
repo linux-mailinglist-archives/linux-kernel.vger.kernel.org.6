@@ -1,321 +1,288 @@
-Return-Path: <linux-kernel+bounces-182893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B296D8C916A
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 16:17:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6565F8C916C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 16:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17FC11F216A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:17:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 899DB1C20CED
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 14:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA7045014;
-	Sat, 18 May 2024 14:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JqedQlvj"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC83A4436E;
+	Sat, 18 May 2024 14:18:39 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F6544C68
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 14:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9373B1AB
+	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 14:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716041864; cv=none; b=MZ25cXAew8osrxJeTDqKgji8FoCllKDUjx+do6JQNwUZtfvt2OQcK/6qvYUzIhJCURNVzD24hWDBE8HRbn7+iiE87BHMCu09waJFBsw879wqMvCqtZvBLWk3EfB+8KpAodOXuoWpZjmDdFZcHBGUvnFbjJQi+Iep8qQVD+kvWL0=
+	t=1716041919; cv=none; b=hkvJT0glx8kd0JEGvjX3NjT6I137Nd9ELFeBsI3+i+k6GYgX9B2sfnU6NGdpQcLR8n2n7t/udDWIqkb1Pezdw4wPDCTllDqnNfC2WAXUQBdAMeQeBLF3EqnGwyHX2PMENQ6mDZCJOgwUSLmYfH+EMPKmKot2+k0NC+eWYhruxwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716041864; c=relaxed/simple;
-	bh=XBTbPk6LUCg/+KF7yZ3YUKGPU4HVOYeWWP4dER/DvP0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rwxx4IeUwshqZBAx04qn9uFmcWmuSNmee/Vozvv+fS3ayjWW/8iB5plp9VSsal3TOaLybEg0UJ/hO9CNrjLVmmtS4WN52hsbrmAFv02LF7Gi87UfbArykJj+c0F8f+lgyi2IEiE7qLz4Kqe9D2dsUHZm8rydy4htz/k8Qs0zgIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JqedQlvj; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44IEGLoI017554;
-	Sat, 18 May 2024 09:16:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716041781;
-	bh=hE7bJWGco1/V2achyvapsMHYTWD7SY5fsWVMayfRq60=;
-	h=From:To:CC:Subject:Date;
-	b=JqedQlvjazZ7Wtvm4tLQmQ5v3QI0s07YunyeQh386vEAu3M53zUD2L3/qDxbuBHiK
-	 K992PU3i0G0n9huGIs9qaTCH+pB8YFNQc+b+NRvPPiy75B4/+fdQUWdaOGbxZVR/8I
-	 ybF6AN8XF179AK5mkkmwTr6QM8kZQG5dk2Y25vwY=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44IEGLZb055620
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 18 May 2024 09:16:21 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 18
- May 2024 09:16:21 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 18 May 2024 09:16:21 -0500
-Received: from LT5CG31242FY.dhcp.ti.com ([10.250.160.158])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44IEGFfa038647;
-	Sat, 18 May 2024 09:16:15 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <broonie@kernel.org>
-CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <13916275206@139.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <liam.r.girdwood@intel.com>,
-        <bard.liao@intel.com>, <yung-chuan.liao@linux.intel.com>,
-        <kevin-lu@ti.com>, <cameron.berkenpas@gmail.com>, <tiwai@suse.de>,
-        <baojun.xu@ti.com>, <soyer@irl.hu>, <Baojun.Xu@fpt.com>,
-        Shenghao Ding <shenghao-ding@ti.com>
-Subject: [PATCH v6] ASoC: tas2781: Fix wrong loading calibrated data sequence
-Date: Sat, 18 May 2024 22:15:46 +0800
-Message-ID: <20240518141546.1742-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1716041919; c=relaxed/simple;
+	bh=bkOtlhAGwGu5qV1jeigsH45EaGJCKIRA44rktLHO/0E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZT6S/Jtr6806wm7K8KkP51GIaO3ebxhqOa06XEynWs9WcZ1ce/fEWFkH6T8ABL4V79xjisDGnSKV9fgdeR2HcFt7yjeW0Z9YpT5dX0Ca4lv5h9wxhejWWgMWDr7EepOJjOe4MYaxa5qNc/phzGusBloRSa/+XQ8NNbhv6YJOZSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e17b6ec827so927695239f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 07:18:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716041916; x=1716646716;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Td8n7eAsFg5U1JlLsiDY9FO/9R6VpwwWeYUXdaRq1kU=;
+        b=Qj2r4+n8fYGe8ZtaGI2dPbgei+lGYev1TPIfE+R0HqQu6cbqiL3LpUuYG736ZAnjbH
+         0Os61VI5jF9JpcthNg0OyCWjTzmVIqx4O0RrkbDxmPCycc5bGNUNo2wsO/yw90YUh+vx
+         DEadQ+tVVO06oheCIN/avHgGbQpQ+akszHVm9kF/Q5BtksY3lSjH5PHmfDnHZFllRfgS
+         ZDBS6/+oJNtFZyCmuIRZobCWmTr5Ji1fxlFdg6Url/fiE06wqeGw8viOFYMoUCQBXMOG
+         YAKTo1jixIRiWSH7LDKnkmAjNp+dWS1RB5WKEE5iZl/ZVwryqcXkTFD5gTSK+OCY+yE+
+         HeDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUh2NmTB+Ds4prnXDCvaeg33G4stOI/mgU1/+LU3mcYx/NB+T8Euz8cnh9CSuOGbBfS+OyeLUpVzshLW4/f3nvjqFqUmXQLYtlGpsXk
+X-Gm-Message-State: AOJu0YyqAi11kEpdkeJm3jHpOnpAZV7ED/VhNVaXzx3/7azd4iueJUfT
+	64H8cy3nMYnOCwNS2z8D3QSL59JKo+BEGDM7vdfZPYKJ8xlLJk7kSff+ABw+PDLGpacTOLAyACA
+	yoKSSfKePIHPFUDU9XfXnoEE9Tq167TFBn/l/jXvqE79/gzRFv9nPMcU=
+X-Google-Smtp-Source: AGHT+IEqcBdOsLYXbAyX0XV4aY9pAgMxg2QKn4hAmvYKfRkwpWT6VyomsrjiuKoIpV5IZKepQ/Gj3S3wUdSjF4MCowXo1TkaB68y
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Received: by 2002:a05:6e02:13c3:b0:36d:b197:70c1 with SMTP id
+ e9e14a558f8ab-36dd09a5911mr410415ab.0.1716041916750; Sat, 18 May 2024
+ 07:18:36 -0700 (PDT)
+Date: Sat, 18 May 2024 07:18:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000de2ee50618bb2490@google.com>
+Subject: [syzbot] [input?] possible deadlock in evdev_cleanup (2)
+From: syzbot <syzbot+77a2ec57108df22d5c63@syzkaller.appspotmail.com>
+To: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Calibrated data will be set to default after loading DSP config params,
-which will cause speaker protection work abnormally. Reload calibrated
-data after loading DSP config params. Remove declaration of unused API
-which load calibrated data in wrong sequence, changed the copyright year
-and correct file name in license
-header.
+Hello,
 
-Fixes: ef3bcde75d06 ("ASoc: tas2781: Add tas2781 driver")
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+syzbot found the following issue on:
+
+HEAD commit:    fda5695d692c Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=14de17c0980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=95dc1de8407c7270
+dashboard link: https://syzkaller.appspot.com/bug?extid=77a2ec57108df22d5c63
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10298620980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=134d3182980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/07f3214ff0d9/disk-fda5695d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/70e2e2c864e8/vmlinux-fda5695d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b259942a16dc/Image-fda5695d.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+77a2ec57108df22d5c63@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.9.0-rc7-syzkaller-gfda5695d692c #0 Not tainted
+------------------------------------------------------
+syz-executor144/6248 is trying to acquire lock:
+ffff0000d6b65110 (&evdev->mutex){+.+.}-{3:3}, at: evdev_mark_dead drivers/input/evdev.c:1314 [inline]
+ffff0000d6b65110 (&evdev->mutex){+.+.}-{3:3}, at: evdev_cleanup+0x38/0x16c drivers/input/evdev.c:1323
+
+but task is already holding lock:
+ffff800090ffb888 (input_mutex){+.+.}-{3:3}, at: __input_unregister_device+0x2a4/0x5c0 drivers/input/input.c:2219
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (input_mutex){+.+.}-{3:3}:
+       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+       __mutex_lock kernel/locking/mutex.c:752 [inline]
+       mutex_lock_interruptible_nested+0x2c/0x38 kernel/locking/mutex.c:826
+       input_register_device+0x8dc/0xde8 drivers/input/input.c:2389
+       uinput_create_device+0x360/0x528 drivers/input/misc/uinput.c:365
+       uinput_ioctl_handler+0x8b0/0x16c0 drivers/input/misc/uinput.c:904
+       uinput_ioctl+0x38/0x4c drivers/input/misc/uinput.c:1075
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:904 [inline]
+       __se_sys_ioctl fs/ioctl.c:890 [inline]
+       __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:890
+       __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+-> #2 (&newdev->mutex){+.+.}-{3:3}:
+       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+       __mutex_lock kernel/locking/mutex.c:752 [inline]
+       mutex_lock_interruptible_nested+0x2c/0x38 kernel/locking/mutex.c:826
+       uinput_request_send drivers/input/misc/uinput.c:151 [inline]
+       uinput_request_submit+0x188/0x654 drivers/input/misc/uinput.c:182
+       uinput_dev_upload_effect+0x170/0x218 drivers/input/misc/uinput.c:257
+       input_ff_upload+0x49c/0x834 drivers/input/ff-core.c:150
+       evdev_do_ioctl drivers/input/evdev.c:1183 [inline]
+       evdev_ioctl_handler+0x1fd0/0x2d58 drivers/input/evdev.c:1272
+       evdev_ioctl+0x38/0x4c drivers/input/evdev.c:1281
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:904 [inline]
+       __se_sys_ioctl fs/ioctl.c:890 [inline]
+       __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:890
+       __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+-> #1 (&ff->mutex){+.+.}-{3:3}:
+       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+       __mutex_lock kernel/locking/mutex.c:752 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+       input_ff_upload+0x31c/0x834 drivers/input/ff-core.c:120
+       evdev_do_ioctl drivers/input/evdev.c:1183 [inline]
+       evdev_ioctl_handler+0x1fd0/0x2d58 drivers/input/evdev.c:1272
+       evdev_ioctl+0x38/0x4c drivers/input/evdev.c:1281
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:904 [inline]
+       __se_sys_ioctl fs/ioctl.c:890 [inline]
+       __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:890
+       __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+-> #0 (&evdev->mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
+       lock_acquire+0x248/0x73c kernel/locking/lockdep.c:5754
+       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+       __mutex_lock kernel/locking/mutex.c:752 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+       evdev_mark_dead drivers/input/evdev.c:1314 [inline]
+       evdev_cleanup+0x38/0x16c drivers/input/evdev.c:1323
+       evdev_disconnect+0x58/0xc0 drivers/input/evdev.c:1407
+       __input_unregister_device+0x31c/0x5c0 drivers/input/input.c:2222
+       input_unregister_device+0xb0/0xfc drivers/input/input.c:2440
+       uinput_destroy_device+0x5a4/0x79c drivers/input/misc/uinput.c:299
+       uinput_release+0x44/0x60 drivers/input/misc/uinput.c:744
+       __fput+0x30c/0x738 fs/file_table.c:422
+       ____fput+0x20/0x30 fs/file_table.c:450
+       task_work_run+0x230/0x2e0 kernel/task_work.c:180
+       exit_task_work include/linux/task_work.h:38 [inline]
+       do_exit+0x4e4/0x1ac8 kernel/exit.c:878
+       do_group_exit+0x194/0x22c kernel/exit.c:1027
+       __do_sys_exit_group kernel/exit.c:1038 [inline]
+       __se_sys_exit_group kernel/exit.c:1036 [inline]
+       pid_child_should_wake+0x0/0x1dc kernel/exit.c:1036
+       __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+other info that might help us debug this:
+
+Chain exists of:
+  &evdev->mutex --> &newdev->mutex --> input_mutex
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(input_mutex);
+                               lock(&newdev->mutex);
+                               lock(input_mutex);
+  lock(&evdev->mutex);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor144/6248:
+ #0: ffff800090ffb888 (input_mutex){+.+.}-{3:3}, at: __input_unregister_device+0x2a4/0x5c0 drivers/input/input.c:2219
+
+stack backtrace:
+CPU: 0 PID: 6248 Comm: syz-executor144 Not tainted 6.9.0-rc7-syzkaller-gfda5695d692c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
+ dump_stack+0x1c/0x28 lib/dump_stack.c:123
+ print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2060
+ check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
+ lock_acquire+0x248/0x73c kernel/locking/lockdep.c:5754
+ __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+ __mutex_lock kernel/locking/mutex.c:752 [inline]
+ mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+ evdev_mark_dead drivers/input/evdev.c:1314 [inline]
+ evdev_cleanup+0x38/0x16c drivers/input/evdev.c:1323
+ evdev_disconnect+0x58/0xc0 drivers/input/evdev.c:1407
+ __input_unregister_device+0x31c/0x5c0 drivers/input/input.c:2222
+ input_unregister_device+0xb0/0xfc drivers/input/input.c:2440
+ uinput_destroy_device+0x5a4/0x79c drivers/input/misc/uinput.c:299
+ uinput_release+0x44/0x60 drivers/input/misc/uinput.c:744
+ __fput+0x30c/0x738 fs/file_table.c:422
+ ____fput+0x20/0x30 fs/file_table.c:450
+ task_work_run+0x230/0x2e0 kernel/task_work.c:180
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0x4e4/0x1ac8 kernel/exit.c:878
+ do_group_exit+0x194/0x22c kernel/exit.c:1027
+ __do_sys_exit_group kernel/exit.c:1038 [inline]
+ __se_sys_exit_group kernel/exit.c:1036 [inline]
+ pid_child_should_wake+0x0/0x1dc kernel/exit.c:1036
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
 
 ---
-v6:
- - Merge into one patch
-v5:
- - correct changelog has no much relationship with the patch
-v4:
- - Use the the culprit of the bug itself as the fixes tag
- - Better variant for tasdev_load_calibrated_data in order to much easier
-   to read and understand and maintain, as it makes harder to squeeze the
-   code.
- - Fix the indentation and move operator to the previous line.
-v3:
- - No changes.
- - Remove redundant return in tasdev_load_calibrated_data
- - Put the second function parameter into the previous line for
-   tasdev_load_calibrated_data
-v2:
- - In the Subject, fixed --> Fix
- - Add Fixes tag
- - dsp --> DSP
- - Changed the copyright year to 2024 in the related files
- - In tas2781-dsp.h, __TASDEVICE_DSP_H__ --> __TAS2781_DSP_H__
-v1:
- - Download calibrated data after loading the new DSP config params
- - Remove tasdevice_prmg_calibdata_load, because it is unnecessary to load
-   calibrated data after loading DSP program.
- - call tasdevice_prmg_load instead of tasdevice_prmg_calibdata_load, it
-   is unnecessary to load calibrated data after loading DSP program. Load
-   it after loading DSP config params each time.
----
- include/sound/tas2781-dsp.h       |   7 +-
- sound/soc/codecs/tas2781-fmwlib.c | 103 ++++++++----------------------
- sound/soc/codecs/tas2781-i2c.c    |   4 +-
- 3 files changed, 32 insertions(+), 82 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/include/sound/tas2781-dsp.h b/include/sound/tas2781-dsp.h
-index ea9af2726a53..7fba7ea26a4b 100644
---- a/include/sound/tas2781-dsp.h
-+++ b/include/sound/tas2781-dsp.h
-@@ -2,7 +2,7 @@
- //
- // ALSA SoC Texas Instruments TAS2781 Audio Smart Amplifier
- //
--// Copyright (C) 2022 - 2023 Texas Instruments Incorporated
-+// Copyright (C) 2022 - 2024 Texas Instruments Incorporated
- // https://www.ti.com
- //
- // The TAS2781 driver implements a flexible and configurable
-@@ -13,8 +13,8 @@
- // Author: Kevin Lu <kevin-lu@ti.com>
- //
- 
--#ifndef __TASDEVICE_DSP_H__
--#define __TASDEVICE_DSP_H__
-+#ifndef __TAS2781_DSP_H__
-+#define __TAS2781_DSP_H__
- 
- #define MAIN_ALL_DEVICES			0x0d
- #define MAIN_DEVICE_A				0x01
-@@ -180,7 +180,6 @@ void tasdevice_calbin_remove(void *context);
- int tasdevice_select_tuningprm_cfg(void *context, int prm,
- 	int cfg_no, int rca_conf_no);
- int tasdevice_prmg_load(void *context, int prm_no);
--int tasdevice_prmg_calibdata_load(void *context, int prm_no);
- void tasdevice_tuning_switch(void *context, int state);
- int tas2781_load_calibration(void *context, char *file_name,
- 	unsigned short i);
-diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
-index a6be81adcb83..265a8ca25cbb 100644
---- a/sound/soc/codecs/tas2781-fmwlib.c
-+++ b/sound/soc/codecs/tas2781-fmwlib.c
-@@ -2151,6 +2151,24 @@ static int tasdevice_load_data(struct tasdevice_priv *tas_priv,
- 	return ret;
- }
- 
-+static void tasdev_load_calibrated_data(struct tasdevice_priv *priv, int i)
-+{
-+	struct tasdevice_calibration *cal;
-+	struct tasdevice_fw *cal_fmw;
-+
-+	cal_fmw = priv->tasdevice[i].cali_data_fmw;
-+
-+	/* No calibrated data for current devices, playback will go ahead. */
-+	if (!cal_fmw)
-+		return;
-+
-+	cal = cal_fmw->calibrations;
-+	if (cal)
-+		return;
-+
-+	load_calib_data(priv, &cal->dev_data);
-+}
-+
- int tasdevice_select_tuningprm_cfg(void *context, int prm_no,
- 	int cfg_no, int rca_conf_no)
- {
-@@ -2210,21 +2228,9 @@ int tasdevice_select_tuningprm_cfg(void *context, int prm_no,
- 		for (i = 0; i < tas_priv->ndev; i++) {
- 			if (tas_priv->tasdevice[i].is_loaderr == true)
- 				continue;
--			else if (tas_priv->tasdevice[i].is_loaderr == false
--				&& tas_priv->tasdevice[i].is_loading == true) {
--				struct tasdevice_fw *cal_fmw =
--					tas_priv->tasdevice[i].cali_data_fmw;
--
--				if (cal_fmw) {
--					struct tasdevice_calibration
--						*cal = cal_fmw->calibrations;
--
--					if (cal)
--						load_calib_data(tas_priv,
--							&(cal->dev_data));
--				}
-+			if (tas_priv->tasdevice[i].is_loaderr == false &&
-+				tas_priv->tasdevice[i].is_loading == true)
- 				tas_priv->tasdevice[i].cur_prog = prm_no;
--			}
- 		}
- 	}
- 
-@@ -2245,11 +2251,15 @@ int tasdevice_select_tuningprm_cfg(void *context, int prm_no,
- 		tasdevice_load_data(tas_priv, &(conf->dev_data));
- 		for (i = 0; i < tas_priv->ndev; i++) {
- 			if (tas_priv->tasdevice[i].is_loaderr == true) {
--				status |= 1 << (i + 4);
-+				status |= BIT(i + 4);
- 				continue;
--			} else if (tas_priv->tasdevice[i].is_loaderr == false
--				&& tas_priv->tasdevice[i].is_loading == true)
-+			}
-+
-+			if (tas_priv->tasdevice[i].is_loaderr == false &&
-+				tas_priv->tasdevice[i].is_loading == true) {
-+				tasdev_load_calibrated_data(tas_priv, i);
- 				tas_priv->tasdevice[i].cur_conf = cfg_no;
-+			}
- 		}
- 	} else
- 		dev_dbg(tas_priv->dev, "%s: Unneeded loading dsp conf %d\n",
-@@ -2308,65 +2318,6 @@ int tasdevice_prmg_load(void *context, int prm_no)
- }
- EXPORT_SYMBOL_NS_GPL(tasdevice_prmg_load, SND_SOC_TAS2781_FMWLIB);
- 
--int tasdevice_prmg_calibdata_load(void *context, int prm_no)
--{
--	struct tasdevice_priv *tas_priv = (struct tasdevice_priv *) context;
--	struct tasdevice_fw *tas_fmw = tas_priv->fmw;
--	struct tasdevice_prog *program;
--	int prog_status = 0;
--	int i;
--
--	if (!tas_fmw) {
--		dev_err(tas_priv->dev, "%s: Firmware is NULL\n", __func__);
--		goto out;
--	}
--
--	if (prm_no >= tas_fmw->nr_programs) {
--		dev_err(tas_priv->dev,
--			"%s: prm(%d) is not in range of Programs %u\n",
--			__func__, prm_no, tas_fmw->nr_programs);
--		goto out;
--	}
--
--	for (i = 0, prog_status = 0; i < tas_priv->ndev; i++) {
--		if (prm_no >= 0 && tas_priv->tasdevice[i].cur_prog != prm_no) {
--			tas_priv->tasdevice[i].cur_conf = -1;
--			tas_priv->tasdevice[i].is_loading = true;
--			prog_status++;
--		}
--		tas_priv->tasdevice[i].is_loaderr = false;
--	}
--
--	if (prog_status) {
--		program = &(tas_fmw->programs[prm_no]);
--		tasdevice_load_data(tas_priv, &(program->dev_data));
--		for (i = 0; i < tas_priv->ndev; i++) {
--			if (tas_priv->tasdevice[i].is_loaderr == true)
--				continue;
--			else if (tas_priv->tasdevice[i].is_loaderr == false
--				&& tas_priv->tasdevice[i].is_loading == true) {
--				struct tasdevice_fw *cal_fmw =
--					tas_priv->tasdevice[i].cali_data_fmw;
--
--				if (cal_fmw) {
--					struct tasdevice_calibration *cal =
--						cal_fmw->calibrations;
--
--					if (cal)
--						load_calib_data(tas_priv,
--							&(cal->dev_data));
--				}
--				tas_priv->tasdevice[i].cur_prog = prm_no;
--			}
--		}
--	}
--
--out:
--	return prog_status;
--}
--EXPORT_SYMBOL_NS_GPL(tasdevice_prmg_calibdata_load,
--	SND_SOC_TAS2781_FMWLIB);
--
- void tasdevice_tuning_switch(void *context, int state)
- {
- 	struct tasdevice_priv *tas_priv = (struct tasdevice_priv *) context;
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index b5abff230e43..9350972dfefe 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -2,7 +2,7 @@
- //
- // ALSA SoC Texas Instruments TAS2563/TAS2781 Audio Smart Amplifier
- //
--// Copyright (C) 2022 - 2023 Texas Instruments Incorporated
-+// Copyright (C) 2022 - 2024 Texas Instruments Incorporated
- // https://www.ti.com
- //
- // The TAS2563/TAS2781 driver implements a flexible and configurable
-@@ -414,7 +414,7 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
- 				__func__, tas_priv->cal_binaryname[i]);
- 	}
- 
--	tasdevice_prmg_calibdata_load(tas_priv, 0);
-+	tasdevice_prmg_load(tas_priv, 0);
- 	tas_priv->cur_prog = 0;
- out:
- 	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
