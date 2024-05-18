@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-182728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E688C8EF3
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 02:39:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 769698C8EFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 02:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC3EA1C21A6B
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:39:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1DDEB217E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 00:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C078D637;
-	Sat, 18 May 2024 00:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331F64A22;
+	Sat, 18 May 2024 00:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="SV2zemg5"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/nnhePA"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CD833EC
-	for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 00:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D074624;
+	Sat, 18 May 2024 00:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715992774; cv=none; b=mS8J2P//ReG6vnvnfaM+//rOfOd3XsKq+uZDIC0IHWxVunHh3wZQO0K/Nzt67NAahucCruYE9ON7ys8SwVI5qJHt1kWR+thqH+cz6RTkr62Ev04mGfmLrrIsKB5/bCGyl6k36tCMGoqsZqdl2JhP8AqVsqKat4Ok2yOdDvrRVCk=
+	t=1715993585; cv=none; b=GxHFI9GSLFZDbD389K01GWlRT/MEzn24ZmJZpnnsMY34R784hGMqp2mVcoLad83RdxIOZPMArurteDW5unzvTxk0HfY6who+udyIc9YoSq/6ZOhu3myTqdk6fbxtIkeEmwm58EejLzwXO78XKktW2LDbnlSCHihSGmbCl7PC7Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715992774; c=relaxed/simple;
-	bh=4V5YW8ORGMY45KRj8UEqSm59pF8Y+sc6mDeE+TSeGJM=;
+	s=arc-20240116; t=1715993585; c=relaxed/simple;
+	bh=kxpNGd21aNnFsS8Tun+x1viqQNqfEmOXf6AfWQzZkhc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gR0XZj2/WmS4MvBiLKw1GXzSCDiJcrJgPT82eDHsMLMpl9Qz/Q+D5vuMfznhDyOrcw2omaD/2y6VIkzQi1Rp8NCxzWtRY7DlOCw0SRI4yKqEotgIBOIO5dLRaoZy8F289FMS6FBNyBRuhdUDUyqt5qG3SjkE2nM83qQJhF009qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=SV2zemg5; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1edfc57ac0cso24917965ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 May 2024 17:39:32 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=ilpl/AyuZkydrvBkgVlMyXxxC7Svh2LgQnt49zjz52KvomPDDpTtT82ZOr7mitsFbBF6VCASHdRwugAvTl3m2ztz/K9NCN7I8rtkDoXzQ8BWFIgraVFvUFZWNRZu4Z/TYlN3C0QJd/CN2SyjdY3M4jedzl4bwb7aBbtUslK6lKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g/nnhePA; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1ec69e3dbcfso28224975ad.0;
+        Fri, 17 May 2024 17:53:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1715992772; x=1716597572; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20230601; t=1715993583; x=1716598383; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=p7Punv+O2VI5RKAkHRkhtEk7CBj9yRK2PJX5XN6bfhc=;
-        b=SV2zemg5NtIR3pbXcUpjQL4Nh2uV808bM0bYra4XbVqoECYENJz6/Yy1du6GUsBF1T
-         XjClNZyHgkq1IjzGsNu0VF4KSRcFvP8duWW93pNhihxONKxIBHEuEju184pzDGSNNupq
-         ib3YMvRdDHjiHmp2OxcZgusnPxfFWYkd34Nlw+eS/M5SIsLUf3Mrx9wPF3j4JbN0L51J
-         8Ns52iIbDMMJzhPw7VAE6tB2RCkaU9f1rM9auoIgPX19Bn4lqARdC5AzZbrjVYBG9xPX
-         cdNuEoJX1TmbwOv4k+7AFSI4ow5gFWRUrYzogvoH4IJNgoo7XBVgU2ba15ADfeNZaYsV
-         sGRA==
+        bh=2bIw/FmfmnY1dbtLfrsgC3aPpzWY8ZVFcFhTBEtvdIg=;
+        b=g/nnhePAhxOUQ30UjmlpTybAIr67vBG/a/ehPy/h/RMbMy8WnNsNr3rOi5rgnzqXzp
+         DDn9/04+1HSJ+aByDOixbwCqeOWT1zrVwL1Vxy6pGPUXaTUIrybIZBfIusjZ3Op7cRZY
+         B6rRQ+0yOQaDzd+3qNtWL8SklX54DCui7UHtSutRAezBVjamqjIy0t/1tZqJjXaV3y8x
+         9tvRGZzuhEmrwB1AUXv5/z4s15aE8BXxKyDStuigkKQzGqDYL7pxgGe/1OnXR1aQCA6t
+         EC9W8PKtvVCG58c36lKD4ountfTHmTuO6EKWmyJV+zt1yvsk24mf62RmKfAgpCe8a61e
+         6J4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715992772; x=1716597572;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1715993583; x=1716598383;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p7Punv+O2VI5RKAkHRkhtEk7CBj9yRK2PJX5XN6bfhc=;
-        b=p096V0Q+SLCLSb2I5R0X46WZSMtOct8colUyDO73CwJDz1YQRGlyaEnZwPx4NpOtKL
-         Y3rjrB75qmH3lLP/uH1q3dGKfO5+skYY/1nhFBV+nRfn6PrXxXBLl/qbG7iPtri4r1kS
-         zihYJA2jRQVSPRA59HUnvPpMVKu/oMx3CGulndMEXrpYAhGYOnPeTwjP+2USVgx7RyNY
-         I+JJadzpXFTc0Vcyw61F+FZQIsw7EFlb6A53bKCgtKFFfsI/i/eIUm1ZS0MVZxvnCWa9
-         oVc5yO/wRll6kFj9UVQh3A6aQpCu69QhT/JlejnoJdfRwNKBDCiZuK4WUP1LFDx29VSU
-         h2Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKia8ihZIJnAtAAxQl49GfCBJITW68u1vB3Wkzo9MTRiQU5iJlJzfOu2yMK2SuICjJ2leQtH9C8Ywmt5g+jMPbQYXGeyRcykPG9ICQ
-X-Gm-Message-State: AOJu0YxNt048P4nTaAoa6k1SnbavefAe67SytiZxA6uTDFUoDZ6xgarf
-	VQK1rRyJ/a1XOjxcDGCbG8k+dLtT0tZxvWt8OqToe7xdAyvehmQ+TkAcY6I8tXE=
-X-Google-Smtp-Source: AGHT+IG2kizdOiSw0uylPEq0qK5Nujj1quEtxgB2wxc39/tXdkGx33RSfpvHjRCh3dNNGsAUN6Msjg==
-X-Received: by 2002:a05:6a00:1397:b0:6e6:89ad:1233 with SMTP id d2e1a72fcca58-6f4e02a6150mr30537733b3a.2.1715992772166;
-        Fri, 17 May 2024 17:39:32 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1156:1:1cbd:da2b:a9f2:881? ([2620:10d:c090:500::6:9fd9])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af2bccsm16503658b3a.170.2024.05.17.17.39.26
+        bh=2bIw/FmfmnY1dbtLfrsgC3aPpzWY8ZVFcFhTBEtvdIg=;
+        b=FGKgaG7CTXfElp2EHbxTgBmZfYpEeimBi+lmUARX9dw/FUF/AJGluYKAhbDD9+xdek
+         NO6wd4EBpiw46xhPHVdIReeLpuFDcObwAe/eXFe1fSZd0WDAvfV1Q7zqtG7vjGQs5n4I
+         Q/09+WOZ85XegtFAD01LBfMYk/wMB6xDb/zZpTXSqb6lhO7T6O37XSP0dNUmBJ7nAdcj
+         vwcjTG6qKuRqRFxnydRptbc+kRXAlPT3ENZO/3YhoLQxnOgqGpzoEG+oRFLuoixapm88
+         M4ScC5R2D0HjGUjOI00nY+XNgK9ppU4uEL/gf+ZYXtnmY+KQZquLPDJ825O5cX3j5ZqY
+         Q+zA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFs0TXP8tMzLf3BaaYtIElFhNeOH13ykt6F/K4x9a6jfJeamCFdJdNmAIWBbQZfqwe97aZkU/ZFtCCq9gznGwC73/l13JGwOK0RV+TezMEgnbGORb9bQlIHuZyO3uX8w3QC0TXxQckodnkFz8BcGrZXuwNlcqWqOeHvuO+1M2ytwY=
+X-Gm-Message-State: AOJu0YwufMuElQzGoRozoEOejeAZBBHgn7vwPvTmhKkCsTTLmHfhAoVF
+	eV6i0buvvTeHpBld5Q1mt/02YWBcHFtw/qz1/VOH1fJRXcB9kw41
+X-Google-Smtp-Source: AGHT+IHKWMGs9nZ9glGJICXGp/lnk3zbLGPv06pwuWoh7CMFd7JnCV+l588sA4B0uKWcpckylTUjow==
+X-Received: by 2002:a17:902:e5d2:b0:1e2:a31e:2062 with SMTP id d9443c01a7336-1ef4404a35dmr306433475ad.53.1715993583310;
+        Fri, 17 May 2024 17:53:03 -0700 (PDT)
+Received: from [192.168.50.127] ([147.78.243.100])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c0374ffsm162886825ad.220.2024.05.17.17.53.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 May 2024 17:39:31 -0700 (PDT)
-Message-ID: <090be3c0-42e6-4b97-8b03-eb64b06a2911@davidwei.uk>
-Date: Fri, 17 May 2024 17:39:25 -0700
+        Fri, 17 May 2024 17:53:02 -0700 (PDT)
+Message-ID: <a65ca1ef-1c9a-4d40-8e11-d9dc2cc75e1e@gmail.com>
+Date: Sat, 18 May 2024 08:52:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,136 +75,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 05/14] netdev: netdevice devmem allocator
-Content-Language: en-GB
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski
- <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
- <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Pavel Begunkov <asml.silence@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-References: <20240510232128.1105145-1-almasrymina@google.com>
- <20240510232128.1105145-6-almasrymina@google.com>
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <20240510232128.1105145-6-almasrymina@google.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH stable] block/mq-deadline: fix different priority request
+ on the same zone
+To: Bart Van Assche <bvanassche@acm.org>, Wu Bo <bo.wu@vivo.com>
+Cc: axboe@kernel.dk, dlemoal@kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <a1c24153-007c-4510-9cb3-bc207e9a75e8@acm.org>
+ <20240517014456.1919588-1-bo.wu@vivo.com>
+ <a1da2c7e-1b29-49cf-a45f-255d3b8b0da2@acm.org>
+Content-Language: en-US
+From: Wu Bo <wubo.oduw@gmail.com>
+In-Reply-To: <a1da2c7e-1b29-49cf-a45f-255d3b8b0da2@acm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2024-05-10 16:21, Mina Almasry wrote:
-> +/* This returns the absolute dma_addr_t calculated from
-> + * net_iov_owner(niov)->owner->base_dma_addr, not the page_pool-owned
-> + * niov->dma_addr.
-> + *
-> + * The absolute dma_addr_t is a dma_addr_t that is always uncompressed.
-> + *
-> + * The page_pool-owner niov->dma_addr is the absolute dma_addr compressed into
-> + * an unsigned long. Special handling is done when the unsigned long is 32-bit
-> + * but the dma_addr_t is 64-bit.
-> + *
-> + * In general code looking for the dma_addr_t should use net_iov_dma_addr(),
-> + * while page_pool code looking for the unsigned long dma_addr which mirrors
-> + * the field in struct page should use niov->dma_addr.
-> + */
-> +static inline dma_addr_t net_iov_dma_addr(const struct net_iov *niov)
-> +{
-> +	struct dmabuf_genpool_chunk_owner *owner = net_iov_owner(niov);
-> +
-> +	return owner->base_dma_addr +
-> +	       ((dma_addr_t)net_iov_idx(niov) << PAGE_SHIFT);
-> +}
+On 2024/5/18 01:53, Bart Van Assche wrote:
+> On 5/16/24 18:44, Wu Bo wrote:
+>> So I figured this solution to fix this priority issue on zoned 
+>> device. It sure
+>> raises the overhead but can do fix it.
+>
+> Something I should have realized earlier is that this patch is not
+> necessary with the latest upstream kernel (v6.10-rc1). Damien's zoned
+> write plugging patch series has been merged. Hence, I/O schedulers,
+> including the mq-deadline I/O schedulers, will only see a single
+> zoned write at a time per zone. So it is no longer possible that
+> zoned writes are reordered by the I/O scheduler because of their I/O
+> priorities.
+Hi Bart,
 
-This part feels like devmem TCP specific, yet the function is in
-netmem.h. Please consider moving it into devmem.{h,c} which makes it
-less likely that people not reading your comment will try using it.
+Yes, I noticed that 'zone write plugging' has been merged to latest
+branch. But it seems hard to backport to old version which mq-deadline
+priority feature has been merged. So is it possible to apply this fix to
+old versions?
 
-> +
-> +static inline struct net_devmem_dmabuf_binding *
-> +net_iov_binding(const struct net_iov *niov)
-> +{
-> +	return net_iov_owner(niov)->binding;
-> +}
-> +
->  /* netmem */
->  
->  /**
-> diff --git a/net/core/devmem.c b/net/core/devmem.c
-> index d82f92d7cf9ce..1f90e23a81441 100644
-> --- a/net/core/devmem.c
-> +++ b/net/core/devmem.c
-> @@ -54,6 +54,42 @@ void __net_devmem_dmabuf_binding_free(struct net_devmem_dmabuf_binding *binding)
->  	kfree(binding);
->  }
->  
-> +struct net_iov *
-> +net_devmem_alloc_dmabuf(struct net_devmem_dmabuf_binding *binding)
-> +{
-> +	struct dmabuf_genpool_chunk_owner *owner;
-> +	unsigned long dma_addr;
-> +	struct net_iov *niov;
-> +	ssize_t offset;
-> +	ssize_t index;
-> +
-> +	dma_addr = gen_pool_alloc_owner(binding->chunk_pool, PAGE_SIZE,
-> +					(void **)&owner);
-> +	if (!dma_addr)
-> +		return NULL;
-> +
-> +	offset = dma_addr - owner->base_dma_addr;
-> +	index = offset / PAGE_SIZE;
-> +	niov = &owner->niovs[index];
-> +
-> +	niov->dma_addr = 0;
-> +
-> +	net_devmem_dmabuf_binding_get(binding);
-> +
-> +	return niov;
-> +}
-> +
-> +void net_devmem_free_dmabuf(struct net_iov *niov)
-> +{
-> +	struct net_devmem_dmabuf_binding *binding = net_iov_binding(niov);
-> +	unsigned long dma_addr = net_iov_dma_addr(niov);
-> +
-> +	if (gen_pool_has_addr(binding->chunk_pool, dma_addr, PAGE_SIZE))
-> +		gen_pool_free(binding->chunk_pool, dma_addr, PAGE_SIZE);
-> +
-> +	net_devmem_dmabuf_binding_put(binding);
-> +}
-> +
->  /* Protected by rtnl_lock() */
->  static DEFINE_XARRAY_FLAGS(net_devmem_dmabuf_bindings, XA_FLAGS_ALLOC1);
->  
+Thanks,
+Wu Bo
+>
+> Thanks,
+>
+> Bart.
 
