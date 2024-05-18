@@ -1,168 +1,187 @@
-Return-Path: <linux-kernel+bounces-182731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-182732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04D58C8F0C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 03:17:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A11FA8C8F0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 03:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57270B21647
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 01:17:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11335B21649
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 May 2024 01:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8264A22;
-	Sat, 18 May 2024 01:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="og1rA74f";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1lmw0SV5"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B574C96;
+	Sat, 18 May 2024 01:22:03 +0000 (UTC)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8AA637;
-	Sat, 18 May 2024 01:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B46E637;
+	Sat, 18 May 2024 01:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715995048; cv=none; b=lN0zMegt/mJ/cl6fMW75XKSLPaSvk+MfBQ2ipXRBO2s1BHQ1sXoOEYog607lygZ4XDqGmGjco9X1YYf5tw8BbBsY7jj2KrhJbSq4gs3kiUHHDYu8foa4vRBKCGaKIJBPm+g5bY34E/8s9tvk7STwSFj063nAPV4k9FewfT3o7Ks=
+	t=1715995323; cv=none; b=EF6jDzkyZ65d6VOyupsBqDc7DltoyHqRzb/VOu3v5isqgrq/BMB4xIkfCO4FL0r3YoVaGwqlYxtldq1RXmhxateOTwRKmq/ogbdiwzm5AI4syHFnV5PYGDiHlkHBFkijvp0yOLydSFZo40uLx4pjZpoz2uJdvZ53/v5snzH7gU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715995048; c=relaxed/simple;
-	bh=jl2/O6SsEzi4qBJJPJxENY9IyDg4cYXwXf3Gw42XRBE=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ktcPWDQ3jIt4zfjN+h2qdUw/WJCswdINLS3PAKfp4ksQ4wANDUenHfIhbLKvfm94FWghLRTNpbA3MD14yw2UEkqQu/g6Brq3s8z3CZ7DsKxyHwAFGkd+vaatxUb99Ey8MRiTG0XEpzqqPYGzNMvcwxHcmhR37T0z2C4IDpEy2bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=og1rA74f; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1lmw0SV5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715995045;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FKkeJQ6Dmsf/dRgxmgzUJWJVJs34oG/JmnsLODFboy4=;
-	b=og1rA74f9epq34KedtsKdAHOvqUTX6vrRcpS9A83i9JH5ON1YsHERohzXdGR0SCsMyDyRG
-	3z2hrBFbtXVzZR2NhsY+ooO6gUJzvEbyeUxPnF3LChfMirjXgssy6VXSdu1aTfg84DqkN6
-	BrkmeR+nU1NEOZpdsQSoIATTydfQaCnTxZOjyVJscnjafyUJusL4raczKILKNYKBSYJ+AI
-	phULBml8IS87h9pdYcArlqHL2sm6kwDYmaYMbqZ/Zwp/Muxxy2O8n+Sk8nejwTT9Z7kuI2
-	4oJeKI9ZPISWw86cm/uoZsjjDBoUXBLqbpB//ZJMQa5xho8WQtOtTqdH39hLRw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715995045;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FKkeJQ6Dmsf/dRgxmgzUJWJVJs34oG/JmnsLODFboy4=;
-	b=1lmw0SV5TcVRgrtoM+9+YFgeKaKrydRHRINsNPvdIdw4QYVz81VPI6bBM061EmZe3RxPzF
-	Z4By2FS/MfyIttBA==
-To: Costa Shulyupin <costa.shul@redhat.com>, longman@redhat.com,
- pauld@redhat.com, juri.lelli@redhat.com, prarit@redhat.com,
- vschneid@redhat.com, Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, Zefan Li
- <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner
- <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
- <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
- <mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, Petr
- Mladek <pmladek@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
- Masahiro Yamada <masahiroy@kernel.org>, Randy Dunlap
- <rdunlap@infradead.org>, Yoann Congal <yoann.congal@smile.fr>, "Gustavo A.
- R. Silva" <gustavoars@kernel.org>, Nhat Pham <nphamcs@gmail.com>, Costa
- Shulyupin <costa.shul@redhat.com>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org
-Subject: Re: [PATCH v1 4/7] sched/isolation: Adjust affinity of managed irqs
- according to change of housekeeping cpumask
-In-Reply-To: <20240516190437.3545310-5-costa.shul@redhat.com>
-References: <20240516190437.3545310-1-costa.shul@redhat.com>
- <20240516190437.3545310-5-costa.shul@redhat.com>
-Date: Sat, 18 May 2024 03:17:24 +0200
-Message-ID: <87wmnrj4uz.ffs@tglx>
+	s=arc-20240116; t=1715995323; c=relaxed/simple;
+	bh=ElhXaKsS1+9DXmfAIxHjuyBWoUf40Xp5dX2TRm/4xnA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rn+6k4aVI/dYkj9d3lCActjttFv78sCsdfgoHX6XdQ91vNR8KpZ1iJ+p6MTH2+kofyW0BpZlp2raKwp3dw8kUhsZ64HR+DKXZ8a1q/voRoOn+PwsvFws72+6+PeVJkO3U1mD7k7qchpPX69eMhsYMdOI0FSX+EriiybfVWWbgBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1ee954e0aa6so27076885ad.3;
+        Fri, 17 May 2024 18:22:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715995321; x=1716600121;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2hc0SNlsLadEAwSJsJkJ0F+sA68E81mxz5OGr/0vCeI=;
+        b=FV01LO2ToJpau07BPXN4t284mogm69zM5sqvk4dynWByOKOEg+8gQlnmNb0gbraeBM
+         HYkTua+429ozIrV4dJcZ4IZSmmnVgeSgvVeKlauVtVWmkar00voVCW8RUmZaVzr/tgUa
+         uJUxfiNQmbaARtu9Q5yuvGrZungYW/73HphjqZypkpr+6m2B8AvVGEpOvEu5qH67+KV7
+         eXkP+t6OpjU0nwsYSaL7erXPihnIgtjCIic4U6BoM+PlvxbFGkPiCJjZmi6mrxxqqLSn
+         r3X66iJZmI5va86zkNdFaloquyKdrdLoDp04gFhfndbk/wc/Fj4jBa0u+O1Fy7oKCFIR
+         aVbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJeIRgrVblGgPuHXroxqXCLu2Rf0FKyMIX2w0JzJCcHMEODlE7SH8nPfntSoxON0dZg1iBDdbKCCA4wu64XoKMKWEDVXZtgbDGOKxuzUAdqhcjmgezfgdyCVBRFHYOsbJD/YyTwVCJu5XczCcNJd3C6Da8hOHMs4igAI6lwCBUpC7enw==
+X-Gm-Message-State: AOJu0YxKJq8kddk0OCGtBOU/0MRQJPIigx6Ob5p+970n2/mZ6e+PmQ7p
+	G3S3KC+7OAXV8JzO3gUT6eQqLJ9M45iDvDWnfPREDzesy9PV8t/ursk2WqGDSOd+8KwLDmii8ey
+	N6yeQ3iJoaJsgm9uMrtmx9SNruCI=
+X-Google-Smtp-Source: AGHT+IE0d41KlXtAOA3EnUT5tFEzESh1XTS/75pcgKnYzszaKX7EC6DEt/owS960AUGa6kFY7l2W6eyQ5y1LDiIsH90=
+X-Received: by 2002:a17:902:d2c4:b0:1e6:40f1:9357 with SMTP id
+ d9443c01a7336-1ef43d2e3acmr276615955ad.8.1715995321085; Fri, 17 May 2024
+ 18:22:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240516041948.3546553-1-irogers@google.com> <CAP-5=fW8TA0KQOepQRuC_0mhyp6kHbPodh+6-uoVxsmC=09tTw@mail.gmail.com>
+ <CAP-5=fUBJOaE3Tp1NP4Urdt-r_kHEaR00aTKxMrvfe_0fyPxYA@mail.gmail.com>
+In-Reply-To: <CAP-5=fUBJOaE3Tp1NP4Urdt-r_kHEaR00aTKxMrvfe_0fyPxYA@mail.gmail.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Fri, 17 May 2024 18:21:50 -0700
+Message-ID: <CAM9d7cjYcOuZOU_vFf8oFJjbTb62pGqTWSVopNAus6waXqSS+A@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] Use BPF filters for a "perf top -u" workaround
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Changbin Du <changbin.du@huawei.com>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16 2024 at 22:04, Costa Shulyupin wrote:
-> irq_affinity_adjust() is prototyped from irq_affinity_online_cpu()
-> and irq_restore_affinity_of_irq().
+Hi Ian,
 
-I'm used to this prototyped phrase by now. It still does not justify to
-expose me to this POC hackery.
+On Thu, May 16, 2024 at 10:34=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
+>
+> On Wed, May 15, 2024 at 10:04=E2=80=AFPM Ian Rogers <irogers@google.com> =
+wrote:
+> >
+> > On Wed, May 15, 2024 at 9:20=E2=80=AFPM Ian Rogers <irogers@google.com>=
+ wrote:
+> > >
+> > > Allow uid and gid to be terms in BPF filters by first breaking the
+> > > connection between filter terms and PERF_SAMPLE_xx values. Calculate
+> > > the uid and gid using the bpf_get_current_uid_gid helper, rather than
+> > > from a value in the sample. Allow filters to be passed to perf top, t=
+his allows:
+> > >
+> > > $ perf top -e cycles:P --filter "uid =3D=3D $(id -u)"
+> > >
+> > > to work as a "perf top -u" workaround, as "perf top -u" usually fails
+> > > due to processes/threads terminating between the /proc scan and the
+> > > perf_event_open.
+> >
+> > Fwiw, something I noticed playing around with this (my workload was
+> > `perf test -w noploop 100000` as different users) is that old samples
+> > appeared to linger around making terminated processes still appear in
+> > the top list. My guess is that there aren't other samples showing up
+> > and pushing the old sample events out of the ring buffers due to the
+> > filter. This can look quite odd and I don't know if we have a way to
+> > improve upon it, flush the ring buffers, histograms, etc. It appears
+> > to be a latent `perf top` issue that you could encounter on other low
+> > frequency events, but I thought I'd mention it anyway.
+>
+> Some other thoughts:
+>
+>  - It is kind of annoying with the --filter option (either on top or
+> record) that there first needs to be an event to filter on. It'd be
+> nice if we could just filter the default event.
 
-My previous comments about change logs still apply.
+Hmm.. right.  It should work with the default event when
+no -e option is given.
 
-> +static int irq_affinity_adjust(cpumask_var_t disable_mask)
-> +{
-> +	unsigned int irq;
-> +	cpumask_var_t mask;
-> +
-> +	if (!alloc_cpumask_var(&mask, GFP_KERNEL))
-> +		return -ENOMEM;
-> +
-> +	irq_lock_sparse();
-> +	for_each_active_irq(irq) {
-> +		struct irq_desc *desc = irq_to_desc(irq);
-> +
-> +		raw_spin_lock_irq(&desc->lock);
+>
+>  - Should "perf top --uid=3D1234" be removed or turned into  an alias
+> for '--filter "uid =3D=3D $(id -u)"' given the --uid option generally
+> doesn't work?
 
-That's simply broken. This is not CPU hotplug on an outgoing CPU. Why
-are you assuming that your isolation change code can rely on the
-implicit guarantees of CPU hot(un)plug?
+I think --uid should not fail if it cannot find the task.
+I had a similar situation for perf stat --for-each-cgroup
+and made it ignore the failures.
 
-Also there is a reason why interrupt related code is in kernel/irq/* and
-not in some random other location. Even if C allows you to fiddle with
-everything that does not mean that hiding random hacks in other places
-is correct in any way.
+>
+>  - What should happen to the perf top --pid and --tid options, should
+> they be filters? Should they fallback on /proc scanning if there
+> aren't sufficient BPF permissions? The plumbing for that is going to
+> be messy.
 
-> +		struct irq_data *data = irq_desc_get_irq_data(desc);
-> +
-> +		if (irqd_affinity_is_managed(data) && cpumask_weight_and(disable_mask,
-> +			irq_data_get_affinity_mask(data))) {
+I'm not inclined to do such things.
 
-Interrupt target isolation is only relevant for managed interrupts and
-non-managed interrupts clearly are going to migrate themself away
-magically, right?
+>
+>  - There should probably be a way to filter on cgroups.
 
-> +
-> +			cpumask_and(mask, cpu_online_mask, irq_default_affinity);
-> +			cpumask_and(mask, mask, housekeeping_cpumask(HK_TYPE_MANAGED_IRQ));
++1
 
-There are clearly a lot of comments explaining what this is doing and
-why it is correct as there is a guarantee that these masks overlap by
-definition.
+>
+>  - Does the user care that there are 3 kinds of filter that will work
+> differently? Could we break them apart to make it more explicit, I may
+> want tracepoint events with a BPF filter. How can we ensure 1 syntax
+> for the 3 kinds of filter.
+>
+>  - Filtering on register values could be potentially interesting, for
+> example, sampling on memcpy-s where the length is over a threshold. We
+> have a register capture test:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/=
+tree/tools/perf/tests/shell/record.sh#n81
+> Perhaps the filter could look something like 'perf record -g -e
+> mem:$ADDRESS_OF_MEMCPY:x --filter "reg:rdx > 1024"' -  this makes me
+> think we need to make a more convenient way to specify memory
+> addresses as symbols.
 
-> +			irq_set_affinity_locked(data, mask, true);
-
-Plus the extensive explanation why using 'force=true' is even remotely
-correct here.
-
-I conceed that the documentation of that function and its arguments is
-close to non-existant, but if you follow the call chain of that function
-there are enough hints down the road, no?
-
-> +			WARN_ON(cpumask_weight_and(irq_data_get_effective_affinity_mask(data),
-> +						disable_mask));
-> +			WARN_ON(!cpumask_subset(irq_data_get_effective_affinity_mask(data),
-> +						cpu_online_mask));
-> +			WARN_ON(!cpumask_subset(irq_data_get_effective_affinity_mask(data),
-> +						housekeeping_cpumask(HK_TYPE_MANAGED_IRQ)));
-
-These warnings are required and useful within the spinlock held and
-interrupt disabled section because of what?
-
- - Because the resulting stack trace provides a well known call chain
-
- - Because the resulting warnings do not tell anything about the
-   affected interrupt number
-
- - Because the resulting warnings do not tell anything about the CPU
-   masks which cause the problem
-
- - Because the aggregate information of the above is utterly useless
-
-Impressive...
+I've been thinking about a similar idea on uftrace.
+It would filter the function based on the value of an
+argument or a global variable.
 
 Thanks,
+Namhyung
 
-       tglx
+
+> >
+> > > Ian Rogers (3):
+> > >   perf bpf filter: Give terms their own enum
+> > >   perf bpf filter: Add uid and gid terms
+> > >   perf top: Allow filters on events
+> > >
+> > >  tools/perf/Documentation/perf-record.txt     |  2 +-
+> > >  tools/perf/Documentation/perf-top.txt        |  4 ++
+> > >  tools/perf/builtin-top.c                     |  9 +++
+> > >  tools/perf/util/bpf-filter.c                 | 55 ++++++++++++----
+> > >  tools/perf/util/bpf-filter.h                 |  5 +-
+> > >  tools/perf/util/bpf-filter.l                 | 66 +++++++++---------=
+-
+> > >  tools/perf/util/bpf-filter.y                 |  7 +-
+> > >  tools/perf/util/bpf_skel/sample-filter.h     | 27 +++++++-
+> > >  tools/perf/util/bpf_skel/sample_filter.bpf.c | 67 +++++++++++++++---=
+--
+> > >  9 files changed, 172 insertions(+), 70 deletions(-)
+> > >
+> > > --
+> > > 2.45.0.rc1.225.g2a3ae87e7f-goog
+> > >
 
