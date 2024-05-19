@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-183024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A3B8C9371
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:02:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F10918C937B
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 883801C209EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 05:02:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58527B20EC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 05:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB40EAF6;
-	Sun, 19 May 2024 05:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9DBFC01;
+	Sun, 19 May 2024 05:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i9a8la5A"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Qk50wyx1"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6624C4C7D;
-	Sun, 19 May 2024 05:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2619F33D5;
+	Sun, 19 May 2024 05:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716094919; cv=none; b=TEdOmZJRqDGjF1DoGmDSr/AmStbdX68yFCjgjt2H/eEBgLP90k2x7v6NP6qiDsuwjPXav1FLH3Gk6gbsaIg82SnBVeL+3A4o//luzer+vCcvwpITHl5xpioLxotmg/bSwwFIl0tKF7fOPB/gJCyw9CngGaFkdtDfaRvG9yE+K/s=
+	t=1716096363; cv=none; b=neRi58iLgm8SRkJb3N3IPRUn8fDuxNBq8oT8NXKr7Cehd5bDmY2viMHr5k+AV/jMk4ClhLoMaeZARkQlLJ1FHJcF9i1yWYe/FFXAnUcJYeKc2W8ufzw09Fc+uNNOgcUepmPZocnn7LiIVsX7ojgAybfaJRA2qNKXpwkv/VI5cHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716094919; c=relaxed/simple;
-	bh=JOXyQnL/Rd4T3+2ptcou/ugUznzFoHrhbhcuHxJtPgI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JxeYRGz3ErzkDRH5hB5qtivOs6GZ30zEuIYK5ibZCTqB+usQCthP9CowJQkByQNrzLtGUKb5oHL/CfxIUFe7grjMJZS3KtnicBXnJWjnr9DoG4oK0ibCS9TpJkUbLPJLP9qSNZRLS7LOsLBBAD65xzSLHwjB1JGnepkLynbx8uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i9a8la5A; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716094918; x=1747630918;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=JOXyQnL/Rd4T3+2ptcou/ugUznzFoHrhbhcuHxJtPgI=;
-  b=i9a8la5AyLwCoYrleumy0KiRFJ5OZi2hcnYMLCPcUi4dvYEa0YxJZBPw
-   uNk5govzlfm+fU7jiZaYh+1K3TEZn0vBcSHgoY2KatEkOO592YxYTVB/h
-   dTslMkqizUJ3C9G3xtQ5o7+a6uxFYRn9TP/fOiQ0BXkAiWYtmlfavN5w5
-   fKmY/LgKSNtGvP0WmztLaxc9fRty+bViLPYzsgn4StHukOozqIny7xCGh
-   JYwwHK7TwPT7jSfwEdo3MvEQAHr+8imn62qLOBKY7Oob8LUUGd0aj29Lo
-   lk/5s/X3xyrHDPpokvaJxA+8UNEFdJ1/wqvGsfgbyjH6EYVrb6HWbigVc
-   Q==;
-X-CSE-ConnectionGUID: pI4ZDnG2T5e3HTVNifWIDw==
-X-CSE-MsgGUID: CGqVs2yLTFyDVMcQKPtErw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11076"; a="12182837"
-X-IronPort-AV: E=Sophos;i="6.08,172,1712646000"; 
-   d="scan'208";a="12182837"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2024 22:01:57 -0700
-X-CSE-ConnectionGUID: VMTxTzD9SMe76W4d80VeWw==
-X-CSE-MsgGUID: Mf1dO27hTISmu4yA6Z9XBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,172,1712646000"; 
-   d="scan'208";a="32110053"
-Received: from xiao-desktop.sh.intel.com ([10.239.46.158])
-  by fmviesa007.fm.intel.com with ESMTP; 18 May 2024 22:01:51 -0700
-From: Xiao Wang <xiao.w.wang@intel.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	luke.r.nels@gmail.com,
-	xi.wang@gmail.com,
-	bjorn@kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@google.com,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	pulehui@huawei.com,
-	haicheng.li@intel.com,
-	Xiao Wang <xiao.w.wang@intel.com>
-Subject: [PATCH] riscv, bpf: try RVC for reg move within BPF_CMPXCHG JIT
-Date: Sun, 19 May 2024 13:05:07 +0800
-Message-Id: <20240519050507.2217791-1-xiao.w.wang@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1716096363; c=relaxed/simple;
+	bh=ZFrmNUxtsmYdUc3cQmt52uM4wMxGux6XqZ1iap+SKes=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=MT3z54Mqmm5nxG14EbL7FLLkj90SN/38i0ovqPlvPB74gN4/OuWFoPSzP/+xe1DlWhlJ7zIrz7mvO2CmMs5cWvhukY3WotM7pWZWY4fZAuf8Uh4peAOcJ0ez3TxZ+duZoPPCK18PFE897hA59iAf/fD0hPBge8h9nTO/nTjGGZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Qk50wyx1; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716096339; x=1716701139; i=markus.elfring@web.de;
+	bh=ZFrmNUxtsmYdUc3cQmt52uM4wMxGux6XqZ1iap+SKes=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Qk50wyx13wLvGfife7KAhFcMZ9tTn8lEstgAUxChlAOWSypOIWwkcelbN1UzwWUj
+	 LmWxXJjwjXDNWulQXFerBS8w6jAS41/W8PvJJnnGXHIVuRWsUSZjUvTaeerVfIGCd
+	 bmTq+sSGNGjn7LJjzlB1h61+VHLculoz3iqhj+FIMGBMDxPsW9/32kmODj07LajwJ
+	 Dh88yt6obeSgHM0Qc51FVqsW9FyNUeZ8+SBt32V1heTfkAap/H1S9FbftASnwwQQ8
+	 BXYsaHCkOCn7fUmJp694iV4SB+81PE07+TyhuG3v+cXQaxs1mdMGNKT1DcJ1aElFv
+	 FHpJZPUuG3dD8iAadQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MK56y-1rqTPB2pN0-00LXsS; Sun, 19
+ May 2024 07:25:39 +0200
+Message-ID: <6eee1069-81ae-495a-850f-7f526006db8b@web.de>
+Date: Sun, 19 May 2024 07:25:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>,
+ bsp-development.geo@leica-geosystems.com, linux-i2c@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+ Peter Korsgaard <peter@korsgaard.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Grygorii Tertychnyi <grembeter@gmail.com>
+References: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com>
+Subject: Re: [PATCH] i2c: ocores: set IACK bit after core is enabled
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6oA+99mdUNDDUSA01G21YEo+PC4BnDqvvY2xvbVENWHN5HVRnyT
+ gcS8BXd+/i3aOSecsvib068rNEm3k9dI62B4BZkTmEuItrd2pTNb9CXxoQTKsBo8vmBRGgG
+ R5AfHpOTfYaA+MYGbe3yYissxQsWg3KjoIIhOdELLHUkBcC7SrKH9QG+c8yCGiYhucxB3yq
+ i1bPNCr9cr+QloDweQOcA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:j1e7MMVA6lo=;vdsdIj3621+iotpg125XlCQEuSI
+ bCASiOv0rPsrGZ50gGf+vRjYeGqGgh5BWzegSMxAp8M1GyujAJYBaI5Mxxqfq82TRRwsqqDW1
+ KSkFKpNjDSvZgnpteFGR64uF2WZRLLZEz18FmpLI4BQ3cIqdnrxQ/ZiEN9TUcehFMU19V8+gi
+ Ecpl5tgIxJPVwnwKnjX0GmP9pzv+T8o0D8GaSkbx9bvPAiDSPMMnjkN1WbXIt+GpvzlK6SGga
+ o1uv+XKrmTO1SsaJpgBHnASrlvyaCSO1oDLEtb7/fBVRYw+p5HkTOmljRCgM5ILXR1OgKq8ds
+ fSjICc917ozo9Kp+yi7a0Hnj0uBL1+sRMd//BW4Ox8yaURZn3nRnTFUElzbgSnHUsnsN/G8e3
+ 1yR6K8pugKFljZdixGVYKFXLhpOnjCaCVKSBwngo7AmKlAESQh9F5QC8UAHC+UJ2SAHXYTiWr
+ O5VftgphFiuOQyN7C8zbuptAXHaG1icc9FlCDoKpg+jgyzJZzSYqKPV6DE3sy+xAkv96jpKKY
+ gjbrmRZ/LU6Kedz7zTxVvIYDiG7AwxBKpy4e01Ew06pV1v81sfIK6odnuh0+ebYxP1Mgp82Qe
+ KrzEsHG4jdVQFXk0fI62lJrVpzsUjZYzQRLt4rm4AZYKjcFruneYp76XHUQOXsh+xywi79bw4
+ lH/U639XZ2uNijiuRj2jHsOxi0W7w4GasOByPtJKE+XKRrtC5sBBLP7oMWZWBqDxaaClSEMdF
+ raM7oXlsg1bDf1tVRPfroL9PopaDimaHxRlmQ82hqlJRA8uG6PkP4Zh8Rb+EH8rbT64QALEXE
+ FlQLf827KddMQUgG4YlTrtEaBNXVsdFEV6stj7wOKGLe8=
 
-We could try to emit compressed insn for reg move operation during CMPXCHG
-JIT, the instruction compression has no impact on the jump offsets of
-following forward and backward jump instructions.
+=E2=80=A6
+> Sometimes it causes failure for the very first message transfer, =E2=80=
+=A6
 
-Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
----
- arch/riscv/net/bpf_jit_comp64.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Does such an information indicate the need for the tag =E2=80=9CFixes=E2=
+=80=9D?
 
-diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
-index aac190085472..c134aaec4295 100644
---- a/arch/riscv/net/bpf_jit_comp64.c
-+++ b/arch/riscv/net/bpf_jit_comp64.c
-@@ -531,8 +531,10 @@ static void emit_atomic(u8 rd, u8 rs, s16 off, s32 imm, bool is64,
- 	/* r0 = atomic_cmpxchg(dst_reg + off16, r0, src_reg); */
- 	case BPF_CMPXCHG:
- 		r0 = bpf_to_rv_reg(BPF_REG_0, ctx);
--		emit(is64 ? rv_addi(RV_REG_T2, r0, 0) :
--		     rv_addiw(RV_REG_T2, r0, 0), ctx);
-+		if (is64)
-+			emit_mv(RV_REG_T2, r0, ctx);
-+		else
-+			emit_addiw(RV_REG_T2, r0, 0, ctx);
- 		emit(is64 ? rv_lr_d(r0, 0, rd, 0, 0) :
- 		     rv_lr_w(r0, 0, rd, 0, 0), ctx);
- 		jmp_offset = ninsns_rvoff(8);
--- 
-2.25.1
-
+Regards,
+Markus
 
