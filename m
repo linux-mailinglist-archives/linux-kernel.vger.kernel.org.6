@@ -1,162 +1,289 @@
-Return-Path: <linux-kernel+bounces-183107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 871398C94B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 15:00:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD32C8C94AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54FA61C2090D
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 13:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88B77281635
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 12:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3FA46444;
-	Sun, 19 May 2024 13:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3DC481AB;
+	Sun, 19 May 2024 12:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="cYF+YYNG"
-Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nyHKbW8p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515253D56D
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 13:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DD3DF58;
+	Sun, 19 May 2024 12:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716123631; cv=none; b=pKLU4A4S55hRnFbPTiUfCdLV8zTBUSnrQltknoKwJ7N5Nf0L37jjrX+xT1/s4Lrq+SpHx5TObDkPCIrjfSPQWrlYBn71NDdOehOfM5UMmA/7Uv/pZ8wO9dyDWU6ohLBtAg33v1jLKWnEjBn4p1foG09A1fYInrYXOQAtY0Gh6sk=
+	t=1716123219; cv=none; b=EAYPilgLVVVmy3aOn2gAZY0oII5dXVEmOXSZ2dXzhrtSjjBKkSzKfCcIh9K+tOm3B2TOOHQeLNDWSt532gsfZRzZeeZQsM9ctV68sLDExtk5ieMnPFsuT8m/q3HBtnNLK7Q+cqd75EeMBsF2jOL+ytOkaveEVXKW7jVHklUOwS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716123631; c=relaxed/simple;
-	bh=bQAUDYj/fEDFuowkWCR/XuTxt8UWF1YgKQ9G9106e5w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:MIME-Version:Date:
-	 Message-Id:Content-Type; b=MSdV+6Hv/a0KhPgqQqZqUVClF/x/YxjZCnOhfOGFUNeSt2wuSPKPaGYfL69gDiCveqScVc/IO+VcmDWRs7QmjlBUR0Jn/pDEjavDCzs2tYJwTCJnj9qBl6w5bDFGI3hnVSco7eGGUzTmpi2j9r3l2c+SnYIIMejN3pMXqxBCZ9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=cYF+YYNG; arc=none smtp.client-ip=178.154.239.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-mxback-production-main-72.vla.yp-c.yandex.net (mail-nwsmtp-mxback-production-main-72.vla.yp-c.yandex.net [IPv6:2a02:6b8:c18:486:0:640:200c:0])
-	by forward502a.mail.yandex.net (Yandex) with ESMTPS id 3BA6A60C51;
-	Sun, 19 May 2024 15:52:34 +0300 (MSK)
-Received: from mail.yandex.ru (2a02:6b8:c0d:91:0:640:566d:0 [2a02:6b8:c0d:91:0:640:566d:0])
-	by mail-nwsmtp-mxback-production-main-72.vla.yp-c.yandex.net (mxback/Yandex) with HTTP id UqG2EH5O0Ko0-C4be1G2S;
-	Sun, 19 May 2024 15:52:33 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1716123153; bh=5L8fi5JUq0n0of2poPTByRTgAzI9PuoUJYWi/l8DFhs=;
-	h=References:Date:Message-Id:Cc:Subject:To:From:In-Reply-To;
-	b=cYF+YYNGOULFdIgWxYVZmHIEnZjVnY4q9CNKtlIgERfwXQkLzSy317lVHCY9j2rgy
-	 NKfhM2w0u38lfmvxZ+T6amcillMHa4FAZ/aFaXezVKZz2ebk7XwFCy9UuKRZHMUvUi
-	 xHOt+cJov/w0/f8X+JJZiuzs023XhNyR7QZ8V+4c=
-Authentication-Results: mail-nwsmtp-mxback-production-main-72.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Received: by 6dmalpruuq6nvlco.vla.yp-c.yandex.net with HTTP;
-	Sun, 19 May 2024 15:52:33 +0300
-From: Tranton Baddy <t.baddy@yandex.ru>
-Envelope-From: t-baddy@yandex.ru
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>
-In-Reply-To: <CADnq5_NNATnV+mTEn6Mshro3gqpH5ffjQ=EWdH8QVZgEBYB-ew@mail.gmail.com>
-References: <1237381714935562@dmcmxrwo3x2o7y3i.sas.yp-c.yandex.net> <20240505224508.GAZjgL9PO9Y5QaAO2t@fat_crate.local> <CADnq5_NNATnV+mTEn6Mshro3gqpH5ffjQ=EWdH8QVZgEBYB-ew@mail.gmail.com>
-Subject: Re: Error in amd driver?
+	s=arc-20240116; t=1716123219; c=relaxed/simple;
+	bh=a6NZIhIHvgb7rtZK4CQlLQQlYPXzIPu2lLEHZPOvSeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EqUysnZIG9QDUYFFqNp3jLohYAPOQHFiAxJwSxH6QGQXfdxkyVswcuAkY7a9BMyIbQef6Hx4nByx1z9Ogo/731NimJLxxPyaJA4O27M0c237UD615PeDJuzfcYM1QWcbS4X4RvCNiS0WuLoYFZsbC54UGUYCKdk9MCfHvsgyPRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nyHKbW8p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EE94C32781;
+	Sun, 19 May 2024 12:53:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716123218;
+	bh=a6NZIhIHvgb7rtZK4CQlLQQlYPXzIPu2lLEHZPOvSeA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nyHKbW8pT+PVhsgI5pmJ+bVUYvfv5ObuaqQlHHK42kMdQQgPYlzay++Ty4twJNJ+s
+	 3DEXJd8mjAgKLAAQA4sJDOLUyw3GjKvWedVN68IJKprUkIJtnT1Fp5KnNqdOsRIt+n
+	 UYKub5o7bKNpzbw7jyJ30tlP434wC2e0Zm8XfdPBskzEcq6NKQ3qm5SFm701K2VyDP
+	 I2uSp4m6WvkBmsUvqShZi1hMts6LXLvPhttLGhOnvlJm58T4g0lF8Rhdi6amWh4Vc4
+	 1qq7Gg9wyLA7/oQL1N4wGjgWJVQORYhAsFiqKIw4KXEDUZ3nTFZ+/Uwm3ZfciCkval
+	 slTsC9Y7efuBQ==
+Date: Sun, 19 May 2024 13:53:33 +0100
+From: Conor Dooley <conor@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Jander <david@protonic.nl>,
+	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
+ spi-offloads property
+Message-ID: <20240519-abreast-haziness-096a57ef57d3@spud>
+References: <20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com>
+ <20240510-dlech-mainline-spi-engine-offload-2-v2-1-8707a870c435@baylibre.com>
+ <20240513-headsman-hacking-d51fcc811695@spud>
+ <CAMknhBE5XJzhdJ=PQUXiubw_CiCLcn1jihiscnQZUzDWMASPKw@mail.gmail.com>
+ <20240514-aspire-ascension-449556da3615@spud>
+ <CAMknhBFFpEGcMoLo5gsC11Syv+CwUM0mnq1yDMUzL1uutUtB+Q@mail.gmail.com>
+ <20240516-rudder-reburial-dcf300504c0a@spud>
+ <CAMknhBF_s0btus4yqPe-T=F3z7Asi9KkRGsGr7FHDFi=k4EQjw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date: Sun, 19 May 2024 15:52:33 +0300
-Message-Id: <62301716123153@6dmalpruuq6nvlco.vla.yp-c.yandex.net>
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="YiBMsFrJmwB65D0T"
+Content-Disposition: inline
+In-Reply-To: <CAMknhBF_s0btus4yqPe-T=F3z7Asi9KkRGsGr7FHDFi=k4EQjw@mail.gmail.com>
+
+
+--YiBMsFrJmwB65D0T
 Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, problem is no more.
-Thanks.
+On Fri, May 17, 2024 at 11:51:58AM -0500, David Lechner wrote:
+> On Thu, May 16, 2024 at 4:32=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+> > On Tue, May 14, 2024 at 05:56:47PM -0500, David Lechner wrote:
 
-> On Mon, May 6, 2024 at 6:00 AM Borislav Petkov <bp@alien8.de> wrote:
-> 
->> + amd-gfx@lists.freedesktop.org
->>
->> On Sun, May 05, 2024 at 09:59:22PM +0300, Tranton Baddy wrote:
->>> I have this in my dmesg since version 6.8.6, not sure when it appeared. Is amdgpu driver has bug?
-> 
-> Should be fixed in:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d3a9331a6591e9df64791e076f6591f440af51c3
-> 
-> Alex
-> 
->>> [ 64.253144] ==================================================================
->>> [ 64.253162] BUG: KFENCE: use-after-free read in amdgpu_bo_move+0x51f/0x7a0
->>>
->>> [ 64.253183] Use-after-free read at 0x00000000671c48dd (in kfence-#111):
->>> [ 64.253192] amdgpu_bo_move+0x51f/0x7a0
->>> [ 64.253202] ttm_bo_handle_move_mem+0xcf/0x180
->>> [ 64.253211] ttm_mem_evict_first+0x1c5/0x500
->>> [ 64.253218] ttm_resource_manager_evict_all+0xa3/0x1e0
->>> [ 64.253228] amdgpu_device_prepare+0x66/0x110
->>> [ 64.253237] amdgpu_pmops_runtime_suspend+0xbe/0x1c0
->>> [ 64.253248] pci_pm_runtime_suspend+0x74/0x200
->>> [ 64.253259] vga_switcheroo_runtime_suspend+0x21/0xb0
->>> [ 64.253268] __rpm_callback+0x5f/0x190
->>> [ 64.253277] rpm_callback+0x7f/0x90
->>> [ 64.253283] rpm_suspend+0x120/0x6a0
->>> [ 64.253290] pm_runtime_work+0x9c/0xa0
->>> [ 64.253297] process_one_work+0x164/0x330
->>> [ 64.253310] worker_thread+0x302/0x430
->>> [ 64.253320] kthread+0xe4/0x110
->>> [ 64.253329] ret_from_fork+0x4c/0x60
->>> [ 64.253341] ret_from_fork_asm+0x1b/0x30
->>>
->>> [ 64.253353] kfence-#111: 0x00000000d018cf03-0x0000000034e821d1, size=96, cache=kmalloc-96
->>>
->>> [ 64.253363] allocated by task 152 on cpu 3 at 64.248952s:
->>> [ 64.253418] kmalloc_trace+0x283/0x340
->>> [ 64.253427] amdgpu_vram_mgr_new+0x8f/0x3f0
->>> [ 64.253435] ttm_resource_alloc+0x39/0x90
->>> [ 64.253444] ttm_bo_mem_space+0xa4/0x260
->>> [ 64.253450] ttm_mem_evict_first+0x18a/0x500
->>> [ 64.253456] ttm_resource_manager_evict_all+0xa3/0x1e0
->>> [ 64.253465] amdgpu_device_prepare+0x66/0x110
->>> [ 64.253472] amdgpu_pmops_runtime_suspend+0xbe/0x1c0
->>> [ 64.253481] pci_pm_runtime_suspend+0x74/0x200
->>> [ 64.253489] vga_switcheroo_runtime_suspend+0x21/0xb0
->>> [ 64.253496] __rpm_callback+0x5f/0x190
->>> [ 64.253503] rpm_callback+0x7f/0x90
->>> [ 64.253509] rpm_suspend+0x120/0x6a0
->>> [ 64.253516] pm_runtime_work+0x9c/0xa0
->>> [ 64.253523] process_one_work+0x164/0x330
->>> [ 64.253532] worker_thread+0x302/0x430
->>> [ 64.253542] kthread+0xe4/0x110
->>> [ 64.253550] ret_from_fork+0x4c/0x60
->>> [ 64.253559] ret_from_fork_asm+0x1b/0x30
->>>
->>> [ 64.253570] freed by task 152 on cpu 3 at 64.253117s:
->>> [ 64.253582] ttm_resource_free+0x67/0x90
->>> [ 64.253591] ttm_bo_move_accel_cleanup+0x247/0x2e0
->>> [ 64.253598] amdgpu_bo_move+0x1bd/0x7a0
->>> [ 64.253605] ttm_bo_handle_move_mem+0xcf/0x180
->>> [ 64.253612] ttm_mem_evict_first+0x1c5/0x500
->>> [ 64.253618] ttm_resource_manager_evict_all+0xa3/0x1e0
->>> [ 64.253626] amdgpu_device_prepare+0x66/0x110
->>> [ 64.253634] amdgpu_pmops_runtime_suspend+0xbe/0x1c0
->>> [ 64.253642] pci_pm_runtime_suspend+0x74/0x200
->>> [ 64.253650] vga_switcheroo_runtime_suspend+0x21/0xb0
->>> [ 64.253658] __rpm_callback+0x5f/0x190
->>> [ 64.253664] rpm_callback+0x7f/0x90
->>> [ 64.253671] rpm_suspend+0x120/0x6a0
->>> [ 64.253677] pm_runtime_work+0x9c/0xa0
->>> [ 64.253684] process_one_work+0x164/0x330
->>> [ 64.253693] worker_thread+0x302/0x430
->>> [ 64.253703] kthread+0xe4/0x110
->>> [ 64.253711] ret_from_fork+0x4c/0x60
->>> [ 64.253723] ret_from_fork_asm+0x1b/0x30
->>>
->>> [ 64.253735] CPU: 3 PID: 152 Comm: kworker/3:2 Tainted: P OE 6.8.9 #3 e7323d0d25f89e853881fc823e59523bdcc577c6
->>> [ 64.253756] Hardware name: Hewlett-Packard HP Pavilion Notebook /80B9, BIOS F.54 05/27/2019
->>> [ 64.253761] Workqueue: pm pm_runtime_work
->>> [ 64.253771] ==================================================================
->>>
->>
->> --
->> Regards/Gruss,
->> Boris.
->>
->> https://people.kernel.org/tglx/notes-about-netiquette
+> > > Back to "something beyond the SPI controller":
+> > >
+> > > Here are some examples of how I envision this would work.
+> > >
+> > > Let's suppose we have a SPI controller that has some sort of offload
+> > > capability with a configurable trigger source. The trigger can either
+> > > be an internal software trigger (i.e. writing a register of the SPI
+> > > controller) or and external trigger (i.e. a input signal from a pin on
+> > > the SoC). The SPI controller has a lookup table with 8 slots where it
+> > > can store a series of SPI commands that can be played back by
+> > > asserting the trigger (this is what provides the "offloading").
+> > >
+> > > So this SPI controller would have #spi-offload-cells =3D <2>; where t=
+he
+> > > first cell would be the index in the lookup table 0 to 7 and the
+> > > second cell would be the trigger source 0 for software or 1 for
+> > > hardware.
+> > >
+> > > Application 1: a network controller
+> > >
+> > > This could use two offloads, one for TX and one for RX. For TX, we use
+> > > the first slot with a software trigger because the data is coming from
+> > > Linux. For RX we use the second slot with a hardware trigger since
+> > > data is coming from the network controller (i.e. a data ready signal
+> > > that would normally be wired to a gpio for interrupt but wired to the
+> > > SPI offload trigger input pin instead). So the peripheral bindings
+> > > would be:
+> > >
+> > > #define SOFTWARE_TRIGGER 0
+> > > #define HARDWARE_TRIGGER 1
+> > >
+> > > can@0 {
+> > >     ...
+> > >     spi-offloads =3D <0 SOFTWARE_TRIGGER>, <1 HARDWARE_TRIGGER>;
+> > >     /* maybe we need names too? */
+> > >     spi-offload-names =3D "tx", "rx";
+> > > };
+> > >
+> > > In this case, there is nothing extra beyond the SPI controller and the
+> > > network controller, so no extra bindings beyond this are needed.
+> > >
+> > > Application 2: an advanced ADC + FPGA
+> > >
+> > > This is basically the same as the ad7944 case seen already with one
+> > > extra feature. In this case, the sample data also contains a CRC byte
+> > > for error checking. So instead of SPI RX data going directly to DMA,
+> > > the FPGA removes the CRC byte from the data stream an only the sample
+> > > data goes to the DMA buffer. The CRC is checked and if bad, an
+> > > interrupt is asserted.
+> > >
+> > > Since this is an FPGA, most everything is hardwired rather than having
+> > > any kind of mux selection so #spi-offload-cells =3D <1>; for this
+> > > controller.
+> > >
+> > > By adding spi-offloads to the peripheral node, it also extends the
+> > > peripheral binding to include the additional properties needed for the
+> > > extra features provided by the FPGA. In other words, we are saying
+> > > this DT node now represents the ADC chip plus everything connected to
+> > > the offload instance used by the ADC chip.
+> >
+> > It seems very strange to me that the dmas and the clock triggers are
+> > going into the spi device nodes. The description is
+> > | +  dmas:
+> > | +    maxItems: 1
+> > | +    description: RX DMA Channel for receiving a samples from the SPI=
+ offload.
+> > But as far as I can tell this device is in a package of its own and not
+> > some IP provided by Analog that an engine on the FPGA can actually do
+> > DMA to, and the actual connection of the device is "just" SPI.
+> > The dmas and clock triggers etc appear to be resources belonging to the
+> > controller that can "assigned" to a particular spi device. If the adc
+> > gets disconnected from the system, the dmas and clock triggers are still
+> > connected to the spi controller/offload engine, they don't end up n/c,
+> > right? (Well maybe they would in the case of a fancy SPI device that
+> > provides it's own sampling clock or w/e, but then it'd be a clock
+> > provider of sorts). I'd be expecting the spi-offloads property to be
+> > responsible for selecting which of the various resources belonging to
+> > the controller are to be used by a device.
+> > Maybe it overcomplicates the shit out of things and Rob or Mark are
+> > gonna start screaming at me but w/e, looking at it from the point of
+> > view of how the hardware is laid out (or at least how it is described
+> > in your FPGA case above) the dma/clock properties looks like they're
+> > misplaced. IOW, I don't think that adding the spi-offloads property
+> > should convert a node from representing an ADC in a qfn-20 or w/e
+> > to "the ADC chip plus everything connected to the offload instance
+> > used by the ADC chip".
+>=20
+> This is the same reasoning that led me to the binding proposed in v1.
+> Rob suggested that these extras (dmas/clocks) should just be
+> properties directly of the SPI controller.
+
+> But the issue I have with
+> that is that since this is an FPGA, these properties are not fixed.
+
+I don't think whether or not we're talking about an FPGA or an ASIC
+matters at all here to be honest. In my view the main thing that FPGA
+impact in terms of bindings is the number of properties required to
+represent the configurability of a particular IP. Sure, you're gonna
+have to change the dts around in a way you'll never have to with an
+ASIC, but the description of individual devices or relations between
+them doesn't change.
+
+> Maybe there are more clocks or no clocks or interrupts or something we
+> didn't think of yet.
+
+This could happen with a new generation of an ASIC and is not specific
+to an FPGA IP core. Even with FPGA IP, while there may be lots of
+different configuration parameters, they are known & limited - you can
+look at the IP's documentation (or failing that, the HDL) to figure out
+what the points of variability are. It's not particularly difficult to
+account for there being a configurable number of clocks or interrupts.
+For "something we didn't think of yet" to be a factor, someone has to
+think of it and add it to the IP core, and which point we can absolutely
+change the bindings and software to account for the revised IP.
+
+> So it doesn't really seem possible to write a
+> binding for the SPI controller node to cover all of these cases.
+
+I dunno, I don't think your concerns about numbers of clocks (or any
+other such property) are unique to this particular use-case.
+
+> These
+> extras are included in the FPGA bitstream only for a specific type of
+> peripheral, not for general use of the SPI controller with any type of
+> peripheral.
+
+I accept that, but what I was trying to get across was that you could
+configure the FPGA with a bitstream that contains these extra resources
+and then connect a peripheral device that does not make use of them at
+all. Or you could connect a range of different peripherals that do use
+them. Whether or not the resources are there and how they are connected
+in the FPGA bitstream is not a property of the device connected to the
+SPI controller, only whether or not you use them is.
+
+In fact, looking at the documentation for the "spi engine" some more, I
+am even less convinced that the right place for describing the offload is
+the peripheral as I (finally?) noticed that the registers for the offload
+engine are mapped directly into the "spi engine"'s memory map, rather than
+it being a entirely separate IP in the FPGA fabric.
+
+Further, what resources are available depends on what the SPI offload
+engine IP is. If my employer decides to start shipping some SPI offload
+IP in our catalogue that can work with ADI's ADCs, the set of offload
+related properties or their names may well differ.
+
+> Another idea I had was to perhaps use the recently added IIO backend
+> framework for the "extras". The idea there is that we are creating a
+> "composite" IIO device that consists of the ADC chip (frontend) plus
+> these extra hardware trigger and hardware buffer functions provided by
+> the FPGA (backend).
+>=20
+> offload_backend: adc0-backend {
+>     /* http://analogdevicesinc.github.io/hdl/projects/pulsar_adc/index.ht=
+ml */
+>     compatible =3D "adi,pulsar-adc-offload";
+>     #io-backend-cells =3D <0>;
+>     dmas =3D <&dma 0>;
+>     dma-names =3D "rx";
+>     clocks =3D <&trigger_clock>;
+> };
+>=20
+> spi {
+>     ...
+>     adc@0 {
+>         ...
+>         spi-offloads =3D <0>;
+>         io-backends =3D <&offload_backend>;
+>     };
+> };
+>=20
+> While this could be a solution for IIO devices, this wouldn't solve
+> the issue in general though for SPI offloads used with non-IIO
+> peripherals.
+
+Yeah, I agree that using something specific to IIO isn't really a good
+solution.
+
+Cheers,
+Conor.
+
+> So I don't think it is the right thing to do here. But, I
+> think this idea of a "composite" device helps explain why we are
+> pushing for putting the "extras" with the peripheral node rather than
+> the controller node, at least for the specific case of the AXI SPI
+> Engine controller.
+
+
+--YiBMsFrJmwB65D0T
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkn2TQAKCRB4tDGHoIJi
+0vCVAQCIFVqleGOTvwajfKEdFoQaEw439hSehDqkMdChJVGlHAD+MyuwiRCNe0Se
+YPMZWaHQzj6FdOyms/3MtG/eNG4r/wE=
+=/qrC
+-----END PGP SIGNATURE-----
+
+--YiBMsFrJmwB65D0T--
 
