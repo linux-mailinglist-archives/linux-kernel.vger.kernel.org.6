@@ -1,116 +1,139 @@
-Return-Path: <linux-kernel+bounces-183049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 978AD8C93CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 10:00:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05E58C93D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 10:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53EDD28176F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 08:00:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41C6A1F21454
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 08:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81B118EA2;
-	Sun, 19 May 2024 08:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B4C18B09;
+	Sun, 19 May 2024 08:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ESZunMs+"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Q2JEOcG5"
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB1A18B09
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 08:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7896D4C8E;
+	Sun, 19 May 2024 08:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716105606; cv=none; b=dGWDNQLN1qEmbaU9xsxHqfbjG/f5ZmoRlVhS1A3vDdEnfsiMXEKp4usim29KiGr1KbszdMnCUOHyklGqDIu8kyW4FZNvEfAnrQGiB5gnZiB/lyTdyBm+lnCKhG4qjmH72U7D9q5tTnSONLiTdsLtpgN4Xg9qsrjmpxc/vCzW4cU=
+	t=1716105971; cv=none; b=pqch8FohxpqOzv+erkG2wHCGUoj+MJfWq890EjhsIezfpXiT6RwEymL9Zc93R/UVlaKkBWBK8BbTpKTlkqfbVFUogpy7l7fqY0PzkXGwtT+YDh12rOw44kHauPO6DQ4eAunizxiu2jB5l94fwue3Sk1LtpoBTB6wqLhYM8FuEp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716105606; c=relaxed/simple;
-	bh=m4rWVSXHJ6/Vt1/TsqI+krQspjxUNxM2H7KmtGzkn1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N2nHTgjVmCYILz2SjQLKDbenLTL596jYrZQM/ACTHvBIslz0PIKVgh0Bxq6hg9apZYSeo9nNVYReAnBM7mOIFEz+8FA7qXy4TGAuCgECskd5L6NQKurmNh6cfAJTQntfUhjD0nchM9aO1aIiZTF6hO4NP2sGO79xVW9LLkWukzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ESZunMs+; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52327368e59so3689866e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 01:00:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716105602; x=1716710402; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ki1c9fDiZ1GCrj1ZoT6mLgSAUoMndehPLBXp5wK4ZPg=;
-        b=ESZunMs+CDqwKXHYC/2cCFn3nkLjWwyo9R+Ybnzq+H6sa+9o/cf5T9+8uBkXnUjC24
-         1ZQMboy9sxzx6dNjY2ZH6PXwAutwhwQVNDVn7aC3XO8/Fzai/EkSqB3xPAk1Nj2T6LRt
-         Tg/uoA1fUzBZglv0y+xmaP/nkKmcA4c+k6A+NuzLg0/lh8dY5BkiOKpCjmA3z1Ci9kl2
-         nqWRvnD+HWbVUyb/VdPnhMIVWxBPLwOZZfwEarESicdyOjXfRSLngWRo5b37fH2yYcTH
-         FQm6uIB2E3Eef8LqH7GaEwdqZufa1H8FA6PaNpCPsqUKNFSL5QR/K1x18wqTDbc0URQ+
-         0toQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716105602; x=1716710402;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ki1c9fDiZ1GCrj1ZoT6mLgSAUoMndehPLBXp5wK4ZPg=;
-        b=ibr+9K7OIb7X46Bbio+8YhbGERc7EbNAsAoFxWa4h1eFDT1QgQvnJWbiXXjltBAetr
-         +PbmrMC/MBM32jPB6qcrlOuea0NASk8MWR9b1Ff/WapcMjXiiLvF7Q384j72CjEoIXzf
-         vdMtnkF1a6cSD+woFjeH7b00YXzGmoj5j1HqIM7Fh3dhUFe/YunC4HF9rGn9mrUJwLBy
-         qEbYhS/80zXLThaHeoSL8MpM5D4uZN0LvHr1fBviyal/tZ5piL536lRjEDJX92ixQv1p
-         8c9V2mw0QyiSK6ON8jsCvXsIM+4RmDMcMRTBjxIXsTLxPbtDbWQH0fGx2O6n1ljjppoJ
-         dWCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnuNyLY8sNuEclV/OnY/JNW/bcUUZk/MxJ7WhjaOqEAHCabRqeFHAUPAPjpf8vsuZ66nl9li2xXnTpTtfE8leG02nc0fjwt/RoZFlI
-X-Gm-Message-State: AOJu0YzeX52FCwCUFSnZLp90kA2NcFfKB7QCQwH3+CR9voEI8EHp2TWy
-	szKYhC9dAq4oW0CRtMwD1XtrpyKM2sNWF/C11pNld9LzeiapbP5EZL2TBwxbeKg=
-X-Google-Smtp-Source: AGHT+IF0LURVQ5dYBvsSGbruvFCB97XFgZLY94N0zD6E2Ytq59xIKVYQNiFn8mBYpdi+1fGK9bErCg==
-X-Received: by 2002:a05:6512:3e1e:b0:523:2ed9:edf9 with SMTP id 2adb3069b0e04-5232ed9ef10mr14396484e87.63.1716105602221;
-        Sun, 19 May 2024 01:00:02 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d7f38sm3839288e87.183.2024.05.19.01.00.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 May 2024 01:00:01 -0700 (PDT)
-Date: Sun, 19 May 2024 11:00:00 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Amit Sunil Dhamne <amitsd@google.com>
-Cc: linux@roeck-us.net, heikki.krogerus@linux.intel.com, 
-	gregkh@linuxfoundation.org, megi@xff.cz, badhri@google.com, rdbabiera@google.com, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v1] usb: typec: tcpm: fix use-after-free case in
- tcpm_register_source_caps
-Message-ID: <begphn3f6rdcwgmyewnk6chmws643zd2gcucphntjcrpwhxxmp@75v7gll7non6>
-References: <20240514220134.2143181-1-amitsd@google.com>
+	s=arc-20240116; t=1716105971; c=relaxed/simple;
+	bh=PBVa6gwyfI7ikzqB0Jg4jElxnuzleVFC8ZWnH20UwdA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jpc7EKiDkG/x4SoHbAzn99vNk18Cpf6m1l+Ld+fbne3fhdmH3wHmdeXUqcqdbFnGxkxWvV389Wt42XtcN/bVwv3I3WPVrVHd69DWnM2D6kZ72aoQgmN4ZLOJTINBE5+JfNhF/lilvy1gNAEFK2GPMArQUTH5igJjda1LbnUHROo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Q2JEOcG5; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 8bYQsFlLZyBie8bYQsSbPx; Sun, 19 May 2024 10:06:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1716105964;
+	bh=17wjD51cm+BPeBrAvICXXERovsnzXo7hkI8s3mqy7uc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Q2JEOcG5SYy7MaeNp+AoUSFfvDgpj6jv4aQ8JPEhtoD6Fqejjf/03tlor+Hs0Hgz+
+	 ttC+w+LEBXXo6v8ClbDUKcx0mrG6tzsPHV/KBKbMpwOVZ0uth9bTs3JKAHgniSWyIR
+	 wnKILMeWfNEGiyTFyrJ9Mi5b3q4p1W8OzHmQ/XxFQP8FnXJdZDjqDxDccwgL+VbkJ/
+	 yIStTF0YoHQAhoPyFF6sj6X/b9tuBi+Ht/4rIid9YBdj4s1QAtwho0+umhi21qjJKb
+	 zr63SHmRS8foi1/i7KD5CWmUpF+i5u249ytQjdTRsR1J5wnIpDK+bs1/ieaXgRH4EM
+	 8Ogx66LxGWlgg==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 19 May 2024 10:06:04 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Saurav Kashyap <skashyap@marvell.com>,
+	Javed Hasan <jhasan@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: bnx2fc: Use a flexible array at the end of struct bnx2fc_cmd_mgr
+Date: Sun, 19 May 2024 10:05:54 +0200
+Message-ID: <e98b5759ef34ce00fdb83eeec4d7c27dfe47cc7f.1716105874.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514220134.2143181-1-amitsd@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 14, 2024 at 03:01:31PM -0700, Amit Sunil Dhamne wrote:
-> There could be a potential use-after-free case in
-> tcpm_register_source_caps(). This could happen when:
->  * new (say invalid) source caps are advertised
->  * the existing source caps are unregistered
->  * tcpm_register_source_caps() returns with an error as
->    usb_power_delivery_register_capabilities() fails
-> 
-> This causes port->partner_source_caps to hold on to the now freed source
-> caps.
-> 
-> Reset port->partner_source_caps value to NULL after unregistering
-> existing source caps.
-> 
-> Fixes: 230ecdf71a64 ("usb: typec: tcpm: unregister existing source caps before re-registration")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-> ---
->  drivers/usb/typec/tcpm/tcpm.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
+The 'cmds' field in "struct bnx2fc_cmd_mgr" can be turned into a flexible
+array.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+This:
+   - makes the code more readable and safer because struct_size() can now
+     be used
+   - saves the size of a pointer when allocating struct bnx2fc_cmd_mgr in
+     bnx2fc_cmd_mgr_alloc()
+   - avoid some pointer arithmetic when computing "cmgr->cmds"
+   - saves an indirection when using the 'cmds array
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/scsi/bnx2fc/bnx2fc.h    | 2 +-
+ drivers/scsi/bnx2fc/bnx2fc_io.c | 7 +------
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/scsi/bnx2fc/bnx2fc.h b/drivers/scsi/bnx2fc/bnx2fc.h
+index 7e74f77da14f..dfe7e0e8fdbd 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc.h
++++ b/drivers/scsi/bnx2fc/bnx2fc.h
+@@ -281,7 +281,7 @@ struct bnx2fc_cmd_mgr {
+ 	struct list_head *free_list;
+ 	spinlock_t *free_list_lock;
+ 	struct io_bdt **io_bdt_pool;
+-	struct bnx2fc_cmd **cmds;
++	struct bnx2fc_cmd *cmds[];
+ };
+ 
+ struct bnx2fc_rport {
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c b/drivers/scsi/bnx2fc/bnx2fc_io.c
+index 33057908f147..8e381081e487 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_io.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
+@@ -213,7 +213,6 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
+ 	struct bnx2fc_cmd_mgr *cmgr;
+ 	struct io_bdt *bdt_info;
+ 	struct bnx2fc_cmd *io_req;
+-	size_t len;
+ 	u32 mem_size;
+ 	u16 xid;
+ 	int i;
+@@ -231,10 +230,8 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
+ 	BNX2FC_MISC_DBG("min xid 0x%x, max xid 0x%x\n", min_xid, max_xid);
+ 
+ 	num_ios = max_xid - min_xid + 1;
+-	len = (num_ios * (sizeof(struct bnx2fc_cmd *)));
+-	len += sizeof(struct bnx2fc_cmd_mgr);
+ 
+-	cmgr = kzalloc(len, GFP_KERNEL);
++	cmgr = kzalloc(struct_size(cmgr, cmds, num_ios), GFP_KERNEL);
+ 	if (!cmgr) {
+ 		printk(KERN_ERR PFX "failed to alloc cmgr\n");
+ 		return NULL;
+@@ -257,8 +254,6 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
+ 		goto mem_err;
+ 	}
+ 
+-	cmgr->cmds = (struct bnx2fc_cmd **)(cmgr + 1);
+-
+ 	for (i = 0; i < arr_sz; i++)  {
+ 		INIT_LIST_HEAD(&cmgr->free_list[i]);
+ 		spin_lock_init(&cmgr->free_list_lock[i]);
 -- 
-With best wishes
-Dmitry
+2.45.1
+
 
