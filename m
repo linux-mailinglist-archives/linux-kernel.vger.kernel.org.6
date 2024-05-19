@@ -1,78 +1,134 @@
-Return-Path: <linux-kernel+bounces-183229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596998C9617
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 21:37:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECEE48C961A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 21:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E203C2811EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:37:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327651C208E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A28B71753;
-	Sun, 19 May 2024 19:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819BE6EB75;
+	Sun, 19 May 2024 19:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKw0bfuB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bTrTTAXc"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742506D1B9
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 19:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0AB53E02;
+	Sun, 19 May 2024 19:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716147417; cv=none; b=Nz7X+UB9yu1yKRFvbsrfwPi5KWRAFxCZHSk0IV3xzh7GWCJUo/hPpIOnhxQ/M98FH7hU0nB42TooU4YfVfa64c7KY5xv6A5Eq9Ai87ahi7kKWEa1cUGFeG2PBYYI5SEFhswAjNSOWcXJh8+Cgp4wclGZfEYpIX5UMbHdPKXLVTc=
+	t=1716147484; cv=none; b=SvFmQ/MjXfJ48JTZFuL+rpZZP7nNCQlQtRj4pzokd/WfsZAKQ/4eLJAy0UlbXMIEtN7A2eGfiv9dk+d3BXce8fS+36PEUve1oNV4O6eSpSiOlvIwrS11Hx8dDQ0ebdZNWN5woACam29X+8xvt/ToVhSGrZTq3MnCYx/U511QRHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716147417; c=relaxed/simple;
-	bh=yz92c1iXTAyGzBaVB+VHzxZy/8ApJAKOqyom+hXVUfY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VKEWWu9Ftl3SpG/Dd8PosJwz/u4iXT2eBX4kUGym9AUDNoiYqtiwlSc+04FEVyo1Q7JSnLx7kytH5l9SRMhqh9M1RDqzr82ESQVxUfHe3gqn/PUOmA0/Dr/Cz5Yur8F4YoqK5LJpIgHlzIK1XPSaDk1KGE+aN5hU/X6DYEGj5RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sKw0bfuB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 535EDC4AF0D;
-	Sun, 19 May 2024 19:36:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716147417;
-	bh=yz92c1iXTAyGzBaVB+VHzxZy/8ApJAKOqyom+hXVUfY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=sKw0bfuBv00EtgapkrBA59jkeTKGs3LUqLeXdt7sm/5MLaGXABxEHrL3Fbfu6Eg4q
-	 n6l0swz+HGY7PisfwnpfF8QidrLy+zTXHApdkbUb8X/1/4MkyZOV5QMiRpe6NtJTLB
-	 g/j9njvo7gKAid2R6r29H0rq6QCTzT9VFHloF0J5UQoXbd22g77vbgD8ESvyaA2VS+
-	 LLR1f+YZDWGj/t2I46X3FtyoHKbUsywNbCWGw9IVj9No+5kGKJzgQEL+FggN9X7ML5
-	 /tKQiYLowTVQ0jqIsGr5k8vF6/Ox++4l1RWdh6IlAtdJzJChG0bVA2h3klIot0TzEv
-	 3OLnuU46xSv4g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 498DEC54BB7;
-	Sun, 19 May 2024 19:36:57 +0000 (UTC)
-Subject: Re: [GIT PULL] kgdb changes for v6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240518152655.GA5820@aspen.lan>
-References: <20240518152655.GA5820@aspen.lan>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240518152655.GA5820@aspen.lan>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/danielt/linux.git/ tags/kgdb-6.10-rc1
-X-PR-Tracked-Commit-Id: b2aba15ad6f908d1a620fd97f6af5620c3639742
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a76056285f5d64740b461d70b062225ba80f0ac2
-Message-Id: <171614741729.6582.13612010194829053315.pr-tracker-bot@kernel.org>
-Date: Sun, 19 May 2024 19:36:57 +0000
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jason Wessel <jason.wessel@windriver.com>, linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, Thorsten Blum <thorsten.blum@toblux.com>, Justin Stitt <justinstitt@google.com>, Liuye <liu.yeC@h3c.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	s=arc-20240116; t=1716147484; c=relaxed/simple;
+	bh=pnvDrWgelAMwAQrYjlbqhDtT80Gw5tnuHUf3yzZM37Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tibd+Qv116eZKEnblx6vEb7w2RJL057LQTjXMdbchpDl/lu42CDTeVHap7K5+yDn/8BD62/scI39Lghq+Uad7sfmtmthGu3xMoraLThEBeliGmQxbjuQE0soHUcnuCltnaFdCQV8tSFJ5Zt2GjhRm3CqE/AQT5OEOze3oCsrDA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bTrTTAXc; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2e576057c56so24249571fa.3;
+        Sun, 19 May 2024 12:38:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716147481; x=1716752281; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Zj4jSaDvedvDrxg8jax5CvqISE9uZYMJo6q0wXM5EZ4=;
+        b=bTrTTAXckdBBFQZQVYadDvSL+aLbRIK9BBhlf1DcZaSlhtNkFSGPpFvt3bX0Nz3GqP
+         duJkLX+04mci2YMyaZnAv4gyD+pkcJJYPtgY2bioIRppERELZiESZEDhvbf6/XkoYsqi
+         1nVrqh9hhdes7jw9gjbB/MUK21d8TwKqBbCXqfuDzESYYk0GDOpZA4R1NF4Ku+JKUQHa
+         3GDI44qfIiCoz4Idhgp8E9Jq4QEnxHRVzEcnqKBHSsfMuvbEkZcZylqVCa8bCxsCwDAP
+         xqP5AHZe9soQbmuPoumrxnQlsdL+/u4/vwJcCpbhLb5/rePOrPBgVpxgeEHDJ4cDASla
+         7ruw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716147481; x=1716752281;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zj4jSaDvedvDrxg8jax5CvqISE9uZYMJo6q0wXM5EZ4=;
+        b=Q9vZXcDYlWWXE98SEmvQHQh+2Xm9CZGsTCSOH8g/Bh+CPCtWuDTC52J5zo2qxGD8sJ
+         /OsBHOUbvehevYXs3GCQb1knSFKLOhEotJz4XP0Fj1RamEld7rLJ+GWfpSiQyJlHoPfH
+         cIq4Wo8PuAWgTmViOH8BkKpCXQ915OBVfd0yGitEpMKKy43f4eENiBMzH3rWBE+rkCUE
+         DHvfBseBg3jm7xezbZnTLBayOYgGegKvlnxo7rL4X6rcqFaT/HP5apZOiou0oKWQqyyH
+         iOc7cZpU75I57ciILimQrF0Fqr/Q6ApfXPjwRj66oPqizATeyI9NiEAwcm9R1BxMSf19
+         UA8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVDmyN/Y4uykC1qpPls+EVBwsh1eaI3R0en+sYDZLfGLB+upOKynAUNWbtGcr5WXWFynr9SaqhJ/RWV6O3L4BuzXheCVB9jG1qJJCh/lD21myniYafUu3OkkNv9BRFLVhq3SEjyaRIim9O70Q8ik2q589CRXTnmiJc9cDDlDXHRinHTuw==
+X-Gm-Message-State: AOJu0YyECy9uNq4jfflpH8W4XTpBm/NqUCAKTofxnK2FfNNI7CDcs22w
+	F/v4mxVTRM1zlbSY+Aj2oJsh7VOHzqFqbgOzbdAgAXPcTyPO1AkfTL/z4tIk
+X-Google-Smtp-Source: AGHT+IGYqjNIm3JqZ0Z2qoxVpyr9PEu8aydkNDANKwFcJL1ZmR4sHMRhw+A7phcVLRKFJGd1Zr7Ddw==
+X-Received: by 2002:a2e:934c:0:b0:2dc:d7e7:d68f with SMTP id 38308e7fff4ca-2e52039e285mr153395541fa.44.1716147480994;
+        Sun, 19 May 2024 12:38:00 -0700 (PDT)
+Received: from [192.168.0.105] (c7.campus.utcluj.ro. [193.226.6.226])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733becfbd3sm14715714a12.44.2024.05.19.12.37.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 May 2024 12:38:00 -0700 (PDT)
+Message-ID: <34c21023-441f-44e4-a427-f3e2bb2f5c15@gmail.com>
+Date: Sun, 19 May 2024 22:37:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 6/6] iio: adc: ad7192: Add AD7194 support
+To: Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>
+Cc: michael.hennerich@analog.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ lgirdwood@gmail.com, broonie@kernel.org, nuno.sa@analog.com,
+ marcelo.schmitt@analog.com, bigunclemax@gmail.com, dlechner@baylibre.com,
+ okan.sahin@analog.com, fr0st61te@gmail.com, alisa.roman@analog.com,
+ marcus.folkesson@gmail.com, schnelle@linux.ibm.com, liambeguin@gmail.com
+References: <20240514120222.56488-1-alisa.roman@analog.com>
+ <20240514120222.56488-7-alisa.roman@analog.com>
+ <ZkNijKz0N7PPvmeU@smile.fi.intel.com> <20240519190304.4d93530a@jic23-huawei>
+Content-Language: en-US
+From: Alisa-Dariana Roman <alisadariana@gmail.com>
+In-Reply-To: <20240519190304.4d93530a@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Sat, 18 May 2024 16:26:55 +0100:
+On 19.05.2024 21:03, Jonathan Cameron wrote:
+> On Tue, 14 May 2024 16:09:32 +0300
+> Andy Shevchenko <andy@kernel.org> wrote:
+> 
+>> On Tue, May 14, 2024 at 03:02:22PM +0300, Alisa-Dariana Roman wrote:
+>>> Unlike the other AD719Xs, AD7194 has configurable channels. The user can
+>>> dynamically configure them in the devicetree.
+>>>
+>>> Add sigma_delta_info member to chip_info structure. Since AD7194 is the
+>>> only chip that has no channel sequencer, num_slots should remain
+>>> undefined.
+>>>
+>>> Also modify config AD7192 description for better scaling.
+>>
+>> Some non-critical, mostly style related comments below.
+>>
+> Tweaked a bit. And applied.  Please check the result in the testing branch
+> of iio.git.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/danielt/linux.git/ tags/kgdb-6.10-rc1
+Thank you guys for the feedback and for making the adjustments!
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a76056285f5d64740b461d70b062225ba80f0ac2
++/* 10th bit corresponds to CON18(Pseudo) */
++#define AD7194_CH(p)		(BIT(10) | AD7194_CH_POS(p))
++
+I noticed this comment got away in the testing branch.
 
-Thank you!
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
++static bool ad7194_validate_ain_channel(struct device *dev, u32 ain)
++{
++	return in_range(ain, AD7194_CH_AIN_START, AD7194_CH_AIN_NR);
++}
+And the negation got lost here.
+
+With these little changes, tested on board to make sure, running perfectly!
+
+Kind regards,
+Alisa-Dariana Roman.
+
 
