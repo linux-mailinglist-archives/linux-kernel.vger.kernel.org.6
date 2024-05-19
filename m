@@ -1,162 +1,96 @@
-Return-Path: <linux-kernel+bounces-183264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA9A8C969F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 22:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE698C96A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 22:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D68F11C208CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE20A280ECD
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59304F20C;
-	Sun, 19 May 2024 20:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F845FEE5;
+	Sun, 19 May 2024 20:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j3OO0z+t"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J2X2hqGL"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98609175AB
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 20:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F188D6E5E8
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 20:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716152181; cv=none; b=rSKNzmdlldLfZSUe9vpIVpgzJUVVpIHe9dTO9ggqO0ebmLM1hRqYh4PDOjrujcaKFPiZFxq71BUsi1Ofcebe5m8PGHRd0cCV/q53LjyrpM90MtLuGpCQKJGENhLG7pc+aFUvDClmK9IVlyvE2u0YCP5ej5ExpVj/i4zMAPnQ9BE=
+	t=1716152300; cv=none; b=MtiFpJVv2pW1XzoK8fuxc487Cw4v45ZR1XIB+SLmVyXMza9FhT5n4oLTMmraZ0v/HX8IqCWAj6ATjVjMZIzOW5QSvH6wg13HL91vfGS1w63rUREyKDfZoAl7ANFr6ymEcq6C2cgF1UPJX8iEP+/LtAR3IadpKigTPMdFP6dD8xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716152181; c=relaxed/simple;
-	bh=VCwLXB8PxzERbMg7Uw6PUxEO8FqWUx4CHmtg5hRTk7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=D5vOBaxOBUIzBuoPVJcQf9M1Z07fjL1fzht2B3MOIaSG4RQqPsLM3ZfdfKae6xKIN1ljUXQTUIzSDMvnWaQZhNrwm3AbJDVp6DWwkAOBjDFCHiee4pMHdkuOeXgatcwMhE4dpVgQ0NFsBlqxwlef8phP8F5Nr7M8XvgLM49RX58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=j3OO0z+t; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240519205003epoutp044fc0103e509a085c18288c6ebdb71b27~Q-vkITWWT1451414514epoutp04v
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 20:50:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240519205003epoutp044fc0103e509a085c18288c6ebdb71b27~Q-vkITWWT1451414514epoutp04v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716151803;
-	bh=ZKVEx0Lq8LLMANM056f80Wk7YikwX/VGXkSZeMFK5l4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=j3OO0z+t7hobRiXrMYMhK7x+qXGS31rAjrLeAiCF5MC32geaiKNHrlsY+Bz62WeqG
-	 XOyr010BGsn4CWHCWaKDlRSmo1+8jmYNPaGJtYWO8f+rMAPQEAtYu0eH9HcuIdeLZA
-	 wOg7XSIsgq19/eUQLRuy+ZHWqrCxEJdaWquxd0sM=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20240519205003epcas2p131efc018e8974ffd7bdda65584145345~Q-vjxxXLU0877008770epcas2p18;
-	Sun, 19 May 2024 20:50:03 +0000 (GMT)
-Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.99]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4VjCWG3Bkwz4x9Pt; Sun, 19 May
-	2024 20:50:02 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E9.E9.19141.AF56A466; Mon, 20 May 2024 05:50:02 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240519205001epcas2p319536d42c4837c0fc7e19da0550e308c~Q-vh_KNTj0558705587epcas2p3L;
-	Sun, 19 May 2024 20:50:01 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240519205001epsmtrp169dd51e56b8016ef66cbad675323aeed~Q-vh9CMmT0448704487epsmtrp1q;
-	Sun, 19 May 2024 20:50:01 +0000 (GMT)
-X-AuditID: b6c32a4d-b17ff70000004ac5-a0-664a65fa0bee
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5E.5E.19234.9F56A466; Mon, 20 May 2024 05:50:01 +0900 (KST)
-Received: from localhost (unknown [10.229.54.230]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240519205001epsmtip11d0873e86be594e3d72d453c4884c86f~Q-vhxKvfi2600726007epsmtip1H;
-	Sun, 19 May 2024 20:50:01 +0000 (GMT)
-Date: Mon, 20 May 2024 05:39:04 +0900
-From: Minwoo Im <minwoo.im@samsung.com>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, Joel Granados
-	<j.granados@samsung.com>, gost.dev@samsung.com, Asutosh Das
-	<quic_asutoshd@quicinc.com>, Minwoo Im <minwoo.im@samsung.com>
-Subject: Re: [PATCH] ufs: mcq: Fix missing argument 'hba' in
- MCQ_OPR_OFFSET_n
-Message-ID: <ZkpjaHaGOWMZ++di@localhost>
+	s=arc-20240116; t=1716152300; c=relaxed/simple;
+	bh=5yRNOhU5A7657bzYs1PfC58Wr0uPu28IMtEfJJ3cC4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=owbx5pq3AMOdWiuq3ZtF8BZN2Mg4OFYqmhMqxesW+6NgySuWjsL7v/bPFDaiVn6f012x2lLz/xUJ6hFn0V9tKafw0eGV5IbJa2653e/ZPIgyWIMzzTSmQ+is6ffxzgh9/mV2Q9Fet4XsghzGHCCFDOUhNp/DwSEw9sx2MP99Q3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J2X2hqGL; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-523b017a5c6so5464703e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 13:58:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716152297; x=1716757097; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5yRNOhU5A7657bzYs1PfC58Wr0uPu28IMtEfJJ3cC4I=;
+        b=J2X2hqGL5SP8DofWLezjG+MVeYq/drtjASTXTJQlONEoOhZqJJQFx75YG/18j889TN
+         /TetvukejHprk49b9Lzt94n8y1LC6MdMiVp7XC71v41TRdg/AclbC74hFf8EfJE2ZZ9h
+         kgJpcIL/FcgxO5qjSgNar94k5dTAmvDtkYfLkXJWCt7ZVjnfYx/Zn6geeNrtGag2lNfw
+         2//EFDIWYJNUCa8gO7+KB1YdAUocZ/ooXS8PXEj9Y1mmEwltBoRvB18i+njDsH4DI/sO
+         hFnKlpkdm/MS0GZptNixttiQeBBzm1PfBY4gvwe2npHkCK2kUIBBZ7Yn3O1i/0HNVprh
+         lM/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716152297; x=1716757097;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5yRNOhU5A7657bzYs1PfC58Wr0uPu28IMtEfJJ3cC4I=;
+        b=cVze1POnUiraz95lDn2dXdeM97KdrcEz03Uky89TJyL73T8bY0gW7DOJIU9xwq//6u
+         FBLhpPeUP0AJCSvFv13yXz9cTFW2CLUvJKEUmHUkVZY9p5KBDBjbwvw8iMwKDYh4h9TI
+         VNRQYAI1WaUdAjezQqR/+kp5xs/c9wIBe/6/nL65l8Kn4ZDCWeCR6YAFkHPmAyrP7kbI
+         /69DnJ7q4vmLravYPhVHQiNP5pQYRBL/ukG3bmx+Nz5KvRG60QGnNlJnf+f2G/tzcCU+
+         eX6519QvtacF3NWDbGmOn8+qDfERBRJFHYLoh3NDyFXj1wt8lxqMWsUTIjD5ALY+GKQY
+         eBSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSzQWJVHAOU+0C3MDlKXMPhP1YVG1VKn46EX4TjQ8sgpFFG4xqPskMynrL03CN118cCkrTFFzTUAgRnfhMdcPejHbT+63GkM82evX8
+X-Gm-Message-State: AOJu0Yzn8lTuX6jLFJS9TZQCYl0Ki6gwkKGrbvP4KGDHFREE5d7dZETt
+	VOvrFvvMN9IERJmm/et+udmquEV5GhQ2zn2Q2JLaG9ZekLyeEg5Y5pM3yiDRaQ==
+X-Google-Smtp-Source: AGHT+IG43adAH5oGa2Y5aasAJK7+4mqBNIlRGabXhfce6DxGG1+Qzgoq/DRDpH65dHqkN/tDUGVokg==
+X-Received: by 2002:a05:6512:149:b0:51d:4c8a:bbdb with SMTP id 2adb3069b0e04-5220fc7d133mr21143293e87.3.1716152296909;
+        Sun, 19 May 2024 13:58:16 -0700 (PDT)
+Received: from google.com ([2a00:79e0:18:10:9677:a1ea:4905:181b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f39d7ca0sm4059536e87.304.2024.05.19.13.58.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 May 2024 13:58:16 -0700 (PDT)
+Date: Sun, 19 May 2024 22:58:12 +0200
+From: "Steinar H. Gunderson" <sesse@google.com>
+To: Ian Rogers <irogers@google.com>
+Cc: acme@kernel.org, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Add a trie to map quickly from address range to
+ compilation unit.
+Message-ID: <Zkpn5Dtva31rjsEg@google.com>
+References: <20240518165315.3963142-1-sesse@google.com>
+ <ZkjdQqN1dPsZDDRA@google.com>
+ <CAP-5=fXPFtS-aufdZE1_haEo6EpYYDw9JhG_4EjHi2AAzzf5RA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2450470c-b449-48a7-9fb7-aa363cbe885b@acm.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGJsWRmVeSWpSXmKPExsWy7bCmue6vVK80g3/nBS0ezNvGZvHy51U2
-	i2kffjJb3Dywk8li6f6HjBYb+zksLu+aw2bRfX0Hm8Xy4/+YLJ6dPsBssbBjLosDt8flK94e
-	0yadYvP4+PQWi8fEPXUefVtWMXp83iTn0X6gmymAPSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzje
-	Od7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoQiWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJ
-	rVJqQUpOgXmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdsa+w41sBbfYKuZsKGtgvMDaxcjJISFg
-	IvFr3h4gm4tDSGAPo8Su2VvZIJxPjBIzv3xmhXNObtnKDtPy88RLRojETkaJ0x2bGEESQgLP
-	GSXWtiSB2CwCqhJzlt1nA7HZBNQlGqa+YgGxRQQ0JL49WM4C0swsMJFZ4syc10AOB4ewgL/E
-	lHv5IDW8QDV/VsxggrAFJU7OfALWyylgLXGr6yRYr4RAL4fEz7e9UBe5SDSfXcwGYQtLvDq+
-	BSouJfGyvw3KLpf4+WYSI4RdIXFw1m02kL0SAvYS156ngISZBTIkDs94ygIRVpY4cosFIswn
-	0XH4LztEmFeio00IYoiyxMdDh5ghbEmJ5ZdeQx3gIXHxxGQ2SIgcYJS4OTF8AqPcLCTPzEKy
-	bBbQVGYBTYn1u/QhTGmJ5f84kEQXMLKuYpRKLSjOTU9NNiow1M1LLYdHcHJ+7iZGcILV8t3B
-	+Hr9X71DjEwcjIcYJTiYlUR4N23xTBPiTUmsrEotyo8vKs1JLT7EaAqMnInMUqLJ+cAUn1cS
-	b2hiaWBiZmZobmRqYK4kznuvdW6KkEB6YklqdmpqQWoRTB8TB6dUA1Od7fz/kZW7HS48aStl
-	+KA3gb8seLPk3Off5/2z/nsrSkhs54OCDQ8VT5j9/Tilumk3i3nnldRo/foZO3hPN8UZXeFN
-	25i667Cu4runCzWq4z9wn7y33qhi1mY7Hh7pxOut4g/fz5/M8nyW3vRty28eijD4feWttvQa
-	97MsjVdXlBg7bjw6OeRqZ/I/xa+WN/eodt3S3+zq/irbLSHzXgyfluOV4Iv3nJeaTDEQEG+/
-	lMf4/vfGo+x83tde/kk4r/XB97LoLbUF/2Zo7489FFYrtmtXqI5RRvbLey0T02U/rfpzcefa
-	KT7rFqy/9WslZ8EkKe7eru4VZ7w+1GzwjrK+Z1Otfq9ygn/ZieqE2dqLlFiKMxINtZiLihMB
-	xhXz4jkEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSnO7PVK80g1cbuSwezNvGZvHy51U2
-	i2kffjJb3Dywk8li6f6HjBYb+zksLu+aw2bRfX0Hm8Xy4/+YLJ6dPsBssbBjLosDt8flK94e
-	0yadYvP4+PQWi8fEPXUefVtWMXp83iTn0X6gmymAPYrLJiU1J7MstUjfLoEr49rXb+wFc1kq
-	lp5xaGBcw9zFyMkhIWAi8fPES8YuRi4OIYHtjBL/fuxnh0hISuw7fZMVwhaWuN9yhBWi6Cmj
-	xOeXm8CKWARUJeYsu88GYrMJqEs0TH3FAmKLCGhIfHuwnAWkgVlgKrPEja27wdYJC/hKzN5w
-	CczmBSr6s2IGE8TUA4wS3w/MYIFICEqcnPkEzGYGmvpnHkgDB5AtLbH8HwdImFPAWuJW10mW
-	CYwCs5B0zELSMQuhYwEj8ypG0dSC4tz03OQCQ73ixNzi0rx0veT83E2M4NjQCtrBuGz9X71D
-	jEwcjIcYJTiYlUR4N23xTBPiTUmsrEotyo8vKs1JLT7EKM3BoiTOq5zTmSIkkJ5YkpqdmlqQ
-	WgSTZeLglGpg6rNk2W7S83vXj6gj7le54j4IPPk4mbfb7t1/1yAVA58HfPp6JVGdwqaSOV9+
-	bmZ1a9GoTWPdoTl17oMoX3UnFt9nOTP/NWa8YjP/32Okabxdcl9pwUqR7VIL2ZsTDu04ylpu
-	F9kzJ6KmMMjCJjXndotsc9HviytZLqRdrczVXs7inBXr63602yZlAUNMd/vkHTtdkqds3GU6
-	+TyLzsH0Wfpl09Yq+Aaphl+qqkmP9Lr64wrr7cRZZ2TtkgrYVJdzPp77TV1o+S2nAw83FEqu
-	5tCYez/+qPn/w6KzO9i23Cw7OX/mkhb1FJ2vikbPGjp3Wqy9zsm3qTtw1obbPvdmS0/nMRZ+
-	ecN7PueUO2+UWIozEg21mIuKEwEg/UqU/AIAAA==
-X-CMS-MailID: 20240519205001epcas2p319536d42c4837c0fc7e19da0550e308c
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----18bPhOHZ4t-_CcSgAyEj2-9JxUxziaFjkQ7CDPyIhvGVJv9g=_1a241_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356
-References: <CGME20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356@epcas2p3.samsung.com>
-	<20240516031405.586706-1-minwoo.im@samsung.com>
-	<2450470c-b449-48a7-9fb7-aa363cbe885b@acm.org>
-
-------18bPhOHZ4t-_CcSgAyEj2-9JxUxziaFjkQ7CDPyIhvGVJv9g=_1a241_
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAP-5=fXPFtS-aufdZE1_haEo6EpYYDw9JhG_4EjHi2AAzzf5RA@mail.gmail.com>
 
-On 24-05-16 08:03:17, Bart Van Assche wrote:
-> On 5/15/24 21:14, Minwoo Im wrote:
-> >   /* Operation and runtime registers configuration */
-> >   #define MCQ_CFG_n(r, i)	((r) + MCQ_QCFG_SIZE * (i))
-> > -#define MCQ_OPR_OFFSET_n(p, i) \
-> > +#define MCQ_OPR_OFFSET_n(hba, p, i) \
-> >   	(hba->mcq_opr[(p)].offset + hba->mcq_opr[(p)].stride * (i))
-> Since inline functions are preferred over macros, please convert the
-> MCQ_OPR_OFFSET_n() macro into an inline function.
+On Sun, May 19, 2024 at 08:50:37AM -0700, Ian Rogers wrote:
+>> I accidentally sent out an ancient patch anew; sorry, please ignore.
+> Presumably v1 should be reviewed?
 
-Okay.  I will prepare v2.
+v3 was merged into binutils two years ago. :-)
 
-> 
-> Thanks,
-> 
-> Bart.
-> 
-
-------18bPhOHZ4t-_CcSgAyEj2-9JxUxziaFjkQ7CDPyIhvGVJv9g=_1a241_
-Content-Type: text/plain; charset="utf-8"
-
-
-------18bPhOHZ4t-_CcSgAyEj2-9JxUxziaFjkQ7CDPyIhvGVJv9g=_1a241_--
+/* Steinar */
 
