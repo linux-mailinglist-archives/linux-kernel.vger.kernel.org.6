@@ -1,106 +1,442 @@
-Return-Path: <linux-kernel+bounces-183116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190948C94E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:01:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4639B8C94E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF7BF1F21548
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2239D1C20B5F
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FA448CC7;
-	Sun, 19 May 2024 14:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD913487A7;
+	Sun, 19 May 2024 14:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y1C9pHte"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O0/KK0d0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAB08BEA;
-	Sun, 19 May 2024 14:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A98E1870;
+	Sun, 19 May 2024 14:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716127255; cv=none; b=vEd9OiRMzeU+TW5nmcTocpS2BCxptANcuFM/KYnGh0Y75k0um3fdnNqoN0ukvUpsttBljisiVbhEmRI0LGrpj0drbJcI/8NNaXp6CrU8TY7Ap0w9rUncKixOOEq73UB4TZt4hrFLOsJV63ukRWYjc+T+uHijHkTbSZPlQR5SXjs=
+	t=1716127324; cv=none; b=cya5+LyyWvWH2yuLV+pRszyq1QKZF5wCPcnRi+o1Ygl082igkrIYcOdxBbM9ZIrAuVdk9f0jwTsmK/rdouJMiZwoNaGOV6ytmXP3ZnqFYT/wjsOQZt/GDTfUuNvyr95c+o5AsxQQPCa83Bd9RKHYxELddSTe68TDeJs6pg/LNKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716127255; c=relaxed/simple;
-	bh=q29JoiujTS2XkolE6zF5+VhKvwJw4Z7qx2SIZperaRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qys5xQ58T1atpNBOzkb2jfIhM8RHW6WIrogTvvxmG/pFhC5a0boWMJ/gbmcG2gdy2dX4vA3WSSTSww3DyfXNjYFxwZOAjFfd/TBk+iUONKrPLAskeJBmPd0DgAzwwAE7crS3sZDlELsk71EViYKfA2ogli8nHsRiqIzds9aCmyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Y1C9pHte; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=UYsczhSMQVTcPtKcf8myz36ovdn5xE0T0cUehFANQaI=; b=Y1C9pHtertFWleTQDsvZ5j/0kD
-	TXtqk93sdYj1Ugwm8ZnYXN65UV8D4FvavTl6n2e2IhROmLQi3dmRhHk2F+M6rvGjMj6qHQchnt4h9
-	SYdkWzpkt6/v2p/duAGLGF9cQP1wgwu7tXZAXigVVYSXOoRrvn26Mzetr7R/BW9j3wr6NsrJFtDq9
-	Yw37NPG8xX79BEE4pRHxHXKCpU+LVCrR0/1rjXbPoEaXWYjQ0r2vhxb08qbV1tZnEUvcjvNP9HqWj
-	gCc6QBm6OKThPwIfv2to8eQGh5NsKViokgz0A96Xpx1b0LCrq8YevSfW4u+QGrGBfYhZ8yiM8zE+0
-	DzoCTXcA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s8h5f-0000000F4a1-07t2;
-	Sun, 19 May 2024 14:00:43 +0000
-Date: Sun, 19 May 2024 15:00:42 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel-janitors@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	MD Danish Anwar <danishanwar@ti.com>,
-	Paolo Abeni <pabeni@redhat.com>, Roger Quadros <rogerq@kernel.org>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-	Misael Lopez Cruz <misael.lopez@ti.com>,
-	Sriramakrishnan <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [RFC PATCH net-next 12/28] net: ethernet: ti: cpsw-proxy-client:
- add NAPI RX polling function
-Message-ID: <ZkoGCpq1XN4t7wHS@casper.infradead.org>
-References: <20240518124234.2671651-13-s-vadapalli@ti.com>
- <f9470c3b-5f69-41fa-b0f4-ade18053473a@web.de>
+	s=arc-20240116; t=1716127324; c=relaxed/simple;
+	bh=sbK7rEfM58wG30zLosVCLwXkwK3gPeXX22rig67yu5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ttv2vsiyNBhM+S210bnSo03Tgb6odNPmdsP0rysN0gjhmuBkeRrP1Wjwo9jExt4617ndGRzpueIbJ+nYX99euBmIChHmT1WmNhzu+XGjzAGrB3xMGKtAyRqB6+NL2JqNOZ2+YKbrkGIHNvAE+lm7KXomhpt/gqv9LjJIDOy/zJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O0/KK0d0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 117CFC32781;
+	Sun, 19 May 2024 14:01:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716127324;
+	bh=sbK7rEfM58wG30zLosVCLwXkwK3gPeXX22rig67yu5Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=O0/KK0d0scZK4qnwDw/19GUKq9cLiQnQaoI19woZ2343Yd5YdodxMV8ItYcGplaNj
+	 bkW4T0dU5vG8AEdnWcO9zxpsWZontsRPYgBHMzRjo6IIu6vWAS6hZ/Xi4ENVAYrzcq
+	 pg77dtx3hDAVam3bLxq93mpd5tNjgehBW+yd7yY8c7pIvQq54wuUQemI3lv3Hs+peA
+	 xQ/cPjLcN5dwza1KEMaCOzQf2riD0dmm/fj+Jy+ryF3vg4crOvhfm5DsUZz+Lb2yPo
+	 VmGa6XsZ3V32PECiYdYMrOg0oI3R/3JgLnR9QDZEZJLRWFvh7VvgULZZtmyJqxSUqN
+	 9GvSEsIKRuXRg==
+Date: Sun, 19 May 2024 15:01:51 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Gustavo Silva <gustavograzs@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ lars@metafoo.de, christophe.jaillet@wanadoo.fr,
+ gerald.loacker@wolfvision.net, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] iio: chemical: add driver for ENS160 sensor
+Message-ID: <20240519150151.291a21dc@jic23-huawei>
+In-Reply-To: <20240512210444.30824-4-gustavograzs@gmail.com>
+References: <20240512210444.30824-1-gustavograzs@gmail.com>
+	<20240512210444.30824-4-gustavograzs@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f9470c3b-5f69-41fa-b0f4-ade18053473a@web.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Sun, 12 May 2024 18:04:39 -0300
+Gustavo Silva <gustavograzs@gmail.com> wrote:
+
+> ScioSense ENS160 is a digital metal oxide multi-gas sensor, designed
+> for indoor air quality monitoring. The driver supports readings of
+> CO2 and VOC, and can be accessed via both SPI and I2C.
+> 
+> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
+
+Hi Gustavo,
+
+Nice driver in general. 2 things that need fixing though.
+
+- DMA safe buffers for the bulk accesses etc. This is esoteric and won't actually
+  cause you any problems today (and depending on your host may never do so)
+  but I'm trying to keep the IIO drivers inline with the rule that if they do SPI
+  even via regmap and bulk accesses they need to use DMA safe buffers
+- devm vs non-devm cleanup. If you mix these it has to be a clean transition. 
+  So devm for first N and non devm for everything from N+1. They cannot be mixed
+  safely. Easiest option is devm_ for everything.
+
+Jonathan
+
+> diff --git a/drivers/iio/chemical/ens160_core.c b/drivers/iio/chemical/ens160_core.c
+> new file mode 100644
+> index 000000000..25593420d
+> --- /dev/null
+> +++ b/drivers/iio/chemical/ens160_core.c
+> @@ -0,0 +1,227 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * ScioSense ENS160 multi-gas sensor driver
+> + *
+> + * Copyright (c) 2024 Gustavo Silva <gustavograzs@gmail.com>
+> + *
+> + * Data sheet:
+> + *  https://www.sciosense.com/wp-content/uploads/2023/12/ENS160-Datasheet.pdf
+> + *
+Trivial, but this blank line adds nothing so drop it.
+> + */
+
+> +
+> +static int ens160_read_raw(struct iio_dev *indio_dev,
+> +			   struct iio_chan_spec const *chan,
+> +			   int *val, int *val2, long mask)
+> +{
+> +	struct ens160_data *data = iio_priv(indio_dev);
+> +	__le16 buf;
+> +	int ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		ret = regmap_bulk_read(data->regmap, chan->address,
+> +					&buf, sizeof(buf));
+
+As below, should use a DMA safe buffer.
+
+> +		if (ret)
+> +			return ret;
+> +		*val = le16_to_cpu(buf);
+> +		return IIO_VAL_INT;
+> +
+> +	case IIO_CHAN_INFO_SCALE:
+> +		switch (chan->channel2) {
+> +		case IIO_MOD_CO2:
+> +			/* The sensor reads CO2 data as ppm */
+> +			*val = 0;
+> +			*val2 = 100;
+> +			return IIO_VAL_INT_PLUS_MICRO;
+> +		case IIO_MOD_VOC:
+> +			/* The sensor reads VOC data as ppb */
+> +			*val = 0;
+> +			*val2 = 100;
+> +			return IIO_VAL_INT_PLUS_NANO;
+> +		}
+
+		default:
+			return -EINVAL;
+and drop the one below.
+
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int ens160_set_mode(struct ens160_data *data, u8 mode)
+> +{
+> +	int ret;
+> +
+> +	ret = regmap_write(data->regmap, ENS160_REG_OPMODE, mode);
+> +	if (ret)
+> +		return ret;
+> +
+> +	msleep(ENS160_BOOTING_TIME_MS);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ens160_chip_init(struct ens160_data *data)
+> +{
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +	u8 fw_version[3];
+> +	__le16 part_id;
+> +	unsigned int status;
+> +	int ret;
+> +
+> +	ret = ens160_set_mode(data, ENS160_REG_MODE_RESET);
+> +	if (ret)
+> +		return ret;
+
+No docs that I can see on what this means for access to registers etc.
+Good to add a comment if you have info on this.
+
+> +
+> +	ret = regmap_bulk_read(data->regmap, ENS160_REG_PART_ID, &part_id,
+> +			       sizeof(part_id));
+
+Ah. So this is a fun corner case.  Currently regmap makes not guarantees
+to always bounce buffer things (though last time I checked it actually did
+do so - there are optimisations that may make sense where it will again
+not do so).  So given we have an SPI bus involved, we should ensure that
+only DMA safe buffers are used. These need to ensure that no other data
+that might be changed concurrently with DMA is in the same IIO_DMA_MINALIGN
+of aligned data (traditionally a cacheline but it gets more complex in some
+systems and is less in others).  Upshot is that if you are are doing
+bulk accesses you need to use a buffer that is either on the heap (kzalloc etc)
+or carefully placed at the end of the iio_priv() structure marked
+__align(IIO_DMA_MINALIGN). Lots of examples of that in tree.
+If you are curious, wolfram did a good talk on the i2c equivalent of this
+a few years back. 
+https://www.youtube.com/watch?v=JDwaMClvV-s I think.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (le16_to_cpu(part_id) != ENS160_PART_ID)
+> +		return -ENODEV;
+> +
+> +	ret = ens160_set_mode(data, ENS160_REG_MODE_IDLE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(data->regmap, ENS160_REG_COMMAND,
+> +			   ENS160_REG_COMMAND_CLRGPR);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(data->regmap, ENS160_REG_COMMAND,
+> +			   ENS160_REG_COMMAND_GET_APPVER);
+> +	if (ret)
+> +		return ret;
+> +
+> +	msleep(ENS160_BOOTING_TIME_MS);
+
+Why here?  Not obviously associated with a boot command?
+A comment might make this easier to follow.  I 'think' it is
+because this next read is the first time it matters. If so that
+isn't obvious.  Also, there is an existing sleep in the mode set,
+so I'm not sure why we need another one.
+
+> +
+> +	ret = regmap_bulk_read(data->regmap, ENS160_REG_GPR_READ4,
+> +			       fw_version, sizeof(fw_version));
+
+The first datasheet that google provided me has this 
+GPR_READ0/GPR_READ1 and only 2 bytes. I hope they have maintained backwards
+compatibility with that earlier doc!
+
+When you do a separate DT binding in v2, make sure to include a link
+to the datasheet you are using.  Also use a Datasheet: tag
+in this patch to make it easy to find that.
+I dug a little deeper and found the one on sciosense own website
+- ah, you do have it in the comments.  Add to the commit message
+and DT binding as well.
 
 
-FYI, Markus can be safely ignored.  His opinions are well-established as
-being irrelevant.
+> +	if (ret)
+> +		return ret;
+> +
+> +	msleep(ENS160_BOOTING_TIME_MS);
+Why again?
+> +
+> +	dev_info(dev, "firmware version: %u.%u.%u\n", fw_version[2],
+> +		 fw_version[1], fw_version[0]);
 
-On Sun, May 19, 2024 at 03:18:52PM +0200, Markus Elfring wrote:
-> …
-> > +++ b/drivers/net/ethernet/ti/cpsw-proxy-client.c
-> …
-> > @@ -988,6 +994,189 @@ static int vport_tx_poll(struct napi_struct *napi_tx, int budget)
-> …
-> > +static int vport_rx_packets(struct virtual_port *vport, u32 rx_chan_idx)
-> > +{
-> …
-> > +	if (unlikely(!netif_running(skb->dev))) {
-> > +		dev_kfree_skb_any(skb);
-> > +		return -ENODEV;
-> > +	}
-> 
-> I suggest to move such exception handling to the end of this function implementation
-> so that it can be better reused also by another if branch.
-> https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resources
-> 
-> How do you think about to increase the application of scope-based resource management
-> also for such a software component?
-> https://elixir.bootlin.com/linux/v6.9.1/source/include/linux/cleanup.h
-> 
-> Regards,
-> Markus
-> 
+Can definitely do this before the sleep above.
+
+> +
+> +	ret = ens160_set_mode(data, ENS160_REG_MODE_STANDARD);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(data->regmap, ENS160_REG_DEVICE_STATUS, &status);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (FIELD_GET(ENS160_STATUS_VALIDITY_FLAG, status)
+> +	    != ENS160_STATUS_NORMAL)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct iio_info ens160_info = {
+> +	.read_raw = ens160_read_raw,
+> +};
+> +
+> +int ens160_core_probe(struct device *dev, struct regmap *regmap,
+> +		      const char *name)
+> +{
+> +	struct ens160_data *data;
+> +	struct iio_dev *indio_dev;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	data = iio_priv(indio_dev);
+> +	dev_set_drvdata(dev, indio_dev);
+
+After you've moved to devm_add_action_or_reset() for the unwind of
+ens160_chip_init() you probably don't need to set the drvdata.
+
+> +	data->regmap = regmap;
+> +
+> +	indio_dev->name = name;
+> +	indio_dev->info = &ens160_info;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->channels = ens160_channels;
+> +	indio_dev->num_channels = ARRAY_SIZE(ens160_channels);
+> +
+> +	ret = ens160_chip_init(data);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "chip initialization failed\n");
+> +		return ret;
+		return dev_err_probe();
+
+> +	}
+> +
+> +	return devm_iio_device_register(dev, indio_dev);
+> +}
+> +EXPORT_SYMBOL_NS(ens160_core_probe, IIO_ENS160);
+> +
+> +void ens160_core_remove(struct device *dev)
+> +{
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> +	struct ens160_data *data = iio_priv(indio_dev);
+> +
+> +	ens160_set_mode(data, ENS160_REG_MODE_IDLE);
+
+This looks to be mixing devm and manual cleanup.
+My guess is this is the unwind for code in ens160_chip_init()
+If so that unwind should definitely happen after we unregister
+the userspace intefaces in the unwind of devm_iio_device_register().
+Currently it happens before this.
+
+This is an even stronger reason to use devm_add_action_or_reset()
+for this than tidying up as mentioned below (note I tend to
+review backwards through patches so my comments may make more
+sense read that way around).
+
+> +}
+> +EXPORT_SYMBOL_NS(ens160_core_remove, IIO_ENS160);
+> +
+> +MODULE_AUTHOR("Gustavo Silva <gustavograzs@gmail.com>");
+> +MODULE_DESCRIPTION("ScioSense ENS160 driver");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/iio/chemical/ens160_i2c.c b/drivers/iio/chemical/ens160_i2c.c
+> new file mode 100644
+> index 000000000..ee2b44184
+> --- /dev/null
+> +++ b/drivers/iio/chemical/ens160_i2c.c
+> @@ -0,0 +1,68 @@
+..
+
+> +static int ens160_i2c_probe(struct i2c_client *client)
+> +{
+> +	struct regmap *regmap;
+> +
+> +	regmap = devm_regmap_init_i2c(client, &ens160_regmap_i2c_conf);
+> +	if (IS_ERR(regmap)) {
+> +		dev_err(&client->dev, "Failed to register i2c regmap %ld\n",
+> +			PTR_ERR(regmap));
+> +		return PTR_ERR(regmap);
+> +	}
+> +
+> +	return ens160_core_probe(&client->dev, regmap, client->name);
+
+As below, hardcode the name for now.  If it matters in future, get it
+from a chip specific structure that we can look up from whichever
+firmware table we have matched against.
+
+> +}
+> +
+> +static void ens160_i2c_remove(struct i2c_client *client)
+> +{
+> +	ens160_core_remove(&client->dev);
+As below, switch to devm_add_action_or_reset() called from
+devm_ens160_core_probe() to avoid need to have manual remove
+in here.
+
+> +}
+> +
+> +static const struct i2c_device_id ens160_i2c_id[] = {
+> +	{ "ens160", 0 },
+
+As below - drop the 0.
+
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, ens160_i2c_id);
+..
+
+> diff --git a/drivers/iio/chemical/ens160_spi.c b/drivers/iio/chemical/ens160_spi.c
+> new file mode 100644
+> index 000000000..effc4acee
+> --- /dev/null
+> +++ b/drivers/iio/chemical/ens160_spi.c
+..
+
+> +static int ens160_spi_probe(struct spi_device *spi)
+> +{
+> +	struct regmap *regmap;
+> +	const struct spi_device_id *id = spi_get_device_id(spi);
+> +
+> +	regmap = devm_regmap_init_spi(spi, &ens160_regmap_spi_conf);
+> +	if (IS_ERR(regmap)) {
+> +		dev_err(&spi->dev, "Failed to register spi regmap: %pe\n",
+> +			regmap);
+> +		return PTR_ERR(regmap);
+> +	}
+> +
+> +	return ens160_core_probe(&spi->dev, regmap, id->name);
+
+Hardcode the name here for now.  When you support multiple drivers you will want to
+get it from a chip type specific structure, not id->name because that path gives
+rather unexpected answers if we are using devicetree fallback compatibles
+or the lists end up not matching perfectly for some other reason.
+
+That fragility means we mostly just use another source for the name
+and where possible hard code it.
+
+> +}
+> +
+> +static void ens160_spi_remove(struct spi_device *spi)
+> +{
+> +	ens160_core_remove(&spi->dev);
+Might as well register an automated cleanup, particularly as you can
+do it in ens160_core_probe() and have it apply to any other buses for
+free.  If you do that, rename that function devm_ens160_core_probe()
+to make it obvious that is what is going on.
+
+Use devm_add_action_or_reset() to register custom cleanup.
+
+Then you can drop this remove function entirely.
+
+> +}
+> +
+> +static const struct of_device_id ens160_spi_of_match[] = {
+> +	{ .compatible = "sciosense,ens160" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, ens160_spi_of_match);
+> +
+> +static const struct spi_device_id ens160_spi_id[] = {
+> +	{ "ens160", 0 },
+
+Don't set the 0 as that suggests it matters whereas it doesn't
+yet. Maybe it will matter when more parts are added to this driver in future
+ - if so introduce it then.  As a general best practice, this is almost
+always a pointer these days anyway rather than an integer.
+
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(spi, ens160_spi_id);
+
 
