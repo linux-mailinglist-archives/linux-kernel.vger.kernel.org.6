@@ -1,371 +1,104 @@
-Return-Path: <linux-kernel+bounces-183149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49618C9547
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:43:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36278C9549
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D68E21C20925
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:43:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DE551F21B59
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EC34D9E8;
-	Sun, 19 May 2024 16:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D794495E5;
+	Sun, 19 May 2024 16:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qe+hR989"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FaVz0gNA"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728801E867;
-	Sun, 19 May 2024 16:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9059C4501B
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 16:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716136979; cv=none; b=Qh+TgL8O7yd57rPgIdaeZi9ulVFxaYBCqzWXJVTfVB621BfHXwwtBxDZkfKB0MNJG2jsmAc14AS6CZMCW0kIqtUALTzbqgGDCea3YJZTcsX6Q9tjR9ts1AApyb4t3w5jiYhF2nTOVKygtx+P9WTEx20MEiNULDWYajJMTkYuI+M=
+	t=1716137351; cv=none; b=HlKJy8RLb4owVfIhvK3KBm6iSToUgPwYu9d6PYKim8ZkscHOq2Poxi6a3i42zYBeUyHu5qtZxpPNHGECNTUfLjxvN+zOgJY2py5chAJCQfbflBJ7n21NAEr7aYEeqpfRTKxXfaQyWDrjSe5VurHYqtA/A0mmetYnP2Il8VJ7NK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716136979; c=relaxed/simple;
-	bh=nQ6/JUs/BT0cryzioXwW2F5LIo5jOlAOmJQ8JI0DmEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f4FQbSV32I3erBPtLxvqI08PEu4KJ/dSld3VY0GZawtNocSpW4SO17EguGGGq+lnN67tfdAENt6OSW8zuBdL+8ffnnGnOYpnXA+EUJYfxeGq+6jzDypHsyWxfvPSjbR2I+qCM+K9vI6VdmBAZFXw99xL+h4brm8DXryElF6Remo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qe+hR989; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 833F0C32781;
-	Sun, 19 May 2024 16:42:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716136979;
-	bh=nQ6/JUs/BT0cryzioXwW2F5LIo5jOlAOmJQ8JI0DmEY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Qe+hR989oB1bT0GsGN/ESInllYkDRxwSexCGwcaFN8dy1WJ6grjzXX+G+w+BlkLfP
-	 XArE0wRKH9//tqtD04SSN23KjgiNaTGjxrT/CYvVm5TJJOAnaH1OVLIBSIyslo0o+R
-	 E8AY5ra0B8fHRuIbDx6POM001IUTGpkxNRJi4bX4+u+8q7SmnXxN5adhkcThzLFAdj
-	 /X2e1tpE72z853t1n1qNKspG7/j1196f4LlK9zf7CeF6IxBgfG0LbIPOfMyXmwCJdT
-	 jFdXXRZNOHt0RZGr6KJob6ox6EMtUGXu4dCy231cN7xs8L9DQPZXGmCNlhGNZzvzZm
-	 w7b68tvy5OxLA==
-Date: Sun, 19 May 2024 17:42:48 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Andrew Hepp
- <andrew.hepp@ahepp.dev>, Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] iio: temperature: mcp9600: add threshold events
- support
-Message-ID: <20240519174248.69f00448@jic23-huawei>
-In-Reply-To: <20240517081050.168698-3-dima.fedrau@gmail.com>
-References: <20240517081050.168698-1-dima.fedrau@gmail.com>
-	<20240517081050.168698-3-dima.fedrau@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716137351; c=relaxed/simple;
+	bh=Fhiqd8BsQupsJpiNgkIjNU/SvByQ1V6nfzY3RL0SiXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hYxjSY36PXhAFmo7IJnMIHHKn66aG87h11NFL+1iMKQJR7ey/TfxiiJZJ4UP2Q9gHdrenlTfVtqy3KED4e/STp92VqbZ3SKkBPIjWsGx+WkFrM0pDM1Pn7u5CH8AGp2mCkux/lgk7RH76DaGySf1l6UeCzt+Qsw9P06VeQ2nQnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FaVz0gNA; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-51f57713684so4517941e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 09:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1716137347; x=1716742147; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M9lPiIVfBe4u7k3tCVL2yrGrYYG9ynn3v8OVvk6ILus=;
+        b=FaVz0gNAaGH8bZwJ6DQQvA43Q4gpnmsWItlmasb0t5McIcnseYHg/Si4E7CoE5HpmJ
+         VeLDftAS+LCaa9puZoHZwkQIS8ymA7ezNnaR5ZcYLkiZKJQAFMdutwDcw71wSjbt570e
+         /lWJ12JnSUXcQbP0qRj+F/y+JeeevK35OP5wg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716137347; x=1716742147;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M9lPiIVfBe4u7k3tCVL2yrGrYYG9ynn3v8OVvk6ILus=;
+        b=Ik/g7xNkFupQM+G+8RTju5L5u5CIK6wPX9yqQ1c1/ERAKVhvO9zMPrvoisQIoSshIF
+         N7fBHuIaa9X1JzvZBvS4cCZvxO+/h/R9c2oaUdAgmgHe+ndjheZyeGScxS3uZCZonv42
+         t8foR2pZal6XomdgpyvuDmB7XI/Y9N00flLcW0y95+9UXbKbhYQScnQeQU/VEae2sgUO
+         Dy7Xnx3Iub5pSiLEJaEpfUEjtVTXQ54kbXfYeKV4JffVijm40yTRveF1w7qap/lZD0Ei
+         /V3iuprtYgHRFsaYZi2fkXpo7wlWnjcNQkDl0d0osI3ds0TeHxPMA5krVYoL6Lo7sRZA
+         BGQw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4QU/eLh30ycNElOy5BZXAQDzt3H4OIG8Q7JlxxJbQQAY4mrv4ySmORXOTN1WfNfimsBkX2RB8+DM3qY75A2ALuGpnq1hTTfW/quMQ
+X-Gm-Message-State: AOJu0Yyt+QGXBY2izUw/UN+1gQvX6Y9Ke8g4JYFW8ErbPS6HLA6nInn5
+	5D91z9p/0k+I/nWoXG/YKYOaS/HU1i8bSNFwpE3k6IhUVgTrDpPl/uYnZtM+e8aP27WEmkUchIc
+	e1fhS5g==
+X-Google-Smtp-Source: AGHT+IESbwoMLkGM8AxacHrSZSiA554nSpyrtYWxJJRyBGh9sp3/6gCAdnIis8XrV06WsCV2D/n68Q==
+X-Received: by 2002:a05:6512:b07:b0:51f:51a6:eea8 with SMTP id 2adb3069b0e04-5220fa71dc5mr21422160e87.7.1716137347397;
+        Sun, 19 May 2024 09:49:07 -0700 (PDT)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a691870absm905156766b.124.2024.05.19.09.49.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 May 2024 09:49:06 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59a0e4b773so625215966b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 09:49:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWe+sYSwVKw8mfURsNGkQ8V5uJINNxy39WjaDxFdjcvQOp3pidZIWZ9MekyNtjb9kvmjwf9r+mQ+Olhg/lNN/l7OqGyBZlQpvO5RKbt
+X-Received: by 2002:a17:906:22c7:b0:a59:be21:3577 with SMTP id
+ a640c23a62f3a-a5a2d5cd472mr1751615266b.43.1716137346046; Sun, 19 May 2024
+ 09:49:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20240517192239.9285edd85f8ef893bb508a61@linux-foundation.org> <CAHk-=whEAquncw0wb59-XVAHmVh4CWSfwuWh4bTJjJzvx0=PzQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whEAquncw0wb59-XVAHmVh4CWSfwuWh4bTJjJzvx0=PzQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Sun, 19 May 2024 09:48:49 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whSiUg7dggHaBLULuF6_GB6NORLDByog0p=Qo+0ewmZSA@mail.gmail.com>
+Message-ID: <CAHk-=whSiUg7dggHaBLULuF6_GB6NORLDByog0p=Qo+0ewmZSA@mail.gmail.com>
+Subject: Re: [GIT PULL] MM updates for 6.10-rc1
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 17 May 2024 10:10:50 +0200
-Dimitri Fedrau <dima.fedrau@gmail.com> wrote:
+On Sun, 19 May 2024 at 08:32, Linus Torvalds
+<torvalds@linuxfoundation.org> wrote:
+>
+> I'm going to take this pull and fix up the cases I find, but I'm not
+> happy with this kind of trivial C preprocessor misuse.
 
-> The device has four programmable temperature alert outputs which can be
-> used to monitor hot or cold-junction temperatures and detect falling and
-> rising temperatures. It supports up to 255 degree celsius programmable
-> hysteresis. Each alert can be individually configured by setting following
-> options in the associated alert configuration register:
-> - monitor hot or cold junction temperature
-> - monitor rising or falling temperature
-> - set comparator or interrupt mode
-> - set output polarity
-> - enable alert
->=20
-> This patch binds alert outputs to iio events:
-> - alert1: hot junction, rising temperature
-> - alert2: hot junction, falling temperature
-> - alert3: cold junction, rising temperature
-> - alert4: cold junction, falling temperature
->=20
-> All outputs are set in comparator mode and polarity depends on interrupt
-> configuration.
->=20
-> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
-Hi Dmitri
-Please make sure to address all questions in earlier reviews, either by
-changing the code, or directly answering the question.
+I did some other maco handling cleanup too and tried to regularize
+some of this all, and it seems to work for me. But somebody should
+double-check, and it's possible these patterns should all be
+regularized further with a few helper macros for the whole "add
+__GFP_ZERO to argument list" or similar.
 
-The hysteresis handling in here is completely different from normal
-and the diagrams in figure 5-10 suggest it should not be.
-
-Your thresholds should not include hysteresis at all as it has nothing to
-do with event triggering. The hysteresis is presented to userspace so it
-knows when a 'reset' of event detection logic occurs. It is expressed
-as an offset (in the obvious direction) from the current threshold.
-
-It is always positive as negative hysteresis would be very odd. It's just
-magnitude of how far back beyond the threshold the signal must go for
-a reset of the signal detection logic to occur, allowing new transitions et=
-c.
-
-As long as you are using an edge interrupt that just means you won't get
-another interrupt until getting well away from what triggered the interrupt
-last time.
-
-Jonathan
-
-> ---
->  drivers/iio/temperature/mcp9600.c | 389 ++++++++++++++++++++++++++++++
->  1 file changed, 389 insertions(+)
->=20
-> diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/=
-mcp9600.c
-> index 22451d1d9e1f..91d811fe9371 100644
-> --- a/drivers/iio/temperature/mcp9600.c
-> +++ b/drivers/iio/temperature/mcp9600.c
-> @@ -6,12 +6,21 @@
->   * Author: <andrew.hepp@ahepp.dev>
->   */
-> =20
-> +#include <linux/bitfield.h>
-> +#include <linux/bitops.h>
-> +#include <linux/bits.h>
->  #include <linux/err.h>
->  #include <linux/i2c.h>
->  #include <linux/init.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/math.h>
-> +#include <linux/minmax.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
-> +#include <linux/mutex.h>
-> =20
-> +#include <linux/iio/events.h>
->  #include <linux/iio/iio.h>
-> =20
->  #define MCP9600_CHAN_HOT_JUNCTION	0
-> @@ -20,11 +29,65 @@
->  /* MCP9600 registers */
->  #define MCP9600_HOT_JUNCTION 0x0
->  #define MCP9600_COLD_JUNCTION 0x2
-> +#define MCP9600_STATUS			0x4
-> +#define MCP9600_STATUS_ALERT(x)		BIT(x)
-> +#define MCP9600_ALERT_CFG1		0x8
-> +#define MCP9600_ALERT_CFG(x)		(MCP9600_ALERT_CFG1 + (x - 1))
-> +#define MCP9600_ALERT_CFG_ENABLE	BIT(0)
-> +#define MCP9600_ALERT_CFG_ACTIVE_HIGH	BIT(2)
-> +#define MCP9600_ALERT_CFG_FALLING	BIT(3)
-> +#define MCP9600_ALERT_CFG_COLD_JUNCTION	BIT(4)
-> +#define MCP9600_ALERT_HYSTERESIS1	0xc
-> +#define MCP9600_ALERT_HYSTERESIS(x)	(MCP9600_ALERT_HYSTERESIS1 + (x - 1))
-> +#define MCP9600_ALERT_LIMIT1		0x10
-> +#define MCP9600_ALERT_LIMIT(x)		(MCP9600_ALERT_LIMIT1 + (x - 1))
-> +#define MCP9600_ALERT_LIMIT_MASK	GENMASK(15, 2)
->  #define MCP9600_DEVICE_ID 0x20
-> =20
->  /* MCP9600 device id value */
->  #define MCP9600_DEVICE_ID_MCP9600 0x40
-> =20
-> +#define MCP9600_ALERT_COUNT		4
-> +
-> +#define MCP9600_TEMP_SCALE_NUM		1000000
-
-MICRO or just use that inline.
-
-> +
-> +#define MCP9600_MIN_TEMP_HOT_JUNCTION	-200
-> +#define MCP9600_MAX_TEMP_HOT_JUNCTION	1800
-Give these units in the naming and  you can include the * MICRO here.
-e.g.
-#define MCP9600_MIN_TEMP_HOT_JUNC_MICROCELCIUS -200 * MICRO
-etc
-
-
-> +
-> +static int mcp9600_read_thresh(struct iio_dev *indio_dev,
-> +			       const struct iio_chan_spec *chan,
-> +			       enum iio_event_type type,
-> +			       enum iio_event_direction dir,
-> +			       enum iio_event_info info, int *val, int *val2)
-> +{
-> +	struct mcp9600_data *data =3D iio_priv(indio_dev);
-> +	struct i2c_client *client =3D data->client;
-> +	s32 ret;
-> +	int i;
-> +
-> +	i =3D mcp9600_get_alert_index(chan->channel, dir);
-> +	guard(mutex)(&data->lock);
-> +	ret =3D i2c_smbus_read_word_swapped(client, MCP9600_ALERT_LIMIT(i + 1));
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/*
-> +	 * Temperature is stored in two=E2=80=99s complement format in bits(15:=
-2),
-> +	 * LSB is 0.25 degree celsius.
-> +	 */
-> +	*val =3D sign_extend32(FIELD_GET(MCP9600_ALERT_LIMIT_MASK, ret), 13);
-> +	*val2 =3D 4;
-> +	if (info =3D=3D IIO_EV_INFO_VALUE)
-> +		return IIO_VAL_FRACTIONAL;
-> +
-> +	ret =3D i2c_smbus_read_byte_data(client, MCP9600_ALERT_HYSTERESIS(i + 1=
-));
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/*
-> +	 * Hysteresis is stored as unsigned offset from threshold. The alert
-> +	 * direction bit in the alert configuration register defines whether the
-> +	 * value is below or above the corresponding threshold.
-
-I'm still very very confused by this.  I raised a question in the first rev=
-iew
-and you didn't provide more information.
-This is not how hysteresis is normally defined.  It should not affect the
-threshold at all, but instead affect when a reset occurs of the threshold d=
-etection
-logic. It also does not correspond to the diagrams in Figure 5-10 which look
-exactly like normal hysteresis controls.
-
-
-> +	 */
-> +	if (dir =3D=3D IIO_EV_DIR_RISING)
-> +		*val -=3D (*val2 * ret);
-> +	else
-> +		*val +=3D (*val2 * ret);
-> +
-> +	return IIO_VAL_FRACTIONAL;
-> +}
-> +
-> +static int mcp9600_write_thresh(struct iio_dev *indio_dev,
-> +				const struct iio_chan_spec *chan,
-> +				enum iio_event_type type,
-> +				enum iio_event_direction dir,
-> +				enum iio_event_info info, int val, int val2)
-> +{
-> +	struct mcp9600_data *data =3D iio_priv(indio_dev);
-> +	struct i2c_client *client =3D data->client;
-> +	int s_val, s_thresh, i;
-> +	s16 thresh;
-> +	s32 ret;
-> +	u8 hyst;
-> +
-> +	/* Scale value to include decimal part into calculations */
-> +	s_val =3D (val < 0) ? ((val * MCP9600_TEMP_SCALE_NUM) - val2) :
-> +			    ((val * MCP9600_TEMP_SCALE_NUM) + val2);
-> +
-> +	/* Hot junction temperature range is from =E2=80=93200 to 1800 degree c=
-elsius */
-> +	if (chan->channel =3D=3D MCP9600_CHAN_HOT_JUNCTION &&
-> +	   (s_val < (MCP9600_MIN_TEMP_HOT_JUNCTION * MCP9600_TEMP_SCALE_NUM) ||
-> +	    s_val > (MCP9600_MAX_TEMP_HOT_JUNCTION * MCP9600_TEMP_SCALE_NUM)))
-
-As above, change the units of the defines to simplify this or perhaps
-just treat these as numbers and put them here rather than using defines at =
-all.
-
-> +		return -EINVAL;
-> +
-> +	/* Cold junction temperature range is from =E2=80=9340 to 125 degree ce=
-lsius */
-> +	if (chan->channel =3D=3D MCP9600_CHAN_COLD_JUNCTION &&
-> +	   (s_val < (MCP9600_MIN_TEMP_COLD_JUNCTION * MCP9600_TEMP_SCALE_NUM) ||
-> +	    s_val > (MCP9600_MAX_TEMP_COLD_JUNCTION * MCP9600_TEMP_SCALE_NUM)))
-> +		return -EINVAL;
-> +
-> +	i =3D mcp9600_get_alert_index(chan->channel, dir);
-> +	guard(mutex)(&data->lock);
-> +	switch (info) {
-> +	case IIO_EV_INFO_VALUE:
-> +		/*
-> +		 * Shift length 4 bits =3D 2(15:2) + 2(0.25 LSB), temperature is
-> +		 * stored in two=E2=80=99s complement format.
-> +		 */
-> +		thresh =3D (s16)(s_val / (MCP9600_TEMP_SCALE_NUM >> 4));
-> +		return i2c_smbus_write_word_swapped(client,
-> +						    MCP9600_ALERT_LIMIT(i + 1),
-> +						    thresh);
-> +	case IIO_EV_INFO_HYSTERESIS:
-> +		/* Read out threshold, hysteresis is stored as offset */
-> +		ret =3D i2c_smbus_read_word_swapped(client, MCP9600_ALERT_LIMIT(i + 1)=
-);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		/* Shift length 4 bits =3D 2(15:2) + 2(0.25 LSB), see above. */
-> +		s_thresh =3D sign_extend32(ret, 15) * (MCP9600_TEMP_SCALE_NUM >> 4);
-> +
-> +		/*
-> +		 * Hysteresis is stored as offset, for rising temperatures, the
-> +		 * hysteresis range is below the alert limit where, as for falling
-> +		 * temperatures, the hysteresis range is above the alert limit.
-> +		 */
-
-I don't understand this comment.
-Hysteresis as a parameter in sysfs in IIO is also an offset, so why is the =
-current
-threshold relevant?
-
-Normally hysteresis is about allowing repeat events. I.e. you have to drop =
-below
-threshold - hysteresis  before rising again to trigger a rising event when =
-passing
-threshold.
-
-
-> +		hyst =3D min(255, abs(s_thresh - s_val) / MCP9600_TEMP_SCALE_NUM);
-> +
-> +		return i2c_smbus_write_byte_data(client,
-> +						 MCP9600_ALERT_HYSTERESIS(i + 1),
-> +						 hyst);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-
-
-> +static irqreturn_t mcp9600_alert3_handler(int irq, void *private)
-> +{
-> +	struct iio_dev *indio_dev =3D private;
-> +	struct mcp9600_data *data =3D iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	ret =3D i2c_smbus_read_byte_data(data->client, MCP9600_STATUS);
-> +	if (ret < 0)
-> +		return IRQ_HANDLED;
-> +
-> +	if (!(ret & MCP9600_STATUS_ALERT(MCP9600_ALERT3)))
-
-This duplicates far too much all these call a function that takes
-a) This bit,
-b) the related channel index.
-C) the direction
-
-and call that from all these separate handlers.
-Each individual handler become simply:
-
-	return mcp9600_alert_handler(private, MCP9600_ALERT3,
-				     MCP9600_CHAN_COLD_JUNCTION,
-				     IIO_EV_DIR_RISING);
-
-etc.
-
-> +		return IRQ_NONE;
-> +
-> +	iio_push_event(indio_dev,
-> +		       IIO_MOD_EVENT_CODE(IIO_TEMP, MCP9600_CHAN_COLD_JUNCTION,
-> +					  IIO_NO_MOD, IIO_EV_TYPE_THRESH,
-> +					  IIO_EV_DIR_RISING),
-> +		       iio_get_time_ns(indio_dev));
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-
-> +
-> +static irqreturn_t (*mcp9600_alert_handler[MCP9600_ALERT_COUNT]) (int, v=
-oid *) =3D {
-> +	mcp9600_alert1_handler,
-> +	mcp9600_alert2_handler,
-> +	mcp9600_alert3_handler,
-> +	mcp9600_alert4_handler,
->  };
-
+            Linus
 
