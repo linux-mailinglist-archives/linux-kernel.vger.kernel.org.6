@@ -1,175 +1,104 @@
-Return-Path: <linux-kernel+bounces-183015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BBE08C9348
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 03:28:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9CF8C9353
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 04:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C50BB20EDC
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 01:28:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85A9E1C209EA
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 02:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BC98F58;
-	Sun, 19 May 2024 01:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B86BE40;
+	Sun, 19 May 2024 02:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="LBQjTwYS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DWCOv+tG"
-Received: from flow6-smtp.messagingengine.com (flow6-smtp.messagingengine.com [103.168.172.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TSrsl+dL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAA839B;
-	Sun, 19 May 2024 01:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7A91870;
+	Sun, 19 May 2024 02:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716082121; cv=none; b=dhJXJtwRxX0PMqeehBIoikpEyygq6pUi+rRn3ztmsP6v/2swfBr8gY+IY60DN+YSgHUsC1m46ukzlPivoAi466YrqbpjEy7lghMt2Bi12egr7nZjrT3cjPZRwQVuQaIQAtDTK00t4DOIFMAeL45Os76czncyHsg8wZnVJpr5sk0=
+	t=1716087268; cv=none; b=LSkPnZAnuPtM5iGM+OS6PhhboYDS9ZIjsFxoqDRAdttH3wOfdnFqdMujYqXUw/R1d9cNWDS2r7aQMvI7KsIrd/On3FlvXdsvCh63IsNxTxR0uGLKa1DSJE2BE2WUI/+4aL/Cvtvg5Nc29VB9vDjvP1RKT3SRF86oau20hxcuFes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716082121; c=relaxed/simple;
-	bh=cx8p0aOrLv2aKH95V35JoNaCc3yz4DZ2hH/JWbzkDI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bdaLxY9oY2AOek0aJ1swgEbuTDmHpr2tuN24hihKZEYYKP/tuq5jaqAl9Ttf6aTc4Xdll7yyc+mx3ag3Ss9HAuEpwyAtW52UbrP64bTlMMzhgDxLF6mu0PKEB3V8cloofrMOLFfJABYtRKc81HAJUAnO92/G0QxQAWCVA9RdYM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=LBQjTwYS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DWCOv+tG; arc=none smtp.client-ip=103.168.172.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 9272720031D;
-	Sat, 18 May 2024 21:28:38 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Sat, 18 May 2024 21:28:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1716082118; x=1716085718; bh=okNdeP1Ev4
-	hSO4ZAkeKtTmX/46s631+dJ7jzdCCcfBw=; b=LBQjTwYSdvWxEy5IFww/witrrq
-	f2zthnzYB98kLozA7r0nGJJPOqFkmd8+O7xTujRohXJkGn4QHL0//h0jom2SHrlT
-	kGS1fzNhTrNVEG6QKmHyxgYxFGkTRX4LKmVILsXNsFPLbYQ8oL8klyfVE51GxFwH
-	91+VFOk8f8ChW5fgn1OCmRCnen6fzkCIWA3FMuGSCtOxpGNjL/nzDAmL7kM9eNCs
-	lfwif7rtZayFkiEJbRUGwNdJU8vffhsUtYBG9wDUNVRA0t5kmRZmm7VhuD+LiUEt
-	nvjA7AIKQ0qblHu/IHNcS1ui2BwYowDvaUVgJc3e/10jbXQTO8cer7m4Ls0g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	i76614979.fm1; t=1716082118; x=1716085718; bh=okNdeP1Ev4hSO4ZAke
-	KtTmX/46s631+dJ7jzdCCcfBw=; b=DWCOv+tGUkL/OxqC8+UmzU3Ust/5P3jJ5O
-	pC2Umtldj+oCgfK+mqPhvZF7koo5yAVhfwcHI6rB/MFVMzrsEzR7ttp5uZh3TKSq
-	mpbaLGIWQ1awSobD1os4Uq32YCMe0PoqQg3EvHuhGEL6svO6KRFgveyDWaOLVj1c
-	a0isprNF7bEtsUG9MMe5GtJU6OmFveZhpa7andcVpohFezE/n1zdonoEz8D7Mddw
-	zIJdXlNw44MNv+uKiQ4WTNQseY51GPtgK+K6YeqP8lrnof33THj+4PGF5VHYyYKH
-	6sCw0w5s5l2PLeeNLkTXhiV7kSaWCUizJNr05LqHdJbEspxt7Njg==
-X-ME-Sender: <xms:xVVJZv74evkjotdRBDX1zrz-PumOreh-i-IvvjVGffQkGOQu0y3ivA>
-    <xme:xVVJZk5ULstTlD242G-3brBInrnxvME7tEwiaT6r_ypMywW5Y_5snCST5rVcPIPvz
-    3Un7aRsqRHRbnWQV3M>
-X-ME-Received: <xmr:xVVJZmdRwHVQfepxZ978pYHQ8-XIdewXzY0dL2xlZkxflW0hjQGNsKO6hhKlDtfvOJGXJrwAlGlplgRYOP7xoQg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehjedggeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
-    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
-    ftrfgrthhtvghrnhepkeekteegfefgvdefgfefffeufeffjedvudeijeehjeehffekjeek
-    leffueelgffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
-X-ME-Proxy: <xmx:xVVJZgKf3I0H6Jn0qAQaigXjJvz3SfXRta1ugGWMqhPoFjHQfhyJcg>
-    <xmx:xVVJZjJE5ytCRj7y5766qKnSNriYrsDxgpmPvST-0h76o_DwXkRB9w>
-    <xmx:xVVJZpyRuzOf-lJ_Cjk8k6tbiWHDPj16hkdLYK642JjtZRLZoKFdNA>
-    <xmx:xVVJZvK4HIJWvjuFlNfr6LvzXYoDnGwrJOGmkSH4anh1iVf_ktlGrw>
-    <xmx:xlVJZiYZ_2usNuHhsJzmD3dcDmdtjx9hEZI9ANvSgQTZ82yq7TyvExAk>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 18 May 2024 21:28:35 -0400 (EDT)
-Date: Sat, 18 May 2024 18:33:37 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: John Johansen <john.johansen@canonical.com>
-Cc: brauner@kernel.org, ebiederm@xmission.com, 
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
-Message-ID: <aiqls6f5bte6ncoomz3etrzwtnq5tuznlaz66w7bvhrnmpgg6w@ahnsazch5gfo>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-2-jcalmels@3xx0.net>
- <641a34bd-e702-4f02-968e-4f71e0957af1@canonical.com>
- <jwuknxmitht42ghsy6nkoegotte5kxi67fh6cbei7o5w3bv5jy@eyphufkqwaap>
- <be62b80f-2e86-4cbc-82ce-c9f62098ef60@canonical.com>
- <txmrzwf2kr6devb5iqghctgvtbccjaspf44entk4fopjbaet2j@zqdfxiy6y6ej>
- <7f94cb03-d573-4cc5-b288-038e44bc1318@canonical.com>
+	s=arc-20240116; t=1716087268; c=relaxed/simple;
+	bh=WunisLTOGe0gk918aPPfVny/lzuRRrtQfgukDSsiixU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=UxePob2YrsqX7DW0PZ2LqRKyTBAoQnlLRGPOddE4lj68uW5DCV+JkhdGhIt5yfu4nx58a5wTXnvSQVLaIY5Uw4/vwyyf80q5pkd1KUpNEeS8MbA4wdrYQ6y/mtksr6UPBW/5oeVj4f8t9M3rsekiFlU4JD1J/ak0euVbg/Vldyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TSrsl+dL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4777C113CC;
+	Sun, 19 May 2024 02:54:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716087267;
+	bh=WunisLTOGe0gk918aPPfVny/lzuRRrtQfgukDSsiixU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TSrsl+dLVpbXo7/vEIpXQYd7IQJjMUdjR6IXtvvW7q7JCOlvHvPMB7Xnfom5Dx2tN
+	 wLqoCXEY2gCrF4ufVt+RGZGnaZ4n1Dnq2bTBOC3qej/Dme6NMoh4fkSOtJv0nWNFvB
+	 UnWH3sAqfl7gBVp8nf6fS2kcgiHWRVJoCe/skARm8upFE6oygrt/Mt4tgyNwxcXr0J
+	 HqEtYon9Gatzuob2Np7j7MiNA7WVkSEgfcct5QTYzQr9frjfvNFnrMUm2BQ6JHSYDH
+	 rgWvZx7zKYGRYZ2BYtKPyUgH5jiYbTk+ydLmjmpSekSNg+QSk5gWcpGXBZhBmMHgCz
+	 GDutcCq1IBmbw==
+Date: Sun, 19 May 2024 11:54:23 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, <linux-kernel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] kernel: trace: preemptirq_delay_test: add
+ MODULE_DESCRIPTION()
+Message-Id: <20240519115423.f89db5ecf2fb336dc2f4ecb1@kernel.org>
+In-Reply-To: <20240518-md-preemptirq_delay_test-v1-1-387d11b30d85@quicinc.com>
+References: <20240518-md-preemptirq_delay_test-v1-1-387d11b30d85@quicinc.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7f94cb03-d573-4cc5-b288-038e44bc1318@canonical.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 18, 2024 at 05:27:27AM GMT, John Johansen wrote:
-> On 5/17/24 20:50, Jonathan Calmels wrote:
-> > As mentioned above, userspace doesn't necessarily have to change. I'm
-> > also not sure what you mean by easy to by-pass? If I mask off some
-> > capabilities system wide or in a given process tree, I know for a fact
-> > that no namespace will ever get those capabilities.
+On Sat, 18 May 2024 15:54:49 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+
+> Fix the 'make W=1' warning:
 > 
-> so by-pass will very much depend on the system but from a distro pov
-> we pretty much have to have bwrap enabled if users want to use flatpaks
-> (and they do), same story for several other tools. Since this basically
-> means said tools need to be available by default, most systems the
-> distro is installed on are vulnerable by default. The trivial by-pass
-> then becomes the exploit running its payload through one of these tools,
-> and yes I have tested it.
+> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/trace/preemptirq_delay_test.o
 > 
-> Could a distro disable these tools by default, and require the user/admin
-> to enable them, yes though there would be a lot of friction, push back,
-> and in the end most systems would still end up with them enabled.
+
+Looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Fixes: f96e8577da10 ("lib: Add module for testing preemptoff/irqsoff latency tracers")
+
+Thanks,
+
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  kernel/trace/preemptirq_delay_test.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> With the capibilities approach can a user/admin make their system
-> more secure than the current situation, absolutely.
+> diff --git a/kernel/trace/preemptirq_delay_test.c b/kernel/trace/preemptirq_delay_test.c
+> index 8c4ffd076162..cb0871fbdb07 100644
+> --- a/kernel/trace/preemptirq_delay_test.c
+> +++ b/kernel/trace/preemptirq_delay_test.c
+> @@ -215,4 +215,5 @@ static void __exit preemptirq_delay_exit(void)
+>  
+>  module_init(preemptirq_delay_init)
+>  module_exit(preemptirq_delay_exit)
+> +MODULE_DESCRIPTION("Preempt / IRQ disable delay thread to test latency tracers");
+>  MODULE_LICENSE("GPL v2");
 > 
-> Note, that regardless of what happens with patch 1, and 2. I think we
-> either need the big sysctl toggle, or a version of your patch 3
+> ---
+> base-commit: 674143feb6a8c02d899e64e2ba0f992896afd532
+> change-id: 20240518-md-preemptirq_delay_test-552cd20e7b0b
+> 
 
-Ah ok, I get you concerns. Unfortunately, I can't really speak for
-distros or tooling about how this gets leveraged.
-I've never claimed this was going to be bulletproof day 1.
-All I'm saying is that they now have the option to do so.
 
-As you pointed out, we're coming from a model where today it's open-bar.
-Only now they can put a bouncer in front of it, so to speak :)
-
-Regarding distros:
-
-    Maybe they ship with an empty userns mask by default and admins have
-    to tweak it, understanding full well the consequences of doing so.
-
-    Maybe they ship with a conservative mask and use pam rules to
-    adjust it.
-
-    Maybe they introduce something like a wheel/sudo group that you need
-    to be part of to gain extra privileges in your userns.
-
-    Maybe only some system services (e.g. dockerd, lxd/incusd, machined)
-    get confined.
-
-    Maybe they need highly specific policies, and this is where you'll
-    would want LSM support. Say an Apparmor profile targetting
-    unshare(1) specifically.
-
-Regarding tools:
-
-    Maybe bwrap has its own group you need to be part of to get full
-    caps.
-
-    Maybe docker uses this set behind `--cap-add` `--cap-drop`.
-
-    Maybe lxd/incusd imlement ACL restricting who can do what.
-
-    Maybe steam always drops everything it doesn't need,
-
-I'm sure this won't cover every single corner cases, but as stated in
-the headline, this is a start, a simple framework we can always
-extend if needed in the future.
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
