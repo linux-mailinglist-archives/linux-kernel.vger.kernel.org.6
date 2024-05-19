@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-183172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A48E8C9590
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:37:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F5668C9593
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB175281FCF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:37:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C09AD1C2118C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A4150285;
-	Sun, 19 May 2024 17:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B376F50285;
+	Sun, 19 May 2024 17:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtGQ7N+F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KPokKQSc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663A514A81;
-	Sun, 19 May 2024 17:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF53D14006;
+	Sun, 19 May 2024 17:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716140214; cv=none; b=Pbl4tmbUowaeH/RgQqjUNEM0CGwTtZOErtnDTK7dnRaNhtN2i4HXJ68aOU9DIgprd1m7OxxIaPudX44H/M3jsGGqL9k9lmWq39CieuGSJgNTGjFFahtk3H/xWN4hBs3cbZM8y5St9Dic6o36rgxPKVNiY3iNwq7IsEIQSwO/9a8=
+	t=1716140294; cv=none; b=Vw9NSWoZzsJaWG4D3xVqqlQLSAMF9EnvkotyUkYCMlfuRbI1nyRJOON2Dxis9p+ed/2xeuSB76SHwD/3tLhPIvHqXI5AF6jahyaIViNIw6+L4ZW5zGLhCJPgugoshRUY2wV3Zk0msMuCp6oOruScq6xKpxD0Xmf2CB6xJFUa8I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716140214; c=relaxed/simple;
-	bh=21HH8WXzLEybD2y2VIp++QC2CVQcWQk6SHeek0XTQ94=;
+	s=arc-20240116; t=1716140294; c=relaxed/simple;
+	bh=JMqzbDwlzdTOXrfPu417lxz0K7rPUVTvb2gQWcX5vVw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NPBEbEU1Wwmimef8wCs2AeEfBCM1M5XvkCyBLP4egep86573wLcZ7J+0UY4C+yqX9U0N+OL4VlZ2lmFuVjqSLB5q9dEAEScMnSiFaZtq9D1csIK5Ef+2SUkZiAabLmrFGlhuTPziiQQvmYema9aj/+ZAqB+9kcNrV5/ZJDmOlqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtGQ7N+F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69A8C32781;
-	Sun, 19 May 2024 17:36:48 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=HX55K3n8v6uC5reVZ6sNyvI34Gt+Te3TUtyp7hPOtcha4PMo2q/JWqyJIbqs9xkBny9R3j2eSGXdSvycupcoNrTBRp53XTg9vPgXlp2LUPRYcf08VU0n0Q5Nk6tYxhMi/aWrBfctsg1uqbl3Tv92yO1nlnVAQD1GZXQomapL3DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KPokKQSc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7807DC32781;
+	Sun, 19 May 2024 17:38:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716140214;
-	bh=21HH8WXzLEybD2y2VIp++QC2CVQcWQk6SHeek0XTQ94=;
+	s=k20201202; t=1716140293;
+	bh=JMqzbDwlzdTOXrfPu417lxz0K7rPUVTvb2gQWcX5vVw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RtGQ7N+FB7NrCMWMjlPXPNI+TIjSqq9wL69w8b1BJoaAOvAgfk+GM26LM5ZRznQ1b
-	 feYTg4OsmBBOED/bv2gg26qqTtEs+Z7dNe4ufrdmQorgW9yUDsqRqI/AsYefxNrOOT
-	 ucMKo6Xz7oEn/k4t3dvseP6kev8chYG2eOWrK1wzX1YjuFTjpy9lyml01KdMyuKm/Z
-	 uhUGxE0LY9dHTkdeYtd8F3dQCRU1nDHRY/4Njr3w9sv1qtgUuiepnkYtTSUqd1fuzY
-	 v1zyi1npymvYvMZ7S15wz89u1p00xLkPzyy7/RbgujE4wdMXN13hRPJVpSE+d66ZWW
-	 prq/3CwfgukoQ==
-Message-ID: <3521519f-34b8-472d-be37-f0e64bba24fc@kernel.org>
-Date: Sun, 19 May 2024 19:36:46 +0200
+	b=KPokKQScW/IwfF6dZTWfZLaA9jav11GydTnqvUa4qvbNhXZYPXbX0gsWsnslodpPA
+	 /NBY9jipSENnnEBhtKkRXSjv37QcSlEbv7TezzfqEij7zNwXBFt7QpMHGMjx+frTzX
+	 nVuCHhLbKQoDPkwwsDhy2bhhGd07bDkGY8HvpFSlFHsvu0N1xF2tGTl4Capa23voD2
+	 7LtDkZ1X0bk+zFY12QO6nBiCrogKUaIqsoxoMTAaORUwR3dQwA9uHQSul/ejreeh/Y
+	 wxHogdL2NURn4XJgD7uQr7doC6CPSpvlZ4f5VwXTAqP10v3RJcMeiC0qo+RsLTsnN7
+	 LTbj9lwD7Sg3w==
+Message-ID: <1675a33d-47af-4de9-a0e7-177cbe208e2b@kernel.org>
+Date: Sun, 19 May 2024 19:38:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] dt-bindings: remoteproc: qcom,pas: Add hwlocks
-To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
- <20240516-hwspinlock-bust-v1-5-47a90a859238@quicinc.com>
+Subject: Re: [PATCH] dt-bindings: usb: gpio-sbu-mux: Add an entry for
+ TMUXHS4212
+To: Parth Pancholi <parth105105@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
+Cc: Parth Pancholi <parth.pancholi@toradex.com>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240517111140.859677-1-parth105105@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,17 +103,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240516-hwspinlock-bust-v1-5-47a90a859238@quicinc.com>
+In-Reply-To: <20240517111140.859677-1-parth105105@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/05/2024 00:58, Chris Lew wrote:
-> Add hwlocks property to describe the hwspinlock that remoteproc can try
-> to bust on behalf of the remoteproc's smem.
+On 17/05/2024 13:11, Parth Pancholi wrote:
+> From: Parth Pancholi <parth.pancholi@toradex.com>
+> 
+> Add a compatible entry for the TI TMUXHS4212 GPIO-based
+> bidirectional 2:1 mux/1:2 demux which can be used for
+> switching orientation of the SBU lines in USB Type-C
+> applications.
+> 
+> TMUXHS4212 datasheet: https://www.ti.com/lit/ds/symlink/tmuxhs4212.pdf
+> 
+> Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
+> ---
+>  Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-Sorry, as you wrote, the lock is part of smem, not here. Drivers do not
-crash, so if your crashes as you imply in the cover letter, then first
-fix the driver.
+Where is an user of this?
 
 Best regards,
 Krzysztof
