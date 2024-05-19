@@ -1,63 +1,49 @@
-Return-Path: <linux-kernel+bounces-183155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED508C9555
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:55:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 242F88C956C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56DE1F21A58
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:55:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60C5FB20AEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797604F207;
-	Sun, 19 May 2024 16:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DEE4D9E7;
+	Sun, 19 May 2024 17:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxXKfFos"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="PcgcU1SF"
+Received: from smtp-out.freemail.hu (fmfe28.freemail.hu [46.107.16.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC53B4501B;
-	Sun, 19 May 2024 16:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7713A1E867;
+	Sun, 19 May 2024 17:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716137691; cv=none; b=GhPCj+STkrY6K81QOcRKO15PkoeV4wDtnr6OudvUCpgQV2VHaCuWa0dhu/Fa/0TY/dwqqV8qC4sAc1/QrruNodICu3oZlipBgJh3YHE8gNA10XAZQczzBEgIegV6TTVq9cMWJrtv7CSZdI37Vqh18gKaTc/ts2QY/Tn40On9dQk=
+	t=1716138150; cv=none; b=ic6KbYNZdATdr3afDmDC2vExXn9NKJ2gly8ZWDDaqwbQact+St2LA5PB94erMegwd/HV7+DVg2h0RNFxAxWDNZrg8ZadcFdf13BKZcZrLXbSpdCsdlqJ6HeRdOd1EfThpA+cx/Arkn+7tKNSq6ErYCkmkBSR6S+hkjrIr9fO37M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716137691; c=relaxed/simple;
-	bh=tR4mc4IZBn+VwLq6uI83LBm5Hav1YvQbFaYXMsVsAn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ck3AXsVioiPqZotO7bgyWRcaB/zb6GBDoXzxAeMc/+gTVrQdbxGSultBpe33LGkigjyPjfsaRxE0p6v2Z9EW+bFoYuM/T8nr1GYtCJbEtYZgxIMHb4ASBFv8vSvkH26U8By0x8ZrKkeiPE0/wGNJP0BZM/JVGrfW2LHq0ok7brA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxXKfFos; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69BFEC4AF07;
-	Sun, 19 May 2024 16:54:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716137691;
-	bh=tR4mc4IZBn+VwLq6uI83LBm5Hav1YvQbFaYXMsVsAn4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uxXKfFosQgBvoj1mDrpbBmBnJ9EdbIMjKlWw6Q/FwNu5KemtHTyniqVotxguFcSzv
-	 Qel2uVToJ6X/LOvzev76uwqDlHiH3CxGaIZDHJeBWLiHdYu3wDIPSHHNJalY9bGolh
-	 hHP4BSStmnGcN5mTEbgwxjWltRt5+x4gFCV2VB74Xtma9PSI9V14FYldMAg03RYO2H
-	 o5QfB4pMIvNlkwt7Kxz5GcXwr05T3BBUR94zZ/mw/Eahgzt0cyKiDSqJPAaIX+xW9u
-	 yeDDwXh8nRfpp2pHx29ZLN61esD7NFzXnCyvFf5NZoXb7BIgAuRYtMHXsth7NgzPAO
-	 SfDacurBvxi4Q==
-Date: Sun, 19 May 2024 17:54:38 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>, dumitru.ceclan@analog.com,
- Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] dt-bindings: adc: ad7173: add support for ad411x
-Message-ID: <20240519175438.5959fab2@jic23-huawei>
-In-Reply-To: <CAMknhBFKM+DC9jNDV+cZ5agwsXJ1iqU9DB3XD-y3sVcRWJOAsQ@mail.gmail.com>
-References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
-	<20240514-ad4111-v2-1-29be6a55efb5@analog.com>
-	<CAMknhBGNPvxegL+YbnLGoKjA=P3Vx=x+39aXuMgq+cv2KgdeLw@mail.gmail.com>
-	<151d6893-3e9e-4331-8dde-5293e75f10ef@gmail.com>
-	<CAMknhBFKM+DC9jNDV+cZ5agwsXJ1iqU9DB3XD-y3sVcRWJOAsQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716138150; c=relaxed/simple;
+	bh=z0HEpwuxgZUJe2+XFOQ3mW/AL7YeIiVbzyFq4gc3vbE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ESd5Nat8pyPArAHn8omObx3VpQL6EhKZap2oi7J5SaLcPih/260EXaT+Au7fkUbYVFTwqZMH5QKj0Qkz9lwyePtlIacWtUzFBFd1vJNvNRMGmkWLWYk9oxc89awbypTezz4VcVZ5ppJp0ioxF67ylJMCkt9RJVub/Uxos/71+nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=PcgcU1SF reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
+Received: from fizweb.elte.hu (fizweb.elte.hu [157.181.183.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.freemail.hu (Postfix) with ESMTPSA id 4Vj6JH3s6Lz4dp;
+	Sun, 19 May 2024 18:55:11 +0200 (CEST)
+From: egyszeregy@freemail.hu
+To: wsa+renesas@sang-engineering.com,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Benjamin=20Sz=C5=91ke?= <egyszeregy@freemail.hu>
+Subject: [PATCH] i2c-dev: Introduce "linux,i2c-dev-name" property for device tree of I2C controller.
+Date: Sun, 19 May 2024 18:55:04 +0200
+Message-Id: <20240519165504.19627-1-egyszeregy@freemail.hu>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,109 +51,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1716137712;
+	s=20181004; d=freemail.hu;
+	h=From:To:Cc:Subject:Date:MIME-Version:Content-Type:Content-Transfer-Encoding;
+	l=1506; bh=SpZ0hi7sZoilYx08Os0iQ7zMl6chRN/0TUPqVc9082s=;
+	b=PcgcU1SF4t47qJMHd47C/PTdJAf+Z0cHl4+46HozeIKSY16BYsXFtOjdPhcOQP++
+	uc3KwZqMX992JtvPfoC2C/HaB1OnKU2gjVQdU0Kpg0nl+QZy2lGftFVsu38ssEzPW/Q
+	9zX9ep+t84aa2WQJjO7l/YEHwJcTAcE4u/qnrqgiqn6TfIJDp36Qm+PJjUY8UGpKX+7
+	DRCW56Rf09VQj9wtuH+WQSenE01qHsneU+fpUUuJOztA/I9PIADrkrmaIsdmVbK/o39
+	GjMG8aRzVDDc0TG5kqRM+NDUNFv60ABOJPxrheeIegW29Nrcdx5oOx8ZZj8Ih9Wr5z5
+	xxV756CF9w==
 
+From: Benjamin Szőke <egyszeregy@freemail.hu>
 
-> > =20
-> > >> +
-> > >> +          There are special values that can be selected besides the=
- voltage
-> > >> +          analog inputs:
-> > >> +            21: REF+
-> > >> +            22: REF=E2=88=92
-> > >> +          Supported only by AD7172-2, AD7172-4, AD7175-2, AD7175-8,=
- AD7177-2:
-> > >> +            19: ((AVDD1 =E2=88=92 AVSS)/5)+
-> > >> +            20: ((AVDD1 =E2=88=92 AVSS)/5)=E2=88=92
-> > >> +          Supported only by AD4111, AD4112:
-> > >> +            12: IIN3+
-> > >> +            11: IIN3=E2=88=92
-> > >> +            13: IIN2+
-> > >> +            10: IIN2=E2=88=92
-> > >> +            14: IIN1+
-> > >> +             9: IIN1=E2=88=92
-> > >> +            15: IIN0+
-> > >> +             8: IIN0=E2=88=92 =20
-> > >
-> > > I just made a late reply on v1 where Jonathan suggested that the
-> > > current inputs are differential with a similar comment to this:
-> > >
-> > > It doesn't seem to me like current inputs are differential if they are
-> > > only measuring one current. They take 2 pins because you need a way
-> > > for current to come in and go back out, but the datasheet calls them
-> > > single-ended inputs.
-> > > =20
-> > It seemed to me that the conclusion that we arrived to was to expose the
-> > precise pins that are used in the conversion and document the selection.
-> >
-> > Yes, it is a single-ended channel. So revert to the way it was in V1 us=
-ing
-> > single-channel? =20
->=20
-> I'd like to hear Jonathan's opinion on this one.
+Optionally, an I2C controller may have a "linux,i2c-dev-name" property.
+This is a string which is defining a custom suffix name for I2C device
+in /dev/i2c-<name> format. It helps to improve software portability between
+various SoCs and reduce complexities of hardware related codes in SWs.
 
-Yes.  I think we rather went off on a false tangent on this.  Any current i=
-nput
-using a shunt is of this form and so far we've treated them as single ended=
- :(
-e.g. pac1934 does this for it's sense inputs where there is an external
-'sense resitor'.  Similar for the stand alone afe driver for a current sens=
-e shunt
-which is used with a differential voltage input, but presents a single ended
-current measurement.
+Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
+---
+ drivers/i2c/i2c-dev.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Sorry for misguiding things :(=20
-
-At the end of this, I don't suppose anyone fancies writing up some notes
-on how to describe different types of channel?
-
->=20
-> > =20
-> > >> +
-> > >>          items:
-> > >>            minimum: 0
-> > >>            maximum: 31
-> > >> @@ -154,6 +195,23 @@ patternProperties:
-> > >>            - avdd
-> > >>          default: refout-avss
-> > >>
-> > >> +      adi,current-channel:
-> > >> +        description: |
-> > >> +          Signal that the selected inputs are current channels.
-> > >> +          Only available on AD4111 and AD4112.
-> > >> +        type: boolean
-
-I'm lost. Why do we need this one?  Is the channel selection not sufficient
-to tell us this?
-
-> > >> +
-> > >> +      adi,channel-type:
-> > >> +        description:
-> > >> +          Used to differentiate between different channel types as =
-the device
-> > >> +           register configurations are the same for all usage types.
-> > >> +        $ref: /schemas/types.yaml#/definitions/string
-> > >> +        enum:
-> > >> +          - single-ended
-> > >> +          - pseudo-differential
-> > >> +          - differential
-> > >> +        default: differential
-> > >> + =20
-> > >
-> > > As suggested above, we should soon have diff-channels and
-> > > single-channel to differentiate between (fully) differential and
-> > > single-ended. Do we actually need to differentiate between
-> > > single-ended and pseudo-differential though?
-> > > =20
-> > Not really, so just a bool differential flag? (this seems weird as we h=
-ave diff-channels) =20
->=20
-> Or we need to change the proposed single-channel property to allow two
-> inputs. I guess we'll see what Johnathan has to say.
-
-I think single ended fits better for the current channels with just one
-parameter.
-
-
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index 8b7e599f1674..df4cec88ea59 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -651,6 +651,7 @@ static void i2cdev_dev_release(struct device *dev)
+ 
+ static int i2cdev_attach_adapter(struct device *dev)
+ {
++	const char *name;
+ 	struct i2c_adapter *adap;
+ 	struct i2c_dev *i2c_dev;
+ 	int res;
+@@ -672,7 +673,16 @@ static int i2cdev_attach_adapter(struct device *dev)
+ 	i2c_dev->dev.parent = &adap->dev;
+ 	i2c_dev->dev.release = i2cdev_dev_release;
+ 
+-	res = dev_set_name(&i2c_dev->dev, "i2c-%d", adap->nr);
++	/*
++	 * If "linux,i2c-dev-name" is specified in device tree, use /dev/i2c-<name>
++	 * in Linux userspace, otherwise use /dev/i2c-<nr>.
++	 */
++	res = device_property_read_string(&adap->dev, "linux,i2c-dev-name", &name);
++	if (res < 0)
++		res = dev_set_name(&i2c_dev->dev, "i2c-%d", adap->nr);
++	else
++		res = dev_set_name(&i2c_dev->dev, "i2c-%s", name);
++
+ 	if (res)
+ 		goto err_put_i2c_dev;
+ 
+-- 
+2.39.3
 
 
