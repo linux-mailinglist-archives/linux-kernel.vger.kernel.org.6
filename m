@@ -1,142 +1,147 @@
-Return-Path: <linux-kernel+bounces-183212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 529BB8C95F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:44:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BFB98C95F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82D421C20D65
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:44:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 964E11C208FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB6370CC9;
-	Sun, 19 May 2024 18:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EE15FEE5;
+	Sun, 19 May 2024 18:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMEh+3g8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MoXRLGv4"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987D16D1B9;
-	Sun, 19 May 2024 18:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACDB6D1B9
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 18:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716144235; cv=none; b=bAuYdzxna5e0C9M3exGLsLxfvArhS6W2J5gWzLwGMiRhh5A9pVz9RatIHC86ZjdW0iDZLB8BUBwkbkTncf+YeQPQorjtnjzqDig9j0IIg13HQDz2N5liP2+3Lm97cvC7BjhyJ0hNfvkgb+/zlFodeLHt2UoUFls6PRZ+4VHUIGw=
+	t=1716145038; cv=none; b=lHdSLHP65XKqprBAyfzyuhWTeBASs6zBnHztcWPlICLw7TPe45UlNulLYL9gKbbzdCWNTNFSvhsHr2d+nIXuDhCVAYRmK3vjYYmGev6cAQ0Ij6KHu8z64soV68n+8sUGNjq6Eu6jEDaxD7MGnnbUeo7uJiZMXPqjLSRJTl4JE0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716144235; c=relaxed/simple;
-	bh=Z64QIpvqXdl7muS6/ZZuI9SyD5ANwufO0lUkLdugi2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FnH+DBNenv1i1xeUjru/36uDJkdoyf81K61tXLQaDsDtKo2FgiQ1iSeqqGtHWrECvQCKQhMqDoYY7wjOh3VDIsxXH51lyaO6zQPYLkZc3t0c36fdntiWGB4+CoAKLwToEAFMAOWG2qNfoiGM0utMSq3PVDMRUXLmlfkchPAdF2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMEh+3g8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7730EC32781;
-	Sun, 19 May 2024 18:43:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716144235;
-	bh=Z64QIpvqXdl7muS6/ZZuI9SyD5ANwufO0lUkLdugi2Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RMEh+3g8XQyK6rjiZUSCTCYPIyk9FpkDhV7ISReUlZDmNB6lLwK/VYNzwpEC2ShGz
-	 zq5hYbdMeYWafC+nh/aelaqTeAAiIUggqG7knY5IuiSXpzohhsAUKDJ/Xu8pKOa7j7
-	 8Skr4ZDquy2AUAaGIcdfoMvC2Etf2ii1rQL9LczlKcULAak8PBxy+GdJ8NdcUQ8MnS
-	 X5jU01b09eHIJpw95Hq08v8+Y/meKqvKPEULr+QIdeh4OO+lF7NHhtqFR1aQs+gP+5
-	 w2WWBpl1i/+AYnwMtC4piLpwN0woUkq6ZsmtFSv/ILHWFFv83Y/eKvkHwgosZ0Q4u8
-	 MH5gVF1Qi+Fbg==
-Message-ID: <7b3cd3a1-1fcf-48b7-a4ed-b110ecdce9bf@kernel.org>
-Date: Sun, 19 May 2024 20:43:44 +0200
+	s=arc-20240116; t=1716145038; c=relaxed/simple;
+	bh=HCDGXHWYGuug0vB2TJuSEuYHOYHvebMr845YY7RWV9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FarDUV0CAznRNneeneSvjG2yClhMfBp0mUxIyXi3+C9Wm1kNm1Oe1e15v/uw0OSjN+99kqar3Ho/rtAQ6tHbkbHK1aseKBUOa59R5pfH5qb+AvSOyviXzUXXMhtoxlNUUTVUkN7Ff7gxeG8N/k6qNyaA+4kEWLXfbb+t52mZO/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MoXRLGv4; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e538a264e0so46113121fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 11:57:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1716145035; x=1716749835; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iY9tQ/lw2tptEzAdBZnuUzlK61qi/54gCaWIsbKgyvQ=;
+        b=MoXRLGv4hJqacADGcZtfcr6gCI6yhhuxbHDgara8kHCA6xckYNCpbBTwhRl61nyuGs
+         O5m6ynqRSQdJJbGphtbyNeX/oROXj+OZcDdKuoXekumSpwal3ftElaWej1H4akAAIEZF
+         bXeUYO69YkZDtpenpNrj0ZfU5up/LKXFxaLFY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716145035; x=1716749835;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iY9tQ/lw2tptEzAdBZnuUzlK61qi/54gCaWIsbKgyvQ=;
+        b=EO0xHJQTSyi9fQNTKahhn3NzZAVByBsAgSZFvkWCrP7aFP2biECq4kCxsyYVR6FZzt
+         NcADDtwQrV/fJsr5pvKyKPk58OkA1YxAqimKVWIOiBVwyVHj4WYdFLm+B0OsZnqsj2G3
+         JLxUVdGNIwE4hojZ2U4QLFKhJ4tGMnTNwPHGjh6JAzrIT5uagY2yz5nfSVunRwyAtS3w
+         uAkNEqrKTn5MkCR8vceK/WB86PhTEjQjCD1fEXsOrPrP1K2gawcYL9nHMS2TpErFN3op
+         gN3eVI8CqksCy/S62X+bhseBEK8xiTg8lolWcOs/Lcq9BG+lQ7ZQSaymtfvncmn9gthQ
+         wU4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUiiTuPGWYX3OHyPTOnv3KmUDuSCLKJsvNoNCd2O0R68B2gy1EJCUKGTdUaE4nu6vmDhAKpwBTuHsiI2zlJVUyKaX9jOX6+MP6VXoW6
+X-Gm-Message-State: AOJu0YzP4J66paQZqRFDmm7bXLgS/1SPEF/xbobS6+Y+xOyiK2HHO0xg
+	Muz3i4Nj966dCAIdqujwkHLRDujnkRjlMXwtS3RKMw2eQwBJZlboOmipTe2NYufEgzVnScKkrXF
+	rQhL0Zg==
+X-Google-Smtp-Source: AGHT+IEoAZKQsW5TQ+Jz9pr7izo0vFNObjMhnLtb/AnzgMPQ8kCaNni1FhXknIaVtIfxNl71AeI6jQ==
+X-Received: by 2002:a19:ca07:0:b0:518:eef0:45c0 with SMTP id 2adb3069b0e04-5221016b407mr22127094e87.48.1716145034251;
+        Sun, 19 May 2024 11:57:14 -0700 (PDT)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d881csm4091433e87.218.2024.05.19.11.57.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 May 2024 11:57:13 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51f71e4970bso4181379e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 11:57:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVo4sjE8TUl8EsBbo7JeXmUNOhW/sYrArGETEVbAflO7hckdCNeZxGzFzbwnOBchJzRqHkKyrU72yKMKREolZvBXvuGwGwdFeLjNwVH
+X-Received: by 2002:a05:6512:3b0d:b0:521:5583:483c with SMTP id
+ 2adb3069b0e04-5221016b3e6mr28495387e87.54.1716145033039; Sun, 19 May 2024
+ 11:57:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mfd: syscon: Add more simple compatibles
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
- UNGLinuxDriver@microchip.com, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta
- <salil.mehta@huawei.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mtd@lists.infradead.org,
- netdev@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20240510123018.3902184-1-robh@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240510123018.3902184-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240517192239.9285edd85f8ef893bb508a61@linux-foundation.org>
+ <CAHk-=whEAquncw0wb59-XVAHmVh4CWSfwuWh4bTJjJzvx0=PzQ@mail.gmail.com> <20240519113639.db3fe5f80d25be4e7666751e@linux-foundation.org>
+In-Reply-To: <20240519113639.db3fe5f80d25be4e7666751e@linux-foundation.org>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Sun, 19 May 2024 11:56:56 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiy+25i1VZhDaV-b_m4aXGNELuVok9Prv4=oYqiun--rg@mail.gmail.com>
+Message-ID: <CAHk-=wiy+25i1VZhDaV-b_m4aXGNELuVok9Prv4=oYqiun--rg@mail.gmail.com>
+Subject: Re: [GIT PULL] MM updates for 6.10-rc1
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/05/2024 14:30, Rob Herring (Arm) wrote:
-> Add another batch of various "simple" syscon compatibles which were
-> undocumented or still documented with old text bindings. Remove the old
-> text binding docs for the ones which were documented.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> This batch is mostly from arm32 platforms.
-> ---
+On Sun, 19 May 2024 at 11:36, Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> This is me advancing the master branch once per week until we hit -rc4.
 
-Cool! I have a followup (on top):
-https://lore.kernel.org/r/20240519-dt-bindings-mfd-syscon-split-v1-0-aaf996e2313a@linaro.org
+Yeah. You really shouldn't do that with a merge commit.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+If what you want to do is just advance the master branch, you should
+just rebase on top (if rebasing is what you want to do).
 
-Best regards,
-Krzysztof
+Instead you seem to merge _and_ then rebase. So you do the worst of both worlds.
 
+You don't get the history cleanup of rebasing, and you don't get the
+history preservation of merging. You do both, and it's wrong.
+
+> I don't understand why these merges were visible to this pull.  I sent:
+>
+> : The following changes since commit 5d1bc760583f225032f91bd88853f4c26acaf4e0:
+
+No. That is NOT how git works.
+
+You claiming to send only the changes after a commit doesn't magically
+make the history that precedes that commit go away.
+
+With git, when you send a branch, you send the WHOLE HISTORY. That is
+fundamentally how git works. You trying to change the "from this
+commit forwards" doesn't actually change anything at all, it only
+changes the wording in the pull request itself.
+
+You can't just do a pull request and try to say "only send changes
+since this commit".
+
+Git is *not* the broken sh*t that you have used before that is just a
+queue of patches. Every single commit carries the whole history that
+leads up to it.
+
+And that is fundamental (and is fundamentally why patch-queue based
+stuff is broken garbage), because proper history is what makes merging
+work and scale. It's pretty much what makes git not CVS, or the horror
+that is darcs and "patch algebra".
+
+So when you do a pull request, the whole history is always visible.
+You can't make it not visible.
+
+> This has worked OK before,
+
+Your previous histories haven't had those broken merges in them, so
+your previous pulls haven't had them either.
+
+I don't know what you have changed in your setup, but your "advance
+the master branch once per week" process is completely broken.
+
+The problem isn't the pull request. The source of the problem is
+something in your "advance" scripting.
+
+               Linus
 
