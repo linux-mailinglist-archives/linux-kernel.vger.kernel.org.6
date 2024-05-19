@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-183203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D08F8C95DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:42:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 887E58C95E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 221791C208B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3940B1F216C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5396E602;
-	Sun, 19 May 2024 18:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26856F06F;
+	Sun, 19 May 2024 18:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B+amyodh"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yKwztwGk"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA026CDBA
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 18:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1006D1BB
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 18:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716144158; cv=none; b=BfO5IPWhwDpmGzYwUDhYFQ9JMwUMZ90b5qzpOmowuQqtU1ChsxBv93+81tXUuDKSs9IuU6wB9QuPbyw9N6eXtDOspmZPONyPHhsG9YXQVnYBDEAd9+PrS20XfHmXfgn/99292wi23VneHYUZEbKnZV/0cCn61kWi4pxEOdv5Xrg=
+	t=1716144161; cv=none; b=i60EEvDnRBbtTcQko93Sjs7SVNNciqqu1vqEO7WdMiaaatjX8u/mUrW3qAIiHjri1cnCRUGTOcUrSEStGcCraZNsmEfP4SK9uo2c8WVXY8iiZc8kD7BJ3P4G9qLHcbaWqdAT11gkhJXfho7OqIf8fxxbd9djiH4jrCDQxSXzTeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716144158; c=relaxed/simple;
-	bh=74vF+IoSfFoLMUH7RudSQwr4gdZA+l9TqbQpYx1aLQY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XF8O4128j2EE4tUXyn3yF8rX2dt8t/KaxEfpMHuS1kbICtYqy3iIXTsJdzQnrge+oNtSVea7mUwSNN8nBWG34iIeRm2vrITCY8MVLWzkX+MmgDlyqfOxK497azpSGbKvyKbcpOV65XmuJkx8auCRHq5B7/7ZfkKKzqBCUfxmL50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B+amyodh; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1716144161; c=relaxed/simple;
+	bh=EqrHKI7VqbulYVlL7ynNasI0rcDDscSlOl3m111YLJk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Br6k6hKw9fdfqE1ATfeXSkIZWuOAbxnxFI9aBql7f5DmoDKrBKlBc6vWCLV6XQyKSaNSEb4Meesu+nLjyp7pfvnrcpmPPBriF4dLvPyBvLq/ackTK/b/TUzilfjxsnfddx5uJ3gDwyhFEmmd/eAal71cuvTQygvAjh9nT3B1cqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yKwztwGk; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-572d83e3c7eso7268765a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 11:42:36 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-571ba432477so7331966a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 11:42:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716144155; x=1716748955; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m+HwIKa8QAruaHjDaMWv2MKCcdgE6o0aq2ewD+8PT4s=;
-        b=B+amyodh1O0M8RSdHqDyY62zd8XkSs+NAbPKqwbmiOL/0zfop95JpF5sAh6guxmx+f
-         b4nFfXLsGi32lrfosXyG8vpzOTChsh5gbE5zr9LT13wGRusWbxNLVvRTQA1cfFSSyvLl
-         ZkuC9jZo/I9K9O+eS1UWznkOftKOEvY9urHBRktFaZhdVVEDcUC9pAvTWNzWn/UaYxTn
-         sPJxlyPMOA38++p/P/Aak9P9XUKQhGXUZnGqEsbhBXktXlYzgmaNYiSZ7KK06G4JdaUZ
-         7uOqXhC3aTH2Udm3Fdb9i5Ubx/HPfm54Y8+XO1CnH1AKOlEF3LLxLeqUP1d7F6fjsbHX
-         lyFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716144155; x=1716748955;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1716144157; x=1716748957; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=m+HwIKa8QAruaHjDaMWv2MKCcdgE6o0aq2ewD+8PT4s=;
-        b=g93i34Y4/jOgcimn+9s7yfHfnu1A6iLbTErk8zvRBuIdDOBVv+A/rprC/UKT5rFLjT
-         er9wI6DZE3PVWRAnQW6vNfL3kLXmcAEJFBjWNuIsO/4bjDcdKtf+j8/Izi/oJP6cyQZq
-         /vXCzRg3/I/Ldk0SpXVWejieyAdGzAiHLTW++enmT/gCR2KcSfxVtQohCEJtOzUgox7c
-         YpHNTImEEzdL5f2qVkST8vr9JPfDuJsjefKSS9XQwDzhuUzQ9hb4XfN+nKh20vMGw2Bh
-         H/fprLfLzLBwtTFf4D4aBFnG5ueR6fh1Ub7WIcir/ruhDDFHkM/6DbeL6Hq1w16gavAu
-         voXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWn+O8iOP3gmX/hVpv674pdaNBWKcyZuMuudFPien89w+r2UwNZ9F0RSSmN8C/PrLymmapgDR2N+Smo7v/YklPDkjalxpLdGCn9e51n
-X-Gm-Message-State: AOJu0Yx6okTePrWCfHy5oUuvzzWU7ROOQaIri8RBNOLNx/ruIKy71RB1
-	vlVJGRA77JrKZcn3WkBgQUNGISOtnMrE5TMKwypieUHdezCyRSzqoIjdf/0YDuM=
-X-Google-Smtp-Source: AGHT+IGBFpqWhK0RMasalcUHn9CfY/XMaOeYt+zsp5+d2c3FSkiM5Pd4rESufwvDhyyTXCO7bUSzGg==
-X-Received: by 2002:a50:8a8d:0:b0:574:ecec:187c with SMTP id 4fb4d7f45d1cf-574ecec19b2mr8805646a12.36.1716144154985;
-        Sun, 19 May 2024 11:42:34 -0700 (PDT)
+        bh=dpZwSG8AUDPUPcQ/cg7yOTW8I5h5fbBcK+XT13gbyOc=;
+        b=yKwztwGkQvymsPkrF3CYlmde7DTcvlbtm6FB5fx0xX/eKt48mVXzfBbjJat/xXNh5A
+         e+zlOUGrZOyS79K2VdUAe6tGr7WkQDheuMh65R6QCmS+hycNMhbxANEL9JXzETr62SOs
+         QxFKkmNRz8ubbgk2pKy+HkGhvcGeT+wGhsPBzxCPYx2KWy0QsnKd45+KeGuzHlMvSuX4
+         UYz3J84P3dSQhpfo3rqtnj5mHAr/XbjhumvChzwy+nC4kYQtdgdQKbWYe09uLlh3gLVT
+         354YzBIaG/ZviSpnSbu1yJl7y4OUCN9Ra9oMyKUvp2HWbUMnjBSd7brVszkXmo9viI+J
+         etUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716144157; x=1716748957;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dpZwSG8AUDPUPcQ/cg7yOTW8I5h5fbBcK+XT13gbyOc=;
+        b=XkOboLyzM9WGLObVc0XJqa2gK641EDHxgCeOGHMazRUnQ79PiDADC6ooqKYZTHyInG
+         J3FppGMyRN76e/W3EFnuyxIEDPCDf2IhiDS+hZaq23pzmRyWmWQf4x3U6XOjiiCAmL/0
+         Kk6pMQSZQZZM3taB5C9UEmpSGj74rxa+Hdy4lxrhIQYYyVNqSrNztCPWWZkmIt+isvfI
+         Xh02xeEe59dgbdQ68YAtVOht24n1BlA959EA8ewSv2vOw4OvfNXh+Om02ptcRkmK4I7f
+         wWcB/BqnsFfZZ+RB13dmp6B4Irux7WuybZS9vjHRjn9YIrhWat20T0oTEsKjcV1lmwD7
+         Pmxg==
+X-Forwarded-Encrypted: i=1; AJvYcCV67ogWRAPUGl/lO4jhYjN0+Ro+StuUozukdvANoDwHdgtGQFqGPTcqvPoIAEfert5SswUfEEeQzDPFXDFxURjYqAqu4zJFsxWG6hCm
+X-Gm-Message-State: AOJu0Yww4O5m7XqJqkMurqOjBoXxLaDqMe9WBfarDUvlY/7KTJ9StrAs
+	jLVNQQcxV19ffmuh6g/wgmQy625sLkPBx7Yo+paXL7cNZLjYc5uDBdHq0UTTNBQ=
+X-Google-Smtp-Source: AGHT+IGq5QA1nd3Au7MNo1HsMLjHK/fKiObB5dGcnX8+/eslrDY+fDV6uC0IXG4Am+hQUeL97oiW3A==
+X-Received: by 2002:a50:ab47:0:b0:572:9984:1921 with SMTP id 4fb4d7f45d1cf-5734d5bec35mr18573696a12.17.1716144156802;
+        Sun, 19 May 2024 11:42:36 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-575313d97desm1789397a12.41.2024.05.19.11.42.31
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-575313d97desm1789397a12.41.2024.05.19.11.42.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 May 2024 11:42:34 -0700 (PDT)
+        Sun, 19 May 2024 11:42:36 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 0/8] dt-bindings: mfd: syscon: Document more compatibles
- and require simpe-mfd description
-Date: Sun, 19 May 2024 20:42:15 +0200
-Message-Id: <20240519-dt-bindings-mfd-syscon-split-v1-0-aaf996e2313a@linaro.org>
+Date: Sun, 19 May 2024 20:42:16 +0200
+Subject: [PATCH 1/8] dt-bindings: mfd: syscon: Drop hwlocks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,9 +77,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAdISmYC/x3MwQ5EQAwA0F+RnjVhZhF+RRyWFk0omYqsiH/fi
- eO7vBuMg7BBk9wQ+BSTTSPyNIFh/urEKBQNLnOfrMgrpAN7URKdDNeR0C4bNkXbFznQV+x8XZe
- F8wSx2AOP8nv7tnueP2KjNbluAAAA
+Message-Id: <20240519-dt-bindings-mfd-syscon-split-v1-1-aaf996e2313a@linaro.org>
+References: <20240519-dt-bindings-mfd-syscon-split-v1-0-aaf996e2313a@linaro.org>
+In-Reply-To: <20240519-dt-bindings-mfd-syscon-split-v1-0-aaf996e2313a@linaro.org>
 To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -93,108 +93,50 @@ Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, devicetree@vger.kernel.org,
  linux-mediatek@lists.infradead.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3403;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=798;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=74vF+IoSfFoLMUH7RudSQwr4gdZA+l9TqbQpYx1aLQY=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmSkgNECgP7nhUrDjjCAV6sziyTN/z6FdpJw6+n
- O76OPg36LaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZkpIDQAKCRDBN2bmhouD
- 1wFnD/910Xe1MkF3fmCQCzKEKdW2xCOK0f8FSyuRvHro+0QKHjH5momKKqzOXtAPRZm7nzXmgQq
- ZSQR5V8q3OALE6XefzeXf8jyfJrDGyl2f9ebjTlIIRlRIld2cVpKK9DCKlScVNriDLnT5Udfngm
- QEC39hCSZu9JbNAFCAmzpP2AF8mP1UOz1UrRJ6fBhYEB4aihn8T23agzrIq+IVgA3NqEGEIk9sc
- RlJG8G5a9nA68PTX/Y75Z3eUtkDD84BlC8JPJN751MHUB7XtjSMjouLU/k923WS8B5ebTeCZKkw
- XpA0tvfxHb+SgXtN8rDXelwPXtLoweDbrdmZVOKFyF/6M58KCGHj692p2Scb9yDCUp8834nuQ/2
- N8HP0VDobIbw+lHKzLcGtFngxkmULJ2Oy84z+fV+hjzgXSZeJEW0VAaFz43YZt6thBUdcQPZrjr
- DEw09N21D/07IUSBUmgolRfzqVPdddyxMxreyQ2wMewXE7OtjIw1S9LBQCU3dNWYn5uZi6AWHOm
- KlB21MfTO8Invpc1xGovfDtW0VNt3zyXWORgKqJSf5fd7E8GJE0m9NOEQbf9ldNwidy1b06AvFX
- 3/HsjPHeEGndsEGtwdhneLPP4GAKxA/erNnfhHEdfy8/Zqh/GgwnJL5G0RZtpt2K+HWFCngv2U4
- OKMbB87TmI3MJqA==
+ bh=EqrHKI7VqbulYVlL7ynNasI0rcDDscSlOl3m111YLJk=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmSkgQzbjNRKze4/tMYsq0YCrgQq1HylGQx0Qnm
+ fqs4ZngdWKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZkpIEAAKCRDBN2bmhouD
+ 17QrD/4qpVSOIgs2t0h8pAjNveQargz+qOiw594JnIjDv6W9T5TOx98Bo6TUfs4/dOlgAY5xYli
+ 0FjQ6Ci8fX580v6LBDTyMzc+nVynHVOmYzmYpvbh4QxfD+Qxra17DEBwcB7F5fg52ZtQGz7lyvh
+ rT3LhCwP0H/dp6BAqZRx5X8KCMt2Z7S2w+hbeEMJg6SLOQlIVrS9Uz1kOVGh4hie4ul1I8AXgEr
+ PU2JfdPUgI2cRzZyU24CdOD8r3OVy+G+tPKAdU7xcOX+s7C7DpzIt8j1eh9f9wqABaSbUr49cLy
+ /MUV00fMYeJD6YUqdtDYuRQdHv5fCRsrb5aqn90Dr85Q10QVChqIHOK5twXFpbodDbxUC2Jm/BQ
+ lOfthfNcBxd2CO8POoeiZz1ngZ6ImW5XBCuird02ojDd8Zr8ZQ3KCCnR3AHoIdNCSEpNScROLJY
+ SlLcUXAZMj2tCj0/T+cezMOpEsEsUm09HCPuHF1JOOxwth+Ie1zhC8zyxCkEx6Hju1fsNF29jE9
+ JK2y1Q5XbOIPL+yOy53hO1EyI9MudcamsNusJ69cRtxodgzP3wJ/IKIyWRmUyc/p+OToz6hDAt4
+ SDCiB7zwL1QcJ/K4g2cOnE2bxDuzmviGpLpyoi5X4/+57XZWhBwMDmjr9JyLNoQXLcXABaNQ7U/
+ y86LmG1E/OCfb4Q==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Hi,
+Apparently there is no in-tree DTS syscon node having hwlocks, so drop
+the property to simplify the binding.
 
-Dependency
-==========
-Depends on https://lore.kernel.org/r/20240510123018.3902184-1-robh@kernel.org
-because it touches the same lines.
-
-Merging
-=======
-1. Bindings: preferrably everything via MFD tree (file/context dependencies).
-2. DTS: via subarch maintainers (no dependencies).
-
-Description/problem
-===================
-Simple syscon nodes can be documented in common syscon.yaml, however
-devices with simple-mfd compatible, thus some children, should have
-their own schema listing these children.  Such listing makes the binding
-specific, allows better validation (so the incorrect child would not
-appear in the simple-mfd node) and actually enforces repeated rule for
-simple-mfd devices:
-
-  "simple-mfd" is only for simple devices, where the children do not
-  depend on the parent.
-
-Currently the syscon+simple-mfd binding is quite broad and allows
-any child or property, thus above rule cannot be enforced.
-
-Solution
-========
-1. Split the syscon.yaml binding into common syscon properties, used
-   potentially by many bindings, and only simple syscon devices (NO
-   simple-mfd!).
-2. Move some known simple-mfd bindings from syscon.yaml to dedicated
-   files.
-
-This patchset might introduce new dtbs_check warnings for devices having
-simple-mfd and being part of syscon.yaml previously. I fixed some of
-them, but probably not all.
-
-Best regards,
-Krzysztof
-
-To: Lee Jones <lee@kernel.org>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-To: Lars Povlsen <lars.povlsen@microchip.com>
-To: Steen Hegelund <Steen.Hegelund@microchip.com>
-To: Daniel Machon <daniel.machon@microchip.com>
-To: UNGLinuxDriver@microchip.com
-To: Nishanth Menon <nm@ti.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mediatek@lists.infradead.org
-
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Krzysztof Kozlowski (8):
-      dt-bindings: mfd: syscon: Drop hwlocks
-      dt-bindings: soc: sprd: sc9863a-glbregs: Document SC9863A syscon
-      dt-bindings: soc: intel: lgm-syscon: Move to dedicated schema
-      dt-bindings: soc: microchip: sparx5-cpu-syscon: Move to dedicated schema
-      dt-bindings: soc: ti: am654-serdes-ctrl: Move to dedicated schema
-      dt-bindings: mfd: syscon: Split and enforce documenting MFD children
-      dt-bindings: mfd: syscon: Add APM poweroff mailbox
-      arm64: dts: apm: Add dedicated syscon poweroff compatibles
+ Documentation/devicetree/bindings/mfd/syscon.yaml | 5 -----
+ 1 file changed, 5 deletions(-)
 
- .../devicetree/bindings/mfd/syscon-common.yaml     |  72 +++++++
- Documentation/devicetree/bindings/mfd/syscon.yaml  | 222 +++++++++------------
- .../bindings/soc/intel/intel,lgm-syscon.yaml       |  53 +++++
- .../soc/microchip/microchip,sparx5-cpu-syscon.yaml |  49 +++++
- .../bindings/soc/sprd/sprd,sc9863a-glbregs.yaml    |  55 +++++
- .../bindings/soc/ti/ti,am654-serdes-ctrl.yaml      |  42 ++++
- arch/arm64/boot/dts/apm/apm-merlin.dts             |   2 +-
- arch/arm64/boot/dts/apm/apm-mustang.dts            |   2 +-
- 8 files changed, 365 insertions(+), 132 deletions(-)
----
-base-commit: ca42fd4fd365cbaf798f17f655aee3d8192829f3
-change-id: 20240517-dt-bindings-mfd-syscon-split-37e23996523d
+diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+index 4d289935c08f..622ea0f1b08e 100644
+--- a/Documentation/devicetree/bindings/mfd/syscon.yaml
++++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+@@ -141,11 +141,6 @@ properties:
+   resets:
+     maxItems: 1
+ 
+-  hwlocks:
+-    maxItems: 1
+-    description:
+-      Reference to a phandle of a hardware spinlock provider node.
+-
+ required:
+   - compatible
+   - reg
 
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.43.0
 
 
