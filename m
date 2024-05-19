@@ -1,54 +1,51 @@
-Return-Path: <linux-kernel+bounces-183026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10918C937B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:26:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7188C937E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58527B20EC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 05:26:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E053D1C209D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 05:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9DBFC01;
-	Sun, 19 May 2024 05:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC94FC0E;
+	Sun, 19 May 2024 05:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Qk50wyx1"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="iyzWNVs3"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2619F33D5;
-	Sun, 19 May 2024 05:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1783F9450;
+	Sun, 19 May 2024 05:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716096363; cv=none; b=neRi58iLgm8SRkJb3N3IPRUn8fDuxNBq8oT8NXKr7Cehd5bDmY2viMHr5k+AV/jMk4ClhLoMaeZARkQlLJ1FHJcF9i1yWYe/FFXAnUcJYeKc2W8ufzw09Fc+uNNOgcUepmPZocnn7LiIVsX7ojgAybfaJRA2qNKXpwkv/VI5cHc=
+	t=1716096771; cv=none; b=BrDYgMDAqPvwpASrwHwhxCi0Sf7gm/78b4eNXlSxw7arVtszkcwed+zKniK0EhIVmQdXJZb10kVOKTc8tk92mm8qs1fTuUH+NsFSs0PWaN48iYTdfdGaWqjp8A77plY8HKXkJ6v+8VnNb5JTJmvc1P9qFmfyZ3xrUxxsIuNZseE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716096363; c=relaxed/simple;
-	bh=ZFrmNUxtsmYdUc3cQmt52uM4wMxGux6XqZ1iap+SKes=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=MT3z54Mqmm5nxG14EbL7FLLkj90SN/38i0ovqPlvPB74gN4/OuWFoPSzP/+xe1DlWhlJ7zIrz7mvO2CmMs5cWvhukY3WotM7pWZWY4fZAuf8Uh4peAOcJ0ez3TxZ+duZoPPCK18PFE897hA59iAf/fD0hPBge8h9nTO/nTjGGZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Qk50wyx1; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716096339; x=1716701139; i=markus.elfring@web.de;
-	bh=ZFrmNUxtsmYdUc3cQmt52uM4wMxGux6XqZ1iap+SKes=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Qk50wyx13wLvGfife7KAhFcMZ9tTn8lEstgAUxChlAOWSypOIWwkcelbN1UzwWUj
-	 LmWxXJjwjXDNWulQXFerBS8w6jAS41/W8PvJJnnGXHIVuRWsUSZjUvTaeerVfIGCd
-	 bmTq+sSGNGjn7LJjzlB1h61+VHLculoz3iqhj+FIMGBMDxPsW9/32kmODj07LajwJ
-	 Dh88yt6obeSgHM0Qc51FVqsW9FyNUeZ8+SBt32V1heTfkAap/H1S9FbftASnwwQQ8
-	 BXYsaHCkOCn7fUmJp694iV4SB+81PE07+TyhuG3v+cXQaxs1mdMGNKT1DcJ1aElFv
-	 FHpJZPUuG3dD8iAadQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MK56y-1rqTPB2pN0-00LXsS; Sun, 19
- May 2024 07:25:39 +0200
-Message-ID: <6eee1069-81ae-495a-850f-7f526006db8b@web.de>
-Date: Sun, 19 May 2024 07:25:15 +0200
+	s=arc-20240116; t=1716096771; c=relaxed/simple;
+	bh=Xkll09NzcXRMEDvaUMAQDVObEDOYOIOCqOZFJSdiRRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ENcfSXgu1lQP2Q59LRWwV7i2AIS4G/cD4XjT08MCvRHggfsx/X0xJsIXu47TOuI8LBs5o+FSv6YY9q3XKIXd4e7T7/h2Iryd++rM3W7/6H2U/kneCbjLHxLhXBCpkx4bWd2+ffvvOPPaOPpzyFygyArIDXfeG6NxUaMXwSphDE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=iyzWNVs3; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=Xkll09NzcXRMEDvaUMAQDVObEDOYOIOCqOZFJSdiRRM=;
+	t=1716096769; x=1716528769; b=iyzWNVs3/WRHnF5ipGL1O+iembIf6lYZM71+rTuV0PUqMR9
+	ZCFCXTsGGthU2DT0JYuV8i9tjs3sRHhvOXMyHIQWjv7klZSdZtgboPPjnY1t2LZ76iVcuqzhxJyFq
+	pwjn7vJY3oYfIFKKuSmQTtp+gjinTPwLZPghYA+4CKR9xukw40Vbw6kzD9JckV5wYE+PsAuXgnow+
+	nrM0iXqnx3XFziCY33ZHa3nL2wQkQikfd4rqUdrRWfqSDdoNsUUeFvOMwdwMa/1OuvfYB+vLdd31g
+	V8wHd3rh1jRL4qGH5zazZKW+qI5Z/J4ySh+oDXIUkUzJI/4eQxpPvVyaas3sq2Ow==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1s8ZA6-0003gZ-7X; Sun, 19 May 2024 07:32:46 +0200
+Message-ID: <7ed1e3ca-2160-4c52-a19e-8b5f2a90a0ff@leemhuis.info>
+Date: Sun, 19 May 2024 07:32:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,45 +53,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>,
- bsp-development.geo@leica-geosystems.com, linux-i2c@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
- Peter Korsgaard <peter@korsgaard.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Grygorii Tertychnyi <grembeter@gmail.com>
-References: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com>
-Subject: Re: [PATCH] i2c: ocores: set IACK bit after core is enabled
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com>
+Subject: Re: [PATCH] cpufreq: amd-pstate: fix the highest frequency issue
+ which limit performance
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ stable@vger.kernel.org
+Cc: rafael.j.wysocki@intel.com, Mario.Limonciello@amd.com,
+ viresh.kumar@linaro.org, Ray.Huang@amd.com, gautham.shenoy@amd.com,
+ Borislav.Petkov@amd.com, Alexander.Deucher@amd.com, Xinmei.Huang@amd.com,
+ Xiaojian.Du@amd.com, Li.Meng@amd.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Perry Yuan <perry.yuan@amd.com>
+References: <20240508054703.3728337-1-perry.yuan@amd.com>
+ <4212df0b-5797-42a8-9c64-3e03851293b5@t-8ch.de>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <4212df0b-5797-42a8-9c64-3e03851293b5@t-8ch.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:6oA+99mdUNDDUSA01G21YEo+PC4BnDqvvY2xvbVENWHN5HVRnyT
- gcS8BXd+/i3aOSecsvib068rNEm3k9dI62B4BZkTmEuItrd2pTNb9CXxoQTKsBo8vmBRGgG
- R5AfHpOTfYaA+MYGbe3yYissxQsWg3KjoIIhOdELLHUkBcC7SrKH9QG+c8yCGiYhucxB3yq
- i1bPNCr9cr+QloDweQOcA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:j1e7MMVA6lo=;vdsdIj3621+iotpg125XlCQEuSI
- bCASiOv0rPsrGZ50gGf+vRjYeGqGgh5BWzegSMxAp8M1GyujAJYBaI5Mxxqfq82TRRwsqqDW1
- KSkFKpNjDSvZgnpteFGR64uF2WZRLLZEz18FmpLI4BQ3cIqdnrxQ/ZiEN9TUcehFMU19V8+gi
- Ecpl5tgIxJPVwnwKnjX0GmP9pzv+T8o0D8GaSkbx9bvPAiDSPMMnjkN1WbXIt+GpvzlK6SGga
- o1uv+XKrmTO1SsaJpgBHnASrlvyaCSO1oDLEtb7/fBVRYw+p5HkTOmljRCgM5ILXR1OgKq8ds
- fSjICc917ozo9Kp+yi7a0Hnj0uBL1+sRMd//BW4Ox8yaURZn3nRnTFUElzbgSnHUsnsN/G8e3
- 1yR6K8pugKFljZdixGVYKFXLhpOnjCaCVKSBwngo7AmKlAESQh9F5QC8UAHC+UJ2SAHXYTiWr
- O5VftgphFiuOQyN7C8zbuptAXHaG1icc9FlCDoKpg+jgyzJZzSYqKPV6DE3sy+xAkv96jpKKY
- gjbrmRZ/LU6Kedz7zTxVvIYDiG7AwxBKpy4e01Ew06pV1v81sfIK6odnuh0+ebYxP1Mgp82Qe
- KrzEsHG4jdVQFXk0fI62lJrVpzsUjZYzQRLt4rm4AZYKjcFruneYp76XHUQOXsh+xywi79bw4
- lH/U639XZ2uNijiuRj2jHsOxi0W7w4GasOByPtJKE+XKRrtC5sBBLP7oMWZWBqDxaaClSEMdF
- raM7oXlsg1bDf1tVRPfroL9PopaDimaHxRlmQ82hqlJRA8uG6PkP4Zh8Rb+EH8rbT64QALEXE
- FlQLf827KddMQUgG4YlTrtEaBNXVsdFEV6stj7wOKGLe8=
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1716096769;d0a3a4cb;
+X-HE-SMSGID: 1s8ZA6-0003gZ-7X
 
-=E2=80=A6
-> Sometimes it causes failure for the very first message transfer, =E2=80=
-=A6
+On 19.05.24 00:07, Thomas Weißschuh wrote:
 
-Does such an information indicate the need for the tag =E2=80=9CFixes=E2=
-=80=9D?
+> Please backport the mainline commit
+> bf202e654bfa ("cpufreq: amd-pstate: fix the highest frequency issue which limits performance")
+> to the 6.9 stable series.
+> [...]
 
-Regards,
-Markus
+FWIW, that commit already queued, as can be seen here:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/tree/queue-6.9
+
+Ciao, Thorsten
 
