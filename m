@@ -1,105 +1,128 @@
-Return-Path: <linux-kernel+bounces-183281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63ED38C96D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 23:34:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC038C96DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 23:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D14728104C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 21:34:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB3B1F210C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 21:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D316F06F;
-	Sun, 19 May 2024 21:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C3D71B4B;
+	Sun, 19 May 2024 21:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="q+OKe+f4"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="efIwYU6G"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5DC23BB;
-	Sun, 19 May 2024 21:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A40571757
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 21:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716154480; cv=none; b=droH5uSmsvzTl/51mOQN9pR+wHZrmZyoXStLCp7nUVEjtAhrjHuEcmqzh7U27ZtPMfgp83HVDUH0oBLjY5vaqbXmc9gMbpf6YOG7jnG5QS6VyU8SkNV4Ven/05UlpUD4PC3y1JnHZrZutBx53ksNtM0WDTquzZAXHY8/azRaGzM=
+	t=1716155086; cv=none; b=WLYkWjFxVQZuSZbd4cxmOgH7EpQxHYddEKXH5ykcV2uv6OBc6+E++Jneg725a+gVpzq8hHwpiuaYxAJMfkqhmSbrwvZfDulnTMY30pKg3fH2cGQPeGXi+P1a1LG08O4cXmZr5AB/zyHp/I8bdEWyXtPstSOLjE7qnGs0mobXLDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716154480; c=relaxed/simple;
-	bh=qVMB/LyakvS5ewW9DcI9S9PSmPNh8r4BJJ8XEDPnRDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kxElWjAu+ypkJVUo0bgc2WujY933+a5YAyVKhIXsy8HqOQxuXEiYiHCU1JummPIjGHyZT1N70lZ22hzAcgYboRRR23+FN+XdKeT3CeActwceLmBlw7BDS7tPPIq6SWBSzBPCL2e5te0LHERtlpdkTiJDry0S/dO9gwvEZyWVxBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=q+OKe+f4; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1716154469;
-	bh=bDHlLiM/QtV4z5R4r4xYeNeJp2pdpiRKmtwQfn4AmPI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=q+OKe+f4gIlIliNjWTSSsBY3PzZAUyDA57gEvMSTGQ6kCz7cSs6OZzrd8HBuJX5D+
-	 2IeW4Di4CBQzVxim2To4ATuJNAUpX7qoLRcuo4vO+JpiF8N3+ovgc5sjjbnxprgmCw
-	 YCJqw0/18Ho5paDGWMfdhNZoyNNgyVjXur8ceqdLWpJ7vcbCa0l+JU0IvObkOre9Nv
-	 Kty4FgWGoE9a1IizO+BNQSZBZBeYQfJLk3nalj0ETKM3LW6bEBSS0HXsdKHopwYWU0
-	 JCytLYc1mlG4PUE96G9ZJRbzmGwL89J4jqEwRCn1ZcV/mXY84c9ROdeSEtqtFO7c4U
-	 OGfSfKcvVtUow==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VjDVY2YfXz4wby;
-	Mon, 20 May 2024 07:34:29 +1000 (AEST)
-Date: Mon, 20 May 2024 07:34:26 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Namhyung Kim
- <namhyung@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the perf tree
-Message-ID: <20240520073426.7d8bd11e@canb.auug.org.au>
+	s=arc-20240116; t=1716155086; c=relaxed/simple;
+	bh=fGSAVIL59Ifgq2urnJfcK6Ty5wtkxO2Uaf4Wxe1mI1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pZntp8kui6U8eUOn1RdSjWrZ/rOX44AX+/igiiZLEqx11hUnQRnpF448rEgFA3b/pgSq7CkoIDRsdXIsBO5flcz6lfZLp5e81gwyFQFG/1cgrXLd0ul2wpfhtW+lb75oy3lA7MHJxTSX1sxqR1z9ubuEOrGbi7oVBm/9KzEDVpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=efIwYU6G; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-523b20e2615so4369077e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 14:44:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716155082; x=1716759882; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iZrkjZRHsfmxgbK3walk1XdMRADgBjFWKUVLaZqtwFE=;
+        b=efIwYU6Grf2LgLW001so4qbfRvDcvZOBC/GGSKj+fdNfjKWOueVHFlCzKOtxOJ91sd
+         heNk0F+6S8n43vK1ONkWPcQvPqDB0f+L+txgl+zcLxNwwn8mAi4ApTWrz9bwdRNJCN8X
+         cnIsEyRWqdCVrFQRrgl2fm4D3InBOSu6ozrDVPb5IEfG3/WgW3VtZS0JTxFWt6Xit7I/
+         jcKsG+Yl33smmpcEzO2Do9kf/cWdv4WjujJPQ3rvEpewDrV6taX52BHS+1KawAAHlKhQ
+         Po4KuFojGIBoZhYi4roxO1H0aOgn/Psp0BXrZtuNGdxqwWEcQX75R+PDPIKe1GzSq+7e
+         8z5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716155082; x=1716759882;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iZrkjZRHsfmxgbK3walk1XdMRADgBjFWKUVLaZqtwFE=;
+        b=jLN3ueTeidXc68fucg1xRFcpSVZ+oJtX7B9qoDzKHe+efEQrQd+6lbsSOG3M3ePsP9
+         MctqZpGeyb4dIjrgVfFxtDCUSZTIpenLsZEgTmNls9l6jCNjaeBG3EDXHPu+sW6vy8bE
+         RhyCa786dFM9t/0qQQbmP3pG5CFu3hNLiApxT+8LQjxJvqMlAh6GBu1Oodw0750KXIbo
+         JjItm45dkDxTVM82l/EnT5oTpW/AwZKV2ymjMP3BnHytbyK93mBo0W2PUhrNyxOPlwDm
+         0UhnRkscZ8EfA1BIqP0mCgEEvfskLuurY8HOmVrgI+/Y1AQ0DeEcWTPUm6wp3LhnLjKF
+         QBaA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtLRjhQIw/VnDM5VrXZQnue1gwDLnVuVYxaGVQ+BJIJf0gY51EfHMSNXJNBqUY2d1m5xJdXsF5yWj8yHYYQwekMpN0UZQBzz/qqXBI
+X-Gm-Message-State: AOJu0Ywht1n4kylC9X4FLln1cjDnFmW7dpZ7bP7WgzUDwlEGoRB8WqqH
+	3nOMoLGzKRAwyZdU+XLa9qE+Fa2C9Nm3DWo/eFqTD/bPV28cStr+v9fKAMohOew=
+X-Google-Smtp-Source: AGHT+IHOuiyvikkf+YRll9mS4v1GujAEdqsCvFUwgxyyxkIYPx/CXF8ahRuYHA82wBImlUDB5iNHmA==
+X-Received: by 2002:a05:6512:3b86:b0:51f:3f6c:7466 with SMTP id 2adb3069b0e04-5220fe79356mr24519590e87.48.1716155082667;
+        Sun, 19 May 2024 14:44:42 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::8a5])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ad4d0sm4047947e87.49.2024.05.19.14.44.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 May 2024 14:44:42 -0700 (PDT)
+Date: Mon, 20 May 2024 00:44:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Maxime Ripard <mripard@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] drm/bridge: Add 'struct device *' field to the
+ drm_bridge structure
+Message-ID: <6khhnjtdcjvebnffrqlavowld4gvgcpnxplcinkja5xv3yefct@vjnmj72dfqtg>
+References: <20240514154045.309925-1-sui.jingfeng@linux.dev>
+ <20240514-scarlet-corgi-of-efficiency-faf2bb@penduick>
+ <c44480ab-8d6b-4334-8eba-83db9b30ff1a@linux.dev>
+ <20240515-fair-satisfied-myna-480dea@penduick>
+ <d394ee32-4fa4-41a8-a5ca-c1c7f77f44d2@linux.dev>
+ <20240515-copper-chimpanzee-of-fortitude-ff3dab@penduick>
+ <2c15c859-6b2b-4979-8317-698bf6cc430c@linux.dev>
+ <20240516-intrepid-uptight-tench-0df95e@penduick>
+ <e955b706-04dd-479f-8327-32771d94f70f@linux.dev>
+ <07b931d9-b11f-4829-a6c4-d5025fc071b5@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/KoV2zI.=GkrxJiH=j.a7hgQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <07b931d9-b11f-4829-a6c4-d5025fc071b5@linux.dev>
 
---Sig_/KoV2zI.=GkrxJiH=j.a7hgQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 16, 2024 at 08:04:59PM +0800, Sui Jingfeng wrote:
+> 
+> 
+> On 5/16/24 18:40, Sui Jingfeng wrote:
+> > use 'to_i2c_client(bridge->dev)' to retrieve the pointer
+> 
+> to_i2c_client(bridge->kdev).
+> 
+> Besides, this also means that we don't need to add the fwnode
+> pointer into struct drm_bridge as member. Relief the conflicts
+> with other reviewers if the work of switching to fwnode is still
+> needed. As for majorities cases (1 to 1), of_node and fwnode can
+> be retrieved with 'struct device *' easily. The aux-bridge.c and
+> aux-hdp-bridge.c can also be converted too easily.
+> 
+> of_node, fwnode, swnode and device properties are all belong to
+> the backing device structure itself. It can be more natural to use
+> device_proterty_read_xxx() APIs after init time, Which in turn
+> avoid the need to acquire and duplicate all properties another
+> time in the driver private structure.
 
-Hi all,
+This doesn't sound 100% correct. This is going to drop the possibile
+case when bridge driver uses child DT or FW node under the main device
+node. For example of such usecase see drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c
 
-The following commits are also in Linus Torvalds' tree as different
-commits (but the same patch):
+> 
+> We could do the programming around the 'struct device *.', remove
+> a batch of boilerplate.
 
-  cd88c11c6d89 ("tools lib rbtree: Pick some improvements from the kernel r=
-btree code")
-
-This is commit
-
-  bbed8b9ffed1 ("tools lib rbtree: pick some improvements from the kernel r=
-btree code")
-
-in Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/KoV2zI.=GkrxJiH=j.a7hgQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZKcGIACgkQAVBC80lX
-0Gyepwf6AtMF0BwzXN8R3eAaKZsq3fNroPu75os/vM2qiEwsJU2Yg+4J9pfdYJHl
-eLcz0Ng69R5pph2AQw8dTBYRYLCjS6gluQBq7f6+pFx4yKYeMGqoU4zVc8GAM4YU
-qPsn5VeQCuFcrWzI2JfoTN3FfYUioUmDwRATqJdbd7cwOOdENVDXvoxxQI6VlirT
-09VizitgTx/3P8gOTTeQrXXYBczviXd9R8OxzpfmbyyF5qRQvXBR7v0zxGv6Yuj8
-yabdKm6+5sV6Remew9Mzy0x2yn1M8qW5+2AHKCOFYHdZE/K3jTkvmGHVyWR6G0p7
-vIe/F9KC/Ewgb/vcQ9ZY6Btxwq/XEw==
-=c0DZ
------END PGP SIGNATURE-----
-
---Sig_/KoV2zI.=GkrxJiH=j.a7hgQ--
+-- 
+With best wishes
+Dmitry
 
