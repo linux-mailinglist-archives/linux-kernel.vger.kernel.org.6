@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-183041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B948C93B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:41:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446E58C93B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CF811F21421
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00ADF28162E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DFF18638;
-	Sun, 19 May 2024 07:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4C0182B3;
+	Sun, 19 May 2024 07:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="vOygvmCD"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aCfhLd9t"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1791C18EB1
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 07:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61497168DC;
+	Sun, 19 May 2024 07:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716104496; cv=none; b=ezWj3pi+sQ053Ff7RBOgC1pp0NL8lqWBwn2oKSY+6YlLqnBO+We24mkoQA8b+BuGEuOLsMTn4ZqH8JBabWZu+UDZ8E6+Qi1IqsKEMRsudCBSym5F9tOPjXVHPAvDvkcc+Pu/A9YTwSUhPr3IfXxBOdHozxRjUJa0nie5nx2YdOA=
+	t=1716104010; cv=none; b=kbUAF3X61rxZ1FT0K7g5zLJPtSD7RMg+f/fPCVQgVNO/A3wwGx4zZa3aCqTq5/SGvBzudVABz509kfiJte7pgLmstyhuacXQgdo31RP08hRXFmNiBRIf9PIqWZSxRcnfxGyMzdWAkCB8GOXCihA6oXt1VWQ8xD9CVsim9/0vC4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716104496; c=relaxed/simple;
-	bh=Scg55UA1RklCqNoWsYUK6xDYQtS3H7dxz/frrtpb58o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hpPOi4nm/Kq8f2GAsZ4vFraOOmDYXoNysE/VYAu1PiOswSs6o2Lw0hatpitiK7osaCSOUYNOm7rx4SuxZoIABmZK9Sv/M3bgU8ShQQx34Rn2yCwQ9gx3R6snGPKKKjKxa0vIoojtT2M2q0gNLuga6Ov8yQ5/FCNV8aNQmxVnzPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=vOygvmCD; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-X-Envelope-To: val@packett.cool
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1716104492;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MnNP0xmGDxanAFfueiOaEkQQkHaHD1N0yNfpZxYHu7g=;
-	b=vOygvmCDYinXST/hlK0BHdTlaBBRBua3v5DJoizXW0DvbnBy+6JMwYe825c+hN/C6EIrAU
-	lkjsD5+VqDB/koqTW6oERNexd+smn06YnvgtrM5wvxYggFd7+xL6Ak0o4sp581Y0A+qLFC
-	YC+cT7kry3X8lXNhqpcJIMQU7TPmmli3kg7+COe9BrF4izNbNK5e3DkMJ4to3GDm9dxAvC
-	MRKyDzxMaLzmIQyQTc/2BrxrlbdFK4mtByEPvUI7aWyl3E+LyJbnjVDHk7nPH9P3UU7mOD
-	0jFX8VnkCjcaBqEns5klYd7p348AoA/D2O6NYnNylrPRyhDUmcnKd0PRjRnpEg==
-X-Envelope-To: stable@vger.kernel.org
-X-Envelope-To: hjc@rock-chips.com
-X-Envelope-To: heiko@sntech.de
-X-Envelope-To: andy.yan@rock-chips.com
-X-Envelope-To: maarten.lankhorst@linux.intel.com
-X-Envelope-To: mripard@kernel.org
-X-Envelope-To: tzimmermann@suse.de
-X-Envelope-To: airlied@gmail.com
-X-Envelope-To: daniel@ffwll.ch
-X-Envelope-To: dri-devel@lists.freedesktop.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Val Packett <val@packett.cool>
-To: 
-Cc: Val Packett <val@packett.cool>,
-	stable@vger.kernel.org,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/rockchip: vop: enable VOP_FEATURE_INTERNAL_RGB on RK3066
-Date: Sun, 19 May 2024 04:31:32 -0300
-Message-ID: <20240519074019.10424-2-val@packett.cool>
-In-Reply-To: <20240519074019.10424-1-val@packett.cool>
-References: <20240519074019.10424-1-val@packett.cool>
+	s=arc-20240116; t=1716104010; c=relaxed/simple;
+	bh=xzuyhU/C3Sgs8JAj/uu65583uObYWqEmKO2M6mcchQ8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=q1OItuWpcSwnqBU3aRQGXSUV+MuO+YInK6Q1t7u3DgYRmAyYukkK8hEjlPp+hAEAQPeMTIQexggiVa20wWQYRQ2AErn5TbvyoR3x4SnCsi2bqA9j8l+TlM54SzJZtl2GpcMxtIyW6raTXsQTOh0AEpZD7hwqNOOBda1rqkWCSQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aCfhLd9t; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716103991; x=1716708791; i=markus.elfring@web.de;
+	bh=Vc/DskwTkMLimCdzc1KNw8QmtDiL/132/HZiZz6WkFY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=aCfhLd9tDYLgNa2qsXvmkiLbpArbAYDjI7YmR1xaNLZaDBvq11qaTZnG6ywIxReK
+	 SuQJeiEZLm5HGzkMyPEokOS/NQAzjuuMbX+9PGLKk+PQdbaadUdxBwk62GNRuaggp
+	 F+C16FSZDOyYrHNnqkHxZ+p2/P/opXKIQ0NEH3zNRU+Y7Cr1kiNgxAUiTk0tc7oKc
+	 rZdxoLjzEzv4x+xY+4k8fzZSDpzxxU6pVBI8ri125Xn+n9fP7zOyAYvyRRaA9ZNWW
+	 HABnOk3PRRXjABWiYNvilNvhtJohRp+4CKCzQEkd4hbh6i7CtFz/E73sH7CfVuK2Z
+	 4ugDdCnYLVCjILW7RQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MwR4R-1sQxIw1eXl-014UAw; Sun, 19
+ May 2024 09:33:11 +0200
+Message-ID: <e2dc9857-d3ad-4060-8363-f8ea0cc37919@web.de>
+Date: Sun, 19 May 2024 09:33:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+To: =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+ devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Alvin_=C5=A0ipraga?=
+ <alvin@pqrs.dk>, Emil Svendsen <emas@bang-olufsen.dk>,
+ Andi Shyti <andi.shyti@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>,
+ Takashi Iwai <tiwai@suse.com>
+References: <20240517-a2b-v1-1-b8647554c67b@bang-olufsen.dk>
+Subject: Re: [PATCH 01/13] a2b: add A2B driver core
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240517-a2b-v1-1-b8647554c67b@bang-olufsen.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+l3+NQO2VssluOBJJXXnKAg3DDtBKfwnya4Yj2/k/UC2D+zw5+4
+ 5wfQkxlfmnAAtNNFCCjQ+BU0F7rn+cGTYPS2zZnk+WCR4g0TyFXpYDB1leaJU2S0HV30pfs
+ xU2auRNo2LPMSNPMOXHZuo5BcD3XSpP433Rqp/0V76PL2HviR15aWHqMYeyyjkj6kZzl9Bb
+ N4XePPuYdCvEFIlb24vmA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZKr4EqZbUiQ=;9LA7nsO9L3QH/khKeG9YCNPasJ1
+ qie9orih1hOiq5F82MekSv77InOTDe00MK5trWdRlRJ0xQCVYDZA9s7gOejT4ieFq4fHtnmin
+ IU1HY8qmp7qeMN5CjQeGz0T6B1b17UILq25Gh3tdKq2n094AQok3E7oxh1z2egS0IV0wTa+/c
+ kQ9u1zbKQhpBTEgsXY26job3L83t4GM4NJ07KZcQx8IiV4YOVbzvUwQUuFKcUanK6IijdHBZ3
+ VRbGUywRb+9y+4klqJEfayWmXG66m3YtfV32q8BmLqhiycF9YvjXpJsFZnAOYfUKltjHmO6+8
+ xCpxBxbZ2ksWU23HXfX3zaP0SoaPSHxGsQBJDBD+o30VMzMSAbq4zqFPN5WZJeFM3lf86svly
+ mQbPcAqkQmtEC1vclRtCvA7goyWsePWyYhgqWIRQTTRqcUUEa1HQjN1L+4us+PPRX6riYHdHs
+ dekVKdSuzzSdeU3QsjLeA9dQCnah4/QHJaiTMu/Acinx53NwNeCkMW93hV6C2kcYOglGVkok6
+ q6x14ug6svM5aYFj+Iu/NPM1X1y1DLkIOUccxgRA57jhN/1Zu8NzIfXRURXkMAmtGUbIkgV4Z
+ PPhPamHt0qluIGUstK3Ll0qRhaac/nM416/FsRYdu9gdUw146+gJzcnW3CBUrxh5z1/svLiZG
+ pRela0v+jfl/vCW2lj+nbh5nmQq7Rvbmrpt2UQ/NJfhFrOX0IEcJWQjGV5ie7Kus4lzd3XAwd
+ zu1PxieCX8rrGxgFFTCKSsSbhQw0lKXyLQNMfIsjs+aa5XMGKjX+p+U9ncjeqLkkR9hslh+Lx
+ +a0pr9P9D7UOF/P363jhsz3xPD9nQFSkkvV0DhcRY9O8E=
 
-Signed-off-by: Val Packett <val@packett.cool>
-Cc: stable@vger.kernel.org
----
- drivers/gpu/drm/rockchip/rockchip_vop_reg.c | 1 +
- 1 file changed, 1 insertion(+)
+=E2=80=A6
+> +++ b/drivers/a2b/a2b.c
+> @@ -0,0 +1,1252 @@
+=E2=80=A6
+> +unsigned long a2b_bus_status(struct a2b_bus *bus)
+> +{
+> +	unsigned long status;
+> +
+> +	mutex_lock(&bus->mutex);
+> +	status =3D bus->status;
+> +	mutex_unlock(&bus->mutex);
+> +
+> +	return status;
+> +}
+=E2=80=A6
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-index 9bcb40a64..e2c6ba26f 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-@@ -515,6 +515,7 @@ static const struct vop_data rk3066_vop = {
- 	.output = &rk3066_output,
- 	.win = rk3066_vop_win_data,
- 	.win_size = ARRAY_SIZE(rk3066_vop_win_data),
-+	.feature = VOP_FEATURE_INTERNAL_RGB,
- 	.max_output = { 1920, 1080 },
- };
- 
--- 
-2.45.0
+How do you think about to increase the application of scope-base resource =
+management
+also for such software components?
+https://elixir.bootlin.com/linux/v6.9.1/source/include/linux/cleanup.h#L12=
+4
 
+Regards,
+Markus
 
