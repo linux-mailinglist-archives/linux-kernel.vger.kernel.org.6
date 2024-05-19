@@ -1,89 +1,77 @@
-Return-Path: <linux-kernel+bounces-183019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7431E8C9356
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 05:11:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D0A48C9358
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 05:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 315981F21452
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 03:11:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29A491C209D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 03:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BA4B666;
-	Sun, 19 May 2024 03:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCF62114;
+	Sun, 19 May 2024 03:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0I/NpPw"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="RFqSbC2s"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6305239B
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 03:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F604A954
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 03:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716088252; cv=none; b=YXoxRlUrbuf6xuYRpalint/IH/zyMEgPAQijIQ8VH5LGfSrJUlzkaOcpJALPzovZSb/ARnev3rXrpn4SDRtQtD7C/n6sGQasz9TdmMs/jNKnPrmjL9xeDV9LaaFRCq8iVvv9cEUadCNRIMfRlK300FKY5H/oYHjlalXopT9JgpY=
+	t=1716088506; cv=none; b=XHh9oY9NeteELFVLPQ0oEwuZfriJc8Ye8Z/witVjkREOHMlAbEMOXeRMjVH00Ai0BZfCh3GQHjUcGCmFeD7RFzlev/RLgI5gxlHZSzCRKWFDOXhDS8BzobTU0XWKxqCBD81JvLOhyB2taVCXe0sZLFeaZ20E2ByT1Q53cyt+Tiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716088252; c=relaxed/simple;
-	bh=FfVJpGlO6teYrVFymUL/fDGFO5nzBWhZE9cAJVX36bw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=robWDm2l4qmxsXmZb78MrX14RiuUuIrKfRSq7TQQWmnBfWgN4EfKgmjnvAsZp9ysXOfs7+dr4cKx9NdBMofIJb+FwkKolo09BilJzzH42MGjsmReU2GrPt/qsS+yXA/KCXcOEgKuMADconKlQgRQgCE+qOiMHPD0IBZ8nVmijLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B0I/NpPw; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f4ed9dc7beso1790491b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 20:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716088250; x=1716693050; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lFSZbZfTC226eQMjp0sS4xniwqBXpfweUGcjqkUYZ2I=;
-        b=B0I/NpPwmHHVG3qo/7pGWaoGmOMvWhTpZXlK372vaIZdSESHds+2aXXlSyegj64sas
-         2gK/Yzg5BV62lkbTLq4BP19AfMdGfGep/N1BR1FvNgZ0gB8IMrNu0R2++J5f3fxZyuQy
-         K3eXp83acKve/MlXqSYElv5f9YpHeuaJC8f37wwgYNd4kvTH0xNYJ8vttaDfoDAs+mCL
-         iT0Ky5JrUIxUMLEHQY9CyxdGpVzbntZuMVxEgeqgSl4+iiGPETwx01YxKp6SWBC8yB4l
-         BF6UUsAsFvQfX4yrrMExAeLibd9STTeIMK3VQiqrlYPBUu5aQDyIcILrGR353gkErPMv
-         VfBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716088250; x=1716693050;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lFSZbZfTC226eQMjp0sS4xniwqBXpfweUGcjqkUYZ2I=;
-        b=nb9aXPaooLrZh0II+wLII1Uefou6gEKvYBFBzH0tGQycwTwlBdlU0J8Ag9/+rVCOcy
-         Y3G2H7qm7I3eZp7jvjMUOhXO9jJ6oXYZHfVw5Gpmosz5nx8kzkCUK1UxK63W7yls0BJF
-         IvP+Wy8NmALPRD8x8sTzXOA/OExc7S/e25iULr4bqILGPs1a0gFXAvTijmKOixBQu4xP
-         3Ro+l/Lvb5eT1BdG0A8AFy8+w/JGkeK9cfi7t3yOZM5US3cl5YmjlBwZGEUUTz89lpAA
-         N/riY+HY1+ywHu285lA8n45Ld91+4tSp5nYvkuvBS0+MlAYly49kKJmZHeAL0FQWyE6/
-         IfLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSMQ2snnQsZqKhDRY/LXbYcYsIVtc1/7Ff8aVTtN+lm88/WqMcvCqEbCrhUSls5f3YEQwQs+RQCTnSamd1fxhHl6PcaXGgHWBM4o+3
-X-Gm-Message-State: AOJu0YynEQYMKPKtFzNAHay+PlJKlkhwiG08I0n1Wz2T148hcqPilvoQ
-	1LBEb6KCtOkKfMnucsy/LZ0v35g8ABTzzW43BJHKFfq3RajITGG2
-X-Google-Smtp-Source: AGHT+IH28eff2ZIUcVS0Dp/+G5i8Aj5IcetQJoyI2wjeZ1HW4+g7K+rPcKbEzCzdIFGIFMoPbyHv4g==
-X-Received: by 2002:a05:6a00:398d:b0:6ea:dfc1:b86 with SMTP id d2e1a72fcca58-6f69fc15becmr3972824b3a.12.1716088250419;
-        Sat, 18 May 2024 20:10:50 -0700 (PDT)
-Received: from mari.. ([2804:431:cfd3:a689:b983:dc6d:a9d1:7485])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6677f912880sm1025131a12.60.2024.05.18.20.10.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 20:10:50 -0700 (PDT)
-From: MarileneGarcia <marilene.agarcia@gmail.com>
-To: David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
-	Imre Deak <imre.deak@intel.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Mitul Golani <mitulkumar.ajitkumar.golani@intel.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: MarileneGarcia <marilene.agarcia@gmail.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/dp: Fix documentation warning
-Date: Sun, 19 May 2024 00:10:27 -0300
-Message-Id: <20240519031027.433751-1-marilene.agarcia@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716088506; c=relaxed/simple;
+	bh=pM5i6LqokDz4pzzZFVyCXFt0ByKBOSnsXU6BpIshdws=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z05QuvjIvDe283Lv79s4l62+l25vZ4itaXpqZcPbETSs8HbKRcN6ifrmFHxtaa7jFzq7BLgABNIPZV32xqcS0yM+u0N7ZA+0sv0Fe5wGgZr8R0cJCJqhOmyStEZw8GCljYxdlWKq6KbCSPtEw0j90ZgoKg0+mnkNoQWpUfimCX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=RFqSbC2s; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+X-Envelope-To: val@packett.cool
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1716088501;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mQ68eiixPLPA8K8ibwC9Cqzr0rdSmWCBdWf8xU1y1GM=;
+	b=RFqSbC2snfhymVSfYyYailtwV2CqggBM/RQHKsrNoV3zW3MCK9cpI1GjMbIu624pm6PfOf
+	wMZxYamANR3bImVCiq3rd4Hey2NKzUTdjLZW2TmnW6HxtGiohDrEnlWvPfeh94XTIQmTWG
+	RkZ+/kTLV+QTyRJ6fGX6ifWe4SQ9p7hFBBJZEssvD/EZ3yPEymxWItYHBjcEPbz7KXgohG
+	BbrN+IVoTm+cEKZ5LHwvSV8y6sIn1qqos9AizSoliMKpVHEuANf6+ot95p8Nr6DcY8FFZ5
+	bAJa+9or7pdVeu/zXV1hTt73Lu3vETEgjRXxYBOSnTnEGSBckyFPRw9qptYMxA==
+X-Envelope-To: stable@vger.kernel.org
+X-Envelope-To: miquel.raynal@bootlin.com
+X-Envelope-To: richard@nod.at
+X-Envelope-To: vigneshr@ti.com
+X-Envelope-To: heiko@sntech.de
+X-Envelope-To: sfr@canb.auug.org.au
+X-Envelope-To: linux-mtd@lists.infradead.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Val Packett <val@packett.cool>
+To: 
+Cc: Val Packett <val@packett.cool>,
+	stable@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	linux-mtd@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mtd: rawnand: rockchip: ensure NVDDR timings are rejected
+Date: Sun, 19 May 2024 00:13:39 -0300
+Message-ID: <20240519031409.26464-1-val@packett.cool>
+In-Reply-To: <20240518124404.472eb60b@xps-13>
+References: <20240518124404.472eb60b@xps-13>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,44 +79,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-It fixes the following warnings when
-the kernel documentation is generated:
+setup_interface first gets called with a "target" value of
+NAND_DATA_IFACE_CHECK_ONLY, in which case an error is expected
+if the controller driver does not support the timing mode (NVDDR).
 
-/include/drm/display/drm_dp_helper.h:126:
-warning: Function parameter or struct member
-'mode' not described in 'drm_dp_as_sdp'
-
-/include/drm/display/drm_dp_helper.h:126:
-warning: Excess struct member 'operation_mode'
-description in 'drm_dp_as_sdp'
-
-Signed-off-by: MarileneGarcia <marilene.agarcia@gmail.com>
+Fixes: a9ecc8c814e9 ("mtd: rawnand: Choose the best timings, NV-DDR included")
+Signed-off-by: Val Packett <val@packett.cool>
+Cc: stable@vger.kernel.org
 ---
-Changes:
-This documentation comment should refer to the name of the 
-variable to solve the warnings. As operation_mode is the 
-name of the enum, and the declared variable name is mode.
+ drivers/mtd/nand/raw/rockchip-nand-controller.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thank you.
-
- include/drm/display/drm_dp_helper.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/drm/display/drm_dp_helper.h b/include/drm/display/drm_dp_helper.h
-index 8bed890eec2c..8defcc399f42 100644
---- a/include/drm/display/drm_dp_helper.h
-+++ b/include/drm/display/drm_dp_helper.h
-@@ -112,7 +112,7 @@ struct drm_dp_vsc_sdp {
-  * @target_rr: Target Refresh
-  * @duration_incr_ms: Successive frame duration increase
-  * @duration_decr_ms: Successive frame duration decrease
-- * @operation_mode: Adaptive Sync Operation Mode
-+ * @mode: Adaptive Sync Operation Mode
-  */
- struct drm_dp_as_sdp {
- 	unsigned char sdp_type;
+diff --git a/drivers/mtd/nand/raw/rockchip-nand-controller.c b/drivers/mtd/nand/raw/rockchip-nand-controller.c
+index 7baaef69d..555804476 100644
+--- a/drivers/mtd/nand/raw/rockchip-nand-controller.c
++++ b/drivers/mtd/nand/raw/rockchip-nand-controller.c
+@@ -420,13 +420,13 @@ static int rk_nfc_setup_interface(struct nand_chip *chip, int target,
+ 	u32 rate, tc2rw, trwpw, trw2c;
+ 	u32 temp;
+ 
+-	if (target < 0)
+-		return 0;
+-
+ 	timings = nand_get_sdr_timings(conf);
+ 	if (IS_ERR(timings))
+ 		return -EOPNOTSUPP;
+ 
++	if (target < 0)
++		return 0;
++
+ 	if (IS_ERR(nfc->nfc_clk))
+ 		rate = clk_get_rate(nfc->ahb_clk);
+ 	else
 -- 
-2.34.1
+2.45.0
 
 
