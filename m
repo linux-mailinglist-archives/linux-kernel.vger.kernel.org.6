@@ -1,85 +1,178 @@
-Return-Path: <linux-kernel+bounces-183075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 355E98C942E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 11:11:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2597A8C9436
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 11:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 661DA1C20948
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:11:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D5251C20A6A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BC52BB10;
-	Sun, 19 May 2024 09:11:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7442EAE6;
+	Sun, 19 May 2024 09:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ru+XCSY1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFB71799F
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 09:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1713D60;
+	Sun, 19 May 2024 09:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716109866; cv=none; b=befbHCX6xYphapeI/WK1/l2VeKOcp6grD2uWX8wVz2/lOHJmYsIymburo8kI9vN2yb028hMbODtiq6Okk+CCqP3fycj7GgspvCwHymSIHpjjT6wIQCWZBr9gmAN37UmT6YUv4ILTNc4bbZOdxQx/azw9dxm1deDpqJfvT7rn/u0=
+	t=1716110555; cv=none; b=ofqzCxBIC7/yZh1QLIuHMy4J6OqXalSVXD0yEMtou0J8rRYO4ISvH3mfxS5jV2KwSAvStWeZHJgZCk6rxsmYk+u0153v6/7FKFRQHdpRmBEbDh1tdx9OV9k++eB71keQDX5GQafsaDMKvi68uMMYaLi7BxwsiFUf2qF+MNrdtBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716109866; c=relaxed/simple;
-	bh=HZofFkKYEc6fyWsMV5cT8IFWrUWtxSlG1TG9c/gl6tg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LH/tJ66nbVR6aiq/qT1X5ui/B6cz2/KvbnhSO7DGbLodSRNRPWFNiFBrZ3+wewXXtQwkpaebKBcf7KWKzDSFg0r7+bAq57OZUiDs8W/XCAdnkIZ6YcyO3HhHA5wtHj/zV9CBe9zvI+NG/O4IqZbo2CMkv0B+m1GfehyCAgXHZXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e1c3c98401so714405439f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 02:11:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716109864; x=1716714664;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HmJHcMrpGBkfX2KL7MFrkpNa9ZVJfwG14BAogNSdHT4=;
-        b=fFiY/rH6kAoJw1pH5JaCyx5GVZwACJ4WSTmrOmvtPcNS6If8L3X5pooOeEENSYQsbk
-         FqIpAY26dlNW7OwVqAPIZ+ULftcnk5lJo2MxCRsZy0SZT2b+cWKiIxKEWIwaNFmuqexx
-         pF6N2yQqQdM5lxkiZVH8W12LXlATzuiRVxKzih7e+AVbrFwGNnA4sT8NrTPfOQt3Aotr
-         4hj7i7SiwMMZy1XLB39GDIPRAw4UaarT6ADgWr5/F7AxulZNnTKNqct3+CFdLeJ4bjyM
-         kp7MYqwQVQjD0puj+ZR2qDNymqrSoocn2rdBrMlbKub8kxa2TEAtmuuRfvNSX+QfN48g
-         ptDg==
-X-Gm-Message-State: AOJu0Yz6BRv8LeIgUFa4CmMhZPGwL5NxnfSyXKIwL15AAm8NvQoU4eoS
-	I3uyUA/iu8cIZzAODGBzDHzVIRelyy8qm0ixyj3XPuUf3k1WYejhjYLSR9jR29lFSnfnfjLiCey
-	9p8xlp/7kZE431FI+rtEV9mcpeVbGyznqyZP6GXm9AFQHjTR/Aa4u3f4=
-X-Google-Smtp-Source: AGHT+IHaejbP3gsdD25yZ6Rj3vih4pVLIdpn/xHgVriOHMgFDcJyEHjAt/xM+XoX3mgr8JqgaE51gAtmAS4KKGVimYaCZ6abZhSp
+	s=arc-20240116; t=1716110555; c=relaxed/simple;
+	bh=4vP51LV2fsWJzxCi5xWMJ6NrpAV+H9bEyZ6ICl1ZBcQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s3TJPO3M36bfAK0u4B9gIEErAD1a6nw+tMMVSpDlgXH2bO8zGSEuBzVy8zOQJ8WPE2IvuVsbx1N60miVjhtnoCsJX2Eic3eD/g2e/cW2UWWyq4ZN4kZLj+LCC+01Vd/RfCLOJhxdNgeJT498B/Kwux2O9OiB//b2AKsm5El1Pnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ru+XCSY1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1254C32781;
+	Sun, 19 May 2024 09:22:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716110554;
+	bh=4vP51LV2fsWJzxCi5xWMJ6NrpAV+H9bEyZ6ICl1ZBcQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ru+XCSY1jgvuvu5UWERN5e+zcG5ECUjhzlirHuHiG/IwbQzBPvO+8E161lFMP3kBG
+	 JE5A8JyHiupwpXBQmZHMRyj1tgZWhGinKaW6isZ9TnT518RMvnV6DBzwvYAT5wB/Bu
+	 VJeRuzlKHvBMHk2JJbznIjhIqB9sUfy0ooeRxRnmTfpCY55V492ryzN4RLagFdZR7n
+	 zb3DZUHv2ncJ7NrR+o8MjD97ge0z2EKNEp/mIohB+yVfBfRtoJJbvtu3DQRgjg8eF6
+	 FZp2gCc5J4GNTGkK2zAe8Uy2SyJ3UxfSsgQuHmnNGcW8YYLNEtNUDsPBQxsAfrGfNB
+	 JtwGFb3Snv7Eg==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH] kconfig: fix comparison to constant symbols, 'm', 'n'
+Date: Sun, 19 May 2024 18:22:27 +0900
+Message-Id: <20240519092227.2101109-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8625:b0:488:7bb2:c9f6 with SMTP id
- 8926c6da1cb9f-48958c02450mr2413163173.3.1716109863866; Sun, 19 May 2024
- 02:11:03 -0700 (PDT)
-Date: Sun, 19 May 2024 02:11:03 -0700
-In-Reply-To: <Zkm6qnUh6Xe2gv6-@zeus>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d4e1ce0618caf6e8@google.com>
-Subject: Re: [syzbot] [net?] [nfc?] KMSAN: uninit-value in nci_rx_work
-From: syzbot <syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, ryasuoka@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Currently, comparisons to 'm' or 'n' result in incorrect output.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+[Test Code]
 
-Reported-and-tested-by: syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
+    config MODULES
+            def_bool y
+            modules
 
-Tested on:
+    config A
+            def_tristate m
 
-commit:         4db783d6 ipv6: prevent NULL dereference in ip6_output()
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=158bb442980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bbf567496022057b
-dashboard link: https://syzkaller.appspot.com/bug?extid=d7b4dc6cd50410152534
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1372beb2980000
+    config B
+            def_bool A > n
 
-Note: testing is done by a robot and is best-effort only.
+CONFIG_B is actually unset, while the expectation is CONFIG_B=y.
+
+The reason for the issue is because Kconfig compares the tristate values
+as strings.
+
+Currently, the .type fields of the constant symbols, 'y', 'm', and 'n'
+are unspecified, i.e., S_UNKNOWN.
+
+When expr_calc_value() evaluates 'A > n', it checks the types of 'A' and
+'n' to determine how to compare them.
+
+The left-hand side, 'A', is a tristate symbol with a value of 'm', which
+corresponds to a numeric value of 1. (Internally, 'y', 'm', and 'n' are
+represented as 2, 1, and 0, respectively.)
+
+The right-hand side, 'n', has an unknown type, so it is treated as the
+string "n" during the comparison.
+
+expr_calc_value() compares two values numerically only when both can
+have numeric values. Otherwise, they are compared as strings.
+
+    symbol    numeric value    ASCII code
+    -------------------------------------
+      y           2             0x79
+      m           1             0x6d
+      n           0             0x6e
+
+'m' is greater than 'n' if compared numerically (since 1 is greater
+than 0), but small than 'n' if compared as strings (since the ASCII
+code 0x6d is smaller than 0x6e).
+
+Specifying .type=S_TRISTATE for symbol_{yes,mod,no} fixes the above
+test code.
+
+However, this would cause a regression to the following test code.
+
+[Test Code 2]
+
+    config MODULES
+            def_bool n
+            modules
+
+    config A
+            def_tristate n
+
+    config B
+            def_bool A = m
+
+You would get CONFIG_B=y, while CONFIG_B should not be set.
+
+The reason is because sym_get_string_value() turns 'm' into 'n' when
+the module feature is disabled. Consequently, expr_calc_value() returns
+the result of 'A = n' instead of 'A = m'. This oddity has been hidden
+because the type of 'm' was previously S_UNKNOWN instead of S_TRISTATE.
+
+sym_get_string_value() should not tweak the string because the tristate
+value has already been correctly calculated. There is no reason to
+return the string "n" where its tristate value is mod.
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/kconfig/symbol.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index aa0e25ee5119..0e439d3d48d1 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -14,6 +14,7 @@
+ 
+ struct symbol symbol_yes = {
+ 	.name = "y",
++	.type = S_TRISTATE,
+ 	.curr = { "y", yes },
+ 	.menus = LIST_HEAD_INIT(symbol_yes.menus),
+ 	.flags = SYMBOL_CONST|SYMBOL_VALID,
+@@ -21,6 +22,7 @@ struct symbol symbol_yes = {
+ 
+ struct symbol symbol_mod = {
+ 	.name = "m",
++	.type = S_TRISTATE,
+ 	.curr = { "m", mod },
+ 	.menus = LIST_HEAD_INIT(symbol_mod.menus),
+ 	.flags = SYMBOL_CONST|SYMBOL_VALID,
+@@ -28,6 +30,7 @@ struct symbol symbol_mod = {
+ 
+ struct symbol symbol_no = {
+ 	.name = "n",
++	.type = S_TRISTATE,
+ 	.curr = { "n", no },
+ 	.menus = LIST_HEAD_INIT(symbol_no.menus),
+ 	.flags = SYMBOL_CONST|SYMBOL_VALID,
+@@ -820,8 +823,7 @@ const char *sym_get_string_value(struct symbol *sym)
+ 		case no:
+ 			return "n";
+ 		case mod:
+-			sym_calc_value(modules_sym);
+-			return (modules_sym->curr.tri == no) ? "n" : "m";
++			return "m";
+ 		case yes:
+ 			return "y";
+ 		}
+-- 
+2.40.1
+
 
