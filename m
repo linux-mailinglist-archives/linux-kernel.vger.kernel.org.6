@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-183025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 282CE8C9372
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:02:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A3B8C9371
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12EE2816B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 05:02:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 883801C209EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 05:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A7FE554;
-	Sun, 19 May 2024 05:02:41 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB40EAF6;
+	Sun, 19 May 2024 05:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i9a8la5A"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AEB946F
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 05:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6624C4C7D;
+	Sun, 19 May 2024 05:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716094961; cv=none; b=efnhudz+MJ6OXEAO04tJajBEFMaAebH6xhewO/bW0Xe7FlHsuCmfrS0nMUINq1jlE7fTZJDo4qZh8eqVe7oS9JXNYUJgxtw5CfB/ipFbC2KmXqEwEuT2rWLk55m6yGNgnJIZ+ATBm8mc3YIcsYJ2YcV0cgJANd7oFZPBDNf/nd0=
+	t=1716094919; cv=none; b=TEdOmZJRqDGjF1DoGmDSr/AmStbdX68yFCjgjt2H/eEBgLP90k2x7v6NP6qiDsuwjPXav1FLH3Gk6gbsaIg82SnBVeL+3A4o//luzer+vCcvwpITHl5xpioLxotmg/bSwwFIl0tKF7fOPB/gJCyw9CngGaFkdtDfaRvG9yE+K/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716094961; c=relaxed/simple;
-	bh=QKgWZ9yK69dBMm4j06TKWvDSRDCE/4PFJH/hajzDA2M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eWAks6qSOxl5v56FrLoVNUD+evjBSg1IrnjUNQRijHikSnIgVkNfMpTmuTz1XakMbxd270zsKzTm5iyu+Wnw84dpEJJYX9lry78EN2t1GBRIuQSNltSml/lxhXEFC4a8FuBNQdwenr+rLqIEsNQ4D3LprvygUNxR/hYHStMuh+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e1e05c39easo826933939f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 22:02:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716094959; x=1716699759;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PEkFLZ1iWs8m/wiswDRxxFaLsy90wywV2q0+A+M0caU=;
-        b=ejldLUR1C07JLWJk4GPWKK3xWI/NMOdHBbI6JY6iJBgiicH9HoEX3DQRgTa5lgSgUp
-         tSwelFMLifMr3sXWXj2jnHhOaEw7kEWoC5qz/e8MuAcBZDNiVrkqzoHpukG0tgiX+Yoc
-         UD00AndQ7NBfqmzUBZ8QKhmgsdAZfqFmENGuI/lVklq0fqIwAMnzHFJPpKss/Xo1HFsq
-         OS5oru/pSBT1fvleUDrB9DELcojt1/l1iJGmo0qUuinQmL7qPFHLRW2a50lAK1DlptHK
-         kElpSoJlVLd60QrWxv8yY02q3M18RqcsBTXi5iHfx/0LSEmc3eugrlwGOSfaC9+FdKO8
-         U/Tw==
-X-Gm-Message-State: AOJu0Yzhj47Gbh0Y9XIiYl2FZcV9+2/o+oxCVyKRJpnbrXfUTVEv4hNg
-	sfu5YULoq49SIX9Ard2O5BAefgN14n/ttjJA/aeSfArz4LlB+q5L3dU7otYPIZ7QDiGPUxVkKjO
-	XcQkqfzMy0k+yVnFvaMAqvhRyljxChmFgn9/V1LrPH50veqknZZu7BRg=
-X-Google-Smtp-Source: AGHT+IH8sI1070YVdmqWnJ1PaJiSNVPCnHp9nJRIhVTpKyduI5ZpH99Jx+ReI7uZTH25bypTfob73sclniFTYUkxH+31m0FtyqTd
+	s=arc-20240116; t=1716094919; c=relaxed/simple;
+	bh=JOXyQnL/Rd4T3+2ptcou/ugUznzFoHrhbhcuHxJtPgI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JxeYRGz3ErzkDRH5hB5qtivOs6GZ30zEuIYK5ibZCTqB+usQCthP9CowJQkByQNrzLtGUKb5oHL/CfxIUFe7grjMJZS3KtnicBXnJWjnr9DoG4oK0ibCS9TpJkUbLPJLP9qSNZRLS7LOsLBBAD65xzSLHwjB1JGnepkLynbx8uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i9a8la5A; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716094918; x=1747630918;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JOXyQnL/Rd4T3+2ptcou/ugUznzFoHrhbhcuHxJtPgI=;
+  b=i9a8la5AyLwCoYrleumy0KiRFJ5OZi2hcnYMLCPcUi4dvYEa0YxJZBPw
+   uNk5govzlfm+fU7jiZaYh+1K3TEZn0vBcSHgoY2KatEkOO592YxYTVB/h
+   dTslMkqizUJ3C9G3xtQ5o7+a6uxFYRn9TP/fOiQ0BXkAiWYtmlfavN5w5
+   fKmY/LgKSNtGvP0WmztLaxc9fRty+bViLPYzsgn4StHukOozqIny7xCGh
+   JYwwHK7TwPT7jSfwEdo3MvEQAHr+8imn62qLOBKY7Oob8LUUGd0aj29Lo
+   lk/5s/X3xyrHDPpokvaJxA+8UNEFdJ1/wqvGsfgbyjH6EYVrb6HWbigVc
+   Q==;
+X-CSE-ConnectionGUID: pI4ZDnG2T5e3HTVNifWIDw==
+X-CSE-MsgGUID: CGqVs2yLTFyDVMcQKPtErw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11076"; a="12182837"
+X-IronPort-AV: E=Sophos;i="6.08,172,1712646000"; 
+   d="scan'208";a="12182837"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2024 22:01:57 -0700
+X-CSE-ConnectionGUID: VMTxTzD9SMe76W4d80VeWw==
+X-CSE-MsgGUID: Mf1dO27hTISmu4yA6Z9XBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,172,1712646000"; 
+   d="scan'208";a="32110053"
+Received: from xiao-desktop.sh.intel.com ([10.239.46.158])
+  by fmviesa007.fm.intel.com with ESMTP; 18 May 2024 22:01:51 -0700
+From: Xiao Wang <xiao.w.wang@intel.com>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	luke.r.nels@gmail.com,
+	xi.wang@gmail.com,
+	bjorn@kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@google.com,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	pulehui@huawei.com,
+	haicheng.li@intel.com,
+	Xiao Wang <xiao.w.wang@intel.com>
+Subject: [PATCH] riscv, bpf: try RVC for reg move within BPF_CMPXCHG JIT
+Date: Sun, 19 May 2024 13:05:07 +0800
+Message-Id: <20240519050507.2217791-1-xiao.w.wang@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3781:b0:488:96c4:9caf with SMTP id
- 8926c6da1cb9f-4895a499857mr1851972173.6.1716094958994; Sat, 18 May 2024
- 22:02:38 -0700 (PDT)
-Date: Sat, 18 May 2024 22:02:38 -0700
-In-Reply-To: <00000000000003b4af060de27f6b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006e9dff0618c77ee2@google.com>
-Subject: Re: [syzbot] [PATCH net v5] nfc: nci: Fix uninit-value in nci_rx_work
-From: syzbot <syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+We could try to emit compressed insn for reg move operation during CMPXCHG
+JIT, the instruction compression has no impact on the jump offsets of
+following forward and backward jump instructions.
 
-***
+Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
+---
+ arch/riscv/net/bpf_jit_comp64.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Subject: [PATCH net v5] nfc: nci: Fix uninit-value in nci_rx_work
-Author: ryasuoka@redhat.com
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git master
-
-diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
-index b133dc55304c..7a9897fbf4f4 100644
---- a/net/nfc/nci/core.c
-+++ b/net/nfc/nci/core.c
-@@ -1463,6 +1463,19 @@ int nci_core_ntf_packet(struct nci_dev *ndev, __u16 opcode,
- 				 ndev->ops->n_core_ops);
- }
- 
-+static bool nci_valid_size(struct sk_buff *skb)
-+{
-+	BUILD_BUG_ON(NCI_CTRL_HDR_SIZE != NCI_DATA_HDR_SIZE);
-+	unsigned int hdr_size = NCI_CTRL_HDR_SIZE;
-+
-+	if (skb->len < hdr_size ||
-+	    !nci_plen(skb->data) ||
-+	    skb->len < hdr_size + nci_plen(skb->data)) {
-+		return false;
-+	}
-+	return true;
-+}
-+
- /* ---- NCI TX Data worker thread ---- */
- 
- static void nci_tx_work(struct work_struct *work)
-@@ -1516,7 +1529,7 @@ static void nci_rx_work(struct work_struct *work)
- 		nfc_send_to_raw_sock(ndev->nfc_dev, skb,
- 				     RAW_PAYLOAD_NCI, NFC_DIRECTION_RX);
- 
--		if (!nci_plen(skb->data)) {
-+		if (!nci_valid_size(skb)) {
- 			kfree_skb(skb);
- 			kcov_remote_stop();
- 			break;
+diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
+index aac190085472..c134aaec4295 100644
+--- a/arch/riscv/net/bpf_jit_comp64.c
++++ b/arch/riscv/net/bpf_jit_comp64.c
+@@ -531,8 +531,10 @@ static void emit_atomic(u8 rd, u8 rs, s16 off, s32 imm, bool is64,
+ 	/* r0 = atomic_cmpxchg(dst_reg + off16, r0, src_reg); */
+ 	case BPF_CMPXCHG:
+ 		r0 = bpf_to_rv_reg(BPF_REG_0, ctx);
+-		emit(is64 ? rv_addi(RV_REG_T2, r0, 0) :
+-		     rv_addiw(RV_REG_T2, r0, 0), ctx);
++		if (is64)
++			emit_mv(RV_REG_T2, r0, ctx);
++		else
++			emit_addiw(RV_REG_T2, r0, 0, ctx);
+ 		emit(is64 ? rv_lr_d(r0, 0, rd, 0, 0) :
+ 		     rv_lr_w(r0, 0, rd, 0, 0), ctx);
+ 		jmp_offset = ninsns_rvoff(8);
+-- 
+2.25.1
 
 
