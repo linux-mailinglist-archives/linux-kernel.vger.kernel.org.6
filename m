@@ -1,84 +1,117 @@
-Return-Path: <linux-kernel+bounces-183268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF74E8C96A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 23:04:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 059A88C96A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 23:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1658AB20C33
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 21:04:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A534E1F20FBB
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 21:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AC66E60E;
-	Sun, 19 May 2024 21:04:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4B026AEC;
-	Sun, 19 May 2024 21:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9E36E61A;
+	Sun, 19 May 2024 21:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaOy4dM7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0164D26AEC;
+	Sun, 19 May 2024 21:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716152652; cv=none; b=u9lp1lx8C5lwTVudZpg9Cdg7jFQV68SNQ+glPQOb/WJTdgm/fv+h9kc1nYvuToJ1ICk0yx05a7fwbcJ+sSl/4mQR6z1JFwFSVuzVrC71iyLjWbtaCBx4CUNKn1qzxHQ/7QTjjSATiT/FLTeIdVm9wxh/GJssCF9EFwpK4sSBT5c=
+	t=1716152870; cv=none; b=OA91khVxx2iPgud07Yr7lEzh50zKWrGYbx08qWHihroYBHw3Nnsrw3o3aCzjfj60a/5yq+6reqBQ7bk/P3LIdkBUhcZa/ybBvbHc8sANsQsUdbtjooonShl/R2DXvoKNFzo/bA4OWiCeNEkMnSbcOGRq148lZwGM4ETCkdDh4MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716152652; c=relaxed/simple;
-	bh=d9zC13sd+PcOp2vUU2yC7M1ViEVGOliY1ayJq7D3KmI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=DGxaBhvH3r1XGjCdT+alrEB02Enyos6yEiqFepoINZwcrOyY4Sv7newVk5P/6vWJE6lsnRB1yK++w6v3a6ITCPljGGFQ1txSdBs/vxReWn3fQWiPY7x3EB+yQjmdn7kjIdYXd1DacNyZJtqFZSn9evFmAgfhLDNaSc4tjPX6oO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F261F1007;
-	Sun, 19 May 2024 14:04:26 -0700 (PDT)
-Received: from [10.57.85.2] (unknown [10.57.85.2])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 701D73F762;
-	Sun, 19 May 2024 14:04:01 -0700 (PDT)
-Message-ID: <0ce2d536-1125-4df8-9a5b-0d5e389cd8af@arm.com>
-Date: Sun, 19 May 2024 22:03:59 +0100
+	s=arc-20240116; t=1716152870; c=relaxed/simple;
+	bh=H6awbG9maNnvIwZjWXp+MfoENhflzFD1z6syx90vt8w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q7l2UdMu39nWvu9yikfDPoPHQn6VVZGeKxFET11MJLwbO7xb7a0OAwnYaTEPk4rcFotLAaiU4qk7C1FDWQXUOwdByhN8Jui+2AWbWe0nK4r7M2HyOBzcHQUUL57y4nBckyBV693WLmpEhbQu6zl/GLuqkDceTG6OdAUJrS/evCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaOy4dM7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6337EC32781;
+	Sun, 19 May 2024 21:07:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716152869;
+	bh=H6awbG9maNnvIwZjWXp+MfoENhflzFD1z6syx90vt8w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qaOy4dM7+RG6NzPTly9gDrivijI3h0waUvmosPNvNuSdulFOz1xGW0pqAraNLq4Hh
+	 my7NuhTeOUrobIr8/Qq2elov23GnsoRTnSE9gDsR0FJ7KdwDD1Nm5m9A2SOLJ0WPEi
+	 6W/0clmDW3ClOolRUmQ8kypF7MUWH2vjUj0Ch/xHz1CpUMaYvAEz2BF1Isw1otp2CF
+	 HjF0dpgYySEzVVHaurEOOs88nYPkh3NeGE0zFuOMyd3neD5NyQjz39o7CCn9MtOGiW
+	 AYTCznAIxHHyJsitG7gv0BoOJpPlE4lgr4QJiXvCnv3wGckErPfuM0iXADtyC1mB0o
+	 RIYq4zzdeBd/A==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Danilo Krummrich <dakr@redhat.com>
+Subject: [PATCH] rust: avoid unused import warning in `rusttest`
+Date: Sun, 19 May 2024 23:07:35 +0200
+Message-ID: <20240519210735.587323-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Qais Yousef <qyousef@layalina.io>, kajetan.puchalski@arm.com,
- Anna-Maria Behnsen <anna-maria@linutronix.de>
-From: Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH] cpuidle: teo: fix underflow of recent intercepts
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The recent counter of each cpuidle state bin reflects the number of
-recent intercepts. It's decremented and incremented accordingly.
-The decrement was never checked for 0, therefore underflowing into a
-value teo cannot easily recover from.
+When compiling for the `rusttest` target, the `core::ptr` import is
+unused since its only use happens in the `reserve()` method which is
+not compiled in that target:
 
-The underflow lead to deeper idle states being skipped because teo
-assumed interception was likely and it preferring shallower states.
+    warning: unused import: `core::ptr`
+    --> rust/kernel/alloc/vec_ext.rs:7:5
+      |
+    7 | use core::ptr;
+      |     ^^^^^^^^^
+      |
+      = note: `#[warn(unused_imports)]` on by default
 
-Fixes: 77577558f25d ("cpuidle: teo: Rework most recent idle duration values treatment")
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+Thus clean it.
+
+Fixes: 97ab3e8eec0c ("rust: alloc: fix dangling pointer in VecExt<T>::reserve()")
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 ---
- drivers/cpuidle/governors/teo.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ rust/kernel/alloc/vec_ext.rs | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
-index 7244f71c59c5..42fb2771e35d 100644
---- a/drivers/cpuidle/governors/teo.c
-+++ b/drivers/cpuidle/governors/teo.c
-@@ -290,7 +290,8 @@ static void teo_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
- 	if (cpu_data->next_recent_idx >= NR_RECENT)
- 		cpu_data->next_recent_idx = 0;
+diff --git a/rust/kernel/alloc/vec_ext.rs b/rust/kernel/alloc/vec_ext.rs
+index e9a81052728a..1297a4be32e8 100644
+--- a/rust/kernel/alloc/vec_ext.rs
++++ b/rust/kernel/alloc/vec_ext.rs
+@@ -4,7 +4,6 @@
  
--	if (cpu_data->recent_idx[i] >= 0)
-+	if (cpu_data->recent_idx[i] >= 0 &&
-+			cpu_data->state_bins[cpu_data->recent_idx[i]].recent)
- 		cpu_data->state_bins[cpu_data->recent_idx[i]].recent--;
+ use super::{AllocError, Flags};
+ use alloc::vec::Vec;
+-use core::ptr;
  
- 	/*
+ /// Extensions to [`Vec`].
+ pub trait VecExt<T>: Sized {
+@@ -141,7 +140,11 @@ fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocError>
+         // `krealloc_aligned`. A `Vec<T>`'s `ptr` value is not guaranteed to be NULL and might be
+         // dangling after being created with `Vec::new`. Instead, we can rely on `Vec<T>`'s capacity
+         // to be zero if no memory has been allocated yet.
+-        let ptr = if cap == 0 { ptr::null_mut() } else { old_ptr };
++        let ptr = if cap == 0 {
++            core::ptr::null_mut()
++        } else {
++            old_ptr
++        };
+ 
+         // SAFETY: `ptr` is valid because it's either NULL or comes from a previous call to
+         // `krealloc_aligned`. We also verified that the type is not a ZST.
+
+base-commit: 97ab3e8eec0ce79d9e265e6c9e4c480492180409
 -- 
-2.34.1
+2.45.1
+
 
