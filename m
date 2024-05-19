@@ -1,93 +1,79 @@
-Return-Path: <linux-kernel+bounces-183044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B2BC8C93C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:51:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B728C93C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 468DB281755
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:51:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B6AC1F21352
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637651C68D;
-	Sun, 19 May 2024 07:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A73D1803E;
+	Sun, 19 May 2024 07:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="N/q3aO5L"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q+2tvIxp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A6D14006;
-	Sun, 19 May 2024 07:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6766AA7;
+	Sun, 19 May 2024 07:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716105051; cv=none; b=CXw90NIiw6cApBOpV5y1VIgvvoO5wEIhRMW241axGLeZDl/rScFeMWe/kWInv4aQ+wielmi6dLu6D9IffszRW/afeIgoU7xyloJydm40PKkZq2LLF3TsB/KEokUz7gn5Wq7rxx6GkwR+3ItFtO/rTCuCUky9ipDkXzr56JHEbQ4=
+	t=1716105575; cv=none; b=kxrkLDWm99RAqAgv37+R2YlpqZiUbVen3BKtnTggLh9VRSJ0J2v9+NeBTZ2aQaPng20fnqFNUwqdiUkqiAv4nFxzVCQnwUYXzPSvrwM9Z5kVpeBQMWnZsUoxJ6p5GQlXv6eJ3Z6P91Tms42dLsAD8WeFIDMuAp/++SCaZZvdGzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716105051; c=relaxed/simple;
-	bh=jkN9s/UCfqcwcO60sG82AdVMCLkIhP/ZxGRMxoGJvNY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BSSeq+FeEgxpVdzptd3X4zPh+Ff/5gSyaVNHsPI8XgEMchdPKJFa+GTsDdGy3PWY8ThOFdZBfghgTqUMdeDXwBwHhvoC/McRNYlsEeRPuYYAwwvr7KEw2v2nry007W07tF78i5f8BAd+yNE9STE8m8Ar9k5E0Xohc7wBf4LBE34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=N/q3aO5L; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1716105046;
-	bh=jkN9s/UCfqcwcO60sG82AdVMCLkIhP/ZxGRMxoGJvNY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=N/q3aO5L67HYc0Qxj5I/En2FlSEjRWleBkFJgkdEvhG7K8aToJy+IZai/ddJTxGhU
-	 +mlvuaPa9dJxjh7VAqoOohCAlTr8xOoNfhGoKcUfKXzNVSmzYnpRsyIoGvH9chGG2Q
-	 uufYH9vgiLvklNEyO0GqE5Rsz4h4oaO8u4Egrspk=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 19 May 2024 09:50:21 +0200
-Subject: [PATCH 3/3] mfd: cros_ec: Register charge control subdevice
+	s=arc-20240116; t=1716105575; c=relaxed/simple;
+	bh=H/2+qHdYi7ZEH7Zr9/SLo5WPHWSoGzS8PBcfWjDh6Hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HuiTk81F/R8g82N23oq52ZPG1UuZ9kR9+GZuwJdu11gKmo94bDfcuPs9n6LmgowysKwHNRWtVbwvV7Xfu81D7GK2YQr+zKzBP7AucXk7/V4f0dPtO9oeVYNG1sFmqlikqgnpBMXz2edeN/cOoU9R9hYOHHsU+NloEdDR8M7ZMNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q+2tvIxp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70A4FC32781;
+	Sun, 19 May 2024 07:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716105575;
+	bh=H/2+qHdYi7ZEH7Zr9/SLo5WPHWSoGzS8PBcfWjDh6Hg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q+2tvIxpjbjvQNCxXWSJzFAJeeMCAvdCKktm2TtN70Zxn9KA+SXM7CaJRPaq/WpPl
+	 IbyyFYOyMX8vooiPyAgSrFHyI9DSfvabTdmqdXmlpaS87pHIqmS4kUQO6IRUWyUr7Y
+	 9b3oYYAIZC/B0s3437qH/UsmtvzKbdxc5YeUFnf0=
+Date: Sun, 19 May 2024 09:59:32 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Val Packett <val@packett.cool>
+Cc: stable@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/rockchip: vop: enable VOP_FEATURE_INTERNAL_RGB
+ on RK3066
+Message-ID: <2024051907-extruding-overplant-54f1@gregkh>
+References: <20240519074019.10424-1-val@packett.cool>
+ <20240519074019.10424-2-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240519-cros_ec-charge-control-v1-3-baf305dc79b8@weissschuh.net>
-References: <20240519-cros_ec-charge-control-v1-0-baf305dc79b8@weissschuh.net>
-In-Reply-To: <20240519-cros_ec-charge-control-v1-0-baf305dc79b8@weissschuh.net>
-To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
- Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>, 
- Dustin Howett <dustin@howett.net>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716105045; l=701;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=jkN9s/UCfqcwcO60sG82AdVMCLkIhP/ZxGRMxoGJvNY=;
- b=d/Xu0dphsEUz2K3zV15gzzcBWA+HAFvbHnpG9ZKAeDysndbIkVaCkAdx7xSdDSYr9PV2A5L34
- lBGrnU4Oo1FDRyuleOw+i1p4Ka4EIq1jGRdSPSMiYS5y44Ncdf308KG
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240519074019.10424-2-val@packett.cool>
 
-Add ChromeOS EC-based charge control as EC subdevice.
+On Sun, May 19, 2024 at 04:31:32AM -0300, Val Packett wrote:
+> Signed-off-by: Val Packett <val@packett.cool>
+> Cc: stable@vger.kernel.org
+> ---
+>  drivers/gpu/drm/rockchip/rockchip_vop_reg.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- drivers/mfd/cros_ec_dev.c | 1 +
- 1 file changed, 1 insertion(+)
+Maybe the DRM subsystem has more lax rules, but I know I can't take
+patches without any changelog text at all, sorry.
 
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index a52d59cc2b1e..c571cbc642c7 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -89,6 +89,7 @@ static const struct mfd_cell cros_ec_sensorhub_cells[] = {
- static const struct mfd_cell cros_usbpd_charger_cells[] = {
- 	{ .name = "cros-usbpd-charger", },
- 	{ .name = "cros-usbpd-logger", },
-+	{ .name = "cros-charge-control", },
- };
- 
- static const struct mfd_cell cros_usbpd_notify_cells[] = {
-
--- 
-2.45.1
-
+greg k-h
 
