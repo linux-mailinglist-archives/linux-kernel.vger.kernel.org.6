@@ -1,132 +1,121 @@
-Return-Path: <linux-kernel+bounces-183118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE788C94E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:03:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5FAB8C94E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552141F212E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:03:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 033191C2111A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CAB482EF;
-	Sun, 19 May 2024 14:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD72E487BC;
+	Sun, 19 May 2024 14:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EWpTMMZZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCQVH7hn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36CB1870
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 14:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122A3481CD;
+	Sun, 19 May 2024 14:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716127431; cv=none; b=aJ38difLKE1w6dZv4xaNeWMMmvZ8hleEPBfQoD2EiM+U1lHq59D8oZ5fKyovi6qSPBH2EwFugy4gHDNlw/NqMklH0YVGlKCH/U32D1xAr7/hk2p1OYFa0fIXpUpfE9yvVAenKiF7o9qZcyO11L8W22VuGkF2G2zeeub5dIDgSAk=
+	t=1716127445; cv=none; b=e5d/rVjLoOwLld8LGx9oA/M4QAr3Vv5WqA/qxgRoEoLDi+CN9vBwrZwSbUX4CDpBjVp1xmq/dbW4vPRyKlbFtn/T6WCFDWsSRzdgkllgMSsk+UzK2lBdOUt3frfKXKaLS7OmjMl/bS2JW0KuELpac8JyJVPh+9gA+Ai0+u0XYuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716127431; c=relaxed/simple;
-	bh=ARmOeQiHP4d/q5mgCSxMdhI46iVoSC/5ft3lev2E/AE=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Kmv18lc9b4CU/IwibEx//KMG80CqNakD47+03y53/aNe30s5giMvFGOzWJr2REF/saRImK96acK9642i/E6cpnH+8qT8J38uutUYBvCTaOIljUhp+cuKnonC10K3IXOvCSe0xK0N3WqAllNvn48x5xGA0PUHhNMQ5W2PD6bnZOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EWpTMMZZ; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716127430; x=1747663430;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ARmOeQiHP4d/q5mgCSxMdhI46iVoSC/5ft3lev2E/AE=;
-  b=EWpTMMZZhfJH/b+p4xNoCOP+iWov1yBV+suthkdQkiLk9W8D1XfH+bG4
-   T14ZkxoIa8yjAbxdENIoRDj9wuG1IRyw9Pkphd71Xid2MUdE/nnc4YFxm
-   y0fup0E+4HscvoBc9Qgu/Z8HB8X/7EhHOhCaJTs5Abqfi+Et3h7LZDyPZ
-   iIKDb+4kFuycI25GrSn9MvcMnJpc1e5IXxdnTuUcLRWelPwLPFozrIoxC
-   V8A4oECHES8H3/mv8Dk/RotdyCgNxfPipBNf3WNfQ3QX+AY0Gyz0WpV/6
-   p9V+GjgWGY2GdBICghTur/I3pD4Royo8feYN/VAZLLTjMFEWiWG7raiT0
-   w==;
-X-CSE-ConnectionGUID: vB6rxcQXR2mUYeyYueBf+w==
-X-CSE-MsgGUID: 6puSqxBjQTKv0hTzTVyeog==
-X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="34769360"
-X-IronPort-AV: E=Sophos;i="6.08,173,1712646000"; 
-   d="scan'208";a="34769360"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 07:03:49 -0700
-X-CSE-ConnectionGUID: hlDNrFh6TleY1OYmN5I/ww==
-X-CSE-MsgGUID: ymjepgDyRPCCOahlLRk1iQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,173,1712646000"; 
-   d="scan'208";a="36690457"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.244.72]) ([10.125.244.72])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 07:03:46 -0700
-Message-ID: <884a4104-27c8-4604-bd80-3b8cf84fd144@linux.intel.com>
-Date: Sun, 19 May 2024 22:03:43 +0800
+	s=arc-20240116; t=1716127445; c=relaxed/simple;
+	bh=kX5c/j3XbB6lfj9z5eriyWxGnhGXhpYNAAdgOsLVHyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RGi1VVD1ii33h5QsDu1BvaIcbfeTwtFpBDcfql62EMvd442o+mTGmgBHHoY3cVZSm0UDqpEWa01bXq5HNthTn4qi8f/toCIOjJmxFtQdPXDXrnFsi6XFU6Lb3svIP/nI3QL1NYLdnSoU9Pyli+gaQlfXowTkGb6WHWLeRiquyjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fCQVH7hn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F55DC32781;
+	Sun, 19 May 2024 14:04:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716127444;
+	bh=kX5c/j3XbB6lfj9z5eriyWxGnhGXhpYNAAdgOsLVHyk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fCQVH7hn3otSFLPQmanPzWBTNHre8jj/IOWcSdxgGX9ACat1VZzWqjkUD1cmKoauL
+	 vGJ0VsxxFk9yZNQeuYYHijja3mreZuyqjypaq4qT8SGKIXnudmRAcO2QcQ+SNnS+Dn
+	 i085mrJVmNV66K5jiw3bAQ+J25l0a7DcR6KYqa3t7Zz7nUUpLnyj5OfoeS4QOjb8z7
+	 fGVfU2FQmk+dYKowfqcPRZ1kBP+crjvfHo/425I9qvSgy5/tos/4FMdsgyMDCG08VK
+	 DlPDClFPkAEtWZqVulUqfFWGm0UQXOrWz0ReOl5YTZ89dc4dL41/XDxrDrxgEZc4/D
+	 Zg+LPqI3POhlA==
+Date: Sun, 19 May 2024 15:03:51 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Gustavo Silva <gustavograzs@gmail.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, lars@metafoo.de,
+ gerald.loacker@wolfvision.net, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] iio: chemical: ens160: add triggered buffer support
+Message-ID: <20240519150351.6c248b1d@jic23-huawei>
+In-Reply-To: <b8775460-5519-4294-9218-d8e814e05305@wanadoo.fr>
+References: <20240512210444.30824-1-gustavograzs@gmail.com>
+	<20240512210444.30824-5-gustavograzs@gmail.com>
+	<b8775460-5519-4294-9218-d8e814e05305@wanadoo.fr>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>,
- "virtualization@lists.linux-foundation.org"
- <virtualization@lists.linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 3/9] iommu: Add attachment handle to struct iopf_group
-To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>
-References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
- <20240430145710.68112-4-baolu.lu@linux.intel.com>
- <BN9PR11MB52762A339B6E103369C22F068CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB52762A339B6E103369C22F068CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/5/15 15:31, Tian, Kevin wrote:
->> From: Lu Baolu <baolu.lu@linux.intel.com>
->> Sent: Tuesday, April 30, 2024 10:57 PM
->>
->> Previously, the domain that a page fault targets is stored in an
->> iopf_group, which represents a minimal set of page faults. With the
->> introduction of attachment handle, replace the domain with the handle
-> 
-> It's better to use 'attach handle' as the code does.
+On Mon, 13 May 2024 21:13:07 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-Done.
+> Le 12/05/2024 =C3=A0 23:04, Gustavo Silva a =C3=A9crit=C2=A0:
+> > ENS160 supports a data ready interrupt. Use it in combination with
+> > triggered buffer for continuous data readings.
+> >=20
+> > Signed-off-by: Gustavo Silva <gustavograzs-Re5JQEeQqe8AvxtiuMwx3w@publi=
+c.gmane.org>
+> > --- =20
+>=20
+> ...
+>=20
+> > +static irqreturn_t ens160_trigger_handler(int irq, void *p)
+> > +{
+> > +	struct iio_poll_func *pf =3D p;
+> > +	struct iio_dev *indio_dev =3D pf->indio_dev;
+> > +	struct ens160_data *data =3D iio_priv(indio_dev);
+> > +	__le16 val;
+> > +	int ret, i, j =3D 0;
+> > +
+> > +	mutex_lock(&data->mutex);
+> > +
+> > +	for_each_set_bit(i, indio_dev->active_scan_mask,
+> > +			 indio_dev->masklength) {
+> > +		ret =3D regmap_bulk_read(data->regmap,
+> > +				       ENS160_REG_DATA_TVOC + 2 * i, &val, 2U);
+> > +		if (ret)
+> > +			goto err;
+> > +
+> > +		data->scan.chans[j++] =3D val; =20
+>=20
+> Is it safe? How can we know if it has been only *partly* updated? Does=20
+> it matter to know?
 
-> 
->> +	handle = iommu_attach_handle_get(dev->iommu_group, pasid, 0);
->> +	if (IS_ERR(handle))
->> +		return PTR_ERR(handle);
->>
->> -	if (!domain || !domain->iopf_handler) {
->> -		dev_warn_ratelimited(dev,
->> -			"iopf (pasid %d) without domain attached or handler
->> installed\n",
->> -			 fault->prm.pasid);
->> +	group->attach_handle = handle;
->> +	group->domain = handle->domain;
-> 
-> this change also removes the warning message. Is it desired?
+You've lost me. What do you mean by partly updated?=20
+This won't push anything to the kfifo etc unless all succeeded.
+Or is there a race with something else in here?
 
-Not desired.
+>=20
+> CJ
+>=20
+> > +	}
+> > +
+> > +	iio_push_to_buffers_with_timestamp(indio_dev, &data->scan,
+> > +					   pf->timestamp);
+> > +err:
+> > +	mutex_unlock(&data->mutex);
+> > +	iio_trigger_notify_done(indio_dev->trig);
+> > +
+> > +	return IRQ_HANDLED;
+> > +} =20
+>=20
+> ...
 
-Perhaps we can add a message when the iopf handling is aborted.
-Something like below:
-
-err_abort:
-+        dev_warn_ratelimited(dev, "iopf with pasid %d aborted\n",
-+                             fault->prm.pasid);
-         iopf_group_response(group, IOMMU_PAGE_RESP_FAILURE);
-
-Though I am not sure which is better dev_warn() or dev_info().
-
-Best regards,
-baolu
 
