@@ -1,113 +1,106 @@
-Return-Path: <linux-kernel+bounces-183115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2BC8C94DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:00:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190948C94E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE4C1F2126A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:00:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF7BF1F21548
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7962D487A9;
-	Sun, 19 May 2024 13:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FA448CC7;
+	Sun, 19 May 2024 14:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y+sRleG2"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y1C9pHte"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE5A374F6;
-	Sun, 19 May 2024 13:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAB08BEA;
+	Sun, 19 May 2024 14:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716127198; cv=none; b=s2gE+olKuag7di1H98VOgqaAQR7g0XKh0qAnFX6NZWmRv0RmgrJ/2wG6QOph1d0uBi0HwNal0HQ8v5H1we+vHu6nNA0GE7/HJzEqm9R0xb8LwuWQvjRQUGBMTECc4Ap10wwXe1Y+g+LDp0QnpY5B3PUG6YKbKDGmvfxKEPQ12Zc=
+	t=1716127255; cv=none; b=vEd9OiRMzeU+TW5nmcTocpS2BCxptANcuFM/KYnGh0Y75k0um3fdnNqoN0ukvUpsttBljisiVbhEmRI0LGrpj0drbJcI/8NNaXp6CrU8TY7Ap0w9rUncKixOOEq73UB4TZt4hrFLOsJV63ukRWYjc+T+uHijHkTbSZPlQR5SXjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716127198; c=relaxed/simple;
-	bh=7DTeiiURBxztZOz15EO00MnA/drHsel5+qO316YqUSk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tjgTnnuaTmWdrVopCHa+LZDDAdkSWmvvNm6D2nJfNEbBGRczM+S1gbZOlrjx3Aoo/FElqyvW+v7sUGr/tgPj1m/0aiIiu75wJqeaqr8FQcHeVd0bI6gR3ydmc3dVZ24fkfuEDoSDosLlbG9yWeF69zk5B373qsUwwjzuTAp+OoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y+sRleG2; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-572a93890d1so7080278a12.3;
-        Sun, 19 May 2024 06:59:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716127195; x=1716731995; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ZcAosKVRRNn3zbNdga7WpFXthPaMuTi09+NpFi9cn4=;
-        b=Y+sRleG2z590MtNr2M6L53LeuQEE4PI7Dtil20GPuNYvW5EPJb+YDJ/6WNoBoUNM/9
-         oLMAV0PNfNSGxKdAOxOlmEQ6er3ESDgwRX8fFlVxtfy1sLoGI312piD1T5vhp0JJ+eFS
-         8FBsO5EVcAxU2ZaLMQxLA4Au3X1ld/xf3XPduugxK9Puc1Gf30W+QNMmTulzEq3N2NEV
-         e1OMxcZ4JAuRlYfhL2dZ3KFF6x2pUFmfyu3zemopMO33RtfygEa0qffoNQ+eb2gQP+cS
-         CnwBHwzv+elXRcwCq+y3/kdroyUJbqIBIikZaSRkGhn0w6aOdAWIJqYZMHQBMWkSItki
-         aotg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716127195; x=1716731995;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7ZcAosKVRRNn3zbNdga7WpFXthPaMuTi09+NpFi9cn4=;
-        b=S1dNp23ewRFhL9z1d9LAw7KKV9LS294GmnGC/txiVGSObJ8tmDY08DyyCWLdF3bDd2
-         la8FgA2rhVTLMBhvu4lrKwaltgNtaDyqiU8kMcqVRgGQ8dXKaA69QrRTYdgxFoWdZ9Eg
-         hZjFr4c0tv23YrdzunI2bVzlh29yUGtsc8FIbhDQzW3gWRnBJz1V+29om8+Mtc1mmQBO
-         btCt8g/wIdNGib8ZtbmlOeE9Nc9FTAIy6ofT4gQTYKwADk112JfF8uwvsmA6/KZwodJA
-         9lSNtyyGLP8pKi3w2v4S/I7JaEwigp7qiAmtkMJLRuDVj5zrjWCvy03SLEWSQlb2DqLX
-         U22w==
-X-Forwarded-Encrypted: i=1; AJvYcCXNsDE+1tewWKEcjG6yhGaGUihytCzMOgpvxbCWteOVjhabI1VoTuxFnKFku13SBWrvrzqAktZ3/5jnmGGYEgT+1lUuR4s8+5wUtYv9S5K2mv2wKpQjK7xWB/tAGP0HI39OtIr7oGrzeA==
-X-Gm-Message-State: AOJu0YwDdrpEImhV/Pqo+gL1grL3FdrRWLQAHAxwdgYsGn+0Q5TT7J8B
-	JZ9jxLbIS/0ixxCXC7q2RfRh1I7SW9GhE19hsJEbKs8eW7CSPM7M41bqawDUyux2tKbJVAh0WTP
-	C+XJ1l347ornFpW49RFS0HVkeoZw=
-X-Google-Smtp-Source: AGHT+IH6xNDTbIhtdz7Y3rIQnrvN4RVVfAL2ZOJM/V7vjiY8AVeMhq3fp/vw7cqOpjmMsLzsCi0dGK2mS4SaJR/2EAY=
-X-Received: by 2002:a50:ab0c:0:b0:572:459f:c7ab with SMTP id
- 4fb4d7f45d1cf-5734d6f004bmr26176500a12.28.1716127195350; Sun, 19 May 2024
- 06:59:55 -0700 (PDT)
+	s=arc-20240116; t=1716127255; c=relaxed/simple;
+	bh=q29JoiujTS2XkolE6zF5+VhKvwJw4Z7qx2SIZperaRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qys5xQ58T1atpNBOzkb2jfIhM8RHW6WIrogTvvxmG/pFhC5a0boWMJ/gbmcG2gdy2dX4vA3WSSTSww3DyfXNjYFxwZOAjFfd/TBk+iUONKrPLAskeJBmPd0DgAzwwAE7crS3sZDlELsk71EViYKfA2ogli8nHsRiqIzds9aCmyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Y1C9pHte; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=UYsczhSMQVTcPtKcf8myz36ovdn5xE0T0cUehFANQaI=; b=Y1C9pHtertFWleTQDsvZ5j/0kD
+	TXtqk93sdYj1Ugwm8ZnYXN65UV8D4FvavTl6n2e2IhROmLQi3dmRhHk2F+M6rvGjMj6qHQchnt4h9
+	SYdkWzpkt6/v2p/duAGLGF9cQP1wgwu7tXZAXigVVYSXOoRrvn26Mzetr7R/BW9j3wr6NsrJFtDq9
+	Yw37NPG8xX79BEE4pRHxHXKCpU+LVCrR0/1rjXbPoEaXWYjQ0r2vhxb08qbV1tZnEUvcjvNP9HqWj
+	gCc6QBm6OKThPwIfv2to8eQGh5NsKViokgz0A96Xpx1b0LCrq8YevSfW4u+QGrGBfYhZ8yiM8zE+0
+	DzoCTXcA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s8h5f-0000000F4a1-07t2;
+	Sun, 19 May 2024 14:00:43 +0000
+Date: Sun, 19 May 2024 15:00:42 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel-janitors@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	MD Danish Anwar <danishanwar@ti.com>,
+	Paolo Abeni <pabeni@redhat.com>, Roger Quadros <rogerq@kernel.org>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+	Misael Lopez Cruz <misael.lopez@ti.com>,
+	Sriramakrishnan <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [RFC PATCH net-next 12/28] net: ethernet: ti: cpsw-proxy-client:
+ add NAPI RX polling function
+Message-ID: <ZkoGCpq1XN4t7wHS@casper.infradead.org>
+References: <20240518124234.2671651-13-s-vadapalli@ti.com>
+ <f9470c3b-5f69-41fa-b0f4-ade18053473a@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240518061925.43549-1-kanakshilledar111@protonmail.com>
- <20240519-ideology-nervous-eb30a92e1e42@spud> <CAGLn_=ugjbdszvN1PQ2eN-pLFQmz-EUmhj=2kOUKWWEsbFMKNg@mail.gmail.com>
-In-Reply-To: <CAGLn_=ugjbdszvN1PQ2eN-pLFQmz-EUmhj=2kOUKWWEsbFMKNg@mail.gmail.com>
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-Date: Sun, 19 May 2024 19:29:44 +0530
-Message-ID: <CAGLn_=uuTOXRGYJGe4wV6u77Ew9aBakg99TNRRcAxo4W_khuGA@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: interrupt-controller: riscv,cpu-intc:
- convert to dtschema
-To: Conor Dooley <conor@kernel.org>
-Cc: Kanak Shilledar <kanakshilledar111@protonmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Samuel Holland <samuel.holland@sifive.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f9470c3b-5f69-41fa-b0f4-ade18053473a@web.de>
 
-> > On Sat, May 18, 2024 at 11:49:21AM +0530, Kanak Shilledar wrote:
-> > > +allOf:
-> > > +  - $ref: /schemas/riscv/cpus.yaml#/properties/interrupt-controller
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    $ref: /schemas/riscv/cpus.yaml#/properties/interrupt-controller/properties/compatible
-> >
-> >
-> > Unfortunately, this is still not what I was asking you to do :/
-> > I said to make the copy in cpus.yaml a reference to this binding.
->
-> Sorry for misinterpreting the comments. I will fix it right away.
-> > Cheers,
-> > Conor.
 
-I have done the changes and created two commits for the respective
-files cpus.yaml and riscv,cpu-intc.yaml.
-I am having v3 for the riscv,cpu-intc.yaml but cpus.yaml will be on
-v1. So shall I mail them separately or
-merge both the commits in a single one?
+FYI, Markus can be safely ignored.  His opinions are well-established as
+being irrelevant.
 
-Thanks and Regards,
-Kanak Shilledar
+On Sun, May 19, 2024 at 03:18:52PM +0200, Markus Elfring wrote:
+> …
+> > +++ b/drivers/net/ethernet/ti/cpsw-proxy-client.c
+> …
+> > @@ -988,6 +994,189 @@ static int vport_tx_poll(struct napi_struct *napi_tx, int budget)
+> …
+> > +static int vport_rx_packets(struct virtual_port *vport, u32 rx_chan_idx)
+> > +{
+> …
+> > +	if (unlikely(!netif_running(skb->dev))) {
+> > +		dev_kfree_skb_any(skb);
+> > +		return -ENODEV;
+> > +	}
+> 
+> I suggest to move such exception handling to the end of this function implementation
+> so that it can be better reused also by another if branch.
+> https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resources
+> 
+> How do you think about to increase the application of scope-based resource management
+> also for such a software component?
+> https://elixir.bootlin.com/linux/v6.9.1/source/include/linux/cleanup.h
+> 
+> Regards,
+> Markus
+> 
 
