@@ -1,277 +1,355 @@
-Return-Path: <linux-kernel+bounces-183125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4E38C94FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:20:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A2428C94F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADEB41C20ECA
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:20:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66C05B21307
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835184C627;
-	Sun, 19 May 2024 14:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9734C61B;
+	Sun, 19 May 2024 14:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=holesch.de header.i=simon@holesch.de header.b="Au/xsyQZ"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGr7nDlJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA288481A5;
-	Sun, 19 May 2024 14:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0731481A5;
+	Sun, 19 May 2024 14:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716128432; cv=none; b=VQ65dG7xQ76H37G5iNUVH2Izfga9iBmgpwiMscdg1fyIdUwqAxpmzCj3jd18TGweuwtmitdGDKlyTP7uuEby3G1EKxPIGWljY7laI4qkRAI6BAg6rK8xcPaMPWldogqsMONO4dHpph3nGmLX+HlO0RROoO28FJlQDBES+JHpEG4=
+	t=1716128302; cv=none; b=gt2T8pcF6E1x9UK/q7XvWKIxl3fEhL7ky4BrOqyT1+tCVFu8qtuM6aAukWjfk/cEFgV6LxDl3dbeRmiyWBzd9qrgVs2FCCIN9G5YK88v+77dQGxTJpYvRZXUO47x0ccVIacgtdeLERlWNdWE/MntA5a+58Tzi0I/AKEruaUSrj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716128432; c=relaxed/simple;
-	bh=BdRenKhE9AoURtk+e0tvVp4/r07Rd9R5Nz+LPkppaKQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N+McSUvgbguu0OuboUELNnwRDrduVBE3zEOxDQgvhpZ22IjRtacT9e0ARC1EVZjxlcie0lDpQJP2VdfBQaJSzJMjk0zIZkTN2A8gQKxMmwKyn7TilLtNpJWcAnp9Kg/U7NDeWKY2+HiOMwe5gBsZm3qe7beIZBWmzoDVTenoul8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=holesch.de; spf=pass smtp.mailfrom=holesch.de; dkim=pass (2048-bit key) header.d=holesch.de header.i=simon@holesch.de header.b=Au/xsyQZ; arc=none smtp.client-ip=212.227.126.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=holesch.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=holesch.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=holesch.de;
-	s=s1-ionos; t=1716128408; x=1716733208; i=simon@holesch.de;
-	bh=V/rkqwTkUlpGLQVnFawbGWTuYkSjydDaVEN2loFqvtA=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Au/xsyQZVIGemmbwJH1ewY+ANQ6IalGlU8MCXntwh9DRTAv+9rnP//v39jX2YeWQ
-	 ujVDvjdf8Q9gsLufytpzVbDxQpjWQKEX1Ue77YICakuEl+aZPfHKmgayAi9zs9HJ1
-	 u8srfIlF0By2jxWhaKwu8WulW+U6DnatxW3Ka+qhta4w3WySW/WJOt1L9gqNy9szu
-	 oSZoK9d4jVcJdNL/hQj3p471tnf6NA98fEEBXtTbdnucsez8pP1kIlvO2+At58fs0
-	 uzgMJTY5cXx7FMqh9G6s+29WkjDIks4xN2Ofcc1rL7iq86sYaG/NXLIoPurFr19Wc
-	 K5xny/JfOt1QTl5hIQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([79.254.36.181]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MT9v5-1rycfX0Q8N-00UWbY; Sun, 19 May 2024 16:20:08 +0200
-From: Simon Holesch <simon@holesch.de>
-To: Valentina Manea <valentina.manea.m@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Hongren Zheng <i@zenithal.me>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Simon Holesch <simon@holesch.de>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5] usbip: Don't submit special requests twice
-Date: Sun, 19 May 2024 16:15:38 +0200
-Message-ID: <20240519141922.171460-1-simon@holesch.de>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716128302; c=relaxed/simple;
+	bh=xjkewc1l0PQ/Sm/ArXEkgi0zRDEeMwDg/sOgETDwA6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FNuJg6qT5Jh+Ks/b/ZEd+YDueRZLLcjzgu0PYfwkNSlnhrCIJUAu3t0cSAvuE1A3T9YBf0nSM4j7rLqLKxlbBSjakn2WWfftIzDTkO/9qOvfBXHAxc4wNuMkS8RAIAfJ2Mc3DFG412HpijK+qbjf0K9u5LWiLNvh/sm/CVllMAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGr7nDlJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D7B3C32781;
+	Sun, 19 May 2024 14:18:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716128302;
+	bh=xjkewc1l0PQ/Sm/ArXEkgi0zRDEeMwDg/sOgETDwA6M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PGr7nDlJv3LY7yz1v/ZyaLrG+hr4S1KrxeKv6CXNsl07jdO8UplLX2KVwylJZCn4Z
+	 eN6/ZIJGcE9w95fU0DGsixik0wEVgOAIBEptxZWh8RD35qpFldXU2KQpLzR5xnz1FV
+	 wGiiV8vgblUCOSyRAUiSXblJ5VkbWUGSPqBMsMdqyizxQ7BBc5hw+hOJy89//0BGQk
+	 tRtPus0W8bWyCkl/Zz4C6XM1TjNC5AwzRjOR4Jp3qh3W8hiT5BVDdbAs2vwEjXD5cm
+	 cL8PJj3kKAIRlAkaZdtR0Xy2LFeXnafZEHbNd19SQPfQVbNIJv6GmJLwmSjxmmy7b/
+	 y5Vk7XhHVg4jQ==
+Date: Sun, 19 May 2024 15:18:09 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Gustavo Silva <gustavograzs@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ lars@metafoo.de, christophe.jaillet@wanadoo.fr,
+ gerald.loacker@wolfvision.net, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] iio: chemical: ens160: add triggered buffer support
+Message-ID: <20240519151809.192448d1@jic23-huawei>
+In-Reply-To: <20240512210444.30824-5-gustavograzs@gmail.com>
+References: <20240512210444.30824-1-gustavograzs@gmail.com>
+	<20240512210444.30824-5-gustavograzs@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:KuIM0LrIHXfgd6BCXcWG1d98RfXPzx9wCdF35N5UOl0kx7MBC24
- uOgUmId1n808YPfWBoSTQdfZgbGebE1c5aEmeCIimHZzhji34nTZRmPxn/QM4Eu7cxayo3J
- xEOtamCLHFosglfVcX4jB3cfqdpgTxqBC3g7Y5/XOrwpETtti3+jeD/Nr3iui+A+yVC5LTW
- Cir172NYTJOgjMxWj2uKg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:HxSfFBth9NA=;Zbv8j8CJ1WVbFdo8kh1skvECp1z
- gzTM/q79IBFHvLaLCBcgtBYVB80Hv0dkjxsNb9bHi214PUyglOXOO9LskYPwtWDwdX/FSKemc
- D2DurpjUomv0hTkOLY4tZ5aMO0eSOKOysvmdNydpp2KNXpX4fi1dx9Gdg0l8wv3ezuBL310nG
- Yodo0vy7U6m0X8+K1Tazn1nkMMf7pqjyI2t63KaOliPtvByUCG8PVLyVJyllzChaTeZliZWxZ
- 1ezONUZQcdbKPlVds7PeGnw7D9Fe7egyHB9Pj/GxwKPKKkMop3ST5P88JxV50q1AezTGsAqCt
- tX1vMLEXuKjorx6OtgX5ZJFFetKWdufE4GQ1XBc5SArwRurbuNzSQtJDu88YcgkI8A5damcaP
- 0hXd5UzanbPg42Urpp8WXOjfi9Vxvp6/tILIPB9K6PNgjtphidwJId8jxPGuU9IvZj0XVT0FX
- 9j2AQD2LXeXKKKV23mikfXWkppOIa6E8uPqXxE406sgQgjzDPIcNR4H/TQzU7Wct6lmdmnxrA
- sRU/n58SBhlVtqIcHZFnWn54ZgmsO0Zpp4ZKTCiFw/vLzOqNjeoRur0RrKVidTw9dR8Hc8xdZ
- OLFafhsNYzXlGRKS2h9ab1Ds0eg9zEE8wxBPAh4z6XK/auc/qADKamzp1VC69zogPLeLYSXZH
- rNIIhrnhsL7aK0DPVI4ciFOACEVEUZQILkOxd+lNr0OqRL8Q/AG/guMXTsPIipaMDWugRJ+6z
- Bgj99QXWyBdoBV44tYdAAsdWfM7rFwrxGBJTgOb7c+FIf0rBXyGsak=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Skip submitting URBs, when identical requests were already sent in
-tweak_special_requests(). Instead call the completion handler directly
-to return the result of the URB.
+On Sun, 12 May 2024 18:04:40 -0300
+Gustavo Silva <gustavograzs@gmail.com> wrote:
 
-Even though submitting those requests twice should be harmless, there
-are USB devices that react poorly to some duplicated requests.
+> ENS160 supports a data ready interrupt. Use it in combination with
+> triggered buffer for continuous data readings.
+> 
+> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
+Hi Gustavo,
 
-One example is the ChipIdea controller implementation in U-Boot: The
-second SET_CONFIGURATION request makes U-Boot disable and re-enable all
-endpoints. Re-enabling an endpoint in the ChipIdea controller, however,
-was broken until U-Boot commit b272c8792502 ("usb: ci: Fix gadget
-reinit").
+Various comments inline. Mostly simplifications you can probably make.
 
-Signed-off-by: Simon Holesch <simon@holesch.de>
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-Reviewed-by: Hongren Zheng <i@zenithal.me>
-Tested-by: Hongren Zheng <i@zenithal.me>
-=2D--
+Jonathan
 
-Changes in v5:
-- add comment for global is_tweaked flag
-- fix typo in commit message
+> ---
+>  drivers/iio/chemical/ens160.h      |   2 +-
+>  drivers/iio/chemical/ens160_core.c | 155 ++++++++++++++++++++++++++++-
+>  drivers/iio/chemical/ens160_i2c.c  |   2 +-
+>  drivers/iio/chemical/ens160_spi.c  |   2 +-
+>  4 files changed, 156 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iio/chemical/ens160.h b/drivers/iio/chemical/ens160.h
+> index 3fd079bc4..a8a2f1263 100644
+> --- a/drivers/iio/chemical/ens160.h
+> +++ b/drivers/iio/chemical/ens160.h
+> @@ -2,7 +2,7 @@
+>  #ifndef ENS160_H_
+>  #define ENS160_H_
+>  
+> -int ens160_core_probe(struct device *dev, struct regmap *regmap,
+> +int ens160_core_probe(struct device *dev, struct regmap *regmap, int irq,
+>  		      const char *name);
+>  void ens160_core_remove(struct device *dev);
+>  
+> diff --git a/drivers/iio/chemical/ens160_core.c b/drivers/iio/chemical/ens160_core.c
+> index 25593420d..4b960ef00 100644
+> --- a/drivers/iio/chemical/ens160_core.c
+> +++ b/drivers/iio/chemical/ens160_core.c
+> @@ -11,6 +11,9 @@
+>  
+>  #include <linux/bitfield.h>
+>  #include <linux/iio/iio.h>
+> +#include <linux/iio/trigger.h>
+> +#include <linux/iio/trigger_consumer.h>
+> +#include <linux/iio/triggered_buffer.h>
+>  #include <linux/module.h>
+>  #include <linux/regmap.h>
+>  
+> @@ -24,6 +27,11 @@
+>  
+>  #define ENS160_REG_OPMODE	0x10
+>  
+> +#define ENS160_REG_CONFIG		0x11
+> +#define ENS160_REG_CONFIG_INTEN		BIT(0)
+> +#define ENS160_REG_CONFIG_INTDAT	BIT(1)
+> +#define ENS160_REG_CONFIG_INT_CFG	BIT(5)
+> +
+>  #define ENS160_REG_MODE_DEEP_SLEEP	0x00
+>  #define ENS160_REG_MODE_IDLE		0x01
+>  #define ENS160_REG_MODE_STANDARD	0x02
+> @@ -48,6 +56,12 @@
+>  
+>  struct ens160_data {
+>  	struct regmap *regmap;
+> +	struct mutex mutex;
+> +	struct {
+> +		u16 chans[2];
 
-Changes in v4:
-- fix compile error
+As per the bot reply. This should be __le16.
+> +		s64 timestamp __aligned(8);
+> +	} scan;
 
-Changes in v3:
-- handle errors in tweak_* routines: send URB if tweaking fails
+You can do spi read directly into here but if you do
+move it to the end of the structure and align it to IIO_DMA_MINALIGN.
 
-Changes in v2:
-- explain change in commit message
+> +	int irq;
+As below - not sure there is any advantage in keeping a copy
+of this after probe. I'd just pass it into the functions that need it.
+>  };
 
- drivers/usb/usbip/stub_rx.c | 77 ++++++++++++++++++++++++-------------
- 1 file changed, 50 insertions(+), 27 deletions(-)
+>  
+>  static int ens160_read_raw(struct iio_dev *indio_dev,
+> @@ -79,10 +108,19 @@ static int ens160_read_raw(struct iio_dev *indio_dev,
+>  
+>  	switch (mask) {
+>  	case IIO_CHAN_INFO_RAW:
+> +		ret = iio_device_claim_direct_mode(indio_dev);
 
-diff --git a/drivers/usb/usbip/stub_rx.c b/drivers/usb/usbip/stub_rx.c
-index fc01b31bbb87..6338d818bc8b 100644
-=2D-- a/drivers/usb/usbip/stub_rx.c
-+++ b/drivers/usb/usbip/stub_rx.c
-@@ -144,53 +144,62 @@ static int tweak_set_configuration_cmd(struct urb *u=
-rb)
- 	if (err && err !=3D -ENODEV)
- 		dev_err(&sdev->udev->dev, "can't set config #%d, error %d\n",
- 			config, err);
--	return 0;
-+	return err;
- }
+Use iio_device_claim_direct_scoped() and guard() for the mutex
+as will automate the unwinding of the two types of lock and avoid
+you having to do it by hand.
 
- static int tweak_reset_device_cmd(struct urb *urb)
- {
- 	struct stub_priv *priv =3D (struct stub_priv *) urb->context;
- 	struct stub_device *sdev =3D priv->sdev;
-+	int err;
 
- 	dev_info(&urb->dev->dev, "usb_queue_reset_device\n");
+> +		if (ret)
+> +			return ret;
+> +		mutex_lock(&data->mutex);
+>  		ret = regmap_bulk_read(data->regmap, chan->address,
+>  					&buf, sizeof(buf));
+> -		if (ret)
+> +		if (ret) {
+> +			mutex_unlock(&data->mutex);
+> +			iio_device_release_direct_mode(indio_dev);
+>  			return ret;
+> +		}
+> +		mutex_unlock(&data->mutex);
+> +		iio_device_release_direct_mode(indio_dev);
+>  		*val = le16_to_cpu(buf);
+>  		return IIO_VAL_INT;
+>  
+> @@ -182,7 +220,104 @@ static const struct iio_info ens160_info = {
+>  	.read_raw = ens160_read_raw,
+>  };
+>  
+> -int ens160_core_probe(struct device *dev, struct regmap *regmap,
+> +static irqreturn_t ens160_irq_handler(int irq, void *private)
+> +{
+> +	struct iio_dev *indio_dev = private;
+> +
+> +	if (iio_buffer_enabled(indio_dev))
 
--	if (usb_lock_device_for_reset(sdev->udev, NULL) < 0) {
-+	err =3D usb_lock_device_for_reset(sdev->udev, NULL);
-+	if (err < 0) {
- 		dev_err(&urb->dev->dev, "could not obtain lock to reset device\n");
--		return 0;
-+		return err;
- 	}
--	usb_reset_device(sdev->udev);
-+	err =3D usb_reset_device(sdev->udev);
- 	usb_unlock_device(sdev->udev);
+How else did you get here?  Either you should use a threaded interrupt
+to check the status registers on the device, or you should assume
+there is no other way of getting here (and hence no sharing of interrupt
+etc) in which case this check is unnecessary and you can use
+iio_trigger_generic_data_rdy_poll().
 
--	return 0;
-+	return err;
- }
 
- /*
-  * clear_halt, set_interface, and set_configuration require special trick=
-s.
-+ * Returns 1 if request was tweaked, 0 otherwise.
-  */
--static void tweak_special_requests(struct urb *urb)
-+static int tweak_special_requests(struct urb *urb)
- {
-+	int err;
-+
- 	if (!urb || !urb->setup_packet)
--		return;
-+		return 0;
 
- 	if (usb_pipetype(urb->pipe) !=3D PIPE_CONTROL)
--		return;
-+		return 0;
+> +		iio_trigger_poll(indio_dev->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static irqreturn_t ens160_trigger_handler(int irq, void *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *indio_dev = pf->indio_dev;
+> +	struct ens160_data *data = iio_priv(indio_dev);
+> +	__le16 val;
+> +	int ret, i, j = 0;
+> +
+> +	mutex_lock(&data->mutex);
+> +
+> +	for_each_set_bit(i, indio_dev->active_scan_mask,
+> +			 indio_dev->masklength) {
+> +		ret = regmap_bulk_read(data->regmap,
+> +				       ENS160_REG_DATA_TVOC + 2 * i, &val, 2U);
 
- 	if (is_clear_halt_cmd(urb))
- 		/* tweak clear_halt */
--		 tweak_clear_halt_cmd(urb);
-+		err =3D tweak_clear_halt_cmd(urb);
+sizeof(val) instead of hardcoded 2. Though better still to just bulk
+read the lot ever time and loose this loop in favour of the demux in the IIO
+core handling the rare occasion of people wanting one channel.
 
- 	else if (is_set_interface_cmd(urb))
- 		/* tweak set_interface */
--		tweak_set_interface_cmd(urb);
-+		err =3D tweak_set_interface_cmd(urb);
+> +		if (ret)
+> +			goto err;
+> +
+> +		data->scan.chans[j++] = val;
 
- 	else if (is_set_configuration_cmd(urb))
- 		/* tweak set_configuration */
--		tweak_set_configuration_cmd(urb);
-+		err =3D tweak_set_configuration_cmd(urb);
+Read directly into the data->scan.chans[]
 
- 	else if (is_reset_device_cmd(urb))
--		tweak_reset_device_cmd(urb);
--	else
-+		err =3D tweak_reset_device_cmd(urb);
-+	else {
- 		usbip_dbg_stub_rx("no need to tweak\n");
-+		return 0;
-+	}
-+
-+	return !err;
- }
+Also, I'd assume that 90% of the time, people want all the channels.  A such
+can you just bulk read them all?  Then you can use available_scan_masks
+to let the IIO core handle the 10% of the time when only one channel is requested.
 
- /*
-@@ -468,6 +477,7 @@ static void stub_recv_cmd_submit(struct stub_device *s=
-dev,
- 	int support_sg =3D 1;
- 	int np =3D 0;
- 	int ret, i;
-+	int is_tweaked;
 
- 	if (pipe =3D=3D -1)
- 		return;
-@@ -580,8 +590,11 @@ static void stub_recv_cmd_submit(struct stub_device *=
-sdev,
- 		priv->urbs[i]->pipe =3D pipe;
- 		priv->urbs[i]->complete =3D stub_complete;
+> +	}
+> +
+> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->scan,
+> +					   pf->timestamp);
+> +err:
+> +	mutex_unlock(&data->mutex);
+> +	iio_trigger_notify_done(indio_dev->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int ens160_set_trigger_state(struct iio_trigger *trig, bool state)
+> +{
+> +	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
+> +	struct ens160_data *data = iio_priv(indio_dev);
+> +	unsigned int int_bits = ENS160_REG_CONFIG_INTEN |
+> +				ENS160_REG_CONFIG_INTDAT |
+> +				ENS160_REG_CONFIG_INT_CFG;
+> +	int ret;
+> +
+> +	if (state)
+> +		ret = regmap_set_bits(data->regmap, ENS160_REG_CONFIG,
+> +				      int_bits);
+		return ...
+> +	else
+> +		ret = regmap_clear_bits(data->regmap, ENS160_REG_CONFIG,
+> +					int_bits);
+		return ...
 
--		/* no need to submit an intercepted request, but harmless? */
--		tweak_special_requests(priv->urbs[i]);
-+		/*
-+		 * all URBs belong to a single PDU, so a global is_tweaked flag is
-+		 * enough
-+		 */
-+		is_tweaked =3D tweak_special_requests(priv->urbs[i]);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct iio_trigger_ops ens160_trigger_ops = {
+> +	.set_trigger_state = ens160_set_trigger_state,
+> +	.validate_device = iio_trigger_validate_own_device,
+> +};
+> +
+> +static int ens160_setup_trigger(struct iio_dev *indio_dev)
+> +{
+> +	struct ens160_data *data = iio_priv(indio_dev);
+> +	struct device *dev = indio_dev->dev.parent;
+> +	struct iio_trigger *trig;
+> +	int ret;
+> +
+> +	trig = devm_iio_trigger_alloc(dev, "%s-dev%d", indio_dev->name,
+> +				      iio_device_id(indio_dev));
+> +	if (!trig)
+> +		return dev_err_probe(dev, -ENOMEM,
+> +				     "failed to allocate trigger\n");
+> +
+> +	trig->ops = &ens160_trigger_ops;
+> +	iio_trigger_set_drvdata(trig, indio_dev);
+> +
+> +	ret = devm_iio_trigger_register(dev, trig);
+> +	if (ret)
+> +		return ret;
+> +
+> +	indio_dev->trig = iio_trigger_get(trig);
+> +
+> +	ret = devm_request_threaded_irq(dev, data->irq,
+> +					ens160_irq_handler,
+> +					NULL,
+> +					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+Generally, for new drivers we leave the direction control up to firmware.
+A nasty, but common trick is to use an inverter to do level conversion.
+That results in the polarity being switched but is not explicitly described
+in the firmware. So we rely in those cases on the firmware settings for
+the interrupt not being modified by the driver.
 
- 		masking_bogus_flags(priv->urbs[i]);
- 	}
-@@ -594,22 +607,32 @@ static void stub_recv_cmd_submit(struct stub_device =
-*sdev,
+IRQF_ONESHOT, only here.
 
- 	/* urb is now ready to submit */
- 	for (i =3D 0; i < priv->num_urbs; i++) {
--		ret =3D usb_submit_urb(priv->urbs[i], GFP_KERNEL);
-+		if (!is_tweaked) {
-+			ret =3D usb_submit_urb(priv->urbs[i], GFP_KERNEL);
+> +					indio_dev->name,
+> +					indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to request irq\n");
+> +
+> +	return 0;
+> +}
+> +
+> +int ens160_core_probe(struct device *dev, struct regmap *regmap, int irq,
+>  		      const char *name)
+>  {
+>  	struct ens160_data *data;
+> @@ -196,6 +331,7 @@ int ens160_core_probe(struct device *dev, struct regmap *regmap,
+>  	data = iio_priv(indio_dev);
+>  	dev_set_drvdata(dev, indio_dev);
+>  	data->regmap = regmap;
+> +	data->irq = irq;
 
--		if (ret =3D=3D 0)
--			usbip_dbg_stub_rx("submit urb ok, seqnum %u\n",
--					pdu->base.seqnum);
--		else {
--			dev_err(&udev->dev, "submit_urb error, %d\n", ret);
--			usbip_dump_header(pdu);
--			usbip_dump_urb(priv->urbs[i]);
-+			if (ret =3D=3D 0)
-+				usbip_dbg_stub_rx("submit urb ok, seqnum %u\n",
-+						pdu->base.seqnum);
-+			else {
-+				dev_err(&udev->dev, "submit_urb error, %d\n", ret);
-+				usbip_dump_header(pdu);
-+				usbip_dump_urb(priv->urbs[i]);
+As below. This stashing of a copy of irq is an unnecessary complication.
 
-+				/*
-+				 * Pessimistic.
-+				 * This connection will be discarded.
-+				 */
-+				usbip_event_add(ud, SDEV_EVENT_ERROR_SUBMIT);
-+				break;
-+			}
-+		} else {
- 			/*
--			 * Pessimistic.
--			 * This connection will be discarded.
-+			 * An identical URB was already submitted in
-+			 * tweak_special_requests(). Skip submitting this URB to not
-+			 * duplicate the request.
- 			 */
--			usbip_event_add(ud, SDEV_EVENT_ERROR_SUBMIT);
--			break;
-+			priv->urbs[i]->status =3D 0;
-+			stub_complete(priv->urbs[i]);
- 		}
- 	}
+>  
+>  	indio_dev->name = name;
+>  	indio_dev->info = &ens160_info;
+> @@ -203,12 +339,27 @@ int ens160_core_probe(struct device *dev, struct regmap *regmap,
+>  	indio_dev->channels = ens160_channels;
+>  	indio_dev->num_channels = ARRAY_SIZE(ens160_channels);
+>  
+> +	if (data->irq > 0) {
 
-=2D-
-2.45.1
+Pass the irq into the setup_trigger call. You don't need it other than for
+registration so no point in keeping it in the data structure.
 
+> +		ret = ens160_setup_trigger(indio_dev);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret,
+> +					     "failed to setup trigger\n");
+> +	}
+> +
+>  	ret = ens160_chip_init(data);
+>  	if (ret) {
+>  		dev_err_probe(dev, ret, "chip initialization failed\n");
+>  		return ret;
+>  	}
+>  
+> +	mutex_init(&data->mutex);
+> +
+> +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+> +					      iio_pollfunc_store_time,
+> +					      ens160_trigger_handler, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+>  	return devm_iio_device_register(dev, indio_dev);
+>  }
+>  EXPORT_SYMBOL_NS(ens160_core_probe, IIO_ENS160);
 
