@@ -1,135 +1,119 @@
-Return-Path: <linux-kernel+bounces-183147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F41A8C9541
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:15:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA2A8C9544
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A142B1C21233
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:15:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1BBD281495
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7D250284;
-	Sun, 19 May 2024 16:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749DD4D117;
+	Sun, 19 May 2024 16:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rdsRavyb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LA0TvzOd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0C345BF9;
-	Sun, 19 May 2024 16:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF85E33D5;
+	Sun, 19 May 2024 16:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716135290; cv=none; b=jMcxYjHFT0ZV9wdTdFCZK84K3+zI0M6FiQ+PUr+9J2kmB0+zPxa2VeAQyeTfjSNlSHKAD6/c+p21G0cGApbeWl3ONuw6ChRGnJU3fF3eZSCJrPLlKOWyGTKNfsokVvJ4fx6wqfeaC3V4G+/+eGC91YanDGqYrlNQgs4xKejFXlU=
+	t=1716136412; cv=none; b=XqLqZDzYV5ee6yTnjB+D7kowM57C/cOeiN4EetNA/pzuorbyibDPRTPwD3zo74A+iqRKT9cmuMjNOWGWWla7uoMQ+HSQ02MVdstDHUK3w6G/6pZcocvBKa06U57xFKo0xDWI5MWEibj9nsvKEOcGOnZ/NdoWLHmGi0FY1kAr9bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716135290; c=relaxed/simple;
-	bh=aQvXmZMW77qc8tNgoHxBHcZ4dYBBQ/RlOSDN1pdnJAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P9nEg6cJFVsZ4x3ybUNckPeZMgId5x/rannURhrUr76e6nyMnzdkPIf/h/YWTp2nusL5Jb3lJqntL8vMYp/1WTJYFaT+S7jBS2G+6WCqejWecBFYMpjIIUn3duRpX2P4WoDAK0d/z2oDOMhwrk9XgdTQlkw3DHC0KmvxQ7yg7uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rdsRavyb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28A83C4AF0D;
-	Sun, 19 May 2024 16:14:46 +0000 (UTC)
+	s=arc-20240116; t=1716136412; c=relaxed/simple;
+	bh=fmMSUyNHsE6VoUCYl0X/LyZxkscRpgZwZMpd5XJNtEM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kgje7L7wXEl6GxZucUZkMAvP/eHMrfb9jHjsjnqdPKnLToadlEU3sQPJ1njTSeRKg1qwT7xI8RTzhLVZmP3ilYb+wPksZ29xf9mVd3OPUAq/1LSNbNZ+i2h1/kBh1Cwj9Mw1f15CJ4TTRPSMz13RHMT0vydQts6jnc/GRBlVu1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LA0TvzOd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B15CCC32781;
+	Sun, 19 May 2024 16:33:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716135289;
-	bh=aQvXmZMW77qc8tNgoHxBHcZ4dYBBQ/RlOSDN1pdnJAg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rdsRavybRhyl1N4rxKMHALpswrTaWdeis5Ujm7sdFLpdehH9AABSVMk0U2o47LZ8w
-	 JotiUKEyaY6XLMadtgsyCBF09tA3h2ddWGMLX35pfutMlY1g1e7SEtxPvZib5+pKAK
-	 x6lZStnNTD4Yt78fef0LMNIy17coLfkt8/wUq/n6NR8YJsGuMsc7hIKI1woOP1w1OB
-	 e/omRDQtXqeuoXUcZNiWwwlWPAEdA4FJ/TPqimAWfArtrdDs9D+iRbc+JTIWtw5Oqu
-	 oQ8HNLfLBwhYRtfS4tWW0GmVdTDuQKMVv8i9RHgpw/BC5unbtmRDVoUBavN7oQdGG5
-	 sgTWENbNa9Vsw==
-Date: Sun, 19 May 2024 17:14:38 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Andrew Hepp
- <andrew.hepp@ahepp.dev>, Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>
-Subject: Re: [PATCH v2 1/2] iio: temperature: mcp9600: Provide index for
- both channels
-Message-ID: <20240519171438.08810789@jic23-huawei>
-In-Reply-To: <20240517081050.168698-2-dima.fedrau@gmail.com>
-References: <20240517081050.168698-1-dima.fedrau@gmail.com>
-	<20240517081050.168698-2-dima.fedrau@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=k20201202; t=1716136412;
+	bh=fmMSUyNHsE6VoUCYl0X/LyZxkscRpgZwZMpd5XJNtEM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LA0TvzOduIiTuOsOJhkeQWTJCtEG/htBtBgK7tt1AFrnZW47/44pX6laki5jNG1LX
+	 nLztUHKT/RiFU53d4cPnOiF9UKmcXz09BkAjDSotJ5yg2pfV9KrCn3MBAfDVTluqLs
+	 HsuBWui+DAUDdcy9X5EzY6hCQl8XCRA1G2W8kPoY3Xy/jhpHfK2LTwcH0pWYfwqBeD
+	 PqRi9Ara5zLpGbLFLpR2eTRObz4/9jXALrHt3vrWidICdJBqab2uJ+Syxygk+y3ILj
+	 eMBTLlyzDpoBGJcIYAtXEhm440Rco2GwDN2BBm7aR9KAXiIkDNP1neqG5CFeW7vrlb
+	 y4whcdOceXPqQ==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: damon@lists.linux.dev,
+	linux-damon@amazon.com,
+	linux-damon-trial@amazon.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: DAMON Beer/Coffee/Tea chat reminder and extending for office hour
+Date: Sun, 19 May 2024 09:33:29 -0700
+Message-Id: <20240519163329.150340-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20220810225102.124459-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, 17 May 2024 10:10:49 +0200
-Dimitri Fedrau <dima.fedrau@gmail.com> wrote:
+Hello,
 
-> The mapping from cold junction to ambient temperature is inaccurate. We
-> provide an index for hot and cold junction temperatures.
+
+On Wed, 10 Aug 2022 22:51:02 +0000 SeongJae Park <sj@kernel.org> wrote:
+
+> Hello,
 > 
-> Suggested-by: Jonathan Cameron <jic23@kernel.org>
-> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
-Hi Dmitri,
-
-I'm not sure you replied to the question in previous review of what
-sysfs files exist for this device.  Whilst I am at least a little
-open to changing the ABI, I'd like to fully understand what
-is currently presented and why iio_info is having trouble with it.
-
-I also want an ack from Andrew on this one given might break it existing
-usage.
-
-The current interface is perhaps less than ideal, but I don't think it
-is wrong as such. Whilst I wasn't particularly keen on the cold junction
-== ambient I'm not sure moving to just indexed is an improvement.
-Hence looking for input from Andrew. +CC Nuno as someone who is both
-active in IIO and has written thermocouple front end drivers in
-the past.
-
-Jonathan
-
-
-> ---
->  drivers/iio/temperature/mcp9600.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
-> index 46845804292b..22451d1d9e1f 100644
-> --- a/drivers/iio/temperature/mcp9600.c
-> +++ b/drivers/iio/temperature/mcp9600.c
-> @@ -14,6 +14,9 @@
->  
->  #include <linux/iio/iio.h>
->  
-> +#define MCP9600_CHAN_HOT_JUNCTION	0
-> +#define MCP9600_CHAN_COLD_JUNCTION	1
-> +
->  /* MCP9600 registers */
->  #define MCP9600_HOT_JUNCTION 0x0
->  #define MCP9600_COLD_JUNCTION 0x2
-> @@ -25,17 +28,19 @@
->  static const struct iio_chan_spec mcp9600_channels[] = {
->  	{
->  		.type = IIO_TEMP,
-> +		.channel = MCP9600_CHAN_HOT_JUNCTION,
->  		.address = MCP9600_HOT_JUNCTION,
->  		.info_mask_separate =
->  			BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
-> +		.indexed = 1,
->  	},
->  	{
->  		.type = IIO_TEMP,
-> +		.channel = MCP9600_CHAN_COLD_JUNCTION,
->  		.address = MCP9600_COLD_JUNCTION,
-> -		.channel2 = IIO_MOD_TEMP_AMBIENT,
-> -		.modified = 1,
->  		.info_mask_separate =
->  			BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
-> +		.indexed = 1,
->  	},
->  };
->  
+> In short, I'd like to start an open, regular, and informal virtual bi-weekly
+> meeting series for DAMON community.
+> 
+> Important links and dates
+> -------------------------
+> 
+> Location: https://meet.google.com/ndx-evoc-gbu
+> Agenda: https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
 
+
+Recently I got some feedback about DAMON Beer/Coffee/Tea chat.  They told me
+having regular reminders of the series would be nice, and official time slots
+for private discussion could be helpful.  I encouraged scheduling private
+meetings for such deep level dicussions, but I understand it could be more
+easier if we have more official things for that.  Hence, I'm making below two
+changes.
+
+Firstly, I will regularly provide reminder of the series, probably 1-2 days
+before every instance.
+
+Secondly, I'm extending this series for reservation-based office hour.  That
+is, I will reserve my time for 30 minutes every two weeks, keep the schedule
+public, and encourage people to reserve the time for discussion on a special
+topic for them.  The reservation should be made at least one day before the
+time slot, and will be first-come first-served basis.  In detail, I will
+reserve Monday afternoon or Tuesday morning of the group chat scheduled week.
+Note that this is not necessarily only time slot for such discussion.  You're
+still encouraged to schedule private meetings on your convenience.
+
+So, the reminders.  Next open group chat will be held 2024-05-20 (Monday) 18:00
+(PT) on Google Meet (https://meet.google.com/ndx-evoc-gbu).
+
+Next reservation-based chats are scheduled for 2024-05-21 (Tuesday) 09:30 (PT)
+and 2024-06-03 (Monday) 18:00 (PT).  If you have some topics that you want to
+discuss with me on the time slot, please reach out to me for the reservation,
+at least one day before the time slot.
+
+Every meeting is 30-minutes length by default.
+
+Entire schedules are also available at the Agenda doc
+(https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing)
+
+
+Thanks,
+SJ
+
+[...]
 
