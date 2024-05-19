@@ -1,61 +1,84 @@
-Return-Path: <linux-kernel+bounces-183071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857B28C9420
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 10:54:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3908C9428
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 11:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6C281C209CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 08:54:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A29D2816F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39EB2A8CD;
-	Sun, 19 May 2024 08:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07502BAF1;
+	Sun, 19 May 2024 09:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nZr0+0uH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RlXQ9+tN"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6B3E554;
-	Sun, 19 May 2024 08:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED2322089
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 09:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716108880; cv=none; b=mVJPg26fO1/NSUc5J2f38jeIxR8R0xLi/qXzAJjlgNviaIdCRlJ/chHaNMvFHlkFul3+BDs7kYX9w21ag7uYRM7ustSLQAdz4zbxpIG7ojL0GToEAcRsYdGFl9DtR9IuHuW72vq5nrpTCjt/BIBXHs7XCL8eADk85WoHRodBO9s=
+	t=1716109295; cv=none; b=tfQ3pNMclrT8VQVO8ihLh5E9d5DTYvm2gQJ8bQcGHRD5pw1jE8b4IoxiL7AM3vGWwTSPxKY91z61nUrN/olLwVARL3aG7hhvA47VP5RFlq9WZ4VZa4BiJ9ZkazCjIMp9ZaD8Oz5QsfoWF0HaloYrXkBukJvZdgDNML50dUkD8Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716108880; c=relaxed/simple;
-	bh=avtQ0tx1UdGxRsX9qlthvVsjKBAmRdw8FRebf2A40AY=;
+	s=arc-20240116; t=1716109295; c=relaxed/simple;
+	bh=J9hb1EieOotdwy6le5SRNSVIHsPXMfQxPpMua98WyyI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mzRDRzFRWya34iLbSq6dzI4Dy4BgZiJmCVjoh3Dy5ZclvMXU5FOK9zsSePwclIxNplbLeCk7d8yvGu56gXt6OmAhYXJMNw66dazVFp5fR9mdKVGMjVUEI6Od2u7PK5D+XIgW5K1piz3Q161J91f65sjUz6RXwPhSvC9YweSUWB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nZr0+0uH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAF3EC32781;
-	Sun, 19 May 2024 08:54:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716108879;
-	bh=avtQ0tx1UdGxRsX9qlthvVsjKBAmRdw8FRebf2A40AY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nZr0+0uH7hovHNTAPMinTSPdETzLlI5O+iBMGKaXSs8Dn6tjYThYVZzpuuB3q89k7
-	 8ivAraMr8BuZNiDzkNjR/dw/01BJItU3zMnON0g2J5TM9Tz5uw5dZXEBMbSE45LRbU
-	 njK9ujwV0dIekKzEFZV4X3qw2RHWZ5KQYPCMhgUQ=
-Date: Sun, 19 May 2024 10:54:36 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Val Packett <val@packett.cool>
-Cc: stable@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] drm/rockchip: vop: clear DMA stop bit on flush on
- RK3066
-Message-ID: <2024051930-canteen-produce-1ba7@gregkh>
-References: <20240519074019.10424-1-val@packett.cool>
- <2024051936-cosmetics-seismic-9fea@gregkh>
- <0C5QDS.UDESKUXHKPET1@packett.cool>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DitqSXjSovdKlNgbQ5WLSzlTVVNkTHPy6f2mAsd3ypxZaqatwSoEnbmGsi8LPCN17Jv2KIGCYHKHgcTdJp/Equm8+Sy/IwGNT8jAsoQxQdehTO2R1us69RtlcGwf1yzlacg3MwHdOOacBwIk+An9P5pFAcarHm/+ddzpv3IfcW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RlXQ9+tN; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5238b5c07efso2193985e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 02:01:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716109291; x=1716714091; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6YSot/x5cFZB8ewE8eTJgK6YVMXZ1880kiMw+EZFqIk=;
+        b=RlXQ9+tNX1a9f4udPndiHg1o1P0B5tnuNgjR0hNhBQPHtTbyX2UI/BYBGZntY7V0Hh
+         NzobHhAznrhaE+EJJc3KOjf0S3blrWkbxqQf1b2Uf7vzKvrEOoG2UjMr+XOIcdfG21SK
+         cANkdE3SWC8eK6JG6vfdhz4soGpP0xgF8BX3jRl3wcvbvlEY71gAuY+F/WRczxwcB3WW
+         r/N1RDx29pxo1A514VxrxNzknNC+3vm5G3igzsqFiDfmOmFawOucOq21LMYjOpcxbPmf
+         KJ3fCTgKhaL9+CP8jxcwrB/CvypXtZhPM/KjiT9S2JH/wEaU1x4FmeJV04gKtaRSNQNJ
+         GHWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716109291; x=1716714091;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6YSot/x5cFZB8ewE8eTJgK6YVMXZ1880kiMw+EZFqIk=;
+        b=WYV21PbN6IIB/8ZtJyfOdxmMUk78md53DReroTSURGSByGNCLxboO9GsrDU5vYY2Sq
+         Xuz+laRdjXOp2NXqtInQq9hkwtPynYOFua9ZIrsYKkk+gxq2Jox5afcrA6E2PA+QG7Qk
+         TMz94iC8vc3ka578mU0t24IZwTNLKOFWqKmcq4RtKUsq/+lqGBqkdomUT/YKLTYVuzQx
+         H5lbHVIJdM8CA6zqfJAdiwQbEsWZX91ItCNRiVsw2GW6IDF/PyHbe9ubT9h+iS275nLi
+         VOzuHotfSnnMei8OQIbGUo0WjRSS4O0YnTrbzUe86kPXPU7ribnZY7BHJ8KSLj2J9+we
+         /vYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeYK7oO1u5ajgYjaFwuiW/wrlwD3gnJdmtpCRdiGAQdEqrvR2sZ3Fb3wQ6znJJ0qnUpiCijbUneAdSZjWfc54VMwNMyqAb/+B/qk6g
+X-Gm-Message-State: AOJu0Yx4BYAQ6r6v5PSLpk+Kr3fnZIyTX+J6MqF0RIB1s4UR58Y3IP0y
+	L4ETJTwYtJ0go5pC06YNeQI76AHbu/pa6umjFeoJ8RT1TB2ez/VERzlxkbD1uE0=
+X-Google-Smtp-Source: AGHT+IHo2lG2QfN3wSHOdCTPeob4sZG4UUob2G1FAI+cUqka9doJg1KkF/LYr2/BlXVeJ+LSz1LbtQ==
+X-Received: by 2002:a05:6512:131d:b0:523:6354:881e with SMTP id 2adb3069b0e04-523635488aemr12970576e87.39.1716109291007;
+        Sun, 19 May 2024 02:01:31 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ad584sm3859393e87.21.2024.05.19.02.01.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 May 2024 02:01:30 -0700 (PDT)
+Date: Sun, 19 May 2024 12:01:29 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-arm-msm@vger.kernel.org, Rob Clark <robdclark@chromium.org>, 
+	Nikita Travkin <nikita@trvn.ru>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Bjorn Andersson <quic_bjorande@quicinc.com>, 
+	Connor Abbott <cwabbott0@gmail.com>, Ruan Jinjie <ruanjinjie@huawei.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/msm/adreno: Check for zap node availability
+Message-ID: <zqncrzat2adqwdbvtjzrropwvfmhplmhv72mzv2nbhbgg54byk@wbpgofmqpjtn>
+References: <20240517195021.8873-1-robdclark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,33 +87,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0C5QDS.UDESKUXHKPET1@packett.cool>
+In-Reply-To: <20240517195021.8873-1-robdclark@gmail.com>
 
-On Sun, May 19, 2024 at 05:38:24AM -0300, Val Packett wrote:
+On Fri, May 17, 2024 at 12:50:19PM -0700, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
 > 
+> This should allow disabling the zap node via an overlay, for slbounce.
 > 
-> On Sun, May 19 2024 at 09:59:47 +02:00:00, Greg KH
-> <gregkh@linuxfoundation.org> wrote:
-> > On Sun, May 19, 2024 at 04:31:31AM -0300, Val Packett wrote:
-> > >  On the RK3066, there is a bit that must be cleared on flush,
-> > > otherwise
-> > >  we do not get display output (at least for RGB).
-> > 
-> > What commit id does this fix?
-> 
-> I guess: f4a6de855e "drm: rockchip: vop: add rk3066 vop definitions" ?
+> Suggested-by: Nikita Travkin <nikita@trvn.ru>
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Great, can you add a Fixes: tag when you resend these?
 
-> But similar changes like:
-> 742203cd "drm: rockchip: add missing registers for RK3066"
-> 8d544233 "drm/rockchip: vop: Add directly output rgb feature for px30"
-> did not have any "Fixes" reference.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Just because people didn't properly tag things in the past, doesn't mean
-you should perpetuate that problem :)
-
-thanks,
-
-greg k-h
+-- 
+With best wishes
+Dmitry
 
