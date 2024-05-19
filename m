@@ -1,119 +1,187 @@
-Return-Path: <linux-kernel+bounces-183029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA708C9388
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54F1D8C938D
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9A8E281428
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 05:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF5628150B
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 05:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9715210A3E;
-	Sun, 19 May 2024 05:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE6113FEE;
+	Sun, 19 May 2024 05:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=schmorgal.com header.i=@schmorgal.com header.b="eIVo+al9"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbFqS1BM"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2DEFC0B
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 05:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D805FC01;
+	Sun, 19 May 2024 05:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716097919; cv=none; b=Vsfr5Vpa6Qk9SmDjqXbHZOA3HpO8KT8cfJzrrromgm5BceGHt/ULGUWLn5KGFTyQGYHzF8uw/mOje6GoVvnNbE5Oc/NSUuJCU5nfAWlZlqN0Mjc4b238yF3NeAbUyau4PckUCCN7Y1ykWquwcSne5sY6PgTOjQlEqv6PdrQoVK0=
+	t=1716098370; cv=none; b=DebI9mkb7VbXECcTaOqYeNfBsSN9K9j3qlvpMCUz00X+fI4HTYKvLrLP4mds/1jX5uMfKcUnOzZ9PXGbInJgUHAe/qQkg7W4H93trU6SF5KXysBZE22XM0chhXjnkL333dsz8QirjntOEG1+JV1Tw5WjXcC7pKeMc5l0CyuVVeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716097919; c=relaxed/simple;
-	bh=iiThBqGg+z+wiT+1+OMKOP35xrELiR5JRc4emeMv/44=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ie+n05KEcf1wYK8i2OR/NrGFRfER4lMZZhM1xdNB73a0RwpmXtJM3DQMsz4j9eSEhKHNp9aBLSfCqe20Ty+kQWvKuXoCvooeEjPOz5AE7vSUsgi8LZMNil6Pd//w2CVJrl21w0muR7FvnTlq96hCq9PjYsAAcMWVdDtwXQ2X6Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=schmorgal.com; spf=pass smtp.mailfrom=schmorgal.com; dkim=pass (1024-bit key) header.d=schmorgal.com header.i=@schmorgal.com header.b=eIVo+al9; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=schmorgal.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=schmorgal.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1ed72194f0aso4639255ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 22:51:58 -0700 (PDT)
+	s=arc-20240116; t=1716098370; c=relaxed/simple;
+	bh=NmN54ee38hsuoKztnpSGK2jQepru5rXH4Gp4EPxGG/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G6qe+lmgLHOuwBTN9KCazQ99nHQSL+rAIKhFsuqRLYoV+SvwOIwb3pPrbRtMt4EyAophut0uFJaB/b2fhfr37FT2T8QNqN9HHEJFaVoNHe+aT9nRI0dixSKGKDXsUx2M9Sn88tTc/qQZDB1AoC4O7c4+GXfpX0gRm6SeoCeUC/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbFqS1BM; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-792ce7a2025so52296385a.0;
+        Sat, 18 May 2024 22:59:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=schmorgal.com; s=google; t=1716097918; x=1716702718; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iiThBqGg+z+wiT+1+OMKOP35xrELiR5JRc4emeMv/44=;
-        b=eIVo+al9wM/MOahLQrd6POnvtOAMTGyusp4dW2GyhH5OqTFXlIV2QODLO49poiyw2q
-         SOIqf1uxS2CzdNDDae+0rzz/6irHatSBxa+zOEfvH3lLHRUC06XlXTig7GboLYG+c2gs
-         dVYnhzoL/66AA1ki/ZRE8tUr2p/14oVz+igPQ=
+        d=gmail.com; s=20230601; t=1716098367; x=1716703167; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l9NrPccSk3dxue6yKBry7lygPcaCTpzVb/uwrQLilDQ=;
+        b=UbFqS1BMC7a831CbLauUqd6ER0ywFqSa/ltBqGHB5qhkJdcfvfINXTcK8nJEqppPen
+         Juwjmb2iJ+bbsTrn1irzkU0eISVv84mc+l3E2WekNYVBXeNJdtXhm8RBH75DLB7ATlRH
+         qk3IH2YHNGYddUO2BLMajH5Q24jG2ySvY1q5rUwIJ/vrtK6yzL6qpqFDl41tPBa4IilF
+         60O+9ZrlFzfAAlAlsQSPMqLXS+euTo8NGxIMeSIWu4DSsxaHZu2PaOTU38XDKRSNn6sL
+         +fftRoKwGTXnkXnflldGiFrsVM+Q3eHpk/IGGCI7pgZkqtg3puGhtnyPRPTz0HMP7B3r
+         xKMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716097918; x=1716702718;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iiThBqGg+z+wiT+1+OMKOP35xrELiR5JRc4emeMv/44=;
-        b=ExTnERZM5yibJWylfdwOOKbFz7AkvmRmx3ud1zcOavxnWStPgp+InFgfCMmak6unvc
-         HxOUM6/XmRwNBuzssvHkVmA/zx1hniO/KpjmSk+Tmapu45iI5sVqTsPr4K3QBVFe6x3Z
-         enDmSKbKOv1Y52Gc+4rtobydl/K8mM/AB7xwhmkZB+slV33HxSYopAjdMKN3JinMEBPd
-         0LkcUivS17VS5kO7H7PlP2V1DzkyuvW6HpEMKUe7CZGB26IA3q+ih/9vatvW0bmEr5vB
-         n90EsnpZtGm9mhYCHdNOn3kq+TbZ/uhbW39zwyL7U1019CpYHLf110Z3odeHaFhEew6u
-         QumQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVH3MHhr6Dba0499VFoZcspQv3/JyiCz95TfXJB9+AdnuGMIvcWCntAPCOo9Mj1aw0oqKB7HrTNyqG2ym+CCs3e/gTAFEw1h/aCsey/
-X-Gm-Message-State: AOJu0YxLrr25tDutrnS/m/ZNJrTmN763YPzAn4XaP7whUSxfRujx1V6W
-	SCEV6hzuZoMePivMQWnFLHbz5WWKDSOxi+AqEbCa0sMqnZ1TNBCGa4X77pA/QIU=
-X-Google-Smtp-Source: AGHT+IFmzx1wmxCx24pjSLNJLMmnh2tsb4Lr0ISETKX8mWSBIrpJFbyjvpIXM/SELRjXRsUtOXDyzQ==
-X-Received: by 2002:a17:90b:2389:b0:2b1:99fd:4eea with SMTP id 98e67ed59e1d1-2b6ccd7d042mr25891545a91.2.1716097916702;
-        Sat, 18 May 2024 22:51:56 -0700 (PDT)
-Received: from [192.168.1.33] ([50.37.206.39])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2bd5f76e0a7sm1217785a91.0.2024.05.18.22.51.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 May 2024 22:51:56 -0700 (PDT)
-Message-ID: <f7744e88-8123-4ab9-8542-209b10b09321@schmorgal.com>
-Date: Sat, 18 May 2024 22:51:54 -0700
+        d=1e100.net; s=20230601; t=1716098367; x=1716703167;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l9NrPccSk3dxue6yKBry7lygPcaCTpzVb/uwrQLilDQ=;
+        b=cVcPXKzdQrsBHj0qrzhKlgFxIMJ3sbP1kOKQiYtzxNpTbT3qw/lDgIJ0rZQyhQriXc
+         Ytrnt3xbP5bUo6xD45AqUmWVfkSPeNX1vFrCW0ne6Tp/P1bHg//vyblEFP+wYv7/5Bib
+         xcyL52WDQMoYnDs3VZaP2lFRP5r/IDVqIONYWH8XctabUVbpqBRo9n0JLs25dlxX0hEF
+         yM6uEwqdUZ7QeNp3jE6CQpIX5AXdk8WF6LEl1T0zTFqnNmLttrvYwK/iTRUnlIfDFtfz
+         W7vjeWCS3osRboAphj8utHSfjPifm3GbNtlpkpFvf+mgu+97toGNQFUfmoWsOBRZyr7r
+         1k8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUyTrTurj0C539WqrifVStZ+ga6aJiTYpQpe/I1eH4shRyte8nCmm7Atp/FvO00iPf4D/P55iQXTQShPM+bZBtqh2nnzGZ6/ltWtA57WXxWGx/9ifXO382w1PwkhV5KtW6gCFEYBrYbr6gToJkj2YaP3wqN+YQu8uzgELWB+sTtEKv0bs9HNbVjvCGSCQPJJMqNUy0Ro1+SdshUIbZOxO04QA==
+X-Gm-Message-State: AOJu0YyVO6s8d3F+rx3UN92sjdtOcKAyBEfNH3Z7nzV31/kzJU9COAgk
+	GkwCGPyWme3p67Z0tM3aL62Fp/mR+iPui15nOsCd8iQl4rZll4aBZwi222Oy0djEOJSU8dQN5G4
+	sjtLWP/UIQ4h9I2ycNZjCvpzAGt0=
+X-Google-Smtp-Source: AGHT+IH3KgC5/5RTYZFFyAgi3gGOQGkSBTIG6FnrvcN+/pNJE8X5PHNe6d/ZdqiUCwpFLg5jGKiFsKPx3NTMctwKRHM=
+X-Received: by 2002:a37:c44c:0:b0:793:343:6db5 with SMTP id
+ af79cd13be357-79303437020mr998126385a.11.1716098367007; Sat, 18 May 2024
+ 22:59:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] serial: core: only stop transmit when HW fifo is empty
-From: Doug Brown <doug@schmorgal.com>
-To: Jonas Gorski <jonas.gorski@gmail.com>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, stable@vger.kernel.org
-References: <20240303150807.68117-1-jonas.gorski@gmail.com>
- <77b71bd9-42be-40e8-8b96-196e214c8afb@schmorgal.com>
-Content-Language: en-US
-In-Reply-To: <77b71bd9-42be-40e8-8b96-196e214c8afb@schmorgal.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1708709155.git.john@groves.net> <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
+ <CAJfpegv8XzFvty_x00UehUQxw9ai8BytvGNXE8SL03zfsTN6ag@mail.gmail.com>
+In-Reply-To: <CAJfpegv8XzFvty_x00UehUQxw9ai8BytvGNXE8SL03zfsTN6ag@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 19 May 2024 08:59:15 +0300
+Message-ID: <CAOQ4uxg9WyQ_Ayh7Za_PJ2u_h-ncVUafm5NZqT_dt4oHBMkFQg@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/20] Introduce the famfs shared-memory file system
+To: Miklos Szeredi <miklos@szeredi.hu>, John Groves <john@groves.net>
+Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, john@jagalactic.com, 
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com, 
+	gregory.price@memverge.com, Vivek Goyal <vgoyal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi again,
+On Fri, May 17, 2024 at 12:55=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu>=
+ wrote:
+>
+> On Thu, 29 Feb 2024 at 07:52, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > I'm not virtiofs expert, but I don't think that you are wrong about thi=
+s.
+> > IIUC, virtiofsd could map arbitrary memory region to any fuse file mmap=
+ed
+> > by virtiofs client.
+> >
+> > So what are the gaps between virtiofs and famfs that justify a new file=
+system
+> > driver and new userspace API?
+>
+> Let me try to fill in some gaps.  I've looked at the famfs driver
+> (even tried to set it up in a VM, but got stuck with the EFI stuff).
+>
+> - famfs has an extent list per file that indicates how each page
+> within the file should be mapped onto the dax device, IOW it has the
+> following mapping:
+>
+>   [famfs file, offset] -> [offset, length]
+>
+> - fuse can currently map a fuse file onto a backing file:
+>
+>   [fuse file] -> [backing file]
+>
+> The interface for the latter is
+>
+>    backing_id =3D ioctl(dev_fuse_fd, FUSE_DEV_IOC_BACKING_OPEN, backing_m=
+ap);
+> ...
+>    fuse_open_out.flags |=3D FOPEN_PASSTHROUGH;
+>    fuse_open_out.backing_id =3D backing_id;
 
-On 5/16/2024 9:22 PM, Doug Brown wrote:
+FYI, library and example code was recently merged to libfuse:
+https://github.com/libfuse/libfuse/pull/919
 
-> I'm hoping there is some kind of simple fix that can be made to the pxa
-> driver to work around it with this new behavior. Can anyone think of a
-> reason that this driver would not like this change? It seems
-> counterintuitive to me -- the patch makes perfect sense.
+>
+> This looks suitable for doing the famfs file - > dax device mapping as
+> well.  I wouldn't extend the ioctl with extent information, since
+> famfs can just use FUSE_DEV_IOC_BACKING_OPEN once to register the dax
+> device.  The flags field could be used to tell the kernel to treat
+> this fd as a dax device instead of a a regular file.
+>
+> Letter, when the file is opened the extent list could be sent in the
+> open reply together with the backing id.  The fuse_ext_header
+> mechanism seems suitable for this.
+>
+> And I think that's it as far as API's are concerned.
+>
+> Note: this is already more generic than the current famfs prototype,
+> since multiple dax devices could be used as backing for famfs files,
+> with the constraint that a single file can only map data from a single
+> dax device.
+>
+> As for implementing dax passthrough, I think that needs a separate
+> source file, the one used by virtiofs (fs/fuse/dax.c) does not appear
+> to have many commonalities with this one.  That could be renamed to
+> virtiofs_dax.c as it's pretty much virtiofs specific, AFAICT.
+>
+> Comments?
 
-After further experimentation, I've come to the conclusion that this is
-a bug in the pxa uart driver, and this patch simply exposed the bug.
-I'll submit a patch to fix the issue in the pxa driver.
+Would probably also need to decouple CONFIG_FUSE_DAX
+from CONFIG_FUSE_VIRTIO_DAX.
 
-If anyone's interested in the details: basically, the pxa driver in its
-current state doesn't work correctly if it receives a TX interrupt when
-the circular buffer is empty. It handles it, but then gets stuck waiting
-for the next TX IRQ that will never happen because no characters were
-transmitted. The way stop_tx() was previously being called before the
-transmitter was empty, it prevented that situation from happening
-because toggling the TX interrupt enable flag off (with stop_tx) and
-back on (with the next start_tx) causes a new TX interrupt to fire and
-kickstarts the transmit process again.
+What about fc->dax_mode (i.e. dax=3D mount option)?
 
-The 8250 driver, for example, isn't affected by this problem because it
-effectively does stop_tx() on its own if it detects an empty circular
-buffer in the TX interrupt handler. Adding similar logic to the pxa
-driver fixes it.
+What about FUSE_IS_DAX()? does it apply to both dax implementations?
 
-Doug
+Sounds like a decent plan.
+John, let us know if you need help understanding the details.
+
+> Am I missing something significant?
+
+Would we need to set IS_DAX() on inode init time or can we set it
+later on first file open?
+
+Currently, iomodes enforces that all opens are either
+mapped to same backing file or none mapped to backing file:
+
+fuse_inode_uncached_io_start()
+{
+..
+        /* deny conflicting backing files on same fuse inode */
+
+The iomodes rules will need to be amended to verify that:
+- IS_DAX() inode open is always mapped to backing dax device
+- All files of the same fuse inode are mapped to the same range
+  of backing file/dax device.
+
+Thanks,
+Amir.
 
