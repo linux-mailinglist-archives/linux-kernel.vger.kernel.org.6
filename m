@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-183014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE6F8C933F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 02:47:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008DC8C934A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 03:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFB6F1C20AEE
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 00:47:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F1351F214A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 01:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C08A8BE5;
-	Sun, 19 May 2024 00:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KY//KQL8"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791525256;
+	Sun, 19 May 2024 01:58:51 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888422900
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 00:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9367A39B;
+	Sun, 19 May 2024 01:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716079641; cv=none; b=azILnpilRKc3if5k9h9DzF5x0PQfQHJRRpOVbPcsqCW6qGBTmow35eqTP+f3t7MC6iXzRmOSBytfgfoebG7nY6lAanBaV08eB3Qq0J/WyMw5nhyIui1PbKXuP60RjhDzaB8FBEkZtqM6bhYuMzfoKTp6LSOQNXjBzn9sCLAbJb8=
+	t=1716083931; cv=none; b=E2XWJ7dP8evJjOqdjiQh0UKhyVl75p9ac+8Zw6bhfrb5kbRt/H0X8kWWC5XAOJVd+jk4CoyJ+zp7ciuRLgPG4A277PUiazz69AIdd9OaYeb8HK8PY4zH9O95mNXCxqk/mV5Cc7rQeon0pd3HZvS+iC8eu51z8COIgsUqrFBIZqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716079641; c=relaxed/simple;
-	bh=SNpQ4mbnxwRgNf7F6NglRimOUUsNGWK2lbgVZaIgvEU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=lTB80QetqyxWLnpozGImS+nEkzCLCCC/QaOdM5hMC50yCqCx0CNhGxs0+QTDQiXhuvB+Y1Rc+LIDLi2Jd6mUJNGyJ8eRD23zBX+zO2RKVBS9lMvbUM3dI8rE3FKXp682SrpMTWuljOuF72GjvetC67JXnU/971aTl4Qfd4fAaro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KY//KQL8; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1eed90a926fso73115ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 17:47:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716079640; x=1716684440; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UX1nBtrrqIgRr44bcjQMv++P2/YYvpyxM8Pb2Eg8Vv8=;
-        b=KY//KQL83PRTQCcdxRdzoko0cyOS0QNbb0ZUH8J8rUE64jm8oUA8RY4k1s6M0RluSn
-         vYGz0kYSFuCOGmck4fGUhrpQ8w4d+wBwQOrljCFIOEAtlqaAzm4lqAzMVRINNLlcX4N/
-         +vLGMqcjm5r2mcQBtqaFuJAgm6xq5jSQJ5FUXQOMjluDF2ffAAMJhufMtApIXKSV2w6C
-         KKFYkgooqGG+b+50Em4uBaRDcMvtB3/Qdmndx8zRYBlzt3s9S12QMJNXVhZeLbQsTZBE
-         HPp/QGYnRwZmlky4MUetx15LbtAbiw2/zJUCXqNOmF2jo2rj5qZwS2KcdqbEMJFa2aDm
-         qYeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716079640; x=1716684440;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UX1nBtrrqIgRr44bcjQMv++P2/YYvpyxM8Pb2Eg8Vv8=;
-        b=ZcyWDUVlDdZ8L7gMO3CUtHlsWOjFuFzDgJPonkO9kjIDGme2qu7JWXsMTdNLhmzt3H
-         71J3eMbQUKmo877rDiQ47ijZKbq66uTFkSdRsPLhATmEiDWer1nFwDn7lAbm53zOrkDQ
-         dUT9nybNKdETo05h2pBCEs6cd5E6pVolBOW2lWGjUKA+soMesqYVHZCkBwNc7987tHRu
-         EztWIyBXSOKUQZfdotWEOzPzXcTozQ1EH1O9qFfAtiT4EKVK5Y+KXQIDx5+Y3C0bo2QZ
-         1hrWCc8YD1RWB3AuZe+uxmciEAvO3dchnsHT4QFaoZIwsiF+fiK4RKRSrye6mTVtjYKN
-         /cQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTl11cuuryPH/l6SIdDiNDAnyXhe/kPmbimklbkkZ+SGcq7iXCPu12wj3eUP2ZzQBQPHfFryChffhMF3rMdyAXw7amrH7+WW25XJZD
-X-Gm-Message-State: AOJu0YxG8xFPET7AWNDUbKHOSgUPqwJyfiuXsL9ztPoModccxtt/6xxJ
-	xRkZBqki5C0T9efbE1HPKOxhd335wS8vV9nr6UWbND6rxLbC0fdxqzSJ4FK2XA==
-X-Google-Smtp-Source: AGHT+IF8J6dj1OWr2XdGIAu1kA/WKtIwcErwluJyt9JiHPPvr1R0kOTpnvCHwtIhT2C2Awtmy778NQ==
-X-Received: by 2002:a17:903:2ac7:b0:1f0:99c9:ca8 with SMTP id d9443c01a7336-1f2ee0c2bbdmr1382185ad.21.1716079639149;
-        Sat, 18 May 2024 17:47:19 -0700 (PDT)
-Received: from [2620:0:1008:15:15d8:f72b:f347:b61c] ([2620:0:1008:15:15d8:f72b:f347:b61c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340ca9019esm15042359a12.50.2024.05.18.17.47.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 17:47:18 -0700 (PDT)
-Date: Sat, 18 May 2024 17:47:16 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-To: Sourav Panda <souravpanda@google.com>
-cc: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org, 
-    akpm@linux-foundation.org, mike.kravetz@oracle.com, muchun.song@linux.dev, 
-    rppt@kernel.org, david@redhat.com, rdunlap@infradead.org, 
-    chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, 
-    tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com, 
-    pasha.tatashin@soleen.com, yosryahmed@google.com, hannes@cmpxchg.org, 
-    shakeelb@google.com, kirill.shutemov@linux.intel.com, 
-    wangkefeng.wang@huawei.com, adobriyan@gmail.com, vbabka@suse.cz, 
-    Liam.Howlett@oracle.com, surenb@google.com, linux-kernel@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-    linux-mm@kvack.org, willy@infradead.org, weixugc@google.com
-Subject: Re: [PATCH v12] mm: report per-page metadata information
-In-Reply-To: <20240512010611.290464-1-souravpanda@google.com>
-Message-ID: <45fb4c94-dd77-94c3-f08f-81bf31e6d6d2@google.com>
-References: <20240512010611.290464-1-souravpanda@google.com>
+	s=arc-20240116; t=1716083931; c=relaxed/simple;
+	bh=v5NrZs6GuCD77xD6BSwxwS3QTpgJ5pqa2G3WKOEcpWc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SNOcpSN8qXpgi7i1HHsmfa95z8LRRGECVM7qey6OT+5RHWEQrHaT4Tsg44m1QD62tRts47TUzj1A65Zap7T7LP8TpK1z3HcZnVhQHxhpywhbjkAd1F+PdoO6/xWE2px03t26aTbOTymi92fiok4z2lMtknLCkcnFi5d3628d+ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 0BF52C056A;
+	Sun, 19 May 2024 01:19:24 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf08.hostedemail.com (Postfix) with ESMTPA id A84B020027;
+	Sun, 19 May 2024 01:19:19 +0000 (UTC)
+Message-ID: <03cc262da2a3db817aa5663fbce6c914708b74f8.camel@perches.com>
+Subject: Re: [PATCH] drm/nouveau/nvif: Avoid build error due to potential
+ integer overflows
+From: Joe Perches <joe@perches.com>
+To: Guenter Roeck <linux@roeck-us.net>, Kees Cook <keescook@chromium.org>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: airlied@gmail.com, dakr@redhat.com, daniel@ffwll.ch, 
+ dri-devel@lists.freedesktop.org, jani.nikula@intel.com, javierm@redhat.com,
+  kherbst@redhat.com, linux-kernel@vger.kernel.org, lyude@redhat.com, 
+ mripard@kernel.org, nouveau@lists.freedesktop.org, tzimmermann@suse.de, 
+ linux-hardening@vger.kernel.org
+Date: Sat, 18 May 2024 18:19:18 -0700
+In-Reply-To: <a912c2d1-9008-410a-92cc-912e17c63695@roeck-us.net>
+References: <20240518143743.313872-1-linux@roeck-us.net>
+	 <34a6d812-b4ed-4465-b0ec-e641d185b9b1@wanadoo.fr>
+	 <202405181020.2D0A364F@keescook>
+	 <a912c2d1-9008-410a-92cc-912e17c63695@roeck-us.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: A84B020027
+X-Stat-Signature: w3iik6tbsay1qy16e34mbnwb8cwgnmib
+X-Rspamd-Server: rspamout01
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19bAkmZyo+dJgltxs9NfI23KEnolHXqvm0=
+X-HE-Tag: 1716081559-138596
+X-HE-Meta: U2FsdGVkX1/NTsnVtjEKYHeeHCzZZWbJc+2s8OyWMfrImO+5aFN+RcWD+M6lUiPJt90JXXVs6VNH9RVnjo0SIbesh5wlYX/L1/Js40Zh10YqeTQ4A1BqQx71+JOEhyzPPcQvSopjounJG+N+Brc38ie+i/JEzH6Hx+tyhKpHLgy47jtUB0yWXaMZQ8gWS8Q8j6gtIR05ZXdxHqPou0c2d1TrTLTjCo1chif3e5HhxrwGcOM7bFFJ928ZMzqD6+OMWtKPVnqWIDQNS5IvOUo7UGzlQBvO+QZ0jEPkO3HnATz0taCXaujQL+UZNKdHjWp3
 
-On Sun, 12 May 2024, Sourav Panda wrote:
+On Sat, 2024-05-18 at 11:23 -0700, Guenter Roeck wrote:
+> On 5/18/24 10:32, Kees Cook wrote:
+>=20
+[]
+> > I think the INT_MAX test is actually better in this case because
+> > nvif_object_ioctl()'s size argument is u32:
+> >=20
+> > ret =3D nvif_object_ioctl(object, args, sizeof(*args) + size, NULL);
+> >                                        ^^^^^^^^^^^^^^^^^^^^
+> >=20
+> > So that could wrap around, even though the allocation may not.
+> >=20
+> > Better yet, since "sizeof(*args) + size" is repeated 3 times in the
+> > function, I'd recommend:
+> >=20
+> > 	...
+> > 	u32 args_size;
+> >=20
+> > 	if (check_add_overflow(sizeof(*args), size, &args_size))
+> > 		return -ENOMEM;
+> > 	if (args_size > sizeof(stack)) {
+> > 		if (!(args =3D kmalloc(args_size, GFP_KERNEL)))
 
-> Today, we do not have any observability of per-page metadata
-> and how much it takes away from the machine capacity. Thus,
-> we want to describe the amount of memory that is going towards
-> per-page metadata, which can vary depending on build
-> configuration, machine architecture, and system use.
-> 
-> This patch adds 2 fields to /proc/vmstat that can used as shown
-> below:
-> 
-> Accounting per-page metadata allocated by boot-allocator:
-> 	/proc/vmstat:nr_memmap_boot * PAGE_SIZE
-> 
-> Accounting per-page metadata allocated by buddy-allocator:
-> 	/proc/vmstat:nr_memmap * PAGE_SIZE
-> 
-> Accounting total Perpage metadata allocated on the machine:
-> 	(/proc/vmstat:nr_memmap_boot +
-> 	 /proc/vmstat:nr_memmap) * PAGE_SIZE
-> 
-> Utility for userspace:
-> 
-> Observability: Describe the amount of memory overhead that is
-> going to per-page metadata on the system at any given time since
-> this overhead is not currently observable.
-> 
-> Debugging: Tracking the changes or absolute value in struct pages
-> can help detect anomalies as they can be correlated with other
-> metrics in the machine (e.g., memtotal, number of huge pages,
-> etc).
-> 
-> page_ext overheads: Some kernel features such as page_owner
-> page_table_check that use page_ext can be optionally enabled via
-> kernel parameters. Having the total per-page metadata information
-> helps users precisely measure impact. Furthermore, page-metadata
-> metrics will reflect the amount of struct pages reliquished
-> (or overhead reduced) when hugetlbfs pages are reserved which
-> will vary depending on whether hugetlb vmemmap optimization is
-> enabled or not.
-> 
-> For background and results see:
-> lore.kernel.org/all/20240220214558.3377482-1-souravpanda@google.com
-> 
-> Signed-off-by: Sourav Panda <souravpanda@google.com>
-> Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+trivia:
 
-Acked-by: David Rientjes <rientjes@google.com>
+More typical kernel style would use separate alloc and test
+
+		args =3D kmalloc(args_size, GFP_KERNEL);
+		if (!args)
+
+> > 			return -ENOMEM;
+> >          } else {
+> >                  args =3D (void *)stack;
+> >          }
+> > 	...
+> >          ret =3D nvif_object_ioctl(object, args, args_size, NULL);
+> >=20
+> > This will catch the u32 overflow to nvif_object_ioctl(), catch an
+> > allocation underflow on 32-bits systems, and make the code more
+> > readable. :)
+> >=20
+>=20
+> Makes sense. I'll change that and send v2.
+>=20
+> Thanks,
+> Guenter
+>=20
+>=20
+
 
