@@ -1,118 +1,224 @@
-Return-Path: <linux-kernel+bounces-183195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 993838C95CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:18:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B0C8C95CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB14D1C20E51
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:18:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EB48281833
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177EF6A33B;
-	Sun, 19 May 2024 18:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02234D595;
+	Sun, 19 May 2024 18:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="0hWgjmKN"
-Received: from smtp-out.freemail.hu (fmfe12.freemail.hu [46.107.16.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="mm7zhmJ+"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4062E58AB4;
-	Sun, 19 May 2024 18:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9D2D2FF
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 18:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716142681; cv=none; b=Ibpn64aFfLOLoVkwDtirQxE5XisRBmxcJ5NR8iQGp0wnl/zxDPli+jysu623Uwi98mx81tNUKPBgdbi38YdIYFy5IhBCsdae12k8oxZXETKb+6U8fdn/Tc+yUbj267ApRsa4sl2TOY7e4f1hwS7+Ed34kUKqbesEGkJDmu8IQxU=
+	t=1716142644; cv=none; b=AMNGoCAPK2y0TOCwkETa8AqCeWsorFx9TFKEMjRDJL6v0sPmBxZRRkeD0pdV/boQK7bVJJHoVWuxDaYm/grUomuZMGx0D3F+sXkR64EIU2F8tH1GBN0ZPt9A+K227jMvdXp3KxF8kKWQeYkuTa1FTHapOb9LJQA0nLdRiZB7hpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716142681; c=relaxed/simple;
-	bh=EJ6Foab+qlu7VNhHLMIvKehDQVVIHCOMsiMv3cp3kn8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=k+DbvtVr1bfoizTd8fnDUbLunuLpDNxRmC05qyJwmv525FHCbafJGXYGh7lMkwa8n1nntswoMPdD7icLUuLHocoyR4LDIicwgOi0Yh6QMKsSKbfZtsOCsbuNS0y4PhXnKZg5LghBzIjEnyFUfouJv+lGDe1+DS/2WrSbHBfpehU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=0hWgjmKN reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
-Received: from fizweb.elte.hu (fizweb.elte.hu [157.181.183.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.freemail.hu (Postfix) with ESMTPSA id 4Vj7zb1121z6b;
-	Sun, 19 May 2024 20:10:51 +0200 (CEST)
-From: egyszeregy@freemail.hu
-To: broonie@kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Benjamin=20Sz=C5=91ke?= <egyszeregy@freemail.hu>
-Subject: [PATCH] spidev: Introduce "linux,spidev-name" property for device tree of spidev.
-Date: Sun, 19 May 2024 20:10:39 +0200
-Message-Id: <20240519181039.23147-1-egyszeregy@freemail.hu>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1716142644; c=relaxed/simple;
+	bh=2s5g+zwfMTvziUNuBm+f7vvR7h8jdexplwL+ieGhwOU=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=oytVi1JtpWLeN3jQf7+bvVaCC0FaJ7Clq1ylqQCugeuHEOo4v2e8pVYEH3vjd6nqeHOlcR3nTPHDlZSmu+23rFiX8drscZHgCy76gKyBSsM4aF2MhwjcO8sNYDCc675B2/pO+fsWdYdTfji6j/0ot1MD30RBndM97OQe3qu3AUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mm7zhmJ+; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dee5f035dd6so16159299276.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 11:17:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716142641; x=1716747441; darn=vger.kernel.org;
+        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EF57d/oSo3Tiz1+Ri035kfCFIPne1iVfqsIeBXpa+mA=;
+        b=mm7zhmJ+Dn7S9KUFk/8y22EXpiq3lQgY89mQ3tj51qB42iZ3lA/MD7Vu5rVAzZ0AUQ
+         mujjAhEGTnM3z7aULDG9KNk3sRsHZP73X+Fe8CsUw/P4v6Ntsx82aYRIiKXesl7EEPMp
+         PxTmux3cePpZuiPfOQ1mMSsc+KvSXBvD0UQ1pV9Ou/FwZowOBmmB0+5EDppq4OijGio/
+         DmKl6MoKbVI5E1uWT1uiZiORb/fmnVOHqNaiN1D4gkS0dRxP9GWQuffP8+/bpxSfCU+m
+         2HqO+R43/8eBONn3Ue40HxBwvZ73tDjqzh3eHwo9xCufkK+jIASnxIOfJRAmqOAPdtaJ
+         1SpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716142641; x=1716747441;
+        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EF57d/oSo3Tiz1+Ri035kfCFIPne1iVfqsIeBXpa+mA=;
+        b=VDC8QL2DJf9i1g1D/PdNV4CCmXUeWzOx9UcjFACeU2g5zSnkg90oYIunLYErPNcAGl
+         ad41OgRNOuZGFMjPLvfhMpTEsBOoslICo86L7o83cbkeSEPjfg7Uvop+FNwkh6vrEdkE
+         X2hgapkQ2a77ZkDlxfdTAB1dCnTOWHNs5WJ0hMkUaSp0O/35IfRA9eSRnYEph1LCGz1k
+         emO38kLFIVi6Wr1xFVydcStPNgX1tL7Yukf9tjHdJJXAOc+nWXQv8ddSJouN4H6fCzug
+         K6tel/v0xgYwDgfObTMfSityDHBabFcVIxAz9eSe2l3VX/K2LEewdilpXPlXycsnwA9Q
+         9fPg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0VgrdKfqXB9MT+wQ3PBQZ2kkp0ZIGZNwJlH+/+0CYg0sdADtD0CY6E43z8qyAT5BHiNcG14EZ0WVHxo6j3pkyAHM1n46wCZ28+bom
+X-Gm-Message-State: AOJu0Yw8PKy5O0G90Xm44/dl4Xl8ETUNNEM+EgovYBcK0ESXnogOlnik
+	AAhQY7fNyqH54glqxweQEwvmxbS+4MuUpgvPC68Ewlex+FjcA3bwpx/08sSZWTXQgIo44TKtKLs
+	7TsU2CQ==
+X-Google-Smtp-Source: AGHT+IFX2CyWCwQfx/kdQYayR3AJIKR/mn3cf14Llmu17FFVI55/2e1typh2ueAzDGhVlMaDIzn64DxLf7cw
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:4b6d:77c7:e6ad:c2a7])
+ (user=irogers job=sendgmr) by 2002:a05:6902:114d:b0:df4:97ab:3673 with SMTP
+ id 3f1490d57ef6-df497ab39b3mr1174299276.5.1716142641040; Sun, 19 May 2024
+ 11:17:21 -0700 (PDT)
+Date: Sun, 19 May 2024 11:17:16 -0700
+Message-Id: <20240519181716.4088459-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1716142251;
-	s=20181004; d=freemail.hu;
-	h=From:To:Cc:Subject:Date:MIME-Version:Content-Type:Content-Transfer-Encoding;
-	l=1791; bh=8JjPylgkjJhf1YbO+GZAuXsj5MnBCud61GtXY/XF3T4=;
-	b=0hWgjmKN0EvdCrAMLe2Y9+HtVqwXunqLAWVS2M9JlCZiRskccxZU+gfiN6orFe6f
-	o68HQoT6xFIq9oeHiF4hSfP5Ko8JSWqGubrBVafGe+yobj0OzGl4qb2maEJscZHR+5P
-	ygpReibEUtHHfMvrDDI2jZEFOyOWA5k1A4A3qUX1m5G/CT3cHzK/TS/p7OSsk3k55hI
-	6HGIPq/GUpUodcoOQyoGfi52vjqj3NK7XYcrawvX3b5mCw3Ve3I64MdZRhAcqoS7I5A
-	F2YB/6U38Ubpm4iucIIVWHU13/IhnEAe/t4TEWKE1JNYAgyBbfIx20jzDDirCq5HXw6
-	Imc0P0Q3DA==
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
+Subject: [PATCH v1] tools api io: Move filling the io buffer to its own function
+From: Ian Rogers <irogers@google.com>
+To: Arnaldo Carvalho de Melo <acme@redhat.com>, Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Cc: Ian Rogers <irogers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Benjamin Szőke <egyszeregy@freemail.hu>
+In general a read fills 4kb so filling the buffer is a 1 in 4096
+operation, move it out of the io__get_char function to avoid some
+checking overhead and to better hint the function is good to inline.
 
-Optionally, spidev may have a "linux,spidev-name" property.
-This is a string which is defining a custom suffix name for spi device in
-/dev/spidev-<name> format. It helps to improve software portability between
-various SoCs and reduce complexities of hardware related codes in SWs.
+For perf's IO intensive internal (non-rigorous) benchmarks there's a
+near 8% improvement to kallsyms-parsing with a default build.
 
-Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
+Before:
+```
+$ perf bench internals all
+Computing performance of single threaded perf event synthesis by
+synthesizing events on the perf process itself:
+  Average synthesis took: 146.322 usec (+- 0.305 usec)
+  Average num. events: 61.000 (+- 0.000)
+  Average time per event 2.399 usec
+  Average data synthesis took: 145.056 usec (+- 0.155 usec)
+  Average num. events: 329.000 (+- 0.000)
+  Average time per event 0.441 usec
+
+  Average kallsyms__parse took: 162.313 ms (+- 0.599 ms)
+..
+Computing performance of sysfs PMU event scan for 100 times
+  Average core PMU scanning took: 53.720 usec (+- 7.823 usec)
+  Average PMU scanning took: 375.145 usec (+- 23.974 usec)
+```
+After:
+```
+$ perf bench internals all
+Computing performance of single threaded perf event synthesis by
+synthesizing events on the perf process itself:
+  Average synthesis took: 127.829 usec (+- 0.079 usec)
+  Average num. events: 61.000 (+- 0.000)
+  Average time per event 2.096 usec
+  Average data synthesis took: 133.652 usec (+- 0.101 usec)
+  Average num. events: 327.000 (+- 0.000)
+  Average time per event 0.409 usec
+
+  Average kallsyms__parse took: 150.415 ms (+- 0.313 ms)
+..
+Computing performance of sysfs PMU event scan for 100 times
+  Average core PMU scanning took: 47.790 usec (+- 1.178 usec)
+  Average PMU scanning took: 376.945 usec (+- 23.683 usec)
+```
+
+Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- drivers/spi/spidev.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ tools/lib/api/io.h | 69 +++++++++++++++++++++++++---------------------
+ 1 file changed, 38 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index 95fb5f1c91c1..e0071522fc6d 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -767,6 +767,8 @@ MODULE_DEVICE_TABLE(acpi, spidev_acpi_ids);
+diff --git a/tools/lib/api/io.h b/tools/lib/api/io.h
+index 84adf8102018..d3eb04d1bc89 100644
+--- a/tools/lib/api/io.h
++++ b/tools/lib/api/io.h
+@@ -43,48 +43,55 @@ static inline void io__init(struct io *io, int fd,
+ 	io->eof = false;
+ }
  
- static int spidev_probe(struct spi_device *spi)
+-/* Reads one character from the "io" file with similar semantics to fgetc. */
+-static inline int io__get_char(struct io *io)
++/* Read from fd filling the buffer. Called when io->data == io->end. */
++static inline int io__fill_buffer(struct io *io)
  {
-+	int ret;
-+	const char *name;
- 	int (*match)(struct device *dev);
- 	struct spidev_data	*spidev;
- 	int			status;
-@@ -800,9 +802,20 @@ static int spidev_probe(struct spi_device *spi)
- 		struct device *dev;
+-	char *ptr = io->data;
++	ssize_t n;
  
- 		spidev->devt = MKDEV(SPIDEV_MAJOR, minor);
--		dev = device_create(&spidev_class, &spi->dev, spidev->devt,
--				    spidev, "spidev%d.%d",
--				    spi->controller->bus_num, spi_get_chipselect(spi, 0));
+ 	if (io->eof)
+ 		return -1;
+ 
+-	if (ptr == io->end) {
+-		ssize_t n;
+-
+-		if (io->timeout_ms != 0) {
+-			struct pollfd pfds[] = {
+-				{
+-					.fd = io->fd,
+-					.events = POLLIN,
+-				},
+-			};
+-
+-			n = poll(pfds, 1, io->timeout_ms);
+-			if (n == 0)
+-				errno = ETIMEDOUT;
+-			if (n > 0 && !(pfds[0].revents & POLLIN)) {
+-				errno = EIO;
+-				n = -1;
+-			}
+-			if (n <= 0) {
+-				io->eof = true;
+-				return -1;
+-			}
++	if (io->timeout_ms != 0) {
++		struct pollfd pfds[] = {
++			{
++				.fd = io->fd,
++				.events = POLLIN,
++			},
++		};
 +
-+		/*
-+		 * If "linux,spidev-name" is specified in device tree, use /dev/spidev-<name>
-+		 * in Linux userspace, otherwise use /dev/spidev<bus_num>.<cs_num>.
-+		 */
-+		ret = device_property_read_string(&spi->dev, "linux,spidev-name", &name);
-+		if (ret < 0)
-+			dev = device_create(spidev_class, &spi->dev, spidev->devt,
-+					    spidev, "spidev%d.%d",
-+					    spi->controller->bus_num, spi_get_chipselect(spi, 0));
-+		else
-+			dev = device_create(spidev_class, &spi->dev, spidev->devt,
-+					    spidev, "spidev-%s", name);
++		n = poll(pfds, 1, io->timeout_ms);
++		if (n == 0)
++			errno = ETIMEDOUT;
++		if (n > 0 && !(pfds[0].revents & POLLIN)) {
++			errno = EIO;
++			n = -1;
+ 		}
+-		n = read(io->fd, io->buf, io->buf_len);
+-
+ 		if (n <= 0) {
+ 			io->eof = true;
+ 			return -1;
+ 		}
+-		ptr = &io->buf[0];
+-		io->end = &io->buf[n];
+ 	}
+-	io->data = ptr + 1;
+-	return *ptr;
++	n = read(io->fd, io->buf, io->buf_len);
 +
- 		status = PTR_ERR_OR_ZERO(dev);
- 	} else {
- 		dev_dbg(&spi->dev, "no minor number available!\n");
++	if (n <= 0) {
++		io->eof = true;
++		return -1;
++	}
++	io->data = &io->buf[0];
++	io->end = &io->buf[n];
++	return 0;
++}
++
++/* Reads one character from the "io" file with similar semantics to fgetc. */
++static inline int io__get_char(struct io *io)
++{
++	if (io->data == io->end) {
++		int ret = io__fill_buffer(io);
++
++		if (ret)
++			return ret;
++	}
++	return *io->data++;
+ }
+ 
+ /* Read a hexadecimal value with no 0x prefix into the out argument hex. If the
 -- 
-2.39.3
+2.45.0.rc1.225.g2a3ae87e7f-goog
 
 
