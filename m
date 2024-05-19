@@ -1,133 +1,119 @@
-Return-Path: <linux-kernel+bounces-183167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFC68C957E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:14:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F78C8C957F
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80E0D1F21C02
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:14:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 513721F21C05
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FD14F200;
-	Sun, 19 May 2024 17:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2964F1F9;
+	Sun, 19 May 2024 17:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzst70TO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lmWVBFa8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEF94D108;
-	Sun, 19 May 2024 17:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999B91DFDE;
+	Sun, 19 May 2024 17:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716138842; cv=none; b=Ktvw7jRp0c0I9VoKNlZKKxEXyzIqhI5MertgvKP1F/gv7efd6Dh+bqBrHqHMlXS7HwU4MRUrlorjke5nZPEy8Cs8IemNduaREemTSkW8/RxilDXXzmD+fQzHG9d9vJbjYf7rtseiJCMvjloWagA3GdmzdkM3hCkjnr+8+Of65QE=
+	t=1716138960; cv=none; b=CEbvGcLxXP3ZdKGSkFD7hxj1MKzjn9MvtvyV19LDjkcQWXDk8+brmmOGQDFgbl8n3D7FrcYkIxxqa7ciLAM8Bem3UWMK15ZQinqiegVmpOVJUiUI2C6vkbFBiFC1qIPP4actLkxHMUHdvBfr7US1efGd2kz1ePu7K1q9zI0QixQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716138842; c=relaxed/simple;
-	bh=rzQUip3ttnHtdiXBV8Xar/0z+hrxGmJ12YoZERJc1o8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S71iEg6/IZPb9MYbHGT7u3hAyWq12bUEzIgSuCXkTy2hgq9LQumKgg4r4wyVgK7KztnLHzz9zedf8JzfhSZKWwOpe+iU2Y+MAYKC2NQNNa9TGZ7Xho8gNTFjIbMuksYkt8qrUY5yk83svj7fGn7ocF/c22OeygThwR8R3+nzhLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzst70TO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37739C32781;
-	Sun, 19 May 2024 17:13:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716138842;
-	bh=rzQUip3ttnHtdiXBV8Xar/0z+hrxGmJ12YoZERJc1o8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jzst70TOK9rMnMkhl4Baw4PRnR93itFBWpkQ1m7a2l+M+UGgahpjYyWc0h87VDjdk
-	 acfpcMYbFGKkXT3vQlOY3cQw6gNBuKZM93Wi9v/4I5tRo+F1+dVEiDOgemI7BTLxQ/
-	 ttMwwsGHgkB/t6IWlv5yi3iIilWpnVHAb9Mx/YnIkrIvPfCJ4MF8DBkkIYiM0XuyKZ
-	 eTQGNAkUU06cqMk1xofz3kIpEdqhFpmSO69UK1kQH9uTRnK9xVKtGZ+DZ/10b/ip6o
-	 L2cl1mE3vS7XgAs1WZHgzCalGckiAPHmiDQBwxgKXetCiHZDxy78zez9sS8SnCeUfM
-	 fZoykaOLzSm7g==
-Date: Sun, 19 May 2024 18:13:49 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dumitru Ceclan via B4 Relay
- <devnull+dumitru.ceclan.analog.com@kernel.org>
-Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>
-Subject: Re: [PATCH v2 8/9] iio: adc: ad7173: Add support for AD411x devices
-Message-ID: <20240519181349.0209271c@jic23-huawei>
-In-Reply-To: <20240514-ad4111-v2-8-29be6a55efb5@analog.com>
-References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
-	<20240514-ad4111-v2-8-29be6a55efb5@analog.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716138960; c=relaxed/simple;
+	bh=avh4UAL3tymowqZ8PsD+NwycV25qlnYN+5GxzSUxlJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bfPgfd0FtTXFcUi/Cj+48lsmjyf3UY45CkZ9MzrGwXH66r8ivKsFM6q5guqQV9zNoMEIFNPOqDFVuUC7Q8aT3aQKvopsZ3HSBNiH2CG6qwNhH6uKYFpS8I9eKfGEYijEwChsQu+LL612e/j9J7f5iW0Dqw/Dt6yIw4EYSB314gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lmWVBFa8; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716138958; x=1747674958;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=avh4UAL3tymowqZ8PsD+NwycV25qlnYN+5GxzSUxlJM=;
+  b=lmWVBFa8p8rkDk7WgxMVNhrufn+fwsjLgRHB9/MhjNPxtomXirjWATJV
+   LjvpZCion9+VGdkkL9pO6StYetm7PMEyRjvwsx6udzUUw3U1CmVYa4F5h
+   ej6ZfmLe2StaxeV01d9BFDUgUiqZ+mZNaypLbXBiuLX3mwdL/64hfejZh
+   Va88nKFbRvyJZ2hsjNWH5xyMvf9knE+7mmHNF/gVeTyZa3YHdarcgp9UF
+   DAnZgskl0jczkHl3Ii6mvOVVgIPm22CVwueWWreWBaL4AjBuKn78EkkFl
+   i+NIqIV26psOv6YIGPA386duZ7SQd4R5zqwITUaZOTvQJkpTCYb0+YL44
+   w==;
+X-CSE-ConnectionGUID: 3ZFh9HnvTnOQ5/vbX46rNg==
+X-CSE-MsgGUID: ORMcOc+7QOKExLEtd3IfBw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="16090167"
+X-IronPort-AV: E=Sophos;i="6.08,173,1712646000"; 
+   d="scan'208";a="16090167"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 10:15:58 -0700
+X-CSE-ConnectionGUID: xV1w0CkHRt+EncUXpdUJsQ==
+X-CSE-MsgGUID: 4Yvu+Z0jSyOEenpHX3KT2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,173,1712646000"; 
+   d="scan'208";a="32144069"
+Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 19 May 2024 10:15:53 -0700
+Received: from kbuild by 108735ec233b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s8k8W-000435-1r;
+	Sun, 19 May 2024 17:15:52 +0000
+Date: Mon, 20 May 2024 01:14:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wen Yang <wen.yang@linux.dev>, Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, Wen Yang <wen.yang@linux.dev>,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Dylan Yudaken <dylany@fb.com>, David Woodhouse <dwmw@amazon.co.uk>,
+	Paolo Bonzini <pbonzini@redhat.com>, Dave Young <dyoung@redhat.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] eventfd: introduce ratelimited wakeup for non-semaphore
+ eventfd
+Message-ID: <202405200111.frRQbI4n-lkp@intel.com>
+References: <20240519144124.4429-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240519144124.4429-1-wen.yang@linux.dev>
 
-On Tue, 14 May 2024 10:22:53 +0300
-Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+Hi Wen,
 
-> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> 
-> Add support for AD4111/AD4112/AD4114/AD4115/AD4116.
-> 
-> The AD411X family encompasses a series of low power, low noise, 24-bit,
-> sigma-delta analog-to-digital converters that offer a versatile range of
-> specifications.
-> 
-> This family of ADCs integrates an analog front end suitable for processing
-> both fully differential and single-ended, bipolar voltage inputs
-> addressing a wide array of industrial and instrumentation requirements.
-> 
-> - All ADCs have inputs with a precision voltage divider with a division
->   ratio of 10.
-> - AD4116 has 5 low level inputs without a voltage divider.
-> - AD4111 and AD4112 support current inputs (0 mA to 20 mA) using a 50ohm
->   shunt resistor.
-> 
-> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
-A couple of trivial things inline. Otherwise lgtm
+kernel test robot noticed the following build errors:
 
-> @@ -1058,17 +1296,26 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
->  		chan->scan_index = chan_index;
->  		chan->channel = ain[0];
->  		chan->channel2 = ain[1];
-> -		chan->differential = true;
-> -
->  		chan_st_priv->ain = AD7173_CH_ADDRESS(ain[0], ain[1]);
->  		chan_st_priv->chan_reg = chan_index;
-> -		chan_st_priv->cfg.input_buf = st->info->has_input_buf;
->  		chan_st_priv->cfg.odr = 0;
-> -
->  		chan_st_priv->cfg.bipolar = fwnode_property_read_bool(child, "bipolar");
-> +
->  		if (chan_st_priv->cfg.bipolar)
->  			chan->info_mask_separate |= BIT(IIO_CHAN_INFO_OFFSET);
->  
-> +		if (is_current_chan)
-> +			chan->type = IIO_CURRENT;
-> +		else
-> +			chan_st_priv->cfg.input_buf = st->info->has_input_buf;
-> +
-> +		ret = fwnode_property_match_property_string(child,
-> +							    "adi,channel-type",
-> +							    ad7173_channel_types,
-> +							    ARRAY_SIZE(ad7173_channel_types));
-> +		chan->differential = (ret < 0 || ret == AD7173_CHAN_DIFFERENTIAL)
-> +					? true : false;
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on linus/master v6.9 next-20240517]
+[cannot apply to vfs-idmapping/for-next hch-configfs/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-That's not a boolean. So better to set 1 or 0.
+url:    https://github.com/intel-lab-lkp/linux/commits/Wen-Yang/eventfd-introduce-ratelimited-wakeup-for-non-semaphore-eventfd/20240519-224440
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20240519144124.4429-1-wen.yang%40linux.dev
+patch subject: [PATCH] eventfd: introduce ratelimited wakeup for non-semaphore eventfd
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240520/202405200111.frRQbI4n-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240520/202405200111.frRQbI4n-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405200111.frRQbI4n-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
 
+   m68k-linux-ld: fs/eventfd.o: in function `eventfd_write':
+>> eventfd.c:(.text+0x998): undefined reference to `__udivdi3'
 
-> +MODULE_DESCRIPTION("Analog Devices AD717x and AD411x ADC driver");
-
-I'm scared of wildcards even in descriptive fields as they often end up covering
-something unintended. I'd just go with 'and similar'.
-
->  MODULE_LICENSE("GPL");
-> 
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
