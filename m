@@ -1,88 +1,105 @@
-Return-Path: <linux-kernel+bounces-183143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9E18C9531
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:38:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342608C9532
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 960D12818A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 15:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 954C9281A74
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 15:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B144D108;
-	Sun, 19 May 2024 15:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1CE4CE1F;
+	Sun, 19 May 2024 15:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="p0lmc2Qq"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yI/TXDug"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790F314A81;
-	Sun, 19 May 2024 15:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4581E87F
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 15:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716133076; cv=none; b=anY+wlgU0V4lSMgEnoyhdNJzKhxwVwz2Zks407AEFcsGzI79NEj2TH2lbLi6vJezjo8dSOZtKtlSMKbhE/dtKr9r6FLgu+XyJtcsY0oFG4RP1/8MByfUU7CqFrP7eH34Fk+JuwF5EwMZ2cwjOM1kIdKjqg5NHYVL2S5+05Ezmhw=
+	t=1716133858; cv=none; b=e4yl2o7sHCoEWYJ74pd33MmvT4NLjR5Aa4wVbLRFXwqeQ/xdTR0/5E/iIWZLlKCbQXgax4f1d7CQXSoVymBGwgMOX1IUg+hKu9TSHorAI1pBYvGZyC3CUrzOxWKZ49P9MB5RJvHL1Cybw7V4B1/1HFtYnCEvnGjw/VQbGc/ZNoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716133076; c=relaxed/simple;
-	bh=NXeERUwyQjx2KQdGfzB24z/wueRuWMxAyk0OIBGtnOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PTJP4CJKF/E7sXNkPVBvoh0LJtdAyEGSEn0fNdzOmPSLEgwc+rShHFkTNMBST67WspqljNzwrLcmO8elQRAVLuA0+WW+K44KiviiipWT3f8WLJequilZJcxYP8UdBlh5B4tRx+79P7uBBteCrHoXqfYIQFp6tuv/Y8gU49APi6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=p0lmc2Qq; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=yPnxnFfwVRXtYrtep56kjTn1ZNOzZhEEVBAwe35GIWI=; b=p0lmc2Qq/5//84h/ZOoyKw8i5d
-	CTXWeKEwbvJK+gEqt69LaFX/W7o54IK4mZumoM5JcIX9KHTToXjux+pZM76MnA/TFfSqZ0vRheXBn
-	AiMJ1a8bbjn35L3L4OIcNH4FnVe+kAQ7D+o0HgKjZvnktM9jwcCbmgbBKzepTNXhpAdU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s8ibT-00Ff0y-7U; Sun, 19 May 2024 17:37:39 +0200
-Date: Sun, 19 May 2024 17:37:39 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel-janitors@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	MD Danish Anwar <danishanwar@ti.com>,
-	Paolo Abeni <pabeni@redhat.com>, Roger Quadros <rogerq@kernel.org>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-	Misael Lopez Cruz <misael.lopez@ti.com>,
-	Sriramakrishnan <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [RFC PATCH net-next 12/28] net: ethernet: ti: cpsw-proxy-client:
- add NAPI RX polling function
-Message-ID: <433ffa6c-7ad3-4e28-a2ef-de699bf0e03a@lunn.ch>
-References: <20240518124234.2671651-13-s-vadapalli@ti.com>
- <f9470c3b-5f69-41fa-b0f4-ade18053473a@web.de>
- <ZkoGCpq1XN4t7wHS@casper.infradead.org>
+	s=arc-20240116; t=1716133858; c=relaxed/simple;
+	bh=pstpHqIexnROQFTW3wHnYyPY7p1CLDiXOk6mk8/HvGw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o0H1d4Jnl90+NzzkGPfSuOcCQdyenKamhEYtfgHn/BcsluCEN1V173DB5S8NtOJVg2+QsVufRR0HXz2qLqWXlu/GmMZ6KT2tYBkLKXZ20KpZL+6Q8HZxzb2L4S7pdIM7WJXW0JhqSGNvlJpHIg6ilOoQyQ0l6VaoaeSYrtZVB3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yI/TXDug; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-36db863679bso169895ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 08:50:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716133856; x=1716738656; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pstpHqIexnROQFTW3wHnYyPY7p1CLDiXOk6mk8/HvGw=;
+        b=yI/TXDugNhJFgWIoMNEKkw3nfM+Bd6Wjfz1jNuVr8YKBFyiOlZ/epkdvuewwLzWCwu
+         eg5ASXtRqggFtmJiq4N1dHZr2wlt7nOicuMlIYes3skIxdScFm0H4LNwv2bliYlHxCMp
+         3OzDiJunxU2jhWgYse5UCdaEN3SETCIQpCGxzTD8oAQP5vL4NLa6miGyu2ambm3sqKhq
+         1q7tqCXEeNu9ju4XUuyg+6MpAhH34fm3gE7yViob08XxR6rkXYfDiiE7xaIXcmjhtkfv
+         QpmdVj4jFJMFfs+tpIW+ySzdjm9EZUCoOYtXONy9CtTZaE6iDyYkJXa/gZYZUifmFueK
+         CtJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716133856; x=1716738656;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pstpHqIexnROQFTW3wHnYyPY7p1CLDiXOk6mk8/HvGw=;
+        b=LCEQvm1ClQgYY7ERwGCfMrNjDNKZfA7GLUxUcbSIOrAJ/LeGdrBxpdArs/Uue1wfvu
+         YR8d/QSxlwesS/U6HaveoHvkxka3ZZJ7QTYMCOB7bToWiihx+mLkPNr7qZJ7cESxz6II
+         UPjizbRSy2SMfRDwzk7IF+sHyh3R1QI6wpcfzOmC8GWXqE660DFZg/MSG9l0/Pn4rwmJ
+         sqpyCGAEGU+DiJlno8Jj8yRB+2BXXu/hc1DqAlSBe5O2Bd11Usj3mvAygsYANwYukudg
+         cvgUGd8Wd80M9JqUTGlnFo+8VWu569sTfc0QcemqV/fbp4ms8H1rPW95UniZQpRv3SK5
+         zRMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgx/ZYRHYxI9iy/AWHHtrrMi5g2ugu3Ulok1IU0tn+ZMifrfVxXx50JuXJXA5KnLV+g7qOLqJMkr7TXfgMHmjxNV2CtO6IKHp7R/E/
+X-Gm-Message-State: AOJu0Yx1lVl5jBT8Ftz5iQkLRAzflzVr0cHbuofmELpc/c/WXkyY6Yly
+	qMMbqLGtLxOCYi3OdDglCyzBWEl9OpiFzpe42X2iwAOsAHFzAIWRXfiriEcQVHvukrp+ZQNUMHn
+	kCQW+jvaEz5HgCgtrClcMFOOSu4yp5o0i7eM5
+X-Google-Smtp-Source: AGHT+IFMOSoMQwdTinCh/+XbmUz8jIFDcVUjy2yphBrctrLgnpgFTI5cV5FIAro94k1mFeFxbHdgRR4jDAuc52rqzdk=
+X-Received: by 2002:a05:6e02:11af:b0:36c:29fc:a5b8 with SMTP id
+ e9e14a558f8ab-36dd04fabf0mr3299535ab.6.1716133856232; Sun, 19 May 2024
+ 08:50:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkoGCpq1XN4t7wHS@casper.infradead.org>
+References: <20240518165315.3963142-1-sesse@google.com> <ZkjdQqN1dPsZDDRA@google.com>
+In-Reply-To: <ZkjdQqN1dPsZDDRA@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Sun, 19 May 2024 08:50:37 -0700
+Message-ID: <CAP-5=fXPFtS-aufdZE1_haEo6EpYYDw9JhG_4EjHi2AAzzf5RA@mail.gmail.com>
+Subject: Re: [PATCH v2] Add a trie to map quickly from address range to
+ compilation unit.
+To: "Steinar H. Gunderson" <sesse@google.com>
+Cc: acme@kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 19, 2024 at 03:00:42PM +0100, Matthew Wilcox wrote:
-> 
-> FYI, Markus can be safely ignored.  His opinions are well-established as
-> being irrelevant.
+On Sat, May 18, 2024 at 9:54=E2=80=AFAM Steinar H. Gunderson <sesse@google.=
+com> wrote:
+>
+> On Sat, May 18, 2024 at 06:53:11PM +0200, Steinar H. Gunderson wrote:
+> > When using perf to profile large binaries, _bfd_dwarf2_find_nearest_lin=
+e()
+> > becomes a hotspot, as perf wants to get line number information
+> > (for inline-detection purposes) for each and every sample. In Chromium
+> > in particular (the content_shell binary), this entails going through
+> > 475k address ranges, which takes a long time when done repeatedly.
+>
+> I accidentally sent out an ancient patch anew; sorry, please ignore.
 
-I personally would suggest ignoring the nit-gritty details for the
-moment, and concentrate on the big picture architecture. I suspect the
-basic architecture is wrong, and the code is going to change in big
-ways. So it is pointless reviewing the code at the moment, other than
-to understand the architecture.
+Presumably v1 should be reviewed?
 
-	Andrew
+Thanks,
+Ian
+
+> /* Steinar */
 
