@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-183193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFC58C95C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:05:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 993838C95CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D9791F20172
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:05:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB14D1C20E51
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C57253380;
-	Sun, 19 May 2024 18:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177EF6A33B;
+	Sun, 19 May 2024 18:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="T+ciulGu"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="0hWgjmKN"
+Received: from smtp-out.freemail.hu (fmfe12.freemail.hu [46.107.16.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AF22233B;
-	Sun, 19 May 2024 18:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4062E58AB4;
+	Sun, 19 May 2024 18:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716141941; cv=none; b=Xn3K3talARnpIp0dRrLF/V9NnpoKhCE08Fr3uRIeERO4ttfOeVxGrlJBE+NZ9S/3XEGrLwodOTXsHufwM6bS0fMrwl48OVEP8U73D7yEOxH3XkOs95U/bFUbD5Q4FC95LtbdI2IF7jNe5pPAU2z2b4JQeduCz2yfaizvxAEf0jA=
+	t=1716142681; cv=none; b=Ibpn64aFfLOLoVkwDtirQxE5XisRBmxcJ5NR8iQGp0wnl/zxDPli+jysu623Uwi98mx81tNUKPBgdbi38YdIYFy5IhBCsdae12k8oxZXETKb+6U8fdn/Tc+yUbj267ApRsa4sl2TOY7e4f1hwS7+Ed34kUKqbesEGkJDmu8IQxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716141941; c=relaxed/simple;
-	bh=27zJDYQNrBc3/Hgn0QfIK4lLVEOUFVMA6YO0B6tgoeM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ugHJvwf0dLbL8ZAaq0/Ykt0mCSSeBp0WxrxCCF8ak8ZqlMoGBZ+BAxHL3qzEDUhLofsbvtZ9+d+1SD1glxDowg+9G+LgFwu7nhcGmOPtVwm7yUN8qVIfUs4kTpvNtRGE4UO0gIU7YtvxKzo+zLJ78jpMlaIZm4F01Yk98DHwptI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=T+ciulGu; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716141928; x=1716746728; i=markus.elfring@web.de;
-	bh=9pY7nZaq1fyJ1tTGdLEQrtwNkEiGqx7yo3oChVDxHLw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=T+ciulGuxb/TPkzLfXIxCqZ2o0nI6XR16AJkrXKJGT8XYJNCwyo3828sPsxG0ls3
-	 a1/W3Pt7uNMsZ5I/55eumefhoyeIqwsto4CbEA9JBn2bmrxineehLs2rqIeYJBw0q
-	 mjzm6gMS8B2kWqm2DgFIyJgoib0oJZb6dS2sbiieVbhUCRViRBBMfpWHpc4PpxAPG
-	 F2KVCmMZFYirz4nf8I3igUfloRyO/SypSMl3TSo/G3A/datAEhKVOQwX1XKk+45L6
-	 ztGNCQ/WU7Fp1kgbeREI4k4CitwrKeGXnjnWwiAmt1A+L22aenjKDMMtRVJy0icjO
-	 0INfHWHAFShSQbrz7A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N6JxT-1sbm2z2hM9-016izA; Sun, 19
- May 2024 20:05:28 +0200
-Message-ID: <0f78a187-5c64-4d95-a6e8-2b5c42f0c253@web.de>
-Date: Sun, 19 May 2024 20:05:22 +0200
+	s=arc-20240116; t=1716142681; c=relaxed/simple;
+	bh=EJ6Foab+qlu7VNhHLMIvKehDQVVIHCOMsiMv3cp3kn8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=k+DbvtVr1bfoizTd8fnDUbLunuLpDNxRmC05qyJwmv525FHCbafJGXYGh7lMkwa8n1nntswoMPdD7icLUuLHocoyR4LDIicwgOi0Yh6QMKsSKbfZtsOCsbuNS0y4PhXnKZg5LghBzIjEnyFUfouJv+lGDe1+DS/2WrSbHBfpehU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=0hWgjmKN reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
+Received: from fizweb.elte.hu (fizweb.elte.hu [157.181.183.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.freemail.hu (Postfix) with ESMTPSA id 4Vj7zb1121z6b;
+	Sun, 19 May 2024 20:10:51 +0200 (CEST)
+From: egyszeregy@freemail.hu
+To: broonie@kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Benjamin=20Sz=C5=91ke?= <egyszeregy@freemail.hu>
+Subject: [PATCH] spidev: Introduce "linux,spidev-name" property for device tree of spidev.
+Date: Sun, 19 May 2024 20:10:39 +0200
+Message-Id: <20240519181039.23147-1-egyszeregy@freemail.hu>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Wardenjohn <zhangwarden@gmail.com>, live-patching@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Joe Lawrence <joe.lawrence@redhat.com>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
- Petr Mladek <pmladek@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240519074343.5833-1-zhangwarden@gmail.com>
-Subject: Re: [PATCH] livepatch: introduce klp_func called interface
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240519074343.5833-1-zhangwarden@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:n1DLcPSd88hho6RTJCi/Ky4agc+v51xTm6fH0J9qsDGvMSA192g
- YH4M6HmPkcexPpMgU8+T3MvYMVK6WK+UGmlyFj5tSgSwgp+uctXpmsGRK9cbqbLm5fZP8t6
- Tc/mTk26VqY3KD7qBF0DiYfIFyZvaRKwL2k9vwOOQbzA24WuDco9C1wEyT9HX0M2hvE5EqQ
- QKxZej+3C7Vglx4kC8L4g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:W9a7sCBMbpc=;fox0FO2AaYDVCTzkA2bWav5YlhG
- d7g8XG0CfKsejGDPLeB8/W7mPbph2E/XDTrW/R09X2X3Oo2AyhZ9fAhlywTgMDZbXs8AaWYDy
- gqdZEImiY9Cz58nipKQJGlfVSdWfRsXfnzo8G+CJd4BtpNtVLPHjm8neiasEF3RxZGvs1K/ae
- frEIfNhPJ2Wf2/KawV/JGg59iDpPldEtXENo2276YF8kRtHfixVl5K3l3AHWdW7fTVtgti7wT
- sHlL7TCNFnoIA7fWmz8xHyrRjKO4PdTx9jJxc49kvfADJLApwQkFIdqIX4ElqmNMq/oM/LmC7
- HKt/DBdU1ghg/5hQR0wviy6CdYoVLNx9PKkN5mPAPHwvZFy2VLSCvROlRu2/90/JhiFybRA1O
- Ap/zu6F/AJltQaj+Jmj5KRf41YdEe5HmFIIgdZ/j3ICzuKA/e1PWbf1xBkbBoodNcfn1543AL
- lmLUIh/zrsz5YZwFlQ1+tdfxVylQMMUfPJcL9YdhdzkSDy8UQ+Sl5srVNuqyeHCBSKnxyLr2p
- yhUjy7qA8frkhflT7uGeUZwHT90XRIP4N5GQauGm75kfdSKOz1PgCNHLWZqB9IllUUz/Rz2OB
- XwJrnfZoIusJK4v/kLQpwVb+Fl8oQaYEwDKXIsDMx9EZQriwynDtH0j7179N1JhwIXdFGR+fM
- T88+3GyGbEUNga1GmHbmHYO1MM1RmadEeJcz0b7zaLNmOKisdwUHNnekkL01hHFAPcxA1jUXV
- IvPNKsjyZaGtwZYMy9m7K6duj9qOFt1TbSRclD2sBPfJkl/tiWptCG23/jTMhMSs4fJzEHoeu
- 0yw2JWUN3pNGSvNHWAXT9Z4QzO2YkTVEycRRupXTmIr8A=
+Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1716142251;
+	s=20181004; d=freemail.hu;
+	h=From:To:Cc:Subject:Date:MIME-Version:Content-Type:Content-Transfer-Encoding;
+	l=1791; bh=8JjPylgkjJhf1YbO+GZAuXsj5MnBCud61GtXY/XF3T4=;
+	b=0hWgjmKN0EvdCrAMLe2Y9+HtVqwXunqLAWVS2M9JlCZiRskccxZU+gfiN6orFe6f
+	o68HQoT6xFIq9oeHiF4hSfP5Ko8JSWqGubrBVafGe+yobj0OzGl4qb2maEJscZHR+5P
+	ygpReibEUtHHfMvrDDI2jZEFOyOWA5k1A4A3qUX1m5G/CT3cHzK/TS/p7OSsk3k55hI
+	6HGIPq/GUpUodcoOQyoGfi52vjqj3NK7XYcrawvX3b5mCw3Ve3I64MdZRhAcqoS7I5A
+	F2YB/6U38Ubpm4iucIIVWHU13/IhnEAe/t4TEWKE1JNYAgyBbfIx20jzDDirCq5HXw6
+	Imc0P0Q3DA==
 
-=E2=80=A6
-> This commit introduce a read only interface of livepatch
+From: Benjamin Szőke <egyszeregy@freemail.hu>
 
-Please improve the changelog with an imperative wording.
+Optionally, spidev may have a "linux,spidev-name" property.
+This is a string which is defining a custom suffix name for spi device in
+/dev/spidev-<name> format. It helps to improve software portability between
+various SoCs and reduce complexities of hardware related codes in SWs.
 
+Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
+---
+ drivers/spi/spidev.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-=E2=80=A6
-> find out which function is successfully called. Any testing process can =
-make sure they
-> have successfully cover all the patched function that changed with the h=
-elp of this interface.
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index 95fb5f1c91c1..e0071522fc6d 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -767,6 +767,8 @@ MODULE_DEVICE_TABLE(acpi, spidev_acpi_ids);
+ 
+ static int spidev_probe(struct spi_device *spi)
+ {
++	int ret;
++	const char *name;
+ 	int (*match)(struct device *dev);
+ 	struct spidev_data	*spidev;
+ 	int			status;
+@@ -800,9 +802,20 @@ static int spidev_probe(struct spi_device *spi)
+ 		struct device *dev;
+ 
+ 		spidev->devt = MKDEV(SPIDEV_MAJOR, minor);
+-		dev = device_create(&spidev_class, &spi->dev, spidev->devt,
+-				    spidev, "spidev%d.%d",
+-				    spi->controller->bus_num, spi_get_chipselect(spi, 0));
++
++		/*
++		 * If "linux,spidev-name" is specified in device tree, use /dev/spidev-<name>
++		 * in Linux userspace, otherwise use /dev/spidev<bus_num>.<cs_num>.
++		 */
++		ret = device_property_read_string(&spi->dev, "linux,spidev-name", &name);
++		if (ret < 0)
++			dev = device_create(spidev_class, &spi->dev, spidev->devt,
++					    spidev, "spidev%d.%d",
++					    spi->controller->bus_num, spi_get_chipselect(spi, 0));
++		else
++			dev = device_create(spidev_class, &spi->dev, spidev->devt,
++					    spidev, "spidev-%s", name);
++
+ 		status = PTR_ERR_OR_ZERO(dev);
+ 	} else {
+ 		dev_dbg(&spi->dev, "no minor number available!\n");
+-- 
+2.39.3
 
-* I suggest to take preferred line lengths better into account
-  also for such a change description.
-
-* Please provide the tag =E2=80=9CSigned-off-by=E2=80=9D.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.9#n398
-
-Regards,
-Markus
 
