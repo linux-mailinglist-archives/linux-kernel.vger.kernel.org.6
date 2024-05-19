@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-183173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F5668C9593
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:38:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C198C9597
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C09AD1C2118C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:38:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34060B211D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B376F50285;
-	Sun, 19 May 2024 17:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD1450297;
+	Sun, 19 May 2024 17:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KPokKQSc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3xSDKwA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF53D14006;
-	Sun, 19 May 2024 17:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCB14AEDF;
+	Sun, 19 May 2024 17:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716140294; cv=none; b=Vw9NSWoZzsJaWG4D3xVqqlQLSAMF9EnvkotyUkYCMlfuRbI1nyRJOON2Dxis9p+ed/2xeuSB76SHwD/3tLhPIvHqXI5AF6jahyaIViNIw6+L4ZW5zGLhCJPgugoshRUY2wV3Zk0msMuCp6oOruScq6xKpxD0Xmf2CB6xJFUa8I4=
+	t=1716140328; cv=none; b=iXYR+MEEhVyS/5+7EFiulB6WCwlVU9MpCVimz4RH+6ogaHaEjQsHnUs3Atmg9tPRjn9zMcZ0CAbRQFJ/fFnd/4YCuWO9vZXxdiNQipo4MnTBdxQQ8iISEAHVHKkrVPkDwqvydNVQcZHjS7Qs1RVkwRPDq75qUEpi1WoV1TUFEkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716140294; c=relaxed/simple;
-	bh=JMqzbDwlzdTOXrfPu417lxz0K7rPUVTvb2gQWcX5vVw=;
+	s=arc-20240116; t=1716140328; c=relaxed/simple;
+	bh=CfkIu+h+pBx3zNhl0+o091ChzmW2hhrt8qtqEa3D1F0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HX55K3n8v6uC5reVZ6sNyvI34Gt+Te3TUtyp7hPOtcha4PMo2q/JWqyJIbqs9xkBny9R3j2eSGXdSvycupcoNrTBRp53XTg9vPgXlp2LUPRYcf08VU0n0Q5Nk6tYxhMi/aWrBfctsg1uqbl3Tv92yO1nlnVAQD1GZXQomapL3DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KPokKQSc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7807DC32781;
-	Sun, 19 May 2024 17:38:10 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=MhaFpjrFPj4NUpmZ3yLIxM0+LfYIwDNOmYy+GTDtXpbX7y8hewNfjoAIv/utRJSwWRknxLVmS9r6UH2eLgMP8NR0u/Hy1s4ZsU+G/Gk+SZbJMz0ahfDt+FU1KGBpkatVWR1K04YdgHt+P4rVa/vUvVO4FIrmtuJIeOzLe1Mvlq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3xSDKwA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF62C32781;
+	Sun, 19 May 2024 17:38:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716140293;
-	bh=JMqzbDwlzdTOXrfPu417lxz0K7rPUVTvb2gQWcX5vVw=;
+	s=k20201202; t=1716140328;
+	bh=CfkIu+h+pBx3zNhl0+o091ChzmW2hhrt8qtqEa3D1F0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KPokKQScW/IwfF6dZTWfZLaA9jav11GydTnqvUa4qvbNhXZYPXbX0gsWsnslodpPA
-	 /NBY9jipSENnnEBhtKkRXSjv37QcSlEbv7TezzfqEij7zNwXBFt7QpMHGMjx+frTzX
-	 nVuCHhLbKQoDPkwwsDhy2bhhGd07bDkGY8HvpFSlFHsvu0N1xF2tGTl4Capa23voD2
-	 7LtDkZ1X0bk+zFY12QO6nBiCrogKUaIqsoxoMTAaORUwR3dQwA9uHQSul/ejreeh/Y
-	 wxHogdL2NURn4XJgD7uQr7doC6CPSpvlZ4f5VwXTAqP10v3RJcMeiC0qo+RsLTsnN7
-	 LTbj9lwD7Sg3w==
-Message-ID: <1675a33d-47af-4de9-a0e7-177cbe208e2b@kernel.org>
-Date: Sun, 19 May 2024 19:38:07 +0200
+	b=t3xSDKwAR7S1lPFIR5Eyd+oxgexajtay1vukMBEbGjSBtbyVKWgNIAXoiYq46kMWS
+	 d5Hh9y2mTxsSNaUW0sE20RG4x+vxaDRgyaVLPjdHmpEHt5OM4YYB/ub6hxgtqrPQrm
+	 NdoFsfMcCLWhRSJR9cYyBVX7Ryc35Ogd0S2+lhdvHf67k5PyzfKTi1ViG+W+JMx2nt
+	 zg9uXvpVdOSUJ46mpNHq97ttjDEZWIe0jj1Tb/L+fbeYeV8cm7TQCW2Lcr37UmP2Yd
+	 WH7YcVfmg10G6GlG2+GaFeiGmvVoLSv9BaoDDFgREesfKIHJ4GogxgGuOjxU1nTeRP
+	 PpAgnbnF60CBQ==
+Message-ID: <fa2d0619-9051-436b-b751-8a8007e2e622@kernel.org>
+Date: Sun, 19 May 2024 19:38:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: usb: gpio-sbu-mux: Add an entry for
- TMUXHS4212
-To: Parth Pancholi <parth105105@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: Parth Pancholi <parth.pancholi@toradex.com>, linux-usb@vger.kernel.org,
+Subject: Re: [PATCH 1/2] dt-bindings: dma: qcom,gpi: document the SDX75 GPI
+ DMA Engine
+To: Rohit Agarwal <quic_rohiagar@quicinc.com>, vkoul@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konrad.dybcio@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240517111140.859677-1-parth105105@gmail.com>
+References: <20240517100423.2006022-1-quic_rohiagar@quicinc.com>
+ <20240517100423.2006022-2-quic_rohiagar@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,26 +103,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240517111140.859677-1-parth105105@gmail.com>
+In-Reply-To: <20240517100423.2006022-2-quic_rohiagar@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/05/2024 13:11, Parth Pancholi wrote:
-> From: Parth Pancholi <parth.pancholi@toradex.com>
+On 17/05/2024 12:04, Rohit Agarwal wrote:
+> Document the GPI DMA Engine on the SDX75 Platform.
 > 
-> Add a compatible entry for the TI TMUXHS4212 GPIO-based
-> bidirectional 2:1 mux/1:2 demux which can be used for
-> switching orientation of the SBU lines in USB Type-C
-> applications.
-> 
-> TMUXHS4212 datasheet: https://www.ti.com/lit/ds/symlink/tmuxhs4212.pdf
-> 
-> Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
+> Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
 > ---
->  Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  Documentation/devicetree/bindings/dma/qcom,gpi.yaml | 1 +
 
-Where is an user of this?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
