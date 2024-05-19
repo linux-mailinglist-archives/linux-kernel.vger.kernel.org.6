@@ -1,111 +1,112 @@
-Return-Path: <linux-kernel+bounces-183033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E29C28C9394
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 08:42:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6916E8C939D
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 08:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DA24B20E9C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 06:42:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E2A2817A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 06:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735EE1429B;
-	Sun, 19 May 2024 06:42:43 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFF414A8B;
+	Sun, 19 May 2024 06:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="p4MioMuX"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49167E6
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 06:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DFD1798C;
+	Sun, 19 May 2024 06:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716100963; cv=none; b=K5YUE4DGwszm04q0BLIGHWf2kgPvoeWOCo7SdjJfpgxOKvBxbdi43tSoXhRb+OXOmpR5IZqWbhdaXnvLxmThL7m4pjUMy/jhMhtFr1Ks7rZEj2pz31+padsJzkYQQNbKNXW04tKoY7sZzh84GGczrbniWlNLJXjuIZ3siQmWt2c=
+	t=1716101103; cv=none; b=lA5Efh5JeNHnujjXN/sLkXyOkUM73ebyIWEhx2WxQDEyz0gCFOAJqs9J1wZu8UIUyVVWDHWjuEeu798GmPiSEW2IhrQ1gmN8TRgJ6wsu8fF5w+rfFNJccRtnTslm5/NYpjb8E0Lnq9M/HoAMX8f8m2hlCBhzLRabIy2In7cg9+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716100963; c=relaxed/simple;
-	bh=2UM1c3sXK2XwhI/6fSG6/UBmeY3QmsTXzr0nIROZv9o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=R+ahwmiTDVfEIK3NPAa0GnZVpwJpRiEBr/BWjxfogJTMqN2N6rOeZAUo3huoCPLzm7CZTtT+gD0/YRCJ96pjqEGdOcpHRtyo12+VbmIV2+rNz8LUm3HN+CuQbJjPH6kjtAQJfW0F7774a8YEggHz57v7YXRQppJfJwwTW7fLsWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7e1db7e5386so938120039f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 May 2024 23:42:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716100961; x=1716705761;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FAzKo3T0h4+pZUoaWcUZc5crg03UaV5atVfyoaGPzL4=;
-        b=uDoeqjlK9PxZJqVywEYBknHjoB3RQUJg9Kgyeuqttt0gnrA1w3gN++sWwGg+U9Uo9R
-         wxpv7tTDtvVbcQ6JYnZwD750KVjD17Gv5SyMmtdCFhqgryGwKElRlDSJ0H5EjtkWRxYt
-         yP60wd06dBchfjuRDmfCXzcDBucmmSVGe/BEfX6qX+7AK94khi8IQsBwTr6CU5bERRNN
-         RUzQHvIqYDf2an4O7vt8LxYmvUtZ09DT7G4PKV8mS2EftuNuhjJ/oL2hLJCLhds8kNza
-         lZ1/FBT5c5S8a/Ro+VDiWStfAt5H5x2AG2ubAn+4mZkKQIcF0pliZ7gSSQ66Py59PWUF
-         xLbQ==
-X-Gm-Message-State: AOJu0Yzn+d5y9wpMry4saCtv69ZDj/a4jRcGuWI4c0dP5L0/ztMMcQUE
-	fwnIIdnd5tFyt7XGlweJX9PP0hQJyMTuffzRahKLeOcc+0iPHqTk4xswZHrzmz2KdduA/fu5wYG
-	sEB7OnEV9m7icjkO2rYfAg1SJdzmeyseXfIGgYJC8NQx7Gyxh0Rqu3Q0=
-X-Google-Smtp-Source: AGHT+IHMXuOHFvf+d0o3D/UmknUeGwUtrKA9k/yu9bSyfatGU5yFZgCKQzrXeF8g7MENi+/sUGl2vODTwNAAdnV41ca+0qIAE1BR
+	s=arc-20240116; t=1716101103; c=relaxed/simple;
+	bh=foDH3v96Rt8qLe3b1e0Q8Zg751Smptuk+sSdTARttOc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=A0E/m78wXXmxA0K1i2+GSP4gWNXZXjJNjE+BJdMioCE1cxTWEe3X+/1QasQy6bpwfSOZeS6PB4Q66kSpUfSEHRY0vCZAhPhnjGj7RMNKBtHQ26ae6Cskbmz1cq8MVw887c+4xmWF4JUSuKCXcz59PCfhrLNHLJYdXW80rYTHJRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=p4MioMuX; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716101068; x=1716705868; i=markus.elfring@web.de;
+	bh=pd86gvRHXgTjz+8IOcII5+ruIiH2fACD6NYai6/iRRQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=p4MioMuXYu1eZDe/5SNsUdVx5l06xivMwFHukfqzUqkq0weMbw8Q80rnLICx3A/g
+	 ZIF60PKHcvBT/dhbWskaQdnImWn+khoLUPEd/WWcV3d2OuMvWb0r8DvdmpXL3cK8M
+	 7fkLXRWYNetCmL+ZyflJ+NG2K2E5NocmnhF97DtPk5ia8wnuirc6sH4xqnMkxTMH1
+	 em0eArWGYl4SibM/YDnNKxcWheI1IXVoBXo21ImzESJV1Zz8G2/R/t3IFvKoey+jr
+	 2YTkYuLaZRHrqkNm/4+y3XSkY6D+SzG1XeiDhQQ4QcLGIBHuCsQYvHzD/7kiy8aIM
+	 jx58Ve09ly/ng6N44A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M6YN9-1sATxd0G7d-00COij; Sun, 19
+ May 2024 08:44:28 +0200
+Message-ID: <0eba5037-fede-4394-94b0-b652797ebe45@web.de>
+Date: Sun, 19 May 2024 08:44:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:7101:b0:488:77ea:f194 with SMTP id
- 8926c6da1cb9f-4895903263emr1831762173.5.1716100961068; Sat, 18 May 2024
- 23:42:41 -0700 (PDT)
-Date: Sat, 18 May 2024 23:42:41 -0700
-In-Reply-To: <00000000000003b4af060de27f6b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002ef6010618c8e4bb@google.com>
-Subject: Re: [syzbot] [PATCH net v5] nfc: nci: Fix uninit-value in nci_rx_work
-From: syzbot <syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+ devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Alvin_=C5=A0ipraga?=
+ <alvin@pqrs.dk>, Emil Svendsen <emas@bang-olufsen.dk>,
+ Andi Shyti <andi.shyti@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>,
+ Takashi Iwai <tiwai@suse.com>
+References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
+Subject: Re: [PATCH 00/13] Analog Devices Inc. Automotive Audio Bus (A2B)
+ support
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:d/iiRC5QJRic14p7QJ6N3VfkYwyyGCbH4WVB1eIzMiHdoYypPQP
+ ql7ZRLKdDFm9Ypsktm0n59n6MY5OAh5959Fjwc7Uk+28sQKUhrb63j1w+Gyrl3c+4Txd/My
+ fsweztoNl8USNfBD61Ph2qzumXcxqJ4n/EvoFSoOUavQzbUtjc3oL1S++nah1+sS8mMn/sV
+ Sga/AIDMLm+boLr8BFA9g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jh3/DQZ8T6M=;KVkNMRa9ZK94MY5gRlZ8HsQOc4k
+ ymClhjW9gL54NptDiJ0eCs7TXHGIbABcRIhHp2iFVQiXR9sZFwOBtUo+igemEcIt549AW+8bQ
+ SY5SlI5FH7aeq0dukuLWS4ATswBUOhY7jS9/3xmgvaU4C3xxKK2T0uPISjk+a4UaALsDcMH4H
+ B1XHP0K3LUPcmQNTRLszIhYZAMXyz08VHnRXNKW3hOLJMDUN2Vw6XF3YnXtIQkltLInCgGZ2Q
+ fKoqL3enGAWrcNeHZhEh3vKPOqL5lTvfseLJxobOu0QPpSwKOC7JNvkP3Y5A2LMx81qrNB5sE
+ r7MPV/TkTkEVMdW6uKx+0na2A0q3gTgxDClItdrEDOVehjPFDkpiPhzspKH2s4BuFu4JSvQCX
+ xAnbSzgYDb+P1xj308Zzxdax4fg5eAyEGoOBGcaL3kI8ew+mfaIgzpDjZHsUqKiSVJqxwf1jq
+ wvpcrncNbORIHQlIswUKKXWXm3eSSyj9jSDHzear45TtxhORKzYcZ8RyHhPfW/kLwEmwpZPo2
+ u7UcTZbOlJusqZbIiuVK+NmyvJ/YIqoiz+MIic0MOa8mvyLSextsRTcE/2EKhEUAAm+/Bbt8o
+ dZW953jIZ4bY+ZdgxYmBGP0TQxv1yFNQEZcEKTBjc+55AxIg9h6JAdxyEuGZ0i4dOtZoBYKG1
+ CP5vZidWSDU93tdCLhwViHJlA64RfPq1oe5OzAh9WzBEyKvmmh0dNiOzcylKLn5JdBe0M8ght
+ 9eEcpv487v0a6sLubFSVYUOlyfoHBj2VhlriDbMUzbC64Sp1KnZfmXIbeWnVGeU0d4pA/h7cz
+ m1ZxZIY2MJaPZsp74XHqTMJIMeKmLgAIw57/7+WEW2J0o=
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+=E2=80=A6
+> A2B buses consist of a seires of daisy-chained A2B transceiver ICs known
+=E2=80=A6
+>   This is the main feature of A2B, whence the name Audio Bus. Each node
+=E2=80=A6
 
-***
+I suggest to avoid a few typos also in such a detailed cover letter.
 
-Subject: [PATCH net v5] nfc: nci: Fix uninit-value in nci_rx_work
-Author: ryasuoka@redhat.com
-
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git main
-
-diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
-index b133dc55304c..7a9897fbf4f4 100644
---- a/net/nfc/nci/core.c
-+++ b/net/nfc/nci/core.c
-@@ -1463,6 +1463,19 @@ int nci_core_ntf_packet(struct nci_dev *ndev, __u16 opcode,
- 				 ndev->ops->n_core_ops);
- }
- 
-+static bool nci_valid_size(struct sk_buff *skb)
-+{
-+	BUILD_BUG_ON(NCI_CTRL_HDR_SIZE != NCI_DATA_HDR_SIZE);
-+	unsigned int hdr_size = NCI_CTRL_HDR_SIZE;
-+
-+	if (skb->len < hdr_size ||
-+	    !nci_plen(skb->data) ||
-+	    skb->len < hdr_size + nci_plen(skb->data)) {
-+		return false;
-+	}
-+	return true;
-+}
-+
- /* ---- NCI TX Data worker thread ---- */
- 
- static void nci_tx_work(struct work_struct *work)
-@@ -1516,7 +1529,7 @@ static void nci_rx_work(struct work_struct *work)
- 		nfc_send_to_raw_sock(ndev->nfc_dev, skb,
- 				     RAW_PAYLOAD_NCI, NFC_DIRECTION_RX);
- 
--		if (!nci_plen(skb->data)) {
-+		if (!nci_valid_size(skb)) {
- 			kfree_skb(skb);
- 			kcov_remote_stop();
- 			break;
-
+Regards,
+Markus
 
