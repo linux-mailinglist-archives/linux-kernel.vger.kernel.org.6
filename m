@@ -1,113 +1,154 @@
-Return-Path: <linux-kernel+bounces-183197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68B998C95CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:25:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922CB8C95D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB033B20F4C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:25:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46E94281612
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2CA6A353;
-	Sun, 19 May 2024 18:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017D06D1C7;
+	Sun, 19 May 2024 18:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eb7nYwoJ"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNUibvPN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19F869D3C
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 18:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBAB45038;
+	Sun, 19 May 2024 18:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716143121; cv=none; b=vBK6HmBYAZenkIfNip9l51PhD5coitfOTInIVjmPBZzKQ6FM2Ghm6efO79B9ZJLlZOlviixDPmGfUHI4beQn9Iuhv5fVoFly8RVz1DfbQeceCAogxwcDLy7vJzmgp1rB/tVWCwNacgcOZaFqDbJD9fUEN40CMWuVEedFhkGy3wE=
+	t=1716143733; cv=none; b=uHLPaO+0U8QbxTq2KjiJNc96vHrgvM/6oBfznTXpgO3mNma2teY4Wm4yPA4e3B+sanr7HmEEYruiDblUUB7V13Tvs71HiWTcjkFMO1HbB9Xe/WquDppHqEMgFsrETlN48d3JB2w846KFHc+IOVXvQbnERkIoJcG9u0vOfd6T+nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716143121; c=relaxed/simple;
-	bh=BPkMiBJmFbqc3tij2Xd3XOMpsHnYCTRsmbhkmPPLLfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LbjuWi8slXERaugxZiHmwxuXZ8VW+wZChUUtRFxEVRiOiVlYvYGSZtGjvZ3eDs+bgtB3NMrUqr1YtHhIoptN0cyymokwwUhSqRTZ2aSv79iteRNuEtpV86VUURyfLtOWd4aXKPqdITl3px6tAgCdDk9QqN7gt0fgJnHU+VUMC84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eb7nYwoJ; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: cam.alvarez.i@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716143113;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CZcRqAT2Hi9yDWO8AgOOTA1HMWZQbltFlns+P+hoiOI=;
-	b=eb7nYwoJyvWNoWkYNPH+CFyEFJ0HVytomFWb0PeZC2uSgdpleQWs4IDXu2+bLMzWv2jguS
-	DP4iRbeMl6da1jVTYnhei4eHdYUjzWoYlos8Yf+f8IaymOQVhGVbF+pTTwPGFeZUbYDoCv
-	QlejPHzVPF2le/OP2jsHfXKI9WHo3AY=
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com
-Date: Sun, 19 May 2024 14:25:09 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Camila Alvarez <cam.alvarez.i@gmail.com>
-Cc: Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com
-Subject: Re: [PATCH] bcachefs: fix last_seq and last_empty_seq in
- bch2_fs_journal_start()
-Message-ID: <c7qpzaeqhyvkbgaplvazj6steii5ayta7gtidmy24u7gfnnkuc@nhc2swhzmuff>
-References: <20240516031919.592696-1-cam.alvarez.i@gmail.com>
+	s=arc-20240116; t=1716143733; c=relaxed/simple;
+	bh=xgvz6Rb6QeU43Wv8Xo7zNgrt2yfkty3dnYcWaaVoGAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BaKIuBy3jb4woOGdxUOkBLtKMEWRPy3R+/6ERjvNzaHGyo6z3s/zhqS2z3ecNcqKrbD36Jp/SqCyIjiIObnVFKaghMzHV/fXy3V1RlsPDt266zqDKsW9gCBTuqtk5VnxfG1Mpcc7estZ+a7qUutVlEI03VfZFw2XswWUAgC6Z/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNUibvPN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B8D6C32781;
+	Sun, 19 May 2024 18:35:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716143732;
+	bh=xgvz6Rb6QeU43Wv8Xo7zNgrt2yfkty3dnYcWaaVoGAk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZNUibvPNTejhgOefLlI92K3IZ9Oty3afy85AfuMIbPSb5I2mVSByWuz60mQd6d2eQ
+	 wZDCbcehzlCZi7G1v4w/dJIG4y1Oe9EYrejG4ADqdYQx6hoM7V/6KncT4rpYPkurCk
+	 OxDUQTkW/UweB0fWtKdGEk+JgMcSuPMIZ27ujrwatGjpncaaGU+JcPKrRFMeq+xfMN
+	 LX6NCrI8TSx4HUgzH0zXPW4lNv8dmsxbyVU4FSC6mE52aEV2zjVvdiXmmeMdFona+l
+	 B3B7h7ooqXWzO6DQ+tFxY9sfdsj0qgznvWxnPnNvqcXkPJpk6LfNOngOml/XoOr74k
+	 KhE5tnMaCctyQ==
+Date: Sun, 19 May 2024 19:35:20 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, conor+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, nuno.sa@analog.com
+Subject: Re: [PATCH v3 7/9] iio: imu: adis_trigger: Allow level interrupts
+Message-ID: <20240519193520.23c3c77e@jic23-huawei>
+In-Reply-To: <20240517074750.87376-8-ramona.bolboaca13@gmail.com>
+References: <20240517074750.87376-1-ramona.bolboaca13@gmail.com>
+	<20240517074750.87376-8-ramona.bolboaca13@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516031919.592696-1-cam.alvarez.i@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 15, 2024 at 11:19:20PM -0400, Camila Alvarez wrote:
-> Values were left as the next possible sequence number when there were no
-> entries.
+On Fri, 17 May 2024 10:47:48 +0300
+Ramona Gradinariu <ramona.bolboaca13@gmail.com> wrote:
+
+> Currently, adis library allows configuration only for edge interrupts,
+> needed for data ready sampling.
+> This patch removes the restriction for level interrupts, which are
+> needed to handle FIFO watermark interrupts.
+> Furthermore, in case of level interrupts, devm_request_threaded_irq is
+> used for interrupt allocation, to avoid blocking the processor while
+> retrieving the FIFO samples.
+
+If respinning for any other reason, I'd rewrap this as a single paragraph.
+
+This looks fine to me, but I'd like an Ack or RB from Nuno.
+Last time I poked an adis part predated the common adis library :(
+
 > 
-> The fix involves updating the last_seq initial value and
-> setting last_empty_seq to cur_seq - 1.
-
-I think this is correct, but we should try to come up with some better
-assertions or something to make the code clearer; we don't want off by
-ones to lurk so easily.
-
-Could you give it some thought?
-
-> 
-> Reported-by: syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com
-> Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
+> Signed-off-by: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
 > ---
->  fs/bcachefs/journal.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> changes in v3:
+>  - new patch
+>  drivers/iio/imu/adis_trigger.c | 39 ++++++++++++++++++----------------
+>  1 file changed, 21 insertions(+), 18 deletions(-)
 > 
-> diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
-> index adec8e1ea73e..3835c458eec9 100644
-> --- a/fs/bcachefs/journal.c
-> +++ b/fs/bcachefs/journal.c
-> @@ -1196,7 +1196,7 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
->  	struct journal_replay *i, **_i;
->  	struct genradix_iter iter;
->  	bool had_entries = false;
-> -	u64 last_seq = cur_seq, nr, seq;
-> +	u64 last_seq = cur_seq - 1, nr, seq;
->  
->  	genradix_for_each_reverse(&c->journal_entries, iter, _i) {
->  		i = *_i;
-> @@ -1256,7 +1256,7 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
->  	}
->  
->  	if (!had_entries)
-> -		j->last_empty_seq = cur_seq;
-> +		j->last_empty_seq = cur_seq - 1;
->  
->  	spin_lock(&j->lock);
->  
-> -- 
+> diff --git a/drivers/iio/imu/adis_trigger.c b/drivers/iio/imu/adis_trigger.c
+> index f890bf842db8..becf1f558b4e 100644
+> --- a/drivers/iio/imu/adis_trigger.c
+> +++ b/drivers/iio/imu/adis_trigger.c
+> @@ -34,21 +34,16 @@ static int adis_validate_irq_flag(struct adis *adis)
+>  	if (adis->data->unmasked_drdy)
+>  		adis->irq_flag |= IRQF_NO_AUTOEN;
+>  	/*
+> -	 * Typically this devices have data ready either on the rising edge or
+> -	 * on the falling edge of the data ready pin. This checks enforces that
+> -	 * one of those is set in the drivers... It defaults to
+> -	 * IRQF_TRIGGER_RISING for backward compatibility with devices that
+> -	 * don't support changing the pin polarity.
+> +	 * Typically adis devices without fifo have data ready either on the
+
+FIFO maybe as it's an acronym.
+
+> +	 * rising edge or on the falling edge of the data ready pin.
+> +	 * IMU devices with fifo support have the watermark pin level driven
+> +	 * either high or low when the fifo is filled with the desired number
+> +	 * of samples.
+> +	 * It defaults to IRQF_TRIGGER_RISING for backward compatibility with
+> +	 * devices that don't support changing the pin polarity.
+>  	 */
+> -	if (direction == IRQF_TRIGGER_NONE) {
+> +	if (direction == IRQF_TRIGGER_NONE)
+>  		adis->irq_flag |= IRQF_TRIGGER_RISING;
+> -		return 0;
+> -	} else if (direction != IRQF_TRIGGER_RISING &&
+> -		   direction != IRQF_TRIGGER_FALLING) {
+> -		dev_err(&adis->spi->dev, "Invalid IRQ mask: %08lx\n",
+> -			adis->irq_flag);
+> -		return -EINVAL;
+> -	}
+> 
+>  	return 0;
+>  }
+> @@ -77,11 +72,19 @@ int devm_adis_probe_trigger(struct adis *adis, struct iio_dev *indio_dev)
+>  	if (ret)
+>  		return ret;
+> 
+> -	ret = devm_request_irq(&adis->spi->dev, adis->spi->irq,
+> -			       &iio_trigger_generic_data_rdy_poll,
+> -			       adis->irq_flag,
+> -			       indio_dev->name,
+> -			       adis->trig);
+> +	if (adis->irq_flag & (IRQF_TRIGGER_HIGH | IRQF_TRIGGER_LOW))
+> +		ret = devm_request_threaded_irq(&adis->spi->dev, adis->spi->irq,
+> +						NULL,
+> +						&iio_trigger_generic_data_rdy_poll,
+> +						adis->irq_flag | IRQF_ONESHOT,
+> +						indio_dev->name,
+> +						adis->trig);
+> +	else
+> +		ret = devm_request_irq(&adis->spi->dev, adis->spi->irq,
+> +				       &iio_trigger_generic_data_rdy_poll,
+> +				       adis->irq_flag,
+> +				       indio_dev->name,
+> +				       adis->trig);
+>  	if (ret)
+>  		return ret;
+> 
+> --
 > 2.34.1
 > 
+
 
