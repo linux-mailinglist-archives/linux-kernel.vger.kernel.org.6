@@ -1,136 +1,159 @@
-Return-Path: <linux-kernel+bounces-183060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A3A98C93F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 10:20:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55C48C93F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 10:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B8D281541
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 08:20:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9019A281799
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 08:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9FE4AEDA;
-	Sun, 19 May 2024 08:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A288918C08;
+	Sun, 19 May 2024 08:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TCYqw/cz"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KI/GbEZN"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A94F45BEC;
-	Sun, 19 May 2024 08:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2EF168DC
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 08:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716106703; cv=none; b=I1I5JYy5eAToh6in7gChKxdjGpvHkHXi10bH3Itupc1lDmcp22PfvK/3hHHcUEpUwbq/K6IEHuslYtx7cCuOhHJ9jCklT6pdVGm1ghbc/WK0nXU777zgcKmTEo2F2h5790muf04AoMEU3cjy6ctjJ5KRmoPWmOagYYN+6LS/oXo=
+	t=1716107473; cv=none; b=X3GDEZxecwwUnxD9yRQ6i4RhwDkofbdDB+Q1yiyQ4doZGaGovNihUlzQRGTj9p4CAkGAxzWNlDl111+hSwyGgegLpsAfNlhlgZs+vTCYC4HBkMnxu+/ViZjwnssJlL8MQCm+DeUZKQohJVDKmR5tbjSzBM83EQQwLLtEX18kE8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716106703; c=relaxed/simple;
-	bh=EKY+Hy6LBgA2NYrAxNKes2DxchRh15GEYQsulR1Ud3E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZmRjI9yTl92b66Vaf4VxTZWvSEhKWw3S1O82UbQ43NZ5+usSpkhaHGYJscCVpA1fb4pJruK+LHthvPVbuggfJNEWVJ548FgASRD/n1Fe8lGMtDkD9Mli4M1lxtZhvRxCTABWeOUV1LoI0f4dwSnTY3X53sq7M2v42fIrpg1A3J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TCYqw/cz; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a5cec2c2981so208301666b.1;
-        Sun, 19 May 2024 01:18:21 -0700 (PDT)
+	s=arc-20240116; t=1716107473; c=relaxed/simple;
+	bh=F0LBOMZDJVE+xbmnqDNWkHm61GJlkhpnSs7Nz8Y6szM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MI+BZmR4vMqqLxHjFZD6oB5gmSIVLYIE4dbLZMUnOOkBL6OopiZtl5fUFIuYAJB7XHBuVm6GlcArjvGWqs1NMicueGLUoE/EKx1xQsWw9ghpUOkugSZkiNvpLnnmpSoGGGJIu+KikScUs1S7jPKaIW0+AEUcrPRCG8CM+o+nYF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KI/GbEZN; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-523b017a5c6so5032592e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 01:31:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716106700; x=1716711500; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WZHcFtW9++T8RHFOp1RN6v1q8xOqk7qAzG9FoGfpxU8=;
-        b=TCYqw/cz0+ZOxzALHuSEu5QWbhOvKc5iqjI12vVlMRn8ZsHWT4uxl4LGzpZ212RIXx
-         6OS20qy9L7TtSNlc13FhqDRLne7HaRkMeshvu/FkeOxU84vvVvKx4TIZuzyxjURU+KEl
-         //XkczNRia35DOTbTlYZP+q0NWL5u4/bEQci5zvhPfi8j/i0wzzIP22fFxO2Jr0Exd0T
-         DRoAMvI3ppIZ8AZQDxBbiB1CHgIeoxa6etEisJO+cYyUEgC8rr96uBlqP/RW3e4lhkLn
-         x8OvUUCiHfgqM1gXjufeF9bY0lBBgxuRoxbCQ0I6/98hkHRvmcrLPie8PPWG4sFWFMv5
-         zofg==
+        d=linaro.org; s=google; t=1716107470; x=1716712270; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O3x30n4rUJq1+J/cwi02KSucHGfHRmh38wGSJ7vLBLs=;
+        b=KI/GbEZNVrWmHAg32qInwZeg6owzZBa02pGKm9eYRhtJhowuJo2YrVtPpIE8ijNdAZ
+         M0p0WOnATQ8vwmYUaUpfRR9QkzIYHnHte1ULSMGSuRZnnszOFlOznwsXpVW1ptrcr9b9
+         D7Y9tsi2Np3Hnqd73HXG8BTj9ugh/9mFvlR9w3aC4ddFho70MkzVupnX6TWtVryl7JGS
+         8wmf6cqhaSF+a2ZJ2MoTvonjWq77XOjQcFUiDywUtTqhg02bzFNKUBcSsGjOLpGW/MbZ
+         nW7SJHitmnJvp3qxP8cO+ORE8GF/j/sFCk4p5aXqasqfBnRssrGUzB94vHl0zD2rRcDh
+         p+4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716106700; x=1716711500;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WZHcFtW9++T8RHFOp1RN6v1q8xOqk7qAzG9FoGfpxU8=;
-        b=WrDGyYWvS/8JhGhFtv80AQg7YtSRCJiM9SeKQkXnLS3xDWQBjeNVcpD3rvbplbL65u
-         nLtBiKMdrVPnUyK3P06DrydQBlU+CO94cTuAAVRMHqi9jt2eB18IoCqNuOXLghKI6lWL
-         72N1ImtR1651okW9B3rAc9MefWjxSuXDQoPSAPQXjSDeWABVi+zBIL7Q+T3l5gpL+Qum
-         zQBO/FFSTGj+LTtsfzWsYCeKQrdLskJF3uDTj4uHqk2ZDcvd821dJTpISTLXBWjfDbzs
-         7XWZnFw0h3Cc5fQd+6BOBpNFnJiK08q8DlzlIzpF0T4eI3Rc1Y2RnkKo6zfzFtbmwiwL
-         xRGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWyXPDiMS/MBDgZhces7VCQKMXEIZ2e5cBSNjgi50REnaDABKxhlg6Yw/QJBV7vLS3jb436shXmfkTcFt7jBXk/NBblHCmT6zY9DCbV9QHuPXFwkw6gBfK7m1+UD2C9VmnaVX6eKQzdTmo5MGE6B0CyLq+/g/e0UCKIsR8AgCReUbW113t0XMZ6yz7wJuy2SFs/4N/RLJNrVQkvDsVSbD0x9+KzQUAHkFo=
-X-Gm-Message-State: AOJu0YzPAUanr5qmJS8zJTGEuMLdRsDW0oyB9Sofw2aJEfiC2opTpRrg
-	SYQs73LpZXkIJ4DOIUJL7j69Uc0aL9LAsHUwoIUpgQAx3eRoTec+
-X-Google-Smtp-Source: AGHT+IHzAvK+rhsJq8Fp46ZI7QRqXTxhpYy+yG/cCF9GqQapzPdzcVtci17vQVRRgkNlN/TxSgrMKA==
-X-Received: by 2002:a50:d518:0:b0:575:2ccc:13c1 with SMTP id 4fb4d7f45d1cf-5752ccc14damr2537043a12.9.1716106699861;
-        Sun, 19 May 2024 01:18:19 -0700 (PDT)
-Received: from hex.my.domain (83.8.125.62.ipv4.supernova.orange.pl. [83.8.125.62])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c34e5ccsm13698518a12.95.2024.05.19.01.18.18
+        d=1e100.net; s=20230601; t=1716107470; x=1716712270;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O3x30n4rUJq1+J/cwi02KSucHGfHRmh38wGSJ7vLBLs=;
+        b=VBDHZrLSQl0Oe2HoUiClidmlGnpEM0KuNwxSbXSYtprwCjTgABXFAc2HETYlocqPhL
+         9z6zU4ZOYUkgo0Y4dlAF2asIrXwEGY8FWv3i4Dvv+oB3JbQZ2TT6OZALQQzp5YQPK+KO
+         /Sv4oNgopTT9WPmr/0dUrOIz3ZZVVOOlfzYXOF650QVwJbJFmUBdbj7PXUtchF6BvZkG
+         7CMeaODH64q5rtqoS+KIOhNK5iYy6yYrxl1FqmmuWYeh7i9QX+d6PkxGNRCmVt7KcIkx
+         5kyH3tLc2wjAKXJrIY0bbZdHO0vkDIvAZy1DASKejTmLMyvKkDd0EwHMmJUoNc1611Pu
+         vIFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVOXh12ZKeBEOloEb8bz0G13Knxqc1+Sl165pllib80ThA4L/FJlID+yQSqIjf8bN/h622FlZlWoO9LfoMiTIeDjVOk81JU0oZEI21
+X-Gm-Message-State: AOJu0YxDPvyIY4q1nAPpk2PS8HCwDNdBtTDm1KokjqVYIYMffe2VLpQY
+	03GXYnjcGHBDmLjphZcj0VJvv8CFKbWhqjZ4sJlE57pSI99ODYXs1UYMU5OWjsE=
+X-Google-Smtp-Source: AGHT+IERJwac+d8XpIpGcOzehZBQ8zzZtThV/IUxxI/UfebWaSGBVYpY+oyFYOdhW5bfzMUQPlo0Hg==
+X-Received: by 2002:a05:6512:3e17:b0:51d:605e:f0ce with SMTP id 2adb3069b0e04-52210278698mr30114392e87.50.1716107470416;
+        Sun, 19 May 2024 01:31:10 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ba5d5sm3779923e87.77.2024.05.19.01.31.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 May 2024 01:18:19 -0700 (PDT)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Sun, 19 May 2024 10:17:54 +0200
-Subject: [PATCH v3 8/8] ARM: dts: samsung: exynos4212-tab3: Drop interrupt
- from WM1811 codec
+        Sun, 19 May 2024 01:31:10 -0700 (PDT)
+Date: Sun, 19 May 2024 11:31:08 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	seanpaul@chromium.org, swboyd@chromium.org, dianders@chromium.org, 
+	quic_jesszhan@quicinc.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/4] drm/msm: register a fault handler for display
+ mmu faults
+Message-ID: <cwo63ra2ogrdr3ywmiuxewzuxzsyozyqfcict7xs5kp6uwy2qp@7e6fgb7oyszc>
+References: <20240517233801.4071868-1-quic_abhinavk@quicinc.com>
+ <20240517233801.4071868-2-quic_abhinavk@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240519-midas-wm1811-gpio-jack-v3-8-0c1736144c0e@gmail.com>
-References: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
-In-Reply-To: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716106686; l=1130;
- i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=EKY+Hy6LBgA2NYrAxNKes2DxchRh15GEYQsulR1Ud3E=;
- b=Nu8HOGw+ABK8etkGN/FIHwRrDIIaop4fIm35cS8IufNRyVktSGw+ltxRgukhX9pKr+Bmh5B/R
- wxogZ+n7q5vB3cE8+MeF9gE6ftpRyW72QbVAuVZlr+VUAeM/A16FXYw
-X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
- pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517233801.4071868-2-quic_abhinavk@quicinc.com>
 
-This was initially copied from the Midas DTSI, but there is no
-proof that the same interrupt is also used on the Tab 3. The pin
-listed as the interrupt here is GPIO_HDMI_CEC on the Midas,
-but for the Tab 3 it is the headset button GPIO - GPIO_EAR_SEND_END.
+On Fri, May 17, 2024 at 04:37:56PM -0700, Abhinav Kumar wrote:
+> In preparation to register a iommu fault handler for display
+> related modules, register a fault handler for the backing
+> mmu object of msm_kms.
+> 
+> Currently, the fault handler only captures the display snapshot
+> but we can expand this later if more information needs to be
+> added to debug display mmu faults.
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/msm_kms.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_kms.c b/drivers/gpu/drm/msm/msm_kms.c
+> index af6a6fcb1173..62c8e6163e81 100644
+> --- a/drivers/gpu/drm/msm/msm_kms.c
+> +++ b/drivers/gpu/drm/msm/msm_kms.c
+> @@ -200,6 +200,28 @@ struct msm_gem_address_space *msm_kms_init_aspace(struct drm_device *dev)
+>  	return aspace;
+>  }
+>  
+> +static int msm_kms_fault_handler(void *arg, unsigned long iova, int flags, void *data)
+> +{
+> +	struct msm_kms *kms = arg;
+> +	struct msm_disp_state *state;
+> +	int ret;
+> +
+> +	ret = mutex_lock_interruptible(&kms->dump_mutex);
+> +	if (ret)
+> +		return ret;
+> +
+> +	state = msm_disp_snapshot_state_sync(kms);
+> +
+> +	mutex_unlock(&kms->dump_mutex);
+> +
+> +	if (IS_ERR(state)) {
+> +		DRM_DEV_ERROR(kms->dev->dev, "failed to capture snapshot\n");
+> +		return PTR_ERR(state);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  void msm_drm_kms_uninit(struct device *dev)
+>  {
+>  	struct platform_device *pdev = to_platform_device(dev);
+> @@ -261,6 +283,9 @@ int msm_drm_kms_init(struct device *dev, const struct drm_driver *drv)
+>  		goto err_msm_uninit;
+>  	}
+>  
+> +	if (kms->aspace)
+> +		msm_mmu_set_fault_handler(kms->aspace->mmu, kms, msm_kms_fault_handler);
+> +
 
-Drop the interrupt, since there is no proof that it is used.
+Can we move this to msm_kms_init_aspace() instead of checking for
+kms->aspace?
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
-Changes in v3:
-- Split out from "[PATCH v2 7/7] ARM: dts: samsung: exynos4212-tab3:
-  Fix up wm1811 codec config"
----
- arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-index 47e9a230f2e8..20e5e7ba6b92 100644
---- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-+++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-@@ -534,8 +534,6 @@ wm1811: audio-codec@1a {
- 		clock-names = "MCLK1", "MCLK2";
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
--		interrupt-parent = <&gpx3>;
--		interrupts = <6 IRQ_TYPE_LEVEL_HIGH>;
- 
- 		gpio-controller;
- 		#gpio-cells = <2>;
+>  	drm_helper_move_panel_connectors_to_head(ddev);
+>  
+>  	drm_for_each_crtc(crtc, ddev) {
+> -- 
+> 2.44.0
+> 
 
 -- 
-2.45.0
-
+With best wishes
+Dmitry
 
