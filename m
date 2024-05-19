@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-183174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C198C9597
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:39:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161658C9599
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34060B211D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:38:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4748B1C21133
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD1450297;
-	Sun, 19 May 2024 17:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BA750284;
+	Sun, 19 May 2024 17:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3xSDKwA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJWGIwPc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCB14AEDF;
-	Sun, 19 May 2024 17:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2004AEDF;
+	Sun, 19 May 2024 17:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716140328; cv=none; b=iXYR+MEEhVyS/5+7EFiulB6WCwlVU9MpCVimz4RH+6ogaHaEjQsHnUs3Atmg9tPRjn9zMcZ0CAbRQFJ/fFnd/4YCuWO9vZXxdiNQipo4MnTBdxQQ8iISEAHVHKkrVPkDwqvydNVQcZHjS7Qs1RVkwRPDq75qUEpi1WoV1TUFEkk=
+	t=1716140403; cv=none; b=L6w7CfPrgOZbDXt5q5zqaE1QTWIxxId0gFvMHW5ppllSn0V+Cp8n2UCJgcdt67XNQg+sXrYut9ivDqZlQlGEmTQmXRu0ZZ8e6wxatwRH0HjA8YbhQI9NFEJvGdpG/pqlFFDVfK216CoBtlEQu+gJA+GQENa/A4mp4lOef4ETRz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716140328; c=relaxed/simple;
-	bh=CfkIu+h+pBx3zNhl0+o091ChzmW2hhrt8qtqEa3D1F0=;
+	s=arc-20240116; t=1716140403; c=relaxed/simple;
+	bh=DtDF4BfH7f8WtXZbUbk5E/jSfDNx6JvY4w0FzFHEgLQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MhaFpjrFPj4NUpmZ3yLIxM0+LfYIwDNOmYy+GTDtXpbX7y8hewNfjoAIv/utRJSwWRknxLVmS9r6UH2eLgMP8NR0u/Hy1s4ZsU+G/Gk+SZbJMz0ahfDt+FU1KGBpkatVWR1K04YdgHt+P4rVa/vUvVO4FIrmtuJIeOzLe1Mvlq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3xSDKwA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF62C32781;
-	Sun, 19 May 2024 17:38:44 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=fFEWsfE5aaHVXkoyN1ZJxVwcf9cYAuyekqOIYI2mRDf0wRTNCgX8hwIKPi+8ABlCWvfONWBArnhOdXhAPdRXxydfVwXoFwAaTo0UVc6UZFUzPlxzfpL8D38PugWIGds/aRBkF71F69cKP9K962M9af0k5vWXQneaSd4pP0sFY80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJWGIwPc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E347C32781;
+	Sun, 19 May 2024 17:39:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716140328;
-	bh=CfkIu+h+pBx3zNhl0+o091ChzmW2hhrt8qtqEa3D1F0=;
+	s=k20201202; t=1716140402;
+	bh=DtDF4BfH7f8WtXZbUbk5E/jSfDNx6JvY4w0FzFHEgLQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t3xSDKwAR7S1lPFIR5Eyd+oxgexajtay1vukMBEbGjSBtbyVKWgNIAXoiYq46kMWS
-	 d5Hh9y2mTxsSNaUW0sE20RG4x+vxaDRgyaVLPjdHmpEHt5OM4YYB/ub6hxgtqrPQrm
-	 NdoFsfMcCLWhRSJR9cYyBVX7Ryc35Ogd0S2+lhdvHf67k5PyzfKTi1ViG+W+JMx2nt
-	 zg9uXvpVdOSUJ46mpNHq97ttjDEZWIe0jj1Tb/L+fbeYeV8cm7TQCW2Lcr37UmP2Yd
-	 WH7YcVfmg10G6GlG2+GaFeiGmvVoLSv9BaoDDFgREesfKIHJ4GogxgGuOjxU1nTeRP
-	 PpAgnbnF60CBQ==
-Message-ID: <fa2d0619-9051-436b-b751-8a8007e2e622@kernel.org>
-Date: Sun, 19 May 2024 19:38:42 +0200
+	b=QJWGIwPcrFpFHhMU6Alp3kpHRVLNB8PEouerEYa4JoMGaAo3WYIDXbBbyCNhZDgmu
+	 naFTr+OwKK6et+AapQPFDZYJqdWRLvik1dqN+DGfa/xypaNfaqLB3OtIsruFHFuKJn
+	 fRYTyZM55jPr85P3gHaRlhj1XbUw9/2RdD4wNNj7+dsj1VrIeh3+50EJ7yo2RliUL3
+	 muoGPcpnZbUbtOIpt9iDXKirRLfooN5e5suHrF8YZXwYkqzSox8av5VsEnV6BVexKx
+	 VEOhlxJgnE0RoH8DQrZ1uzc7O1l0zPXAmrvOcPdukf3QAP+7lY1/+AX5BKD7LrSqvd
+	 1KKBbIEQEtYsw==
+Message-ID: <274b4544-ae6f-4dfe-9952-7b88faffd96a@kernel.org>
+Date: Sun, 19 May 2024 19:39:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: dma: qcom,gpi: document the SDX75 GPI
- DMA Engine
-To: Rohit Agarwal <quic_rohiagar@quicinc.com>, vkoul@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konrad.dybcio@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240517100423.2006022-1-quic_rohiagar@quicinc.com>
- <20240517100423.2006022-2-quic_rohiagar@quicinc.com>
+Subject: Re: [PATCH v4] ASoC: dt-bindings: ak4104: convert to dt schema
+To: Xiaxi Shen <shenxiaxi26@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, javier.carrasco.cruz@gmail.com,
+ skhan@linuxfoundation.org
+References: <20240517051317.466764-1-shenxiaxi26@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,18 +101,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240517100423.2006022-2-quic_rohiagar@quicinc.com>
+In-Reply-To: <20240517051317.466764-1-shenxiaxi26@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/05/2024 12:04, Rohit Agarwal wrote:
-> Document the GPI DMA Engine on the SDX75 Platform.
+On 17/05/2024 07:13, Xiaxi Shen wrote:
+> Convert ak4104 binding to DT schema
 > 
-> Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/dma/qcom,gpi.yaml | 1 +
+> Signed-off-by: Xiaxi Shen <shenxiaxi26@gmail.com>
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+---
+
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
 
 Best regards,
 Krzysztof
