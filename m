@@ -1,111 +1,89 @@
-Return-Path: <linux-kernel+bounces-183163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 242F88C956C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:02:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D96F28C9563
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60C5FB20AEF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:02:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D031C20942
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DEE4D9E7;
-	Sun, 19 May 2024 17:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E804D13F;
+	Sun, 19 May 2024 16:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="PcgcU1SF"
-Received: from smtp-out.freemail.hu (fmfe28.freemail.hu [46.107.16.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bDolRsKn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7713A1E867;
-	Sun, 19 May 2024 17:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A259B8BE0;
+	Sun, 19 May 2024 16:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716138150; cv=none; b=ic6KbYNZdATdr3afDmDC2vExXn9NKJ2gly8ZWDDaqwbQact+St2LA5PB94erMegwd/HV7+DVg2h0RNFxAxWDNZrg8ZadcFdf13BKZcZrLXbSpdCsdlqJ6HeRdOd1EfThpA+cx/Arkn+7tKNSq6ErYCkmkBSR6S+hkjrIr9fO37M=
+	t=1716137896; cv=none; b=FUgoc4p7xHgAf+xWJNyOa8zpPZqvVIUGSzV8Tu5V10h6vo/aWjdfXqaEwu0nA9k/DN6VubHMDhxH5okwu+aSWU/o2LPYHjYsfUG8ktS+3AwGr3khn7b4Z2zlhO5rnnSTA/qU26+Oye8LQMnK4+T9AWpoxquCgf5F+YqUCZ/STCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716138150; c=relaxed/simple;
-	bh=z0HEpwuxgZUJe2+XFOQ3mW/AL7YeIiVbzyFq4gc3vbE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ESd5Nat8pyPArAHn8omObx3VpQL6EhKZap2oi7J5SaLcPih/260EXaT+Au7fkUbYVFTwqZMH5QKj0Qkz9lwyePtlIacWtUzFBFd1vJNvNRMGmkWLWYk9oxc89awbypTezz4VcVZ5ppJp0ioxF67ylJMCkt9RJVub/Uxos/71+nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=PcgcU1SF reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
-Received: from fizweb.elte.hu (fizweb.elte.hu [157.181.183.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.freemail.hu (Postfix) with ESMTPSA id 4Vj6JH3s6Lz4dp;
-	Sun, 19 May 2024 18:55:11 +0200 (CEST)
-From: egyszeregy@freemail.hu
-To: wsa+renesas@sang-engineering.com,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Benjamin=20Sz=C5=91ke?= <egyszeregy@freemail.hu>
-Subject: [PATCH] i2c-dev: Introduce "linux,i2c-dev-name" property for device tree of I2C controller.
-Date: Sun, 19 May 2024 18:55:04 +0200
-Message-Id: <20240519165504.19627-1-egyszeregy@freemail.hu>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1716137896; c=relaxed/simple;
+	bh=Cfoes/lsrzIeaqNypbBmxhOUBPcXRxD7h5OWjdIY+V8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aguLZ+3dsabdXri/2g7M+2gIK1t+j3ucrifVD2bkbZWABUMtiZ5dzndM6+h0R6BwaSEp3kkNumwDrHCy6mPt0a+VvaeTUU22qo2wMVSXjS4iEOvkgXtjKhbouLi/ZehdyCqTC+MZm8C/gANeRifXx31ly7KR7f0bwTv6dG/QuRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bDolRsKn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8811EC32781;
+	Sun, 19 May 2024 16:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716137896;
+	bh=Cfoes/lsrzIeaqNypbBmxhOUBPcXRxD7h5OWjdIY+V8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bDolRsKnX4UjKfRWGxWIFCAuM1w/U0MRQtJrmU9VyqcAGkDzQsVwV8yaXujFqlrCk
+	 ageleoHvVTonAPGpE6xCOGCJkAKXqOJBy16gzPJpQyKI0K0Lfy5IYaCqdgHbmV2cqT
+	 CJtbHJhDrgW+7u9xjriCxb/lfOc9MXR+wa6/T05VS4DOO6pdI8wvcSv8GjLE/Vljk8
+	 TaJx0Rxou/3J2AXpR+OtA1+Sw7Ka8R34D502UbqnPYUDxpXyuQ7E3pUvRigAHGe+2Q
+	 FrVxCD/g++XBjfVqgQFe+VKQAM4jK0PP81It2m+xwMmpxaeLTf5lLr2yhnZ+Eig+0R
+	 duOC1/j+WwZpA==
+Date: Sun, 19 May 2024 17:58:02 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dumitru Ceclan via B4 Relay
+ <devnull+dumitru.ceclan.analog.com@kernel.org>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 3/9] iio: adc: ad7173: refactor channel configuration
+ parsing
+Message-ID: <20240519175802.6ee5b46d@jic23-huawei>
+In-Reply-To: <20240514-ad4111-v2-3-29be6a55efb5@analog.com>
+References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
+	<20240514-ad4111-v2-3-29be6a55efb5@analog.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1716137712;
-	s=20181004; d=freemail.hu;
-	h=From:To:Cc:Subject:Date:MIME-Version:Content-Type:Content-Transfer-Encoding;
-	l=1506; bh=SpZ0hi7sZoilYx08Os0iQ7zMl6chRN/0TUPqVc9082s=;
-	b=PcgcU1SF4t47qJMHd47C/PTdJAf+Z0cHl4+46HozeIKSY16BYsXFtOjdPhcOQP++
-	uc3KwZqMX992JtvPfoC2C/HaB1OnKU2gjVQdU0Kpg0nl+QZy2lGftFVsu38ssEzPW/Q
-	9zX9ep+t84aa2WQJjO7l/YEHwJcTAcE4u/qnrqgiqn6TfIJDp36Qm+PJjUY8UGpKX+7
-	DRCW56Rf09VQj9wtuH+WQSenE01qHsneU+fpUUuJOztA/I9PIADrkrmaIsdmVbK/o39
-	GjMG8aRzVDDc0TG5kqRM+NDUNFv60ABOJPxrheeIegW29Nrcdx5oOx8ZZj8Ih9Wr5z5
-	xxV756CF9w==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Benjamin Szőke <egyszeregy@freemail.hu>
+On Tue, 14 May 2024 10:22:48 +0300
+Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
 
-Optionally, an I2C controller may have a "linux,i2c-dev-name" property.
-This is a string which is defining a custom suffix name for I2C device
-in /dev/i2c-<name> format. It helps to improve software portability between
-various SoCs and reduce complexities of hardware related codes in SWs.
+> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> 
+> Move configurations regarding number of channels from
+> *_fw_parse_device_config to *_fw_parse_channel_config.
+> 
+> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Link: https://lore.kernel.org/all/20240303162148.3ad91aa2@jic23-huawei/
+> 
+These are all part of the tag block so no blank line here.
+Having one will break some scripts that parse these blocks and
 
-Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
----
- drivers/i2c/i2c-dev.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-index 8b7e599f1674..df4cec88ea59 100644
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -651,6 +651,7 @@ static void i2cdev_dev_release(struct device *dev)
- 
- static int i2cdev_attach_adapter(struct device *dev)
- {
-+	const char *name;
- 	struct i2c_adapter *adap;
- 	struct i2c_dev *i2c_dev;
- 	int res;
-@@ -672,7 +673,16 @@ static int i2cdev_attach_adapter(struct device *dev)
- 	i2c_dev->dev.parent = &adap->dev;
- 	i2c_dev->dev.release = i2cdev_dev_release;
- 
--	res = dev_set_name(&i2c_dev->dev, "i2c-%d", adap->nr);
-+	/*
-+	 * If "linux,i2c-dev-name" is specified in device tree, use /dev/i2c-<name>
-+	 * in Linux userspace, otherwise use /dev/i2c-<nr>.
-+	 */
-+	res = device_property_read_string(&adap->dev, "linux,i2c-dev-name", &name);
-+	if (res < 0)
-+		res = dev_set_name(&i2c_dev->dev, "i2c-%d", adap->nr);
-+	else
-+		res = dev_set_name(&i2c_dev->dev, "i2c-%s", name);
-+
- 	if (res)
- 		goto err_put_i2c_dev;
- 
--- 
-2.39.3
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+
 
 
