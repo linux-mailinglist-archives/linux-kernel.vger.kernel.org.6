@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-183110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D93D8C94C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 15:24:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F38B8C94CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 15:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCD5C2813E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 13:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346E328150A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 13:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04113482FF;
-	Sun, 19 May 2024 13:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493EF481A3;
+	Sun, 19 May 2024 13:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T91Wes5i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ucnnH8LJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C76145BF9;
-	Sun, 19 May 2024 13:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8249D1401B;
+	Sun, 19 May 2024 13:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716125086; cv=none; b=LNaclUTpeVyrVEMFjt3DQYBCILZnqVZ+t2gB9JhEvpemqIAgtbtbxwYLXybtU8tp2ATbqkodTrdqrZKZeEn0WU5D2Z6/MRenbuzW4XX+gv/fZrDZvvgHm56eSfAAFAdJH7zB4GgxUkuq5PjwZPmus8QqIvKDmm6qcBeu3jcO/zc=
+	t=1716125797; cv=none; b=ZnHguPgU3OSiUeMiEKCkuy8DPByEiL04tfVjNsE42qYC8V4YiVaj+5COJFpVacxVif1dZqnSaDObjjwzjhMXXqqQ5HNv+Ht/INzGN9KWdnHJx8fVeHAHjD15sPpGnuloDQh4JBeA139YIVBMy4vb/XcqLw7l2GKHLYCeD+8Ivwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716125086; c=relaxed/simple;
-	bh=CucozrtdOVuNaSrdIYeewqNiTGAWA4ZEe0MjrxLng5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o83qKVFPGeA0wfMUEJrU16EY9+K6h1wgFdhTko9rL8tR6FlbrJ5z08sIljPclBlGn8X9awzaH3eS0thwuvM1FWs8MSdNnpUm2F/mcpZIRBBPTzyVIsDcvGXHKGbJGtjQxE0B7kpk12zYL9FggePPFWMVU//6SpX5yMIBCYrNrTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T91Wes5i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3687DC32781;
-	Sun, 19 May 2024 13:24:41 +0000 (UTC)
+	s=arc-20240116; t=1716125797; c=relaxed/simple;
+	bh=3zOjnH9twAh9RM0OcFtavYQmwEm7aEsSMb4hvSGCWQc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jwimo9cuSxmhWq/WHTjBIAIGzEpH2EdyLbQ2H3XdrfZrZ7I6JQjgkY6Srrjd3hDzs1CgMg95saAm/JKgOCmO0Tztkakul5NDket1xsfY8qMrRknGf2EQjd12D8MpjwMRfePICjaXuzKDQedefhDrOoXH0jFYhieAhGGawwMsbCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ucnnH8LJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE59C32781;
+	Sun, 19 May 2024 13:36:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716125085;
-	bh=CucozrtdOVuNaSrdIYeewqNiTGAWA4ZEe0MjrxLng5I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=T91Wes5ie51G0mISD7dSe4rk2hcDwyA/4ToQhoposuE+NeGuveGbr0bDocWJI+Z5O
-	 9mtJNWl/ZmAd8hxmk2DdSqrZTYwUz9RD5LfsWt2mEoneYze4jSB3iQX1cDOFIHeMl4
-	 fqnr1idRqUrFGPcCtTWYITdbUEeqRkLiYWOlcEisnpeurHKw0qOsUl5WCKAvDefFbx
-	 MFA7+gRTJyORtqN4vxbfzI9V7mWZPkNIcwrBKKIPT+Ka2w2Ga8ed2UZPiXPd9yGFx3
-	 hpxyR4TnNBCXrUu7zd32mufkCUTpAa6Jf6P/OGHNfCUxqWdnYInz2kp1etamxcCV6x
-	 fg3ahXsAr0CgA==
-Date: Sun, 19 May 2024 14:24:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Gustavo Silva <gustavograzs@gmail.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, lars@metafoo.de,
- gerald.loacker@wolfvision.net, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] iio: chemical: add driver for ENS160 sensor
-Message-ID: <20240519142433.78fda3b5@jic23-huawei>
-In-Reply-To: <205163e0-e2bd-4ed9-9f51-e20468f77655@wanadoo.fr>
-References: <20240512210444.30824-1-gustavograzs@gmail.com>
-	<20240512210444.30824-4-gustavograzs@gmail.com>
-	<205163e0-e2bd-4ed9-9f51-e20468f77655@wanadoo.fr>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=k20201202; t=1716125797;
+	bh=3zOjnH9twAh9RM0OcFtavYQmwEm7aEsSMb4hvSGCWQc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ucnnH8LJCe325CEDMcyTrpY+mLGB1UDFRhUMEav8uWgWcqFVmiRe1PrsZssHz1n73
+	 drml/18VK7u52aaB7BMqfiVQuRsGXLGMRqotEhnX/hLLraFCEpwKHrfpx431TbYJsW
+	 QJxam1YnoZU7C7rdXyf7XX8hoLLvULMND7GxjGDXUArlVtbO2OUCaz61U/+DFbptIK
+	 8gpUvfhN1iRGul+hI+6YQhQZ3EQCrZaQIHQLOirQVDWM+CPblIXqaFizaYKspwWsZN
+	 dI0rQKb4SEtif4MOHyq277HXMAPj2e9fb2bgh74dvpHcXRRo3TBCfOb2wLf7Qii9XQ
+	 Z0Jb3nn9L48pQ==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH] kconfig: remove redundant check in expr_join_or()
+Date: Sun, 19 May 2024 22:34:02 +0900
+Message-Id: <20240519133403.2121105-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, 13 May 2024 21:12:55 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+The check for 'sym1 == sym2' is redundant here because it has already
+been done a few lines above:
 
-> Le 12/05/2024 =C3=A0 23:04, Gustavo Silva a =C3=A9crit=C2=A0:
-> > ScioSense ENS160 is a digital metal oxide multi-gas sensor, designed
-> > for indoor air quality monitoring. The driver supports readings of
-> > CO2 and VOC, and can be accessed via both SPI and I2C.
-> >=20
-> > Signed-off-by: Gustavo Silva <gustavograzs-Re5JQEeQqe8AvxtiuMwx3w@publi=
-c.gmane.org>
-> > --- =20
->=20
-> Hi,
-> a few comments below, for what it worth.
->=20
-> BTW, why I'm in copy of the mail?
-> I'm not a maintainer, and not active on drivers/iio/chemical/
-> Slightly proud, but curious as well.
+    if (sym1 != sym2)
+            return NULL;
 
-Now we have evidence you'll review if CC'd, wait for the deluge :)
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/kconfig/expr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
+index a290de36307b..4d95fce5f9a7 100644
+--- a/scripts/kconfig/expr.c
++++ b/scripts/kconfig/expr.c
+@@ -476,7 +476,7 @@ static struct expr *expr_join_or(struct expr *e1, struct expr *e2)
+ 			return expr_alloc_comp(E_UNEQUAL, sym1, &symbol_yes);
+ 		}
+ 	}
+-	if (sym1->type == S_BOOLEAN && sym1 == sym2) {
++	if (sym1->type == S_BOOLEAN) {
+ 		if ((e1->type == E_NOT && e1->left.expr->type == E_SYMBOL && e2->type == E_SYMBOL) ||
+ 		    (e2->type == E_NOT && e2->left.expr->type == E_SYMBOL && e1->type == E_SYMBOL))
+ 			return expr_alloc_symbol(&symbol_yes);
+-- 
+2.40.1
+
 
