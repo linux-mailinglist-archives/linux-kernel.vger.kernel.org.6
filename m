@@ -1,168 +1,257 @@
-Return-Path: <linux-kernel+bounces-183130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195D98C9508
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:35:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29038C950A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE4311F21290
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:35:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 687162813F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA914C635;
-	Sun, 19 May 2024 14:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65801A2C10;
+	Sun, 19 May 2024 14:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IWeoyJJR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJEirfKI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E161A2C10;
-	Sun, 19 May 2024 14:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91FA3D56D;
+	Sun, 19 May 2024 14:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716129316; cv=none; b=ueqSU3GBDQ1kbRe2ottjdxm7BXB08PasRILAMYyrfSskqT31bfCATM5kBcP9jr2VqncOZNQGnzQ/a6fUTPxbJQarnc8LosFXYaQTEyW6ZTgVI7RrjF8UASrzOYOd3ePFABGYJ2ieFStGm9hvjkP99SRp6UO3YBOmLeN0bqGyqb4=
+	t=1716129441; cv=none; b=CkLJcBLJBByC+sBRuLpmPftohstbKKIYZNypBOwYMxRmmmy0n+xn4gQLeqlcT4G/ChhyRfiAFL8bI9ZEdKxh990fZ5aN9E8MTXJ50n9UiI++9BY2JjTKCLz24IFki9bM7LYc3mTEcPG5YEGHzjJml4gDjOb7bRE7Dkj0BkaggJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716129316; c=relaxed/simple;
-	bh=acJzPp/ACsuFShBqZ1EROr8tF6WzxfJcERezBmSDdeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IF5wTAzE4fxKkO1XYBfWQIkzVu0+ZsTxQDlwRCPK06ad8yrfjSVSm8Rj9jUiyJoL+2MErCLRkr5z2v0uN8BXQ8Og5dKlugtcQFjf8qzeIuB5t5ftcFsjbubeolMvyZTW0rRZqUE5TQSSly67uDkAS/7l4PJMsqFc7y7aolAWzI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IWeoyJJR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85103C32781;
-	Sun, 19 May 2024 14:35:10 +0000 (UTC)
+	s=arc-20240116; t=1716129441; c=relaxed/simple;
+	bh=Wm9kuBvbN2Z0ar7wcWYh/6btVifnIAsGAULz5deVKZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jRLWJ2r5lxsCKDYL+OcBjx+Lx8BHxC+FV/VFC4/eQ5jlQClCLmsukktXxJyj+Lwcu5Cvwad01NvPOa51OQLki4rbu7Wp4N3Yg0va9VUXcdj3LmMQvBifwxSJjGRgbsv6rnaenGEg3NwEsh5vpYoCtHwC3AaTlgdTzZ0oNSNEknI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJEirfKI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17042C32781;
+	Sun, 19 May 2024 14:37:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716129315;
-	bh=acJzPp/ACsuFShBqZ1EROr8tF6WzxfJcERezBmSDdeg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IWeoyJJReFBVFtjfYEBtVUANNaqB2bXQKXLty9T9e9UFAjUOBilkldiVUYd72OSWC
-	 90yzqhX6AE0S1AeJZ4NMdjNa9gPGnxW9/VnF1DreWLEj8zCdmV/d/8stOuvkJwPxg2
-	 YC6+QPR2O0pjtgfvU+QDbf3mU2lUDTLZ71fckUnKA3i3Uw0JOEExo8Cy5lvNTps6ev
-	 hEM2b+V7bJd3EqGHwkVhFfBqAddGmdLrFE12Bebp511nckX3iBYPuDvFQdVUKgfR+g
-	 LtqRjY4ruA5zRzEaLeuKPskbhOauPyTWSe9B+19A9g6PcQOPyuSRoTaaNbMy3DoQzE
-	 8RLury6rbToKA==
-Date: Sun, 19 May 2024 15:35:01 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
- ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
- petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
- linus.walleij@linaro.org, semen.protsenko@linaro.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 5/5] iio: pressure: bmp280: Add triggered buffer
- support
-Message-ID: <20240519153501.7d30c7c2@jic23-huawei>
-In-Reply-To: <20240512230524.53990-6-vassilisamir@gmail.com>
-References: <20240512230524.53990-1-vassilisamir@gmail.com>
-	<20240512230524.53990-6-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=k20201202; t=1716129440;
+	bh=Wm9kuBvbN2Z0ar7wcWYh/6btVifnIAsGAULz5deVKZo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gJEirfKI1pc+SMsHKhryXOvgYK2HdV7p/qh3seLs5HxBhW6N5g4gcWcKnS8teEHol
+	 ci0Xgd2s6XXuz8xyrkuoX4dc8r+OHtPUcf1FzpCAoPH6KYCZygi8g7N/bzbpoC3jIo
+	 pIs2g46q0MGWsqfLGr7pxTnDymGkpo1zYkQqiL+Hil7zXNAZ1IwESYbXjDMSed73pZ
+	 gcgbV+gglGIsGC5uI/OhJBI8HfwZ0rC3nw2rAY8C0N8zxWWjeMgTMDk1A+2TR/kzfr
+	 mnndftr/LwS9mR8KomXkerWXTCAg1IihdIQNb+rwyN+metaV47hWjypKQYIgv0s/WD
+	 091wD4AWPaQUw==
+Date: Sun, 19 May 2024 16:37:09 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: linux-man@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, libc-alpha@sourceware.org, 
+	andyrtr <andyrtr@archlinux.org>, Luna Jernberg <droidbittin@gmail.com>, 
+	"Dr. Tobias Quathamer" <toddy@debian.org>, Marcos Fouces <marcos@debian.org>, Sam James <sam@gentoo.org>, 
+	Jonathan Corbet <corbet@lwn.net>, man-pages-maintainers@fedoraproject.org, 
+	Petr Gajdos <pgajdos@suse.cz>
+Subject: man-pages-6.8 released
+Message-ID: <je5cqtxomjonmjyzdkhalfxr5idkselxxgfybjtwupnocqgaai@hue4yy7hvory>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Mon, 13 May 2024 01:05:24 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-
-> BMP2xx, BME280, BMP3xx, and BMP5xx use continuous buffers for their
-> temperature, pressure and humidity readings. This facilitates the
-> use of burst/bulk reads in order to acquire data faster. The
-> approach is different from the one used in oneshot captures.
-> 
-> BMP085 & BMP1xx devices use a completely different measurement
-> process that is well defined and is used in their buffer_handler().
-> 
-> Suggested-by: Angel Iglesias <ang.iglesiasg@gmail.com>
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
->  
-> +static irqreturn_t bmp280_buffer_handler(int irq, void *p)
-> +{
-> +	struct iio_poll_func *pf = p;
-> +	struct iio_dev *indio_dev = pf->indio_dev;
-> +	struct bmp280_data *data = iio_priv(indio_dev);
-> +	s32 adc_temp, adc_press, adc_humidity, t_fine;
-> +	u8 sizeof_burst_read;
-> +	int ret;
-> +
-> +	guard(mutex)(&data->lock);
-> +
-> +	/*
-> +	 * If humidity channel is enabled it means that we are called for the
-> +	 * BME280 humidity sensor.
-> +	 */
-> +	if (test_bit(BME280_HUMID, indio_dev->active_scan_mask))
-
-The only thing I though a bit about on this review was whether this
-combined function really makes sense, or should we just move to two
-separate handlers. It's marginal, but given you had it done this way
-let us stick with this.
-
-Definitely something to keep in mind for future changes though that may
-make this more complex still.  For now it's fine.
-
-Applied to the togreg branch of iio.git but given timing that is for now
-only pushed out as testing and I'll rebase it on rc1 once available.
-
-Thanks,
-
-Jonathan
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="daawn735hgbapzjg"
+Content-Disposition: inline
 
 
+--daawn735hgbapzjg
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: linux-man@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, libc-alpha@sourceware.org, 
+	andyrtr <andyrtr@archlinux.org>, Luna Jernberg <droidbittin@gmail.com>, 
+	"Dr. Tobias Quathamer" <toddy@debian.org>, Marcos Fouces <marcos@debian.org>, Sam James <sam@gentoo.org>, 
+	Jonathan Corbet <corbet@lwn.net>, man-pages-maintainers@fedoraproject.org, 
+	Petr Gajdos <pgajdos@suse.cz>
+Subject: man-pages-6.8 released
+MIME-Version: 1.0
 
-> +		sizeof_burst_read = BME280_BURST_READ_BYTES;
-> +	else
-> +		sizeof_burst_read = BMP280_BURST_READ_BYTES;
-> +
-> +	/* Burst read data registers */
-> +	ret = regmap_bulk_read(data->regmap, BMP280_REG_PRESS_MSB,
-> +			       data->buf, sizeof_burst_read);
-> +	if (ret) {
-> +		dev_err(data->dev, "failed to burst read sensor data\n");
-> +		goto out;
-> +	}
-> +
-> +	/* Temperature calculations */
-> +	adc_temp = FIELD_GET(BMP280_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[3]));
-> +	if (adc_temp == BMP280_TEMP_SKIPPED) {
-> +		dev_err(data->dev, "reading temperature skipped\n");
-> +		goto out;
-> +	}
-> +
-> +	data->sensor_data[1] = bmp280_compensate_temp(data, adc_temp);
-> +
-> +	/* Pressure calculations */
-> +	adc_press = FIELD_GET(BMP280_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[0]));
-> +	if (adc_press == BMP280_PRESS_SKIPPED) {
-> +		dev_err(data->dev, "reading pressure skipped\n");
-> +		goto out;
-> +	}
-> +
-> +	t_fine = bmp280_calc_t_fine(data, adc_temp);
-> +
-> +	data->sensor_data[0] = bmp280_compensate_press(data, adc_press, t_fine);
-> +
-> +	/* Humidity calculations */
-> +	if (test_bit(BME280_HUMID, indio_dev->active_scan_mask)) {
-> +		adc_humidity = get_unaligned_be16(&data->buf[6]);
-> +
-> +		if (adc_humidity == BMP280_HUMIDITY_SKIPPED) {
-> +			dev_err(data->dev, "reading humidity skipped\n");
-> +			goto out;
-> +		}
-> +		data->sensor_data[2] = bme280_compensate_humidity(data, adc_humidity, t_fine);
-> +	}
-> +
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
-> +					   iio_get_time_ns(indio_dev));
-> +
-> +out:
-> +	iio_trigger_notify_done(indio_dev->trig);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> 
+Gidday!
+
+I'm proud to announce:
+
+	man-pages-6.8 - manual pages for GNU/Linux
+
+Tarball download:
+<https://mirrors.edge.kernel.org/pub/linux/docs/man-pages/>
+Git repository:
+<https://git.kernel.org/cgit/docs/man-pages/man-pages.git/>
+Online PDF book:
+<https://mirrors.edge.kernel.org/pub/linux/docs/man-pages/book/>
+
+You are receiving this message either because:
+
+	a)  (BCC) You contributed to the content of this release.
+
+	b)  You are subscribed to <linux-man@vger.kernel.org>,
+	    <linux-kernel@vger.kernel.org>, or
+	    <libc-alpha@sourceware.org>.
+
+	c)  I have information (possibly inaccurate) that you are the
+	    maintainer of a translation of the manual pages, or are the
+	    maintainer of the manual pages set in a particular
+	    distribution, or have expressed interest in helping with
+	    man-pages maintenance, or have otherwise expressed interest
+	    in being notified about man-pages releases.
+	    If you don't want to receive such messages from me, or you
+	    know of some other translator or maintainer who may want to
+	    receive such notifications, send me a message.
+
+Downstream packagers, please read the changes below.  There are
+important changes in this release.
+
+
+Have a lovely day!
+
+Alex
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D Changes in man=
+-pages-6.08 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Released: 2024-05-19, Aldaya
+
+
+New and rewritten pages
+-----------------------
+
+man3type/
+        locale_t.3type
+        mbstate_t.3type
+        wchar_t.3type
+        wint_t.3type
+
+
+Newly documented interfaces in existing pages
+---------------------------------------------
+
+man2/
+        init_module.2
+                MODULE_INIT_COMPRESS_FILE
+
+        get_mempolicy.2
+        mbind.2
+        set_mempolicy.2
+                MPOL_WEIGHTED_INTERLEAVE
+
+        mount_setattr.2
+                squashfs
+                tmpfs
+                cephfs
+                hugetlbfs
+
+man5/
+man8/
+        proc.5
+                subset
+
+        elf.5
+        ld.so.8
+                Updeprecate and explain DT_RPATH
+
+man7/
+        string_copying.7
+                strndup()
+
+
+New and changed links
+---------------------
+
+man3/
+        S_ISBLK.3                       (inode(7))
+        S_ISCHR.3                       (inode(7))
+        S_ISDIR.3                       (inode(7))
+        S_ISFIFO.3                      (inode(7))
+        S_ISLNK.3                       (inode(7))
+        S_ISREG.3                       (inode(7))
+        S_ISSOCK.3                      (inode(7))
+        pthread_cond_broadcast.3        (pthread_cond_init(3))
+        pthread_cond_destroy.3          (pthread_cond_init(3))
+        pthread_cond_signal.3           (pthread_cond_init(3))
+        pthread_cond_timedwait.3        (pthread_cond_init(3))
+        pthread_cond_wait.3             (pthread_cond_init(3))
+        pthread_condattr_destroy.3      (pthread_condattr_init(3))
+        pthread_getspecific.3           (pthread_key_create(3))
+        pthread_key_delete.3            (pthread_key_create(3))
+        pthread_mutex_destroy.3         (pthread_mutex_init(3))
+        pthread_mutex_lock.3            (pthread_mutex_init(3))
+        pthread_mutex_trylock.3         (pthread_mutex_init(3))
+        pthread_mutex_unlock.3          (pthread_mutex_init(3))
+        pthread_mutexattr_getkind_np.3  (pthread_mutexattr_setkind_np(3))
+        pthread_mutexattr_gettype.3     (pthread_mutexattr_init(3))
+        pthread_mutexattr_settype.3     (pthread_mutexattr_init(3))
+        pthread_setspecific.3           (pthread_key_create(3))
+
+
+Global changes
+--------------
+
+-  Build system
+   !  Stamp the versions on the pages at install time, instead of dist
+      time.  This change is important, because downstream packagers will
+      need to `make install` instead of just copying the pages.
+      The benefit of this is that downstream distributors are now able
+      to set their own distro-specific version strings.  The most common
+      thing that I'd expect is setting a suffix such as '-1', which can
+      be done with `make install EXTRAVERSION=3D-1`.
+      Another benefit is that downstream patches that apply near the
+      TH line will have to be refreshed less often, since the TH line
+      will not necessarily change in every release.
+   -  Reorganize build system
+   -  Improve support for Darwin systems.
+   -  Remove any generated files (fonts) from the repository, and
+      generate them at build time.
+   -  Various improvements to the generation of the PDF book.
+
+-  man
+   -  Move manual pages to a new directory man/, so that they are now
+      under man/man*/.  Symlinks have been added for convenience.
+
+-  git
+   -  Import pthread_*.3 link pages' git history from debian/glibc.git
+
+-  CONTRIBUTING.d
+   -  Add help for using git-config(1), git-send-email(1),
+      git-range-diff(1), and [neo]mutt(1).
+
+
+Changes to individual files
+---------------------------
+
+The manual pages and other files in the repository have been improved
+beyond what this changelog covers.  To learn more about changes applied
+to individual pages, or the authors of changes, use git(1).
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--daawn735hgbapzjg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmZKDo8ACgkQnowa+77/
+2zI1BQ/+IRoelPfShOnPHBa5YoMZ/kdABDKsrLpm/a0h4qhn6sAHcsG8Nmbto+5L
+kiIyzjeOt5kYCyU7UHCWsnQWGJVLD9ZNVGklKfJe/Pn7Z842DucAIa8Ss7G3DmZT
+dKNtMz7yBIXAOJo9kejkUiqea/5oucw4mfiM1Vu5WmnrLlJIH6ujBsDSNATawnNx
+XNlDd67A8+LY0fEay/tXG0niWNYbVOgDpkl1nGcyN/tkG5UYmVrnOewGM+MY8vRw
+iKCAwd+TyMmjsOKp/dFU6iyJD2TviaE1yUXid3FY3jhjUjQVBn8ck/Mev9xxYzsA
+4WU7tY97tnPRIZlAP2CR6jAFa9jdkU8paO/9xYpRppdnwcDBbepE+v3v6418N2mt
+Rdo8rpLtm/XpIiL8wjRhWECCIBDrhzrfXTaT0dGT0y6tsS/z58erBf+pXTL1TqF8
+bDU2Y2v4XTLpUaNAcyiVar8FjbKyb4K+doCTPlsNUqDyWSu+P6HkGif9X/xR8ONr
+91EUV1fh+8Zjury2Dq5LETdYyLw7SuRn9a0KWLuJbJdfdT4IpqMAMEo077jXMD1w
+yJBDamWH/6Tdrs2yt7WnslCExgZo1cMHEp3vJwUh3lyUpPUt2o4ckJ04mNxnwgBW
+7Al+64pNq9g1gQPm869Ymfx/8MVhkmZIVqFDVO4jABk7hHA6eC0=
+=TGSe
+-----END PGP SIGNATURE-----
+
+--daawn735hgbapzjg--
 
