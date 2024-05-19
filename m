@@ -1,158 +1,98 @@
-Return-Path: <linux-kernel+bounces-183106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01978C94B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:55:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B2228C94A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AF81281640
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 12:55:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AAEDB20D3D
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 12:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434F9482CA;
-	Sun, 19 May 2024 12:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3445A47F46;
+	Sun, 19 May 2024 12:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BZzJlsLk"
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pu9fBiY5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7D0DF58;
-	Sun, 19 May 2024 12:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B73DF58;
+	Sun, 19 May 2024 12:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716123319; cv=none; b=Wk6968E/67FeovUCmeOUBgqCYTUE7uI1w8ndiMoJJAyxCPhs8O3m0hvc2+GKFZDM5H/+6/BBD6xcjgAd3tsPA1h6UkpVFReUI8lzTDLM/iic9spWfZZch/7sQByGNCB9FgCPN98AN9XSTlHKplwdITWFqYKmEKxp1R04YwaDR3U=
+	t=1716122974; cv=none; b=gX9qzsEjBRNm1ck7YaV/ukhcbxGEIHLULsbX0QdYOM8uH3L2Tjdv++qOoHy/MI8u048va3U5ovCOusUqgcxlEM3RMa1Wxb4kfN8kMUuOfBikBAFhRzuAg8Tm/nkMm7A7Jn1V2OYgKrdweLMJno3Ytsp+l4okW00KCkNzielbuCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716123319; c=relaxed/simple;
-	bh=96ddWgy+DqQkkmfLAmqY9C/dPMMuWMqOSDKoVWxeAKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DeTQMdZiZIw5wOjloaXukgCuuPx9fMEz8cvfBFtIlTi4dx4E39jUiYmFC3K9PZnxyNyTgN93TQ2Qi0njXnVvLKSDUN76YPEqxIunV4BOb4qLEsZPtD72LdlOXgrDKbX4qqFiehPz0XMACn5dQBr0gQarijaJCRKDXVHcMgBkMeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BZzJlsLk; arc=none smtp.client-ip=80.12.242.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 8fvNsas0Vml3s8fvOsAwyi; Sun, 19 May 2024 14:46:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716122764;
-	bh=IdukyeSVMol9uozX3qDqOVLoOKjojIJiN8ffYrHylXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=BZzJlsLkWkm524qgL4YZGWx+ntPz7Rzw0DUp9YfZpHYTMG1V/qZ1j/xA0rqb31b6D
-	 Ze1E4DqsikBm5Ill2qHE+XDEhXWC3ZFehpfiCphM3ASZMwpAAO/CIEfwIM+6x9P6Ky
-	 x6WsGkQgBOq1nHhw0PEBknAxA1z+uduyhETuzPgM3mtjxFIH+esfSPTlHY8a47SGMQ
-	 SbFz/W6Y7B139j0qJ0iTWL1RRCutlXtYtYAzuRhMi6FxijWkz0RdrpRJ5rWmCOJSgo
-	 7QFtAkzsg4qdY6XoRzEF48NImLtbHFx5GWDL1P0HpI1Sm3lFTze6XFl5jLcuLSJln6
-	 2MqonpmJnfoSw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 19 May 2024 14:46:04 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <64403766-cc22-4dbe-b4b3-af3ad32fb9ea@wanadoo.fr>
-Date: Sun, 19 May 2024 14:45:59 +0200
+	s=arc-20240116; t=1716122974; c=relaxed/simple;
+	bh=5c6KJP9+iCfjzaILwM7txlwQN7YH/0G77q+/VLJR75Q=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=ugkmX+Ys2K4w041Ps6WtM6LwZfzmU9FUjLDtBQVaCvOPnPaTpTrbTE8BUcB7eE+uErHXwNS5uF/bJILHbuUm9sAJlIMdPgPOK96pjZHxNvdllWyyr3PYaHsXnRZkDlB2m8Stdtk/g9Lfgx+qOlVGUMhLAQTNFAsfCphZmkJFWCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pu9fBiY5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CDCDC32781;
+	Sun, 19 May 2024 12:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716122973;
+	bh=5c6KJP9+iCfjzaILwM7txlwQN7YH/0G77q+/VLJR75Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pu9fBiY5sUYW+kaSaQAsHpOYqf6ezgVhR63MS0OeE3XNnO9jKmp2fM4hhReBGI9m5
+	 hV9KzFBgUn+H/+fFMXEqbrSG7MprlfUioOWRjjotk14fYKLJA/p/uKqJFIzc2uVYn/
+	 pqE6FJLnApKT+hss/8NGm+JXSxpHrfF98A04/cCeGIOi7qlZ0DdgmbaUEbWaDk75xN
+	 ZdrLFVekaKSof67XtRtDzXFPPkr1hVbmIir2F9CU12M4KTIZO/aLjbJWadLvJheoPF
+	 wrOTW3vNQ/pwDoPwduqahuG0zI9Q6MriCzcjvwk+lAV0jVNyplCkXiNEvcsT6I2xHQ
+	 2XBetNTBAqNMQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2 net-next] libceph: Use sruct_size() in
- ceph_create_snap_context()
-To: kernel test robot <lkp@intel.com>, Ilya Dryomov <idryomov@gmail.com>,
- Xiubo Li <xiubli@redhat.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- ceph-devel@vger.kernel.org
-References: <5b7c72bdb52703bbfa5511ed500aed4babde1308.1716109606.git.christophe.jaillet@wanadoo.fr>
- <202405191909.7qhhefnu-lkp@intel.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <202405191909.7qhhefnu-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 19 May 2024 15:49:28 +0300
+Message-Id: <D1DMTJYL7TFC.3J3FM36K06ECD@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>
+Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <Andreas.Fuchs@infineon.com>, "James Prestwood" <prestwoj@gmail.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "David Howells"
+ <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>, "Peter
+ Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>, "James
+ Bottomley" <James.Bottomley@HansenPartnership.com>, "Stefan Berger"
+ <stefanb@linux.ibm.com>, "Ard Biesheuvel" <ardb@kernel.org>, "Mario
+ Limonciello" <mario.limonciello@amd.com>, "open list:CRYPTO API"
+ <linux-crypto@vger.kernel.org>, "open list" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC v2 0/5] Asymmetric TPM2 key type
+X-Mailer: aerc 0.17.0
+References: <20240519002616.4432-1-jarkko@kernel.org>
+In-Reply-To: <20240519002616.4432-1-jarkko@kernel.org>
 
-Le 19/05/2024 à 13:34, kernel test robot a écrit :
-> Hi Christophe,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on net-next/main]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-JAILLET/libceph-Use-__counted_by-in-struct-ceph_snap_context/20240519-172142
-> base:   net-next/main
-> patch link:    https://lore.kernel.org/r/5b7c72bdb52703bbfa5511ed500aed4babde1308.1716109606.git.christophe.jaillet%40wanadoo.fr
-> patch subject: [PATCH 1/2 net-next] libceph: Use sruct_size() in ceph_create_snap_context()
-> config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240519/202405191909.7qhhefnu-lkp@intel.com/config)
-> compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240519/202405191909.7qhhefnu-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202405191909.7qhhefnu-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->     net/ceph/snapshot.c: In function 'ceph_create_snap_context':
->>> net/ceph/snapshot.c:32:25: error: implicit declaration of function 'sruct_size'; did you mean 'struct_size'? [-Werror=implicit-function-declaration]
->        32 |         snapc = kzalloc(sruct_size(snapc, snaps, snap_count), gfp_flags);
->           |                         ^~~~~~~~~~
->           |                         struct_size
->>> net/ceph/snapshot.c:32:43: error: 'snaps' undeclared (first use in this function); did you mean 'snapc'?
->        32 |         snapc = kzalloc(sruct_size(snapc, snaps, snap_count), gfp_flags);
->           |                                           ^~~~~
->           |                                           snapc
->     net/ceph/snapshot.c:32:43: note: each undeclared identifier is reported only once for each function it appears in
->     cc1: some warnings being treated as errors
-> 
-> 
-> vim +32 net/ceph/snapshot.c
-> 
->      11	
->      12	/*
->      13	 * Ceph snapshot contexts are reference counted objects, and the
->      14	 * returned structure holds a single reference.  Acquire additional
->      15	 * references with ceph_get_snap_context(), and release them with
->      16	 * ceph_put_snap_context().  When the reference count reaches zero
->      17	 * the entire structure is freed.
->      18	 */
->      19	
->      20	/*
->      21	 * Create a new ceph snapshot context large enough to hold the
->      22	 * indicated number of snapshot ids (which can be 0).  Caller has
->      23	 * to fill in snapc->seq and snapc->snaps[0..snap_count-1].
->      24	 *
->      25	 * Returns a null pointer if an error occurs.
->      26	 */
->      27	struct ceph_snap_context *ceph_create_snap_context(u32 snap_count,
->      28							gfp_t gfp_flags)
->      29	{
->      30		struct ceph_snap_context *snapc;
->      31	
->    > 32		snapc = kzalloc(sruct_size(snapc, snaps, snap_count), gfp_flags);
+On Sun May 19, 2024 at 3:25 AM EEST, Jarkko Sakkinen wrote:
+> ## Overview
+>
+> Introduce tpm2_key_rsa implementing asymmetric TPM RSA key.
+>
+> I submit this first as RFC as I could not execute the keyctl padd in the
+> following sequence (returns EBADF):
+>
+> tpm2_createprimary --hierarchy o -G rsa2048 -c owner.txt
+> tpm2_evictcontrol -c owner.txt 0x81000001
+> tpm2_getcap handles-persistent
+> openssl genrsa -out private.pem 2048
+> tpm2_import -C 0x81000001 -G rsa -i private.pem -u key.pub -r key.priv
+> tpm2_encodeobject -C 0x81000001 -u key.pub -r key.priv -o key.priv.pem
+> openssl asn1parse -inform pem -in key.priv.pem -noout -out key.priv.der
+> key_serial=3D`cat key.priv.der | keyctl padd asymmetric tpm @u`
 
-Ouch!
+After v2 changes it ends up to -EINVAL and:
 
-this was build-tested, but I must have made a mistake when editing the 
-patch file to add the "net-next".
+OID is "2.23.133.10.1.3" which is not TPMSealedData
 
-Sorry about that.
-I'll resend when the net-next branch will re-open.
+which makes total sense. James' old patch set has already TPMLoadableKey
+parsing PoC'd so I use that as the reference.
 
-CJ
+After the sequence above successfully completes keyctl public key ops
+are accesible by using $key_serial as the serial.
 
->      33		if (!snapc)
->      34			return NULL;
->      35	
->      36		refcount_set(&snapc->nref, 1);
->      37		snapc->num_snaps = snap_count;
->      38	
->      39		return snapc;
->      40	}
->      41	EXPORT_SYMBOL(ceph_create_snap_context);
->      42	
-> 
-
+BR, Jarkko
 
