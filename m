@@ -1,226 +1,130 @@
-Return-Path: <linux-kernel+bounces-183190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A948C95BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:03:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2FF8C95C1
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C94CCB20F6E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:03:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA2761F21A81
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4552A5102B;
-	Sun, 19 May 2024 18:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A749D5467A;
+	Sun, 19 May 2024 18:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPcl4mgx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZycKx30L"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7576D50297;
-	Sun, 19 May 2024 18:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2F250297;
+	Sun, 19 May 2024 18:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716141799; cv=none; b=hFxTj+GQlK9fO4ZV7zvfX28V5zHLYUifQTIfpAn9mM8JtnjRDQskVe3isgituKJeS0gyKg7Fp6mk2wlXPSwueQkABJhJoQTrPN1PjdUAcH9RHTud3HwrVDXoDdPcUYFec+WPLaLk1N8saRaDCFqNnnROGpJecN3bSw38uG501/k=
+	t=1716141805; cv=none; b=tpGhtKSrpAXvaGDYcSa3fsbvwZa6+5ErDh806Fx6TDSYTlJqVF7B+vomRPA4e3tZK5e6wDsvP/+/ct30FYzbkkYDuW6VpOxr22W5invUVUl9dR87gboCnWrIrGWwhCgjGPjPX4NuJoMw07sjsNQXoajnK7ZD3jY5rhtmQZf9s74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716141799; c=relaxed/simple;
-	bh=5u6Kmcb4zUJUkge3R6Zf3jnoUhdhS8dKOk/lRvZwtr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DNyuNrxmHgkuaDJ1dkqrOkbF5Qnw4yLZJcztWMIfO0a6C+HamYX+oV+jIrfi6QkJXTw5GNoC7Xk+WpiizFhkU7081N24/xktKKbP84qIeHWFLEqocBxWnt7LB+kOh6F2ewlykIicagiZKJZyvVSmoip3Yc4Km+z82DOOl78wX/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPcl4mgx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09C96C32781;
-	Sun, 19 May 2024 18:03:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716141799;
-	bh=5u6Kmcb4zUJUkge3R6Zf3jnoUhdhS8dKOk/lRvZwtr8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aPcl4mgx9k+AqW33OPBHRdbwX1+oRl5B1JmVzba/Msx02oIK1/KfsvJIgsffkhHQI
-	 q7np+UrzlgrLu6rA0HljgzBFpNocYvWvmpaZR2DbP4RgD4zaTJ3OiCpT6bjkumGjrg
-	 bcq73b/erZQ3XXkTo9cxVb/QtHsi8+yeAh2WzaBdehQVtzbuvUDvy4h2tEi060nF9M
-	 X3QOH8kWW1Psp9Dgtgqcdp3BKnHmHHVGgcbfeTkLMy+CFb8uwZWTFgjnURj7kNR9Mk
-	 anQW58k56xU7FNUkiRWpyAroeJdkwrp2jDq1aDK653iAQf9+zlZaMXDT3J0DEQm8y+
-	 0VDFncskOrh6A==
-Date: Sun, 19 May 2024 19:03:04 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Alisa-Dariana Roman <alisadariana@gmail.com>,
- michael.hennerich@analog.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lars@metafoo.de,
- robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- lgirdwood@gmail.com, broonie@kernel.org, nuno.sa@analog.com,
- marcelo.schmitt@analog.com, bigunclemax@gmail.com, dlechner@baylibre.com,
- okan.sahin@analog.com, fr0st61te@gmail.com, alisa.roman@analog.com,
- marcus.folkesson@gmail.com, schnelle@linux.ibm.com, liambeguin@gmail.com
-Subject: Re: [PATCH v8 6/6] iio: adc: ad7192: Add AD7194 support
-Message-ID: <20240519190304.4d93530a@jic23-huawei>
-In-Reply-To: <ZkNijKz0N7PPvmeU@smile.fi.intel.com>
-References: <20240514120222.56488-1-alisa.roman@analog.com>
-	<20240514120222.56488-7-alisa.roman@analog.com>
-	<ZkNijKz0N7PPvmeU@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716141805; c=relaxed/simple;
+	bh=O1s2Qv2YbwPox/EW+4f1PjpmmaG9nU1GvX/WuNsC83A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YmUVRh6NL25O2eh9Y4pgMthhg17AqnYOFJv5XNOdKrPfNwBF6s50EZ9xBm2KqERY11Yn4Lp6iqr9UxBWdpm2BYiZJPwt+yzaVbPfBxnrloxCZcCKkM/n+SjYX9YxGIWksWT0KJfynXmXrSDuOc2HbgdV6I9RuC9rtL4xTQjAOLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZycKx30L; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-572669fd9f9so6758295a12.0;
+        Sun, 19 May 2024 11:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716141802; x=1716746602; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x/YRdnvMtWMhxlbEh050IDdP/xmTW8QB38Z1f1o0cz0=;
+        b=ZycKx30LK2tXS8986w2DnVh1JU1I0GQE6CCq4SglmF7FP0C4YVG2kdJumZqy9j69Ka
+         55Usg0UIIm3MojdCduaZKfx0/Fxfcpc+PYj220f9qNBz9FeRaCp33etAaEWYXvcS51j/
+         QyXApCZFoF1QdliQ/EVCdxxtoeHOnNoBj893MdDSH52oC1hp8ixfXm0wRFQr4kcKQcsU
+         ufji1L7h93XLUYmzhSntl4+iVT3A3ILyPB9nEN5gbHdyMht9mJnQdKhqGmF8nrFixmfH
+         oONTO7KXk9znNczVLBC4cPypCLTur7BhjNJfLeHLnOgCL3mT2Q8jzeJBAAXLrO7g80nZ
+         +xmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716141802; x=1716746602;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x/YRdnvMtWMhxlbEh050IDdP/xmTW8QB38Z1f1o0cz0=;
+        b=Ozje4jWAZ/8VkSMdLvP+SFvDADbbL+/rb0qxNv4g4iu5GWu72K9clckj8iv5GISDUn
+         BKucjIVjbXHgNUlsDaMQSkqpLIPt5AGL9V23VK+RrzNAlGFwf/m3GSppoaC69g6TQQoI
+         Go0yPXsAoQeNXjSclwZVVqP5C61sE7nH9z2yfkbRE9evir6kxuaLrLrCMzC2crZ3WCx3
+         pzdyaB6/BF/6nNmEW7OzAPDoaOIUgdviGNKvUwsC0kf4t9RnNtnZF89MywRS/9OFRibV
+         YOxZpwFmGVD+RkYo+raCrW3Llm+trklbbLlcZQDfIvbJXpxP9j7ooqCmzKiJiMIt6SBk
+         3cgA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7G5l7s2i4Dq8lzB5HoI/+3TVuthq5n5MxhA5XixWu6YImAPDn3r3FTmt7Qtr13ptQ/9IJbszzcCBFBav7B9ksbnvam1ntwo4DTyWlFEctMP6SIc1MYuh6UJQ+bF+nWMLM+rCB+4z75A==
+X-Gm-Message-State: AOJu0YzLdqANyCvDiiLTmkEAGEfT1xpmHls+D6oSNZDhNK+N3yDmk8NY
+	aABfhKNHPeHExXV9PFn2eKRjzcZd0qb3vi1bjGULdica5M9WqsnNncMuwngiwl5FMNBfPRCgcmz
+	XBSY/WREPe3807rj6AtBBRZUcRYc=
+X-Google-Smtp-Source: AGHT+IHVtG0K3UlTS0c2FjdhwQXLY6J7tGPhlwYRSFokMmUU2X3FUGCIHNd3a7VofRVJUhFDf+h4G4S2/KpV6v1hYZo=
+X-Received: by 2002:a50:d653:0:b0:572:7d75:a715 with SMTP id
+ 4fb4d7f45d1cf-5734d6b4120mr17882439a12.28.1716141801886; Sun, 19 May 2024
+ 11:03:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240518061925.43549-1-kanakshilledar111@protonmail.com>
+ <20240519-ideology-nervous-eb30a92e1e42@spud> <CAGLn_=ugjbdszvN1PQ2eN-pLFQmz-EUmhj=2kOUKWWEsbFMKNg@mail.gmail.com>
+ <CAGLn_=uuTOXRGYJGe4wV6u77Ew9aBakg99TNRRcAxo4W_khuGA@mail.gmail.com>
+In-Reply-To: <CAGLn_=uuTOXRGYJGe4wV6u77Ew9aBakg99TNRRcAxo4W_khuGA@mail.gmail.com>
+From: Kanak Shilledar <kanakshilledar@gmail.com>
+Date: Sun, 19 May 2024 23:33:11 +0530
+Message-ID: <CAGLn_=sqQPnAN+y10j1P9y9JP8thkhOZaTtZ7R+ZktO=NxNZBQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: interrupt-controller: riscv,cpu-intc:
+ convert to dtschema
+To: Conor Dooley <conor@kernel.org>
+Cc: Kanak Shilledar <kanakshilledar111@protonmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Samuel Holland <samuel.holland@sifive.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 14 May 2024 16:09:32 +0300
-Andy Shevchenko <andy@kernel.org> wrote:
+On Sun, May 19, 2024 at 7:29=E2=80=AFPM Kanak Shilledar
+<kanakshilledar@gmail.com> wrote:
+>
+> > > On Sat, May 18, 2024 at 11:49:21AM +0530, Kanak Shilledar wrote:
+> > > > +allOf:
+> > > > +  - $ref: /schemas/riscv/cpus.yaml#/properties/interrupt-controlle=
+r
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    $ref: /schemas/riscv/cpus.yaml#/properties/interrupt-controlle=
+r/properties/compatible
+> > >
+> > >
+> > > Unfortunately, this is still not what I was asking you to do :/
+> > > I said to make the copy in cpus.yaml a reference to this binding.
+> >
+> > Sorry for misinterpreting the comments. I will fix it right away.
+> > > Cheers,
+> > > Conor.
+>
+> I have done the changes and created two commits for the respective
+> files cpus.yaml and riscv,cpu-intc.yaml.
+> I am having v3 for the riscv,cpu-intc.yaml but cpus.yaml will be on
+> v1. So shall I mail them separately or
+> merge both the commits in a single one?
+>
+> Thanks and Regards,
+> Kanak Shilledar
 
-> On Tue, May 14, 2024 at 03:02:22PM +0300, Alisa-Dariana Roman wrote:
-> > Unlike the other AD719Xs, AD7194 has configurable channels. The user can
-> > dynamically configure them in the devicetree.
-> > 
-> > Add sigma_delta_info member to chip_info structure. Since AD7194 is the
-> > only chip that has no channel sequencer, num_slots should remain
-> > undefined.
-> > 
-> > Also modify config AD7192 description for better scaling.  
-> 
-> Some non-critical, mostly style related comments below.
-> 
-Tweaked a bit. And applied.  Please check the result in the testing branch
-of iio.git.
-> ...
-> 
-> This...
-> 
-> > +#define AD7194_CH(p)		(BIT(10) | AD7194_CH_POS(p))
-> > +				  /* 10th bit corresponds to CON18(Pseudo) */  
-> 
-> ...should be (you have broken indentation on the comment, btw):
-> 
-> /* 10th bit corresponds to CON18(Pseudo) */
-> #define AD7194_CH(p)		(BIT(10) | AD7194_CH_POS(p))
-> 
-> But no need to resend because of this, let's wait others to comment, and
-> if everything fine I think Jonathan can massage this when applying.
+I referred to the documentation and created a patchset with a cover
+letter to have both the commits separated
+in different patches.
+https://lore.kernel.org/linux-devicetree/20240519175906.138410-1-kanakshill=
+edar111@protonmail.com/T/#t
 
-Fixed.
-
-> 
-> ...
-> 
-> > +#define AD7194_CH_TEMP		0x100 /* Temp sensor */  
-> 
-> Not sure that the comment has any value here.
-Dropped
-
-> 
-> ...
-> 
-> > +static int ad7194_validate_ain_channel(struct device *dev, u32 ain)
-> > +{
-> > +	if (!in_range(ain, AD7194_CH_AIN_START, AD7194_CH_AIN_NR))
-> > +		return dev_err_probe(dev, -EINVAL,
-> > +				     "Invalid AIN channel: %u\n", ain);
-> > +
-> > +	return 0;  
-> 
-> While this uses traditional pattern, it might be better looking in a form of
-> 
-> 	if (in_range(ain, AD7194_CH_AIN_START, AD7194_CH_AIN_NR))
-> 		return 0;
-> 
-> 	return dev_err_probe(dev, -EINVAL, "Invalid AIN channel: %u\n", ain);
-> 
-> But at the same time I would rather expect this to be in the caller and here
-> to have a boolean function
-> 
-Moved it.
-
-> static bool ad7194_is_ain_channel_valid(struct device *dev, u32 ain)
-> {
-> 	return in_range(ain, AD7194_CH_AIN_START, AD7194_CH_AIN_NR);
-> }
-> 
-> > +}  
-> 
-> ...
-> 
-> > +		return dev_err_probe(dev, -EINVAL,
-> > +				     "Too many channels: %u\n", num_channels);  
-> 
-> 		return dev_err_probe(dev, -EINVAL, "Too many channels: %u\n", num_channels);
-> 
-> ?
-> 
-> Or with limit
-> 
-> 		return dev_err_probe(dev, -EINVAL, "Too many channels: %u\n",
-> 				     num_channels);
-> 
-> 
-This one.
-> ...
-> 
-> > +	ad7194_channels = devm_kcalloc(dev, num_channels,
-> > +				       sizeof(*ad7194_channels), GFP_KERNEL);  
-> 
-> 	ad7194_channels = devm_kcalloc(dev, num_channels, sizeof(*ad7194_channels), GFP_KERNEL);
-> 
-> ?
-> 
-> Or
-> 
-> 	ad7194_channels = devm_kcalloc(dev, num_channels, sizeof(*ad7194_channels),
-> 				       GFP_KERNEL);
-Nope. too long in either case.
-
-> 
-> ?
-> 
-> ...
-> 
-> > +	device_for_each_child_node_scoped(dev, child) {
-> > +		ret = fwnode_property_read_u32_array(child, "diff-channels",
-> > +						     ain, ARRAY_SIZE(ain));
-> > +		if (ret == 0) {  
-> 
-> And here I would rather go for the traditional pattern, i.e.
-> 
-> 		if (ret) {
-> 			...
-> 		} else {
-> 			...
-> 		}
-It's odd, as it's two good paths I've left this one alone.
-
-> 
-> > +			ret = ad7194_validate_ain_channel(dev, ain[0]);
-> > +			if (ret)
-> > +				return ret;
-> > +
-> > +			ret = ad7194_validate_ain_channel(dev, ain[1]);
-> > +			if (ret)
-> > +				return ret;
-> > +
-> > +			*ad7194_channels = ad7194_chan_diff;
-> > +			ad7194_channels->scan_index = index++;
-> > +			ad7194_channels->channel = ain[0];
-> > +			ad7194_channels->channel2 = ain[1];
-> > +			ad7194_channels->address = AD7194_DIFF_CH(ain[0], ain[1]);
-> > +		} else {
-> > +			ret = fwnode_property_read_u32(child, "single-channel",
-> > +						       &ain[0]);
-> > +			if (ret)
-> > +				return dev_err_probe(dev, ret,
-> > +						     "Missing channel property\n");
-> > +
-> > +			ret = ad7194_validate_ain_channel(dev, ain[0]);
-> > +			if (ret)
-> > +				return ret;
-> > +
-> > +			*ad7194_channels = ad7194_chan;
-> > +			ad7194_channels->scan_index = index++;
-> > +			ad7194_channels->channel = ain[0];
-> > +			ad7194_channels->address = AD7194_CH(ain[0]);
-> > +		}
-> > +		ad7194_channels++;
-> > +	}  
-> 
-
+Thanks and Regards,
+Kanak Shilledar
 
