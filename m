@@ -1,118 +1,148 @@
-Return-Path: <linux-kernel+bounces-183037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE44A8C93AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:16:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C3278C93B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23A0E1C20B12
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:16:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8F091F213A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEDE17BA2;
-	Sun, 19 May 2024 07:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D5C17C74;
+	Sun, 19 May 2024 07:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="O6OwOLue"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="uyHLxjhM"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9046FB666;
-	Sun, 19 May 2024 07:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294061C2E;
+	Sun, 19 May 2024 07:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716102960; cv=none; b=rF2CmOCWg3JnMJ4RVLdd5LMtPUPzy262dB2tKmIkUz4Nh0UHKgbFxMqG06tMvCo1uQmVDrgUPTJuBdDN12PfJdS28dS5EhJLbt0HWo0qwClwMonjH4CCFit4ax9Gryre4deTLIMHs14ewkAL8mdHljrt7u6oaC39S6QIuCt6nLI=
+	t=1716104489; cv=none; b=jS5vDygh/mLd2FplBIuMGnsaYn4R6YkDsnxpWesULWs82JENGfzmSnF2jngJZmV3xfZcyMQ4O45ePHHHN1H2LaixuGvG308iOuNQ8aZ+bba8+s/kmck9uBXkOk8TmF219px3GOJ+axe6uGgQbleSKlhMuyeH3tX9YelwQZ3lud0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716102960; c=relaxed/simple;
-	bh=3Ib/4jVZX15fK3hvYNLAJEDzsJyGYYDvKxm3yexwV/M=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=dO58ejgtk4GMENwalpis2MtPvyB/FqE5DzDrzYuzbXGRpuEV8+rhIrMO+dz35EH+3DVILrFLlktcRPm+csBMazuTWTia1ye0kWaPxYjXl23Ns4vnhGE4me+QCFS4/ayGYCnYwF2rkOLxJCm73IZFDUNfBwh2+Vzqv/g6FFM7Rc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=O6OwOLue; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716102924; x=1716707724; i=markus.elfring@web.de;
-	bh=awBD3TGD+O80uOUmxCjUFbBY5uYZxYKTob1I/UkA+vE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=O6OwOLueNplf1cccVOoDKe+1IWy74wk7u2b2KBJL+76S9QRpUBJPmmZRZlWoT3Sy
-	 Dp39K4Zwr2Mj3WAwXLiz6OwEP8sgVZhmOFNAStu0oa6KzCmoqhXiK26g41p4jY3tB
-	 FMW6gbMV1gVmaq921lzi0aJ2KJtLxyWBmmc4u041MAxwNwRX3M1RH5Q6IDs08N28M
-	 a3d7PLvqWk94gVCNW25vFAzzPHZLyM+UUMOEwZS2FjaT9RLr8Yjc3yLtAhqlYseCa
-	 wW4XNr2JwIeYhC2u4Yw4zV+GJh8E5w/mtJTtj0xPBLlx3d59W4/z1u46gSS41041j
-	 X52gqx+vItakwwc38g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N9LIc-1seOuF3JBM-015Ky5; Sun, 19
- May 2024 09:15:23 +0200
-Message-ID: <43f4acb9-4409-4b51-9cb6-543bcf42f0ba@web.de>
-Date: Sun, 19 May 2024 09:15:19 +0200
+	s=arc-20240116; t=1716104489; c=relaxed/simple;
+	bh=r7qebuKPlwDwTzkVFn4u2wgs6vKh7lR+jcu5oIF9jbA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z0nCN5O5UYfhlf7JkljGSR9JPxeE5o+gDxMmQ3+BwrUvUnn//iUbrYsmqmkQYw+bvmqxCBMCbFX0yKOZgwEi8Ky4oE6jY1UB8kE/lVD2Rh9ExP+hRBOYhVKVYfrb3ERLJCfjrZraUVRzQsqEBzjGRipynLqkOrOgMtVHZtf2NW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=uyHLxjhM; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+X-Envelope-To: val@packett.cool
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1716104484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iCzZwZj36Iz4vA1dDun7lszpPSZPxwDHKR4L5BLCjIg=;
+	b=uyHLxjhMy3s5Tm8T1twQKRP6W5/3ZNw6oYwG7SQFEmrp6HRLn9yvjp+J4WS2RYr0/Xug/7
+	IeOM96jyjfSeADjc5wXZsFDZ4PzL0NkAM2Hnekudu2iQACIYkoHkFHCOFZQeXs0KQi4HxY
+	Qz7n9kvfBdnt6WINxFLWpbPNiVTQMrghArcTu81SSvTOh6mO29DLWYTeC6gHJwKnNw3QDj
+	l0mR9Pwt6Iq2XP+guouOVkxYjVkvdwEhbxXV8CA2/ZQo//VrO1UA51+Be3fIRslylfuj3b
+	CvzZt6Tv3PIRaXu12T4LcfDUSYbmP79QoZiW1g815fC0gY//CBQtKBSTSGN+YQ==
+X-Envelope-To: stable@vger.kernel.org
+X-Envelope-To: hjc@rock-chips.com
+X-Envelope-To: heiko@sntech.de
+X-Envelope-To: andy.yan@rock-chips.com
+X-Envelope-To: maarten.lankhorst@linux.intel.com
+X-Envelope-To: mripard@kernel.org
+X-Envelope-To: tzimmermann@suse.de
+X-Envelope-To: airlied@gmail.com
+X-Envelope-To: daniel@ffwll.ch
+X-Envelope-To: dri-devel@lists.freedesktop.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Val Packett <val@packett.cool>
+To: 
+Cc: Val Packett <val@packett.cool>,
+	stable@vger.kernel.org,
+	Sandy Huang <hjc@rock-chips.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] drm/rockchip: vop: clear DMA stop bit on flush on RK3066
+Date: Sun, 19 May 2024 04:31:31 -0300
+Message-ID: <20240519074019.10424-1-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
- devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Alvin_=C5=A0ipraga?=
- <alvin@pqrs.dk>, Emil Svendsen <emas@bang-olufsen.dk>,
- Andi Shyti <andi.shyti@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij
- <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>,
- Takashi Iwai <tiwai@suse.com>
-References: <20240517-a2b-v1-1-b8647554c67b@bang-olufsen.dk>
-Subject: Re: [PATCH 01/13] a2b: add A2B driver core
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240517-a2b-v1-1-b8647554c67b@bang-olufsen.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NEkB/gm/kIFqYDsQ8gGsUusFhiSrnLq0i2UUuLPVIe+oePa5zTf
- fkVCMhH4sItWIoH/iCPB+hN6FpWGVHAcPkKh82G6vgUD9Jk+guNKQ4BEKH1Avm249Ihhr3P
- Dcx0z+T555vWJCQsByKRjkd9j1VijpPhrZBXd4oqs3lPmrlobaDZdEBo2YQ5BR1Aul0jWye
- t79NiTVhdvkwIknnthtTA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:A6h29kzZZCU=;scPHcuHdNkNc6ycjFNwFZucbAhY
- MprszvjeRvSwg/FEKzeionPG512gGR6psy9f/yzvvH7DWIGiber5m3EwPhXs3JrkqNYLJGe4A
- 1ms8rKNzdCQ7BwZqNLQD0FBHykLpgVqUqBcaLbWCZ0WBfBweg4rqTMBdg3MKf/sWfDVGvIBe6
- 9gp4Ev/kLjPwj5+m6VhmfSgMKVz+CDTZjVbwqfXet6gCVbK2YMP6MHJDz2dOsRwaXzWpOTkDX
- Ohe0pZxbrtH35P391zmfXEC5BWfxyjES6IHlbsCrmS5K7gDETbcGMVEOpUvmhGofwOLZzIPDP
- BJ670qzI4gtrMl972fFbchNKJ9Mc2HTL+ZeW/HgIaIOSp3hj1mPxcImQbtdmoJl70W6EF+sus
- HtkSYgUpG9r2j7Fu0xZzYEEu91ozDmMSisS8CPphewaXu6ld999NyGnKJia2iYBksUsZWb/W0
- JwNdNsByuQzaN6/YTNZqNT+Fpzk3sffP3z9ivtwMCwKc+OXxvowQxUjgwjTfrxMR4g+7+pT5T
- oxj10kVao94VNqVyKrNgN5sKyDSIWPp5osh9wEb2nfcFCbbcCwU3ntl1py863QCQfPgaq2Eij
- EnIa+K5QqXtH5s9G24TGflxdSj7771aQ9ycTJ2dnnoXNHUIWNs/HWPrYZxpcGP2XePtxH9XME
- ZPQCwIWyLvHJtxyqWnU/EEaua1iN2ZLKpytT6Pcgf5SCALXQs4UC6W/FJrLxZQ1OQMysh//84
- TIisovgFrB+t66GFLmp9mm09R6bkJJMiu0WvSh4w/91RKFaFUO/j3Rbfvgu5vDB8szLpek0Pz
- o8JUoIa7qfLNAcvTWhEhhTWGvBs6Af68W2s7u951lPgzo=
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-=E2=80=A6
-> +++ b/drivers/a2b/a2b.c
-> @@ -0,0 +1,1252 @@
-=E2=80=A6
-> +#define __a2b_bus_for_each_node(__bus, __node, __i) \
-> +	for (__i =3D 0; __i < A2B_MAX_NODES && (__node =3D __bus->nodes[__i]);=
- i++)
-=E2=80=A6
+On the RK3066, there is a bit that must be cleared on flush, otherwise
+we do not get display output (at least for RGB).
 
-I suggest to reconsider the usage of double underscores for identifiers.
-How do you think about to avoid that this software depends on undefined be=
-haviour?
-https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
-efine+a+reserved+identifier
+Signed-off-by: Val Packett <val@packett.cool>
+Cc: stable@vger.kernel.org
+---
+Hi! This was required to get display working on an old RK3066 tablet,
+along with the next tiny patch in the series enabling the RGB output.
 
-Regards,
-Markus
+I have spent quite a lot of time banging my head against the wall debugging
+that display (especially since at the same time a scaler chip is used for
+LVDS encoding), but finally adding debug prints showed that RK3066_SYS_CTRL0
+ended up being reset to all-zero after being written correctly upon init.
+Looking at the register definitions in the vendor driver revealed that the
+reason was pretty self-explanatory: "dma_stop".
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 3 +++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.h | 1 +
+ drivers/gpu/drm/rockchip/rockchip_vop_reg.c | 1 +
+ 3 files changed, 5 insertions(+)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index a13473b2d..d4daeba74 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -1578,6 +1578,9 @@ static void vop_crtc_atomic_flush(struct drm_crtc *crtc,
+ 
+ 	spin_lock(&vop->reg_lock);
+ 
++	/* If the chip has a DMA stop bit (RK3066), it must be cleared. */
++	VOP_REG_SET(vop, common, dma_stop, 0);
++
+ 	/* Enable AFBC if there is some AFBC window, disable otherwise. */
+ 	s = to_rockchip_crtc_state(crtc->state);
+ 	VOP_AFBC_SET(vop, enable, s->enable_afbc);
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
+index b33e5bdc2..0cf512cc1 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
+@@ -122,6 +122,7 @@ struct vop_common {
+ 	struct vop_reg lut_buffer_index;
+ 	struct vop_reg gate_en;
+ 	struct vop_reg mmu_en;
++	struct vop_reg dma_stop;
+ 	struct vop_reg out_mode;
+ 	struct vop_reg standby;
+ };
+diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
+index b9ee02061..9bcb40a64 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
++++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
+@@ -466,6 +466,7 @@ static const struct vop_output rk3066_output = {
+ };
+ 
+ static const struct vop_common rk3066_common = {
++	.dma_stop = VOP_REG(RK3066_SYS_CTRL0, 0x1, 0),
+ 	.standby = VOP_REG(RK3066_SYS_CTRL0, 0x1, 1),
+ 	.out_mode = VOP_REG(RK3066_DSP_CTRL0, 0xf, 0),
+ 	.cfg_done = VOP_REG(RK3066_REG_CFG_DONE, 0x1, 0),
+-- 
+2.45.0
+
 
