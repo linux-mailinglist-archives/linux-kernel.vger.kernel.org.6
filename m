@@ -1,189 +1,105 @@
-Return-Path: <linux-kernel+bounces-183042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C6448C93BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:44:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D07818C93C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F2D21C209CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 718F51F21326
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 07:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343B418037;
-	Sun, 19 May 2024 07:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A4B1BDE6;
+	Sun, 19 May 2024 07:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hkzgk/z+"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Lz6vhAyR"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E2517BA2;
-	Sun, 19 May 2024 07:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9850F1798C;
+	Sun, 19 May 2024 07:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716104637; cv=none; b=fQKgs5tW8Qz+1OkAusnqGy8U0qPXeifHp3vEMpma7cw9mvHv+9FA6TMQ+2hXLqdWcEaxzSLOUsCToQ+9SuX/DccDbrd0WlipUxAq/PPr9XVZPn1d+jRkGl56fr1NKY6XqAnU4ZtKP9kuik/wauYl9mhb1FpUOuzEj8jfQRMZPbs=
+	t=1716105051; cv=none; b=cK6Upe99mwFGfkgPsSSpJuJVZYRdH5dnOxxpdZlDRWUZ7QccL3dZPwOXivRatLIBCnJPKZYgOSEFvdFCEnguvv6ulWLX7s0nTqhIKOG0fiupvAYWkYpydqtZWOWoGSzN21le/HSOrRb79vSOQUgfgKNJwdJh3tNj0RYIBD/AWUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716104637; c=relaxed/simple;
-	bh=BLS/3yqG+x+pmzxow4oCh/ZaClvha66n9SalV6XKyPI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nxgTMr9iF4IRRF+JsHHOHiHGwTCsB+3B8UR9+gVJVcMtZQNc3LughTr2Yxylppr4tfPAZga4z194SsBFx28SMi2Ko+4S8cuyHR/teRt5HoIkWrwyT72JT6it8UZEdpUi6WolC8+HW4rU7PVGzNKAyzY0a+BDZWR+4TAxHu2fdcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hkzgk/z+; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5b27bbcb5f0so867057eaf.3;
-        Sun, 19 May 2024 00:43:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716104635; x=1716709435; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sxw0ppvwN68aKsYdrg7i/nk/Ahqb/+wiMV6TU4JTkq0=;
-        b=Hkzgk/z+sjGl3uGZ5/cN8u5niBaqdG6cwZ2yYp4ZHzL2Iz5bU/S3D4jgX9Q/gp59x8
-         n8c67saLryXiMGxsxNNZV4DJp2V1ORBgQt/fEoyc+h/oe3IRzXIoqaqvPsE2t7YE8+aj
-         SRA5sMpKnmSyuE1fwILppZ/JKQw4NyLqoc0VuhoZTVjKR64FjMOYDO7DX3RYZY8C++jj
-         KqtdXog21jsNEKQUKXTNWiyH+C7ZGDfBObsC69LzlT4U7cd+4Kw+tAhMBTWbkv2zbwqH
-         2WXy4wOHwOqWyKIVWcrSPEOtNZs8mNvA50vSLIewza6Np0t2fwM6ksdRoSX+GEXqBUa0
-         858Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716104635; x=1716709435;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sxw0ppvwN68aKsYdrg7i/nk/Ahqb/+wiMV6TU4JTkq0=;
-        b=sUIMdY8mTNquYl7xrMsM4s9lnE0exBIDOILxDnBbMvURyBA1VD9jIXMZlDBj/1c80R
-         fPUOp49Aya32bO9rjUKI4F+0sxuvQgdBZctlA58QONY+/pys110JjojBqq15Fjn+yAud
-         mTSIiHMYYQyaJN8HdCncg72/Nuq1I8chIJu+6OSh9DjTenXyAZ6w/WlZor0Yeg92yTH9
-         GNiicDhkE/EjlLdI08AxZuoS17EUs7F7eOuwgJvFQCytw5SFLOyFuGQgrzLqh60Edo75
-         wghJ7Ee+rmzRXykPpNKeivFgVE7eUNDQZMYyrTN9dxhbjaLpoViF9dP9iesJAPBo/CuS
-         lKKA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8wSN8xOmg5zj1sczS80lHr1fLo9YTI7tljKE/NW708BRPtcuMc2rybJoXeza9A3skDtTgvXT6e5XHdpegg/RTmmiA+wKoO9bNVxbP
-X-Gm-Message-State: AOJu0Yw/s+4mNtnbW7Mb733vGXimdfMFXPkAyJAXkIKlyGuscdixafs3
-	nthZqO/qmHOQ2/tvIhD7ph+iTGd4KXiQLNWogTL5/H2gWa+a0csY
-X-Google-Smtp-Source: AGHT+IHNm6SmvyxfGJ2bBkTQkzP7Xrbf6qLP88jCweFCOqqbEpA3/8+5OaaoJ+k0I3HpDOHDqyfI/w==
-X-Received: by 2002:a05:6358:8093:b0:192:5510:e3ee with SMTP id e5c5f4694b2df-193bb623eb1mr3124570055d.13.1716104635013;
-        Sun, 19 May 2024 00:43:55 -0700 (PDT)
-Received: from localhost.localdomain ([120.229.27.58])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67126b666sm19735722a91.34.2024.05.19.00.43.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 May 2024 00:43:54 -0700 (PDT)
-From: Wardenjohn <zhangwarden@gmail.com>
-To: jpoimboe@kernel.org,
-	mbenes@suse.cz,
-	jikos@kernel.org,
-	pmladek@suse.com,
-	joe.lawrence@redhat.com
-Cc: live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wardenjohn <zhangwarden@gmail.com>
-Subject: [PATCH] livepatch: introduce klp_func called interface
-Date: Sun, 19 May 2024 15:43:43 +0800
-Message-Id: <20240519074343.5833-1-zhangwarden@gmail.com>
-X-Mailer: git-send-email 2.37.3
+	s=arc-20240116; t=1716105051; c=relaxed/simple;
+	bh=XEvMTmyejA92HfvXwRaxygi2nQZ9IXfpiRQKTfYa1uM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KkiqvbAjZS6JiV8eJ18GrGdEXJ8ucAcnz5k9qRwGAJlVtWC3ODGi72/00NsTuSGU15hwvPgkdaUsH5P8FDNqlGeaTU+tLGNkaxGvNqlGsNdR+1ssfcZA2VM2jMQo4WSBAUfAv6aB/AudyOtCrKinz5aB/zeox+2n3S4tIAdNXjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Lz6vhAyR; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1716105046;
+	bh=XEvMTmyejA92HfvXwRaxygi2nQZ9IXfpiRQKTfYa1uM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Lz6vhAyRZm7CuzS8wdtwgjMUo8XB/5KHpbUcsaSq+94dlgB4TDQqwOIKCObCim666
+	 cTqI4w5dS+kz8j/TyqQxZ3IMS5V3wePBgH7Fomub/ypcuDJlTSzyrAmHHp1eUFKHWJ
+	 8K2kTnOH4wDC1d413AEuGkhUQvYCy/CygfSC9jwc=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 0/3] ChromeOS Embedded Controller charge control driver
+Date: Sun, 19 May 2024 09:50:18 +0200
+Message-Id: <20240519-cros_ec-charge-control-v1-0-baf305dc79b8@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADqvSWYC/x2MWwqAMAzAriL9drCJe+BVRERm1YJs0okI4t0tf
+ oaQPFCQCQt01QOMFxXKScDUFcRtSisqmoWh0U2rrXYqci4jRiWWxcacTs67csE64zHgHDxIfDA
+ udP/jfnjfD0qbOMRoAAAA
+To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+ Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>, 
+ Dustin Howett <dustin@howett.net>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716105045; l=1339;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=XEvMTmyejA92HfvXwRaxygi2nQZ9IXfpiRQKTfYa1uM=;
+ b=bzQAuhT2HoodDD+paM1bjPmpJqZ4jNyPrci8hFaTGj9Heh/GjTuliLL9JarHQMzpFm2NMAJj9
+ EvS9NyxYVEKDABUcyKwKCh1rVS1gsdb52BLgON2Kvm8nHu0Ta2eLx2u
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Livepatch module usually used to modify kernel functions.
-If the patched function have bug, it may cause serious result
-such as kernel crash.
+Add a power supply driver that supports charge thresholds and behaviour
+configuration.
 
-This commit introduce a read only interface of livepatch
-sysfs interface. If a livepatch function is called, this
-sysfs interface "called" of the patched function will
-set to be 1.
+This is a complete rework of
+"platform/chrome: cros_ec_framework_laptop: new driver" [0], which used
+Framework specific EC commands.
 
-/sys/kernel/livepatch/<patch>/<object>/<function,sympos>/called
+The driver propsed in this series only uses upstream CrOS functionality.
 
-This value "called" is quite necessary for kernel stability assurance for livepatching
-module of a running system. Testing process is important before a livepatch module
-apply to a production system. With this interface, testing process can easily
-find out which function is successfully called. Any testing process can make sure they
-have successfully cover all the patched function that changed with the help of this interface.
+Tested on a Framework 13 AMD, Firmware 3.05.
+
+[0] https://lore.kernel.org/lkml/20240505-cros_ec-framework-v1-0-402662d6276b@weissschuh.net/
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- include/linux/livepatch.h |  2 ++
- kernel/livepatch/core.c   | 18 ++++++++++++++++++
- kernel/livepatch/patch.c  |  2 ++
- 3 files changed, 22 insertions(+)
+Thomas Weißschuh (3):
+      platform/chrome: Update binary interface for EC-based charge control
+      power: supply: add ChromeOS EC based charge control driver
+      mfd: cros_ec: Register charge control subdevice
 
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index 51a258c24ff5..026431825593 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -37,6 +37,7 @@
-  * @nop:        temporary patch to use the original code again; dyn. allocated
-  * @patched:	the func has been added to the klp_ops list
-  * @transition:	the func is currently being applied or reverted
-+ * @called:		the func is called
-  *
-  * The patched and transition variables define the func's patching state.  When
-  * patching, a func is always in one of the following states:
-@@ -75,6 +76,7 @@ struct klp_func {
- 	bool nop;
- 	bool patched;
- 	bool transition;
-+	bool called;
- };
- 
- struct klp_object;
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 52426665eecc..bc055b56dbe5 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -470,6 +470,22 @@ static struct attribute *klp_object_attrs[] = {
- };
- ATTRIBUTE_GROUPS(klp_object);
- 
-+static ssize_t called_show(struct kobject *kobj,
-+				struct kobj_attribute *attr, char *buf)
-+{
-+	struct klp_func *func;
-+	
-+	func = container_of(kobj, struct klp_func, kobj);
-+	return sysfs_emit(buf, "%d\n", func->called);
-+}
-+
-+static struct kobj_attribute called_kobj_attr = __ATTR_RO(called);
-+static struct attribute *klp_func_attrs[] = {
-+	&called_kobj_attr.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(klp_func);
-+
- static void klp_free_object_dynamic(struct klp_object *obj)
- {
- 	kfree(obj->name);
-@@ -631,6 +647,7 @@ static void klp_kobj_release_func(struct kobject *kobj)
- static const struct kobj_type klp_ktype_func = {
- 	.release = klp_kobj_release_func,
- 	.sysfs_ops = &kobj_sysfs_ops,
-+	.default_groups = klp_func_groups,
- };
- 
- static void __klp_free_funcs(struct klp_object *obj, bool nops_only)
-@@ -903,6 +920,7 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
- static void klp_init_func_early(struct klp_object *obj,
- 				struct klp_func *func)
- {
-+	func->called = 0;
- 	kobject_init(&func->kobj, &klp_ktype_func);
- 	list_add_tail(&func->node, &obj->func_list);
- }
-diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
-index 90408500e5a3..75b9603a183f 100644
---- a/kernel/livepatch/patch.c
-+++ b/kernel/livepatch/patch.c
-@@ -118,6 +118,8 @@ static void notrace klp_ftrace_handler(unsigned long ip,
- 	if (func->nop)
- 		goto unlock;
- 
-+	if (!func->called)
-+		func->called = true;
- 	ftrace_regs_set_instruction_pointer(fregs, (unsigned long)func->new_func);
- 
- unlock:
+ MAINTAINERS                                    |   6 +
+ drivers/mfd/cros_ec_dev.c                      |   1 +
+ drivers/power/supply/Kconfig                   |  12 ++
+ drivers/power/supply/Makefile                  |   1 +
+ drivers/power/supply/cros_charge-control.c     | 279 +++++++++++++++++++++++++
+ include/linux/platform_data/cros_ec_commands.h |  44 +++-
+ 6 files changed, 341 insertions(+), 2 deletions(-)
+---
+base-commit: 0450d2083be6bdcd18c9535ac50c55266499b2df
+change-id: 20240506-cros_ec-charge-control-685617e8ed87
+
+Best regards,
 -- 
-2.37.3
+Thomas Weißschuh <linux@weissschuh.net>
 
 
