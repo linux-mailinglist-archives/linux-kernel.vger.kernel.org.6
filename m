@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-183224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F24F8C960E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 21:20:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856008C9611
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 21:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 532EB2812B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:20:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5AEAB20C67
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAFA6D1BD;
-	Sun, 19 May 2024 19:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015E16BFD4;
+	Sun, 19 May 2024 19:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNAip4XM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RV+ciD7z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32AEEAEB;
-	Sun, 19 May 2024 19:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400D6168BE;
+	Sun, 19 May 2024 19:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716146452; cv=none; b=NlFl9PF/ZbjfZJZOE8rr7PK2qaUKqfLaJu9ehMfnkUKZ5Wy7HtJRUvw3Xp1iGJqubCkOwOe2ORzj5lzBwyREAD0Bn9weODfobaKsNGaMplkpyj6PE9LSBLzU1fC7pLepCgnziveQ52peENeTSMLp/5hMIyWnzSeLmnRX0xZGaII=
+	t=1716147156; cv=none; b=dMu2ZA/XMPxIrcdl0nUBojk9CpL5ERVT66HWoSEyQGa6botQoOXScqBXkalbijUbf2HIcH3ipcT1ZKkCm6GgMtaHnZ/8EWemLyBqcJWDmPaw10Hb4fGNi8dtpNfF5wfiGhhmaPHtw8XQpSoGNx2haUnXyuwwsgbBJTYRyg6VqN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716146452; c=relaxed/simple;
-	bh=ykLxESgB7ISBPimW2UXAEsGJazq8lCpoX0jzaPzAzFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AAheE5/tT1w9r5WX4t89ZZbwONkcKAmkBqNDS0wWqqGMx0mNcj2xQRWS8NlR3SEJTe8//yTie/9SkZRW7tXG4D7Z+mTGyT/IEXhGW5EKHJD4pXaUCt/WzHhOhcW+ue1q+hfbX6gsRfeuvz30nIFjOLofC6hA8gN+GUQfUzj32LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNAip4XM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1B8BC32781;
-	Sun, 19 May 2024 19:20:48 +0000 (UTC)
+	s=arc-20240116; t=1716147156; c=relaxed/simple;
+	bh=1GvbBfv2XOQYFaJwoRDiUHVxHSxTdIHoGwILpB6AiwQ=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=FpDt+tV7InXXmNU6tYGUAofpd51+Zipeda50cr3xRUXGUc6FePVVHlTtq0vOiHzEOKbL8iD4ZG54ZqOgWE7yBzfiluI7O2oh/DQ7ZJzFK2Ny/AUSX9UkH3bwQEKRL6KKyeiMXu+eyv9Gf6lRiCe2xdVshzLWosbHootDa9CefU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RV+ciD7z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 781EEC32781;
+	Sun, 19 May 2024 19:32:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716146451;
-	bh=ykLxESgB7ISBPimW2UXAEsGJazq8lCpoX0jzaPzAzFY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dNAip4XM8wdUfJAQ6NEtWFMVCidR9ibuqM0426E0JFFEbaxMI3D+tmdocXHLoSmBW
-	 hYIrehDtUGu3V18nY7Bs8scP5CavU14GcDTWWUBbDdzs4G5AuG9iCvg5PMqcoZOF5Y
-	 g7vG9B8uF9jbU8pqjdPzUS49yZGE/fA8SR2Gq+pF6favZsHrMez1xWzTFOb9Zx36aR
-	 07gsXGKm0uY1jdidTFaghL+cxg7vLzlKX3TdUlq6KeS6WTF12H2Qnp+KcRt8GetKQn
-	 Q7gDvkz7AUOFUhet6yKHGzIV+kHiU0sFSBe3T0Z1SVVsDQW/pNDk3u8CvK25VhZ8pZ
-	 3n2h3Tr8pYeGw==
-Date: Sun, 19 May 2024 20:20:39 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Julien Stephan <jstephan@baylibre.com>, Esteban Blanc
- <eblanc@baylibre.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 4/4] iio: adc: ad7380: add support for multiple scan
- type
-Message-ID: <20240519202039.5a70157d@jic23-huawei>
-In-Reply-To: <CAMknhBFob4Wd8Gm8W8NKSuL9UbBCY8+fAN_voGPhb4Fy1tAT-w@mail.gmail.com>
-References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
-	<20240507-iio-add-support-for-multiple-scan-types-v1-4-95ac33ee51e9@baylibre.com>
-	<20240508124049.00001661@Huawei.com>
-	<CAMknhBFob4Wd8Gm8W8NKSuL9UbBCY8+fAN_voGPhb4Fy1tAT-w@mail.gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=k20201202; t=1716147155;
+	bh=1GvbBfv2XOQYFaJwoRDiUHVxHSxTdIHoGwILpB6AiwQ=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=RV+ciD7zn2cE5WPaK6Rr58GtDcZbvGDrRevdKoGmzdpmxR4IwAS90F+AJ8NNUNZlF
+	 aqmzascLg5BYDyR6OfAfji8wCDwULp7NONZlZyaGTSKaNj/NI+qk/df77ipsb49oEK
+	 oH/Cq96ycdom81nSHCQwDQ+2SAelCcbCw0ilsAfbajpC4c1JbSAb4CP98H/n9neURg
+	 3o1ekOeseaBGKMa4uv2enWt2CkciNc6R5bCzlZkq0HVHZ5vCVXVvPiMaX46VmWRFyf
+	 Q63Dse0E3zv3p+06Ov1PH3IZvTbQox7eKspaOjRbhl7cY9Y+Qv5R+m5ZnXb+Q9giao
+	 2oG3+xER9iqcg==
+Date: Sun, 19 May 2024 14:32:34 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: linux-riscv@lists.infradead.org, 
+ Kanak Shilledar <kanakshilledar111@protonmail.com>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Samuel Holland <samuel.holland@sifive.com>
+In-Reply-To: <20240519175906.138410-3-kanakshilledar111@protonmail.com>
+References: <20240519175906.138410-1-kanakshilledar111@protonmail.com>
+ <20240519175906.138410-3-kanakshilledar111@protonmail.com>
+Message-Id: <171614715439.2941344.11264816105918092609.robh@kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: riscv: cpus: add ref to
+ interrupt-controller
 
-On Wed, 8 May 2024 12:21:09 -0500
-David Lechner <dlechner@baylibre.com> wrote:
 
-> On Wed, May 8, 2024 at 6:40=E2=80=AFAM Jonathan Cameron
-> <Jonathan.Cameron@huawei.com> wrote:
-> >
-> > On Tue,  7 May 2024 14:02:08 -0500
-> > David Lechner <dlechner@baylibre.com> wrote:
-> > =20
-> > > The AD783x chips have a resolution boost feature that allows for 2
-> > > extra bits of resolution. Previously, we had to choose a scan type to
-> > > fit the largest resolution and manipulate the raw data to fit when the
-> > > resolution was lower. This patch adds support for multiple scan types
-> > > for the voltage input channels so that we can support both resolutions
-> > > without having to manipulate the raw data.
-> > >
-> > > Signed-off-by: David Lechner <dlechner@baylibre.com> =20
-> >
-> > I'm wondering about the control mechanism.  I was thinking we'd poke
-> > the scan type directly but this may well make more sense.
-> >
-> > This is relying on _scale change to trigger the change in the scan type.
-> > That may well be sufficient and I've been over thinking this for far to=
-o many
-> > years :)
-> >
-> > It will get messy though in some cases as the device might have a PGA o=
-n the
-> > front end so we will have a trade off between actual scaling control and
-> > resolution related scale changes. We've had a few device where the scale
-> > calculation is already complex and involves various different hardware
-> > controls, but none have affected the storage format like this.
-> >
-> > I'll think some more.
-> > =20
->=20
-> Here is some more food for thought. The AD4630 family of chips we are
-> working on is similar to this one in that it also has oversampling
-> with increased resolution. Except in that case, they are strictly tied
-> together. With oversampling disabled, we must only read 24-bits (or 16
-> depending on the exact model) and when oversampling is enabled, we
-> must read 32-bits (30 real bits with 2-bit shift). So in that case,
-> the scan_type would depend only on oversampling ratio > 0. (Writing
-> the oversampling ratio attribute would affect scale, but scale
-> wouldn't be writable like on ad7380.)
->=20
-> It seems more intuitive to me that to enable oversampling, we would
-> just write to the oversampling ratio attribute rather than having to
-> write to a buffer _type attribute to enable oversampling in the first
-> place. And other than requiring reading the documentation it would be
-> pretty hard to guess that writing le:s30/32>>2 is what you need to do
-> to enable oversampling.
->=20
+On Sun, 19 May 2024 23:29:06 +0530, Kanak Shilledar wrote:
+> removed the redundant properties for interrupt-controller
+> and provide reference to the riscv,cpu-intc.yaml which defines
+> the interrupt-controller. making the properties for riscv
+> interrupt-controller at a central place.
+> 
+> Signed-off-by: Kanak Shilledar <kanakshilledar111@protonmail.com>
+> ---
+>  .../devicetree/bindings/riscv/cpus.yaml       | 22 +------------------
+>  1 file changed, 1 insertion(+), 21 deletions(-)
+> 
 
-Ok. Few weeks thinking and I've no better ideas.  Generally I'm fine
-with how you did this but I wouldn't have a 'special / default'
-scan_type.  Just put them all in the array and pick between them.
-That avoids fun of people trying to work out on what basis to
-prefer one over another.=20
+My bot found errors running 'make dt_binding_check' on your patch:
 
-So tidy the loose ends up and I'd be delighted to see a non RFC version.
-It 'might' be worth waiting until we have a couple of suitable drivers
-though and then show the feature works well for them all.
-Whilst I think I'd take it with just one though as can see how it fits
-together, but more than one driver would boost my confidence level.
+yamllint warnings/errors:
 
-Jonathan
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/riscv/cpus.yaml: properties:interrupt-controller: 'oneOf' conditional failed, one must be fixed:
+	Additional properties are not allowed ('$ref' was unexpected)
+	'type' is a required property
+		hint: DT nodes ("object" type in schemas) can only use a subset of json-schema keywords
+	from schema $id: http://devicetree.org/meta-schemas/interrupts.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240519175906.138410-3-kanakshilledar111@protonmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
