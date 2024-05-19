@@ -1,256 +1,140 @@
-Return-Path: <linux-kernel+bounces-183181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41CFA8C95A9
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:47:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 969F48C95AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D9F1B20C6B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:47:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DB7E1F21549
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DAE502BE;
-	Sun, 19 May 2024 17:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223625102B;
+	Sun, 19 May 2024 17:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wg9+zWz8"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xlw/Ln1E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E424F200
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 17:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E93245C1C;
+	Sun, 19 May 2024 17:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716140832; cv=none; b=rBuDsjh28accLnUVtSNDFqlSmBnGgD6bA/YAYawXOZje3pqr+JXvxZflZwY/yBWi52yyMVFQL3SUNCgpzjWHVhr1EKWNJrPt52z2eRcUIrzhjJwRVoB/20msf5L/zoWu0lfKrakK7PbQ1WOMMu6/NqJfPh6XUxmoca4tZ2VQ3h0=
+	t=1716141241; cv=none; b=pyTOLxVy/Hc3uiQymzJ5FJSmaXpa25dIW9hAGgvMzdScpiW5McRopZKj7snC3NH28Uh7chFKnAq12zSurYEfnBjk4zokEoIm1XBDp2JtNMWhVyDrzrxeQHxRAza+8numPbcx/l7lbALOWhRz88gVKrZf8jts9uV4i8mnEWipdzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716140832; c=relaxed/simple;
-	bh=myeE3XBIP2ogQpDASkBLoktTJIKPRWi5o4H6xIR1cnY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=thAUuC5KTJS+n7fYVgyGPJCdgMeSwDyqF70eD0oz2pwF+uTB2KI+8hkm7bnnzxATt73SwO+CwXdXMgymgeQTZUQpNRpetEnzVlQk4YelaZaqFuguW/r0uFAFMz/fbNkewoEPbeShbNWEO2dwwZoKCYYV8Jy1Se2VR7eJRGFI9yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wg9+zWz8; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dee8315174dso14327657276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 10:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716140830; x=1716745630; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MxyPPkoyb/v1Xne3FZ/GVon/lPLE77xcyrrXPBy+OCs=;
-        b=Wg9+zWz8Phj8rGeihP9ZmlThaCerTWGwuBNe6erRKpHD9roiJYcZPvautUJ1UhLK5U
-         7jdDXdEGi+MHHBy9ofLc9EZPj9BtRAP+IuR3Me+dVeFN3jAZyx+hrSsX6oiiVypAUVbc
-         uRzS978iWZY2CjFIvgmcLIOG9/tPG100umeQaNvyaOVn6vn5zQa5ZT1s9qkI+U1VXoLA
-         Iyu6ZG46BQlQyVLq6ZZHlhSyfTovm5EqeLYksVfqHWqtQAlRENi20BDFIYh5Not4usxE
-         vyeXrrVOJHHBH4/gQHQfiZ5+5s69rRx+VEgke/ONPlEC6/8w7IcT6WE4gBk9k9Exnv/d
-         L8lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716140830; x=1716745630;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MxyPPkoyb/v1Xne3FZ/GVon/lPLE77xcyrrXPBy+OCs=;
-        b=JuRt9f1HdFxoY/wOPDvgZn+XFzY9GLjzfBmbD9REXG9+LbgjE8ifBnsI6F//xmqpyx
-         +p+oPzsur1ufrdFtQwZk2NTK/j69Lq1EzYI/VRMEcrZuHiSn/z+GCxbAQBjdgrJmkGKW
-         ZTW3Uqw7XDTZEJihhCh9fly8QWJ0uiYLU2+hIMaBFAxZMfi2MjMidH0DkMum/qrNanbS
-         Zg/a9NR6rntaJsy+T5rN1vJbfac/mGIDfWhoERunmL2BqSohlvGWxm4219StqTtDO8Z3
-         p6PwyIvS7JD19S/1df+8NAl/1ujIuysJh/GfIuFyS4r3vP3w8KTeWRxVTOoLdDYaicJj
-         4IyA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1v2gh4AsWiFgYvbHVjBFMeRfsFj/68Z0HKuER9LpZFtK+Z2Ny2jJRKmpvedXz4/M7+mSWhBx/telbMeI1vinjQSIsSgemlQDL8Ak8
-X-Gm-Message-State: AOJu0YwIQQhvTCdolGy5Ceaw+WE3x/0YT4BQg3JADCFxprcxD4hwXPA6
-	EA1Ge/aw6ROJ0S7xhKGnJqMSEVt6COoSAZiLFJ0AQqlBgOXIdYdDQuvhPv2auHLcrJpJZVRGObI
-	RStfVheC505J0eg==
-X-Google-Smtp-Source: AGHT+IHT8sDGPigxr7FKHw6oIx0bTcsFvuCkPczlxcIrNezaHNHMldcSmu36Fnmq8zyuYkZ3A+DQbfeCn2NHlVk=
-X-Received: from tj-virt.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5683])
- (user=tjmercier job=sendgmr) by 2002:a25:b18f:0:b0:de6:569:325c with SMTP id
- 3f1490d57ef6-df490711195mr1058902276.4.1716140830204; Sun, 19 May 2024
- 10:47:10 -0700 (PDT)
-Date: Sun, 19 May 2024 17:46:48 +0000
+	s=arc-20240116; t=1716141241; c=relaxed/simple;
+	bh=Psl6s14Q/uZmJDpMUryavaz13jKlxId6dobvJt+7uwQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aPBo++lDD4Yd215cEZwDQMjk7U7Qz7bcdydNjZ8mYXZGNaHZqyQf6wjaUm8TnrgdGKqzVLsZbE+j0yODg/8y+vi0ClDO8qHQXoM4AoedZJFRlETZGfG7Hx3SkNsyMIFp9ubQbujmIjhKxcEhH/BK6lqGFJadc3dsOxWrXPXeofA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xlw/Ln1E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05014C32781;
+	Sun, 19 May 2024 17:53:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716141240;
+	bh=Psl6s14Q/uZmJDpMUryavaz13jKlxId6dobvJt+7uwQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Xlw/Ln1E96E2SMqs8LiQYc+76WnUKrmW+CqtybCn2A21+63KHBRN6S+Y9lGzGRM+L
+	 ff368j3o08DxQF8ZX59OD0eqXnZMtVEc0wQSRikYmffP34udzULlq67nXASreNC+1v
+	 TirFwXlX2pr45dL5EJFsKVeapGf8mFQZx36WY5zJNIwS0iVq51KukDzBm4yYEMo0m2
+	 zUH5lQAq+Q1Mm5GiogT/V4UrsSzHQtKE9p9q9DFaclVL5NCGgwiZ5rKbWUhUi55z2z
+	 ZM0f5t3q2hqK2i5K+/Y/wNfEami36chglimbh+0utOs31erQCbo/NR5d6zGEkxvmFo
+	 fdJNYuPZCsfdQ==
+Date: Sun, 19 May 2024 18:53:46 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Alisa-Dariana Roman <alisadariana@gmail.com>,
+ michael.hennerich@analog.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ lgirdwood@gmail.com, broonie@kernel.org, nuno.sa@analog.com,
+ marcelo.schmitt@analog.com, bigunclemax@gmail.com, dlechner@baylibre.com,
+ okan.sahin@analog.com, fr0st61te@gmail.com, alisa.roman@analog.com,
+ marcus.folkesson@gmail.com, schnelle@linux.ibm.com, liambeguin@gmail.com
+Subject: Re: [PATCH v8 3/6] iio: adc: ad7192: Add aincom supply
+Message-ID: <20240519185346.01092b44@jic23-huawei>
+In-Reply-To: <ZkNjYZew7Mko7iPX@smile.fi.intel.com>
+References: <20240514120222.56488-1-alisa.roman@analog.com>
+	<20240514120222.56488-4-alisa.roman@analog.com>
+	<ZkNjYZew7Mko7iPX@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Message-ID: <20240519174650.559538-1-tjmercier@google.com>
-Subject: [RFC] cgroup: Fix /proc/cgroups count for v2
-From: "T.J. Mercier" <tjmercier@google.com>
-To: tjmercier@google.com, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>
-Cc: shakeel.butt@linux.dev, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The /proc/cgroups documentation says that the num_cgroups value is,
-"the number of control groups in this hierarchy using this controller."
+On Tue, 14 May 2024 16:13:05 +0300
+Andy Shevchenko <andy@kernel.org> wrote:
 
-The value printed is simply the total number of cgroups in the hierarchy
-which is correct for v1, but not for the shared v2 hierarchy.
+> On Tue, May 14, 2024 at 03:02:19PM +0300, Alisa-Dariana Roman wrote:
+> > AINCOM should actually be a supply. AINx inputs are referenced to AINCOM
+> > in pseudo-differential operation mode. AINCOM voltage represents the
+> > offset of corresponding channels.  
+> 
+> ...
+> 
+> Possible cleanup with the help of
+> 
+> 	struct device *dev = &spi->dev;
+This is a good thing to have as a follow up as it applies much more widely
+than what is visible in this patch. In ideal world it would have been
+a precursor to this series, but I don't want to delay this for a v9 just
+to add that.
 
-Consider:
-controllers="cpuset cpu io memory hugetlb pids rdma misc"
-for c in $controllers
-do
-  echo +$c > /sys/fs/cgroup/cgroup.subtree_control
-  mkdir /sys/fs/cgroup/$c
-  echo +$c > /sys/fs/cgroup/$c/cgroup.subtree_control
-  for i in `seq 100`; do mkdir /sys/fs/cgroup/$c/$i; done
-done
-cat /proc/cgroups
+Hence I'm not going to tweak this whilst applying.
 
-#subsys_name	hierarchy	num_cgroups	enabled
-cpuset	0	809	1
-cpu	0	809	1
-cpuacct	0	809	1
-blkio	0	809	1
-memory	0	809	1
-devices	0	809	1
-freezer	0	809	1
-net_cls	0	809	1
-perf_event	0	809	1
-net_prio	0	809	1
-hugetlb	0	809	1
-pids	0	809	1
-rdma	0	809	1
-misc	0	809	1
-debug	0	809	1
+Patch applied as is.
 
-A count of 809 is reported for each controller, but only 109 should be
-reported for most of them since each controller is enabled in only part
-of the hierarchy. (Note that io depends on memcg, so its count should be
-209.)
+Thanks,
 
-The number of cgroups using a controller is an important metric since
-kernel memory is used for each cgroup, and some kernel operations scale
-with the number of cgroups for some controllers (memory, io). So users
-have an interest in minimizing/tracking the number of them.
+Jonathan
 
-- - - - - - - - - -
-
-Why is this functional patch currently a RFC:
-The point at which the new counters are incremented/decremented for most
-enumerated v2 controllers works fine. However for some controllers (the
-v2 documentation calls them "utility controllers") online_css and
-kill_css are never called: cpuacct, devices, freezer, net_cls, net_prio,
-debug.
-
-To deal with num_cgroups being reported as 1 for those utility
-controllers regardless of the number of cgroups that exist and support
-their use, I added is_v2_utility_controller which checks if a controller
-is among a hardcoded list instead of looking at some property of the
-cgroup_subsys since I don't think any such property currently exists.
-It'd be easy to miss adding a new utility controller to this list, so
-I am interested in hearing if folks have other ideas. I checked if I
-could use the presence of online_css in cgroup_subsys, but that only
-works for cpuacct and debug.
----
- include/linux/cgroup-defs.h |  6 ++++++
- kernel/cgroup/cgroup-v1.c   | 36 ++++++++++++++++++++++++++++++++++--
- kernel/cgroup/cgroup.c      |  4 ++++
- 3 files changed, 44 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index ea48c861cd36..400311222337 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -579,6 +579,12 @@ struct cgroup_root {
- 	/* Number of cgroups in the hierarchy, used only for /proc/cgroups */
- 	atomic_t nr_cgrps;
- 
-+	/*
-+	 * Number of cgroups using each controller. Includes online and zombies.
-+	 * Used only for v2 controllers in /proc/cgroups.
-+	 */
-+	atomic_t nr_css[CGROUP_SUBSYS_COUNT];
-+
- 	/* Hierarchy-specific flags */
- 	unsigned int flags;
- 
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index 520a11cb12f4..8146bcc31421 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -663,6 +663,30 @@ struct cftype cgroup1_base_files[] = {
- 	{ }	/* terminate */
- };
- 
-+static bool is_v2_utility_controller(int ssid)
-+{
-+	return
-+#ifdef CONFIG_CGROUP_CPUACCT
-+		ssid == cpuacct_cgrp_id ||
-+#endif
-+#ifdef CONFIG_CGROUP_DEVICE
-+		ssid == devices_cgrp_id ||
-+#endif
-+#ifdef CONFIG_CGROUP_FREEZER
-+		ssid == freezer_cgrp_id ||
-+#endif
-+#ifdef CONFIG_NET_CLS_CGROUP
-+		ssid == net_cls_cgrp_id ||
-+#endif
-+#ifdef CONFIG_CGROUP_NET_PRIO
-+		ssid == net_prio_cgrp_id ||
-+#endif
-+#ifdef CONFIG_CGROUP_DEBUG
-+		ssid == debug_cgrp_id ||
-+#endif
-+		false;
-+}
-+
- /* Display information about each subsystem and each hierarchy */
- int proc_cgroupstats_show(struct seq_file *m, void *v)
- {
-@@ -675,11 +699,19 @@ int proc_cgroupstats_show(struct seq_file *m, void *v)
- 	 * cgroup_mutex contention.
- 	 */
- 
--	for_each_subsys(ss, i)
-+	for_each_subsys(ss, i) {
-+		int count;
-+
-+		if (!cgroup_on_dfl(&ss->root->cgrp) || is_v2_utility_controller(i))
-+			count = atomic_read(&ss->root->nr_cgrps);
-+		else
-+			count = atomic_read(&ss->root->nr_css[i]);
-+
- 		seq_printf(m, "%s\t%d\t%d\t%d\n",
- 			   ss->legacy_name, ss->root->hierarchy_id,
--			   atomic_read(&ss->root->nr_cgrps),
-+			   count,
- 			   cgroup_ssid_enabled(i));
-+	}
- 
- 	return 0;
- }
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index a66c088c851c..f25d0e77ae8a 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -2047,6 +2047,8 @@ void init_cgroup_root(struct cgroup_fs_context *ctx)
- 
- 	INIT_LIST_HEAD_RCU(&root->root_list);
- 	atomic_set(&root->nr_cgrps, 1);
-+	for (int i = 0; i < CGROUP_SUBSYS_COUNT; ++i)
-+		atomic_set(&root->nr_css[i], 0);
- 	cgrp->root = root;
- 	init_cgroup_housekeeping(cgrp);
- 
-@@ -5362,6 +5364,7 @@ static void css_free_rwork_fn(struct work_struct *work)
- 		ss->css_free(css);
- 		cgroup_idr_remove(&ss->css_idr, id);
- 		cgroup_put(cgrp);
-+		atomic_dec(&ss->root->nr_css[ss->id]);
- 
- 		if (parent)
- 			css_put(parent);
-@@ -5503,6 +5506,7 @@ static int online_css(struct cgroup_subsys_state *css)
- 		atomic_inc(&css->online_cnt);
- 		if (css->parent)
- 			atomic_inc(&css->parent->online_cnt);
-+		atomic_inc(&ss->root->nr_css[ss->id]);
- 	}
- 	return ret;
- }
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+> 
+> 
+> >  	struct ad7192_state *st;
+> >  	struct iio_dev *indio_dev;
+> > +	struct regulator *aincom;
+> >  	int ret;  
+> 
+> ...
+> 
+> > +	aincom = devm_regulator_get_optional(&spi->dev, "aincom");  
+> 
+> 	aincom = devm_regulator_get_optional(dev, "aincom");
+> 
+> ...
+> 
+> > +			return dev_err_probe(&spi->dev, PTR_ERR(aincom),
+> > +					     "Failed to get AINCOM supply\n");  
+> 
+> 			return dev_err_probe(dev, PTR_ERR(aincom),
+> 					     "Failed to get AINCOM supply\n");
+> 
+> ...
+> 
+> > +			return dev_err_probe(&spi->dev, ret,
+> > +					     "Failed to enable specified AINCOM supply\n");  
+> 
+> 			return dev_err_probe(dev, ret,
+> 					     "Failed to enable specified AINCOM supply\n");
+> 
+> ...
+> 
+> > +		ret = devm_add_action_or_reset(&spi->dev, ad7192_reg_disable, aincom);  
+> 
+> 		ret = devm_add_action_or_reset(dev, ad7192_reg_disable, aincom);
+> 
+> ...
+> 
+> > +			return dev_err_probe(&spi->dev, ret,
+> > +					     "Device tree error, AINCOM voltage undefined\n");  
+> 
+> 			return dev_err_probe(dev, ret,
+> 					     "Device tree error, AINCOM voltage undefined\n");
+> 
 
 
