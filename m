@@ -1,100 +1,85 @@
-Return-Path: <linux-kernel+bounces-183074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628928C942D
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 11:10:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 355E98C942E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 11:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC102816EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:10:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 661DA1C20948
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 09:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C183611A;
-	Sun, 19 May 2024 09:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="okS4Sb9h"
-Received: from msa.smtpout.orange.fr (smtp-77.smtpout.orange.fr [80.12.242.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BC52BB10;
+	Sun, 19 May 2024 09:11:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C454241E7;
-	Sun, 19 May 2024 09:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFB71799F
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 09:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716109833; cv=none; b=abwgNEvQr2tUW8bG3U96qz1CYRdSTn79yo6FlR0zUCNRIWvAiO+biYWzqvn4KWN8zYG2EwJp61rD98LoOkVtGdbc192Owb7nZ0EvDxhWXSY+0aNImnIiswriKAuTothr6wm1RqGo6aMPJUbhju6ioJcSWDPrl7Pq52kaIF/a4CU=
+	t=1716109866; cv=none; b=befbHCX6xYphapeI/WK1/l2VeKOcp6grD2uWX8wVz2/lOHJmYsIymburo8kI9vN2yb028hMbODtiq6Okk+CCqP3fycj7GgspvCwHymSIHpjjT6wIQCWZBr9gmAN37UmT6YUv4ILTNc4bbZOdxQx/azw9dxm1deDpqJfvT7rn/u0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716109833; c=relaxed/simple;
-	bh=WHLI54myjQZgi0GBCy9D+0xHgarTdc8QkTWV2HYfM/4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b9fi5D7ChqClWT3i+Q6b6d5gmB6akvKVYDgiObLHPWdwmz+r31ON8ZMI02wkA2X3tf2X4QMElujOT7GGEL3jK2ARklIZRaopD4tD0uoRVsBuDxKmLNA9aOUbxwKpiNA0CTvlZKDnUnEmkhPMpmvy+i7rAcuu8r38gcqNLuLKdNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=okS4Sb9h; arc=none smtp.client-ip=80.12.242.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 8cYSsFC8hNQ4U8cYespYD1; Sun, 19 May 2024 11:10:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716109820;
-	bh=BuzLzcGApaGthL63ihFJK2+ain4oC/YEb1ozPZvoVBw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=okS4Sb9hoEuVjb/kMR4hDnZ7f6paQP6y+KGUUnGBCL3cEN9W2FRGXwRMKCtQiu7j8
-	 GwFGm+DxRbnK/KEb4xhXYM0qZB9XEHTgZWBXftEXsIh7Bi+Wr+Cf+N7EXmWrt2XmB2
-	 6D42KRIi34gw9NqHAD8RVWjp+i5Em6sh2J+lfdDhNXazdeaJvaBQ5NayMjaeDQeamH
-	 OtHdnCMjSOqdnF77nvm5QrzWz5uEE/9Erjdid7uya0HZycP+Y17WT6q4DON/3BeJX5
-	 /ZK9tzEykO9ORHOTdCr8HRdYPBdI7+glqOV4CBYU0npR9mRG8LI4B+1IHlgj+eB6M2
-	 gxMgDGkCLoadg==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 19 May 2024 11:10:20 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Ilya Dryomov <idryomov@gmail.com>,
-	Xiubo Li <xiubli@redhat.com>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	ceph-devel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH 2/2 net-next] libceph: Use __counted_by() in  struct ceph_snap_context
-Date: Sun, 19 May 2024 11:09:59 +0200
-Message-ID: <c883cccd53beb412f4806d28f48e8a3ddd4f0995.1716109606.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <5b7c72bdb52703bbfa5511ed500aed4babde1308.1716109606.git.christophe.jaillet@wanadoo.fr>
-References: <5b7c72bdb52703bbfa5511ed500aed4babde1308.1716109606.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1716109866; c=relaxed/simple;
+	bh=HZofFkKYEc6fyWsMV5cT8IFWrUWtxSlG1TG9c/gl6tg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=LH/tJ66nbVR6aiq/qT1X5ui/B6cz2/KvbnhSO7DGbLodSRNRPWFNiFBrZ3+wewXXtQwkpaebKBcf7KWKzDSFg0r7+bAq57OZUiDs8W/XCAdnkIZ6YcyO3HhHA5wtHj/zV9CBe9zvI+NG/O4IqZbo2CMkv0B+m1GfehyCAgXHZXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e1c3c98401so714405439f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 02:11:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716109864; x=1716714664;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HmJHcMrpGBkfX2KL7MFrkpNa9ZVJfwG14BAogNSdHT4=;
+        b=fFiY/rH6kAoJw1pH5JaCyx5GVZwACJ4WSTmrOmvtPcNS6If8L3X5pooOeEENSYQsbk
+         FqIpAY26dlNW7OwVqAPIZ+ULftcnk5lJo2MxCRsZy0SZT2b+cWKiIxKEWIwaNFmuqexx
+         pF6N2yQqQdM5lxkiZVH8W12LXlATzuiRVxKzih7e+AVbrFwGNnA4sT8NrTPfOQt3Aotr
+         4hj7i7SiwMMZy1XLB39GDIPRAw4UaarT6ADgWr5/F7AxulZNnTKNqct3+CFdLeJ4bjyM
+         kp7MYqwQVQjD0puj+ZR2qDNymqrSoocn2rdBrMlbKub8kxa2TEAtmuuRfvNSX+QfN48g
+         ptDg==
+X-Gm-Message-State: AOJu0Yz6BRv8LeIgUFa4CmMhZPGwL5NxnfSyXKIwL15AAm8NvQoU4eoS
+	I3uyUA/iu8cIZzAODGBzDHzVIRelyy8qm0ixyj3XPuUf3k1WYejhjYLSR9jR29lFSnfnfjLiCey
+	9p8xlp/7kZE431FI+rtEV9mcpeVbGyznqyZP6GXm9AFQHjTR/Aa4u3f4=
+X-Google-Smtp-Source: AGHT+IHaejbP3gsdD25yZ6Rj3vih4pVLIdpn/xHgVriOHMgFDcJyEHjAt/xM+XoX3mgr8JqgaE51gAtmAS4KKGVimYaCZ6abZhSp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:8625:b0:488:7bb2:c9f6 with SMTP id
+ 8926c6da1cb9f-48958c02450mr2413163173.3.1716109863866; Sun, 19 May 2024
+ 02:11:03 -0700 (PDT)
+Date: Sun, 19 May 2024 02:11:03 -0700
+In-Reply-To: <Zkm6qnUh6Xe2gv6-@zeus>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d4e1ce0618caf6e8@google.com>
+Subject: Re: [syzbot] [net?] [nfc?] KMSAN: uninit-value in nci_rx_work
+From: syzbot <syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, ryasuoka@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Annotate the 'snaps' flexible array in "struct ceph_snap_context" with
-__counted_by() so that additional checks can be made, if enabled.
+Hello,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- include/linux/ceph/libceph.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
-index 4497d0a6772c..485efc8837d5 100644
---- a/include/linux/ceph/libceph.h
-+++ b/include/linux/ceph/libceph.h
-@@ -164,7 +164,7 @@ struct ceph_snap_context {
- 	refcount_t nref;
- 	u64 seq;
- 	u32 num_snaps;
--	u64 snaps[];
-+	u64 snaps[] __counted_by(num_snaps);
- };
- 
- extern struct ceph_snap_context *ceph_create_snap_context(u32 snap_count,
--- 
-2.45.1
+Reported-and-tested-by: syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         4db783d6 ipv6: prevent NULL dereference in ip6_output()
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=158bb442980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bbf567496022057b
+dashboard link: https://syzkaller.appspot.com/bug?extid=d7b4dc6cd50410152534
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1372beb2980000
+
+Note: testing is done by a robot and is best-effort only.
 
