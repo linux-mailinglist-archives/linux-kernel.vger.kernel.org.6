@@ -1,125 +1,105 @@
-Return-Path: <linux-kernel+bounces-183280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B258C96C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 23:26:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63ED38C96D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 23:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B97280F3D
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 21:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D14728104C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 21:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389B96EB5F;
-	Sun, 19 May 2024 21:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D316F06F;
+	Sun, 19 May 2024 21:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XFF/dnXw"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="q+OKe+f4"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFFA18EB1
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 21:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5DC23BB;
+	Sun, 19 May 2024 21:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716153966; cv=none; b=a/vXJhnD1hP5LEAoBGvI4mMv56QnQ5twmduyLQsNDIXCUUPHNVBgRwkZgk7L4DWOnQG0dW9E8v2pjcXEOElNpUhoyLACP6dFy+t+D/JTkoLYv4CrxfOZAsYN77lSUqpwBcLlFB6Jre9ZWyLxqpz5pzZDoWs1jrfxpS+nZ8VhoNk=
+	t=1716154480; cv=none; b=droH5uSmsvzTl/51mOQN9pR+wHZrmZyoXStLCp7nUVEjtAhrjHuEcmqzh7U27ZtPMfgp83HVDUH0oBLjY5vaqbXmc9gMbpf6YOG7jnG5QS6VyU8SkNV4Ven/05UlpUD4PC3y1JnHZrZutBx53ksNtM0WDTquzZAXHY8/azRaGzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716153966; c=relaxed/simple;
-	bh=xo7z5gBTqh9m8tR1mR90dfldkI721z1Mabjp7Gy3gNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LNRRnRDbsvlY7HVuN0wD6nDo4wcoN97H1TseonwWwz291xtJEfXSS2OiACr1br6ijj57cpyawWUvhYuHOt9wAVCwCI2h5BGyFIdVFa+rkNnlWRhJf4vGApYBrIeHV+dOfmvf+C9cy2u1c6uMGy3tLCfvdmrfuv89dqyer6zdxSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XFF/dnXw; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e72b8931caso1270551fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 14:26:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716153963; x=1716758763; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X6nVMrZE712KEz8bUFbSeox35yQ1x4MWsEF3bYFtA1Y=;
-        b=XFF/dnXw0SewwVpYdQKzaeenUCAeg+raGqTFhqqqZkjm7QYtKlAcFq8qQwkp6JpBIS
-         gzlIq1uhNypfidf1YMrrINSUV377VLTBBCDrevui8TliQIeM1OnTBXPzO4rdoBjWqnaJ
-         +dMcQFaHr27A0TcBRrTzQksxxXzcjp6+K40nsGVe7nDUak3UpKy1nSyw+vTRgGL56hLw
-         3+GSEFICi2foHJSdMOJK4f/PPfOyaMbiv7njG3+k9txv7Nhf23ACsr83FnIg/OlWCTgj
-         TPeJxb7fVBDbNJDZNSwU81BYFhayg9vSwCuqnmGIsKOjXrci7v/RJUwQuQM85aPWIiY6
-         A3HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716153963; x=1716758763;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X6nVMrZE712KEz8bUFbSeox35yQ1x4MWsEF3bYFtA1Y=;
-        b=t0oYjLdXPOvveSXMZaBbgsYnmrnk2FJe+dDgUzX8pJOfL13itdxGlvfiWoKBL5dgZo
-         fYSCgFbeKrRz6ymxZnefMSNg6jzO4r20WH4u9y2sIpNGTs0qAnBGujRdXVkMvelOSx10
-         1NUdn7IwCDbiQCR7wrcxbdRBe/WZhbYkXFKGwOHX3yljc2KuhIHSLUZsOAWSAxlqmk3f
-         3XtBVgnm9C+A+Qt8c6QTWStk46hRtzOE646C6G+IQEMrClCqB3qtx/2GNchyjJveD0ae
-         WEg/01ZtiypGRTC6Mex7ZcT4rLjDXZ22wGQS/HDR8GGvI2sL/7q3xfJDP6nEfQg36L63
-         GrcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA2y4gdZqeiM3y/1ELROBcVBZP7YxbdLluPSKZ18d/eOS3iiuJZr6FXAcCvK9qYX2wXgnlU2NYTe7F2xakv5KLza3X+LARSEfSI4ZA
-X-Gm-Message-State: AOJu0YwUkExBkD3NK878jnWu2PSoZTo1VCtfRka4G0RzaQP1DmB/BgMX
-	5HdfDuxuRfXXekPCEEyhhwtghqEW5X5zGKUOse/R7GlTMHUL5TuUnC0CBqhV6M0=
-X-Google-Smtp-Source: AGHT+IEDiTly3l/2arj6xKsFbQnwkCXaJx0c6Qc6YWYld3fj0pvH9iSWWsSZ94Z5R5WBsRW4rLHAKQ==
-X-Received: by 2002:a2e:b01a:0:b0:2e6:a0b3:24a3 with SMTP id 38308e7fff4ca-2e6a0b326fdmr141595051fa.4.1716153962611;
-        Sun, 19 May 2024 14:26:02 -0700 (PDT)
-Received: from eriador.lan (dzdbxzyyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::8a5])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d1622740sm32064781fa.119.2024.05.19.14.26.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 May 2024 14:26:02 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Liu Ying <victor.liu@nxp.com>
-Cc: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	biju.das.jz@bp.renesas.com,
-	aford173@gmail.com,
-	bli@bang-olufsen.dk,
-	robh@kernel.org,
-	jani.nikula@intel.com
-Subject: Re: [PATCH] drm/bridge: adv7511: Attach next bridge without creating connector
-Date: Mon, 20 May 2024 00:25:59 +0300
-Message-ID: <171615394192.98831.12547491683028150051.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240513080243.3952292-1-victor.liu@nxp.com>
-References: <20240513080243.3952292-1-victor.liu@nxp.com>
+	s=arc-20240116; t=1716154480; c=relaxed/simple;
+	bh=qVMB/LyakvS5ewW9DcI9S9PSmPNh8r4BJJ8XEDPnRDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kxElWjAu+ypkJVUo0bgc2WujY933+a5YAyVKhIXsy8HqOQxuXEiYiHCU1JummPIjGHyZT1N70lZ22hzAcgYboRRR23+FN+XdKeT3CeActwceLmBlw7BDS7tPPIq6SWBSzBPCL2e5te0LHERtlpdkTiJDry0S/dO9gwvEZyWVxBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=q+OKe+f4; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1716154469;
+	bh=bDHlLiM/QtV4z5R4r4xYeNeJp2pdpiRKmtwQfn4AmPI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=q+OKe+f4gIlIliNjWTSSsBY3PzZAUyDA57gEvMSTGQ6kCz7cSs6OZzrd8HBuJX5D+
+	 2IeW4Di4CBQzVxim2To4ATuJNAUpX7qoLRcuo4vO+JpiF8N3+ovgc5sjjbnxprgmCw
+	 YCJqw0/18Ho5paDGWMfdhNZoyNNgyVjXur8ceqdLWpJ7vcbCa0l+JU0IvObkOre9Nv
+	 Kty4FgWGoE9a1IizO+BNQSZBZBeYQfJLk3nalj0ETKM3LW6bEBSS0HXsdKHopwYWU0
+	 JCytLYc1mlG4PUE96G9ZJRbzmGwL89J4jqEwRCn1ZcV/mXY84c9ROdeSEtqtFO7c4U
+	 OGfSfKcvVtUow==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VjDVY2YfXz4wby;
+	Mon, 20 May 2024 07:34:29 +1000 (AEST)
+Date: Mon, 20 May 2024 07:34:26 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Namhyung Kim
+ <namhyung@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the perf tree
+Message-ID: <20240520073426.7d8bd11e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/KoV2zI.=GkrxJiH=j.a7hgQ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, 13 May 2024 16:02:43 +0800, Liu Ying wrote:
-> The connector is created by either this ADV7511 bridge driver or
-> any DRM device driver/previous bridge driver, so this ADV7511
-> bridge driver should not let the next bridge driver create connector.
-> 
-> If the next bridge is a HDMI connector, the next bridge driver
-> would fail to attach bridge from display_connector_attach() without
-> the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag.
-> 
-> [...]
+--Sig_/KoV2zI.=GkrxJiH=j.a7hgQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Applied to drm-misc-next-fixes, thanks!
+Hi all,
 
-[1/1] drm/bridge: adv7511: Attach next bridge without creating connector
-      commit: 20da948e3a807c67f0efe4f665e64728be370f3d
+The following commits are also in Linus Torvalds' tree as different
+commits (but the same patch):
 
-Best regards,
--- 
-With best wishes
-Dmitry
+  cd88c11c6d89 ("tools lib rbtree: Pick some improvements from the kernel r=
+btree code")
 
+This is commit
+
+  bbed8b9ffed1 ("tools lib rbtree: pick some improvements from the kernel r=
+btree code")
+
+in Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/KoV2zI.=GkrxJiH=j.a7hgQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZKcGIACgkQAVBC80lX
+0Gyepwf6AtMF0BwzXN8R3eAaKZsq3fNroPu75os/vM2qiEwsJU2Yg+4J9pfdYJHl
+eLcz0Ng69R5pph2AQw8dTBYRYLCjS6gluQBq7f6+pFx4yKYeMGqoU4zVc8GAM4YU
+qPsn5VeQCuFcrWzI2JfoTN3FfYUioUmDwRATqJdbd7cwOOdENVDXvoxxQI6VlirT
+09VizitgTx/3P8gOTTeQrXXYBczviXd9R8OxzpfmbyyF5qRQvXBR7v0zxGv6Yuj8
+yabdKm6+5sV6Remew9Mzy0x2yn1M8qW5+2AHKCOFYHdZE/K3jTkvmGHVyWR6G0p7
+vIe/F9KC/Ewgb/vcQ9ZY6Btxwq/XEw==
+=c0DZ
+-----END PGP SIGNATURE-----
+
+--Sig_/KoV2zI.=GkrxJiH=j.a7hgQ--
 
