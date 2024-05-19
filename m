@@ -1,136 +1,104 @@
-Return-Path: <linux-kernel+bounces-183175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161658C9599
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:40:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA288C959C
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4748B1C21133
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:40:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88FD5281FC5
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BA750284;
-	Sun, 19 May 2024 17:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591665029B;
+	Sun, 19 May 2024 17:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJWGIwPc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4kP6sFw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2004AEDF;
-	Sun, 19 May 2024 17:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8B84AEDF;
+	Sun, 19 May 2024 17:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716140403; cv=none; b=L6w7CfPrgOZbDXt5q5zqaE1QTWIxxId0gFvMHW5ppllSn0V+Cp8n2UCJgcdt67XNQg+sXrYut9ivDqZlQlGEmTQmXRu0ZZ8e6wxatwRH0HjA8YbhQI9NFEJvGdpG/pqlFFDVfK216CoBtlEQu+gJA+GQENa/A4mp4lOef4ETRz0=
+	t=1716140491; cv=none; b=Mb5NBE/olmjrdrHK3sXXVbuwXHf90hFfLdJwp4Z0iqFRRqjO7/FqG/dUR52rTeQOjUq6PUHceATd5x5QpssBntolQK2y/sZRvolCQ9ux4iF4ViW09khw0TcdyXCkr1MK83gUd3yUlqXxtZN4urDXbpmdCQk+ZixJY46s3TpAYnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716140403; c=relaxed/simple;
-	bh=DtDF4BfH7f8WtXZbUbk5E/jSfDNx6JvY4w0FzFHEgLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fFEWsfE5aaHVXkoyN1ZJxVwcf9cYAuyekqOIYI2mRDf0wRTNCgX8hwIKPi+8ABlCWvfONWBArnhOdXhAPdRXxydfVwXoFwAaTo0UVc6UZFUzPlxzfpL8D38PugWIGds/aRBkF71F69cKP9K962M9af0k5vWXQneaSd4pP0sFY80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJWGIwPc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E347C32781;
-	Sun, 19 May 2024 17:39:59 +0000 (UTC)
+	s=arc-20240116; t=1716140491; c=relaxed/simple;
+	bh=3X5gVOifa2obU56urc8799IYLnQNDhoLeW9pQ7MAPyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cKbmYIHqGBZ2/kRxAJg3L6VyHh9pQLDQL7azuM9qGizoFu+8POmFKck5fOZaWIQhbbgtbUUkWgKhlZqiwRUFD3NdO9ATNUhkzOawbaWsoqc5mQcJhBELN5q5810j1hSMA3PXIJKh3SzJRng0pWcUi4hyAkuKO3/OArR0hVUp184=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4kP6sFw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE88FC32781;
+	Sun, 19 May 2024 17:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716140402;
-	bh=DtDF4BfH7f8WtXZbUbk5E/jSfDNx6JvY4w0FzFHEgLQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QJWGIwPcrFpFHhMU6Alp3kpHRVLNB8PEouerEYa4JoMGaAo3WYIDXbBbyCNhZDgmu
-	 naFTr+OwKK6et+AapQPFDZYJqdWRLvik1dqN+DGfa/xypaNfaqLB3OtIsruFHFuKJn
-	 fRYTyZM55jPr85P3gHaRlhj1XbUw9/2RdD4wNNj7+dsj1VrIeh3+50EJ7yo2RliUL3
-	 muoGPcpnZbUbtOIpt9iDXKirRLfooN5e5suHrF8YZXwYkqzSox8av5VsEnV6BVexKx
-	 VEOhlxJgnE0RoH8DQrZ1uzc7O1l0zPXAmrvOcPdukf3QAP+7lY1/+AX5BKD7LrSqvd
-	 1KKBbIEQEtYsw==
-Message-ID: <274b4544-ae6f-4dfe-9952-7b88faffd96a@kernel.org>
-Date: Sun, 19 May 2024 19:39:57 +0200
+	s=k20201202; t=1716140491;
+	bh=3X5gVOifa2obU56urc8799IYLnQNDhoLeW9pQ7MAPyU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h4kP6sFwM0sk8Znco0WYoe3Ub9AxDoA/eEQ/5K8lOwYxMfczbR4PprIGtH71Xbrus
+	 +h5gIBBACSVgdo2A0idLUrAOu277ncPBlATSm6nlYkArxaAf6ijk3VyP1z3OqfQKVc
+	 tksfFVDC3OurDMJskGy2E9iT/wUFhy8NomCY+Qp2iTauiVztovF3C9wfv2VOBKo351
+	 Ou3t3y4M4Z64qBIGSaORfFa4JSMaWRmCGWkycFtsQjJiSXWCa+njzg9O5VOEP4kJwb
+	 ZSlugpj4+SmqPADmBoJpYKVF20B/QdyQWNWlhRRkGdIOTRUzIksADPu3vvGjHSRD9X
+	 p1JLj5s+oCUfA==
+Date: Sun, 19 May 2024 18:41:19 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michael Hennerich
+ <michael.hennerich@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: iio: adc: adi,axi-adc: tweak example node
+ name
+Message-ID: <20240519184119.7fd75ab9@jic23-huawei>
+In-Reply-To: <20240513141906.GA2534611-robh@kernel.org>
+References: <20240510-b4-iio-axi-adc-dt-binding-tweak-v1-1-a1f633c4602c@baylibre.com>
+	<20240513141906.GA2534611-robh@kernel.org>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] ASoC: dt-bindings: ak4104: convert to dt schema
-To: Xiaxi Shen <shenxiaxi26@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, javier.carrasco.cruz@gmail.com,
- skhan@linuxfoundation.org
-References: <20240517051317.466764-1-shenxiaxi26@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240517051317.466764-1-shenxiaxi26@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 17/05/2024 07:13, Xiaxi Shen wrote:
-> Convert ak4104 binding to DT schema
+On Mon, 13 May 2024 09:19:06 -0500
+Rob Herring <robh@kernel.org> wrote:
+
+> On Fri, May 10, 2024 at 04:04:38PM -0500, David Lechner wrote:
+> > It is always recommended to use generic node names for devicetree nodes.
+> > The documentation [1] of the AXI ADC IP core says "The most important
+> > part of the core is the Receiver PHY module.", so using phy as the node
+> > name seems appropriate.
+> > 
+> > [1]: https://wiki.analog.com/resources/fpga/docs/axi_adc_ip
+> > 
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > ---
+> >  Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml b/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
+> > index e1f450b80db2..9cad4c439045 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
+> > @@ -57,7 +57,7 @@ additionalProperties: false
+> >  
+> >  examples:
+> >    - |
+> > -    axi-adc@44a00000 {
+> > +    phy@44a00000 {  
 > 
-> Signed-off-by: Xiaxi Shen <shenxiaxi26@gmail.com>
-
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
----
-
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-Best regards,
-Krzysztof
+> phy should be used when there's #phy-cells which is not the case here. 
+> 'adc' is somewhat standard. Or maybe it should be tied to 
+> #io-backend-cells.
+> 
+> Until we have something defined as ti what it should be, we should just 
+> leave node names alone.
+> 
+> Rob
+> 
+Unapplied.
 
 
