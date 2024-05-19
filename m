@@ -1,205 +1,162 @@
-Return-Path: <linux-kernel+bounces-183263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712FB8C969D
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 22:36:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA9A8C969F
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 22:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F90D2813B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D68F11C208CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50E46CDBA;
-	Sun, 19 May 2024 20:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59304F20C;
+	Sun, 19 May 2024 20:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZnLdR+QN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j3OO0z+t"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4F31804F;
-	Sun, 19 May 2024 20:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98609175AB
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 20:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716150971; cv=none; b=Ul0+1rwMKNcYHUq34Vlwz5epzpZBHKBMEyRpWgwXa/125L4Qdd+C0WFXVA6a8pb/H4IfEi0y2UDot5NmgclV56vbWhdEKBaNLXur2clsDGicE1nFYHDjFGEtiihvfWo5mjhEmQ7PkudnUZRNAtL32dvXTfqHpCJ7iox4wBku+rI=
+	t=1716152181; cv=none; b=rSKNzmdlldLfZSUe9vpIVpgzJUVVpIHe9dTO9ggqO0ebmLM1hRqYh4PDOjrujcaKFPiZFxq71BUsi1Ofcebe5m8PGHRd0cCV/q53LjyrpM90MtLuGpCQKJGENhLG7pc+aFUvDClmK9IVlyvE2u0YCP5ej5ExpVj/i4zMAPnQ9BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716150971; c=relaxed/simple;
-	bh=PvchwwyHop/XcvwdlyaD/GxovOSOTuEM6HwG18aSwr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jYuMF2jvV9rQtI/YqPNUpY/88xhQ3GC1Y5WRiNU5ToGdx/HU5zGRBvQDbyzt0y3fNbTUTog/FlBRfMtH2SLzNCXZNysJjxROM2hrwA/5Qzp1zvLUgirjxLXVz2T+Reem2Ti/w2jDt1Vp8CvjAtEkPJUq8Mx/CdmcCe0QkZAvF24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZnLdR+QN; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716150969; x=1747686969;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PvchwwyHop/XcvwdlyaD/GxovOSOTuEM6HwG18aSwr4=;
-  b=ZnLdR+QNpIzU0DSGwznHv8vy7I6bqey3jn3jGQYj/r3FLZgmoA9Bs0s6
-   Y3o+jmEkwN7CkOAgyjfyAD8wv3kGJ4KmMcmgVZXs8weBz+KI908cKMJdA
-   3KgiX864D6xrFYyQci8jSj0HA9yBtOvTATLer5VuYqMYzAIrKSy8yKImH
-   X/QvYt6hQsxzT3Dm6nf62q08NdmwQYfjXTV1S/DV6ApKo7grTtDpLWRu3
-   oHGBC2OWQwU8kDhAWjt2GRcQC4pCqVfFU/DO2sU8qaDn6t1ljJjC7FvA5
-   XNpkpqz/tBQ3bowqI1QmtN+149vMAAdyJE/jkjN228S1pJ/70B2RJXCij
-   w==;
-X-CSE-ConnectionGUID: TTzI/6HpQGGDNZ/3z2nVBA==
-X-CSE-MsgGUID: c0HcY28ASQmxIlzsGwg2AA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="23412065"
-X-IronPort-AV: E=Sophos;i="6.08,173,1712646000"; 
-   d="scan'208";a="23412065"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 13:36:09 -0700
-X-CSE-ConnectionGUID: hAuS7mItQAGZRzMpvNwHeg==
-X-CSE-MsgGUID: DNMCxiFmSyuh2hG4uII5KA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,173,1712646000"; 
-   d="scan'208";a="63150766"
-Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 19 May 2024 13:36:07 -0700
-Received: from kbuild by 108735ec233b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s8nGG-0004Au-1Q;
-	Sun, 19 May 2024 20:36:04 +0000
-Date: Mon, 20 May 2024 04:35:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: egyszeregy@freemail.hu, broonie@kernel.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Benjamin =?utf-8?B?U3rFkWtl?= <egyszeregy@freemail.hu>
-Subject: Re: [PATCH] spidev: Introduce "linux,spidev-name" property for
- device tree of spidev.
-Message-ID: <202405200406.PHvbYk5Z-lkp@intel.com>
-References: <20240519181039.23147-1-egyszeregy@freemail.hu>
+	s=arc-20240116; t=1716152181; c=relaxed/simple;
+	bh=VCwLXB8PxzERbMg7Uw6PUxEO8FqWUx4CHmtg5hRTk7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=D5vOBaxOBUIzBuoPVJcQf9M1Z07fjL1fzht2B3MOIaSG4RQqPsLM3ZfdfKae6xKIN1ljUXQTUIzSDMvnWaQZhNrwm3AbJDVp6DWwkAOBjDFCHiee4pMHdkuOeXgatcwMhE4dpVgQ0NFsBlqxwlef8phP8F5Nr7M8XvgLM49RX58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=j3OO0z+t; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240519205003epoutp044fc0103e509a085c18288c6ebdb71b27~Q-vkITWWT1451414514epoutp04v
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 20:50:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240519205003epoutp044fc0103e509a085c18288c6ebdb71b27~Q-vkITWWT1451414514epoutp04v
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716151803;
+	bh=ZKVEx0Lq8LLMANM056f80Wk7YikwX/VGXkSZeMFK5l4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=j3OO0z+t7hobRiXrMYMhK7x+qXGS31rAjrLeAiCF5MC32geaiKNHrlsY+Bz62WeqG
+	 XOyr010BGsn4CWHCWaKDlRSmo1+8jmYNPaGJtYWO8f+rMAPQEAtYu0eH9HcuIdeLZA
+	 wOg7XSIsgq19/eUQLRuy+ZHWqrCxEJdaWquxd0sM=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20240519205003epcas2p131efc018e8974ffd7bdda65584145345~Q-vjxxXLU0877008770epcas2p18;
+	Sun, 19 May 2024 20:50:03 +0000 (GMT)
+Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.99]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4VjCWG3Bkwz4x9Pt; Sun, 19 May
+	2024 20:50:02 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E9.E9.19141.AF56A466; Mon, 20 May 2024 05:50:02 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240519205001epcas2p319536d42c4837c0fc7e19da0550e308c~Q-vh_KNTj0558705587epcas2p3L;
+	Sun, 19 May 2024 20:50:01 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240519205001epsmtrp169dd51e56b8016ef66cbad675323aeed~Q-vh9CMmT0448704487epsmtrp1q;
+	Sun, 19 May 2024 20:50:01 +0000 (GMT)
+X-AuditID: b6c32a4d-b17ff70000004ac5-a0-664a65fa0bee
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	5E.5E.19234.9F56A466; Mon, 20 May 2024 05:50:01 +0900 (KST)
+Received: from localhost (unknown [10.229.54.230]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240519205001epsmtip11d0873e86be594e3d72d453c4884c86f~Q-vhxKvfi2600726007epsmtip1H;
+	Sun, 19 May 2024 20:50:01 +0000 (GMT)
+Date: Mon, 20 May 2024 05:39:04 +0900
+From: Minwoo Im <minwoo.im@samsung.com>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, Joel Granados
+	<j.granados@samsung.com>, gost.dev@samsung.com, Asutosh Das
+	<quic_asutoshd@quicinc.com>, Minwoo Im <minwoo.im@samsung.com>
+Subject: Re: [PATCH] ufs: mcq: Fix missing argument 'hba' in
+ MCQ_OPR_OFFSET_n
+Message-ID: <ZkpjaHaGOWMZ++di@localhost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2450470c-b449-48a7-9fb7-aa363cbe885b@acm.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGJsWRmVeSWpSXmKPExsWy7bCmue6vVK80g3/nBS0ezNvGZvHy51U2
+	i2kffjJb3Dywk8li6f6HjBYb+zksLu+aw2bRfX0Hm8Xy4/+YLJ6dPsBssbBjLosDt8flK94e
+	0yadYvP4+PQWi8fEPXUefVtWMXp83iTn0X6gmymAPSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzje
+	Od7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoQiWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJ
+	rVJqQUpOgXmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdsa+w41sBbfYKuZsKGtgvMDaxcjJISFg
+	IvFr3h4gm4tDSGAPo8Su2VvZIJxPjBIzv3xmhXNObtnKDtPy88RLRojETkaJ0x2bGEESQgLP
+	GSXWtiSB2CwCqhJzlt1nA7HZBNQlGqa+YgGxRQQ0JL49WM4C0swsMJFZ4syc10AOB4ewgL/E
+	lHv5IDW8QDV/VsxggrAFJU7OfALWyylgLXGr6yRYr4RAL4fEz7e9UBe5SDSfXcwGYQtLvDq+
+	BSouJfGyvw3KLpf4+WYSI4RdIXFw1m02kL0SAvYS156ngISZBTIkDs94ygIRVpY4cosFIswn
+	0XH4LztEmFeio00IYoiyxMdDh5ghbEmJ5ZdeQx3gIXHxxGQ2SIgcYJS4OTF8AqPcLCTPzEKy
+	bBbQVGYBTYn1u/QhTGmJ5f84kEQXMLKuYpRKLSjOTU9NNiow1M1LLYdHcHJ+7iZGcILV8t3B
+	+Hr9X71DjEwcjIcYJTiYlUR4N23xTBPiTUmsrEotyo8vKs1JLT7EaAqMnInMUqLJ+cAUn1cS
+	b2hiaWBiZmZobmRqYK4kznuvdW6KkEB6YklqdmpqQWoRTB8TB6dUA1Od7fz/kZW7HS48aStl
+	+KA3gb8seLPk3Off5/2z/nsrSkhs54OCDQ8VT5j9/Tilumk3i3nnldRo/foZO3hPN8UZXeFN
+	25i667Cu4runCzWq4z9wn7y33qhi1mY7Hh7pxOut4g/fz5/M8nyW3vRty28eijD4feWttvQa
+	97MsjVdXlBg7bjw6OeRqZ/I/xa+WN/eodt3S3+zq/irbLSHzXgyfluOV4Iv3nJeaTDEQEG+/
+	lMf4/vfGo+x83tde/kk4r/XB97LoLbUF/2Zo7489FFYrtmtXqI5RRvbLey0T02U/rfpzcefa
+	KT7rFqy/9WslZ8EkKe7eru4VZ7w+1GzwjrK+Z1Otfq9ygn/ZieqE2dqLlFiKMxINtZiLihMB
+	xhXz4jkEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSnO7PVK80g1cbuSwezNvGZvHy51U2
+	i2kffjJb3Dywk8li6f6HjBYb+zksLu+aw2bRfX0Hm8Xy4/+YLJ6dPsBssbBjLosDt8flK94e
+	0yadYvP4+PQWi8fEPXUefVtWMXp83iTn0X6gmymAPYrLJiU1J7MstUjfLoEr49rXb+wFc1kq
+	lp5xaGBcw9zFyMkhIWAi8fPES8YuRi4OIYHtjBL/fuxnh0hISuw7fZMVwhaWuN9yhBWi6Cmj
+	xOeXm8CKWARUJeYsu88GYrMJqEs0TH3FAmKLCGhIfHuwnAWkgVlgKrPEja27wdYJC/hKzN5w
+	CczmBSr6s2IGE8TUA4wS3w/MYIFICEqcnPkEzGYGmvpnHkgDB5AtLbH8HwdImFPAWuJW10mW
+	CYwCs5B0zELSMQuhYwEj8ypG0dSC4tz03OQCQ73ixNzi0rx0veT83E2M4NjQCtrBuGz9X71D
+	jEwcjIcYJTiYlUR4N23xTBPiTUmsrEotyo8vKs1JLT7EKM3BoiTOq5zTmSIkkJ5YkpqdmlqQ
+	WgSTZeLglGpg6rNk2W7S83vXj6gj7le54j4IPPk4mbfb7t1/1yAVA58HfPp6JVGdwqaSOV9+
+	bmZ1a9GoTWPdoTl17oMoX3UnFt9nOTP/NWa8YjP/32Okabxdcl9pwUqR7VIL2ZsTDu04ylpu
+	F9kzJ6KmMMjCJjXndotsc9HviytZLqRdrczVXs7inBXr63602yZlAUNMd/vkHTtdkqds3GU6
+	+TyLzsH0Wfpl09Yq+Aaphl+qqkmP9Lr64wrr7cRZZ2TtkgrYVJdzPp77TV1o+S2nAw83FEqu
+	5tCYez/+qPn/w6KzO9i23Cw7OX/mkhb1FJ2vikbPGjp3Wqy9zsm3qTtw1obbPvdmS0/nMRZ+
+	ecN7PueUO2+UWIozEg21mIuKEwEg/UqU/AIAAA==
+X-CMS-MailID: 20240519205001epcas2p319536d42c4837c0fc7e19da0550e308c
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----18bPhOHZ4t-_CcSgAyEj2-9JxUxziaFjkQ7CDPyIhvGVJv9g=_1a241_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356
+References: <CGME20240516032553epcas2p3b8f34d03f32cccccc628027fbe1e8356@epcas2p3.samsung.com>
+	<20240516031405.586706-1-minwoo.im@samsung.com>
+	<2450470c-b449-48a7-9fb7-aa363cbe885b@acm.org>
+
+------18bPhOHZ4t-_CcSgAyEj2-9JxUxziaFjkQ7CDPyIhvGVJv9g=_1a241_
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20240519181039.23147-1-egyszeregy@freemail.hu>
 
-Hi,
+On 24-05-16 08:03:17, Bart Van Assche wrote:
+> On 5/15/24 21:14, Minwoo Im wrote:
+> >   /* Operation and runtime registers configuration */
+> >   #define MCQ_CFG_n(r, i)	((r) + MCQ_QCFG_SIZE * (i))
+> > -#define MCQ_OPR_OFFSET_n(p, i) \
+> > +#define MCQ_OPR_OFFSET_n(hba, p, i) \
+> >   	(hba->mcq_opr[(p)].offset + hba->mcq_opr[(p)].stride * (i))
+> Since inline functions are preferred over macros, please convert the
+> MCQ_OPR_OFFSET_n() macro into an inline function.
 
-kernel test robot noticed the following build errors:
+Okay.  I will prepare v2.
 
-[auto build test ERROR on broonie-spi/for-next]
-[also build test ERROR on linus/master v6.9 next-20240517]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> Thanks,
+> 
+> Bart.
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/egyszeregy-freemail-hu/spidev-Introduce-linux-spidev-name-property-for-device-tree-of-spidev/20240520-021957
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-patch link:    https://lore.kernel.org/r/20240519181039.23147-1-egyszeregy%40freemail.hu
-patch subject: [PATCH] spidev: Introduce "linux,spidev-name" property for device tree of spidev.
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20240520/202405200406.PHvbYk5Z-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240520/202405200406.PHvbYk5Z-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405200406.PHvbYk5Z-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/spi/spidev.c:812:24: error: passing 'const struct class' to parameter of incompatible type 'const struct class *'; take the address with &
-                           dev = device_create(spidev_class, &spi->dev, spidev->devt,
-                                               ^~~~~~~~~~~~
-                                               &
-   include/linux/device.h:1175:35: note: passing argument to parameter 'cls' here
-   device_create(const struct class *cls, struct device *parent, dev_t devt,
-                                     ^
-   drivers/spi/spidev.c:816:24: error: passing 'const struct class' to parameter of incompatible type 'const struct class *'; take the address with &
-                           dev = device_create(spidev_class, &spi->dev, spidev->devt,
-                                               ^~~~~~~~~~~~
-                                               &
-   include/linux/device.h:1175:35: note: passing argument to parameter 'cls' here
-   device_create(const struct class *cls, struct device *parent, dev_t devt,
-                                     ^
-   2 errors generated.
+------18bPhOHZ4t-_CcSgAyEj2-9JxUxziaFjkQ7CDPyIhvGVJv9g=_1a241_
+Content-Type: text/plain; charset="utf-8"
 
 
-vim +812 drivers/spi/spidev.c
-
-   767	
-   768	static int spidev_probe(struct spi_device *spi)
-   769	{
-   770		int ret;
-   771		const char *name;
-   772		int (*match)(struct device *dev);
-   773		struct spidev_data	*spidev;
-   774		int			status;
-   775		unsigned long		minor;
-   776	
-   777		match = device_get_match_data(&spi->dev);
-   778		if (match) {
-   779			status = match(&spi->dev);
-   780			if (status)
-   781				return status;
-   782		}
-   783	
-   784		/* Allocate driver data */
-   785		spidev = kzalloc(sizeof(*spidev), GFP_KERNEL);
-   786		if (!spidev)
-   787			return -ENOMEM;
-   788	
-   789		/* Initialize the driver data */
-   790		spidev->spi = spi;
-   791		mutex_init(&spidev->spi_lock);
-   792		mutex_init(&spidev->buf_lock);
-   793	
-   794		INIT_LIST_HEAD(&spidev->device_entry);
-   795	
-   796		/* If we can allocate a minor number, hook up this device.
-   797		 * Reusing minors is fine so long as udev or mdev is working.
-   798		 */
-   799		mutex_lock(&device_list_lock);
-   800		minor = find_first_zero_bit(minors, N_SPI_MINORS);
-   801		if (minor < N_SPI_MINORS) {
-   802			struct device *dev;
-   803	
-   804			spidev->devt = MKDEV(SPIDEV_MAJOR, minor);
-   805	
-   806			/*
-   807			 * If "linux,spidev-name" is specified in device tree, use /dev/spidev-<name>
-   808			 * in Linux userspace, otherwise use /dev/spidev<bus_num>.<cs_num>.
-   809			 */
-   810			ret = device_property_read_string(&spi->dev, "linux,spidev-name", &name);
-   811			if (ret < 0)
- > 812				dev = device_create(spidev_class, &spi->dev, spidev->devt,
-   813						    spidev, "spidev%d.%d",
-   814						    spi->controller->bus_num, spi_get_chipselect(spi, 0));
-   815			else
-   816				dev = device_create(spidev_class, &spi->dev, spidev->devt,
-   817						    spidev, "spidev-%s", name);
-   818	
-   819			status = PTR_ERR_OR_ZERO(dev);
-   820		} else {
-   821			dev_dbg(&spi->dev, "no minor number available!\n");
-   822			status = -ENODEV;
-   823		}
-   824		if (status == 0) {
-   825			set_bit(minor, minors);
-   826			list_add(&spidev->device_entry, &device_list);
-   827		}
-   828		mutex_unlock(&device_list_lock);
-   829	
-   830		spidev->speed_hz = spi->max_speed_hz;
-   831	
-   832		if (status == 0)
-   833			spi_set_drvdata(spi, spidev);
-   834		else
-   835			kfree(spidev);
-   836	
-   837		return status;
-   838	}
-   839	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+------18bPhOHZ4t-_CcSgAyEj2-9JxUxziaFjkQ7CDPyIhvGVJv9g=_1a241_--
 
