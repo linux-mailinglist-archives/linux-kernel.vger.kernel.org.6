@@ -1,78 +1,157 @@
-Return-Path: <linux-kernel+bounces-183151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3151D8C954A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:49:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227B48C954D
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D321F21C23
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:49:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C0231C20D18
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CA94E1D1;
-	Sun, 19 May 2024 16:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FB245979;
+	Sun, 19 May 2024 16:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBhFY90R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fX+avRDV"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B052F26AEC;
-	Sun, 19 May 2024 16:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E03710957
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 16:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716137380; cv=none; b=pGLDk8+zB9aGtN2suqOq5VKmqlBXT2Dky1nbhJ9l6pSi0f2PEwcv/iq94agrtPI8PVgHVkZu+6PNYVvKkMpRxFi9WDIRRRs0eUivCZJKAwHYynkdzPlJ70CMOE9ZI5CiDl+8Dqe3TwOKUp7GJyEq+AnjIGZXe39b6bSBelGD0vg=
+	t=1716137629; cv=none; b=s5GFKR2FlFoxl2xfge5JKxGEf9ZpdEz28KaH2vca7iAgBDvkk/H8zRwdAg9bkkuDc7Bb5EDR3Hjd0q+Tr5Okv1TVCMdKsaAK1aNEIGbXTTyhHN0ryrEq0Zznom/jwV+Sdn7OEtS/pPOqXllb3SlSZ+bdf8se8O0vpYpDXg+qEC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716137380; c=relaxed/simple;
-	bh=ZdL1P3gDLeD7UcWsgjDS5BynTw8GaFR9nqjQy4PwtOk=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=cllfyz9IZ2923jvexQp813bqIceyWuk6WdsezGLh7DgOPPPwsseOHBsS7qqneSKztSoU/y0CnQVh1obXg72ZhA9pNbLBB+XTfHans6UGORwS33O+3lOjDD/UPffzt1ARgg9KjD4QocafdqPBnNCief7toqMdgOEr3GAVRVskR7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBhFY90R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 40046C32781;
-	Sun, 19 May 2024 16:49:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716137380;
-	bh=ZdL1P3gDLeD7UcWsgjDS5BynTw8GaFR9nqjQy4PwtOk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=vBhFY90RT1qs+GUnN+yjijJYE7ctYfW3txPoLG3J5MvPyhrEOWxKB7SQxgNHCi+iZ
-	 RYZOevU7n1wBSxC9uCUi8yd4E6BA0jfvVwWcbupC4d0DVUG3K4s7JF98T73/uIpl3u
-	 6OSpvh42DDOjm8vaN9MzH7RD+p+xK5fAjIRJ0ByGrW6pO+4Qxy5tglCh6HhcDnym7N
-	 +WVDw8/Ja+wllbCc0IG6gMJ1NiJVFIUZV4OaN/VYQPsGxt63nXyuapsQSFxU63jtZi
-	 1wUjaNUnwBNErrS3C2q3k9DoNezW/Nnf58az/t6LgAKFFMH64snUFddcGmW8RrDB4z
-	 TGIzs3nnQV6HA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 38F28C54BB2;
-	Sun, 19 May 2024 16:49:40 +0000 (UTC)
-Subject: Re: [GIT PULL] MM updates for 6.10-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240517192239.9285edd85f8ef893bb508a61@linux-foundation.org>
-References: <20240517192239.9285edd85f8ef893bb508a61@linux-foundation.org>
-X-PR-Tracked-List-Id: <linux-mm.kvack.org>
-X-PR-Tracked-Message-Id: <20240517192239.9285edd85f8ef893bb508a61@linux-foundation.org>
-X-PR-Tracked-Remote: https://lkml.kernel.org/r/20240412120421.27d86c34@canb.auug.org.au io_uring/io_uring.c
-X-PR-Tracked-Commit-Id: 76edc534cc289308130272a2ac28694fc9b72a03
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 61307b7be41a1f1039d1d1368810a1d92cb97b44
-Message-Id: <171613738022.16746.1562405680951035145.pr-tracker-bot@kernel.org>
-Date: Sun, 19 May 2024 16:49:40 +0000
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1716137629; c=relaxed/simple;
+	bh=Po+1KvkPJoTu32T4IF95CT38BZXUTlQe++YziYUSbaU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M3JgLl0XQOlNNUAlvoH4BfE08uET0VtWTBUlCmh0EVxaI+cJunAYq3Ue1EdvXwQcbYC5jU4xYvEaXtoMj2XaRYZq+FJlWMs/i9HS/JNpOPHB1Hy7AxAZb5vV+fHxwUMvm1BQXQMywSf7lCRewF3TNXKvP4yWn1PcdkRJIKJJi4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fX+avRDV; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: l.stach@pengutronix.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716137625;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FuOak0X2GaG4L1svxVLJRuYwxll44K4jK0Xm/fybtzo=;
+	b=fX+avRDV73axaKVDoFcR27s4jvjZaOb7pQ9X38faGhAP26IqI4fiMG4SXcIohUHk2+de70
+	7in4/TWaGNc1FnQ82uqvCajnwLsE99RZICVyd9dBX1ZA48tAK424jRMiEyoiqGaayR8eXn
+	NUbtuc8VNBEycMeRqtrnzCFrg3SmXEA=
+X-Envelope-To: linux+etnaviv@armlinux.org.uk
+X-Envelope-To: christian.gmeiner@gmail.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: etnaviv@lists.freedesktop.org
+X-Envelope-To: dri-devel@lists.freedesktop.org
+X-Envelope-To: sui.jingfeng@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	etnaviv@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Sui Jingfeng <sui.jingfeng@linux.dev>
+Subject: [etnaviv-next v14 0/8] drm/etnaviv: Add driver wrapper for vivante GPUs attached on PCI(e) device
+Date: Mon, 20 May 2024 00:53:13 +0800
+Message-Id: <20240519165321.2123356-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The pull request you sent on Fri, 17 May 2024 19:22:39 -0700:
+drm/etnaviv use the component framework to bind multiple GPU cores to a
+virtual master, the virtual master is manually create during driver load
+time. This works well for various SoCs, yet there are some PCIe card has
+the vivante GPU cores integrated. The driver lacks the support for PCIe
+devices currently.
 
-> https://lkml.kernel.org/r/20240412120421.27d86c34@canb.auug.org.au io_uring/io_uring.c
+Adds PCIe driver wrapper on the top of what drm/etnaviv already has, the
+component framework is still being used to bind subdevices, even though
+there is only one GPU core. But the process is going to be reversed, we
+create virtual platform device for each of the vivante GPU IP core shipped
+by the PCIe master. The PCIe master is real, bind all the virtual child
+to the master with component framework.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/61307b7be41a1f1039d1d1368810a1d92cb97b44
 
-Thank you!
+v6:
+	* Fix build issue on system without CONFIG_PCI enabled
+v7:
+	* Add a separate patch for the platform driver rearrangement (Bjorn)
+	* Switch to runtime check if the GPU is dma coherent or not (Lucas)
+	* Add ETNAVIV_PARAM_GPU_COHERENT to allow userspace to query (Lucas)
+	* Remove etnaviv_gpu.no_clk member (Lucas)
+	* Fix Various typos and coding style fixed (Bjorn)
+v8:
+	* Fix typos and remove unnecessary header included (Bjorn).
+	* Add a dedicated function to create the virtual master platform
+	  device.
+v9:
+	* Use PCI_VDEVICE() macro (Bjorn)
+	* Add trivial stubs for the PCI driver (Bjorn)
+	* Remove a redundant dev_err() usage (Bjorn)
+	* Clean up etnaviv_pdev_probe() with etnaviv_of_first_available_node()
+v10:
+	* Add one more cleanup patch
+	* Resolve the conflict with a patch from Rob
+	* Make the dummy PCI stub inlined
+	* Print only if the platform is dma-coherrent
+V11:
+	* Drop unnecessary changes (Lucas)
+	* Tweak according to other reviews of v10.
 
+V12:
+	* Create a virtual platform device for the subcomponent GPU cores
+	* Bind all subordinate GPU cores to the real PCI master via component.
+
+V13:
+	* Drop the non-component code path, always use the component framework
+	  to bind subcomponent GPU core. Even though there is only one core.
+	* Defer the irq handler register.
+	* Rebase and improve the commit message
+
+V14:
+	* Rebase onto etnaviv-next and improve commit message.
+
+Tested with JD9230P GPU and LingJiu GP102 GPU.
+
+Sui Jingfeng (8):
+  drm/etnaviv: Add a dedicated helper function to get various clocks
+  drm/etnaviv: Add constructor and destructor for the
+    etnaviv_drm_private structure
+  drm/etnaviv: Embed struct drm_device into struct etnaviv_drm_private
+  drm/etnaviv: Fix wrong cache property being used for vmap()
+  drm/etnaviv: Add support for cached coherent caching mode
+  drm/etnaviv: Replace the '&pdev->dev' with 'dev'
+  drm/etnaviv: Allow creating subdevices and pass platform specific data
+  drm/etnaviv: Add support for vivante GPU cores attached via PCIe
+    device
+
+ drivers/gpu/drm/etnaviv/Kconfig              |   8 +
+ drivers/gpu/drm/etnaviv/Makefile             |   2 +
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c        | 159 ++++++++++------
+ drivers/gpu/drm/etnaviv/etnaviv_drv.h        |  27 +++
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c        |  22 ++-
+ drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c |   2 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.c        | 144 +++++++++-----
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.h        |   4 +
+ drivers/gpu/drm/etnaviv/etnaviv_mmu.c        |   4 +-
+ drivers/gpu/drm/etnaviv/etnaviv_pci_drv.c    | 187 +++++++++++++++++++
+ drivers/gpu/drm/etnaviv/etnaviv_pci_drv.h    |  18 ++
+ include/uapi/drm/etnaviv_drm.h               |   1 +
+ 12 files changed, 468 insertions(+), 110 deletions(-)
+ create mode 100644 drivers/gpu/drm/etnaviv/etnaviv_pci_drv.c
+ create mode 100644 drivers/gpu/drm/etnaviv/etnaviv_pci_drv.h
+
+
+base-commit: 52272bfff15ee70c7bd5be9368f175948fb8ecfd
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.34.1
+
 
