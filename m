@@ -1,127 +1,139 @@
-Return-Path: <linux-kernel+bounces-183199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B726F8C95D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:36:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A17FD8C95D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C7D4281568
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:36:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A616281828
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60AB6D1BD;
-	Sun, 19 May 2024 18:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A515F6E605;
+	Sun, 19 May 2024 18:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CpFm2ZzT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGaYEROF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BB045038;
-	Sun, 19 May 2024 18:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93396CDBA;
+	Sun, 19 May 2024 18:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716143800; cv=none; b=V4aPB6CDG76dVVQQAuoC533URUVn33BVHy1RSHHzGhp/J2FE4DMAhANKANwmFvT8xzFyviEFFBCSmHegsNaMyfmj4mENeTJPT9wqgSDeB3Dyu/kXGNwY/bR8ycy+k2miZfCw2Owlprllj22AJfk9cxga6Jn54jdDP+oqwnnP4yc=
+	t=1716143896; cv=none; b=rFfi0KhKgYnlXPZ5HHCrsxzyHHI5z31QaY1t9iwNA6JStVMN5tD3nfkMpxLI+Iaknz39UP90aClraEFjZBDfFOFKZFeYehmxR9agRK16nDgsvrWJPFrIJHfJrOyMby4DDIZpgbmWZVwdDiLh1x0oJp+t1QA2+Ob+26J21flWCms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716143800; c=relaxed/simple;
-	bh=UUhwXxqUPl7s1YkfVggMn/rNgFKLSx/iqaAxFo+gv7w=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=oos0A+CEhoHlKluqSyczOHi+cnxwsvuOWc3S21D+DhJ6qRoutalVvi1KSEZ3kCLFkacAvcbDR1vXqKfD+pZYvU6iY8gKKG4Km9hoQcKvz2bbOGhJJqjAxmttk+sFRGCmhRqcu7m6uRHTbvBcAgdqz0g8fM2OoEVFBQehW7qYh7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CpFm2ZzT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29884C32781;
-	Sun, 19 May 2024 18:36:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1716143800;
-	bh=UUhwXxqUPl7s1YkfVggMn/rNgFKLSx/iqaAxFo+gv7w=;
+	s=arc-20240116; t=1716143896; c=relaxed/simple;
+	bh=lVCcZNgsc8zO7s/yax8GQlYEW+YH4cqOMEwcZkdmLCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OyndJ/LlulFIYSBORCO+YHFHo1v7X1uKseoZED8EDdXFJCEA0K35C928vLEXstUXmwLUBpf7XgrwiiggOcmE/RzsMLe5oOL0fSYAI5nKGEx+vumPKWX/Z6Mw9gU77pAOgICgWet+8msCrrQ4DlGWmNMxOhQpArS5b29PJrqeQ28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGaYEROF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F81C32781;
+	Sun, 19 May 2024 18:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716143895;
+	bh=lVCcZNgsc8zO7s/yax8GQlYEW+YH4cqOMEwcZkdmLCo=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CpFm2ZzTjT7bt9pUpITHxMxR/vtK7evZs57rWz3tBtSlm/XOEFX3G9m1K6CGPK+kv
-	 1FoUOPWtfpQWYJY+33Zak7EMr76YRoJl/9/PXFfU+OvzXBuqc0uGOpScWZVZDwvIP/
-	 d94OEdp8flElEddq31aS8tKpn+K3F8NFhhSU2orc=
-Date: Sun, 19 May 2024 11:36:39 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linuxfoundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] MM updates for 6.10-rc1
-Message-Id: <20240519113639.db3fe5f80d25be4e7666751e@linux-foundation.org>
-In-Reply-To: <CAHk-=whEAquncw0wb59-XVAHmVh4CWSfwuWh4bTJjJzvx0=PzQ@mail.gmail.com>
-References: <20240517192239.9285edd85f8ef893bb508a61@linux-foundation.org>
-	<CAHk-=whEAquncw0wb59-XVAHmVh4CWSfwuWh4bTJjJzvx0=PzQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=dGaYEROFbcsOWz4dpnikAEeKk0KglCeQYp/W+CSvt4z32IW7Z+LXduDKBzcnX72gg
+	 At0ZFGT4Rtde6o2ijU6n17ZvoE9boV/fSOoAHuJVthPqzo+cjyjozyE3l9fpxT56uv
+	 b5sp41dVVQTpruGRFQntcOQFfVW/S9PYKNIJFSCf4m8c8cbOmyzTxPi+JFzKRHMvH5
+	 TFWzNGrIL7sLes9h9LjyEDlkMt2fhJuZHBKm7sEVbHt7X7ERWW77/ZGU1hIaHaPrlZ
+	 B00X6LWkGoZI3dIDCqTvuavjqUPZGhPseoK2o7uVN19Ys658+7QVCebwMDXoaSEpKF
+	 ZIRJ/eZZd7Hfg==
+Date: Sun, 19 May 2024 19:38:05 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, conor+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, nuno.sa@analog.com,
+ oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v3 9/9] drivers: iio: imu: Add support for adis1657x
+ family
+Message-ID: <20240519193805.3bc1d842@jic23-huawei>
+In-Reply-To: <202405181400.174vWAhr-lkp@intel.com>
+References: <20240517074750.87376-10-ramona.bolboaca13@gmail.com>
+	<202405181400.174vWAhr-lkp@intel.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sun, 19 May 2024 08:32:44 -0700 Linus Torvalds <torvalds@linuxfoundation.org> wrote:
+On Sat, 18 May 2024 14:47:01 +0800
+kernel test robot <lkp@intel.com> wrote:
 
-> On Fri, 17 May 2024 at 19:22, Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > include/linux/slab.h
-> >         https://lkml.kernel.org/r/20240429114302.7af809e8@canb.auug.org.au
+> Hi Ramona,
 > 
-> This is not only a merge conflict, your tree is actively buggy.
+> kernel test robot noticed the following build errors:
 > 
-> You have introduced changes like this:
+> [auto build test ERROR on jic23-iio/togreg]
+> [cannot apply to linus/master v6.9 next-20240517]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 > 
->   -static inline __alloc_size(1, 2) void *kvcalloc(size_t n, size_t
-> size, gfp_t flags)
->   -{
->   - return kvmalloc_array(n, size, flags | __GFP_ZERO);
->   -}
->   +#define kvcalloc(_n, _size, _flags) kvmalloc_array(_n, _size,
-> _flags|__GFP_ZERO)
+> url:    https://github.com/intel-lab-lkp/linux/commits/Ramona-Gradinariu/dt-bindings-iio-imu-Add-ADIS16501-compatibles/20240517-155051
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+> patch link:    https://lore.kernel.org/r/20240517074750.87376-10-ramona.bolboaca13%40gmail.com
+> patch subject: [PATCH v3 9/9] drivers: iio: imu: Add support for adis1657x family
+> config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240518/202405181400.174vWAhr-lkp@intel.com/config)
+> compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240518/202405181400.174vWAhr-lkp@intel.com/reproduce)
 > 
-> and that's just completely wrong. Note the "_flags|__GFP_ZERO": yes,
-> the bitwise or is fairly low down in the operator precedence rules,
-> and it probably work sin practice because most cases will just pass in
-> a simple expression for the flags, but it's still *horribly* wrong.
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202405181400.174vWAhr-lkp@intel.com/
 > 
-> I'm going to take this pull and fix up the cases I find, but I'm not
-> happy with this kind of trivial C preprocessor misuse.
+> All errors (new ones prefixed by >>):
+> 
+> >> drivers/iio/imu/adis16475.c:523:9: error: initialization of 'const struct iio_dev_attr *' from incompatible pointer type 'struct attribute *' [-Werror=incompatible-pointer-types]  
+>      523 |         &iio_dev_attr_hwfifo_watermark_min.dev_attr.attr,
+>          |         ^
+>    drivers/iio/imu/adis16475.c:523:9: note: (near initialization for 'adis16475_fifo_attributes[0]')
+>    drivers/iio/imu/adis16475.c:524:9: error: initialization of 'const struct iio_dev_attr *' from incompatible pointer type 'struct attribute *' [-Werror=incompatible-pointer-types]
+>      524 |         &iio_dev_attr_hwfifo_watermark_max.dev_attr.attr,
+>          |         ^
+>    drivers/iio/imu/adis16475.c:524:9: note: (near initialization for 'adis16475_fifo_attributes[1]')
+>    drivers/iio/imu/adis16475.c:525:9: error: initialization of 'const struct iio_dev_attr *' from incompatible pointer type 'struct attribute *' [-Werror=incompatible-pointer-types]
+>      525 |         &iio_dev_attr_hwfifo_watermark.dev_attr.attr,
+>          |         ^
+>    drivers/iio/imu/adis16475.c:525:9: note: (near initialization for 'adis16475_fifo_attributes[2]')
+>    drivers/iio/imu/adis16475.c:526:9: error: initialization of 'const struct iio_dev_attr *' from incompatible pointer type 'struct attribute *' [-Werror=incompatible-pointer-types]
+>      526 |         &iio_dev_attr_hwfifo_enabled.dev_attr.attr,
+>          |         ^
+>    drivers/iio/imu/adis16475.c:526:9: note: (near initialization for 'adis16475_fifo_attributes[3]')
+>    cc1: some warnings being treated as errors
+> 
+> 
+> vim +523 drivers/iio/imu/adis16475.c
+> 
+>    514	
+>    515	static IIO_DEVICE_ATTR_RO(hwfifo_watermark_min, 0);
+>    516	static IIO_DEVICE_ATTR_RO(hwfifo_watermark_max, 0);
+>    517	static IIO_DEVICE_ATTR(hwfifo_watermark, 0444,
+>    518			       adis16475_get_fifo_watermark, NULL, 0);
+>    519	static IIO_DEVICE_ATTR(hwfifo_enabled, 0444,
+>    520			       adis16475_get_fifo_enabled, NULL, 0);
+>    521	
+>    522	static const struct iio_dev_attr *adis16475_fifo_attributes[] = {
+>  > 523		&iio_dev_attr_hwfifo_watermark_min.dev_attr.attr,  
+>    524		&iio_dev_attr_hwfifo_watermark_max.dev_attr.attr,
+>    525		&iio_dev_attr_hwfifo_watermark.dev_attr.attr,
+>    526		&iio_dev_attr_hwfifo_enabled.dev_attr.attr,
+>    527		NULL
+>    528	};
+drop the dev_attr.attr parts.  This will 'work' because they are all at the start of
+the containing structure, but it should be the iio_dev_attrs as in a similar
+case here:
+https://elixir.bootlin.com/linux/latest/source/drivers/iio/accel/adxl372.c#L1009
 
-Thanks, I've asked Suren and Kent to check it all over.
-
-> I also note that you have *SEVEN* pointless merges that have no
-> explanation for them. I'm happy that you use git, but that means that
-> you also need to either
+>    529	
 > 
->  (a) not do merges at all and treat it as a patch queue
-> 
->  (b) do merges _properly_ and not throw them around like some madman
-> 
-> And doing them properly means not only writing good commit messages,
-> but actually having good reasons for them. As it is, we have
-> 
->   5d1bc760583f ("merge mm-hotfixes-stable into mm-nonmm-stable to pick
-> up needed changes")
->   640958fde130 ("Merge branch 'master' into mm-stable")
->   4e2e36129225 ("Merge branch 'master' into mm-stable")
->   1dd4505cf4c8 ("Merge branch 'master' into mm-stable")
->   71919308943d ("Merge branch 'master' into mm-stable")
->   b228ab57e51b ("Merge branch 'master' into mm-stable")
->   5e2806112864 ("Merge branch 'master' into mm-stable")
 
-This is me advancing the master branch once per week until we hit -rc4.
-
-I don't understand why these merges were visible to this pull.  I sent:
-
-: The following changes since commit 5d1bc760583f225032f91bd88853f4c26acaf4e0:
-: 
-:   merge mm-hotfixes-stable into mm-nonmm-stable to pick up needed changes (2024-04-25 20:54:12 -0700)
-: 
-: are available in the Git repository at:
-: 
-:   git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-stable-2024-05-17-19-19
-: 
-: for you to fetch changes up to 76edc534cc289308130272a2ac28694fc9b72a03:
-: 
-:   memcg, oom: cleanup unused memcg_oom_gfp_mask and memcg_oom_order (2024-05-11 15:41:37 -0700)
-: 
-
-This has worked OK before,
 
