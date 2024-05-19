@@ -1,176 +1,125 @@
-Return-Path: <linux-kernel+bounces-183132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2318C950B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:37:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE9B8C950E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C622E1F21099
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:37:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D04D1C21250
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F9E4CB28;
-	Sun, 19 May 2024 14:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755A74CE1F;
+	Sun, 19 May 2024 14:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L6h1cjpc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EMmbQOEv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591713D56D
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 14:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBD44DA04;
+	Sun, 19 May 2024 14:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716129465; cv=none; b=UbsV8tMTGEON03ZfRRizeGM3Tjnu5nsSG0BFmpQNb7RCZsClr99CBLZWM/5p7J4Chd3bfb5mB4t2JspvKSC8O2pptwkYnVuSx3/51/FeJ4XpKRQqo1fiIER5L2+PhgokjryAdObv7qyJNbWg/8q5RnDKfiUAW66SKqTCFaKlo8c=
+	t=1716129477; cv=none; b=unWMQ/n5zDMLm+KUHvmCkpK2+YvRbvF2hWxwm8exVwRwarDKKipuKTIyk14Do8/sLfgJ+ALdHBUjbj+bVVrX625xPF4t+JtzXLdWIMXAHHMOVYM9indcQHI0/Xykal4wxgDzzym4VtSEJEGZddXVBMvLo3ygoVlhQNFmF09DikI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716129465; c=relaxed/simple;
-	bh=7T1VueeZHq6IfwKomhlIjMYUhBWiRr9Lz4G4Ygn6vuw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Fl+vMrZygXmv4xpTkivav4jhQ8HJfmLuEtsvheam/SncAigP2KZj/WwxPUhe5l2QSLRdPjXByU73YXWPc7WvGoHwr9UUkM4Wk0igtZvhPujueLPI9qqS62urmXag77mfv+5StepQ5g7cPADh1u6bomo56BGVbcZosATqHcR0U8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L6h1cjpc; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716129465; x=1747665465;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7T1VueeZHq6IfwKomhlIjMYUhBWiRr9Lz4G4Ygn6vuw=;
-  b=L6h1cjpcIZK7VpnlYXKQckg7IzzolQGV8CgNWJ8s8wDj9FzS2YmalF60
-   Uy7Nq+oE2WkBkWoEeazNjhM/2b0ubhxYbPinNy8MLGv+vIUqB0FwQrybC
-   RNBot84KmL7gyFBUrY6EQ6tl5RhY15WOOvEaNK48moqAAwMvGtEZGZjIT
-   EPTVIFOYEN8KN3S35t9OjjZy2NgbvRWUAmfYMnNnXX6ZlpKsXzkPUuA+l
-   gRagyc2oZzFK+Mqs2Lt2QS0/+qaLHsOpKku8RGHV61i8kR3P+zJ0DBRT1
-   GU61KH3dq41w4uaHAl8twTD8A+EUjO69gQCGM7wTT/huXidxMIUNcKO5C
-   Q==;
-X-CSE-ConnectionGUID: 8FMfsNm5RW2zWbU/b2fKkg==
-X-CSE-MsgGUID: +hpK4PMCQfyc4D83SrBbyA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="23664492"
-X-IronPort-AV: E=Sophos;i="6.08,173,1712646000"; 
-   d="scan'208";a="23664492"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 07:37:45 -0700
-X-CSE-ConnectionGUID: U/887R5zRvye6aFdnJdRfQ==
-X-CSE-MsgGUID: HCWUP5VSScSsFHQ85uSJHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,173,1712646000"; 
-   d="scan'208";a="63505015"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.244.72]) ([10.125.244.72])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 07:37:41 -0700
-Message-ID: <805f3ae2-341e-4255-add8-3f6dd296a556@linux.intel.com>
-Date: Sun, 19 May 2024 22:37:38 +0800
+	s=arc-20240116; t=1716129477; c=relaxed/simple;
+	bh=AGcBlp/L0UCiDEm9xU4FkF8tyQP1W/SpJauzpAkP8h0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EKm+gs82nK1/rEM+btusF7JKPlrR9rKr4e1yQ8st/qvif92JXOqFym3YrongC8koCpmj4OXlMH9Vj6Mg39jh/y/Hv0fYafLu7KPrWFZTSKzZ34VNqSmBAECGBkPHnsrVlz4XtTVWlb0VyUcXNhfjeNOKdHY33QZVikvHSyn1LiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EMmbQOEv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC45C32781;
+	Sun, 19 May 2024 14:37:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716129477;
+	bh=AGcBlp/L0UCiDEm9xU4FkF8tyQP1W/SpJauzpAkP8h0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EMmbQOEvlvD8tg/XNAUE1vqmVbIV9Ny5B5OYx+XdaR5xCATfXTZIkqBZAqdASNYb8
+	 hTxSmORhhPeNQ8i7WAseJZ9KBJujD4lDbFOsV28rkF23navHVpnB5nWivqhTYg7tRg
+	 ez6/mNEVq4d3oAeGZ3THqyF/ZfaxfroSq+ZCL288=
+Date: Sun, 19 May 2024 16:37:54 +0200
+From: gregkh <gregkh@linuxfoundation.org>
+To: "nanfengwq@sina.com" <nanfengwq@sina.com>
+Cc: balbi <balbi@kernel.org>, linux-usb <linux-usb@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: memory leakage in ncm_wrap_ntb() in USB ncm mode with kernel 5.15
+Message-ID: <2024051901-gimmick-cosponsor-f2dd@gregkh>
+References: <2024051922230825069112@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>,
- "virtualization@lists.linux-foundation.org"
- <virtualization@lists.linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 4/9] iommufd: Add fault and response message
- definitions
-To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>
-References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
- <20240430145710.68112-5-baolu.lu@linux.intel.com>
- <BN9PR11MB52762F2AF16AA5833D61AFF68CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB52762F2AF16AA5833D61AFF68CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024051922230825069112@sina.com>
 
-On 2024/5/15 15:43, Tian, Kevin wrote:
->> From: Lu Baolu <baolu.lu@linux.intel.com>
->> Sent: Tuesday, April 30, 2024 10:57 PM
->>
->> iommu_hwpt_pgfaults represent fault messages that the userspace can
->> retrieve. Multiple iommu_hwpt_pgfaults might be put in an iopf group,
->> with the IOMMU_PGFAULT_FLAGS_LAST_PAGE flag set only for the last
->> iommu_hwpt_pgfault.
+On Sun, May 19, 2024 at 10:23:10PM +0800, nanfengwq@sina.com wrote:
+> Hello：
+> I have discovered a risk of memory leakage in ncm_wrap_ntb() under USB ncm mode in kernel 5.15, and I have fixed it. 
+> Please help me review it.
 > 
-> Do you envision extending the same structure to report unrecoverable
-> fault in the future?
+> If this modification is effective, it can also be integrated into other kernel versions, such as kernel 4.14, and so on.
+> 
+> The logic of a memory leak is as follows:
+> 
+> If the return value skb2 of  package_for_tx() is not NULL, and the return value ncm->skb_tx_data of alloc_skb() is NULL, then the code will go to err, where there is no processing of skb2, resulting in a memory leak in skb2.
+> 
+> 
+> Thank you.
+> 
+> 
+> 
+> 
 
-I am not envisioning extending this to report unrecoverable faults in
-the future. The unrecoverable faults are not always related to a hwpt,
-and therefore it's more suitable to route them through a viommu object
-which is under discussion in Nicolin's series.
 
-> 
-> If yes this could be named more neutral e.g. iommu_hwpt_faults with
-> flags to indicate it's a recoverable PRI request.
-> 
-> If it's only for PRI probably iommu_hwpt_pgreqs is clearer.
-> 
->> +
->> +/**
->> + * struct iommu_hwpt_pgfault - iommu page fault data
->> + * @size: sizeof(struct iommu_hwpt_pgfault)
->> + * @flags: Combination of enum iommu_hwpt_pgfault_flags
->> + * @dev_id: id of the originated device
->> + * @pasid: Process Address Space ID
->> + * @grpid: Page Request Group Index
->> + * @perm: Combination of enum iommu_hwpt_pgfault_perm
->> + * @addr: Page address
-> 
-> 'Fault address'
+Hi,
 
-Okay.
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-> 
->> + * @length: a hint of how much data the requestor is expecting to fetch. For
->> + *          example, if the PRI initiator knows it is going to do a 10MB
->> + *          transfer, it could fill in 10MB and the OS could pre-fault in
->> + *          10MB of IOVA. It's default to 0 if there's no such hint.
-> 
-> This is not clear to me and I don't remember PCIe spec defines such
-> mechanism.
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-This came up in a previous discussion. While it's not currently part of
-the PCI specification and may not be in the future, we'd like to add
-this mechanism for potential future advanced device features as it
-offers significant optimization benefits.
+- Your patch did not apply to any known trees that Greg is in control
+  of.  Possibly this is because you made it against Linus's tree, not
+  the linux-next tree, which is where all of the development for the
+  next version of the kernel is at.  Please refresh your patch against
+  the linux-next tree, or even better yet, the development tree
+  specified in the MAINTAINERS file for the subsystem you are submitting
+  a patch for, and resend it.
 
-> 
->> +/**
->> + * enum iommufd_page_response_code - Return status of fault handlers
->> + * @IOMMUFD_PAGE_RESP_SUCCESS: Fault has been handled and the page
->> tables
->> + *                             populated, retry the access. This is the
->> + *                             "Success" defined in PCI 10.4.2.1.
->> + * @IOMMUFD_PAGE_RESP_INVALID: General error. Drop all subsequent
->> faults
->> + *                             from this device if possible. This is the
->> + *                             "Response Failure" in PCI 10.4.2.1.
->> + * @IOMMUFD_PAGE_RESP_FAILURE: Could not handle this fault, don't
->> retry the
->> + *                             access. This is the "Invalid Request" in PCI
->> + *                             10.4.2.1.
-> 
-> the comment for 'INVALID' and 'FAILURE' are misplaced. Also I'd more
-> use the spec words to be accurate.
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what is needed in
+  order to properly describe the change.
 
-Yes. Fixed.
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what a proper
+  Subject: line should look like.
 
-> 
->> + */
->> +enum iommufd_page_response_code {
->> +	IOMMUFD_PAGE_RESP_SUCCESS = 0,
->> +	IOMMUFD_PAGE_RESP_INVALID,
->> +	IOMMUFD_PAGE_RESP_FAILURE,
->> +};
->> +
+- It looks like you did not use your "real" name for the patch on either
+  the Signed-off-by: line, or the From: line (both of which have to
+  match).  Please read the kernel file,
+  Documentation/process/submitting-patches.rst for how to do this
+  correctly.
 
-Best regards,
-baolu
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
