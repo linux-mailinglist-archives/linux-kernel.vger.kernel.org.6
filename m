@@ -1,109 +1,82 @@
-Return-Path: <linux-kernel+bounces-183069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5D18C9417
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 10:40:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 038FB8C941E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 10:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 594D9281754
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 08:40:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AD4B1C20B16
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 08:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526232BAFC;
-	Sun, 19 May 2024 08:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E09B2576B;
+	Sun, 19 May 2024 08:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hZgN99hA"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IBuq5Yc4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CE710940
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 08:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D354E17C9B;
+	Sun, 19 May 2024 08:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716108034; cv=none; b=fpwGT7oy7BQIb1ZMMJloCiOQF8LbimhIe4OAchMIsiPTxd7uYZt5PRE+ZcGW1Sexe59DPdUHbQi1KI+D2JeGyyd93SF7SIzZaOYNmUkhvp5BapqDzLeS+cgPjv9dAOVAzLyLh0vcvc+08+17Yt3d2eUxD7o4maHlOWGm/rV7vSc=
+	t=1716108794; cv=none; b=cg5PyLxTF0p9yZQH+f6Q51oOB9PHA4DfKiSOdoROGEMGdf9JfrMhgGx5tJ0kxgnLUA3/BHIQnQLIMEcinwpW6FI2SUAjh33BYH9fy2vlhqCxO7yTSXmVT5Gz+EkoOSSMSeF7dAP8PyFObPbQcP6QzdNGJW+AbxYtAoaQzOwEZpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716108034; c=relaxed/simple;
-	bh=YRpNzQ5zShBeLJ7EHFOzaPwGXY60cRr8c2PrAP1MZRo=;
+	s=arc-20240116; t=1716108794; c=relaxed/simple;
+	bh=OkqBkdyMVNgKTLHGmM2W2G4Sl6wOqdQaV04McuATOQo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z7lV5k4E3yJl267lqhg4WpnwvG9majh7azid9AV2uN0V8W59u9VkW4v3rEcnKK8xqFrsw6LwhgSf+jGxN1P16CYQFQhz1wFdauq4BOdU7d209v21qVXVbtZe2feS3kyrcZVggMm7+9ylEd/LU/VJL4q7RlVPqoA/xdvPy8ZbWfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hZgN99hA; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e576057c06so23011861fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 01:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716108031; x=1716712831; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MgTrllwDYHTgB7C+QKVDFFRer7No5HD5l0LPXbNp0Rc=;
-        b=hZgN99hAJMzaOKtrm0NUsc9bA+zKWrIqWH3aoBvT8L5gDlOPV5veWaT+4ACSnTyBP/
-         hog1bB3u0o2VwgzmtFYJErcIcMG9xqmPLb7RkQnMiFGVslE78Qr0gd2pqovSTx6lF72i
-         sjNjy2dCnorAEtkKB/h8hRtNTp6jOA/qkg+kbTynP6Ax6DBL3TykFnAjk/A/JF71XuMP
-         LsYSRone+cjezvacoXhxYvelC6T0QVyqIfIODuhHSZj8c5KL6ApSm4RoZBOyRbem4KCg
-         vwKX2gtrIkOd3qV58WKIFfMl186aikgzMH4C7azK+7QMY2w8OvpUtksTqW4QmDknG/Un
-         naIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716108031; x=1716712831;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MgTrllwDYHTgB7C+QKVDFFRer7No5HD5l0LPXbNp0Rc=;
-        b=aJoQoRnnARKSxHhQS8dbpPTK/H3H84h13lnE6bXAnTft75koB+GNb5dc4z7Wl8RhR9
-         s0bcaLwE3fmb6Yzvn8CNKRPyrueKV0qxcB0FAn6umO3b4l6gfkFXJcdnWqgman0OkFSp
-         +HXRuBAACEmYUskwpVsb/h+wbcQqJqZCqPLwdg3g5ZUi7BjCdk9HJK985bo0rHfzGkEk
-         xMttnMqzJRwv1NEejUGe91bHxmeGgVQ3xqCiagm68nm/fu/RFAXNpMNwM9mknL0Olyf4
-         TfkpD8/UKMQjtC2VsVIYdK9x6GXjkMpeXaCDXDmsXcLHeCiQ01cOzE03qf91bLG9B6rN
-         jWkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfIba6W/r+Ba3+Up0WxIQ79soQsBp14SfIyiysaT8/J6Zozo3fhphrZJP3t1XJkTCSInKx5Fbibp0Tnb2kku5POEOm3sqAHSh3tMwL
-X-Gm-Message-State: AOJu0YxP7IY/sx3Zqho0WN3X/+2paQ9BJkJr+kHj2zrMAM9PxxQDxMYK
-	d4mcWe5wdlcDNo+MnsCki7u3bbeCs8z3VJt29v/jD/wP7Ap3xOcRixmpsixyrhw=
-X-Google-Smtp-Source: AGHT+IEj+o0GE3iSfy5vy0xWlDi14/h6b+B2BzuNrvjjBdZo1C91BvTjjcT+ES/qsBFTc1EsXLX9fg==
-X-Received: by 2002:a2e:960f:0:b0:2df:b7cf:9607 with SMTP id 38308e7fff4ca-2e51ff4d030mr186327031fa.22.1716108031394;
-        Sun, 19 May 2024 01:40:31 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d0bbd57fsm29637451fa.22.2024.05.19.01.40.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 May 2024 01:40:30 -0700 (PDT)
-Date: Sun, 19 May 2024 11:40:29 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Bjorn Andersson <quic_bjorande@quicinc.com>, Connor Abbott <cwabbott0@gmail.com>, 
-	Ruan Jinjie <ruanjinjie@huawei.com>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/msm: Add obj flags to gpu devcoredump
-Message-ID: <npo6qfweuwlo36gsrseb2oldsqpuv6z2soie3rt4u4zmoxdyzf@hlwx7zd22osl>
-References: <20240513155150.166924-1-robdclark@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gCDBsmvJR7ZVdfO/OyxmHTAJnU1D5BkrcStYzeivnzVjzr0tBc8a+TKAYQCR1wbTTEEPQLm4Yk5BMEbs5qsd+K1ROJMnpt2Dd26NmP4V+dQCo3zQCPMl68heQT0/jHiKI3xJ5ILN7uwmrR69MK7BfqxDqPVWKYwM7lXbnd4lqsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IBuq5Yc4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E542EC32781;
+	Sun, 19 May 2024 08:53:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716108794;
+	bh=OkqBkdyMVNgKTLHGmM2W2G4Sl6wOqdQaV04McuATOQo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IBuq5Yc42M73fknn1ZCdI+W5JoWxgmzF+MSe29OmTLB31MCmztlXZPuw4nAnyJEr2
+	 wg0lEynF3Zc0qt3J/TJco3+BsIdAryT8wm6d3S3GTXALpjBbiALO4aGt67cpobtXwU
+	 MBSoAqf+grgRdP2YgBIrKuapbqB1ADUK/BBpst5U=
+Date: Sun, 19 May 2024 10:53:11 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org
+Subject: Re: CVE-2024-27406: lib/Kconfig.debug: TEST_IOV_ITER depends on MMU
+Message-ID: <2024051947-hermit-yeast-3e15@gregkh>
+References: <2024051739-CVE-2024-27406-cfc3@gregkh>
+ <ot4g5zxesgwpzbgvb7yjazsgdxojktdph42qbw6pik3tvyswhj@kdo44nmnwwcq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240513155150.166924-1-robdclark@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ot4g5zxesgwpzbgvb7yjazsgdxojktdph42qbw6pik3tvyswhj@kdo44nmnwwcq>
 
-On Mon, May 13, 2024 at 08:51:47AM -0700, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
+On Fri, May 17, 2024 at 07:42:14PM +0200, Michal Koutný wrote:
+> On Fri, May 17, 2024 at 01:40:41PM GMT, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > BUG: failure at mm/nommu.c:318/vmap()!
+> > Kernel panic - not syncing: BUG!
+> > 
+> > The test calls vmap() directly, but vmap() is not supported on nommu
+> > systems, causing the crash.  TEST_IOV_ITER therefore needs to depend on
+> > MMU.
 > 
-> When debugging faults, it is useful to know how the BO is mapped (cached
-> vs WC, gpu readonly, etc).
-> 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 1 +
->  drivers/gpu/drm/msm/msm_gpu.c           | 6 ++++--
->  drivers/gpu/drm/msm/msm_gpu.h           | 1 +
->  3 files changed, 6 insertions(+), 2 deletions(-)
+> This is fixing mising assumption of a testing module.
+> The BUG is deserved AFAIU. The CVE should be reverted IMO.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Many people/distros run the built-in unit tests at boot time, and having
+crashes is not a good idea.  So if you don't enable this option, great,
+this CVE isn't relevent, but if you do, it's an in-kernel crash which is
+not good, and this is the fix for that.
 
--- 
-With best wishes
-Dmitry
+So I don't think this CVE should be rejected, sorry.
+
+thanks,
+
+greg k-h
 
