@@ -1,145 +1,175 @@
-Return-Path: <linux-kernel+bounces-183083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D7F8C9446
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 12:07:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7A68C9447
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 12:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65CA01C20B4F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 10:07:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51653281697
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 10:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A127C2BAFC;
-	Sun, 19 May 2024 10:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DF22BB13;
+	Sun, 19 May 2024 10:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dt+IJdVy"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YRDse6g9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FD91E534
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 10:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091073AC2B
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 10:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716113244; cv=none; b=kv/qRICO89mhWa5A/gVcdz7NNuM+5g2OfYpeT/I1u7MvHaJ6u8oTpbCTKQTIpMhU59uVhCQuVUpaqai6WZ1fdaUzpzsoFzaRSkCHafvcW9EOwYkskWLjJL6XWxR0ixH1UR9U9kRxIzF3821JGh+sJE/pARyZl1V4jYZec1dqHJk=
+	t=1716113378; cv=none; b=jgKK4qdkHpFqo3x9MQig18DjXpBxA1VGzx8k7U8agFXquPME8DG1VrGE47xpRVwrMx6oSMHNgZQZJM+sF++SkP9o2mFmjTwjromOA+X1e4kHjlQ37KZja9D0U8+WbH6onW2dDo5MZHl93pUEo3TPDbUdjx/oYfJUsqJlGWsBvGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716113244; c=relaxed/simple;
-	bh=etQGD/Sc3GMgATEbVZpoDBSCvoQuUlRHiYOy0ekge0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ofhRNFGxP/VY6FYnz4vX/0Q5vf5Z3PwKbJRuBQ/bCnsABRMr9r8gWVWt/UNcA208oKkkL0YrGOZGnGnPmB+kkrG07CYBSA0juGhIiDZFF8MHE43FDTaOqc6/pLt2QmMbP4dQsg86QfzhRAITDXNHHy5ZKAJmlv1ZivltKcHIUVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dt+IJdVy; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-34db6a29998so1434103f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 03:07:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716113241; x=1716718041; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=320z9E/86yc2wudgNLgLL8g4U1YGIAZ7tfBbM4eHHIY=;
-        b=Dt+IJdVy86jpIhRaY/yCHj0qSl17DRnFnq4DB56mPH/5/Ww9/YEtJyVul2zqDg4FzR
-         Bd7+9hbB/eudYbLVP+K/upwz7x4qCxZvNVFmpzUJnBjKNiGjOFsOyOXCJsqVJwF+Yjhh
-         r2NMVDa63ne2JIpaFHcZRgQXyDwZdVFqUL7ei76mlDdCmMwTHK5quUI95R2k8KnHuP7z
-         9VZzOYDa1U+CShxvLiAXQ8OyowiZQeHh3paxc6GwbojSQcQvM/iiuAP4M8guFDV4lUEK
-         kbwk5eeC9a74ad63RfJr/gquYOfeHe53MohFTRLprsOMBD7g4EF2QEg2C594/OpDOCAG
-         KRYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716113241; x=1716718041;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=320z9E/86yc2wudgNLgLL8g4U1YGIAZ7tfBbM4eHHIY=;
-        b=ev7rR5ecyJlon1G9umat0AVQdNCN2INXtDFAHwTxHALTagkdRbJo3H5r3glqSYjJpf
-         cvSoIXhkSKI0Gf4ezRvgWfQZkPr6L5I5z4Ul6SAbLtzqNy5ItE8msezBKnRBXy35/150
-         +PgDLCCtLtDFPV3uOw5LppNkimhyr6TBLORV+Ir1f8Cuk3AAbIcxuwi+fM5hwQL3m2+W
-         v1/JV14CHXgUQ+V6SEgh/VGVfPMSIBJqCZl0bCyMYTL+w5XFSW8KKfneDYxJMDxU5N9L
-         pxYBuRnULTfRUrMQMUBiLU+2cU7xsaGvjlNKTXsd3LCBiuivijD3LVFQl2CLefdizq0m
-         n1lA==
-X-Forwarded-Encrypted: i=1; AJvYcCUutm/Z5NitupGSPkeySPCQZEvYP8cJ9hZzRt0LOHoDrsR2+EOs9fxzNEOD3U/E7HVxlnmk+MKAi8WSAMSDo4h4yvuyvaBSxlSzdTX8
-X-Gm-Message-State: AOJu0YwD3LEkyuPtgGPZLh873vK5ZDj6cRwCazc4OMgw8DTyClZ17Ael
-	jsPYl22lS0hXFx2ltT9scjM+KC7c3e/KrH00+uH+M3sOySkSz9Gl
-X-Google-Smtp-Source: AGHT+IErv8QLrHO4ewcOMEXQoUPuwcgDRLStIisOq5DrjhknuIwGVYk6eO38TVuLwkJFG9FcCwb51w==
-X-Received: by 2002:adf:ec4d:0:b0:343:7b6b:dcc6 with SMTP id ffacd0b85a97d-3504a73bc6amr18580623f8f.30.1716113241336;
-        Sun, 19 May 2024 03:07:21 -0700 (PDT)
-Received: from f (cst-prg-73-12.cust.vodafone.cz. [46.135.73.12])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbbedbsm26261151f8f.92.2024.05.19.03.07.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 May 2024 03:07:20 -0700 (PDT)
-Date: Sun, 19 May 2024 12:07:07 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	lstoakes@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: batch unlink_file_vma calls in free_pgd_range
-Message-ID: <wcc2azm3iy7yhhl4c7ge22a7jpsekxl6vhl4aftusej7btzbrg@jlgir5kaobuk>
-References: <20240518062005.76129-1-mjguzik@gmail.com>
- <Zkk6SCZl70o3WXpW@casper.infradead.org>
+	s=arc-20240116; t=1716113378; c=relaxed/simple;
+	bh=3pqbNvdYRhWc2XQ8kSFBcuNQeXXTsBDv7SxsX1AkypM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gwtpPmV/HXQbVggxLJT57hQh2vvKaSIxCap5YG95b6mfKbuhOzjLPtzX0XH4LySc6vXF9/nnlyqhCf+VYx1pAhTz28/IQAiw6nqaxqqXI4LKTiWZUwvaRXBUDK2iJpr6WXrFT5Olfbks/4v1yo9px3svQOa582esDBVfobsgnHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YRDse6g9; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716113377; x=1747649377;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3pqbNvdYRhWc2XQ8kSFBcuNQeXXTsBDv7SxsX1AkypM=;
+  b=YRDse6g91xqVnsB8XW8ajG3bVSJVarNLmyn6ZcwooVqvQXTeLG6QZm7U
+   o/FQhxte0AgXoitpmMQuxw/aRAuRq8Kay3gEythScQ3JJNgzm5yyQBrP1
+   4BKR5ngHvAqXU0qFSiEXIrriNb/OkFABw6wI7OJp/UTuYfSTNyWpBNrG8
+   iBctL7wUotrFWuzxIXXaQ15fkJE4Y5Lo7VOljNhgdxtMSp2WPQ33t+4tQ
+   uUXOynC5iSeFLNpiQgqq8BDdAla2onLqRxjgaOaYD5pIysB8X7PEFuS+w
+   +dNFy74W5hyt6bk/iXvoTaYA9mBbovduzC8puWaevmguBHlOy5kwBk6vW
+   w==;
+X-CSE-ConnectionGUID: XO4TfK4tTZmoQRvH80fHcw==
+X-CSE-MsgGUID: XXJ01MlxRNqnmykjfNtblQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11076"; a="12422241"
+X-IronPort-AV: E=Sophos;i="6.08,172,1712646000"; 
+   d="scan'208";a="12422241"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 03:09:37 -0700
+X-CSE-ConnectionGUID: Fz4KnX5YTNaXWKsOX48Lkg==
+X-CSE-MsgGUID: TmitfyhdQs++X2CiWV1/2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,172,1712646000"; 
+   d="scan'208";a="37168261"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa004.jf.intel.com with ESMTP; 19 May 2024 03:09:33 -0700
+Message-ID: <6b0529a9-b1c6-44ba-8c45-ad233de6484e@linux.intel.com>
+Date: Sun, 19 May 2024 18:07:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zkk6SCZl70o3WXpW@casper.infradead.org>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>,
+ "virtualization@lists.linux-foundation.org"
+ <virtualization@lists.linux-foundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v5 1/9] iommu: Introduce domain attachment handle
+To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
+ Jacob Pan <jacob.jun.pan@linux.intel.com>,
+ Joel Granados <j.granados@samsung.com>
+References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
+ <20240430145710.68112-2-baolu.lu@linux.intel.com>
+ <BN9PR11MB5276F0DAE4B5F63513C38A158CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB5276F0DAE4B5F63513C38A158CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, May 19, 2024 at 12:31:20AM +0100, Matthew Wilcox wrote:
-> On Sat, May 18, 2024 at 08:20:05AM +0200, Mateusz Guzik wrote:
-> > Execs of dynamically linked binaries at 20-ish cores are bottlenecked on
-> > the i_mmap_rwsem semaphore, while the biggest singular contributor is
-> > free_pgd_range inducing the lock acquire back-to-back for all
-> > consecutive mappings of a given file.
-> > 
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index b6bdaa18b9e9..443d0c55df80 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
+On 5/15/24 3:17 PM, Tian, Kevin wrote:
+>> From: Lu Baolu <baolu.lu@linux.intel.com>
+>> Sent: Tuesday, April 30, 2024 10:57 PM
+>>
+>> +/* Add an attach handle to the group's pasid array. */
+>> +static struct iommu_attach_handle *
+>> +iommu_attach_handle_set(struct iommu_domain *domain,
+>> +			struct iommu_group *group, ioasid_t pasid)
+>> +{
+>> +	struct iommu_attach_handle *handle;
+>> +	void *curr;
+>> +
+>> +	handle = kzalloc(sizeof(*handle), GFP_KERNEL);
+>> +	if (!handle)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	handle->domain = domain;
+>> +	curr = xa_cmpxchg(&group->pasid_array, pasid, NULL, handle,
+>> GFP_KERNEL);
 > 
-> I do object to this going into mm.h.  mm/internal.h would be better.
+> this could be just xa_insert() which returns -EBUSY if the entry isn't NULL.
+
+Yes, exactly.
+
 > 
-
-Noted.
-
-> I haven't reviewed the patch in depth, but I don't have a problem with
-> the idea.  I think it's only a stopgap and we really do need a better
-> data structure than this.
+>> +	if (curr) {
+>> +		kfree(handle);
+>> +		return xa_err(curr) ? curr : ERR_PTR(-EBUSY);
 > 
+> 'curr' is not an error pointer. You need ERR_PTR(xa_err(curr)).
 
-I'll send a v2 after some more reviews pour in.
+Fixed.
 
-The above indeed is just a low hanging fruit fixup in an unpleasant
-situation.
+> 
+>>   int iommu_attach_group(struct iommu_domain *domain, struct
+>> iommu_group *group)
+>>   {
+>> +	struct iommu_attach_handle *handle;
+>>   	int ret;
+>>
+>>   	mutex_lock(&group->mutex);
+>> +	handle = iommu_attach_handle_set(domain, group,
+>> IOMMU_NO_PASID);
+>> +	if (IS_ERR(handle)) {
+>> +		ret = PTR_ERR(handle);
+>> +		goto out_unlock;
+>> +	}
+>>   	ret = __iommu_attach_group(domain, group);
+>> +	if (ret)
+>> +		goto out_remove_handle;
+>>   	mutex_unlock(&group->mutex);
+> 
+> It's slightly better to set the handler after __iommu_attach_group().
+> 
+> doing so is aligned to the sequence in iommu_group_replace_domain().
 
-I think the real fix in the long run would provide the loader with means
-to be more efficient about it.
+I did it in this way because erasing an attach handle is easier than
+rolling back the group to the previous domain from the perspective of
+coding. I didn't realize attaching the group and storing the attach
+handle had to be done in a specific order.
 
-strace /bin/echo shows:
-[snip]
-openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
-read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\220\243\2\0\0\0\0\0"..., 832) = 832
-pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
-fstat(3, {st_mode=S_IFREG|0755, st_size=2125328, ...}) = 0
-pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
-mmap(NULL, 2170256, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7dbda8a00000
-mmap(0x7dbda8a28000, 1605632, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000) = 0x7dbda8a28000
-mmap(0x7dbda8bb0000, 323584, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1b0000) = 0x7dbda8bb0000
-mmap(0x7dbda8bff000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1fe000) = 0x7dbda8bff000
-mmap(0x7dbda8c05000, 52624, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7dbda8c05000
-[/snip]
+> 
+>> @@ -2211,13 +2307,33 @@ EXPORT_SYMBOL_GPL(iommu_attach_group);
+>>   int iommu_group_replace_domain(struct iommu_group *group,
+>>   			       struct iommu_domain *new_domain)
+>>   {
+>> +	struct iommu_domain *old_domain = group->domain;
+>> +	struct iommu_attach_handle *handle;
+>>   	int ret;
+>>
+>>   	if (!new_domain)
+>>   		return -EINVAL;
+>>
+>> +	if (new_domain == old_domain)
+>> +		return 0;
+>> +
+> 
+> __iommu_group_set_domain() already does the check.
 
-Hence the 5 mappings.
+Removed.
 
-Should there be a mechanism to issue all these mmaps at the same time
-there would definitely be savings in total work done, not only in terms
-of one i_mmap_rwsem lock trip.
-
-The mechanism should be versatile enough to replace other back-to-back mmap
-uses. It would be great if on top of it it did not require the size
-argument, instead it could return a pair address + size. Then the
-typical combo of open + fstat + mmap could be shortened.
-
-As in that was just a quick note, I have no intention of pursuing
-anything of the sort. I'll probably submit some other patches to
-damage-control the state without altering any design choices.
+Best regards,
+baolu
 
