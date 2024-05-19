@@ -1,168 +1,80 @@
-Return-Path: <linux-kernel+bounces-183306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B129F8C976B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 01:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 868908C976F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 01:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B80528115E
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 23:49:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2DFE1C208F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 23:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377685FEE5;
-	Sun, 19 May 2024 23:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB3271756;
+	Sun, 19 May 2024 23:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QUqcSwLG"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbQFl7s3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88058F4A;
-	Sun, 19 May 2024 23:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC338F4A;
+	Sun, 19 May 2024 23:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716162536; cv=none; b=DZZ6akIubg9w13WmMrj6XqgttTA10t3CSCZLgFt6O9OFx+D80Uq79BG2v+/EqrjFvwL2xkGcEH7DtyedlWNx+dMVBo5cuuLW/11O3oYZR1UpGVr8VapRzBJEhjcu75FZ6JVyY4OMQcxzyCCqBU6HyBo6l6K1D9u9e4pu7upM5g8=
+	t=1716162688; cv=none; b=aSfgDOTnGV9pWNGn/qS1tw/a4uC75OUe16gjaSJFDalsyOC1dpyV3D1iLvIjFa83efZmGZgsuoKumppPiwZfqr9z12hcpSw7oqDI1b3QpEWFeHhmga+o/RUBpZQtr112WNYgQG0n3rEnmGfL5geFqIsyWubMxipt2c+kDTYok1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716162536; c=relaxed/simple;
-	bh=Ocv4cMWN/YJWoYreF+GfL6lTlF1Ai0HbQK1y9mrIcsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qP34VAkG6KnsJPxtveGO6DWxAXl3De7uyaf8tCaKnTWbjcU2lcHhmSUsKKgEzZqEq0871Tgb8b79rWmX7CTPMManZcLdrEOJ82a2jlorhjXnEyB6o+LlFjPPb8yPsMIAC9Hj6rdMn7uY1I6kLEbbMBWXKUhpfT7RewF6sdpOAdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QUqcSwLG; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: cam.alvarez.i@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716162531;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YomE77DBn7ISQor+O+BG/IgfWqCbd+m1xARQsjuVbzo=;
-	b=QUqcSwLGLaTlyjcOC8DdjeMsQAyN2/X2pAEyUZ+gbOZX04yBscg1O8IfdZLK10Fu482pcr
-	60lZ6yjxF8iaBDohE9bw7AwrDtiVgEZwIJGpvH/52HKUfd/ZPgbqmytrWgmQ+Xk9J8fSC+
-	qndXyHN4ozf2dqkDTRlsutKRK3Qga1Q=
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzbot+249018ea545364f78d04@syzkaller.appspotmail.com
-Date: Sun, 19 May 2024 19:48:47 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Camila Alvarez <cam.alvarez.i@gmail.com>
-Cc: Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzbot+249018ea545364f78d04@syzkaller.appspotmail.com
-Subject: Re: [PATCH] guard against unknown r->data_type in
- bch2_sb_dev_has_data()
-Message-ID: <463goq53266oiymf2bpulp2jczyd37boxifqhem3hhhu5vxn3z@xdjdgmx3htsq>
-References: <20240515014720.2482142-1-cam.alvarez.i@gmail.com>
+	s=arc-20240116; t=1716162688; c=relaxed/simple;
+	bh=sFF+7igQBl2ESdcO2thGcwttU4waX/G2ehZzAJURP0I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jJVfARbJ5X/XOhBGJPD0TvK40hCBveoiPUL0Rdubsvl8EZDVpVfnLSCpXrQhcuJnBLY6rf1UK0K0NEWVqt+R/NpA3TuyCTSVPyVLtFGX4tFeCZ8m85OD2+Q9ffTa/4IKynnotK1GO/FqWe2/prpUl8EzinhSe4sM5gGjkPGp6zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbQFl7s3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFE9CC32781;
+	Sun, 19 May 2024 23:51:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716162687;
+	bh=sFF+7igQBl2ESdcO2thGcwttU4waX/G2ehZzAJURP0I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GbQFl7s3spqTkn7xfq3hNeqkAE8gh6hjmnA1j0Y/+pudvJV/wg2Pg7bLydSfLjr1Y
+	 gXXzP676BsvfO4+haxJrn2zlF9iVGsfJjvegbqk9V43UgEhOyCWot7SGlMOWaKoH27
+	 Zhp42JxAVqA64f236VKNPwmY8If2qqRcSdDWL28y2o51Qs0djXlDYZSoe8LnOtR+QC
+	 Vp3gaohiuJ2usHqXxS7K/G1YUhN5L0AvrmlQkBKL3wlmwGMDCtl2jB8tm3lZA4Ql++
+	 0cnPHxp4Y0Kzvw4j3/bDxfs93XW3BTj8RryLLCIzJafmH+SLU1xZKYIL/1IaDR2Ihx
+	 SpJy5kItC4yzQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org,
+	James.Bottomley@HansenPartnership.com,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] KEYS: trusted: bug fixes
+Date: Mon, 20 May 2024 02:51:18 +0300
+Message-ID: <20240519235122.3380-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515014720.2482142-1-cam.alvarez.i@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 14, 2024 at 09:47:22PM -0400, Camila Alvarez wrote:
-> Shift is perfomed only when the data type makes sense.
-> 
-> Fix a missing guard on r->data_type being known.
-> 
-> Reported-by: syzbot+249018ea545364f78d04@syzkaller.appspotmail.com
-> Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
+Accumulated bug fixes for trusted keys.
 
-Sorry I just now saw this, already applied a different fix - BCH_DATA_NR
-isn't the right guard here, because we need to be able to handle unknown
-data types for backwards compatibilicy. 
+Jarkko Sakkinen (3):
+  tpm: Disable TCG_TPM2_HMAC by default
+  KEYS: trusted: Fix memory leak in tpm2_key_encode()
+  KEYS: trusted: Do not use WARN when encode fails
 
-Here's my version:
+ drivers/char/tpm/Kconfig                  |  2 +-
+ security/keys/trusted-keys/trusted_tpm2.c | 25 +++++++++++++++++------
+ 2 files changed, 20 insertions(+), 7 deletions(-)
 
-commit 85e8b546542c9a1f9050a7f53d92b8bd39c8e9d8
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sun May 19 17:28:44 2024 -0400
+-- 
+2.45.1
 
-    bcachefs: Fix shift overflows in replicas.c
-    
-    We can't disallow unknown data_types in verify() - we have to preserve
-    them unchanged for backwards compat; that means we have to add a few
-    more guards.
-    
-    Reported-by: syzbot+249018ea545364f78d04@syzkaller.appspotmail.com
-    Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-
-diff --git a/fs/bcachefs/replicas.c b/fs/bcachefs/replicas.c
-index bd1d5d085e23..d45b10bc531c 100644
---- a/fs/bcachefs/replicas.c
-+++ b/fs/bcachefs/replicas.c
-@@ -524,13 +524,16 @@ int bch2_replicas_gc_start(struct bch_fs *c, unsigned typemask)
- 	c->replicas_gc.nr		= 0;
- 	c->replicas_gc.entry_size	= 0;
- 
--	for_each_cpu_replicas_entry(&c->replicas, e)
--		if (!((1 << e->data_type) & typemask)) {
-+	for_each_cpu_replicas_entry(&c->replicas, e) {
-+		/* Preserve unknown data types */
-+		if (e->data_type >= BCH_DATA_NR ||
-+		    !((1 << e->data_type) & typemask)) {
- 			c->replicas_gc.nr++;
- 			c->replicas_gc.entry_size =
- 				max_t(unsigned, c->replicas_gc.entry_size,
- 				      replicas_entry_bytes(e));
- 		}
-+	}
- 
- 	c->replicas_gc.entries = kcalloc(c->replicas_gc.nr,
- 					 c->replicas_gc.entry_size,
-@@ -542,7 +545,8 @@ int bch2_replicas_gc_start(struct bch_fs *c, unsigned typemask)
- 	}
- 
- 	for_each_cpu_replicas_entry(&c->replicas, e)
--		if (!((1 << e->data_type) & typemask))
-+		if (e->data_type >= BCH_DATA_NR ||
-+		    !((1 << e->data_type) & typemask))
- 			memcpy(cpu_replicas_entry(&c->replicas_gc, i++),
- 			       e, c->replicas_gc.entry_size);
- 
-@@ -998,7 +1002,7 @@ unsigned bch2_sb_dev_has_data(struct bch_sb *sb, unsigned dev)
- {
- 	struct bch_sb_field_replicas *replicas;
- 	struct bch_sb_field_replicas_v0 *replicas_v0;
--	unsigned i, data_has = 0;
-+	unsigned data_has = 0;
- 
- 	replicas = bch2_sb_field_get(sb, replicas);
- 	replicas_v0 = bch2_sb_field_get(sb, replicas_v0);
-@@ -1006,17 +1010,26 @@ unsigned bch2_sb_dev_has_data(struct bch_sb *sb, unsigned dev)
- 	if (replicas) {
- 		struct bch_replicas_entry_v1 *r;
- 
--		for_each_replicas_entry(replicas, r)
--			for (i = 0; i < r->nr_devs; i++)
-+		for_each_replicas_entry(replicas, r) {
-+			if (r->data_type >= sizeof(data_has) * 8)
-+				continue;
-+
-+			for (unsigned i = 0; i < r->nr_devs; i++)
- 				if (r->devs[i] == dev)
- 					data_has |= 1 << r->data_type;
-+		}
-+
- 	} else if (replicas_v0) {
- 		struct bch_replicas_entry_v0 *r;
- 
--		for_each_replicas_entry_v0(replicas_v0, r)
--			for (i = 0; i < r->nr_devs; i++)
-+		for_each_replicas_entry_v0(replicas_v0, r) {
-+			if (r->data_type >= sizeof(data_has) * 8)
-+				continue;
-+
-+			for (unsigned i = 0; i < r->nr_devs; i++)
- 				if (r->devs[i] == dev)
- 					data_has |= 1 << r->data_type;
-+		}
- 	}
- 
- 
 
