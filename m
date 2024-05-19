@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-183171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C498C958A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:33:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A48E8C9590
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 19:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F431C210D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB175281FCF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 17:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79CC5026E;
-	Sun, 19 May 2024 17:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A4150285;
+	Sun, 19 May 2024 17:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UixxaUzx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtGQ7N+F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BE326AC3;
-	Sun, 19 May 2024 17:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663A514A81;
+	Sun, 19 May 2024 17:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716140009; cv=none; b=rbAOF6ekilIHVOAmBLQiw6/hLktLvYMsB9C7yX5BJl1VeyvCULLUV1hzz/rmwIFgyjRzIcy6CDDc9oia5WU2BBBmQVfXAhK0G6RTJZUX6Qc5HvVKJeRUX1Ynx0TPcllKAsI4FRWdGU0sEYRxpFywgI4pU1Ex0pJN/pWyoHMJ24o=
+	t=1716140214; cv=none; b=Pbl4tmbUowaeH/RgQqjUNEM0CGwTtZOErtnDTK7dnRaNhtN2i4HXJ68aOU9DIgprd1m7OxxIaPudX44H/M3jsGGqL9k9lmWq39CieuGSJgNTGjFFahtk3H/xWN4hBs3cbZM8y5St9Dic6o36rgxPKVNiY3iNwq7IsEIQSwO/9a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716140009; c=relaxed/simple;
-	bh=4mz2FMIueUw7JkUkL+3bRYfmmsVUn6W+IyGaW34EyBQ=;
+	s=arc-20240116; t=1716140214; c=relaxed/simple;
+	bh=21HH8WXzLEybD2y2VIp++QC2CVQcWQk6SHeek0XTQ94=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ujhDxPNU2VRP62A0GmXr9BCv1hvnavdX4vBJCUBSaM5PUCEX0Hb3uC7m8rpkxSN3SFTwqafiLdHs8cfSFvP/qpu7jSVeZ+jXorAYmd4bgBarGxLueEgKLy0jyemlEbUPuc058b45YHEFiOBraBFjvsJ4agl/IN2oRwYzQxAH/QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UixxaUzx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8858AC32781;
-	Sun, 19 May 2024 17:33:23 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=NPBEbEU1Wwmimef8wCs2AeEfBCM1M5XvkCyBLP4egep86573wLcZ7J+0UY4C+yqX9U0N+OL4VlZ2lmFuVjqSLB5q9dEAEScMnSiFaZtq9D1csIK5Ef+2SUkZiAabLmrFGlhuTPziiQQvmYema9aj/+ZAqB+9kcNrV5/ZJDmOlqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtGQ7N+F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69A8C32781;
+	Sun, 19 May 2024 17:36:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716140008;
-	bh=4mz2FMIueUw7JkUkL+3bRYfmmsVUn6W+IyGaW34EyBQ=;
+	s=k20201202; t=1716140214;
+	bh=21HH8WXzLEybD2y2VIp++QC2CVQcWQk6SHeek0XTQ94=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UixxaUzxN4bgA1Rmqdx/m1rRW/nH0K/4ob5ioRLKoU5CzgQyzNT8nCsETI1rpr8hQ
-	 PqyHNfdJ92sAgkU2z+5Woh5PoTZvuN5f+Zt/tXx7R02iYWcI6l0sMAiqw/FfV5kKbY
-	 esy+72QOXELWzbwrvQFfPu8E53hKawAu9Bn6oZOqyUiicJThD/lJZ3SHFLAwkMmfy5
-	 x5EWEFAnbEzApKrK7kmlHGanLnMP/I3ND/pUznEaS6JFLWcinqRU8PIWYyUTildHe6
-	 EZWmcRd/yg6pO9TmkSjvJOAz10FyCaRo1IRWIk8lZhnCWw5WJ5NEYfpDtPbYpjJBPE
-	 BhqHj4EyH50mQ==
-Message-ID: <18746508-f7d6-4a1c-9758-1e9e1fb35c64@kernel.org>
-Date: Sun, 19 May 2024 19:33:20 +0200
+	b=RtGQ7N+FB7NrCMWMjlPXPNI+TIjSqq9wL69w8b1BJoaAOvAgfk+GM26LM5ZRznQ1b
+	 feYTg4OsmBBOED/bv2gg26qqTtEs+Z7dNe4ufrdmQorgW9yUDsqRqI/AsYefxNrOOT
+	 ucMKo6Xz7oEn/k4t3dvseP6kev8chYG2eOWrK1wzX1YjuFTjpy9lyml01KdMyuKm/Z
+	 uhUGxE0LY9dHTkdeYtd8F3dQCRU1nDHRY/4Njr3w9sv1qtgUuiepnkYtTSUqd1fuzY
+	 v1zyi1npymvYvMZ7S15wz89u1p00xLkPzyy7/RbgujE4wdMXN13hRPJVpSE+d66ZWW
+	 prq/3CwfgukoQ==
+Message-ID: <3521519f-34b8-472d-be37-f0e64bba24fc@kernel.org>
+Date: Sun, 19 May 2024 19:36:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 1/2] dt-bindings: net: xilinx_gmii2rgmii: Add
- clock support
-To: Vineeth Karumanchi <vineeth.karumanchi@amd.com>, git@amd.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- harini.katakam@amd.com, andrew@lunn.ch, hkallweit1@gmail.com,
- linux@armlinux.org.uk, michal.simek@amd.com
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240517054745.4111922-1-vineeth.karumanchi@amd.com>
- <20240517054745.4111922-2-vineeth.karumanchi@amd.com>
+Subject: Re: [PATCH 5/7] dt-bindings: remoteproc: qcom,pas: Add hwlocks
+To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
+ <20240516-hwspinlock-bust-v1-5-47a90a859238@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,35 +110,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240517054745.4111922-2-vineeth.karumanchi@amd.com>
+In-Reply-To: <20240516-hwspinlock-bust-v1-5-47a90a859238@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/05/2024 07:47, Vineeth Karumanchi wrote:
-> Add input clock support to gmii_to_rgmii IP.
-> Add "clocks" bindings for the input clock.
+On 17/05/2024 00:58, Chris Lew wrote:
+> Add hwlocks property to describe the hwspinlock that remoteproc can try
+> to bust on behalf of the remoteproc's smem.
 
-Both sentences look like saying the same... confused.
-
-> 
-> Signed-off-by: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
-> ---
->  Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml b/Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml
-> index 0f781dac6717..672bff6dae28 100644
-> --- a/Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml
-> +++ b/Documentation/devicetree/bindings/net/xlnx,gmii-to-rgmii.yaml
-> @@ -31,6 +31,9 @@ properties:
->    phy-handle:
->      $ref: ethernet-controller.yaml#/properties/phy-handle
->  
-> +  clocks:
-> +    description: 200/375 MHz free-running clock is used as input clock.
-
-Missing constraints. Probably you wanted items above description.
-
+Sorry, as you wrote, the lock is part of smem, not here. Drivers do not
+crash, so if your crashes as you imply in the cover letter, then first
+fix the driver.
 
 Best regards,
 Krzysztof
