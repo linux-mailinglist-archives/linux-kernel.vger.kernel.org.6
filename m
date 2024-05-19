@@ -1,231 +1,277 @@
-Return-Path: <linux-kernel+bounces-183122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415858C94F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:13:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4E38C94FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648F91C20E6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:13:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADEB41C20ECA
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4CC48CC7;
-	Sun, 19 May 2024 14:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835184C627;
+	Sun, 19 May 2024 14:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kdxkVkkA"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=holesch.de header.i=simon@holesch.de header.b="Au/xsyQZ"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F91A8BEA
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 14:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA288481A5;
+	Sun, 19 May 2024 14:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716128027; cv=none; b=lCwIIZt2OzElHOOwYGD54YNEsHmkArYin4PLCOzvuFTu30e6a0kOQk4niHdBG5PPnQip0YdNzONoyF/k8NaO0IzQTMcHgE6B2RJpNbwlRtPlVdaiZlKIlHIg95T1m23I+E2wOW66KkkUlAhPtCU8D4Qt0nC514jASTrEHQbwNo4=
+	t=1716128432; cv=none; b=VQ65dG7xQ76H37G5iNUVH2Izfga9iBmgpwiMscdg1fyIdUwqAxpmzCj3jd18TGweuwtmitdGDKlyTP7uuEby3G1EKxPIGWljY7laI4qkRAI6BAg6rK8xcPaMPWldogqsMONO4dHpph3nGmLX+HlO0RROoO28FJlQDBES+JHpEG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716128027; c=relaxed/simple;
-	bh=9t6jwH3FrP0vS5iN/jNE2kGzhEUu2R/PkRBXRDaNa84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thAS2V2UuMqFb2pnqmCnw3yIsIFgDsMUFLM8VzuHKiJzqaKYg3wVIRR09afXfUY9WD0KhQmq03BkW5wX1XEocUDIVZKis8vLnpiK5+G79W487H/U10GfiTtfWHYW1OIQsPI5cagwjc4PteLTagDFPvq7VSYZVMM96lMMxKqzKYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kdxkVkkA; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5b2baa24c2bso866272eaf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 07:13:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716128025; x=1716732825; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kHrw/x5NVoGqtuVQNcrErFWhfjb0N0uwlSFD9+cPjas=;
-        b=kdxkVkkAO7l4/FGF6xVfPmCMXXL17pUhHJ8RzmfEwnTRdidaPJ89605aM+Pmjjle+A
-         k1YGPiQ0SFikdtXoZdz2n1pHioqpgnV9bQymUAl56jzTy2WDuC6pbu7XgoTNolcs1zFK
-         80nl02CHcHR1oI3dSIeTVX671HKTEe75+8bNTZiI7EjWXJNTB9+ooW7pohDRUz6xV5pC
-         5N6vioOvS6ySc5SUjmDhFuRegrMSFgNVzPY1ppTggQYh6xrd7Xxpyn8dLUrG93WIHEXO
-         daNCi56JJ7b1CX6AkTdMTtnU7O8L2DlcB4hH00rlW9sSMKJhCwPljx8lrjsqpc+uNE4e
-         2Qmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716128025; x=1716732825;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kHrw/x5NVoGqtuVQNcrErFWhfjb0N0uwlSFD9+cPjas=;
-        b=jSRXfBP/niB6Zl6muI9jyj2sI1SVtdx7qiQwa4/FzqBQCf3c62tW1o162RPa64cYdj
-         twI2PYSZaa/5kZw8f0iFpmzgIXvYptZpJsuzWgHSDS9otAXFASqJUa8qyyKqWpo13kV0
-         B4SWkbKb2uNGKJUMAofDJjiYiENcmJ2/M0pEtkORH6HpDZtdiOHO/oRhAEkdp7N/n9QA
-         FcjSK2n3Amz/C49XPA8OM2Rp9sj6zwltxxvKffhVCcL7iReK1Z4pbzpgGoaBOsnBSWHZ
-         rILRupvb0pOnBzrFO0ih1ydn4xObHNoJt2REvuNOP+AwCCxRyMoiq87nBFvep4eS/cx5
-         eUxg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5uW06W6JjcDxYwhMrAEHzqvwRqqlBd59PUC3N8qcbdg/MeWcprnFH5eeTy4vY0QgyMm8+e+B40LqZs9IN7Wdk2uxVQdQbEUybVPtl
-X-Gm-Message-State: AOJu0YzVUmhrlREP6iq/Fz1ZGdp8nAuJYdTwoT3wr71g61RJQSYIDwx8
-	Jb9IAsVPkdwfFIaYMe6zIJc96/X6JJlqzzryweRfm6sFtrfvN4oPDfT6t8JX
-X-Google-Smtp-Source: AGHT+IFEmSZ/a8PpAbsS7AI+i8TGHMbB4LmiK3qZj++q80foFK5Zl7fz92u6Q03LAk63OkdLP/9agA==
-X-Received: by 2002:a05:6359:4c9f:b0:186:3beb:90e0 with SMTP id e5c5f4694b2df-193bb64d4d4mr2667711355d.18.1716128024862;
-        Sun, 19 May 2024 07:13:44 -0700 (PDT)
-Received: from snowbird ([2600:4041:54fc:a302:414c:9ba6:5d92:63bc])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df56a57afsm135905681cf.73.2024.05.19.07.13.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 May 2024 07:13:43 -0700 (PDT)
-Date: Sun, 19 May 2024 07:13:40 -0700
-From: Dennis Zhou <dennisszhou@gmail.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Kairui Song <ryncsn@gmail.com>,
-	"zhangpeng (AS)" <zhangpeng362@huawei.com>,
-	Rongwei Wang <rongwei.wrw@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	dennisszhou@gmail.com, shakeelb@google.com, jack@suse.cz,
-	surenb@google.com, kent.overstreet@linux.dev, mhocko@suse.cz,
-	vbabka@suse.cz, yuzhao@google.com, yu.ma@intel.com,
-	wangkefeng.wang@huawei.com, sunnanyong@huawei.com
-Subject: Re: [RFC PATCH v2 2/2] mm: convert mm's rss stats to use atomic mode
-Message-ID: <ZkoJFBfz7P3xuCrx@snowbird>
-References: <20240418142008.2775308-1-zhangpeng362@huawei.com>
- <20240418142008.2775308-3-zhangpeng362@huawei.com>
- <ec2b110b-fb85-4af2-942b-645511a32297@gmail.com>
- <c1c79eb5-4d48-40e5-6f17-f8bc42f2d274@huawei.com>
- <CAMgjq7DHUgyR0vtkYXH4PuzBHUVZ5cyCzi58TfShL57TUSL+Tg@mail.gmail.com>
- <5nv3r7qilsye5jgqcjrrbiry6on7wtjmce6twqbxg6nmvczue3@ikc22ggphg3h>
+	s=arc-20240116; t=1716128432; c=relaxed/simple;
+	bh=BdRenKhE9AoURtk+e0tvVp4/r07Rd9R5Nz+LPkppaKQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N+McSUvgbguu0OuboUELNnwRDrduVBE3zEOxDQgvhpZ22IjRtacT9e0ARC1EVZjxlcie0lDpQJP2VdfBQaJSzJMjk0zIZkTN2A8gQKxMmwKyn7TilLtNpJWcAnp9Kg/U7NDeWKY2+HiOMwe5gBsZm3qe7beIZBWmzoDVTenoul8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=holesch.de; spf=pass smtp.mailfrom=holesch.de; dkim=pass (2048-bit key) header.d=holesch.de header.i=simon@holesch.de header.b=Au/xsyQZ; arc=none smtp.client-ip=212.227.126.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=holesch.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=holesch.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=holesch.de;
+	s=s1-ionos; t=1716128408; x=1716733208; i=simon@holesch.de;
+	bh=V/rkqwTkUlpGLQVnFawbGWTuYkSjydDaVEN2loFqvtA=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Au/xsyQZVIGemmbwJH1ewY+ANQ6IalGlU8MCXntwh9DRTAv+9rnP//v39jX2YeWQ
+	 ujVDvjdf8Q9gsLufytpzVbDxQpjWQKEX1Ue77YICakuEl+aZPfHKmgayAi9zs9HJ1
+	 u8srfIlF0By2jxWhaKwu8WulW+U6DnatxW3Ka+qhta4w3WySW/WJOt1L9gqNy9szu
+	 oSZoK9d4jVcJdNL/hQj3p471tnf6NA98fEEBXtTbdnucsez8pP1kIlvO2+At58fs0
+	 uzgMJTY5cXx7FMqh9G6s+29WkjDIks4xN2Ofcc1rL7iq86sYaG/NXLIoPurFr19Wc
+	 K5xny/JfOt1QTl5hIQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([79.254.36.181]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MT9v5-1rycfX0Q8N-00UWbY; Sun, 19 May 2024 16:20:08 +0200
+From: Simon Holesch <simon@holesch.de>
+To: Valentina Manea <valentina.manea.m@gmail.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Hongren Zheng <i@zenithal.me>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Simon Holesch <simon@holesch.de>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5] usbip: Don't submit special requests twice
+Date: Sun, 19 May 2024 16:15:38 +0200
+Message-ID: <20240519141922.171460-1-simon@holesch.de>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5nv3r7qilsye5jgqcjrrbiry6on7wtjmce6twqbxg6nmvczue3@ikc22ggphg3h>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:KuIM0LrIHXfgd6BCXcWG1d98RfXPzx9wCdF35N5UOl0kx7MBC24
+ uOgUmId1n808YPfWBoSTQdfZgbGebE1c5aEmeCIimHZzhji34nTZRmPxn/QM4Eu7cxayo3J
+ xEOtamCLHFosglfVcX4jB3cfqdpgTxqBC3g7Y5/XOrwpETtti3+jeD/Nr3iui+A+yVC5LTW
+ Cir172NYTJOgjMxWj2uKg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HxSfFBth9NA=;Zbv8j8CJ1WVbFdo8kh1skvECp1z
+ gzTM/q79IBFHvLaLCBcgtBYVB80Hv0dkjxsNb9bHi214PUyglOXOO9LskYPwtWDwdX/FSKemc
+ D2DurpjUomv0hTkOLY4tZ5aMO0eSOKOysvmdNydpp2KNXpX4fi1dx9Gdg0l8wv3ezuBL310nG
+ Yodo0vy7U6m0X8+K1Tazn1nkMMf7pqjyI2t63KaOliPtvByUCG8PVLyVJyllzChaTeZliZWxZ
+ 1ezONUZQcdbKPlVds7PeGnw7D9Fe7egyHB9Pj/GxwKPKKkMop3ST5P88JxV50q1AezTGsAqCt
+ tX1vMLEXuKjorx6OtgX5ZJFFetKWdufE4GQ1XBc5SArwRurbuNzSQtJDu88YcgkI8A5damcaP
+ 0hXd5UzanbPg42Urpp8WXOjfi9Vxvp6/tILIPB9K6PNgjtphidwJId8jxPGuU9IvZj0XVT0FX
+ 9j2AQD2LXeXKKKV23mikfXWkppOIa6E8uPqXxE406sgQgjzDPIcNR4H/TQzU7Wct6lmdmnxrA
+ sRU/n58SBhlVtqIcHZFnWn54ZgmsO0Zpp4ZKTCiFw/vLzOqNjeoRur0RrKVidTw9dR8Hc8xdZ
+ OLFafhsNYzXlGRKS2h9ab1Ds0eg9zEE8wxBPAh4z6XK/auc/qADKamzp1VC69zogPLeLYSXZH
+ rNIIhrnhsL7aK0DPVI4ciFOACEVEUZQILkOxd+lNr0OqRL8Q/AG/guMXTsPIipaMDWugRJ+6z
+ Bgj99QXWyBdoBV44tYdAAsdWfM7rFwrxGBJTgOb7c+FIf0rBXyGsak=
 
-Hi Mateusz and Kairui,
+Skip submitting URBs, when identical requests were already sent in
+tweak_special_requests(). Instead call the completion handler directly
+to return the result of the URB.
 
-On Thu, May 16, 2024 at 05:14:06PM +0200, Mateusz Guzik wrote:
-> On Thu, May 16, 2024 at 07:50:52PM +0800, Kairui Song wrote:
-> > > > On 2024/4/18 22:20, Peng Zhang wrote:
-> > > >> From: ZhangPeng <zhangpeng362@huawei.com>
-> > > >>
-> > > >> Since commit f1a7941243c1 ("mm: convert mm's rss stats into
-> > > >> percpu_counter"), the rss_stats have converted into percpu_counter,
-> > > >> which convert the error margin from (nr_threads * 64) to approximately
-> > > >> (nr_cpus ^ 2). However, the new percpu allocation in mm_init() causes a
-> > > >> performance regression on fork/exec/shell. Even after commit
-> > > >> 14ef95be6f55
-> > > >> ("kernel/fork: group allocation/free of per-cpu counters for mm
-> > > >> struct"),
-> > > >> the performance of fork/exec/shell is still poor compared to previous
-> > > >> kernel versions.
-> > > >>
-> > > >> To mitigate performance regression, we delay the allocation of percpu
-> > > >> memory for rss_stats. Therefore, we convert mm's rss stats to use
-> > > >> percpu_counter atomic mode. For single-thread processes, rss_stat is in
-> > > >> atomic mode, which reduces the memory consumption and performance
-> > > >> regression caused by using percpu. For multiple-thread processes,
-> > > >> rss_stat is switched to the percpu mode to reduce the error margin.
-> > > >> We convert rss_stats from atomic mode to percpu mode only when the
-> > > >> second thread is created.
-> > 
-> > I've a patch series that is earlier than commit f1a7941243c1 ("mm:
-> > convert mm's rss stats into
-> > percpu_counter"):
-> > 
-> > https://lwn.net/ml/linux-kernel/20220728204511.56348-1-ryncsn@gmail.com/
-> > 
+Even though submitting those requests twice should be harmless, there
+are USB devices that react poorly to some duplicated requests.
 
-I hadn't seen this series as my inbox filters on percpu, but not
-per-cpu. I can take a closer look this week.
+One example is the ChipIdea controller implementation in U-Boot: The
+second SET_CONFIGURATION request makes U-Boot disable and re-enable all
+endpoints. Re-enabling an endpoint in the ChipIdea controller, however,
+was broken until U-Boot commit b272c8792502 ("usb: ci: Fix gadget
+reinit").
 
-> > Instead of a per-mm-per-cpu cache, it used only one global per-cpu
-> > cache, and flush it on schedule. Or, if the arch supports, flush and
-> > fetch it use mm bitmap as an optimization (like tlb shootdown).
-> > 
-> 
-> I just spotted this thread.
-> 
-> I have a rather long rant to write about the entire ordeal, but don't
-> have the time at the moment. I do have time to make some remarks though.
-> 
-> Rolling with a centralized counter and only distributing per-cpu upon
-> creation of a thread is something which was discussed last time and
-> which I was considering doing. Then life got it in the way and in the
-> meantime I managed to conclude it's a questionable idea anyway.
-> 
+Signed-off-by: Simon Holesch <simon@holesch.de>
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+Reviewed-by: Hongren Zheng <i@zenithal.me>
+Tested-by: Hongren Zheng <i@zenithal.me>
+=2D--
 
-To clarify my stance, I'm not against the API of switching a
-percpu_counter to percpu mode. We do it for percpu_refcount. I think the
-implementation here was fragile. Secondly, Kent did implement
-lazy_percpu_counters. We likely should see how that can be leveraged and
-how we can reconcile the 2 APIs.
+Changes in v5:
+- add comment for global is_tweaked flag
+- fix typo in commit message
 
-> The state prior to the counters moving to per-cpu was not that great to
-> begin with, with quite a few serialization points. As far as allocating
-> stuff goes one example is mm_alloc_cid, with the following:
-> 	mm->pcpu_cid = alloc_percpu(struct mm_cid);
-> 
-> Converting the code to avoid per-cpu rss counters in the common case or
-> the above patchset only damage-control the state back to what it was,
-> don't do anything to push things further.
-> 
-> Another note is that unfortunately userspace is increasingly
-> multithreaded for no good reason, see the Rust ecosystem as an example.
-> 
-> All that to say is that the multithreaded case is what has to get
-> faster, as a side effect possibly obsoleting both approaches proposed
-> above. I concede if there is nobody wiling to commit to doing the work
-> in the foreseeable future then indeed a damage-controlling solution
-> should land.
-> 
-> On that note in check_mm there is this loop:
->         for (i = 0; i < NR_MM_COUNTERS; i++) {
->                 long x = percpu_counter_sum(&mm->rss_stat[i]);
-> 
-> This avoidably walks all cpus 4 times with a preemption and lock trip
-> for each round. Instead one can observe all modifications are supposed
-> to have already stopped and that this is allocated in a banch. A
-> routine, say percpu_counter_sum_many_unsafe, could do one iteration
-> without any locks or interrupt play and return an array. This should be
-> markedly faster and I perhaps will hack it up.
+Changes in v4:
+- fix compile error
 
-I'm a little worried about the correctness in the cpu_hotplug case, idk
-if it's warranted.
+Changes in v3:
+- handle errors in tweak_* routines: send URB if tweaking fails
 
-> 
-> A part of The Real Solution(tm) would make counter allocations scale
-> (including mcid, not just rss) or dodge them (while maintaining the
-> per-cpu distribution, see below for one idea), but that boils down to
-> balancing scalability versus total memory usage. It is trivial to just
-> slap together a per-cpu cache of these allocations and have the problem
-> go away for benchmarking purposes, while being probably being too memory
-> hungry for actual usage.
-> 
-> I was pondering an allocator with caches per some number of cores (say 4
-> or 8). Microbenchmarks aside I suspect real workloads would not suffer
-> from contention at this kind of granularity. This would trivially reduce
-> memory usage compared to per-cpu caching. I suspect things like
-> mm_struct, task_struct, task stacks and similar would be fine with it.
-> 
-> Suppose mm_struct is allocated from a more coarse grained allocator than
-> per-cpu. Total number of cached objects would be lower than it is now.
-> That would also mean these allocated but not currently used mms could
-> hold on to other stuff, for example per-cpu rss and mcid counters. Then
-> should someone fork or exit, alloc/free_percpu would be avoided for most
-> cases. This would scale better and be faster single-threaded than the
-> current state.
-> 
-> (believe it or not this is not the actual long rant I have in mind)
-> 
-> I can't commit to work on the Real Solution though.
-> 
-> In the meantime I can submit percpu_counter_sum_many_unsafe as described
-> above if Denis likes the idea.
+Changes in v2:
+- explain change in commit message
 
-To be honest, I'm a little out of my depth here. I haven't spent a lot
-of time in the mm code paths to really know when and how we're
-accounting RSS and other stats. Given that, I think we should align on
-the approach we want to take because in some way it sounds like percpu
-RSS might not be the final evolution here for this and other stats.
+ drivers/usb/usbip/stub_rx.c | 77 ++++++++++++++++++++++++-------------
+ 1 file changed, 50 insertions(+), 27 deletions(-)
 
-I think lets hold off on percpu_counter_sum_many_unsafe() initially and
-if that's the way we have to go so be it. I'm going to respin a
-cpu_hotplug related series that might change some of the correctness
-here and have that ready for the v6.11 merge window.
+diff --git a/drivers/usb/usbip/stub_rx.c b/drivers/usb/usbip/stub_rx.c
+index fc01b31bbb87..6338d818bc8b 100644
+=2D-- a/drivers/usb/usbip/stub_rx.c
++++ b/drivers/usb/usbip/stub_rx.c
+@@ -144,53 +144,62 @@ static int tweak_set_configuration_cmd(struct urb *u=
+rb)
+ 	if (err && err !=3D -ENODEV)
+ 		dev_err(&sdev->udev->dev, "can't set config #%d, error %d\n",
+ 			config, err);
+-	return 0;
++	return err;
+ }
 
-Thanks,
-Dennis
+ static int tweak_reset_device_cmd(struct urb *urb)
+ {
+ 	struct stub_priv *priv =3D (struct stub_priv *) urb->context;
+ 	struct stub_device *sdev =3D priv->sdev;
++	int err;
+
+ 	dev_info(&urb->dev->dev, "usb_queue_reset_device\n");
+
+-	if (usb_lock_device_for_reset(sdev->udev, NULL) < 0) {
++	err =3D usb_lock_device_for_reset(sdev->udev, NULL);
++	if (err < 0) {
+ 		dev_err(&urb->dev->dev, "could not obtain lock to reset device\n");
+-		return 0;
++		return err;
+ 	}
+-	usb_reset_device(sdev->udev);
++	err =3D usb_reset_device(sdev->udev);
+ 	usb_unlock_device(sdev->udev);
+
+-	return 0;
++	return err;
+ }
+
+ /*
+  * clear_halt, set_interface, and set_configuration require special trick=
+s.
++ * Returns 1 if request was tweaked, 0 otherwise.
+  */
+-static void tweak_special_requests(struct urb *urb)
++static int tweak_special_requests(struct urb *urb)
+ {
++	int err;
++
+ 	if (!urb || !urb->setup_packet)
+-		return;
++		return 0;
+
+ 	if (usb_pipetype(urb->pipe) !=3D PIPE_CONTROL)
+-		return;
++		return 0;
+
+ 	if (is_clear_halt_cmd(urb))
+ 		/* tweak clear_halt */
+-		 tweak_clear_halt_cmd(urb);
++		err =3D tweak_clear_halt_cmd(urb);
+
+ 	else if (is_set_interface_cmd(urb))
+ 		/* tweak set_interface */
+-		tweak_set_interface_cmd(urb);
++		err =3D tweak_set_interface_cmd(urb);
+
+ 	else if (is_set_configuration_cmd(urb))
+ 		/* tweak set_configuration */
+-		tweak_set_configuration_cmd(urb);
++		err =3D tweak_set_configuration_cmd(urb);
+
+ 	else if (is_reset_device_cmd(urb))
+-		tweak_reset_device_cmd(urb);
+-	else
++		err =3D tweak_reset_device_cmd(urb);
++	else {
+ 		usbip_dbg_stub_rx("no need to tweak\n");
++		return 0;
++	}
++
++	return !err;
+ }
+
+ /*
+@@ -468,6 +477,7 @@ static void stub_recv_cmd_submit(struct stub_device *s=
+dev,
+ 	int support_sg =3D 1;
+ 	int np =3D 0;
+ 	int ret, i;
++	int is_tweaked;
+
+ 	if (pipe =3D=3D -1)
+ 		return;
+@@ -580,8 +590,11 @@ static void stub_recv_cmd_submit(struct stub_device *=
+sdev,
+ 		priv->urbs[i]->pipe =3D pipe;
+ 		priv->urbs[i]->complete =3D stub_complete;
+
+-		/* no need to submit an intercepted request, but harmless? */
+-		tweak_special_requests(priv->urbs[i]);
++		/*
++		 * all URBs belong to a single PDU, so a global is_tweaked flag is
++		 * enough
++		 */
++		is_tweaked =3D tweak_special_requests(priv->urbs[i]);
+
+ 		masking_bogus_flags(priv->urbs[i]);
+ 	}
+@@ -594,22 +607,32 @@ static void stub_recv_cmd_submit(struct stub_device =
+*sdev,
+
+ 	/* urb is now ready to submit */
+ 	for (i =3D 0; i < priv->num_urbs; i++) {
+-		ret =3D usb_submit_urb(priv->urbs[i], GFP_KERNEL);
++		if (!is_tweaked) {
++			ret =3D usb_submit_urb(priv->urbs[i], GFP_KERNEL);
+
+-		if (ret =3D=3D 0)
+-			usbip_dbg_stub_rx("submit urb ok, seqnum %u\n",
+-					pdu->base.seqnum);
+-		else {
+-			dev_err(&udev->dev, "submit_urb error, %d\n", ret);
+-			usbip_dump_header(pdu);
+-			usbip_dump_urb(priv->urbs[i]);
++			if (ret =3D=3D 0)
++				usbip_dbg_stub_rx("submit urb ok, seqnum %u\n",
++						pdu->base.seqnum);
++			else {
++				dev_err(&udev->dev, "submit_urb error, %d\n", ret);
++				usbip_dump_header(pdu);
++				usbip_dump_urb(priv->urbs[i]);
+
++				/*
++				 * Pessimistic.
++				 * This connection will be discarded.
++				 */
++				usbip_event_add(ud, SDEV_EVENT_ERROR_SUBMIT);
++				break;
++			}
++		} else {
+ 			/*
+-			 * Pessimistic.
+-			 * This connection will be discarded.
++			 * An identical URB was already submitted in
++			 * tweak_special_requests(). Skip submitting this URB to not
++			 * duplicate the request.
+ 			 */
+-			usbip_event_add(ud, SDEV_EVENT_ERROR_SUBMIT);
+-			break;
++			priv->urbs[i]->status =3D 0;
++			stub_complete(priv->urbs[i]);
+ 		}
+ 	}
+
+=2D-
+2.45.1
+
 
