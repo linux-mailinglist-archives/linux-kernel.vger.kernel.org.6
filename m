@@ -1,82 +1,79 @@
-Return-Path: <linux-kernel+bounces-183302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63228C9759
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 01:03:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F248C975F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 01:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4091F2113D
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 23:03:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9D21C20750
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 23:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA22618042;
-	Sun, 19 May 2024 23:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CCF48CC7;
+	Sun, 19 May 2024 23:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f4IWLZse"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dj1w73lL"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02812E639
-	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 23:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A342FB2
+	for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 23:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716159809; cv=none; b=ABFi3Lp5liDo0Zb2v0i3nsUQ3bexA3mbY+6qqBD3pzlX3ApinHSTyFsP9mXl4sQkaOoQLYOL83gjUHwtcDN0DdxTIq7thq2MWM/hb2i4L8KeEYmRCFUZtlqhZd+7LZ2JkdwudytXQ42yVATuRMKvjosdnVjYeGGOhw+g/FSX18Y=
+	t=1716160920; cv=none; b=MB9wO7gEIBOGGOY5YeOdNPIv98jRBmrhKGQWiEpfNIYu4+lk8MGE+GpsYcea/GDjB+YmlIjePTyZnobhRudZ5yk06UICJyRBEFWDi99BxEcJ014orpPtA8BxM56NYpeUXb32xuQUBH5//ti1KgS5qVauYQR04zoi8J1+7Yy+mec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716159809; c=relaxed/simple;
-	bh=f+dqr7wX6Dzc+IEUgIjY13qVsDw6pGhMt1gywjtRTo8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VnL3l4myk6vUIc3TNAxznvz75Eon3LC10Q79HRtul2cKNSvfXIHVMPypXQRsPP6NBymHyPb8AoAqH/BWORpS1psHf3ChfHoWf3DkfpTK9WGb+wCZXWT2ndgQBEvl3gjw8hx+f8aoLUD5ylx1a4TYKEaIZLP2T6iAxiecbflvE3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f4IWLZse; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: peterz@infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716159805;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+V0S8PCd3+C0VSIsGmhpI47bpGeTogzeC9Uf4DblCds=;
-	b=f4IWLZseKij1P3S6iUqOHooBGx4YmH63N1gk6Db5y9+fNEwSYsB5ZWryj6CL/6Zp1k7KMO
-	SXRrBiH2liO9rphAmazVFlmynGsMBvRp3AVIXqEOFxiO7bO6bM+N2G1qZd/b7Pq4BT2oX9
-	y4a7bSknDHt6o0pyTN4E3oVxsZEC5y0=
-X-Envelope-To: visitorckw@gmail.com
-X-Envelope-To: colyli@suse.de
-X-Envelope-To: msakai@redhat.com
-X-Envelope-To: mingo@redhat.com
-X-Envelope-To: acme@kernel.org
-X-Envelope-To: namhyung@kernel.org
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: mark.rutland@arm.com
-X-Envelope-To: alexander.shishkin@linux.intel.com
-X-Envelope-To: jolsa@kernel.org
-X-Envelope-To: irogers@google.com
-X-Envelope-To: adrian.hunter@intel.com
-X-Envelope-To: bagasdotme@gmail.com
-X-Envelope-To: jserv@ccns.ncku.edu.tw
-X-Envelope-To: linux-bcache@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: dm-devel@lists.linux.dev
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-perf-users@vger.kernel.org
-Date: Sun, 19 May 2024 19:03:20 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, colyli@suse.de, 
-	msakai@redhat.com, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
-	akpm@linux-foundation.org, bfoster@redhat.com, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	bagasdotme@gmail.com, jserv@ccns.ncku.edu.tw, linux-bcache@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Subject: Re: [RESEND PATCH v5 11/16] lib min_heap: Update min_heap_push() and
- min_heap_pop() to return bool values
-Message-ID: <tnsqm2iw2qmyll6hmgfadh6bgorpsqjjgefibg2vagopyqurjt@vrix7erg2jp7>
-References: <20240514084724.557100-1-visitorckw@gmail.com>
- <20240514084724.557100-12-visitorckw@gmail.com>
- <20240515083755.GB40213@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1716160920; c=relaxed/simple;
+	bh=u7gjMjuglaAO5QCvcjIQw+6IPzjFWvmSLcTIn0twOQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rcvb3+ME1k0+ihf5JVciSNntYr0GB47EEXeEZXKP4NmdZS1O4diVEqYx8DyS/Bk3etRMSFEVt+koeSwQfFRDXFsFg9ySqYb84OIewQoeCY6kMgEQFuLuh7bhFuzjjoRNXQ+n+MZ6drLfwroc8vQjM/NRY/KF9kh5ajfDJe5lxGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dj1w73lL; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-61bed738438so18254467b3.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 16:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716160917; x=1716765717; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BL2V7WIZ6oU98oGtySeECzPZ7Qlj0COVkgIfg+hQpaE=;
+        b=dj1w73lLULGuD41YDamiB/0yUFoDyHtFJRoxJqVq0o9WzToIoPz2fGYdJOtanwtnAN
+         gonfglkBn5udrrPA7IhxJAIY1xbrvNfdHXZpcYxIg4lBNMulOhIoolW5TAy898KzAgve
+         KDwiH+OMIPhBFQV96FG+KP1lFKek/9j+0cUI87jQ5ox9UuHwZdSrAoc+2PxNb84WPeZa
+         NWhjtNGNwv/20kFyXL/7yvMoYyjQvyq9KCBrTy2CyQQkQlQbd+Zg+qrN6o9a+TUj0kv3
+         ghobKJ9EfH+VHlqB7JCjLt2p49i0N6FqfdVSWQKikQgQpKLsCZxr7W1RVibNIraRLp71
+         o+EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716160917; x=1716765717;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BL2V7WIZ6oU98oGtySeECzPZ7Qlj0COVkgIfg+hQpaE=;
+        b=VCZKkmPtlYK1MOQEgCOFTeCmNCA8iETNg7o1KkOsh/9GoDnPPu9BxwlYbL+6UKWVgt
+         qHY2ztJK7PRZaJwna7L13tPa4NnHZC7tgf2pdUSaHz7rrzIaOvoXQA8vELvuIaGp0UBn
+         yuKd1vIx6ZlfLRVgPTd1xpietKQm+nz6MYg3UGd+tdthVcb+hthepdY8d0J5fR3X5/AI
+         spspNzmx87rS+o1B6EXGFMjJyvolb4V3jFxWu+b+ZI8vVDESCIOJulYxO6CvASmOBSJ6
+         sMTgCNKDaDbVhF2OxXQTCiMOyaR69c7HifSywafPKQFbAuJbrOqIJtwXOXCace9ddeBM
+         /Tiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUuq7JQmlYE6YzFEAtlonTDS6H6WrgZLaOwM51oRqJZ1pvQ9u200hJOh9AWgqE0jmuFhORRt53wht4yUeBIjf9VnnFbVceVO6oZWXs
+X-Gm-Message-State: AOJu0YwFgIBrEHsBU66uauDS2ccaftS6wmSDaT6GcZoHTzpbhKvVwO+w
+	3STobGqmHQfCes7XAhoOrAfpUHfJcignT7xgTdJsS8KnZPNiNeKf
+X-Google-Smtp-Source: AGHT+IFLh51+a2JXUfa2+56Pqmwk10QpP3ph0QdbSeXq/BucqSa382IT61UHLcOEX2dcuvFoFqosAA==
+X-Received: by 2002:a05:690c:6bca:b0:624:4154:fcf0 with SMTP id 00721157ae682-6244154fe2dmr190825797b3.35.1716160917617;
+        Sun, 19 May 2024 16:21:57 -0700 (PDT)
+Received: from localhost ([2601:344:8301:57f0:3ab1:7ab2:ea8c:dc68])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e23abf4sm47526247b3.3.2024.05.19.16.21.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 May 2024 16:21:57 -0700 (PDT)
+Date: Sun, 19 May 2024 16:21:56 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org
+Cc: Yury Norov <yury.norov@gmail.com>, Kyle Meyer <kyle.meyer@hpe.com>,
+	Kuan-Wei Chiu <visitorckw@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [GIT PULL v2] bitmap changes for 6.10
+Message-ID: <ZkqJlKdwMU+LrLqC@yury-ThinkPad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,19 +82,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240515083755.GB40213@noisy.programming.kicks-ass.net>
-X-Migadu-Flow: FLOW_OUT
 
-On Wed, May 15, 2024 at 10:37:55AM +0200, Peter Zijlstra wrote:
-> On Tue, May 14, 2024 at 04:47:19PM +0800, Kuan-Wei Chiu wrote:
-> > Modify the min_heap_push() and min_heap_pop() to return a boolean
-> > value. They now return false when the operation fails and true when it
-> > succeeds.
-> 
-> But why ?!
+The following changes since commit 678e14c772130d3a83225ed56fb9860a40bca38b:
 
-like Kuan said, it makes for cleaner code.
+  Merge tag 'soc-fixes-6.9-1' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc (2024-04-12 13:02:27 -0700)
 
-It's also what the bcache/bcachefs heap (and fifo) implementations do,
-which we're consolidating.
+are available in the Git repository at:
+
+  https://github.com:/norov/linux.git tags/bitmap-for-6.10v2
+
+for you to fetch changes up to 5671dca241b9a2f4ecf88d8e992041cfb580e0a5:
+
+  usercopy: Don't use "proxy" headers (2024-05-19 16:12:38 -0700)
+
+----------------------------------------------------------------
+bitmap patches for 6.10
+
+Hi Linus,
+
+Please pull patches for 6.10. This includes:
+ - topology_span_sane() optimization from Kyle Meyer;
+ - fns() rework from Kuan-Wei Chiu (used in
+   cpumask_local_spread() and other places); and
+ - headers cleanup from Andy.
+
+This also adds a MAINTAINERS record for bitops API as it's unattended,
+and I'd like to follow it closer.
+
+v2: drop binary fns().
+
+Thanks,
+Yury
+
+----------------------------------------------------------------
+Andy Shevchenko (2):
+      bitops: Move aligned_byte_mask() to wordpart.h
+      usercopy: Don't use "proxy" headers
+
+Kuan-Wei Chiu (2):
+      lib/test_bitops: Add benchmark test for fns()
+      bitops: Optimize fns() for improved performance
+
+Kyle Meyer (2):
+      cpumask: Add for_each_cpu_from()
+      sched/topology: Optimize topology_span_sane()
+
+Yury Norov (4):
+      Compiler Attributes: Add __always_used macro
+      lib: make test_bitops compilable into the kernel image
+      bitmap: relax find_nth_bit() limitation on return value
+      MAINTAINERS: add BITOPS API record
+
+ MAINTAINERS                         | 14 ++++++++++++++
+ include/linux/bitops.h              | 19 +++----------------
+ include/linux/compiler_attributes.h | 13 +++++++++++++
+ include/linux/cpumask.h             | 10 ++++++++++
+ include/linux/find.h                |  2 +-
+ include/linux/wordpart.h            |  7 +++++++
+ kernel/sched/topology.c             |  6 ++----
+ lib/Kconfig.debug                   |  1 -
+ lib/find_bit.c                      |  2 +-
+ lib/test_bitmap.c                   |  4 ++--
+ lib/test_bitops.c                   | 28 ++++++++++++++++++++++++++++
+ lib/usercopy.c                      |  9 +++++++--
+ 12 files changed, 88 insertions(+), 27 deletions(-)
 
