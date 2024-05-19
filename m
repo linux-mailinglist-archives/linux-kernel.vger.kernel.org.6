@@ -1,118 +1,168 @@
-Return-Path: <linux-kernel+bounces-183129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2AD48C9505
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:31:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 195D98C9508
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 16:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618EE1F219CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:31:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE4311F21290
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 14:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A4F4D108;
-	Sun, 19 May 2024 14:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA914C635;
+	Sun, 19 May 2024 14:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hsPoZwPb"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IWeoyJJR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53E5282F0;
-	Sun, 19 May 2024 14:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E161A2C10;
+	Sun, 19 May 2024 14:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716129101; cv=none; b=fvOC+G/EBKxhtNhk7jO3QRknlFwhq2e5RX+t4eZadZj/c4UkKBLqlDmNyxAOO4gm+P1EtTdqFjPL8+bCH+CROLqSnd0a4xWsIvZ50LFMNv2TtDFfCeeh47hmpLxyIK7TYFJFbvflAZd3JUxAH1DNTBW4bNWtzGECg6Zr20h92lw=
+	t=1716129316; cv=none; b=ueqSU3GBDQ1kbRe2ottjdxm7BXB08PasRILAMYyrfSskqT31bfCATM5kBcP9jr2VqncOZNQGnzQ/a6fUTPxbJQarnc8LosFXYaQTEyW6ZTgVI7RrjF8UASrzOYOd3ePFABGYJ2ieFStGm9hvjkP99SRp6UO3YBOmLeN0bqGyqb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716129101; c=relaxed/simple;
-	bh=Bo0hkkNb6n0GtovvowUCH9XaoMAubly47QTAmugCRVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s621FQX9ZNFVNq98i7jMDtymB+zEiEYnMFK2N7ZK1ZMParFqsBbzhAswyG0V2KmZNAUTpkKNsUHWxYMOmq4OZ3h/zhh7/thMlaOTyJIa/oW64zglqAdYWHqeXIai7hM5PxaUfdZsOP8SfVSNleEbR8NWLEI+kyTBcjGMjf+77aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hsPoZwPb; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716129063; x=1716733863; i=markus.elfring@web.de;
-	bh=okgSGZhPXLzsKcF0XXQXyYWpYhHobc+okPiEHtdUg2Q=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=hsPoZwPbyl9kHz9oKkiVu5F5hQDrX/uhpttLkGq4gkskP0mIvN+u6qQazEN6bfC/
-	 w43xpBUftsCLM2XXNgxDG1y9sBiHoGuhSq10V0/KoxjHQuIGWtB+7ilSSykmWL3Jp
-	 8ERJ1VS5bv0Mv7jwXZte9olZWwz3ixQbqL2gLXK+QKuHpoOhzYXfDak0W1ML+DerU
-	 SShKVwM2QtpV/OIefLftCWKA/sI/z3EUROSkm1nVDFvYqmRZ+SmaS7wqbU26EMezB
-	 f6aBh2MXdnjMta+mDlUKkEL9kCxZKwPHxuazKdVB4UGduFzAp8rG7F8XtQxxet4Ea
-	 JywBbyAtGSfdxkUPCw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3Gga-1sYnFk3to2-00x6CV; Sun, 19
- May 2024 16:31:03 +0200
-Message-ID: <13c9cf99-48e2-4638-b40e-e5b065421ff3@web.de>
-Date: Sun, 19 May 2024 16:30:58 +0200
+	s=arc-20240116; t=1716129316; c=relaxed/simple;
+	bh=acJzPp/ACsuFShBqZ1EROr8tF6WzxfJcERezBmSDdeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IF5wTAzE4fxKkO1XYBfWQIkzVu0+ZsTxQDlwRCPK06ad8yrfjSVSm8Rj9jUiyJoL+2MErCLRkr5z2v0uN8BXQ8Og5dKlugtcQFjf8qzeIuB5t5ftcFsjbubeolMvyZTW0rRZqUE5TQSSly67uDkAS/7l4PJMsqFc7y7aolAWzI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IWeoyJJR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85103C32781;
+	Sun, 19 May 2024 14:35:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716129315;
+	bh=acJzPp/ACsuFShBqZ1EROr8tF6WzxfJcERezBmSDdeg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IWeoyJJReFBVFtjfYEBtVUANNaqB2bXQKXLty9T9e9UFAjUOBilkldiVUYd72OSWC
+	 90yzqhX6AE0S1AeJZ4NMdjNa9gPGnxW9/VnF1DreWLEj8zCdmV/d/8stOuvkJwPxg2
+	 YC6+QPR2O0pjtgfvU+QDbf3mU2lUDTLZ71fckUnKA3i3Uw0JOEExo8Cy5lvNTps6ev
+	 hEM2b+V7bJd3EqGHwkVhFfBqAddGmdLrFE12Bebp511nckX3iBYPuDvFQdVUKgfR+g
+	 LtqRjY4ruA5zRzEaLeuKPskbhOauPyTWSe9B+19A9g6PcQOPyuSRoTaaNbMy3DoQzE
+	 8RLury6rbToKA==
+Date: Sun, 19 May 2024 15:35:01 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
+ petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
+ linus.walleij@linaro.org, semen.protsenko@linaro.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 5/5] iio: pressure: bmp280: Add triggered buffer
+ support
+Message-ID: <20240519153501.7d30c7c2@jic23-huawei>
+In-Reply-To: <20240512230524.53990-6-vassilisamir@gmail.com>
+References: <20240512230524.53990-1-vassilisamir@gmail.com>
+	<20240512230524.53990-6-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 12/28] net: ethernet: ti: cpsw-proxy-client: add NAPI RX
- polling function
-To: Matthew Wilcox <willy@infradead.org>, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- MD Danish Anwar <danishanwar@ti.com>, Paolo Abeni <pabeni@redhat.com>,
- Roger Quadros <rogerq@kernel.org>, Vladimir Oltean
- <vladimir.oltean@nxp.com>, LKML <linux-kernel@vger.kernel.org>,
- linux-doc@vger.kernel.org, Misael Lopez Cruz <misael.lopez@ti.com>,
- Sriramakrishnan <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-References: <20240518124234.2671651-13-s-vadapalli@ti.com>
- <f9470c3b-5f69-41fa-b0f4-ade18053473a@web.de>
- <ZkoGCpq1XN4t7wHS@casper.infradead.org>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZkoGCpq1XN4t7wHS@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ZOR+qvZzRR+ttY7PuL03hVIwkfO7x7y7RvXHXJuDeJUFFg/+vou
- BwVgWAInZI7x7d7oE3Dfl/rE7iP1T/eLVCvjjfayyrwhEuhxhwE39O8tzqt3roh2BpMqkGi
- aYy3QlFzjJqzlz3/9G7agOFYGgUOyXJrtimGjGkb4vKKCKR7EUy6tmNPRBVAaWj+dpIz6vc
- aAEpAcp10aXc8VNXn3i0g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:p3njCTGZjQU=;MM/BtbTKdD1/cFkV9hDHqUuaeAA
- R8CSId/keq81wOpxwHGT/KQ4/EMc9EoKDoFt23MwMKcwbX0IuDzl6HNuffNcsR6AlDHighzfb
- 2B+cutp2WbiKUvJga7TBKBM4przF3nvvKDYzJmSZlEJ2O24l/wZoSBk+S9KLD3Qhl+JqLp0Em
- 1D3zuB5amF58IKbdQDVQ7Pxcf+Y1RTTct+Ayv8q7I9D3GoSbkiRw5K97Tv1ryT0qwrlOGgHFS
- eEy7+ebyN1tir8hvfeVLk1Qys0ls3yvzpSvRFqpEqgdQi44G7Nadm/k0shnia85KtpxgxlKpW
- DthE0qQZIe3mtkDaXSv/xCmphm94gZ3n4/aqVbarmLo6ou7IW4UAbUhALG1dPG0FZNM4JYjey
- cg71B7xYHPic7aLYL7fHJZk5VCXGbcTx1aF003t/t/6VSfGZYRTo+dmAiCWl5RozkCrgIbLYZ
- QkOhjRi1J+a3APsPw0obs+FQOxDy3HXTbW28RPwmLhYvoc/Br1gXrJjcBulS88IqHyWQviK8d
- U/LeOlPk5asXdhWhlkJH2QpJv1u63peW9/GNboafj2B7flO0toWBxDcrBxrf7tPz8juacvrrW
- nVfBGcU71xJdyVS3sr9iBIjat028YQsdef86mkhzfZ6mb+YrBftSIpyQrlqzUaz0PxTAYJKtQ
- ow/iuIjcM6UgdqQPm5kX9tFvzUcPDxqWuzdx8YyHrqIo9gSf/aJuJff9epK0jjydIcxA1vtN5
- ZMzWwujjFG46gOhAZyhKEVjPxSSlXZHk1yH6F/w9vTrNa4jByh+yImhvHVTPa8bqIeTQjSJKp
- iviOXkUr8ycRer9OPgCgyULquV7EQb8P5RSH7uOa71E94=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> FYI, Markus can be safely ignored.  His opinions are well-established as
-> being irrelevant.
+On Mon, 13 May 2024 01:05:24 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-I hope that views can become more constructive somehow.
+> BMP2xx, BME280, BMP3xx, and BMP5xx use continuous buffers for their
+> temperature, pressure and humidity readings. This facilitates the
+> use of burst/bulk reads in order to acquire data faster. The
+> approach is different from the one used in oneshot captures.
+> 
+> BMP085 & BMP1xx devices use a completely different measurement
+> process that is well defined and is used in their buffer_handler().
+> 
+> Suggested-by: Angel Iglesias <ang.iglesiasg@gmail.com>
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+>  
+> +static irqreturn_t bmp280_buffer_handler(int irq, void *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *indio_dev = pf->indio_dev;
+> +	struct bmp280_data *data = iio_priv(indio_dev);
+> +	s32 adc_temp, adc_press, adc_humidity, t_fine;
+> +	u8 sizeof_burst_read;
+> +	int ret;
+> +
+> +	guard(mutex)(&data->lock);
+> +
+> +	/*
+> +	 * If humidity channel is enabled it means that we are called for the
+> +	 * BME280 humidity sensor.
+> +	 */
+> +	if (test_bit(BME280_HUMID, indio_dev->active_scan_mask))
+
+The only thing I though a bit about on this review was whether this
+combined function really makes sense, or should we just move to two
+separate handlers. It's marginal, but given you had it done this way
+let us stick with this.
+
+Definitely something to keep in mind for future changes though that may
+make this more complex still.  For now it's fine.
+
+Applied to the togreg branch of iio.git but given timing that is for now
+only pushed out as testing and I'll rebase it on rc1 once available.
+
+Thanks,
+
+Jonathan
 
 
-=E2=80=A6
->> https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a=
-+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+reso=
-urces
-=E2=80=A6
->> https://elixir.bootlin.com/linux/v6.9.1/source/include/linux/cleanup.h
 
-Do linked information sources provide more helpful clarification opportuni=
-ties
-also for undesirable communication difficulties?
-
-Regards,
-Markus
+> +		sizeof_burst_read = BME280_BURST_READ_BYTES;
+> +	else
+> +		sizeof_burst_read = BMP280_BURST_READ_BYTES;
+> +
+> +	/* Burst read data registers */
+> +	ret = regmap_bulk_read(data->regmap, BMP280_REG_PRESS_MSB,
+> +			       data->buf, sizeof_burst_read);
+> +	if (ret) {
+> +		dev_err(data->dev, "failed to burst read sensor data\n");
+> +		goto out;
+> +	}
+> +
+> +	/* Temperature calculations */
+> +	adc_temp = FIELD_GET(BMP280_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[3]));
+> +	if (adc_temp == BMP280_TEMP_SKIPPED) {
+> +		dev_err(data->dev, "reading temperature skipped\n");
+> +		goto out;
+> +	}
+> +
+> +	data->sensor_data[1] = bmp280_compensate_temp(data, adc_temp);
+> +
+> +	/* Pressure calculations */
+> +	adc_press = FIELD_GET(BMP280_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[0]));
+> +	if (adc_press == BMP280_PRESS_SKIPPED) {
+> +		dev_err(data->dev, "reading pressure skipped\n");
+> +		goto out;
+> +	}
+> +
+> +	t_fine = bmp280_calc_t_fine(data, adc_temp);
+> +
+> +	data->sensor_data[0] = bmp280_compensate_press(data, adc_press, t_fine);
+> +
+> +	/* Humidity calculations */
+> +	if (test_bit(BME280_HUMID, indio_dev->active_scan_mask)) {
+> +		adc_humidity = get_unaligned_be16(&data->buf[6]);
+> +
+> +		if (adc_humidity == BMP280_HUMIDITY_SKIPPED) {
+> +			dev_err(data->dev, "reading humidity skipped\n");
+> +			goto out;
+> +		}
+> +		data->sensor_data[2] = bme280_compensate_humidity(data, adc_humidity, t_fine);
+> +	}
+> +
+> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
+> +					   iio_get_time_ns(indio_dev));
+> +
+> +out:
+> +	iio_trigger_notify_done(indio_dev->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> 
 
