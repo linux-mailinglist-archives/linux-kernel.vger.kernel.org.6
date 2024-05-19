@@ -1,84 +1,76 @@
-Return-Path: <linux-kernel+bounces-183262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A0A8C969B
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 22:33:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 712FB8C969D
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 22:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776EE285253
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:33:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F90D2813B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFF271B3B;
-	Sun, 19 May 2024 20:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50E46CDBA;
+	Sun, 19 May 2024 20:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2mOMqWX"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZnLdR+QN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4245F5024E;
-	Sun, 19 May 2024 20:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4F31804F;
+	Sun, 19 May 2024 20:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716150776; cv=none; b=hSGxj0jguP3SKGqsN7h+RDdbZwTR+B+ennDxFRAF2El2ekEeDBmVANzDxzMP76iNauzaZpXQWY4ABQnzfq6kufZ5gjX7IAwj3kyKq9a3DcX4WlVBM4imbusXA5o5vZ/AMLMqR6715KOVYl0HU3xcjMyuGBHXnwxefvaZERQ0u20=
+	t=1716150971; cv=none; b=Ul0+1rwMKNcYHUq34Vlwz5epzpZBHKBMEyRpWgwXa/125L4Qdd+C0WFXVA6a8pb/H4IfEi0y2UDot5NmgclV56vbWhdEKBaNLXur2clsDGicE1nFYHDjFGEtiihvfWo5mjhEmQ7PkudnUZRNAtL32dvXTfqHpCJ7iox4wBku+rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716150776; c=relaxed/simple;
-	bh=B67zx55BXVPRDqr+VxV/B3N9LmQjSyqMHUdH6fCQoqY=;
+	s=arc-20240116; t=1716150971; c=relaxed/simple;
+	bh=PvchwwyHop/XcvwdlyaD/GxovOSOTuEM6HwG18aSwr4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lr2UwMthrJrIvFYuPHxd7RMvwQPuI7STbWvsC8Amm2wsIb/MRUcBVB4Lc5tq3GK9tN3udXEFQq7OL8DPSr/NdVV9PdCAbDgUw8QHJVe5t2I4jNIBPRuX4aSe5dkqm8zgVNYBj9TXoIepjkHes9Ufl2QrtMhAUDx/45dHMeUuqUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2mOMqWX; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4202ca70287so10951525e9.3;
-        Sun, 19 May 2024 13:32:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716150773; x=1716755573; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RhgPuzlxsOcCWNyFWxUD91IphBlIn/MfHVkMLGAcKZ8=;
-        b=m2mOMqWXpze7CMUBr5vgUC4AuSA+D+7nxWRxLSSR9IKWJzchd/XsUq5DyczDau9Ad0
-         qynQ/dyRjbYinhj/5a2mMwRyP17HaDFdsEFPD+Hqy0P+tpJRqsctxMrnxloljdumpkDv
-         h6oUuakWoWdVvOj5apfuEJ8kiEoL5l53Tmx9Abvuw+MtOxKnTpN6Cj5fAEWe9gRT6m/1
-         Lg8YSxI6TlWXzS1vba0MeTnO+O1sF72Y3hfuOYkiUJlu4xbwNEXo5NBDO+dU2WgmJOwC
-         7Th2AKByKyRQCedJHaPypa6f63GrJpwYbtOq+/d5IbEEdTFLHTl68mO7ZgMUKRGhoHpi
-         m1Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716150773; x=1716755573;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RhgPuzlxsOcCWNyFWxUD91IphBlIn/MfHVkMLGAcKZ8=;
-        b=KmxPp8W6M36YRK94ikeMUQ8BEF/yvNWW/t/79h5acED2mqHJ8/Fb4I87nLEcxtVI1y
-         59lB0zkH19gSzEWqtA2spjEM32rwaExy+xmRa36Va11nI/laOta+E3HyBxD/dau/gjo4
-         1aYSYkYI165wg50IHqjzf+BgRwYzqtzfzA/bHJ1PogrKrEZ/wPn0l/y9YmfJW3+Z3qiY
-         CKHsPglyF7ZEZ6x4WXmUjrfJyf0A7EcGuKfXQ8iDHxmil92gXcD3ENfjThOoBk2hqrJ9
-         lwzcNqn633c5BHqW3JjNayvL3PpGx7RwfcN++WQ7n7LF9jci6tu5jPWk/ppUBIBGoIU1
-         UirQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP+cTbdtYwy/b7UtN8rq9QidQQJLXMCVUsO9B9IgbV23nn4lztRowe3u54zuJPz7aTQ+Cphdmi9Ih+OM8PVbnp5G9+Sh2z4dlKe3tsyS0zKLGtHE67HG22NYWlzqUhaH4mxSXVW1JC
-X-Gm-Message-State: AOJu0YwS55eabGtOQTfBj7+swCtxlRqYGc6o3s+RXT9obG7/in6l9tQR
-	mj1UXUCZeMuEFICfo8llqp+telFYKhb5pEUGtGqZCJVza4MX+ulW
-X-Google-Smtp-Source: AGHT+IEKV2eZF4f8NTqe2Y2slOHO93CwAMtBHbYBrP2h1xq2zedV0nBuxdazTtk5EwLRtmcXHZBzFw==
-X-Received: by 2002:a05:600c:4f50:b0:420:34a0:bb51 with SMTP id 5b1f17b1804b1-42034a0bbbemr69428995e9.18.1716150773346;
-        Sun, 19 May 2024 13:32:53 -0700 (PDT)
-Received: from debian ([93.184.186.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce24c0sm395094065e9.17.2024.05.19.13.32.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 May 2024 13:32:52 -0700 (PDT)
-Date: Sun, 19 May 2024 22:32:50 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Andrew Hepp <andrew.hepp@ahepp.dev>,
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>
-Subject: Re: [PATCH v2 1/2] iio: temperature: mcp9600: Provide index for both
- channels
-Message-ID: <20240519203250.GA10322@debian>
-References: <20240517081050.168698-1-dima.fedrau@gmail.com>
- <20240517081050.168698-2-dima.fedrau@gmail.com>
- <20240519171438.08810789@jic23-huawei>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jYuMF2jvV9rQtI/YqPNUpY/88xhQ3GC1Y5WRiNU5ToGdx/HU5zGRBvQDbyzt0y3fNbTUTog/FlBRfMtH2SLzNCXZNysJjxROM2hrwA/5Qzp1zvLUgirjxLXVz2T+Reem2Ti/w2jDt1Vp8CvjAtEkPJUq8Mx/CdmcCe0QkZAvF24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZnLdR+QN; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716150969; x=1747686969;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PvchwwyHop/XcvwdlyaD/GxovOSOTuEM6HwG18aSwr4=;
+  b=ZnLdR+QNpIzU0DSGwznHv8vy7I6bqey3jn3jGQYj/r3FLZgmoA9Bs0s6
+   Y3o+jmEkwN7CkOAgyjfyAD8wv3kGJ4KmMcmgVZXs8weBz+KI908cKMJdA
+   3KgiX864D6xrFYyQci8jSj0HA9yBtOvTATLer5VuYqMYzAIrKSy8yKImH
+   X/QvYt6hQsxzT3Dm6nf62q08NdmwQYfjXTV1S/DV6ApKo7grTtDpLWRu3
+   oHGBC2OWQwU8kDhAWjt2GRcQC4pCqVfFU/DO2sU8qaDn6t1ljJjC7FvA5
+   XNpkpqz/tBQ3bowqI1QmtN+149vMAAdyJE/jkjN228S1pJ/70B2RJXCij
+   w==;
+X-CSE-ConnectionGUID: TTzI/6HpQGGDNZ/3z2nVBA==
+X-CSE-MsgGUID: c0HcY28ASQmxIlzsGwg2AA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="23412065"
+X-IronPort-AV: E=Sophos;i="6.08,173,1712646000"; 
+   d="scan'208";a="23412065"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 13:36:09 -0700
+X-CSE-ConnectionGUID: hAuS7mItQAGZRzMpvNwHeg==
+X-CSE-MsgGUID: DNMCxiFmSyuh2hG4uII5KA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,173,1712646000"; 
+   d="scan'208";a="63150766"
+Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 19 May 2024 13:36:07 -0700
+Received: from kbuild by 108735ec233b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s8nGG-0004Au-1Q;
+	Sun, 19 May 2024 20:36:04 +0000
+Date: Mon, 20 May 2024 04:35:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: egyszeregy@freemail.hu, broonie@kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Benjamin =?utf-8?B?U3rFkWtl?= <egyszeregy@freemail.hu>
+Subject: Re: [PATCH] spidev: Introduce "linux,spidev-name" property for
+ device tree of spidev.
+Message-ID: <202405200406.PHvbYk5Z-lkp@intel.com>
+References: <20240519181039.23147-1-egyszeregy@freemail.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,92 +79,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240519171438.08810789@jic23-huawei>
+In-Reply-To: <20240519181039.23147-1-egyszeregy@freemail.hu>
 
-Am Sun, May 19, 2024 at 05:14:38PM +0100 schrieb Jonathan Cameron:
-> On Fri, 17 May 2024 10:10:49 +0200
-> Dimitri Fedrau <dima.fedrau@gmail.com> wrote:
-> 
-> > The mapping from cold junction to ambient temperature is inaccurate. We
-> > provide an index for hot and cold junction temperatures.
-> > 
-> > Suggested-by: Jonathan Cameron <jic23@kernel.org>
-> > Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
-> Hi Dmitri,
->
-Hi Jonathan,
+Hi,
 
-> I'm not sure you replied to the question in previous review of what
-> sysfs files exist for this device.  Whilst I am at least a little
-> open to changing the ABI, I'd like to fully understand what
-> is currently presented and why iio_info is having trouble with it.
-> 
-I did, see: https://lore.kernel.org/linux-iio/20240509193125.GA3614@debian/T/#u
+kernel test robot noticed the following build errors:
 
-But maybe not to the point. Sysfs is working correct and iio_info
-probably not. There is only one channel found, the temp_ambient. I would
-have expected two channels. Instead there are four attributes, I would
-have expected two. It seems to me that they are just duplicated. I also
-added the output when setting channel2 member of channel 0 to
-IIO_MOD_TEMP_OBJECT. This time iio_info works fine.
+[auto build test ERROR on broonie-spi/for-next]
+[also build test ERROR on linus/master v6.9 next-20240517]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> I also want an ack from Andrew on this one given might break it existing
-> usage.
-> 
-> The current interface is perhaps less than ideal, but I don't think it
-> is wrong as such. Whilst I wasn't particularly keen on the cold junction
-> == ambient I'm not sure moving to just indexed is an improvement.
-> Hence looking for input from Andrew. +CC Nuno as someone who is both
-> active in IIO and has written thermocouple front end drivers in
-> the past.
-> 
-I just thought the setting of channel2 member to IIO_MOD_TEMP_OBJECT was
-missing. But it turned out that it is not set for a reason. I'm fine
-with the existing mapping, but would be still interesting to know how
-others think about the mapping.
+url:    https://github.com/intel-lab-lkp/linux/commits/egyszeregy-freemail-hu/spidev-Introduce-linux-spidev-name-property-for-device-tree-of-spidev/20240520-021957
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+patch link:    https://lore.kernel.org/r/20240519181039.23147-1-egyszeregy%40freemail.hu
+patch subject: [PATCH] spidev: Introduce "linux,spidev-name" property for device tree of spidev.
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20240520/202405200406.PHvbYk5Z-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240520/202405200406.PHvbYk5Z-lkp@intel.com/reproduce)
 
-Dimitri
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405200406.PHvbYk5Z-lkp@intel.com/
 
-> 
-> > ---
-> >  drivers/iio/temperature/mcp9600.c | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
-> > index 46845804292b..22451d1d9e1f 100644
-> > --- a/drivers/iio/temperature/mcp9600.c
-> > +++ b/drivers/iio/temperature/mcp9600.c
-> > @@ -14,6 +14,9 @@
-> >  
-> >  #include <linux/iio/iio.h>
-> >  
-> > +#define MCP9600_CHAN_HOT_JUNCTION	0
-> > +#define MCP9600_CHAN_COLD_JUNCTION	1
-> > +
-> >  /* MCP9600 registers */
-> >  #define MCP9600_HOT_JUNCTION 0x0
-> >  #define MCP9600_COLD_JUNCTION 0x2
-> > @@ -25,17 +28,19 @@
-> >  static const struct iio_chan_spec mcp9600_channels[] = {
-> >  	{
-> >  		.type = IIO_TEMP,
-> > +		.channel = MCP9600_CHAN_HOT_JUNCTION,
-> >  		.address = MCP9600_HOT_JUNCTION,
-> >  		.info_mask_separate =
-> >  			BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
-> > +		.indexed = 1,
-> >  	},
-> >  	{
-> >  		.type = IIO_TEMP,
-> > +		.channel = MCP9600_CHAN_COLD_JUNCTION,
-> >  		.address = MCP9600_COLD_JUNCTION,
-> > -		.channel2 = IIO_MOD_TEMP_AMBIENT,
-> > -		.modified = 1,
-> >  		.info_mask_separate =
-> >  			BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
-> > +		.indexed = 1,
-> >  	},
-> >  };
-> >  
-> 
+All errors (new ones prefixed by >>):
+
+>> drivers/spi/spidev.c:812:24: error: passing 'const struct class' to parameter of incompatible type 'const struct class *'; take the address with &
+                           dev = device_create(spidev_class, &spi->dev, spidev->devt,
+                                               ^~~~~~~~~~~~
+                                               &
+   include/linux/device.h:1175:35: note: passing argument to parameter 'cls' here
+   device_create(const struct class *cls, struct device *parent, dev_t devt,
+                                     ^
+   drivers/spi/spidev.c:816:24: error: passing 'const struct class' to parameter of incompatible type 'const struct class *'; take the address with &
+                           dev = device_create(spidev_class, &spi->dev, spidev->devt,
+                                               ^~~~~~~~~~~~
+                                               &
+   include/linux/device.h:1175:35: note: passing argument to parameter 'cls' here
+   device_create(const struct class *cls, struct device *parent, dev_t devt,
+                                     ^
+   2 errors generated.
+
+
+vim +812 drivers/spi/spidev.c
+
+   767	
+   768	static int spidev_probe(struct spi_device *spi)
+   769	{
+   770		int ret;
+   771		const char *name;
+   772		int (*match)(struct device *dev);
+   773		struct spidev_data	*spidev;
+   774		int			status;
+   775		unsigned long		minor;
+   776	
+   777		match = device_get_match_data(&spi->dev);
+   778		if (match) {
+   779			status = match(&spi->dev);
+   780			if (status)
+   781				return status;
+   782		}
+   783	
+   784		/* Allocate driver data */
+   785		spidev = kzalloc(sizeof(*spidev), GFP_KERNEL);
+   786		if (!spidev)
+   787			return -ENOMEM;
+   788	
+   789		/* Initialize the driver data */
+   790		spidev->spi = spi;
+   791		mutex_init(&spidev->spi_lock);
+   792		mutex_init(&spidev->buf_lock);
+   793	
+   794		INIT_LIST_HEAD(&spidev->device_entry);
+   795	
+   796		/* If we can allocate a minor number, hook up this device.
+   797		 * Reusing minors is fine so long as udev or mdev is working.
+   798		 */
+   799		mutex_lock(&device_list_lock);
+   800		minor = find_first_zero_bit(minors, N_SPI_MINORS);
+   801		if (minor < N_SPI_MINORS) {
+   802			struct device *dev;
+   803	
+   804			spidev->devt = MKDEV(SPIDEV_MAJOR, minor);
+   805	
+   806			/*
+   807			 * If "linux,spidev-name" is specified in device tree, use /dev/spidev-<name>
+   808			 * in Linux userspace, otherwise use /dev/spidev<bus_num>.<cs_num>.
+   809			 */
+   810			ret = device_property_read_string(&spi->dev, "linux,spidev-name", &name);
+   811			if (ret < 0)
+ > 812				dev = device_create(spidev_class, &spi->dev, spidev->devt,
+   813						    spidev, "spidev%d.%d",
+   814						    spi->controller->bus_num, spi_get_chipselect(spi, 0));
+   815			else
+   816				dev = device_create(spidev_class, &spi->dev, spidev->devt,
+   817						    spidev, "spidev-%s", name);
+   818	
+   819			status = PTR_ERR_OR_ZERO(dev);
+   820		} else {
+   821			dev_dbg(&spi->dev, "no minor number available!\n");
+   822			status = -ENODEV;
+   823		}
+   824		if (status == 0) {
+   825			set_bit(minor, minors);
+   826			list_add(&spidev->device_entry, &device_list);
+   827		}
+   828		mutex_unlock(&device_list_lock);
+   829	
+   830		spidev->speed_hz = spi->max_speed_hz;
+   831	
+   832		if (status == 0)
+   833			spi_set_drvdata(spi, spidev);
+   834		else
+   835			kfree(spidev);
+   836	
+   837		return status;
+   838	}
+   839	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
