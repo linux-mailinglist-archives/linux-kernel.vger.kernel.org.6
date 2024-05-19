@@ -1,154 +1,127 @@
-Return-Path: <linux-kernel+bounces-183198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922CB8C95D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:35:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B726F8C95D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 20:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46E94281612
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C7D4281568
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 May 2024 18:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017D06D1C7;
-	Sun, 19 May 2024 18:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60AB6D1BD;
+	Sun, 19 May 2024 18:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNUibvPN"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CpFm2ZzT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBAB45038;
-	Sun, 19 May 2024 18:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BB045038;
+	Sun, 19 May 2024 18:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716143733; cv=none; b=uHLPaO+0U8QbxTq2KjiJNc96vHrgvM/6oBfznTXpgO3mNma2teY4Wm4yPA4e3B+sanr7HmEEYruiDblUUB7V13Tvs71HiWTcjkFMO1HbB9Xe/WquDppHqEMgFsrETlN48d3JB2w846KFHc+IOVXvQbnERkIoJcG9u0vOfd6T+nw=
+	t=1716143800; cv=none; b=V4aPB6CDG76dVVQQAuoC533URUVn33BVHy1RSHHzGhp/J2FE4DMAhANKANwmFvT8xzFyviEFFBCSmHegsNaMyfmj4mENeTJPT9wqgSDeB3Dyu/kXGNwY/bR8ycy+k2miZfCw2Owlprllj22AJfk9cxga6Jn54jdDP+oqwnnP4yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716143733; c=relaxed/simple;
-	bh=xgvz6Rb6QeU43Wv8Xo7zNgrt2yfkty3dnYcWaaVoGAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BaKIuBy3jb4woOGdxUOkBLtKMEWRPy3R+/6ERjvNzaHGyo6z3s/zhqS2z3ecNcqKrbD36Jp/SqCyIjiIObnVFKaghMzHV/fXy3V1RlsPDt266zqDKsW9gCBTuqtk5VnxfG1Mpcc7estZ+a7qUutVlEI03VfZFw2XswWUAgC6Z/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNUibvPN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B8D6C32781;
-	Sun, 19 May 2024 18:35:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716143732;
-	bh=xgvz6Rb6QeU43Wv8Xo7zNgrt2yfkty3dnYcWaaVoGAk=;
+	s=arc-20240116; t=1716143800; c=relaxed/simple;
+	bh=UUhwXxqUPl7s1YkfVggMn/rNgFKLSx/iqaAxFo+gv7w=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=oos0A+CEhoHlKluqSyczOHi+cnxwsvuOWc3S21D+DhJ6qRoutalVvi1KSEZ3kCLFkacAvcbDR1vXqKfD+pZYvU6iY8gKKG4Km9hoQcKvz2bbOGhJJqjAxmttk+sFRGCmhRqcu7m6uRHTbvBcAgdqz0g8fM2OoEVFBQehW7qYh7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CpFm2ZzT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29884C32781;
+	Sun, 19 May 2024 18:36:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1716143800;
+	bh=UUhwXxqUPl7s1YkfVggMn/rNgFKLSx/iqaAxFo+gv7w=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZNUibvPNTejhgOefLlI92K3IZ9Oty3afy85AfuMIbPSb5I2mVSByWuz60mQd6d2eQ
-	 wZDCbcehzlCZi7G1v4w/dJIG4y1Oe9EYrejG4ADqdYQx6hoM7V/6KncT4rpYPkurCk
-	 OxDUQTkW/UweB0fWtKdGEk+JgMcSuPMIZ27ujrwatGjpncaaGU+JcPKrRFMeq+xfMN
-	 LX6NCrI8TSx4HUgzH0zXPW4lNv8dmsxbyVU4FSC6mE52aEV2zjVvdiXmmeMdFona+l
-	 B3B7h7ooqXWzO6DQ+tFxY9sfdsj0qgznvWxnPnNvqcXkPJpk6LfNOngOml/XoOr74k
-	 KhE5tnMaCctyQ==
-Date: Sun, 19 May 2024 19:35:20 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, conor+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, nuno.sa@analog.com
-Subject: Re: [PATCH v3 7/9] iio: imu: adis_trigger: Allow level interrupts
-Message-ID: <20240519193520.23c3c77e@jic23-huawei>
-In-Reply-To: <20240517074750.87376-8-ramona.bolboaca13@gmail.com>
-References: <20240517074750.87376-1-ramona.bolboaca13@gmail.com>
-	<20240517074750.87376-8-ramona.bolboaca13@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	b=CpFm2ZzTjT7bt9pUpITHxMxR/vtK7evZs57rWz3tBtSlm/XOEFX3G9m1K6CGPK+kv
+	 1FoUOPWtfpQWYJY+33Zak7EMr76YRoJl/9/PXFfU+OvzXBuqc0uGOpScWZVZDwvIP/
+	 d94OEdp8flElEddq31aS8tKpn+K3F8NFhhSU2orc=
+Date: Sun, 19 May 2024 11:36:39 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] MM updates for 6.10-rc1
+Message-Id: <20240519113639.db3fe5f80d25be4e7666751e@linux-foundation.org>
+In-Reply-To: <CAHk-=whEAquncw0wb59-XVAHmVh4CWSfwuWh4bTJjJzvx0=PzQ@mail.gmail.com>
+References: <20240517192239.9285edd85f8ef893bb508a61@linux-foundation.org>
+	<CAHk-=whEAquncw0wb59-XVAHmVh4CWSfwuWh4bTJjJzvx0=PzQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri, 17 May 2024 10:47:48 +0300
-Ramona Gradinariu <ramona.bolboaca13@gmail.com> wrote:
+On Sun, 19 May 2024 08:32:44 -0700 Linus Torvalds <torvalds@linuxfoundation.org> wrote:
 
-> Currently, adis library allows configuration only for edge interrupts,
-> needed for data ready sampling.
-> This patch removes the restriction for level interrupts, which are
-> needed to handle FIFO watermark interrupts.
-> Furthermore, in case of level interrupts, devm_request_threaded_irq is
-> used for interrupt allocation, to avoid blocking the processor while
-> retrieving the FIFO samples.
-
-If respinning for any other reason, I'd rewrap this as a single paragraph.
-
-This looks fine to me, but I'd like an Ack or RB from Nuno.
-Last time I poked an adis part predated the common adis library :(
-
+> On Fri, 17 May 2024 at 19:22, Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > include/linux/slab.h
+> >         https://lkml.kernel.org/r/20240429114302.7af809e8@canb.auug.org.au
 > 
-> Signed-off-by: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
-> ---
-> changes in v3:
->  - new patch
->  drivers/iio/imu/adis_trigger.c | 39 ++++++++++++++++++----------------
->  1 file changed, 21 insertions(+), 18 deletions(-)
+> This is not only a merge conflict, your tree is actively buggy.
 > 
-> diff --git a/drivers/iio/imu/adis_trigger.c b/drivers/iio/imu/adis_trigger.c
-> index f890bf842db8..becf1f558b4e 100644
-> --- a/drivers/iio/imu/adis_trigger.c
-> +++ b/drivers/iio/imu/adis_trigger.c
-> @@ -34,21 +34,16 @@ static int adis_validate_irq_flag(struct adis *adis)
->  	if (adis->data->unmasked_drdy)
->  		adis->irq_flag |= IRQF_NO_AUTOEN;
->  	/*
-> -	 * Typically this devices have data ready either on the rising edge or
-> -	 * on the falling edge of the data ready pin. This checks enforces that
-> -	 * one of those is set in the drivers... It defaults to
-> -	 * IRQF_TRIGGER_RISING for backward compatibility with devices that
-> -	 * don't support changing the pin polarity.
-> +	 * Typically adis devices without fifo have data ready either on the
+> You have introduced changes like this:
+> 
+>   -static inline __alloc_size(1, 2) void *kvcalloc(size_t n, size_t
+> size, gfp_t flags)
+>   -{
+>   - return kvmalloc_array(n, size, flags | __GFP_ZERO);
+>   -}
+>   +#define kvcalloc(_n, _size, _flags) kvmalloc_array(_n, _size,
+> _flags|__GFP_ZERO)
+> 
+> and that's just completely wrong. Note the "_flags|__GFP_ZERO": yes,
+> the bitwise or is fairly low down in the operator precedence rules,
+> and it probably work sin practice because most cases will just pass in
+> a simple expression for the flags, but it's still *horribly* wrong.
+> 
+> I'm going to take this pull and fix up the cases I find, but I'm not
+> happy with this kind of trivial C preprocessor misuse.
 
-FIFO maybe as it's an acronym.
+Thanks, I've asked Suren and Kent to check it all over.
 
-> +	 * rising edge or on the falling edge of the data ready pin.
-> +	 * IMU devices with fifo support have the watermark pin level driven
-> +	 * either high or low when the fifo is filled with the desired number
-> +	 * of samples.
-> +	 * It defaults to IRQF_TRIGGER_RISING for backward compatibility with
-> +	 * devices that don't support changing the pin polarity.
->  	 */
-> -	if (direction == IRQF_TRIGGER_NONE) {
-> +	if (direction == IRQF_TRIGGER_NONE)
->  		adis->irq_flag |= IRQF_TRIGGER_RISING;
-> -		return 0;
-> -	} else if (direction != IRQF_TRIGGER_RISING &&
-> -		   direction != IRQF_TRIGGER_FALLING) {
-> -		dev_err(&adis->spi->dev, "Invalid IRQ mask: %08lx\n",
-> -			adis->irq_flag);
-> -		return -EINVAL;
-> -	}
+> I also note that you have *SEVEN* pointless merges that have no
+> explanation for them. I'm happy that you use git, but that means that
+> you also need to either
 > 
->  	return 0;
->  }
-> @@ -77,11 +72,19 @@ int devm_adis_probe_trigger(struct adis *adis, struct iio_dev *indio_dev)
->  	if (ret)
->  		return ret;
+>  (a) not do merges at all and treat it as a patch queue
 > 
-> -	ret = devm_request_irq(&adis->spi->dev, adis->spi->irq,
-> -			       &iio_trigger_generic_data_rdy_poll,
-> -			       adis->irq_flag,
-> -			       indio_dev->name,
-> -			       adis->trig);
-> +	if (adis->irq_flag & (IRQF_TRIGGER_HIGH | IRQF_TRIGGER_LOW))
-> +		ret = devm_request_threaded_irq(&adis->spi->dev, adis->spi->irq,
-> +						NULL,
-> +						&iio_trigger_generic_data_rdy_poll,
-> +						adis->irq_flag | IRQF_ONESHOT,
-> +						indio_dev->name,
-> +						adis->trig);
-> +	else
-> +		ret = devm_request_irq(&adis->spi->dev, adis->spi->irq,
-> +				       &iio_trigger_generic_data_rdy_poll,
-> +				       adis->irq_flag,
-> +				       indio_dev->name,
-> +				       adis->trig);
->  	if (ret)
->  		return ret;
+>  (b) do merges _properly_ and not throw them around like some madman
 > 
-> --
-> 2.34.1
+> And doing them properly means not only writing good commit messages,
+> but actually having good reasons for them. As it is, we have
 > 
+>   5d1bc760583f ("merge mm-hotfixes-stable into mm-nonmm-stable to pick
+> up needed changes")
+>   640958fde130 ("Merge branch 'master' into mm-stable")
+>   4e2e36129225 ("Merge branch 'master' into mm-stable")
+>   1dd4505cf4c8 ("Merge branch 'master' into mm-stable")
+>   71919308943d ("Merge branch 'master' into mm-stable")
+>   b228ab57e51b ("Merge branch 'master' into mm-stable")
+>   5e2806112864 ("Merge branch 'master' into mm-stable")
 
+This is me advancing the master branch once per week until we hit -rc4.
+
+I don't understand why these merges were visible to this pull.  I sent:
+
+: The following changes since commit 5d1bc760583f225032f91bd88853f4c26acaf4e0:
+: 
+:   merge mm-hotfixes-stable into mm-nonmm-stable to pick up needed changes (2024-04-25 20:54:12 -0700)
+: 
+: are available in the Git repository at:
+: 
+:   git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-stable-2024-05-17-19-19
+: 
+: for you to fetch changes up to 76edc534cc289308130272a2ac28694fc9b72a03:
+: 
+:   memcg, oom: cleanup unused memcg_oom_gfp_mask and memcg_oom_order (2024-05-11 15:41:37 -0700)
+: 
+
+This has worked OK before,
 
