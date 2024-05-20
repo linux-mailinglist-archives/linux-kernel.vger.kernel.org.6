@@ -1,227 +1,175 @@
-Return-Path: <linux-kernel+bounces-183522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F528C9A26
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:11:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065098C9A32
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94F331C20BB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:11:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A3B51F212EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8221F21A19;
-	Mon, 20 May 2024 09:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864251CD02;
+	Mon, 20 May 2024 09:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NEsPMqrE"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SQ/+LTtN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QC8SRNpp";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SQ/+LTtN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QC8SRNpp"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24DC28689;
-	Mon, 20 May 2024 09:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1E51C6A3
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 09:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716196234; cv=none; b=kaxZC5+SL8RoUf6N5r85lnzqly11cXfcHWjwpwWiyiu/NpVsKfJ8cqahp8N93MFY676jHGWGZby3dgmwPtI9DXb0W5/iGge4yRnwvz/aHnDrS0Oo5J0q7Ac8Ll4T8fvg3Kli3A9bXYfCCkQgOgRZvJ1TYau8wY03wLbsga/YPTc=
+	t=1716196496; cv=none; b=jtGyt7SPRw2PEDHg7w1vhtX/bMVRoFPwu2ugpynYFi5+MWBANBwl429UVdgjipj7FErk2EFFa5kq//RVmSPBFYtJFQ18emer6oQLzECTjwnmNTBrIkAAPu72FTgRzGxZcgOWwOjWsLdXtvB13yugINxqhLNXFTj31TmWD4uf9Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716196234; c=relaxed/simple;
-	bh=geJPqWfA+lOH1gJHU1bK7o0WD65edn5Wmepk6PLkqFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iph2RjiRoq03G692fuwCwkZql9gWVZKwhVWGLAoMzCr4T5Mhr383/j79LoV71NryEtRDfUjw2QO3V8gQo3tpGllBGmarev1SxU1Nri/EmCDHDHTOnPx5I3atD3PFK9DvcBdUkcqH3O/eSR6VOPMnAQ/YXn+L+dQedWguCLEpovE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NEsPMqrE; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716196228; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=+oDd34WpzIBfLmElGTtMnUNcaXAiuc3XoXxpuDHCkHQ=;
-	b=NEsPMqrE0qmU7i6NLwtoI0FUt3XgfYkdtLsm+u1HMFi/RouB8VTRTQRB5yRuxjOP1CwqR8fTmXCVXqADXirgVUnLto7Y1Viq6goAx3vY2qmRDLjNnx3jnYbEftEF/g7z5T8NSRNGsDN6coEjXOJ9R6GDHQsKPrPdbDANQsxn+Ug=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R701e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W6qKWbx_1716196226;
-Received: from 30.221.148.185(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W6qKWbx_1716196226)
-          by smtp.aliyun-inc.com;
-          Mon, 20 May 2024 17:10:27 +0800
-Message-ID: <d0e6d1f6-002f-4255-a481-6bd17f3da7fc@linux.alibaba.com>
-Date: Mon, 20 May 2024 17:10:25 +0800
+	s=arc-20240116; t=1716196496; c=relaxed/simple;
+	bh=LVBctxLzOPar47r1X+xyUCWooEprhK/vcDKfEVAVmcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=StIXEALlUg6A2oatGLF9CVYO/OkyLL0FOwFAts7oAqwPS4X2HJWjBWgjloSUZHYEuRPLtAiQzJbVLx4J+usdoAjzbUo1i/gYyq5QNv1aR3Col3Y8XIYZWsXGWDOf8ZcJ38sM9nvuW4h7gr9qsvbgomEP+n+zq0K+M7YOSjZnYCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SQ/+LTtN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QC8SRNpp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SQ/+LTtN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QC8SRNpp; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1D19C2230F;
+	Mon, 20 May 2024 09:14:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716196493; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DQpaWqEk14kmnZcRhdQPeYIN4UAv14SG3VVppGhfDQw=;
+	b=SQ/+LTtNmqQ5lsOk1oA9qLfIIOqAFGFL5m4YmwHs8Is7y9FKQNJjmip74l+Uwc9gzozVUg
+	hzCz6cM5ClUd/phVVLgFDDCk/Kfg96Hc+VF/LRatpnCuQSvX6wyl1yY3fIim5HyPYfktSg
+	ZV1ZlLdrh0DVbh9jVSxoeUKLRsrsQso=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716196493;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DQpaWqEk14kmnZcRhdQPeYIN4UAv14SG3VVppGhfDQw=;
+	b=QC8SRNppEITCa/rAX9pRgj9rB/ERaebOnt5nW39BmxGgevybxtNyCzt9dMQXYCSQARYQkq
+	nU2/g80JI8Uw2LBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716196493; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DQpaWqEk14kmnZcRhdQPeYIN4UAv14SG3VVppGhfDQw=;
+	b=SQ/+LTtNmqQ5lsOk1oA9qLfIIOqAFGFL5m4YmwHs8Is7y9FKQNJjmip74l+Uwc9gzozVUg
+	hzCz6cM5ClUd/phVVLgFDDCk/Kfg96Hc+VF/LRatpnCuQSvX6wyl1yY3fIim5HyPYfktSg
+	ZV1ZlLdrh0DVbh9jVSxoeUKLRsrsQso=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716196493;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DQpaWqEk14kmnZcRhdQPeYIN4UAv14SG3VVppGhfDQw=;
+	b=QC8SRNppEITCa/rAX9pRgj9rB/ERaebOnt5nW39BmxGgevybxtNyCzt9dMQXYCSQARYQkq
+	nU2/g80JI8Uw2LBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8475713A6B;
+	Mon, 20 May 2024 09:14:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id C18sHYwUS2ZSYQAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Mon, 20 May 2024 09:14:52 +0000
+Date: Mon, 20 May 2024 11:14:51 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH v2 06/20] powerpc/8xx: Fix size given to
+ set_huge_pte_at()
+Message-ID: <ZksUiwNaKx2n1fJO@localhost.localdomain>
+References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
+ <04f4e737608ea0b177b88057db138fbf0d6ab138.1715971869.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/12] cachefiles: fix slab-use-after-free in
- cachefiles_ondemand_get_fd()
-To: Baokun Li <libaokun@huaweicloud.com>, netfs@lists.linux.dev,
- dhowells@redhat.com, jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
- <20240515084601.3240503-4-libaokun@huaweicloud.com>
- <35561c99-c978-4cf6-82e9-d1308c82a7ff@linux.alibaba.com>
- <d8154eed-98d0-9cb7-4a2c-6b68ed75b7a2@huaweicloud.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <d8154eed-98d0-9cb7-4a2c-6b68ed75b7a2@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <04f4e737608ea0b177b88057db138fbf0d6ab138.1715971869.git.christophe.leroy@csgroup.eu>
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_TLS_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,nvidia.com,redhat.com,ellerman.id.au,gmail.com,vger.kernel.org,kvack.org,lists.ozlabs.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,csgroup.eu:email]
 
+On Fri, May 17, 2024 at 09:00:00PM +0200, Christophe Leroy wrote:
+> set_huge_pte_at() expects the real page size, not the psize which is
 
+"expects the size of the huge page" sounds bettter? 
 
-On 5/20/24 4:38 PM, Baokun Li wrote:
-> Hi Jingbo,
+> the index of the page definition in table mmu_psize_defs[]
 > 
-> Thanks for your review!
+> Fixes: 935d4f0c6dc8 ("mm: hugetlb: add huge page size param to set_huge_pte_at()")
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+
+AFAICS, this fixup is not related to the series, right? (yes, you will
+the parameter later)
+I would have it at the very beginning of the series.
+
+
+> ---
+>  arch/powerpc/mm/nohash/8xx.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> On 2024/5/20 15:24, Jingbo Xu wrote:
->>
->> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
->>> From: Baokun Li <libaokun1@huawei.com>
->>>
->>> We got the following issue in a fuzz test of randomly issuing the
->>> restore
->>> command:
->>>
->>> ==================================================================
->>> BUG: KASAN: slab-use-after-free in
->>> cachefiles_ondemand_daemon_read+0x609/0xab0
->>> Write of size 4 at addr ffff888109164a80 by task ondemand-04-dae/4962
->>>
->>> CPU: 11 PID: 4962 Comm: ondemand-04-dae Not tainted 6.8.0-rc7-dirty #542
->>> Call Trace:
->>>   kasan_report+0x94/0xc0
->>>   cachefiles_ondemand_daemon_read+0x609/0xab0
->>>   vfs_read+0x169/0xb50
->>>   ksys_read+0xf5/0x1e0
->>>
->>> Allocated by task 626:
->>>   __kmalloc+0x1df/0x4b0
->>>   cachefiles_ondemand_send_req+0x24d/0x690
->>>   cachefiles_create_tmpfile+0x249/0xb30
->>>   cachefiles_create_file+0x6f/0x140
->>>   cachefiles_look_up_object+0x29c/0xa60
->>>   cachefiles_lookup_cookie+0x37d/0xca0
->>>   fscache_cookie_state_machine+0x43c/0x1230
->>>   [...]
->>>
->>> Freed by task 626:
->>>   kfree+0xf1/0x2c0
->>>   cachefiles_ondemand_send_req+0x568/0x690
->>>   cachefiles_create_tmpfile+0x249/0xb30
->>>   cachefiles_create_file+0x6f/0x140
->>>   cachefiles_look_up_object+0x29c/0xa60
->>>   cachefiles_lookup_cookie+0x37d/0xca0
->>>   fscache_cookie_state_machine+0x43c/0x1230
->>>   [...]
->>> ==================================================================
->>>
->>> Following is the process that triggers the issue:
->>>
->>>       mount  |   daemon_thread1    |    daemon_thread2
->>> ------------------------------------------------------------
->>>   cachefiles_ondemand_init_object
->>>    cachefiles_ondemand_send_req
->>>     REQ_A = kzalloc(sizeof(*req) + data_len)
->>>     wait_for_completion(&REQ_A->done)
->>>
->>>              cachefiles_daemon_read
->>>               cachefiles_ondemand_daemon_read
->>>                REQ_A = cachefiles_ondemand_select_req
->>>                cachefiles_ondemand_get_fd
->>>                copy_to_user(_buffer, msg, n)
->>>              process_open_req(REQ_A)
->>>                                    ------ restore ------
->>>                                    cachefiles_ondemand_restore
->>>                                    xas_for_each(&xas, req, ULONG_MAX)
->>>                                     xas_set_mark(&xas,
->>> CACHEFILES_REQ_NEW);
->>>
->>>                                    cachefiles_daemon_read
->>>                                     cachefiles_ondemand_daemon_read
->>>                                      REQ_A =
->>> cachefiles_ondemand_select_req
->>>
->>>               write(devfd, ("copen %u,%llu", msg->msg_id, size));
->>>               cachefiles_ondemand_copen
->>>                xa_erase(&cache->reqs, id)
->>>                complete(&REQ_A->done)
->>>     kfree(REQ_A)
->>>                                      cachefiles_ondemand_get_fd(REQ_A)
->>>                                       fd = get_unused_fd_flags
->>>                                       file = anon_inode_getfile
->>>                                       fd_install(fd, file)
->>>                                       load = (void *)REQ_A->msg.data;
->>>                                       load->fd = fd;
->>>                                       // load UAF !!!
->>>
->>> This issue is caused by issuing a restore command when the daemon is
->>> still
->>> alive, which results in a request being processed multiple times thus
->>> triggering a UAF. So to avoid this problem, add an additional reference
->>> count to cachefiles_req, which is held while waiting and reading, and
->>> then
->>> released when the waiting and reading is over.
->>>
->>>
->>> Note that since there is only one reference count for waiting, we
->>> need to
->>> avoid the same request being completed multiple times, so we can only
->>> complete the request if it is successfully removed from the xarray.
->> Sorry the above description makes me confused.  As the same request may
->> be got by different daemon threads multiple times, the introduced
->> refcount mechanism can't protect it from being completed multiple times
->> (which is expected).  The refcount only protects it from being freed
->> multiple times.
-> The idea here is that because the wait only holds one reference count,
-> complete(&req->done) can only be called when the req has been
-> successfully removed from the xarry, otherwise the following UAF may
-> occur:
-
-
-"complete(&req->done) can only be called when the req has been
-successfully removed from the xarry ..."
-
-How this is done? since the following xarray_erase() following the first
-xarray_erase() will fail as the xarray slot referred by the same id has
-already been erased?
-
-
->>> @@ -455,7 +459,7 @@ static int cachefiles_ondemand_send_req(struct
->>> cachefiles_object *object,
->>>       wake_up_all(&cache->daemon_pollwq);
->>>       wait_for_completion(&req->done);
->>>       ret = req->error;
->>> -    kfree(req);
->>> +    cachefiles_req_put(req);
->>>       return ret;
->>>   out:
->>>       /* Reset the object to close state in error handling path.
->>
->> Don't we need to also convert "kfree(req)" to cachefiles_req_put(req)
->> for the error path of cachefiles_ondemand_send_req()?
->>
->> ```
->> out:
->>     /* Reset the object to close state in error handling path.
->>      * If error occurs after creating the anonymous fd,
->>      * cachefiles_ondemand_fd_release() will set object to close.
->>      */
->>     if (opcode == CACHEFILES_OP_OPEN)
->>         cachefiles_ondemand_set_object_close(object);
->>     kfree(req);
->>     return ret;
->> ```
-> When "goto out;" is called in cachefiles_ondemand_send_req(),
-> it means that the req is unallocated/failed to be allocated/failed to
-> be inserted into the xarry, and therefore the req can only be accessed
-> by the current function, so there is no need to consider concurrency
-> and reference counting.
-
-Okay I understand. But this is indeed quite confusing. I see no cost of
-also converting to cachefiles_req_put(req).
-
+> diff --git a/arch/powerpc/mm/nohash/8xx.c b/arch/powerpc/mm/nohash/8xx.c
+> index 43d4842bb1c7..d93433e26ded 100644
+> --- a/arch/powerpc/mm/nohash/8xx.c
+> +++ b/arch/powerpc/mm/nohash/8xx.c
+> @@ -94,7 +94,8 @@ static int __ref __early_map_kernel_hugepage(unsigned long va, phys_addr_t pa,
+>  		return -EINVAL;
+>  
+>  	set_huge_pte_at(&init_mm, va, ptep,
+> -			pte_mkhuge(pfn_pte(pa >> PAGE_SHIFT, prot)), psize);
+> +			pte_mkhuge(pfn_pte(pa >> PAGE_SHIFT, prot)),
+> +			1UL << mmu_psize_to_shift(psize));
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.44.0
+> 
 
 -- 
-Thanks,
-Jingbo
+Oscar Salvador
+SUSE Labs
 
