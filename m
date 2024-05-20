@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-184046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1B68CA1C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:04:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB268CA1C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A20F228260E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:03:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B4861C21A9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A65913775C;
-	Mon, 20 May 2024 18:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FFD13792E;
+	Mon, 20 May 2024 18:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HrXh9QNZ"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oPqJRmaL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CA0137744
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 18:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D636034CDE;
+	Mon, 20 May 2024 18:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716228223; cv=none; b=lZVmzwAXp2l8rE4eQkYhP6quLZdkpjQ1q11TbU+fKklOny4fXBFbi/4v9wG3DJoGY9Ozy3gK3bGEMbeQPIU3VN6Lc9oYt0nfm88BcHjW1tWfqDSNGJd6orDDxiNVUnXxFFQCbsH1jkYQfT3UqS57Q66KRg1ghYGIdRxuT6eAZUg=
+	t=1716228304; cv=none; b=XhXirj86UXBDMRKKpJhxZWlVQhMj42As2Pxlt1/gqqPTKKvaPuGaBdslrMEjP4SGK/FJVZR8p8dn9lhkm0+4voZKJeGfpE62VnzZzFCsLTF64iA+n1JHxTxHmWqlLF5n4UuTJGh8Rlt40zSpVQUdv81lLhh+QPla6yUUrQpvnMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716228223; c=relaxed/simple;
-	bh=PRYrhuikhqyde0FeratQ4dnkTKv8ECaK4D7CQBCqVHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KrgbObHHXvoNjd/Jdd/oSCpXlF+S+Ytspmo53iYdsmoHUkvbaoYVb7uHzy8aGId/V9Ajf1frarjSD3WRBy9/ccSTti+K1upW7I2r+JhRmeyIvXmMoE34fGo5GVESQTkFEoiquKmTnaRY5dPntokQXDA8IltH0b99u60obh1eJkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=HrXh9QNZ; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5b2cc8c4b8aso2433208eaf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 11:03:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1716228221; x=1716833021; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:references:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EKpKU0cQ/i38LzFvKx22OgL+jd0nWlAKyJ5/lZQReiM=;
-        b=HrXh9QNZyb78F1+TL4bj+NvcHPuPKQEnRDK4AJb2xvN0nyw8CJoH6kT0fUlU69SUvt
-         cslj+P2fcOQ/Tzhim23oe0u8eWvtBfOuimtiHAOZ2hz34581ryjqHzwVyS5CkOh/ifYQ
-         ddmo2n6ldwVwfDnzvlRMiBqM1EM/VFUVWttzQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716228221; x=1716833021;
-        h=in-reply-to:autocrypt:from:references:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EKpKU0cQ/i38LzFvKx22OgL+jd0nWlAKyJ5/lZQReiM=;
-        b=CBFR0PFoXUpYTfZYlscyQHlIoF9d6yGk18koOAiYuk/w+REW1qnLCATkDkSghWEEVl
-         93PldeRBBUEFcXeTJngyr6/uJ8BBXgktyh2eY0jz8XcfKB2Rf197mkbboAtSmU17tTXX
-         8bcBtLkyX9lJFQ6qPfQWF6UGPqyPNouk+epP6nXufju0F/Amcslcc6s1BaarvVC5Bp8F
-         zx6Sl/C1mzLEbQnxEa5G+WD/RceFwEB3xo8zqR8PxqLQTmLb5wnoTyJ7+7Dstqu3N178
-         E4d27wSX1+7fusLjlbNKCiizTvooRzDRCrqpmoJ7+frl/+BxOe0bL9L2y3Hy41xd4LZt
-         myNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXssBn233G7omorziuxmUZrPMYm377FZYYEJK7mRnDif8FnayTCv3GRh5Z34Z5Mvgyd8+E8z9bxoIq3QWy5lWSJC8gGTn2BF+R/0cS8
-X-Gm-Message-State: AOJu0YxCeK6MvycdYYzqR27ZoPInO4mzC4sDg9Id9hoGatsTdScp1tMz
-	zGT5CBuohKn4AvmV2ZswK4BIEYq6aRZU8VqZk6YicTg01f6Ly2Xz6UMtRRFqTQ==
-X-Google-Smtp-Source: AGHT+IF1vtC9mPyrFL0m08fdVRoS2BPQFth0Niyk7NYw3apdCGUojV2l0aml2wNxdW0yedf3mC+N3w==
-X-Received: by 2002:a05:6358:3423:b0:17f:7206:fd81 with SMTP id e5c5f4694b2df-193bcfc5cf8mr4166150755d.20.1716228221214;
-        Mon, 20 May 2024 11:03:41 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1857f9sm115251606d6.49.2024.05.20.11.03.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 May 2024 11:03:40 -0700 (PDT)
-Message-ID: <69e840a9-e5f4-4ae5-ab89-ae7d9f6367f8@broadcom.com>
-Date: Mon, 20 May 2024 11:03:37 -0700
+	s=arc-20240116; t=1716228304; c=relaxed/simple;
+	bh=kPBtia4xzyfEHTggusZtDrxjOdowelLRyYrYWeNkILQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f5R/miFMCeYDdl/+mmPjQ39TF3WBS/DI4riYJyz9NMJf5pi2Q5GX29OhdnUtb6qB0AWC+n9MhFgC1tF3j0hfqrbDDb/SRPc/3tuV3erS8/EAe3Ll5WxWLKNk4Cnqmg6XDvccZ3cw1BCCR2ntk+gxRIkfrPzGd9LkRmShbpO+b24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oPqJRmaL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44KBrKQx019730;
+	Mon, 20 May 2024 18:04:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=kPBtia4xzyfEHTggusZtDrxjOdowelLRyYrYWeNkILQ=; b=oP
+	qJRmaLWnD1kxfGyLqrhRLraaRQxTiPHZ34Yr70W5m31c5hQrsi/w2EVEc/1h5MNP
+	/xwaCAuJhuwn/6d3SwZkPYfELmhCh4lphZrtWnGfr229fq+AYsW+REjL8QwZxohl
+	gUp6hSA2yPN31s/W1ET0d3ZeTfZFsm4//GqeoUCtblCMhssvIkYPulXrHXFGWDpg
+	W8njs4W/zWi3LoGQU6hAcW3lDn9aXg9M32CqYOELDkvuD96fHLxUkUI96apyj/Hf
+	gHHaP0piTndidCTZHdYiaZQQ0a4x9jeL/IyH3k+2zjnktVo544JpoosyowWNl0Hf
+	LlY5PY7O1VYJJf1xI6PQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6n4p4d8s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 18:04:40 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44KI4JEw007304
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 18:04:19 GMT
+Received: from [10.110.126.173] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 20 May
+ 2024 11:04:15 -0700
+Message-ID: <e6436f2f-ac51-4f18-90f2-e39a2ff1c520@quicinc.com>
+Date: Mon, 20 May 2024 11:03:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,205 +64,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] arm64: dts: broadcom: Add support for BCM2712
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
- Andrea della Porta <andrea.porta@suse.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
- Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org
-References: <cover.1715332922.git.andrea.porta@suse.com>
- <59a3015c3a6f2f0b70a38c030274a163773e7757.1715332922.git.andrea.porta@suse.com>
- <786bbf35-e9fe-445c-b6f9-21119e60fb34@broadcom.com>
- <ZkXFi6_2DkXRNgSL@apocalypse>
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <ZkXFi6_2DkXRNgSL@apocalypse>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000824e710618e685e1"
-
---000000000000824e710618e685e1
+Subject: Re: [PATCH v2] sh: Call paging_init() earlier in the init sequence
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        <ysato@users.sourceforge.jp>, <dalias@libc.org>
+CC: <akpm@linux-foundation.org>, <linux-sh@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
+        <kernel@quicinc.com>, Rob Herring <robh@kernel.org>,
+        Rob Landley <rob@landley.net>
+References: <20240423233150.74302-1-quic_obabatun@quicinc.com>
+ <72ec7831604326e852eb228072b1d817bab829fb.camel@physik.fu-berlin.de>
+ <b00e0adc72815e465cf32fc5505445cfceeeca84.camel@physik.fu-berlin.de>
+ <ec5f3194-7e9e-4cc9-86b9-02a204649246@quicinc.com>
+ <0e813c8498bf3d9ed5d8fd5b171ac9980dc2999c.camel@physik.fu-berlin.de>
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+In-Reply-To: <0e813c8498bf3d9ed5d8fd5b171ac9980dc2999c.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fnn3RhToGM7W8LpYoAZBiwrfbmQxHCc6
+X-Proofpoint-GUID: fnn3RhToGM7W8LpYoAZBiwrfbmQxHCc6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-20_09,2024-05-17_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0 spamscore=0
+ impostorscore=0 clxscore=1015 phishscore=0 suspectscore=0 adultscore=0
+ mlxlogscore=624 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405200145
 
-On 5/16/24 01:36, Andrea della Porta wrote:
-> On 09:14 Fri 10 May     , Florian Fainelli wrote:
->> On 5/10/24 07:35, Andrea della Porta wrote:
+
+On 5/7/2024 3:41 PM, John Paul Adrian Glaubitz wrote:
+> Hello Oreoluwa,
+>
+> On Tue, 2024-05-07 at 14:42 -0700, Oreoluwa Babatunde wrote:
+>> memblock_alloc() marks all its allocations as reserved by calling
+>> memblock_reserve().
+>> https://elixir.bootlin.com/linux/latest/source/mm/memblock.c#L1463
 >>
->> This should be #size-cells = <2> to be future proof and support over 4GB of
->> DRAM, because the DDR controller and the memory map on that chip have been
->> designed with that requirement.
+>> This should normally stop other users from allocating from within that
+>> region of memory.
 >>
->>> +
->>> +	interrupt-parent = <&gicv2>;
->>> +
->>> +	axi: axi {
->>> +		compatible = "simple-bus";
->>> +		#address-cells = <2>;
->>> +		#size-cells = <1>;
->>> +		ranges;
+>> But in this case, since all the free memory regions have already been
+>> transferred over to the bootmem framework by paging_init(), I am not
+>> sure if that logic will still hold for the unflatten_deivcetree allocated memory.
 >>
->> The AXI peripheral window should be defined in the ranges property. The
->> aperture is from 0x10_0000_0000 to 0x10_3FFF_FFFF.
+>> The main goal of this patch is to make sure that the reserved memory
+>> regions defined in the DT are set aside before any memblock allocations
+>> are done (which includes the allocation done by unflatten_devicetree).
 >>
->>  From that point on you can define all peripherals under the axi node to be
->> relative to that axi aperture, just like what you did for the legacy Pi
->> peripherals in the subsequent bus node.
-> 
-> This doesn't seem to match with what I have here:
-> - some axi peripherals goes beyond 0x10_3FFF_FFFF (e.g. the interrupt
->    controller is @0x107fff9000)
+>> Hence, I can restructure the patch to only remove the portion of code that is
+>> is responsible for setting aside the DT defined reserved memory regions from
+>> within paging_init(), and move it above the unflatten_devicetree() call.
+>> https://elixir.bootlin.com/linux/latest/source/arch/sh/mm/init.c#L292
+>>
+>> I will explore further and possibly restructure this patch based on my findings.
+> OK, sounds like a plan. In the meantime, I have set up my J2 Turtle Board and
+> I am actually now able to test patches for this target, so that I would be
+> able to verify that your patch didn't break anything.
+>
+> However, I think for v6.10 I think the ship has sailed.
+>
+> Adrian
+Hi Adrian,
 
-The interrupt controller (GIC) is technically its own dedicated bus to 
-the CPU, that's why it is typically added to the root node.
+I have uploaded v3 of this patch now.
+https://lore.kernel.org/all/20240520175802.2002183-1-quic_obabatun@quicinc.com/
 
-> - downstream dts have that ranges going from 0x10 0x00000000 0x11 0x00000000,
->    so to span all the peripheral (included e.g. the above int controller)
-> - another comment in downstream dts says: // 10_00000000-1x_xxxxxxxx = up to
->    64GB system RAM
+In this new version, paging_init() is left in its original position and only the portion
+of code that is responsible for setting aside the reserved memory regions is moved.
 
-Yes, up to 64GB of DRAM is correct.
-
-> 
-> I'm a little confused here, of course we could also define multiple ranges
-> but I don't really know what the boundaries are. Anyway, I would opt for the
-> extended range (0x10 0x00000000 - 0x11 0x00000000) unless there is concern
-> about it. Any thoughts?
-
-A single range is fine with me, those sort of details should not matter.
-
-> 
-> Many thanks,
-> Andrea
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
--- 
-Florian
-
-
---000000000000824e710618e685e1
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
-9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
-UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
-KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
-nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
-Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
-KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
-kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
-2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
-3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
-NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
-AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIGH+J96PCL/4jD8f
-lQHk5zME/xP/EKMqdcEemDnoPNGeMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTI0MDUyMDE4MDM0MVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQDOdY1EilCJxbc9J6VFz5FUfWL+b/6JgSlq
-xEESHUITjDGEZbFP7N1fdF2PmE+l81JtlSjf8QhPyJuJ/6Zf0iPw/C3G6kTeWGHBIcFwjiPyv/fi
-mZSuQEn0DWAZx7oaVLmhYg6mdalyK8WOZJoCoXYco1Usj3DfHVxYPvaWqE9I4wtsRgOm2RjkOhOe
-CqaEyG7osA8LyjNA2Zo/HicePE6sPlFVhfR5bpZksc0Mt+P+QlsPACtLI+IdZ4FJnWsyIOcVGlSz
-A+29V505SX1dGuUvENLQZGzbB54JQrhA792NgAiKU+fverNLeuhBjh2gygbvelWR8S6r7UxjmM3Q
-dnS+
---000000000000824e710618e685e1--
+Thank you!
+Oreoluwa
 
