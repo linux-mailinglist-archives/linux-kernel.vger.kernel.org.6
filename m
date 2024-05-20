@@ -1,100 +1,85 @@
-Return-Path: <linux-kernel+bounces-183858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 745548C9F04
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:50:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76BC58C9F06
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21421C2140D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:50:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B154C1C21578
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74E11369B4;
-	Mon, 20 May 2024 14:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990511369B7;
+	Mon, 20 May 2024 14:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="D+kk4AG0";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="D+kk4AG0"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNxxzmK3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546591E878;
-	Mon, 20 May 2024 14:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FD31E878;
+	Mon, 20 May 2024 14:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716216633; cv=none; b=nmXlPKO+tCkr26RCVNlXfO0sd9eoyjB8DYEi4cnWxYbpj5AhVX+N1IGsBSgjD5rj1fOU1HdKjSjDNhXuacImTXMueYPG9E7xJLRchLwvJvqv1XuUzzTFf7eC/BmPwhbLZ+UQJ8FCMG7gSEvO5JcHUBLM+lT5YIqGKpk2tNrUIIQ=
+	t=1716216679; cv=none; b=T4pdJqyphoQQlDwOaHITgUwZM/6CKmDLQ6S0R84+DAp2p2yd47Mxm1mcsvXIkp+w42quRmYaORzn8KZoamJS42txGprEbf7hDTuB9LDy62rxE6XTiHXQR9d+GaSEpkB9uQx6EXxJbGCGjcEaqLHOAUa0WiXHoNzkedQgj5ycwPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716216633; c=relaxed/simple;
-	bh=a3b4/nDS8pHPvnKT7j0QAuoDnWKmn0konKkL0z8d35c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KEIhNv9oK4paCPmtDeUQnFcnfzZD0tZNKbXPVfVBiR92C3lohbpClvuAXUhu8N44ZZricN76ulonkniQ1dYCVBV3MLFAbHS5XEBTH8HJK4EzXVBUWrlWbA4m9J0LRbV3DDF3hhw8l1OBtEdpn2xHTsPGXkm/6eshyjimA4XW8jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=D+kk4AG0; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=D+kk4AG0; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1716216630;
-	bh=a3b4/nDS8pHPvnKT7j0QAuoDnWKmn0konKkL0z8d35c=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=D+kk4AG0QoCIjSouaPRINcQbpA2n+ukVzkMHBxe++5m1vX8AvqhxpMnBcRzOOikgI
-	 byZL9IzE/WUXrRlY0lX90yiIcYTRhToUfCIrc8Gvw5jOyP1qBe5MQr8Zs1iYzzml54
-	 tVjmfvHbT1zsC7Rcuz2/P3siTEz0gxntrf5pt1t0=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 5F2941285FA1;
-	Mon, 20 May 2024 10:50:30 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id Da-M4TCAyMMp; Mon, 20 May 2024 10:50:30 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1716216630;
-	bh=a3b4/nDS8pHPvnKT7j0QAuoDnWKmn0konKkL0z8d35c=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=D+kk4AG0QoCIjSouaPRINcQbpA2n+ukVzkMHBxe++5m1vX8AvqhxpMnBcRzOOikgI
-	 byZL9IzE/WUXrRlY0lX90yiIcYTRhToUfCIrc8Gvw5jOyP1qBe5MQr8Zs1iYzzml54
-	 tVjmfvHbT1zsC7Rcuz2/P3siTEz0gxntrf5pt1t0=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 88E8B1280773;
-	Mon, 20 May 2024 10:50:29 -0400 (EDT)
-Message-ID: <41466b65a30a351d57869042e9f130cdb68aab5b.camel@HansenPartnership.com>
-Subject: Re: [PATCH] tpm: Disable TCG_TPM2_HMAC by default
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org, Vitor Soares <ivitro@gmail.com>, Peter Huewe
-	 <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, open list
-	 <linux-kernel@vger.kernel.org>
-Date: Mon, 20 May 2024 10:50:28 -0400
-In-Reply-To: <20240518113424.13486-1-jarkko@kernel.org>
-References: <20240518113424.13486-1-jarkko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1716216679; c=relaxed/simple;
+	bh=D+Kqca1KEXxg0yNf3o5Zf6/5aAbEqPhGV7VQ7pMihjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P1lO/qW3xLsw5jjSFKTA8gnyP2KG6n3N5m6ZgqmIS/OosHaO68jvQtn3xB7bwjLk3toec5NQdUNmK3HSn2hOdMyBAs7em2fqB5P0ag34UgqvqeSNm8Tusp22Dxej1bDNUmlAvhPk6piF+YTXFKJp/Kt1tqzWEsryBdHDfb6WA8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNxxzmK3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3101AC32786;
+	Mon, 20 May 2024 14:51:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716216678;
+	bh=D+Kqca1KEXxg0yNf3o5Zf6/5aAbEqPhGV7VQ7pMihjU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oNxxzmK3tj6QsLYknhOkxRgQnSLppWoidfLzPYyT/ueo2FaiBWGuEMGQYK5lOEmtn
+	 p3BYIZQn8HwaInlnHOGvoHxnTXWYYPmlJjS9InuTgjtEMtESTyjpDLdJWH4ED7+TF9
+	 WuLkIJOdiWtijrI3PCgkV+6nf2VFkj0nbAYnl5UXcALoFyC2hVBSR7bbP20jLHmNg6
+	 /i96MXLEjH9xMRLs7zJ57kmU/ymWZ+mEna4llLIsrO4XK9PfdeDMpsZmPZR/mKeJix
+	 ZJml7gKQlmAzsXiAYJke+eTDpiVbGizLt2k3+foOaPLyai6Z1hhE8KAlSp1mWr3SH0
+	 tlKVnZaXSEnhg==
+Date: Mon, 20 May 2024 09:51:17 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>, devicetree@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>, linux-arm-kernel@lists.infradead.org,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: firmware: arm,scmi: Support
+ notification completion channel
+Message-ID: <171621667459.535282.3262936480019838224.robh@kernel.org>
+References: <20240510-scmi-notify-v2-0-e994cf14ef86@nxp.com>
+ <20240510-scmi-notify-v2-1-e994cf14ef86@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510-scmi-notify-v2-1-e994cf14ef86@nxp.com>
 
-On Sat, 2024-05-18 at 14:34 +0300, Jarkko Sakkinen wrote:
-> Causes performance drop in initialization so needs to be opt-in.
-> Distributors are capable of opt-in enabling this. Could be also
-> handled by kernel-command line in the future.
+
+On Fri, 10 May 2024 11:19:47 +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Reported-by: Vitor Soares <ivitro@gmail.com>
-> Closes:
-> https://lore.kernel.org/linux-integrity/bf67346ef623ff3c452c4f968b7d900911e250c3.camel@gmail.com/#t
+> Per System Control Management Interface specification:
+> " Completion interrupts:This transport supports polling or interrupt driven
+>   modes of communication. In interrupt mode, when the callee completes
+>   processing a message, it raises an interrupt to the caller. Hardware
+>   support for completion interrupts is optional."
+> So add an optional mailbox channel for notification completion interrupts.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/firmware/arm,scmi.yaml | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
 
-Hey, there's no response on that thread verifying the primary
-generation is the culprit.  Could we at least wait for a reply before
-taking such drastic action based on surmise?
-
-I'd be really surprised if it is primary generation.  If I used an RSA
-primary it would be a problem (My oldest TPM takes a couple of minutes
-to generate one) but the longest I've seen an EC primary take to
-generate is still less than a second.
-
-James
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
