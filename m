@@ -1,143 +1,89 @@
-Return-Path: <linux-kernel+bounces-183353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6478C97E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 04:20:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C38F8C97E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 04:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EBCA1C21556
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:20:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 126B5284238
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3859BA47;
-	Mon, 20 May 2024 02:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eg3+9A+8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B9C79EF
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 02:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE92D52F;
+	Mon, 20 May 2024 02:19:56 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 4285B9474;
+	Mon, 20 May 2024 02:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716171646; cv=none; b=EBWIcWYcDANIxueEDW7WnpSTmf426H/LplnUoXTOIBfulKfBQvTUnlHLTDU0b/y1rBK2KRiPyXvXTJfq9SbzZs9QVXO1nUfUbe5QA19SF87eZfNg/7Y455+Sl9XuQqiTQN7QE+InezFm/nTv/HunGvwcMRiLMfKZmKntF5fpBjk=
+	t=1716171596; cv=none; b=g9vDRz96yxZau7aYMrVULWB2bRjTCk/Wf/YgDbp31OE6N/48RCx4EyB2oCRdEg+GNgWY0YCALtYYUzJy9kxFyOMSmZFcajE3+IqtczmzvE+TCOpcAoKQBNTJPZ8xjo+2Dgciotq5TriWFxftNWIiEgAZUa8RHcn/NuJiuCZ7TkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716171646; c=relaxed/simple;
-	bh=HmTOhh9HFJBHTh79UxzuMR2rO3zHP4siktUZD+OBd/0=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=X4sr5oCjIjfZayUUaI+N+HPEWQJs4Nh5qCXSivNUdV2QPyOpkS6V/5anf1dTnFXNibnTYp445sS1uFOgr7/Td4pYvunUH6WstbvUyv8rylDs12mAKpIGUVFMbOacWq5Pw7KQjLuIO/MH925DQQHnfXr4tIPdPuzsAqTZNcZYSDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eg3+9A+8; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716171644; x=1747707644;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HmTOhh9HFJBHTh79UxzuMR2rO3zHP4siktUZD+OBd/0=;
-  b=eg3+9A+8l6zG3oTAQ8rqWyRQtb2CFll4IxSiZ0OfGEamOH0mPp81vZIG
-   Dtz6MD9jcoF7qgbW7D6KehKD9UHQb0Cku9SIrwQotAuS+UPPBCsnTE5Jp
-   DG0Z2x0OSyXS0kaTiGti+Y3OUyaoXSQoFp7wa1UQr8F/lOzjd53mg8Q+w
-   7wjVDIzOk0hwVssMYEmIPP+uPbC7myCwxpyWDcCn7WcDW6s1JClrKjTnD
-   n28OQhs1Ml83s5UJl7RJZiyVj8e1xuUbozAYL5XavMniCnY/ddWHrOdcd
-   aXYao8wcIRtuh0maFEPdBu/ilQ8apfB7KeOipROI+k/7aU0exglqomHr0
-   Q==;
-X-CSE-ConnectionGUID: mQFIdrUURomTEnX5ZofhsA==
-X-CSE-MsgGUID: 86JrXgsQTC+vharbcfkqCw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="12466669"
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="12466669"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 19:20:44 -0700
-X-CSE-ConnectionGUID: 0+13nvqtSJi+hGLjcBYcKA==
-X-CSE-MsgGUID: I4mEjD1XR6mn5Z5VCt6elQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="32286015"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by fmviesa007.fm.intel.com with ESMTP; 19 May 2024 19:20:39 -0700
-Message-ID: <b09f96db-8451-4de9-81c5-312cffdfd4fc@linux.intel.com>
-Date: Mon, 20 May 2024 10:18:49 +0800
+	s=arc-20240116; t=1716171596; c=relaxed/simple;
+	bh=rB7dD75CY84ry20/0r/cpYaVwib9bJIdMevmIkkR3EE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cdnLeTaW7Pq/7u1vlzZEo3Mtk5DZJKQS1vGLyXoKuSUNF8curYB7YsfzPv5WbZ0rSHLJdlyr/w0wEvOaF/a9NJFTPdZ4nx6UemuOc3M9h2Ch16qLmeYFHsHn+na/yHMNvcI6/5UFMNvtPs7UjAlgRV3nmeE2gqZsEFWm8FHQzko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 4F0696026E8D1;
+	Mon, 20 May 2024 10:19:44 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: srinivas.pandruvada@linux.intel.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: Su Hui <suhui@nfschina.com>,
+	rui.zhang@intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] platform/x86: ISST: fix use after free problem in tpmi_sst_dev_remove()
+Date: Mon, 20 May 2024 10:19:35 +0800
+Message-Id: <20240520021934.113877-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>,
- "virtualization@lists.linux-foundation.org"
- <virtualization@lists.linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 7/9] iommufd: Associate fault object with
- iommufd_hw_pgtable
-To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>
-References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
- <20240430145710.68112-8-baolu.lu@linux.intel.com>
- <BN9PR11MB5276A8E898983310B83C399E8CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB5276A8E898983310B83C399E8CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/15/24 4:50 PM, Tian, Kevin wrote:
->> From: Lu Baolu <baolu.lu@linux.intel.com>
->> Sent: Tuesday, April 30, 2024 10:57 PM
->>
->> @@ -227,7 +233,7 @@ iommufd_hwpt_nested_alloc(struct iommufd_ctx
->> *ictx,
->>   	refcount_inc(&parent->common.obj.users);
->>   	hwpt_nested->parent = parent;
->>
->> -	hwpt->domain = ops->domain_alloc_user(idev->dev, flags,
->> +	hwpt->domain = ops->domain_alloc_user(idev->dev, 0,
->>   					      parent->common.domain,
->> user_data);
-> 
-> it reads slightly better to clear the fault bit and still pass in flags.
-> 
+clang static checker (scan-build) warning:
+drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c:1614:24:
+Use of memory after it is freed.
 
-Done.
+Using 'tpmi_sst->package_id' after releasing 'tpmi_sst' causes this
+problem. Change the order of releasing 'tpmi_sst' to fix this.
 
--       hwpt->domain = ops->domain_alloc_user(idev->dev, 0,
-+       hwpt->domain = ops->domain_alloc_user(idev->dev,
-+                                             flags & 
-~IOMMU_HWPT_FAULT_ID_VALID,
-                                               parent->common.domain, 
-user_data);
+Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned systems")
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> @@ -308,6 +314,19 @@ int iommufd_hwpt_alloc(struct iommufd_ucmd
->> *ucmd)
->>   		goto out_put_pt;
->>   	}
->>
->> +	if (cmd->flags & IOMMU_HWPT_FAULT_ID_VALID) {
->> +		struct iommufd_fault *fault;
->> +
->> +		fault = iommufd_get_fault(ucmd, cmd->fault_id);
->> +		if (IS_ERR(fault)) {
->> +			rc = PTR_ERR(fault);
->> +			goto out_hwpt;
->> +		}
->> +		hwpt->fault = fault;
->> +		hwpt->domain->iopf_handler = iommufd_fault_iopf_handler;
->> +		hwpt->domain->fault_data = hwpt;
->> +	}
-> 
-> this is nesting specific. why not moving it to the nested_alloc()?
+diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+index 7bac7841ff0a..7fa360073f6e 100644
+--- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
++++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+@@ -1610,8 +1610,8 @@ void tpmi_sst_dev_remove(struct auxiliary_device *auxdev)
+ 	tpmi_sst->partition_mask_current &= ~BIT(plat_info->partition);
+ 	/* Free the package instance when the all partitions are removed */
+ 	if (!tpmi_sst->partition_mask_current) {
+-		kfree(tpmi_sst);
+ 		isst_common.sst_inst[tpmi_sst->package_id] = NULL;
++		kfree(tpmi_sst);
+ 	}
+ 	mutex_unlock(&isst_tpmi_dev_lock);
+ }
+-- 
+2.30.2
 
-Nesting is currently a use case for userspace I/O page faults, but this
-design should be general enough to support other scenarios as well.
-
-Best regards,
-baolu
 
