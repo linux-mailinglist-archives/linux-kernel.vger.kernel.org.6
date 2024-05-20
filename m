@@ -1,120 +1,131 @@
-Return-Path: <linux-kernel+bounces-183854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7036A8C9EF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:43:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEA568C9EF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 457D5B2315C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:43:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DA1CB2258E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CF41369AB;
-	Mon, 20 May 2024 14:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA7113699A;
+	Mon, 20 May 2024 14:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="H0w+Fr1t"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AcA28TtJ"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B98F136669
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 14:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DD48462
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 14:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716216174; cv=none; b=JzLHa5VvG5W43wPewoI7LPTd0a8YTpUEbAxf3RYVLtnx2MDQN5B5LjW8yJBIUm90PTSjTIISa6B8rwcT4fsE1EVVUH5cmxn9FrqSjWoLBtOylKRB61KAFAKdAz5geYgYyZxkKHZc3GAE/8fAKMbUmAgvova2gwhCOdSg86IPXdI=
+	t=1716216317; cv=none; b=N6A9yD7l71ezQ+1qKvxLm+n1RONELogHsLUiAONP/5FLZNfSAa7jY8Jnzf9umMM69iDqHr3i4pGvTmbLf544vgLoGdcMSuSk09yjRMH1Sxa+oCLyG1qschmHexHSlYMVKvKXThjtKDOj5vudUX5Wgw0IPFjZYzQD25LLmV7w0/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716216174; c=relaxed/simple;
-	bh=KUgBuEaVcI4ydQagLxbGYRK4MhcScQHsdwehLTvW9Aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3/ZIahg0kXXz9s8b8NPDdV2By2rGzmuLrhtDyccDvEvYm40kz47b/CEfBtxOcvjShZvTGasboLX4b/qPSIgeo1Eq32BUGM5QHdZzEqrDRSYy3EihsjiClSYT49TC9gpVBDvwlXR2xjjhW5SHjLhBPkSGgkPUWBi/pQCao7h+fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=H0w+Fr1t; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: rostedt@goodmis.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716216170;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0KCk58wS70fFfp9wh3lG0S0zT2I32k7WzSL3uhS3b9w=;
-	b=H0w+Fr1tyaK0dgotrLbIBNgrB1mOi3KV38cxZpo+6Yyt4k+fO/2vrDH+iGt3UjFRD8fn/H
-	4uejzgWDY0WsHI9V3l3aWie7L631vo/dQ8HI4xdI0irJWkUB4r3afU3hIDSU5P51XHGC4d
-	qup6Oab80OmddLIInLfZaL4n8I/oDYs=
-X-Envelope-To: bugreport@ubisectech.com
-X-Envelope-To: linux-trace-kernel@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Mon, 20 May 2024 10:42:45 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ubisectech Sirius <bugreport@ubisectech.com>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: UBSAN: shift-out-of-bounds in validate_sb_layout
-Message-ID: <rcrruhodkxfno5645jrikjtc6i5p7dsaesajmqgsfboj5xur3q@zcwkow7kf4rt>
-References: <e9ce22da-0caa-4815-9b3a-3e406aca6ffd.bugreport@ubisectech.com>
- <20240520103153.245b0c51@gandalf.local.home>
+	s=arc-20240116; t=1716216317; c=relaxed/simple;
+	bh=eBqFY/TIoMgxP29NOdWtsaUl5FItN7otD1voKRBdwJQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uv4RFCo+Kpsphkt239xVMbx2+5SRHf/t+GuE6HHlBTOvYd2utZzaS6Nq3Aryz5KOWud9GWgmbtCiosxAbCQIj50ay7HyAmcWY7UHku1m/Fe5oS3W4ED6qzf30NLV6XoaNuOsHK4Ad6JROKIfqedFqHShyWl4a0lqb683WIS7I1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AcA28TtJ; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-56e6a1edecfso10532042a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 07:45:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716216314; x=1716821114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LeSLRL0OKsRhD4qQFOfBvy1JJv4XgJp3PPoxz2ixx5E=;
+        b=AcA28TtJ7BdaxEEHXOULkJDFWJ9a4UvPY9Iyfg7H4pqBNjPRMDU32cn8Bxlj9sh4Ul
+         G55KeMtpg/sO94YTbVb/u0ttsOzSkPOqaH+hHma4dlaBmaCsMLtQB27gM5SScB/ZfBRq
+         CJXWBCBVacD73pJwuOZMadG7HjUBhW0tTszOQ+5kxEyIN5jClkMCMY8nGjKuL4Z+9pzD
+         Z5C12WCnw/UWUWzoASe+qDwhA3gJwhgv4o5QdMCUw9ISbQyg48OA7mC/xoVSIBh0LTsp
+         A/PZKG3ZwPwdpaV93JDAcdkBm+nC5sOBpSmKtl0a8WD0wqDkOLRE15wnyAvStPnaWmwx
+         7sYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716216314; x=1716821114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LeSLRL0OKsRhD4qQFOfBvy1JJv4XgJp3PPoxz2ixx5E=;
+        b=DCEHJCBdeFXr90JDxtEW6ETSS8bH1l29vZi4QL6mV8Bavudpi944fSgZFoJ+yBfWud
+         iTs+e6uNLqisrSzbHIKSv9jwTMvxUXyvIngsegRaFYul7yQ0p7nYz4p4z7ETq2wLdBnw
+         wZu8BXuu1aj524zSVYf6IGc783r3Hp8I9pM83sAX36/8MubYBHTqPg7jEY12bivo9tqr
+         ZsHMiBo381oWA16kQQQL9PZWMYMb2epWAbMcCu7liym983LZWEZG3gtjdMN+y6Aqi+AS
+         nJ579OfRFtJWWAZwdRn57bSaBkYL1UkKs57y5U/Yt1joss6bKMYUcWBu6lxY1r4FcUPA
+         NDgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgS7ZdVVPCYixpIEiCwk3rYQPFCeGzYCbR2qV1GbA4+ZxzZRfZ54OXT6uN2XkZS7H9YHLKmSskXxiZcWXxreMdR4kLYFFJI4JJYL1N
+X-Gm-Message-State: AOJu0YywuW4/p5xkTJ5Avoe9eTG3mRndbIOXCJMKuIa+/dahodZ2WKzA
+	SZHBIFa6xC6MobgwWhRW31IdaL5oecOEL2e3/XoY0qBR5tjwmmnR7P5Vn5ARvfN4NDbMhrEM4qK
+	TYD8RhYH+czfMTu+nS3QbE/QKYVs=
+X-Google-Smtp-Source: AGHT+IGDDoObxx9h/znodmfXEVY75Zni6ttTKrQE+oaBai6EzaOM4y8AFd/boO5geigu1S0BoUNrW/+Xk2EHVDvwPRI=
+X-Received: by 2002:a05:6402:3486:b0:574:ea61:3b01 with SMTP id
+ 4fb4d7f45d1cf-574ea613b99mr13223033a12.16.1716216314505; Mon, 20 May 2024
+ 07:45:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520103153.245b0c51@gandalf.local.home>
-X-Migadu-Flow: FLOW_OUT
+References: <20240518074914.52170-1-libang.li@antgroup.com> <20240518074914.52170-4-libang.li@antgroup.com>
+In-Reply-To: <20240518074914.52170-4-libang.li@antgroup.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Mon, 20 May 2024 22:45:02 +0800
+Message-ID: <CAK1f24=Cm--tn4MsxBQEoBV048OsrGGyVVsy0B2MT1VMn+YoBg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] mm: Use update_mmu_tlb_range() to simplify code
+To: Bang Li <libang.li@antgroup.com>
+Cc: akpm@linux-foundation.org, chenhuacai@kernel.org, 
+	tsbogend@alpha.franken.de, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	chris@zankel.net, jcmvbkbc@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, loongarch@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, david@redhat.com, ryan.roberts@arm.com, 
+	libang.linux@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 20, 2024 at 10:31:53AM -0400, Steven Rostedt wrote:
-> On Mon, 20 May 2024 15:02:26 +0800
-> "Ubisectech Sirius" <bugreport@ubisectech.com> wrote:
-> 
-> > Hello.
-> > We are Ubisectech Sirius Team, the vulnerability lab of China ValiantSec. Recently, our team has discovered a issue in Linux kernel 6.7. Attached to the email were a PoC file of the issue.
-> > 
-> > Stack dump:
-> > UBSAN: shift-out-of-bounds in fs/bcachefs/super-io.c:310:18
-> > shift exponent 127 is too large for 32-bit type 'int'
-> > CPU: 0 PID: 14408 Comm: syz-executor.3 Not tainted 6.7.0 #2
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> > Call Trace:
-> >  <TASK>
-> >  __dump_stack lib/dump_stack.c:88 [inline]
-> >  dump_stack_lvl+0x136/0x150 lib/dump_stack.c:106
-> >  ubsan_epilogue lib/ubsan.c:217 [inline]
-> >  __ubsan_handle_shift_out_of_bounds+0x24b/0x430 lib/ubsan.c:387
-> >  validate_sb_layout.cold+0x1a/0x51 fs/bcachefs/super-io.c:310
-> >  bch2_read_super+0x980/0x1000 fs/bcachefs/super-io.c:786
-> >  bch2_fs_open+0x471/0x3890 fs/bcachefs/super.c:1922
-> >  bch2_mount+0x538/0x13c0 fs/bcachefs/fs.c:1863
-> >  legacy_get_tree+0x109/0x220 fs/fs_context.c:662
-> >  vfs_get_tree+0x93/0x380 fs/super.c:1771
-> >  do_new_mount fs/namespace.c:3337 [inline]
-> >  path_mount+0x679/0x1e40 fs/namespace.c:3664
-> >  do_mount fs/namespace.c:3677 [inline]
-> >  __do_sys_mount fs/namespace.c:3886 [inline]
-> >  __se_sys_mount fs/namespace.c:3863 [inline]
-> >  __x64_sys_mount+0x287/0x310 fs/namespace.c:3863
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0x43/0x120 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x6f/0x77
-> > RIP: 0033:0x7f41e1091b3e
-> > Code: 48 c7 c0 ff ff ff ff eb aa e8 be 0d 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007f41e1d22e38 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-> > RAX: ffffffffffffffda RBX: 0000000000005d82 RCX: 00007f41e1091b3e
-> > RDX: 0000000020005d80 RSI: 0000000020000100 RDI: 00007f41e1d22e90
-> > RBP: 00007f41e1d22ed0 R08: 00007f41e1d22ed0 R09: 0000000000000080
-> > R10: 0000000000000080 R11: 0000000000000202 R12: 0000000020005d80
-> > R13: 0000000020000100 R14: 00007f41e1d22e90 R15: 0000000020005e00
-> >  </TASK>
-> > 
-> > Thank you for taking the time to read this email and we look forward to working with you further.
-> 
-> I'm not sure why this is getting Cc'd to linux-trace-kernel. That's for
-> anything to do with the tracing code (trace events, tracepoints, kprobes,
-> uprobes, function tracer etc).
-> 
-> What part of tracing is this for?
+On Sat, May 18, 2024 at 3:51=E2=80=AFPM Bang Li <libang.li@antgroup.com> wr=
+ote:
+>
+> Let us simplify the code by update_mmu_tlb_range().
+>
 
-Everything I've seen from Ubisectech has been duplicates of stuff syzbot
-found awhile ago and is already fixed.
+LGTM.
+Reviewed-by: Lance Yang <ioworker0@gmail.com>
+
+> Signed-off-by: Bang Li <libang.li@antgroup.com>
+> ---
+>  mm/memory.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/mm/memory.c b/mm/memory.c
+> index eea6e4984eae..2d53e29cf76e 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4421,7 +4421,6 @@ static vm_fault_t do_anonymous_page(struct vm_fault=
+ *vmf)
+>         vm_fault_t ret =3D 0;
+>         int nr_pages =3D 1;
+>         pte_t entry;
+> -       int i;
+>
+>         /* File mapping without ->vm_ops ? */
+>         if (vma->vm_flags & VM_SHARED)
+> @@ -4491,8 +4490,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault=
+ *vmf)
+>                 update_mmu_tlb(vma, addr, vmf->pte);
+>                 goto release;
+>         } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
+> -               for (i =3D 0; i < nr_pages; i++)
+> -                       update_mmu_tlb(vma, addr + PAGE_SIZE * i, vmf->pt=
+e + i);
+> +               update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
+>                 goto release;
+>         }
+>
+> --
+> 2.19.1.6.gb485710b
+>
 
