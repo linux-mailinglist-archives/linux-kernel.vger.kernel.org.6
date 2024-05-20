@@ -1,247 +1,369 @@
-Return-Path: <linux-kernel+bounces-183527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0488C9A3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:20:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1058C9A59
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 416681C20E00
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:20:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF3C01F21C1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C0021350;
-	Mon, 20 May 2024 09:19:59 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101BF210E7;
+	Mon, 20 May 2024 09:29:43 +0000 (UTC)
+Received: from mx.der-flo.net (mx.der-flo.net [193.160.39.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5352137F;
-	Mon, 20 May 2024 09:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F3F1B27D;
+	Mon, 20 May 2024 09:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.160.39.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716196798; cv=none; b=SMSggfRLh6OHHQZlYB8rm3HAzZJZNdoLlWNwkOBpSH25XE5lc7INVQXSFN0O2USFTEWus+sszrnW4RfdckKtvyqm8eMgqdAn14GvfAc14gRv59DRThfIEQTz7YbmZHSfkDpx40cM5q2g5K/Gel23NiuM9PA3etUj8QPL9hKem1g=
+	t=1716197382; cv=none; b=BEN7wnMcRYt4WbCt4FhgYQM8Y+6I+VkrplI0JXPs9zrFjEDGraaZE1VF/GziomB7AdnffCU6B5axO47fzj8gKylpZzSgqi/5GXE5iXB+C/LXXqRNr5tY82mMolT5L/fdrfZgV2EI/j9LzaJZ4Lv3awhqUt0bchpTZ36xT3wQkZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716196798; c=relaxed/simple;
-	bh=v1mCRc4Cyw1bo9jvOSa3ltHdkaf7YQ1Ul8qqdJDs2Vc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mCvZQzNolDG9NxpcTk0eLML4rQNhr4j9uGSZNWjqzL9hEn2s5igV0jMuFd0pIRBvXK1abZCouPCa7Y7Yl/nBsgz+DUlCeIAUeRhIZoFJbXh8HutxE6mfMxTw1B/a/3IvTIKTKUHLEr/DS7B2OemaFUWpN7fVCTAeMEVZc4T0Fk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjX8L0FhNz4f3jqB;
-	Mon, 20 May 2024 17:19:46 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id B927D1A0A82;
-	Mon, 20 May 2024 17:19:51 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgAX5g6zFUtmP6KzNA--.3807S3;
-	Mon, 20 May 2024 17:19:51 +0800 (CST)
-Message-ID: <5e3716d1-379a-a052-2ecf-8df497efafef@huaweicloud.com>
-Date: Mon, 20 May 2024 17:19:47 +0800
+	s=arc-20240116; t=1716197382; c=relaxed/simple;
+	bh=SZYZZ5m4hxbxr2qYdBFsTSgOkIcGmrJU4lQ37BRL5oc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iJUrJgjq8PzGvheL+gLnVu7FYVyNOPnr4lF2O+1RidAHCZSdmcb2r9zXT9ga9lc1biEacUn9BIxI47fIeU2G6IgnossfJgypFHiOqqGoXTm6I45rUXZmhbptUl//p3yiOgLR5AG/CUBcfJfn+6tkIHlNq7/xRJKprbo5XZwBynU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=der-flo.net; spf=pass smtp.mailfrom=der-flo.net; arc=none smtp.client-ip=193.160.39.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=der-flo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=der-flo.net
+From: Florian Lehner <dev@der-flo.net>
+To: linux-kernel@vger.kernel.org
+Cc: davem@davemloft.net,
+	netdev@vger.kernel.org,
+	Florian Lehner <dev@der-flo.net>
+Subject: [PATCH] net: sync headers
+Date: Mon, 20 May 2024 11:21:45 +0200
+Message-ID: <20240520092145.13575-1-dev@der-flo.net>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH v2 03/12] cachefiles: fix slab-use-after-free in
- cachefiles_ondemand_get_fd()
-Content-Language: en-US
-To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
- dhowells@redhat.com, jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
- libaokun@huaweicloud.com
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
- <20240515084601.3240503-4-libaokun@huaweicloud.com>
- <35561c99-c978-4cf6-82e9-d1308c82a7ff@linux.alibaba.com>
- <d8154eed-98d0-9cb7-4a2c-6b68ed75b7a2@huaweicloud.com>
- <d0e6d1f6-002f-4255-a481-6bd17f3da7fc@linux.alibaba.com>
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <d0e6d1f6-002f-4255-a481-6bd17f3da7fc@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX5g6zFUtmP6KzNA--.3807S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxtF4rXrW5Kw48KF4kKw4fAFb_yoW3Ar43pF
-	Z3tFyxtry5GrykJr1Utr1UJryUtr1UJ3WDXr18JF18Ar4DAr1Yqr1UXr1qgryUGr48Ar4U
-	Jr1UJry7Zr1UJr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9I14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
-	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJb
-	IYCTnIWIevJa73UjIFyTuYvjfUouWlDUUUU
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-On 2024/5/20 17:10, Jingbo Xu wrote:
->
-> On 5/20/24 4:38 PM, Baokun Li wrote:
->> Hi Jingbo,
->>
->> Thanks for your review!
->>
->> On 2024/5/20 15:24, Jingbo Xu wrote:
->>> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
->>>> From: Baokun Li <libaokun1@huawei.com>
->>>>
->>>> We got the following issue in a fuzz test of randomly issuing the
->>>> restore
->>>> command:
->>>>
->>>> ==================================================================
->>>> BUG: KASAN: slab-use-after-free in
->>>> cachefiles_ondemand_daemon_read+0x609/0xab0
->>>> Write of size 4 at addr ffff888109164a80 by task ondemand-04-dae/4962
->>>>
->>>> CPU: 11 PID: 4962 Comm: ondemand-04-dae Not tainted 6.8.0-rc7-dirty #542
->>>> Call Trace:
->>>>    kasan_report+0x94/0xc0
->>>>    cachefiles_ondemand_daemon_read+0x609/0xab0
->>>>    vfs_read+0x169/0xb50
->>>>    ksys_read+0xf5/0x1e0
->>>>
->>>> Allocated by task 626:
->>>>    __kmalloc+0x1df/0x4b0
->>>>    cachefiles_ondemand_send_req+0x24d/0x690
->>>>    cachefiles_create_tmpfile+0x249/0xb30
->>>>    cachefiles_create_file+0x6f/0x140
->>>>    cachefiles_look_up_object+0x29c/0xa60
->>>>    cachefiles_lookup_cookie+0x37d/0xca0
->>>>    fscache_cookie_state_machine+0x43c/0x1230
->>>>    [...]
->>>>
->>>> Freed by task 626:
->>>>    kfree+0xf1/0x2c0
->>>>    cachefiles_ondemand_send_req+0x568/0x690
->>>>    cachefiles_create_tmpfile+0x249/0xb30
->>>>    cachefiles_create_file+0x6f/0x140
->>>>    cachefiles_look_up_object+0x29c/0xa60
->>>>    cachefiles_lookup_cookie+0x37d/0xca0
->>>>    fscache_cookie_state_machine+0x43c/0x1230
->>>>    [...]
->>>> ==================================================================
->>>>
->>>> Following is the process that triggers the issue:
->>>>
->>>>        mount  |   daemon_thread1    |    daemon_thread2
->>>> ------------------------------------------------------------
->>>>    cachefiles_ondemand_init_object
->>>>     cachefiles_ondemand_send_req
->>>>      REQ_A = kzalloc(sizeof(*req) + data_len)
->>>>      wait_for_completion(&REQ_A->done)
->>>>
->>>>               cachefiles_daemon_read
->>>>                cachefiles_ondemand_daemon_read
->>>>                 REQ_A = cachefiles_ondemand_select_req
->>>>                 cachefiles_ondemand_get_fd
->>>>                 copy_to_user(_buffer, msg, n)
->>>>               process_open_req(REQ_A)
->>>>                                     ------ restore ------
->>>>                                     cachefiles_ondemand_restore
->>>>                                     xas_for_each(&xas, req, ULONG_MAX)
->>>>                                      xas_set_mark(&xas,
->>>> CACHEFILES_REQ_NEW);
->>>>
->>>>                                     cachefiles_daemon_read
->>>>                                      cachefiles_ondemand_daemon_read
->>>>                                       REQ_A =
->>>> cachefiles_ondemand_select_req
->>>>
->>>>                write(devfd, ("copen %u,%llu", msg->msg_id, size));
->>>>                cachefiles_ondemand_copen
->>>>                 xa_erase(&cache->reqs, id)
->>>>                 complete(&REQ_A->done)
->>>>      kfree(REQ_A)
->>>>                                       cachefiles_ondemand_get_fd(REQ_A)
->>>>                                        fd = get_unused_fd_flags
->>>>                                        file = anon_inode_getfile
->>>>                                        fd_install(fd, file)
->>>>                                        load = (void *)REQ_A->msg.data;
->>>>                                        load->fd = fd;
->>>>                                        // load UAF !!!
->>>>
->>>> This issue is caused by issuing a restore command when the daemon is
->>>> still
->>>> alive, which results in a request being processed multiple times thus
->>>> triggering a UAF. So to avoid this problem, add an additional reference
->>>> count to cachefiles_req, which is held while waiting and reading, and
->>>> then
->>>> released when the waiting and reading is over.
->>>>
->>>>
->>>> Note that since there is only one reference count for waiting, we
->>>> need to
->>>> avoid the same request being completed multiple times, so we can only
->>>> complete the request if it is successfully removed from the xarray.
->>> Sorry the above description makes me confused.  As the same request may
->>> be got by different daemon threads multiple times, the introduced
->>> refcount mechanism can't protect it from being completed multiple times
->>> (which is expected).  The refcount only protects it from being freed
->>> multiple times.
->> The idea here is that because the wait only holds one reference count,
->> complete(&req->done) can only be called when the req has been
->> successfully removed from the xarry, otherwise the following UAF may
->> occur:
->
-> "complete(&req->done) can only be called when the req has been
-> successfully removed from the xarry ..."
->
-> How this is done? since the following xarray_erase() following the first
-> xarray_erase() will fail as the xarray slot referred by the same id has
-> already been erased?
->
->
->>>> @@ -455,7 +459,7 @@ static int cachefiles_ondemand_send_req(struct
->>>> cachefiles_object *object,
->>>>        wake_up_all(&cache->daemon_pollwq);
->>>>        wait_for_completion(&req->done);
->>>>        ret = req->error;
->>>> -    kfree(req);
->>>> +    cachefiles_req_put(req);
->>>>        return ret;
->>>>    out:
->>>>        /* Reset the object to close state in error handling path.
->>> Don't we need to also convert "kfree(req)" to cachefiles_req_put(req)
->>> for the error path of cachefiles_ondemand_send_req()?
->>>
->>> ```
->>> out:
->>>      /* Reset the object to close state in error handling path.
->>>       * If error occurs after creating the anonymous fd,
->>>       * cachefiles_ondemand_fd_release() will set object to close.
->>>       */
->>>      if (opcode == CACHEFILES_OP_OPEN)
->>>          cachefiles_ondemand_set_object_close(object);
->>>      kfree(req);
->>>      return ret;
->>> ```
->> When "goto out;" is called in cachefiles_ondemand_send_req(),
->> it means that the req is unallocated/failed to be allocated/failed to
->> be inserted into the xarry, and therefore the req can only be accessed
->> by the current function, so there is no need to consider concurrency
->> and reference counting.
-> Okay I understand. But this is indeed quite confusing. I see no cost of
-> also converting to cachefiles_req_put(req).
->
->
-Yes, kfree(req) converts to cachefiles_req_put(req) at no cost,
-but may trigger a NULL pointer dereference in cachefiles_req_put(req)
-if the req has not been initialised.
+The header files include/uapi/linux/pkt_cls.h and
+tools/include/uapi/linux/pkt_cls.h did become out of sync. Update the later
+with the changes from the former.
 
+Signed-off-by: Florian Lehner <dev@der-flo.net>
+---
+ tools/include/uapi/linux/pkt_cls.h | 230 ++++++++++++++++++++++++++++-
+ 1 file changed, 226 insertions(+), 4 deletions(-)
+
+diff --git a/tools/include/uapi/linux/pkt_cls.h b/tools/include/uapi/linux/pkt_cls.h
+index bd4b227ab..229fc925e 100644
+--- a/tools/include/uapi/linux/pkt_cls.h
++++ b/tools/include/uapi/linux/pkt_cls.h
+@@ -16,9 +16,40 @@ enum {
+ 	TCA_ACT_STATS,
+ 	TCA_ACT_PAD,
+ 	TCA_ACT_COOKIE,
++	TCA_ACT_FLAGS,
++	TCA_ACT_HW_STATS,
++	TCA_ACT_USED_HW_STATS,
++	TCA_ACT_IN_HW_COUNT,
+ 	__TCA_ACT_MAX
+ };
+ 
++/* See other TCA_ACT_FLAGS_ * flags in include/net/act_api.h. */
++#define TCA_ACT_FLAGS_NO_PERCPU_STATS (1 << 0) /* Don't use percpu allocator for
++						* actions stats.
++						*/
++#define TCA_ACT_FLAGS_SKIP_HW	(1 << 1) /* don't offload action to HW */
++#define TCA_ACT_FLAGS_SKIP_SW	(1 << 2) /* don't use action in SW */
++
++/* tca HW stats type
++ * When user does not pass the attribute, he does not care.
++ * It is the same as if he would pass the attribute with
++ * all supported bits set.
++ * In case no bits are set, user is not interested in getting any HW statistics.
++ */
++#define TCA_ACT_HW_STATS_IMMEDIATE (1 << 0) /* Means that in dump, user
++					     * gets the current HW stats
++					     * state from the device
++					     * queried at the dump time.
++					     */
++#define TCA_ACT_HW_STATS_DELAYED (1 << 1) /* Means that in dump, user gets
++					   * HW stats that might be out of date
++					   * for some time, maybe couple of
++					   * seconds. This is the case when
++					   * driver polls stats updates
++					   * periodically or when it gets async
++					   * stats update from the device.
++					   */
++
+ #define TCA_ACT_MAX __TCA_ACT_MAX
+ #define TCA_OLD_COMPAT (TCA_ACT_MAX+1)
+ #define TCA_ACT_MAX_PRIO 32
+@@ -63,12 +94,53 @@ enum {
+ #define TC_ACT_GOTO_CHAIN __TC_ACT_EXT(2)
+ #define TC_ACT_EXT_OPCODE_MAX	TC_ACT_GOTO_CHAIN
+ 
++/* These macros are put here for binary compatibility with userspace apps that
++ * make use of them. For kernel code and new userspace apps, use the TCA_ID_*
++ * versions.
++ */
++#define TCA_ACT_GACT 5
++#define TCA_ACT_IPT 6 /* obsoleted, can be reused */
++#define TCA_ACT_PEDIT 7
++#define TCA_ACT_MIRRED 8
++#define TCA_ACT_NAT 9
++#define TCA_ACT_XT 10
++#define TCA_ACT_SKBEDIT 11
++#define TCA_ACT_VLAN 12
++#define TCA_ACT_BPF 13
++#define TCA_ACT_CONNMARK 14
++#define TCA_ACT_SKBMOD 15
++#define TCA_ACT_CSUM 16
++#define TCA_ACT_TUNNEL_KEY 17
++#define TCA_ACT_SIMP 22
++#define TCA_ACT_IFE 25
++#define TCA_ACT_SAMPLE 26
++
+ /* Action type identifiers*/
+-enum {
+-	TCA_ID_UNSPEC=0,
+-	TCA_ID_POLICE=1,
++enum tca_id {
++	TCA_ID_UNSPEC = 0,
++	TCA_ID_POLICE = 1,
++	TCA_ID_GACT = TCA_ACT_GACT,
++	TCA_ID_IPT = TCA_ACT_IPT, /* Obsoleted, can be reused */
++	TCA_ID_PEDIT = TCA_ACT_PEDIT,
++	TCA_ID_MIRRED = TCA_ACT_MIRRED,
++	TCA_ID_NAT = TCA_ACT_NAT,
++	TCA_ID_XT = TCA_ACT_XT,
++	TCA_ID_SKBEDIT = TCA_ACT_SKBEDIT,
++	TCA_ID_VLAN = TCA_ACT_VLAN,
++	TCA_ID_BPF = TCA_ACT_BPF,
++	TCA_ID_CONNMARK = TCA_ACT_CONNMARK,
++	TCA_ID_SKBMOD = TCA_ACT_SKBMOD,
++	TCA_ID_CSUM = TCA_ACT_CSUM,
++	TCA_ID_TUNNEL_KEY = TCA_ACT_TUNNEL_KEY,
++	TCA_ID_SIMP = TCA_ACT_SIMP,
++	TCA_ID_IFE = TCA_ACT_IFE,
++	TCA_ID_SAMPLE = TCA_ACT_SAMPLE,
++	TCA_ID_CTINFO,
++	TCA_ID_MPLS,
++	TCA_ID_CT,
++	TCA_ID_GATE,
+ 	/* other actions go here */
+-	__TCA_ID_MAX=255
++	__TCA_ID_MAX = 255
+ };
+ 
+ #define TCA_ID_MAX __TCA_ID_MAX
+@@ -120,6 +192,10 @@ enum {
+ 	TCA_POLICE_RESULT,
+ 	TCA_POLICE_TM,
+ 	TCA_POLICE_PAD,
++	TCA_POLICE_RATE64,
++	TCA_POLICE_PEAKRATE64,
++	TCA_POLICE_PKTRATE64,
++	TCA_POLICE_PKTBURST64,
+ 	__TCA_POLICE_MAX
+ #define TCA_POLICE_RESULT TCA_POLICE_RESULT
+ };
+@@ -286,12 +362,19 @@ enum {
+ 
+ /* Basic filter */
+ 
++struct tc_basic_pcnt {
++	__u64 rcnt;
++	__u64 rhit;
++};
++
+ enum {
+ 	TCA_BASIC_UNSPEC,
+ 	TCA_BASIC_CLASSID,
+ 	TCA_BASIC_EMATCHES,
+ 	TCA_BASIC_ACT,
+ 	TCA_BASIC_POLICE,
++	TCA_BASIC_PCNT,
++	TCA_BASIC_PAD,
+ 	__TCA_BASIC_MAX
+ };
+ 
+@@ -438,17 +521,76 @@ enum {
+ 
+ 	TCA_FLOWER_IN_HW_COUNT,
+ 
++	TCA_FLOWER_KEY_PORT_SRC_MIN,	/* be16 */
++	TCA_FLOWER_KEY_PORT_SRC_MAX,	/* be16 */
++	TCA_FLOWER_KEY_PORT_DST_MIN,	/* be16 */
++	TCA_FLOWER_KEY_PORT_DST_MAX,	/* be16 */
++
++	TCA_FLOWER_KEY_CT_STATE,	/* u16 */
++	TCA_FLOWER_KEY_CT_STATE_MASK,	/* u16 */
++	TCA_FLOWER_KEY_CT_ZONE,		/* u16 */
++	TCA_FLOWER_KEY_CT_ZONE_MASK,	/* u16 */
++	TCA_FLOWER_KEY_CT_MARK,		/* u32 */
++	TCA_FLOWER_KEY_CT_MARK_MASK,	/* u32 */
++	TCA_FLOWER_KEY_CT_LABELS,	/* u128 */
++	TCA_FLOWER_KEY_CT_LABELS_MASK,	/* u128 */
++
++	TCA_FLOWER_KEY_MPLS_OPTS,
++
++	TCA_FLOWER_KEY_HASH,		/* u32 */
++	TCA_FLOWER_KEY_HASH_MASK,	/* u32 */
++
++	TCA_FLOWER_KEY_NUM_OF_VLANS,    /* u8 */
++
++	TCA_FLOWER_KEY_PPPOE_SID,	/* be16 */
++	TCA_FLOWER_KEY_PPP_PROTO,	/* be16 */
++
++	TCA_FLOWER_KEY_L2TPV3_SID,	/* be32 */
++
++	TCA_FLOWER_L2_MISS,		/* u8 */
++
++	TCA_FLOWER_KEY_CFM,		/* nested */
++
++	TCA_FLOWER_KEY_SPI,		/* be32 */
++	TCA_FLOWER_KEY_SPI_MASK,	/* be32 */
++
+ 	__TCA_FLOWER_MAX,
+ };
+ 
+ #define TCA_FLOWER_MAX (__TCA_FLOWER_MAX - 1)
+ 
++enum {
++	TCA_FLOWER_KEY_CT_FLAGS_NEW = 1 << 0, /* Beginning of a new connection. */
++	TCA_FLOWER_KEY_CT_FLAGS_ESTABLISHED = 1 << 1, /* Part of an existing connection. */
++	TCA_FLOWER_KEY_CT_FLAGS_RELATED = 1 << 2, /* Related to an established connection. */
++	TCA_FLOWER_KEY_CT_FLAGS_TRACKED = 1 << 3, /* Conntrack has occurred. */
++	TCA_FLOWER_KEY_CT_FLAGS_INVALID = 1 << 4, /* Conntrack is invalid. */
++	TCA_FLOWER_KEY_CT_FLAGS_REPLY = 1 << 5, /* Packet is in the reply direction. */
++	__TCA_FLOWER_KEY_CT_FLAGS_MAX,
++};
++
+ enum {
+ 	TCA_FLOWER_KEY_ENC_OPTS_UNSPEC,
+ 	TCA_FLOWER_KEY_ENC_OPTS_GENEVE, /* Nested
+ 					 * TCA_FLOWER_KEY_ENC_OPT_GENEVE_
+ 					 * attributes
+ 					 */
++	TCA_FLOWER_KEY_ENC_OPTS_VXLAN,	/* Nested
++					 * TCA_FLOWER_KEY_ENC_OPT_VXLAN_
++					 * attributes
++					 */
++	TCA_FLOWER_KEY_ENC_OPTS_ERSPAN,	/* Nested
++					 * TCA_FLOWER_KEY_ENC_OPT_ERSPAN_
++					 * attributes
++					 */
++	TCA_FLOWER_KEY_ENC_OPTS_GTP,	/* Nested
++					 * TCA_FLOWER_KEY_ENC_OPT_GTP_
++					 * attributes
++					 */
++	TCA_FLOWER_KEY_ENC_OPTS_PFCP,	/* Nested
++					 * TCA_FLOWER_KEY_ENC_IPT_PFCP
++					 * attributes
++					 */
+ 	__TCA_FLOWER_KEY_ENC_OPTS_MAX,
+ };
+ 
+@@ -466,18 +608,98 @@ enum {
+ #define TCA_FLOWER_KEY_ENC_OPT_GENEVE_MAX \
+ 		(__TCA_FLOWER_KEY_ENC_OPT_GENEVE_MAX - 1)
+ 
++enum {
++	TCA_FLOWER_KEY_ENC_OPT_VXLAN_UNSPEC,
++	TCA_FLOWER_KEY_ENC_OPT_VXLAN_GBP,		/* u32 */
++	__TCA_FLOWER_KEY_ENC_OPT_VXLAN_MAX,
++};
++
++#define TCA_FLOWER_KEY_ENC_OPT_VXLAN_MAX \
++		(__TCA_FLOWER_KEY_ENC_OPT_VXLAN_MAX - 1)
++
++enum {
++	TCA_FLOWER_KEY_ENC_OPT_ERSPAN_UNSPEC,
++	TCA_FLOWER_KEY_ENC_OPT_ERSPAN_VER,              /* u8 */
++	TCA_FLOWER_KEY_ENC_OPT_ERSPAN_INDEX,            /* be32 */
++	TCA_FLOWER_KEY_ENC_OPT_ERSPAN_DIR,              /* u8 */
++	TCA_FLOWER_KEY_ENC_OPT_ERSPAN_HWID,             /* u8 */
++	__TCA_FLOWER_KEY_ENC_OPT_ERSPAN_MAX,
++};
++
++#define TCA_FLOWER_KEY_ENC_OPT_ERSPAN_MAX \
++		(__TCA_FLOWER_KEY_ENC_OPT_ERSPAN_MAX - 1)
++
++enum {
++	TCA_FLOWER_KEY_ENC_OPT_GTP_UNSPEC,
++	TCA_FLOWER_KEY_ENC_OPT_GTP_PDU_TYPE,		/* u8 */
++	TCA_FLOWER_KEY_ENC_OPT_GTP_QFI,			/* u8 */
++
++	__TCA_FLOWER_KEY_ENC_OPT_GTP_MAX,
++};
++
++#define TCA_FLOWER_KEY_ENC_OPT_GTP_MAX \
++		(__TCA_FLOWER_KEY_ENC_OPT_GTP_MAX - 1)
++
++enum {
++	TCA_FLOWER_KEY_ENC_OPT_PFCP_UNSPEC,
++	TCA_FLOWER_KEY_ENC_OPT_PFCP_TYPE,		/* u8 */
++	TCA_FLOWER_KEY_ENC_OPT_PFCP_SEID,		/* be64 */
++	__TCA_FLOWER_KEY_ENC_OPT_PFCP_MAX,
++};
++
++#define TCA_FLOWER_KEY_ENC_OPT_PFCP_MAX \
++		(__TCA_FLOWER_KEY_ENC_OPT_PFCP_MAX - 1)
++
++enum {
++	TCA_FLOWER_KEY_MPLS_OPTS_UNSPEC,
++	TCA_FLOWER_KEY_MPLS_OPTS_LSE,
++	__TCA_FLOWER_KEY_MPLS_OPTS_MAX,
++};
++
++#define TCA_FLOWER_KEY_MPLS_OPTS_MAX (__TCA_FLOWER_KEY_MPLS_OPTS_MAX - 1)
++
++enum {
++	TCA_FLOWER_KEY_MPLS_OPT_LSE_UNSPEC,
++	TCA_FLOWER_KEY_MPLS_OPT_LSE_DEPTH,
++	TCA_FLOWER_KEY_MPLS_OPT_LSE_TTL,
++	TCA_FLOWER_KEY_MPLS_OPT_LSE_BOS,
++	TCA_FLOWER_KEY_MPLS_OPT_LSE_TC,
++	TCA_FLOWER_KEY_MPLS_OPT_LSE_LABEL,
++	__TCA_FLOWER_KEY_MPLS_OPT_LSE_MAX,
++};
++
++#define TCA_FLOWER_KEY_MPLS_OPT_LSE_MAX \
++		(__TCA_FLOWER_KEY_MPLS_OPT_LSE_MAX - 1)
++
+ enum {
+ 	TCA_FLOWER_KEY_FLAGS_IS_FRAGMENT = (1 << 0),
+ 	TCA_FLOWER_KEY_FLAGS_FRAG_IS_FIRST = (1 << 1),
+ };
+ 
++enum {
++	TCA_FLOWER_KEY_CFM_OPT_UNSPEC,
++	TCA_FLOWER_KEY_CFM_MD_LEVEL,
++	TCA_FLOWER_KEY_CFM_OPCODE,
++	__TCA_FLOWER_KEY_CFM_OPT_MAX,
++};
++
++#define TCA_FLOWER_KEY_CFM_OPT_MAX (__TCA_FLOWER_KEY_CFM_OPT_MAX - 1)
++
++#define TCA_FLOWER_MASK_FLAGS_RANGE	(1 << 0) /* Range-based match */
++
+ /* Match-all classifier */
+ 
++struct tc_matchall_pcnt {
++	__u64 rhit;
++};
++
+ enum {
+ 	TCA_MATCHALL_UNSPEC,
+ 	TCA_MATCHALL_CLASSID,
+ 	TCA_MATCHALL_ACT,
+ 	TCA_MATCHALL_FLAGS,
++	TCA_MATCHALL_PCNT,
++	TCA_MATCHALL_PAD,
+ 	__TCA_MATCHALL_MAX,
+ };
+ 
 -- 
-With Best Regards,
-Baokun Li
+2.45.1
 
 
