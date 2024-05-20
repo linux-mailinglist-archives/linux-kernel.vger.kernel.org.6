@@ -1,123 +1,156 @@
-Return-Path: <linux-kernel+bounces-183798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36AD8C9E43
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:35:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA1638C9E46
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946261F21715
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:35:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D7FFB211D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D611C13665D;
-	Mon, 20 May 2024 13:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E525913664A;
+	Mon, 20 May 2024 13:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0Fn4CyZ6"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J1XB+4eM"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BCD53E07;
-	Mon, 20 May 2024 13:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8734154789
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 13:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716212143; cv=none; b=Qr50qylBMQvoVqKPeMIX/Psy+j5tu8/WuedcYQfysci+wsgd5bcfZUgJocfdLjDSyy7E0YULc0fdGQnggPQDjJCYw4dSfqeH/pibmrNFM0RJYhq2dg9ejQCy4KUayPcBXGK/GrsPpn2GuaXSy5VSr3IG8jbi+EfHxN1zxLcdHek=
+	t=1716212269; cv=none; b=VIs9VOLieAKPJRUJAzWAulUmBjNUyP8Xlicy+GOYFARilFIgzVYp2B6/WmjEh927LAXINSfF/pmiwXflfX0TQ61Unsow+5xZl5Xnrt3S4krSkbHkQkIfNCZVn0CAk2nUKQgM3XAZQF9CVfvTls5GfhULd7bp2vEDqYgFHZrMIP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716212143; c=relaxed/simple;
-	bh=eKlD1ITrUAqbOoU46mxHGdH230qRNZ71RdpMuz1QTt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JANN4CS080eNDW8Osi8UpJKqQiqg1qohXb0VjN+vUwsLA/0yrHqR4SmyfhCMNVQsrav7M6m4ka8Vugej7owKDq1eNCxhXhDgLANUmVb81+qHZlE1unPUwJN+ZQUuPZ6ohhFxtqImrMIu+N5cdtGN+CdPVLbONTCTeBXH7PmJL4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0Fn4CyZ6; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=KvdEIYYYkIBNIphyeovfwOBCnQAQsyfyDCazfo+ptac=; b=0Fn4CyZ6sIsex8ug8E1lVRfHYM
-	YkjjrNDxDIKdB/4AtWOLmYn6AnYCNtklor1/x1VLM6sxaJhP1EZTdAqOlbAEeVtl34e4HAaLh0cMY
-	wLzTG2KfwRUcL5He7OG3DbvllFMTk+6EdFh1KOKztgR+VVLJu2ksMJPYYVIXUO1MvRI4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s93Ao-00FhQJ-Ld; Mon, 20 May 2024 15:35:30 +0200
-Date: Mon, 20 May 2024 15:35:30 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v3 5/5] net: phy: add driver for built-in 2.5G
- ethernet PHY on MT7988
-Message-ID: <1158a657-1b95-4d7f-9371-41eec5388441@lunn.ch>
-References: <20240520113456.21675-1-SkyLake.Huang@mediatek.com>
- <20240520113456.21675-6-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1716212269; c=relaxed/simple;
+	bh=tenZe5PUCM8bWtglkhmhlBwCcE/VGwl7nmqDXmXecsw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OY8VY1r3e4r4z4sBGRh8Jva019kXoQrDYq4TJBGEogSS0Q8TBJVCPCD3sdK5iODBlBgcDjgek64YJ3Gf4E6HeXZh3kSwJ6HUzKXImc0ANGl+FKrvbjo7KFQ870kGljjy8jErHp8CFl5UJHMj/o7SOq1ZC3k7QUEt4wp2qjmUokw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J1XB+4eM; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-34da4d6f543so2351818f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 06:37:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716212266; x=1716817066; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WtJyx18Oev4H/D/FuP0FY8kBcDndJh3yqCcIoMGyUmM=;
+        b=J1XB+4eMkLpurtwl0VIGR8g5jRmMw762kfKCWnESh+PIx8XrR17vrCUeqb8Xo3bss5
+         Owy84pIWLxMNj8YsXrlm5RwF7ngPaCc72eLnv8DBZvsIlGlf8qzTc/SuWDfnNBFSk1yT
+         Ads70Gws6mYLU4aElM3U27LdugxUSvvW3rXrTBEsQm21ebE+lPLrBaPhi5EKW25Kn/0J
+         BwJO6+xHPcunzvimenMGt7HTpfu5xjbLVnmzhObwAh/LlO6SghIfyHpz5DiTXYIrInuj
+         HFGL7FaWuZDba7iP94qIKNZ79o3EaSZI9OiYDLdU4xt2HL/lYWCAdPsqNBLWN6mKDqMT
+         Gy5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716212266; x=1716817066;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WtJyx18Oev4H/D/FuP0FY8kBcDndJh3yqCcIoMGyUmM=;
+        b=uWIEMab8h2ByLs2NkebpxYEWDM2OWRJ8K7eoI3ijJ44jRJ+CIv9pYhE0dlJHQ8iL72
+         D+drZEXCekeI7A6g1HuTxI0+cHZL4C54xi2CDS38ATnLgc+UwNnhbL+gttWOKv/sTjMp
+         ZxyjDZS0qxtOLYpip+VyPIB6551TA4gETTXn+R+kD/RL1IaPYt1LSjCcg6nOaDJ2lsYH
+         tJkpbwe+k9yj1kqh1ML7pBtWJrn9W4f8ASpEt9ATBqnHXg77NmyNqFpPHr+NqHMWF/V/
+         1mUE3/BD1EuOXe6qmGpUD2vlOZKyWth/6Di1vb02Bp1B4kA5z92JiUStDjEruRmYRy+w
+         /shw==
+X-Forwarded-Encrypted: i=1; AJvYcCXy8snvJO1qTyyC3DQ37/VL8UcSYNmHNgknvTuSpBj1by6FSEHbMnjo3jO837B4YWEXKLYi6ufFUQO1jzQy+Y5RhKsl7qcOsluYHAAV
+X-Gm-Message-State: AOJu0Yx+jPnQfxN63FA7hQK6tCkgA6UXv9c/xbJ2vp0RzvCgOlkVK8Hc
+	zf/41NZl6sYN4c0flZHFcpFuxuv7kU4nINFHhvFkwdtLqJCdlCWF/OnhKHZNRc4=
+X-Google-Smtp-Source: AGHT+IGPtzL6P2tlnyPsh0P1ZgrwP9h5JG72y05Qi5ynRbRPJzFgW/QE0s8Vbs88qtemijnXuw9sCg==
+X-Received: by 2002:a5d:550b:0:b0:343:3542:b6aa with SMTP id ffacd0b85a97d-3504aa63c1emr18812746f8f.58.1716212265998;
+        Mon, 20 May 2024 06:37:45 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-354c58c1768sm3214858f8f.52.2024.05.20.06.37.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 May 2024 06:37:45 -0700 (PDT)
+Message-ID: <30675fad-2185-4098-b184-a5ad572eef14@linaro.org>
+Date: Mon, 20 May 2024 15:37:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520113456.21675-6-SkyLake.Huang@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: arm: bcm: Add BCM2712 SoC support
+To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org
+References: <cover.1715332922.git.andrea.porta@suse.com>
+ <e60ee068f06cb2325e3d09c27b27002ba6db8572.1715332922.git.andrea.porta@suse.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <e60ee068f06cb2325e3d09c27b27002ba6db8572.1715332922.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> +static int mt798x_2p5ge_phy_config_init(struct phy_device *phydev)
-> +{
-> +	struct mtk_i2p5ge_phy_priv *priv = phydev->priv;
-> +	struct device *dev = &phydev->mdio.dev;
-> +	const struct firmware *fw;
-> +	struct pinctrl *pinctrl;
-> +	int ret, i;
-> +	u16 reg;
-> +
-> +	if (!priv->fw_loaded) {
-> +		if (!priv->md32_en_cfg_base || !priv->pmb_addr) {
-> +			dev_err(dev, "MD32_EN_CFG base & PMB addresses aren't valid\n");
-> +			return -EINVAL;
-> +		}
+On 10/05/2024 16:34, Andrea della Porta wrote:
+> The BCM2712 SoC is found on Raspberry Pi 5. Add compatible string to
+> acknowledge its new chipset.
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
 
-..
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> +static int mt798x_2p5ge_phy_probe(struct phy_device *phydev)
-> +{
-> +	struct mtk_i2p5ge_phy_priv *priv;
-> +
-> +	priv = devm_kzalloc(&phydev->mdio.dev,
-> +			    sizeof(struct mtk_i2p5ge_phy_priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	switch (phydev->drv->phy_id) {
-> +	case MTK_2P5GPHY_ID_MT7988:
-> +		priv->pmb_addr = ioremap(MT7988_2P5GE_PMB_BASE, MT7988_2P5GE_PMB_LEN);
-> +		if (!priv->pmb_addr)
-> +			return -ENOMEM;
-> +		priv->md32_en_cfg_base = ioremap(MT7988_2P5GE_MD32_EN_CFG_BASE,
-> +						 MT7988_2P5GE_MD32_EN_CFG_LEN);
-> +		if (!priv->md32_en_cfg_base)
-> +			return -ENOMEM;
-> +
-> +		/* The original hardware only sets MDIO_DEVS_PMAPMD */
-> +		phydev->c45_ids.mmds_present |= (MDIO_DEVS_PCS | MDIO_DEVS_AN |
-> +						 MDIO_DEVS_VEND1 | MDIO_DEVS_VEND2);
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
+Best regards,
+Krzysztof
 
-How can priv->md32_en_cfg_base or priv->pmb_addr not be set in
-mt798x_2p5ge_phy_config_init()
-
-	Andrew
 
