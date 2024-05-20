@@ -1,119 +1,153 @@
-Return-Path: <linux-kernel+bounces-183753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91BB8C9D86
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:40:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76AB68C9D8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 738A0285E08
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:40:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A92361C225FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9960656452;
-	Mon, 20 May 2024 12:39:59 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533A256450;
+	Mon, 20 May 2024 12:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yacytYOj"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830A050275;
-	Mon, 20 May 2024 12:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05FF50275;
+	Mon, 20 May 2024 12:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716208799; cv=none; b=CKKqOkurqC/mHOsbxgzY7QOZJ9WOR0fy98b+dmOCESxQJ+rP1IIdurw/7VfUCbv/SG/87qyvsTVn06HR72mbK2CeaRJCS/4ouoYlBZsY+WVVM0+J3vZ5tSfTOg3DsP1/4hM34eJkJm0K+2HKLfpRvFWxzL8uf2KY5qK/IBq9Bow=
+	t=1716208848; cv=none; b=sZvQsYonieeci7k2LCQtsUXkTAV2X2T1l8rYJOtGnZMTVumcqRmtuTHeZcSABRu1laWtDtQBfOv32RsR6JkARlUpq29aX9tguCA/Z2LLC7B7B+2cVhx2hQH/mZqF+ZufnMcGMr6fAyoUTGv8AgVSaNWh1tQPh5Sr/mrKyWjU6qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716208799; c=relaxed/simple;
-	bh=RMALe9odXTlOhasHrwx7JoyA/Hw3+Z+zypbJzTqfiiM=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=P30tjZUr8uqFNitAxl3na9B2J2VaKWCLEiGzbQ+GgiocHCoC36mi/2oEKm1C0RGEUjMwO5h0hO+Cc9lQYv1lTtYS/Tgnq7tryInRdp9nxTyAX6Axu99PYC5VoaVEJKwQt+N/zpSxy7FQgWdDJsrE5g7vuOk44iRXf0VhYWNkqXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vjcb24YNPz4f3l1K;
-	Mon, 20 May 2024 20:39:42 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 0A02B1A016E;
-	Mon, 20 May 2024 20:39:53 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgDnCw+XREtma4YLNg--.33126S3;
-	Mon, 20 May 2024 20:39:52 +0800 (CST)
-Subject: Re: [PATCH] ext4/jbd2: drop jbd2_transaction_committed()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240513072119.2335346-1-yi.zhang@huaweicloud.com>
- <20240515002513.yaglghza4i4ldmr5@quack3>
- <f0eb115d-dd10-e156-9aed-65b7f479f008@huaweicloud.com>
- <20240520084906.ejykv3xwn7l36jbg@quack3>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <8d85f75e-cf9e-b3da-766f-59d80d608203@huaweicloud.com>
-Date: Mon, 20 May 2024 20:39:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1716208848; c=relaxed/simple;
+	bh=0ghm8pQgH/Ie98fFuns1Qo6g1py5XierO6yhGzHAGBw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mH4IC4hzZPfr+actL5+UHC7k9wTu93keHzawNSr+B6TMLHptWbX6dE4BtaN/5XEeTgDF1CO21jiMNORL2bdjs4E9iujcABXkwcBwFdzDfva7dIcQosxoLv2YR548aXga51u7z2M4+CF3ynw+63wCViJR7IH0NyWoTj4tknKoymc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yacytYOj; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44KCeYf7000884;
+	Mon, 20 May 2024 07:40:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716208834;
+	bh=Ta/6dDLVDBDylZDSxMvvq60F/fRcQie13vswtxKmeh0=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=yacytYOjk5DMrkwI+ZkGMnGOhGWd/SVrsCgbsHpQzS4WIQwHHE1YdoVpXVpdPSp/h
+	 iXhXvcYEcppe8+YAu8sGi6LbP2FbNCcjQS1LGXRv5+dv/otGZqxbKkEbCpLNSXgnWD
+	 926f/U2wKh+yTbUwizn0bekTQIEzhigFqo9dknCI=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44KCeY00024689
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 20 May 2024 07:40:34 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 20
+ May 2024 07:40:34 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 20 May 2024 07:40:34 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44KCeYhZ036464;
+	Mon, 20 May 2024 07:40:34 -0500
+Date: Mon, 20 May 2024 07:40:34 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Francesco Dolcini <francesco@dolcini.it>,
+        Parth Pancholi
+	<parth105105@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Parth
+ Pancholi <parth.pancholi@toradex.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <vigneshr@ti.com>
+Subject: Re: [PATCH] dt-bindings: usb: gpio-sbu-mux: Add an entry for
+ TMUXHS4212
+Message-ID: <20240520124034.mo5rhbgjsuakxoo7@severity>
+References: <20240517111140.859677-1-parth105105@gmail.com>
+ <1675a33d-47af-4de9-a0e7-177cbe208e2b@kernel.org>
+ <20240519202754.GA3334@francesco-nb>
+ <469be7c2-6865-40d4-bd06-15dc3a08b3e3@kernel.org>
+ <20240520121441.svp6oabjyev4vmih@magazine>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240520084906.ejykv3xwn7l36jbg@quack3>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDnCw+XREtma4YLNg--.33126S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF43Kr43Ar1UGr4rKw17Jrb_yoW8Wry5pF
-	W8Ka47Ka17tr1Svrn7trnrZFy2yw1Ikry8Gr9F9ryqk3yUG3sagrWftryak34Duw1kGayI
-	9rWFgFZrG3W5ua7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UWE__UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240520121441.svp6oabjyev4vmih@magazine>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 2024/5/20 16:49, Jan Kara wrote:
-> On Thu 16-05-24 16:27:25, Zhang Yi wrote:
->> On 2024/5/15 8:25, Jan Kara wrote:
->>> On Mon 13-05-24 15:21:19, Zhang Yi wrote:
->>> Also accessing j_commit_sequence without any
->>> lock is theoretically problematic wrt compiler optimization. You should have
->>> READ_ONCE() there and the places modifying j_commit_sequence need to use
->>> WRITE_ONCE().
->>>
->>
->> Thanks for pointing this out, but I'm not sure if we have to need READ_ONCE()
->> here. IIUC, if we add READ_ONCE(), we could make sure to get the latest
->> j_commit_sequence, if not, there is a window (it might becomes larger) that
->> we could get the old value and jbd2_transaction_committed() could return false
->> even if the given transaction was just committed, but I think the window is
->> always there, so it looks like it is not a big problem, is that right?
+On 07:14-20240520, Nishanth Menon wrote:
+> On 08:53-20240520, Krzysztof Kozlowski wrote:
+> > On 19/05/2024 22:27, Francesco Dolcini wrote:
 > 
-> Well, all accesses to any memory should use READ_ONCE(), be protected by a
-> lock, or use types that handle atomicity on assembly level (like atomic_t,
-> or atomic bit operations and similar). Otherwise the compiler is free to
-> assume the underlying memory cannot change and generate potentionally
-> invalid code. In this case, I don't think realistically any compiler will
-> do it but still it is a good practice and also it saves us from KCSAN
-> warnings. If you want to know more details about possible problems, see
+> [...]
+> > > If it's not the case we'll send the patch later on, however some
+> > > DT files maintainers (e.g. arch/arm64/boot/dts/ti/) have a policy to
+> > > just accept DT file in which the binding changes are already merged
+> > > therefore I was trying to be a little bit proactive here.
+> > 
+> > TI? Never heard something like this from them... Such requirement would
+> > seriously slow down any work, so it's not really reasonable. Expectation
+> > is to post both binding change and an user, so DTS, in case of USB in
+> > separate patchsets.
 > 
->   tools/memory-model/Documentation/explanation.txt
+> There is a reason we have set that "soft rule":
+> - Driver subsystem merges have known to be broken from time to time and
+>   the dt maintainer is left holding compatibles that have not made to
+>   master.
+> - ARM subsystem merges prefers not to see checkpatch warnings -
+>   typically, this happens with new compatibles in the driver subsystem.
+> - Off chance that driver subsystem maintainer picks up the dt changes as
+>   well (should not happen, but has happened)
 > 
-> chapter "PLAIN ACCESSES AND DATA RACES".
+> We have however flexed the rule when:
+> a) driver maintainer is willing to provide us an immutable tag that we
+>    can merge in and base the dts on top.
+> b) We felt that the chances of the driver not making it is very very low
+>    (typically after 1+ month in next) and the dts change is in the wider
+>    interest of the community. In such case, we have to explicitly take
+>    the action of letting the patch submitter, driver subsystem to let us
+>    know if something bad happens to the PR, also in our PR to SoC
+>    maintainers, we have to call it out along with rationale why this is
+>    OK. This is a bunch of work from a lot of folks, so prefer only to
+>    trigger this path in case of exceptional cases - there have been a
+>    few far in between.
 > 
+> Again, the default rule (driver in one window, binding in next) has
 
-Sure, this document is really helpful, I'll add READ_ONCE() and
-WRITE_ONCE() here, thanks a lot.
+That went out wrong :( - correction:
 
-Yi.
+s/driver in one window, binding in next/driver and binding in one
+window, dts in the next window/
 
+Apologies on the confusion.
+
+> kept us out of trouble for a few years now at the detriment of pace
+> of merges, but that took care of a lot of conflicts that we had seen
+> during initial days of k3 - there are few chains in the lakml list
+> where this was the direction we ended up in after discussion.
+> 
+> But, yes - as you mentioned, send the patches of the "user" of the dt
+> binding and driver gives the subsystem and dt maintainers a chance to
+> review in the context of usage prior to the driver and binding merge.
+
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
