@@ -1,263 +1,239 @@
-Return-Path: <linux-kernel+bounces-183766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88B98C9DBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:55:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3FB8C9DB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 078991C23380
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:55:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41E752845C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CD213441F;
-	Mon, 20 May 2024 12:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279A61339B8;
+	Mon, 20 May 2024 12:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Ekq+9lST"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YjECXG9t"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469F486626;
-	Mon, 20 May 2024 12:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E90367
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 12:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716209686; cv=none; b=bbpmJ/DFE6UzA+4g6A/QZMOnFVp2GslkiWXb4VPtdovjxYuiOQoGXhRn343r8ptQPzfVAQRLonxLAgqTXQ2dbBvxYKTmUhnvxflmmA6pnkAlX5FmcVZ67q7tg/yi1htFPXqc0j1RsFfSmM9tmH/1YcZXO1Ai8PWxaJdfNUjqiUI=
+	t=1716209684; cv=none; b=hBFb6bkJVaasP1CGDRiSMfypbTJzgXV8Mj+Usn+8e8Ios5ujI9ljvl9+xVSMOrAeYL7Y/C33g0y8bccRjiAJ7D1SY5mtaIAyYhoGLRWuaYwQA4Vg5gHPjSzFaMr8jUlj2+/tcXn8Wf+DoP8+ithnqjtDTQTUVh8L4Vm7srs7iv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716209686; c=relaxed/simple;
-	bh=37CvmkwIYC5B75m5eTyZm7t36cPINnz4PX3v2i2+wSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a10WkO0fPGNYFwTM3zZkAVisD4VE6oMaPG58U/tm3hkzYCYaBeQbcicMjKo5pkSyfLzEKxkkUar5HqYtEJG64l8ANHPlx/x0qN16m4zkJ6FzxOz/DOWZszQE33lfHGd8WWRIrKf7OO1utJQlL34c/aS8nBUbNEursK1egHNhDXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Ekq+9lST; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716209674; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=mX8hyz8zLef0rWFw+iWlMYAQS32FV3Gjv5O3p8Lau+k=;
-	b=Ekq+9lST6whlkQnvLaHqHNUkojiZRisqjzxfKDJtm/66xp2ySBImKpWxLqQ4SI+pjprcUhLcB06GMWfaRkhy/91fGErtwcYuWfScoyVQ+Y1zDtEzQHGCPeL9f/a3RvMuSmWImTz46FsvBYn/6YVgGw5XLXXvxavrnRhRZqxELrU=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W6tGmXV_1716209671;
-Received: from 30.25.238.216(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W6tGmXV_1716209671)
-          by smtp.aliyun-inc.com;
-          Mon, 20 May 2024 20:54:33 +0800
-Message-ID: <d82277a4-aeab-4eb7-bdfd-377edd8b8737@linux.alibaba.com>
-Date: Mon, 20 May 2024 20:54:31 +0800
+	s=arc-20240116; t=1716209684; c=relaxed/simple;
+	bh=VLJYwRbEs6zn5i8TGBXdzx7fqbzIQEsCUP/+nCE98xk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=e+AAI8182qHV4wXN4vtBnmICsEv1HEv8lWxObW9gjI+ZgIPUhJqUQ0WFb3ytaaCQo5z0gc5h2yIT6oYUcuT0PxMwSrD38kiFyaE+L00qBsPgLCLxOVNohQYgUU/jcLeom5LfmjdVFSpxnWO/ahsLHmoe8FNGreH0Ii84YmvFBzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YjECXG9t; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1ec486198b6so67012555ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 05:54:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716209682; x=1716814482; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PsaS7hwC6SGwZpxPNV/aTtZM8wWRDwUCiBIx6wA+SRA=;
+        b=YjECXG9tXNDKuM1kAVVJmpfw0Ji9iK8FJ0y7SPy8dseMlvY+KWVcYCfYQHAQLheQdA
+         s4L2DT4+wFSP65ltISGWk37rn99C5cSP7TUY+oGrOtrcUEQ3rp/6UIOc8P72Gb17LP8u
+         rrKVdM3ehdydKkjWXn6obnoKo1FUnPiAueA3hi/oiGHSEPf1OGbDg0V6jkxymgdS1X1X
+         n//MPU7Dn+tSS7zIu1HLZ06tyKUej3WSmNbWkwaknU820gtLaeBIs4Hq1cXD5WgX2wta
+         5I7hqpGhhwwjPouD3UTJkkU0myl58SkYu9gWmh3CPqaj67cNTLVoEk068VcetUnvYrfj
+         HNSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716209682; x=1716814482;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PsaS7hwC6SGwZpxPNV/aTtZM8wWRDwUCiBIx6wA+SRA=;
+        b=pP4ze88q5b1J5lj7EoGXHqXJdY2jE0j8s9DS0o0eCQovN0lXY3aYUFQ1v5BkkdOkV9
+         VSU5Uf8CBTSSarymr12wqwENanL6qytlPItn9maXgv9pB/IqhdOynpFuwn3AOvM5E94X
+         8QqeA6fDJyXBmtgPxFN4cUS44qWoeSFufI8PZa+Uw29K34ZwD2Q90g2mjSvGtSRAb5Ru
+         sbR1Zk0iZ69jrbrNoEQ5VmeTVPprlCgOXe23TQrB20DYd0u4Of5jdgpXXTgHhKEw9JUN
+         ikBWasHPgQg1s5ea41KOaCv3T91VXEX3l3zLFEuABYW/GsbTboaDxnwUAVJMsLUntutg
+         KEEQ==
+X-Gm-Message-State: AOJu0Yw8cKqEZog7j/4/CPR/vx7YO0bLdFRqCcAJuL38hkUREEOpU2VX
+	AIiJr2Bztbg/1FLVq7I2Pep3qYGv7Zfh3CCabo7rwM3s+Py5MBby
+X-Google-Smtp-Source: AGHT+IGQD5voDad482etfAFYqJItSYWnKfB4jvZBywe8XpDGx+z9MFzihkDpII2A9KT8cmADi+Mg7g==
+X-Received: by 2002:a05:6a00:b51:b0:6ed:88e5:53d4 with SMTP id d2e1a72fcca58-6f4e02aa365mr35041612b3a.8.1716209682074;
+        Mon, 20 May 2024 05:54:42 -0700 (PDT)
+Received: from localhost (110-175-65-7.tpgi.com.au. [110.175.65.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4eccc3b91sm16004093b3a.66.2024.05.20.05.54.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 May 2024 05:54:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] cachefiles: cyclic allocation of msg_id to avoid
- reuse
-To: Baokun Li <libaokun@huaweicloud.com>, Jeff Layton <jlayton@kernel.org>,
- netfs@lists.linux.dev, dhowells@redhat.com
-Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
-References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
- <20240515125136.3714580-5-libaokun@huaweicloud.com>
- <f449f710b7e1ba725ec9f73cace6c1289b9225b6.camel@kernel.org>
- <d3f5d0c4-eda7-87e3-5938-487ab9ff6b81@huaweicloud.com>
- <4b1584787dd54bb95d700feae1ca498c40429551.camel@kernel.org>
- <a4d57830-2bde-901f-72c4-e1a3f714faa5@huaweicloud.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <a4d57830-2bde-901f-72c4-e1a3f714faa5@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 20 May 2024 22:54:35 +1000
+Message-Id: <D1EHK0STZ19E.3CTOAWG7LVBPK@gmail.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [RFC PATCH v2 18/20] powerpc/64s: Use contiguous PMD/PUD
+ instead of HUGEPD
+From: "Nicholas Piggin" <npiggin@gmail.com>
+To: "Christophe Leroy" <christophe.leroy@csgroup.eu>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Jason Gunthorpe" <jgg@nvidia.com>, "Peter Xu"
+ <peterx@redhat.com>, "Oscar Salvador" <osalvador@suse.de>, "Michael
+ Ellerman" <mpe@ellerman.id.au>
+X-Mailer: aerc 0.17.0
+References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
+ <ac9f4f2d6e571e4579a8125b81eaa88fbddd6187.1715971869.git.christophe.leroy@csgroup.eu>
+In-Reply-To: <ac9f4f2d6e571e4579a8125b81eaa88fbddd6187.1715971869.git.christophe.leroy@csgroup.eu>
 
+On Sat May 18, 2024 at 5:00 AM AEST, Christophe Leroy wrote:
+> On book3s/64, the only user of hugepd is hash in 4k mode.
+>
+> All other setups (hash-64, radix-4, radix-64) use leaf PMD/PUD.
+>
+> Rework hash-4k to use contiguous PMD and PUD instead.
+>
+> In that setup there are only two huge page sizes: 16M and 16G.
+>
+> 16M sits at PMD level and 16G at PUD level.
+>
+> pte_update doesn't know page size, lets use the same trick as
+> hpte_need_flush() to get page size from segment properties. That's
+> not the most efficient way but let's do that until callers of
+> pte_update() provide page size instead of just a huge flag.
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
+>  arch/powerpc/include/asm/book3s/64/hash-4k.h  | 15 --------
+>  arch/powerpc/include/asm/book3s/64/hash.h     | 38 +++++++++++++++----
+>  arch/powerpc/include/asm/book3s/64/hugetlb.h  | 38 -------------------
+>  .../include/asm/book3s/64/pgtable-4k.h        | 34 -----------------
+>  .../include/asm/book3s/64/pgtable-64k.h       | 20 ----------
+>  arch/powerpc/include/asm/hugetlb.h            |  4 ++
+>  .../include/asm/nohash/32/hugetlb-8xx.h       |  4 --
+>  .../powerpc/include/asm/nohash/hugetlb-e500.h |  4 --
+>  arch/powerpc/include/asm/page.h               |  8 ----
+>  arch/powerpc/mm/book3s64/hash_utils.c         | 11 ++++--
+>  arch/powerpc/mm/book3s64/pgtable.c            | 12 ------
+>  arch/powerpc/mm/hugetlbpage.c                 | 19 ----------
+>  arch/powerpc/mm/pgtable.c                     |  2 +-
+>  arch/powerpc/platforms/Kconfig.cputype        |  1 -
+>  14 files changed, 43 insertions(+), 167 deletions(-)
+>
+> diff --git a/arch/powerpc/include/asm/book3s/64/hash-4k.h b/arch/powerpc/=
+include/asm/book3s/64/hash-4k.h
+> index 6472b08fa1b0..c654c376ef8b 100644
+> --- a/arch/powerpc/include/asm/book3s/64/hash-4k.h
+> +++ b/arch/powerpc/include/asm/book3s/64/hash-4k.h
+> @@ -74,21 +74,6 @@
+>  #define remap_4k_pfn(vma, addr, pfn, prot)	\
+>  	remap_pfn_range((vma), (addr), (pfn), PAGE_SIZE, (prot))
+> =20
+> -#ifdef CONFIG_HUGETLB_PAGE
+> -static inline int hash__hugepd_ok(hugepd_t hpd)
+> -{
+> -	unsigned long hpdval =3D hpd_val(hpd);
+> -	/*
+> -	 * if it is not a pte and have hugepd shift mask
+> -	 * set, then it is a hugepd directory pointer
+> -	 */
+> -	if (!(hpdval & _PAGE_PTE) && (hpdval & _PAGE_PRESENT) &&
+> -	    ((hpdval & HUGEPD_SHIFT_MASK) !=3D 0))
+> -		return true;
+> -	return false;
+> -}
+> -#endif
+> -
+>  /*
+>   * 4K PTE format is different from 64K PTE format. Saving the hash_slot =
+is just
+>   * a matter of returning the PTE bits that need to be modified. On 64K P=
+TE,
+> diff --git a/arch/powerpc/include/asm/book3s/64/hash.h b/arch/powerpc/inc=
+lude/asm/book3s/64/hash.h
+> index faf3e3b4e4b2..509811ca7695 100644
+> --- a/arch/powerpc/include/asm/book3s/64/hash.h
+> +++ b/arch/powerpc/include/asm/book3s/64/hash.h
+> @@ -4,6 +4,7 @@
+>  #ifdef __KERNEL__
+> =20
+>  #include <asm/asm-const.h>
+> +#include <asm/book3s/64/slice.h>
+> =20
+>  /*
+>   * Common bits between 4K and 64K pages in a linux-style PTE.
+> @@ -161,14 +162,10 @@ extern void hpte_need_flush(struct mm_struct *mm, u=
+nsigned long addr,
+>  			    pte_t *ptep, unsigned long pte, int huge);
+>  unsigned long htab_convert_pte_flags(unsigned long pteflags, unsigned lo=
+ng flags);
+>  /* Atomic PTE updates */
+> -static inline unsigned long hash__pte_update(struct mm_struct *mm,
+> -					 unsigned long addr,
+> -					 pte_t *ptep, unsigned long clr,
+> -					 unsigned long set,
+> -					 int huge)
+> +static inline unsigned long hash__pte_update_one(pte_t *ptep, unsigned l=
+ong clr,
+> +						 unsigned long set)
+>  {
+>  	__be64 old_be, tmp_be;
+> -	unsigned long old;
+> =20
+>  	__asm__ __volatile__(
+>  	"1:	ldarx	%0,0,%3		# pte_update\n\
+> @@ -182,11 +179,38 @@ static inline unsigned long hash__pte_update(struct=
+ mm_struct *mm,
+>  	: "r" (ptep), "r" (cpu_to_be64(clr)), "m" (*ptep),
+>  	  "r" (cpu_to_be64(H_PAGE_BUSY)), "r" (cpu_to_be64(set))
+>  	: "cc" );
+> +
+> +	return be64_to_cpu(old_be);
+> +}
+> +
+> +static inline unsigned long hash__pte_update(struct mm_struct *mm,
+> +					 unsigned long addr,
+> +					 pte_t *ptep, unsigned long clr,
+> +					 unsigned long set,
+> +					 int huge)
+> +{
+> +	unsigned long old;
+> +
+> +	old =3D hash__pte_update_one(ptep, clr, set);
+> +
+> +	if (huge && IS_ENABLED(CONFIG_PPC_4K_PAGES)) {
+> +		unsigned int psize =3D get_slice_psize(mm, addr);
+> +		int nb, i;
+> +
+> +		if (psize =3D=3D MMU_PAGE_16M)
+> +			nb =3D SZ_16M / PMD_SIZE;
+> +		else if (psize =3D=3D MMU_PAGE_16G)
+> +			nb =3D SZ_16G / PUD_SIZE;
+> +		else
+> +			nb =3D 1;
+> +
+> +		for (i =3D 1; i < nb; i++)
+> +			hash__pte_update_one(ptep + i, clr, set);
+> +	}
+>  	/* huge pages use the old page table lock */
+>  	if (!huge)
+>  		assert_pte_locked(mm, addr);
+> =20
+> -	old =3D be64_to_cpu(old_be);
+>  	if (old & H_PAGE_HASHPTE)
+>  		hpte_need_flush(mm, addr, ptep, old, huge);
+> =20
 
+Nice series, I don't know this hugepd code very well but I'll try.
+Why do you have to replicate the PTE entry here? The hash table refill
+should always be working on the first PTE of the page otherwise we have
+bigger problems.
 
-On 2024/5/20 20:42, Baokun Li wrote:
-> On 2024/5/20 18:04, Jeff Layton wrote:
->> On Mon, 2024-05-20 at 12:06 +0800, Baokun Li wrote:
->>> Hi Jeff,
->>>
->>> Thank you very much for your review!
->>>
->>> On 2024/5/19 19:11, Jeff Layton wrote:
->>>> On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
->>>>> From: Baokun Li <libaokun1@huawei.com>
->>>>>
->>>>> Reusing the msg_id after a maliciously completed reopen request may cause
->>>>> a read request to remain unprocessed and result in a hung, as shown below:
->>>>>
->>>>>          t1       |      t2       |      t3
->>>>> -------------------------------------------------
->>>>> cachefiles_ondemand_select_req
->>>>>    cachefiles_ondemand_object_is_close(A)
->>>>>    cachefiles_ondemand_set_object_reopening(A)
->>>>>    queue_work(fscache_object_wq, &info->work)
->>>>>                   ondemand_object_worker
->>>>>                    cachefiles_ondemand_init_object(A)
->>>>>                     cachefiles_ondemand_send_req(OPEN)
->>>>>                       // get msg_id 6
->>>>>                       wait_for_completion(&req_A->done)
->>>>> cachefiles_ondemand_daemon_read
->>>>>    // read msg_id 6 req_A
->>>>>    cachefiles_ondemand_get_fd
->>>>>    copy_to_user
->>>>>                                   // Malicious completion msg_id 6
->>>>>                                   copen 6,-1
->>>>>                                   cachefiles_ondemand_copen
->>>>>                                    complete(&req_A->done)
->>>>>                                    // will not set the object to close
->>>>>                                    // because ondemand_id && fd is valid.
->>>>>
->>>>>                   // ondemand_object_worker() is done
->>>>>                   // but the object is still reopening.
->>>>>
->>>>>                                   // new open req_B
->>>>>                                   cachefiles_ondemand_init_object(B)
->>>>>                                    cachefiles_ondemand_send_req(OPEN)
->>>>>                                    // reuse msg_id 6
->>>>> process_open_req
->>>>>    copen 6,A.size
->>>>>    // The expected failed copen was executed successfully
->>>>>
->>>>> Expect copen to fail, and when it does, it closes fd, which sets the
->>>>> object to close, and then close triggers reopen again. However, due to
->>>>> msg_id reuse resulting in a successful copen, the anonymous fd is not
->>>>> closed until the daemon exits. Therefore read requests waiting for reopen
->>>>> to complete may trigger hung task.
->>>>>
->>>>> To avoid this issue, allocate the msg_id cyclically to avoid reusing the
->>>>> msg_id for a very short duration of time.
->>>>>
->>>>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
->>>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->>>>> ---
->>>>>    fs/cachefiles/internal.h |  1 +
->>>>>    fs/cachefiles/ondemand.c | 20 ++++++++++++++++----
->>>>>    2 files changed, 17 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
->>>>> index 8ecd296cc1c4..9200c00f3e98 100644
->>>>> --- a/fs/cachefiles/internal.h
->>>>> +++ b/fs/cachefiles/internal.h
->>>>> @@ -128,6 +128,7 @@ struct cachefiles_cache {
->>>>>        unsigned long            req_id_next;
->>>>>        struct xarray            ondemand_ids;    /* xarray for ondemand_id allocation */
->>>>>        u32                ondemand_id_next;
->>>>> +    u32                msg_id_next;
->>>>>    };
->>>>>    static inline bool cachefiles_in_ondemand_mode(struct cachefiles_cache *cache)
->>>>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->>>>> index f6440b3e7368..b10952f77472 100644
->>>>> --- a/fs/cachefiles/ondemand.c
->>>>> +++ b/fs/cachefiles/ondemand.c
->>>>> @@ -433,20 +433,32 @@ static int cachefiles_ondemand_send_req(struct cachefiles_object *object,
->>>>>            smp_mb();
->>>>>            if (opcode == CACHEFILES_OP_CLOSE &&
->>>>> -            !cachefiles_ondemand_object_is_open(object)) {
->>>>> +            !cachefiles_ondemand_object_is_open(object)) {
->>>>>                WARN_ON_ONCE(object->ondemand->ondemand_id == 0);
->>>>>                xas_unlock(&xas);
->>>>>                ret = -EIO;
->>>>>                goto out;
->>>>>            }
->>>>> -        xas.xa_index = 0;
->>>>> +        /*
->>>>> +         * Cyclically find a free xas to avoid msg_id reuse that would
->>>>> +         * cause the daemon to successfully copen a stale msg_id.
->>>>> +         */
->>>>> +        xas.xa_index = cache->msg_id_next;
->>>>>            xas_find_marked(&xas, UINT_MAX, XA_FREE_MARK);
->>>>> +        if (xas.xa_node == XAS_RESTART) {
->>>>> +            xas.xa_index = 0;
->>>>> +            xas_find_marked(&xas, cache->msg_id_next - 1, XA_FREE_MARK);
->>>>> +        }
->>>>>            if (xas.xa_node == XAS_RESTART)
->>>>>                xas_set_err(&xas, -EBUSY);
->>>>> +
->>>>>            xas_store(&xas, req);
->>>>> -        xas_clear_mark(&xas, XA_FREE_MARK);
->>>>> -        xas_set_mark(&xas, CACHEFILES_REQ_NEW);
->>>>> +        if (xas_valid(&xas)) {
->>>>> +            cache->msg_id_next = xas.xa_index + 1;
->>>> If you have a long-standing stuck request, could this counter wrap
->>>> around and you still end up with reuse?
->>> Yes, msg_id_next is declared to be of type u32 in the hope that when
->>> xa_index == UINT_MAX, a wrap around occurs so that msg_id_next
->>> goes to zero. Limiting xa_index to no more than UINT_MAX is to avoid
->>> the xarry being too deep.
->>>
->>> If msg_id_next is equal to the id of a long-standing stuck request
->>> after the wrap-around, it is true that the reuse in the above problem
->>> may also occur.
->>>
->>> But I feel that a long stuck request is problematic in itself, it means
->>> that after we have sent 4294967295 requests, the first one has not
->>> been processed yet, and even if we send a million requests per
->>> second, this one hasn't been completed for more than an hour.
->>>
->>> We have a keep-alive process that pulls the daemon back up as
->>> soon as it exits, and there is a timeout mechanism for requests in
->>> the daemon to prevent the kernel from waiting for long periods
->>> of time. In other words, we should avoid the situation where
->>> a request is stuck for a long period of time.
->>>
->>> If you think UINT_MAX is not enough, perhaps we could raise
->>> the maximum value of msg_id_next to ULONG_MAX?
->>>> Maybe this should be using
->>>> ida_alloc/free instead, which would prevent that too?
->>>>
->>> The id reuse here is that the kernel has finished the open request
->>> req_A and freed its id_A and used it again when sending the open
->>> request req_B, but the daemon is still working on req_A, so the
->>> copen id_A succeeds but operates on req_B.
->>>
->>> The id that is being used by the kernel will not be allocated here
->>> so it seems that ida _alloc/free does not prevent reuse either,
->>> could you elaborate a bit more how this works?
->>>
->> ida_alloc and free absolutely prevent reuse while the id is in use.
->> That's sort of the point of those functions. Basically it uses a set of
->> bitmaps in an xarray to track which IDs are in use, so ida_alloc only
->> hands out values which are not in use. See the comments over
->> ida_alloc_range() in lib/idr.c.
->>
-> Thank you for the explanation!
-> 
-> The logic now provides the same guarantees as ida_alloc/free.
-> The "reused" id, indeed, is no longer in use in the kernel, but it is still
-> in use in the userland, so a multi-threaded daemon could be handling
-> two different requests for the same msg_id at the same time.
-> 
-> Previously, the logic for allocating msg_ids was to start at 0 and look
-> for a free xas.index, so it was possible for an id to be allocated to a
-> new request just as the id was being freed.
-> 
-> With the change to cyclic allocation, the kernel will not use the same
-> id again until INT_MAX requests have been sent, and during the time
-> it takes to send requests, the daemon has enough time to process
-> requests whose ids are still in use by the daemon, but have already
-> been freed in the kernel.
-
-Again, If I understand correctly, I think the main point
-here is
-
-wait_for_completion(&req_A->done)
-
-which could hang due to some malicious deamon.  But I think it
-should be switched to wait_for_completion_killable() instead.
-It's up to users to kill the mount instance if there is a
-malicious user daemon.
-
-So in that case, hung task will not be triggered anymore, and
-you don't need to care about cyclic allocation too.
+What paths look at the N > 0 PTEs of a contiguous page entry?
 
 Thanks,
-Gao Xiang
-
-> 
-> Regards,
-> Baokun
->>>>> +            xas_clear_mark(&xas, XA_FREE_MARK);
->>>>> +            xas_set_mark(&xas, CACHEFILES_REQ_NEW);
->>>>> +        }
->>>>>            xas_unlock(&xas);
->>>>>        } while (xas_nomem(&xas, GFP_KERNEL));
->>>>>
+Nick
 
