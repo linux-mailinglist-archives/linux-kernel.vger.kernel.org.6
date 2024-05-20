@@ -1,182 +1,170 @@
-Return-Path: <linux-kernel+bounces-183479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E37518C99A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:10:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB698C99AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C19BB21B89
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 08:10:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADDC91F21504
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 08:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAA01C2A3;
-	Mon, 20 May 2024 08:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64081BF38;
+	Mon, 20 May 2024 08:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RiHK+ZQQ"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0Y1qrsit";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MEREtT8B";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0Y1qrsit";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MEREtT8B"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C241BC3F
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 08:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEA3FC1D
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 08:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716192598; cv=none; b=uVi4TM8jyNBCq3qjNpQe3CA0tQx2sNC93pRH6Xf9XJL05XbboUvRHPPUr9EtZje9qRcZhy414PBCgpKnTg7NAUPR3z9FVXNmSG6IEfnXqgvohVIR9eh2fPvsEZFtfAtCENjulKCgsvqdmWpAQAsCa6I8VNwsbFU2DIFWTYuiwU0=
+	t=1716192746; cv=none; b=PhDhwokZ5xyDhI2FCRz/5lFuM3yBU+T8M1PAVNfX4XX0CgLhVge4JbVUXMFsuk/OeIgvEKv+Z/M0pK/E6v7B41tn+WfPETsiB3IJ7yAl3MrDBMNVCNFl/Vah+5uA69qxd6sP3xAJ2i5awVera6tVlj3VQ0luvyP9k9YdqxkqPcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716192598; c=relaxed/simple;
-	bh=z8NthXkMFgdIbl0krCEF+Y+L/RbyZV7sLRHmjvGb+Zc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tL94qQW7hZfhnsACs2B7PhLFtU4mPqIGNoSit+gOLRDJ533jGaXsVt719LoPclEUWlX/xxynth+XwQVxzOted3lldGGsrL4QboJF+No7Wu2+YQDlycsjf1IKieEFASsCpK3Y8zQXon/F5/yhOp2PWiwXcKaufQftTJh4dA1oPc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RiHK+ZQQ; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-354c5b7fafaso812946f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 01:09:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716192594; x=1716797394; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gsL9bQ0y9pX/2lyTMYaTOUIKY6XWDRYJxwuWOVCpsyw=;
-        b=RiHK+ZQQiygHT9xW9FGf+q90GHAb1qdiO/fYScSWskCPIRSrdelpaXijnZFQC0oE7g
-         8e9HB352o6jFDMkcGyMr/+XtepLixlJ002GyltiLwhbARWu4wrgtMpTyQ2SC4pSAgcLt
-         r45OT9tLzE+r71w/nq9WKC3bOv2KehfF0VINxevepu/Oktq2092/VSQZeSDDPPqUZ0zz
-         28mH/QmL3tc9k69RRRfaqb5gK9aeaKKQiD0E7MmyyzJwHUv4I4rq9664/ZcUtGjRyRJ6
-         k/Vlq5CclgKkcZrLhQBKlFr3qiwL5fBjxBRhCYJ/mo72DNpOSPE51gXajkbwcpCeuTPd
-         AjTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716192594; x=1716797394;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gsL9bQ0y9pX/2lyTMYaTOUIKY6XWDRYJxwuWOVCpsyw=;
-        b=giw3av/U6PbZxPGh71SdBEziITf17XQfxsSdE4gtgwKbXreKI0P3q2QyMwciioUSyO
-         GAJeGjWOdUF65eRDDuv3UsK7BOEfwiFTQtXwECxHtKSgxecuSZ3lY3TcDEYHqkh8CDCi
-         lwBkuHb8O+wKXeCBDj5OPAW4HoaYVx8eyT1wNI4nNgvlL1hJbNyXfiqGrejby2954c7r
-         8pgpgq5UvJfDiwtNdrEtql2uOn3W5s+ct91DXT/wxwvp7rVKm3no3bNaIRHfFVEjYTJ+
-         AmCT2ehGppFhSJCBvpCQuohFszGaQK1fnhlaaeIpUmQMxRhOwsPDXCZxPmA2SPskrlYr
-         +78A==
-X-Gm-Message-State: AOJu0YwlOz1GUSSbPElOB6PvkqfVNleqtOqz1J3LmfR/jM8e1cUqQlXK
-	jsumwrMjlXYDca+KZ17UedM9x6/OOlHY2VvmFUij1gu0mv0j3qIDEyzwA265
-X-Google-Smtp-Source: AGHT+IHW68v5wA0Iacn17DpWa1mXifpjKOYqaoESiIqJA6aj55de3EZNfvM+dJCkOIq8dKeAjiFVnQ==
-X-Received: by 2002:a05:6000:114c:b0:34d:b549:9465 with SMTP id ffacd0b85a97d-3504a737635mr20536526f8f.32.1716192594289;
-        Mon, 20 May 2024 01:09:54 -0700 (PDT)
-Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3518d817ee2sm24784776f8f.2.2024.05.20.01.09.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 01:09:53 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 2/2] x86/percpu: Move some percpu accessors around to reduce ifdeffery
-Date: Mon, 20 May 2024 10:09:25 +0200
-Message-ID: <20240520080951.121049-2-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240520080951.121049-1-ubizjak@gmail.com>
-References: <20240520080951.121049-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1716192746; c=relaxed/simple;
+	bh=IjOPMFS0BvHE2ltRHld+74oQKCRSM8tN46/uyLdlo70=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=aFFQ/DxPONxVrwfZ6+KoP8Qeop5mQcqYYZHYiUIudY1h21CgaubaYAdrDfrZJrz3tXF/Eo6RLSkR7WbxXnBjewja9Fh4dUCzRgL+cw02afalSMjCVOpWMjvoB26USq5zOLGXItfL45rZNGRmyGl9nDdda01AdS9czMEzYDxcRwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0Y1qrsit; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MEREtT8B; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0Y1qrsit; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MEREtT8B; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 29FEC20B88;
+	Mon, 20 May 2024 08:12:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716192743; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RfO4OrdsEs2zpIDzxNtv58pndZOnIczWQ6oCFt1KxL0=;
+	b=0Y1qrsitqvIXDIPwoldsOC1/1PJrffnkKW48cJnFYhvmbEKnuAk+AOy4rx1icRhhRk8yNL
+	NSqyXNUQTqVOog58c9tO32xujEhjiriRhk+QdEOACMn7vejnEMR0J2vYkFsQPvrotcnkFS
+	hshxOqScf7K7znSEDZyjpM+HKesBVgI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716192743;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RfO4OrdsEs2zpIDzxNtv58pndZOnIczWQ6oCFt1KxL0=;
+	b=MEREtT8BDzqWP4Y4G4Gm7hQ1ghJc4Ju2zzmBcG7DBHkUoKyfdgvpJ2QKFSpZSSKOFl1b3i
+	XGVe8rApDQPq5MAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=0Y1qrsit;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MEREtT8B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716192743; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RfO4OrdsEs2zpIDzxNtv58pndZOnIczWQ6oCFt1KxL0=;
+	b=0Y1qrsitqvIXDIPwoldsOC1/1PJrffnkKW48cJnFYhvmbEKnuAk+AOy4rx1icRhhRk8yNL
+	NSqyXNUQTqVOog58c9tO32xujEhjiriRhk+QdEOACMn7vejnEMR0J2vYkFsQPvrotcnkFS
+	hshxOqScf7K7znSEDZyjpM+HKesBVgI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716192743;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RfO4OrdsEs2zpIDzxNtv58pndZOnIczWQ6oCFt1KxL0=;
+	b=MEREtT8BDzqWP4Y4G4Gm7hQ1ghJc4Ju2zzmBcG7DBHkUoKyfdgvpJ2QKFSpZSSKOFl1b3i
+	XGVe8rApDQPq5MAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EB12813A21;
+	Mon, 20 May 2024 08:12:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UblYN+YFS2YUVAAAD6G6ig
+	(envelope-from <jdelvare@suse.de>); Mon, 20 May 2024 08:12:22 +0000
+Date: Mon, 20 May 2024 10:12:21 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>, LKML 
+ <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] dmi update for v6.10
+Message-ID: <20240520101221.463a1ec8@endymion.delvare>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.43
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 29FEC20B88
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.43 / 50.00];
+	BAYES_HAM(-2.92)[99.66%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWO(0.00)[2];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	HAS_ORG_HEADER(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
 
-Move some percpu accessors around, mainly to reduce ifdeffery
-and improve readabilty by following dependencies between
-accessors.
+Hi Linus,
 
-No functional change intended.
+Please pull dmi subsystem updates for Linux v6.10 from:
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- arch/x86/include/asm/percpu.h | 40 +++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 21 deletions(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/jdelvare/staging.git dmi-for-v6.10
 
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index 39762fcfe328..0f0d8973f8df 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -445,17 +445,6 @@ do {									\
- #define this_cpu_try_cmpxchg128(pcp, ovalp, nval)	percpu_try_cmpxchg128_op(16, volatile, pcp, ovalp, nval)
- #endif
- 
--/*
-- * this_cpu_read() makes gcc load the percpu variable every time it is
-- * accessed while this_cpu_read_stable() allows the value to be cached.
-- * this_cpu_read_stable() is more efficient and can be used if its value
-- * is guaranteed to be valid across cpus.  The current users include
-- * pcpu_hot.current_task and pcpu_hot.top_of_stack, both of which are
-- * actually per-thread variables implemented as per-CPU variables and
-- * thus stable for the duration of the respective task.
-- */
--#define this_cpu_read_stable(pcp)	__pcpu_size_call_return(this_cpu_read_stable_, pcp)
--
- #define raw_cpu_read_1(pcp)		__raw_cpu_read(1, , pcp)
- #define raw_cpu_read_2(pcp)		__raw_cpu_read(2, , pcp)
- #define raw_cpu_read_4(pcp)		__raw_cpu_read(4, , pcp)
-@@ -470,16 +459,6 @@ do {									\
- #define this_cpu_write_2(pcp, val)	__raw_cpu_write(2, volatile, pcp, val)
- #define this_cpu_write_4(pcp, val)	__raw_cpu_write(4, volatile, pcp, val)
- 
--#ifdef CONFIG_X86_64
--#define raw_cpu_read_8(pcp)		__raw_cpu_read(8, , pcp)
--#define raw_cpu_write_8(pcp, val)	__raw_cpu_write(8, , pcp, val)
--
--#define this_cpu_read_8(pcp)		__raw_cpu_read(8, volatile, pcp)
--#define this_cpu_write_8(pcp, val)	__raw_cpu_write(8, volatile, pcp, val)
--#endif
--
--#define this_cpu_read_const(pcp)	__raw_cpu_read_const(pcp)
--
- #define this_cpu_read_stable_1(pcp)	__raw_cpu_read_stable(1, pcp)
- #define this_cpu_read_stable_2(pcp)	__raw_cpu_read_stable(2, pcp)
- #define this_cpu_read_stable_4(pcp)	__raw_cpu_read_stable(4, pcp)
-@@ -535,6 +514,12 @@ do {									\
-  * 32 bit must fall back to generic operations.
-  */
- #ifdef CONFIG_X86_64
-+#define raw_cpu_read_8(pcp)		__raw_cpu_read(8, , pcp)
-+#define raw_cpu_write_8(pcp, val)	__raw_cpu_write(8, , pcp, val)
-+
-+#define this_cpu_read_8(pcp)		__raw_cpu_read(8, volatile, pcp)
-+#define this_cpu_write_8(pcp, val)	__raw_cpu_write(8, volatile, pcp, val)
-+
- #define this_cpu_read_stable_8(pcp)	__raw_cpu_read_stable(8, pcp)
- 
- #define raw_cpu_add_8(pcp, val)			percpu_add_op(8, , (pcp), val)
-@@ -561,6 +546,19 @@ do {									\
- #define raw_cpu_read_long(pcp)		raw_cpu_read_4(pcp)
- #endif
- 
-+#define this_cpu_read_const(pcp)	__raw_cpu_read_const(pcp)
-+
-+/*
-+ * this_cpu_read() makes gcc load the percpu variable every time it is
-+ * accessed while this_cpu_read_stable() allows the value to be cached.
-+ * this_cpu_read_stable() is more efficient and can be used if its value
-+ * is guaranteed to be valid across cpus.  The current users include
-+ * pcpu_hot.current_task and pcpu_hot.top_of_stack, both of which are
-+ * actually per-thread variables implemented as per-CPU variables and
-+ * thus stable for the duration of the respective task.
-+ */
-+#define this_cpu_read_stable(pcp)	__pcpu_size_call_return(this_cpu_read_stable_, pcp)
-+
- #define x86_this_cpu_constant_test_bit(_nr, _var)			\
- ({									\
- 	unsigned long __percpu *addr__ =				\
+Summary of changes:
+* Bug fixes:
+  - KCFI violation in dmi-id
+  - Panic on broken (short) DMI table entry
+* New features:
+  - Print info about populated memory slots at boot
+
+This is the first time I use a signed tag for a pull request, I hope I
+got it right, if not feel free to complain.
+
+ drivers/firmware/dmi-id.c   |  7 ++++++-
+ drivers/firmware/dmi_scan.c | 17 +++++++++++++++++
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+---------------
+
+Arnd Bergmann (1):
+      firmware: dmi-id: add a release callback function
+
+Heiner Kallweit (1):
+      firmware: dmi: Add info message for number of populated and total memory slots
+
+Jean Delvare (1):
+      firmware: dmi: Stop decoding on broken entry
+
+Thanks,
 -- 
-2.45.1
-
+Jean Delvare
+SUSE L3 Support
 
