@@ -1,62 +1,84 @@
-Return-Path: <linux-kernel+bounces-183637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16AA28C9BC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:02:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F5A8C9BCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DBF91F22884
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:02:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A17EB22929
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C847653812;
-	Mon, 20 May 2024 11:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EA7182DF;
+	Mon, 20 May 2024 11:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y76dXG6F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KS0tDeas"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6F91643A;
-	Mon, 20 May 2024 11:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0352E51C46
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 11:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716202944; cv=none; b=OxmpgkwL6mwBQ+GSEm5W6GhTChOrdtiDj4T6Uj4AnrWy4tbCrXAEsc7vwqdBqZyR8Kul6y6BaBseqVhbd3y2as3epukca/80y0H9LhcqslzLno7CzW9P2Q/y7oEW4Oyigfxe9qI5VC9NXjnZh1//5GJoR6eZm+FxVsM/KJXK+T8=
+	t=1716202969; cv=none; b=Ft3ju1EiV7Jffjb0H/BQd4rrrjnZb+mukjWndid7ahqe6eV/91DnTMGLjNTAt9RmHf7nAEarmDKHwMaF14N+Gy8qNr9meIZAdoEy4TfTArrmD7WPugNkJLR0QTEOh578OtSEs1lOftfTZVfYHqn6kxU2HpGSVK1wpfbmXx3e+OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716202944; c=relaxed/simple;
-	bh=fBMRsCfYJyR6hIrSKyh6obRGMiWNwGySypQNPgZYSl4=;
+	s=arc-20240116; t=1716202969; c=relaxed/simple;
+	bh=aHXJgMMAWaYsM0kSRcC2/pcFvZd8v1mmzcvs6fKS26k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GgeiBdN8YJ67UsBqyHCZINrIL2bBbY14hOe3rpEEzF/s0/k5AlpY43/od6CB4oGwh8u1exoDmHD0t+SelWDXboitRSJHE/xZHtib2OW68RD0pbRshkC0m96HblqIOVCeSA8FLwZbMmPVIwdCfsRD2P4EFhNydWlJ92zUVFwyAo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y76dXG6F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4CF6C2BD10;
-	Mon, 20 May 2024 11:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716202943;
-	bh=fBMRsCfYJyR6hIrSKyh6obRGMiWNwGySypQNPgZYSl4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y76dXG6Ff9lU0BseLExi/9Goan23DJwqM6QOWeL9VrauQ1i65KbvD2B7xRGnzJIRV
-	 c7iZLWDvaQAi9T46TWXS/chVnyHoRXS1UtoSh+xBXJjokGvwcxb8aN5tkIqakxaZ4m
-	 X1RL6xx5vDTWiJ0FnvEwIHgQWPg3Fe0UAtmWImTePIoPF1/805iDB5w0H54KD1+qG8
-	 HgTSoOKYMT6QKZ+78TF6cRznbBFLe1O8DdeskLvn64kLH2d8QQLxPHbJRnkldDQAmA
-	 MZ+n+z8GrIkUyvbBAki/9hXnltYr35GW/nUXxy67F3izkKlOeJ/ukglEFNi7HSvAkG
-	 hv2boHYgq8JUw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1s90mZ-000000003iD-1MbO;
-	Mon, 20 May 2024 13:02:19 +0200
-Date: Mon, 20 May 2024 13:02:19 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Tedd Ho-Jeong An <tedd.an@intel.com>, Kiran K <kiran.k@intel.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	linux-bluetooth@vger.kernel.org
-Subject: Re: [PATCH] Bluetooth: btintel_pcie: Fix the error handling path of
- btintel_pcie_probe()
-Message-ID: <Zkstu34CQYwKdtfr@hovoldconsulting.com>
-References: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IihoePT4LRMpC+n6Omkj+x0kOueRVLCX6W+591iXoTKogqak+WBNTViHjF94FNH9cDFdw2Mb1z35FWZ9YGs0AxRXC42uOUPyE8j8SZodT20rPhYSzk97yeiuT78U4O1lBFPzXq42pRC1AxtHmVIQ9voZrfYVuPO1YHLRmx0aYRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KS0tDeas; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51f0602bc58so2339499e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 04:02:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716202966; x=1716807766; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SIDOKwIcUp4lPPO/PDmHDa/A/zxT15SPb9EQ0kHZyQI=;
+        b=KS0tDeaswHLDsFQJ2dXVZEW00flrO7Yi+5XlZAyeYw70E8YM3gI3do48DJFdFznLqh
+         ICnXfpB3tM9mUVTOkIC5V8UseJjuGYhmgy9zrSDeAoY2r4+OL/EizvOiPZfc47MqQIWN
+         qMcw+Wq1nJ9Sn1hDSwW0ObUgqClllvbgXmZS5Y0G1paavKLBrcT/dhMGGW82p71m+XOo
+         enoiKx/shfFRI+N/aaGrAAbQ4nW5KXP9QefFVq90sKxX+ju276KrJrfQuFrwjbp35FO1
+         TzA0JAb1Us9FRiJev/r46ZitNpz957KyXRDCm18Q0QUAsw2KUqwV7MY5rkOCjSMrb6fp
+         OOIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716202966; x=1716807766;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SIDOKwIcUp4lPPO/PDmHDa/A/zxT15SPb9EQ0kHZyQI=;
+        b=DENRnoQa3vLBbnZ6h4uck+C9Gn3thYXTyla0gQuhq4wILqikiS25zodSXFKvN+yOak
+         6PU2Kr3W2N4QL7GoShXp5dToye0DCNmpw6TAqPDXxCEdcRCVpU7JRMe/G4qc9l8+68e5
+         WGhdGElZckqPpwAgJ8Gz4JQs21DJYyqWeAwnzfoOA+PqQW0QZXpRu+XL37htZ0WXVJiL
+         MPvqKka5MINnj7jf/iO7Tt92/F6Ergkjp9ZbwCUYKckJjt8V6n2yA1Spq9803RZi28M0
+         n7Vty6oXlAGsf4T0UVYzaU9YurSnx5vtInUQ9mgtGL5VcAVSHH3Uo0SziyDqJ6DrMUkn
+         LLUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDHMTcL/LuY9BOYKtSc98hVed/yAKMFUcJ1WaRz961O+pIkrNwdYcCdc1qHxjQQNj83Oc4vtOMsXRsoW2ITjYuRnj0v8aJqqwr47tC
+X-Gm-Message-State: AOJu0Yyw4jp8Rw9F9Kwg+3hgnZT1N7Yyw1OE6txHH9591KuwOaM8bfWX
+	7f/E7v+JheKDUh+S/V8jAVsQRWot7xZN8BVuCVkaspTZEg+4udJoZjCtbhQjOlc=
+X-Google-Smtp-Source: AGHT+IHe2PgQwC1mRKPz+r1r564vDGsot6Gznz5gkwCdKTo8R1LGu6rQBjXQZQUxapTX0MQHaaP1KA==
+X-Received: by 2002:ac2:44a8:0:b0:513:dbcd:7b8e with SMTP id 2adb3069b0e04-52407cdde08mr1551456e87.24.1716202966284;
+        Mon, 20 May 2024 04:02:46 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5236e80e8c9sm2317384e87.238.2024.05.20.04.02.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 04:02:45 -0700 (PDT)
+Date: Mon, 20 May 2024 14:02:44 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
+	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, robdclark@gmail.com, 
+	david.heidelberg@collabora.com, guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
+	mcanal@igalia.com, linux-mediatek@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] drm/ci: build virtual GPU driver as module
+Message-ID: <elftuzsd7lhz6y5ow6rb5uu5fb5b5jcprxtvxtxtojo774rnyr@swpeg4vkgtnc>
+References: <20240517092502.647420-1-vignesh.raman@collabora.com>
+ <20240517092502.647420-4-vignesh.raman@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,60 +87,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240517092502.647420-4-vignesh.raman@collabora.com>
 
-On Mon, May 20, 2024 at 09:41:57AM +0200, Christophe JAILLET wrote:
-> Some resources freed in the remove function are not handled by the error
-> handling path of the probe.
+On Fri, May 17, 2024 at 02:54:59PM +0530, Vignesh Raman wrote:
+> With latest IGT, the tests tries to load the module and it
+> fails. So build the virtual GPU driver for virtio as module.
+
+Why? If the test fails on module loading (if the driver is built-in)
+then it's the test that needs to be fixed, not the kerenel config.
+
+It's fine as a temporal workaround, but please include a link to the
+patch posted to fix the issue.
+
 > 
-> Add the needed function calls.
-> 
-> Fixes: c2b636b3f788 ("Bluetooth: btintel_pcie: Add support for PCIe transport")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
 > ---
-> Compile tested only.
-> Maybe incomplete.
-> ---
->  drivers/bluetooth/btintel_pcie.c | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
-> index 5b6805d87fcf..d572576d0dbc 100644
-> --- a/drivers/bluetooth/btintel_pcie.c
-> +++ b/drivers/bluetooth/btintel_pcie.c
-> @@ -1280,17 +1280,17 @@ static int btintel_pcie_probe(struct pci_dev *pdev,
+> v2:
+>   - No changes.
+> 
+> ---
+>  drivers/gpu/drm/ci/build.sh       | 1 -
+>  drivers/gpu/drm/ci/igt_runner.sh  | 6 +++---
+>  drivers/gpu/drm/ci/image-tags.yml | 4 ++--
+>  drivers/gpu/drm/ci/test.yml       | 1 +
+>  drivers/gpu/drm/ci/x86_64.config  | 2 +-
+>  5 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/ci/build.sh b/drivers/gpu/drm/ci/build.sh
+> index a67871fdcd3f..e938074ac8e7 100644
+> --- a/drivers/gpu/drm/ci/build.sh
+> +++ b/drivers/gpu/drm/ci/build.sh
+> @@ -157,7 +157,6 @@ fi
 >  
->  	err = btintel_pcie_config_pcie(pdev, data);
->  	if (err)
-> -		goto exit_error;
-> +		goto exit_destroy_worqueue;
-
-typo: workqueue
-
-[...]
-
->  	bt_dev_dbg(data->hdev, "cnvi: 0x%8.8x cnvr: 0x%8.8x", data->cnvi,
->  		   data->cnvr);
->  	return 0;
+>  mkdir -p artifacts/install/lib
+>  mv install/* artifacts/install/.
+> -rm -rf artifacts/install/modules
+>  ln -s common artifacts/install/ci-common
+>  cp .config artifacts/${CI_JOB_NAME}_config
 >  
-> -exit_error:
-> +exit_free_pcie:
-> +	btintel_pcie_free(data);
-> +
-> +exit_free_irq_vectors:
-> +	pci_free_irq_vectors(pdev);
-> +
-> +exit_destroy_worqueue:
-> +	destroy_workqueue(data->workqueue);
-> +
+> diff --git a/drivers/gpu/drm/ci/igt_runner.sh b/drivers/gpu/drm/ci/igt_runner.sh
+> index 20026612a9bd..55532f79fbdc 100755
+> --- a/drivers/gpu/drm/ci/igt_runner.sh
+> +++ b/drivers/gpu/drm/ci/igt_runner.sh
+> @@ -30,10 +30,10 @@ case "$DRIVER_NAME" in
+>              export IGT_FORCE_DRIVER="panfrost"
+>          fi
+>          ;;
+> -    amdgpu)
+> +    amdgpu|virtio_gpu)
+>          # Cannot use HWCI_KERNEL_MODULES as at that point we don't have the module in /lib
+> -        mv /install/modules/lib/modules/* /lib/modules/.
+> -        modprobe amdgpu
+> +        mv /install/modules/lib/modules/* /lib/modules/. || true
+> +        modprobe --first-time $DRIVER_NAME
+>          ;;
+>  esac
+>  
+> diff --git a/drivers/gpu/drm/ci/image-tags.yml b/drivers/gpu/drm/ci/image-tags.yml
+> index 60323ebc7304..328f5c560742 100644
+> --- a/drivers/gpu/drm/ci/image-tags.yml
+> +++ b/drivers/gpu/drm/ci/image-tags.yml
+> @@ -4,9 +4,9 @@ variables:
+>     DEBIAN_BASE_TAG: "${CONTAINER_TAG}"
+>  
+>     DEBIAN_X86_64_BUILD_IMAGE_PATH: "debian/x86_64_build"
+> -   DEBIAN_BUILD_TAG: "2023-10-08-config"
+> +   DEBIAN_BUILD_TAG: "2024-05-09-virtio"
+>  
+> -   KERNEL_ROOTFS_TAG: "2023-10-06-amd"
+> +   KERNEL_ROOTFS_TAG: "2024-05-09-virtio"
+>  
+>     DEBIAN_X86_64_TEST_BASE_IMAGE: "debian/x86_64_test-base"
+>     DEBIAN_X86_64_TEST_IMAGE_GL_PATH: "debian/x86_64_test-gl"
+> diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
+> index 612c9ede3507..864ac3809d84 100644
+> --- a/drivers/gpu/drm/ci/test.yml
+> +++ b/drivers/gpu/drm/ci/test.yml
+> @@ -350,6 +350,7 @@ virtio_gpu:none:
+>    script:
+>      - ln -sf $CI_PROJECT_DIR/install /install
+>      - mv install/bzImage /lava-files/bzImage
+> +    - mkdir -p /lib/modules
 
-Please use an 'err_' prefix which is shorter and clearly indicates that
-these are error paths.
+Is it necessary to create it manually here?
 
-I'd also drop the newlines.
+>      - mkdir -p $CI_PROJECT_DIR/results
+>      - ln -sf $CI_PROJECT_DIR/results /results
+>      - install/crosvm-runner.sh install/igt_runner.sh
+> diff --git a/drivers/gpu/drm/ci/x86_64.config b/drivers/gpu/drm/ci/x86_64.config
+> index 1cbd49a5b23a..78479f063e8e 100644
+> --- a/drivers/gpu/drm/ci/x86_64.config
+> +++ b/drivers/gpu/drm/ci/x86_64.config
+> @@ -91,7 +91,7 @@ CONFIG_KVM=y
+>  CONFIG_KVM_GUEST=y
+>  CONFIG_VIRT_DRIVERS=y
+>  CONFIG_VIRTIO_FS=y
+> -CONFIG_DRM_VIRTIO_GPU=y
+> +CONFIG_DRM_VIRTIO_GPU=m
+>  CONFIG_SERIAL_8250_CONSOLE=y
+>  CONFIG_VIRTIO_NET=y
+>  CONFIG_VIRTIO_CONSOLE=y
+> -- 
+> 2.40.1
+> 
 
->  	/* reset device before exit */
->  	btintel_pcie_reset_bt(data);
-
-Johan
+-- 
+With best wishes
+Dmitry
 
