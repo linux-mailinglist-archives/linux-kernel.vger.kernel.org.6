@@ -1,125 +1,195 @@
-Return-Path: <linux-kernel+bounces-183648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E870B8C9C05
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:14:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44A1A8C9C0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4A91282FDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:14:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24FA1F227BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAF8535A6;
-	Mon, 20 May 2024 11:14:27 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9EF535DB;
+	Mon, 20 May 2024 11:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="g3O5Mq+L"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409705337E;
-	Mon, 20 May 2024 11:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A980820EB;
+	Mon, 20 May 2024 11:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716203667; cv=none; b=phclC8ZtJzRX0RQmpOO2jQ0Owji1O2Ee4WHECp7NUV7lRva0UBXFYRHha0VP257inJBerBmBLTxTCMs4y527llH4rvFaQJx7vjiXKYYQF7bdoQ/3eg2fLRO01cSMGnlSv1bX5ciUid6OjwJxLHM5KsMRzdtTipUmTj4LJVSE9MY=
+	t=1716203866; cv=none; b=ALkH851idkie/29alWcD0/Lgh5EkEd5Nz/DYiOMLFDdqPjV0wF/MKf0jYHKngT1y6Rdg9zplHNhpPMRtgfvyG/c85wTAri3MtKttIXtqDQ34WUtdhNOaStDuLDMv9Hbk5XKJ6+VBpX3p4RMYKl5ojRBy+RuM1mLjrKGXY05p6T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716203667; c=relaxed/simple;
-	bh=w6EWHG/7umfYX85hJzKNaeqWOnb01B251xQqu8FXNag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=citahhZn34nyjGqbrXXI9xAoEVs0G4/CHJFwF+3LrM48ir4q3pz1A76rXpMlXakUia9WRjy384dO8+QbkJqMG7PoWrSRMyIchy2QYXCNmk6joVZkSgb5w3awXlcM4ti++oXbc2JeHrqhHxzEfFrsB9SfFCrZcsfAiVDjMiNUplc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjZhL0Jmlz4f3mJD;
-	Mon, 20 May 2024 19:14:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 6CF731A016E;
-	Mon, 20 May 2024 19:14:20 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgAn9g6IMEtmiAG7NA--.5841S3;
-	Mon, 20 May 2024 19:14:20 +0800 (CST)
-Message-ID: <5b1b2719-2123-9218-97b4-ccda8b5cb3b4@huaweicloud.com>
-Date: Mon, 20 May 2024 19:14:16 +0800
+	s=arc-20240116; t=1716203866; c=relaxed/simple;
+	bh=Tr8/wwJz4pOtQRmig0+vpz4m6s/lwh1H78YLrzvodNA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rQ4oiY5HeEZwbge6aFAUJV548Qmn3DkohjUV1y+ILCRN1zIC4by7lNwyfDLHhaztLeM8hguwxmtopc7JMtdG+7eQ0faZnEkmn1m+20+NWJwgp1xh1LrlCUvritu65OWrIUdS1iPf6d5v7e+kvkyai6RMAi42kmj0avOctatAhPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=g3O5Mq+L; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44KBGaTh127346;
+	Mon, 20 May 2024 06:16:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716203796;
+	bh=DtbotRrxlfh+3BepWZTeI8VdjCOrKh6fu9usGat9L9E=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=g3O5Mq+LDVkAiOTfu89f+qA4Hc5CXAw8hwO6CDpVZOWCWTiaPXueaSCSB4aV5yfpo
+	 7kuGcJqh/HJywyzhyxgs+Jn/UDIqkdj825k8R7YYhVLHbxsqxQUNfeptJZiZDPQQU8
+	 /Iwl/AjrCGfhiuyQLi1IETRhlb3zpxdwUt3cYlao=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44KBGahd004860
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 20 May 2024 06:16:36 -0500
+Received: from flwvowa02.ent.ti.com (10.64.41.53) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 20
+ May 2024 06:16:36 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by flwvowa02.ent.ti.com
+ (10.64.41.53) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Mon, 20 May
+ 2024 06:16:35 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 20 May 2024 06:16:35 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44KBGZ84034645;
+	Mon, 20 May 2024 06:16:35 -0500
+Date: Mon, 20 May 2024 16:46:34 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Onkarnath <onkarnath.1@samsung.com>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>,
+        "bhelgaas@google.com"
+	<bhelgaas@google.com>,
+        "vigneshr@ti.com" <vigneshr@ti.com>,
+        "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+        "kw@linux.com"
+	<kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
+        "yue.wang@Amlogic.com"
+	<yue.wang@Amlogic.com>,
+        "neil.armstrong@linaro.org"
+	<neil.armstrong@linaro.org>,
+        "khilman@baylibre.com" <khilman@baylibre.com>,
+        "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
+        "martin.blumenstingl@googlemail.com" <martin.blumenstingl@googlemail.com>,
+        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
+        "shawn.guo@linaro.org" <shawn.guo@linaro.org>,
+        "lchuanhua@maxlinear.com"
+	<lchuanhua@maxlinear.com>,
+        "srikanth.thokala@intel.com"
+	<srikanth.thokala@intel.com>,
+        "songxiaowei@hisilicon.com"
+	<songxiaowei@hisilicon.com>,
+        "wangbinghui@hisilicon.com"
+	<wangbinghui@hisilicon.com>,
+        "manivannan.sadhasivam@linaro.org"
+	<manivannan.sadhasivam@linaro.org>,
+        "thierry.reding@gmail.com"
+	<thierry.reding@gmail.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "hayashi.kunihiko@socionext.com" <hayashi.kunihiko@socionext.com>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "pali@kernel.org"
+	<pali@kernel.org>,
+        "toan@os.amperecomputing.com"
+	<toan@os.amperecomputing.com>,
+        "daire.mcnamara@microchip.com"
+	<daire.mcnamara@microchip.com>,
+        "conor.dooley@microchip.com"
+	<conor.dooley@microchip.com>,
+        "marek.vasut+renesas@gmail.com"
+	<marek.vasut+renesas@gmail.com>,
+        "shawn.lin@rock-chips.com"
+	<shawn.lin@rock-chips.com>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "nirmal.patel@linux.intel.com" <nirmal.patel@linux.intel.com>,
+        "jonathan.derrick@linux.dev" <jonathan.derrick@linux.dev>,
+        "kishon@kernel.org" <kishon@kernel.org>,
+        "jdmason@kudzu.us"
+	<jdmason@kudzu.us>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "mahesh@linux.ibm.com" <mahesh@linux.ibm.com>,
+        "oohall@gmail.com"
+	<oohall@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-amlogic@lists.infradead.org"
+	<linux-amlogic@lists.infradead.org>,
+        "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>,
+        Rohit Thapliyal <r.thapliyal@samsung.com>,
+        Maninder Singh <maninder1.s@samsung.com>
+Subject: Re: [PATCH 1/1] PCI : Refactoring error log prints for better
+ readability
+Message-ID: <e0e28988-9699-4e6c-abb0-30fa2727c2c3@ti.com>
+References: <4ec3b167-9324-41d3-a086-74ca001b9042@ti.com>
+ <20240517105923.2406246-1-onkarnath.1@samsung.com>
+ <CGME20240517105941epcas5p3e8dbb97f19c9553bf9942ad146124806@epcms5p5>
+ <20240520104358epcms5p50e00970ef70f66e87ceaaa893fc0ba67@epcms5p5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH v2 08/12] cachefiles: never get a new anonymous fd if
- ondemand_id is valid
-Content-Language: en-US
-To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
- dhowells@redhat.com, jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
- libaokun@huaweicloud.com
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
- <20240515084601.3240503-9-libaokun@huaweicloud.com>
- <f4d24738-76a2-4998-9a28-493599cd7eae@linux.alibaba.com>
- <d62b162d-acb3-2fa7-085e-79da3278091a@huaweicloud.com>
- <a3ca2292-0218-45f6-8afe-4319a10b69e2@linux.alibaba.com>
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <a3ca2292-0218-45f6-8afe-4319a10b69e2@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn9g6IMEtmiAG7NA--.5841S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFy7Wr1ktw4rCryUZrW5Wrg_yoW8XFyDpF
-	WxWa4rKF1vqFW0vr9Fvr9xXryjyay7J3WUXrs7Kw1UJr98Zr15Cr4xJr4jgas8A39ava1I
-	yF12q3srZa4UA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
-	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x0JUq38nUUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240520104358epcms5p50e00970ef70f66e87ceaaa893fc0ba67@epcms5p5>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 2024/5/20 17:24, Jingbo Xu wrote:
->
-> On 5/20/24 5:07 PM, Baokun Li wrote:
->> On 2024/5/20 16:43, Jingbo Xu wrote:
->>> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
->>>> From: Baokun Li <libaokun1@huawei.com>
->>>>
-SNIP
->>>>
->>>> To avoid this, allocate a new anonymous fd only if no anonymous fd has
->>>> been allocated (ondemand_id == 0) or if the previously allocated
->>>> anonymous
->>>> fd has been closed (ondemand_id == -1). Moreover, returns an error if
->>>> ondemand_id is valid, letting the daemon know that the current userland
->>>> restore logic is abnormal and needs to be checked.
->>>>
->>>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking
->>>> up cookie")
->>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->>> The LOCs of this fix is quite under control.  But still it seems that
->>> the worst consequence is that the (potential) malicious daemon gets
->>> hung.  No more effect to the system or other processes.  Or does a
->>> non-malicious daemon have any chance having the same issue?
->> If we enable hung_task_panic, it may cause panic to crash the server.
-> Then this issue has nothing to do with this patch?  As long as a
-> malicious daemon doesn't close the anonymous fd after umounting, then I
-> guess a following attempt of mounting cookie with the same name will
-> also wait and hung there?
->
-Yes, a daemon that only reads requests but doesn't process them will
-cause hung，but the daemon will obey the basic constraints when we
-test it.
+On Mon, May 20, 2024 at 04:13:58PM +0530, Onkarnath wrote:
+> Hi,
+> 
+> 
 
--- 
-With Best Regards,
-Baokun Li
+[...]
 
+> 
+> >>Similar question as above regarding converting "failed, ret" to
+> 
+> >>"failed:". Is this a new convention that is expected to be followed,
+> 
+> >where all errors are supposed to have "failed: %pe", rather than custom
+> 
+> >statements? Please let me know if this has already been discussed
+> 
+> >elsewhere.
+> 
+> 
+> Bjorn suggested to make all errors consistent.
+> 
+> and I thought printing error like below:
+> 
+> 
+> "gpio request failed: -ENOMEM".
+> 
+> 
+> Seems more suitable than
+> 
+> 
+> "gpio request failed, ret (-ENOMEM)".
+> 
+> 
+> If it needs to be changed in other format, please let me know, i will make all
+> errors in that format.
+> 
+> and will share v2.
+
+Thank you for clarifying. It appeared to me that the suggestion was
+limited to the %d to %pe conversion. The existing implementation looks
+good in that case.
+
+Regards,
+Siddharth.
 
