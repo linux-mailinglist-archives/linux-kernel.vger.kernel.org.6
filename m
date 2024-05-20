@@ -1,223 +1,108 @@
-Return-Path: <linux-kernel+bounces-183750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097498C9D79
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:38:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF6E8C9D03
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C3E91C226D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:38:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72D41B2159D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7F85D8EE;
-	Mon, 20 May 2024 12:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=damenly.org header.i=@damenly.org header.b="p8/2w1aH"
-Received: from mail-108-mta245.mxroute.com (mail-108-mta245.mxroute.com [136.175.108.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4A854BF6;
+	Mon, 20 May 2024 12:14:43 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7BA56754
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 12:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738125337F;
+	Mon, 20 May 2024 12:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716208711; cv=none; b=R0I4wNraRe0Oy8cBeQmkDLwGNMJVDDEgvLVXS/gBWMVHcgFBmSJEk0lhnEmIT2znCbd7XhzMAk/mGz6E4TeOEKVZoH8I9SqQSaquDv0f9NT2PdspOq+ILeWuDgEW841igLAASy3bQ7ouEhjBuZGyBZAbbheFkGWCKZG4gEKcTfc=
+	t=1716207282; cv=none; b=JYS06gJzjAmbdYO+NovEmIf3V2CJaIAK7r18/ZHlLf7hEaiZnkuWC6jaSqfNR1UFx4VL0fe7HxMmoB+RWrMjXL4CXSST/m9+l8CuFWZu/H5Amkq6ktEicHaPay4R3D36E0r0UpHGBBbpd0JDsc40CMQrQj7IhZyzQv7wgNgzw14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716208711; c=relaxed/simple;
-	bh=vSwLw09oJeePOsbI1H72eswYjkpje5c2G4YPiZSuBj8=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=KM371ucuvheBBUX9Eh+cUuZFAg9fVMs5OLeSHOFz2uxC7VdNNhQah072gNtT/0gbiyl+3naFM6S4sqNuiz70xn3JJXGznkskqM6BIT5lDMflkqKW8KNCiz9qWEb5D7sPoiRgVfTYI/n+agaI8xx3nBoLfEGUfEy+7Dlv2VB2HCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damenly.org; spf=pass smtp.mailfrom=damenly.org; dkim=pass (2048-bit key) header.d=damenly.org header.i=@damenly.org header.b=p8/2w1aH; arc=none smtp.client-ip=136.175.108.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damenly.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damenly.org
-Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
- (Authenticated sender: mN4UYu2MZsgR)
- by mail-108-mta245.mxroute.com (ZoneMTA) with ESMTPSA id 18f95fdf437000efce.00b
- for <linux-kernel@vger.kernel.org>
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
- Mon, 20 May 2024 12:33:19 +0000
-X-Zone-Loop: 43fddec20cacd8692ee656ab6f6f5eb7b1ea636cb875
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=damenly.org
-	; s=x; h=Content-Type:MIME-Version:Message-ID:In-reply-to:Date:Subject:Cc:To:
-	From:References:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=JvDGKlHjtsOoT4fZ/bziidnM87mi6Drl2/H5bm2mPzM=; b=p8/2w1aHCYzDslMAYy93dwz2e6
-	vhlqrwcwxLncKvNFqMHO0DIGCj2FoFfGaMEWE3b4t4Q7nj8MoPpAQR5gJXqIDGKW9SgWSpzUqqXyM
-	aBGjVIdRkgPlHDCBUHijbXEBNemJq3Hw58aNQXcWDFuPZNojxf8yp0LLbmmIXuN1hcsgijmdaKcWx
-	F3KBhhecUmCJibFnY0v0od58b9FdLWxV4MgPJef9Wqle9eiru+7jGkKzhZs1xJBktjiAvjtVGex0q
-	Pib9myuR3eQ2cJd0dw43Rs6XrmL+M08qbepXVG0o286MdarM1LjoI+mFj0BON5kJLQKHjqmocyMth
-	ZH0CT2jw==;
-References: <20240509011900.2694291-1-yukuai1@huaweicloud.com>
- <20240509011900.2694291-4-yukuai1@huaweicloud.com>
-User-agent: mu4e 1.7.5; emacs 28.2
-From: Su Yue <l@damenly.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
- song@kernel.org, xni@redhat.com, dm-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH md-6.10 3/9] md: add new helpers for sync_action
-Date: Mon, 20 May 2024 19:51:25 +0800
-In-reply-to: <20240509011900.2694291-4-yukuai1@huaweicloud.com>
-Message-ID: <v838ekaa.fsf@damenly.org>
+	s=arc-20240116; t=1716207282; c=relaxed/simple;
+	bh=mvD6sd9vndZ7Sf1mQsWKHKUTPiFurzaR4/bRViw4zaM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L05/KGs2hCckn+tPQe+1ijkD6baJbOiBTZFYGwW9JL4ZLDqht7sl5QhZjAr+WAvubhodC8zZiwPk0GvC/zdGFqFHJWT5nASJsDAiFQBaAgb9tWRe6n0WSWGSle8E0APm/ogbTbxX+raDXM8HvkIG6R9W/PFuoY4Akd5xrJ5SVNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4VjbcJ3M3dz2Cj98;
+	Mon, 20 May 2024 19:55:44 +0800 (CST)
+Received: from dggpemm500006.china.huawei.com (unknown [7.185.36.236])
+	by mail.maildlp.com (Postfix) with ESMTPS id B43F414037E;
+	Mon, 20 May 2024 19:59:11 +0800 (CST)
+Received: from huawei.com (10.173.134.152) by dggpemm500006.china.huawei.com
+ (7.185.36.236) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 20 May
+ 2024 19:59:11 +0800
+From: <zhoushuling@huawei.com>
+To: <seanjc@google.com>, <pbonzini@redhat.com>
+CC: <weiqi4@huawei.com>, <zhoushuling@huawei.com>, <wanpengli@tencent.com>,
+	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] KVM: LAPIC: Fix an inversion error when a negative value assigned to lapic_timer.timer_advance_ns
+Date: Mon, 20 May 2024 19:53:34 +0800
+Message-ID: <20240520115334.852510-1-zhoushuling@huawei.com>
+X-Mailer: git-send-email 2.23.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-X-Authenticated-Id: l@damenly.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm500006.china.huawei.com (7.185.36.236)
 
+From: Shuling Zhou <zhoushuling@huawei.com>
 
-On Thu 09 May 2024 at 09:18, Yu Kuai <yukuai1@huaweicloud.com> 
-wrote:
+After 'commit 0e6edceb8f18 ("KVM: LAPIC: Fix lapic_timer_advance_ns
+parameter overflow")',a negative value can be assigned to
+lapic_timer_advance_ns, when it is '-1', the kvm_create_lapic()
+will judge it and turns on adaptive tuning of timer advancement.
+However, when lapic_timer_advance_ns=-2, it will be assigned to
+an uint variable apic->lapic_timer.timer_advance_ns, the
+apic->lapic_timer.timer_advance_ns of each vCPU will become a huge
+value. When a VM is started, the VM is stuck in the
+"
+[    2.669717] ACPI: Core revision 20130517
+[    2.672378] ACPI: All ACPI Tables successfully acquired
+[    2.673309] ftrace: allocating 29651 entries in 116 pages
+[    2.698797] Enabling x2apic
+[    2.699431] Enabled x2apic
+[    2.700160] Switched APIC routing to physical x2apic.
+[    2.701644] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    2.702575] smpboot: CPU0: Intel(R) Xeon(R) Platinum 8378A CPU @ 3.00GHz (fam: 06, model: 6a, stepping: 06)
+.........
+"
 
-> From: Yu Kuai <yukuai3@huawei.com>
->
-> The new helpers will get current sync_action of the array, will 
-> be used
-> in later patches to make code cleaner.
->
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  drivers/md/md.c | 64 
->  +++++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/md/md.h |  3 +++
->  2 files changed, 67 insertions(+)
->
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 00bbafcd27bb..48ec35342d1b 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -69,6 +69,16 @@
->  #include "md-bitmap.h"
->  #include "md-cluster.h"
->
-> +static char *action_name[NR_SYNC_ACTIONS] = {
->
+'Fixes: 0e6edceb8f18 ("KVM: LAPIC: Fix lapic_timer_advance_ns
+parameter overflow")'
 
-Th array will not be modified, so:
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Wanpeng Li <wanpengli@tencent.com>
+Signed-off-by: Shuling Zhou<zhoushuling@huawei.com>
+---
+ arch/x86/kvm/lapic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-static const char * const action_names[NR_SYNC_ACTIONS]
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index ebf41023be38..5feeb889ddb6 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -2848,7 +2848,7 @@ int kvm_create_lapic(struct kvm_vcpu *vcpu, int timer_advance_ns)
+ 	if (timer_advance_ns == -1) {
+ 		apic->lapic_timer.timer_advance_ns = LAPIC_TIMER_ADVANCE_NS_INIT;
+ 		lapic_timer_advance_dynamic = true;
+-	} else {
++	} else if (timer_advance_ns >= 0) {
+ 		apic->lapic_timer.timer_advance_ns = timer_advance_ns;
+ 		lapic_timer_advance_dynamic = false;
+ 	}
+-- 
+2.27.0
 
-> +	[ACTION_RESYNC]		= "resync",
-> +	[ACTION_RECOVER]	= "recover",
-> +	[ACTION_CHECK]		= "check",
-> +	[ACTION_REPAIR]		= "repair",
-> +	[ACTION_RESHAPE]	= "reshape",
-> +	[ACTION_FROZEN]		= "frozen",
-> +	[ACTION_IDLE]		= "idle",
-> +};
-> +
->  /* pers_list is a list of registered personalities protected by 
->  pers_lock. */
->  static LIST_HEAD(pers_list);
->  static DEFINE_SPINLOCK(pers_lock);
-> @@ -4867,6 +4877,60 @@ metadata_store(struct mddev *mddev, const 
-> char *buf, size_t len)
->  static struct md_sysfs_entry md_metadata =
->  __ATTR_PREALLOC(metadata_version, S_IRUGO|S_IWUSR, 
->  metadata_show, metadata_store);
->
-> +enum sync_action md_sync_action(struct mddev *mddev)
-> +{
-> +	unsigned long recovery = mddev->recovery;
-> +
-> +	/*
-> +	 * frozen has the highest priority, means running sync_thread 
-> will be
-> +	 * stopped immediately, and no new sync_thread can start.
-> +	 */
-> +	if (test_bit(MD_RECOVERY_FROZEN, &recovery))
-> +		return ACTION_FROZEN;
-> +
-> +	/*
-> +	 * idle means no sync_thread is running, and no new 
-> sync_thread is
-> +	 * requested.
-> +	 */
-> +	if (!test_bit(MD_RECOVERY_RUNNING, &recovery) &&
-> +	    (!md_is_rdwr(mddev) || !test_bit(MD_RECOVERY_NEEDED, 
-> &recovery)))
-> +		return ACTION_IDLE;
-My brain was lost sometimes looking into nested conditions of md 
-code...
-I agree with Xiao Ni's suggestion that more comments about the 
-array
-state should be added.
-
-> +	if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
-> +	    mddev->reshape_position != MaxSector)
-> +		return ACTION_RESHAPE;
-> +
-> +	if (test_bit(MD_RECOVERY_RECOVER, &recovery))
-> +		return ACTION_RECOVER;
-> +
->
-In action_show, MD_RECOVERY_SYNC is tested first then 
-MD_RECOVERY_RECOVER.
-After looking through the logic of MD_RECOVERY_RECOVER 
-clear/set_bit, the
-change is fine to me. However, better to follow old pattern unless 
-there
-have resons.
-
-
-> +	if (test_bit(MD_RECOVERY_SYNC, &recovery)) {
-> +		if (test_bit(MD_RECOVERY_CHECK, &recovery))
-> +			return ACTION_CHECK;
-> +		if (test_bit(MD_RECOVERY_REQUESTED, &recovery))
-> +			return ACTION_REPAIR;
-> +		return ACTION_RESYNC;
-> +	}
-> +
-> +	return ACTION_IDLE;
-> +}
-> +
-> +enum sync_action md_sync_action_by_name(char *page)
-> +{
-> +	enum sync_action action;
-> +
-> +	for (action = 0; action < NR_SYNC_ACTIONS; ++action) {
-> +		if (cmd_match(page, action_name[action]))
-> +			return action;
-> +	}
-> +
-> +	return NR_SYNC_ACTIONS;
-> +}
-> +
-> +char *md_sync_action_name(enum sync_action action)
->
-
-And 'const char *'
-
---
-Su
-
-> +{
-> +	return action_name[action];
-> +}
-> +
->  static ssize_t
->  action_show(struct mddev *mddev, char *page)
->  {
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index 2edad966f90a..72ca7a796df5 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -864,6 +864,9 @@ extern void md_unregister_thread(struct 
-> mddev *mddev, struct md_thread __rcu **t
->  extern void md_wakeup_thread(struct md_thread __rcu *thread);
->  extern void md_check_recovery(struct mddev *mddev);
->  extern void md_reap_sync_thread(struct mddev *mddev);
-> +extern enum sync_action md_sync_action(struct mddev *mddev);
-> +extern enum sync_action md_sync_action_by_name(char *page);
-> +extern char *md_sync_action_name(enum sync_action action);
->  extern bool md_write_start(struct mddev *mddev, struct bio 
->  *bi);
->  extern void md_write_inc(struct mddev *mddev, struct bio *bi);
->  extern void md_write_end(struct mddev *mddev);
 
