@@ -1,329 +1,197 @@
-Return-Path: <linux-kernel+bounces-183449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69A48C992D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:12:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5D98C9930
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4201C1F2152F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:12:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4637C1F20F78
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A66B18C3B;
-	Mon, 20 May 2024 07:12:28 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD9E18AF4;
+	Mon, 20 May 2024 07:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="THhhE5S8"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BA217BAF
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 07:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016F61865A
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 07:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716189147; cv=none; b=ROFXl4EF7b5UwUxAHmBiUyYMPLm8bv3MAFQ5OIhQAMQxPG4vGWxKiAwE6JNJLOQwTqcvkxOBooAfRdTY0NeSJHvBl5ME9rvJ+6+JV1WEqP71mWTx5WFiO7AvPD4Vzml+sNGXa3ifeamrm0ACjWu+G+qisNCPgPjpn8PzU/CEP0M=
+	t=1716189257; cv=none; b=SF1jdDi2dNeHQM1Thy+KV9/A+1LnhwesMcRPXyu5u9e5uKCTvs7FvMoW9xCS+ClG2RyNKz6mg46eeZqaSjy4jTvP73qyfYrSzjhX7ttC/1qXWKHjDBtdbyWWmKxCE8dFelYhDU0WX5/zi1+3gxcPqpk0bL8xRpYvFaz0YvxNWoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716189147; c=relaxed/simple;
-	bh=HdSe5NKtEbkv5X2azDCfiLrS6TQP0fL8ACjGdAYdsqY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VdoOf+SREvEBBczFBa1wQddFM57QK5f2u+2qrxaumvMaD57hTb/6co5uFt33Ff34shnyg490YOUHlC1/JdzElR0F4RcFMlCK8XofkWaDBoK6thf1/XoyCrmSLYE5gB9Df/03efSNv93YE9Z/qXyyQoR790Zp2jyVrAz59QqSCFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7ddf0219685so1351248139f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 00:12:25 -0700 (PDT)
+	s=arc-20240116; t=1716189257; c=relaxed/simple;
+	bh=HqRomw7PvD7opEbwRuNt2g5NQH+EA6onQdBZHNyIvL4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oxQg8rc6uPnYFiBQ4USWuM2MvjYkWIrPrpmqM4d3Sr0Kf/qvODcvOcZ2IZkO9/myuUZCzCCf0KyidlRC/uXUPJ7RRXoHqtaw/Pxo0wWB/5GyGljpH8kQN27j6tTIfIdJhiRA37qt4twlHaTgE08uthDsJ2mXuK7RjUp1SZ0hCdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=THhhE5S8; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-571ba432477so7693155a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 00:14:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716189254; x=1716794054; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FZ3PltnZNdgwNAbMD6uwjPtdVhRlQYrC9JSG8VMmpxQ=;
+        b=THhhE5S8rSNZP7f1xd2b9AHpC0alJ1LZyZkT8p3svqwo89v30ZS4Kjte+SZr70+9KT
+         075P420dHWkc+rEzO1D/IiBYcOh/apx0v5M0PczJtJOmf8i+x9gV2zJ4FvagRuWKI2h3
+         UiCYKawjKu3dr50/czkU1MsuZSHRUnnU+TJzCinA9z4rPHADbJm6pBPauTjbLBs16027
+         cP4FFkboexPdy39UsoDNpPEubCtxItCHS0pXiFn4oJPK8C5EMzIvtGcRDzdY08sWxfLw
+         Xii5hRch7tDQkrblFpepIlhM87Hu4JlHMb5jzezOcmM6zTngLoTwy4+0tRcQkjrYGF/h
+         hpCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716189144; x=1716793944;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SBScJFSoP+QAp8D3oEJp/AZqhhLav73CUmlNAAy3P5Y=;
-        b=RikZxj5r9/Xi4EBKJA/JxM9/D05Kr9rDOhykKsot107JIcw08YR+3hWp1wIvVUe5Z1
-         ki2TU9rksiVpfueUiGNAXmUQuiCIhJuCQYA7akIAt2u9DksuG2ndvxJw1pgIZK5j51+z
-         LXznzARkgj4Q70EGb3hS4Hffj9eLxSQKk+g3lD71z3wM4+Fs7S3Ba1CLBhp+ub+DPXch
-         yHOtO0qgUi8XjbEisMDJ+4SGZDtQGpC1ceYkp5/pMF1kNclNiKe1PuKydMqHOTIMIgom
-         VEoxYhpjfcmGoE4iDBVNjnki5ruwHAQ2RpaO8dtJFDjDJ3gUix/nfDHx5r00kQ62I1NG
-         L9zA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxBwzVmbRnBjJ0YH1WQmyS+NOVc0l3+4I+J2CTOlny5l0RN1FJCVrBBLSrRExm5jmWXV8LcuzY04MkB2Lm72i00PWtm4/EeHpHHgqH
-X-Gm-Message-State: AOJu0Yy8d+0EWwRUKAPgFWZTerh+NDtjdpe0gxWf2PtcVkWtMT3BAlAE
-	Lu3czuqekN8UNKeyKDH0PojSpHay1ZzKbUnceYKXHyPqzni8PUe6oIVkHNpricycHpsMEU3KPu8
-	beWZlI1wkoA+EcMvH6DPdUr1Z1FbXZzKPG9kiUzcdVXBLwUKGnTgUUvc=
-X-Google-Smtp-Source: AGHT+IERYBwCkEzRrHVYv0kkDcamD8sBWyp+tWpnLnvrCSgJOIfkaWnrKMkBgSR1JOkYNM7dHFamDRg0p1yOgiESf8bJonyo/sin
+        d=1e100.net; s=20230601; t=1716189254; x=1716794054;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FZ3PltnZNdgwNAbMD6uwjPtdVhRlQYrC9JSG8VMmpxQ=;
+        b=FMPPeMgSLUCvUadWcAOBEyoBZ9RRgE7pdGxuE3sDKhoqexzbeCRpTE8BMJ/Jak3pT2
+         TpOWEIGyVxvICxF1lB4VgkgtoFDl/UZThTgzxcd0rvIG6zlkeRsSCzzjmCyhplQpUg7M
+         ozMo9vJ5XwEsYapNoJtw3/x4xY4Ae3lAuzYkLp1MUOZLSO/gp8GuuNSukD6wcbAC3kX7
+         mja1p7YXu6Lv2As90HWLdZ5AanWipEgYXBbZSLeJghUjGwmNpc50QS2WQbMgn/yPX9Tg
+         XRe6GaTcMWSR4mKJtycmJIvgm05W6IM5Vi+UvbRzNw8AkASLlNKBVKMVsHkzVDdt05xG
+         06bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXk80AU4ym6+FYSxrkC7Hbb+S53XUpkeOWiSvPg8x646UW0Qz+v+ngLT6HSKw+fF+etD+SqcW/Xkg9vNSBrgyalB/Yrr6R1rhVFpNyI
+X-Gm-Message-State: AOJu0YygpvuGsnv/iLLhHd4HEY6V4tTZ+mdZqINdRwxjn9kzX3tNPvOM
+	aUDQQXtZkGXmLe2ChV/IRKRgaX3UvEtklFi8MwQv9NJNOe3GtFNW
+X-Google-Smtp-Source: AGHT+IFpcWecaqheR6olE2EQ7ViMsVokrPeDzwE+eEfMtuGuvWEkz3ZG4+3aCMSdskzOZNNg8PcScg==
+X-Received: by 2002:a50:9ec5:0:b0:568:8e22:4eff with SMTP id 4fb4d7f45d1cf-5734d6df0d5mr18026097a12.37.1716189254152;
+        Mon, 20 May 2024 00:14:14 -0700 (PDT)
+Received: from f.. (cst-prg-73-12.cust.vodafone.cz. [46.135.73.12])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733becfde7sm14701087a12.48.2024.05.20.00.14.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 00:14:13 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: dennis@kernel.org
+Cc: tj@kernel.org,
+	hughd@google.com,
+	akpm@linux-foundation.org,
+	vbabka@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] percpu_counter: add a cmpxchg-based _add_batch variant
+Date: Mon, 20 May 2024 09:14:07 +0200
+Message-ID: <20240520071407.201618-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8506:b0:488:f465:f4cd with SMTP id
- 8926c6da1cb9f-4895856fa08mr2097682173.1.1716189144565; Mon, 20 May 2024
- 00:12:24 -0700 (PDT)
-Date: Mon, 20 May 2024 00:12:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000545c120618dd6c63@google.com>
-Subject: [syzbot] [bcachefs?] INFO: task hung in bch2_readahead
-From: syzbot <syzbot+a6060114362257e9798a@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+This was "percpu_counter: reimplement _add_batch with __this_cpu_cmpxchg".
 
-syzbot found the following issue on:
+I chatted with vbabka a little bit and he pointed me at mod_zone_state,
+which does the same thing I needed except dodges preemption -- turns out
+cmpxchg with a gs-prefixed argument is safe here.
 
-HEAD commit:    8c06da67d0bd Merge tag 'livepatching-for-6.10' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e74ef4980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cc69cd6a2dcb5aa
-dashboard link: https://syzkaller.appspot.com/bug?extid=a6060114362257e9798a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+================ cut here ================
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Interrupt disable/enable trips are quite expensive on x86-64 compared to
+a mere cmpxchg (note: no lock prefix!) and percpu counters are used
+quite often.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/331202aeac12/disk-8c06da67.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4db56871f364/vmlinux-8c06da67.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2ab7bc870390/bzImage-8c06da67.xz
+With this change I get a bump of 1% ops/s for negative path lookups,
+plugged into will-it-scale:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a6060114362257e9798a@syzkaller.appspotmail.com
+void testcase(unsigned long long *iterations, unsigned long nr)
+{
+        while (1) {
+                int fd = open("/tmp/nonexistent", O_RDONLY);
+                assert(fd == -1);
 
-INFO: task syz-executor.4:6256 blocked for more than 143 seconds.
-      Not tainted 6.9.0-syzkaller-07387-g8c06da67d0bd #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.4  state:D stack:14936 pid:6256  tgid:6255  ppid:5481   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5409 [inline]
- __schedule+0x1796/0x4a00 kernel/sched/core.c:6746
- __schedule_loop kernel/sched/core.c:6823 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6838
- __bch2_two_state_lock+0x171/0x200 fs/bcachefs/two_state_shared_lock.c:7
- bch2_two_state_lock fs/bcachefs/two_state_shared_lock.h:56 [inline]
- bch2_readahead+0xcf5/0x1870 fs/bcachefs/fs-io-buffered.c:277
- read_pages+0x17e/0x840 mm/readahead.c:160
- page_cache_ra_order+0xa62/0xcc0 mm/readahead.c:531
- filemap_readahead mm/filemap.c:2480 [inline]
- filemap_get_pages+0x743/0x2090 mm/filemap.c:2521
- filemap_splice_read+0x654/0xeb0 mm/filemap.c:2870
- do_splice_read fs/splice.c:985 [inline]
- splice_direct_to_actor+0x4b7/0xc90 fs/splice.c:1089
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x28c/0x3e0 fs/splice.c:1233
- do_sendfile+0x56d/0xdc0 fs/read_write.c:1295
- __do_sys_sendfile64 fs/read_write.c:1362 [inline]
- __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1348
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8ff447cee9
-RSP: 002b:00007f8ff52d30c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f8ff45abf80 RCX: 00007f8ff447cee9
-RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000006
-RBP: 00007f8ff44c949e R08: 0000000000000000 R09: 0000000000000000
-R10: 000000007ffff000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f8ff45abf80 R15: 00007ffe62ab44e8
- </TASK>
-INFO: task syz-executor.4:6292 blocked for more than 144 seconds.
-      Not tainted 6.9.0-syzkaller-07387-g8c06da67d0bd #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.4  state:D
- stack:18064 pid:6292  tgid:6255  ppid:5481   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5409 [inline]
- __schedule+0x1796/0x4a00 kernel/sched/core.c:6746
- __schedule_loop kernel/sched/core.c:6823 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6838
- io_schedule+0x8d/0x110 kernel/sched/core.c:9044
- folio_wait_bit_common+0x882/0x12b0 mm/filemap.c:1283
- bch2_seek_pagecache_data+0x2c6/0xac0 fs/bcachefs/fs-io-pagecache.c:690
- bch2_clamp_data_hole+0x121/0x180 fs/bcachefs/fs-io-pagecache.c:793
- __bchfs_fallocate fs/bcachefs/fs-io.c:647 [inline]
- bchfs_fallocate fs/bcachefs/fs-io.c:733 [inline]
- bch2_fallocate_dispatch+0x1a84/0x3810 fs/bcachefs/fs-io.c:780
- vfs_fallocate+0x564/0x6c0 fs/open.c:330
- ksys_fallocate fs/open.c:353 [inline]
- __do_sys_fallocate fs/open.c:361 [inline]
- __se_sys_fallocate fs/open.c:359 [inline]
- __x64_sys_fallocate+0xbd/0x110 fs/open.c:359
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8ff447cee9
-RSP: 002b:00007f8ff52b20c8 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
-RAX: ffffffffffffffda RBX: 00007f8ff45ac050 RCX: 00007f8ff447cee9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-RBP: 00007f8ff44c949e R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000001000f4 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007f8ff45ac050 R15: 00007ffe62ab44e8
- </TASK>
-INFO: task syz-executor.4:6293 blocked for more than 144 seconds.
-      Not tainted 6.9.0-syzkaller-07387-g8c06da67d0bd #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.4  state:D stack:28656 pid:6293  tgid:6255  ppid:5481   flags:0x00000006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5409 [inline]
- __schedule+0x1796/0x4a00 kernel/sched/core.c:6746
- __schedule_loop kernel/sched/core.c:6823 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6838
- __bch2_two_state_lock+0x171/0x200 fs/bcachefs/two_state_shared_lock.c:7
- bch2_two_state_lock fs/bcachefs/two_state_shared_lock.h:56 [inline]
- bch2_buffered_write fs/bcachefs/fs-io-buffered.c:1045 [inline]
- bch2_write_iter+0x410/0x2840 fs/bcachefs/fs-io-buffered.c:1144
- call_write_iter include/linux/fs.h:2120 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa2d/0xc50 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8ff447cee9
-RSP: 002b:00007f8ff52910c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f8ff45ac120 RCX: 00007f8ff447cee9
-RDX: 0000000000000009 RSI: 0000000020000040 RDI: 0000000000000004
-RBP: 00007f8ff44c949e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007f8ff45ac120 R15: 00007ffe62ab44e8
- </TASK>
+                (*iterations)++;
+        }
+}
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e3361e0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #0: ffffffff8e3361e0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #0: ffffffff8e3361e0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
-4 locks held by kworker/u8:9/2838:
- #0: ffff888015ed3148 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3242 [inline]
- #0: ffff888015ed3148 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x8e0/0x17c0 kernel/workqueue.c:3348
- #1: ffffc9000a487d00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3243 [inline]
- #1: ffffc9000a487d00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x91b/0x17c0 kernel/workqueue.c:3348
- #2: ffffffff8f5c1a10 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:594
- #3: ffffffff8f5ce3c8 (rtnl_mutex){+.+.}-{3:3}, at: default_device_exit_batch+0xe9/0xa90 net/core/dev.c:11745
-2 locks held by dhcpcd/4752:
- #0: ffff888061cc6678 (nlk_cb_mutex-ROUTE){+.+.}-{3:3}, at: __netlink_dump_start+0x119/0x780 net/netlink/af_netlink.c:2418
- #1: ffffffff8f5ce3c8 (rtnl_mutex){+.+.}-{3:3}, at: netlink_dump+0x5d3/0xe50 net/netlink/af_netlink.c:2336
-2 locks held by getty/4839:
- #0: ffff8880785280a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f162f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
-2 locks held by syz-executor.4/6256:
- #0: ffff88805683be30 (mapping.invalidate_lock#4){.+.+}-{3:3}, at: filemap_invalidate_lock_shared include/linux/fs.h:846 [inline]
- #0: ffff88805683be30 (mapping.invalidate_lock#4){.+.+}-{3:3}, at: page_cache_ra_order+0x3bc/0xcc0 mm/readahead.c:510
- #1: ffff888050b84250 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:116 [inline]
- #1: ffff888050b84250 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:215 [inline]
- #1: ffff888050b84250 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x911/0xd30 fs/bcachefs/btree_iter.c:3069
-3 locks held by syz-executor.4/6292:
- #0: ffff8880242c2420 (sb_writers#14){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2871 [inline]
- #0: ffff8880242c2420 (sb_writers#14){.+.+}-{0:0}, at: vfs_fallocate+0x4d3/0x6c0 fs/open.c:329
- #1: ffff88805683bc90 (&sb->s_type->i_mutex_key#22){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
- #1: ffff88805683bc90 (&sb->s_type->i_mutex_key#22){+.+.}-{3:3}, at: bch2_fallocate_dispatch+0x295/0x3810 fs/bcachefs/fs-io.c:771
- #2: ffff888050b84250 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:116 [inline]
- #2: ffff888050b84250 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:215 [inline]
- #2: ffff888050b84250 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0xb1/0x220 fs/bcachefs/btree_iter.c:2896
-2 locks held by syz-executor.4/6293:
- #0: ffff8880246754c8 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0x259/0x320 fs/file.c:1191
- #1: ffff8880242c2420 (sb_writers#14){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2871 [inline]
- #1: ffff8880242c2420 (sb_writers#14){.+.+}-{0:0}, at: vfs_write+0x227/0xc50 fs/read_write.c:586
-1 lock held by syz-executor.1/8207:
- #0: ffffffff8e33b5b8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:323 [inline]
- #0: ffffffff8e33b5b8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x451/0x830 kernel/rcu/tree_exp.h:939
-1 lock held by syz-executor.0/8583:
- #0: ffffffff8f5ce3c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8f5ce3c8 (rtnl_mutex){+.+.}-{3:3}, at: __rtnl_newlink net/core/rtnetlink.c:3720 [inline]
- #0: ffffffff8f5ce3c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_newlink+0xab5/0x20a0 net/core/rtnetlink.c:3743
-5 locks held by syz-executor.3/8673:
-2 locks held by syz-executor.4/8675:
+The win would be higher if it was not for other slowdowns, but one has
+to start somewhere.
 
-=============================================
+v2:
+- dodge preemption
+- use this_cpu_try_cmpxchg
+- keep the old variant depending on CONFIG_HAVE_CMPXCHG_LOCAL
 
-NMI backtrace for cpu 0
-CPU: 0 PID: 30 Comm: khungtaskd Not tainted 6.9.0-syzkaller-07387-g8c06da67d0bd #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xfde/0x1020 kernel/hung_task.c:380
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 8673 Comm: syz-executor.3 Not tainted 6.9.0-syzkaller-07387-g8c06da67d0bd #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:rcu_dynticks_curr_cpu_in_eqs include/linux/context_tracking.h:122 [inline]
-RIP: 0010:rcu_is_watching+0x3a/0xb0 kernel/rcu/tree.c:724
-Code: e8 4b 7c 02 0a 89 c3 83 f8 08 73 7a 49 bf 00 00 00 00 00 fc ff df 4c 8d 34 dd 20 7a d9 8d 4c 89 f0 48 c1 e8 03 42 80 3c 38 00 <74> 08 4c 89 f7 e8 ac 73 7b 00 48 c7 c3 08 7d 03 00 49 03 1e 48 89
-RSP: 0018:ffffc9000306f600 EFLAGS: 00000246
-RAX: 1ffffffff1bb2f45 RBX: 0000000000000001 RCX: ffffffff8172f1b0
-RDX: 0000000000000000 RSI: ffffffff8c1edc40 RDI: ffffffff8c1edc00
-RBP: ffffc9000306f758 R08: ffffffff8fabae2f R09: 1ffffffff1f575c5
-R10: dffffc0000000000 R11: fffffbfff1f575c6 R12: 1ffff9200060ded0
-R13: ffffffff82010bf4 R14: ffffffff8dd97a28 R15: dffffc0000000000
-FS:  00007f9c691596c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055558e530978 CR3: 000000002931c000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- trace_lock_release include/trace/events/lock.h:69 [inline]
- lock_release+0xbf/0x9f0 kernel/locking/lockdep.c:5765
- rcu_lock_release include/linux/rcupdate.h:339 [inline]
- rcu_read_unlock include/linux/rcupdate.h:812 [inline]
- percpu_ref_tryget_many include/linux/percpu-refcount.h:250 [inline]
- percpu_ref_tryget+0xf7/0x180 include/linux/percpu-refcount.h:266
- css_tryget include/linux/cgroup_refcnt.h:45 [inline]
- get_mem_cgroup_from_mm+0x103/0x2a0 mm/memcontrol.c:1112
- __mem_cgroup_charge+0x16/0x80 mm/memcontrol.c:7298
- mem_cgroup_charge include/linux/memcontrol.h:691 [inline]
- shmem_alloc_and_add_folio+0x456/0xbc0 mm/shmem.c:1677
- shmem_get_folio_gfp+0x82d/0x1f50 mm/shmem.c:2055
- shmem_get_folio mm/shmem.c:2160 [inline]
- shmem_write_begin+0x170/0x4d0 mm/shmem.c:2744
- generic_perform_write+0x322/0x640 mm/filemap.c:3974
- shmem_file_write_iter+0xfc/0x120 mm/shmem.c:2920
- call_write_iter include/linux/fs.h:2120 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa2d/0xc50 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9c6847bc2f
-Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 b9 80 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 0c 81 02 00 48
-RSP: 002b:00007f9c69158e80 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000013bd7ef RCX: 00007f9c6847bc2f
-RDX: 00000000013bd7ef RSI: 00007f9c5e200000 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 0000000000000000 R09: 000000000000551e
-R10: 00000000000003c8 R11: 0000000000000293 R12: 0000000000000005
-R13: 00007f9c69158f80 R14: 00007f9c69158f40 R15: 00007f9c5e200000
- </TASK>
-
-
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ lib/percpu_counter.c | 44 +++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 39 insertions(+), 5 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/lib/percpu_counter.c b/lib/percpu_counter.c
+index 44dd133594d4..80ec2ffc981a 100644
+--- a/lib/percpu_counter.c
++++ b/lib/percpu_counter.c
+@@ -73,17 +73,50 @@ void percpu_counter_set(struct percpu_counter *fbc, s64 amount)
+ EXPORT_SYMBOL(percpu_counter_set);
+ 
+ /*
+- * local_irq_save() is needed to make the function irq safe:
+- * - The slow path would be ok as protected by an irq-safe spinlock.
+- * - this_cpu_add would be ok as it is irq-safe by definition.
+- * But:
+- * The decision slow path/fast path and the actual update must be atomic, too.
++ * Add to a counter while respecting batch size.
++ *
++ * There are 2 implementations, both dealing with the following problem:
++ *
++ * The decision slow path/fast path and the actual update must be atomic.
+  * Otherwise a call in process context could check the current values and
+  * decide that the fast path can be used. If now an interrupt occurs before
+  * the this_cpu_add(), and the interrupt updates this_cpu(*fbc->counters),
+  * then the this_cpu_add() that is executed after the interrupt has completed
+  * can produce values larger than "batch" or even overflows.
+  */
++#ifdef CONFIG_HAVE_CMPXCHG_LOCAL
++/*
++ * Safety against interrupts is achieved in 2 ways:
++ * 1. the fast path uses local cmpxchg (note: no lock prefix)
++ * 2. the slow path operates with interrupts disabled
++ */
++void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
++{
++	s64 count;
++	unsigned long flags;
++
++	count = this_cpu_read(*fbc->counters);
++	do {
++		if (unlikely(abs(count + amount)) >= batch) {
++			raw_spin_lock_irqsave(&fbc->lock, flags);
++			/*
++			 * Note: by now might have migrated to another CPU or
++			 * the value might have changed.
++			 */
++			count = __this_cpu_read(*fbc->counters);
++			fbc->count += count + amount;
++			__this_cpu_sub(*fbc->counters, count);
++			raw_spin_unlock_irqrestore(&fbc->lock, flags);
++			return;
++		}
++	} while (!this_cpu_try_cmpxchg(*fbc->counters, &count, count + amount));
++}
++#else
++/*
++ * local_irq_save() is used to make the function irq safe:
++ * - The slow path would be ok as protected by an irq-safe spinlock.
++ * - this_cpu_add would be ok as it is irq-safe by definition.
++ */
+ void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
+ {
+ 	s64 count;
+@@ -101,6 +134,7 @@ void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
+ 	}
+ 	local_irq_restore(flags);
+ }
++#endif
+ EXPORT_SYMBOL(percpu_counter_add_batch);
+ 
+ /*
+-- 
+2.39.2
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
