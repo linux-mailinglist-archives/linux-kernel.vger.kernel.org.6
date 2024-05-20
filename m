@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-184247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884488CA4A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:49:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D518CA4A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D197282092
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:49:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06D401F225F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2916213BC1E;
-	Mon, 20 May 2024 22:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7623D13C667;
+	Mon, 20 May 2024 22:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CgyDtGjY"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FwGJWe3d"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1047413B2A8
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 22:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5018B13B5B7
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 22:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716245208; cv=none; b=efUS7TywZxgTHliI7uyJC/hHzDUaKmWBHYApJ7Gf/60/GqTpr7GTZXdwwgXB4NabfEy1/pf4+cKmXCt/+Rid3ZoU6lr9c2TFPKmYT0wRCYsuTBTKCnMy9rn2V1arZ1cZ31YLDQiDUi38ehC0ThlYlMU4hxiTVRC2O30bVtpPMo4=
+	t=1716245209; cv=none; b=GeX8DodSF1VjyNHPE9rNJmRs6Oiw5KZXcb8boBqW1xgBtJJiu+P7MD3uNYD9oUlmcLV34LgfwkGH+L6yxEWp6WoBYwUuhqiIUWUEMQIoaC0UH3cz2s4D/qp0/QqDC6WWnhRjhLvShM+hh2cV4EKFJQ1tVtDwnzGD+RvN7uTSq8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716245208; c=relaxed/simple;
-	bh=8rfbntKG1DMkpDVnqu9bd2NfEh681lNQrvAAuh2G8x0=;
+	s=arc-20240116; t=1716245209; c=relaxed/simple;
+	bh=WB9IrZhQaBiWvCtxLVin3lFQLCeXldDe0NZh3MqrvXI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RIeK0Ww68jOZFoN+7oN6I/50w4LfqKpFpENGgtoccS9IJxvrPCmrnkDsa1ZwJ6ocz1sKuPiJZNj9KEiky7eCK3MEobNyoF0OVjhsBDEQmLCmDcSn1SsgOjTcxMkSphJs17XGpknOB9bxYUD4vWZnze2G1w9vK5PicuusIAocb4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CgyDtGjY; arc=none smtp.client-ip=192.198.163.18
+	 MIME-Version; b=iqhknZNb5J1TUfzQdIPbOd4DpJ4KCvEu0nABPqDRfarifvpaOvyprLqmiwnb6vN4kmDpvRQt4i3bw16cq80PiR/29754cxZdjDAxmzu0h5FKlXHFu/Cd18rbpKNWwTNK5+ElbUoduQ4Vdjvy3xtwj+0bM2w16TUfEO4TCG9jujs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FwGJWe3d; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716245206; x=1747781206;
+  t=1716245207; x=1747781207;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=8rfbntKG1DMkpDVnqu9bd2NfEh681lNQrvAAuh2G8x0=;
-  b=CgyDtGjYiL8lhLMn+xkc9HUgTn66aNEPeYklja1xdmCWqEKI4wOohrIn
-   5jVqcYjOKoJfee/pz7ndybWtL3UEXtrxF/Wq/zx6wohPyzd+dk+0tvzya
-   PErusWdgtA14W3NG3pVX3EtIn5b+0+f3x1WMicngRUf+yUN/Hf1Zk194u
-   P/Skbea7jMa//1A10dgH8KrCYGkJroqwD9VsjkxwBpm0/RmOiHQDMJDmw
-   /OdeJebncgxUge9JYAnGqahljhthGGjXEz5klG2pEuFYz7QVwvbkz5Jtr
-   bQ95RLjtS0/lz92kKcFO9zsMljFuG829ujYASbbpB5HzT26zDqtmLqMri
-   Q==;
-X-CSE-ConnectionGUID: 88zS+MWHRASpbDgfrTuvGg==
-X-CSE-MsgGUID: z5kmJIvBTtSGD0YFI/RLhA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12199734"
+  bh=WB9IrZhQaBiWvCtxLVin3lFQLCeXldDe0NZh3MqrvXI=;
+  b=FwGJWe3dbNteHb/HRdDWvt+tjyNhkfVgbmEzyCXIrsjTFqpsLpNxNWZf
+   Jlvr59bZyJeUozWf1B3PG4ZNE0zmnP3ASXWL2T540kuCuQ2XM49MEHPgM
+   Q/QQAIirgxFLCFzGNxl6upovrAItpvLCE8DpL4d8L9HgIOo+TC8dew42d
+   Qk4f5kLZMp8lPev7TJ1hErhMEbS2TldfJCeNKt5oGn3tgXSvrBPYD8VFA
+   b6hW4cVUzLlu1JVIxd2GcApLYdXr1h2wqSbPqgKuxn98mEig6xItIRqBG
+   s5AW+Y1DVtic+JSlzIup1Lm0AqZCJ8AkRQR625T/Cqs97wmNEVfjWG7qy
+   w==;
+X-CSE-ConnectionGUID: lmMWICMxQDa9JtYnQl0Yyg==
+X-CSE-MsgGUID: TX9+bxpgT2eeZTb3Roc8IA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12199745"
 X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="12199734"
+   d="scan'208";a="12199745"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 15:46:37 -0700
-X-CSE-ConnectionGUID: p7sV0lcQR9KdqobAN6+SLg==
-X-CSE-MsgGUID: dWfWafuhR4+twVI5BMlcwA==
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 15:46:38 -0700
+X-CSE-ConnectionGUID: VURtXdSDSkeM+6BtBnTnLg==
+X-CSE-MsgGUID: OiObT9RmQ8Gac8FzHR0c4A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="32593445"
+   d="scan'208";a="32593448"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 15:46:37 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -75,9 +75,9 @@ Cc: "H. Peter Anvin" <hpa@zytor.com>,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v6 21/49] platform/x86: intel: telemetry: Switch to new Intel CPU model defines
-Date: Mon, 20 May 2024 15:45:52 -0700
-Message-ID: <20240520224620.9480-22-tony.luck@intel.com>
+Subject: [PATCH v6 22/49] platform/x86: intel_turbo_max_3: Switch to new Intel CPU model defines
+Date: Mon, 20 May 2024 15:45:53 -0700
+Message-ID: <20240520224620.9480-23-tony.luck@intel.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240520224620.9480-1-tony.luck@intel.com>
 References: <20240520224620.9480-1-tony.luck@intel.com>
@@ -94,21 +94,21 @@ New CPU #defines encode vendor and family as well as model.
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 Acked-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/platform/x86/intel/telemetry/pltdrv.c | 4 ++--
+ drivers/platform/x86/intel/turbo_max_3.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/intel/telemetry/pltdrv.c b/drivers/platform/x86/intel/telemetry/pltdrv.c
-index 06311d0e9451..767a0bc6c7ad 100644
---- a/drivers/platform/x86/intel/telemetry/pltdrv.c
-+++ b/drivers/platform/x86/intel/telemetry/pltdrv.c
-@@ -177,8 +177,8 @@ static struct telemetry_plt_config telem_glk_config = {
- };
+diff --git a/drivers/platform/x86/intel/turbo_max_3.c b/drivers/platform/x86/intel/turbo_max_3.c
+index 892140b62898..79a0bcdeffb8 100644
+--- a/drivers/platform/x86/intel/turbo_max_3.c
++++ b/drivers/platform/x86/intel/turbo_max_3.c
+@@ -114,8 +114,8 @@ static int itmt_legacy_cpu_online(unsigned int cpu)
+ }
  
- static const struct x86_cpu_id telemetry_cpu_ids[] = {
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT,	&telem_apl_config),
--	X86_MATCH_INTEL_FAM6_MODEL(ATOM_GOLDMONT_PLUS,	&telem_glk_config),
-+	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT,	&telem_apl_config),
-+	X86_MATCH_VFM(INTEL_ATOM_GOLDMONT_PLUS,	&telem_glk_config),
+ static const struct x86_cpu_id itmt_legacy_cpu_ids[] = {
+-	X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_X,	NULL),
+-	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_X,	NULL),
++	X86_MATCH_VFM(INTEL_BROADWELL_X,	NULL),
++	X86_MATCH_VFM(INTEL_SKYLAKE_X,	NULL),
  	{}
  };
  
