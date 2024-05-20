@@ -1,331 +1,274 @@
-Return-Path: <linux-kernel+bounces-184277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60D68CA4C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:55:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB228CA4C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 710AF1F21DBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:55:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51A01280CF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAE21422B0;
-	Mon, 20 May 2024 22:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5274E1386D1;
+	Mon, 20 May 2024 22:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SmwGllr9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KWew3cDH"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2086.outbound.protection.outlook.com [40.107.223.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6364013D8B0
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 22:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716245222; cv=none; b=h5/ktjCSAg3QPrpQwX1scmWPsmKOL4OUnfjWo0RuM5+t2mZzwRT1kO0Zon9kNm8OcnsbRj5u6wRstZLAndFfQpUy+0ZMbKYgfqHmO6PLu6izlxRt1SFkCnFW9Uti9WYrV1eRCylixN+I4i0FoYIVpWzedIKkUclqJvm9VsaOfJY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716245222; c=relaxed/simple;
-	bh=fARPp99QJtDjYFh93jB5P8ipyPFnC7ncFvMG22Occsg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RTLcVr9PkviQ01wA5dNqwXu000wcKarRA2cTrTQWFRjet7WE5e692BZtfzsmO+EMbSAUX/D9InjA99m1ezQmmciiN0AurkXpaKchl1zZWcB9vuP8n1m2KPDiVeUkfsZt9ghddahvimCanpNAk+LVGARhMW2pL2bV0nNvVnnEyTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SmwGllr9; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716245220; x=1747781220;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=fARPp99QJtDjYFh93jB5P8ipyPFnC7ncFvMG22Occsg=;
-  b=SmwGllr9MFeNQ9kH4OlSXQb9wLyWRmyvffJR88H1n3NiXKgx8vyoGfQ1
-   Ui5ZlbBCuesk3b8eNms5b/A6o+jkiEwEiL8wQcNp6sCQyYhQZnAMW0MFJ
-   Z2asBFjO6ryTWiaS7nZh/Lo3Qr+a5Kiw+Ml409abp7MOT72I6PkqyxPQw
-   ZLF++xZbmcNn6LGmRnj2Oax8F9fuNQ+UdMz7swq9SJjSz47kQgmPCJUEh
-   xqZIUX55sMgtNDTH2XU8eJMZmXsKtqSvv3aSP7QgbCauGP4qPPH1o6GWA
-   k/USefcvcJaNQnSyZYRXEPJSbEcj9gL+xulue5/s+CBxxbTZ+q1fJZvJ1
-   g==;
-X-CSE-ConnectionGUID: 9HGY4O0LQhGIiIw58MrK8A==
-X-CSE-MsgGUID: +Py+qY26Q76/UpE/gUT0mQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12200054"
-X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="12200054"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 15:46:41 -0700
-X-CSE-ConnectionGUID: I2278ouOR4eVNbzYBLzw/A==
-X-CSE-MsgGUID: ImHXOQT9QWqVP9mBIGmKqg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="32593534"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 15:46:41 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Thomas Renninger <trenn@suse.de>,
-	Andi Kleen <ak@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH v6 49/49] x86/cpu/vfm: Delete all the *_FAM6_ CPU #defines
-Date: Mon, 20 May 2024 15:46:20 -0700
-Message-ID: <20240520224620.9480-50-tony.luck@intel.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240520224620.9480-1-tony.luck@intel.com>
-References: <20240520224620.9480-1-tony.luck@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DC650A68;
+	Mon, 20 May 2024 22:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716245481; cv=fail; b=cOdsFNcMAWAaCbLmZx43JFveo1Sgm98gG7qRxJPdH+vwtgoRfXSqw7TRMgDygLXVh1NVycXxYNPVsg+U13tq8Q+jv1n9ExWrigAzwE0IXer6JH2ovQbaGMiHcalsYxDA3o0+Ck6rt2QVjKAOSABXIm+84/WtFRv9hVW3kscW5Us=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716245481; c=relaxed/simple;
+	bh=OUb8rRkg6p2fz67Z51cPS+T8YGYNrfZWpqoWDwC2MaY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L7gWnx9Hr0r7Z1aRkt5Cjmr1wF6dQilYQurfZuT5A2azk9AWB4wgaOHBFh5E/vuk05crF1PmynNLXKVLnHSfRD8MlkcRgIoXzxTapk0G0eyIDYMEZ96Z6fFkDNWE/G16s5MlGXqdyyorTqJdWrcnHg5kHKyX9zlmvcZ12Z8EW08=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KWew3cDH; arc=fail smtp.client-ip=40.107.223.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kOZGj7+n9qpdADgLYZKpdPrmD5GQtCibd7htftYIKu0lju2U9kVYoUK+csDbgCOJeB/Kg/X9o/4R4FT5NbFUnCe9qkg7xqsaAgXJsKPgHXlHryK3ofbYEXH5t1Qi6A21OrV4MzJkglamTgnq93uCe2+grRzxjiwJdpRjNK6l+YoF1SJvDH4b5X1VjbCwWPVbSA4SVVOZnErINtxp2OBFyAC0jYFRIa4+Oq8vu4EVvtJ+n88bjR8mPMyv+yMedGeCP3fN0LyjAkHf4sOWjLVosnW8f0EhLC78/btGXl5qEIlZwE4qB44IxxaAibpDdEHZ9309U+YG4UYPrqR5N1bmoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Lfr0FTlF298ECHw4NXy+gQFL4aX2FCr0rdRcaYcRbtM=;
+ b=ihC1UKXMXLYi6FhLEVBBjYfjkWi0OH7v2jD6n3FQI4M8nHxpuFsGDCwOpX6Zdpop/sMigBkBGpHEFPH36t+gygL024pntzPVJB7/pgQQLlLf6e/AFV61xWcGRjZ3bowJBdiQj7S4CZSHRwhPxYn0QdeYtvNvkkoxBYGs6MjieMOOkli1v0R2AGZnOD0s/mEC/lTvBLR+mXSslgEIqKXVKbFpepRYgifAX4mcWNS1AgC8p8tkTrAQ5DAovbqMZye59LFtYdymIkQs6eVmTr3smyk55aghYwhE1OjBP2DuNfKYR5WUe984quUvLTRmQgyL0RCby1dwhPVTMKMo5UOM8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lfr0FTlF298ECHw4NXy+gQFL4aX2FCr0rdRcaYcRbtM=;
+ b=KWew3cDHfwsGJC8E/11xppbOq0tCq/pk6T8RH79BilnLwKFBHrESmNX0sfGJVbbd/KgyjNlNfHuoTnPbTQk8S1PnDAnPubZ3LYW7H4Ytoku4P+8R9oZI0dM/sMV+K910CpUrbZDFsPtw5LMgQxwsktlXR5LuEsL2kIYnTAhQCvo=
+Received: from SN7PR04CA0073.namprd04.prod.outlook.com (2603:10b6:806:121::18)
+ by SN7PR12MB7884.namprd12.prod.outlook.com (2603:10b6:806:343::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Mon, 20 May
+ 2024 22:51:16 +0000
+Received: from SN1PEPF00036F41.namprd05.prod.outlook.com
+ (2603:10b6:806:121:cafe::10) by SN7PR04CA0073.outlook.office365.com
+ (2603:10b6:806:121::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35 via Frontend
+ Transport; Mon, 20 May 2024 22:51:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF00036F41.mail.protection.outlook.com (10.167.248.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7611.14 via Frontend Transport; Mon, 20 May 2024 22:51:16 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 20 May
+ 2024 17:51:15 -0500
+Date: Mon, 20 May 2024 17:50:44 -0500
+From: Michael Roth <michael.roth@amd.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Michael Roth <mdroth@utexas.edu>, <pbonzini@redhat.com>,
+	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<ashish.kalra@amd.com>, <thomas.lendacky@amd.com>,
+	<rick.p.edgecombe@intel.com>
+Subject: Re: [PATCH] KVM: SEV: Fix guest memory leak when handling guest
+ requests
+Message-ID: <iqzde53xfkcpqpjvrpyetklutgqpepy3pzykwpdwyjdo7rth3m@taolptudb62c>
+References: <58492a1a-63bb-47d2-afef-164557d15261@redhat.com>
+ <20240518150457.1033295-1-michael.roth@amd.com>
+ <ZktbBRLXeOp9X6aH@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZktbBRLXeOp9X6aH@google.com>
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F41:EE_|SN7PR12MB7884:EE_
+X-MS-Office365-Filtering-Correlation-Id: 548c9d37-5f8a-4214-b8b6-08dc791f5b86
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|82310400017|1800799015|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ecpLzKjdMRgo6o8zxEQKb2bmPP1GWZd/eOqlVqiUpCOTh/maDuKBI7yUbuWU?=
+ =?us-ascii?Q?hZD+dCReu+DKKrQCU1eFbEyOFROvOyoX5FkwLriEYR7G/8vEFNyWcDMjBNtp?=
+ =?us-ascii?Q?VH/PxY0RBKp2id0b7MP+r+ZRDnphV9+I5TMOncHgyAo+exHWvypm9PGxIOye?=
+ =?us-ascii?Q?zCZ+5xF6oSEjQ9wmViGqDRE2Ou1oqqxZgMB6OaTd5PyB1qufsSv6qWu+TDVZ?=
+ =?us-ascii?Q?ObbsWu/JJ9OrpW6f0eUC280R2Yy/xdPXNaFQZZBAuVmbq5hWwTJ13ZcY+vY1?=
+ =?us-ascii?Q?sBw9iwYEl5HUbAJ6R50q+GNm/PRthckdVSQkR+exHy2FeCIRae6RO7FR7duO?=
+ =?us-ascii?Q?i26KFbZFauu98Bo9IsvCqv1vPYKx/pCH2MxLxMYoZQb2LK6Vg7gCc+mVBCAk?=
+ =?us-ascii?Q?6fk95ZYjZMBxQxclw7n6lWzoPWzHpXLb+u0/Paqf1s/p1kqVB4N7sOTNwma9?=
+ =?us-ascii?Q?Z+D+utRdtLxVpwEDQ/yN2pK3lnuj10eVmnpWtfApOKRCRP6ywUXWuGEDKTeh?=
+ =?us-ascii?Q?VR+Z71PGMl3x0/9zGQ1oeQz68t/omMTalielhlBy6FRWTAFM5PpLkzL9kGUz?=
+ =?us-ascii?Q?yb0FPVteh4YtqXuS/pjJu8MdAUyO+Q9mpUjK/ZHbMHh5morrXaJCPnxdVojM?=
+ =?us-ascii?Q?kEBc4aJdDqobieWu4hdYPkEDCtntXSFM1PBEsvZfRAykSnGrvKlO45tnBxgu?=
+ =?us-ascii?Q?L24ibS6SbLGrEPt3g2jaBvgQu6LnDjBlh02sp7Knq7JwbQSqdr+KPVkCADXv?=
+ =?us-ascii?Q?gVv/uNak7HK1ZwgAa+cZLH5llRkzMVxTFp0cY+PCIjBC5aChyH3f2KxdDvjN?=
+ =?us-ascii?Q?wkaY0dXblIbJr7lKaaNOjkZKSFtGISSigmf8fgLNvw0Tdfum2i1lUuFGnZ0c?=
+ =?us-ascii?Q?ehWBOEcSZqpswXM3WLu4QyiaQJTzRxuMyf9Ns+rZ7tAdEeg6lpZkqDtu5cb+?=
+ =?us-ascii?Q?Qm/u8nKhCp8vT0Gz196uTOfxvsVz97cMFeOtlXEJuS429maKZ/mlr2meuuZt?=
+ =?us-ascii?Q?F/Hv+GyarsQscWYf9XKwBr3RpTPlvh2I2e2onQ/kSDwFtkbMQoUuofUquiog?=
+ =?us-ascii?Q?O+YG4+6Kyc7EgWI1HPtPJo6eoqco664UYstPJh4tEiQK/wEx1qPYrE4T6w0A?=
+ =?us-ascii?Q?uqHX4NzohklfcWORkXHovjWyhQ8yyTVOcS5hJIERfW0lkpYLGpUhJirlUoib?=
+ =?us-ascii?Q?u6TqallcohnAneSbrVD3AS6ys0Qyc/tp2Tnq1JOxbBI8t0XAJRz3UrUA1cns?=
+ =?us-ascii?Q?IxHaqs/qmq39aaI+dNJA0CgcaATHqT6urdoiZC8iTOkTNxTk41qEfzHXDx/F?=
+ =?us-ascii?Q?rqEdNm5wDscvmLyF6RGEGECdXarVs4whxEdnH8B4KyYR1w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(82310400017)(1800799015)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 22:51:16.5645
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 548c9d37-5f8a-4214-b8b6-08dc791f5b86
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00036F41.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7884
 
-All code has been converted to use the vendor/family/model versions.
+On Mon, May 20, 2024 at 07:17:13AM -0700, Sean Christopherson wrote:
+> This needs a
+> 
+>   From: Michael Roth <michael.roth@amd.com>
+> 
+> otherwise Author will be assigned to your @utexas.edu email.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- arch/x86/include/asm/intel-family.h | 85 +----------------------------
- 1 file changed, 2 insertions(+), 83 deletions(-)
+Thanks, I hadn't considered that. My work email issue seems to be
+resolved now, but will keep that in mind if I ever need to use a
+fallback again.
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index f81a851c46dc..f7289094a483 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -10,7 +10,7 @@
-  * that group keep the CPUID for the variants sorted by model number.
-  *
-  * The defined symbol names have the following form:
-- *	INTEL_FAM6{OPTFAMILY}_{MICROARCH}{OPTDIFF}
-+ *	INTEL_{OPTFAMILY}_{MICROARCH}{OPTDIFF}
-  * where:
-  * OPTFAMILY	Describes the family of CPUs that this belongs to. Default
-  *		is assumed to be "_CORE" (and should be omitted). Other values
-@@ -42,215 +42,134 @@
- 
- #define IFM(_fam, _model)	VFM_MAKE(X86_VENDOR_INTEL, _fam, _model)
- 
--/* Wildcard match for FAM6 so X86_MATCH_INTEL_FAM6_MODEL(ANY) works */
--#define INTEL_FAM6_ANY			X86_MODEL_ANY
--/* Wildcard match for FAM6 so X86_MATCH_VFM(ANY) works */
-+/* Wildcard match so X86_MATCH_VFM(ANY) works */
- #define INTEL_ANY			IFM(X86_FAMILY_ANY, X86_MODEL_ANY)
- 
--#define INTEL_FAM6_CORE_YONAH		0x0E
- #define INTEL_CORE_YONAH		IFM(6, 0x0E)
- 
--#define INTEL_FAM6_CORE2_MEROM		0x0F
- #define INTEL_CORE2_MEROM		IFM(6, 0x0F)
--#define INTEL_FAM6_CORE2_MEROM_L	0x16
- #define INTEL_CORE2_MEROM_L		IFM(6, 0x16)
--#define INTEL_FAM6_CORE2_PENRYN		0x17
- #define INTEL_CORE2_PENRYN		IFM(6, 0x17)
--#define INTEL_FAM6_CORE2_DUNNINGTON	0x1D
- #define INTEL_CORE2_DUNNINGTON		IFM(6, 0x1D)
- 
--#define INTEL_FAM6_NEHALEM		0x1E
- #define INTEL_NEHALEM			IFM(6, 0x1E)
--#define INTEL_FAM6_NEHALEM_G		0x1F /* Auburndale / Havendale */
- #define INTEL_NEHALEM_G			IFM(6, 0x1F) /* Auburndale / Havendale */
--#define INTEL_FAM6_NEHALEM_EP		0x1A
- #define INTEL_NEHALEM_EP		IFM(6, 0x1A)
--#define INTEL_FAM6_NEHALEM_EX		0x2E
- #define INTEL_NEHALEM_EX		IFM(6, 0x2E)
- 
--#define INTEL_FAM6_WESTMERE		0x25
- #define INTEL_WESTMERE			IFM(6, 0x25)
--#define INTEL_FAM6_WESTMERE_EP		0x2C
- #define INTEL_WESTMERE_EP		IFM(6, 0x2C)
--#define INTEL_FAM6_WESTMERE_EX		0x2F
- #define INTEL_WESTMERE_EX		IFM(6, 0x2F)
- 
--#define INTEL_FAM6_SANDYBRIDGE		0x2A
- #define INTEL_SANDYBRIDGE		IFM(6, 0x2A)
--#define INTEL_FAM6_SANDYBRIDGE_X	0x2D
- #define INTEL_SANDYBRIDGE_X		IFM(6, 0x2D)
--#define INTEL_FAM6_IVYBRIDGE		0x3A
- #define INTEL_IVYBRIDGE			IFM(6, 0x3A)
--#define INTEL_FAM6_IVYBRIDGE_X		0x3E
- #define INTEL_IVYBRIDGE_X		IFM(6, 0x3E)
- 
--#define INTEL_FAM6_HASWELL		0x3C
- #define INTEL_HASWELL			IFM(6, 0x3C)
--#define INTEL_FAM6_HASWELL_X		0x3F
- #define INTEL_HASWELL_X			IFM(6, 0x3F)
--#define INTEL_FAM6_HASWELL_L		0x45
- #define INTEL_HASWELL_L			IFM(6, 0x45)
--#define INTEL_FAM6_HASWELL_G		0x46
- #define INTEL_HASWELL_G			IFM(6, 0x46)
- 
--#define INTEL_FAM6_BROADWELL		0x3D
- #define INTEL_BROADWELL			IFM(6, 0x3D)
--#define INTEL_FAM6_BROADWELL_G		0x47
- #define INTEL_BROADWELL_G		IFM(6, 0x47)
--#define INTEL_FAM6_BROADWELL_X		0x4F
- #define INTEL_BROADWELL_X		IFM(6, 0x4F)
--#define INTEL_FAM6_BROADWELL_D		0x56
- #define INTEL_BROADWELL_D		IFM(6, 0x56)
- 
--#define INTEL_FAM6_SKYLAKE_L		0x4E	/* Sky Lake             */
- #define INTEL_SKYLAKE_L			IFM(6, 0x4E) /* Sky Lake */
--#define INTEL_FAM6_SKYLAKE		0x5E	/* Sky Lake             */
- #define INTEL_SKYLAKE			IFM(6, 0x5E) /* Sky Lake */
--#define INTEL_FAM6_SKYLAKE_X		0x55	/* Sky Lake             */
- #define INTEL_SKYLAKE_X			IFM(6, 0x55) /* Sky Lake */
- /*                 CASCADELAKE_X	0x55	   Sky Lake -- s: 7     */
- /*                 COOPERLAKE_X		0x55	   Sky Lake -- s: 11    */
- 
--#define INTEL_FAM6_KABYLAKE_L		0x8E	/* Sky Lake             */
- #define INTEL_KABYLAKE_L		IFM(6, 0x8E) /* Sky Lake */
- /*                 AMBERLAKE_L		0x8E	   Sky Lake -- s: 9     */
- /*                 COFFEELAKE_L		0x8E	   Sky Lake -- s: 10    */
- /*                 WHISKEYLAKE_L	0x8E       Sky Lake -- s: 11,12 */
- 
--#define INTEL_FAM6_KABYLAKE		0x9E	/* Sky Lake             */
- #define INTEL_KABYLAKE			IFM(6, 0x9E) /* Sky Lake */
- /*                 COFFEELAKE		0x9E	   Sky Lake -- s: 10-13 */
- 
--#define INTEL_FAM6_COMETLAKE		0xA5	/* Sky Lake             */
- #define INTEL_COMETLAKE			IFM(6, 0xA5) /* Sky Lake */
--#define INTEL_FAM6_COMETLAKE_L		0xA6	/* Sky Lake             */
- #define INTEL_COMETLAKE_L		IFM(6, 0xA6) /* Sky Lake */
- 
--#define INTEL_FAM6_CANNONLAKE_L		0x66	/* Palm Cove */
- #define INTEL_CANNONLAKE_L		IFM(6, 0x66) /* Palm Cove */
- 
--#define INTEL_FAM6_ICELAKE_X		0x6A	/* Sunny Cove */
- #define INTEL_ICELAKE_X			IFM(6, 0x6A) /* Sunny Cove */
--#define INTEL_FAM6_ICELAKE_D		0x6C	/* Sunny Cove */
- #define INTEL_ICELAKE_D			IFM(6, 0x6C) /* Sunny Cove */
--#define INTEL_FAM6_ICELAKE		0x7D	/* Sunny Cove */
- #define INTEL_ICELAKE			IFM(6, 0x7D) /* Sunny Cove */
--#define INTEL_FAM6_ICELAKE_L		0x7E	/* Sunny Cove */
- #define INTEL_ICELAKE_L			IFM(6, 0x7E) /* Sunny Cove */
--#define INTEL_FAM6_ICELAKE_NNPI		0x9D	/* Sunny Cove */
- #define INTEL_ICELAKE_NNPI		IFM(6, 0x9D) /* Sunny Cove */
- 
--#define INTEL_FAM6_ROCKETLAKE		0xA7	/* Cypress Cove */
- #define INTEL_ROCKETLAKE		IFM(6, 0xA7) /* Cypress Cove */
- 
--#define INTEL_FAM6_TIGERLAKE_L		0x8C	/* Willow Cove */
- #define INTEL_TIGERLAKE_L		IFM(6, 0x8C) /* Willow Cove */
--#define INTEL_FAM6_TIGERLAKE		0x8D	/* Willow Cove */
- #define INTEL_TIGERLAKE			IFM(6, 0x8D) /* Willow Cove */
- 
--#define INTEL_FAM6_SAPPHIRERAPIDS_X	0x8F	/* Golden Cove */
- #define INTEL_SAPPHIRERAPIDS_X		IFM(6, 0x8F) /* Golden Cove */
- 
--#define INTEL_FAM6_EMERALDRAPIDS_X	0xCF
- #define INTEL_EMERALDRAPIDS_X		IFM(6, 0xCF)
- 
--#define INTEL_FAM6_GRANITERAPIDS_X	0xAD
- #define INTEL_GRANITERAPIDS_X		IFM(6, 0xAD)
--#define INTEL_FAM6_GRANITERAPIDS_D	0xAE
- #define INTEL_GRANITERAPIDS_D		IFM(6, 0xAE)
- 
- /* "Hybrid" Processors (P-Core/E-Core) */
- 
--#define INTEL_FAM6_LAKEFIELD		0x8A	/* Sunny Cove / Tremont */
- #define INTEL_LAKEFIELD			IFM(6, 0x8A) /* Sunny Cove / Tremont */
- 
--#define INTEL_FAM6_ALDERLAKE		0x97	/* Golden Cove / Gracemont */
- #define INTEL_ALDERLAKE			IFM(6, 0x97) /* Golden Cove / Gracemont */
--#define INTEL_FAM6_ALDERLAKE_L		0x9A	/* Golden Cove / Gracemont */
- #define INTEL_ALDERLAKE_L		IFM(6, 0x9A) /* Golden Cove / Gracemont */
- 
--#define INTEL_FAM6_RAPTORLAKE		0xB7	/* Raptor Cove / Enhanced Gracemont */
- #define INTEL_RAPTORLAKE		IFM(6, 0xB7) /* Raptor Cove / Enhanced Gracemont */
--#define INTEL_FAM6_RAPTORLAKE_P		0xBA
- #define INTEL_RAPTORLAKE_P		IFM(6, 0xBA)
--#define INTEL_FAM6_RAPTORLAKE_S		0xBF
- #define INTEL_RAPTORLAKE_S		IFM(6, 0xBF)
- 
--#define INTEL_FAM6_METEORLAKE		0xAC
- #define INTEL_METEORLAKE		IFM(6, 0xAC)
--#define INTEL_FAM6_METEORLAKE_L		0xAA
- #define INTEL_METEORLAKE_L		IFM(6, 0xAA)
- 
--#define INTEL_FAM6_ARROWLAKE_H		0xC5
- #define INTEL_ARROWLAKE_H		IFM(6, 0xC5)
--#define INTEL_FAM6_ARROWLAKE		0xC6
- #define INTEL_ARROWLAKE			IFM(6, 0xC6)
--#define INTEL_FAM6_ARROWLAKE_U		0xB5
- #define INTEL_ARROWLAKE_U		IFM(6, 0xB5)
- 
--#define INTEL_FAM6_LUNARLAKE_M		0xBD
- #define INTEL_LUNARLAKE_M		IFM(6, 0xBD)
- 
- /* "Small Core" Processors (Atom/E-Core) */
- 
--#define INTEL_FAM6_ATOM_BONNELL		0x1C /* Diamondville, Pineview */
- #define INTEL_ATOM_BONNELL		IFM(6, 0x1C) /* Diamondville, Pineview */
--#define INTEL_FAM6_ATOM_BONNELL_MID	0x26 /* Silverthorne, Lincroft */
- #define INTEL_ATOM_BONNELL_MID		IFM(6, 0x26) /* Silverthorne, Lincroft */
- 
--#define INTEL_FAM6_ATOM_SALTWELL	0x36 /* Cedarview */
- #define INTEL_ATOM_SALTWELL		IFM(6, 0x36) /* Cedarview */
--#define INTEL_FAM6_ATOM_SALTWELL_MID	0x27 /* Penwell */
- #define INTEL_ATOM_SALTWELL_MID		IFM(6, 0x27) /* Penwell */
--#define INTEL_FAM6_ATOM_SALTWELL_TABLET	0x35 /* Cloverview */
- #define INTEL_ATOM_SALTWELL_TABLET	IFM(6, 0x35) /* Cloverview */
- 
--#define INTEL_FAM6_ATOM_SILVERMONT	0x37 /* Bay Trail, Valleyview */
- #define INTEL_ATOM_SILVERMONT		IFM(6, 0x37) /* Bay Trail, Valleyview */
--#define INTEL_FAM6_ATOM_SILVERMONT_D	0x4D /* Avaton, Rangely */
- #define INTEL_ATOM_SILVERMONT_D		IFM(6, 0x4D) /* Avaton, Rangely */
--#define INTEL_FAM6_ATOM_SILVERMONT_MID	0x4A /* Merriefield */
- #define INTEL_ATOM_SILVERMONT_MID	IFM(6, 0x4A) /* Merriefield */
- 
--#define INTEL_FAM6_ATOM_AIRMONT		0x4C /* Cherry Trail, Braswell */
- #define INTEL_ATOM_AIRMONT		IFM(6, 0x4C) /* Cherry Trail, Braswell */
--#define INTEL_FAM6_ATOM_AIRMONT_MID	0x5A /* Moorefield */
- #define INTEL_ATOM_AIRMONT_MID		IFM(6, 0x5A) /* Moorefield */
--#define INTEL_FAM6_ATOM_AIRMONT_NP	0x75 /* Lightning Mountain */
- #define INTEL_ATOM_AIRMONT_NP		IFM(6, 0x75) /* Lightning Mountain */
- 
--#define INTEL_FAM6_ATOM_GOLDMONT	0x5C /* Apollo Lake */
- #define INTEL_ATOM_GOLDMONT		IFM(6, 0x5C) /* Apollo Lake */
--#define INTEL_FAM6_ATOM_GOLDMONT_D	0x5F /* Denverton */
- #define INTEL_ATOM_GOLDMONT_D		IFM(6, 0x5F) /* Denverton */
- 
- /* Note: the micro-architecture is "Goldmont Plus" */
--#define INTEL_FAM6_ATOM_GOLDMONT_PLUS	0x7A /* Gemini Lake */
- #define INTEL_ATOM_GOLDMONT_PLUS	IFM(6, 0x7A) /* Gemini Lake */
- 
--#define INTEL_FAM6_ATOM_TREMONT_D	0x86 /* Jacobsville */
- #define INTEL_ATOM_TREMONT_D		IFM(6, 0x86) /* Jacobsville */
--#define INTEL_FAM6_ATOM_TREMONT		0x96 /* Elkhart Lake */
- #define INTEL_ATOM_TREMONT		IFM(6, 0x96) /* Elkhart Lake */
--#define INTEL_FAM6_ATOM_TREMONT_L	0x9C /* Jasper Lake */
- #define INTEL_ATOM_TREMONT_L		IFM(6, 0x9C) /* Jasper Lake */
- 
--#define INTEL_FAM6_ATOM_GRACEMONT	0xBE /* Alderlake N */
- #define INTEL_ATOM_GRACEMONT		IFM(6, 0xBE) /* Alderlake N */
- 
--#define INTEL_FAM6_ATOM_CRESTMONT_X	0xAF /* Sierra Forest */
- #define INTEL_ATOM_CRESTMONT_X		IFM(6, 0xAF) /* Sierra Forest */
--#define INTEL_FAM6_ATOM_CRESTMONT	0xB6 /* Grand Ridge */
- #define INTEL_ATOM_CRESTMONT		IFM(6, 0xB6) /* Grand Ridge */
- 
--#define INTEL_FAM6_ATOM_DARKMONT_X	0xDD /* Clearwater Forest */
- #define INTEL_ATOM_DARKMONT_X		IFM(6, 0xDD) /* Clearwater Forest */
- 
- /* Xeon Phi */
- 
--#define INTEL_FAM6_XEON_PHI_KNL		0x57 /* Knights Landing */
- #define INTEL_XEON_PHI_KNL		IFM(6, 0x57) /* Knights Landing */
--#define INTEL_FAM6_XEON_PHI_KNM		0x85 /* Knights Mill */
- #define INTEL_XEON_PHI_KNM		IFM(6, 0x85) /* Knights Mill */
- 
- /* Family 5 */
--- 
-2.45.0
+> 
+> On Sat, May 18, 2024, Michael Roth wrote:
+> > Before forwarding guest requests to firmware, KVM takes a reference on
+> > the 2 pages the guest uses for its request/response buffers. Make sure
+> > to release these when cleaning up after the request is completed.
+> > 
+> > Signed-off-by: Michael Roth <michael.roth@amd.com>
+> > ---
+> 
+> ...
+> 
+> > @@ -3970,14 +3980,11 @@ static int __snp_handle_guest_req(struct kvm *kvm, gpa_t req_gpa, gpa_t resp_gpa
+> >  		return ret;
+> >  
+> >  	ret = sev_issue_cmd(kvm, SEV_CMD_SNP_GUEST_REQUEST, &data, fw_err);
+> > -	if (ret)
+> > -		return ret;
+> >  
+> > -	ret = snp_cleanup_guest_buf(&data);
+> > -	if (ret)
+> > -		return ret;
+> > +	if (snp_cleanup_guest_buf(&data))
+> > +		return -EINVAL;
+> 
+> EINVAL feels wrong.  The input was completely valid.  Also, forwarding the error
 
+Yah, EIO seems more suitable here.
+
+> to the guest doesn't seem like the right thing to do if KVM can't reclaim the
+> response PFN.  Shouldn't that be fatal to the VM?
+
+The thinking here is that pretty much all guest request failures will be
+fatal to the guest being able to continue. At least, that's definitely
+true for attestation. So reporting the error to the guest would allow that
+failure to be propagated along by handling in the guest where it would
+presumably be reported a little more clearly to the guest owner, at
+which point the guest would most likely terminate itself anyway.
+
+But there is a possibility that the guest will attempt access the response
+PFN before/during that reporting and spin on an #NPF instead though. So
+maybe the safer more repeatable approach is to handle the error directly
+from KVM and propagate it to userspace.
+
+But the GHCB spec does require that the firmware response code for
+SNP_GUEST_REQUEST be passed directly to the guest via lower 32-bits of
+SW_EXITINFO2, so we'd still want handling to pass that error on to the
+guest, so I made some changes to retain that behavior.
+
+> 
+> > -	return 0;
+> > +	return ret;
+> 
+> I find the setup/cleanup split makes this code harder to read, not easier.  It
+> won't be pretty no matter waht due to the potential RMP failures, but IMO this
+> is easier to follow:
+
+It *might* make more sense to split things out into helpers when extended
+guest requests are implemented, but for the patch in question I agree
+what you have below is clearer. I also went a step further and moved
+__snp_handle_guest_req() back into snp_handle_guest_req() as well to
+simplify the logic for always passing firmware errors back to the guest.
+
+I'll post a v2 of the fixup with these changes added. But I've also
+pushed it here for reference:
+
+  https://github.com/mdroth/linux/commit/8ceab17950dc5f1b94231037748104f7c31752f8
+  (from https://github.com/mdroth/linux/commits/kvm-next-snp-fixes2/)
+
+and here's the original PATCH 17/19 with all pending fixes squashed in:
+
+  https://github.com/mdroth/linux/commit/b4f51e38da22a2b163c546cb2a3aefd04446b3c7
+  (from https://github.com/mdroth/linux/commits/kvm-next-snp-fixes2-squashed/)
+  (also retested attestation with simulated failures and double-checked
+   for clang warnings with W=1)
+  
+Thanks!
+
+-Mike
+
+> 
+> 	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
+> 	struct sev_data_snp_guest_request data = {0};
+> 	kvm_pfn_t req_pfn, resp_pfn;
+> 	int ret;
+> 
+> 	if (!sev_snp_guest(kvm))
+> 		return -EINVAL;
+> 
+> 	if (!PAGE_ALIGNED(req_gpa) || !PAGE_ALIGNED(resp_gpa))
+> 		return -EINVAL;
+> 
+> 	req_pfn = gfn_to_pfn(kvm, gpa_to_gfn(req_gpa));
+> 	if (is_error_noslot_pfn(req_pfn))
+> 		return -EINVAL;
+> 
+> 	ret = -EINVAL;
+> 
+> 	resp_pfn = gfn_to_pfn(kvm, gpa_to_gfn(resp_gpa));
+> 	if (is_error_noslot_pfn(resp_pfn))
+> 		goto release_req;
+> 
+> 	if (rmp_make_private(resp_pfn, 0, PG_LEVEL_4K, 0, true)) {
+> 		kvm_release_pfn_clean(resp_pfn);
+> 		goto release_req;
+> 	}
+> 
+> 	data.gctx_paddr = __psp_pa(sev->snp_context);
+> 	data.req_paddr = __sme_set(req_pfn << PAGE_SHIFT);
+> 	data.res_paddr = __sme_set(resp_pfn << PAGE_SHIFT);
+> 	ret = sev_issue_cmd(kvm, SEV_CMD_SNP_GUEST_REQUEST, &data, fw_err);
+> 
+> 	if (snp_page_reclaim(resp_pfn) ||
+> 	    rmp_make_shared(resp_pfn, PG_LEVEL_4K))
+> 		ret = ret ?: -EIO;
+> 	else
+> 		kvm_release_pfn_dirty(resp_pfn);
+> release_req:
+> 	kvm_release_pfn_clean(req_pfn);
+> 	return ret;
+> 
+> 
 
