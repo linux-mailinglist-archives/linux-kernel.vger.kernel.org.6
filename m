@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-183901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C24B8C9F96
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:23:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B008C9F98
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC201F2166A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:23:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4E751C21028
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3EC136E1A;
-	Mon, 20 May 2024 15:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B14136E26;
+	Mon, 20 May 2024 15:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0oWg1e3I"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J/NxzsHE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89DC45026
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 15:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02B3135A79
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 15:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716218597; cv=none; b=YgYyHB8QVZrbCBQiOZVec/EXSjShfu5k1pbvsyAj01fKAETy2xAJCPcTcgz0YMR1l1ky+nStWxcUI9YDh0P/RDGs3MyimKD5CaxroWHEcytAme7soQuUniYBl66Hicv9kBL4BD0c1TIyLreDFPArOHi1Yxulhz5IcGv9bxJPeBw=
+	t=1716218679; cv=none; b=eDYd2EdLCtxJmCe3I1nnt/GIU9pH33kiC4CqvWHSZnCIaj9nO55SxW7sSf1qfs1lsebmqZhWlz3CXcOb9TZup45ZelvtLalu9wn0K+BaZ2xxnVTjaZKhWYiP77ESLn+Eog+mpNNeMowKkhptnND3/j1rGOL3OPPAL2gLXy0f52s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716218597; c=relaxed/simple;
-	bh=/MqlQoolb7hzFTZdR5tx+GNDxGNoERix/Mm8NugIaCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=trMCrTxVPb+U+nbEFEakTsrw2SRluuSww0HXSNm0gO0M7thcdMYO/rVSvn7XUzcQjz+px9mbzjIkW5VmfdX0/HhgkDY9iFwWphJG0v8O54r+RKn73HmaARbcFbxPY18UjXMv+j9d5SS++VXssVybaEJ5tycFr+5g0Z9TUwBr76k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0oWg1e3I; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-420298ff5b1so29678425e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 08:23:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716218593; x=1716823393; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=BvrEYs9DYAbC5MlxDXuq2vHAc+BawiypTJLqHR9+P4I=;
-        b=0oWg1e3In4NZcvhOGsf9X/ULcjQCiFro1XqJK6lOUm5R7yqln/lvKrXXQ8+TVM68VN
-         MmVGQWpVWhmP5UyIuubPfMYICOHTpjk+MCR3m9Fb0HJMZ5SAAkvYWp753Q9mj4hD/6sZ
-         TNezEgKhS8tt1CmuLkT0cGyRQK7zT8r1C2/JkwB1uA0qQH9+0GwQk9BGVaLk9mwOK6fX
-         PAIogM4NK73K20GEKzA+2UgwevyrjdAnQCxEOMnrrpS5nEq9K4F2lcWOtx3XjE90F13j
-         ZtahiSW11VMMShlnNiAabbrFl21q0Ox3KytXC7XzvHq/oWZOFBQDcHaJG39IZx6I6txp
-         jucQ==
+	s=arc-20240116; t=1716218679; c=relaxed/simple;
+	bh=/bYutIsSrxoty/i0tqxvH1agSRzviA7eI9qMo7lmngg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHtaEyV2jgCWpsYeojURsSXYvDCJq9NQmJhrVrR3K5yvpcfY+9PD7GvTm39K8X3QMsWULTqmlwjJo4iyb8R05PQqwkksQIPJDiR2FJtUpGBKGQLn9zAJohmW4Dj1g8nnj339YGuGOuQQDxDdDME7faJiyAI8FeKO3fvlJTpDtt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J/NxzsHE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716218676;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MPzD2EYz+Tws56HwE5fNBA/4Wwv6n6zB3tlyojChHUw=;
+	b=J/NxzsHEf6OCSitqSjOsgtr0U/A95AAJbZkP52gRbIOND2QALRM/mwoonwxCvkZu3M7l7y
+	amxxSbNjy1E4XWdNdWaUtd2T4oBO5M7U0w4Wm4ryoH4sMkYJkxmNqbGmilO14csCVFjjs+
+	f8eYrdAO1H7XYwGxaBo1meO2s2trLvM=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-515-9s5979q7OyiC1nFId7_BTg-1; Mon, 20 May 2024 11:24:35 -0400
+X-MC-Unique: 9s5979q7OyiC1nFId7_BTg-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-420094e8896so42649105e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 08:24:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716218593; x=1716823393;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BvrEYs9DYAbC5MlxDXuq2vHAc+BawiypTJLqHR9+P4I=;
-        b=L2iP44IiJmXCqgitdtMph88XvdrDb6ytYt6yRAJS+kcVrDnJyE8G5erYUNAoTYoLk1
-         7tqhyakBxzNFwBn5pyzPLjQi5V2KuMVQ3ZO1qgIAG3t3mv8goeAK6oSVgwovRky+ycGd
-         ZhSU8Mef8KL0aVIU1IC5tiySho8fmbcWSKWFd84qq6+yxKHV97f5AqhdSSLtiEbgtnGi
-         TDCe0CPZRoEbaWIcjtz15n1nvfaQWTbRT+86FyrRyqVGNPaLs5hgWKUGSvAMcV5XyprT
-         B/MReQDaCEoOvmTDjuN8Qm0tz1lHoMuEGT5QZedghBz9Vb75KNI36tsuPApVMA2BBzWR
-         W1uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3fihL7MaCfgXA9ab19ivUh5IBkt0uT1o9nGm48TS8tynXFuDbrsYsKbrVFhsjylzab9ZPKoxsgEK0eXsdkJb7WyxhIfURyahWUB6V
-X-Gm-Message-State: AOJu0YyyeHlO0k5zfziUp1iaJ/bgGaoUBUf1iqMNqtKWjH1qj7WRg32l
-	LXrfsrQsX0/7BdEfjpKmcXd2lsd3HEtTlFvCiONw5WcMNFIBONtc92oNhH9N8UE=
-X-Google-Smtp-Source: AGHT+IEfQLzDF+6DeA5WUKvuzwObOI9YQj9ggS89zR1Mmor4R3KYRZxxcVlburs7BeHxESEegxmkMA==
-X-Received: by 2002:a05:600c:3ca3:b0:41c:23f3:65fa with SMTP id 5b1f17b1804b1-41feac55e3cmr276704235e9.28.1716218593164;
-        Mon, 20 May 2024 08:23:13 -0700 (PDT)
-Received: from [192.168.1.172] ([93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f88111033sm461769625e9.34.2024.05.20.08.23.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 May 2024 08:23:12 -0700 (PDT)
-Message-ID: <51a47736-ffe8-49e2-b798-d409ca587501@baylibre.com>
-Date: Mon, 20 May 2024 17:23:11 +0200
+        d=1e100.net; s=20230601; t=1716218674; x=1716823474;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MPzD2EYz+Tws56HwE5fNBA/4Wwv6n6zB3tlyojChHUw=;
+        b=uFUlnxg+nAxjGo9CnVpSqZ2RuLepDWKDafzI5o2+l+766Zsokn9xvGo186ixWafs01
+         mTht7a6+NOK0QNLrKvwNJvA5EyecsFEz1RVraDxG8xBq8i54ce66taq6kVcekNdVnpIf
+         zxoCiW45Q9vlKAy5yj4UfePpLG14WiR1KXmU1N4hJkDwuc45iTuhT4s8FupxzjNCp5bX
+         4eAhiUV6q+rf5ag5iSrvPTblZgVa6eXWqRJoRH+1OGMXDm5AnF/kpsZgtTNhcSZIa2zN
+         /73hcU1RL1c8yu8mfRqZj6wb95hx2MsVV6aS7vDBzV3oKaoPMY/LS52of5eDWqWMDRB+
+         0n0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUoBOupTQtCUY8mOumht660mD/2VbEjDzYa6N8Goab/8Av/QM1M5Ckp/RQnEoDLKjjcGfqIfPGmZVut5wGBauYsg+l5zlJkYcI/XLU9
+X-Gm-Message-State: AOJu0YyzYLInb1EpasrTOh6r4rPuaURhbbm344gJI1MuEPcaFVpnCxvq
+	36VZFbTZEuL2x6sqbemmsxmkQlG4qLkqZ3Bya0s/5nO05MkY/2dyXwiAum/tP6lRGaChxsc/vp0
+	SrlSaJdeP1Fd7+cwagb/fOTDVmsZTVKcsAPxX4JmTcmz6fo6BMy+6Qhn3f0NyTA==
+X-Received: by 2002:adf:f746:0:b0:347:3037:188d with SMTP id ffacd0b85a97d-3504a737594mr27533409f8f.34.1716218674166;
+        Mon, 20 May 2024 08:24:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFybBVRF9qV0XR+xTmYzrgRY5zsNr68gufSFbFaQHscL73I++QGoGy2M8cBG9NDuhAutpTMuA==
+X-Received: by 2002:adf:f746:0:b0:347:3037:188d with SMTP id ffacd0b85a97d-3504a737594mr27533388f8f.34.1716218673765;
+        Mon, 20 May 2024 08:24:33 -0700 (PDT)
+Received: from pollux.localdomain ([2a02:810d:4b3f:ee94:d829:d5ef:3adf:70e2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b79bc8esm29279979f8f.15.2024.05.20.08.24.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 08:24:33 -0700 (PDT)
+Date: Mon, 20 May 2024 17:24:31 +0200
+From: Danilo Krummrich <dakr@redhat.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH] rust: avoid unused import warning in `rusttest`
+Message-ID: <ZktrL5YcHx6kKtLR@pollux.localdomain>
+References: <20240519210735.587323-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] arm64: dts: mediatek: mt8365: use a specific SCPSYS
- compatible
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- MandyJH Liu <mandyjh.liu@mediatek.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240518211159.142920-1-krzysztof.kozlowski@linaro.org>
- <20240518211159.142920-2-krzysztof.kozlowski@linaro.org>
- <f42ef151-6eee-418f-91e1-5ac08d161119@collabora.com>
- <2cc638ca-0add-4c8c-b844-606e22dbd253@linaro.org>
- <cf8c87fe-7a4f-423f-9c97-3759eeee4894@collabora.com>
-Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <cf8c87fe-7a4f-423f-9c97-3759eeee4894@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240519210735.587323-1-ojeda@kernel.org>
 
-Hello Krzysztof,
-
-On 20/05/2024 12:12, AngeloGioacchino Del Regno wrote:
-> Il 20/05/24 12:03, Krzysztof Kozlowski ha scritto:
->> On 20/05/2024 11:55, AngeloGioacchino Del Regno wrote:
->>> Il 18/05/24 23:11, Krzysztof Kozlowski ha scritto:
->>>> SoCs should use dedicated compatibles for each of their syscon nodes to
->>>> precisely describe the block.  Using an incorrect compatible does not
->>>> allow to properly match/validate children of the syscon device.  Replace
->>>> SYSCFG compatible, which does not have children, with a new dedicated
->>>> one for SCPSYS block.
->>>>
->>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>
->>> Technically, that's not a SCPSYS block, but called SYSCFG in MT8365, but the
->>> meaning and the functioning is the same, so it's fine for me.
->>
->> So there are two syscfg blocks? With exactly the same set of registers
->> or different?
->>
+On Sun, May 19, 2024 at 11:07:35PM +0200, Miguel Ojeda wrote:
+> When compiling for the `rusttest` target, the `core::ptr` import is
+> unused since its only use happens in the `reserve()` method which is
+> not compiled in that target:
 > 
-> I'm not sure about that, I don't have the MT8365 datasheet...
+>     warning: unused import: `core::ptr`
+>     --> rust/kernel/alloc/vec_ext.rs:7:5
+>       |
+>     7 | use core::ptr;
+>       |     ^^^^^^^^^
+>       |
+>       = note: `#[warn(unused_imports)]` on by default
 > 
-> Adding Alexandre to the loop - I think he can clarify as he should have the
-> required documentation.
+> Thus clean it.
+> 
+> Fixes: 97ab3e8eec0c ("rust: alloc: fix dangling pointer in VecExt<T>::reserve()")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Unfortunately, The SCPSYS (@10006000) isn't documented, but according to the functionnal 
-specification, it seems to have only one block.
+Reviewed-by: Danilo Krummrich <dakr@redhat.com>
 
-I don't have the history why SYSCFG instead of SCPSYS.
+> ---
+>  rust/kernel/alloc/vec_ext.rs | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/rust/kernel/alloc/vec_ext.rs b/rust/kernel/alloc/vec_ext.rs
+> index e9a81052728a..1297a4be32e8 100644
+> --- a/rust/kernel/alloc/vec_ext.rs
+> +++ b/rust/kernel/alloc/vec_ext.rs
+> @@ -4,7 +4,6 @@
+>  
+>  use super::{AllocError, Flags};
+>  use alloc::vec::Vec;
+> -use core::ptr;
+>  
+>  /// Extensions to [`Vec`].
+>  pub trait VecExt<T>: Sized {
+> @@ -141,7 +140,11 @@ fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocError>
+>          // `krealloc_aligned`. A `Vec<T>`'s `ptr` value is not guaranteed to be NULL and might be
+>          // dangling after being created with `Vec::new`. Instead, we can rely on `Vec<T>`'s capacity
+>          // to be zero if no memory has been allocated yet.
+> -        let ptr = if cap == 0 { ptr::null_mut() } else { old_ptr };
+> +        let ptr = if cap == 0 {
+> +            core::ptr::null_mut()
+> +        } else {
+> +            old_ptr
+> +        };
+>  
+>          // SAFETY: `ptr` is valid because it's either NULL or comes from a previous call to
+>          // `krealloc_aligned`. We also verified that the type is not a ZST.
+> 
+> base-commit: 97ab3e8eec0ce79d9e265e6c9e4c480492180409
+> -- 
+> 2.45.1
+> 
 
-I've tested your serie and have a regression at the kernel boot time:
-[    7.738117] mtk-power-controller 10006000.syscon:power-controller: Failed to create device link 
-(0x180) with 14000000.syscon
-
-It's related to your patch 3/4.
-
--- 
-Regards,
-Alexandre
 
