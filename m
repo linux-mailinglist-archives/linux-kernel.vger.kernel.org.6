@@ -1,83 +1,108 @@
-Return-Path: <linux-kernel+bounces-183821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF0D8C9E97
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:07:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F134B8C9E9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C34CCB22699
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:07:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E13A1C22F81
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF1C13698D;
-	Mon, 20 May 2024 14:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD2A13666F;
+	Mon, 20 May 2024 14:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nzXujvLQ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="q1rmb1I3"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57BF45026;
-	Mon, 20 May 2024 14:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290CF13664B
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 14:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716214037; cv=none; b=fFo7hhFcbhd1TaQsgNdI77dvKPpl6U+FuCuvuEjnHVqi7kx0uwVC3eQUB3aZePmaLiePnohksU7X+mOaxBvQ7DEQITkAV4Bqtqr6OypZwlMi2S7di6UKqvibEtBg8nV13eSyPBbn1lsiQUHTWACFwCi9fgTrisKQWMNw6evzta8=
+	t=1716214086; cv=none; b=rVlY3D/91iGoLp/PAvdqRn93aThQokeXeCFyp4n1AwDeaIPKOfFeu4V6TyJeVGxLxaGRdILDlWhTbXqwB6PbHGrI8CaClr3Fn/BEcaJ4BtNeBi6X8fHozaG62r5Xkgd3VRMh8zqlcV6wxSSesURt9voD6SEP5ujVBiTtDPNUAew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716214037; c=relaxed/simple;
-	bh=w4T6LcRjlCHTTZIBTqyyyFIHQt2VX43DOdStKH+dMjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WFLWUfJfl2p/+J2Y+7xaEqlIwqSFkjQ+OTWrEYjESxf7Q+nENKnl6qVLNDoX++mHDgKtR+rwcI3tCNexPZucW/KbS+J43TDreVjnVXhsZ3BwHWGonZdE2IZwNibmR3KIWJc+xmVq/DW39FVSHivMCu8ILj32qsgVRnM5sYRDk7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nzXujvLQ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wpWEoUMWnFLJr+MkLtPIZ/EXAlokieryuSaCz8a6I3M=; b=nzXujvLQghLXfJUbZl0u3JiQ/V
-	njxgWrULaemEv1rhjj7uGwTNzAM865guFORckfkd4Elr/e93FJxZ7xTyAiIdHg5YdZ5fZ5uXnfPLZ
-	CkqyBZ+Fnjku555e7eD3RcC1Zsq4vNK1IowWSRMEcMyM/9W+5QQhEQob/6fQ6CZLxDh8rF+J2mz7B
-	ne6Lxk1tkPc4pO11ZuBp7Vn+3Cjy+Gsmh1kKjw1cn5zxMQmGVEIK5F3Q+mhhHaOwFlPewXynlVCI6
-	yLaq/aRiNH+FsLzpdW2E0VFX3q2kB5KFtFAoFVn5xw4OdNAZXy5oqxQlyYTJG9vVi3+f7x+gT2JRa
-	Z5hYlxBA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s93fS-0000000EfNO-3kiZ;
-	Mon, 20 May 2024 14:07:10 +0000
-Date: Mon, 20 May 2024 07:07:10 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-	alex.williamson@redhat.com, jgg@nvidia.com, kevin.tian@intel.com,
-	iommu@lists.linux.dev, pbonzini@redhat.com, seanjc@google.com,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-	corbet@lwn.net, joro@8bytes.org, will@kernel.org,
-	robin.murphy@arm.com, baolu.lu@linux.intel.com, yi.l.liu@intel.com,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH 3/5] x86/mm: Introduce and export interface
- arch_clean_nonsnoop_dma()
-Message-ID: <ZktZDmcNnsHhp4Tm@infradead.org>
-References: <20240507061802.20184-1-yan.y.zhao@intel.com>
- <20240507062044.20399-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1716214086; c=relaxed/simple;
+	bh=jejequIZLQUkXoRwRN38Pai8FJ1AhPODk6cIdwLFiZs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=UDH8SkIYr+vUotWq/zWX9A29eqNRoJRlrUHwHvX/HKJVZUzteXxkIBLhulliURCISEGqzfsxnC9FcKypjakXvRVzfnxHCuBbgY6e3zS4453SrjqZsDdLmghvgVorbbZlsufjgqg9WJtBbdwrzh4Coys+yaeUZWrfS66p+NPSDX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=q1rmb1I3; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f2e3249d5eso10156025ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 07:08:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716214083; x=1716818883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pUPDjNArKJ3mfUMSjW2yhq61IQlP1POL1CAjSweGz24=;
+        b=q1rmb1I3UB2MCbhXDTl8HJk+JlONBra45FPlNABo4ewLHWHA8JXEGtzcm6JDV/G5Z3
+         3fqtG9AJA1wtzwXgSg7u2uqyrKK0NcDIqs23OIcYXFnmAE8p1vzcyw/RRnq3R2w29PPf
+         3gRxtUNYEzUCgmDLwK9Dm5f40o27bx+GDp7QOVSk4ctmu5imbWMJ98Vb70N4b5SySZ/L
+         h3W+CCbHKMwFId+2iQrP/iPZQJDHdKAUjxlCkPdARia5DYqDHKH90faKzgEB/o87W62x
+         NxUKgdIAYdU0+kgpLgykcF5eJSfRiF/i0nb5yrbYE1GprVK2ZKNwyT760abN44mcgYnK
+         J5Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716214083; x=1716818883;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pUPDjNArKJ3mfUMSjW2yhq61IQlP1POL1CAjSweGz24=;
+        b=ClGWYx+Qo39JMfC6r8ct0lbMTZTdfoRhlzaE2ognuCL+O9ScutKZks02UucND3GAxc
+         f8uv01yI17vNM/ztA9+zZDDaJHivUJ/skI5IiIJtTazBeb5RWoOoCre7c4nkWWkw0Lmn
+         my3td4dnmDTMgr6cCrNokoI2tHqjW3UUTSyeMS5I3LrxClZTz1T5/V8+J1UcBU1XmRg9
+         ezJl/xb6+pMIBU/A0VPdDTOgwiw3f6lnDPNjryyijXm+vUjavWIQQNshyPPYWYnCsXNH
+         AjECyAPPzM22YyrpIouu1V+Cf20C+Oq6/+l7ivwm//yYz8nvV497MF2ym2V+o08tQtbF
+         wOdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbP/InytYoMZOgA5Vc4VIpA/oC2PHQwwa5qzIk0MxBVucPK1OT2HYGuwqicjhVN7vi59bolGPuBVT2lUW0/Vj0NkMIZtDq4TZFANwv
+X-Gm-Message-State: AOJu0YwyzPFUXQARJOtttFVqLeyZ7kAb9Dj7xIYYkGtsB9B2drbYe79Z
+	7n2xuX/zqyDSfkXT2Ubs2OolfPHDJxniv64p6coKJCpt7yBc+sN0gE/HyehINYyQOREWzQPR0Ya
+	c
+X-Google-Smtp-Source: AGHT+IFRAVhTX6eDNJiRwOPpKgGY/dBfWAVh7Azrv4tnNy307MGqgnnXihGSFJR0EEXwooshsV6e2g==
+X-Received: by 2002:a17:902:d508:b0:1f3:358:cc30 with SMTP id d9443c01a7336-1f30358e620mr23191555ad.2.1716214083522;
+        Mon, 20 May 2024 07:08:03 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bada431sm203721085ad.100.2024.05.20.07.08.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 07:08:02 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240516-md-t10-pi-v1-1-44a3469374aa@quicinc.com>
+References: <20240516-md-t10-pi-v1-1-44a3469374aa@quicinc.com>
+Subject: Re: [PATCH] block: t10-pi: add MODULE_DESCRIPTION()
+Message-Id: <171621408252.12318.1975684366197625365.b4-ty@kernel.dk>
+Date: Mon, 20 May 2024 08:08:02 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507062044.20399-1-yan.y.zhao@intel.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-On Tue, May 07, 2024 at 02:20:44PM +0800, Yan Zhao wrote:
-> Introduce and export interface arch_clean_nonsnoop_dma() to flush CPU
-> caches for memory involved in non-coherent DMAs (DMAs that lack CPU cache
-> snooping).
 
-Err, no.  There should really be no exported cache manipulation macros,
-as drivers are almost guaranteed to get this wrong.  I've added
-Russell to the Cc list who has been extremtly vocal about this at least
-for arm.
+On Thu, 16 May 2024 17:15:06 -0700, Jeff Johnson wrote:
+> Fix the allmodconfig 'make W=1' issue:
+> 
+> WARNING: modpost: missing MODULE_DESCRIPTION() in block/t10-pi.o
+> 
+> 
+
+Applied, thanks!
+
+[1/1] block: t10-pi: add MODULE_DESCRIPTION()
+      commit: f0eab3e8d1530b87f3523cee060004dd513a6d2b
+
+Best regards,
+-- 
+Jens Axboe
+
+
 
 
