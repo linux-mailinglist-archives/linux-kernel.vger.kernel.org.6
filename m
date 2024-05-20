@@ -1,126 +1,160 @@
-Return-Path: <linux-kernel+bounces-183327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74AD18C97B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:48:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B588C97B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33D021F21ABC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 01:48:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D5D41C2116F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 01:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50A479DC;
-	Mon, 20 May 2024 01:47:51 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF14A937;
+	Mon, 20 May 2024 01:52:28 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1094C12C
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 01:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C36B4C66
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 01:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716169671; cv=none; b=E/ho1t5bULl0X9D7PK5VsPtN6nnrUVB9LcRLS6mAUQ4KgKSAjd7ifyh8fwOj7njAHF5g63PJ53jJu2GxdkRWoVj1olL7/GO+lBN8OXx68yGB9iiRUwSITSMfckiHCy9YlO/JBe7jcKoDtHAY5uwtmJbWEAfUyEDg8jsvsDP9Hr8=
+	t=1716169948; cv=none; b=EMDFaq4S9He9ZeKOrYsxSefdKjAmaSmA6bQcP6PIaMhfbzAQXbPk+fQ8Es0N8PlWgYuBsiF1CedcOxnlzCDRf4Jryc0Un4lHi7gy6iQiLh7KXVlqOpLVRlBajdjKiYtGgai1Gt1FdgYooMTOtbMTSzWY1zcuzkaXF3tloWl17SY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716169671; c=relaxed/simple;
-	bh=qpXZyW+NEeL2MCm77eZBO0fz7eYvCpAkOHbsTO+X6EA=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=IrONfTzEiLHaX9PkCTEu0mygXyIT8kz5+rs4lOAODUb8vomB9gRXIPC/Sz7Gv8HLWLoPS4WZNhtLVZ0gNikzIf0pNmqhvNcplaa+7sONgbqa3Z5yaAiKd+CZQ6zj/+EfqgJ7q93zbNqv6GnOhsRWdyEsaMQib3neVFle1O8d9tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4VjL5H4GTcz1xmdr;
-	Mon, 20 May 2024 09:46:27 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8A01C1A0188;
-	Mon, 20 May 2024 09:47:40 +0800 (CST)
-Received: from [10.173.135.154] (10.173.135.154) by
- canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 20 May 2024 09:47:40 +0800
-Subject: Re: [PATCH -rc7] mm/huge_memory: mark huge_zero_page reserved
-To: kernel test robot <oliver.sang@intel.com>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-mm@kvack.org>,
-	<akpm@linux-foundation.org>, <shy828301@gmail.com>,
-	<nao.horiguchi@gmail.com>, <xuyu@linux.alibaba.com>,
-	<linux-kernel@vger.kernel.org>
-References: <202405171417.1bb0856a-lkp@intel.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <1872dc30-01ff-008c-aedb-9a83c57a6bc7@huawei.com>
-Date: Mon, 20 May 2024 09:47:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1716169948; c=relaxed/simple;
+	bh=HsQV4Ltggy6Aey7CF0suvofOohFBFlsZ5EqjOonqp6c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ces+zmMwmPJ6mYsKN1VCLxxQ4l5m+wAGipNxRW57WVF1fy6Gns4vQVzbhgiQR3mqI2guiAFY2ZhPzDtrxoGqrUnWEVDZnW/dR61MlD349eE2PAIsDv4a4uRBgvXdKyn7oHSAyf3AFJXrP8abyMkjwU3nNXBIQ7i5k1ed32Dqp5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e1db7e5386so1005875639f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 18:52:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716169946; x=1716774746;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k++fI0WKokHitI27fX8ZAGJFInOOijXTOw3x+5jhqLg=;
+        b=J9yLN+bO0F/9bdAFWwR+vdclBl7s6TY9Pq5wdDRA1whBanhW2p7g8mjeBv/Os5gsnE
+         GWWx74O3lJWyFV98QXhIkLvFU+7hOJsYZvy/83WHzJoyb13W3RNVxt2rRmC00+6/wXLj
+         0+QcuBKF6mkTLorOAZnGbxM9mYW0fJRReI/cHuO6nvT1lJTT0XeFcQtfzUoYqzI4v8ck
+         TljoVfUJKHyxCmUvbPq6RZXvJp0NLd4eBRo61d25b0NQ/nSH/3rUIwv6CyPO+V8GnchY
+         2Pf+SrkozlMmMb/ShyL8hZsNZpr0E78NzQpVT8OXrCM2Ho6rQ54vTLOSeqwWTiaO1qxr
+         c0rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxBk1tnktfAAn3VduNrVJr+HB/3LsLLGpitgHSUhjBp85lgIXHi74CCTSC9XcFcdOh7Z2i9n/JJnHzYONqep1RM5tYON6bBv9yW54Z
+X-Gm-Message-State: AOJu0YxXErGlVUiGTIV1SMNLwiPudQHJJvrZLIjWI418CdyAPTlMPsPR
+	duuTOOCW/A9/5NbhQvrHiAd/ZPA3VHyemoMYyAPlEwaD1Qv+dJYh6Tv14PrtXQiuQWRN8rzgp+I
+	Ec10qSH7NiDE+XS4kwm66Q/4aKOMxRdqOELkp9fGibVPJEkFYXzlqf4s=
+X-Google-Smtp-Source: AGHT+IHfDk7mUTbbI/3N8CUKQkG0KRS2hg0WW5QlxyVMk7+oinsyJd/sju8KYYQgN0slGoVobo/Iaff4pwYsacf+PjdZ+Kp67gC/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <202405171417.1bb0856a-lkp@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- canpemm500002.china.huawei.com (7.192.104.244)
+X-Received: by 2002:a05:6638:8725:b0:488:5e26:ffb5 with SMTP id
+ 8926c6da1cb9f-48958694bafmr1963185173.2.1716169945846; Sun, 19 May 2024
+ 18:52:25 -0700 (PDT)
+Date: Sun, 19 May 2024 18:52:25 -0700
+In-Reply-To: <000000000000f19a1406109eb5c5@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ff23a10618d8f3b5@google.com>
+Subject: Re: [syzbot] [ext4?] general protection fault in __block_commit_write
+From: syzbot <syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/5/17 15:03, kernel test robot wrote:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "kernel_BUG_at_include/linux/page-flags.h" on:
-> 
-> commit: 8e6ff9c4aad2c677c53f70d9e193c35cbbafcb88 ("[PATCH -rc7] mm/huge_memory: mark huge_zero_page reserved")
-> url: https://github.com/intel-lab-lkp/linux/commits/Miaohe-Lin/mm-huge_memory-mark-huge_zero_page-reserved/20240511-115840
-> base: https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git cf87f46fd34d6c19283d9625a7822f20d90b64a4
-> patch link: https://lore.kernel.org/all/20240511035435.1477004-1-linmiaohe@huawei.com/
-> patch subject: [PATCH -rc7] mm/huge_memory: mark huge_zero_page reserved
-> 
-> in testcase: trinity
-> version: trinity-i386-abe9de86-1_20230429
-> with following parameters:
-> 
-> 	runtime: 300s
-> 	group: group-03
-> 	nr_groups: 5
-> 
-> 
-> 
-> compiler: gcc-13
-> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> +------------------------------------------+------------+------------+
-> |                                          | cf87f46fd3 | 8e6ff9c4aa |
-> +------------------------------------------+------------+------------+
-> | kernel_BUG_at_include/linux/page-flags.h | 0          | 11         |
-> | invalid_opcode:#[##]                     | 0          | 11         |
-> | RIP:get_huge_zero_page                   | 0          | 11         |
-> | Kernel_panic-not_syncing:Fatal_exception | 0          | 11         |
-> +------------------------------------------+------------+------------+
-> 
+syzbot has found a reproducer for the following issue on:
 
-Thanks for your report.
+HEAD commit:    fda5695d692c Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1624be58980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=95dc1de8407c7270
+dashboard link: https://syzkaller.appspot.com/bug?extid=18df508cf00a0598d9a6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12bef634980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b68242980000
 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202405171417.1bb0856a-lkp@intel.com
-> 
-> 
-> [  272.633454][ T3838] ------------[ cut here ]------------
-> [  272.634362][ T3838] kernel BUG at include/linux/page-flags.h:540!
-> [  272.635422][ T3838] invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-> [  272.636518][ T3838] CPU: 0 PID: 3838 Comm: trinity-c2 Not tainted 6.9.0-rc7-00184-g8e6ff9c4aad2 #1
-> [  272.638008][ T3838] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [ 272.639707][ T3838] RIP: 0010:get_huge_zero_page (include/linux/page-flags.h:540 (discriminator 1) mm/huge_memory.c:211 (discriminator 1)) 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/07f3214ff0d9/disk-fda5695d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/70e2e2c864e8/vmlinux-fda5695d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b259942a16dc/Image-fda5695d.gz.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/5853ffd99deb/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/8d78b07027fb/mount_5.gz
 
-I think the root cause is that PG_reserved is inhibited on compound pages. So my original version of patch breaks the assumption.
-But since PG_reserved is to be removed, I have dropped this patch.
-Thanks.
-.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com
 
+Unable to handle kernel paging request at virtual address dfff800000000004
+KASAN: null-ptr-deref in range [0x0000000000000020-0x0000000000000027]
+Mem abort info:
+  ESR = 0x0000000096000005
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x05: level 1 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[dfff800000000004] address between user and kernel address ranges
+Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 20274 Comm: syz-executor185 Not tainted 6.9.0-rc7-syzkaller-gfda5695d692c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __block_commit_write+0x64/0x2b0 fs/buffer.c:2167
+lr : __block_commit_write+0x3c/0x2b0 fs/buffer.c:2160
+sp : ffff8000a1957600
+x29: ffff8000a1957610 x28: dfff800000000000 x27: ffff0000e30e34b0
+x26: 0000000000000000 x25: dfff800000000000 x24: dfff800000000000
+x23: fffffdffc397c9e0 x22: 0000000000000020 x21: 0000000000000020
+x20: 0000000000000040 x19: fffffdffc397c9c0 x18: 1fffe000367bd196
+x17: ffff80008eead000 x16: ffff80008ae89e3c x15: 00000000200000c0
+x14: 1fffe0001cbe4e04 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : 0000000000000004 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : fffffdffc397c9c0 x4 : 0000000000000020 x3 : 0000000000000020
+x2 : 0000000000000040 x1 : 0000000000000020 x0 : fffffdffc397c9c0
+Call trace:
+ __block_commit_write+0x64/0x2b0 fs/buffer.c:2167
+ block_write_end+0xb4/0x104 fs/buffer.c:2253
+ ext4_da_do_write_end fs/ext4/inode.c:2955 [inline]
+ ext4_da_write_end+0x2c4/0xa40 fs/ext4/inode.c:3028
+ generic_perform_write+0x394/0x588 mm/filemap.c:3985
+ ext4_buffered_write_iter+0x2c0/0x4ec fs/ext4/file.c:299
+ ext4_file_write_iter+0x188/0x1780
+ call_write_iter include/linux/fs.h:2110 [inline]
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0x968/0xc3c fs/read_write.c:590
+ ksys_write+0x15c/0x26c fs/read_write.c:643
+ __do_sys_write fs/read_write.c:655 [inline]
+ __se_sys_write fs/read_write.c:652 [inline]
+ __arm64_sys_write+0x7c/0x90 fs/read_write.c:652
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+Code: 97f85911 f94002da 91008356 d343fec8 (38796908) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	97f85911 	bl	0xffffffffffe16444
+   4:	f94002da 	ldr	x26, [x22]
+   8:	91008356 	add	x22, x26, #0x20
+   c:	d343fec8 	lsr	x8, x22, #3
+* 10:	38796908 	ldrb	w8, [x8, x25] <-- trapping instruction
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
