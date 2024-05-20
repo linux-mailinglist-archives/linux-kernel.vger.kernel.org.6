@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-184274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D540B8CA4BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:55:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3BB8CA4C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B406281C91
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:55:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF6521C2042A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3521411D2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED001411E1;
 	Mon, 20 May 2024 22:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BVyhrLXF"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QIxj0FL3"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39B813D539
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 22:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393BF13D609
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 22:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716245221; cv=none; b=LbbXgTh6Y8+aRyHImTxE9bjZ0kIrdbBnumC1Qg5BB6Gvl2wVijOjSlny1Aa02mYlNGSoBEnx5B+dKLpcAXKCRdR4FQ6HeLKKx3vPHw5pbMHlkubYB9hfs802Gk28R8ncCQoWPQfSVSBuEw16uD+5ypqIqG5A9pn61cL18wCOSv8=
+	t=1716245221; cv=none; b=dyo3BzjzNCCFKPAHqUEXxAhHVV9nOV6lVgt/VIxwYE9ue/3M6AR5dubwcDYbT1iRJMsNxCBLgtbzIIfCcY9F+5PQsLJ0ffFbP+LS5Syc5KqJoUpQXBbuXswkBoA6sJ20XYls0lzueNepIVBDT+i6+ihF8VAVqYn6c+3lM9NPM9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716245221; c=relaxed/simple;
-	bh=A/kp9Rdskk/VY+HmbT1Gfw4afwzWaErQECfGecHn7vw=;
+	bh=kewR2uBkcTny6f6IgFHYsgMrVAXGPg5/f1jOQ9w1xDE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CI6qLr3YGovgTCKOEV97XNkhJX3G5Qh+LcSYIppqP3/vNjEi2ZVFwDrZSrLw554A0sp3IAGdEzUSDt3m4p3UDbNiz4+ZWDXpVvz4+54fuIqe8JGsB73QwpQ0sriQMnVDfxDPqB1pg+RX4syVs5eCAq7zrCFz3+WMiT60UQW9IhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BVyhrLXF; arc=none smtp.client-ip=192.198.163.18
+	 MIME-Version; b=pRHJ1EAE8qzT2rBq6nwQI9/iWcoK4HhWsaxODyEy4KsYn7/WLcUiiUxdMjr1izwsAz4QxY323YoHJd88aGm77+fYmKYbMZcAisGALX0T36kOJet1CXsA5UazECt4FmkqOa1LzxrnzMK/G2lvrcsJwFjxBwFW1v6q8rXGS+Cgdhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QIxj0FL3; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,26 +35,26 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1716245219; x=1747781219;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=A/kp9Rdskk/VY+HmbT1Gfw4afwzWaErQECfGecHn7vw=;
-  b=BVyhrLXFcG4jAGtyzrm0Ku62WcFP1Ol/zqtasCQCcLhE1WVuIRM/S0MK
-   EYsBpetHtxA/Ny/3m0/wZGzUlcZ5TL0tCk9/hXwlrTNGNl4l4g0x8WCaw
-   j+E4zS8i6wI0DPcrQiYhplBKcRXoZ1fyRnDnaF5e+v0BB6ElcwGxdM6S3
-   WBrSPpJdOnV34f7cULaBZMkAh6c14Nobhqo2VCKOff9xb1Zjg7SU0yGe6
-   ztQkRavgC4dE8Rggawt/9KPaLe4kSymx3xWlH3EvMZn1ZARCy2IBJQs5R
-   XlSfDFRNAoPQ3fuBCtvpMUh4+j9w7kvV+zRt/74Hf1CVvgpZSM5v/ku67
-   A==;
-X-CSE-ConnectionGUID: UB8gfZMOQjCErLSVyPeOMg==
-X-CSE-MsgGUID: Q7icTqyoTH+LI5dqYjWy2Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12200012"
+  bh=kewR2uBkcTny6f6IgFHYsgMrVAXGPg5/f1jOQ9w1xDE=;
+  b=QIxj0FL3arBZXSy8aiOslP9NtXtJQEWf5WamobWHd/I6VA3jKc913+94
+   HSfrv+CwyADcOlQxFSCB0n0lWZW6R6UMrzrpHQTNls+z29pf5cwas8b82
+   75Sscnpm7SAgtyO5VWMRWGF+3y8nThhgZ6HpYcyFGEgNO2AWE7J+jkb2x
+   tYgrwW7adSvzvjWOjzzXa535nrhLljScNQxXEp63Hp6MLMRnPueTe9DBy
+   1xwk42WXvkpVWx+jG2vL2skuxAxSExF1EfBv4RNeyNI/GO4AMJa6av7E8
+   Jdv9X+yTi8vgGHjPlK3HiiU2LlOiaSbgZxeSvQ4JfB0RvkmBKRLy3RZ1q
+   Q==;
+X-CSE-ConnectionGUID: l5GUuQcYRLSJkzRne4Mtxw==
+X-CSE-MsgGUID: OuxYXOqLQoaCMN5i+ShpTg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12200024"
 X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="12200012"
+   d="scan'208";a="12200024"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 15:46:40 -0700
-X-CSE-ConnectionGUID: /X0EMqcrQMKHwdvSe7S2Ag==
-X-CSE-MsgGUID: jblmajauQ925b227asUMIw==
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 15:46:41 -0700
+X-CSE-ConnectionGUID: zq0pFpXWS6ebPr0Zi6x9gw==
+X-CSE-MsgGUID: 2+NlFfxISxmt/ivpRL0kAQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="32593525"
+   d="scan'208";a="32593528"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 15:46:40 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -73,11 +73,10 @@ Cc: "H. Peter Anvin" <hpa@zytor.com>,
 	Thomas Renninger <trenn@suse.de>,
 	Andi Kleen <ak@linux.intel.com>,
 	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH v6 46/49] tools/power/turbostat: Switch to new Intel CPU model defines
-Date: Mon, 20 May 2024 15:46:17 -0700
-Message-ID: <20240520224620.9480-47-tony.luck@intel.com>
+	patches@lists.linux.dev
+Subject: [PATCH v6 47/49] peci, hwmon: Switch to new Intel CPU model defines
+Date: Mon, 20 May 2024 15:46:18 -0700
+Message-ID: <20240520224620.9480-48-tony.luck@intel.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240520224620.9480-1-tony.luck@intel.com>
 References: <20240520224620.9480-1-tony.luck@intel.com>
@@ -89,27 +88,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-New CPU #defines encode vendor and family as well as model.
-
-N.B. Copied VFM_*() defines here from <asm/cpu_device_id.h> to avoid
-an application picking a second internal kernel header file.
+Update peci subsystem to use the same vendor-family-model
+combined definition that core x86 code uses.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- tools/power/x86/turbostat/turbostat.c | 165 +++++++++++++++-----------
- 1 file changed, 95 insertions(+), 70 deletions(-)
+ include/linux/peci-cpu.h     | 24 ++++++++++++++++++++++++
+ include/linux/peci.h         |  6 ++----
+ drivers/peci/internal.h      |  6 ++----
+ drivers/hwmon/peci/cputemp.c |  8 ++++----
+ drivers/peci/core.c          |  5 ++---
+ drivers/peci/cpu.c           | 21 +++++++--------------
+ drivers/peci/device.c        |  3 +--
+ 7 files changed, 42 insertions(+), 31 deletions(-)
 
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index 8cdf41906e98..2df6c118b6c0 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -9,6 +9,30 @@
+diff --git a/include/linux/peci-cpu.h b/include/linux/peci-cpu.h
+index ff8ae9c26c80..601cdd086bf6 100644
+--- a/include/linux/peci-cpu.h
++++ b/include/linux/peci-cpu.h
+@@ -6,6 +6,30 @@
  
- #define _GNU_SOURCE
- #include MSRHEADER
+ #include <linux/types.h>
+ 
++/* Copied from x86 <asm/processor.h> */
++#define X86_VENDOR_INTEL       0
 +
-+// copied from arch/x86/include/asm/cpu_device_id.h
++/* Copied from x86 <asm/cpu_device_id.h> */
 +#define VFM_MODEL_BIT	0
 +#define VFM_FAMILY_BIT	8
 +#define VFM_VENDOR_BIT	16
@@ -128,180 +132,154 @@ index 8cdf41906e98..2df6c118b6c0 100644
 +	((_family) << VFM_FAMILY_BIT) |		\
 +	((_vendor) << VFM_VENDOR_BIT)		\
 +)
-+// end copied section
++/* End of copied code */
 +
-+#define X86_VENDOR_INTEL	0
-+
- #include INTEL_FAMILY_HEADER
- #include <stdarg.h>
- #include <stdio.h>
-@@ -367,7 +391,7 @@ struct platform_features {
+ #include "../../arch/x86/include/asm/intel-family.h"
+ 
+ #define PECI_PCS_PKG_ID			0  /* Package Identifier Read */
+diff --git a/include/linux/peci.h b/include/linux/peci.h
+index 90e241458ef6..3e0bc37591d6 100644
+--- a/include/linux/peci.h
++++ b/include/linux/peci.h
+@@ -59,8 +59,7 @@ static inline struct peci_controller *to_peci_controller(void *d)
+  * struct peci_device - PECI device
+  * @dev: device object to register PECI device to the device model
+  * @info: PECI device characteristics
+- * @info.family: device family
+- * @info.model: device model
++ * @info.x86_vfm: device vendor-family-model
+  * @info.peci_revision: PECI revision supported by the PECI device
+  * @info.socket_id: the socket ID represented by the PECI device
+  * @addr: address used on the PECI bus connected to the parent controller
+@@ -73,8 +72,7 @@ static inline struct peci_controller *to_peci_controller(void *d)
+ struct peci_device {
+ 	struct device dev;
+ 	struct {
+-		u16 family;
+-		u8 model;
++		u32 x86_vfm;
+ 		u8 peci_revision;
+ 		u8 socket_id;
+ 	} info;
+diff --git a/drivers/peci/internal.h b/drivers/peci/internal.h
+index 9d75ea54504c..b9d45483cabe 100644
+--- a/drivers/peci/internal.h
++++ b/drivers/peci/internal.h
+@@ -66,13 +66,11 @@ struct peci_request *peci_xfer_ep_mmio64_readl(struct peci_device *device, u8 ba
+ /**
+  * struct peci_device_id - PECI device data to match
+  * @data: pointer to driver private data specific to device
+- * @family: device family
+- * @model: device model
++ * @x86_vfm: device vendor-family-model
+  */
+ struct peci_device_id {
+ 	const void *data;
+-	u16 family;
+-	u8 model;
++	u32 x86_vfm;
  };
  
- struct platform_data {
--	unsigned int model;
-+	unsigned int vfm;
- 	const struct platform_features *features;
- };
+ extern struct device_type peci_device_type;
+diff --git a/drivers/hwmon/peci/cputemp.c b/drivers/hwmon/peci/cputemp.c
+index a812c15948d9..5a682195b98f 100644
+--- a/drivers/hwmon/peci/cputemp.c
++++ b/drivers/hwmon/peci/cputemp.c
+@@ -360,10 +360,10 @@ static int init_core_mask(struct peci_cputemp *priv)
+ 	int ret;
  
-@@ -910,75 +934,75 @@ static const struct platform_features amd_features_with_rapl = {
- };
- 
- static const struct platform_data turbostat_pdata[] = {
--	{ INTEL_FAM6_NEHALEM, &nhm_features },
--	{ INTEL_FAM6_NEHALEM_G, &nhm_features },
--	{ INTEL_FAM6_NEHALEM_EP, &nhm_features },
--	{ INTEL_FAM6_NEHALEM_EX, &nhx_features },
--	{ INTEL_FAM6_WESTMERE, &nhm_features },
--	{ INTEL_FAM6_WESTMERE_EP, &nhm_features },
--	{ INTEL_FAM6_WESTMERE_EX, &nhx_features },
--	{ INTEL_FAM6_SANDYBRIDGE, &snb_features },
--	{ INTEL_FAM6_SANDYBRIDGE_X, &snx_features },
--	{ INTEL_FAM6_IVYBRIDGE, &ivb_features },
--	{ INTEL_FAM6_IVYBRIDGE_X, &ivx_features },
--	{ INTEL_FAM6_HASWELL, &hsw_features },
--	{ INTEL_FAM6_HASWELL_X, &hsx_features },
--	{ INTEL_FAM6_HASWELL_L, &hswl_features },
--	{ INTEL_FAM6_HASWELL_G, &hswg_features },
--	{ INTEL_FAM6_BROADWELL, &bdw_features },
--	{ INTEL_FAM6_BROADWELL_G, &bdwg_features },
--	{ INTEL_FAM6_BROADWELL_X, &bdx_features },
--	{ INTEL_FAM6_BROADWELL_D, &bdx_features },
--	{ INTEL_FAM6_SKYLAKE_L, &skl_features },
--	{ INTEL_FAM6_SKYLAKE, &skl_features },
--	{ INTEL_FAM6_SKYLAKE_X, &skx_features },
--	{ INTEL_FAM6_KABYLAKE_L, &skl_features },
--	{ INTEL_FAM6_KABYLAKE, &skl_features },
--	{ INTEL_FAM6_COMETLAKE, &skl_features },
--	{ INTEL_FAM6_COMETLAKE_L, &skl_features },
--	{ INTEL_FAM6_CANNONLAKE_L, &cnl_features },
--	{ INTEL_FAM6_ICELAKE_X, &icx_features },
--	{ INTEL_FAM6_ICELAKE_D, &icx_features },
--	{ INTEL_FAM6_ICELAKE_L, &cnl_features },
--	{ INTEL_FAM6_ICELAKE_NNPI, &cnl_features },
--	{ INTEL_FAM6_ROCKETLAKE, &cnl_features },
--	{ INTEL_FAM6_TIGERLAKE_L, &cnl_features },
--	{ INTEL_FAM6_TIGERLAKE, &cnl_features },
--	{ INTEL_FAM6_SAPPHIRERAPIDS_X, &spr_features },
--	{ INTEL_FAM6_EMERALDRAPIDS_X, &spr_features },
--	{ INTEL_FAM6_GRANITERAPIDS_X, &spr_features },
--	{ INTEL_FAM6_LAKEFIELD, &cnl_features },
--	{ INTEL_FAM6_ALDERLAKE, &adl_features },
--	{ INTEL_FAM6_ALDERLAKE_L, &adl_features },
--	{ INTEL_FAM6_RAPTORLAKE, &adl_features },
--	{ INTEL_FAM6_RAPTORLAKE_P, &adl_features },
--	{ INTEL_FAM6_RAPTORLAKE_S, &adl_features },
--	{ INTEL_FAM6_METEORLAKE, &cnl_features },
--	{ INTEL_FAM6_METEORLAKE_L, &cnl_features },
--	{ INTEL_FAM6_ARROWLAKE_H, &arl_features },
--	{ INTEL_FAM6_ARROWLAKE_U, &arl_features },
--	{ INTEL_FAM6_ARROWLAKE, &arl_features },
--	{ INTEL_FAM6_LUNARLAKE_M, &arl_features },
--	{ INTEL_FAM6_ATOM_SILVERMONT, &slv_features },
--	{ INTEL_FAM6_ATOM_SILVERMONT_D, &slvd_features },
--	{ INTEL_FAM6_ATOM_AIRMONT, &amt_features },
--	{ INTEL_FAM6_ATOM_GOLDMONT, &gmt_features },
--	{ INTEL_FAM6_ATOM_GOLDMONT_D, &gmtd_features },
--	{ INTEL_FAM6_ATOM_GOLDMONT_PLUS, &gmtp_features },
--	{ INTEL_FAM6_ATOM_TREMONT_D, &tmtd_features },
--	{ INTEL_FAM6_ATOM_TREMONT, &tmt_features },
--	{ INTEL_FAM6_ATOM_TREMONT_L, &tmt_features },
--	{ INTEL_FAM6_ATOM_GRACEMONT, &adl_features },
--	{ INTEL_FAM6_ATOM_CRESTMONT_X, &srf_features },
--	{ INTEL_FAM6_ATOM_CRESTMONT, &grr_features },
--	{ INTEL_FAM6_XEON_PHI_KNL, &knl_features },
--	{ INTEL_FAM6_XEON_PHI_KNM, &knl_features },
-+	{ INTEL_NEHALEM, &nhm_features },
-+	{ INTEL_NEHALEM_G, &nhm_features },
-+	{ INTEL_NEHALEM_EP, &nhm_features },
-+	{ INTEL_NEHALEM_EX, &nhx_features },
-+	{ INTEL_WESTMERE, &nhm_features },
-+	{ INTEL_WESTMERE_EP, &nhm_features },
-+	{ INTEL_WESTMERE_EX, &nhx_features },
-+	{ INTEL_SANDYBRIDGE, &snb_features },
-+	{ INTEL_SANDYBRIDGE_X, &snx_features },
-+	{ INTEL_IVYBRIDGE, &ivb_features },
-+	{ INTEL_IVYBRIDGE_X, &ivx_features },
-+	{ INTEL_HASWELL, &hsw_features },
-+	{ INTEL_HASWELL_X, &hsx_features },
-+	{ INTEL_HASWELL_L, &hswl_features },
-+	{ INTEL_HASWELL_G, &hswg_features },
-+	{ INTEL_BROADWELL, &bdw_features },
-+	{ INTEL_BROADWELL_G, &bdwg_features },
-+	{ INTEL_BROADWELL_X, &bdx_features },
-+	{ INTEL_BROADWELL_D, &bdx_features },
-+	{ INTEL_SKYLAKE_L, &skl_features },
-+	{ INTEL_SKYLAKE, &skl_features },
-+	{ INTEL_SKYLAKE_X, &skx_features },
-+	{ INTEL_KABYLAKE_L, &skl_features },
-+	{ INTEL_KABYLAKE, &skl_features },
-+	{ INTEL_COMETLAKE, &skl_features },
-+	{ INTEL_COMETLAKE_L, &skl_features },
-+	{ INTEL_CANNONLAKE_L, &cnl_features },
-+	{ INTEL_ICELAKE_X, &icx_features },
-+	{ INTEL_ICELAKE_D, &icx_features },
-+	{ INTEL_ICELAKE_L, &cnl_features },
-+	{ INTEL_ICELAKE_NNPI, &cnl_features },
-+	{ INTEL_ROCKETLAKE, &cnl_features },
-+	{ INTEL_TIGERLAKE_L, &cnl_features },
-+	{ INTEL_TIGERLAKE, &cnl_features },
-+	{ INTEL_SAPPHIRERAPIDS_X, &spr_features },
-+	{ INTEL_EMERALDRAPIDS_X, &spr_features },
-+	{ INTEL_GRANITERAPIDS_X, &spr_features },
-+	{ INTEL_LAKEFIELD, &cnl_features },
-+	{ INTEL_ALDERLAKE, &adl_features },
-+	{ INTEL_ALDERLAKE_L, &adl_features },
-+	{ INTEL_RAPTORLAKE, &adl_features },
-+	{ INTEL_RAPTORLAKE_P, &adl_features },
-+	{ INTEL_RAPTORLAKE_S, &adl_features },
-+	{ INTEL_METEORLAKE, &cnl_features },
-+	{ INTEL_METEORLAKE_L, &cnl_features },
-+	{ INTEL_ARROWLAKE_H, &arl_features },
-+	{ INTEL_ARROWLAKE_U, &arl_features },
-+	{ INTEL_ARROWLAKE, &arl_features },
-+	{ INTEL_LUNARLAKE_M, &arl_features },
-+	{ INTEL_ATOM_SILVERMONT, &slv_features },
-+	{ INTEL_ATOM_SILVERMONT_D, &slvd_features },
-+	{ INTEL_ATOM_AIRMONT, &amt_features },
-+	{ INTEL_ATOM_GOLDMONT, &gmt_features },
-+	{ INTEL_ATOM_GOLDMONT_D, &gmtd_features },
-+	{ INTEL_ATOM_GOLDMONT_PLUS, &gmtp_features },
-+	{ INTEL_ATOM_TREMONT_D, &tmtd_features },
-+	{ INTEL_ATOM_TREMONT, &tmt_features },
-+	{ INTEL_ATOM_TREMONT_L, &tmt_features },
-+	{ INTEL_ATOM_GRACEMONT, &adl_features },
-+	{ INTEL_ATOM_CRESTMONT_X, &srf_features },
-+	{ INTEL_ATOM_CRESTMONT, &grr_features },
-+	{ INTEL_XEON_PHI_KNL, &knl_features },
-+	{ INTEL_XEON_PHI_KNM, &knl_features },
- 	/*
- 	 * Missing support for
--	 * INTEL_FAM6_ICELAKE
--	 * INTEL_FAM6_ATOM_SILVERMONT_MID
--	 * INTEL_FAM6_ATOM_AIRMONT_MID
--	 * INTEL_FAM6_ATOM_AIRMONT_NP
-+	 * INTEL_ICELAKE
-+	 * INTEL_ATOM_SILVERMONT_MID
-+	 * INTEL_ATOM_AIRMONT_MID
-+	 * INTEL_ATOM_AIRMONT_NP
- 	 */
- 	{ 0, NULL },
- };
-@@ -1003,11 +1027,12 @@ void probe_platform_features(unsigned int family, unsigned int model)
- 		return;
+ 	/* Get the RESOLVED_CORES register value */
+-	switch (peci_dev->info.model) {
+-	case INTEL_FAM6_ICELAKE_X:
+-	case INTEL_FAM6_ICELAKE_D:
+-	case INTEL_FAM6_SAPPHIRERAPIDS_X:
++	switch (peci_dev->info.x86_vfm) {
++	case INTEL_ICELAKE_X:
++	case INTEL_ICELAKE_D:
++	case INTEL_SAPPHIRERAPIDS_X:
+ 		ret = peci_ep_pci_local_read(peci_dev, 0, reg->bus, reg->dev,
+ 					     reg->func, reg->offset + 4, &data);
+ 		if (ret)
+diff --git a/drivers/peci/core.c b/drivers/peci/core.c
+index 0f83a9c6093b..b2d7adf05ba0 100644
+--- a/drivers/peci/core.c
++++ b/drivers/peci/core.c
+@@ -163,9 +163,8 @@ EXPORT_SYMBOL_NS_GPL(devm_peci_controller_add, PECI);
+ static const struct peci_device_id *
+ peci_bus_match_device_id(const struct peci_device_id *id, struct peci_device *device)
+ {
+-	while (id->family != 0) {
+-		if (id->family == device->info.family &&
+-		    id->model == device->info.model)
++	while (id->x86_vfm != 0) {
++		if (id->x86_vfm == device->info.x86_vfm)
+ 			return id;
+ 		id++;
  	}
+diff --git a/drivers/peci/cpu.c b/drivers/peci/cpu.c
+index bd990acd92b8..152bbd8e717a 100644
+--- a/drivers/peci/cpu.c
++++ b/drivers/peci/cpu.c
+@@ -294,38 +294,31 @@ peci_cpu_probe(struct peci_device *device, const struct peci_device_id *id)
  
--	if (!genuine_intel || family != 6)
-+	if (!genuine_intel)
- 		return;
+ static const struct peci_device_id peci_cpu_device_ids[] = {
+ 	{ /* Haswell Xeon */
+-		.family	= 6,
+-		.model	= INTEL_FAM6_HASWELL_X,
++		.x86_vfm = INTEL_HASWELL_X,
+ 		.data	= "hsx",
+ 	},
+ 	{ /* Broadwell Xeon */
+-		.family	= 6,
+-		.model	= INTEL_FAM6_BROADWELL_X,
++		.x86_vfm = INTEL_BROADWELL_X,
+ 		.data	= "bdx",
+ 	},
+ 	{ /* Broadwell Xeon D */
+-		.family	= 6,
+-		.model	= INTEL_FAM6_BROADWELL_D,
++		.x86_vfm = INTEL_BROADWELL_D,
+ 		.data	= "bdxd",
+ 	},
+ 	{ /* Skylake Xeon */
+-		.family	= 6,
+-		.model	= INTEL_FAM6_SKYLAKE_X,
++		.x86_vfm = INTEL_SKYLAKE_X,
+ 		.data	= "skx",
+ 	},
+ 	{ /* Icelake Xeon */
+-		.family	= 6,
+-		.model	= INTEL_FAM6_ICELAKE_X,
++		.x86_vfm = INTEL_ICELAKE_X,
+ 		.data	= "icx",
+ 	},
+ 	{ /* Icelake Xeon D */
+-		.family	= 6,
+-		.model	= INTEL_FAM6_ICELAKE_D,
++		.x86_vfm = INTEL_ICELAKE_D,
+ 		.data	= "icxd",
+ 	},
+ 	{ /* Sapphire Rapids Xeon */
+-		.family	= 6,
+-		.model	= INTEL_FAM6_SAPPHIRERAPIDS_X,
++		.x86_vfm = INTEL_SAPPHIRERAPIDS_X,
+ 		.data	= "spr",
+ 	},
+ 	{ }
+diff --git a/drivers/peci/device.c b/drivers/peci/device.c
+index e6b0bffb14f4..5eb57b503c81 100644
+--- a/drivers/peci/device.c
++++ b/drivers/peci/device.c
+@@ -100,8 +100,7 @@ static int peci_device_info_init(struct peci_device *device)
+ 	if (ret)
+ 		return ret;
  
- 	for (i = 0; turbostat_pdata[i].features; i++) {
--		if (turbostat_pdata[i].model == model) {
-+		if (VFM_FAMILY(turbostat_pdata[i].vfm) == family &&
-+		    VFM_MODEL(turbostat_pdata[i].vfm) == model) {
- 			platform = turbostat_pdata[i].features;
- 			return;
- 		}
+-	device->info.family = peci_x86_cpu_family(cpu_id);
+-	device->info.model = peci_x86_cpu_model(cpu_id);
++	device->info.x86_vfm = IFM(peci_x86_cpu_family(cpu_id), peci_x86_cpu_model(cpu_id));
+ 
+ 	ret = peci_get_revision(device, &revision);
+ 	if (ret)
 -- 
 2.45.0
 
