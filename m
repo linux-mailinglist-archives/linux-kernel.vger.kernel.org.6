@@ -1,92 +1,89 @@
-Return-Path: <linux-kernel+bounces-183853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C69C8C9EF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:42:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B439A8C9EEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6027284D58
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:42:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D322284E74
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6571369B2;
-	Mon, 20 May 2024 14:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930361369B9;
+	Mon, 20 May 2024 14:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="hPUdUEVu"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2z6eGyG5"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2046.outbound.protection.outlook.com [40.107.95.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57107136669;
-	Mon, 20 May 2024 14:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049C013666E;
+	Mon, 20 May 2024 14:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716216122; cv=fail; b=BW5ddesuckyY+R4dAqxeCclCQp0Z+32e6ZZYR6QMwknAcL7xJHN/dUXHfM93XqlZyqH8hObybiccfqvHz3SwNknVnyjqozpxa2Lo8oEaXbkmr1y6FJ5yISBzoK10euo1dlCOzcaBecOskZHdeY1xypdAkyMJ7Ei8m1xXts/NBqA=
+	t=1716216111; cv=fail; b=lGv8+xhqvUlCRoYsIL7RcyosvoHpjDB0o+Kr1crTvIo3raGv3TDSq+lBzu3LgWet5d0InF7yG4i64Z2QmcAV7Ksj9zpb486D5GSed3SO7XztnrekTLvRyW2bchaW7dapEVYlC8Ov3IVrW/f61MEKA5rEFLiCci8CIUoKxQ6kt8w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716216122; c=relaxed/simple;
-	bh=L/Zmv17X3g7j6qYIhnUqsiyD+FHieecBYk6Q6O0RyHI=;
+	s=arc-20240116; t=1716216111; c=relaxed/simple;
+	bh=xKfUtZRXvcJd2NdD2ZbbX7J+EPz1FiarnyNO5j4v3GQ=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VINtYhxLHIGwTqYMvumPtoOu9bsyedIdnbaWQl9blXNve8n66zTJGkQ2bI3Os3Y3WimHiOLTiWfxW0bBXulRHVQ/Abhaw7BM6iimoKYR+bIlfukXTBv7swc9hV+y7lQ2Gn8w20HVJ4+PctafFygoayEUkgPhc+DwME7+80k6wSc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=hPUdUEVu; arc=fail smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44KD0BWV021146;
-	Mon, 20 May 2024 07:41:35 -0700
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3y6sphwag2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 07:41:35 -0700 (PDT)
+	 Content-Type:MIME-Version; b=qx+ylv2pZD+HdajFEcJfPqbvSkDH1/Qwh3cGLwqHs0qtK8HWVMNfo1FQQXtlGTINrPTTUv31YdCqHH5rxK4Jg4JcSZLTEN1MvLgtdIg9g2988oFYt69hVoqfZodDXM7hohv5WTi2s9+tO8jQ3Jtb+yeIs4mrQiACPRk94sABlE4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2z6eGyG5; arc=fail smtp.client-ip=40.107.95.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Vt79OwBA9/jQmDSaMk9BZ6ND0GYOeh7Tu+BuTdZT+pJHQG23UZEZ00SYF7PFRRawUZJO6ZrCA6ANndkJYCU0KLWOBaw8B2k6rswB9DFjB43JzsBGcmLQOr73675xtWJpatzf9PCl1H4+JMZ9zifteRusUahUJ8x4EN9SVLLyDrZe4ElsOxU9S1LmkYDZwkIiPhEWmnZHHDo3t0MLKjcT1mq/9NGRtVoOsjREdeXDhLs18+KyWHLhlQRq2k2c37fkPA5oUfsfH5FxguxsRBm+1sQRLABuS6cPEeZrYT5B5rpd5DUdCWTPOj8Qwq303STcWsk5+tHWgKxEsiEwWnjzhg==
+ b=SpGKQf0x9aLamv1sNCjv5jlLeraUMW9fTo8xvQZYdbMopKkuahhIyzcWmSaj7wkSi+Rh+DFcrQfjCo5Yedgl0UqQdn0nMPWGKnoYKTtG9SW9IfjuEMaG5MHzNogM9ySFUucavhLm8zw2+nr9H7fwd99fUWf8PQQ/skkiMTLktmQH9Hvh8I7PSJjKrtKK/nOhROu+HgtvEptrQ1M7LO8D8aayQSXuRCucR19L4AHBYVIPKHfBfSADTECgn26X0Lq9Lj/7vLUWXgjLXD6HJOR9OgWbJR6QmZt0GT0GtMPrScrYl6JndwyOsSN/46bhr5UDvVfXPZbMVK0PkKmQdX+32g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5GKX5E3R+HRYos61B28aQoYdln1r62l0A5zusSbQkoU=;
- b=Shj0EaKUhjWZwOAzSFc8rqipF1PooZuV+fBQX7USFO5DfS4QeSFgNycmwiWQvu/81CjAhYf+89yVSzvY//qzt/5KicqToYQbe+tNaoz17zurN2g60xuGTC9SMljHekbfmAlLwVlzBYK1zApjh04QJcl2XUQbhyhKbzKKWH+qfiJA8dICxjC3PUorvtfQOiibzkVvyrZL9z3SusNjgfCubSDoiDefchdjy7TvS2S83lhJrFcLpD/QcYRLnzA8zNDqypASnX0Uyhg679ub9okFHSZAWHkaLg2qFMxAknRZd4Ay+ovgaIR/G7qFMneqYkh7a6KsUdbmyYOT3/DJPbexTg==
+ bh=/7eu3DzVFGh99i1wY3ypYXdMNAVZvfmncPExyuO/CcQ=;
+ b=HSRVmdPVCVkib4oDd+y9R2Mxsp0/xNqQnX1+Q1zexRDHdDFqmYoGtLIWJJxT3Ap0V8SZMpJq0g2QiESqfyha6x9pEWK3po7oF/TUHMWTCrXX1soSAE72QhNfCrrh3SIirzTy2B6Twjdy+o1wPZgsStQoI1/DaBWGBAsd0gFO7zMDBcPmQNvW6j0dsdq68YUK5IsPEaDsk10Vkshx2kmUqg9FfUP1oDVaHn5FHpDRUU7os83XFtVl5Ugqyy8QCNzklzVxhwm2SqyYzncc+V7WBo5T70eliRr/Oy2HNUocwGspleLsFcJkj8har4lYbOyUpDXyGusFwA31h3iVuCoDjw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5GKX5E3R+HRYos61B28aQoYdln1r62l0A5zusSbQkoU=;
- b=hPUdUEVuWuBXADMTy3C8QUy97D2kKkKPRHQKoHPPfR6IayG59OVSKV42fUx0Ozp42AB+kxOnzeP1wz/elnmIafbC4YI+5aWiMqE/7A0Dsd1jb9+KKchjtKDmfkm7iFX5wcp7xoJBaDVgprIGzPtpj4Xiqgwdoth6p5LpYC/JXes=
-Received: from MW4PR18MB5084.namprd18.prod.outlook.com (2603:10b6:303:1a7::8)
- by CO1PR18MB4748.namprd18.prod.outlook.com (2603:10b6:303:eb::6) with
+ bh=/7eu3DzVFGh99i1wY3ypYXdMNAVZvfmncPExyuO/CcQ=;
+ b=2z6eGyG5Q062QIrd+JSlQtzofB5K4w8Ej9eAKIQOBTQucFMnytakpazbEI4KWKUF1LytJVQoaBI55OdTCe1m3m0HAzJTjxfmRLp16Qd1ahVE98wLVSOXvrDLO7LSshy8WQfbqxGhQE/Trw4U7KcAlvHoX6r6ll6vzTKmMoFHPNg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by IA1PR12MB6481.namprd12.prod.outlook.com (2603:10b6:208:3aa::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Mon, 20 May
- 2024 14:41:32 +0000
-Received: from MW4PR18MB5084.namprd18.prod.outlook.com
- ([fe80::1fe2:3c84:eebf:a905]) by MW4PR18MB5084.namprd18.prod.outlook.com
- ([fe80::1fe2:3c84:eebf:a905%5]) with mapi id 15.20.7587.030; Mon, 20 May 2024
- 14:41:32 +0000
-Message-ID: <fc91b997-f90b-4e3c-9a89-5db932ba148c@marvell.com>
-Date: Mon, 20 May 2024 20:11:22 +0530
+ 2024 14:41:45 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7587.030; Mon, 20 May 2024
+ 14:41:45 +0000
+Message-ID: <611f8200-8e0e-40e4-aff4-cc2c55dc6354@amd.com>
+Date: Mon, 20 May 2024 09:41:43 -0500
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] reset: add driver for imx8ulp SIM reset controller
-To: Frank Li <Frank.li@nxp.com>
-Cc: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Liu Ying <victor.liu@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>, laurentiu.mihalcea@nxp.com,
-        devicetree@vger.kernel.org, imx@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240516204031.171920-1-laurentiumihalcea111@gmail.com>
- <20240516204031.171920-3-laurentiumihalcea111@gmail.com>
- <ade33946-bb94-4357-bc6d-a354661b50ca@marvell.com>
- <Zkd0uIaJiwzYrBIK@lizhi-Precision-Tower-5810>
+Subject: Re: [REGRESSION][BISECTED] "xHCI host controller not responding,
+ assume dead" on stable kernel > 6.8.7
+To: Christian Heusel <christian@heusel.eu>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Gia <giacomo.gio@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ "kernel@micha.zone" <kernel@micha.zone>,
+ Andreas Noever <andreas.noever@gmail.com>,
+ Michael Jamet <michael.jamet@intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Yehezkel Bernat <YehezkelShB@gmail.com>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ =?UTF-8?Q?Benjamin_B=C3=B6hmke?= <benjamin@boehmke.net>,
+ "S, Sanath" <Sanath.S@amd.com>
+References: <CAHe5sWavQcUTg2zTYaryRsMywSBgBgETG=R1jRexg4qDqwCfdw@mail.gmail.com>
+ <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
+ <lqdpk7lopqq4jn22mycxgg6ps4yfs7hcca33tqb2oy6jxc2y7p@rhjjbzs6wigu>
 Content-Language: en-US
-From: Amit Singh Tomar <amitsinght@marvell.com>
-In-Reply-To: <Zkd0uIaJiwzYrBIK@lizhi-Precision-Tower-5810>
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <lqdpk7lopqq4jn22mycxgg6ps4yfs7hcca33tqb2oy6jxc2y7p@rhjjbzs6wigu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0156.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:c8::9) To MW4PR18MB5084.namprd18.prod.outlook.com
- (2603:10b6:303:1a7::8)
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA0PR11CA0070.namprd11.prod.outlook.com
+ (2603:10b6:806:d2::15) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,298 +91,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR18MB5084:EE_|CO1PR18MB4748:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2fcb7747-bc56-45f7-154b-08dc78daf121
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|IA1PR12MB6481:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1dcea2cf-fe6a-40ba-e5b2-08dc78daf90b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?bDRza25nRy9HcGlpNWt1Z1VpbzEyVFZVT2M0M3RnL1h3bU01dGc3cjZIMmZE?=
- =?utf-8?B?SzlqbmgrQ2d4d0NpWEtlVXBSOXBMOWJrNkNwS1ZwUm4yVG0ydyt5M3A0MGFZ?=
- =?utf-8?B?T1dYdEwrWFVvazYrK2tyUW5sRGx4NWcwSWNQZFFqZHdZMVlROGtQUkRxSTFK?=
- =?utf-8?B?a3plL2Q3UlNVYVNKZW5sTDhxZXdPc2ZRa1YvYjIvN2Z4djRzT1NNZ0R3dGJX?=
- =?utf-8?B?SkFYL2p1RWhwclA5aXBDZnBKemJmZ3ZIaXJ1ZStOQmtER2ZHWjFPblY5NXdl?=
- =?utf-8?B?Sm82SVNqOUFuemVnTU5rakUwdDRuWUQ3L2JILzFlSm11ZDBucjg2a1A3N2lX?=
- =?utf-8?B?T1RKQURyVDdIMnR1SmJKSUxaUXZsVGZmSTV6OVJtaVdHUWVzeSt0OVdsN0li?=
- =?utf-8?B?SWxLc2xET0VLWGljZVRrVkhYb1Y2Q2E4ZERCblkxNUIvWkIyaXcxcmxhWjk1?=
- =?utf-8?B?MUFTS0ExZDc2aVJQVXFueUxUNTJ5YTZJckZmUDdhb2lDem52cjJEZFNGb0ZP?=
- =?utf-8?B?TFV3U1FIRGhLZmt4Zi9jK3k0VllMc3ByU0dyMFhMQmhBVGtiN3kyN0x6TmpX?=
- =?utf-8?B?YnZiOTJ2OVNLbXpYQTNDR3NwelpTNjhRSUVDUmNsVENFNGtBSU5hRkh5bHp6?=
- =?utf-8?B?UE1pY005TmVvMkRCdG5LSHVvTGpqQmVtcTY2TFcyZ3J4S3ZlV0h3SmlHU3cr?=
- =?utf-8?B?SXdmclBQWEhIcjZGZEpLY2hpTkV4VnIyTTlCY2RQTlZOWDY4MEVlYmFEblFk?=
- =?utf-8?B?VVBKUlJleU80SWtUMEo3WVMzYWJNU3NEY0xtbmRaN25yS3RteUxlME5idVo4?=
- =?utf-8?B?Wmt5Y2p6UVY3Rmx5RDVKMjBBN2RQcWcwUG9DcTQxY0NTVVh6eVE2OHVrVzRX?=
- =?utf-8?B?aUI3QmV1ZjJubG4wMzZYejV6UWVuT3B3cUx4clNwdkQyUEtHMTlQRE5RNFdr?=
- =?utf-8?B?ZS9YSjFIV1VDS3ltMHRGMHdVWmxDcTExT3JGaVU2V2h5UEtzcENuOWdHSXBE?=
- =?utf-8?B?N01PZ21LVlBMY1I2a3h3eDBmVUxhd0h2TGFyV05BelczblVvN2F1bHBUWlZt?=
- =?utf-8?B?bVdabUZwNDlVaitiMnNQWGZiNDV1SlJJZFhQenZ1aStwM2RDOVl4Z0VTR25V?=
- =?utf-8?B?SHpnUDNjcVZSWmtUd0JFTUR6NGJGa2N6UERkY1FBeC8vZFFOUlFlSmlFb3dZ?=
- =?utf-8?B?NTNzRzJmS0lyR3hnYTFFQTFzSUI2NUpxdHU4blpxdzQ0TGNOK3JwYVdjTEhY?=
- =?utf-8?B?emhPQko5a3FlK0tqNlFhVGU1ckt2bGpFQVhza0tVMlZHYit6ZEhyeTJ4QVhn?=
- =?utf-8?B?UG5YSGY1SEpJd3ZsdlNnQWJackROWnhFTzZvdGpjWndScjdhSldQV0VsdUg1?=
- =?utf-8?B?R1RDbGdZYUI4ekI4NDdTaUFqZ29DV09WdGNPdzYrTnpoempnRmdsdzIvSVlt?=
- =?utf-8?B?djdGYjNaUExVTWx1MmFHMGVxOHhldTZINitoSURDQXhQdzVPZGVVUVFTZ2Vw?=
- =?utf-8?B?MVlORnNXUUY2UTM0RWM1R1k2QTRUZlRPRTlFRXRGclZ3cWRpaTNjaXlWM296?=
- =?utf-8?B?RGhvZCtDK2phbFBOZXRKTnBLTlRxOFBsRm9abkFvYjFsNnhXSll6MVhWaHRt?=
- =?utf-8?B?NGFhaVp5aU1ucU8xSXB2cStBVDRzT2c9PQ==?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR18MB5084.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OVVlTzNsWEV6bnVabGJ6ZUpkelJpNkNYUDBveDBESHlkZzNlQnJhWGZHYlcv?=
+ =?utf-8?B?RUE5N2FxMElDV1B4VFkxZ2lPTmNYcHNmZHJHb1I2cTJzVU9YTkYvOG5BZTJB?=
+ =?utf-8?B?YVpvQVl4cjEvRndjYnpGVEV6dXQvMGdEblZta24zUlFwSHR3OUt3WmpuMmVt?=
+ =?utf-8?B?MTZPd1lzZ3FWUDgwVHdFR3dLWXRZQ0ZYbzJzaDVEekEvb1lqRGlJdmw3L2hY?=
+ =?utf-8?B?aU4vUVpXNG5PUWhHSVlkajhLdndmTmVEdHE3N1ZUczdUdVlMbVY3bnhNSkoz?=
+ =?utf-8?B?N2pqM21vR3lHb1ZwT2Nxa0FiL1RTZ2pkU0VIdGNXNXZBUXAwVEhlUmtWQkZG?=
+ =?utf-8?B?cFRHWU5hYWFySDZRalNWdlNsK2ZhYW0zZFpwQzFjdDJTcWhmQzdVTmhIem5q?=
+ =?utf-8?B?K2lsMDZpeXhUQ0VGUUhnZU9YVU1KcUZUVEVwa2lMSi9RMm45YzI5SjYwZkR1?=
+ =?utf-8?B?L2JXUnhTdFpsNjdDUmIwSXByZ3NZWHRDZHRVUjM3NExrdkwxMDE3T3g1MzRK?=
+ =?utf-8?B?NG5YWnhQMCtadzFvdERQOHpCUFcyb003TlZMSWFQSFlPZzErdDFHWC9xWnk5?=
+ =?utf-8?B?SjJMVmkvTDZBT3FHeVNsT011bE51Z3AyQXNCZVNHOWljYUw2dS9wbEo0QVdQ?=
+ =?utf-8?B?dnRWL1hPODBPUjdZTmZrUVc1clVnakU1ZERmbGJmYzJFd2s0RE5TOFNLZ0xa?=
+ =?utf-8?B?QTdOSmhEQXp2eUhMN1NxVXdlajR0V2RScy92eC93L2ZlNFpTbjFEYm1RWmVp?=
+ =?utf-8?B?UVM5N2RWT3o0UE5JN3Vla2xhNDF1MVJKUzExaEhadHlpdXlaZnd6a3R2N1c4?=
+ =?utf-8?B?cmI0ZERKdVVTOHVyUzZsVExKWnhLTEhCM01ReHRCODZPTGVmM21uTGRzSTVY?=
+ =?utf-8?B?eDFyTUV3cUc0UWxnZUZIalNGYTdtQWZKK2dxSkpIMFFmMm5TdmpoOTM4UEIv?=
+ =?utf-8?B?a0pIZW02MFdmZU9wQk5UMjEzMUZwS2Q2NjFIOFUzMmJFM0luUDdsNllhZlFk?=
+ =?utf-8?B?Y3d6RzFlSVdJRmZJTkd1UXg4WVVYdjRLNi9VOUpFczRlS0haWWhrVmM0TnQw?=
+ =?utf-8?B?YncyVkZrSjVBSXF0MHdaS21sajNXeUJobVVucjBnUFFIY2s1QnJ5VmVKd3k1?=
+ =?utf-8?B?VFNMR2ROOVFMOCtnSnZkTHJSWVJFZUpneHBjajd4Q3IyM2hoVE96eUkvVVJh?=
+ =?utf-8?B?ZzBUMi9ZNWcxZkwzcXVBaTRqVXBwWDZidk1GaDRaUm9VUHdoQTVBWEFZVStM?=
+ =?utf-8?B?VWoxQWNJd0FWMVhFb2llbEozRUV6VkNOY1FKaGJUOUZwdjRGL0IvM1BTaTg5?=
+ =?utf-8?B?VElNUGI2ZTNoeW1mcTlydHdZOHcvTGR6WnV1T24rMHB2V2wrNHFXYkYzL1RL?=
+ =?utf-8?B?US9kV09uT2FQZTdJY0tUN3JrZjQxUE9IRkZ4UmZVZ1NWc2pnSldkVVFTelhI?=
+ =?utf-8?B?OWprcFc4L0luc2xWZHkyU293Q3BLbHQrNjM1VnlBdWVJeTRaeGZHMWZEaG5H?=
+ =?utf-8?B?cjhHOXo4aHZjdENmT2lnanBsNkNnVThMdmxBTnRrVm1WWnN0Ny9aYnYyWWJJ?=
+ =?utf-8?B?QzVQRURIalJwQXhtVTc3WjdwTkRNMlFyZitwUjN2S2QyMU5RcmNTMkR1YnB2?=
+ =?utf-8?Q?WKR8LRT55inT7Gkj/PD0EhRLnuC57S48a/Sf9CrQ/+4Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?clRhYUFlWitDdzlYcFhjdUZZNloxa0JNVDJuY0RlUmtBM3RUMUYwVFNaZHhC?=
- =?utf-8?B?MFRmOUJrK3BXUzUvdElsNkM3NDJ1S0JZM2hqdUxIanU0S0lxNzgwNTNMUmt4?=
- =?utf-8?B?aFdvUHlCZ2pvUUV6bW1ZWGttcWhCY1p5Mm9QL1FvdnRGS1pEWWtHYnBkWHU3?=
- =?utf-8?B?eDNtemNIUmhxenlxS2crRnVHMjM4ZTdrU0FSOUJqbHFkM3ViYUVsMW0zejJv?=
- =?utf-8?B?amlXc3FOQXRZRktaUUtiT1NTUXVNVXpndkJGSTlnbHorSWF4Q2QyRTBuUzE1?=
- =?utf-8?B?RHJmUUVXQ1JtME1jUGw5WmdLc2lVMmlhTm5YM1ZqclBsOGlYM0Q4ZnV3azFa?=
- =?utf-8?B?NXljRHNtZ0lzVk45YVVreXU1YVR4dHo5ckJnNkhobnBXWGdDcTZ5WXUvbGlT?=
- =?utf-8?B?Zm5RdFJRTGlrTGxGK1ZRRWl1WU5UOHBlTkNqOVVndWhhVW54NW9RakprSlhH?=
- =?utf-8?B?Y1A3LzVob1pUc2x0Wm50VjlSWVhMemprN3ArWjBaL0hyMzRSSFhRbUlWZnhx?=
- =?utf-8?B?bVFKTGhCUENyM1hEL0tROEJ4OFB5UGYvSHdQVDVMQ1RIa285RVRFZmQrRVRB?=
- =?utf-8?B?UWx4bkhYYStJbXBma0FRN2g4VWlWQ1JLTFlDVHpFUWZHQmJWQW1tYkdEMDc2?=
- =?utf-8?B?cndibWxMRnR2M3M3TEkzZUdydDBLS0hhcWMwMy9CZFBpNGFyS25kc3owK2xZ?=
- =?utf-8?B?UmV6aXc3MzAwNFFvOVhRRTdFclBZUzAydG0wdktCNWRab0taQ3Q5eXZDTkJ5?=
- =?utf-8?B?eHU3aUVEZ3FNNzRxMnBvamtQZGNwWVVqSnkrajR1em1lUklCb1FraUxnVWo4?=
- =?utf-8?B?cEdvOEttalBHcVRTSTF0YlNvVlNHMXlpVWFhQnpaRnB2bHl2VWs1TWNlSnhX?=
- =?utf-8?B?UDdrT1JtQzFWQ3BFLzhJaHE4V0U0Z3hONXlZb2wxaTZqdW5YTlhVRm9QL1Ju?=
- =?utf-8?B?RVNTeHVhWHhGbStOcmZ3RXNzcnlDMENrZjdzSlJpL1pVTVVpeHQvSThoZ3hs?=
- =?utf-8?B?Q3BxOFl2NS94SHhUSFJFVGFydU50djhtbWhwSmRlWnJ1cUlxQjU0M3Y2YW11?=
- =?utf-8?B?SEc5c21Sb2ZRbXRhQ2M2ZVhWaUtSYjFhRWVUMTJQN3g2ano2UlpUUlNXdWIx?=
- =?utf-8?B?eS9PVERLRmNjT3JVYXJCQmR5RzNiNytwUVI3YVFUWWpZdEFUM0JtSkFJKy96?=
- =?utf-8?B?UjVJQkQ2aDBjYU8vZ3JYNW1rZCt4V3RlZFRaSnp6LzU5VWpEZnFEMDNQVmVX?=
- =?utf-8?B?cWhUYk9aVGgxRlBHc1puMzBueUMrRWZuYXcwNFRJY2tHaHIxRVhHTWp0N0p6?=
- =?utf-8?B?N1FVWFZoVlNkK25CY2E1WmxZdmZXSlBJQjYyV0p6TmtvNDcrOUJONjNsK1pl?=
- =?utf-8?B?RzdIVSsvNXlVcGtLZS80dUNkSnE0V2hVbnhsM3pBU2czY3FXVWFNVy9EODJT?=
- =?utf-8?B?Sk0vbnZhZ1VPaFAyUzhXeDNQMmQvNnFKeDFJRGlUNlhiWjRzTGNyWE1nM2Nz?=
- =?utf-8?B?U3ROaDNwQUw5azZ6YjhEancxZHl1Y3pmOTg5OVZhbG9ZQ0hIUkxSUUcycU5j?=
- =?utf-8?B?eVF4REhtS3FCT29kVXMweFFKaEFCNitCR1pSdHM2Q2dVMHpiZ3ZqeUFjTW03?=
- =?utf-8?B?TkZKdTZibnUzZ1c2b01WNWlFV3BMWndWZ2hZQTJJbzB0bWkwTUdkTCtvS1Ar?=
- =?utf-8?B?Q2JwbmZGcFN5SnhtdlM0b0VZSTlmZWYwQzk0SzVYVWZ6UFpUYmp2OGZ4THRV?=
- =?utf-8?B?dFpzbEtsS1c5ZS82VzJlb28yejJERmhWY0orUUIyZm1wSS9Ca0VTcG1RT2w5?=
- =?utf-8?B?NjdXa0RDcC9BZVlyUDRsbkdoUjdVekc0SXN1TlF5Rk1UeW0vZFpWaU5OME9n?=
- =?utf-8?B?MVhPbytNYVl3aXQxTXh6S2xZeHJKbytmd3VLTWM1S3BVUGZNb2c5aG10NnlP?=
- =?utf-8?B?c0NSTUNHaVdHaXN4TWxsNmFiSkR4U2VrT1pRbVIrMitRTWVzalJmV1FnVk5W?=
- =?utf-8?B?d3gxdUYzakJrNVpodG1TSFE3R3VxQko4TG9WRDZFQjVWWlpBY1NIY3VlMjNa?=
- =?utf-8?B?T3hjZWxOQVluQ0F2YnRqMi9uaEZhOXVCZ29NN2F2RGE2dEkvSy9DYVl1WWpi?=
- =?utf-8?Q?gjouCJjsVhHABz8EgeXjzs0Au?=
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2fcb7747-bc56-45f7-154b-08dc78daf121
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR18MB5084.namprd18.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bFlYRitWSHh1bUZtcGExclZxaE52eXNnUFRXTm1OL1pSdEU2cXY0VitLOG9B?=
+ =?utf-8?B?dFBNb1FYeVFjQ1I4Q1dNbzMydVNoREtiUzlvNTdwRllFN282UkhiNDl5SVhX?=
+ =?utf-8?B?NTF4ZkxzOTNVRkthZjNpUG1CUUlydGpqaklDN2djZ3NyS005Z3ZGS2d5MXJs?=
+ =?utf-8?B?dHY4Zjg3WDA5OWE3WlB6Z3JGL1JtRUJlRjZkSVN2aEtranBSbG05N24ramY0?=
+ =?utf-8?B?T3FpeVBvQTladnJ4WjBzMFM0eTZTOC9GLzlpc2lDc1kwSVA1MEpicjEwc0xu?=
+ =?utf-8?B?Uk40RDBlRXJtV3dvMEhWUTN1bVRUUFFYYisrUG5RY3ZRejRyVXZ6ZGVnUFBO?=
+ =?utf-8?B?ZTlUQzVGM2RmZE9mTTVsRDdBZ0JuMW9mbVh3dU9TYU90RG16dVg4MzJhOENY?=
+ =?utf-8?B?dE5meVIzN09oTnlDbW1aVmMwZUFacnIyRXlEKzFmc3Zjc1BlUjVZcEh2YlFY?=
+ =?utf-8?B?dE9yc0hsWDNUWjk3Qzh6M28vR28vWnVsVFFIbmVtakd2UGNtUDUwT0JXblEv?=
+ =?utf-8?B?YkFGb0VlUHAvZ1p5VWRVYWptTGVUQVg1Vy9uRlBQUGc1VEROZ2ZjQVhWbGxr?=
+ =?utf-8?B?TDZydDBsSWlxV1pJcEtFTmtUSmpVNHY0QWwvbnZ6TUMvSmlBa3YrMndlbGtw?=
+ =?utf-8?B?UHpPZEQrL21sRzdmRTBiU1R6N3Z3QnhtTVhCNWQydmE1c0M5QnZNTXU1Nndx?=
+ =?utf-8?B?OGFqQWpuTnhtTElGTHpMeCtvNmZpQ2toWkNMcmhwN09RaFZDMU1pUDgzcnpn?=
+ =?utf-8?B?ejFuUjFQaktpeVBCQzNEN0dxbVovRnF6cXQyQWtyWGxZUUhBTmJvaEVkU1BY?=
+ =?utf-8?B?bDdYOElNK3VSS2JtRHM0L3NVWS90bUNBdUlvT1ZybjVrMm5aQy8yaGFKZm5t?=
+ =?utf-8?B?RHQ1dUU3bW9Ka2hXOWNBTlRYNTVLaVdEb2Nnd3JacmQ5Z3FPMjFGOGNlWmYw?=
+ =?utf-8?B?QkRRVU5QeDNFbWlQQzFaZ0VRME8zd0hRSE15VzN5cjhPLzdRL3BjUEdURFF0?=
+ =?utf-8?B?T3JydjRCNmxnd2tBekQrWUJDdVE0cnFjaE1IRW9SRi9YVjVEcitYOTlBUkxw?=
+ =?utf-8?B?OEJVaDBEYysrQjhwa3FjNDdJNUNoNG1JOVVDeEF3TTAxK214Rko0alljUWw5?=
+ =?utf-8?B?eUFTaEJxTmV0OEJLaTI1b3crREdMeUcwazh6TFpxUGMzR0N3eTNTZWtUVnUw?=
+ =?utf-8?B?SElUQUpzK2tCb3BMUXhlQlFZWnV1ckNhNjR4ZlNJS2tIeVJBeVYzOXNvdUZx?=
+ =?utf-8?B?WDduQi9FSWJkZ1o2aU9HTWhEMzNUMmR4R1NTMlIwRUFZZ2k1bXdXZ2RzalNF?=
+ =?utf-8?B?SWszV05iUXNKbkIxd1ppREVCa0pVeFhVQUFyR0JJb1p1UVlRT0YvYmp1OEhr?=
+ =?utf-8?B?WEM5TVpBb1RNeUZqd3JUek5KaG5jaDM2M2Q3SDZNK0E0SjY4aWRaZWxoTDk1?=
+ =?utf-8?B?aHp4SFNEYlYrbitOdWwrQlVXUXhFTFByRUVnaXJKVkkxbm9uSjllMDJxWlFL?=
+ =?utf-8?B?eTA1azR5bnRJSXQwc0E2K29La2N5b0hERzFxZzZZUGJjYWo2ZUVYVlNMdmpP?=
+ =?utf-8?B?L2tsZXBzMU8wblBoV0dRU0p6MjJOeXdkSzJ5Z01xbzBiUHVhbTg2eFJUTVRU?=
+ =?utf-8?B?LzQ2NjM3N0RKNVEzWHNXSjRvU3BPMGpMQUxqU3k0UlVLTTdlZ0NwcUI0cnRq?=
+ =?utf-8?B?bzRGdmcrZU1kVE1DRTBIUTVqcWt2VWJPU3h1T00xRHY3eGJldXY2QUZoMDdO?=
+ =?utf-8?B?aU9udEpmYzlCUUFpRXovUlVESUlFVHJ6QTZuYWRsc25QUlZCcEFhTTdtNFNU?=
+ =?utf-8?B?cDJxNE54QnhId1l2UUtrWVdrT05KLzdVQlpCbkVHamcydnRURjdCNWswZVlS?=
+ =?utf-8?B?cnArNkllZ2VkMjNTaGZmbGtNdHloaFlCNm1nckdMVVhUQ2NOdm5YekhTYk95?=
+ =?utf-8?B?TmRWSXloZGkyRXc4WWwzMnBNK3ZETmR3QnBRVklmV2tCS0FQTno0V212OG1T?=
+ =?utf-8?B?OXBKMmtjQXJ2RHNyc09HVjZGeTBRdnJOR2kwSWlDZEJYb0s5QlFiRUdZeVRu?=
+ =?utf-8?B?cW40ZWVzYWN5cjZjdFVRZ1hSZXh4YmxmZkN2TEhFV1FySU5aeGhoN05DQnY0?=
+ =?utf-8?Q?NfW3sPYdVNya5vdpg7B3sscM+?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1dcea2cf-fe6a-40ba-e5b2-08dc78daf90b
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 14:41:32.6595
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 14:41:45.7670
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pMN6fdfJcvenwHVd97d0pxohHIKTppEADgXvLKIDZJjYWWo/d6KGiaqmEkxBBZ+hRkHp1VuvrWVTZvAnFPJBZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR18MB4748
-X-Proofpoint-ORIG-GUID: GcWhw80Wgxo5pHRSTN3Ufdms-BJ8QOqV
-X-Proofpoint-GUID: GcWhw80Wgxo5pHRSTN3Ufdms-BJ8QOqV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-20_05,2024-05-17_03,2024-05-17_01
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4qhVb974Sf+2KrdoidE4vNB+Pp7duPi2k/M+YXskcFh3ztl4iF2mfggOErThFqJC2O8Mr1Yr5bXJcxZhq7Me9Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6481
 
-
-> 
-> ----------------------------------------------------------------------
-> On Fri, May 17, 2024 at 11:51:30AM +0530, Amit Singh Tomar wrote:
->> Hi,
+On 5/20/2024 09:39, Christian Heusel wrote:
+> On 24/05/06 02:53PM, Linux regression tracking (Thorsten Leemhuis) wrote:
+>> [CCing Mario, who asked for the two suspected commits to be backported]
 >>
->>> ----------------------------------------------------------------------
->>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> On 06.05.24 14:24, Gia wrote:
+>>> Hello, from 6.8.7=>6.8.8 I run into a similar problem with my Caldigit
+>>> TS3 Plus Thunderbolt 3 dock.
 >>>
->>> Certain components can be reset via the SIM module.
->>> Add reset controller driver for the SIM module to
->>> allow drivers for said components to control the
->>> reset signal(s).
->>>
->>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
->>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>> ---
->>>    drivers/reset/Kconfig                         |  7 ++
->>>    drivers/reset/Makefile                        |  1 +
->>>    drivers/reset/reset-imx8ulp-sim.c             | 98 +++++++++++++++++++
->>
->> Just out of curiosity, can't this be accomplished using a generic reset
->> driver?
->>
->> https://urldefense.proofpoint.com/v2/url?u=https-3A__elixir.bootlin.com_linux_latest_source_drivers_reset_reset-2Dsimple.c&d=DwIBAg&c=nKjWec2b6R0mOyPaz7xtfQ&r=V_GK7jRuCHDErm6txmgDK1-MbUihtnSQ3gPgB-A-JKU&m=MnEcoegPnKc-F7TNf8PB3icMf8uCGrxsh6mEDWgNq3YA-OugL6Y53LxytlBGcsKp&s=6mBPHYYYXoyyxPPbUeOiIpwR3CXdnui1W3nkUJQ76Vo&e=
+>>> After the update I see this message on boot "xHCI host controller not
+>>> responding, assume dead" and the dock is not working anymore. Kernel
+>>> 6.8.7 works great.
 > 
-> reset-simple have not use regmap. I think it can use ti's
-> https://urldefense.proofpoint.com/v2/url?u=https-3A__elixir.bootlin.com_linux_latest_source_drivers_reset_reset-2Dti-2Dsyscon.c&d=DwIBAg&c=nKjWec2b6R0mOyPaz7xtfQ&r=V_GK7jRuCHDErm6txmgDK1-MbUihtnSQ3gPgB-A-JKU&m=MnEcoegPnKc-F7TNf8PB3icMf8uCGrxsh6mEDWgNq3YA-OugL6Y53LxytlBGcsKp&s=D6tqLNYrUbsdG_gYg4G-ORlC9YKz4XRAlVeo1hyoYS4&e=
+> We now have some further information on the matter as somebody was kind
+> enough to bisect the issue in the [Arch Linux Forums][0]:
 > 
-> Or should change ti to reset-simple-syscon?  or add regmap support for
-> reset-simple.c
+>      cc4c94a5f6c4 ("thunderbolt: Reset topology created by the boot firmware")
 > 
-
-Quickly looked into U-Boot (not sure if it's the right reference), and 
-it has a separate reset-syscon.c file:
-
-https://elixir.bootlin.com/u-boot/latest/source/drivers/reset/reset-syscon.c
-
-So, converting reset-ti-syscon.c to reset-syscon.c might be the way to go.
-
-> Frank Li
+> This is a stable commit id, the relevant mainline commit is:
 > 
+>      59a54c5f3dbd ("thunderbolt: Reset topology created by the boot firmware")
 > 
->>
->>>    include/dt-bindings/reset/imx8ulp-sim-reset.h | 16 +++
->>>    4 files changed, 122 insertions(+)
->>>    create mode 100644 drivers/reset/reset-imx8ulp-sim.c
->>>    create mode 100644 include/dt-bindings/reset/imx8ulp-sim-reset.h
->>>
->>> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
->>> index 85b27c42cf65..c1f4d9ebd0fd 100644
->>> --- a/drivers/reset/Kconfig
->>> +++ b/drivers/reset/Kconfig
->>> @@ -91,6 +91,13 @@ config RESET_IMX7
->>>    	help
->>>    	  This enables the reset controller driver for i.MX7 SoCs.
->>> +config RESET_IMX8ULP_SIM
->>> +	tristate "i.MX8ULP SIM Reset Driver"
->>> +	depends on ARCH_MXC
->>> +	help
->>> +	  This enables the SIM (System Integration Module) reset driver
->>> +	  for the i.MX8ULP SoC.
->>> +
->>>    config RESET_INTEL_GW
->>>    	bool "Intel Reset Controller Driver"
->>>    	depends on X86 || COMPILE_TEST
->>> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
->>> index fd8b49fa46fc..f257d6a41f1e 100644
->>> --- a/drivers/reset/Makefile
->>> +++ b/drivers/reset/Makefile
->>> @@ -42,3 +42,4 @@ obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
->>>    obj-$(CONFIG_RESET_UNIPHIER_GLUE) += reset-uniphier-glue.o
->>>    obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
->>>    obj-$(CONFIG_ARCH_ZYNQMP) += reset-zynqmp.o
->>> +obj-$(CONFIG_RESET_IMX8ULP_SIM) += reset-imx8ulp-sim.o
->>> diff --git a/drivers/reset/reset-imx8ulp-sim.c b/drivers/reset/reset-imx8ulp-sim.c
->>> new file mode 100644
->>> index 000000000000..27923b9cd454
->>> --- /dev/null
->>> +++ b/drivers/reset/reset-imx8ulp-sim.c
->>> @@ -0,0 +1,98 @@
->>> +// SPDX-License-Identifier: GPL-2.0+
->>> +
->>> +/*
->>> + * Copyright 2024 NXP
->>> + */
->>> +
->>> +#include <linux/mfd/syscon.h>
->>> +#include <linux/module.h>
->>> +#include <linux/of.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/regmap.h>
->>> +#include <linux/reset-controller.h>
->>> +#include <dt-bindings/reset/imx8ulp-sim-reset.h>
->>> +
->>> +#define AVD_SIM_SYSCTRL0        0x8
->>> +
->>> +struct imx8ulp_sim_reset {
->>> +	struct reset_controller_dev     rcdev;
->>> +	struct regmap                   *regmap;
->>> +};
->>> +
->>> +static const u32 imx8ulp_sim_reset_bits[IMX8ULP_SIM_RESET_NUM] = {
->>> +	[IMX8ULP_SIM_RESET_MIPI_DSI_RST_DPI_N] = BIT(3),
->>> +	[IMX8ULP_SIM_RESET_MIPI_DSI_RST_ESC_N] = BIT(4),
->>> +	[IMX8ULP_SIM_RESET_MIPI_DSI_RST_BYTE_N] = BIT(5),
->>> +};
->>> +
->>> +static inline struct imx8ulp_sim_reset *
->>> +to_imx8ulp_sim_reset(struct reset_controller_dev *rcdev)
->>> +{
->>> +	return container_of(rcdev, struct imx8ulp_sim_reset, rcdev);
->>> +}
->>> +
->>> +static int imx8ulp_sim_reset_assert(struct reset_controller_dev *rcdev,
->>> +				    unsigned long id)
->>> +{
->>> +	struct imx8ulp_sim_reset *simr = to_imx8ulp_sim_reset(rcdev);
->>> +	const u32 bit = imx8ulp_sim_reset_bits[id];
->>> +
->>> +	return regmap_update_bits(simr->regmap, AVD_SIM_SYSCTRL0, bit, 0);
->>> +}
->>> +
->>> +static int imx8ulp_sim_reset_deassert(struct reset_controller_dev *rcdev,
->>> +				      unsigned long id)
->>> +{
->>> +	struct imx8ulp_sim_reset *simr = to_imx8ulp_sim_reset(rcdev);
->>> +	const u32 bit = imx8ulp_sim_reset_bits[id];
->>> +
->>> +	return regmap_update_bits(simr->regmap, AVD_SIM_SYSCTRL0, bit, bit);
->>> +}
->>> +
->>> +static const struct reset_control_ops imx8ulp_sim_reset_ops = {
->>> +	.assert         = imx8ulp_sim_reset_assert,
->>> +	.deassert       = imx8ulp_sim_reset_deassert,
->>> +};
->>> +
->>> +static const struct of_device_id imx8ulp_sim_reset_dt_ids[] = {
->>> +	{ .compatible = "nxp,imx8ulp-avd-sim-reset", },
->>> +	{ /* sentinel */ },
->>> +};
->>> +
->>> +static int imx8ulp_sim_reset_probe(struct platform_device *pdev)
->>> +{
->>> +	struct device *dev = &pdev->dev;
->>> +	struct imx8ulp_sim_reset *simr;
->>> +	int ret;
->>> +
->>> +	simr = devm_kzalloc(dev, sizeof(*simr), GFP_KERNEL);
->>> +	if (!simr)
->>> +		return -ENOMEM;
->>> +
->>> +	simr->regmap = syscon_node_to_regmap(dev->of_node->parent);
->>> +	if (IS_ERR(simr->regmap)) {
->>> +		ret = PTR_ERR(simr->regmap);
->>> +		dev_err(dev, "failed to get regmap: %d\n", ret);
->>> +		return ret;
->>> +	}
->>> +
->>> +	simr->rcdev.owner = THIS_MODULE;
->>> +	simr->rcdev.nr_resets = IMX8ULP_SIM_RESET_NUM;
->>> +	simr->rcdev.ops = &imx8ulp_sim_reset_ops;
->>> +	simr->rcdev.of_node = dev->of_node;
->>> +
->>> +	return devm_reset_controller_register(dev, &simr->rcdev);
->>> +}
->>> +
->>> +static struct platform_driver imx8ulp_sim_reset_driver = {
->>> +	.probe  = imx8ulp_sim_reset_probe,
->>> +	.driver = {
->>> +		.name           = KBUILD_MODNAME,
->>> +		.of_match_table = imx8ulp_sim_reset_dt_ids,
->>> +	},
->>> +};
->>> +module_platform_driver(imx8ulp_sim_reset_driver);
->>> +
->>> +MODULE_AUTHOR("Liu Ying <victor.liu@nxp.com>");
->>> +MODULE_DESCRIPTION("NXP i.MX8ULP System Integration Module Reset driver");
->>> +MODULE_LICENSE("GPL");
->>> diff --git a/include/dt-bindings/reset/imx8ulp-sim-reset.h b/include/dt-bindings/reset/imx8ulp-sim-reset.h
->>> new file mode 100644
->>> index 000000000000..a3cee0d60773
->>> --- /dev/null
->>> +++ b/include/dt-bindings/reset/imx8ulp-sim-reset.h
->>> @@ -0,0 +1,16 @@
->>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
->>> +
->>> +/*
->>> + * Copyright 2024 NXP
->>> + */
->>> +
->>> +#ifndef DT_BINDINGS_RESET_IMX8ULP_SIM_RESET_H
->>> +#define DT_BINDINGS_RESET_IMX8ULP_SIM_RESET_H
->>> +
->>> +#define IMX8ULP_SIM_RESET_MIPI_DSI_RST_DPI_N    0
->>> +#define IMX8ULP_SIM_RESET_MIPI_DSI_RST_ESC_N    1
->>> +#define IMX8ULP_SIM_RESET_MIPI_DSI_RST_BYTE_N   2
->>> +
->>> +#define IMX8ULP_SIM_RESET_NUM                   3
->>> +
->>> +#endif /* DT_BINDINGS_RESET_IMX8ULP_SIM_RESET_H */
->>
+> The other reporter created [a issue][1] in our bugtracker, which I'll
+> leave here just for completeness sake.
+> 
+> Reported-by: Benjamin Böhmke <benjamin@boehmke.net>
+> Reported-by: Gia <giacomo.gio@gmail.com>
+> Bisected-by: Benjamin Böhmke <benjamin@boehmke.net>
+> 
+> The person doing the bisection also offered to chime in here if further
+> debugging is needed!
+> 
+> Also CC'ing the Commitauthors & Subsystem Maintainers for this report.
+> 
+> Cheers,
+> Christian
+> 
+> [0]: https://bbs.archlinux.org/viewtopic.php?pid=2172526
+> [1]: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/48
+> 
+> #regzbot introduced: 59a54c5f3dbd
+> #regzbot link: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/48
 
+As I mentioned in my other email I would like to collate logs onto a 
+kernel Bugzilla.  With these two cases:
+
+thunderbolt.dyndbg=+p
+thunderbolt.dyndbg=+p thunderbolt.host_reset=false
+
+Also what is the value for:
+
+$ cat /sys/bus/thunderbolt/devices/domain0/iommu_dma_protection
 
