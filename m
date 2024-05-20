@@ -1,217 +1,127 @@
-Return-Path: <linux-kernel+bounces-183956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4B58CA08F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:12:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C5738CA090
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2A7FB22604
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:12:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3050E1C20D2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AA413791F;
-	Mon, 20 May 2024 16:12:14 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE2713792B;
+	Mon, 20 May 2024 16:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wkz158jb"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A80137740;
-	Mon, 20 May 2024 16:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F596136E3D
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 16:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716221534; cv=none; b=IfLxqPDyIAcJUy4bVcF+wFakOHfKwAp0dP3i0HUnXbe2JJkOg0/EVNkqwbZkRBJTGEBTze90WyVwfOV4IeQqJtw9bqDJGOTUaZLbEiIlSxdNYrRJNaQV22uza9okL79xHr201yXf6EcHekWnUVaEkuOiuwmChQd/BrIILlxiz54=
+	t=1716221572; cv=none; b=Furdh5JC8hFgd7Oh2VLzDnhkhlkmG4JRpjgSanNltf3lhvk9xB9+VyqoJWmdzIK6YFHEjeQq/9xiMuppW8xV76MCskxpMP+/Mhz4uY8J7Hlb/ogp6FqGve11ZTGZwGkCS0s8R45/jX1XzwE+Ty0sxHFwZ1SsaFTvbQvQp1Ycprc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716221534; c=relaxed/simple;
-	bh=TGRn8nQiBIP7pFxI0vEU7EOZ9M0KlisQD3v6znpQzhQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fOy40CsjIpud/rj8bdkuUZ++QvB9fO7817hm2fjqvGxyaDSgrhWMckPPowAgaaWIKnbb+2as3BSm0jGyH1KbRFP59u4FR4plwf+oklBvhX/MKLIF2U8wwuhIdXeCrsPwR1jcmv4SLhovamL2Al/RHkwAVk3HZr/hp7WstvGNiEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VjjD12x13z6JBjm;
-	Tue, 21 May 2024 00:08:33 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 60B7F1400DD;
-	Tue, 21 May 2024 00:12:07 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 20 May
- 2024 17:12:06 +0100
-Date: Mon, 20 May 2024 17:12:05 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: David Lechner <dlechner@baylibre.com>
-CC: Jonathan Cameron <jic23@kernel.org>, Michael Hennerich
-	<Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
-	<nuno.sa@analog.com>, Julien Stephan <jstephan@baylibre.com>, Esteban Blanc
-	<eblanc@baylibre.com>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC 3/4] iio: add support for multiple scan types per
- channel
-Message-ID: <20240520171205.000035b0@Huawei.com>
-In-Reply-To: <ebf18ed1-a82f-4c0a-9a63-2c428b5aee40@baylibre.com>
-References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
-	<20240507-iio-add-support-for-multiple-scan-types-v1-3-95ac33ee51e9@baylibre.com>
-	<20240519201241.7c60abac@jic23-huawei>
-	<ebf18ed1-a82f-4c0a-9a63-2c428b5aee40@baylibre.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1716221572; c=relaxed/simple;
+	bh=ndSvp5o7Uyu7m5CFUsdC1gDLc9bJxe151OXDAGHCzcE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SYv04MWoTvt3gQx0K2YPwKioOePNni72NpoxcO4pj8qnFjIcvfCrwSvUrS/mO56d1cZZuSNXs4dluzZ5xQsUSa4gXhBAPWBognmBqUnhENrug/vBgWbuoILB9LOiOTWAZvpflAv0awgR4T1XmeSb/3l/AnUvtynDgvory7H49Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wkz158jb; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-622ce716ceaso101239177b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 09:12:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716221570; x=1716826370; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YqAox3vnnp1RHk0CTlnjLBK+5bX50Kf7v7eduSyk3HQ=;
+        b=Wkz158jbBtWDZNYr9DalK5GwmDWq1va+vfofipsDAM68Sg70FSO3Elwv4IqpBY9LlP
+         2Cf9FqXAZYTrnqoump6/pThHErEz7EEZ4q8JnpvtK7bAC6kNrhRi8fOcw+42Z9A08ck9
+         3HM/dwacx0NJH8w8U4o8MmbLXAX23uPRsoVkVLyidcQ/8//qUpf8B2I4yQHxRdvUeHqR
+         LqKO9DWMKkAtsB1V76SonrVXZqrOqlYGJcmt2NsuSThVYahN4fqZkrR40XGvPCBSJPfM
+         QIX3ECtxUm5i+ZYIK/Kekt00MrqnXnVmhiSGmL4xR6A6XR9Z+CJlbvKiFuCg2e391KRV
+         4f5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716221570; x=1716826370;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YqAox3vnnp1RHk0CTlnjLBK+5bX50Kf7v7eduSyk3HQ=;
+        b=hqVPoxP7PBHAVRDNJVk00LaIljbc6V7jDrGri36smwGcNvA0RtW7A8mDL/xWu4CjqC
+         5do4s/OP3/9/MGeNQ3dJiVaiClnA3HYNoLonDqIGBNpaoWUk+Vmmqk1W7pF/TXMhhZxK
+         SQaXzou1WFr8HgV9u2GXho+mFKss7946w94EpPQ7TD8H6vVzSTMbRAV8jy1c8Inoo9YB
+         QuvqqMyCJNdCW/IUc6xveJF9SoUBkWLp3Bu3XrXcT0t/76Wg2nF/8dBXusV4WnAkhZgG
+         mj976rlE+Kbl7HAW/V6TUpJ5jMOAw0+pWkzA6Xy0J2NIh9U9/2Qf/lNMo0jxmQKt1EB9
+         YoEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbA/d+NVulVRB0ZGeXVr70HXBG9VJp1oVFtYHQKnKhLAYIux9yBM6lLPAX2lSiTxtiw7d80NIXYDUtwav61CkuetxBn6Yd2B868wFG
+X-Gm-Message-State: AOJu0Ywb0b/67DI1XhSkajvxJ4zbcdHThpH4X5gRC3VzK3Dp9T/r0mJ1
+	wRjatw4450Gcwu97Yboh/ade9MyBoOKUvZvzDCoj4PNDEBc/lGsMyM44JI55EdrqXyd0XzkfFc8
+	P3w==
+X-Google-Smtp-Source: AGHT+IFa2e5VGEJDNAknJpQM25yGMEzP0LmXW0vucAxwnkceDX3CFZ9s8rn661BS5hKCJ0z/mz+8q95JKLo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a81:8494:0:b0:61b:ebf1:77a with SMTP id
+ 00721157ae682-62796f670f8mr16949897b3.0.1716221570151; Mon, 20 May 2024
+ 09:12:50 -0700 (PDT)
+Date: Mon, 20 May 2024 09:12:48 -0700
+In-Reply-To: <c2baeb4b-5cad-4cb9-a48e-0540f448cb15@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Mime-Version: 1.0
+References: <cover.1715017765.git.reinette.chatre@intel.com>
+ <a2f7013646a8a1e314744568b9baa439682cbf8a.1715017765.git.reinette.chatre@intel.com>
+ <c2baeb4b-5cad-4cb9-a48e-0540f448cb15@intel.com>
+Message-ID: <Zkt2gNFxC0MHyIRb@google.com>
+Subject: Re: [PATCH V6 4/4] KVM: selftests: Add test for configure of x86 APIC
+ bus frequency
+From: Sean Christopherson <seanjc@google.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: isaku.yamahata@intel.com, pbonzini@redhat.com, erdemaktas@google.com, 
+	vkuznets@redhat.com, vannapurve@google.com, jmattson@google.com, 
+	mlevitsk@redhat.com, xiaoyao.li@intel.com, chao.gao@intel.com, 
+	rick.p.edgecombe@intel.com, yuan.yao@intel.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, 20 May 2024 08:51:52 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Mon, May 20, 2024, Reinette Chatre wrote:
+> On 5/6/2024 11:35 AM, Reinette Chatre wrote:
+> > diff --git a/tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c b/tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c
+> > new file mode 100644
+> > index 000000000000..56eb686144c6
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c
+> > @@ -0,0 +1,166 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Test configure of APIC bus frequency.
+> > + *
+> > + * Copyright (c) 2024 Intel Corporation
+> > + *
+> > + * To verify if the APIC bus frequency can be configured this, test starts
+> > + * by setting the TSC frequency in KVM, and then:
+> > + * For every APIC timer frequency supported:
+> > + * * In the guest:
+> > + * * * Start the APIC timer by programming the APIC TMICT (initial count
+> > + *       register) to the largest value possible to guarantee that it will
+> > + *       not expire during the test,
+> > + * * * Wait for a known duration based on previously set TSC frequency,
+> > + * * * Stop the timer and read the APIC TMCCT (current count) register to
+> > + *       determine the count at that time (TMCCT is loaded from TMICT when
+> > + *       TMICT is programmed and then starts counting down).
+> > + * * In the host:
+> > + * * * Determine if the APIC counts close to configured APIC bus frequency
+> > + *     while taking into account how the APIC timer frequency was modified
+> > + *     using the APIC TDCR (divide configuration register).
+> > + */
+> > +#define _GNU_SOURCE /* for program_invocation_short_name */
+> 
+> As reported in [1] this #define is no longer needed after commit 730cfa45b5f4
+> ("KVM: selftests: Define _GNU_SOURCE for all selftests code"). This will be
+> fixed in next version of this series.
 
-> On 5/19/24 2:12 PM, Jonathan Cameron wrote:
-> > On Tue,  7 May 2024 14:02:07 -0500
-> > David Lechner <dlechner@baylibre.com> wrote:
-> >   
-> >> This adds new fields to the iio_channel structure to support multiple
-> >> scan types per channel. This is useful for devices that support multiple
-> >> resolution modes or other modes that require different data formats of
-> >> the raw data.
-> >>
-> >> To make use of this, drivers can still use the old scan_type field for
-> >> the "default" scan type and use the new scan_type_ext field for any
-> >> additional scan types.  
-> > 
-> > Comment inline says that you should commit scan_type if scan_type_ext
-> > is provided.  That makes sense to me rather that a default no one reads.
-> > 
-> > The example that follows in patch 4 uses both the scan_type and
-> > the scan_type_ext which is even more confusing.
-> >   
-> >> And they must implement the new callback
-> >> get_current_scan_type() to return the current scan type based on the
-> >> current state of the device.
-> >>
-> >> The buffer code is the only code in the IIO core code that is using the
-> >> scan_type field. This patch updates the buffer code to use the new
-> >> iio_channel_validate_scan_type() function to ensure it is returning the
-> >> correct scan type for the current state of the device when reading the
-> >> sysfs attributes. The buffer validation code is also update to validate
-> >> any additional scan types that are set in the scan_type_ext field. Part
-> >> of that code is refactored to a new function to avoid duplication.
-> >>
-> >> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> >> ---  
-> >   
-> >> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-> >> index 19de573a944a..66f0b4c68f53 100644
-> >> --- a/include/linux/iio/iio.h
-> >> +++ b/include/linux/iio/iio.h
-> >> @@ -205,6 +205,9 @@ struct iio_scan_type {
-> >>   * @scan_index:		Monotonic index to give ordering in scans when read
-> >>   *			from a buffer.
-> >>   * @scan_type:		struct describing the scan type
-> >> + * @ext_scan_type:	Used in rare cases where there is more than one scan
-> >> + *			format for a channel. When this is used, omit scan_type.  
-> > 
-> > Here is the disagreement with the patch description.
-> >   
-> >> + * @num_ext_scan_type:	Number of elements in ext_scan_type.
-> >>   * @info_mask_separate: What information is to be exported that is specific to
-> >>   *			this channel.
-> >>   * @info_mask_separate_available: What availability information is to be
-> >> @@ -256,6 +259,8 @@ struct iio_chan_spec {
-> >>  	unsigned long		address;
-> >>  	int			scan_index;
-> >>  	struct iio_scan_type scan_type;
-> >> +	const struct iio_scan_type *ext_scan_type;
-> >> +	unsigned int		num_ext_scan_type;  
-> > 
-> > Let's make it explicit that you can't do both.
-> > 
-> > 	union {
-> > 		struct iio_scan_type scan_type;
-> > 		struct {
-> > 			const struct iio_scan_type *ext_scan_type;
-> > 			unsigned int num_ext_scan_type;
-> > 		};
-> > 	};
-> > should work for that I think.
-> > 
-> > However this is I think only used for validation. If that's the case
-> > do we care about values not in use?  Can we move the validation to
-> > be runtime if the get_current_scan_type() callback is used.  
-> 
-> I like the suggestion of the union to use one or the other. But I'm not
-> sure I understand the comments about validation.
-> 
-> If you are referring to iio_channel_validate_scan_type(), it only checks
-> for programmer error of realbits > storagebits, so it seems better to
-> keep it where it is to fail as early as possible.
-
-That requires the possible scan masks to be listed here but there is
-nothing enforcing the callback returning one from here.  Maybe make it
-return an index instead?
-
-> 
-> > 
-> >   
-> >>  	long			info_mask_separate;
-> >>  	long			info_mask_separate_available;
-> >>  	long			info_mask_shared_by_type;
-> >> @@ -435,6 +440,9 @@ struct iio_trigger; /* forward declaration */
-> >>   *			for better event identification.
-> >>   * @validate_trigger:	function to validate the trigger when the
-> >>   *			current trigger gets changed.
-> >> + * @get_current_scan_type: must be implemented by drivers that use ext_scan_type
-> >> + *			in the channel spec to return the currently active scan
-> >> + *			type based on the current state of the device.
-> >>   * @update_scan_mode:	function to configure device and scan buffer when
-> >>   *			channels have changed
-> >>   * @debugfs_reg_access:	function to read or write register value of device
-> >> @@ -519,6 +527,9 @@ struct iio_info {
-> >>  
-> >>  	int (*validate_trigger)(struct iio_dev *indio_dev,
-> >>  				struct iio_trigger *trig);
-> >> +	const struct iio_scan_type *(*get_current_scan_type)(
-> >> +					const struct iio_dev *indio_dev,
-> >> +					const struct iio_chan_spec *chan);
-> >>  	int (*update_scan_mode)(struct iio_dev *indio_dev,
-> >>  				const unsigned long *scan_mask);
-> >>  	int (*debugfs_reg_access)(struct iio_dev *indio_dev,
-> >> @@ -804,6 +815,28 @@ static inline bool iio_read_acpi_mount_matrix(struct device *dev,
-> >>  }
-> >>  #endif
-> >>  
-> >> +/**
-> >> + * iio_get_current_scan_type - Get the current scan type for a channel
-> >> + * @indio_dev:	the IIO device to get the scan type for
-> >> + * @chan:	the channel to get the scan type for
-> >> + *
-> >> + * Most devices only have one scan type per channel and can just access it
-> >> + * directly without calling this function. Core IIO code and drivers that
-> >> + * implement ext_scan_type in the channel spec should use this function to
-> >> + * get the current scan type for a channel.
-> >> + *
-> >> + * Returns: the current scan type for the channel
-> >> + */
-> >> +static inline const struct iio_scan_type *iio_get_current_scan_type(
-> >> +					const struct iio_dev *indio_dev,
-> >> +					const struct iio_chan_spec *chan)
-> >> +{
-> >> +	if (indio_dev->info->get_current_scan_type)
-> >> +		return indio_dev->info->get_current_scan_type(indio_dev, chan);
-> >> +
-> >> +	return &chan->scan_type;
-> >> +}
-> >> +
-> >>  ssize_t iio_format_value(char *buf, unsigned int type, int size, int *vals);
-> >>  
-> >>  int iio_str_to_fixpoint(const char *str, int fract_mult, int *integer,
-> >>  
-> >   
-> 
-> 
-
+Don't worry about sending another version just for this, I can clean this up when
+applying.
 
