@@ -1,70 +1,79 @@
-Return-Path: <linux-kernel+bounces-184174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E15038CA38E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:59:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36978CA398
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 116471C20FC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:59:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A372281EB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60180139CE8;
-	Mon, 20 May 2024 20:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568F513A25B;
+	Mon, 20 May 2024 21:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="C1JjhjK3"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Uc8iRJ8f"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1DF168BD
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF301D531;
+	Mon, 20 May 2024 21:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716238745; cv=none; b=FRXLj6Hg/HKtCLgR9DAUzXZjJ7ecX5mIjKqXD2KikFksJEpGgPSOuKZ3y19460ecD1iNfPf9gmIe3a37X2agvoPXQttGrUrVDY1cW7zfIwxOSLMWRfyzCs59TkIBRkd74ikNfIevQ/7+XO8F+oqAKRGu4ZIqIVASuuITxxf/h6U=
+	t=1716238829; cv=none; b=W7DS3Kb12nxlc8VmY//MNEe09nT7hzsEFPpRz5qHbjzdQhmhOanf0WQIvdJ9pzqyolx9LxLznIfUZgXwBpAx2zYh7zwLwduegS0rI9lRSotZnxq+hSDg3K9ZNmQ/+52+NiFQqF/UYTqU6SGSH6ArcY0cyNfKh2w8tZFcCvJI6KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716238745; c=relaxed/simple;
-	bh=y7/tHkkU+6LM/sgkkjIZQzGhCN3OQBbKgY5ooxhPzP4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kS9FhzI6tb9MxXCOTf5KktOKpO3luECtn6AG9d9NRDGD/rOV82Et5LgxRQZ+IiicjZJ1Y1z23OlKbC6y+FEXvk33XcJil4TqTiZnG0iLoUHfcgkC0YLzO6O1rApkWLX6qH1NaE3Utj/5oVOfnFnpFEP0cN+oTsiPMHjq9FTlyBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=C1JjhjK3; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: stern@rowland.harvard.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716238740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=dVtkm6Cg+QhrfgIVN0pjJZdjkLBJfP8oJdEHuFJPJQU=;
-	b=C1JjhjK3Pqg679wyMjVHSms1bdU0ECv8draV03dcUKEV4zOhFgXdAD0U+Rj/yjW6ouYM3Z
-	xyqddroJwKLa/md5O2X55MpRyNbuELtln3f2RROOinm9I5bw1Qf1053pDCaLgqL9j4pxZ+
-	rC/dX8KF8d81RHiPRxxqSJL4nEKV5dg=
-X-Envelope-To: gregkh@linuxfoundation.org
-X-Envelope-To: andreyknvl@gmail.com
-X-Envelope-To: dvyukov@google.com
-X-Envelope-To: elver@google.com
-X-Envelope-To: glider@google.com
-X-Envelope-To: kasan-dev@googlegroups.com
-X-Envelope-To: penguin-kernel@i-love.sakura.ne.jp
-X-Envelope-To: tj@kernel.org
-X-Envelope-To: linux-usb@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: andrey.konovalov@linux.dev
-To: Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Marco Elver <elver@google.com>,
-	Alexander Potapenko <glider@google.com>,
-	kasan-dev@googlegroups.com,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Tejun Heo <tj@kernel.org>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kcov, usb: disable interrupts in kcov_remote_start_usb_softirq
-Date: Mon, 20 May 2024 22:58:56 +0200
-Message-Id: <20240520205856.162910-1-andrey.konovalov@linux.dev>
+	s=arc-20240116; t=1716238829; c=relaxed/simple;
+	bh=VSvQmWvyt6XRwDpuefCejKD5GszkJU4qsziRsiQDp+g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q33+LRvapFasCCoudyrchUYjFfLn1O0idUlz5wUEPW3fspkSyKUw/fdSJh8NHm6HZq7kgn5bguupDTe4Mr27K3vJjxT2tA++xEig3uDe+QU/6YQCyK5lqG8qupxo/dP8Ydqe/B/OD/XGOeAhAMpJXcRe/MvjSwRiMpF50c4810s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Uc8iRJ8f; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44KBCSrG017683;
+	Mon, 20 May 2024 21:00:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=qcppdkim1; bh=h9HCd7VW5BcLUkkHGNpV
+	29+KjvbETXmbZebEgbqw8Gw=; b=Uc8iRJ8f6TSThg1mkOzNOz8P1AFxwsMcFs5d
+	nZ3YZTRaA24qD51q2IdiO0GTfI9nP8BrOGd254n/m2dwTlkByTfukGoHn0W9bl5p
+	NfOjgn0qZ0Re52gy9+hap7iwDIs3CZnLiV9yy9RGTcnFgK+llLayBbVKv+PZtYUT
+	UH5sl1q8EjmDoSN8lUrhmZpuqoopTxWRi0mjfEcU8bneUVghC+j28JHerzNjNfsB
+	4MBVGprh/CICWsjz7Ir01nJE+NDjh7wXgCoCi3oNDWHMLmbwmB8K4dURymD41f4l
+	SgdysXAguX+Clqm5wfjvsoIkUerHqY6KdsABC1kk+XV+4QCUAw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6n3tcs0d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 21:00:21 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA04.qualcomm.com [127.0.0.1])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 44KKrfMF021080;
+	Mon, 20 May 2024 21:00:20 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA04.qualcomm.com (PPS) with ESMTPS id 3y6ndkhevx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 21:00:20 +0000
+Received: from NALASPPMTA04.qualcomm.com (NALASPPMTA04.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44KL0K17029567;
+	Mon, 20 May 2024 21:00:20 GMT
+Received: from hu-devc-lv-u22-c.qualcomm.com (hu-uchalich-lv.qualcomm.com [10.81.89.1])
+	by NALASPPMTA04.qualcomm.com (PPS) with ESMTPS id 44KL0KbB029548
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 21:00:20 +0000
+Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4184210)
+	id 2D055641; Mon, 20 May 2024 14:00:19 -0700 (PDT)
+From: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Unnathi Chalicheemala <quic_uchalich@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@quicinc.com
+Subject: [PATCH v5 0/5] LLCC: Support for Broadcast_AND region
+Date: Mon, 20 May 2024 14:00:12 -0700
+Message-Id: <cover.1716228054.git.quic_uchalich@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,140 +81,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: dIZyef9vWObOtM2uykA6U2Dltx6wyM01
+X-Proofpoint-ORIG-GUID: dIZyef9vWObOtM2uykA6U2Dltx6wyM01
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-20_11,2024-05-17_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ bulkscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=808
+ lowpriorityscore=0 phishscore=0 spamscore=0 impostorscore=0 clxscore=1015
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405200167
 
-From: Andrey Konovalov <andreyknvl@gmail.com>
+This series adds:
+1. Device tree register mapping for Broadcast_AND region in SM8450,
+SM8550, SM8650.
+2. LLCC driver updates to reflect addition of Broadcast_AND regmap.
 
-After commit 8fea0c8fda30 ("usb: core: hcd: Convert from tasklet to BH
-workqueue"), usb_giveback_urb_bh() runs in the BH workqueue with
-interrupts enabled.
+To support CSR programming, a broadcast interface is used to program all
+channels in a single command. Until SM8450 there was only one broadcast
+region (Broadcast_OR) used to broadcast write and check for status bit
+0. From SM8450 onwards another broadcast region (Broadcast_AND) has been
+added which checks for status bit 1.
 
-Thus, the remote coverage collection section in usb_giveback_urb_bh()->
-__usb_hcd_giveback_urb() might be interrupted, and the interrupt handler
-might invoke __usb_hcd_giveback_urb() again.
+This series updates the device trees from SM8450 onwards to have a
+mapping to this Broadcast_AND region. It also updates the llcc_drv_data
+structure with a regmap for Broadcast_AND region and corrects the
+broadcast region used to check for status bit 1.
 
-This breaks KCOV, as it does not support nested remote coverage collection
-sections within the same context (neither in task nor in softirq).
+Changes in v5:
+- Add additional check to remove warning from devres.c on older
+chipsets.
+- Carried over Bjorn's and Krzysztof's R-b tags from v4.
 
-Update kcov_remote_start/stop_usb_softirq() to disable interrupts for the
-duration of the coverage collection section to avoid nested sections in
-the softirq context (in addition to such in the task context, which are
-already handled).
+Changes in v4:
+- Updated Devicetree patches' commit messages to make problem statement
+clearer
+- Resolved Konrad's comments on driver code patch
+- Updated v3 changelog to include dropped R-b tag
 
-Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Closes: https://lore.kernel.org/linux-usb/0f4d1964-7397-485b-bc48-11c01e2fcbca@I-love.SAKURA.ne.jp/
-Closes: https://syzkaller.appspot.com/bug?extid=0438378d6f157baae1a2
-Suggested-by: Alan Stern <stern@rowland.harvard.edu>
-Fixes: 8fea0c8fda30 ("usb: core: hcd: Convert from tasklet to BH workqueue")
-Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
----
- drivers/usb/core/hcd.c | 12 +++++++-----
- include/linux/kcov.h   | 44 +++++++++++++++++++++++++++++++++---------
- 2 files changed, 42 insertions(+), 14 deletions(-)
+Changes in v3:
+- Removed new example in dt-bindings patch and ran 'make
+DT_CHECKER_FLAGS=-m dt_binding_check'
+- Dropped Krzysztof's R-b tag on dt-bindings patch
+- Use of ternary operator in llcc_update_act_ctrl()
+- Add comment before initialization of Broadcast_AND regmap in probe
+- Move DeviceTree patches to the end
 
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index c0e005670d67..fb1aa0d4fc28 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -1623,6 +1623,7 @@ static void __usb_hcd_giveback_urb(struct urb *urb)
- 	struct usb_hcd *hcd = bus_to_hcd(urb->dev->bus);
- 	struct usb_anchor *anchor = urb->anchor;
- 	int status = urb->unlinked;
-+	unsigned long flags;
- 
- 	urb->hcpriv = NULL;
- 	if (unlikely((urb->transfer_flags & URB_SHORT_NOT_OK) &&
-@@ -1640,13 +1641,14 @@ static void __usb_hcd_giveback_urb(struct urb *urb)
- 	/* pass ownership to the completion handler */
- 	urb->status = status;
- 	/*
--	 * This function can be called in task context inside another remote
--	 * coverage collection section, but kcov doesn't support that kind of
--	 * recursion yet. Only collect coverage in softirq context for now.
-+	 * Only collect coverage in the softirq context and disable interrupts
-+	 * to avoid scenarios with nested remote coverage collection sections
-+	 * that KCOV does not support.
-+	 * See the comment next to kcov_remote_start_usb_softirq() for details.
- 	 */
--	kcov_remote_start_usb_softirq((u64)urb->dev->bus->busnum);
-+	flags = kcov_remote_start_usb_softirq((u64)urb->dev->bus->busnum);
- 	urb->complete(urb);
--	kcov_remote_stop_softirq();
-+	kcov_remote_stop_softirq(flags);
- 
- 	usb_anchor_resume_wakeups(anchor);
- 	atomic_dec(&urb->use_count);
-diff --git a/include/linux/kcov.h b/include/linux/kcov.h
-index b851ba415e03..ebcfc271aee3 100644
---- a/include/linux/kcov.h
-+++ b/include/linux/kcov.h
-@@ -55,21 +55,47 @@ static inline void kcov_remote_start_usb(u64 id)
- 
- /*
-  * The softirq flavor of kcov_remote_*() functions is introduced as a temporary
-- * work around for kcov's lack of nested remote coverage sections support in
-- * task context. Adding support for nested sections is tracked in:
-- * https://bugzilla.kernel.org/show_bug.cgi?id=210337
-+ * workaround for KCOV's lack of nested remote coverage sections support.
-+ *
-+ * Adding support is tracked in https://bugzilla.kernel.org/show_bug.cgi?id=210337.
-+ *
-+ * kcov_remote_start_usb_softirq():
-+ *
-+ * 1. Only collects coverage when called in the softirq context. This allows
-+ *    avoiding nested remote coverage collection sections in the task context.
-+ *    For example, USB/IP calls usb_hcd_giveback_urb() in the task context
-+ *    within an existing remote coverage collection section. Thus, KCOV should
-+ *    not attempt to start collecting coverage within the coverage collection
-+ *    section in __usb_hcd_giveback_urb() in this case.
-+ *
-+ * 2. Disables interrupts for the duration of the coverage collection section.
-+ *    This allows avoiding nested remote coverage collection sections in the
-+ *    softirq context (a softirq might occur during the execution of a work in
-+ *    the BH workqueue, which runs with in_serving_softirq() > 0).
-+ *    For example, usb_giveback_urb_bh() runs in the BH workqueue with
-+ *    interrupts enabled, so __usb_hcd_giveback_urb() might be interrupted in
-+ *    the middle of its remote coverage collection section, and the interrupt
-+ *    handler might invoke __usb_hcd_giveback_urb() again.
-  */
- 
--static inline void kcov_remote_start_usb_softirq(u64 id)
-+static inline unsigned long kcov_remote_start_usb_softirq(u64 id)
- {
--	if (in_serving_softirq())
-+	unsigned long flags = 0;
-+
-+	if (in_serving_softirq()) {
-+		local_irq_save(flags);
- 		kcov_remote_start_usb(id);
-+	}
-+
-+	return flags;
- }
- 
--static inline void kcov_remote_stop_softirq(void)
-+static inline void kcov_remote_stop_softirq(unsigned long flags)
- {
--	if (in_serving_softirq())
-+	if (in_serving_softirq()) {
- 		kcov_remote_stop();
-+		local_irq_restore(flags);
-+	}
- }
- 
- #ifdef CONFIG_64BIT
-@@ -103,8 +129,8 @@ static inline u64 kcov_common_handle(void)
- }
- static inline void kcov_remote_start_common(u64 id) {}
- static inline void kcov_remote_start_usb(u64 id) {}
--static inline void kcov_remote_start_usb_softirq(u64 id) {}
--static inline void kcov_remote_stop_softirq(void) {}
-+static inline unsigned long kcov_remote_start_usb_softirq(u64 id) {}
-+static inline void kcov_remote_stop_softirq(unsigned long flags) {}
- 
- #endif /* CONFIG_KCOV */
- #endif /* _LINUX_KCOV_H */
+Changes in v2:
+- Added an additional check in the case old DT files are used for
+above mentioned chipsets for backwards compatibility
+- Moved addition of if check in llcc_update_act_ctrl() to a separate
+"Fixes" patch; not part of this series
+
+Link to v4: https://lore.kernel.org/all/20240329-llcc-broadcast-and-v4-0-107c76fd8ceb@quicinc.com/
+Link to v3: https://lore.kernel.org/all/cover.1708551850.git.quic_uchalich@quicinc.com/
+Link to v2: https://lore.kernel.org/all/cover.1707202761.git.quic_uchalich@quicinc.com/
+Link to v1: https://lore.kernel.org/all/cover.1706296015.git.quic_uchalich@quicinc.com/
+
+Unnathi Chalicheemala (5):
+  dt-bindings: arm: msm: Add llcc Broadcast_AND register
+  soc: qcom: llcc: Add regmap for Broadcast_AND region
+  arm64: dts: qcom: sm8450: Add Broadcast_AND register in LLCC block
+  arm64: dts: qcom: sm8550: Add Broadcast_AND register in LLCC block
+  arm64: dts: qcom: sm8650: Add Broadcast_AND register in LLCC block
+
+ .../devicetree/bindings/cache/qcom,llcc.yaml  | 27 ++++++++++++++++++-
+ arch/arm64/boot/dts/qcom/sm8450.dtsi          |  5 ++--
+ arch/arm64/boot/dts/qcom/sm8550.dtsi          |  6 +++--
+ arch/arm64/boot/dts/qcom/sm8650.dtsi          |  6 +++--
+ drivers/soc/qcom/llcc-qcom.c                  | 16 ++++++++++-
+ include/linux/soc/qcom/llcc-qcom.h            |  4 ++-
+ 6 files changed, 55 insertions(+), 9 deletions(-)
+
 -- 
-2.25.1
+2.34.1
 
 
