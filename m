@@ -1,170 +1,114 @@
-Return-Path: <linux-kernel+bounces-183480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB698C99AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:12:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D6068C99AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADDC91F21504
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 08:12:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DE851C20CB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 08:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64081BF38;
-	Mon, 20 May 2024 08:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E251C2A5;
+	Mon, 20 May 2024 08:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0Y1qrsit";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MEREtT8B";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0Y1qrsit";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MEREtT8B"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dd/rE/3v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEA3FC1D
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 08:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE5CE554;
+	Mon, 20 May 2024 08:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716192746; cv=none; b=PhDhwokZ5xyDhI2FCRz/5lFuM3yBU+T8M1PAVNfX4XX0CgLhVge4JbVUXMFsuk/OeIgvEKv+Z/M0pK/E6v7B41tn+WfPETsiB3IJ7yAl3MrDBMNVCNFl/Vah+5uA69qxd6sP3xAJ2i5awVera6tVlj3VQ0luvyP9k9YdqxkqPcE=
+	t=1716193026; cv=none; b=f6K+LpuBSccMOlxnMUBvRSVS4gwGiIYBY7irJtoxLe06AHiSIk7JzY0yyL/S/VVGmh5Sj/SBx/+1UXLEl2Nioy6RsKf73HF55CeXJaDALg/7ZCEq5a7LN4kcILjCZxLUaZF3ifQSq7xvVvBdsvaFMrT5bnxF/D2TZiqXJsJ9Ic0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716192746; c=relaxed/simple;
-	bh=IjOPMFS0BvHE2ltRHld+74oQKCRSM8tN46/uyLdlo70=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=aFFQ/DxPONxVrwfZ6+KoP8Qeop5mQcqYYZHYiUIudY1h21CgaubaYAdrDfrZJrz3tXF/Eo6RLSkR7WbxXnBjewja9Fh4dUCzRgL+cw02afalSMjCVOpWMjvoB26USq5zOLGXItfL45rZNGRmyGl9nDdda01AdS9czMEzYDxcRwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0Y1qrsit; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MEREtT8B; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0Y1qrsit; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MEREtT8B; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 29FEC20B88;
-	Mon, 20 May 2024 08:12:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716192743; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RfO4OrdsEs2zpIDzxNtv58pndZOnIczWQ6oCFt1KxL0=;
-	b=0Y1qrsitqvIXDIPwoldsOC1/1PJrffnkKW48cJnFYhvmbEKnuAk+AOy4rx1icRhhRk8yNL
-	NSqyXNUQTqVOog58c9tO32xujEhjiriRhk+QdEOACMn7vejnEMR0J2vYkFsQPvrotcnkFS
-	hshxOqScf7K7znSEDZyjpM+HKesBVgI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716192743;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RfO4OrdsEs2zpIDzxNtv58pndZOnIczWQ6oCFt1KxL0=;
-	b=MEREtT8BDzqWP4Y4G4Gm7hQ1ghJc4Ju2zzmBcG7DBHkUoKyfdgvpJ2QKFSpZSSKOFl1b3i
-	XGVe8rApDQPq5MAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=0Y1qrsit;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MEREtT8B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716192743; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RfO4OrdsEs2zpIDzxNtv58pndZOnIczWQ6oCFt1KxL0=;
-	b=0Y1qrsitqvIXDIPwoldsOC1/1PJrffnkKW48cJnFYhvmbEKnuAk+AOy4rx1icRhhRk8yNL
-	NSqyXNUQTqVOog58c9tO32xujEhjiriRhk+QdEOACMn7vejnEMR0J2vYkFsQPvrotcnkFS
-	hshxOqScf7K7znSEDZyjpM+HKesBVgI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716192743;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RfO4OrdsEs2zpIDzxNtv58pndZOnIczWQ6oCFt1KxL0=;
-	b=MEREtT8BDzqWP4Y4G4Gm7hQ1ghJc4Ju2zzmBcG7DBHkUoKyfdgvpJ2QKFSpZSSKOFl1b3i
-	XGVe8rApDQPq5MAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EB12813A21;
-	Mon, 20 May 2024 08:12:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UblYN+YFS2YUVAAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Mon, 20 May 2024 08:12:22 +0000
-Date: Mon, 20 May 2024 10:12:21 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>, LKML 
- <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] dmi update for v6.10
-Message-ID: <20240520101221.463a1ec8@endymion.delvare>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1716193026; c=relaxed/simple;
+	bh=kC+d8Eaw9kodIS1Eil070H+nDygrxbdBOm02pE9boGA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XlwR0d7/P7i+I38RUFr47i5xxBKyQB/MJImw3gjGc+slXHxD/LIkBViU2dsp3zbtSY3Tvp7PPwlbg7t3rsiRe8xOV+ZWjt54to2AKXkMU+g2q2D+a+MqOv89IBgbIpC82OfQ2PLEWlICK47zuTBnQoczaI5SK+HuXJi0j982FDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dd/rE/3v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B61B1C2BD10;
+	Mon, 20 May 2024 08:17:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716193025;
+	bh=kC+d8Eaw9kodIS1Eil070H+nDygrxbdBOm02pE9boGA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Dd/rE/3vfvnNvgm4jqnquecuI0lLlhp6XTXYgZRrD8kEy3TPSttDY+vXCbjcAfanl
+	 s7ePrWNapHb2RMZIiy7JRIz2FG4fbmNA0FHG2SY3ekjAVDicSzMGs2jOILqKIafc6Z
+	 UauUq0wEQnwwT5RbXYs10zTO+i1vJLEShjm9XYz3brVPguuhAn9jX1fwcehbAphBDe
+	 x/uVwYYg+WR9V4E95TPtbhVAphOcIwbv9Vnrb62GKK6i6inN5qYPenUpX3WygV4DM4
+	 +inpC/lnkVMH7ADm4WErJgqAbAUxDb4Yrd4pP0HpUBph5JSJfI0Bu59X+6BFp3Pdz/
+	 iH5HwboNPnYyw==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net 0/3] doc: mptcp: new general doc and fixes
+Date: Mon, 20 May 2024 10:16:39 +0200
+Message-Id: <20240520-upstream-net-20240520-mptcp-doc-v1-0-e3ad294382cb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.43
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 29FEC20B88
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.43 / 50.00];
-	BAYES_HAM(-2.92)[99.66%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWO(0.00)[2];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	HAS_ORG_HEADER(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
+X-B4-Tracking: v=1; b=H4sIAOcGS2YC/z2NQQqDMBBFryKzdiCOSqFXkS7C+G1nYQxJKgXx7
+ g0uXL4P77+DMpIh07M5KGG3bFuo0LUN6ceHN9jmyiROBjeK42/MJcGvHFD4XtdYNPK8KWN8eO1
+ FMHil+hITFvtdhYmqQ6/z/AN75srjdgAAAA==
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+ Gregory Detal <gregory.detal@gmail.com>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1262; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=kC+d8Eaw9kodIS1Eil070H+nDygrxbdBOm02pE9boGA=;
+ b=kA0DAAgB9reCT0JpoHMByyZiAGZLBv2jod6cd9tvMvkwvroD6mP6HHY6GUB18jxjO71RxM/aY
+ YkCMwQAAQgAHRYhBOjLhfdodwV6bif3eva3gk9CaaBzBQJmSwb9AAoJEPa3gk9CaaBzOFYP/0vm
+ WDAQ9BgTjAGaolMs2FiBrCSi6fbRhQCg1z2j0YBx+8nO3ZhLKsGr3Ygf2h5p0Bmbr1qRDaa+C2O
+ lj4kK8vmzGxomoBmQsOIAMFMzDr1jJf1xWt8PnTLykNQOgwcVkAiVtuWkB6JhK+Rgx4ydFSIjY8
+ PO3fHSyhZhtqGE0aaXPgb8KbmBXU9qylnQPyQYUsrwtfvMPZ8v3ccgkxhSCyc/UkeugE/xk8zpX
+ 9Ks4qAzpGEZ/gPLM2X2dDCJsxdv+O7i8MXe2L3Z5y2o6AOmoltYXssjmffRhva8NIhUKXR0HL1T
+ nbH0ZFBnYY7xmQpLiLBoaatl3ZViGeUyZpG8PidaTMyrBhHjHDgCGRYO91FFLBZjALVtoD/3hZX
+ d5p00Xm+4J9go6Zgf1OsPjmQ+SwFvzG9c5WTc/GJdJbSjqDcK32B4X8MbhaAcR9uvJQPoec3VOs
+ +Gj1UU+XPLIxUn3kMzQb3N7RQTVUMoM/ho6TF/aHP0Dr+2AADEJ4sTqhBM7ryVksHt0kE2hKfZY
+ WbYC8zPj20xZ2xQPQ2MGDwWZsOOdjW5LxbSjD38L8MHORU6X2DcXJI3sX0IivNfR1HculLWsYq/
+ uILbohHC7oqJ9bzKbymEeuXaGl6PiD9+sJf2eyenNWYku41nmJYFyAPSuuLAo4kL04W/FO3yKDw
+ w08y+
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-Hi Linus,
+A general documentation about MPTCP was missing since its introduction
+in v5.6. The last patch adds a new 'mptcp' page in the 'networking'
+documentation.
 
-Please pull dmi subsystem updates for Linux v6.10 from:
+The first patch is a fix for a missing sysctl entry introduced in v6.10
+rc0, and the second one reorder the sysctl entries.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jdelvare/staging.git dmi-for-v6.10
+These patches can be applied without conflicts on top of the 'net' tree
+and the 'docs-next' one. They are currently based on top of the current
+'net' tree because the first patch is a fix for a patch that is not in
+'docs-next' yet.
 
-Summary of changes:
-* Bug fixes:
-  - KCFI violation in dmi-id
-  - Panic on broken (short) DMI table entry
-* New features:
-  - Print info about populated memory slots at boot
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Matthieu Baerts (NGI0) (3):
+      doc: mptcp: add missing 'available_schedulers' entry
+      doc: mptcp: alphabetical order
+      doc: new 'mptcp' page in 'networking'
 
-This is the first time I use a signed tag for a pull request, I hope I
-got it right, if not feel free to complain.
+ Documentation/networking/index.rst        |   1 +
+ Documentation/networking/mptcp-sysctl.rst |  74 +++++++-------
+ Documentation/networking/mptcp.rst        | 156 ++++++++++++++++++++++++++++++
+ MAINTAINERS                               |   2 +-
+ 4 files changed, 197 insertions(+), 36 deletions(-)
+---
+base-commit: 4b377b4868ef17b040065bd468668c707d2477a5
+change-id: 20240520-upstream-net-20240520-mptcp-doc-e57ac322e4ac
 
- drivers/firmware/dmi-id.c   |  7 ++++++-
- drivers/firmware/dmi_scan.c | 17 +++++++++++++++++
- 2 files changed, 23 insertions(+), 1 deletion(-)
-
----------------
-
-Arnd Bergmann (1):
-      firmware: dmi-id: add a release callback function
-
-Heiner Kallweit (1):
-      firmware: dmi: Add info message for number of populated and total memory slots
-
-Jean Delvare (1):
-      firmware: dmi: Stop decoding on broken entry
-
-Thanks,
+Best regards,
 -- 
-Jean Delvare
-SUSE L3 Support
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
