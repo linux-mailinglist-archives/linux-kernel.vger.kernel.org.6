@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-183996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 146AB8CA129
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:19:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 660308CA160
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4FE4281C6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:19:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D9C282351
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCE3137C4B;
-	Mon, 20 May 2024 17:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB1513A89B;
+	Mon, 20 May 2024 17:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qw9rgYTC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="57LL6CO5"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="bXIVpLoz"
+Received: from smtp-out.freemail.hu (fmfe00.freemail.hu [46.107.16.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845411369B9;
-	Mon, 20 May 2024 17:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418BD13A417;
+	Mon, 20 May 2024 17:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716225544; cv=none; b=KzJKGcLVofRUB8W1Q6te0I1uIoJae9Y4zImye92HHqxKnH+MBeObgCXSZv4kjnumabz1g1jsOqgzk5leKnoijLt92DqKPzB0FSYd1wmsmEdN9w+jFAHtDcI8yAe2brjuftdfg6mw94YFDk0m5H6WgbMURy/F8Xgo4LmOTokv+2s=
+	t=1716226052; cv=none; b=MUzV8m/ys4WmMKoKmTrhc4lRiNkE2tdpHLYihDWrsAjzA6lWNs+/Nl6dLKruE2M5joGDD4Tgb6UznRY9FQS9lZu/5KBfVbJ2eUDI7Wd6WpgLEhZIEDENGB8/a9KypNeDQfb5KICllsy8cV1pA2hAeRIO5P5tRzu5zRJAnsua87A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716225544; c=relaxed/simple;
-	bh=ZulL6qcXBmPMizDGMFa38MV6hLqalQopbVewHPPYeiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3mnDDAtV3De8noUZ9cK1MjhxBT6M04uV4uzD0WQxm1Oyq/lP7kAxMxtfB+wrgi61QTQOnXFltuAXORKOnNjsjQZrnapuradd5OpcQ5iLCH9zqm7TBIvZHgmaCy697PzDRi2a+t/SXiNdg2DYBFPBXQCeLbU6f7rZ3ODz0Afyhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qw9rgYTC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=57LL6CO5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 20 May 2024 19:18:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716225535;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P2V0fdH4t2poMRftCjRvPZHt3gefMT0fvdsrTqva5qU=;
-	b=qw9rgYTCydS26maYwXWBoL/7nMIZZdaccxQIOVk787jMgA6a5txSIR+y2nffAuCPPofmn1
-	oPCJW7v9dj1diB7JN+5NKhHMfIdGe72q2n6F/4ylPZFFDUt9M4SI54vbp+9grQkUTs11HU
-	g+taABgvmeLWQPE4OeNu5E264f76xw02HnR9EnCMpoWCQ3mWQUiA+xFnOdcbksCT10WJty
-	V7wGSrVImu6Uk7zqKu+GHtgt2hBkBe5RDwZoJJoxKQ0gMcr5ARL7ag4oSJouVmeYc/XtOP
-	sXpJK+JxleCfnk+2xc8H9yeFUFJ/ISQjWbXYXXml3EnmsZkfnTPkzeHNhMbawg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716225535;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P2V0fdH4t2poMRftCjRvPZHt3gefMT0fvdsrTqva5qU=;
-	b=57LL6CO5ZyAXHZYeHd5nbaeYh6SIDlHkM+L3BDLsQBQc860I2EPt/5IFLRoW/wIPEuWjoZ
-	jqt0WVlJI55MluDQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Cc: syzbot <syzbot+83763e624cfec6b462cb@syzkaller.appspotmail.com>,
-	Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [staging?] [usb?] memory leak in _r8712_init_xmit_priv
- (2)
-Message-ID: <20240520171848.60Nzvv8y@linutronix.de>
-References: <000000000000809328060a8a4c1c@google.com>
- <20240520144641.17643-1-n.zhandarovich@fintech.ru>
+	s=arc-20240116; t=1716226052; c=relaxed/simple;
+	bh=hZ9BTpanyVdzRqlVTlS9UoiB+8CRYDf1nsuDDju6yYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bjWe3WIT+jwh8GbAI3efVWM7qMPOEBaL6Nc2dvlPC3orxsAv8c7Hj0+tzfE1p2wYsSE3Z0ArRtMIGrOyrnB5S//52fnOc4hDkNqysfudnPS0SaXA+fg/pStQxCngfZUb9Lt27/+TRGYCfMXiB8mdbSpTYaibTcvDKJh2Hg+ka5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=bXIVpLoz reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
+Received: from [192.168.0.16] (catv-80-98-74-198.catv.fixed.vodafone.hu [80.98.74.198])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.freemail.hu (Postfix) with ESMTPSA id 4Vjkpp6dq1zqc;
+	Mon, 20 May 2024 19:20:18 +0200 (CEST)
+Message-ID: <9ae65e3c-f1fa-4ca9-8d74-12d92c51c5c6@freemail.hu>
+Date: Mon, 20 May 2024 19:20:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520144641.17643-1-n.zhandarovich@fintech.ru>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] spidev: Introduce "linux,spidev-name" property for
+ device tree of spidev.
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240519211346.30323-1-egyszeregy@freemail.hu>
+ <1ec9e8e5-0818-42b0-8776-d9cfb0585f42@sirena.org.uk>
+Content-Language: hu, en-US
+From: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
+In-Reply-To: <1ec9e8e5-0818-42b0-8776-d9cfb0585f42@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1716225620;
+	s=20181004; d=freemail.hu;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	l=3028; bh=cvIOdk4xUZa+dLTqg5VA9e7Melwr8hlOaowEyxAGAac=;
+	b=bXIVpLozECHnvAP90I3d0K9994PrGE0swuIbqqeq77SjTOhiokcktCTix+gfkE9e
+	8FehBfGyU+zH7ycndbsuXdwKLx5lmG3U6eTo/poY4Ydb0phNaEQFXaBDuHMMSJxbgzK
+	uBSR+L7zVqdqyGPXz9eb/JpxRfA1nQ6EFYofVn/AA0tj/T6G3mHFkVq/EgPRHU7/dwP
+	y+ZhVCC+zJwTtQDw2Lepwvl3kHllWVf/7GkkHYVa89MSl0WfHyB92+sjhxix9jfzr7X
+	VEiEW1lIG1M4NlPx4NFmQOZoA5AzzYI90PX78nNFfx4c/cDECyJeqa3vQ/7nVmEB5EM
+	JI+vvv0e8g==
 
-On Mon, May 20, 2024 at 07:46:41AM -0700, Nikita Zhandarovich wrote:
-> Hi,
+2024. 05. 20. 15:20 keltezéssel, Mark Brown írta:
+> On Sun, May 19, 2024 at 11:13:46PM +0200, egyszeregy@freemail.hu wrote:
+>> From: Benjamin Szőke <egyszeregy@freemail.hu>
+>>
+>> Optionally, spidev may have a "linux,spidev-name" property.
+>> This is a string which is defining a custom suffix name for spi device in
+>> /dev/spidev-<name> format. It helps to improve software portability between
+>> various SoCs and reduce complexities of hardware related codes in SWs.
 > 
-> > BUG: memory leak
-> > unreferenced object 0xffff888107a5c000 (size 4096):
-> >   comm "kworker/1:0", pid 22, jiffies 4294943134 (age 18.720s)
-> >   hex dump (first 32 bytes):
-> >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> >   backtrace:
-> >     [<ffffffff816337cd>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
-> >     [<ffffffff816337cd>] slab_post_alloc_hook mm/slab.h:766 [inline]
-> >     [<ffffffff816337cd>] slab_alloc_node mm/slub.c:3478 [inline]
-> >     [<ffffffff816337cd>] __kmem_cache_alloc_node+0x2dd/0x3f0 mm/slub.c:3517
-> >     [<ffffffff8157e625>] kmalloc_trace+0x25/0x90 mm/slab_common.c:1098
-> >     [<ffffffff83cee442>] kmalloc include/linux/slab.h:600 [inline]
-> >     [<ffffffff83cee442>] _r8712_init_xmit_priv+0x2b2/0x6e0 drivers/staging/rtl8712/rtl871x_xmit.c:130
-> >     [<ffffffff83ce9033>] r8712_init_drv_sw+0xc3/0x290 drivers/staging/rtl8712/os_intfs.c:311
-> >     [<ffffffff83ce7ce6>] r871xu_drv_init+0x1c6/0x920 drivers/staging/rtl8712/usb_intf.c:386
-> >     [<ffffffff832d0f0b>] usb_probe_interface+0x16b/0x3a0 drivers/usb/core/driver.c:396
-> >     [<ffffffff82c3bb06>] call_driver_probe drivers/base/dd.c:579 [inline]
-> 
-> I am inclined to think that this issue might be false positive. During
-> repro the device is initialized correctly, does some work and then
-> exits, calling all required functions to clean things up
-> (i.e. _free_xmit_priv()), including pxmitbuf->pallocated_buf.
-> Kmemleak triggers disappear if you set longer intervals between
-> scannning for them (obviously). And if all the things get cleared up
-> when the device disconnects, isn't that correct and expected
-> behaviour? Could the scanner just "lose track" of some of the objects
-> here?
-> 
-> Or am I missing something?
+> This seems like what udev rules are for?
 
-Possibly this is because the driver's probe function doesn't clean up
-itself properly if it fails in the middle (e.g. due to the system running
-out of memory and kmalloc() fails). These aren't easy to reproduce, because
-you would need to make probing fails somehow.
+Hi,
 
-Example fix: ac83631230f7 ("staging: r8712: Fix memory leak in
-_r8712_init_xmit_priv()")
+Goal of this patch is to introduce this new mode to assign a custom name from 
+lowlevel device tree to a spidev device. As i know udev can do it, but to do it 
+from device tree is the best and easier way for this feature in my opinion.
 
-Best regards,
-Nam
+It is more maintainable then use udev in userspace for it.
+For example there are three different SoCs: i.MX7, i.MX9, ZynqMP.
+
+In Yocto project, the Linux image's SW environment is nicely configurable 
+independently from what is the target MACHNIE. But if i like to deploy a SW 
+which uses peripheries like gpiobanks, i2c-dev, spidev these /dev/... name will 
+be totally different on each SoCs, more over in ZynqMP and any other Adaptive 
+SoC platform, the index number for the spidev, gpiobanks or other can be not 
+deterministic if it probed in run-time. Goal is to easily make a Linux OS image 
+which can support multiple SoCs in SW point of view easily.
+
+So, in Yocto project build system point of view the best, if any Machine 
+specific settings is stored in the device tree files of the target machine in 
+driver levels/config, because it will be deterministic in 100% sure and it will 
+be nicely separated from the SW meta layers which may not contains any machine 
+specific hacking with udev and so on.
+
+So this way to assign a custom name for a spidev from device tree is more 
+efficient and more maintainable in SW developing point of view in embedded Linux 
+and Yocto/buildroot world because i need to just define a name like 
+linux,spidev-name = "sensor"; then use it with a fixed name in my generic SW 
+under /dev/spidev-sensor name. And there are no need to care about what will be 
+the index number of this spidev randomly after boot and how need to make an ugly 
+append layer for udev config and make it for all of machine variants separately.
+
+My opinion udev is ugly to use for it, and no longer beneficial for new Adaptive 
+SoCs where they can be not deterministic what kind of index number they got in 
+driver probing for many gpio, spidev, i2c-dev peripheries (you do not have info 
+about that which need to mapping for what custom name, it can be different in 
+many time based on PL FW). It is much better, safe and easier to assign this 
+custom suffix/name explicitly from device tree, moreover it is a driver related 
+things, i think the best place is in device tree for it not in a sys config file 
+for udev.
+
+DT binding would need to be documented later in a separated patch as a guideline 
+mentioned it in Linux repo.
+
 
