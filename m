@@ -1,118 +1,143 @@
-Return-Path: <linux-kernel+bounces-183634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45CF28C9BB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:59:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C538C9BBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE4CB280F3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:59:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FCDC1C21B4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBF453384;
-	Mon, 20 May 2024 10:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6B751C30;
+	Mon, 20 May 2024 11:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="d4uIlM+V";
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="QNc/u9i3"
-Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eo6BjmTf"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F31C47F7A;
-	Mon, 20 May 2024 10:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D386D1643A
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 11:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716202751; cv=none; b=lTPyabzhDgftJ6nNkOyr50Zt6VY6QSVCfats/toCIeVNL1B3pHhXjCtBTntaB/+CgFWzziPXU87tmEOVd0HdmtDThzq3xT7BDDb5DLxRANQrBCkpm+wqquegDhG+1hT32b2bZvU+10sjOt7VnD31iRgeZ+qiZZLm/ytQ1mI1Fiw=
+	t=1716202846; cv=none; b=qi3vJ031CKl+x4oQRgjiF2nquo+5VIEaAtJhGD1Q6oLyjblkbJFp95eQDj1/FHRppbkAWMoBkkizhDtCuN4FuTmsJt/VEIjUaeaQsJI9hScwDfj4HwKUFksI+dDsb67bu1D9INUIfgim5eX/Zg2uq27tg0lGBusFEU5HgugHbSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716202751; c=relaxed/simple;
-	bh=LVap5KcHhie4Ew1SwXzHWoCTe66JbKygQVQhZNZNkfM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BVD8k5M0CyHjUaYdC37/B/JnPCz0X4AAm7w50/+SVyua9+N20b343dHTArKRchuh+JDLjQ245IHfXHmsdQ2aLkQsTuZmyhdINOMXB5Gtoe5WL0w2Ugi94Ih8LZMlNhU1YqknZqLd2ISHVQfxPn+s6CZNp0zQC0VNlj+dXErPzH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=d4uIlM+V; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=QNc/u9i3; arc=none smtp.client-ip=24.134.29.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
-Received: from localhost (localhost [127.0.0.1])
-	by honk.sigxcpu.org (Postfix) with ESMTP id B0E6AFB03;
-	Mon, 20 May 2024 12:58:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1716202736; bh=LVap5KcHhie4Ew1SwXzHWoCTe66JbKygQVQhZNZNkfM=;
-	h=From:To:Subject:Date:From;
-	b=d4uIlM+VCv4q+xSA/gVe+v8nUuH7kOkhqEvXmHJYCFyKy2Zz3nUzbE6Ro7gCOUCXW
-	 1ApaTm+a1pDc5dg3f61kaHd50uzQkR/bYpVuuwEoBeJDo2O9Os5/4wmxvUjMSjTNY1
-	 caGo+bl/43hwigIqXsxBqE7BEEZHU1nUy5LY8gi/XYK2PlS+NExfW6OqcjilLDKo/n
-	 4l7CM0nJd7j7DYj675h+I7V3T918+YAdWv986SeBYFugtmb1vP+i6rA7XbinCsSdCu
-	 pUooWkjlEpMWkVVRsbnw30QtxXrO381p8uaC0zX7NKiK3nblkZJNbYRldGpmjKBbZj
-	 SMFHq7QG13aDQ==
-Received: from honk.sigxcpu.org ([127.0.0.1])
-	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 1t31Xa3dvWmD; Mon, 20 May 2024 12:58:56 +0200 (CEST)
-From: =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1716202735; bh=LVap5KcHhie4Ew1SwXzHWoCTe66JbKygQVQhZNZNkfM=;
-	h=From:To:Subject:Date:From;
-	b=QNc/u9i3S77ioYu1u/mAmNICEpCx+G5WhKGLHB5R2QX2qzV1zOHolrlirVaL4ZfN2
-	 B/IFJjqdZsZguV+WufLE0s6xH8lh2rbM9Esg4ogcAfYt3TVpCMORbDWHV1MRrak40b
-	 8VnUzGhv0ZPKBBhaQjjVBh0gViv/RNdmSj5hBk1C69QH6cN/GVCCzM/sGxzZ1A/Jab
-	 lD2hSnoNVOaC4GvnwSAwazDC6RphUCNHXoZiETKPw0JNB/JFQEQT2VQiYfFEFBRo/H
-	 tL9TjUqUhIXNuw7LjWaE0eSAc0ck0ild7DF13jEEvBHx2sRk5lAsBeCazldTGrqOb+
-	 AdAamm2Qk1IQg==
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	phone-devel@vger.kernel.org,
-	kernel@puri.sm,
-	Martin Kepplinger <martink@posteo.de>
-Subject: [PATCH] dts: imx8mq-librem5: Don't wake up on volume key press
-Date: Mon, 20 May 2024 12:57:05 +0200
-Message-ID: <fa416916049e85ca159805e8602fa8361d5e6d83.1716202515.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1716202846; c=relaxed/simple;
+	bh=opqwwImqcKJM//Av+ypRrBQEF3Ht3H8zS8zbCZiPUdY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KworBHTvddbCldDGAGMht2jxinCoFCbXN2kUJKMjZDlUOwAUqSocpv/QV/eNb4sSL2uNpxwM4oD09X93faMSGoECyIKnXpptspvBRORshrNLB6eB4vRyJHNjYn0JmAth4Ilw1M3g+cRhKG9D7ppWdoJdGHZVb+otaGZxJ4Up8C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eo6BjmTf; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51fdc9af005so5170429e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 04:00:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716202843; x=1716807643; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zbU3zeRUyfJhQipGYR6FKYCuEp6+mBicTADebou1jyQ=;
+        b=eo6BjmTfYsOE7E8NlZiKcPiegr9iaMzhPcVRP4+8vX1xsKfu/MoBv5bq//lMUJyN54
+         zbVpbVdh7cmkFuuLdOtSQLrAnnarYO66zMJUpgNCiDhH+4U1/3y62TkWCVIUQKXAjIoZ
+         tuhS0gNZA8sIkiUvFd+rX6vQiJPAxqEUcD4H/FqPqK1nvIt6wO80bHUrVhYqFCpmzRKN
+         XyCeKmJM1vfWokhGTGxpx35I7PEMv5oj816hlCrZcdSyAffzb7E1eL+n2niuEeKtDBeR
+         c/R0xUwV5MAhJnwbgcfoKij1YEhKdZ0HmE0lt3n1eQGkZqnOCjAwmC+VONFPYokuP4dl
+         8VQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716202843; x=1716807643;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zbU3zeRUyfJhQipGYR6FKYCuEp6+mBicTADebou1jyQ=;
+        b=QQ7aG+Aw0q+laXgap4/nramJHBl7XdwMz8Q0AN9U9r1Pc1x/vah2D5MMzZL/M+zpgZ
+         vRuNuN5vR0Gaqt5D/Daueo645KnARwXcHxljqoFWl+MX/qaP9JtFSHxkjwYFOp6nOjfH
+         Aeq+6FSW0dXvb4cJx0niyKCUHVIp7Jawwz7EHGr7flJEof5twf4M8pj05y+V3D7c6430
+         jCe77eq3shjnzCtMwr6Ht/x1qy3amV5gMP4kbveAoydGKiASEcb9XAWTu1OavQGWgOnu
+         gBJ/NTFEPbX9JhIvf1BQHGOSRWHqEH8UJHLRYerMSh+TI50ZNIK3iU6zPMkq84uD19t1
+         u0fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGcQkUN1CGSQYoKOYXS7uvJNAukpEQTfTY3V0Sz/arIC5RfZAJOyARixAUROS+OuY4z9pDGV/UKGjth7qRnbOAus8zb6+sK7/BfVZj
+X-Gm-Message-State: AOJu0YyFcNOZnSeCnb0DI1Zj51VhefZD4tpnMlye4HnIy3oNzZ5TbkV1
+	pyIhdUQN006K1h2jhCszqx8x5JLdMwHiP0UcQL9rmyP4ZzD2ZgNSCHdo8tkwmgI=
+X-Google-Smtp-Source: AGHT+IEoP2+bL0oMFj4P0Aa7CMuek/Wx23WK1fJZHUBxVQUK6n4Or8upEK0eOTuockV49z8ZJoyWZA==
+X-Received: by 2002:ac2:504c:0:b0:51a:df97:cc8d with SMTP id 2adb3069b0e04-5220fd7cc70mr18338046e87.26.1716202842997;
+        Mon, 20 May 2024 04:00:42 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ad5fdsm4253446e87.24.2024.05.20.04.00.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 04:00:42 -0700 (PDT)
+Date: Mon, 20 May 2024 14:00:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
+	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, robdclark@gmail.com, 
+	david.heidelberg@collabora.com, guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
+	mcanal@igalia.com, linux-mediatek@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] drm/ci: generate testlist from build
+Message-ID: <o363vir3dqz2znrnifo6enbdwudalmxqbigdkci2ykxf5qjbnx@2ngllflxotgk>
+References: <20240517092502.647420-1-vignesh.raman@collabora.com>
+ <20240517092502.647420-3-vignesh.raman@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517092502.647420-3-vignesh.raman@collabora.com>
 
-The only key that should wake up the phone is power button press. This
-prevents accidental wakeup due to e.g. pressing the buttons in the
-pocket or backpack and is in line what userspace uses to unblank the
-device.
+On Fri, May 17, 2024 at 02:54:58PM +0530, Vignesh Raman wrote:
+> Stop vendoring the testlist into the kernel. Instead, use the
+> testlist from the IGT build to ensure we do not miss renamed
+> or newly added tests.
+> 
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+> ---
+> 
+> v2:
+>   - Fix testlist generation for arm and arm64 builds.
+> 
+> ---
+>  drivers/gpu/drm/ci/build-igt.sh  |   34 +
+>  drivers/gpu/drm/ci/igt_runner.sh |    9 +-
+>  drivers/gpu/drm/ci/testlist.txt  | 2761 ------------------------------
+>  3 files changed, 39 insertions(+), 2765 deletions(-)
+>  delete mode 100644 drivers/gpu/drm/ci/testlist.txt
+> 
+> diff --git a/drivers/gpu/drm/ci/build-igt.sh b/drivers/gpu/drm/ci/build-igt.sh
+> index 7859554756c4..e62244728613 100644
+> --- a/drivers/gpu/drm/ci/build-igt.sh
+> +++ b/drivers/gpu/drm/ci/build-igt.sh
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
- arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+[...]
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-index ffb5fe61630d..1b39514d5c12 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-@@ -45,7 +45,6 @@ key-vol-down {
- 			gpios = <&gpio1 17 GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEDOWN>;
- 			debounce-interval = <50>;
--			wakeup-source;
- 		};
- 
- 		key-vol-up {
-@@ -53,7 +52,6 @@ key-vol-up {
- 			gpios = <&gpio1 16 GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEUP>;
- 			debounce-interval = <50>;
--			wakeup-source;
- 		};
- 	};
- 
+> @@ -26,6 +50,16 @@ meson build $MESON_OPTIONS $EXTRA_MESON_ARGS
+>  ninja -C build -j${FDO_CI_CONCURRENT:-4} || ninja -C build -j 1
+>  ninja -C build install
+>  
+> +if [[ "$KERNEL_ARCH" = "arm64" ]]; then
+> +    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/igt/lib/aarch64-linux-gnu
+> +elif [[ "$KERNEL_ARCH" = "arm" ]]; then
+> +    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/igt/lib
+> +else
+> +    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/igt/lib64
+
+Could you please clarify this part? The arm64 vs arm don't look logical
+from my point of view.
+
+The rest LGTM.
+
+> +fi
+> +
+> +generate_testlist
+> +
+>  mkdir -p artifacts/
+>  tar -cf artifacts/igt.tar /igt
+>  
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
