@@ -1,84 +1,75 @@
-Return-Path: <linux-kernel+bounces-183622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506568C9B8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:43:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3350D8C9B90
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:43:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B660281535
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:43:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5836B222B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D50A524C4;
-	Mon, 20 May 2024 10:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A884D51C46;
+	Mon, 20 May 2024 10:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jjevzvox"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QLnA7NIZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D225F51C28
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 10:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26304F5E6;
+	Mon, 20 May 2024 10:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716201810; cv=none; b=lqcYDR6BulgZNCjNuBtphYHWzvUKkWfu6eyZkPOMc5nrX082BMbUM5ifH4sHEh1r77KEkmm7ZKphFA7iwZP2CYOwcFdTy+2O1f1sz1Tn87tu/w7oJY1rGh6HH4ha0JY3yV+7NdunlXClj964g6H0SbwyZzu61vKUFODBaM/vIAM=
+	t=1716201829; cv=none; b=hk528zaj7ExfI+0F1TSD3ftxWJR5tVUi8pXrBTv+dnMcx4hDhlccDpaJz6ByXtA3VwhdfZzlJxtHFfytdeE3AFdJCIyEnKgaAWCDQkzhDb2Zim4U/yTo65veKffoP6vOg/JJ17i/LiZsTEXE3UxzF088ZG/aYv/nNeaczapHfiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716201810; c=relaxed/simple;
-	bh=Iz9ztzUrzHwU28kEfAv2CoCZ/02g4GuMeMy9kUlFIHU=;
+	s=arc-20240116; t=1716201829; c=relaxed/simple;
+	bh=5+bbb1UczVvw6K+0nS9bOImpVZ8qu3hNkapBpWA73wo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iJ7ejVPY+kE1fYCCZHdU2mHFkEpt9RFnTAqApSLobvkvNDF42jpkCt/AJCIohINF3BD87DxiH/Q5Kw/tnpD46FNzNROZP7XT8JzYtAd+6Fo1chs18enQDMa2VtEv9gptNQZO69mijB3kNNiWXeBiRcX21aapjFFI3A597Xv46Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jjevzvox; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5238fe0cfc9so2405304e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:43:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716201807; x=1716806607; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=icwVF42TmZ2hZjEXcduZvhpSy5tVelIfuJSjSBSENHo=;
-        b=JjevzvoxGXMN/CsZU5tmAFIdRnE096bNWj6r84plZJljWfyPHFwe5QP70aIm5F5sTW
-         6NcgLFLpXBtUqPmg/4sk5Lmn8tFwsx/0S/cGCNXsmOO2PQ6h8J54x5ZeyYXy89TTU5Iz
-         RjF6yR+QZnLQjl230ckniBWVOBEJlYuY5//LnVOs+KxGWA3Zr/grvYQUACbLN+V6E3Yr
-         lIzPiVw8d4O4heYAtRkFdbVGDHeyibZs/KRtugcTp9RO9ls29a8zLKN8RKzz9c1nYlXn
-         3es76vaLZYho8/6ZP5DoNT5bvaPYGfvEOKo7OBMChyVFXoe807h2KVLTk5GdTQ0WPijm
-         4OuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716201807; x=1716806607;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=icwVF42TmZ2hZjEXcduZvhpSy5tVelIfuJSjSBSENHo=;
-        b=XQYlLUPl/uZxFkxA+hRQtNIqx3jH02uiR5Z98n98o38ALcBegK1xK6JMrohRr2GRjN
-         bzzO8F7rhzxDAF/CmFoDJxstJICzae2jmTT8pmWCVJuyrw3VeIhGORMnQAHqN2fpHvLe
-         W28ScE94lJwPWW7QUYM6i1bNdkrvit5Y88/d6mKgDCrPF/cQdqZY4fsYqj/JqsQHn/iL
-         P7eRxI1WqbcyTy/WSYqrVsZHirj9xtS9XbsQCdMHkL8n07hQMUGeq8EgVuKjd+gFv445
-         zSH8bBWlbFhY69hr4Cl+HSGR7MC5wISBKEsMEX/d2ai37hjSyH7ZWX9c6JG8mA+zxw+m
-         +yUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXrReSl+X7VSCw/19zKH/o1MpZU0UFKHc/UJUX831hNtajBXsOpc7hufLa6MIU4r0ta1s5JB4lxmPxgIt9xDttvfJyCsstyqCh/Br7
-X-Gm-Message-State: AOJu0YxKr2ndk4F1mceHvSJKX0gCPYSDlS+13YJgH0Li3oheZ+2UtnVm
-	oLve+xXXd7HCQj4+af0WozeGzdzzx3IRNXBW0LvqxnfKULx5MSPuCB20LIm55rU=
-X-Google-Smtp-Source: AGHT+IFzot8n6xHV0OHm6wH4k0sEr+LYxBLD0eD+umJwBs/mAovf2bSRWjBos0WaEoAs2a0risJ1Ww==
-X-Received: by 2002:a05:6512:4801:b0:51d:8ff3:f835 with SMTP id 2adb3069b0e04-52407cddc3fmr1595444e87.26.1716201806986;
-        Mon, 20 May 2024 03:43:26 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5238bee41afsm2044239e87.294.2024.05.20.03.43.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 03:43:26 -0700 (PDT)
-Date: Mon, 20 May 2024 13:43:24 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
-	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, robdclark@gmail.com, 
-	david.heidelberg@collabora.com, guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
-	mcanal@igalia.com, linux-mediatek@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
-	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] drm/ci: uprev mesa version
-Message-ID: <2qzmfv3oc6feihwxu3tl37rg6w3qsj2vddu5olvqk6vhqr26cc@bxu5y6ijvtfa>
-References: <20240517092502.647420-1-vignesh.raman@collabora.com>
- <20240517092502.647420-2-vignesh.raman@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dte93O2wKpxdLuY380TmnsNivGvjEPe+7VDu786WdwaNIEktqjBELEIw7MfpgB09rTAwWTx/8bYJHsgv/P3uppUMBTWHCuGMci4GgHucmp41AfAb2c1jxL/ItSQuyTghzhU+a7UJg9txSmL5XWfHBdh67OO3pi8Pq/8923AAN50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QLnA7NIZ; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716201828; x=1747737828;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5+bbb1UczVvw6K+0nS9bOImpVZ8qu3hNkapBpWA73wo=;
+  b=QLnA7NIZVeLc3tsj8RqFsSbFjDiCY+KZP/ZQAlvdI6iHhmKzh7juV/vT
+   1QOMaudCJ9qUKotHOIfztgNw9VnyjOd1Ged+HoMbWeAMW6hV98D6GHhpR
+   B9yiVsCAHVTZw2wismrmyYN6HjmGFra/OVB6uLRJgJ5lOZtUMTtRcClqK
+   6dy/6DeMbABAND2Y2xX+IpLRZwn0NFiAEy8NsXhtxEhLMtaVlOgbvW6Gf
+   JEyr3CJxeAviYHINo7YJJwU/fpFeVe77XW1dgKSheTCTc3UW4GgQoi/N/
+   PkymeghMQs++bl+z5/6IKRAH+fz781JIMhG3crfSyZkAeKh73+KcI/ozX
+   g==;
+X-CSE-ConnectionGUID: 4S4EUtkSQCymJH0r3Lr3gA==
+X-CSE-MsgGUID: CYaY8Ha7RyeyJi+jFRNPnA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="12163853"
+X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
+   d="scan'208";a="12163853"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 03:43:47 -0700
+X-CSE-ConnectionGUID: iZNt5L4bSBCMya55eNWjmQ==
+X-CSE-MsgGUID: uqFEuioCQ02AyNpzDiKeLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
+   d="scan'208";a="37435554"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 03:43:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s90UY-00000009Htu-1RTD;
+	Mon, 20 May 2024 13:43:42 +0300
+Date: Mon, 20 May 2024 13:43:42 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, x86@kernel.org,
+	bp@alien8.de, stable@vger.kernel.org
+Subject: Re: [PATCH] x86/cpu: Provide default cache line size if not
+ enumerated
+Message-ID: <ZkspXhQFcWvBkL2q@smile.fi.intel.com>
+References: <20240517200534.8EC5F33E@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,63 +78,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240517092502.647420-2-vignesh.raman@collabora.com>
+In-Reply-To: <20240517200534.8EC5F33E@davehans-spike.ostc.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, May 17, 2024 at 02:54:57PM +0530, Vignesh Raman wrote:
-> zlib.net is not allowing tarball download anymore and results
-> in below error in kernel+rootfs_arm32 container build,
-> urllib.error.HTTPError: HTTP Error 403: Forbidden
-> urllib.error.HTTPError: HTTP Error 415: Unsupported Media Type
+On Fri, May 17, 2024 at 01:05:34PM -0700, Dave Hansen wrote:
 > 
-> Uprev mesa to latest version which includes a fix for this issue.
-> https://gitlab.freedesktop.org/mesa/mesa/-/commit/908f444e
+> From: Dave Hansen <dave.hansen@linux.intel.com>
 > 
-> Use id_tokens for JWT authentication. Since s3 bucket is migrated to
-> mesa-rootfs, update the variables accordingly. Also copy helper scripts
-> to install, so that the ci jobs can use these scripts for logging.
+> tl;dr: CPUs with CPUID.80000008H but without CPUID.01H:EDX[CLFSH]
+> will end up reporting cache_line_size()==0 and bad things happen.
+> Fill in a default on those to avoid the problem.
 > 
-> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
-> ---
+> Long Story:
 > 
-> v2:
->   - Uprev to recent version and use id_tokens for JWT authentication
-> 
-> ---
->  drivers/gpu/drm/ci/build-igt.sh   |  2 +-
->  drivers/gpu/drm/ci/build.sh       |  6 +++--
->  drivers/gpu/drm/ci/container.yml  | 12 +++------
->  drivers/gpu/drm/ci/gitlab-ci.yml  | 44 +++++++++++++++++++++----------
->  drivers/gpu/drm/ci/image-tags.yml |  2 +-
->  drivers/gpu/drm/ci/lava-submit.sh |  4 +--
->  drivers/gpu/drm/ci/test.yml       |  2 ++
->  7 files changed, 44 insertions(+), 28 deletions(-)
-> 
+> The kernel dies a horrible death if c->x86_cache_alignment (aka.
+> cache_line_size() is 0.  Normally, this value is populated from
 
-[skipped]
+Missing ) ?
 
-> diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
-> index 8bc63912fddb..612c9ede3507 100644
-> --- a/drivers/gpu/drm/ci/test.yml
-> +++ b/drivers/gpu/drm/ci/test.yml
-> @@ -150,6 +150,8 @@ msm:sdm845:
->      BM_KERNEL: https://${PIPELINE_ARTIFACTS_BASE}/arm64/cheza-kernel
->      GPU_VERSION: sdm845
->      RUNNER_TAG: google-freedreno-cheza
-> +    DEVICE_TYPE: sdm845-cheza-r3
-> +    FARM: google
-
-I see that this is the only user of the FARM: tag. Is it correct?
-Also we miss DEVICE_TYPE for several other boards. Should we be adding
-them?
-
->    script:
->      - ./install/bare-metal/cros-servo.sh
->  
-> -- 
-> 2.40.1
+> c->x86_clflush_size.
 > 
+> Right now the code is set up to get c->x86_clflush_size from two
+> places.  First, modern CPUs get it from CPUID.  Old CPUs that don't
+> have leaf 0x80000008 (or CPUID at all) just get some sane defaults
+> from the kernel in get_cpu_address_sizes().
+> 
+> The vast majority of CPUs that have leaf 0x80000008 also get
+> ->x86_clflush_size from CPUID.  But there are oddballs.
+> 
+> Intel Quark CPUs[1] and others[2] have leaf 0x80000008 but don't set
+> CPUID.01H:EDX[CLFSH], so they skip over filling in ->x86_clflush_size:
+> 
+> 	cpuid(0x00000001, &tfms, &misc, &junk, &cap0);
+> 	if (cap0 & (1<<19))
+> 		c->x86_clflush_size = ((misc >> 8) & 0xff) * 8;
+> 
+> So they: land in get_cpu_address_sizes(), set vp_bits_from_cpuid=0 and
+> never fill in c->x86_clflush_size, assign c->x86_cache_alignment, and
+> hilarity ensues in code like:
+> 
+>         buffer = kzalloc(ALIGN(sizeof(*buffer), cache_line_size()),
+>                          GFP_KERNEL);
+> 
+> To fix this, always provide a sane value for ->x86_clflush_size.
+> 
+> Big thanks to Andy Shevchenko for finding and reporting this and also
+> providing a first pass at a fix. But his fix was only partial and only
+> worked on the Quark CPUs.  It would not, for instance, have worked on
+> the QEMU config.
+> 
+> 1. https://raw.githubusercontent.com/InstLatx64/InstLatx64/master/GenuineIntel/GenuineIntel0000590_Clanton_03_CPUID.txt
+> 2. You can also get this behavior if you use "-cpu 486,+clzero"
+>    in QEMU.
+
+Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+(as this obviously fixes the issue as it makes a partial revert of the culprit
+ change).
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
