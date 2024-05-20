@@ -1,150 +1,127 @@
-Return-Path: <linux-kernel+bounces-183333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F3838C97C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 04:15:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3EC8C97C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 04:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 789051C213BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:15:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD2951C2146A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFFF8C06;
-	Mon, 20 May 2024 02:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7B2D27E;
+	Mon, 20 May 2024 02:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnHVHQoJ"
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oQ0s/cO+"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76112746E
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 02:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8CF79EF
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 02:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716171318; cv=none; b=ML2A8m94+OrGyMqI4vTqeS21PL/iMaFRd7yEpl4w+kqg/B9ern3+2ZVfACGVfFzJE1fox6YMm1QwHoyiCQyhBqzeTS54ZgimHn+H1y9iKV5kz4uE79wj0hcGSvOgeruldeWmAd78yZI/+QhV3g9iE3ZNnaICPCs+rPVTgrrNnjM=
+	t=1716171379; cv=none; b=nEuHcrSWsDwsUl+FW5ffH+/DDHYvBC2mBJNswES6ShP05qP+Cq97whHOXQgWJGAJMqJ77a7zPtoYi3LhHJlTQBhAASX127uif6EomWGM4ANEGDBW7ASrOe1G0rBAhIVEOASGMR0A2GvvTLtbmgbVduEVw1fDltlAGjDMoGMozyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716171318; c=relaxed/simple;
-	bh=hfl3RvqgJG+zg4U+kQ1Rt5dKBhsRFBGmr+jlHrL1oGM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SNt+vxM0KVB/fccTSH6Tu5b7ZJ7VQPbO4YC8kumBwWRi0/eF0Ywb+KSrGBFe/bXQrbCqxEXay65kLiDOSwEjon7+Ep5iw0oRbWI3mH3MGIHqeODsTeW0GOCEAKS5BB5FxSHOL7Sz1/o12x2qTBcO59DpXCDdm+QJne0JrXjZ64c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RnHVHQoJ; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-481398a7381so298507137.3
-        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 19:15:16 -0700 (PDT)
+	s=arc-20240116; t=1716171379; c=relaxed/simple;
+	bh=k5lb3KexDXe66sBBkZldL+OZ64rstu4w/axQqkMX4Js=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OGfOQcy8yJIlxEMJ3Hjm0cDSbvZ4zNo9DAy0RSbkIaqs+g73gUcaHhlB8g2Nblh1i41+JObKK2kARf6I5tQnv6MT15Lz8Hde5ikGsf2ve32EY8OsRHoiNnhT9XUxYWXCJeq5SwXhid+Ug6EXgnEU5nki3k1IHX2pI3wQaz2DhPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oQ0s/cO+; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-60585faa69fso1924349a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 19:16:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716171315; x=1716776115; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ItY3dJ6r9GRDoSvMq3ooAXzy/Y3jWDpnBdowlwHmSnc=;
-        b=RnHVHQoJ5Trm5IL2inf4+ryjMYIGGlctSy2QUL+q0JFabdiHXf4H14WCMY/2TPlCTz
-         HiNxXk8TTyFA5BLWvIOl61F5zcXo7EuN9Mz10hmePwoWLJq+9PYaMq2cPQo7qP9jJaTv
-         iLHkMT2Kw93RK922Ej0NPeY3Hshjzno8phEuHFiYrE4CgTJ2JmucXO65kLAfxOLjZgtO
-         QknUJVU3WXBy5t38XxBiAPP2jZz2HxFJTlefIYeMHoLeZ5Qnvy278/eGh/D9MtzKKCVM
-         6Kfs9K/bwqIwH4UWrpyL71rr2YaKBg5u0Xar/sWINuhtXM/71tH4LLCJmRZ0pVo8q8Jz
-         lWkA==
+        d=chromium.org; s=google; t=1716171377; x=1716776177; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YE4ucDs9bqpCnHq3oUgTivRFQ/nTE3BF0FzqbWtaKfY=;
+        b=oQ0s/cO+9DKklSRPhLMVg6Oofm9b83/Lbgx3SGavcwW9ePYRaZm/sbPmVy+gm7Gw/O
+         Ie2AT4aTBHtpRNWhhDo8un6H/1ZbOiX6k9dgrdhkOPmQ1fTyb5AWeTR3yXnPo7EgEsJ0
+         jVzvIhlde5zcn/2aZ07BfL4mPLC2rT86M4PMk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716171315; x=1716776115;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ItY3dJ6r9GRDoSvMq3ooAXzy/Y3jWDpnBdowlwHmSnc=;
-        b=jUPMtk5meuzxXRg7v16i3hrXjAlxqvCvrkA6N/UHV007IFpIKNtYq3Iqr0+8hK7N8X
-         frXNBeZgXdzkRvEC+kP6m527qWqSpl64AcV/bgyElRX9t5CNVaMLtfZb/IgV2Gy+LgIt
-         cWVjxpKACkjdNyfICzK0yYZ5leeWnErQ+Ey5N7PTBzpW63iZNdv4KLfFHQQ97i7s1Kwg
-         uFKfdPKP5Qtj1jStw24AsXL80LSO6P/XEsR0CSqQuSDmL2eVUVlAmVKpaMHGYr6Mfs2d
-         R0Ncq6ehkGUgWPIGBUv6ygMPIuUvq6zbxsL0T81vcI0lxrekoq7lfg/xa4KY62OARrht
-         b0cA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsBPV+xgTaZ5QL2QAY1W8uYqFi6Mh/HxsglIgmCAuZ2uRR8Ex2qDnTI3r2/qNTg4caQ9Y5PS2DipTM5+A9ojpFMXNT9HhWiCwfIuhy
-X-Gm-Message-State: AOJu0YwWUgMdVffMzM/Gb9HwNpy6W1MbeFcpKvs2R2LVNhzsOG9el1id
-	V54gXIGRG2Y6Nt1FF5S6q//EOtFhNse0QTZssjry9BBfS7dV+OK3hnplG7UIHE5Hq/YA5CFMFRl
-	+2qqRUaPocRA6cqCBbrqqtdV+/eg9k6d9qWk=
-X-Google-Smtp-Source: AGHT+IHLIiOr6c/yXHrwB0GZnzQC+NRw3mkL9lwRS6pyms1Fy2BtK39c6kFtX63WC4ag0icy6HIRNhmQLnROLyrLeAk=
-X-Received: by 2002:a05:6102:418d:b0:47b:ca6a:c5d9 with SMTP id
- ada2fe7eead31-48077e8122amr22895009137.28.1716171313827; Sun, 19 May 2024
- 19:15:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716171377; x=1716776177;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YE4ucDs9bqpCnHq3oUgTivRFQ/nTE3BF0FzqbWtaKfY=;
+        b=pdmuKxavrn/0cELM32BtW7GrHbj8EP/vc0dKB7np6Xx7Qx2YWBbDj6IjRrISUTsHTo
+         ZuwFObCwRstj+ahGj9IrQjJr/WTxXvup139/GNo077tzzfM7hs1YaEWsZBBDYamTWRnn
+         yN0Xx2U63/m07N2/qw+7Gs/iDESCfwxNWurPVUy2w3+aJKQNQMKm4DjqZx6B34xFX38g
+         D2n1jGumq7hpeto5eoQUvLchjVPOgX7yEBpgdMfafNnya8D2ay7MGGG2qSQyNwzZKp/k
+         hmmCzo0VmmZuxAbuqZoRReaehSDtHeB+59F1djlHcX7jREaN4UfHqbdOoTU1tZeGHXoo
+         G8dA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ+7NaS0KBmkDpi9XdU5SuMVo9O/XnM92+XHOXYGIlqtgmpFmDCRRI+8Jc8/MrWyhcBuatwtTXlK1Mq2ndDFi3vQ+t9PYQBp0+3m+Z
+X-Gm-Message-State: AOJu0YyzkqPBi1omawAhRm9cX44XAUdlbJLu5GGjT0vH08Y/2RsjP+e/
+	4incZqDUSlR3onpQZ3UrDs4qJ/Yg3W9vO7WtCq3uODd2PmDtzcZsuYTpTrdUqw==
+X-Google-Smtp-Source: AGHT+IGlmg2Db2n2jC83SuJ/euH+lWUD88AE94T/zbSsqm5Y0IM2QGpn7oCJ4Kl9duCwOUaZbJJobQ==
+X-Received: by 2002:a05:6a20:9696:b0:1af:4fa3:30c2 with SMTP id adf61e73a8af0-1b1ca45c914mr5637698637.20.1716171377141;
+        Sun, 19 May 2024 19:16:17 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340a9107f3sm18518349a12.9.2024.05.19.19.16.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 May 2024 19:16:16 -0700 (PDT)
+From: Kees Cook <keescook@chromium.org>
+To: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <keescook@chromium.org>,
+	Justin Stitt <justinstitt@google.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH 0/2] exec: Add KUnit test for bprm_stack_limits()
+Date: Sun, 19 May 2024 19:16:10 -0700
+Message-Id: <20240520021337.work.198-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509034138.2207186-1-roman.gushchin@linux.dev>
- <jf44dfyaenz6xmn2hcodaginrshw5d5hfhmakdxtj4x6szk6b2@cr2rxamkgj2m>
- <CALOAHbC0AATe5iMAm84Y_obOs4ePZYEW3X2a2OmjTCt_A3xXMQ@mail.gmail.com> <jllnyxah2czkca4bpbaqshksdjqk7lapgviee6gyajlqx3pcon@qwrf5ooxzrim>
-In-Reply-To: <jllnyxah2czkca4bpbaqshksdjqk7lapgviee6gyajlqx3pcon@qwrf5ooxzrim>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Mon, 20 May 2024 10:14:36 +0800
-Message-ID: <CALOAHbBOzzAv2yHxFACfb_HDHDruoR+3xR7AUGPmZF2m9fvRtw@mail.gmail.com>
-Subject: Re: [PATCH rfc 0/9] mm: memcg: separate legacy cgroup v1 code and put
- under config option
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Yosry Ahmed <yosryahmed@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	gthelen@google.com, rientjes@google.com, Chris Li <chrisl@kernel.org>, 
-	Ivan Babrou <ivan@cloudflare.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=800; i=keescook@chromium.org;
+ h=from:subject:message-id; bh=k5lb3KexDXe66sBBkZldL+OZ64rstu4w/axQqkMX4Js=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmSrJrWE8uIm/m6QvBW42tgwzmZT5aSDXKKKp9q
+ ZrpvWpZHWqJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZkqyawAKCRCJcvTf3G3A
+ Jm2PEACicbwCbc6OZnHBIcUUFcyBjlf/4v+fHpVGZ9x6gjGoLiaNNzSux1Yt5JsshKg1JSrKaUk
+ kuwBy5cP7Wd1dPijGg1mmRphZ+4IlFvzRrJdV7kssCixOfU6FtSV3Z57lrbjvvyP8HHzedtpUEK
+ 1yWzY2CSboSPLgs+vdL24sCO6N5A0fM4nPaXhMJVpZbmiiaU2w+t4R+CbiMTLUfvxHhh70wgbcb
+ 31ctRRBnXXJiv0X6Noy+6hyd11W3mG18VH6cMEhncRxY8+O5gvEkhS7e9LUnAtB7+VACvUknFrj
+ lD9AsbARrigjh9odISpN5HjThC567f+OvosQSoO3K/la5Yrw3INvPzoS2Y1/xslqszpZr3xlxPT
+ foiHcGM05pEJ3c/fzvDF+Eqe80hxDr9m9vt3MLb742NAq51+rJUuBQ/WQJSCMuI4XpjnKGR6t3g
+ dlq/1cdQVlvi5myH8cCuE58CIMYkiCNwVw241Xz3XRRKcmqKdyK0+fNLvD8Y73jUM9QOLixb5Qv
+ yV70c8ZgrF46lDeClXpyRchoMZzfQrie5TK1WjbGBI2N6AT77vLlSVhoYrCPJJX98yNuXY3Fp2w
+ eIANrxNFwd5Yi30KSmuHd3ssO10sVZK125bhTFDM+1hkoWH11nyVYsBqHfVIVXU/SkgIT6dvlc/
+ kHPdLM3h 3fmwu7w==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Sat, May 18, 2024 at 3:33=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> On Thu, May 16, 2024 at 11:35:57AM +0800, Yafang Shao wrote:
-> > On Thu, May 9, 2024 at 2:33=E2=80=AFPM Shakeel Butt <shakeel.butt@linux=
-dev> wrote:
-> > >
-> >
-> [...]
-> > Hi Shakeel,
-> >
-> > Hopefully I'm not too late.  We are currently using memcg v1.
-> >
-> > One specific feature we rely on in v1 is skmem accounting. In v1, we
-> > account for TCP memory usage without charging it to memcg v1, which is
-> > useful for monitoring the TCP memory usage generated by tasks running
-> > in a container. However, in memcg v2, monitoring TCP memory requires
-> > charging it to the container, which can easily cause OOM issues. It
-> > would be better if we could monitor skmem usage without charging it in
-> > the memcg v2, allowing us to account for it without the risk of
-> > triggering OOM conditions.
-> >
->
-> Hi Yafang,
->
-> No worries. From what I understand, you are not really using skmem
-> charging of v1 but just the network memory usage stats and you are
-> worried that charging network memory to cgroup memory may cause OOMs. Is
-> that correct?
+Hi,
 
-Correct.
+This adds a first KUnit test to the core exec code. With the ability to
+manipulate userspace memory from KUnit coming[1], I wanted to at least
+get the KUnit framework in place in exec.c. Most of the coming tests
+will likely be to binfmt_elf.c, but still, this serves as a reasonable
+first step.
 
-> Have you tried charging network memory to cgroup memory
-> before and saw OOMs? If yes then I would really like to see OOM reports.
+-Kees
 
-No, we don't enable the charging for TCP memory in memcg v1 and we
-don't have a plan to add support for it currently.
+[1] https://lore.kernel.org/linux-hardening/20240519190422.work.715-kees@kernel.org/
 
->
-> I have two examples where the v2's skmem charging is working fine in
-> production namely Google and Meta. Google is still on v1 but for skmem
-> charging, they have moved to v2 semantics. Actually I have another
-> report from Cloudflare [0] where the tcp throttling mechanism for v2's
-> tcp memory accounting is too much conservative for their production
-> traffic.
->
-> Anyways this just means that we need a more flexible way to provide
-> and enforce semantics for tcp memory pressure with a decent default
-> behavior. I will followup on this separately.
->
-> [0] https://lore.kernel.org/lkml/CABWYdi0G7cyNFbndM-ELTDAR3x4Ngm0AehEp5aP=
-0tfNkXUE+Uw@mail.gmail.com/
+Kees Cook (2):
+  exec: Add KUnit test for bprm_stack_limits()
+  exec: Avoid pathological argc, envc, and bprm->p values
 
-Thanks for your explanation.
+ MAINTAINERS       |   2 +
+ fs/Kconfig.binfmt |   8 +++
+ fs/exec.c         |  24 +++++++-
+ fs/exec_test.c    | 137 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 170 insertions(+), 1 deletion(-)
+ create mode 100644 fs/exec_test.c
 
---=20
-Regards
-Yafang
+-- 
+2.34.1
+
 
