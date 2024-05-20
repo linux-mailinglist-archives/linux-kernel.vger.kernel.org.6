@@ -1,184 +1,231 @@
-Return-Path: <linux-kernel+bounces-183383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56EB58C9844
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 05:30:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D7A38C9841
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 05:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FCB41C217B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:30:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B575BB21D39
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D61101E6;
-	Mon, 20 May 2024 03:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD8CE57D;
+	Mon, 20 May 2024 03:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UFrZocsn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="LAA4dx2O"
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01on2078.outbound.protection.outlook.com [40.107.13.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C878C2ED
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716175829; cv=none; b=Qula1GROgJt53xZJ8rKBKPd9X4wzhXgrR0pz+LIrA8+7aToxb3TZNsBE57dh4q7ciVG/rpE+BT3Qv6+3Ef09fKjAc6mQqE387kqw/2fbhFu1+QMG0+ua/4ELEJNKOgJeZNiPwDdYstyoX37rXEolIU3hcmw+7/WJwhjC+DWXtY4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716175829; c=relaxed/simple;
-	bh=ikOTYfj5UG4dTpauR7CDHRmki8gXIROQCt77kT2U4jI=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=E7nE4yKWu2gTj89793M+YQgReJ7ecBQKg1Qojb6a1AgBO/quJW+zIGDUBh2fkIer92ycKY1gyYVbwnuugeiScRM+9u33dtQ3Wb1q0DuIEmUibZXo/5BavlqVml41NV8OCfMV77LBd+eiQban/LdgTpa3ZEac6JXVYVneeT3o2rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UFrZocsn; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716175827; x=1747711827;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ikOTYfj5UG4dTpauR7CDHRmki8gXIROQCt77kT2U4jI=;
-  b=UFrZocsn/BVFw/FcEI83In0q2CtplFV9VreutNHpjKH08nVJLxAirw3t
-   MmwV0DfQac2cs0pzmrHsETGdJpcXRE6GmHVb56qdr2kQ5HyYyh1qCwTzk
-   MiOqEmAVyrOUbhQXsT991b843q3ZvCqlyMRdBB4rOoqYLo0k4Je1pEA/e
-   eK7YNOg6dDEWfl5XRdNEN8XMbeyg+muNk+mzyRw7Q33baw6iN+h2C7aPl
-   acsKdxr7rCbSyFpeSrvKXF8a/f48sRvsDHnKICrUNochpWFOadGauN9P+
-   NAaoSsoqk3jIzLjvMsyUApv1rCOAuR3LJ8nMs2Vgqot4RkXnViIHrq/gI
-   A==;
-X-CSE-ConnectionGUID: tfp12MR8TOiiyz+NtPWPzw==
-X-CSE-MsgGUID: xvJ2tzb3TpaEJNU1TH94ng==
-X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="15229124"
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="15229124"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 20:30:27 -0700
-X-CSE-ConnectionGUID: kpasQPeuTTi6K6G9JAdx7A==
-X-CSE-MsgGUID: w+5CVyV1T867FyHDbsuZiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="32297108"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by fmviesa007.fm.intel.com with ESMTP; 19 May 2024 20:30:21 -0700
-Message-ID: <f88b9fea-3941-49d6-ad54-4be29bc6d034@linux.intel.com>
-Date: Mon, 20 May 2024 11:28:30 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD7ADDA3
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.13.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716175771; cv=fail; b=hOiY1rq5ctrK6xXTeHHDI6fZAXqhXWr5Wds57cxmXFT/9MxhpukqoECjqjs7feoDwoh5lzV7eLIx8bDJCQ+0NCjkjaYScS0Uduo22pQwpzITh6UblNdgUmfruNB8E45tUXGYNsrSSxc1RyS7J3H8jWWJ78MZq5jhDj7lXQa91LM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716175771; c=relaxed/simple;
+	bh=uA2w3H2eS4Yw2JTzHil8/z609sa4uONvL8UJP3zouQk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=utNbfBLZcfz4jtAWZ+p+bMqU5AM7XLeVbismCn0/3gZHU56MyIwQ1anmrSCfw4XNU6TBPYr0e5aKTyJ8WAIq75vniOncK6i0wu73mRNCQrdV5cuVZZRclHfIHoiTW5H+J2mc+XqGCyiUnT6fJpYcwKyXEIetk4iCVe39xtiB5aw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=LAA4dx2O; arc=fail smtp.client-ip=40.107.13.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=a0bvo+ri2BYk48LC2JkIrODjXeY/zGd+ilL/yTITYBcsHeZIy3Sw7W4eBKhacBXdaJ+cp7LoQcJ1Gc8a/hFv7GaP9Bb7XsAAXnjlFwKJEACAQ8Voi2DyYllKW6bYmizgj9MpevheecvC2y84x0Nd0djP6rsueRuGE1vZ5VMTw7IKQ+3Jl4y1eBsU9uF84tRlYXC7Xsr42j7ixRnrJRJ1IXFlY0WDNKR7jEW7xmurc2tkypCJMN2PZpWeKmshVK86rcrSGg+f6Phbb7wtgU/3LA4alqVcP7X2nPibTjxZx0vIphXzmCWTIj9Uwa0CeRLWFzt3vu8xS5EHek9TMwrJsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DNjgC4d9auDv7660uuSxcI3hhwe+7wjNRReUrLharvQ=;
+ b=FEjuw8L+qwt+arIo29p1IQxGOeTEHIbcxsnJ324s532fwTUNMRrx3DFdAlDHN0QbqlybuoXr5zswjuLaDE0iH2VgKqJaRTzVUDY831ipE8ze9gdFsJB68XluyXYpYGViLNWqjUZDUwmORnUx2ovceI9EkmUKFA4f70kh3ZVtVMYAzfu6y5X20AhNZm10QlGY7Y6P1aOXu96oZvJoaolMJQ8k7CesAPkzsjpWWD6SDdLhVAg4f+22OjgOn0+eWoU90sIEoKzftgiwC9bkMgbJYFPU3B4uvKT6BdfV/WtLbL09+n1ttqfXRg8K7D7BgLRM1R9Ao4MUbR+OfrQ+wXg4Jg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DNjgC4d9auDv7660uuSxcI3hhwe+7wjNRReUrLharvQ=;
+ b=LAA4dx2OjO0Ckhpi8/eewdJbgrOQdhwPo1QJb9sYyO0Q+id4uJPg5B2epacBLPYr4r6MZSUxTdaLHcAu8egRNdC5c2RlZwtahJqBbalMH2g6H72YkDLVf8SjQNUKZfv7bT59glDi+Z6NvUeoZoc/6kzUZRl2P0MCI2OkkaDBI60=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by AS8PR04MB8151.eurprd04.prod.outlook.com (2603:10a6:20b:3f3::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Mon, 20 May
+ 2024 03:29:25 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%3]) with mapi id 15.20.7587.030; Mon, 20 May 2024
+ 03:29:25 +0000
+Message-ID: <5efe29a7-441f-4d70-b17c-5327c0a9f600@nxp.com>
+Date: Mon, 20 May 2024 11:29:42 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/bridge: adv7511: Exit interrupt handling when
+ necessary
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ biju.das.jz@bp.renesas.com, u.kleine-koenig@pengutronix.de,
+ aford173@gmail.com, jani.nikula@intel.com, bli@bang-olufsen.dk,
+ sui.jingfeng@linux.dev
+References: <20240516101006.2388767-1-victor.liu@nxp.com>
+ <evnxopqt5be56vxuxqdj4l3mcd5nrrvucio7jhwgg4emraai3t@gherubdynyip>
+Content-Language: en-US
+From: Liu Ying <victor.liu@nxp.com>
+In-Reply-To: <evnxopqt5be56vxuxqdj4l3mcd5nrrvucio7jhwgg4emraai3t@gherubdynyip>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR02CA0048.apcprd02.prod.outlook.com
+ (2603:1096:4:196::23) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "virtualization@lists.linux-foundation.org"
- <virtualization@lists.linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 5/9] iommufd: Add iommufd fault object
-To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>
-References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
- <20240430145710.68112-6-baolu.lu@linux.intel.com>
- <20240508001121.GN4718@ziepe.ca>
- <a03d3bf6-0610-427c-bf2a-5f6c410e220e@linux.intel.com>
- <BN9PR11MB5276F21755C883FE7EC784228CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <733e3788-d303-4b75-aa97-d97489a7f0bf@linux.intel.com>
- <BN9PR11MB527685B9D96675AA8A3CE78E8CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB527685B9D96675AA8A3CE78E8CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AS8PR04MB8151:EE_
+X-MS-Office365-Filtering-Correlation-Id: ba43ba4c-fd41-40dc-2c87-08dc787d0c3f
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?M2wrdkVWTFA0TUxQeTg1SGR3eGFoN1hVS2J1WTE1cjdiVHliaEdFV3BUUzdo?=
+ =?utf-8?B?NTF2N1BhVG1WNm1oQ2VMYmNiWGpnay9sTEl0KzI4eTNGRjgyRldzMHJRK0Vn?=
+ =?utf-8?B?MEkrT0x0YUZLQ01HQ0JPMDkrMmRoZGJwK255azVPM3M5R083M1lZMUlwd1Rk?=
+ =?utf-8?B?d3VBRnBsOUdwcmdSKytMQ2ZXTCtpYVFtbUwwaEpuVEd2dmEzdHU2Vk1xdC8z?=
+ =?utf-8?B?VUZWMnhIUjVJSk5wS3FJbUNsaTdtMnhrZTB3T0V6eDRkakhPN2ZtOUZjNU9K?=
+ =?utf-8?B?WkZBVnBlSm91dEoxSzc0S0JkMUdvdDVxS0U3TFZmenpmSld2YkRkWHZsdERQ?=
+ =?utf-8?B?d3BWN1A3c1lrWlBYMDdDendvTS9teERWNldpTU5wekhxUC9SV1BPajV0WWg4?=
+ =?utf-8?B?Z2kwTHo1U0gzeVhUanlwL3dYWDFUNFE1dEFVdStSek1IaHY3T2pIdWZQdGpJ?=
+ =?utf-8?B?SkVnc0dxWDhuVy9pTGQrWVBlU29LR3FaMVFGYkcyMU9zY2Z5TXp3NEtveVRs?=
+ =?utf-8?B?czBsVXAxVU5lWUFWdXQwZVZ2Y3hTUU5MUzkwSU56em9USHNzL3MzOFRUUjl6?=
+ =?utf-8?B?MlYxaVcxeUVhcFdwcVYyemg0WTl6T2t5MTc3N0lYNElPOFdsQ2hHWkk1ZmtZ?=
+ =?utf-8?B?UzRZcVRKM1hBT1BObFBDeDVRNVhBcWFnSURxVG1oQlB5OHVxa2NYbVNJWWR1?=
+ =?utf-8?B?eTdvTzVvK3ZPZjYraWlUWm9iT296dk1FYTRHZ3d1UmVtU2pyL3duYzNJVzhh?=
+ =?utf-8?B?b2ZKRlN2QnVJUVM1ZU9URXBmUVlRT3AwdnpWVFVXMVlGTmd5Zzhlb0Fxbito?=
+ =?utf-8?B?OTI4WlFVRkxsaDkybS9MTUNGaFhkTENTb2J4TTFCZmpaUmhVbXoyVy83TUFr?=
+ =?utf-8?B?aGZtUEFacnpRK2syaktValUzamp6N21WWUE4bjU4L1JCM2FZcXBNc2YzczRq?=
+ =?utf-8?B?d2VjTm1qN0lVYUczNHRDZzlheFZGelI5QWx2VDl3N1JMU2hCZEZXZXBnZERl?=
+ =?utf-8?B?Q0d4ekdvTDE5TUI3MW80K0NUcGFlRUhvUVdaaXlQM1Z2dWxDaGk4ZFlJSEN0?=
+ =?utf-8?B?emhJVnU4eU83Yk00MEt0MGJwS1JQeU9RY0IyNVlXclpPVFN5ZVJnT1N1ZFJy?=
+ =?utf-8?B?cDBFKzZ3K3IvUHJ1WFNiOWZxRG5QeUFDbkRldmVreXYrVmpIRE1jc1VZY2l3?=
+ =?utf-8?B?UVBpSjBDV1NwdUNVbkFKcW9DZ0YwR1ZhNHJ4bjkyZzdXc0NkUlhrZkErTTIr?=
+ =?utf-8?B?b29sWXMweDNuVDR1QkVKenEya0VFTzMxQWkxZnd3Rm9lYU5Kd3VKdHZVSmN4?=
+ =?utf-8?B?eTZDOTZEa3Q0ekpibGMrbGJTbUFoMWg5SHRwM1NtK3lURzduSGM1V1V2Vy9y?=
+ =?utf-8?B?VUs0RDg4QU04NlArT0drZTBienVWWlJQRWJKcmVOV1hKMmtpUG5kV3lkTnB4?=
+ =?utf-8?B?amx4UWR2djg1MXdHZjAxVHRVdVNIVnRIM0FpK2QrdzU0d1loUTg4NUliVzhT?=
+ =?utf-8?B?TGxwWGRNbDlVRmVVZjBoVXM3RkxKNlF2ZFFlcUg0dW5FTG1XMHBoQzAyUmYy?=
+ =?utf-8?B?K2pMRlF1eElKaXhEQzkzWGJHL1FYM1NIT0gzQmc4dkcxTGwrbXJkc2FCUU9D?=
+ =?utf-8?B?dElKWWFiWUhuRkkyMXM3ZHloLy9ubVAzdUFvZnpQNU5WRkp4U1A3YUl0Y2hC?=
+ =?utf-8?B?VjJjLzBaYjUrQTVsUnlLaXFRUGNKT3BobjNPbmVvNzJWSnJPR3pqeGJRPT0=?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?VEZPaDBwMnAyNWIzV3FYQzdJeGVPWVRJeEVTd3h1NFpsMkxUd3FYdk9jeEFm?=
+ =?utf-8?B?MWxhcDlZZmFRZU5QWWNXOStYa2xZN1lLaHptY2czNnFiQldvdm5DeVRYcHRT?=
+ =?utf-8?B?N0ZkQnZEcEpMcDFzR1MrTE1yeHNFemRBczdJYmtGNEFhOFB3MnNaL1c5RU1B?=
+ =?utf-8?B?Mkx6UUZNSjNsZzVRWlg1a1pVVnc2eExTQUR2K1g2UUVibG1TWGQ0VmJpUnpa?=
+ =?utf-8?B?czhXeFdDRUR3d2p4c0hxRUZuazlhSHBpZ2lxOTczZFlucm9ZdlpneFdFdXYv?=
+ =?utf-8?B?S3dBWGZGZTZMd0hjT2JIcGdmNDFyTjdUdUZla1VFNXdPMFlzbjlkQjY4ek5r?=
+ =?utf-8?B?bXdKQlBGZ1B2N215cmRKWVlNQ0U2R1N2Z0EzdzQwN2xNaXFySStGNTdBSDFp?=
+ =?utf-8?B?dW5Pdk1EZE5GQWpVQncrTVJkZVFuZ0ppakJDcFFqaU9PWmdqNnZIYTBjd2RN?=
+ =?utf-8?B?WC9jTnhaU1A2UkNWMGs1ZW04K3hzOVlicGZWaTd0bTNISkFrWnFNcjlkSWtE?=
+ =?utf-8?B?WWJ0WDR5QnBkbklZN3E2dWJoRnFVL09RRUxXeVhNNjkxRDRvZnZNRkY4QktZ?=
+ =?utf-8?B?RFg1MC9MK1FIRVZwV3Z1RS9qeEFkaGZjWmdVQXpYR1lLT0xFVjlsdmxBQmJS?=
+ =?utf-8?B?WndMNjdTTXFLbTZoTGw4QjE3RGowT3h6Y3VjeUZDYllnMGl3M29udFk0SFN1?=
+ =?utf-8?B?OEd2UytrK0pLR0o4aGhuY2FYNWhKbnkrcjNHY2RxRnZqYTdRYU9MSHRQc2cz?=
+ =?utf-8?B?YlRFeGNLRkVGR0pGUHlHa3d2cjNpSjlsZ3lrelU2cjc0UEYyU2RlRnNlaFEv?=
+ =?utf-8?B?d1hHUDNaZ0s0ZmhsZ2FONzNLc2kxZEN3andtNnVrSDQzeWNkMGtQeTBXZlNB?=
+ =?utf-8?B?SVV3M0ZJb2Z0OUV3MWw1TmVsZUNUTnpSTU54dkJyRGhJTWZIUE1sajV4MmFQ?=
+ =?utf-8?B?c3dNYUhYTXpDTnVSck80cCtrTTZyZmpXb3lWeVpndERTUEI5emU1MUljVjhx?=
+ =?utf-8?B?TWxCTGNIMVhQOStwNWdGLzNLTm1MMGNvYmdRbUhnZ3lFckpxYUNSQ3ljOG5r?=
+ =?utf-8?B?cVlmT3k4aDIzWkJLWjE1c3lVMDVtc01TTjYvL2NZN3FiNUF4dVYvajdmSk9k?=
+ =?utf-8?B?Q2NXeDJVby9sQzIzZk9ud2MwbkFmWDZEcGp3MGpBckk5NXZRcXQzNExsZTlN?=
+ =?utf-8?B?aG5HY0NKRGdnL2RZMElMckJyV05tN0dWU2IzWlJBYXpOV1lUeklkZGJwSXo3?=
+ =?utf-8?B?RFR1aWNhTWxIdHFRazRYZmxabmltNHBlOENmdkRXQlRMM1V6QnpYVk01alVk?=
+ =?utf-8?B?bGFORGNmZDdhTUFTYTMya0xUclZUOWFLcGZSa1lCT21vYTNxVGw5SVR1M01Z?=
+ =?utf-8?B?elBJWEFtWW5PQkl3cEdsZHp4V282Vm4yVkhvNnRtT0FENUtDTzNwamJ2aTkv?=
+ =?utf-8?B?SGdxV0FuUUR1WGN3L290TnhKZlh3NFYwT3dCWVJtSllTTXpYUmw3U0ZHTFNI?=
+ =?utf-8?B?U1NqcVAzMk1pVno0UkEyaTVJQitCNncwUUxYUkEvRXltTlBNeVJCbGwxRlcw?=
+ =?utf-8?B?VThnMmdTMnN2Vk93OEowV3BheFhpcDBnc1hoQnAwclc1TWNQaGlBNldjZlNT?=
+ =?utf-8?B?cDdBWG1vN2hDV3RRY050bUFJSDFRRFdqTFN4VDduK2tXMDNUUGhFSnRLT0gw?=
+ =?utf-8?B?MGZhZldZTmV2WXM4N2loU1dvMEh5WlFrSUcyUjJReG0yOFZnTG5QWGpERzBL?=
+ =?utf-8?B?enpKdDY5M1NRN0dOSlFsOS96UU9ZU2JlLzVmUXdHK25vVGZRb1VaMVVHbklo?=
+ =?utf-8?B?WGFYRkFzK0VRK2ZSa29KSWhXOTdpcmtHRS96UDYzbzJvTGJxYXVkWFNySjZy?=
+ =?utf-8?B?UFNlZ2oxRFc4dmtKeFpXS0ZCWmVZejdwSVZNbVV2MFUvZFRDMDFJSTV2b0s1?=
+ =?utf-8?B?RVo3VEV2UjV3TEJGdHJqb2RJZ2h3azBaY1A4cXE3SzJHUExZN2g4bnhyRFNV?=
+ =?utf-8?B?cEpLb1FEek5kbnBHVGg2OFBCV21HL1pzYUZkSGtGQWY0L0xvUEVXWExXd3M1?=
+ =?utf-8?B?OEZkaTRpUlZ1ZDgrOFBKSDNnTkE4ek04bWJYZnpoN20zajlpZVQrUmk5bll4?=
+ =?utf-8?Q?DyaEQVhKTeo58zjZ59EPqLxcu?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba43ba4c-fd41-40dc-2c87-08dc787d0c3f
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 03:29:25.2561
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DC2I6FCBFt4UMof/WzbnPkcO/A4KaZ8MrBTpzlLPijiab8lKtDQ0qK+TviO2YZ1XVs1itZNR7e0roBvY72+UKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8151
 
-On 5/20/24 11:26 AM, Tian, Kevin wrote:
->> From: Baolu Lu <baolu.lu@linux.intel.com>
->> Sent: Monday, May 20, 2024 8:41 AM
+On 5/20/24 06:11, Dmitry Baryshkov wrote:
+> On Thu, May 16, 2024 at 06:10:06PM +0800, Liu Ying wrote:
+>> Commit f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
+>> fails to consider the case where adv7511->i2c_main->irq is zero, i.e.,
+>> no interrupt requested at all.
 >>
->> On 5/15/24 3:57 PM, Tian, Kevin wrote:
->>>> From: Baolu Lu <baolu.lu@linux.intel.com>
->>>> Sent: Wednesday, May 8, 2024 6:05 PM
->>>>
->>>> On 2024/5/8 8:11, Jason Gunthorpe wrote:
->>>>> On Tue, Apr 30, 2024 at 10:57:06PM +0800, Lu Baolu wrote:
->>>>>> diff --git a/drivers/iommu/iommu-priv.h b/drivers/iommu/iommu-
->> priv.h
->>>>>> index ae65e0b85d69..1a0450a83bd0 100644
->>>>>> --- a/drivers/iommu/iommu-priv.h
->>>>>> +++ b/drivers/iommu/iommu-priv.h
->>>>>> @@ -36,6 +36,10 @@ struct iommu_attach_handle {
->>>>>>     			struct device	*dev;
->>>>>>     			refcount_t	users;
->>>>>>     		};
->>>>>> +		/* attach data for IOMMUFD */
->>>>>> +		struct {
->>>>>> +			void		*idev;
->>>>>> +		};
->>>>> We can use a proper type here, just forward declare it.
->>>>>
->>>>> But this sequence in the other patch:
->>>>>
->>>>> +       ret = iommu_attach_group(hwpt->domain, idev->igroup->group);
->>>>> +       if (ret) {
->>>>> +               iommufd_fault_iopf_disable(idev);
->>>>> +               return ret;
->>>>> +       }
->>>>> +
->>>>> +       handle = iommu_attach_handle_get(idev->igroup->group,
->>>> IOMMU_NO_PASID, 0);
->>>>> +       handle->idev = idev;
->>>>>
->>>>> Is why I was imagining the caller would allocate, because now we have
->>>>> the issue that a fault capable domain was installed into the IOMMU
->>>>> before it's handle could be fully setup, so we have a race where a
->>>>> fault could come in right between those things. Then what happens?
->>>>> I suppose we can retry the fault and by the time it comes back the
->>>>> race should resolve. A bit ugly I suppose.
->>>>
->>>> You are right. It makes more sense if the attached data is allocated and
->>>> managed by the caller. I will go in this direction and update my series.
->>>> I will also consider other review comments you have given in other
->>>> places.
->>>>
->>>
->>> Does this direction imply a new iommu_attach_group_handle() helper
->>> to pass in the caller-allocated handle pointer or exposing a new
->>> iommu_group_set_handle() to set the handle to the group pasid_array
->>> and then having iomm_attach_group() to update the domain info in
->>> the handle?
+>> Without interrupt, adv7511_wait_for_edid() could return -EIO sometimes,
+>> because it polls adv7511->edid_read flag by calling adv7511_irq_process()
+>> a few times, but adv7511_irq_process() happens to refuse to handle
+>> interrupt by returning -ENODATA.  Hence, EDID retrieval fails randomly.
 >>
->> I will add new iommu_attach/replace/detach_group_handle() helpers. Like
->> below:
+>> Fix the issue by checking adv7511->i2c_main->irq before exiting interrupt
+>> handling from adv7511_irq_process().
 >>
->> +/**
->> + * iommu_attach_group_handle - Attach an IOMMU domain to an IOMMU
->> group
->> + * @domain: IOMMU domain to attach
->> + * @group: IOMMU group that will be attached
->> + * @handle: attach handle
->> + *
->> + * Returns 0 on success and error code on failure.
->> + *
->> + * This is a variant of iommu_attach_group(). It allows the caller to
->> provide
->> + * an attach handle and use it when the domain is attached. This is
->> currently
->> + * only designed for IOMMUFD to deliver the I/O page faults.
->> + */
->> +int iommu_attach_group_handle(struct iommu_domain *domain,
->> +                             struct iommu_group *group,
->> +                             struct iommu_attach_handle *handle)
+>> Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
+>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>> ---
+>>  drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
 >>
+>> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>> index 6089b0bb9321..2074fa3c1b7b 100644
+>> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>> @@ -479,7 +479,8 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
+>>  		return ret;
+>>  
+>>  	/* If there is no IRQ to handle, exit indicating no IRQ data */
+>> -	if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
+>> +	if (adv7511->i2c_main->irq &&
+>> +	    !(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
+>>  	    !(irq1 & ADV7511_INT1_DDC_ERROR))
+>>  		return -ENODATA;
 > 
-> "currently only designed for IOMMUFD" doesn't sound correct.
-> 
-> design-wise this can be used by anyone which relies on the handle.
-> There is nothing tied to IOMMUFD.
-> 
-> s/designed for/used by/ is more accurate.
+> I think it might be better to handle -ENODATA in adv7511_wait_for_edid()
+> instead. WDYT?
 
-Done.
+Then, adv7511_cec_irq_process() will have less chance to be called from
+adv7511_irq_process() (assuming CONFIG_DRM_I2C_ADV7511_CEC is defined)
+if adv7511->i2c_main->irq is zero.
 
-Best regards,
-baolu
+But, anyway, it seems that commit f3d9683346d6 ("drm/bridge: adv7511:
+Allow IRQ to share GPIO pins") is even more broken to handle the CEC case,
+as adv7511_cec_adap_enable() may enable some interrupts for CEC.
+
+This is a bit complicated.  Thoughts?
+
+Regards,
+Liu Ying
+
+
+
+
+
 
