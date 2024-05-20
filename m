@@ -1,31 +1,31 @@
-Return-Path: <linux-kernel+bounces-183339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6208C97D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 04:18:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F138C97D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 04:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23E16280EB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:18:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04E6F1C2142D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9309474;
-	Mon, 20 May 2024 02:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA729DF58;
+	Mon, 20 May 2024 02:17:57 +0000 (UTC)
 Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E814C2ED
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7D8C136
 	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 02:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716171476; cv=none; b=i+yLlgosCMgz3CwEf2wRkHAyFUybMpmg/5UB0yBtzGoZcg2okv8aVV7QwqupQhDx+zJ7RxLsxT+lMSgp/TbyVxMY8e/uz5uAMMd2DynAmXQIbgUiLdtcNLWppztov1v3EzTqCRwGOEkMZ0fEg8L3rfTMJLJLWyyZzdWO5wNRVTk=
+	t=1716171477; cv=none; b=nS6m2mp/VG2oadtCujpr6MhYovLx8ZO8G/JrjqPqSSdAYExjV85A+udVbn0VtxVVjADhBVuDSIOut6AE8Ia9O9jBpjDCzRVc9E2lpCP7pGpbNlKwfCU608lF225iANPwXO5y9rYyJ+3KrgiotI1TvvtXaUs/5mfLBEVPloFXTDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716171476; c=relaxed/simple;
-	bh=rQZiU0CNXQyRU5Wz05SQq2QflCX9irEmFt30HXPbKHY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=nT1UYCjVtYLR/H6rpKCGmyoDG7XdIBNrP5ZPfMAedmM9d39aY0ZP4BGj9oIZiK9MfwTgzzD3og28keE7zYNMv6GODvDMdDrZpFbYmmWjoqoNQ9oFtUcZwcdsV8RAX8/+74MrPgTB4BCDVSYbF43LoaL/IWXYWAwot9h0dc9rXhY=
+	s=arc-20240116; t=1716171477; c=relaxed/simple;
+	bh=jv1iOoprSwRFH5w9Z/PANDJyKvnOZy0dQlWzrKJ6O5k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=lS89TmNHhaGjzjuRwDCbAFdo8qTIAKwUUhw8/0Chs8HAwwJxS/RdTBibv8575zR+gkdmQetPACP7U8180HvfCNt9fxnGd3MPpSc24xWjUGCvFAm9OK53Q69xgNqQXDG6TUQ0M9nBnz3ns0W2kkqxtwO8YktuT+k6KcFJijBMqHw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-9f-664ab2c844b4
+X-AuditID: a67dfc5b-d6dff70000001748-a4-664ab2c82afd
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
@@ -44,36 +44,36 @@ Cc: kernel_team@skhynix.com,
 	bp@alien8.de,
 	dave.hansen@linux.intel.com,
 	rjgolo@gmail.com
-Subject: [RESEND PATCH v10 02/12] arm64: tlbflush: add APIs manipulating tlb batch's arch data
-Date: Mon, 20 May 2024 11:17:24 +0900
-Message-Id: <20240520021734.21527-3-byungchul@sk.com>
+Subject: [RESEND PATCH v10 03/12] riscv, tlb: add APIs manipulating tlb batch's arch data
+Date: Mon, 20 May 2024 11:17:25 +0900
+Message-Id: <20240520021734.21527-4-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240520021734.21527-1-byungchul@sk.com>
 References: <20240520021734.21527-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsXC9ZZnke6JTV5pBq0LLC3mrF/DZvF5wz82
-	ixcb2hktvq7/xWzx9FMfi8XlXXPYLO6t+c9qcX7XWlaLHUv3MVlcOrCAyeJ47wEmi/n3PrNZ
-	bN40ldni+JSpjBa/fwAVn5w1mcVBwON7ax+Lx85Zd9k9Fmwq9di8Qstj8Z6XTB6bVnWyeWz6
-	NInd4925c+weJ2b8ZvGYdzLQ4/2+q2weW3/ZeTROvcbm8XmTXABfFJdNSmpOZllqkb5dAlfG
-	gYZ9LAWLeSuutqo2MP7m6mLk5JAQMJG4//sYUxcjB5g9d0Y9SJhNQF3ixo2fzCC2iICZxMHW
-	P+wgNrPAXSaJA/1sILawQJxE67XvYDaLgKrEq3cnwep5BUwlpnx5xQgxXl5i9YYDYHFOoDkz
-	Vu1kAbGFgGp+HP0K1MsFVPOeTeLgzJUsEA2SEgdX3GCZwMi7gJFhFaNQZl5ZbmJmjoleRmVe
-	ZoVecn7uJkZg2C+r/RO9g/HTheBDjAIcjEo8vDseeaYJsSaWFVfmHmKU4GBWEuHdtAUoxJuS
-	WFmVWpQfX1Sak1p8iFGag0VJnNfoW3mKkEB6YklqdmpqQWoRTJaJg1OqgdHwpBVvvddEGzm/
-	1glcCSf62V6VLy/l6VSzSeuUbtx69lE5W/AW0+QpVybZzp4VFHPg3pVPn6xu39bJ3xlf+Pwh
-	w+67udLfGeRXq4t8MuvRM7D9zBw3dyEL2+YcbyOzhrfuKhtuMSQlKPtPaT2cN3mbiqNQLI/T
-	wVcLWr2dBfd/Dk2ut9rfq8RSnJFoqMVcVJwIALG4RNt3AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsXC5WfdrHtik1eaQecafYs569ewWXze8I/N
-	4sWGdkaLr+t/MVs8/dTHYnF47klWi8u75rBZ3Fvzn9Xi/K61rBY7lu5jsrh0YAGTxfHeA0wW
-	8+99ZrPYvGkqs8XxKVMZLX7/ACo+OWsyi4Ogx/fWPhaPnbPusnss2FTqsXmFlsfiPS+ZPDat
-	6mTz2PRpErvHu3Pn2D1OzPjN4jHvZKDH+31X2TwWv/jA5LH1l51H49RrbB6fN8kF8Edx2aSk
-	5mSWpRbp2yVwZRxo2MdSsJi34mqragPjb64uRg4OCQETibkz6rsYOTnYBNQlbtz4yQxiiwiY
-	SRxs/cMOYjML3GWSONDPBmILC8RJtF77DmazCKhKvHp3EqyeV8BUYsqXV4wgtoSAvMTqDQfA
-	4pxAc2as2skCYgsB1fw4+pVtAiPXAkaGVYwimXlluYmZOaZ6xdkZlXmZFXrJ+bmbGIFBvKz2
-	z8QdjF8uux9iFOBgVOLh3XDbM02INbGsuDL3EKMEB7OSCO+mLUAh3pTEyqrUovz4otKc1OJD
-	jNIcLErivF7hqQlCAumJJanZqakFqUUwWSYOTqkGxtrTk2zis81l7UP2SM7PVYqRCBQR7v7g
-	8vtI0wqJPaUBunM3iH1+ddwi+fgyifLcipiQ/c7dnRbtG2tZGj0NZD82T9v2e5Kfhfn7Hje2
-	Z049Mwz0Elx4+PVUhWoznsw7It8TJXApR6L+o0+RgV7tjaUT0pr3vYldJvn0QXTZkUvv2ur5
-	+xKUWIozEg21mIuKEwHkHhI9XgIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsXC9ZZnke6JTV5pBgd22ljMWb+GzeLzhn9s
+	Fi82tDNafF3/i9ni6ac+FovLu+awWdxb85/V4vyutawWO5buY7K4dGABk8Xx3gNMFvPvfWaz
+	2LxpKrPF8SlTGS1+/wAqPjlrMouDgMf31j4Wj52z7rJ7LNhU6rF5hZbH4j0vmTw2repk89j0
+	aRK7x7tz59g9Tsz4zeIx72Sgx/t9V9k8tv6y82iceo3N4/MmuQC+KC6blNSczLLUIn27BK6M
+	5evuMRZ8FKg4+m8VewPjMr4uRk4OCQETiecXfrLC2IebzrGB2GwC6hI3bvxkBrFFBMwkDrb+
+	YQexmQXuMkkc6AerERaIlLhyuR8sziKgKnHhwVQWEJtXwFTi7Kt3jBAz5SVWbzgANocTaM6M
+	VTvBaoSAan4c/Qo0hwuo5j2bxIv2qywQDZISB1fcYJnAyLuAkWEVo1BmXlluYmaOiV5GZV5m
+	hV5yfu4mRmDoL6v9E72D8dOF4EOMAhyMSjy8Ox55pgmxJpYVV+YeYpTgYFYS4d20BSjEm5JY
+	WZValB9fVJqTWnyIUZqDRUmc1+hbeYqQQHpiSWp2ampBahFMlomDU6qB0dzQNv9bhHdLzLGn
+	0/LP3mnRbP8lfS/+++J/jhOnzTBYxym/38m7yez3xq+W0h4cbZ/5pjHeNr95asVZF1fGaZdc
+	Eo/lCi9v04rnkXhfyLR5juETx8ZtB5rufFllIKhxP+8S2xWX97U/l6i+3zPpnHWrrYjX4Sc9
+	/3msuu7dlv3/YpfCvVvaMUosxRmJhlrMRcWJAGJSZnd5AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsXC5WfdrHtik1eawcNvhhZz1q9hs/i84R+b
+	xYsN7YwWX9f/YrZ4+qmPxeLw3JOsFpd3zWGzuLfmP6vF+V1rWS12LN3HZHHpwAImi+O9B5gs
+	5t/7zGaxedNUZovjU6YyWvz+AVR8ctZkFgdBj++tfSweO2fdZfdYsKnUY/MKLY/Fe14yeWxa
+	1cnmsenTJHaPd+fOsXucmPGbxWPeyUCP9/uusnksfvGByWPrLzuPxqnX2Dw+b5IL4I/isklJ
+	zcksSy3St0vgyli+7h5jwUeBiqP/VrE3MC7j62Lk5JAQMJE43HSODcRmE1CXuHHjJzOILSJg
+	JnGw9Q87iM0scJdJ4kA/WI2wQKTElcv9YHEWAVWJCw+msoDYvAKmEmdfvWOEmCkvsXrDAbA5
+	nEBzZqzaCVYjBFTz4+hXtgmMXAsYGVYximTmleUmZuaY6hVnZ1TmZVboJefnbmIEBvKy2j8T
+	dzB+uex+iFGAg1GJh3fDbc80IdbEsuLK3EOMEhzMSiK8m7YAhXhTEiurUovy44tKc1KLDzFK
+	c7AoifN6hacmCAmkJ5akZqemFqQWwWSZODilGhh5QlaWJ0SXfXt1V6+JVTbxymsnGeed0R3c
+	90163954nhTNI2XXrRy37k2vkQX/2QKnbXv9TvC0aRed+98m7Cf74tHUG1Uz3BYFParzzBUT
+	Dlva1iExLeWCVBTrqwAp6yeBdyZubV12X9O4bv7ML5PeRysadp/WW7eql0c0TTc/8+RViwM7
+	PiuxFGckGmoxFxUnAgCiDQqAYAIAAA==
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -87,44 +87,59 @@ safe for folios that had been mapped read only and were unmapped, since
 the contents of the folios don't change while staying in pcp or buddy
 so we can still read the data through the stale tlb entries.
 
-This is a preparation for the mechanism that requires to manipulate tlb
-batch's arch data.  Even though arm64 does nothing for tlb things, arch
-with CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH should provide the APIs.
+This is a preparation for the mechanism that needs to recognize
+read-only tlb entries by separating tlb batch arch data into two, one is
+for read-only entries and the other is for writable ones, and merging
+those two when needed.
+
+It also optimizes tlb shootdown by skipping CPUs that have already
+performed tlb flush needed since.  To support it, added APIs
+manipulating arch data for riscv.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- arch/arm64/include/asm/tlbflush.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/riscv/include/asm/tlbflush.h | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index a75de2665d84..b8c7fbc1c68e 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -347,6 +347,24 @@ static inline void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
- 	dsb(ish);
- }
+diff --git a/arch/riscv/include/asm/tlbflush.h b/arch/riscv/include/asm/tlbflush.h
+index 4112cc8d1d69..480c082ccde3 100644
+--- a/arch/riscv/include/asm/tlbflush.h
++++ b/arch/riscv/include/asm/tlbflush.h
+@@ -8,6 +8,7 @@
+ #define _ASM_RISCV_TLBFLUSH_H
+ 
+ #include <linux/mm_types.h>
++#include <linux/cpumask.h>
+ #include <asm/smp.h>
+ #include <asm/errata_list.h>
+ 
+@@ -55,6 +56,26 @@ void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
+ void arch_flush_tlb_batched_pending(struct mm_struct *mm);
+ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch);
  
 +static inline void arch_tlbbatch_clear(struct arch_tlbflush_unmap_batch *batch)
 +{
-+	/* nothing to do */
++	cpumask_clear(&batch->cpumask);
++
 +}
 +
 +static inline void arch_tlbbatch_fold(struct arch_tlbflush_unmap_batch *bdst,
-+			       struct arch_tlbflush_unmap_batch *bsrc)
++		struct arch_tlbflush_unmap_batch *bsrc)
 +{
-+	/* nothing to do */
++	cpumask_or(&bdst->cpumask, &bdst->cpumask, &bsrc->cpumask);
++
 +}
 +
 +static inline bool arch_tlbbatch_done(struct arch_tlbflush_unmap_batch *bdst,
-+			       struct arch_tlbflush_unmap_batch *bsrc)
++		struct arch_tlbflush_unmap_batch *bsrc)
 +{
-+	/* Kernel can consider tlb batch always has been done. */
-+	return true;
++	return !cpumask_andnot(&bdst->cpumask, &bdst->cpumask, &bsrc->cpumask);
++
 +}
 +
- /*
-  * This is meant to avoid soft lock-ups on large TLB flushing ranges and not
-  * necessarily a performance improvement.
+ #else /* CONFIG_SMP && CONFIG_MMU */
+ 
+ #define flush_tlb_all() local_flush_tlb_all()
 -- 
 2.17.1
 
