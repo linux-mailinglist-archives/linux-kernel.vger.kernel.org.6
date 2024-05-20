@@ -1,114 +1,164 @@
-Return-Path: <linux-kernel+bounces-183849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8298C9EE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:35:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 175B98C9EE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A909E285AF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:35:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D4751C2250A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AE31369AB;
-	Mon, 20 May 2024 14:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782E31369AD;
+	Mon, 20 May 2024 14:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyTqSGz/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="1wO7K28E"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F10F182DF;
-	Mon, 20 May 2024 14:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F4A182DF;
+	Mon, 20 May 2024 14:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716215745; cv=none; b=suSQuaczdiOP14Y/n6swZL2rYIww+t21734B5cY5trFy264/1c/Lgz0eQWz3ZRfa7+yVY2ORpGbmJZHKmk9julSgDyGgqLCdVkHLQtiNxCT80OldAS70ufT6ehHdObVjpiYNkfsbml9U0pUzf7slMHo2kkg0A1Qgy8c7P/mmb6A=
+	t=1716215997; cv=none; b=FKhnoGV707mwsiquVOQI15rZV+F380oMd4um80yMV8zrc+cs2SaemP40EVjE5WNL4vXuDSUeNfwkZ0b2uKLXKFbPa2h0V1ZnU9x13NZXhRaBnzwt8tr+b932QhJihrq/rAKu6xjydwyyI5NMXlZV3SlMP4pykRs6axHdeov/8co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716215745; c=relaxed/simple;
-	bh=uSKePMg68VHTXgwYY757U7QjRjNo5hrsfRcyRwpLxfY=;
+	s=arc-20240116; t=1716215997; c=relaxed/simple;
+	bh=zv+HW79T1Yvt5Bx0CuWVlQt4BunkONpK9r3/Q08QBwo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T0HWKLmYd+KQbY5qmxVjBelUdghqQzJDKZNsL0TwmNZBsbCxIiIXD/4kwjF2FUk5JlBA9YMPLiAHMvDwQljRCX1jGnBgE+AyxtdcAlnSiayvzJBwNVfQY34cyFC+3xEMJ2MQlvnWi6EHA4kjzNGe1UjhHwwhs9SRRJCt8RZS1Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyTqSGz/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D43DAC2BD10;
-	Mon, 20 May 2024 14:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716215745;
-	bh=uSKePMg68VHTXgwYY757U7QjRjNo5hrsfRcyRwpLxfY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FyTqSGz/Is1DZZJFNqP/b4Jk32a1bzHgOfe3VALEG1QyaujqN4mnQoNIGEf3E8DFV
-	 t6U4XsM8T9SCiuud31ZqmvDSwHC70rcdUmh6y1DkKXaeMyKUcfUmIOHWI3/FXWcRo2
-	 Zj/QIQM8Fv9KJI4M+4Ca6uMTjElqkhWNe2MOOdyYQlkQRuiuzAIEZIJp3XQlB6FGvc
-	 ooaBUiLxH/coetBrCjC1ZU+gpEGmBtAOaidl+g5sw0vAW32yAEy61aHjX4f78gZoaG
-	 RadZ3is985KiHJbZYfdbMyqcXY/+4/cDcgcES93ulI3RnalcfaGLXuF0rVBRu81wR7
-	 ++ajJ7TE2BqAQ==
-Date: Mon, 20 May 2024 15:35:38 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v3 3/8] ASoC: samsung: midas_wm1811: Add headset mic bias
- supply support
-Message-ID: <1aed24a7-ab2a-4c2b-a3bc-2b907e091624@sirena.org.uk>
-References: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
- <20240519-midas-wm1811-gpio-jack-v3-3-0c1736144c0e@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=riMnFJ2qk6C+MVXLRXYXvr+gfEwVlGW18VmrzMKGfvL3mGp41ofhJ5YsVw+H86SWZrlFaS0iVvZbWjM8ybHtfSJUeG6CY+/HWn0JtZD8oYpWsBD33FaJEJ34ZjF7TobxIqQ7ECYLe+0xeD0RPp+Jz91K/eDuGaVE1RAFB+MTzz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=1wO7K28E; arc=none smtp.client-ip=212.227.126.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1716215964; x=1716820764; i=christian@heusel.eu;
+	bh=E6KOZeFRaKRuuf5cGm79uMfaPx/NoIu23yMygQh1ZGw=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=1wO7K28E0m6W70ZjQLee4fP2vH1fPgGK9sdr+N85Iotr4c+b0kYg8RwgA759+caI
+	 BgIkDrp0/X+LMZgrGELDqQUw4OfcwkVakfE+uB+NLGYLhw8t3JbphReg1OhmsQNSO
+	 /JZrpBuU4fAmKmkd534NDxfckjKc7cqGfVyzshVe16NwQ3vOgEPgNgan84PFvZYmB
+	 TCoUVdRMZJKuymUK/1oG5tkbgzp28Z+whSgJf0X9f9BsHeKRy77jQXb2kHFSQdr/C
+	 MA5Pus/JqYJIpvlwM4ZgXUBS36iKUw1Nwoc6vBKz/YWsGtvnJcvrtf788+I7u8pLH
+	 ekTJ70QGtnmam+ppKw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue010
+ [212.227.15.167]) with ESMTPSA (Nemesis) id 1MrQ2R-1svrit0eP9-00oUVS; Mon, 20
+ May 2024 16:39:24 +0200
+Date: Mon, 20 May 2024 16:39:18 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Gia <giacomo.gio@gmail.com>, linux-kernel@vger.kernel.org, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, kernel@micha.zone, Mario Limonciello <mario.limonciello@amd.com>, 
+	Andreas Noever <andreas.noever@gmail.com>, Michael Jamet <michael.jamet@intel.com>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Yehezkel Bernat <YehezkelShB@gmail.com>, 
+	linux-usb@vger.kernel.org, Benjamin =?utf-8?Q?B=C3=B6hmke?= <benjamin@boehmke.net>, 
+	Sanath S <Sanath.S@amd.com>
+Subject: Re: [REGRESSION][BISECTED] "xHCI host controller not responding,
+ assume dead" on stable kernel > 6.8.7
+Message-ID: <lqdpk7lopqq4jn22mycxgg6ps4yfs7hcca33tqb2oy6jxc2y7p@rhjjbzs6wigu>
+References: <CAHe5sWavQcUTg2zTYaryRsMywSBgBgETG=R1jRexg4qDqwCfdw@mail.gmail.com>
+ <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pxaZ0LKbE08JUaU/"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nnrhtthi7s6ib27g"
 Content-Disposition: inline
-In-Reply-To: <20240519-midas-wm1811-gpio-jack-v3-3-0c1736144c0e@gmail.com>
-X-Cookie: We are what we are.
+In-Reply-To: <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
+X-Provags-ID: V03:K1:ZNg9RlicgXQ+fJDKfEZ5jsZNNWXsZ+vHdy5LUYK7F/BjaX76F8n
+ CztXD7MHswvHJChbEGmq92f8y+zdoPomr0JqrTzQHeuBPEkZcjf03xcubzeKQ2rycj8Yqkd
+ QOZTf8enFoEcXxsm3pFr4bI9lbMigjNcPYrN/Jc+vplgcz4n2M1KhIoBSysdjsjwQ8RXutL
+ vNB/Bfk9xswX5tnwx93JA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VY+TMUEmLjk=;QdvI0unuQ9pdWhUd3kNBbvuQeTc
+ l2D6xhUNnzF39PgRdXd/Ej6xACAbqNDzpnMqtciJZCdDBTUfCXCQOHgI3WOwuO0WpQidep5J7
+ WtFSTbNhTJE79wc7lnQnAEfeYWEHdA0tc68TkbZ6IcA5opr4OVvzRtUdGhiD7S1fzze1IeMZ4
+ 2TsQSB/h2NcReoMCzXYKwaewjp7MIc9BWqckNPs8aztnrJTh22esCbqa2TqPxzj9SQPv+qOkJ
+ bt0cniOAV62N64RiPMFdka11BuA81CiQVsPcYwhsrVoEYJmAbmRkiTdfLL1f+U02L+BqPlHCV
+ 1u5OqGInMoq0j+09AcT/4jemxj2pJf92wgcokmvCPprLEYdSXcc6GNlnkdQF0s1SM41NivmSw
+ qrD0q8+I5vIJ6iP3RAm2AQny6M1zIj/2rQG5wvVbwVTpucoEF5JMqyofd6Rt0WmKADiSm5pv3
+ rSdRoVhggXu7i4paiyv0VvrrGtwH9LaFJkIAMHxJW83LamJSeNjuwZJ+vtU0algZm2SXeOFUq
+ hyQPAyUtwIehuA8ywhmlbWxFxtW2SyIELXcH5t3Vaf4GFp/NFsDIUM4sJ2z1xwocBmKRV+mQh
+ 7vs2582fTSNBOEp2MoxsCSr//nHvmdVxLPFXsAAn/aVESpBpAoJxJSi/eDPZOvP33lvNLbAUw
+ zZOi6riqGqrxUGL/2oSEXtPeeq1xPtPdsPIcyv6sNODsvsemXj7u7dJEgrHYNjoQJ4Nb6Op5Z
+ WyAXjeZwX3mz/lIKsMihzSaf44igNOgtOGi6ruh07fR0Ujtd2K4AiE=
 
 
---pxaZ0LKbE08JUaU/
-Content-Type: text/plain; charset=us-ascii
+--nnrhtthi7s6ib27g
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 19, 2024 at 10:17:49AM +0200, Artur Weber wrote:
+On 24/05/06 02:53PM, Linux regression tracking (Thorsten Leemhuis) wrote:
+> [CCing Mario, who asked for the two suspected commits to be backported]
+>=20
+> On 06.05.24 14:24, Gia wrote:
+> > Hello, from 6.8.7=3D>6.8.8 I run into a similar problem with my Caldigit
+> > TS3 Plus Thunderbolt 3 dock.
+> >=20
+> > After the update I see this message on boot "xHCI host controller not
+> > responding, assume dead" and the dock is not working anymore. Kernel
+> > 6.8.7 works great.
 
-> +static int midas_headset_mic_bias(struct snd_soc_dapm_widget *w,
-> +			     struct snd_kcontrol *kcontrol, int event)
-> +{
-> +	struct snd_soc_card *card = w->dapm->card;
-> +	struct midas_priv *priv = snd_soc_card_get_drvdata(card);
-> +
-> +	if (!priv->reg_headset_mic_bias)
-> +		return 0;
-> +
-> +	switch (event) {
-> +	case SND_SOC_DAPM_PRE_PMU:
-> +		return regulator_enable(priv->reg_headset_mic_bias);
-> +	case SND_SOC_DAPM_POST_PMD:
-> +		return regulator_disable(priv->reg_headset_mic_bias);
-> +	}
+We now have some further information on the matter as somebody was kind
+enough to bisect the issue in the [Arch Linux Forums][0]:
 
-We have SND_SOC_DAPM_REGULATOR_SUPPLY?
+    cc4c94a5f6c4 ("thunderbolt: Reset topology created by the boot firmware=
+")
 
---pxaZ0LKbE08JUaU/
+This is a stable commit id, the relevant mainline commit is:
+
+    59a54c5f3dbd ("thunderbolt: Reset topology created by the boot firmware=
+")
+
+The other reporter created [a issue][1] in our bugtracker, which I'll
+leave here just for completeness sake.
+
+Reported-by: Benjamin B=F6hmke <benjamin@boehmke.net>
+Reported-by: Gia <giacomo.gio@gmail.com>
+Bisected-by: Benjamin B=F6hmke <benjamin@boehmke.net>
+
+The person doing the bisection also offered to chime in here if further
+debugging is needed!
+
+Also CC'ing the Commitauthors & Subsystem Maintainers for this report.
+
+Cheers,
+Christian
+
+[0]: https://bbs.archlinux.org/viewtopic.php?pid=3D2172526
+[1]: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issu=
+es/48
+
+#regzbot introduced: 59a54c5f3dbd
+#regzbot link: https://gitlab.archlinux.org/archlinux/packaging/packages/li=
+nux/-/issues/48
+
+--nnrhtthi7s6ib27g
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZLX7oACgkQJNaLcl1U
-h9B+pQf/bj3bL8onTU8c2fQX8+h6MTpaxgO+m8QtLrABywDZfmRF/bCC0d/FGzGT
-2dAn3CMy8ZhJo65ELhLPkBHKRypcILUsxzjTOL6ddyek3cwtaomzLKt/5BPO6zDn
-XCygGXgK3NXCDSM4ldhW+N7x5n/i3j6ZCZfAxmYtrxpbEeTxRUbBBYfh20/cSEsa
-hhd0GxkGdUdG3ylpnA5n/hi+eMWlGHHB+OxXVJfv/iDrXF8hjOHUbaf82ZR9xwrJ
-2wP4BQNUowOuMBQ84h8zzBYOKtvtWUlig2y4ppzeMFeFw4MhYeeQzp/fz5COeKO+
-7+EiuORd1ry9xIRankV9nGs7JgiAHQ==
-=JVQ0
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmZLYJYACgkQwEfU8yi1
+JYUkEg/8DdCQQF3fVww6+qQQk9N0w3n9lodAQQfqdrq3GCnk3iE3JT9jcQ4hh9B1
+DIqw50/t7YqpuYSDI4T4RsbNbEj8MPUR45CgVhkcM8PJtlGpmsGqmGLkHV5rl8NS
+MFUwiRnJAAETTdmEkS78eX8U9/jXO+Y8IJkFQ8kkDfboIc64TOQTBnAA1WPFNnWO
+GEN8AsF5gajc76to2zaqsOtXe/+w6w5fPRpj2Tt1vjujzb3PWvhU0Jh/HtffyOQr
+V8FZyhHsUiNo7/jUwFwKOxkSRXmqFUvhmVA7sa/YlSPxanKJ0k1d3Tbq/gr/Xh49
+Ay4ul8sqX02YNShxN4zYTH/+Mn58wDdBPD3tYqYg70rCLtDwnlYDqgBh+Nldx0tW
+t5PY3At3XKKaIL5/bkrfTkQmC+kVDFG9V8lHUozWxEFNsgz5IhPeuucpxVarqw+9
+wiCipYL8Wu9x5C7Mbd5xVahE1oF18iPb0EIt0dMZD8xc2sJcWDoPxhLIbofDKhUR
+m38xhfy5ysaD6YpR5ZGt9XP1Lvm6L3lSBYz3M324/Cm6iXGhFytRZpY3b3L8PRcJ
+JieEq5CIlhimB5Z5vNYkxv+sqGC629DxPIEyDQUfAe1ebfjUBtHx4tgSU3p9rAXF
+7sjyZlvdnmS2TDg0KIXemMjqbLD7LkjIFZTeXe88Kx1kZVHSUsU=
+=Va6n
 -----END PGP SIGNATURE-----
 
---pxaZ0LKbE08JUaU/--
+--nnrhtthi7s6ib27g--
 
