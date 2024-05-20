@@ -1,188 +1,289 @@
-Return-Path: <linux-kernel+bounces-184198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75408CA3D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 296FA8CA3F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F2C61F21FE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:36:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E3751F228BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8EA139D13;
-	Mon, 20 May 2024 21:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79613139D1D;
+	Mon, 20 May 2024 21:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="olLQjaRP"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="SXUlwACX"
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2054.outbound.protection.outlook.com [40.107.7.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B555E55E43;
-	Mon, 20 May 2024 21:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716240983; cv=none; b=Q0dXLb54hqwlCI9k9ySOim2244W+ufOMWNV0zUZC0YQQn8mptqr8Exa7WDkQWWIz+oydlZEvSCg6zaZH1hg/SQp90uiuCQU6zxPkGSX57aMR/KyuBBmHgN3Kl+WKoV+w0IhwmiZPcnMiveUAB+zCU6g3zgQz86n+ST3gI8OH4pY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716240983; c=relaxed/simple;
-	bh=x48YcDZycYBkj2Phwetwph6CXUcIag9OaAHRLH6QlOk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NSM5VwLY8+aLeTOitYeSx3Xizy8wTAaMi0T6MmDMJLwpIJRi5GtaC+00Z0lLa+8rLE6IMaqXBMuNQZPfnJbMKRZ1btzn84lDPdBBzGqk7vKDK6heuX+Lq3USgT0NrH183qKi4eh6hR5Kn6OYVFCt25Q9CT4F/pZKHnowy5/Hc04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=olLQjaRP; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4VjrV33vVMz9sGX;
-	Mon, 20 May 2024 23:36:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1716240971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BXvAc5+yvOeOxZBq8vsWGYVPth6HUKUv5k3v/N890/4=;
-	b=olLQjaRP+PPrcDXinmD3wD4A7LPG0bg6uXH9DM+rOz6cnKuOC6yidBDMvpQJjZZYBfNFl8
-	cMCsPlDdTZL+W+w6SiwTxmCH3KYm5/b4M3l7fH/XBteQUK42AwamQ9jiAeHpbPQdzp1CnJ
-	nI4PsETh3g9yugW5BO24lz68PoqTRifXyq2GxZnToVN5t1JtFeBgHWTez8mG7bO90LmPeX
-	50/IJrk2Fqk3emiBV4LkmgLBmgfBS1w84RZ6fRey06zVOtsbmlLPrIIGCiBJmRyHng42Vt
-	aBil7Z0RsF+Ps8yflPGZO92H6TMnftgX/nUPqi2XzfPz22MCrS0Ju6URDyUT8Q==
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Mon, 20 May 2024 17:35:49 -0400
-Subject: [PATCH RFC] fhandle: expose u64 mount id to name_to_handle_at(2)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839881847;
+	Mon, 20 May 2024 21:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716241595; cv=fail; b=SigDcNOcU2evwlLaJBG3HOSN9metwuPSI/iNomUPVG7xRKy2E9iIgQwINCrE9UE3fRWdQEYQNHX4Ol8o/JrumKzPp/5p2ugcNw5Xr9xIigEuf0QU0gilCDct7h9phpl49sZ3m0gV22m24ahmcnUGwfSgxdj9KrzRUSkNY4B6Ao4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716241595; c=relaxed/simple;
+	bh=5BFBKQYLcxryyq8fqHTidvXrmfDKJ0Xbff7ycAUw7TE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=J0BbyomHnQkiWqdmJ/v1MqT3hz9VXw4QjAYkXUrwtmSb4/KdupKfy1XNhv6TnDPFci/lKznwMFmHSGlbtM55ik4up0ltA53X6YkIDGJurwohCM88HOU4RJoX8d6A/CpPJbBF/Kh2PjFI1fHKBzFu/2bJlb3ye1djGurHJo/tyq4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=SXUlwACX; arc=fail smtp.client-ip=40.107.7.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KvAysaARb5cK2Hf7Gn9xL8+O7tMWGVcaSYXx8sk/pmEKVt75M+lHLZPMujS5niok/ClqK8dBRFGTV9LcWYWhDpIHkz/jtfb1ATGnCsB2KtSeVQMXD7RKS79tRCcSocB6BOWBMRNlqV9lUGyEelgxAHPhSRBpuncjn5CvXX1FR4GHnBE9dTIfFuaOAaR+qycwwEgK1I5/ufdl9SERDQhuSNE2fqhjeVbQOHtJ1+iqtfSmr08ArZ5hB6cFLLnApl1Ondr1Ucvk6M5CtsMiTZUhk3pTFvFSAzkhqnxvE8Xo+t3WCdtyQfB1N8ITJzgr7zi6d9q65E1k+Qn+YuXzZOYMng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0pLlm+E8LJPOQpHl7oDGYjCUAVsPwl3fA7HQXZd0WMg=;
+ b=Xjg/ON0IluxodPr31yLC3RrRXrbAVDJykCo0dUnAls9JGx+oGUEFtVCXRjYpH7kLud4gnXrNM3tkNpLcakV2iY+ptGElEKHFhM+RqfJcpQjj3kV6ZUWNpjb9drwt6ZnYbKqwq8V3Up5UkM9Ji08Th72C3WtW+uKcutAS5gSAbooBNyZUbA5XpxYolN5410L6Np/wzAlxAkUmicUS1Xd0NYTpu7wv7zwL2MMA5GN12xbiH0Vb4yvca/NTNwwvstNqgDTARvUeDYn6lnsdL1ATS7OCnu05fA+mslS6UqamXnuslSgopolsZEepOl5+56e3ImHycyzOfoRe4PS4I7TOzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0pLlm+E8LJPOQpHl7oDGYjCUAVsPwl3fA7HQXZd0WMg=;
+ b=SXUlwACX72ckUHk6vk0VSwdmZL4fL2740HNBTlUhr+lll+URUWSX4ifSkNdxlTQLMgjAp04h4sVTnoIxmWgmVStaRm+zOgHCluPtpPAT50DpUNCUFOrEFxHDsB5EneIZcGFMFHV+Gra8A6rVHIbHWbbUQ9U0PdHrdHzc0U5KGuM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM7PR04MB7112.eurprd04.prod.outlook.com (2603:10a6:20b:113::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Mon, 20 May
+ 2024 21:46:29 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::1e67:dfc9:d0c1:fe58]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::1e67:dfc9:d0c1:fe58%7]) with mapi id 15.20.7587.035; Mon, 20 May 2024
+ 21:46:28 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-rtc@vger.kernel.org (open list:REAL TIME CLOCK (RTC) SUBSYSTEM),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: rtc: Convert rtc-fsl-ftm-alarm.txt to yaml format
+Date: Mon, 20 May 2024 17:46:13 -0400
+Message-Id: <20240520214614.863539-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR05CA0205.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::30) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
-X-B4-Tracking: v=1; b=H4sIADTCS2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDU0NT3dSKgvyikrRi3VIzE93c/NK8EqAKXcvUpCTTZFOLJFPjZCWg3oK
- i1LTMCrC50UpBbs5KsbW1AAtgJA1sAAAA
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
- Amir Goldstein <amir73il@gmail.com>, Alexander Aring <alex.aring@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3969; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=x48YcDZycYBkj2Phwetwph6CXUcIag9OaAHRLH6QlOk=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaR5H3KYutXprEaJjcWnmyd2fy874WzhXnkp68ydrdqt9
- QL+7w3UO0pZGMS4GGTFFFm2+XmGbpq/+Eryp5VsMHNYmUCGMHBxCsBEPs5iZLjz6/3tuvdFbfLt
- 1Qmrp9W/uCprn+D99IFl0O9HX6+IbFFkZHjVWCRu2899dvUxqxNGv2PV1VUavQX4tn28JmZ7f2o
- GAx8A
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM7PR04MB7112:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28fc1ad9-c050-4521-39ac-08dc79164e27
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|52116005|1800799015|366007|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?z7plvd/Hko8/qVicT9e2mCBwSa2TTTnAgvPELP2xTyGc8H7W2amFslD4cj9W?=
+ =?us-ascii?Q?j32WE3r15Q5n1TFl6FeWk4f+vIyUYYOQYgj7RfPAkG4uR4UlOI8mcYbhE6jX?=
+ =?us-ascii?Q?Weu2LMDVd87qQQXvgeARb/GrW3VyN5K4SqZfVE2bLBw91cz0iG5nQZNSs5XE?=
+ =?us-ascii?Q?+lZGPQAZLx9PX1j48DyoHapClkfcPO2Mbi3TExYrvlVLF1VPIFdNdVJnOrBA?=
+ =?us-ascii?Q?C3SClVDbqiN/c8aIrJOp5Ji+pbRakZZQVUXUCYaxHZllWkH9Prvedq3aEZ6L?=
+ =?us-ascii?Q?LOe3S3xCldx4qXsREByg93xQmqCGUcnBY1WyR+YACZT0a5ajpw2qa2clLNxw?=
+ =?us-ascii?Q?YeDregNxK2Jl37JNPtMZDAboORcGBKJhr+PoDD6VrErDMW00FxMYpUy/Gco+?=
+ =?us-ascii?Q?5eEMfEpkFUqePRM+7VNTA9neJh+FEbeb0RTTGotD19mLwZ3xl/NkLYu/xCag?=
+ =?us-ascii?Q?etu/7gdE8Fk5wERRrmNnjJ8IPpEhCJfJ8LCsUxA3VuS3DAx3kG14swxjywlK?=
+ =?us-ascii?Q?cgTU5fams8KMu8+7HmhbapP7Jakn3RtRjRdp7e+AOg3fx9U6AJ0fBJspjbvA?=
+ =?us-ascii?Q?MLrLYPgDlXN/2x8GY5h5yStpaxRagXKOk8IrOUn1FXkhGujjBtykUZmjg6fd?=
+ =?us-ascii?Q?nWDur9zugq/MlKkYCa1Xwsxs1aI6jzDxUNKpmm9S/7mPw135rSFW5silbiPo?=
+ =?us-ascii?Q?tCkCUkK3Ev0hlCcjs9nsQHjhyvcpl2KuNNA8OE+63N7YQFbF9mH0IbRS4DS7?=
+ =?us-ascii?Q?Ks51WyjQFLxmDBdKuvAlHoV9at1z34iHilBSCWGLsQ04LDvfYpCz5DhegXG+?=
+ =?us-ascii?Q?yFEMlhNTNHr6JusB/gEHGzIW/x9SWea7HxO6XaXg3qil/cTPBkoNxZO3nv/V?=
+ =?us-ascii?Q?wCTHjkZWr7GiCvcfEUgaK9Bqd+ZpP4ve+MPJwPNqtCdM6fWSMDmKNlmJaZnH?=
+ =?us-ascii?Q?KM1UQm736fQ7HQXXDj+gaoK3Z6/455VMpQqws8FlbAlh+HWZ7pxQvmQqojLg?=
+ =?us-ascii?Q?vS9o4Gwns9oDTl3ZBtmD/30SxVgxA7zS9M0WvIcHFce02z2iO+JfNtU6XBCr?=
+ =?us-ascii?Q?DzbYCFiRsr7ytlmSz1zPZ3bLgS5tOXSFHEsTSoq6LNiv8QfY4ad7vbQE10dy?=
+ =?us-ascii?Q?KKGbTkSxlEDUZvVdcR991fU3RFMcRZFmcXGp3rc21hO6ynUjhBpvdhXtHQ8v?=
+ =?us-ascii?Q?BuKoWMm+b5XsgeYMLJvNWB2uzHj3H6LJkRI6XV3kqm/u8SN/Uxkbn6HXDhG8?=
+ =?us-ascii?Q?YvX4NBkQpLpq5gwykCvSWXC9mUQAJh9apXBxPvqTFehOOjRZxAXtBlLzEDLj?=
+ =?us-ascii?Q?yKA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(52116005)(1800799015)(366007)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?fqpxM9a1rNH4pwFKsIdgk6TRorb4SrnPVPndohbnwd2KFTt4jtKPTfokJN1I?=
+ =?us-ascii?Q?gfezV+pD4hxV36XrD5PYNK2M8VnsgU0bkzeFkY0AN7L5s5W88ugVRfi/Zdis?=
+ =?us-ascii?Q?ECWjfY52A2kQr54bkRY2G1bmTDikOiVh3kCfFGmCay4xiewIzOY/a5t0BIbj?=
+ =?us-ascii?Q?jncLrYb1FkgI4kETTwfdrhiIVwvwA15SvpsnM8eqc/E3xhXl7UtRQlY0+rqK?=
+ =?us-ascii?Q?PHu24nP0BXvE22edsXDQ9G1tzNMlS/oStPDo46Yip39NjGVAeICPsDaba4Gs?=
+ =?us-ascii?Q?jpkMartYp0bfmTPuXxZc7olvwJneTy1HUI1iQbJOmZST+L4VRisr8qvFOUG8?=
+ =?us-ascii?Q?hzFVchrhy3tmCOluJzLGsZ1Fw7aZm71iNgc3kQRU2Xt1zhEUfHhEi+fRRQXn?=
+ =?us-ascii?Q?0uDzt9b/Vlu+7zUMBMmDe2WcaP3PmXl0T5QB+dyi+stJEJj5ZBNXYGxa8SyS?=
+ =?us-ascii?Q?PwvFnBusWR9EU0mTvcjoBUakVxV2ACVYej75uNVRhUwxHpxLhNpG9mHtttFY?=
+ =?us-ascii?Q?F32Sprx9Gvbm/3InV/P+jM/qZKk4sOy03DQ4jRtockDbTnYVi/ll65/Y+9TJ?=
+ =?us-ascii?Q?6Y861wPRl2HBJzb5Spc57IiVCYLL1SnDviW2eAjeBvcSUDYbznhKgnzSSncS?=
+ =?us-ascii?Q?X3zn75jrHHa3zwkmb7w/abanu1jVLOQTDdPMM0U99eWPzJMD97TLv+L3WUi/?=
+ =?us-ascii?Q?tf64erUeMZoOrsCGnzrlXfGgAMUfGClK/ix5iA35St2mK0p4bgrV/qoIrCp0?=
+ =?us-ascii?Q?qmsCax+n1p5R8i756F6y1thAv7BaiUd+b6rYySjCX0GENJzvOXwTrqIguTd8?=
+ =?us-ascii?Q?8ZE2Qog2DpUHhXV3YcKrKMUPkNHWrBtklhDdcZ8z0S4tZ9+DInShqm2BWVAk?=
+ =?us-ascii?Q?h0HA3YKaXXAxo5gNPVyO2Y6VJw6zUnnFKXdhIMcRLdvplhFHvEH1469pJm3l?=
+ =?us-ascii?Q?5zby7rA0UTkh26HezYVLffkS1eAjuEgVMT0j3ZUjrkTM3rriBmWI+0p8fFbQ?=
+ =?us-ascii?Q?UJEkQY9rWbac2JPN3LvsC4RPBD1zQ6iK4ij37uCksRZRDVAMaYMEovdCziOk?=
+ =?us-ascii?Q?kJu8XlgTIrVA03qSke1NPMMrcgt0p1LtBXmD749C6iV5BYoAtDYTRF8vM+i+?=
+ =?us-ascii?Q?wuEIGNffFTXt9466bJdUAcfTtG8zR6yPDRPEz6ZbSswpp9O9xCbBqTIaRK03?=
+ =?us-ascii?Q?9r4DcUdAgyG2WsZeyQ92IQg2G8S/Ma+4QfEANecZ7T2O+QbYLMEx4sarQY6L?=
+ =?us-ascii?Q?WB8teOYoZNCn3scqaMWONq33sUdfgQca9edFy0EcdqXDCq/09+eM0tJO1ghr?=
+ =?us-ascii?Q?S0ntIjhw5BKn5u29mH6uDpNjTOOf6UoQLxavb5V8wO7xv69EXDcu1Ut1n6kR?=
+ =?us-ascii?Q?d3vN4fjUMOCXJDHhYP9tLSL2pf3q08j7s2GAzhPNDwrMwHCwCkV/NCYNkplS?=
+ =?us-ascii?Q?3/ltvGpbIa7NzfOy4dJ0llDYRN+Ku97TRFmQPFUsNXqTGR6EkEquVd4orbkx?=
+ =?us-ascii?Q?39EFRJ2Aj/qNMp6kxTJwoyuz7SdmXdeK4vPOeMDlc3TDO1gJ9LRl5eVE+S1w?=
+ =?us-ascii?Q?jIvoYn9MblN/wCWbJJHWaEPEaZGGN5NBJDAIBH6x?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28fc1ad9-c050-4521-39ac-08dc79164e27
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 21:46:28.8735
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ddu/ttQpWJhPbCbV6Jf3izJhkc+YsSup0vaJ5o4HSqBbM17DbACAQJmxEjqXJB3jsqwGfz1uLoFMu6IQ7TkzWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7112
 
-Now that we have stabilised the unique 64-bit mount ID interface in
-statx, we can now provide a race-free way for name_to_handle_at(2) to
-provide a file handle and corresponding mount without needing to worry
-about racing with /proc/mountinfo parsing.
+Convert dt-binding doc "rtc-fsl-ftm-alarm.txt" to yaml format.
 
-As with AT_HANDLE_FID, AT_HANDLE_UNIQUE_MNT_ID reuses a statx AT_* bit
-that doesn't make sense for name_to_handle_at(2).
+Change example's reg to 32bit address and length.
+Remove unrelated rcpm@1e34040 in example.
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- fs/fhandle.c               | 27 +++++++++++++++++++--------
- include/uapi/linux/fcntl.h |  2 ++
- 2 files changed, 21 insertions(+), 8 deletions(-)
 
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 8a7f86c2139a..6bc7ffccff8c 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -16,7 +16,8 @@
- 
- static long do_sys_name_to_handle(const struct path *path,
- 				  struct file_handle __user *ufh,
--				  int __user *mnt_id, int fh_flags)
-+				  void __user *mnt_id, bool unique_mntid,
-+				  int fh_flags)
- {
- 	long retval;
- 	struct file_handle f_handle;
-@@ -69,10 +70,16 @@ static long do_sys_name_to_handle(const struct path *path,
- 	} else
- 		retval = 0;
- 	/* copy the mount id */
--	if (put_user(real_mount(path->mnt)->mnt_id, mnt_id) ||
--	    copy_to_user(ufh, handle,
--			 struct_size(handle, f_handle, handle_bytes)))
--		retval = -EFAULT;
-+	if (unique_mntid)
-+		retval = put_user(real_mount(path->mnt)->mnt_id_unique,
-+				  (u64 __user *) mnt_id);
-+	else
-+		retval = put_user(real_mount(path->mnt)->mnt_id,
-+				  (int __user *) mnt_id);
-+	/* copy the handle */
-+	if (!retval)
-+		retval = copy_to_user(ufh, handle,
-+				struct_size(handle, f_handle, handle_bytes));
- 	kfree(handle);
- 	return retval;
- }
-@@ -83,6 +90,7 @@ static long do_sys_name_to_handle(const struct path *path,
-  * @name: name that should be converted to handle.
-  * @handle: resulting file handle
-  * @mnt_id: mount id of the file system containing the file
-+ *          (u64 if AT_HANDLE_UNIQUE_MNT_ID, otherwise int)
-  * @flag: flag value to indicate whether to follow symlink or not
-  *        and whether a decodable file handle is required.
-  *
-@@ -92,7 +100,7 @@ static long do_sys_name_to_handle(const struct path *path,
-  * value required.
-  */
- SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
--		struct file_handle __user *, handle, int __user *, mnt_id,
-+		struct file_handle __user *, handle, void __user *, mnt_id,
- 		int, flag)
- {
- 	struct path path;
-@@ -100,7 +108,8 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
- 	int fh_flags;
- 	int err;
- 
--	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID))
-+	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID |
-+		     AT_HANDLE_UNIQUE_MNT_ID))
- 		return -EINVAL;
- 
- 	lookup_flags = (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
-@@ -109,7 +118,9 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
- 		lookup_flags |= LOOKUP_EMPTY;
- 	err = user_path_at(dfd, name, lookup_flags, &path);
- 	if (!err) {
--		err = do_sys_name_to_handle(&path, handle, mnt_id, fh_flags);
-+		err = do_sys_name_to_handle(&path, handle, mnt_id,
-+					    flag & AT_HANDLE_UNIQUE_MNT_ID,
-+					    fh_flags);
- 		path_put(&path);
- 	}
- 	return err;
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index c0bcc185fa48..fda970f92fba 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -118,6 +118,8 @@
- #define AT_HANDLE_FID		AT_REMOVEDIR	/* file handle is needed to
- 					compare object identity and may not
- 					be usable to open_by_handle_at(2) */
-+#define AT_HANDLE_UNIQUE_MNT_ID	AT_STATX_FORCE_SYNC /* returned mount id is
-+					the u64 unique mount id */
- #if defined(__KERNEL__)
- #define AT_GETATTR_NOSEC	0x80000000
- #endif
+Notes:
+    make dt_binding_check DT_SCHEMA_FILES=rtc-fsl-ftm-alarm.yaml
+      SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+      CHKDT   Documentation/devicetree/bindings
+      LINT    Documentation/devicetree/bindings
+      DTEX    Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.example.dts
+      DTC_CHK Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.example.dtb
 
----
-base-commit: 584bbf439d0fa83d728ec49f3a38c581bdc828b4
-change-id: 20240515-exportfs-u64-mount-id-9ebb5c58b53c
+ .../bindings/rtc/rtc-fsl-ftm-alarm.txt        | 36 -----------
+ .../bindings/rtc/rtc-fsl-ftm-alarm.yaml       | 61 +++++++++++++++++++
+ 2 files changed, 61 insertions(+), 36 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
+ create mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.yaml
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
+deleted file mode 100644
+index fffac74999da6..0000000000000
+--- a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
++++ /dev/null
+@@ -1,36 +0,0 @@
+-Freescale FlexTimer Module (FTM) Alarm
+-
+-Required properties:
+-- compatible : Should be "fsl,<chip>-ftm-alarm", the
+-	       supported chips include
+-	       "fsl,ls1012a-ftm-alarm"
+-	       "fsl,ls1021a-ftm-alarm"
+-	       "fsl,ls1028a-ftm-alarm"
+-	       "fsl,ls1043a-ftm-alarm"
+-	       "fsl,ls1046a-ftm-alarm"
+-	       "fsl,ls1088a-ftm-alarm"
+-	       "fsl,ls208xa-ftm-alarm"
+-	       "fsl,lx2160a-ftm-alarm"
+-- reg : Specifies base physical address and size of the register sets for the
+-  FlexTimer Module.
+-- interrupts : Should be the FlexTimer Module interrupt.
+-- fsl,rcpm-wakeup property and rcpm node : Please refer
+-	Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+-
+-Optional properties:
+-- big-endian: If the host controller is big-endian mode, specify this property.
+-  The default endian mode is little-endian.
+-
+-Example:
+-rcpm: rcpm@1e34040 {
+-	compatible = "fsl,ls1088a-rcpm", "fsl,qoriq-rcpm-2.1+";
+-	reg = <0x0 0x1e34040 0x0 0x18>;
+-	#fsl,rcpm-wakeup-cells = <6>;
+-};
+-
+-ftm_alarm0: timer@2800000 {
+-	compatible = "fsl,ls1088a-ftm-alarm";
+-	reg = <0x0 0x2800000 0x0 0x10000>;
+-	fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
+-	interrupts = <0 44 4>;
+-};
+diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.yaml b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.yaml
+new file mode 100644
+index 0000000000000..69b44e9920033
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rtc/rtc-fsl-ftm-alarm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale FlexTimer Module (FTM) Alarm
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    enum:
++      - fsl,ls1012a-ftm-alarm
++      - fsl,ls1021a-ftm-alarm
++      - fsl,ls1028a-ftm-alarm
++      - fsl,ls1043a-ftm-alarm
++      - fsl,ls1046a-ftm-alarm
++      - fsl,ls1088a-ftm-alarm
++      - fsl,ls208xa-ftm-alarm
++      - fsl,lx2160a-ftm-alarm
++
++  reg:
++    description:
++      Specifies base physical address and size of the register sets for the
++      FlexTimer Module.
++    maxItems: 1
++
++  interrupts:
++    description: Should be the FlexTimer Module interrupt.
++    maxItems: 1
++
++  fsl,rcpm-wakeup:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++      phandle to rcpm node, Please refer
++      documentation/devicetree/bindings/soc/fsl/rcpm.txt
++
++  big-endian:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      If the host controller is big-endian mode, specify this property.
++      The default endian mode is little-endian.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - fsl,rcpm-wakeup
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    timer@2800000 {
++        compatible = "fsl,ls1088a-ftm-alarm";
++        reg = <0x2800000 0x10000>;
++        fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
++        interrupts = <0 44 4>;
++    };
 -- 
-Aleksa Sarai <cyphar@cyphar.com>
+2.34.1
 
 
