@@ -1,521 +1,267 @@
-Return-Path: <linux-kernel+bounces-184216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 092378CA475
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:29:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B748CA476
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791511F22129
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:29:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 489FD1C21113
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F023D3B3;
-	Mon, 20 May 2024 22:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918F53BB4D;
+	Mon, 20 May 2024 22:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBoF8aYD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jar92hOn"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E242D05D;
-	Mon, 20 May 2024 22:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF7AA929
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 22:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716244186; cv=none; b=iMI8ZW6hVmr+9i+JUs1aMGEUES6mC2qzicZvMtGi2MiIrYeW3sKnRfa2Lydg5h9eZeWBaY61nwrcoay7gxPrb4qIej4GvVEyIYLfwjWyDHKQ4uDHJ9fhjEoLAVNnFryiTfl/RU8lRt7bm9yMZzuJGua7H6ucaG6mAYYhF68c3XU=
+	t=1716244224; cv=none; b=mWS63yXDKG+RBFUHgBNvBS88md4+f2rYKEyeyMxjVtEpd5t3OcT6baLaWQG7llF4N6HWwd0ZbIbsuYXawjcSvZGdFStY87xm7bxliyAljlUxrefNILwRuVBTZjbtxdxsnS51AQxcekVqlvrI5F5f+jUaAsIsuWfJhVhRcx+zxYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716244186; c=relaxed/simple;
-	bh=RR/yF8QP2vwDDr9BvJmNrqRVyEgUVgRjQWH7T6pXxMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Z6SeWOXwVAYbtpeb+ltY7pNGPlDWrpDfT2VUkZWGVAhMP/XE6Qq7729Nv+LRsLpCh7sZPSzY3Gjo2+TCcMrZ3usmSbuiy1Zk3tO9IkJXQStaPxTOOP+cm+p8i3jB14jvF+bAx2E+A0whWRPYsJBZDPPG2P0Hc4BOc8L8uNAnOQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBoF8aYD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9677C2BD10;
-	Mon, 20 May 2024 22:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716244185;
-	bh=RR/yF8QP2vwDDr9BvJmNrqRVyEgUVgRjQWH7T6pXxMc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=FBoF8aYDcavzQf/O89zww2aFm01JOj3NUvNIQHpcID3gSSy2cpHgiQCkmyz33MKGB
-	 67DpyQE4ePKJ3enUHKRQXGoVi/HKT6NwJYTwCO/MMBW74iRPMFE8pEFVbr1NS1Ou4v
-	 yxBYCOTrdc6T2+RSI8fJay9gv77iWMpluLG9hm+Z0ou/CNV6QuqmEvcKN5xzhPHWN1
-	 rJUdKmglDjX5ODlZI77YFViLqUfz6Rx7NQG96aW2ojDWJYzC37X4l7p0TlSNGo/t/U
-	 zkmrOgmhTBu2scXSvAneLvYDqyP1d+DMIBlaZQPNp8YW1Wp4H7GZ0otx2VN6zJUh9M
-	 lf73OP5vNR/rw==
-Date: Mon, 20 May 2024 17:29:43 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
+	s=arc-20240116; t=1716244224; c=relaxed/simple;
+	bh=88sBaM9c/lFm72joDHCx2YS7aISJsmZbK2zQBM05g6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xv0HCA1j15kjSorTKHX4wZ4C5DECQoiLEYslsqBHSQHhMc9Ia11K5jJS8l0HjvSbVvMX9zHh9BAIlquopitmhiz/ODr8EQbYlJf/3xlqR7lZJ9UrkWs3cFy+mAA59Er0nz8tXESInX9tkhXkNRGXq9FqKD+EScCpAisyE3dtgbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jar92hOn; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ee7963db64so22444345ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 15:30:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716244220; x=1716849020; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EwsBu5PYWrTFPJ0bre84b7wUfl6breTdrE2WqkfWz3k=;
+        b=Jar92hOnO6jgCf1zFEp9Zcr49HtMcKAJVFlS2twWzTmi9MdShE1WibCwqTOQk+nGCZ
+         PWy0YBgWSCZzmCMdC0sIfr7U6oU0gLbDC98rzJwQNUOaJ28KG7kPU8jWDbVILQUz9PZ7
+         xgIoDNBLunIVGP2SOiuQ8BN2pm4NAHo0stWRZMaUSF71OFJRh7Vmkr+uGzCcstrZap2Z
+         ioQzzgd6DnqchFwiFyrNa20r4NdGzeo3uY0GC+eS2Z0MHszqIQxLOKu6UYuASqS0NCQi
+         WlPEvq3Dlcv2lPjOYBgF+z45VZDLljcI0DZ2CCXS5/NUKbzZaMxVjIDEsic1ZOIMQICj
+         fsCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716244220; x=1716849020;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EwsBu5PYWrTFPJ0bre84b7wUfl6breTdrE2WqkfWz3k=;
+        b=BMeDvKjnNP6n4nh/t9Rl5ON0ZEFDLvxsJ7tqtqb2hsn8vd1AjmGJ42rsoWPW/h31zi
+         6rPBOSFHIrkbU4ZPkg1EUNWmOzdUPYahgz/G/Oq3EDxTFdQhmSPiEKhEEI6wsyh7AnT+
+         p0593qfy2iKVmHp6JmJrYvjWkGurt4FDO/WUycXRNascuN5+6Ncxzyb1cKQbe5QgzBZv
+         wmzZvrTn62ISINdNEkeV3hYGtTW6F9LynKgjrk8e/Lhp0cxN6eiJC5l7qofV/qrjLuRB
+         quliAPsdeclI5zukYox14IGP0Xklket1GSeG0FfwsWN7NeCJ1lKDSr90tdrEYLLdTe4W
+         BU2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV9YiN2YClXSo4pYQ/TUmHY7yLJlzsLdRjPbGJyP+b6TLavqwWfntYAGg65t6jAgTmxZ05NGXhtVNWjrFBOqpgRRrTgclvtxk5XVXmP
+X-Gm-Message-State: AOJu0YxWLaC6XLVBDMx8Yp1DjB1H+/FhDsoS4M9TrSECrOvdhYEmzPXQ
+	mg3HbGeuVmKCRbgnSqiKoBf9ncHPBSZ2Uo/26E9xnBhzGC51QaoY
+X-Google-Smtp-Source: AGHT+IF+yCrFPT4Y/UkNVNB/61VKnO2sVY/0KbF5gBQyzdY5StJyVD72Et7ULze7+CHeLI7sFuuq4Q==
+X-Received: by 2002:a17:902:f549:b0:1f3:7cf:b881 with SMTP id d9443c01a7336-1f307cfbb77mr30780875ad.50.1716244220281;
+        Mon, 20 May 2024 15:30:20 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad886csm209028305ad.70.2024.05.20.15.30.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 15:30:19 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 20 May 2024 12:30:18 -1000
+From: Tejun Heo <tj@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: [GIT PULL] PCI changes for v6.10
-Message-ID: <20240520222943.GA7973@bhelgaas>
+Cc: Jan Engelhardt <jengelh@inai.de>, Craig Small <csmall@enc.com.au>,
+	Yafang Shao <laoar.shao@gmail.com>, linux-kernel@vger.kernel.org,
+	Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [PATCH workqueue/for-6.10-fixes] workqueue: Refactor worker ID
+ formatting and make wq_worker_comm() use full ID string
+Message-ID: <ZkvO-h7AsWnj4gaZ@slm.duckdns.org>
+References: <o89373n4-3oq5-25qr-op7n-55p9657r96o8@vanv.qr>
+ <CAHk-=wjxdtkFMB8BPYpU3JedjAsva3XXuzwxtzKoMwQ2e8zRzw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
-
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.10-changes
-
-for you to fetch changes up to 7ecf13fd35feed2e888686320d378769305b8322:
-
-  Merge branch 'pci/misc' (2024-05-16 18:14:14 -0500)
-
-----------------------------------------------------------------
-Enumeration:
-
-  - Skip E820 checks for MCFG ECAM regions for new (2016+) machines, since
-    there's no requirement to describe them in E820 and some platforms
-    require ECAM to work (Bjorn Helgaas)
-
-  - Rename PCI_IRQ_LEGACY to PCI_IRQ_INTX to be more specific (Damien Le
-    Moal)
-
-  - Remove last user and pci_enable_device_io() (Heiner Kallweit)
-
-  - Wait for Link Training==0 to avoid possible race (Ilpo Järvinen)
-
-  - Skip waiting for devices that have been disconnected while suspended
-    (Ilpo Järvinen)
-
-  - Clear Secondary Status errors after enumeration since Master Aborts and
-    Unsupported Request errors are an expected part of enumeration (Vidya
-    Sagar)
-
-MSI:
-
-  - Remove unused IMS (Interrupt Message Store) support (Bjorn Helgaas)
-
-Error handling:
-
-  - Mask Genesys GL975x SD host controller Replay Timer Timeout correctable
-    errors caused by a hardware defect; the errors cause interrupts that
-    prevent system suspend (Kai-Heng Feng)
-
-  - Fix EDR-related _DSM support, which previously evaluated revision 5 but
-    assumed revision 6 behavior (Kuppuswamy Sathyanarayanan)
-
-ASPM:
-
-  - Simplify link state definitions and mask calculation (Ilpo Järvinen)
-
-Power management:
-
-  - Avoid D3cold for HP Pavilion 17 PC/1972 PCIe Ports, where BIOS
-    apparently doesn't know how to put them back in D0 (Mario Limonciello)
-
-CXL:
-
-  - Support resetting CXL devices; special handling required because CXL
-    Ports mask Secondary Bus Reset by default (Dave Jiang)
-
-DOE:
-
-  - Support DOE Discovery Version 2 (Alexey Kardashevskiy)
-
-Endpoint framework:
-
-  - Set endpoint BAR to be 64-bit if the driver says that's all the device
-    supports, in addition to doing so if the size is >2GB (Niklas Cassel)
-
-  - Simplify endpoint BAR allocation and setting interfaces (Niklas Cassel)
-
-Cadence PCIe controller driver:
-
-  - Drop DT binding redundant msi-parent and pci-bus.yaml (Krzysztof
-    Kozlowski)
-
-Cadence PCIe endpoint driver:
-
-  - Configure endpoint BARs to be 64-bit based on the BAR type, not the BAR
-    value (Niklas Cassel)
-
-Freescale Layerscape PCIe controller driver:
-
-  - Convert DT binding to YAML (Frank Li)
-
-MediaTek MT7621 PCIe controller driver:
-
-  - Add DT binding missing 'reg' property for child Root Ports (Krzysztof
-    Kozlowski)
-
-  - Fix theoretical string truncation in PHY name (Sergio Paracuellos)
-
-NVIDIA Tegra194 PCIe controller driver:
-
-  - Return success for endpoint probe instead of falling through to the
-    failure path (Vidya Sagar)
-
-Renesas R-Car PCIe controller driver:
-
-  - Add DT binding missing IOMMU properties (Geert Uytterhoeven)
-
-  - Add DT binding R-Car V4H compatible for host and endpoint mode
-    (Yoshihiro Shimoda)
-
-Rockchip PCIe controller driver:
-
-  - Configure endpoint BARs to be 64-bit based on the BAR type, not the BAR
-    value (Niklas Cassel)
-
-  - Add DT binding missing maxItems to ep-gpios (Krzysztof Kozlowski)
-
-  - Set the Subsystem Vendor ID, which was previously zero because it was
-    masked incorrectly (Rick Wertenbroek)
-
-Synopsys DesignWare PCIe controller driver:
-
-  - Restructure DBI register access to accommodate devices where this
-    requires Refclk to be active (Manivannan Sadhasivam)
-
-  - Remove the deinit() callback, which was only need by the
-    pcie-rcar-gen4, and do it directly in that driver (Manivannan
-    Sadhasivam)
-
-  - Add dw_pcie_ep_cleanup() so drivers that support PERST# can clean up
-    things like eDMA (Manivannan Sadhasivam)
-
-  - Rename dw_pcie_ep_exit() to dw_pcie_ep_deinit() to make it parallel to
-    dw_pcie_ep_init() (Manivannan Sadhasivam)
-
-  - Rename dw_pcie_ep_init_complete() to dw_pcie_ep_init_registers() to
-    reflect the actual functionality (Manivannan Sadhasivam)
-
-  - Call dw_pcie_ep_init_registers() directly from all the glue drivers,
-    not just those that require active Refclk from the host (Manivannan
-    Sadhasivam)
-
-  - Remove the "core_init_notifier" flag, which was an obscure way for glue
-    drivers to indicate that they depend on Refclk from the host
-    (Manivannan Sadhasivam)
-
-TI J721E PCIe driver:
-
-  - Add DT binding J784S4 SoC Device ID (Siddharth Vadapalli)
-
-  - Add DT binding J722S SoC support (Siddharth Vadapalli)
-
-TI Keystone PCIe controller driver:
-
-  - Add DT binding missing num-viewport, phys and phy-name properties (Jan
-    Kiszka)
-
-Miscellaneous:
-
-  - Constify and annotate with __ro_after_init (Heiner Kallweit)
-
-  - Convert DT bindings to YAML (Krzysztof Kozlowski)
-
-  - Check for kcalloc() failure in of_pci_prop_intr_map() (Duoming Zhou)
-
-----------------------------------------------------------------
-Alexey Kardashevskiy (1):
-      PCI/DOE: Support discovery version 2
-
-Andy Shevchenko (1):
-      PCI/MSI: Make error path handling follow the standard pattern
-
-Bjorn Helgaas (28):
-      Revert "PCI/MSI: Provide stubs for IMS functions"
-      Revert "PCI/MSI: Provide pci_ims_alloc/free_irq()"
-      Revert "PCI/MSI: Provide IMS (Interrupt Message Store) support"
-      Revert "iommu/amd: Enable PCI/IMS"
-      Revert "iommu/vt-d: Enable PCI/IMS"
-      Revert "x86/apic/msi: Enable PCI/IMS"
-      Revert "genirq/msi: Provide constants for PCI/IMS support"
-      PCI: Update pci_find_capability() stub return types
-      x86/pci: Skip early E820 check for ECAM region
-      Merge branch 'pci/aer'
-      Merge branch 'pci/aspm'
-      Merge branch 'pci/cxl'
-      Merge branch 'pci/doe'
-      Merge branch 'pci/edr'
-      Merge branch 'pci/enumeration'
-      Merge branch 'pci/hotplug'
-      Merge branch 'pci/msi'
-      Merge branch 'pci/of'
-      Merge branch 'pci/pm'
-      Merge branch 'pci/dt-bindings'
-      Merge branch 'pci/controller/cadence'
-      Merge branch 'pci/controller/dwc'
-      Merge branch 'pci/controller/mt7621'
-      Merge branch 'pci/controller/rockchip'
-      Merge branch 'pci/controller/tegra194'
-      Merge branch 'pci/endpoint'
-      Merge branch 'pci/ims-removal'
-      Merge branch 'pci/misc'
-
-Damien Le Moal (29):
-      PCI/MSI: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      PCI/portdrv: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      Documentation: PCI: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      ASoC: Intel: avs: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      usb: hcd-pci: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      tty: 8250_pci: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      platform/x86: intel_ips: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      ntb: idt: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      mfd: intel-lpss: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      drm/amdgpu: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      IB/qib: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      RDMA/vmw_pvrdma: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      VMCI: Use PCI_IRQ_ALL_TYPES to remove PCI_IRQ_LEGACY use
-      net: amd-xgbe: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      net: atlantic: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      net: alx: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      r8169: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      net: wangxun: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      wifi: ath10k: Refer to INTX instead of LEGACY
-      wifi: rtw88: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      wifi: rtw89: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      scsi: arcmsr: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      scsi: hpsa: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      scsi: ipr: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      scsi: megaraid_sas: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      scsi: mpt3sas: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      scsi: pmcraid: Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
-      scsi: vmw_pvscsi: Do not use PCI_IRQ_LEGACY instead of PCI_IRQ_LEGACY
-      PCI: Remove PCI_IRQ_LEGACY
-
-Dave Jiang (5):
-      PCI/CXL: Move CXL Vendor ID to pci_ids.h
-      PCI: Lock upstream bridge for pci_reset_function()
-      PCI/CXL: Fail bus reset if upstream CXL Port has SBR masked
-      PCI/CXL: Add 'cxl_bus' reset method for devices below CXL Ports
-      cxl: Add post-reset warning if reset results in loss of previously committed HDM decoders
-
-Duoming Zhou (1):
-      PCI: of_property: Return error for int_map allocation failure
-
-Frank Li (1):
-      dt-bindings: PCI: layerscape-pci: Convert to YAML format
-
-Geert Uytterhoeven (1):
-      dt-bindings: PCI: rcar-pci-host: Add missing IOMMU properties
-
-Heiner Kallweit (4):
-      PCI: Constify pcibus_class
-      PCI: Annotate pci_cache_line_size variables as __ro_after_init
-      ata: pata_cs5520: Remove unnecessary call to pci_enable_device_io()
-      PCI: Remove unused pci_enable_device_io()
-
-Ilpo Järvinen (8):
-      PCI: Wait for Link Training==0 before starting Link retrain
-      PCI: Clarify intent of LT wait
-      PCI/ERR: Cleanup misleading indentation inside if conditions
-      PCI: Clean up accessor macro formatting
-      PCI/ASPM: Consolidate link state defines
-      PCI/ASPM: Clean up ASPM disable/enable mask calculation
-      PCI: Make pcie_bandwidth_capable() static
-      PCI: Do not wait for disconnected devices when resuming
-
-Jan Kiszka (1):
-      dt-bindings: PCI: ti,am65: Fix remaining binding warnings
-
-Kai-Heng Feng (1):
-      PCI: Mask Replay Timer Timeout errors for Genesys GL975x SD host controller
-
-Krzysztof Kozlowski (5):
-      dt-bindings: PCI: cdns,cdns-pcie-host: Drop redundant msi-parent and pci-bus.yaml
-      dt-bindings: PCI: mediatek,mt7621: Add missing child node reg
-      dt-bindings: PCI: host-bridges: Switch from deprecated pci-bus.yaml
-      dt-bindings: PCI: mediatek,mt7621-pcie: Switch from deprecated pci-bus.yaml
-      dt-bindings: PCI: rockchip,rk3399-pcie: Add missing maxItems to ep-gpios
-
-Kunwu Chan (1):
-      x86/pci: Remove OLPC dead code
-
-Kuppuswamy Sathyanarayanan (3):
-      PCI/AER: Update aer-inject tool source URL
-      PCI/EDR: Align EDR_PORT_DPC_ENABLE_DSM with PCI Firmware r3.3
-      PCI/EDR: Align EDR_PORT_LOCATE_DSM with PCI Firmware r3.3
-
-Manivannan Sadhasivam (8):
-      PCI: dwc: ep: Fix DBI access failure for drivers requiring refclk from host
-      PCI: dwc: ep: Add Kernel-doc comments for APIs
-      PCI: dwc: ep: Remove deinit() callback from struct dw_pcie_ep_ops
-      PCI: dwc: ep: Rename dw_pcie_ep_exit() to dw_pcie_ep_deinit()
-      PCI: dwc: ep: Introduce dw_pcie_ep_cleanup() API for drivers supporting PERST#
-      PCI: dwc: ep: Rename dw_pcie_ep_init_complete() to dw_pcie_ep_init_registers()
-      PCI: dwc: ep: Call dw_pcie_ep_init_registers() API directly from all glue drivers
-      PCI: endpoint: Remove "core_init_notifier" flag
-
-Mario Limonciello (1):
-      PCI/PM: Avoid D3cold for HP Pavilion 17 PC/1972 PCIe Ports
-
-Nam Cao (2):
-      PCI: hotplug: Document unchecked return value of pci_hp_add_bridge()
-      PCI: hotplug: Remove obsolete sgi_hotplug TODO notes
-
-Niklas Cassel (7):
-      PCI: cadence: Set a 64-bit BAR if requested
-      PCI: rockchip-ep: Set a 64-bit BAR if requested
-      PCI: endpoint: pci-epf-test: Simplify pci_epf_test_alloc_space() loop
-      PCI: endpoint: Allocate a 64-bit BAR if that is the only option
-      PCI: endpoint: pci-epf-test: Remove superfluous code
-      PCI: endpoint: pci-epf-test: Simplify pci_epf_test_set_bar() loop
-      PCI: endpoint: pci-epf-test: Clean up pci_epf_test_unbind()
-
-Rick Wertenbroek (1):
-      PCI: rockchip-ep: Remove wrong mask on subsys_vendor_id
-
-Sergio Paracuellos (1):
-      PCI: mt7621: Fix string truncation in mt7621_pcie_parse_port()
-
-Siddharth Vadapalli (2):
-      dt-bindings: PCI: ti,j721e-pci-host: Add device-id for TI's J784S4 SoC
-      dt-bindings: PCI: ti,j721e-pci-host: Add support for J722S SoC
-
-Vidya Sagar (2):
-      PCI: tegra194: Fix probe path for Endpoint mode
-      PCI: Clear Secondary Status errors after enumeration
-
-Yoshihiro Shimoda (2):
-      dt-bindings: PCI: rcar-gen4-pci-host: Add R-Car V4H compatible
-      dt-bindings: PCI: rcar-gen4-pci-ep: Add R-Car V4H compatible
-
- Documentation/PCI/msi-howto.rst                    |   2 +-
- Documentation/PCI/pci.rst                          |   2 +-
- Documentation/PCI/pcieaer-howto.rst                |   2 +-
- .../devicetree/bindings/pci/amlogic,axg-pcie.yaml  |   2 +-
- .../devicetree/bindings/pci/apple,pcie.yaml        |   2 +-
- .../devicetree/bindings/pci/brcm,iproc-pcie.yaml   |   2 +-
- .../devicetree/bindings/pci/brcm,stb-pcie.yaml     |   2 +-
- .../bindings/pci/cdns,cdns-pcie-host.yaml          |   3 -
- .../devicetree/bindings/pci/cdns-pcie-host.yaml    |   2 +-
- .../devicetree/bindings/pci/faraday,ftpci100.yaml  |   2 +-
- .../bindings/pci/fsl,layerscape-pcie-ep.yaml       | 102 +++++++++
- .../bindings/pci/fsl,layerscape-pcie.yaml          | 167 ++++++++++++++
- .../devicetree/bindings/pci/host-generic-pci.yaml  |   2 +-
- .../devicetree/bindings/pci/intel,ixp4xx-pci.yaml  |   2 +-
- .../bindings/pci/intel,keembay-pcie.yaml           |   2 +-
- .../devicetree/bindings/pci/layerscape-pci.txt     |  79 -------
- .../devicetree/bindings/pci/loongson.yaml          |   2 +-
- .../bindings/pci/mediatek,mt7621-pcie.yaml         |   7 +-
- .../bindings/pci/mediatek-pcie-gen3.yaml           |   2 +-
- .../bindings/pci/microchip,pcie-host.yaml          |   2 +-
- .../devicetree/bindings/pci/qcom,pcie-common.yaml  |   2 +-
- .../devicetree/bindings/pci/qcom,pcie.yaml         |   2 +-
- .../devicetree/bindings/pci/rcar-gen4-pci-ep.yaml  |   4 +-
- .../bindings/pci/rcar-gen4-pci-host.yaml           |   4 +-
- .../devicetree/bindings/pci/rcar-pci-host.yaml     |   5 +-
- .../bindings/pci/renesas,pci-rcar-gen2.yaml        |   2 +-
- .../bindings/pci/rockchip,rk3399-pcie.yaml         |   3 +-
- .../devicetree/bindings/pci/snps,dw-pcie.yaml      |   2 +-
- .../devicetree/bindings/pci/ti,am65-pci-host.yaml  |  22 +-
- .../devicetree/bindings/pci/ti,j721e-pci-host.yaml |   5 +
- .../devicetree/bindings/pci/versatile.yaml         |   2 +-
- .../devicetree/bindings/pci/xilinx-versal-cpm.yaml |   2 +-
- .../bindings/pci/xlnx,axi-pcie-host.yaml           |   2 +-
- .../devicetree/bindings/pci/xlnx,nwl-pcie.yaml     |   2 +-
- .../devicetree/bindings/pci/xlnx,xdma-host.yaml    |   2 +-
- Documentation/translations/zh_CN/PCI/msi-howto.rst |   2 +-
- Documentation/translations/zh_CN/PCI/pci.rst       |   2 +-
- arch/x86/kernel/apic/msi.c                         |   5 -
- arch/x86/pci/mmconfig-shared.c                     |  40 +++-
- arch/x86/pci/olpc.c                                |   3 -
- drivers/ata/pata_cs5520.c                          |   6 -
- drivers/cxl/core/pci.c                             |  35 ++-
- drivers/cxl/core/regs.c                            |   2 +-
- drivers/cxl/cxl.h                                  |   2 +
- drivers/cxl/cxlpci.h                               |   1 -
- drivers/cxl/pci.c                                  |  24 ++-
- drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c            |   2 +-
- drivers/infiniband/hw/qib/qib_iba7220.c            |   2 +-
- drivers/infiniband/hw/qib/qib_iba7322.c            |   5 +-
- drivers/infiniband/hw/qib/qib_pcie.c               |   2 +-
- drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c     |   2 +-
- drivers/iommu/amd/iommu.c                          |  17 +-
- drivers/iommu/intel/irq_remapping.c                |  19 +-
- drivers/mfd/intel-lpss-pci.c                       |   2 +-
- drivers/misc/vmw_vmci/vmci_guest.c                 |   3 +-
- drivers/net/ethernet/amd/xgbe/xgbe-pci.c           |   2 +-
- drivers/net/ethernet/aquantia/atlantic/aq_cfg.h    |   2 +-
- drivers/net/ethernet/aquantia/atlantic/aq_hw.h     |   2 +-
- drivers/net/ethernet/aquantia/atlantic/aq_nic.c    |   2 +-
- .../net/ethernet/aquantia/atlantic/aq_pci_func.c   |   9 +-
- .../ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c  |   2 +-
- .../ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c  |   2 +-
- .../ethernet/aquantia/atlantic/hw_atl2/hw_atl2.c   |   2 +-
- drivers/net/ethernet/atheros/alx/main.c            |   2 +-
- drivers/net/ethernet/realtek/r8169_main.c          |   2 +-
- drivers/net/ethernet/wangxun/libwx/wx_lib.c        |   8 +-
- drivers/net/wireless/ath/ath10k/ahb.c              |  18 +-
- drivers/net/wireless/ath/ath10k/pci.c              |  36 ++--
- drivers/net/wireless/ath/ath10k/pci.h              |   6 +-
- drivers/net/wireless/realtek/rtw88/pci.c           |   2 +-
- drivers/net/wireless/realtek/rtw89/pci.c           |   2 +-
- drivers/ntb/hw/idt/ntb_hw_idt.c                    |   2 +-
- drivers/pci/access.c                               |  44 ++--
- drivers/pci/controller/cadence/pcie-cadence-ep.c   |   7 +-
- drivers/pci/controller/dwc/pci-dra7xx.c            |   9 +
- drivers/pci/controller/dwc/pci-imx6.c              |  10 +
- drivers/pci/controller/dwc/pci-keystone.c          |  11 +
- drivers/pci/controller/dwc/pci-layerscape-ep.c     |   9 +
- drivers/pci/controller/dwc/pcie-artpec6.c          |  15 +-
- drivers/pci/controller/dwc/pcie-designware-ep.c    | 240 ++++++++++++++-------
- drivers/pci/controller/dwc/pcie-designware-plat.c  |  11 +
- drivers/pci/controller/dwc/pcie-designware.h       |  14 +-
- drivers/pci/controller/dwc/pcie-keembay.c          |  18 +-
- drivers/pci/controller/dwc/pcie-qcom-ep.c          |   4 +-
- drivers/pci/controller/dwc/pcie-rcar-gen4.c        |  28 ++-
- drivers/pci/controller/dwc/pcie-tegra194.c         |   8 +-
- drivers/pci/controller/dwc/pcie-uniphier-ep.c      |  15 +-
- drivers/pci/controller/pcie-mt7621.c               |   2 +-
- drivers/pci/controller/pcie-rcar-ep.c              |   2 +
- drivers/pci/controller/pcie-rockchip-ep.c          |  10 +-
- drivers/pci/doe.c                                  |  12 +-
- drivers/pci/endpoint/functions/pci-epf-test.c      |  80 ++-----
- drivers/pci/endpoint/pci-ep-cfs.c                  |   9 +
- drivers/pci/endpoint/pci-epc-core.c                |  22 ++
- drivers/pci/endpoint/pci-epf-core.c                |   9 +-
- drivers/pci/hotplug/TODO                           |  12 +-
- drivers/pci/msi/api.c                              |  58 +----
- drivers/pci/msi/irqdomain.c                        |  59 -----
- drivers/pci/msi/msi.c                              |  15 +-
- drivers/pci/of_property.c                          |   2 +
- drivers/pci/pci.c                                  | 143 ++++++++++--
- drivers/pci/pci.h                                  |   2 -
- drivers/pci/pcie/Kconfig                           |   2 +-
- drivers/pci/pcie/aer_inject.c                      |   2 +-
- drivers/pci/pcie/aspm.c                            | 182 ++++++++--------
- drivers/pci/pcie/edr.c                             |  28 ++-
- drivers/pci/pcie/err.c                             |  12 +-
- drivers/pci/pcie/portdrv.c                         |   8 +-
- drivers/pci/probe.c                                |   8 +-
- drivers/pci/quirks.c                               |  20 ++
- drivers/perf/cxl_pmu.c                             |   2 +-
- drivers/platform/x86/intel_ips.c                   |   2 +-
- drivers/scsi/arcmsr/arcmsr_hba.c                   |   2 +-
- drivers/scsi/hpsa.c                                |   2 +-
- drivers/scsi/ipr.c                                 |   2 +-
- drivers/scsi/megaraid/megaraid_sas_base.c          |   4 +-
- drivers/scsi/mpt3sas/mpt3sas_base.c                |   2 +-
- drivers/scsi/pmcraid.c                             |   2 +-
- drivers/scsi/vmw_pvscsi.c                          |   2 +-
- drivers/tty/serial/8250/8250_pci.c                 |   2 +-
- drivers/usb/core/hcd-pci.c                         |   3 +-
- include/linux/irqdomain_defs.h                     |   1 -
- include/linux/lockdep.h                            |   5 +
- include/linux/msi.h                                |   2 -
- include/linux/msi_api.h                            |   1 -
- include/linux/pci-epc.h                            |   7 +-
- include/linux/pci.h                                |  74 +++----
- include/linux/pci_ids.h                            |   2 +
- include/uapi/linux/pci_regs.h                      |   6 +
- sound/soc/intel/avs/core.c                         |   2 +-
- 130 files changed, 1232 insertions(+), 761 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pci/fsl,layerscape-pcie-ep.yaml
- create mode 100644 Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml
- delete mode 100644 Documentation/devicetree/bindings/pci/layerscape-pci.txt
+In-Reply-To: <CAHk-=wjxdtkFMB8BPYpU3JedjAsva3XXuzwxtzKoMwQ2e8zRzw@mail.gmail.com>
+
+Currently, worker ID formatting is open coded in create_worker(),
+init_rescuer() and worker_thread() (for %WORKER_DIE case). The formatted ID
+is saved into task->comm and wq_worker_comm() uses it as the base name to
+append extra information to when generating the name to be shown as.
+
+However, TASK_COMM_LEN is only 16 leading to badly truncated names for
+rescuers. For example, the rescuer for the inet_frag_wq workqueue becomes:
+
+  $ ps -ef | grep '[k]worker/R-inet'
+  root         483       2  0 Apr26 ?        00:00:00 [kworker/R-inet_]
+
+Even for non-rescue workers, it's easy to run over 15 characters on
+moderately large machines.
+
+Fit it by consolidating worker ID formatting into a new helper
+format_worker_id() and calling it from wq_worker_comm() to obtain the
+untruncated worker ID.
+
+  $ ps -ef | grep '[k]worker/R-inet'
+  root          60       2  0 12:10 ?        00:00:00 [kworker/R-inet_frag_wq]
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Jan Engelhardt <jengelh@inai.de>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+---
+(cc'ing LKML and Lai)
+
+On Mon, May 20, 2024 at 10:17:00AM -0700, Linus Torvalds wrote:
+> Oh well. I suspect this would be trivial to fix. I think the
+> get_kthread_comm() should use the full name, and only *then* attach
+> the extra worker pool information if it exists..
+> 
+> Tejun?
+
+Yeah, looks like even the unbound worker IDs are getting truncated on larger
+machines. This patch should fix it. I'll apply it to wq/for-6.10-fixes soon.
+
+> Also, independently of the WQ worker issue, I do think we could
+> possibly expand TASK_COMM_LEN a bit more. 16 bytes is too short for
+> user-level names too, and while it's seldom used for 'ps', it's
+> visible in things like oops messages etc where it gets truncated.
+
+That'd be great. ISTR this being discussed a while ago. Am I imagining that
+we were going to raise this to 32?
+
+Thanks.
+
+ kernel/workqueue.c |   51 ++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 34 insertions(+), 17 deletions(-)
+
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -125,6 +125,7 @@ enum wq_internal_consts {
+ 	HIGHPRI_NICE_LEVEL	= MIN_NICE,
+ 
+ 	WQ_NAME_LEN		= 32,
++	WORKER_ID_LEN		= 10 + WQ_NAME_LEN, /* "kworker/R-" + WQ_NAME_LEN */
+ };
+ 
+ /*
+@@ -2742,6 +2743,26 @@ static void worker_detach_from_pool(stru
+ 		complete(detach_completion);
+ }
+ 
++static int format_worker_id(char *buf, size_t size, struct worker *worker,
++			    struct worker_pool *pool)
++{
++	if (worker->rescue_wq)
++		return scnprintf(buf, size, "kworker/R-%s",
++				 worker->rescue_wq->name);
++
++	if (pool) {
++		if (pool->cpu >= 0)
++			return scnprintf(buf, size, "kworker/%d:%d%s",
++					 pool->cpu, worker->id,
++					 pool->attrs->nice < 0  ? "H" : "");
++		else
++			return scnprintf(buf, size, "kworker/u%d:%d",
++					 pool->id, worker->id);
++	} else {
++		return scnprintf(buf, size, "kworker/dying");
++	}
++}
++
+ /**
+  * create_worker - create a new workqueue worker
+  * @pool: pool the new worker will belong to
+@@ -2758,7 +2779,6 @@ static struct worker *create_worker(stru
+ {
+ 	struct worker *worker;
+ 	int id;
+-	char id_buf[23];
+ 
+ 	/* ID is needed to determine kthread name */
+ 	id = ida_alloc(&pool->worker_ida, GFP_KERNEL);
+@@ -2777,17 +2797,14 @@ static struct worker *create_worker(stru
+ 	worker->id = id;
+ 
+ 	if (!(pool->flags & POOL_BH)) {
+-		if (pool->cpu >= 0)
+-			snprintf(id_buf, sizeof(id_buf), "%d:%d%s", pool->cpu, id,
+-				 pool->attrs->nice < 0  ? "H" : "");
+-		else
+-			snprintf(id_buf, sizeof(id_buf), "u%d:%d", pool->id, id);
++		char id_buf[WORKER_ID_LEN];
+ 
++		format_worker_id(id_buf, sizeof(id_buf), worker, pool);
+ 		worker->task = kthread_create_on_node(worker_thread, worker,
+-					pool->node, "kworker/%s", id_buf);
++						      pool->node, "%s", id_buf);
+ 		if (IS_ERR(worker->task)) {
+ 			if (PTR_ERR(worker->task) == -EINTR) {
+-				pr_err("workqueue: Interrupted when creating a worker thread \"kworker/%s\"\n",
++				pr_err("workqueue: Interrupted when creating a worker thread \"%s\"\n",
+ 				       id_buf);
+ 			} else {
+ 				pr_err_once("workqueue: Failed to create a worker thread: %pe",
+@@ -3350,7 +3367,6 @@ woke_up:
+ 		raw_spin_unlock_irq(&pool->lock);
+ 		set_pf_worker(false);
+ 
+-		set_task_comm(worker->task, "kworker/dying");
+ 		ida_free(&pool->worker_ida, worker->id);
+ 		worker_detach_from_pool(worker);
+ 		WARN_ON_ONCE(!list_empty(&worker->entry));
+@@ -5542,6 +5558,7 @@ static int wq_clamp_max_active(int max_a
+ static int init_rescuer(struct workqueue_struct *wq)
+ {
+ 	struct worker *rescuer;
++	char id_buf[WORKER_ID_LEN];
+ 	int ret;
+ 
+ 	if (!(wq->flags & WQ_MEM_RECLAIM))
+@@ -5555,7 +5572,9 @@ static int init_rescuer(struct workqueue
+ 	}
+ 
+ 	rescuer->rescue_wq = wq;
+-	rescuer->task = kthread_create(rescuer_thread, rescuer, "kworker/R-%s", wq->name);
++	format_worker_id(id_buf, sizeof(id_buf), rescuer, NULL);
++
++	rescuer->task = kthread_create(rescuer_thread, rescuer, "%s", id_buf);
+ 	if (IS_ERR(rescuer->task)) {
+ 		ret = PTR_ERR(rescuer->task);
+ 		pr_err("workqueue: Failed to create a rescuer kthread for wq \"%s\": %pe",
+@@ -6384,19 +6403,15 @@ void show_freezable_workqueues(void)
+ /* used to show worker information through /proc/PID/{comm,stat,status} */
+ void wq_worker_comm(char *buf, size_t size, struct task_struct *task)
+ {
+-	int off;
+-
+-	/* always show the actual comm */
+-	off = strscpy(buf, task->comm, size);
+-	if (off < 0)
+-		return;
+-
+ 	/* stabilize PF_WQ_WORKER and worker pool association */
+ 	mutex_lock(&wq_pool_attach_mutex);
+ 
+ 	if (task->flags & PF_WQ_WORKER) {
+ 		struct worker *worker = kthread_data(task);
+ 		struct worker_pool *pool = worker->pool;
++		int off;
++
++		off = format_worker_id(buf, size, worker, pool);
+ 
+ 		if (pool) {
+ 			raw_spin_lock_irq(&pool->lock);
+@@ -6415,6 +6430,8 @@ void wq_worker_comm(char *buf, size_t si
+ 			}
+ 			raw_spin_unlock_irq(&pool->lock);
+ 		}
++	} else {
++		strscpy(buf, task->comm, size);
+ 	}
+ 
+ 	mutex_unlock(&wq_pool_attach_mutex);
 
