@@ -1,321 +1,115 @@
-Return-Path: <linux-kernel+bounces-183504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A668C99EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:46:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FC68C99F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83777B21E59
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 08:46:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10BD3280C8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 08:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5101CA87;
-	Mon, 20 May 2024 08:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB361A2D;
+	Mon, 20 May 2024 08:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cReYhNtU"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ClkoGjEY"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9443FA2D;
-	Mon, 20 May 2024 08:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB2612B77
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 08:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716194753; cv=none; b=mPlNivY24yR64enJw/uxkMP56Xu136gFTi1B9vqqfhYt05vuYhPcGXvfPUKWAUjnL6eMEz/hDtCyIZdW5AhZhcjxK/ziORaEWFrZzu+gzmWTGLqht7aFWqWUcKN7SOyQbDIGjbp2ty31eg1wv5glxJ9fa+pUjssum5/jBdxYZII=
+	t=1716194869; cv=none; b=rSRkFFHOClxbhrsEZz/e4GGO7RQQdGDv0Nz4Qn83obHh3GHI3hvWmAo22ecKQwlzAvOLuMmpaZvPMl+Hr5w0ATUTFOUDwRFlo9B4ncCzO5LW/F/ghCPZ8g2omG6nSKMh2a3gqi/YTt6MNpDmBhLBctgsoNMCuw4LvvNQBAghy7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716194753; c=relaxed/simple;
-	bh=dyWHdQIOPf5ByBFIrrYhjIszG4FrJ8Kbt+apgc27Vko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e10lohq1U0Wr6nXX1PRcyGz5SJDoO81llpXS0+w5EBDdcX3B4rOvh+F3wGrSbbw8oopPdJgiPgfDSF32pcJhXcWc28YQslu5VbKSUhFIqE6I4Iuuq5ChncH7OoQLU4S5adbvDG2qeqObcK2hUR4jTQKDtHlQizBjtKKGiTQvELM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cReYhNtU; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716194748; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=mOJbLoDEbhw+IxO8LnZ1BgN4WgsSHktGATTpcwnHMYE=;
-	b=cReYhNtUy2Yxus6nMerbMxc89CPPee1+g25mOrMhte5MqdHHC/qcNA1iFDOccpsaE8n0pUGUBRgKtQ61v/DoSqGDG3BHr5Cxlfb4dSo1gyoQGduPBDcqzs6nmymguiYGfYhmLOxSRUhwwpIzV6QPnLTyMWF5btSuR2IrfKTFd8U=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W6pD40v_1716194745;
-Received: from 30.97.48.204(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W6pD40v_1716194745)
-          by smtp.aliyun-inc.com;
-          Mon, 20 May 2024 16:45:47 +0800
-Message-ID: <cd7fe397-9785-42f3-b05f-39ab90ba6a9a@linux.alibaba.com>
-Date: Mon, 20 May 2024 16:45:45 +0800
+	s=arc-20240116; t=1716194869; c=relaxed/simple;
+	bh=1JXwg3co7CA4yd8HEmvpHCNIBhJLvkCWwnyE35UiQjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TipA+R6QtgZHrBx/KxS7VmvMJhuVwNz8epM9k3btlgDKdpsdR8UFEhU9rFfeCIMDcbtadE/FQiWB9inZ0EUVZ0QDAjtGtpGtwo5y5onaS8BPXWrCCwWq0Sl0/koWqCL6oZ2RptrNfXAJhjuvWPGpAb3XSg0bER7+aMjHs4208JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ClkoGjEY; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ee5235f5c9so64891125ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 01:47:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716194867; x=1716799667; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YrLMhQtHmFLHs+kWdp3R2y+V3C5K0eADNR+Y0D696q8=;
+        b=ClkoGjEYQ/cv7Eff3faGvgT35sEOQc+VhdA5v2h02Qi/vFPyO9hVabP9gqtE1Lxlm2
+         yTSEvDnXe98j0VrtzOy22DNbYIgc5+r1leT/JU/KZ4n5zE/zwoeAnQPDJ4S54iG1CMA2
+         HS0RCPfzSLXaHG3fPU6LPPUejp6mFbTqyh8JiOrWbIodtWkScFtzkJTs/uYoiFE8xqO+
+         7i7XUC6DlkKYMi8FrVZ+MD0Lv1BJKk0WcUAIx6Re0NydYQQGhYxKSKUAS/13mvxOjnJC
+         2NYaBhXxflrZ5pfs0zglKfMImyHySNGMXvSRAwoaSgO+lmEy3cAkndrDtG8h2i9ZpUll
+         E/Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716194867; x=1716799667;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YrLMhQtHmFLHs+kWdp3R2y+V3C5K0eADNR+Y0D696q8=;
+        b=LMLIRzsVYTh0Rhhb768f1giGy5cCzUshO+qmdpoJB4WbMhxOJqTIYMPRW3mOstEKPk
+         OdYB2zrcueLhvTCr251Xc0ov49/2PNwuhwvcYuvsqIvzxj/9U1VcrAEqix0hrA2iKKB4
+         SnZLouDhkSmZy0joKkqewLsU4Nwu4aetbDEBTJ0jxUQDeHQdSW8FW8qty7ek8IW61BBJ
+         DWznJs9ktFu9CatZbi9fMhxPdbn3VoQ4PR1o2xXMMqUKIgGrE+QB+1+Ic7L2gFquZ5ud
+         7fe2wQjhbt+wLoVemxS7cLoX+RbYw1tQKVYwLvGVQceFe96FmZjwdzVw/DhUq+PfHTfy
+         QlQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUN3Bm++v/m9sWG1D6VALBmTJInI88ExfupMgolF0OH56kbiYJlto7mYZthpfy6cAZskm4tb53UAQKr1uTJWRNyg62gVc4ikbkEMAai
+X-Gm-Message-State: AOJu0YynQPEVSse/NF9TGopk9oxxIraK+7lnzsNNEbF9Y+uOwN5QJqub
+	9eVlea8y2r0IG29Gsf8TTQ17bSMaT2kOt6Iw3RFSzRB+nURFbUppT0yE0oW20sE=
+X-Google-Smtp-Source: AGHT+IHIV6eCV/9i6/dZe1BXa4HhbTQyGQqcAj5k+kJx1rGb6z5ATgfbFY+Jq78Q6UjwvQeG1Eelvg==
+X-Received: by 2002:a17:902:bf04:b0:1e2:1df:449b with SMTP id d9443c01a7336-1ef44182635mr255554345ad.69.1716194866898;
+        Mon, 20 May 2024 01:47:46 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f30523c34csm9111535ad.13.2024.05.20.01.47.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 01:47:46 -0700 (PDT)
+Date: Mon, 20 May 2024 14:17:44 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Vivek Aknurwar <quic_viveka@quicinc.com>,
+	Mike Tipton <quic_mdtipton@quicinc.com>
+Subject: Re: [PATCH V2] cpufreq: scmi: Avoid overflow of target_freq in fast
+ switch
+Message-ID: <20240520084744.sb2rk7l2pjf4whyd@vireshk-i7>
+References: <20240520063732.11220-1-quic_jkona@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/12] cachefiles: fix slab-use-after-free in
- cachefiles_ondemand_get_fd()
-To: Baokun Li <libaokun@huaweicloud.com>,
- Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev
-Cc: zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
- wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
- David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
- <20240515084601.3240503-4-libaokun@huaweicloud.com>
- <35561c99-c978-4cf6-82e9-d1308c82a7ff@linux.alibaba.com>
- <d8154eed-98d0-9cb7-4a2c-6b68ed75b7a2@huaweicloud.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <d8154eed-98d0-9cb7-4a2c-6b68ed75b7a2@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520063732.11220-1-quic_jkona@quicinc.com>
 
+On 20-05-24, 12:07, Jagadeesh Kona wrote:
+> Conversion of target_freq to HZ in scmi_cpufreq_fast_switch()
+> can lead to overflow if the multiplied result is greater than
+> UINT_MAX, since type of target_freq is unsigned int. Avoid this
+> overflow by assigning target_freq to unsigned long variable for
+> converting it to HZ.
+> 
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> ---
+> Changes in V2:
+>   - Updated freq variable from u64 to unsigned long to keep it
+>     consistent with the rate parameter in scmi .freq_set() callback
+>   - Link to v1: https://lore.kernel.org/all/20240517070157.19553-1-quic_jkona@quicinc.com/
+> ---
+>  drivers/cpufreq/scmi-cpufreq.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
+Applied. Thanks.
 
-On 2024/5/20 16:38, Baokun Li wrote:
-> Hi Jingbo,
-> 
-> Thanks for your review!
-> 
-> On 2024/5/20 15:24, Jingbo Xu wrote:
->>
->> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
->>> From: Baokun Li <libaokun1@huawei.com>
->>>
->>> We got the following issue in a fuzz test of randomly issuing the restore
->>> command:
->>>
->>> ==================================================================
->>> BUG: KASAN: slab-use-after-free in cachefiles_ondemand_daemon_read+0x609/0xab0
->>> Write of size 4 at addr ffff888109164a80 by task ondemand-04-dae/4962
->>>
->>> CPU: 11 PID: 4962 Comm: ondemand-04-dae Not tainted 6.8.0-rc7-dirty #542
->>> Call Trace:
->>>   kasan_report+0x94/0xc0
->>>   cachefiles_ondemand_daemon_read+0x609/0xab0
->>>   vfs_read+0x169/0xb50
->>>   ksys_read+0xf5/0x1e0
->>>
->>> Allocated by task 626:
->>>   __kmalloc+0x1df/0x4b0
->>>   cachefiles_ondemand_send_req+0x24d/0x690
->>>   cachefiles_create_tmpfile+0x249/0xb30
->>>   cachefiles_create_file+0x6f/0x140
->>>   cachefiles_look_up_object+0x29c/0xa60
->>>   cachefiles_lookup_cookie+0x37d/0xca0
->>>   fscache_cookie_state_machine+0x43c/0x1230
->>>   [...]
->>>
->>> Freed by task 626:
->>>   kfree+0xf1/0x2c0
->>>   cachefiles_ondemand_send_req+0x568/0x690
->>>   cachefiles_create_tmpfile+0x249/0xb30
->>>   cachefiles_create_file+0x6f/0x140
->>>   cachefiles_look_up_object+0x29c/0xa60
->>>   cachefiles_lookup_cookie+0x37d/0xca0
->>>   fscache_cookie_state_machine+0x43c/0x1230
->>>   [...]
->>> ==================================================================
->>>
->>> Following is the process that triggers the issue:
->>>
->>>       mount  |   daemon_thread1    |    daemon_thread2
->>> ------------------------------------------------------------
->>>   cachefiles_ondemand_init_object
->>>    cachefiles_ondemand_send_req
->>>     REQ_A = kzalloc(sizeof(*req) + data_len)
->>>     wait_for_completion(&REQ_A->done)
->>>
->>>              cachefiles_daemon_read
->>>               cachefiles_ondemand_daemon_read
->>>                REQ_A = cachefiles_ondemand_select_req
->>>                cachefiles_ondemand_get_fd
->>>                copy_to_user(_buffer, msg, n)
->>>              process_open_req(REQ_A)
->>>                                    ------ restore ------
->>>                                    cachefiles_ondemand_restore
->>>                                    xas_for_each(&xas, req, ULONG_MAX)
->>>                                     xas_set_mark(&xas, CACHEFILES_REQ_NEW);
->>>
->>>                                    cachefiles_daemon_read
->>>                                     cachefiles_ondemand_daemon_read
->>>                                      REQ_A = cachefiles_ondemand_select_req
->>>
->>>               write(devfd, ("copen %u,%llu", msg->msg_id, size));
->>>               cachefiles_ondemand_copen
->>>                xa_erase(&cache->reqs, id)
->>>                complete(&REQ_A->done)
->>>     kfree(REQ_A)
->>>                                      cachefiles_ondemand_get_fd(REQ_A)
->>>                                       fd = get_unused_fd_flags
->>>                                       file = anon_inode_getfile
->>>                                       fd_install(fd, file)
->>>                                       load = (void *)REQ_A->msg.data;
->>>                                       load->fd = fd;
->>>                                       // load UAF !!!
->>>
->>> This issue is caused by issuing a restore command when the daemon is still
->>> alive, which results in a request being processed multiple times thus
->>> triggering a UAF. So to avoid this problem, add an additional reference
->>> count to cachefiles_req, which is held while waiting and reading, and then
->>> released when the waiting and reading is over.
->>>
->>>
->>> Note that since there is only one reference count for waiting, we need to
->>> avoid the same request being completed multiple times, so we can only
->>> complete the request if it is successfully removed from the xarray.
->> Sorry the above description makes me confused.  As the same request may
->> be got by different daemon threads multiple times, the introduced
->> refcount mechanism can't protect it from being completed multiple times
->> (which is expected).  The refcount only protects it from being freed
->> multiple times.
-> The idea here is that because the wait only holds one reference count,
-> complete(&req->done) can only be called when the req has been
-> successfully removed from the xarry, otherwise the following UAF may
-> occur:
-> 
->     daemon_thread1    |    daemon_thread2
-> -------------------------------------------
-> cachefiles_ondemand_daemon_read
->   xa_lock(&cache->reqs)
->   // select req_A
->   xa_unlock(&cache->reqs)
->                      // restore req_A and read again
->                      cachefiles_ondemand_daemon_read
->                      xa_lock(&cache->reqs)
->                      // select req_A
->                      xa_unlock(&cache->reqs)
-> // goto error, erase success
-> xa_erase(&cache->reqs, id)
-> complete(&req_A->done)
-> // free req_A
->                      // goto error, erase failed
->                      complete(&req_A->done)
->                      // req_A use-after-free
-> 
-> This is also why error requests and CLOSE requests are handled
-> together and why xas_load(&xas) == req is checked.
->>> Fixes: e73fa11a356c ("cachefiles: add restore command to recover inflight ondemand read requests")
->>> Suggested-by: Hou Tao <houtao1@huawei.com>
->>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->>> Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
->>> ---
->>>   fs/cachefiles/internal.h |  1 +
->>>   fs/cachefiles/ondemand.c | 44 ++++++++++++++++++++++------------------
->>>   2 files changed, 25 insertions(+), 20 deletions(-)
->>>
->>> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
->>> index d33169f0018b..7745b8abc3aa 100644
->>> --- a/fs/cachefiles/internal.h
->>> +++ b/fs/cachefiles/internal.h
->>> @@ -138,6 +138,7 @@ static inline bool cachefiles_in_ondemand_mode(struct cachefiles_cache *cache)
->>>   struct cachefiles_req {
->>>       struct cachefiles_object *object;
->>>       struct completion done;
->>> +    refcount_t ref;
->>>       int error;
->>>       struct cachefiles_msg msg;
->>>   };
->>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->>> index fd49728d8bae..56d12fe4bf73 100644
->>> --- a/fs/cachefiles/ondemand.c
->>> +++ b/fs/cachefiles/ondemand.c
->>> @@ -4,6 +4,12 @@
->>>   #include <linux/uio.h>
->>>   #include "internal.h"
->>> +static inline void cachefiles_req_put(struct cachefiles_req *req)
->>> +{
->>> +    if (refcount_dec_and_test(&req->ref))
->>> +        kfree(req);
->>> +}
->>> +
->>>   static int cachefiles_ondemand_fd_release(struct inode *inode,
->>>                         struct file *file)
->>>   {
->>> @@ -299,7 +305,6 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>>   {
->>>       struct cachefiles_req *req;
->>>       struct cachefiles_msg *msg;
->>> -    unsigned long id = 0;
->>>       size_t n;
->>>       int ret = 0;
->>>       XA_STATE(xas, &cache->reqs, cache->req_id_next);
->>> @@ -330,41 +335,39 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>>       xas_clear_mark(&xas, CACHEFILES_REQ_NEW);
->>>       cache->req_id_next = xas.xa_index + 1;
->>> +    refcount_inc(&req->ref);
->>>       xa_unlock(&cache->reqs);
->>> -    id = xas.xa_index;
->>> -
->>>       if (msg->opcode == CACHEFILES_OP_OPEN) {
->>>           ret = cachefiles_ondemand_get_fd(req);
->>>           if (ret) {
->>>               cachefiles_ondemand_set_object_close(req->object);
->>> -            goto error;
->>> +            goto out;
->>>           }
->>>       }
->>> -    msg->msg_id = id;
->>> +    msg->msg_id = xas.xa_index;
->>>       msg->object_id = req->object->ondemand->ondemand_id;
->>>       if (copy_to_user(_buffer, msg, n) != 0) {
->>>           ret = -EFAULT;
->>>           if (msg->opcode == CACHEFILES_OP_OPEN)
->>>               close_fd(((struct cachefiles_open *)msg->data)->fd);
->>> -        goto error;
->>>       }
->>> -
->>> -    /* CLOSE request has no reply */
->>> -    if (msg->opcode == CACHEFILES_OP_CLOSE) {
->>> -        xa_erase(&cache->reqs, id);
->>> -        complete(&req->done);
->>> +out:
->>> +    /* Remove error request and CLOSE request has no reply */
->>> +    if (ret || msg->opcode == CACHEFILES_OP_CLOSE) {
->>> +        xas_reset(&xas);
->>> +        xas_lock(&xas);
->>> +        if (xas_load(&xas) == req) {
->> Just out of curiosity... How could xas_load(&xas) doesn't equal to req?
-> 
-> As mentioned above, the req may have been deleted or even the id
-> 
-> may have been reused.
-> 
->>
->>> +            req->error = ret;
->>> +            complete(&req->done);
->>> +            xas_store(&xas, NULL);
->>> +        }
->>> +        xas_unlock(&xas);
->>>       }
->>> -
->>> -    return n;
->>> -
->>> -error:
->>> -    xa_erase(&cache->reqs, id);
->>> -    req->error = ret;
->>> -    complete(&req->done);
->>> -    return ret;
->>> +    cachefiles_req_put(req);
->>> +    return ret ? ret : n;
->>>   }
->> This is actually a combination of a fix and a cleanup which combines the
->> logic of removing error request and the CLOSE requests into one place.
->> Also it relies on the cleanup made in patch 2 ("cachefiles: remove
->> err_put_fd tag in cachefiles_ondemand_daemon_read()"), making it
->> difficult to be atomatically back ported to the stable (as patch 2 is
->> not marked as "Fixes").
->>
->> Thus could we make the fix first, and then make the cleanup.
-> I don't think that's necessary, stable automatically backports the
-> relevant dependency patches in case of backport patch conflicts,
-> and later patches modify the logic here as well.
-> Or add Fixes tag for patch 2?
-
-I think we might better to avoid unnecessary dependencies
-since it relies on some "AI" magic and often mis-backportes
-real dependencies.
-
-I tend to leave real bugfixes first, and do cleanup next.
-But please don't leave cleanup patches with "Fixes:" tags
-anyway since it just misleads people.
-
-Thanks,
-Gao Xiang
+-- 
+viresh
 
