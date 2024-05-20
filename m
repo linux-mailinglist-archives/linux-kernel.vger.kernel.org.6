@@ -1,129 +1,96 @@
-Return-Path: <linux-kernel+bounces-184086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA2B8CA251
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA698CA2F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF56B1C213D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:49:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BA0C1C215B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119DC1384B0;
-	Mon, 20 May 2024 18:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EB31386CC;
+	Mon, 20 May 2024 19:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Uevmahz5"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VhUZLS06"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5D528E7;
-	Mon, 20 May 2024 18:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDC912E6A;
+	Mon, 20 May 2024 19:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716230974; cv=none; b=SBEpoHnBdr+ryxJ/WbNWfJDbDZ82CXFNxP1gM6DIPFYaZVDigEKJw66XirFTm//4PA1Pdb4sCvn+khAwofKI1ROSEgb6R5IECamJd4K71ufaAxvi9BUmJJMQZ6tFXZWHu+l6FOKsqL4ABJ0mXfDnuF35B2JZI54oF+7H5kKaEK8=
+	t=1716234837; cv=none; b=kK0/RM7J8BuFrnRtKzqOK8Exa1+XdkyI5Tjw+nWA6HAcmYpzSlIQQ9JkHJ7/meF9sCz0MMQU6Wz7vdOPQSu5XESgOlMQN4JsqYVuHKnmXnb7bS9mqWDVnW/JosIkFb3EnuN9j58DUMvnWzYMn0t6ZQX7MMtzPpOf97ncNCYK974=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716230974; c=relaxed/simple;
-	bh=u2m9PqRi31nqcXPRdJ15h40h2RHdmsocERJ8ssKxvJ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=snxOIREX4+9XGcYgP4Ea8xNxYI0tcJGWlGBT56Tq6CdOpKxwKMSHKNsSJ21P6YzELZzYbu+UrO4+Yq459mB4J+yuSPvX5UHQU/HnnDFBwnjnx1YUt4SgPWxoTsc32r4qOp/EupUEsVmhPZBQxgRixFAORETjw/j+vdI/g4AYIyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Uevmahz5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44KBtNUd030957;
-	Mon, 20 May 2024 18:49:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=u2m9PqRi31nqcXPRdJ15h40h2RHdmsocERJ8ssKxvJ4=; b=Ue
-	vmahz5+xafE2pyUMfwhkAQyBLAdP6TGsq05Bd68KjWqnNVJHVeRfg8fGMpIyvkyH
-	S+jq4V1OXWv0sSTyziFrr/ozy929LbwQBbvpR5hC5ytvmDOoP4Dpom2Gequ4EPar
-	ZJXkCyHQDx33Hdd5GcNzk6kRSl5lvryKF6SITuuyZUSYnjCw/wiFadMy/E+HHSPZ
-	QOv9VmEDiHUgybq/NZ5cJ0NHpcH3+bKbyqYg5d7Z2E+a5L3UwNd8Qpm6j8tzeYsL
-	FiFtA8OtBzFuzDMLv2+/qD8UypUeVdj3g2rpTN8GTRDdc/AohdyVF8xgUoH7p+7O
-	7Ra2aGTdL7kX1ovIHRjg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pqc48a7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 18:49:10 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44KIn8pu008035
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 18:49:08 GMT
-Received: from [10.110.126.173] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 20 May
- 2024 11:49:04 -0700
-Message-ID: <e3ee7a29-5b2e-4678-91e5-4fe3a0e618c6@quicinc.com>
-Date: Mon, 20 May 2024 11:49:03 -0700
+	s=arc-20240116; t=1716234837; c=relaxed/simple;
+	bh=QxwadSFkxmRXFr0xxxHIn2pF5xPts2dxqh+DBylu7mQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rbHgP0hKbo1XOQCIrVUoYgKEq02bUpwsaD5aSi4EPVUiTsu9pm+MJ2xDcui8eTyjJIRewOE2hhs6l6bracFgzs9NaexTUP6Wd3rTrhZwkdkW7Rmcxumd23NHMSXpCpvpH56nTc/WS9+ZFepZ1pnQyPBVDGGDRUhVX7ZtF3sZwsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VhUZLS06; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716234833;
+	bh=QxwadSFkxmRXFr0xxxHIn2pF5xPts2dxqh+DBylu7mQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VhUZLS06j1YdBnQbzv56wlvUR5HQvP/1AvkKKjbuDbLyWBUR182YzrNpA53jj0242
+	 /XfRVzmz2NPwJEqJ4wd3q1geEWlr3zMB3hKvXqSCwwLwldwYxWeCJt72l0fQ3kneEc
+	 vlqrJdesHy/9tfTO5izTPOAmQKFQymdSt2ocrpWD2o1Al0Tds8TQgKcOziaLorI9au
+	 CZ5KW2RBAZAHfCsmQjPa2KhipqUUce1J40a4H6aU1WN+tiM6K7JL5qB7Ly8DW+u324
+	 disEcT1fkvvegQKdSYQvjt9vIAhmHagZsTdVqE5TtD8nBypirSCIvwOI1ug//FF0tI
+	 aZUYxFQM7Ln4Q==
+Received: from localhost.localdomain (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 317083780BFE;
+	Mon, 20 May 2024 19:53:52 +0000 (UTC)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: kernel@collabora.com,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: mm: check return values
+Date: Mon, 20 May 2024 11:52:48 -0700
+Message-Id: <20240520185248.1801945-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sh: Call paging_init() earlier in the init sequence
-Content-Language: en-US
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        <ysato@users.sourceforge.jp>, <dalias@libc.org>
-CC: <akpm@linux-foundation.org>, <linux-sh@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
-        <kernel@quicinc.com>, Rob Herring <robh@kernel.org>,
-        Rob Landley <rob@landley.net>
-References: <20240423233150.74302-1-quic_obabatun@quicinc.com>
- <72ec7831604326e852eb228072b1d817bab829fb.camel@physik.fu-berlin.de>
- <b00e0adc72815e465cf32fc5505445cfceeeca84.camel@physik.fu-berlin.de>
- <ec5f3194-7e9e-4cc9-86b9-02a204649246@quicinc.com>
- <0e813c8498bf3d9ed5d8fd5b171ac9980dc2999c.camel@physik.fu-berlin.de>
- <e6436f2f-ac51-4f18-90f2-e39a2ff1c520@quicinc.com>
- <7130f36dcf6f2272fa61eb1477f881ccea0375f8.camel@physik.fu-berlin.de>
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-In-Reply-To: <7130f36dcf6f2272fa61eb1477f881ccea0375f8.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Gz3yrCDYxGlPnyFqqpBvlLeDU4Cy5cAd
-X-Proofpoint-GUID: Gz3yrCDYxGlPnyFqqpBvlLeDU4Cy5cAd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-20_09,2024-05-17_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
- priorityscore=1501 bulkscore=0 adultscore=0 mlxlogscore=637 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405200150
+Content-Transfer-Encoding: 8bit
 
+Check return value and return error/skip the tests.
 
-On 5/20/2024 11:24 AM, John Paul Adrian Glaubitz wrote:
-> Hi Oreoluwa,
->
-> On Mon, 2024-05-20 at 11:03 -0700, Oreoluwa Babatunde wrote:
->> I have uploaded v3 of this patch now.
->> https://lore.kernel.org/all/20240520175802.2002183-1-quic_obabatun@quicinc.com/
->>
->> In this new version, paging_init() is left in its original position and only the portion
->> of code that is responsible for setting aside the reserved memory regions is moved.
-> Thanks a lot for the updated version.
->
-> I will give it a try later this week as we had a public holiday in Germany
-> today and therefore enjoyed an extended weekend.
->
-> If it doesn't break anything and Geert is happy with the change as well,
-> I'll pick it up for v6.11.
->
-> Adrian
+Fixes: 46fd75d4a3c9 ("selftests: mm: add pagemap ioctl tests")
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ tools/testing/selftests/mm/pagemap_ioctl.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Hi Adrian,
-
-That sounds good, thank you!
-Enjoy the extended weekend!
-
-Regards,
-Oreoluwa
+diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c b/tools/testing/selftests/mm/pagemap_ioctl.c
+index 2d785aca72a5c..bcc73b4e805c6 100644
+--- a/tools/testing/selftests/mm/pagemap_ioctl.c
++++ b/tools/testing/selftests/mm/pagemap_ioctl.c
+@@ -1567,8 +1567,10 @@ int main(int argc, char *argv[])
+ 	/* 7. File Hugetlb testing */
+ 	mem_size = 2*1024*1024;
+ 	fd = memfd_create("uffd-test", MFD_HUGETLB | MFD_NOEXEC_SEAL);
++	if (fd < 0)
++		ksft_exit_fail_msg("uffd-test creation failed %d %s\n", errno, strerror(errno));
+ 	mem = mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+-	if (mem) {
++	if (mem != MAP_FAILED) {
+ 		wp_init(mem, mem_size);
+ 		wp_addr_range(mem, mem_size);
+ 
+-- 
+2.39.2
 
 
