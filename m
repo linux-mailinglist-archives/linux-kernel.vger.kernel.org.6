@@ -1,168 +1,105 @@
-Return-Path: <linux-kernel+bounces-183813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A3C8C9E7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:59:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2078C9E8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA8C91F22176
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:59:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3C1E1F21F31
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63536136678;
-	Mon, 20 May 2024 13:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A91136992;
+	Mon, 20 May 2024 14:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lJxn9+Hw"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xNqjhzzM"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B2C136657
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 13:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC83A53E20;
+	Mon, 20 May 2024 14:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716213556; cv=none; b=N3vxZgaz0jY0JxPfxb4oAAp+snATyIwBNPHKbsgW/wyRm2Ex2RIJA91kJRXzQ+IUW/Kl/FvpVi0Akya5cNWKRspGNfGzJEHX/EyHFxFJtW0IY8n1/gd49+SXoZxkCzNc8ALmpYt2jBD5llTO8K1EV+ZwOnUiyYc9W1rOh5D3yj0=
+	t=1716213717; cv=none; b=FKomVTsunBzXw1tvSLe63woDzFP3BblkUGylHZBJKBAbFZch88pPAwYJvOvIygS5krEumkye/Se9pqApMqUcRYQYQXIp+mloKP1gvnKGNhL+Dc96jBSdQkBoP88UW7YGRj9QPpEpHe+dCsAMe1p9zuk8C4aWafWHoagFQOHKM48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716213556; c=relaxed/simple;
-	bh=auN7ajgDFQ+TscwjsNo+1lNRLK44QGFJmvB3kaABhgc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZL3tcG28OOILJIOFcEw2YQUSPBNaP6N3+UYXi/W2361nPQdx5JqtyQiqibuuPY2gTxjgraIR36FFXE20suZku2kHpNC+g5F462FBR9UAmeKL0StFU9iROncklxHcsWcmVKSRDRLj2yLu+Ixw6QTL36kc8KytnBvEDpa/IGDj1f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lJxn9+Hw; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3c9abbb9efbso1340196b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 06:59:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716213553; x=1716818353; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SRk7efIpjrHKK8mZq8D2p4bRXd76dFjkrEncDkyuqMM=;
-        b=lJxn9+HwGhERdZyeNGa1WXwAZGJ6c0V5XkYlqzkliLvjGGO5pJ9tg9REydv+oCkwRG
-         cItPNSIJpvmerPK71mJIvvKgS7+wUESSZjq8J4HZhAx7zo9fFhQRH50s+yzcnXpErZ6E
-         H0NlXtSvl1F8dkqltn/suEkGDyn97MNkxBY/gNG8YBkIb370IrPxkzZpugDVu3D4CJp5
-         cXcahI1bWdrD3fSDQJVgdeYCXt54Ol+A3+w/G23IKLHilc1HxXXsMztR+wCMwPgUkfl+
-         5GZGd2g6x2opIafFJoVEPDkeygi8e0ag4JfKKJErUBPyIfofSm41PoDGlcWXhUnW7xaM
-         8LGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716213553; x=1716818353;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SRk7efIpjrHKK8mZq8D2p4bRXd76dFjkrEncDkyuqMM=;
-        b=esT2XqVIK8WlcyiB8SneO6NhNHLAfrBYl+uK6lJUgPluEM8+1d/JLddVG2/sG+ZTUP
-         Zg6/ktdQDVXq5lhqD4x/7fUzXVOQckm4ZtR/HEgIm8OrlQvz10vwjFKIrT5zSPmKcQr6
-         m5uNXobiB0qnxzq+cP/7BxdfPNJ37d58c9epgrx1SK81TRCuWmH8aqaO2doU1g7c5v3n
-         iEN+Wld2e/nDerkXhqxL9Je4CVSfolEqqdskgtBWLKQVF/aSywYDXOujt/9qMyJQVPFl
-         fs+/Gsvn6ka3h8Z/4b7ULxBdhaCpKoe5IVk6eUuojj+KiHQWtPymKgZyFWzrj0zMOE/6
-         1P0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVg/0tod4lr78VIQlBteyRNZ06MModcYxTnrAhkBddDNL6yhaoQ7QlAjM2q5UUNa++Vm31c5HWArh81tj0rDSksVVfYTxKmGjQFjV2t
-X-Gm-Message-State: AOJu0Yy0VwlZx+bxFoXgTYMSpzmPwr7XB8Sx162ZC3/xxcRfELqP8nqa
-	WwOBiCIctMM6x19UcNkO337Yn9mQBSRg74rmqbGRM67oeUW7gcCmkyZld4S3hZY=
-X-Google-Smtp-Source: AGHT+IGAJafPJAzkp9+IXA/K8JKbMbU7yk4n7qr30M6RhtuunPKyLY2TXFyvUia3bR42SD19HYBcrw==
-X-Received: by 2002:a05:6808:2391:b0:3c9:c30f:801c with SMTP id 5614622812f47-3c9d3bced71mr2401887b6e.10.1716213552634;
-        Mon, 20 May 2024 06:59:12 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3c99e8cf09csm3199848b6e.39.2024.05.20.06.59.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 May 2024 06:59:12 -0700 (PDT)
-Message-ID: <11c97f46-3881-4274-8c36-ec88218d3e60@baylibre.com>
-Date: Mon, 20 May 2024 08:59:11 -0500
+	s=arc-20240116; t=1716213717; c=relaxed/simple;
+	bh=nqUvc6sU6vpcddIpClyKh9qpVYre+r9fzZH4SsuS2ag=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MN31n20bn9PXzmKQbCPbfIe9Q5Sew6+8zwPqWUrYqYgAJR3qBXpX7zCM7K+c+SOfjK1DU1YUqVzNXvqkaoueWuStGaU/suSG3U/60Gdfk28x/QuMZPwBIkqfsYSuyjZG3cfDBZ8srvreYTHrgeFLKgxKLbStQSPvO72powWJoz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=xNqjhzzM; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44KDtKnN018364;
+	Mon, 20 May 2024 16:01:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=selector1; bh=/eWZVhr
+	f80If0Zu1V4FcVn5XIUfeeeYvTullFqKWqvU=; b=xNqjhzzMZ0EpV3j+0L2WojM
+	vfYR+H6ZE3j8r0HKFHK1FlGd8CHsdqS8epSHMIeq5ZOlbQJmJBo0b03hmFVsfm1S
+	HyId82NCOKuudcy7bH5x9gP7CYmpzSkmEpssEkraWxRXo8A53JnfdkyTgPmxJjHW
+	6vmdqz8tukQwNVpLlF27xDuAlAXdXAjWpLoubULMldK+wdcVM9gD8wJCmsTKObm7
+	QICSkm+yUzNd7wuZBv208r8AFgcc8d9Ms2hMh9jOS5GBJ4ttL/MpDrBHp7TIfJWP
+	D77eAg7C7QuVZnVsIamf4jZ9CMbmrXg9gtSfLWPf4QeX5j7uwe7NkdZ59HRpWUA=
+	=
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y6n337bnf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 16:01:28 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9D9CC4004A;
+	Mon, 20 May 2024 16:01:06 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F02D8222C81;
+	Mon, 20 May 2024 16:00:35 +0200 (CEST)
+Received: from localhost (10.48.86.111) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 20 May
+ 2024 16:00:35 +0200
+From: Valentin Caron <valentin.caron@foss.st.com>
+To: Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Valentin Caron <valentin.caron@foss.st.com>
+Subject: [PATCH 0/3] arm64: dts: st: add usart nodes for stm32mp25
+Date: Mon, 20 May 2024 16:00:21 +0200
+Message-ID: <20240520140024.3711080-1-valentin.caron@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 4/4] iio: adc: ad7380: add support for multiple scan
- type
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Julien Stephan <jstephan@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
- <20240507-iio-add-support-for-multiple-scan-types-v1-4-95ac33ee51e9@baylibre.com>
- <20240508124049.00001661@Huawei.com>
- <CAMknhBFob4Wd8Gm8W8NKSuL9UbBCY8+fAN_voGPhb4Fy1tAT-w@mail.gmail.com>
- <20240519202039.5a70157d@jic23-huawei>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240519202039.5a70157d@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-20_05,2024-05-17_03,2024-05-17_01
 
-On 5/19/24 2:20 PM, Jonathan Cameron wrote:
-> On Wed, 8 May 2024 12:21:09 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
-> 
->> On Wed, May 8, 2024 at 6:40 AM Jonathan Cameron
->> <Jonathan.Cameron@huawei.com> wrote:
->>>
->>> On Tue,  7 May 2024 14:02:08 -0500
->>> David Lechner <dlechner@baylibre.com> wrote:
->>>  
->>>> The AD783x chips have a resolution boost feature that allows for 2
->>>> extra bits of resolution. Previously, we had to choose a scan type to
->>>> fit the largest resolution and manipulate the raw data to fit when the
->>>> resolution was lower. This patch adds support for multiple scan types
->>>> for the voltage input channels so that we can support both resolutions
->>>> without having to manipulate the raw data.
->>>>
->>>> Signed-off-by: David Lechner <dlechner@baylibre.com>  
->>>
->>> I'm wondering about the control mechanism.  I was thinking we'd poke
->>> the scan type directly but this may well make more sense.
->>>
->>> This is relying on _scale change to trigger the change in the scan type.
->>> That may well be sufficient and I've been over thinking this for far too many
->>> years :)
->>>
->>> It will get messy though in some cases as the device might have a PGA on the
->>> front end so we will have a trade off between actual scaling control and
->>> resolution related scale changes. We've had a few device where the scale
->>> calculation is already complex and involves various different hardware
->>> controls, but none have affected the storage format like this.
->>>
->>> I'll think some more.
->>>  
->>
->> Here is some more food for thought. The AD4630 family of chips we are
->> working on is similar to this one in that it also has oversampling
->> with increased resolution. Except in that case, they are strictly tied
->> together. With oversampling disabled, we must only read 24-bits (or 16
->> depending on the exact model) and when oversampling is enabled, we
->> must read 32-bits (30 real bits with 2-bit shift). So in that case,
->> the scan_type would depend only on oversampling ratio > 0. (Writing
->> the oversampling ratio attribute would affect scale, but scale
->> wouldn't be writable like on ad7380.)
->>
->> It seems more intuitive to me that to enable oversampling, we would
->> just write to the oversampling ratio attribute rather than having to
->> write to a buffer _type attribute to enable oversampling in the first
->> place. And other than requiring reading the documentation it would be
->> pretty hard to guess that writing le:s30/32>>2 is what you need to do
->> to enable oversampling.
->>
-> 
-> Ok. Few weeks thinking and I've no better ideas.  Generally I'm fine
-> with how you did this but I wouldn't have a 'special / default'
-> scan_type.  Just put them all in the array and pick between them.
-> That avoids fun of people trying to work out on what basis to
-> prefer one over another. 
-> 
-> So tidy the loose ends up and I'd be delighted to see a non RFC version.
-> It 'might' be worth waiting until we have a couple of suitable drivers
-> though and then show the feature works well for them all.
-> Whilst I think I'd take it with just one though as can see how it fits
-> together, but more than one driver would boost my confidence level.
-> 
-> Jonathan
+STM32MP25 got the same serial hardware block as STM32MP1x but with two improvements:
+ - TX and RX FIFO have been extended to 64 bytes.
+ - one instance more than in STM32MP1x series (4x usart and 5x uart).
+ 
+STM32MP257F-EV1 board has one usart used by console and one usart on IO port.
 
-Great! I'll do a v2 with only the core code. Julian, Esteban and I
-are all working on drivers that should make use of this. So if all goes
-well, we should have 3 drivers for you this release cycle.
+Valentin Caron (3):
+  arm64: dts: st: add usart nodes on stm32mp25
+  arm64: dts: st: add usart6 pinctrl used on stm32mp257f-ev1 board
+  arm64: dts: st: add usart6 on stm32mp257f-ev1 board
+
+ arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi | 41 +++++++++++
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        | 72 +++++++++++++++++++
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    | 10 +++
+ 3 files changed, 123 insertions(+)
+
+-- 
+2.25.1
 
 
