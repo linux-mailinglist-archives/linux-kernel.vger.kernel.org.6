@@ -1,375 +1,137 @@
-Return-Path: <linux-kernel+bounces-183872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C6B8C9F2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:00:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FF98C9FAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3534D1C2135F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:00:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C5BE1F21969
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBB0136E2C;
-	Mon, 20 May 2024 15:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CFC136E3C;
+	Mon, 20 May 2024 15:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oF28tbLn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44ECF28E7;
-	Mon, 20 May 2024 15:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="RL5D4mYb"
+Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78C4136E26;
+	Mon, 20 May 2024 15:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716217211; cv=none; b=o16U9RWi3Yw+1yYU1MiVXS6FlYkICFJ6dGWfyNzDYolzcUT1L9EAzJ3Thac0M+hJYmF+ZDeegpB9P+SCU24sH71QwE90aPGRfyhj6SIBFdFiDTG7rTnA6EpwVe68A6RuhBMeoyR1v6xloqMH65Y3dBMXpkO/NVa+VE/qpWbGOvQ=
+	t=1716218803; cv=none; b=iz4Kq91bgodY6Y33HNdckvVEE1qQFUbqMToyhV9V7M7bOHND/LUkGf5Eb0TiSC5IhL2a5sLSxbBz7rIVywhwnk8+/8ZxY7TYMx+xtY0oQWf7D+xT8Dt355RVs2RgP6EYemcTBzO8h1083SeCMpXomgXz3d89xjpvhHbB0RJ1eDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716217211; c=relaxed/simple;
-	bh=6RnVIwxpdPu2quHrapU91k6GMCQR93bNvVmrk8LVkS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AkYHCH1Moa0kiqP9zxJ70pusqJiZcZifYy+cC4n34WuLkrxHb+Rf7raEFAksfh25HBkWhcADc+0ZryKfnPMJfjsnSq/fqXwow0Wu2P0hZBFMB2op2GVcQHCk5xHml3bhp2ioQf+xdI0aXCE6bxrGuIfc5Dg2wL4d8gEqhn4jy6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oF28tbLn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CE63C2BD10;
-	Mon, 20 May 2024 15:00:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716217210;
-	bh=6RnVIwxpdPu2quHrapU91k6GMCQR93bNvVmrk8LVkS0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oF28tbLntmCzHKO6rQoXTZ3wKS2octb5Jh6K7EmZBCBXNUFfb9Nz1Ajdy2nO9Hg6i
-	 XH7BjC2Ird+JGwRVmNhYqZy92ZhQbsr0HNPXjFb0fZLNNC41MVNmz3haLdyF98Qnzj
-	 7RIeTux/Yy0jcBFDHe5A9TzSj/0iWQ9kiXWX0kmAFy12DYxTuJdfnfaIIIoDgrdMzd
-	 ROqbDuj7O5sFlDYxBNYp4yVwskKIQr9qUQc3Bnz14LyBtSwhMAesbcDurXhZ+CwrKz
-	 bMxZchDGqjooqICZYNYs/QGUCBjCyX7PXC5YqgnAi5/S/iRCxQ99JjQCCqClqOpfm4
-	 MoZvH6ZaVtHFA==
-Message-ID: <8f60ed88-1978-4d7c-9149-aee672aa1b09@kernel.org>
-Date: Mon, 20 May 2024 17:00:03 +0200
+	s=arc-20240116; t=1716218803; c=relaxed/simple;
+	bh=2kPC8/7VEMwe1FMH7DLKRv/rPLNUj8M87O0aGdTrOsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KOBfv0wHBQRMbAiIRr15epbSvYEuN4tetLFiD7Q9+Zp/DwGFeJv1e/bVSFxdxfDKqHArVfc3R8iYGFgIvKYBzLAPqwEsQO0Ip8pMTAA02/D21kHDB60mWlGjB9NIQ5gQ5avestKzPI0Zl+IXOaysi03ENykeJaEUIJguVJWDgk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=RL5D4mYb; arc=none smtp.client-ip=185.87.125.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
+Received: by www.linux-watchdog.org (Postfix, from userid 500)
+	id 68DCA40A00; Mon, 20 May 2024 17:01:25 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 68DCA40A00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
+	s=odk20180602; t=1716217285;
+	bh=2kPC8/7VEMwe1FMH7DLKRv/rPLNUj8M87O0aGdTrOsc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RL5D4mYbX2CL9lsvzQne1UoC7l2Kf+BNuEaS7NOzaGEV/r0tOo0Qodvb/9qG+px6F
+	 m7VCLmIUQoQ0dHe1fyoSLPpxYtjgsNOOu6GaTyis/kJoAN/tKnnG3p5Ztsf5DPOW4S
+	 WhPrSIk8v8xOh8L+ThiCxG4XM7OyivxDv3KEbmKQ=
+Date: Mon, 20 May 2024 17:01:25 +0200
+From: Wim Van Sebroeck <wim@linux-watchdog.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>, Chen Ni <nichen@iscas.ac.cn>,
+	Dawei Li <set_pte_at@outlook.com>,
+	Duoming Zhou <duoming@zju.edu.cn>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Judith Mendez <jm@ti.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Niklas Schnelle <schnelle@linux.ibm.com>
+Subject: [GIT PULL REQUEST] watchdog - v6.10 release cycle.
+Message-ID: <20240520150125.GA11491@www.linux-watchdog.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-To: Nitesh Shetty <nj.shetty@samsung.com>, Jens Axboe <axboe@kernel.dk>,
- Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
- hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
- joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
- <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
- <20240520102033.9361-3-nj.shetty@samsung.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20240520102033.9361-3-nj.shetty@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.20 (2009-12-10)
 
-On 2024/05/20 12:20, Nitesh Shetty wrote:
-> We add two new opcode REQ_OP_COPY_DST, REQ_OP_COPY_SRC.
-> Since copy is a composite operation involving src and dst sectors/lba,
-> each needs to be represented by a separate bio to make it compatible
-> with device mapper.
+Hi Linus,
 
-Why ? The beginning of the sentence isn't justification enough for the two new
-operation codes ? The 2 sentences should be reversed for easier reading:
-justification first naturally leads to the reader understanding why the codes
-are needed.
+Please pull following watchdog changes for the v6.10 release cycle.
 
-Also: s/opcode/operations
+This series contains:
+* Add Lenovo SE10 platform Watchdog Driver
+* Other small fixes and improvements
 
+The output from git request-pull:
+----------------------------------------------------------------
+The following changes since commit 0bbac3facb5d6cc0171c45c9873a2dc96bea9680:
 
-> We expect caller to take a plug and send bio with destination information,
-> followed by bio with source information.
+  Linux 6.9-rc4 (2024-04-14 13:38:39 -0700)
 
-expect ? Plugging is optional. Does copy offload require it ? Please clarify this.
+are available in the git repository at:
 
-> Once the dst bio arrives we form a request and wait for source
+  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-6.10-rc1
 
-arrives ? You mean "is submitted" ?
+for you to fetch changes up to c45b8cfc6d5c12fbbc4d89b24b59402df99c1ecb:
 
-s/and wait for/and wait for the
+  watchdog: LENOVO_SE10_WDT should depend on X86 && DMI (2024-05-11 11:32:06 +0200)
 
-> bio. Upon arrival of source bio we merge these two bio's and send
+----------------------------------------------------------------
+linux-watchdog 6.10-rc1 tag
 
-s/arrival/submission ?
+----------------------------------------------------------------
+Chen Ni (1):
+      watchdog: sa1100: Fix PTR_ERR_OR_ZERO() vs NULL check in sa1100dog_probe()
 
-s/of/of the
-s/bio's/BIOs
-s/and send/and send the
-s/down to/down to the
+Dawei Li (1):
+      watchdog/wdt-main: Use cpumask_of() to avoid cpumask var on stack
 
-> corresponding request down to device driver.
-> Merging non copy offload bio is avoided by checking for copy specific
-> opcodes in merge function.
+Duoming Zhou (1):
+      watchdog: cpu5wdt.c: Fix use-after-free bug caused by cpu5wdt_trigger
 
-Super unclear... What are you trying to say here ? That merging copy offload
-BIOs with other BIOs is not allowed ? That is already handled. Only BIOs &
-requests with the same operation can be merged. The code below also suggests
-that you allow merging copy offloads... So I really do not understand this.
+Geert Uytterhoeven (1):
+      watchdog: LENOVO_SE10_WDT should depend on X86 && DMI
 
-> 
-> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> ---
->  block/blk-core.c          |  7 +++++++
->  block/blk-merge.c         | 41 +++++++++++++++++++++++++++++++++++++++
->  block/blk.h               | 16 +++++++++++++++
->  block/elevator.h          |  1 +
->  include/linux/bio.h       |  6 +-----
->  include/linux/blk_types.h | 10 ++++++++++
->  6 files changed, 76 insertions(+), 5 deletions(-)
-> 
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index ea44b13af9af..f18ee5f709c0 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -122,6 +122,8 @@ static const char *const blk_op_name[] = {
->  	REQ_OP_NAME(ZONE_FINISH),
->  	REQ_OP_NAME(ZONE_APPEND),
->  	REQ_OP_NAME(WRITE_ZEROES),
-> +	REQ_OP_NAME(COPY_SRC),
-> +	REQ_OP_NAME(COPY_DST),
->  	REQ_OP_NAME(DRV_IN),
->  	REQ_OP_NAME(DRV_OUT),
->  };
-> @@ -838,6 +840,11 @@ void submit_bio_noacct(struct bio *bio)
->  		 * requests.
->  		 */
->  		fallthrough;
-> +	case REQ_OP_COPY_SRC:
-> +	case REQ_OP_COPY_DST:
-> +		if (!q->limits.max_copy_sectors)
-> +			goto not_supported;
-> +		break;
->  	default:
->  		goto not_supported;
->  	}
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index 8534c35e0497..f8dc48a03379 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -154,6 +154,20 @@ static struct bio *bio_split_write_zeroes(struct bio *bio,
->  	return bio_split(bio, lim->max_write_zeroes_sectors, GFP_NOIO, bs);
->  }
->  
-> +static struct bio *bio_split_copy(struct bio *bio,
-> +				  const struct queue_limits *lim,
-> +				  unsigned int *nsegs)
-> +{
-> +	*nsegs = 1;
-> +	if (bio_sectors(bio) <= lim->max_copy_sectors)
-> +		return NULL;
-> +	/*
-> +	 * We don't support splitting for a copy bio. End it with EIO if
-> +	 * splitting is required and return an error pointer.
-> +	 */
-> +	return ERR_PTR(-EIO);
-> +}
+Judith Mendez (1):
+      watchdog: rti_wdt: Set min_hw_heartbeat_ms to accommodate a safety margin
 
-Hmm... Why not check that the copy request is small enough and will not be split
-when it is submitted ? Something like blk_check_zone_append() does with
-REQ_OP_ZONE_APPEND ? So adding a blk_check_copy_offload(). That would also
-include the limits check from the previous hunk.
+Krzysztof Kozlowski (1):
+      watchdog: mtx-1: drop driver owner assignment
 
-> +
->  /*
->   * Return the maximum number of sectors from the start of a bio that may be
->   * submitted as a single request to a block device. If enough sectors remain,
-> @@ -362,6 +376,12 @@ struct bio *__bio_split_to_limits(struct bio *bio,
->  	case REQ_OP_WRITE_ZEROES:
->  		split = bio_split_write_zeroes(bio, lim, nr_segs, bs);
->  		break;
-> +	case REQ_OP_COPY_SRC:
-> +	case REQ_OP_COPY_DST:
-> +		split = bio_split_copy(bio, lim, nr_segs);
-> +		if (IS_ERR(split))
-> +			return NULL;
-> +		break;
+Mark Pearson (1):
+      watchdog: lenovo_se10_wdt: Watchdog driver for Lenovo SE10 platform
 
-See above.
+Matti Vaittinen (1):
+      watchdog: bd9576: Drop "always-running" property
 
->  	default:
->  		split = bio_split_rw(bio, lim, nr_segs, bs,
->  				get_max_io_size(bio, lim) << SECTOR_SHIFT);
-> @@ -925,6 +945,9 @@ bool blk_rq_merge_ok(struct request *rq, struct bio *bio)
->  	if (!rq_mergeable(rq) || !bio_mergeable(bio))
->  		return false;
->  
-> +	if (blk_copy_offload_mergable(rq, bio))
-> +		return true;
-> +
->  	if (req_op(rq) != bio_op(bio))
->  		return false;
->  
-> @@ -958,6 +981,8 @@ enum elv_merge blk_try_merge(struct request *rq, struct bio *bio)
->  {
->  	if (blk_discard_mergable(rq))
->  		return ELEVATOR_DISCARD_MERGE;
-> +	else if (blk_copy_offload_mergable(rq, bio))
-> +		return ELEVATOR_COPY_OFFLOAD_MERGE;
->  	else if (blk_rq_pos(rq) + blk_rq_sectors(rq) == bio->bi_iter.bi_sector)
->  		return ELEVATOR_BACK_MERGE;
->  	else if (blk_rq_pos(rq) - bio_sectors(bio) == bio->bi_iter.bi_sector)
-> @@ -1065,6 +1090,20 @@ static enum bio_merge_status bio_attempt_discard_merge(struct request_queue *q,
->  	return BIO_MERGE_FAILED;
->  }
->  
-> +static enum bio_merge_status bio_attempt_copy_offload_merge(struct request *req,
-> +							    struct bio *bio)
-> +{
-> +	if (req->__data_len != bio->bi_iter.bi_size)
-> +		return BIO_MERGE_FAILED;
-> +
-> +	req->biotail->bi_next = bio;
-> +	req->biotail = bio;
-> +	req->nr_phys_segments++;
-> +	req->__data_len += bio->bi_iter.bi_size;
+Niklas Schnelle (1):
+      watchdog: add HAS_IOPORT dependencies
 
-Arg... You seem to be assuming that the source BIO always comes right after the
-destination request... What if copy offloads are being concurrently issued ?
-Shouldn't you check somehow that the pair is a match ? Or are you relying on the
-per-context plugging which prevents that from happening in the first place ? But
-that would assumes that you never ever sleep trying to allocate the source BIO
-after the destination BIO/request are prepared and plugged.
+ drivers/watchdog/Kconfig           |  69 +++++----
+ drivers/watchdog/Makefile          |   1 +
+ drivers/watchdog/bd9576_wdt.c      |  12 +-
+ drivers/watchdog/cpu5wdt.c         |   2 +-
+ drivers/watchdog/lenovo_se10_wdt.c | 308 +++++++++++++++++++++++++++++++++++++
+ drivers/watchdog/mtx-1_wdt.c       |   1 -
+ drivers/watchdog/octeon-wdt-main.c |   6 +-
+ drivers/watchdog/rti_wdt.c         |  34 ++--
+ drivers/watchdog/sa1100_wdt.c      |   5 +-
+ 9 files changed, 370 insertions(+), 68 deletions(-)
+ create mode 100644 drivers/watchdog/lenovo_se10_wdt.c
+----------------------------------------------------------------
 
-> +
-> +	return BIO_MERGE_OK;
-> +}
-> +
->  static enum bio_merge_status blk_attempt_bio_merge(struct request_queue *q,
->  						   struct request *rq,
->  						   struct bio *bio,
-> @@ -1085,6 +1124,8 @@ static enum bio_merge_status blk_attempt_bio_merge(struct request_queue *q,
->  		break;
->  	case ELEVATOR_DISCARD_MERGE:
->  		return bio_attempt_discard_merge(q, rq, bio);
-> +	case ELEVATOR_COPY_OFFLOAD_MERGE:
-> +		return bio_attempt_copy_offload_merge(rq, bio);
->  	default:
->  		return BIO_MERGE_NONE;
->  	}
-> diff --git a/block/blk.h b/block/blk.h
-> index 189bc25beb50..6528a2779b84 100644
-> --- a/block/blk.h
-> +++ b/block/blk.h
-> @@ -174,6 +174,20 @@ static inline bool blk_discard_mergable(struct request *req)
->  	return false;
->  }
->  
-> +/*
-> + * Copy offload sends a pair of bio with REQ_OP_COPY_DST and REQ_OP_COPY_SRC
-> + * operation by taking a plug.
-> + * Initially DST bio is sent which forms a request and
-> + * waits for SRC bio to arrive. Once SRC bio arrives
-> + * we merge it and send request down to driver.
-> + */
-> +static inline bool blk_copy_offload_mergable(struct request *req,
-> +					     struct bio *bio)
-> +{
-> +	return (req_op(req) == REQ_OP_COPY_DST &&
-> +		bio_op(bio) == REQ_OP_COPY_SRC);
-> +}
-
-This function is really not needed at all (used in one place only).
-
-> +
->  static inline unsigned int blk_rq_get_max_segments(struct request *rq)
->  {
->  	if (req_op(rq) == REQ_OP_DISCARD)
-> @@ -323,6 +337,8 @@ static inline bool bio_may_exceed_limits(struct bio *bio,
->  	case REQ_OP_DISCARD:
->  	case REQ_OP_SECURE_ERASE:
->  	case REQ_OP_WRITE_ZEROES:
-> +	case REQ_OP_COPY_SRC:
-> +	case REQ_OP_COPY_DST:
->  		return true; /* non-trivial splitting decisions */
-
-See above. Limits should be checked on submission.
-
->  	default:
->  		break;
-> diff --git a/block/elevator.h b/block/elevator.h
-> index e9a050a96e53..c7a45c1f4156 100644
-> --- a/block/elevator.h
-> +++ b/block/elevator.h
-> @@ -18,6 +18,7 @@ enum elv_merge {
->  	ELEVATOR_FRONT_MERGE	= 1,
->  	ELEVATOR_BACK_MERGE	= 2,
->  	ELEVATOR_DISCARD_MERGE	= 3,
-> +	ELEVATOR_COPY_OFFLOAD_MERGE	= 4,
->  };
->  
->  struct blk_mq_alloc_data;
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index d5379548d684..528ef22dd65b 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -53,11 +53,7 @@ static inline unsigned int bio_max_segs(unsigned int nr_segs)
->   */
->  static inline bool bio_has_data(struct bio *bio)
->  {
-> -	if (bio &&
-> -	    bio->bi_iter.bi_size &&
-> -	    bio_op(bio) != REQ_OP_DISCARD &&
-> -	    bio_op(bio) != REQ_OP_SECURE_ERASE &&
-> -	    bio_op(bio) != REQ_OP_WRITE_ZEROES)
-> +	if (bio && (bio_op(bio) == REQ_OP_READ || bio_op(bio) == REQ_OP_WRITE))
->  		return true;
-
-This change seems completely broken and out of place. This would cause a return
-of false for zone append operations.
-
->  
->  	return false;
-> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-> index 781c4500491b..7f692bade271 100644
-> --- a/include/linux/blk_types.h
-> +++ b/include/linux/blk_types.h
-> @@ -342,6 +342,10 @@ enum req_op {
->  	/* reset all the zone present on the device */
->  	REQ_OP_ZONE_RESET_ALL	= (__force blk_opf_t)15,
->  
-> +	/* copy offload src and dst operation */
-
-s/src/source
-s/dst/destination
-s/operation/operations
-
-> +	REQ_OP_COPY_SRC		= (__force blk_opf_t)18,
-> +	REQ_OP_COPY_DST		= (__force blk_opf_t)19,
-> +
->  	/* Driver private requests */
->  	REQ_OP_DRV_IN		= (__force blk_opf_t)34,
->  	REQ_OP_DRV_OUT		= (__force blk_opf_t)35,
-> @@ -430,6 +434,12 @@ static inline bool op_is_write(blk_opf_t op)
->  	return !!(op & (__force blk_opf_t)1);
->  }
->  
-> +static inline bool op_is_copy(blk_opf_t op)
-> +{
-> +	return ((op & REQ_OP_MASK) == REQ_OP_COPY_SRC ||
-> +		(op & REQ_OP_MASK) == REQ_OP_COPY_DST);
-> +}
-
-May be use a switch here to avoid the double masking of op ?
-
-> +
->  /*
->   * Check if the bio or request is one that needs special treatment in the
->   * flush state machine.
-
--- 
-Damien Le Moal
-Western Digital Research
+Kind regards,
+Wim.
 
 
