@@ -1,193 +1,177 @@
-Return-Path: <linux-kernel+bounces-183791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A3F8C9E25
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:27:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 247DD8C9E5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D67D1C2385F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:27:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC691F21DD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3747A13667A;
-	Mon, 20 May 2024 13:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L3NkJ8AJ"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753ED136658;
+	Mon, 20 May 2024 13:48:46 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167E31369A1;
-	Mon, 20 May 2024 13:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1E3101DB;
+	Mon, 20 May 2024 13:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716211622; cv=none; b=hoExJhkoMPvEk/tJioAwse2TDHDqbaXw3m8mKHJLD4WPlpUyX5O36tJQGlR0hx7bfe7UZ9uGgJq1z8i4C2G2wYrT51uzDOwLXIuHbUjqKTcr384EJW91+XDlj7Fs8DXzJQ4Xpz0fL9kf7nGWUKnivSxqBOrwzbnts7aQiML0c/A=
+	t=1716212926; cv=none; b=cCdgRrvJrxcatwVmZ4g5tXdpDUFyxCdjIQzOdl7HKrGm6pdJalsML7yKJaviGAeHcwNOmYPOb7KpQdPntLCr73BqreeSM7F7kfM9xVuOANyQYxsGqEHQ0TzIYmawTUmLG0WQ+OmASxYDSaMZdfy3lrYYN/+xXmxgrc89zdai7Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716211622; c=relaxed/simple;
-	bh=0pWZhWs3EMPgwiv2J/jv7QnmCej/OqSCgrcNLJE+h5Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=k9BnqzgT+5IUGeyxha90MTIy+bqYExnImtqv6qu77Ckw7XFG+wpGOQoxicQB1wUWqQaINxLn9yh0E55fKmG1ePPX3BH4tCARgtiD0CiGn2k3vP80HUDyMupm9jhu+viXH63bGG4EKYj2AmS/JOa6YL4qsdhy1+/7XEMQwnMC6hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L3NkJ8AJ; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1eb0e08bfd2so76609325ad.1;
-        Mon, 20 May 2024 06:27:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716211620; x=1716816420; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=96ExljQ2zVirPNQa+ZzfNLvxLXxlK8xHce/amt9Pe0M=;
-        b=L3NkJ8AJgS9UwRJzKKIfk8jQ36FZtwwt1c/I+nPLW1Fw/xcAdcAPQ8mgMvOUR+9z1c
-         /ct2FKgQe3k7B/gu2B8nkecxGZwYXYExYF84auteQSTXOAqaq3zgCTEeK44a+uVuv2CP
-         XbIaWOsfKuGqcBePgD0Kub/HvEoc+sOAR2PS4XgfRHyE3gmNCFF7Kn37M8drZJ/9PuTp
-         L8gIfH0ZBp/ze1EPqIaWDZnW0qMQPZFdF+XO7viiXhH2wx80fkhPDt45BtA6pUzDrY7B
-         pdROYvYxBimJcf5PFTipx1izMqPkpCVjDoU4AsMblR2wzSuJpfnN02kS5COuxBCwSPVD
-         Rq8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716211620; x=1716816420;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=96ExljQ2zVirPNQa+ZzfNLvxLXxlK8xHce/amt9Pe0M=;
-        b=mBR7SI+qd1QnINI2velzUDA4av8tDa0P6sceyDnfapH3hHuDs8ZchcDskbvtHtFuzv
-         ZJsSD1n6ik0SOELBnlBht+sNDJt0DHva985pfWWuK4bAXNc1E9pmm1OaT422JZSGRnPo
-         eQoxiCXYpyJeNfZyF5fPKnBBtc5rIXa717ZlJ8RLDDScG7bO3ldrHiHia9fJ9JsWV9gH
-         nrm+eQbBULi14j6lSQ2oTHz69UC8TP3DhFIwV4IvCWESE74ggbblRUAo4DcIfpgKf1mC
-         TkS3UiKlC8lYpn5kq1EpxEQyqOG3l15qGOQ+3c1pz1qb1oSKjH/wwxq6zkmYyUePuThh
-         JzRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ2GMLRvMH/Xn4W5sB7BSYDyvEGWimipgei1tZ7Sn7M6CHXIiux1q1afKTi9i1dky1e4LwAapfAkw39NDPL0mfJ5sAr3Xeb9++1vuS
-X-Gm-Message-State: AOJu0YxodhpdYawEUjWvVYXTuuhPYzEFsiVeRagMkOYvf7hXMHlDBkSQ
-	C0ltYsr+sNwenPfR+WoN3VwcwLHePV3ULpNVJEua25YDdnoRkv2x
-X-Google-Smtp-Source: AGHT+IGbyOUs1EhYzCeml++ycEXgnW9tLpQUKE0JgndaN/V4OMsLmhiL6BPpSZ8uUt5XV8TWCUbRIA==
-X-Received: by 2002:a17:90a:5901:b0:2b3:28be:dd6e with SMTP id 98e67ed59e1d1-2b6ccd6baedmr25282210a91.33.1716211620226;
-        Mon, 20 May 2024 06:27:00 -0700 (PDT)
-Received: from carrot.. (i222-151-4-139.s42.a014.ap.plala.or.jp. [222.151.4.139])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b628849c40sm22011380a91.18.2024.05.20.06.26.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 06:26:59 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	syzbot <syzbot+e3973c409251e136fdd0@syzkaller.appspotmail.com>,
-	syzkaller-bugs@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	sjb7183@psu.edu
-Subject: [PATCH 3/3] nilfs2: fix potential hang in nilfs_detach_log_writer()
-Date: Mon, 20 May 2024 22:26:21 +0900
-Message-Id: <20240520132621.4054-4-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240520132621.4054-1-konishi.ryusuke@gmail.com>
-References: <0000000000001a167a05ebc4f62b@google.com>
- <20240520132621.4054-1-konishi.ryusuke@gmail.com>
+	s=arc-20240116; t=1716212926; c=relaxed/simple;
+	bh=eF+jBaVjhoGRtH6l8O7AjGRsyfFCGXZ2LDLVX4bqmqI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=X5vD9M5l11Kqd0RJ5xvJYFViONcdsjsrSf2YlbbESlmaEltbgNAhUtCK6ZGIoFrdX1y6ND93ElfSySk+F56Povqc8Hv+rnLCrYezMngHcuPuBA75WLswanTD60L2JYjPiXsEJ0mlazRh3vQYPLdSntrnLeAMkeUi4AfAg/NNS9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Vjdc53lKVz1S6dx;
+	Mon, 20 May 2024 21:25:41 +0800 (CST)
+Received: from dggpemd100001.china.huawei.com (unknown [7.185.36.94])
+	by mail.maildlp.com (Postfix) with ESMTPS id 14003180AA0;
+	Mon, 20 May 2024 21:29:17 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ dggpemd100001.china.huawei.com (7.185.36.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 20 May 2024 21:29:16 +0800
+Message-ID: <c1835d80-ca48-766e-c174-d94a2d357925@huawei.com>
+Date: Mon, 20 May 2024 21:29:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v2] scsi: libsas: Fix exp-attached end device cannot be
+ scanned in again after probe failed
+Content-Language: en-CA
+From: yangxingui <yangxingui@huawei.com>
+To: <john.g.garry@oracle.com>, <yanaijie@huawei.com>, <jejb@linux.ibm.com>,
+	<martin.petersen@oracle.com>, <damien.lemoal@opensource.wdc.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>,
+	<chenxiang66@hisilicon.com>, <kangfenglong@huawei.com>
+References: <20240424080807.8469-1-yangxingui@huawei.com>
+In-Reply-To: <20240424080807.8469-1-yangxingui@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggpemm500008.china.huawei.com (7.185.36.136) To
+ dggpemd100001.china.huawei.com (7.185.36.94)
 
-Syzbot has reported a potential hang in nilfs_detach_log_writer()
-called during nilfs2 unmount.
+Friendly ping ...
 
-Analysis revealed that this is because nilfs_segctor_sync(), which
-synchronizes with the log writer thread, can be called after
-nilfs_segctor_destroy() terminates that thread, as shown in the call
-trace below:
-
-nilfs_detach_log_writer
-  nilfs_segctor_destroy
-    nilfs_segctor_kill_thread  --> Shut down log writer thread
-    flush_work
-      nilfs_iput_work_func
-        nilfs_dispose_list
-          iput
-            nilfs_evict_inode
-              nilfs_transaction_commit
-                nilfs_construct_segment (if inode needs sync)
-                  nilfs_segctor_sync  --> Attempt to synchronize with
-                                          log writer thread
-                           *** DEADLOCK ***
-
-Fix this issue by changing nilfs_segctor_sync() so that the log writer
-thread returns normally without synchronizing after it terminates, and
-by forcing tasks that are already waiting to complete once after the
-thread terminates.
-
-The skipped inode metadata flushout will then be processed together in
-the subsequent cleanup work in nilfs_segctor_destroy().
-
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Reported-by: syzbot+e3973c409251e136fdd0@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=e3973c409251e136fdd0
-Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: stable@vger.kernel.org
----
- fs/nilfs2/segment.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
-
-diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-index 99c78a49e432..c27f0daec9af 100644
---- a/fs/nilfs2/segment.c
-+++ b/fs/nilfs2/segment.c
-@@ -2190,6 +2190,14 @@ static int nilfs_segctor_sync(struct nilfs_sc_info *sci)
- 	for (;;) {
- 		set_current_state(TASK_INTERRUPTIBLE);
- 
-+		/*
-+		 * Synchronize only while the log writer thread is alive.
-+		 * Leave flushing out after the log writer thread exits to
-+		 * the cleanup work in nilfs_segctor_destroy().
-+		 */
-+		if (!sci->sc_task)
-+			break;
-+
- 		if (atomic_read(&wait_req.done)) {
- 			err = wait_req.err;
- 			break;
-@@ -2205,7 +2213,7 @@ static int nilfs_segctor_sync(struct nilfs_sc_info *sci)
- 	return err;
- }
- 
--static void nilfs_segctor_wakeup(struct nilfs_sc_info *sci, int err)
-+static void nilfs_segctor_wakeup(struct nilfs_sc_info *sci, int err, bool force)
- {
- 	struct nilfs_segctor_wait_request *wrq, *n;
- 	unsigned long flags;
-@@ -2213,7 +2221,7 @@ static void nilfs_segctor_wakeup(struct nilfs_sc_info *sci, int err)
- 	spin_lock_irqsave(&sci->sc_wait_request.lock, flags);
- 	list_for_each_entry_safe(wrq, n, &sci->sc_wait_request.head, wq.entry) {
- 		if (!atomic_read(&wrq->done) &&
--		    nilfs_cnt32_ge(sci->sc_seq_done, wrq->seq)) {
-+		    (force || nilfs_cnt32_ge(sci->sc_seq_done, wrq->seq))) {
- 			wrq->err = err;
- 			atomic_set(&wrq->done, 1);
- 		}
-@@ -2362,7 +2370,7 @@ static void nilfs_segctor_notify(struct nilfs_sc_info *sci, int mode, int err)
- 	if (mode == SC_LSEG_SR) {
- 		sci->sc_state &= ~NILFS_SEGCTOR_COMMIT;
- 		sci->sc_seq_done = sci->sc_seq_accepted;
--		nilfs_segctor_wakeup(sci, err);
-+		nilfs_segctor_wakeup(sci, err, false);
- 		sci->sc_flush_request = 0;
- 	} else {
- 		if (mode == SC_FLUSH_FILE)
-@@ -2746,6 +2754,13 @@ static void nilfs_segctor_destroy(struct nilfs_sc_info *sci)
- 		|| sci->sc_seq_request != sci->sc_seq_done);
- 	spin_unlock(&sci->sc_state_lock);
- 
-+	/*
-+	 * Forcibly wake up tasks waiting in nilfs_segctor_sync(), which can
-+	 * be called from delayed iput() via nilfs_evict_inode() and can race
-+	 * with the above log writer thread termination.
-+	 */
-+	nilfs_segctor_wakeup(sci, 0, true);
-+
- 	if (flush_work(&sci->sc_iput_work))
- 		flag = true;
- 
--- 
-2.34.1
-
+On 2024/4/24 16:08, Xingui Yang wrote:
+> We found that it is judged as broadcast flutter when the exp-attached end
+> device reconnects after probe failed, as follows:
+> 
+> [78779.654026] sas: broadcast received: 0
+> [78779.654037] sas: REVALIDATING DOMAIN on port 0, pid:10
+> [78779.654680] sas: ex 500e004aaaaaaa1f phy05 change count has changed
+> [78779.662977] sas: ex 500e004aaaaaaa1f phy05 originated BROADCAST(CHANGE)
+> [78779.662986] sas: ex 500e004aaaaaaa1f phy05 new device attached
+> [78779.663079] sas: ex 500e004aaaaaaa1f phy05:U:8 attached: 500e004aaaaaaa05 (stp)
+> [78779.693542] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] found
+> [78779.701155] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
+> [78779.707864] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+> ...
+> [78835.161307] sas: --- Exit sas_scsi_recover_host: busy: 0 failed: 0 tries: 1
+> [78835.171344] sas: sas_probe_sata: for exp-attached device 500e004aaaaaaa05 returned -19
+> [78835.180879] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] is gone
+> [78835.187487] sas: broadcast received: 0
+> [78835.187504] sas: REVALIDATING DOMAIN on port 0, pid:10
+> [78835.188263] sas: ex 500e004aaaaaaa1f phy05 change count has changed
+> [78835.195870] sas: ex 500e004aaaaaaa1f phy05 originated BROADCAST(CHANGE)
+> [78835.195875] sas: ex 500e004aaaaaaa1f rediscovering phy05
+> [78835.196022] sas: ex 500e004aaaaaaa1f phy05:U:A attached: 500e004aaaaaaa05 (stp)
+> [78835.196026] sas: ex 500e004aaaaaaa1f phy05 broadcast flutter
+> [78835.197615] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
+> 
+> The cause of the problem is that the related ex_phy's attached_sas_addr was
+> not cleared after the end device probe failed. In order to solve the above
+> problem, a function sas_ex_unregister_end_dev() is defined to clear the
+> ex_phy information and unregister the end device after the exp-attached end
+> device probe failed.
+> 
+> As the sata device is an asynchronous probe, the sata device may probe
+> failed after done REVALIDATING DOMAIN. Then after its port is added to the
+> sas_port_del_list, the port will not be deleted until the end of the next
+> REVALIDATING DOMAIN and sas_destruct_ports() is called. A warning about
+> creating a duplicate port will occur in the new REVALIDATING DOMAIN when
+> the end device reconnects. Therefore, the previous destroy_list and
+> sas_port_del_list should be handled before REVALIDATING DOMAIN.
+> 
+> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+> ---
+> Changes since v1:
+> - Simplify the process of getting ex_phy id based on Jason's suggestion.
+> - Update commit information.
+> ---
+>   drivers/scsi/libsas/sas_discover.c | 2 ++
+>   drivers/scsi/libsas/sas_expander.c | 8 ++++++++
+>   drivers/scsi/libsas/sas_internal.h | 6 +++++-
+>   3 files changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
+> index 8fb7c41c0962..aae90153f4c6 100644
+> --- a/drivers/scsi/libsas/sas_discover.c
+> +++ b/drivers/scsi/libsas/sas_discover.c
+> @@ -517,6 +517,8 @@ static void sas_revalidate_domain(struct work_struct *work)
+>   	struct sas_ha_struct *ha = port->ha;
+>   	struct domain_device *ddev = port->port_dev;
+>   
+> +	sas_destruct_devices(port);
+> +	sas_destruct_ports(port);
+>   	/* prevent revalidation from finding sata links in recovery */
+>   	mutex_lock(&ha->disco_mutex);
+>   	if (test_bit(SAS_HA_ATA_EH_ACTIVE, &ha->state)) {
+> diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+> index f6e6db8b8aba..45793c10009b 100644
+> --- a/drivers/scsi/libsas/sas_expander.c
+> +++ b/drivers/scsi/libsas/sas_expander.c
+> @@ -1856,6 +1856,14 @@ static void sas_unregister_devs_sas_addr(struct domain_device *parent,
+>   	}
+>   }
+>   
+> +void sas_ex_unregister_end_dev(struct domain_device *dev)
+> +{
+> +	struct domain_device *parent = dev->parent;
+> +	struct sas_phy *phy = dev->phy;
+> +
+> +	sas_unregister_devs_sas_addr(parent, phy->number, true);
+> +}
+> +
+>   static int sas_discover_bfs_by_root_level(struct domain_device *root,
+>   					  const int level)
+>   {
+> diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
+> index 3804aef165ad..434f928c2ed8 100644
+> --- a/drivers/scsi/libsas/sas_internal.h
+> +++ b/drivers/scsi/libsas/sas_internal.h
+> @@ -50,6 +50,7 @@ void sas_discover_event(struct asd_sas_port *port, enum discover_event ev);
+>   
+>   void sas_init_dev(struct domain_device *dev);
+>   void sas_unregister_dev(struct asd_sas_port *port, struct domain_device *dev);
+> +void sas_ex_unregister_end_dev(struct domain_device *dev);
+>   
+>   void sas_scsi_recover_host(struct Scsi_Host *shost);
+>   
+> @@ -145,7 +146,10 @@ static inline void sas_fail_probe(struct domain_device *dev, const char *func, i
+>   		func, dev->parent ? "exp-attached" :
+>   		"direct-attached",
+>   		SAS_ADDR(dev->sas_addr), err);
+> -	sas_unregister_dev(dev->port, dev);
+> +	if (dev->parent && !dev_is_expander(dev->dev_type))
+> +		sas_ex_unregister_end_dev(dev);
+> +	else
+> +		sas_unregister_dev(dev->port, dev);
+>   }
+>   
+>   static inline void sas_fill_in_rphy(struct domain_device *dev,
+> 
 
