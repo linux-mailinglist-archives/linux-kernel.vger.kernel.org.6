@@ -1,112 +1,120 @@
-Return-Path: <linux-kernel+bounces-183995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA468CA127
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:18:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 146AB8CA129
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6D21F21393
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4FE4281C6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BAA137C54;
-	Mon, 20 May 2024 17:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCE3137C4B;
+	Mon, 20 May 2024 17:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLFOZCVL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qw9rgYTC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="57LL6CO5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3203953E13;
-	Mon, 20 May 2024 17:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845411369B9;
+	Mon, 20 May 2024 17:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716225477; cv=none; b=TSMETg1RuGHk6Uq1Ytr5F1k3ZYz2ID+WyKLlDuB2Ajzp8Pr+sOdwmR+itOvxQBHtqwqXCywcOPtDvxbldnPBQ+W20KzPvDe8KwyohxMhMTWxujyvsVK7JoD+3JXa2V6elPJcqrprRAUYnVI5N868AjUNue5gKcAYqC+vD0pwN3k=
+	t=1716225544; cv=none; b=KzJKGcLVofRUB8W1Q6te0I1uIoJae9Y4zImye92HHqxKnH+MBeObgCXSZv4kjnumabz1g1jsOqgzk5leKnoijLt92DqKPzB0FSYd1wmsmEdN9w+jFAHtDcI8yAe2brjuftdfg6mw94YFDk0m5H6WgbMURy/F8Xgo4LmOTokv+2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716225477; c=relaxed/simple;
-	bh=dcRbeZXXPhsr3+R4ot9MrqpKhfby+5UfDHXnDXLmTf8=;
+	s=arc-20240116; t=1716225544; c=relaxed/simple;
+	bh=ZulL6qcXBmPMizDGMFa38MV6hLqalQopbVewHPPYeiA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QsQ6na8Rljg4EOA9SBz1cG2YhWp/e2TyQPVZbvUJVV/jK1jhTn+ihXHyaRbps3PtPD+CoZqxaQWaYy9lqrpYw+hiUDAU6Vhp21aa8qeVQ5U5MBH09nduZYRHS+hI8/wm5rlH2dHR5oactSWnPl/CrvdhHE8HX6lJeRgiltbYk7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLFOZCVL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2514EC2BD10;
-	Mon, 20 May 2024 17:17:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716225477;
-	bh=dcRbeZXXPhsr3+R4ot9MrqpKhfby+5UfDHXnDXLmTf8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GLFOZCVLaHTVAadnpMqrFdDPJX9WTFJBxD4XO8BM0QSZPh5vvkHfu2k2z3p2Yppqn
-	 51G/WWUBzwP+2b87UhibetcDxKR1TNUnCB08PDJZieh7Gjo7PmT4ruk+hJMv1s7Jpj
-	 9PU0bVD1+EzXdqvQXhH7k7rn7h3XF/TSAC1kBrELO/doaj6VIeuSTujPNsXZHKA+pU
-	 u4TltHlq2aqR80Ed5WDihbMg++nnYCH/1Q5gRMzN0t8o2P/bqyxQYIY5kdRO0P5NGz
-	 g1Eb9LCsd0fwmI0W1pQgtGG3lUlFdlpHpPseqCsccLput9IQmUQcErFOC8MA7aMpNs
-	 E/sgRobiyYUzg==
-Date: Mon, 20 May 2024 18:17:52 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Kumar, Udit" <u-kumar1@ti.com>
-Cc: vigneshr@ti.com, nm@ti.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kip Broadhurst <kbroadhurst@ti.com>, w.egorov@phytec.de
-Subject: Re: [PATCH] dt-bindings: net: dp8386x: Add MIT license along with
- GPL-2.0
-Message-ID: <20240520-discard-fanatic-f8e686a4faad@spud>
-References: <20240517104226.3395480-1-u-kumar1@ti.com>
- <20240517-poster-purplish-9b356ce30248@spud>
- <20240517-fastball-stable-9332cae850ea@spud>
- <8e56ea52-9e58-4291-8f7f-4721dd74c72f@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f3mnDDAtV3De8noUZ9cK1MjhxBT6M04uV4uzD0WQxm1Oyq/lP7kAxMxtfB+wrgi61QTQOnXFltuAXORKOnNjsjQZrnapuradd5OpcQ5iLCH9zqm7TBIvZHgmaCy697PzDRi2a+t/SXiNdg2DYBFPBXQCeLbU6f7rZ3ODz0Afyhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qw9rgYTC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=57LL6CO5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 20 May 2024 19:18:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716225535;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P2V0fdH4t2poMRftCjRvPZHt3gefMT0fvdsrTqva5qU=;
+	b=qw9rgYTCydS26maYwXWBoL/7nMIZZdaccxQIOVk787jMgA6a5txSIR+y2nffAuCPPofmn1
+	oPCJW7v9dj1diB7JN+5NKhHMfIdGe72q2n6F/4ylPZFFDUt9M4SI54vbp+9grQkUTs11HU
+	g+taABgvmeLWQPE4OeNu5E264f76xw02HnR9EnCMpoWCQ3mWQUiA+xFnOdcbksCT10WJty
+	V7wGSrVImu6Uk7zqKu+GHtgt2hBkBe5RDwZoJJoxKQ0gMcr5ARL7ag4oSJouVmeYc/XtOP
+	sXpJK+JxleCfnk+2xc8H9yeFUFJ/ISQjWbXYXXml3EnmsZkfnTPkzeHNhMbawg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716225535;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P2V0fdH4t2poMRftCjRvPZHt3gefMT0fvdsrTqva5qU=;
+	b=57LL6CO5ZyAXHZYeHd5nbaeYh6SIDlHkM+L3BDLsQBQc860I2EPt/5IFLRoW/wIPEuWjoZ
+	jqt0WVlJI55MluDQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Cc: syzbot <syzbot+83763e624cfec6b462cb@syzkaller.appspotmail.com>,
+	Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [staging?] [usb?] memory leak in _r8712_init_xmit_priv
+ (2)
+Message-ID: <20240520171848.60Nzvv8y@linutronix.de>
+References: <000000000000809328060a8a4c1c@google.com>
+ <20240520144641.17643-1-n.zhandarovich@fintech.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UePwvSjabeybRF4C"
-Content-Disposition: inline
-In-Reply-To: <8e56ea52-9e58-4291-8f7f-4721dd74c72f@ti.com>
-
-
---UePwvSjabeybRF4C
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240520144641.17643-1-n.zhandarovich@fintech.ru>
 
-On Sat, May 18, 2024 at 02:18:55PM +0530, Kumar, Udit wrote:
-> Hi Conor
->=20
-> On 5/17/2024 8:11 PM, Conor Dooley wrote:
-> > On Fri, May 17, 2024 at 03:39:20PM +0100, Conor Dooley wrote:
-> > > On Fri, May 17, 2024 at 04:12:26PM +0530, Udit Kumar wrote:
-> > > > Modify license to include dual licensing as GPL-2.0-only OR MIT
-> > > > license for TI specific phy header files. This allows for Linux
-> > > > kernel files to be used in other Operating System ecosystems
-> > > > such as Zephyr or FreeBSD.
-> > > What's wrong with BSD-2-Clause, why not use that?
-> > I cut myself off, I meant to say:
-> > What's wrong with BSD-2-Clause, the standard dual license for
-> > bindings, why not use that?
->=20
-> want to be inline with License of top level DTS, which is including this
-> header file
+On Mon, May 20, 2024 at 07:46:41AM -0700, Nikita Zhandarovich wrote:
+> Hi,
+> 
+> > BUG: memory leak
+> > unreferenced object 0xffff888107a5c000 (size 4096):
+> >   comm "kworker/1:0", pid 22, jiffies 4294943134 (age 18.720s)
+> >   hex dump (first 32 bytes):
+> >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> >   backtrace:
+> >     [<ffffffff816337cd>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
+> >     [<ffffffff816337cd>] slab_post_alloc_hook mm/slab.h:766 [inline]
+> >     [<ffffffff816337cd>] slab_alloc_node mm/slub.c:3478 [inline]
+> >     [<ffffffff816337cd>] __kmem_cache_alloc_node+0x2dd/0x3f0 mm/slub.c:3517
+> >     [<ffffffff8157e625>] kmalloc_trace+0x25/0x90 mm/slab_common.c:1098
+> >     [<ffffffff83cee442>] kmalloc include/linux/slab.h:600 [inline]
+> >     [<ffffffff83cee442>] _r8712_init_xmit_priv+0x2b2/0x6e0 drivers/staging/rtl8712/rtl871x_xmit.c:130
+> >     [<ffffffff83ce9033>] r8712_init_drv_sw+0xc3/0x290 drivers/staging/rtl8712/os_intfs.c:311
+> >     [<ffffffff83ce7ce6>] r871xu_drv_init+0x1c6/0x920 drivers/staging/rtl8712/usb_intf.c:386
+> >     [<ffffffff832d0f0b>] usb_probe_interface+0x16b/0x3a0 drivers/usb/core/driver.c:396
+> >     [<ffffffff82c3bb06>] call_driver_probe drivers/base/dd.c:579 [inline]
+> 
+> I am inclined to think that this issue might be false positive. During
+> repro the device is initialized correctly, does some work and then
+> exits, calling all required functions to clean things up
+> (i.e. _free_xmit_priv()), including pxmitbuf->pallocated_buf.
+> Kmemleak triggers disappear if you set longer intervals between
+> scannning for them (obviously). And if all the things get cleared up
+> when the device disconnects, isn't that correct and expected
+> behaviour? Could the scanner just "lose track" of some of the objects
+> here?
+> 
+> Or am I missing something?
 
-Unless there's a specific reason to use MIT (like your legal won't even
-allow you to use BSD-2-Clause) then please just use the normal license
-for bindings here.
+Possibly this is because the driver's probe function doesn't clean up
+itself properly if it fails in the middle (e.g. due to the system running
+out of memory and kmalloc() fails). These aren't easy to reproduce, because
+you would need to make probing fails somehow.
 
-Cheers,
-Conor.
+Example fix: ac83631230f7 ("staging: r8712: Fix memory leak in
+_r8712_init_xmit_priv()")
 
---UePwvSjabeybRF4C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkuFvwAKCRB4tDGHoIJi
-0jFQAP9VmADFwFETab2Xw6u8RNuEmVRMP4CsXPoUSZDuZyWVrwEAypOI3tz6MeUd
-1duYMmtHWNxu9vJjZAZ0lCOfDKr95wg=
-=WAqU
------END PGP SIGNATURE-----
-
---UePwvSjabeybRF4C--
+Best regards,
+Nam
 
