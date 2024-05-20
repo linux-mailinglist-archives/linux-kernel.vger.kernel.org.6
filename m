@@ -1,113 +1,78 @@
-Return-Path: <linux-kernel+bounces-184211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D0B98CA461
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:13:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB6F8CA463
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C01282371
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D3771F227B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EE8139D1B;
-	Mon, 20 May 2024 22:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E177331758;
+	Mon, 20 May 2024 22:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jv+Yqjwe"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="juAMYDYs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1891CD3B;
-	Mon, 20 May 2024 22:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3501912E6A
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 22:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716243183; cv=none; b=qXHoj6ujtHrjTKaqWp2TQFFdanDdL49QX2etbyd1CoD7NpIJ9JKCHroSB0wLwYLXuxHn75P+UWHtGDo7PhgWVxeh4qfNQINeHidJkAd0PGPX0Tt5BOrfTsep4GZUZ3QgLYiUP5uPGIWeVS/bVUBsJQHZ/MELJInnHv3gXSrAAXE=
+	t=1716243331; cv=none; b=LgKXA4tQ/KjpcpG4AlqSqX+Z48lAsmcfwqwiIzgtc/s9UTyt03YLh4xopQuvy+TKJ3zt0DTLqlWYACJm+x6gACr8/TT+rWw+yNSIWMdKzTnLIPsSah9N+bP5h/EFp8QWExM8voLCaoo88lAZYvCxltX+qms/gURKAK2xGYLCCx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716243183; c=relaxed/simple;
-	bh=g67Au3Gl3mqSp0DalxfSQ7ydt1TQGOl6Vi8oRqoOvyE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=IfSGOjk8znDm4ZX9aDMqdZx8t3pKgqWga28Z/D3mq2NesX72w4EEcjOjpe5Z3axkgbTpyeViREAhx58khXaCjsb0Fg0PfFGMBKWXKGhBzlQ2LgHsSdz4er2RBwui2dKGguCVlxIrNCrh/QNMs9XydF5A09icmuVInY8pvoqZz7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jv+Yqjwe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8D6AC2BD10;
-	Mon, 20 May 2024 22:12:59 +0000 (UTC)
+	s=arc-20240116; t=1716243331; c=relaxed/simple;
+	bh=426rdnFhOzmZGODgfSzTjGDMs/RniLV9geTTwINhcgI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=bx7Wka+q/LfR2DNdnF25APGEh/b8SGxgD4sepU4+T3SqEh/Piy9xOoDWTEFpdbiSDSvojbefmYSB9dWUYXVVf9w+KqLhz7KWik1kLToSs5i3d9AYJJlyPXFYLpvj15Vii67ffyytvVkP1uxaUSRZaF5GpFUVTdWvCkSxIvfjL1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=juAMYDYs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0C8EBC2BD10;
+	Mon, 20 May 2024 22:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716243182;
-	bh=g67Au3Gl3mqSp0DalxfSQ7ydt1TQGOl6Vi8oRqoOvyE=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=jv+YqjweWfOJ58Q3rWlPlQFpRXdnf0erK6kTjwm69gsovWdMmwxN9rknV5ZxWSN6B
-	 Fqs8WiDOHc9qevF1/3ks8cLHz5bTvsGWiabm9jjGikcvnZZG1qt/aDXy8jxdg4uG4c
-	 z1WKhAGZceld4lkmUZbrOQKQJqV+ed++z5zKsq63KAs98UAwUtpJ5ALf4kCvQnVLuH
-	 iFAoYHnk66FrFIo3UhnKZKeGaFUfJvXUnMuZH2soK+u2t7rJxRqxV2iqQEemdJT6BQ
-	 uLCZIxjwrjwVmECgZ02bXTlOH/TcfCevAYf2khb2XBVuWXd0po3UYUMOSBHAy6kQ9L
-	 aWJlEPVroniqQ==
+	s=k20201202; t=1716243331;
+	bh=426rdnFhOzmZGODgfSzTjGDMs/RniLV9geTTwINhcgI=;
+	h=Subject:From:In-Reply-To:References:Date:To:List-Id:Cc:From;
+	b=juAMYDYswiJ3BVDHfGdRR51rNdcJ+6eH7AT5MyopUhrxWkk5XhvdqM43TEUljtdc9
+	 c0Kloni9j7kqYguMw3ykGXL2wJB6w5yOLi2JqeqrbASodbY3oiDnspSywpKzqoERqK
+	 U8RbYx4/YN9Web6JcL+ZSnO2Qzq6l6hBrohgmVfVigD10fy3ijdscKyLNxoxjyM8TG
+	 2Wm04pvQo0+sF61KANVDkvyI+BhdRqKd+NZ60Ezayh2BofSiVPoPi2DL0f3U4tlGj7
+	 zVs0mSor6BUfFKx0t6YEjC+sz+QPMM+DX2NeZU8E50bRHDzF2lVmavwtjvXfO0Sxs7
+	 iAzrwn/U30f5A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 01697C54BB0;
+	Mon, 20 May 2024 22:15:31 +0000 (UTC)
+Subject: Re: [GIT PULL] soc: devicetree updates for v6.10, part 2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <7b555e52-a83b-4218-9251-27dcb4e93268@app.fastmail.com>
+References: <7b555e52-a83b-4218-9251-27dcb4e93268@app.fastmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <7b555e52-a83b-4218-9251-27dcb4e93268@app.fastmail.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-dt-late-6.10
+X-PR-Tracked-Commit-Id: 01a7f9e1a97ee48ed187b040afcda23886b9f48d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1b036162097060e7e762b601de6517d9f2c7514e
+Message-Id: <171624333099.11553.4340948832769130968.pr-tracker-bot@kernel.org>
+Date: Mon, 20 May 2024 22:15:30 +0000
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, soc@kernel.org, linux-arm-kernel@lists.infradead.org, Conor Dooley <conor.dooley@microchip.com>, Neil Armstrong <neil.armstrong@linaro.org>, Joel Stanley <joel@jms.id.au>, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 May 2024 01:12:57 +0300
-Message-Id: <D1ETFJFE9Y48.1T8I7SIPGFMQ2@kernel.org>
-Cc: <brauner@kernel.org>, <ebiederm@xmission.com>, "Luis Chamberlain"
- <mcgrof@kernel.org>, "Kees Cook" <keescook@chromium.org>, "Joel Granados"
- <j.granados@samsung.com>, "Serge Hallyn" <serge@hallyn.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "David Howells"
- <dhowells@redhat.com>, <containers@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <keyrings@vger.kernel.org>
-Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Tycho Andersen" <tycho@tycho.pizza>, "Jonathan Calmels"
- <jcalmels@3xx0.net>
-X-Mailer: aerc 0.17.0
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-4-jcalmels@3xx0.net> <ZktQZi5iCwxcU0qs@tycho.pizza>
- <ptixqmplbovxmqy3obybwphsie2xaybfj46xyafdnol7bme4z4@4kwdljmrkdpn>
- <Zku8839xgFRAEcl+@tycho.pizza>
-In-Reply-To: <Zku8839xgFRAEcl+@tycho.pizza>
 
-On Tue May 21, 2024 at 12:13 AM EEST, Tycho Andersen wrote:
-> On Mon, May 20, 2024 at 12:25:27PM -0700, Jonathan Calmels wrote:
-> > On Mon, May 20, 2024 at 07:30:14AM GMT, Tycho Andersen wrote:
-> > > there is an ongoing effort (started at [0]) to constify the first arg
-> > > here, since you're not supposed to write to it. Your usage looks
-> > > correct to me, so I think all it needs is a literal "const" here.
-> >=20
-> > Will do, along with the suggestions from Jarkko
-> >=20
-> > > > +	struct ctl_table t;
-> > > > +	unsigned long mask_array[2];
-> > > > +	kernel_cap_t new_mask, *mask;
-> > > > +	int err;
-> > > > +
-> > > > +	if (write && (!capable(CAP_SETPCAP) ||
-> > > > +		      !capable(CAP_SYS_ADMIN)))
-> > > > +		return -EPERM;
-> > >=20
-> > > ...why CAP_SYS_ADMIN? You mention it in the changelog, but don't
-> > > explain why.
-> >=20
-> > No reason really, I was hoping we could decide what we want here.
-> > UMH uses CAP_SYS_MODULE, Serge mentioned adding a new cap maybe.
->
-> I don't have a strong preference between SETPCAP and a new capability,
-> but I do think it should be just one. SYS_ADMIN is already god mode
-> enough, IMO.
+The pull request you sent on Mon, 20 May 2024 21:49:14 +0000:
 
-Sometimes I think would it make more sense to invent something
-completely new like capabilities but more modern and robust, instead of
-increasing complexity of a broken mechanism (especially thanks to
-CAP_MAC_ADMIN).
+> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-dt-late-6.10
 
-I kind of liked the idea of privilege tokens both in Symbian and Maemo
-(have been involved professionally in both). Emphasis on the idea not
-necessarily on implementation.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1b036162097060e7e762b601de6517d9f2c7514e
 
-Not an LSM but like something that you could use in the place of POSIX
-caps. Probably quite tedious effort tho because you would need to pull
-the whole industry with the new thing...
+Thank you!
 
-BR, Jarkko
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
