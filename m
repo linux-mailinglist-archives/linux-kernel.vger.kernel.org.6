@@ -1,117 +1,109 @@
-Return-Path: <linux-kernel+bounces-183586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7484A8C9AF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29388C9AF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D7F51F2165C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:05:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F1E4282506
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33994C624;
-	Mon, 20 May 2024 10:05:00 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C301EA67;
-	Mon, 20 May 2024 10:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D7F4D59E;
+	Mon, 20 May 2024 10:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="38z8CCsu"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCE5C125;
+	Mon, 20 May 2024 10:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716199500; cv=none; b=t6aejTJlYKMlw1NIwuq5p9w/dBYPAnQC/MQ3PF/aSuIrXahL5xjuBGPY7EeazLsaq7JtHD3wnDxyhhAj/rqBQ9a4xA4JnOXg3vtpy/fiMhY8/1qjPXakgb+o5RY7BnylfxzJAOXOqQe5lZ8vFyc+8yc765bUJxUGpQk0VyzJh0Q=
+	t=1716199616; cv=none; b=PAET2FxFM4191AkgvFuj5R0YDGf8Sdw1c9hDLgHnD27b0AmZnwJIALcYpvMZB5sU79dpYc5nkuzxA66u+V8UWm+/w5AI41UgVwoJqFzpp7XUszzL/FeZDCdXOP3ghDtG3BKnu3vzNNOcQZpY2CpsBKr5rklFM9b+UKpXFQLVX6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716199500; c=relaxed/simple;
-	bh=Lh/a5CQnHWFVHPLTcboaMYD8avCNkkGAiOMBkLALvxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ib52Dg2BbYgxYyYtMHQ/4oPxL6KarO3CNz24sFtOWiXG1ny0IxgCbllal6v1GLxTA8VskJVtlRPvN2gKel08tmATLHKJld8m45UyG1nxtdYVpXntAHFWF3lQP2tdRK0Xe1EM1nobjxTB0ublUBpz9aKowIA9RW/DjXjW9PBdNf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1s8zD8-0007O9-00; Mon, 20 May 2024 11:21:38 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 21EF2C0120; Mon, 20 May 2024 11:21:29 +0200 (CEST)
-Date: Mon, 20 May 2024 11:21:29 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: torvalds@linux-foundation.org
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] MIPS changes for v6.10
-Message-ID: <ZksWGd0Kr7D19kp/@alpha.franken.de>
+	s=arc-20240116; t=1716199616; c=relaxed/simple;
+	bh=vb+S3v0VFH+2kufPH8rXeEV4ZmE//CWYzZhNwvQ83wM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=d/pKYZymsPhFQsj7ga9A/Ux3zQREucsytjUJtzQs3EWfGm+w+KI/CK7KrsGKTs3jkUfc+/dMfYb3RlfJpe1+jsAClj9B7+cqav9Nh4Zqwk4moVbOSSI6CUtApaKW8nJbt67ATfRNsOj0/n62FXmKA5j7V7EYvc3HPu97OwqJJSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=38z8CCsu; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716199613;
+	bh=vb+S3v0VFH+2kufPH8rXeEV4ZmE//CWYzZhNwvQ83wM=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=38z8CCsuKFNlEFOI8zKZiaIoR24d2xYKgwkiqCs0fEy6eEbUr0nwwXkrXcCfQmtbL
+	 nUaoOacEpmeJb2ebeOQd7ubBmu+PHX3ChWO2IOnD9iqkfKPvyAdHb5YBDKBjnbDHCy
+	 ozft6KKYyyMHEEesYZpKiDFPW5GhNQkf5NDk2FZJ1815WWY/UvHHlW2FyqzVWq8rKg
+	 EwPxZE0TtgCda3YVcbM5mR07OouW9zwsREHiboOh8aQKjW3VkeIJhzwnb1CXX2rYJ+
+	 hKObzyxCt9iQV9klOjOBQAHK+S/6I9T0zGihr7EITRtI6pjFwuDPqCAMbkGAQqtKj3
+	 YU4dg37ZORrTQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1699D37809D1;
+	Mon, 20 May 2024 10:06:53 +0000 (UTC)
+Message-ID: <f7760293-ded2-4d89-928c-a73359a045d2@collabora.com>
+Date: Mon, 20 May 2024 12:06:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: mediatek: mt8365: drop incorrect
+ power-domain-cells
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ MandyJH Liu <mandyjh.liu@mediatek.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240518211159.142920-1-krzysztof.kozlowski@linaro.org>
+ <20240518211159.142920-3-krzysztof.kozlowski@linaro.org>
+ <3b1be547-ac49-40fb-909f-96952c299545@collabora.com>
+ <1540f43c-9859-49a8-9b20-1fb08d1c153f@linaro.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <1540f43c-9859-49a8-9b20-1fb08d1c153f@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit 0bbac3facb5d6cc0171c45c9873a2dc96bea9680:
+Il 20/05/24 12:03, Krzysztof Kozlowski ha scritto:
+> On 20/05/2024 11:58, AngeloGioacchino Del Regno wrote:
+>> Il 18/05/24 23:11, Krzysztof Kozlowski ha scritto:
+>>> The top SCPSYS node is not a power domain provider.  It's child
+>>> "power-controller" is instead.  Fix dtbs_check warnings like:
+>>>
+>>>     mt8365-evk.dtb: syscon@10006000: '#power-domain-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> Well if you're fixing that by migrating to scpsys compatible, you might as well
+>> resolve all of the warnings in one commit, removing that power-domain-cells
+>> property in patch [2/4], otherwise this one is technically a fix for that.
+>>
+>> Please squash [2/4] and [3/4], like that it just makes more sense.
+>>
+> 
+> That's independent thing. Previous compatible - syscfg - also did not
+> allow power domains. The difference is that bindings did not print a
+> warning without my change. We can reverse the patches if this is more
+> suitable.
+> 
 
-  Linux 6.9-rc4 (2024-04-14 13:38:39 -0700)
+You're still introducing a warning with patch 2.
 
-are available in the Git repository at:
+As for swapping the order, that could also be a solution, but I still don't see
+that as an independent thing - in any case, swapping them is something I can do
+while applying, eventually.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips_6.10
 
-for you to fetch changes up to 07e6a6d7f1d9fa4685003a195032698ba99577bb:
 
-  MIPS: Take in account load hazards for HI/LO restoring (2024-05-03 14:22:38 +0200)
-
-----------------------------------------------------------------
-just cleanups and fixes
-
-----------------------------------------------------------------
-Jiaxun Yang (1):
-      MIPS: Guard some macros with __ASSEMBLY__ in asm.h
-
-Justin Swartz (14):
-      mips: dts: ralink: mt7621: reorder cpu node attributes
-      mips: dts: ralink: mt7621: reorder cpuintc node attributes
-      mips: dts: ralink: mt7621: reorder mmc regulator attributes
-      mips: dts: ralink: mt7621: reorder sysc node attributes
-      mips: dts: ralink: mt7621: reorder gpio node attributes
-      mips: dts: ralink: mt7621: reorder i2c node attributes
-      mips: dts: ralink: mt7621: reorder spi0 node attributes
-      mips: dts: ralink: mt7621: move pinctrl and sort its children
-      mips: dts: ralink: mt7621: reorder mmc node attributes
-      mips: dts: ralink: mt7621: reorder gic node attributes
-      mips: dts: ralink: mt7621: reorder ethernet node attributes and kids
-      mips: dts: ralink: mt7621: reorder pcie node attributes and children
-      mips: dts: ralink: mt7621: reorder pci?_phy attributes
-      mips: dts: ralink: mt7621: reorder the attributes of the root node
-
-Nathan Chancellor (1):
-      MIPS: Add prototypes for plat_post_relocation() and relocate_kernel()
-
-Siarhei Volkau (1):
-      MIPS: Take in account load hazards for HI/LO restoring
-
-Songyang Li (1):
-      MIPS: Octeon: Add PCIe link status check
-
-Yongzhen Zhang (3):
-      MIPS: BCM47XX: include header for bcm47xx_prom_highmem_init() prototype
-      MIPS: BCM47XX: Declare early_tlb_init() static
-      MIPS: RB532: Declare prom_setup_cmdline() and rb532_gpio_init() static
-
-Yury Norov (3):
-      MIPS: SGI-IP27: micro-optimize arch_init_irq()
-      MIPS: SGI-IP27: fix -Wunused-variable in arch_init_irq()
-      MIPS: SGI-IP27: use WARN_ON() output
-
- arch/mips/bcm47xx/prom.c              |   3 +-
- arch/mips/boot/dts/ralink/mt7621.dtsi | 430 +++++++++++++++++++---------------
- arch/mips/include/asm/asm.h           |   3 +
- arch/mips/include/asm/setup.h         |   6 +
- arch/mips/include/asm/stackframe.h    |  19 +-
- arch/mips/pci/pcie-octeon.c           |   6 +
- arch/mips/rb532/gpio.c                |   2 +-
- arch/mips/rb532/prom.c                |   2 +-
- arch/mips/sgi-ip27/ip27-irq.c         |  15 +-
- 9 files changed, 274 insertions(+), 212 deletions(-)
- mode change 100644 => 100755 arch/mips/pci/pcie-octeon.c
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
 
