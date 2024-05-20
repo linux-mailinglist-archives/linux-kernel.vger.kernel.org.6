@@ -1,31 +1,31 @@
-Return-Path: <linux-kernel+bounces-183342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C658C97D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 04:18:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E6208C97D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 04:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22CD81C204FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:18:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23E16280EB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21DAEACE;
-	Mon, 20 May 2024 02:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9309474;
+	Mon, 20 May 2024 02:17:56 +0000 (UTC)
 Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E87BC8CE
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E814C2ED
 	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 02:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716171477; cv=none; b=ACSupKbKJ+rVZvcqfDkWL0aN+gqCQC8n9SAqQNb938coRyh+9unVfGmdVAXa+97BYXQZ19oBjOZscWT8MG1JYjg1nPGL4K0VRgv4qIB5vxuX0wWCJMKJ2zN3oJi487NmjlDfJkUim9MkJNrs3ph2Px6pGPVFsF2hq253+6d9WWQ=
+	t=1716171476; cv=none; b=i+yLlgosCMgz3CwEf2wRkHAyFUybMpmg/5UB0yBtzGoZcg2okv8aVV7QwqupQhDx+zJ7RxLsxT+lMSgp/TbyVxMY8e/uz5uAMMd2DynAmXQIbgUiLdtcNLWppztov1v3EzTqCRwGOEkMZ0fEg8L3rfTMJLJLWyyZzdWO5wNRVTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716171477; c=relaxed/simple;
-	bh=6cD35mEyKwclK8bRNTmdyMxP37PfjcwjlbBbEy4ouTo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=ayqXzyuOb7VBFuk856JelhmYMt9LLgCBqIHPym8EO9bbK1QiNqjdiLz+V484PXbPm5tkn3rvD9/Mq/xzL8nvzbPvvjWDSDY5UPZleOZrgqnoWBorksOKciPms52MJ8UiB5jyiNLSCUC7VUUMcL0EVIWQtyVexfT5RaY+ckO1muw=
+	s=arc-20240116; t=1716171476; c=relaxed/simple;
+	bh=rQZiU0CNXQyRU5Wz05SQq2QflCX9irEmFt30HXPbKHY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=nT1UYCjVtYLR/H6rpKCGmyoDG7XdIBNrP5ZPfMAedmM9d39aY0ZP4BGj9oIZiK9MfwTgzzD3og28keE7zYNMv6GODvDMdDrZpFbYmmWjoqoNQ9oFtUcZwcdsV8RAX8/+74MrPgTB4BCDVSYbF43LoaL/IWXYWAwot9h0dc9rXhY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-9a-664ab2c8f665
+X-AuditID: a67dfc5b-d6dff70000001748-9f-664ab2c844b4
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
@@ -44,36 +44,36 @@ Cc: kernel_team@skhynix.com,
 	bp@alien8.de,
 	dave.hansen@linux.intel.com,
 	rjgolo@gmail.com
-Subject: [RESEND PATCH v10 01/12] x86/tlb: add APIs manipulating tlb batch's arch data
-Date: Mon, 20 May 2024 11:17:23 +0900
-Message-Id: <20240520021734.21527-2-byungchul@sk.com>
+Subject: [RESEND PATCH v10 02/12] arm64: tlbflush: add APIs manipulating tlb batch's arch data
+Date: Mon, 20 May 2024 11:17:24 +0900
+Message-Id: <20240520021734.21527-3-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240520021734.21527-1-byungchul@sk.com>
 References: <20240520021734.21527-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsXC9ZZnoe6JTV5pBlP3WlrMWb+GzeLzhn9s
-	Fi82tDNafF3/i9ni6ac+FovLu+awWdxb85/V4vyutawWO5buY7K4dGABk8Xx3gNMFvPvfWaz
-	2LxpKrPF8SlTGS1+/wAqPjlrMouDgMf31j4Wj52z7rJ7LNhU6rF5hZbH4j0vmTw2repk89j0
-	aRK7x7tz59g9Tsz4zeIx72Sgx/t9V9k8tv6y82iceo3N4/MmuQC+KC6blNSczLLUIn27BK6M
-	k/0bmAreCFSceTqPvYFxDl8XIyeHhICJxLfry5hh7Dv7V7GD2GwC6hI3bvwEi4sImEkcbP0D
-	FmcWuMskcaCfrYuRg0NYIEyia68kSJhFQFXi595/7CBhXgFTiT0nlSEmykus3nAAbAon0JQZ
-	q3aygNhCQCU/jn4FmsIFVPOeTeLd/C4WiAZJiYMrbrBMYORdwMiwilEoM68sNzEzx0QvozIv
-	s0IvOT93EyMw7JfV/onewfjpQvAhRgEORiUe3h2PPNOEWBPLiitzDzFKcDArifBu2gIU4k1J
-	rKxKLcqPLyrNSS0+xCjNwaIkzmv0rTxFSCA9sSQ1OzW1ILUIJsvEwSnVwLh88623XLuf1xx+
-	4nCgb8Zh2+6ieEm1B7kiuyeuc/+d+z8/7JJ8Q+duthmZ+aLBV988WFP8T7D4OrOS+j0nnbLX
-	6yLcdE/tOhPe/cXKct5bE0Mf7v7drku2aEVbiNmuv5F3mpv7+LcFh1ZdaZnuFlQseI2TrYxb
-	qTb5R37So2eJu38LWj090KLEUpyRaKjFXFScCAC3hbI8dwIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsXC5WfdrHtik1eawap7OhZz1q9hs/i84R+b
-	xYsN7YwWX9f/YrZ4+qmPxeLw3JOsFpd3zWGzuLfmP6vF+V1rWS12LN3HZHHpwAImi+O9B5gs
-	5t/7zGaxedNUZovjU6YyWvz+AVR8ctZkFgdBj++tfSweO2fdZfdYsKnUY/MKLY/Fe14yeWxa
-	1cnmsenTJHaPd+fOsXucmPGbxWPeyUCP9/uusnksfvGByWPrLzuPxqnX2Dw+b5IL4I/isklJ
-	zcksSy3St0vgyjjZv4Gp4I1AxZmn89gbGOfwdTFyckgImEjc2b+KHcRmE1CXuHHjJzOILSJg
-	JnGw9Q9YnFngLpPEgX62LkYODmGBMImuvZIgYRYBVYmfe/+xg4R5BUwl9pxUhpgoL7F6wwGw
-	KZxAU2as2skCYgsBlfw4+pVtAiPXAkaGVYwimXlluYmZOaZ6xdkZlXmZFXrJ+bmbGIFBvKz2
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsXC9ZZnke6JTV5pBq0LLC3mrF/DZvF5wz82
+	ixcb2hktvq7/xWzx9FMfi8XlXXPYLO6t+c9qcX7XWlaLHUv3MVlcOrCAyeJ47wEmi/n3PrNZ
+	bN40ldni+JSpjBa/fwAVn5w1mcVBwON7ax+Lx85Zd9k9Fmwq9di8Qstj8Z6XTB6bVnWyeWz6
+	NInd4925c+weJ2b8ZvGYdzLQ4/2+q2weW3/ZeTROvcbm8XmTXABfFJdNSmpOZllqkb5dAlfG
+	gYZ9LAWLeSuutqo2MP7m6mLk5JAQMJG4//sYUxcjB5g9d0Y9SJhNQF3ixo2fzCC2iICZxMHW
+	P+wgNrPAXSaJA/1sILawQJxE67XvYDaLgKrEq3cnwep5BUwlpnx5xQgxXl5i9YYDYHFOoDkz
+	Vu1kAbGFgGp+HP0K1MsFVPOeTeLgzJUsEA2SEgdX3GCZwMi7gJFhFaNQZl5ZbmJmjoleRmVe
+	ZoVecn7uJkZg2C+r/RO9g/HTheBDjAIcjEo8vDseeaYJsSaWFVfmHmKU4GBWEuHdtAUoxJuS
+	WFmVWpQfX1Sak1p8iFGag0VJnNfoW3mKkEB6YklqdmpqQWoRTJaJg1OqgdHwpBVvvddEGzm/
+	1glcCSf62V6VLy/l6VSzSeuUbtx69lE5W/AW0+QpVybZzp4VFHPg3pVPn6xu39bJ3xlf+Pwh
+	w+67udLfGeRXq4t8MuvRM7D9zBw3dyEL2+YcbyOzhrfuKhtuMSQlKPtPaT2cN3mbiqNQLI/T
+	wVcLWr2dBfd/Dk2ut9rfq8RSnJFoqMVcVJwIALG4RNt3AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsXC5WfdrHtik1eaQecafYs569ewWXze8I/N
+	4sWGdkaLr+t/MVs8/dTHYnF47klWi8u75rBZ3Fvzn9Xi/K61rBY7lu5jsrh0YAGTxfHeA0wW
+	8+99ZrPYvGkqs8XxKVMZLX7/ACo+OWsyi4Ogx/fWPhaPnbPusnss2FTqsXmFlsfiPS+ZPDat
+	6mTz2PRpErvHu3Pn2D1OzPjN4jHvZKDH+31X2TwWv/jA5LH1l51H49RrbB6fN8kF8Edx2aSk
+	5mSWpRbp2yVwZRxo2MdSsJi34mqragPjb64uRg4OCQETibkz6rsYOTnYBNQlbtz4yQxiiwiY
+	SRxs/cMOYjML3GWSONDPBmILC8RJtF77DmazCKhKvHp3EqyeV8BUYsqXV4wgtoSAvMTqDQfA
+	4pxAc2as2skCYgsB1fw4+pVtAiPXAkaGVYwimXlluYmZOaZ6xdkZlXmZFXrJ+bmbGIFBvKz2
 	z8QdjF8uux9iFOBgVOLh3XDbM02INbGsuDL3EKMEB7OSCO+mLUAh3pTEyqrUovz4otKc1OJD
-	jNIcLErivF7hqQlCAumJJanZqakFqUUwWSYOTqkGxrx9Rwvbpp6yK+u6cTZo77fTcRGJemr6
-	F3U46vztUzd/qX3Z+HGV6pMryQ/fskm937CFtzHfKl4+8gRPd2im8Gv+unOOX+78boi3Yiwp
-	kdr78+/N/cEHf0rvi26Iu1b22/nEQ+ZN36OYkit5O35FzjcqUy3dZChcmLX3z3KZg5F+OxJX
-	XlSfqsRSnJFoqMVcVJwIABWbBh5eAgAA
+	jNIcLErivF7hqQlCAumJJanZqakFqUUwWSYOTqkGxtrTk2zis81l7UP2SM7PVYqRCBQR7v7g
+	8vtI0wqJPaUBunM3iH1+ddwi+fgyifLcipiQ/c7dnRbtG2tZGj0NZD82T9v2e5Kfhfn7Hje2
+	Z049Mwz0Elx4+PVUhWoznsw7It8TJXApR6L+o0+RgV7tjaUT0pr3vYldJvn0QXTZkUvv2ur5
+	+xKUWIozEg21mIuKEwHkHhI9XgIAAA==
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -83,60 +83,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
 A new mechanism, LUF(Lazy Unmap Flush), defers tlb flush until folios
 that have been unmapped and freed, eventually get allocated again.  It's
-safe for folios that had been mapped read-only and were unmapped, since
-the contents of the folios wouldn't change while staying in pcp or buddy
+safe for folios that had been mapped read only and were unmapped, since
+the contents of the folios don't change while staying in pcp or buddy
 so we can still read the data through the stale tlb entries.
 
-This is a preparation for the mechanism that needs to recognize
-read-only tlb entries by separating tlb batch arch data into two, one is
-for read-only entries and the other is for writable ones, and merging
-those two when needed.
-
-It also optimizes tlb shootdown by skipping CPUs that have already
-performed tlb flush needed since.  To support it, added APIs
-manipulating arch data for x86.
+This is a preparation for the mechanism that requires to manipulate tlb
+batch's arch data.  Even though arm64 does nothing for tlb things, arch
+with CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH should provide the APIs.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- arch/x86/include/asm/tlbflush.h | 18 ++++++++++++++++++
+ arch/arm64/include/asm/tlbflush.h | 18 ++++++++++++++++++
  1 file changed, 18 insertions(+)
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 25726893c6f4..a14f77c5cdde 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -5,6 +5,7 @@
- #include <linux/mm_types.h>
- #include <linux/mmu_notifier.h>
- #include <linux/sched.h>
-+#include <linux/cpumask.h>
- 
- #include <asm/processor.h>
- #include <asm/cpufeature.h>
-@@ -293,6 +294,23 @@ static inline void arch_flush_tlb_batched_pending(struct mm_struct *mm)
- 
- extern void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch);
+diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+index a75de2665d84..b8c7fbc1c68e 100644
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -347,6 +347,24 @@ static inline void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
+ 	dsb(ish);
+ }
  
 +static inline void arch_tlbbatch_clear(struct arch_tlbflush_unmap_batch *batch)
 +{
-+	cpumask_clear(&batch->cpumask);
++	/* nothing to do */
 +}
 +
 +static inline void arch_tlbbatch_fold(struct arch_tlbflush_unmap_batch *bdst,
-+		struct arch_tlbflush_unmap_batch *bsrc)
++			       struct arch_tlbflush_unmap_batch *bsrc)
 +{
-+	cpumask_or(&bdst->cpumask, &bdst->cpumask, &bsrc->cpumask);
++	/* nothing to do */
 +}
 +
 +static inline bool arch_tlbbatch_done(struct arch_tlbflush_unmap_batch *bdst,
-+		struct arch_tlbflush_unmap_batch *bsrc)
++			       struct arch_tlbflush_unmap_batch *bsrc)
 +{
-+	return !cpumask_andnot(&bdst->cpumask, &bdst->cpumask, &bsrc->cpumask);
++	/* Kernel can consider tlb batch always has been done. */
++	return true;
 +}
 +
- static inline bool pte_flags_need_flush(unsigned long oldflags,
- 					unsigned long newflags,
- 					bool ignore_access)
+ /*
+  * This is meant to avoid soft lock-ups on large TLB flushing ranges and not
+  * necessarily a performance improvement.
 -- 
 2.17.1
 
