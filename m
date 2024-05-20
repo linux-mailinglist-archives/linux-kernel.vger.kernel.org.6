@@ -1,142 +1,125 @@
-Return-Path: <linux-kernel+bounces-183647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FFA8C9BFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:13:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E870B8C9C05
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B92C1C21C41
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:13:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4A91282FDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18A35337E;
-	Mon, 20 May 2024 11:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wafdUty1"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAF8535A6;
+	Mon, 20 May 2024 11:14:27 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D4F182DF
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 11:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409705337E;
+	Mon, 20 May 2024 11:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716203601; cv=none; b=dR+i/N8jlUqI0jzTgTpJ1dDBKYG1z8z8kh7+XsB37xk6tOk5AteHtQ3TQ+OVR4hSV9ZaIf6m7WC16YVZ5f3w27YkJgLneAM4BQkwYf33t/DWh5FrZe2DvYW3kldgg6uBMUhgjx95v+8LR/BP1SsxbPfeoHU9DxbhdfFsfRmjHuM=
+	t=1716203667; cv=none; b=phclC8ZtJzRX0RQmpOO2jQ0Owji1O2Ee4WHECp7NUV7lRva0UBXFYRHha0VP257inJBerBmBLTxTCMs4y527llH4rvFaQJx7vjiXKYYQF7bdoQ/3eg2fLRO01cSMGnlSv1bX5ciUid6OjwJxLHM5KsMRzdtTipUmTj4LJVSE9MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716203601; c=relaxed/simple;
-	bh=BwJI/vqR/Vf+YTatfUGzhpZo0KGpHV1810YIo5sFMss=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lr66gJALAi5F46pCwhNfwoAuyRXWCSrwqNRlh7o9kimeI+yBJn2x19omA8C3oMXj219EpCa/hRS/GSbY1QQGJvVzCeO+M1HixE9MGLtcQhOwNkGd88cB7iw6TRAVKIgVTJUmR5a1dPd76tViMRfp9CNOz6j55tEpuJiMGEZdXv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wafdUty1; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-de462979e00so2640319276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 04:13:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716203598; x=1716808398; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=O5jh8Q3/PtVQ/wHNrcuIbE1MuAYfpZQK0CvL7Pv+jlo=;
-        b=wafdUty1KBK9CRkOIEDnJ2G275QipBnHhbDQsf9Kx2uySr/LDXW2Ny4CYUUBNR46qE
-         zCTOv/VzgTOoNJDxfPPIj9IFgrugP4fwi1hz7Mno4kUWeCKhR5bvpVsVBo33kacu45Gn
-         G+DJ+z20adO2ioVN1y8wtC7fWErscDa7WzU14USN6zxQoeuEEJKl1HJ7JJEX1eH7MPbd
-         9kVJQgW4wG4RAPn99Pr5ONtjOOJkowBJ1t5zssqGSjvKdOS1yc7CL+z6KcBmn9lvZoIq
-         gk7is1X5VVEEK4wr5H3SwiMx+xFOqRpJesWd1fpX9KNAlM+r3NhBAGAWqYN3yROTs89b
-         uc2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716203598; x=1716808398;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O5jh8Q3/PtVQ/wHNrcuIbE1MuAYfpZQK0CvL7Pv+jlo=;
-        b=Hqqha/MRfnj76qYiKc2j1Yrh/XMw0feBq3wlEjAW0+UifPqDdu+TGm6ks+ouVyNUOe
-         SwLE+VfAn+dcOjgyUbq5gMvJmcA1AM9Ae3K5zwV1w0WgqBx7HaMq1tFs/VbUdO8NfQ4Q
-         Ww2K7Uz8NkhEZdzAnY0O6X+sGfl2GWOGfvdlftG121UIjDSx569iz/mp024eaBYce7LN
-         9yhezzh7QzN8KKqpvfMqk4VtdeoJZsbF1nTZ0GQckLhXe4ijK3fwQBEv0pw1k2vGxSd4
-         qNSSVjU+Po4qySdtaDZyJeu9GI/SFS4sLX5HPcUC5ZXI3XJM7WpugJugCENYkhP952vR
-         XQUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlpIaxbWWmg0uhRJtxaS5AFm+s8uKJrRsxbRNuZo+tqHtAMpnfFte6EJHiDxsX4LF5Za32LF6WxTVe74SiYhYbRDHllPbOYeixpl7F
-X-Gm-Message-State: AOJu0Yy7nR7XZoubRGJtSHGD0jLK3p6kcnxK/NNnzI7AnOUF0DFClCou
-	5rUqtNdiluz+TfMfqSyzXeWyAer+RVCCkXLsQ06tfoRxHPF7rRLoPxYk8+3V4LwHE1osh+Hjt9Y
-	DZBzZZus2/raPIRCWsF0c1olpI6Yk08Dw4CQr/A==
-X-Google-Smtp-Source: AGHT+IHgw3R2VDG3/RcUEiQCjrLCQ2HYddtsmPFqDCMLDMd5M1yfaM/WnZRHZJBTrNeCwPZKpwSj4dE7NBwdkz/lREo=
-X-Received: by 2002:a25:ae18:0:b0:dee:607c:3528 with SMTP id
- 3f1490d57ef6-dee607c3793mr25911507276.3.1716203598470; Mon, 20 May 2024
- 04:13:18 -0700 (PDT)
+	s=arc-20240116; t=1716203667; c=relaxed/simple;
+	bh=w6EWHG/7umfYX85hJzKNaeqWOnb01B251xQqu8FXNag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=citahhZn34nyjGqbrXXI9xAoEVs0G4/CHJFwF+3LrM48ir4q3pz1A76rXpMlXakUia9WRjy384dO8+QbkJqMG7PoWrSRMyIchy2QYXCNmk6joVZkSgb5w3awXlcM4ti++oXbc2JeHrqhHxzEfFrsB9SfFCrZcsfAiVDjMiNUplc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjZhL0Jmlz4f3mJD;
+	Mon, 20 May 2024 19:14:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 6CF731A016E;
+	Mon, 20 May 2024 19:14:20 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgAn9g6IMEtmiAG7NA--.5841S3;
+	Mon, 20 May 2024 19:14:20 +0800 (CST)
+Message-ID: <5b1b2719-2123-9218-97b4-ccda8b5cb3b4@huaweicloud.com>
+Date: Mon, 20 May 2024 19:14:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516101006.2388767-1-victor.liu@nxp.com> <evnxopqt5be56vxuxqdj4l3mcd5nrrvucio7jhwgg4emraai3t@gherubdynyip>
- <e2d4e8b4-bab4-448f-8b67-21f2902fdcd2@linux.dev>
-In-Reply-To: <e2d4e8b4-bab4-448f-8b67-21f2902fdcd2@linux.dev>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 20 May 2024 14:13:07 +0300
-Message-ID: <CAA8EJppH1rYQ5pzkGP+V-=cOPBYMWm=ZK2Ei1ttjOiN6GRDP+w@mail.gmail.com>
-Subject: Re: [PATCH] drm/bridge: adv7511: Exit interrupt handling when necessary
-To: Sui Jingfeng <sui.jingfeng@linux.dev>
-Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, biju.das.jz@bp.renesas.com, 
-	u.kleine-koenig@pengutronix.de, aford173@gmail.com, jani.nikula@intel.com, 
-	bli@bang-olufsen.dk
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH v2 08/12] cachefiles: never get a new anonymous fd if
+ ondemand_id is valid
+Content-Language: en-US
+To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
+ dhowells@redhat.com, jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ libaokun@huaweicloud.com
+References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
+ <20240515084601.3240503-9-libaokun@huaweicloud.com>
+ <f4d24738-76a2-4998-9a28-493599cd7eae@linux.alibaba.com>
+ <d62b162d-acb3-2fa7-085e-79da3278091a@huaweicloud.com>
+ <a3ca2292-0218-45f6-8afe-4319a10b69e2@linux.alibaba.com>
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <a3ca2292-0218-45f6-8afe-4319a10b69e2@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAn9g6IMEtmiAG7NA--.5841S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFy7Wr1ktw4rCryUZrW5Wrg_yoW8XFyDpF
+	WxWa4rKF1vqFW0vr9Fvr9xXryjyay7J3WUXrs7Kw1UJr98Zr15Cr4xJr4jgas8A39ava1I
+	yF12q3srZa4UA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
+	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x0JUq38nUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-On Mon, 20 May 2024 at 14:11, Sui Jingfeng <sui.jingfeng@linux.dev> wrote:
+On 2024/5/20 17:24, Jingbo Xu wrote:
 >
-> Hi,
+> On 5/20/24 5:07 PM, Baokun Li wrote:
+>> On 2024/5/20 16:43, Jingbo Xu wrote:
+>>> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
+>>>> From: Baokun Li <libaokun1@huawei.com>
+>>>>
+SNIP
+>>>>
+>>>> To avoid this, allocate a new anonymous fd only if no anonymous fd has
+>>>> been allocated (ondemand_id == 0) or if the previously allocated
+>>>> anonymous
+>>>> fd has been closed (ondemand_id == -1). Moreover, returns an error if
+>>>> ondemand_id is valid, letting the daemon know that the current userland
+>>>> restore logic is abnormal and needs to be checked.
+>>>>
+>>>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking
+>>>> up cookie")
+>>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>>> The LOCs of this fix is quite under control.  But still it seems that
+>>> the worst consequence is that the (potential) malicious daemon gets
+>>> hung.  No more effect to the system or other processes.  Or does a
+>>> non-malicious daemon have any chance having the same issue?
+>> If we enable hung_task_panic, it may cause panic to crash the server.
+> Then this issue has nothing to do with this patch?  As long as a
+> malicious daemon doesn't close the anonymous fd after umounting, then I
+> guess a following attempt of mounting cookie with the same name will
+> also wait and hung there?
 >
-> On 5/20/24 06:11, Dmitry Baryshkov wrote:
-> > On Thu, May 16, 2024 at 06:10:06PM +0800, Liu Ying wrote:
-> >> Commit f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
-> >> fails to consider the case where adv7511->i2c_main->irq is zero, i.e.,
-> >> no interrupt requested at all.
-> >>
-> >> Without interrupt, adv7511_wait_for_edid() could return -EIO sometimes,
-> >> because it polls adv7511->edid_read flag by calling adv7511_irq_process()
-> >> a few times, but adv7511_irq_process() happens to refuse to handle
-> >> interrupt by returning -ENODATA.  Hence, EDID retrieval fails randomly.
-> >>
-> >> Fix the issue by checking adv7511->i2c_main->irq before exiting interrupt
-> >> handling from adv7511_irq_process().
-> >>
-> >> Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
-> >> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> >> ---
-> >>   drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 3 ++-
-> >>   1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> >> index 6089b0bb9321..2074fa3c1b7b 100644
-> >> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> >> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> >> @@ -479,7 +479,8 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
-> >>              return ret;
-> >>
-> >>      /* If there is no IRQ to handle, exit indicating no IRQ data */
-> >> -    if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
-> >> +    if (adv7511->i2c_main->irq &&
-> >> +        !(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
-> >>          !(irq1 & ADV7511_INT1_DDC_ERROR))
-> >>              return -ENODATA;
-> >
-> > I think it might be better to handle -ENODATA in adv7511_wait_for_edid()
-> > instead. WDYT?
-> >
->
-> I think this is may deserve another patch.
-
-My point is that the IRQ handler is fine to remove -ENODATA here,
-there is no pending IRQ that can be handled. So instead of continuing
-the execution when we know that IRQ bits are not set, it's better to
-ignore -ENODATA in the calling code and go on with msleep().
+Yes, a daemon that only reads requests but doesn't process them will
+cause hung，but the daemon will obey the basic constraints when we
+test it.
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Baokun Li
+
 
