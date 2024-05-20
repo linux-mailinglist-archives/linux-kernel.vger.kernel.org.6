@@ -1,78 +1,187 @@
-Return-Path: <linux-kernel+bounces-183971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69BBC8CA0C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:34:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A46BC8CA17E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 206441F21C77
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:34:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F3E72815B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3867E137C5A;
-	Mon, 20 May 2024 16:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2D9137C44;
+	Mon, 20 May 2024 17:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uyy6XQiB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="1DAarIjl"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCE8137C38;
-	Mon, 20 May 2024 16:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3946CA2D;
+	Mon, 20 May 2024 17:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716222840; cv=none; b=ZLsk7nIwvUQTl64ETQPLyUd+aIPPtButc6O2PCNFvKN8NPtkicKGhxoDrzLv2PUXtUWO/BO5E/wptnbYrWKZPfUp9vGg2aEx0caBzxo5DCQKE5JzvwQ53inJ5u25D51NKCuIjmForg61jySr51vDtdsNNSJdOmhEVvf/zoDx0Xs=
+	t=1716226913; cv=none; b=rwXKylQDclLi+5dChvPgjfiiXACJDEHn1Gcbd0c0hFQXRr5kxlhlVTNHywJl2cVZRExJthJjTdCD8iSKImWEtCQSYO4PyPfc3hoZhfI22WmwxJvUEIU9cJCW05imUvegk9so3RIrX+pMjIlhq0y0Udnd9A/5gdedf+FRJKPkItk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716222840; c=relaxed/simple;
-	bh=bncJaobV6T5P9tfPqs/N4aWl2fN1kCAd2p1qWFETk20=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=UqJ9PMLbwhz4C15uiB/zaojcnsbWLKsRvLWUsp2Ef0OpN6k/9m3BLRO0CPJ+sES6TzczQqWXUwFDA41dlmvN9smyS+SUHWPzPaSHYiRrIgotjJiwWnV8LGkFDMeztoWzdaRAfPkGJST96pYob0oH9B1hJZoJ5gPslhr/N128kFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uyy6XQiB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5E01EC4AF07;
-	Mon, 20 May 2024 16:34:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716222840;
-	bh=bncJaobV6T5P9tfPqs/N4aWl2fN1kCAd2p1qWFETk20=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Uyy6XQiBnwCOcVPq36981VzljHQe7CShdiA6bmwIRbRmorPwfHwzjyXQnsZOJa/91
-	 5sQlQNNnGTZLZhVEnTt7yIuJJel4FVxOd5dCfTUULCtqysr2kDJBWtCy71EcNU5QUk
-	 sRlftNpfq2Gq+gIQz31N4D//PLXIFm57iHRAMYuc5qp7WOUNkZdFtrzLOKJQjDNcpW
-	 2Qf1s6YOYFrSwO19jmoFh7IWH0KUumuxSdJ3wyWrvu7wLnnChzpPFkojng2REsKu8J
-	 0pPzv9NB+RACebwPf6ZiHo5wt54A8pdp13xV0AwUiBhB1J1AL1wdNYnwTyzjv/ycGR
-	 C7c2LtZkwHjNA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 562F5C54BB1;
-	Mon, 20 May 2024 16:34:00 +0000 (UTC)
-Subject: Re: [GIT PULL] pin control bulk changes for v6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdbKNem0KB4W9a6R7o6e7V4+eh9cLMKYV0xv5Hv3tEpysg@mail.gmail.com>
-References: <CACRpkdbKNem0KB4W9a6R7o6e7V4+eh9cLMKYV0xv5Hv3tEpysg@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdbKNem0KB4W9a6R7o6e7V4+eh9cLMKYV0xv5Hv3tEpysg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.10-1
-X-PR-Tracked-Commit-Id: 83906257f2e4441a4610f83ae24a713ba609b64a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2de68638aa7c0da594d23b1aa025fc5a801c427e
-Message-Id: <171622284034.31783.13668525475084512425.pr-tracker-bot@kernel.org>
-Date: Mon, 20 May 2024 16:34:00 +0000
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-kernel <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1716226913; c=relaxed/simple;
+	bh=USAnQFsFIAz4NTK1Wi/gNcItGq8+FboBq9Sm3p6WVJE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fbaiWSWHx0oE5qRHz8T/tK64v1EfhJBktP0q7hd50I2siz5TwB88AJ86gOhracSRepgnQ7KkP527VrV8pbyOFFLlJrtZSk5BGWm22cOcDW+xQ5nGe30tBf+tG8kfoiB+BHc+m3UvalzV8rxIxMq9Rb2Lq4EC5py6YMxOO5djAlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=1DAarIjl; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716226909;
+	bh=USAnQFsFIAz4NTK1Wi/gNcItGq8+FboBq9Sm3p6WVJE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=1DAarIjlKy2Zl60w7NfmP/MqF+2Vf/lBvTyq/6hDi9OQDKknjDXzFHqpwgOc+lUjA
+	 pphsH/zdCrKHAHbKSZ23D//Eca5Y3tqf5q/o6FJuyEeG5utOgnD/ano+hUgn4j9gBN
+	 985FZoqwm8oJcQR22Ds6awEbQptqdojjls4+AqLvJz4fXuykXdEvusxo2qAUVJ9APi
+	 I5NMO2wdKnu9z4NXjcdMw1JsDF/8pF1qCdzxKcoKubfulihtrzqImF0E3+kTDKIsfC
+	 1cvwoN9Mr2GFIii68eYdsOK+YJWALUX9iBLyUsWizv3g9WVl9KPrb56bji59IhTDA7
+	 HpNToWom1Nqmw==
+Received: from localhost.localdomain (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 09AC0378107D;
+	Mon, 20 May 2024 17:41:47 +0000 (UTC)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: kernel@collabora.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: firmware: conform test to TAP
+Date: Mon, 20 May 2024 09:37:57 -0700
+Message-Id: <20240520163759.1427653-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Mon, 20 May 2024 09:55:47 +0200:
+Conform the layout, informational and status messages to TAP. No
+functional change is intended other than the layout of output messages.
+Without using TAP messages, the passed/failed/skip test names cannot be
+found. This is a prepartory patch, more patches will be sent to comform
+the test completely.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.10-1
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ .../selftests/firmware/fw_run_tests.sh        | 63 ++++++++++++-------
+ 1 file changed, 40 insertions(+), 23 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2de68638aa7c0da594d23b1aa025fc5a801c427e
-
-Thank you!
-
+diff --git a/tools/testing/selftests/firmware/fw_run_tests.sh b/tools/testing/selftests/firmware/fw_run_tests.sh
+index f6d95a2d51249..5063c75345680 100755
+--- a/tools/testing/selftests/firmware/fw_run_tests.sh
++++ b/tools/testing/selftests/firmware/fw_run_tests.sh
+@@ -6,6 +6,9 @@
+ 
+ set -e
+ 
++DIR="$(dirname $(readlink -f "$0"))"
++source "${DIR}"/../kselftest/ktap_helpers.sh
++
+ TEST_DIR=$(dirname $0)
+ source $TEST_DIR/fw_lib.sh
+ 
+@@ -26,54 +29,68 @@ run_tests()
+ 	proc_set_force_sysfs_fallback $1
+ 	proc_set_ignore_sysfs_fallback $2
+ 	$TEST_DIR/fw_upload.sh
++
++	ktap_test_pass "Completed"
+ }
+ 
+ run_test_config_0001()
+ {
+-	echo "-----------------------------------------------------"
+-	echo "Running kernel configuration test 1 -- rare"
+-	echo "Emulates:"
+-	echo "CONFIG_FW_LOADER=y"
+-	echo "CONFIG_FW_LOADER_USER_HELPER=n"
+-	echo "CONFIG_FW_LOADER_USER_HELPER_FALLBACK=n"
++	ktap_print_msg "-----------------------------------------------------"
++	ktap_print_msg "Running kernel configuration test 1 -- rare"
++	ktap_print_msg "Emulates:"
++	ktap_print_msg "CONFIG_FW_LOADER=y"
++	ktap_print_msg "CONFIG_FW_LOADER_USER_HELPER=n"
++	ktap_print_msg "CONFIG_FW_LOADER_USER_HELPER_FALLBACK=n"
+ 	run_tests 0 1
+ }
+ 
+ run_test_config_0002()
+ {
+-	echo "-----------------------------------------------------"
+-	echo "Running kernel configuration test 2 -- distro"
+-	echo "Emulates:"
+-	echo "CONFIG_FW_LOADER=y"
+-	echo "CONFIG_FW_LOADER_USER_HELPER=y"
+-	echo "CONFIG_FW_LOADER_USER_HELPER_FALLBACK=n"
++	ktap_print_msg "-----------------------------------------------------"
++	ktap_print_msg "Running kernel configuration test 2 -- distro"
++	ktap_print_msg "Emulates:"
++	ktap_print_msg "CONFIG_FW_LOADER=y"
++	ktap_print_msg "CONFIG_FW_LOADER_USER_HELPER=y"
++	ktap_print_msg "CONFIG_FW_LOADER_USER_HELPER_FALLBACK=n"
+ 	proc_set_ignore_sysfs_fallback 0
+ 	run_tests 0 0
+ }
+ 
+ run_test_config_0003()
+ {
+-	echo "-----------------------------------------------------"
+-	echo "Running kernel configuration test 3 -- android"
+-	echo "Emulates:"
+-	echo "CONFIG_FW_LOADER=y"
+-	echo "CONFIG_FW_LOADER_USER_HELPER=y"
+-	echo "CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y"
++	ktap_print_msg "-----------------------------------------------------"
++	ktap_print_msg "Running kernel configuration test 3 -- android"
++	ktap_print_msg "Emulates:"
++	ktap_print_msg "CONFIG_FW_LOADER=y"
++	ktap_print_msg "CONFIG_FW_LOADER_USER_HELPER=y"
++	ktap_print_msg "CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y"
+ 	run_tests 1 0
+ }
+ 
++ktap_print_header
++
+ check_mods
+ check_setup
+ 
+-echo "Running namespace test: "
+-$TEST_DIR/fw_namespace $DIR/trigger_request
+-echo "OK"
+-
+ if [ -f $FW_FORCE_SYSFS_FALLBACK ]; then
++	ktap_set_plan "4"
++
+ 	run_test_config_0001
+ 	run_test_config_0002
+ 	run_test_config_0003
+ else
+-	echo "Running basic kernel configuration, working with your config"
++	ktap_set_plan "2"
++
++	ktap_print_msg "Running basic kernel configuration, working with your config"
+ 	run_tests
+ fi
++
++ktap_print_msg "Running namespace test: "
++$TEST_DIR/fw_namespace $DIR/trigger_request
++if [ $? -eq 0 ]; then
++    ktap_test_pass "fw_namespace completed successfully"
++else
++    ktap_test_fail "fw_namespace failed"
++fi
++
++ktap_finished
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.39.2
+
 
