@@ -1,115 +1,131 @@
-Return-Path: <linux-kernel+bounces-183688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F2408C9C9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:50:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E68898C9CAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C5128331E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:50:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2DE6280C33
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4785FBB1;
-	Mon, 20 May 2024 11:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB8053E0A;
+	Mon, 20 May 2024 11:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OLGHNE3I"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LvG7xouh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D4356B95
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 11:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3EA14292;
+	Mon, 20 May 2024 11:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716205761; cv=none; b=NVvtT3aFkHXo2hMyXixzQ03SfmmxasGnYoqDg0U4JfRLzjkV1NjoQMUMZifkJLyoP0q/tIisGmSFsYNhPzt/UmgTMshmzDdUsE4moO3cPCU1V68wGzWWa6/TXhModUOeQnqXqzlna6H+PesXuELf5fo04IqLHzXbPfL51iK6ofU=
+	t=1716205957; cv=none; b=VmpUX4vMdmOThECkQiaPd46S05rNIQKSY0Ez/ZfVYiFLPc3jkgTQG6kUuLs+zmuuomp7AVB1L6FeIP4CFUDkdwdHmgILpWVuIiWm0lNMBM5cKORmssvgcMedjs3MeALe6+qXsM2w3wEwYY/O7I4s6H3FTovUZNaVXBiQGHDmqeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716205761; c=relaxed/simple;
-	bh=yWP4aKeWINro0Ux1wtTeGfryGZI1hCqxA8nspc6sNVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hhjRjlaNrMOdQbEwnn+SfMu8xkO5Q12rJSHALWZ384s3KED0YFoCTEnvKkhR1wqlOmINlpcWf9LEq8yy/c7VmqTXb/tuCbokgzC9WtoFIQjUToPBMDiFKYYcI1WPiy6+dofTbCrP9kejaw5BdZIVdUCrEabxesWldXBE1Vi8ITU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OLGHNE3I; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e72224c395so11614971fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 04:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716205757; x=1716810557; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O/oxcJBIyXlY9TtgU1r7E6cgf1golLAQDrTLfXTTYDk=;
-        b=OLGHNE3IPhuAk6QNRs5Q5cHUrohX0BV1OOMO7IgFj5fAacby3uXrkmkHSEkkzmKfWN
-         T3R3v+A472Q759N5bbJURzVTYg56Tvkd9YTT9MEmF0jxA/FuD3ItLUZAEGaaAqBPS88W
-         2xu/uMxTfW+CIQkTT45miLL0hSaoKbcHNApd+ZRHQy+vuO/wZkzjhxDU+A6zuWC+hs6Q
-         Cd/uk25TogZW9PfJ/6Viicb01fPwbdxUe571Uf0POWzh7q0hMLbllFqtu7ZsEBcT7Gqk
-         hYVKPzrkqlJ0U69IMGvL1vOaawzsLzlRA2PehxJVT0c+RW1X9ROsV0pFFu+cHMxy6J7u
-         +b9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716205757; x=1716810557;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O/oxcJBIyXlY9TtgU1r7E6cgf1golLAQDrTLfXTTYDk=;
-        b=dhMXyWHkhnBQjn7+Ytg4zZCrZG7Mjxy7sZUIstOS8ob79KB7PIWQDebs5yTxXtHwy2
-         PQpabiTlzl41DqEJdEgDY03ziPSgZWFeXLOYNERuE+yhQDY8+GV+/5HGxEDjrDS8bpbH
-         +nmMluBLgSCh3EYwDaasLNhcLzjrou8s3Ws6XT3hCn69/PZlrzgZCCaRid/sMxOz5wFl
-         ANdCPKC7c685f46Bh3FQxR5KtygCc6hDx9aMZXRDe+6U/w1RC2WnGveKt5JGZCCSTa66
-         jGbgENwdTBFSirWem7MS8roN2w5oG+4H/j3aWSecpmZMyiy2jjlqgBcCv6TAN9rtl1oa
-         p9Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqWv17M58QOZHhglFhJrBwrYCYUwB0ZXXnWAISuF8lvy7G4QBolMvJppuSbqtHvMqJuwC0cUklcYFxFM3iSCWJwZ4kAtGmXV2AQILo
-X-Gm-Message-State: AOJu0YxnJHF90xCo/PTG3ydYJ/lIk4RwCjU9Oqhe+rsnqBpWjGuZ1oMc
-	61ChM+l6u9oIPJTT0NlwUWJiW0PeAOJwi1qsEYZvfHfbqeq40HOt+vFlz/+b5uU=
-X-Google-Smtp-Source: AGHT+IFlzaGIRfESALSLtsyNFlfZ1/JIBw7ONHINjG4LvPNB4eEcZEi71DkW5rhom1Y1o6Z5gbWZjw==
-X-Received: by 2002:a2e:98c5:0:b0:2df:6b06:b5dc with SMTP id 38308e7fff4ca-2e51ff5cf54mr192231491fa.15.1716205756937;
-        Mon, 20 May 2024 04:49:16 -0700 (PDT)
-Received: from [192.168.1.172] ([93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-351b79e8e6bsm21316539f8f.65.2024.05.20.04.49.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 May 2024 04:49:16 -0700 (PDT)
-Message-ID: <67f13b3c-18b2-4042-9908-b4d41c24cdb0@baylibre.com>
-Date: Mon, 20 May 2024 13:49:15 +0200
+	s=arc-20240116; t=1716205957; c=relaxed/simple;
+	bh=z3aFHh38mRkuskXCICZ7ozAmniYihzx6T8rWtzfwYSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WnbIXspQTLa+F5pf9ZiDEtA/Tt8d/1Hzev/Pc3tuuvqOvBiBCVIolpMNJ2tYhCxeZUDf6oPK7+ZmEZc4L5j+lKBg6/I4uVPpm2uH0CsD3uOoujRcKPyA6QuKkeF3NueCPpnBd+T+15xpWe1HEey1Cg54I0uivGu/fi9/ke8erow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LvG7xouh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED2B6C2BD10;
+	Mon, 20 May 2024 11:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716205957;
+	bh=z3aFHh38mRkuskXCICZ7ozAmniYihzx6T8rWtzfwYSQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LvG7xouhQzrqPROcXkFFVpuc4pXu3XX+WUuWvOH/btvB2pZHPKjNmkMnDeGO9l7mj
+	 quyi5oA5fu6YJ9kl5lF8dYQjMwLsURXf8UxtRjY7VmZKlpQpwy9qLkoNQ2bjzWCPE/
+	 1qBqEp43fgPJUrn2xcdJ066r8D5dny3DjyQo+LT88Q1mXEil3wpyTA4dD70D3TkNJc
+	 ep8NRmTkB/V5yJehV1U6wTWqCHsdbC/Hv1JPueFz2vRhj4uq/ZipVDDkDwxFrGH+gp
+	 dHLe1UmBEims3QkdMIfPFQB80bx+BFp7J3BmpipHZJ+fKoZp07gF08lSAJvLxA6BOc
+	 szFa9EhP+fZAw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1s91ZA-000000004K1-07cL;
+	Mon, 20 May 2024 13:52:32 +0200
+Date: Mon, 20 May 2024 13:52:32 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Steev Klimaszewski <steev@kali.org>
+Subject: Re: [PATCH v2 4/7] HID: i2c-hid: elan: fix reset suspend current
+ leakage
+Message-ID: <Zks5gJ7H6ZuWr_Xm@hovoldconsulting.com>
+References: <20240507144821.12275-1-johan+linaro@kernel.org>
+ <20240507144821.12275-5-johan+linaro@kernel.org>
+ <CAD=FV=V59t_tZ9Xk=uhbgOdTRYLKu+kZt8cpaksTkJo+D4yt8Q@mail.gmail.com>
+ <Zks3hp5iUhTe3rLH@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] dt-bindings: arm: mediatek: mmsys: Add OF graph
- support for board path
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- chunkuang.hu@kernel.org
-Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- matthias.bgg@gmail.com, shawn.sung@mediatek.com, yu-chang.lee@mediatek.com,
- ck.hu@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- wenst@chromium.org, kernel@collabora.com
-References: <20240516081104.83458-1-angelogioacchino.delregno@collabora.com>
- <20240516081104.83458-3-angelogioacchino.delregno@collabora.com>
- <ce1de395-3f60-4f7f-9424-bf036134de94@baylibre.com>
- <7dbe08cf-47a1-4da6-9035-6b0932cf8426@collabora.com>
-Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <7dbe08cf-47a1-4da6-9035-6b0932cf8426@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zks3hp5iUhTe3rLH@hovoldconsulting.com>
 
+On Mon, May 20, 2024 at 01:44:06PM +0200, Johan Hovold wrote:
+> On Fri, May 10, 2024 at 04:36:08PM -0700, Doug Anderson wrote:
+> > On Tue, May 7, 2024 at 7:48 AM Johan Hovold <johan+linaro@kernel.org> wrote:
 
-
-On 20/05/2024 12:53, AngeloGioacchino Del Regno wrote:
->> So, I don't know how you want to manage multiple display, but IMHO there are 2 ways:
->> - removing the current "oneOf".
+> > > @@ -67,7 +77,14 @@ static void elan_i2c_hid_power_down(struct i2chid_ops *ops)
+> > >         struct i2c_hid_of_elan *ihid_elan =
+> > >                 container_of(ops, struct i2c_hid_of_elan, ops);
+> > >
+> > > -       gpiod_set_value_cansleep(ihid_elan->reset_gpio, 1);
+> > > +       /*
+> > > +        * Do not assert reset when the hardware allows for it to remain
+> > > +        * deasserted regardless of the state of the (shared) power supply to
+> > > +        * avoid wasting power when the supply is left on.
+> > > +        */
+> > > +       if (!ihid_elan->no_reset_on_power_off)
+> > > +               gpiod_set_value_cansleep(ihid_elan->reset_gpio, 1);
+> > > +
+> > >         if (ihid_elan->chip_data->post_gpio_reset_off_delay_ms)
+> > >                 msleep(ihid_elan->chip_data->post_gpio_reset_off_delay_ms);
+> > 
+> > Shouldn't  the above two lines be inside the "if
+> > (!ihid_elan->no_reset_on_power_off)" test? If you're not setting the
+> > reset GPIO then you don't need to do the delay, right?
 > 
-> ...eh I think this should be anyOf instead :-)
+> Yes, I guess you're right. The off-delay is weird and not normally used,
+> but apparently it is needed by some panel-follower use case. AFAICT it's
+> not even related to the reset line, just a hack to add a delay before
+> the panel is reset by some other driver (see f2f43bf15d7a ("HID:
+> i2c-hid: elan: Add ili9882t timing")).
 > 
-> I'll check later and send a v5.
+> I think that's why I just looked the other way and left this little
+> oddity here unchanged.
 
-"anyOf" behavior works as expected on my side, dt-validate pass ;)
+Hit send too soon.
 
--- 
-Regards,
-Alexandre
+Since this hack does not appear to be related to the reset line, I think
+it's correct to not have it depend on whether the reset line is asserted
+or not (e.g. as there could be 'panel-followers' with
+'no_reset_on_power_off'):
+
+	 The datasheet specifies there should be 60ms between touch SDA
+	 sleep and panel RESX. Doug's series[1] allows panels and
+	 touchscreens to power on/off together, so we can add the 65 ms
+	 delay in i2c_hid_core_suspend before panel_unprepare.
+
+The power-off delay variable should probably be renamed, but that's a
+separate change.
+
+So I think v2 of this series is good to go.
+
+Johan
 
