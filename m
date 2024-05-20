@@ -1,280 +1,293 @@
-Return-Path: <linux-kernel+bounces-183600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6688C9B23
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:21:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1A88C9B2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C0D91C20D4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:21:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 470B71F22336
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420B220328;
-	Mon, 20 May 2024 10:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M8kfYDMH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FA814285
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 10:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CE2502A6;
+	Mon, 20 May 2024 10:26:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CDE1CD31;
+	Mon, 20 May 2024 10:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716200466; cv=none; b=b2hCUsz6bijQ4MUcDh2Was0dh22CLOQbuWse0uVE/YjHCbnWB/kvWz4Y03XDwvs2yPbNiVLN02HrY0gS7AYVSUovrNSl2VkPl6v8dm8XyzxB9oYg4M3SCOn8Wrv47LWMLkBBfSng1g4IPWDUZ00QXralM5aMfCn36IGsitubesk=
+	t=1716200784; cv=none; b=SvWXUjh0obr6Nrg3t/O1e2tY/RJQubLSP4hFuZdUuSTcnmgqchUGbuM+bM7+hiQD13uBkgPiPcwe/OzXWFwCcc2yQfuVlVr/F+taleCuaoB2bM6MWxnKrOII2+1JIempwLyba2JdnCDMjOpqO9IKAq7HLpv0nXkx/VnMjoPEWZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716200466; c=relaxed/simple;
-	bh=fjGpEbWhO2U55ERIqgCNVFguYmITI1zHU6KLafosfd8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bbKVcztoB/+Jfq8kOPNfjREGWPkWdHebHNR3tFOWYfO+vCkMQ/VJ3PZWcVa5G6VJUKYzhI37swqd7tnVBP4PRpHDhmINy2xAEx/hf8zy0gyJU0EcvVgRDem8D67AhWIhWMke8intUSD1ugqKutuVKDqxwSe4atz+5e8727s6fDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M8kfYDMH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716200463;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=duA+lcZjZaK9FohFXicZ26TNWWaPuTxpNl7VcpCJvS0=;
-	b=M8kfYDMHEjnywzYx0toJ2a7UbTbvpXoGl0CioPztxZv8qSNt4U6VuBszCwg+kLthYHPs26
-	9UNBieIuKFx+7MyCPLY+PaktkPa1TFd/dcGBzqE7h0T2lsrFyDZvakgrBmcaoRTMrf1cYT
-	0+jVAVQrsEU1k3pBYNEgqxZLK0l977Q=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-587-_hBuZV6rNai_Nf2GLMywsw-1; Mon, 20 May 2024 06:21:02 -0400
-X-MC-Unique: _hBuZV6rNai_Nf2GLMywsw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7D2B280066E;
-	Mon, 20 May 2024 10:21:01 +0000 (UTC)
-Received: from ksundara-mac.redhat.com (unknown [10.74.17.140])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 5FC612026D68;
-	Mon, 20 May 2024 10:20:54 +0000 (UTC)
-From: Karthik Sundaravel <ksundara@redhat.com>
-To: jesse.brandeburg@intel.com,
-	wojciech.drewek@intel.com,
-	sumang@marvell.com,
-	jacob.e.keller@intel.com,
-	anthony.l.nguyen@intel.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	horms@kernel.org
-Cc: pmenzel@molgen.mpg.de,
-	jiri@resnulli.us,
-	michal.swiatkowski@linux.intel.com,
-	bcreeley@amd.com,
-	rjarry@redhat.com,
-	aharivel@redhat.com,
-	vchundur@redhat.com,
-	ksundara@redhat.com,
-	cfontain@redhat.com
-Subject: [PATCH iwl-next v11] ice: Add get/set hw address for VFs using devlink commands
-Date: Mon, 20 May 2024 15:50:40 +0530
-Message-Id: <20240520102040.54745-2-ksundara@redhat.com>
-In-Reply-To: <20240520102040.54745-1-ksundara@redhat.com>
-References: <20240520102040.54745-1-ksundara@redhat.com>
+	s=arc-20240116; t=1716200784; c=relaxed/simple;
+	bh=1qB7VBGFkFKCrRZgTuXpSZgFCo9+oaSne3bB3h1ZcpM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DZI2GFcGJ7pT4YsOE6Prk29QD92gOU5KYtT91sCjBwGHhtDkg4TkBCwV4th60qUy87Kgi7vYQNeXIEKPNXKEuIq7MoabPK58ATyvYJuxhSA4WiiQKvJBhlh4UWDCFZAD7XGW0GGa8Hc50/U5PdKhpdJDMNiHG/K/Fqgt0ciZ+/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1759FEC;
+	Mon, 20 May 2024 03:26:45 -0700 (PDT)
+Received: from [10.57.37.116] (unknown [10.57.37.116])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C36063F766;
+	Mon, 20 May 2024 03:26:11 -0700 (PDT)
+Message-ID: <09fef0af-73ab-46cb-af31-9a10c1e90593@arm.com>
+Date: Mon, 20 May 2024 11:26:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/7] iommu/dma: Make limit checks self-contained
+To: Jerry Snitselaar <jsnitsel@redhat.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Christoph Hellwig <hch@lst.de>, Vineet Gupta <vgupta@kernel.org>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
+ Niklas Schnelle <schnelle@linux.ibm.com>,
+ Matthew Rosato <mjrosato@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-acpi@vger.kernel.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <cover.1713523152.git.robin.murphy@arm.com>
+ <e28a114243d1e79eb3609aded034f8529521333f.1713523152.git.robin.murphy@arm.com>
+ <243d441d-dda8-442a-a495-83bf9725a14c@nvidia.com>
+ <48c39306-c226-4e7f-a013-d679ca80157e@arm.com>
+ <46fc1b7f-7d10-4233-b089-aa173ad3bbeb@nvidia.com>
+ <981c85f3-6d43-4c2b-a440-88bf81a18e55@arm.com>
+ <o7hp34of3rg2fhbzpnbakaxnr24cfdfdrwf6d3hhxdeq4qqisk@6fqlszyvclhs>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <o7hp34of3rg2fhbzpnbakaxnr24cfdfdrwf6d3hhxdeq4qqisk@6fqlszyvclhs>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-Changing the MAC address of the VFs is currently unsupported via devlink.
-Add the function handlers to set and get the HW address for the VFs.
+On 2024-05-18 7:31 pm, Jerry Snitselaar wrote:
+> On Fri, May 17, 2024 at 04:03:57PM GMT, Robin Murphy wrote:
+>> On 17/05/2024 3:21 pm, Jon Hunter wrote:
+>>>
+>>> On 15/05/2024 15:59, Robin Murphy wrote:
+>>>> Hi Jon,
+>>>>
+>>>> On 2024-05-14 2:27 pm, Jon Hunter wrote:
+>>>>> Hi Robin,
+>>>>>
+>>>>> On 19/04/2024 17:54, Robin Murphy wrote:
+>>>>>> It's now easy to retrieve the device's DMA limits if we want to check
+>>>>>> them against the domain aperture, so do that ourselves instead of
+>>>>>> relying on them being passed through the callchain.
+>>>>>>
+>>>>>> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>>>>>> Tested-by: Hanjun Guo <guohanjun@huawei.com>
+>>>>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>>>>>> ---
+>>>>>> ï¿½ drivers/iommu/dma-iommu.c | 21 +++++++++------------
+>>>>>> ï¿½ 1 file changed, 9 insertions(+), 12 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+>>>>>> index a3039005b696..f542eabaefa4 100644
+>>>>>> --- a/drivers/iommu/dma-iommu.c
+>>>>>> +++ b/drivers/iommu/dma-iommu.c
+>>>>>> @@ -660,19 +660,16 @@ static void
+>>>>>> iommu_dma_init_options(struct iommu_dma_options *options,
+>>>>>> ï¿½ /**
+>>>>>> ï¿½ï¿½ * iommu_dma_init_domain - Initialise a DMA mapping domain
+>>>>>> ï¿½ï¿½ * @domain: IOMMU domain previously prepared by
+>>>>>> iommu_get_dma_cookie()
+>>>>>> - * @base: IOVA at which the mappable address space starts
+>>>>>> - * @limit: Last address of the IOVA space
+>>>>>> ï¿½ï¿½ * @dev: Device the domain is being initialised for
+>>>>>> ï¿½ï¿½ *
+>>>>>> - * @base and @limit + 1 should be exact multiples of IOMMU
+>>>>>> page granularity to
+>>>>>> - * avoid rounding surprises. If necessary, we reserve the
+>>>>>> page at address 0
+>>>>>> + * If the geometry and dma_range_map include address 0, we
+>>>>>> reserve that page
+>>>>>> ï¿½ï¿½ * to ensure it is an invalid IOVA. It is safe to
+>>>>>> reinitialise a domain, but
+>>>>>> ï¿½ï¿½ * any change which could make prior IOVAs invalid will fail.
+>>>>>> ï¿½ï¿½ */
+>>>>>> -static int iommu_dma_init_domain(struct iommu_domain
+>>>>>> *domain, dma_addr_t base,
+>>>>>> -ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ dma_addr_t limit, struct device *dev)
+>>>>>> +static int iommu_dma_init_domain(struct iommu_domain
+>>>>>> *domain, struct device *dev)
+>>>>>> ï¿½ {
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ struct iommu_dma_cookie *cookie = domain->iova_cookie;
+>>>>>> +ï¿½ï¿½ï¿½ const struct bus_dma_region *map = dev->dma_range_map;
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ unsigned long order, base_pfn;
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ struct iova_domain *iovad;
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ int ret;
+>>>>>> @@ -684,18 +681,18 @@ static int
+>>>>>> iommu_dma_init_domain(struct iommu_domain *domain,
+>>>>>> dma_addr_t base,
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ /* Use the smallest supported page size for IOVA granularity */
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ order = __ffs(domain->pgsize_bitmap);
+>>>>>> -ï¿½ï¿½ï¿½ base_pfn = max_t(unsigned long, 1, base >> order);
+>>>>>> +ï¿½ï¿½ï¿½ base_pfn = 1;
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ /* Check the domain allows at least some access to the
+>>>>>> device... */
+>>>>>> -ï¿½ï¿½ï¿½ if (domain->geometry.force_aperture) {
+>>>>>> +ï¿½ï¿½ï¿½ if (map) {
+>>>>>> +ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ dma_addr_t base = dma_range_map_min(map);
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ if (base > domain->geometry.aperture_end ||
+>>>>>> -ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ limit < domain->geometry.aperture_start) {
+>>>>>> +ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ dma_range_map_max(map) <
+>>>>>> domain->geometry.aperture_start) {
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ pr_warn("specified DMA range outside IOMMU
+>>>>>> capability\n");
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ return -EFAULT;
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ }
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ /* ...then finally give it a kicking to make sure it fits */
+>>>>>> -ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ base_pfn = max_t(unsigned long, base_pfn,
+>>>>>> -ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ domain->geometry.aperture_start >> order);
+>>>>>> +ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ base_pfn = max(base,
+>>>>>> domain->geometry.aperture_start) >> order;
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ }
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ /* start_pfn is always nonzero for an
+>>>>>> already-initialised domain */
+>>>>>> @@ -1760,7 +1757,7 @@ void iommu_setup_dma_ops(struct device
+>>>>>> *dev, u64 dma_base, u64 dma_limit)
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ * underlying IOMMU driver needs to support via the
+>>>>>> dma-iommu layer.
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ if (iommu_is_dma_domain(domain)) {
+>>>>>> -ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ if (iommu_dma_init_domain(domain, dma_base, dma_limit, dev))
+>>>>>> +ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ if (iommu_dma_init_domain(domain, dev))
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ goto out_err;
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ dev->dma_ops = &iommu_dma_ops;
+>>>>>> ï¿½ï¿½ï¿½ï¿½ï¿½ }
+>>>>>
+>>>>>
+>>>>> I have noticed some random test failures on Tegra186 and
+>>>>> Tegra194 and bisect is pointing to this commit. Reverting this
+>>>>> along with the various dependencies does fix the problem. On
+>>>>> Tegra186 CPU hotplug is failing and on Tegra194 suspend is
+>>>>> failing. Unfortunately, on neither platform do I see any
+>>>>> particular crash but the boards hang somewhere.
+>>>>
+>>>> That is... thoroughly bemusing :/ Not only is there supposed to be
+>>>> no real functional change here - we should merely be recalculating
+>>>> the same information from dev->dma_range_map that the callers were
+>>>> already doing to generate the base/limit arguments - but the act of
+>>>> initially setting up a default domain for a device behind an IOMMU
+>>>> should have no connection whatsoever to suspend and especially not
+>>>> to CPU hotplug.
+>>>
+>>>
+>>> Yes it does look odd, but this is what bisect reported ...
+>>>
+>>> git bisect start
+>>> # good: [a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6] Linux 6.9
+>>> git bisect good a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+>>> # bad: [6ba6c795dc73c22ce2c86006f17c4aa802db2a60] Add linux-next
+>>> specific files for 20240513
+>>> git bisect bad 6ba6c795dc73c22ce2c86006f17c4aa802db2a60
+>>> # good: [29e7f949865a023a21ecdfbd82d68ac697569f34] Merge branch 'main'
+>>> of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+>>> git bisect good 29e7f949865a023a21ecdfbd82d68ac697569f34
+>>> # skip: [150e6cc14e51f2a07034106a4529cdaafd812c46] Merge branch 'next'
+>>> of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git
+>>> git bisect skip 150e6cc14e51f2a07034106a4529cdaafd812c46
+>>> # good: [f5d75327d30af49acf2e4b55f35ce2e6c45d1287] drm/amd/display: Fix
+>>> invalid Copyright notice
+>>> git bisect good f5d75327d30af49acf2e4b55f35ce2e6c45d1287
+>>> # skip: [f1ec9a9ffc526df7c9523006c2abbb8ea554cdd8] Merge branch
+>>> 'for-next' of
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git
+>>> git bisect skip f1ec9a9ffc526df7c9523006c2abbb8ea554cdd8
+>>> # bad: [f091e93306e0429ebb7589b9874590b6a9705e64] dma-mapping: Simplify
+>>> arch_setup_dma_ops()
+>>> git bisect bad f091e93306e0429ebb7589b9874590b6a9705e64
+>>> # good: [91cfd679f9e8b9a7bf2f26adf66eff99dbe2026b] ACPI/IORT: Handle
+>>> memory address size limits as limits
+>>> git bisect good 91cfd679f9e8b9a7bf2f26adf66eff99dbe2026b
+>>> # bad: [ad4750b07d3462ce29a0c9b1e88b2a1f9795290e] iommu/dma: Make limit
+>>> checks self-contained
+>>> git bisect bad ad4750b07d3462ce29a0c9b1e88b2a1f9795290e
+>>> # good: [fece6530bf4b59b01a476a12851e07751e73d69f] dma-mapping: Add
+>>> helpers for dma_range_map bounds
+>>> git bisect good fece6530bf4b59b01a476a12851e07751e73d69f
+>>> # first bad commit: [ad4750b07d3462ce29a0c9b1e88b2a1f9795290e]
+>>> iommu/dma: Make limit checks self-contained
+>>>
+>>> There is a couple skips in there and so I will try this again.
+>>>
+>>>>> If you have any ideas on things we can try let me know.
+>>>>
+>>>> Since the symptom seems inexplicable, I'd throw the usual memory
+>>>> debugging stuff like KASAN at it first. I'd also try
+>>>> "no_console_suspend" to check whether any late output is being
+>>>> missed in the suspend case (and if it's already broken, then any
+>>>> additional issues that may be caused by the console itself hopefully
+>>>> shouldn't matter).
+>>>>
+>>>> For more base-covering, do you have the "arm64: Properly clean up
+>>>> iommu-dma remnants" fix in there already as well? That bug has
+>>>> bisected to patch #6 each time though, so I do still suspect that
+>>>> what you're seeing is likely something else. It does seem
+>>>> potentially significant that those Tegra platforms are making fairly
+>>>> wide use of dma-ranges, but there's no clear idea forming out of
+>>>> that observation just yet...
+>>>
+>>> I was hoping it was the same issue other people had reported,
+>>> but the fix provided did not help. I have also tried today's
+>>> -next and I am still seeing the issue.
+>>>
+>>> I should have more time next week to look at this further. Let
+>>> me confirm which change is causing this and add more debug.
+>>
+>> Thanks. From staring at the code I think I've spotted one subtlety which
+>> may not be quite as intended - can you see if the diff below helps? It
+>> occurs to me that suspend and CPU hotplug may not *cause* the symptom,
+>> but they could certainly stall if one or more relevant CPUs is *already*
+>> stuck in a loop somewhere...
+>>
+>> Thanks,
+>> Robin.
+>>
+>> ----->8-----
+>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+>> index 89a53c2f2cf9..85eb1846c637 100644
+>> --- a/drivers/iommu/dma-iommu.c
+>> +++ b/drivers/iommu/dma-iommu.c
+>> @@ -686,6 +686,7 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, struct device *dev
+>>   	/* Check the domain allows at least some access to the device... */
+>>   	if (map) {
+>>   		dma_addr_t base = dma_range_map_min(map);
+>> +		base = max(base, (dma_addr_t)1 << order);
+>>   		if (base > domain->geometry.aperture_end ||
+>>   		    dma_range_map_max(map) < domain->geometry.aperture_start) {
+>>   			pr_warn("specified DMA range outside IOMMU capability\n");
+> 
+> With this in place I no longer see the mapping fail on the nvidia system.
 
-Signed-off-by: Karthik Sundaravel <ksundara@redhat.com>
----
- .../ethernet/intel/ice/devlink/devlink_port.c | 59 ++++++++++++++++++-
- drivers/net/ethernet/intel/ice/ice_sriov.c    | 32 +++++++---
- drivers/net/ethernet/intel/ice/ice_sriov.h    |  8 +++
- 3 files changed, 89 insertions(+), 10 deletions(-)
+Cheers Jerry, that's reassuring. I'll write up a proper patch shortly - 
+with Monday morning eyes I realise this isn't entirely the right fix for 
+how I messed up here - and hope that my guess was right and it's the 
+source of Jon's issues as well. From experience I know that the effects 
+of the IOVA allocator going wrong can be varied and downright weird...
 
-diff --git a/drivers/net/ethernet/intel/ice/devlink/devlink_port.c b/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
-index c9fbeebf7fb9..00fed5a61d62 100644
---- a/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
-+++ b/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
-@@ -372,6 +372,62 @@ void ice_devlink_destroy_pf_port(struct ice_pf *pf)
- 	devl_port_unregister(&pf->devlink_port);
- }
- 
-+/**
-+ * ice_devlink_port_get_vf_fn_mac - .port_fn_hw_addr_get devlink handler
-+ * @port: devlink port structure
-+ * @hw_addr: MAC address of the port
-+ * @hw_addr_len: length of MAC address
-+ * @extack: extended netdev ack structure
-+ *
-+ * Callback for the devlink .port_fn_hw_addr_get operation
-+ * Return: zero on success or an error code on failure.
-+ */
-+static int ice_devlink_port_get_vf_fn_mac(struct devlink_port *port,
-+					  u8 *hw_addr, int *hw_addr_len,
-+					  struct netlink_ext_ack *extack)
-+{
-+	struct ice_vf *vf = container_of(port, struct ice_vf, devlink_port);
-+
-+	ether_addr_copy(hw_addr, vf->dev_lan_addr);
-+	*hw_addr_len = ETH_ALEN;
-+
-+	return 0;
-+}
-+
-+/**
-+ * ice_devlink_port_set_vf_fn_mac - .port_fn_hw_addr_set devlink handler
-+ * @port: devlink port structure
-+ * @hw_addr: MAC address of the port
-+ * @hw_addr_len: length of MAC address
-+ * @extack: extended netdev ack structure
-+ *
-+ * Callback for the devlink .port_fn_hw_addr_set operation
-+ * Return: zero on success or an error code on failure.
-+ */
-+static int ice_devlink_port_set_vf_fn_mac(struct devlink_port *port,
-+					  const u8 *hw_addr,
-+					  int hw_addr_len,
-+					  struct netlink_ext_ack *extack)
-+
-+{
-+	struct devlink_port_attrs *attrs = &port->attrs;
-+	struct devlink_port_pci_vf_attrs *pci_vf;
-+	struct devlink *devlink = port->devlink;
-+	struct ice_pf *pf;
-+	u16 vf_id;
-+
-+	pf = devlink_priv(devlink);
-+	pci_vf = &attrs->pci_vf;
-+	vf_id = pci_vf->vf;
-+
-+	return __ice_set_vf_mac(pf, vf_id, hw_addr);
-+}
-+
-+static const struct devlink_port_ops ice_devlink_vf_port_ops = {
-+	.port_fn_hw_addr_get = ice_devlink_port_get_vf_fn_mac,
-+	.port_fn_hw_addr_set = ice_devlink_port_set_vf_fn_mac,
-+};
-+
- /**
-  * ice_devlink_create_vf_port - Create a devlink port for this VF
-  * @vf: the VF to create a port for
-@@ -407,7 +463,8 @@ int ice_devlink_create_vf_port(struct ice_vf *vf)
- 	devlink_port_attrs_set(devlink_port, &attrs);
- 	devlink = priv_to_devlink(pf);
- 
--	err = devl_port_register(devlink, devlink_port, vsi->idx);
-+	err = devl_port_register_with_ops(devlink, devlink_port, vsi->idx,
-+					  &ice_devlink_vf_port_ops);
- 	if (err) {
- 		dev_err(dev, "Failed to create devlink port for VF %d, error %d\n",
- 			vf->vf_id, err);
-diff --git a/drivers/net/ethernet/intel/ice/ice_sriov.c b/drivers/net/ethernet/intel/ice/ice_sriov.c
-index 067712f4923f..dd1583b0fd90 100644
---- a/drivers/net/ethernet/intel/ice/ice_sriov.c
-+++ b/drivers/net/ethernet/intel/ice/ice_sriov.c
-@@ -1416,21 +1416,22 @@ ice_get_vf_cfg(struct net_device *netdev, int vf_id, struct ifla_vf_info *ivi)
- }
- 
- /**
-- * ice_set_vf_mac
-- * @netdev: network interface device structure
-+ * __ice_set_vf_mac
-+ * @pf: PF to be configure
-  * @vf_id: VF identifier
-  * @mac: MAC address
-  *
-  * program VF MAC address
-  */
--int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
-+int __ice_set_vf_mac(struct ice_pf *pf, u16 vf_id, const u8 *mac)
- {
--	struct ice_pf *pf = ice_netdev_to_pf(netdev);
-+	struct device *dev;
- 	struct ice_vf *vf;
- 	int ret;
- 
-+	dev = ice_pf_to_dev(pf);
- 	if (is_multicast_ether_addr(mac)) {
--		netdev_err(netdev, "%pM not a valid unicast address\n", mac);
-+		dev_err(dev, "%pM not a valid unicast address\n", mac);
- 		return -EINVAL;
- 	}
- 
-@@ -1459,13 +1460,13 @@ int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
- 	if (is_zero_ether_addr(mac)) {
- 		/* VF will send VIRTCHNL_OP_ADD_ETH_ADDR message with its MAC */
- 		vf->pf_set_mac = false;
--		netdev_info(netdev, "Removing MAC on VF %d. VF driver will be reinitialized\n",
--			    vf->vf_id);
-+		dev_info(dev, "Removing MAC on VF %d. VF driver will be reinitialized\n",
-+			 vf->vf_id);
- 	} else {
- 		/* PF will add MAC rule for the VF */
- 		vf->pf_set_mac = true;
--		netdev_info(netdev, "Setting MAC %pM on VF %d. VF driver will be reinitialized\n",
--			    mac, vf_id);
-+		dev_info(dev, "Setting MAC %pM on VF %d. VF driver will be reinitialized\n",
-+			 mac, vf_id);
- 	}
- 
- 	ice_reset_vf(vf, ICE_VF_RESET_NOTIFY);
-@@ -1476,6 +1477,19 @@ int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
- 	return ret;
- }
- 
-+/**
-+ * ice_set_vf_mac
-+ * @netdev: network interface device structure
-+ * @vf_id: VF identifier
-+ * @mac: MAC address
-+ *
-+ * program VF MAC address
-+ */
-+int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
-+{
-+	return __ice_set_vf_mac(ice_netdev_to_pf(netdev), vf_id, mac);
-+}
-+
- /**
-  * ice_set_vf_trust
-  * @netdev: network interface device structure
-diff --git a/drivers/net/ethernet/intel/ice/ice_sriov.h b/drivers/net/ethernet/intel/ice/ice_sriov.h
-index 8f22313474d6..96549ca5c52c 100644
---- a/drivers/net/ethernet/intel/ice/ice_sriov.h
-+++ b/drivers/net/ethernet/intel/ice/ice_sriov.h
-@@ -28,6 +28,7 @@
- #ifdef CONFIG_PCI_IOV
- void ice_process_vflr_event(struct ice_pf *pf);
- int ice_sriov_configure(struct pci_dev *pdev, int num_vfs);
-+int __ice_set_vf_mac(struct ice_pf *pf, u16 vf_id, const u8 *mac);
- int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac);
- int
- ice_get_vf_cfg(struct net_device *netdev, int vf_id, struct ifla_vf_info *ivi);
-@@ -80,6 +81,13 @@ ice_sriov_configure(struct pci_dev __always_unused *pdev,
- 	return -EOPNOTSUPP;
- }
- 
-+static inline int
-+__ice_set_vf_mac(struct ice_pf __always_unused *pf,
-+		 u16 __always_unused vf_id, const u8 __always_unused *mac)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- static inline int
- ice_set_vf_mac(struct net_device __always_unused *netdev,
- 	       int __always_unused vf_id, u8 __always_unused *mac)
--- 
-2.39.3 (Apple Git-146)
-
+Thanks,
+Robin.
 
