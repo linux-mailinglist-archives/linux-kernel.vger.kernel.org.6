@@ -1,242 +1,135 @@
-Return-Path: <linux-kernel+bounces-183545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75898C9A75
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 192898C9A7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA62F1C21194
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:37:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 175591C2147F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFCD225CE;
-	Mon, 20 May 2024 09:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901FA200CB;
+	Mon, 20 May 2024 09:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YcgpFrop";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="np0MN4ld";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YcgpFrop";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="np0MN4ld"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAGIgH48"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C17468E;
-	Mon, 20 May 2024 09:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C268417C67;
+	Mon, 20 May 2024 09:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716197845; cv=none; b=TaboDZuif8800MzYslAO9YlihwYlQ+Sa6wUEvEuVoZItUIjebI/Rg8/vYvz3mtAfIBz/98apjfdQ9Xs8k/xqQx6fpNW/StQf3KUM+ZXEEZZQMIP7Yt8Z3M+dfx1d2DpfPPNFRCSeJK1IcBLFkwErVkKwdkMEbiCsccourqDEY7E=
+	t=1716197931; cv=none; b=iop5wq8NX4WBcPJQMzCGJvyY3PmsVA/tl6v1cTzOS0jz3Cz6ETa1JSwutiHiKRtEaDRk/AMjOtGR+GRNbtzTSj00UWHOYRmmAdFp9lmRKTODsIIHQZwNsFiJYfqbYyOtnqmmEBm+S2kTs6Pj+63OrCo/EPNtoqODpPrbQbd2M18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716197845; c=relaxed/simple;
-	bh=jDB07f25m/8VdNYLtPu4VtyuzRZAEp4rLDnxII32KEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LmpDkXM+1PB4olg7TFthaSeoIip71xp+lR3ARyMsAk8VtoCQ/tHwBJho6NLgn0Dzbzxhw1G3qr7/Rhx1Q5lJ4bu22OMnQeRPToUzwDwgE0FP9mErGKqgvsjNaL8X0t72gKpd0pIZGljyuo1mIrltuEeDChHrexJnCRXrgqhrW68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YcgpFrop; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=np0MN4ld; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YcgpFrop; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=np0MN4ld; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EE28933C95;
-	Mon, 20 May 2024 09:37:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716197842; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wVUHeC5Oeqc5t/I8Wprafz2LKwDdXeIY2YgQkBuR1oE=;
-	b=YcgpFrop+RjoEvEwWH3pqY+mhd039FcMyUHg+G5gNcZSat4ftSjocMM+YY+3ENW0Ovygdh
-	ukKwg2VjD6Tc8KKLP3pYtVQ4QydOmfEFe3PJ5xa+s1K5ORHkpgIfJNFEZESJr0CZazh9jR
-	KwEVmAJ2g/dqsdub6w/4VJrSG31eyCw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716197842;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wVUHeC5Oeqc5t/I8Wprafz2LKwDdXeIY2YgQkBuR1oE=;
-	b=np0MN4ldwu128j3hmLUyLr6ewSDUe/4b8MElk4ubD+r8POMJet3rSnWtL9LjJ4VV6riSm+
-	RiglcVkfDTOVuHCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=YcgpFrop;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=np0MN4ld
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716197842; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wVUHeC5Oeqc5t/I8Wprafz2LKwDdXeIY2YgQkBuR1oE=;
-	b=YcgpFrop+RjoEvEwWH3pqY+mhd039FcMyUHg+G5gNcZSat4ftSjocMM+YY+3ENW0Ovygdh
-	ukKwg2VjD6Tc8KKLP3pYtVQ4QydOmfEFe3PJ5xa+s1K5ORHkpgIfJNFEZESJr0CZazh9jR
-	KwEVmAJ2g/dqsdub6w/4VJrSG31eyCw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716197842;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wVUHeC5Oeqc5t/I8Wprafz2LKwDdXeIY2YgQkBuR1oE=;
-	b=np0MN4ldwu128j3hmLUyLr6ewSDUe/4b8MElk4ubD+r8POMJet3rSnWtL9LjJ4VV6riSm+
-	RiglcVkfDTOVuHCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA52513A6B;
-	Mon, 20 May 2024 09:37:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gdsHNdEZS2bWBwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 20 May 2024 09:37:21 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8B926A0888; Mon, 20 May 2024 11:37:21 +0200 (CEST)
-Date: Mon, 20 May 2024 11:37:21 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v5 08/10] ext4: factor out a helper to check the cluster
- allocation state
-Message-ID: <20240520093721.xqrhhn43ldvhoh5y@quack3>
-References: <20240517124005.347221-1-yi.zhang@huaweicloud.com>
- <20240517124005.347221-9-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1716197931; c=relaxed/simple;
+	bh=f2ltlTJfrPXs5K86QOoQ6YuDR8HIGkk3pJMklKg3P6s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nZItjFs54f32rjSMRXa/7w/G6CnJzd3QxMuCO+uh1T5NuaML5GshdDF3EfXm4UmwmuFFOGbWHF0gUYRvzjpukoLyxzLWg1XNrx9J8AiA13srHsELExJYcUZt0L2QuUCGul4qRUpHdWBgtiDMqCRqjoKpacYWAhb7JTOVgCWdCIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAGIgH48; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B15FC4AF08;
+	Mon, 20 May 2024 09:38:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716197931;
+	bh=f2ltlTJfrPXs5K86QOoQ6YuDR8HIGkk3pJMklKg3P6s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LAGIgH48/HWLi4pMVeP+Y54RqB4nRlmrFadY+SSIZN1ms2/Z+Xq9ylVZZ6rabqH2H
+	 b8tqnMQtyZtQ2fh6A9Cpu6nfFBllRAFRUAgyHD1+DG7T3wS7/1/QaWau3k+6SMF1EI
+	 QN1PkIF/jln3DDg0aLxM/hrUAQGF9xIM5HPhX4PA8oC63RMuFWBnkSHxIcZ+VUGCxO
+	 fNdZyVKvb9SenaZSgiPncY6esb6ifpn9m9JoDhirxrJf/ByK8R7grQE/zHis4gAWhP
+	 EqEjr6bR3S4vQAjWLJQ7TX+QMxb0GpeXYtVTqXFgHBUG1SGKXrrUbSObjpC28Kvdvh
+	 QoK9rL9fNOz8A==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51f99f9e0faso4685543e87.2;
+        Mon, 20 May 2024 02:38:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX/9vaFE6NOAsa94TAYSgboLg0Tz/XHCdx0IDlBUgyVbHGWGHqvKwz0D/jlvKT1K57UTX0CvVus+IwiKIqke2SnA2zccFEKLFYhzsTOAPW5sTP99HkWJr5G1tcZGppC2xsxb2e1USdMBqjot3gmfBqpEETM0hCnSnNJIqwA9gEvFH7wDebwRIeZSwatnqLZMA==
+X-Gm-Message-State: AOJu0Yx7FjM0Re0Wv3ANXDqSS+2G2BK47bBKh3NDdWPiRtidAV7ZVuv+
+	Gi0hXsCselPuUxBlEg3eck1o/725X6r2pd2Xl1PMlw6gOWB1H+jTb8SwUed9yfmxqLYJy6nd+tH
+	Wfs+4cAAFoiCcW882hMhegAs1VrI=
+X-Google-Smtp-Source: AGHT+IHJ50N0b6yVjcPEnuluIR3E+9C3M5NQS8+OA8xjBOBrvD4f0Q/6GXm3dzXglHKaJPbJ3/n8p7uD8nPWdAXamx8=
+X-Received: by 2002:a05:6512:3448:b0:520:76d0:b054 with SMTP id
+ 2adb3069b0e04-524590e5807mr610226e87.57.1716197930086; Mon, 20 May 2024
+ 02:38:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517124005.347221-9-yi.zhang@huaweicloud.com>
-X-Spam-Flag: NO
-X-Spam-Score: -2.51
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: EE28933C95
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email,suse.cz:dkim,suse.cz:email]
+References: <20240517042839.544650-1-kris.van.hees@oracle.com> <20240517042839.544650-3-kris.van.hees@oracle.com>
+In-Reply-To: <20240517042839.544650-3-kris.van.hees@oracle.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 20 May 2024 18:38:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAST_SbaN9WQRM_k0xE1MUReJvn9AMSg4A1-9b9xotf67w@mail.gmail.com>
+Message-ID: <CAK7LNAST_SbaN9WQRM_k0xE1MUReJvn9AMSg4A1-9b9xotf67w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] trace: add CONFIG_BUILTIN_MODULE_RANGES option
+To: Kris Van Hees <kris.van.hees@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Nick Alcock <nick.alcock@oracle.com>, Alan Maguire <alan.maguire@oracle.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni <elena.zannoni@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 17-05-24 20:40:03, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Factor out a common helper ext4_clu_alloc_state(), check whether the
-> cluster containing a delalloc block to be added has been allocated or
-> has delalloc reservation, no logic changes.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On Fri, May 17, 2024 at 1:30=E2=80=AFPM Kris Van Hees <kris.van.hees@oracle=
+com> wrote:
+>
+> The CONFIG_BUILTIN_MODULE_RANGES option controls whether offset range dat=
+a
+> is generated for kernel modules that are built into the kernel image.
+>
+> Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
+> Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
+> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
 > ---
->  fs/ext4/inode.c | 55 ++++++++++++++++++++++++++++++++++---------------
->  1 file changed, 38 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 0c52969654ac..eefedb7264c7 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1649,6 +1649,35 @@ static void ext4_print_free_blocks(struct inode *inode)
->  	return;
->  }
->  
-> +/*
-> + * Check whether the cluster containing lblk has been allocated or has
-> + * delalloc reservation.
-> + *
-> + * Returns 0 if the cluster doesn't have either, 1 if it has delalloc
-> + * reservation, 2 if it's already been allocated, negative error code on
-> + * failure.
-> + */
-> +static int ext4_clu_alloc_state(struct inode *inode, ext4_lblk_t lblk)
-> +{
-> +	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
-> +	int ret;
-> +
-> +	/* Has delalloc reservation? */
-> +	if (ext4_es_scan_clu(inode, &ext4_es_is_delonly, lblk))
-> +		return 1;
-> +
-> +	/* Already been allocated? */
-> +	if (ext4_es_scan_clu(inode, &ext4_es_is_mapped, lblk))
-> +		return 2;
-> +	ret = ext4_clu_mapped(inode, EXT4_B2C(sbi, lblk));
-> +	if (ret < 0)
-> +		return ret;
-> +	if (ret > 0)
-> +		return 2;
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * ext4_insert_delayed_block - adds a delayed block to the extents status
->   *                             tree, incrementing the reserved cluster/block
-> @@ -1682,23 +1711,15 @@ static int ext4_insert_delayed_block(struct inode *inode, ext4_lblk_t lblk)
->  		if (ret != 0)   /* ENOSPC */
->  			return ret;
->  	} else {   /* bigalloc */
-> -		if (!ext4_es_scan_clu(inode, &ext4_es_is_delonly, lblk)) {
-> -			if (!ext4_es_scan_clu(inode,
-> -					      &ext4_es_is_mapped, lblk)) {
-> -				ret = ext4_clu_mapped(inode,
-> -						      EXT4_B2C(sbi, lblk));
-> -				if (ret < 0)
-> -					return ret;
-> -				if (ret == 0) {
-> -					ret = ext4_da_reserve_space(inode, 1);
-> -					if (ret != 0)   /* ENOSPC */
-> -						return ret;
-> -				} else {
-> -					allocated = true;
-> -				}
-> -			} else {
-> -				allocated = true;
-> -			}
-> +		ret = ext4_clu_alloc_state(inode, lblk);
-> +		if (ret < 0)
-> +			return ret;
-> +		if (ret == 2)
-> +			allocated = true;
-> +		if (ret == 0) {
-> +			ret = ext4_da_reserve_space(inode, 1);
-> +			if (ret != 0)   /* ENOSPC */
-> +				return ret;
->  		}
->  	}
->  
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Changes since v2:
+>  - Add explicit dependency on FTRACE for CONFIG_BUILTIN_MODULE_RANGES
+> ---
+>  kernel/trace/Kconfig | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>
+> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+> index 47345bf1d4a9f..d0c82b4b3a61e 100644
+> --- a/kernel/trace/Kconfig
+> +++ b/kernel/trace/Kconfig
+> @@ -188,6 +188,24 @@ menuconfig FTRACE
+>
+>  if FTRACE
+>
+> +config BUILTIN_MODULE_RANGES
+> +       bool "Generate address range information for builtin modules"
+> +       depends on FTRACE
+> +       select VMLINUX_MAP
+
+
+
+I still got this warning.
+
+
+WARNING: unmet direct dependencies detected for VMLINUX_MAP
+  Depends on [n]: EXPERT [=3Dn]
+  Selected by [y]:
+  - BUILTIN_MODULE_RANGES [=3Dy] && FTRACE [=3Dy]
+
+
+
+
+
+I recommend changing 'select VMLINUX_MAP'
+to 'depends on VMLINUX_MAP'.
+
+
+
+BTW, do you need to put this inside 'if FTRACE'?
+
+FTRACE is not required to generate the ranges file.
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
