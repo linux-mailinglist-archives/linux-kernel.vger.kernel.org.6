@@ -1,190 +1,180 @@
-Return-Path: <linux-kernel+bounces-184122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75EBD8CA2D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:41:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02528CA2D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B4B1C206A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:41:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6701428121B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF57D137C33;
-	Mon, 20 May 2024 19:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B237D137C26;
+	Mon, 20 May 2024 19:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLA5TykB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HRWA5uQO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46C71E878;
-	Mon, 20 May 2024 19:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB541F945;
+	Mon, 20 May 2024 19:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716234096; cv=none; b=JDgIjsIJtURyzH7Yb8tniFsVvqcdVoWYAxKp2Tm4VmtFgJMOJQEtAm5ZHGu+wpJV+zDYT6w5Ci1RxlPB/bks+ZnAS6oba9BLXP7I6YmCmkqq/9JyBoDTmqai1F+Ipp8m4gpoIj+LTCiHn22OjQDDkeDfDJvFsqQKAeMi3g+ZFH0=
+	t=1716234138; cv=none; b=XyuiDWo72O56PszwmPuFqSDLZodYjkwxNzSnGDrZRhGNnc/naRLAiCHYzGtQabnbGx+/GoBDgDzCFZpC4V5Mxrji4oqTyYobYh6XkTWerhcPE2tfIMN42aLN7de4M5fncCuv42jrARpXwNTrItiP1mCeS/F+vZcNpvf5BAdflLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716234096; c=relaxed/simple;
-	bh=ad/ng2ZfVJZUt5PIHKSAUXGS1BayQ+Hcf7vtMyIKGJY=;
+	s=arc-20240116; t=1716234138; c=relaxed/simple;
+	bh=TC5YGn3w3/yr6FzaVfTxCUg2L4p7HcRQyWWJNr6TxLw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lX7NQloFx4VpAvCN4amnm3hh4McwgGAhYlhDoPXjIYjrzCH7JfG6EnjJn8ZM9qanZzZRFxioMlVa7qzztKATJ/ucW12NiN5UEJS1vCiJLR/x0Pa2eYNMUfsBeR8npIdPnCVxiY4WdQGvo8OIGaB/OZ39PMrFKtHJTSGFCH+LIHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JLA5TykB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E6E2C2BD10;
-	Mon, 20 May 2024 19:41:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716234095;
-	bh=ad/ng2ZfVJZUt5PIHKSAUXGS1BayQ+Hcf7vtMyIKGJY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JLA5TykBP9W7YuF4TUzV+f0T4WKzyYSwK65imF+k9wOT6AMlZmS9DqIHOJvCKREQL
-	 h54VCE50/Ljzd6xwdttjXVd7A/KlLAK/pVlCWkLCenAxGuSQdo4bxuHWqb9EMDhnmu
-	 L72ztfunxdQiF3ueYTWUSWDP6mtN1GHpOC2xX0mYE4OmEEIlkoeSCfHM3w1dbrLT/G
-	 vz5y8fXIGRmVnblqmCIDJWSUqaVGb0NH8vOyzLdIEKNJIECVa9aOuIFYKLTMt9j2DP
-	 9JRjUI0a2y28vCNTI9EFV40XErzS0L7EGfnomRUcAyQPYWYqe6E36yR0ltBvdiuEyS
-	 rVWLPkz3G2xyQ==
-Date: Mon, 20 May 2024 20:41:31 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>, jdelvare@suse.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	ukleinek@kernel.org, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: hwmon: Add adt7475 fan/pwm properties
-Message-ID: <20240520-badly-islamist-dcae9fe1303b@spud>
-References: <20240520030321.3756604-1-chris.packham@alliedtelesis.co.nz>
- <20240520030321.3756604-2-chris.packham@alliedtelesis.co.nz>
- <20240520-pendant-charity-a66a8d738690@spud>
- <62c3c546-5172-4417-a15a-d13419d42be3@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EQaPqLibCX/SZku58ej44/9bu2a/dF3BxolSzfLgsIJzoVDU25ZFqJce7aByu/cO8HouxPxRWr8mYJd2ADVn2jnJxwBNOloNLiUqEHrFHRYr1f49uUu/1nFAqLvzXYe5nIpQgoX5QEBo6wdiPQ/WsmVdClc5265vxmXE+cDWLGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HRWA5uQO; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716234136; x=1747770136;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=TC5YGn3w3/yr6FzaVfTxCUg2L4p7HcRQyWWJNr6TxLw=;
+  b=HRWA5uQOtwYXdC7crIJ9L9MZZoojy+BtPeUHNhPqbTxtPv9OFKKnj23U
+   TS/NtZ3jSLW5MKlT8FgFyK67LJ56KBZfR9HkZTKHdRI+k1fi4vdw40+8h
+   qbYtzF7Oal8FR598up4prYq11f4dt7iTl7p3KVMbkW6fv6FupDnE46SdY
+   4qpDxUUpkh2CgbDl54wygitu78zr5qnB8bb9mVAvMKIR4sTXVZ38g5nex
+   IeCHAPRzV6WP8e1KsX5qoYl9zRNJ3QbY6kp9RIQnumbBj8YLGlisMBkn/
+   MQYp8ReGck2dhV8BqXP0QgxjaF4jhtH888XlPRZkXCnVUlrK78iDCFrmS
+   g==;
+X-CSE-ConnectionGUID: eRQVHExySMqckBT1aK++iQ==
+X-CSE-MsgGUID: +/XrUf5MRi2MPBICT6csiw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="34904044"
+X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
+   d="scan'208";a="34904044"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 12:42:15 -0700
+X-CSE-ConnectionGUID: VJN3Ja6FS4CQZEk6Pkjwyw==
+X-CSE-MsgGUID: 3bmG9zIhQo+9cSrOrLUu5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
+   d="scan'208";a="37598254"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.51.95])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 12:42:15 -0700
+Date: Mon, 20 May 2024 12:42:13 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Cc: Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] cxl/events: Use a common struct for DRAM and General
+ Media events
+Message-ID: <Zkunlbv2qIOaLaq3@aschofie-mobl2>
+References: <20240518113317.3683718-1-fabio.m.de.francesco@linux.intel.com>
+ <4446774.UPlyArG6xL@fdefranc-mobl3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="EwebWdOmCCvPoTdW"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <62c3c546-5172-4417-a15a-d13419d42be3@roeck-us.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4446774.UPlyArG6xL@fdefranc-mobl3>
 
+On Mon, May 20, 2024 at 07:55:17PM +0200, Fabio M. De Francesco wrote:
+> On Saturday, May 18, 2024 1:26:21 PM GMT+2 Fabio M. De Francesco wrote:
+> > cxl_event_common was an unfortunate naming choice and caused confusion with
+> > the existing Common Event Record. Furthermore, its fields didn't map all
+> > the common information between DRAM and General Media Events.
+> > 
+> > Remove cxl_event_common and introduce cxl_event_media_hdr to record common
+> > information between DRAM and General Media events.
+> > 
+> > cxl_event_media_hdr, which is embedded in both cxl_event_gen_media and
+> > cxl_event_dram, leverages the commonalities between the two events to
+> > simplify their respective handling.
+> > 
+> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+> > ---
+> > 
+> > [...]
+> > -
+> >  union cxl_event {
+> >  	struct cxl_event_generic generic;
+> >  	struct cxl_event_gen_media gen_media;
+> >  	struct cxl_event_dram dram;
+> >  	struct cxl_event_mem_module mem_module;
+> > -	struct cxl_event_common common;
+> > +	struct cxl_event_media_hdr media_hdr;
+> >  } __packed;
+> 
+> Today I was thinking about a comment from Ira. He didn't like the addition of 
+> an event that is not in the specs.[0] (Notice that the other issues have been 
+> already addressed). 
+> 
+> I dislike the addition of an artificial event for the very same reasons Ira 
+> expressed.
 
---EwebWdOmCCvPoTdW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Agree it should not appear like an artifical event. It should appear
+as a special member of the union. A union's purpose is to allow access
+like this. Perhaps it's a naming thing.
 
-On Mon, May 20, 2024 at 12:03:42PM -0700, Guenter Roeck wrote:
-> On 5/20/24 09:49, Conor Dooley wrote:
-> > On Mon, May 20, 2024 at 03:03:19PM +1200, Chris Packham wrote:
-> > > Add fan child nodes that allow describing the connections for the
-> > > ADT7475 to the fans it controls. This also allows setting some
-> > > initial values for the pwm duty cycle and frequency.
-> > >=20
-> > > Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> > > ---
-> > >=20
-> > > Notes:
-> > >      Changes in v3:
-> > >      - Use the pwm provider/consumer bindings
-> > >      Changes in v2:
-> > >      - Document 0 as a valid value (leaves hardware as-is)
-> > >=20
-> > >   .../devicetree/bindings/hwmon/adt7475.yaml    | 25 ++++++++++++++++=
-++-
-> > >   1 file changed, 24 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.yaml b/D=
-ocumentation/devicetree/bindings/hwmon/adt7475.yaml
-> > > index 051c976ab711..99bd689ae0cd 100644
-> > > --- a/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-> > > +++ b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-> > > @@ -51,6 +51,15 @@ properties:
-> > >         enum: [0, 1]
-> > >         default: 1
-> > > +  "#pwm-cells":
-> > > +    const: 4
-> > > +    description: |
-> > > +      Number of cells in a PWM specifier.
-> > > +      - 0: The pwm channel
-> > > +      - 1: The pwm frequency in hertz - 0, 11, 14, 22, 29, 35, 44, 5=
-8, 88, 22500
-> >=20
-> > The standard binding is period in nanoseconds, not frequency in Hz.
-> > What's gained from deviating from that?
-> >=20
->=20
-> I'd strongly suspect that Chris didn't know and didn't expect it,
-> just like me.
+How about s/cxl_event_media_hdr/cxl_media_hdr and add a comment:
 
-I did point out on v2 that the information on the standard binding was
-in pwm.txt, but I also said "order it has <index freq flags duty>" which
-likely didn't help. I did however CC you both on a patch the other day
-where I fixed pwm.yaml so that it actually contained the information on
-what the cells represented.
-> > > +      - 2: PWM flags 0 or PWM_POLARITY_INVERTED
-> > > +      - 3: The default pwm duty cycle - 0-255
-> >=20
-> > Same here I guess, why not match the units used for the period for the
-> > duty cycle?
-> >=20
->=20
-> Same here. I am used to pwm frequency in Hz and duty cycle as percentage.
-> Using the period instead is somewhat unusual, and I must admit that I
-> have never encountered it while dealing with a variety of fan controllers.
+-	struct cxl_event_common common;
++	struct cxl_media_hdr media_hdr; /* dram & gen_media event header */
 
-If it is what makes sense to use, because it's what everyone and their
-mother documents, then sure. My rationale I suppose was threefold:
-- Consistency with the period
-- Time would be more portable between providers, if 8 bits of precision
-  is deemed insufficient for some providers.
-- Last & least, the PWM APIs in the kernel use time for the dutycycle
+> 
+> This additional event could be easily removed by something simple like the 
+> following diff.
 
-If you're going to use percentages rather than time, would it not
-make more sense to either use percent itself with a 0-100 range or use
-basis points if percent doesn't provide sufficient granularity?
+Some typos below and also you'll need to look at the larger chunk of
+code and reconsider the if/else flow. Perhaps revert to an earlier
+version of the event patchset.
 
-I think it'd be good of Uwe chimed in, given we're discussing a PWM
-provider binding after all.
+-- Alison
 
-> Just to make sure I understand this correctly - duty cycles would
-
-s/duty cycles/periods/
-
-> be (rounded):
->=20
-> Hz	ns
-> 11	90,909,091
-> 14	71,428,571
-> 22	45,454,545
-> 29:	34,482,759
-> 35:	28,571,429
-> 44:	22,727,273
-> 58:	17,241,379
-> 88:	11,363,636
-> 22500	44,444
->=20
-> Examples for duty cycles would be
->=20
-> 20%: 0,2s or 200,000,000
-> 50%: 0.5s or 500,000,000
-> 80%: 0.8s or 800,000,000
->=20
-> Is that correct ?
-
-Assuming a 1 second period, those look as expected.
-
-Cheers,
-Conor.
-
-
---EwebWdOmCCvPoTdW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkunawAKCRB4tDGHoIJi
-0teKAP9QTzAM4I9Knk/VlftfV7eyBojkQ7JhiscMPJjToa6SRwEAhBt2VrLVWnNN
-mXPi0eWlRwYyQS6o04gwdQPgcfbFjgE=
-=Mg3Z
------END PGP SIGNATURE-----
-
---EwebWdOmCCvPoTdW--
+> 
+> Fabio
+> 
+> [0] https://lore.kernel.org/linux-cxl/66467b8b47170_8c79294b3@iweiny-mobl.notmuch/
+> 
+> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+> index a08f050cc1ca..05de8836adea 100644
+> --- a/drivers/cxl/core/mbox.c
+> +++ b/drivers/cxl/core/mbox.c
+> @@ -875,7 +875,13 @@ void cxl_event_trace_record(const struct cxl_memdev 
+> *cxlmd,
+>                 guard(rwsem_read)(&cxl_region_rwsem);
+>                 guard(rwsem_read)(&cxl_dpa_rwsem);
+>  
+> -               dpa = le64_to_cpu(evt->media_hdr.phys_addr) & CXL_DPA_MASK;
+> +               if (event_type == CXL_CPER_EVENT_GEN_MEDIA)
+> +                       dpa = le64_to_cpu(evt->gen_media.media_hdr.phys_addr)
+> +                             & CXL_DPA_MASK;
+> +               else if (event_type == CXL_CPER_EVENT_GEN_MEDIA)
+> +                       dpa = le64_to_cpu(evt->dram.media_hdr.phys_addr)
+> +                             & CXL_DPA_MASK;
+> +
+>                 cxlr = cxl_dpa_to_region(cxlmd, dpa);
+>                 if (cxlr)
+>                         hpa = cxl_trace_hpa(cxlr, cxlmd, dpa);
+> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
+> index 6562663a036d..f0a5be131e6a 100644
+> --- a/include/linux/cxl-event.h
+> +++ b/include/linux/cxl-event.h
+> @@ -97,7 +97,6 @@ union cxl_event {
+>         struct cxl_event_gen_media gen_media;
+>         struct cxl_event_dram dram;
+>         struct cxl_event_mem_module mem_module;
+> -       struct cxl_event_media_hdr media_hdr;
+>  } __packed;
+>  
+>  /*
+> 
+> 
+> 
 
