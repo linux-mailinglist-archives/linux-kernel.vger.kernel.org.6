@@ -1,223 +1,122 @@
-Return-Path: <linux-kernel+bounces-183796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E0F8C9E3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:34:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB4A8C9E40
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7E31C20ECE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C3EA1F217DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5067D419;
-	Mon, 20 May 2024 13:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CB813665F;
+	Mon, 20 May 2024 13:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IOp6znxw"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QVpUy6j/"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404936D1A3;
-	Mon, 20 May 2024 13:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23011136648
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 13:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716212052; cv=none; b=upickSyXgqlG74USX3ISyyJNJeuNrIXAH4cntkHgNIbQ3epVjg54NJOyvjmBotXW5X23PjFW9boo4SR5yQvR4cV9PlCMAR5+GV46dWQAsV19Aiftz57994BluqBoo40EV6u8WSqKwikzxhJiqrAMj0hlsmsXVaRo+E6bDTSy92s=
+	t=1716212108; cv=none; b=hL7Sfk7KLQXuGgTYAoy+bihDryAtOH2iE9qbwn82d6FSRYEYoP3MZlTsp0Met5sWNb2sTZGA23zv5TsFCtfU+IBbjbhPP1Oz2b5dnevNb03+qf8LHf48dUygtLI0GPTq8Ym1zHlxYpNBAmhOo6end0vdCkLBt1asYfIklVKL5NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716212052; c=relaxed/simple;
-	bh=6l89WwTl0d561bLjFwzCLWKm7Dw0Thg6kC5YSizBDTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y6jKV4JBztE4tQ9jH5TikxQ2St4IpgFTUfiekfmV1T382yEVtCWN7+ou6v/0bVaw69B2qhIEFK0GQHJxrZGUgEn6VhSTaqBjuCJ+2AqWpgVxHTnvKaTRWqulWa702tFoJyvEzwUfIrJwwZ6igbWooaZS5mdYeapDVlHbgZKlNCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IOp6znxw; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=7MTkFW5EKW6VtXAQK1YmzVyloY2FLZZSBaVZDYaOtOU=; b=IOp6znxwuh16I4+DNrVElh1uf3
-	LQPxTYVNYVj4WuzeoZdhZj+T+Gk58XMxXkoBlL6vFSdxP0Ry9C+M7xeZI21ZO79kC7fSlSZO75pSe
-	CUQ4ue2/ndyXxKlu/QhFa2rSXY4PeMxY5Hu06Ef5cqyou1EzKucmfXKbpIjphqf/0uwM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s939F-00FhPN-Bj; Mon, 20 May 2024 15:33:53 +0200
-Date: Mon, 20 May 2024 15:33:53 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v3 5/5] net: phy: add driver for built-in 2.5G
- ethernet PHY on MT7988
-Message-ID: <62b19955-23b8-4cd1-b09c-68546f612b44@lunn.ch>
-References: <20240520113456.21675-1-SkyLake.Huang@mediatek.com>
- <20240520113456.21675-6-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1716212108; c=relaxed/simple;
+	bh=R/0zG6yLUYRJaCSaEdvkdqZcg4FkuA6onh3IU8OmRfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pIv2hjIqTLl3Wfi2uVfRrnnxGSh3vkogS5YQFscTcBL7NkX0VWAPDv4j3+EnB2p1gh4DXRItNGrJYgeV/z7v1WBjuB48A6g6z5nIQjafZbO+2wbKbZDaiAu6udHoTTgkYIeauUbPjdv79qv2/Eg3BPWI4R8yWG7DP69fgVdWEqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QVpUy6j/; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: lkp@intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716212103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gyw5WnWHpJz6E3Mc68G1X1pQFAugA2g3tSqbvj80T9o=;
+	b=QVpUy6j/slpeF+8hheYUC0ArIclrwUJUOcg0BMYheBc3WY9jbEzvl8u3m4pJk/cVpU3t0Z
+	u3v8gM+fsA8apsOwRvDm0Gz6yNeY4WnNfPQRjo79/+0fs9mbm8be4lf1ywSU7VlAFCWziE
+	/VUBDF3ygfeGR5X9TuyANXi8Q6BKEmU=
+X-Envelope-To: brauner@kernel.org
+X-Envelope-To: jack@suse.cz
+X-Envelope-To: viro@zeniv.linux.org.uk
+X-Envelope-To: oe-kbuild-all@lists.linux.dev
+X-Envelope-To: axboe@kernel.dk
+X-Envelope-To: hch@lst.de
+X-Envelope-To: dylany@fb.com
+X-Envelope-To: dwmw@amazon.co.uk
+X-Envelope-To: pbonzini@redhat.com
+X-Envelope-To: dyoung@redhat.com
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Message-ID: <18ef03df-8313-432f-bf24-aa685d099f3e@linux.dev>
+Date: Mon, 20 May 2024 21:34:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520113456.21675-6-SkyLake.Huang@mediatek.com>
+Subject: Re: [PATCH] eventfd: introduce ratelimited wakeup for non-semaphore
+ eventfd
+To: kernel test robot <lkp@intel.com>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
+ David Woodhouse <dwmw@amazon.co.uk>, Paolo Bonzini <pbonzini@redhat.com>,
+ Dave Young <dyoung@redhat.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240519144124.4429-1-wen.yang@linux.dev>
+ <202405200456.29VvtOKg-lkp@intel.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Wen Yang <wen.yang@linux.dev>
+In-Reply-To: <202405200456.29VvtOKg-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-> +static int mt798x_2p5ge_phy_config_init(struct phy_device *phydev)
-> +{
-> +	struct mtk_i2p5ge_phy_priv *priv = phydev->priv;
-> +	struct device *dev = &phydev->mdio.dev;
-> +	const struct firmware *fw;
-> +	struct pinctrl *pinctrl;
-> +	int ret, i;
-> +	u16 reg;
-> +
-> +	if (!priv->fw_loaded) {
-> +		if (!priv->md32_en_cfg_base || !priv->pmb_addr) {
-> +			dev_err(dev, "MD32_EN_CFG base & PMB addresses aren't valid\n");
-> +			return -EINVAL;
-> +		}
-> +
 
-https://www.kernel.org/doc/html/latest/process/coding-style.html
 
-  6) Functions
+On 2024/5/20 05:18, kernel test robot wrote:
+> Hi Wen,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on brauner-vfs/vfs.all]
+> [also build test ERROR on linus/master v6.9 next-20240517]
+> [cannot apply to vfs-idmapping/for-next hch-configfs/for-next]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Wen-Yang/eventfd-introduce-ratelimited-wakeup-for-non-semaphore-eventfd/20240519-224440
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+> patch link:    https://lore.kernel.org/r/20240519144124.4429-1-wen.yang%40linux.dev
+> patch subject: [PATCH] eventfd: introduce ratelimited wakeup for non-semaphore eventfd
+> config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20240520/202405200456.29VvtOKg-lkp@intel.com/config)
+> compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240520/202405200456.29VvtOKg-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202405200456.29VvtOKg-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>     arm-linux-gnueabi-ld: fs/eventfd.o: in function `eventfd_write':
+>>> eventfd.c:(.text+0x1740): undefined reference to `__aeabi_uldivmod'
+> 
 
-  Functions should be short and sweet, and do just one thing. They
-  should fit on one or two screenfuls of text (the ISO/ANSI screen
-  size is 80x24, as we all know), and do one thing and do that well.
+Thanks, we will fix it soon and then send v2.
 
-This is a big function, which does multiple things. Maybe pull the
-downloading of firmware into a helper.
-
-> +		ret = request_firmware(&fw, MT7988_2P5GE_PMB, dev);
-> +		if (ret) {
-> +			dev_err(dev, "failed to load firmware: %s, ret: %d\n",
-> +				MT7988_2P5GE_PMB, ret);
-> +			return ret;
-> +		}
-> +
-> +		if (fw->size != MT7988_2P5GE_PMB_SIZE) {
-> +			dev_err(dev, "Firmware size 0x%zx != 0x%x\n",
-> +				fw->size, MT7988_2P5GE_PMB_SIZE);
-> +			return -EINVAL;
-> +		}
-> +
-> +		reg = readw(priv->md32_en_cfg_base);
-> +		if (reg & MD32_EN) {
-> +			phy_set_bits(phydev, MII_BMCR, BMCR_RESET);
-> +			usleep_range(10000, 11000);
-> +		}
-> +		phy_set_bits(phydev, MII_BMCR, BMCR_PDOWN);
-> +
-> +		/* Write magic number to safely stall MCU */
-> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x800e, 0x1100);
-> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x800f, 0x00df);
-> +
-> +		for (i = 0; i < MT7988_2P5GE_PMB_SIZE - 1; i += 4)
-> +			writel(*((uint32_t *)(fw->data + i)), priv->pmb_addr + i);
-> +		release_firmware(fw);
-> +
-> +		writew(reg & ~MD32_EN, priv->md32_en_cfg_base);
-> +		writew(reg | MD32_EN, priv->md32_en_cfg_base);
-> +		phy_set_bits(phydev, MII_BMCR, BMCR_RESET);
-> +		/* We need a delay here to stabilize initialization of MCU */
-> +		usleep_range(7000, 8000);
-> +		dev_info(dev, "Firmware loading/trigger ok.\n");
-> +
-> +		priv->fw_loaded = true;
-
-So there is no way to know if this has already happened? Maybe the
-bootloader downloaded the firmware so it could TFTP boot? Linux will
-download the firmware again, which is a waste of time.
-
-> +		iounmap(priv->md32_en_cfg_base);
-> +		iounmap(priv->pmb_addr);
-> +	}
-> +
-> +	/* Setup LED */
-> +	phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MTK_PHY_LED0_ON_CTRL,
-> +			 MTK_PHY_LED_ON_POLARITY | MTK_PHY_LED_ON_LINK10 |
-> +			 MTK_PHY_LED_ON_LINK100 | MTK_PHY_LED_ON_LINK1000 |
-> +			 MTK_PHY_LED_ON_LINK2500);
-> +	phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MTK_PHY_LED1_ON_CTRL,
-> +			 MTK_PHY_LED_ON_FDX | MTK_PHY_LED_ON_HDX);
-> +
-> +	pinctrl = devm_pinctrl_get_select(&phydev->mdio.dev, "i2p5gbe-led");
-
-Calls to devm_pinctrl_get_select() is pretty unusual in drivers:
-
-https://elixir.bootlin.com/linux/latest/C/ident/devm_pinctrl_get_select
-
-Why is this needed? Generally, the DT file should describe the needed
-pinmux setting, without needed anything additionally.
-
-> +static int mt798x_2p5ge_phy_get_features(struct phy_device *phydev)
-> +{
-> +	int ret;
-> +
-> +	ret = genphy_c45_pma_read_abilities(phydev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* We don't support HDX at MAC layer on mt7988. So mask phy's HDX capabilities here. */
-
-So you make it clear, the MAC does not support half duplex. The MAC
-should then remove it, not the PHY.
-
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT, phydev->supported);
-> +
-> +	return 0;
-> +}
-> +
-> +static int mt798x_2p5ge_phy_read_status(struct phy_device *phydev)
-> +{
-> +	int ret;
-> +
-> +	/* When MDIO_STAT1_LSTATUS is raised genphy_c45_read_link(), this phy actually
-> +	 * hasn't finished AN. So use CL22's link update function instead.
-> +	 */
-> +	ret = genphy_update_link(phydev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	phydev->speed = SPEED_UNKNOWN;
-> +	phydev->duplex = DUPLEX_UNKNOWN;
-> +	phydev->pause = 0;
-> +	phydev->asym_pause = 0;
-> +
-> +	/* We'll read link speed through vendor specific registers down below. So remove
-> +	 * phy_resolve_aneg_linkmode (AN on) & genphy_c45_read_pma (AN off).
-> +	 */
-> +	if (phydev->autoneg == AUTONEG_ENABLE && phydev->autoneg_complete) {
-> +		ret = genphy_c45_read_lpa(phydev);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		/* Clause 45 doesn't define 1000BaseT support. Read the link partner's 1G
-> +		 * advertisement via Clause 22
-> +		 */
-> +		ret = phy_read(phydev, MII_STAT1000);
-> +		if (ret < 0)
-> +			return ret;
-> +		mii_stat1000_mod_linkmode_lpa_t(phydev->lp_advertising, ret);
-> +	} else if (phydev->autoneg == AUTONEG_DISABLE) {
-> +		return -EOPNOTSUPP;
-> +	}
-
-It is a bit late doing this now. The user requested this a long time
-ago, and it will be hard to understand why it now returns EOPNOTSUPP.
-You should check for AUTONEG_DISABLE in config_aneg() and return the
-error there.
-
-      Andrew
+--
+Best wishes,
+Wen
 
