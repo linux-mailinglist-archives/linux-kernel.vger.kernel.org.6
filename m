@@ -1,86 +1,83 @@
-Return-Path: <linux-kernel+bounces-183721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767698C9D19
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:23:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308348C9D15
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1702E1F21A5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61CF41C21108
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CCC5674D;
-	Mon, 20 May 2024 12:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE511548EC;
+	Mon, 20 May 2024 12:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TD0D+cAJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dguptPYJ"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE31854FBD;
-	Mon, 20 May 2024 12:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA4756448
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 12:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716207779; cv=none; b=X9Y14OizVFmar32k6gnggXPsvMmbyaXBAXwUavQX5rMHaKwX9o9G53pxj+dikTj0EVRrWWdoAcGufPGqpW2VR1ton7r6LkZKzOccH6eSdfAHV9iRY6YXdL/V7DOTqBLk4VjiCMfUoG9YJCWYdR6j1Zr02tN843IQNm6xx4bmekQ=
+	t=1716207776; cv=none; b=dwxWKZDgtNSls3hv2DNc2d/8MR7thN8yzHMepwX3JGOa61gUrI42vBr3yT2IEie4woey8aSeHC/imv204QD82+f19b4YnCtcM83yFEOGj36eJ/NP4Uf273ou1LiTJERF+opZ1hYvJCvoYlnw/o4yfu9m+CwtwSyFCAs1Z4neF3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716207779; c=relaxed/simple;
-	bh=FIHPzrYBeBwApuNIfaSlsYWDNvGy7ZbVQrqLmZ/82pg=;
+	s=arc-20240116; t=1716207776; c=relaxed/simple;
+	bh=FsjGULNLBK+FjzXLWr/t8FWTDIAjnTpWhcTrRa5F9sI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UZUmCOZDX0akzJJxSkbRLu3nsMtiNSe0hRssVbDA8CAZFIcTvykauRXcc6TvWZa927/WWkgSwvDD8fuo0BaOn8d4g/gG53jv3T7amcyM6HUBP1aqalEDSmpY2v5GFZPg2ghHF4jK/ufQ+FLGpqx13JIfQy0teTfvTS7vqOMWt2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TD0D+cAJ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716207778; x=1747743778;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FIHPzrYBeBwApuNIfaSlsYWDNvGy7ZbVQrqLmZ/82pg=;
-  b=TD0D+cAJWpOXVMlr+M5ngqJJ0fG7hhmTwx3/W8ZDCstnvMts0NRJbHPA
-   ph3uDzAf+uvSxkpkMk/zCyMeFA6pkI7newEIUqf+sbF6am1lppnpj7pdv
-   3nT6ZM8GebZu1A9GiRMWn7V+S+9m6dRB9NUDyCOsGuUwc+5xy8AyZGNDv
-   hTg8qcsLioeVAnLEehmQRUnizJeL6a2mUPvq0BEJEZ23wyrw30aWX/aDC
-   NcCwKOXIrD2XKwVLvzmwcBR1UtN6xZBgpcHVvq7FE0PPg0HFOyZHrSBTU
-   Ln8dC/Euwx4wJXnmjxgZCGKQGR8+RhMW6g8lv+ohixwUAAnvokCZHkeZH
-   g==;
-X-CSE-ConnectionGUID: 0yxWYYs5SnizDKg1khRQug==
-X-CSE-MsgGUID: e8DYWLavRO6LcT/Kb8xahQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="16121090"
-X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
-   d="scan'208";a="16121090"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 05:22:57 -0700
-X-CSE-ConnectionGUID: BwU7Y7GMQkeBw3e/17TV/w==
-X-CSE-MsgGUID: BjQEzPg3QwSQCXAimCM+iQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
-   d="scan'208";a="32652526"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 05:22:51 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s922R-00000009J9i-2ohd;
-	Mon, 20 May 2024 15:22:47 +0300
-Date: Mon, 20 May 2024 15:22:47 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: Daniel Latypov <dlatypov@google.com>, mchehab@kernel.org,
-	hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, benjamin.gaignard@collabora.com,
-	sebastian.fricke@collabora.com, akpm@linux-foundation.org,
-	gregkh@linuxfoundation.org, adobriyan@gmail.com,
-	jani.nikula@intel.com, p.zabel@pengutronix.de, airlied@gmail.com,
-	daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-	laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
-	vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
-	detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
-	andrzej.p@collabora.com, nicolas@ndufresne.ca, davidgow@google.com
-Subject: Re: [PATCH v8 07/10] lib: add basic KUnit test for lib/math
-Message-ID: <ZktAlza1zEke1eCx@smile.fi.intel.com>
-References: <20240517171532.748684-1-devarsht@ti.com>
- <20240517173607.800549-1-devarsht@ti.com>
- <Zke6o3HYnUrgtD0K@smile.fi.intel.com>
- <7b8cd37b-5b16-2d99-ab62-5d6876e6571c@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+/Zd0chM4e/P2MnzushV289AwsXm/OZ75yUTSH1WOiYKIPC9UDU5yhS16o1wGQ2Rg5CnxUE8hNY0hFNd7xWyEyZyQC+f1uJrOn6oeRM5tcY4PaJwtDOB1QaPxcRC/26wyNWYfX1P9tCuQa93sv5Fgx9x76oKsomjP+AWdDjDAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dguptPYJ; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51f57713684so5276778e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 05:22:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1716207772; x=1716812572; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6bREYXSNJx7yr5uTrce/LKMVLb4BxuBwY9vQL2AO1CY=;
+        b=dguptPYJ6eEH1U3JgYG8j8UeKVQqMosUTvjzVuQX2lW8WEoyc09NoR1oMcTG6LMoay
+         bjqhSoidZKDH6slChBbhHO91Hf0e0IzYsV4kvBNpYHR8zsHD0t4lDNi9hvzm9/E4KIZo
+         Ycq6nUEwH8GIKoRLb2pXaLkU/LfVONSFoZByMXDd9hULQ1wcAIlIGLqMdKnunohX8V84
+         9znpBAcSeYCRa52dKZ8Apzg02GVPxC/mgC0K4mHMd1OSGPBGxs1WxSwvls8v8nG7MV7k
+         iBRnym2VcpMKYvuhrj+vC+L7qU6zc2gpsuJhExZnIeMwX28fqU1dME1Vc/yimTYhaw6d
+         KZ+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716207772; x=1716812572;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6bREYXSNJx7yr5uTrce/LKMVLb4BxuBwY9vQL2AO1CY=;
+        b=angzOSVzCPnUgYOLOJl6ZQDzCZut6L96sZSFruB7VwTwj2Y/aFx76pBtzLTkwcVQ0n
+         UV93YbjrRVSoKZYicVyY63+ZfwbOk961q7+WytFoP95jhIfVRXthk0Rsg1C1B3CVxqGC
+         IarNVk+OtraPybfTiTsPv6T9VkUC5R9UEgw7aO1RfO4B1VcP8RZ2+n2jKSGPxSE/UQol
+         wnoXs8GPHQJLj5z3cHKGOgMSw+MxxLe1BAW4W/WPj40JVe9FGJHz+DKaIn8K1Y6kLPB9
+         Lea8hKHs0I2p3AWpQD0fDhx7H2aXAofxfVfcS69uyDEB0EGnCSAq6AncMe1i49U4GPV0
+         MVmg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/L8w3rS7pY8qH9o4iuJOuv2CDEYWm6jyuyWXUxgiBK5uR8UnwvHwKZwtbLnsiM4SUC75sfF9zNORirZunjnnPoj9krLMZFriN6Qmj
+X-Gm-Message-State: AOJu0YyL6jMqJN0SqctLj0+HIANR3A9CU6Ga5HRB6GYvV1cH/7ZiYKxa
+	x4dBSJSlqYZFmRbVWNgYgRrqdBZlIeAcZ5F/7+c9j4D5Bq5wulWREV3jBx/UiyY=
+X-Google-Smtp-Source: AGHT+IHrIxn8lRvzjOg1Ui/6tQPrN6PSJ3Se90i+uvDj849VnBCvGdQmYRpv36r0fn+9t2zRZhCgVQ==
+X-Received: by 2002:a05:6512:3c9e:b0:523:9493:4e63 with SMTP id 2adb3069b0e04-5239493505emr12455625e87.60.1716207771843;
+        Mon, 20 May 2024 05:22:51 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781cfa7sm1446680866b.33.2024.05.20.05.22.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 05:22:51 -0700 (PDT)
+Date: Mon, 20 May 2024 14:22:50 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org
+Subject: Re: [PATCH printk v5 12/30] serial: core: Implement processing in
+ port->lock wrapper
+Message-ID: <ZktAmvpBfk-IrMr9@pathway.suse.cz>
+References: <20240502213839.376636-1-john.ogness@linutronix.de>
+ <20240502213839.376636-13-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,46 +86,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7b8cd37b-5b16-2d99-ab62-5d6876e6571c@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240502213839.376636-13-john.ogness@linutronix.de>
 
-On Mon, May 20, 2024 at 05:11:18PM +0530, Devarsh Thakkar wrote:
-> On 18/05/24 01:44, Andy Shevchenko wrote:
-> > On Fri, May 17, 2024 at 11:06:07PM +0530, Devarsh Thakkar wrote:
-
-[..]
-
-> >> +#include <kunit/test.h>
-> >> +#include <linux/gcd.h>
-> > 
-> >> +#include <linux/kernel.h>
-> > 
-> > Do you know why this header is included?
+On Thu 2024-05-02 23:44:21, John Ogness wrote:
+> Currently the port->lock wrappers uart_port_lock(),
+> uart_port_unlock() (and their variants) only lock/unlock
+> the spin_lock.
 > 
-> It includes all the other required headers (including those you mentioned
-> below), and header list is probably copied from other files in same directory.
-> But it does suffice the requirements as I have verified the compilation.
-
-Yes, and one should follow IWYU principle and not cargo cult or whatever
-arbitrary lists.
-
-> >> +#include <linux/lcm.h>
-> > 
-> > + math.h // obviously
-> > + module.h
-> > 
-> >> +#include <linux/reciprocal_div.h>
-> > 
-> > + types.h
+> If the port is an nbcon console, the wrappers must also
+> acquire/release the console and mark the region as unsafe. This
+> allows general port->lock synchronization to be synchronized
+> with the nbcon console ownership.
 > 
-> All the above headers are already included as part of kernel.h
+> Note that __uart_port_using_nbcon() relies on the port->lock
+> being held while a console is added and removed from the
+> console list (i.e. all uart nbcon drivers *must* take the
+> port->lock in their device_lock() callbacks).
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
 
-Yes, that's why you should not use "proxy" headers.
-Have you read the top comment in the kernel.h?
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Best Regards,
+Petr
 
