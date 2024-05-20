@@ -1,129 +1,179 @@
-Return-Path: <linux-kernel+bounces-183928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A86A8CA010
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:49:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E498CA028
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9642B21773
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:49:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC1821F21A49
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2015B137756;
-	Mon, 20 May 2024 15:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D497C0B2;
+	Mon, 20 May 2024 15:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WCRdbWwb"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="u3iRdCl4"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC23524D4
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 15:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777BC136E37;
+	Mon, 20 May 2024 15:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716220162; cv=none; b=STaXxX78wzzTy2r1nqPoSm0cAvh8qVLULE7OUh1JHDjhtLjNNFI3XPWALDzJ8uEtEmmrvDYzJZU7ZqswCnrIJ0XONceDsiGiaLIYwx1JRPyz4iiH8fNXxxsfbXTph8OrcZMpt8GHgPVQNtjbv+xiF8F652uvV0CwpfEkXkwM/gU=
+	t=1716220262; cv=none; b=tsBjgagOEuT+D/x3PJPJfNA3zT8rErPApZbSe3yuPJZjCHN0oLa30r1FG3ZoucaS3VL0dmXQg+kEULKJWY/Fllfg8cyCYyyr1ykwwg6sXahJLb57xU1R+v8kEhoFQLCnimb46xPgF+8VW1ug7J/jhGaOF0XanWTxsO6vimdKfnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716220162; c=relaxed/simple;
-	bh=4iB0UniyvGsVchRqtMoChe7NlqVHuiQOzngJRi+uD6o=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=T4MShR7V+nJkC+4ztrfQWaKtvI6Qy7onvidboVIbq8NPqk+6f8oKeIv4/z1ALDD8OWJvw74W3Mm8HuAC1G++0AnjXWDOD2CFi3kVrrcDYr7Oxyx2g2f/KyLKY+dYC7qGReXnMMOLYVeZmgieF+qB2BWoHR3yvoilnCenytQQIRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kyletso.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WCRdbWwb; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kyletso.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc6b26845cdso16370737276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 08:49:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716220159; x=1716824959; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3Hta5Q6/b2rPRyvZAPSqwK1sqIL5wofS3TUQ5XOr7Cs=;
-        b=WCRdbWwb3h9YKpUTyyIeIrWAoBbRg2SyEDVvAuyxVVXVp2XBwg9gKfsScI2HW5ilQ+
-         ndT2MxOmv8IEgZwMplkk+y+0XWODXFBnxU8OZpZ/5a+Cg1Nwzm6Cn5jz00Xq569SLAHa
-         SWtHngG05WDcp2zNDGQRyQ1Nqxupp8Oi6bpODCjOMcKZJ+Buht1wqIsVSU8SHCJtFoHv
-         F3nedsdHviLjbBkJsnigBUUrvc+4c/Ptk8PicatkscFJdaYKivS98nsHRMCJJAooMiOG
-         Zrii/j48u7thpxZFCPBim07mes5tWv8lZc5MWo9DC604+6eNRFhwaYfH75033ZoxqPbc
-         BxHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716220159; x=1716824959;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3Hta5Q6/b2rPRyvZAPSqwK1sqIL5wofS3TUQ5XOr7Cs=;
-        b=hdJzYedazoBJxPLNcseROGRoYGpc+HAnO1F0PX9wXsw5tQGEWwEO93v0gunea72zA/
-         Xs+u3J0qatMDKsxyCTp5JxuX6Xu3iUTUmdRJDchSJ9gEioJ2NdRGQvw7GcrbAS5qSvc9
-         9CUWivMSXReijxoPQ73PLOwSrrlDSXdtBn1IgK4P9G6ZEy3bj1lDIhAx0k1Vw2Slhk0l
-         8eVXR/f0Z6yRVClS5HbHAJ2pNQTWmGrYZkw7+kxkva567+UjahwAQoKbyPGYc2bv+/KH
-         rlKff4ifLyjEn2b3lujrQt3jBlwJXG8ooFX+XgMhE2GZAb6S3xylowb/X0e2BoKgl2kA
-         quKg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8z8AaI4AKiaSchcYXmOY2wzH6hi7ks++l7KQhgsb2JjeqavF63EiQs9IvR4OgtOGMVxQOrSu7cmawwcnBHKb893Gb4qB2stijPDLw
-X-Gm-Message-State: AOJu0YzUZKvLI5LWGkpaJT5KfuRJawd/u4CdnAMI9BDjwQYgM+YPZcJH
-	1GkCOY/px8X0REPdO6EzXKWhUNEwS+utLGePPnAvEg1W0wg8UfbtRcPPX3dEyDjGXyVg1Md3WET
-	k0Nw3kw==
-X-Google-Smtp-Source: AGHT+IFiZXUt8sxoCkvWR9ksdbwYOAWH9aUG7crxl4brbEO5+hvznY+zLbTMl/qWVD2B4Kq7QWK0AT+WRJAL
-X-Received: from kyletso-p620lin01.ntc.corp.google.com ([2401:fa00:a7:c:e7e6:5547:2aba:8696])
- (user=kyletso job=sendgmr) by 2002:a05:6902:1241:b0:df4:9b3d:66a6 with SMTP
- id 3f1490d57ef6-df49b3d9b3emr1603204276.10.1716220159335; Mon, 20 May 2024
- 08:49:19 -0700 (PDT)
-Date: Mon, 20 May 2024 23:48:58 +0800
+	s=arc-20240116; t=1716220262; c=relaxed/simple;
+	bh=x9C2QzrpdhnVABs2QA+kwfC7f3OTmWuO1n/k3Ls+AtA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=szQxowxBH0GibGYBIlSPooNfRDkc0TDjVGd/3KzZSFsnw0wUswjLvtBaH+YuInoIS0ji1fRQqS/JSONux2vpySCBIOoDbGmweMdjuU28DwlgG3tPnThiZz+rUf7Y2RxsGaftriQx/9F1UvLby1qUauulJNq0VfDiNMUWJ2Aqqdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=u3iRdCl4; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44KEKwwu031522;
+	Mon, 20 May 2024 17:50:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=selector1; bh=Msnirtj
+	BeSdlPyRwULFwxBgccQO+AeHXhvf9XB7mN3M=; b=u3iRdCl4UK8gBaaSYD7Nad3
+	GiTyJemb8exmb2ai4G1y4Mlk+MjX9FTcjVEqDc+hiZY8T/WZgfCrJuQq8BvpTkym
+	DGYSLIoJASYYky8yD8sXI+yrK3aNbpYBQ941uT4PYxsQ6lJUlnURyX0fFi/ALNIO
+	m5T6jicya6u7JOkYXUV/5t6Pwl4FSuO8MW2diFEbQdBpIuX786EQSodgtIIP6GZz
+	dQ/s6lOq0sfOlscdurYOMUfq5chnSfYaYCKECD4xYIVGtEz+lI5rffi4v9lMHnft
+	E+eDow/9XdG70hKk3aIsuTdFoad/GsRnw302tLDZctntjv6JS1nQVoffBhqbgVw=
+	=
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y6n6hfp97-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 17:50:42 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 601B940044;
+	Mon, 20 May 2024 17:50:38 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8F084226FBA;
+	Mon, 20 May 2024 17:49:52 +0200 (CEST)
+Received: from localhost (10.252.8.132) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 20 May
+ 2024 17:49:52 +0200
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>
+CC: <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>,
+        Amelie Delaunay
+	<amelie.delaunay@foss.st.com>
+Subject: [PATCH v3 00/12] Introduce STM32 DMA3 support
+Date: Mon, 20 May 2024 17:49:36 +0200
+Message-ID: <20240520154948.690697-1-amelie.delaunay@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Message-ID: <20240520154858.1072347-1-kyletso@google.com>
-Subject: [PATCH] usb: typec: tcpm: Ignore received Hard Reset in TOGGLING state
-From: Kyle Tso <kyletso@google.com>
-To: linux@roeck-us.net, heikki.krogerus@linux.intel.com, 
-	gregkh@linuxfoundation.org
-Cc: badhri@google.com, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Kyle Tso <kyletso@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-20_05,2024-05-17_03,2024-05-17_01
 
-Similar to what fixed in Commit a6fe37f428c1 ("usb: typec: tcpm: Skip
-hard reset when in error recovery"), the handling of the received Hard
-Reset has to be skipped during TOGGLING state.
+STM32 DMA3 is a direct memory access controller with different features
+depending on its hardware configuration. It is either called LPDMA (Low
+Power), GPDMA (General Purpose) or HPDMA (High Performance), and it can
+be found in new STM32 MCUs and MPUs.
 
-[ 4086.021288] VBUS off
-[ 4086.021295] pending state change SNK_READY -> SNK_UNATTACHED @ 650 ms [rev2 NONE_AMS]
-[ 4086.022113] VBUS VSAFE0V
-[ 4086.022117] state change SNK_READY -> SNK_UNATTACHED [rev2 NONE_AMS]
-[ 4086.022447] VBUS off
-[ 4086.022450] state change SNK_UNATTACHED -> SNK_UNATTACHED [rev2 NONE_AMS]
-[ 4086.023060] VBUS VSAFE0V
-[ 4086.023064] state change SNK_UNATTACHED -> SNK_UNATTACHED [rev2 NONE_AMS]
-[ 4086.023070] disable BIST MODE TESTDATA
-[ 4086.023766] disable vbus discharge ret:0
-[ 4086.023911] Setting usb_comm capable false
-[ 4086.028874] Setting voltage/current limit 0 mV 0 mA
-[ 4086.028888] polarity 0
-[ 4086.030305] Requesting mux state 0, usb-role 0, orientation 0
-[ 4086.033539] Start toggling
-[ 4086.038496] state change SNK_UNATTACHED -> TOGGLING [rev2 NONE_AMS]
+In STM32MP25 SoC [1], 3 HPDMAs and 1 LPDMA are embedded. Only HPDMAs are
+used by Linux.
 
-// This Hard Reset is unexpected
-[ 4086.038499] Received hard reset
-[ 4086.038501] state change TOGGLING -> HARD_RESET_START [rev2 HARD_RESET]
+Before adding this new driver, this series gathers existing STM32 DMA
+drivers and bindings under stm32/ subdirectory and adds an entry in
+MAINTAINERS file.
 
-Fixes: f0690a25a140 ("staging: typec: USB Type-C Port Manager (tcpm)")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kyle Tso <kyletso@google.com>
----
- drivers/usb/typec/tcpm/tcpm.c | 1 +
- 1 file changed, 1 insertion(+)
+To ease review, the initial "dmaengine: Add STM32 DMA3 support" has been
+split into functionnalities.
+Patches 6 to 9 can be squashed into patch 5.
 
-diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-index 8a1af08f71b6..9c1cb8c11bd6 100644
---- a/drivers/usb/typec/tcpm/tcpm.c
-+++ b/drivers/usb/typec/tcpm/tcpm.c
-@@ -6172,6 +6172,7 @@ static void _tcpm_pd_hard_reset(struct tcpm_port *port)
- 		port->tcpc->set_bist_data(port->tcpc, false);
- 
- 	switch (port->state) {
-+	case TOGGLING:
- 	case ERROR_RECOVERY:
- 	case PORT_RESET:
- 	case PORT_RESET_WAIT_OFF:
+Patch 10 has already been proposed [2], the API is now used in stm32-dma3
+driver. Indeed, STM32 DMA3 channels can be individually reserved either
+because they are secure, or dedicated to another CPU. These channels are
+not registered in dmaengine, so id is not incremented, but, using the new
+API to specify the channel name, channel name matches the name in the
+Reference Manual and ease requesting a channel thanks to its name.
+
+[1] https://www.st.com/resource/en/reference_manual/rm0457-stm32mp25xx-advanced-armbased-3264bit-mpus-stmicroelectronics.pdf
+[2] https://lore.kernel.org/lkml/20231213174021.3074759-1-amelie.delaunay@foss.st.com/
+
+v3:
+- address Rob's remarks about st,stm32-dma3.yaml
+  (wrap at 80, remove useless '|')
+- address Frank's remarks about patch 5: improve commit message and
+  ensure descriptors availability before starting the channel
+
+v2:
+- fix reference in spi/st,stm32-spi.yaml with an updated description of the
+  dmas property to reflect the new path of STM32 DMA controllers bindings.
+- address Rob's remarks about st,stm32-dma3.yaml
+- address Vinod's remarks about stm32-dma3.c
+
+Amelie Delaunay (12):
+  dt-bindings: dma: New directory for STM32 DMA controllers bindings
+  dmaengine: stm32: New directory for STM32 DMA controllers drivers
+  MAINTAINERS: Add entry for STM32 DMA controllers drivers and
+    documentation
+  dt-bindings: dma: Document STM32 DMA3 controller bindings
+  dmaengine: Add STM32 DMA3 support
+  dmaengine: stm32-dma3: add DMA_CYCLIC capability
+  dmaengine: stm32-dma3: add DMA_MEMCPY capability
+  dmaengine: stm32-dma3: add device_pause and device_resume ops
+  dmaengine: stm32-dma3: improve residue granularity
+  dmaengine: add channel device name to channel registration
+  dmaengine: stm32-dma3: defer channel registration to specify channel
+    name
+  arm64: dts: st: add HPDMA nodes on stm32mp251
+
+ .../dma/{ => stm32}/st,stm32-dma.yaml         |    4 +-
+ .../bindings/dma/stm32/st,stm32-dma3.yaml     |  135 ++
+ .../dma/{ => stm32}/st,stm32-dmamux.yaml      |    4 +-
+ .../dma/{ => stm32}/st,stm32-mdma.yaml        |    4 +-
+ .../devicetree/bindings/spi/st,stm32-spi.yaml |    2 +-
+ MAINTAINERS                                   |    9 +
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        |   69 +
+ drivers/dma/Kconfig                           |   34 +-
+ drivers/dma/Makefile                          |    4 +-
+ drivers/dma/dmaengine.c                       |   16 +-
+ drivers/dma/idxd/dma.c                        |    2 +-
+ drivers/dma/stm32/Kconfig                     |   47 +
+ drivers/dma/stm32/Makefile                    |    5 +
+ drivers/dma/{ => stm32}/stm32-dma.c           |    2 +-
+ drivers/dma/stm32/stm32-dma3.c                | 1847 +++++++++++++++++
+ drivers/dma/{ => stm32}/stm32-dmamux.c        |    0
+ drivers/dma/{ => stm32}/stm32-mdma.c          |    2 +-
+ include/linux/dmaengine.h                     |    3 +-
+ 18 files changed, 2137 insertions(+), 52 deletions(-)
+ rename Documentation/devicetree/bindings/dma/{ => stm32}/st,stm32-dma.yaml (97%)
+ create mode 100644 Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml
+ rename Documentation/devicetree/bindings/dma/{ => stm32}/st,stm32-dmamux.yaml (89%)
+ rename Documentation/devicetree/bindings/dma/{ => stm32}/st,stm32-mdma.yaml (96%)
+ create mode 100644 drivers/dma/stm32/Kconfig
+ create mode 100644 drivers/dma/stm32/Makefile
+ rename drivers/dma/{ => stm32}/stm32-dma.c (99%)
+ create mode 100644 drivers/dma/stm32/stm32-dma3.c
+ rename drivers/dma/{ => stm32}/stm32-dmamux.c (100%)
+ rename drivers/dma/{ => stm32}/stm32-mdma.c (99%)
+
 -- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+2.25.1
 
 
