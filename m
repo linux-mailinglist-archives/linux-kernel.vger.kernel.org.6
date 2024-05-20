@@ -1,127 +1,192 @@
-Return-Path: <linux-kernel+bounces-183957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C5738CA090
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:13:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A192A8CA094
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3050E1C20D2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:13:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C82D1F217A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE2713792B;
-	Mon, 20 May 2024 16:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF90713792E;
+	Mon, 20 May 2024 16:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wkz158jb"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVIH+1ZK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F596136E3D
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 16:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5B220EB;
+	Mon, 20 May 2024 16:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716221572; cv=none; b=Furdh5JC8hFgd7Oh2VLzDnhkhlkmG4JRpjgSanNltf3lhvk9xB9+VyqoJWmdzIK6YFHEjeQq/9xiMuppW8xV76MCskxpMP+/Mhz4uY8J7Hlb/ogp6FqGve11ZTGZwGkCS0s8R45/jX1XzwE+Ty0sxHFwZ1SsaFTvbQvQp1Ycprc=
+	t=1716221764; cv=none; b=HTgXyoKnLjiXP0wncfNH2Z38PwR6gFzss/KqR6+Ylg6/89RmLDxyXClCn+85MNJRKZI35brYl54JCa3DTFgwJ4fSFkvxo9NEFgmLJ/xHXQ1OLXOADeTpXpwiF1kpUp2uGhj0dd82736EVLglfecOc9WLM28E5Dek4op8dpf0yDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716221572; c=relaxed/simple;
-	bh=ndSvp5o7Uyu7m5CFUsdC1gDLc9bJxe151OXDAGHCzcE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SYv04MWoTvt3gQx0K2YPwKioOePNni72NpoxcO4pj8qnFjIcvfCrwSvUrS/mO56d1cZZuSNXs4dluzZ5xQsUSa4gXhBAPWBognmBqUnhENrug/vBgWbuoILB9LOiOTWAZvpflAv0awgR4T1XmeSb/3l/AnUvtynDgvory7H49Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wkz158jb; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-622ce716ceaso101239177b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 09:12:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716221570; x=1716826370; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YqAox3vnnp1RHk0CTlnjLBK+5bX50Kf7v7eduSyk3HQ=;
-        b=Wkz158jbBtWDZNYr9DalK5GwmDWq1va+vfofipsDAM68Sg70FSO3Elwv4IqpBY9LlP
-         2Cf9FqXAZYTrnqoump6/pThHErEz7EEZ4q8JnpvtK7bAC6kNrhRi8fOcw+42Z9A08ck9
-         3HM/dwacx0NJH8w8U4o8MmbLXAX23uPRsoVkVLyidcQ/8//qUpf8B2I4yQHxRdvUeHqR
-         LqKO9DWMKkAtsB1V76SonrVXZqrOqlYGJcmt2NsuSThVYahN4fqZkrR40XGvPCBSJPfM
-         QIX3ECtxUm5i+ZYIK/Kekt00MrqnXnVmhiSGmL4xR6A6XR9Z+CJlbvKiFuCg2e391KRV
-         4f5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716221570; x=1716826370;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YqAox3vnnp1RHk0CTlnjLBK+5bX50Kf7v7eduSyk3HQ=;
-        b=hqVPoxP7PBHAVRDNJVk00LaIljbc6V7jDrGri36smwGcNvA0RtW7A8mDL/xWu4CjqC
-         5do4s/OP3/9/MGeNQ3dJiVaiClnA3HYNoLonDqIGBNpaoWUk+Vmmqk1W7pF/TXMhhZxK
-         SQaXzou1WFr8HgV9u2GXho+mFKss7946w94EpPQ7TD8H6vVzSTMbRAV8jy1c8Inoo9YB
-         QuvqqMyCJNdCW/IUc6xveJF9SoUBkWLp3Bu3XrXcT0t/76Wg2nF/8dBXusV4WnAkhZgG
-         mj976rlE+Kbl7HAW/V6TUpJ5jMOAw0+pWkzA6Xy0J2NIh9U9/2Qf/lNMo0jxmQKt1EB9
-         YoEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbA/d+NVulVRB0ZGeXVr70HXBG9VJp1oVFtYHQKnKhLAYIux9yBM6lLPAX2lSiTxtiw7d80NIXYDUtwav61CkuetxBn6Yd2B868wFG
-X-Gm-Message-State: AOJu0Ywb0b/67DI1XhSkajvxJ4zbcdHThpH4X5gRC3VzK3Dp9T/r0mJ1
-	wRjatw4450Gcwu97Yboh/ade9MyBoOKUvZvzDCoj4PNDEBc/lGsMyM44JI55EdrqXyd0XzkfFc8
-	P3w==
-X-Google-Smtp-Source: AGHT+IFa2e5VGEJDNAknJpQM25yGMEzP0LmXW0vucAxwnkceDX3CFZ9s8rn661BS5hKCJ0z/mz+8q95JKLo=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:8494:0:b0:61b:ebf1:77a with SMTP id
- 00721157ae682-62796f670f8mr16949897b3.0.1716221570151; Mon, 20 May 2024
- 09:12:50 -0700 (PDT)
-Date: Mon, 20 May 2024 09:12:48 -0700
-In-Reply-To: <c2baeb4b-5cad-4cb9-a48e-0540f448cb15@intel.com>
+	s=arc-20240116; t=1716221764; c=relaxed/simple;
+	bh=UOi1n2UYMr/FQbVKWQcyqklCKnrURV8Jm+y0d+1xmXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oOoMKyPAPg8a9VgiMjSnQwnyV1daJ3KvI5CZdHuiEiDhSTF0B9vrXyvmQalUbIB06SC+VbPxjZQQkWBzLUfpBPkwJRRDHoRdeVWMNYSbxdMrPcJyH12LTa2m88jNXEgRH+kp3PGlx70HWhWwu184yvF2Onoi9d9jqjPb7OcW8Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVIH+1ZK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40BCFC2BD10;
+	Mon, 20 May 2024 16:16:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716221763;
+	bh=UOi1n2UYMr/FQbVKWQcyqklCKnrURV8Jm+y0d+1xmXU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZVIH+1ZKPc7nCIgzITvynSYYWTuhtNjvapabvfzI39kdCUv/cP4aImgHpSanyEI85
+	 fc0TB8ke+DtxyB2CtlKbVnrDZ+ddR8fPUrDgiu1uANtDlzM7XYr/LabR/5B7Owbk9B
+	 4hWwZd/6EdR6d5bT8cObim94znIZbhwjsgTCCHrNHbap8pX+INKZ4MMCPgO7PIan7o
+	 hDxrSRyQfKhn+fdEOfUX72EyR2VWY0B4ikj9one8DIBkv4VQ6jLc7h/YSffPOXtIrt
+	 0+kuwP0OcIO4tSATpnsSyiEcc58emRDd1LfmGCTInzD7GPHZ57rqhnUe52uXrVT0eP
+	 VBwc46NopDv5A==
+Date: Mon, 20 May 2024 11:16:02 -0500
+From: Rob Herring <robh@kernel.org>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	shengjiu.wang@gmail.com, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com,
+	perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 1/2] ASoC: dt-bindings: fsl,xcvr: Add compatible
+ string for i.MX95
+Message-ID: <20240520161602.GA733483-robh@kernel.org>
+References: <1715656329-8061-1-git-send-email-shengjiu.wang@nxp.com>
+ <1715656329-8061-2-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1715017765.git.reinette.chatre@intel.com>
- <a2f7013646a8a1e314744568b9baa439682cbf8a.1715017765.git.reinette.chatre@intel.com>
- <c2baeb4b-5cad-4cb9-a48e-0540f448cb15@intel.com>
-Message-ID: <Zkt2gNFxC0MHyIRb@google.com>
-Subject: Re: [PATCH V6 4/4] KVM: selftests: Add test for configure of x86 APIC
- bus frequency
-From: Sean Christopherson <seanjc@google.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: isaku.yamahata@intel.com, pbonzini@redhat.com, erdemaktas@google.com, 
-	vkuznets@redhat.com, vannapurve@google.com, jmattson@google.com, 
-	mlevitsk@redhat.com, xiaoyao.li@intel.com, chao.gao@intel.com, 
-	rick.p.edgecombe@intel.com, yuan.yao@intel.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1715656329-8061-2-git-send-email-shengjiu.wang@nxp.com>
 
-On Mon, May 20, 2024, Reinette Chatre wrote:
-> On 5/6/2024 11:35 AM, Reinette Chatre wrote:
-> > diff --git a/tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c b/tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c
-> > new file mode 100644
-> > index 000000000000..56eb686144c6
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c
-> > @@ -0,0 +1,166 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Test configure of APIC bus frequency.
-> > + *
-> > + * Copyright (c) 2024 Intel Corporation
-> > + *
-> > + * To verify if the APIC bus frequency can be configured this, test starts
-> > + * by setting the TSC frequency in KVM, and then:
-> > + * For every APIC timer frequency supported:
-> > + * * In the guest:
-> > + * * * Start the APIC timer by programming the APIC TMICT (initial count
-> > + *       register) to the largest value possible to guarantee that it will
-> > + *       not expire during the test,
-> > + * * * Wait for a known duration based on previously set TSC frequency,
-> > + * * * Stop the timer and read the APIC TMCCT (current count) register to
-> > + *       determine the count at that time (TMCCT is loaded from TMICT when
-> > + *       TMICT is programmed and then starts counting down).
-> > + * * In the host:
-> > + * * * Determine if the APIC counts close to configured APIC bus frequency
-> > + *     while taking into account how the APIC timer frequency was modified
-> > + *     using the APIC TDCR (divide configuration register).
-> > + */
-> > +#define _GNU_SOURCE /* for program_invocation_short_name */
+On Tue, May 14, 2024 at 11:12:08AM +0800, Shengjiu Wang wrote:
+> Add compatible string "fsl,imx95-xcvr" for i.MX95 platform.
 > 
-> As reported in [1] this #define is no longer needed after commit 730cfa45b5f4
-> ("KVM: selftests: Define _GNU_SOURCE for all selftests code"). This will be
-> fixed in next version of this series.
+> The difference between each platform is in below table.
+> 
+> +---------+--------+----------+--------+
+> |  SOC	  |  PHY   | eARC/ARC | SPDIF  |
+> +---------+--------+----------+--------+
+> | i.MX8MP |  V1    |  Yes     |  Yes   |
+> +---------+--------+----------+--------+
+> | i.MX93  |  N/A   |  N/A     |  Yes   |
+> +---------+--------+----------+--------+
+> | i.MX95  |  V2    |  N/A     |  Yes   |
+> +---------+--------+----------+--------+
+> 
+> On i.MX95, there are two PLL clock sources, they are the parent
+> clocks of the XCVR root clock. one is for 8kHz series rates, named
+> as 'pll8k', another one is for 11kHz series rates, named as 'pll11k'.
+> They are optional clocks, if there are such clocks, then the driver
+> can switch between them to support more accurate sample rates.
+> 
+> As 'pll8k' and 'pll11k' are optional, then add 'minItems: 4'
+> for clocks and clock-names properties.
+> 
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  .../devicetree/bindings/sound/fsl,xcvr.yaml   | 55 +++++++++++++++----
+>  1 file changed, 45 insertions(+), 10 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/fsl,xcvr.yaml b/Documentation/devicetree/bindings/sound/fsl,xcvr.yaml
+> index 0eb0c1ba8710..70bcde33e986 100644
+> --- a/Documentation/devicetree/bindings/sound/fsl,xcvr.yaml
+> +++ b/Documentation/devicetree/bindings/sound/fsl,xcvr.yaml
+> @@ -22,6 +22,7 @@ properties:
+>      enum:
+>        - fsl,imx8mp-xcvr
+>        - fsl,imx93-xcvr
+> +      - fsl,imx95-xcvr
+>  
+>    reg:
+>      items:
+> @@ -44,18 +45,12 @@ properties:
+>      minItems: 1
+>  
+>    clocks:
+> -    items:
+> -      - description: Peripheral clock
+> -      - description: PHY clock
+> -      - description: SPBA clock
+> -      - description: PLL clock
 
-Don't worry about sending another version just for this, I can clean this up when
-applying.
+Leave these here and add pll8k and pll11k.
+
+> +    minItems: 4
+
+Keep this.
+
+> +    maxItems: 6
+>  
+>    clock-names:
+> -    items:
+> -      - const: ipg
+> -      - const: phy
+> -      - const: spba
+> -      - const: pll_ipg
+> +    minItems: 4
+> +    maxItems: 6
+
+Same here.
+
+>  
+>    dmas:
+>      items:
+> @@ -97,6 +92,46 @@ allOf:
+>        properties:
+>          interrupts:
+>            maxItems: 1
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx95-xcvr
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: Peripheral clock
+> +            - description: PHY clock
+> +            - description: SPBA clock
+> +            - description: PLL clock
+> +            - description: PLL clock source for 8kHz series
+> +            - description: PLL clock source for 11kHz series
+> +          minItems: 4
+> +        clock-names:
+> +          items:
+> +            - const: ipg
+> +            - const: phy
+> +            - const: spba
+> +            - const: pll_ipg
+> +            - const: pll8k
+> +            - const: pll11k
+> +          minItems: 4
+
+Drop all this.
+
+> +    else:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: Peripheral clock
+> +            - description: PHY clock
+> +            - description: SPBA clock
+> +            - description: PLL clock
+> +        clock-names:
+> +          items:
+> +            - const: ipg
+> +            - const: phy
+> +            - const: spba
+> +            - const: pll_ipg
+
+And for this case, you just need 'maxItems: 4'.
+
+Rob
 
