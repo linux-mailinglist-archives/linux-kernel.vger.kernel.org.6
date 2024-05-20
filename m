@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-184060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842708CA1F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:25:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508A38CA1FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2DC1F220D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:25:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A761F22375
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF376137935;
-	Mon, 20 May 2024 18:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F0D1386C2;
+	Mon, 20 May 2024 18:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="hgUFtytb"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UtBfyvIG"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDBD1847;
-	Mon, 20 May 2024 18:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2864F137935;
+	Mon, 20 May 2024 18:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716229498; cv=none; b=a8WZCvVewLQlbaMYlwK9BBrgbhLogIk7BmKm+e5zERneW63rBhIFJSCGBuZBgIKYenO4FN7oN6rMux4nXag80A0gQf7iZeKmhdfKzZPALaEa2WmQk24LTuxBLoMTuXbH2sucnleQBCd9Z5gGHR4AU5N6LJmyhBg6TmnvkIHDW+c=
+	t=1716229511; cv=none; b=Xs9l8D79nirkOGhBOyf4jhoRAnSKSoKhIlKWSofQJ+kC6t2JND9dhfBjchWzcz/OSfFo+77ls+74LZf4+F6ZaYzMDYEmtJJLq5GuAei34GBRYK4Evv7VppJNo6hlZMF0EnnFrVwlttigDKnCtHk5JxKJmaaEZlLMmUzBSLWpwrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716229498; c=relaxed/simple;
-	bh=embwZJeyhc3d/eQBQ2AmwUIIJANut56abOXK/YW3yJM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FlaPdyIfxjo/VB7v46RiX3XRO9qlMJ2r0CDVZm5UWShSBr8JJb7nv7lKNMSX6ynfuzPx+Jch4QICNaEkTjoEN2gLtKXNePr6T24P2s+X11hEr3vo9LUqneErhvzMui205Q/26AtIX8kKZ/N51mtqXOxNuOVAcsXEdw34cpIDDWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=hgUFtytb; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=zwEmpdKTmgjz2scPBDSL4o03FYFjxO3vSlNGyHJLelg=; t=1716229494; x=1716834294; 
-	b=hgUFtytblmdL0XcSezFeeqG5jBBgynRhT+8wQwOJFwCZNnSz3UxB7xvBIPFB1IbrYpX8+sCSRei
-	5JdEQy1f1boAG1GpdU9g9jlrv5D2e+i2oX/JuqR62OiqZN19p1qGrYbxR0tRb24ASUfrpIL6jZ4o3
-	kMZKVYoQMhynqRzoeHdV0J/QVhoKCGRsoqS9spBFTKnNAhFPh8dRcY+bmN3aEcr70LB5PzdzHAbUf
-	DywqjT17b6Rlc86TjZQ1LDtA7FZ2TOeLmyo2RbP6C88unibN1ZMEiTwTYQ/OM2cTKWVhyzWmrhrQf
-	0c6r//wVfWJUS3URASlrI6DsoARw6ibUWFPw==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.97)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1s97go-00000001bFA-2fJU; Mon, 20 May 2024 20:24:50 +0200
-Received: from p57bd9a40.dip0.t-ipconnect.de ([87.189.154.64] helo=[192.168.178.20])
-          by inpost2.zedat.fu-berlin.de (Exim 4.97)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1s97go-00000002MIw-1hpz; Mon, 20 May 2024 20:24:50 +0200
-Message-ID: <7130f36dcf6f2272fa61eb1477f881ccea0375f8.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v2] sh: Call paging_init() earlier in the init sequence
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, 
-	ysato@users.sourceforge.jp, dalias@libc.org
-Cc: akpm@linux-foundation.org, linux-sh@vger.kernel.org, 
- linux-kernel@vger.kernel.org, robh+dt@kernel.org, kernel@quicinc.com, Rob
- Herring <robh@kernel.org>, Rob Landley <rob@landley.net>
-Date: Mon, 20 May 2024 20:24:49 +0200
-In-Reply-To: <e6436f2f-ac51-4f18-90f2-e39a2ff1c520@quicinc.com>
-References: <20240423233150.74302-1-quic_obabatun@quicinc.com>
-	 <72ec7831604326e852eb228072b1d817bab829fb.camel@physik.fu-berlin.de>
-	 <b00e0adc72815e465cf32fc5505445cfceeeca84.camel@physik.fu-berlin.de>
-	 <ec5f3194-7e9e-4cc9-86b9-02a204649246@quicinc.com>
-	 <0e813c8498bf3d9ed5d8fd5b171ac9980dc2999c.camel@physik.fu-berlin.de>
-	 <e6436f2f-ac51-4f18-90f2-e39a2ff1c520@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 
+	s=arc-20240116; t=1716229511; c=relaxed/simple;
+	bh=p1xprU4vOea7uqODiskzLhgw/kUfj5m0dleX5y0RR/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OUh6uxqV6usAEHI+b6nc2Jh0nB9t853B6pISc9yrSVmQs2fU2RKbRiSWdsRRTVw4NVxNotIFFNRbIXg+wuOFFll4APsBe56Bds0H0ZF8mx9Ke8erilLyuXtV24AlXWjdk4UccufUwAXAZgcytfeiwYo5I3JgvM+ox2rzA/p9aME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UtBfyvIG; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f2ecea41deso76436725ad.1;
+        Mon, 20 May 2024 11:25:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716229509; x=1716834309; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aCzsMXCJzJib1Vj/052OC8Unse2419z65QvsV8mXP9k=;
+        b=UtBfyvIGNkbMGJgFZDWHS7kOxfVXqfk0U3AYzudbmebCCfbKOjVGV7+RC74bZdm8lg
+         VaMNMcPBOPa8nzgAA4Y+bBEInmJpysHo3LoT0W3Tmzy8Y/75V5mVn3KM/mL0NIPJBfn0
+         TVOrW57kz+XMIHlMO6MYr1Yp7xzq5HyfjNsx1olHdyKe9KDNkW0jUkcF+WdPTETa11mI
+         KWnLC0lwPiIY7NZ/pnO8xmApg2q2dlAVhLOWqk2wsWuRiQQ2Jx7WzssUdVoi85N9mq86
+         J9H05pSJvbIYwxSc73n+lH/1KyVG/wuIfaSPLpMD7VTBOiSOQnGC6h99vRxqoNmMTaVW
+         UR/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716229509; x=1716834309;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aCzsMXCJzJib1Vj/052OC8Unse2419z65QvsV8mXP9k=;
+        b=Ovy4NAqgi5ozyBrT+6v8ZKJg6KEe0SonNhQuTsEEy0VY2LtPS6G+vT4n1hyQa3VX77
+         jBZDMHObBXu7Njla6WXHCShd8jAhvjZWz417I+r5mou7LZLRKv2LwV5Ig1lOw4bPGTYg
+         gQTBpvOo5rEVNu7LoQBBW8AOZJWnzv8WuCZVlaaKPqUSyRokYj4y7FOrTgYgMooABnNl
+         1vHMQmsY0OGY0t79rAIZGopEri2o6j0cjqdgO29OEgpRQYdx6YivNozvU+s0+CUuuHEu
+         IrnyX274prwGBJnmtmvkgeaq6Fw6VIxxvcyxFIvcU1jTh45wlWoFHqUo+Gh3d67pi7Pq
+         Sr1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWg2epGNq9yAwrIXPvEaJCyv0oLekWE7Qxwe/4MJAR5guH0CGbkXg9oZg8udKg7Bmpqa4plwHM/auudDiK+FjNjI82JDoJGqaS6pmbWARUq5c7x5YNTG4HDYLn01XlPAUeXMWiqILZXqE0kdAiglguVBY64OswUyG7+nBItx3hhwgF4iHoCfuI=
+X-Gm-Message-State: AOJu0Yw2b2VLkav8pbbTfdK7BLmRqwREbbEFDrzGB6O+aJsDhpyL1QjV
+	uv1/4jSfPjGh/a3CRazEEA05/8rC4Hsfyxb8bWhDi1/LAqtf2XVkMnsyHFVsrxlguRaWLWHyD4h
+	QMjVpxnLboLhCRg3pYoxsSTEXomqLoiIG
+X-Google-Smtp-Source: AGHT+IEo5H6eSId3eMYUGGmgFGcoQeNlGjDqS05obW5JIaQ7xwgIbgIbOQXUmPJK+Mk8Q73L4WM10QgiqrVY9P+5AOk=
+X-Received: by 2002:a17:90b:d0b:b0:2a2:c16:d673 with SMTP id
+ 98e67ed59e1d1-2b6ccc73005mr27772865a91.36.1716229509274; Mon, 20 May 2024
+ 11:25:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+References: <20240520172554.182094-1-dakr@redhat.com> <20240520172554.182094-2-dakr@redhat.com>
+ <2024052038-deviancy-criteria-e4fe@gregkh>
+In-Reply-To: <2024052038-deviancy-criteria-e4fe@gregkh>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 20 May 2024 20:24:56 +0200
+Message-ID: <CANiq72n5Cb9dyzRozt9_SWknm9JOuZrY0jo7sLrC9AGkdKR9Qw@mail.gmail.com>
+Subject: Re: [RFC PATCH 01/11] rust: add abstraction for struct device
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Danilo Krummrich <dakr@redhat.com>, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Oreoluwa,
+On Mon, May 20, 2024 at 8:00=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> What's the status of moving .rs files next to their respective .c files
+> in the build system?  Keeping them separate like this just isn't going
+> to work, sorry.
 
-On Mon, 2024-05-20 at 11:03 -0700, Oreoluwa Babatunde wrote:
-> I have uploaded v3 of this patch now.
-> https://lore.kernel.org/all/20240520175802.2002183-1-quic_obabatun@quicin=
-c.com/
->=20
-> In this new version, paging_init() is left in its original position and o=
-nly the portion
-> of code that is responsible for setting aside the reserved memory regions=
- is moved.
+In progress.
 
-Thanks a lot for the updated version.
+> > +//! Generic devices that are part of the kernel's driver model.
+> > +//!
+> > +//! C header: [`include/linux/device.h`](../../../../include/linux/dev=
+ice.h)
+>
+> relative paths for a common "include <linux/device.h" type of thing?
+> Rust can't handle include paths from directories?
 
-I will give it a try later this week as we had a public holiday in Germany
-today and therefore enjoyed an extended weekend.
+We have the custom `srctree/` notation for that (which the patch should use=
+).
 
-If it doesn't break anything and Geert is happy with the change as well,
-I'll pick it up for v6.11.
+And eventually we should have support for easy-to-use links to C
+structs and so on (i.e. to the C docs) -- today I happened to be
+talking to the `rustdoc` maintainers about this old idea of ours.
 
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Cheers,
+Miguel
 
