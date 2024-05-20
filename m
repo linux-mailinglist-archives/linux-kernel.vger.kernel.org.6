@@ -1,193 +1,143 @@
-Return-Path: <linux-kernel+bounces-183712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91718C9D01
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:13:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A9C8C9D06
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DD7CB22053
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:13:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1A0628251F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE54D54675;
-	Mon, 20 May 2024 12:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CF454FAE;
+	Mon, 20 May 2024 12:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XFLGoF6/"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hYvHRt5w"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA185337F
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 12:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3E55337F;
+	Mon, 20 May 2024 12:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716207200; cv=none; b=D8t2m6L2VcL9xo7rEgemMeRSNLUJPKCPgLBsEkDB9MaTVfwQQOEHGzCN6St8p9eyePwlmwYvrLD6+8SRVzHr+qKx8004d2xCd+k/XOix/ACgH9qmhCiQr94g5jzBd7oVg+tCfqGtEoW4080s2+GyxZRcZ+vH3gfO/oXFMbIqaJM=
+	t=1716207298; cv=none; b=T1U7TcSblaem5IEiFZ0rjEv4F4OeeBYt3M7V7hio3YLvvZvF+YKks5P3sGhyygY2rowMN3/Pq/i09p4dQ9MFQ8HdNU237w+/hMwVFD8rnCFSufKZWF9nTx4I3Q6eMZX++zgyO4bSR/U8HQaBdTT1orHm3we+XcURm6UVyRafvD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716207200; c=relaxed/simple;
-	bh=iD22LoyvP1b3Cffzn6b+BCqUp34FfrjwA3/bpSQ6rE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K/ob22JRyk4ZL3ZRDwUTI/IQYRU+d9Q/1CnU0IVJtQsAHrt0rFXiHBpFXM74AhxTGwIP3EuAFVJ2bLZyj5M8Lr0gN66yahec0g3xnaDh8Ek7UnjIWrQS7+udIOjpiKlYmrNA3hH9eJnx4WuQTN+Ql60IwHwcs91kayn8NXR3RPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XFLGoF6/; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-572e48f91e9so8124035a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 05:13:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716207197; x=1716811997; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vq2921iavEdoPmEW4aOE6M8eMTh4FTRY+b70NrF3F90=;
-        b=XFLGoF6/eFYgy1egQoeJl9+s3kd9Ri/zb9qYSe6Y3MdiAS6AXngPZmLQzpL3TLOUwk
-         6t9Ea17U1GOttGP2uxGfVFEHAF/pQzPukgWmJM6fwPcJNKpxckkHtjFz0Vs3VxKevLRA
-         sWeDC7u3CZXTC12bP9vy3oavxBj4TEYcm4Ou9dEqv5DSI+CkwFrtAnUHFHwXcUqa6uTy
-         pt7yjgmq3h2laDThJY2Rt8EN4FM9gRx+pUj20QXrKAY5ON/Ow4DApx264lFxuIUFWy1+
-         w4vYi+X5eBJ7K+2w7LwGEDGLX/N7RVcMzKpOp8y0Gx8YswbubyiYpcxmsV3KImaUNd1v
-         AfoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716207197; x=1716811997;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vq2921iavEdoPmEW4aOE6M8eMTh4FTRY+b70NrF3F90=;
-        b=K0GDzpocRBD0NNTs+vNIvljYH7W+N1zQKIB6WaDAXmib3j2RdcEAej9AQcfOhik+2w
-         H7fhStuNAATjf5fBAQyLhe0idoyX0w8i0cWK5EgiUz0njGaq6fOpc5yrlvoTmX70JaBF
-         Uq65vQmt0B1xKRHHaZf0Thz5xzhXatGp6K/DauzrlSLUKL2MxLtC9yLs3xqonPJ+9QzO
-         rIyoZ5LoB8WY/G30hsGbuGAUSMJO9uMQuM1jgQ+RhmdvQQaXM3PXh/zTtNxitmodTcyD
-         wobDOKTRHZJPEledHrcU36qNUR/pNjFEBsh5RZcDg7J40dXJTVkNm8Tlnkgwn3VGfPpf
-         5Eiw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4ShdbLEWMWwVMKXXbH5UoPpzfaAOvOHigV1wk8toBIIKpOA+sz/XAJqn/WTIN605GifWHN1gnDLjH0wvaKpk80B+d5lIV9232bxOc
-X-Gm-Message-State: AOJu0YyPgSXRfHUaTcH9xGyzMzG9yAiB7j6uYGtSHHxGhZCpv4sjCRme
-	b5JLDYfEgnsYfBs9m8HFXO8nMBBaHfQydJR4505MOnAaIgzL43738uedzB30bkWtMAByM3seT0L
-	b
-X-Google-Smtp-Source: AGHT+IHT+4FXFXHpSzVJ2xsAx+yu/dvxZKIC0DzVNL7NS+aUUAOHVjlmEjHt8cyVsO4n6EnN1qMBCQ==
-X-Received: by 2002:a50:bac5:0:b0:56d:ee61:6874 with SMTP id 4fb4d7f45d1cf-5734d5e4089mr19783652a12.20.1716207197067;
-        Mon, 20 May 2024 05:13:17 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c322c85sm14998153a12.84.2024.05.20.05.13.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 05:13:16 -0700 (PDT)
-Date: Mon, 20 May 2024 14:13:14 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH printk v5 11/30] nbcon: Provide functions for drivers to
- acquire console for non-printing
-Message-ID: <Zks-WkoTmAVFBgoP@pathway.suse.cz>
-References: <20240502213839.376636-1-john.ogness@linutronix.de>
- <20240502213839.376636-12-john.ogness@linutronix.de>
+	s=arc-20240116; t=1716207298; c=relaxed/simple;
+	bh=yyFjEETTLseT7dtN9+rXSzvJfQ09dPUxjbBDMLKEHP4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c6875BkbklQmpFveUMXL9q+CCeYjtqYUt6/abZ8mg5OB/EhNCPdDKbqAnSUFN4tlbAfdaCUNvwJ5CppXqjFIopvfFRPI2HTsyv5UkHi67oXnvrbNz3fGXrgfKv3JEHC+mIRMIGtOYXqUafxvSL/c81LeWJR5C3obpmnoPMxgEko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hYvHRt5w; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44KCEgvI125427;
+	Mon, 20 May 2024 07:14:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716207282;
+	bh=jqq3vLkhd8TaxcAmaBUSEYP9cRLD6oJAMLwozEckBg8=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=hYvHRt5wNHzHrsMXSyIAM6G/j8ACXQodgDkxoo7WTTfbC2pHksrI+qrXKfEeglSst
+	 qaUKBb6sk56Ost7ziQPAAMd3I8GrQu+p9+PJfAR2+PacTfyT06Z2WPlxSuJ6G+CIfq
+	 tKSRKrGa/F1TeLio4Zg/ivA3ofJhcdPrAmuJjscE=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44KCEgmI091100
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 20 May 2024 07:14:42 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 20
+ May 2024 07:14:41 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 20 May 2024 07:14:41 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44KCEfNj128247;
+	Mon, 20 May 2024 07:14:41 -0500
+Date: Mon, 20 May 2024 07:14:41 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Francesco Dolcini <francesco@dolcini.it>,
+        Parth Pancholi
+	<parth105105@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Parth
+ Pancholi <parth.pancholi@toradex.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <vigneshr@ti.com>
+Subject: Re: [PATCH] dt-bindings: usb: gpio-sbu-mux: Add an entry for
+ TMUXHS4212
+Message-ID: <20240520121441.svp6oabjyev4vmih@magazine>
+References: <20240517111140.859677-1-parth105105@gmail.com>
+ <1675a33d-47af-4de9-a0e7-177cbe208e2b@kernel.org>
+ <20240519202754.GA3334@francesco-nb>
+ <469be7c2-6865-40d4-bd06-15dc3a08b3e3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240502213839.376636-12-john.ogness@linutronix.de>
+In-Reply-To: <469be7c2-6865-40d4-bd06-15dc3a08b3e3@kernel.org>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Thu 2024-05-02 23:44:20, John Ogness wrote:
-> Provide functions nbcon_driver_try_acquire() and
-> nbcon_driver_release() to allow drivers to acquire the nbcon
-> console and mark it unsafe for handover/takeover.
+On 08:53-20240520, Krzysztof Kozlowski wrote:
+> On 19/05/2024 22:27, Francesco Dolcini wrote:
 
-I would prefer to rename 'driver' to 'device' to keep the existing
-naming scheme in struct console. The API will be used to
-synchronize the 'device' element.
+[...]
+> > If it's not the case we'll send the patch later on, however some
+> > DT files maintainers (e.g. arch/arm64/boot/dts/ti/) have a policy to
+> > just accept DT file in which the binding changes are already merged
+> > therefore I was trying to be a little bit proactive here.
+> 
+> TI? Never heard something like this from them... Such requirement would
+> seriously slow down any work, so it's not really reasonable. Expectation
+> is to post both binding change and an user, so DTS, in case of USB in
+> separate patchsets.
 
-> These functions are to be used by nbcon drivers when performing
-> non-printing activities that should be synchronized with their
-> atomic_write() callback.
+There is a reason we have set that "soft rule":
+- Driver subsystem merges have known to be broken from time to time and
+  the dt maintainer is left holding compatibles that have not made to
+  master.
+- ARM subsystem merges prefers not to see checkpatch warnings -
+  typically, this happens with new compatibles in the driver subsystem.
+- Off chance that driver subsystem maintainer picks up the dt changes as
+  well (should not happen, but has happened)
 
-I am still trying to create a mental model around the synchronization
-between the device-specific locks and nbcon context. Also it took
-me some time to realize that just disambling the migration is
-perfectly fine here.
+We have however flexed the rule when:
+a) driver maintainer is willing to provide us an immutable tag that we
+   can merge in and base the dts on top.
+b) We felt that the chances of the driver not making it is very very low
+   (typically after 1+ month in next) and the dts change is in the wider
+   interest of the community. In such case, we have to explicitly take
+   the action of letting the patch submitter, driver subsystem to let us
+   know if something bad happens to the PR, also in our PR to SoC
+   maintainers, we have to call it out along with rationale why this is
+   OK. This is a bunch of work from a lot of folks, so prefer only to
+   trigger this path in case of exceptional cases - there have been a
+   few far in between.
 
-I propose a bit extended commit message:
+Again, the default rule (driver in one window, binding in next) has
+kept us out of trouble for a few years now at the detriment of pace
+of merges, but that took care of a lot of conflicts that we had seen
+during initial days of k3 - there are few chains in the lakml list
+where this was the direction we ended up in after discussion.
 
-<proposal>
-Subject: nbcon: Add API to acquire context for non-printing operations
+But, yes - as you mentioned, send the patches of the "user" of the dt
+binding and driver gives the subsystem and dt maintainers a chance to
+review in the context of usage prior to the driver and binding merge.
 
-Provide functions nbcon_device_try_acquire() and
-nbcon_device_release() which will try to acquire the nbcon console
-ownership with NBCON_PRIO_NORMAL and mark it unsafe for handover/takeover.
-
-These functions are to be used together with the device-specific
-locking when performing non-printing activities on the console device.
-They will allow synchronization against atomic_write() callback which
-will be serialized, for higher priority contexts, only by acquiring
-the console context ownership.
-
-Pitfalls:
-
-The API requires to be called in a context with a disabled migration
-because it uses per-CPU variables internally.
-
-The context is set unsafe for a takeover all the time. It guarantees
-full serialization against any atomic_write() caller except for
-the final flush in panic() which might try an unsafe takeover.
-</proposal>
-
-> --- a/include/linux/console.h
-> +++ b/include/linux/console.h
-> @@ -304,6 +304,7 @@ struct nbcon_write_context {
->   *
->   * @nbcon_state:	State for nbcon consoles
->   * @nbcon_seq:		Sequence number of the next record for nbcon to print
-> + * @nbcon_driver_ctxt:	Context available for driver non-printing operations
-
-This provides a context for "@device".
-
-We should call this "@nbcon_device_ctxt" to avoid confusion.
-
-
->   * @pbufs:		Pointer to nbcon private buffer
->   */
->  struct console {
-> @@ -399,6 +400,7 @@ struct console {
->  
->  	atomic_t		__private nbcon_state;
->  	atomic_long_t		__private nbcon_seq;
-> +	struct nbcon_context	__private nbcon_driver_ctxt;
->  	struct printk_buffers	*pbufs;
->  };
->  
-> diff --git a/include/linux/printk.h b/include/linux/printk.h
-> index d8b3f51d9e98..d0a1106388d1 100644
-> --- a/include/linux/printk.h
-> +++ b/include/linux/printk.h
-> @@ -9,6 +9,8 @@
->  #include <linux/ratelimit_types.h>
->  #include <linux/once_lite.h>
->  
-> +struct console;
-> +
->  extern const char linux_banner[];
->  extern const char linux_proc_banner[];
->  
-> @@ -193,6 +195,8 @@ void show_regs_print_info(const char *log_lvl);
->  extern asmlinkage void dump_stack_lvl(const char *log_lvl) __cold;
->  extern asmlinkage void dump_stack(void) __cold;
->  void printk_trigger_flush(void);
-> +extern bool nbcon_driver_try_acquire(struct console *con);
-> +extern void nbcon_driver_release(struct console *con);
-
-Similar here:
-
-s/driver/device/
-
->  #else
->  static inline __printf(1, 0)
->  int vprintk(const char *s, va_list args)
-
-
-With all the renames and updated commit message:
-
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-
-Best Regards,
-Petr
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
