@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-183561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13878C9AA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 571968C9AA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CECFB21F11
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:46:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5677B21F26
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3B736139;
-	Mon, 20 May 2024 09:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6465D433C2;
+	Mon, 20 May 2024 09:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TF0f6pns"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ppRk1q5T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64ED724B5B;
-	Mon, 20 May 2024 09:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47403F9D5;
+	Mon, 20 May 2024 09:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716198353; cv=none; b=OhERLr1AMAlYWIKftGYjR7me0dUG6U774EAYZH6AIRxZiyMSY2dzdFuDJPNt+fN/0RQs50zLOx/FUtSv6saB9KLai4egJEdrSl0XjgrsV2bQpdUc4etZDIB2Y3ysvxOrACxcn8iHFTjGFLwAWOxxFpGvQgN5WNUIEQlsE2xgRkM=
+	t=1716198374; cv=none; b=UOuZoUFpboR6TFUbQ9mFEEI1qgIpD9yTPxfYrvUsXgMp3tFJsGiXCTs2R3TCinKQjkdJTJSE8UYSPzzKvTpwdfdtjWoorc/uG8kRljX3BSGliV1235WLUanHuhYZC9AgzstSJxTLOj4wnB4oifD56gG8MXKug4r+11gr2Q1wo3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716198353; c=relaxed/simple;
-	bh=Zdw3Q1wFX6fCgYfdSfW3vPj43L9qIOAEPDK3nk6Nlzg=;
+	s=arc-20240116; t=1716198374; c=relaxed/simple;
+	bh=CD3m2FyYVSHZBS38YWRS5VaJJDhV0ca02GYxBwY0yz4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UXNME1jxrnOgS/DMH0Dms+ltKohvqO/SMnocP/sWlrgHnbzYjgj9syTyk6jgW7hHA7o0JJ6nL3TtBakNLvciv2+n0s1txx4QxVHVvTn+1hedkFfKEj8muySZPAQ/TR3yGE05UgXR/9kycmOAlIq0GLl0aC/UpzNjd+7EllbzolA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TF0f6pns; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68295C2BD10;
-	Mon, 20 May 2024 09:45:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRkdzjkzH+HPSTPPwh/eOi8qkvgH9SjBCSy+0wdd38g0GUUrszNMiFBc8PNwk1rVKHo8lhz8fJinSbQ+Eb1885ptBVQCI3W34Z7yuphwKLO4bj1NjL4+KGFaFffhtvSHeH9ZNsZpFQJtoWmWd7YM0uwMQ9DtpqARanWME9yXJAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ppRk1q5T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 023A0C2BD10;
+	Mon, 20 May 2024 09:46:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716198352;
-	bh=Zdw3Q1wFX6fCgYfdSfW3vPj43L9qIOAEPDK3nk6Nlzg=;
+	s=k20201202; t=1716198374;
+	bh=CD3m2FyYVSHZBS38YWRS5VaJJDhV0ca02GYxBwY0yz4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TF0f6pns3XbIdT7W5y9eXDZ5S7ibijiJQj0K399dm6EaOxSpxgpag2sU6fH1j+9lY
-	 qUOlTEaaBJo66i5j4W8x/Q1MkHw/mV6DyAcxe2BGhk1ADk5nGMhSEL98If5spJ8aT9
-	 hEp8zZx62bul4k3Pv+5YikKa3fx8VTLk69jS0fvZkiGR6jN1gUz5nnm7phNr8RX6mI
-	 pHfyIFsPjbZPCjqOqYKYy7E6jINTzEVmbf4ICXyn4jdAyaQ1YLtXjLIL6AwsKRjpfs
-	 yjBBNKjzeXUKk2eYOi8EK+Pm6gpALhyya0S8E0KZ/oVZl5yEMFi6AGcMuyqrJHYPJR
-	 sG96754ebMMRg==
-Date: Mon, 20 May 2024 17:45:49 +0800
+	b=ppRk1q5TcZHo28GUlKxf2Wu3Lk0loPbLNnBYXtIxQzE3xR+cKoG54d7xubyRGno8O
+	 WiBSAqr5foCmcJVuT0B8Shp2PzDXfKGuYPYlRTz6lH8QPNCULFRj5qGtXbd+Fbn6Gb
+	 aIZuTSKn/mJM/mZcDaTUYzXWjrJY/0wRNCVuVIaT7Jdvwld0xeFVwcNXwBGQVpvClu
+	 Yzoh8nYBf92OJeIjI9+M6tjt5BkZm0R2boCRU/9UFbmDJczBiLQfwyvIhqEC6wsXYQ
+	 f49XjWW5Zj6eEaf5PSknTvg3deRldgXAwowJSpxRvF5/kwsLPiDexfOAOiju2SSlju
+	 z1Qvxg8uaiugQ==
+Date: Mon, 20 May 2024 17:46:11 +0800
 From: Tzung-Bi Shih <tzungbi@kernel.org>
 To: Ben Walsh <ben@jubnut.com>
 Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
@@ -49,11 +49,11 @@ Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
 	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
 	Mario Limonciello <mario.limonciello@amd.com>,
 	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] platform/chrome: cros_ec_lpc: MEC access can return
- error code
-Message-ID: <ZksbzQeR6cDsQz0B@google.com>
+Subject: Re: [PATCH 2/6] platform/chrome: cros_ec_lpc: MEC access can use an
+ AML mutex
+Message-ID: <Zksb4xB5wpxCQYtC@google.com>
 References: <20240515055631.5775-1-ben@jubnut.com>
- <20240515055631.5775-2-ben@jubnut.com>
+ <20240515055631.5775-3-ben@jubnut.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,85 +62,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240515055631.5775-2-ben@jubnut.com>
+In-Reply-To: <20240515055631.5775-3-ben@jubnut.com>
 
-On Wed, May 15, 2024 at 06:56:26AM +0100, Ben Walsh wrote:
-> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+On Wed, May 15, 2024 at 06:56:27AM +0100, Ben Walsh wrote:
+> diff --git a/drivers/platform/chrome/cros_ec_lpc_mec.c b/drivers/platform/chrome/cros_ec_lpc_mec.c
 [...]
-> @@ -116,14 +118,19 @@ static u8 cros_ec_lpc_write_bytes(unsigned int offset, unsigned int length,
->   * An instance of the read function of struct lpc_driver_ops, used for the
->   * MEC variant of LPC EC.
->   */
-> -static u8 cros_ec_lpc_mec_read_bytes(unsigned int offset, unsigned int length,
-> -				     u8 *dest)
-> +static int cros_ec_lpc_mec_read_bytes(unsigned int offset, unsigned int length,
-> +				      u8 *dest)
->  {
-> -	int in_range = cros_ec_lpc_mec_in_range(offset, length);
-> +	int in_range;
->  
-> -	if (in_range < 0)
-> +	if (length == 0)
->  		return 0;
->  
-> +	in_range = cros_ec_lpc_mec_in_range(offset, length);
+> +static int cros_ec_lpc_mec_lock(void)
+> +{
+> +	bool success;
 > +
-> +	if (in_range < 0)
-> +		return in_range;
+> +	if (!aml_mutex) {
+> +		mutex_lock(&io_mutex);
+> +		return 0;
+> +	}
 > +
->  	return in_range ?
->  		cros_ec_lpc_io_bytes_mec(MEC_IO_READ,
->  					 offset - EC_HOST_CMD_REGION0,
-
-The `in_range` change looks irrelevant to the patch.  Or it should rather be
-an independent patch if it fixes something.
-
-> @@ -135,14 +142,19 @@ static u8 cros_ec_lpc_mec_read_bytes(unsigned int offset, unsigned int length,
->   * An instance of the write function of struct lpc_driver_ops, used for the
->   * MEC variant of LPC EC.
->   */
-> -static u8 cros_ec_lpc_mec_write_bytes(unsigned int offset, unsigned int length,
-> -				      const u8 *msg)
-> +static int cros_ec_lpc_mec_write_bytes(unsigned int offset, unsigned int length,
-> +				       const u8 *msg)
->  {
-> -	int in_range = cros_ec_lpc_mec_in_range(offset, length);
-> +	int in_range;
->  
-> -	if (in_range < 0)
-> +	if (length == 0)
->  		return 0;
->  
-> +	in_range = cros_ec_lpc_mec_in_range(offset, length);
+> +	success = ACPI_SUCCESS(acpi_acquire_mutex(aml_mutex,
+> +						  NULL, ACPI_LOCK_DELAY_MS));
 > +
-> +	if (in_range < 0)
-> +		return in_range;
+> +	if (!success) {
+> +		pr_info("%s failed.", __func__);
+> +		return -EBUSY;
+
+I guess it doesn't need to print anything as the -EBUSY should be propagated
+correctly now.
+
+> +static int cros_ec_lpc_mec_unlock(void)
+> +{
+> +	bool success;
 > +
->  	return in_range ?
->  		cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE,
->  					 offset - EC_HOST_CMD_REGION0,
+> +	if (!aml_mutex) {
+> +		mutex_unlock(&io_mutex);
+> +		return 0;
+> +	}
+> +
+> +	success = ACPI_SUCCESS(acpi_release_mutex(aml_mutex, NULL));
+> +
+> +	if (!success) {
+> +		pr_err("%s failed.", __func__);
+> +		return -EBUSY;
 
-Same as above.
-
-> @@ -179,28 +194,41 @@ static int cros_ec_pkt_xfer_lpc(struct cros_ec_device *ec,
-[...]
->  	/* Check result */
-> -	msg->result = cros_ec_lpc_ops.read(EC_LPC_ADDR_HOST_DATA, 1, &sum);
-> +	ret = cros_ec_lpc_ops.read(EC_LPC_ADDR_HOST_DATA, 1, &sum);
-> +	if (ret < 0)
-> +		goto done;
-> +	msg->result = sum;
-
-Even though they are equivalent, `msg->result = ret` looks more intuitive.
-
-> @@ -255,32 +286,47 @@ static int cros_ec_cmd_xfer_lpc(struct cros_ec_device *ec,
-[...]
->  	/* Check result */
-> -	msg->result = cros_ec_lpc_ops.read(EC_LPC_ADDR_HOST_DATA, 1, &sum);
-> +	ret = cros_ec_lpc_ops.read(EC_LPC_ADDR_HOST_DATA, 1, &sum);
-> +	if (ret < 0)
-> +		goto done;
-> +	msg->result = sum;
-
-Same as above.
+Same here.
 
