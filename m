@@ -1,114 +1,115 @@
-Return-Path: <linux-kernel+bounces-183689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362098C9C9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:50:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2408C9C9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E104C1F22A43
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C5128331E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F7436134;
-	Mon, 20 May 2024 11:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4785FBB1;
+	Mon, 20 May 2024 11:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DNGKbJlZ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OLGHNE3I"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE6856B95
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 11:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D4356B95
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 11:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716205766; cv=none; b=JR4adD0xn+CBWnOret4vn7Tk+XLw3cKJtKzmCVZYS/zYpE4PstDxRNUh6OyCfiYE6ddCt4J0CrhFmdRqZoQO34oYTIaSUPF/dvdJlxDKAMrwFWsrZbWaFl+XoghGAAwl2/KyqS3YKRdHiFWaUYPu1YZQfPBBGDtRbfAPHvXOT0c=
+	t=1716205761; cv=none; b=NVvtT3aFkHXo2hMyXixzQ03SfmmxasGnYoqDg0U4JfRLzjkV1NjoQMUMZifkJLyoP0q/tIisGmSFsYNhPzt/UmgTMshmzDdUsE4moO3cPCU1V68wGzWWa6/TXhModUOeQnqXqzlna6H+PesXuELf5fo04IqLHzXbPfL51iK6ofU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716205766; c=relaxed/simple;
-	bh=t+pjIpHWwVWoGbu51U5Ft4pHw3iODZAWJ3ANRxuiE+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SveLzJOef5Vwm4FEyuUWN8dsf/Cpl8eY8s3XaYb4+ks0uQdhen9JItbFUzvfYO8xjt3T7u4CrKxqKAmrmWxbVM0Dt1u2Mgd7hSaciSXV/qN5aMusBAz9+ItctpZ4TYbbcfJt0xY5eOC7P4mX+eJgwGL+gNfxy85MXTXWC0uVGAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DNGKbJlZ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3EE90593;
-	Mon, 20 May 2024 13:49:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716205745;
-	bh=t+pjIpHWwVWoGbu51U5Ft4pHw3iODZAWJ3ANRxuiE+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DNGKbJlZrNf3oQc7C9GUCb1SB0E+JtDzszFNDXDkBa1DqtFAbnvCB/aZkW1JvuX3r
-	 Jn2bODQ1RJPZPwMV1RsdsDr3IoFD7YcTWgnVoZXGczuxitFb22ThkCzAa8DauSNzOc
-	 u9764CMP3/eryWYwC9FK4JJFaZmf6YsX91VN4t/g=
-Date: Mon, 20 May 2024 14:49:07 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: open list <linux-kernel@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	David Airlie <airlied@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Christian Gmeiner <christian.gmeiner@gmail.com>,
-	Oded Gabbay <ogabbay@kernel.org>, Olof Johansson <olof@lixom.net>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Jeffrey Hugo <quic_jhugo@quicinc.com>
-Subject: Re: DRM Accel BoF at Linux Plumbers
-Message-ID: <20240520114907.GA6275@pendragon.ideasonboard.com>
-References: <CAAObsKAw174AhGaA13Hyw0ANW=TxJHpK10+OwQGNMVca85Urdg@mail.gmail.com>
+	s=arc-20240116; t=1716205761; c=relaxed/simple;
+	bh=yWP4aKeWINro0Ux1wtTeGfryGZI1hCqxA8nspc6sNVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hhjRjlaNrMOdQbEwnn+SfMu8xkO5Q12rJSHALWZ384s3KED0YFoCTEnvKkhR1wqlOmINlpcWf9LEq8yy/c7VmqTXb/tuCbokgzC9WtoFIQjUToPBMDiFKYYcI1WPiy6+dofTbCrP9kejaw5BdZIVdUCrEabxesWldXBE1Vi8ITU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OLGHNE3I; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e72224c395so11614971fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 04:49:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716205757; x=1716810557; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O/oxcJBIyXlY9TtgU1r7E6cgf1golLAQDrTLfXTTYDk=;
+        b=OLGHNE3IPhuAk6QNRs5Q5cHUrohX0BV1OOMO7IgFj5fAacby3uXrkmkHSEkkzmKfWN
+         T3R3v+A472Q759N5bbJURzVTYg56Tvkd9YTT9MEmF0jxA/FuD3ItLUZAEGaaAqBPS88W
+         2xu/uMxTfW+CIQkTT45miLL0hSaoKbcHNApd+ZRHQy+vuO/wZkzjhxDU+A6zuWC+hs6Q
+         Cd/uk25TogZW9PfJ/6Viicb01fPwbdxUe571Uf0POWzh7q0hMLbllFqtu7ZsEBcT7Gqk
+         hYVKPzrkqlJ0U69IMGvL1vOaawzsLzlRA2PehxJVT0c+RW1X9ROsV0pFFu+cHMxy6J7u
+         +b9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716205757; x=1716810557;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O/oxcJBIyXlY9TtgU1r7E6cgf1golLAQDrTLfXTTYDk=;
+        b=dhMXyWHkhnBQjn7+Ytg4zZCrZG7Mjxy7sZUIstOS8ob79KB7PIWQDebs5yTxXtHwy2
+         PQpabiTlzl41DqEJdEgDY03ziPSgZWFeXLOYNERuE+yhQDY8+GV+/5HGxEDjrDS8bpbH
+         +nmMluBLgSCh3EYwDaasLNhcLzjrou8s3Ws6XT3hCn69/PZlrzgZCCaRid/sMxOz5wFl
+         ANdCPKC7c685f46Bh3FQxR5KtygCc6hDx9aMZXRDe+6U/w1RC2WnGveKt5JGZCCSTa66
+         jGbgENwdTBFSirWem7MS8roN2w5oG+4H/j3aWSecpmZMyiy2jjlqgBcCv6TAN9rtl1oa
+         p9Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqWv17M58QOZHhglFhJrBwrYCYUwB0ZXXnWAISuF8lvy7G4QBolMvJppuSbqtHvMqJuwC0cUklcYFxFM3iSCWJwZ4kAtGmXV2AQILo
+X-Gm-Message-State: AOJu0YxnJHF90xCo/PTG3ydYJ/lIk4RwCjU9Oqhe+rsnqBpWjGuZ1oMc
+	61ChM+l6u9oIPJTT0NlwUWJiW0PeAOJwi1qsEYZvfHfbqeq40HOt+vFlz/+b5uU=
+X-Google-Smtp-Source: AGHT+IFlzaGIRfESALSLtsyNFlfZ1/JIBw7ONHINjG4LvPNB4eEcZEi71DkW5rhom1Y1o6Z5gbWZjw==
+X-Received: by 2002:a2e:98c5:0:b0:2df:6b06:b5dc with SMTP id 38308e7fff4ca-2e51ff5cf54mr192231491fa.15.1716205756937;
+        Mon, 20 May 2024 04:49:16 -0700 (PDT)
+Received: from [192.168.1.172] ([93.5.22.158])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-351b79e8e6bsm21316539f8f.65.2024.05.20.04.49.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 May 2024 04:49:16 -0700 (PDT)
+Message-ID: <67f13b3c-18b2-4042-9908-b4d41c24cdb0@baylibre.com>
+Date: Mon, 20 May 2024 13:49:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAAObsKAw174AhGaA13Hyw0ANW=TxJHpK10+OwQGNMVca85Urdg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] dt-bindings: arm: mediatek: mmsys: Add OF graph
+ support for board path
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ chunkuang.hu@kernel.org
+Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ matthias.bgg@gmail.com, shawn.sung@mediatek.com, yu-chang.lee@mediatek.com,
+ ck.hu@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ wenst@chromium.org, kernel@collabora.com
+References: <20240516081104.83458-1-angelogioacchino.delregno@collabora.com>
+ <20240516081104.83458-3-angelogioacchino.delregno@collabora.com>
+ <ce1de395-3f60-4f7f-9424-bf036134de94@baylibre.com>
+ <7dbe08cf-47a1-4da6-9035-6b0932cf8426@collabora.com>
+Content-Language: en-US
+From: Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <7dbe08cf-47a1-4da6-9035-6b0932cf8426@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Tomeu,
 
-On Sat, May 18, 2024 at 10:46:01AM +0200, Tomeu Vizoso wrote:
-> Hi,
-> 
-> I would like to use the chance at the next Plumbers to discuss the
-> present challenges related to ML accelerators in mainline.
-> 
-> I'm myself more oriented towards edge-oriented deployments, and don't
-> know enough about how these accelerators are being used in the cloud
-> (and maybe desktop?) to tell if there is enough overlap to warrant a
-> common BoF.
-> 
-> In any case, these are the topics I would like to discuss, some
-> probably more relevant to the edge than to the cloud or desktop:
-> 
-> * What is stopping vendors from mainlining their drivers?
-> 
-> * How could we make it easier for them?
-> 
-> * Userspace API: how close are we from a common API that we can ask
-> userspace drivers to implement? What can be done to further this goal?
-> 
-> * Automated testing: DRM CI can be used, but would be good to have a
-> common test suite to run there. This is probably dependent on a common
-> userspace API.
-> 
-> * Other shared userspace infrastructure (compiler, execution,
-> synchronization, virtualization, ...)
-> 
-> * Firmware-mediated IP: what should we do about it, if anything?
-> 
-> * Any standing issues in DRM infra (GEM, gpu scheduler, DMABuf, etc)
-> that are hurting accel drivers?
-> 
-> What do people think, should we have a drivers/accel-wide BoF at
-> Plumbers? If so, what other topics should we have in the agenda?
 
-I'm interested in attending, even if so far I have limited involvement
-in that area. Looking forward we're considering usage of ML accelerators
-in libcamera for various purposes, so an open ecosystem will be crucial
-for us.
+On 20/05/2024 12:53, AngeloGioacchino Del Regno wrote:
+>> So, I don't know how you want to manage multiple display, but IMHO there are 2 ways:
+>> - removing the current "oneOf".
+> 
+> ...eh I think this should be anyOf instead :-)
+> 
+> I'll check later and send a v5.
+
+"anyOf" behavior works as expected on my side, dt-validate pass ;)
 
 -- 
 Regards,
-
-Laurent Pinchart
+Alexandre
 
