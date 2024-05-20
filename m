@@ -1,122 +1,110 @@
-Return-Path: <linux-kernel+bounces-183784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE26F8C9E0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 302AB8C9E17
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E948B213F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:22:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB6D2B23EB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B967A135A7D;
-	Mon, 20 May 2024 13:21:55 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F22E13664D;
+	Mon, 20 May 2024 13:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZqUX0+Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C5554FA1
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 13:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACACD13398E;
+	Mon, 20 May 2024 13:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716211315; cv=none; b=CcSqiv7tmbEgLLE/SmCA9uQrUZOgfIi0XdrMzW6gAArlm3vein7NN3RlcLDfZHi55hAeUteqXww8ZY4sazuhwiorlcbW+Y6CY7M216w1d2f7ppJ0TdwygIyWO37/2ssTX41Hiw4315R+d2qslFeL3Pger6bqS6rouiOLETgwKmI=
+	t=1716211465; cv=none; b=sMBkcuKngo5kVi/fFv7kAlbwpZb1Rnnb1IHhawuWUiPJF6MbpNaBh+wLymVV+bKeMz5p2wh60EpgCFusrQSTfaGlvRVLCOf32542htMBcrktm5u8wqYZhYxGiapCRjA1YrE29o6WtHp3kAFLXIQ0f/nZ3WsXn1wnCF8RIGrVWiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716211315; c=relaxed/simple;
-	bh=lFhFicoTUR0HTjRnwiKX7Nhd2JVpOUuOPHos2f7lCwo=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=lte8wTObOfx23ATsoWPN9x4l9/QYLtMTN9505D1fIr9nxe5XjsHQFpioUAQy5EpouZzkBVk8x+VYZqX+Q4x8EY5sYIYwz6AeS2k8fbMjSUh4VS92pBuiR7lgKKp7K+Wso6aay2kT04VQ8YrOm3LeLAMjfG0a4IJFD+p2CPCH2Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4VjdTp3zn5z1HCJF;
-	Mon, 20 May 2024 21:20:14 +0800 (CST)
-Received: from canpemm500010.china.huawei.com (unknown [7.192.105.118])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8334B180062;
-	Mon, 20 May 2024 21:21:44 +0800 (CST)
-Received: from [10.67.111.82] (10.67.111.82) by canpemm500010.china.huawei.com
- (7.192.105.118) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 20 May
- 2024 21:21:44 +0800
-Subject: Re: [PATCH] arm64: asm-bug: Add .align 2 to the end of __BUG_ENTRY
-To: Li Zetao <lizetao1@huawei.com>, Mark Rutland <mark.rutland@arm.com>
-References: <1715955208-17109-1-git-send-email-xiaojiangfeng@huawei.com>
- <ZksnARrLkKHcX4C_@J2N7QTR9R3>
- <20d70835-9411-9a08-c567-56d7040e01dd@huawei.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <Dave.Martin@arm.com>,
-	<xieyuanbin1@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <nixiaoming@huawei.com>,
-	<wangbing6@huawei.com>, <douzhaolei@huawei.com>, <liaohua4@huawei.com>,
-	<lijiahuan5@huawei.com>, <wangfangpeng1@huawei.com>, "zhangjianhua (E)"
-	<chris.zjh@huawei.com>
-From: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-Message-ID: <876b3571-b7f5-03f1-5da2-07a2ec47ad08@huawei.com>
-Date: Mon, 20 May 2024 21:21:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1716211465; c=relaxed/simple;
+	bh=KmZVxGEYbyrP9V7WE809KECo6k1t051ppisGlj+zDQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nhlfjCXjVaQhzK7iFB8JxAtO9OZ1c6G170Sr0FCnUHtBNLvDhKSJZqcIe9NuPPWnJY2raDgM632F+CjhYdQ5dLUVhXzijRVOCP9eOsB3MFMWCmlPaoWikqJyOqJix53deg+ernxtAhrWdXMUCZ/jM2DkTtra4lIprqxhxUgzBnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZqUX0+Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1367C4AF08;
+	Mon, 20 May 2024 13:24:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716211465;
+	bh=KmZVxGEYbyrP9V7WE809KECo6k1t051ppisGlj+zDQk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pZqUX0+QMkw5pTpm4DONwaNufkqX3zzWfwapwSgBpkV2TWxHsn+grw39j7Lk9LnXz
+	 AKQRNqjcuPochJglbbEfrX6pcl+TYohqQUm5xtClM3jtnYZvMaTcRqQH3/gDSjKIhI
+	 hZXHw6KGK1csT4XJK/nhON9zaHir+22pxLIQv4zDAtw3T09tos5Cl7DkE59O7AKmU4
+	 qJXyyPd28EWmOZPVqZhGsaStx/28y0DbRTzH1m1lICPu1/t5M2LValnltn1dPD2nlY
+	 34w2l9JfjJg7g8Ezosdoup1VX77pYUISsTmVm25Hnq/NBsijKCTybcfpvNDUXEQm3w
+	 Z2M+KCBHjANSw==
+Date: Mon, 20 May 2024 14:24:18 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+	cezary.rojewski@intel.com, pierre-louis.bossart@linux.intel.com,
+	peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com,
+	srinivas.kandagatla@linaro.org, bgoswami@quicinc.com,
+	daniel.baluta@nxp.com, linux-sound@vger.kernel.org,
+	alsa-devel@alsa-project.org, sound-open-firmware@alsa-project.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/6] ASoC: topology: Constify an argument of
+ snd_soc_tplg_component_load()
+Message-ID: <baf1789a-a573-470f-b816-ca9bb0d7f299@sirena.org.uk>
+References: <f2f983e791d7f941a95556bb147f426a345d84d4.1715526069.git.christophe.jaillet@wanadoo.fr>
+ <1fb69d24-03af-4742-9f44-5a93704f5cfb@sirena.org.uk>
+ <b736e11e-430a-462b-898a-d5e1dcf7f74a@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20d70835-9411-9a08-c567-56d7040e01dd@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- canpemm500010.china.huawei.com (7.192.105.118)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3ra5j95P2SXUw+yS"
+Content-Disposition: inline
+In-Reply-To: <b736e11e-430a-462b-898a-d5e1dcf7f74a@wanadoo.fr>
+X-Cookie: We are what we are.
 
 
+--3ra5j95P2SXUw+yS
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/5/20 20:05, Li Zetao wrote:
+On Sat, May 18, 2024 at 10:34:33AM +0200, Christophe JAILLET wrote:
+> Le 14/05/2024 =E0 12:21, Mark Brown a =E9crit=A0:
 
+> > As mentioned in submitting-patches.rst when submitting a patch series
+> > you should supply a cover letter for that patch series which describes
+> > the overall content of the series.  This helps people understand what
+> > they are looking at and how things fit together.
 
->>> diff --git a/arch/arm64/include/asm/asm-bug.h b/arch/arm64/include/asm/asm-bug.h
->>> index c762038..6e73809 100644
->>> --- a/arch/arm64/include/asm/asm-bug.h
->>> +++ b/arch/arm64/include/asm/asm-bug.h
->>> @@ -28,6 +28,7 @@
->>>       14470:    .long 14471f - .;            \
->>>   _BUGVERBOSE_LOCATION(__FILE__, __LINE__)        \
->>>           .short flags;                 \
->>> +        .align 2;                \
-> The use of .align 2 here is based on the assumption that struct bug_entry is 4-byte aligned. Currently, there is no problem with this assumption, but for compatibility reasons, refer to the riscv architecture and refactor the implementation of __BUG_FLAGS:
-> 
-> #define __BUG_FLAGS(flags)                    \
-> do {                                \
->     __asm__ __volatile__ (                    \
->         "1:\n\t"                    \
->             "ebreak\n"                \
->             ".pushsection __bug_table,\"aw\"\n\t"    \
->         "2:\n\t"                    \
->             __BUG_ENTRY "\n\t"            \
->             ".org 2b + %3\n\t"                      \
->             ".popsection"                \
->         :                        \
->         : "i" (__FILE__), "i" (__LINE__),        \
->           "i" (flags),                    \
->           "i" (sizeof(struct bug_entry)));              \
-> } while (0)
-> 
-> Align the real size of struct bug_entry through .org. What do you think?
+> Ok.
+> I usually do, but I thought that the subjects were self-explanatory enough
+> in this case.
 
-The implementation of risc-v BUG_ENTRY does handle
-the `implicit padding` at the end of the struct correctly,
-however, it does not handle the `implicit padding` in the middle of
-the struct correctly, for example, assume that
-the struct bug_entry changes as follows in the future:
-struct bug_entry {
-	signed int bug_addr_disp; // 4 bytes
-	unsigned short flags; // 2 bytes
-	< implicit padding > // 6 bytes
-	unsigned long long flags2; // 8 bytes
-}
+> Do you want me to resend?
 
-Even the implementation of risc-v BUG_ENTRY
-can't handle this situation. Referencing risc-v solution
-complicates things, but doesn't completely solve the problem.
+It's fine this time.
 
-In the current scenario, we know the contents of struct bug_entry
-and generate variables using assembly language.
-I don't think it's necessary to complicate things.
+--3ra5j95P2SXUw+yS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZLTwIACgkQJNaLcl1U
+h9Dgigf+O7QTQ4V66dmxfo81LtTtdJ9xws2tiMsQz2yhw40n6x/uUnAI/DpVsJBM
+7bnp8/mWqL0S36pfO4c+ypaAOjI/V0BjVEsLBIEIcyWNHlvicUGTAE0UrkUfeUyt
+zIomDWwKLYl6V7o3dUyUn/CASeVpft1esGq8jlyvp9woke55IKQJIp+iX2H/rfZY
+4XZZ+c37WFAj1VsRKD3drP9PrXrVsVfhAzpcq2ZrPLj5llC0nltM7IgPEfZFXIjG
+VkQ8GS2lNoTHiZHgg+lLtqD2l89Ri4Yl0IS4DT1S/iez2COuCZfadttzQxJbDNUa
+ASeX6pfwcXFqRHE0F6YAYkSzaB53YA==
+=rysW
+-----END PGP SIGNATURE-----
+
+--3ra5j95P2SXUw+yS--
 
