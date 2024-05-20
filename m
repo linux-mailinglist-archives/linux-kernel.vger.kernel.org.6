@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-183583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344128C9AEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:03:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF00E8C9AED
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FB841C20D11
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C1E11F214CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F9B48CDD;
-	Mon, 20 May 2024 10:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD49A481CE;
+	Mon, 20 May 2024 10:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SPJ4iDeH"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oa8KYlk2"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CF5224D7
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 10:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60862481C0
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 10:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716199386; cv=none; b=vAeLI0ru6KH0tgNnHnaJnxeLHsZ/sqkyxlPuKrQZsxgHMOkCF3y7EWS1CEmh0uVF6JodrGT0SJy5g4/FWH1CNCn9/A/fbl8fea6ukCPuSoc7113eVS26OVivHzls7nhCkv/YHyAVQU8cAsXyrE/QpSAo98uiPm+7VbqVhbxJ65c=
+	t=1716199414; cv=none; b=WiqYvKwBGGnA6r0ICdv8B2BdIPllefH6ph8Fd7ZU3RWALRRj3kt7vQC7Qulqd8tFQVLHocbsZDbuPvSjShISRMhP5ZXs3ru63jvVDVUQA/jQdvq+/7QEaPe6QRoEaE/OepfuWwtrMzP298ye4x2uyrniahpHZMqYlUvhdZZe6dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716199386; c=relaxed/simple;
-	bh=HZIYFkhIwUPSoF+5K0XAQcJhpkeI0VWyBmsb9GzsxQI=;
+	s=arc-20240116; t=1716199414; c=relaxed/simple;
+	bh=zxxLirpwR+1Uc+/X/AU5DRGhH1gUeZH3K7IgbF6YaiY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Oqh6XeB/xhLegKPHgFTyRsi26a2HTUBQ84Dn2bg1BBN+WNKhGFqFRpo8pys3encpeksg1ebDxeWmkhJdKJDCXcoPTmvYxSfgpZNUdfUgjvm2e+7do4QnUmbs50evdR1jBN1sIiLIGPuVO1D1owz+b4IEaEkypxZp75B4sRCOADU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SPJ4iDeH; arc=none smtp.client-ip=209.85.218.50
+	 In-Reply-To:Content-Type; b=NtA7O2ELbqkCcF3FrRjnPqt6nKjt/qKioVIW0BHlN8zjUG67x/WEtQPn52O8q7z+csGzGh95tyjsejqtDs4G4zEpa5TqGrZwGllXkcMp3gVr+mrVnIVqTBjWn1A6M3qqKOraH4aPB0bQOYjZJ9k40HtbczJTDdF+JvO13Eo+sm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oa8KYlk2; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a5cdd6cfae7so692761666b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:03:04 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a5ce2f0deffso403167466b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:03:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716199383; x=1716804183; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716199411; x=1716804211; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=a6yHs4rSxOQ6qy2Hekl9h1Wn+oXWrJB1lIm/YYC/7yc=;
-        b=SPJ4iDeH+LQS/4PFVmtf1QHqAVYMlbPawnb8O/pk/nWNUJXTJa0U6ixgNOviXKVus0
-         simbdkGWSFAkAtM74kzKqJo0Vp8sK6U3hPfLXtcBlv443BdBLTZHaqtUHHp31VRxrZf4
-         9DECPrLspaFLwVnDDOXFkfW9HGm5KtI3kgoSUT4uj/N6vrheLt2KFL3HTyJW9vXn2Qrd
-         9kol5Dg3KubTbdtJJKDiof8nRuuRroPRyeoSSvV3EUpHU0Q8jsncoagRBPpi8pUHaGLq
-         ft/RhTweKI7nZUHX6Qpv0Vksqa/Ojzt5nqN2AleoCD60FtoCKCzP35tdK1tAVUHj7Xsd
-         oF8g==
+        bh=+w5hVdpJzgHJWxnVTirhPSm/kZdDAmDj99V04KDUEPk=;
+        b=oa8KYlk2RmSYzv0ecgZzt2wiOiGE+TMDeFpXaQ6uXYCpY0O1fGcuTER2mo0oCRNFuU
+         ejxCrzp2O4CGJ8/CY8g2e6KbeB+wuaCAd4xFaUcDJITYC2CQ3Sl3NmdN/5gw0OjSSseI
+         VB18pXYf89B1X2kZ6vFDsRLgQJ5lnBGdMx+S4nlgaLyqCjMph7DTnJPxnGfNqIBxaXRP
+         VRepahQ6bC3q6GpVrlcpBfAkdp4y5jK0ynD5mlBlGqrFQb/bJA+Jspx/yF7Rzoty72iz
+         OBJr1n093LrdEreB72rRWnyx0vuhhZuoreYaBh4YF2nvGQFTStoFTKBHf4st8NnDXgkB
+         J2VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716199383; x=1716804183;
+        d=1e100.net; s=20230601; t=1716199411; x=1716804211;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a6yHs4rSxOQ6qy2Hekl9h1Wn+oXWrJB1lIm/YYC/7yc=;
-        b=cG9NaRQCbamFfFba/Hz3Y+yB1d8KHCil6i9DLCKGURsUWfEpOmS/+DowxHNqZO92Xq
-         yHfab+l6sWZNE7+AizUhfSF9Lrlq3o6lSiTak8f6wSW3ZRsN5VjpblvOtT7hCXUWYD1v
-         VTkleo5rBkwAUejNa0u3vkpxR5fhcm+8NP9H26/8WXr97rh5oyUPE5PKiYkg+OUX7FZK
-         SiPrbVcNxGHOGlRK2pS3mhxnD2L+9NZKcqoEX4Fq2w+9mfkouDjGj0q9lS3Pt+BgkvcP
-         kHVNtm42pTY4QRDC+3huflxANvV3ZM6uJAgccwm9si838O3cXRw0ArpUfdrGxA+6UXka
-         YTrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnXic17vlxQZ9rBccFSznqH9LwBhP1nd5MjNhZ7LUevmuqDCrd3/sXQVHiETQY0qVROCZ/p/f1ZcN3Gm4ZQErf80m5wJiBTtpJWPaZ
-X-Gm-Message-State: AOJu0Yyd2nCKpqDMD5VqATYsjFWg8V/62fcCc0lfaXegMaVBMMythy/t
-	CG9EoeaJ2DipTJZLz2McxfnG+GSy/U8S0/IUWtql+00fc0GilbfzDP7vNQ0AqmlbWa9i5wLQC3V
-	S
-X-Google-Smtp-Source: AGHT+IHvS6YMfewPPk1qx5NmgVCTMgWM7DY6JEB92R4p2YnC056jgBx3nsgtMXv/G4ze4/9m3RKHEA==
-X-Received: by 2002:a17:906:cd1a:b0:a5c:dc46:d252 with SMTP id a640c23a62f3a-a5d6003d4b1mr491279766b.38.1716199382808;
-        Mon, 20 May 2024 03:03:02 -0700 (PDT)
+        bh=+w5hVdpJzgHJWxnVTirhPSm/kZdDAmDj99V04KDUEPk=;
+        b=MSTBSzr/Puj3rr2G248YMujxkxAABgx0ujgf0kisI+nXkYjiuMiMMevZroQeTb9hgh
+         LqqIhtwhotBuNNF9NtAId9IqNGkcUCvSIFRfDcK4o0CvZnkj519nElQCT6WjmaoX4vsc
+         3ct8ZVlC2Ux6M6XguBTuA3qPkK7TRWgNAvTdT/ie7gPzfJW9NLHa3cj0h3Nrq0tXw/86
+         kaOOz66TCxThB4G/k1qs+xng7qBUxPWzHhL6x9oCOPv35Tv2VL4ClLIrcoMjkwOFehCf
+         IQJiiKp98MnLGo2XKAaKN4rg4F3ihrj/xP5XIL5boLGDnvbDeaI/MeVBSGKUymLHiiZe
+         Pr4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUq7lIG+lVIUK0u1k4iCupYkVzNsoByVxIfwAxRMW8d/RxCSHWExeA6Xb7ePtKso7GSA+Z9J0TIHwMD/MT5nwGyfAAFvG+HL6p8D4ya
+X-Gm-Message-State: AOJu0YyPv4p47hftvoxkxnjk+zOj+r8fB0+hsKRU+voOBiMN90niQGRx
+	Y/+SiirV1sNjfSsC4gFwGKPLtGSsuVEP4BwNSdpOVY6hlwC2GC77JPHPmI33Dm4=
+X-Google-Smtp-Source: AGHT+IE5tpWNted05oEw6862L7rKbgv9gVijM0FDT/qeo+s3+hQok9SPpPkcKoYUDoviVohSMHqSag==
+X-Received: by 2002:a17:907:930b:b0:a59:9a68:7283 with SMTP id a640c23a62f3a-a5a2d53bafbmr2272216666b.12.1716199410738;
+        Mon, 20 May 2024 03:03:30 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a691870absm982730466b.124.2024.05.20.03.03.01
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7d09sm1438746666b.107.2024.05.20.03.03.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 May 2024 03:03:02 -0700 (PDT)
-Message-ID: <1540f43c-9859-49a8-9b20-1fb08d1c153f@linaro.org>
-Date: Mon, 20 May 2024 12:03:00 +0200
+        Mon, 20 May 2024 03:03:30 -0700 (PDT)
+Message-ID: <2cc638ca-0add-4c8c-b844-606e22dbd253@linaro.org>
+Date: Mon, 20 May 2024 12:03:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,8 +75,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: mediatek: mt8365: drop incorrect
- power-domain-cells
+Subject: Re: [PATCH 2/4] arm64: dts: mediatek: mt8365: use a specific SCPSYS
+ compatible
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
  Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -86,8 +85,8 @@ To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-mediatek@lists.infradead.org
 References: <20240518211159.142920-1-krzysztof.kozlowski@linaro.org>
- <20240518211159.142920-3-krzysztof.kozlowski@linaro.org>
- <3b1be547-ac49-40fb-909f-96952c299545@collabora.com>
+ <20240518211159.142920-2-krzysztof.kozlowski@linaro.org>
+ <f42ef151-6eee-418f-91e1-5ac08d161119@collabora.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -134,30 +133,25 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <3b1be547-ac49-40fb-909f-96952c299545@collabora.com>
+In-Reply-To: <f42ef151-6eee-418f-91e1-5ac08d161119@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/05/2024 11:58, AngeloGioacchino Del Regno wrote:
+On 20/05/2024 11:55, AngeloGioacchino Del Regno wrote:
 > Il 18/05/24 23:11, Krzysztof Kozlowski ha scritto:
->> The top SCPSYS node is not a power domain provider.  It's child
->> "power-controller" is instead.  Fix dtbs_check warnings like:
->>
->>    mt8365-evk.dtb: syscon@10006000: '#power-domain-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
+>> SoCs should use dedicated compatibles for each of their syscon nodes to
+>> precisely describe the block.  Using an incorrect compatible does not
+>> allow to properly match/validate children of the syscon device.  Replace
+>> SYSCFG compatible, which does not have children, with a new dedicated
+>> one for SCPSYS block.
 >>
 >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
-> Well if you're fixing that by migrating to scpsys compatible, you might as well
-> resolve all of the warnings in one commit, removing that power-domain-cells
-> property in patch [2/4], otherwise this one is technically a fix for that.
-> 
-> Please squash [2/4] and [3/4], like that it just makes more sense.
-> 
+> Technically, that's not a SCPSYS block, but called SYSCFG in MT8365, but the
+> meaning and the functioning is the same, so it's fine for me.
 
-That's independent thing. Previous compatible - syscfg - also did not
-allow power domains. The difference is that bindings did not print a
-warning without my change. We can reverse the patches if this is more
-suitable.
+So there are two syscfg blocks? With exactly the same set of registers
+or different?
 
 Best regards,
 Krzysztof
