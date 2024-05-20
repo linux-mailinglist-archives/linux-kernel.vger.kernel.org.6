@@ -1,91 +1,144 @@
-Return-Path: <linux-kernel+bounces-184164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 916578CA36B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:40:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A5B8CA37B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C20181C2169F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:40:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A5051C21057
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC14139CF4;
-	Mon, 20 May 2024 20:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9112713A40F;
+	Mon, 20 May 2024 20:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7ZqlrZN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c5qDFkTd"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD43139599;
-	Mon, 20 May 2024 20:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AFC13A3EF
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716237627; cv=none; b=pOwjrZgzX3ihx2FU9b8cwh8wiWJtos3rEmUGulu1RID5W34c68V8Jrkgpx3PmF6vuHeRTUij95vIhykU+STfJEeLUYW9uOx4T6EFje00z2RvlYOKcKNJ/qIFTXmr5VQLOv5B5A06QMGzVVlLUngzyJuUtQhqfpw+pxirlqv9a78=
+	t=1716237719; cv=none; b=A/XIw+nqTEOmdTeB+jgveuEy9g/VhKxp1JvDs8TWZE6+faZETtvehcZbjSI0AiCPB8Al7Gc5LC8HxDdYEY5sRFW66GSkP6+qSazfZHZdaeXa17s8bHgcjO0Rl3dw3I5ZO5Y48GvAonJIRDlvuOWdPCusK/Jm578YgxR98EXhsuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716237627; c=relaxed/simple;
-	bh=0GeM9ZvpwWeEcyEm1SbQY2gkxS/JHF/8kq6OsWB3c64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GWfEH/God4R7BVBkPFMYEVH7rXBOaNIfwx0MitCPGCQ/bQn+QxnRrzhwWJkOHuE2VDK/C6wal7U8wKqXHuj07IlTxF4R9i6wGKshVkQHLnioVucXGe7HujWU9w95qByqelSKtZQshfHTpvvFznuCpKkZoQnmsm6GYAsj3m4JQuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7ZqlrZN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B507C4AF07;
-	Mon, 20 May 2024 20:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716237626;
-	bh=0GeM9ZvpwWeEcyEm1SbQY2gkxS/JHF/8kq6OsWB3c64=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t7ZqlrZNs9lHt+YgugJjQRXeBEDuR0Vitej683otqqmp7+RMvFnGITHwvABnm2rFq
-	 yMpYc2h39snU/KS7pZ/9kKDAp6A5KLeaU/iAMaQN3TVxjVFLIsHnQeaHpmJiD/LdkQ
-	 crnfWwF5HJZRGtk5DaZqMAsepEoJYlRNRiaIkYXaUlWsCCSc0PTV+2eYYF9SVJziqL
-	 AHlr24bQPpMhN3GO7XSdPt/ZnH9QtR5x0BRKmrqpea5EQ7SbNxuXFELInc2W+c9ShH
-	 Byj5aLi+tuzYz7uFCPQ/y1Uv+xE+u6QQLPgq4e65/uuHzOKnAqWR+COCFY3TphD3wF
-	 vwfg79vx+vbsg==
-Date: Mon, 20 May 2024 15:40:25 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, Han Xu <han.xu@nxp.com>,
-	Richard Weinberger <richard@nod.at>,
-	Fabio Estevam <festevam@gmail.com>, linux-mtd@lists.infradead.org,
-	Marek Vasut <marex@denx.de>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Vinod Koul <vkoul@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Shawn Guo <shawnguo@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	dmaengine@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	imx@lists.linux.dev, Miquel Raynal <miquel.raynal@bootlin.com>,
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 2/5] dt-bindings: dma: fsl-mxs-dma: Add compatible string
- "fsl,imx8qxp-dma-apbh"
-Message-ID: <171623762348.1441545.15424610075709594477.robh@kernel.org>
-References: <20240517-gpmi_nand-v1-0-73bb8d2cd441@nxp.com>
- <20240517-gpmi_nand-v1-2-73bb8d2cd441@nxp.com>
+	s=arc-20240116; t=1716237719; c=relaxed/simple;
+	bh=KLAoNg3lNimMGEM1iK1E2E71QyftAe7H7PKPd5zQpd0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZhhsOogI3eYFHd8TYFWWuykm/HSEbpJfKNL10RqS41IOR6Vx9kqX/0dju4BPpCm+TWaubR72k/zgJeGd8GHPoe3Fsa+3z9UWzhXGn26kdOGejvsIdx7COBOR83b08uPS4SUAm+ZzgtgDQFu5mL8EdpV+UjvhYj+YMqCfmoskPIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c5qDFkTd; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1ed0abbf706so19641885ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 13:41:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716237717; x=1716842517; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P7tYjQOKUhhyypRv+20xcgSB/ZPEIGDyWUW6MmS8mUM=;
+        b=c5qDFkTdGW/PkzxKKeC19A10gpemAfXqRD6QFIiBGcrWjQH1Yk+DMgRZ3sUkWVjUvl
+         uLnSjKX+gueJ2JS0QjrZNiYu46IoGMT9W2buQcHovUkMTpVVJET65QI083rLJGQheHly
+         WwaDX5m+tO054qE1Ukf/NgHLlcam90K0hLJGQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716237717; x=1716842517;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P7tYjQOKUhhyypRv+20xcgSB/ZPEIGDyWUW6MmS8mUM=;
+        b=iuX9lkItSHErOroFeAo5JWLvfbmrqYNc8jyXlJUqCD/dEnYfPj5WgppiOV2xo2LW1r
+         R+85Afd1bByLDaTIcvqncBrp4dlte3/StUv37ZYNu0v9Z8eQjq75eNRepbqByIPACL5D
+         nAK1kbY7QvG4jqLop5egJDMmm2oOUH9z2WI3oBjt0pgRqv7iIV47w40VqT52l0CGkRWj
+         zaT37rvynZ4Mx6TE0UhUXCGjS3PhjWjc7UPC8V6F0tpw87BuloiYpVU1Hzjo9zXibs67
+         htOXAInlAtXp9R5qZrHK9774SS+vWuU47uK9CR4jPfzItUeaOpMb67OfyY/faNJuCPeI
+         hKEA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6ywVmhBEbjhRWbMR4Hs5nW4o8H9S5V46Oo3e6nUvk5PvF4wjftQgA/43+C4JH2jcUCKrbzNCApeamvuLxL3PHx1PczwI3sDcIJKCx
+X-Gm-Message-State: AOJu0Yxarx96tLcS0b5MevTk2Q6Km5wFxyuCYNc3d5sUyFtrNquxpsXQ
+	9mnx8cBEwJp1EyTP233V5lAoBXBT+hsLxX2zxkv6KZoBVLPMjibqBLfTzZZymw==
+X-Google-Smtp-Source: AGHT+IGUEKmCgcmIHfXp6npZuZGjuJx5A/FAe7BpLxOGHhZPiMoBvbnihDQpbFMwZRHpWh2syWfS+Q==
+X-Received: by 2002:a17:902:e54d:b0:1f3:590:71d9 with SMTP id d9443c01a7336-1f3059073f7mr34219075ad.2.1716237717581;
+        Mon, 20 May 2024 13:41:57 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:cd20:112a:72ca:4425])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bbde9d7sm213068255ad.106.2024.05.20.13.41.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 13:41:57 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Hayes Wang <hayeswang@realtek.com>
+Cc: danielgeorgem@google.com,
+	Douglas Anderson <dianders@chromium.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Grant Grundler <grundler@chromium.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next 1/2] r8152: If inaccessible at resume time, issue a reset
+Date: Mon, 20 May 2024 13:41:11 -0700
+Message-ID: <20240520134108.net-next.1.Ibeda5c0772812ce18953150da5a0888d2d875150@changeid>
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517-gpmi_nand-v1-2-73bb8d2cd441@nxp.com>
+Content-Transfer-Encoding: 8bit
 
+If we happened to get a USB transfer error during the transition to
+suspend then the usb_queue_reset_device() that r8152_control_msg()
+calls will get dropped on the floor. This is because
+usb_lock_device_for_reset() (which usb_queue_reset_device() uses)
+silently fails if it's called when a device is suspended or if too
+much time passes.
 
-On Fri, 17 May 2024 14:09:49 -0400, Frank Li wrote:
-> Add compatible string "fsl,imx8qxp-dma-apbh". It requires power-domains
-> compared with "fsl,imx28-dma-apbh".
-> 
-> Allow 'power-domains' property because i.MX8DXL i.MX8QM and i.MX8QXP need
-> it.
-> 
-> Keep the same restriction about 'power-domains' for other compatible
-> strings.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  Documentation/devicetree/bindings/dma/fsl,mxs-dma.yaml | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
+Let's resolve this by resetting the device ourselves in r8152's
+resume() function.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+NOTE: due to timing, it's _possible_ that we could end up with two USB
+resets: the one queued previously and the one called from the resume()
+patch. This didn't happen in test cases I ran, though it's conceivably
+possible. We can't easily know if this happened since
+usb_queue_reset_device() can just silently drop the reset request. In
+any case, it's not expected that this is a problem since the two
+resets can't run at the same time (because of the device lock) and it
+should be OK to reset the device twice. If somehow the double-reset
+causes problems we could prevent resets from being queued up while
+suspend is running.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+
+ drivers/net/usb/r8152.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index 19df1cd9f072..6a3f4b2114ee 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -8554,6 +8554,19 @@ static int rtl8152_system_resume(struct r8152 *tp)
+ 		usb_submit_urb(tp->intr_urb, GFP_NOIO);
+ 	}
+ 
++	/* If the device is RTL8152_INACCESSIBLE here then we should do a
++	 * reset. This is important because the usb_lock_device_for_reset()
++	 * that happens as a result of usb_queue_reset_device() will silently
++	 * fail if the device was suspended or if too much time passed.
++	 *
++	 * NOTE: The device is locked here so we can directly do the reset.
++	 * We don't need usb_lock_device_for_reset() because that's just a
++	 * wrapper over device_lock() and device_resume() (which calls us)
++	 * does that for us.
++	 */
++	if (test_bit(RTL8152_INACCESSIBLE, &tp->flags))
++		usb_reset_device(tp->udev);
++
+ 	return 0;
+ }
+ 
+-- 
+2.45.0.rc1.225.g2a3ae87e7f-goog
 
 
