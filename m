@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-183873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D018C9F30
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:02:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816688C9F32
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0D8282F2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:01:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB7C1F218BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F109D136E09;
-	Mon, 20 May 2024 15:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3BD136997;
+	Mon, 20 May 2024 15:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlEVKSu3"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KHzDrnPS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C2728E7;
-	Mon, 20 May 2024 15:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80D928E7;
+	Mon, 20 May 2024 15:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716217310; cv=none; b=dLASfI9k6v57bdTNOQ0BCFEx0+clZU5ACb0YELflWeRpYIXRQb+gGEYBxXfcJrn1ZRNkHTHS7KI+jtkMe7+7ITjs6g7VUkbf/8vaI6VLH1LhEVTOqsrkoE3+tt0wkbs0AbS3HJN7UDKxHUXl6tkzRw+nvQaO8LjY01dYAiv6Uiw=
+	t=1716217319; cv=none; b=FFJAfb5myIP8Ixf9c2NafY4sIEIGAPl5MRSM5UZ48HjpZX+mWwhbFMpEYjIpWiH/ts1P8r+p6Ya56hVDuJrE28KVHYmFzjxPg+O3vvqyuQgB1k07XOqNfJPmhpoFmBfK3i0h0y48Olyo6MLD2HOVjGFMBybB3NkCATU9JmmqNlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716217310; c=relaxed/simple;
-	bh=h9G+PzNOBo0XpGBoArWpCHVHv14Yl1PQqd7N8807B0M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oLHzQv7EIg0PTA9xIWAIC3fuXl7398LUtvPn1qyrckrs9wftvzO1D6tdGtxQtJzK1L1ZNTAsQYq7d5kw/Ix0iPR53p++SUjWxqdW2lYqxdSjQbKVqypveaj2U/9MHETERMm/JgASfbDdL4KMcpWP+Cj1spJyG5lQEca9NjY6nEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlEVKSu3; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59b097b202so543072266b.0;
-        Mon, 20 May 2024 08:01:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716217307; x=1716822107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NrznS2cuTf/vafEauQb8pP6KkMct4u3y/Gx+jtIqOBk=;
-        b=XlEVKSu3ROuRrQYunpZeWcMO4IZM+XoM6JLpT5YJtIsGtqejaXhAOd4oK8MDZqxUr5
-         VVDby/eZMF5G2rvsIRCVLrnT3Hq5M3o6Ro+QfrPbucm7NnAUW4IK4lEL9rPR3oLC+PAi
-         YQJ1hBWRwClNsTu6h6gatB3+0t4LSk6BVkwaSZVTAQmlC5SfUyQQ6/AEC+QoY/6sWB7G
-         Ypu9GmmGRLHMCU3v3XAUgiIW9q6NUepxpFJUhUds6NNf0C7vbrhJOs+NssNfiEfeUHdr
-         qRLe3/TviBKoPsf4LKQNbjiHVqKYSFDIuenBpUTuqTSR5ytFcHs6hTIjnE19wycNz9h6
-         xxcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716217307; x=1716822107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NrznS2cuTf/vafEauQb8pP6KkMct4u3y/Gx+jtIqOBk=;
-        b=g7r0RLpL2sHGdIwfvjhpICX4xnqV6DeH8aGgSU6Zrshg0AtIjLVnPWHefqPPP0R1XP
-         7wI+Ntf4ARrK0JOfrxBC3efYHAoUPRRQQ4KUrX6cNkZ4IhYlup02Iy1yPCuvH8yq2M02
-         I/grBkVrO+I3dozt01rqTmXoCvThVs3kx+7gc2I1387+rBSN4mhdn1b0YY6joTbdeWPr
-         Xtc/3PHuoZgrHl10Q5Ov8HAw2CajvzX8OEeTHUhEGz2q6bMOTYFWbxkGZGD9XYAgXsvN
-         5o/vBR7X84wCw4qtJmc8ljufHABZnAOBdB1Xy5d6pL4ruMfbMYz7uHxjLmoMXZzOU5Ie
-         Ukfg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0siFaOPNOvktZB7hqLNN/O1WeOm48C6iFxpnyD2ejiJjcFF7sTUYvMqc6tjtepiidpVbleJGxRYhrM9epMX+FkYUvuTrXYTx3vg004665ZwqdccXkLggGWDteSJ0SH+Kq810c6gyZOV6k4xIg/2lOZgE2F6d40BKMbml7pQjZ7sze/ITVsu2d
-X-Gm-Message-State: AOJu0YyIPJmW1S6+DyILpx5UqcX4DlmJjsvnNUFADSKr7af3X7w6STlb
-	f7W9K5ryhU4/kyGG8PA9pNb7o7k0rJ2a2h7riqTEuVSnea8uATuh39ky7IUcJowKcgg48XK7Auk
-	t+buqdcTGV9T7TUiQuSOahT1++zo=
-X-Google-Smtp-Source: AGHT+IGGnQKNWxIxOvVxR+lGNx1s7DwBsojy6rWDdcN/SEWlpdlGR5yRRJJkPCknsF5uAt1G1irGlDzBZLb6IZHllVE=
-X-Received: by 2002:a17:907:6e9e:b0:a59:c39b:6bc3 with SMTP id
- a640c23a62f3a-a5a2d6417e5mr2100229966b.49.1716217306721; Mon, 20 May 2024
- 08:01:46 -0700 (PDT)
+	s=arc-20240116; t=1716217319; c=relaxed/simple;
+	bh=yZe8BUauvo3lejvk2C+hLkZ78XaAKCpDBbZUCxqKy8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=imOSlKDJTnBRV8izNwqf4sWUggUZ+Hi6trhWSw47kFOkMiyum2U1FpeekmVHL+vuLsb5I0F74sYSqTYHP2c4iZ594psV7knAtyoDT6mzUtbFYIQDvPsuR3v5kPtojvHUZxyw+AZQF6FjnrGFMM5Nhk0/paytwtW4VMAimZVAPCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KHzDrnPS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44KCAjP9029799;
+	Mon, 20 May 2024 15:01:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=ViWFnlRfa6HfsCpt9sNPud6U2bBS5mkJbqnxes4Nv44=; b=KH
+	zDrnPS1fdfel7KxCI9YWLJcFc0omE4hPzN51YzAyvtF8H5eJjOOx5MAZiWV3kDR6
+	nHGCtoJ4w5zdWfkijZpbcYZr/YeHui7gsMfIHDRMEZ6O366kEhiLoTNKLvkLvfC1
+	w5pEo/5Bz3A16Df819O08VcmWtQMpFSwy2S//XpEsNJAOVjB9snSFAjsVdA13wTs
+	WVUEpNn0F8FDv0nvRWsBQdWEncLfX8BK2FtYGiKKxpkZDx6O/7sDpUXNiJJn+950
+	qshmrVa7sRv1cTq8eU4tFzdA2ee9xfy93ozB8Gg06WZ1wMRe9faa3BxnZ4HuNvVz
+	/+/KURVGk03kcLvRRpsQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6psauk5q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 15:01:44 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44KF1hue032086
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 15:01:43 GMT
+Received: from [10.216.60.210] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 20 May
+ 2024 08:01:39 -0700
+Message-ID: <7ab7636c-9da0-8053-a264-6031c416ab6b@quicinc.com>
+Date: Mon, 20 May 2024 20:31:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com>
- <6eee1069-81ae-495a-850f-7f526006db8b@web.de> <CAGFuAuyXhBT8Nkvz5qN8iejeoHMFmx1b86tTNmpVfQ2xqjMtLw@mail.gmail.com>
- <a42d75ad-8065-49f0-906a-c8ae3761457c@lunn.ch>
-In-Reply-To: <a42d75ad-8065-49f0-906a-c8ae3761457c@lunn.ch>
-From: grygorii tertychnyi <grembeter@gmail.com>
-Date: Mon, 20 May 2024 17:01:34 +0200
-Message-ID: <CAGFuAuwot_7+R=J4NC=0Z_48YZ-RTJjRUoQnSjZUvpt=AWF39Q@mail.gmail.com>
-Subject: Re: [PATCH] i2c: ocores: set IACK bit after core is enabled
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Markus Elfring <Markus.Elfring@web.de>, 
-	Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>, 
-	bsp-development.geo@leica-geosystems.com, linux-i2c@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, Peter Korsgaard <peter@korsgaard.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] remoteproc: mediatek: Zero out only remaining bytes of
+ IPI buffer
+Content-Language: en-US
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        <mathieu.poirier@linaro.org>
+CC: <andersson@kernel.org>, <matthias.bgg@gmail.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <kernel@collabora.com>
+References: <20240520112724.139945-1-angelogioacchino.delregno@collabora.com>
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <20240520112724.139945-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Bd0pJb3d-7DgY5dqmoJk8-rBGLOCNNDJ
+X-Proofpoint-ORIG-GUID: Bd0pJb3d-7DgY5dqmoJk8-rBGLOCNNDJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-20_05,2024-05-17_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ adultscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ priorityscore=1501 phishscore=0 impostorscore=0 spamscore=0 clxscore=1011
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405200120
 
-On Mon, May 20, 2024 at 3:41=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Mon, May 20, 2024 at 03:30:43PM +0200, grygorii tertychnyi wrote:
-> > On Sun, May 19, 2024 at 7:25=E2=80=AFAM Markus Elfring <Markus.Elfring@=
-web.de> wrote:
-> > >
-> > > =E2=80=A6
-> > > > Sometimes it causes failure for the very first message transfer, =
-=E2=80=A6
-> > >
-> > > Does such an information indicate the need for the tag =E2=80=9CFixes=
-=E2=80=9D?
-> >
-> > I'm not sure: the original initialization order was introduced by the
-> > very first commit
-> > 18f98b1e3147 ("[PATCH] i2c: New bus driver for the OpenCores I2C contro=
-ller").
->
-> https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
->
->   It fixes a problem like an oops, a hang, data corruption, a real
->   security issue, a hardware quirk, a build error (but not for things
->   marked CONFIG_BROKEN), or some =E2=80=9Coh, that=E2=80=99s not good=E2=
-=80=9D issue.
->
-> Your description of the very first message transfer failing sounds
-> like a data corruption? Using the commit which adds the driver is also
-> fine, some bugs have been there all the time.
 
-Thanks! Yes, it is a data corruption.
 
-> Remember to add a
->
-> Cc: stable@vger.kernel.org
+On 5/20/2024 4:57 PM, AngeloGioacchino Del Regno wrote:
+> In scp_ipi_handler(), instead of zeroing out the entire shared
+> buffer, which may be as large as 600 bytes, overwrite it with the
+> received data, then zero out only the remaining bytes.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>   drivers/remoteproc/mtk_scp.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index e5214d43181e..dc70cf7db44d 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -117,8 +117,8 @@ static void scp_ipi_handler(struct mtk_scp *scp)
+>   		return;
+>   	}
+>   
+> -	memset(scp->share_buf, 0, scp_sizes->ipi_share_buffer_size);
+>   	memcpy_fromio(scp->share_buf, &rcv_obj->share_buf, len);
+> +	memset(&scp->share_buf[len], 0, scp_sizes->ipi_share_buffer_size - len);
 
-I will send v2.
+Although, it does not make any difference apart from a write of len 
+bytes, still a good improvement to do ..
 
-Regards,
-Grygorii
+Acked-by: Mukesh Ojha <quic_mojha@quicinc.com>
+
+-Mukesh
+
+>   	handler(scp->share_buf, len, ipi_desc[id].priv);
+>   	scp_ipi_unlock(scp, id);
+>   
 
