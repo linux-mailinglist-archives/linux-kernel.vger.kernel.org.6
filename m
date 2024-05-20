@@ -1,160 +1,141 @@
-Return-Path: <linux-kernel+bounces-183403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90ECD8C9888
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 05:52:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A73C58C988B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 05:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D39E1F21742
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9F3282A50
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254A912B77;
-	Mon, 20 May 2024 03:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DBF11184;
+	Mon, 20 May 2024 03:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ia7d6jVz"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RYBt5alD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDE5DF51
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F8E11CAB
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716177165; cv=none; b=OO1dEIkqnPRpgTBEtHRLwg18uzutDpCYiIbiT7jqrbMlebjD7gLy013Ogy1sxwXWFSxQ1h5FwH8YtFMMh9nYCEwWIitH4aGIiulP4L7G7Q9G8WmrI7Qq6ksG0ITy3kGZ+wzVDhPBxqu6EU9LIdTRdaRDRV4P0F4XUJff2YrzPlc=
+	t=1716177467; cv=none; b=lKBHgTFT0DE+cvG4KfSF0tIL6gZl/OaxwE7f6oHmidxvScFWadFBDErWoPSSpY4RIhbEqSD6d/IgVJVrqoX3+BotM3BKqLsWm21dlqUE0K6yaMKEaMQ9wcMY/WnUB/xKIfkOim6i8xv+WfSf64o3+8mE78bBROxb+RKqyBGUR8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716177165; c=relaxed/simple;
-	bh=rSyboOe5ADA6s/e4vGwvUomLwIG/5xupU4mSFMwTGg4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BB50dEpw4/FGESqGCJmrKCZjDVa8dsx4l6dgtO5B7OnezTYb6Y2YYxSnWDES7FAtoaKmF1vfK52w83qsFcMSQtm/IausSIsLuzlmKQ7B2wVgVS+dG86uXygLVCdcy5VDy63hv83BL4aL5rHWqSUtKpght/lJE/iT45lsAK96kFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ia7d6jVz; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: keescook@chromium.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716177161;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H+hVaXU3OLVtnnff/5Lzdg6bnZTvwPprcV1YnanniD0=;
-	b=ia7d6jVzKjdK6FsC6rzouvWzUMOmpf9NbUP98ULlq9BChwXBilKWnTPXP2/4apyoFay3CJ
-	FL9B003cDf8xlYbT0kWVwGjZLhFsyHB++EJNeeDnGhenCjhXCoKGSHxI+cTF26RxkGzE4b
-	RTRy2CzSog75beIl4SjHg/2wGq8ioSY=
-X-Envelope-To: sfr@canb.auug.org.au
-X-Envelope-To: torvalds@linux-foundation.org
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Sun, 19 May 2024 23:52:36 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Kees Cook <keescook@chromium.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs updates fro 6.10-rc1
-Message-ID: <2uuhtn5rnrfqvwx7krec6lc57gptqearrwwbtbpedvlbor7ziw@zgbzssfacdbe>
-References: <zhtllemg2gcex7hwybjzoavzrsnrwheuxtswqyo3mn2dlhsxbx@dkfnr5zx3r2x>
- <202405191921.C218169@keescook>
+	s=arc-20240116; t=1716177467; c=relaxed/simple;
+	bh=LTlMRByhd4F+euVmK6Ked5hunQivRpLdxW4sWjwAKcY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Fkpim1LyDFFFLqIcRmM/IVCvQM9C1SgL8zyFc630qUwnRoaUSXAsxLc03lvLIsPGK4l8HxfRxakUjlyvODnh5Ul12H++jSIHrqLvJGgA+jmR6QyOSikbvQbaVSHp0B50kqDC3U7LnmIyqJwUDPKGNLoFIgmoYZtUMoyaEFFxk88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RYBt5alD; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716177466; x=1747713466;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=LTlMRByhd4F+euVmK6Ked5hunQivRpLdxW4sWjwAKcY=;
+  b=RYBt5alDbUN3Ve2JGylC963VXzaAse5b61DVUpm4ihbuocshrfYRMLw7
+   sVACdpRReCtnWkoxW/7EB56mL2atD7RrWLC586Q1y+zz1McfX/nytirte
+   UD++7ufL83C7+E+8BMTCtmmP75iWhfMSBuSsmmlVKm3NGSO1RNwyPpdUs
+   c04b6eoe3HjLPv2nOoGz/B8dQA3NZwoQsTdQuj0qLpdmeX2+a4J6meYNZ
+   zU3Gjmbsb8aOMCZaQffpIJHgla+DTbAJJiigu/6rd3CmJMYfp8JLJaSBO
+   uL97KnuSanRYi8Sii4WfvnqjibMi13a87Pqp2kuCwEZiYRPffpBrOnOno
+   g==;
+X-CSE-ConnectionGUID: hfkWkiFxRQWBgtTWni5Bbw==
+X-CSE-MsgGUID: mcj/JLiwSL2G3Etxx3bRdA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="23691830"
+X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
+   d="scan'208";a="23691830"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 20:57:46 -0700
+X-CSE-ConnectionGUID: xhpZf/slTFm12oszjVwKKQ==
+X-CSE-MsgGUID: g+zZGbeoR+icujyl1mlkuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
+   d="scan'208";a="32824611"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa006.jf.intel.com with ESMTP; 19 May 2024 20:57:42 -0700
+Message-ID: <868a67fa-b5b5-439b-a906-57cdddeb1053@linux.intel.com>
+Date: Mon, 20 May 2024 11:55:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202405191921.C218169@keescook>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>,
+ "virtualization@lists.linux-foundation.org"
+ <virtualization@lists.linux-foundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 6/9] iommufd: Fault-capable hwpt attach/detach/replace
+To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
+ Jacob Pan <jacob.jun.pan@linux.intel.com>,
+ Joel Granados <j.granados@samsung.com>
+References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
+ <20240430145710.68112-7-baolu.lu@linux.intel.com>
+ <BN9PR11MB5276D582749AD8B619B11B688CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <bd08d2b0-f226-4b42-8d3b-099c46435aa2@linux.intel.com>
+ <BN9PR11MB527642EC35E6B925100D0AEA8CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB527642EC35E6B925100D0AEA8CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, May 19, 2024 at 07:39:38PM -0700, Kees Cook wrote:
-> On Sun, May 19, 2024 at 12:14:34PM -0400, Kent Overstreet wrote:
-> > [...]
-> > bcachefs changes for 6.10-rc1
-> > [...]
-> >       bcachefs: bch2_btree_path_to_text()
+On 5/20/24 11:35 AM, Tian, Kevin wrote:
+>> From: Baolu Lu <baolu.lu@linux.intel.com>
+>> Sent: Monday, May 20, 2024 10:10 AM
+>>
+>> On 5/15/24 4:43 PM, Tian, Kevin wrote:
+>>>> From: Lu Baolu <baolu.lu@linux.intel.com>
+>>>> Sent: Tuesday, April 30, 2024 10:57 PM
+>>>> +
+>>>> +int iommufd_fault_domain_replace_dev(struct iommufd_device *idev,
+>>>> +				     struct iommufd_hw_pagetable *hwpt,
+>>>> +				     struct iommufd_hw_pagetable *old)
+>>>> +{
+>>>> +	struct iommu_attach_handle *handle;
+>>>> +	int ret;
+>>>> +
+>>>> +	if (hwpt->fault)
+>>>> +		ret = iommufd_fault_iopf_enable(idev);
+>>>> +	else
+>>>> +		iommufd_fault_iopf_disable(idev);
+>>>> +
+>>>> +	ret = iommu_group_replace_domain(idev->igroup->group, hwpt-
+>>>>> domain);
+>>>> +	if (ret)
+>>>> +		goto out_cleanup;
+>>>> +
+>>>> +	iommufd_auto_response_faults(old, idev);
+>>>> +	handle = iommu_attach_handle_get(idev->igroup->group,
+>>>> IOMMU_NO_PASID, 0);
+>>>> +	handle->idev = idev;
+>>>
+>>> why is auto response required in replace? new requests can come
+>>> after the auto response anyway...
+>>>
+>>> The user should prepare for faults delivered to the old or new hwpt
+>>> in the transition window.
+>>
+>> The current design of replace allows switching between one that is not
+>> IOPF-capable and one that is. This implies that if we switch from an
+>> IOPF-capable hwpt to a non-IOPF-capable one, the response queue needs to
+>> be auto responded.
+>>
 > 
-> Hi Kent,
-> 
-> I've asked after this before[1], but there continues to be a lot of
-> bcachefs development going on that is only visible when it appears in
-> -next or during the merge window. I cannot find the above commit on
-> any mailing list on lore.kernel.org[2]. The rules for -next are clear:
-> patches _must_ appear on a list _somewhere_ before they land in -next
-> (much less Linus's tree). The point is to get additional reviews, and
-> to serve as a focal point for any discussions that pop up over a given
-> change. Please adjust the bcachefs development workflow to address this.
+> then do it only for that scenario?
 
-Over the course of my career, I've found the kind of workflow and level
-of review you seem to asking for to be at best not useful, and at worst
-harmful to productive functioning of a team - to my ability to teach
-people and get them happy and productive.
+Yes. Will do this in the new version.
 
-The reality has just been that no one has ever been able to keep up with
-the rate at which I work and write code [0], and attempting to do code
-review of every patch means no one else gets anything done and we get
-sidetracked on irrelevant details. When I do post my patches to the
-list, the majority of what I get ends up being spelling fixes or at best
-the kinds of bugs that shake out quickly in real testing. In short, I've
-had to learn to write code without anyone looking over my shoulder, and
-I take pride in debugging my own code and not saddling other people with
-that.
-
-So instead, I prioritize:
- - real discussion over the work being done, which does tend to happen
-   person to person or in meetings (getting more of that on the list
-   would not be a bad idea; I do need to be spending more time writing
-   documentation and design docs, especially at this point).
- - good effective test infrastructure
- - heavy and thoughtful use of assertions; there's a real art to
-   effective use of assertions, where you think about what the
-   correctness proof would look like and write assertions for the
-   invariants (and assertions should be on _state_, not _logic_)
-
-I also do (try to) post patches to the list that are doing something
-interesting and worth discussion; the vast majority this cycle has been
-boring syzbot crap...
-
-IOW, I'm not trying to _flout_ process here, even if I do things
-somewhat differently; I've got quite a few people I'm actively teaching
-and bringing in and that's where most of my energy is going. And we do
-spend a lot of time going over code together, the meetings I run
-(especially with the younger guys) are very much code-and-workflow
-focused.
-
-You'll also find I'm quite responsive, on IRC and the list, should you
-have anything you wish to complain or yell about.
-
-(btw, there's also been some discussions in fs land about other people
-changing their workflows to something that looks more like mine; get the
-important stuff on the list, make the list less spammy, work with each
-other on a quicker timeline than that. They're not quite doing what I'm
-doing, but I do think there's room for the /way/ we do code review and
-the expectations around it to evolve a bit. Personally, I mostly just
-want code to be readable).
-
-I personally approach code review as being primarily about mentorship...
-I don't want people to have the expectation that I'm going to pore over
-their code and find their bugs; I'm not going to do that. I expect
-people to be adults, and take as much time as they need to to get it
-right; if there's something they're not sure about, I expect _them_ to
-bring it up. I personally feel that this mindset teaches more
-responsibility and the "right" kind of defensiveness that it takes to
-write reliable code.
-
-> Anyway, in reference to the above commit, please scrub bcachefs of its
-> %px format string uses. Neither it nor %p should be used[3][4] in new
-> code. (Which is, again, something checkpatch.pl will warn about.)
-
-So that particular code is used in debugfs (root only) or in dumps when
-we're panicing; the reason it's %px and not hashed is because I not
-uncommonly do things like grab addresses from the introspection and then
-use kgdb for further inspection.
-
-Does that alleviate your concern, if it's only exposed that way?
-
-If not, perhaps some sort of config option is appropriate.
-
-[0]: except Linus, who quite frequently leaves my jaw hanging with how
-quickly he can read code and spot real issues.
+Best regards,
+baolu
 
