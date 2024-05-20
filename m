@@ -1,203 +1,78 @@
-Return-Path: <linux-kernel+bounces-184204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7848CA3F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:50:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9326E8CA3FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575A31F22439
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:50:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4DFF1C215F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF18139CE7;
-	Mon, 20 May 2024 21:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62131139D19;
+	Mon, 20 May 2024 21:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cLB6SDwt";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XstiVK2B"
-Received: from wfout3-smtp.messagingengine.com (wfout3-smtp.messagingengine.com [64.147.123.146])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IIMCpQGp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00563137C25;
-	Mon, 20 May 2024 21:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C361847;
+	Mon, 20 May 2024 21:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716241827; cv=none; b=pIYiiXTWiNmDe7UlvHZuujFpSMHjmntK241XGyGtHtvoCE+yC/5C71k7DYowWTrhHS+K2yggNUUVe+xC95NIzIZmumT/ITqOrBmpjHvS4r0LgUHwYM4O4SSZrjUuW7zU5NigciS5HtxnQoEI2EQlvbxloCr45qjoDBmdXuIpQEo=
+	t=1716241921; cv=none; b=TM8sqXEjTCkbn2ZODWo0xcY+e3C9vXbEvuy4GVl/oUoRt3OeoHk8QCkJtfxibo+P/rftfL8MYRW2nqHfMB3BPVlc6cwaXE/NBlrr8dwSUeVg6R9rVFLahHPx7HeZrYpN9m43E301wUp/CGFrW/Of6fFAhXUicdgRpOEzIGp1jWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716241827; c=relaxed/simple;
-	bh=/BzG2AXPi91Ybuwzyq5LPVmO885wC3Jcjp3w2pkDsr4=;
-	h=MIME-Version:Message-Id:Date:From:To:Cc:Subject:Content-Type; b=u8yhEJ59539RgIb/XlqEm0VrY8RvnIBKcR+MymItazgq7jO7EM246cS0X4sKj7XtHu++m6gKOtyZBcr7vparSfyCSpc9Cn3pvNDJri10lbRSgpvM9DS3XONo6jrIn5V5v60KFq4tyh0jffNsxwx9S4d7aOIq7Nmq3y/xMVHlRuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cLB6SDwt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XstiVK2B; arc=none smtp.client-ip=64.147.123.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id 070701C000F1;
-	Mon, 20 May 2024 17:50:24 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 20 May 2024 17:50:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm3;
-	 t=1716241824; x=1716328224; bh=tfXZqovi6taJSl11sMP24Yo5BKUNuK/p
-	Jx4Vnb9SBmo=; b=cLB6SDwtwX8D1YXbRT2Z+tq57154T48R6icFfkzBqndC7NKs
-	kJCNC/8XncR8UAp9JVUqv72BkRo39Yk8KdA2UimbAaW74PzWVF7UvsHVqZfu0yH9
-	CpZQMDYJKx4Zk0fbeJ40YHYGMCF9/hp+ENKyfxG3n1cxHeruza0FI1N74V9TLnxE
-	UN+Pvunc250FyPkXald8vkYt5kZIUCNTYtaTkx+KC/S/XsXEUSoxyztFcIiybxhV
-	ZRItE0Y/tmLwdGZpNn/CafWvFSd++0d0AKo5Vv8DVYKwySVTBwaCGCbLhtbrYV+G
-	igWutFMkNFYGgXJxeJo9IW772WAAcvrYQhLBcA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1716241824; x=1716328224; bh=tfXZqovi6taJSl11sMP24Yo5BKUNuK/pJx4
-	Vnb9SBmo=; b=XstiVK2BWLZ/yUhUPRkmEtDwOfRqYWIruNzAM5K6JiOH18iiZoR
-	jpcktH7n4ZS6MYCet1OvhkiY3o4OjawLqaCmYmxofk/7EZDm0tl2M/+tJiuEoLha
-	3rbAqFil38LXe41aeis6gpqZnbhB+gnJxrcoMP3pVDp39CWpQcKNJb6K5w/vDJBM
-	8+tUpnAMd5u2IXlTlZkYmYypEjmdd8XclMqSMGVrnoH1+iZOIAC8k33eB58FQNGN
-	qupvw+i9xDCfrFj1/QRT4F3E3XYA5QUfvWa0xvadw2yhYq+dK9E9Lzm8CVRDQ+E7
-	dBLxXIvbi4v0LFNw0qNLMlHP2amPfejSOsA==
-X-ME-Sender: <xms:oMVLZgP0VdQ0aumfSkPsr8gtgubS2jZ_pfyU85bKMZxywlJqfna3Cg>
-    <xme:oMVLZm-zjXY3ALkqzf1t9PQU0Dud1ze8uW5k3xXhhoKqJMSPB4A4m0Kx4mU3h2aEo
-    QnO2OPkWKUdq02nUAQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeiuddgtdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkfffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepfeefuefhkeejvedtvddtleeltddttdejgedvhfdtuddvhfeukeduiefhjeetgfei
-    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedune
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:oMVLZnR4P21fPigHQ9soQrUAj3qnGBivfuonvjU_su81wHDMBzbMnw>
-    <xmx:oMVLZovtEXLtJyXbt726GE-RR9VDSNbdxZJ-0C02XvN7vSEduvSYjw>
-    <xmx:oMVLZofKdG8AQxBWmapNqr2pb3E5MsZ5fUNJWqlxp0nsgpNQS5vo1g>
-    <xmx:oMVLZs0hCqqOw4oZKnxjWQFBMeU5GuarQd-UeJt6CWgqve3ojXF1dg>
-    <xmx:oMVLZn69Zgwt3qnDbtT0PS9NojcksovtKp1vVNZNVe-gLsFyWuALdMBz>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 5A501B6008D; Mon, 20 May 2024 17:50:24 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-480-g515a2f54a-fm-20240515.001-g515a2f54
+	s=arc-20240116; t=1716241921; c=relaxed/simple;
+	bh=5Z0o5pJ87HF4qkDugd6GaJxiEySBHPbmdta/hrrtTQI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DuDxiMjTMhJqo/kSuhxhQ6SxNRFyrZAKxc+0pRaLwfvksptVcChKv+q0MkE/On9uX6fVTASoYSTudw4s8s9UxtXKJHlAN8rhcE9XWeADrkKj2V8Z4XWHRtoyiK2O9o4BIs2eWJ21JklGCVYjLCrkuNuROSmdHfVZKrwtCURB0cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IIMCpQGp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7B511C2BD10;
+	Mon, 20 May 2024 21:52:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716241921;
+	bh=5Z0o5pJ87HF4qkDugd6GaJxiEySBHPbmdta/hrrtTQI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=IIMCpQGphdfFbaPr75sIPKKMx2LX1boBCMF73QPFPCFNIhz3wIjmYD0ngBoseAp3k
+	 K8donHg4MvSuwWr7HjbXb7KL7ilFCbWxPQemnOSym+JEGnfBzb9B7gMXsrdaI2zmfK
+	 gIosACLB5PxTH77lOXbXRGU5K7+o6vkwnVkBfp0wqHRHSqGPY123t8hrY3X3vPRk2z
+	 xSGlPFLlio74V7m2Tc4pXseE4ik0OiuHfaMkQ8Wl7mFM9aUdr88AgzxJioM8CmSMVz
+	 0CNT3iTBJWsFp9J13xWtfrctyksL5tbIUUast4RdeiLRu4y4mgWzulXlwOa+J1Z8Sn
+	 pvkbIJ2WJkXag==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6F4A0C43332;
+	Mon, 20 May 2024 21:52:01 +0000 (UTC)
+Subject: Re: [GIT PULL] Kselftest fixes for Linux 6.10-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <1eee575f-91fe-4da8-bd8f-8a8e44fcd4c7@linuxfoundation.org>
+References: <1eee575f-91fe-4da8-bd8f-8a8e44fcd4c7@linuxfoundation.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <1eee575f-91fe-4da8-bd8f-8a8e44fcd4c7@linuxfoundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-next-6.10-rc1-fixes
+X-PR-Tracked-Commit-Id: a97853f25b06f71c23b2d7a59fbd40f3f42d55ac
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 70ec81c2e2b4005465ad0d042e90b36087c36104
+Message-Id: <171624192144.28858.1523665933041408999.pr-tracker-bot@kernel.org>
+Date: Mon, 20 May 2024 21:52:01 +0000
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Tejun Heo <tj@kernel.org>, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Edward Liaw <edliaw@google.com>, John Hubbard <jhubbard@nvidia.com>, Shuah Khan <skhan@linuxfoundation.org>, shuah <shuah@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-Id: <53adc3c6-9d79-405b-ae34-7a4c957a7bda@app.fastmail.com>
-Date: Mon, 20 May 2024 21:50:04 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Thorsten Blum" <thorsten.blum@toblux.com>
-Subject: [GIT PULL v2] asm-generic cleanups for 6.10
-Content-Type: text/plain
 
-The following changes since commit e67572cd2204894179d89bd7b984072f19313b03:
+The pull request you sent on Mon, 20 May 2024 11:34:03 -0600:
 
-  Linux 6.9-rc6 (2024-04-28 13:47:24 -0700)
+> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-next-6.10-rc1-fixes
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/70ec81c2e2b4005465ad0d042e90b36087c36104
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git tags/asm-generic-6.10
+Thank you!
 
-for you to fetch changes up to 34cda5ab89d4f30bc8d8f8d28980a7b8c68db6ec:
-
-  arch: Fix name collision with ACPI's video.o (2024-05-20 21:17:06 +0000)
-
-----------------------------------------------------------------
-asm-generic cleanups for 6.10
-
-These are a few cross-architecture cleanup patches:
-
- - Thomas Zimmermann works on separating fbdev support from the asm/video.h
-   contents that may be used by either the old fbdev drivers or the
-   newer drm display code.
-
- - Thorsten Blum contributes cleanups for the generic bitops code
-   and asm-generic/bug.h
-
- - I remove the orphaned include/asm-generic/page.h header that used to
-   included by long-removed mmu-less architectures.
-
-------------
-I finally managed to resend this pull request after
-merging another regression fix for the original
-contents that were missing the tag on git.kernel.org
-during my travels.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      asm-generic: remove unused asm-generic/page.h
-
-Thomas Zimmermann (4):
-      arch: Select fbdev helpers with CONFIG_VIDEO
-      arch: Remove struct fb_info from video helpers
-      arch: Rename fbdev header and source files
-      arch: Fix name collision with ACPI's video.o
-
-Thorsten Blum (2):
-      bitops: Change function return types from long to int
-      bug: Improve comment
-
- arch/arc/include/asm/fb.h                    |   8 ---
- arch/arm/include/asm/fb.h                    |   6 --
- arch/arm64/include/asm/fb.h                  |  10 ---
- arch/loongarch/include/asm/{fb.h => video.h} |   8 +--
- arch/m68k/include/asm/{fb.h => video.h}      |   8 +--
- arch/mips/include/asm/{fb.h => video.h}      |  12 ++--
- arch/parisc/Makefile                         |   2 +-
- arch/parisc/include/asm/fb.h                 |  14 ----
- arch/parisc/include/asm/video.h              |  16 +++++
- arch/parisc/video/Makefile                   |   2 +-
- arch/parisc/video/{fbdev.c => video-sti.c}   |   9 +--
- arch/powerpc/include/asm/{fb.h => video.h}   |   8 +--
- arch/powerpc/kernel/pci-common.c             |   2 +-
- arch/sh/include/asm/fb.h                     |   7 --
- arch/sparc/Makefile                          |   4 +-
- arch/sparc/include/asm/{fb.h => video.h}     |  15 ++--
- arch/sparc/video/Makefile                    |   2 +-
- arch/sparc/video/fbdev.c                     |  26 -------
- arch/sparc/video/video-common.c              |  25 +++++++
- arch/um/include/asm/Kbuild                   |   2 +-
- arch/x86/Makefile                            |   2 +-
- arch/x86/include/asm/fb.h                    |  19 -----
- arch/x86/include/asm/video.h                 |  21 ++++++
- arch/x86/video/Makefile                      |   3 +-
- arch/x86/video/{fbdev.c => video-common.c}   |  21 +++---
- drivers/video/fbdev/core/fbcon.c             |   2 +-
- include/asm-generic/Kbuild                   |   2 +-
- include/asm-generic/bitops/__ffs.h           |   4 +-
- include/asm-generic/bitops/__fls.h           |   4 +-
- include/asm-generic/bitops/builtin-__ffs.h   |   2 +-
- include/asm-generic/bitops/builtin-__fls.h   |   2 +-
- include/asm-generic/bug.h                    |   2 +-
- include/asm-generic/page.h                   | 103 ---------------------------
- include/asm-generic/{fb.h => video.h}        |  17 ++---
- include/linux/bitops.h                       |   6 +-
- include/linux/fb.h                           |   2 +-
- tools/include/asm-generic/bitops/__ffs.h     |   4 +-
- tools/include/asm-generic/bitops/__fls.h     |   4 +-
- tools/include/linux/bitops.h                 |   2 +-
- 39 files changed, 139 insertions(+), 269 deletions(-)
- delete mode 100644 arch/arc/include/asm/fb.h
- delete mode 100644 arch/arm/include/asm/fb.h
- delete mode 100644 arch/arm64/include/asm/fb.h
- rename arch/loongarch/include/asm/{fb.h => video.h} (86%)
- rename arch/m68k/include/asm/{fb.h => video.h} (86%)
- rename arch/mips/include/asm/{fb.h => video.h} (76%)
- delete mode 100644 arch/parisc/include/asm/fb.h
- create mode 100644 arch/parisc/include/asm/video.h
- rename arch/parisc/video/{fbdev.c => video-sti.c} (78%)
- rename arch/powerpc/include/asm/{fb.h => video.h} (76%)
- delete mode 100644 arch/sh/include/asm/fb.h
- rename arch/sparc/include/asm/{fb.h => video.h} (75%)
- delete mode 100644 arch/sparc/video/fbdev.c
- create mode 100644 arch/sparc/video/video-common.c
- delete mode 100644 arch/x86/include/asm/fb.h
- create mode 100644 arch/x86/include/asm/video.h
- rename arch/x86/video/{fbdev.c => video-common.c} (66%)
- delete mode 100644 include/asm-generic/page.h
- rename include/asm-generic/{fb.h => video.h} (89%)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
