@@ -1,124 +1,145 @@
-Return-Path: <linux-kernel+bounces-183458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926788C994C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:29:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D978C8C9925
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F20C281CD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:29:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165871C20D5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7671CAAD;
-	Mon, 20 May 2024 07:29:35 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A25D182D8;
+	Mon, 20 May 2024 07:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REMDBuTV"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836181B960;
-	Mon, 20 May 2024 07:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2289817991;
+	Mon, 20 May 2024 07:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716190175; cv=none; b=B9lAmdSSAH2i+bN2d24t7cliAVcckSdR1ax4UoPcu9IWBgKkwfSx85H3R79n4FqPmSjSYU3wrMSL1x5/gxdObzZK93UAmSxWncgpdTlFetzWoLGvTXYn9hga0aCSWaerQs0u0yRuz+YHc4rMQRudLb5SGtlpanC7z8eMWPgLWDg=
+	t=1716189062; cv=none; b=lcZCJbOh8yliDkxjGFtfmz1aJDWugiwcZv+lDZmvPelX9GB80d1L3lBWqfBkYNCtG2nDSd0sqESgaLEIh9bJzY3YpoKkktAsTgJzU4G1f70EnDe9s2oUXZE9INKsNjl96eQOBeR/3CucVMfJnwe5K8RvsGni4PbMCcNSZhDsUsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716190175; c=relaxed/simple;
-	bh=4aojkFZC7sCdR6e90XG+sUyXzKpg7q4F9CqGRb/pFkM=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=Uq9i9Yd+YFWP1sTeiktfOW9FAia4etZ/BYuChrwHBlm4cTNeO2HhmO1+SbkPVjQf4sDhF7ml94woDZW6ar6U8ORO6xawJvY2uxkg1kNrY286TQlpV7vgn41W1ZUiVey+dYWMniv+7I0ZsgEhh1oyfiJwctkxrgvk+tgWz2qdcYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 00478201946;
-	Mon, 20 May 2024 09:29:32 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A82E420194D;
-	Mon, 20 May 2024 09:29:31 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 3A768180226C;
-	Mon, 20 May 2024 15:29:29 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	marex@denx.de,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de,
-	shengjiu.wang@gmail.com
-Subject: [PATCH v4 5/5] clk: imx: clk-audiomix: Corrent parent clock for earc_phy and audpll
-Date: Mon, 20 May 2024 15:09:23 +0800
-Message-Id: <1716188963-16175-6-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1716188963-16175-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1716188963-16175-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1716189062; c=relaxed/simple;
+	bh=Xqp4WFSK/O1dCF/AoIOI2mi1EC2aT+nNHiw50mWgMi4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ilHNZUGJa8m93vAfJhyI/F5grSe9r4eE1sU+2KC7mpcmVURpAaRkgNJQ2PIl8KR/Y/pDGMUkq+zmS3tTxmzLgtJl4Ik7agPQ8FdtONySxF3jsx36JJx5CVdcncsYkj1PUsD8+O9+pptTBdvo0WH+kuHKPm1LTuUkT9pYcgKxUX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=REMDBuTV; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1ed835f3c3cso73065525ad.3;
+        Mon, 20 May 2024 00:11:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716189060; x=1716793860; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GzRkDGtz7I3+/0/aWq4lp22/QhQlM4vFfLswyFGXHd8=;
+        b=REMDBuTVsPIBIi5CsX10qqlieCvm06TFXkegLE6pNJcxVNgi+pw7UFV63HoavvFwOd
+         8dLb0zKWuPdlIudbjLmk+2M/vufkH0Evw4Y9IV4+kWNeEK8xkaAfFCLhZoXnt3RHIaK0
+         vOpTWOzE6xzdhxS3GoS71eCmuXG1/24776DGXcNZdFIsehAv6RWFPFzbjwrFsA4b6P6k
+         yIwyK99mjfYOB7ja0K3+XaZ9wUOtEOr+KGbtOGF1PDmkOqPiHvTZjcpafzKFmemEYj2n
+         upyU2OFVCx8DD2KriFLmGj3NNZ1opnUSwuzuAHj6yK07vxMjmBWzzWxnxSKQEhgSYPTC
+         Pocw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716189060; x=1716793860;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GzRkDGtz7I3+/0/aWq4lp22/QhQlM4vFfLswyFGXHd8=;
+        b=hT13hU9vXZRXVm6ZtgWy+lk8Co2MAZlL7bJEzr+0sERuY4hAvolR9z6NRTk893tvYx
+         TtoHQ8zu3pUQjltYYUfcFW35d7p8QXlHYvYHHxBChUpSUMbxCPR/f8EZa5CYBQdtLcjn
+         ewQAJDOxz5SJHSP/mx80PtOX2VfOIQohlZsq4IB11H3NzMcv9Nmv3trJ6akn5nysugYA
+         X1rVgt5dgON+YyrYHwMdZPzejgiK+ARNkpKPf7onpK0qMGYNFbV91OnYxB92WjOtXMt6
+         YAVCJOoSXsyliMM9PA08cts+q56xa+HZfLVqZnpCPLTnG877u7GZbpA297xOmPEdVnTD
+         szog==
+X-Forwarded-Encrypted: i=1; AJvYcCUa5kgqA9W+xRUn6S3Y5qH0n8YmhZwNqxXHcDij7mnAVTkJ9zh9QvUoLqLHHJf9astOToszcXn0ZDQ/TAyNvqNAHizPPCN3kVaIvJsZTmFxG13dCVIpmOvC0cRSRrNXoIQNXXC593mrWs+Amg==
+X-Gm-Message-State: AOJu0Yx1zyGX2MI6HeBbPXI+VKqbXMR5cBsoTlh7gxOiUV7pxYY9Ss11
+	i4w1eOOCs3ad9OzkPUn2yzNKPk8VeqJAP6i99cmyLVPKc21NR5vY17eviU+G5qk=
+X-Google-Smtp-Source: AGHT+IG4Ymvi2o+m4Cd7KR59fK5NFZa5IP8shdlOvXufN+TZu1xsj/UlyyJohS1f26TB2LTxebTbZw==
+X-Received: by 2002:a17:902:eb86:b0:1eb:4a40:c486 with SMTP id d9443c01a7336-1ef43d17f42mr374476445ad.14.1716189060280;
+        Mon, 20 May 2024 00:11:00 -0700 (PDT)
+Received: from smtpclient.apple ([47.246.179.0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c03874csm195601135ad.206.2024.05.20.00.10.57
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2024 00:10:59 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
+Date: Mon, 20 May 2024 15:10:40 +0800
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>,
+ Petr Mladek <pmladek@suse.com>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
+References: <20240520005826.17281-1-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
+To: Miroslav Benes <mbenes@suse.cz>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-According to Reference Manual of i.MX8MP
-The parent clock of "earc_phy" is "sai_pll_out_div2",
-The parent clock of "audpll" is "osc_24m".
 
-Add CLK_GATE_PARENT() macro for usage of specifying parent clock.
 
-Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- drivers/clk/imx/clk-imx8mp-audiomix.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+> On May 20, 2024, at 14:46, Miroslav Benes <mbenes@suse.cz> wrote:
+>=20
+> Hi,
+>=20
+> On Mon, 20 May 2024, Wardenjohn wrote:
+>=20
+>> Livepatch module usually used to modify kernel functions.
+>> If the patched function have bug, it may cause serious result
+>> such as kernel crash.
+>>=20
+>> This is a kobject attribute of klp_func. Sysfs interface named
+>> "called" is introduced to livepatch which will be set as true
+>> if the patched function is called.
+>>=20
+>> /sys/kernel/livepatch/<patch>/<object>/<function,sympos>/called
+>>=20
+>> This value "called" is quite necessary for kernel stability
+>> assurance for livepatching module of a running system.
+>> Testing process is important before a livepatch module apply to
+>> a production system. With this interface, testing process can
+>> easily find out which function is successfully called.
+>> Any testing process can make sure they have successfully cover
+>> all the patched function that changed with the help of this =
+interface.
+>=20
+> Even easier is to use the existing tracing infrastructure in the =
+kernel=20
+> (ftrace for example) to track the new function. You can obtain much =
+more=20
+> information with that than the new attribute provides.
+>=20
+> Regards,
+> Miroslav
+Hi Miroslav
 
-diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-index 3d15405cedb8..4ae0cf916d78 100644
---- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-+++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-@@ -155,6 +155,15 @@ static const struct clk_parent_data clk_imx8mp_audiomix_pll_bypass_sels[] = {
- 		PDM_SEL, 2, 0						\
- 	}
- 
-+#define CLK_GATE_PARENT(gname, cname, pname)						\
-+	{								\
-+		gname"_cg",						\
-+		IMX8MP_CLK_AUDIOMIX_##cname,				\
-+		{ .fw_name = pname, .name = pname }, NULL, 1,		\
-+		CLKEN0 + 4 * !!(IMX8MP_CLK_AUDIOMIX_##cname / 32),	\
-+		1, IMX8MP_CLK_AUDIOMIX_##cname % 32			\
-+	}
-+
- struct clk_imx8mp_audiomix_sel {
- 	const char			*name;
- 	int				clkid;
-@@ -172,14 +181,14 @@ static struct clk_imx8mp_audiomix_sel sels[] = {
- 	CLK_GATE("earc", EARC_IPG),
- 	CLK_GATE("ocrama", OCRAMA_IPG),
- 	CLK_GATE("aud2htx", AUD2HTX_IPG),
--	CLK_GATE("earc_phy", EARC_PHY),
-+	CLK_GATE_PARENT("earc_phy", EARC_PHY, "sai_pll_out_div2"),
- 	CLK_GATE("sdma2", SDMA2_ROOT),
- 	CLK_GATE("sdma3", SDMA3_ROOT),
- 	CLK_GATE("spba2", SPBA2_ROOT),
- 	CLK_GATE("dsp", DSP_ROOT),
- 	CLK_GATE("dspdbg", DSPDBG_ROOT),
- 	CLK_GATE("edma", EDMA_ROOT),
--	CLK_GATE("audpll", AUDPLL_ROOT),
-+	CLK_GATE_PARENT("audpll", AUDPLL_ROOT, "osc_24m"),
- 	CLK_GATE("mu2", MU2_ROOT),
- 	CLK_GATE("mu3", MU3_ROOT),
- 	CLK_PDM,
--- 
-2.34.1
+First, in most cases, testing process is should be automated, which make =
+using existing tracing infrastructure inconvenient. Second, livepatch is =
+already use ftrace for functional replacement, I don=E2=80=99t think it =
+is a good choice of using kernel tracing tool to trace a patched =
+function.
+
+At last, this attribute can be thought of as a state of a livepatch =
+function. It is a state, like the "patched" "transition" state of a =
+klp_patch.  Adding this state will not break the state consistency of =
+livepatch.
+
+Regards,
+Wardenjohn
 
 
