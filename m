@@ -1,187 +1,169 @@
-Return-Path: <linux-kernel+bounces-183962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE678CA0A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:21:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82488CA0A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE4AFB21EEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:21:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2A661C2103F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC756137933;
-	Mon, 20 May 2024 16:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A9C137929;
+	Mon, 20 May 2024 16:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZXlF+02T"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2079.outbound.protection.outlook.com [40.107.241.79])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHBmFr/9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2801220EB;
-	Mon, 20 May 2024 16:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716222080; cv=fail; b=FbqHQSfXbz/yHsAD9SPRgRv0+GshVNcQixJ6t/atJ7MYJTR3rQlsE0Ays8WGp7IZGJR+Ypee+7VVIbG1kK4rfl9L4bFwurakHc9LLhs5J2Xtvbcl/PLN0GhAJ46Pucu0oEKvuc61OK0YOMRrXSqEM4AjBwXmi3Y7B8BWfb8+IW4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716222080; c=relaxed/simple;
-	bh=BJh68L2Vo442M71kmp+NPXtJGO3KdaNTcmACexJNETc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=se3Ra8NPM+b1flJ1nOzN+ttsd5alhyG880AIybkffu8sR12iHdDfSWrZXJGTOKayDHZh5ayEDdm2UTBjUrvo3avtPxi98+8Hr4YRALhGIJJNDUx3e/kE9ddg7nKSi4FiuLbBqAzW9J4bVml7QbjVMr5jzD/Mse1c1qv/+i0KHlk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZXlF+02T; arc=fail smtp.client-ip=40.107.241.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LE8pSerZfh8rsg2grecl/Vkay43yT3DJxunUG1AgeQ3Gk/7UVlIAVCQaVDN3EUIAbZ9d7jnzWqUCBJCI+OEEcuCLjCQ89a7VdLJD04Wa1I/J9Np9v7EC7CQ+A9MDPMfBZ+ODtzhhgKfSS2NNBl3k+z+zPqQclP52EeOk+f3uKwRNa/TUjEY2xovZG8HPbnW9MX+OeCtkgft0L+wUDynqh+/P4v79r07vn38Eiw/kDXHzzr5E/K9Aj5qUTpeszdlkgxRksF9f5tBmFS4SAO1hhiqZDTcEk4hnvZ57tHo2ounmXetRKihhaLw9icchvwtv35HxZA6y3JFw1FCY0XElzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=evB8sm3euJVq7vQR6Ti3pbEKrwLAvCFw9hRO/klxrsE=;
- b=Pcw/on3dsZDjyV3jWJvpxKxX+qKzDaS0CqnRuwMJdFWk6BJiY/pAkUE/6iySDeo0G7VvNLcOOruJX7A8tlPeRIEHYjnMVjP+TMAWrd+KvHw+EY7KOI6gJDi69UMGEl1JTkB+AEeKSGwl11JGANvI/AkQQMuR2UYTlyz+dMt2ytq7ze8wUaDfiBYkSxAqDeJaY3jSWguDGAfQRtyfz8FnnltF18613hCZXQLczPe2Vj0sa6SUSDF+vNovvZFxf8zTMRBWdN62C/Sdq+VBm0wXG46ZpjWHaneQBZKCpDjvfoQoieKhUdyjOGDPYK1GhdBkgiv44MfvFGcRf8+O0pGHeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=evB8sm3euJVq7vQR6Ti3pbEKrwLAvCFw9hRO/klxrsE=;
- b=ZXlF+02TClmEj9wDWtp+Na5slQsSRBNrAOtIUGrTDA7rM79pu5hsl3UAoXw2Y7ELp4DL2IjupF+tg+Xwlv7Xik+vwertjSJpzR6bYl7YPfaG2nXrMXbzkSjFdPQv6VEUXdnejk+YLyY/3NI9OJUXtrSfRlMBXgyY8FEWDcb6ZTQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS8PR04MB8387.eurprd04.prod.outlook.com (2603:10a6:20b:3f7::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Mon, 20 May
- 2024 16:21:14 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::1e67:dfc9:d0c1:fe58]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::1e67:dfc9:d0c1:fe58%7]) with mapi id 15.20.7587.030; Mon, 20 May 2024
- 16:21:14 +0000
-Date: Mon, 20 May 2024 12:21:08 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: linux@treblig.org
-Cc: vkoul@kernel.org, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dmaengine: moxart-dma: remove unused struct
- 'moxart_filter_data'
-Message-ID: <Zkt4dHQuSoRaz7Nn@lizhi-Precision-Tower-5810>
-References: <20240516152825.262578-1-linux@treblig.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516152825.262578-1-linux@treblig.org>
-X-ClientProxiedBy: BYAPR02CA0047.namprd02.prod.outlook.com
- (2603:10b6:a03:54::24) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C74420EB;
+	Mon, 20 May 2024 16:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716222198; cv=none; b=cGDiKdvu5frEjOjDfG+Zqc6FwglXS4Q0JhsNIgGHpypntOvOxIS/3+YXhxZm+HSncYO4dBvLIV33V0CMOkVlqWXhSe1KOT+3zeJxEIQLRbRlfOeJDPmd/x0Uqtu3GaaQkB29EG6BCgH2LT8rv36ciTXRsPE2HMlXtwvBpuD2+x4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716222198; c=relaxed/simple;
+	bh=6dHx4umvxa1ctj0jF5ZevsPoIkxPhkhSXCfqfYnVDV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FJkr4eu2SLSC8jeRrOCctK9zpGkwbu7/RL06GyeFGty6bd0JVZKlTvKwD9A3fpyypZQzuZrhY+JGuqRlU0mDX4SwnRZw+Gi/4K9SGpa6DlmP7wnZuvGEsPYzDegDm5xXsFDzznNe5m1XkHGgWTFMw+paZWyQE979/M4x2Ionjng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHBmFr/9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1776C2BD10;
+	Mon, 20 May 2024 16:23:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716222198;
+	bh=6dHx4umvxa1ctj0jF5ZevsPoIkxPhkhSXCfqfYnVDV8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fHBmFr/9g8bHAE5luH9TrL76uGgHUparucsJYOnFIvQNjdqPpborLVihddYhfysT7
+	 Pwa6xwusXxIE/CE/kKEsE+3kB5quBJo28KPRCMNtHdz5f/PLOr+oPV8WECUiuL3Hl+
+	 wlj/FWXazBNyzhSZqmr2OeBK0ykUV9uYYJ9p77xRiG35+r7Vuu+ovCGZY5pRvF0yl5
+	 zeOZAmEIVHg1+XC2s4py6bKgZRh7APZV5FYdxsFc6Z/Vxuifed6qd2yXotpkBaCkkj
+	 dN7eC/X3EgapSDlfpleu7Zff2ek0YSAjkoVlAMq3egMbWWYEX0aHxN18Q0smB0Bni0
+	 uV3jhmCXbhW0A==
+Date: Mon, 20 May 2024 17:23:14 +0100
+From: Filipe Manana <fdmanana@kernel.org>
+To: cve@kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-cve-announce@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: CVE-2024-26904: btrfs: fix data race at btrfs_use_block_rsv()
+ when accessing block reserve
+Message-ID: <Zkt48ug3KKOTQk42@debian0.Home>
+References: <2024041746-CVE-2024-26904-e3a8@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8387:EE_
-X-MS-Office365-Filtering-Correlation-Id: 274bd63e-4a4c-4a2e-c890-08dc78e8dedf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|52116005|366007|1800799015|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zp73mOJq967XfTBkDVAvUZHlYZLrNKu+82z0Bmj161fLtE9KDQYsO1fKNM2a?=
- =?us-ascii?Q?nd7RPW8rj1WWbUuuNN4L63njNGOAHPnb8kHn8OoQlhyfoPjyzLC/UMFQeW20?=
- =?us-ascii?Q?tj1yfdIjBqoBMRkpSccAWr4KUtFIoaNDmvUhoxrQawzWe3M1B9+yTqn1TEhx?=
- =?us-ascii?Q?DsaXHNRFXvEFsqxb3CIEPHKmUENoP+XqWLB6fbY7XmWMKC8ikMLJe5qhvlAU?=
- =?us-ascii?Q?4+1hB9kuaVHPjQEx4LUA9xWDlST16J64KMq6Hx6k4TsL27FVHnWLY9zTLT6l?=
- =?us-ascii?Q?R37id1aLRHMla6xS7piytlvQQ+ERYFk1Y9bFBTOypoPHo3QqwvB98LcynzEJ?=
- =?us-ascii?Q?MVVcXLKBRaAkDzbGqODUKFK7rUbr5TD4cacH1oZNpf7+vtqf4yMPw15bqh83?=
- =?us-ascii?Q?Gh8ABw//+QfsSsRivJ0ROl6lqW1nlnIQfuRGzSJrQ3wiyCIXX6Nii9L3Fg3w?=
- =?us-ascii?Q?JrXovSnyCb/HS/IJONyKpzLUdB96POI3nfcRNz98IJFKWUL2X1H+JaUm+s6g?=
- =?us-ascii?Q?6SjlGxlUspo97TXFCs6nMf/tepHlV1gNgbtrLLRe97DKFj1lEQTTO2JNKNc2?=
- =?us-ascii?Q?brmMv7iu3NeIN3iCQK55bSTVzwfhoIi5TdagUWDIxr9jhumjIhgB+bcqY3iz?=
- =?us-ascii?Q?M8Ss/2+wsY/JVuhGWM4g+ykPJ7rErUSKKE1DVD1tHeXvZVDOO+LP6WxfHSFx?=
- =?us-ascii?Q?SjIdOvuh0ZEI1zYAd/6/D0IXEpv0sGBo5/4sa+g32lH6EFp8HpX41V/HsH40?=
- =?us-ascii?Q?imva4LLEn6wH7Vmm2hsJJoLgRkbN5IWiooHTsPeZRc4XDvmpNM19KQ7gPblf?=
- =?us-ascii?Q?O1Tp8J7WwJy/8Z8P+oUUmIVBJGxfktDBpxNVdboo+lrwikLT1srQayFHe1nr?=
- =?us-ascii?Q?HJcnMKy3xheQRDaiXeeB8TSDFXD+cKcL4vtjdlpXgv6ejU05Z8nOcBxjV8ZE?=
- =?us-ascii?Q?27xF0DoR7jLF0aHHgO16NAjo53xV9NWwF8WbDFBjfK/H6rWUETa26wdAD/6C?=
- =?us-ascii?Q?wGXY6yxEGcQ2YQpJhWHHkTkrNBSNshOabCt1ZoNKaPLws451ynS1XbusKMY7?=
- =?us-ascii?Q?risAbRkd8QM8K1XdtbZ66PrO0IIkxDWAhzX0dEiy47aVXFGhIL2qSIswnaoD?=
- =?us-ascii?Q?6cdsM+Wy7PrgCH5XmCH8ABPj3GBOAyILDG5RNKCufUHpSfFn3yX9vRm8SAfv?=
- =?us-ascii?Q?IzQsshLWHFT/g20Apzrh5NtG7WLnNG/Jb+SR8KsD8YNq/463dE9VRBMpMb7S?=
- =?us-ascii?Q?FMINCX/VvMCyalo9ya3qvBRJK5AJsqlZl/t5IX1hjKf71hKD81jsUOZkpKWn?=
- =?us-ascii?Q?UBT10qlrFFn6SKQqlUlNY9aNFnSLzb7krKp2T0y0aDuUlA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(52116005)(366007)(1800799015)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hgcL2jzzYNQp6YxOiGjvoMEl6OiYZRfJ495milJeIMW8kYPjwcxnyUgQ6pOM?=
- =?us-ascii?Q?lUw9O50p+ftANE6cGY9ZWIgsMjdIfY62IsEmiOqCDBHl9SvwGJFh3RIwUveA?=
- =?us-ascii?Q?kqqYRLA9KtSiQbCDEy5teZHxQw4SB8BCNGlK9WcCzy9+8+yKOwpzKUrUynOF?=
- =?us-ascii?Q?eQ4ofUbXgDu/v8sn0r3M/dsWjDVwp8xqt+2mv2vYRFDqnNYgiukF2JwKEePK?=
- =?us-ascii?Q?9GH/Hj09GXhArjWFf992iFuyM1PNJlYpPQmTWBvClkDRvbdATIvfbB/5nK6C?=
- =?us-ascii?Q?hNgmk8W97Xh2hGKjjfnUrPjSOAgDyiiDqwaI2gIZskjBFHHZXV5nuSJoGhl2?=
- =?us-ascii?Q?cKC01mV3aQG0668ZotqJZ+Iz7ArGm0s3OzUEL5R0zebBrbl28PVWzzkqqlD9?=
- =?us-ascii?Q?vvMGhdQI0+aVcn31euJW7N5JiF17WJ0gqfoJZih2jqn+15GAqgxTnDXDXrjg?=
- =?us-ascii?Q?Aqg4tj3GHS+M5Cb2k689G7WNDY4FpZJHvbUvpHuiZYv/qyJwCBDkjyMKYmdS?=
- =?us-ascii?Q?gVIY1H9FjVtvHZp6ZRseSJR4V6v/IREJb07KqfGgIybfjL9H++qjhcGs/59g?=
- =?us-ascii?Q?lXzbwTjGTrTEhfNOLUVb/rNVv/tNGX1HJm8DAlR5ysvf636rcxBC6H+ux6SW?=
- =?us-ascii?Q?InANeSzH5rkFnw9NQe34DTtn5o+xigVY0gH6i5Ip7kyWEARm7JmgnvzdE4hH?=
- =?us-ascii?Q?PvqHZzNXvtzEbGT9uDeXjDou7lzHCRdVCw1hir8e5IU+cokD9b/1h/w0MFdP?=
- =?us-ascii?Q?q8t4EnDcrqteE/+U5qgJpa5MvAQpOQRh1Vo+yLbftN4vulmPEJzlxC0fv3xi?=
- =?us-ascii?Q?yRaj1juBnZVJys3KtDv0TGEzjYT6s0s81hF69m4yqlUNlZlJJ7/VqGa4vo8M?=
- =?us-ascii?Q?AkhfEX5k7qEIa+xgELEjsVAOm1vRV/jBRWG+M5qk54AirXrlKi7SRG7ltJ6M?=
- =?us-ascii?Q?dWsAlPBCzSIMgJfVFm16jrLQ7gvwB8rWT7IcqsmTOAdSxJmkRUZzrpByrmpB?=
- =?us-ascii?Q?jyl44fXsWNrrBpRxshrLM9L7tXMrujRPYBPDLQwo2+XltR/fnUlCx63gIEzg?=
- =?us-ascii?Q?eKtttEds20wUnuJ6vjKZT33lRkzeQAAnC7jFJb6692zsaPrt7jWc5w1Qj1dn?=
- =?us-ascii?Q?+Zj5/6fWFEgtVqFRTp2VE8OOfUPQRP+uL+kfugsj00hmQIBXFNLimGdfC2ig?=
- =?us-ascii?Q?ZZhO/PdDeosvfDszSfdUimmnI6Y/csX0wLBlZ2H++KBQtavYKzZAxAmdEvou?=
- =?us-ascii?Q?yBYpxNjtD162+ulkNZxYndenSZMdbykiTRz6PFnzufE26HLtDbraqODcTirK?=
- =?us-ascii?Q?n8bbWsm8GzM2GDhS1S1KZlNiWADjlQDg2ZvQyxV6ZbEsXax+MQ78uQwdZLux?=
- =?us-ascii?Q?MWsMKLa1is45wnyev67/qTmloDN0THvavzjTlIwnDS6geEGFmAxwHKjfx+14?=
- =?us-ascii?Q?uqkzST0aa4/eRvqvhHOjm1608U8APqK1u+PNuo1v5w2a+HG5He42RPzpt5cH?=
- =?us-ascii?Q?rb5R8csjiyBb3AeubND+jpNIr09PIt3HV69GucG8qdRfWdDtKNzkdD1VhicN?=
- =?us-ascii?Q?Q3f6ERheGti1SpYok4c=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 274bd63e-4a4c-4a2e-c890-08dc78e8dedf
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 16:21:14.7521
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dNPmclaRNPvgMZxfvDNogk2rc1OW9vjiylJUSaeYTrzTXs0yQqGCBfRL+Y6+HNZRSAB6fxyXrViqyqyBw0h7cg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8387
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024041746-CVE-2024-26904-e3a8@gregkh>
 
-On Thu, May 16, 2024 at 04:28:25PM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Wed, Apr 17, 2024 at 12:29:19PM +0200, Greg Kroah-Hartman wrote:
+> Description
+> ===========
 > 
-> Remove unused struct 'moxart_filter_data'
+> In the Linux kernel, the following vulnerability has been resolved:
 > 
-nit: need "." after sentence.
+> btrfs: fix data race at btrfs_use_block_rsv() when accessing block reserve
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+May I ask why is this classified a CVE?
 
+How can a malicious user exploit this to do something harmful?
 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  drivers/dma/moxart-dma.c | 5 -----
->  1 file changed, 5 deletions(-)
+The race was solved to silence KCSAN warnings, as from time to time we have
+someone reporting it, but other than that, it should be harmless.
+
+Thanks.
+
 > 
-> diff --git a/drivers/dma/moxart-dma.c b/drivers/dma/moxart-dma.c
-> index c48d68cbff92..66dc6d31b603 100644
-> --- a/drivers/dma/moxart-dma.c
-> +++ b/drivers/dma/moxart-dma.c
-> @@ -148,11 +148,6 @@ struct moxart_dmadev {
->  	unsigned int			irq;
->  };
->  
-> -struct moxart_filter_data {
-> -	struct moxart_dmadev		*mdc;
-> -	struct of_phandle_args		*dma_spec;
-> -};
-> -
->  static const unsigned int es_bytes[] = {
->  	[MOXART_DMA_DATA_TYPE_S8] = 1,
->  	[MOXART_DMA_DATA_TYPE_S16] = 2,
-> -- 
-> 2.45.0
+> At btrfs_use_block_rsv() we read the size of a block reserve without
+> locking its spinlock, which makes KCSAN complain because the size of a
+> block reserve is always updated while holding its spinlock. The report
+> from KCSAN is the following:
 > 
+>   [653.313148] BUG: KCSAN: data-race in btrfs_update_delayed_refs_rsv [btrfs] / btrfs_use_block_rsv [btrfs]
+> 
+>   [653.314755] read to 0x000000017f5871b8 of 8 bytes by task 7519 on cpu 0:
+>   [653.314779]  btrfs_use_block_rsv+0xe4/0x2f8 [btrfs]
+>   [653.315606]  btrfs_alloc_tree_block+0xdc/0x998 [btrfs]
+>   [653.316421]  btrfs_force_cow_block+0x220/0xe38 [btrfs]
+>   [653.317242]  btrfs_cow_block+0x1ac/0x568 [btrfs]
+>   [653.318060]  btrfs_search_slot+0xda2/0x19b8 [btrfs]
+>   [653.318879]  btrfs_del_csums+0x1dc/0x798 [btrfs]
+>   [653.319702]  __btrfs_free_extent.isra.0+0xc24/0x2028 [btrfs]
+>   [653.320538]  __btrfs_run_delayed_refs+0xd3c/0x2390 [btrfs]
+>   [653.321340]  btrfs_run_delayed_refs+0xae/0x290 [btrfs]
+>   [653.322140]  flush_space+0x5e4/0x718 [btrfs]
+>   [653.322958]  btrfs_preempt_reclaim_metadata_space+0x102/0x2f8 [btrfs]
+>   [653.323781]  process_one_work+0x3b6/0x838
+>   [653.323800]  worker_thread+0x75e/0xb10
+>   [653.323817]  kthread+0x21a/0x230
+>   [653.323836]  __ret_from_fork+0x6c/0xb8
+>   [653.323855]  ret_from_fork+0xa/0x30
+> 
+>   [653.323887] write to 0x000000017f5871b8 of 8 bytes by task 576 on cpu 3:
+>   [653.323906]  btrfs_update_delayed_refs_rsv+0x1a4/0x250 [btrfs]
+>   [653.324699]  btrfs_add_delayed_data_ref+0x468/0x6d8 [btrfs]
+>   [653.325494]  btrfs_free_extent+0x76/0x120 [btrfs]
+>   [653.326280]  __btrfs_mod_ref+0x6a8/0x6b8 [btrfs]
+>   [653.327064]  btrfs_dec_ref+0x50/0x70 [btrfs]
+>   [653.327849]  walk_up_proc+0x236/0xa50 [btrfs]
+>   [653.328633]  walk_up_tree+0x21c/0x448 [btrfs]
+>   [653.329418]  btrfs_drop_snapshot+0x802/0x1328 [btrfs]
+>   [653.330205]  btrfs_clean_one_deleted_snapshot+0x184/0x238 [btrfs]
+>   [653.330995]  cleaner_kthread+0x2b0/0x2f0 [btrfs]
+>   [653.331781]  kthread+0x21a/0x230
+>   [653.331800]  __ret_from_fork+0x6c/0xb8
+>   [653.331818]  ret_from_fork+0xa/0x30
+> 
+> So add a helper to get the size of a block reserve while holding the lock.
+> Reading the field while holding the lock instead of using the data_race()
+> annotation is used in order to prevent load tearing.
+> 
+> The Linux kernel CVE team has assigned CVE-2024-26904 to this issue.
+> 
+> 
+> Affected and fixed versions
+> ===========================
+> 
+> 	Fixed in 5.4.273 with commit 2daa2a8e895e
+> 	Fixed in 6.1.83 with commit ab1be3f1aa77
+> 	Fixed in 6.6.23 with commit f6d4d29a1265
+> 	Fixed in 6.7.11 with commit 7e9422d35d57
+> 	Fixed in 6.8 with commit c7bb26b847e5
+> 
+> Please see https://www.kernel.org for a full list of currently supported
+> kernel versions by the kernel community.
+> 
+> Unaffected versions might change over time as fixes are backported to
+> older supported kernel versions.  The official CVE entry at
+> 	https://cve.org/CVERecord/?id=CVE-2024-26904
+> will be updated if fixes are backported, please check that for the most
+> up to date information about this issue.
+> 
+> 
+> Affected files
+> ==============
+> 
+> The file(s) affected by this issue are:
+> 	fs/btrfs/block-rsv.c
+> 	fs/btrfs/block-rsv.h
+> 
+> 
+> Mitigation
+> ==========
+> 
+> The Linux kernel CVE team recommends that you update to the latest
+> stable kernel version for this, and many other bugfixes.  Individual
+> changes are never tested alone, but rather are part of a larger kernel
+> release.  Cherry-picking individual commits is not recommended or
+> supported by the Linux kernel community at all.  If however, updating to
+> the latest release is impossible, the individual changes to resolve this
+> issue can be found at these commits:
+> 	https://git.kernel.org/stable/c/2daa2a8e895e6dc2395f8628c011bcf1e019040d
+> 	https://git.kernel.org/stable/c/ab1be3f1aa7799f99155488c28eacaef65eb68fb
+> 	https://git.kernel.org/stable/c/f6d4d29a12655b42a13cec038c2902bb7efc50ed
+> 	https://git.kernel.org/stable/c/7e9422d35d574b646269ca46010a835ca074b310
+> 	https://git.kernel.org/stable/c/c7bb26b847e5b97814f522686068c5628e2b3646
 
