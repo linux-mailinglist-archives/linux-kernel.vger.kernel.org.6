@@ -1,127 +1,223 @@
-Return-Path: <linux-kernel+bounces-183795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71BF28C9E3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:34:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E0F8C9E3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10764B20E14
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:34:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7E31C20ECE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F54F136652;
-	Mon, 20 May 2024 13:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5067D419;
+	Mon, 20 May 2024 13:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RF5aj7j5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IOp6znxw"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7078D481C2;
-	Mon, 20 May 2024 13:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404936D1A3;
+	Mon, 20 May 2024 13:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716212035; cv=none; b=R0YtJfCE5PO0P0O0qFlL+TnnKQDwdebptupGkgxncl/GegxT0hQjAXxEB7NCGPwlCPgCZzs90E0adx/gbozoTsOK+ShrL7UXYccf9l/0RpY7XqcQt0mJ/DW2aXfszjfGs4OHRJfCwMHoRDicNCmVsVnMmLUwJlUlouLdOBTZw8A=
+	t=1716212052; cv=none; b=upickSyXgqlG74USX3ISyyJNJeuNrIXAH4cntkHgNIbQ3epVjg54NJOyvjmBotXW5X23PjFW9boo4SR5yQvR4cV9PlCMAR5+GV46dWQAsV19Aiftz57994BluqBoo40EV6u8WSqKwikzxhJiqrAMj0hlsmsXVaRo+E6bDTSy92s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716212035; c=relaxed/simple;
-	bh=DjxBH1hk7nqIlIRu7o8c2uGzw9yEe52HIFQOB/6OAZw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VQqHg7C9u4VHN9c7oXzKtlKVazvGMG82qbt2TYSsKzTiSW3+1qusOZXv6FbDsKoa48B/HjVc8gCFUbrwTlX8ajXij9XfGyqFgqwEhLNYeQ8lz2ExbpcK0hCW6FpjzseJh+TWu1RBuQp63HA7NfVxiixj9Qomv4nPlk4FJvBUlnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RF5aj7j5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B9BEC4AF09;
-	Mon, 20 May 2024 13:33:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716212035;
-	bh=DjxBH1hk7nqIlIRu7o8c2uGzw9yEe52HIFQOB/6OAZw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RF5aj7j50AUMjWSVqpgkGMbg4mfKsBOUUPEsfoMwcC6rAMaoRbQN0i6LtJrUL41vq
-	 y6yi9+c7Ro5s7FEloTcLNZmKPYe8C5RDfmXSnrcAj4gFVk44+TpnxvmfwP9xYmLadz
-	 D24tMNHiVKFCPnKU7kSU8n8haLBza/iLhB+oAi5AC/X2/SByh2v6Z2zLfkGmeb6TRl
-	 1EOojmOLskRh/BxwfzcktscyIl1EDmWoUwA7nfcq42Cz1ABWn8DOefZoVOwoKxzyJQ
-	 /INzAtSCitG3DR8JNpY3/Nwkkn1/hd+RfvhQLGTe7r7Kjfzo64fhtYpMAkiD56abyF
-	 btcTVaA8R6Puw==
-Message-ID: <12533e91-c352-43c5-8b8a-5133c3bfa963@kernel.org>
-Date: Mon, 20 May 2024 15:33:48 +0200
+	s=arc-20240116; t=1716212052; c=relaxed/simple;
+	bh=6l89WwTl0d561bLjFwzCLWKm7Dw0Thg6kC5YSizBDTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y6jKV4JBztE4tQ9jH5TikxQ2St4IpgFTUfiekfmV1T382yEVtCWN7+ou6v/0bVaw69B2qhIEFK0GQHJxrZGUgEn6VhSTaqBjuCJ+2AqWpgVxHTnvKaTRWqulWa702tFoJyvEzwUfIrJwwZ6igbWooaZS5mdYeapDVlHbgZKlNCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IOp6znxw; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=7MTkFW5EKW6VtXAQK1YmzVyloY2FLZZSBaVZDYaOtOU=; b=IOp6znxwuh16I4+DNrVElh1uf3
+	LQPxTYVNYVj4WuzeoZdhZj+T+Gk58XMxXkoBlL6vFSdxP0Ry9C+M7xeZI21ZO79kC7fSlSZO75pSe
+	CUQ4ue2/ndyXxKlu/QhFa2rSXY4PeMxY5Hu06Ef5cqyou1EzKucmfXKbpIjphqf/0uwM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s939F-00FhPN-Bj; Mon, 20 May 2024 15:33:53 +0200
+Date: Mon, 20 May 2024 15:33:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next v3 5/5] net: phy: add driver for built-in 2.5G
+ ethernet PHY on MT7988
+Message-ID: <62b19955-23b8-4cd1-b09c-68546f612b44@lunn.ch>
+References: <20240520113456.21675-1-SkyLake.Huang@mediatek.com>
+ <20240520113456.21675-6-SkyLake.Huang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: soc: ti: Move
- ti,j721e-system-controller.yaml to soc/ti
-To: Roger Quadros <rogerq@kernel.org>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Tero Kristo <kristo@kernel.org>
-Cc: "Andrew F. Davis" <afd@ti.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240520-for-v6-11-j721e-syscon-v1-1-f57a93e12cad@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240520-for-v6-11-j721e-syscon-v1-1-f57a93e12cad@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520113456.21675-6-SkyLake.Huang@mediatek.com>
 
-On 20/05/2024 14:05, Roger Quadros wrote:
-> soc/ti is the more appropriate location for the system controller
-> device tree binding documentation so move there.
-> 
-> Update Kishon's email address to a working one.
-> 
-> Signed-off-by: Roger Quadros <rogerq@kernel.org>
-> ---
->  .../bindings/{mfd => soc/ti}/ti,j721e-system-controller.yaml          | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> +static int mt798x_2p5ge_phy_config_init(struct phy_device *phydev)
+> +{
+> +	struct mtk_i2p5ge_phy_priv *priv = phydev->priv;
+> +	struct device *dev = &phydev->mdio.dev;
+> +	const struct firmware *fw;
+> +	struct pinctrl *pinctrl;
+> +	int ret, i;
+> +	u16 reg;
+> +
+> +	if (!priv->fw_loaded) {
+> +		if (!priv->md32_en_cfg_base || !priv->pmb_addr) {
+> +			dev_err(dev, "MD32_EN_CFG base & PMB addresses aren't valid\n");
+> +			return -EINVAL;
+> +		}
+> +
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+https://www.kernel.org/doc/html/latest/process/coding-style.html
 
-Best regards,
-Krzysztof
+  6) Functions
 
+  Functions should be short and sweet, and do just one thing. They
+  should fit on one or two screenfuls of text (the ISO/ANSI screen
+  size is 80x24, as we all know), and do one thing and do that well.
+
+This is a big function, which does multiple things. Maybe pull the
+downloading of firmware into a helper.
+
+> +		ret = request_firmware(&fw, MT7988_2P5GE_PMB, dev);
+> +		if (ret) {
+> +			dev_err(dev, "failed to load firmware: %s, ret: %d\n",
+> +				MT7988_2P5GE_PMB, ret);
+> +			return ret;
+> +		}
+> +
+> +		if (fw->size != MT7988_2P5GE_PMB_SIZE) {
+> +			dev_err(dev, "Firmware size 0x%zx != 0x%x\n",
+> +				fw->size, MT7988_2P5GE_PMB_SIZE);
+> +			return -EINVAL;
+> +		}
+> +
+> +		reg = readw(priv->md32_en_cfg_base);
+> +		if (reg & MD32_EN) {
+> +			phy_set_bits(phydev, MII_BMCR, BMCR_RESET);
+> +			usleep_range(10000, 11000);
+> +		}
+> +		phy_set_bits(phydev, MII_BMCR, BMCR_PDOWN);
+> +
+> +		/* Write magic number to safely stall MCU */
+> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x800e, 0x1100);
+> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x800f, 0x00df);
+> +
+> +		for (i = 0; i < MT7988_2P5GE_PMB_SIZE - 1; i += 4)
+> +			writel(*((uint32_t *)(fw->data + i)), priv->pmb_addr + i);
+> +		release_firmware(fw);
+> +
+> +		writew(reg & ~MD32_EN, priv->md32_en_cfg_base);
+> +		writew(reg | MD32_EN, priv->md32_en_cfg_base);
+> +		phy_set_bits(phydev, MII_BMCR, BMCR_RESET);
+> +		/* We need a delay here to stabilize initialization of MCU */
+> +		usleep_range(7000, 8000);
+> +		dev_info(dev, "Firmware loading/trigger ok.\n");
+> +
+> +		priv->fw_loaded = true;
+
+So there is no way to know if this has already happened? Maybe the
+bootloader downloaded the firmware so it could TFTP boot? Linux will
+download the firmware again, which is a waste of time.
+
+> +		iounmap(priv->md32_en_cfg_base);
+> +		iounmap(priv->pmb_addr);
+> +	}
+> +
+> +	/* Setup LED */
+> +	phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MTK_PHY_LED0_ON_CTRL,
+> +			 MTK_PHY_LED_ON_POLARITY | MTK_PHY_LED_ON_LINK10 |
+> +			 MTK_PHY_LED_ON_LINK100 | MTK_PHY_LED_ON_LINK1000 |
+> +			 MTK_PHY_LED_ON_LINK2500);
+> +	phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MTK_PHY_LED1_ON_CTRL,
+> +			 MTK_PHY_LED_ON_FDX | MTK_PHY_LED_ON_HDX);
+> +
+> +	pinctrl = devm_pinctrl_get_select(&phydev->mdio.dev, "i2p5gbe-led");
+
+Calls to devm_pinctrl_get_select() is pretty unusual in drivers:
+
+https://elixir.bootlin.com/linux/latest/C/ident/devm_pinctrl_get_select
+
+Why is this needed? Generally, the DT file should describe the needed
+pinmux setting, without needed anything additionally.
+
+> +static int mt798x_2p5ge_phy_get_features(struct phy_device *phydev)
+> +{
+> +	int ret;
+> +
+> +	ret = genphy_c45_pma_read_abilities(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* We don't support HDX at MAC layer on mt7988. So mask phy's HDX capabilities here. */
+
+So you make it clear, the MAC does not support half duplex. The MAC
+should then remove it, not the PHY.
+
+> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT, phydev->supported);
+> +
+> +	return 0;
+> +}
+> +
+> +static int mt798x_2p5ge_phy_read_status(struct phy_device *phydev)
+> +{
+> +	int ret;
+> +
+> +	/* When MDIO_STAT1_LSTATUS is raised genphy_c45_read_link(), this phy actually
+> +	 * hasn't finished AN. So use CL22's link update function instead.
+> +	 */
+> +	ret = genphy_update_link(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	phydev->speed = SPEED_UNKNOWN;
+> +	phydev->duplex = DUPLEX_UNKNOWN;
+> +	phydev->pause = 0;
+> +	phydev->asym_pause = 0;
+> +
+> +	/* We'll read link speed through vendor specific registers down below. So remove
+> +	 * phy_resolve_aneg_linkmode (AN on) & genphy_c45_read_pma (AN off).
+> +	 */
+> +	if (phydev->autoneg == AUTONEG_ENABLE && phydev->autoneg_complete) {
+> +		ret = genphy_c45_read_lpa(phydev);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		/* Clause 45 doesn't define 1000BaseT support. Read the link partner's 1G
+> +		 * advertisement via Clause 22
+> +		 */
+> +		ret = phy_read(phydev, MII_STAT1000);
+> +		if (ret < 0)
+> +			return ret;
+> +		mii_stat1000_mod_linkmode_lpa_t(phydev->lp_advertising, ret);
+> +	} else if (phydev->autoneg == AUTONEG_DISABLE) {
+> +		return -EOPNOTSUPP;
+> +	}
+
+It is a bit late doing this now. The user requested this a long time
+ago, and it will be hard to understand why it now returns EOPNOTSUPP.
+You should check for AUTONEG_DISABLE in config_aneg() and return the
+error there.
+
+      Andrew
 
