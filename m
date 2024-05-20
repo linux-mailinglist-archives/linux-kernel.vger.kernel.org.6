@@ -1,221 +1,143 @@
-Return-Path: <linux-kernel+bounces-183374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBFD8C9829
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 05:13:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51CCE8C982D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 05:15:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F9DCB21C53
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:13:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B14A28168A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D9FDDAB;
-	Mon, 20 May 2024 03:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF636DDA3;
+	Mon, 20 May 2024 03:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="JTT1Dz31"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2053.outbound.protection.outlook.com [40.107.215.53])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RneYUvMO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845F7BA40
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716174790; cv=fail; b=HDaPM1kxbCej7tdpKcU5nQBDiYtB+VZv3jcGtlv0zi3rIQ3xkBhI+kESUGKP/JWLwIO4CzJFonplQDyEy8wW8GVgu9K9KSA/QYODeY4/oCSw+5y/q4MUu5v9Fq3N4gHQeUO0jWBDtEiuWT6g9fX8rPAxwkmLmqKZk9uS78JSkuo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716174790; c=relaxed/simple;
-	bh=ErHJB2zlc3BODReSuIG8nYugmscBOGFxs5487yAw8fo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OIZCoQ/PEqhzxwDhp/Ve9WS7GBs+dAMmnNyQ7RoaBulw266h1RONav4R3B1CIyEdKwZRVK3kvNStxTZsOAef8U0Z7Lvh5u1hzm7f53FDLra/L2Ng7p3lkxurqfICrHJtpMaVrJuH1lvQpsUctkexN8RpaJdGES+f5QS4EcnYeLY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=JTT1Dz31; arc=fail smtp.client-ip=40.107.215.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=G/Z2jgGypHvLe3Zi+cEkrBhq8E2++Zz96Jc70PseaPd2WWcePXK/zwYfKn4CRBbqvxASbrlTIJeYnD8LYjYBT1fTzSp5ftpyYJAAHhkLQpHFRz8LG76ZfB7SGilEoSe+cTSqQ03ckZRXKCJebWAitxmDh9qra75XnDKjxn0HwQAWGcJ4IyVP8UVTYan2FdoJNXgAcxhlwo3Gorplv0UUKcBCitp+cd/8kMP1ZcAvaFIt2e1niC+Af9nUIHF7i1GvjmSpCCLOQSvIN38+m9AaH8OmLxS7Rz5QrrOfNG1o64ozFibfcQQgIPi0YQrrjJpjEbTRvSBFCtEGGhnbSTSykQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yf+sHPCcXXIv1k08zT5l63dPtVEzabNk01gc4MUIbzo=;
- b=jPF3reITUgxhq1fRznW9xipwVXLcjYUOZooxNobn5MWVeX0i2omaFQN0rS1Quwg132nXoLOdEtiZULElh+Zl/oxUAmfu/5GuUAzjdai7bujG1XMOYBloM36DNLXVomHIhBhOCbFdFJRshjErKkBZ7L0pbPsMTOiPaP6IkQAvTMdDC/Pz6XXd+sktZbAMME500Qx5vTsi0VaMBj9pDMGf20wleEls0Tr0d6U/BCVMm6+daCaDUXV9DSNopXuH8ri2jT2+zSD+4//NM9timtTG4/TWrkcHIpuIqXQssB7Wlc7zVx/ZX+Bi4b0zKLr/HocS9b8evueAOLxJ6yy4ZBZ3qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yf+sHPCcXXIv1k08zT5l63dPtVEzabNk01gc4MUIbzo=;
- b=JTT1Dz31guxpSa0UUmhNzTfnpivrBZ5zBNNmzw2srMkXOB74GFV3JfiyX7ReXhwiqlyhCGDMUjx15GUg66J+48Q1f0VQaOTu4jP2LCfNZn1E/q7Z61cLUIEr0991TZ48LiVLDLG/YMIMY5QJSea919B7JPO1zIse0aubqiwRJynBG9h3iyTKeqxN2C/M//WtbuOqTmH/N1d1ZiuSGvFlBm0DGILvBryij7TIZL7pZpsvPPwIom2WLuE6DnK78wp6FOmV9YiBu/89kphT1GjKUykFs2pNo3LpbM4ejl6/NSdNzZIhe/jOilGzR/4y2LzU0FnUqETA/iAhxpV2iGk83Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB7401.apcprd06.prod.outlook.com (2603:1096:820:146::12)
- by SEZPR06MB5392.apcprd06.prod.outlook.com (2603:1096:101:67::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Mon, 20 May
- 2024 03:13:02 +0000
-Received: from KL1PR06MB7401.apcprd06.prod.outlook.com
- ([fe80::f4f:43c4:25e5:394e]) by KL1PR06MB7401.apcprd06.prod.outlook.com
- ([fe80::f4f:43c4:25e5:394e%4]) with mapi id 15.20.7587.030; Mon, 20 May 2024
- 03:13:01 +0000
-Message-ID: <7e84c37f-e3f0-42d3-a9b7-c810b641b95b@vivo.com>
-Date: Mon, 20 May 2024 11:12:57 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] dm: support retrieving struct dm_target from struct
- dm_dev
-To: Benjamin Marzinski <bmarzins@redhat.com>
-Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240514090445.2847-1-yang.yang@vivo.com>
- <20240514090445.2847-4-yang.yang@vivo.com> <ZkTXzG1yrPmW64Z6@redhat.com>
- <80ddcd90-2e1c-4fbf-a45a-b1b5ff4d60fb@vivo.com> <ZkYmZaGWPtGIwedG@redhat.com>
- <8f49b95e-88df-48b8-9311-8a15414d8107@vivo.com> <Zkdqpl5SN3RV0smg@redhat.com>
-Content-Language: en-US
-From: YangYang <yang.yang@vivo.com>
-In-Reply-To: <Zkdqpl5SN3RV0smg@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYCP286CA0244.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:456::19) To KL1PR06MB7401.apcprd06.prod.outlook.com
- (2603:1096:820:146::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810686AB8;
+	Mon, 20 May 2024 03:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716174941; cv=none; b=cwfOTWvMGdqxA04qHQB8y3zSvONpWnMVIcn1FECDbYLHw6gy8M8rFnloP6uO2xasYjPoJWGLht5BeEbOUkII0QkwFYCMlzk9P3nlOrultQxFjajLD19JTb0BXAtIs0gC/GQ9rYDCgsiWayElJ4buwxsYGafhaXdnJEIoCdJEiBg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716174941; c=relaxed/simple;
+	bh=MxRQHfUfj2r/5A+3BQ6EVcIti+tro82FG+y+bSXtfsU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GyPB/41evhWfLH+jHHmZLwOpwIIdfcwTHYcQXeMfLg4skEh4ceQOSpeLVAU1mQrS66zrgeqjCF+cGSJCKm29AEV5tIC7dey/UkxgbMeM+Seg8RdUgg47PmfD31K2/etXZgiu4RKhAhk14zcA3/xNu7tECCRoJwB/7ZSlJVVCuRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RneYUvMO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44JNmZUr023818;
+	Mon, 20 May 2024 03:15:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=qcppdkim1; bh=8lFeKLmxC5SwUI1TCFP0u
+	1MzCDvG1yc21gbkRhCjvg4=; b=RneYUvMOqxd/3QpK/rt6R30Txxpx6ONOHN+JT
+	+DaU5Jc+cFrKrzF5XiIIxYs4S6uvoS0pE/z4QWpiAJmrdBcsSwQ+jN7XfS675/Qf
+	Wmgq8vb29E0O2Oy7H9RPW/JE6IYpR5Paksi+XPh6LQUlh2epBz0ucrjXiOagdBCx
+	shLmxmDojs7hKk3M8WlMvpa+uKJdr92LcgFUVJDzUUXvIdby2eXssOboatu5S26K
+	n82FgzCLhO9klf8PmWLZ6ZJdciiS0+i3llk7O5FTapFr1rXZOk316SQSP2CNp7GH
+	p5HfF1h0v2OIasDLWvT8oDZ04K2iGVMAPzhJmvs2cHOgHV17A==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6n4p2jk4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 03:15:18 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44K3FHF2003157
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 03:15:17 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 19 May 2024 20:15:17 -0700
+Date: Sun, 19 May 2024 20:15:15 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>
+CC: <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-arm-msm@vger.kernel.org>, Rob Clark <robdclark@chromium.org>,
+        "Nikita
+ Travkin" <nikita@trvn.ru>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        "Marijn Suijten" <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Connor Abbott <cwabbott0@gmail.com>,
+        Ruan Jinjie
+	<ruanjinjie@huawei.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/msm/adreno: Check for zap node availability
+Message-ID: <ZkrAQ+CLnwHTjPl6@hu-bjorande-lv.qualcomm.com>
+References: <20240517195021.8873-1-robdclark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB7401:EE_|SEZPR06MB5392:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6670b4a3-9047-49d4-3261-08dc787ac1fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UTdPWkFJcloyRDhrVndJTUoxMmFMemNZUDVkMitEUUFCNGlOOHZyNGVDd2NE?=
- =?utf-8?B?WDJkd3hidm9PcGgyUG1XZkF1MDFtTDFHN3BXS3NVNlRVOEtxSEc3aFVJbWVL?=
- =?utf-8?B?YmFWRFI2UjlYQklNQXZWNEJlM3VvOTkwbkcyYXlESkpIOTZpc2xNZFR6VlpE?=
- =?utf-8?B?Vng5ZjFPM2xiWGNxTUQ3UDkyWVJZQ2ozQzFORVZpcTIzNGlHRnF3Q1N3NzZZ?=
- =?utf-8?B?akd3eVdsNUdMbUFZMERtZEQya0NsVUVJL0pWdjE5UzhTN3F0NE5PMC9kQWV1?=
- =?utf-8?B?KzBnRW5wMWF4bGhqS2YxWGFkU2VBREMrVzJvVVFIS05uTTlpelVJNjRka2k2?=
- =?utf-8?B?ZjBzOXphTjJUeWlvcW4wNFJybEpjUGp0ZmtuTTFqR1Rad1RFU3F1a01wUjNo?=
- =?utf-8?B?dDczY1JTRUR0alJKVGI3ZERUcWMwWnRhVkVDRjFBN2xpTzVWT1NhV2dIalhi?=
- =?utf-8?B?aVJSbnhSRW9rZGQxcFV3RmZDeUFsaVNRUStnOUdTWkdiUHZmTGNhWE4yeGEy?=
- =?utf-8?B?emxaRHBoeUZHeUFQU2wraGV6OXRmdmthN1hpcGUvWFpndGpieksyNVltVzlk?=
- =?utf-8?B?VXJVVVlyY1FIR1R6MGk1OTdiUndRQUozaCtmdFcwZDRobFVmdTZZaXJSN0ND?=
- =?utf-8?B?QzNVYmFrV1FhTWxHTG1zRFZVdE5kNDA0Zm1zaFVDVzZQRWRkRjl1YU1FNndu?=
- =?utf-8?B?S3cwWS9MTlI4eEJJV2dXdWxZYVhNS2x4SVpIWXdJSlVpZTlZeVR0K1phdktq?=
- =?utf-8?B?WWZHQkwrbXpKRysrMEo3VkNDZ3BMekc3b2k3OGEzam83MkkvZjE3UDJRY0RF?=
- =?utf-8?B?QkxaMVJJZncvLzFydys1OHFidVpqYStBMGt6SDMyVVkvOVRtTTlYZTVHeTEv?=
- =?utf-8?B?TklaNy9WbTBoRjNuKzJnVDlkOXk4NWZQRmFqS1FxOThmTllHNlN6K29TbzAy?=
- =?utf-8?B?eHpZQ1Z5Y2R4WFJ3aXlqUVZ6MHBHLzlSS3ozRmUvUDNHcXFDam9tMnp2aXdl?=
- =?utf-8?B?OGc5NlUwS2ZReWpPZW52Wkh0bUZubU1qZ295aFMvaFZJZmFuV0JERlNURUUz?=
- =?utf-8?B?c1ErMXc0MVpjV1Z5UjhodVc4NDdvQjZUYXlDa1lEVDhyOVRvaUFJdkV2MGg2?=
- =?utf-8?B?WFlCSFh5K1V2YW5Jby9Id05LRTh0VStjditvL0NaQXNZcVhoalhhc1RaSFhE?=
- =?utf-8?B?eDE4eGNJK0NCcitISC9Hc1VTdGkrc0NUdEVIazQxQWtWNm5yYUkxaHBUTzA5?=
- =?utf-8?B?VU9yRkVYQTBKaWxVdkRBdTNQemd5OVIvYjZTUW55Q1BpU2prSGtOS2FYbGI1?=
- =?utf-8?B?OXlGeitiQTZpL1N4clZTZHd4eWNpZ1J4YWtBQ21vT1ptQUMweU5PaFJGWC9a?=
- =?utf-8?B?OU1CeXhjZ2JjN1RBMWdJVklXUVNMRlk1VFRNTGhsV2g3Nm1yQlEyWS9iNVA2?=
- =?utf-8?B?ZVJTK1FaTUdqb2d2ZE5XaFQ0V2V5bTRYZUxqK1BPekhzT1hCWWlvOTRwYVhy?=
- =?utf-8?B?eWVmVHM1S1djMWVlNUdSTi9Tc0toUnhGU2s5a1pVNnBWbTBhSUpONzVBNzU1?=
- =?utf-8?B?RDNGSTA2TXlVWXFLdnpDTGloc05UNkM0Wm02N2NZdFFRRlZmZCsrbmY0WE1i?=
- =?utf-8?B?dlhFQ1dXb25leHNWVWlhTGtRQ29WbkZuT0RRczAzUFFTdExWTDZ3ZVZNTXM2?=
- =?utf-8?B?OTlzM2NxbjRYTHZjZStDOURqVDFpZ0Z6YUMyR3NVbk0wVk1uRGhWME93PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB7401.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZHZFcWYxLzBDcjFvLzZrUndGck82Z0lmTkZVa1ppOVNNMWFpcFBNcDZZRkt5?=
- =?utf-8?B?MXc1Q0pBOVNHUk9ndlhFa3E4WlVGK3grMWZra0twSzZMU3lrdjExTjAyS3kw?=
- =?utf-8?B?WnZIZ3JhRE05RFpGeURtOUNaVG1TbjBSR1ZLbEhWWUN1RTFMRGx5amJRdWNr?=
- =?utf-8?B?Z1ZTZ2JhaFZuUG5yNE4va3duSXA3aWhaaFdaWVp6dkdrOEVPcit5MEQvOVVn?=
- =?utf-8?B?UzRvUUwvWXNiRXhncXFEMEpaa3BtR3lIZ1FWUDZ2ZzFnaHcxazNFRGpiVEZu?=
- =?utf-8?B?cVZ5emRkdTdpYlEyMjJ5WDM5S2sxeUJkVWgwaXFDaEFlV3N4ZUpKaHlac1Ns?=
- =?utf-8?B?OFRIMmxwV29PaVJzTnByYzcwakRXSzgwSnYxSTkrVmJ0RmE2RFloQ3VFZStV?=
- =?utf-8?B?RzIwQlVrYnlibVB1VXpvb1ZOajhKQ2xGYmtsQ1duRk1BZzRyUm4yUno2ZW1Q?=
- =?utf-8?B?NzBTQlY4WG5GaGhWdVRLaEdwdjZDZmQyTVRVVG9yYm1pOS9vRThlRURnRDFQ?=
- =?utf-8?B?TWFXd3JXZU5Hd1Vhd1cwTHlvVkxNc29ZSzRWK29xdVFzeUlJY3R4WFFUbTZJ?=
- =?utf-8?B?VW0zK3lwQnU3QVUxYzIrWWQxczQ5NVMvSXhuc3Z0V1UwTTBFSDRZRHoyd1Rt?=
- =?utf-8?B?MGlKNFgxL2ZuU3VsU044VHArRzZHdzVQSVJDbzdPWllCUEdPdldrb0JqTlp4?=
- =?utf-8?B?Ny9zeUVCTGFMdXZEYU1BSjkxS3RxNFdseTc3eFlxT0JlUlpaMFBqOTlJWkMz?=
- =?utf-8?B?RjFNb0NHVDBZUXdabHVSS0hmMFoxaFh3ajFueG96b0c4VzNkMGJWeFdlSFVr?=
- =?utf-8?B?SDdkZEY0ZWd3UVBORTdzY2RwbHFlajdpdWRxUDdyQndtdTJKdzhDb3IwOFRD?=
- =?utf-8?B?Z3c2ci9aY0M3WHJPQ21jOVRDVlJXTVN1Q3VxWm5Fc0dmaGZuK2hXaUFMalQ5?=
- =?utf-8?B?S2NUck8zYy9EeWZtYjBaaVNJQy9uSFBHVjdkdjBicFVwbnI0cS9RNTBybkli?=
- =?utf-8?B?WDBzTzNqK21NUlhUU0EzQ3V5SS9mTTdRbndLcjZnUmN4Q2FJWEhPekdwYWJh?=
- =?utf-8?B?NklENndacFY4ZGpDdEJONHJZdHA3RUFlckZ2R0U2ZkFBK08yVGJyK2ZKWDVL?=
- =?utf-8?B?Nzgrdk5TeVhlaWdtQUFlYkJtZTdENFJ1VURORlFFNXBIZDhMM1BLOUZBRjV0?=
- =?utf-8?B?RUNiektQT29reXZrNDZVSE5GY3M3SFZSZkVDcTFIVkk0OXdFVHZFeGdUNUtZ?=
- =?utf-8?B?U2VZZHZYTE5Ibk52cFRxeE9LeDljWlpwQ21QUzk2TG9oUnlxTG1yQ2V3ZzEw?=
- =?utf-8?B?ajA1V0trNW5FNzZtRHFtM1VEcVhxVVUwQ2dwc0syd1dGcDIyZjZRcU12ODBh?=
- =?utf-8?B?cUtXTFJuT3B0MGl3ZXJ6MXhaSjhnVGM4dHJRQzY0cG1LbUZjZlhLOFNWSzh2?=
- =?utf-8?B?L3BqRTlWWm55dXk4aTJQRkJINkJ2ZWl3KytMdjl1eXE3anZ3d1p5VDdYcm9q?=
- =?utf-8?B?T05sbmFWL1V6RVRLbS9CSzJIWDc2blpUZiswei9zOGVRZlBUbHhMYjVtNUg3?=
- =?utf-8?B?ek9INVZac0d6N2RTc00zbGFCMCtyZlFHMWt5VFFhc0MrL1IxWkxCT1UwbWtP?=
- =?utf-8?B?TjNQeGdoY0dzWmVJT3VZT2FqVVJienRUdG1UTUxSOUJNU2J2Z3NIVmZyQktx?=
- =?utf-8?B?TlQ4S0xYTWtLbzI1aFdJSk5adWlPbzM4d3R6Z0U2UC9WU3lVMGxOZG5KV2l4?=
- =?utf-8?B?RUxzYzJFRnFBeWVyMjlQM0tRT3ZYTjdVdForQXNQa1lFWmRhKzJUZnN5Y2Va?=
- =?utf-8?B?VGpkSTFJYWZsRmVKZDY1SmxkRDgyUTdua29WTGpLOVpLN2xpeU41YkJiQWRF?=
- =?utf-8?B?L291cmo4Z1gvdzFjT3hGZmxYNWZ1aThNSnVvMENyNlZRdjZyTjB4R0lLaFRy?=
- =?utf-8?B?aVNEemsvLzRhWkdlNUpWY3pzTU1CR2xBb0RUaWhza2dESzZVcmwraVZhbktV?=
- =?utf-8?B?T3F6TzlVK2hwMWF1NHgyNE9PVWZVQmo1VkhoVTFWei8vcmJOSUxIclo4b3pI?=
- =?utf-8?B?c0lJRjNkYUlhZDFqVFh1bUl6Nkkzb0dOMjc2L1pmOTlFUEJ0Rmd2TXpnOVZ4?=
- =?utf-8?Q?xOUPdkYkYk1EmkN/awPV794vw?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6670b4a3-9047-49d4-3261-08dc787ac1fb
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB7401.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 03:13:01.7322
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Bzo6d3DGzgtiAjhGhJgGdFxnUwaIf6+gcGezuGlG3kXy8DinCafjDEUVqm2rrLSN5MzrV8m/VQ4JycETW7ptAg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5392
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240517195021.8873-1-robdclark@gmail.com>
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Uq4jZktGJrI1Bgm_j1kP6QuvdqeyhNn1
+X-Proofpoint-GUID: Uq4jZktGJrI1Bgm_j1kP6QuvdqeyhNn1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-20_01,2024-05-17_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0 spamscore=0
+ impostorscore=0 clxscore=1011 phishscore=0 suspectscore=0 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405200025
 
-On 2024/5/17 22:33, Benjamin Marzinski wrote:
-> On Fri, May 17, 2024 at 03:48:49PM +0800, YangYang wrote:
->> On 2024/5/16 23:29, Benjamin Marzinski wrote:
->>> On Thu, May 16, 2024 at 09:55:53AM +0800, YangYang wrote:
->>>> On 2024/5/15 23:42, Benjamin Marzinski wrote:
->>>>> On Tue, May 14, 2024 at 05:04:42PM +0800, Yang Yang wrote:
+On Fri, May 17, 2024 at 12:50:19PM -0700, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
 > 
->>>>
->>>> If I understand correctly, you are suggesting to iterate through all the
->>>> targets, handling those with sends_pass_around_flush set, and skipping
->>>> those where sends_pass_around_flush is not set. I believe this approach
->>>> may result in some CPU wastage.
->>>>
->>>>     for i in {0..1023}; do
->>>>       echo $((8000*$i)) 8000 linear /dev/sda2 $((16384*$i))
->>>>     done | sudo dmsetup create example
->>>>
->>>> In this specific scenario, a single iteration of the loop is all that
->>>> is needed.
->>>
->>> It's just one iteration of the loop either way. You either loop through
->>> the targets or the devices.  It's true that if you have lots of targets
->>> all mapped to the same device, you would waste time looping through all
->>> the targets instead of looping through the devices.  But if you only had
->>> one striped target mapped to lots of devices, you would waste time
->>> looping through all of the devices instead of looping through the
->>> targets.
->>
->> Yes, I get your point. This patchset may make things even worse for
->> the striped target.
->> I am just curious, in what scenario is the "dm-strip" target mapped to
->> a large number of underlying devices from the same block device.
->>
+> This should allow disabling the zap node via an overlay, for slbounce.
 > 
-> I don't think anyone in the real world does create dm-stripe devices with a
-> huge number of stripe table devices. My point was that it didn't seem
-> obvious me that looping through the targets was a significant problem
-> compared to looping through the devices.
+> Suggested-by: Nikita Travkin <nikita@trvn.ru>
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> At any rate, Mikulas's patch already does this optimally, even for
-> targets like dm-stripe, so it doesn't really matter now.
-> 
-> -Ben
-> 
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> index d9ea15994ae9..a00241e3373b 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> @@ -46,7 +46,7 @@ static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname,
+>  	}
+>  
+>  	np = of_get_child_by_name(dev->of_node, "zap-shader");
+> -	if (!np) {
+> +	if (!np || !of_device_is_available(np)) {
 
-Yeah. Thanks for the explanation and your patience.
+	if (!of_device_is_available(np)) {
 
+would cover both cases and be slightly cleaner imho...
 
+But this looks reasonable either way.
+
+Reviewed-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+
+Regards,
+Bjorn
+
+>  		zap_available = false;
+>  		return -ENODEV;
+>  	}
+> -- 
+> 2.45.1
+> 
 
