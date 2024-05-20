@@ -1,149 +1,267 @@
-Return-Path: <linux-kernel+bounces-183661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1BB8C9C32
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:38:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D9DB8C9C2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B5B1C21B36
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:38:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A19111C21DAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7D356452;
-	Mon, 20 May 2024 11:37:25 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5A453E3C;
+	Mon, 20 May 2024 11:36:57 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD55453E1B
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 11:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A62535DB;
+	Mon, 20 May 2024 11:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716205045; cv=none; b=f9lN8OcbIbXlJRXLuzPfRvYpAUj9V9M7OK1n7Y9CYYFB/Y8+SRVHsd0P/87cARWhm+lGcAFe5nlFCV5u3gFgYGftZtLhphAuc2sq4MFi5Ach/bgcy2PMngXQ0UhB8pousNfcJJ03m8RhBmInDf9VghCt2rehODSaBeVkC6fERSU=
+	t=1716205017; cv=none; b=kqDGS6vT1uS+Fq59oc9cuoJsJDi3l9YQwIuN0npu0sEaeuagwbwWG8kFqcl+TZFb35eijtbAzI0k6CQ+SpY50FJVFuH+EaC2Abh9vJgxqELeoFc6IDInAJHgoscTqMI37i46scOUohRKP8LjAdgVlUIJt7rYBIa6Y43yJSVarQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716205045; c=relaxed/simple;
-	bh=cj9mL1bGgD8z39mvLMM7/PQdXOTIZAKRgKgyy7lcLMQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oyKXJAdo1mbIzLWh1hSvIK341rofGMuFBeqFo5O4oxIZOz2IDkpooQc0OS3h2N+KCtC+9vcd/K+m+eETVQTEZdiZSjgE1znpDAj60cJ3fTJjOquBD9W2BKb1n0U/aNpKntrd1dD7hEoHlmKYg99mxQlBHEuds2UUfx5sSBnBWOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 44KBaWh8040804;
-	Mon, 20 May 2024 19:36:32 +0800 (+08)
-	(envelope-from Zhiguo.Niu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Vjb672thwz2Q7LW0;
-	Mon, 20 May 2024 19:33:03 +0800 (CST)
-Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Mon, 20 May 2024 19:36:29 +0800
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>
-Subject: [PATCH] f2fs: enable atgc if atgc_age_threshold from user is less than elapsed_time
-Date: Mon, 20 May 2024 19:36:18 +0800
-Message-ID: <1716204978-29455-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+	s=arc-20240116; t=1716205017; c=relaxed/simple;
+	bh=te1EYIMSjDa2AtN2JbBQlKLLglOCxloo3WN9EZTPmf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NKZGnY0ufusU1C+7XdesGz+3kQbbRop2tUqNJbRAsHHlQYyFL7TKhpmN2e+NK0pEQUdqyhffsNN6tnjzlzWvqdrc9q59ooatfNev6ruoHOX4q2OfynSUssI0WY3F++JCAhtSzBIHGeVg9TwJwTac7GMfxlopnCbHF8wdtEvPf8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjbBP3KRYz4f3jkL;
+	Mon, 20 May 2024 19:36:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 307E21A0C4C;
+	Mon, 20 May 2024 19:36:51 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgAn9g7PNUtm6nK8NA--.6529S3;
+	Mon, 20 May 2024 19:36:50 +0800 (CST)
+Message-ID: <a9e39b5f-4397-056e-7f6c-b1a1847429dd@huaweicloud.com>
+Date: Mon, 20 May 2024 19:36:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 44KBaWh8040804
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH v2 09/12] cachefiles: defer exposing anon_fd until after
+ copy_to_user() succeeds
+Content-Language: en-US
+To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
+ dhowells@redhat.com, jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ libaokun@huaweicloud.com
+References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
+ <20240515084601.3240503-10-libaokun@huaweicloud.com>
+ <db7ae78c-857b-45ba-94dc-63c02757e0b2@linux.alibaba.com>
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <db7ae78c-857b-45ba-94dc-63c02757e0b2@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgAn9g7PNUtm6nK8NA--.6529S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ww43ur4fZw43CFW5XF1fJFb_yoWxJr1kpF
+	WakFW3KFy8WFW8urn7AFZ8XFySy3y8A3ZrW34Fga4rArnFgryF9r1jkr98uF15Ar97Grs3
+	tF4UCr97Gr1jy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3
+	Jr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x0JUq38nUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-Now atgc can be enabled based on the following conditions:
--ATGC mount option is set
--elapsed_time is more than atgc_age_threshold already
-but these conditions are check when umounted->mounted device again.
-If the device has not be umounted->mounted for a long time, atgc can
-not work even the above conditions met.
+On 2024/5/20 17:39, Jingbo Xu wrote:
+>
+> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> After installing the anonymous fd, we can now see it in userland and close
+>> it. However, at this point we may not have gotten the reference count of
+>> the cache, but we will put it during colse fd, so this may cause a cache
+>> UAF.
+>>
+>> So grab the cache reference count before fd_install(). In addition, by
+>> kernel convention, fd is taken over by the user land after fd_install(),
+>> and the kernel should not call close_fd() after that, i.e., it should call
+>> fd_install() after everything is ready, thus fd_install() is called after
+>> copy_to_user() succeeds.
+>>
+>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
+>> Suggested-by: Hou Tao <houtao1@huawei.com>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> ---
+>>   fs/cachefiles/ondemand.c | 53 +++++++++++++++++++++++++---------------
+>>   1 file changed, 33 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+>> index d2d4e27fca6f..3a36613e00a7 100644
+>> --- a/fs/cachefiles/ondemand.c
+>> +++ b/fs/cachefiles/ondemand.c
+>> @@ -4,6 +4,11 @@
+>>   #include <linux/uio.h>
+>>   #include "internal.h"
+>>   
+>> +struct anon_file {
+>> +	struct file *file;
+>> +	int fd;
+>> +};
+>> +
+>>   static inline void cachefiles_req_put(struct cachefiles_req *req)
+>>   {
+>>   	if (refcount_dec_and_test(&req->ref))
+>> @@ -263,14 +268,14 @@ int cachefiles_ondemand_restore(struct cachefiles_cache *cache, char *args)
+>>   	return 0;
+>>   }
+>>   
+>
+>> -static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>> +static int cachefiles_ondemand_get_fd(struct cachefiles_req *req,
+>> +				      struct anon_file *anon_file)
+>
+> How about:
+>
+> int cachefiles_ondemand_get_fd(struct cachefiles_req *req, int *fd,
+> struct file *file) ?
+>
+> It isn't worth introducing a new structure as it is used only for
+> parameter passing.
+>
+It's just a different code style preference, and internally we think
 
-It is better to enable atgc dynamiclly when user change atgc_age_threshold
-meanwhile this vale is less than elapsed_time and ATGC mount option is on.
+it makes the code look clearer when encapsulated this way.
 
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
----
- fs/f2fs/f2fs.h    |  1 +
- fs/f2fs/segment.c |  9 ++++-----
- fs/f2fs/sysfs.c   | 16 ++++++++++++++++
- 3 files changed, 21 insertions(+), 5 deletions(-)
+>>   {
+>>   	struct cachefiles_object *object;
+>>   	struct cachefiles_cache *cache;
+>>   	struct cachefiles_open *load;
+>> -	struct file *file;
+>>   	u32 object_id;
+>> -	int ret, fd;
+>> +	int ret;
+>>   
+>>   	object = cachefiles_grab_object(req->object,
+>>   			cachefiles_obj_get_ondemand_fd);
+>> @@ -282,16 +287,16 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>>   	if (ret < 0)
+>>   		goto err;
+>>   
+>> -	fd = get_unused_fd_flags(O_WRONLY);
+>> -	if (fd < 0) {
+>> -		ret = fd;
+>> +	anon_file->fd = get_unused_fd_flags(O_WRONLY);
+>> +	if (anon_file->fd < 0) {
+>> +		ret = anon_file->fd;
+>>   		goto err_free_id;
+>>   	}
+>>   
+>> -	file = anon_inode_getfile("[cachefiles]", &cachefiles_ondemand_fd_fops,
+>> -				  object, O_WRONLY);
+>> -	if (IS_ERR(file)) {
+>> -		ret = PTR_ERR(file);
+>> +	anon_file->file = anon_inode_getfile("[cachefiles]",
+>> +				&cachefiles_ondemand_fd_fops, object, O_WRONLY);
+>> +	if (IS_ERR(anon_file->file)) {
+>> +		ret = PTR_ERR(anon_file->file);
+>>   		goto err_put_fd;
+>>   	}
+>>   
+>> @@ -299,16 +304,15 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>>   	if (object->ondemand->ondemand_id > 0) {
+>>   		spin_unlock(&object->ondemand->lock);
+>>   		/* Pair with check in cachefiles_ondemand_fd_release(). */
+>> -		file->private_data = NULL;
+>> +		anon_file->file->private_data = NULL;
+>>   		ret = -EEXIST;
+>>   		goto err_put_file;
+>>   	}
+>>   
+>> -	file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
+>> -	fd_install(fd, file);
+>> +	anon_file->file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
+>>   
+>>   	load = (void *)req->msg.data;
+>> -	load->fd = fd;
+>> +	load->fd = anon_file->fd;
+>>   	object->ondemand->ondemand_id = object_id;
+>>   	spin_unlock(&object->ondemand->lock);
+>>   
+>> @@ -317,9 +321,11 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>>   	return 0;
+>>   
+>>   err_put_file:
+>> -	fput(file);
+>> +	fput(anon_file->file);
+>> +	anon_file->file = NULL;
+> When cachefiles_ondemand_get_fd() returns failure, anon_file->file is
+> not used, and thus I don't think it is worth resetting anon_file->file
+> to NULL. Or we could assign fd and struct file at the very end when all
+> succeed.
+Nulling pointers that are no longer in use is a safer coding convention,
+which goes some way to avoiding double free or use-after-free.
+Moreover it's in the error branch, so it doesn't cost anything.
+>>   err_put_fd:
+>> -	put_unused_fd(fd);
+>> +	put_unused_fd(anon_file->fd);
+>> +	anon_file->fd = ret;
+> Ditto.
+>
+>>   err_free_id:
+>>   	xa_erase(&cache->ondemand_ids, object_id);
+>>   err:
+>> @@ -376,6 +382,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>>   	struct cachefiles_msg *msg;
+>>   	size_t n;
+>>   	int ret = 0;
+>> +	struct anon_file anon_file;
+>>   	XA_STATE(xas, &cache->reqs, cache->req_id_next);
+>>   
+>>   	xa_lock(&cache->reqs);
+>> @@ -409,7 +416,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>>   	xa_unlock(&cache->reqs);
+>>   
+>>   	if (msg->opcode == CACHEFILES_OP_OPEN) {
+>> -		ret = cachefiles_ondemand_get_fd(req);
+>> +		ret = cachefiles_ondemand_get_fd(req, &anon_file);
+>>   		if (ret)
+>>   			goto out;
+>>   	}
+>> @@ -417,10 +424,16 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>>   	msg->msg_id = xas.xa_index;
+>>   	msg->object_id = req->object->ondemand->ondemand_id;
+>>   
+>> -	if (copy_to_user(_buffer, msg, n) != 0) {
+>> +	if (copy_to_user(_buffer, msg, n) != 0)
+>>   		ret = -EFAULT;
+>> -		if (msg->opcode == CACHEFILES_OP_OPEN)
+>> -			close_fd(((struct cachefiles_open *)msg->data)->fd);
+>> +
+>> +	if (msg->opcode == CACHEFILES_OP_OPEN) {
+>> +		if (ret < 0) {
+>> +			fput(anon_file.file);
+>> +			put_unused_fd(anon_file.fd);
+>> +			goto out;
+>> +		}
+>> +		fd_install(anon_file.fd, anon_file.file);
+>>   	}
+>>   out:
+>>   	cachefiles_put_object(req->object, cachefiles_obj_put_read_req);
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1974b6a..e441d2d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3694,6 +3694,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- int f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi);
- void f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi);
- void f2fs_restore_inmem_curseg(struct f2fs_sb_info *sbi);
-+int f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi);
- int f2fs_allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
- 					unsigned int start, unsigned int end);
- int f2fs_allocate_new_section(struct f2fs_sb_info *sbi, int type, bool force);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 71dc8042..44923d4 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2931,14 +2931,11 @@ static int get_atssr_segment(struct f2fs_sb_info *sbi, int type,
- 	return ret;
- }
- 
--static int __f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
-+int f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
- {
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_ALL_DATA_ATGC);
- 	int ret = 0;
- 
--	if (!sbi->am.atgc_enabled)
--		return 0;
--
- 	f2fs_down_read(&SM_I(sbi)->curseg_lock);
- 
- 	mutex_lock(&curseg->curseg_mutex);
-@@ -2955,7 +2952,9 @@ static int __f2fs_init_atgc_curseg(struct f2fs_sb_info *sbi)
- }
- int f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi)
- {
--	return __f2fs_init_atgc_curseg(sbi);
-+	if (!sbi->am.atgc_enabled)
-+		return 0;
-+	return f2fs_init_atgc_curseg(sbi);
- }
- 
- static void __f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi, int type)
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 09d3ecf..72676c5 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -673,6 +673,22 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return count;
- 	}
- 
-+	if (!strcmp(a->attr.name, "atgc_age_threshold")) {
-+		if (t < 0)
-+			return -EINVAL;
-+		sbi->am.age_threshold = t;
-+		if (sbi->am.atgc_enabled)
-+			return count;
-+
-+		if (test_opt(sbi, ATGC) &&
-+			le64_to_cpu(sbi->ckpt->elapsed_time) >= t) {
-+			if (f2fs_init_atgc_curseg(sbi))
-+				return -EINVAL;
-+			sbi->am.atgc_enabled = true;
-+		}
-+		return count;
-+	}
-+
- 	if (!strcmp(a->attr.name, "gc_segment_mode")) {
- 		if (t < MAX_GC_MODE)
- 			sbi->gc_segment_mode = t;
+
 -- 
-1.9.1
+With Best Regards,
+Baokun Li
 
 
