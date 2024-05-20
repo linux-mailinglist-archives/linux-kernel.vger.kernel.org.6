@@ -1,135 +1,105 @@
-Return-Path: <linux-kernel+bounces-183793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89618C9E31
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:30:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E56E8C9E34
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F91F287B90
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:30:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1945C287E65
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D4813665A;
-	Mon, 20 May 2024 13:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5478E13664E;
+	Mon, 20 May 2024 13:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="KngA7ggd";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jcQS+Dwp"
-Received: from wfhigh1-smtp.messagingengine.com (wfhigh1-smtp.messagingengine.com [64.147.123.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8VkvGBY"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A411E87C;
-	Mon, 20 May 2024 13:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366CF1E87C;
+	Mon, 20 May 2024 13:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716211822; cv=none; b=p0MPhX5oNiIQmb1+rjH0R3wHUc1fuOreiL6aWLaM1tHLEwS4HjkEmlxc4fTi2w/HYuN3hYmFi3YJWSdS5kkxIgTdHZtma6kEE2+QxPfikpX/BRyBku6MbFpOOwc9TpRGcmIYm3F7UD84LOgv+SoMHr/g5uMG4391l7LnQ33Se1Y=
+	t=1716211857; cv=none; b=lKVXGlqscBAayK0wG/aPJwcCBOkardJ4rrP/0/XUy6CXe6YGjWseiVXb5+EcrX8sjyzWnJdIsd7n3Xh72b16SrIKoCNO3fi2KxaWBkGfjhgBVsQ5khcU/YCeiqoAiN8YjaffPX9f058gJvYpL6i5Q9Kp9MYsv+VwQt3yvkAHcF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716211822; c=relaxed/simple;
-	bh=qfvNWKn/CQRVv/+cpmMCpprLiCzOA6G5IF/qyBsiOO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gpk8NCBnmy1GBPYQRAc1znoPkHSW2KmH1tZLOc58kqa2YU6bVP4/2kw7ey2HgFm4DazYPXW1PcfcyA461AoJ0768c2h7fpx+r0/oqYpuwlb+u8RA933G+TcET83gV1rpXB9zzKds6malH8azet8lEpfVzywomU+erHRWimHDrRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=KngA7ggd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jcQS+Dwp; arc=none smtp.client-ip=64.147.123.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 1F8EC1800113;
-	Mon, 20 May 2024 09:30:19 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 20 May 2024 09:30:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1716211818; x=1716298218; bh=oa2W4qjwd3
-	7BEc4YnG8uAq9YoHRdThoet19LMJypOJk=; b=KngA7ggdi0drYPof5o7hwmTHRG
-	S1IU/jqt9f39+LLVVayq0jCaruRqJLTNA7Ks8icMsmbv0cfVRKGccFi1pljVa866
-	SYJhvYcWV71/wPhdtsupKguUSphYy8FMJmGL+5CUUFDCMZuKdCPQj2IYpCuetuId
-	Ng4rjvr5M8VMsDg73uJZbUx7uiSmEl3qt2cXtvH0vlyNJsSJNqzIt2nw6mWG3ueS
-	S3bBtq351+HqbQaocyOy1b5Kkgu/XtWYxn0VotlTQg9VSZ25xjNw+EzqymjBmTTS
-	5jPxtYWLB11th1PnC8tJJ65cUBo/TnEkX2taPHdxyflnBj/zCniAj+McRJxA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716211818; x=1716298218; bh=oa2W4qjwd37BEc4YnG8uAq9YoHRd
-	Thoet19LMJypOJk=; b=jcQS+DwpjR6VeZzuQ0pdwmbkcf2+ELvd20o2DZOzD9JW
-	K1Ouc82eECZh2CUyAZmcpgiJ7Aj+RGF+radye4kAqANBgqeSFC5Kc2RS6r73Qq78
-	wQavmUkdh4ZZyLtkeXSLaEfd/rnlxvhQ4uOL9a+JLfA5zqGV6o/L9jVXO/oK0LQx
-	bcN0cQZ5j0UEtgvbU4c3Qm2USaSBWjT68DDFLctcd6yIURrxVx1cxwHiBjvS0/2V
-	AXPv1wbwPmFkFQ8Xz7F5VxiJnuNqQrcN4kcGxKU6hstqC/KeJC34xetLKaWaTR8n
-	0zOYgO/KgxUDu+2UCJP2h3fO5zWI+MJIk5LWg8D3Qw==
-X-ME-Sender: <xms:aVBLZgSicgZjJPlIVVmqiGzabXmY7U6W-0cf6XlPPGb9FjAoRo3i3Q>
-    <xme:aVBLZtyvBNjibT9OIXMtuxSODDNt60MW4Zx1rQGGupWpM5STLV47xJdGO5ceQHoNp
-    Hn6WzBjyUeeWu9cDQM>
-X-ME-Received: <xmr:aVBLZt3gLg6GCxVnil1t54Zgi9M7nf9iJDLZJfgCKaz2OGOO9cDYTRLuhNRlBinQj-htlu-2o_0zCBcSoxwySoI5og>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeitddggeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghh
-    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
-    grthhtvghrnhepleevudetgefhheekueekhfduffethfehteeftdfhvefgteelvedvudev
-    teeufeehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihii
-    iigr
-X-ME-Proxy: <xmx:aVBLZkC4m14s5n4tEp3avfH807qvPwncZ2I4Y8fgrQLUIdPf_FIzKA>
-    <xmx:aVBLZpi3GscB2ljoVCtHmBhYuWCIGQjJd8VIwqqSfz5mb8dIqOnIjg>
-    <xmx:aVBLZgpYWVjDC5IVwGQHAI3G5RpzgHOfzQpd-FVNiarwtvRY71MrWQ>
-    <xmx:aVBLZsgJ-Srgc7YF2SLDksEcZPHG5z1ImBm8SgQp1vv6jyTYTnoSJQ>
-    <xmx:alBLZoT0XhJL2dv8tXkxE_p1f3DxUlYY4oWx8zECBUg_U-dVblg9I4z5>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 20 May 2024 09:30:15 -0400 (EDT)
-Date: Mon, 20 May 2024 07:30:14 -0600
-From: Tycho Andersen <tycho@tycho.pizza>
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Joel Granados <j.granados@samsung.com>,
-	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
-Message-ID: <ZktQZi5iCwxcU0qs@tycho.pizza>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-4-jcalmels@3xx0.net>
+	s=arc-20240116; t=1716211857; c=relaxed/simple;
+	bh=kZHxyEYpeqymvbNV5Acz0S9qU02H/GfF0vbbl2YfxXM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TClGeolLkh4Xsqy6MsE+A16QRTUCB/VpD/TI7iYgJXnTt/Kv8jRu4ZBz7PWTL9z9EowlnXHb4BAcND+Fs4xT9RuxCmbvAcRiyH9aDAVOEA35Q48pOE/DtphLJM63v/bJtBBCP0+wxTotPgWeu9SnlyW188tpY9zCWsQPst+XDh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8VkvGBY; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-34db9a38755so2526903f8f.1;
+        Mon, 20 May 2024 06:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716211854; x=1716816654; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kZHxyEYpeqymvbNV5Acz0S9qU02H/GfF0vbbl2YfxXM=;
+        b=m8VkvGBYs5dL4A4rtQ4t7wKhshn08WcuW9iEW7E3ZXI4H4bPQq+9YM0AAyR5L0m7VS
+         OPLWKTPnEMhov1cJJ1yEKh0ls45Cy2ZZBWGH3t5gu9tiZzwNquOEw/dpulLxhJvuFnj8
+         3TWI9aG8QXvW8eagxhvtRuK6LkAi81+MIT1uCvmTS4imMSClvDr+3NYWHVJuS3mTZMtF
+         LZxs7JEs/Fu0p044CrEbQVpCSHzMJSnImuiodsv0ckeUy6a4tW0CFOt75eoxbfMzpZzy
+         iJ4VhFcQnnggr/guKJ/9y6f2CUE64ylym3d5Q0SdM3QhQHqbZoAY+fCKJDw7v+/31Ykv
+         ehPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716211854; x=1716816654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kZHxyEYpeqymvbNV5Acz0S9qU02H/GfF0vbbl2YfxXM=;
+        b=vKXmwZOJ8tLjxiurukblk5/hFIGvuR6UIP4k8PDOOdm3NX9OkPj4dXpXvC2oVN7aGd
+         PtFjsAjszANB1/5fIdwx9a9gPFQRMUlfMDUmAQR7xq6AoF/LACYuER/cUza9pr9ZVktR
+         ZA1SmsOKBnjgYiyd2dMhv80J4aIZi8awHxIQHNykRpwQJmpDPuzODLHxjgKwMb3yOVE5
+         BoPB4E7Ld8QVxRrY4HH6iPHwimzx5AxTa8Mp000o4seruEj++s0bbdOLQ7j2s/KEfqR3
+         f5yVGkiCvksRBcBz+7xrsL77sNwwIGK5loADbDnPbEj3GTMks4crXn8DR+SVBXwf31ul
+         CwSA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9gHZv+PYq/g6+3vdsgsM4ZJUI1zX5sUr6ngQOLJ9ICRYqRx0kVP6uK2Bu6iCqjV5louP1Zbx3o8/JQmTY3oJRtEvMISo6d+IBtqxXa3YlvTdURysKSgTFcxfO3PygXi6qGADV124Lw4LeLHqrQa/hIPSoDZxsBtJ0KU/LSdjqF3/tVEaPDbY8
+X-Gm-Message-State: AOJu0YzkMwegEUYP0aK0nEtjv6n4ct3L8bEVZHA8rf5i4Ou1kJwkFWWo
+	Vgkp4xCWLOdWK9sVPckukzIucEGZ7cnRHAWJh5Y3LELP4J80h7EgjU7Yc16I/+vQKXdeLY3EfnT
+	siyA/SwKphEUpsafd92QdGUsmloSkynSC
+X-Google-Smtp-Source: AGHT+IFwxIwSzgN4Et+aYcjqi2uLRSFf/4UznGmV17LEMLE6uJqfvkNZ06oKf6rIcJVHNW77Bv3ygx2PKIZskzEdkJ8=
+X-Received: by 2002:a5d:53c5:0:b0:34a:9adc:c364 with SMTP id
+ ffacd0b85a97d-3504a630f38mr25053493f8f.8.1716211854324; Mon, 20 May 2024
+ 06:30:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516092213.6799-4-jcalmels@3xx0.net>
+References: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com> <6eee1069-81ae-495a-850f-7f526006db8b@web.de>
+In-Reply-To: <6eee1069-81ae-495a-850f-7f526006db8b@web.de>
+From: grygorii tertychnyi <grembeter@gmail.com>
+Date: Mon, 20 May 2024 15:30:43 +0200
+Message-ID: <CAGFuAuyXhBT8Nkvz5qN8iejeoHMFmx1b86tTNmpVfQ2xqjMtLw@mail.gmail.com>
+Subject: Re: [PATCH] i2c: ocores: set IACK bit after core is enabled
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>, 
+	bsp-development.geo@leica-geosystems.com, linux-i2c@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
+	Peter Korsgaard <peter@korsgaard.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jonathan,
+On Sun, May 19, 2024 at 7:25=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> =E2=80=A6
+> > Sometimes it causes failure for the very first message transfer, =E2=80=
+=A6
+>
+> Does such an information indicate the need for the tag =E2=80=9CFixes=E2=
+=80=9D?
 
-On Thu, May 16, 2024 at 02:22:05AM -0700, Jonathan Calmels wrote:
-> +int proc_cap_userns_handler(struct ctl_table *table, int write,
-> +			    void *buffer, size_t *lenp, loff_t *ppos)
-> +{
+I'm not sure: the original initialization order was introduced by the
+very first commit
+18f98b1e3147 ("[PATCH] i2c: New bus driver for the OpenCores I2C controller=
+").
 
-there is an ongoing effort (started at [0]) to constify the first arg
-here, since you're not supposed to write to it. Your usage looks
-correct to me, so I think all it needs is a literal "const" here.
-
-[0]: https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net/
-
-> +	struct ctl_table t;
-> +	unsigned long mask_array[2];
-> +	kernel_cap_t new_mask, *mask;
-> +	int err;
-> +
-> +	if (write && (!capable(CAP_SETPCAP) ||
-> +		      !capable(CAP_SYS_ADMIN)))
-> +		return -EPERM;
-
-..why CAP_SYS_ADMIN? You mention it in the changelog, but don't
-explain why.
-
-Tycho
+Regards,
+Grygorii
 
