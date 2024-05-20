@@ -1,213 +1,174 @@
-Return-Path: <linux-kernel+bounces-183806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1DC8C9E64
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:50:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20DF18C9E6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A666EB2239D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:50:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09C961C220E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B76A13666E;
-	Mon, 20 May 2024 13:50:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2E3136678;
+	Mon, 20 May 2024 13:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="arDADyHg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E212E26AEC;
-	Mon, 20 May 2024 13:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B5253815;
+	Mon, 20 May 2024 13:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716213001; cv=none; b=ibNUK7D29dEeEljC9a0SCinHrusmi0oOb2qdfTNaYBGJFhJB0Igk8gqnNENX4EsXuqQoB/glwL0toLg/00AhZY8aZ1thunfkrAqcCOluirD5BSIWWMI3Wiwv3zIafMDhcgzDNgKMAGQCZ75nS9sSyjTPGKl/NZxfMgBiev+bs78=
+	t=1716213153; cv=none; b=ItJzHpJWaPMRkegz/dEwfjmO2RMckCMUl0flPLu+IyH0KX7O4H90Mj2LltmV7JDyzxULDpS2hZrFWROhhFVzCTBWWSIcrjpNLK66ixzYJKfj1cwCGUJnD60npr9om6T9d3Ipx4sMxKK9j1D7Sr3RWvpPspsUJWBXXuNY73lEwmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716213001; c=relaxed/simple;
-	bh=46mWSNkzzYXt6IhvzmetNq9RgZo7U/8GlVF8Q8Tardg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WPK2bGXBAacm0ynrzKf0VwbmwklqsSuyA8ipZup89wfLIxg8uyCeIA0eDmJMoCRT/O3lkzsnbR2EciBQAC2oIfgypBRWYgRE49htaczPpCXL9V4fbVlT3QkkLiIl9gdM1FNChvrHijHjIzzm+xppD8yJs8H80LXqnny/ycG2oSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99034C2BD10;
-	Mon, 20 May 2024 13:50:00 +0000 (UTC)
-Date: Mon, 20 May 2024 09:50:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rt-users
- <linux-rt-users@vger.kernel.org>
-Subject: Re: [PATCH 2/2] ring-buffer: Fix a race between readers and resize
- checks
-Message-ID: <20240520095037.33a7fde6@gandalf.local.home>
-In-Reply-To: <20240517134008.24529-3-petr.pavlu@suse.com>
-References: <20240517134008.24529-1-petr.pavlu@suse.com>
-	<20240517134008.24529-3-petr.pavlu@suse.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716213153; c=relaxed/simple;
+	bh=hDGQ/f9tnKzEsLVgBqkboz6ShsWwZfM5TWALVwDYV6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9CrOrF1raz8mg2UdBco2GYeO1RGk7Zfvcz/22orZXBtW0loDhyosKv5m7XZba/ZG02Fj99iFvz5tyGZY3jf2z3dD9GPE7JoU7TvxMPo+b4n74Lm3JdPtuFF6BBxwN2muvyKk8A8ZeuvJcWrKC8z/g9c7+uOPO6BeYDI33e1OgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=arDADyHg; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716213151; x=1747749151;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hDGQ/f9tnKzEsLVgBqkboz6ShsWwZfM5TWALVwDYV6Q=;
+  b=arDADyHg8gU1QzfRT/RuCBAl4qCElvzvR8azTR68N8DT+ZAaiu27Ova2
+   +B+a5l7OiYrgJ2hGLvofCgzwTk3RP9LSE7n9lQxriQiA0kl4Ip4UUsKmA
+   Etqj7YAMSbtRnT2OtDh6KQB/HNCAYZZtN3KIqNm+QkYDO7pmszrUis35v
+   EOiw/k+zhkMZZtRCqPHNQPsSBqWcnvra3xOPFlpXartweBeiWWqG3QG0l
+   C2S65x6cSOeglzn0mKW8rJ7wNQVJtZp0ULwib16vXuZgS/B1Sq5FnC2NV
+   LA1atqTqArKYaktpPjr2ehLvy5iQqZgw2FcTWQbXmGYJVNZ5X8Q1aXQ9+
+   A==;
+X-CSE-ConnectionGUID: oW3pvki2S4SmD1b4jh0M1A==
+X-CSE-MsgGUID: witET3DnTDyFewDbCEflZg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="23749406"
+X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
+   d="scan'208";a="23749406"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 06:52:31 -0700
+X-CSE-ConnectionGUID: IZ/kxZVCRu+B/+d4yLGwsA==
+X-CSE-MsgGUID: 0q2of9YaRviqgGI9BTjUrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
+   d="scan'208";a="32446141"
+Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 20 May 2024 06:52:26 -0700
+Received: from kbuild by 108735ec233b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s93R9-0004si-2j;
+	Mon, 20 May 2024 13:52:23 +0000
+Date: Mon, 20 May 2024 21:51:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, marex@denx.de, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de, shengjiu.wang@gmail.com
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v4 2/5] clk: imx: clk-audiomix: Add reset controller
+Message-ID: <202405202110.K51viYoO-lkp@intel.com>
+References: <1716188963-16175-3-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1716188963-16175-3-git-send-email-shengjiu.wang@nxp.com>
 
-On Fri, 17 May 2024 15:40:08 +0200
-Petr Pavlu <petr.pavlu@suse.com> wrote:
+Hi Shengjiu,
 
-> The reader code in rb_get_reader_page() swaps a new reader page into the
-> ring buffer by doing cmpxchg on old->list.prev->next to point it to the
-> new page. Following that, if the operation is successful,
-> old->list.next->prev gets updated too. This means the underlying
-> doubly-linked list is temporarily inconsistent, page->prev->next or
-> page->next->prev might not be equal back to page for some page in the
-> ring buffer.
-> 
-> The resize operation in ring_buffer_resize() can be invoked in parallel.
-> It calls rb_check_pages() which can detect the described inconsistency
-> and stop further tracing:
-> 
-> [  190.271762] ------------[ cut here ]------------
-> [  190.271771] WARNING: CPU: 1 PID: 6186 at kernel/trace/ring_buffer.c:1467 rb_check_pages.isra.0+0x6a/0xa0
-> [  190.271789] Modules linked in: [...]
-> [  190.271991] Unloaded tainted modules: intel_uncore_frequency(E):1 skx_edac(E):1
-> [  190.272002] CPU: 1 PID: 6186 Comm: cmd.sh Kdump: loaded Tainted: G            E      6.9.0-rc6-default #5 158d3e1e6d0b091c34c3b96bfd99a1c58306d79f
-> [  190.272011] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.0-0-gd239552c-rebuilt.opensuse.org 04/01/2014
-> [  190.272015] RIP: 0010:rb_check_pages.isra.0+0x6a/0xa0
-> [  190.272023] Code: [...]
-> [  190.272028] RSP: 0018:ffff9c37463abb70 EFLAGS: 00010206
-> [  190.272034] RAX: ffff8eba04b6cb80 RBX: 0000000000000007 RCX: ffff8eba01f13d80
-> [  190.272038] RDX: ffff8eba01f130c0 RSI: ffff8eba04b6cd00 RDI: ffff8eba0004c700
-> [  190.272042] RBP: ffff8eba0004c700 R08: 0000000000010002 R09: 0000000000000000
-> [  190.272045] R10: 00000000ffff7f52 R11: ffff8eba7f600000 R12: ffff8eba0004c720
-> [  190.272049] R13: ffff8eba00223a00 R14: 0000000000000008 R15: ffff8eba067a8000
-> [  190.272053] FS:  00007f1bd64752c0(0000) GS:ffff8eba7f680000(0000) knlGS:0000000000000000
-> [  190.272057] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  190.272061] CR2: 00007f1bd6662590 CR3: 000000010291e001 CR4: 0000000000370ef0
-> [  190.272070] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [  190.272073] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [  190.272077] Call Trace:
-> [  190.272098]  <TASK>
-> [  190.272189]  ring_buffer_resize+0x2ab/0x460
-> [  190.272199]  __tracing_resize_ring_buffer.part.0+0x23/0xa0
-> [  190.272206]  tracing_resize_ring_buffer+0x65/0x90
-> [  190.272216]  tracing_entries_write+0x74/0xc0
-> [  190.272225]  vfs_write+0xf5/0x420
-> [  190.272248]  ksys_write+0x67/0xe0
-> [  190.272256]  do_syscall_64+0x82/0x170
-> [  190.272363]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  190.272373] RIP: 0033:0x7f1bd657d263
-> [  190.272381] Code: [...]
-> [  190.272385] RSP: 002b:00007ffe72b643f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> [  190.272391] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f1bd657d263
-> [  190.272395] RDX: 0000000000000002 RSI: 0000555a6eb538e0 RDI: 0000000000000001
-> [  190.272398] RBP: 0000555a6eb538e0 R08: 000000000000000a R09: 0000000000000000
-> [  190.272401] R10: 0000555a6eb55190 R11: 0000000000000246 R12: 00007f1bd6662500
-> [  190.272404] R13: 0000000000000002 R14: 00007f1bd6667c00 R15: 0000000000000002
-> [  190.272412]  </TASK>
-> [  190.272414] ---[ end trace 0000000000000000 ]---
-> 
-> Note that ring_buffer_resize() calls rb_check_pages() only if the parent
-> trace_buffer has recording disabled. Recent commit d78ab792705c
-> ("tracing: Stop current tracer when resizing buffer") causes that it is
-> now always the case which makes it more likely to experience this issue.
-> 
-> The window to hit this race is nonetheless very small. To help
-> reproducing it, one can add a delay loop in rb_get_reader_page():
-> 
->  ret = rb_head_page_replace(reader, cpu_buffer->reader_page);
->  if (!ret)
->  	goto spin;
->  for (unsigned i = 0; i < 1U << 26; i++)  /* inserted delay loop */
->  	__asm__ __volatile__ ("" : : : "memory");
->  rb_list_head(reader->list.next)->prev = &cpu_buffer->reader_page->list;
-> 
-> .. and then run the following commands on the target system:
-> 
->  echo 1 > /sys/kernel/tracing/events/sched/sched_switch/enable
->  while true; do
->  	echo 16 > /sys/kernel/tracing/buffer_size_kb; sleep 0.1
->  	echo 8 > /sys/kernel/tracing/buffer_size_kb; sleep 0.1
->  done &
->  while true; do
->  	for i in /sys/kernel/tracing/per_cpu/*; do
->  		timeout 0.1 cat $i/trace_pipe; sleep 0.2
->  	done
->  done
-> 
-> To fix the problem, make sure ring_buffer_resize() doesn't invoke
-> rb_check_pages() concurrently with a reader operating on the same
-> ring_buffer_per_cpu by taking its cpu_buffer->reader_lock.
+kernel test robot noticed the following build errors:
 
-Definitely a bug. Thanks for catching it. But...
+[auto build test ERROR on abelvesa/clk/imx]
+[also build test ERROR on linus/master next-20240520]
+[cannot apply to pza/reset/next shawnguo/for-next robh/for-next pza/imx-drm/next v6.9]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> 
-> Fixes: 659f451ff213 ("ring-buffer: Add integrity check at end of iter read")
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
-> ---
->  kernel/trace/ring_buffer.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index 0ae569eae55a..967655591719 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -1449,6 +1449,11 @@ static void rb_check_bpage(struct ring_buffer_per_cpu *cpu_buffer,
->   *
->   * As a safety measure we check to make sure the data pages have not
->   * been corrupted.
-> + *
-> + * Callers of this function need to guarantee that the list of pages doesn't get
-> + * modified during the check. In particular, if it's possible that the function
-> + * is invoked with concurrent readers which can swap in a new reader page then
-> + * the caller should take cpu_buffer->reader_lock.
->   */
->  static void rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
->  {
-> @@ -2200,8 +2205,13 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
->  		 */
->  		synchronize_rcu();
->  		for_each_buffer_cpu(buffer, cpu) {
-> +			unsigned long flags;
-> +
->  			cpu_buffer = buffer->buffers[cpu];
-> +			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
->  			rb_check_pages(cpu_buffer);
-> +			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock,
-> +						   flags);
+url:    https://github.com/intel-lab-lkp/linux/commits/Shengjiu-Wang/dt-bindings-clock-imx8mp-Add-reset-cells-property/20240520-153230
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git clk/imx
+patch link:    https://lore.kernel.org/r/1716188963-16175-3-git-send-email-shengjiu.wang%40nxp.com
+patch subject: [PATCH v4 2/5] clk: imx: clk-audiomix: Add reset controller
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20240520/202405202110.K51viYoO-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240520/202405202110.K51viYoO-lkp@intel.com/reproduce)
 
-Putting my RT hat on, I really don't like the above fix. The
-rb_check_pages() iterates all subbuffers which makes the time interrupts
-are disabled non-deterministic.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405202110.K51viYoO-lkp@intel.com/
 
-Instead, I would rather have something where we disable readers while we do
-the check, and re-enable them.
+All errors (new ones prefixed by >>):
 
-			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-			cpu_buffer->read_disabled++;
-			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
-
-// Also, don't put flags on a new line. We are allow to go 100 characters now.
+   drivers/clk/imx/clk-imx8mp-audiomix.c: In function 'clk_imx8mp_audiomix_reset_adev_release':
+>> drivers/clk/imx/clk-imx8mp-audiomix.c:235:9: error: implicit declaration of function 'kfree'; did you mean 'vfree'? [-Werror=implicit-function-declaration]
+     235 |         kfree(adev);
+         |         ^~~~~
+         |         vfree
+   drivers/clk/imx/clk-imx8mp-audiomix.c: In function 'clk_imx8mp_audiomix_reset_controller_register':
+>> drivers/clk/imx/clk-imx8mp-audiomix.c:244:16: error: implicit declaration of function 'kzalloc'; did you mean 'vzalloc'? [-Werror=implicit-function-declaration]
+     244 |         adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+         |                ^~~~~~~
+         |                vzalloc
+   drivers/clk/imx/clk-imx8mp-audiomix.c:244:14: warning: assignment to 'struct auxiliary_device *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     244 |         adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+         |              ^
+   cc1: some warnings being treated as errors
 
 
-  			rb_check_pages(cpu_buffer);
-			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-			cpu_buffer->read_disabled--;
-			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+vim +235 drivers/clk/imx/clk-imx8mp-audiomix.c
 
-Or something like that. Yes, that also requires creating a new
-"read_disabled" field in the ring_buffer_per_cpu code.
+   230	
+   231	static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
+   232	{
+   233		struct auxiliary_device *adev = to_auxiliary_dev(dev);
+   234	
+ > 235		kfree(adev);
+   236	}
+   237	
+   238	static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
+   239								 struct clk_imx8mp_audiomix_priv *priv)
+   240	{
+   241		struct auxiliary_device *adev;
+   242		int ret;
+   243	
+ > 244		adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+   245		if (!adev)
+   246			return -ENOMEM;
+   247	
+   248		adev->name = "reset";
+   249		adev->dev.parent = dev;
+   250		adev->dev.release = clk_imx8mp_audiomix_reset_adev_release;
+   251	
+   252		ret = auxiliary_device_init(adev);
+   253		if (ret) {
+   254			kfree(adev);
+   255			return ret;
+   256		}
+   257	
+   258		ret = auxiliary_device_add(adev);
+   259		if (ret) {
+   260			auxiliary_device_uninit(adev);
+   261			kfree(adev);
+   262			return ret;
+   263		}
+   264	
+   265		return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_unregister_adev, adev);
+   266	}
+   267	
 
-That said, I'm going to accept these patches as is (moving flags onto the
-same line). But would like the above code for the next merge window as it
-would then not affect RT.
-
-I'll accept these patches because it does fix the bug now.
-
--- Steve
-
-
->  		}
->  		atomic_dec(&buffer->record_disabled);
->  	}
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
