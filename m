@@ -1,98 +1,128 @@
-Return-Path: <linux-kernel+bounces-184148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F59D8CA331
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:18:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27C38CA334
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BFED282041
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:18:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DC96281FC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64BE139562;
-	Mon, 20 May 2024 20:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFD6139562;
+	Mon, 20 May 2024 20:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7VD5wz+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c7wIPFrt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE536A2D;
-	Mon, 20 May 2024 20:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193C1136988
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716236289; cv=none; b=mpYs3VveP2BrZ1kuZFj6LOXSNcKbUqvM7yde9WplhPbGOBLjbdE/RzgDR9hVEE9oFK0VUK6GNQ0ZjCPa2a1QsEtnkv396R+p/Zu2uR1Kaoc2DSeTaXCgE5xx1p3jtu4O7GP2A4oNu8pima90rxJgiFkBwyfCyhwm5GDozT+8mcQ=
+	t=1716236457; cv=none; b=T6fIa0hMZKuNNfuuRgw9QmCdyDHXsgYXw+VVMW5NQjswcBTPc5RHQK9HBaioGme6J91M4xw6iKRypMTlJlRmbZFck8ltuuVAykGSky7lHv3Vs37KwnIOLNmrLMTjQ+bim7JHuknm1z3mIpbjNmzQmj6/yis4n/aZkyAJgCNX5q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716236289; c=relaxed/simple;
-	bh=LcKby/XxbtDN9O7Z30k0Ah2AUXHNqqqz9xCEDpiWHdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E2xEpEzMPHYqkdi4b8GGWRSxa+XGdBXdi15+OBUWlh09KeNXv7BdZA7JEuiZ4gLZEdw/dAlIhk1+Z3Anze7/lzoHv4uhQ2r8HEbv0EIjiPViBnZVP8CQ2scdEmISnPT3Ia+jYbP8h118U8QF6uBIYXWropFmdr7x/4hBGCrpgE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7VD5wz+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E5FEC2BD10;
-	Mon, 20 May 2024 20:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716236288;
-	bh=LcKby/XxbtDN9O7Z30k0Ah2AUXHNqqqz9xCEDpiWHdw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b7VD5wz+D67o/zSiHS9pLgUjHtdcUFeR+MoeScDi8mcuPr1aQFtCySAHB4axmvtNO
-	 Yoq16cjAnhSDsZR//gUc3lPrhdZrfTPpux4gxc7lgBnHSK37H2l1zZAIhpaRyRc+wM
-	 h9gNGsbfmCxTYmtiXbdrQXpS4hsYXx8p7Gxhz+ruL7Ph5Epkj+1A1BikxAIJGEVug+
-	 kIMYiSUeQVWqf70N9yxSAZZE4z7f9K0gw5ShQpt47vJmE319UnO/VrxCieyD8rllXG
-	 M9byGZTyriphKf9Ks2aVCH5wlVZZ6klcba3bRLqYM5BB9Jf9iMGVZzrwFSUgC/36D4
-	 btsPK/+vIYUxA==
-Date: Mon, 20 May 2024 15:18:07 -0500
-From: Rob Herring <robh@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: "Kumar, Udit" <u-kumar1@ti.com>, vigneshr@ti.com, nm@ti.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Kip Broadhurst <kbroadhurst@ti.com>,
-	w.egorov@phytec.de
-Subject: Re: [PATCH] dt-bindings: net: dp8386x: Add MIT license along with
- GPL-2.0
-Message-ID: <20240520201807.GA1410789-robh@kernel.org>
-References: <20240517104226.3395480-1-u-kumar1@ti.com>
- <20240517-poster-purplish-9b356ce30248@spud>
- <20240517-fastball-stable-9332cae850ea@spud>
- <8e56ea52-9e58-4291-8f7f-4721dd74c72f@ti.com>
- <20240520-discard-fanatic-f8e686a4faad@spud>
+	s=arc-20240116; t=1716236457; c=relaxed/simple;
+	bh=YDCRg2Cm4geYhXAR/tMhisRKsyQxPL6umy7x/kacso4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-type; b=U+DqZZN4S59vsRkka4H7tIQYKhV3ZtYLirQr6f84srs9ZnBFVL4yScZ4rdoRGZtt3uoVQAC1EMb0hTp2SOwKsSBlkw9OD0WSNo7tPWyYI+6Hq9yvHMQSsy2ZdPtrLTZovMBZ/2RnjaaNDtbDFgKqBrHfvUR7OyctvNDwdTrABdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c7wIPFrt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716236454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pOcNyvgHjOWe2pYYsGkhb9Oi1HGWChOiFubUg3gEQ8Y=;
+	b=c7wIPFrt6GbjMES+gs+eEdpySAtOso//wf30wqtkYhHL8HP3xot1hY0/cW1MItfqPsWGnN
+	EecwQoWb+KDKogP7lgkueDEhCS5Lj6Hxv4byP6xliVrr1IIR1DxOWOiv7ucawfe2/Xthbk
+	Kn+12sfZcAw5fXOdA1lFNFmthNGMrkY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-J7ENc2GXNJuxF4Elx6Z0FA-1; Mon, 20 May 2024 16:20:49 -0400
+X-MC-Unique: J7ENc2GXNJuxF4Elx6Z0FA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AEBB28008A4;
+	Mon, 20 May 2024 20:20:48 +0000 (UTC)
+Received: from jmeneghi.bos.com (unknown [10.22.8.193])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 2460040C6CB4;
+	Mon, 20 May 2024 20:20:48 +0000 (UTC)
+From: John Meneghini <jmeneghi@redhat.com>
+To: kbusch@kernel.org,
+	hch@lst.de,
+	sagi@grimberg.me,
+	emilne@redhat.com
+Cc: linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	jmeneghi@redhat.com,
+	jrani@purestorage.com,
+	randyj@purestorage.com,
+	hare@kernel.org
+Subject: [PATCH v3 0/1] nvme: queue-depth multipath iopolicy
+Date: Mon, 20 May 2024 16:20:44 -0400
+Message-Id: <20240520202045.427110-1-jmeneghi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520-discard-fanatic-f8e686a4faad@spud>
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-On Mon, May 20, 2024 at 06:17:52PM +0100, Conor Dooley wrote:
-> On Sat, May 18, 2024 at 02:18:55PM +0530, Kumar, Udit wrote:
-> > Hi Conor
-> > 
-> > On 5/17/2024 8:11 PM, Conor Dooley wrote:
-> > > On Fri, May 17, 2024 at 03:39:20PM +0100, Conor Dooley wrote:
-> > > > On Fri, May 17, 2024 at 04:12:26PM +0530, Udit Kumar wrote:
-> > > > > Modify license to include dual licensing as GPL-2.0-only OR MIT
-> > > > > license for TI specific phy header files. This allows for Linux
-> > > > > kernel files to be used in other Operating System ecosystems
-> > > > > such as Zephyr or FreeBSD.
-> > > > What's wrong with BSD-2-Clause, why not use that?
-> > > I cut myself off, I meant to say:
-> > > What's wrong with BSD-2-Clause, the standard dual license for
-> > > bindings, why not use that?
-> > 
-> > want to be inline with License of top level DTS, which is including this
-> > header file
-> 
-> Unless there's a specific reason to use MIT (like your legal won't even
-> allow you to use BSD-2-Clause) then please just use the normal license
-> for bindings here.
+Submitting for final review. As agreed at LSFMM I've squashed this series into
+one patch and addressed all review comments. Please merge this into nvme-6.10.
 
-Aligning with the DTS files is enough reason for me as that's where 
-these files are used. If you need to pick a permissive license for both, 
-then yes, use BSD-2-Clause. Better yet, ask your lawyer.
+Changes since V2:
 
-Rob
+Add the NVME_MPATH_CNT_ACTIVE flag to eliminate a READ_ONCE in the completion path
+and increment/decrement the active_nr count on all mpath IOs - including
+passthru commands.
+
+Send a pr_notice when ever the iopolicy on a subsystem is changed. This is
+important for support reasons. It is fully expected that users will be changing
+the iopolicy with active IO in progress.
+
+Squashed everything and rebased to nvme-v6.10
+
+Changes since V1:
+
+I'm re-issuing Ewan's queue-depth patches in preparation for LSFMM
+
+These patches were first show at ALPSS 2023 where I shared the following
+graphs which measure the IO distribution across 4 active-optimized
+controllers using the round-robin verses queue-depth iopolicy.
+
+ https://people.redhat.com/jmeneghi/ALPSS_2023/NVMe_QD_Multipathing.pdf
+
+Since that time we have continued testing these patches with a number of
+different nvme-of storage arrays and test bed configurations, and I've codified
+the tests and methods we use to measure IO distribution
+
+All of my test results, together with the scripts I used to generate these
+graphs, are available at:
+
+ https://github.com/johnmeneghini/iopolicy
+
+Please use the scripts in this repository to do your own testing.
+
+These patches are based on nvme-v6.9
+
+Ewan D. Milne (1):
+  nvme: multipath: Implemented new iopolicy "queue-depth"
+
+ drivers/nvme/host/core.c      |  2 +-
+ drivers/nvme/host/multipath.c | 86 +++++++++++++++++++++++++++++++++--
+ drivers/nvme/host/nvme.h      |  9 ++++
+ 3 files changed, 92 insertions(+), 5 deletions(-)
+
+-- 
+2.39.3
+
 
