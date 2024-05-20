@@ -1,129 +1,141 @@
-Return-Path: <linux-kernel+bounces-183541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719A28C9A64
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:32:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB188C9A69
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D95D21F21CE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:32:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034EC28217D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472B31C6A3;
-	Mon, 20 May 2024 09:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2E3200A0;
+	Mon, 20 May 2024 09:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ABtfl/GW"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KaXg0zs7"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1871B27D
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 09:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55192468E;
+	Mon, 20 May 2024 09:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716197562; cv=none; b=EH50D2KhOG+e+cCDizYvD7qLDkOHmDlGZGIF61zBon204zp6lSxcuuZNgs5RvseQ+0qFHXEN31HEyazz7WmrzAkQUlDtXusaclM5oyK7DLhGULMNGwWA1tUqZ44tfh42jmTw4aQxFUbkya/PQBFWxHka8e0K/e1eZjwp5wgV7Tg=
+	t=1716197669; cv=none; b=VILilq0h1zKsouxozy3qthGN7W18wtMcSeHOpGMaVYzIoRm4/WafbfjYA13x95jFz+SRuDVKLf37ZnmU5QrbMpSIZsrPzlHgQDvaL8Gq1KEJjj6EsHme7i0BcPQY13Sj7gSwNT6N6KcMBNdcrowkbuS7G39hHTsC5vgP7XeMVbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716197562; c=relaxed/simple;
-	bh=6qqAt+q020TEX/srbVeaNcplSl/KDDH8/TynN7XepB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oKbH8p/UQJF1ApFoQE6U5b6Se1HTfHtEwIgUkyn3lwUcY6orbSYNirnt0imyqJRLuGXtcjoSSEl7LC6g6BDWM6VegKehSCdFp9m7e0yijJV9QmICUe5q2P/rfDr69SjlLK/DtFnu0lEcFGW5zlhc9h3Ud2NklyWBGBWfis4pMCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ABtfl/GW; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f67f4bebadso117188b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 02:32:41 -0700 (PDT)
+	s=arc-20240116; t=1716197669; c=relaxed/simple;
+	bh=Zjn1F07rtTniBpTF31UU+SvXqEBiG8xGCtaMgsAMhmo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=G0GO2Ybtgs3Gk//udFg3phGD5fJBYH72QIX/mdGwPvzkSMD6b7Yw+M9zq/kfh+BVe1eSk+bIHsimE9A0kEQS4rss4vMK2avS167fzTPF2jtKzyTmFz8t4qPS/wYuGFozeJnd3bbuugevSdJnWgrMtBCzUB65r27NYGOy9iPdQ1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KaXg0zs7; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-23d477a1a4fso2019745fac.3;
+        Mon, 20 May 2024 02:34:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716197560; x=1716802360; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VHjDhF8zKcuH4KaZDrxu/GGnpHyFrMbNt+nqVfo/Ty0=;
-        b=ABtfl/GWJsS2j7QFjZny3VQhxa0wIOS0fY2+8mOTZKNwQds9z7xJS4JzFEM4E2lS6w
-         HgPdqXISwcxph5cZi9uzJQjnFdzl8G7JuRNZw80FXOXwdCCknJ5emLRovZuuvvsLJbDx
-         1xFW8SG5T3gswEpnt7HbtpARZSVroukH1WujziKqo2tMGMOeABgTeRShUib3kdO0Y3cV
-         K7d0RhkEM+yFgyR5XxHozta9eC4ByBQiR04GcbB8gRJ5EzsfkeMX30dGDZ/fZ3W5Butk
-         BhpSN92QbQgVjoMsACCJTp0ES/3tvjiBwro8ikRpytrhljVUfy2jywIbqozNPQ7FMdDQ
-         G8nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716197560; x=1716802360;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1716197667; x=1716802467; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VHjDhF8zKcuH4KaZDrxu/GGnpHyFrMbNt+nqVfo/Ty0=;
-        b=cAiqGklNt8Gc3s9ZADcDpUahnam85rnQ8pMHMXQ5CouqqNrnxdkVyEF0qNpeAxtfhN
-         qicS6d92ItL92/RzyHjlN+aix/jxzpEZOOQVhToQmLBXbc0KFed72hu0IfpGmQCAEWKZ
-         97MAjwLiPmyPWgXxA6rJKw/NfFXOJE5U74mDXg5gf/Ah+WTOWryRLft4f6ei5K2tFQBb
-         z26AxrjXdY7ZxskcpGyBAqY4oubXMelIiTuunm+EOeRZcrSWATEdkfsebNiAtCJ95Uuf
-         czR/EevOwXeEobTu/HkYXP0XG5Q+nk+zMG2ZH9sugUCxrpJhVOrNARj+59yqNEaDgrmk
-         C5+g==
-X-Forwarded-Encrypted: i=1; AJvYcCULf2y/+MTv34qQmvL8jQN3WGX+nyNAi4jhUdQG5lDtZX/FDcSyqQAjtcKzp5Di5AfyxAkbGGumgX8qT757j8Yai5NOdx/x1QLvdML0
-X-Gm-Message-State: AOJu0YyCmAm47p6wVraIToOYKL+rVZI6pmVq8A7gUm5g2d1JBjzqZT9O
-	mHNTrMvvCr75mRhNfB1sIS5w7oV7Eaovw2N90cgx1e4IC9JXHEsGVtzwWyyZKR0=
-X-Google-Smtp-Source: AGHT+IFa8g+pCvcfTr1oEO5S4AwyMh2Iyy71hR8SjL5gaoTIDdRqmSgGKDGc01l9L6eqB0yM0+XG+g==
-X-Received: by 2002:a05:6a00:3a01:b0:6ed:5f64:2ff4 with SMTP id d2e1a72fcca58-6f4e02af0d1mr31874819b3a.14.1716197560387;
-        Mon, 20 May 2024 02:32:40 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-65e149dd925sm5500703a12.58.2024.05.20.02.32.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 02:32:39 -0700 (PDT)
-Date: Mon, 20 May 2024 15:02:37 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Yangtao Li <tiny.windzz@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] cpufreq: sun50i: fix memory leak and remove
- of_node_put()
-Message-ID: <20240520093237.fucml6sp2ziygyav@vireshk-i7>
-References: <20240503-sun50i-cpufreq-nvmem-cleanup-v1-0-0a2352cac46b@gmail.com>
+        bh=4eZ825pnSzBKL6Z+MD7+agBNrXJhAhcfuzn1pCYFodw=;
+        b=KaXg0zs7c1kS7NLLfsg206bYjY+5T8NVIgKhvwB3i9k+7KIfJ2bjMxuWu67pD85BAk
+         Zr2ZQ9per9aGw+/KPa31Y5p/JbZTFOqRD2EaUgtTWHW1iu0cmYvYaKSR9Jup22/h4Sg2
+         NkGmkoBSDuLBUmEoBK1DHf4DLdUoo+G15/G6+OQC2LC0Us6hnkhUCoYanX7S6SSa9M2b
+         bWSL+GUudwkqjUP4+V98zMSXeiRCdL25xWSLynzCr3Hdyjrz1RqHiGF2YfjrduaOT3Bn
+         0wVnHJMMGdzus5AnctX2fMYu7o8u03PkdnZbBzqwh6fSxF92zg2N1wuAp8lDXsDebL4V
+         so7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716197667; x=1716802467;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4eZ825pnSzBKL6Z+MD7+agBNrXJhAhcfuzn1pCYFodw=;
+        b=ZV64LHLjSnXXz4r6fB/wflGxXXN7/Vj8Bio3ks6MNDQhx7zOljhzSHbDhoquRzISS4
+         Da+5uxvFbprtRhlAdnrAKYOtA3dgkAaUTolByRT3q2JwJDTFwhMvhTV9KjyyoZJDk5TS
+         DYefDCSuB+++SiGCJ1uizKiBy5qNLFVADY2lQ3hUwLWz1L2uCSLNcZnPlMO6qDE4EYq1
+         KUmYZwgCvf3h2eyHYPUwGg1P17ikVR9+VWxbUd0ToS7WEIPSlHuA3HlDYOSzxAgqFLnE
+         SghxDCogPkwMd1xUdxrEqw3ULbarOxgztG8lgGDCwxmHatnashQ4UsISNA9QTWBcuzBJ
+         Y/bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzPHw4ZqHwj31Lar9XKKWBepiu/iwnNgwT3DIiAtRB09Kd7tiBGJLtAXY7EbkHeYHeOriWOUQNPEeiRoJPQP2zlawYPgiF4CnVB5Pxqq/tPkYcOiBMOY/NdReSK7X/it0BAEMMYZZ9IJSuikgD
+X-Gm-Message-State: AOJu0YwuD/YTH6IAW73OJbQ6IsPVgJPX/Hqz0zhr1rUVOukhoM0r8kWW
+	9oFCS0zFeFbp72dYfefSVx5V/ABqJwrJn5o64LKIqq7m9NkqaV+i
+X-Google-Smtp-Source: AGHT+IHZpWo5mmzw/yMUCdQ4hm6LqOJHS0i7yylA7xFh8dTisfm7nyBUhZxtLmWQ2W4TSBBDIA7TnQ==
+X-Received: by 2002:a05:6871:207:b0:221:96b2:5a4e with SMTP id 586e51a60fabf-241731118d4mr40095508fac.58.1716197667424;
+        Mon, 20 May 2024 02:34:27 -0700 (PDT)
+Received: from smtpclient.apple ([47.246.179.0])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-63411346c12sm16640737a12.80.2024.05.20.02.34.24
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2024 02:34:26 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240503-sun50i-cpufreq-nvmem-cleanup-v1-0-0a2352cac46b@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <eb464408-5567-4130-b899-90ba9756adc1@web.de>
+Date: Mon, 20 May 2024 17:34:12 +0800
+Cc: live-patching@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Jiri Kosina <jikos@kernel.org>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>,
+ Petr Mladek <pmladek@suse.com>,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7F8BE9D1-D68E-4560-8D5C-9025122963B4@gmail.com>
+References: <20240520005826.17281-1-zhangwarden@gmail.com>
+ <eb464408-5567-4130-b899-90ba9756adc1@web.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On 03-05-24, 19:52, Javier Carrasco wrote:
-> This series fixes a memory leak by means of the _scoped version of the
-> for_each_child_of_node() loop, which was recently introduced with
-> 34af4554fb0c ("of: Introduce for_each_*_child_of_node_scoped() to
-> automate of_node_put() handling").
-> 
-> The new approach is still not widely used, but this might be a good
-> occasion to use it in a driver because it actually fixes a bug, and
-> the loop is rather simple.
-> 
-> The creator of the new macro was added to the discussion in case the
-> new approach is still not mature enough, even for such simple case.
-> 
-> Additionally, the existing uses of of_node_put() have been removed to
-> favour the _free() cleanup handler, which reduces the chances of having
-> any other memory leak because some of_node_put() is missing as well as
-> simplifies the current code.
-> 
-> I don't have the real hardware to test the series, so I "faked" the node
-> in a device tree for an arm64 device (Rockchip) and hacked the driver
-> to get to run dt_has_supported_hw(). The new implementation works as
-> expected, but if someone wants to test it with the proper SoC,
-> additional tests are always welcome. The same applies for the removals
-> of of_node_put().
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
-> Javier Carrasco (2):
->       cpufreq: sun50i: fix memory leak in dt_has_supported_hw()
->       cpufreq: sun50i: replace of_node_put() with automatic cleanup handler
+OK, I will try to optimize my description after the patch is reviewed. I =
+am sure there are something still need to be fix for that patch.
 
-Applied. Thanks.
+> On May 20, 2024, at 16:00, Markus Elfring <Markus.Elfring@web.de> =
+wrote:
+>=20
+> Please add a version identifier to the message subject.
+>=20
+>=20
+> =E2=80=A6
+>> If the patched function have bug, it may cause serious result
+>> such as kernel crash.
+>=20
+> Wording suggestion:
+>=20
+>   If the patched function has a bug, it might cause serious side =
+effects
+>   like a kernel crash.
+>=20
+>=20
+>> This is a kobject attribute of klp_func. Sysfs interface named
+>> "called" is introduced to livepatch =E2=80=A6
+>=20
+> Under which circumstances will imperative wordings be applied for
+> another improved change description?
+> =
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
+>=20
+>=20
+> =E2=80=A6
+>> ---
+>> include/linux/livepatch.h |  2 ++
+> =E2=80=A6
+>=20
+> You may present version descriptions behind the marker line.
+> Would you like to indicate any adjustments according to your change =
+approach
+> (from yesterday)?
+> =
+https://lore.kernel.org/lkml/20240519074343.5833-1-zhangwarden@gmail.com/
+>=20
+> Regards,
+> Markus
 
--- 
-viresh
 
