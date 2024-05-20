@@ -1,124 +1,100 @@
-Return-Path: <linux-kernel+bounces-183883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46388C9F51
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:07:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01A28C9F5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59311C20E6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:07:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 708E3B21199
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BCE1369AF;
-	Mon, 20 May 2024 15:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD80136E1C;
+	Mon, 20 May 2024 15:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1lTF429"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BF/4T0Rx"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5864F28E7
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 15:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9674F28E7;
+	Mon, 20 May 2024 15:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716217671; cv=none; b=Odq6FlTkWfsE7Upxt3o1FMselno8+Wb9igTSivcIwU6UY1rsIQFm+Nzp9TvELMbi1KeOODebb+DuDSea2XpMazohfcQzCIh3OfeqnJKsAmjmxmSySBZ8Rv+THAQjwHUlASSD2FSLS4Qgj53ZwgYKsZp/yUHjy45WJ5YbS34b6IU=
+	t=1716217789; cv=none; b=CfszjD/bn76U3tEEEOiB3OH+DYzhYJ78EIrx5jgUCvR2oJlOH1nyCSDrzqW2NZfGJuFLaam5r1prK+9AyhkyF5Z70oyvDDXYyQUuDeROYMn5K6rZ90ZG+tKI4cMmN8D3kUqHx3osa3ICH+skdhxf3G1kDhgcrIwqJ8w5W2kC378=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716217671; c=relaxed/simple;
-	bh=DY0GU6upOgiDDmylYzIWrHNWZ+2ZmWy8gOFdxID9q6Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E9eKqukOxtPOO5HyCxieRzVVurcqUSBC18K+3vfXzPY4XA1vnGzbV+JjaCHe+MaFuyasKKGdW//nYuTcF3MoYevQT3MiApszfMTBwksrZf63MxmbWb/Z/Y8iS7s4+2/NTYR08czxwfoal8ctks08crpEbc9GXk6Ojg44mUkh1Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1lTF429; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1716217789; c=relaxed/simple;
+	bh=3ZPzTccGxeYiZ3UCRWcRKYqjZ6SNEtUDp0r4ooVJnSg=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZsVZc2ZpJaFhP4PacuARu9hcRRxLanUvGRljdFdrzdmxS9ADpIDZFotdB0scT/d+TA+3r/WFTPbcWHPnQca3m77M2DLtOEjsa8SzW2iND9eDtHQeXqdoo4vYRdcdYO6+MFomQKDQeJBlIYQPBmMswI3763ge7+skP6ywyI8sTe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BF/4T0Rx; arc=none smtp.client-ip=209.85.160.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1ec41d82b8bso87779505ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 08:07:50 -0700 (PDT)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-23d1c4c14ceso1440709fac.0;
+        Mon, 20 May 2024 08:09:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716217669; x=1716822469; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IhwVQj77q9WsVa/PNIbqf67vLZaFOrT0DXfZ5Ha2VXE=;
-        b=P1lTF429HedmKVy7wr1i/Ud2V3cZC9fl3aD+T4TbwMxwERbOqjT4DtWJJJM+ZL1fCW
-         i7eXceTRYCzDf1bwP9/oG3Krs89ZsFDOQYueFY/+BVQP7VZ10+hcfSTRkNpeLxrBjH4N
-         H3TwWnnS50hunnpEYgCV7uANDLdXnomJTU68DiNZQ79QO2787SiurNLmYrKxgh9HoDzx
-         wN6096r/pYEn9sTv6dyShnUY6jxum/yahIAdHVCBDEYdAoOMwZvhSmaUA5JM6jqhej8R
-         3n+x1G6bwXqGd8uXmZ6hHAh+TNlCCM9slh5EAzcpcfFOhZvfxG6DaDWwCQc7mKRNPETU
-         g3Hw==
+        d=gmail.com; s=20230601; t=1716217788; x=1716822588; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3ZPzTccGxeYiZ3UCRWcRKYqjZ6SNEtUDp0r4ooVJnSg=;
+        b=BF/4T0Rxls8Bhm4YqXf6pHPnHuaLO3lm2MWs/ZDcelKiAy7gRpA324g8DU4sGfGQqy
+         nwPTcNIPfSn80Op0vCPXywUF4PeJjPx4muTfMQ7AHmHLYuBB3A6pMG+xS+k0nla5oqSk
+         nj8gkSWCHudBPPus5Mr7RWNRPktzIqUHZHZCVoTb2t9QVczU0+eE4xAw59Gh9/9X/UHS
+         OWxa90j6dE2L71iJ6il8Q6vGIdNYTgTCwLMM2KGo05IuV5sheW6QEEzSTikrp2IbKjc/
+         TEuQgi5Y1f37NQLKKzQidHmCy6yqT+niBUb/zxD8ZDieZGsP1K/QCOB34eeFQC4i6SK/
+         OLuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716217669; x=1716822469;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IhwVQj77q9WsVa/PNIbqf67vLZaFOrT0DXfZ5Ha2VXE=;
-        b=uZJk0FXFhgc8Sg47GgV1Bqvt0yZzcNV93CksnIE42AT9eJgpWtOTt4LfJ8IARZZKX/
-         UtNiaj0EREihaHe+pnC+K+oC3EJwQiWYoeqDeRJxhb8M8DWtG6ADIrp6n4ilEeAMRXHi
-         CEfcFVDiM7K8SMCjP5LrTwPCn4q/9n2DC499lRCGLVVy9BtHcTA8Vvr8EbKE2k1upbN6
-         LN/pLeFP/HXkddQ7IvJJ/MCOl/8N/Y6ZNzzRibWsdOVxvbsyYi6JQ5PuWlz2ULtujogp
-         7PQdfvNwnjag9hoPAGYN/ONnsB2iSW+yd+eIc8C/oe5o9LtJlftUugJhaRBIYB1tfCII
-         A3MA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/Bd9+szmgadKp5iwXAwvKl3gCzyACGT3SfhHgSqNUijmIqoCkSwjnZ2UwaKhkj2XQ2eXLfpvQ7A3qaYXbPXEx2P5AhA80h5FT9EC6
-X-Gm-Message-State: AOJu0YzZZlwzSU9KcGIBB5NXrUYlB7H4Auw+HIuzwXW0r4zyJpZtwck2
-	88Jjaypw1+rFFtv1aKfmd1NU9+WV65UQ4G1NLW6kqgGvLiX+aKWWInNeyXeDo2fYS8Nu0oR+oox
-	b8PwUnw7Wa+9YZDRps509hBQn3YU=
-X-Google-Smtp-Source: AGHT+IFPFW/F5D24m94Tz0YHdPMZG54zKWfl02ijEGW9135nYPbQuliZTHA0+CJ4LJGqGqLCQ22PggF4KPszeIb267g=
-X-Received: by 2002:a17:90a:e389:b0:2af:2be3:89c5 with SMTP id
- 98e67ed59e1d1-2b6cc76d2bamr26474648a91.29.1716217669551; Mon, 20 May 2024
- 08:07:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716217788; x=1716822588;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ZPzTccGxeYiZ3UCRWcRKYqjZ6SNEtUDp0r4ooVJnSg=;
+        b=nRh4M+Rvab291VayoHkIO5ACZtzYMCpT6nemD+xzBVF/Z0DK0HaxoxZJqoglGGijF+
+         JeAQmDLHeWC8y5UoWOaKzq8VlJ9ZFkZxBchr2UrAnnFSR40wypjE3J70LNeq+RgSvzaf
+         9sjEVJGHHxCzC1XmWqCpZiYTHjYv2sYSvC+oe+MH/ZeDe4HldcNJWHE13cCcAcUuQ2xK
+         0DlZzA6wGCkJAzex+xdKmDSWyN3fac9pheHpgZFXZNCQYnOXHsRMZZ/RJOYLdwlgd1DC
+         VGy7ATdTP/nB6E72PGrl48OS8FrOdcnXbGewBuGNJwFKOf3M33n65AIS0NdWjV7FOT5I
+         Zffw==
+X-Forwarded-Encrypted: i=1; AJvYcCVB8GCUDSaplHHU0dcDzHvduewx7ORZkgyTgvUlpvd570lV7cZ7RbE4cafj/M/tX7gFoQXdI+UFegf7qWVSyd6hTOlo8Z1avhIqDf3Yd+6MYQKKsYc8cCNC+ONNhZ2cp1aoMumwl5hLH5++BwL/IFQMucBsXg+KbKNR+R+BhUSMhcqpUiP7tINgp5AdaQ==
+X-Gm-Message-State: AOJu0YxO9fU0XqXdgc0gD5hRi8f3/S2re3DeXzke7oOmuE5q9ja3f3d3
+	GPZ7q7iSmoMBTxH8RyFokWaLDGtlFsOlXSrAPa1JqyjvS4yJKlXD
+X-Google-Smtp-Source: AGHT+IEEwTNwDG/5OWJKkrOQ+QtpD76b+5Ie4/DQJOETwsN4jDmj2Z5/18baOTuuE1EhEH6prG8TgQ==
+X-Received: by 2002:a05:6870:5246:b0:23b:b0fd:47f4 with SMTP id 586e51a60fabf-24172a8b902mr33765767fac.18.1716217787405;
+        Mon, 20 May 2024 08:09:47 -0700 (PDT)
+Received: from arch (recod-gw.ic.unicamp.br. [143.106.7.151])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4df85902f10sm2923274e0c.54.2024.05.20.08.09.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 08:09:46 -0700 (PDT)
+Date: Mon, 20 May 2024 12:09:43 -0300
+From: Artur A C de Barros <arturacb@gmail.com>
+To: willy@infradead.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: First Contributions for KUnit
+Message-ID: <Zktnt7rjKryTh9-N@arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240517082637.69928-1-yang.lee@linux.alibaba.com>
-In-Reply-To: <20240517082637.69928-1-yang.lee@linux.alibaba.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 20 May 2024 11:07:37 -0400
-Message-ID: <CADnq5_MTOUOdesLtSY_8X5kHVmGvXxSCY3Lh54RwGutysj=p1g@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/amd/display: Update optc35_set_odm_combine doc
- to match kernel-doc spec
-To: Yang Li <yang.lee@linux.alibaba.com>
-Cc: alexander.deucher@amd.com, airlied@gmail.com, daniel@ffwll.ch, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, May 17, 2024 at 4:42=E2=80=AFAM Yang Li <yang.lee@linux.alibaba.com=
-> wrote:
->
-> This patch updates the function documentation comment for
-> optc35_set_odm_combine to conform to the kernel-doc specification.
->
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+Hi all,
 
-Thanks for the patch.  Srini already fixed this last week.
+We are students from the State University of Campinas with an interest in contributing to the kernel. We are part of LKCAMP, a student group that focuses on researching and contributing to open source software. Our group has organized kernel hackathons in the past [1] that resulted in sucessful contributions, and we would like to continue the effort this year.
 
-Alex
+This time, we were thinking about writing KUnit tests for data structures in `lib/` (or converting existing lib test code), similarly to our previous hackathon. We are currently considering a few candidates:
 
-> ---
->  drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c b/dri=
-vers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c
-> index 7c9faa507ec2..1f8516e5ce68 100644
-> --- a/drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c
-> @@ -50,7 +50,9 @@
->   * @optc: Output Pipe Timing Combine instance reference.
->   * @opp_id: Output Plane Processor instance ID.
->   * @opp_cnt: Output Plane Processor count.
-> - * @timing: Timing parameters used to configure DCN blocks.
-> + * @segment_width: Width in pixels of each segment in a horizontal direc=
-tion.
-> + * @last_segment_width: Width in pixels of the last segment if it differ=
-s from
-> + *                     other segments.
->   *
->   * Return: void.
->   */
-> --
-> 2.20.1.7.g153144c
->
+- lib/kfifo.c
+- lib/llist.c
+- tools/testing/scatterlist
+- tools/testing/radix-tree
+
+We would like to know if these are good candidates, and also ask for suggestions of other code that could benefit from having KUnit tests.
+
+Thanks!
+Artur Alves
+
+[1] https://lore.kernel.org/dri-devel/20211011152333.gm5jkaog6b6nbv5w@notapiano/
 
