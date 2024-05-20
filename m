@@ -1,240 +1,235 @@
-Return-Path: <linux-kernel+bounces-183400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 639848C987E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 05:40:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594408C987F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 05:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4365B224E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:40:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0BD31F223F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBEF10788;
-	Mon, 20 May 2024 03:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF4910958;
+	Mon, 20 May 2024 03:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ajt6+5AI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T308kHQT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169D914005
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716176400; cv=fail; b=maMNEn49oFAagZ6M8YF1/7500quKVv1tfHNBDzApY6YzYkPGsc1X5R9EiZYIApE06HJKG0FLVNt/eI8MOGQaGPtDGBV2knRFHlTdoNa8hfzBiFT9AQ6u/9+YSZjo0IN3uUWj5XoYCB3uq6W+t6RYh29yfd8aXlUxSkkBQI1Jpw8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716176400; c=relaxed/simple;
-	bh=W/U22nrbRd82ipcnXp4uA7MS9sjljTbyIJA+bRrRcG8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ar7cfr/fhfUA11riKWhpgT/9sNirclV5CxB9yUGpnMqztgY9OR0+mLH2C5rc8b5kI/NM9SURDOM52YricYPjhYWevDw2E+ZZKRSzzFbzKPGUqoSmhUy+rnun2i1BRlVov17/2ePimoSIMal3YB+uTBjnMsMmi7aO9bkNGiHrfaU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ajt6+5AI; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716176398; x=1747712398;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=W/U22nrbRd82ipcnXp4uA7MS9sjljTbyIJA+bRrRcG8=;
-  b=ajt6+5AInM/ygSVApRl93CG8ThThQi+34kJCibu0QnsUlbqnurMNiC1E
-   qfsCO1Rpx30eQzWc45RvOjBwievS7TEE7y/93T3KNwUQisQaFHCD96r3M
-   4CCVQCOd5fyhvJIeYIpMGJQCz1Le+Fh3grSNcJyYsMLVWmj/JMotbT16j
-   wHsqa0VV5OpKYkcdqJY4Yw3L8hS2x0f35WNReV3vEEk9jdH9Yzaomem/M
-   ygdVmpXdqKBttF9qhirAx5ZMoTxQDH6kLPwvd5gctnHKKmhda9+oC5Ubh
-   e1sI7RhyNMrMI6Cn1BoNU6gDenOpkRWkzCUrTx7nBtm/chtT/0P0th3rx
-   A==;
-X-CSE-ConnectionGUID: wyjLZ545TiiAcAxQs2B5Bw==
-X-CSE-MsgGUID: nl22g6BtTUaPc5g5+R2gEg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="12408383"
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="12408383"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 20:39:57 -0700
-X-CSE-ConnectionGUID: I2tWc3qBTHujhz2cgbDiFw==
-X-CSE-MsgGUID: wJWxuot3SIWPm6yyajd1dA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="32413284"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 May 2024 20:39:57 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 19 May 2024 20:39:57 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 19 May 2024 20:39:56 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 19 May 2024 20:39:56 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.101)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Sun, 19 May 2024 20:39:56 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=V7Y0kaoA/HQ/PNhn6zVmfVdGJglyGb9JvMsjXfwPfRXT0Mz2LmcNCd/jJhzdh0tauL4aaOl3F0yQY/R9YY5p5p4484BD4FJxBziV+LrNing+5n+gl3SAph0LqVmJ0qpvLT/O3BuxFXwGwgLwPAL5duPw9DJXfhUvjzOIDomn6yGXVt3WJhhTC7KCUvD0gZ7gJ48Saz03XSmEXN9MxiGV1EBdV10B/3JgCVKq7G7LPZ9eFvqA5+MJuPDy5RxgYLUxgK6ye38wqLCj1Fy/vvtqJNkReKhYXcA44bOqTsF+iGGp0c9cae0NqxYresLUD+C2JPZQtJu1sewyBVnZTbxxog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W/U22nrbRd82ipcnXp4uA7MS9sjljTbyIJA+bRrRcG8=;
- b=cOipsvh6DIP7mCPFYz5Kfw9UoIufuay8miBUFO6uEVFrx//b5gwYxc6bfZ7HasGftxd3I90kG0aOAxnw79yoqMd7YiZWZlpOnsoNoES3m6FkrMQirVHaGuPL8jRK/dKKGbErFu5Dehj/V7QVrF6pXJEE72PAM+8CY9XfDGhRDVMJ4CRiNwoOhnEr92iguWSew/gzJGTgoT/V+RuX3e5rZs6HE/j/Y9449rm8Pu46S/zNCUoZ1wHvG3edYoTepgKWEgjjrpr2IUTGRlFGuwpMsMnajufYrnw41mNQZ3jpaN+rpNco1398zce3rmBa2nvStHJBtXgrxfKZbk/MJrBKsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by DM6PR11MB4674.namprd11.prod.outlook.com (2603:10b6:5:2a0::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Mon, 20 May
- 2024 03:39:54 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7587.030; Mon, 20 May 2024
- 03:39:54 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	"Joerg Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>, "Jacob
- Pan" <jacob.jun.pan@linux.intel.com>, Joel Granados <j.granados@samsung.com>
-CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"virtualization@lists.linux-foundation.org"
-	<virtualization@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 7/9] iommufd: Associate fault object with
- iommufd_hw_pgtable
-Thread-Topic: [PATCH v5 7/9] iommufd: Associate fault object with
- iommufd_hw_pgtable
-Thread-Index: AQHamw8P/6/4oit4lU2Ra006NwpZoLGYE2jAgAduk4CAABV6kA==
-Date: Mon, 20 May 2024 03:39:54 +0000
-Message-ID: <BN9PR11MB5276F07A130CD617777A3AAD8CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
- <20240430145710.68112-8-baolu.lu@linux.intel.com>
- <BN9PR11MB5276A8E898983310B83C399E8CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <b09f96db-8451-4de9-81c5-312cffdfd4fc@linux.intel.com>
-In-Reply-To: <b09f96db-8451-4de9-81c5-312cffdfd4fc@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|DM6PR11MB4674:EE_
-x-ms-office365-filtering-correlation-id: e67c3c64-01d1-4c08-34cc-08dc787e8326
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|1800799015|7416005|376005|38070700009|921011;
-x-microsoft-antispam-message-info: =?utf-8?B?MUh1VzZaNzJOcU1vbXdMcnl5R0VBcFpBaUFhNHJ3aHZyUzk2UDgxVFM5Z3cx?=
- =?utf-8?B?Y0FadXN2YjlmbURsYTdlSStVMFhkbXVuWktZRGpWNm9zZllxTlFVZEt5OVp4?=
- =?utf-8?B?eUluMDFOUGFJeU8zdStHWlVrU1FyYi9FSWlIa080RDJkbVhVZWZuVTh2NzVQ?=
- =?utf-8?B?Q0d5eXYvNFJLOHFGS1czeVlSenhVeTVHZC9xbEdQelNQZUNzVTZUdXk5UEtI?=
- =?utf-8?B?V0MxQjlUTExaaDVYUTJFT3dxMkZ3VHUxZ3d0VDBCdkY2MmpMRHlFMUpIMVhI?=
- =?utf-8?B?ZGMzcERJVkNYMmFRTVlmcHdzT3VLM2dZZWpHVDJTR2RKYmoyMmtBWXJ2dzhS?=
- =?utf-8?B?b1BXNktkT2xkd3F4dW1rWG1LbWIycTBicWxEekNmQVI4dzdDbmk1OFdZR3JK?=
- =?utf-8?B?QlpyNSt6Y1A5aDlEMUJnbkdDY0pEODdhVWVDRDNWTlJiZE1VMEE2U1dmNEQy?=
- =?utf-8?B?N2JjeUFvdGFNeVYwckJycUZycFdxN2w4dzB0dWF0TWdZNDl0V0MybnNVNGp4?=
- =?utf-8?B?MEVseWRZazBuZEd6ODdkSDJlNHY3bnlGNjZnK3Q3MGxtV0QzL2V3RzlTQkJK?=
- =?utf-8?B?T2VEclduTnFJb2RRWWdBbjFnTmkrNVBvcXRYSnZMN3RBeS9GR2ZMdjBvN0Vk?=
- =?utf-8?B?VFZOdG1vT3VwWFZrS2hvcXJlNUFjQU5JQ0J5SDhybUx3ZzhOTExzTGlEQnI2?=
- =?utf-8?B?TXBlYndLVUNDQVBFeTZtbXlCYlFJQXpDOXlmQmRGcVBpWUg3Q0JkdkcxdGVP?=
- =?utf-8?B?bGJ2aUNqNkM4ajJPS2poeUFzRzh3VzRpYjU5RTlYQ0dBb2ExN0tpRjkwUjgz?=
- =?utf-8?B?eWUxWXdyRk9xNkd6R1g2RnZEZmc2Uk5sTHplRWxrcHljaDBLSjU3UnpXenI1?=
- =?utf-8?B?WnFaQ3NVdlBRb2lOYWloeVZtWGJpQ1ZHNTFpU3NmOVhremRZQWw2Nk5aV01N?=
- =?utf-8?B?Tjg4RVRRdkpJTWQ3UFIzTHkwTEs2V1hGY0xNdnp3T3RIOU5SSDR2aVN4VTBN?=
- =?utf-8?B?aERFNDErQ3pPZXRPUHYxYytZUVF0eWYzRG5HckdpTCtqWDZieVl3SWV6V0Mv?=
- =?utf-8?B?NzZNeWdQTnhLN21WNzRKVldFLzB4ZzlqdWZzYVltOFpxOHdSYnoyNTkzTUcz?=
- =?utf-8?B?U28vSy9yR2tkQnk0UGswbVhGcDJ4Z1ZHWUtkaVlDS3d6NUJGcjRXUnEwbTdh?=
- =?utf-8?B?TXEwQ3hlbllRa0FqdkcyOVJjdTBhenh0RGR6MEtCRkduK0ZMQUN0aVRiVDN5?=
- =?utf-8?B?aXM1Q1dGN284c2M3ZVBxK0l5OTlSZS92VCtDbmVRSDAzWXBpQkJsbEIwb3FK?=
- =?utf-8?B?T0VBdVhIeDRCemdsUkhkbGZZMjB2a2V4QjlvTy9vMlN2ZkRNU0tIR1lIMVVs?=
- =?utf-8?B?VEFlOG5WcGxjQXFSYS8xQmwrQm0xK2ttRkRtS0pVbjV6N280R3pmd3ByNzYy?=
- =?utf-8?B?Yis0NWxlUERVbFQ0cXJ5d3Uvc0ZDTm93ckZjTWtGZER3KzhTNzdSL1VZMjZn?=
- =?utf-8?B?Sm9GQVA0YklEWk1tZE5iSzJlRmRLVjJqdHpVYXFSUzAxZXBhbWNEb0JvMUsz?=
- =?utf-8?B?YUFyQ2tKK2pNb0dmQWVEUnBNMlhkNG9YcHJZekVUUW43WVRsb1FIbVY5eTZO?=
- =?utf-8?B?Y1k1WVFiTnJYYjR1Z0d2bUVJNlk3MDFNYW9KWFpvdVhSZGlxWFA1c2kvc2Y5?=
- =?utf-8?B?NEhmTCt2bzJaNFpGYTBMa2hGQ3VyWWlhSzk1MkRrZCszUW55WnQ4THBaelBV?=
- =?utf-8?B?b0xaUlJzTDR0bjAxQ0RHZ2YvMUxqaUowQmk2cFoxd1R1bDg4aUlSZEwyWHVp?=
- =?utf-8?B?Qk9PZlY0TU1ZYVJhUUlMQT09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(7416005)(376005)(38070700009)(921011);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?bm1Iamg3RHNmTnR2N1lITm53TENZc3ByMDVHQ3VFSFF3SmpLY1lnOU40Wm96?=
- =?utf-8?B?ZUtxVzYxZnlQVUM2aHJMZFhaNTFncWFXL3RQbVd1WWkvVDZ4SFZyYVAxdDQy?=
- =?utf-8?B?UVltS3hpdkxnOEpwWHRDL25Ia3M3YTZic3pNUEkyd3BtZjJZMWI2ZFVvZ1VX?=
- =?utf-8?B?YlBuWmwvUHB1S2VqMXNMUEkvVjRaUHg4TWZzOWMvV2dnZVh6YTFiWkhLNkVy?=
- =?utf-8?B?QW52ZGxzbllFWWxWdEFybTVjYkYybGljbEVjaEhON013VUhVMGdhek1mSGxi?=
- =?utf-8?B?N2J0dGI0MWRMdk9UZ3dlbmlmOFNvRGRCbFdTVWhoRHpJWGRBZ3ZzOUxiN01Q?=
- =?utf-8?B?Q3RhZ0NMd0JWL0xYQkdrd1hIeGxzcnMyMVhRZ2tUdHA1WU1hV3B1VW9zQ25u?=
- =?utf-8?B?aEFzbUpxRFBCSTVndFZpZ2dNeU1RcFp6SWJvNkFmRUQ1TVdiTnNWMHVIR2pS?=
- =?utf-8?B?VmF0eXFTa0Q2d2JnVXZlOS8rVWpjc1YzZ2FyUkNxUWVLbDVZYi9YOFMraUo3?=
- =?utf-8?B?ZlZaempwY2JmemI1aElRRXNBN2o2dTJZUndUTVlVMDRRTmphTFhFVDJMUXVH?=
- =?utf-8?B?c1NJQjk0bWdVOGxITitTM0VjSUNXOUxoNEVrWks5bEFQOUttd0R2Q2NUcm1N?=
- =?utf-8?B?RDA1dFZCSmtaQ212RWxVS2Yydk5uTEZSM2QxNmNYRGYzN1g4Ky90WXI5eHk1?=
- =?utf-8?B?OVA1amhSemdGRVJWK1dXRGRtMTJGM3l2UytGV21RYlFnVnlWamtsYUc3cDJD?=
- =?utf-8?B?WE81R1lKMng1aG1DeFNaQ25lYkdwR1M0V0VLT2hnckx3UVQ4WnJzRDQwOGJB?=
- =?utf-8?B?VEt0VG1adWpSVlZBUHpVQm1TTVpIRnpTU1JidWdKZVRwS3BBN1pNbys1SnJK?=
- =?utf-8?B?L2p3b2QzanEzWHB5Z0hFWHhoWFFVT2tQN0g3SWc0eXZ4eU1YOTR1TXpEc1d2?=
- =?utf-8?B?UnhibjdORENZS2dFZVB6QklLaFpWUlZXWUpTYmNEQ0dTMko2QlNuRGVhUllQ?=
- =?utf-8?B?OGp6OG5ZSXpVM2ZFZUEySlBaeGhRb0ZxNWZXdkc1dEk0TFhlTlVqbU5YYW5B?=
- =?utf-8?B?dW0wL3BSVDFpQzRBL2JYNVVSalYzeG84Z1djKzFDdXlaS1F2UkhNd3JkTWo4?=
- =?utf-8?B?bDdpbnFNanBmOExFTi8rWTRMa3dMOTJSSXVKOUdPZHJlQXNQUVlxYnM4bTBp?=
- =?utf-8?B?bHBHRHZQSFBTLzlJdEtqYVFGekZVQzlIam1wTHFYdUE1TkNCYzRWYVZOMjk1?=
- =?utf-8?B?SGlWS05EL28wSnplQ1JsQWR2NEI0cVhjWmtJek81V2V4bXVnK3pSUC9NN1d4?=
- =?utf-8?B?bUZTYnZ5RjJlM3ZYakRMdWtad281bUNnd1pOZnhKbXgzU1ExcFdFMkdDSkxM?=
- =?utf-8?B?ZCs2K016WUdubmM5Vlg2blloY3hueml3Wng4WldxamsveXZnQlZJT2NVYjFP?=
- =?utf-8?B?RmtNNkNsQlJZSmROQ3BIWUVhZS9NRmVIMytsaGdNZlVOaDRJZC9rRHhkUWw0?=
- =?utf-8?B?V3dNREw0LzBSWko1MzZLMDh0RVpBU3YxQVRpSnE5bjBHR0VITU82eUtoUHR1?=
- =?utf-8?B?S3RpSGg4NG0xRjYzdHUwbG41MkJ1anRERG4yYzB2RnpXbFMvY0Vkelc3UW41?=
- =?utf-8?B?NGJURUhTQXZYWVNicEJQdVZvYUlYRDNrcXJvYXdtU1BmeGNUbnpIcmNUbTJo?=
- =?utf-8?B?Z2ZJTzZyTWNTcU5FZVowcnh6czhFY09EY0NBNHJKTFErYW83Q0tWUXRFdSty?=
- =?utf-8?B?SVJRMGo2clEveXBxc0xsOFB4eG5GdmNYdmsyQ2FZemJEc0tVTVhxSzhCY3hi?=
- =?utf-8?B?VFVBeHNRYW5lcEU0US9aNEVCMmp1UFFwVWx1aTd0MmZYSGk2cUtrMmNhTE1s?=
- =?utf-8?B?RHhBcjVTcHp5VXdDNSthSUlGNkFCdXVzdFlUcGRydnhuWnc5T2NXZGlkK3Nk?=
- =?utf-8?B?QmhNNUJzNkN2bVlra3NZaXRpUmFRdDN6b1Q2QkhZbTFjZkg1NWwyZm9tZ21n?=
- =?utf-8?B?RDdwRVdyWTYrNFpwekpGdlA5VzJ5M3dXaE1CQm00cEhXTnFrMURrSWhtQmUz?=
- =?utf-8?B?MnRCMFBkMnFNM25IczJ6c3F2cWlLTlh5SXVsM3krSEtXTDcvdjdjT21VMkpz?=
- =?utf-8?Q?oL4bRMiXwkxpkaxLEM/HqppSP?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03EDDDD4
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716176497; cv=none; b=XEABxOd0ni6GLJhQWjVUSDoWGHYHKKkiwr0SWySo51/MVRLdn4gHZFTl+4eADrIEchU1OJyQl+cNLeV2tcwqyHuJ2uULF1aGfsblrz0htViTa4P1Lqrcsk+xLvK1SdikO8cAGDHbfmZ70QwAX9Eke8Kqn+wo1Mt+wEhYGzV/ZL8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716176497; c=relaxed/simple;
+	bh=58hXNC4mMLbn4FZL/nucZBkX5raEBPaBt9hpU97VHzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UghKGbk0gmVI8SrIhAXj7cN9NQvw1KAaoMHmouwX6UE6LmdQqyfoM5r2W2UECPIDE5KgKIx437IPGZXRi1K3whhn0uvWwpzlT7rdfCD71dlCV6V7odUKiLDAmFwd/OrR/CtoIUJ/Q0MWorAaDYiDDjn4U4Eebn9uVBtfW1vS6Uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T308kHQT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716176494;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p/bQvjIWsA9UOtJxjtZ9UofQNPMeAF67h3q2PgjKYn4=;
+	b=T308kHQTnjgtd8XU+QMiQQwUgiFo2WpWK34mXJAoPacFDVkA5yzt0rxpz7D10rKAIjjD0N
+	jMtFo18VWftpXe4veuVAy1WDGysyqaMHA5XNPzvNtgm44jxC5IeAkgpCFObEHtB/LPeISq
+	KZjmoJRN5b7h9407WdnAJmmpnUxnj8E=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-671-hel1pjmoNCO2YIkuSszUmw-1; Sun,
+ 19 May 2024 23:41:31 -0400
+X-MC-Unique: hel1pjmoNCO2YIkuSszUmw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1B0D829AA38D;
+	Mon, 20 May 2024 03:41:30 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.65])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 21FDF202701E;
+	Mon, 20 May 2024 03:41:28 +0000 (UTC)
+Date: Mon, 20 May 2024 11:41:24 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Yuntao Wang <ytcoode@gmail.com>
+Cc: pengfei.xu@intel.com, akpm@linux-foundation.org, andrii@kernel.org,
+	ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
+	eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com,
+	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev, sdf@google.com, song@kernel.org,
+	syzbot+a7f061d2d16154538c58@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Subject: Re: [syzbot] [bpf?] possible deadlock in get_page_from_freelist
+Message-ID: <ZkrGZOoUlitbwkvj@MiWiFi-R3L-srv>
+References: <ZkcD9H0P8O7Me5Do@xpf.sh.intel.com>
+ <20240518054026.11403-1-ytcoode@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e67c3c64-01d1-4c08-34cc-08dc787e8326
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2024 03:39:54.0673
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: v9w/rrsI/umXtt4u2V0H4cHg81uR8gnddOvq6394on1GFvE/6m7GMQWIkqjYTm6H8adoq7mw9MI8N74fC9OmTA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4674
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240518054026.11403-1-ytcoode@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-PiBGcm9tOiBCYW9sdSBMdSA8YmFvbHUubHVAbGludXguaW50ZWwuY29tPg0KPiBTZW50OiBNb25k
-YXksIE1heSAyMCwgMjAyNCAxMDoxOSBBTQ0KPiANCj4gT24gNS8xNS8yNCA0OjUwIFBNLCBUaWFu
-LCBLZXZpbiB3cm90ZToNCj4gPj4gRnJvbTogTHUgQmFvbHUgPGJhb2x1Lmx1QGxpbnV4LmludGVs
-LmNvbT4NCj4gPj4gU2VudDogVHVlc2RheSwgQXByaWwgMzAsIDIwMjQgMTA6NTcgUE0NCj4gPj4N
-Cj4gPj4gQEAgLTMwOCw2ICszMTQsMTkgQEAgaW50IGlvbW11ZmRfaHdwdF9hbGxvYyhzdHJ1Y3Qg
-aW9tbXVmZF91Y21kDQo+ID4+ICp1Y21kKQ0KPiA+PiAgIAkJZ290byBvdXRfcHV0X3B0Ow0KPiA+
-PiAgIAl9DQo+ID4+DQo+ID4+ICsJaWYgKGNtZC0+ZmxhZ3MgJiBJT01NVV9IV1BUX0ZBVUxUX0lE
-X1ZBTElEKSB7DQo+ID4+ICsJCXN0cnVjdCBpb21tdWZkX2ZhdWx0ICpmYXVsdDsNCj4gPj4gKw0K
-PiA+PiArCQlmYXVsdCA9IGlvbW11ZmRfZ2V0X2ZhdWx0KHVjbWQsIGNtZC0+ZmF1bHRfaWQpOw0K
-PiA+PiArCQlpZiAoSVNfRVJSKGZhdWx0KSkgew0KPiA+PiArCQkJcmMgPSBQVFJfRVJSKGZhdWx0
-KTsNCj4gPj4gKwkJCWdvdG8gb3V0X2h3cHQ7DQo+ID4+ICsJCX0NCj4gPj4gKwkJaHdwdC0+ZmF1
-bHQgPSBmYXVsdDsNCj4gPj4gKwkJaHdwdC0+ZG9tYWluLT5pb3BmX2hhbmRsZXIgPSBpb21tdWZk
-X2ZhdWx0X2lvcGZfaGFuZGxlcjsNCj4gPj4gKwkJaHdwdC0+ZG9tYWluLT5mYXVsdF9kYXRhID0g
-aHdwdDsNCj4gPj4gKwl9DQo+ID4NCj4gPiB0aGlzIGlzIG5lc3Rpbmcgc3BlY2lmaWMuIHdoeSBu
-b3QgbW92aW5nIGl0IHRvIHRoZSBuZXN0ZWRfYWxsb2MoKT8NCj4gDQo+IE5lc3RpbmcgaXMgY3Vy
-cmVudGx5IGEgdXNlIGNhc2UgZm9yIHVzZXJzcGFjZSBJL08gcGFnZSBmYXVsdHMsIGJ1dCB0aGlz
-DQo+IGRlc2lnbiBzaG91bGQgYmUgZ2VuZXJhbCBlbm91Z2ggdG8gc3VwcG9ydCBvdGhlciBzY2Vu
-YXJpb3MgYXMgd2VsbC4NCj4gDQoNCkRvIHdlIGFsbG93IHVzZXIgcGFnZSB0YWJsZSB3L28gbmVz
-dGluZz8NCg0KV2hhdCB3b3VsZCBiZSBhIHNjZW5hcmlvIGluIHdoaWNoIHRoZSB1c2VyIGRvZXNu
-J3QgbWFuYWdlIHRoZQ0KcGFnZSB0YWJsZSBidXQgc3RpbGwgd2FudCB0byBoYW5kbGUgdGhlIEkv
-TyBwYWdlIGZhdWx0PyBUaGUgZmF1bHQNCnNob3VsZCBhbHdheXMgYmUgZGVsaXZlcmVkIHRvIHRo
-ZSBvd25lciBtYW5hZ2luZyB0aGUgcGFnZSB0YWJsZS4uLg0K
+On 05/18/24 at 01:40pm, Yuntao Wang wrote:
+> On Fri, 17 May 2024 15:15:00 +0800, Pengfei Xu <pengfei.xu@intel.com> wrote:
+> 
+> > Hi Yuntao,
+> > 
+> > Greeting!
+> > 
+> > On 2024-04-14 at 19:28:16 -0700, syzbot wrote:
+> > > Hello,
+> > > 
+> > > syzbot found the following issue on:
+> > > 
+> > > HEAD commit:    7efd0a74039f Merge tag 'ata-6.9-rc4' of git://git.kernel.o..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1358aeed180000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=285be8dd6baeb438
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=a7f061d2d16154538c58
+> > > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> > > 
+> > > Unfortunately, I don't have any reproducer for this issue yet.
+> > > 
+> > 
+> > I used syzkaller and could reproduce the similar issue "WARNING in
+> > get_page_from_freelist" in v6.9 mainline kernel.
+> > 
+> > Bisected and found first bad commit:
+> > "
+> > 816d334afa85 kexec: modify the meaning of the end parameter in kimage_is_destination_range()
+> > "
+> > Revert above commit on top of v6.9 kernel this issue was gone.
+> 
+> Hi Pengfei,
+> 
+> I reviewed this commit multiple times, but I still couldn't figure out why this
+> commit would cause this issue. Could someone else please take a look? Thank you
+> very much!
+
+I haven't got the root cause either. 
+
+From the log and code reading, it's using kexec_load to load kernel
+for kexec rebooting. And the loading is being done when 2G memory is
+being exhausted. Currently, the kexec_load will load memory at the top
+of system RAM, near 2G. The left free memory should scatter in all
+over the system RAM. While, seems the allocated page via
+kimage_alloc_pages() are mostly destination pages, or the
+kimage_is_destination_range() function incorrectly, then the while loop
+will last very long and cost many pages, then causing the deadlock.
+
+I will read code again when I am in very clear headed state.
+
+> 
+> > All detailed info: https://github.com/xupengfe/syzkaller_logs/tree/main/240517_085953_get_page_from_freelist
+> > mount_*.gz are in above link.
+> > Syzkaller reproduced code: https://github.com/xupengfe/syzkaller_logs/blob/main/240517_085953_get_page_from_freelist/rep.c
+> > Syzkaller syscall repro steps: https://github.com/xupengfe/syzkaller_logs/blob/main/240517_085953_get_page_from_freelist/repro.prog
+> > Syzkaller report: https://github.com/xupengfe/syzkaller_logs/blob/main/240517_085953_get_page_from_freelist/repro.report
+> > Kconfig(make olddefconfig): https://github.com/xupengfe/syzkaller_logs/blob/main/240517_085953_get_page_from_freelist/kconfig_origin
+> > Bisect info: https://github.com/xupengfe/syzkaller_logs/blob/main/240517_085953_get_page_from_freelist/bisect_info.log
+> > v6.9 dmesg: https://github.com/xupengfe/syzkaller_logs/blob/main/240517_085953_get_page_from_freelist/a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6_dmesg.log
+> > v6.9 bzImage: https://github.com/xupengfe/syzkaller_logs/raw/main/240517_085953_get_page_from_freelist/bzImage_a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6.tar.gz
+> > 
+> > [   17.436013] loop0: detected capacity change from 0 to 1024
+> > [   17.456160] I/O error, dev loop0, sector 0 op 0x0:(READ) flags 0x80700 phys_seg 1 prio class 0
+> > [   17.456746] loop0: detected capacity change from 0 to 1024
+> > [   17.456809] I/O error, dev loop0, sector 16 op 0x0:(READ) flags 0x80700 phys_seg 1 prio class 0
+> > [   17.457548] EXT4-fs: Invalid want_extra_isize 0
+> > [   17.575984] repro: page allocation failure: order:1, mode:0x10cc0(GFP_KERNEL|__GFP_NORETRY), nodemask=(null),cpuset=/,mems_allowed=0
+> > [   17.576621] CPU: 1 PID: 726 Comm: repro Not tainted 6.9.0-a38297e3fb01+ #1
+> > [   17.576930] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
+> > [   17.577412] Call Trace:
+> > [   17.577526]  <TASK>
+> > [   17.577626]  dump_stack_lvl+0x121/0x150
+> > [   17.577813]  dump_stack+0x19/0x20
+> > [   17.577969]  warn_alloc+0x218/0x350
+> > [   17.578133]  ? __pfx_warn_alloc+0x10/0x10
+> > [   17.578317]  ? __alloc_pages_direct_compact+0x130/0xa00
+> > [   17.578552]  ? __pfx___alloc_pages_direct_compact+0x10/0x10
+> > [   17.578803]  ? __drain_all_pages+0x27b/0x480
+> > [   17.579021]  __alloc_pages_slowpath.constprop.0+0x1b62/0x2160
+> > [   17.579291]  ? __pfx___alloc_pages_slowpath.constprop.0+0x10/0x10
+> > [   17.579569]  ? __pfx_get_page_from_freelist+0x10/0x10
+> > [   17.579802]  ? prepare_alloc_pages.constprop.0+0x15b/0x4f0
+> > [   17.580032]  __alloc_pages+0x48f/0x580
+> > [   17.580212]  ? __pfx___alloc_pages+0x10/0x10
+> > [   17.580392]  ? kasan_save_stack+0x40/0x60
+> > [   17.580583]  ? kasan_save_stack+0x2c/0x60
+> > [   17.580772]  ? kasan_save_track+0x18/0x40
+> > [   17.580946]  ? _find_first_bit+0x95/0xc0
+> > [   17.581114]  ? policy_nodemask+0xf9/0x450
+> > [   17.581300]  alloc_pages_mpol+0x296/0x590
+> > [   17.581487]  ? __pfx_alloc_pages_mpol+0x10/0x10
+> > [   17.581695]  ? arch_kexec_post_alloc_pages+0x37/0x70
+> > [   17.581924]  ? __pfx_write_comp_data+0x10/0x10
+> > [   17.582133]  alloc_pages+0x13f/0x160
+> > [   17.582302]  kimage_alloc_pages+0x79/0x240
+> > [   17.582498]  kimage_alloc_control_pages+0x1cb/0xa60
+> > [   17.582727]  ? __pfx_kimage_alloc_control_pages+0x10/0x10
+> > [   17.582973]  ? __sanitizer_cov_trace_const_cmp1+0x1e/0x30
+> > [   17.583224]  do_kexec_load+0x337/0x750
+> > [   17.583406]  __x64_sys_kexec_load+0x1cc/0x240
+> > [   17.583619]  x64_sys_call+0x1aa2/0x20c0
+> > [   17.583807]  do_syscall_64+0x6f/0x150
+> > [   17.583988]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [   17.584217] RIP: 0033:0x7f4f2ec3ee5d
+> > [   17.584382] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 93 af 1b 00 f7 d8 64 89 01 48
+> > [   17.585171] RSP: 002b:00007ffd101da888 EFLAGS: 00000246 ORIG_RAX: 00000000000000f6
+> > [   17.585500] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f4f2ec3ee5d
+> > [   17.585985] RDX: 00000000200003c0 RSI: 0000000000000002 RDI: 0000000000000000
+> > [   17.586346] RBP: 00007ffd101da8a0 R08: 0000000000000800 R09: 0000000000000800
+> > [   17.586656] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd101da9b8
+> > [   17.587001] R13: 0000000000402862 R14: 0000000000412e08 R15: 00007f4f2ef30000
+> > [   17.587381]  </TASK>
+> > [   17.587559] Mem-Info:
+> > [   17.587667] active_anon:117 inactive_anon:14235 isolated_anon:0
+> > [   17.587667]  active_file:25278 inactive_file:25394 isolated_file:0
+> > [   17.587667]  unevictable:0 dirty:82 writeback:189
+> > [   17.587667]  slab_reclaimable:14774 slab_unreclaimable:23678
+> > [   17.587667]  mapped:13500 shmem:1187 pagetables:846
+> > [   17.587667]  sec_pagetables:0 bounce:0
+> > [   17.587667]  kernel_misc_reclaimable:0
+> > [   17.587667]  free:13396 free_pcp:37 free_cma:0
+> > [   17.589349] Node 0 active_anon:468kB inactive_anon:56940kB active_file:101112kB inactive_file:101576kB unevictable:0kB isolated(anon):0kB isolated(file):0kB mapped:54000kB dirty:328kB writeback:756kB shmem:4748kB shmem_thp:0kB shmem_pmdmapped:0kB anon_thp:0kB writeback_tmp:0kB kernel_stack:5504kB pagetables:3384kB sec_pagetables:0kB all_unreclaimable? no
+> > [   17.590712] Node 0 DMA free:6664kB boost:0kB min:424kB low:528kB high:632kB reserved_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+> > [   17.591848] lowmem_reserve[]: 0 1564 1564 1564 1564
+> > [   17.592075] Node 0 DMA32 free:46920kB boost:0kB min:44628kB low:55784kB high:66940kB reserved_highatomic:0KB active_anon:468kB inactive_anon:56940kB active_file:101072kB inactive_file:101568kB unevictable:0kB writepending:1504kB present:2080640kB managed:1620324kB mlocked:0kB bounce:0kB free_pcp:468kB local_pcp:0kB free_cma:0kB
+> > [   17.593443] lowmem_reserve[]: 0 0 0 0 0
+> > [   17.593624] Node 0 DMA: 0*4kB 2*8kB (UM) 1*16kB (M) 1*32kB (M) 1*64kB (M) 1*128kB (M) 1*256kB (M) 2*512kB (UM) 1*1024kB (M) 0*2048kB 1*4096kB (M) = 6656kB
+> > [   17.594261] Node 0 DMA32: 770*4kB (UME) 193*8kB (UME) 121*16kB (UME) 72*32kB (UME) 39*64kB (UME) 15*128kB (ME) 7*256kB (UM) 4*512kB (ME) 2*1024kB (UM) 4*2048kB (UME) 5*4096kB (M) = 47840kB
+> > [   17.595020] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=1048576kB
+> > [   17.595399] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=2048kB
+> > [   17.595774] 51855 total pagecache pages
+> > [   17.595949] 0 pages in swap cache
+> > [   17.596170] Free swap  = 0kB
+> > [   17.596304] Total swap = 0kB
+> > [   17.596440] 524158 pages RAM
+> > [   17.596589] 0 pages HighMem/MovableOnly
+> > [   17.596767] 115237 pages reserved
+> > [   17.596934] 0 pages cma reserved
+> > [   17.597149] 0 pages hwpoisoned
+> > [   17.645660] kexec: Could not allocate control_code_buffer
+> > [   17.785654] loop0: detected capacity change from 0 to 65536
+> > [   17.787652] =======================================================
+> > [   17.787652] WARNING: The mand mount option has been deprecated and
+> > [   17.787652]          and is ignored by this kernel. Remove the mand
+> > [   17.787652]          option from the mount to silence this warning.
+> > [   17.787652] =======================================================
+> > [   17.801532] XFS (loop0): cannot change alignment: superblock does not support data alignment
+> > [   17.878479] loop0: detected capacity change from 0 to 1024
+> > [   17.888666] I/O error, dev loop0, sector 0 op 0x0:(READ) flags 0x80700 phys_seg 1 prio class 0
+> > [   17.894988] loop0: detected capacity change from 0 to 1024
+> > [   17.895613] EXT4-fs: Invalid want_extra_isize 0
+> > [   17.909948] loop0: detected capacity change from 0 to 128
+> > [   18.105190] kexec: Could not allocate control_code_buffer
+
 
