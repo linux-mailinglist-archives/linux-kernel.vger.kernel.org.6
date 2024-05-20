@@ -1,133 +1,104 @@
-Return-Path: <linux-kernel+bounces-184219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C233E8CA47A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:32:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8497F8CA47B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16BE02813C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:32:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B61271C210BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172F54C62B;
-	Mon, 20 May 2024 22:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26C0482D0;
+	Mon, 20 May 2024 22:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L18bQqHN"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ovrTD+qs"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218BEA929;
-	Mon, 20 May 2024 22:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A7DA929
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 22:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716244336; cv=none; b=utsCn9fhpdFtCaOmR3a1PcarBiErTbPRliXX7ZR1AhiEqDhBAiTs2+h2dtnQjeBXOMs00MiEc4v3/JCZ4oO3qBCM1AfbIB5rzHVTk4dK+V423ZqF2FXloV7IS6xg3vQfATZgSse1MEYeiaRjiHHZ4dy73gSh0KUlXDwY40XIurg=
+	t=1716244420; cv=none; b=Eo7PMVp+Q+mHiqIoGVY1Ch9IX4uJC1UeHPPzswn/wWZZkSiJDZfoPidgzShkd914gCPsBQvNL9Xzz9qixl1JhtoIbv56gCn/4HbZbEmSf8SAJw6xbAorZcO+0pURnguzgp0t1YCWXWarmg7L6rO8ZKzC15yrBkHYffBZXlAynEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716244336; c=relaxed/simple;
-	bh=Nfd/hotRsNGOUrVaiD/+D1eNGry9/QIrEElvqfwSwYU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pPMdEohPuniZNV6VOJ+LZzsP/m/zJEwXgMYozYsclu6JW5Jpq3YfN6ZCZvk8y+/OimwOoUqSqfvoC3NzLuQ6G3YxmiIJspU6VHMASCjIUjGIbqIMayDHAwyKbGaXTqcwbPEo8o5rvjGgNAw8T2TlPlDM4Y1Stu+GH++9ZGY6ItE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L18bQqHN; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2bd9000dc87so353908a91.0;
-        Mon, 20 May 2024 15:32:14 -0700 (PDT)
+	s=arc-20240116; t=1716244420; c=relaxed/simple;
+	bh=NYo/N7BXec44ICtyrYVBTW0BcviRclt5lLRqjmbMHMU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=aduHxmNSUTyV0FGwghEwcsKkHyMqZZs7WtHmEFTXkMxZNJQWRaxRtlihpXlhtBpje7B0tq+Ue2K9yAxO1I3HmDhi8ustGCtPAJNkxjkOsHKEymaoKIbUkrrgw1tTae3wFNdI1T06pZoznHWiwUcyRKDfs5LjvPLa1RMwSiCnLEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ovrTD+qs; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51f1bf83f06so5823446e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 15:33:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716244334; x=1716849134; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716244415; x=1716849215; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TLfT69TsEa3c895CC5YzoNBNMLq5vydc1ZiuXwGInhw=;
-        b=L18bQqHNzFJBE81Hp4VHgdcoq3n3gEVV2kpxBkjAgqp5t6u0EwSXufRPL4rEvs8HLR
-         8RjLtHGkGDayNlBi3AKB659W0j8k6USHzgcBtbDbkyt7pzOzp3l5aCnS0Ux+6AxPqND5
-         4XQdqsj1Tlog3hjhC4lGE8RkdiGtzYUSEXC87bnNbkTtJqbdxjwHjMgxDPI+sVunVymx
-         XaS4s+9MQwB0XXjxbFFBOYU6Ruzat1MwVfDFa+h/k/4M1JVoGzZyNU+faFk0IlXtTVCw
-         VGXiK0vchzqSDHfNexQHYnCOfRhum5hOUuvsdXT0o4A7ED2C99K7Uy85g7NeRmIO+qUg
-         uoNw==
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NYo/N7BXec44ICtyrYVBTW0BcviRclt5lLRqjmbMHMU=;
+        b=ovrTD+qsR0lGdcz+G3ErYepuxL2hTGkmQzRYqM2VF1B3N4r2cJfX7UNcA1epsx9Q0T
+         ycDTFzUrsI/y6nhwhKJlqc5nQa78z1yiKIeLFPk76PcCXuklch1bPnHSps0UIBVvpnAR
+         yitXmcH7pbCuOBMhBmBsHFf14x7ji7B28EMXT7oqqwAN23LUHgOgqJ9gihuhgYDKdyC8
+         sz+lmJVwKD2khWkY16mT2vuTgrQyLMNLgIKDZqdFziPmcayS6hwG1fneIfHrhqVx2ZCk
+         F1BwtqUXjJTcSa90LR/a5dxhgiW+FsxL+DFxb3wut2dB4BfwqXr9KN7TrjvXbVc+oMR5
+         rrZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716244334; x=1716849134;
+        d=1e100.net; s=20230601; t=1716244416; x=1716849216;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TLfT69TsEa3c895CC5YzoNBNMLq5vydc1ZiuXwGInhw=;
-        b=li9kx0jdO616AVZDvS5PCmbdb9auSWrhV3YJUov+LihZWhsmWa5bwBbE9CzXLq8d8f
-         +lnLCZI+YmCximBZHOv8ES+6WY0NU5GcD/xw/a57vZM/iA9tCHrPk7NKSHb7+aBQPO2s
-         2rq/mTAYgGSuIjpQTCeb1nHVKm44+bgKkt7do1MItM6gebxU6xkgFSQosQ8bRlLr4mdv
-         TcC0oCpaMSLSspMlxFHB4dZmbVgL7NonpOxJqAgbX/yJxkgV0pnlftDFYthy/1HQz59H
-         4x3Lh+9uJuDBkF6AZlHZR0NPAb1/KwRi8qK0uSn1c8w74uULVCbQyQfoluiR49BZ4v6R
-         XtXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXJxOGegEBqhzhgpUJeLm7SYHFzoX/Y2XjZcp7dzV1h8KKb/ixzThB3vmn+jdTQ4uHGXMp7EZ0I2MXyTuN9vnI7IF8Mep/MNZES8qgzs2396KHzOKdD3ZzRbKgzZb6SRGVcNbvNjYVXB/TwMSlqnLx6oBbaLRjX289N57iMBerQ+56YX0LQNI=
-X-Gm-Message-State: AOJu0YwLcKbf9j6KjPl48O9/Y6Ib93O8lAlQamSTZY2W6HdiKyGXE19t
-	LMLiBG3SEh2XboseFXVx3kgsX/LC7KNVkjl0Sja+1+Vl2FgKGD4GT/vNaVqgTol00EXnpIaeXk3
-	IkeUXNyyXx4vLWJ/tDojGuK8aAxF+aipO
-X-Google-Smtp-Source: AGHT+IFvqS0iVQIkq63MK0TTou44XjHDozUcq4RYICj4/VXpRTq0S7tMbcgtrYO6JiWDTsdNF9mZvrvoa1bzNOw7dx8=
-X-Received: by 2002:a17:90a:bf15:b0:2bd:85e8:79de with SMTP id
- 98e67ed59e1d1-2bd85e87aa2mr4104579a91.11.1716244334350; Mon, 20 May 2024
- 15:32:14 -0700 (PDT)
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NYo/N7BXec44ICtyrYVBTW0BcviRclt5lLRqjmbMHMU=;
+        b=afKJv3w2NfBTrVuo9C5rR1U/buWp1q5Y427A6mWzc6d09Ug+Cosw9C1RLmReRKk7b7
+         /CV/cw9RcZ466J/+o2JsgNyaI1mUVtQeyjtFhTBxcQR3YYAmNXQXgyIAfzQJshyc12HR
+         qrliNi36VyOUFhqJts1fEm0vX0bQTE75I+JQP9zMgpPyLTadkxFZfszBotXBWx/sOHgQ
+         TtBdU3r5RW8o7EWUqBWCUECxx8elUTh4amk6iHRz4rogU74CluZk1fWqHSTLFQj8xtwB
+         8/1zE54+VKJrUFPuBkSrvlcxj3Ke4vYw/nCdivqEwNxUQ7OipElkUEOA+wwIOZ2h3bch
+         YW8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWgjA7E6PdPhJ8Z8ccCFN2bm8Lmc8SO5IbUQ+IbibZCwIpEf5AQUSMoUR7VDOBY01k8rAKvNO0wCLjwBuE+pfLGwqt8UwBbsFLpWdUX
+X-Gm-Message-State: AOJu0YwHliOOJ2bYoaiZC0cIvD9x6mqQLUjRUI/MWCG95U4TkE4ztvjQ
+	wg9ssrfwx3LRjboVMGQFFbzJcgSpF6WkctUwXmWyY+DzYSWyiVYjpIe3RkIqTPofrL2+HDPs8Bt
+	gSGXb6mYoGV2FbfVXf2Om55KZ4/N8+CxIR2l80A==
+X-Google-Smtp-Source: AGHT+IEmg9128M+eN0m3kGRQymnVHm1GcalzmPl2RQ72iRv7vCX4Uq/ZuSz/Y8IItLGvMwP7hPMh6SKsdg4hlDqGOnc=
+X-Received: by 2002:ac2:5979:0:b0:519:8963:c678 with SMTP id
+ 2adb3069b0e04-5220fc794b5mr17825488e87.23.1716244415690; Mon, 20 May 2024
+ 15:33:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520172554.182094-1-dakr@redhat.com> <20240520172554.182094-11-dakr@redhat.com>
-In-Reply-To: <20240520172554.182094-11-dakr@redhat.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 21 May 2024 00:32:02 +0200
-Message-ID: <CANiq72kHrgOVrdw7rB9KpHvOMy244TgmEzAcL=v5O9rchs8T1g@mail.gmail.com>
-Subject: Re: [RFC PATCH 10/11] rust: add basic abstractions for iomem operations
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org
+From: Atish Kumar Patra <atishp@rivosinc.com>
+Date: Mon, 20 May 2024 15:33:25 -0700
+Message-ID: <CAHBxVyEaCFt+bC=bwO54n30urANy+DaffOBk2odpqjpbBgOPKQ@mail.gmail.com>
+Subject: RISC - V Microconference CFP 2024 CFP
+To: linux-riscv <linux-riscv@lists.infradead.org>, 
+	"open list:KERNEL VIRTUAL MACHINE FOR RISC-V (KVM/riscv)" <kvm-riscv@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 20, 2024 at 7:27=E2=80=AFPM Danilo Krummrich <dakr@redhat.com> =
-wrote:
->
-> through its Drop() implementation.
+The Call for Proposals (CFP) for the RISC-V Microconference 2024 is
+now open. Don=E2=80=99t miss your chance to submit a topic proposal!
 
-Nit: `Drop`, `Deref` and so on are traits -- what do the `()` mean
-here? I guess you may be referring to their method, but those are
-lowercase.
+The deadline for topic submissions is July 15, 2024. Proposals can be
+submitted at: https://lpc.events/event/18/abstracts/
 
-> +/// IO-mapped memory, starting at the base pointer @ioptr and spanning @=
-malxen bytes.
+Be sure to select the RISC-V MC track during submission.
 
-Please use Markdown code spans instead (and intra-doc links where
-possible) -- we don't use the `@` notation. There is a typo on the
-variable name too.
+Due to an unprecedented number of submissions this year, the RISC-V
+Microconference may be shortened to 1.5 hours (nano conference)
+instead of the usual 3-hour format. Topics will be accepted on a
+rolling basis due to the limited number of slots.
 
-> +pub struct IoMem {
-> +    pub ioptr: usize,
+LPC 2024 will take place in Vienna, Austria, on September 18-20.
+For more details, visit: https://lpc.events/event/18/.
 
-This field is public, which raises some questions...
+Update on the microconference situation:
+https://lpc.events/blog/current/index.php/2024/05/13/update-on-the-microcon=
+ference-situation/
 
-> +    pub fn readb(&self, offset: usize) -> Result<u8> {
-> +        let ioptr: usize =3D self.get_io_addr(offset, 1)?;
-> +
-> +        Ok(unsafe { bindings::readb(ioptr as _) })
-> +    }
-
-These methods are unsound, since `ioptr` may end up being anything
-here, given `self.ioptr` it is controlled by the caller. One could
-also trigger an overflow in `get_io_addr`.
-
-Wedson wrote a similar abstraction in the past
-(`rust/kernel/io_mem.rs` in the old `rust` branch), with a
-compile-time `SIZE` -- it is probably worth taking a look.
-
-Also, there are missing `// SAFETY:` comments here. Documentation and
-examples would also be nice to have.
-
-Thanks!
-
-Cheers,
-Miguel
+Best regards,
+Atish & Palmer
 
