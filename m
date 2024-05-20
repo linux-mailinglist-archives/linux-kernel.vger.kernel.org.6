@@ -1,105 +1,127 @@
-Return-Path: <linux-kernel+bounces-183794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E56E8C9E34
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:31:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71BF28C9E3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1945C287E65
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:31:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10764B20E14
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5478E13664E;
-	Mon, 20 May 2024 13:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F54F136652;
+	Mon, 20 May 2024 13:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8VkvGBY"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RF5aj7j5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366CF1E87C;
-	Mon, 20 May 2024 13:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7078D481C2;
+	Mon, 20 May 2024 13:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716211857; cv=none; b=lKVXGlqscBAayK0wG/aPJwcCBOkardJ4rrP/0/XUy6CXe6YGjWseiVXb5+EcrX8sjyzWnJdIsd7n3Xh72b16SrIKoCNO3fi2KxaWBkGfjhgBVsQ5khcU/YCeiqoAiN8YjaffPX9f058gJvYpL6i5Q9Kp9MYsv+VwQt3yvkAHcF0=
+	t=1716212035; cv=none; b=R0YtJfCE5PO0P0O0qFlL+TnnKQDwdebptupGkgxncl/GegxT0hQjAXxEB7NCGPwlCPgCZzs90E0adx/gbozoTsOK+ShrL7UXYccf9l/0RpY7XqcQt0mJ/DW2aXfszjfGs4OHRJfCwMHoRDicNCmVsVnMmLUwJlUlouLdOBTZw8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716211857; c=relaxed/simple;
-	bh=kZHxyEYpeqymvbNV5Acz0S9qU02H/GfF0vbbl2YfxXM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TClGeolLkh4Xsqy6MsE+A16QRTUCB/VpD/TI7iYgJXnTt/Kv8jRu4ZBz7PWTL9z9EowlnXHb4BAcND+Fs4xT9RuxCmbvAcRiyH9aDAVOEA35Q48pOE/DtphLJM63v/bJtBBCP0+wxTotPgWeu9SnlyW188tpY9zCWsQPst+XDh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8VkvGBY; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-34db9a38755so2526903f8f.1;
-        Mon, 20 May 2024 06:30:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716211854; x=1716816654; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kZHxyEYpeqymvbNV5Acz0S9qU02H/GfF0vbbl2YfxXM=;
-        b=m8VkvGBYs5dL4A4rtQ4t7wKhshn08WcuW9iEW7E3ZXI4H4bPQq+9YM0AAyR5L0m7VS
-         OPLWKTPnEMhov1cJJ1yEKh0ls45Cy2ZZBWGH3t5gu9tiZzwNquOEw/dpulLxhJvuFnj8
-         3TWI9aG8QXvW8eagxhvtRuK6LkAi81+MIT1uCvmTS4imMSClvDr+3NYWHVJuS3mTZMtF
-         LZxs7JEs/Fu0p044CrEbQVpCSHzMJSnImuiodsv0ckeUy6a4tW0CFOt75eoxbfMzpZzy
-         iJ4VhFcQnnggr/guKJ/9y6f2CUE64ylym3d5Q0SdM3QhQHqbZoAY+fCKJDw7v+/31Ykv
-         ehPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716211854; x=1716816654;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kZHxyEYpeqymvbNV5Acz0S9qU02H/GfF0vbbl2YfxXM=;
-        b=vKXmwZOJ8tLjxiurukblk5/hFIGvuR6UIP4k8PDOOdm3NX9OkPj4dXpXvC2oVN7aGd
-         PtFjsAjszANB1/5fIdwx9a9gPFQRMUlfMDUmAQR7xq6AoF/LACYuER/cUza9pr9ZVktR
-         ZA1SmsOKBnjgYiyd2dMhv80J4aIZi8awHxIQHNykRpwQJmpDPuzODLHxjgKwMb3yOVE5
-         BoPB4E7Ld8QVxRrY4HH6iPHwimzx5AxTa8Mp000o4seruEj++s0bbdOLQ7j2s/KEfqR3
-         f5yVGkiCvksRBcBz+7xrsL77sNwwIGK5loADbDnPbEj3GTMks4crXn8DR+SVBXwf31ul
-         CwSA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9gHZv+PYq/g6+3vdsgsM4ZJUI1zX5sUr6ngQOLJ9ICRYqRx0kVP6uK2Bu6iCqjV5louP1Zbx3o8/JQmTY3oJRtEvMISo6d+IBtqxXa3YlvTdURysKSgTFcxfO3PygXi6qGADV124Lw4LeLHqrQa/hIPSoDZxsBtJ0KU/LSdjqF3/tVEaPDbY8
-X-Gm-Message-State: AOJu0YzkMwegEUYP0aK0nEtjv6n4ct3L8bEVZHA8rf5i4Ou1kJwkFWWo
-	Vgkp4xCWLOdWK9sVPckukzIucEGZ7cnRHAWJh5Y3LELP4J80h7EgjU7Yc16I/+vQKXdeLY3EfnT
-	siyA/SwKphEUpsafd92QdGUsmloSkynSC
-X-Google-Smtp-Source: AGHT+IFwxIwSzgN4Et+aYcjqi2uLRSFf/4UznGmV17LEMLE6uJqfvkNZ06oKf6rIcJVHNW77Bv3ygx2PKIZskzEdkJ8=
-X-Received: by 2002:a5d:53c5:0:b0:34a:9adc:c364 with SMTP id
- ffacd0b85a97d-3504a630f38mr25053493f8f.8.1716211854324; Mon, 20 May 2024
- 06:30:54 -0700 (PDT)
+	s=arc-20240116; t=1716212035; c=relaxed/simple;
+	bh=DjxBH1hk7nqIlIRu7o8c2uGzw9yEe52HIFQOB/6OAZw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VQqHg7C9u4VHN9c7oXzKtlKVazvGMG82qbt2TYSsKzTiSW3+1qusOZXv6FbDsKoa48B/HjVc8gCFUbrwTlX8ajXij9XfGyqFgqwEhLNYeQ8lz2ExbpcK0hCW6FpjzseJh+TWu1RBuQp63HA7NfVxiixj9Qomv4nPlk4FJvBUlnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RF5aj7j5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B9BEC4AF09;
+	Mon, 20 May 2024 13:33:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716212035;
+	bh=DjxBH1hk7nqIlIRu7o8c2uGzw9yEe52HIFQOB/6OAZw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RF5aj7j50AUMjWSVqpgkGMbg4mfKsBOUUPEsfoMwcC6rAMaoRbQN0i6LtJrUL41vq
+	 y6yi9+c7Ro5s7FEloTcLNZmKPYe8C5RDfmXSnrcAj4gFVk44+TpnxvmfwP9xYmLadz
+	 D24tMNHiVKFCPnKU7kSU8n8haLBza/iLhB+oAi5AC/X2/SByh2v6Z2zLfkGmeb6TRl
+	 1EOojmOLskRh/BxwfzcktscyIl1EDmWoUwA7nfcq42Cz1ABWn8DOefZoVOwoKxzyJQ
+	 /INzAtSCitG3DR8JNpY3/Nwkkn1/hd+RfvhQLGTe7r7Kjfzo64fhtYpMAkiD56abyF
+	 btcTVaA8R6Puw==
+Message-ID: <12533e91-c352-43c5-8b8a-5133c3bfa963@kernel.org>
+Date: Mon, 20 May 2024 15:33:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com> <6eee1069-81ae-495a-850f-7f526006db8b@web.de>
-In-Reply-To: <6eee1069-81ae-495a-850f-7f526006db8b@web.de>
-From: grygorii tertychnyi <grembeter@gmail.com>
-Date: Mon, 20 May 2024 15:30:43 +0200
-Message-ID: <CAGFuAuyXhBT8Nkvz5qN8iejeoHMFmx1b86tTNmpVfQ2xqjMtLw@mail.gmail.com>
-Subject: Re: [PATCH] i2c: ocores: set IACK bit after core is enabled
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>, 
-	bsp-development.geo@leica-geosystems.com, linux-i2c@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
-	Peter Korsgaard <peter@korsgaard.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: soc: ti: Move
+ ti,j721e-system-controller.yaml to soc/ti
+To: Roger Quadros <rogerq@kernel.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Tero Kristo <kristo@kernel.org>
+Cc: "Andrew F. Davis" <afd@ti.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240520-for-v6-11-j721e-syscon-v1-1-f57a93e12cad@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240520-for-v6-11-j721e-syscon-v1-1-f57a93e12cad@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, May 19, 2024 at 7:25=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> =E2=80=A6
-> > Sometimes it causes failure for the very first message transfer, =E2=80=
-=A6
->
-> Does such an information indicate the need for the tag =E2=80=9CFixes=E2=
-=80=9D?
+On 20/05/2024 14:05, Roger Quadros wrote:
+> soc/ti is the more appropriate location for the system controller
+> device tree binding documentation so move there.
+> 
+> Update Kishon's email address to a working one.
+> 
+> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+> ---
+>  .../bindings/{mfd => soc/ti}/ti,j721e-system-controller.yaml          | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'm not sure: the original initialization order was introduced by the
-very first commit
-18f98b1e3147 ("[PATCH] i2c: New bus driver for the OpenCores I2C controller=
-").
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Regards,
-Grygorii
+Best regards,
+Krzysztof
+
 
