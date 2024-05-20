@@ -1,195 +1,253 @@
-Return-Path: <linux-kernel+bounces-183846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 618558C9ED5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:34:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7567E8C9ED0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 850331C210E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:33:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B83C2842E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A181369AA;
-	Mon, 20 May 2024 14:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyberus-technology.de header.i=@cyberus-technology.de header.b="WB29042Q"
-Received: from DEU01-FR2-obe.outbound.protection.outlook.com (mail-fr2deu01on2102.outbound.protection.outlook.com [40.107.135.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F84C7C0B2;
+	Mon, 20 May 2024 14:33:02 +0000 (UTC)
+Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F071136E26;
-	Mon, 20 May 2024 14:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.135.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716215590; cv=fail; b=R9fJzjJ2kenLpnrSdglqJ/46F84/j8v65E5+27JLPU8rViUjOrFNS8zFHKKGNwen4FBQrEGG1WEjLDvi86PBqB5iqW6zJLJZI6TbNTjtfAtyQhyQ4070zVfqUh0AfUhLbsTxS6X9iC4Lx+PBL9KpxxNoS9ZsCeuTcXt8wlMyUbs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716215590; c=relaxed/simple;
-	bh=w0jDKZdkhk8OSLlVYpRtwsv7AEf9NIM3S92uHOkJTWE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oij7Vf8neO44bT5+wq7vVKV9tdoEm6chPklcoo6l2VDD/kmtogsTF3zMeok7LkHuPAjPSLDJBEuwHH2sfk/GQ7u7IEn5f7FCWZd9f4RG0mCs7NtOH8JGuauhpfMVsqlqSC6LLbwB/zveLZBbDJavJ2ehAwYyZeG4yL/5pf+K6Hs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cyberus-technology.de; spf=pass smtp.mailfrom=cyberus-technology.de; dkim=pass (2048-bit key) header.d=cyberus-technology.de header.i=@cyberus-technology.de header.b=WB29042Q; arc=fail smtp.client-ip=40.107.135.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cyberus-technology.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyberus-technology.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ibmx80cwq0oK9lZ0ghbDK3kZobhmJSIvWtkbjtdVibtFFeu/1XN+L3RjMKCtizQUba4DEMs8LTAse8Qlkp9mWf99wdeI8iTqKnG+NbHn/rFlUiPfvXlDnqq5y6g/SPFJ5+wETaKwojGA9YcgnjgOooBLXkg17Ok8zvz4qxwVGfVoOnSui3vUl4C/pQOo0TYAmlLMx8vJ2TbJIeMSOP+1JDtg/zysk8FVj+YmPGIqNAybGev07XXsEoGIUdkl5lYbbnDp9N7h87zB2LePuuTe9IAt2ihpbboeDaDJpFi+9fgyJ/L/pqXEMyGY7MzLhJpnCpwzoT6AWhfrzasP3u0R1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wZUA/SeEfUnO/dn+cPWISTnH1aU5MZMu0bbtj8icaBQ=;
- b=b+VvHknkHpsOsxLyEs6XsCKe7Rz+UOAzuZHd54OegV1Lv63irKk8WOnOnT5Y4NCMmwyMDIhyc16+pC/pMpJ7jqOEj9QRf6jmjORsKCoTPJBzR0jCp2To7dkXmTx01lp36r8sXB2xNbKu9lCPAh4KEp4AwqC+TQiNxKOvwHmCf7MZAqFNJXLFwZoJaW9ifg4RPXlVeQ7ZSeniORWVYwKWFH6VVsO5fkbPOGYON1R//BxAsTClvEOUTtvRjsyDRcSMkTvz5XFzoeiU98IpkXhRV/x5GhGypuT3KfxZ39SxyjcsZWDjF64+PFer+o6reGt3qOpYsKuGCWpeZrFiq5TPhg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cyberus-technology.de; dmarc=pass action=none
- header.from=cyberus-technology.de; dkim=pass header.d=cyberus-technology.de;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyberus-technology.de;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wZUA/SeEfUnO/dn+cPWISTnH1aU5MZMu0bbtj8icaBQ=;
- b=WB29042QzBr88/u2BILT0A/ffsyJAgNfvJgsV7K7QoOtQ+KNTDJJeuNXRXWxRAkS7SvLeD/tKgDKCgDYYeTBMWqEAM08V9ki5hxQSQo06fZ6zEX9bjM2Vox20kUAWaSjzBTu8qea6b4UuWhQ2JDGLCrbk/FwVwrG6q4Ry/UneQhab9pEXkv4kObnkEjrVJ4CBx5AArLxofnFXLuN9upGc6phzjaxkj+0JfiyOVPYpQuiff1/JqjK5Pp2O1omz3p6v/SU+V0yGbdo9AGjF91Z40JrYbDKD/HlDZI+GBZMjiHg+SQ/fsC4SHra/xwdRi0Q04m4lpz7fKoV/xJEK2TYeA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cyberus-technology.de;
-Received: from FR2P281MB2329.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:38::7) by
- FR6P281MB3534.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:bd::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7611.16; Mon, 20 May 2024 14:33:06 +0000
-Received: from FR2P281MB2329.DEUP281.PROD.OUTLOOK.COM
- ([fe80::bf0d:16fc:a18c:c423]) by FR2P281MB2329.DEUP281.PROD.OUTLOOK.COM
- ([fe80::bf0d:16fc:a18c:c423%5]) with mapi id 15.20.7611.013; Mon, 20 May 2024
- 14:33:06 +0000
-From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Julian Stecklina <julian.stecklina@cyberus-technology.de>,
-	kvm@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] KVM: fix spelling of KVM_RUN_X86_BUS_LOCK in docs
-Date: Mon, 20 May 2024 16:32:19 +0200
-Message-ID: <20240520143220.340737-2-julian.stecklina@cyberus-technology.de>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240520143220.340737-1-julian.stecklina@cyberus-technology.de>
-References: <20240520143220.340737-1-julian.stecklina@cyberus-technology.de>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MA3P292CA0009.ESPP292.PROD.OUTLOOK.COM
- (2603:10a6:250:2c::10) To FR2P281MB2329.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:38::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6364182DF
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 14:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716215581; cv=none; b=fvnzyn9siK0X2CxfR+CeqiO1phCTqedIdUrTQcZB8blV3OcbD5Oh/ZeX36SZHeoqbKukDFYvOdFsW241fOIT0pRBPnw53CHQ6bg5MqE44m7ISJKfZXpeEMbtA7IfR0QZTkGZ7wPzReBmcYfBxne3F30XkkP88OHAskzUYXwJ5jA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716215581; c=relaxed/simple;
+	bh=RjA9QK1StFOq1s9zLGgz16s6I7u52YYHAsn2RqqMx/s=;
+	h=Date:From:To:Cc:Subject:References:Mime-Version:Message-ID:
+	 Content-Type; b=rpf22+RCrEyKqqGgazikl2if9o6huxva38zq/O6c5CniJ8/uL1pLduWVPmX9iBTzkrAmlfpB3sXNa+3o/db87ujRTnUU9JQZUKcDonVVENBCeSmp91qRCZvd2kM0w0Y5YrBfmhJENYfE/y/5XaEFuOY8ivjOd5wwFfE1ACg5r+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=61.135.153.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: PC-20220305VLFP
+Received: from unknown (HELO PC-20220305VLFP)([112.97.60.228])
+	by sina.com (10.182.253.23) with ESMTP
+	id 664B5F0C00007E12; Mon, 20 May 2024 22:32:46 +0800 (CST)
+X-Sender: nanfengwq@sina.com
+X-Auth-ID: nanfengwq@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=nanfengwq@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=nanfengwq@sina.com
+X-SMAIL-MID: 3256017864831
+X-SMAIL-UIID: F46B7554566F41A4852BB1452072EFE2-20240520-223246-1
+Date: Mon, 20 May 2024 22:32:21 +0800
+From: "nanfengwq@sina.com" <nanfengwq@sina.com>
+To: gregkh <gregkh@linuxfoundation.org>
+Cc: balbi <balbi@kernel.org>, 
+	linux-usb <linux-usb@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: memory leakage in ncm_wrap_ntb() in USB ncm mode with kernel 5.15
+References: <2024051922230825069112@sina.com>, 
+	<2024051901-gimmick-cosponsor-f2dd@gregkh>
+X-Priority: 3
+X-Has-Attach: yes
+X-Mailer: Foxmail 7.2.25.254[cn]
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: FR2P281MB2329:EE_|FR6P281MB3534:EE_
-X-MS-Office365-Filtering-Correlation-Id: 73641797-fb73-4451-59dc-08dc78d9c39e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|366007|1800799015|52116005|376005|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tSuAIZMF3CDbRrtKU0xUKHeAzpusDrOm+wrHfummsUHC41j0De5nNpsV2+Be?=
- =?us-ascii?Q?1CNw6gwEh14JzzE/Sbs2nNSddbvW4/Vj2EW8Cgey69baSgihqtMzNw5e+an9?=
- =?us-ascii?Q?ukSQgr0tMx0ivx9utnu2KGew2883DsRTD7HzE+ekQVY4xsI+PeJIP+P1xj3P?=
- =?us-ascii?Q?AoykeKzrg59p4MNBN2Sw/KNd/ysaNMskvP1P9B6VXVeApUbXdU3OjHRW/Pbp?=
- =?us-ascii?Q?WKUV6RHNuuAXG6KUhY3PeNhPLoqvhmkQ2CnAbdzethKeSzJgGCEHGptT1fi2?=
- =?us-ascii?Q?iWJ1EJp5gR24mmHdt0r6Q/9ErxOKuxnb9/JrcZ0uzXYdJ7zDdtC+BbtS081i?=
- =?us-ascii?Q?4hN9dg+65MnEVailytQefswSKW7u7jMapSSlJm78FH2AMPwhsp+/eO8byGNT?=
- =?us-ascii?Q?XDiDJ672xDPzQPZuFYQHxsqJa30fzgfIO+d2lU8YDuQQP5DZTHGS/BkqJs1l?=
- =?us-ascii?Q?wLmXciAvtx8LCHiZ9qftthS2BJAFCX1wmIWNyKohjwUlZ09l1JOoROkhXbkJ?=
- =?us-ascii?Q?93ExSnyAk9tVkYXZ/xKUM0K7NT0SQrfak+JTXHhxtpE0OT0ZBO168hhLh34M?=
- =?us-ascii?Q?j+fEXa6VxFV1D/UGediNvrT6ioTmXcpkhts0EDq613rdV88ucb1ZxCrItqrM?=
- =?us-ascii?Q?SI+pom9io29NyXLgleQssG+qkuvRcGzas5/EM/jWth57fOXYBadV8M9t9erw?=
- =?us-ascii?Q?WEHAnvIBAV+pv6LnFNfFkweAY5fpJUkVMrTY4KC4BLSSRjdeCGpYerD4fx0a?=
- =?us-ascii?Q?M+bvq6evIQm4F6R1h7N96AIkTaPTFs6T7KQIjl7jUkbeaES3F+FgCf81zNPH?=
- =?us-ascii?Q?RBXXhEtVNXlWxNbkiSvH45dYE0wjwzbWIk5487LIekZqGdbktBL+n/adH9mc?=
- =?us-ascii?Q?ZVyG8mlYcZkAP7VqooYto4j7NYBx9lglqoMD1t9TD/fVadT6WkCQuvllygWk?=
- =?us-ascii?Q?6mfZWC4m8TG1isBTeZsDsfqeXNSAp4eWciKhoB/2q+Vs/ZAGZuhg9gCt1pVF?=
- =?us-ascii?Q?RtiXO3dopzsV9twC9Fq46ruvccf1j+a3apxawoa+FYmkUv+azkGUtvu3qn7L?=
- =?us-ascii?Q?ayJ0p7PMEmMrt1sCUDgoBCK0nJrHRuKYf0jo7Da2X/5cItcq3MIebH/NakbW?=
- =?us-ascii?Q?S+OazpXkp52qjNWMUozrFY3N/Xt4o3othH65dESURH5Sz31W7mBKg8pOOOEg?=
- =?us-ascii?Q?yN8h7eGkPt3Xkq+z+5V650MDRJ08mWY0IHUTIm7q3qpuojbxYFlNPgDUeg4d?=
- =?us-ascii?Q?J7xXPyvxOtHGjGqo1XfbvEOmBPkl6o4YJ04fgT3eresuvs82l34pznH7qRvY?=
- =?us-ascii?Q?/WTAhS+A0WIaHSGzA1LrJcsc5NwurmW87GN53OTq3a/24w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR2P281MB2329.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(52116005)(376005)(38350700005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BIV6/CKh4m8w0FkjgdvAmpGjS+ee78xA8NnjJKLXADQXVY06GpSHJzntrsyn?=
- =?us-ascii?Q?nMVF7ZCmN0Q6oNFfTTXBjXcEj3h4ScmYZFD9fbFkZr7xOAS3SE67tvAyBZS3?=
- =?us-ascii?Q?bUbo9UuFmBzYqk0HGp3PsT9PKBb2eeYjqEliXCNGYNsqyZw6O9fuJPFK/8yy?=
- =?us-ascii?Q?VtOZhdaV3OFERfJHvZXwkBzVDGhXi54ar8qsAHZhs1zS9V5G0WljGLRz/nEI?=
- =?us-ascii?Q?rZnHbJTo8yKVyQIl2xAcYMWXs5C4GIySGGy4WeSJA6aJRmfmPoOJQ7aPSzBR?=
- =?us-ascii?Q?ZvG844zWdtEUSqaPxpFFOwh3O0Sw8+CythZEvE/4Rz83ZO2mowL/sf6twEdG?=
- =?us-ascii?Q?6Z1xLV8PDdkZvb7P+AUWI2Cyl6APnisJjsNoJ7T5clKWgpA0Unsm8sdXLtLE?=
- =?us-ascii?Q?OSG4qbcHiv2i1+C26eCiff+L3sKN9iq54OB0R839wqC2Ie+o/pnw6/jXMfjp?=
- =?us-ascii?Q?yXnHKX8tRV4SEeSLyZV0I5fXvwDYso/42/va+UFJDmH30eFUOyyIvH2ol2vl?=
- =?us-ascii?Q?jLyZG1cD/LylJCj/+h8UloIma6nA06PUpUUzwNAtJVy1uCWYMkiPubRdBRuO?=
- =?us-ascii?Q?65VF3sHv77J7PnxBzhRCdOfmZ80RhzoriSLsMdnC7MEgnPZIVyLRHP7+T3vR?=
- =?us-ascii?Q?fdR2JbO2sH2193UWQkBZh0M5FWeWEIuzjKjW/IKsMTmaL8PEojYbOyFBkbRZ?=
- =?us-ascii?Q?9O+czaAISyCKyS2DvU6Cf13mRhzztNGPB8KTE6tvYwNo6oZM2minsTALYhPj?=
- =?us-ascii?Q?FQh1G5xQpQAGe9h5iuoJihax90l9YB5bxoHww/oy/QMqpX5uMx4NloQWFjHP?=
- =?us-ascii?Q?eN4KVllho3bnOJ6GBl7E79mC97+MreE2MXvq1dY5G+iCxE9EANJl9aUSpBM+?=
- =?us-ascii?Q?nvdaXfvYiGgSl398BlPUBPWCMMb3PslAV0+8g2d+I+kD4M19GtumtFulkweJ?=
- =?us-ascii?Q?IeAnCGJRCqswuFZXUSCT1K8pJP11PKoEL3reK+63XpRVyMLd8y8pJHoZ0VWA?=
- =?us-ascii?Q?eSz1xf8VLFzifC8KzulAq6g24S41kIlAnsliBq2bqgR2noCNy+dNmqJDAE12?=
- =?us-ascii?Q?spqJvRgs8VyXGHbiNUpoyDOKLcdNtnnTUWLHqV0it21GK1MGyD2zP5UmSIDF?=
- =?us-ascii?Q?/JZ4TBvxjeZiRlfiAkKP+cVQ2jCdEIKJILloMjNTA4DQGH7AwcmKLtXaBl9r?=
- =?us-ascii?Q?+uprOxUSSRPmoKUWoTlohBwCLNc7D4tB8Bb8nepIZG0f7uJD8US/8DVQ8I7e?=
- =?us-ascii?Q?rGlYyGUHAyYU1J3k6F0BRfFtqj97jAJ3z9ZLnlFNeRLweAfQh6qCOyFcJEAd?=
- =?us-ascii?Q?bku6Y3cFPhMtSshUa3SWlzXdNwAdfvE7a6h9zsO7z/o8KI3BGVc63hRWgig+?=
- =?us-ascii?Q?sDbKRRyR9MKxO4WjjUC4XFv+W9aDceQYsrDG1YBJ+Knvh0ZmzvR9TnUo3nY+?=
- =?us-ascii?Q?1Op88gF9ceQURViYwmz3t28VFWDfbljOsm7UqsMtfIDfNytBD7l+dQPLFyVU?=
- =?us-ascii?Q?J8QqpmKJaiAPNaQgiPdrrUFKwwezDxtxuco4x6L4SOaLIOOb5dJoa/Y+IqLo?=
- =?us-ascii?Q?fsiv1/XI6ufLiFnSH1OVicle2BFG2BLFzjJaMvqXkMXxcQ3QUY+ZebDlBgqk?=
- =?us-ascii?Q?6cwXEAqaMmdaJpO8gT2+Ujc=3D?=
-X-OriginatorOrg: cyberus-technology.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73641797-fb73-4451-59dc-08dc78d9c39e
-X-MS-Exchange-CrossTenant-AuthSource: FR2P281MB2329.DEUP281.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 14:33:06.5824
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f4e0f4e0-9d68-4bd6-a95b-0cba36dbac2e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TwTkD50zDl4q8UIN/2WNCHnnuyrVeMWwC7D3FcIaQFm72UMyXak+szpYLWNJFEXCN7sQO7Fz7kkFcCi3hj3Hev6G/oHe9GZsWdVZMFwHRw2p38nyQ2VFkzC3+AZDkm4k
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR6P281MB3534
+Mime-Version: 1.0
+Message-ID: <202405202232198531894@sina.com>
+Content-Type: multipart/mixed;
+	boundary="----=_001_NextPart642033051568_=----"
 
-The documentation refers to KVM_RUN_BUS_LOCK, but the constant is
-actually called KVM_RUN_X86_BUS_LOCK.
+This is a multi-part message in MIME format.
 
-Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
----
- Documentation/virt/kvm/api.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+------=_001_NextPart642033051568_=----
+Content-Type: multipart/alternative;
+	boundary="----=_002_NextPart608575887075_=----"
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index 2d45b21b0288..5050535140ab 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -6418,7 +6418,7 @@ affect the device's behavior. Current defined flags::
-   /* x86, set if the VCPU is in system management mode */
-   #define KVM_RUN_X86_SMM     (1 << 0)
-   /* x86, set if bus lock detected in VM */
--  #define KVM_RUN_BUS_LOCK    (1 << 1)
-+  #define KVM_RUN_X86_BUS_LOCK    (1 << 1)
-   /* arm64, set for KVM_EXIT_DEBUG */
-   #define KVM_DEBUG_ARCH_HSR_HIGH_VALID  (1 << 0)
- 
-@@ -7776,10 +7776,10 @@ its own throttling or other policy based mitigations.
- This capability is aimed to address the thread that VM can exploit bus locks to
- degree the performance of the whole system. Once the userspace enable this
- capability and select the KVM_BUS_LOCK_DETECTION_EXIT mode, KVM will set the
--KVM_RUN_BUS_LOCK flag in vcpu-run->flags field and exit to userspace. Concerning
-+KVM_RUN_X86_BUS_LOCK flag in vcpu-run->flags field and exit to userspace. Concerning
- the bus lock vm exit can be preempted by a higher priority VM exit, the exit
- notifications to userspace can be KVM_EXIT_BUS_LOCK or other reasons.
--KVM_RUN_BUS_LOCK flag is used to distinguish between them.
-+KVM_RUN_X86_BUS_LOCK flag is used to distinguish between them.
- 
- 7.23 KVM_CAP_PPC_DAWR1
- ----------------------
--- 
-2.44.0
+
+------=_002_NextPart608575887075_=----
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+aGVsbG86DQogICAgICAgSW4gZW1iZWRkZWQgZGV2aWNlcyB3aXRoIHJlbGF0aXZlbHkgc21hbGwg
+bWVtb3J5LCBpZiB0aGUgdHJhbnNmZXIgc3BlZWQgb2YgbmNtIGlzIGZhc3QgYW5kIG90aGVyIHBy
+b2dyYW1zIG9jY3VweSBDUFUgbWVtb3J5LCBpdCBpcyBsaWtlbHkgdGhhdCB0aGUgcmV0dXJuIHZh
+bHVlIG5jbSAtPnNrZF90eF9kYXRhIG9mIGFsbG9jX3NrYigpIGlzIE5VTEwsIGFuZCB0aGUgY29k
+ZSBpcyBsaWtlbHkgdG8gZW50ZXIgZXJyLiBJZiBza2IyIGlzIG5vdCBwcm9jZXNzZWQgaW4gZXJy
+LCBpdCB3aWxsIGNhdXNlIG1lbW9yeSBsZWFrYWdlLg0KDQpUaGFuayB5b3UuDQoNCg0KbmFuZmVu
+Z3dxQHNpbmEuY29tDQogDQpGcm9tOiBncmVna2gNCkRhdGU6IDIwMjQtMDUtMTkgMjI6MzcNClRv
+OiBuYW5mZW5nd3FAc2luYS5jb20NCkNDOiBiYWxiaTsgbGludXgtdXNiOyBsaW51eC1rZXJuZWwN
+ClN1YmplY3Q6IFJlOiBtZW1vcnkgbGVha2FnZSBpbiBuY21fd3JhcF9udGIoKSBpbiBVU0IgbmNt
+IG1vZGUgd2l0aCBrZXJuZWwgNS4xNQ0KT24gU3VuLCBNYXkgMTksIDIwMjQgYXQgMTA6MjM6MTBQ
+TSArMDgwMCwgbmFuZmVuZ3dxQHNpbmEuY29tIHdyb3RlOg0KPiBIZWxsb++8mg0KPiBJIGhhdmUg
+ZGlzY292ZXJlZCBhIHJpc2sgb2YgbWVtb3J5IGxlYWthZ2UgaW4gbmNtX3dyYXBfbnRiKCkgdW5k
+ZXIgVVNCIG5jbSBtb2RlIGluIGtlcm5lbCA1LjE1LCBhbmQgSSBoYXZlIGZpeGVkIGl0LiANCj4g
+UGxlYXNlIGhlbHAgbWUgcmV2aWV3IGl0Lg0KPiANCj4gSWYgdGhpcyBtb2RpZmljYXRpb24gaXMg
+ZWZmZWN0aXZlLCBpdCBjYW4gYWxzbyBiZSBpbnRlZ3JhdGVkIGludG8gb3RoZXIga2VybmVsIHZl
+cnNpb25zLCBzdWNoIGFzIGtlcm5lbCA0LjE0LCBhbmQgc28gb24uDQo+IA0KPiBUaGUgbG9naWMg
+b2YgYSBtZW1vcnkgbGVhayBpcyBhcyBmb2xsb3dzOg0KPiANCj4gSWYgdGhlIHJldHVybiB2YWx1
+ZSBza2IyIG9mICBwYWNrYWdlX2Zvcl90eCgpIGlzIG5vdCBOVUxMLCBhbmQgdGhlIHJldHVybiB2
+YWx1ZSBuY20tPnNrYl90eF9kYXRhIG9mIGFsbG9jX3NrYigpIGlzIE5VTEwsIHRoZW4gdGhlIGNv
+ZGUgd2lsbCBnbyB0byBlcnIsIHdoZXJlIHRoZXJlIGlzIG5vIHByb2Nlc3Npbmcgb2Ygc2tiMiwg
+cmVzdWx0aW5nIGluIGEgbWVtb3J5IGxlYWsgaW4gc2tiMi4NCj4gDQo+IA0KPiBUaGFuayB5b3Uu
+DQo+IA0KPiANCj4gDQo+IA0KIA0KIA0KSGksDQogDQpUaGlzIGlzIHRoZSBmcmllbmRseSBwYXRj
+aC1ib3Qgb2YgR3JlZyBLcm9haC1IYXJ0bWFuLiAgWW91IGhhdmUgc2VudCBoaW0NCmEgcGF0Y2gg
+dGhhdCBoYXMgdHJpZ2dlcmVkIHRoaXMgcmVzcG9uc2UuICBIZSB1c2VkIHRvIG1hbnVhbGx5IHJl
+c3BvbmQNCnRvIHRoZXNlIGNvbW1vbiBwcm9ibGVtcywgYnV0IGluIG9yZGVyIHRvIHNhdmUgaGlz
+IHNhbml0eSAoaGUga2VwdA0Kd3JpdGluZyB0aGUgc2FtZSB0aGluZyBvdmVyIGFuZCBvdmVyLCB5
+ZXQgdG8gZGlmZmVyZW50IHBlb3BsZSksIEkgd2FzDQpjcmVhdGVkLiAgSG9wZWZ1bGx5IHlvdSB3
+aWxsIG5vdCB0YWtlIG9mZmVuY2UgYW5kIHdpbGwgZml4IHRoZSBwcm9ibGVtDQppbiB5b3VyIHBh
+dGNoIGFuZCByZXN1Ym1pdCBpdCBzbyB0aGF0IGl0IGNhbiBiZSBhY2NlcHRlZCBpbnRvIHRoZSBM
+aW51eA0Ka2VybmVsIHRyZWUuDQogDQpZb3UgYXJlIHJlY2VpdmluZyB0aGlzIG1lc3NhZ2UgYmVj
+YXVzZSBvZiB0aGUgZm9sbG93aW5nIGNvbW1vbiBlcnJvcihzKQ0KYXMgaW5kaWNhdGVkIGJlbG93
+Og0KIA0KLSBZb3VyIHBhdGNoIGRpZCBub3QgYXBwbHkgdG8gYW55IGtub3duIHRyZWVzIHRoYXQg
+R3JlZyBpcyBpbiBjb250cm9sDQogIG9mLiAgUG9zc2libHkgdGhpcyBpcyBiZWNhdXNlIHlvdSBt
+YWRlIGl0IGFnYWluc3QgTGludXMncyB0cmVlLCBub3QNCiAgdGhlIGxpbnV4LW5leHQgdHJlZSwg
+d2hpY2ggaXMgd2hlcmUgYWxsIG9mIHRoZSBkZXZlbG9wbWVudCBmb3IgdGhlDQogIG5leHQgdmVy
+c2lvbiBvZiB0aGUga2VybmVsIGlzIGF0LiAgUGxlYXNlIHJlZnJlc2ggeW91ciBwYXRjaCBhZ2Fp
+bnN0DQogIHRoZSBsaW51eC1uZXh0IHRyZWUsIG9yIGV2ZW4gYmV0dGVyIHlldCwgdGhlIGRldmVs
+b3BtZW50IHRyZWUNCiAgc3BlY2lmaWVkIGluIHRoZSBNQUlOVEFJTkVSUyBmaWxlIGZvciB0aGUg
+c3Vic3lzdGVtIHlvdSBhcmUgc3VibWl0dGluZw0KICBhIHBhdGNoIGZvciwgYW5kIHJlc2VuZCBp
+dC4NCiANCi0gWW91IGRpZCBub3Qgc3BlY2lmeSBhIGRlc2NyaXB0aW9uIG9mIHdoeSB0aGUgcGF0
+Y2ggaXMgbmVlZGVkLCBvcg0KICBwb3NzaWJseSwgYW55IGRlc2NyaXB0aW9uIGF0IGFsbCwgaW4g
+dGhlIGVtYWlsIGJvZHkuICBQbGVhc2UgcmVhZCB0aGUNCiAgc2VjdGlvbiBlbnRpdGxlZCAiVGhl
+IGNhbm9uaWNhbCBwYXRjaCBmb3JtYXQiIGluIHRoZSBrZXJuZWwgZmlsZSwNCiAgRG9jdW1lbnRh
+dGlvbi9wcm9jZXNzL3N1Ym1pdHRpbmctcGF0Y2hlcy5yc3QgZm9yIHdoYXQgaXMgbmVlZGVkIGlu
+DQogIG9yZGVyIHRvIHByb3Blcmx5IGRlc2NyaWJlIHRoZSBjaGFuZ2UuDQogDQotIFlvdSBkaWQg
+bm90IHdyaXRlIGEgZGVzY3JpcHRpdmUgU3ViamVjdDogZm9yIHRoZSBwYXRjaCwgYWxsb3dpbmcg
+R3JlZywNCiAgYW5kIGV2ZXJ5b25lIGVsc2UsIHRvIGtub3cgd2hhdCB0aGlzIHBhdGNoIGlzIGFs
+bCBhYm91dC4gIFBsZWFzZSByZWFkDQogIHRoZSBzZWN0aW9uIGVudGl0bGVkICJUaGUgY2Fub25p
+Y2FsIHBhdGNoIGZvcm1hdCIgaW4gdGhlIGtlcm5lbCBmaWxlLA0KICBEb2N1bWVudGF0aW9uL3By
+b2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVzLnJzdCBmb3Igd2hhdCBhIHByb3Blcg0KICBTdWJqZWN0
+OiBsaW5lIHNob3VsZCBsb29rIGxpa2UuDQogDQotIEl0IGxvb2tzIGxpa2UgeW91IGRpZCBub3Qg
+dXNlIHlvdXIgInJlYWwiIG5hbWUgZm9yIHRoZSBwYXRjaCBvbiBlaXRoZXINCiAgdGhlIFNpZ25l
+ZC1vZmYtYnk6IGxpbmUsIG9yIHRoZSBGcm9tOiBsaW5lIChib3RoIG9mIHdoaWNoIGhhdmUgdG8N
+CiAgbWF0Y2gpLiAgUGxlYXNlIHJlYWQgdGhlIGtlcm5lbCBmaWxlLA0KICBEb2N1bWVudGF0aW9u
+L3Byb2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVzLnJzdCBmb3IgaG93IHRvIGRvIHRoaXMNCiAgY29y
+cmVjdGx5Lg0KIA0KSWYgeW91IHdpc2ggdG8gZGlzY3VzcyB0aGlzIHByb2JsZW0gZnVydGhlciwg
+b3IgeW91IGhhdmUgcXVlc3Rpb25zIGFib3V0DQpob3cgdG8gcmVzb2x2ZSB0aGlzIGlzc3VlLCBw
+bGVhc2UgZmVlbCBmcmVlIHRvIHJlc3BvbmQgdG8gdGhpcyBlbWFpbCBhbmQNCkdyZWcgd2lsbCBy
+ZXBseSBvbmNlIGhlIGhhcyBkdWcgb3V0IGZyb20gdGhlIHBlbmRpbmcgcGF0Y2hlcyByZWNlaXZl
+ZA0KZnJvbSBvdGhlciBkZXZlbG9wZXJzLg0KIA0KdGhhbmtzLA0KIA0KZ3JlZyBrLWgncyBwYXRj
+aCBlbWFpbCBib3QNCiANCg==
+
+------=_002_NextPart608575887075_=----
+Content-Type: text/html;
+	charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<html><head><meta http-equiv=3D"content-type" content=3D"text/html; charse=
+t=3DUTF-8"><style>body { line-height: 1.5; }blockquote { margin-top: 0px; =
+margin-bottom: 0px; margin-left: 0.5em; }body { font-size: 14px; font-fami=
+ly: "Microsoft YaHei UI"; color: rgb(0, 0, 0); line-height: 1.5; }</style>=
+</head><body>=0A<div>hello:</div><div><span></span><span style=3D"backgrou=
+nd-color: transparent;">&nbsp; &nbsp;&nbsp;</span><span style=3D"backgroun=
+d-color: transparent;">&nbsp; &nbsp;</span><span style=3D"background-color=
+: transparent;">In embedded devices with relatively small memory, if the t=
+ransfer speed of ncm is fast and other programs occupy CPU memory, it is l=
+ikely that the return value ncm -&gt;skd_tx_data of alloc_skb() is NULL, a=
+nd the code is likely to enter err. If skb2 is not processed in err, it wi=
+ll cause memory leakage.</span></div>=0A<div><br></div><div>Thank you.</di=
+v><hr style=3D"width: 210px; height: 1px;" color=3D"#b5c4df" size=3D"1" al=
+ign=3D"left">=0A<div><span><div style=3D"MARGIN: 10px; FONT-FAMILY: verdan=
+a; FONT-SIZE: 10pt"><div>nanfengwq@sina.com</div></div></span></div>=0A<bl=
+ockquote style=3D"margin-Top: 0px; margin-Bottom: 0px; margin-Left: 0.5em;=
+ margin-Right: inherit"><div>&nbsp;</div><div style=3D"border:none;border-=
+top:solid #B5C4DF 1.0pt;padding:3.0pt 0cm 0cm 0cm"><div style=3D"PADDING-R=
+IGHT: 8px; PADDING-LEFT: 8px; FONT-SIZE: 12px;FONT-FAMILY:tahoma;COLOR:#00=
+0000; BACKGROUND: #efefef; PADDING-BOTTOM: 8px; PADDING-TOP: 8px"><div><b>=
+From:</b>&nbsp;<a href=3D"mailto:gregkh@linuxfoundation.org">gregkh</a></d=
+iv><div><b>Date:</b>&nbsp;2024-05-19&nbsp;22:37</div><div><b>To:</b>&nbsp;=
+<a href=3D"mailto:nanfengwq@sina.com">nanfengwq@sina.com</a></div><div><b>=
+CC:</b>&nbsp;<a href=3D"mailto:balbi@kernel.org">balbi</a>; <a href=3D"mai=
+lto:linux-usb@vger.kernel.org">linux-usb</a>; <a href=3D"mailto:linux-kern=
+el@vger.kernel.org">linux-kernel</a></div><div><b>Subject:</b>&nbsp;Re: me=
+mory leakage in ncm_wrap_ntb() in USB ncm mode with kernel 5.15</div></div=
+></div><div><div>On Sun, May 19, 2024 at 10:23:10PM +0800, nanfengwq@sina.=
+com wrote:</div>=0A<div>&gt; Hello=EF=BC=9A</div>=0A<div>&gt; I have disco=
+vered a risk of memory leakage in ncm_wrap_ntb() under USB ncm mode in ker=
+nel 5.15, and I have fixed it. </div>=0A<div>&gt; Please help me review it=
+</div>=0A<div>&gt; </div>=0A<div>&gt; If this modification is effective, =
+it can also be integrated into other kernel versions, such as kernel 4.14,=
+ and so on.</div>=0A<div>&gt; </div>=0A<div>&gt; The logic of a memory lea=
+k is as follows:</div>=0A<div>&gt; </div>=0A<div>&gt; If the return value =
+skb2 of&nbsp; package_for_tx() is not NULL, and the return value ncm-&gt;s=
+kb_tx_data of alloc_skb() is NULL, then the code will go to err, where the=
+re is no processing of skb2, resulting in a memory leak in skb2.</div>=0A<=
+div>&gt; </div>=0A<div>&gt; </div>=0A<div>&gt; Thank you.</div>=0A<div>&gt=
+; </div>=0A<div>&gt; </div>=0A<div>&gt; </div>=0A<div>&gt; </div>=0A<div>&=
+nbsp;</div>=0A<div>&nbsp;</div>=0A<div>Hi,</div>=0A<div>&nbsp;</div>=0A<di=
+v>This is the friendly patch-bot of Greg Kroah-Hartman.&nbsp; You have sen=
+t him</div>=0A<div>a patch that has triggered this response.&nbsp; He used=
+ to manually respond</div>=0A<div>to these common problems, but in order t=
+o save his sanity (he kept</div>=0A<div>writing the same thing over and ov=
+er, yet to different people), I was</div>=0A<div>created.&nbsp; Hopefully =
+you will not take offence and will fix the problem</div>=0A<div>in your pa=
+tch and resubmit it so that it can be accepted into the Linux</div>=0A<div=
+>kernel tree.</div>=0A<div>&nbsp;</div>=0A<div>You are receiving this mess=
+age because of the following common error(s)</div>=0A<div>as indicated bel=
+ow:</div>=0A<div>&nbsp;</div>=0A<div>- Your patch did not apply to any kno=
+wn trees that Greg is in control</div>=0A<div>&nbsp; of.&nbsp; Possibly th=
+is is because you made it against Linus's tree, not</div>=0A<div>&nbsp; th=
+e linux-next tree, which is where all of the development for the</div>=0A<=
+div>&nbsp; next version of the kernel is at.&nbsp; Please refresh your pat=
+ch against</div>=0A<div>&nbsp; the linux-next tree, or even better yet, th=
+e development tree</div>=0A<div>&nbsp; specified in the MAINTAINERS file f=
+or the subsystem you are submitting</div>=0A<div>&nbsp; a patch for, and r=
+esend it.</div>=0A<div>&nbsp;</div>=0A<div>- You did not specify a descrip=
+tion of why the patch is needed, or</div>=0A<div>&nbsp; possibly, any desc=
+ription at all, in the email body.&nbsp; Please read the</div>=0A<div>&nbs=
+p; section entitled "The canonical patch format" in the kernel file,</div>=
+=0A<div>&nbsp; Documentation/process/submitting-patches.rst for what is ne=
+eded in</div>=0A<div>&nbsp; order to properly describe the change.</div>=
+=0A<div>&nbsp;</div>=0A<div>- You did not write a descriptive Subject: for=
+ the patch, allowing Greg,</div>=0A<div>&nbsp; and everyone else, to know =
+what this patch is all about.&nbsp; Please read</div>=0A<div>&nbsp; the se=
+ction entitled "The canonical patch format" in the kernel file,</div>=0A<d=
+iv>&nbsp; Documentation/process/submitting-patches.rst for what a proper</=
+div>=0A<div>&nbsp; Subject: line should look like.</div>=0A<div>&nbsp;</di=
+v>=0A<div>- It looks like you did not use your "real" name for the patch o=
+n either</div>=0A<div>&nbsp; the Signed-off-by: line, or the From: line (b=
+oth of which have to</div>=0A<div>&nbsp; match).&nbsp; Please read the ker=
+nel file,</div>=0A<div>&nbsp; Documentation/process/submitting-patches.rst=
+ for how to do this</div>=0A<div>&nbsp; correctly.</div>=0A<div>&nbsp;</di=
+v>=0A<div>If you wish to discuss this problem further, or you have questio=
+ns about</div>=0A<div>how to resolve this issue, please feel free to respo=
+nd to this email and</div>=0A<div>Greg will reply once he has dug out from=
+ the pending patches received</div>=0A<div>from other developers.</div>=0A=
+<div>&nbsp;</div>=0A<div>thanks,</div>=0A<div>&nbsp;</div>=0A<div>greg k-h=
+'s patch email bot</div>=0A<div>&nbsp;</div>=0A</div></blockquote>=0A</bod=
+y></html>
+------=_002_NextPart608575887075_=------
+
+------=_001_NextPart642033051568_=----
+Content-Type: application/octet-stream;
+	name="0001-USB-NCM-mode-There-is-a-memory-leak.patch"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="0001-USB-NCM-mode-There-is-a-memory-leak.patch"
+
+RnJvbSAyOWQ0NTBiMzI3OGQ1MDkwZDhiNjJmNzg0ZTk5M2IwZWIxMWVlYzM0IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBuYW5mZW5nd3EgPG5hbmZlbmd3cUBzaW5hLmNvbT4KRGF0ZTog
+U2F0LCAxOCBNYXkgMjAyNCAxNjoxNTo0NSArMDgwMApTdWJqZWN0OiBbUEFUQ0hdIFVTQihOQ00g
+bW9kZSk6VGhlcmUgaXMgYSBtZW1vcnkgbGVhawoKSWYgc2tiMiBpcyBub3QgZXF1YWwgdG8gTlVM
+TCBhbmQgdGhlIHJldHVybiB2YWx1ZSBvZiBhbGxvY3NrYigpIGlzIE5VTEwsaXQgd2lsbCBjYXVz
+ZSBhIG1lbW9yeSBsZWFrCgpTaWduZWQtb2ZmLWJ5OiBuYW5mZW5nd3EgPG5hbmZlbmd3cUBzaW5h
+LmNvbT4KLS0tCiBkcml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vZl9uY20uYyB8IDIgKy0KIDEg
+ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX25jbS5jIGIvZHJpdmVycy91c2IvZ2FkZ2V0
+L2Z1bmN0aW9uL2ZfbmNtLmMKaW5kZXggZTBjMTgzMjM0Li5jOWJkZTdhZmQgMTAwNjQ0Ci0tLSBh
+L2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX25jbS5jCisrKyBiL2RyaXZlcnMvdXNiL2dh
+ZGdldC9mdW5jdGlvbi9mX25jbS5jCkBAIC0xMTQ0LDcgKzExNDQsNyBAQCBzdGF0aWMgc3RydWN0
+IHNrX2J1ZmYgKm5jbV93cmFwX250YihzdHJ1Y3QgZ2V0aGVyICpwb3J0LAogCWlmIChuY20tPnNr
+Yl90eF9uZHApCiAJCWRldl9rZnJlZV9za2JfYW55KG5jbS0+c2tiX3R4X25kcCk7CiAKLQlyZXR1
+cm4gTlVMTDsKKwlyZXR1cm4gc2tiMjsKIH0KIAogLyoKLS0gCjIuMzIuMC53aW5kb3dzLjEKCg==
+
+------=_001_NextPart642033051568_=------
 
 
