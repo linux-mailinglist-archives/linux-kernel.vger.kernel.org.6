@@ -1,187 +1,374 @@
-Return-Path: <linux-kernel+bounces-183946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D6B98CA069
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:00:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E728CA06C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAB0F1F22577
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:00:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47509B2171F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0B813775E;
-	Mon, 20 May 2024 16:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0F013791F;
+	Mon, 20 May 2024 16:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b1AeUqz0"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jx/zhco1"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2071.outbound.protection.outlook.com [40.107.93.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D5E28E7
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 16:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716220835; cv=none; b=KVCww3z4YxDLrel6ovXQwU+JHvecOO++BvSehAUeHbq4Q8orlo6SC3AHX7r6uIL9+NPnHPWLGv2P7H78/noQuHUpUPpDVqSefNFmneaT/wQmk96Y7pMdvfv8ZhjxJGXyhcb4Gjil9xM5cOBCJ70OhMh6pS/JqsRgIIjuOuDHYew=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716220835; c=relaxed/simple;
-	bh=74OgddEij1CdKOr7nsQpcxRgDTjS/dIJGQiYkK7+pOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AatEX+yIz5xS+zLkDrIQu65/FFG6J75Jen0HMzmp+cO1X4lz5aXhnFAvzkPmCTNUWnzTamlArgW1rYrpMeZu36rO+JGiqVKhRU9Ky2GDDXU7eOhu1BKvwZS+rhpjnWMDyhMSfWJqMYGxlRCAC522/KGmZOn1UxEOgTCz58H+v4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b1AeUqz0; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1eed90a926fso212745ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 09:00:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716220833; x=1716825633; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=74OgddEij1CdKOr7nsQpcxRgDTjS/dIJGQiYkK7+pOo=;
-        b=b1AeUqz02OpA8o9wkiSz8IlCJRicor/iyim0+DI9RavFz/r3c6gGcw3YFSqMthTVcZ
-         /CSK7CknBtkwjq0gpxxJmeZ8+KDkKREdX1Jv34I7C/VHCT0OQODnuQh0SGTGM9aHq3M2
-         wKFErOB6eGhaze6q/ZNBao1YrsROmLfP4zkglxKhu34uHsCja9GATPUdDuwdjgU8sXkM
-         zZJQxFuTysJLbpGNLbRp60PT4fMI03HbdSrhwNYYkoaBtLOBn9lcn9Aw/s1M9Fj3IM1t
-         +j+a7AhRZXFQ0CbOxPptYiYySlqnK2AiOTqmDRLhPNCOaB2TzFNB4G2OFw2P2/p/Xlcm
-         V98A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716220833; x=1716825633;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=74OgddEij1CdKOr7nsQpcxRgDTjS/dIJGQiYkK7+pOo=;
-        b=oxAXtlvOOLymWxFivDTvJyUs1S67XrYbsPOG4SFxZqkEkQ4LKGuJTydHbOMXsXyFSV
-         7ODH+3i8mxoacGgF4wCwyfaMCpHvIvHt91Xiaodw6T9ytVcYGi02AQXmvmpDtFWhWZR/
-         1TZMiB2bku/PH2zmC/S5VD5bQP0Yyi2/QIcbGDQcWvn2v3rZMdeuEZ/fN84SxgKwL+LD
-         Hgjm/vAp92gdZUneVEyD/+PGMbrhyq7gfotOAcqR8XICgYFRDBu28WqWdlkG8yoO+JiN
-         PoXl2xxOAErhd52tUvrt9q84bwKhIsHMYTKhyBwmNr3AwOvz0oIBwUMn7+Q4mwXC5IvV
-         iuzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUde41TeWEi92jgDQJsCmk57q4ZVOJxSHWAWeTQfoSgHf55O76wLYW19h57RQkFkeYXEGS+Ut+3dVVuhpMycPlJTc2uS2N9v2MNJB/0
-X-Gm-Message-State: AOJu0Yz35JpHdq9yk/fvPdRfrIsw+iyKmmrKTSxYR8TUyCFJdd5LeeRV
-	Sa+EEzngRH4nKzfsGa6ns2rQR1LB/m2a0NCtbV8P26/giQr2Yj6vb3XmQnOGgkJD57hyvro4JVG
-	YjFQXZ1Qa8EXZyB+G4k7pRXLFbhKzOu1eT2ub
-X-Google-Smtp-Source: AGHT+IGpRekdWyemBibjacSQMYbn6i1xsrzO7dlG3bkZXaNFXd2FbNWPC+rVxr8FPQRubhli1F/P3H93KAkTNF16b04=
-X-Received: by 2002:a17:902:c395:b0:1e2:1955:1b1c with SMTP id
- d9443c01a7336-1f2ee0ec936mr3283225ad.27.1716220832548; Mon, 20 May 2024
- 09:00:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39C728E7;
+	Mon, 20 May 2024 16:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716220959; cv=fail; b=jyuknntT+XVLQZnjv5fxxVjYrlexbg5E0Mur+GihzOz8PDUBoeHOGWHOVn1T9Kz9176Z6llqfKuHY+kbFHmJtGPqU6kfBrhvBJHACS5u2RN1oVILktH6T6PEqW0WUq6Q72HVGia41x0sgPQVSpCoooZ5J2VLy6hEeMuO/a4luJg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716220959; c=relaxed/simple;
+	bh=xBnjAxBN+j29u/AZfQxB4yXD3tJj+liVb3GCd7pC/3k=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dLUO3yXMEzz8ZqEsDMhYHsl3bhkC1Z/7o2kuFPO5muyVIg08gAqbcvxRyo3Qe+5ETn7av7XYGGhO6xgofbcE4pQbImtpPL2F0FbB7pf3dhz2OS2Wzv2EAEyI5f+bP228nvgiBRtRpYy0zDMaRwquC60Xi7fWPXenoNQpdFm2+Is=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jx/zhco1; arc=fail smtp.client-ip=40.107.93.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=S5a/L/RAIL6mWa9drwMoXjL3qAo8HxeKMVosLSzpvDIBd5vpZcPTneIzaBJ5S1CM68soYcg2OX9o0kJqfkd2ChlR4diTPg3jGDhBIqNKUA5R5o6cgKmDGXdFMGC+GncdOMI/DxybNHnNj8w7kiHg04PDlPz+w6fb2fARCZSCYM0ZIC44j4eNbWCDLNz37y9qI8JKtTr21ehbG+4zYTg0H6hy0bcw6X7N0NEjEe3TUjKptMIxkeePLxY7hhi14+Sgs/t107Udt3Lhao1fsY0aGKbOWQaaaq3s5XfKXLtrBQ8CFACfOJR9XW4HQlBmzvlBuJ7Eq0xJvto48a0UYE/u6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KEhqzk4fvIOIFau4A6F0EYDUw3t1fQwjiMAAJ5/tdLw=;
+ b=PSi8j0X9irbL4eRsWTOHQAg7OwshOGLRX2KdUm86vIBO7qHOm2gU1l9iYsYZMer0/Aw+SYzqQ6Cyz7WJudD/Zr+gLhQwRqSSPFJJPQjSuxBqbr8oCQcu1bggUwI/Ljs+Y7cYHf2I7fad3BB2vsUMY+UeRSOlly9ubZ7HhnGoXEaTerPMwKPisXOwP98yzRxHZdFk8fwNKHXsKlaV9Oc1L27gudDr+t9Dl7+M/1RXNCfaqm5RzlBcWvF/rvi8ZgGh0x6mu8Qld6P7pd4xAnjlY57u9leFNNqCRR5TDP1R2fjcg2UsUFa/pWznEoZZzdD6LxK1YABWjEsz3uPC7Vcg6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KEhqzk4fvIOIFau4A6F0EYDUw3t1fQwjiMAAJ5/tdLw=;
+ b=jx/zhco1QSVD31C1D66EihqiuwzYKmYTMmzjnswRw8FDTVaKLAIc17o8TZy8JDKff0lQAmgUxaHzLHUQY13HRtf40GPOFGa7YPyBU0c2CM+xEVQBuVi+Kmeb6EzEmh/YrHpu67tPhixs+ldzvQVhW8DoVZd1GFDiDb0prcWrfD8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH0PR12MB7982.namprd12.prod.outlook.com (2603:10b6:510:28d::5)
+ by MW4PR12MB7311.namprd12.prod.outlook.com (2603:10b6:303:227::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Mon, 20 May
+ 2024 16:02:34 +0000
+Received: from PH0PR12MB7982.namprd12.prod.outlook.com
+ ([fe80::bfd5:ffcf:f153:636a]) by PH0PR12MB7982.namprd12.prod.outlook.com
+ ([fe80::bfd5:ffcf:f153:636a%5]) with mapi id 15.20.7587.030; Mon, 20 May 2024
+ 16:02:34 +0000
+Message-ID: <8e1b9ae3-b533-4a13-aff7-9d62bd1f8f98@amd.com>
+Date: Mon, 20 May 2024 09:02:31 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next v11] ice: Add get/set hw address for VFs using
+ devlink commands
+To: Karthik Sundaravel <ksundara@redhat.com>, jesse.brandeburg@intel.com,
+ wojciech.drewek@intel.com, sumang@marvell.com, jacob.e.keller@intel.com,
+ anthony.l.nguyen@intel.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org
+Cc: pmenzel@molgen.mpg.de, jiri@resnulli.us,
+ michal.swiatkowski@linux.intel.com, rjarry@redhat.com, aharivel@redhat.com,
+ vchundur@redhat.com, cfontain@redhat.com
+References: <20240520102040.54745-1-ksundara@redhat.com>
+ <20240520102040.54745-2-ksundara@redhat.com>
+Content-Language: en-US
+From: Brett Creeley <bcreeley@amd.com>
+In-Reply-To: <20240520102040.54745-2-ksundara@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY3PR10CA0025.namprd10.prod.outlook.com
+ (2603:10b6:a03:255::30) To PH0PR12MB7982.namprd12.prod.outlook.com
+ (2603:10b6:510:28d::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1711674410.git.babu.moger@amd.com> <CALPaoCjZ3oLdKymJjASt0aqtd0GGOme7LavvYOtPYTb_rA-mYQ@mail.gmail.com>
- <b35dc4e9-7e8b-42ed-9a51-ae50d521cf4b@amd.com> <CALPaoChxYoJx8eR48EkSKf-hu2p2myQJLZEhj_Pq6O4R15-=5A@mail.gmail.com>
- <6edffe1b-e9a9-4995-8172-353efc189666@amd.com> <ab2a6a4b-3740-47c6-9443-e6bb7a0c1adb@intel.com>
- <CALPaoCiYFKeASPMDwzzaHLw4JiMtBB6DTyVPgt0Voe3c3Tav_A@mail.gmail.com>
- <b725e4ca-8602-eb26-9d47-914526621f52@amd.com> <CALPaoCiu2_UHyGjsyitz28BL1N93TSn28E1r-6nhXg--bzmU+Q@mail.gmail.com>
- <d7f3c5b1-c39d-4c66-92c3-5b096b9e0579@intel.com> <CALPaoCiJ9ELXkij-zsAhxC1hx8UUR+KMPJH6i8c8AT6_mtXs+Q@mail.gmail.com>
- <fae7fd93-27b7-4f94-964b-9c909f85f2fe@amd.com>
-In-Reply-To: <fae7fd93-27b7-4f94-964b-9c909f85f2fe@amd.com>
-From: Peter Newman <peternewman@google.com>
-Date: Mon, 20 May 2024 09:00:19 -0700
-Message-ID: <CALPaoCihfQ9VtLYzyHB9-PsQzXLc06BW8bzhBXwj9-i+Q8RVFQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/17] x86/resctrl : Support AMD Assignable
- Bandwidth Monitoring Counters (ABMC)
-To: babu.moger@amd.com
-Cc: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net, fenghua.yu@intel.com, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	paulmck@kernel.org, rdunlap@infradead.org, tj@kernel.org, 
-	peterz@infradead.org, yanjiewtw@gmail.com, kim.phillips@amd.com, 
-	lukas.bulwahn@gmail.com, seanjc@google.com, jmattson@google.com, 
-	leitao@debian.org, jpoimboe@kernel.org, rick.p.edgecombe@intel.com, 
-	kirill.shutemov@linux.intel.com, jithu.joseph@intel.com, kai.huang@intel.com, 
-	kan.liang@linux.intel.com, daniel.sneddon@linux.intel.com, 
-	pbonzini@redhat.com, sandipan.das@amd.com, ilpo.jarvinen@linux.intel.com, 
-	maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR12MB7982:EE_|MW4PR12MB7311:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc1051c0-a4b8-4e7f-72c1-08dc78e642dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|1800799015|7416005|366007|921011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eDQrUTFUd1FPWG80dk9IVHZxdWlscVJ3OUVnZDBMQkhMWkVZdGVkd25ZblpR?=
+ =?utf-8?B?ZEk2RkdJekI1WkNrV3RhdlFBeGpXSEI5YTJvd0pURjIwZDliajl2UjVodUtL?=
+ =?utf-8?B?Nnl4TGQ0S2E3UG9iakNtTEV2MHZacVcxV1BmYVA2a2ZicGdZaXQrWFQxcmkv?=
+ =?utf-8?B?bzRlVWpkRFBQODNvbTlyUUZsaVhJejFuUVl6WkhlczRJY2lnbGpob0NGb3dM?=
+ =?utf-8?B?emV6czFXMXo4dFkyaDhPdFdjSVZqR1lsQ21nMU0rWjFSbWY5ejBDZ09ubnVp?=
+ =?utf-8?B?S1FNdHhQNnpZcGh1Y083OVJrTC9ldll0NUliWWxwZDZrZHgzdzROSTB6ZlIw?=
+ =?utf-8?B?UzJpSiszSnFsTU9YbWR6WlFxUCt6Ry9FOVFMTE9EbmFVcVBoSXIvaFI4UEVp?=
+ =?utf-8?B?aVV4YjFIdHVrWkFwa3pEYklCTHVVNmVHc1dlS0VvMEswWGdjcGVqcFBmMTRM?=
+ =?utf-8?B?NmZVVTlvU0dEdnd5ZDVvT0U5aFo3YXlwbS9LamgzbEJsaGNtVUljOTZ3eFc2?=
+ =?utf-8?B?SlpXdnRKdjR4TXVtRU5ha2pEM1dFVzJCcHB1RjEwczhyL2FpaVpoL1NSblk3?=
+ =?utf-8?B?cDIrYnlYNFVYVlV5VDJhQmQxbklUSStsQ2JJK3BLamR5TEhmWU1YdC8yKzBa?=
+ =?utf-8?B?NC9RSHFTZXVvelZjN0pxZithTjEzeUxmQ2dQamNLbFRCV0JweHBtYm1xMHh3?=
+ =?utf-8?B?Q1VRUURweUw0U3RXRmVVTTBtNXVlbHlzSU1OL1B6aWdwamI2RmtYRm41Q05L?=
+ =?utf-8?B?Ui9EYitGVzIvVjYxY25UQktXaXp6Ly9sTnJSa0dYaGZublAxNUI0OHdsM2Zz?=
+ =?utf-8?B?M2RHbXduWlNReEkvc1ZxYlNHMVJvQS93L0VHalhVWVhGdDZBclJ5RlJLQ2VX?=
+ =?utf-8?B?Um1Rcnl2US9oQTRqdVh2M1N3VGpRT0J0QU5DK1Q1a0xTbGZsVFFRTHJ4NklD?=
+ =?utf-8?B?bjAwSU1wMWgxdzR0dTlQQW42Nzh5TG0xVzJsbGFZUTcvSEY2UkFuS0xzQlNv?=
+ =?utf-8?B?ZTVpL25JMyt0QnFaR29DUkIzQWtzZ2Y0cmtmU3BQaTBBQlp3QVQyVC9JOElK?=
+ =?utf-8?B?UnlFeGZicTVIYWVUaWVVd0Q2K2FlKzk4SmlZcEd1NnFZbURMNDJpVGp3b3dx?=
+ =?utf-8?B?VG9la3VGMUdLQmJ6QnZ0dlM4YVkvRDFJTVE0S3NKbVJ2dERPTkdndUdzMkJa?=
+ =?utf-8?B?R1JvRWZoK3RCTFBGdjlPSXVyYjZ3NXZQV1I5Ulc2N0JlZk9obHM2Si9KODFF?=
+ =?utf-8?B?WFl5VGNtdGg1U0EzY3JnZVFuUTdzUUFVcFNWTXRSa3BLbXVCckp2ZFdIR1Q3?=
+ =?utf-8?B?S2hFc01pTU1MV2FJZlF3YW03NGhJeEpIZmpVdzN4K3RtbnYvV3pMOWNheGlL?=
+ =?utf-8?B?ejlKRVZNS1l4QlJOK1hhelA4bE5qNlpmYVBLK2x4aGNhaFVITytFQTBVaTBn?=
+ =?utf-8?B?aGpHRUNYK2JTSWd0Tm5YRnprRlpkT0JxTmErWXQwS2ZiVURobnpucVRFNUN0?=
+ =?utf-8?B?OGpZYmpXRXh0ejdBclNQdDErL3FtdUQrSWVhSWI5dlFtZmlKOUlDTnBBVXlo?=
+ =?utf-8?B?Ym4zaXJxeFdyUGF0TjV4TUtYVGlud0h6U2FvdEx4SmhRd3k3cG9XLzYwdXZo?=
+ =?utf-8?B?MXo0bUd4MzhnK3ptMTNpR1dieVVyQ09FS1IwbnQ2bGdLUUZHY09DQ2JlMXdN?=
+ =?utf-8?B?T09iNXc4UkdqcWhlV2duQzFPMmpENEYvb0dDTXpsTnI0MjR3a3k0T0ZuY3l6?=
+ =?utf-8?Q?UDadkEl6ZBRf1W8TcY1O1Qh28BcYxC3kd/wOvZc?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR12MB7982.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(366007)(921011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZFVGamxNWWxtRFFxOWF4N1N0YlRPY1ZxZ0dpQU4xWTFwQ1Z1QXg0UlNiT2VV?=
+ =?utf-8?B?aStxNUVHekZvaWd2Q1Fzd0NuekZFSnIyQkhlYVRaVVZJSXFnYnVHQVRxOTA2?=
+ =?utf-8?B?RXE2RVJDRU4yVG5FUzhXd015Um50NEtnOFd1L2VjMDRpekdqMzExNi9jMGxR?=
+ =?utf-8?B?NDJ1Y0hRay9iNGlWYmg2R3QwWXFmdjZQNXgzeFB3Ti9aMkZPSzdiUnJFNEd2?=
+ =?utf-8?B?YlkxOHBTaTErdFhOQkFVL1BpYU9LaUhFaGJGT00wbkNYN0kvRVdrVlBOZnZV?=
+ =?utf-8?B?UysyZWd5V0JOYzJxeFN6L0FGVEx2QVU3cjVkcDRWbkJSK1RRZDdSSTVNcFU1?=
+ =?utf-8?B?K0N5ZG5jMXlpaGRvYXBYenZYbEhaekZZTklmS3BrNS85SEFqRVMzU0NvazhT?=
+ =?utf-8?B?OEIyL2tveE5rUTB2NkdveDZFbXRkQnNYRjY2QTZVZWVaSTFBWlR1dldmVCtz?=
+ =?utf-8?B?MW9yaXRoajNFc3RkbTJjN2Q2NFg4WU9rWmJ1NllKblRWeGF1UlcxaTZ1d1VK?=
+ =?utf-8?B?SmJva0RlY0NWci91aENCOXVjbzY0UXROZjBUY0cxN0cwaWtwbTVndTdHQkdQ?=
+ =?utf-8?B?NUtFbVlGZWFuZERMR3VpVE1nUVBkeDJkajJwS3lVZUEzYWVpTGsydEVUcXVL?=
+ =?utf-8?B?Z1VxZjhYa0tVYVJDY2txVnVlRUR3NUMwVUcxSUc0blJzcFpnOTBOaUhBUGRa?=
+ =?utf-8?B?dlJWVksyb3lySDI0UHZCN3dpR1QwWDVQSzEzbmY0bVMyRzFleG16YnlvQjY0?=
+ =?utf-8?B?SFd2T0VIclRqcFZGUTJIQ0kwbkQvaEtMdGVXYnJOZ3UzcENXQVVTUEF5Z25n?=
+ =?utf-8?B?bDZSaTZvc3NPb0NITXVFdFptMEl4YmRtMUovaWhTV0hZcWkxZFhIZjlVTVR0?=
+ =?utf-8?B?WmNESGdKVnlIMFRvV1l5ZDdYeVlYcm5pWGVPd0ZNdFFBYUNrUjZyMEdPRnZ3?=
+ =?utf-8?B?TFZHSUJtUWtwbU5ONUVsMkNQazhpOUJLbFhjSjJicHl3bDZvaEVSUy9uWjRO?=
+ =?utf-8?B?aWZDYTlkWUJ2OVRMMjh6d3pvMTRXZlFHNHJIZzkyK2xNSXlYMm5pYlJoN2RD?=
+ =?utf-8?B?V1pESWdrbXh3RGxvYUt5d0xSVGVyaklrakwxL3BHUjlJZURCaVJSZEVHVmJH?=
+ =?utf-8?B?QkJ5eTBNOXlkVU9WQVRJd0JudlptQlFuNG40TEZCTXMweUgzblcyUjVBRlVV?=
+ =?utf-8?B?c0VGNy9IdVhCbjYrdWNIc3ZqSmpyUTFDRzE4NGZ6OXFwUVdKRDQwMG9NYmIr?=
+ =?utf-8?B?QU1ZanRabCtYOGRYQmt5bWtRcGcrWFprUmxVOXRXZ2pnR2kyaFRoU0dvTHZF?=
+ =?utf-8?B?cDBOOWJRWWxkYXUvRXJSbVFQdFVPZGRuZTMzamJJMmpVb1QzOTRNT0xCRC9x?=
+ =?utf-8?B?YUtwUGMrOC83NGFSRnozMk5teXA5Y3hyNzVTcTQxYktMbWxVK1ZaNXRHVHdL?=
+ =?utf-8?B?ZzZqcy8xS2lxTHVLaHVOcjU4NE00NTNKSEpRL0VLRWVTV1NUWWJVNHFTWVFJ?=
+ =?utf-8?B?WHFXK05mdzJ6eG01MndaQStBVld6QXIzRjRiWVRhcGw3QXBFNnVsTWkwRGtC?=
+ =?utf-8?B?aFROdllJQkpZMG0wZUIva3hZMHVndXFCTUtLZ3dzdEx0eDRML3FldE9kNlhZ?=
+ =?utf-8?B?UGpFMFppb1UvR2pEeWJuNXpVYmwvSXZXUzhVSG5oN0pCK1QwVHA2N0xSRlhr?=
+ =?utf-8?B?SWs4TXRzT1ByZUFWTXNsOUUxU0hyaW5oSmR2ZW1MK2FjNnhTMithNWRwazJ3?=
+ =?utf-8?B?b3pFbFhid3hUSGQ2Ym1DZCtSeGtBSi9rV2dnOHFsQldxTTY1WHNSRVRmN0JH?=
+ =?utf-8?B?dVczenEvMC85QUtxWHpVYUE0ODFPK0RRV2VHQTVIaVVFNHI2cytzaVpPekh2?=
+ =?utf-8?B?YWxlSElEYWNiRnVIR2R6WWt1VlNGeDJOSTh1a3hhcW41L3N6SXdRdjNJMmVo?=
+ =?utf-8?B?OVlEOTRkRDlvblY3dE1uUUV1S0lVbGhOQ0ticWlrcncySWJnZXFqeGFNbGZG?=
+ =?utf-8?B?YURrNnRiOUwydzVSNllaMjRsYnlzR0pUSG1RQUtmQWdMai9UOFYrYnRPSENF?=
+ =?utf-8?B?R3F2d1U0YThFalcyZmt0cnRyV3Znajc3aWdRd2kvUDFjdHBVNkRzRCs5dFhW?=
+ =?utf-8?Q?dkau6tTLeuajsTgsN3KD0x8Yk?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc1051c0-a4b8-4e7f-72c1-08dc78e642dc
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB7982.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 16:02:34.0988
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k+P+Roz9rhccvcaVk8hvtweW0HzSIuoUyT6IemKhNvAEtnrCTOysPREdR8ZK7Csx2J+cAQf0qj7gRpTqMOWupg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7311
 
-Hi Babu,
 
-On Mon, May 20, 2024 at 7:25=E2=80=AFAM Moger, Babu <babu.moger@amd.com> wr=
-ote:
->
-> Hi Peter,
->
-> On 5/17/24 16:51, Peter Newman wrote:
-> > Hi Reinette, Babu,
-> >
-> > On Fri, May 3, 2024 at 2:15=E2=80=AFPM Reinette Chatre
-> > <reinette.chatre@intel.com> wrote:
-> >>
-> >> Hi Peter,
-> >>
-> >> On 5/3/2024 2:00 PM, Peter Newman wrote:
-> >>> Hi Babu,
-> >>>
-> >>> On Fri, May 3, 2024 at 1:44=E2=80=AFPM Moger, Babu <bmoger@amd.com> w=
-rote:
-> >>>>
-> >>>> Hi Peter,
-> >>>>
-> >>>> On 5/2/2024 7:57 PM, Peter Newman wrote:
-> >>>>> Hi Reinette,
-> >>>>>
-> >>>>> On Thu, May 2, 2024 at 4:21=E2=80=AFPM Reinette Chatre
-> >>>>>> I do think ABMC should be enabled by default when available and it=
- looks
-> >>>>>> to be what this series aims to do [1]. The way I reason about this=
- is
-> >>>>>> that legacy user space gets more reliable monitoring behavior with=
-out
-> >>>>>> needing to change behavior.
-> >>>>>
-> >>>>> I don't like that for a monitor assignment-aware user, following th=
-e
-> >>>>> creation of new monitoring groups, there will be less monitors
-> >>>>> available for assignment. If the user wants precise control over wh=
-ere
-> >>>>> monitors are allocated, they would need to manually unassign the
-> >>>>> automatically-assigned monitor after creating new groups.
-> >>>>>
-> >>>>> It's an annoyance, but I'm not sure if it would break any realistic
-> >>>>> usage model. Maybe if the monitoring agent operates independently o=
-f
-> >>>>
-> >>>> Yes. Its annoyance.
-> >>>>
-> >>>> But if you think about it, normal users don't create too many groups=
-.
-> >>>> They wont have to worry about assign/unassign headache if we enable
-> >>>> monitor assignment automatically. Also there is pqos tool which uses
-> >>>> this interface. It does not have to know about assign/unassign stuff=
-.
-> >>>
-> >>> Thinking about this again, I don't think it's much of a concern
-> >>> because the automatic assignment on mongroup creation behavior can be
-> >>> trivially disabled using a boolean flag.
-> >>
-> >> This could be a config option.
-> >
-> > I'd like to work out the details of this option.
-> >
-> > info/L3_MON/mbm_assign_on_mkdir?
-> >
-> > boolean (parsed with kstrtobool()), defaulting to true?
->
-> I am thinking is not a big concern. We only have limited (32) counters.
-> Automatic monitor assignment works only for first 16 groups(2 counters fo=
-r
-> each group). When the counters are exhausted auto assignment does not
-> work. In your case(with more than 16 groups) the auto assignment does not
-> work. I feel having a config option is really not necessary.
 
-I'm not sure I follow the argument you're trying to make because it
-doesn't sound like an argument against adding a config option. What
-exactly do you mean by "work" vs "not work"?
+On 5/20/2024 3:20 AM, Karthik Sundaravel wrote:
+> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
+> 
+> 
+> Changing the MAC address of the VFs is currently unsupported via devlink.
+> Add the function handlers to set and get the HW address for the VFs.
+> 
+> Signed-off-by: Karthik Sundaravel <ksundara@redhat.com>
+> ---
+>   .../ethernet/intel/ice/devlink/devlink_port.c | 59 ++++++++++++++++++-
+>   drivers/net/ethernet/intel/ice/ice_sriov.c    | 32 +++++++---
+>   drivers/net/ethernet/intel/ice/ice_sriov.h    |  8 +++
+>   3 files changed, 89 insertions(+), 10 deletions(-)
 
-Also it doesn't address my original concern about needing to manually
-(and non-atomically) undo the auto assignment in order to account for
-where the monitors are assigned or ensure that creating a new
-monitoring group will succeed.
+LGTM.
 
--Peter
+Reviewed-by: Brett Creeley <brett.creeley@amd.com>
+
+> 
+> diff --git a/drivers/net/ethernet/intel/ice/devlink/devlink_port.c b/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
+> index c9fbeebf7fb9..00fed5a61d62 100644
+> --- a/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
+> +++ b/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
+> @@ -372,6 +372,62 @@ void ice_devlink_destroy_pf_port(struct ice_pf *pf)
+>          devl_port_unregister(&pf->devlink_port);
+>   }
+> 
+> +/**
+> + * ice_devlink_port_get_vf_fn_mac - .port_fn_hw_addr_get devlink handler
+> + * @port: devlink port structure
+> + * @hw_addr: MAC address of the port
+> + * @hw_addr_len: length of MAC address
+> + * @extack: extended netdev ack structure
+> + *
+> + * Callback for the devlink .port_fn_hw_addr_get operation
+> + * Return: zero on success or an error code on failure.
+> + */
+> +static int ice_devlink_port_get_vf_fn_mac(struct devlink_port *port,
+> +                                         u8 *hw_addr, int *hw_addr_len,
+> +                                         struct netlink_ext_ack *extack)
+> +{
+> +       struct ice_vf *vf = container_of(port, struct ice_vf, devlink_port);
+> +
+> +       ether_addr_copy(hw_addr, vf->dev_lan_addr);
+> +       *hw_addr_len = ETH_ALEN;
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * ice_devlink_port_set_vf_fn_mac - .port_fn_hw_addr_set devlink handler
+> + * @port: devlink port structure
+> + * @hw_addr: MAC address of the port
+> + * @hw_addr_len: length of MAC address
+> + * @extack: extended netdev ack structure
+> + *
+> + * Callback for the devlink .port_fn_hw_addr_set operation
+> + * Return: zero on success or an error code on failure.
+> + */
+> +static int ice_devlink_port_set_vf_fn_mac(struct devlink_port *port,
+> +                                         const u8 *hw_addr,
+> +                                         int hw_addr_len,
+> +                                         struct netlink_ext_ack *extack)
+> +
+> +{
+> +       struct devlink_port_attrs *attrs = &port->attrs;
+> +       struct devlink_port_pci_vf_attrs *pci_vf;
+> +       struct devlink *devlink = port->devlink;
+> +       struct ice_pf *pf;
+> +       u16 vf_id;
+> +
+> +       pf = devlink_priv(devlink);
+> +       pci_vf = &attrs->pci_vf;
+> +       vf_id = pci_vf->vf;
+> +
+> +       return __ice_set_vf_mac(pf, vf_id, hw_addr);
+> +}
+> +
+> +static const struct devlink_port_ops ice_devlink_vf_port_ops = {
+> +       .port_fn_hw_addr_get = ice_devlink_port_get_vf_fn_mac,
+> +       .port_fn_hw_addr_set = ice_devlink_port_set_vf_fn_mac,
+> +};
+> +
+>   /**
+>    * ice_devlink_create_vf_port - Create a devlink port for this VF
+>    * @vf: the VF to create a port for
+> @@ -407,7 +463,8 @@ int ice_devlink_create_vf_port(struct ice_vf *vf)
+>          devlink_port_attrs_set(devlink_port, &attrs);
+>          devlink = priv_to_devlink(pf);
+> 
+> -       err = devl_port_register(devlink, devlink_port, vsi->idx);
+> +       err = devl_port_register_with_ops(devlink, devlink_port, vsi->idx,
+> +                                         &ice_devlink_vf_port_ops);
+>          if (err) {
+>                  dev_err(dev, "Failed to create devlink port for VF %d, error %d\n",
+>                          vf->vf_id, err);
+> diff --git a/drivers/net/ethernet/intel/ice/ice_sriov.c b/drivers/net/ethernet/intel/ice/ice_sriov.c
+> index 067712f4923f..dd1583b0fd90 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_sriov.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_sriov.c
+> @@ -1416,21 +1416,22 @@ ice_get_vf_cfg(struct net_device *netdev, int vf_id, struct ifla_vf_info *ivi)
+>   }
+> 
+>   /**
+> - * ice_set_vf_mac
+> - * @netdev: network interface device structure
+> + * __ice_set_vf_mac
+> + * @pf: PF to be configure
+>    * @vf_id: VF identifier
+>    * @mac: MAC address
+>    *
+>    * program VF MAC address
+>    */
+> -int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
+> +int __ice_set_vf_mac(struct ice_pf *pf, u16 vf_id, const u8 *mac)
+>   {
+> -       struct ice_pf *pf = ice_netdev_to_pf(netdev);
+> +       struct device *dev;
+>          struct ice_vf *vf;
+>          int ret;
+> 
+> +       dev = ice_pf_to_dev(pf);
+>          if (is_multicast_ether_addr(mac)) {
+> -               netdev_err(netdev, "%pM not a valid unicast address\n", mac);
+> +               dev_err(dev, "%pM not a valid unicast address\n", mac);
+>                  return -EINVAL;
+>          }
+> 
+> @@ -1459,13 +1460,13 @@ int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
+>          if (is_zero_ether_addr(mac)) {
+>                  /* VF will send VIRTCHNL_OP_ADD_ETH_ADDR message with its MAC */
+>                  vf->pf_set_mac = false;
+> -               netdev_info(netdev, "Removing MAC on VF %d. VF driver will be reinitialized\n",
+> -                           vf->vf_id);
+> +               dev_info(dev, "Removing MAC on VF %d. VF driver will be reinitialized\n",
+> +                        vf->vf_id);
+>          } else {
+>                  /* PF will add MAC rule for the VF */
+>                  vf->pf_set_mac = true;
+> -               netdev_info(netdev, "Setting MAC %pM on VF %d. VF driver will be reinitialized\n",
+> -                           mac, vf_id);
+> +               dev_info(dev, "Setting MAC %pM on VF %d. VF driver will be reinitialized\n",
+> +                        mac, vf_id);
+>          }
+> 
+>          ice_reset_vf(vf, ICE_VF_RESET_NOTIFY);
+> @@ -1476,6 +1477,19 @@ int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
+>          return ret;
+>   }
+> 
+> +/**
+> + * ice_set_vf_mac
+> + * @netdev: network interface device structure
+> + * @vf_id: VF identifier
+> + * @mac: MAC address
+> + *
+> + * program VF MAC address
+> + */
+> +int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
+> +{
+> +       return __ice_set_vf_mac(ice_netdev_to_pf(netdev), vf_id, mac);
+> +}
+> +
+>   /**
+>    * ice_set_vf_trust
+>    * @netdev: network interface device structure
+> diff --git a/drivers/net/ethernet/intel/ice/ice_sriov.h b/drivers/net/ethernet/intel/ice/ice_sriov.h
+> index 8f22313474d6..96549ca5c52c 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_sriov.h
+> +++ b/drivers/net/ethernet/intel/ice/ice_sriov.h
+> @@ -28,6 +28,7 @@
+>   #ifdef CONFIG_PCI_IOV
+>   void ice_process_vflr_event(struct ice_pf *pf);
+>   int ice_sriov_configure(struct pci_dev *pdev, int num_vfs);
+> +int __ice_set_vf_mac(struct ice_pf *pf, u16 vf_id, const u8 *mac);
+>   int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac);
+>   int
+>   ice_get_vf_cfg(struct net_device *netdev, int vf_id, struct ifla_vf_info *ivi);
+> @@ -80,6 +81,13 @@ ice_sriov_configure(struct pci_dev __always_unused *pdev,
+>          return -EOPNOTSUPP;
+>   }
+> 
+> +static inline int
+> +__ice_set_vf_mac(struct ice_pf __always_unused *pf,
+> +                u16 __always_unused vf_id, const u8 __always_unused *mac)
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+> +
+>   static inline int
+>   ice_set_vf_mac(struct net_device __always_unused *netdev,
+>                 int __always_unused vf_id, u8 __always_unused *mac)
+> --
+> 2.39.3 (Apple Git-146)
+> 
 
