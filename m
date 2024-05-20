@@ -1,161 +1,141 @@
-Return-Path: <linux-kernel+bounces-184291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295CC8CA4EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 01:15:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E848CA4F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 01:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2697281A75
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:15:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E7E71F22C84
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A9C137C3C;
-	Mon, 20 May 2024 23:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978604AEEA;
+	Mon, 20 May 2024 23:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h2q78OmZ"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jkk4oy/N"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1943F9FB
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 23:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD873D3BC
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 23:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716246932; cv=none; b=ATgWfm4T50sXzcE0IHfKfV5wmmMaYRD3boHDKl+fek/K0hD0fdyWVHNfEay0BGhw+tHuFgFjJqHY1/eokCgs1BBLdoxxcDX4HkVpxqpIVnA0UrZDeH5fWWFEGsXaHN0xtYWwN5H+obZjzULH2GQzPkFFC7Cw7eum1ZjrbtpgTqE=
+	t=1716247253; cv=none; b=b+ZJiTTsCro++tkrGgVYxAEY28cPbsWyzDyXgSDj5e92l+cM1yMDHk/URrYN0I/t5CnQ3GC3KdPHq8V8HZPen9h+l7y2/bIiUK9iEzKr3IIG2MTr4Dclwx0/4/s+S8d8dKUHHwrA71Db0L3h9lJ3V987iO1tCY5+xCWK8va0G1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716246932; c=relaxed/simple;
-	bh=9UKSTyxeIo7ms1MzG6LVINnuAwbI4QebTI1VvbPk+cs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hIqEo5DtKtfPQTiszc9+PLIZMHrqGPVtKGAxSOVtqZV4lrKDIDJGULFWUX3kd+N3W9LfSsWOAwZ4P8UvM5Hv9R1exx6dVpQJ8rMQRDsntDa6xEwHPC6Txqooa65RkASfTD3vdHqHK2f5doBjsrqn3za6CdF3vNo3JeBlKZ97ca4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h2q78OmZ; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-5ca5b61c841so12111725a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 16:15:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716246930; x=1716851730; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=twyGBTDDHaKdZ8SvbyxDVnqYzF64Bkyy6CUrxLoAK6Y=;
-        b=h2q78OmZyyPrl3NwO9dLo6tl8o7g6KQuV0iw35wVXKSIxaLkZKncMNZa0o4icb4Mtx
-         famG8uFclqI7qs+iaT7aEiJu2sdnAcuoe8GY6mnBF9OMwQ8ca7KakmEalXhwOgh8zTHl
-         /p0meewxhh2zgNml3LLHvQaVnOfOGaJe4diJGFRi965VGy3vfnOQxKQT3AqvAtQNEeez
-         y0vWuV7e4fi6TYP2qNgKqgukfo1IypjRnTboGPi1SexS19LEYvbxwfGEG6M7v3SLR2WW
-         /3k83stj7iLKRHi9vWeb7ZugWcax3FZvjXGW4CtegjPbpcpHqMqIgLHQlXk2JY1yt3mH
-         gCqg==
+	s=arc-20240116; t=1716247253; c=relaxed/simple;
+	bh=Da/CBR16or4UGo0B9Fv7lCV3lekLur2+eQ/p/ipcOog=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=KVYpCLjf/kk4SddYhpnMhXc23p+q/PLuPn01iGo4Ww3Ia/zyVcKQeaBEtEaZEI0xNRIlY4U3pZ4R5SrTcDHEOnJxJKdKGTspnuvhwUdsFbEnsl8s1id1VXNo9bhVMoM7AD6gjOneh5HmCLZ2iP3/D+xXQgnTHFZq6nq5z4DRMLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jkk4oy/N; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716247250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IeLkwEBul/z5hvAYOR5ch/FucXPvNElvTMYwlJONjiY=;
+	b=Jkk4oy/NrMWPG9+kT1+obEjTwP9A9ORwZAyEvosIL1cckCgz+VtbCHBolR5nnnxRr2whwo
+	drU6zNClyyo83qObf4ppfs35lBi3b39Wqj6hAoK04bnfa7nsVE5hAqJtTjxux8FJ5TIa83
+	H0oxF5FSTKuUqwgkki0GbH0Q4LwXH14=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-35-hoz3_hr3NuiVDhQ86QM5Bg-1; Mon, 20 May 2024 19:20:48 -0400
+X-MC-Unique: hoz3_hr3NuiVDhQ86QM5Bg-1
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-792bd1dc658so2272253585a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 16:20:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716246930; x=1716851730;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=twyGBTDDHaKdZ8SvbyxDVnqYzF64Bkyy6CUrxLoAK6Y=;
-        b=FkahhLq0zQW5kTbBYwRGbvp2tjZyAHapVaX8EuTngEj70lxGlC4JGEpdNHAYHC/7UH
-         wnwSMbqfbITthg2kV/46sCAxqpYcN9ztnyRWw+HnYJjVwfic/gfprpaVJ9IHqp7AEkH7
-         ToHHbIM2+Gb+nRiyKmnvTalvPU806IxsESG0JuUAX5sVJOj1vSwUpa47Y1rYJM+74cyu
-         9ogl/+gvN6gYKV/MWfwM2xhly3fCr94fSQYRQji+WEoNFfB1aP42S6RFQanR6JCKccEQ
-         bO5QT3CINWXNpDSGKErluf4l3IEOrqwaXeMrH4/s0hKBxKQXN/clL85KTwbTtCWDOtEJ
-         ax4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVoU6oqVe7tMyBBrb473HU2P19Rg2+2KZAo/W3HJSSb7T/DAQqEjjFMZQohxAaTV17mIhXy5+teikOFVLJwBIhif0TGhISTxUQ1IYyW
-X-Gm-Message-State: AOJu0YzZhQsBtF+gF05xhdIyJwJOJvuaOAeZr5wN0Opv4nfR6yfV7vS7
-	ZmWqbs533Cqt2+pZiHA0EzIS4bDdSY0xUuimgam/3P2o0vjallGCnNhuKp7Ar+TGnLFV+iIuRUP
-	2wg==
-X-Google-Smtp-Source: AGHT+IEb1f5CvIuuxXv4wmgiPRrmKycduR1sWh9xhUNpPR81OBtrrM1PtIOQ9UT8e0m4a7A35MqsxNzI03I=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:688:b0:655:199c:eb1b with SMTP id
- 41be03b00d2f7-655199cebe4mr46923a12.10.1716246930361; Mon, 20 May 2024
- 16:15:30 -0700 (PDT)
-Date: Mon, 20 May 2024 16:15:28 -0700
-In-Reply-To: <e771a7ba-0445-483e-9c42-66bd5b331dce@intel.com>
+        d=1e100.net; s=20230601; t=1716247247; x=1716852047;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IeLkwEBul/z5hvAYOR5ch/FucXPvNElvTMYwlJONjiY=;
+        b=WuO6C9X0NcYThNhyCzK9aUvdhWwRGgFN86TfzscM+nZdwnBTz+9b3scWbs2NsWWz2m
+         D3tWp4yhW66ccq/DEmWE35GF0qJtaYqiCqOriYqpztx4aludso7Th7UDQryVQjdRCb2o
+         iR45I5TpogcUcts0b4BUcTNIag1NQLj8ZFJmH7p48bNSxsU/nCn8tAL1IzmTcwBSjb0h
+         sjQ3c6B5ShKmFsg1nIGpykC4UcbnTZ4DeYkTzbX6lgNI4X941/jGiHiGbeEOFW79gdwN
+         iyCUL1eajNLMbf5m8v/J9U4LM77FPt9fbmuwZa5jyHIilmqtA0SvHPYFhIts9494jHL0
+         gMZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMKtZ9A4dp2xoQQiqZ61STuBk8wuyNB33ljG8+MGBOvj1l0kjdbvkIm3nF2V9kZx1KzyJKZ0sL786gUlOb2he5qXi2GTTlsOLy2aMF
+X-Gm-Message-State: AOJu0Yx4k8YbhqZt8hSqq5kXU8w52eTceksCBelHLXlpftg3K7RPCCZA
+	rM2Q8CWlWtJYOEhLTqY8iWO9y59ECj/idCsOqnyo8wUbbI4uLhXZsRPrcM4lVHbd+Id1jRG5Fzt
+	lQqZMKBT7FGacpB7FRrnEWY5nQOmiRemYUxOKtl6auMZOjjt9v1yoKRDI6DL4tG4VV2Q6Kg==
+X-Received: by 2002:a05:620a:378a:b0:790:9e84:9b75 with SMTP id af79cd13be357-79470ee35b9mr1220333685a.12.1716247247095;
+        Mon, 20 May 2024 16:20:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWpismoPVZlLN0ErtG17dDj9o0/D4AFXwHCL0aHduFKzUmTiJonT5jwHLii4qs5WVn6WTX9A==
+X-Received: by 2002:a05:620a:378a:b0:790:9e84:9b75 with SMTP id af79cd13be357-79470ee35b9mr1220330485a.12.1716247246505;
+        Mon, 20 May 2024 16:20:46 -0700 (PDT)
+Received: from localhost (pool-71-184-142-128.bstnma.fios.verizon.net. [71.184.142.128])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf2fc3dbsm1232517385a.96.2024.05.20.16.20.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 16:20:46 -0700 (PDT)
+From: Eric Chanudet <echanude@redhat.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Zhen Lei <thunder.leizhen@huawei.com>,
+	Yajun Deng <yajun.deng@linux.dev>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Zhang Jianhua <chris.zjh@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Eric Chanudet <echanude@redhat.com>
+Subject: [PATCH] arm64: init: override deferred_page_init_max_threads
+Date: Mon, 20 May 2024 19:15:59 -0400
+Message-ID: <20240520231555.395979-5-echanude@redhat.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240501085210.2213060-1-michael.roth@amd.com>
- <20240501085210.2213060-14-michael.roth@amd.com> <41d8ba3a48d33de82baa67ef5ee88e5f8995aea8.camel@intel.com>
- <ZkuJ27DKOCkqogHn@google.com> <e771a7ba-0445-483e-9c42-66bd5b331dce@intel.com>
-Message-ID: <ZkvZkPvHqqPnVa9k@google.com>
-Subject: Re: [PATCH v15 13/20] KVM: SEV: Implement gmem hook for initializing
- private pages
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
-	"pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"tobin@ibm.com" <tobin@ibm.com>, "liam.merwick@oracle.com" <liam.merwick@oracle.com>, 
-	"alpergun@google.com" <alpergun@google.com>, Tony Luck <tony.luck@intel.com>, 
-	"jmattson@google.com" <jmattson@google.com>, "luto@kernel.org" <luto@kernel.org>, 
-	"ak@linux.intel.com" <ak@linux.intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"pgonda@google.com" <pgonda@google.com>, 
-	"srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>, "slp@redhat.com" <slp@redhat.com>, 
-	"rientjes@google.com" <rientjes@google.com>, "peterz@infradead.org" <peterz@infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"dovmurik@linux.ibm.com" <dovmurik@linux.ibm.com>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>, 
-	"vkuznets@redhat.com" <vkuznets@redhat.com>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"ashish.kalra@amd.com" <ashish.kalra@amd.com>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
-	"nikunj.dadhania@amd.com" <nikunj.dadhania@amd.com>, Jorg Rodel <jroedel@suse.de>, 
-	"mingo@redhat.com" <mingo@redhat.com>, 
-	"sathyanarayanan.kuppuswamy@linux.intel.com" <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "kirill@shutemov.name" <kirill@shutemov.name>, 
-	"jarkko@kernel.org" <jarkko@kernel.org>, "ardb@kernel.org" <ardb@kernel.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 21, 2024, Kai Huang wrote:
-> On 21/05/2024 5:35 am, Sean Christopherson wrote:
-> > On Mon, May 20, 2024, Kai Huang wrote:
-> > > I am wondering whether this can be done in the KVM page fault handler?
-> > 
-> > No, because the state of a pfn in the RMP is tied to the guest_memfd inode,
-> > not to the file descriptor, i.e. not to an individual VM.
-> 
-> It's strange that as state of a PFN of SNP doesn't bind to individual VM, at
-> least for the private pages.  The command rpm_make_private() indeed reflects
-> the mapping between PFN <-> <GFN, SSID>.
+This was the behavior prior to making the function arch-specific with
+commit ecd096506922 ("mm: make deferred init's max threads
+arch-specific")
 
-s/SSID/ASID
+Architectures can override the generic implementation that uses only one
+CPU. Setting DEFERRED_STRUCT_PAGE_INIT and testing on a few arm64
+platforms shows faster deferred_init_memmap completions:
 
-KVM allows a single ASID to be bound to multiple "struct kvm" instances, e.g.
-for intra-host migration.  If/when trusted I/O is a thing, presumably KVM will
-also need to share the ASID with other entities, e.g. IOMMUFD.
+|         | x13s        | SA8775p-ride | Ampere R137-P31 | Ampere HR330 |
+|         | Metal, 32GB | VM, 36GB     | VM, 58GB        | Metal, 128GB |
+|         | 8cpus       | 8cpus        | 8cpus           | 32cpus       |
+|---------|-------------|--------------|-----------------|--------------|
+| threads |  ms     (%) | ms       (%) |  ms         (%) |  ms      (%) |
+|---------|-------------|--------------|-----------------|--------------|
+| 1       | 108    (0%) | 72      (0%) | 224        (0%) | 324     (0%) |
+| cpus    |  24  (-77%) | 36    (-50%) |  40      (-82%) |  56   (-82%) |
 
-> 	rc = rmp_make_private(pfn_aligned, gfn_to_gpa(gfn_aligned),
-> 			level, sev->asid, false);
->
-> > And the NPT page tables are treated as ephemeral for SNP.
-> 
-> Do you mean private mappings for SNP guest can be zapped from the VM (the
-> private pages are still there unchanged) and re-mapped later w/o needing to
-> have guest's explicit acceptance?
+Signed-off-by: Eric Chanudet <echanude@redhat.com>
+---
+ arch/arm64/mm/init.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Correct.
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 9b5ab6818f7f..71f5188fe63d 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -158,6 +158,13 @@ static void __init zone_sizes_init(void)
+ 	free_area_init(max_zone_pfns);
+ }
+ 
++#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
++int __init deferred_page_init_max_threads(const struct cpumask *node_cpumask)
++{
++	return max_t(int, cpumask_weight(node_cpumask), 1);
++}
++#endif
++
+ int pfn_is_map_memory(unsigned long pfn)
+ {
+ 	phys_addr_t addr = PFN_PHYS(pfn);
+-- 
+2.44.0
 
-> If so, I think "we can zap" doesn't mean "we need to zap"?
-
-Correct.
-
-> Because the privates are now pinned anyway.
-
-Pinning is an orthogonal issue.  And it's not so much that the pfns are pinned
-as it is that guest_memfd simply doesn't support page migration or swap at this
-time.
-
-Regardless of whether or not guest_memfd supports page migration, KVM needs to
-track the state of the physical page in guest_memfd, e.g. if it's been assigned
-to the ASID versus if it's still in a shared state.
-
-> If we truly want to zap private mappings for SNP, IIUC it can be done by
-> distinguishing whether a VM needs to use a separate private table, which is
-> TDX-only.
-
-I wouldn't say we "want" to zap private mappings for SNP, rather that it's a lot
-less work to keep KVM's existing behavior (literally do nothing) than it is to
-rework the MMU and whatnot to not zap SPTEs.  And there's no big motivation to
-avoid zapping because SNP VMs are unlikely to delete memslots.
-
-If it turns out that it's easy to preserve SNP mappings after TDX lands, then we
-can certainly go that route, but AFAIK there's no reason to force the issue.
 
