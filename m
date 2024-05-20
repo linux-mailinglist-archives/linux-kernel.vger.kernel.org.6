@@ -1,104 +1,142 @@
-Return-Path: <linux-kernel+bounces-183469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E25918C996F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:41:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A49118C997A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CBD8280CF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:41:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F0D3280E18
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC691BC23;
-	Mon, 20 May 2024 07:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0351BF3B;
+	Mon, 20 May 2024 07:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mpMWf3CO"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="t+8vRIjd"
+Received: from msa.smtpout.orange.fr (smtp-83.smtpout.orange.fr [80.12.242.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B574F12B8B;
-	Mon, 20 May 2024 07:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC6812B8B;
+	Mon, 20 May 2024 07:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716190856; cv=none; b=CYgCSfRiDgxEqgRFix2SXN6/E898ZriHGCE2TKnnWYGSWRx53gCY+6rmudlQjJPIBGhzMiFho7MU0j1dugJfzYMhlnD6QyThAIk+tcSC7UwDMIAbHYB15gETydt5ad1vb8w4Hts+Ef6Hln6gUhX2rdGFRoKbkVwx5dTVy5GTVM4=
+	t=1716190940; cv=none; b=IrME58nnxlOKMfJ+qE3Q9qjBkj3sSz0+SZviaoXiq+iy17gn2DmVlQSnigcicT7pZI76QXQTbqhXuyTI4CcDji4gBui5aFEZnNW+qOwF11IJ+ElbUNc2hEVxcPxBM4+rmDkPxEZe2SOdskLlOJ5FfxiySknF5kQdBTkpx5slFIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716190856; c=relaxed/simple;
-	bh=rEglyoG4FdJOKzE03IYMWtomapTEwx50RRcDUiD5YFs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JnlrqRwF8F8q/zBUWesafyMxdSsCt0p2HzbjQMY8XK2Ov3EJIw/33TutYzyQmmhsvumHre+PvdMsaPUoMgx/ao5jIsdilKlZn+JwtW7Tp9mHdi+aVhnGQbJdFIt+ufE9fM3KmicimpdBMNCLLrNR7Z47TtunSm27THlHupQ0DBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mpMWf3CO; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716190851; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=crYhzYLF/Z9aGaDX2S1xu5VnG4QQ1Zxh17dm47AJQSo=;
-	b=mpMWf3COln6H5eW4E6+uJXuWFMAHiKJVNqOz4yyUKFmqHKEtp8i6kkscxdZ+nNNl7HffD9vy8dvOAPjGB6HV35fPT1yvk+05O+vzLaPsKPDXR7G0it6koAnQe+a7UW5kYdg+C0Pt6vpWp7WhJ2ehWlANDqgfImKwwgYafHiMKuA=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045075189;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W6nyCdl_1716190849;
-Received: from 30.221.148.185(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W6nyCdl_1716190849)
-          by smtp.aliyun-inc.com;
-          Mon, 20 May 2024 15:40:50 +0800
-Message-ID: <af4b9591-d82e-4da3-b681-eb677369ced3@linux.alibaba.com>
-Date: Mon, 20 May 2024 15:40:47 +0800
+	s=arc-20240116; t=1716190940; c=relaxed/simple;
+	bh=k4k9NEelRcoi98SI9g7103KMZ9H3Z/pFf+PgoWGfjy0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HZscgJqH5i4WVKZFKzdtwfoMARRvkW/54r3Fozqle8EsssbqWA2bl4mbLjgL8BD33GaDE45Plx4wnHU8joE+fLvtRxTWgqt9VPTWxGbIAGW5uJ7hm5A8NEd/cY3MW2enk2yi5NzmFZpe1rcPZHRdgFJevQacmLO3chInj2uV3fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=t+8vRIjd; arc=none smtp.client-ip=80.12.242.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 8xeqsglyjml3s8xersCxfy; Mon, 20 May 2024 09:42:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1716190930;
+	bh=bdxbRY6DhIfGliSzM5MbeLiBdRI38zgyGW9MM+5fHeE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=t+8vRIjdGyNISv2Dq+QABq/jhNPkpgpmtCbCrZAauIfXEEJEm4/kSoSCe2uw1oE9H
+	 k3jvy8TEzmnOPH2k5pjGrM89Pv3MKBvuG2rOC84uZ2NAdsMRR5iMI80IommRPUFKdT
+	 vs8xkqHkDt+1H7wfBfFej7bXLLGEYVu2CuLVmdf7wQlHMwd8L7VK5yTYB/gsbbVyXU
+	 whAvKBMETZ7KKN7ftm6kOqBjwohTVXGGvLcFhay5ypfK9OL1CRPJKQcWSR9/z+/Hp/
+	 FmEPifZ8kgskWWoj6sQP0Vz2HY/1t08Qq1JTvG7hDluDPgw93lVKDxHq6v26KtdeRb
+	 oO6h4KFyha2ew==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 20 May 2024 09:42:10 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Tedd Ho-Jeong An <tedd.an@intel.com>,
+	Kiran K <kiran.k@intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+	linux-bluetooth@vger.kernel.org
+Subject: [PATCH] Bluetooth: btintel_pcie: Fix the error handling path of btintel_pcie_probe()
+Date: Mon, 20 May 2024 09:41:57 +0200
+Message-ID: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/12] cachefiles: add output string to
- cachefiles_obj_[get|put]_ondemand_fd
-To: libaokun@huaweicloud.com, netfs@lists.linux.dev, dhowells@redhat.com,
- jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
- <20240515084601.3240503-6-libaokun@huaweicloud.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20240515084601.3240503-6-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Some resources freed in the remove function are not handled by the error
+handling path of the probe.
 
+Add the needed function calls.
 
-On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> This lets us see the correct trace output.
-> 
-> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+Fixes: c2b636b3f788 ("Bluetooth: btintel_pcie: Add support for PCIe transport")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+Maybe incomplete.
+---
+ drivers/bluetooth/btintel_pcie.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-
-Could we move this simple fix to the beginning of the patch set?
-
-Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-
-
-> ---
->  include/trace/events/cachefiles.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
-> index 119a823fb5a0..bb56e3104b12 100644
-> --- a/include/trace/events/cachefiles.h
-> +++ b/include/trace/events/cachefiles.h
-> @@ -130,6 +130,8 @@ enum cachefiles_error_trace {
->  	EM(cachefiles_obj_see_lookup_failed,	"SEE lookup_failed")	\
->  	EM(cachefiles_obj_see_withdraw_cookie,	"SEE withdraw_cookie")	\
->  	EM(cachefiles_obj_see_withdrawal,	"SEE withdrawal")	\
-> +	EM(cachefiles_obj_get_ondemand_fd,      "GET ondemand_fd")      \
-> +	EM(cachefiles_obj_put_ondemand_fd,      "PUT ondemand_fd")      \
->  	EM(cachefiles_obj_get_read_req,		"GET read_req")		\
->  	E_(cachefiles_obj_put_read_req,		"PUT read_req")
->  
-
+diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
+index 5b6805d87fcf..d572576d0dbc 100644
+--- a/drivers/bluetooth/btintel_pcie.c
++++ b/drivers/bluetooth/btintel_pcie.c
+@@ -1280,17 +1280,17 @@ static int btintel_pcie_probe(struct pci_dev *pdev,
+ 
+ 	err = btintel_pcie_config_pcie(pdev, data);
+ 	if (err)
+-		goto exit_error;
++		goto exit_destroy_worqueue;
+ 
+ 	pci_set_drvdata(pdev, data);
+ 
+ 	err = btintel_pcie_alloc(data);
+ 	if (err)
+-		goto exit_error;
++		goto exit_free_irq_vectors;
+ 
+ 	err = btintel_pcie_enable_bt(data);
+ 	if (err)
+-		goto exit_error;
++		goto exit_free_pcie;
+ 
+ 	/* CNV information (CNVi and CNVr) is in CSR */
+ 	data->cnvi = btintel_pcie_rd_reg32(data, BTINTEL_PCIE_CSR_HW_REV_REG);
+@@ -1299,17 +1299,25 @@ static int btintel_pcie_probe(struct pci_dev *pdev,
+ 
+ 	err = btintel_pcie_start_rx(data);
+ 	if (err)
+-		goto exit_error;
++		goto exit_free_pcie;
+ 
+ 	err = btintel_pcie_setup_hdev(data);
+ 	if (err)
+-		goto exit_error;
++		goto exit_free_pcie;
+ 
+ 	bt_dev_dbg(data->hdev, "cnvi: 0x%8.8x cnvr: 0x%8.8x", data->cnvi,
+ 		   data->cnvr);
+ 	return 0;
+ 
+-exit_error:
++exit_free_pcie:
++	btintel_pcie_free(data);
++
++exit_free_irq_vectors:
++	pci_free_irq_vectors(pdev);
++
++exit_destroy_worqueue:
++	destroy_workqueue(data->workqueue);
++
+ 	/* reset device before exit */
+ 	btintel_pcie_reset_bt(data);
+ 
 -- 
-Thanks,
-Jingbo
+2.45.1
+
 
