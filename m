@@ -1,214 +1,240 @@
-Return-Path: <linux-kernel+bounces-183811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D938C9E78
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:58:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D068C9E7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5220D283192
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:58:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74CCFB22475
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB48136673;
-	Mon, 20 May 2024 13:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8779D13667E;
+	Mon, 20 May 2024 13:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JaJizE9T"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2051.outbound.protection.outlook.com [40.107.95.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1MKI1te"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35920135A6B
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 13:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716213470; cv=fail; b=eUhUJIAPo85wR713UzeyBNawM1ma7pQixq3YSwQJOqrjS31EVVsPhc33ILrLL50UCjdQb0pUB86o2to6EKlVJcjgkd9oyCNhfW9diUUDa/ErlxsEmlw8d77TTucVzWxrjzyVrRnmEXmv4jxxPO8X++gJ0Dg0nuY31/QJQO0WgGA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716213470; c=relaxed/simple;
-	bh=Mj6cOzSqHvPra7g+Emazt3R98Xfd2pHoU/7IL+hJiiY=;
-	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
-	 Content-Type:MIME-Version; b=SXGFudF6ayeFNzaVWvlm7z+yDV0aFlDyORUD5staCVhTVx9YNkbaprUakn1QhhmD/phsJFfxQ8BmFt+0d0KcbbaKeVFfRvVXeC2yUfk6M/5wfigEIH/4iDm1EERQjfk1efmWwe352Q0TDiZxKBm+8B8BMYn3tjhCemasGvoUsfU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JaJizE9T; arc=fail smtp.client-ip=40.107.95.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=muelqyRuKr8tZWfmTUWARvayVcQYm7QArXhmM7+A2wyz6/Egr8SSyIW+Z6MlfoSC78ZPaqoDCXyeq0sqzqG80fLXJ9AChnA+XbYMkD+RdcD06cXi6xzi4h7gzkTfcGhpBuh6X4MCs6sYg/QWM73pWazhcNj1DBc/hFiDr68zdOe6GDSqIijBoh/ygTR3v102fx9Tca20d2tkzSARqM+ZZ6Kt/EdgP2lkwGKvTEwt5j9V40EK2lw/tg2L9GHYf4DM3EgOhHik+dzLmgi9WusbHrYmTTSKQOgXCj3+AQS7j4i+C9MhVFNGRNihqGHqtcFV8ATE+L6YFnzeGQdKtoEqlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t0FFZ0t27/ssnqVjVUm8RKiTC58eC0Cn6C9xCl0K5Cg=;
- b=lyi3nFrbVrGsZoEJ1pbF/nzIicSaTNA9nMHRCN6shfmfVzq6fAi4s9OxU5Hv/PGzPJdHgRiQobPM4ZEgHLjNXAOhuLgnaerp+pOmJ9/ljb2I5GaOccyk90FRZawq94dgK4rK8zI2cTdnOFZMyoytnVR083z3N+jOAvPv700ohQr+sbMFLJ6p1LxMD3XOlRN5Lz7aovnWVhPV1nSzjE0+NwAvOTffi674lJotsJEmsjX2/Z4TvXdzIxLbelqr9o49zMlZ118OGPZGabjKjRnu34vGhoMNmQdM8/2XCtWl7OfrodOcEwF/41co0kfRyrd4YcJ4J56W+u26J8qT/jHo3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t0FFZ0t27/ssnqVjVUm8RKiTC58eC0Cn6C9xCl0K5Cg=;
- b=JaJizE9TtoABkItEMhHOcAGQ70riR6BgcKMsQF4mWLWASn06eBSjpDBiKYZlxGNgG3EDMeaz5i5HIjbl/+o20VwLN8rSzof1ty3Jr4RelGvDcjEJuARs2TYBs4jPGRDsZU04scHB2kyxIvEGuMKn/9b2Qp85M1e57aKZKnn+62k=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5732.namprd12.prod.outlook.com (2603:10b6:208:387::17)
- by CH3PR12MB8187.namprd12.prod.outlook.com (2603:10b6:610:125::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Mon, 20 May
- 2024 13:57:46 +0000
-Received: from BL1PR12MB5732.namprd12.prod.outlook.com
- ([fe80::bf0:d462:345b:dc52]) by BL1PR12MB5732.namprd12.prod.outlook.com
- ([fe80::bf0:d462:345b:dc52%7]) with mapi id 15.20.7587.030; Mon, 20 May 2024
- 13:57:46 +0000
-Message-ID: <f8a92b19-9090-40ea-c2cf-707005f583a5@amd.com>
-Date: Mon, 20 May 2024 08:57:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-coco@lists.linux.dev,
- svsm-devel@coconut-svsm.dev, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Dan Williams <dan.j.williams@intel.com>, Michael Roth
- <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>
-References: <cover.1713974291.git.thomas.lendacky@amd.com>
- <6cf54cac47f212f4c2b59b123855d8c183989022.1713974291.git.thomas.lendacky@amd.com>
- <20240502093520.GRZjNeWLXU5j2UMOAM@fat_crate.local>
- <66928741-aa5c-4bbb-9155-dc3a0609c50a@amd.com>
- <20240517155858.GDZkd-wkWmYegos-eT@fat_crate.local>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH v4 04/15] x86/sev: Check for the presence of an SVSM in
- the SNP Secrets page
-In-Reply-To: <20240517155858.GDZkd-wkWmYegos-eT@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DM6PR18CA0027.namprd18.prod.outlook.com
- (2603:10b6:5:15b::40) To BL1PR12MB5732.namprd12.prod.outlook.com
- (2603:10b6:208:387::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F52136658;
+	Mon, 20 May 2024 13:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716213492; cv=none; b=lYkQYBVLDRZybzu2OudOZGYqeDIsU9+csiQ0Ov69590KSMmu0oNcIwW0UEgOifYIFh2KNWMLQQ1Bb9PnF+9Hd8mCo2ihmcSi6VdmyzZmz5kSdzk2KenAN59vpT+6ZUy8XtNYmgsuAITzmPTUrFC/Z0B2dyrBwacd115gJPMTu04=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716213492; c=relaxed/simple;
+	bh=4XRyKsv+ktKwEMFWCnR0/ki044xhY4Tvtdof1cxypnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ge7B+pXUCHY2TwS8SOY66HCRUDUaAlbiD0xiY3ht43wezyMwTLgjiZEQ4FJt0tVhtErgYk37nftyNSoWGLuDoybMHivNu/phxYfnis7FORbEm9/xLvRw4ieEp2zC3fkzkIQsvjSCKodbA5uTsfvKQWgDA8h0QrYwn+ZUEonFkcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U1MKI1te; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1ee954e0aa6so43462675ad.3;
+        Mon, 20 May 2024 06:58:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716213490; x=1716818290; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aK2KfWsY9tIOekL8pJv9CCEv+WbW12jE+CdMrD20bkQ=;
+        b=U1MKI1teuzIQ8BbZzZvTI2O3gwfrbQ9Vo3WWfwFfjXjluAB9UySAqvMvxdca5eEC9U
+         WFgP8foh1MuuwKF1HwThZRRqOwyEmOobEa+aVO1B/XVP9z81H4Y5xFWsr7BhXIzx/IlI
+         MntTSpN8krJxyLPy39imosJ1DyinplJ2FEXMlI/nqPK5qDD7K6/DdqpY3DtTD7y4qVQ7
+         TKlFQFFERjihPExnlT7C+HdTTC2UamjW3kq2Y/e3wi+8O9r1DEc80o9UrNjXcsf1kI9u
+         EdRK4cwGHTNaeFZN9zqBpD4NeCe0zWVV3O2KBfs++jA9QVK/hnmbBiiADwGpKz0XnwHQ
+         DlIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716213490; x=1716818290;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aK2KfWsY9tIOekL8pJv9CCEv+WbW12jE+CdMrD20bkQ=;
+        b=GSIsfO3X75FRyGEj7wDHLpzJ9Ohfo6shGvjmEuOibU5FX7gOGwHIdM4qdi9IU5/rBx
+         7gvjyKU6YbfbzD1fdvyNxeUIuXZ6I0NQGEQkpMc45wtKg35Voe0H5xCdVDkV+NCa5tsf
+         mWeNUT4eBY4WDqLM9btzBdIDxaa4BCZLANkrEIySqTbXIv2Cq/gjnJky5gW9qALke6/T
+         p/1Djylb25VpyWbA6urSaJ57rB82xqYVLzauDqnktLvd9esY34XSXjfD0EQ16hhc7mIM
+         salSnrDQyduolopE7jQNSgNWXhYbQcEX0t48oaEF380N9b/ITIczxXEBF3EDObWvD6Wa
+         eajw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxljLKNOhw07rty0+zofUmexhBUz+CiflaR2i6fCF0PSTFAsb14127wPd6Y+EdwpzUwxqTPfAP0foJGyBe49EJwxBYIe0825yrEQ2aF9owqd1sfxP7sG3tHuP8G7FnSuG6mhl05HnOTC/hFzLHJQSJdOA/wMv7jOtQoAugTdC1l2uP
+X-Gm-Message-State: AOJu0Yyq1mGUYvQuEQRr+nlx5diRB6YxQ6WVJmqYHPaW2qRwiNyaLnhY
+	lLqknRaxeBbCYOvXQc73XfBBgiC7vA7VptUbmTd0ybz3XkAdgrAU
+X-Google-Smtp-Source: AGHT+IH6bOQxKKfz2oRDMwLwhzxzcoFHDDbYI/j24IRoy5TIbufIXanD7RPTZ6YTXUM1epUFeAxFew==
+X-Received: by 2002:a05:6a20:3c94:b0:1ad:7bfd:54a1 with SMTP id adf61e73a8af0-1afde0e2402mr29348300637.17.1716213489954;
+        Mon, 20 May 2024 06:58:09 -0700 (PDT)
+Received: from [10.59.0.127] ([210.178.66.119])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b254cfsm19098701b3a.200.2024.05.20.06.58.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 May 2024 06:58:09 -0700 (PDT)
+Message-ID: <fcbaeb18-41ce-47c2-8914-96345449a280@gmail.com>
+Date: Mon, 20 May 2024 22:58:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5732:EE_|CH3PR12MB8187:EE_
-X-MS-Office365-Filtering-Correlation-Id: f434e58c-ae14-4ec2-3233-08dc78d4d38c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|366007|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QWFzMHhOOGZFc21UR3NYVHZZQkRrTm95ME9wQjFRN1hMeEZVUEZLM294M0J4?=
- =?utf-8?B?eUVXZm04eVlsalpZNmh6SldrUi90S2xFc0hCcExzRFJ5MllwU3Z4ekpHL0w2?=
- =?utf-8?B?ZEZTdXJMV0U3VG9qaGlYMW41TlBqVmhrWUI3aWttbllJUjJJWkhBS1FwK2Nz?=
- =?utf-8?B?SkFDTmZwNWJ4aXVBU2ZiUHh3aGhzRi9aRXJpVG5YZE9nclB4cTBkc1RrQjNo?=
- =?utf-8?B?THR4S0drMEhrYmNURVF3LzBhVjVSWUhHbDVrOGtVYXlKRTIwYU9BTFMrQnY3?=
- =?utf-8?B?L3g2K2JKTGRyYmpVQ0dsK0JCSGNlU1dkOU1KdW1FSlFvd0VoNU5OM2JqUkY3?=
- =?utf-8?B?blhJZ1V0N1Flb09BZ1J3Vk1nVzVWdjZ0ZTFSTEVCVGtjazAyUDNWelByc1FY?=
- =?utf-8?B?Sk5ZSTUrc09iSFh1cGFoaXl2dC8zMVFGdkVYdTVKc0huZTIxZVFMQWI1cER0?=
- =?utf-8?B?MjlKOGZENTBjLzI1RVMyZnBpYnRScEV5TmdOaG9pOXVaaGdpZGQ1WGh2RUho?=
- =?utf-8?B?TDg0VUpQT2c4VzF0OFUyUTF2Nm5DZzdIKzF6UDFTM1h3STlGR3p2S3U1TTZQ?=
- =?utf-8?B?YThWNXZ5Q1MwWlBLSjFQNU1MZ1pPckJNNjZMVnZjK0drOFcveFYrMkZUbjM5?=
- =?utf-8?B?Tk9qbCtxU0VYRlhkcFhPTkhsbWxxYzFZamFQOEltaENEeHU3NC9Ub3NDUEVr?=
- =?utf-8?B?WHJFdHVKRHRFWlM2MjQwZXo1bnJTWmIzZ3h3SVN0andjaTh4czNKQzlZeHRD?=
- =?utf-8?B?aUxlYWZRQ0dDWmVJWkNFeTkzd3kzcDRGa0ZvVis4MmtCdmczR3Z2MGREdUlO?=
- =?utf-8?B?ZGUxT3dzcC9HVytjTVZpZ1NpSEZ3ZWFERnlrelE0ek04MCtKUC93MFhSS0hU?=
- =?utf-8?B?c3pZYzhkWnE4OGhDaFJxOTNrakJPeDg2Smc3bUh3U2paVks4dTVOUzJQNVMr?=
- =?utf-8?B?NHR6RExIT2VsZ1dXSURTQkFFdnIydTBncWxaK1k0RU9TQjhvTFh5VjFnNUor?=
- =?utf-8?B?ZDN2YTh6cWgwUDZ3MG1ZdWdxNTY2MFExeDlFUFd1cEVLQjVmRkF3OHZLZWl6?=
- =?utf-8?B?UnZ0T3Vzb1JWYmcwUFBIMk1OU3lBRzQrRkUweGc4Nzk3ZHcrQ2lOUGlOZUJa?=
- =?utf-8?B?VHNoQ1IzbVdrYjQwclJFVE5aVVRiRTYvZVd5Z1VyWU5uQ3BkSFFXaW83aHpO?=
- =?utf-8?B?Z0ZIQkwrVVlRdUNWejR6MWxxRVRoRnhjYzN1eXNOOU1NK2cwL1UxVDdHb0Yx?=
- =?utf-8?B?a3hyK1F6aTJMNXd1YVlrRy91czU1SE0rUEdHY3J1ZmZsekRFWXpuUHlzb1hN?=
- =?utf-8?B?aXNkZ2Z1ZDFGUUxwekRKNmRDbGZ5UjZKaFNmakZuTGVHRDYzWGxnZ1ZXUVFj?=
- =?utf-8?B?N29QM01qRkVOU2VuK3BZOXJ6S2xpaFB2bmVLckpIdXJoTkowbFlabXFlMmFo?=
- =?utf-8?B?WWdXOC9XdFEyd2NVcGt1cklUcE1lWU1vNjNia29SUTZtckVKVDJBdFZ6MDM1?=
- =?utf-8?B?L2xVMllTRFQyT1gydjB0bmd3OGdDQ1EzVDdjdVE0S2h2RnA0VHRlTitpV0JG?=
- =?utf-8?B?SHJqZWd1ZXNwOXIvK3RGUy9oRzIvQXhqUk1vdHVaTTNyUndpWlZsWVkrQVJL?=
- =?utf-8?B?UEdkc3d4ZHIvWjhFMllNM1BCUTBibFZZbEFYTmJZVnllVzBKZ1FrZ0pnWVhi?=
- =?utf-8?B?NHFUc3RLVUhWbmtteXBGWUxiVUFjVTRBR2pMR1h0dW5UU2pzQ1YxOUhnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5732.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YmVwNW4ySXRsUGQzMzRwd2tvUWJjdnJ4Z2FTOXVsbE9rWEIxKytmOTN5M0lZ?=
- =?utf-8?B?WUJ6Nm9LZ2gwa0E2bmpPYWthSmV5OG5BVjR6Uy9ydk5Ub09rY2NqbmJlUFpI?=
- =?utf-8?B?cXlINGR3c21GTE8xVlBRQi9VNmxUbjU0TEszY2hkN3hyd3A0Rlg1NUVmelpV?=
- =?utf-8?B?cGlpU0J4c0ZGR1dQN3dSVzh1YnE0c2dQOWZucm56KzcyUHZQQk5WSlN3RXo3?=
- =?utf-8?B?SGw0L3Z2cVJDU0lHYlZVbnB1aXpoN3VsbzZ4bWFaRmxXSnpUbHJETXNkS1hI?=
- =?utf-8?B?K2tlQXRxZHh0VEdMNzhWeWxmMmxqTkljQWhqcmIrTk1pajE0WHkveHlod2Rq?=
- =?utf-8?B?c2dBaHJSREdpWkMrcmhRVlIyVWVlZEFFWUVucjMrM0pwS0MwcFllR29yWWY3?=
- =?utf-8?B?NDU2Z2dVUWI4dlZMdzUvMVV4NlNveU0xVERJSUNjYjFaWGtrOHpsR1Zzb2tT?=
- =?utf-8?B?SDRDbDZGQXdWVkg2b1paVzhZb0hiV1R6eTE1T3lSRkViWEJxNlcxOXpIMEhF?=
- =?utf-8?B?bE01V2wyM3FONU1MOGlUR2NwVk0xTXR2U2ZYdy80N291TnRIWnhCOVdnL0xU?=
- =?utf-8?B?TWFuSU9vZnk5WmlKVmU4QmlWdVAzZVNXZjd1bWR4VDZ2eG1VanhnRWVwcGs5?=
- =?utf-8?B?NnpYWGN4QWRteGNHbk9zbFRFUzBNQWYxLzFROWltT1U4RlVMQXlRT0ZtNnMw?=
- =?utf-8?B?Rk9SMWc1TkNJZkM5cmxDdGdWYlUwZ3JtMXRHMVkyUURIclN0K0cySndhRHhV?=
- =?utf-8?B?bzZQdnVHRFJwS3haR1J4dWpqV0l0VEtUS3dWZ05Bb3JQV0tXSWVpNHVEWHBv?=
- =?utf-8?B?Wlg2SW5zV3hLRDE1VkdiVW85eWQ3ZS82cWJGMFNsdkl3Z01hNUd5OVduKzN3?=
- =?utf-8?B?UkxsMUZ4RW5yWFdsUTJ2Q0hXZHVVMVArMjhoTUtrTWtwUXl3SUwrN2xGWVo4?=
- =?utf-8?B?Q2cvdkU2a2VMSTZjb1gxOHFVZnBnTHZGZ3dKK2ZycnBHd1Jkc0VmTi9DTXo1?=
- =?utf-8?B?dmZkUjJ6S3JSSlVhaXYxTFV4bUVxUFFjUFhNdkJqOVpNcGtjemJuSUhPUmlI?=
- =?utf-8?B?SmZMc3pHUGNkQ3dxYzFQRkdrTVhGNldHa0NWaEU3N1loVUhaRmdmZlVKSVl3?=
- =?utf-8?B?UzNOazdHS2RoWVdoa1dSZ0ZhTnpWaVVFMGNvV01iVmh3QW5xck5udjJodzkw?=
- =?utf-8?B?ek5pcWJyaThraHFmcUx0V1RHY1lOaVNQSG9wWHorNDJtM1hMd3FaRjRkUkls?=
- =?utf-8?B?WWxXeXA4ODRXYlRiZVlRY0hJcEdVU0VCT1ZRZXltd0cyYVYwUXBqQjBDY0Rh?=
- =?utf-8?B?cThjT09nVncyTjFGdCtkTVUrWHVsNUFHOExsQU41bHdCd2RWR3ovZlVDR2pa?=
- =?utf-8?B?cEhxZzBUMWEzMk12K0Y1VmhhOGdRb3BaN2cyeDV3dTRzNkxGc0tnWUt4Zzlm?=
- =?utf-8?B?VXZOMlpKVjZGTFpPMzFpTjU5d1UrbG1SNUV2RExNUU5FYzk3RWRtd08waGtN?=
- =?utf-8?B?Vk9mZitCNnhRM3FDcGJMRnl3dDk4NlVFR3FKQlk0clRMeDdHY0ZUZXRSaEFY?=
- =?utf-8?B?cUMzQnFtT3locTNnRmtWazdvNkx0dW9oalRSN3pBd1ZTMUdmMlZua0RvWWE1?=
- =?utf-8?B?VmUzRDJTWU9tNjBxSW5yNlhlSGhVQWxGamw1elpCZEN6OHlxZE5xdWV4OGM4?=
- =?utf-8?B?UnltWU5LY0t2a0tmM1JzWkhoampqTk5BMVR5bExpTUNqVE5IblRnLzYwVDh2?=
- =?utf-8?B?eDgzM0ViRlhUQzM0SHpGZ0lVV0ppSmFpT1hNOHRUUERGWFQwWVlGVEc5d3Np?=
- =?utf-8?B?WWM5Z0R2dEFsVDg4UXp2TUc2UWw4bWpPRDVwTytJWkJPMFlGcjdGV3ZYV1Qz?=
- =?utf-8?B?bVFVWTVQTlI4UFZVYURGbHNERWdkamQvSXJLUTVtMEpuaEVXcFVQSWErNXRR?=
- =?utf-8?B?TWNtOGpQNUNNc0pTM25kSWJnVFFWZzg2ajRsZTByUDlXQ0duQVEwcDFPeVYx?=
- =?utf-8?B?WHQ0MmJVYVMxYzBDZENFR1BkTkthU2ZPaHBHMjU2VnhHWWNVSGtWcGhXWXRU?=
- =?utf-8?B?Q3hNa2lBTC93d2M1ODg2eXRoTjZYTGtHWjBJaVBZbEtzb0J4YlJ6Q242V3Vr?=
- =?utf-8?Q?IjH9bkh5IF3QR4zZGvFDI9qFN?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f434e58c-ae14-4ec2-3233-08dc78d4d38c
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5732.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 13:57:45.9340
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rneZGh8mAk8oMPb0ceAcAflYfuLS4/bA/MLoPOzEnuek0iA4xHbKPPqYKrQaHWFaRcsUBcPR9Mz6lS6wQiQYXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8187
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: cve Korean translation
+Content-Language: ko
+To: yskelg@gmail.com, Jonathan Corbet <corbet@lwn.net>
+Cc: Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240511195942.30857-1-yskelg@gmail.com>
+From: Jinwoo Park <pmnxis@gmail.com>
+In-Reply-To: <20240511195942.30857-1-yskelg@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 5/17/24 10:58, Borislav Petkov wrote:
-> On Thu, May 02, 2024 at 10:29:02AM -0500, Tom Lendacky wrote:
->> PAGE_ALIGNED and IS_ALIGNED are from two separate header files (mm.h and
->> align.h) which seems like a lot of extra changes for just one check.
+On 2024. 5. 12. 오전 4:59, yskelg@gmail.com wrote:
+> From: Yunseong Kim <yskelg@gmail.com>
 > 
-> No, pls put them in a single shared/mm.h header. And no, those are not
-> a lot of extra changes - those are changes which are moving the code in
-> the right direction and we do them sooner rather than later, otherwise
-> they'd pile up and we'll never be able to find time to do them - sev.c
-> movement attempt case-in-point.
+> This is a Documentation/process/cve korean version.
+> 
+> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
 
-So this will be a new shared directory in the top level include 
-directory (as PAGE_ALIGNED is defined in include/linux/mm.h), not just 
-in the arch/x86/include directory like the others (io.h, msr.h and 
-tdx.h). Is that what you want?
+Thanks for translating new Documentation/process/cve document to Korean
+Language. Most of the Korean sentences are looks good to me. But only
+one sentence seemed unnatural.
 
-Thanks,
-Tom
+> 잘못된 CVE 항목들
+> =================
+>
+> -해당 배포판에서 변경된 사항으로 인해 또는 해당 배포판이 더 이상
+kernel.org
+> +특정 배포판에서 변경된 사항으로 인해 또는 해당 배포판이 더 이상
+kernel.org
+> 지원 릴리스가 아닌 커널 버전을 지원하기 때문에 Linux 배포판에서만 지원되는
+> Linux 커널에서 보안 문제가 발견되는 경우 Linux 커널 CVE 팀에서 CVE를 할당할
+수
+> 없으며 해당 Linux 배포판 자체에서 요청해야 합니다.
 
+When the first modifier "해당" is first used in a Korean sentence, like
+"the", there needs to be an explanation of what it is targeting.
+
+However, in the process of literal translation, it seems that "the"
+became "해당" due to the difference in word order between Korean and
+English, And since the translated sentence did not describe which "Linux
+distributor" is being described, it would be very difficult if
+"특정(specific)" were used instead. It seems natural.
+
+> ---
+>  .../translations/ko_KR/process/cve.rst        | 107 ++++++++++++++++++
+>  1 file changed, 107 insertions(+)
+>  create mode 100644 Documentation/translations/ko_KR/process/cve.rst
 > 
->> Not sure I agree. I'd prefer to keep the comment here because it is
->> specific to this rmpadjust() call. See below.
-> 
-> Just don't replicate some versions of the same comment all over the
-> place. Do one big comment which explains which RMPADJUST has to do with
-> VMPL levels - perhaps over the insn - and then refer to it from the
-> other places after adding the specific explanations for them.
-> 
->> Right. Not sure about the "cannot", more like "must not." The specification
->> states that the guest should run at a VMPL other than 0. If an SVSM starts
->> the guest at VMPL0, then the SVSM would not be protected from guest.
-> 
-> Yeah, well, you do terminate the guest if it is running at VMPL 0 *in*
-> the presence of a SVSM so it is a "must not". Ok.
-> 
+> diff --git a/Documentation/translations/ko_KR/process/cve.rst b/Documentation/translations/ko_KR/process/cve.rst
+> new file mode 100644
+> index 000000000000..26682969b2b7
+> --- /dev/null
+> +++ b/Documentation/translations/ko_KR/process/cve.rst
+> @@ -0,0 +1,107 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +:Original: Documentation/process/cve.rst
+> +:Translator: Yunseong Kim <yskelg@gmail.com>
+> +
+> +==========
+> +CVE 항목들
+> +==========
+> +
+> +공통 취약점 및 노출(CVE®) 번호는 공개적으로 발표된 보안 취약점을 식별, 정의 및
+> +목록화하기 위한 명확한 방법으로 개발되었습니다. 시간이 지남에 따라 커널
+> +프로젝트와 관련하여서는 그 유용성이 감소했으며, CVE 번호는 부적절한 방식과
+> +부적절한 이유로 할당되는 경우가 매우 많았습니다. 이로 인하여 커널 개발
+> +커뮤니티에서는 이를 기피하는 경향이 있었습니다. 그러나 커널 커뮤니티 외부의
+> +개인과 회사가 CVE 및 기타 형태의 보안 식별자를 할당하라는 지속적인 압박과
+> +지속적인 남용이 결합되면서 커널 커뮤니티가 이러한 할당에 대한 통제권을 가져야
+> +한다는 것이 분명해졌습니다.
+> +
+> +Linux 커널 개발자 팀은 잠재적인 Linux 커널 보안 문제에 대해 CVE를 할당할 수
+> +있는 권한이 있습니다. 여기서 할당은 :doc:`일반 Linux 커널 보안 버그 보고
+> +절차<../process/security-bugs>`와는 별개입니다.
+> +
+> +Linux 커널에 할당된 모든 CVE 목록은
+> +https://lore.kernel.org/linux-cve-announce/ 에 있는 Linux-CVE 메일링 리스트의
+> +아카이브에서 확인할 수 있습니다. 할당된 CVE에 대한 알림을 받으려면 해당
+> +메일링 리스트에 `구독
+> +<https://subspace.kernel.org/subscribing.html>`_ 하세요.
+> +
+> +절차
+> +====
+> +
+> +일반적인 안정 릴리스 절차의 일부로, 잠재적으로 보안 문제가 될 수 있는 커널
+> +변경 사항은 CVE 번호 할당을 담당하는 개발자가 식별하여 CVE 번호를 자동으로
+> +할당합니다. 이러한 할당은 linux-cve-announce 메일링 리스트에 공지사항으로
+> +수시로 게시됩니다.
+> +
+> +리눅스 커널이 시스템에 있는 계층으로 인해 거의 모든 버그가 커널의 보안을
+> +손상시키는 데 악용될 수 있지만 버그가 수정되면 악용 가능성이 명확하게 드러나지
+> +않는 경우가 많습니다. 이 때문에 CVE 할당 팀은 지나치게 조심스럽게 버그 수정이
+> +확인되는 모든 버그에 CVE 번호를 할당합니다.
+> +이것이 리눅스 커널 팀에서 발행하는 겉으로 보기에 많은 수의 CVE를 설명합니다.
+> +
+> +사용자가 CVE를 지정해야 한다고 생각하는 특정 수정 사항을 CVE 할당 팀이 놓친
+> +경우 <cve@kernel.org>로 이메일을 보내 주시면 해당 팀에서 함께 작업할 것입니다.
+> +이 별칭은 이미 릴리스된 커널 트리에 있는 수정 사항에 대한 CVE 할당 전용이므로
+> +잠재적인 보안 문제는 이 별칭으로 보내서는 안 됩니다.
+> +수정되지 않은 보안 문제를 발견했다고 생각되면 :doc:`일반 Linux 커널 보안
+> +버그 보고 절차<../process/security-bugs>`를 따르세요.
+> +
+> +Linux 커널에서 수정되지 않은 보안 이슈에 대해서는 CVE가 자동으로 할당되지
+> +않으며, 수정이 제공되고 안정적인 커널 트리에 적용된 후에만 자동으로 할당되며,
+> +기존 수정의 git 커밋 ID로 추적할 수 있습니다. 커밋으로 문제가 해결되기 전에
+> +CVE를 할당받고자 하는 사람은 커널 CVE 할당 팀<cve@kernel.org>에 문의하여
+> +예약된 식별자 항목들에서 식별자를 할당받으시기 바랍니다.
+> +
+> +현재 Stable/LTS 커널 팀에서 적극적으로 지원하지 않는 커널 버전에서 발견된
+> +문제에 대해서는 CVE가 할당되지 않습니다.
+> +현재 지원되는 커널 브랜치 목록은 https://kernel.org/releases.html 에서 확인할
+> +수 있습니다.
+> +
+> +할당된 CVE 항목들의 분쟁
+> +=========================
+> +
+> +특정 커널 변경에 대해 할당된 CVE에 대해 이의를 제기하거나 수정할 권한은
+> +전적으로 영향을 받는 관련 하위 시스템의 유지 관리자에게 있습니다.
+> +이 원칙은 취약점 보고에 있어 높은 수준의 정확성과 책임성을 보장합니다.
+> +하위 시스템에 대한 깊은 전문 지식과 친밀한 지식을 갖춘 사람만이 보고된
+> +취약점의 유효성과 범위를 효과적으로 평가하고 적절한 CVE 지정을 결정할 수
+> +있습니다. 이 지정된 기관 외부에서 CVE를 수정하거나 이의를 제기하려는 시도는
+> +혼란, 부정확한 보고, 궁극적으로 시스템 손상으로 이어질 수 있습니다.
+> +
+> +잘못된 CVE 항목들
+> +=================
+> +
+> +해당 배포판에서 변경된 사항으로 인해 또는 해당 배포판이 더 이상 kernel.org
+> +지원 릴리스가 아닌 커널 버전을 지원하기 때문에 Linux 배포판에서만 지원되는
+> +Linux 커널에서 보안 문제가 발견되는 경우 Linux 커널 CVE 팀에서 CVE를 할당할 수
+> +없으며 해당 Linux 배포판 자체에서 요청해야 합니다.
+> +
+> +커널 할당 CVE 팀이 아닌 다른 그룹에서 적극적으로 지원되는 커널 버전에 대해
+> +Linux 커널에 대해 할당된 CVE는 유효한 CVE로 취급해서는 안 됩니다.
+> +CNA 수정 절차를 통해 해당 항목을 무효화할 수 있도록 커널 CVE 할당 팀에
+> +<cve@kernel.org>로 알려주시기 바랍니다.
+> +
+> +특정 CVE의 적용 가능성
+> +======================
+> +
+> +Linux 커널은 외부 사용자가 다양한 방법으로 접근하거나 전혀 접근하지 않는
+> +등 다양한 방식으로 사용될 수 있으므로 특정 CVE의 적용 여부는 Linux 사용자가
+> +결정할 사항이며 CVE 할당 팀의 권한이 아닙니다. 특정 CVE의 적용 가능성을
+> +판단하기 위해 우리에게 문의하지 마시기 바랍니다.
+> +
+> +또한 소스 트리가 매우 방대하고 어떤 시스템도 소스 트리의 작은 하위 집합만
+> +사용하므로 Linux 사용자는 할당된 많은 수의 CVE가 자신의 시스템과 관련이 없다는
+> +사실을 알고 인지해야 합니다.
+> +
+> +즉, 우리는 사용자의 사용 사례를 알지 못하며 사용자가 커널의 어떤 부분을
+> +사용하는지 알 수 없으므로 특정 CVE가 사용자의 시스템과 관련이 있는지 판단할 수
+> +있는 방법이 없습니다.
+> +
+> +항상 그렇듯이 커널 변경 사항은 개별적으로 선별된 변경 사항이 아니라 많은
+> +커뮤니티 구성원이 통합된 전체에서 함께 테스트하는 것이므로 릴리스된 모든 커널
+> +변경 사항을 적용하는 것이 가장 좋습니다. 또한 많은 버그의 경우 전체 문제에
+> +대한 해결책은 단일 변경 사항이 아니라 여러 수정 사항을 모아놓고 보아야 찾을 수
+> +있다는 점에 유의하세요. 이상적으로는 모든 문제에 대한 모든 수정 사항에 CVE가
+> +할당되지만, 때로는 수정 사항을 발견하지 못하는 경우가 있으므로 CVE가 할당되지
+> +않은 일부 변경 사항이 관련성이 있을 수 있다고 가정합니다.
 
