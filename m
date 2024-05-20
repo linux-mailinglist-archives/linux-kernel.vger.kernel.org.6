@@ -1,104 +1,176 @@
-Return-Path: <linux-kernel+bounces-184112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F15098CA2B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:27:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10B28CA2BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37F031C212CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:27:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50D161F21F3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE3C139587;
-	Mon, 20 May 2024 19:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EB01386C6;
+	Mon, 20 May 2024 19:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IqhHYiKQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhEYg9TS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3A7139588
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 19:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFBE138496;
+	Mon, 20 May 2024 19:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716233234; cv=none; b=Tku7wya7GsjI1L7Y9qU2AwIG5xcxnyx3EmXwDe7+pkdvPrl/WJcSejd+Aqov/IbI+l5LzwK865uhhcxLqegobpGecmCU7keEoZYGsPqV/lehUioP3aGwJy09uIqeQpCTudEiRyuYMZgBh7M5rm+JMHejGFIyp9ZtWY53WVAd9BM=
+	t=1716233347; cv=none; b=NzFlnp4sTbiZL1ez4fCScyulppBnudDuXYfZIB9uppmP2RUJRvqpwrDMOLUIc/SJOGkvrlDGbKxYTnOLnw+jaN8MaF5x+v+oZ1+pyDq8NkPdSsaLDNFK755Q8LWPC85Y2EwWpLtnbCmnbfxLmHmUhYDPIuLabcrHkW/6YPUJgtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716233234; c=relaxed/simple;
-	bh=2TnMREiRIAIebGgTkLzHrsGe9BV1po7cFaa8eIolCVI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=KlqJSpk4pfccIltt+6aBEnT/4NMQxtNidEftW/lGyGXuHFLciOvt0BeTSZjTZzSekGF5K7I22FfKLU719qKSdioeeWNp9GqRqOhB5S/a81UiCRB9aV5DH+C8fB3Z/k5Jv2hxQh1TnZvcRwaNFsq7swBA9BUurB8LLtg5sfVIQSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IqhHYiKQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D16DFC2BD10;
-	Mon, 20 May 2024 19:27:12 +0000 (UTC)
+	s=arc-20240116; t=1716233347; c=relaxed/simple;
+	bh=XUJS0Nr3vYVX0F8uk+6ZJ1bmsN6ximLLLBQTiJ2ot4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VfKUS3WVp4YhsWbWgHXL4yUj6Y6PpefL2AyqIxsD5Cgzn0Sroc0iTCALgwLCc1EJ/zdr0OZYvAX4RbDOTQdiBzPMaHAy8ucai121MaBiq9lKrfU0LWQ3fkPvGJEiDuyqJe7392GAFa+y/ZQ02QO56QRIL1GeLlTnHTbj/V/RcDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhEYg9TS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910FBC2BD10;
+	Mon, 20 May 2024 19:29:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716233233;
-	bh=2TnMREiRIAIebGgTkLzHrsGe9BV1po7cFaa8eIolCVI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=IqhHYiKQYX4qNcIZCqN6+WS5oXtqo4c3TZ89YK82kNnsHJC9ma9L/Uyvv2d7NjXZy
-	 GFemFybXYvCdT1hlg4fEnHKdxHVF1WvOIj/741gYUNBMofyBKOfgBe1ClggNTakO3b
-	 LExPSp0hFrv10QTqoZzvYKOCGIXuDqzi1ya9nYr34tqc0nOcbHz5lRmX9CmNM6mexI
-	 3vd9AnpiP3WI7GrzRnkN9QZKI0vs63U286WM3iXEnwUmw+H78wiyYwpiES0E1f2qR2
-	 Yl0JvNVlGqu890d/YnfJTbc+VCDQSH5EbKy1eB+b3eBOhCOx/+6LGFkfnSlywCATYe
-	 W5TwyFzWgNb4Q==
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>, 
- Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, 
- =?utf-8?q?M=C3=A5rten_Lindahl?= <marten.lindahl@axis.com>, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <ZktCpcGZdgHWuN_L@fedora>
-References: <ZktCpcGZdgHWuN_L@fedora>
-Subject: Re: [PATCH v2 1/2] regulator: pickable ranges: don't always cache
- vsel
-Message-Id: <171623323257.94554.15001762747135346135.b4-ty@kernel.org>
-Date: Mon, 20 May 2024 20:27:12 +0100
+	s=k20201202; t=1716233346;
+	bh=XUJS0Nr3vYVX0F8uk+6ZJ1bmsN6ximLLLBQTiJ2ot4E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FhEYg9TSNmjmqsi4z5nUbjshugz1fFBtkFH2PhPoUnp6gGAGsjyZC6Mg9+o9NMDEE
+	 Y/gcdIwhMguzNueJwnw0GgYHoBUBuvU+3CVKqGXKBdHD1mhHXwzYFmZKsN3tsaLCSU
+	 Zpom41x7pESpNRUxUfMw8FxCP4MJptcduDANtfdd1oLaaoM3pizIr6JCl5klPQq12M
+	 /++/5H7iwoD+Lp8p56BLpH0yXkecBBes0MZutT1l3o6T5blQ5B7HrYgYZnCsaNS+Kf
+	 Rv34ZUkPgBHQHEoH3U2klhWMaNUxCRFD0o5tHLonTogbTfAWy74SOq0N5IwTaYrjq4
+	 1jFUl/FrKH+nA==
+Date: Mon, 20 May 2024 14:29:05 -0500
+From: Rob Herring <robh@kernel.org>
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+	Melody Olvera <quic_molvera@quicinc.com>,
+	Shivendra Pratap <quic_spratap@quicinc.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: power: reset: Convert mode-.*
+ properties to array
+Message-ID: <20240520192905.GA1345016-robh@kernel.org>
+References: <20240515-arm-psci-system_reset2-vendor-reboots-v3-0-16dd4f9c0ab4@quicinc.com>
+ <20240515-arm-psci-system_reset2-vendor-reboots-v3-1-16dd4f9c0ab4@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-621fa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515-arm-psci-system_reset2-vendor-reboots-v3-1-16dd4f9c0ab4@quicinc.com>
 
-On Mon, 20 May 2024 15:31:33 +0300, Matti Vaittinen wrote:
-> Some PMICs treat the vsel_reg same as apply-bit. Eg, when voltage range
-> is changed, the new voltage setting is not taking effect until the vsel
-> register is written.
+On Wed, May 15, 2024 at 04:09:44PM -0700, Elliot Berman wrote:
+> PSCI reboot mode will map a mode name to multiple magic values instead
+> of just one. Convert the mode-.* property to an array. Users of the
+> reboot-mode schema will need to specify the maxItems of the mode-.*
+> properties. Existing users will all be 1.
 > 
-> Add a flag 'range_applied_by_vsel' to the regulator desc to indicate this
-> behaviour and to force the vsel value to be written to hardware if range
-> was changed, even if the old selector was same as the new one.
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> ---
+>  .../devicetree/bindings/power/reset/nvmem-reboot-mode.yaml |  4 ++++
+>  .../devicetree/bindings/power/reset/qcom,pon.yaml          |  4 ++++
+>  .../devicetree/bindings/power/reset/reboot-mode.yaml       | 14 ++++++++++++--
+>  .../bindings/power/reset/syscon-reboot-mode.yaml           |  4 ++++
+>  4 files changed, 24 insertions(+), 2 deletions(-)
 > 
-> [...]
+> diff --git a/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml b/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml
+> index 627f8a6078c2..03b3b9be36de 100644
+> --- a/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml
+> +++ b/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml
+> @@ -30,6 +30,10 @@ properties:
+>  
+>  allOf:
+>    - $ref: reboot-mode.yaml#
+> +  - patternProperties:
+> +      "^mode-.*$":
+> +        items:
+> +          maxItems: 1
+>  
+>  required:
+>    - compatible
+> diff --git a/Documentation/devicetree/bindings/power/reset/qcom,pon.yaml b/Documentation/devicetree/bindings/power/reset/qcom,pon.yaml
+> index fc8105a7b9b2..95964e04d5d6 100644
+> --- a/Documentation/devicetree/bindings/power/reset/qcom,pon.yaml
+> +++ b/Documentation/devicetree/bindings/power/reset/qcom,pon.yaml
+> @@ -68,6 +68,10 @@ allOf:
+>      then:
+>        allOf:
+>          - $ref: reboot-mode.yaml#
+> +        - patternProperties:
+> +            "^mode-.*$":
+> +              items:
+> +                maxItems: 1
+>  
+>        properties:
+>          reg:
+> diff --git a/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml b/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
+> index ad0a0b95cec1..feb70609bb5f 100644
+> --- a/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
+> +++ b/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
+> @@ -28,13 +28,23 @@ description: |
+>  
+>  properties:
+>    mode-normal:
+> -    $ref: /schemas/types.yaml#/definitions/uint32
+> +    $ref: "#/patternProperties/^mode-.*$"
+>      description:
+>        Default value to set on a reboot if no command was provided.
+>  
+>  patternProperties:
+>    "^mode-.*$":
+> -    $ref: /schemas/types.yaml#/definitions/uint32
+> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> +    # Limit to 1 outer cell, e.g. no mode-normal = <0>, <1>;
+> +    maxItems: 1
 
-Applied to
+So it's an array, not a matrix...
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+> +    # Note: to reference this schema, the allOf should include hint about
+> +    # maxItems for the inner cell
+> +    # allOf:
 
-Thanks!
+Don't need allOf here.
 
-[1/2] regulator: pickable ranges: don't always cache vsel
-      commit: f4f4276f985a5aac7b310a4ed040b47e275e7591
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> +    # - $ref: /schemas/power/reset/reboot-mode.yaml#
+> +    # - patternProperties:
+> +    #     "^mode-.*$":
+> +    #       items:
+> +    #         maxItems: 1
+>  
+>  additionalProperties: true
+>  
+> diff --git a/Documentation/devicetree/bindings/power/reset/syscon-reboot-mode.yaml b/Documentation/devicetree/bindings/power/reset/syscon-reboot-mode.yaml
+> index b6acff199cde..bf6d68355e7f 100644
+> --- a/Documentation/devicetree/bindings/power/reset/syscon-reboot-mode.yaml
+> +++ b/Documentation/devicetree/bindings/power/reset/syscon-reboot-mode.yaml
+> @@ -31,6 +31,10 @@ properties:
+>  
+>  allOf:
+>    - $ref: reboot-mode.yaml#
+> +  - patternProperties:
+> +      "^mode-.*$":
+> +        items:
+> +          maxItems: 1
+>  
+>  unevaluatedProperties: false
+>  
+> 
+> -- 
+> 2.34.1
+> 
 
