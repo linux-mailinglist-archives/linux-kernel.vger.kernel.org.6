@@ -1,46 +1,48 @@
-Return-Path: <linux-kernel+bounces-183907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A09968C9FB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:30:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE358C9FB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54C211F219BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:30:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B61F283275
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43355137766;
-	Mon, 20 May 2024 15:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABEF1369BF;
+	Mon, 20 May 2024 15:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="PA7k3srR"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="l8Iufx47"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EA51369AD
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 15:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FB4136E3D
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 15:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716219014; cv=none; b=ZRDpgvrHvfv9Ju6GMbLSXVs+q6PYF7RoDyA7c6QkzXqXeuayoH6iwQG3NauoSMmA6ry5Fzq3+xRj1ZGoyFd4EwAh/n+ik2UdsTvleDtWl/EqNDpaqtlijlf7MQaIN5xUFfGdIeF8R9GyWbaQ/ce4yF6tcJpe3To5NVjpe8yXNgI=
+	t=1716219014; cv=none; b=e3WwaeOJSDmB9dHvlfYmCnsXDSON5ZmGdXJqP//W0jVQ8VDD86kYER98RdT5yvHKQcLyHHe30Dr1AUZFVwRIhaKWQ5aw3umqm/g6ExoUOLbcLaPq0Ph7Jq3WE0zBa9bdjwq/rmmKsS18q6LzHfgDBzyBrQ/xyTEdBzQ+BA2X7pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716219014; c=relaxed/simple;
-	bh=Vu0vznjdWxs66nSkbS9cacJp9FhincaEtP6y7P6cQd8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jZ1Sew6Y6wPBZ4bPriCD6264Dp66AwIkgfGoZUN66j4w8zslTt9xOipXOg/lc22Gvd1vtMqmSrwA7/Dc4hRIP/XeBGFWeuohKNWGpj5v+fdZMwGW+jTjRb3mfaxKdbvkuCcA8p1ZZ/LhoV5yyp+u88VlNyXXg4euhSPCZFNvm4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=PA7k3srR; arc=none smtp.client-ip=95.215.58.187
+	bh=myz+zjMaiVIdprC73JF/2+HbHVKa1GuOWNljRbXJcVE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=H7fXqckKVfryZRpt4/8Hp0ok6yAnuy5In+H4KgX8YbxhOfYa6KaU+VI6mVzpvm5D9okJSUX2AXLmZMCeoRkjPhcm4E0zLgWSB5fIX00aGPMrFUVHT4/1ChS0KL3+obgC8fXI/b8YaGZkWwQ1jfM49hNPeHh4uLCW4S2LAX1Fy4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=l8Iufx47; arc=none smtp.client-ip=95.215.58.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
 X-Envelope-To: robh@kernel.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-	s=key1; t=1716219009;
+	s=key1; t=1716219010;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=flQbjfqnjMGGLkGPgtwubHoIaR8WTP9vdHbSmZ1m2Bs=;
-	b=PA7k3srRdv7Ot87pJeffHhgamxS+LVsiGZORzvmiaqIOHXU58Mrh0X7+S8ExpFajXO7xoQ
-	S0TSAf62d7sympTeOzrXm1wJDxG4v0RSs2T0zwqpqwxtaGogGKGxrENG2JSFwnWIoymxHs
-	NIeskTOeAOIc1Ky5UScKzsw18aaKCBafT149EZETfQZRyoLWfS3eD6vDEql0bRJzndJWvy
-	CvgkgLg/XH907zkV7t4mcWYxbxdWD7H5RqNhztJBU/RFCZI++MYYfyVjohElabpAr2yP0V
-	gMSWHwYud8WuIcyqlDGOoQdklnR8FdM6vybK6AF61bgP/6KM0ZQgLdacOiD3KQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UNS/7gofY3jzirMluCy8uHvSKsq2/rQzRSXNUnOuMMw=;
+	b=l8Iufx47Hj4tHsXkEUjLD/JKzTfntMxvvAdkEVNIc9o0DjWVHpIeEW0WCAzEXQFuJSdIYb
+	AazFv/K/GjwNQbDs/Vs2oMK46eu7vu3yutctecQgj4Pvns/wm7mcave2KOraZex07yuzNA
+	i4rzHuir5cE/BazDM4OzbG2kEbjiy8dTQ6IzzACbGk3qoWgdf58yTqUNpNJ5etPGRQzOfL
+	AEKQN+NASPZqnzx8O0QF7HmnaEk8GXUHrS4VOCwKuHHb2vbicCFwMBPIraQDOTr4SSfpbq
+	S8hw4BvJNcggoG01x0uJ4ugeyPyHBEIreOJ2MtOlOYNOGu3XifBEbYatIQIGTw==
 X-Envelope-To: amartinz@shiftphones.com
 X-Envelope-To: linux-kernel@vger.kernel.org
 X-Envelope-To: ~postmarketos/upstreaming@lists.sr.ht
@@ -55,9 +57,8 @@ X-Envelope-To: krzysztof.kozlowski@linaro.org
 X-Envelope-To: caleb@postmarketos.org
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Caleb Connolly <caleb@postmarketos.org>
-Subject: [PATCH v2 0/2] qcom: initial support for the SHIFTphone 8
-Date: Mon, 20 May 2024 17:29:40 +0200
-Message-Id: <20240520-otter-bringup-v2-0-d717d1dab6b8@linaro.org>
+Date: Mon, 20 May 2024 17:29:41 +0200
+Subject: [PATCH v2 1/2] dt-bindings: arm: qcom: Add QCM6490 SHIFTphone 8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,10 +67,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGRsS2YC/13MQQ7CIBCF4as0sxZDwQp25T1MF0gpncRAM1Sia
- bi72MSNy/8l79sgOUKXoG82IJcxYQw1xKEBO5vgHcOxNgguTrzjisV1dcTuhME/Fya1tpM0Rln
- TQf0s5CZ87d5tqD1jWiO9dz633/Un6T8pt4wzq7ka5XiR7XS+PjAYisdIHoZSygfTReqeqwAAA
- A==
+Message-Id: <20240520-otter-bringup-v2-1-d717d1dab6b8@linaro.org>
+References: <20240520-otter-bringup-v2-0-d717d1dab6b8@linaro.org>
+In-Reply-To: <20240520-otter-bringup-v2-0-d717d1dab6b8@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -80,69 +80,50 @@ Cc: Alexander Martinz <amartinz@shiftphones.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
  Caleb Connolly <caleb@postmarketos.org>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1452;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=899;
  i=caleb.connolly@linaro.org; h=from:subject:message-id;
- bh=Vu0vznjdWxs66nSkbS9cacJp9FhincaEtP6y7P6cQd8=;
- b=owEBbQKS/ZANAwAIAQWDMSsZX2S2AcsmYgBmS2yAGFfxWjWLHLcjMiOszvA68CXROR7bXORIn
- 5oNNuwg1aqJAjMEAAEIAB0WIQS2UaFGPGq+0GkMVc0FgzErGV9ktgUCZktsgAAKCRAFgzErGV9k
- tmycD/9W6oyUOT4pwY+xWiUl96huz+0T0LDSk+g5l8Hg0Y5H29wcVNc6Gp7sk6R6TKaP5+WdNrc
- p9Y8Hz2zQHT4yFpecDQoCOn50/eXTa+zKUdueDC7VGinxTpypjslooNIKgC4usopO4UQZH9iYW0
- IybixkH3rtVgNAEbBaByUMe9NoXiELDHNZayfhdiryELdcS/qziU4zygfQeWLsCsMpsFVwSbjzE
- oqBMwTd28YglMiM8+dQpAhkMXnIdan3CMsTwJ5MuzlNpWttzdhJIRFrHwheNU6T6PbOgZdiT7j1
- 0oRbN5yLZ1ibjZ0PixAi9ymRcAqiHseRhyd62HbLKU+tSxBMxCGMeMxIWD8OP+vWCFdYq1y0sxw
- 0o5fXs17hL0MIqvNRN5SxQdMhBUka3nTiY3ACLuLnBVFkfEDuw4066eTcPOJmVc/5WgUs1KiMDC
- HvcN6R1ftuJg8PuLSj9TWWMfevvxDZQXH6GMs0nZe0aLayKJckBRVgtytAFHp/Jw8cVoJab9xk8
- w1q2kQ9OSkLDZEG/76D5tML/+/ZRye20S1MOv1Nm1k/gAaDpN10THuQQWlmk8obAzCdlYFr1w2c
- f5ZDpz7KhcSaa2OCNG9dN80CEoW9IF+e2SQ3owiYwxcowr63aPWrAg3AHgPWDcikI4Yh918zDeG
- u3/ODIEcVOFRStQ==
+ bh=myz+zjMaiVIdprC73JF/2+HbHVKa1GuOWNljRbXJcVE=;
+ b=owEBbQKS/ZANAwAIAQWDMSsZX2S2AcsmYgBmS2yAKhy1j5xsmkcH60fctyXGaV1YMB8E0yskQ
+ EJt+K7bysGJAjMEAAEIAB0WIQS2UaFGPGq+0GkMVc0FgzErGV9ktgUCZktsgAAKCRAFgzErGV9k
+ tqEID/9g0PIWEor5bYqUsba6C3+7Yj8x+1Ndhd15Za7IKhAsEu8PsbEfwV5Dx3QXh93SJ5HaQRY
+ 7FadPoyoq8rggKlkVeA4l3EX/N0O4rhZq8bf4E5gflnOC73Ox/5c8X9Q+tOnU24UcWQOcSyg0dV
+ 9K1r8kcn8Xy8wc7U+xykHo1gYcpE0j6w/Z0pOHiqsPwICKhqW8wHpP8u49V/abf+5BSkvHvDZc/
+ 5KIi8hlJoOfD8V3DwXeZz4GHLvgmn8mELYAv0kqKbhq3lOVxH52ygAyL8BibDTl1iIWr1hpbPrQ
+ 538leBRsOvWiGZYS67PYu14qiqJ+38Bw+yCvZlpS+pTXorZh+uhAVSjnFA+j3ZWINfIXcuHNACr
+ J/qlz88Rb+7LPPbOGgbV1VCeGfVfnq14bXgFwhrTA0/lNPb2ghaw0nPI1W+soaJLx+zYtjI0Bl6
+ g2NKMP19jPwM3LRsrDi5zdAknlBJwN8o/Jx/VcDamY4jazLZCpu08kA4fsI+xDxczFmT76zBLLU
+ 6jCBtfcLzfkasdvy/N1zGZNsjuHv+FAV1U5WInWLgJ8pskDcHqtcR1lJQMwUDUr0w9+sNom83Yw
+ 7Xa8sQIxeITQijI5S9dQkx5GnAo4D8Xxi0DeungB+yaCCgRD1s5uJnJYh5h4LGhH6nShYdVJGWO
+ bPsdvavavQeCuOg==
 X-Developer-Key: i=caleb.connolly@linaro.org; a=openpgp;
  fpr=83B24DA7FE145076BC38BB250CD904EB673A7C47
 X-Migadu-Flow: FLOW_OUT
 
-The SHIFTphone 8 is an upcoming QCM6490 smartphone, it has the following
-features:
+The SHIFTphone 8 (codename otter) is a smartphone based on the QCM6490
+SoC.
 
-* 12GB of RAM, 512GB UFS storage
-* 1080p display.
-* Hardware kill switches for cameras and microphones
-* UART access via type-c SBU pins (enabled by an internal switch)
-
-Initial support includes:
-
-* Framebuffer display
-* UFS and sdcard storage
-* Battery monitoring and USB role switching via pmic glink
-* Bluetooth
-* Thermals
-
-Wifi works but requires some commits to be reverted to prevent a
-firmware crash.
-
-The serial port on the device can be accessed via the usb-cereal
-adapter, it must first be enabled by flipping the switch under the
-display. Additional info can be found on the postmarketOS wiki page.
-
-https://wiki.postmarketos.org/wiki/SHIFT_SHIFTphone_8_(shift-otter)
-
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Caleb Connolly <caleb@postmarketos.org>
 ---
-Changes in v2:
-- Fix authorship
-- Address Luca's feedback
-- Link to v1: https://lore.kernel.org/r/20240508-otter-bringup-v1-0-c807d3d931f6@linaro.org
+ Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
----
-Caleb Connolly (2):
-      dt-bindings: arm: qcom: Add QCM6490 SHIFTphone 8
-      arm64: dts: qcom: add QCM6490 SHIFTphone 8
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index 66beaac60e1d..d4b2d39f914e 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -364,8 +364,9 @@ properties:
+           - enum:
+               - fairphone,fp5
+               - qcom,qcm6490-idp
+               - qcom,qcs6490-rb3gen2
++              - shift,otter
+           - const: qcom,qcm6490
+ 
+       - description: Qualcomm Technologies, Inc. Distributed Unit 1000 platform
+         items:
 
- Documentation/devicetree/bindings/arm/qcom.yaml  |   1 +
- arch/arm64/boot/dts/qcom/Makefile                |   1 +
- arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 923 +++++++++++++++++++++++
- 3 files changed, 925 insertions(+)
----
-change-id: 20240507-otter-bringup-388cf3aa7ca5
-base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-
-// Caleb (they/them)
+-- 
+2.45.0
 
 
