@@ -1,102 +1,127 @@
-Return-Path: <linux-kernel+bounces-183570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED6F8C9ACD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:56:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173A88C9AD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5AD61F2123A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:56:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C20341F217E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB0B487B6;
-	Mon, 20 May 2024 09:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B89482F4;
+	Mon, 20 May 2024 09:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="p5pk6DQb"
-Received: from msa.smtpout.orange.fr (out-71.smtpout.orange.fr [193.252.22.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpQwPz4F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3C8481AA;
-	Mon, 20 May 2024 09:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A98B481AA;
+	Mon, 20 May 2024 09:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716198973; cv=none; b=swlmgUDTckhAEiQMuduBurrTOzi/HULsp6SeCdF9kEVS4ZyqgL/S/+SaD0TWO94ETQBQLp717x95efQZC2rJEzhf64SmLdXxSG9JtSxcSMf91zbE5GGTyG2XIXfmocYryGiFXoziZDSMz/vxiDSX3EZLGtFSIy5fyY+VDAaZng4=
+	t=1716199038; cv=none; b=b6Yztrgo19E+WyVjQBI2eCPQdBYSnAW/q5AyJk59BFmSravHaZ3Amc4CgE6PKSc9I7chag7CiiG28DseibugAP9NIYhg2jvbmaCsXX7enJtkTVCKCskCf/aSIxzPeYdAO9Ow6AkZ8nemM3j0haP/1HFkbV7ZzCGo+9i7CPRtG7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716198973; c=relaxed/simple;
-	bh=8pN9+dZPsIe+Zp9h68CLnh+ugMClUzOnDxV9mWnTvS8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QW649owKu7xNVInGuDif8TN3CkPG/5w4v+5xiyylF2Nrq8zlavKL6IzkxDktmg+DbWjYznKp0pVR0WKdX8Q2DMzzDp8/yPa2/CnP3ZlDQR9VEDxQa0Ro6Kk1C3o6J9gnvn8C+HXsy55ZU1K7bgomEXiwVVyXWd3/8MGzDgIiJcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=p5pk6DQb; arc=none smtp.client-ip=193.252.22.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 8zkSsPtMlFWfB8zkTs2sLr; Mon, 20 May 2024 11:56:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716198966;
-	bh=grLk96lCrEC21k00xQkJtYdNWTj170Ht3ul8K1nz6dA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=p5pk6DQbYbKbK3DM+7H1QiHCOS28wb2JGj6lff//z844isqef6EJcGjnQ0t9OKShd
-	 8msdT59fxLoKPBRA8xeU3iSKYqVeMLKPgIbPZXdFu7C4ftw6ug6ki68z0T6CJROUh+
-	 DJf3mBEm2wqDhyEGHp01XyCUtbw9ku0UwsjFnNYNlQdw2wNsRMhiu9ywgumgV70QzU
-	 SW3MHVLXqv938UswKDuZshl/HAK0mBdqXlQfGT08d9bryPe5PaVI+coluoi39Z4LE6
-	 kaKj8KhIufPeR/wsr6jV+XSC5rs1d522olCsf9Xzwoiurynf0meQjNdMf3q3kXL3dj
-	 Xbs5IkTGAMNDg==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 20 May 2024 11:56:06 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-media@vger.kernel.org
-Subject: [PATCH] media: intel/ipu6: Fix some redundant resources freeing in ipu6_pci_remove()
-Date: Mon, 20 May 2024 11:55:54 +0200
-Message-ID: <33dbf7b5c1b1b94d64a13441b69e1ff976caaa62.1716198935.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716199038; c=relaxed/simple;
+	bh=HAZNjDgSrlri/l7/2sSm0PgdmiazDso7ZHTn27qp3w4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cgIRUx3kQZtLng0ZVmqkzMx66Ow0YVssAkxBSd+psVC1H10k3N/cvrSr6uYGk244vtrbgqWmlkAcNmdumn+BmjvLWF9eoWG0l/ur/W8llyjTX4KUJT5skF9fohClDGi+4U1zZPiXbQ0sidyVcxDFqmWo+Re2xI1zG4k8UwXV2IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpQwPz4F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55DA0C2BD10;
+	Mon, 20 May 2024 09:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716199038;
+	bh=HAZNjDgSrlri/l7/2sSm0PgdmiazDso7ZHTn27qp3w4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CpQwPz4FYqik+KFKwffU3xiNov+7zrvZPhUXsCPbmDagPyqHgtJIfcVpkIUyaoO5c
+	 F+jsEd6YOYLTedikTJ+nMMRs7QfloJUvhT+zAIt4StquwIDPzkEJUbwhFsnA+emUS0
+	 tSTFI43Nk12QsTvb5sLRR+4KD1JIhbT7eWx7Is8GTWJZremSKqRV7BrfGahuH3ixF9
+	 NiC225fxJlYXmcHGeikn2LWQ8egNLApjYLn2sA3JjrNNoO6XAwfQENbO3OI6SiA/fS
+	 pMXf5D/fVzZu1y1vf6MXclePsYLYxKUBD+iRbK/noqI443+Rczw/uMpZ9uAJYa0ndP
+	 J1NCUHdPly6XQ==
+Message-ID: <88c9c7bf-ee32-4fcd-a2ce-12a589fe844f@kernel.org>
+Date: Mon, 20 May 2024 11:57:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v5] nfc: nci: Fix uninit-value in nci_rx_work
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syoshida@redhat.com, syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
+References: <20240519094304.518279-1-ryasuoka@redhat.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240519094304.518279-1-ryasuoka@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-pcim_iomap_regions() and pcim_enable_device() are used in the probe. So
-the corresponding managed resources don't need to be freed explicitly in
-the remove function.
+On 19/05/2024 11:43, Ryosuke Yasuoka wrote:
+> syzbot reported the following uninit-value access issue [1]
+> 
+> nci_rx_work() parses received packet from ndev->rx_q. It should be
+> validated header size, payload size and total packet size before
+> processing the packet. If an invalid packet is detected, it should be
+> silently discarded.
+> 
+> Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
+> Reported-and-tested-by: syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=d7b4dc6cd50410152534 [1]
+> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+> ---
+> v5
 
-Remove the incorrect pci_release_regions() and pci_disable_device() calls.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Fixes: 25fedc021985 ("media: intel/ipu6: add Intel IPU6 PCI device driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/media/pci/intel/ipu6/ipu6.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/media/pci/intel/ipu6/ipu6.c b/drivers/media/pci/intel/ipu6/ipu6.c
-index d2bebd208461..f587f609259d 100644
---- a/drivers/media/pci/intel/ipu6/ipu6.c
-+++ b/drivers/media/pci/intel/ipu6/ipu6.c
-@@ -727,9 +727,6 @@ static void ipu6_pci_remove(struct pci_dev *pdev)
- 	pm_runtime_forbid(&pdev->dev);
- 	pm_runtime_get_noresume(&pdev->dev);
- 
--	pci_release_regions(pdev);
--	pci_disable_device(pdev);
--
- 	release_firmware(isp->cpd_fw);
- 
- 	ipu6_mmu_cleanup(psys_mmu);
--- 
-2.45.1
+Best regards,
+Krzysztof
 
 
