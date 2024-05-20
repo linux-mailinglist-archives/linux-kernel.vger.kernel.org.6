@@ -1,177 +1,221 @@
-Return-Path: <linux-kernel+bounces-183803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247DD8C9E5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:48:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B4F8C9E5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC691F21DD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C6492831E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753ED136658;
-	Mon, 20 May 2024 13:48:46 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44739136994;
+	Mon, 20 May 2024 13:48:51 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1E3101DB;
-	Mon, 20 May 2024 13:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1108136986
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 13:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716212926; cv=none; b=cCdgRrvJrxcatwVmZ4g5tXdpDUFyxCdjIQzOdl7HKrGm6pdJalsML7yKJaviGAeHcwNOmYPOb7KpQdPntLCr73BqreeSM7F7kfM9xVuOANyQYxsGqEHQ0TzIYmawTUmLG0WQ+OmASxYDSaMZdfy3lrYYN/+xXmxgrc89zdai7Qs=
+	t=1716212930; cv=none; b=ZvejLYmuL41kekbtS77u8rvFiY1+s0MQpo5xD+usSgTTx0QiTdz4RLFd/vewYEZ3335dEpUNgZOGFtm5G8q3on3JePRIYRHtVFjjqDBForlWn5p7JN+DQJtYa8nJ5K5FyovZsg9a0Gk0nwCqhnjJm/x3mTxzJJLKqRJuwOpwGZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716212926; c=relaxed/simple;
-	bh=eF+jBaVjhoGRtH6l8O7AjGRsyfFCGXZ2LDLVX4bqmqI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=X5vD9M5l11Kqd0RJ5xvJYFViONcdsjsrSf2YlbbESlmaEltbgNAhUtCK6ZGIoFrdX1y6ND93ElfSySk+F56Povqc8Hv+rnLCrYezMngHcuPuBA75WLswanTD60L2JYjPiXsEJ0mlazRh3vQYPLdSntrnLeAMkeUi4AfAg/NNS9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+	s=arc-20240116; t=1716212930; c=relaxed/simple;
+	bh=p71lg6zGyJAtcZ8Xn2jER3pWn4wYpyvMIBfJ1w+2jFI=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Fv3Ud14calVuPfXdvaprDMAb+rLZBeZ4Kw9dJuOP1broAzvextGw9v0/OSoUZw1YcqNz9Mc4GaGN1PjEnp+BBmoVEjsIjY55xM03fGlA2X8njAJiPZuyTzONthxQtl0j9U2pWELY+FKfg/Viz7Ei0MUY4bLtlIZfLDKhAk6OQBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Vjdc53lKVz1S6dx;
-	Mon, 20 May 2024 21:25:41 +0800 (CST)
-Received: from dggpemd100001.china.huawei.com (unknown [7.185.36.94])
-	by mail.maildlp.com (Postfix) with ESMTPS id 14003180AA0;
-	Mon, 20 May 2024 21:29:17 +0800 (CST)
-Received: from [10.67.120.108] (10.67.120.108) by
- dggpemd100001.china.huawei.com (7.185.36.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 20 May 2024 21:29:16 +0800
-Message-ID: <c1835d80-ca48-766e-c174-d94a2d357925@huawei.com>
-Date: Mon, 20 May 2024 21:29:16 +0800
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Vjdd40Q08zvXcX;
+	Mon, 20 May 2024 21:26:32 +0800 (CST)
+Received: from canpemm500010.china.huawei.com (unknown [7.192.105.118])
+	by mail.maildlp.com (Postfix) with ESMTPS id C537A180069;
+	Mon, 20 May 2024 21:30:07 +0800 (CST)
+Received: from [10.67.111.82] (10.67.111.82) by canpemm500010.china.huawei.com
+ (7.192.105.118) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 20 May
+ 2024 21:30:07 +0800
+Subject: Re: [PATCH] arm64: asm-bug: Add .align 2 to the end of __BUG_ENTRY
+To: Mark Rutland <mark.rutland@arm.com>
+References: <1715955208-17109-1-git-send-email-xiaojiangfeng@huawei.com>
+ <ZksnARrLkKHcX4C_@J2N7QTR9R3>
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <Dave.Martin@arm.com>,
+	<xieyuanbin1@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <nixiaoming@huawei.com>,
+	<wangbing6@huawei.com>, <douzhaolei@huawei.com>, <liaohua4@huawei.com>,
+	<lijiahuan5@huawei.com>, <wangfangpeng1@huawei.com>
+From: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+Message-ID: <8452c8cb-4822-9110-0a3c-51dd94ee3e8d@huawei.com>
+Date: Mon, 20 May 2024 21:30:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v2] scsi: libsas: Fix exp-attached end device cannot be
- scanned in again after probe failed
-Content-Language: en-CA
-From: yangxingui <yangxingui@huawei.com>
-To: <john.g.garry@oracle.com>, <yanaijie@huawei.com>, <jejb@linux.ibm.com>,
-	<martin.petersen@oracle.com>, <damien.lemoal@opensource.wdc.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>,
-	<chenxiang66@hisilicon.com>, <kangfenglong@huawei.com>
-References: <20240424080807.8469-1-yangxingui@huawei.com>
-In-Reply-To: <20240424080807.8469-1-yangxingui@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <ZksnARrLkKHcX4C_@J2N7QTR9R3>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggpemm500008.china.huawei.com (7.185.36.136) To
- dggpemd100001.china.huawei.com (7.185.36.94)
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ canpemm500010.china.huawei.com (7.192.105.118)
 
-Friendly ping ...
 
-On 2024/4/24 16:08, Xingui Yang wrote:
-> We found that it is judged as broadcast flutter when the exp-attached end
-> device reconnects after probe failed, as follows:
+
+On 2024/5/20 18:33, Mark Rutland wrote:
+
+> I reckon we should spell out the reason for this a bit more; would you
+> be happy with the commit message below?
 > 
-> [78779.654026] sas: broadcast received: 0
-> [78779.654037] sas: REVALIDATING DOMAIN on port 0, pid:10
-> [78779.654680] sas: ex 500e004aaaaaaa1f phy05 change count has changed
-> [78779.662977] sas: ex 500e004aaaaaaa1f phy05 originated BROADCAST(CHANGE)
-> [78779.662986] sas: ex 500e004aaaaaaa1f phy05 new device attached
-> [78779.663079] sas: ex 500e004aaaaaaa1f phy05:U:8 attached: 500e004aaaaaaa05 (stp)
-> [78779.693542] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] found
-> [78779.701155] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
-> [78779.707864] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
-> ...
-> [78835.161307] sas: --- Exit sas_scsi_recover_host: busy: 0 failed: 0 tries: 1
-> [78835.171344] sas: sas_probe_sata: for exp-attached device 500e004aaaaaaa05 returned -19
-> [78835.180879] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] is gone
-> [78835.187487] sas: broadcast received: 0
-> [78835.187504] sas: REVALIDATING DOMAIN on port 0, pid:10
-> [78835.188263] sas: ex 500e004aaaaaaa1f phy05 change count has changed
-> [78835.195870] sas: ex 500e004aaaaaaa1f phy05 originated BROADCAST(CHANGE)
-> [78835.195875] sas: ex 500e004aaaaaaa1f rediscovering phy05
-> [78835.196022] sas: ex 500e004aaaaaaa1f phy05:U:A attached: 500e004aaaaaaa05 (stp)
-> [78835.196026] sas: ex 500e004aaaaaaa1f phy05 broadcast flutter
-> [78835.197615] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
+> | When CONFIG_DEBUG_BUGVERBOSE=n, we fail to add necessary padding bytes
+> | to bug_table entries, and as a result the last entry in a bug table will
+> | be ignored, potentially leading to an unexpected panic(). All prior
+> | entries in the table will be handled correctly.
+> | 
+> | The arm64 ABI requires that struct fields of up to 8 bytes are
+> | naturally-aligned, with padding added within a struct such that struct
+> | are suitably aligned within arrays.
+> | 
+> | When CONFIG_DEBUG_BUGVERPOSE=y, the layout of a bug_entry is:
+> | 
+> | 	struct bug_entry {
+> | 		signed int      bug_addr_disp;	// 4 bytes
+> | 		signed int      file_disp;	// 4 bytes
+> | 		unsigned short  line;		// 2 bytes
+> | 		unsigned short  flags;		// 2 bytes
+> | 	}
+> | 
+> | ... with 12 bytes total, requiring 4-byte alignment.
+> | 
+> | When CONFIG_DEBUG_BUGVERBOSE=n, the layout of a bug_entry is:
+> | 
+> | 	struct bug_entry {
+> | 		signed int      bug_addr_disp;	// 4 bytes
+> | 		unsigned short  flags;		// 2 bytes
+> | 		< implicit padding >		// 2 bytes
+> | 	}
+> | 
+> | ... with 8 bytes total, with 6 bytes of data and 2 bytes of trailing
+> | padding, requiring 4-byte alginment.
+> | 
+> | When we create a bug_entry in assembly, we align the start of the entry
+> | to 4 bytes, which implicitly handles padding for any prior entries.
+> | However, we do not align the end of the entry, and so when
+> | CONFIG_DEBUG_BUGVERBOSE=n, the final entry lacks the trailing padding
+> | bytes.
+> | 
+> | For the main kernel image this is not a problem as find_bug() doesn't
+> | depend on the trailing padding bytes when searching for entries:
+> | 
+> | 	for (bug = __start___bug_table; bug < __stop___bug_table; ++bug)
+> | 		if (bugaddr == bug_addr(bug))
+> | 			return bug;
+> | 
+> | However for modules, module_bug_finalize() depends on the trailing
+> | bytes when calculating the number of entries:
+> | 
+> | 	mod->num_bugs = sechdrs[i].sh_size / sizeof(struct bug_entry);
+> | 
+> | ... and as the last bug_entry lacks the necessary padding bytes, this entry
+> | will not be counted, e.g. in the case of a single entry:
+> | 	
+> | 	sechdrs[i].sh_size == 6
+> | 	sizeof(struct bug_entry) == 8;
+> | 
+> | 	sechdrs[i].sh_size / sizeof(struct bug_entry) == 0;
+> | 
+> | Consequently module_find_bug() will miss the last bug_entry when it does:
+> | 
+> | 	for (i = 0; i < mod->num_bugs; ++i, ++bug)
+> | 		if (bugaddr == bug_addr(bug))
+> | 			goto out;	
+> | 
+> | ... which can lead to a kenrel panic due to an unhandled bug.
+> | 
+> | This can be demonstrated with the following module:
+> | 
+> | 	static int __init buginit(void)
+> | 	{
+> | 		WARN(1, "hello\n");
+> | 		return 0;
+> | 	}
+> | 
+> | 	static void __exit bugexit(void)
+> | 	{
+> | 	}
+> | 
+> | 	module_init(buginit);
+> | 	module_exit(bugexit);
+> | 	MODULE_LICENSE("GPL");
+> | 
+> | ... which will trigger a kernel panic when loaded:
+> | 
+> | 	------------[ cut here ]------------
+> | 	hello
+> | 	Unexpected kernel BRK exception at EL1
+> | 	Internal error: BRK handler: 00000000f2000800 [#1] PREEMPT SMP
+> | 	Modules linked in: hello(O+)
+> | 	CPU: 0 PID: 50 Comm: insmod Tainted: G           O       6.9.1 #8
+> | 	Hardware name: linux,dummy-virt (DT)
+> | 	pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> | 	pc : buginit+0x18/0x1000 [hello]
+> | 	lr : buginit+0x18/0x1000 [hello]
+> | 	sp : ffff800080533ae0
+> | 	x29: ffff800080533ae0 x28: 0000000000000000 x27: 0000000000000000
+> | 	x26: ffffaba8c4e70510 x25: ffff800080533c30 x24: ffffaba8c4a28a58
+> | 	x23: 0000000000000000 x22: 0000000000000000 x21: ffff3947c0eab3c0
+> | 	x20: ffffaba8c4e3f000 x19: ffffaba846464000 x18: 0000000000000006
+> | 	x17: 0000000000000000 x16: ffffaba8c2492834 x15: 0720072007200720
+> | 	x14: 0720072007200720 x13: ffffaba8c49b27c8 x12: 0000000000000312
+> | 	x11: 0000000000000106 x10: ffffaba8c4a0a7c8 x9 : ffffaba8c49b27c8
+> | 	x8 : 00000000ffffefff x7 : ffffaba8c4a0a7c8 x6 : 80000000fffff000
+> | 	x5 : 0000000000000107 x4 : 0000000000000000 x3 : 0000000000000000
+> | 	x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff3947c0eab3c0
+> | 	Call trace:
+> | 	 buginit+0x18/0x1000 [hello]
+> | 	 do_one_initcall+0x80/0x1c8
+> | 	 do_init_module+0x60/0x218
+> | 	 load_module+0x1ba4/0x1d70
+> | 	 __do_sys_init_module+0x198/0x1d0
+> | 	 __arm64_sys_init_module+0x1c/0x28
+> | 	 invoke_syscall+0x48/0x114
+> | 	 el0_svc_common.constprop.0+0x40/0xe0
+> | 	 do_el0_svc+0x1c/0x28
+> | 	 el0_svc+0x34/0xd8
+> | 	 el0t_64_sync_handler+0x120/0x12c
+> | 	 el0t_64_sync+0x190/0x194
+> | 	Code: d0ffffe0 910003fd 91000000 9400000b (d4210000)
+> | 	---[ end trace 0000000000000000 ]---
+> | 	Kernel panic - not syncing: BRK handler: Fatal exception
+> | 
+> | Fix this by always aligning the end of a bug_entry to 4 bytes, which is
+> | correct regardless of CONFIG_DEBUG_BUGVERBOSE.
+> | 
+> | Fixes: 9fb7410f955f ("arm64/BUG: Use BRK instruction for generic BUG traps")
+> | Signed-off-by: Yuanbin Xie <xieyuanbin1@huawei.com>
+> | Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
 > 
-> The cause of the problem is that the related ex_phy's attached_sas_addr was
-> not cleared after the end device probe failed. In order to solve the above
-> problem, a function sas_ex_unregister_end_dev() is defined to clear the
-> ex_phy information and unregister the end device after the exp-attached end
-> device probe failed.
+> With that:
 > 
-> As the sata device is an asynchronous probe, the sata device may probe
-> failed after done REVALIDATING DOMAIN. Then after its port is added to the
-> sas_port_del_list, the port will not be deleted until the end of the next
-> REVALIDATING DOMAIN and sas_destruct_ports() is called. A warning about
-> creating a duplicate port will occur in the new REVALIDATING DOMAIN when
-> the end device reconnects. Therefore, the previous destroy_list and
-> sas_port_del_list should be handled before REVALIDATING DOMAIN.
+> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 > 
-> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
-> ---
-> Changes since v1:
-> - Simplify the process of getting ex_phy id based on Jason's suggestion.
-> - Update commit information.
-> ---
->   drivers/scsi/libsas/sas_discover.c | 2 ++
->   drivers/scsi/libsas/sas_expander.c | 8 ++++++++
->   drivers/scsi/libsas/sas_internal.h | 6 +++++-
->   3 files changed, 15 insertions(+), 1 deletion(-)
+> Mark.
 > 
-> diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
-> index 8fb7c41c0962..aae90153f4c6 100644
-> --- a/drivers/scsi/libsas/sas_discover.c
-> +++ b/drivers/scsi/libsas/sas_discover.c
-> @@ -517,6 +517,8 @@ static void sas_revalidate_domain(struct work_struct *work)
->   	struct sas_ha_struct *ha = port->ha;
->   	struct domain_device *ddev = port->port_dev;
->   
-> +	sas_destruct_devices(port);
-> +	sas_destruct_ports(port);
->   	/* prevent revalidation from finding sata links in recovery */
->   	mutex_lock(&ha->disco_mutex);
->   	if (test_bit(SAS_HA_ATA_EH_ACTIVE, &ha->state)) {
-> diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-> index f6e6db8b8aba..45793c10009b 100644
-> --- a/drivers/scsi/libsas/sas_expander.c
-> +++ b/drivers/scsi/libsas/sas_expander.c
-> @@ -1856,6 +1856,14 @@ static void sas_unregister_devs_sas_addr(struct domain_device *parent,
->   	}
->   }
->   
-> +void sas_ex_unregister_end_dev(struct domain_device *dev)
-> +{
-> +	struct domain_device *parent = dev->parent;
-> +	struct sas_phy *phy = dev->phy;
-> +
-> +	sas_unregister_devs_sas_addr(parent, phy->number, true);
-> +}
-> +
->   static int sas_discover_bfs_by_root_level(struct domain_device *root,
->   					  const int level)
->   {
-> diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
-> index 3804aef165ad..434f928c2ed8 100644
-> --- a/drivers/scsi/libsas/sas_internal.h
-> +++ b/drivers/scsi/libsas/sas_internal.h
-> @@ -50,6 +50,7 @@ void sas_discover_event(struct asd_sas_port *port, enum discover_event ev);
->   
->   void sas_init_dev(struct domain_device *dev);
->   void sas_unregister_dev(struct asd_sas_port *port, struct domain_device *dev);
-> +void sas_ex_unregister_end_dev(struct domain_device *dev);
->   
->   void sas_scsi_recover_host(struct Scsi_Host *shost);
->   
-> @@ -145,7 +146,10 @@ static inline void sas_fail_probe(struct domain_device *dev, const char *func, i
->   		func, dev->parent ? "exp-attached" :
->   		"direct-attached",
->   		SAS_ADDR(dev->sas_addr), err);
-> -	sas_unregister_dev(dev->port, dev);
-> +	if (dev->parent && !dev_is_expander(dev->dev_type))
-> +		sas_ex_unregister_end_dev(dev);
-> +	else
-> +		sas_unregister_dev(dev->port, dev);
->   }
->   
->   static inline void sas_fill_in_rphy(struct domain_device *dev,
-> 
+
+Thank you very much for your patience and professional review.
+
+Indeed, we have not clearly expressed the specific layout
+of `struct bug_entry` under the arm64 ABI
+and how it causes the problem. We have only briefly described
+that the assembly code does not consistent with
+the binary layout of the C struct.
+
+Your commit messge is much more accurate
+in describing the problem, and we couldn't agree more.
+
+I will follow your advice to submit our V2 patch.
 
