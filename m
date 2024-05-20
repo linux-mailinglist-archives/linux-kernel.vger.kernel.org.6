@@ -1,897 +1,308 @@
-Return-Path: <linux-kernel+bounces-184083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83BF8CA24C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:49:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E31278CA24F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBD2C1C2161D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9944F281F5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58637139573;
-	Mon, 20 May 2024 18:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE16E1386B9;
+	Mon, 20 May 2024 18:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKYw8xm1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="I5wBoxX7";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="WmM5p81p"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EB21386A8;
-	Mon, 20 May 2024 18:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716230890; cv=none; b=i1jNWwsQ+QuZrWqesTYWkAXOOKn+XyKW5+ppbdkBWg6mR6TwiKOeoaK3jBCP4Dhop228Hh6pGsOJesAfrCdcuSdW+yWSltwkty9v4a0Ar4FNG+GkAPqSppHuNdJQoRjeHquIJvmOxCIwrH86wNosvegKeoYOOuz3SbhNc24Z84s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716230890; c=relaxed/simple;
-	bh=r5y4Bh3Xs6y2NPBVB69qhr5YKvnEC7G0LpZIPMD89n8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nondDsIHKjitq8apY63VfTmn5yuEEC8Vu+0UMXRtK1HksRKYA7RIKjz1VSbP8UYkjEClH/40rbu1d7p7OhKxhx+A6Gguxbje3sxBFdFhPw+bOUIPfKn5lJSZhTSMirw/jhCd5M0pLExjH8ze91LHy2FkuCgQgH1Ua/dW/XrqWHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKYw8xm1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E38D4C2BD10;
-	Mon, 20 May 2024 18:48:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716230890;
-	bh=r5y4Bh3Xs6y2NPBVB69qhr5YKvnEC7G0LpZIPMD89n8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tKYw8xm1HqZ66lGUYDrPV03FC2aTg8g4faNlFc0yCu/SocJfox7ZSBQ9PbNRIB6Dt
-	 PgN5vnMiMjlGTyEe0N3yFlfAiYlx3h/+lmLUzycJnUE36dfW7EtoFfIY2iIBU4m8YU
-	 AXPW7pl3Uz3imfiJZaJ7BJOJ1J2keK0wcTwpr9umimnV8J6ueasHYYaZUdJAKz74je
-	 UFWg8ZER7eMWDKtRy0ygnPXTxsPcQH87ffEfmzdFuc08glf24/XS8uBZBDjEsrIyYf
-	 qou3bCPJDpZW7SICZZKSrRXtb9aV3zlE00BwCoHpKAa+UKpxpH/BE7dDQX6bCyk86b
-	 kqAsn8fxCXM4g==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	Andreas.Fuchs@infineon.com,
-	James Prestwood <prestwoj@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-crypto@vger.kernel.org (open list:CRYPTO API),
-	linux-kernel@vger.kernel.org (open list),
-	David Howells <dhowells@redhat.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH 6/6] keys: asymmetric: ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE
-Date: Mon, 20 May 2024 21:47:13 +0300
-Message-ID: <20240520184727.22038-7-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240520184727.22038-1-jarkko@kernel.org>
-References: <20240520184727.22038-1-jarkko@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617771386B3
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 18:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716230943; cv=fail; b=o/iwRHyEnrtqGLRPXWvQ1bd0Y2QauV4UopWv6DQq+tBcgeaRhC69y29yaB3yTjMkpe+L8FQCHJDR7nm4WvAwAqWj1Q1nGf90r+0N01ZAPHcJGEj21oCeFzJtnF6Lwqalrc/7XmJGSNncmVpN47LAXd/PG8U/8KAh9CI0f29ICbM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716230943; c=relaxed/simple;
+	bh=hhU3b7ukATf99rWCGJmpZft6ZfqfvSQk23LW30v5Nqs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=TUaZz+IG38RxJPdxIxD/7APENLV+pxDO7LDEJfQ1HULvTkc1QzPR18Y9mgh79t95ivb3k50iADz4DnwALI4PdNYGuVMJaR1L1aki8DLVi3m72UV/2QLjQJeprbXoCDAiO2dHl1FGp/jMAitu7EVQRQOqhLWr2ZiKOJIq4/8eIa0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=I5wBoxX7; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=WmM5p81p; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44KGn2Di003239;
+	Mon, 20 May 2024 18:48:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=ZsFmZCW+IXBsPUr6geFOR0dn3GoJkHC3OJVHhOXHQn0=;
+ b=I5wBoxX7VjqjcN7KCXsWEwcoKLsxa/IWKDEq8ep4V1TCLumoHdeLxjGGrU/7COxbGm0m
+ eI/UHOFIfvD3axb4rNYCF2WojQsi8jsMJ77WeyBzlXO7ThWrK+qylLqVAeW2/MPg/may
+ /+DPdU+Uf9Kk6fpv53St/cXuJl+4UJ20XV2IkAmwbMxLfRRVJON57o8HH6G8a+XoklAY
+ tFAkp/drOg21Fqop5mGPk/+Avsdtz/x7HaEGdbxleN/4XXW9BNCKT82C+LC/Dvgl1WAO
+ W/uxw+Ov2b7u/4KqB1U9jew8b+BTs78ByL9HykB+dV1zNDKSzUe6jyW7dHbzu+71OvLc rA== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y6mcduegk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 20 May 2024 18:48:50 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44KIiaaa002778;
+	Mon, 20 May 2024 18:48:49 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2101.outbound.protection.outlook.com [104.47.55.101])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3y6js6n8py-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 20 May 2024 18:48:49 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XtICQoL27f1ANzDxUpfDUGerSHN+4GUGZilWFAH9YFhwigLZ91Lrpy/SYQ0jbWvRFj+CzQvlHmfLt7cEVLcv0yZpmODrDto/Ac4Y4ku7/WbTJcDahqDtn//A1BQ+qAOe0J3iPeSFQd8aUCAsm+S3GyIfd24LFuoHNfXZW1CGqXgxygD7dDR5yJUoAbrHCHX8T50RzHQBF6rD6zIrX1NUp7iXsK0LDTy3drCwWuIQQzdSpLMleVLW/CjXHR+0h20ASVWBK5eSpfcVjF+k+3VZhzRgD6T3srpgqiJ8W4Tn/xDCMrNyqGEyG9QZ75IIl9kuSDWp+xBJl15C2Izu5w30KA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZsFmZCW+IXBsPUr6geFOR0dn3GoJkHC3OJVHhOXHQn0=;
+ b=nGBD9iRe2cYzL9LIpXJHRJc0h9tDrjXVtyaD2e0a2i+Ddiok+UOQFLWX6BrK5gFr4uK7jxMtMJs9CF5utbq4HZNp9pIfM1ngqUJoMPsU7vz74Xb0sOuoeKycpeQsfkGf+TYjhM6J9DORoFklMMoM9NrROtnjHfjovmYSQFLjdcpThnr0nXdid5dbIM0sJ6J/H06pT8FhYqphQwpXbCnnzVihYjfD6z6mUvKiJQm0u+gyX7Ftaeh+k8AlO+EEO5T0wYoRprHLtlJyCr057wVeKpZS/fmcf03Iog7JaH8qLlYRtngyjoFCxiRxXc7lpfz13ezq/bI9UGd/R8+OOeLFTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZsFmZCW+IXBsPUr6geFOR0dn3GoJkHC3OJVHhOXHQn0=;
+ b=WmM5p81p3/rYAgDNqfcQqJ4Gd2Eo24PkPfPyhoVVFamxycTbOS1eWiks8Vb61vuVP8T1pyvO2rKCSBaqLPNkncGvLrlhtwd08/WB2snpR7G05NVdIKdrtrxCHX9/AoGZAyaiNkP0qCPVi7CS7oZ4xqkRkVPuwl9W8OR0/gWXJD8=
+Received: from SJ0PR10MB4429.namprd10.prod.outlook.com (2603:10b6:a03:2d1::14)
+ by DM6PR10MB4154.namprd10.prod.outlook.com (2603:10b6:5:21f::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.30; Mon, 20 May
+ 2024 18:48:47 +0000
+Received: from SJ0PR10MB4429.namprd10.prod.outlook.com
+ ([fe80::3db0:ec21:1957:f1b3]) by SJ0PR10MB4429.namprd10.prod.outlook.com
+ ([fe80::3db0:ec21:1957:f1b3%6]) with mapi id 15.20.7587.030; Mon, 20 May 2024
+ 18:48:47 +0000
+Message-ID: <78a04731-d585-4fdf-8af6-e9acac18b2d5@oracle.com>
+Date: Mon, 20 May 2024 11:48:45 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] mm/memory-failure: send SIGBUS in the event of thp
+ split fail
+To: Oscar Salvador <osalvador@suse.de>
+Cc: linmiaohe@huawei.com, nao.horiguchi@gmail.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240510062602.901510-1-jane.chu@oracle.com>
+ <20240510062602.901510-6-jane.chu@oracle.com>
+ <ZkYARVW2cOZcsFYB@localhost.localdomain>
+Content-Language: en-US
+From: Jane Chu <jane.chu@oracle.com>
+In-Reply-To: <ZkYARVW2cOZcsFYB@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0051.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c2::26) To SJ0PR10MB4429.namprd10.prod.outlook.com
+ (2603:10b6:a03:2d1::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB4429:EE_|DM6PR10MB4154:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc7ca02a-0def-4475-49fe-08dc78fd7b6b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?WWFNdmc0a2dlVisrUmtoZnFIbHlHU1F1ZHlOenlIVy9IRldScVc5OFF5Si9I?=
+ =?utf-8?B?NnVyTzF1ejMyNkI2eksyYTM0eDhDcDVsdXBJcnBGeUViaEFRZ254UnB2Z01T?=
+ =?utf-8?B?MDU2YmJVSHV2ajBGalBjSHFWTmtxZUFQeFhZK1Jsa01VT1dOa2E0Ry9oWmFZ?=
+ =?utf-8?B?Z0dBSmRCQjZpZklVSm5Gc0pCTktJV2RIcmFtYnp0MVNKcncrLzdka0crbHVw?=
+ =?utf-8?B?UDZrWlhsZlBvN3kyZC9FQXFtbUk0c0ZydzFqQndVTEJvVXk3L3M2MmN4S1Zk?=
+ =?utf-8?B?aGVadkdwNzIvcER6TXVqeGVCalNTblFZcTZORGJCeTV0UFppenpSRGVLQTlD?=
+ =?utf-8?B?bS9RWVpMbWV0cDlsUDQ2bnJXQnR3dHZJbElTeHlOY2pJQzg2blRBZ2pOR05a?=
+ =?utf-8?B?UEtOWDhrRXlCNW00MVJmcUNxcU1lS25ZRk9lQmVzTTZKbzlOK1k4c3VEbjZl?=
+ =?utf-8?B?ZHd5UFBWM29uK2JiSzNsRjR1YlFHNEFiN2RSUTBmcW1zemdKN1FDOXpsN3Fr?=
+ =?utf-8?B?anZCdWR1S3VIRTJNemRQaGVDS2JQOFIwWTB3aUcrWE40K0JQekNyTjVXQito?=
+ =?utf-8?B?QUErYmhSamdFTUFBUis0MzNKeEJocEtJaWFIc3U2c09jSGxVaktMbUg2M0RV?=
+ =?utf-8?B?UGl5MEViQmFYR3VyOStTZHhReDc3bG9STnVOcHFnSzBOSzRiTi9qbExjdlBw?=
+ =?utf-8?B?b0ZNSVozVUt3V2JrSWFWejE0YWdRRzk4VG9wTkNvbzBZdThUZDd0M3NPa2FR?=
+ =?utf-8?B?VmdCQVE0MVpkNTRBOVJhNCtrendhRmNDRnIxc1FZUVBBS2FSWk9hMnJna0Vo?=
+ =?utf-8?B?ZEx4eW9zSmdDU1NaT3JpWG5HMFpzRGFNNWN5YkErdDFzOTJ2SHNkMEFzck85?=
+ =?utf-8?B?NmQ3R2EwcWkrdTk1TDhScFBVQWhYNW5WaVpjTjQ4dlVMUDd4TG9BdThlTm93?=
+ =?utf-8?B?TW11VncvM1Z4YUkyVExFVG5MdFZiRkFUZFl1eVd5T3AvajE5ekM5YzFRZmdU?=
+ =?utf-8?B?dUhrSUdjL0UzdngyV2laa2gzS0pHNjJIU3pCNTc3MnNsZWVkQnc4SmZONDdW?=
+ =?utf-8?B?T20xR0NhZ1BlM1lGWGw1K2FzdTJWdnRLa1hyOFEyRkxzaXBsQnBWaXEwbjho?=
+ =?utf-8?B?V2VpQzZqWDlObmU4bG41dFJEcVFPRXp3SWVNblRJTGNQa2V4Ylg2TlBhTENC?=
+ =?utf-8?B?bm9pY0taZlE1N3F5cGovWVJBRFBUZzNVdGo1dDgvUEUxdXBWRUpKcjlEaU52?=
+ =?utf-8?B?L0x4SnUxZkJGQ2piUzI1YWNlYU9XT0l1UUo5ZTRIcGZYdVRLVjBrNXVuWXNP?=
+ =?utf-8?B?TXFtV3dza3dBQ2RHd0pYeFBwOXplaTBiNnAzb3NzZW4ySm1pL1JwT0QxdWN5?=
+ =?utf-8?B?Q3dyRWNyZDBQWmlvS2xUYkFWc29Td3R2cGVQZlk0MDlLRUhpZHo4NmM0UEVZ?=
+ =?utf-8?B?MDhWV2ZZZjhrYXZaZm5RMFJWODIxVmZJeTJNUTRNVCtybnNLVHZ5RXRQQkhD?=
+ =?utf-8?B?R241YTNvc21qWm1OT1RHVW1ZdWRCNjF0bXpYSnJnMGhCa3VJbWdXdUh3OHpw?=
+ =?utf-8?B?cnpOR2E1VncvWkhnV3lIczhzbi80S2hlNlZBcG1aTDRzbEF2WTVWOG1IRnVT?=
+ =?utf-8?B?UmRDNFhOenhuTWxJeEM1SXZSaDNQNlZNa2pUUTJpZStsRWhpa20yR1VzV0VK?=
+ =?utf-8?B?c0plaGd4UUFhVlV6aGQ3T3dxYVJlb3h0N2pWY3BzdDgwRG9qQzBsdlVnPT0=?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4429.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?ZjRJZjUzZys2bDY1cWRqY0FpZWVCRXNHSXdVUVNjNy9rR0EvYmJpYXl5aDBK?=
+ =?utf-8?B?cXNkblczMklmZnF6TmN1OUxkeVVQbVRlb2UydmVVYkx2SkxTS3doQlY1by9J?=
+ =?utf-8?B?YXhaUi9YNzVQd25oV1FXeUNYdHJXY0JOQlgzSWpvWXlDY0MxYmRsT3NHcHpj?=
+ =?utf-8?B?K0xwalFCcW1YRGNRY1hqdFNkR2gvbGNuWm9IRVB6TTBiTHl2OFYwdEEzWkJO?=
+ =?utf-8?B?VjEyeTdMMzFaaERCZGlhNkFlUk5obVVLd0VzVXRVWXZPcitROFlxWldYeE5O?=
+ =?utf-8?B?ZU42Y1FnYXA2aTdFRVp6VUZ6b213aURDYiswNmkwdm9IcHZDNEhBL0N3MW5T?=
+ =?utf-8?B?aHNuNVprRUlWOE8vS3ExN0MvNFJOOCtwNzFDeWNiNVB0NDF1cWFZbkdoeFFV?=
+ =?utf-8?B?eHZkSHgvUnRLd0VGN2RCQXdzV3MwUjBycEZvd3B3R3BZcjE2cG1ycDg0OXlF?=
+ =?utf-8?B?dlVDUi9vL0txTHZENmE3OW1ISlhPMFZUMnA1ZGVON2k1VWU4TVJWdW1IQXlp?=
+ =?utf-8?B?K1ZVMXBiajhNZktFWVp4VFc3M1BKMlF4UWd0bktSZElHOEFmTWd0dEJwL29u?=
+ =?utf-8?B?YVQ3dk5Fdm1oaHVLWEdBQmhPOG9DQ3hhK3lUVHJqeTIzK3RpVWIvZWpUZVFm?=
+ =?utf-8?B?VDQ1MzR2ZE4zdWJVMW5jbXNlWTE5cUxOeXhwN3ZOaDZ5ZngvOHY1djdvcVJr?=
+ =?utf-8?B?RU9IZXJzMXJ6V2xKTTJ2Z1cvSEdpdFptbWtUblYrWFFWdUEvQWlBZ2IzMFdz?=
+ =?utf-8?B?NCtFMU9iMnk0R25COVAzN0lrWTJwWlY5eXJ5ak12T3BwTmVVWWNWbkJ5cmp4?=
+ =?utf-8?B?UUpzdHRoUVBlNjRrQUVDaTU4ZGxYeVVzS1V3NkxkaFRTZUdGdGREOHcwcEpV?=
+ =?utf-8?B?YW5Kb0Q5REJDSGpEdmFUbHRhMnJ5SHBOQlk3dTZxVUpxUDgrbzJQL2xwUDRY?=
+ =?utf-8?B?WVVEWGkwTE0wNXA2VE5HTEZIYkFYTFVpN0Raa1N6VkZNYjFBNzZ3bEhINiti?=
+ =?utf-8?B?WWxaU0lXalJ1djFQdlJIbE5UcGM0Wmp2cE42Z3lwYjdTcHlmdGROL2plKzhZ?=
+ =?utf-8?B?TGJDQWpVVU9XRGNOYmJDZnhtdFdXcnBNbkc1TDFoQnhVK2YzZjZCTG9LRmFJ?=
+ =?utf-8?B?TEVSSFhTY0VjeHNuS2pvWTA2MllkTnU5S2x5VytneC9NM3JsWG50MGx2dHJj?=
+ =?utf-8?B?WFBQU3ExYjFWZU4xRzlsbkdLVUgyMEZyS0xxV3p2Q1VqYUFpY1A0dWUwbjRM?=
+ =?utf-8?B?QlFWN3VRbXFEVC8va0Q5TC9JRndobUFzc2VwWnFjSkFiSDhaaGNIWTVORm1L?=
+ =?utf-8?B?Z0JKdjhLT3RrY2NyRVdQUHNSWHR1RVk2aVg1d3k4V0xMVTZreDN1ckNweUNp?=
+ =?utf-8?B?L3B2c2x6d245NkYrQ0F3ZlR4cVFPM0Z6VzdGbjJ1YmNvclgyR1JoVGZ5RzEw?=
+ =?utf-8?B?aGRocmo1SVNIK3E5SU1JWTZzbVhCS1hmM1F1OStraExZd3Bxd1Vub3Uwb3dD?=
+ =?utf-8?B?Sm1TZkRiM3Fwa3d3YWQwRllIOU9zbURwMEV4N04wNEtyUlM1TDNhVS9GOEJj?=
+ =?utf-8?B?akJBTkE3TEUyNVJsWnd2RDdSNUs2S3o0L0RlenRGdjdTSnQ2RENlNzh3aC9w?=
+ =?utf-8?B?MWdDUE5BU0FoREFLSHdUUVlLZDU0cHVSeUcyWWs2L2xzRHd1UXNXY2lxeXdY?=
+ =?utf-8?B?dXdyRGM1eDNtTGtnMHZsREd6NXlIOHRuaHhnM2ZFNFI4enF4VU1qK3dIV09H?=
+ =?utf-8?B?NWZQeDR3ZExXdUxzWFZCbjBNdmQ2eXM5YW9saXJNYkJ4VUUzMEJUNER4dTg5?=
+ =?utf-8?B?Qmp1TFhZa3RpN0N0TXhlUjJaMjdVNDZWR1J1YUJJdmZMWG8wT1M2NXNJWUdr?=
+ =?utf-8?B?NUc2SnpQeXhwckxpM2kySjVYemN6R3hLcUV2dEsvTjFWcnJhYmQvS3JjK0hU?=
+ =?utf-8?B?TVJpelJBVTRieHZybVcvelNSeW5QY3V6RDdJcWkycXFyNThnOGhzclpNeWJY?=
+ =?utf-8?B?WFhIZCtsVlZranZRSmx4akJLTDdHenBKdGtXVTJxelNPUTJaUXJBWE1PSW1C?=
+ =?utf-8?B?RVNCSE5tdXFaNEpaMlE5OTRxQ2dxT2tCY0t5STBGN29yK0RScDU0akJSYWp4?=
+ =?utf-8?Q?B6vTcCHwuAX/WiA2re0+8Owt2?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	0W0GdkzBw3BKq1aSEQslXQ65BmbY+gkLSAyFhy2DyslpCoMhY3baKIHrQMm0WDk/SVXeVtAq3amvhrpohaAGS9vMNnDGpVMv7+ayvQejOdWSNHgjjMcozfNJ7KnHj6MyHaCIMPMcF34JR0SMtDoAzCU6bUkcvWhp9fBC6Zmh+vVEbS8ytCPnh/kL8YKFoifHgrDmix6jXWnl0Ref1JdsKOpkuAze/TClb4CPzBC58svdvoVkzDgZreQTSBpX2LwCfQH+vG6soq1QklGdld5XsJ3ew+QhmsS9JASyjbP/we4itrgpsuzd3tIKcXb5kYbNoXye4Q0Nh1CP1WUdvQhYeT38mujOCEJn7vdsRM/b/RqGPtVE8TqzoSXwg6FOoZMtMTdyj5tEG/Zk14AKcNWTt1gmCzIVlti6807PaB6wG9zdJgwrds/svB138RbfizL9O3H4PCnHithbrgFjD4yFhOdho1ARW6UseDjB5oi2lX7Bz/dVSdNeNagsswdASQRoyktyP0QUClmVVATUuz0M2DuS03+Zmdv6SHpBxP4HE4z/EwDBMOb7kuA08gotuxihZJl2qC6Nza8w+nqLn1o3QnVdQ284tpqOd64vpg4BE4c=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc7ca02a-0def-4475-49fe-08dc78fd7b6b
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4429.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 18:48:47.3266
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EauZV/7L5MY0YKtZRJmJ1Mn4nwoxQLuzSVZ0MOxNQ4DhG32x3vbW0eRMTXAo1gQ0LHXEJ+LMbT5qjCvacy4jpg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4154
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-20_09,2024-05-17_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 adultscore=0 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405200150
+X-Proofpoint-ORIG-GUID: vzFevCgC2AuQutiSsqVmjsONVw9QShtN
+X-Proofpoint-GUID: vzFevCgC2AuQutiSsqVmjsONVw9QShtN
 
-From: James Prestwood <prestwoj@gmail.com>
+On 5/16/2024 5:47 AM, Oscar Salvador wrote:
 
-Based on earlier work by James Prestwood.
+> On Fri, May 10, 2024 at 12:26:02AM -0600, Jane Chu wrote:
+>> When handle hwpoison in a RDMA longterm pinned thp page,
+>> try_to_split_thp_page() will fail. And at this point, there is
+>> little else the kernel could do except sending a SIGBUS to
+>> the user process, thus give it a chance to recover.
+> Well, it does need to be a RDMA longterm pinned, right?
+> Anything holding an extra refcount can already make us bite the dust, so
+> I would not make it that specific.
 
-Add ASN.1 compatible asymmetric TPM2 RSA key subtype:
+How about let me just mention RDMA longterm pin as one of the use cases?
 
-1. Signing and decryption (with the private key) is handled by
-   TPM2_RSA_Decrypt.
-2. Encryption (with the public key) is handled by the kernel RSA
-   implementation.
+To be honest, it is the only known case to me, and not all FOLL_LONGTERM 
+pin
 
-Link: https://lore.kernel.org/all/20200518172704.29608-1-prestwoj@gmail.com/
-Signed-off-by: James Prestwood <prestwoj@gmail.com>
-Co-developed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- crypto/asymmetric_keys/Kconfig        |  16 +
- crypto/asymmetric_keys/Makefile       |   1 +
- crypto/asymmetric_keys/tpm2_key_rsa.c | 726 ++++++++++++++++++++++++++
- include/linux/tpm.h                   |   2 +
- 4 files changed, 745 insertions(+)
- create mode 100644 crypto/asymmetric_keys/tpm2_key_rsa.c
+lead to THP split failure.
 
-diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
-index e1345b8f39f1..4d14bb0c346e 100644
---- a/crypto/asymmetric_keys/Kconfig
-+++ b/crypto/asymmetric_keys/Kconfig
-@@ -15,6 +15,7 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
- 	select MPILIB
- 	select CRYPTO_HASH_INFO
- 	select CRYPTO_AKCIPHER
-+	select CRYPTO_RSA
- 	select CRYPTO_SIG
- 	select CRYPTO_HASH
- 	help
-@@ -23,6 +24,21 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
- 	  appropriate hash algorithms (such as SHA-1) must be available.
- 	  ENOPKG will be reported if the requisite algorithm is unavailable.
- 
-+config ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE
-+	tristate "Asymmetric TPM2 RSA crypto algorithm subtype"
-+	depends on TCG_TPM
-+	select TCG_TPM2_HMAC
-+	select CRYPTO_RSA
-+	select CRYPTO_SHA256
-+	select CRYPTO_HASH_INFO
-+	select ASN1
-+	select ASN1_ENCODER
-+	help
-+	  This option provides support for asymmetric TPM2 key type handling.
-+	  If signature generation and/or verification are to be used,
-+	  appropriate hash algorithms (such as SHA-256) must be available.
-+	  ENOPKG will be reported if the requisite algorithm is unavailable.
-+
- config X509_CERTIFICATE_PARSER
- 	tristate "X.509 certificate parser"
- 	depends on ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
-index bc65d3b98dcb..c6da84607824 100644
---- a/crypto/asymmetric_keys/Makefile
-+++ b/crypto/asymmetric_keys/Makefile
-@@ -11,6 +11,7 @@ asymmetric_keys-y := \
- 	signature.o
- 
- obj-$(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE) += public_key.o
-+obj-$(CONFIG_ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE) += tpm2_key_rsa.o
- 
- #
- # X.509 Certificate handling
-diff --git a/crypto/asymmetric_keys/tpm2_key_rsa.c b/crypto/asymmetric_keys/tpm2_key_rsa.c
-new file mode 100644
-index 000000000000..f44ddb5baee6
---- /dev/null
-+++ b/crypto/asymmetric_keys/tpm2_key_rsa.c
-@@ -0,0 +1,726 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/* TPM2 asymmetric public-key crypto subtype
-+ *
-+ * See Documentation/crypto/asymmetric-keys.rst
-+ *
-+ * Copyright (c) 2020 Intel Corporation
-+ */
-+
-+#include <asm/unaligned.h>
-+#include <crypto/akcipher.h>
-+#include <crypto/public_key.h>
-+#include <crypto/rsa-pkcs1pad.h>
-+#include <crypto/tpm2_key.h>
-+#include <keys/asymmetric-parser.h>
-+#include <keys/asymmetric-subtype.h>
-+#include <keys/trusted-type.h>
-+#include <linux/asn1_encoder.h>
-+#include <linux/keyctl.h>
-+#include <linux/module.h>
-+#include <linux/scatterlist.h>
-+#include <linux/slab.h>
-+#include <linux/tpm.h>
-+
-+#undef pr_fmt
-+#define pr_fmt(fmt) "tpm2_key_rsa: "fmt
-+
-+#define PUB_KEY_BUF_SIZE 512
-+
-+struct tpm2_key_rsa {
-+	struct tpm2_key key;
-+	const u8 *pub;
-+	int pub_len;
-+};
-+
-+/*
-+ * PKCS1 padding (type 1)
-+ */
-+static int tpm2_pad_pkcs1(const u8 *m, unsigned int mlen,
-+			  u8 *em, unsigned int em_len)
-+{
-+	unsigned int ps_len = em_len - mlen - 3;
-+
-+	if (mlen > em_len - 11)
-+		return -EBADMSG;
-+
-+	em[0] = 0;
-+	em[1] = 1;
-+
-+	memset(em + 2, 0xff, ps_len);
-+
-+	em[2 + ps_len] = 0;
-+	memcpy(em + 2 + ps_len + 1, m, mlen);
-+
-+	return 0;
-+}
-+
-+/*
-+ * RFC 3447 - Section 7.2.2
-+ */
-+static const u8 *tpm2_unpad_pkcs1(const u8 *data, unsigned int len,
-+				  unsigned int *out_len)
-+{
-+	unsigned int i;
-+
-+	/*
-+	 * Size of input data should be checked against public key size by
-+	 * caller.
-+	 */
-+	if (data[0] != 0 || data[1] != 2)
-+		return NULL;
-+
-+	i = 2;
-+
-+	while (data[i] != 0 && i < len)
-+		i++;
-+
-+	if (i == len)
-+		return NULL;
-+
-+	*out_len = len - i - 1;
-+
-+	return data + i + 1;
-+}
-+
-+/*
-+ * Outputs the cipher algorithm name on success, and retuns -ENOPKG
-+ * on failure.
-+ */
-+static int tpm2_key_get_akcipher(const char *encoding, const char *hash_algo,
-+				 char *cipher)
-+{
-+	ssize_t ret;
-+
-+	if (strcmp(encoding, "pkcs1") == 0) {
-+		if (!hash_algo) {
-+			strcpy(cipher, "pkcs1pad(rsa)");
-+			return 0;
-+		}
-+
-+		ret = snprintf(cipher, CRYPTO_MAX_ALG_NAME,
-+			       "pkcs1pad(rsa,%s)",
-+			       hash_algo);
-+		if (ret >= CRYPTO_MAX_ALG_NAME)
-+			return -ENOPKG;
-+
-+		return 0;
-+	}
-+
-+	if (strcmp(encoding, "raw") == 0) {
-+		strcpy(cipher, "rsa");
-+		return 0;
-+	}
-+
-+	return -ENOPKG;
-+}
-+
-+static int tpm2_key_rsa_extract_pub(struct tpm2_key_rsa *key_rsa)
-+{
-+	struct tpm2_key *key = &key_rsa->key;
-+	struct tpm_buf buf;
-+	off_t offset = 2;
-+	u16 policy_len;
-+	u32 attr;
-+	u16 bits;
-+	u16 type;
-+	u16 len;
-+	u16 alg;
-+	u32 exp;
-+
-+	buf.flags = TPM_BUF_TPM2B;
-+	buf.length = key->pub_len;
-+	buf.data = (void *)key->pub;
-+
-+	if (get_unaligned_be16(key->pub) != buf.length - 2)
-+		return -EINVAL;
-+
-+	type = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub type: 0x%04x\n", type);
-+	if (type != TPM_ALG_RSA)
-+		return -EINVAL;
-+
-+	alg = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub name alg: 0x%04x\n", alg);
-+	attr = tpm_buf_read_u32(&buf, &offset);
-+	pr_debug("pub attributes: 0x%08x\n", attr);
-+	policy_len = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub policy length: %u bytes\n", policy_len);
-+	offset += policy_len;
-+
-+	if (buf.flags & TPM_BUF_BOUNDARY_ERROR) {
-+		pr_err("pub overflow\n");
-+		return -EIO;
-+	}
-+
-+	alg = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub symmetric: 0x%04x\n", alg);
-+	if (alg != TPM_ALG_NULL)
-+		return -EINVAL;
-+
-+	alg = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub symmetric scheme: 0x%04x\n", alg);
-+	if (alg != TPM_ALG_NULL)
-+		return -EINVAL;
-+
-+	bits = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub bits: %u\n", bits);
-+
-+	exp = tpm_buf_read_u32(&buf, &offset);
-+	pr_debug("pub exponent: 0x%08x\n", exp);
-+	if (exp != 0x00000000 && exp !=  0x00010001)
-+		return -EINVAL;
-+
-+	if (buf.flags & TPM_BUF_BOUNDARY_ERROR) {
-+		pr_err("pub overflow\n");
-+		return -EIO;
-+	}
-+
-+	len = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub modulus: %u bytes\n", len);
-+	key_rsa->pub = key->pub + offset;
-+	key_rsa->pub_len = len;
-+	return 0;
-+}
-+
-+static int tpm2_key_rsa_encode(const struct tpm2_key_rsa *key, u8 *buf)
-+{
-+	const int SCRATCH_SIZE = PAGE_SIZE;
-+	const u8 exp[3] = {1, 0, 1};
-+	u8 *scratch, *work, *work1, *end_work;
-+	int pub_len = key->pub_len;
-+	const u8 *pub = key->pub;
-+	int ret;
-+
-+	scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
-+	if (!scratch)
-+		return -ENOMEM;
-+
-+	work = scratch;
-+	end_work = &scratch[SCRATCH_SIZE];
-+
-+	work = asn1_encode_integer(work, end_work, pub, pub_len);
-+	if (IS_ERR(work)) {
-+		ret = PTR_ERR(work);
-+		goto err;
-+	}
-+
-+	work = asn1_encode_integer(work, end_work, exp, 3);
-+	if (IS_ERR(work)) {
-+		ret = PTR_ERR(work);
-+		goto err;
-+	}
-+
-+	work1 = buf;
-+	work1 = asn1_encode_sequence(work1, &work1[PUB_KEY_BUF_SIZE],
-+				     scratch, work - scratch);
-+	if (IS_ERR(work1)) {
-+		ret = PTR_ERR(work1);
-+		goto err;
-+	}
-+
-+	memset(work1, 0, 8);
-+
-+	kfree(scratch);
-+	return work1 - buf;
-+
-+err:
-+	kfree(scratch);
-+	return ret;
-+}
-+
-+/*
-+ * Encryption operation is performed with the public key.  Hence it is done
-+ * in software
-+ */
-+static int tpm2_key_rsa_encrypt(struct tpm2_key_rsa *key,
-+				struct kernel_pkey_params *params,
-+				const void *in, void *out)
-+{
-+	char cipher[CRYPTO_MAX_ALG_NAME];
-+	struct scatterlist in_sg, out_sg;
-+	u8 enc_pub_key[PUB_KEY_BUF_SIZE];
-+	struct akcipher_request *req;
-+	struct crypto_akcipher *tfm;
-+	struct crypto_wait cwait;
-+	int rc;
-+
-+	rc = tpm2_key_get_akcipher(params->encoding, params->hash_algo, cipher);
-+	if (rc < 0)
-+		return rc;
-+
-+	tfm = crypto_alloc_akcipher(cipher, 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	rc = tpm2_key_rsa_encode(key, enc_pub_key);
-+	if (rc < 0)
-+		goto err_tfm;
-+
-+	rc = crypto_akcipher_set_pub_key(tfm, enc_pub_key, rc);
-+	if (rc < 0)
-+		goto err_tfm;
-+
-+	req = akcipher_request_alloc(tfm, GFP_KERNEL);
-+	if (!req) {
-+		rc = -ENOMEM;
-+		goto err_tfm;
-+	}
-+
-+	sg_init_one(&in_sg, in, params->in_len);
-+	sg_init_one(&out_sg, out, params->out_len);
-+	akcipher_request_set_crypt(req, &in_sg, &out_sg, params->in_len,
-+				   params->out_len);
-+
-+	crypto_init_wait(&cwait);
-+	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
-+				      CRYPTO_TFM_REQ_MAY_SLEEP,
-+				      crypto_req_done, &cwait);
-+
-+	rc = crypto_akcipher_encrypt(req);
-+	rc = crypto_wait_req(rc, &cwait);
-+
-+	if (!rc)
-+		rc = req->dst_len;
-+
-+	akcipher_request_free(req);
-+
-+err_tfm:
-+	crypto_free_akcipher(tfm);
-+
-+	return rc;
-+}
-+
-+static int __tpm2_key_rsa_decrypt(struct tpm_chip *chip,
-+				  struct tpm2_key_rsa *key,
-+				  struct kernel_pkey_params *params,
-+				  const void *in, int in_len, void *out)
-+{
-+	unsigned int offset = 0;
-+	u32 key_handle = 0;
-+	struct tpm_buf buf;
-+	u16 decrypted_len;
-+	u32 parent;
-+	u8 *pos;
-+	int ret;
-+
-+	ret = tpm_try_get_ops(chip);
-+	if (ret)
-+		return ret;
-+
-+	ret = tpm2_start_auth_session(chip);
-+	if (ret)
-+		goto err_ops;
-+
-+	if (key->key.parent == TPM2_RH_NULL) {
-+		ret = tpm2_load_context(chip, chip->null_key_context, &offset,
-+					&parent);
-+		if (ret) {
-+			ret = -EIO;
-+			goto err_auth;
-+		}
-+	} else {
-+		parent = key->key.parent;
-+	}
-+
-+	pr_info("parent: 0x%08x\n", parent);
-+
-+	ret = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
-+	if (ret < 0)
-+		goto err_parent;
-+
-+	tpm_buf_append_name(chip, &buf, parent, NULL);
-+	tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_CONTINUE_SESSION |
-+				    TPM2_SA_ENCRYPT, NULL, 0);
-+	tpm_buf_append(&buf, key->key.blob, key->key.blob_len);
-+	if (buf.flags & TPM_BUF_OVERFLOW) {
-+		ret = -E2BIG;
-+		goto err_buf;
-+	}
-+	tpm_buf_fill_hmac_session(chip, &buf);
-+	ret = tpm_transmit_cmd(chip, &buf, 4, "loading blob");
-+	ret = tpm_buf_check_hmac_response(chip, &buf, ret);
-+	if (ret) {
-+		ret = -EIO;
-+		goto err_buf;
-+	}
-+	key_handle = be32_to_cpup((__be32 *)&buf.data[TPM_HEADER_SIZE]);
-+	pr_info("key: 0x%08x\n", key_handle);
-+
-+	tpm_buf_reset(&buf, TPM2_ST_SESSIONS, TPM2_CC_RSA_DECRYPT);
-+	tpm_buf_append_name(chip, &buf, key_handle, NULL);
-+	tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_DECRYPT, NULL, 0);
-+	tpm_buf_append_u16(&buf, in_len);
-+	tpm_buf_append(&buf, in, in_len);
-+	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
-+	tpm_buf_append_u16(&buf, 0);
-+	tpm_buf_fill_hmac_session(chip, &buf);
-+	ret = tpm_transmit_cmd(chip, &buf, 4, "RSA decryption");
-+	ret = tpm_buf_check_hmac_response(chip, &buf, ret);
-+	if (ret) {
-+		ret = -EIO;
-+		goto err_blob;
-+	}
-+
-+	pos = buf.data + TPM_HEADER_SIZE + 4;
-+	decrypted_len = be16_to_cpup((__be16 *)pos);
-+	pos += 2;
-+
-+	if (params->out_len < decrypted_len) {
-+		ret = -EMSGSIZE;
-+		goto err_blob;
-+	}
-+
-+	memcpy(out, pos, decrypted_len);
-+	ret = decrypted_len;
-+
-+err_blob:
-+	tpm2_flush_context(chip, key_handle);
-+
-+err_buf:
-+	tpm_buf_destroy(&buf);
-+
-+err_parent:
-+	if (key->key.parent == TPM2_RH_NULL)
-+		tpm2_flush_context(chip, parent);
-+
-+err_auth:
-+	if (ret < 0)
-+		tpm2_end_auth_session(chip);
-+
-+err_ops:
-+	tpm_put_ops(chip);
-+	return ret;
-+}
-+
-+/*
-+ * Decryption operation is performed with the private key in the TPM.
-+ */
-+static int tpm2_key_rsa_decrypt(struct tpm_chip *chip, struct tpm2_key_rsa *key,
-+				struct kernel_pkey_params *params,
-+				const void *in, void *out)
-+{
-+	unsigned int unpadded_len;
-+	const u8 *unpadded;
-+	u8 *work;
-+	int ret;
-+
-+	work = kzalloc(params->out_len, GFP_KERNEL);
-+
-+	ret = __tpm2_key_rsa_decrypt(chip, key, params, in, params->in_len, work);
-+	if (ret < 0)
-+		goto err;
-+
-+	unpadded = tpm2_unpad_pkcs1(work, ret, &unpadded_len);
-+	if (!unpadded) {
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
-+	memcpy(out, unpadded, unpadded_len);
-+	kfree(work);
-+	return unpadded_len;
-+
-+err:
-+	kfree(work);
-+	return ret;
-+}
-+
-+/*
-+ * Sign operation is an encryption using the TPM's private key. With RSA the
-+ * only difference between encryption and decryption is where the padding goes.
-+ * Since own padding can be used, TPM2_RSA_Decrypt can be repurposed to do
-+ * encryption.
-+ */
-+static int tpm2_key_rsa_sign(struct tpm_chip *chip, struct tpm2_key_rsa *key,
-+			     struct kernel_pkey_params *params,
-+			     const void *in, void *out)
-+{
-+	const struct rsa_asn1_template *asn1;
-+	u32 in_len = params->in_len;
-+	void *asn1_wrapped = NULL;
-+	int pub_len = key->pub_len;
-+	u8 *padded;
-+	int ret;
-+
-+	if (strcmp(params->encoding, "pkcs1") != 0) {
-+		ret = -ENOPKG;
-+		goto done;
-+	}
-+
-+	if (params->hash_algo) {
-+		asn1 = rsa_lookup_asn1(params->hash_algo);
-+		if (!asn1) {
-+			ret = -ENOPKG;
-+			goto done;
-+		}
-+
-+		/* Request enough space for the ASN.1 template + input hash */
-+		asn1_wrapped = kzalloc(in_len + asn1->size, GFP_KERNEL);
-+		if (!asn1_wrapped) {
-+			ret = -ENOMEM;
-+			goto done;
-+		}
-+
-+		/* Copy ASN.1 template, then the input */
-+		memcpy(asn1_wrapped, asn1->data, asn1->size);
-+		memcpy(asn1_wrapped + asn1->size, in, in_len);
-+
-+		in = asn1_wrapped;
-+		in_len += asn1->size;
-+	}
-+
-+	/*
-+	 * Using the TPM's decrypt call to sign (aka encrypt). This
-+	 * requires pre-padding the data with PKCS1.
-+	 */
-+	padded = kmalloc(pub_len, GFP_KERNEL);
-+	tpm2_pad_pkcs1(in, in_len, padded, pub_len);
-+
-+	ret = __tpm2_key_rsa_decrypt(chip, key, params, padded, pub_len, out);
-+
-+	kfree(padded);
-+done:
-+	kfree(asn1_wrapped);
-+	return ret;
-+}
-+
-+static void tpm2_key_rsa_describe(const struct key *asymmetric_key,
-+				  struct seq_file *m)
-+{
-+	struct tpm2_key_rsa *key = asymmetric_key->payload.data[asym_crypto];
-+
-+	if (!key) {
-+		pr_err("key is empty");
-+		return;
-+	}
-+
-+	seq_puts(m, "TPM2/RSA");
-+}
-+
-+static void tpm2_key_rsa_destroy(void *payload0, void *payload3)
-+{
-+	struct tpm2_key *key = payload0;
-+
-+	if (!key)
-+		return;
-+
-+	tpm2_key_destroy(key);
-+	kfree(key);
-+}
-+
-+static int tpm2_key_rsa_eds_op(struct kernel_pkey_params *params,
-+			       const void *in, void *out)
-+{
-+	struct tpm2_key_rsa *key = params->key->payload.data[asym_crypto];
-+	struct tpm_chip *chip = tpm_default_chip();
-+
-+	if (!chip)
-+		return -ENODEV;
-+
-+	switch (params->op) {
-+	case kernel_pkey_encrypt:
-+		return tpm2_key_rsa_encrypt(key, params, in, out);
-+	case kernel_pkey_decrypt:
-+		return tpm2_key_rsa_decrypt(chip, key, params, in, out);
-+	case kernel_pkey_sign:
-+		return tpm2_key_rsa_sign(chip, key, params, in, out);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+static int tpm2_key_rsa_verify(const struct key *key,
-+			       const struct public_key_signature *sig)
-+{
-+	const struct tpm2_key_rsa *tpm2_key = key->payload.data[asym_crypto];
-+	char alg_name[CRYPTO_MAX_ALG_NAME];
-+	u8 enc_pub_key[PUB_KEY_BUF_SIZE];
-+	struct akcipher_request *req;
-+	struct scatterlist src_sg[2];
-+	struct crypto_akcipher *tfm;
-+	struct crypto_wait cwait;
-+	int rc;
-+
-+	if (WARN_ON(!tpm2_key || !sig || !sig->s))
-+		return -EINVAL;
-+
-+	if (!sig->digest)
-+		return -ENOPKG;
-+
-+	rc = tpm2_key_get_akcipher(sig->encoding, sig->hash_algo, alg_name);
-+	if (rc < 0)
-+		return rc;
-+
-+	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	rc = tpm2_key_rsa_encode(tpm2_key, enc_pub_key);
-+	if (rc < 0)
-+		goto err_tfm;
-+
-+	rc = crypto_akcipher_set_pub_key(tfm, enc_pub_key, rc);
-+	if (rc < 0)
-+		goto err_tfm;
-+
-+	rc = -ENOMEM;
-+	req = akcipher_request_alloc(tfm, GFP_KERNEL);
-+	if (!req)
-+		goto err_tfm;
-+
-+	sg_init_table(src_sg, 2);
-+	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
-+	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
-+	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
-+				   sig->digest_size);
-+	crypto_init_wait(&cwait);
-+	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
-+				      CRYPTO_TFM_REQ_MAY_SLEEP,
-+				      crypto_req_done, &cwait);
-+	rc = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
-+
-+	akcipher_request_free(req);
-+err_tfm:
-+	crypto_free_akcipher(tfm);
-+	pr_devel("<=%s() = %d\n", __func__, rc);
-+	if (WARN_ON_ONCE(rc > 0))
-+		rc = -EINVAL;
-+	return rc;
-+}
-+
-+static int tpm2_key_rsa_query(const struct kernel_pkey_params *params,
-+			      struct kernel_pkey_query *info)
-+{
-+	struct tpm2_key_rsa *tk = params->key->payload.data[asym_crypto];
-+	char alg_name[CRYPTO_MAX_ALG_NAME];
-+	u8 enc_pub_key[PUB_KEY_BUF_SIZE];
-+	struct crypto_akcipher *tfm;
-+	unsigned int len;
-+	int ret;
-+
-+	ret = tpm2_key_get_akcipher(params->encoding, params->hash_algo, alg_name);
-+	if (ret < 0)
-+		return ret;
-+
-+	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	ret = tpm2_key_rsa_encode(tk, enc_pub_key);
-+	if (ret < 0)
-+		goto err_tfm;
-+
-+	ret = crypto_akcipher_set_pub_key(tfm, enc_pub_key, ret);
-+	if (ret < 0)
-+		goto err_tfm;
-+
-+	len = crypto_akcipher_maxsize(tfm);
-+
-+	info->key_size = tk->pub_len * 8;
-+	info->max_data_size = tk->pub_len;
-+	info->max_sig_size = len;
-+	info->max_enc_size = len;
-+	info->max_dec_size = tk->pub_len;
-+
-+	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT |
-+			      KEYCTL_SUPPORTS_DECRYPT |
-+			      KEYCTL_SUPPORTS_VERIFY |
-+			      KEYCTL_SUPPORTS_SIGN;
-+
-+err_tfm:
-+	crypto_free_akcipher(tfm);
-+	return ret;
-+}
-+
-+/*
-+ * Asymmetric TPM2 RSA key. Signs and decrypts with TPM.
-+ */
-+struct asymmetric_key_subtype tpm2_key_rsa_subtype = {
-+	.owner			= THIS_MODULE,
-+	.name			= "tpm2_key_rsa",
-+	.name_len		= sizeof("tpm2_key_rsa") - 1,
-+	.describe		= tpm2_key_rsa_describe,
-+	.destroy		= tpm2_key_rsa_destroy,
-+	.query			= tpm2_key_rsa_query,
-+	.eds_op			= tpm2_key_rsa_eds_op,
-+	.verify_signature	= tpm2_key_rsa_verify,
-+};
-+EXPORT_SYMBOL_GPL(tpm2_key_rsa_subtype);
-+
-+/*
-+ * Attempt to parse a data blob for a key as a TPM private key blob.
-+ */
-+static int tpm2_key_preparse(struct key_preparsed_payload *prep)
-+{
-+	struct tpm2_key_rsa *key;
-+	int ret;
-+
-+	key = kzalloc(sizeof(*key), GFP_KERNEL);
-+	if (!key)
-+		return -ENOMEM;
-+
-+	/*
-+	 * TPM 2.0 RSA keys are recommended to be 2048 bits long. Assume the
-+	 * blob is no more than 4x that.
-+	 */
-+	if (prep->datalen > 256 * 4) {
-+		kfree(key);
-+		return -EMSGSIZE;
-+	}
-+
-+	ret = tpm2_key_decode(prep->data, prep->datalen, &key->key, PAGE_SIZE);
-+	if (ret) {
-+		kfree(key);
-+		return ret;
-+	}
-+
-+	if (key->key.oid != OID_TPMLoadableKey) {
-+		tpm2_key_destroy(&key->key);
-+		kfree(key);
-+		return -EINVAL;
-+	}
-+
-+	ret = tpm2_key_rsa_extract_pub(key);
-+	if (ret < 0) {
-+		tpm2_key_destroy(&key->key);
-+		kfree(key);
-+		return ret;
-+	}
-+
-+	prep->payload.data[asym_subtype] = &tpm2_key_rsa_subtype;
-+	prep->payload.data[asym_key_ids] = NULL;
-+	prep->payload.data[asym_crypto] = key;
-+	prep->payload.data[asym_auth] = NULL;
-+	prep->quotalen = 100;
-+
-+	return 0;
-+}
-+
-+static struct asymmetric_key_parser tpm2_key_rsa_parser = {
-+	.owner	= THIS_MODULE,
-+	.name	= "tpm2_key_rsa_parser",
-+	.parse	= tpm2_key_preparse,
-+};
-+
-+static int __init tpm2_key_rsa_init(void)
-+{
-+	int ret;
-+
-+	ret = register_asymmetric_key_parser(&tpm2_key_rsa_parser);
-+	if (ret)
-+		return ret;
-+
-+	pr_info("Asymmetric TPM2 RSA key initialized\n");
-+	return 0;
-+}
-+
-+static void __exit tpm2_key_rsa_exit(void)
-+{
-+	unregister_asymmetric_key_parser(&tpm2_key_rsa_parser);
-+}
-+
-+module_init(tpm2_key_rsa_init);
-+module_exit(tpm2_key_rsa_exit);
-+
-+MODULE_DESCRIPTION("Asymmetric TPM2 RSA key");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 2f25ca07127b..8161758da19a 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -43,6 +43,7 @@ enum tpm2_session_types {
- /* if you add a new hash to this, increment TPM_MAX_HASHES below */
- enum tpm_algorithms {
- 	TPM_ALG_ERROR		= 0x0000,
-+	TPM_ALG_RSA		= 0x0001,
- 	TPM_ALG_SHA1		= 0x0004,
- 	TPM_ALG_AES		= 0x0006,
- 	TPM_ALG_KEYEDHASH	= 0x0008,
-@@ -271,6 +272,7 @@ enum tpm2_command_codes {
- 	TPM2_CC_NV_READ                 = 0x014E,
- 	TPM2_CC_CREATE		        = 0x0153,
- 	TPM2_CC_LOAD		        = 0x0157,
-+	TPM2_CC_RSA_DECRYPT	        = 0x0159,
- 	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
- 	TPM2_CC_UNSEAL		        = 0x015E,
- 	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
--- 
-2.45.1
+>
+>> Signed-off-by: Jane Chu <jane.chu@oracle.com>
+>> ---
+>>   mm/memory-failure.c | 31 ++++++++++++++++++++++++++-----
+>>   1 file changed, 26 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>> index 2fa884d8b5a3..15bb1c0c42e8 100644
+>> --- a/mm/memory-failure.c
+>> +++ b/mm/memory-failure.c
+>> @@ -1697,7 +1697,7 @@ static int identify_page_state(unsigned long pfn, struct page *p,
+>>   	return page_action(ps, p, pfn);
+>>   }
+>>   
+>> -static int try_to_split_thp_page(struct page *page)
+>> +static int try_to_split_thp_page(struct page *page, bool release)
+>>   {
+>>   	int ret;
+>>   
+>> @@ -1705,7 +1705,7 @@ static int try_to_split_thp_page(struct page *page)
+>>   	ret = split_huge_page(page);
+>>   	unlock_page(page);
+>>   
+>> -	if (unlikely(ret))
+>> +	if (ret && release)
+>>   		put_page(page);
+> I would document whhen and when not we can release the page.
+> E.g: we cannot release it if there are still processes mapping the thp.
+Sure.
+>
+>> +static int kill_procs_now(struct page *p, unsigned long pfn, int flags,
+>> +				struct folio *folio)
+>> +{
+>> +	LIST_HEAD(tokill);
+>> +
+>> +	collect_procs(folio, p, &tokill, flags & MF_ACTION_REQUIRED);
+>> +	kill_procs(&tokill, true, pfn, flags);
+>> +
+>> +	return -EHWPOISON;
+> You are returning -EHWPOISON here,
 
+Yes, indeed.
+
+>> +}
+>> +
+>>   /**
+>>    * memory_failure - Handle memory failure of a page.
+>>    * @pfn: Page Number of the corrupted page
+>> @@ -2313,8 +2331,11 @@ int memory_failure(unsigned long pfn, int flags)
+>>   		 * page is a valid handlable page.
+>>   		 */
+>>   		folio_set_has_hwpoisoned(folio);
+>> -		if (try_to_split_thp_page(p) < 0) {
+>> -			res = action_result(pfn, MF_MSG_UNSPLIT_THP, MF_IGNORED);
+>> +		if (try_to_split_thp_page(p, false) < 0) {
+>> +			pr_err("%#lx: thp split failed\n", pfn);
+>> +			res = kill_procs_now(p, pfn, flags, folio);
+>> +			put_page(p);
+>> +			res = action_result(pfn, MF_MSG_UNSPLIT_THP, MF_FAILED);
+> just to overwrite it here with action_result(). Which one do we need?
+> I think we would need -EBUSY here, right? So I would drop the retcode
+> from kill_procs_now.
+
+The overwrite was wrong, it should return -EHWPOISON to indicate to the 
+caller (such as kill_me_maybe)
+
+that no further action against the process is needed since the m-f() 
+handler has killed the process.
+
+>
+> Also, do we want the extra pr_err() here.
+> action_result() will already provide us the pfn and the
+> action_page_types which will be "unsplit thp". Is not that clear enough?
+>
+> I would drop that.
+
+Agreed, will drop the extra print.
+
+thanks!
+
+-jane
+
+>
+>
 
