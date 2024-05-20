@@ -1,138 +1,283 @@
-Return-Path: <linux-kernel+bounces-184189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5D38CA3B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:13:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F60A8CA3C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B3CE1C20E47
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:13:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 151091F21F6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DB5139D15;
-	Mon, 20 May 2024 21:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979BB13A252;
+	Mon, 20 May 2024 21:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="Z46utTAB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ql3G1jPi"
-Received: from wfout2-smtp.messagingengine.com (wfout2-smtp.messagingengine.com [64.147.123.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oU5NziKq"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1569313959D;
-	Mon, 20 May 2024 21:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FDE139D01
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 21:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716239615; cv=none; b=pQaho4Xzm3ZZ0GDtK3cm3MIpElvyoa5n0mbqipaggUP504fUlGpVg8unO9liOHE4gjBM80R/kHVGaOi+h4WrdoLfd/vNCp0hvxKmXCeN5J+jalyN9SFo43N2nYETvAxHB4PZJJ7WZ5Rn9Rn6C7dIB+mA8y/PO0l1ivEniahGdw0=
+	t=1716239809; cv=none; b=J9bKmNnj3NVRk4hg4rR8k/DfzWhEtu52Mr8ywU56m6Nmnom75UzUMlz47ZNqb7C2m0L5xR0XrEc6ASICXGn1mLxJ/hrkuqGQg5tC9uzcOXAB4UNq3FrPJddDpDJatp1UPMBCFbwNyk6Z3xPqNfd9KDWoZ5cqYkzA+DQ8MWXcb2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716239615; c=relaxed/simple;
-	bh=Bx+sj8t9HNxybi1oDttghAMxvT+D/0RgxzOubry0jmg=;
+	s=arc-20240116; t=1716239809; c=relaxed/simple;
+	bh=Q69knQy5aWtyMV52TDeQIu0cu45JjhpKnFX3Ul/xAnc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IBu1BUiGV8YaaJN7mLmbIIlk/9EDntc7n/FJmqIO6VGMCnKpUy8mW+y14Hu8KsJ7PCOXlRWi3gX7su7ycTL4+OJQF+KwMcQbh8qF4AeEn28fdVEmMiCyqUIQpJt/eYkr/GhrX0YeOZkvlE9aqmHHzcPglUJmAxzqBN0/uCq45qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=Z46utTAB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ql3G1jPi; arc=none smtp.client-ip=64.147.123.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfout.west.internal (Postfix) with ESMTP id 4F0C51C000FB;
-	Mon, 20 May 2024 17:13:32 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 20 May 2024 17:13:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1716239611; x=1716326011; bh=07dLT5mWE9
-	IVMfZYh0BeXqhtBVnvUCmQKUtwX9bMrAY=; b=Z46utTABbFWDgQmbCaMIfWNGWU
-	Muz0cl/JbRhW/QLp3km+gIKTXsOCzbpzFD+SWjP+BMcX+49S1YmH/5wAB9L/SqxA
-	prw9Eaw7tJ7QJ2YZkfDbqFyiT8c37stsX4sWRY7ls5aXJF1kC+W0OL7j3qBysVa4
-	wbPIJ+IXPVjBCwHQQE5Htjn5/Ec4t3vye967rgbuI1ppFaIHh4MMWeCIUEYoz6Aw
-	L3kba1Nf1q3u4K5Z2zWBfojaZiBSpuJvM3PrjU0p1IA/kTXsanZM+PWqdYmRDiJL
-	Pws//zBG0gqzAsk2g2NeirpzkjNKPSz4+URusHvpr33eyBbDURr4radZcinQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716239611; x=1716326011; bh=07dLT5mWE9IVMfZYh0BeXqhtBVnv
-	UCmQKUtwX9bMrAY=; b=Ql3G1jPiI4SktfG12x4b39mgwqhaF/2ra9OY8hIfZ369
-	FgawflV1v7+BWhjQbVHfdWzJujUpRUBR1wd/eNVLmcjKthUuKauaNTanGkrei1OE
-	vCHyQzo2fgEOmMwNdWdEO93L45bV/6DDDryOA6S2bNvboieP6p+T6bnvSnLTQc3Q
-	d6uh9vG9oU63V1LhrUfYgnD+7Gf3SR7Ldj454noVyRKmpuc/wKqh27WoGIVfK3iT
-	v8dg9HmTLoFgm+oB0P6HA5i8O60FG79VYpe5tvxl+DxRudDMmz/yGvDNVsNhI1eM
-	NraLVmhZMP3dtqOB5vFB+XIb1tYkGYcJG2afGPVvsg==
-X-ME-Sender: <xms:-rxLZuwi3fdH7B4nQz3r5YrvCyUdiHW6DN68Rpq5ANnGpkuG-yZssg>
-    <xme:-rxLZqQCDli3I3S3ptJXThrp5l2QCMbMYP1JB_TLF7IqaaSLAE4LLrUn721L9v-tW
-    j-Jo1jAj5dk1QYmlMc>
-X-ME-Received: <xmr:-rxLZgXQ5rLZsDf3SKZFGnUJtqixF8cJZE7ukHZu6xzzNH1XE1EtfLpXgE0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeitddgudeffecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvhigt
-    hhhoucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpihiiiigrqeenucggtf
-    frrghtthgvrhhnpeeutedttefgjeefffehffffkeejueevieefudelgeejuddtfeffteek
-    lefhleelteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehthigthhhosehthigthhhordhpihiiiigr
-X-ME-Proxy: <xmx:-rxLZkh8quqXExI6E37pQD-9ivdWceVTcKAAyeit9eZKMLJDYVZavA>
-    <xmx:-rxLZgBf41SAm_EiNoHj__AfvIVtkjYm86BiN0mmYSdB4gc9D7Vxeg>
-    <xmx:-rxLZlIPEIHv2BFBgwAJGweaR8HGEKY3tHZG_VMtK-9pH-0WaCWniA>
-    <xmx:-rxLZnDDzw-CeTIZPgvIe0_J4_Sb8kwVOV2WVmASCXmq1AIjtFhviA>
-    <xmx:-7xLZqz6yYdr3UaxUMhGusn9Mc5lvvpyBcGCs33ZjVXNMyTtDP0H9ZBz>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 20 May 2024 17:13:27 -0400 (EDT)
-Date: Mon, 20 May 2024 15:13:23 -0600
-From: Tycho Andersen <tycho@tycho.pizza>
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Joel Granados <j.granados@samsung.com>,
-	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
-Message-ID: <Zku8839xgFRAEcl+@tycho.pizza>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-4-jcalmels@3xx0.net>
- <ZktQZi5iCwxcU0qs@tycho.pizza>
- <ptixqmplbovxmqy3obybwphsie2xaybfj46xyafdnol7bme4z4@4kwdljmrkdpn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pr2y1M+zGtCH6zS4/NXFBkb5H40iwpoiU6VtDkjioVAm2LxqNl93dgjqXuOsmGc2oPcYeAloTxkbdAAJh0U28F9yDJ7uEqSYg9BFNgMIvVHvQf8fUB/DWjYyEw/wVkxND4WDr2XxeCLfbvWxJygyKqjn+TVai/FpM/OHefMQ+rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oU5NziKq; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e538a264e0so60821591fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 14:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716239806; x=1716844606; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VG+wyOOGGLfw+B2ijipUditBjceEdzKS6/pyMdE87yA=;
+        b=oU5NziKq394lPsS2aP1UcgR/CS2KhCHt4fB73JwhRiLIO/V5UwZpncEX97Wx+gEGXW
+         6xc6PpDGg68WKfwdF9X/QPfI0cPV15k0Ft4/TrQOIES6ggbYhMgQxPviJQGfYcUgwLpq
+         t+JVcaIL/Tkg1fAX8QyrjPOHSkXNSbo/7vym1iOIf7mO/2mmB/JdXOYJPbNMSDLVqbVl
+         RZUbUwkdFQhXANZqzfN/UiudCiDZ18hhVzFdupt3WR+m1CZIPrfT8QfpoJdcE3QTfS5F
+         V7ADDAeGsS6Gw3FEmCK22KLAydohaQe/0/7SOoTn76biwW86nTDOxWDV2MIEYBYUjx7b
+         dXkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716239806; x=1716844606;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VG+wyOOGGLfw+B2ijipUditBjceEdzKS6/pyMdE87yA=;
+        b=NB6MZD+eyjCOzW0Ual4OEYI+QOXXvNkujjHbpE6YZ60i2dhIpY2qTyrjXbMnBKXT2/
+         Txiq3fQUQec3XmTcBUCbQJzSxzWHyKFz0cFHgLNdDEqmO52Fnr1Tgf+bHakWVSW8Xe8l
+         msVvf9GokhDfZaFD5vxx2YMisEdIsfxDYtTb+PiO84NDbacFOYn2cjIRLbZTJLWJ1IRt
+         e8qxHB0V6eMRrprfRFy5xf+iQjfVMlD6glyUxL0QJH14W6pV1hp3FSraRcE909WJktxC
+         Itd2eSOgLX6ZKneJLk8U3RU0hD39DDimRQnRJvvvGS5qV/c0qD3jikjHJChxe9WoV3Bv
+         hl/g==
+X-Forwarded-Encrypted: i=1; AJvYcCW9LKydEKtGzcV3R41Ryjlj9HmzgQSwQopCITAvdlkfn/wXnhm2a9i9uReKwRu9a8xiSCDdylxy6T0vk8TgdbCRKoesUYFe97RXNtyx
+X-Gm-Message-State: AOJu0YwxuBrX/SB6bKo7RfLALdSj3cwgqat+J7EOzmwSbbgdTmtfRWOd
+	7gqh7+JEv1MTu6v+HnzAkIlMEpqbEWMAwBvenFi1InduVvoibDQgp6F33GCFGJw=
+X-Google-Smtp-Source: AGHT+IEp/sEhG115TKoHU/cBHnUXls0SY/sGKzpT+eTYnWDyBk/vRVw2jF5iCZxcKZkZcJlt8gQnsQ==
+X-Received: by 2002:a2e:a40f:0:b0:2e4:a21a:bf7d with SMTP id 38308e7fff4ca-2e51ff5234cmr312792631fa.21.1716239805722;
+        Mon, 20 May 2024 14:16:45 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d0ce2733sm34965821fa.31.2024.05.20.14.16.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 14:16:45 -0700 (PDT)
+Date: Tue, 21 May 2024 00:16:43 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Adam Ford <aford173@gmail.com>
+Cc: Sui Jingfeng <sui.jingfeng@linux.dev>, Liu Ying <victor.liu@nxp.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
+	jonas@kwiboo.se, jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	biju.das.jz@bp.renesas.com, u.kleine-koenig@pengutronix.de, jani.nikula@intel.com, 
+	bli@bang-olufsen.dk
+Subject: Re: [PATCH] drm/bridge: adv7511: Exit interrupt handling when
+ necessary
+Message-ID: <lpgtwv74vlazlzpurey3qdhs6qygauw2xr3g4gcfp6kvbio4zj@2puyycoaqqay>
+References: <20240516101006.2388767-1-victor.liu@nxp.com>
+ <evnxopqt5be56vxuxqdj4l3mcd5nrrvucio7jhwgg4emraai3t@gherubdynyip>
+ <e2d4e8b4-bab4-448f-8b67-21f2902fdcd2@linux.dev>
+ <CAA8EJppH1rYQ5pzkGP+V-=cOPBYMWm=ZK2Ei1ttjOiN6GRDP+w@mail.gmail.com>
+ <acc508e2-b067-47ef-b3e2-fcac51403fe0@linux.dev>
+ <CAA8EJpowLnrnV8ezXYj=oWBFFTa6LqkPFFHc9F49un6AYgZvzw@mail.gmail.com>
+ <CAHCN7x+5L+fjkDgR_mJ2BQ1M52oBZyU0nUca1Uvhyh1pFSJChw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ptixqmplbovxmqy3obybwphsie2xaybfj46xyafdnol7bme4z4@4kwdljmrkdpn>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHCN7x+5L+fjkDgR_mJ2BQ1M52oBZyU0nUca1Uvhyh1pFSJChw@mail.gmail.com>
 
-On Mon, May 20, 2024 at 12:25:27PM -0700, Jonathan Calmels wrote:
-> On Mon, May 20, 2024 at 07:30:14AM GMT, Tycho Andersen wrote:
-> > there is an ongoing effort (started at [0]) to constify the first arg
-> > here, since you're not supposed to write to it. Your usage looks
-> > correct to me, so I think all it needs is a literal "const" here.
+On Mon, May 20, 2024 at 07:46:05AM -0500, Adam Ford wrote:
+> On Mon, May 20, 2024 at 7:00 AM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > On Mon, 20 May 2024 at 14:48, Sui Jingfeng <sui.jingfeng@linux.dev> wrote:
+> > >
+> > > Hi,
+> > >
+> > >
+> > > On 5/20/24 19:13, Dmitry Baryshkov wrote:
+> > > > On Mon, 20 May 2024 at 14:11, Sui Jingfeng <sui.jingfeng@linux.dev> wrote:
+> > > >>
+> > > >> Hi,
+> > > >>
+> > > >> On 5/20/24 06:11, Dmitry Baryshkov wrote:
+> > > >>> On Thu, May 16, 2024 at 06:10:06PM +0800, Liu Ying wrote:
+> > > >>>> Commit f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
+> > > >>>> fails to consider the case where adv7511->i2c_main->irq is zero, i.e.,
+> > > >>>> no interrupt requested at all.
+> > > >>>>
+> > > >>>> Without interrupt, adv7511_wait_for_edid() could return -EIO sometimes,
+> > > >>>> because it polls adv7511->edid_read flag by calling adv7511_irq_process()
+> > > >>>> a few times, but adv7511_irq_process() happens to refuse to handle
+> > > >>>> interrupt by returning -ENODATA.  Hence, EDID retrieval fails randomly.
 > 
-> Will do, along with the suggestions from Jarkko
+> Sorry about that.  I did some testing and didn't see any regressions,
+> but if it was random, it's likely I just was lucky to not see it.
 > 
-> > > +	struct ctl_table t;
-> > > +	unsigned long mask_array[2];
-> > > +	kernel_cap_t new_mask, *mask;
-> > > +	int err;
-> > > +
-> > > +	if (write && (!capable(CAP_SETPCAP) ||
-> > > +		      !capable(CAP_SYS_ADMIN)))
-> > > +		return -EPERM;
-> > 
-> > ...why CAP_SYS_ADMIN? You mention it in the changelog, but don't
-> > explain why.
+> > > >>>>
+> > > >>>> Fix the issue by checking adv7511->i2c_main->irq before exiting interrupt
+> > > >>>> handling from adv7511_irq_process().
+> > > >>>>
+> > > >>>> Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
+> > > >>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> > > >>>> ---
+> > > >>>>    drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 3 ++-
+> > > >>>>    1 file changed, 2 insertions(+), 1 deletion(-)
+> > > >>>>
+> > > >>>> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> > > >>>> index 6089b0bb9321..2074fa3c1b7b 100644
+> > > >>>> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> > > >>>> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> > > >>>> @@ -479,7 +479,8 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
+> > > >>>>               return ret;
+> > > >>>>
+> > > >>>>       /* If there is no IRQ to handle, exit indicating no IRQ data */
+> > > >>>> -    if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
+> > > >>>> +    if (adv7511->i2c_main->irq &&
+> > > >>>> +        !(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
+> > > >>>>           !(irq1 & ADV7511_INT1_DDC_ERROR))
+> > > >>>>               return -ENODATA;
+> > > >>>
+> > > >>> I think it might be better to handle -ENODATA in adv7511_wait_for_edid()
+> > > >>> instead. WDYT?
+> > > >>>
+> > > >>
+> > > >> I think this is may deserve another patch.
+> > > >
+> > > > My point is that the IRQ handler is fine to remove -ENODATA here,
+> > >
+> > > [...]
+> > >
+> > > > there is no pending IRQ that can be handled.
+> > >
+> > > But there may has other things need to do in the adv7511_irq_process()
+> > > function.
+> >
+> > But the function returns anyway. So, we know that the condition is broken.
 > 
-> No reason really, I was hoping we could decide what we want here.
-> UMH uses CAP_SYS_MODULE, Serge mentioned adding a new cap maybe.
+> When I originally submitted the patch, I only added the shared IRQ
+> flag without any IRQ condition checks, IRQ because I didn't want to
+> break anything. The feedback I got was to check to see if the IRQ was
+> intended by the device.  My focus was the adv7511_drv.c file because
+> that appears to be what the registered IRQ hander was, but after
+> looking through adv7511_cec, I see that adv7511_cec_irq_process checks
+> adv_cec_tx_raw_status and returns if there is nothing to do.
+> 
+> Would it make sense to move the if statement  did the following things:
+> 
+> -  Make adv7511_cec_irq_process return an int and modify it to return
+> 0 in normal operation or return -ENODATA where there is nothing to do.
+> It already has the checks in place to determine if there is work to
+> do, so the impact here should be minimal.
+> 
+> - Move the check I added on whether or not there is an interrupt  to
+> the very end of adv7511_irq_process just before the return 0.
+> 
+> - Instead of blindly returning 0, modify the if statement to read the
+> state of the return code of adv7511_cec_irq_process and the IRQ flags
+> it already checks.  If ADV7511_INT0_HPD, ADV7511_INT0_EDID_READY and
+> ADV7511_INT1_DDC_ERROR are all not true and adv7511_cec_irq_process
+> returned early, return ENODATA, but if any of the interrupts was
+> present and adv7511_cec_irq_process did work, it would return 0.
+> 
+> I think that would cover the situation where adv7511_cec_irq_process
+> would get called, and also prevent a false return of the IRQ being
+> handled when this part didn't handle anything.
+> 
+> It would look something like:
+> 
+> cec_irq = adv7511_cec_irq_process(adv7511, irq1);
+> 
+> /* If there is no IRQ to handle, exit indicating no IRQ data */)
+> if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
+>    !(irq1 & ADV7511_INT1_DDC_ERROR) &&
+>   cec_irq ==  -ENODATA)
+>         return -ENODATA;
+> else
+>         return 0
+> 
+> 
+> OR...
+> 
+> 
+> Another alternative to all this is to modify the check that I added to
+> verify all the following flags which are currently checked in
+> adv7511_cec_irq_process :
+> 
+> ADV7511_INT1_CEC_TX_READY
+> ADV7511_INT1_CEC_TX_ARBIT_LOST
+> ADV7511_INT1_CEC_TX_RETRY_TIMEOUT
+> ADV7511_INT1_CEC_RX_READY1
+> ADV7511_INT1_CEC_RX_READY2
+> ADV7511_INT1_CEC_RX_READY3
+> 
+> It would look something like:
+> 
+> /* If there is no IRQ to handle, exit indicating no IRQ data */
+> if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
+>    !(irq1 & ADV7511_INT1_DDC_ERROR) &&
+>    !(irq1 & ADV7511_INT1_CEC_TX_READY) &&
+>   !(irq1 & ADV7511_INT1_CEC_TX_ARBIT_LOST) &&
+>   !(irq1 & ADV7511_INT1_CEC_TX_RETRY_TIMEOUT) &&
+>   !(irq1 & ADV7511_INT1_CEC_RX_READY1) &&
+>   !(irq1 & ADV7511_INT1_CEC_RX_READY2) &&
+>   !(irq1 & ADV7511_INT1_CEC_RX_READY3))
+> return -ENODATA;
 
-I don't have a strong preference between SETPCAP and a new capability,
-but I do think it should be just one. SYS_ADMIN is already god mode
-enough, IMO.
+This definitely looks ugly. At least it should be a mask.
 
-Tycho
+I have a slightly different solution:
+
+Make adv7511_irq_process return <0 for error, IRQ_NONE or IRQ_HANDLED.
+This would also require tracking whether HPD, EDID or CEC processing
+actually took place (add temp var for the current 'handled' status, make
+adv7511_cec_irq_process() return IRQ_HANDLED too).
+
+> 
+> 
+> Please let me know what is preferred or if there is a third possible solution.
+> 
+> I can write up a patch with a fixes tag later today when I get back to
+> my build machine.
+> 
+> adam
+> >
+> > >
+> > > > So instead of continuing
+> > > > the execution when we know that IRQ bits are not set,
+> > >
+> > > Even when IRQ bits are not set, it just means that there is no HPD
+> > > and no EDID ready-to-read signal. HDMI CEC interrupts still need
+> > > to process.
+> >
+> > Yes. Let's get the CEC fixed. Then maybe we won't need this commit at all.
+> >
+> > >
+> > >
+> > > > it's better to
+> > > > ignore -ENODATA in the calling code and go on with msleep().
+> > > >
+> > >
+> > > So, It's confusing to ignore the -ENODATA here.
+> >
+> > [BTW: you had quotation levels wrong in two places, I've fixed them]
+> >
+> > --
+> > With best wishes
+> > Dmitry
+
+-- 
+With best wishes
+Dmitry
 
