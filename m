@@ -1,114 +1,97 @@
-Return-Path: <linux-kernel+bounces-183651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C81E8C9C13
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:24:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9EE8C9C17
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368531C21D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:24:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA5581C21C56
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC10F535CE;
-	Mon, 20 May 2024 11:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868A1535CE;
+	Mon, 20 May 2024 11:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZRWlrIKp"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nr8DTS66"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C871B42044;
-	Mon, 20 May 2024 11:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5979620EB;
+	Mon, 20 May 2024 11:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716204255; cv=none; b=greCa1sb+xv72iCpJ/akfoPgLzaDg9c7HIUimHzBbUIv2Lzluvpy20ejUz5iACi0axYAPHyAlSTIBg/5FDhQeHg0DVDT5HLns46odRRFkBST4Q+zQX8OYP3XvPIh2T62mlZVcIMvcycil1yhyc4yO49mOlIxndyCPX9j/UF0IJY=
+	t=1716204450; cv=none; b=uhDLHpCSXqecXcqB7bWiGsvlU66pMJz1eIe1fxpzCFtbn6NH3cNAxGBMFy0PoRV82dUMpT6o+cGKhAgEmQZRdDlG5Pk+Do2bj95XfJDtnhuu8Mebkeq5tHs/BPGhfJ5j4pRyXD96L+3g/As5OQSOrT9L7jdaO1JxT0ircUZk01o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716204255; c=relaxed/simple;
-	bh=e5msGpPJDfpNozD6dX0TXGDkIn5t6CljDiGOFY3+f8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I7tEErEllBZlwaOHiDrH8ALqwn8RUQMuhdYygIRDzo+QeSMlHmC/MgCRAxcO3vlftc4EW/R3q4zEl2xD3dvU9LTJvaykmYE4gihTij+EdeVlcCc5NfF1LQWqyG+DK1K4iNYXScsfKNxsHNWKyI0dtE1yDpwPeyZoGBJwAT25a2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZRWlrIKp; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716204249; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=e5msGpPJDfpNozD6dX0TXGDkIn5t6CljDiGOFY3+f8E=;
-	b=ZRWlrIKplW1YPjLd05G9+f+tm8g6XYzuhfjvg3YpjE61faO8TNVdmVePsn751grmQA222UszBEuvIMM9CiMIBjplNb8Zbp8YOOeHs+ujwbX0F704RA4gJjnuPqUGTLGoqCnOUlkmp3oGg/X98WSQoQMIhvRaAODS67uSQDnnLPY=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R271e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W6s..ub_1716204246;
-Received: from 30.97.48.204(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W6s..ub_1716204246)
-          by smtp.aliyun-inc.com;
-          Mon, 20 May 2024 19:24:08 +0800
-Message-ID: <e57ae68f-29c3-41ac-bf16-f11d546dd958@linux.alibaba.com>
-Date: Mon, 20 May 2024 19:24:06 +0800
+	s=arc-20240116; t=1716204450; c=relaxed/simple;
+	bh=TugNqe9PlBp1NJ5MSXmFZQM1MVvwZOYkkhks49lJzMo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DD9jinDQqwWn5Fvox/0vISKfJ8iJmtA8Zd5g5zxN96vlPFe3f9bMqe7k42iNJv9Z05tYRBpZeDAjoZWcufFoSn+JuyZtn94H8XEPgphmavLW79ruPzc/QsKChp9MvlqwJXQl5IKBWpcdpgnHf0d5tvR1znUtVT5BIEbfsL1pOHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nr8DTS66; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716204447;
+	bh=TugNqe9PlBp1NJ5MSXmFZQM1MVvwZOYkkhks49lJzMo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nr8DTS66gLZaW4X+w+Uv/tuKcFUStU+GvdhLQPuJsWF6N2J/AeLKzJlaCrbdHeHPV
+	 wF5qZXK6qH+0otnO0KZePovIQZ5wUUgttPqRj2H6m8VwcZ1YM8LS4q9WOzzEynsqP2
+	 UGGc5ix3SAGst/HSwDWh42aF/JikrXPbYVYLP4h08H4mZC56+mjjvjg2kIOvRI2d86
+	 MgcnZoUoZqoaQZOTFxaGXyP8IGMFjEl/KMqob1R81lGCyqGv6cDieiANg5HB1rL4ti
+	 /jFfJJ8P5zLGngFoaKGvNEVS/TjoPC0OpL5vzOzwnezaKC7cr81KjZevPwqUQXUDb5
+	 F/raaUKoD42vg==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D88DD3780BFE;
+	Mon, 20 May 2024 11:27:26 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: mathieu.poirier@linaro.org
+Cc: andersson@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH] remoteproc: mediatek: Zero out only remaining bytes of IPI buffer
+Date: Mon, 20 May 2024 13:27:24 +0200
+Message-ID: <20240520112724.139945-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/12] cachefiles: never get a new anonymous fd if
- ondemand_id is valid
-To: Baokun Li <libaokun@huaweicloud.com>,
- Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
- dhowells@redhat.com, jlayton@kernel.org
-Cc: zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
- wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
- <20240515084601.3240503-9-libaokun@huaweicloud.com>
- <f4d24738-76a2-4998-9a28-493599cd7eae@linux.alibaba.com>
- <d62b162d-acb3-2fa7-085e-79da3278091a@huaweicloud.com>
- <a3ca2292-0218-45f6-8afe-4319a10b69e2@linux.alibaba.com>
- <5b1b2719-2123-9218-97b4-ccda8b5cb3b4@huaweicloud.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <5b1b2719-2123-9218-97b4-ccda8b5cb3b4@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+In scp_ipi_handler(), instead of zeroing out the entire shared
+buffer, which may be as large as 600 bytes, overwrite it with the
+received data, then zero out only the remaining bytes.
 
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/remoteproc/mtk_scp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 2024/5/20 19:14, Baokun Li wrote:
-> On 2024/5/20 17:24, Jingbo Xu wrote:
->>
->> On 5/20/24 5:07 PM, Baokun Li wrote:
->>> On 2024/5/20 16:43, Jingbo Xu wrote:
->>>> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
->>>>> From: Baokun Li <libaokun1@huawei.com>
->>>>>
-> SNIP
->>>>>
->>>>> To avoid this, allocate a new anonymous fd only if no anonymous fd has
->>>>> been allocated (ondemand_id == 0) or if the previously allocated
->>>>> anonymous
->>>>> fd has been closed (ondemand_id == -1). Moreover, returns an error if
->>>>> ondemand_id is valid, letting the daemon know that the current userland
->>>>> restore logic is abnormal and needs to be checked.
->>>>>
->>>>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking
->>>>> up cookie")
->>>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->>>> The LOCs of this fix is quite under control.  But still it seems that
->>>> the worst consequence is that the (potential) malicious daemon gets
->>>> hung.  No more effect to the system or other processes.  Or does a
->>>> non-malicious daemon have any chance having the same issue?
->>> If we enable hung_task_panic, it may cause panic to crash the server.
->> Then this issue has nothing to do with this patch?  As long as a
->> malicious daemon doesn't close the anonymous fd after umounting, then I
->> guess a following attempt of mounting cookie with the same name will
->> also wait and hung there?
->>
-> Yes, a daemon that only reads requests but doesn't process them will
-> cause hung，but the daemon will obey the basic constraints when we
-> test it.
-
-If we'd really like to enhanace this ("hung_task_panic"), I think
-you'd better to switch wait_for_completion() to
-wait_for_completion_killable() at least IMHO anyway.
-
-Thanks,
-Gao Xiang
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index e5214d43181e..dc70cf7db44d 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -117,8 +117,8 @@ static void scp_ipi_handler(struct mtk_scp *scp)
+ 		return;
+ 	}
+ 
+-	memset(scp->share_buf, 0, scp_sizes->ipi_share_buffer_size);
+ 	memcpy_fromio(scp->share_buf, &rcv_obj->share_buf, len);
++	memset(&scp->share_buf[len], 0, scp_sizes->ipi_share_buffer_size - len);
+ 	handler(scp->share_buf, len, ipi_desc[id].priv);
+ 	scp_ipi_unlock(scp, id);
+ 
+-- 
+2.45.1
 
 
