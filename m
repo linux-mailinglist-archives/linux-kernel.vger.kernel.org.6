@@ -1,126 +1,287 @@
-Return-Path: <linux-kernel+bounces-183697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B31E8C9CB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:54:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19D68C9CBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11ADF1F22376
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:54:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3CA81C22024
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19F554660;
-	Mon, 20 May 2024 11:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA9453E02;
+	Mon, 20 May 2024 11:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NKKDURXJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JnxtWrNn"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFEA5381D;
-	Mon, 20 May 2024 11:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF484502AC
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 11:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716206060; cv=none; b=NynKaHeZZjCzkLA1YhWrxTlxeIjW1Mx2iFcfJvE0OO5QCuIxCHVhXG2brEWUa2UVXzRZanReXnYONU0OVlWogBL+AUL/U3VPom8Qy8LENDoygfSRNjFWuItqyAllc7iVTHB7GygKQBOo83arThYBGxn2ekSNN7Cg2ZYdZjELaSw=
+	t=1716206131; cv=none; b=bsqMnjgiBplxvzSWOWG4bqBCemTAkGJ2ilkER0RDYsMijzD6HgUdXg88RTW+20fn1Qbhjk1RL1puJb2Bv3vhG/aNiNbYAuaLZELVeQZc+RelZc4xTvh+Om3TgQ34Teu/GrAorHrSjTl33VcCmv2EeaNmgnvuZ62HUdQjXsQdQWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716206060; c=relaxed/simple;
-	bh=6T/LxFwDsB4C2hzVBPcuFqDMYHoW8Lwuk7UjmrI9QgA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=JwZvAYOcZPe8pRmchDLXMnIK7bPimJIrFdY1bRL7fl0P1KxXLyfzg/HW2mbZzylaZq6ijFTPzqT9itwnbJK/qUTnd3qFKwYKsjwgblQHbPHTmXKZ7g3NHUNw8rGoWh41eZbmzBxlBxhosQildPuzkYxQb+Yy43Iok7CrMnmPEDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NKKDURXJ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716206059; x=1747742059;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=6T/LxFwDsB4C2hzVBPcuFqDMYHoW8Lwuk7UjmrI9QgA=;
-  b=NKKDURXJbsyK6Aoz7WththbLZi/ahkE6TCBdNFPyLH3xBfzAKQEqzFyb
-   1rXQKkMO+tFRSdOfN7m3V2NrmW8hTEObT1OuO/fG1xMq2ZZrXfTBb3ljq
-   CTpydVYjPZpsgn5Yl6q27NN3pHtbOcEiUr+dzo0vBGPgMHwqJOYpXYIjP
-   91SCaqpQZGo+wLn8/nI50Uo7JkrMcMoT3MwOUK9kGtyE6oTbsZo7B99dr
-   A/KT5+ziXkjEoMzq0YqfrTBpxOXLb4sr+NOLdPuwlejjazCMbi7TFKvUR
-   1Oaq+owYgl1wUEKADY9KUfek6A50MDVKpZJKbffPZYbrmV28B+5RgjiPT
-   w==;
-X-CSE-ConnectionGUID: FjFjdSZ6QDiLP3pgY1Fzrg==
-X-CSE-MsgGUID: tYOrlzFvQyS1B1mwlY+qmg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="12548085"
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="12548085"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 04:54:18 -0700
-X-CSE-ConnectionGUID: OQ0wOBEZSIOqHfbBhUgPSQ==
-X-CSE-MsgGUID: DUvUtQmjSwi8l+LY38rq8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="32950757"
-Received: from ipu5-build.bj.intel.com (HELO [10.238.232.136]) ([10.238.232.136])
-  by orviesa006.jf.intel.com with ESMTP; 20 May 2024 04:54:16 -0700
-Subject: Re: [PATCH] media: intel/ipu6: Fix some redundant resources freeing
- in ipu6_pci_remove()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <33dbf7b5c1b1b94d64a13441b69e1ff976caaa62.1716198935.git.christophe.jaillet@wanadoo.fr>
-From: Bingbu Cao <bingbu.cao@linux.intel.com>
-Message-ID: <f622051b-7ccd-e261-a311-2073c293602e@linux.intel.com>
-Date: Mon, 20 May 2024 19:54:41 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+	s=arc-20240116; t=1716206131; c=relaxed/simple;
+	bh=kEoGgqB0rzX9HUVUIPEKmyOuoLj4yGARQKNBWGYuBtw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UzjyQcTrcZWqC8h+l+Wu8TONjI0OiQZXYoe4Tr4caZcF8SaRGkZGJg8WPvuy5bPmPzsCCFh3PZ8AZJHvj1aRcu/KbrTddzm4oO3Jz079BFp5ZZyTehI6RqY9OsqWuA4iPLhO4eKuULEiejWRnrY4fatBdt8qJMigC0lF5YkOjgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JnxtWrNn; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4202cea9941so17760895e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 04:55:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1716206127; x=1716810927; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J52kMpMDHoKvOAndzN0rC/vV/Kub3GsExDvSDouYLys=;
+        b=JnxtWrNn/i+nS87br6CxiUNNov5H1ZeYDfntBGPoelIRMrqOGKC9e+sfZ4bNf9Uuer
+         nzsxA8+ZFEBvFZEbBCt22/Jj5y4N4qs2cJmuyIugpiLJizbVUtqIi9S2wKlwP4IXAgeO
+         yy0jUKxtJoahWzDC6CdEQBVD7pLvVcXD8rLZ0f8I6jeT5Ur8fya3ykB6Sbl+HKTUZI/s
+         C1AAr3KehqEQNz2RrC21FTvLNu3u0tNb1uBzP4T8iONuA/YdQaWqd1K3Xwim/AUMN4Zn
+         MBvh7O1NIJzsKHAX1vI6fJbwMDP2FRckNuCvN9dOLYvy4h8F8w+as59N02tLlYvnQ4B0
+         BLJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716206127; x=1716810927;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J52kMpMDHoKvOAndzN0rC/vV/Kub3GsExDvSDouYLys=;
+        b=u6tT3Ljxg3NIG0Nm+ggWR/c2K5Cb4sK4IuvlXjvaRWtjcRKN+hpYzjeyzAK2IWQVeu
+         1c8j7JCx7af8V6Sher6eiA9hSOWbP65c4T60deYqDKVqTPCqipuGBPdH8rhANh/VCXaQ
+         houcD9/Kk9WfTTr+pxAtTxoulkis9Iv7gs21KLCPYF1dADKGR8Sbivf6xLC2rZvp9DDq
+         b1+gTO535ygpqZn4nKJ8DF7SV4wWLaPRrvSbWlFedFrtOTzLoQknGVrYEDVE1KkgudD3
+         TQk+Y4eZKMj/b3UYZAkAguP/TtcKl1tG4kUw6wI270G0YUhQ4oQqbOHoyyEe8o7odBRw
+         /A8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVbJVFMvdgwXmoivl+AUEbhKEtd20r8NHz/NRDBNW0EI5gEIXjZi5PGzc2MSKZ08EUWB4qyri0L1l8qFAEjvQKz0/ToIWVg0uutxR1s
+X-Gm-Message-State: AOJu0YyhIcN+k9K/HgRkS82DJ9X5wzH6P6BODF3+yq39FpCncEbrcNsC
+	1Vh8P7/aVlZUwDKZ5hmOZtlcr74X301XowZ9rU+Fy/OMbNw1YtHYfc0UCgpAf68=
+X-Google-Smtp-Source: AGHT+IFlvSqANMGIFrY7ueIY75b5WZsPp07glKW9CXJYkzLlO1bcGTsSAd5RIIjQcSQBq4MnYIRKvQ==
+X-Received: by 2002:adf:c7cb:0:b0:351:b7fa:ccbf with SMTP id ffacd0b85a97d-351b7facde5mr23107427f8f.61.1716206126884;
+        Mon, 20 May 2024 04:55:26 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbca98sm29018734f8f.112.2024.05.20.04.55.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 May 2024 04:55:26 -0700 (PDT)
+Message-ID: <559ad243-b43b-471a-99a4-2f42e0930a64@tuxon.dev>
+Date: Mon, 20 May 2024 14:55:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <33dbf7b5c1b1b94d64a13441b69e1ff976caaa62.1716198935.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=windows-1252
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v8 09/10] watchdog: rzg2l_wdt: Power on the PM
+ domain in rzg2l_wdt_restart()
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: wim@linux-watchdog.org, linux@roeck-us.net, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+ geert+renesas@glider.be, magnus.damm@gmail.com, biju.das.jz@bp.renesas.com,
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240410134044.2138310-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240410134044.2138310-10-claudiu.beznea.uj@bp.renesas.com>
+ <CAPDyKFqq+gMDHx_-g-j9rO3nBDcXRSoXRjJK9D51=VaQ5XaGvw@mail.gmail.com>
+ <af9c6747-120e-48c1-8c04-9594c9b49666@tuxon.dev>
+ <2d674a18-006f-4182-bc85-bcfa50615495@tuxon.dev>
+ <CAPDyKFp+8VnxDfhDzvP1KWCN_oRHrVMCru9BXO_55GkF=gHUBA@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
+In-Reply-To: <CAPDyKFp+8VnxDfhDzvP1KWCN_oRHrVMCru9BXO_55GkF=gHUBA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Christophe,
+Hi, Ulf,
 
-Thanks for the patch.
-
-On 5/20/24 5:55 PM, Christophe JAILLET wrote:
-> pcim_iomap_regions() and pcim_enable_device() are used in the probe. So
-> the corresponding managed resources don't need to be freed explicitly in
-> the remove function.
+On 29.04.2024 17:19, Ulf Hansson wrote:
+> On Wed, 24 Apr 2024 at 13:14, claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
+>>
+>> Hi, Ulf,
+>>
+>> On 12.04.2024 17:02, claudiu beznea wrote:
+>>> Hi, Ulf,
+>>>
+>>> On 12.04.2024 14:14, Ulf Hansson wrote:
+>>>> On Wed, 10 Apr 2024 at 16:19, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>>>>
+>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>
+>>>>> The rzg2l_wdt_restart() is called from atomic context. Calling
+>>>>> pm_runtime_{get_sync, resume_and_get}() or any other runtime PM resume
+>>>>> APIs is not an option as it may lead to issues as described in commit
+>>>>> e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait context'")
+>>>>> that removed the pm_runtime_get_sync() and used directly the
+>>>>> clk_prepare_enable() APIs.
+>>>>>
+>>>>> Starting with RZ/G3S the watchdog could be part of its own software
+>>>>> controlled power domain (see the initial implementation in Link section).
+>>>>> In case the watchdog is not used the power domain is off and accessing
+>>>>> watchdog registers leads to aborts.
+>>>>>
+>>>>> To solve this the patch powers on the power domain using
+>>>>> dev_pm_genpd_resume() API before enabling its clock. This is not
+>>>>> sleeping or taking any other locks as the power domain will not be
+>>>>> registered with GENPD_FLAG_IRQ_SAFE flags.
+>>>>>
+>>>>> Link: https://lore.kernel.org/all/20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com
+>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>> ---
+>>>>>
+>>>>> Changes in v8:
+>>>>> - none, this patch is new
+>>>>>
+>>>>>  drivers/watchdog/rzg2l_wdt.c | 12 ++++++++++++
+>>>>>  1 file changed, 12 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
+>>>>> index c8c20cfb97a3..98e5e9914a5d 100644
+>>>>> --- a/drivers/watchdog/rzg2l_wdt.c
+>>>>> +++ b/drivers/watchdog/rzg2l_wdt.c
+>>>>> @@ -12,6 +12,7 @@
+>>>>>  #include <linux/module.h>
+>>>>>  #include <linux/of.h>
+>>>>>  #include <linux/platform_device.h>
+>>>>> +#include <linux/pm_domain.h>
+>>>>>  #include <linux/pm_runtime.h>
+>>>>>  #include <linux/reset.h>
+>>>>>  #include <linux/units.h>
+>>>>> @@ -164,6 +165,17 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
+>>>>>         struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+>>>>>         int ret;
+>>>>>
+>>>>> +       /*
+>>>>> +        * The device may be part of a power domain that is currently
+>>>>> +        * powered off. We need to power it up before accessing registers.
+>>>>> +        * We don't undo the dev_pm_genpd_resume() as the device need to
+>>>>> +        * be up for the reboot to happen. Also, as we are in atomic context
+>>>>> +        * here there is no need to increment PM runtime usage counter
+>>>>> +        * (to make sure pm_runtime_active() doesn't return wrong code).
+>>>>> +        */
+>>>>> +       if (!pm_runtime_active(wdev->parent))
+>>>>> +               dev_pm_genpd_resume(wdev->parent);
+>>>>> +
+>>>>
+>>>> I doubt this is the correct solution, but I may be wrong. Unless this
+>>>> is invoked at the syscore stage?
+>>>
+>>> On my case I see it invoked from kernel_restart(). As of my code reading,
+>>
+>> With the above explanations, do you consider calling dev_pm_genpd_resume()
+>> here is still wrong?
 > 
-> Remove the incorrect pci_release_regions() and pci_disable_device() calls.
-> 
-> Fixes: 25fedc021985 ("media: intel/ipu6: add Intel IPU6 PCI device driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only
-> ---
->  drivers/media/pci/intel/ipu6/ipu6.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/media/pci/intel/ipu6/ipu6.c b/drivers/media/pci/intel/ipu6/ipu6.c
-> index d2bebd208461..f587f609259d 100644
-> --- a/drivers/media/pci/intel/ipu6/ipu6.c
-> +++ b/drivers/media/pci/intel/ipu6/ipu6.c
-> @@ -727,9 +727,6 @@ static void ipu6_pci_remove(struct pci_dev *pdev)
->  	pm_runtime_forbid(&pdev->dev);
->  	pm_runtime_get_noresume(&pdev->dev);
->  
-> -	pci_release_regions(pdev);
-> -	pci_disable_device(pdev);
-> -
->  	release_firmware(isp->cpd_fw);
->  
->  	ipu6_mmu_cleanup(psys_mmu);
->
+> Yes. At least, those genpd functions were not added to cope for cases like this.
 
-Reviewed-by: Bingbu Cao <bingbu.cao@intel.com>
+Sorry to bother you, do you have some suggestions on this topic?
 
--- 
-Best regards,
-Bingbu Cao
+On my side I did some investigation to see how else it could be implemented
+but I don't have much clue how to go forward.
+
+Would you prefer to have a separate API to deal with domain power on in
+this scenario? Maybe one that should run only in the reboot context?
+
+Would you consider only updating the description of  dev_pm_genpd_resume()
+and genpd_sync_power_on() to specify that it could run in a reboot context?
+
+Would you consider updating the genpd_switch_state() to take into system
+reboot state and do locking based on that, too?
+
+
+> 
+> Moreover, you still need to find another solution as
+> clk_prepare_enable() can't be called in this path.
+
+The clock driver doesn't implement clk_ops::prepare in all
+micro-architectures that this watchdog driver is used. This may be the
+reason the clk_prepare_enable() was used on this path from the beginning.
+
+Even though, a simple solution I have in mind for this is to keep the clk
+prepared all the time.
+
+Thank you,
+Claudiu Beznea
+
+> 
+>>
+>> Do you have any suggestions I could try?
+> 
+> Not at the moment, but I will try to circle back to this topic more
+> thinking next week, when I have some more time.
+> 
+>>
+>> Thank you,
+>> Claudiu Beznea
+> 
+> Kind regards
+> Uffe
+> 
+>>
+>>> at that point only one CPU is active with IRQs disabled (done in
+>>> machine_restart()). Below is the stack trace decoded on next-20240410 with
+>>> this series
+>>> (https://lore.kernel.org/all/20240410134044.2138310-1-claudiu.beznea.uj@bp.renesas.com/)
+>>> on top and the one from here (adding power domain support):
+>>> https://lore.kernel.org/all/20240410122657.2051132-1-claudiu.beznea.uj@bp.renesas.com/
+>>>
+>>> Hardware name: Renesas SMARC EVK version 2 based on r9a08g045s33 (DT)
+>>> Call trace:
+>>> dump_backtrace (arch/arm64/kernel/stacktrace.c:319)
+>>> show_stack (arch/arm64/kernel/stacktrace.c:326)
+>>> dump_stack_lvl (lib/dump_stack.c:117)
+>>> dump_stack (lib/dump_stack.c:124)
+>>> rzg2l_wdt_restart (drivers/watchdog/rzg2l_wdt.c:180)
+>>> watchdog_restart_notifier (drivers/watchdog/watchdog_core.c:188)
+>>> atomic_notifier_call_chain (kernel/notifier.c:98 kernel/notifier.c:231)
+>>> do_kernel_restart (kernel/reboot.c:236)
+>>> machine_restart (arch/arm64/kernel/process.c:145)
+>>> kernel_restart (kernel/reboot.c:287)
+>>> __do_sys_reboot (kernel/reboot.c:755)
+>>> __arm64_sys_reboot (kernel/reboot.c:715)
+>>> invoke_syscall (arch/arm64/include/asm/current.h:19
+>>> arch/arm64/kernel/syscall.c:53)
+>>> el0_svc_common.constprop.0 (include/linux/thread_info.h:127
+>>> arch/arm64/kernel/syscall.c:141)
+>>> do_el0_svc (arch/arm64/kernel/syscall.c:153)
+>>> el0_svc (arch/arm64/include/asm/irqflags.h:56
+>>> arch/arm64/include/asm/irqflags.h:77 arch/arm64/kernel/entry-common.c:165
+>>> arch/arm64/kernel/entry-common.c:178 arch/arm64/kernel/entry-common.c:713)
+>>> el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:731)
+>>> el0t_64_sync (arch/arm64/kernel/entry.S:598)
+>>>
+>>> The watchdog restart handler is added in restart_handler_list and this list
+>>> is invoked though do_kernel_restart(). As of my code investigation the
+>>> restart_handler_list is invoked only though do_kernel_restart() and only
+>>> though the stack trace above.
+>>>
+>>> Thank you,
+>>> Claudiu Beznea
+>>>
+>>>>
+>>>>>         clk_prepare_enable(priv->pclk);
+>>>>>         clk_prepare_enable(priv->osc_clk);
+>>>>>
+>>>>> --
+>>>>> 2.39.2
+>>>>>
+>>>>>
+>>>>
+>>>> Can you redirectly me to the complete series, so I can have a better
+>>>> overview of the problem?
+>>>
+>>> This is the series that adds power domain support for RZ/G3S SoC:
+>>> https://lore.kernel.org/all/20240410122657.2051132-1-claudiu.beznea.uj@bp.renesas.com/
+>>>
+>>> This is the series that adds watchdog support for RZ/G3S SoC:
+>>> https://lore.kernel.org/all/20240410134044.2138310-1-claudiu.beznea.uj@bp.renesas.com/
+>>>
+>>> Thank you for your review,
+>>> Claudiu Beznea
+>>>
+>>>>
+>>>> Kind regards
+>>>> Uffe
 
