@@ -1,231 +1,390 @@
-Return-Path: <linux-kernel+bounces-183382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7A38C9841
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 05:29:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EF08C984A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 05:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B575BB21D39
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:29:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 944D11C218C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD8CE57D;
-	Mon, 20 May 2024 03:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="LAA4dx2O"
-Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01on2078.outbound.protection.outlook.com [40.107.13.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF6C1172C;
+	Mon, 20 May 2024 03:31:09 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD7ADDA3
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.13.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716175771; cv=fail; b=hOiY1rq5ctrK6xXTeHHDI6fZAXqhXWr5Wds57cxmXFT/9MxhpukqoECjqjs7feoDwoh5lzV7eLIx8bDJCQ+0NCjkjaYScS0Uduo22pQwpzITh6UblNdgUmfruNB8E45tUXGYNsrSSxc1RyS7J3H8jWWJ78MZq5jhDj7lXQa91LM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716175771; c=relaxed/simple;
-	bh=uA2w3H2eS4Yw2JTzHil8/z609sa4uONvL8UJP3zouQk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=utNbfBLZcfz4jtAWZ+p+bMqU5AM7XLeVbismCn0/3gZHU56MyIwQ1anmrSCfw4XNU6TBPYr0e5aKTyJ8WAIq75vniOncK6i0wu73mRNCQrdV5cuVZZRclHfIHoiTW5H+J2mc+XqGCyiUnT6fJpYcwKyXEIetk4iCVe39xtiB5aw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=LAA4dx2O; arc=fail smtp.client-ip=40.107.13.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=a0bvo+ri2BYk48LC2JkIrODjXeY/zGd+ilL/yTITYBcsHeZIy3Sw7W4eBKhacBXdaJ+cp7LoQcJ1Gc8a/hFv7GaP9Bb7XsAAXnjlFwKJEACAQ8Voi2DyYllKW6bYmizgj9MpevheecvC2y84x0Nd0djP6rsueRuGE1vZ5VMTw7IKQ+3Jl4y1eBsU9uF84tRlYXC7Xsr42j7ixRnrJRJ1IXFlY0WDNKR7jEW7xmurc2tkypCJMN2PZpWeKmshVK86rcrSGg+f6Phbb7wtgU/3LA4alqVcP7X2nPibTjxZx0vIphXzmCWTIj9Uwa0CeRLWFzt3vu8xS5EHek9TMwrJsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DNjgC4d9auDv7660uuSxcI3hhwe+7wjNRReUrLharvQ=;
- b=FEjuw8L+qwt+arIo29p1IQxGOeTEHIbcxsnJ324s532fwTUNMRrx3DFdAlDHN0QbqlybuoXr5zswjuLaDE0iH2VgKqJaRTzVUDY831ipE8ze9gdFsJB68XluyXYpYGViLNWqjUZDUwmORnUx2ovceI9EkmUKFA4f70kh3ZVtVMYAzfu6y5X20AhNZm10QlGY7Y6P1aOXu96oZvJoaolMJQ8k7CesAPkzsjpWWD6SDdLhVAg4f+22OjgOn0+eWoU90sIEoKzftgiwC9bkMgbJYFPU3B4uvKT6BdfV/WtLbL09+n1ttqfXRg8K7D7BgLRM1R9Ao4MUbR+OfrQ+wXg4Jg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DNjgC4d9auDv7660uuSxcI3hhwe+7wjNRReUrLharvQ=;
- b=LAA4dx2OjO0Ckhpi8/eewdJbgrOQdhwPo1QJb9sYyO0Q+id4uJPg5B2epacBLPYr4r6MZSUxTdaLHcAu8egRNdC5c2RlZwtahJqBbalMH2g6H72YkDLVf8SjQNUKZfv7bT59glDi+Z6NvUeoZoc/6kzUZRl2P0MCI2OkkaDBI60=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AS8PR04MB8151.eurprd04.prod.outlook.com (2603:10a6:20b:3f3::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Mon, 20 May
- 2024 03:29:25 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%3]) with mapi id 15.20.7587.030; Mon, 20 May 2024
- 03:29:25 +0000
-Message-ID: <5efe29a7-441f-4d70-b17c-5327c0a9f600@nxp.com>
-Date: Mon, 20 May 2024 11:29:42 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/bridge: adv7511: Exit interrupt handling when
- necessary
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- biju.das.jz@bp.renesas.com, u.kleine-koenig@pengutronix.de,
- aford173@gmail.com, jani.nikula@intel.com, bli@bang-olufsen.dk,
- sui.jingfeng@linux.dev
-References: <20240516101006.2388767-1-victor.liu@nxp.com>
- <evnxopqt5be56vxuxqdj4l3mcd5nrrvucio7jhwgg4emraai3t@gherubdynyip>
-Content-Language: en-US
-From: Liu Ying <victor.liu@nxp.com>
-In-Reply-To: <evnxopqt5be56vxuxqdj4l3mcd5nrrvucio7jhwgg4emraai3t@gherubdynyip>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR02CA0048.apcprd02.prod.outlook.com
- (2603:1096:4:196::23) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C185107A9;
+	Mon, 20 May 2024 03:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716175869; cv=none; b=qeJSj7sH+3BkZRwwjSevhvK/+/+b6lm4GZmV16VzvHYWaErd0tJ5fIqU1m0qZVWNpAOZlRvu+AOB0dtgCbsdR1founw69UNtRYALxuWb+K2EPdOV8F1IMIcoi5r3A05HksO3Tx2jLtz8XUUrW+E2njRxILuerETbsITWlAmFy0o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716175869; c=relaxed/simple;
+	bh=bWi6GM1ZjfN+LLbqPY6EwmWWTad8t0Sg2YE6Pjjdm7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LXi+paxHgq4evF2VLJcL8Z4XvYFHtPkqSZu4wheWh2gtjYf3OBzZ2ZWo3co3w4px2F6cmES1p86MB2jsVCyjXiMZbT1hKY+SrwIOJfPCs8t7+dlm5/g6BooS68UGxEzsTLuXUkWTmhsygkYsB/7f73oDAqZaGKpOdkUfVTLiHxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 94ABE46C; Sun, 19 May 2024 22:30:58 -0500 (CDT)
+Date: Sun, 19 May 2024 22:30:58 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Jonathan Calmels <jcalmels@3xx0.net>
+Cc: brauner@kernel.org, ebiederm@xmission.com,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
+Message-ID: <20240520033058.GA1815759@mail.hallyn.com>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-2-jcalmels@3xx0.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AS8PR04MB8151:EE_
-X-MS-Office365-Filtering-Correlation-Id: ba43ba4c-fd41-40dc-2c87-08dc787d0c3f
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?M2wrdkVWTFA0TUxQeTg1SGR3eGFoN1hVS2J1WTE1cjdiVHliaEdFV3BUUzdo?=
- =?utf-8?B?NTF2N1BhVG1WNm1oQ2VMYmNiWGpnay9sTEl0KzI4eTNGRjgyRldzMHJRK0Vn?=
- =?utf-8?B?MEkrT0x0YUZLQ01HQ0JPMDkrMmRoZGJwK255azVPM3M5R083M1lZMUlwd1Rk?=
- =?utf-8?B?d3VBRnBsOUdwcmdSKytMQ2ZXTCtpYVFtbUwwaEpuVEd2dmEzdHU2Vk1xdC8z?=
- =?utf-8?B?VUZWMnhIUjVJSk5wS3FJbUNsaTdtMnhrZTB3T0V6eDRkakhPN2ZtOUZjNU9K?=
- =?utf-8?B?WkZBVnBlSm91dEoxSzc0S0JkMUdvdDVxS0U3TFZmenpmSld2YkRkWHZsdERQ?=
- =?utf-8?B?d3BWN1A3c1lrWlBYMDdDendvTS9teERWNldpTU5wekhxUC9SV1BPajV0WWg4?=
- =?utf-8?B?Z2kwTHo1U0gzeVhUanlwL3dYWDFUNFE1dEFVdStSek1IaHY3T2pIdWZQdGpJ?=
- =?utf-8?B?SkVnc0dxWDhuVy9pTGQrWVBlU29LR3FaMVFGYkcyMU9zY2Z5TXp3NEtveVRs?=
- =?utf-8?B?czBsVXAxVU5lWUFWdXQwZVZ2Y3hTUU5MUzkwSU56em9USHNzL3MzOFRUUjl6?=
- =?utf-8?B?MlYxaVcxeUVhcFdwcVYyemg0WTl6T2t5MTc3N0lYNElPOFdsQ2hHWkk1ZmtZ?=
- =?utf-8?B?UzRZcVRKM1hBT1BObFBDeDVRNVhBcWFnSURxVG1oQlB5OHVxa2NYbVNJWWR1?=
- =?utf-8?B?eTdvTzVvK3ZPZjYraWlUWm9iT296dk1FYTRHZ3d1UmVtU2pyL3duYzNJVzhh?=
- =?utf-8?B?b2ZKRlN2QnVJUVM1ZU9URXBmUVlRT3AwdnpWVFVXMVlGTmd5Zzhlb0Fxbito?=
- =?utf-8?B?OTI4WlFVRkxsaDkybS9MTUNGaFhkTENTb2J4TTFCZmpaUmhVbXoyVy83TUFr?=
- =?utf-8?B?aGZtUEFacnpRK2syaktValUzamp6N21WWUE4bjU4L1JCM2FZcXBNc2YzczRq?=
- =?utf-8?B?d2VjTm1qN0lVYUczNHRDZzlheFZGelI5QWx2VDl3N1JMU2hCZEZXZXBnZERl?=
- =?utf-8?B?Q0d4ekdvTDE5TUI3MW80K0NUcGFlRUhvUVdaaXlQM1Z2dWxDaGk4ZFlJSEN0?=
- =?utf-8?B?emhJVnU4eU83Yk00MEt0MGJwS1JQeU9RY0IyNVlXclpPVFN5ZVJnT1N1ZFJy?=
- =?utf-8?B?cDBFKzZ3K3IvUHJ1WFNiOWZxRG5QeUFDbkRldmVreXYrVmpIRE1jc1VZY2l3?=
- =?utf-8?B?UVBpSjBDV1NwdUNVbkFKcW9DZ0YwR1ZhNHJ4bjkyZzdXc0NkUlhrZkErTTIr?=
- =?utf-8?B?b29sWXMweDNuVDR1QkVKenEya0VFTzMxQWkxZnd3Rm9lYU5Kd3VKdHZVSmN4?=
- =?utf-8?B?eTZDOTZEa3Q0ekpibGMrbGJTbUFoMWg5SHRwM1NtK3lURzduSGM1V1V2Vy9y?=
- =?utf-8?B?VUs0RDg4QU04NlArT0drZTBienVWWlJQRWJKcmVOV1hKMmtpUG5kV3lkTnB4?=
- =?utf-8?B?amx4UWR2djg1MXdHZjAxVHRVdVNIVnRIM0FpK2QrdzU0d1loUTg4NUliVzhT?=
- =?utf-8?B?TGxwWGRNbDlVRmVVZjBoVXM3RkxKNlF2ZFFlcUg0dW5FTG1XMHBoQzAyUmYy?=
- =?utf-8?B?K2pMRlF1eElKaXhEQzkzWGJHL1FYM1NIT0gzQmc4dkcxTGwrbXJkc2FCUU9D?=
- =?utf-8?B?dElKWWFiWUhuRkkyMXM3ZHloLy9ubVAzdUFvZnpQNU5WRkp4U1A3YUl0Y2hC?=
- =?utf-8?B?VjJjLzBaYjUrQTVsUnlLaXFRUGNKT3BobjNPbmVvNzJWSnJPR3pqeGJRPT0=?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?VEZPaDBwMnAyNWIzV3FYQzdJeGVPWVRJeEVTd3h1NFpsMkxUd3FYdk9jeEFm?=
- =?utf-8?B?MWxhcDlZZmFRZU5QWWNXOStYa2xZN1lLaHptY2czNnFiQldvdm5DeVRYcHRT?=
- =?utf-8?B?N0ZkQnZEcEpMcDFzR1MrTE1yeHNFemRBczdJYmtGNEFhOFB3MnNaL1c5RU1B?=
- =?utf-8?B?Mkx6UUZNSjNsZzVRWlg1a1pVVnc2eExTQUR2K1g2UUVibG1TWGQ0VmJpUnpa?=
- =?utf-8?B?czhXeFdDRUR3d2p4c0hxRUZuazlhSHBpZ2lxOTczZFlucm9ZdlpneFdFdXYv?=
- =?utf-8?B?S3dBWGZGZTZMd0hjT2JIcGdmNDFyTjdUdUZla1VFNXdPMFlzbjlkQjY4ek5r?=
- =?utf-8?B?bXdKQlBGZ1B2N215cmRKWVlNQ0U2R1N2Z0EzdzQwN2xNaXFySStGNTdBSDFp?=
- =?utf-8?B?dW5Pdk1EZE5GQWpVQncrTVJkZVFuZ0ppakJDcFFqaU9PWmdqNnZIYTBjd2RN?=
- =?utf-8?B?WC9jTnhaU1A2UkNWMGs1ZW04K3hzOVlicGZWaTd0bTNISkFrWnFNcjlkSWtE?=
- =?utf-8?B?WWJ0WDR5QnBkbklZN3E2dWJoRnFVL09RRUxXeVhNNjkxRDRvZnZNRkY4QktZ?=
- =?utf-8?B?RFg1MC9MK1FIRVZwV3Z1RS9qeEFkaGZjWmdVQXpYR1lLT0xFVjlsdmxBQmJS?=
- =?utf-8?B?WndMNjdTTXFLbTZoTGw4QjE3RGowT3h6Y3VjeUZDYllnMGl3M29udFk0SFN1?=
- =?utf-8?B?OEd2UytrK0pLR0o4aGhuY2FYNWhKbnkrcjNHY2RxRnZqYTdRYU9MSHRQc2cz?=
- =?utf-8?B?YlRFeGNLRkVGR0pGUHlHa3d2cjNpSjlsZ3lrelU2cjc0UEYyU2RlRnNlaFEv?=
- =?utf-8?B?d1hHUDNaZ0s0ZmhsZ2FONzNLc2kxZEN3andtNnVrSDQzeWNkMGtQeTBXZlNB?=
- =?utf-8?B?SVV3M0ZJb2Z0OUV3MWw1TmVsZUNUTnpSTU54dkJyRGhJTWZIUE1sajV4MmFQ?=
- =?utf-8?B?c3dNYUhYTXpDTnVSck80cCtrTTZyZmpXb3lWeVpndERTUEI5emU1MUljVjhx?=
- =?utf-8?B?TWxCTGNIMVhQOStwNWdGLzNLTm1MMGNvYmdRbUhnZ3lFckpxYUNSQ3ljOG5r?=
- =?utf-8?B?cVlmT3k4aDIzWkJLWjE1c3lVMDVtc01TTjYvL2NZN3FiNUF4dVYvajdmSk9k?=
- =?utf-8?B?Q2NXeDJVby9sQzIzZk9ud2MwbkFmWDZEcGp3MGpBckk5NXZRcXQzNExsZTlN?=
- =?utf-8?B?aG5HY0NKRGdnL2RZMElMckJyV05tN0dWU2IzWlJBYXpOV1lUeklkZGJwSXo3?=
- =?utf-8?B?RFR1aWNhTWxIdHFRazRYZmxabmltNHBlOENmdkRXQlRMM1V6QnpYVk01alVk?=
- =?utf-8?B?bGFORGNmZDdhTUFTYTMya0xUclZUOWFLcGZSa1lCT21vYTNxVGw5SVR1M01Z?=
- =?utf-8?B?elBJWEFtWW5PQkl3cEdsZHp4V282Vm4yVkhvNnRtT0FENUtDTzNwamJ2aTkv?=
- =?utf-8?B?SGdxV0FuUUR1WGN3L290TnhKZlh3NFYwT3dCWVJtSllTTXpYUmw3U0ZHTFNI?=
- =?utf-8?B?U1NqcVAzMk1pVno0UkEyaTVJQitCNncwUUxYUkEvRXltTlBNeVJCbGwxRlcw?=
- =?utf-8?B?VThnMmdTMnN2Vk93OEowV3BheFhpcDBnc1hoQnAwclc1TWNQaGlBNldjZlNT?=
- =?utf-8?B?cDdBWG1vN2hDV3RRY050bUFJSDFRRFdqTFN4VDduK2tXMDNUUGhFSnRLT0gw?=
- =?utf-8?B?MGZhZldZTmV2WXM4N2loU1dvMEh5WlFrSUcyUjJReG0yOFZnTG5QWGpERzBL?=
- =?utf-8?B?enpKdDY5M1NRN0dOSlFsOS96UU9ZU2JlLzVmUXdHK25vVGZRb1VaMVVHbklo?=
- =?utf-8?B?WGFYRkFzK0VRK2ZSa29KSWhXOTdpcmtHRS96UDYzbzJvTGJxYXVkWFNySjZy?=
- =?utf-8?B?UFNlZ2oxRFc4dmtKeFpXS0ZCWmVZejdwSVZNbVV2MFUvZFRDMDFJSTV2b0s1?=
- =?utf-8?B?RVo3VEV2UjV3TEJGdHJqb2RJZ2h3azBaY1A4cXE3SzJHUExZN2g4bnhyRFNV?=
- =?utf-8?B?cEpLb1FEek5kbnBHVGg2OFBCV21HL1pzYUZkSGtGQWY0L0xvUEVXWExXd3M1?=
- =?utf-8?B?OEZkaTRpUlZ1ZDgrOFBKSDNnTkE4ek04bWJYZnpoN20zajlpZVQrUmk5bll4?=
- =?utf-8?Q?DyaEQVhKTeo58zjZ59EPqLxcu?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba43ba4c-fd41-40dc-2c87-08dc787d0c3f
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 03:29:25.2561
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DC2I6FCBFt4UMof/WzbnPkcO/A4KaZ8MrBTpzlLPijiab8lKtDQ0qK+TviO2YZ1XVs1itZNR7e0roBvY72+UKg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8151
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240516092213.6799-2-jcalmels@3xx0.net>
 
-On 5/20/24 06:11, Dmitry Baryshkov wrote:
-> On Thu, May 16, 2024 at 06:10:06PM +0800, Liu Ying wrote:
->> Commit f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
->> fails to consider the case where adv7511->i2c_main->irq is zero, i.e.,
->> no interrupt requested at all.
->>
->> Without interrupt, adv7511_wait_for_edid() could return -EIO sometimes,
->> because it polls adv7511->edid_read flag by calling adv7511_irq_process()
->> a few times, but adv7511_irq_process() happens to refuse to handle
->> interrupt by returning -ENODATA.  Hence, EDID retrieval fails randomly.
->>
->> Fix the issue by checking adv7511->i2c_main->irq before exiting interrupt
->> handling from adv7511_irq_process().
->>
->> Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
->> Signed-off-by: Liu Ying <victor.liu@nxp.com>
->> ---
->>  drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
->> index 6089b0bb9321..2074fa3c1b7b 100644
->> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
->> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
->> @@ -479,7 +479,8 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
->>  		return ret;
->>  
->>  	/* If there is no IRQ to handle, exit indicating no IRQ data */
->> -	if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
->> +	if (adv7511->i2c_main->irq &&
->> +	    !(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
->>  	    !(irq1 & ADV7511_INT1_DDC_ERROR))
->>  		return -ENODATA;
+On Thu, May 16, 2024 at 02:22:03AM -0700, Jonathan Calmels wrote:
+> Attackers often rely on user namespaces to get elevated (yet confined)
+> privileges in order to target specific subsystems (e.g. [1]). Distributions
+> have been pretty adamant that they need a way to configure these, most of
+> them carry out-of-tree patches to do so, or plainly refuse to enable them.
+> As a result, there have been multiple efforts over the years to introduce
+> various knobs to control and/or disable user namespaces (e.g. [2][3][4]).
 > 
-> I think it might be better to handle -ENODATA in adv7511_wait_for_edid()
-> instead. WDYT?
+> While we acknowledge that there are already ways to control the creation of
+> such namespaces (the most recent being a LSM hook), there are inherent
+> issues with these approaches. Preventing the user namespace creation is not
+> fine-grained enough, and in some cases, incompatible with various userspace
+> expectations (e.g. container runtimes, browser sandboxing, service
+> isolation)
+> 
+> This patch addresses these limitations by introducing an additional
+> capability set used to restrict the permissions granted when creating user
+> namespaces. This way, processes can apply the principle of least privilege
+> by configuring only the capabilities they need for their namespaces.
+> 
+> For compatibility reasons, processes always start with a full userns
+> capability set.
+> 
+> On namespace creation, the userns capability set (pU) is assigned to the
+> new effective (pE), permitted (pP) and bounding set (X) of the task:
+> 
+>     pU = pE = pP = X
+> 
+> The userns capability set obeys the invariant that no bit can ever be set
+> if it is not already part of the task’s bounding set. This ensures that no
+> namespace can ever gain more privileges than its predecessors.
+> Additionally, if a task is not privileged over CAP_SETPCAP, setting any bit
+> in the userns set requires its corresponding bit to be set in the permitted
+> set. This effectively mimics the inheritable set rules and means that, by
+> default, only root in the initial user namespace can gain userns
+> capabilities:
+> 
+>     p’U = (pE & CAP_SETPCAP) ? X : (X & pP)
+> 
+> Note that since userns capabilities are strictly hierarchical, policies can
+> be enforced at various levels (e.g. init, pam_cap) and inherited by every
+> child namespace.
+> 
+> Here is a sample program that can be used to verify the functionality:
+> 
+> /*
+>  * Test program that drops CAP_SYS_RAWIO from subsequent user namespaces.
+>  *
+>  * ./cap_userns_test unshare -r grep Cap /proc/self/status
+>  * CapInh: 0000000000000000
+>  * CapPrm: 000001fffffdffff
+>  * CapEff: 000001fffffdffff
+>  * CapBnd: 000001fffffdffff
+>  * CapAmb: 0000000000000000
+>  * CapUNs: 000001fffffdffff
+>  */
+> 
+> int main(int argc, char *argv[])
+> {
+>         if (prctl(PR_CAP_USERNS, PR_CAP_USERNS_LOWER, CAP_SYS_RAWIO, 0, 0) < 0)
+>                 err(1, "cannot drop userns cap");
+> 
+>         execvp(argv[1], argv + 1);
+>         err(1, "cannot exec");
+> }
+> 
+> Link: https://security.googleblog.com/2023/06/learnings-from-kctf-vrps-42-linux.html
+> Link: https://lore.kernel.org/lkml/1453502345-30416-1-git-send-email-keescook@chromium.org
+> Link: https://lore.kernel.org/lkml/20220815162028.926858-1-fred@cloudflare.com
+> Link: https://lore.kernel.org/containers/168547265011.24337.4306067683997517082-0@git.sr.ht
+> 
+> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
 
-Then, adv7511_cec_irq_process() will have less chance to be called from
-adv7511_irq_process() (assuming CONFIG_DRM_I2C_ADV7511_CEC is defined)
-if adv7511->i2c_main->irq is zero.
+Thanks! Of course we'llnsee how the conversations fall out, but
 
-But, anyway, it seems that commit f3d9683346d6 ("drm/bridge: adv7511:
-Allow IRQ to share GPIO pins") is even more broken to handle the CEC case,
-as adv7511_cec_adap_enable() may enable some interrupts for CEC.
-
-This is a bit complicated.  Thoughts?
-
-Regards,
-Liu Ying
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
 
-
-
-
+> ---
+>  fs/proc/array.c              |  9 ++++++
+>  include/linux/cred.h         |  3 ++
+>  include/uapi/linux/prctl.h   |  7 +++++
+>  kernel/cred.c                |  3 ++
+>  kernel/umh.c                 | 16 ++++++++++
+>  kernel/user_namespace.c      | 12 +++-----
+>  security/commoncap.c         | 59 ++++++++++++++++++++++++++++++++++++
+>  security/keys/process_keys.c |  3 ++
+>  8 files changed, 105 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/proc/array.c b/fs/proc/array.c
+> index 34a47fb0c57f..364e8bb19f9d 100644
+> --- a/fs/proc/array.c
+> +++ b/fs/proc/array.c
+> @@ -313,6 +313,9 @@ static inline void task_cap(struct seq_file *m, struct task_struct *p)
+>  	const struct cred *cred;
+>  	kernel_cap_t cap_inheritable, cap_permitted, cap_effective,
+>  			cap_bset, cap_ambient;
+> +#ifdef CONFIG_USER_NS
+> +	kernel_cap_t cap_userns;
+> +#endif
+>  
+>  	rcu_read_lock();
+>  	cred = __task_cred(p);
+> @@ -321,6 +324,9 @@ static inline void task_cap(struct seq_file *m, struct task_struct *p)
+>  	cap_effective	= cred->cap_effective;
+>  	cap_bset	= cred->cap_bset;
+>  	cap_ambient	= cred->cap_ambient;
+> +#ifdef CONFIG_USER_NS
+> +	cap_userns	= cred->cap_userns;
+> +#endif
+>  	rcu_read_unlock();
+>  
+>  	render_cap_t(m, "CapInh:\t", &cap_inheritable);
+> @@ -328,6 +334,9 @@ static inline void task_cap(struct seq_file *m, struct task_struct *p)
+>  	render_cap_t(m, "CapEff:\t", &cap_effective);
+>  	render_cap_t(m, "CapBnd:\t", &cap_bset);
+>  	render_cap_t(m, "CapAmb:\t", &cap_ambient);
+> +#ifdef CONFIG_USER_NS
+> +	render_cap_t(m, "CapUNs:\t", &cap_userns);
+> +#endif
+>  }
+>  
+>  static inline void task_seccomp(struct seq_file *m, struct task_struct *p)
+> diff --git a/include/linux/cred.h b/include/linux/cred.h
+> index 2976f534a7a3..adab0031443e 100644
+> --- a/include/linux/cred.h
+> +++ b/include/linux/cred.h
+> @@ -124,6 +124,9 @@ struct cred {
+>  	kernel_cap_t	cap_effective;	/* caps we can actually use */
+>  	kernel_cap_t	cap_bset;	/* capability bounding set */
+>  	kernel_cap_t	cap_ambient;	/* Ambient capability set */
+> +#ifdef CONFIG_USER_NS
+> +	kernel_cap_t	cap_userns;	/* User namespace capability set */
+> +#endif
+>  #ifdef CONFIG_KEYS
+>  	unsigned char	jit_keyring;	/* default keyring to attach requested
+>  					 * keys to */
+> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+> index 370ed14b1ae0..e09475171f62 100644
+> --- a/include/uapi/linux/prctl.h
+> +++ b/include/uapi/linux/prctl.h
+> @@ -198,6 +198,13 @@ struct prctl_mm_map {
+>  # define PR_CAP_AMBIENT_LOWER		3
+>  # define PR_CAP_AMBIENT_CLEAR_ALL	4
+>  
+> +/* Control the userns capability set */
+> +#define PR_CAP_USERNS			48
+> +# define PR_CAP_USERNS_IS_SET		1
+> +# define PR_CAP_USERNS_RAISE		2
+> +# define PR_CAP_USERNS_LOWER		3
+> +# define PR_CAP_USERNS_CLEAR_ALL	4
+> +
+>  /* arm64 Scalable Vector Extension controls */
+>  /* Flag values must be kept in sync with ptrace NT_ARM_SVE interface */
+>  #define PR_SVE_SET_VL			50	/* set task vector length */
+> diff --git a/kernel/cred.c b/kernel/cred.c
+> index 075cfa7c896f..9912c6f3bc6b 100644
+> --- a/kernel/cred.c
+> +++ b/kernel/cred.c
+> @@ -56,6 +56,9 @@ struct cred init_cred = {
+>  	.cap_permitted		= CAP_FULL_SET,
+>  	.cap_effective		= CAP_FULL_SET,
+>  	.cap_bset		= CAP_FULL_SET,
+> +#ifdef CONFIG_USER_NS
+> +	.cap_userns		= CAP_FULL_SET,
+> +#endif
+>  	.user			= INIT_USER,
+>  	.user_ns		= &init_user_ns,
+>  	.group_info		= &init_groups,
+> diff --git a/kernel/umh.c b/kernel/umh.c
+> index 1b13c5d34624..51f1e1d25d49 100644
+> --- a/kernel/umh.c
+> +++ b/kernel/umh.c
+> @@ -32,6 +32,9 @@
+>  
+>  #include <trace/events/module.h>
+>  
+> +#ifdef CONFIG_USER_NS
+> +static kernel_cap_t usermodehelper_userns = CAP_FULL_SET;
+> +#endif
+>  static kernel_cap_t usermodehelper_bset = CAP_FULL_SET;
+>  static kernel_cap_t usermodehelper_inheritable = CAP_FULL_SET;
+>  static DEFINE_SPINLOCK(umh_sysctl_lock);
+> @@ -94,6 +97,10 @@ static int call_usermodehelper_exec_async(void *data)
+>  	new->cap_bset = cap_intersect(usermodehelper_bset, new->cap_bset);
+>  	new->cap_inheritable = cap_intersect(usermodehelper_inheritable,
+>  					     new->cap_inheritable);
+> +#ifdef CONFIG_USER_NS
+> +	new->cap_userns = cap_intersect(usermodehelper_userns,
+> +					new->cap_userns);
+> +#endif
+>  	spin_unlock(&umh_sysctl_lock);
+>  
+>  	if (sub_info->init) {
+> @@ -560,6 +567,15 @@ static struct ctl_table usermodehelper_table[] = {
+>  		.mode		= 0600,
+>  		.proc_handler	= proc_cap_handler,
+>  	},
+> +#ifdef CONFIG_USER_NS
+> +	{
+> +		.procname	= "userns",
+> +		.data		= &usermodehelper_userns,
+> +		.maxlen		= 2 * sizeof(unsigned long),
+> +		.mode		= 0600,
+> +		.proc_handler	= proc_cap_handler,
+> +	},
+> +#endif
+>  	{ }
+>  };
+>  
+> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> index 0b0b95418b16..7e624607330b 100644
+> --- a/kernel/user_namespace.c
+> +++ b/kernel/user_namespace.c
+> @@ -42,15 +42,13 @@ static void dec_user_namespaces(struct ucounts *ucounts)
+>  
+>  static void set_cred_user_ns(struct cred *cred, struct user_namespace *user_ns)
+>  {
+> -	/* Start with the same capabilities as init but useless for doing
+> -	 * anything as the capabilities are bound to the new user namespace.
+> -	 */
+> -	cred->securebits = SECUREBITS_DEFAULT;
+> +	/* Start with the capabilities defined in the userns set. */
+> +	cred->cap_bset = cred->cap_userns;
+> +	cred->cap_permitted = cred->cap_userns;
+> +	cred->cap_effective = cred->cap_userns;
+>  	cred->cap_inheritable = CAP_EMPTY_SET;
+> -	cred->cap_permitted = CAP_FULL_SET;
+> -	cred->cap_effective = CAP_FULL_SET;
+>  	cred->cap_ambient = CAP_EMPTY_SET;
+> -	cred->cap_bset = CAP_FULL_SET;
+> +	cred->securebits = SECUREBITS_DEFAULT;
+>  #ifdef CONFIG_KEYS
+>  	key_put(cred->request_key_auth);
+>  	cred->request_key_auth = NULL;
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 162d96b3a676..b3d3372bf910 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -228,6 +228,28 @@ static inline int cap_inh_is_capped(void)
+>  	return 1;
+>  }
+>  
+> +/*
+> + * Determine whether a userns capability can be raised.
+> + * Returns 1 if it can, 0 otherwise.
+> + */
+> +#ifdef CONFIG_USER_NS
+> +static inline int cap_uns_is_raiseable(unsigned long cap)
+> +{
+> +	if (!!cap_raised(current_cred()->cap_userns, cap))
+> +		return 1;
+> +	/* a capability cannot be raised unless the current task has it in
+> +	 * its bounding set and, without CAP_SETPCAP, its permitted set.
+> +	 */
+> +	if (!cap_raised(current_cred()->cap_bset, cap))
+> +		return 0;
+> +	if (cap_capable(current_cred(), current_cred()->user_ns,
+> +			CAP_SETPCAP, CAP_OPT_NONE) != 0 &&
+> +	    !cap_raised(current_cred()->cap_permitted, cap))
+> +		return 0;
+> +	return 1;
+> +}
+> +#endif
+> +
+>  /**
+>   * cap_capset - Validate and apply proposed changes to current's capabilities
+>   * @new: The proposed new credentials; alterations should be made here
+> @@ -1382,6 +1404,43 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  			return commit_creds(new);
+>  		}
+>  
+> +#ifdef CONFIG_USER_NS
+> +	case PR_CAP_USERNS:
+> +		if (arg2 == PR_CAP_USERNS_CLEAR_ALL) {
+> +			if (arg3 | arg4 | arg5)
+> +				return -EINVAL;
+> +
+> +			new = prepare_creds();
+> +			if (!new)
+> +				return -ENOMEM;
+> +			cap_clear(new->cap_userns);
+> +			return commit_creds(new);
+> +		}
+> +
+> +		if (((!cap_valid(arg3)) | arg4 | arg5))
+> +			return -EINVAL;
+> +
+> +		if (arg2 == PR_CAP_USERNS_IS_SET) {
+> +			return !!cap_raised(current_cred()->cap_userns, arg3);
+> +		} else if (arg2 != PR_CAP_USERNS_RAISE &&
+> +			   arg2 != PR_CAP_USERNS_LOWER) {
+> +			return -EINVAL;
+> +		} else {
+> +			if (arg2 == PR_CAP_USERNS_RAISE &&
+> +			    !cap_uns_is_raiseable(arg3))
+> +				return -EPERM;
+> +
+> +			new = prepare_creds();
+> +			if (!new)
+> +				return -ENOMEM;
+> +			if (arg2 == PR_CAP_USERNS_RAISE)
+> +				cap_raise(new->cap_userns, arg3);
+> +			else
+> +				cap_lower(new->cap_userns, arg3);
+> +			return commit_creds(new);
+> +		}
+> +#endif
+> +
+>  	default:
+>  		/* No functionality available - continue with default */
+>  		return -ENOSYS;
+> diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+> index b5d5333ab330..e3670d815435 100644
+> --- a/security/keys/process_keys.c
+> +++ b/security/keys/process_keys.c
+> @@ -944,6 +944,9 @@ void key_change_session_keyring(struct callback_head *twork)
+>  	new->cap_effective	= old->cap_effective;
+>  	new->cap_ambient	= old->cap_ambient;
+>  	new->cap_bset		= old->cap_bset;
+> +#ifdef CONFIG_USER_NS
+> +	new->cap_userns		= old->cap_userns;
+> +#endif
+>  
+>  	new->jit_keyring	= old->jit_keyring;
+>  	new->thread_keyring	= key_get(old->thread_keyring);
+> -- 
+> 2.45.0
+> 
 
