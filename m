@@ -1,124 +1,131 @@
-Return-Path: <linux-kernel+bounces-183462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8D38C9959
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:33:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB5F8C995E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5381C2131E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:33:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46D522818F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF15F1B7F4;
-	Mon, 20 May 2024 07:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="c4J1a2ke"
-Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3B71BDCD
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 07:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED5A1BDCF;
+	Mon, 20 May 2024 07:34:21 +0000 (UTC)
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFFA18C3B;
+	Mon, 20 May 2024 07:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716190376; cv=none; b=n5/Y9YlZjB4A0qewFENcrPegdBd+/5dZtCIoTv6qQM+AzOo2RGBVJnlhN4anSbtC09xD55jpbATxGRQb2cN0rs8/Sa7KXzMl1uJ48nHMlGr/d++5QSEAJrZk3BHe1blzRnyEUogcUWxbLE/aE1+VS4G8+g0LF08mVQH0yWcfpKs=
+	t=1716190461; cv=none; b=jh54qpNhlrq+l0swgglca46bGIM0lstwwuB82ZODrEwXBLW65pcibs9tsjmHJJpQmLORf+stTgLNpbVfIjsdHekntuxnGwNHogHW1tyqrfuA8S9Nj4JVsIj8xTCGAvh96lox/o8nPcR9yq1i1i/dGshYStrnSP89CJBZMGWAjEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716190376; c=relaxed/simple;
-	bh=FFamMafNUgPmRC2roNs5YTBIj9RyU3l/0sZQ9xCXCLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0fsanVV69YREHpGODlcy6FVC+1ZKGXsuCbRXO18HoE4HpYHAlohmj+ngiyYcXatV/yCs5D8hAfZmEj87AyJ/VsKc/GKKQkdVUi3+GnxGFu/VTduut5eL1uYj8VS0CeOgVKYd//+L9im4f6TEoBP1bqCQAHBehXpSug2i9L8ac0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=c4J1a2ke; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id F276814C2DB;
-	Mon, 20 May 2024 09:32:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1716190368;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8vbBcX66RghTnkz2dmYVbCbRBKn2ffe8qZ0JA8PcrWg=;
-	b=c4J1a2keNzTDzZHGaRFZjMhWSoqA9vmA+S6H/IEyHyB/aNWouO9ao4pzJ1cfy0VQQqLQUJ
-	1uy+90nuQC5qYy82ZgUdyORwXbc+W5zcHQ79s/zm1fLr6uF6SpKCB6sT1DYeX4tvJw/lGI
-	/d9LnXoHHNyWuWoKmTxKO9WA+ZpvGInL2Li8c7xTLB1gK8WPQL5iVWECLuok8e5A1slGq5
-	nDpdf9sIhgYE3UEKXM9WxfPg15J1yRd13X6vx0qXzC2cfHIf77Ik5VnNYDaHzWynCwwsiy
-	E0NOTKXdRMSrb6HyyuozvKKUlTVpsNplv1gMeVBcWMtdqZVGmUwS2JV78fsY9A==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 88b285a3;
-	Mon, 20 May 2024 07:32:42 +0000 (UTC)
-Date: Mon, 20 May 2024 16:32:27 +0900
-From: asmadeus@codewreck.org
-To: David Howells <dhowells@redhat.com>
-Cc: syzbot <syzbot+df038d463cca332e8414@syzkaller.appspotmail.com>,
-	ericvh@kernel.org, linux-kernel@vger.kernel.org,
-	linux_oss@crudebyte.com, lucho@ionkov.net,
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
-Subject: Re: [syzbot] [v9fs?] KASAN: slab-use-after-free Write in
- v9fs_free_request
-Message-ID: <Zkr8i9XxpkJ9AABZ@codewreck.org>
-References: <0000000000005be0aa061846f8d6@google.com>
+	s=arc-20240116; t=1716190461; c=relaxed/simple;
+	bh=w0nWP4OpzxjTteaJdbehBz/NP4ETwZZeVrDtaMvHGWQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ckYno2tRQVEgRmWO/VPa2gfRX83dWQCG2xbdis5S6bEoURjEJ8oZpKiMNslJpfsHxicTRjANvITA2NTQgpq8yUr/YDbvjQJso2l1LoLSqhnlfa/feJXpHAA96VTluQgNBe279kfwUYRpcIkSupW1m8oD3Vnamgtc0y2vXppd1uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from gui.. (unknown [115.206.161.197])
+	by mail-app2 (Coremail) with SMTP id by_KCgDHUaC9_EpmpJkFAQ--.208S4;
+	Mon, 20 May 2024 15:33:19 +0800 (CST)
+From: Lin Ma <linma@zju.edu.cn>
+To: johannes@sipsolutions.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Lin Ma <linma@zju.edu.cn>
+Subject: [PATCH v1 net] cfg80211: pmsr: use correct nla_get_uX functions
+Date: Mon, 20 May 2024 15:33:11 +0800
+Message-Id: <20240520073311.44117-1-linma@zju.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0000000000005be0aa061846f8d6@google.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:by_KCgDHUaC9_EpmpJkFAQ--.208S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxXF13tFW5Cw1Dtry7tFWUArb_yoW5WrW8pF
+	4kta95t3Z8Xw1kZrykCw18WF9FqF17Arn3CFW3uF1fCr4vga45twnrWr4jqa1DA3s5W395
+	tr1vyay8Cw15KFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkm14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26rxl
+	6s0DM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
+	6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: qtrwiiyqvtljo62m3hxhgxhubq/
 
-+To David as I need help with netfs
+The commit 9bb7e0f24e7e ("cfg80211: add peer measurement with FTM
+initiator API") defines four attributes, which are
 
-syzbot wrote on Sun, May 12, 2024 at 12:42:33PM -0700:
-> UAF in
-> Workqueue: events_unbound v9fs_upload_to_server_worker
->  refcount_dec_and_test include/linux/refcount.h:325 [inline]
->  p9_fid_put include/net/9p/client.h:275 [inline]
->  v9fs_free_request+0x5f/0xe0 fs/9p/vfs_addr.c:128
->  netfs_free_request+0x246/0x600 fs/netfs/objects.c:97
->  v9fs_upload_to_server fs/9p/vfs_addr.c:36 [inline]
->  v9fs_upload_to_server_worker+0x200/0x3e0 fs/9p/vfs_addr.c:44
->  process_one_work kernel/workqueue.c:3267 [inline]
+- `NL80211_PMSR_FTM_REQ_ATTR_NUM_BURSTS_EXP` with NLA_U8 type
+- `NL80211_PMSR_FTM_REQ_ATTR_BURST_PERIOD` with NLA_U16 type
+- `NL80211_PMSR_FTM_REQ_ATTR_BURST_DURATION` with NLA_U8 type
+- `NL80211_PMSR_FTM_REQ_ATTR_NUM_FTMR_RETRIES` with NLA_U8 type
 
-> Freed by task 32641:
->  p9_fid_destroy net/9p/client.c:889 [inline]
->  p9_client_destroy+0x1fb/0x660 net/9p/client.c:1070
->  v9fs_session_close+0x51/0x210 fs/9p/v9fs.c:506
->  v9fs_kill_super+0x5c/0x90 fs/9p/vfs_super.c:196
->  deactivate_locked_super+0xc6/0x130 fs/super.c:472
->  cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
+However, the consumers of these attributes in `pmsr_parse_ftm` blindly
+all use `nla_get_u32`, which is incorrect. Hence, fix these with correct
+`nla_get_u8` and `nla_get_u16`.
 
-That's a tough one: netfs took a ref in v9fs_init_request (netfs op's
-init_request) and expects to be able to use it until v9fs_free_request
-(net op's free_request()), but the fs was dismounted first and we kill
-the kmem cache at this point so we aggressively drop any dangling ref
-there as there's no way of waiting.
-(this is corroborated by "9pnet: Found fid 1 not clunked" in dmesg in
-the syzcaller logs)
+Fixes: 9bb7e0f24e7e ("cfg80211: add peer measurement with FTM initiator API")
+Signed-off-by: Lin Ma <linma@zju.edu.cn>
+---
+ net/wireless/pmsr.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-The other two recent kasan errors are similar:
-https://lkml.kernel.org/r/000000000000b86c5e06130da9c6@google.com
-is pretty much the same (it's just that the decrement here hit 0 as
-umount was in the middle of doing it?), and
-https://lkml.kernel.org/r/000000000000041f960618206d7e@google.com
-is yet another step faster (netfs freed the last ref while the cache
-was being emptied and destroyed the fid first; which is possible because
-we're not taking the client lock at this point as we weren't expecting
-any other access after umount)
-
-David, got an idea on how we could wait for these async writebacks?
-
-
-Notes:
- - David removed v9fs_upload_to_server in 2df86547b23d ("netfs: Cut
-over to using new writeback code") (and c245868524cc ("netfs: Remove the
-old writeback code")) in master, but the problem is still present
-conceptually.
- - layering wise, 9p (fs) depends on 9pnet, so 9pnet cannot call into the
-fs code; the wait has to be in v9fs_session_close() before calling
-p9_client_destroy or earlier
-
-
-Thanks,
+diff --git a/net/wireless/pmsr.c b/net/wireless/pmsr.c
+index e106dcea3977..c569c37da317 100644
+--- a/net/wireless/pmsr.c
++++ b/net/wireless/pmsr.c
+@@ -56,7 +56,7 @@ static int pmsr_parse_ftm(struct cfg80211_registered_device *rdev,
+ 	out->ftm.burst_period = 0;
+ 	if (tb[NL80211_PMSR_FTM_REQ_ATTR_BURST_PERIOD])
+ 		out->ftm.burst_period =
+-			nla_get_u32(tb[NL80211_PMSR_FTM_REQ_ATTR_BURST_PERIOD]);
++			nla_get_u16(tb[NL80211_PMSR_FTM_REQ_ATTR_BURST_PERIOD]);
+ 
+ 	out->ftm.asap = !!tb[NL80211_PMSR_FTM_REQ_ATTR_ASAP];
+ 	if (out->ftm.asap && !capa->ftm.asap) {
+@@ -75,7 +75,7 @@ static int pmsr_parse_ftm(struct cfg80211_registered_device *rdev,
+ 	out->ftm.num_bursts_exp = 0;
+ 	if (tb[NL80211_PMSR_FTM_REQ_ATTR_NUM_BURSTS_EXP])
+ 		out->ftm.num_bursts_exp =
+-			nla_get_u32(tb[NL80211_PMSR_FTM_REQ_ATTR_NUM_BURSTS_EXP]);
++			nla_get_u8(tb[NL80211_PMSR_FTM_REQ_ATTR_NUM_BURSTS_EXP]);
+ 
+ 	if (capa->ftm.max_bursts_exponent >= 0 &&
+ 	    out->ftm.num_bursts_exp > capa->ftm.max_bursts_exponent) {
+@@ -88,7 +88,7 @@ static int pmsr_parse_ftm(struct cfg80211_registered_device *rdev,
+ 	out->ftm.burst_duration = 15;
+ 	if (tb[NL80211_PMSR_FTM_REQ_ATTR_BURST_DURATION])
+ 		out->ftm.burst_duration =
+-			nla_get_u32(tb[NL80211_PMSR_FTM_REQ_ATTR_BURST_DURATION]);
++			nla_get_u8(tb[NL80211_PMSR_FTM_REQ_ATTR_BURST_DURATION]);
+ 
+ 	out->ftm.ftms_per_burst = 0;
+ 	if (tb[NL80211_PMSR_FTM_REQ_ATTR_FTMS_PER_BURST])
+@@ -107,7 +107,7 @@ static int pmsr_parse_ftm(struct cfg80211_registered_device *rdev,
+ 	out->ftm.ftmr_retries = 3;
+ 	if (tb[NL80211_PMSR_FTM_REQ_ATTR_NUM_FTMR_RETRIES])
+ 		out->ftm.ftmr_retries =
+-			nla_get_u32(tb[NL80211_PMSR_FTM_REQ_ATTR_NUM_FTMR_RETRIES]);
++			nla_get_u8(tb[NL80211_PMSR_FTM_REQ_ATTR_NUM_FTMR_RETRIES]);
+ 
+ 	out->ftm.request_lci = !!tb[NL80211_PMSR_FTM_REQ_ATTR_REQUEST_LCI];
+ 	if (out->ftm.request_lci && !capa->ftm.request_lci) {
 -- 
-Dominique Martinet | Asmadeus
+2.34.1
+
 
