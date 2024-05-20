@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-183808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF238C9E6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:52:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BABAB8C9E76
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327261C21D3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:52:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A8A282ECB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF63E136658;
-	Mon, 20 May 2024 13:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4397A13666E;
+	Mon, 20 May 2024 13:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KPmvrE07"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I6QBEyaz"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A2053815
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 13:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112CC135A6B
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 13:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716213119; cv=none; b=s+tRAlqOcDhtrXL2aO0CW2vl9KsqdAQDOcO/TLFeA7imZf5PHyVpVZ+z7eVCR8NtvQ4QkSKMxOO5RAnukuVwWPB+wcb/beEdtPqq0KS9x0u7O0cS5sEjpyB/m/GsSp1V6Mh5fZJwnZwyjO3usCsaLonOzm/m7FKiTK6+P2r68CU=
+	t=1716213462; cv=none; b=amPt3PEYMgVPGHpTVyPiuNwPt/J9wYzCgpT8SuDtuVi2oT+zBEuEhqs/KC8iMehRyVV50ltwd6I6I0+8xqgjCFFmEpWVmlG2hoTNcNJQc1pfjUv0MnCOcb7kiGFENuREafysikZlIjPujupF/HQvos2a89DEsRodoPg9A2qRo6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716213119; c=relaxed/simple;
-	bh=NTsRMbb5iWNBU8od9S2Jd/KrHPBQGWlCUbGymF1Fw3w=;
+	s=arc-20240116; t=1716213462; c=relaxed/simple;
+	bh=hz1NbHsnS8VM83jZDGbfce0Y04Ax0FINz964pXTrpYI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bC3hqjMdvGru3mlIicQyorfxK9g/VzRtWgyuYMPiyIdJAlIWYZbU8uxVxEs96cyqAKpo4QcpQoP/HFlXQogiiAaIz0ufLbCYX7tGs5vdLhsPCupSiCiPrPYY3l1y0BXMFjpQJ0QhERz2uu/0M8uxsYYNEP3yj/ceruKkX0QdFeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KPmvrE07; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3c9cc681ee0so1301908b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 06:51:56 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=UPf+UnjqS1ya3i/MVDaGTTeyuriwbojxYjvTNMTnhF1nwvFB57tihlDPFNBWXtqoi3jLbPv5J2ZO5vZTsdolRaMYaK0zoGIXOom5ZIfB0gEOUAD/wKuNorI1UGqzTz/h7Wf7FpR3epdygP4aICaA1Q9nke2N0OEEZ8OUVY7hEyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I6QBEyaz; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a5a2d0d8644so634055766b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 06:57:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716213115; x=1716817915; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rt+swezO2XoZgidBhPae8eGHxrp7XZ2iue6hZ5iS2g8=;
-        b=KPmvrE07fAv9Z9TcPuCIR1KewqCG73z8bimdlgXDrFxlDVFUUVm8o40gAGwaaIUw+f
-         kCojKzvf9VEFcpKoXdwfe564jP6SsMXBGinWC/lTC+qkJgCBvKAs/I2bIu5cY28KRD70
-         xQorhuNzMAK1KYf3wQDh1s0XirkGyk6izW9C3PlIvCpCI7GozFmu+IOwPjYoW7SeoXsA
-         +eOcChZRgSRghVDDuXZjjPO0cBFk/rozicr5cMEFUXKdaT0euy4xxR7c0UwCuYTlWw/F
-         +0KNULX8YDtw9tVNU78nlcj0mrfsopkiWw9MHUtpHK1k1JeeR9P0LoKiTc/XwXU/aT/y
-         sxeA==
+        d=linaro.org; s=google; t=1716213458; x=1716818258; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=QRamhVuVMRjdbf0PqzgKHE62r/5JU7p/yeFWq/4P6B8=;
+        b=I6QBEyaznV5STDV3cEsmZy978mJeVIIREHEybfI+K6Q9MNMQsrNcn6izfUsDtr6RrP
+         kblzMuXYvrpXWLuFrw4qVPXZ/yNg1EInLdKyP8M10gO+HUQorf29wWWNwvCPcvTtTv2Y
+         psgZw9XE1/HQXdL509yw2dULwY6bgF5hiyXmSmdjTY9w6tHjXIcnnH+J3B9Sf/Qe20ET
+         7xnTEPFzR6Ad/LJehT4AFMhJY7BJzwD0EO/8aZyoVJJegcdrv08UWWiUZM6LXwaox6bu
+         uPi2L/JEGukIA10kmcDJSSFUM20daqXBO5OjYofzjx8Nv+hUWJXtVVP60Xu9TFq3oZsy
+         ybaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716213115; x=1716817915;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rt+swezO2XoZgidBhPae8eGHxrp7XZ2iue6hZ5iS2g8=;
-        b=ZvbhNe0N4fjOKZI7ZbK0GUmjIVGWOvf4lNZfmIpHWPM6KxCzJPYk0erWXYWTqOQUQM
-         i2XmqUly4g6HbrZy2yngB2TaEV5HrjFXC38lO5oe3rmE54fVRYy5h5lhecqU5NbvKo9x
-         /QzesdWPgqEmphKcI0biBOtRq6DXb7Fy+fA/V7GqWakUSVd0CMY+5bOXsO58rt5DNVFy
-         sYOfinckl86l9LEoHInLKKiZkPf7Y1mmwpFOmVBOp+zoD9VpXEsU/J4z+Hf5QtPqA+B7
-         E5dQJ4d2t5eKq+/TNON8laKrhSSDdYWlfwtk0Xx+P3VJMvgDoE+Q0fGgsf+EsSk+XM1k
-         PLiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWok4635fSfe5W8DnSzfAvlNurSc3ixakJPGZYAEo3uuFp/7B0Qwh44pfaOiQZT2FRBRA0RLwgGDYnZAxSTd38JGx0aXe/vLR6pFFCY
-X-Gm-Message-State: AOJu0Yy4uG90S/terSAlIqIjJUo5hZ2AM93GtrJN/K5JZippnpBjZ3AF
-	xB3ROHtn6k/WRJcNvV9lBBEvfhR/jB7+134nbxH1gc2Isq36t3+c9EJ+21dn1oY=
-X-Google-Smtp-Source: AGHT+IFU10m32Gb2xWok1B4/mtfFUidep2XTvahd+Xb9OopS6qpAPhoM94gSqMsEhEtiYhFACB28PA==
-X-Received: by 2002:a05:6808:150c:b0:3c9:d118:4b4b with SMTP id 5614622812f47-3c9d1184ecbmr9504987b6e.15.1716213114222;
-        Mon, 20 May 2024 06:51:54 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3c9c8260c0esm1349499b6e.58.2024.05.20.06.51.53
+        d=1e100.net; s=20230601; t=1716213458; x=1716818258;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QRamhVuVMRjdbf0PqzgKHE62r/5JU7p/yeFWq/4P6B8=;
+        b=n84No2QGtikmicwU41Xm1lt/s+OZwiteeIVt+bMhKku8MUL+We9Hx7vk/yht7/yelU
+         GYFrvJKspRtjCJ3cIGmkVMvN9/YniA75+2nqYEMvypKfUvbpPDdp7jzxkt120V3O5fzw
+         +nmqvtkBaoZkDKsOG+PGd3LjmqkQm934Lelc2Z81MWpSTZSw6R7IUPtSM8JYumQqO0vk
+         oRgqc9e1xoKf45lghc4uyGs/D380z9ClzDPKS4p7KLG+UPbWIWoCqlK+nNAMwIqVpsgc
+         xYQlex7JX3K5TDOdiLKDBBZzu/Y+6WRfFtG5/isMMtO8hxQbhTIMFhuZIhH5iuetBBZx
+         DdNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4InkgaaDvt6zGE9HQEHLevFH/EKX9Eu06gyHgEsziU/XQzqfaU7q5FxyhjdyjGzPhsIhZsJ5aUQvX0wqoBUAggFAUYP6C6jcHEw4N
+X-Gm-Message-State: AOJu0YxOikX6O6lWcPBGOwjvNi+OGxkcwKeTc3jwCiuupsaLUcxflHCx
+	iu+8ipmLnrlzmkzxfT9hJznI92rlfIzBTcoEdf0+ivEt14wfUWFMgdSTkifhNUg=
+X-Google-Smtp-Source: AGHT+IHJ4TjOsch17ekDhKwGOmXGwBjMLnonRjbcmiUS/hMsvvp7nSgXL34tLdwpY+FNeQ7sGb2ZSw==
+X-Received: by 2002:a17:906:1d05:b0:a59:c9b1:cb68 with SMTP id a640c23a62f3a-a5a2d55a759mr2047316166b.7.1716213458224;
+        Mon, 20 May 2024 06:57:38 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7da8sm1469644366b.99.2024.05.20.06.57.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 May 2024 06:51:53 -0700 (PDT)
-Message-ID: <ebf18ed1-a82f-4c0a-9a63-2c428b5aee40@baylibre.com>
-Date: Mon, 20 May 2024 08:51:52 -0500
+        Mon, 20 May 2024 06:57:37 -0700 (PDT)
+Message-ID: <7b9d66a9-22b4-4fdc-a6a5-dda737a4f932@linaro.org>
+Date: Mon, 20 May 2024 15:57:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,157 +76,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/4] iio: add support for multiple scan types per
- channel
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Julien Stephan <jstephan@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
- <20240507-iio-add-support-for-multiple-scan-types-v1-3-95ac33ee51e9@baylibre.com>
- <20240519201241.7c60abac@jic23-huawei>
+Subject: Re: [PATCH v3 3/4] ASoC: qcom: qdsp6: Set channel mapping instead of
+ fixed defaults
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ James Schulman <james.schulman@cirrus.com>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Banajit Goswami <bgoswami@quicinc.com>
+Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240509-asoc-x1e80100-4-channel-mapping-v3-0-6f874552d7b2@linaro.org>
+ <20240509-asoc-x1e80100-4-channel-mapping-v3-3-6f874552d7b2@linaro.org>
+ <d3c78e43-44a9-4ef2-8e64-00f39b32172c@linaro.org>
+ <aa8509c9-7475-40b3-82cb-9bfc1e33b202@linaro.org>
+ <adde3972-f055-464b-83ac-8d8a2d874e29@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240519201241.7c60abac@jic23-huawei>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <adde3972-f055-464b-83ac-8d8a2d874e29@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5/19/24 2:12 PM, Jonathan Cameron wrote:
-> On Tue,  7 May 2024 14:02:07 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
+On 10/05/2024 17:39, Srinivas Kandagatla wrote:
 > 
->> This adds new fields to the iio_channel structure to support multiple
->> scan types per channel. This is useful for devices that support multiple
->> resolution modes or other modes that require different data formats of
->> the raw data.
+> 
+> On 09/05/2024 12:43, Krzysztof Kozlowski wrote:
+>> On 09/05/2024 11:17, Srinivas Kandagatla wrote:
+>>>> diff --git a/sound/soc/qcom/qdsp6/audioreach.h b/sound/soc/qcom/qdsp6/audioreach.h
+>>>> index eb9306280988..208b74e50445 100644
+>>>> --- a/sound/soc/qcom/qdsp6/audioreach.h
+>>>> +++ b/sound/soc/qcom/qdsp6/audioreach.h
+>>>> @@ -766,6 +766,7 @@ struct audioreach_module_config {
+>>>>    /* Packet Allocation routines */
+>>>>    void *audioreach_alloc_apm_cmd_pkt(int pkt_size, uint32_t opcode, uint32_t
+>>>>    				    token);
+>>>> +void audioreach_set_channel_mapping(u8 *ch_map, int num_channels);
+>>>>    void *audioreach_alloc_cmd_pkt(int payload_size, uint32_t opcode,
+>>>>    			       uint32_t token, uint32_t src_port,
+>>>>    			       uint32_t dest_port);
+>>>> diff --git a/sound/soc/qcom/qdsp6/q6apm-dai.c b/sound/soc/qcom/qdsp6/q6apm-dai.c
+>>>> index 00bbd291be5c..8ab55869e8a2 100644
+>>>> --- a/sound/soc/qcom/qdsp6/q6apm-dai.c
+>>>> +++ b/sound/soc/qcom/qdsp6/q6apm-dai.c
+>>>> @@ -243,6 +243,7 @@ static int q6apm_dai_prepare(struct snd_soc_component *component,
+>>>>    	cfg.num_channels = runtime->channels;
+>>>>    	cfg.bit_width = prtd->bits_per_sample;
+>>>>    	cfg.fmt = SND_AUDIOCODEC_PCM;
+>>>> +	audioreach_set_channel_mapping(cfg.channel_map, runtime->channels);
+>>>>    
+>>>
+>>> Prepare can be called multiple times.. so we have channels overwritten here.
 >>
->> To make use of this, drivers can still use the old scan_type field for
->> the "default" scan type and use the new scan_type_ext field for any
->> additional scan types.
+>> Which is expected - just like we overwrite number of channels.
+> This will work in q6apm-dai.c case as there is no set_channel_map callback.
 > 
-> Comment inline says that you should commit scan_type if scan_type_ext
-> is provided.  That makes sense to me rather that a default no one reads.
+> lgtm.
 > 
-> The example that follows in patch 4 uses both the scan_type and
-> the scan_type_ext which is even more confusing.
-> 
->> And they must implement the new callback
->> get_current_scan_type() to return the current scan type based on the
->> current state of the device.
->>
->> The buffer code is the only code in the IIO core code that is using the
->> scan_type field. This patch updates the buffer code to use the new
->> iio_channel_validate_scan_type() function to ensure it is returning the
->> correct scan type for the current state of the device when reading the
->> sysfs attributes. The buffer validation code is also update to validate
->> any additional scan types that are set in the scan_type_ext field. Part
->> of that code is refactored to a new function to avoid duplication.
->>
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
->> ---
-> 
->> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
->> index 19de573a944a..66f0b4c68f53 100644
->> --- a/include/linux/iio/iio.h
->> +++ b/include/linux/iio/iio.h
->> @@ -205,6 +205,9 @@ struct iio_scan_type {
->>   * @scan_index:		Monotonic index to give ordering in scans when read
->>   *			from a buffer.
->>   * @scan_type:		struct describing the scan type
->> + * @ext_scan_type:	Used in rare cases where there is more than one scan
->> + *			format for a channel. When this is used, omit scan_type.
-> 
-> Here is the disagreement with the patch description.
-> 
->> + * @num_ext_scan_type:	Number of elements in ext_scan_type.
->>   * @info_mask_separate: What information is to be exported that is specific to
->>   *			this channel.
->>   * @info_mask_separate_available: What availability information is to be
->> @@ -256,6 +259,8 @@ struct iio_chan_spec {
->>  	unsigned long		address;
->>  	int			scan_index;
->>  	struct iio_scan_type scan_type;
->> +	const struct iio_scan_type *ext_scan_type;
->> +	unsigned int		num_ext_scan_type;
-> 
-> Let's make it explicit that you can't do both.
-> 
-> 	union {
-> 		struct iio_scan_type scan_type;
-> 		struct {
-> 			const struct iio_scan_type *ext_scan_type;
-> 			unsigned int num_ext_scan_type;
-> 		};
-> 	};
-> should work for that I think.
-> 
-> However this is I think only used for validation. If that's the case
-> do we care about values not in use?  Can we move the validation to
-> be runtime if the get_current_scan_type() callback is used.
+> Can you rename audioreach_set_channel_mapping to 
+> audioreach_set_default_channel_mapping which makes it more obvious that 
+> we are setting a default channel mappings.
 
-I like the suggestion of the union to use one or the other. But I'm not
-sure I understand the comments about validation.
+Ack.
 
-If you are referring to iio_channel_validate_scan_type(), it only checks
-for programmer error of realbits > storagebits, so it seems better to
-keep it where it is to fail as early as possible.
-
-> 
-> 
->>  	long			info_mask_separate;
->>  	long			info_mask_separate_available;
->>  	long			info_mask_shared_by_type;
->> @@ -435,6 +440,9 @@ struct iio_trigger; /* forward declaration */
->>   *			for better event identification.
->>   * @validate_trigger:	function to validate the trigger when the
->>   *			current trigger gets changed.
->> + * @get_current_scan_type: must be implemented by drivers that use ext_scan_type
->> + *			in the channel spec to return the currently active scan
->> + *			type based on the current state of the device.
->>   * @update_scan_mode:	function to configure device and scan buffer when
->>   *			channels have changed
->>   * @debugfs_reg_access:	function to read or write register value of device
->> @@ -519,6 +527,9 @@ struct iio_info {
->>  
->>  	int (*validate_trigger)(struct iio_dev *indio_dev,
->>  				struct iio_trigger *trig);
->> +	const struct iio_scan_type *(*get_current_scan_type)(
->> +					const struct iio_dev *indio_dev,
->> +					const struct iio_chan_spec *chan);
->>  	int (*update_scan_mode)(struct iio_dev *indio_dev,
->>  				const unsigned long *scan_mask);
->>  	int (*debugfs_reg_access)(struct iio_dev *indio_dev,
->> @@ -804,6 +815,28 @@ static inline bool iio_read_acpi_mount_matrix(struct device *dev,
->>  }
->>  #endif
->>  
->> +/**
->> + * iio_get_current_scan_type - Get the current scan type for a channel
->> + * @indio_dev:	the IIO device to get the scan type for
->> + * @chan:	the channel to get the scan type for
->> + *
->> + * Most devices only have one scan type per channel and can just access it
->> + * directly without calling this function. Core IIO code and drivers that
->> + * implement ext_scan_type in the channel spec should use this function to
->> + * get the current scan type for a channel.
->> + *
->> + * Returns: the current scan type for the channel
->> + */
->> +static inline const struct iio_scan_type *iio_get_current_scan_type(
->> +					const struct iio_dev *indio_dev,
->> +					const struct iio_chan_spec *chan)
->> +{
->> +	if (indio_dev->info->get_current_scan_type)
->> +		return indio_dev->info->get_current_scan_type(indio_dev, chan);
->> +
->> +	return &chan->scan_type;
->> +}
->> +
->>  ssize_t iio_format_value(char *buf, unsigned int type, int size, int *vals);
->>  
->>  int iio_str_to_fixpoint(const char *str, int fract_mult, int *integer,
->>
-> 
+Best regards,
+Krzysztof
 
 
