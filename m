@@ -1,139 +1,78 @@
-Return-Path: <linux-kernel+bounces-184020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2458CA17B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:37:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A658CA179
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D9A01F2110D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:37:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0F51F216A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD158137C48;
-	Mon, 20 May 2024 17:37:31 +0000 (UTC)
-Received: from akranes.kaiser.cx (akranes.kaiser.cx [152.53.16.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136E2137C4A;
+	Mon, 20 May 2024 17:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7wFseYL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C07A2D;
-	Mon, 20 May 2024 17:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=152.53.16.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF00A2D;
+	Mon, 20 May 2024 17:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716226651; cv=none; b=poeB9tytCLRAKRoP8PMnb4L2qRRITVGCINOb992O87db2tW/QWyc8vtFC9l9xpdhrbPl2f0shg7uLMl5BsyytS1wW74/WxVYGZ38PQtSEz9jykC3dL1+12BvW2oS4ifpVqfqDjFpZUwf8WW+gN/+NASWm8iFdNJf477vgOa0JzA=
+	t=1716226635; cv=none; b=bSf8IoKA3WLpZyBkb7nXc41LCweAOKGDHLJBdmgi7c7B8oobps0AZSGqyx78C/q9cxAgKE+jVCymv05y7KsKwB0gn7cj6ZkvPioZdsHoQMlXlNPNdQNepfTNbm2vx1nW2evxvo/Q+/2c/0WwO7+HYrnUKPr7JmZw0hg2dXV7a1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716226651; c=relaxed/simple;
-	bh=3pJWOpeUaIw55Dq1/uPdfsrzR6sFZhwannbYrrdZqUk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P0tGO8hqjvPlPaN1Fgu6VogU+2AMjBxkVV3tZT+Ih7oXHRYOR9neKEAZIWR3chlLNIpXtNROtzojuJYFbm5gqJpKL+Pjb3lgWOe6hsn0fb0YYN4wKjQQT7EoCMClWkE6tgreBQh2JOOcq+XLNG7qWcK84iyJRDmg/cNK8fyhKuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx; spf=pass smtp.mailfrom=kaiser.cx; arc=none smtp.client-ip=152.53.16.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaiser.cx
-Received: from dslb-084-059-234-031.084.059.pools.vodafone-ip.de ([84.59.234.31] helo=martin-debian-3.kaiser.cx)
-	by akranes.kaiser.cx with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <martin@kaiser.cx>)
-	id 1s96wY-000hxD-2p;
-	Mon, 20 May 2024 19:37:02 +0200
-From: Martin Kaiser <martin@kaiser.cx>
-To: Anna Schumaker <Anna.Schumaker@Netapp.com>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	David Howells <dhowells@redhat.com>
-Cc: NeilBrown <neilb@suse.de>,
-	Jeff Layton <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH v4] nfs: keep server info for remounts
-Date: Mon, 20 May 2024 19:36:39 +0200
-Message-Id: <20240520173639.174439-1-martin@kaiser.cx>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716226635; c=relaxed/simple;
+	bh=+c35VY+nM47X5XU7nqvHCYGuJZVzvWQ2lXzYGoxUU54=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=XeWRA8HxYorhoV8gH6pD7ga/xs2deJVdtXeWXiApWdq38L6o5IDuwRtob05ZP2VkVq5/lf4LlIMn17lcVf242xBBPh9ATCikCluA1KhoocKZnw5tJkgXbKcCHnRr8I1rx/V5f+6qR/Y1H74fYvPmzD7I48cAhiR5XiHQE5G4dhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7wFseYL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E3C8FC2BD10;
+	Mon, 20 May 2024 17:37:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716226634;
+	bh=+c35VY+nM47X5XU7nqvHCYGuJZVzvWQ2lXzYGoxUU54=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=h7wFseYLo24P9ZZjRB4bcTxBZ1NhQqs6cvuDtTdfMN3swLH6h5PdnbFHbzDOjGxPe
+	 TKFOZDG82tLaklAPt1ipsftIh/zVsqmEJCsQqU0NHFbIqSNOw4vDc0kKmc8Q7QZKdc
+	 b0JggNKorgM8AEHeacZTmBqrXuCsfE7xlo3Vz4rX45Z9sg/eialupB9bwGbgNrqQeS
+	 JSLtdX+U/RNB9+U3ommInbL+u/gQdRP15wJyB+MWGRfQ3E7BgF4aiDLJEbxVsj0lKU
+	 7QvVDydSsSDq26lA7ZGAAR5Q40uXiAKIR1HSzb8agEulQsSRVDxjELO9XnSrXSwA2H
+	 cCw6m0axLYTsQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DA240C43332;
+	Mon, 20 May 2024 17:37:14 +0000 (UTC)
+Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.10
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZktYriALqC7ZNQpa@infradead.org>
+References: <ZktYriALqC7ZNQpa@infradead.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZktYriALqC7ZNQpa@infradead.org>
+X-PR-Tracked-Remote: git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.10-2024-05-20
+X-PR-Tracked-Commit-Id: a6016aac5252da9d22a4dc0b98121b0acdf6d2f5
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: daa121128a2d2ac6006159e2c47676e4fcd21eab
+Message-Id: <171622663488.4663.13899900592813092105.pr-tracker-bot@kernel.org>
+Date: Mon, 20 May 2024 17:37:14 +0000
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev, netdev@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-With newer kernels that use fs_context for nfs mounts, remounts fail with
--EINVAL.
+The pull request you sent on Mon, 20 May 2024 07:05:34 -0700:
 
-$ mount -t nfs -o nolock 10.0.0.1:/tmp/test /mnt/test/
-$ mount -t nfs -o remount /mnt/test/
-mount: mounting 10.0.0.1:/tmp/test on /mnt/test failed: Invalid argument
+> git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.10-2024-05-20
 
-For remounts, the nfs server address and port are populated by
-nfs_init_fs_context and later overwritten with 0x00 bytes by
-nfs23_parse_monolithic. The remount then fails as the server address is
-invalid.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/daa121128a2d2ac6006159e2c47676e4fcd21eab
 
-Fix this by not overwriting nfs server info in nfs23_parse_monolithic if
-we're doing a remount.
+Thank you!
 
-Fixes: f2aedb713c28 ("NFS: Add fs_context support.")
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
----
- v4:
- - rebased against linux-next from 20th May 2024
-
- v3:
- - rebased against linux-next from 12th April 2024
-
- v2:
- - rebased against linux-next from 26th February 2024
-
-Dear all,
-
-I'm resending this patch again.
-
-The problem that I'm trying to fix is still present in today's linux-next.
-It affects (amongst others) systems where the rootfs is mounted via nfs2/3.
-If the rootfs is mounted read-only first and remounted read-write later, the
-remount will fail and the system won't boot.
-
-Thanks in advance for any reviews and comments.
-
-I guess that we're taking this path for remounts
-
-do_remount
-    fs_context_for_reconfigure
-        alloc_fs_context
-            init_fs_context == nfs_init_fs_context
-               fc->root is set for remounts
-               ctx->nfs_server is populated
-    parse_monolithic_mount_data
-        nfs_fs_context_parse_monolithic
-            nfs23_parse_monolithic
-               ctx->nfs_server is overwritten with data from mount request
-
-An alternative to checking for !is_remount_fc(fc) would be to check
-if (ctx->nfs_server.addrlen == 0)
-
- fs/nfs/fs_context.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
-index d0a0956f8a13..cac1157be2c2 100644
---- a/fs/nfs/fs_context.c
-+++ b/fs/nfs/fs_context.c
-@@ -1112,9 +1112,12 @@ static int nfs23_parse_monolithic(struct fs_context *fc,
- 		ctx->acdirmax	= data->acdirmax;
- 		ctx->need_mount	= false;
- 
--		memcpy(sap, &data->addr, sizeof(data->addr));
--		ctx->nfs_server.addrlen = sizeof(data->addr);
--		ctx->nfs_server.port = ntohs(data->addr.sin_port);
-+		if (!is_remount_fc(fc)) {
-+			memcpy(sap, &data->addr, sizeof(data->addr));
-+			ctx->nfs_server.addrlen = sizeof(data->addr);
-+			ctx->nfs_server.port = ntohs(data->addr.sin_port);
-+		}
-+
- 		if (sap->ss_family != AF_INET ||
- 		    !nfs_verify_server_address(sap))
- 			goto out_no_address;
 -- 
-2.39.2
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
