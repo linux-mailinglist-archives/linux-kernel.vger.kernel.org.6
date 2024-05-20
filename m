@@ -1,109 +1,106 @@
-Return-Path: <linux-kernel+bounces-184097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCFAB8CA293
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:05:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A3B8CA288
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A4521C213CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:05:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2562E28248A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0644139CFF;
-	Mon, 20 May 2024 19:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77E6139569;
+	Mon, 20 May 2024 19:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hul6fYn5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="pVacRy8l"
+Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181B71384B4;
-	Mon, 20 May 2024 19:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0F4137934;
+	Mon, 20 May 2024 19:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716231911; cv=none; b=TWQWxhbnM4K+Kw5JLnqNHDrZ2RmmYlROZ+jgs04FxNUfhwolx4meyd1gqKJq3w2BrCsCU7mGoszAQUbPYZhTtVZaafCqw2tV3i5bwoSWNb7jUMZRBeEakFj1cXiHUHfp14Z5bkfHAAGWC/aHCRSizz52L8Spwi6Y+d+efgtpwG4=
+	t=1716231904; cv=none; b=ALrLs41ra5FTESHzWIEnOipbIJ1tqbFctTiaksmMisrxFj06PNeCq8+HZJYCTh10F88Oj7JDVWYyDY5CYWby009VlAPfT+1DIeOmgVwN1dAugI8+yDRMx4Gf+QuAszRogDU1SmB0y2Gy+GdorZgh7oID8q87VWLr/svRSKM1goE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716231911; c=relaxed/simple;
-	bh=zjmdVHD9xhS/1n4Rw9BcJgcMBhyRpG01mLSj2X8CQ7M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DACh722hwMt1Qba2CwITo/wQ4m1YbjNoAGvm9KX62TdDi7SfAJ+Ic8Ldlw4IYyaPoRhwm4WsUpS2TGIWm/NaJrfv6s0n9XmolL3wUhYTIWx3jcLcUsV9GLfBItC07xkW58T0ORKLJ5DCQO55cVq4ya3VoNWnKZtKVTHU0Kc8IMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hul6fYn5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F785C32789;
-	Mon, 20 May 2024 19:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716231909;
-	bh=zjmdVHD9xhS/1n4Rw9BcJgcMBhyRpG01mLSj2X8CQ7M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Hul6fYn5E545RYZ9SafZ8CkXb8YK3/NkkOuRfr8u2cDjYHv4KwrJu6SFGSvPg89nB
-	 Bdk4wkW64saAU+3uKZTpEDwliB7YmxnK2GBAgIKHe2dUR9TwVTgH+/g+GO6t6w0tn4
-	 n03rOTvygXO1ibMNZuguBywXjf+EiFAZsXnqO9eUw65LWvea0tRIggZ8NyKMzV0wps
-	 OtokmA8nOLpJIoGgOtPsdLWg1EdfJqlFXXJAVeplyFvr95kMzcrD4goFYyHKYE9QH6
-	 VJIb2VYxcadqkGyDiYRLkFTXr/YCVaLrCt7BkuZ6uNZ4/l8oUk/Wn362Gcf2rXt5h0
-	 NHLGKTLvU54zg==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org,
-	James.Bottomley@HansenPartnership.com,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	stable@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] KEYS: trusted: Do not use WARN when encode fails
-Date: Mon, 20 May 2024 22:04:53 +0300
-Message-ID: <20240520190454.28745-3-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240520190454.28745-1-jarkko@kernel.org>
-References: <20240520190454.28745-1-jarkko@kernel.org>
+	s=arc-20240116; t=1716231904; c=relaxed/simple;
+	bh=Whkq+hKM/qmDNnBMj3dbzvPDG5j50Xp2GcuxKj7WaHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hUZ+0yHUhkPA7BzqTVtJ8ioLK6Z0qcBsu4wcoO9oRFbDRNhC+75M8bw/i6cAZ45mdX3UgBYwC5H2tH7zTbmm+hnG/VJ5fEW5RIaQVrKcQz/NqWTtceVxdBP/6uDUyKaj1iQjcLA1JIKu+wIYyLU3vJAt7fm8AsG+tuOQQg1XkRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=pVacRy8l; arc=none smtp.client-ip=195.181.215.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
+	t=1716231898; bh=Whkq+hKM/qmDNnBMj3dbzvPDG5j50Xp2GcuxKj7WaHI=;
+	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
+	b=pVacRy8loO5jQ12YSQrnC47BXn66ePeAvKoHrFsTNZbUZuDE9I/8bc/37EdRZIQWN
+	 YJSS60cvLymNAglX+885beRZOfcbFcd8IxTR0nbDIJBtt2kVkGu2XfCUnR8pgUXis6
+	 ouo8co6qtt2wJAvS0kjSU1RuzrFrBuSb+cJmZbIE=
+Date: Mon, 20 May 2024 21:04:58 +0200
+From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, git@luigi311.com, 
+	linux-media@vger.kernel.org, jacopo.mondi@ideasonboard.com, mchehab@kernel.org, 
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, 
+	phone-devel@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v5 21/25] dt-bindings: media: imx258: Add binding for
+ powerdown-gpio
+Message-ID: <6egxnvqjz4z57bwd7jeubikfiew2myjo74hw3x6dimcdm6nuq3@qnk2tliwfxps>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, git@luigi311.com, 
+	linux-media@vger.kernel.org, jacopo.mondi@ideasonboard.com, mchehab@kernel.org, 
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, 
+	phone-devel@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
+References: <20240501152442.1072627-1-git@luigi311.com>
+ <20240501152442.1072627-22-git@luigi311.com>
+ <ZkcV5xWZz2jCszxA@kekkonen.localdomain>
+ <q5nbk3qcxsjsqp4mdyx5nlrn4oie6oynunwodm7r2nwtywc2ey@kxsgcatwt5b2>
+ <CAPY8ntCfQvp9rCt=fqTFKYEOamLZwKmJDv9agxerQtDvsGKB0g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPY8ntCfQvp9rCt=fqTFKYEOamLZwKmJDv9agxerQtDvsGKB0g@mail.gmail.com>
 
-When asn1_encode_sequence() fails, WARN is not the correct solution.
+Hi Dave,
 
-1. asn1_encode_sequence() is not an internal function (located
-   in lib/asn1_encode.c).
-2. Location is known, which makes the stack trace useless.
-3. Results a crash if panic_on_warn is set.
+On Mon, May 20, 2024 at 02:20:28PM GMT, Dave Stevenson wrote:
+> Hi Ondřej
+>
+> [...]
+> 
+> From v3 [1] Luis reported testing dropping the powerdown-gpio on a PPP
+> and it working fine.
+> 
+> I linked to the IMX258 datasheet in the same thread[2], and that
+> datasheet does not include such a signal on the imx258 sensor itself.
+> 
+> If your module has a powerdown gpio, then you'll have to ask the
+> module vendor what it is actually connected to. Potentially it relates
+> to the VCM driver rather than the sensor.
 
-It is also noteworthy that the use of WARN is undocumented, and it
-should be avoided unless there is a carefully considered rationale to
-use it.
+I've tested it in various ways (inverting the signal, etc.) and it doesn't
+seem to do anything. So these patches related to powerdown-gpio can
+be dropped.
 
-Replace WARN with pr_err, and print the return value instead, which is
-only useful piece of information.
+Kind regards,
+	o.
 
-Cc: stable@vger.kernel.org # v5.13+
-Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- security/keys/trusted-keys/trusted_tpm2.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index c6882f5d094f..8b7dd73d94c1 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -84,8 +84,9 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 	work1 = payload->blob;
- 	work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
- 				     scratch, work - scratch);
--	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed")) {
-+	if (IS_ERR(work1)) {
- 		ret = PTR_ERR(work1);
-+		pr_err("BUG: ASN.1 encoder failed with %d\n", ret);
- 		goto err;
- 	}
- 
--- 
-2.45.1
-
+>   Dave
+> 
+> [1] https://www.spinics.net/lists/linux-media/msg252519.html
+> [2] https://www.spinics.net/lists/linux-media/msg252496.html
 
