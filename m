@@ -1,86 +1,70 @@
-Return-Path: <linux-kernel+bounces-184029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F158CA19B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:58:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E078CA19D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0B88B22082
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:58:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8444B1C20BDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF29137C57;
-	Mon, 20 May 2024 17:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DA6137C3E;
+	Mon, 20 May 2024 17:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="X+epluMV"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="APV8fBxL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E054A136986;
-	Mon, 20 May 2024 17:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FDB13398E;
+	Mon, 20 May 2024 17:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716227897; cv=none; b=AKU7heiq5Y9vX1e1z7Y1SZGtFThLV1tzfXsDnDpLeBn1zj4fZ8fFgQ5ccLb7rHEslXKEKsTq0jwT3ScuD9YPNOOlNVRj7KOW4OdrUY+qZkhgcAA5lcIHtIUpJVWWaT1CwdiSjlN0oCMYyPSfFEADaCb1qMXEX7L0eFibK5s3qSE=
+	t=1716227936; cv=none; b=mvSvlUb8PgPmkIP8nf++qf/lFe6nLZbQ8fcioY1NSUHMi6I1i/Xwz6kd0diBGmmZDA0LBSgQhbJD4o+Yl5IbwalFQgHpYeRAAyH0Ra3s5U4K238Xas4KG+Sf16HeLVXwvI1DSsnt/tPbHjShI8DFz+GfuYppBfovTNOJWlf4ojc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716227897; c=relaxed/simple;
-	bh=MeRVqS2/5Y1veein1nrFkEafETCgAWNKWOs1Qq1CiNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i0qTQsQyoviTrg3zaSxXbFNf/JCvL6MNspxzQNSd8X5lHHn9nhjc/AxCb7OFbrH/myVzuHquEzk1UqeoQfbnnQFLLgOZJZhUf9C/6I7qI5+rCKFC6Vs1a9USfl0anRgkylQKjVjP8cwYzVX2b6Yg98wbEP9XSHY88Nw7bBs0aC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=X+epluMV; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44KHl5VP007355;
-	Mon, 20 May 2024 17:57:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=oj/uEy4llmIH0Y9yp8kCrXfrm50EjfkhMiwF2OjKMcQ=;
- b=X+epluMVqDL9J9lAZUBvmiCyUfArZgypPTky/z98w+sulTqVlR9bRHo63FSVY/q/AtCb
- zxBNiFWkP5nh/BQ5ixIXDeIVrA8BWaqsnsdEDfzSf0Ju6rhVTQyL4D64JVNtc9qXlrwQ
- PmTWHzApl6uFxAE/YHp/hE8aaAXoU0nzgteC5LwLW3tI5rUtVt1gsLmOCXHtIo/ubDCn
- WEx51hnNQGzycmaUR6wkZMy7b6/uF7n3SxixZ2R7oAZb36OUY+Mzv7bByiVY5m/ldg4O
- bmc1GXh3IZyqf2/S04W+fOlzXimZi8CnRIJ8MaGxkS3Bbfk6Re4qwHlLCcf/vM3dBJ3H DA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y8b7kg1tr-1
+	s=arc-20240116; t=1716227936; c=relaxed/simple;
+	bh=Az6oPsSbddKjSIMd0ogzNPgJLStuBzGY4FR/SoElx8s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YlX22ctgEi25hapBAsobGCmW3rNg1iU8KGyRV121/WtxEQ0OXFZN8aI5fj+iJ/6oWU7BhWNo2rXMOaz44iJ8RJkZYsy+DajgV6LtVWr54nhW+f0M2k2QcKrW/Kw3bSJ741kmqN2qhSb5HdJM5jLRNYq/R2HHaAy3EvaqvVetHfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=APV8fBxL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44KBvvNA026154;
+	Mon, 20 May 2024 17:58:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=f7Et55Q
+	dGx0KtAjxNrsmLToiOz3ap//IAyD25kq6tKE=; b=APV8fBxLP5hA6UdmAGSmvhd
+	LgSouTCYDa16fDEtETZ3BDaPRmYNwxcMlv+oeAjPsFthlXyT0Y3cjAOebYygGUFk
+	lgugJgDwK/iA1yuJta9Vbnz8uQwmRz98YwdCh7gEO/Wq9txSYhrVnAALu8ypRFC+
+	YYjTQTxm49aidYPflAOQus+VjiKhj7SxHtGE9jte72rKftR49UrmzvU8t9gM2Bwg
+	pZxVmpsXjLT5yqg8h0bMaoUli/a2IBw7kJbIEAVpwnngk0RBmhrQ6aJJQ3fh6sxH
+	r/ibTTGT6OECWa5Wn1J+hpVE5IAaTw1+7x8l8mfNbZTbMEBf8lFfBeSIDpwvWjQ=
+	=
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pqc44su-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 17:57:57 +0000
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44KHvusl028302;
-	Mon, 20 May 2024 17:57:56 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y8b7kg1tc-1
+	Mon, 20 May 2024 17:58:32 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44KHwVkZ032189
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 17:57:56 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44KEpbFZ007424;
-	Mon, 20 May 2024 17:57:55 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y79c2rp7g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 17:57:55 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44KHvnb956099178
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 20 May 2024 17:57:52 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DC1362004F;
-	Mon, 20 May 2024 17:57:49 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A4A5B20040;
-	Mon, 20 May 2024 17:57:45 +0000 (GMT)
-Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com.com (unknown [9.43.62.32])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 20 May 2024 17:57:45 +0000 (GMT)
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com
-Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Naveen N Rao <naveen@kernel.org>, Vaibhav Jain <vaibhav@linux.ibm.com>
-Subject: [PATCH v9] arch/powerpc/kvm: Add support for reading VPA counters for pseries guests
-Date: Mon, 20 May 2024 23:27:40 +0530
-Message-ID: <20240520175742.196329-1-gautam@linux.ibm.com>
-X-Mailer: git-send-email 2.44.0
+	Mon, 20 May 2024 17:58:31 GMT
+Received: from hu-obabatun-lv.qualcomm.com (10.49.16.6) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 20 May 2024 10:58:25 -0700
+From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+To: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
+        <glaubitz@physik.fu-berlin.de>
+CC: <linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <robh+dt@kernel.org>, <kernel@quicinc.com>,
+        Oreoluwa Babatunde
+	<quic_obabatun@quicinc.com>
+Subject: [PATCH v3] sh: Restructure setup code to reserve memory regions earlier
+Date: Mon, 20 May 2024 10:58:02 -0700
+Message-ID: <20240520175802.2002183-1-quic_obabatun@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,254 +72,198 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: IFHXsTqauo8Uzh-_kABS2Yn9QyKPXSZn
-X-Proofpoint-GUID: _d8rzzMH9qc5w26DAK3vy29edjcPrf96
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VQsE9DgVI4Kv9VcATw2jn3mQiSPwiHeJ
+X-Proofpoint-GUID: VQsE9DgVI4Kv9VcATw2jn3mQiSPwiHeJ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-05-20_09,2024-05-17_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 bulkscore=0 phishscore=0 clxscore=1011 priorityscore=1501
- adultscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405200143
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405200143
 
-PAPR hypervisor has introduced three new counters in the VPA area of
-LPAR CPUs for KVM L2 guest (see [1] for terminology) observability - 2
-for context switches from host to guest and vice versa, and 1 counter
-for getting the total time spent inside the KVM guest. Add a tracepoint
-that enables reading the counters for use by ftrace/perf. Note that this
-tracepoint is only available for nestedv2 API (i.e, KVM on PowerVM).
+The unflatten_device_tree() function contains a call to
+memblock_alloc(). This is a problem because this allocation is done
+before any of the reserved memory regions are set aside in
+paging_init().
+As a result, there is a possibility for memblock to unknowingly allocate
+from any of the memory regions that are meant to be reserved.
 
-[1] Terminology:
-a. L1 refers to the VM (LPAR) booted on top of PAPR hypervisor
-b. L2 refers to the KVM guest booted on top of L1.
+Hence, restructure the setup code to set aside reserved memory
+regions before any allocations are done using memblock.
 
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-Acked-by: Naveen N Rao <naveen@kernel.org>
-Signed-off-by: Vaibhav Jain <vaibhav@linux.ibm.com>
-Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
 ---
-v8 -> v9:
-1. Fix linker errors when compiling as module.
+v3:
+- Instead of moving all of paging_init(), move only the parts
+  that are responsible for setting aside the reserved memory
+  regions.
 
-v7 -> v8:
-1. Use per_cpu vars instead of paca members.
-2. Fix build error for powernv config.
+v2:
+https://lore.kernel.org/all/20240423233150.74302-1-quic_obabatun@quicinc.com/
+- Added Rob Herrings Reviewed-by.
+- cc Andrew Morton to assist with merging this for sh architecture.
+  Similar change made for loongarch and openrisc in v1 have already
+  been merged.
 
-v6 -> v7:
-1. Use TRACE_EVENT_FN_COND to handle zero counters case.
-2. Use for_each_present_cpu() to handle hotplugs.
+v1:
+https://lore.kernel.org/all/1707524971-146908-4-git-send-email-quic_obabatun@quicinc.com/
 
-v5 -> v6:
-1. Use TRACE_EVENT_FN to enable/disable counters only once.
-2. Remove the agg. counters from vcpu->arch.
-3. Use PACA to maintain old counter values instead of zeroing on every
-entry.
-4. Simplify variable names
+ arch/sh/include/asm/setup.h |  1 -
+ arch/sh/kernel/setup.c      | 43 +++++++++++++++++++++++++++++++++++-
+ arch/sh/mm/init.c           | 44 -------------------------------------
+ 3 files changed, 42 insertions(+), 46 deletions(-)
 
-v4 -> v5:
-1. Define helper functions for getting/setting the accumulation counter
-in L2's VPA
-
-v3 -> v4:
-1. After vcpu_run, check the VPA flag instead of checking for tracepoint
-being enabled for disabling the cs time accumulation.
-
-v2 -> v3:
-1. Move the counter disabling and zeroing code to a different function.
-2. Move the get_lppaca() inside the tracepoint_enabled() branch.
-3. Add the aggregation logic to maintain total context switch time.
-
-v1 -> v2:
-1. Fix the build error due to invalid struct member reference.
-
- arch/powerpc/include/asm/kvm_book3s_64.h |  5 ++
- arch/powerpc/include/asm/lppaca.h        | 11 +++-
- arch/powerpc/kvm/book3s_hv.c             | 75 ++++++++++++++++++++++++
- arch/powerpc/kvm/trace_hv.h              | 29 +++++++++
- 4 files changed, 117 insertions(+), 3 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/kvm_book3s_64.h b/arch/powerpc/include/asm/kvm_book3s_64.h
-index d8729ec81ca0..2ef9a5f4e5d1 100644
---- a/arch/powerpc/include/asm/kvm_book3s_64.h
-+++ b/arch/powerpc/include/asm/kvm_book3s_64.h
-@@ -684,6 +684,11 @@ int kvmhv_nestedv2_set_ptbl_entry(unsigned long lpid, u64 dw0, u64 dw1);
- int kvmhv_nestedv2_parse_output(struct kvm_vcpu *vcpu);
- int kvmhv_nestedv2_set_vpa(struct kvm_vcpu *vcpu, unsigned long vpa);
+diff --git a/arch/sh/include/asm/setup.h b/arch/sh/include/asm/setup.h
+index fc807011187f..5feed99b9b7a 100644
+--- a/arch/sh/include/asm/setup.h
++++ b/arch/sh/include/asm/setup.h
+@@ -19,7 +19,6 @@
+ #define COMMAND_LINE ((char *) (PARAM+0x100))
  
-+int kmvhv_counters_tracepoint_regfunc(void);
-+void kmvhv_counters_tracepoint_unregfunc(void);
-+int kvmhv_get_l2_counters_status(void);
-+void kvmhv_set_l2_counters_status(int cpu, bool status);
-+
- #endif /* CONFIG_KVM_BOOK3S_HV_POSSIBLE */
+ void sh_mv_setup(void);
+-void check_for_initrd(void);
+ void per_cpu_trap_init(void);
  
- #endif /* __ASM_KVM_BOOK3S_64_H__ */
-diff --git a/arch/powerpc/include/asm/lppaca.h b/arch/powerpc/include/asm/lppaca.h
-index 61ec2447dabf..f40a646bee3c 100644
---- a/arch/powerpc/include/asm/lppaca.h
-+++ b/arch/powerpc/include/asm/lppaca.h
-@@ -62,7 +62,8 @@ struct lppaca {
- 	u8	donate_dedicated_cpu;	/* Donate dedicated CPU cycles */
- 	u8	fpregs_in_use;
- 	u8	pmcregs_in_use;
--	u8	reserved8[28];
-+	u8	l2_counters_enable;  /* Enable usage of counters for KVM guest */
-+	u8	reserved8[27];
- 	__be64	wait_state_cycles;	/* Wait cycles for this proc */
- 	u8	reserved9[28];
- 	__be16	slb_count;		/* # of SLBs to maintain */
-@@ -92,9 +93,13 @@ struct lppaca {
- 	/* cacheline 4-5 */
- 
- 	__be32	page_ins;		/* CMO Hint - # page ins by OS */
--	u8	reserved12[148];
-+	u8	reserved12[28];
-+	volatile __be64 l1_to_l2_cs_tb;
-+	volatile __be64 l2_to_l1_cs_tb;
-+	volatile __be64 l2_runtime_tb;
-+	u8 reserved13[96];
- 	volatile __be64 dtl_idx;	/* Dispatch Trace Log head index */
--	u8	reserved13[96];
-+	u8	reserved14[96];
- } ____cacheline_aligned;
- 
- #define lppaca_of(cpu)	(*paca_ptrs[cpu]->lppaca_ptr)
-diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-index 35cb014a0c51..a6e4d46c1cd0 100644
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -4108,6 +4108,77 @@ static void vcpu_vpa_increment_dispatch(struct kvm_vcpu *vcpu)
- 	}
+ #endif /* _SH_SETUP_H */
+diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
+index 620e5cf8ae1e..f5b6078173c9 100644
+--- a/arch/sh/kernel/setup.c
++++ b/arch/sh/kernel/setup.c
+@@ -114,7 +114,7 @@ static int __init early_parse_mem(char *p)
  }
+ early_param("mem", early_parse_mem);
  
-+/* Helper functions for reading L2's stats from L1's VPA */
-+#ifdef CONFIG_PPC_PSERIES
-+static DEFINE_PER_CPU(u64, l1_to_l2_cs);
-+static DEFINE_PER_CPU(u64, l2_to_l1_cs);
-+static DEFINE_PER_CPU(u64, l2_runtime_agg);
-+
-+int kvmhv_get_l2_counters_status(void)
-+{
-+	return firmware_has_feature(FW_FEATURE_LPAR) &&
-+		get_lppaca()->l2_counters_enable;
-+}
-+
-+void kvmhv_set_l2_counters_status(int cpu, bool status)
-+{
-+	if (!firmware_has_feature(FW_FEATURE_LPAR))
-+		return;
-+	if (status)
-+		lppaca_of(cpu).l2_counters_enable = 1;
-+	else
-+		lppaca_of(cpu).l2_counters_enable = 0;
-+}
-+
-+int kmvhv_counters_tracepoint_regfunc(void)
-+{
-+	int cpu;
-+
-+	for_each_present_cpu(cpu) {
-+		kvmhv_set_l2_counters_status(cpu, true);
-+	}
-+	return 0;
-+}
-+
-+void kmvhv_counters_tracepoint_unregfunc(void)
-+{
-+	int cpu;
-+
-+	for_each_present_cpu(cpu) {
-+		kvmhv_set_l2_counters_status(cpu, false);
-+	}
-+}
-+
-+static void do_trace_nested_cs_time(struct kvm_vcpu *vcpu)
-+{
-+	struct lppaca *lp = get_lppaca();
-+	u64 l1_to_l2_ns, l2_to_l1_ns, l2_runtime_ns;
-+	u64 *l1_to_l2_cs_ptr = this_cpu_ptr(&l1_to_l2_cs);
-+	u64 *l2_to_l1_cs_ptr = this_cpu_ptr(&l2_to_l1_cs);
-+	u64 *l2_runtime_agg_ptr = this_cpu_ptr(&l2_runtime_agg);
-+
-+	l1_to_l2_ns = tb_to_ns(be64_to_cpu(lp->l1_to_l2_cs_tb));
-+	l2_to_l1_ns = tb_to_ns(be64_to_cpu(lp->l2_to_l1_cs_tb));
-+	l2_runtime_ns = tb_to_ns(be64_to_cpu(lp->l2_runtime_tb));
-+	trace_kvmppc_vcpu_stats(vcpu, l1_to_l2_ns - *l1_to_l2_cs_ptr,
-+					l2_to_l1_ns - *l2_to_l1_cs_ptr,
-+					l2_runtime_ns - *l2_runtime_agg_ptr);
-+	*l1_to_l2_cs_ptr = l1_to_l2_ns;
-+	*l2_to_l1_cs_ptr = l2_to_l1_ns;
-+	*l2_runtime_agg_ptr = l2_runtime_ns;
-+}
-+
-+#else
-+int kvmhv_get_l2_counters_status(void)
-+{
-+	return 0;
-+}
-+
-+static void do_trace_nested_cs_time(struct kvm_vcpu *vcpu)
-+{
-+}
-+#endif
-+
- static int kvmhv_vcpu_entry_nestedv2(struct kvm_vcpu *vcpu, u64 time_limit,
- 				     unsigned long lpcr, u64 *tb)
+-void __init check_for_initrd(void)
++static void __init check_for_initrd(void)
  {
-@@ -4156,6 +4227,10 @@ static int kvmhv_vcpu_entry_nestedv2(struct kvm_vcpu *vcpu, u64 time_limit,
- 
- 	timer_rearm_host_dec(*tb);
- 
-+	/* Record context switch and guest_run_time data */
-+	if (kvmhv_get_l2_counters_status())
-+		do_trace_nested_cs_time(vcpu);
-+
- 	return trap;
+ #ifdef CONFIG_BLK_DEV_INITRD
+ 	unsigned long start, end;
+@@ -172,6 +172,42 @@ void __init check_for_initrd(void)
+ #endif
  }
  
-diff --git a/arch/powerpc/kvm/trace_hv.h b/arch/powerpc/kvm/trace_hv.h
-index 8d57c8428531..77ebc724e6cd 100644
---- a/arch/powerpc/kvm/trace_hv.h
-+++ b/arch/powerpc/kvm/trace_hv.h
-@@ -512,6 +512,35 @@ TRACE_EVENT(kvmppc_run_vcpu_exit,
- 			__entry->vcpu_id, __entry->exit, __entry->ret)
- );
++static void __init early_reserve_mem(void)
++{
++	unsigned long start_pfn;
++	u32 zero_base = (u32)__MEMORY_START + (u32)PHYSICAL_OFFSET;
++	u32 start = zero_base + (u32)CONFIG_ZERO_PAGE_OFFSET;
++
++	/*
++	 * Partially used pages are not usable - thus
++	 * we are rounding upwards:
++	 */
++	start_pfn = PFN_UP(__pa(_end));
++
++	/*
++	 * Reserve the kernel text and Reserve the bootmem bitmap. We do
++	 * this in two steps (first step was init_bootmem()), because
++	 * this catches the (definitely buggy) case of us accidentally
++	 * initializing the bootmem allocator with an invalid RAM area.
++	 */
++	memblock_reserve(start, (PFN_PHYS(start_pfn) + PAGE_SIZE - 1) - start);
++
++	/*
++	 * Reserve physical pages below CONFIG_ZERO_PAGE_OFFSET.
++	 */
++	if (CONFIG_ZERO_PAGE_OFFSET != 0)
++		memblock_reserve(zero_base, CONFIG_ZERO_PAGE_OFFSET);
++
++	/*
++	 * Handle additional early reservations
++	 */
++	check_for_initrd();
++	reserve_crashkernel();
++
++	if (sh_mv.mv_mem_reserve)
++		sh_mv.mv_mem_reserve();
++}
++
+ #ifndef CONFIG_GENERIC_CALIBRATE_DELAY
+ void calibrate_delay(void)
+ {
+@@ -319,9 +355,14 @@ void __init setup_arch(char **cmdline_p)
  
-+#ifdef CONFIG_PPC_PSERIES
-+
-+TRACE_EVENT_FN_COND(kvmppc_vcpu_stats,
-+	TP_PROTO(struct kvm_vcpu *vcpu, u64 l1_to_l2_cs, u64 l2_to_l1_cs, u64 l2_runtime),
-+
-+	TP_ARGS(vcpu, l1_to_l2_cs, l2_to_l1_cs, l2_runtime),
-+
-+	TP_CONDITION(l1_to_l2_cs || l2_to_l1_cs || l2_runtime),
-+
-+	TP_STRUCT__entry(
-+		__field(int,		vcpu_id)
-+		__field(u64,		l1_to_l2_cs)
-+		__field(u64,		l2_to_l1_cs)
-+		__field(u64,		l2_runtime)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->vcpu_id  = vcpu->vcpu_id;
-+		__entry->l1_to_l2_cs = l1_to_l2_cs;
-+		__entry->l2_to_l1_cs = l2_to_l1_cs;
-+		__entry->l2_runtime = l2_runtime;
-+	),
-+
-+	TP_printk("VCPU %d: l1_to_l2_cs_time=%llu ns l2_to_l1_cs_time=%llu ns l2_runtime=%llu ns",
-+		__entry->vcpu_id,  __entry->l1_to_l2_cs,
-+		__entry->l2_to_l1_cs, __entry->l2_runtime),
-+	kmvhv_counters_tracepoint_regfunc, kmvhv_counters_tracepoint_unregfunc
-+);
-+#endif
- #endif /* _TRACE_KVM_HV_H */
+ 	sh_mv_setup();
  
- /* This part must be outside protection */
++	sh_mv.mv_mem_init();
++
+ 	/* Let earlyprintk output early console messages */
+ 	sh_early_platform_driver_probe("earlyprintk", 1, 1);
+ 
++	/* set aside reserved memory regions */
++	early_reserve_mem();
++
+ #ifdef CONFIG_OF_EARLY_FLATTREE
+ #ifdef CONFIG_USE_BUILTIN_DTB
+ 	unflatten_and_copy_device_tree();
+diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
+index bf1b54055316..4559f5bea782 100644
+--- a/arch/sh/mm/init.c
++++ b/arch/sh/mm/init.c
+@@ -242,55 +242,11 @@ static void __init do_init_bootmem(void)
+ 	sparse_init();
+ }
+ 
+-static void __init early_reserve_mem(void)
+-{
+-	unsigned long start_pfn;
+-	u32 zero_base = (u32)__MEMORY_START + (u32)PHYSICAL_OFFSET;
+-	u32 start = zero_base + (u32)CONFIG_ZERO_PAGE_OFFSET;
+-
+-	/*
+-	 * Partially used pages are not usable - thus
+-	 * we are rounding upwards:
+-	 */
+-	start_pfn = PFN_UP(__pa(_end));
+-
+-	/*
+-	 * Reserve the kernel text and Reserve the bootmem bitmap. We do
+-	 * this in two steps (first step was init_bootmem()), because
+-	 * this catches the (definitely buggy) case of us accidentally
+-	 * initializing the bootmem allocator with an invalid RAM area.
+-	 */
+-	memblock_reserve(start, (PFN_PHYS(start_pfn) + PAGE_SIZE - 1) - start);
+-
+-	/*
+-	 * Reserve physical pages below CONFIG_ZERO_PAGE_OFFSET.
+-	 */
+-	if (CONFIG_ZERO_PAGE_OFFSET != 0)
+-		memblock_reserve(zero_base, CONFIG_ZERO_PAGE_OFFSET);
+-
+-	/*
+-	 * Handle additional early reservations
+-	 */
+-	check_for_initrd();
+-	reserve_crashkernel();
+-}
+-
+ void __init paging_init(void)
+ {
+ 	unsigned long max_zone_pfns[MAX_NR_ZONES];
+ 	unsigned long vaddr, end;
+ 
+-	sh_mv.mv_mem_init();
+-
+-	early_reserve_mem();
+-
+-	/*
+-	 * Once the early reservations are out of the way, give the
+-	 * platforms a chance to kick out some memory.
+-	 */
+-	if (sh_mv.mv_mem_reserve)
+-		sh_mv.mv_mem_reserve();
+-
+ 	memblock_enforce_memory_limit(memory_limit);
+ 	memblock_allow_resize();
+ 
 -- 
-2.39.3
+2.34.1
 
 
