@@ -1,151 +1,154 @@
-Return-Path: <linux-kernel+bounces-183668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A163A8C9C42
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:42:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EFB98C9C40
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D244283005
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:42:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EC51B2233F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E716153E09;
-	Mon, 20 May 2024 11:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DD653E05;
+	Mon, 20 May 2024 11:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VwFnbDv5"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EiP1nCzH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786A154670;
-	Mon, 20 May 2024 11:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980B054BE8;
+	Mon, 20 May 2024 11:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716205317; cv=none; b=s0GiQev//8QVDKKQnSR0RMeVGkhlLwSsyD29qkIDKK3NyKm2D30B6ilJyKCs2vzevDkAWJorO8+X1Kpd1o14id+Ybqt5aW0rrT9UxS1ibvJOZaStUJ0uVWuwVq+7izoOaQ5A4zFpNvIHH1XeKYldbkEz0tslPCbgAGCUF51GQ+E=
+	t=1716205303; cv=none; b=UR+79MXWP9vxUMxSpZCiYooQsIJ5Q/rZegxuoc3k/JkA9jAz4LZ+Ap7TlXxshwYraYl/6lehNR9k9cmBkTd8P9e2yxxUuQ6oOCPsNvqkBbiWOsG2X9i3tM5h9/5Zsn+Jy9Z9MvWwLITTfRBu0qQlsNpo/ET7RbOrWIXFxnONrgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716205317; c=relaxed/simple;
-	bh=joCspknWNfA6tUqmGbvbm5iNnV9qpT6aM/THrk/lSA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iIZeEriwNFGt4XHBGaqcSEkooMhZrSKsS0UfG8xFQE6tsbmpOSx7+CYoBcIsSQIw3KCafvZGz6YURAevC0X9oRPyurI44lSa9JtSuhkX+6ra/x0OycD4PgyoENlpvvewaV8zFcG//hyhWUE74NvvMLi8Dve2QANtIi8JzBxKe8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VwFnbDv5; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44KBfRqK032177;
-	Mon, 20 May 2024 06:41:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716205287;
-	bh=a76NLsOqpAhT7UPR9aUmjJ2mg4WHgQRk5YjCt6+gAeM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=VwFnbDv5uflaIET3e5IHt6ObbQTtfqczMDLmIuuyRwkr+PMKbO6KDftOndM5S4Kk3
-	 EFwR2f0t4y5Ky2JyTwmRMBI0sbHzhh9dvO0Ycjr5fxMiFRZ9XSTBtBokTWcx6QxG/l
-	 jVwN1nNzquaUcJv4fRQ8FtcRR7Zo1D83GZB/SvXI=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44KBfRQV120258
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 20 May 2024 06:41:27 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 20
- May 2024 06:41:27 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 20 May 2024 06:41:26 -0500
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44KBfJ8A078373;
-	Mon, 20 May 2024 06:41:19 -0500
-Message-ID: <7b8cd37b-5b16-2d99-ab62-5d6876e6571c@ti.com>
-Date: Mon, 20 May 2024 17:11:18 +0530
+	s=arc-20240116; t=1716205303; c=relaxed/simple;
+	bh=u130tbWpT6LvE50q6tsnZs3h7loPdMb44w2PkpTnAbc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iQW6Em04gepbJYmmkLRmU6JsJSjPyO294Pb2JFad5OUtL2Fk+iNSfxQ2fHJ/b2HtWrOkRXtmoCgWkx/voIOVw4qF2fOuSfPd9kJDCFAYFCsyDyUEQ12CIDKq5LeaPIAyIeUeju8Uooyx8+AM91yIpcMZzZ4fvHSPRiazGUtlbWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EiP1nCzH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3016AC2BD10;
+	Mon, 20 May 2024 11:41:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716205303;
+	bh=u130tbWpT6LvE50q6tsnZs3h7loPdMb44w2PkpTnAbc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EiP1nCzHxOEa+BR7Kpdt3rojQ2goPIuUi6CR+1vWHvRUjXLnPYaw6gBMEjffQLnbz
+	 +/CFIgAxdyc7dbPVPNpj2EsuQJEwlY75/Hw+i2f0aoida5RtbXnnOYcHntdzi/AeJq
+	 7OmzLIRjjxYW/MhMyv+NRbQ9Dj91lttRf8tNy++iUVluN+BC5Omqckl7dxWtjLLfo8
+	 JKD6UeguXk62LjHE+TtjJPIlNgOD/iZt75WkjbbFvPUYhimLhVu8gkCXgGDcmX0Q76
+	 8ln0fn+EsWqm7r3OKtiR/x6fRdIhUn5+y45OO1ZEUJ+TVSLhlRYDCMED1u/qHchR2c
+	 60A7bnWsGH9Ow==
+Message-ID: <6f9f87d3-9570-4eb0-a3d0-f087308d9815@kernel.org>
+Date: Mon, 20 May 2024 14:41:37 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v8 07/10] lib: add basic KUnit test for lib/math
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: soc: ti: am645-system-controller: add
+ AM654 syscon
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240518-dt-bindings-ti-soc-mfd-v1-0-b3952f104c9a@linaro.org>
+ <20240518-dt-bindings-ti-soc-mfd-v1-2-b3952f104c9a@linaro.org>
 Content-Language: en-US
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Latypov
-	<dlatypov@google.com>
-CC: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
-        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
-        <adobriyan@gmail.com>, <jani.nikula@intel.com>,
-        <p.zabel@pengutronix.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <laurent.pinchart@ideasonboard.com>,
-        <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>, <a-bhatia1@ti.com>,
-        <j-luthra@ti.com>, <b-brnich@ti.com>, <detheridge@ti.com>,
-        <p-mantena@ti.com>, <vijayp@ti.com>, <andrzej.p@collabora.com>,
-        <nicolas@ndufresne.ca>, <davidgow@google.com>, <dlatypov@google.com>
-References: <20240517171532.748684-1-devarsht@ti.com>
- <20240517173607.800549-1-devarsht@ti.com>
- <Zke6o3HYnUrgtD0K@smile.fi.intel.com>
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <Zke6o3HYnUrgtD0K@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240518-dt-bindings-ti-soc-mfd-v1-2-b3952f104c9a@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Andy, Daniel,
 
-On 18/05/24 01:44, Andy Shevchenko wrote:
-> On Fri, May 17, 2024 at 11:06:07PM +0530, Devarsh Thakkar wrote:
-[..]
+
+On 18/05/2024 23:07, Krzysztof Kozlowski wrote:
+> Add dedicated binding for the AM654 MCU SCM system controller registers,
+> already used in the DTS to properly describe its children.
 > 
->> [devarsht: Rebase to 6.9 and change license to GPL]
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../soc/ti/ti,am654-system-controller.yaml         | 60 ++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
 > 
-> I'm not sure that you may change license. It needs the author's confirmation.
+> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,am654-system-controller.yaml b/Documentation/devicetree/bindings/soc/ti/ti,am654-system-controller.yaml
+> new file mode 100644
+> index 000000000000..e79803e586ca
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/ti/ti,am654-system-controller.yaml
+> @@ -0,0 +1,60 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/ti/ti,am654-system-controller.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI AM654 System Controller Registers R/W
+> +
+> +maintainers:
+> +  - Kishon Vijay Abraham I <kishon@ti.com>
+
+Please update the email address to Kishon Vijay Abraham I <kishon@kernel.org>
+
+> +  - Roger Quadros <rogerq@kernel.org>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - ti,am654-system-controller
+> +      - const: syscon
+> +      - const: simple-mfd
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges: true
+> +
+> +patternProperties:
+> +  "^phy@[0-9a-f]+$":
+> +    type: object
+> +    $ref: /schemas/phy/ti,phy-gmii-sel.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - ranges
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    syscon@40f00000 {
+> +        compatible = "ti,am654-system-controller", "syscon", "simple-mfd";
+> +        reg = <0x40f00000 0x20000>;
+> +        ranges = <0x0 0x40f00000 0x20000>;
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +
+> +        phy@4040 {
+> +            compatible = "ti,am654-phy-gmii-sel";
+> +            reg = <0x4040 0x4>;
+> +            #phy-cells = <1>;
+> +        };
+> +    };
 > 
 
-As per latest licensing doc [1], It quotes that GPL  is same as GPL v2 and GPL
-v2 exists only for historical reasons as shared below :
-
-“GPL v2 Same as “GPL”. It exists for historic reasons."
-
-So I think it should be fine and more apt to use GPL. This is also highlighted
-in below commit:
-bf7fbeeae6db644ef5995085de2bc5c6121f8c8d module: Cure the MODULE_LICENSE "GPL"
-vs. "GPL v2" bogosity
-
->> ---
->> Changes since v6:
->> * Rebase to linux-next, change license to GPL as suggested by checkpatch.
-> 
-> Note, checkpatch.pl is not false positives free. Be careful
-> with what it suggests.
-> 
->> +#include <kunit/test.h>
->> +#include <linux/gcd.h>
-> 
->> +#include <linux/kernel.h>
-> 
-> Do you know why this header is included?
-> 
-
-It includes all the other required headers (including those you mentioned
-below), and header list is probably copied from other files in same directory.
-But it does suffice the requirements as I have verified the compilation.
-
->> +#include <linux/lcm.h>
-> 
-> + math.h // obviously
-> + module.h
-> 
->> +#include <linux/reciprocal_div.h>
-> 
-> + types.h
-> 
-
-All the above headers are already included as part of kernel.h
-
-Kindly let me know if any queries.
-
-[1]: https://docs.kernel.org/process/license-rules.html
-
-Regards
-Devarsh
+-- 
+cheers,
+-roger
 
