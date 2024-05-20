@@ -1,91 +1,111 @@
-Return-Path: <linux-kernel+bounces-184157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC218CA350
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:34:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FDA18CA354
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FA2C1F21B5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:34:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA9361C212F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23765137C5F;
-	Mon, 20 May 2024 20:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6305139583;
+	Mon, 20 May 2024 20:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bzs7jjNX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X1nfohYc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAip3esm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E49D27A
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54BDD27A;
+	Mon, 20 May 2024 20:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716237285; cv=none; b=Od6dq3uZyySBFXP7HwPH5DIPKx98AjVHQha0duHjrVs8YUwt8GOdN1ZQcZxQ42ZA0UQ/A/a7erCt4Q0NWMpLrsWiii5Ra9kqkdC8+MGRSeScEscXaQ/dnuuYKiUOdfso3SMs648PnFUWRn5l8BNfXR6rSnD2Qp1OJ5g0D+ds00M=
+	t=1716237362; cv=none; b=tuqb323tmLAJ+CtgrZUZ+Tb12cUZeNzYCReeQhTBc3/jhdHHKG/lntly5QDBjuv5rcKB6FTm7X4vmz+8/jNf5St2kQ+wTjCzGDaMwovBq+fqva44SiyXauuqYf0jb73KeONmBXa6tD3Z4Une2C/zZkrJ2boeWH9N64g/j8Ifqkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716237285; c=relaxed/simple;
-	bh=yfQDcjCfh8o5yW1yDPGrImiVu4ZMa56v959MUAQj0Bk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=s8zHRiorQLQROEu5pyAOv6lGnMin4lZxBW27l4P5sUnoOnh7gAVGY6x+LwqsU6IUGJzYbcU6MorXjrgeAGJIG9L94iR8pPH2vDn/vdmGQL8XCh+++lNLhjKajh1uq665jH/g6MvacvWrfcIGp2OZzHba5oeDTOon/fZeaNOZUzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bzs7jjNX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X1nfohYc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716237281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KG1kV7a6J+60PKYk9ymbeTHXtrYcEUzQzN+I6ayOT94=;
-	b=Bzs7jjNXrrHACM9AwaiyPYhPdvFRr23tKjLDNRNz/Tl/N2164vhcAIcYbpPLKauIv+C84f
-	uC8BMS7E2nzGpnG5vArA/vI3OiaX7H7nS4etm7HamTiS8HuGR8j3Fv0j3lah4ICL3TruIr
-	XH3P+HanDPxaaDuWqCDpQt3pDEUdaKhlmh1N8kLtrxYoRrBFiuz857utEPFBrDuC28o9Z3
-	bggu5rPIs+PSEkUXneS17o7yHPkBhGCXap4FShhUXIm1pa9zL4mQT/8OEtaRASxo5WvEsh
-	M+AXizi9jj2x4h+VXhNi68r1XW9Yg6Pl8J79Mup8f7c/ULOPRlKquQJiWChL9g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716237281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KG1kV7a6J+60PKYk9ymbeTHXtrYcEUzQzN+I6ayOT94=;
-	b=X1nfohYcrNiOenaHMvoa6DDdNQmFsG+ut2RQEfj0WKTy4bsxRVt1TBwpUJxZr3PgN6dF4T
-	gDqXqSGWEAszqJAQ==
-To: Christoph Hellwig <hch@lst.de>
-Cc: Keith Busch <kbusch@kernel.org>, Ming Lei <ming.lei@redhat.com>,
- Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] nvme-pci: allow unmanaged interrupts
-In-Reply-To: <20240520153742.GB921@lst.de>
-References: <20240510141459.3207725-1-kbusch@meta.com>
- <20240510141459.3207725-2-kbusch@meta.com> <20240510151047.GA10486@lst.de>
- <Zj5JMqWRY187PqnD@kbusch-mbp.dhcp.thefacebook.com>
- <Zj6yvTxIpUnOXl7R@fedora>
- <Zj6-1sXvUNZWO1pB@kbusch-mbp.dhcp.thefacebook.com> <87r0e7mt9w.ffs@tglx>
- <20240520153742.GB921@lst.de>
-Date: Mon, 20 May 2024 22:34:40 +0200
-Message-ID: <87fruci5nj.ffs@tglx>
+	s=arc-20240116; t=1716237362; c=relaxed/simple;
+	bh=e/tOP5Sek+faG3xsBh/Yz8zOqx//+Q/9hHUwA35OWAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGWipimwLaMfX4Tylc0ODgFVJmb23jzP7sZANhoNgg6y3b41/H7WVLkPzo2sd2kKioKtQF7RcXt79HG5kN/JRU4HY26U5fgkItF+NdvGfeG+MkxhdBL3npIdlwXGx8XSipHD8LNL87LfL3V4ImlH/i2lL0yT0K18OxF2AQ14ABk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAip3esm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 834C1C2BD10;
+	Mon, 20 May 2024 20:36:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716237361;
+	bh=e/tOP5Sek+faG3xsBh/Yz8zOqx//+Q/9hHUwA35OWAU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aAip3esmRhJut2sxDJQe0/veutbOVefJHqUqW0i7oFpw0bPlhtOQI/e4EPD3iSliJ
+	 OVUmJQ153eQyiGv0wrrIvZ1ioKJkjIfy1wutTbYBBL6g7w0K8abNhoB6rkPtHkcT4w
+	 GeKZ8COhG/WAPVpwsqaUrPaV5d5GSVDpla2eQ2FGkR6YFbomvG4bCmZtSXB197+umS
+	 k2GQdRvZS2iGl/Qtc8fXI6kncG3S2vzeyU88jDm8vBtOggCPDlka4LhNq7QwUEJyKY
+	 UPerCe9+qsDKlF8h6b4V7w0rAywtVM0XAymwJcDCtAe1Bmoluc4Ugs8AXBHcTske9t
+	 UPR3mAgl3rmUA==
+Date: Mon, 20 May 2024 15:36:00 -0500
+From: Rob Herring <robh@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v1 1/1] spi: pxa2xx: Move PXA SSP bindings to the correct
+ folder
+Message-ID: <20240520203600.GA1424819-robh@kernel.org>
+References: <20240517171103.221856-1-andriy.shevchenko@linux.intel.com>
+ <e81d43f8-a3ba-41b4-a86f-af2d6943e917@sirena.org.uk>
+ <Zke2yG-WPkaWg5PV@smile.fi.intel.com>
+ <CAL_JsqKA7AnY7w3sjrT+khrat348v7uNpAP1+FZ=mdYMhJkf3Q@mail.gmail.com>
+ <ZksqPiSLY8OlE5lT@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZksqPiSLY8OlE5lT@smile.fi.intel.com>
 
-On Mon, May 20 2024 at 17:37, Christoph Hellwig wrote:
+On Mon, May 20, 2024 at 01:47:26PM +0300, Andy Shevchenko wrote:
+> On Fri, May 17, 2024 at 03:19:51PM -0500, Rob Herring wrote:
+> > On Fri, May 17, 2024 at 2:58 PM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Fri, May 17, 2024 at 06:24:37PM +0100, Mark Brown wrote:
+> > > > On Fri, May 17, 2024 at 08:11:03PM +0300, Andy Shevchenko wrote:
+> 
+> ...
+> 
+> > > > > SSP stands for Serial Synchronous Protocol and has nothing to do with
+> > > > > UART, also known as USART, where 'A' stands for Asynchronous.
+> > > > >
+> > > > > Move the SSP bindings to where it belongs.
+> > > >
+> > > > It's a serial device which is also used for other applications (the
+> > > > other one upstream being audio) so I can see where the current binding
+> > > > comes from and it's not super obvious that spi is especially better
+> > > > here.
+> > >
+> > > Hmm... okay. Then it's question to DT people. Consider this as a report.
+> > > Because UART (aka serial) is definitely not the place for SPI/SSP bindings
+> > > either.
+> > 
+> > Move it when it is converted.
+> 
+> The problem is that somebody added a binding (in YAML) for SPI PXA2xx
+> in the spi/ folder while this one kept unconverted.
 
-> On Sun, May 12, 2024 at 08:35:55AM +0200, Thomas Gleixner wrote:
->> That's expected as you pin the I/O operation on the isolated CPUs which
->> in turn makes them use the per CPU queue.
->> 
->> The isolated CPUs are only excluded for device management interrupts,
->> but not for the affinity spread of the queues.
->
-> We'll probably need a version of isolcpus that also excludes the
-> interrupt spread given that users are asking for it.  And I'd much
-> prefer that over adding radom module options to every driver to disable
-> managed interrupts.
+Ah, well that detail was missed.
 
-No objections from my side.
+> 
+> If it dangles more, it might be that we will have two asynchronous bindings
+> for the co-existed drivers.
+
+Looks like all that is needed is adding the compatible strings and 
+'dmas' property to spi/marvell,mmp2-ssp.yaml. The examples in the old 
+binding have other stuff, but looks like that's garbage.
+
+Rob
 
