@@ -1,137 +1,129 @@
-Return-Path: <linux-kernel+bounces-183905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FF98C9FAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:26:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D018C9F30
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C5BE1F21969
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:26:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0D8282F2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CFC136E3C;
-	Mon, 20 May 2024 15:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F109D136E09;
+	Mon, 20 May 2024 15:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="RL5D4mYb"
-Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78C4136E26;
-	Mon, 20 May 2024 15:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlEVKSu3"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C2728E7;
+	Mon, 20 May 2024 15:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716218803; cv=none; b=iz4Kq91bgodY6Y33HNdckvVEE1qQFUbqMToyhV9V7M7bOHND/LUkGf5Eb0TiSC5IhL2a5sLSxbBz7rIVywhwnk8+/8ZxY7TYMx+xtY0oQWf7D+xT8Dt355RVs2RgP6EYemcTBzO8h1083SeCMpXomgXz3d89xjpvhHbB0RJ1eDw=
+	t=1716217310; cv=none; b=dLASfI9k6v57bdTNOQ0BCFEx0+clZU5ACb0YELflWeRpYIXRQb+gGEYBxXfcJrn1ZRNkHTHS7KI+jtkMe7+7ITjs6g7VUkbf/8vaI6VLH1LhEVTOqsrkoE3+tt0wkbs0AbS3HJN7UDKxHUXl6tkzRw+nvQaO8LjY01dYAiv6Uiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716218803; c=relaxed/simple;
-	bh=2kPC8/7VEMwe1FMH7DLKRv/rPLNUj8M87O0aGdTrOsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KOBfv0wHBQRMbAiIRr15epbSvYEuN4tetLFiD7Q9+Zp/DwGFeJv1e/bVSFxdxfDKqHArVfc3R8iYGFgIvKYBzLAPqwEsQO0Ip8pMTAA02/D21kHDB60mWlGjB9NIQ5gQ5avestKzPI0Zl+IXOaysi03ENykeJaEUIJguVJWDgk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=RL5D4mYb; arc=none smtp.client-ip=185.87.125.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-	id 68DCA40A00; Mon, 20 May 2024 17:01:25 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 68DCA40A00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-	s=odk20180602; t=1716217285;
-	bh=2kPC8/7VEMwe1FMH7DLKRv/rPLNUj8M87O0aGdTrOsc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=RL5D4mYbX2CL9lsvzQne1UoC7l2Kf+BNuEaS7NOzaGEV/r0tOo0Qodvb/9qG+px6F
-	 m7VCLmIUQoQ0dHe1fyoSLPpxYtjgsNOOu6GaTyis/kJoAN/tKnnG3p5Ztsf5DPOW4S
-	 WhPrSIk8v8xOh8L+ThiCxG4XM7OyivxDv3KEbmKQ=
-Date: Mon, 20 May 2024 17:01:25 +0200
-From: Wim Van Sebroeck <wim@linux-watchdog.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>, Chen Ni <nichen@iscas.ac.cn>,
-	Dawei Li <set_pte_at@outlook.com>,
-	Duoming Zhou <duoming@zju.edu.cn>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Judith Mendez <jm@ti.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Niklas Schnelle <schnelle@linux.ibm.com>
-Subject: [GIT PULL REQUEST] watchdog - v6.10 release cycle.
-Message-ID: <20240520150125.GA11491@www.linux-watchdog.org>
+	s=arc-20240116; t=1716217310; c=relaxed/simple;
+	bh=h9G+PzNOBo0XpGBoArWpCHVHv14Yl1PQqd7N8807B0M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oLHzQv7EIg0PTA9xIWAIC3fuXl7398LUtvPn1qyrckrs9wftvzO1D6tdGtxQtJzK1L1ZNTAsQYq7d5kw/Ix0iPR53p++SUjWxqdW2lYqxdSjQbKVqypveaj2U/9MHETERMm/JgASfbDdL4KMcpWP+Cj1spJyG5lQEca9NjY6nEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlEVKSu3; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59b097b202so543072266b.0;
+        Mon, 20 May 2024 08:01:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716217307; x=1716822107; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NrznS2cuTf/vafEauQb8pP6KkMct4u3y/Gx+jtIqOBk=;
+        b=XlEVKSu3ROuRrQYunpZeWcMO4IZM+XoM6JLpT5YJtIsGtqejaXhAOd4oK8MDZqxUr5
+         VVDby/eZMF5G2rvsIRCVLrnT3Hq5M3o6Ro+QfrPbucm7NnAUW4IK4lEL9rPR3oLC+PAi
+         YQJ1hBWRwClNsTu6h6gatB3+0t4LSk6BVkwaSZVTAQmlC5SfUyQQ6/AEC+QoY/6sWB7G
+         Ypu9GmmGRLHMCU3v3XAUgiIW9q6NUepxpFJUhUds6NNf0C7vbrhJOs+NssNfiEfeUHdr
+         qRLe3/TviBKoPsf4LKQNbjiHVqKYSFDIuenBpUTuqTSR5ytFcHs6hTIjnE19wycNz9h6
+         xxcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716217307; x=1716822107;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NrznS2cuTf/vafEauQb8pP6KkMct4u3y/Gx+jtIqOBk=;
+        b=g7r0RLpL2sHGdIwfvjhpICX4xnqV6DeH8aGgSU6Zrshg0AtIjLVnPWHefqPPP0R1XP
+         7wI+Ntf4ARrK0JOfrxBC3efYHAoUPRRQQ4KUrX6cNkZ4IhYlup02Iy1yPCuvH8yq2M02
+         I/grBkVrO+I3dozt01rqTmXoCvThVs3kx+7gc2I1387+rBSN4mhdn1b0YY6joTbdeWPr
+         Xtc/3PHuoZgrHl10Q5Ov8HAw2CajvzX8OEeTHUhEGz2q6bMOTYFWbxkGZGD9XYAgXsvN
+         5o/vBR7X84wCw4qtJmc8ljufHABZnAOBdB1Xy5d6pL4ruMfbMYz7uHxjLmoMXZzOU5Ie
+         Ukfg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0siFaOPNOvktZB7hqLNN/O1WeOm48C6iFxpnyD2ejiJjcFF7sTUYvMqc6tjtepiidpVbleJGxRYhrM9epMX+FkYUvuTrXYTx3vg004665ZwqdccXkLggGWDteSJ0SH+Kq810c6gyZOV6k4xIg/2lOZgE2F6d40BKMbml7pQjZ7sze/ITVsu2d
+X-Gm-Message-State: AOJu0YyIPJmW1S6+DyILpx5UqcX4DlmJjsvnNUFADSKr7af3X7w6STlb
+	f7W9K5ryhU4/kyGG8PA9pNb7o7k0rJ2a2h7riqTEuVSnea8uATuh39ky7IUcJowKcgg48XK7Auk
+	t+buqdcTGV9T7TUiQuSOahT1++zo=
+X-Google-Smtp-Source: AGHT+IGGnQKNWxIxOvVxR+lGNx1s7DwBsojy6rWDdcN/SEWlpdlGR5yRRJJkPCknsF5uAt1G1irGlDzBZLb6IZHllVE=
+X-Received: by 2002:a17:907:6e9e:b0:a59:c39b:6bc3 with SMTP id
+ a640c23a62f3a-a5a2d6417e5mr2100229966b.49.1716217306721; Mon, 20 May 2024
+ 08:01:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.20 (2009-12-10)
+References: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com>
+ <6eee1069-81ae-495a-850f-7f526006db8b@web.de> <CAGFuAuyXhBT8Nkvz5qN8iejeoHMFmx1b86tTNmpVfQ2xqjMtLw@mail.gmail.com>
+ <a42d75ad-8065-49f0-906a-c8ae3761457c@lunn.ch>
+In-Reply-To: <a42d75ad-8065-49f0-906a-c8ae3761457c@lunn.ch>
+From: grygorii tertychnyi <grembeter@gmail.com>
+Date: Mon, 20 May 2024 17:01:34 +0200
+Message-ID: <CAGFuAuwot_7+R=J4NC=0Z_48YZ-RTJjRUoQnSjZUvpt=AWF39Q@mail.gmail.com>
+Subject: Re: [PATCH] i2c: ocores: set IACK bit after core is enabled
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Markus Elfring <Markus.Elfring@web.de>, 
+	Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>, 
+	bsp-development.geo@leica-geosystems.com, linux-i2c@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, Peter Korsgaard <peter@korsgaard.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Mon, May 20, 2024 at 3:41=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Mon, May 20, 2024 at 03:30:43PM +0200, grygorii tertychnyi wrote:
+> > On Sun, May 19, 2024 at 7:25=E2=80=AFAM Markus Elfring <Markus.Elfring@=
+web.de> wrote:
+> > >
+> > > =E2=80=A6
+> > > > Sometimes it causes failure for the very first message transfer, =
+=E2=80=A6
+> > >
+> > > Does such an information indicate the need for the tag =E2=80=9CFixes=
+=E2=80=9D?
+> >
+> > I'm not sure: the original initialization order was introduced by the
+> > very first commit
+> > 18f98b1e3147 ("[PATCH] i2c: New bus driver for the OpenCores I2C contro=
+ller").
+>
+> https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+>
+>   It fixes a problem like an oops, a hang, data corruption, a real
+>   security issue, a hardware quirk, a build error (but not for things
+>   marked CONFIG_BROKEN), or some =E2=80=9Coh, that=E2=80=99s not good=E2=
+=80=9D issue.
+>
+> Your description of the very first message transfer failing sounds
+> like a data corruption? Using the commit which adds the driver is also
+> fine, some bugs have been there all the time.
 
-Please pull following watchdog changes for the v6.10 release cycle.
+Thanks! Yes, it is a data corruption.
 
-This series contains:
-* Add Lenovo SE10 platform Watchdog Driver
-* Other small fixes and improvements
+> Remember to add a
+>
+> Cc: stable@vger.kernel.org
 
-The output from git request-pull:
-----------------------------------------------------------------
-The following changes since commit 0bbac3facb5d6cc0171c45c9873a2dc96bea9680:
+I will send v2.
 
-  Linux 6.9-rc4 (2024-04-14 13:38:39 -0700)
-
-are available in the git repository at:
-
-  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-6.10-rc1
-
-for you to fetch changes up to c45b8cfc6d5c12fbbc4d89b24b59402df99c1ecb:
-
-  watchdog: LENOVO_SE10_WDT should depend on X86 && DMI (2024-05-11 11:32:06 +0200)
-
-----------------------------------------------------------------
-linux-watchdog 6.10-rc1 tag
-
-----------------------------------------------------------------
-Chen Ni (1):
-      watchdog: sa1100: Fix PTR_ERR_OR_ZERO() vs NULL check in sa1100dog_probe()
-
-Dawei Li (1):
-      watchdog/wdt-main: Use cpumask_of() to avoid cpumask var on stack
-
-Duoming Zhou (1):
-      watchdog: cpu5wdt.c: Fix use-after-free bug caused by cpu5wdt_trigger
-
-Geert Uytterhoeven (1):
-      watchdog: LENOVO_SE10_WDT should depend on X86 && DMI
-
-Judith Mendez (1):
-      watchdog: rti_wdt: Set min_hw_heartbeat_ms to accommodate a safety margin
-
-Krzysztof Kozlowski (1):
-      watchdog: mtx-1: drop driver owner assignment
-
-Mark Pearson (1):
-      watchdog: lenovo_se10_wdt: Watchdog driver for Lenovo SE10 platform
-
-Matti Vaittinen (1):
-      watchdog: bd9576: Drop "always-running" property
-
-Niklas Schnelle (1):
-      watchdog: add HAS_IOPORT dependencies
-
- drivers/watchdog/Kconfig           |  69 +++++----
- drivers/watchdog/Makefile          |   1 +
- drivers/watchdog/bd9576_wdt.c      |  12 +-
- drivers/watchdog/cpu5wdt.c         |   2 +-
- drivers/watchdog/lenovo_se10_wdt.c | 308 +++++++++++++++++++++++++++++++++++++
- drivers/watchdog/mtx-1_wdt.c       |   1 -
- drivers/watchdog/octeon-wdt-main.c |   6 +-
- drivers/watchdog/rti_wdt.c         |  34 ++--
- drivers/watchdog/sa1100_wdt.c      |   5 +-
- 9 files changed, 370 insertions(+), 68 deletions(-)
- create mode 100644 drivers/watchdog/lenovo_se10_wdt.c
-----------------------------------------------------------------
-
-Kind regards,
-Wim.
-
+Regards,
+Grygorii
 
