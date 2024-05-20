@@ -1,124 +1,112 @@
-Return-Path: <linux-kernel+bounces-184010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660308CA160
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:30:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027118CA12E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D9C282351
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:29:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1206281D56
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB1513A89B;
-	Mon, 20 May 2024 17:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D7D137C42;
+	Mon, 20 May 2024 17:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="bXIVpLoz"
-Received: from smtp-out.freemail.hu (fmfe00.freemail.hu [46.107.16.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="LuU/fEMP"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418BD13A417;
-	Mon, 20 May 2024 17:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECF653E13;
+	Mon, 20 May 2024 17:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716226052; cv=none; b=MUzV8m/ys4WmMKoKmTrhc4lRiNkE2tdpHLYihDWrsAjzA6lWNs+/Nl6dLKruE2M5joGDD4Tgb6UznRY9FQS9lZu/5KBfVbJ2eUDI7Wd6WpgLEhZIEDENGB8/a9KypNeDQfb5KICllsy8cV1pA2hAeRIO5P5tRzu5zRJAnsua87A=
+	t=1716225640; cv=none; b=QpvEbEgvsY0yfKsafXjIPuZu8uXeYNLTh3WaLkkPNt/wWVCQ5DVIGMez2vFEUVRUVbBj7uM9faHO7ofF7SAFcDYunzNWuOf4U3IfiOfzNJXP3AI/fG6xKIQd/T+9+6zwId3Tk/WkEV9svd3cX2Ga30F/5sO3i/DX7O8cHlf3zaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716226052; c=relaxed/simple;
-	bh=hZ9BTpanyVdzRqlVTlS9UoiB+8CRYDf1nsuDDju6yYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bjWe3WIT+jwh8GbAI3efVWM7qMPOEBaL6Nc2dvlPC3orxsAv8c7Hj0+tzfE1p2wYsSE3Z0ArRtMIGrOyrnB5S//52fnOc4hDkNqysfudnPS0SaXA+fg/pStQxCngfZUb9Lt27/+TRGYCfMXiB8mdbSpTYaibTcvDKJh2Hg+ka5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=bXIVpLoz reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
-Received: from [192.168.0.16] (catv-80-98-74-198.catv.fixed.vodafone.hu [80.98.74.198])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.freemail.hu (Postfix) with ESMTPSA id 4Vjkpp6dq1zqc;
-	Mon, 20 May 2024 19:20:18 +0200 (CEST)
-Message-ID: <9ae65e3c-f1fa-4ca9-8d74-12d92c51c5c6@freemail.hu>
-Date: Mon, 20 May 2024 19:20:12 +0200
+	s=arc-20240116; t=1716225640; c=relaxed/simple;
+	bh=ujOZdM12m2SkEuErdLg31UfXALUkOK8fYQRRZe+CGPo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a63vvnYNAPjHErnZgEGQg8mAH8uQSP4n7XYdo0B6EYuljDCPASut4n1Q99ZRQsZ7hscvEHt04tPByXecsjAHBYAnBeTHaZokqtHgwwRQvqYe+f7asFiz8QBDcHESY5gCSUCCPnUkrll+IiVGsg3x+tB4AFk2ZbDZkegzgSV92j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=LuU/fEMP; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+From: Dragan Simic <dsimic@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1716225634;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=M5mdKrQZ6Ky+oql5N4jU0irfjSORSwfq+zI30MiBIko=;
+	b=LuU/fEMPZL0GHan6Z1Z0f2BpKu+NaY/w0OmOAbO9PaNcTiGPihIk+jEt/FfcthR7H3nL49
+	x0+z0UXxgVjOsQ4RV0z7dVY7wGEnxexYc38rqFz+VW8Q0eiaW30/JLEPmHl3CDuf1HQyEO
+	vQWrQpGOneFSwbcwMw5LlRhcEP625t/+cISm+aHJxTkkqXMI8YQW3FfrJbZ/mK4k/ld1Az
+	mbK/ui3vFhOZ7TavIMGZZARU9c1zlI1CAE3K66gHAQFECNsbCdWbfmMZfbBijvGrfDJyp6
+	U0+HQ8NnpQ2MyISitkaJU2fd9duUnbjUApV4peHrnyaDa9IoRvxzApTeaBgvEw==
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Diederik de Haas <didi.debian@cknow.org>
+Subject: [PATCH] arm64: dts: rockchip: Fix the DCDC_REG2 minimum voltage on Quartz64 Model B
+Date: Mon, 20 May 2024 19:20:28 +0200
+Message-Id: <e70742ea2df432bf57b3f7de542d81ca22b0da2f.1716225483.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] spidev: Introduce "linux,spidev-name" property for
- device tree of spidev.
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240519211346.30323-1-egyszeregy@freemail.hu>
- <1ec9e8e5-0818-42b0-8776-d9cfb0585f42@sirena.org.uk>
-Content-Language: hu, en-US
-From: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
-In-Reply-To: <1ec9e8e5-0818-42b0-8776-d9cfb0585f42@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1716225620;
-	s=20181004; d=freemail.hu;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	l=3028; bh=cvIOdk4xUZa+dLTqg5VA9e7Melwr8hlOaowEyxAGAac=;
-	b=bXIVpLozECHnvAP90I3d0K9994PrGE0swuIbqqeq77SjTOhiokcktCTix+gfkE9e
-	8FehBfGyU+zH7ycndbsuXdwKLx5lmG3U6eTo/poY4Ydb0phNaEQFXaBDuHMMSJxbgzK
-	uBSR+L7zVqdqyGPXz9eb/JpxRfA1nQ6EFYofVn/AA0tj/T6G3mHFkVq/EgPRHU7/dwP
-	y+ZhVCC+zJwTtQDw2Lepwvl3kHllWVf/7GkkHYVa89MSl0WfHyB92+sjhxix9jfzr7X
-	VEiEW1lIG1M4NlPx4NFmQOZoA5AzzYI90PX78nNFfx4c/cDECyJeqa3vQ/7nVmEB5EM
-	JI+vvv0e8g==
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-2024. 05. 20. 15:20 keltezéssel, Mark Brown írta:
-> On Sun, May 19, 2024 at 11:13:46PM +0200, egyszeregy@freemail.hu wrote:
->> From: Benjamin Szőke <egyszeregy@freemail.hu>
->>
->> Optionally, spidev may have a "linux,spidev-name" property.
->> This is a string which is defining a custom suffix name for spi device in
->> /dev/spidev-<name> format. It helps to improve software portability between
->> various SoCs and reduce complexities of hardware related codes in SWs.
-> 
-> This seems like what udev rules are for?
+Correct the specified regulator-min-microvolt value for the buck DCDC_REG2
+regulator, which is part of the Rockchip RK809 PMIC, in the Pine64 Quartz64
+Model B board dts.  According to the RK809 datasheet, version 1.01, this
+regulator is capable of producing voltages as low as 0.5 V on its output,
+instead of going down to 0.9 V only, which is additionally confirmed by the
+regulator-min-microvolt values found in the board dts files for the other
+supported boards that use the same RK809 PMIC.
 
-Hi,
+This allows the DVFS to clock the GPU on the Quartz64 Model B below 700 MHz,
+all the way down to 200 MHz, which saves some power and reduces the amount of
+generated heat a bit, improving the thermal headroom and possibly improving
+the bursty CPU and GPU performance on this board.
 
-Goal of this patch is to introduce this new mode to assign a custom name from 
-lowlevel device tree to a spidev device. As i know udev can do it, but to do it 
-from device tree is the best and easier way for this feature in my opinion.
+This also eliminates the following warnings in the kernel log:
 
-It is more maintainable then use udev in userspace for it.
-For example there are three different SoCs: i.MX7, i.MX9, ZynqMP.
+  core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000, not supported by regulator
+  panfrost fde60000.gpu: _opp_add: OPP not supported by regulators (200000000)
+  core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000, not supported by regulator
+  panfrost fde60000.gpu: _opp_add: OPP not supported by regulators (300000000)
+  core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000, not supported by regulator
+  panfrost fde60000.gpu: _opp_add: OPP not supported by regulators (400000000)
+  core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000, not supported by regulator
+  panfrost fde60000.gpu: _opp_add: OPP not supported by regulators (600000000)
 
-In Yocto project, the Linux image's SW environment is nicely configurable 
-independently from what is the target MACHNIE. But if i like to deploy a SW 
-which uses peripheries like gpiobanks, i2c-dev, spidev these /dev/... name will 
-be totally different on each SoCs, more over in ZynqMP and any other Adaptive 
-SoC platform, the index number for the spidev, gpiobanks or other can be not 
-deterministic if it probed in run-time. Goal is to easily make a Linux OS image 
-which can support multiple SoCs in SW point of view easily.
+Fixes: dcc8c66bef79 ("arm64: dts: rockchip: add Pine64 Quartz64-B device tree")
+Cc: stable@vger.kernel.org
+Reported-By: Diederik de Haas <didi.debian@cknow.org>
+Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-So, in Yocto project build system point of view the best, if any Machine 
-specific settings is stored in the device tree files of the target machine in 
-driver levels/config, because it will be deterministic in 100% sure and it will 
-be nicely separated from the SW meta layers which may not contains any machine 
-specific hacking with udev and so on.
-
-So this way to assign a custom name for a spidev from device tree is more 
-efficient and more maintainable in SW developing point of view in embedded Linux 
-and Yocto/buildroot world because i need to just define a name like 
-linux,spidev-name = "sensor"; then use it with a fixed name in my generic SW 
-under /dev/spidev-sensor name. And there are no need to care about what will be 
-the index number of this spidev randomly after boot and how need to make an ugly 
-append layer for udev config and make it for all of machine variants separately.
-
-My opinion udev is ugly to use for it, and no longer beneficial for new Adaptive 
-SoCs where they can be not deterministic what kind of index number they got in 
-driver probing for many gpio, spidev, i2c-dev peripheries (you do not have info 
-about that which need to mapping for what custom name, it can be different in 
-many time based on PL FW). It is much better, safe and easier to assign this 
-custom suffix/name explicitly from device tree, moreover it is a driver related 
-things, i think the best place is in device tree for it not in a sys config file 
-for udev.
-
-DT binding would need to be documented later in a separated patch as a guideline 
-mentioned it in Linux repo.
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
+index 26322a358d91..b908ce006c26 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
+@@ -289,7 +289,7 @@ vdd_gpu: DCDC_REG2 {
+ 				regulator-name = "vdd_gpu";
+ 				regulator-always-on;
+ 				regulator-boot-on;
+-				regulator-min-microvolt = <900000>;
++				regulator-min-microvolt = <500000>;
+ 				regulator-max-microvolt = <1350000>;
+ 				regulator-ramp-delay = <6001>;
+ 
 
