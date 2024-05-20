@@ -1,102 +1,117 @@
-Return-Path: <linux-kernel+bounces-183591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 929798C9B06
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:12:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3623F8C9B14
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E466280E3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:12:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0BF1F21033
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281EA4D9FB;
-	Mon, 20 May 2024 10:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62BF4F5EA;
+	Mon, 20 May 2024 10:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3RKlVEnw"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T12CGJkF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15061224D7;
-	Mon, 20 May 2024 10:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B655A14285;
+	Mon, 20 May 2024 10:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716199932; cv=none; b=ifmvggwdRpFfW8TSi3I0UezfU20DuwpQ7KrwuvprVt1A1q6HZd05SPfFR46V44Ri8LxOG5y6TlBFcwRiAL0wi/ntTnx19XHW/szl48GixoRBxxd1zGsfJ/yyJkcyn/xuBvB2ZpwvKaWNXHJ7jekfC7nArURrQCT0p6q1lsThICY=
+	t=1716200134; cv=none; b=CYVYUTrY7egnUnW9A580PaMMxqNMLaVHi4VZ3laACWTb1sxVs0Ko0knpWvGgivHxAZV9qJkmmge5wpxrSHJ1ETYoTVoxK8qSMcUhTADzAZshI4JiHvb+uBewfFflrks0HZ825Ut7Nb6zCKjLQhPMtuUiZaMlCMAClMj3fjrHGkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716199932; c=relaxed/simple;
-	bh=6NDH0z522me5vrgmflzfx3WQmnMcDdrAZ53MUWxQv/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=g19ZYwiAKNwQcocUsUqqusmbvvBGGUZMTlPxQ9lP6OUvvusEP0h/168aKMhcvpSyuCi+LNIOIU2HMeNAF4n9SZKKVodMipBQBf4bAOT5UbZwhqag0xMZs7Kg+NYDXfw8akkmy+bbs8htezLh2ysWVBecdJayuGqoNV6vAsu/0U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=3RKlVEnw; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716199929;
-	bh=6NDH0z522me5vrgmflzfx3WQmnMcDdrAZ53MUWxQv/4=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=3RKlVEnwwt+L5N6iv4pr5sMiBA1t3K7kWgvqTEz2d1rPQs0u9QxBIfxWjsU5Ch537
-	 MwoEupaZcfEH4C6n5h8R0IDoqxWmROmYlaHoRlRJ7wjPrBZ/Q2kUZEOg5xMLmKHsni
-	 LVSNEE08mvwsn0Jen6ElZtG6U57kCmUC11S4ghbAqW0cEyQAuYpJesHhj8ADRfXdR4
-	 5qHAg0a9Wh0ytta1OEjeFBngPVBUthhT1DGluv2H5NzRfI/2ci45MZdCBWuUId4/nQ
-	 TlCXVJzXpd2Jo6UUexOJwg2S72A7G0xA08/Z8OG9HNea6u1utU6oHEu+C8h44MZUUM
-	 Ah+2Y+6LS3jtA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9B0B037809D1;
-	Mon, 20 May 2024 10:12:08 +0000 (UTC)
-Message-ID: <cf8c87fe-7a4f-423f-9c97-3759eeee4894@collabora.com>
-Date: Mon, 20 May 2024 12:12:08 +0200
+	s=arc-20240116; t=1716200134; c=relaxed/simple;
+	bh=quscQVhGYECqWdN6pmPjH9Lcvjms9S+zA4L3I3EqjiQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=igUzGU/oyBUOXmJQgLdBNI2Tn/nPZwHELZhFVx126d2yl6SAXEnSrI1eQBBSqWQgL1C7BgqTJzuGb4IgLDXcWYmGxPCiHWTZYV3d3DkvvVf7J6dgzRsqzlUO4IXrkqosYI9azUxI9iZnL5CF+skxjbgv3qIh2WNiusawwyVgZ9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T12CGJkF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44JNwfm3030497;
+	Mon, 20 May 2024 10:15:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=hKiodN63Z0RVsc8gXW3IiXso5pHhoSGv7lkZ5eTB99E=; b=T1
+	2CGJkFyF80nsOUBOS4vzcG24n2OQWSDySie8JV1bRvWy/hiAmEkXG3dddzYq/7o+
+	bKl2tAY5oeLoBlwDnFqqMBnLr9gkLvO/mGxrO09qt2cRB4juMSOT+I9hbYfTww0t
+	LyDNxArrhjEg4DGMoh/Km7cWI9iGAUYEjY6JmzQeiRbRxJ4Ksk6rgdUp7IjWnuvH
+	SyZrr+y1ZY7uHXmpg0ggxMhnZLnzLWejav5QQUwpmnY4NPBaKk29ChxnZmUagVg/
+	HiTqbHBGQO2v0wNjly5ee1yzY+RjVGNTbFNbltDEEzum2kKnrzAS7fsUi6AzCzkN
+	DaElI0tuw8WXK2cLlLog==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pq5avt3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 10:15:20 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44KAFJwU014001
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 10:15:19 GMT
+Received: from [10.216.4.5] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 20 May
+ 2024 03:15:13 -0700
+Message-ID: <bdfd0704-ac8f-45c2-e292-a5bc416e6610@quicinc.com>
+Date: Mon, 20 May 2024 15:45:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] arm64: dts: mediatek: mt8365: use a specific SCPSYS
- compatible
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- MandyJH Liu <mandyjh.liu@mediatek.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Alexandre Mergnat <amergnat@baylibre.com>
-References: <20240518211159.142920-1-krzysztof.kozlowski@linaro.org>
- <20240518211159.142920-2-krzysztof.kozlowski@linaro.org>
- <f42ef151-6eee-418f-91e1-5ac08d161119@collabora.com>
- <2cc638ca-0add-4c8c-b844-606e22dbd253@linaro.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v5 7/7] arm64: dts: qcom: ipq9574: Disable eMMC node
 Content-Language: en-US
-In-Reply-To: <2cc638ca-0add-4c8c-b844-606e22dbd253@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+CC: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <richard@nod.at>, <vigneshr@ti.com>,
+        <manivannan.sadhasivam@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>
+References: <20240508083637.3744003-1-quic_mdalam@quicinc.com>
+ <20240508083637.3744003-8-quic_mdalam@quicinc.com>
+ <20240516145915.10adca29@xps-13>
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <20240516145915.10adca29@xps-13>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: GIfhyrBYp1lFuQVrWvmXxsU1Z8Tk9sjo
+X-Proofpoint-ORIG-GUID: GIfhyrBYp1lFuQVrWvmXxsU1Z8Tk9sjo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-20_05,2024-05-17_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 clxscore=1015 mlxlogscore=528 mlxscore=0
+ bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405200085
 
-Il 20/05/24 12:03, Krzysztof Kozlowski ha scritto:
-> On 20/05/2024 11:55, AngeloGioacchino Del Regno wrote:
->> Il 18/05/24 23:11, Krzysztof Kozlowski ha scritto:
->>> SoCs should use dedicated compatibles for each of their syscon nodes to
->>> precisely describe the block.  Using an incorrect compatible does not
->>> allow to properly match/validate children of the syscon device.  Replace
->>> SYSCFG compatible, which does not have children, with a new dedicated
->>> one for SCPSYS block.
->>>
->>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> Technically, that's not a SCPSYS block, but called SYSCFG in MT8365, but the
->> meaning and the functioning is the same, so it's fine for me.
+
+
+On 5/16/2024 6:29 PM, Miquel Raynal wrote:
+> Hi,
 > 
-> So there are two syscfg blocks? With exactly the same set of registers
-> or different?
+> quic_mdalam@quicinc.com wrote on Wed,  8 May 2024 14:06:37 +0530:
 > 
-
-I'm not sure about that, I don't have the MT8365 datasheet...
-
-Adding Alexandre to the loop - I think he can clarify as he should have the
-required documentation.
-
-Cheers
+>> Disable eMMC node
+> 
+> Please explain why or remove this patch from this series, because at a
+> first glance there is no reason to link this patch with the others.
+  rdp433 default boot mode is norplusnand and GPIOs are shared b/w eMMC
+  and NAND so we can't keep both.So we are disabling the eMMC for rdp433.
+> 
+> Thanks,
+> Miquèl
 
