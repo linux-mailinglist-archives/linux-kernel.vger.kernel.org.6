@@ -1,58 +1,98 @@
-Return-Path: <linux-kernel+bounces-184108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077908CA2AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:24:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D772A8CA2AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87105281268
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:24:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A97DB221E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7009E1384A9;
-	Mon, 20 May 2024 19:24:18 +0000 (UTC)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C151C1386B5;
+	Mon, 20 May 2024 19:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="PcnX9rzu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RLa1niyU"
+Received: from wflow5-smtp.messagingengine.com (wflow5-smtp.messagingengine.com [64.147.123.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CDD137C42
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 19:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60911137935;
+	Mon, 20 May 2024 19:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716233058; cv=none; b=u8HSp1+bJAxBpK/yV7kGtOIKwH3X4G7FHw09Ib9mlsHHj+poImnItBjRLL16r/qA0t77z83fejqjga8xlICEkqBasVd7bw7TULQvodUAP/V47bjP+I80nkNGB+jxdsTa8QJasXaA7w95ti1ASFFLOn2tWi9TzL2+M1hWt1GfvhY=
+	t=1716232831; cv=none; b=fh2cOb0V47mT9I3m3QeKQPzcIHNkVD5nYeEMkendmCbQqwI+0EduAOLPyEOCEpKZSexFszt7KYfR5N6d/bSuk3+3YCviFFJC/6iz6fMqnasgUk2hNCNOssmuvyXcJKseK6AnGvmO0VUiUYHk2fQ3+uAAQLNGk/SJsbNFHwQEKng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716233058; c=relaxed/simple;
-	bh=G36Cx8GySjdHNtcYSHoIRZuKeuqegAU39EJK3W+NhBc=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=cku+1PxR3EbKLtpRRoDzUwc3eHcloKNtU9DDyjuaHsczS3EAQqSf3FCttMQbkTLgBX/E3mbADC6Co+M0jvsdJiMCOkvMbA57+vOT0SMobzWiGThoT/yyswqEcmQhQqN6QUQe9S+Cir4CiyfRO7S7fZtpmZ9l2yEeZHM37ZXyRU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 1B8E96195FC2;
-	Mon, 20 May 2024 21:24:07 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id 6z9Gs4OLXYbU; Mon, 20 May 2024 21:24:06 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 678D96195FD7;
-	Mon, 20 May 2024 21:24:06 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id cPpfmcUIF8d4; Mon, 20 May 2024 21:24:06 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 09C736195FC2;
-	Mon, 20 May 2024 21:24:05 +0200 (CEST)
-Date: Mon, 20 May 2024 21:24:05 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: hch <hch@lst.de>
-Cc: "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	linux-um <linux-um@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <1300720405.125947.1716233045712.JavaMail.zimbra@nod.at>
-In-Reply-To: <20240520152049.GB398@lst.de>
-References: <20240505001508.255096-1-linux@treblig.org> <20240506070648.GA6506@lst.de> <ZktoVIG500he350_@gallifrey> <20240520152049.GB398@lst.de>
-Subject: Re: [PATCH] ubd: Remove unused mutex 'ubd_mutex'
+	s=arc-20240116; t=1716232831; c=relaxed/simple;
+	bh=oBHEUgxuOy3Gb3SSjzvFEwOATEjDLoQFe4gPk/cU3Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sSmAmvDdteswSKSOZw5qrdGPXYv+u8lj6SEaimd2PUUR+e8/vq09dOjE4awjaypL3fnn0WbkpJh0qAkB/HQVd8gugkTj00GrdFUAEQ5JchS6xhv27pzAKsVqhOMx2Qa/6WV/H7Pajm+GbSNNEFJ7smPFs7a8aE8pHH9GIMv5czw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=PcnX9rzu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RLa1niyU; arc=none smtp.client-ip=64.147.123.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailflow.west.internal (Postfix) with ESMTP id 959502CC023E;
+	Mon, 20 May 2024 15:20:28 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 20 May 2024 15:20:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1716232828; x=1716236428; bh=mO0EedKpcd
+	HIsso5KUGd6iDgcS2AGEPXGB8hV4/SyCk=; b=PcnX9rzubBrca97DZrsVgCICWa
+	JuiSf1k6djT2sFikn6eAuRpbOZU5lv5Bj1KvcUQAFi1pKJ706kRS0yGwhnGaglUp
+	Q5Gw9xY5u6i3SgySAUVERfFcr7KQzVCCo3GhWOhYJAF8EFACZssHggqNs6MXa75H
+	jG8ybiPYenaaz/geBonOqtTnd3jpjaIn0DVcaX6hspR6jyHYNGzRop+7cJhJAKCF
+	a/vnSlOb8M+GNxyhXHt7PqgSfRkwYay4QFdDh4YlRrxN8m4UGYHCTSBDH2BEw3Wz
+	q9mhqOUE98+dEnicxF/AXmtYshKzNmHJ0c0YAF3A5gW2kjlTWEMG8shAepQQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716232828; x=1716236428; bh=mO0EedKpcdHIsso5KUGd6iDgcS2A
+	GEPXGB8hV4/SyCk=; b=RLa1niyUuqomipMH6wH8n5ZPTPzAUDg26M3+U8ZJ3gKk
+	frG9wr7yyFYQhg92xcqHHOy2kb7yqd4GqpWgl2dxppyYmws07gtgS8aVCNNduP/4
+	G6ep8zG3tGKUxab1vECr7uefbgvO1uX5Az/YEj+ocAXD7m0Dc4wcAs20tpuu6X/A
+	eCGB401w53Y4ui+5MM5ciJLIKNmIeuT8pIGpnIgtiGkOMjlGWD/iDI5JKgmA9lF0
+	yOKhDRxQYMBRl6QknG8izF2gsIwsiJpw0ehYT6ZdxPh2RubGF+ijT0MVSNAG8Nc4
+	Wl0S9T9Y/XQ2iQobpRojjP5FRcV2DcMxUjGlZjpBHA==
+X-ME-Sender: <xms:e6JLZqL3F3B2aRCJ4w1S9WRH9slbVS04Anuc3Mq4dVF0uFsSre9bwA>
+    <xme:e6JLZiIY_k-ZDk7QL_-QBKTGCi4lkqtA31fORwgqNxil4r9Jp9Y3zvFfgVuzNJX-A
+    3-wDoQWoF_ozipb2vQ>
+X-ME-Received: <xmr:e6JLZqsqlwtMoI0P81WwiLaEuT2yOboTSj1LwLg-zsZgJgbT0qxMktr2CeY8-tPlWjQ3GnGl1Vy6_ap5KNOU8ss>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeitddgudduudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttdejnecuhfhrohhmpeflohhn
+    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
+    ggtffrrghtthgvrhhnpeekkeetgeefgfdvfefgfeffueefffejvdduieejheejheffkeej
+    keelffeulefggfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehjtggrlhhmvghlshesfeiggidtrdhnvght
+X-ME-Proxy: <xmx:e6JLZvY4OqRPmhLDbSoNBf9SaSnyJhxd3ipvV7YA-JVJX_8F5wtRbQ>
+    <xmx:e6JLZhYJA0-Y4UiDfcKcdBM3JdCdCTyL5lAtnDmC8vj7X55i9IPQ4g>
+    <xmx:e6JLZrA-o1NbLbBFxj_rl6jjY8fNsBfo-ozmgIL2il_amxjjZDfpUw>
+    <xmx:e6JLZnZisSO1vb5NFiGJfxQHXjZLXuo3uRGN8amQ8DjLajlWAl-eKQ>
+    <xmx:fKJLZlqTk4UcPirAK9O5Z2cBz4ms-BwgWtuD-EK2p5_O71z9bjoeav0X>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 20 May 2024 15:20:25 -0400 (EDT)
+Date: Mon, 20 May 2024 12:25:27 -0700
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: Tycho Andersen <tycho@tycho.pizza>
+Cc: brauner@kernel.org, ebiederm@xmission.com, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
+Message-ID: <ptixqmplbovxmqy3obybwphsie2xaybfj46xyafdnol7bme4z4@4kwdljmrkdpn>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-4-jcalmels@3xx0.net>
+ <ZktQZi5iCwxcU0qs@tycho.pizza>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,32 +100,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: Remove unused mutex 'ubd_mutex'
-Thread-Index: sUO+fPwo/Hce3VfngHxEy05naTFOLg==
+Content-Disposition: inline
+In-Reply-To: <ZktQZi5iCwxcU0qs@tycho.pizza>
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "hch" <hch@lst.de>
-> An: "Dr. David Alan Gilbert" <linux@treblig.org>
-> CC: "hch" <hch@lst.de>, "richard" <richard@nod.at>, "linux-um" <linux-um@=
-lists.infradead.org>, "linux-kernel"
-> <linux-kernel@vger.kernel.org>
-> Gesendet: Montag, 20. Mai 2024 17:20:49
-> Betreff: Re: [PATCH] ubd: Remove unused mutex 'ubd_mutex'
+On Mon, May 20, 2024 at 07:30:14AM GMT, Tycho Andersen wrote:
+> there is an ongoing effort (started at [0]) to constify the first arg
+> here, since you're not supposed to write to it. Your usage looks
+> correct to me, so I think all it needs is a literal "const" here.
 
-> On Mon, May 20, 2024 at 03:12:20PM +0000, Dr. David Alan Gilbert wrote:
->> * Christoph Hellwig (hch@lst.de) wrote:
->> > Looks good:
->> >=20
->> > Reviewed-by: Christoph Hellwig <hch@lst.de>
->>=20
->> Thanks Christoph; any ideas who might take this?
->=20
-> Probably Richard who is alredy on Cc.
+Will do, along with the suggestions from Jarkko
 
-Yes, after the merge window.
+> > +	struct ctl_table t;
+> > +	unsigned long mask_array[2];
+> > +	kernel_cap_t new_mask, *mask;
+> > +	int err;
+> > +
+> > +	if (write && (!capable(CAP_SETPCAP) ||
+> > +		      !capable(CAP_SYS_ADMIN)))
+> > +		return -EPERM;
+> 
+> ...why CAP_SYS_ADMIN? You mention it in the changelog, but don't
+> explain why.
 
-Thanks,
-//richard
+No reason really, I was hoping we could decide what we want here.
+UMH uses CAP_SYS_MODULE, Serge mentioned adding a new cap maybe.
 
