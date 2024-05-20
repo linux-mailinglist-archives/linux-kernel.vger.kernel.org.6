@@ -1,101 +1,146 @@
-Return-Path: <linux-kernel+bounces-184280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255DC8CA4CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:57:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D0A78CA4CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 00:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6FA41F21E9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:57:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A42681F21B64
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDB513A3F4;
-	Mon, 20 May 2024 22:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97624AEC8;
+	Mon, 20 May 2024 22:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="N76ds2Vd"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SURuoBz5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19989139562;
-	Mon, 20 May 2024 22:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0F82BB02;
+	Mon, 20 May 2024 22:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716245674; cv=none; b=Sudlx/+eDac3JGSsMcz+h4ks6tc8RNGXYfX/l/9tt2Qiqtni2iHkDyPg+i+2rEiMaiIH2tn6ic1efJbSefKKWjGCXBVm/xnCO1FoG/h+nVYuKY+vilhbXyJfoGxmmZ9VnM19oK++ueLPmVGFtSLHL6lIF2b0IUw/abo8b6Yv7Ig=
+	t=1716245840; cv=none; b=oXKzWladLpHNCTPhWqwOIhvPedbysNrg5d798qpcWaSxsAdjckqHmaWgDs9qj9onz6DyFuTsTeffJ15lchlDsHu2h22ub0rESqX/+cNR4xo08pKNxGMo1wKS75e76lOqK2OPxs3aghHtIrXz1+cWwrLBJajyjGrko9kAQSDR3YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716245674; c=relaxed/simple;
-	bh=ECRSw6YGQVTPe0gy0dYCsLe8oTWHc9F2P3oJ7mZ9HJU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q6ugkNXMuHZIx5Sg8EmEsRi9XZVfjVEOnf0oWNkE4OVcWnWlJLhfTvfn73YaEPmB+1Al3IKMTL5qrPIMnjK+mEKD0m4bZOvMZvS6GH7G5VqzDSU00fCuSasIG+W0hL2oxAh8sx8CbNVVUzW3X/sKGvQJTg5XMqNSub2Tl7r/FHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=N76ds2Vd; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VjtDS1LFmz6Cnk8t;
-	Mon, 20 May 2024 22:54:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1716245664; x=1718837665; bh=ditZiWOn7hLJUcVL8ZGmOB5K
-	Frac2puNeESvY7Sy76I=; b=N76ds2VdkoJmHd1jG09JVM0JcdkE4e8L/BR83/0u
-	cH1cBSsqz73IdPb13CN2jkZ1TxKhGzjF7KpzQKYU4Jfzcf6sC/RDGQJ/BPLgh/mF
-	UQ7mu0Rpcr8kINyu6mA3/XZL0KRNO/YLyH9Cqd8NNKmFVk9EAKPIz4PKqDyiljLs
-	T6hX7k66/7ckCKqP+3Nd0t7czRyRhfDIjbCa2KoV+v6kmiY4bglg5iKxBJRJvy5V
-	jBGqqWIweAoEnGOAcRt3yADoAdBj7+nghVxqqCh0rjL7BtrdX5VcA3Q9vfRLVXor
-	3Tao430X8PGm+xlT0M2i6oao9GfyD6XGmA0vS5cLE1KzFg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id hlmfe--IqVC7; Mon, 20 May 2024 22:54:24 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VjtD956Wjz6Cnk8s;
-	Mon, 20 May 2024 22:54:17 +0000 (UTC)
-Message-ID: <87f92553-04dc-48c9-be8b-f7fd4cd259b2@acm.org>
-Date: Mon, 20 May 2024 15:54:15 -0700
+	s=arc-20240116; t=1716245840; c=relaxed/simple;
+	bh=hw1CkrVZiWcYewlm4mKxXcEMU+gmLH6V9X14+HZy/Tg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pIbMalKxrNZLZR9b0OoQmZ4iCbQVbBU4vUlvEGe6E6iC3SeDnvIWHKutcLG4IYIjR7UdpBA6wtP0aS8Kky+XHnDxcOzDgFYAAQrzbDXpVPg+9uG/ue7cpx1HNLw3dySB0O2POTkaVyqsBF2ZqRA91GJ1ltH948XE26yQvgn+FJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SURuoBz5; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716245838; x=1747781838;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=hw1CkrVZiWcYewlm4mKxXcEMU+gmLH6V9X14+HZy/Tg=;
+  b=SURuoBz5saHrNkfILzMv6936FV93p16kgZJ1aYrceRlsJKeEc+aHyVPN
+   uo1UwSrIBOeBxV1rJz43zbuRwPY/9SXQ/CKdv2Uua2xfSNvyyTa0v/G0j
+   8RwvxBLG3qoNza3bh2pDzyoNgE2MOspneaCnireo73udrPWEiexgT+18t
+   sjLdjRs5ObqPx3ISfBsEqIYIea+BLhD5qH6OSpbjwYq+y2eTzq//dxisN
+   2pqw90ItSGxLHxHhRTYXKPe7mlC2e78D3dfMfLV3MrLOtJONHJxRQhCss
+   hHuJa1m5QFw/Z7D2KrnEpzMp0/vH/OTItgCM0E9JiIIo2p3UPMshaNQ/i
+   g==;
+X-CSE-ConnectionGUID: Vv4Z91c/SaScjW2E4+bx8Q==
+X-CSE-MsgGUID: KrvQ03twSrifqtNvsjHi6A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="29915599"
+X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
+   d="scan'208";a="29915599"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 15:57:18 -0700
+X-CSE-ConnectionGUID: RX5/4wY5Qdi779Niwq4Gcg==
+X-CSE-MsgGUID: j89SCt2zSkyfPCdlGd4z1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
+   d="scan'208";a="37461387"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.132])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 15:57:14 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org
+Cc: Ira Weiny <ira.weiny@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v3] cxl/events: Use a common struct for DRAM and General Media
+ events
+Date: Tue, 21 May 2024 00:57:10 +0200
+Message-ID: <2114228.Jadu78ljVU@fdefranc-mobl3>
+In-Reply-To: <4446774.UPlyArG6xL@fdefranc-mobl3>
+References:
+ <20240518113317.3683718-1-fabio.m.de.francesco@linux.intel.com>
+ <4446774.UPlyArG6xL@fdefranc-mobl3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 00/12] Implement copy offload support
-To: Nitesh Shetty <nj.shetty@samsung.com>, Jens Axboe <axboe@kernel.dk>,
- Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
- damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
- nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
- linux-fsdevel@vger.kernel.org
-References: <CGME20240520102747epcas5p33497a911ca70c991e5da8e22c5d1336b@epcas5p3.samsung.com>
- <20240520102033.9361-1-nj.shetty@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240520102033.9361-1-nj.shetty@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On 5/20/24 03:20, Nitesh Shetty wrote:
-> 4. This bio is merged with the request containing the destination info.
+On Monday, May 20, 2024 7:55:17=E2=80=AFPM GMT+2 Fabio M. De Francesco wrot=
+e:
+> On Saturday, May 18, 2024 1:26:21=E2=80=AFPM GMT+2 Fabio M. De Francesco =
+wrote:
+> [...]
+>
+> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+> index a08f050cc1ca..05de8836adea 100644
+> --- a/drivers/cxl/core/mbox.c
+> +++ b/drivers/cxl/core/mbox.c
+> @@ -875,7 +875,13 @@ void cxl_event_trace_record(const struct cxl_memdev=
+=20
+> *cxlmd,
+>                 guard(rwsem_read)(&cxl_region_rwsem);
+>                 guard(rwsem_read)(&cxl_dpa_rwsem);
+> =20
+> -               dpa =3D le64_to_cpu(evt->media_hdr.phys_addr) & CXL_DPA_M=
+ASK;
+> +               if (event_type =3D=3D CXL_CPER_EVENT_GEN_MEDIA)
+> +                       dpa =3D le64_to_cpu(evt-
+>gen_media.media_hdr.phys_addr)
+> +                             & CXL_DPA_MASK;
+> +               else if (event_type =3D=3D CXL_CPER_EVENT_GEN_MEDIA)
+> +                       dpa =3D le64_to_cpu(evt->dram.media_hdr.phys_addr)
+> +                             & CXL_DPA_MASK;
+> +
+>                 cxlr =3D cxl_dpa_to_region(cxlmd, dpa);
+>                 if (cxlr)
+>                         hpa =3D cxl_trace_hpa(cxlr, cxlmd, dpa);
+> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
+> index 6562663a036d..f0a5be131e6a 100644
+> --- a/include/linux/cxl-event.h
+> +++ b/include/linux/cxl-event.h
+> @@ -97,7 +97,6 @@ union cxl_event {
+>         struct cxl_event_gen_media gen_media;
+>         struct cxl_event_dram dram;
+>         struct cxl_event_mem_module mem_module;
+> -       struct cxl_event_media_hdr media_hdr;
+>  } __packed;
+> =20
+>  /*
+>=20
 
-bios with different operation types must never be merged. From attempt_merge():
+I suspect that I didn't clarify that the diff above is proposing an additio=
+nal=20
+little change to this patch (for v4) and that I wanted to collect comments=
+=20
+before applying and respinning.
 
-	if (req_op(req) != req_op(next))
-		return NULL;
+To be clearer, that diff is meant only to show that cxl_event_media_hdr can=
+ be=20
+removed from union cxl_event at no cost while still be used for the common=
+=20
+fields in the definitions of cxl_event_dram and cxl_event_gen_media.
 
-Thanks,
+=46abio
 
-Bart.
+
+
+
 
 
