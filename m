@@ -1,143 +1,155 @@
-Return-Path: <linux-kernel+bounces-183431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775C08C98FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 08:46:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7258C9902
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 08:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187C11F213FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 06:46:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28235B21CB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 06:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E82F17993;
-	Mon, 20 May 2024 06:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0648168DE;
+	Mon, 20 May 2024 06:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="k8oIx/nh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vmqTbn1b";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="k8oIx/nh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vmqTbn1b"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sexBTArQ"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE80BA47;
-	Mon, 20 May 2024 06:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6601DA929
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 06:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716187589; cv=none; b=K5FjInNpRklTWe99namWnWh2ZNYOL6sHvbCMaX1N4ppcv83fNkxxdnZzGrxX6QJ1aoONNo9nN8rftWGk1g02UE1XzU+aM5XrwKZEybkIuLxS2cGGXQJooI+mhdKgKooxB6tSP6KsC9Y+hP6vV5OS8//dFtU3sv7SvPLQit/XZAM=
+	t=1716187604; cv=none; b=RtnUo5cB+1mS5uGC9Svic3iqqhFlOvf4cNcttF06mAFOXTC6PgTP5/qtswFnGSKBoLT7IfazUQz2vgWY3lYnMxDAqmoSuUhtMoe/uXMwtrJ0X5bBlw7i2OTyMvxG28gYXFqb5SOecypkv1ws1xkVrsKHWxffvKPb3t6uTmY6ppU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716187589; c=relaxed/simple;
-	bh=zJeiXIUYemctI6JUyxHh/6l92N7GiddGqsNhdU7mYWQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DTmhPMPB6Q/TRoTHG3sWMB3At4j567vY4pe5nvbvbxBJ3ziQj9MkCFpkJSwJfpZmdouzVnCdGx7SdC4zHE/joaZBxPXNJh5I3Xbfwc8XR9a0UO3vCQfnxC3q+R7M6pvVtSS/1vLutgteYptPAgnwkO/I8KBFZG1CktafaN5R+Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=k8oIx/nh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vmqTbn1b; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=k8oIx/nh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vmqTbn1b; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8615C33EFA;
-	Mon, 20 May 2024 06:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716187585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JneacqqljGXg+srmnVmYB1aId3PqrqaRgKmSc9R968I=;
-	b=k8oIx/nhGpggOZgZC9WeeSbkYSaooUPQX2p5JD8sxPnnlqoG/QuPJ6twzTtCVXToEEocUo
-	ZPEstKj82ZOV1nu4ZNDyC34UDhMjYuKOngtvzizlDzHXwhWViCgLzXlOd9nFoNdrof0eBa
-	inFy3V3rJt42BhpVl0CaCIpflnc4eRI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716187585;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JneacqqljGXg+srmnVmYB1aId3PqrqaRgKmSc9R968I=;
-	b=vmqTbn1bpteS/1Y1Ks7YheyXMrzt2it9x7xXuklBDKNwSjgN0hR2kyvV2P1tcO10/Lrw2T
-	5uJth6WxtL9+9SCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716187585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JneacqqljGXg+srmnVmYB1aId3PqrqaRgKmSc9R968I=;
-	b=k8oIx/nhGpggOZgZC9WeeSbkYSaooUPQX2p5JD8sxPnnlqoG/QuPJ6twzTtCVXToEEocUo
-	ZPEstKj82ZOV1nu4ZNDyC34UDhMjYuKOngtvzizlDzHXwhWViCgLzXlOd9nFoNdrof0eBa
-	inFy3V3rJt42BhpVl0CaCIpflnc4eRI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716187585;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JneacqqljGXg+srmnVmYB1aId3PqrqaRgKmSc9R968I=;
-	b=vmqTbn1bpteS/1Y1Ks7YheyXMrzt2it9x7xXuklBDKNwSjgN0hR2kyvV2P1tcO10/Lrw2T
-	5uJth6WxtL9+9SCg==
-Date: Mon, 20 May 2024 08:46:24 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Wardenjohn <zhangwarden@gmail.com>
-cc: jpoimboe@kernel.org, jikos@kernel.org, pmladek@suse.com, 
-    joe.lawrence@redhat.com, live-patching@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] livepatch: introduce klp_func called interface
-In-Reply-To: <20240520005826.17281-1-zhangwarden@gmail.com>
-Message-ID: <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
-References: <20240520005826.17281-1-zhangwarden@gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1716187604; c=relaxed/simple;
+	bh=5MWY+lVErIp4I1uexC+cvslTG8YEDGKbFx3G54OrXb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xnmo99czr1TSocmiNbi2jMpok3crPo1xUKdcH7bbS0iE4UI0ZYHGpWhHAYYPiBqxqNcSxZUVxZkYBJJ7zNOnzyehpDP16rKmbHCEAZrLxQwRHB1/7XT78Mr4u8drZNHHKU9GOGvOerxaCUWmFfqYQALnD5Zt/Leo4LLsNwaWd9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sexBTArQ; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a61b70394c0so41502366b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 23:46:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716187602; x=1716792402; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=zx2yIJoxOsqFEYZLGOO5+Op30+HnDfY+fqMG/nFCrHY=;
+        b=sexBTArQjEIH8eQLcqlU8ranIyvJ6ZBz9hLlAWdea/W2IALEBy2k+CDiDOfE+KkFCH
+         svhc1lA3KB/EAwFKTmdV+GtGzNEDbqtm0xz4WhHSYwo5S5OgAIwE1gz4MgtZxbDn+73Q
+         knh/80Q3Mnqji6/QMtGPEKH5HjV07mbluK9JCpf2Sb/tGzwM84uEiBbK4ETf24M6If8P
+         KUHEZFRJ6AEAztr1PoG+aK+YM+OdnsNhY6dHFm1CImbRpm7xyuLbbzg1ncFxDGF2gkO+
+         lpK9LUcGTicrDHXVfHk/WpZgQ/a1R6Vu302uD+W7VVwASw//qf7xbJYfYxZ7GCqFeWkq
+         PRPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716187602; x=1716792402;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zx2yIJoxOsqFEYZLGOO5+Op30+HnDfY+fqMG/nFCrHY=;
+        b=RejhIQ5ibRsF/CfQ1++UXDNOPPm8IKct2dee82bYCQwexcm7+yRwLtpEn9LaHI+fS3
+         2DGIOVzM29uHXKYCT/cgnqo4dosqLCCt/TGjfwJiev0hvFhmMoR/N3EyaRGImFEHIpY7
+         ZnFs2gDf24qp1f7/35mTDiqGcNjnBiu67b7AqbhMP4zkMoptre1DmSEVQT6kfzJnmZ20
+         A9kuI0LqS9/3t+TjNsFDVDJFWebmRKWHYj2gX8xp/9qF+/QyBGqy3TEbrLQUXb86JpZd
+         Dz6uEUt88tWTSmBTbebPM9abzmVIhRK1PsUZ7AZvVchJWgMwlshDWyRUGYnKQ5ckHhUt
+         pNbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUodTK3EWRphJ182I4T6n1v7v1zoBP9eSv50RZ42qPR7gHwGR14ZrF0txjEy/vc19fAvlHwL+XTtC9W1gqPzJoY91ubXWZhjRqH51wy
+X-Gm-Message-State: AOJu0Yzziq3v5PX6zd7bDNgJBIQwGBIKGDh99DHQGepDH11YGAAHVwFP
+	vR/amYi7SL8DQFz9Uv48vBcJhTobhsWcmDmiinb3HKJSYv46IUIwdufwTgXAjSc=
+X-Google-Smtp-Source: AGHT+IEDFZAJX25H+KaaUwZXSoMIRH1hxEVysMMwx6s0CEzoirOSdM3TwZ91o/vEwazcCzcPgVcOGg==
+X-Received: by 2002:a17:906:375a:b0:a59:d27e:bce0 with SMTP id a640c23a62f3a-a5a2d5ccb06mr1665366866b.40.1716187601768;
+        Sun, 19 May 2024 23:46:41 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01652sm1424910266b.167.2024.05.19.23.46.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 19 May 2024 23:46:41 -0700 (PDT)
+Message-ID: <1ab150cd-68f0-4153-8d4e-5bd30bb01dfe@linaro.org>
+Date: Mon, 20 May 2024 08:46:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.05 / 50.00];
-	BAYES_HAM(-2.75)[98.93%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Score: -4.05
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/2] dt-bindings: soc: qcom,smsm: Allow specifying
+ mboxes instead of qcom,ipc
+To: Luca Weiss <luca@z3ntu.xyz>, Rob Herring <robh@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240424-smsm-mbox-v1-0-555f3f442841@z3ntu.xyz>
+ <20240425161715.GA2759240-robh@kernel.org> <5087455.31r3eYUQgx@g550jk>
+ <2729475.mvXUDI8C0e@g550jk>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <2729475.mvXUDI8C0e@g550jk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On Mon, 20 May 2024, Wardenjohn wrote:
-
-> Livepatch module usually used to modify kernel functions.
-> If the patched function have bug, it may cause serious result
-> such as kernel crash.
+On 15/05/2024 17:06, Luca Weiss wrote:
+> Hi Rob,
 > 
-> This is a kobject attribute of klp_func. Sysfs interface named
->  "called" is introduced to livepatch which will be set as true
-> if the patched function is called.
-> 
-> /sys/kernel/livepatch/<patch>/<object>/<function,sympos>/called
-> 
-> This value "called" is quite necessary for kernel stability
-> assurance for livepatching module of a running system.
-> Testing process is important before a livepatch module apply to
-> a production system. With this interface, testing process can
-> easily find out which function is successfully called.
-> Any testing process can make sure they have successfully cover
-> all the patched function that changed with the help of this interface.
+> Any feedback on the below topic?
 
-Even easier is to use the existing tracing infrastructure in the kernel 
-(ftrace for example) to track the new function. You can obtain much more 
-information with that than the new attribute provides.
+Can be explained in description, like
+mboxes:
+  description: Each entry corresponds to one remote processor
+  maxItems: 5
 
-Regards,
-Miroslav
+Best regards,
+Krzysztof
+
 
