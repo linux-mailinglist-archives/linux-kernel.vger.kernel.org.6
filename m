@@ -1,167 +1,132 @@
-Return-Path: <linux-kernel+bounces-183525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC7C88C9A38
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:19:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B238C9A3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AD80B20CD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:19:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 358BB1F2144C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752741C6A3;
-	Mon, 20 May 2024 09:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D946F1CA87;
+	Mon, 20 May 2024 09:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uM44mjLf"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BPaYbHB1"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3C2134B2
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 09:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C93219E0;
+	Mon, 20 May 2024 09:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716196738; cv=none; b=ByPaRGzpzxg095HMw1Z4Iquiq9YhafNQSZNZiOImo5mxaziHKiiTkDbdjQLaIpbhOgtdrxkQMvorFxNVElW7WJA0XRaNFOF7rjWd7SqGnUY/vbp5MxjiIjJMwIN7hB9eHObW6s93fIiKA+0N7seL5wvBBcjnRM+bqGZgLmyHykE=
+	t=1716196788; cv=none; b=ekdK3fqjGS6sssXxVWBnnlbc5afgckXrl4nh4SlCmFMYulxYV4dbBdEs0TjuUCS146oKPCLEygIAKZFjNQp9wHe6jLoRPgl0POcsDknJ2Q7ac9EKbGN/fCyPdga3+vfb80ZgaM07MoQwCZISLso2iejLufKrkOqgSo1Q8910LP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716196738; c=relaxed/simple;
-	bh=ocyhqUDe6Apnd+oKIqWNv6toBWBbxSk/XPrkqzWkycc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ES6k6dn7ce414tgz3tCTyDQL6P3z7ufxzhesdy9Bt3SHSivU5zWkZX38UlnT690PE6nWvQH7e3HxlGWrZ9eyIRHkdfphs7wS62PU2619240f8UWVQJpoaH0yhPm7+e2hAjWUAsJ0Dyb3KHY4OhvIA0IAxMZbAWx4KIi8J6mDOSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uM44mjLf; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1ee42b97b32so68693905ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 02:18:56 -0700 (PDT)
+	s=arc-20240116; t=1716196788; c=relaxed/simple;
+	bh=WNf6P72bcYi1f7Q/YxEur95rQekBz1J8C+FdIR6DQV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C4eT+NO3IG0TE5S3bp70Q0vFk3coo275igz+z7GFmMYRbywtOZlUDbQNfKuF6068n+aOr9C0Pp5eykQ4sGjgLXx2yLuAR8jZZNPvXnPg0DsNrBJMQQfpBUuZ0z10cnUmKNmWo39RCNWwrjKCiLwTNbqk3CxTvJIGPZXwW1i8ftw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BPaYbHB1; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1eca195a7c8so67105275ad.2;
+        Mon, 20 May 2024 02:19:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716196736; x=1716801536; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qbkhJkJ1XC7gIimFOJJxOChZ4G289d9IYRqq+r9fSXM=;
-        b=uM44mjLf6HlgpskMDARfudNe3A4sUBwg3yD+3y5LsyiJVodn6tFHH/u2D6OCPUStAe
-         b2hjSZ6XeyW1K0U+QWBH1IIcZhOeiFHVXJH+R6OcQWNFaonwf+xZCm/h0BXPJOX631SC
-         +iLF+Gnl+NqfcRj8AsecWxJW78WIsujVwopJORsvYFzLatGoYijPPdHFuyN6i66TZwvp
-         TrPURZ33pi152P2Jqf5jVSi34mhEXXr8HsIy0um6ovg85eb71cq+M+iKvj7f3GDZg8G6
-         7HUATkycCR7ocdyI/pu0df4aAvUHlEev2kVo+bmvSQQgWVi3BYcsMRHEWzpujj52t3ZN
-         zP9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716196736; x=1716801536;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1716196786; x=1716801586; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qbkhJkJ1XC7gIimFOJJxOChZ4G289d9IYRqq+r9fSXM=;
-        b=w9qLu2K/kJQk/La9PLMiMeXc9MIk8O2cpDF30Hy5zeop8Xi779wWmITKelAMC18D3s
-         /7oJtYUurGPc6GU8khLj/ds8mI/izg8g0fm3U6+Kg1ymcZyOZNwaJzmzX/sw3ETT7vXt
-         LCMfOOlkKeVK6fC8pLlenIv/FpLSlN1PpuMxwY+oVwIc1P3fg9iC3TPqyTC+0A0CUSfY
-         kIjSxeDWvFVfWFKcyVF6uWQdfMlWa0gbRhx8nojhzaGkBP2Q5yjjZmSF+O+wCvZFnwpo
-         wtuBTEhjMXeOP1il+KH1g66MWd9Xfbdrqa3CFhTQn96SDgWHJvOFdzfeWqpS8laP7PYM
-         Dkfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWg2TDTXDQHDHPQcEtKtWmdMs2AfOp94cMM/gGh8v9Xx7gmrqo6/xb5oIBmVPiH6tW9YG6o2SG4snHOjXxfghj00vcIAXpmo6jtCiF0
-X-Gm-Message-State: AOJu0YzWxUuDw7MsktFXGzvQ96b9ydZw/LRvAoKqCySMI6pZIAgBLIwH
-	n2zd68rW9yy2m2xRTXlDCF2cueic1inVqV50Rsqx3HAQXwMmk8t0+fP5Yjgk124=
-X-Google-Smtp-Source: AGHT+IF13zAdM0O0asZK39mZrspFC5UwHgi4tpDWXMJe1KBtqtXW1PYn5vgvhSvLrnISOVfv7FLJbA==
-X-Received: by 2002:a17:903:2349:b0:1f3:b2:e26 with SMTP id d9443c01a7336-1f300b21109mr25409725ad.28.1716196736284;
-        Mon, 20 May 2024 02:18:56 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f3053c34d0sm9561075ad.205.2024.05.20.02.18.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 02:18:55 -0700 (PDT)
-Date: Mon, 20 May 2024 14:48:53 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Beata Michalska <beata.michalska@arm.com>
-Cc: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, vincent.guittot@linaro.org,
-	sumitg@nvidia.com, yang@os.amperecomputing.com,
-	lihuisong@huawei.com
-Subject: Re: [PATCH v4 4/4] cpufreq: Use arch specific feedback for
- cpuinfo_cur_freq
-Message-ID: <20240520091853.tbxzoolqh5tgzg7t@vireshk-i7>
-References: <20240405133319.859813-1-beata.michalska@arm.com>
- <20240405133319.859813-5-beata.michalska@arm.com>
- <76zutrz47zs6i2cquvjo2qn7myxpq7e3c6alhper7n3wrkhf5h@22l5t5pio2cd>
- <Zh6dSrUnckoa-thV@arm.com>
- <s2bel7fzwpkyfyfkhod4xaihuklsaum75ycbcgmcanqaezxdu7@uxvqdqt3yo7l>
- <ZiuF0zgqkMlmkEZz@arm.com>
- <20240429092515.2ehk4ifcul6mbaxh@vireshk-i7>
- <Zjnm7LzrYLCbz-XX@arm.com>
- <Zjn8RGSDfn3HrYYd@arm.com>
+        bh=WNf6P72bcYi1f7Q/YxEur95rQekBz1J8C+FdIR6DQV4=;
+        b=BPaYbHB1tf+D6Q6vq82Hc38sUpiVlgPJQneZNGRwKPyOPbwj1OJIWYE+Rk6D4+kTwp
+         Lz5xlIKa/kKjPsyljHrcHYwkx6rOjeHxUy7TefQxqqAWBo2AOt0nmpNj8/LWQU/wHqWq
+         yHAdbyCdpBuHklF7gbylOVgStxKuRwPjmK5Kj4QL/xJmXuJyZFuhqzCWtf6zzHF8uS6F
+         t+3BNfXxzA91zorz7RdhxtTGgNCcLZVtxpLktKltAkqyn6KD4lfUMY6TmJcCrh7bGLdj
+         ReEZOj6MAWZq+aN2l+LNIVkNi+hmHOyaklfZB8dW4z43sq4kne0nrZ/oBKD3Y5B3HArs
+         4/1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716196786; x=1716801586;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WNf6P72bcYi1f7Q/YxEur95rQekBz1J8C+FdIR6DQV4=;
+        b=t8qsAcuAUe+ZCDiOAwInG976z0tQ32s080k6Bg5GlxTnFFgCmR7XkwMIm36RT2JFK9
+         Vpn+KbB9dZzMHfbJOIt5hv+L/3lnBN+V6O+O6kvs+9McnPbVOTsFuf1ZPZ3C6BGWS7XA
+         mPlR/+0a0wWuDrl1aul7sRK5/0NGebzuOkOPE3iQSHXqs924KesnTOvfpYjnC2T5ZiLm
+         OO6ZhYeWXiYLza59vH7VGDUF7jD8Gr/CcWopos043svFNJf+ysyrXmS35wkVDi4pgwF4
+         N4fcuFUy/PSNQC7DmEJVa+72yClBXQsWmb5qKb3eJW2jqk9kiJSOlAyGIjsXgGALJOt/
+         8aQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUwBBUmOPe9ovZto2uO2SGfBloTml80YPIt+y+kjEMjKY44+NoeTu7hqaNZeu5JM/DnY3glu2jw2DTmJIEhJkMkGlO+JY3
+X-Gm-Message-State: AOJu0Yz1mMHMiQeKkhSjcqCM8rYxn/2Ah5PzNj/7GYAImGCJI0j8lx21
+	HBbEnZjl9thQnLyrfFJBLQfZpfgwmt4gjraQHtnx5GSOmjUU4qurypz/30VscJxcUhW5qXkl3oQ
+	Wy8rOKyIV/wZrx5CHAdAP+4QytAv20zRZOlg=
+X-Google-Smtp-Source: AGHT+IHA5ALO4rDjGdGMuE0iLP0CBzKlLf/Vl3GUmnak99XjEEyqobY19GgnDDHEooirsYv6X0jKdzTSMgl0uYQLXNY=
+X-Received: by 2002:a17:90a:a083:b0:2b6:24cf:5c32 with SMTP id
+ 98e67ed59e1d1-2b6cd0e7f04mr21993872a91.49.1716196785903; Mon, 20 May 2024
+ 02:19:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zjn8RGSDfn3HrYYd@arm.com>
+References: <CAHe5sWavQcUTg2zTYaryRsMywSBgBgETG=R1jRexg4qDqwCfdw@mail.gmail.com>
+ <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
+In-Reply-To: <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
+From: Gia <giacomo.gio@gmail.com>
+Date: Mon, 20 May 2024 11:19:34 +0200
+Message-ID: <CAHe5sWYnbJAjGp66Q4H0W_yk9uYTcERmW=sPvJSWTsqbFZFCVg@mail.gmail.com>
+Subject: Re: [REGRESSION] Thunderbolt Host Reset Change Causes eGPU
+ Disconnection from 6.8.7=>6.8.8
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: linux-kernel@vger.kernel.org, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, kernel@micha.zone, 
+	Mario Limonciello <mario.limonciello@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07-05-24, 12:02, Beata Michalska wrote:
-> On Tue, May 07, 2024 at 10:31:52AM +0200, Beata Michalska wrote:
-> > On Mon, Apr 29, 2024 at 02:55:15PM +0530, Viresh Kumar wrote:
-> > > Lets forget for once what X86 and ARM may have done and think about it
-> > > once again. I also had a chat with Vincent today about this.
-> > > 
-> > > The documentation says it clearly, cpuinfo_cur_freq is the one
-> > > received from hardware and scaling_cur_freq is the one requested from
-> > > software.
-> > > 
-> > > Now, I know that X86 has made both of them quite similar and I
-> > > suggested to make them all aligned (and never received a reply on my
-> > > previous message).
-> > > 
-> > > There are few reasons why it may be worth keeping the definition (and
-> > > behavior) of the sysfs files as is, at least for ARM:
-> > > - First is that the documentation says so.
-> > > - There is no point providing the same information via both the
-> > >   interfaces, there are two interfaces here for a reason.
-> > > - There maybe tools around which depend on the documented behavior.
-> > > - From userspace, currently there is only one way to know the exact
-> > >   frequency that the cpufreq governors have requested from a platform,
-> > >   i.e. the value from scaling_cur_freq. If we make it similar to
-> > >   cpuinfo_cur_freq, then userspace will never know about the requested
-> > >   frequency and the eventual one and if they are same or different.
-> > > 
-> > > Lets keep the behavior as is and update only cpuinfo_cur_freq with
-> > > arch_freq_get_on_cpu().
-> > > 
-> > > Makes sense ?
-> > >
-> > First of all - apologies for late reply.
-> > 
-> > It all makes sense, though to clarify things up, for my own benefit, and to
-> > avoid any potential confusion ....
-> > 
-> > Adding arch_freq_get_on_cpu to cpuinfo_cur_freq does seem to be the right
-> > approach - no argue on this one. Doing that though means we need a way to
-> > skip calling arch_freq_get_on_cpu() from show_scaling_cur_freq(), to avoid
-> > having both providing the same information when that should not be the case.
-> > In the initial approach [1], that was handled by checking whether the cpufreq
-> > driver supports 'get' callback (and thus cpuinfo_cur_freq). In case it didn't,
-> > things remained unchanged for scaling_cur_freq. That does not seem to be a viable
-> > option though, as there are at least few drivers, that will support both:
-> > cpuinfo_cur_freq alongside scaling_cur_freq (+ APERF/MPERF) and for those,
-> > we would hit the initial problem of both relying on arch_freq_get_on_cpu.
-> > So I guess we need another way of avoiding calling arch_freq_get_on_cpu
-> > for show_scaling_cur_freq (and most probably avoid calling that one for
-> > cpuinfo_cur_freq). Quick idea on how to not bring arch specificity into
-> > cpufreq generic code would be to introduce a new flag for cpufreq drivers though
-> > that seems a bit stretched. Will ponder a bit about that but in the meantime
-> > suggestions are more than welcomed.
-> Alternatively we could add a parameter to arch_freq_get_on_cpu specifying type
-> of feedback required: hw vs sw. Then the arch specific implementation could
-> decide which to provide when. It will get slightly counter-intuitive, especially
-> for cases when sw feedback provides hw one, as it is the case for current
-> arch_freq_get_on_cpu() and scaling_cur_freq but at least the changes would be
-> minimal and it will contain handling the tricky bits inside arch specific
-> implementation - hiding those messy bits.
+Hi Thorsten,
 
-I think we should just move the call to arch_freq_get_on_cpu() from
-show_scaling_cur_freq() to show_cpuinfo_cur_freq() and post it.
+I'll try to provide a kernel log ASAP, it's not that easy because when
+I run into this issue my keyboard isn't working. The kernel parameter
+that Mario suggested, thunderbolt.host_reset=3Dfalse, fixes the issue!
 
-Lets see what X86 guys say to that. You can provide all the reasoning
-we discussed here, which makes perfect sense.
+I can add that without the suggested kernel parameter the issue
+persists with the latest Archlinux kernel 6.9.1.
 
--- 
-viresh
+I also found another report of the issue on Archlinux forum:
+https://bbs.archlinux.org/viewtopic.php?id=3D295824
+
+
+On Mon, May 6, 2024 at 2:53=E2=80=AFPM Linux regression tracking (Thorsten
+Leemhuis) <regressions@leemhuis.info> wrote:
+>
+> [CCing Mario, who asked for the two suspected commits to be backported]
+>
+> On 06.05.24 14:24, Gia wrote:
+> > Hello, from 6.8.7=3D>6.8.8 I run into a similar problem with my Caldigi=
+t
+> > TS3 Plus Thunderbolt 3 dock.
+> >
+> > After the update I see this message on boot "xHCI host controller not
+> > responding, assume dead" and the dock is not working anymore. Kernel
+> > 6.8.7 works great.
+>
+> Thx for the report. Could you make the kernel log (journalctl -k/dmesg)
+> accessible somewhere?
+>
+> And have you looked into the other stuff that Mario suggested in the
+> other thread? See the following mail and the reply to it for details:
+>
+> https://lore.kernel.org/all/1eb96465-0a81-4187-b8e7-607d85617d5f@gmail.co=
+m/T/#u
+>
+> Ciao, Thorsten
+>
+> P.S.: To be sure the issue doesn't fall through the cracks unnoticed,
+> I'm adding it to regzbot, the Linux kernel regression tracking bot:
+>
+> #regzbot ^introduced v6.8.7..v6.8.8
+> #regzbot title thunderbolt: TB3 dock problems, xHCI host controller not
+> responding, assume dead
 
