@@ -1,114 +1,126 @@
-Return-Path: <linux-kernel+bounces-183886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073C18C9F66
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:12:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF678C9F67
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B32611F22548
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:12:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B5C91F217B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DF613774A;
-	Mon, 20 May 2024 15:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E46136E0E;
+	Mon, 20 May 2024 15:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="iG0uswZ8"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DgaTwL/c"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C255A136E21;
-	Mon, 20 May 2024 15:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717514D9FE
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 15:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716217931; cv=none; b=j6TjjyBeSyK9nW0uo3+aTbfWfaLNyuL46Ac3dizsPX3c8/6WG4MJEreyECh3rWtBcYHPtarjCgweTevHHOgglJWDPYEH4T5+3tmE+gs9pR/EfoqzCtJzU6BKWhCZV9uaqrUBmkhxcptoCJGz1FSzXorkqEWlAwfRnGOLrByDxUA=
+	t=1716217938; cv=none; b=WcHAlA9+4ZILQJtZbGQL2pryGaUNX/EZnRB2M2vxyRdU77ESNL88RfMrNxZC2QXapl5YJJXzfw1/pu5zqg+fI0L/cB21a/4SepXSncoGhrr92XSpFLahsvoIxwv5DeYlkRDelHFGS8GmtC33IekroNVY7i2gxQv3JjU4JXIrV5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716217931; c=relaxed/simple;
-	bh=l4YKr8q4hSlSYnlmC8is7kKyo1psXqGg1nzwO8qkXlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gAgz7XRGza/827sOaMKyoSsE4vSJ8P2j0LPET9S7SufeD9TNlu1U5Q/yJ5PDMJZsdPM+ozq+jcp48W9dNZ+QNxoSYvruHVadx6O2sxIepTP05HG0BMUXNVddc8hHTglSH3j5tnE0YZfaX9LiHDqd+wf3t/ocnoGq1bWNIJZl0zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=iG0uswZ8; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
-	t=1716217922; bh=l4YKr8q4hSlSYnlmC8is7kKyo1psXqGg1nzwO8qkXlE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=iG0uswZ88y5tt8RR8Ak5aackUNDyrnZ25F5WfiBekmPKoJem+rMN4eLLQfnwcRz15
-	 DZDAKMBRaYH08cm32uki5G5LIx2r2UNnI7utFn9a9zKML5Hp2DqVRRnZG+cMWs/WE1
-	 aKV0IBzQ8gTcR2Y6rhwj2nQXmsL0lFC3+EC34kH4=
-From: Luca Weiss <luca@z3ntu.xyz>
-To: Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH RFC 1/2] dt-bindings: soc: qcom,smsm: Allow specifying mboxes
- instead of qcom,ipc
-Date: Mon, 20 May 2024 17:11:59 +0200
-Message-ID: <12437992.O9o76ZdvQC@g550jk>
-In-Reply-To: <1ab150cd-68f0-4153-8d4e-5bd30bb01dfe@linaro.org>
-References:
- <20240424-smsm-mbox-v1-0-555f3f442841@z3ntu.xyz> <2729475.mvXUDI8C0e@g550jk>
- <1ab150cd-68f0-4153-8d4e-5bd30bb01dfe@linaro.org>
+	s=arc-20240116; t=1716217938; c=relaxed/simple;
+	bh=fNL+MIkF/dECnsy/X1AE/tXFth6uO/ktmVSweAz8kUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TSARw3wAS0dLQ/bUDXeCSspUBW/RmtgLlU+k4AXTchgqmEZh8yVnTGrNe1CI9x4K+XX5Xmddc5it18Ef94TNsKu4HjARVRA24zrqUipfKC5u4odX9AUEVJGK+qCA7B3hShcR5ahetBass/OIkxR++o/wFuhHBCAN0VaMlwQZw9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DgaTwL/c; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1ed835f3c3cso10263835ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 08:12:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716217936; x=1716822736; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wz2DF7y1Qr5mH4wb4c2w0AUoZg9A/thbi3cZqGi2HnM=;
+        b=DgaTwL/csYn7OS2vDID4MP3atv3STY6Gd0eZ8+jz2cNyCi4ySqe97ekiCMPIiRpEBO
+         tgxUi+gxBjj8lxKRAMVVtp3ao4z+V5msisvKKKXaRDPtg8udY9M4yL10Uy4DRZkc6C1N
+         rbxBz6mDO9YYUDPm6S39oKWpOnKzzfyCwwzlC/8kZzE2s5ACUD6jwVWkJtMkHsRMEbl8
+         sNs1iUi6lXxzUOBsavVUzNpPFMyoer1Md0UnSJoHoGNpQYl1DzTsSXsU5HNojFC7kJqI
+         HVmcmyEb3fO8ryTmpp17R3YOEszq5sKGWep8h+M0tbUucx5/l0yYz5ZqCFhE54GXbEQ2
+         NcFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716217936; x=1716822736;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wz2DF7y1Qr5mH4wb4c2w0AUoZg9A/thbi3cZqGi2HnM=;
+        b=RxSw01ZSvn77GWfUYCLuTyScOtqfogXz3A+OH8imhePf41WbMHzX6nCNv5T8VcN1Ff
+         ln6b/uecddFwmCFcL1kxE4ZkP34l+/FgLyZmEs5f40ML9NhToDld6DzMYLSVeftXlC2K
+         qyErVat5daOdV+lPza8/q+MDkagVfei+AimzYWve9BylR1ZfxNX85hwXq83+F2t8d3oQ
+         jgvpSijMEtgPYv8kt9Lcu4kiQTDhSFB+0S6qyFiUJBbpTAfh5IWpzK8IqHNcS0IK1REJ
+         YHvNbHEebqRHTQW5dOCsJcDM+4k0IZTtZi5kLDXV70/vtyGyvAxz935QhZA6vFV7r6tt
+         NqZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDQbd8HxqTvP//0jfvRQCDB76KzfmxqVBFH3v43m3z7FBBq4gphvarQ5idaHrGw3D9YpB3s0isZIIN1UZHsOnXUtkUFsKobTwzKnqw
+X-Gm-Message-State: AOJu0YyC8N8ziB3JoKaaS2jSUWNCxm3DVpwcdYXGu7X9U2eXOW7ymlQ9
+	qQXiDGdbnkcSpaWXUfY5lRp/M8ZXBLFeFffPxasPUjc/C2M8ozuHWb76byLt8O6KrjSOK+sT96a
+	LCxndp7eeHUlZD1xeUdIYTMJ06v4=
+X-Google-Smtp-Source: AGHT+IEVcRvxcDC68E699ppW3ZebEFtvfHkfkJZmo7cCBgvWqWCG855W+ec0A4hUDM8jqcLX3i9PK8jreumPYZwOBjA=
+X-Received: by 2002:a17:90a:cf0e:b0:2ae:cffa:9b2c with SMTP id
+ 98e67ed59e1d1-2b6ccd8e06dmr25209675a91.44.1716217935699; Mon, 20 May 2024
+ 08:12:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20240517233548.231120-1-linux@treblig.org> <20240517233548.231120-4-linux@treblig.org>
+In-Reply-To: <20240517233548.231120-4-linux@treblig.org>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 20 May 2024 11:12:04 -0400
+Message-ID: <CADnq5_OwD0=y2UKJ3Ajp54_dGzs-LCwLe1wtcqE19r5qpLzrCA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] drm/amd/display: remove unused struct 'dc_reg_sequence'
+To: linux@treblig.org
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com, 
+	daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Montag, 20. Mai 2024 08:46:39 MESZ Krzysztof Kozlowski wrote:
-> On 15/05/2024 17:06, Luca Weiss wrote:
-> > Hi Rob,
-> > 
-> > Any feedback on the below topic?
-> 
-> Can be explained in description, like
-> mboxes:
->   description: Each entry corresponds to one remote processor
->   maxItems: 5
+Applied the series.  Thanks!
 
-Hi Krzysztof
+Alex
 
-Ack, sounds good.
-
-Maybe also from you, any opinion between these two binding styles?
-
-So first using index of mboxes for the numbering, where for the known
-usages the first element (and sometimes the 3rd - ipc-2) are empty <>.
-
-The second variant is using mbox-names to get the correct channel-mbox
-mapping.
-
--               qcom,ipc-1 = <&apcs 8 13>;
--               qcom,ipc-2 = <&apcs 8 9>;
--               qcom,ipc-3 = <&apcs 8 19>;
-+               mboxes = <0>, <&apcs 13>, <&apcs 9>, <&apcs 19>;
-
-vs.
-
--               qcom,ipc-1 = <&apcs 8 13>;
--               qcom,ipc-2 = <&apcs 8 9>;
--               qcom,ipc-3 = <&apcs 8 19>;
-+               mboxes = <&apcs 13>, <&apcs 9>, <&apcs 19>;
-+               mbox-names = "ipc-1", "ipc-2", "ipc-3";
-
-Regards
-Luca
-
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-
-
-
-
+On Fri, May 17, 2024 at 8:12=E2=80=AFPM <linux@treblig.org> wrote:
+>
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> 'dc_reg_sequence' was added in
+> commit 44788bbc309b ("drm/amd/display: refactor reg_update")
+>
+> but isn't actually used.
+>
+> Remove it.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  drivers/gpu/drm/amd/display/dc/dc_helper.c | 5 -----
+>  1 file changed, 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dc_helper.c b/drivers/gpu/drm=
+/amd/display/dc/dc_helper.c
+> index 8f9a67825615..b81419c95222 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dc_helper.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dc_helper.c
+> @@ -91,11 +91,6 @@ struct dc_reg_value_masks {
+>         uint32_t mask;
+>  };
+>
+> -struct dc_reg_sequence {
+> -       uint32_t addr;
+> -       struct dc_reg_value_masks value_masks;
+> -};
+> -
+>  static inline void set_reg_field_value_masks(
+>         struct dc_reg_value_masks *field_value_mask,
+>         uint32_t value,
+> --
+> 2.45.1
+>
 
