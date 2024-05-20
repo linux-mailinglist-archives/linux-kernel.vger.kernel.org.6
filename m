@@ -1,112 +1,162 @@
-Return-Path: <linux-kernel+bounces-183720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308348C9D15
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:23:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DEEF8C9D1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61CF41C21108
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:23:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57C901C21ECC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE511548EC;
-	Mon, 20 May 2024 12:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F9855E75;
+	Mon, 20 May 2024 12:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dguptPYJ"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dixOGuBY"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2062.outbound.protection.outlook.com [40.107.237.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA4756448
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 12:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716207776; cv=none; b=dwxWKZDgtNSls3hv2DNc2d/8MR7thN8yzHMepwX3JGOa61gUrI42vBr3yT2IEie4woey8aSeHC/imv204QD82+f19b4YnCtcM83yFEOGj36eJ/NP4Uf273ou1LiTJERF+opZ1hYvJCvoYlnw/o4yfu9m+CwtwSyFCAs1Z4neF3M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716207776; c=relaxed/simple;
-	bh=FsjGULNLBK+FjzXLWr/t8FWTDIAjnTpWhcTrRa5F9sI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+/Zd0chM4e/P2MnzushV289AwsXm/OZ75yUTSH1WOiYKIPC9UDU5yhS16o1wGQ2Rg5CnxUE8hNY0hFNd7xWyEyZyQC+f1uJrOn6oeRM5tcY4PaJwtDOB1QaPxcRC/26wyNWYfX1P9tCuQa93sv5Fgx9x76oKsomjP+AWdDjDAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dguptPYJ; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51f57713684so5276778e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 05:22:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716207772; x=1716812572; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6bREYXSNJx7yr5uTrce/LKMVLb4BxuBwY9vQL2AO1CY=;
-        b=dguptPYJ6eEH1U3JgYG8j8UeKVQqMosUTvjzVuQX2lW8WEoyc09NoR1oMcTG6LMoay
-         bjqhSoidZKDH6slChBbhHO91Hf0e0IzYsV4kvBNpYHR8zsHD0t4lDNi9hvzm9/E4KIZo
-         Ycq6nUEwH8GIKoRLb2pXaLkU/LfVONSFoZByMXDd9hULQ1wcAIlIGLqMdKnunohX8V84
-         9znpBAcSeYCRa52dKZ8Apzg02GVPxC/mgC0K4mHMd1OSGPBGxs1WxSwvls8v8nG7MV7k
-         iBRnym2VcpMKYvuhrj+vC+L7qU6zc2gpsuJhExZnIeMwX28fqU1dME1Vc/yimTYhaw6d
-         KZ+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716207772; x=1716812572;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6bREYXSNJx7yr5uTrce/LKMVLb4BxuBwY9vQL2AO1CY=;
-        b=angzOSVzCPnUgYOLOJl6ZQDzCZut6L96sZSFruB7VwTwj2Y/aFx76pBtzLTkwcVQ0n
-         UV93YbjrRVSoKZYicVyY63+ZfwbOk961q7+WytFoP95jhIfVRXthk0Rsg1C1B3CVxqGC
-         IarNVk+OtraPybfTiTsPv6T9VkUC5R9UEgw7aO1RfO4B1VcP8RZ2+n2jKSGPxSE/UQol
-         wnoXs8GPHQJLj5z3cHKGOgMSw+MxxLe1BAW4W/WPj40JVe9FGJHz+DKaIn8K1Y6kLPB9
-         Lea8hKHs0I2p3AWpQD0fDhx7H2aXAofxfVfcS69uyDEB0EGnCSAq6AncMe1i49U4GPV0
-         MVmg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/L8w3rS7pY8qH9o4iuJOuv2CDEYWm6jyuyWXUxgiBK5uR8UnwvHwKZwtbLnsiM4SUC75sfF9zNORirZunjnnPoj9krLMZFriN6Qmj
-X-Gm-Message-State: AOJu0YyL6jMqJN0SqctLj0+HIANR3A9CU6Ga5HRB6GYvV1cH/7ZiYKxa
-	x4dBSJSlqYZFmRbVWNgYgRrqdBZlIeAcZ5F/7+c9j4D5Bq5wulWREV3jBx/UiyY=
-X-Google-Smtp-Source: AGHT+IHrIxn8lRvzjOg1Ui/6tQPrN6PSJ3Se90i+uvDj849VnBCvGdQmYRpv36r0fn+9t2zRZhCgVQ==
-X-Received: by 2002:a05:6512:3c9e:b0:523:9493:4e63 with SMTP id 2adb3069b0e04-5239493505emr12455625e87.60.1716207771843;
-        Mon, 20 May 2024 05:22:51 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781cfa7sm1446680866b.33.2024.05.20.05.22.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 05:22:51 -0700 (PDT)
-Date: Mon, 20 May 2024 14:22:50 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org
-Subject: Re: [PATCH printk v5 12/30] serial: core: Implement processing in
- port->lock wrapper
-Message-ID: <ZktAmvpBfk-IrMr9@pathway.suse.cz>
-References: <20240502213839.376636-1-john.ogness@linutronix.de>
- <20240502213839.376636-13-john.ogness@linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6AB548F7;
+	Mon, 20 May 2024 12:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716207861; cv=fail; b=eWQwoVWV34XRorgRvhppar/CuhVssuzeB5jAVuxVZ00qbUPHRVakyv7Yp2zek3hIiJA1uAy0y/xpiqy9p67vEqiW/tjUj2hY85Q064CapWVvmbg0XBIKZ3XhT8uC2fKeOZBBhQKCVFv03nWGnMOont/u9gYNsxeRDxQnf7rhK94=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716207861; c=relaxed/simple;
+	bh=DEXsZmSeo58xCvMWzPm/DrxUDoqwSDplm9/r5QtI1j4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F0K1TblI5R5Q7xRbSFSBwohnDAYSFq4k23XDakSad7Lj68kWuCGaf4gl7SzvBPPAbvDHYJs7pH+SpDWCCGchUEm12R5YkdSPoKS/f53PZtvaMLZwKGH7E+CGxFjBRkbyVVPAGNFSjSARZwLlPGwyre2DS/vd9dexDquKXywdIcA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dixOGuBY; arc=fail smtp.client-ip=40.107.237.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=A/PA97WOujVHmXIqU7GVuTpExftAU5grwQJqmy7SVbGBTEDxkBYVTSTFjoH4EzqD+4Y3RYhUhSJn0txppcOH23bSzpdTEGZCSQ6ywtE5TsOMkzgxc8A5YQzV9UlL8yLY//bwCU0NecSzYntpCpyfHMTKIOMrmy7T6dF4aZwny42l8tFa++279Pg3IiPR4xPF/2CHDEB0o2IEENHpGRBM6tTj66Ox36PCuoO+ytzoIefkU7s9+tM2PF3ENSiAxul5/lYrEN7kEqIaeiiauHi0rw+Gpz1zVZ7F/eELwGLYJ7gZewGzyyrM+7cVD5e2apMUCUd5fhzkWAhNlO0URjnDIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dJXd25h0NH+4MRShVKC+Gk9crFEOq9qqIX3UWMD9U1Y=;
+ b=jyRDPpkM5aNLSetPiIaA84/zXGNbWSXftUQ99gnAipNPxvFqItQnTudvbTkNBAQY70eon79lyLaDo3ljholcchVc6bN3Zmviyok32aSvVWfrvejxQ3dtP2sjCYitvGLckTsos3e5zUoklErZYVXqaTkY6Ar6X00+u/QnXjqrVjFxSK665KydtXi4ZntoPGhBKcJM4TPpalQE8Qu+YchBPc3c/3ZUDPB2AtxcvsVdhkuuOyNytGJo+WEM4jUgxvp3JrVxeRTHdHCs/uMaDWD9v73Tq9h1bdHVcRgU9jHfWcwEvNIzJuIfSHq8kPLighMo7o9ztr9d1MHizMyjmzYVJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dJXd25h0NH+4MRShVKC+Gk9crFEOq9qqIX3UWMD9U1Y=;
+ b=dixOGuBYWHxxrke2wXLB2ZAdAxnDQqPq/pk5QtGSQ3rP7gatC/0oVudyyWNm0H1dXMFuh0F1yBu2NTgKjoSYDiEj+RUOKL4hM9M2oDGRGGInFihqyB8CzO3BLXmWedvLgrgoov7/gOSex2c5qm13zflwVcxLgToevJBbK3wqZMGmaL2tY54zuyV9h4c6DGWV8MSzan6ukPnbPbW9c6AmxB6ZPOW52UiGd1vs0j/cdIaTxkakQlPWEYm+8oObYPddKQk1NP3q9C60Ab9/1w+Vy/27bz+Ajv23ObKymESHkXkUHEDW00X3+56rJmSt1YKd6OEL0Dmo+5RyS/C399Kdkw==
+Received: from DS7PR03CA0345.namprd03.prod.outlook.com (2603:10b6:8:55::29) by
+ SA3PR12MB9178.namprd12.prod.outlook.com (2603:10b6:806:396::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7587.35; Mon, 20 May 2024 12:24:16 +0000
+Received: from CY4PEPF0000EE31.namprd05.prod.outlook.com
+ (2603:10b6:8:55:cafe::ef) by DS7PR03CA0345.outlook.office365.com
+ (2603:10b6:8:55::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.34 via Frontend
+ Transport; Mon, 20 May 2024 12:24:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000EE31.mail.protection.outlook.com (10.167.242.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7611.14 via Frontend Transport; Mon, 20 May 2024 12:24:16 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 20 May
+ 2024 05:24:01 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 20 May
+ 2024 05:24:00 -0700
+Received: from build-spujar-20240506T080629452.internal (10.127.8.9) by
+ mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.4 via
+ Frontend Transport; Mon, 20 May 2024 05:24:00 -0700
+From: Sameer Pujar <spujar@nvidia.com>
+To: <vkoul@kernel.org>, <thierry.reding@gmail.com>,
+	<dmaengine@vger.kernel.org>
+CC: <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <mkumard@nvidia.com>, <spujar@nvidia.com>,
+	<ldewangan@nvidia.com>
+Subject: [PATCH 0/2] Virtualization support for Tegra ADMA
+Date: Mon, 20 May 2024 12:23:49 +0000
+Message-ID: <20240520122351.1691058-1-spujar@nvidia.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502213839.376636-13-john.ogness@linutronix.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE31:EE_|SA3PR12MB9178:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7572be15-2d30-4249-89ec-08dc78c7c41e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|36860700004|82310400017|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CZQ39v+/Fr3wDHxwgymnfXMOrYNQZwerfiFioXz6NV+5dLN5zL3AoklShrPl?=
+ =?us-ascii?Q?zsNONmIIreL3pf8XpWrdPoyO8Ll29Nrs+mClba/aONG4Q2D1XT3FRT+9RWic?=
+ =?us-ascii?Q?rELx9tWRHmEJoRC7qy4XgPk7Ah7X7Jvcq/OiUAQ1ggzRVJdq1p7qLL+qLHDc?=
+ =?us-ascii?Q?YtoRxbx+Aj4x96dAGaCNxg/HNpTcULG2PiyOme4CFlAhftAROKPIdC0ABVAw?=
+ =?us-ascii?Q?eb63TgLTt8D9wiBnwBgtd+6bmLoeJC22oUvCvfsqxJgQfjobklwXmiHs5vwL?=
+ =?us-ascii?Q?59UJx9glvAEKBXAh+jIy/k37VNj7eVuSZknNlbhdFQw44KF6t1Ggoe3z1Hd7?=
+ =?us-ascii?Q?k/bHmaQYoIupV/umNQ9STtaOey5JgoZ9d7AXYebwczesw0dWxgyVeBbeBvn5?=
+ =?us-ascii?Q?NgLuGFLmV+/DPbol+T5l8fzY8bnyKkDEDFT76JaJHGB9wrqKZJrbC+ZZmdMY?=
+ =?us-ascii?Q?aAJ6Q0+PlA5VWrqEbA4XjV4vZzfIkcdzZg4pQ63W1KbVjDBx3wsP+IWD/zV4?=
+ =?us-ascii?Q?Ys62eeO9AD4oVlkOUFDU/tMKghH+StvyujONLM250IpajhiUOs9mbugwTIbh?=
+ =?us-ascii?Q?cqZeM+MDBZmo5mp/UCXkGbc1/MW4mcOlbHHHnt4K6j2d8Ys7EHnEb/evSbMo?=
+ =?us-ascii?Q?cLfdk9Pkm6lJuadFR11LvqEOIHBoEKa2EDgHPI7wyWWhBkyLcejhrNA4Vnz+?=
+ =?us-ascii?Q?/RaF3IwGD8+QJyNt+U3MK70UMuJPU8BHzjSOjDK3EBn0nZtVnnGsLdsFV+io?=
+ =?us-ascii?Q?oZo/ceHM75c1pN7lmw26IEJuZdyI3jMQ5DgcYdUN0laZJDR+KeK7hJ+3ABqy?=
+ =?us-ascii?Q?0A5SF3jqYjjEPlGaG7HsY7+6uhHwDjRHN+BaJ9X2/z/eSc6dTu/Duei0gpe/?=
+ =?us-ascii?Q?eUfczEAvEDL8JrS6KJvPaS9F5Zkm0dN3pl2jOHbud+ltNrVgaHw2Z0HvzMyx?=
+ =?us-ascii?Q?7OJnGx7PJcOM8JffvuUFB1FrvDOk7L2p27N0BQEWJQEo6fPoqcqNwOyecs/T?=
+ =?us-ascii?Q?LqoGoek1pBUQeR4/m1i65jQs/dRyv7gSLgsApOoy0oMXZ0PtmEQU56yHbLvv?=
+ =?us-ascii?Q?92tmMzvLMGWGSbYA5zqkH3pwtWggcz/oA0+W8PJFbDuSJj4JedLwdfu8/OcV?=
+ =?us-ascii?Q?DBPqel+H9m48ltOVvcmUpA5w0a03c2Tg535IepI+8+rA44QWR97x5xLNaT11?=
+ =?us-ascii?Q?jDGtdt3CL17EGDcgLYeiwwdtll9LG7DVbc33wDMgFz9wqNXaPnEUU9JU5CCa?=
+ =?us-ascii?Q?q4S+GXm4Q4LCaa9GFPs5kCfZomGvQkfCE2NtviyUbpjK9mZXmxrerIiC95mY?=
+ =?us-ascii?Q?YsfzoT1x0I6UnegTrL4Rl2/2kN94Pi+9uuWGL8TDbf54vzX2lCJlYuxSpoJj?=
+ =?us-ascii?Q?sroAQhy/qvc4Rtr8OddUWQG+AYkf?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(36860700004)(82310400017)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 12:24:16.2706
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7572be15-2d30-4249-89ec-08dc78c7c41e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE31.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9178
 
-On Thu 2024-05-02 23:44:21, John Ogness wrote:
-> Currently the port->lock wrappers uart_port_lock(),
-> uart_port_unlock() (and their variants) only lock/unlock
-> the spin_lock.
-> 
-> If the port is an nbcon console, the wrappers must also
-> acquire/release the console and mark the region as unsafe. This
-> allows general port->lock synchronization to be synchronized
-> with the nbcon console ownership.
-> 
-> Note that __uart_port_using_nbcon() relies on the port->lock
-> being held while a console is added and removed from the
-> console list (i.e. all uart nbcon drivers *must* take the
-> port->lock in their device_lock() callbacks).
-> 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+From: Mohan Kumar <mkumard@nvidia.com>
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Tegra ADMA HW supports multiple PAGES for virtualization, to
+support virtualization
+- reg-names property has been added to DT binding for the hypervisor mode.
+- In hypervisor mode the ADMA global registers are not accessed by guest.
 
-Best Regards,
-Petr
+Mohan Kumar (2):
+  dt-bindings: dma: Add reg-names to nvidia,tegra210-adma
+  dmaengine: tegra210-adma: Add support for ADMA virtualization
+
+ .../bindings/dma/nvidia,tegra210-adma.yaml    | 10 +++++
+ drivers/dma/tegra210-adma.c                   | 44 +++++++++++++++----
+ 2 files changed, 46 insertions(+), 8 deletions(-)
+
+-- 
+2.45.1
+
 
