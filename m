@@ -1,251 +1,284 @@
-Return-Path: <linux-kernel+bounces-183378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF5F8C9837
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 05:24:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FBD8C9839
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 05:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9ED69B21DE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D91E2820C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 03:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722EADDA3;
-	Mon, 20 May 2024 03:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eP5t3uFT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EBAFBF6;
+	Mon, 20 May 2024 03:26:39 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D250AE542
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716175472; cv=fail; b=L10R8rewthPCbkGYMjcikbyA+E/xjEtJ6DUclhaS0McxGuCB4etbCcUpk6YmZKKzIdI810Czr2Icqy502u8poE6CeD8HKDycyOJml3hnnNpKWBBDoWPKJc1FNqJWeyqQhZ5Acweh+JjcyzUYDBNEa5gdThlmlEpm2sA618QPD2Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716175472; c=relaxed/simple;
-	bh=sD8eKPLrPVA6xQ+trEuGT9Po1Z28Wdwnyk09SUpNSSQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=W8Xxj6II1ENtreAaAkOGCo9Y2Ej5MypI7HW1aBKav5WrlHTVg58hh9ZXjOQsbhtfBCu+3qzXlNTVHAPSEWw19RhdZikJR76YH6bQs4jKVxBFdlvVDDLR91j5QwutxNFs3zrg7SIVrrKgLlnTNzUeqlAwdepY9SO2128Y2IR4kHU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eP5t3uFT; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716175471; x=1747711471;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=sD8eKPLrPVA6xQ+trEuGT9Po1Z28Wdwnyk09SUpNSSQ=;
-  b=eP5t3uFTUe4kqobev1zjznb+lF8E2eMlf+ebe79m1iCC5+xoYi82kiG+
-   E7Z6chfAwHjnx+hNWSiv4bjd3A5g8EKEfn0z3JwQ9UuiigBJ2FaADdpav
-   CPaEqMq8UJ45k+sFyWHKLIFXWFxhHDDEQj2oGxjes8exYvorhXlHpSWs/
-   y7c0g/kC7ICOXYx6cvlXcO9C5IECGg7K0is+FMxPwUt0H+2X9zvHoO7Pp
-   +quw/GPuKIidSLuAXfM6RDEiJF/+LgHuHs/2lOMzc8atyoKA9S6tdQV6c
-   SfGnapB0ftOF+l4qEIvsMJSjO8W/4gUkCIv23Ppm1NKwldM+7/jvCTnRb
-   Q==;
-X-CSE-ConnectionGUID: Z7COf1KURnSC4Hup3VS+/w==
-X-CSE-MsgGUID: y6Dhb1lTRK29qS95nxnyQg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="23698527"
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="23698527"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 20:24:30 -0700
-X-CSE-ConnectionGUID: vdCWvRlUQOq9Gp4+Z+zNXg==
-X-CSE-MsgGUID: 5sXmYBXDS+uxUMJl3rlLqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="32815953"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 May 2024 20:24:30 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 19 May 2024 20:24:29 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 19 May 2024 20:24:29 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 19 May 2024 20:24:29 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Sun, 19 May 2024 20:24:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fQ3DrzwW2mTe7Gb6/MjubwpPI2OVUfXlnLLpZacbsUu23JReAfnYr+fCuLxohrnLqtjZj2oaUA74uCkJBQGmYqNS5pNrfd7kx0t83Q/fGu92b7IUq1YWOdVQIqWpmEPnO6NT7L6Bniyu7EGfcemKN7F+beFKIzQWcgQuure1DlJn53iinX8gMbWlGODxTMIRsy5gB4Vf1MGp5Mfoxn+hXjAvh362z+KPBRVcOMQ/0lrUwVSawm3yiAsX+0h69pOBkHg7sJZL8ZBTxdtkS9LCxSy1N6GyPbXp0vuUIA9l3aK7SgeiR6jbK0TN7d/OYc6iCWn5aclsPqrQF8BVTIfaHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sD8eKPLrPVA6xQ+trEuGT9Po1Z28Wdwnyk09SUpNSSQ=;
- b=gnuIV1iq2JsA7Z96haqeKIbcJF8kfNd9/eKRwxhKFn7UTnfclTbeGLCgjXE6uJHnq4P73kNkyHQuELTTbcXhSDLNLYZyl9UIeUCvQ1DzodhCYYYx3Qv06Er8MqCm4ciIEfh6q04iRGvGh1/GSy6c7Se3ekv9yCaA2hpCqP+n5xgcGTHW5rEIDvMOmP9xRTGnRmhdSWRDJk7++pOKCIITzjUi1sJsLo5Xh0EW36L2CjnCie9iIX3OSdi4RqF/Y7hv3JpSBO703gvPivltzxiPGyr+sM82i8jJvnf3OrhOnT/6ZPpgV+Ykex/wTisumDyBmmkIDNKlf/PMowEURo5lOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by DM4PR11MB6120.namprd11.prod.outlook.com (2603:10b6:8:af::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Mon, 20 May
- 2024 03:24:27 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7587.030; Mon, 20 May 2024
- 03:24:26 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	"Joerg Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>, "Jacob
- Pan" <jacob.jun.pan@linux.intel.com>, Joel Granados <j.granados@samsung.com>
-CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"virtualization@lists.linux-foundation.org"
-	<virtualization@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 4/9] iommufd: Add fault and response message
- definitions
-Thread-Topic: [PATCH v5 4/9] iommufd: Add fault and response message
- definitions
-Thread-Index: AQHamw8bLYtOgdprmEKnPZxoJChdq7GX/cMwgAbATwCAANVHUA==
-Date: Mon, 20 May 2024 03:24:26 +0000
-Message-ID: <BN9PR11MB5276A68C9DCDA201826714018CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
- <20240430145710.68112-5-baolu.lu@linux.intel.com>
- <BN9PR11MB52762F2AF16AA5833D61AFF68CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <805f3ae2-341e-4255-add8-3f6dd296a556@linux.intel.com>
-In-Reply-To: <805f3ae2-341e-4255-add8-3f6dd296a556@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|DM4PR11MB6120:EE_
-x-ms-office365-filtering-correlation-id: 39b6d789-4018-4f81-08c9-08dc787c5a71
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|7416005|366007|921011|38070700009;
-x-microsoft-antispam-message-info: =?utf-8?B?NTdOWU5USkNOdVVYMjdaQVEveGZKREh4MFR0TTNKTm4xVmVOM0ZRRk9sM1hw?=
- =?utf-8?B?MEZEUjhGS3NyOGtaNlFraXdzWGdTQTVDak1rUEIxVS9iV04vYjJRTVE1ajBG?=
- =?utf-8?B?VnVhSVZaNDc2ek9jQnFrbU5jaTdua1RxMXFDZ1dJWGlWUkpEaGNQcTNibjFN?=
- =?utf-8?B?bUNzTDdtWW9BdUx1R2IrZUFRSUFCdDZVcDFFYXJENC9mYVZDT3JocEdQVFcr?=
- =?utf-8?B?aTk4VUhkZU1ZUUltQ2NDVGk3dUs1aGdjWjBESVlTVmhmQ2J3c0xvdzg2SGha?=
- =?utf-8?B?Qmh6MkRxdWR0M2FhVHhOR05GOHprd0g5bmswem9aaWtPa3hQMjhya0YzVC84?=
- =?utf-8?B?UlowWWc2MFYrR2pxdzNBOWkvblFEQ1cxMDh2QlFCZzJ1WHRuUUhLRG0ycXhX?=
- =?utf-8?B?NnhCL2NRTTcwQVlOSUpwZEhhRTFmTDNtQWM5RjFWTjF3YncvNzFwYXNLQ0px?=
- =?utf-8?B?WDd3NXBrRmNoYU56SDNnbGI2SEI5ZFMxUFJueThzdklpNFFYYlk1L2orZXBE?=
- =?utf-8?B?UkNNL2ZzOWFkQ09TeEJnb2l0R0ZFZGlJWEQvaEx4TmdUckMrejI3aTlMU3JQ?=
- =?utf-8?B?YmNxaS9LWDJ2NmFMYkRwTE1LeGNkMHNWU0ZLcm9NcVVJYXYwVEswTzRWUGhz?=
- =?utf-8?B?WFNrSkRwVU53Z0Z4dDdmcFB5UlRCM2F5ZHlCelNUQmhJUXZxZ205cHFLWHdF?=
- =?utf-8?B?NUlJQ0VSRnptV1huOFdsTytaTEhrSDFHN1VTZkpjNHZ0SG5CNWVZSDBOZzNU?=
- =?utf-8?B?YTBhdG0zK2FIakhKN0hqNVE1U2lSajFPRHVFMkw1M205UjRrNUlNaVQ2OVd6?=
- =?utf-8?B?UGlMQWpBSEViVExoTDlYdHVJZzlQV0JoL01xYTFETWdocFdBZXZGTm1RTFR1?=
- =?utf-8?B?NTZJYkV3MlBYMzRnd3h1R0NqeHBQOUgxdVRxVlNqU0VrR0xrY0RFcW9CeWlH?=
- =?utf-8?B?L2REeURYVUlNNVdjSmc0d0xXa2dvRDB1RXdMU09mbEp6T21MaVJmMFZycndv?=
- =?utf-8?B?Sm5zeU9ud0MxTnJrZnc2cW1FSnpXenFSeXdQUjFJT0FMNDNzUFE4RWxBelhX?=
- =?utf-8?B?WG1QOFRGemlXYzk5TU9waFJad1k4aTAxZEJLNThBdzVOWTZTL1FQZStXeWFI?=
- =?utf-8?B?U1JhWWlURGVGU2d4ampMdHBzOS9zT2JCM0JLUVh5a1AxREVrWkJZakxxb3c4?=
- =?utf-8?B?bjdoTDh1OStqaDFVcnJPclg2NC9yRmkxQzhDWUNwT2xjeFhpQ0ZGcE1oM2tG?=
- =?utf-8?B?d29GREtHZVlTUnlDaUhjWTZhODZjazhZWnQvaDRVYnNMeEc5NlE1enBjNlV1?=
- =?utf-8?B?b3k5TUg3Y0U5QVZGTFlqdloyRmw5Mkt2anpTeXlKUzdyTUVMdGtDVGFJK1h4?=
- =?utf-8?B?NFB4c1VoZTQwTjI4ZENINlcyejdRWWpiZHhMNUJwb1owYytnSXFsdDZ2MnZv?=
- =?utf-8?B?eFNyT3ptNE1sbW1qckVKRHVBRDhvQmtwR01xYTQreG9JRm1HcElESkZBRVZ1?=
- =?utf-8?B?VFRVNzdEQjRXODF5S1dBSHFXMFk3SmprRkpoZVlUc1VRVTl4VWpaQk5mOXdR?=
- =?utf-8?B?dzJKZ0cyRFlZS3U2U3F1T1lUQU95WkIxdXdRdXgxRFJVYlViN0tvV29kc2hP?=
- =?utf-8?B?ZU4zU0N2Tm5XRnVxbThvZDlvTDdBNXdFWnpPUlZ3WEs1QmpPbjd3SmN1S2hv?=
- =?utf-8?B?KzV2TlhvWEYrTTV4bmxDNTFTeXNITkR6Y0E0VjFNTE8vdDBUTnljYUtvK3dU?=
- =?utf-8?B?N29BVHRPTzJXQTRnb0ZrbUpZWXVqeGFrK0dIS3UxdFJPazlvUWJLNVNaTU1K?=
- =?utf-8?Q?WsOx1TEy0UI5NOWN9xhTbDgPfh1M0Pf+ZH0IE=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(366007)(921011)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UktYRnEwd1F0aGJsWjg3MVN6UGpzdmVISzNOdmZKWkFOWXVwRXVhcllIS1NC?=
- =?utf-8?B?cG56TlAxY3F5WHNCMVg3UzlaVGxkVVVqbmlZeUZBUHJhT3JxL2lJNGMwM285?=
- =?utf-8?B?S1hENmlSTFVHVmtEQm9JTmNPNWp3cTYwc3lUeWhuVWFCSHNjczJKUVVMYnUx?=
- =?utf-8?B?T2N3SnZGRUdFbHN5V3ZjeVhRZUtOQ0pDRE9aaE0rdTBQc2tUU0lTRUJCbWxx?=
- =?utf-8?B?elkzZWdVSENpTk5WVHdla0pUY2RSOHJTNTJRQXBuN01RNFpmb2crd3Y4em4r?=
- =?utf-8?B?dkJGQTliOGI0Zkp1ZjVWRXJnSVh0OTdKdzdDNm4ycTN3Vnl5dUF6NmVPZVZM?=
- =?utf-8?B?OHVhdEF3MFFqdDBVak5pTlFDODBhVTlLS2JLY1BnTmp0ZHA5V0FZQVlNbldz?=
- =?utf-8?B?Mjh4dEpnd1oyQkd1a3hwYWxUQ0NOUWpBbjhQQWN4cDNnU0dDWVFVRU8yamVq?=
- =?utf-8?B?RnQ3WjJhbldRSGpDcjhzWDUyUGpkUXdoeGhMckpla3MvZTk0QWN6bEI3TmM0?=
- =?utf-8?B?TGhOa1AyRGkyMXNhSCtEZ2FkL3FxU0YrQkh2Z2MwMEZLbVZFZUtDNlZ3RVd0?=
- =?utf-8?B?Q2N1QktFYjNmcmFwTk1EbDdHak5Ccmt5bkt3QU1YUkFZZUkwbGV5WDhNNm53?=
- =?utf-8?B?d0xVd0RTN05takFkUjhaV2ZpN3hQMVZVQUErY2dlWUV6RktPellrM1dQZS93?=
- =?utf-8?B?TFZoMDJERU5WOXVSeVJOVlR6MGxrckFiLzlLT1FETlI3TStvUlJUOU1hUHZY?=
- =?utf-8?B?c3cyMkNVd3p3ZzdmSHBjMTFsTFU4RG5TYmpIV0NpdUdCQmNPRDdLY0xrRmUx?=
- =?utf-8?B?bmxITmxTRzNzRDJvd0lxWWh3RklwbHg3aEFYWGxOdzl0aWs2SThmOWVVT0Nv?=
- =?utf-8?B?M1lQWDA4ZXpBZEhaaWNsbEY5VkxGcUJ2Wit3V0tnUHZnb2t1UFNXNlVSRXBH?=
- =?utf-8?B?S2Y0YlNCNFhSU3d5SVdZL3VSc3ZOK1JxZzlPbGNsMitTYnpKK1lacTIwb0xj?=
- =?utf-8?B?c3JmNVQzM1FzWE1ZWVk4ZEJkM2RWQldMVEQ3c3lvK3c4TDFzbXlIejM1cnR1?=
- =?utf-8?B?aTlzR3VYaWoxWWEwbHhNZXpxYVNIaG8rSjhUV2FuU0doaHU0VVMzR1FSeG1q?=
- =?utf-8?B?dGc3MUNRU1dBVnFHd09JU2dXNmI4MUlvcS9Pb3pjMnprQ3hCK1lWMnZkaFY1?=
- =?utf-8?B?emdkYUF4cytIYjVqY2dacE93bDd0ZnY5Q0EyV1NOMGRtY3ZSNWZhWUZ6V0Nu?=
- =?utf-8?B?U1QrMndMS1c2NHRnMWFXWGI2ZXlGVml3MEttWS8xc0lMeHhibnM5dldodnBP?=
- =?utf-8?B?Zk5DUTlMdk9zazhmMjQ1dVN2UmNDbEhGVzV4OGpvODRjSGRGOWpqUXBaQS8v?=
- =?utf-8?B?d1o3bXNKeFhraTZzY0s3TG9GNWtRSlA0Q0U2YUZQWks0SUJHLzJjU1lSOWZK?=
- =?utf-8?B?SVBrQ1pRMWw0bE1HWEZDWXk4YUJxWmxJdkk1aWJMN0JsYkxBcTAzNDNJbEFM?=
- =?utf-8?B?T2xRSkNPQVd3bGV6dVlqTkt3Q2hVNVVNK0t1RHlqMHFqUlBmSXdJUms5b1dt?=
- =?utf-8?B?dGQ3M0wwZXJ1ZFkvcVJpd1poSzEzQnVxTkF2YVk0dzZlRjJnYWtqazQ2T21S?=
- =?utf-8?B?RW5NTys5VXdkWXNuUFdJbysxSEcveFhadTVpYmxzUmpUL25MNWZKZDZNMlBR?=
- =?utf-8?B?RWJvRWtlM05DU2lPVG13ZXZodkcyMHBhT1VrNWFZM1ZiRjdSbUZmVm1CZzc2?=
- =?utf-8?B?MEwwemtWbVpzeXA3bVl6dWF3VXlhc2VUNzVPTGY4SGtNcUliRnN1RjlhL3ls?=
- =?utf-8?B?L2cwbGNxbFQwVTZiNCtOcnhtWWlOek5GdzFlQzFuNTNtbkFaam9VL3gwS3Y0?=
- =?utf-8?B?dlBTMU4xUmdYWHZUakY0MVkydUlFS29ETEpDL3pEaS9OZEVtcnFZTEEvV21P?=
- =?utf-8?B?K3NhVzg1OGRxWnc1Z1pid1RYZWIyQ0NvR085VEtFYllCRFlLNUk2TG11UDdm?=
- =?utf-8?B?ditJVkRHYlNkUThTQkM0eU1qelgxV1k5enNPUzdGcTZCaTd2NHRPVVFpcDZN?=
- =?utf-8?B?SFUzdmc3K2RKNGFWOWxrdmVJYjRuZ2M3S3VXWkc4M2VqckRFcGJmTnF3RXFT?=
- =?utf-8?Q?7j1+VPZvHhQOtg40uBZ3SlV/E?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFBBD27E
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716175599; cv=none; b=eJUH1NPF2+NGADjUsvaHZ/v7U8kh3MfgdiafSXomD64SyjPbZKu7Gndlhexj9Ms+QNlpvCDZvaJBIZO3Z4/2TwNcCxsprDnWhC6A4zdy6RyQ6puPPmA8+hwf5mBPTIbeLEMIhG0VF9d1jMwG1T09hyihhBE/BGVW96B1Gm+oDfE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716175599; c=relaxed/simple;
+	bh=SIU6BkS1vNzohVMZSXLGegnX1XFP2mVd9tSMrjddPYE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bvV/TxYptrO477Wvz6mAf+Ny3DDEoCs7yahTgJfXiufKGxU1Vhyp8mH8jPXqIxvCwCCXzSK2OdK43tnPDsYc03bZTFxByOAq/pa1g6RtlavEuEloREctPoQvsMcqQK58tO1JRKK2GvEZHgJoVlabzSR/dPxjsiRrIQdXdCKONO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e212ee8008so432306939f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 19 May 2024 20:26:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716175596; x=1716780396;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6554Dml7AVC9MMh7rMkJuSnNnsg9u5RHnuC+rU8Skd8=;
+        b=we7pCMmVeg9vqB8wfYP6s7qEuZOdmtOVP3wi7Yek5/A7G1n6xiTgjikxxy1JxdpJ3s
+         kcYTus2TJdHvhiRjlwhlbb8dS+3xONOHHfW6kLXPCvubHzHhRJ1wdzqqhiZFzK+NcsBx
+         b/OJOOgrXTdIodApBF1IwMhXVTfZHpiEKP7dcWeHs4mMbfp0/tfZfKIVv7SNxEvIxV69
+         rLynTehCfst7+E0izW9Xhzq43/6m30px+0SbLCaeRGsaVScE8qHin1BsSFdopQEIdOiV
+         oCt34vH7WXRpCeozo9fFGfYFgP44nWYrntXYGh3tIvW0YH2/8rgaIEqcs7MzyHmLSi5d
+         tMBw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8Ih53gwMB2kcZlzryx6s37Ha/wTsosnxs0zU6LRI3UnHeU6YYo6S2C1STwWQZm6brUZudkPPn4CTyPTLgEBih+M8NNqb5j90AG91b
+X-Gm-Message-State: AOJu0Yzn4N4kkLMBlbONoAz6i7EPSnPIlFL/xNL+j5HjaT9OGt9n1uYN
+	z43kW32nBghFx/B43wzRgqekcoBPKLsww8t5V0GfGpV6iDI2LVqBj+CDY9Ah6gKnr8hxzM+Y2qU
+	IYdE0yOq2R7nAbEizlprC9NsDrQ2nEl0hn8a1JceN/Iw8fA6AlnD/OLs=
+X-Google-Smtp-Source: AGHT+IGt94fYQGCRX5Zrv8KGd9W8Iosc0WKmoDzVVJhaCxBiZ0SwoSALa9IjHh+5C+1S7DC7NtnH6Fv+9HnFCvP7ztOIaiJWNRoa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39b6d789-4018-4f81-08c9-08dc787c5a71
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2024 03:24:26.8194
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NkgaGdjSTPTYG65AipARbhlyPat4OJFrFoBnitaDxfdol/67epYdPjUn0sNlA18E0H0w7CbkEn3QNItUK5I7mw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6120
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a05:6602:2cc1:b0:7da:19cb:1c7f with SMTP id
+ ca18e2360f4ac-7e1b500ee78mr139469739f.0.1716175596551; Sun, 19 May 2024
+ 20:26:36 -0700 (PDT)
+Date: Sun, 19 May 2024 20:26:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ce12ef0618da4417@google.com>
+Subject: [syzbot] [net?] INFO: task hung in addrconf_dad_work (4)
+From: syzbot <syzbot+46af9e85f01be0118283@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-PiBGcm9tOiBCYW9sdSBMdSA8YmFvbHUubHVAbGludXguaW50ZWwuY29tPg0KPiBTZW50OiBTdW5k
-YXksIE1heSAxOSwgMjAyNCAxMDozOCBQTQ0KPiANCj4gT24gMjAyNC81LzE1IDE1OjQzLCBUaWFu
-LCBLZXZpbiB3cm90ZToNCj4gPj4gRnJvbTogTHUgQmFvbHUgPGJhb2x1Lmx1QGxpbnV4LmludGVs
-LmNvbT4NCj4gPj4gU2VudDogVHVlc2RheSwgQXByaWwgMzAsIDIwMjQgMTA6NTcgUE0NCj4gPj4N
-Cj4gPj4gaW9tbXVfaHdwdF9wZ2ZhdWx0cyByZXByZXNlbnQgZmF1bHQgbWVzc2FnZXMgdGhhdCB0
-aGUgdXNlcnNwYWNlIGNhbg0KPiA+PiByZXRyaWV2ZS4gTXVsdGlwbGUgaW9tbXVfaHdwdF9wZ2Zh
-dWx0cyBtaWdodCBiZSBwdXQgaW4gYW4gaW9wZiBncm91cCwNCj4gPj4gd2l0aCB0aGUgSU9NTVVf
-UEdGQVVMVF9GTEFHU19MQVNUX1BBR0UgZmxhZyBzZXQgb25seSBmb3IgdGhlIGxhc3QNCj4gPj4g
-aW9tbXVfaHdwdF9wZ2ZhdWx0Lg0KPiA+DQo+ID4gRG8geW91IGVudmlzaW9uIGV4dGVuZGluZyB0
-aGUgc2FtZSBzdHJ1Y3R1cmUgdG8gcmVwb3J0IHVucmVjb3ZlcmFibGUNCj4gPiBmYXVsdCBpbiB0
-aGUgZnV0dXJlPw0KPiANCj4gSSBhbSBub3QgZW52aXNpb25pbmcgZXh0ZW5kaW5nIHRoaXMgdG8g
-cmVwb3J0IHVucmVjb3ZlcmFibGUgZmF1bHRzIGluDQo+IHRoZSBmdXR1cmUuIFRoZSB1bnJlY292
-ZXJhYmxlIGZhdWx0cyBhcmUgbm90IGFsd2F5cyByZWxhdGVkIHRvIGEgaHdwdCwNCj4gYW5kIHRo
-ZXJlZm9yZSBpdCdzIG1vcmUgc3VpdGFibGUgdG8gcm91dGUgdGhlbSB0aHJvdWdoIGEgdmlvbW11
-IG9iamVjdA0KPiB3aGljaCBpcyB1bmRlciBkaXNjdXNzaW9uIGluIE5pY29saW4ncyBzZXJpZXMu
-DQoNCk9LLCBJJ2xsIHRha2UgYSBsb29rIGF0IHRoYXQgc2VyaWVzIHdoZW4gcmVhY2hpbmcgaXQg
-aW4gbXkgVE9ETyBsaXN0LiDwn5iKDQoNCj4gPj4gKyAqIEBsZW5ndGg6IGEgaGludCBvZiBob3cg
-bXVjaCBkYXRhIHRoZSByZXF1ZXN0b3IgaXMgZXhwZWN0aW5nIHRvIGZldGNoLg0KPiBGb3INCj4g
-Pj4gKyAqICAgICAgICAgIGV4YW1wbGUsIGlmIHRoZSBQUkkgaW5pdGlhdG9yIGtub3dzIGl0IGlz
-IGdvaW5nIHRvIGRvIGEgMTBNQg0KPiA+PiArICogICAgICAgICAgdHJhbnNmZXIsIGl0IGNvdWxk
-IGZpbGwgaW4gMTBNQiBhbmQgdGhlIE9TIGNvdWxkIHByZS1mYXVsdCBpbg0KPiA+PiArICogICAg
-ICAgICAgMTBNQiBvZiBJT1ZBLiBJdCdzIGRlZmF1bHQgdG8gMCBpZiB0aGVyZSdzIG5vIHN1Y2gg
-aGludC4NCj4gPg0KPiA+IFRoaXMgaXMgbm90IGNsZWFyIHRvIG1lIGFuZCBJIGRvbid0IHJlbWVt
-YmVyIFBDSWUgc3BlYyBkZWZpbmVzIHN1Y2gNCj4gPiBtZWNoYW5pc20uDQo+IA0KPiBUaGlzIGNh
-bWUgdXAgaW4gYSBwcmV2aW91cyBkaXNjdXNzaW9uLiBXaGlsZSBpdCdzIG5vdCBjdXJyZW50bHkg
-cGFydCBvZg0KDQpDYW4geW91IHByb3ZpZGUgYSBsaW5rIHRvIHRoYXQgZGlzY3Vzc2lvbj8NCg0K
-PiB0aGUgUENJIHNwZWNpZmljYXRpb24gYW5kIG1heSBub3QgYmUgaW4gdGhlIGZ1dHVyZSwgd2Un
-ZCBsaWtlIHRvIGFkZA0KPiB0aGlzIG1lY2hhbmlzbSBmb3IgcG90ZW50aWFsIGZ1dHVyZSBhZHZh
-bmNlZCBkZXZpY2UgZmVhdHVyZXMgYXMgaXQNCj4gb2ZmZXJzIHNpZ25pZmljYW50IG9wdGltaXph
-dGlvbiBiZW5lZml0cy4NCj4gDQoNCldlIGRlc2lnbiB1QVBJIGZvciByZWFsIHVzYWdlcy4gSXQn
-cyBhIGJpdCB3ZWlyZCB0byBpbnRyb2R1Y2UgYSBmb3JtYXQNCmZvciB1bmtub3duIGZ1dHVyZSBm
-ZWF0dXJlcyB3L28gYW4gYWN0dWFsIHVzZXIgdG8gZGVtb25zdHJhdGUgaXRzDQpjb3JyZWN0bmVz
-cy4NCg==
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    a5131c3fdf26 Merge tag 'x86-shstk-2024-05-13' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13f0ecf0980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e50cba0cee5dac3a
+dashboard link: https://syzkaller.appspot.com/bug?extid=46af9e85f01be0118283
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/890a976d962e/disk-a5131c3f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/03885a88739f/vmlinux-a5131c3f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ec1af8562020/bzImage-a5131c3f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+46af9e85f01be0118283@syzkaller.appspotmail.com
+
+INFO: task kworker/u8:5:145 blocked for more than 143 seconds.
+      Not tainted 6.9.0-syzkaller-01768-ga5131c3fdf26 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u8:5    state:D stack:14192 pid:145   tgid:145   ppid:2      flags:0x00004000
+Workqueue: ipv6_addrconf addrconf_dad_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5409 [inline]
+ __schedule+0x1796/0x4a00 kernel/sched/core.c:6746
+ __schedule_loop kernel/sched/core.c:6823 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6838
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6895
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4192
+ process_one_work kernel/workqueue.c:3267 [inline]
+ process_scheduled_works+0xa10/0x17c0 kernel/workqueue.c:3348
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3429
+ kthread+0x2f0/0x390 kernel/kthread.c:388
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Showing all locks held in the system:
+2 locks held by init/1:
+2 locks held by kworker/u8:1/12:
+ #0: ffff888015089148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3242 [inline]
+ #0: ffff888015089148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x8e0/0x17c0 kernel/workqueue.c:3348
+ #1: ffffc90000117d00 ((work_completion)(&sub_info->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3243 [inline]
+ #1: ffffc90000117d00 ((work_completion)(&sub_info->work)){+.+.}-{0:0}, at: process_scheduled_works+0x91b/0x17c0 kernel/workqueue.c:3348
+3 locks held by kworker/1:0/25:
+ #0: ffff888015080948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3242 [inline]
+ #0: ffff888015080948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x8e0/0x17c0 kernel/workqueue.c:3348
+ #1: ffffc900001f7d00 (deferred_process_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3243 [inline]
+ #1: ffffc900001f7d00 (deferred_process_work){+.+.}-{0:0}, at: process_scheduled_works+0x91b/0x17c0 kernel/workqueue.c:3348
+ #2: ffffffff8f599888 (rtnl_mutex){+.+.}-{3:3}, at: switchdev_deferred_process_work+0xe/0x20 net/switchdev/switchdev.c:104
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e336020 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #0: ffffffff8e336020 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #0: ffffffff8e336020 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
+5 locks held by kworker/u9:0/53:
+ #0: ffff8881a659a948 ((wq_completion)hci5){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3242 [inline]
+ #0: ffff8881a659a948 ((wq_completion)hci5){+.+.}-{0:0}, at: process_scheduled_works+0x8e0/0x17c0 kernel/workqueue.c:3348
+ #1: ffffc90000bd7d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3243 [inline]
+ #1: ffffc90000bd7d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_scheduled_works+0x91b/0x17c0 kernel/workqueue.c:3348
+ #2: ffff8881e35a1060 (&hdev->req_lock){+.+.}-{3:3}, at: hci_cmd_sync_work+0x1ec/0x400 net/bluetooth/hci_sync.c:309
+ #3: ffff8881e35a0078 (&hdev->lock){+.+.}-{3:3}, at: hci_abort_conn_sync+0x1ea/0xde0 net/bluetooth/hci_sync.c:5548
+ #4: ffff8880b943e658 (&rq->__lock){-.-.}-{2:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #4: ffff8880b943e658 (&rq->__lock){-.-.}-{2:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #4: ffff8880b943e658 (&rq->__lock){-.-.}-{2:2}, at: shrink_slab+0x12b/0x14d0 mm/shrinker.c:649
+1 lock held by kswapd1/89:
+3 locks held by kworker/u8:5/145:
+ #0: ffff888029f86148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3242 [inline]
+ #0: ffff888029f86148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x8e0/0x17c0 kernel/workqueue.c:3348
+ #1: ffffc90002d17d00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3243 [inline]
+ #1: ffffc90002d17d00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x91b/0x17c0 kernel/workqueue.c:3348
+ #2: ffffffff8f599888 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4192
+4 locks held by kworker/u8:6/2426:
+6 locks held by kworker/u8:8/2822:
+1 lock held by jbd2/sda1-8/4493:
+1 lock held by udevd/4530:
+2 locks held by getty/4832:
+ #0: ffff88802a0ac0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f0e2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
+2 locks held by sshd/5067:
+ #0: ffff8880221ec420 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_trylock include/linux/mmap_lock.h:165 [inline]
+ #0: ffff8880221ec420 (&mm->mmap_lock){++++}-{3:3}, at: get_mmap_lock_carefully mm/memory.c:5633 [inline]
+ #0: ffff8880221ec420 (&mm->mmap_lock){++++}-{3:3}, at: lock_mm_and_find_vma+0x32/0x2f0 mm/memory.c:5693
+ #1: ffffffff8e42a400 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:3771 [inline]
+ #1: ffffffff8e42a400 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:3796 [inline]
+ #1: ffffffff8e42a400 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath+0xd31/0x23d0 mm/page_alloc.c:4202
+3 locks held by syz-fuzzer/5070:
+2 locks held by syz-fuzzer/5075:
+3 locks held by syz-fuzzer/5087:
+4 locks held by kworker/u9:1/17744:
+1 lock held by syz-executor.2/18180:
+ #0: ffff888065c500e0 (&type->s_umount_key#60){++++}-{3:3}, at: __super_lock fs/super.c:56 [inline]
+ #0: ffff888065c500e0 (&type->s_umount_key#60){++++}-{3:3}, at: __super_lock_excl fs/super.c:71 [inline]
+ #0: ffff888065c500e0 (&type->s_umount_key#60){++++}-{3:3}, at: deactivate_super+0xb5/0xf0 fs/super.c:504
+4 locks held by kworker/u9:2/18553:
+ #0: ffff88805e87e148 ((wq_completion)hci0){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3242 [inline]
+ #0: ffff88805e87e148 ((wq_completion)hci0){+.+.}-{0:0}, at: process_scheduled_works+0x8e0/0x17c0 kernel/workqueue.c:3348
+ #1: ffffc90003377d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3243 [inline]
+ #1: ffffc90003377d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_scheduled_works+0x91b/0x17c0 kernel/workqueue.c:3348
+ #2: ffff888073ef9060 (&hdev->req_lock){+.+.}-{3:3}, at: hci_cmd_sync_work+0x1ec/0x400 net/bluetooth/hci_sync.c:309
+ #3: ffff888073ef8078 (&hdev->lock){+.+.}-{3:3}, at: hci_abort_conn_sync+0x1ea/0xde0 net/bluetooth/hci_sync.c:5548
+2 locks held by syz-executor.4/18796:
+3 locks held by syz-executor.2/19219:
+2 locks held by syz-executor.1/19286:
+2 locks held by rm/19503:
+3 locks held by modprobe/19505:
+5 locks held by kworker/u8:7/19507:
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 30 Comm: khungtaskd Not tainted 6.9.0-syzkaller-01768-ga5131c3fdf26 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xfde/0x1020 kernel/hung_task.c:380
+ kthread+0x2f0/0x390 kernel/kthread.c:388
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 5075 Comm: syz-fuzzer Not tainted 6.9.0-syzkaller-01768-ga5131c3fdf26 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:__ref_is_percpu include/linux/percpu-refcount.h:174 [inline]
+RIP: 0010:percpu_ref_tryget_many include/linux/percpu-refcount.h:243 [inline]
+RIP: 0010:percpu_ref_tryget+0x82/0x180 include/linux/percpu-refcount.h:266
+Code: 1f c6 05 fa 02 92 0d 01 48 c7 c7 e0 3b d7 8b be 0f 03 00 00 48 c7 c2 20 3c d7 8b e8 f8 73 72 ff 49 bf 00 00 00 00 00 fc ff df <48> 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 08 15 f7 ff
+RSP: 0000:ffffc900034c6c30 EFLAGS: 00000202
+RAX: 0000000000000001 RBX: ffff888078a32010 RCX: ffff88807a811e00
+RDX: dffffc0000000000 RSI: ffffffff8c1ec8c0 RDI: ffffffff8c1ec880
+RBP: ffff888078a32000 R08: ffffffff92f0b587 R09: 1ffffffff25e16b0
+R10: dffffc0000000000 R11: fffffbfff25e16b1 R12: ffff888078a32054
+R13: ffff888016ac4000 R14: ffffffff82009d14 R15: dffffc0000000000
+FS:  000000c000d1e490(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055dff07a1696 CR3: 0000000075c00000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ css_tryget include/linux/cgroup_refcnt.h:45 [inline]
+ mem_cgroup_iter+0x2d3/0x560 mm/memcontrol.c:1228
+ shrink_node_memcgs mm/vmscan.c:5884 [inline]
+ shrink_node+0x135b/0x2d60 mm/vmscan.c:5908
+ shrink_zones mm/vmscan.c:6152 [inline]
+ do_try_to_free_pages+0x695/0x1af0 mm/vmscan.c:6214
+ try_to_free_pages+0x760/0x1100 mm/vmscan.c:6449
+ __perform_reclaim mm/page_alloc.c:3774 [inline]
+ __alloc_pages_direct_reclaim mm/page_alloc.c:3796 [inline]
+ __alloc_pages_slowpath+0xdc3/0x23d0 mm/page_alloc.c:4202
+ __alloc_pages+0x43e/0x6c0 mm/page_alloc.c:4588
+ alloc_pages_mpol+0x3e8/0x680 mm/mempolicy.c:2264
+ alloc_pages mm/mempolicy.c:2335 [inline]
+ folio_alloc+0x128/0x180 mm/mempolicy.c:2342
+ filemap_alloc_folio+0xdf/0x500 mm/filemap.c:984
+ __filemap_get_folio+0x41a/0xbb0 mm/filemap.c:1926
+ filemap_fault+0xba2/0x1760 mm/filemap.c:3299
+ __do_fault+0x135/0x460 mm/memory.c:4531
+ do_read_fault mm/memory.c:4894 [inline]
+ do_fault mm/memory.c:5024 [inline]
+ do_pte_missing mm/memory.c:3880 [inline]
+ handle_pte_fault mm/memory.c:5300 [inline]
+ __handle_mm_fault+0x45fe/0x7250 mm/memory.c:5441
+ handle_mm_fault+0x27f/0x770 mm/memory.c:5606
+ do_user_addr_fault arch/x86/mm/fault.c:1332 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1475 [inline]
+ exc_page_fault+0x446/0x8a0 arch/x86/mm/fault.c:1533
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0033:0x43d098
+Code: Unable to access opcode bytes at 0x43d06e.
+RSP: 002b:000000c000d378e0 EFLAGS: 00010202
+RAX: 00000000013b25a8 RBX: 00000000014b5540 RCX: 0000000000000000
+RDX: 00000000013b25a8 RSI: 00000000009c053f RDI: 0000000000e4fcc0
+RBP: 000000c000d37950 R08: 00000000ffffffff R09: 0000000000000080
+R10: 0000000000000001 R11: 000000000001960e R12: 0000000000000002
+R13: ffffffffffffffff R14: 000000c0001c4820 R15: 0000000000000000
+ </TASK>
+ICMPv6: ndisc: ndisc_alloc_skb failed to allocate an skb
+ICMPv6: ndisc: ndisc_alloc_skb failed to allocate an skb
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
