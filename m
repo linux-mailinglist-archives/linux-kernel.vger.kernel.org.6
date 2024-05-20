@@ -1,164 +1,129 @@
-Return-Path: <linux-kernel+bounces-184042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24D48CA1B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:02:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 612C68CA1BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DEB01C21C1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1717228277B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178FA1386A4;
-	Mon, 20 May 2024 18:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C403B137C25;
+	Mon, 20 May 2024 18:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Nz2jfv0X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="g3O7I5yv"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3457834CDE;
-	Mon, 20 May 2024 18:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EBE13792E
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 18:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716228027; cv=none; b=XaA/X4nZo4fjWj8xqFWrfgaoe5jjDmk0MqvtOJ3FmmX47INlu6+Pje1+RttxDJ3nmoWSDJbd39hv6pqgkwyzNmrn24c3IhPn5YUAOplNU+lcFJW7TJStJqyhwMhu2f2d9K4ZkanIwXwvX1pY372TKODOdNV9L48JSfWURyv+7LE=
+	t=1716228099; cv=none; b=ufNuI/a/LWw2z8RkT/oXCJq7JgoqqALX08affBClK9HxDDxko/SrI68hR5tNpd3Abewtv9lB95ScXOj1c3tcAP2GnoIk9PQzBktyz4GzrMI5AQMvNOzMEjruL4UPpOYsD/T7RuyWxbZiMYVcB6pl2SxEpH+ryxXGi8a3vrskIzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716228027; c=relaxed/simple;
-	bh=vVR9EAvK+2jMSL8py9fcIjHGGS71cFk9eRgtsSMxJ3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o67AfKGW5QNsyKHU5N/kCD6foa8qgXYsQsHC4+L0R6mealxSMMD3p710zzalSUou0HOm7vj+ScqKTmx7Stu+P8uhw6LcR9D1OWNCNH1Gyq1rH8mUJCvCCySJrMbrnJ056cs7ee3Ogml5uw8dKNKBWrQSlEwq7UHqPUonQnPY89g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Nz2jfv0X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E9C4C32789;
-	Mon, 20 May 2024 18:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716228026;
-	bh=vVR9EAvK+2jMSL8py9fcIjHGGS71cFk9eRgtsSMxJ3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nz2jfv0XEg7U5RPgEE4Kz/1YSq4wbFkS4OHP9RSGruDTZQc0+oLvMOO+zq4xzYpHm
-	 RndQzzc9nJyljmchgLvsxsAAlNS/T+ZEWoTvi1cNWPiGBi+7J1pv7GdUCWflZp98Ew
-	 ZT30w6wE3rwuXw6J7WwjDELCgIhHK7/Qe9rzrDQg=
-Date: Mon, 20 May 2024 20:00:23 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [RFC PATCH 01/11] rust: add abstraction for struct device
-Message-ID: <2024052038-deviancy-criteria-e4fe@gregkh>
-References: <20240520172554.182094-1-dakr@redhat.com>
- <20240520172554.182094-2-dakr@redhat.com>
+	s=arc-20240116; t=1716228099; c=relaxed/simple;
+	bh=y357Gf++Lwv58DsPTP+EhrVLy2CyZ3UEDFn8PhgucMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=roSNdQd99oqLpNKPG2UVNBUFv5uwSW9/QCyMjI5dV0oGNRtYBFrFTKqtQoM1QqpwkGEBIFclEV5d4+VRy6MidIGpq95ut4UrS1TW+tm1mfa0LfhkEZxYWXVwXCxGJWIYo+pxUUyKtH/Km/FkRakhdqUeP7rNCNTKTRuuUw3wcqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=g3O7I5yv; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1716228095;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jj/JcQQpB8rmUIcI3E2ag3tbR7mqdkzfH4b6x0esQhc=;
+	b=g3O7I5yvMu9BQoVNpVIDnLYPyNi7NwX8hmmEKjuqewJcwAQp9o1XdauJ7NZPRoEHYOYxQA
+	ug/1qUk+eUqizfl3GRl5CBWKGbBMx7VMwl7F3GXH/lC+ndwLoVXE1b1Q6sJHQm2eftbRRe
+	y+y+RObaKCTOyCBCbBJux6tbC7StmkR86+RotipWkVZ1VnOKdWLSW3uXxTdKryVY7zA46p
+	58Wm/250r/dVMCYp77nFirTiqtTWXbDlxbjtUCiVJQGatPfX7qK+71wi9ytzjZKprRCP1P
+	iSMutYNXONzjLRg+57bTjDWFB5VWsQ9OYCRcUingZaT1TeEvUq83LdocP20+ZQ==
+X-Envelope-To: dsimic@manjaro.org
+X-Envelope-To: heiko@sntech.de
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: robh+dt@kernel.org
+X-Envelope-To: krzk+dt@kernel.org
+X-Envelope-To: conor+dt@kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: stable@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Diederik de Haas <didi.debian@cknow.org>
+To: linux-rockchip@lists.infradead.org, Dragan Simic <dsimic@manjaro.org>
+Cc: heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject:
+ Re: [PATCH] arm64: dts: rockchip: Fix the DCDC_REG2 minimum voltage on
+ Quartz64 Model B
+Date: Mon, 20 May 2024 20:01:24 +0200
+Message-ID: <28082151.hHkOrr57cY@bagend>
+Organization: Connecting Knowledge
+In-Reply-To:
+ <e70742ea2df432bf57b3f7de542d81ca22b0da2f.1716225483.git.dsimic@manjaro.org>
+References:
+ <e70742ea2df432bf57b3f7de542d81ca22b0da2f.1716225483.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240520172554.182094-2-dakr@redhat.com>
+Content-Type: multipart/signed; boundary="nextPart6401850.1aQqFvIbO2";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, May 20, 2024 at 07:25:38PM +0200, Danilo Krummrich wrote:
-> Add an (always) reference counted abstraction for a generic struct
-> device. This abstraction encapsulates existing struct device instances
-> and manages its reference count.
+--nextPart6401850.1aQqFvIbO2
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+Date: Mon, 20 May 2024 20:01:24 +0200
+Message-ID: <28082151.hHkOrr57cY@bagend>
+Organization: Connecting Knowledge
+MIME-Version: 1.0
+
+On Monday, 20 May 2024 19:20:28 CEST Dragan Simic wrote:
+> This also eliminates the following warnings in the kernel log:
 > 
-> Subsystems may use this abstraction as a base to abstract subsystem
-> specific device instances based on a generic struct device.
-> 
-> Co-developed-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-> ---
->  rust/helpers.c        |  1 +
->  rust/kernel/device.rs | 76 +++++++++++++++++++++++++++++++++++++++++++
+>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000, not
+> supported by regulator panfrost fde60000.gpu: _opp_add: OPP not supported
+> by regulators (200000000) core: _opp_supported_by_regulators: OPP minuV:
+> 825000 maxuV: 825000, not supported by regulator panfrost fde60000.gpu:
+> _opp_add: OPP not supported by regulators (300000000) core:
+> _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000, not
+> supported by regulator panfrost fde60000.gpu: _opp_add: OPP not supported
+> by regulators (400000000) core: _opp_supported_by_regulators: OPP minuV:
+> 825000 maxuV: 825000, not supported by regulator panfrost fde60000.gpu:
+> _opp_add: OPP not supported by regulators (600000000)
 
-What's the status of moving .rs files next to their respective .c files
-in the build system?  Keeping them separate like this just isn't going
-to work, sorry.
+Can confirm those messages are no longer there in ``dmesg``, I see no other 
+error/warning messages appear and my Q64-B still works. So
 
-> --- /dev/null
-> +++ b/rust/kernel/device.rs
-> @@ -0,0 +1,76 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Generic devices that are part of the kernel's driver model.
-> +//!
-> +//! C header: [`include/linux/device.h`](../../../../include/linux/device.h)
+Tested-by: Diederik de Haas <didi.debian@cknow.org>
 
-relative paths for a common "include <linux/device.h" type of thing?
-Rust can't handle include paths from directories?
+Thanks!
 
-> +
-> +use crate::{
-> +    bindings,
-> +    types::{ARef, Opaque},
-> +};
-> +use core::ptr;
-> +
-> +/// A ref-counted device.
-> +///
-> +/// # Invariants
-> +///
-> +/// The pointer stored in `Self` is non-null and valid for the lifetime of the ARef instance. In
-> +/// particular, the ARef instance owns an increment on underlying object’s reference count.
-> +#[repr(transparent)]
-> +pub struct Device(Opaque<bindings::device>);
-> +
-> +impl Device {
-> +    /// Creates a new ref-counted instance of an existing device pointer.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that `ptr` is valid, non-null, and has a non-zero reference count.
+Cheers,
+  Diederik
+--nextPart6401850.1aQqFvIbO2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-Callers NEVER care about the reference count of a struct device, anyone
-poking in that is asking for trouble.
+-----BEGIN PGP SIGNATURE-----
 
-And why non-NULL?  Can't you check for that here?  Shouldn't you check
-for that here?  Many driver core functions can handle a NULL pointer
-just fine (i.e. get/put_device() can), why should Rust code assume that
-a pointer passed to it from the C layer is going to have stricter rules
-than the C layer can provide?
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZkuP9AAKCRDXblvOeH7b
+bpi3AQDm7qbYfHudSUzrr2LFgBeDIsZBSArY/04vtRyNrGk0hAEAmADoy6OdU918
+gVzI7Zmmt1pEwCDGj6bnrQhovKNdlAI=
+=L7k7
+-----END PGP SIGNATURE-----
 
-> +    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Self> {
-> +        // SAFETY: By the safety requirements, ptr is valid.
-> +        // Initially increase the reference count by one to compensate for the final decrement once
-> +        // this newly created `ARef<Device>` instance is dropped.
-> +        unsafe { bindings::get_device(ptr) };
-> +
-> +        // CAST: `Self` is a `repr(transparent)` wrapper around `bindings::device`.
-> +        let ptr = ptr.cast::<Self>();
-> +
-> +        // SAFETY: By the safety requirements, ptr is valid.
-> +        unsafe { ARef::from_raw(ptr::NonNull::new_unchecked(ptr)) }
-> +    }
-> +
-> +    /// Obtain the raw `struct device *`.
-> +    pub(crate) fn as_raw(&self) -> *mut bindings::device {
-> +        self.0.get()
-> +    }
-> +
-> +    /// Convert a raw `struct device` pointer to a `&Device`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that `ptr` is valid, non-null, and has a non-zero reference count for
-> +    /// the entire duration when the returned reference exists.
+--nextPart6401850.1aQqFvIbO2--
 
-Again, non-NULL might not be true, and reference counts are never
-tracked by any user EXCEPT to increment/decrement it, you never know if
-it is 0 or not, all you know is that if a pointer is given to you by the
-driver core to a 'struct device' for a function that it is a valid
-reference at that point in time, or maybe NULL, until your function
-returns.  Anything after that can not be counted on.
 
-thanks,
 
-greg k-h
 
