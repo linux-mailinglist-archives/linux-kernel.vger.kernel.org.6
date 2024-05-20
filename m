@@ -1,222 +1,143 @@
-Return-Path: <linux-kernel+bounces-183351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95D48C97DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 04:19:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6478C97E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 04:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1409C1F21F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EBCA1C21556
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AF6208A5;
-	Mon, 20 May 2024 02:18:04 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C51E1BDDB
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 02:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3859BA47;
+	Mon, 20 May 2024 02:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eg3+9A+8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B9C79EF
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 02:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716171483; cv=none; b=PyeeT1WjBJcuLfa6fl92JWacqXqLBAFaLB8RJKOtAD4FGwpZB9BvanTlinFe9hepKVRarSqn6zjZmdAQcX2HOiTsLMD8YZxVmSIyY27vpXsFF3VGMYH1Qz77LPinyoiOaPadsphdLQH0p7bHZT4I/NLG/T+o3sqE3W2gy+jYXsU=
+	t=1716171646; cv=none; b=EBWIcWYcDANIxueEDW7WnpSTmf426H/LplnUoXTOIBfulKfBQvTUnlHLTDU0b/y1rBK2KRiPyXvXTJfq9SbzZs9QVXO1nUfUbe5QA19SF87eZfNg/7Y455+Sl9XuQqiTQN7QE+InezFm/nTv/HunGvwcMRiLMfKZmKntF5fpBjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716171483; c=relaxed/simple;
-	bh=xHQ+I0rvQ/aXac1SAUEKaqX98bcd3OelkmI2+09FF90=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=ox9teEBr7y/evyvojyT/OckDbj5NLwePgFgvudYvVlaB9jzwnBdRt6UNdb1MJtuOiPplwxIVdbL0HzkfM04d24XBf5KWjWKzl/xTuoidPzBF8h6B/h8zg0euXFTdsRusWBgWmPNsJ0SDFbyFfHmVtJGiU9klGH0wdze42derReQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-d1-664ab2c9763c
-From: Byungchul Park <byungchul@sk.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: kernel_team@skhynix.com,
-	akpm@linux-foundation.org,
-	ying.huang@intel.com,
-	vernhao@tencent.com,
-	mgorman@techsingularity.net,
-	hughd@google.com,
-	willy@infradead.org,
-	david@redhat.com,
-	peterz@infradead.org,
-	luto@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	rjgolo@gmail.com
-Subject: [RESEND PATCH v10 12/12] mm, vmscan: apply luf mechanism to unmapping during folio reclaim
-Date: Mon, 20 May 2024 11:17:34 +0900
-Message-Id: <20240520021734.21527-13-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240520021734.21527-1-byungchul@sk.com>
-References: <20240520021734.21527-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsXC9ZZnke7JTV5pBm9mi1vMWb+GzeLzhn9s
-	Fi82tDNafF3/i9ni6ac+FovLu+awWdxb85/V4vyutawWO5buY7K4dGABk8Xx3gNMFvPvfWaz
-	2LxpKrPF8SlTGS1+/wAqPjlrMouDgMf31j4Wj52z7rJ7LNhU6rF5hZbH4j0vmTw2repk89j0
-	aRK7x7tz59g9Tsz4zeIx72Sgx/t9V9k8tv6y82iceo3N4/MmuQC+KC6blNSczLLUIn27BK6M
-	ub83MRX8V6t4tvQrUwPjV/kuRk4OCQETieXrW5hh7P557xlBbDYBdYkbN36CxUUEzCQOtv5h
-	B7GZBe4ySRzoZwOxhQWSJfp/PAWLswioSrz8+Busnheofvn2z0wQM+UlVm84ABbnBIrPWLWT
-	BcQWEjCV+HH0K9AcLqCa92wSn9oXMkI0SEocXHGDZQIj7wJGhlWMQpl5ZbmJmTkmehmVeZkV
-	esn5uZsYgaG/rPZP9A7GTxeCDzEKcDAq8fDueOSZJsSaWFZcmXuIUYKDWUmEd9MWoBBvSmJl
-	VWpRfnxRaU5q8SFGaQ4WJXFeo2/lKUIC6YklqdmpqQWpRTBZJg5OqQZGpQVfFrHfkz+fMuvW
-	locZB/dOnnk/y/nFP+1Pgbr/ZhfEdUjv5wzXur/2ioienMUUN9dz3T4dC0tYRF2t1u74Wmir
-	ZSg0eXnrmm9nJs/ctD34oEnNaa4pb/aH3RCeOI0/W+2d2+mkq57lR89Eib99uo5z2ifjSIY9
-	O5oXzdWaIpJrM/eehJrFMSWW4oxEQy3mouJEAGOoIUV5AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsXC5WfdrHtyk1eawcNPvBZz1q9hs/i84R+b
-	xYsN7YwWX9f/YrZ4+qmPxeLw3JOsFpd3zWGzuLfmP6vF+V1rWS12LN3HZHHpwAImi+O9B5gs
-	5t/7zGaxedNUZovjU6YyWvz+AVR8ctZkFgdBj++tfSweO2fdZfdYsKnUY/MKLY/Fe14yeWxa
-	1cnmsenTJHaPd+fOsXucmPGbxWPeyUCP9/uusnksfvGByWPrLzuPxqnX2Dw+b5IL4I/isklJ
-	zcksSy3St0vgypj7exNTwX+1imdLvzI1MH6V72Lk5JAQMJHon/eeEcRmE1CXuHHjJzOILSJg
-	JnGw9Q87iM0scJdJ4kA/G4gtLJAs0f/jKVicRUBV4uXH32D1vED1y7d/ZoKYKS+xesMBsDgn
-	UHzGqp0sILaQgKnEj6Nf2SYwci1gZFjFKJKZV5abmJljqlecnVGZl1mhl5yfu4kRGMjLav9M
-	3MH45bL7IUYBDkYlHt4Ntz3ThFgTy4orcw8xSnAwK4nwbtoCFOJNSaysSi3Kjy8qzUktPsQo
-	zcGiJM7rFZ6aICSQnliSmp2aWpBaBJNl4uCUamA8qquh/+/PghOfblkJyjay72M1Wjjt0sxl
-	1W3rfKbYPTM/4phe1mSjvpDpwqNzagfeuCTouZdqfnyo8rLhyqvVtc94tl5vczrONO3mq65r
-	rqte5G/iqXmcXR5da8xWKXV607z8q98OS3C+7K/+6Fu2q5dBqvV4MZPjX9XE+n3c4htc7wp8
-	yf6kxFKckWioxVxUnAgAxnKitWACAAA=
-X-CFilter-Loop: Reflected
+	s=arc-20240116; t=1716171646; c=relaxed/simple;
+	bh=HmTOhh9HFJBHTh79UxzuMR2rO3zHP4siktUZD+OBd/0=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=X4sr5oCjIjfZayUUaI+N+HPEWQJs4Nh5qCXSivNUdV2QPyOpkS6V/5anf1dTnFXNibnTYp445sS1uFOgr7/Td4pYvunUH6WstbvUyv8rylDs12mAKpIGUVFMbOacWq5Pw7KQjLuIO/MH925DQQHnfXr4tIPdPuzsAqTZNcZYSDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eg3+9A+8; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716171644; x=1747707644;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=HmTOhh9HFJBHTh79UxzuMR2rO3zHP4siktUZD+OBd/0=;
+  b=eg3+9A+8l6zG3oTAQ8rqWyRQtb2CFll4IxSiZ0OfGEamOH0mPp81vZIG
+   Dtz6MD9jcoF7qgbW7D6KehKD9UHQb0Cku9SIrwQotAuS+UPPBCsnTE5Jp
+   DG0Z2x0OSyXS0kaTiGti+Y3OUyaoXSQoFp7wa1UQr8F/lOzjd53mg8Q+w
+   7wjVDIzOk0hwVssMYEmIPP+uPbC7myCwxpyWDcCn7WcDW6s1JClrKjTnD
+   n28OQhs1Ml83s5UJl7RJZiyVj8e1xuUbozAYL5XavMniCnY/ddWHrOdcd
+   aXYao8wcIRtuh0maFEPdBu/ilQ8apfB7KeOipROI+k/7aU0exglqomHr0
+   Q==;
+X-CSE-ConnectionGUID: mQFIdrUURomTEnX5ZofhsA==
+X-CSE-MsgGUID: 86JrXgsQTC+vharbcfkqCw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="12466669"
+X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
+   d="scan'208";a="12466669"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 19:20:44 -0700
+X-CSE-ConnectionGUID: 0+13nvqtSJi+hGLjcBYcKA==
+X-CSE-MsgGUID: I4mEjD1XR6mn5Z5VCt6elQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
+   d="scan'208";a="32286015"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa007.fm.intel.com with ESMTP; 19 May 2024 19:20:39 -0700
+Message-ID: <b09f96db-8451-4de9-81c5-312cffdfd4fc@linux.intel.com>
+Date: Mon, 20 May 2024 10:18:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>,
+ "virtualization@lists.linux-foundation.org"
+ <virtualization@lists.linux-foundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 7/9] iommufd: Associate fault object with
+ iommufd_hw_pgtable
+To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
+ Jacob Pan <jacob.jun.pan@linux.intel.com>,
+ Joel Granados <j.granados@samsung.com>
+References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
+ <20240430145710.68112-8-baolu.lu@linux.intel.com>
+ <BN9PR11MB5276A8E898983310B83C399E8CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB5276A8E898983310B83C399E8CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-A new mechanism, LUF(Lazy Unmap Flush), defers tlb flush until folios
-that have been unmapped and freed, eventually get allocated again.  It's
-safe for folios that had been mapped read only and were unmapped, since
-the contents of the folios don't change while staying in pcp or buddy
-so we can still read the data through the stale tlb entries.
+On 5/15/24 4:50 PM, Tian, Kevin wrote:
+>> From: Lu Baolu <baolu.lu@linux.intel.com>
+>> Sent: Tuesday, April 30, 2024 10:57 PM
+>>
+>> @@ -227,7 +233,7 @@ iommufd_hwpt_nested_alloc(struct iommufd_ctx
+>> *ictx,
+>>   	refcount_inc(&parent->common.obj.users);
+>>   	hwpt_nested->parent = parent;
+>>
+>> -	hwpt->domain = ops->domain_alloc_user(idev->dev, flags,
+>> +	hwpt->domain = ops->domain_alloc_user(idev->dev, 0,
+>>   					      parent->common.domain,
+>> user_data);
+> 
+> it reads slightly better to clear the fault bit and still pass in flags.
+> 
 
-Applied the mechanism to unmapping during folio reclaim.
+Done.
 
-Signed-off-by: Byungchul Park <byungchul@sk.com>
----
- include/linux/rmap.h |  5 +++--
- mm/rmap.c            |  5 ++++-
- mm/vmscan.c          | 21 ++++++++++++++++++++-
- 3 files changed, 27 insertions(+), 4 deletions(-)
+-       hwpt->domain = ops->domain_alloc_user(idev->dev, 0,
++       hwpt->domain = ops->domain_alloc_user(idev->dev,
++                                             flags & 
+~IOMMU_HWPT_FAULT_ID_VALID,
+                                               parent->common.domain, 
+user_data);
 
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index 1898a2c1c087..9ca752f8de97 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -658,7 +658,7 @@ int folio_referenced(struct folio *, int is_locked,
- 			struct mem_cgroup *memcg, unsigned long *vm_flags);
- 
- bool try_to_migrate(struct folio *folio, enum ttu_flags flags);
--void try_to_unmap(struct folio *, enum ttu_flags flags);
-+bool try_to_unmap(struct folio *, enum ttu_flags flags);
- 
- int make_device_exclusive_range(struct mm_struct *mm, unsigned long start,
- 				unsigned long end, struct page **pages,
-@@ -777,8 +777,9 @@ static inline int folio_referenced(struct folio *folio, int is_locked,
- 	return 0;
- }
- 
--static inline void try_to_unmap(struct folio *folio, enum ttu_flags flags)
-+static inline bool try_to_unmap(struct folio *folio, enum ttu_flags flags)
- {
-+	return false;
- }
- 
- static inline int folio_mkclean(struct folio *folio)
-diff --git a/mm/rmap.c b/mm/rmap.c
-index d25ae20a47b5..571e337af448 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -2237,10 +2237,11 @@ static int folio_not_mapped(struct folio *folio)
-  * Tries to remove all the page table entries which are mapping this
-  * folio.  It is the caller's responsibility to check if the folio is
-  * still mapped if needed (use TTU_SYNC to prevent accounting races).
-+ * Return true if all the mappings are read-only, otherwise false.
-  *
-  * Context: Caller must hold the folio lock.
-  */
--void try_to_unmap(struct folio *folio, enum ttu_flags flags)
-+bool try_to_unmap(struct folio *folio, enum ttu_flags flags)
- {
- 	struct rmap_walk_control rwc = {
- 		.rmap_one = try_to_unmap_one,
-@@ -2265,6 +2266,8 @@ void try_to_unmap(struct folio *folio, enum ttu_flags flags)
- 		fold_ubc(tlb_ubc_luf, tlb_ubc_ro);
- 	else
- 		fold_ubc(tlb_ubc, tlb_ubc_ro);
-+
-+	return can_luf;
- }
- 
- /*
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index bb0ff11f9ec9..4e2e9d07cd96 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1031,14 +1031,17 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 		struct reclaim_stat *stat, bool ignore_references)
- {
- 	struct folio_batch free_folios;
-+	struct folio_batch free_folios_luf;
- 	LIST_HEAD(ret_folios);
- 	LIST_HEAD(demote_folios);
- 	unsigned int nr_reclaimed = 0;
- 	unsigned int pgactivate = 0;
- 	bool do_demote_pass;
- 	struct swap_iocb *plug = NULL;
-+	unsigned short int ugen;
- 
- 	folio_batch_init(&free_folios);
-+	folio_batch_init(&free_folios_luf);
- 	memset(stat, 0, sizeof(*stat));
- 	cond_resched();
- 	do_demote_pass = can_demote(pgdat->node_id, sc);
-@@ -1050,6 +1053,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 		enum folio_references references = FOLIOREF_RECLAIM;
- 		bool dirty, writeback;
- 		unsigned int nr_pages;
-+		bool can_luf = false;
- 
- 		cond_resched();
- 
-@@ -1292,7 +1296,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 			if (folio_test_large(folio) && list_empty(&folio->_deferred_list))
- 				flags |= TTU_SYNC;
- 
--			try_to_unmap(folio, flags);
-+			can_luf = try_to_unmap(folio, flags);
- 			if (folio_mapped(folio)) {
- 				stat->nr_unmap_fail += nr_pages;
- 				if (!was_swapbacked &&
-@@ -1457,6 +1461,18 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 		if (folio_test_large(folio) &&
- 		    folio_test_large_rmappable(folio))
- 			folio_undo_large_rmappable(folio);
-+
-+		if (can_luf) {
-+			if (folio_batch_add(&free_folios_luf, folio) == 0) {
-+				mem_cgroup_uncharge_folios(&free_folios_luf);
-+				ugen = try_to_unmap_luf();
-+				if (!ugen)
-+					try_to_unmap_flush();
-+				free_unref_folios(&free_folios_luf, ugen);
-+			}
-+			continue;
-+		}
-+
- 		if (folio_batch_add(&free_folios, folio) == 0) {
- 			mem_cgroup_uncharge_folios(&free_folios);
- 			try_to_unmap_flush();
-@@ -1526,8 +1542,11 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 	pgactivate = stat->nr_activate[0] + stat->nr_activate[1];
- 
- 	mem_cgroup_uncharge_folios(&free_folios);
-+	mem_cgroup_uncharge_folios(&free_folios_luf);
-+	ugen = try_to_unmap_luf();
- 	try_to_unmap_flush();
- 	free_unref_folios(&free_folios, 0);
-+	free_unref_folios(&free_folios_luf, ugen);
- 
- 	list_splice(&ret_folios, folio_list);
- 	count_vm_events(PGACTIVATE, pgactivate);
--- 
-2.17.1
+>> @@ -308,6 +314,19 @@ int iommufd_hwpt_alloc(struct iommufd_ucmd
+>> *ucmd)
+>>   		goto out_put_pt;
+>>   	}
+>>
+>> +	if (cmd->flags & IOMMU_HWPT_FAULT_ID_VALID) {
+>> +		struct iommufd_fault *fault;
+>> +
+>> +		fault = iommufd_get_fault(ucmd, cmd->fault_id);
+>> +		if (IS_ERR(fault)) {
+>> +			rc = PTR_ERR(fault);
+>> +			goto out_hwpt;
+>> +		}
+>> +		hwpt->fault = fault;
+>> +		hwpt->domain->iopf_handler = iommufd_fault_iopf_handler;
+>> +		hwpt->domain->fault_data = hwpt;
+>> +	}
+> 
+> this is nesting specific. why not moving it to the nested_alloc()?
 
+Nesting is currently a use case for userspace I/O page faults, but this
+design should be general enough to support other scenarios as well.
+
+Best regards,
+baolu
 
