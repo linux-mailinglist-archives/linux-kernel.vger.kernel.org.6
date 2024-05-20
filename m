@@ -1,90 +1,102 @@
-Return-Path: <linux-kernel+bounces-183569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042A88C9ACA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:55:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED6F8C9ACD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84079B211E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:55:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5AD61F2123A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875FE481C0;
-	Mon, 20 May 2024 09:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB0B487B6;
+	Mon, 20 May 2024 09:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4gFFiyZp"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="p5pk6DQb"
+Received: from msa.smtpout.orange.fr (out-71.smtpout.orange.fr [193.252.22.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9D5219E0;
-	Mon, 20 May 2024 09:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3C8481AA;
+	Mon, 20 May 2024 09:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716198947; cv=none; b=UkquF3VXE5netdGLXUSrIcRuR+SruDJ0ZGZJKCu4b5mfiiTPJ/jG4IoiQ+ORt+P4F3BWyVxg/3TqR0KPDW2gHxk40Ue+h3wNIm3Dy5Bts7VVRgy+omJKDaJ1h2oK27cFkNXkfl3y+sGCWUReR/2GTnj+zFCtdDWAhf1ecC0+cBs=
+	t=1716198973; cv=none; b=swlmgUDTckhAEiQMuduBurrTOzi/HULsp6SeCdF9kEVS4ZyqgL/S/+SaD0TWO94ETQBQLp717x95efQZC2rJEzhf64SmLdXxSG9JtSxcSMf91zbE5GGTyG2XIXfmocYryGiFXoziZDSMz/vxiDSX3EZLGtFSIy5fyY+VDAaZng4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716198947; c=relaxed/simple;
-	bh=rzE7nnaPg+u62UlsV6bG5IQXkGCAxUqcoHM8hLYB1OU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ArBk3pD8Aa4nY3R7u6edUkm+sZa70sc+nB7wQ40dSuaVw1GxmOPROvr4npZ+yanURKgJYrTgEnpIJvoOu4/g/v+2jvsoOWsVUt0hiCGTf9wtN5YNXSe5G7AJfHbVT9d+JOAfGNRzavSXg8kpe2qBX5ca9Ch+GSV7soOmojxJJjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4gFFiyZp; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716198944;
-	bh=rzE7nnaPg+u62UlsV6bG5IQXkGCAxUqcoHM8hLYB1OU=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=4gFFiyZpSOvXFnhQYJ3KqTyRJEbDDkrgy1aZsXHaxvVvjado3VaUT0E0Bpvni3tMC
-	 erGzuMR6kF2FJtwMH/YhlKMWPQLI6cFaizPwvFuaMaY5DFOmqFLKCpK6JEa6m5X6Qn
-	 RZGGi7dVEAN4fSAVlWij5D8ub2gTdBfPWxgpRLbqhV5YIjXvE+vgBjnhKlieocvJJh
-	 DdXvsXAcLke8ibqtcjUH2oOpg/RhcLOrIZIibrNXVj3v2E0aKsX1uWQpe/4dqQfRTt
-	 r/CE3dFpFiloVdx3uAam+zxUpcHMHsHwvx+k3XBihTmf5gFDyMgYzHvShEYNGtZcrm
-	 7loLBm5oWzr2A==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1820B37820CD;
-	Mon, 20 May 2024 09:55:44 +0000 (UTC)
-Message-ID: <f42ef151-6eee-418f-91e1-5ac08d161119@collabora.com>
-Date: Mon, 20 May 2024 11:55:43 +0200
+	s=arc-20240116; t=1716198973; c=relaxed/simple;
+	bh=8pN9+dZPsIe+Zp9h68CLnh+ugMClUzOnDxV9mWnTvS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QW649owKu7xNVInGuDif8TN3CkPG/5w4v+5xiyylF2Nrq8zlavKL6IzkxDktmg+DbWjYznKp0pVR0WKdX8Q2DMzzDp8/yPa2/CnP3ZlDQR9VEDxQa0Ro6Kk1C3o6J9gnvn8C+HXsy55ZU1K7bgomEXiwVVyXWd3/8MGzDgIiJcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=p5pk6DQb; arc=none smtp.client-ip=193.252.22.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 8zkSsPtMlFWfB8zkTs2sLr; Mon, 20 May 2024 11:56:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1716198966;
+	bh=grLk96lCrEC21k00xQkJtYdNWTj170Ht3ul8K1nz6dA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=p5pk6DQbYbKbK3DM+7H1QiHCOS28wb2JGj6lff//z844isqef6EJcGjnQ0t9OKShd
+	 8msdT59fxLoKPBRA8xeU3iSKYqVeMLKPgIbPZXdFu7C4ftw6ug6ki68z0T6CJROUh+
+	 DJf3mBEm2wqDhyEGHp01XyCUtbw9ku0UwsjFnNYNlQdw2wNsRMhiu9ywgumgV70QzU
+	 SW3MHVLXqv938UswKDuZshl/HAK0mBdqXlQfGT08d9bryPe5PaVI+coluoi39Z4LE6
+	 kaKj8KhIufPeR/wsr6jV+XSC5rs1d522olCsf9Xzwoiurynf0meQjNdMf3q3kXL3dj
+	 Xbs5IkTGAMNDg==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 20 May 2024 11:56:06 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-media@vger.kernel.org
+Subject: [PATCH] media: intel/ipu6: Fix some redundant resources freeing in ipu6_pci_remove()
+Date: Mon, 20 May 2024 11:55:54 +0200
+Message-ID: <33dbf7b5c1b1b94d64a13441b69e1ff976caaa62.1716198935.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] arm64: dts: mediatek: mt8365: use a specific SCPSYS
- compatible
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- MandyJH Liu <mandyjh.liu@mediatek.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240518211159.142920-1-krzysztof.kozlowski@linaro.org>
- <20240518211159.142920-2-krzysztof.kozlowski@linaro.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240518211159.142920-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 18/05/24 23:11, Krzysztof Kozlowski ha scritto:
-> SoCs should use dedicated compatibles for each of their syscon nodes to
-> precisely describe the block.  Using an incorrect compatible does not
-> allow to properly match/validate children of the syscon device.  Replace
-> SYSCFG compatible, which does not have children, with a new dedicated
-> one for SCPSYS block.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+pcim_iomap_regions() and pcim_enable_device() are used in the probe. So
+the corresponding managed resources don't need to be freed explicitly in
+the remove function.
 
-Technically, that's not a SCPSYS block, but called SYSCFG in MT8365, but the
-meaning and the functioning is the same, so it's fine for me.
+Remove the incorrect pci_release_regions() and pci_disable_device() calls.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Fixes: 25fedc021985 ("media: intel/ipu6: add Intel IPU6 PCI device driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/media/pci/intel/ipu6/ipu6.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/media/pci/intel/ipu6/ipu6.c b/drivers/media/pci/intel/ipu6/ipu6.c
+index d2bebd208461..f587f609259d 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6.c
++++ b/drivers/media/pci/intel/ipu6/ipu6.c
+@@ -727,9 +727,6 @@ static void ipu6_pci_remove(struct pci_dev *pdev)
+ 	pm_runtime_forbid(&pdev->dev);
+ 	pm_runtime_get_noresume(&pdev->dev);
+ 
+-	pci_release_regions(pdev);
+-	pci_disable_device(pdev);
+-
+ 	release_firmware(isp->cpd_fw);
+ 
+ 	ipu6_mmu_cleanup(psys_mmu);
+-- 
+2.45.1
 
 
