@@ -1,142 +1,124 @@
-Return-Path: <linux-kernel+bounces-184047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB268CA1C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:05:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3228CA1C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B4861C21A9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:05:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 420301F226AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FFD13792E;
-	Mon, 20 May 2024 18:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C5E137C32;
+	Mon, 20 May 2024 18:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oPqJRmaL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tDnSfZn9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D636034CDE;
-	Mon, 20 May 2024 18:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C4A34CDE;
+	Mon, 20 May 2024 18:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716228304; cv=none; b=XhXirj86UXBDMRKKpJhxZWlVQhMj42As2Pxlt1/gqqPTKKvaPuGaBdslrMEjP4SGK/FJVZR8p8dn9lhkm0+4voZKJeGfpE62VnzZzFCsLTF64iA+n1JHxTxHmWqlLF5n4UuTJGh8Rlt40zSpVQUdv81lLhh+QPla6yUUrQpvnMo=
+	t=1716228332; cv=none; b=mIJ//TCFRfpt/Llr38CVwipUOWy5fq9vMLc5BefbH1PHWfNDn/7j3KuMGdKQHp3ypArrC+CzCpJ1ZFllVpPaHil+DRE+K71OUoDER9EXLeij0pTkimvD2j7y8EirfAZDncEhj04aOymOhRq2pwfsvgGhXi4ZvO7qhXxBk0RmohU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716228304; c=relaxed/simple;
-	bh=kPBtia4xzyfEHTggusZtDrxjOdowelLRyYrYWeNkILQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=f5R/miFMCeYDdl/+mmPjQ39TF3WBS/DI4riYJyz9NMJf5pi2Q5GX29OhdnUtb6qB0AWC+n9MhFgC1tF3j0hfqrbDDb/SRPc/3tuV3erS8/EAe3Ll5WxWLKNk4Cnqmg6XDvccZ3cw1BCCR2ntk+gxRIkfrPzGd9LkRmShbpO+b24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oPqJRmaL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44KBrKQx019730;
-	Mon, 20 May 2024 18:04:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=kPBtia4xzyfEHTggusZtDrxjOdowelLRyYrYWeNkILQ=; b=oP
-	qJRmaLWnD1kxfGyLqrhRLraaRQxTiPHZ34Yr70W5m31c5hQrsi/w2EVEc/1h5MNP
-	/xwaCAuJhuwn/6d3SwZkPYfELmhCh4lphZrtWnGfr229fq+AYsW+REjL8QwZxohl
-	gUp6hSA2yPN31s/W1ET0d3ZeTfZFsm4//GqeoUCtblCMhssvIkYPulXrHXFGWDpg
-	W8njs4W/zWi3LoGQU6hAcW3lDn9aXg9M32CqYOELDkvuD96fHLxUkUI96apyj/Hf
-	gHHaP0piTndidCTZHdYiaZQQ0a4x9jeL/IyH3k+2zjnktVo544JpoosyowWNl0Hf
-	LlY5PY7O1VYJJf1xI6PQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6n4p4d8s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 18:04:40 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44KI4JEw007304
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 18:04:19 GMT
-Received: from [10.110.126.173] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 20 May
- 2024 11:04:15 -0700
-Message-ID: <e6436f2f-ac51-4f18-90f2-e39a2ff1c520@quicinc.com>
-Date: Mon, 20 May 2024 11:03:50 -0700
+	s=arc-20240116; t=1716228332; c=relaxed/simple;
+	bh=fe0UcvX4RKyP+54gpQ64qZRY1cISErxtCFj+FyCrqVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g7DicqGJSnGYwV1rTE5YVnXKomnOToSijEg8urYpzNW3MFtI8APIpwFVxGmgFV+x5AxYdvb94Q+OHYcdwQw/5JeF2ZHlRQPzR+B7B0dIzvn4ZLWfocTEHcxhkyIZ2Dp1KBlBAqa09+82JuWGXb5uD1J7Mxc+/CH1qxOdKPz0F3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tDnSfZn9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E39CC2BD10;
+	Mon, 20 May 2024 18:05:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716228332;
+	bh=fe0UcvX4RKyP+54gpQ64qZRY1cISErxtCFj+FyCrqVI=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=tDnSfZn9+DolgC7qHMN7wdeEtzOqkgm1iuWyrvbwsBvH504JRpoeSIo+vcrSGLEFP
+	 3AaGTl2kjDBQdfszqrGVp9DxG4fUCp5ivs54FeOZ9fCoMTOgnGkhQj3qwq0FmoErQY
+	 duP5ZS3JxGW1X/UzybA8+VswOAV98w5oJ6mxwLOGnY09pn9r5iR9DWMwTMm5yKJ7it
+	 ENxht2fwRbFM98LBRPI8CeD7tnyfrlNu2z54wTy43qMqjD0AACt16kDXGqEK4ixjc4
+	 cJzHX7mU1xtHn7UaAaXNwrz5QuM7vyIfM9bqKW7OzO3IfrDLOKKMqJTFdaIbq/KapC
+	 idGAeS01yhWZg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id EAE9DCE0C3C; Mon, 20 May 2024 11:05:31 -0700 (PDT)
+Date: Mon, 20 May 2024 11:05:31 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Marco Elver <elver@google.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, Breno Leitao <leitao@debian.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	"open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] block: Annotate a racy read in blk_do_io_stat()
+Message-ID: <14bb1b20-b03c-45c1-9566-9287eee23c54@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <447ad732-3ff8-40bf-bd82-f7be66899cee@paulmck-laptop>
+ <ca7c2ef0-7e21-4fb3-ac6b-3dae652a7a0e@acm.org>
+ <59ec96c2-52ce-4da1-92c3-9fe38053cd3d@paulmck-laptop>
+ <CANpmjNMj9r1V6Z63fcJxrFC1v4i2vUCEhm1HT77ikxhx0Rghdw@mail.gmail.com>
+ <dd251dba-0a63-4b57-a05b-bfa02615fae5@paulmck-laptop>
+ <CANpmjNMqRUNUs1mZEhrOSyK0Hk+PdGOi+VAs22qYD+1zTkwfhg@mail.gmail.com>
+ <75421237-4c5a-48bc-849e-87a216ee9d32@paulmck-laptop>
+ <CANpmjNM-Cg12qCU3WoLeBboogLQVgn4znFerRwD3BVAFMc9BiQ@mail.gmail.com>
+ <d9df8351-7cc2-4562-a8b5-440344bfeb91@paulmck-laptop>
+ <CANpmjNO+WDF804s49VdCf2=3io5Uh=8ZbM_jiW5j1rcbcONbUA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sh: Call paging_init() earlier in the init sequence
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        <ysato@users.sourceforge.jp>, <dalias@libc.org>
-CC: <akpm@linux-foundation.org>, <linux-sh@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
-        <kernel@quicinc.com>, Rob Herring <robh@kernel.org>,
-        Rob Landley <rob@landley.net>
-References: <20240423233150.74302-1-quic_obabatun@quicinc.com>
- <72ec7831604326e852eb228072b1d817bab829fb.camel@physik.fu-berlin.de>
- <b00e0adc72815e465cf32fc5505445cfceeeca84.camel@physik.fu-berlin.de>
- <ec5f3194-7e9e-4cc9-86b9-02a204649246@quicinc.com>
- <0e813c8498bf3d9ed5d8fd5b171ac9980dc2999c.camel@physik.fu-berlin.de>
-Content-Language: en-US
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-In-Reply-To: <0e813c8498bf3d9ed5d8fd5b171ac9980dc2999c.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: fnn3RhToGM7W8LpYoAZBiwrfbmQxHCc6
-X-Proofpoint-GUID: fnn3RhToGM7W8LpYoAZBiwrfbmQxHCc6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-20_09,2024-05-17_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0 spamscore=0
- impostorscore=0 clxscore=1015 phishscore=0 suspectscore=0 adultscore=0
- mlxlogscore=624 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405200145
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNO+WDF804s49VdCf2=3io5Uh=8ZbM_jiW5j1rcbcONbUA@mail.gmail.com>
 
+On Thu, May 16, 2024 at 08:35:02AM +0200, Marco Elver wrote:
+> On Wed, 15 May 2024 at 23:51, Paul E. McKenney <paulmck@kernel.org> wrote:
+> [...]
+> > > And I just checked the current access-marking.txt to see where we
+> > > might add more, and found the section "ACCESS-DOCUMENTATION OPTIONS"
+> > > already exists. I think that section is perfectly reasonable as is,
+> > > and it does explicitly talk about ASSERT_EXCLUSIVE* macros.
+> > >
+> > > Did you want to add it more prominently at the top? If so, maybe a
+> > > brief forward-reference to that section might be helpful.
+> >
+> > How about like this?
+> >
+> > ------------------------------------------------------------------------
+> >
+> > The Linux kernel provides the following access-marking options:
+> >
+> > 1.      Plain C-language accesses (unmarked), for example, "a = b;"
+> >
+> > 2.      Data-race marking, for example, "data_race(a = b);"
+> >
+> > 3.      READ_ONCE(), for example, "a = READ_ONCE(b);"
+> >         The various forms of atomic_read() also fit in here.
+> >
+> > 4.      WRITE_ONCE(), for example, "WRITE_ONCE(a, b);"
+> >         The various forms of atomic_set() also fit in here.
+> >
+> > 5.      __data_racy, for example "int __data_racy a;"
+> >
+> > 6.      KCSAN's negative-marking assertions, ASSERT_EXCLUSIVE_ACCESS()
+> >         and ASSERT_EXCLUSIVE_WRITER(), are desccribed in the
+> >         "ACCESS-DOCUMENTATION OPTIONS" section below.
+> 
+> s/desccribed/described/
 
-On 5/7/2024 3:41 PM, John Paul Adrian Glaubitz wrote:
-> Hello Oreoluwa,
->
-> On Tue, 2024-05-07 at 14:42 -0700, Oreoluwa Babatunde wrote:
->> memblock_alloc() marks all its allocations as reserved by calling
->> memblock_reserve().
->> https://elixir.bootlin.com/linux/latest/source/mm/memblock.c#L1463
->>
->> This should normally stop other users from allocating from within that
->> region of memory.
->>
->> But in this case, since all the free memory regions have already been
->> transferred over to the bootmem framework by paging_init(), I am not
->> sure if that logic will still hold for the unflatten_deivcetree allocated memory.
->>
->> The main goal of this patch is to make sure that the reserved memory
->> regions defined in the DT are set aside before any memblock allocations
->> are done (which includes the allocation done by unflatten_devicetree).
->>
->> Hence, I can restructure the patch to only remove the portion of code that is
->> is responsible for setting aside the DT defined reserved memory regions from
->> within paging_init(), and move it above the unflatten_devicetree() call.
->> https://elixir.bootlin.com/linux/latest/source/arch/sh/mm/init.c#L292
->>
->> I will explore further and possibly restructure this patch based on my findings.
-> OK, sounds like a plan. In the meantime, I have set up my J2 Turtle Board and
-> I am actually now able to test patches for this target, so that I would be
-> able to verify that your patch didn't break anything.
->
-> However, I think for v6.10 I think the ship has sailed.
->
-> Adrian
-Hi Adrian,
+Good eyes, fixed!
 
-I have uploaded v3 of this patch now.
-https://lore.kernel.org/all/20240520175802.2002183-1-quic_obabatun@quicinc.com/
+> > ------------------------------------------------------------------------
+> >
+> > Would that work?
+> 
+> It works for me, if we agree that "negative marking" makes sense: if
+> the other markings indicate the access is happening concurrently with
+> others, a negative marking does the opposite.
 
-In this new version, paging_init() is left in its original position and only the portion
-of code that is responsible for setting aside the reserved memory regions is moved.
+Very good, I will send this out shortly after v6.10-rc1 comes out and
+let's see where the bikeshedding leads.  ;-)
 
-Thank you!
-Oreoluwa
+							Thanx, Paul
 
