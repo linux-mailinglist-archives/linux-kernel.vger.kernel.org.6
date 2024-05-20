@@ -1,283 +1,171 @@
-Return-Path: <linux-kernel+bounces-184125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1542A8CA2DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:48:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306108CA2DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 392621C20C0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:48:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 526C1B222F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441131386B3;
-	Mon, 20 May 2024 19:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC241386AF;
+	Mon, 20 May 2024 19:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hf9PJgQ4"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="APUp2CIs"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11024022.outbound.protection.outlook.com [52.101.61.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B791718EBF
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 19:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716234530; cv=none; b=fOSKnay25AfYfX+91muqMjslou7+HnyaLU8i/qqUZ8C6sfveypa89OqwIlz8vLaOuMKjmy6mM0DbwkrCCz5W+2ldEo7Oo8Yk5CdQk1OP3m9njceRiZNIa87BQBsBcBxURIxDLIKNNtbioJ7mI1e6kQslmJHB2yefxHEBJozU9Kc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716234530; c=relaxed/simple;
-	bh=HEsM47HF6mcipvDTHY2N5vZlfa3QUdtia5u5E/euMOs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UbMMFqpVdltLPBKFPn8WbtsmKHoAoZ2ZRdwU/pTRZfUbSp1FW+zIy6yIJyptgZ6FMRGx65euY9WuaDcVm+FYw5+8uLMk5g72NfjAl4SV/FuIBfAurM0orEcZ6UTc3tDZn1/LOtGjeImxFDWKTw1vZzk6qk2hMUG/WmumOncLO/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hf9PJgQ4; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-622ce869e9bso33903317b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 12:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716234527; x=1716839327; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CxHZ56zm4ItHAREln0MAqCnqcbTO0AQUe9UM1z9zLfY=;
-        b=hf9PJgQ4wNmsLJI/3iVtq/KQD0lN1Ax5vyAS/taMpJOcbtY/+LkGeuEMbPxdD5DSd0
-         +IGw7sqplzsgkL0pWyt2XFxOQOz8A/V2oaMXo1k7Kv453wiXe2Oda4//gdnas2v3k9wK
-         dzxtCW9U6wHTSinjcpV1u03iI6J221xAGbwXYUCf5kGKOophWb2Z2m19zhRxZxd0LsAs
-         tTrvqwcSdRHcvLUhSB4bMGJpqUg90BV3QUArK3SxANCuryupaMdlPWaGLTYa8XoY62BL
-         mdrrE7MQCkfWFiqvsy6sfsqB4xhJ6jGSjL2GpJfQhtxW+ffAgsswSvxVvA6rqqHT7nFM
-         u1ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716234527; x=1716839327;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CxHZ56zm4ItHAREln0MAqCnqcbTO0AQUe9UM1z9zLfY=;
-        b=Fx8WhtDBSATeHRiiiSCvFAgkp8skpsRIiZokQLlu7P3Sl7WMyCR2s49EjvKOxFD9PY
-         Vbu4PlbkaVwxvxjMxj1uk/48bnY+gd5z4bXf8Rs40+6OAWt9T/yGCbIt8606oWN1kW9y
-         zXwK5/2AykTRbFcUNnjTV9Lp88FWJz1MfDbkvfBNc+d0vKc6O5eMZYa0tnwJioVTzds9
-         pxcqf/dXRy3j23yzzoTBaWgVMAjNH/hToTXKVTG+dvzHk/JEDwEGO7e1BDwBYoXPV9z+
-         sJpidyHNxMIRwzGqkFd0gMSnswkUkw4ZBOllgaPyaC+FVknAbXWEOd/1yV5LWzSKoten
-         EFmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeEJChAkyhcE1pXnllESGKkJJL1TZyQRMN8KyRGEQmILhgF8h52nslgmqIdGUFxxEVfkKSXIeMSxcTSM71QcVRaFMoEUgCB4TM9dyh
-X-Gm-Message-State: AOJu0Yyaox2QjH3SdLLfrbUifWCE+yrVS0FpMVKfli1kC7KRSFBDbFp2
-	r68cn2fEiUeJ/5qvQUeBQcTxtkU7rWUN19t+cJ1hfQ+3nT2RKeoR
-X-Google-Smtp-Source: AGHT+IGRVnzRuJy3FzjwWKxx39LtXKiCJCYMf1/eg0CGPu5354+L2uqAHc6D7tg5dpC89Hd4MY3IAg==
-X-Received: by 2002:a81:e24d:0:b0:61a:c316:9953 with SMTP id 00721157ae682-622aff42b46mr301350797b3.11.1716234527493;
-        Mon, 20 May 2024 12:48:47 -0700 (PDT)
-Received: from fedora.attlocal.net ([2600:1700:2f7d:1800::42])
-        by smtp.googlemail.com with ESMTPSA id 00721157ae682-6209e346760sm50695827b3.78.2024.05.20.12.48.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 12:48:47 -0700 (PDT)
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	muchun.song@linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH] Convert __unmap_hugepage_range() to folios
-Date: Mon, 20 May 2024 12:47:49 -0700
-Message-ID: <20240520194749.334896-1-vishal.moola@gmail.com>
-X-Mailer: git-send-email 2.45.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4AF8C06;
+	Mon, 20 May 2024 19:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716234546; cv=fail; b=db6AYDShj8AJYVYHXGN59X+bWqV3EwbLXzf+GU01HepRprPX33A3ivrGtvEhitGZ4d2YlFG/CzM6cD3T8rP+CHTejbWzXUaovPrdvp1tHEnGihtTjhozNdXYeWw0YHbyNAsKAlJtiWqUVT5pbk5fU4xXOQJsAscUeevS3vRK3QM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716234546; c=relaxed/simple;
+	bh=V5L8sTgLWcCU5k7y+R2sjR1DJjUbtz03JOZ6lkl/Kx0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ud302aEOyF2/lf7mAGETh6kBjnI5KAURUdnNQpwpAsc22mDmeGnSw43XiJ7F9HQal6i3SSwCDkvZ2mFQvuR8Fbs/+h4O1rA/p6RC3X0L2mUsTkVgzp6TCaPia8+bp76VBuIRNQod25XOymrAJnSewzDJMYbwJy7HMzmN3b4q4ck=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=APUp2CIs; arc=fail smtp.client-ip=52.101.61.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DH65Gu9JH8c5PbiF9+0cDav564X9nT+0PiHRuIfSg0hv1v9KZgAFwRQ12k20+Tw5o2ssSIabnUtuyChIYk5Fe2e7epwu1xkpGoZ86XFiXT0DWBc1Lu+LFYuTloNaWJoITPoxuS3/uaz1KIPHkHrA3vZDu0GW3oZH41LMFfx2A690Xy5k+Z+l2N6fjiTFqksUwMExEyHyLSMBrQr2/KP/TjN3N2ZVxpni4VQTALIRXFVFxH+6wxKhPiAgCDEWSdAvo2EHNXVdyxmlMGDkkbzICoBVX8UUe2LPzVPnLLnxiDcZ49hcTu9sLkZGiSZjgJlb6oo86NXcOtwzsFFL6kSu4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=V5L8sTgLWcCU5k7y+R2sjR1DJjUbtz03JOZ6lkl/Kx0=;
+ b=YS7qTCIO8Fxj3cDNG0gMk+wnJ4hVpjaUW2ruERKRGCxzezvuX5ATbTbloX/9MVg7U2snh/UBtNwcnkfo+oUsx5AqHRAEVYMzEHckd5jZuW/7Z1DsVEjobjcQeqUpt/qlguXMyH8rFu5gsbIBTV3ylDueT90lOChIjrvFyrK9WVAfTCmkL1iYAauXwUDYKHBvyt0v4f+oIgfW2w7aFjXRrVQvI99bKOtkGwcOb1236805vCNeZhbrAidSozG5HdBB8qMIL+rwq29hN2lL/09TrUdWQ3nfkEEWqGMMXUbBNaSQdPvO8D+85YmCPwihqKGJHCV6zRvcEl7cSMT0DAOz2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=V5L8sTgLWcCU5k7y+R2sjR1DJjUbtz03JOZ6lkl/Kx0=;
+ b=APUp2CIskRF5IjnachqB1eXZViMS/ZpNdNxJ7WTKYOs8XTZgKmOt+kBUOH4+lzHwV5IiIRmtwR8WoWlE8V7h/JjLqkTOGtcqcUO/W3uukrNnsQuYFkRALOsGcs1+bTQfJY1uHaymOib1R4iR4CqZpO2PruRyKAQ3dAaC8cOu4Wg=
+Received: from PH7PR21MB3071.namprd21.prod.outlook.com (2603:10b6:510:1d0::12)
+ by DS7PR21MB3366.namprd21.prod.outlook.com (2603:10b6:8:82::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.2; Mon, 20 May 2024 19:49:01 +0000
+Received: from PH7PR21MB3071.namprd21.prod.outlook.com
+ ([fe80::204c:c88b:65d2:7d3a]) by PH7PR21MB3071.namprd21.prod.outlook.com
+ ([fe80::204c:c88b:65d2:7d3a%6]) with mapi id 15.20.7633.000; Mon, 20 May 2024
+ 19:49:01 +0000
+From: Long Li <longli@microsoft.com>
+To: Konstantin Taranov <kotaranov@linux.microsoft.com>, Konstantin Taranov
+	<kotaranov@microsoft.com>, "sharmaajay@microsoft.com"
+	<sharmaajay@microsoft.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "leon@kernel.org"
+	<leon@kernel.org>
+CC: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH rdma-next 3/3] RDMA/mana_ib: Modify QP state
+Thread-Topic: [PATCH rdma-next 3/3] RDMA/mana_ib: Modify QP state
+Thread-Index: AQHaoGRmrTY+qMVYqUaTAQ7xEqQbEbGgnJTw
+Date: Mon, 20 May 2024 19:49:01 +0000
+Message-ID:
+ <PH7PR21MB3071DAA2FA116BE3262672DDCEE92@PH7PR21MB3071.namprd21.prod.outlook.com>
+References: <1715075595-24470-1-git-send-email-kotaranov@linux.microsoft.com>
+ <1715075595-24470-4-git-send-email-kotaranov@linux.microsoft.com>
+In-Reply-To: <1715075595-24470-4-git-send-email-kotaranov@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=0a63d88b-68d4-4b0e-bef0-a01bdd2784f4;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-05-20T19:48:27Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR21MB3071:EE_|DS7PR21MB3366:EE_
+x-ms-office365-filtering-correlation-id: dd85766e-5168-47a7-0bdb-08dc7905e571
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|38070700009;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?2peG6qp6eANHoknVska9LztuS+0ZcBup/KQZDHPz8/o7hQ7RMFbY1Qui509w?=
+ =?us-ascii?Q?4r0Eh7YEnGDYZzzCFXzmhvZSD53AWuO1O/CVMjNlkYuORqkwFGpx5thP0Ioq?=
+ =?us-ascii?Q?OrEEjZJ7fCASpqiR73XiwigzbA9IJRDKHMbXN/fkICaN06zt27I3QZQqdkVb?=
+ =?us-ascii?Q?eicZRnPSSH2Gui5QNeJ0XOP/IBUF6mV3qRV0O7tfxfo44hKbtVg8VGD7GGSA?=
+ =?us-ascii?Q?YyAX7XOC5dz7k6Gc8gBljg0oVk/WA1UVJcJMqxuQUXusb6i/NiXX+cvV4IbQ?=
+ =?us-ascii?Q?7aOgIOEKPV+MFWarA1xwHglyNvEg/rajrKP3TOOirYEnkxRaxDR76KXJnn8z?=
+ =?us-ascii?Q?7eN/zFMft5mjiyPcENafzr/k/FA50YALjPXxUh1oFXff1oLpgGIdt7V0soeN?=
+ =?us-ascii?Q?AEEmJjyrcuHk7i6RklnL/QyG8h1/6PBGPnh8OQV1Oe5p8aMxItadQX69qvnc?=
+ =?us-ascii?Q?YXLzit+0KXpBlDs0aRIKjzfE+4u2owboL0zbV7VHa8o8fS5bQzPG1ATtay6j?=
+ =?us-ascii?Q?d+6GI3yCgUrNDEA8COHRbWhHuoHbPGFzMQ30q3L3YIU+QPPqcPEXr6DNKQja?=
+ =?us-ascii?Q?9B1Y+t0elN0Ipl+d8VNrLChbcPosFp/NH3Up7yTlmvFloI/8NGlt8Ousrkk8?=
+ =?us-ascii?Q?NCHa0CWtSlEPxMUD6FQy1iOrftdCZJiB3JgaEuUMv4Oj8sEP2M+oHBS0qCGY?=
+ =?us-ascii?Q?9QecVE04IuaGbjlJiMh0Qedl6VsPcZ7cxm953ZZ43S3H4OxksW2mz2+Usd7e?=
+ =?us-ascii?Q?LNJkZojVupste33vNwxoMCPVutjYLZr9dE6ZsBGNclOrHbxXfLFd7SxKprbF?=
+ =?us-ascii?Q?QHklO66F6EKMQMzRabzmHgzMXK0vZbhCQnc93netjjetBn0F86BwxdQ6/rrJ?=
+ =?us-ascii?Q?sQG7IeW9GHQuh/mjuR9lBfB3/l+LMBwt9sBtISyFxjIrUYfydkQ9wBa6I71n?=
+ =?us-ascii?Q?TXUppyASXWHyN9+tcjiCvqLdk3bIu/gAtcMxfQ39XshsFSmNeIGYi34oBQ1T?=
+ =?us-ascii?Q?KDJSjRfKXTwwQAipmgmbpTUy7qwsQEWQfHDZSuhWxBkhyEA/SNgOmmjUnIYd?=
+ =?us-ascii?Q?icKR9hXLsQPAnoyANGmCZTqveTVo2BEpQBA7bKB9H77yIOsGWZFFfLkOZf+f?=
+ =?us-ascii?Q?6jtv6ip4/u613dwYF+d3I+dPPzMy59jMen1RvQ1el08JUhz/2QBKUCEutgt4?=
+ =?us-ascii?Q?tnNBQHBR3SYNp2f1iV4I16OmXxXQtTJwHVZxnvdOL1hq1tKk72Tbq5VSK2yZ?=
+ =?us-ascii?Q?csLiiA/fTsnUT2fQuj0iDbvLywwGCDeHktK85hvmado1Piphyy2q2bFDvs/P?=
+ =?us-ascii?Q?6kWcbnq29mATiwi2ufUcZ6a+/QYAnE4tQTdbzzNPRkNaiQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR21MB3071.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?PQGFG8jWSzGcZoWQUGmPRGWnZiTU0eCALy8AeQSttNK0Gsi/ErhMMWawjh1F?=
+ =?us-ascii?Q?fE1Sxs8fjEreqoqIaG1JFMDsYU8TOh3n4vBRnrvpowrsp6vreD2ewJzdeEdP?=
+ =?us-ascii?Q?55KuLFbZHzMX3pwn1cvAuFpTxaSerdqNDisNbQntZkuFb3BP5OGJ9NW5SHbP?=
+ =?us-ascii?Q?+YmYb66HoL7heQwzBRyJfVY+mRGV938lZfrLC6zBpba5lGtX/TMuD/PMMDyA?=
+ =?us-ascii?Q?TSsc055D15MNt1G1LwVYnnuBv09eXy8wYRbei4g2XwXpB1z3bsWIkH4Z+7JB?=
+ =?us-ascii?Q?KPrhwjcev1nLGAq+xOOtVc/Db+fBDPpVG/X7w1YFz4G0DxK7tGn77msvCp08?=
+ =?us-ascii?Q?PLmulJbrNtHE5i+XlI8taFbrAx0fDg7qzfdYR0S8kB+FgR4rcC1qatQmPnNt?=
+ =?us-ascii?Q?IT10glnP48sD/2yDU1do5xC5zTb7CLKFzqOl3TBWPTDgGpGxXn6VU2DYZ0D+?=
+ =?us-ascii?Q?r32ny5atC2JLskQuQ7yBz4oKRZw2YaRXPRo2WHwUB8sj3YCw3j/KiBH6sPqT?=
+ =?us-ascii?Q?HyAWoU6eutxJUJK5POG88ZMtl4z0uYKXCo94b13+tJEpUc8ESMCMjId+6BYk?=
+ =?us-ascii?Q?6/mtMJf/sINFRan8a7zR2PnA3hvuHZk2ZaSOw2K4YTHQvw1CqUGrqocXKBQV?=
+ =?us-ascii?Q?ADexR5bnojZqG8Yn5j/Y+Kq8/t5PKYArdf6vJ3M+9MePn4Y0cM5CrIZX3i/p?=
+ =?us-ascii?Q?F2J1iStdvVRfO5ZzDXs4fG9z/7RUafJWrp+obIKoR1sxN68CAueQ6sgMS+pG?=
+ =?us-ascii?Q?Wp1OscXmJqpo0R87wm6XrIMTHHOb9LMvTPD34dz1tDjIsjnntX3zfTk2bjHx?=
+ =?us-ascii?Q?MSES4MZ804OsMej7zBo1N2Sf+r8lADSDqwD9ksFPZlGsHkHxppU6FJQKHi5J?=
+ =?us-ascii?Q?UgNE5mNQCkCtSauRrrtfzJOsMoRXO7oZo2yIuFHeaX+Azd/dKVQXFOetNHQv?=
+ =?us-ascii?Q?q19Cjho6IxlqEv//vH2AA+YhDdP5MbEeCTSjeDNpi+YJiqcmPBE9EZLYoYkA?=
+ =?us-ascii?Q?knztqIqIfPjsBQkJeO4h2lMXy2OrwXDoIRQhrDT36qk8vd1s9H5BnWIxgFcX?=
+ =?us-ascii?Q?cZmhbz3exPVXxvJ9TMytoG+zzv8peEILHoKvvizk2UL1jdIRqc/aSlppsTWT?=
+ =?us-ascii?Q?3bZl1TO11NYoYCSQP2WeG2OW/3HUs7UPqKcCSi5SCjAsUAeV+h48R7NZLger?=
+ =?us-ascii?Q?iNRE21WrcVp1P6nD8FxXu0as4PqVFoqKCUGoZ74RWM/mcVu88te3qFqJFoCe?=
+ =?us-ascii?Q?2ZQeAIRfR/zlOcpop2LX2nkWMNKoCF10GdZXEZHZln6uam8nBCpSS+h4qT20?=
+ =?us-ascii?Q?+WfTj18CiVA43C/8Go9Hult+BYvFcvePbXcf3IJnE0mR12zjkwDbozajnRUA?=
+ =?us-ascii?Q?yhDLcZ9X77mvI2WuFy+YRTfkTd0QWxU8vgNXi+RTFIAVwZrSM/jGu+6PMcui?=
+ =?us-ascii?Q?PeXYgtm0LhG6blnk8f38q8Rdl6F9dGKDurK9sdjQQTAYc57BCH+IZ/E+e2ud?=
+ =?us-ascii?Q?teBlUifDJd6IOd5JVjMvIuXAuS4hbE5j929zMAGgXrTEbgxm6F8p0r+sVJh8?=
+ =?us-ascii?Q?0FPcacLOvZpIboWcUxV/bkxxHC3oLiO/ykOsWPSW?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR21MB3071.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd85766e-5168-47a7-0bdb-08dc7905e571
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2024 19:49:01.0730
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WOQGCxEHFVpDeLD5JtpynvAFXKyXl2OlNhJ1p3Sa72caFYoFo/qZemve47CNv64RzYkx5QTVS1AEgp8FUf97Cw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR21MB3366
 
-Replaces 4 calls to compound_head() with one. Also converts
-unmap_hugepage_range() and unmap_ref_private() to take in folios.
+> Subject: [PATCH rdma-next 3/3] RDMA/mana_ib: Modify QP state
+>=20
+> From: Konstantin Taranov <kotaranov@microsoft.com>
+>=20
+> Implement modify QP state for RC QPs.
+>=20
+> Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
 
-Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
----
- include/linux/hugetlb.h |  6 ++---
- mm/hugetlb.c            | 50 ++++++++++++++++++++---------------------
- 2 files changed, 28 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 68244bb3637a..6c7ce8679950 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -137,12 +137,12 @@ struct page *hugetlb_follow_page_mask(struct vm_area_struct *vma,
- 				      unsigned long address, unsigned int flags,
- 				      unsigned int *page_mask);
- void unmap_hugepage_range(struct vm_area_struct *,
--			  unsigned long, unsigned long, struct page *,
-+			  unsigned long, unsigned long, struct folio *,
- 			  zap_flags_t);
- void __unmap_hugepage_range(struct mmu_gather *tlb,
- 			  struct vm_area_struct *vma,
- 			  unsigned long start, unsigned long end,
--			  struct page *ref_page, zap_flags_t zap_flags);
-+			  struct folio *ref_folio, zap_flags_t zap_flags);
- void hugetlb_report_meminfo(struct seq_file *);
- int hugetlb_report_node_meminfo(char *buf, int len, int nid);
- void hugetlb_show_meminfo_node(int nid);
-@@ -458,7 +458,7 @@ static inline long hugetlb_change_protection(
- 
- static inline void __unmap_hugepage_range(struct mmu_gather *tlb,
- 			struct vm_area_struct *vma, unsigned long start,
--			unsigned long end, struct page *ref_page,
-+			unsigned long end, struct folio *ref_folio,
- 			zap_flags_t zap_flags)
- {
- 	BUG();
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6be78e7d4f6e..02f40bfa3686 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5643,14 +5643,14 @@ int move_hugetlb_page_tables(struct vm_area_struct *vma,
- 
- void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 			    unsigned long start, unsigned long end,
--			    struct page *ref_page, zap_flags_t zap_flags)
-+			    struct folio *ref_folio, zap_flags_t zap_flags)
- {
- 	struct mm_struct *mm = vma->vm_mm;
- 	unsigned long address;
- 	pte_t *ptep;
- 	pte_t pte;
- 	spinlock_t *ptl;
--	struct page *page;
-+	struct folio *folio;
- 	struct hstate *h = hstate_vma(vma);
- 	unsigned long sz = huge_page_size(h);
- 	bool adjust_reservation = false;
-@@ -5663,7 +5663,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 
- 	/*
- 	 * This is a hugetlb vma, all the pte entries should point
--	 * to huge page.
-+	 * to huge folio.
- 	 */
- 	tlb_change_page_size(tlb, sz);
- 	tlb_start_vma(tlb, vma);
-@@ -5714,19 +5714,19 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 			continue;
- 		}
- 
--		page = pte_page(pte);
-+		folio = page_folio(pte_page(pte));
- 		/*
--		 * If a reference page is supplied, it is because a specific
--		 * page is being unmapped, not a range. Ensure the page we
--		 * are about to unmap is the actual page of interest.
-+		 * If a reference folio is supplied, it is because a specific
-+		 * folio is being unmapped, not a range. Ensure the folio we
-+		 * are about to unmap is the actual folio of interest.
- 		 */
--		if (ref_page) {
--			if (page != ref_page) {
-+		if (ref_folio) {
-+			if (folio != ref_folio) {
- 				spin_unlock(ptl);
- 				continue;
- 			}
- 			/*
--			 * Mark the VMA as having unmapped its page so that
-+			 * Mark the VMA as having unmapped its folio so that
- 			 * future faults in this VMA will fail rather than
- 			 * looking like data was lost
- 			 */
-@@ -5736,7 +5736,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		pte = huge_ptep_get_and_clear(mm, address, ptep);
- 		tlb_remove_huge_tlb_entry(h, tlb, ptep, address);
- 		if (huge_pte_dirty(pte))
--			set_page_dirty(page);
-+			folio_mark_dirty(folio);
- 		/* Leave a uffd-wp pte marker if needed */
- 		if (huge_pte_uffd_wp(pte) &&
- 		    !(zap_flags & ZAP_FLAG_DROP_MARKER))
-@@ -5744,17 +5744,17 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 					make_pte_marker(PTE_MARKER_UFFD_WP),
- 					sz);
- 		hugetlb_count_sub(pages_per_huge_page(h), mm);
--		hugetlb_remove_rmap(page_folio(page));
-+		hugetlb_remove_rmap(folio);
- 
- 		/*
--		 * Restore the reservation for anonymous page, otherwise the
--		 * backing page could be stolen by someone.
-+		 * Restore the reservation for anonymous folio, otherwise the
-+		 * backing folio could be stolen by someone.
- 		 * If there we are freeing a surplus, do not set the restore
- 		 * reservation bit.
- 		 */
- 		if (!h->surplus_huge_pages && __vma_private_lock(vma) &&
--		    folio_test_anon(page_folio(page))) {
--			folio_set_hugetlb_restore_reserve(page_folio(page));
-+		    folio_test_anon(folio)) {
-+			folio_set_hugetlb_restore_reserve(folio);
- 			/* Reservation to be adjusted after the spin lock */
- 			adjust_reservation = true;
- 		}
-@@ -5771,11 +5771,11 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		if (adjust_reservation && vma_needs_reservation(h, vma, address))
- 			vma_add_reservation(h, vma, address);
- 
--		tlb_remove_page_size(tlb, page, huge_page_size(h));
-+		tlb_remove_page_size(tlb, &folio->page, huge_page_size(h));
- 		/*
--		 * Bail out after unmapping reference page if supplied
-+		 * Bail out after unmapping reference folio if supplied
- 		 */
--		if (ref_page)
-+		if (ref_folio)
- 			break;
- 	}
- 	tlb_end_vma(tlb, vma);
-@@ -5837,7 +5837,7 @@ void __hugetlb_zap_end(struct vm_area_struct *vma,
- }
- 
- void unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
--			  unsigned long end, struct page *ref_page,
-+			  unsigned long end, struct folio *ref_folio,
- 			  zap_flags_t zap_flags)
- {
- 	struct mmu_notifier_range range;
-@@ -5849,7 +5849,7 @@ void unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
- 	mmu_notifier_invalidate_range_start(&range);
- 	tlb_gather_mmu(&tlb, vma->vm_mm);
- 
--	__unmap_hugepage_range(&tlb, vma, start, end, ref_page, zap_flags);
-+	__unmap_hugepage_range(&tlb, vma, start, end, ref_folio, zap_flags);
- 
- 	mmu_notifier_invalidate_range_end(&range);
- 	tlb_finish_mmu(&tlb);
-@@ -5862,7 +5862,7 @@ void unmap_hugepage_range(struct vm_area_struct *vma, unsigned long start,
-  * same region.
-  */
- static void unmap_ref_private(struct mm_struct *mm, struct vm_area_struct *vma,
--			      struct page *page, unsigned long address)
-+			      struct folio *folio, unsigned long address)
- {
- 	struct hstate *h = hstate_vma(vma);
- 	struct vm_area_struct *iter_vma;
-@@ -5898,7 +5898,7 @@ static void unmap_ref_private(struct mm_struct *mm, struct vm_area_struct *vma,
- 			continue;
- 
- 		/*
--		 * Unmap the page from other VMAs without their own reserves.
-+		 * Unmap the folio from other VMAs without their own reserves.
- 		 * They get marked to be SIGKILLed if they fault in these
- 		 * areas. This is because a future no-page fault on this VMA
- 		 * could insert a zeroed page instead of the data existing
-@@ -5906,7 +5906,7 @@ static void unmap_ref_private(struct mm_struct *mm, struct vm_area_struct *vma,
- 		 */
- 		if (!is_vma_resv_set(iter_vma, HPAGE_RESV_OWNER))
- 			unmap_hugepage_range(iter_vma, address,
--					     address + huge_page_size(h), page, 0);
-+					     address + huge_page_size(h), folio, 0);
- 	}
- 	i_mmap_unlock_write(mapping);
- }
-@@ -6035,7 +6035,7 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
- 			hugetlb_vma_unlock_read(vma);
- 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 
--			unmap_ref_private(mm, vma, &old_folio->page,
-+			unmap_ref_private(mm, vma, old_folio,
- 					vmf->address);
- 
- 			mutex_lock(&hugetlb_fault_mutex_table[hash]);
--- 
-2.45.0
-
+Reviewed-by: Long Li <longli@microsoft.com>
 
