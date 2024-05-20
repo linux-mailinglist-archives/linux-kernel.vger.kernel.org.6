@@ -1,160 +1,165 @@
-Return-Path: <linux-kernel+bounces-183779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20138C9DF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:17:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7BD98C9E2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 693B81F21DE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:17:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C563B22F93
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C29134407;
-	Mon, 20 May 2024 13:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XrQkqERh"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7605E136655;
+	Mon, 20 May 2024 13:29:39 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F0C1CD18;
-	Mon, 20 May 2024 13:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91D443AB2;
+	Mon, 20 May 2024 13:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716211069; cv=none; b=Gs2eb9IKv416fCFugFRfJwFCcFWU9NQWCAefeD9m/8bjngTRvUHgJjK2V3AGyLfuBdGgglwZspBdtgoMd+lNXCIW3OPhk+a2X7pr3RB1vEC4eH2fUxcFbmOv5yGMuMXM3h9iMekTryQynJMl9wMRgk1eVEhoa7by2X8C65h5Buk=
+	t=1716211779; cv=none; b=Lc369pdizeX0EEMy6G9E8c9w58YM6mzIblpABFNNjX7us9pXw/XvoQ3gCvLNU1PgOi/vlAAHA+azpgsk4WtAgb3S5Xe4wIQvmwG+M2fiVnVyJvxSs4O4DPgu5tHFfWbauO+4RMHybEVfdv03ujw38Ck5ol/q6sLlMOVK8z5vi+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716211069; c=relaxed/simple;
-	bh=2pc9eb/n0fggHWJGm7ZPYFjRKT4X2r90jaagBTnGttA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOaZa0VM5lbF6miFKV0ZfVT9wiCZXfnXHnqb+nBe8O36PRh3iyudSBWv/M/OzWSMH2/Nw/3CnTfJQ1AHODkMMrx2Ztpx+ttDpejdOXi3skcv4h/LUHs9ii9lUZ2Eiu33T2vIh/HdSZsNsQEkha6YL2AbaLyzbornD0Os3HwJ1EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XrQkqERh; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=kBepfuRSnR60+uXpcB5dLLA7csPWcskh8ZUNfZDMcXI=; b=XrQkqERh5PY8JuDZ54IBjmYc/S
-	OzyanipZZToOSnM3CT9RqesnTEe7B0Jyqt1grcLwm8aDN+oJtl4WJbPB7bnKL9VS+SMFDkY+Vxnfv
-	RKQ9FZI+7i1LHL6p064EIw20vAMW/04AgUsPWZkkHiEeFhbvQgVk3eiKbJNRgeqBxWok=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s92tR-00FhLz-AJ; Mon, 20 May 2024 15:17:33 +0200
-Date: Mon, 20 May 2024 15:17:33 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v3 4/5] net: phy: mediatek: Extend 1G TX/RX link
- pulse time
-Message-ID: <5389c04a-40ff-44a1-9592-05c6dc1a9636@lunn.ch>
-References: <20240520113456.21675-1-SkyLake.Huang@mediatek.com>
- <20240520113456.21675-5-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1716211779; c=relaxed/simple;
+	bh=dfQ2mFPkIfsAxlVTyO4uk0ANvRgUl3qUB4NCcxQVKBM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H9muJ2xhzjNnEWH3ejFLTM/IHJb+KcoCrLvj/QasQuRzyNrzpge9+6OCVAFj/4ESoOucfZhiJsaer0W7SAVqfP9G0MGnULnKtIKzPWZUwXT/AxzFEb/ylVYORA+XDt68Xz1uZGAodII5b9JPvSVc8aDo+6wWt9OJcDY7S0CATK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VjdhM516Tz4f3jMH;
+	Mon, 20 May 2024 21:29:23 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 8E5871A0BCA;
+	Mon, 20 May 2024 21:29:32 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgAn+REpUEtmHanDNA--.33390S4;
+	Mon, 20 May 2024 21:29:30 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ritesh.list@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH v2] jbd2: speed up jbd2_transaction_committed()
+Date: Mon, 20 May 2024 21:18:31 +0800
+Message-Id: <20240520131831.2910790-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520113456.21675-5-SkyLake.Huang@mediatek.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAn+REpUEtmHanDNA--.33390S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxGr4fur4kJry8ZF47Cw47CFg_yoW5ZF4xpr
+	yxCw17trykZ34xurn7Xr4kXFWjvanYya4UXrZF93Z3Za1Utw1xK3y2qryavryqyFs5Ww48
+	XF15ur1DKw1j9a7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
+	UdHUDUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-> +static void extend_an_new_lp_cnt_limit(struct phy_device *phydev)
-> +{
-> +	int mmd_read_ret;
-> +	int ret;
-> +	u32 reg_val;
-> +
-> +	ret = read_poll_timeout(mmd_read_ret = phy_read_mmd, reg_val,
-> +				(mmd_read_ret < 0) || reg_val & MTK_PHY_FINAL_SPEED_1000,
-> +				10000, 1000000, false, phydev,
-> +				MDIO_MMD_VEND1, MTK_PHY_LINK_STATUS_MISC);
-> +	if (mmd_read_ret < 0)
-> +		ret = mmd_read_ret;
-> +	/* If final_speed_1000 is raised, try to extend timeout period
-> +	 * of auto downshift.
-> +	 */
-> + if (!ret) {
+From: Zhang Yi <yi.zhang@huawei.com>
 
-If you look at other Linux code, the general pattern is to look if a
-function returned an error. If it does, either return immediately, or
-jump to the end of the function where the cleanup is.
+jbd2_transaction_committed() is used to check whether a transaction with
+the given tid has already committed, it holds j_state_lock in read mode
+and check the tid of current running transaction and committing
+transaction, but holding the j_state_lock is expensive.
 
-Since this is a void function:
+We have already stored the sequence number of the most recently
+committed transaction in journal t->j_commit_sequence, we could do this
+check by comparing it with the given tid instead. If the given tid isn't
+smaller than j_commit_sequence, we can ensure that the given transaction
+has been committed. That way we could drop the expensive lock and
+achieve about 10% ~ 20% performance gains in concurrent DIOs on may
+virtual machine with 100G ramdisk.
 
-> +	if (mmd_read_ret < 0)
-> +		return;
+fio -filename=/mnt/foo -direct=1 -iodepth=10 -rw=$rw -ioengine=libaio \
+    -bs=4k -size=10G -numjobs=10 -runtime=60 -overwrite=1 -name=test \
+    -group_reporting
 
-And then you don't need the
+Before:
+  overwrite       IOPS=88.2k, BW=344MiB/s
+  read            IOPS=95.7k, BW=374MiB/s
+  rand overwrite  IOPS=98.7k, BW=386MiB/s
+  randread        IOPS=102k, BW=397MiB/s
 
-> + if (!ret) {
+After:
+  overwrite       IOPS=105k, BW=410MiB/s
+  read            IOPS=112k, BW=436MiB/s
+  rand overwrite  IOPS=104k, BW=404MiB/s
+  randread        IOPS=111k, BW=432MiB/s
 
+CC: Dave Chinner <david@fromorbit.com>
+Suggested-by: Dave Chinner <david@fromorbit.com>
+Link: https://lore.kernel.org/linux-ext4/ZjILCPNZRHeazSqV@dread.disaster.area/
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+---
+v1->v2:
+ - Add READ_ONCE and WRITE_ONCE to access ->j_commit_sequence
+   concurrently.
+ - Keep the jbd2_transaction_committed() helper.
 
-> +		tr_modify(phydev, 0x0, 0xf, 0x3c, AN_NEW_LP_CNT_LIMIT_MASK,
-> +			  FIELD_PREP(AN_NEW_LP_CNT_LIMIT_MASK, 0xf));
-> +		mdelay(1500);
-> +
-> +		ret = read_poll_timeout(mmd_read_ret = tr_read, reg_val,
-> +					(mmd_read_ret < 0) ||
-> +					(reg_val & AN_STATE_MASK) !=
-> +					(AN_STATE_TX_DISABLE << AN_STATE_SHIFT),
-> +					10000, 1000000, false, phydev,
-> +					0x0, 0xf, 0x2);
-> +
-> +		if (mmd_read_ret < 0)
-> +			ret = mmd_read_ret;
-> +
-> +		if (!ret) {
+ fs/jbd2/commit.c  |  2 +-
+ fs/jbd2/journal.c | 12 +-----------
+ 2 files changed, 2 insertions(+), 12 deletions(-)
 
-This if can also be removed.
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index 5e122586e06e..8244cab17688 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -1108,7 +1108,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+ 
+ 	commit_transaction->t_state = T_COMMIT_CALLBACK;
+ 	J_ASSERT(commit_transaction == journal->j_committing_transaction);
+-	journal->j_commit_sequence = commit_transaction->t_tid;
++	WRITE_ONCE(journal->j_commit_sequence, commit_transaction->t_tid);
+ 	journal->j_committing_transaction = NULL;
+ 	commit_time = ktime_to_ns(ktime_sub(ktime_get(), start_time));
+ 
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index b6c114c11b97..cc586e3c4ee1 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -789,17 +789,7 @@ EXPORT_SYMBOL(jbd2_fc_end_commit_fallback);
+ /* Return 1 when transaction with given tid has already committed. */
+ int jbd2_transaction_committed(journal_t *journal, tid_t tid)
+ {
+-	int ret = 1;
+-
+-	read_lock(&journal->j_state_lock);
+-	if (journal->j_running_transaction &&
+-	    journal->j_running_transaction->t_tid == tid)
+-		ret = 0;
+-	if (journal->j_committing_transaction &&
+-	    journal->j_committing_transaction->t_tid == tid)
+-		ret = 0;
+-	read_unlock(&journal->j_state_lock);
+-	return ret;
++	return tid_geq(READ_ONCE(journal->j_commit_sequence), tid);
+ }
+ EXPORT_SYMBOL(jbd2_transaction_committed);
+ 
+-- 
+2.39.2
 
-> +			mdelay(625);
-> +			tr_modify(phydev, 0x0, 0xf, 0x3c, AN_NEW_LP_CNT_LIMIT_MASK,
-> +				  FIELD_PREP(AN_NEW_LP_CNT_LIMIT_MASK, 0x8));
-> +			mdelay(500);
-> +			tr_modify(phydev, 0x0, 0xf, 0x3c, AN_NEW_LP_CNT_LIMIT_MASK,
-> +				  FIELD_PREP(AN_NEW_LP_CNT_LIMIT_MASK, 0xf));
-> +		}
-> +	}
-
-One question i have is, should this really be a void function? What
-does it mean if read_poll_timeout() returns an error? Why is it safe
-to ignore it? Why not return the error?
-
-> +}
-> +
-> +int mtk_gphy_cl22_read_status(struct phy_device *phydev)
-> +{
-> +	int ret;
-> +
-> +	ret = genphy_read_status(phydev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (phydev->autoneg == AUTONEG_ENABLE && !phydev->autoneg_complete) {
-> +		ret = phy_read(phydev, MII_CTRL1000);
-> +		if ((ret & ADVERTISE_1000FULL) || (ret & ADVERTISE_1000HALF))
-> +			extend_an_new_lp_cnt_limit(phydev);
-> +	}
-> +
-> +	return 0;
-
-If extend_an_new_lp_cnt_limit() fails, what does it mean? Do we
-actually want mtk_gphy_cl22_read_status() to indicate something has
-gone wrong? Or does extend_an_new_lp_cnt_limit() failing not matter?
-
-	Andrew
 
