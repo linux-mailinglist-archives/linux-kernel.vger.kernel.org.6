@@ -1,91 +1,145 @@
-Return-Path: <linux-kernel+bounces-184190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F0C8CA3BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:16:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB62F8CA3C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074451F21EF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:16:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70982281A0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5B7139D05;
-	Mon, 20 May 2024 21:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432AA1386D5;
+	Mon, 20 May 2024 21:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2WQhm58"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TxDfy+Fi"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BD017BA0
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 21:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75A0134DE
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 21:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716239807; cv=none; b=nJPfOWnNFc/8breG81VaXqW06t6cpu2cLPrpyGI+5l6KMWJuiIox/vq30bsjpnQlr7YGVF/2QKLkHfOx9tXYaapw4Z/JYtxh+MaLgzBRhJNO9WyEFSQ2CbbHi9+4h7ixBht23EejQ0Wqy4E5rXeFOqoogg7nKrB+UN+iTOwOxvA=
+	t=1716239899; cv=none; b=EKH3kW0XTRXJIvvxL0yclgdI5SyR6acChklW5oFY8iEC3c2PaxTrrwD6aDRJJ2Yg0o2Z2bgZ+6DE/5H6wAPOR/G6vM+t1mCUjUgtKNxJNpqMsQsmOaT+v1nuYhpG/GrZktcYnMdjD9dN7gFhfcpVLDmrErfZP8UHKOdnEpv1krs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716239807; c=relaxed/simple;
-	bh=54hX8vPKop6i3pWXoGxSp4JmH6Mg6jeOTgisbEHYQv0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=IHnhUfEGNFDutrfn7SgKiTz+wcB10dFBJ7vgfU5WbbtmBF/Zo+8gEGKpAQ7qj9XypwHkOOhpSeyF5FiIxLqVszk0+Rn+vY7el4AZCBuNPbJFRP3pTBmqvCyj+k1WEGlGHQvEBrt06YXVeehm4XpAuqnKmGotn3oFywtnRT6+qtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2WQhm58; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8D011C4AF08;
-	Mon, 20 May 2024 21:16:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716239806;
-	bh=54hX8vPKop6i3pWXoGxSp4JmH6Mg6jeOTgisbEHYQv0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=E2WQhm58AqzZrWAiYKpT2/mhODonm7UeUACZ8sSVJYNiGsup+CqrZOEVgGVovEP5b
-	 B9+ls2rrS5gMnHfgg9mkBJY2HQOABVY5q6CExoV76M6xKg+P/7U6Llgrj1pneea9JT
-	 c2flWpduB8Om8QQQkw9XzCvvnjN4x8/+FTeMuwqN4HmfIQ9O3bpnd0hUFLxguKy9RI
-	 2Kp+mlLEZ9xMhMUggGmZyjrdJkZUkGDtdljdIvDcG0W0rl/Wtej4agGN5B7Qu9tFYU
-	 EIGW1k5wET4jWwLwMJe+l6cleneB0Il/C7vpyH1+av1Cx2iUx/cntUIWaBrMo+TabI
-	 k3JgSD9ioZdiA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7029FC54BD4;
-	Mon, 20 May 2024 21:16:46 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1716239899; c=relaxed/simple;
+	bh=cXSYJ6Uq/Nt1467RetY5cc0avV5e/FrYKk+EzIhsnug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hgswxAcKby9ByMQtS6A9TO7ENBJdww2dWioOIzZvw962sAQIL5bhCn+hSTr+I7oEADOyMhksA/v1zE+42zq+eg04gPFRMH8aC1ldetyLF4gxMXSMIbADdQLR6w4nt10CsYjxqAFIkBe6ZXpRPuuti1lvEQTbiWfrh6MQai29XG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TxDfy+Fi; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e27277d2c1so60509561fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 14:18:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716239896; x=1716844696; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HW+WHMVY50002e9IRpssfBbRimW3FKru0iLADUV6i64=;
+        b=TxDfy+Fiw0Cz4cVFTNnE4KQTiU0YUknEySgIum3PBx8SjWnAE+mawUjgkkfZDOLOTd
+         HYPxlmqul8sIH6Q6irLFsAxYV0a49rjjI6Vn865cYdD5T4gIlBYdzu8zfTV+PGZN+YDx
+         dwfQlnjE1ON54o9DUMP73ahQNlhjpWqy6A/9OJ9iSA5+tTqsWVmlGcn8zAbOhiwsKI4Q
+         m1fcMh6KUSbdaQi9V/0GiPoGAnyTX7A3y2FLNTxWPf1+zZP4C+R/Go9DwSGv3TEkAcYG
+         A4r9qSx2cowd1tdTkyw4yPFkGb9XlNEeXCEOEI6rqdhaPbNacRKVntJzeTQ+Q43ZksE4
+         wRxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716239896; x=1716844696;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HW+WHMVY50002e9IRpssfBbRimW3FKru0iLADUV6i64=;
+        b=a8LtYXn3TglWWxYOQolM3NP/RcgMQQ1k9lAoEslpij8vQSxXELwSSpwO2Ibhi/5ETD
+         tOFpWNUsG6SfU7Et/h7PMTzdKo84ktD0WpDO8ZtQQUcudHSdbUsYJQsik3J5pn1rLWY7
+         KC21ukazYZtkrYncmyM3HyE4F4ryx4NeaS8HDZ8OILqd3DaUtZ+0T3NgjIpKmVYYiDcU
+         9TIkO/jEkBgewEiUWwnUFHLV6UEVjHGClH7AoA4GSB9sH9gV+YvaXYafbKp2AlXbEQkj
+         M41k2FWrFYGPHM1uHfU/SU0zdsUN265FjjJZFyGrhrHkEBGQf7ZhDhVEKeq7kFWaU5j5
+         jRAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEkxIo3XcsStAzlFw+nEc6CMyzsITzB83xzhgZU6YHCMhN0X2Ot9XOs0LCSXoLLpt4dwZ3Pww5nipgNP5UIXfdcZH0qNGfDcWGy8t9
+X-Gm-Message-State: AOJu0YwHd/BDBj9C+8ItFleNUf/i+DfOqmUxb1taY+83v2d7Bh9o9i96
+	9oGWwkEBrQYCxqsgi8fzCgno16qUECH4gWoEStWVez9VmvYAihNCkkAUgPyBSAo=
+X-Google-Smtp-Source: AGHT+IHjDaHWa60F+jHY9vRPyuZpYDge9YtHlyBxPbhzbM3teDE9hhUOJNQM1jd2KggUv9gaasw50Q==
+X-Received: by 2002:a2e:a7d5:0:b0:2e1:5684:8fa3 with SMTP id 38308e7fff4ca-2e51ff5ce98mr229404741fa.22.1716239895787;
+        Mon, 20 May 2024 14:18:15 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e76070598dsm639771fa.35.2024.05.20.14.18.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 14:18:15 -0700 (PDT)
+Date: Tue, 21 May 2024 00:18:13 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
+	maarten.lankhorst@linux.intel.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] drm/bridge: analogix: remove unused struct
+ 'bridge_init'
+Message-ID: <tmlrvvop6lhmppwxp5pfumq4vr24rq4byiljsqn5rt72sokslz@bfqeqmfdlqdl>
+References: <20240517232427.230709-1-linux@treblig.org>
+ <6tfxkc3foarpfuo6viwmsm4e2ujxjmhpqsku37d4ov6ppufpjr@byrbjs7srqri>
+ <ZkqAoG9ZGg0_dC-9@gallifrey>
+ <la43b5ra7aziiv7dwt4o5zha3px7jarfmk45dwsf24qn6pgcre@pcmcsicjdrus>
+ <ZktIwMWtQXuxCgRN@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [GIT PULL] f2fs update for 6.10-rc1
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: 
- <171623980645.27511.8619360433381265549.git-patchwork-notify@kernel.org>
-Date: Mon, 20 May 2024 21:16:46 +0000
-References: <ZkumXs7POGImbr-k@google.com>
-In-Reply-To: <ZkumXs7POGImbr-k@google.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZktIwMWtQXuxCgRN@gallifrey>
 
-Hello:
-
-This pull request was applied to jaegeuk/f2fs.git (dev)
-by Linus Torvalds <torvalds@linux-foundation.org>:
-
-On Mon, 20 May 2024 19:37:02 +0000 you wrote:
-> Hi Linus,
+On Mon, May 20, 2024 at 12:57:36PM +0000, Dr. David Alan Gilbert wrote:
+> * Dmitry Baryshkov (dmitry.baryshkov@linaro.org) wrote:
+> > On Sun, May 19, 2024 at 10:43:44PM +0000, Dr. David Alan Gilbert wrote:
+> > > * Dmitry Baryshkov (dmitry.baryshkov@linaro.org) wrote:
+> > > > On Sat, May 18, 2024 at 12:24:27AM +0100, linux@treblig.org wrote:
+> > > > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > > > > 
+> > > > > 'bridge_init' is unused, I think following:
+> > > > > commit 6a1688ae8794 ("drm/bridge: ptn3460: Convert to I2C driver model")
+> > > > > (which is where a git --follow finds it)
+> > > > > Remove it.
+> > > > 
+> > > > Please rephrase the commit message following guidelines in
+> > > > Documentation/process. Use Fixes tags if suitable.
+> > > 
+> > > I specifically don't want to use Fixes in these set because
+> > > there's no need for someone to backport this to older
+> > > kernels that use the original, and many backporters
+> > > use 'Fixes' as an automated means to find stuff they should
+> > > backport.
+> > > 
+> > > Other than that, is there something specific you think I've
+> > > missed?
+> > 
+> > It's not about missing things. It's about a way it is written.
+> > Consider something like:
+> > 
+> > The commit aaaaaaa ("drm/bridge: foo bar") has dropped all the users of
+> > the struct bridge_init from the exynos_dp_core, while retainng unused
+> > structure definition. Later on the driver was reworked and the
+> > definition migrated to the analogix_dp driver. Remove unused struct
+> > bridge_init definition.
 > 
-> Could you please consider this pull reuqest?
+> OK, v2 sent with text close to that.
 > 
-> Thanks,
+> > 
+> > > 
+> > > (I'm also purposely being less certain here, because --follow
+> > > is showing it in a ptn3460 and I don't quite follow
+> > > why that changes it here).
+> > 
+> > The mentioned commit is a correct one. Historically exynos_dp_core had
+> > been creating the ptn3460 bridge manually. Later on this was fixed in
+> > the ptn3640 driver and the code was dropped from exynos_dp_core.
 > 
-> The following changes since commit 928a87efa42302a23bb9554be081a28058495f22:
-> 
-> [...]
+> Ah OK; remember I don't know the actual structure of these devices
+> or the history.
 
-Here is the summary with links:
-  - [f2fs-dev,GIT,PULL] f2fs update for 6.10-rc1
-    https://git.kernel.org/jaegeuk/f2fs/c/72ece20127a3
+It's all a part of the git history. I've just read it aloud for you.
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+With best wishes
+Dmitry
 
