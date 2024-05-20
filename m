@@ -1,245 +1,111 @@
-Return-Path: <linux-kernel+bounces-183551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1A98C9A87
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:40:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2AA18C9A88
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFEAE1C219AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:40:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E992D1C2193C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E093A29A;
-	Mon, 20 May 2024 09:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB949225A2;
+	Mon, 20 May 2024 09:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qrdlR/6H"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XmpE2Aug"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5958824A0E;
-	Mon, 20 May 2024 09:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5CB1F94C
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 09:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716198000; cv=none; b=OP5LrXj9mvqrky6faUwaCDBAIAJWSSAhvz4Y8CPgtDdUewF0sOAuda5hEyp1vxzT7SDRbcNITrpbgsURonLKiTF+HQiPV2+9t8YvpJqDBwWlTFcyY5T1lgMDhsnmppx2Lh0fgiMLOwf5ihMpNLOc+gLA3dDZ3WE/fLma04z4958=
+	t=1716198029; cv=none; b=nTPlwkcAxiibBBwxPfPU1kvFP+q2SbiZiTdOHxB0u8hxRGb6WLafzYFxPGgtNxAHGb6L3JPX6F/egjbhMBMj2uDvvD/zamK/Vuu93/YaFJdnPZWI/8xLTTtetEYWvX0Hscfi0DezU16v3JtXenK4Y41Hf95bBYDLFUy0mGzr+Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716198000; c=relaxed/simple;
-	bh=47LN/nymBqehrBP24YKxxrHpwHOr2rH6/YWWUldHoas=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZLljXB6ktLIfFHAtRNXlenauCB/DVLj4HZCEB66C+Ew82akOEkRAnHDwDubVSh0sxOmK82fazt37YQnBUCcdpvvMUyj0DcVtfuCQ52IIeS/1p5gH+StB0q2sgmXFflTYwUFm7qqMZlFmnk4cmyXHmpPnxIZ0TnseU1hISjUezmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qrdlR/6H; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716197994; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=6mPT0eGoRhA21v6AH8L2aZwWTPQ8/DIb/G4ER9YIgYQ=;
-	b=qrdlR/6HP2mzeeJDw5ODpprr1QsuisZzJI4FSn+5XF4s8OCQopZzUv8J8aXZMT+zmPhKv9PaljwuwFQx/plmRUcKBGhIK3BDGot3aN88v4pXAvvidYPUl63GJSdtgKv7ikRfwc3QZsWZSzU+QWsBLpk937fQjweXcYwYOptOUbU=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R721e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W6qUXQb_1716197992;
-Received: from 30.221.148.185(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W6qUXQb_1716197992)
-          by smtp.aliyun-inc.com;
-          Mon, 20 May 2024 17:39:54 +0800
-Message-ID: <db7ae78c-857b-45ba-94dc-63c02757e0b2@linux.alibaba.com>
-Date: Mon, 20 May 2024 17:39:51 +0800
+	s=arc-20240116; t=1716198029; c=relaxed/simple;
+	bh=hlbB+kN75U9YScWnGXlfgm/HK3XeDX7QVEgtfCxUOBE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ThU33VYMM/lX4BlNi0dtTFrUElYHGuziAgTcGpsOIS2Jlz60XBm2gJyN3mV6+xxZBhhdH1mt+ZJjSTH/Tq3ykLqtR18wJB+gR/WJ7sZGCt2mFD7upqt5KgVdIqluo3ud/PBhGuJM3Yfd5Zkyksyon8CyZJodRUrQH1vWz2W7d/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XmpE2Aug; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-7f3317ff3c2so869720241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 02:40:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716198027; x=1716802827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QWeEZYLQFowsoh5tWMf37zmjnQP8pREzFJH0TgxKuRc=;
+        b=XmpE2AugI/3BFEc2tnmw00bRgcvxtiEKExQI+9wVi66HQBeRM6EZYxWQRXULA2LHNx
+         cgeRykmBbYoLGBW2eW5SwiOx8hH9j1TJhMOao0yeU/m3Hi0Fitm6tqYqWnkKo4lXk5Nj
+         v169mXgJ38jdSXJR/jhwW2cuLMVyrEKqyLCjAZ2whHvvvodHO9Kkcb+E3rTLEFdLTtjq
+         Y4lC4XlvY0vfpDKDtnqOKX3C6lKD839o3X9vPerDyGOd2Ty8qfBRIbrRb7qa9tLETgKH
+         BpfEEVAyCgRssg4+wcDeun59hmEx3wAXJICdOy5e7MC25NMtS4cxLbvyNIydCWkTStaG
+         oDlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716198027; x=1716802827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QWeEZYLQFowsoh5tWMf37zmjnQP8pREzFJH0TgxKuRc=;
+        b=JYcMkcq4GAvo0jyPNjjDKIrjJv76IiR7pnYpVM1jZ+iyoQD2rNaBd/riQrJQHidn+P
+         9ylIXrQu1vklr3XmUKcNdXl8Bew1tjT1I+SQmuGRULO/9J4qZjRVkEwgDoAM/xZNAzXn
+         udOCxvPv+tVBab62PdnCglgGxB4tMatd5NR4YWM0U4bJnx08M8VLQAUCzFcSVhMfO2dy
+         Alqa8V0Xtc+pYol2md6PKjGIxEvIEr6WC17rpZZFmMLDhMFJPznCtO8P6MvyFTV2ZY9y
+         26RfsifNpnDDkAS16hiBnpOkcDY+7cWkiHjM3uK4wNoip28F4KQ+Ef3AnN+uL/p/uS1L
+         w0uA==
+X-Forwarded-Encrypted: i=1; AJvYcCXiVGamlBF14EARvz9rI/HYcAU3nrXEixFe8kqGyBBdGS/g9xFM9hRiyZD1o8jKn8RCMZH5hyGpl9ClIb8kmSqOi2ELb6g1OAiA4eHx
+X-Gm-Message-State: AOJu0YyqOyLbus5EabZXplUmnCon9DJhxj8w9A7M/l/uge9McvI995s8
+	i5aYRdmh7o+JyiMugBkC/67bD0MwP7jLzB3y03sHUlOsJqBxpfmpUiVCNrQLFqqZwKAIZPSBp8d
+	iQ7R76V7fchvuRIlhoGogz/3my1DtLrmKFs6r
+X-Google-Smtp-Source: AGHT+IGRslYvtPZVflT9H/QVdXO5/e6Xw9lf8JCxCi36VGobIaGTO31kcm2q5Iy/MccVAuZ4g5GXjchLPJr6wZYIugk=
+X-Received: by 2002:a05:6102:32cb:b0:47e:f5a5:7f79 with SMTP id
+ ada2fe7eead31-48077dce359mr29874881137.2.1716198025227; Mon, 20 May 2024
+ 02:40:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/12] cachefiles: defer exposing anon_fd until after
- copy_to_user() succeeds
-To: libaokun@huaweicloud.com, netfs@lists.linux.dev, dhowells@redhat.com,
- jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
- <20240515084601.3240503-10-libaokun@huaweicloud.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20240515084601.3240503-10-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240519210735.587323-1-ojeda@kernel.org>
+In-Reply-To: <20240519210735.587323-1-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 20 May 2024 11:40:12 +0200
+Message-ID: <CAH5fLghTdgWyEQFLL8VVSFBNq1hgXPF0gqoM2KETD=Ubj8xV9Q@mail.gmail.com>
+Subject: Re: [PATCH] rust: avoid unused import warning in `rusttest`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev, Danilo Krummrich <dakr@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, May 19, 2024 at 11:07=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wr=
+ote:
+>
+> When compiling for the `rusttest` target, the `core::ptr` import is
+> unused since its only use happens in the `reserve()` method which is
+> not compiled in that target:
+>
+>     warning: unused import: `core::ptr`
+>     --> rust/kernel/alloc/vec_ext.rs:7:5
+>       |
+>     7 | use core::ptr;
+>       |     ^^^^^^^^^
+>       |
+>       =3D note: `#[warn(unused_imports)]` on by default
+>
+> Thus clean it.
+>
+> Fixes: 97ab3e8eec0c ("rust: alloc: fix dangling pointer in VecExt<T>::res=
+erve()")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-
-On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> After installing the anonymous fd, we can now see it in userland and close
-> it. However, at this point we may not have gotten the reference count of
-> the cache, but we will put it during colse fd, so this may cause a cache
-> UAF.
-> 
-> So grab the cache reference count before fd_install(). In addition, by
-> kernel convention, fd is taken over by the user land after fd_install(),
-> and the kernel should not call close_fd() after that, i.e., it should call
-> fd_install() after everything is ready, thus fd_install() is called after
-> copy_to_user() succeeds.
-> 
-> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
-> Suggested-by: Hou Tao <houtao1@huawei.com>
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> ---
->  fs/cachefiles/ondemand.c | 53 +++++++++++++++++++++++++---------------
->  1 file changed, 33 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-> index d2d4e27fca6f..3a36613e00a7 100644
-> --- a/fs/cachefiles/ondemand.c
-> +++ b/fs/cachefiles/ondemand.c
-> @@ -4,6 +4,11 @@
->  #include <linux/uio.h>
->  #include "internal.h"
->  
-> +struct anon_file {
-> +	struct file *file;
-> +	int fd;
-> +};
-> +
->  static inline void cachefiles_req_put(struct cachefiles_req *req)
->  {
->  	if (refcount_dec_and_test(&req->ref))
-> @@ -263,14 +268,14 @@ int cachefiles_ondemand_restore(struct cachefiles_cache *cache, char *args)
->  	return 0;
->  }
->  
-
-
-> -static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
-> +static int cachefiles_ondemand_get_fd(struct cachefiles_req *req,
-> +				      struct anon_file *anon_file)
-
-
-How about:
-
-int cachefiles_ondemand_get_fd(struct cachefiles_req *req, int *fd,
-struct file *file) ?
-
-It isn't worth introducing a new structure as it is used only for
-parameter passing.
-
-
->  {
->  	struct cachefiles_object *object;
->  	struct cachefiles_cache *cache;
->  	struct cachefiles_open *load;
-> -	struct file *file;
->  	u32 object_id;
-> -	int ret, fd;
-> +	int ret;
->  
->  	object = cachefiles_grab_object(req->object,
->  			cachefiles_obj_get_ondemand_fd);
-> @@ -282,16 +287,16 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->  	if (ret < 0)
->  		goto err;
->  
-> -	fd = get_unused_fd_flags(O_WRONLY);
-> -	if (fd < 0) {
-> -		ret = fd;
-> +	anon_file->fd = get_unused_fd_flags(O_WRONLY);
-> +	if (anon_file->fd < 0) {
-> +		ret = anon_file->fd;
->  		goto err_free_id;
->  	}
->  
-> -	file = anon_inode_getfile("[cachefiles]", &cachefiles_ondemand_fd_fops,
-> -				  object, O_WRONLY);
-> -	if (IS_ERR(file)) {
-> -		ret = PTR_ERR(file);
-> +	anon_file->file = anon_inode_getfile("[cachefiles]",
-> +				&cachefiles_ondemand_fd_fops, object, O_WRONLY);
-> +	if (IS_ERR(anon_file->file)) {
-> +		ret = PTR_ERR(anon_file->file);
->  		goto err_put_fd;
->  	}
->  
-> @@ -299,16 +304,15 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->  	if (object->ondemand->ondemand_id > 0) {
->  		spin_unlock(&object->ondemand->lock);
->  		/* Pair with check in cachefiles_ondemand_fd_release(). */
-> -		file->private_data = NULL;
-> +		anon_file->file->private_data = NULL;
->  		ret = -EEXIST;
->  		goto err_put_file;
->  	}
->  
-> -	file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
-> -	fd_install(fd, file);
-> +	anon_file->file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
->  
->  	load = (void *)req->msg.data;
-> -	load->fd = fd;
-> +	load->fd = anon_file->fd;
->  	object->ondemand->ondemand_id = object_id;
->  	spin_unlock(&object->ondemand->lock);
->  
-> @@ -317,9 +321,11 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->  	return 0;
->  
->  err_put_file:
-> -	fput(file);
-> +	fput(anon_file->file);
-> +	anon_file->file = NULL;
-
-When cachefiles_ondemand_get_fd() returns failure, anon_file->file is
-not used, and thus I don't think it is worth resetting anon_file->file
-to NULL. Or we could assign fd and struct file at the very end when all
-succeed.
-
->  err_put_fd:
-> -	put_unused_fd(fd);
-> +	put_unused_fd(anon_file->fd);
-> +	anon_file->fd = ret;
-
-Ditto.
-
->  err_free_id:
->  	xa_erase(&cache->ondemand_ids, object_id);
->  err:
-> @@ -376,6 +382,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->  	struct cachefiles_msg *msg;
->  	size_t n;
->  	int ret = 0;
-> +	struct anon_file anon_file;
->  	XA_STATE(xas, &cache->reqs, cache->req_id_next);
->  
->  	xa_lock(&cache->reqs);
-> @@ -409,7 +416,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->  	xa_unlock(&cache->reqs);
->  
->  	if (msg->opcode == CACHEFILES_OP_OPEN) {
-> -		ret = cachefiles_ondemand_get_fd(req);
-> +		ret = cachefiles_ondemand_get_fd(req, &anon_file);
->  		if (ret)
->  			goto out;
->  	}
-> @@ -417,10 +424,16 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->  	msg->msg_id = xas.xa_index;
->  	msg->object_id = req->object->ondemand->ondemand_id;
->  
-> -	if (copy_to_user(_buffer, msg, n) != 0) {
-> +	if (copy_to_user(_buffer, msg, n) != 0)
->  		ret = -EFAULT;
-> -		if (msg->opcode == CACHEFILES_OP_OPEN)
-> -			close_fd(((struct cachefiles_open *)msg->data)->fd);
-> +
-> +	if (msg->opcode == CACHEFILES_OP_OPEN) {
-> +		if (ret < 0) {
-> +			fput(anon_file.file);
-> +			put_unused_fd(anon_file.fd);
-> +			goto out;
-> +		}
-> +		fd_install(anon_file.fd, anon_file.file);
->  	}
->  out:
->  	cachefiles_put_object(req->object, cachefiles_obj_put_read_req);
-
--- 
-Thanks,
-Jingbo
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
