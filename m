@@ -1,165 +1,128 @@
-Return-Path: <linux-kernel+bounces-183792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BD98C9E2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:29:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEEA28C9E05
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C563B22F93
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:29:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8236F28461F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7605E136655;
-	Mon, 20 May 2024 13:29:39 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E36813664A;
+	Mon, 20 May 2024 13:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D5DwRzne"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91D443AB2;
-	Mon, 20 May 2024 13:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2EC1CD18;
+	Mon, 20 May 2024 13:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716211779; cv=none; b=Lc369pdizeX0EEMy6G9E8c9w58YM6mzIblpABFNNjX7us9pXw/XvoQ3gCvLNU1PgOi/vlAAHA+azpgsk4WtAgb3S5Xe4wIQvmwG+M2fiVnVyJvxSs4O4DPgu5tHFfWbauO+4RMHybEVfdv03ujw38Ck5ol/q6sLlMOVK8z5vi+I=
+	t=1716211189; cv=none; b=QuPbXys9GI0GJWJ+NmQVl0P4h0PI6H8wvi6bdmBOG6H+o9O3p/pGz2+vE5bYCDzsyxOdD29HmqNi02UAvpKSQJNTOxtd6XgeAwknI60C8WYQLBJkGyKqzzEJdS0UQJzv13KaUfvXTlxGczX8ZJymmIMu/XYkgj4a7WO0N9UnZl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716211779; c=relaxed/simple;
-	bh=dfQ2mFPkIfsAxlVTyO4uk0ANvRgUl3qUB4NCcxQVKBM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H9muJ2xhzjNnEWH3ejFLTM/IHJb+KcoCrLvj/QasQuRzyNrzpge9+6OCVAFj/4ESoOucfZhiJsaer0W7SAVqfP9G0MGnULnKtIKzPWZUwXT/AxzFEb/ylVYORA+XDt68Xz1uZGAodII5b9JPvSVc8aDo+6wWt9OJcDY7S0CATK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VjdhM516Tz4f3jMH;
-	Mon, 20 May 2024 21:29:23 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 8E5871A0BCA;
-	Mon, 20 May 2024 21:29:32 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAn+REpUEtmHanDNA--.33390S4;
-	Mon, 20 May 2024 21:29:30 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ritesh.list@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v2] jbd2: speed up jbd2_transaction_committed()
-Date: Mon, 20 May 2024 21:18:31 +0800
-Message-Id: <20240520131831.2910790-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716211189; c=relaxed/simple;
+	bh=NuEonSsy9BHcGw03XtsY8/+H2cm/AtrmCekQjk+olEY=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fNKU34ZUy1BVnwW3TnzMyA4p8qz5AKiYgllUXW4hKCChgXvCcQWbYWvuCBEU/Gvne7/7WatL5A85icjqljNPBVvg1mrXmwl/S/icCYKTAepvLKwgX16PlG1CjC6f7/+sHZoyHqiPs42NkXgrkLIA81mzmn1nJ68Fgzad73iZvqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D5DwRzne; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716211188; x=1747747188;
+  h=date:from:to:subject:message-id:references:mime-version:
+   content-transfer-encoding:in-reply-to;
+  bh=NuEonSsy9BHcGw03XtsY8/+H2cm/AtrmCekQjk+olEY=;
+  b=D5DwRzne7fetmP2UI6rmdbUsG+9+K1jB5fmJz9DcWqT/lP8biKzVN/QN
+   p8SfYO79z4NcIDK+17eKNmvHJGbt5MuhxbajRMCLUvjBtJgtSL1vAxUyO
+   545dlcZnRVC/EA/NX7+Lf3lU9Q/eLCl/FsdLNPPi8pJgkwPd/9zB06m+Q
+   aPBQGHoBsE58/DhKRBtwII0/h3uYD0XoyziKMR8Zfd184Gn2YVNRSNNAX
+   rLpOLwo6udwhDNgiqdR2cAGVfTRXxRehPXhRK0M2/p1lmK/D4Y0ihTebT
+   sTRuFSXBQ1iwjLDaaJFQir9upTSTpfzAf+bfBqxK2UTh8F5ahEg72VWZo
+   Q==;
+X-CSE-ConnectionGUID: KJtdniVvTfONm0krfltTZA==
+X-CSE-MsgGUID: kJiaBLkhTuGIdhy/OwDfGQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="15285546"
+X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
+   d="scan'208";a="15285546"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 06:19:47 -0700
+X-CSE-ConnectionGUID: 6tFvXyVtRRKL8lxX7jfCRQ==
+X-CSE-MsgGUID: H2tDu6cjS8i01DNr1Lex/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
+   d="scan'208";a="32519214"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 06:19:42 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id B6A0811F855;
+	Mon, 20 May 2024 16:19:40 +0300 (EEST)
+Date: Mon, 20 May 2024 13:19:40 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, git@luigi311.com,
+	linux-media@vger.kernel.org, dave.stevenson@raspberrypi.com,
+	jacopo.mondi@ideasonboard.com, mchehab@kernel.org, robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	pavel@ucw.cz, phone-devel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v5 21/25] dt-bindings: media: imx258: Add binding for
+ powerdown-gpio
+Message-ID: <ZktN7EcXiqupI9Qd@kekkonen.localdomain>
+References: <20240501152442.1072627-1-git@luigi311.com>
+ <20240501152442.1072627-22-git@luigi311.com>
+ <ZkcV5xWZz2jCszxA@kekkonen.localdomain>
+ <q5nbk3qcxsjsqp4mdyx5nlrn4oie6oynunwodm7r2nwtywc2ey@kxsgcatwt5b2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn+REpUEtmHanDNA--.33390S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr4fur4kJry8ZF47Cw47CFg_yoW5ZF4xpr
-	yxCw17trykZ34xurn7Xr4kXFWjvanYya4UXrZF93Z3Za1Utw1xK3y2qryavryqyFs5Ww48
-	XF15ur1DKw1j9a7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v2
-	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
-	UdHUDUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+In-Reply-To: <q5nbk3qcxsjsqp4mdyx5nlrn4oie6oynunwodm7r2nwtywc2ey@kxsgcatwt5b2>
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Hi Ondřej,
 
-jbd2_transaction_committed() is used to check whether a transaction with
-the given tid has already committed, it holds j_state_lock in read mode
-and check the tid of current running transaction and committing
-transaction, but holding the j_state_lock is expensive.
+On Mon, May 20, 2024 at 02:55:26PM +0200, Ondřej Jirman wrote:
+> On Fri, May 17, 2024 at 08:31:35AM GMT, Sakari Ailus wrote:
+> > Hi Luis,
+> > 
+> > On Wed, May 01, 2024 at 09:24:38AM -0600, git@luigi311.com wrote:
+> > > From: Ondrej Jirman <megi@xff.cz>
+> > > 
+> > > Add powerdown-gpio binding as it is required for some boards.
+> > 
+> > I thought the conclusion was that this wasn't a property of the sensor? If
+> > it needs to be controlled, then this should take place somewhere else than
+> > in the sensor driver.
+> 
+> It's a property of the sensor modules. It's just optional on
+> some, eg. (pin 8):
+> 
+>   https://assets-global.website-files.com/63b65bd4974577341e1fe194/654290d4d0fb173e87f754ed_IMX_258_FF_drawing.png
+> 
+> Where else should it be so that the module is described properly in the 
+> DT and the powerdown signal can be used as part of powerup/down sequence
+> of the sensor?
 
-We have already stored the sequence number of the most recently
-committed transaction in journal t->j_commit_sequence, we could do this
-check by comparing it with the given tid instead. If the given tid isn't
-smaller than j_commit_sequence, we can ensure that the given transaction
-has been committed. That way we could drop the expensive lock and
-achieve about 10% ~ 20% performance gains in concurrent DIOs on may
-virtual machine with 100G ramdisk.
+That's an interesting case. The document does suggest the PWDN pin isn't
+connected though.
 
-fio -filename=/mnt/foo -direct=1 -iodepth=10 -rw=$rw -ioengine=libaio \
-    -bs=4k -size=10G -numjobs=10 -runtime=60 -overwrite=1 -name=test \
-    -group_reporting
+Is this pin used for something? If so, what is it? The sensor doesn't have
+it and generally the module in this respect just contains wiring.
 
-Before:
-  overwrite       IOPS=88.2k, BW=344MiB/s
-  read            IOPS=95.7k, BW=374MiB/s
-  rand overwrite  IOPS=98.7k, BW=386MiB/s
-  randread        IOPS=102k, BW=397MiB/s
+Someone earlier suggested this could have been related to the VCM.
 
-After:
-  overwrite       IOPS=105k, BW=410MiB/s
-  read            IOPS=112k, BW=436MiB/s
-  rand overwrite  IOPS=104k, BW=404MiB/s
-  randread        IOPS=111k, BW=432MiB/s
-
-CC: Dave Chinner <david@fromorbit.com>
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Link: https://lore.kernel.org/linux-ext4/ZjILCPNZRHeazSqV@dread.disaster.area/
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
-v1->v2:
- - Add READ_ONCE and WRITE_ONCE to access ->j_commit_sequence
-   concurrently.
- - Keep the jbd2_transaction_committed() helper.
-
- fs/jbd2/commit.c  |  2 +-
- fs/jbd2/journal.c | 12 +-----------
- 2 files changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-index 5e122586e06e..8244cab17688 100644
---- a/fs/jbd2/commit.c
-+++ b/fs/jbd2/commit.c
-@@ -1108,7 +1108,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
- 
- 	commit_transaction->t_state = T_COMMIT_CALLBACK;
- 	J_ASSERT(commit_transaction == journal->j_committing_transaction);
--	journal->j_commit_sequence = commit_transaction->t_tid;
-+	WRITE_ONCE(journal->j_commit_sequence, commit_transaction->t_tid);
- 	journal->j_committing_transaction = NULL;
- 	commit_time = ktime_to_ns(ktime_sub(ktime_get(), start_time));
- 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index b6c114c11b97..cc586e3c4ee1 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -789,17 +789,7 @@ EXPORT_SYMBOL(jbd2_fc_end_commit_fallback);
- /* Return 1 when transaction with given tid has already committed. */
- int jbd2_transaction_committed(journal_t *journal, tid_t tid)
- {
--	int ret = 1;
--
--	read_lock(&journal->j_state_lock);
--	if (journal->j_running_transaction &&
--	    journal->j_running_transaction->t_tid == tid)
--		ret = 0;
--	if (journal->j_committing_transaction &&
--	    journal->j_committing_transaction->t_tid == tid)
--		ret = 0;
--	read_unlock(&journal->j_state_lock);
--	return ret;
-+	return tid_geq(READ_ONCE(journal->j_commit_sequence), tid);
- }
- EXPORT_SYMBOL(jbd2_transaction_committed);
- 
 -- 
-2.39.2
+Regards,
 
+Sakari Ailus
 
