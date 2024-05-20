@@ -1,253 +1,349 @@
-Return-Path: <linux-kernel+bounces-183844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7567E8C9ED0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:33:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B23B8C9EDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B83C2842E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:33:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C22841F21EF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F84C7C0B2;
-	Mon, 20 May 2024 14:33:02 +0000 (UTC)
-Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC34137775;
+	Mon, 20 May 2024 14:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggletEnJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6364182DF
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 14:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9622E7C0B2;
+	Mon, 20 May 2024 14:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716215581; cv=none; b=fvnzyn9siK0X2CxfR+CeqiO1phCTqedIdUrTQcZB8blV3OcbD5Oh/ZeX36SZHeoqbKukDFYvOdFsW241fOIT0pRBPnw53CHQ6bg5MqE44m7ISJKfZXpeEMbtA7IfR0QZTkGZ7wPzReBmcYfBxne3F30XkkP88OHAskzUYXwJ5jA=
+	t=1716215604; cv=none; b=ZehN82VuTMLd0hMvUz7U2bvMLBcCHTkkVCe0mw0ULMXKYZKqKtw+DVYIFAsIC7yCA96Byaxdqdva+BeQwGGuqEaP6G5HsrRFFfCl6Fm1PkueKJxAOaW1bwqFrne2HDdvVk3JCI9mCqIaQfh7AXmTZtkla6TL49cDJM5wGc7ChOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716215581; c=relaxed/simple;
-	bh=RjA9QK1StFOq1s9zLGgz16s6I7u52YYHAsn2RqqMx/s=;
-	h=Date:From:To:Cc:Subject:References:Mime-Version:Message-ID:
-	 Content-Type; b=rpf22+RCrEyKqqGgazikl2if9o6huxva38zq/O6c5CniJ8/uL1pLduWVPmX9iBTzkrAmlfpB3sXNa+3o/db87ujRTnUU9JQZUKcDonVVENBCeSmp91qRCZvd2kM0w0Y5YrBfmhJENYfE/y/5XaEFuOY8ivjOd5wwFfE1ACg5r+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=61.135.153.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: PC-20220305VLFP
-Received: from unknown (HELO PC-20220305VLFP)([112.97.60.228])
-	by sina.com (10.182.253.23) with ESMTP
-	id 664B5F0C00007E12; Mon, 20 May 2024 22:32:46 +0800 (CST)
-X-Sender: nanfengwq@sina.com
-X-Auth-ID: nanfengwq@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=nanfengwq@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=nanfengwq@sina.com
-X-SMAIL-MID: 3256017864831
-X-SMAIL-UIID: F46B7554566F41A4852BB1452072EFE2-20240520-223246-1
-Date: Mon, 20 May 2024 22:32:21 +0800
-From: "nanfengwq@sina.com" <nanfengwq@sina.com>
-To: gregkh <gregkh@linuxfoundation.org>
-Cc: balbi <balbi@kernel.org>, 
-	linux-usb <linux-usb@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: memory leakage in ncm_wrap_ntb() in USB ncm mode with kernel 5.15
-References: <2024051922230825069112@sina.com>, 
-	<2024051901-gimmick-cosponsor-f2dd@gregkh>
-X-Priority: 3
-X-Has-Attach: yes
-X-Mailer: Foxmail 7.2.25.254[cn]
+	s=arc-20240116; t=1716215604; c=relaxed/simple;
+	bh=xciCHReFFZlVddQDu0g7FFTsuuoF7H/QKFVGKEg8Gc4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZEqlV5guO/Ct8vqbCOTk5eiTvEjLIiJPon8L5Gty0iWGAivT9MuvzSn9oKK53gtc7vKbxMzBljdZcAkwY7t5ZZovx1WKUTz6GJrNElDJXrIvn6FCLdWhBZnReaKob+33gi/mJpSLEp8TNsQIt1T6J7AYKW/jDUFl9SpdlIyXnEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggletEnJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D3EC2BD10;
+	Mon, 20 May 2024 14:33:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716215604;
+	bh=xciCHReFFZlVddQDu0g7FFTsuuoF7H/QKFVGKEg8Gc4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ggletEnJVNvT+XMfBN6K1gVjC0KEbb4ExeLzLf0vbaRRHkZ7IEvEOZKQ/PDc2oi8E
+	 pXage4QdiC0oUqSrpJiUeB0dKqWhB9I2hK5C8yyHuxu3ceh9gv3Z3LhdYf2h19+aDY
+	 oFvXuSOCMpaBZfU2sTrfs2yKp2E1sJ2bpIDWvK9q4yAf2KdBD459pZm2g4WzKYdPaZ
+	 9LKPkZgdyYVLe5mOYkhyVJZG4nDEp5EiHkvCVT78MBz3DJ+jvCWsC1a70wZeVO+0qJ
+	 P7lIZ7Cvagfs8b82Dg3wnyXYXdq61GunvMX/02kzLwD+9UncB7By2qWgOYlHFsdMqd
+	 ZZ624nKVYYE4w==
+Message-ID: <c31f663f-36c0-4db2-8bf6-8e3c699073ca@kernel.org>
+Date: Mon, 20 May 2024 16:33:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <202405202232198531894@sina.com>
-Content-Type: multipart/mixed;
-	boundary="----=_001_NextPart642033051568_=----"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 01/12] block: Introduce queue limits and sysfs for
+ copy-offload support
+To: Nitesh Shetty <nj.shetty@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+ Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
+ hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+ joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102830epcas5p27274901f3d0c2738c515709890b1dec4@epcas5p2.samsung.com>
+ <20240520102033.9361-2-nj.shetty@samsung.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20240520102033.9361-2-nj.shetty@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This is a multi-part message in MIME format.
+On 2024/05/20 12:20, Nitesh Shetty wrote:
+> Add device limits as sysfs entries,
+> 	- copy_max_bytes (RW)
+> 	- copy_max_hw_bytes (RO)
+> 
+> Above limits help to split the copy payload in block layer.
+> copy_max_bytes: maximum total length of copy in single payload.
+> copy_max_hw_bytes: Reflects the device supported maximum limit.
+> 
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> ---
+>  Documentation/ABI/stable/sysfs-block | 23 +++++++++++++++
+>  block/blk-settings.c                 | 34 ++++++++++++++++++++--
+>  block/blk-sysfs.c                    | 43 ++++++++++++++++++++++++++++
+>  include/linux/blkdev.h               | 14 +++++++++
+>  4 files changed, 112 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
+> index 831f19a32e08..52d8a253bf8e 100644
+> --- a/Documentation/ABI/stable/sysfs-block
+> +++ b/Documentation/ABI/stable/sysfs-block
+> @@ -165,6 +165,29 @@ Description:
+>  		last zone of the device which may be smaller.
+>  
+>  
+> +What:		/sys/block/<disk>/queue/copy_max_bytes
+> +Date:		May 2024
+> +Contact:	linux-block@vger.kernel.org
+> +Description:
+> +		[RW] This is the maximum number of bytes that the block layer
+> +		will allow for a copy request. This is always smaller or
+> +		equal to the maximum size allowed by the hardware, indicated by
+> +		'copy_max_hw_bytes'. An attempt to set a value higher than
+> +		'copy_max_hw_bytes' will truncate this to 'copy_max_hw_bytes'.
+> +		Writing '0' to this file will disable offloading copies for this
+> +		device, instead copy is done via emulation.
+> +
+> +
+> +What:		/sys/block/<disk>/queue/copy_max_hw_bytes
+> +Date:		May 2024
+> +Contact:	linux-block@vger.kernel.org
+> +Description:
+> +		[RO] This is the maximum number of bytes that the hardware
+> +		will allow for single data copy request.
+> +		A value of 0 means that the device does not support
+> +		copy offload.
+> +
+> +
+>  What:		/sys/block/<disk>/queue/crypto/
+>  Date:		February 2022
+>  Contact:	linux-block@vger.kernel.org
+> diff --git a/block/blk-settings.c b/block/blk-settings.c
+> index a7fe8e90240a..67010ed82422 100644
+> --- a/block/blk-settings.c
+> +++ b/block/blk-settings.c
+> @@ -52,6 +52,9 @@ void blk_set_stacking_limits(struct queue_limits *lim)
+>  	lim->max_write_zeroes_sectors = UINT_MAX;
+>  	lim->max_zone_append_sectors = UINT_MAX;
+>  	lim->max_user_discard_sectors = UINT_MAX;
+> +	lim->max_copy_hw_sectors = UINT_MAX;
+> +	lim->max_copy_sectors = UINT_MAX;
+> +	lim->max_user_copy_sectors = UINT_MAX;
+>  }
+>  EXPORT_SYMBOL(blk_set_stacking_limits);
+>  
+> @@ -219,6 +222,9 @@ static int blk_validate_limits(struct queue_limits *lim)
+>  		lim->misaligned = 0;
+>  	}
+>  
+> +	lim->max_copy_sectors =
+> +		min(lim->max_copy_hw_sectors, lim->max_user_copy_sectors);
+> +
+>  	return blk_validate_zoned_limits(lim);
+>  }
+>  
+> @@ -231,10 +237,11 @@ int blk_set_default_limits(struct queue_limits *lim)
+>  {
+>  	/*
+>  	 * Most defaults are set by capping the bounds in blk_validate_limits,
+> -	 * but max_user_discard_sectors is special and needs an explicit
+> -	 * initialization to the max value here.
+> +	 * but max_user_discard_sectors and max_user_copy_sectors are special
+> +	 * and needs an explicit initialization to the max value here.
 
-------=_001_NextPart642033051568_=----
-Content-Type: multipart/alternative;
-	boundary="----=_002_NextPart608575887075_=----"
+s/needs/need
 
+>  	 */
+>  	lim->max_user_discard_sectors = UINT_MAX;
+> +	lim->max_user_copy_sectors = UINT_MAX;
+>  	return blk_validate_limits(lim);
+>  }
+>  
+> @@ -316,6 +323,25 @@ void blk_queue_max_discard_sectors(struct request_queue *q,
+>  }
+>  EXPORT_SYMBOL(blk_queue_max_discard_sectors);
+>  
+> +/*
+> + * blk_queue_max_copy_hw_sectors - set max sectors for a single copy payload
+> + * @q:	the request queue for the device
+> + * @max_copy_sectors: maximum number of sectors to copy
+> + */
+> +void blk_queue_max_copy_hw_sectors(struct request_queue *q,
+> +				   unsigned int max_copy_sectors)
+> +{
+> +	struct queue_limits *lim = &q->limits;
+> +
+> +	if (max_copy_sectors > (BLK_COPY_MAX_BYTES >> SECTOR_SHIFT))
+> +		max_copy_sectors = BLK_COPY_MAX_BYTES >> SECTOR_SHIFT;
+> +
+> +	lim->max_copy_hw_sectors = max_copy_sectors;
+> +	lim->max_copy_sectors =
+> +		min(max_copy_sectors, lim->max_user_copy_sectors);
+> +}
+> +EXPORT_SYMBOL_GPL(blk_queue_max_copy_hw_sectors);
 
-------=_002_NextPart608575887075_=----
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+Hmm... Such helper seems to not fit with Christoph's changes of the limits
+initialization as that is not necessarily done using &q->limits but depending on
+the driver, a different limit structure. So shouldn't this function be passed a
+queue_limits struct pointer instead of the request queue pointer ?
 
-aGVsbG86DQogICAgICAgSW4gZW1iZWRkZWQgZGV2aWNlcyB3aXRoIHJlbGF0aXZlbHkgc21hbGwg
-bWVtb3J5LCBpZiB0aGUgdHJhbnNmZXIgc3BlZWQgb2YgbmNtIGlzIGZhc3QgYW5kIG90aGVyIHBy
-b2dyYW1zIG9jY3VweSBDUFUgbWVtb3J5LCBpdCBpcyBsaWtlbHkgdGhhdCB0aGUgcmV0dXJuIHZh
-bHVlIG5jbSAtPnNrZF90eF9kYXRhIG9mIGFsbG9jX3NrYigpIGlzIE5VTEwsIGFuZCB0aGUgY29k
-ZSBpcyBsaWtlbHkgdG8gZW50ZXIgZXJyLiBJZiBza2IyIGlzIG5vdCBwcm9jZXNzZWQgaW4gZXJy
-LCBpdCB3aWxsIGNhdXNlIG1lbW9yeSBsZWFrYWdlLg0KDQpUaGFuayB5b3UuDQoNCg0KbmFuZmVu
-Z3dxQHNpbmEuY29tDQogDQpGcm9tOiBncmVna2gNCkRhdGU6IDIwMjQtMDUtMTkgMjI6MzcNClRv
-OiBuYW5mZW5nd3FAc2luYS5jb20NCkNDOiBiYWxiaTsgbGludXgtdXNiOyBsaW51eC1rZXJuZWwN
-ClN1YmplY3Q6IFJlOiBtZW1vcnkgbGVha2FnZSBpbiBuY21fd3JhcF9udGIoKSBpbiBVU0IgbmNt
-IG1vZGUgd2l0aCBrZXJuZWwgNS4xNQ0KT24gU3VuLCBNYXkgMTksIDIwMjQgYXQgMTA6MjM6MTBQ
-TSArMDgwMCwgbmFuZmVuZ3dxQHNpbmEuY29tIHdyb3RlOg0KPiBIZWxsb++8mg0KPiBJIGhhdmUg
-ZGlzY292ZXJlZCBhIHJpc2sgb2YgbWVtb3J5IGxlYWthZ2UgaW4gbmNtX3dyYXBfbnRiKCkgdW5k
-ZXIgVVNCIG5jbSBtb2RlIGluIGtlcm5lbCA1LjE1LCBhbmQgSSBoYXZlIGZpeGVkIGl0LiANCj4g
-UGxlYXNlIGhlbHAgbWUgcmV2aWV3IGl0Lg0KPiANCj4gSWYgdGhpcyBtb2RpZmljYXRpb24gaXMg
-ZWZmZWN0aXZlLCBpdCBjYW4gYWxzbyBiZSBpbnRlZ3JhdGVkIGludG8gb3RoZXIga2VybmVsIHZl
-cnNpb25zLCBzdWNoIGFzIGtlcm5lbCA0LjE0LCBhbmQgc28gb24uDQo+IA0KPiBUaGUgbG9naWMg
-b2YgYSBtZW1vcnkgbGVhayBpcyBhcyBmb2xsb3dzOg0KPiANCj4gSWYgdGhlIHJldHVybiB2YWx1
-ZSBza2IyIG9mICBwYWNrYWdlX2Zvcl90eCgpIGlzIG5vdCBOVUxMLCBhbmQgdGhlIHJldHVybiB2
-YWx1ZSBuY20tPnNrYl90eF9kYXRhIG9mIGFsbG9jX3NrYigpIGlzIE5VTEwsIHRoZW4gdGhlIGNv
-ZGUgd2lsbCBnbyB0byBlcnIsIHdoZXJlIHRoZXJlIGlzIG5vIHByb2Nlc3Npbmcgb2Ygc2tiMiwg
-cmVzdWx0aW5nIGluIGEgbWVtb3J5IGxlYWsgaW4gc2tiMi4NCj4gDQo+IA0KPiBUaGFuayB5b3Uu
-DQo+IA0KPiANCj4gDQo+IA0KIA0KIA0KSGksDQogDQpUaGlzIGlzIHRoZSBmcmllbmRseSBwYXRj
-aC1ib3Qgb2YgR3JlZyBLcm9haC1IYXJ0bWFuLiAgWW91IGhhdmUgc2VudCBoaW0NCmEgcGF0Y2gg
-dGhhdCBoYXMgdHJpZ2dlcmVkIHRoaXMgcmVzcG9uc2UuICBIZSB1c2VkIHRvIG1hbnVhbGx5IHJl
-c3BvbmQNCnRvIHRoZXNlIGNvbW1vbiBwcm9ibGVtcywgYnV0IGluIG9yZGVyIHRvIHNhdmUgaGlz
-IHNhbml0eSAoaGUga2VwdA0Kd3JpdGluZyB0aGUgc2FtZSB0aGluZyBvdmVyIGFuZCBvdmVyLCB5
-ZXQgdG8gZGlmZmVyZW50IHBlb3BsZSksIEkgd2FzDQpjcmVhdGVkLiAgSG9wZWZ1bGx5IHlvdSB3
-aWxsIG5vdCB0YWtlIG9mZmVuY2UgYW5kIHdpbGwgZml4IHRoZSBwcm9ibGVtDQppbiB5b3VyIHBh
-dGNoIGFuZCByZXN1Ym1pdCBpdCBzbyB0aGF0IGl0IGNhbiBiZSBhY2NlcHRlZCBpbnRvIHRoZSBM
-aW51eA0Ka2VybmVsIHRyZWUuDQogDQpZb3UgYXJlIHJlY2VpdmluZyB0aGlzIG1lc3NhZ2UgYmVj
-YXVzZSBvZiB0aGUgZm9sbG93aW5nIGNvbW1vbiBlcnJvcihzKQ0KYXMgaW5kaWNhdGVkIGJlbG93
-Og0KIA0KLSBZb3VyIHBhdGNoIGRpZCBub3QgYXBwbHkgdG8gYW55IGtub3duIHRyZWVzIHRoYXQg
-R3JlZyBpcyBpbiBjb250cm9sDQogIG9mLiAgUG9zc2libHkgdGhpcyBpcyBiZWNhdXNlIHlvdSBt
-YWRlIGl0IGFnYWluc3QgTGludXMncyB0cmVlLCBub3QNCiAgdGhlIGxpbnV4LW5leHQgdHJlZSwg
-d2hpY2ggaXMgd2hlcmUgYWxsIG9mIHRoZSBkZXZlbG9wbWVudCBmb3IgdGhlDQogIG5leHQgdmVy
-c2lvbiBvZiB0aGUga2VybmVsIGlzIGF0LiAgUGxlYXNlIHJlZnJlc2ggeW91ciBwYXRjaCBhZ2Fp
-bnN0DQogIHRoZSBsaW51eC1uZXh0IHRyZWUsIG9yIGV2ZW4gYmV0dGVyIHlldCwgdGhlIGRldmVs
-b3BtZW50IHRyZWUNCiAgc3BlY2lmaWVkIGluIHRoZSBNQUlOVEFJTkVSUyBmaWxlIGZvciB0aGUg
-c3Vic3lzdGVtIHlvdSBhcmUgc3VibWl0dGluZw0KICBhIHBhdGNoIGZvciwgYW5kIHJlc2VuZCBp
-dC4NCiANCi0gWW91IGRpZCBub3Qgc3BlY2lmeSBhIGRlc2NyaXB0aW9uIG9mIHdoeSB0aGUgcGF0
-Y2ggaXMgbmVlZGVkLCBvcg0KICBwb3NzaWJseSwgYW55IGRlc2NyaXB0aW9uIGF0IGFsbCwgaW4g
-dGhlIGVtYWlsIGJvZHkuICBQbGVhc2UgcmVhZCB0aGUNCiAgc2VjdGlvbiBlbnRpdGxlZCAiVGhl
-IGNhbm9uaWNhbCBwYXRjaCBmb3JtYXQiIGluIHRoZSBrZXJuZWwgZmlsZSwNCiAgRG9jdW1lbnRh
-dGlvbi9wcm9jZXNzL3N1Ym1pdHRpbmctcGF0Y2hlcy5yc3QgZm9yIHdoYXQgaXMgbmVlZGVkIGlu
-DQogIG9yZGVyIHRvIHByb3Blcmx5IGRlc2NyaWJlIHRoZSBjaGFuZ2UuDQogDQotIFlvdSBkaWQg
-bm90IHdyaXRlIGEgZGVzY3JpcHRpdmUgU3ViamVjdDogZm9yIHRoZSBwYXRjaCwgYWxsb3dpbmcg
-R3JlZywNCiAgYW5kIGV2ZXJ5b25lIGVsc2UsIHRvIGtub3cgd2hhdCB0aGlzIHBhdGNoIGlzIGFs
-bCBhYm91dC4gIFBsZWFzZSByZWFkDQogIHRoZSBzZWN0aW9uIGVudGl0bGVkICJUaGUgY2Fub25p
-Y2FsIHBhdGNoIGZvcm1hdCIgaW4gdGhlIGtlcm5lbCBmaWxlLA0KICBEb2N1bWVudGF0aW9uL3By
-b2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVzLnJzdCBmb3Igd2hhdCBhIHByb3Blcg0KICBTdWJqZWN0
-OiBsaW5lIHNob3VsZCBsb29rIGxpa2UuDQogDQotIEl0IGxvb2tzIGxpa2UgeW91IGRpZCBub3Qg
-dXNlIHlvdXIgInJlYWwiIG5hbWUgZm9yIHRoZSBwYXRjaCBvbiBlaXRoZXINCiAgdGhlIFNpZ25l
-ZC1vZmYtYnk6IGxpbmUsIG9yIHRoZSBGcm9tOiBsaW5lIChib3RoIG9mIHdoaWNoIGhhdmUgdG8N
-CiAgbWF0Y2gpLiAgUGxlYXNlIHJlYWQgdGhlIGtlcm5lbCBmaWxlLA0KICBEb2N1bWVudGF0aW9u
-L3Byb2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVzLnJzdCBmb3IgaG93IHRvIGRvIHRoaXMNCiAgY29y
-cmVjdGx5Lg0KIA0KSWYgeW91IHdpc2ggdG8gZGlzY3VzcyB0aGlzIHByb2JsZW0gZnVydGhlciwg
-b3IgeW91IGhhdmUgcXVlc3Rpb25zIGFib3V0DQpob3cgdG8gcmVzb2x2ZSB0aGlzIGlzc3VlLCBw
-bGVhc2UgZmVlbCBmcmVlIHRvIHJlc3BvbmQgdG8gdGhpcyBlbWFpbCBhbmQNCkdyZWcgd2lsbCBy
-ZXBseSBvbmNlIGhlIGhhcyBkdWcgb3V0IGZyb20gdGhlIHBlbmRpbmcgcGF0Y2hlcyByZWNlaXZl
-ZA0KZnJvbSBvdGhlciBkZXZlbG9wZXJzLg0KIA0KdGhhbmtzLA0KIA0KZ3JlZyBrLWgncyBwYXRj
-aCBlbWFpbCBib3QNCiANCg==
+> +
+>  /**
+>   * blk_queue_max_secure_erase_sectors - set max sectors for a secure erase
+>   * @q:  the request queue for the device
+> @@ -633,6 +659,10 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
+>  	t->max_segment_size = min_not_zero(t->max_segment_size,
+>  					   b->max_segment_size);
+>  
+> +	t->max_copy_sectors = min(t->max_copy_sectors, b->max_copy_sectors);
+> +	t->max_copy_hw_sectors = min(t->max_copy_hw_sectors,
+> +				     b->max_copy_hw_sectors);
+> +
+>  	t->misaligned |= b->misaligned;
+>  
+>  	alignment = queue_limit_alignment_offset(b, start);
+> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+> index f0f9314ab65c..805c2b6b0393 100644
+> --- a/block/blk-sysfs.c
+> +++ b/block/blk-sysfs.c
+> @@ -205,6 +205,44 @@ static ssize_t queue_discard_zeroes_data_show(struct request_queue *q, char *pag
+>  	return queue_var_show(0, page);
+>  }
+>  
+> +static ssize_t queue_copy_hw_max_show(struct request_queue *q, char *page)
+> +{
+> +	return sprintf(page, "%llu\n", (unsigned long long)
+> +		       q->limits.max_copy_hw_sectors << SECTOR_SHIFT);
+> +}
+> +
+> +static ssize_t queue_copy_max_show(struct request_queue *q, char *page)
+> +{
+> +	return sprintf(page, "%llu\n", (unsigned long long)
+> +		       q->limits.max_copy_sectors << SECTOR_SHIFT);
+> +}
 
-------=_002_NextPart608575887075_=----
-Content-Type: text/html;
-	charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Given that you repeat the same pattern twice, may be add a queue_var64_show()
+helper ? (naming can be changed).
 
-<html><head><meta http-equiv=3D"content-type" content=3D"text/html; charse=
-t=3DUTF-8"><style>body { line-height: 1.5; }blockquote { margin-top: 0px; =
-margin-bottom: 0px; margin-left: 0.5em; }body { font-size: 14px; font-fami=
-ly: "Microsoft YaHei UI"; color: rgb(0, 0, 0); line-height: 1.5; }</style>=
-</head><body>=0A<div>hello:</div><div><span></span><span style=3D"backgrou=
-nd-color: transparent;">&nbsp; &nbsp;&nbsp;</span><span style=3D"backgroun=
-d-color: transparent;">&nbsp; &nbsp;</span><span style=3D"background-color=
-: transparent;">In embedded devices with relatively small memory, if the t=
-ransfer speed of ncm is fast and other programs occupy CPU memory, it is l=
-ikely that the return value ncm -&gt;skd_tx_data of alloc_skb() is NULL, a=
-nd the code is likely to enter err. If skb2 is not processed in err, it wi=
-ll cause memory leakage.</span></div>=0A<div><br></div><div>Thank you.</di=
-v><hr style=3D"width: 210px; height: 1px;" color=3D"#b5c4df" size=3D"1" al=
-ign=3D"left">=0A<div><span><div style=3D"MARGIN: 10px; FONT-FAMILY: verdan=
-a; FONT-SIZE: 10pt"><div>nanfengwq@sina.com</div></div></span></div>=0A<bl=
-ockquote style=3D"margin-Top: 0px; margin-Bottom: 0px; margin-Left: 0.5em;=
- margin-Right: inherit"><div>&nbsp;</div><div style=3D"border:none;border-=
-top:solid #B5C4DF 1.0pt;padding:3.0pt 0cm 0cm 0cm"><div style=3D"PADDING-R=
-IGHT: 8px; PADDING-LEFT: 8px; FONT-SIZE: 12px;FONT-FAMILY:tahoma;COLOR:#00=
-0000; BACKGROUND: #efefef; PADDING-BOTTOM: 8px; PADDING-TOP: 8px"><div><b>=
-From:</b>&nbsp;<a href=3D"mailto:gregkh@linuxfoundation.org">gregkh</a></d=
-iv><div><b>Date:</b>&nbsp;2024-05-19&nbsp;22:37</div><div><b>To:</b>&nbsp;=
-<a href=3D"mailto:nanfengwq@sina.com">nanfengwq@sina.com</a></div><div><b>=
-CC:</b>&nbsp;<a href=3D"mailto:balbi@kernel.org">balbi</a>; <a href=3D"mai=
-lto:linux-usb@vger.kernel.org">linux-usb</a>; <a href=3D"mailto:linux-kern=
-el@vger.kernel.org">linux-kernel</a></div><div><b>Subject:</b>&nbsp;Re: me=
-mory leakage in ncm_wrap_ntb() in USB ncm mode with kernel 5.15</div></div=
-></div><div><div>On Sun, May 19, 2024 at 10:23:10PM +0800, nanfengwq@sina.=
-com wrote:</div>=0A<div>&gt; Hello=EF=BC=9A</div>=0A<div>&gt; I have disco=
-vered a risk of memory leakage in ncm_wrap_ntb() under USB ncm mode in ker=
-nel 5.15, and I have fixed it. </div>=0A<div>&gt; Please help me review it=
-</div>=0A<div>&gt; </div>=0A<div>&gt; If this modification is effective, =
-it can also be integrated into other kernel versions, such as kernel 4.14,=
- and so on.</div>=0A<div>&gt; </div>=0A<div>&gt; The logic of a memory lea=
-k is as follows:</div>=0A<div>&gt; </div>=0A<div>&gt; If the return value =
-skb2 of&nbsp; package_for_tx() is not NULL, and the return value ncm-&gt;s=
-kb_tx_data of alloc_skb() is NULL, then the code will go to err, where the=
-re is no processing of skb2, resulting in a memory leak in skb2.</div>=0A<=
-div>&gt; </div>=0A<div>&gt; </div>=0A<div>&gt; Thank you.</div>=0A<div>&gt=
-; </div>=0A<div>&gt; </div>=0A<div>&gt; </div>=0A<div>&gt; </div>=0A<div>&=
-nbsp;</div>=0A<div>&nbsp;</div>=0A<div>Hi,</div>=0A<div>&nbsp;</div>=0A<di=
-v>This is the friendly patch-bot of Greg Kroah-Hartman.&nbsp; You have sen=
-t him</div>=0A<div>a patch that has triggered this response.&nbsp; He used=
- to manually respond</div>=0A<div>to these common problems, but in order t=
-o save his sanity (he kept</div>=0A<div>writing the same thing over and ov=
-er, yet to different people), I was</div>=0A<div>created.&nbsp; Hopefully =
-you will not take offence and will fix the problem</div>=0A<div>in your pa=
-tch and resubmit it so that it can be accepted into the Linux</div>=0A<div=
->kernel tree.</div>=0A<div>&nbsp;</div>=0A<div>You are receiving this mess=
-age because of the following common error(s)</div>=0A<div>as indicated bel=
-ow:</div>=0A<div>&nbsp;</div>=0A<div>- Your patch did not apply to any kno=
-wn trees that Greg is in control</div>=0A<div>&nbsp; of.&nbsp; Possibly th=
-is is because you made it against Linus's tree, not</div>=0A<div>&nbsp; th=
-e linux-next tree, which is where all of the development for the</div>=0A<=
-div>&nbsp; next version of the kernel is at.&nbsp; Please refresh your pat=
-ch against</div>=0A<div>&nbsp; the linux-next tree, or even better yet, th=
-e development tree</div>=0A<div>&nbsp; specified in the MAINTAINERS file f=
-or the subsystem you are submitting</div>=0A<div>&nbsp; a patch for, and r=
-esend it.</div>=0A<div>&nbsp;</div>=0A<div>- You did not specify a descrip=
-tion of why the patch is needed, or</div>=0A<div>&nbsp; possibly, any desc=
-ription at all, in the email body.&nbsp; Please read the</div>=0A<div>&nbs=
-p; section entitled "The canonical patch format" in the kernel file,</div>=
-=0A<div>&nbsp; Documentation/process/submitting-patches.rst for what is ne=
-eded in</div>=0A<div>&nbsp; order to properly describe the change.</div>=
-=0A<div>&nbsp;</div>=0A<div>- You did not write a descriptive Subject: for=
- the patch, allowing Greg,</div>=0A<div>&nbsp; and everyone else, to know =
-what this patch is all about.&nbsp; Please read</div>=0A<div>&nbsp; the se=
-ction entitled "The canonical patch format" in the kernel file,</div>=0A<d=
-iv>&nbsp; Documentation/process/submitting-patches.rst for what a proper</=
-div>=0A<div>&nbsp; Subject: line should look like.</div>=0A<div>&nbsp;</di=
-v>=0A<div>- It looks like you did not use your "real" name for the patch o=
-n either</div>=0A<div>&nbsp; the Signed-off-by: line, or the From: line (b=
-oth of which have to</div>=0A<div>&nbsp; match).&nbsp; Please read the ker=
-nel file,</div>=0A<div>&nbsp; Documentation/process/submitting-patches.rst=
- for how to do this</div>=0A<div>&nbsp; correctly.</div>=0A<div>&nbsp;</di=
-v>=0A<div>If you wish to discuss this problem further, or you have questio=
-ns about</div>=0A<div>how to resolve this issue, please feel free to respo=
-nd to this email and</div>=0A<div>Greg will reply once he has dug out from=
- the pending patches received</div>=0A<div>from other developers.</div>=0A=
-<div>&nbsp;</div>=0A<div>thanks,</div>=0A<div>&nbsp;</div>=0A<div>greg k-h=
-'s patch email bot</div>=0A<div>&nbsp;</div>=0A</div></blockquote>=0A</bod=
-y></html>
-------=_002_NextPart608575887075_=------
+> +
+> +static ssize_t queue_copy_max_store(struct request_queue *q, const char *page,
+> +				    size_t count)
+> +{
+> +	unsigned long max_copy_bytes;
+> +	struct queue_limits lim;
+> +	ssize_t ret;
+> +	int err;
+> +
+> +	ret = queue_var_store(&max_copy_bytes, page, count);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (max_copy_bytes & (queue_logical_block_size(q) - 1))
+> +		return -EINVAL;
+> +
+> +	blk_mq_freeze_queue(q);
+> +	lim = queue_limits_start_update(q);
+> +	lim.max_user_copy_sectors = max_copy_bytes >> SECTOR_SHIFT;
 
-------=_001_NextPart642033051568_=----
-Content-Type: application/octet-stream;
-	name="0001-USB-NCM-mode-There-is-a-memory-leak.patch"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
-	filename="0001-USB-NCM-mode-There-is-a-memory-leak.patch"
+max_copy_bytes is an unsigned long, so 64 bits on 64-bit arch and
+max_user_copy_sectors is an unsigned int, so 32-bits. There are thus no
+guarantees that this will not overflow. A check is needed.
 
-RnJvbSAyOWQ0NTBiMzI3OGQ1MDkwZDhiNjJmNzg0ZTk5M2IwZWIxMWVlYzM0IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBuYW5mZW5nd3EgPG5hbmZlbmd3cUBzaW5hLmNvbT4KRGF0ZTog
-U2F0LCAxOCBNYXkgMjAyNCAxNjoxNTo0NSArMDgwMApTdWJqZWN0OiBbUEFUQ0hdIFVTQihOQ00g
-bW9kZSk6VGhlcmUgaXMgYSBtZW1vcnkgbGVhawoKSWYgc2tiMiBpcyBub3QgZXF1YWwgdG8gTlVM
-TCBhbmQgdGhlIHJldHVybiB2YWx1ZSBvZiBhbGxvY3NrYigpIGlzIE5VTEwsaXQgd2lsbCBjYXVz
-ZSBhIG1lbW9yeSBsZWFrCgpTaWduZWQtb2ZmLWJ5OiBuYW5mZW5nd3EgPG5hbmZlbmd3cUBzaW5h
-LmNvbT4KLS0tCiBkcml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vZl9uY20uYyB8IDIgKy0KIDEg
-ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX25jbS5jIGIvZHJpdmVycy91c2IvZ2FkZ2V0
-L2Z1bmN0aW9uL2ZfbmNtLmMKaW5kZXggZTBjMTgzMjM0Li5jOWJkZTdhZmQgMTAwNjQ0Ci0tLSBh
-L2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX25jbS5jCisrKyBiL2RyaXZlcnMvdXNiL2dh
-ZGdldC9mdW5jdGlvbi9mX25jbS5jCkBAIC0xMTQ0LDcgKzExNDQsNyBAQCBzdGF0aWMgc3RydWN0
-IHNrX2J1ZmYgKm5jbV93cmFwX250YihzdHJ1Y3QgZ2V0aGVyICpwb3J0LAogCWlmIChuY20tPnNr
-Yl90eF9uZHApCiAJCWRldl9rZnJlZV9za2JfYW55KG5jbS0+c2tiX3R4X25kcCk7CiAKLQlyZXR1
-cm4gTlVMTDsKKwlyZXR1cm4gc2tiMjsKIH0KIAogLyoKLS0gCjIuMzIuMC53aW5kb3dzLjEKCg==
+> +	err = queue_limits_commit_update(q, &lim);
+> +	blk_mq_unfreeze_queue(q);
+> +
+> +	if (err)
 
-------=_001_NextPart642033051568_=------
+You can reuse ret here. No need for adding the err variable.
+
+> +		return err;
+> +	return count;
+> +}
+> +
+>  static ssize_t queue_write_same_max_show(struct request_queue *q, char *page)
+>  {
+>  	return queue_var_show(0, page);
+> @@ -505,6 +543,9 @@ QUEUE_RO_ENTRY(queue_nr_zones, "nr_zones");
+>  QUEUE_RO_ENTRY(queue_max_open_zones, "max_open_zones");
+>  QUEUE_RO_ENTRY(queue_max_active_zones, "max_active_zones");
+>  
+> +QUEUE_RO_ENTRY(queue_copy_hw_max, "copy_max_hw_bytes");
+> +QUEUE_RW_ENTRY(queue_copy_max, "copy_max_bytes");
+> +
+>  QUEUE_RW_ENTRY(queue_nomerges, "nomerges");
+>  QUEUE_RW_ENTRY(queue_rq_affinity, "rq_affinity");
+>  QUEUE_RW_ENTRY(queue_poll, "io_poll");
+> @@ -618,6 +659,8 @@ static struct attribute *queue_attrs[] = {
+>  	&queue_discard_max_entry.attr,
+>  	&queue_discard_max_hw_entry.attr,
+>  	&queue_discard_zeroes_data_entry.attr,
+> +	&queue_copy_hw_max_entry.attr,
+> +	&queue_copy_max_entry.attr,
+>  	&queue_write_same_max_entry.attr,
+>  	&queue_write_zeroes_max_entry.attr,
+>  	&queue_zone_append_max_entry.attr,
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index aefdda9f4ec7..109d9f905c3c 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -309,6 +309,10 @@ struct queue_limits {
+>  	unsigned int		discard_alignment;
+>  	unsigned int		zone_write_granularity;
+>  
+> +	unsigned int		max_copy_hw_sectors;
+> +	unsigned int		max_copy_sectors;
+> +	unsigned int		max_user_copy_sectors;
+> +
+>  	unsigned short		max_segments;
+>  	unsigned short		max_integrity_segments;
+>  	unsigned short		max_discard_segments;
+> @@ -933,6 +937,8 @@ void blk_queue_max_secure_erase_sectors(struct request_queue *q,
+>  		unsigned int max_sectors);
+>  extern void blk_queue_max_discard_sectors(struct request_queue *q,
+>  		unsigned int max_discard_sectors);
+> +extern void blk_queue_max_copy_hw_sectors(struct request_queue *q,
+> +					  unsigned int max_copy_sectors);
+>  extern void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
+>  		unsigned int max_write_same_sectors);
+>  extern void blk_queue_logical_block_size(struct request_queue *, unsigned int);
+> @@ -1271,6 +1277,14 @@ static inline unsigned int bdev_discard_granularity(struct block_device *bdev)
+>  	return bdev_get_queue(bdev)->limits.discard_granularity;
+>  }
+>  
+> +/* maximum copy offload length, this is set to 128MB based on current testing */
+
+Current testing will not be current in a while... So may be simply say
+"arbitrary" or something. Also please capitalize the first letter of the
+comment. So something like:
+
+/* Arbitrary absolute limit of 128 MB for copy offload. */
+
+> +#define BLK_COPY_MAX_BYTES		(1 << 27)
+
+Also, it is not clear from the name if this is a soft limit or a cap on the
+hardware limit... So at least please adjust the comment to say which one it is.
+
+> +
+> +static inline unsigned int bdev_max_copy_sectors(struct block_device *bdev)
+> +{
+> +	return bdev_get_queue(bdev)->limits.max_copy_sectors;
+> +}
+> +
+>  static inline unsigned int
+>  bdev_max_secure_erase_sectors(struct block_device *bdev)
+>  {
+
+-- 
+Damien Le Moal
+Western Digital Research
 
 
