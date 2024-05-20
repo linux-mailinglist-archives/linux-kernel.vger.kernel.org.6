@@ -1,142 +1,276 @@
-Return-Path: <linux-kernel+bounces-183472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49118C997A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:42:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549628C9993
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F0D3280E18
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:42:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8D28B21B8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0351BF3B;
-	Mon, 20 May 2024 07:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17631B7F4;
+	Mon, 20 May 2024 07:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="t+8vRIjd"
-Received: from msa.smtpout.orange.fr (smtp-83.smtpout.orange.fr [80.12.242.83])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SPVfeYSA"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC6812B8B;
-	Mon, 20 May 2024 07:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81CF17BB7
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 07:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716190940; cv=none; b=IrME58nnxlOKMfJ+qE3Q9qjBkj3sSz0+SZviaoXiq+iy17gn2DmVlQSnigcicT7pZI76QXQTbqhXuyTI4CcDji4gBui5aFEZnNW+qOwF11IJ+ElbUNc2hEVxcPxBM4+rmDkPxEZe2SOdskLlOJ5FfxiySknF5kQdBTkpx5slFIk=
+	t=1716191762; cv=none; b=KEFwcy/SspDjKgjkypbFx38KlH0Z7U4sXgTLl0kjwjCr2nX1MOZ1JUg6SbDCV610x+87Ey9SdgUh2mBfF4wl543HNl/UUdZX9W6MR2LUxK1d/yFlrrLq/NbrMlHckpDKna2LaOJHIPF/vWDd1d1Oxj2PL0rFGkEMzjTMxtR7iXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716190940; c=relaxed/simple;
-	bh=k4k9NEelRcoi98SI9g7103KMZ9H3Z/pFf+PgoWGfjy0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HZscgJqH5i4WVKZFKzdtwfoMARRvkW/54r3Fozqle8EsssbqWA2bl4mbLjgL8BD33GaDE45Plx4wnHU8joE+fLvtRxTWgqt9VPTWxGbIAGW5uJ7hm5A8NEd/cY3MW2enk2yi5NzmFZpe1rcPZHRdgFJevQacmLO3chInj2uV3fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=t+8vRIjd; arc=none smtp.client-ip=80.12.242.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 8xeqsglyjml3s8xersCxfy; Mon, 20 May 2024 09:42:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716190930;
-	bh=bdxbRY6DhIfGliSzM5MbeLiBdRI38zgyGW9MM+5fHeE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=t+8vRIjdGyNISv2Dq+QABq/jhNPkpgpmtCbCrZAauIfXEEJEm4/kSoSCe2uw1oE9H
-	 k3jvy8TEzmnOPH2k5pjGrM89Pv3MKBvuG2rOC84uZ2NAdsMRR5iMI80IommRPUFKdT
-	 vs8xkqHkDt+1H7wfBfFej7bXLLGEYVu2CuLVmdf7wQlHMwd8L7VK5yTYB/gsbbVyXU
-	 whAvKBMETZ7KKN7ftm6kOqBjwohTVXGGvLcFhay5ypfK9OL1CRPJKQcWSR9/z+/Hp/
-	 FmEPifZ8kgskWWoj6sQP0Vz2HY/1t08Qq1JTvG7hDluDPgw93lVKDxHq6v26KtdeRb
-	 oO6h4KFyha2ew==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 20 May 2024 09:42:10 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Tedd Ho-Jeong An <tedd.an@intel.com>,
-	Kiran K <kiran.k@intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	linux-bluetooth@vger.kernel.org
-Subject: [PATCH] Bluetooth: btintel_pcie: Fix the error handling path of btintel_pcie_probe()
-Date: Mon, 20 May 2024 09:41:57 +0200
-Message-ID: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716191762; c=relaxed/simple;
+	bh=GbUxzxc7h8pQ/nE4TnWwJpTxKCZajuWeWSMZb+LFpog=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=FNEFh1b6HiqP5ltN8BHm/WoFCtv4Qp0uq9Xp93yX5NldN8xqHxUrIadk2cC4wgIw+5VISEuDi4liSjVBMecKmh+hANkTBQQgVC81ZD8O0WQ4S1a0Znv/ntN+5xPY3xG22QqFM+VhvuyEFGRt1rj1pGVsyXbO5wCmLMW1GMirWxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SPVfeYSA; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-61be4b98766so25727407b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 00:55:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716191759; x=1716796559; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SN6nOe4VdcVTTAJGaWcvy/5LbNdItcqnWfPe1QXhyCU=;
+        b=SPVfeYSAl6hGxGe8jAvV3iaNrfB7COHqMjmY+bvWxofJrbcUAFbDmblAxwNHHGCuDG
+         lLgxYyJTF1jnVs+Yev7RAQLVQyetWMGqOH6uPY81eT2Gzdd0hgxl1d9JNGWkxoz3mxYR
+         /xBKvGSAAcIKw1jTId8HRIqpdr6ZHT42RZR0cO7S/gwwnUtpKUIJ1sH1xBb2urjIeniN
+         P4ScfgabO0RAFNnRJW4QP4FhiygLLq1aiN9R8oMjkQUvcHyfy9WY5m5yX9h7qsupYigc
+         A7ROUMRwQoi2vUomr5QUUaZlpnfaJ1v8/bnwCK6X+FnLjxnifSylNzn8sUkqjuIpxb8i
+         4i7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716191759; x=1716796559;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SN6nOe4VdcVTTAJGaWcvy/5LbNdItcqnWfPe1QXhyCU=;
+        b=RnGAfp0g981+1MPHZ0QO1y7qWo3x1m6yzLKOVRcCvGvJJJ0VDPXhqWdaOAynfi04e7
+         jyVbBY4QC0ujMMxUeoaVFPWcciVDGSxQ6/jLvSrTQDrjgSNJYyiSkR8rP3Yo/Bv15vsf
+         RAWfIkxI+GkE+KHrfLDql+bp2DrqgWw1q6i8Wot9HLQD49XAcFD8H/we1pymNZ7YQdxt
+         HVUqGxsqm9c/fU4vKkEAMUa6S1xvPxd4kQh5JfVrw7ROySI2qqZQiHIYKdQ+fBMFjEZ2
+         2BPNgGTEQPdRUyMVS+P1PDGa+Opmym1uPCiPCawTlygZ1xBp3OKcWt1IcgvMx0httFQI
+         RrUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoSrCx8giuhp6jbYiNI9lrEa5MTg1+Vnr4QAEpGprhn7s6sKf/RF/z/Ik1pUfxBVgPltnx62UY77dMwcV85g0gdsA+vZq957K7pH9M
+X-Gm-Message-State: AOJu0YzluPb2dAfXVakaASKbmVsQyZQcYQ3fL9oGGkldawrh1a8RL42z
+	NPPP8Ie8oHptXhBIEdDm/L07+Zi2epaYw4ID4saDB3C1lpuNdhE/yzYY8A7SdQTROdI3y8bD60d
+	KwyQ6HXDS3xJdBl3Un3SYCsZLCkc8uxn8Yr/S7g==
+X-Google-Smtp-Source: AGHT+IGChIi8QXwHMF5+ngfiRBN2ka1NvZfJRURrCniZBbnzVAnq6Zit8D96fFDFZn8e8GEyn3gP37eM3i8jB4KExd4=
+X-Received: by 2002:a25:b94e:0:b0:dee:998b:1459 with SMTP id
+ 3f1490d57ef6-dee998b211bmr17372329276.39.1716191758672; Mon, 20 May 2024
+ 00:55:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 20 May 2024 09:55:47 +0200
+Message-ID: <CACRpkdbKNem0KB4W9a6R7o6e7V4+eh9cLMKYV0xv5Hv3tEpysg@mail.gmail.com>
+Subject: [GIT PULL] pin control bulk changes for v6.10
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Some resources freed in the remove function are not handled by the error
-handling path of the probe.
+Hi Linus,
 
-Add the needed function calls.
+here is the bulk of pin control changes for v6.10. This time
+low activity and not very much interesting, it's even very little
+driver activity.
 
-Fixes: c2b636b3f788 ("Bluetooth: btintel_pcie: Add support for PCIe transport")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Anyways: details in the signed tag, please pull it in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit 4cece764965020c22cff7665b18a012006359095=
+:
+
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v6.10-1
+
+for you to fetch changes up to 83906257f2e4441a4610f83ae24a713ba609b64a:
+
+  Merge tag 'samsung-pinctrl-6.10' of
+https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung into
+devel (2024-05-06 08:53:50 +0200)
+
+----------------------------------------------------------------
+Pin control changes for the v6.10 kernel cycle:
+
+Core changes:
+
+- Use DEFINE_SHOW_STORE_ATTRIBUTE() in debugfs entries.
+
+New drivers:
+
+- Qualcomm PMIH0108, PMD8028, PMXR2230 and PM6450
+  pin control support.
+
+Improvements:
+
+- Serious cleanup of the recently merged aw9523 driver.
+
+- Fix PIN_CONFIG_BIAS_DISABLE handling in pinctrl-single.
+
+- A slew of device tree binding cleanups.
+
+- Support a bus clock in the Samsung driver.
+
+----------------------------------------------------------------
+Andr=C3=A9 Draszik (2):
+      dt-bindings: pinctrl: samsung: google,gs101-pinctrl needs a clock
+      pinctrl: samsung: support a bus clock
+
+Andy Shevchenko (13):
+      pinctrl: pxa2xx: Make use of struct pinfunction
+      pinctrl: pxa2xx: Make use of struct pingroup
+      pinctrl: aw9523: Destroy mutex on ->remove()
+      pinctrl: aw9523: Use correct error code for not supported functionali=
+ty
+      pinctrl: aw9523: Always try both ports in aw9523_gpio_set_multiple()
+      pinctrl: aw9523: Make use of struct pinfunction and PINCTRL_PINFUNCTI=
+ON()
+      pinctrl: aw9523: Use temporary variable for HW IRQ number
+      pinctrl: aw9523: Get rid of redundant ' & U8_MAX' pieces
+      pinctrl: aw9523: Remove unused irqchip field in struct aw9523_irq
+      pinctrl: aw9523: Make use of dev_err_probe()
+      pinctrl: aw9523: Sort headers and group pinctrl/*
+      pinctrl: aw9523: Fix indentation in a few places
+      pinctrl: Use DEFINE_SHOW_STORE_ATTRIBUTE() helper for debugfs
+
+Anjelique Melendez (4):
+      dt-bindings: pinctrl: qcom,pmic-gpio: Add PMIH0108 and PMD8028 suppor=
+t
+      pinctrl: qcom: spmi-gpio: Add PMXR2230 and PM6450 support
+      pinctrl: qcom: spmi-gpio: Add PMIH0108 and PMD8028 support
+      dt-bindings: pinctrl: qcom,pmic-gpio: Fix "comptaible" typo for PMIH0=
+108
+
+Arnd Bergmann (1):
+      pinctrl: armada-37xx: remove an unused variable
+
+Christophe JAILLET (2):
+      pinctrl: max77620: Remove an unused fields in struct
+max77620_pin_info and max77620_pctrl_info
+      pinctrl: pinctrl-single: Remove some unused fields in struct pcs_func=
+tion
+
+Claudiu Beznea (2):
+      pinctrl: renesas: rzg2l: Execute atomically the interrupt configurati=
+on
+      pinctrl: renesas: rzg2l: Configure the interrupt type on resume
+
+Danila Tikhonov (1):
+      pinctrl: qcom: pinctrl-sm7150: Fix sdc1 and ufs special pins regs
+
+David Collins (1):
+      dt-bindings: pinctrl: qcom,pmic-gpio: Add PMXR2230 and PM6450 support
+
+Geert Uytterhoeven (2):
+      pinctrl: renesas: r8a779h0: Fix IRQ suffixes
+      pinctrl: renesas: r8a779h0: Add INTC-EX pins, groups, and function
+
+Herman van Hazendonk (1):
+      dt-bindings: pinctrl: qcom,pmic-mpp: add support for PM8901
+
+Krzysztof Kozlowski (8):
+      dt-bindings: pinctrl: samsung: drop unused header with register const=
+ants
+      pinctrl: sunxi: sun9i-a80-r: drop driver owner assignment
+      pinctrl: freescale: imx8ulp: fix module autoloading
+      pinctrl: mediatek: fix module autoloading
+      pinctrl: loongson2: fix module autoloading
+      pinctrl: qcom: sm7150: fix module autoloading
+      pinctrl: realtek: fix module autoloading
+      pinctrl: samsung: drop redundant drvdata assignment
+
+Lad Prabhakar (2):
+      dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow 'input' and
+'output-enable' properties
+      pinctrl: renesas: rzg2l: Remove extra space in function parameter
+
+Linus Walleij (2):
+      Merge tag 'renesas-pinctrl-for-v6.10-tag1' of
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers
+into devel
+      Merge tag 'samsung-pinctrl-6.10' of
+https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung into
+devel
+
+Luca Weiss (1):
+      dt-bindings: pinctrl: qcom,pmic-gpio: Allow gpio-hog nodes
+
+Matthijs Kooijman (1):
+      pinctrl: single: Fix PIN_CONFIG_BIAS_DISABLE handling
+
+Paul Barker (1):
+      pinctrl: renesas: rzg2l: Limit 2.5V power supply to Ethernet interfac=
+es
+
+Peng Fan (1):
+      pinctrl: pinconf-generic: print hex value
+
+Rafa=C5=82 Mi=C5=82ecki (3):
+      dt-bindings: pinctrl: mediatek: mt7622: add "gpio-ranges" property
+      dt-bindings: pinctrl: mediatek: mt7622: fix array properties
+      dt-bindings: pinctrl: mediatek: mt7622: add "antsel" function
+
+Stefan Wahren (3):
+      pinctrl: bcm2835: Implement bcm2835_pinconf_get
+      pinctrl: bcm2835: Implement bcm2711_pinconf_get
+      pinctrl: bcm2835: Make pin freeing behavior configurable
+
+Tengfei Fan (1):
+      dt-bindings: pinctrl: qcom: update functions to match with driver
+
+Thomas Richard (1):
+      pinctrl: pinctrl-single: move suspend()/resume() callbacks to noirq
+
+ .../bindings/pinctrl/mediatek,mt7622-pinctrl.yaml  | 113 ++++++++++-------
+ .../bindings/pinctrl/qcom,pmic-gpio.yaml           |  38 ++++++
+ .../devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml |   1 +
+ .../bindings/pinctrl/qcom,sm4450-tlmm.yaml         |  52 +++-----
+ .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml    |   2 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml          |  21 ++++
+ MAINTAINERS                                        |   1 -
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c              |  83 +++++++++++--
+ drivers/pinctrl/freescale/pinctrl-imx8ulp.c        |   1 +
+ drivers/pinctrl/mediatek/pinctrl-mt6765.c          |   1 +
+ drivers/pinctrl/mediatek/pinctrl-mt6779.c          |   1 +
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c        |   3 -
+ drivers/pinctrl/pinconf-generic.c                  |   2 +-
+ drivers/pinctrl/pinctrl-aw9523.c                   | 131 +++++++----------=
 ---
-Compile tested only.
-Maybe incomplete.
----
- drivers/bluetooth/btintel_pcie.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
-index 5b6805d87fcf..d572576d0dbc 100644
---- a/drivers/bluetooth/btintel_pcie.c
-+++ b/drivers/bluetooth/btintel_pcie.c
-@@ -1280,17 +1280,17 @@ static int btintel_pcie_probe(struct pci_dev *pdev,
- 
- 	err = btintel_pcie_config_pcie(pdev, data);
- 	if (err)
--		goto exit_error;
-+		goto exit_destroy_worqueue;
- 
- 	pci_set_drvdata(pdev, data);
- 
- 	err = btintel_pcie_alloc(data);
- 	if (err)
--		goto exit_error;
-+		goto exit_free_irq_vectors;
- 
- 	err = btintel_pcie_enable_bt(data);
- 	if (err)
--		goto exit_error;
-+		goto exit_free_pcie;
- 
- 	/* CNV information (CNVi and CNVr) is in CSR */
- 	data->cnvi = btintel_pcie_rd_reg32(data, BTINTEL_PCIE_CSR_HW_REV_REG);
-@@ -1299,17 +1299,25 @@ static int btintel_pcie_probe(struct pci_dev *pdev,
- 
- 	err = btintel_pcie_start_rx(data);
- 	if (err)
--		goto exit_error;
-+		goto exit_free_pcie;
- 
- 	err = btintel_pcie_setup_hdev(data);
- 	if (err)
--		goto exit_error;
-+		goto exit_free_pcie;
- 
- 	bt_dev_dbg(data->hdev, "cnvi: 0x%8.8x cnvr: 0x%8.8x", data->cnvi,
- 		   data->cnvr);
- 	return 0;
- 
--exit_error:
-+exit_free_pcie:
-+	btintel_pcie_free(data);
-+
-+exit_free_irq_vectors:
-+	pci_free_irq_vectors(pdev);
-+
-+exit_destroy_worqueue:
-+	destroy_workqueue(data->workqueue);
-+
- 	/* reset device before exit */
- 	btintel_pcie_reset_bt(data);
- 
--- 
-2.45.1
-
+ drivers/pinctrl/pinctrl-loongson2.c                |   1 +
+ drivers/pinctrl/pinctrl-max77620.c                 |   2 -
+ drivers/pinctrl/pinctrl-single.c                   |  50 ++++----
+ drivers/pinctrl/pinmux.c                           |  26 ++--
+ drivers/pinctrl/pxa/pinctrl-pxa2xx.c               |  55 ++++-----
+ drivers/pinctrl/pxa/pinctrl-pxa2xx.h               |  15 +--
+ drivers/pinctrl/qcom/pinctrl-sm7150.c              |  21 ++--
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           |   4 +
+ drivers/pinctrl/realtek/pinctrl-rtd1315e.c         |   1 +
+ drivers/pinctrl/realtek/pinctrl-rtd1319d.c         |   1 +
+ drivers/pinctrl/renesas/pfc-r8a779h0.c             | 136 +++++++++++++++++=
+++--
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c            |  18 ++-
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 112 +++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |  95 +++++++++++++-
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   2 +
+ drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c        |   1 -
+ include/dt-bindings/pinctrl/samsung.h              |  95 --------------
+ 31 files changed, 694 insertions(+), 391 deletions(-)
+ delete mode 100644 include/dt-bindings/pinctrl/samsung.h
 
