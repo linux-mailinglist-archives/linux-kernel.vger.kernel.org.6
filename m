@@ -1,126 +1,191 @@
-Return-Path: <linux-kernel+bounces-183475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0548C99A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:01:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949D58C99A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48F99B21A47
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 08:01:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDDFC1F21742
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 08:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3BA1BF54;
-	Mon, 20 May 2024 08:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JYRRQFeP"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B5C1C2A3;
+	Mon, 20 May 2024 08:06:39 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC707EAF1;
-	Mon, 20 May 2024 08:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DD1168B7
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 08:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716192068; cv=none; b=r2tpzdGJHrHoA5SdwoyyjKYnmypt1jTTkEWFfF9EhY0KDM6W3UEJYSp+UI93eUfZVhDpJLFZFdeXTTRFhWSnCBsQNc7z7BTwPme8KVK3d8Di8YRZCyjp6bR9zyOcwN/XSH2VLfGrIEfl/b8qzOQ8ZeEjOtmFg6kJeHoe4SCQoDI=
+	t=1716192399; cv=none; b=uOZI1yiEeNOyilVLqt4HmuanlG7/Z4QYmbrF/AaQ74B9qfO4LeN+G8UvaXUqFW2SsumGY8Z6+mrol2jEV/oV5ekLJqTiLd605SHCQge40i1iXAQp5O7mS9Gyh9eu5WjLGkl/Aa9pLNyQddpfhEDDpxTqxB5hg0benlsRoy22wYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716192068; c=relaxed/simple;
-	bh=HXoQhPqpAkaWlPvx77/Pe7iK4py1z16RYmHwOBdQZ2A=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=aWlORHQLaqEuZQY6ZcxKYikcev1KYZ2MZEXSX5PWe6MFdsnHeSBWjyh/lS4dW8Zb288ZYmfGv8XAVVnr5KgORi8UJEK4WQzyyQN/rKypcTUE0qddTtydQL8NyeV45vIWJxsfZDvbImfx+ORByudbwmWs/BiDUx/UytmOOJ9o6No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JYRRQFeP; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716192042; x=1716796842; i=markus.elfring@web.de;
-	bh=m1O7qNjpXbTiSLCciZWoL6HuYyWekxoXYSN0Bs0YSVk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=JYRRQFeP0/4DMi3qsoF1n3FfHCwGxDwcKsyqbBcBn9SV8qUHBAGiF4tO51y9XjuV
-	 ZAskPOtGuwjEZF8X/MGsd9MKJ3kd0f7gsSJ/levuu/OoxzHkO2B23MkdlA/MIWIPF
-	 JqE03HK6Id18+KCJsnxM5sp0yAU26yp6ZN4gZWCpKzgDirB2jyn8kxzyyPzcDi9yt
-	 Ar9TDKuXO9D72sltOGpB2Lq4aEE/apnSisodYkSHJcrP0MXyFMc/Ol6Yr4WBEEdeO
-	 lhZ7ykS333jIqDMJhb7JRnMStuxVMxYXAUpf6F3xa/V+vsAO375QsFRNSxP+2qQLP
-	 q6dGZ2Rs7ZOtLg+CyA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N1Lwd-1sWaOX2lcB-00udIW; Mon, 20
- May 2024 10:00:42 +0200
-Message-ID: <eb464408-5567-4130-b899-90ba9756adc1@web.de>
-Date: Mon, 20 May 2024 10:00:27 +0200
+	s=arc-20240116; t=1716192399; c=relaxed/simple;
+	bh=/K7ci0TyVb6yNyxuqXd0mYfjFOuDKmaTCa6ESll68lY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=USxuj21RzEuy77M1Zah7zpHFHBrBlk1HEsh9UjuxRsEqjolqvrDEqWgilG+eXmLvzWsHq45Bw8B/EnMUbKxiKIsXfFhlARce2X2kMUGuQR2OZbH4uvjJScQWdXuy8JKP2jafedcUqecKyKKMW1ut1Q1/twMWx1/NnwjOlMlGKYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e1b97c1b19so1147906839f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 01:06:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716192397; x=1716797197;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hY/NcJMQiiMdWCWi2cq/vnWcITZlQA3YKCGo1tRNyWQ=;
+        b=Kv7FbLJeCHi882qUBnIYYRHA1or9lxeww4OVA1qlPRQQzQxHKlKVFeuLVvFo9oDncr
+         Z/fHXog3kaE6rxw0pUmetwsxd2+HAf47ixPVv0Vsx4k6/b/hV2HohWB2HjMhyoR2FZUA
+         CMBWt+ntxw5ilcZMX5ecJ8oajrccYhOHPcqPUMecaqEwTh105xQ0lED/CvYRT5NWy6dG
+         P6Ik5bni7N7nZ2P5ZUHSnzTC32ixjLVqfmrTpAddXu3eRMrWNMi3AKV3D/ZbvXHtgYu1
+         aSifum5Z7dw/1sM0hyvVmRTvYMuUGKuxiIZZC90H+agtMng/AKwQ1S9jN0nlkVw3/MFz
+         cr1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWmamye9lchXR2C2yvDVwo4pFWSpBkfUR5g+X/DzNdHY38uCUNtFi+sV+5gEjDE5q24ao0FfnpiUiq2NEeask0HFnuTjoT6Hv6U+XUi
+X-Gm-Message-State: AOJu0YwNe2mEGvq9iNo7o0h9klcOKbN3wf9dzNXWnhyvNMbyKrOgi7rR
+	GBk33PEpEtQH4tdaCfI4ia8Fusw55S+1pQSfn0epkL+aoXgDuLlGCi3U/X5KsLGXkU0gGnnjI74
+	lx32flC7oQCJ0bK7M4eYwcqPm/H0c+rA6xavjrFAAaCY8qEl42v1pHUg=
+X-Google-Smtp-Source: AGHT+IFq3uO/UhtVBXa4Djzdi7C8ugAfiwRzvCnwh/ZLvesXXEj5LMquqqmisP+rEjSyJQfvfWrP9ovQ7/K0BS+bIF3dONYeTPXn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Wardenjohn <zhangwarden@gmail.com>, live-patching@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Joe Lawrence <joe.lawrence@redhat.com>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
- Petr Mladek <pmladek@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240520005826.17281-1-zhangwarden@gmail.com>
-Subject: Re: [PATCH] livepatch: introduce klp_func called interface
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240520005826.17281-1-zhangwarden@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DPRWWeXpFsZQ3K8p/zgQYyEDxVHbzbT/j6qkc2eSiAfrb40kCD5
- Z3V1upljGa97oHvOt1Etual6WudEUL2Tf3HFY0ZyVJuEdv0GleLOcRJb4clI+YDTTr66fPJ
- y1vYPfwTt2eGCjNB+H6KJf7QKFW/y8eFwoNXKVHF47gKKs/JwV7T8sxWcAp3jq0mBOiOHVT
- p2bCZMPnn8mDt/Atys3cA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2fVKSG8kbUc=;Yc9XRMoFlr+JvngYg8kDNyIu42d
- myrlfj1TUqSklkp8aKjC+xn6RtDf7mvqPN7/BSLc6EsFxonT1y5zdSt2rPtbXspqwx2G/+r6m
- VNNvJkbm/TRF6TmeWh5x0mlp+wmyCz2oxTiujdrOXsaEWwcid3OqOdj//GoUziUV6TOA9+ZNo
- RNoPj9qQf/JzgvNHQm9QCLIEw7aFq8vQ0IFUziiLmIKliRDGcAc4SqP3rCpYeoVOgbTKLXNTt
- rlsW5FWuJqNVwhyaSHszUZZBei/+KkApPssS1kpkIPVjPc5+o6JoEGdw1LJ3hjvaZIMMviDLJ
- UMggv8BRS8dBrBDEqrBqSIUvyjEZkKVs17g2MFkIXlVdkK9gqvksAvHJX20ZQ2L+nT1I7pA//
- A03nYNzFAftVXpm75/D8oOBVzH8jwx9pDn/OSbU+5xxTiM2q0T9VpHuKHNdVaH2mJVF320z+B
- wO8fbx4w+67l+apQBAPP8q2F82GptqLa7jjGihyERVx6p2l434tUE4ff8rde05beGpKSql5Sp
- mn/goIPYveDBm7ja9RfsF3k01ryaCmdG8j45k83gqz8kGKIU6wBZgLyWki8TEqWDHtgO/gxTf
- e/ctsUNtW0NulgM9FvAP3mU0h2YPIoJIPjzPa743EGd/oYWBwbJdS7yMJ7xSFaYQ99te9QbIv
- 96a+sZev8Jkg9RG/AzNV1X0KrCZMk78w/bm9nPl5YdS51UFpsjoVrRk+pHfV0GpGs4PRCJN4Q
- 60ypiW7ROGMmxPut+Zcb6YpwvGLTCjyOwloaoY7cHa0lxA8GMOta8xKvwTeMj9fwO1+K+FlDY
- SD6YbM7PvwZz62SGHJ0Buc6WOymOUe9pxNb2ErMOoCrgs=
+X-Received: by 2002:a05:6602:2b82:b0:7de:d6a0:dbe1 with SMTP id
+ ca18e2360f4ac-7e1b51fdb00mr162044539f.2.1716192396951; Mon, 20 May 2024
+ 01:06:36 -0700 (PDT)
+Date: Mon, 20 May 2024 01:06:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002fd2de0618de2e65@google.com>
+Subject: [syzbot] [fs?] general protection fault in iter_file_splice_write
+From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-Please add a version identifier to the message subject.
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    33e02dc69afb Merge tag 'sound-6.10-rc1' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13ad18d0980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25544a2faf4bae65
+dashboard link: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1526a8dc980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f53ae4980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-33e02dc6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/573c88ac3233/vmlinux-33e02dc6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/760a52b9a00a/bzImage-33e02dc6.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 3 PID: 5196 Comm: syz-executor259 Not tainted 6.9.0-syzkaller-07370-g33e02dc69afb #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+RIP: 0010:iter_file_splice_write+0xa24/0x10b0 fs/splice.c:759
+Code: 00 48 89 fa 48 c1 ea 03 80 3c 1a 00 0f 85 b1 04 00 00 4d 8b 65 10 49 c7 45 10 00 00 00 00 49 8d 7c 24 08 48 89 fa 48 c1 ea 03 <80> 3c 1a 00 0f 85 1a 05 00 00 49 8b 54 24 08 4c 89 ee 4c 89 ff 83
+RSP: 0018:ffffc900031b7930 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: ffffffff8209a1a8
+RDX: 0000000000000001 RSI: ffffffff8209a06c RDI: 0000000000000008
+RBP: 000000000000003d R08: 0000000000000006 R09: 0000000000000000
+R10: 7fffffffffffefff R11: 0000000000000001 R12: 0000000000000000
+R13: ffff888026d5a208 R14: 7fffffffffffefff R15: ffff88801e5c5800
+FS:  00007f78cdfc16c0(0000) GS:ffff88806b300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f78ce0454d0 CR3: 0000000019dc8000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_splice_from fs/splice.c:941 [inline]
+ direct_splice_actor+0x19b/0x6d0 fs/splice.c:1164
+ splice_direct_to_actor+0x346/0xa40 fs/splice.c:1108
+ do_splice_direct_actor fs/splice.c:1207 [inline]
+ do_splice_direct+0x17e/0x250 fs/splice.c:1233
+ do_sendfile+0xaa8/0xdb0 fs/read_write.c:1295
+ __do_sys_sendfile64 fs/read_write.c:1362 [inline]
+ __se_sys_sendfile64 fs/read_write.c:1348 [inline]
+ __x64_sys_sendfile64+0x1da/0x220 fs/read_write.c:1348
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f78ce009d09
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f78cdfc1168 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f78ce091328 RCX: 00007f78ce009d09
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000004
+RBP: 00007f78ce091320 R08: 00007f78cdfc16c0 R09: 0000000000000000
+R10: 0000000100000000 R11: 0000000000000246 R12: 00007f78ce09132c
+R13: 0000000000000006 R14: 00007ffe98369ff0 R15: 00007ffe9836a0d8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+RIP: 0010:iter_file_splice_write+0xa24/0x10b0 fs/splice.c:759
+Code: 00 48 89 fa 48 c1 ea 03 80 3c 1a 00 0f 85 b1 04 00 00 4d 8b 65 10 49 c7 45 10 00 00 00 00 49 8d 7c 24 08 48 89 fa 48 c1 ea 03 <80> 3c 1a 00 0f 85 1a 05 00 00 49 8b 54 24 08 4c 89 ee 4c 89 ff 83
+RSP: 0018:ffffc900031b7930 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: ffffffff8209a1a8
+RDX: 0000000000000001 RSI: ffffffff8209a06c RDI: 0000000000000008
+RBP: 000000000000003d R08: 0000000000000006 R09: 0000000000000000
+R10: 7fffffffffffefff R11: 0000000000000001 R12: 0000000000000000
+R13: ffff888026d5a208 R14: 7fffffffffffefff R15: ffff88801e5c5800
+FS:  00007f78cdfc16c0(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f78ce05d0d8 CR3: 0000000019dc8000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	00 48 89             	add    %cl,-0x77(%rax)
+   3:	fa                   	cli
+   4:	48 c1 ea 03          	shr    $0x3,%rdx
+   8:	80 3c 1a 00          	cmpb   $0x0,(%rdx,%rbx,1)
+   c:	0f 85 b1 04 00 00    	jne    0x4c3
+  12:	4d 8b 65 10          	mov    0x10(%r13),%r12
+  16:	49 c7 45 10 00 00 00 	movq   $0x0,0x10(%r13)
+  1d:	00
+  1e:	49 8d 7c 24 08       	lea    0x8(%r12),%rdi
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 1a 00          	cmpb   $0x0,(%rdx,%rbx,1) <-- trapping instruction
+  2e:	0f 85 1a 05 00 00    	jne    0x54e
+  34:	49 8b 54 24 08       	mov    0x8(%r12),%rdx
+  39:	4c 89 ee             	mov    %r13,%rsi
+  3c:	4c 89 ff             	mov    %r15,%rdi
+  3f:	83                   	.byte 0x83
 
 
-=E2=80=A6
-> If the patched function have bug, it may cause serious result
-> such as kernel crash.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Wording suggestion:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-   If the patched function has a bug, it might cause serious side effects
-   like a kernel crash.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-> This is a kobject attribute of klp_func. Sysfs interface named
->  "called" is introduced to livepatch =E2=80=A6
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Under which circumstances will imperative wordings be applied for
-another improved change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-
-=E2=80=A6
-> ---
->  include/linux/livepatch.h |  2 ++
-=E2=80=A6
-
-You may present version descriptions behind the marker line.
-Would you like to indicate any adjustments according to your change approa=
-ch
-(from yesterday)?
-https://lore.kernel.org/lkml/20240519074343.5833-1-zhangwarden@gmail.com/
-
-Regards,
-Markus
+If you want to undo deduplication, reply with:
+#syz undup
 
