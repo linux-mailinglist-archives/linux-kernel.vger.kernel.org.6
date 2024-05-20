@@ -1,127 +1,137 @@
-Return-Path: <linux-kernel+bounces-184106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D772A8CA2AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:20:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C708CA2B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A97DB221E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:20:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF6CF1F225A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C151C1386B5;
-	Mon, 20 May 2024 19:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A80D1386BD;
+	Mon, 20 May 2024 19:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="PcnX9rzu";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RLa1niyU"
-Received: from wflow5-smtp.messagingengine.com (wflow5-smtp.messagingengine.com [64.147.123.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60911137935;
-	Mon, 20 May 2024 19:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.140
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WQl4upsy"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A44137C41;
+	Mon, 20 May 2024 19:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716232831; cv=none; b=fh2cOb0V47mT9I3m3QeKQPzcIHNkVD5nYeEMkendmCbQqwI+0EduAOLPyEOCEpKZSexFszt7KYfR5N6d/bSuk3+3YCviFFJC/6iz6fMqnasgUk2hNCNOssmuvyXcJKseK6AnGvmO0VUiUYHk2fQ3+uAAQLNGk/SJsbNFHwQEKng=
+	t=1716233139; cv=none; b=A7HarkYwzujTRUhLYFhsBragZujmKrAk6USA6pL4O95xcdJTXjkq11H/9fIt/LT8LU085Lgg2GHRII8/0Ok3Hz2Ag67YIAI776CdCgpdeJL/kjOmfUsuf8YcVR8gtdUvnetiswh4GrZXfzvDD4usO8JawQip2TEPTeYlyav9urw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716232831; c=relaxed/simple;
-	bh=oBHEUgxuOy3Gb3SSjzvFEwOATEjDLoQFe4gPk/cU3Do=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sSmAmvDdteswSKSOZw5qrdGPXYv+u8lj6SEaimd2PUUR+e8/vq09dOjE4awjaypL3fnn0WbkpJh0qAkB/HQVd8gugkTj00GrdFUAEQ5JchS6xhv27pzAKsVqhOMx2Qa/6WV/H7Pajm+GbSNNEFJ7smPFs7a8aE8pHH9GIMv5czw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=PcnX9rzu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RLa1niyU; arc=none smtp.client-ip=64.147.123.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailflow.west.internal (Postfix) with ESMTP id 959502CC023E;
-	Mon, 20 May 2024 15:20:28 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 20 May 2024 15:20:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1716232828; x=1716236428; bh=mO0EedKpcd
-	HIsso5KUGd6iDgcS2AGEPXGB8hV4/SyCk=; b=PcnX9rzubBrca97DZrsVgCICWa
-	JuiSf1k6djT2sFikn6eAuRpbOZU5lv5Bj1KvcUQAFi1pKJ706kRS0yGwhnGaglUp
-	Q5Gw9xY5u6i3SgySAUVERfFcr7KQzVCCo3GhWOhYJAF8EFACZssHggqNs6MXa75H
-	jG8ybiPYenaaz/geBonOqtTnd3jpjaIn0DVcaX6hspR6jyHYNGzRop+7cJhJAKCF
-	a/vnSlOb8M+GNxyhXHt7PqgSfRkwYay4QFdDh4YlRrxN8m4UGYHCTSBDH2BEw3Wz
-	q9mhqOUE98+dEnicxF/AXmtYshKzNmHJ0c0YAF3A5gW2kjlTWEMG8shAepQQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716232828; x=1716236428; bh=mO0EedKpcdHIsso5KUGd6iDgcS2A
-	GEPXGB8hV4/SyCk=; b=RLa1niyUuqomipMH6wH8n5ZPTPzAUDg26M3+U8ZJ3gKk
-	frG9wr7yyFYQhg92xcqHHOy2kb7yqd4GqpWgl2dxppyYmws07gtgS8aVCNNduP/4
-	G6ep8zG3tGKUxab1vECr7uefbgvO1uX5Az/YEj+ocAXD7m0Dc4wcAs20tpuu6X/A
-	eCGB401w53Y4ui+5MM5ciJLIKNmIeuT8pIGpnIgtiGkOMjlGWD/iDI5JKgmA9lF0
-	yOKhDRxQYMBRl6QknG8izF2gsIwsiJpw0ehYT6ZdxPh2RubGF+ijT0MVSNAG8Nc4
-	Wl0S9T9Y/XQ2iQobpRojjP5FRcV2DcMxUjGlZjpBHA==
-X-ME-Sender: <xms:e6JLZqL3F3B2aRCJ4w1S9WRH9slbVS04Anuc3Mq4dVF0uFsSre9bwA>
-    <xme:e6JLZiIY_k-ZDk7QL_-QBKTGCi4lkqtA31fORwgqNxil4r9Jp9Y3zvFfgVuzNJX-A
-    3-wDoQWoF_ozipb2vQ>
-X-ME-Received: <xmr:e6JLZqsqlwtMoI0P81WwiLaEuT2yOboTSj1LwLg-zsZgJgbT0qxMktr2CeY8-tPlWjQ3GnGl1Vy6_ap5KNOU8ss>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeitddgudduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttdejnecuhfhrohhmpeflohhn
-    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
-    ggtffrrghtthgvrhhnpeekkeetgeefgfdvfefgfeffueefffejvdduieejheejheffkeej
-    keelffeulefggfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehjtggrlhhmvghlshesfeiggidtrdhnvght
-X-ME-Proxy: <xmx:e6JLZvY4OqRPmhLDbSoNBf9SaSnyJhxd3ipvV7YA-JVJX_8F5wtRbQ>
-    <xmx:e6JLZhYJA0-Y4UiDfcKcdBM3JdCdCTyL5lAtnDmC8vj7X55i9IPQ4g>
-    <xmx:e6JLZrA-o1NbLbBFxj_rl6jjY8fNsBfo-ozmgIL2il_amxjjZDfpUw>
-    <xmx:e6JLZnZisSO1vb5NFiGJfxQHXjZLXuo3uRGN8amQ8DjLajlWAl-eKQ>
-    <xmx:fKJLZlqTk4UcPirAK9O5Z2cBz4ms-BwgWtuD-EK2p5_O71z9bjoeav0X>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 20 May 2024 15:20:25 -0400 (EDT)
-Date: Mon, 20 May 2024 12:25:27 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: Tycho Andersen <tycho@tycho.pizza>
-Cc: brauner@kernel.org, ebiederm@xmission.com, 
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
-Message-ID: <ptixqmplbovxmqy3obybwphsie2xaybfj46xyafdnol7bme4z4@4kwdljmrkdpn>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-4-jcalmels@3xx0.net>
- <ZktQZi5iCwxcU0qs@tycho.pizza>
+	s=arc-20240116; t=1716233139; c=relaxed/simple;
+	bh=5LBXzjzDAPTZBUaBcHE7waTQatRc3TVSXvGyu/MVk7A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tbJenvo1Zs01+zFb/rrMI5f5vvETSkH7nPGmwngr19Iu1kZt7+Md9NHBhvcO0BhAVWFAW/AJHrOpQAJbdW1dxxmlmYwV8cB3vs5qKh38WR8HPpY+A9P3TtI1zLVIcnhLvla9jv2vLlMH/XMx4G1L6ewKKpA4xCTF87ci9blhvAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WQl4upsy; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 86661205421D;
+	Mon, 20 May 2024 12:25:36 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 86661205421D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1716233136;
+	bh=MBxWBiadl4sTqBaO3ScFCEQXblE9CV7k2QIVsB3rijA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WQl4upsytkSNzZMYUQzV1c6k/uK8n/Tv1YX48+vP5jmz2O1aGpKlw9raxHIiMiZ5P
+	 B+wcmw0OFEA5NIqDtjca44j/FSezEkjxTUQXuuyOj2+auBaDgpuqexIy8PMHYe2WgC
+	 1SS0WAGK5pORppu92rp4lKsTZ8uMRlKBEdno0aPU=
+Message-ID: <ec8c1b9e-6ada-49c1-a3e3-47452208d26c@linux.microsoft.com>
+Date: Mon, 20 May 2024 12:25:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZktQZi5iCwxcU0qs@tycho.pizza>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] drivers/hv/vmbus: Get the irq number from
+ DeviceTree
+To: Rob Herring <robh@kernel.org>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
+ catalin.marinas@arm.com, dave.hansen@linux.intel.com, decui@microsoft.com,
+ haiyangz@microsoft.com, hpa@zytor.com, kw@linux.com, kys@microsoft.com,
+ lenb@kernel.org, lpieralisi@kernel.org, mingo@redhat.com,
+ mhklinux@outlook.com, rafael@kernel.org, tglx@linutronix.de,
+ wei.liu@kernel.org, will@kernel.org, linux-acpi@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, x86@kernel.org, ssengar@microsoft.com,
+ sunilmut@microsoft.com, vdso@hexbites.dev
+References: <20240514224508.212318-1-romank@linux.microsoft.com>
+ <20240514224508.212318-6-romank@linux.microsoft.com>
+ <CAL_JsqKXejxzixzwQO4U_00WAaV_iaEh8Mndf6R5BhLQsgVwLQ@mail.gmail.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <CAL_JsqKXejxzixzwQO4U_00WAaV_iaEh8Mndf6R5BhLQsgVwLQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 20, 2024 at 07:30:14AM GMT, Tycho Andersen wrote:
-> there is an ongoing effort (started at [0]) to constify the first arg
-> here, since you're not supposed to write to it. Your usage looks
-> correct to me, so I think all it needs is a literal "const" here.
 
-Will do, along with the suggestions from Jarkko
 
-> > +	struct ctl_table t;
-> > +	unsigned long mask_array[2];
-> > +	kernel_cap_t new_mask, *mask;
-> > +	int err;
-> > +
-> > +	if (write && (!capable(CAP_SETPCAP) ||
-> > +		      !capable(CAP_SYS_ADMIN)))
-> > +		return -EPERM;
+On 5/17/2024 10:14 AM, Rob Herring wrote:
+> On Tue, May 14, 2024 at 5:45 PM Roman Kisel <romank@linux.microsoft.com> wrote:
+>>
+>> The vmbus driver uses ACPI for interrupt assignment on
+>> arm64 hence it won't function in the VTL mode where only
+>> DeviceTree can be used.
+>>
+>> Update the vmbus driver to discover interrupt configuration
+>> via DeviceTree.
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> ---
+>>   drivers/hv/vmbus_drv.c | 37 +++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 37 insertions(+)
+>>
+>> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+>> index e25223cee3ab..52f01bd1c947 100644
+>> --- a/drivers/hv/vmbus_drv.c
+>> +++ b/drivers/hv/vmbus_drv.c
+>> @@ -36,6 +36,7 @@
+>>   #include <linux/syscore_ops.h>
+>>   #include <linux/dma-map-ops.h>
+>>   #include <linux/pci.h>
+>> +#include <linux/of_irq.h>
 > 
-> ...why CAP_SYS_ADMIN? You mention it in the changelog, but don't
-> explain why.
+> If you are using this header in a driver, you are doing it wrong. We
+> have common functions which work on both ACPI or DT, so use them if
+> you have a need to support both.
+> 
+Understood, thank you! I'll look more for the examples. If you happen to 
+have in mind the place where the idiomatic/more preferred approach is 
+used, please let me know, would owe you a great debt of gratitude.
 
-No reason really, I was hoping we could decide what we want here.
-UMH uses CAP_SYS_MODULE, Serge mentioned adding a new cap maybe.
+
+> Though my first question on a binding will be the same as on every
+> 'hypervisor binding'.  Why can't you make your hypervisor interfaces
+> discoverable? It's all s/w, not some h/w device which is fixed.
+> 
+I've taken a look at the related art. AWS's Firecracker, Intel's Cloud 
+Hypervisor, Google's CrosVM, QEmu allow the guest use the 
+well-established battle-tested generic approaches (ACPI, 
+DeviceTree/OpenFirmware) of describing the virtual hardware and its 
+resources rather than making the guest use their own specific 
+interfaces. That holds true for the s/w devices like 
+"vcpu-stall-detector" and VirtIO that do not have counterparts built as 
+hardware, too.
+
+Here, the guest needs to set up VMBus (the intra-partition communication 
+transport) to be able to talk to the host partition. Receiving a message 
+needs an interrupt service routine attached to the interrupt injected 
+into the guest virtual processor, and DeviceTree lets provide the 
+interrupt number. If a custom interface were used here, it'd look less 
+expected due to others relying on ACPI and DT for configuring virtual 
+devices and busses. A specialized interface would add more code (new 
+code) instead of relying on the approach that is widely used.
+
+
+> Rob
+
+-- 
+Thank you,
+Roman
 
