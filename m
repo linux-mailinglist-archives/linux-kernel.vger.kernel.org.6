@@ -1,354 +1,127 @@
-Return-Path: <linux-kernel+bounces-183711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C922C8C9CDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:05:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5CB68C9CD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB76B1C20E68
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:05:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C2811F2229A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4791854F86;
-	Mon, 20 May 2024 12:05:49 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD8C54670;
+	Mon, 20 May 2024 12:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NW353wGB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2599B20311
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 12:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93E147F64;
+	Mon, 20 May 2024 12:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716206748; cv=none; b=aYE3dwCgu8Ul0q5eo7onjwgv3OOXcfoQvIUawy2Qv2hqWrIrUWZyPdG3ttaKHFTUv0ZBOln4zyjzXKMz/kuFHOkkplif/pCcb0oGRpoqAEjp2G5K0qTaYWk2gztOfzboSgSZgxYuYwzzL/nnjEOPkhHcKP4NEVazd1y3kyCDyCo=
+	t=1716206748; cv=none; b=Mv1IFEUQ+v8J8WxuCs/IeU11VykXAl85qW2432+CVC1D4+yrqv9wvO8ZeNLwNpnIBzvtcgK3TGGtA31W/WwZTPaQL5Px5YymlZvs6VNvrKqUb4knmWwwfYygg9B9BnKXpNIreBgdUreA5ov048RQFk1TO9kanW3WixJN5cDQZ+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716206748; c=relaxed/simple;
-	bh=1+VJICtKmIz+t0qSPTGJieJWl7G46hkfIzcpH3cffcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HNv8Zf4hTF4qBBzNtsuDaZ7uIMWaI8HTOCTd8GLXrO/cPPFCuYrR12Pa/u6QIqjTtEuYzR4LsFcY8UjRnBKNkZCcAGcP1+7LnAjTQn6eDCBAB6ILfQbc0rXxYlTUDDXSecfO1CRljnaIpvUHaAg7libREKfcx/JeLDL7AscL8xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VjbpK2hp0zcj3D;
-	Mon, 20 May 2024 20:04:25 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0E3681402C8;
-	Mon, 20 May 2024 20:05:27 +0800 (CST)
-Received: from [10.67.111.176] (10.67.111.176) by
- kwepemd500012.china.huawei.com (7.221.188.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 20 May 2024 20:05:26 +0800
-Message-ID: <20d70835-9411-9a08-c567-56d7040e01dd@huawei.com>
-Date: Mon, 20 May 2024 20:05:25 +0800
+	bh=ihphf3e+2xoqjMycX7UjOAanljK01aQaycW292KC3Ew=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YKoivFFm5AlfeF1kGOGsJIzXVtIp6C//2cDxHMalG+QXLZZKSzZ6dgrk/7r6eNGYtIW+z1JOeeCYh/PUl3pF99WkpiulnfMCA4bCnrQWqX6QxRFD/lk9qgy4hJn+i73XCS8vY+Ae2+zBGRzAg8wNXLB5RFPFldDajpiqQnQKkns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NW353wGB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A91A8C2BD10;
+	Mon, 20 May 2024 12:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716206747;
+	bh=ihphf3e+2xoqjMycX7UjOAanljK01aQaycW292KC3Ew=;
+	h=From:Date:Subject:To:Cc:From;
+	b=NW353wGBz//sqIPuFiU0kLKhZe2yu5PTD4UB84EsVyeZbflUkizsvHj4AyHUxJtq/
+	 vXDu5tum8/6mZmhQFxQQ8U1x9vv5LNjPvx0z6S5CfojpsdEL7J8T2RTnuA9bNRh1DK
+	 xRO+yh/+6gzsAESxVA0K6Lk1wZwZvpiOMHGLBsbAR9rOjmfvoWW2xcx394Hun2SqHf
+	 7DHc3Pe4eQF/7O9lCqNM+KcnPANgCvFrulRUE68HGMNsORenuIKOEzfZkSSgmMjNCu
+	 8NRRsCJOcccsLMCCLshW3zaEN6bHx+7XuUesV4Ota/Dpg7T7ZQUVrj2CSpKDZ3OvvJ
+	 CHYI5rtMrUPyQ==
+From: Roger Quadros <rogerq@kernel.org>
+Date: Mon, 20 May 2024 15:05:41 +0300
+Subject: [PATCH] dt-bindings: soc: ti: Move ti,j721e-system-controller.yaml
+ to soc/ti
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH] arm64: asm-bug: Add .align 2 to the end of __BUG_ENTRY
-To: Mark Rutland <mark.rutland@arm.com>, Jiangfeng Xiao
-	<xiaojiangfeng@huawei.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <Dave.Martin@arm.com>,
-	<xieyuanbin1@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <nixiaoming@huawei.com>,
-	<wangbing6@huawei.com>, <douzhaolei@huawei.com>, <liaohua4@huawei.com>,
-	<lijiahuan5@huawei.com>, <wangfangpeng1@huawei.com>, "zhangjianhua (E)"
-	<chris.zjh@huawei.com>
-References: <1715955208-17109-1-git-send-email-xiaojiangfeng@huawei.com>
- <ZksnARrLkKHcX4C_@J2N7QTR9R3>
-Content-Language: en-US
-From: Li Zetao <lizetao1@huawei.com>
-In-Reply-To: <ZksnARrLkKHcX4C_@J2N7QTR9R3>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggpeml500015.china.huawei.com (7.185.36.226) To
- kwepemd500012.china.huawei.com (7.221.188.25)
+Message-Id: <20240520-for-v6-11-j721e-syscon-v1-1-f57a93e12cad@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAJQ8S2YC/x3MPQqAMAxA4atIZgNt/cWriIOtqcahlQZEEe9uc
+ fyG9x4QSkwCQ/FAopOFY8jQZQFum8NKyEs2GGVq1RiFPiY8W9Qa985oQrnFxYCd9a3rK29rZSH
+ HRyLP1z8ep/f9AOaC3QtoAAAA
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>, 
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Tero Kristo <kristo@kernel.org>
+Cc: "Andrew F. Davis" <afd@ti.com>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Roger Quadros <rogerq@kernel.org>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1693; i=rogerq@kernel.org;
+ h=from:subject:message-id; bh=ihphf3e+2xoqjMycX7UjOAanljK01aQaycW292KC3Ew=;
+ b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBmSzyYloFG0cbNYoIvsMeschthmd/vhp1TpuXm2
+ 1CgDcsy/OGJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZks8mAAKCRDSWmvTvnYw
+ k+mjEADBkrgshJf8w/RM1hI/HIBC00dlgNdQwaPBHGmdwQcbI/ceY8CHGgx67jK//UtYTlbd+O2
+ wMYnoh+Xidv5+FATS9RK3LAEVIlmLtqnDcTxVB/Az6p4I8gOcxPK4COEl9XyoisdSPk7j+Hmdlj
+ cEJQebHr8EYcRA6DXPt41221zjqmkGdp4wL/GJ7aJaUNqv9RuRMwDvrOsDfFZ8pXn2rpvo2OfA2
+ bZUvD9m+2uGc6J8oPf+ShlTxKeVd8LNtgnwWnAEjltw11bESqMGIjEF9SbVPLXCBJ83eTiTn3vM
+ 2qZpBfia5daaE42IYbwr4rh03d9E0FQqQx30SA9ULBkItjd01rirYii3Eg2rIwTvhSQ7kzw0Wux
+ /8zwZdNkq7JRUDmkc0gQyHgoYwuc8dn2/9an5KxOxbFf6omBeh3vRPenTXu+9Zfii8165Gqr4RP
+ ofbVY8HFZInh+7ZlN2L0U/oXX9AlaWMpf/RBAeFif3EDWO7RmLJWucDKHhVksQBWQRZwlmROeQd
+ /uzewpiwcLs9QXbrz8rc2GcWmQlDLUPjBpauVrDujakrk8V2X1pGFodAhX8zdzRpP+wDYY5sp4z
+ m/zv8fBG2v2dRoH5v0PZ47OT+ibqX5TWoZo7N+dM37ySfKkxaCK5gAjkUj49LbRNttSD/5fE73u
+ DzF+FkoEq/ooEow==
+X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
+ fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
 
-Hi,
+soc/ti is the more appropriate location for the system controller
+device tree binding documentation so move there.
 
-On 2024/5/20 18:33, Mark Rutland wrote:
-> On Fri, May 17, 2024 at 10:13:28PM +0800, Jiangfeng Xiao wrote:
->> I'm using the latest linux kernel mainline code,
->> with the default arm64 configuration:
->> make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig,
->> and set CONFIG_EXPERT=y, CONFIG_DEBUG_BUGVERBOSE=n,
->> CONFIG_PANIC_ON_OOPS=y.
->>
->> Loading the following kernel module will cause kernel panic.
->>
->> The call stack is as follows:
->>
->> root@(none):/# /root/insmod hello.ko
->> [    6.035003] hello: loading out-of-tree module taints kernel.
->> [    6.039129] ------------[ cut here ]------------
->> [    6.039287] hello
->> [    6.039704] Unexpected kernel BRK exception at EL1
->> [    6.040059] Internal error: BRK handler: 00000000f2000800 [#1] PREEMPT SMP
->> [    6.040457] Modules linked in: hello(O+)
->> [    6.041311] CPU: 0 PID: 50 Comm: insmod Tainted: G           O       6.9.1 #8
->> [    6.041755] Hardware name: linux,dummy-virt (DT)
->> [    6.042238] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->> [    6.042594] pc : buginit+0x18/0x1000 [hello]
->> [    6.043601] lr : buginit+0x18/0x1000 [hello]
->> [    6.043852] sp : ffff800080533ae0
->> [    6.044121] x29: ffff800080533ae0 x28: 0000000000000000 x27: 0000000000000000
->> [    6.044523] x26: ffffaba8c4e70510 x25: ffff800080533c30 x24: ffffaba8c4a28a58
->> [    6.044961] x23: 0000000000000000 x22: 0000000000000000 x21: ffff3947c0eab3c0
->> [    6.045503] x20: ffffaba8c4e3f000 x19: ffffaba846464000 x18: 0000000000000006
->> [    6.046124] x17: 0000000000000000 x16: ffffaba8c2492834 x15: 0720072007200720
->> [    6.046387] x14: 0720072007200720 x13: ffffaba8c49b27c8 x12: 0000000000000312
->> [    6.046829] x11: 0000000000000106 x10: ffffaba8c4a0a7c8 x9 : ffffaba8c49b27c8
->> [    6.047293] x8 : 00000000ffffefff x7 : ffffaba8c4a0a7c8 x6 : 80000000fffff000
->> [    6.047739] x5 : 0000000000000107 x4 : 0000000000000000 x3 : 0000000000000000
->> [    6.047955] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff3947c0eab3c0
->> [    6.048366] Call trace:
->> [    6.048653]  buginit+0x18/0x1000 [hello]
->> [    6.048922]  do_one_initcall+0x80/0x1c8
->> [    6.049333]  do_init_module+0x60/0x218
->> [    6.049475]  load_module+0x1ba4/0x1d70
->> [    6.049755]  __do_sys_init_module+0x198/0x1d0
->> [    6.049959]  __arm64_sys_init_module+0x1c/0x28
->> [    6.050160]  invoke_syscall+0x48/0x114
->> [    6.050334]  el0_svc_common.constprop.0+0x40/0xe0
->> [    6.050468]  do_el0_svc+0x1c/0x28
->> [    6.050635]  el0_svc+0x34/0xd8
->> [    6.050852]  el0t_64_sync_handler+0x120/0x12c
->> [    6.051088]  el0t_64_sync+0x190/0x194
->> [    6.051433] Code: d0ffffe0 910003fd 91000000 9400000b (d4210000)
->> [    6.052212] ---[ end trace 0000000000000000 ]---
->> [    6.052473] Kernel panic - not syncing: BRK handler: Fatal exception
->>
->> The kernel module source code is as follows:
->> ```
->>
->> static int __init buginit(void)
->> {
->> 	WARN(1, "hello\n");
->> 	return 0;
->> }
->>
->> static void __exit bugexit(void)
->> {
->> }
->>
->> module_init(buginit);
->> module_exit(bugexit);
->> MODULE_LICENSE("GPL");
->> ```
->>
->> When CONFIG_DEBUG_BUGVERBOSE macro is disabled,
->> the size of "__bug_table" section in hello.ko
->> is only 6 bytes instead of the expected 8 bytes.
->> As a result,
->> mod->num_bugs = sechdrs[i].sh_size / sizeof(struct bug_entry) = 6 / 8 = 0
->> calculated in module_bug_finalize when the kernel loads ko is incorrect.
->>
->> When running `WARN()`, the following backtrace is triggered:
->>
->> module_find_bug() at lib/bug.c
->> find_bug() at lib/bug.c
->> __report_bug() at lib/bug.c
->> report_bug() at lib/bug.c
->> call_break_hook() at arch/arm64/kernel/debug-monitors.c
->> brk_handler() at arch/arm64/kernel/debug-monitors.c
->>
->> It will return -EFAULT because hello.ko's mod->num_bugs is 0.
->> Finally, the kernel OOPS is triggered.
->>
->> Add .align 2 to the end of __BUG_ENTRY
->> to make the object layout generated by the assembly code
->> consistent with that of the C struct bug_entry.
->>
->> Fixes: 9fb7410f955f ("arm64/BUG: Use BRK instruction for generic BUG traps")
->>
->> Signed-off-by: Yuanbin Xie <xieyuanbin1@huawei.com>
->> Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
->> ---
->>   arch/arm64/include/asm/asm-bug.h | 1 +
->>   1 file changed, 1 insertion(+)
-> 
-> Ouch; sorry about this.
-> 
-> I reckon we should spell out the reason for this a bit more; would you
-> be happy with the commit message below?
-> 
-> | When CONFIG_DEBUG_BUGVERBOSE=n, we fail to add necessary padding bytes
-> | to bug_table entries, and as a result the last entry in a bug table will
-> | be ignored, potentially leading to an unexpected panic(). All prior
-> | entries in the table will be handled correctly.
-> |
-> | The arm64 ABI requires that struct fields of up to 8 bytes are
-> | naturally-aligned, with padding added within a struct such that struct
-> | are suitably aligned within arrays.
-> |
-> | When CONFIG_DEBUG_BUGVERPOSE=y, the layout of a bug_entry is:
-> |
-> | 	struct bug_entry {
-> | 		signed int      bug_addr_disp;	// 4 bytes
-> | 		signed int      file_disp;	// 4 bytes
-> | 		unsigned short  line;		// 2 bytes
-> | 		unsigned short  flags;		// 2 bytes
-> | 	}
-> |
-> | ... with 12 bytes total, requiring 4-byte alignment.
-> |
-> | When CONFIG_DEBUG_BUGVERBOSE=n, the layout of a bug_entry is:
-> |
-> | 	struct bug_entry {
-> | 		signed int      bug_addr_disp;	// 4 bytes
-> | 		unsigned short  flags;		// 2 bytes
-> | 		< implicit padding >		// 2 bytes
-> | 	}
-> |
-> | ... with 8 bytes total, with 6 bytes of data and 2 bytes of trailing
-> | padding, requiring 4-byte alginment.
-> |
-> | When we create a bug_entry in assembly, we align the start of the entry
-> | to 4 bytes, which implicitly handles padding for any prior entries.
-> | However, we do not align the end of the entry, and so when
-> | CONFIG_DEBUG_BUGVERBOSE=n, the final entry lacks the trailing padding
-> | bytes.
-> |
-> | For the main kernel image this is not a problem as find_bug() doesn't
-> | depend on the trailing padding bytes when searching for entries:
-> |
-> | 	for (bug = __start___bug_table; bug < __stop___bug_table; ++bug)
-> | 		if (bugaddr == bug_addr(bug))
-> | 			return bug;
-> |
-> | However for modules, module_bug_finalize() depends on the trailing
-> | bytes when calculating the number of entries:
-> |
-> | 	mod->num_bugs = sechdrs[i].sh_size / sizeof(struct bug_entry);
-> |
-> | ... and as the last bug_entry lacks the necessary padding bytes, this entry
-> | will not be counted, e.g. in the case of a single entry:
-> | 	
-> | 	sechdrs[i].sh_size == 6
-> | 	sizeof(struct bug_entry) == 8;
-> |
-> | 	sechdrs[i].sh_size / sizeof(struct bug_entry) == 0;
-> |
-> | Consequently module_find_bug() will miss the last bug_entry when it does:
-> |
-> | 	for (i = 0; i < mod->num_bugs; ++i, ++bug)
-> | 		if (bugaddr == bug_addr(bug))
-> | 			goto out;	
-> |
-> | ... which can lead to a kenrel panic due to an unhandled bug.
-> |
-> | This can be demonstrated with the following module:
-> |
-> | 	static int __init buginit(void)
-> | 	{
-> | 		WARN(1, "hello\n");
-> | 		return 0;
-> | 	}
-> |
-> | 	static void __exit bugexit(void)
-> | 	{
-> | 	}
-> |
-> | 	module_init(buginit);
-> | 	module_exit(bugexit);
-> | 	MODULE_LICENSE("GPL");
-> |
-> | ... which will trigger a kernel panic when loaded:
-> |
-> | 	------------[ cut here ]------------
-> | 	hello
-> | 	Unexpected kernel BRK exception at EL1
-> | 	Internal error: BRK handler: 00000000f2000800 [#1] PREEMPT SMP
-> | 	Modules linked in: hello(O+)
-> | 	CPU: 0 PID: 50 Comm: insmod Tainted: G           O       6.9.1 #8
-> | 	Hardware name: linux,dummy-virt (DT)
-> | 	pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> | 	pc : buginit+0x18/0x1000 [hello]
-> | 	lr : buginit+0x18/0x1000 [hello]
-> | 	sp : ffff800080533ae0
-> | 	x29: ffff800080533ae0 x28: 0000000000000000 x27: 0000000000000000
-> | 	x26: ffffaba8c4e70510 x25: ffff800080533c30 x24: ffffaba8c4a28a58
-> | 	x23: 0000000000000000 x22: 0000000000000000 x21: ffff3947c0eab3c0
-> | 	x20: ffffaba8c4e3f000 x19: ffffaba846464000 x18: 0000000000000006
-> | 	x17: 0000000000000000 x16: ffffaba8c2492834 x15: 0720072007200720
-> | 	x14: 0720072007200720 x13: ffffaba8c49b27c8 x12: 0000000000000312
-> | 	x11: 0000000000000106 x10: ffffaba8c4a0a7c8 x9 : ffffaba8c49b27c8
-> | 	x8 : 00000000ffffefff x7 : ffffaba8c4a0a7c8 x6 : 80000000fffff000
-> | 	x5 : 0000000000000107 x4 : 0000000000000000 x3 : 0000000000000000
-> | 	x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff3947c0eab3c0
-> | 	Call trace:
-> | 	 buginit+0x18/0x1000 [hello]
-> | 	 do_one_initcall+0x80/0x1c8
-> | 	 do_init_module+0x60/0x218
-> | 	 load_module+0x1ba4/0x1d70
-> | 	 __do_sys_init_module+0x198/0x1d0
-> | 	 __arm64_sys_init_module+0x1c/0x28
-> | 	 invoke_syscall+0x48/0x114
-> | 	 el0_svc_common.constprop.0+0x40/0xe0
-> | 	 do_el0_svc+0x1c/0x28
-> | 	 el0_svc+0x34/0xd8
-> | 	 el0t_64_sync_handler+0x120/0x12c
-> | 	 el0t_64_sync+0x190/0x194
-> | 	Code: d0ffffe0 910003fd 91000000 9400000b (d4210000)
-> | 	---[ end trace 0000000000000000 ]---
-> | 	Kernel panic - not syncing: BRK handler: Fatal exception
-> |
-> | Fix this by always aligning the end of a bug_entry to 4 bytes, which is
-> | correct regardless of CONFIG_DEBUG_BUGVERBOSE.
-> |
-> | Fixes: 9fb7410f955f ("arm64/BUG: Use BRK instruction for generic BUG traps")
-> | Signed-off-by: Yuanbin Xie <xieyuanbin1@huawei.com>
-> | Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-> 
-> With that:
-> 
-> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> Mark.
-> 
->>
->>
->>
->> diff --git a/arch/arm64/include/asm/asm-bug.h b/arch/arm64/include/asm/asm-bug.h
->> index c762038..6e73809 100644
->> --- a/arch/arm64/include/asm/asm-bug.h
->> +++ b/arch/arm64/include/asm/asm-bug.h
->> @@ -28,6 +28,7 @@
->>   	14470:	.long 14471f - .;			\
->>   _BUGVERBOSE_LOCATION(__FILE__, __LINE__)		\
->>   		.short flags; 				\
->> +		.align 2;				\
-The use of .align 2 here is based on the assumption that struct 
-bug_entry is 4-byte aligned. Currently, there is no problem with this 
-assumption, but for compatibility reasons, refer to the riscv 
-architecture and refactor the implementation of __BUG_FLAGS:
+Update Kishon's email address to a working one.
 
-#define __BUG_FLAGS(flags)					\
-do {								\
-	__asm__ __volatile__ (					\
-		"1:\n\t"					\
-			"ebreak\n"				\
-			".pushsection __bug_table,\"aw\"\n\t"	\
-		"2:\n\t"					\
-			__BUG_ENTRY "\n\t"			\
-			".org 2b + %3\n\t"                      \
-			".popsection"				\
-		:						\
-		: "i" (__FILE__), "i" (__LINE__),		\
-		  "i" (flags),					\
-		  "i" (sizeof(struct bug_entry)));              \
-} while (0)
+Signed-off-by: Roger Quadros <rogerq@kernel.org>
+---
+ .../bindings/{mfd => soc/ti}/ti,j721e-system-controller.yaml          | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Align the real size of struct bug_entry through .org. What do you think?
->>   		.popsection;				\
->>   	14471:
->>   #else
->> -- 
->> 1.8.5.6
->>
->>
-> 
+diff --git a/Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.yaml b/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
+similarity index 96%
+rename from Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.yaml
+rename to Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
+index e6289fbe6907..378e9cc5fac2 100644
+--- a/Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.yaml
++++ b/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
+@@ -2,7 +2,7 @@
+ # Copyright (C) 2020 Texas Instruments Incorporated - http://www.ti.com/
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/mfd/ti,j721e-system-controller.yaml#
++$id: http://devicetree.org/schemas/soc/ti/ti,j721e-system-controller.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: TI J721e System Controller Registers R/W
+@@ -19,7 +19,7 @@ description: |
+   and access the registers directly.
+ 
+ maintainers:
+-  - Kishon Vijay Abraham I <kishon@ti.com>
++  - Kishon Vijay Abraham I <kishon@kernel.org>
+   - Roger Quadros <rogerq@kernel.org>
+ 
+ properties:
+
+---
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+change-id: 20240520-for-v6-11-j721e-syscon-7bf6c83fb40b
+
+Best regards,
+-- 
+Roger Quadros <rogerq@kernel.org>
+
 
