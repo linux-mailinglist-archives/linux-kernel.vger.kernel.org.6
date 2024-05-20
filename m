@@ -1,428 +1,171 @@
-Return-Path: <linux-kernel+bounces-183528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 674918C9A42
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:23:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC048C9A44
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ACD41C20EB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:23:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 964AB2817BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F381CD20;
-	Mon, 20 May 2024 09:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4172B1CD3B;
+	Mon, 20 May 2024 09:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJONfR+W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sgEHnjXN"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ACEFC1D;
-	Mon, 20 May 2024 09:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B3EFC1D;
+	Mon, 20 May 2024 09:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716196977; cv=none; b=e671IJ5FFVfkDGvG51xyC++XqYKWforwuc120ixnC+kNw7NP3eEwCTWpbK5ADUjPCAREDPl0guUtnLVx6VGqLwNuuAapE0tarbwuQWdyL3RXWrTl6kx7WqdtQJgx+qMiji5mg4Wha0qdiKgJL9eDcgruwU3tgVl7q2mFpNAuG8E=
+	t=1716197055; cv=none; b=ec89MqhCQHIx5zKcWTNyMIZdr9MMFdAcNyKqVMKOIquh9m3jeRyWxEfnNq/39QHRrJVWsqHbIttmVWUmgBc8WXw2o4X6ZrtmzJgbe5Rbxg6YsEtB5nud/tGTDWidMkYOGlmEaL65Hz5XcKOq/rjxdSagj9xcyzzdaGgGBIg9PUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716196977; c=relaxed/simple;
-	bh=3pMKgd4LmFd4C4gJjWdjXdVrkXrPsHj6cGmB/FY1nl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AEtD5IUt9jvQwgR8EMFaRZrxVNeVjqJtz3gEr258Kxu9DMlvbLr1vxKer0IorDPFywdGuHOeJPmnQ8U9GVJ5PdlN0txhwUcwur+/FUuXEQ8zMzIvzZkXmuw6w6AWmGae7xu8tqkSAjctkzzZ1v42ijBhxn4mrfGZgtsnWNSJDMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJONfR+W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F08C2BD10;
-	Mon, 20 May 2024 09:22:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716196977;
-	bh=3pMKgd4LmFd4C4gJjWdjXdVrkXrPsHj6cGmB/FY1nl4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MJONfR+WtLjhJO70UsIZWSeTbhKyMnQTb8HwATGqEJdrEW2NRwlL84vUl4pTb3PjW
-	 QANfnibBlnfqu4TxcwrPHdLGhr9Sn4Qult5J5zfvEzbXtwJqxbcl2gCC6MjZfdNIJS
-	 2WuCIpnqG7oGP8sCDiPW57Grg392rG0gzZWCrR3Eu/0VxqhHWHa7Isj7VyNqyhYztu
-	 E1P/s+eUTd1LpcgXmUTC6hYhUTAcnAw9VjAzkf0nFR4+zyPnImxOZNz5EsxLBRvblx
-	 54T3YKlHowgB/UUXYbjGYXlLwN4P8tBK+P+oxYAaH2eU3M7hb/bmsobGcChTSDcpLp
-	 aVfPiHYv1YYnw==
-Date: Mon, 20 May 2024 11:22:53 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.10-rc1
-Message-ID: <ZksWbctxiJmcNmg9@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=arc-20240116; t=1716197055; c=relaxed/simple;
+	bh=YaRWz5ZPAgxsyx3A/YCS4XSvpzdxlutVvqHz7AR9X6o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WgxcwZ0kZ6F+pjrKKq9QBZraCTMJX64sFNu7bajKkjMvXMhvlyg9ctHhO+Nk0DMICDihFh26w4tBRnmpjtRhKuygGBrsMcB/tYFObRyk2hHk9HFYy4HznsWIcqNXV0w2GXlV/qi3I7vxLMzS9g4scRreGSRYeXKSKa0v5XRIhR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sgEHnjXN; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716197043; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ypw9L8vrY/zJiXV/6qIjcOg86oiLiLLexz5cMQSyyW4=;
+	b=sgEHnjXN4dLRHHa9shmzQuKv862c4R7/C9/qg7nsq23BivIxoTEHFVbb+WSlT36YyymYDu8BJln/Ez0kxc15cDYFf1l/BQYd+iAMx4nXcjR+pa5qQbF6Wl1qnRcG3KE/NopAtkqF9EhZyhVZSRlpBthIMIEMd4y//3P/uG1BFcI=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W6qKcWT_1716197041;
+Received: from 30.221.148.185(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W6qKcWT_1716197041)
+          by smtp.aliyun-inc.com;
+          Mon, 20 May 2024 17:24:03 +0800
+Message-ID: <a3ca2292-0218-45f6-8afe-4319a10b69e2@linux.alibaba.com>
+Date: Mon, 20 May 2024 17:24:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Ci9aXpwAIRAxNlWI"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/12] cachefiles: never get a new anonymous fd if
+ ondemand_id is valid
+To: Baokun Li <libaokun@huaweicloud.com>, netfs@lists.linux.dev,
+ dhowells@redhat.com, jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
+References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
+ <20240515084601.3240503-9-libaokun@huaweicloud.com>
+ <f4d24738-76a2-4998-9a28-493599cd7eae@linux.alibaba.com>
+ <d62b162d-acb3-2fa7-085e-79da3278091a@huaweicloud.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <d62b162d-acb3-2fa7-085e-79da3278091a@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---Ci9aXpwAIRAxNlWI
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit dd5a440a31fae6e459c0d6271dddd62825505361:
+On 5/20/24 5:07 PM, Baokun Li wrote:
+> On 2024/5/20 16:43, Jingbo Xu wrote:
+>>
+>> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
+>>> From: Baokun Li <libaokun1@huawei.com>
+>>>
+>>> Now every time the daemon reads an open request, it gets a new
+>>> anonymous fd
+>>> and ondemand_id. With the introduction of "restore", it is possible
+>>> to read
+>>> the same open request more than once, and therefore an object can
+>>> have more
+>>> than one anonymous fd.
+>>>
+>>> If the anonymous fd is not unique, the following concurrencies will
+>>> result
+>>> in an fd leak:
+>>>
+>>>       t1     |         t2         |          t3
+>>> ------------------------------------------------------------
+>>>   cachefiles_ondemand_init_object
+>>>    cachefiles_ondemand_send_req
+>>>     REQ_A = kzalloc(sizeof(*req) + data_len)
+>>>     wait_for_completion(&REQ_A->done)
+>>>              cachefiles_daemon_read
+>>>               cachefiles_ondemand_daemon_read
+>>>                REQ_A = cachefiles_ondemand_select_req
+>>>                cachefiles_ondemand_get_fd
+>>>                  load->fd = fd0
+>>>                  ondemand_id = object_id0
+>>>                                    ------ restore ------
+>>>                                    cachefiles_ondemand_restore
+>>>                                     // restore REQ_A
+>>>                                    cachefiles_daemon_read
+>>>                                     cachefiles_ondemand_daemon_read
+>>>                                      REQ_A =
+>>> cachefiles_ondemand_select_req
+>>>                                        cachefiles_ondemand_get_fd
+>>>                                          load->fd = fd1
+>>>                                          ondemand_id = object_id1
+>>>               process_open_req(REQ_A)
+>>>               write(devfd, ("copen %u,%llu", msg->msg_id, size))
+>>>               cachefiles_ondemand_copen
+>>>                xa_erase(&cache->reqs, id)
+>>>                complete(&REQ_A->done)
+>>>     kfree(REQ_A)
+>>>                                    process_open_req(REQ_A)
+>>>                                    // copen fails due to no req
+>>>                                    // daemon close(fd1)
+>>>                                    cachefiles_ondemand_fd_release
+>>>                                     // set object closed
+>>>   -- umount --
+>>>   cachefiles_withdraw_cookie
+>>>    cachefiles_ondemand_clean_object
+>>>     cachefiles_ondemand_init_close_req
+>>>      if (!cachefiles_ondemand_object_is_open(object))
+>>>        return -ENOENT;
+>>>      // The fd0 is not closed until the daemon exits.
+>>>
+>>> However, the anonymous fd holds the reference count of the object and
+>>> the
+>>> object holds the reference count of the cookie. So even though the
+>>> cookie
+>>> has been relinquished, it will not be unhashed and freed until the
+>>> daemon
+>>> exits.
+>>>
+>>> In fscache_hash_cookie(), when the same cookie is found in the hash
+>>> list,
+>>> if the cookie is set with the FSCACHE_COOKIE_RELINQUISHED bit, then
+>>> the new
+>>> cookie waits for the old cookie to be unhashed, while the old cookie is
+>>> waiting for the leaked fd to be closed, if the daemon does not exit
+>>> in time
+>>> it will trigger a hung task.
+>>>
+>>> To avoid this, allocate a new anonymous fd only if no anonymous fd has
+>>> been allocated (ondemand_id == 0) or if the previously allocated
+>>> anonymous
+>>> fd has been closed (ondemand_id == -1). Moreover, returns an error if
+>>> ondemand_id is valid, letting the daemon know that the current userland
+>>> restore logic is abnormal and needs to be checked.
+>>>
+>>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking
+>>> up cookie")
+>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> The LOCs of this fix is quite under control.  But still it seems that
+>> the worst consequence is that the (potential) malicious daemon gets
+>> hung.  No more effect to the system or other processes.  Or does a
+>> non-malicious daemon have any chance having the same issue?
+> If we enable hung_task_panic, it may cause panic to crash the server.
 
-  Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
+Then this issue has nothing to do with this patch?  As long as a
+malicious daemon doesn't close the anonymous fd after umounting, then I
+guess a following attempt of mounting cookie with the same name will
+also wait and hung there?
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-=
-6.10-rc1
-
-for you to fetch changes up to 068a95ef3945033b5355e50fecea18737680d43d:
-
-  power: supply: sbs-manager: Remove class argument from i2c_mux_add_adapte=
-r() (2024-05-14 09:21:43 +0200)
-
-----------------------------------------------------------------
-I2C core removes an argument from the i2c_mux_add_adapter() call to
-further deprecate class based I2C device instantiation. All users are
-converted, too. Other that that, Andi collected a number if I2C host
-driver patches. Those merges have their own description.
-
-----------------------------------------------------------------
-Abhinav Jain (1):
-      i2c: mpc: Removal of of_node_put with __free for auto cleanup
-
-Alexander Stein (1):
-      i2c: lpi2c: Avoid calling clk_get_rate during transfer
-
-Andy Shevchenko (1):
-      i2c: designware: Replace MODULE_ALIAS() with MODULE_DEVICE_TABLE()
-
-Animesh Agarwal (1):
-      dt-bindings: i2c: nxp,pnx-i2c: Convert to dtschema
-
-Arnd Bergmann (1):
-      i2c: ocores: convert to ioport_map() for IORESOURCE_IO
-
-Bryan O'Donoghue (1):
-      dt-bindings: i2c: qcom-cci: Document sc8280xp compatible
-
-Christophe JAILLET (1):
-      i2c: synquacer: Fix an error handling path in synquacer_i2c_probe()
-
-Hamish Martin (1):
-      i2c: acpi: Unbind mux adapters before delete
-
-Hans Hu (6):
-      i2c: wmt: create wmt_i2c_init for general init
-      i2c: wmt: split out common files
-      i2c: wmt: rename something
-      i2c: wmt: fix a bug when thread blocked
-      i2c: wmt: add platform type VIAI2C_PLAT_WMT
-      i2c: add zhaoxin i2c controller driver
-
-Heiner Kallweit (6):
-      i2c: i801: Call i2c_register_spd for muxed child segments
-      i2c: i801: Fix missing Kconfig dependency
-      i2c: i801: Remove usage of I2C_CLASS_SPD
-      i2c: mux: gpio: remove support for class-based device instantiation
-      i2c: i801: Annotate apanel_addr as __ro_after_init
-      i2c: mux: Remove class argument from i2c_mux_add_adapter()
-
-Ji Sheng Teoh (1):
-      i2c: cadence: Add RISCV architecture support
-
-Krzysztof Kozlowski (1):
-      i2c: viperboard: drop driver owner assignment
-
-Lad Prabhakar (4):
-      dt-bindings: i2c: renesas,riic: Document R9A09G057 support
-      i2c: riic: Introduce helper functions for I2C read/write operations
-      i2c: riic: Pass register offsets and chip details as OF data
-      i2c: riic: Add support for R9A09G057 SoC
-
-Lukas Bulwahn (1):
-      MAINTAINERS: adjust file entry in ARM/LPC32XX SOC SUPPORT
-
-Niklas Schnelle (1):
-      i2c: add HAS_IOPORT dependencies
-
-Piyush Malgujar (2):
-      i2c: octeon: Add platform prefix to macros
-      i2c: thunderx: Adding ioclk support
-
-Sai Pavan Boddu (1):
-      i2c: cadence: Avoid fifo clear after start
-
-Shanth Murthy (1):
-      i2c: designware: Add ACPI ID for Granite Rapids-D I2C controller
-
-Suneel Garapati (3):
-      i2c: thunderx: Clock divisor logic changes
-      i2c: thunderx: Support for High speed mode
-      i2c: octeon: Handle watchdog timeout
-
-Wolfram Sang (40):
-      i2c: at91-master: remove printout on handled timeouts
-      i2c: bcm-iproc: remove printout on handled timeouts
-      i2c: bcm2835: remove printout on handled timeouts
-      i2c: cadence: remove printout on handled timeouts
-      i2c: davinci: remove printout on handled timeouts
-      i2c: img-scb: remove printout on handled timeouts
-      i2c: ismt: remove printout on handled timeouts
-      i2c: nomadik: remove printout on handled timeouts
-      i2c: omap: remove printout on handled timeouts
-      i2c: qcom-geni: remove printout on handled timeouts
-      i2c: qup: remove printout on handled timeouts
-      i2c: rk3x: remove printout on handled timeouts
-      i2c: sh_mobile: remove printout on handled timeouts
-      i2c: st: remove printout on handled timeouts
-      i2c: tegra: remove printout on handled timeouts
-      i2c: uniphier-f: remove printout on handled timeouts
-      i2c: uniphier: remove printout on handled timeouts
-      i2c: i801: remove printout on handled timeouts
-      i2c: ali1535: remove printout on handled timeouts
-      i2c: ali1563: remove printout on handled timeouts
-      i2c: ali15x3: remove printout on handled timeouts
-      i2c: amd-mp2-plat: use 'time_left' variable with wait_for_completion_=
-timeout()
-      i2c: digicolor: use 'time_left' variable with wait_for_completion_tim=
-eout()
-      i2c: exynos5: use 'time_left' variable with wait_for_completion_timeo=
-ut()
-      i2c: hix5hd2: use 'time_left' variable with wait_for_completion_timeo=
-ut()
-      i2c: imx-lpi2c: use 'time_left' variable with wait_for_completion_tim=
-eout()
-      i2c: omap: use 'time_left' variable with wait_for_completion_timeout()
-      i2c: st: use 'time_left' variable with wait_for_completion_timeout()
-      i2c: stm32f4: use 'time_left' variable with wait_for_completion_timeo=
-ut()
-      i2c: stm32f7: use 'time_left' variable with wait_for_completion_timeo=
-ut()
-      i2c: synquacer: use 'time_left' variable with wait_for_completion_tim=
-eout()
-      i2c: jz4780: use 'time_left' variable with wait_for_completion_timeou=
-t()
-      i2c: qcom-geni: use 'time_left' variable with wait_for_completion_tim=
-eout()
-      i2c: rk3x: use 'time_left' variable with wait_event_timeout()
-      i2c: s3c2410: use 'time_left' variable with wait_event_timeout()
-      i2c: pxa: use 'time_left' variable with wait_event_timeout()
-      Merge tag 'i2c-host-fixes-6.8-rc8' of git://git.kernel.org/pub/scm/li=
-nux/kernel/git/andi.shyti/linux into i2c/for-mergewindow
-      Merge tag 'i2c-host-6.10' of git://git.kernel.org/pub/scm/linux/kerne=
-l/git/andi.shyti/linux into i2c/for-mergewindow
-      Merge branch 'i2c/for-current' into i2c/for-mergewindow
-      power: supply: sbs-manager: Remove class argument from i2c_mux_add_ad=
-apter()
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Andi Shyti (5):
-      (Rev.) i2c: acpi: Unbind mux adapters before delete
-      (Rev.) i2c: designware: Replace MODULE_ALIAS() with MODULE_DEVICE_TAB=
-LE()
-      (Rev.) i2c: wmt: create wmt_i2c_init for general init
-      (Rev.) i2c: lpi2c: Avoid calling clk_get_rate during transfer
-      (Rev.) MAINTAINERS: adjust file entry in ARM/LPC32XX SOC SUPPORT
-
-Bjorn Andersson (3):
-      (Rev.) i2c: qcom-geni: use 'time_left' variable with wait_for_complet=
-ion_timeout()
-      (Rev.) i2c: qup: remove printout on handled timeouts
-      (Rev.) i2c: qcom-geni: remove printout on handled timeouts
-
-Bryan O'Donoghue (1):
-      (Rev.) i2c: qcom-geni: use 'time_left' variable with wait_for_complet=
-ion_timeout()
-
-Chris Packham (1):
-      (Rev.) i2c: mpc: Removal of of_node_put with __free for auto cleanup
-
-Conor Dooley (1):
-      (Rev.) dt-bindings: i2c: nxp,pnx-i2c: Convert to dtschema
-
-Geert Uytterhoeven (4):
-      (Rev.) i2c: riic: Add support for R9A09G057 SoC
-      (Rev.) i2c: riic: Pass register offsets and chip details as OF data
-      (Rev.) i2c: riic: Introduce helper functions for I2C read/write opera=
-tions
-      (Rev.) dt-bindings: i2c: renesas,riic: Document R9A09G057 support
-
-Jarkko Nikula (1):
-      (Test) i2c: designware: Replace MODULE_ALIAS() with MODULE_DEVICE_TAB=
-LE()
-
-Jean Delvare (4):
-      (Rev.) i2c: ali15x3: remove printout on handled timeouts
-      (Rev.) i2c: ali1563: remove printout on handled timeouts
-      (Rev.) i2c: ali1535: remove printout on handled timeouts
-      (Rev.) i2c: i801: remove printout on handled timeouts
-
-Krzysztof Kozlowski (1):
-      (Rev.) dt-bindings: i2c: qcom-cci: Document sc8280xp compatible
-
-Laurent Pinchart (1):
-      (Rev.) i2c: mux: Remove class argument from i2c_mux_add_adapter()
-
-Linus Walleij (1):
-      (Rev.) i2c: nomadik: remove printout on handled timeouts
-
-Mario Limonciello (1):
-      (Rev.) i2c: designware: Replace MODULE_ALIAS() with MODULE_DEVICE_TAB=
-LE()
-
-Mika Westerberg (1):
-      (Rev.) i2c: acpi: Unbind mux adapters before delete
-
-Peng Fan (1):
-      (Rev.) i2c: imx-lpi2c: use 'time_left' variable with wait_for_complet=
-ion_timeout()
-
-Philippe Mathieu-Daud=C3=A9 (1):
-      (Rev.) i2c: jz4780: use 'time_left' variable with wait_for_completion=
-_timeout()
-
-Serge Semin (1):
-      (Test) i2c: designware: Replace MODULE_ALIAS() with MODULE_DEVICE_TAB=
-LE()
-
-Thomas Zimmermann (1):
-      (Rev.) i2c: mux: Remove class argument from i2c_mux_add_adapter()
-
-Uwe Kleine-K=C3=B6nig (2):
-      (Rev.) i2c: st: use 'time_left' variable with wait_for_completion_tim=
-eout()
-      (Rev.) i2c: lpi2c: Avoid calling clk_get_rate during transfer
-
-Vladimir Zapolskiy (1):
-      (Rev.) dt-bindings: i2c: qcom-cci: Document sc8280xp compatible
-
-Wolfram Sang (11):
-      (Rev.) i2c: wmt: fix a bug when thread blocked
-      (Rev.) i2c: wmt: rename something
-      (Rev.) i2c: wmt: split out common files
-      (Rev.) i2c: wmt: create wmt_i2c_init for general init
-      (Rev.) i2c: i801: Fix missing Kconfig dependency
-      (Rev.) i2c: add HAS_IOPORT dependencies
-      (Rev.) i2c: i801: Call i2c_register_spd for muxed child segments
-      (Rev.) i2c: riic: Add support for R9A09G057 SoC
-      (Rev.) i2c: riic: Pass register offsets and chip details as OF data
-      (Rev.) i2c: riic: Introduce helper functions for I2C read/write opera=
-tions
-      (Rev.) dt-bindings: i2c: renesas,riic: Document R9A09G057 support
-
- Documentation/devicetree/bindings/i2c/i2c-pnx.txt  |  34 --
- .../devicetree/bindings/i2c/nxp,pnx-i2c.yaml       |  46 +++
- .../devicetree/bindings/i2c/qcom,i2c-cci.yaml      |  19 +
- .../devicetree/bindings/i2c/renesas,riic.yaml      |  19 +-
- MAINTAINERS                                        |  12 +-
- drivers/gpu/drm/bridge/sii902x.c                   |   2 +-
- drivers/i2c/busses/Kconfig                         |  49 ++-
- drivers/i2c/busses/Makefile                        |   3 +
- drivers/i2c/busses/i2c-ali1535.c                   |   8 +-
- drivers/i2c/busses/i2c-ali1563.c                   |   1 -
- drivers/i2c/busses/i2c-ali15x3.c                   |   4 +-
- drivers/i2c/busses/i2c-amd-mp2-plat.c              |   8 +-
- drivers/i2c/busses/i2c-at91-master.c               |   1 -
- drivers/i2c/busses/i2c-bcm-iproc.c                 |   2 -
- drivers/i2c/busses/i2c-bcm2835.c                   |   1 -
- drivers/i2c/busses/i2c-cadence.c                   |   3 +-
- drivers/i2c/busses/i2c-davinci.c                   |   1 -
- drivers/i2c/busses/i2c-designware-pcidrv.c         |   2 -
- drivers/i2c/busses/i2c-designware-platdrv.c        |   9 +-
- drivers/i2c/busses/i2c-digicolor.c                 |   6 +-
- drivers/i2c/busses/i2c-exynos5.c                   |  12 +-
- drivers/i2c/busses/i2c-hix5hd2.c                   |   8 +-
- drivers/i2c/busses/i2c-i801.c                      |  41 +-
- drivers/i2c/busses/i2c-img-scb.c                   |   5 +-
- drivers/i2c/busses/i2c-imx-lpi2c.c                 |  25 +-
- drivers/i2c/busses/i2c-ismt.c                      |   1 -
- drivers/i2c/busses/i2c-jz4780.c                    |  22 +-
- drivers/i2c/busses/i2c-mpc.c                       |  11 +-
- drivers/i2c/busses/i2c-nomadik.c                   |   7 +-
- drivers/i2c/busses/i2c-ocores.c                    |  21 +-
- drivers/i2c/busses/i2c-octeon-core.c               | 141 +++++--
- drivers/i2c/busses/i2c-octeon-core.h               |  53 ++-
- drivers/i2c/busses/i2c-omap.c                      |  11 +-
- drivers/i2c/busses/i2c-pxa.c                       |  14 +-
- drivers/i2c/busses/i2c-qcom-geni.c                 |  10 +-
- drivers/i2c/busses/i2c-qup.c                       |   4 +-
- drivers/i2c/busses/i2c-riic.c                      | 125 ++++--
- drivers/i2c/busses/i2c-rk3x.c                      |  14 +-
- drivers/i2c/busses/i2c-s3c2410.c                   |   6 +-
- drivers/i2c/busses/i2c-sh_mobile.c                 |   1 -
- drivers/i2c/busses/i2c-st.c                        |  11 +-
- drivers/i2c/busses/i2c-stm32f4.c                   |   8 +-
- drivers/i2c/busses/i2c-stm32f7.c                   |   8 +-
- drivers/i2c/busses/i2c-synquacer.c                 |  26 +-
- drivers/i2c/busses/i2c-tegra.c                     |   2 -
- drivers/i2c/busses/i2c-thunderx-pcidrv.c           |  13 +-
- drivers/i2c/busses/i2c-uniphier-f.c                |   1 -
- drivers/i2c/busses/i2c-uniphier.c                  |   4 +-
- drivers/i2c/busses/i2c-viai2c-common.c             | 256 +++++++++++++
- drivers/i2c/busses/i2c-viai2c-common.h             |  85 +++++
- drivers/i2c/busses/i2c-viai2c-wmt.c                | 148 ++++++++
- drivers/i2c/busses/i2c-viai2c-zhaoxin.c            | 298 +++++++++++++++
- drivers/i2c/busses/i2c-viperboard.c                |   1 -
- drivers/i2c/busses/i2c-wmt.c                       | 421 -----------------=
-----
- drivers/i2c/i2c-core-acpi.c                        |  19 +-
- drivers/i2c/i2c-mux.c                              |  24 +-
- drivers/i2c/muxes/i2c-arb-gpio-challenge.c         |   2 +-
- drivers/i2c/muxes/i2c-mux-gpio.c                   |   3 +-
- drivers/i2c/muxes/i2c-mux-gpmux.c                  |   2 +-
- drivers/i2c/muxes/i2c-mux-ltc4306.c                |   2 +-
- drivers/i2c/muxes/i2c-mux-mlxcpld.c                |   2 +-
- drivers/i2c/muxes/i2c-mux-pca9541.c                |   2 +-
- drivers/i2c/muxes/i2c-mux-pca954x.c                |   2 +-
- drivers/i2c/muxes/i2c-mux-pinctrl.c                |   2 +-
- drivers/i2c/muxes/i2c-mux-reg.c                    |   2 +-
- drivers/iio/gyro/mpu3050-i2c.c                     |   2 +-
- drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c          |   2 +-
- drivers/media/dvb-frontends/af9013.c               |   2 +-
- drivers/media/dvb-frontends/lgdt3306a.c            |   2 +-
- drivers/media/dvb-frontends/m88ds3103.c            |   2 +-
- drivers/media/dvb-frontends/rtl2830.c              |   2 +-
- drivers/media/dvb-frontends/rtl2832.c              |   2 +-
- drivers/media/dvb-frontends/si2168.c               |   2 +-
- drivers/media/i2c/max9286.c                        |   2 +-
- drivers/media/usb/cx231xx/cx231xx-i2c.c            |   5 +-
- drivers/of/unittest.c                              |   2 +-
- drivers/power/supply/sbs-manager.c                 |   2 +-
- include/linux/i2c-mux.h                            |   3 +-
- include/linux/platform_data/i2c-mux-gpio.h         |   2 -
- 79 files changed, 1340 insertions(+), 798 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-pnx.txt
- create mode 100644 Documentation/devicetree/bindings/i2c/nxp,pnx-i2c.yaml
- create mode 100644 drivers/i2c/busses/i2c-viai2c-common.c
- create mode 100644 drivers/i2c/busses/i2c-viai2c-common.h
- create mode 100644 drivers/i2c/busses/i2c-viai2c-wmt.c
- create mode 100644 drivers/i2c/busses/i2c-viai2c-zhaoxin.c
- delete mode 100644 drivers/i2c/busses/i2c-wmt.c
-
---Ci9aXpwAIRAxNlWI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZLFm0ACgkQFA3kzBSg
-KbZJLQ/9EY9Twfk+W2ji0OvXD08U47jMNj2ldxT7Ced23L+TJF02QiG7+ckImGOf
-712dYCeA0QgUZCAkGAcpyQhOlXLUlKjKSHAdJydUgNM9ySaJsvBnWVggJAd3u2aR
-C+AEaagkesk+EQAhFJXwCDEjsf0EQC6lcyKxJ1tMHgj2bpa9oKdswKwduH2SYEt9
-hw9oJcJfT72rnhqYIxT6lbtCGK4yQNd4ot3vdbQ2nwmY48VVfqdGEXVMGB2l6qVl
-dIISSAU5VXI2IfMjfcr4cfGlY+ZSVrIgR09AzkKSq59KZJDYQUNyRoQKO5ZRGEHs
-uSNAwXj5EMGXQBt6Rv+lheuURay9muw1QMuxKWes+IA4MS0w/C59kmKq+bcnovBJ
-+i8KV0Da+sOIpPOFambph47JsT0pxqiFpUfrkp7X7VUXPFC/gGyQz3AkM9D5SrRp
-JMu88WzAGo1NKWF7Yu8k6R8/NgRsGExSUGXuHWJ7JU9SfUOLo62JG7JacENeJfnS
-zKIFaEqrt6WFmrjZag8k8jLeLILjyA4ldkb34QUhpRY/82V/OfcELGdfIrHaU3aS
-400dv3IXRRm6SBDhrvi1/+jCJZbQYM7Ktcsnlu3H/aMfoeznsrqEWzo10nPfu6su
-hrTLd+49e8MvpMxALMK900fzYfaR8rBVo6vUiB/BiQjxBeukOd8=
-=r4Iy
------END PGP SIGNATURE-----
-
---Ci9aXpwAIRAxNlWI--
+-- 
+Thanks,
+Jingbo
 
