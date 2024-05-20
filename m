@@ -1,276 +1,288 @@
-Return-Path: <linux-kernel+bounces-183473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549628C9993
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C928C999A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8D28B21B8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:56:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 534BBB219CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17631B7F4;
-	Mon, 20 May 2024 07:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A5D1C286;
+	Mon, 20 May 2024 07:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SPVfeYSA"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Za1n5Idg";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="ifpQRn9n"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81CF17BB7
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 07:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716191762; cv=none; b=KEFwcy/SspDjKgjkypbFx38KlH0Z7U4sXgTLl0kjwjCr2nX1MOZ1JUg6SbDCV610x+87Ey9SdgUh2mBfF4wl543HNl/UUdZX9W6MR2LUxK1d/yFlrrLq/NbrMlHckpDKna2LaOJHIPF/vWDd1d1Oxj2PL0rFGkEMzjTMxtR7iXM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716191762; c=relaxed/simple;
-	bh=GbUxzxc7h8pQ/nE4TnWwJpTxKCZajuWeWSMZb+LFpog=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=FNEFh1b6HiqP5ltN8BHm/WoFCtv4Qp0uq9Xp93yX5NldN8xqHxUrIadk2cC4wgIw+5VISEuDi4liSjVBMecKmh+hANkTBQQgVC81ZD8O0WQ4S1a0Znv/ntN+5xPY3xG22QqFM+VhvuyEFGRt1rj1pGVsyXbO5wCmLMW1GMirWxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SPVfeYSA; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-61be4b98766so25727407b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 00:55:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE4F17BB7;
+	Mon, 20 May 2024 07:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716191915; cv=fail; b=HB2dpI9tGcmYrUugLmHtbsXuP/s/WQwOxiLoJMwsJAvwUe5Jh4dILokvyx2P2gjPMwnSZ9OUeevriw0vXwjn3zQoxZBJvjeS6XGhx4hxiEj5DydrzazbCTqafmXlEKl6C/xb65O9pf+hhNIuz2qCJiN0CifF1Wi9kqvhLyMEZsI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716191915; c=relaxed/simple;
+	bh=HcMyxMIfNhsvzF93z3B5yaVFLwYV3FKqaTq+tWpRsHw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=t+Iclf/5OoRBVwBENmvZxpvhAS3Ezt5F2VzA+o2xk3f0BBaFXbv5L7rKmiOOuoKpsUEj5WAHLO81eyoAElvHdBIguZfureIt7iFktJj0EAd3WwtGnO1qikc48AmHGpbg4BrkMtmTwNaiNqBoPHeIq4yT4yhH7Ck5kzcX8XJ+4Ds=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Za1n5Idg; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=ifpQRn9n; arc=fail smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: b8e3fcae167e11ef8065b7b53f7091ad-20240520
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=HcMyxMIfNhsvzF93z3B5yaVFLwYV3FKqaTq+tWpRsHw=;
+	b=Za1n5IdgTHpfNuvrBgf4ilC2kEGgecWB4fTyYz39w5Ye0/zz7KcUn7hMMEhdCNdILIoBh3gS059Tsz51s4Mx9vasaHGgKFfraxT1JI+WjUwzTQbq2YedQT48hpxQrjUTdwaB7hE+UUJwj+lkXR6qhNsSe28XnP3jlbBZfapLsAY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:0e027fde-6513-446f-8757-420871a6ff78,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:670c9287-8d4f-477b-89d2-1e3bdbef96d1,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: b8e3fcae167e11ef8065b7b53f7091ad-20240520
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <yong.wu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1564585218; Mon, 20 May 2024 15:58:19 +0800
+Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 20 May 2024 15:58:18 +0800
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 20 May 2024 15:58:18 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=a06y7pGe3bBTueOlyGuD1Urfr68CqL7s1wnzbHho1XJYZzP6cUUpbxVus3mJqPQVmQnnZr25WjhciLYOEf+1lmGmWMVB4EaEI8RghJw628cfkVxXgJMWqdjKQ5DZRacZW/FKK63dm7T86o58sZe0LZQC0XV/PsgqKwEnF3fazMDc/ErQ3bBrJBM19f8CgZLUT+pdkx0uZ0Lljg6wCTdFqm2oOHweA527rC0PwAs7EUef/B+0zxhcVUw9VJv49YQK8MsXbRFGcJGVObtjZIb28yWQB+waxkvsQqKZQrye/QjehgMTBtwAxSEe0zLICeC6gg/MRvj3Z3WNhYY9QGvJ8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HcMyxMIfNhsvzF93z3B5yaVFLwYV3FKqaTq+tWpRsHw=;
+ b=G5YI2s9mhM4d4ReCtNz4j/MvaqxIVUgobqdah/q9jkxfRmTIyu95bfEcHttfVWOMDLr40NMgJf6l9hG1AtCn3Ej82LdakkGYQCsBbIjlxl/lNKICuboBW9XPvoMozSsXpKCI0kG7kVynHgNtK8MigeZfDi8vcVl61FimA9Zi/zABfZG3Cgi795enQen2h98MBWe03V7aHVKjm6SPf8VYo4IhUfv/gv5XHo8ENDib5+ag8ckZF6RT+bR+C/hjTsoEUXP11G+OGkuFI1DWPcrNDRMSF/UG03eiaN5/oZANpjRNtIObST2GI2TlyNWaA/L9HifZZZUcmEPXjxc5Pewtsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716191759; x=1716796559; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SN6nOe4VdcVTTAJGaWcvy/5LbNdItcqnWfPe1QXhyCU=;
-        b=SPVfeYSAl6hGxGe8jAvV3iaNrfB7COHqMjmY+bvWxofJrbcUAFbDmblAxwNHHGCuDG
-         lLgxYyJTF1jnVs+Yev7RAQLVQyetWMGqOH6uPY81eT2Gzdd0hgxl1d9JNGWkxoz3mxYR
-         /xBKvGSAAcIKw1jTId8HRIqpdr6ZHT42RZR0cO7S/gwwnUtpKUIJ1sH1xBb2urjIeniN
-         P4ScfgabO0RAFNnRJW4QP4FhiygLLq1aiN9R8oMjkQUvcHyfy9WY5m5yX9h7qsupYigc
-         A7ROUMRwQoi2vUomr5QUUaZlpnfaJ1v8/bnwCK6X+FnLjxnifSylNzn8sUkqjuIpxb8i
-         4i7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716191759; x=1716796559;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SN6nOe4VdcVTTAJGaWcvy/5LbNdItcqnWfPe1QXhyCU=;
-        b=RnGAfp0g981+1MPHZ0QO1y7qWo3x1m6yzLKOVRcCvGvJJJ0VDPXhqWdaOAynfi04e7
-         jyVbBY4QC0ujMMxUeoaVFPWcciVDGSxQ6/jLvSrTQDrjgSNJYyiSkR8rP3Yo/Bv15vsf
-         RAWfIkxI+GkE+KHrfLDql+bp2DrqgWw1q6i8Wot9HLQD49XAcFD8H/we1pymNZ7YQdxt
-         HVUqGxsqm9c/fU4vKkEAMUa6S1xvPxd4kQh5JfVrw7ROySI2qqZQiHIYKdQ+fBMFjEZ2
-         2BPNgGTEQPdRUyMVS+P1PDGa+Opmym1uPCiPCawTlygZ1xBp3OKcWt1IcgvMx0httFQI
-         RrUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoSrCx8giuhp6jbYiNI9lrEa5MTg1+Vnr4QAEpGprhn7s6sKf/RF/z/Ik1pUfxBVgPltnx62UY77dMwcV85g0gdsA+vZq957K7pH9M
-X-Gm-Message-State: AOJu0YzluPb2dAfXVakaASKbmVsQyZQcYQ3fL9oGGkldawrh1a8RL42z
-	NPPP8Ie8oHptXhBIEdDm/L07+Zi2epaYw4ID4saDB3C1lpuNdhE/yzYY8A7SdQTROdI3y8bD60d
-	KwyQ6HXDS3xJdBl3Un3SYCsZLCkc8uxn8Yr/S7g==
-X-Google-Smtp-Source: AGHT+IGChIi8QXwHMF5+ngfiRBN2ka1NvZfJRURrCniZBbnzVAnq6Zit8D96fFDFZn8e8GEyn3gP37eM3i8jB4KExd4=
-X-Received: by 2002:a25:b94e:0:b0:dee:998b:1459 with SMTP id
- 3f1490d57ef6-dee998b211bmr17372329276.39.1716191758672; Mon, 20 May 2024
- 00:55:58 -0700 (PDT)
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HcMyxMIfNhsvzF93z3B5yaVFLwYV3FKqaTq+tWpRsHw=;
+ b=ifpQRn9nYbH1DM7b1xlrMLV9mQXe+kz8UAcRpy/Ijat0YoKmJJXUT1qdHDPWJ6a/JaPDaogDQqWKLYJOTcdhGI2jR7hza832Xgfs1dhd28J0oaYab0IKraKzYtxbihFKvhWU9vXFPJ8+VdunGS/f3jX2l5z9eNDDQmFLkPxzxnY=
+Received: from SI2PR03MB5885.apcprd03.prod.outlook.com (2603:1096:4:142::7) by
+ TYSPR03MB7652.apcprd03.prod.outlook.com (2603:1096:400:42d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.16; Mon, 20 May
+ 2024 07:58:16 +0000
+Received: from SI2PR03MB5885.apcprd03.prod.outlook.com
+ ([fe80::683a:246a:d31f:1c0]) by SI2PR03MB5885.apcprd03.prod.outlook.com
+ ([fe80::683a:246a:d31f:1c0%4]) with mapi id 15.20.7611.013; Mon, 20 May 2024
+ 07:58:15 +0000
+From: =?utf-8?B?WW9uZyBXdSAo5ZC05YuHKQ==?= <Yong.Wu@mediatek.com>
+To: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "christian.koenig@amd.com"
+	<christian.koenig@amd.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"jstultz@google.com" <jstultz@google.com>,
+	=?utf-8?B?SmlhbmppYW8gWmVuZyAo5pu+5YGl5aejKQ==?=
+	<Jianjiao.Zeng@mediatek.com>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "quic_vjitta@quicinc.com"
+	<quic_vjitta@quicinc.com>, "willy@infradead.org" <willy@infradead.org>,
+	=?utf-8?B?S3VvaG9uZyBXYW5nICjnjovlnIvptLsp?= <kuohong.wang@mediatek.com>,
+	"pavel@ucw.cz" <pavel@ucw.cz>, "robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"contact@emersion.fr" <contact@emersion.fr>, "logang@deltatee.com"
+	<logang@deltatee.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>,
+	"jkardatzke@google.com" <jkardatzke@google.com>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "Brian.Starkey@arm.com" <Brian.Starkey@arm.com>,
+	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
+	"tjmercier@google.com" <tjmercier@google.com>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "joakim.bech@linaro.org"
+	<joakim.bech@linaro.org>, "ppaalanen@gmail.com" <ppaalanen@gmail.com>,
+	"angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>,
+	=?utf-8?B?WW91bGluIFBlaSAo6KO05Y+L5p6XKQ==?= <youlin.pei@mediatek.com>
+Subject: Re: [PATCH v5 2/9] scatterlist: Add a flag for the restricted memory
+Thread-Topic: [PATCH v5 2/9] scatterlist: Add a flag for the restricted memory
+Thread-Index: AQHaprp4GpnKuiAAR0GKSJ5cgg3gt7GZhXSAgAZEBQA=
+Date: Mon, 20 May 2024 07:58:15 +0000
+Message-ID: <779ce30a657754ff945ebd32b66e1c644635e84d.camel@mediatek.com>
+References: <20240515112308.10171-1-yong.wu@mediatek.com>
+	 <20240515112308.10171-3-yong.wu@mediatek.com>
+	 <98721904-003d-4d0d-8cfe-1cecdd59ce01@amd.com>
+In-Reply-To: <98721904-003d-4d0d-8cfe-1cecdd59ce01@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SI2PR03MB5885:EE_|TYSPR03MB7652:EE_
+x-ms-office365-filtering-correlation-id: b74eb424-c341-495d-40df-08dc78a29ab2
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|366007|1800799015|376005|7416005|38070700009;
+x-microsoft-antispam-message-info: =?utf-8?B?dEhReWtWaUdTcWZqN2EwZ2ZSUEkrdDlRanZsbysxY0ZNbk9VV2VMQlJpRkVC?=
+ =?utf-8?B?ak5tY1FiL3dXdEgwRjRHbEpVeFcvdHl2MngzOHJJenN3a3FicFU2YUw1UEI5?=
+ =?utf-8?B?VllRekk0WEo2OThNT2RsQW9vcVdQeG92SitQQVE3QXMveFZTemYvQnVTN0VH?=
+ =?utf-8?B?amZGNUNFMDVUUzBVZDBGQmdqeHl1VmMvVVZOOGJUZzlib3ZkdlBJUHI3QVpi?=
+ =?utf-8?B?U2FybDkrL0lWRXhnKzZuSU5pTVRGa3Fzc056alRHaVYyMkppUWRaaWVsL2Ju?=
+ =?utf-8?B?NzZsTWZWQzZtNjRndDJpUDllR0NXaG9CQWsxUUx0UkFpWTFHRHZKcVNxODE2?=
+ =?utf-8?B?NGttQVNjdjdIaGJYRDRRT2o3ZW9iS0ZrbzdLd1VXOGl5RnJoL3BlL2pwSDdH?=
+ =?utf-8?B?SHFmMkpPSElXeWZCOWUyWHRVMjhiUTJaNXZWOW1qMURYUWpJR2VJbFpBMjBp?=
+ =?utf-8?B?RVdJWGZ1YlZTSHZYUVBSeFVUWk9jNTErYUY3TkVtUEMxbzVWQkFZSnRoNFE1?=
+ =?utf-8?B?U3g4ZnIxc3NDNFFBNVpEd0VZek9VaGpjMnBlOU9MbWJYc3plckhEdStVeER2?=
+ =?utf-8?B?cnNSQXlkVHpEeFBRN1A1Q2RjQm0rZHpobXo3bXBPMUxCTjBSNVNHTkFud2RN?=
+ =?utf-8?B?L3ZzakM4bTEzYjBOWTMrUEwrQWNpaWNuUDJtaVZnZ0xGQlkwUGtBT0ZFZXU1?=
+ =?utf-8?B?em5oTHYrZWFmSVNnR2o5WHhQODRabUZ5QTRSYkFKZDVielR2L0FzMnFhZGow?=
+ =?utf-8?B?ZnRJUW5ScGN0R2o4NGU5U0Q5NjBEbDdHSDE4TGZDc0lKaFVrd1ZyQ2RBRWc3?=
+ =?utf-8?B?SDhvQUNJSXQwWW0xQmN4d1MxWGlETWZzS3FVRmUybWRVUEF3c3YwTDBrM1VO?=
+ =?utf-8?B?MFp3MFRiS3dsRW1NZWlUR1A5Z1BpNGZPck5JTGsyWTk4NUpNRDIrNDVrbTJZ?=
+ =?utf-8?B?VjZDQUdSaW1HK09VMFJMeFdaYXdZVWZMa3lyWVVqcWU2QVpwNjdFeUw2SHJ6?=
+ =?utf-8?B?Rng3bzFLekV6d293M3YwR0N1MDc0Z0JyT3pwZ0ovNjdYbUo4NUFyOU1FbTdP?=
+ =?utf-8?B?cHo2RlFrVThOUGFncUxrY21NTkprUFREejVxU1J2OTR1NzluOXZCYkw2Snkv?=
+ =?utf-8?B?LzRPdDB3d2pxNUJUOG02b3F3MlNRUEVvV0lPWlpsWTU4Rll2MFg3Ti9naEpD?=
+ =?utf-8?B?ektvN0ZTYUk5L1h6eDEwSnk2blByQjhURTlmQnZUSmpMMHRCakpNWmRZUDk3?=
+ =?utf-8?B?VlVDUXhzMnNDMDVReVc3MVJNMVQyMHlLWDJ4bVZBdFhJUWFLeHRuMzBjUlRa?=
+ =?utf-8?B?NXJFRzBzWWg0anZwUk5zR0s2T1I5RmRVZDZHVWlXTi9zSWtuSWZzb2Jjb3g1?=
+ =?utf-8?B?WmtRcXlkU0FkeFJvU0xydHVLcjYzVXJwZ0haejV0Z09BNXV2T1pKTUJEbTZW?=
+ =?utf-8?B?cXFVN0xSdzdNc05sOGNMT0RDS21VeW9nbWNvVVdnRDNianI3U0dRWDRaZ0Zt?=
+ =?utf-8?B?Qld1ODhKc29sTG1sWXROVE1iTjA4QXBxT2lUL052elFtb0cvekVqV2ZYb0Zm?=
+ =?utf-8?B?V1FjZXpQNFUvN2FheVcxNU14TVQ1WTNmY2NacjB2RHlDSWNtaWpJMUlJZTgy?=
+ =?utf-8?B?UjhUV0F5SDhKUS94bURSeWpDWmFlMGNjV1VYenBFK2ViUU03Ti95cS90N0Jt?=
+ =?utf-8?B?L3RiL1c1NUU0aDFrYUhiNzJJenQ5bTFLNS83cFpUaUZjQW5URGxxa3dueXNK?=
+ =?utf-8?B?c2VGRUhkSHcybzE3cFJ3WDkzcjc5ckt2SUN0dVNNNmY2ZWZyUDZzMXB0UHlq?=
+ =?utf-8?B?ZjgwNjNqVXJBbW5NcXJVUT09?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR03MB5885.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(7416005)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Um0zb1hrUmU3dkFRVVByaEh2ODVVTjVzZGxNU0dqcEdOZE4zNmZkNnJka1Za?=
+ =?utf-8?B?eXFhMmNJVTAzMTNHTHlMM0dNa3hha2ZmS200NkdGQlhUOStsTWxjdDB3Z3NC?=
+ =?utf-8?B?MWpVeWp1TlBBR3ErYXZaWUdpakFWZ1RNYlhMQUFlanhVNUQ3ZDYxTkxSQ00y?=
+ =?utf-8?B?NXRwc3VleENkcDBJdUFWR3V5Y0JjZUFwSHRKNkxSWUswUEV5S3lIQzZOcWQ4?=
+ =?utf-8?B?K0pBMFpyMUF6Y0c4VGtPbXFrdEJkaSs2WHF3aVlWR28wS0tHYnlxSFBDR3d1?=
+ =?utf-8?B?NWVVOW9iMmNpUkExSC9PSTExa1FJNTdFaFM1RHM4RUtjVDVOSms1Q01xaTdu?=
+ =?utf-8?B?MXZ6Z0lZYS9acVMvM0FucjFJaWhRVGVrRjFWalZNVXNJK0I4V3NFSjBDN1Jj?=
+ =?utf-8?B?NDFDSi9PU0IvZ3BoVUxUZ0hZbGtMbFg2KzU5SDJMTTV5S1pNTFk5R2hWR1Fi?=
+ =?utf-8?B?SGVyd25YT3JhUDZRYzhMTjRkenRPV2pXcjMzRzZXVzJZdmFhU09OZFZPRVdv?=
+ =?utf-8?B?Z09RZDV1ZzNxN3VBdlFYZUxyajlCMXRxeUpjcDdVZ09lT3cvR3ZrQ0xjblgv?=
+ =?utf-8?B?TVpzR1NTK0trOHV0WkdqUkliVENDYnhqVmdVQUUyRDE2eGs1dnVJbzlKNzNW?=
+ =?utf-8?B?OE9kbDNwcklvSmkzNndqdWdRV05nbVB2MDFENzNuQzNha2V4UzlWL0F4aVFZ?=
+ =?utf-8?B?OTZHaVFHSEZsYXRmQUg1QnJFdXNUNEJqdUVLUCs2MFFleGVody9pY1p5eFBL?=
+ =?utf-8?B?NUlFV094L25sS3FwbDRIc0pWZk04SHNzSGpTckQyWUJwaFhaeHZDTGVESGFC?=
+ =?utf-8?B?L0UzK09tcHhhdGJjdldGQmtNcEhlQW9Fd1NQSE03bnJLaEQ1ZTBzcU1kRlNp?=
+ =?utf-8?B?T09GY3NmS2tKUVYxYjJsVmY5Z2xDL3cwRW0wRkVackkwSXlJWnJjWFBnMHZx?=
+ =?utf-8?B?L1ZzdVVnZ3ZET3BSbnFPY2VmTzVzU0NaaVpqRUIrcDcvNm5yR3FlRE0xWTly?=
+ =?utf-8?B?TGxERnlVT0ZaVW42U2FwRmxnTGRPOGUxaVZMVEpqcUN2cGY0NFd6QkFybGtN?=
+ =?utf-8?B?TG1ZdllQbWY0Zmg3UGJaaHJKcXhBRkoxY0NqeW5nRmVxak5GVVliTHFaRDVn?=
+ =?utf-8?B?cnNCS2tqT0R5TVI4YmFUdUNXT3Zrb2JnMnQ4NmZ4dmtqeTFFT3dvbGFaQjVx?=
+ =?utf-8?B?YTUvL1krT1NmMy96VzF2aXlpME5saHB3ZEFudU1TR1hDQ2lrUlBxSjZBbGgw?=
+ =?utf-8?B?RWNkckdjVlF3cVJaL3dGV1VsRWpHQmVwZ3lIQXVGRnVDdEJTVmlWc0xSUHJQ?=
+ =?utf-8?B?Y0VOTERsckVzbGdIWWRkckIvazBzZTJTa3dTM2syL29GWTlHeUpIRmR2U2Ny?=
+ =?utf-8?B?eG9tR1E5RlRoSGYzNiszMXlnbDZlQTlQK3Z6YlhBWEtITkpyN0tNR2hVays0?=
+ =?utf-8?B?bFJEL2hTdWxkMkUvakF3NXMwU0JDZVhVZzJUSzVTdW5veGJQLy9Kd1gxaitF?=
+ =?utf-8?B?eGh1MjVjaUYyQXVvTzJZUHllSVJvOGtTWUo3SkxqQ0crcTd5cHdkbWxDdHR1?=
+ =?utf-8?B?ekJTOWczQTdTcjVSdTFvT2xacyt0TTJGamJ2UTM0ZVplWGYrUkw4UDVhOFJF?=
+ =?utf-8?B?cUZlazZXVFNES1RsUnM4aW9RMW1vMWZFQ0FiczdtYUl3aGE4cU1BU1pFZnpm?=
+ =?utf-8?B?RjlNbnUwYk5yR2l1Tjl3SGZkQ0NUMjgxTy9DckJ1eER0VldDQzJwSFNxY0Rs?=
+ =?utf-8?B?MFhVUkhqNkEyVEk4MXpYV2creHFuYmRzRmUwYkdMRVFGME1CQ24yMDZQelR6?=
+ =?utf-8?B?Zmx6Q3RHNGxpc2VEUnBWUnBYeXZaaTdySXBIVGFHd3phdDBiSndMR1Q3RDI4?=
+ =?utf-8?B?Z1pwVlBuTzFqYit0dnJKdndwQ0l4S0l2QmVhNTI2b1JhVWN5eDZzcWYxSXlB?=
+ =?utf-8?B?TzdMUFlTRG1INk5KMndUUWZRbkZYckVLRW9tcWh6V00ycVFoSEd4aHY5TEN0?=
+ =?utf-8?B?ZVNOdHY3cWt0RmdYWmxWTFVoaXIwS3VCS0ZpVm9yMEhPTTk4R05WR1lBYnkv?=
+ =?utf-8?B?NURGREI4UCtJMnpldmEwTFRQc1FzWVd5SzZpalE5RmpaQVZ2U3hrRVBScnR6?=
+ =?utf-8?B?R0wza1hvK2g5aGdPNGwxVUk3UGlOTlQzbWtwWnhic3lPOHgwNmYyYWVOaDdX?=
+ =?utf-8?B?TXc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <67EC1FAE66A2EC4495302695250CB95C@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 20 May 2024 09:55:47 +0200
-Message-ID: <CACRpkdbKNem0KB4W9a6R7o6e7V4+eh9cLMKYV0xv5Hv3tEpysg@mail.gmail.com>
-Subject: [GIT PULL] pin control bulk changes for v6.10
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR03MB5885.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b74eb424-c341-495d-40df-08dc78a29ab2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2024 07:58:15.4827
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mr+zJ5XKPIyiV7tIhKxO2n6MGEVj8XZYjJD5XCDiF0SdW18kpM4DGulScH8hxQWIxLpgHI2tt5gC5VYHI4Wy9Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR03MB7652
+X-MTK: N
 
-Hi Linus,
-
-here is the bulk of pin control changes for v6.10. This time
-low activity and not very much interesting, it's even very little
-driver activity.
-
-Anyways: details in the signed tag, please pull it in!
-
-Yours,
-Linus Walleij
-
-The following changes since commit 4cece764965020c22cff7665b18a012006359095=
-:
-
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v6.10-1
-
-for you to fetch changes up to 83906257f2e4441a4610f83ae24a713ba609b64a:
-
-  Merge tag 'samsung-pinctrl-6.10' of
-https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung into
-devel (2024-05-06 08:53:50 +0200)
-
-----------------------------------------------------------------
-Pin control changes for the v6.10 kernel cycle:
-
-Core changes:
-
-- Use DEFINE_SHOW_STORE_ATTRIBUTE() in debugfs entries.
-
-New drivers:
-
-- Qualcomm PMIH0108, PMD8028, PMXR2230 and PM6450
-  pin control support.
-
-Improvements:
-
-- Serious cleanup of the recently merged aw9523 driver.
-
-- Fix PIN_CONFIG_BIAS_DISABLE handling in pinctrl-single.
-
-- A slew of device tree binding cleanups.
-
-- Support a bus clock in the Samsung driver.
-
-----------------------------------------------------------------
-Andr=C3=A9 Draszik (2):
-      dt-bindings: pinctrl: samsung: google,gs101-pinctrl needs a clock
-      pinctrl: samsung: support a bus clock
-
-Andy Shevchenko (13):
-      pinctrl: pxa2xx: Make use of struct pinfunction
-      pinctrl: pxa2xx: Make use of struct pingroup
-      pinctrl: aw9523: Destroy mutex on ->remove()
-      pinctrl: aw9523: Use correct error code for not supported functionali=
-ty
-      pinctrl: aw9523: Always try both ports in aw9523_gpio_set_multiple()
-      pinctrl: aw9523: Make use of struct pinfunction and PINCTRL_PINFUNCTI=
-ON()
-      pinctrl: aw9523: Use temporary variable for HW IRQ number
-      pinctrl: aw9523: Get rid of redundant ' & U8_MAX' pieces
-      pinctrl: aw9523: Remove unused irqchip field in struct aw9523_irq
-      pinctrl: aw9523: Make use of dev_err_probe()
-      pinctrl: aw9523: Sort headers and group pinctrl/*
-      pinctrl: aw9523: Fix indentation in a few places
-      pinctrl: Use DEFINE_SHOW_STORE_ATTRIBUTE() helper for debugfs
-
-Anjelique Melendez (4):
-      dt-bindings: pinctrl: qcom,pmic-gpio: Add PMIH0108 and PMD8028 suppor=
-t
-      pinctrl: qcom: spmi-gpio: Add PMXR2230 and PM6450 support
-      pinctrl: qcom: spmi-gpio: Add PMIH0108 and PMD8028 support
-      dt-bindings: pinctrl: qcom,pmic-gpio: Fix "comptaible" typo for PMIH0=
-108
-
-Arnd Bergmann (1):
-      pinctrl: armada-37xx: remove an unused variable
-
-Christophe JAILLET (2):
-      pinctrl: max77620: Remove an unused fields in struct
-max77620_pin_info and max77620_pctrl_info
-      pinctrl: pinctrl-single: Remove some unused fields in struct pcs_func=
-tion
-
-Claudiu Beznea (2):
-      pinctrl: renesas: rzg2l: Execute atomically the interrupt configurati=
-on
-      pinctrl: renesas: rzg2l: Configure the interrupt type on resume
-
-Danila Tikhonov (1):
-      pinctrl: qcom: pinctrl-sm7150: Fix sdc1 and ufs special pins regs
-
-David Collins (1):
-      dt-bindings: pinctrl: qcom,pmic-gpio: Add PMXR2230 and PM6450 support
-
-Geert Uytterhoeven (2):
-      pinctrl: renesas: r8a779h0: Fix IRQ suffixes
-      pinctrl: renesas: r8a779h0: Add INTC-EX pins, groups, and function
-
-Herman van Hazendonk (1):
-      dt-bindings: pinctrl: qcom,pmic-mpp: add support for PM8901
-
-Krzysztof Kozlowski (8):
-      dt-bindings: pinctrl: samsung: drop unused header with register const=
-ants
-      pinctrl: sunxi: sun9i-a80-r: drop driver owner assignment
-      pinctrl: freescale: imx8ulp: fix module autoloading
-      pinctrl: mediatek: fix module autoloading
-      pinctrl: loongson2: fix module autoloading
-      pinctrl: qcom: sm7150: fix module autoloading
-      pinctrl: realtek: fix module autoloading
-      pinctrl: samsung: drop redundant drvdata assignment
-
-Lad Prabhakar (2):
-      dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow 'input' and
-'output-enable' properties
-      pinctrl: renesas: rzg2l: Remove extra space in function parameter
-
-Linus Walleij (2):
-      Merge tag 'renesas-pinctrl-for-v6.10-tag1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers
-into devel
-      Merge tag 'samsung-pinctrl-6.10' of
-https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung into
-devel
-
-Luca Weiss (1):
-      dt-bindings: pinctrl: qcom,pmic-gpio: Allow gpio-hog nodes
-
-Matthijs Kooijman (1):
-      pinctrl: single: Fix PIN_CONFIG_BIAS_DISABLE handling
-
-Paul Barker (1):
-      pinctrl: renesas: rzg2l: Limit 2.5V power supply to Ethernet interfac=
-es
-
-Peng Fan (1):
-      pinctrl: pinconf-generic: print hex value
-
-Rafa=C5=82 Mi=C5=82ecki (3):
-      dt-bindings: pinctrl: mediatek: mt7622: add "gpio-ranges" property
-      dt-bindings: pinctrl: mediatek: mt7622: fix array properties
-      dt-bindings: pinctrl: mediatek: mt7622: add "antsel" function
-
-Stefan Wahren (3):
-      pinctrl: bcm2835: Implement bcm2835_pinconf_get
-      pinctrl: bcm2835: Implement bcm2711_pinconf_get
-      pinctrl: bcm2835: Make pin freeing behavior configurable
-
-Tengfei Fan (1):
-      dt-bindings: pinctrl: qcom: update functions to match with driver
-
-Thomas Richard (1):
-      pinctrl: pinctrl-single: move suspend()/resume() callbacks to noirq
-
- .../bindings/pinctrl/mediatek,mt7622-pinctrl.yaml  | 113 ++++++++++-------
- .../bindings/pinctrl/qcom,pmic-gpio.yaml           |  38 ++++++
- .../devicetree/bindings/pinctrl/qcom,pmic-mpp.yaml |   1 +
- .../bindings/pinctrl/qcom,sm4450-tlmm.yaml         |  52 +++-----
- .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml    |   2 +
- .../bindings/pinctrl/samsung,pinctrl.yaml          |  21 ++++
- MAINTAINERS                                        |   1 -
- drivers/pinctrl/bcm/pinctrl-bcm2835.c              |  83 +++++++++++--
- drivers/pinctrl/freescale/pinctrl-imx8ulp.c        |   1 +
- drivers/pinctrl/mediatek/pinctrl-mt6765.c          |   1 +
- drivers/pinctrl/mediatek/pinctrl-mt6779.c          |   1 +
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c        |   3 -
- drivers/pinctrl/pinconf-generic.c                  |   2 +-
- drivers/pinctrl/pinctrl-aw9523.c                   | 131 +++++++----------=
----
- drivers/pinctrl/pinctrl-loongson2.c                |   1 +
- drivers/pinctrl/pinctrl-max77620.c                 |   2 -
- drivers/pinctrl/pinctrl-single.c                   |  50 ++++----
- drivers/pinctrl/pinmux.c                           |  26 ++--
- drivers/pinctrl/pxa/pinctrl-pxa2xx.c               |  55 ++++-----
- drivers/pinctrl/pxa/pinctrl-pxa2xx.h               |  15 +--
- drivers/pinctrl/qcom/pinctrl-sm7150.c              |  21 ++--
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           |   4 +
- drivers/pinctrl/realtek/pinctrl-rtd1315e.c         |   1 +
- drivers/pinctrl/realtek/pinctrl-rtd1319d.c         |   1 +
- drivers/pinctrl/renesas/pfc-r8a779h0.c             | 136 +++++++++++++++++=
-++--
- drivers/pinctrl/renesas/pinctrl-rzg2l.c            |  18 ++-
- drivers/pinctrl/samsung/pinctrl-exynos.c           | 112 +++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c          |  95 +++++++++++++-
- drivers/pinctrl/samsung/pinctrl-samsung.h          |   2 +
- drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c        |   1 -
- include/dt-bindings/pinctrl/samsung.h              |  95 --------------
- 31 files changed, 694 insertions(+), 391 deletions(-)
- delete mode 100644 include/dt-bindings/pinctrl/samsung.h
+T24gVGh1LCAyMDI0LTA1LTE2IGF0IDEwOjE3ICswMjAwLCBDaHJpc3RpYW4gS8O2bmlnIHdyb3Rl
+Og0KPiAgCSANCj4gRXh0ZXJuYWwgZW1haWwgOiBQbGVhc2UgZG8gbm90IGNsaWNrIGxpbmtzIG9y
+IG9wZW4gYXR0YWNobWVudHMgdW50aWwNCj4geW91IGhhdmUgdmVyaWZpZWQgdGhlIHNlbmRlciBv
+ciB0aGUgY29udGVudC4NCj4gIEFtIDE1LjA1LjI0IHVtIDEzOjIzIHNjaHJpZWIgWW9uZyBXdToN
+Cj4gPiBJbnRyb2R1Y2UgYSBGTEFHIGZvciB0aGUgcmVzdHJpY3RlZCBtZW1vcnkgd2hpY2ggbWVh
+bnMgdGhlIG1lbW9yeQ0KPiBpcw0KPiA+IHByb3RlY3RlZCBieSBURUUgb3IgaHlwZXJ2aXNvciwg
+dGhlbiBpdCdzIGluYWNjZXNzaWFibGUgZm9yIGtlcm5lbC4NCj4gPg0KPiA+IEN1cnJlbnRseSB3
+ZSBkb24ndCB1c2Ugc2dfZG1hX3VubWFya19yZXN0cmljdGVkLCB0aHVzIHRoaXMNCj4gaW50ZXJm
+YWNlDQo+ID4gaGFzIG5vdCBiZWVuIGFkZGVkLg0KPiANCj4gV2h5IHNob3VsZCB0aGF0IGJlIHBh
+cnQgb2YgdGhlIHNjYXR0ZXJsaXN0PyBJdCBkb2Vzbid0IHNlZW0gdG8NCj4gYWZmZWN0IA0KPiBh
+bnkgb2YgaXQncyBmdW5jdGlvbmFsaXR5Lg0KPiANCj4gQXMgZmFyIGFzIEkgY2FuIHNlZSB0aGUg
+c2NhdHRlcmxpc3Qgc2hvdWxkbid0IGJlIHRoZSB0cmFuc3BvcnQgb2YNCj4gdGhpcyANCj4ga2lu
+ZCBvZiBpbmZvcm1hdGlvbi4NCg0KVGhhbmtzIGZvciB0aGUgcmV2aWV3LiBJIHdpbGwgcmVtb3Zl
+IHRoaXMuDQoNCkluIG91ciB1c2VyIHNjZW5hcmlvLCBEUk0gd2lsbCBpbXBvcnQgdGhlc2UgYnVm
+ZmVycyBhbmQgY2hlY2sgaWYgdGhpcw0KaXMgYSByZXN0cmljdGVkIGJ1ZmZlci4gSWYgeWVzLCBp
+dCB3aWxsIHVzZSBzZWN1cmUgR0NFIHRha2VzIG92ZXIuDQoNCklmIHRoaXMganVkZ21lbnQgaXMg
+bm90IHN1aXRhYmxlIHRvIGJlIHBsYWNlZCBpbiBzY2F0dGVybGlzdC4gSSBkb24ndA0Ka25vdyBp
+ZiBpdCBpcyBvayB0byBsaW1pdCB0aGlzIGluc2lkZSBkbWEtYnVmLiBBZGRpbmcgc3VjaCBhbg0K
+aW50ZXJmYWNlOg0KDQpzdGF0aWMgYm9vbCBkbWFfYnVmX2lzX3Jlc3RyaWN0ZWQoc3RydWN0IGRt
+YV9idWYgKmRtYWJ1ZikNCnsNCglyZXR1cm4gIXN0cm5jbXAoZG1hYnVmLT5leHBfbmFtZSwgInJl
+c3RyaWN0ZWQiLCAxMCk7DQp9DQoNClRoYW5rcy4NCg0KPiANCj4gUmVnYXJkcywNCj4gQ2hyaXN0
+aWFuLg0KPiANCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFlvbmcgV3UgPHlvbmcud3VAbWVkaWF0
+ZWsuY29tPg0KPiA+IC0tLQ0KPiA+ICAgaW5jbHVkZS9saW51eC9zY2F0dGVybGlzdC5oIHwgMzQN
+Cj4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICAgMSBmaWxlIGNoYW5n
+ZWQsIDM0IGluc2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4
+L3NjYXR0ZXJsaXN0LmgNCj4gYi9pbmNsdWRlL2xpbnV4L3NjYXR0ZXJsaXN0LmgNCj4gPiBpbmRl
+eCA3N2RmM2Q3YjE4YTYuLmE2YWQ5MDE4ZWNhMCAxMDA2NDQNCj4gPiAtLS0gYS9pbmNsdWRlL2xp
+bnV4L3NjYXR0ZXJsaXN0LmgNCj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L3NjYXR0ZXJsaXN0LmgN
+Cj4gPiBAQCAtMjgyLDYgKzI4Miw3IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBzZ191bm1hcmtfZW5k
+KHN0cnVjdA0KPiBzY2F0dGVybGlzdCAqc2cpDQo+ID4gICANCj4gPiAgICNkZWZpbmUgU0dfRE1B
+X0JVU19BRERSRVNTKDEgPDwgMCkNCj4gPiAgICNkZWZpbmUgU0dfRE1BX1NXSU9UTEIoMSA8PCAx
+KQ0KPiA+ICsjZGVmaW5lIFNHX0RNQV9SRVNUUklDVEVEKDIgPDwgMSkNCj4gPiAgIA0KPiA+ICAg
+LyoqDQo+ID4gICAgKiBzZ19kbWFfaXNfYnVzX2FkZHJlc3MgLSBSZXR1cm4gd2hldGhlciBhIGdp
+dmVuIHNlZ21lbnQgd2FzDQo+IG1hcmtlZA0KPiA+IEBAIC0zNTIsNiArMzUzLDMxIEBAIHN0YXRp
+YyBpbmxpbmUgdm9pZCBzZ19kbWFfbWFya19zd2lvdGxiKHN0cnVjdA0KPiBzY2F0dGVybGlzdCAq
+c2cpDQo+ID4gICBzZy0+ZG1hX2ZsYWdzIHw9IFNHX0RNQV9TV0lPVExCOw0KPiA+ICAgfQ0KPiA+
+ICAgDQo+ID4gKy8qKg0KPiA+ICsgKiBzZ19kbWFfbWFya19yZXN0cmljdGVkIC0gTWFyayB0aGUg
+c2NhdHRlcmxpc3QgZm9yIHJlc3RyaWN0ZWQNCj4gYnVmZmVyLg0KPiA+ICsgKiBAc2c6U0cgZW50
+cnkNCj4gPiArICoNCj4gPiArICogRGVzY3JpcHRpb246DQo+ID4gKyAqICAgTWFya3MgYSBhIHNj
+YXR0ZXJsaXN0IGZvciB0aGUgcmVzdHJpY3RlZCBidWZmZXIgdGhhdCBtYXkgYmUNCj4gaW5hY2Nl
+c3NpYWJsZQ0KPiA+ICsgKiAgIGluIGtlcm5lbCBpZiBpdCBpcyBwcm90ZWN0ZWQuDQo+ID4gKyAq
+Lw0KPiA+ICtzdGF0aWMgaW5saW5lIHZvaWQgc2dfZG1hX21hcmtfcmVzdHJpY3RlZChzdHJ1Y3Qg
+c2NhdHRlcmxpc3QgKnNnKQ0KPiA+ICt7DQo+ID4gK3NnLT5kbWFfZmxhZ3MgfD0gU0dfRE1BX1JF
+U1RSSUNURUQ7DQo+ID4gK30NCj4gPiArDQo+ID4gKy8qKg0KPiA+ICsgKiBzZ19kbWFfaXNfcmVz
+dHJpY3RlZCAtIFJldHVybiB3aGV0aGVyIHRoZSBzY2F0dGVybGlzdCB3YXMNCj4gbWFya2VkIGFz
+IHJlc3RyaWN0ZWQNCj4gPiArICogICAgICAgICAgICAgICAgICAgICAgICBidWZmZXIuDQo+ID4g
+KyAqIEBzZzpTRyBlbnRyeQ0KPiA+ICsgKg0KPiA+ICsgKiBEZXNjcmlwdGlvbjoNCj4gPiArICog
+ICBSZXR1cm5zIHRydWUgaWYgdGhlIHNjYXR0ZXJsaXN0IHdhcyBtYXJrZWQgYXMgcmVzdHJpY3Rl
+ZA0KPiBidWZmZXIuDQo+ID4gKyAqLw0KPiA+ICtzdGF0aWMgaW5saW5lIGJvb2wgc2dfZG1hX2lz
+X3Jlc3RyaWN0ZWQoc3RydWN0IHNjYXR0ZXJsaXN0ICpzZykNCj4gPiArew0KPiA+ICtyZXR1cm4g
+c2ctPmRtYV9mbGFncyAmIFNHX0RNQV9SRVNUUklDVEVEOw0KPiA+ICt9DQo+ID4gICAjZWxzZQ0K
+PiA+ICAgDQo+ID4gICBzdGF0aWMgaW5saW5lIGJvb2wgc2dfZG1hX2lzX2J1c19hZGRyZXNzKHN0
+cnVjdCBzY2F0dGVybGlzdCAqc2cpDQo+ID4gQEAgLTM3Miw2ICszOTgsMTQgQEAgc3RhdGljIGlu
+bGluZSB2b2lkIHNnX2RtYV9tYXJrX3N3aW90bGIoc3RydWN0DQo+IHNjYXR0ZXJsaXN0ICpzZykN
+Cj4gPiAgIHsNCj4gPiAgIH0NCj4gPiAgIA0KPiA+ICtzdGF0aWMgaW5saW5lIGJvb2wgc2dfZG1h
+X2lzX3Jlc3RyaWN0ZWQoc3RydWN0IHNjYXR0ZXJsaXN0ICpzZykNCj4gPiArew0KPiA+ICtyZXR1
+cm4gZmFsc2U7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbmxpbmUgdm9pZCBzZ19kbWFf
+bWFya19yZXN0cml0ZWQoc3RydWN0IHNjYXR0ZXJsaXN0ICpzZykNCj4gPiArew0KPiA+ICt9DQo+
+ID4gICAjZW5kaWYvKiBDT05GSUdfTkVFRF9TR19ETUFfRkxBR1MgKi8NCj4gPiAgIA0KPiA+ICAg
+LyoqDQo+IA0KPiANCg==
 
