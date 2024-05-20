@@ -1,122 +1,214 @@
-Return-Path: <linux-kernel+bounces-183797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB4A8C9E40
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:35:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C3B88C9E8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C3EA1F217DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:35:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 127E4283534
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CB813665F;
-	Mon, 20 May 2024 13:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QVpUy6j/"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69F7136672;
+	Mon, 20 May 2024 14:02:23 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23011136648
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 13:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF329136E2B
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 14:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716212108; cv=none; b=hL7Sfk7KLQXuGgTYAoy+bihDryAtOH2iE9qbwn82d6FSRYEYoP3MZlTsp0Met5sWNb2sTZGA23zv5TsFCtfU+IBbjbhPP1Oz2b5dnevNb03+qf8LHf48dUygtLI0GPTq8Ym1zHlxYpNBAmhOo6end0vdCkLBt1asYfIklVKL5NA=
+	t=1716213743; cv=none; b=JIUNBOQdqWr+V8yUEU5scVgyh7xBIWinRgmdkGGWc9Jtq/dl4IU2AJtHHBBZTyDmNOFjjc4rPXY6l5gNozmwJ3Ik633VRNtLSS43NZziacRYP8hi8dggWTAjepqgXrhUmDjgdqNRSIPzMhw6l6alvaDWAYnWNTu85cDnPZJ147U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716212108; c=relaxed/simple;
-	bh=R/0zG6yLUYRJaCSaEdvkdqZcg4FkuA6onh3IU8OmRfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pIv2hjIqTLl3Wfi2uVfRrnnxGSh3vkogS5YQFscTcBL7NkX0VWAPDv4j3+EnB2p1gh4DXRItNGrJYgeV/z7v1WBjuB48A6g6z5nIQjafZbO+2wbKbZDaiAu6udHoTTgkYIeauUbPjdv79qv2/Eg3BPWI4R8yWG7DP69fgVdWEqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QVpUy6j/; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: lkp@intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716212103;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gyw5WnWHpJz6E3Mc68G1X1pQFAugA2g3tSqbvj80T9o=;
-	b=QVpUy6j/slpeF+8hheYUC0ArIclrwUJUOcg0BMYheBc3WY9jbEzvl8u3m4pJk/cVpU3t0Z
-	u3v8gM+fsA8apsOwRvDm0Gz6yNeY4WnNfPQRjo79/+0fs9mbm8be4lf1ywSU7VlAFCWziE
-	/VUBDF3ygfeGR5X9TuyANXi8Q6BKEmU=
-X-Envelope-To: brauner@kernel.org
-X-Envelope-To: jack@suse.cz
-X-Envelope-To: viro@zeniv.linux.org.uk
-X-Envelope-To: oe-kbuild-all@lists.linux.dev
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: hch@lst.de
-X-Envelope-To: dylany@fb.com
-X-Envelope-To: dwmw@amazon.co.uk
-X-Envelope-To: pbonzini@redhat.com
-X-Envelope-To: dyoung@redhat.com
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <18ef03df-8313-432f-bf24-aa685d099f3e@linux.dev>
-Date: Mon, 20 May 2024 21:34:26 +0800
+	s=arc-20240116; t=1716213743; c=relaxed/simple;
+	bh=b64PkD5oK8R4txFrQZibPpogUweP1EsI7xAx3DMIvFE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=reg49Ia+zueOtrxdibjGShQBWrki+8jF0LvVIdA9FlMiFckGKDthPvUOPCkPvO8FiTIr1nAbgNd4ucoE4vtKXRde1ltCyCX/W4IGI/JH7uu6gKgS2aWgiyQcIuYoWpWLiW9sXdhj6OyjiYZRsxav4m6ULMeC5OW1pNGZ/pSCj/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VjfNq5nqBzch8l;
+	Mon, 20 May 2024 22:00:59 +0800 (CST)
+Received: from canpemm500010.china.huawei.com (unknown [7.192.105.118])
+	by mail.maildlp.com (Postfix) with ESMTPS id 833CB18007D;
+	Mon, 20 May 2024 22:02:16 +0800 (CST)
+Received: from huawei.com (10.67.189.167) by canpemm500010.china.huawei.com
+ (7.192.105.118) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 20 May
+ 2024 22:02:16 +0800
+From: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+To: <mark.rutland@arm.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<Dave.Martin@arm.com>, <xieyuanbin1@huawei.com>, <xiaojiangfeng@huawei.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<nixiaoming@huawei.com>, <wangbing6@huawei.com>, <douzhaolei@huawei.com>,
+	<liaohua4@huawei.com>, <lijiahuan5@huawei.com>, <wangfangpeng1@huawei.com>
+Subject: [PATCH v2] arm64: asm-bug: Add .align 2 to the end of __BUG_ENTRY
+Date: Mon, 20 May 2024 21:34:37 +0800
+Message-ID: <1716212077-43826-1-git-send-email-xiaojiangfeng@huawei.com>
+X-Mailer: git-send-email 1.8.5.6
+In-Reply-To: <1715955208-17109-1-git-send-email-xiaojiangfeng@huawei.com>
+References: <1715955208-17109-1-git-send-email-xiaojiangfeng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] eventfd: introduce ratelimited wakeup for non-semaphore
- eventfd
-To: kernel test robot <lkp@intel.com>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: oe-kbuild-all@lists.linux.dev, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
- David Woodhouse <dwmw@amazon.co.uk>, Paolo Bonzini <pbonzini@redhat.com>,
- Dave Young <dyoung@redhat.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240519144124.4429-1-wen.yang@linux.dev>
- <202405200456.29VvtOKg-lkp@intel.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Wen Yang <wen.yang@linux.dev>
-In-Reply-To: <202405200456.29VvtOKg-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ canpemm500010.china.huawei.com (7.192.105.118)
 
+When CONFIG_DEBUG_BUGVERBOSE=n, we fail to add necessary padding bytes
+to bug_table entries, and as a result the last entry in a bug table will
+be ignored, potentially leading to an unexpected panic(). All prior
+entries in the table will be handled correctly.
 
+The arm64 ABI requires that struct fields of up to 8 bytes are
+naturally-aligned, with padding added within a struct such that struct
+are suitably aligned within arrays.
 
-On 2024/5/20 05:18, kernel test robot wrote:
-> Hi Wen,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on brauner-vfs/vfs.all]
-> [also build test ERROR on linus/master v6.9 next-20240517]
-> [cannot apply to vfs-idmapping/for-next hch-configfs/for-next]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Wen-Yang/eventfd-introduce-ratelimited-wakeup-for-non-semaphore-eventfd/20240519-224440
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-> patch link:    https://lore.kernel.org/r/20240519144124.4429-1-wen.yang%40linux.dev
-> patch subject: [PATCH] eventfd: introduce ratelimited wakeup for non-semaphore eventfd
-> config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20240520/202405200456.29VvtOKg-lkp@intel.com/config)
-> compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240520/202405200456.29VvtOKg-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202405200456.29VvtOKg-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->     arm-linux-gnueabi-ld: fs/eventfd.o: in function `eventfd_write':
->>> eventfd.c:(.text+0x1740): undefined reference to `__aeabi_uldivmod'
-> 
+When CONFIG_DEBUG_BUGVERPOSE=y, the layout of a bug_entry is:
 
-Thanks, we will fix it soon and then send v2.
+	struct bug_entry {
+		signed int      bug_addr_disp;	// 4 bytes
+		signed int      file_disp;	// 4 bytes
+		unsigned short  line;		// 2 bytes
+		unsigned short  flags;		// 2 bytes
+	}
 
---
-Best wishes,
-Wen
+.. with 12 bytes total, requiring 4-byte alignment.
+
+When CONFIG_DEBUG_BUGVERBOSE=n, the layout of a bug_entry is:
+
+	struct bug_entry {
+		signed int      bug_addr_disp;	// 4 bytes
+		unsigned short  flags;		// 2 bytes
+		< implicit padding >		// 2 bytes
+	}
+
+.. with 8 bytes total, with 6 bytes of data and 2 bytes of trailing
+padding, requiring 4-byte alginment.
+
+When we create a bug_entry in assembly, we align the start of the entry
+to 4 bytes, which implicitly handles padding for any prior entries.
+However, we do not align the end of the entry, and so when
+CONFIG_DEBUG_BUGVERBOSE=n, the final entry lacks the trailing padding
+bytes.
+
+For the main kernel image this is not a problem as find_bug() doesn't
+depend on the trailing padding bytes when searching for entries:
+
+	for (bug = __start___bug_table; bug < __stop___bug_table; ++bug)
+		if (bugaddr == bug_addr(bug))
+			return bug;
+
+However for modules, module_bug_finalize() depends on the trailing
+bytes when calculating the number of entries:
+
+	mod->num_bugs = sechdrs[i].sh_size / sizeof(struct bug_entry);
+
+.. and as the last bug_entry lacks the necessary padding bytes, this entry
+will not be counted, e.g. in the case of a single entry:
+
+	sechdrs[i].sh_size == 6
+	sizeof(struct bug_entry) == 8;
+
+	sechdrs[i].sh_size / sizeof(struct bug_entry) == 0;
+
+Consequently module_find_bug() will miss the last bug_entry when it does:
+
+	for (i = 0; i < mod->num_bugs; ++i, ++bug)
+		if (bugaddr == bug_addr(bug))
+			goto out;
+
+.. which can lead to a kenrel panic due to an unhandled bug.
+
+This can be demonstrated with the following module:
+
+	static int __init buginit(void)
+	{
+		WARN(1, "hello\n");
+		return 0;
+	}
+
+	static void __exit bugexit(void)
+	{
+	}
+
+	module_init(buginit);
+	module_exit(bugexit);
+	MODULE_LICENSE("GPL");
+
+.. which will trigger a kernel panic when loaded:
+
+	------------[ cut here ]------------
+	hello
+	Unexpected kernel BRK exception at EL1
+	Internal error: BRK handler: 00000000f2000800 [#1] PREEMPT SMP
+	Modules linked in: hello(O+)
+	CPU: 0 PID: 50 Comm: insmod Tainted: G           O       6.9.1 #8
+	Hardware name: linux,dummy-virt (DT)
+	pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+	pc : buginit+0x18/0x1000 [hello]
+	lr : buginit+0x18/0x1000 [hello]
+	sp : ffff800080533ae0
+	x29: ffff800080533ae0 x28: 0000000000000000 x27: 0000000000000000
+	x26: ffffaba8c4e70510 x25: ffff800080533c30 x24: ffffaba8c4a28a58
+	x23: 0000000000000000 x22: 0000000000000000 x21: ffff3947c0eab3c0
+	x20: ffffaba8c4e3f000 x19: ffffaba846464000 x18: 0000000000000006
+	x17: 0000000000000000 x16: ffffaba8c2492834 x15: 0720072007200720
+	x14: 0720072007200720 x13: ffffaba8c49b27c8 x12: 0000000000000312
+	x11: 0000000000000106 x10: ffffaba8c4a0a7c8 x9 : ffffaba8c49b27c8
+	x8 : 00000000ffffefff x7 : ffffaba8c4a0a7c8 x6 : 80000000fffff000
+	x5 : 0000000000000107 x4 : 0000000000000000 x3 : 0000000000000000
+	x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff3947c0eab3c0
+	Call trace:
+	 buginit+0x18/0x1000 [hello]
+	 do_one_initcall+0x80/0x1c8
+	 do_init_module+0x60/0x218
+	 load_module+0x1ba4/0x1d70
+	 __do_sys_init_module+0x198/0x1d0
+	 __arm64_sys_init_module+0x1c/0x28
+	 invoke_syscall+0x48/0x114
+	 el0_svc_common.constprop.0+0x40/0xe0
+	 do_el0_svc+0x1c/0x28
+	 el0_svc+0x34/0xd8
+	 el0t_64_sync_handler+0x120/0x12c
+	 el0t_64_sync+0x190/0x194
+	Code: d0ffffe0 910003fd 91000000 9400000b (d4210000)
+	---[ end trace 0000000000000000 ]---
+	Kernel panic - not syncing: BRK handler: Fatal exception
+
+Fix this by always aligning the end of a bug_entry to 4 bytes, which is
+correct regardless of CONFIG_DEBUG_BUGVERBOSE.
+
+Fixes: 9fb7410f955f ("arm64/BUG: Use BRK instruction for generic BUG traps")
+
+Signed-off-by: Yuanbin Xie <xieyuanbin1@huawei.com>
+Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+---
+V1 -> V2: Describe the problem scenario and cause more clearly
+in the commit message as suggested by the maintainer.
+---
+ arch/arm64/include/asm/asm-bug.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/include/asm/asm-bug.h b/arch/arm64/include/asm/asm-bug.h
+index c762038..6e73809 100644
+--- a/arch/arm64/include/asm/asm-bug.h
++++ b/arch/arm64/include/asm/asm-bug.h
+@@ -28,6 +28,7 @@
+ 	14470:	.long 14471f - .;			\
+ _BUGVERBOSE_LOCATION(__FILE__, __LINE__)		\
+ 		.short flags; 				\
++		.align 2;				\
+ 		.popsection;				\
+ 	14471:
+ #else
+-- 
+1.8.5.6
+
 
