@@ -1,206 +1,112 @@
-Return-Path: <linux-kernel+bounces-184061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5D08CA1F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:25:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 842708CA1F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B37F51F222B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:25:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2DC1F220D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC871384AE;
-	Mon, 20 May 2024 18:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF376137935;
+	Mon, 20 May 2024 18:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O1P5SsLy"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="hgUFtytb"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F26137C48
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 18:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDBD1847;
+	Mon, 20 May 2024 18:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716229501; cv=none; b=GgEOMCOOJl4J9ipY2ZUc9A8pSiM4D+QKF251vvCqno7MOvXpMpVLSPiB8hzQTQTtBd0AQcbGU0/m5zqB2LumFK8qDzamBPvtLX5mDAQLHBq3D1YTZkevQjd3RPGVfO5QzPAhGT5IigvjbysLw3iFjQYcIzvJinxHZ856QCyxzVQ=
+	t=1716229498; cv=none; b=a8WZCvVewLQlbaMYlwK9BBrgbhLogIk7BmKm+e5zERneW63rBhIFJSCGBuZBgIKYenO4FN7oN6rMux4nXag80A0gQf7iZeKmhdfKzZPALaEa2WmQk24LTuxBLoMTuXbH2sucnleQBCd9Z5gGHR4AU5N6LJmyhBg6TmnvkIHDW+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716229501; c=relaxed/simple;
-	bh=dDm79kFjTMDwIZyPH0s80xpUacie3sx5J6V+kXbGlEA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NmEuPBxrL+wG5Ez2nB5mhnTWc9H3L9RHXO36Uv80f5zZqyXsUJMiBmDPAXpqeavwqW5yQ+OdgtKPWQqOYiDEePbwEaQXYX5BQQHkkp8RKFKHzwj9kQf4VLBP0mZULor3gowSWEE0RXhK2TaEK6xON/mbTT5Fx7PNQYrIrLEPJV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O1P5SsLy; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-351da5838fcso2696655f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 11:24:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716229498; x=1716834298; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZdzEvfu1PEpJBwHmOIv154V3jtL1pSQeI6RYwYyKYZk=;
-        b=O1P5SsLymRYGLPFOcjsjAoXv1AyUYOanpGavuKQdgbB5XRlKjs2LOhw6sOBKDNUpRb
-         QMObBMZUpOq6QV5adlV3ByK4g6y5bPzMW5Wp6KgOhgGy3vb/z21CjjCq7H2Na3FrpN6c
-         06FLyVsMGjzMchlnY/wa/vfsMyqs9USGCJtyo7ygYImJenbLFDsdYDc11PoGAvErFIxy
-         mF4MxRas+83zfZt3uJ1SDgq8GfTYVw5y6RqFzoTfrTAGSUaq5Cw49PHhFXycICb5xuqg
-         VM46Xa5cagy6ZYrJlOGvL/9KpcQn3QxzuYsfngiXn2Cb+8VpGR5F0imwFXVaMUWSjxoi
-         gGew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716229498; x=1716834298;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZdzEvfu1PEpJBwHmOIv154V3jtL1pSQeI6RYwYyKYZk=;
-        b=i++tcxeOzpJzrKOud7tprDa7IB8sxjuMrOpdSK+xrhc0v/CP0PWZr8iO9fT2mgGhmT
-         UyI5dRhj4Qpu3nZ+C9Wy0WrKsM+ZehX+P22RJgYkcoNcBwBUH43oNLCEyjRUN4L1uJOG
-         c68x6u76ccrFaquba3RaCUCqOvAsk/E0SjmeJ53JzDErOQBoUweuPn9krcPxLXqKQyZJ
-         qJRetIZ9EY84c95GuUQd7XryAYQ3twHbwe7KabA0L1Qj5BPcxCu0s/0V0+xEBMxGXwjk
-         rpsZn/kbKqRR8w5NODphglODHoV10RIdH+aJS/O7bGYHW8cidnpg0uxaKrsXo1DL+teE
-         wVhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUf+BB4/5FyThLJpeJOODaPtEfkGPwbJIolEGz7ktO1fb7Ec3M5tWH8XL2CvQ4Rvy9R7Qjo/z+XMavEQ3wxXHCag9XmhFH5jg96aS3
-X-Gm-Message-State: AOJu0Yx/OW1U+psuj4OeOcIfAoxFmcpVQVzuflgX6+loE5DKO9DbM+F4
-	UpFKRyIU1l8GC3ZRtGHfRthuEbqleRZ21ZVkW+Sz0S7UrjSzQ2fK//VPojRFdJyyiG2TtpiBTBN
-	7wt5J9plNM+XSnjuxunquoq9IvQna/+oU+kRqWPkY6jZ0ijbia1Cs
-X-Google-Smtp-Source: AGHT+IHip0D1CwulZkUqzgTRHd4h9KDYjqLHoifTqfHumIM8JPr9kA/cIoKnvUx1OIyjr1GSqMOBTklaXEOXcjT5FEw=
-X-Received: by 2002:a05:6000:1a8d:b0:351:b882:4e2b with SMTP id
- ffacd0b85a97d-351b8824ef3mr21104096f8f.63.1716229497450; Mon, 20 May 2024
- 11:24:57 -0700 (PDT)
+	s=arc-20240116; t=1716229498; c=relaxed/simple;
+	bh=embwZJeyhc3d/eQBQ2AmwUIIJANut56abOXK/YW3yJM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FlaPdyIfxjo/VB7v46RiX3XRO9qlMJ2r0CDVZm5UWShSBr8JJb7nv7lKNMSX6ynfuzPx+Jch4QICNaEkTjoEN2gLtKXNePr6T24P2s+X11hEr3vo9LUqneErhvzMui205Q/26AtIX8kKZ/N51mtqXOxNuOVAcsXEdw34cpIDDWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=hgUFtytb; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=zwEmpdKTmgjz2scPBDSL4o03FYFjxO3vSlNGyHJLelg=; t=1716229494; x=1716834294; 
+	b=hgUFtytblmdL0XcSezFeeqG5jBBgynRhT+8wQwOJFwCZNnSz3UxB7xvBIPFB1IbrYpX8+sCSRei
+	5JdEQy1f1boAG1GpdU9g9jlrv5D2e+i2oX/JuqR62OiqZN19p1qGrYbxR0tRb24ASUfrpIL6jZ4o3
+	kMZKVYoQMhynqRzoeHdV0J/QVhoKCGRsoqS9spBFTKnNAhFPh8dRcY+bmN3aEcr70LB5PzdzHAbUf
+	DywqjT17b6Rlc86TjZQ1LDtA7FZ2TOeLmyo2RbP6C88unibN1ZMEiTwTYQ/OM2cTKWVhyzWmrhrQf
+	0c6r//wVfWJUS3URASlrI6DsoARw6ibUWFPw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1s97go-00000001bFA-2fJU; Mon, 20 May 2024 20:24:50 +0200
+Received: from p57bd9a40.dip0.t-ipconnect.de ([87.189.154.64] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1s97go-00000002MIw-1hpz; Mon, 20 May 2024 20:24:50 +0200
+Message-ID: <7130f36dcf6f2272fa61eb1477f881ccea0375f8.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v2] sh: Call paging_init() earlier in the init sequence
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, 
+	ysato@users.sourceforge.jp, dalias@libc.org
+Cc: akpm@linux-foundation.org, linux-sh@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, robh+dt@kernel.org, kernel@quicinc.com, Rob
+ Herring <robh@kernel.org>, Rob Landley <rob@landley.net>
+Date: Mon, 20 May 2024 20:24:49 +0200
+In-Reply-To: <e6436f2f-ac51-4f18-90f2-e39a2ff1c520@quicinc.com>
+References: <20240423233150.74302-1-quic_obabatun@quicinc.com>
+	 <72ec7831604326e852eb228072b1d817bab829fb.camel@physik.fu-berlin.de>
+	 <b00e0adc72815e465cf32fc5505445cfceeeca84.camel@physik.fu-berlin.de>
+	 <ec5f3194-7e9e-4cc9-86b9-02a204649246@quicinc.com>
+	 <0e813c8498bf3d9ed5d8fd5b171ac9980dc2999c.camel@physik.fu-berlin.de>
+	 <e6436f2f-ac51-4f18-90f2-e39a2ff1c520@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520090106.2898681-1-hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240520090106.2898681-1-hsiangkao@linux.alibaba.com>
-From: Sandeep Dhavale <dhavale@google.com>
-Date: Mon, 20 May 2024 11:24:44 -0700
-Message-ID: <CAB=BE-Qr5mukXPPqqduH2Rr3cBrkP_WUiJ1udhtfmmrHFmObcQ@mail.gmail.com>
-Subject: Re: [PATCH] erofs: avoid allocating DEFLATE streams before mounting
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Mon, May 20, 2024 at 2:06=E2=80=AFAM Gao Xiang <hsiangkao@linux.alibaba.=
-com> wrote:
->
-> Currently, each DEFLATE stream takes one 32 KiB permanent internal
-> window buffer even if there is no running instance which uses DEFLATE
-> algorithm.
->
-> It's unexpected and wasteful on embedded devices with limited resources
-> and servers with hundreds of CPU cores if DEFLATE is enabled but unused.
->
-> Fixes: ffa09b3bd024 ("erofs: DEFLATE compression support")
-> Cc: <stable@vger.kernel.org> # 6.6+
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+Hi Oreoluwa,
 
-LGTM.
+On Mon, 2024-05-20 at 11:03 -0700, Oreoluwa Babatunde wrote:
+> I have uploaded v3 of this patch now.
+> https://lore.kernel.org/all/20240520175802.2002183-1-quic_obabatun@quicin=
+c.com/
+>=20
+> In this new version, paging_init() is left in its original position and o=
+nly the portion
+> of code that is responsible for setting aside the reserved memory regions=
+ is moved.
 
-Reviewed-by: Sandeep Dhavale <dhavale@google.com>
+Thanks a lot for the updated version.
 
-Thanks,
-Sandeep.
+I will give it a try later this week as we had a public holiday in Germany
+today and therefore enjoyed an extended weekend.
 
-> ---
->  fs/erofs/decompressor_deflate.c | 55 +++++++++++++++++----------------
->  1 file changed, 29 insertions(+), 26 deletions(-)
->
-> diff --git a/fs/erofs/decompressor_deflate.c b/fs/erofs/decompressor_defl=
-ate.c
-> index 81e65c453ef0..3a3461561a3c 100644
-> --- a/fs/erofs/decompressor_deflate.c
-> +++ b/fs/erofs/decompressor_deflate.c
-> @@ -46,39 +46,15 @@ int __init z_erofs_deflate_init(void)
->         /* by default, use # of possible CPUs instead */
->         if (!z_erofs_deflate_nstrms)
->                 z_erofs_deflate_nstrms =3D num_possible_cpus();
-> -
-> -       for (; z_erofs_deflate_avail_strms < z_erofs_deflate_nstrms;
-> -            ++z_erofs_deflate_avail_strms) {
-> -               struct z_erofs_deflate *strm;
-> -
-> -               strm =3D kzalloc(sizeof(*strm), GFP_KERNEL);
-> -               if (!strm)
-> -                       goto out_failed;
-> -
-> -               /* XXX: in-kernel zlib cannot shrink windowbits currently=
- */
-> -               strm->z.workspace =3D vmalloc(zlib_inflate_workspacesize(=
-));
-> -               if (!strm->z.workspace) {
-> -                       kfree(strm);
-> -                       goto out_failed;
-> -               }
-> -
-> -               spin_lock(&z_erofs_deflate_lock);
-> -               strm->next =3D z_erofs_deflate_head;
-> -               z_erofs_deflate_head =3D strm;
-> -               spin_unlock(&z_erofs_deflate_lock);
-> -       }
->         return 0;
-> -
-> -out_failed:
-> -       erofs_err(NULL, "failed to allocate zlib workspace");
-> -       z_erofs_deflate_exit();
-> -       return -ENOMEM;
->  }
->
->  int z_erofs_load_deflate_config(struct super_block *sb,
->                         struct erofs_super_block *dsb, void *data, int si=
-ze)
->  {
->         struct z_erofs_deflate_cfgs *dfl =3D data;
-> +       static DEFINE_MUTEX(deflate_resize_mutex);
-> +       static bool inited;
->
->         if (!dfl || size < sizeof(struct z_erofs_deflate_cfgs)) {
->                 erofs_err(sb, "invalid deflate cfgs, size=3D%u", size);
-> @@ -89,9 +65,36 @@ int z_erofs_load_deflate_config(struct super_block *sb=
-,
->                 erofs_err(sb, "unsupported windowbits %u", dfl->windowbit=
-s);
->                 return -EOPNOTSUPP;
->         }
-> +       mutex_lock(&deflate_resize_mutex);
-> +       if (!inited) {
-> +               for (; z_erofs_deflate_avail_strms < z_erofs_deflate_nstr=
-ms;
-> +                    ++z_erofs_deflate_avail_strms) {
-> +                       struct z_erofs_deflate *strm;
-> +
-> +                       strm =3D kzalloc(sizeof(*strm), GFP_KERNEL);
-> +                       if (!strm)
-> +                               goto failed;
-> +                       /* XXX: in-kernel zlib cannot customize windowbit=
-s */
-> +                       strm->z.workspace =3D vmalloc(zlib_inflate_worksp=
-acesize());
-> +                       if (!strm->z.workspace) {
-> +                               kfree(strm);
-> +                               goto failed;
-> +                       }
->
-> +                       spin_lock(&z_erofs_deflate_lock);
-> +                       strm->next =3D z_erofs_deflate_head;
-> +                       z_erofs_deflate_head =3D strm;
-> +                       spin_unlock(&z_erofs_deflate_lock);
-> +               }
-> +               inited =3D true;
-> +       }
-> +       mutex_unlock(&deflate_resize_mutex);
->         erofs_info(sb, "EXPERIMENTAL DEFLATE feature in use. Use at your =
-own risk!");
->         return 0;
-> +failed:
-> +       mutex_unlock(&deflate_resize_mutex);
-> +       z_erofs_deflate_exit();
-> +       return -ENOMEM;
->  }
->
->  int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
-> --
-> 2.39.3
->
+If it doesn't break anything and Geert is happy with the change as well,
+I'll pick it up for v6.11.
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
