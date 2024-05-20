@@ -1,110 +1,334 @@
-Return-Path: <linux-kernel+bounces-183785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302AB8C9E17
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:24:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4993C8C9E1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB6D2B23EB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:24:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5F18B23D57
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F22E13664D;
-	Mon, 20 May 2024 13:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E55135A7F;
+	Mon, 20 May 2024 13:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZqUX0+Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhnwnH2o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACACD13398E;
-	Mon, 20 May 2024 13:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8AA13398E;
+	Mon, 20 May 2024 13:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716211465; cv=none; b=sMBkcuKngo5kVi/fFv7kAlbwpZb1Rnnb1IHhawuWUiPJF6MbpNaBh+wLymVV+bKeMz5p2wh60EpgCFusrQSTfaGlvRVLCOf32542htMBcrktm5u8wqYZhYxGiapCRjA1YrE29o6WtHp3kAFLXIQ0f/nZ3WsXn1wnCF8RIGrVWiU=
+	t=1716211470; cv=none; b=LII+PqUicGDxmWj6YQOBWNA38fiFbVyvZEYDs+sRmJyQX6s4foZOEX09/N6Wlk7p3+Sg6V54akTCpKuVPPR4RJGRP02MLtJ3q0Ijhin/fKnbm0jx3kYBYSYckQPmPUdjKhl1XB6Qax0l6yqKDr1zyLKMfcSHpZW0D62xUNYQhCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716211465; c=relaxed/simple;
-	bh=KmZVxGEYbyrP9V7WE809KECo6k1t051ppisGlj+zDQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nhlfjCXjVaQhzK7iFB8JxAtO9OZ1c6G170Sr0FCnUHtBNLvDhKSJZqcIe9NuPPWnJY2raDgM632F+CjhYdQ5dLUVhXzijRVOCP9eOsB3MFMWCmlPaoWikqJyOqJix53deg+ernxtAhrWdXMUCZ/jM2DkTtra4lIprqxhxUgzBnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZqUX0+Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1367C4AF08;
-	Mon, 20 May 2024 13:24:21 +0000 (UTC)
+	s=arc-20240116; t=1716211470; c=relaxed/simple;
+	bh=tmycHzHS16yUDsFnDDAGL9c2k/ykCsqRadkM55Fr7Rk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qFzwdlwfdtwJIUw9onoJ1fXjxdXyx85UPcI7SaZMiQg5n5nR2+lBFtT/iGoe4ucrAzpc1R9HjExHNklohruEukJHTGuX3aWaUs1BmuF/GbRy0tNW+X/SRAi0FJxG2cXfxtHVZwFoRW5CsvSRXpIxzdsDZXDTxsc5Dufyk1MNBc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhnwnH2o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3F33C2BD10;
+	Mon, 20 May 2024 13:24:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716211465;
-	bh=KmZVxGEYbyrP9V7WE809KECo6k1t051ppisGlj+zDQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pZqUX0+QMkw5pTpm4DONwaNufkqX3zzWfwapwSgBpkV2TWxHsn+grw39j7Lk9LnXz
-	 AKQRNqjcuPochJglbbEfrX6pcl+TYohqQUm5xtClM3jtnYZvMaTcRqQH3/gDSjKIhI
-	 hZXHw6KGK1csT4XJK/nhON9zaHir+22pxLIQv4zDAtw3T09tos5Cl7DkE59O7AKmU4
-	 qJXyyPd28EWmOZPVqZhGsaStx/28y0DbRTzH1m1lICPu1/t5M2LValnltn1dPD2nlY
-	 34w2l9JfjJg7g8Ezosdoup1VX77pYUISsTmVm25Hnq/NBsijKCTybcfpvNDUXEQm3w
-	 Z2M+KCBHjANSw==
-Date: Mon, 20 May 2024 14:24:18 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-	cezary.rojewski@intel.com, pierre-louis.bossart@linux.intel.com,
-	peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com,
-	ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com,
-	srinivas.kandagatla@linaro.org, bgoswami@quicinc.com,
-	daniel.baluta@nxp.com, linux-sound@vger.kernel.org,
-	alsa-devel@alsa-project.org, sound-open-firmware@alsa-project.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/6] ASoC: topology: Constify an argument of
- snd_soc_tplg_component_load()
-Message-ID: <baf1789a-a573-470f-b816-ca9bb0d7f299@sirena.org.uk>
-References: <f2f983e791d7f941a95556bb147f426a345d84d4.1715526069.git.christophe.jaillet@wanadoo.fr>
- <1fb69d24-03af-4742-9f44-5a93704f5cfb@sirena.org.uk>
- <b736e11e-430a-462b-898a-d5e1dcf7f74a@wanadoo.fr>
+	s=k20201202; t=1716211470;
+	bh=tmycHzHS16yUDsFnDDAGL9c2k/ykCsqRadkM55Fr7Rk=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=XhnwnH2o/kK01P+lYGJGEibHOO3m9DuugiCuE9yJ90uFaL2eM+Z/d2XN3lfTGzpFb
+	 U4Wdfi2wQEEbGEARAa9r0h/ryL8Yte54qJzPeudrmaXyUi1BkFmVqPUbtUc1lrvbFV
+	 XsHOTEM3WPnFIpxJ0fUeqvW/7p3x4ebrAR5QC1u+ujqVeEJsG5gMEPPpGKMb0g1zUK
+	 rDW1NGM8VzK7VKTndup+Bftvki/RVcH2m9dQ5A1WdxCcqvAsFnANYp+gm6u8NyHqo7
+	 3uj8bfGfzDkE9jUBcavi0KrEt6fVGzzxkJOkYHTb/1t1fSpWuKtwRysfthdhp0fM7v
+	 U+/eUYApP/Nvg==
+Message-ID: <e522702477bed6e73c1e365bd8bd77a4250955c2.camel@kernel.org>
+Subject: Re: [PATCH v2 4/5] cachefiles: cyclic allocation of msg_id to avoid
+ reuse
+From: Jeff Layton <jlayton@kernel.org>
+To: Baokun Li <libaokun@huaweicloud.com>, netfs@lists.linux.dev, 
+	dhowells@redhat.com
+Cc: hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com, 
+ zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
+ wozizhi@huawei.com,  Baokun Li <libaokun1@huawei.com>
+Date: Mon, 20 May 2024 09:24:27 -0400
+In-Reply-To: <a4d57830-2bde-901f-72c4-e1a3f714faa5@huaweicloud.com>
+References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
+	 <20240515125136.3714580-5-libaokun@huaweicloud.com>
+	 <f449f710b7e1ba725ec9f73cace6c1289b9225b6.camel@kernel.org>
+	 <d3f5d0c4-eda7-87e3-5938-487ab9ff6b81@huaweicloud.com>
+	 <4b1584787dd54bb95d700feae1ca498c40429551.camel@kernel.org>
+	 <a4d57830-2bde-901f-72c4-e1a3f714faa5@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3ra5j95P2SXUw+yS"
-Content-Disposition: inline
-In-Reply-To: <b736e11e-430a-462b-898a-d5e1dcf7f74a@wanadoo.fr>
-X-Cookie: We are what we are.
 
+On Mon, 2024-05-20 at 20:42 +0800, Baokun Li wrote:
+> On 2024/5/20 18:04, Jeff Layton wrote:
+> > On Mon, 2024-05-20 at 12:06 +0800, Baokun Li wrote:
+> > > Hi Jeff,
+> > >=20
+> > > Thank you very much for your review!
+> > >=20
+> > > On 2024/5/19 19:11, Jeff Layton wrote:
+> > > > On Wed, 2024-05-15 at 20:51 +0800,
+> > > > libaokun@huaweicloud.com=C2=A0wrote:
+> > > > > From: Baokun Li <libaokun1@huawei.com>
+> > > > >=20
+> > > > > Reusing the msg_id after a maliciously completed reopen
+> > > > > request may cause
+> > > > > a read request to remain unprocessed and result in a hung, as
+> > > > > shown below:
+> > > > >=20
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 t1=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 t2=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 t3
+> > > > > -------------------------------------------------
+> > > > > cachefiles_ondemand_select_req
+> > > > > =C2=A0=C2=A0 cachefiles_ondemand_object_is_close(A)
+> > > > > =C2=A0=C2=A0 cachefiles_ondemand_set_object_reopening(A)
+> > > > > =C2=A0=C2=A0 queue_work(fscache_object_wq, &info->work)
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ondemand_object_worker
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cachefiles_ondemand_init_obje=
+ct(A)
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cachefiles_ondemand_sen=
+d_req(OPEN)
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // get msg_=
+id 6
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wait_for_co=
+mpletion(&req_A->done)
+> > > > > cachefiles_ondemand_daemon_read
+> > > > > =C2=A0=C2=A0 // read msg_id 6 req_A
+> > > > > =C2=A0=C2=A0 cachefiles_ondemand_get_fd
+> > > > > =C2=A0=C2=A0 copy_to_user
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // Malicious c=
+ompletion
+> > > > > msg_id 6
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 copen 6,-1
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cachefiles_ond=
+emand_copen
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 complete=
+(&req_A->done)
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // will =
+not set the object
+> > > > > to close
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // becau=
+se ondemand_id &&
+> > > > > fd is valid.
+> > > > >=20
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // ondemand_object_worker() is done
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // but the object is still reopenin=
+g.
+> > > > >=20
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // new open re=
+q_B
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> > > > > cachefiles_ondemand_init_object(B)
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> > > > > cachefiles_ondemand_send_req(OPEN)
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // reuse=
+ msg_id 6
+> > > > > process_open_req
+> > > > > =C2=A0=C2=A0 copen 6,A.size
+> > > > > =C2=A0=C2=A0 // The expected failed copen was executed successful=
+ly
+> > > > >=20
+> > > > > Expect copen to fail, and when it does, it closes fd, which
+> > > > > sets the
+> > > > > object to close, and then close triggers reopen again.
+> > > > > However, due to
+> > > > > msg_id reuse resulting in a successful copen, the anonymous
+> > > > > fd is not
+> > > > > closed until the daemon exits. Therefore read requests
+> > > > > waiting for reopen
+> > > > > to complete may trigger hung task.
+> > > > >=20
+> > > > > To avoid this issue, allocate the msg_id cyclically to avoid
+> > > > > reusing the
+> > > > > msg_id for a very short duration of time.
+> > > > >=20
+> > > > > Fixes: c8383054506c ("cachefiles: notify the user daemon when
+> > > > > looking up cookie")
+> > > > > Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> > > > > ---
+> > > > > =C2=A0=C2=A0 fs/cachefiles/internal.h |=C2=A0 1 +
+> > > > > =C2=A0=C2=A0 fs/cachefiles/ondemand.c | 20 ++++++++++++++++----
+> > > > > =C2=A0=C2=A0 2 files changed, 17 insertions(+), 4 deletions(-)
+> > > > >=20
+> > > > > diff --git a/fs/cachefiles/internal.h
+> > > > > b/fs/cachefiles/internal.h
+> > > > > index 8ecd296cc1c4..9200c00f3e98 100644
+> > > > > --- a/fs/cachefiles/internal.h
+> > > > > +++ b/fs/cachefiles/internal.h
+> > > > > @@ -128,6 +128,7 @@ struct cachefiles_cache {
+> > > > > =C2=A0=C2=A0=C2=A0	unsigned long			req_id_next;
+> > > > > =C2=A0=C2=A0=C2=A0	struct xarray			ondemand_ids;	/*
+> > > > > xarray for ondemand_id allocation */
+> > > > > =C2=A0=C2=A0=C2=A0	u32				ondemand_id_next;
+> > > > > +	u32				msg_id_next;
+> > > > > =C2=A0=C2=A0 };
+> > > > > =C2=A0=C2=A0=20
+> > > > > =C2=A0=C2=A0 static inline bool cachefiles_in_ondemand_mode(struc=
+t
+> > > > > cachefiles_cache *cache)
+> > > > > diff --git a/fs/cachefiles/ondemand.c
+> > > > > b/fs/cachefiles/ondemand.c
+> > > > > index f6440b3e7368..b10952f77472 100644
+> > > > > --- a/fs/cachefiles/ondemand.c
+> > > > > +++ b/fs/cachefiles/ondemand.c
+> > > > > @@ -433,20 +433,32 @@ static int
+> > > > > cachefiles_ondemand_send_req(struct cachefiles_object
+> > > > > *object,
+> > > > > =C2=A0=C2=A0=C2=A0		smp_mb();
+> > > > > =C2=A0=C2=A0=20
+> > > > > =C2=A0=C2=A0=C2=A0		if (opcode =3D=3D CACHEFILES_OP_CLOSE &&
+> > > > > -
+> > > > > 			!cachefiles_ondemand_object_is_open(object)) {
+> > > > > +		=C2=A0=C2=A0=C2=A0
+> > > > > !cachefiles_ondemand_object_is_open(object)) {
+> > > > > =C2=A0=C2=A0=C2=A0			WARN_ON_ONCE(object->ondemand-
+> > > > > >ondemand_id =3D=3D 0);
+> > > > > =C2=A0=C2=A0=C2=A0			xas_unlock(&xas);
+> > > > > =C2=A0=C2=A0=C2=A0			ret =3D -EIO;
+> > > > > =C2=A0=C2=A0=C2=A0			goto out;
+> > > > > =C2=A0=C2=A0=C2=A0		}
+> > > > > =C2=A0=C2=A0=20
+> > > > > -		xas.xa_index =3D 0;
+> > > > > +		/*
+> > > > > +		 * Cyclically find a free xas to avoid
+> > > > > msg_id reuse that would
+> > > > > +		 * cause the daemon to successfully copen a
+> > > > > stale msg_id.
+> > > > > +		 */
+> > > > > +		xas.xa_index =3D cache->msg_id_next;
+> > > > > =C2=A0=C2=A0=C2=A0		xas_find_marked(&xas, UINT_MAX,
+> > > > > XA_FREE_MARK);
+> > > > > +		if (xas.xa_node =3D=3D XAS_RESTART) {
+> > > > > +			xas.xa_index =3D 0;
+> > > > > +			xas_find_marked(&xas, cache-
+> > > > > >msg_id_next - 1, XA_FREE_MARK);
+> > > > > +		}
+> > > > > =C2=A0=C2=A0=C2=A0		if (xas.xa_node =3D=3D XAS_RESTART)
+> > > > > =C2=A0=C2=A0=C2=A0			xas_set_err(&xas, -EBUSY);
+> > > > > +
+> > > > > =C2=A0=C2=A0=C2=A0		xas_store(&xas, req);
+> > > > > -		xas_clear_mark(&xas, XA_FREE_MARK);
+> > > > > -		xas_set_mark(&xas, CACHEFILES_REQ_NEW);
+> > > > > +		if (xas_valid(&xas)) {
+> > > > > +			cache->msg_id_next =3D xas.xa_index +
+> > > > > 1;
+> > > > If you have a long-standing stuck request, could this counter
+> > > > wrap
+> > > > around and you still end up with reuse?
+> > > Yes, msg_id_next is declared to be of type u32 in the hope that
+> > > when
+> > > xa_index =3D=3D UINT_MAX, a wrap around occurs so that msg_id_next
+> > > goes to zero. Limiting xa_index to no more than UINT_MAX is to
+> > > avoid
+> > > the xarry being too deep.
+> > >=20
+> > > If msg_id_next is equal to the id of a long-standing stuck
+> > > request
+> > > after the wrap-around, it is true that the reuse in the above
+> > > problem
+> > > may also occur.
+> > >=20
+> > > But I feel that a long stuck request is problematic in itself, it
+> > > means
+> > > that after we have sent 4294967295 requests, the first one has
+> > > not
+> > > been processed yet, and even if we send a million requests per
+> > > second, this one hasn't been completed for more than an hour.
+> > >=20
+> > > We have a keep-alive process that pulls the daemon back up as
+> > > soon as it exits, and there is a timeout mechanism for requests
+> > > in
+> > > the daemon to prevent the kernel from waiting for long periods
+> > > of time. In other words, we should avoid the situation where
+> > > a request is stuck for a long period of time.
+> > >=20
+> > > If you think UINT_MAX is not enough, perhaps we could raise
+> > > the maximum value of msg_id_next to ULONG_MAX?
+> > > > Maybe this should be using
+> > > > ida_alloc/free instead, which would prevent that too?
+> > > >=20
+> > > The id reuse here is that the kernel has finished the open
+> > > request
+> > > req_A and freed its id_A and used it again when sending the open
+> > > request req_B, but the daemon is still working on req_A, so the
+> > > copen id_A succeeds but operates on req_B.
+> > >=20
+> > > The id that is being used by the kernel will not be allocated
+> > > here
+> > > so it seems that ida _alloc/free does not prevent reuse either,
+> > > could you elaborate a bit more how this works?
+> > >=20
+> > ida_alloc and free absolutely prevent reuse while the id is in use.
+> > That's sort of the point of those functions. Basically it uses a
+> > set of
+> > bitmaps in an xarray to track which IDs are in use, so ida_alloc
+> > only
+> > hands out values which are not in use. See the comments over
+> > ida_alloc_range() in lib/idr.c.
+> >=20
+> Thank you for the explanation!
+>=20
+> The logic now provides the same guarantees as ida_alloc/free.
+> The "reused" id, indeed, is no longer in use in the kernel, but it is
+> still
+> in use in the userland, so a multi-threaded daemon could be handling
+> two different requests for the same msg_id at the same time.
+>=20
+> Previously, the logic for allocating msg_ids was to start at 0 and
+> look
+> for a free xas.index, so it was possible for an id to be allocated to
+> a
+> new request just as the id was being freed.
+>=20
+> With the change to cyclic allocation, the kernel will not use the
+> same
+> id again until INT_MAX requests have been sent, and during the time
+> it takes to send requests, the daemon has enough time to process
+> requests whose ids are still in use by the daemon, but have already
+> been freed in the kernel.
+>=20
+>=20
 
---3ra5j95P2SXUw+yS
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If you're checking for collisions somewhere else, then this should be
+fine:
 
-On Sat, May 18, 2024 at 10:34:33AM +0200, Christophe JAILLET wrote:
-> Le 14/05/2024 =E0 12:21, Mark Brown a =E9crit=A0:
-
-> > As mentioned in submitting-patches.rst when submitting a patch series
-> > you should supply a cover letter for that patch series which describes
-> > the overall content of the series.  This helps people understand what
-> > they are looking at and how things fit together.
-
-> Ok.
-> I usually do, but I thought that the subjects were self-explanatory enough
-> in this case.
-
-> Do you want me to resend?
-
-It's fine this time.
-
---3ra5j95P2SXUw+yS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZLTwIACgkQJNaLcl1U
-h9Dgigf+O7QTQ4V66dmxfo81LtTtdJ9xws2tiMsQz2yhw40n6x/uUnAI/DpVsJBM
-7bnp8/mWqL0S36pfO4c+ypaAOjI/V0BjVEsLBIEIcyWNHlvicUGTAE0UrkUfeUyt
-zIomDWwKLYl6V7o3dUyUn/CASeVpft1esGq8jlyvp9woke55IKQJIp+iX2H/rfZY
-4XZZ+c37WFAj1VsRKD3drP9PrXrVsVfhAzpcq2ZrPLj5llC0nltM7IgPEfZFXIjG
-VkQ8GS2lNoTHiZHgg+lLtqD2l89Ri4Yl0IS4DT1S/iez2COuCZfadttzQxJbDNUa
-ASeX6pfwcXFqRHE0F6YAYkSzaB53YA==
-=rysW
------END PGP SIGNATURE-----
-
---3ra5j95P2SXUw+yS--
+Acked-by: Jeff Layton <jlayton@kernel.org>
 
