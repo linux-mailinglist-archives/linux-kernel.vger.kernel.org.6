@@ -1,123 +1,106 @@
-Return-Path: <linux-kernel+bounces-183444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A358C9921
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:09:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E5F8C9946
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7652B1F21578
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9188F281C65
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8581862F;
-	Mon, 20 May 2024 07:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aXET4ZKT"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BBF1B970;
+	Mon, 20 May 2024 07:29:33 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58D91B7F4;
-	Mon, 20 May 2024 07:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867A0E576;
+	Mon, 20 May 2024 07:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716188965; cv=none; b=gAHc2GFduqaGVWK2+n3uGPsFXHy9xFMJPaRk3zzH3Q4gkLYzC3l7yrsyJaeiiR9QjiwG1p8zE/NTtdhVYLop+ffVHUFZnX6CZzKLJFD3mOf3fyl+LV0EjNHQNdZ66cO1byM2yetj5uFqHCCUArUU5OGy9lWBfH7jh6NIaxom2Yk=
+	t=1716190173; cv=none; b=PWsiKfgg5LPCWcvEcCj9OUmoRWROX62NumQqDEHmLQ6ib8e+c4gOt1NgeRZM10agD2QldE0bzJY+8KE9v2Pa2S/yAn/r5ceedorRtjjQIHJeSfcuccdKXdGwWAugP0tOmMwBsJzl1KFv1Z4kKHjm4U168l/rVq628cmhT81+9x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716188965; c=relaxed/simple;
-	bh=JmovHuASvA+p1UsintWL61loAHcJzRWLo3Jjwj74OjQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mbbRPMo4Fr28c3+KSIqq1TzFm190fDHjJFi6FXmtvh5t8lucn4lCqVlJXzqRJSDyJHYhF1nLWGUK3nIXndMoxdzi0THJuJtto9lnjm3L5JJKhJhLGzEPItQgDrjLzDBdc2LYJ7kZvHRbx7I6CI5xhtGYwZdTY73zIrDY8++9EuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aXET4ZKT; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716188954; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=MDsSId074xo3EY1nI/gNouEZEC8qd9U9t2v9Vm9rIbo=;
-	b=aXET4ZKTNGS4FY28AswQ7chQwxMwaiq285OgWDn7i+iV/yafqAbASX4rmkWBm0Ue11K4zTmDIRgcMaj/yaAtZFZnUp+eHFluI2Bz1446uMcYjtTw4N90uBQ+VC/Aq3/Fj0FCSL6Fv7xGvQh96P1rZof+yjZBquj8WbTgkzdE/P0=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W6ny017_1716188952;
-Received: from 30.221.148.185(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W6ny017_1716188952)
-          by smtp.aliyun-inc.com;
-          Mon, 20 May 2024 15:09:13 +0800
-Message-ID: <764c7b94-9ca9-4288-b806-b3e99fbd05c5@linux.alibaba.com>
-Date: Mon, 20 May 2024 15:09:11 +0800
+	s=arc-20240116; t=1716190173; c=relaxed/simple;
+	bh=nztgN3dFfNb0xDuxLkAdkVrN2aHy/VlgXSSIl1Fc6FI=;
+	h=From:To:Subject:Date:Message-Id; b=dZsNBp9El00YXQUxVhNKeF71t/6RNhAvY7oAWWbFeZewJqMKswOFXn+7l48Cryti4BVdbu9fHdg+OLyjmsowddZqUtLNJlbz8UEJcJbONWkRUF5d002bkQYanC8PcE6Ogou8z6eTtjVaZtzH7XKNuYMUsvpnmql+yJHWsgqsFag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BF9FF201943;
+	Mon, 20 May 2024 09:29:23 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7350E201965;
+	Mon, 20 May 2024 09:29:23 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 10F4C180226C;
+	Mon, 20 May 2024 15:29:20 +0800 (+08)
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: abelvesa@kernel.org,
+	peng.fan@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	marex@denx.de,
+	linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	shengjiu.wang@gmail.com
+Subject: [PATCH v4 0/5] clk: imx: clk-audiomix: Improvement for audiomix
+Date: Mon, 20 May 2024 15:09:18 +0800
+Message-Id: <1716188963-16175-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/12] cachefiles: remove request from xarry during
- flush requests
-To: libaokun@huaweicloud.com, netfs@lists.linux.dev, dhowells@redhat.com,
- jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
-References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
- <20240515084601.3240503-2-libaokun@huaweicloud.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20240515084601.3240503-2-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+Some improvement for audiomix driver:
+Add reset controller for EARC function
+Add CLK_SET_RATE_PARENT flags for clocks
+Corrent parent clock for earc_phy and audpll clocks.
 
+changes in v4:
+- use auxiliary device framework for reset controller driver.
+- drop syscon and simple-mfd related changes in v3
 
-On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Even with CACHEFILES_DEAD set, we can still read the requests, so in the
-> following concurrency the request may be used after it has been freed:
-> 
->      mount  |   daemon_thread1    |    daemon_thread2
-> ------------------------------------------------------------
->  cachefiles_ondemand_init_object
->   cachefiles_ondemand_send_req
->    REQ_A = kzalloc(sizeof(*req) + data_len)
->    wait_for_completion(&REQ_A->done)
->             cachefiles_daemon_read
->              cachefiles_ondemand_daemon_read
->                                   // close dev fd
->                                   cachefiles_flush_reqs
->                                    complete(&REQ_A->done)
->    kfree(REQ_A)
->               xa_lock(&cache->reqs);
->               cachefiles_ondemand_select_req
->                 req->msg.opcode != CACHEFILES_OP_READ
->                 // req use-after-free !!!
->               xa_unlock(&cache->reqs);
->                                    xa_destroy(&cache->reqs)
-> 
-> Hence remove requests from cache->reqs when flushing them to avoid
-> accessing freed requests.
-> 
-> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
+changes in v3:
+- separate reset driver to driver/reset/
+- add binding doc for reset driver.
+- modify imx8mp.dtsi accordingly
 
-Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+changes in v2:
+- add more info in commit messages.
 
-> ---
->  fs/cachefiles/daemon.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
-> index 6465e2574230..ccb7b707ea4b 100644
-> --- a/fs/cachefiles/daemon.c
-> +++ b/fs/cachefiles/daemon.c
-> @@ -159,6 +159,7 @@ static void cachefiles_flush_reqs(struct cachefiles_cache *cache)
->  	xa_for_each(xa, index, req) {
->  		req->error = -EIO;
->  		complete(&req->done);
-> +		__xa_erase(xa, index);
->  	}
->  	xa_unlock(xa);
->  
+Shengjiu Wang (5):
+  dt-bindings: clock: imx8mp: Add #reset-cells property
+  clk: imx: clk-audiomix: Add reset controller
+  reset: imx-aux: Add i.MX auxiliary reset driver
+  clk: imx: clk-audiomix: Add CLK_SET_RATE_PARENT flags for clocks
+  clk: imx: clk-audiomix: Corrent parent clock for earc_phy and audpll
+
+ .../bindings/clock/imx8mp-audiomix.yaml       |   3 +
+ drivers/clk/imx/Kconfig                       |   1 +
+ drivers/clk/imx/clk-imx8mp-audiomix.c         |  84 ++++++-
+ drivers/reset/Kconfig                         |   8 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-imx-aux.c                 | 217 ++++++++++++++++++
+ 6 files changed, 308 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/reset/reset-imx-aux.c
 
 -- 
-Thanks,
-Jingbo
+2.34.1
+
 
