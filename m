@@ -1,214 +1,223 @@
-Return-Path: <linux-kernel+bounces-183508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B5A8C99FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:54:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C768C9A05
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80D3D1F21A8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 08:54:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A48C3B21EDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 08:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A836D1CAA2;
-	Mon, 20 May 2024 08:53:55 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF441CAB0;
+	Mon, 20 May 2024 08:56:57 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9ED2A2D;
-	Mon, 20 May 2024 08:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F291B974;
+	Mon, 20 May 2024 08:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716195235; cv=none; b=nGukT5gZVt0Db02QTG9Mk1hveDHquElxeGfPwVFwOeWuV1OjdMCN008kEWE25wi10KnPrHdRCEjzhG+l2tKBWYmRJrxJXzIskAgkZh6ToZ5kBsFTyBqO1UXjLrTTHVHk793KjYTycvAVFaxk+5/0yNP4OChuOMyAWXtHsW8M8UU=
+	t=1716195416; cv=none; b=FJR89wrA9NdhH8lGKStE+sGCLLgogUJ9FZoms6XvLm/0F94CPJMGA7eo+OKnw9XMagTvk45O0hyrXf4NL3gu9zfJ3Gac1UjxV8B9yB2vPE96QVlEUOdDCDeSG67t0L6p7lbi0g9Apt3LXWbXJa2P2xFHsskRXSHP2u5Vaw2URj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716195235; c=relaxed/simple;
-	bh=KEOlMkrSPXEec/pXVkjAynLvkjTiplIQQWQgqc1mkXk=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=IOpivVlqahuBAkri9Q1D5RzhBY/mXHhNeBCqkHyLO3NSBcRsjw8i33gImfrPSMfRGcH3OnRL+nxD/1eeycYgQS28B0GSVZkNgkgoabVEz99L0DS0kn4qLHTP0k0dNNLHseU/nQ5GP0cVIgEfm6mq0bzxQAcah34LaBp+Wr0jTOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VjWZF3402z8XrS7;
-	Mon, 20 May 2024 16:53:41 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 44K8rXuL074907;
-	Mon, 20 May 2024 16:53:33 +0800 (+08)
-	(envelope-from ye.xingchen@zte.com.cn)
-Received: from mapi (xaxapp03[null])
-	by mapi (Zmail) with MAPI id mid31;
-	Mon, 20 May 2024 16:53:35 +0800 (CST)
-Date: Mon, 20 May 2024 16:53:35 +0800 (CST)
-X-Zmail-TransId: 2afb664b0f8f0c4-7d57e
-X-Mailer: Zmail v1.0
-Message-ID: <20240520165335899feIJEvG6iuT4f7FBU6ctk@zte.com.cn>
+	s=arc-20240116; t=1716195416; c=relaxed/simple;
+	bh=dV/gLwlucQydWQ4XAl6gXZsvgraVb977dNukWdEJyxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VEqGlBO6SpexaPPgv33CzEH1oRh80Wx9bWMnnTbR9Z8AF5OrPYSFAM10SgmfiFM795z/riv7r/UiVFPHgq8r477KNb33YKKKgA14V2CTOggLeXGjfmzQbE44hrQlET3/qKMCyRQek2/93jIaAPLsNagSyiIm6Qp7hYTSxypFy9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjWdh5fhnz4f3jMJ;
+	Mon, 20 May 2024 16:56:40 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 2E4F71A0EF4;
+	Mon, 20 May 2024 16:56:51 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgAX5g5PEEtmqiyyNA--.3335S3;
+	Mon, 20 May 2024 16:56:50 +0800 (CST)
+Message-ID: <556ca8a0-68a6-eeb4-3aa2-a6d613c232e7@huaweicloud.com>
+Date: Mon, 20 May 2024 16:56:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <ye.xingchen@zte.com.cn>
-To: <davem@davemloft.net>
-Cc: <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <corbet@lwn.net>, <dsahern@kernel.org>, <ncardwell@google.com>,
-        <soheil@google.com>, <haiyangz@microsoft.com>, <lixiaoyan@google.com>,
-        <ye.xingchen@zte.com.cn>, <mfreemon@cloudflare.com>,
-        <david.laight@aculab.com>, <netdev@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <yang.yang29@zte.com.cn>, <yang.guang5@zte.com.cn>,
-        <zhang.yunkai@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIG5ldC1uZXh0IHYyXSBpY21wOiBBZGQgaWNtcF90aW1lc3RhbXBfaWdub3JlX2FsbCB0byBjb250cm9sIElDTVBfVElNRVNUQU1Q?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 44K8rXuL074907
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 664B0F95.001/4VjWZF3402z8XrS7
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH v2 04/12] cachefiles: fix slab-use-after-free in
+ cachefiles_ondemand_daemon_read()
+Content-Language: en-US
+To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
+ dhowells@redhat.com, jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ libaokun@huaweicloud.com
+References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
+ <20240515084601.3240503-5-libaokun@huaweicloud.com>
+ <a4cb6b6b-0105-4ba5-b43d-662ef96fbec6@linux.alibaba.com>
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <a4cb6b6b-0105-4ba5-b43d-662ef96fbec6@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgAX5g5PEEtmqiyyNA--.3335S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3WF45Gw4rAw47Jr4fWr1rJFb_yoW7ArW7pF
+	ZIyFyxtry8WrW8Cr97ZFn8Jr1rJ3yqyFnrX340qr1xAws8Zr1rZr17tF1FqF98Cry7Ars7
+	t3WUuF9xtryjy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
+	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-From: YeXingchen <ye.xingchen@zte.com.cn>
+On 2024/5/20 15:36, Jingbo Xu wrote:
+>
+> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> We got the following issue in a fuzz test of randomly issuing the restore
+>> command:
+>>
+>> ==================================================================
+>> BUG: KASAN: slab-use-after-free in cachefiles_ondemand_daemon_read+0xb41/0xb60
+>> Read of size 8 at addr ffff888122e84088 by task ondemand-04-dae/963
+>>
+>> CPU: 13 PID: 963 Comm: ondemand-04-dae Not tainted 6.8.0-dirty #564
+>> Call Trace:
+>>   kasan_report+0x93/0xc0
+>>   cachefiles_ondemand_daemon_read+0xb41/0xb60
+>>   vfs_read+0x169/0xb50
+>>   ksys_read+0xf5/0x1e0
+>>
+>> Allocated by task 116:
+>>   kmem_cache_alloc+0x140/0x3a0
+>>   cachefiles_lookup_cookie+0x140/0xcd0
+>>   fscache_cookie_state_machine+0x43c/0x1230
+>>   [...]
+>>
+>> Freed by task 792:
+>>   kmem_cache_free+0xfe/0x390
+>>   cachefiles_put_object+0x241/0x480
+>>   fscache_cookie_state_machine+0x5c8/0x1230
+>>   [...]
+>> ==================================================================
+>>
+>> Following is the process that triggers the issue:
+>>
+>>       mount  |   daemon_thread1    |    daemon_thread2
+>> ------------------------------------------------------------
+>> cachefiles_withdraw_cookie
+>>   cachefiles_ondemand_clean_object(object)
+>>    cachefiles_ondemand_send_req
+>>     REQ_A = kzalloc(sizeof(*req) + data_len)
+>>     wait_for_completion(&REQ_A->done)
+>>
+>>              cachefiles_daemon_read
+>>               cachefiles_ondemand_daemon_read
+>>                REQ_A = cachefiles_ondemand_select_req
+>>                msg->object_id = req->object->ondemand->ondemand_id
+>>                                    ------ restore ------
+>>                                    cachefiles_ondemand_restore
+>>                                    xas_for_each(&xas, req, ULONG_MAX)
+>>                                     xas_set_mark(&xas, CACHEFILES_REQ_NEW)
+>>
+>>                                    cachefiles_daemon_read
+>>                                     cachefiles_ondemand_daemon_read
+>>                                      REQ_A = cachefiles_ondemand_select_req
+>>                copy_to_user(_buffer, msg, n)
+>>                 xa_erase(&cache->reqs, id)
+>>                 complete(&REQ_A->done)
+>>                ------ close(fd) ------
+>>                cachefiles_ondemand_fd_release
+>>                 cachefiles_put_object
+>>   cachefiles_put_object
+>>    kmem_cache_free(cachefiles_object_jar, object)
+>>                                      REQ_A->object->ondemand->ondemand_id
+>>                                       // object UAF !!!
+>>
+>> When we see the request within xa_lock, req->object must not have been
+>> freed yet, so grab the reference count of object before xa_unlock to
+>> avoid the above issue.
+>>
+>> Fixes: 0a7e54c1959c ("cachefiles: resend an open request if the read request's object is closed")
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
+>> ---
+>>   fs/cachefiles/ondemand.c          | 2 ++
+>>   include/trace/events/cachefiles.h | 6 +++++-
+>>   2 files changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+>> index 56d12fe4bf73..bb94ef6a6f61 100644
+>> --- a/fs/cachefiles/ondemand.c
+>> +++ b/fs/cachefiles/ondemand.c
+>> @@ -336,6 +336,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>>   	xas_clear_mark(&xas, CACHEFILES_REQ_NEW);
+>>   	cache->req_id_next = xas.xa_index + 1;
+>>   	refcount_inc(&req->ref);
+>> +	cachefiles_grab_object(req->object, cachefiles_obj_get_read_req);
+>>   	xa_unlock(&cache->reqs);
+>>   
+>>   	if (msg->opcode == CACHEFILES_OP_OPEN) {
+>> @@ -355,6 +356,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>>   			close_fd(((struct cachefiles_open *)msg->data)->fd);
+>>   	}
+>>   out:
+>> +	cachefiles_put_object(req->object, cachefiles_obj_put_read_req);
+>>   	/* Remove error request and CLOSE request has no reply */
+>>   	if (ret || msg->opcode == CACHEFILES_OP_CLOSE) {
+>>   		xas_reset(&xas);
+>> diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
+>> index cf4b98b9a9ed..119a823fb5a0 100644
+>> --- a/include/trace/events/cachefiles.h
+>> +++ b/include/trace/events/cachefiles.h
+>> @@ -33,6 +33,8 @@ enum cachefiles_obj_ref_trace {
+>>   	cachefiles_obj_see_withdrawal,
+>>   	cachefiles_obj_get_ondemand_fd,
+>>   	cachefiles_obj_put_ondemand_fd,
+>> +	cachefiles_obj_get_read_req,
+>> +	cachefiles_obj_put_read_req,
+> How about cachefiles_obj_[get|put]_ondemand_read, so that it could be
+> easily identified as ondemand mode at the first glance?
+The ondemand_read tends to confuse whether it's
+ondemand_daemon_read or ondemand_data_read. I think it's better
+to emphasise the read request, and currently only the ondemand
+mode has a cachefiles req.
+>>   };
+>>   
+>>   enum fscache_why_object_killed {
+>> @@ -127,7 +129,9 @@ enum cachefiles_error_trace {
+>>   	EM(cachefiles_obj_see_lookup_cookie,	"SEE lookup_cookie")	\
+>>   	EM(cachefiles_obj_see_lookup_failed,	"SEE lookup_failed")	\
+>>   	EM(cachefiles_obj_see_withdraw_cookie,	"SEE withdraw_cookie")	\
+>> -	E_(cachefiles_obj_see_withdrawal,	"SEE withdrawal")
+>> +	EM(cachefiles_obj_see_withdrawal,	"SEE withdrawal")	\
+>> +	EM(cachefiles_obj_get_read_req,		"GET read_req")		\
+>> +	E_(cachefiles_obj_put_read_req,		"PUT read_req")
+> Ditto.
+>
+>
+> Otherwise, LGTM.
+>
+> Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+>
+Thank you very much for your review!
 
-The CVE-1999-0524 vulnerability is associated with ICMP
-timestamp messages, which can be exploited to conduct 
-a denial-of-service (DoS) attack. In the Vulnerability
-Priority Rating (VPR) system, this vulnerability was 
-rated as a medium risk in May of this year.
-Link:https://www.tenable.com/plugins/nessus/10113
-
-To protect embedded systems that cannot run firewalls
-from attacks exploiting the CVE-1999-0524 vulnerability,
-the icmp_timestamp_ignore_all sysctl is offered as 
-an easy solution, which allows all ICMP timestamp
-messages to be ignored, effectively bypassing the 
-potential exploitation through the CVE-1999-0524 
-vulnerability. It enables these resource-constrained
-systems to disregard all ICMP timestamp messages,
-preventing potential DoS attacks, making it an ideal
-lightweight solution for such environments.
-
-Signed-off-by: YeXingchen <ye.xingchen@zte.com.cn>
-Reviewed-by: xu xin <xu.xin16@zte.com.cn>
-Reviewed-by: zhang yunkai <zhang.yunkai@zte.com.cn>
-Reviewed-by: Fan Yu <fan.yu9@zte.com.cn>
-CC: he peilin <he.peilin@zte.com.cn>
-Cc: Yang Yang <yang.yang29@zte.com.cn>
-Cc: Yang Guang <yang.guang5@zte.com.cn>
----
-v1->v2
-fixes according to
-https://lore.kernel.org/all/20240517172639229ec5bN7VBV7SGEHkSK5K6f@zte.com.cn/
-1.fix the compile warning
-2.change description.
- Documentation/networking/ip-sysctl.rst                 |  6 ++++++
- .../networking/net_cachelines/netns_ipv4_sysctl.rst    |  1 +
- include/net/netns/ipv4.h                               |  1 +
- include/uapi/linux/sysctl.h                            |  1 +
- net/ipv4/icmp.c                                        | 10 ++++++++++
- net/ipv4/sysctl_net_ipv4.c                             |  9 +++++++++
- 6 files changed, 28 insertions(+)
-
-diff --git a/Documentation/networking/ip-sysctl.rst b/Documentation/networking/ip-sysctl.rst
-index bd50df6a5a42..41eb3de61659 100644
---- a/Documentation/networking/ip-sysctl.rst
-+++ b/Documentation/networking/ip-sysctl.rst
-@@ -1441,6 +1441,12 @@ icmp_ratelimit - INTEGER
-
- 	Default: 1000
-
-+icmp_timestamp_ignore_all - BOOLEAN
-+	If set non-zero, then the kernel will ignore all ICMP TIMESTAMP
-+	requests sent to it.
-+
-+	Default: 0
-+
- icmp_msgs_per_sec - INTEGER
- 	Limit maximal number of ICMP packets sent per second from this host.
- 	Only messages whose type matches icmp_ratemask (see below) are
-diff --git a/Documentation/networking/net_cachelines/netns_ipv4_sysctl.rst b/Documentation/networking/net_cachelines/netns_ipv4_sysctl.rst
-index 9b87089a84c6..ed72f67c8f72 100644
---- a/Documentation/networking/net_cachelines/netns_ipv4_sysctl.rst
-+++ b/Documentation/networking/net_cachelines/netns_ipv4_sysctl.rst
-@@ -38,6 +38,7 @@ u8                              sysctl_icmp_ignore_bogus_error_responses
- u8                              sysctl_icmp_errors_use_inbound_ifaddr                                                
- int                             sysctl_icmp_ratelimit                                                                
- int                             sysctl_icmp_ratemask                                                                 
-+u8                              sysctl_icmp_timestamp_ignore_all
- u32                             ip_rt_min_pmtu                               -                   -                   
- int                             ip_rt_mtu_expires                            -                   -                   
- int                             ip_rt_min_advmss                             -                   -                   
-diff --git a/include/net/netns/ipv4.h b/include/net/netns/ipv4.h
-index c356c458b340..7364c469e7eb 100644
---- a/include/net/netns/ipv4.h
-+++ b/include/net/netns/ipv4.h
-@@ -113,6 +113,7 @@ struct netns_ipv4 {
- 	u8 sysctl_icmp_echo_ignore_broadcasts;
- 	u8 sysctl_icmp_ignore_bogus_error_responses;
- 	u8 sysctl_icmp_errors_use_inbound_ifaddr;
-+	u8 sysctl_icmp_timestamp_ignore_all;
- 	int sysctl_icmp_ratelimit;
- 	int sysctl_icmp_ratemask;
-
-diff --git a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
-index 8981f00204db..ef8640947f4e 100644
---- a/include/uapi/linux/sysctl.h
-+++ b/include/uapi/linux/sysctl.h
-@@ -426,6 +426,7 @@ enum
- 	NET_TCP_ALLOWED_CONG_CONTROL=123,
- 	NET_TCP_MAX_SSTHRESH=124,
- 	NET_TCP_FRTO_RESPONSE=125,
-+	NET_IPV4_ICMP_TIMESTAMP_IGNORE_ALL = 126,
- };
-
- enum {
-diff --git a/net/ipv4/icmp.c b/net/ipv4/icmp.c
-index ab6d0d98dbc3..2047ca62b44e 100644
---- a/net/ipv4/icmp.c
-+++ b/net/ipv4/icmp.c
-@@ -1152,6 +1152,13 @@ EXPORT_SYMBOL_GPL(icmp_build_probe);
- static enum skb_drop_reason icmp_timestamp(struct sk_buff *skb)
- {
- 	struct icmp_bxm icmp_param;
-+	struct net *net;
-+
-+	net = dev_net(skb_dst(skb)->dev);
-+
-+	if (READ_ONCE(net->ipv4.sysctl_icmp_timestamp_ignore_all))
-+		return SKB_NOT_DROPPED_YET;
-+
- 	/*
- 	 *	Too short.
- 	 */
-@@ -1469,6 +1476,9 @@ static int __net_init icmp_sk_init(struct net *net)
- 	net->ipv4.sysctl_icmp_echo_enable_probe = 0;
- 	net->ipv4.sysctl_icmp_echo_ignore_broadcasts = 1;
-
-+	/* Control parameters for TIMESTAMP replies. */
-+	net->ipv4.sysctl_icmp_timestamp_ignore_all = 0;
-+
- 	/* Control parameter - ignore bogus broadcast responses? */
- 	net->ipv4.sysctl_icmp_ignore_bogus_error_responses = 1;
-
-diff --git a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
-index 162a0a3b6ba5..b002426c3d9c 100644
---- a/net/ipv4/sysctl_net_ipv4.c
-+++ b/net/ipv4/sysctl_net_ipv4.c
-@@ -651,6 +651,15 @@ static struct ctl_table ipv4_net_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= ipv4_ping_group_range,
- 	},
-+	{
-+		.procname	= "icmp_timestamp_ignore_all",
-+		.data		= &init_net.ipv4.sysctl_icmp_timestamp_ignore_all,
-+		.maxlen		= sizeof(u8),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dou8vec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE
-+	},
- #ifdef CONFIG_NET_L3_MASTER_DEV
- 	{
- 		.procname	= "raw_l3mdev_accept",
 -- 
-2.25.1
+With Best Regards,
+Baokun Li
+
 
