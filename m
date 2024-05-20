@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-183856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514CC8C9EFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:46:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5280D8C9EFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8DF7280DE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:46:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D90F281A83
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB311369BB;
-	Mon, 20 May 2024 14:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ln+ZHaNM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CFF136E03;
+	Mon, 20 May 2024 14:47:24 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830CF1E878;
-	Mon, 20 May 2024 14:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C93145026;
+	Mon, 20 May 2024 14:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716216385; cv=none; b=QKquuj1LqP0kJN3WpCCvJcox3cyKjkPwX54FGpfEzSUC0hueUa8uuyWGsw2a4yE1L7ztb7KxAOUhJI2P/T0XMsbmZIGtC+dcz5trIvj2d9rjvCNI/xWAFh6AdGkSuLpoXB9OtQcnhv6P1kRpq9J4IIzEEVHbs4eD7SUporZ1Pd0=
+	t=1716216444; cv=none; b=fe0d5sphvEl4ZOU4ZilSkPrRKAfI5Q/A5all0UkBwQRX5EEn2LFkDENakLWPuyNN3EPYhVbw9LYDQcUVXEVmP9F8rItzp++C4p6Zq0aibK+xMk6Eunxbh3eRk3yQ2OxB3EuvqhrIh0ptNnHJmmozo9Ys79jeHqyXU1O/1nuIUHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716216385; c=relaxed/simple;
-	bh=nkYor5RmQ81d94obxlBN808m0wZIacK6XzjCZHCe7dA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lW7suEhZpxF9LDpo8YwweInr3z/fiYT58CXO9xp46Z8RwBIykqezxxo+byi+ft6si+3X/xzIiLTIDPFWyEB7Wnnfj8+g3HP2wroEyTit4mSvk/gS+xZapAxnC+6Lb3d7rRqtOb6RSrezclmYlKMVoq1tuUXAQJd9dcCInV1dnPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ln+ZHaNM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB296C2BD10;
-	Mon, 20 May 2024 14:46:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716216385;
-	bh=nkYor5RmQ81d94obxlBN808m0wZIacK6XzjCZHCe7dA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ln+ZHaNMsU/xVjFM9yVnYQqEJs4vY0NyRs9vgq/yJ38mTZ1h5xU/kaXHx53DhUvQj
-	 Xl5S7TNuMUnnUUXWSxasIAQZ1kNfpwO96PM2KQMRQZcXePR5mcX0kKYX96g9A5/W9N
-	 VOaDejndqUsXMh7jJGZ7h37xN/qVr27q+51Ve3atVeP9yXcfcAbD4kaTxUF5D9lGKP
-	 2KCdbCPzdMs5F4CLftTg4dF3Q79FWXC1H9sVe/+zSvWWSRZMtI08EejIpozzX1L/Eh
-	 Z2f6FIZC8Jedd494JII5VVOqE/qVPmoczTM+UHwgqD9z6jnsPPohWieqtq4wLSc04q
-	 N/QXL1Von0s+w==
-Date: Mon, 20 May 2024 08:46:21 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: John Meneghini <jmeneghi@redhat.com>
-Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk, hch@lst.de,
-	sagi@grimberg.me, emilne@redhat.com, hare@kernel.org,
-	linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	jrani@purestorage.com, randyj@purestorage.com
-Subject: Re: [PATCH v4 1/6] nvme: multipath: Implemented new iopolicy
- "queue-depth"
-Message-ID: <ZktiPV8h5y04YwXv@kbusch-mbp>
-References: <20240514175322.19073-1-jmeneghi@redhat.com>
- <20240514175322.19073-2-jmeneghi@redhat.com>
+	s=arc-20240116; t=1716216444; c=relaxed/simple;
+	bh=NszCYuGG62vA2thKcJ8SoYDRFimKvFGOM29xafLKn54=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MF8uMF+4J/0tY9u+S4D4arEfEPA13cNMZ8/NAP98TP0fSID1fPMkkD7Jc0lD3WdokmIMnaAlIQWTrajyEb5mFl4/FCv+7q/eArNm5XXNHi9xY7pOcPyWvw2UtgEhHaqyabgou0hur2ptq4CM6XsJQr5IXKmvTAqG5pqlRAZANuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 20 May
+ 2024 17:47:11 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 20 May
+ 2024 17:47:11 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: syzbot <syzbot+83763e624cfec6b462cb@syzkaller.appspotmail.com>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	<Larry.Finger@lwfinger.net>, <florian.c.schilhabel@googlemail.com>,
+	<gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <linux-staging@lists.linux.dev>,
+	<linux-usb@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [staging?] [usb?] memory leak in _r8712_init_xmit_priv (2)
+Date: Mon, 20 May 2024 07:46:41 -0700
+Message-ID: <20240520144641.17643-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <000000000000809328060a8a4c1c@google.com>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514175322.19073-2-jmeneghi@redhat.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Tue, May 14, 2024 at 01:53:17PM -0400, John Meneghini wrote:
-> @@ -130,6 +133,7 @@ void nvme_mpath_start_request(struct request *rq)
->  	if (!blk_queue_io_stat(disk->queue) || blk_rq_is_passthrough(rq))
->  		return;
->  
-> +	atomic_inc(&ns->ctrl->nr_active);
+Hi,
 
-Why skip passthrough and stats?
+> BUG: memory leak
+> unreferenced object 0xffff888107a5c000 (size 4096):
+>   comm "kworker/1:0", pid 22, jiffies 4294943134 (age 18.720s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<ffffffff816337cd>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
+>     [<ffffffff816337cd>] slab_post_alloc_hook mm/slab.h:766 [inline]
+>     [<ffffffff816337cd>] slab_alloc_node mm/slub.c:3478 [inline]
+>     [<ffffffff816337cd>] __kmem_cache_alloc_node+0x2dd/0x3f0 mm/slub.c:3517
+>     [<ffffffff8157e625>] kmalloc_trace+0x25/0x90 mm/slab_common.c:1098
+>     [<ffffffff83cee442>] kmalloc include/linux/slab.h:600 [inline]
+>     [<ffffffff83cee442>] _r8712_init_xmit_priv+0x2b2/0x6e0 drivers/staging/rtl8712/rtl871x_xmit.c:130
+>     [<ffffffff83ce9033>] r8712_init_drv_sw+0xc3/0x290 drivers/staging/rtl8712/os_intfs.c:311
+>     [<ffffffff83ce7ce6>] r871xu_drv_init+0x1c6/0x920 drivers/staging/rtl8712/usb_intf.c:386
+>     [<ffffffff832d0f0b>] usb_probe_interface+0x16b/0x3a0 drivers/usb/core/driver.c:396
+>     [<ffffffff82c3bb06>] call_driver_probe drivers/base/dd.c:579 [inline]
 
-And I think you should squash the follow up patch that constrains the
-atomics to the queue-depth path selector.
+I am inclined to think that this issue might be false positive. During
+repro the device is initialized correctly, does some work and then
+exits, calling all required functions to clean things up
+(i.e. _free_xmit_priv()), including pxmitbuf->pallocated_buf.
+Kmemleak triggers disappear if you set longer intervals between
+scannning for them (obviously). And if all the things get cleared up
+when the device disconnects, isn't that correct and expected
+behaviour? Could the scanner just "lose track" of some of the objects
+here?
 
-> +static struct nvme_ns *nvme_queue_depth_path(struct nvme_ns_head *head)
-> +{
-> +	struct nvme_ns *best_opt = NULL, *best_nonopt = NULL, *ns;
-> +	unsigned int min_depth_opt = UINT_MAX, min_depth_nonopt = UINT_MAX;
-> +	unsigned int depth;
-> +
-> +	list_for_each_entry_rcu(ns, &head->list, siblings) {
-> +		if (nvme_path_is_disabled(ns))
-> +			continue;
-> +
-> +		depth = atomic_read(&ns->ctrl->nr_active);
-> +
-> +		switch (ns->ana_state) {
-> +		case NVME_ANA_OPTIMIZED:
-> +			if (depth < min_depth_opt) {
-> +				min_depth_opt = depth;
-> +				best_opt = ns;
-> +			}
-> +			break;
-> +
-> +		case NVME_ANA_NONOPTIMIZED:
-> +			if (depth < min_depth_nonopt) {
-> +				min_depth_nonopt = depth;
-> +				best_nonopt = ns;
-> +			}
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +	}
-> +
+Or am I missing something?
 
-I think you can do the atomic_inc here so you don't have to check the io
-policy a 2nd time.
-
-> +	return best_opt ? best_opt : best_nonopt;
-> +}
+Regards,
+Nikita
 
