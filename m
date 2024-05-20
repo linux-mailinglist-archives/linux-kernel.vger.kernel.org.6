@@ -1,78 +1,118 @@
-Return-Path: <linux-kernel+bounces-184019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A658CA179
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:37:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5958CA17F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0F51F216A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:37:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 887E9281457
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136E2137C4A;
-	Mon, 20 May 2024 17:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7wFseYL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4044137C43;
+	Mon, 20 May 2024 17:42:31 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF00A2D;
-	Mon, 20 May 2024 17:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAEFA2D
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 17:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716226635; cv=none; b=bSf8IoKA3WLpZyBkb7nXc41LCweAOKGDHLJBdmgi7c7B8oobps0AZSGqyx78C/q9cxAgKE+jVCymv05y7KsKwB0gn7cj6ZkvPioZdsHoQMlXlNPNdQNepfTNbm2vx1nW2evxvo/Q+/2c/0WwO7+HYrnUKPr7JmZw0hg2dXV7a1c=
+	t=1716226951; cv=none; b=twcQNwJJiZgRE1ttH3HCnxDke3Ev2liEzsMiq1xFYF271Cf036yaBJA7/+rm6LXD+7kKiA8fy42/QUcuvmG619+dq5bJZ0iDnyJkMKMHKPsI7DTvWHlLG5aZqqDW3xc2ZbnKiPhaxWDUFhNEduPRNzFNjVqpBpGvmlwdmh31ito=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716226635; c=relaxed/simple;
-	bh=+c35VY+nM47X5XU7nqvHCYGuJZVzvWQ2lXzYGoxUU54=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=XeWRA8HxYorhoV8gH6pD7ga/xs2deJVdtXeWXiApWdq38L6o5IDuwRtob05ZP2VkVq5/lf4LlIMn17lcVf242xBBPh9ATCikCluA1KhoocKZnw5tJkgXbKcCHnRr8I1rx/V5f+6qR/Y1H74fYvPmzD7I48cAhiR5XiHQE5G4dhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7wFseYL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E3C8FC2BD10;
-	Mon, 20 May 2024 17:37:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716226634;
-	bh=+c35VY+nM47X5XU7nqvHCYGuJZVzvWQ2lXzYGoxUU54=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=h7wFseYLo24P9ZZjRB4bcTxBZ1NhQqs6cvuDtTdfMN3swLH6h5PdnbFHbzDOjGxPe
-	 TKFOZDG82tLaklAPt1ipsftIh/zVsqmEJCsQqU0NHFbIqSNOw4vDc0kKmc8Q7QZKdc
-	 b0JggNKorgM8AEHeacZTmBqrXuCsfE7xlo3Vz4rX45Z9sg/eialupB9bwGbgNrqQeS
-	 JSLtdX+U/RNB9+U3ommInbL+u/gQdRP15wJyB+MWGRfQ3E7BgF4aiDLJEbxVsj0lKU
-	 7QvVDydSsSDq26lA7ZGAAR5Q40uXiAKIR1HSzb8agEulQsSRVDxjELO9XnSrXSwA2H
-	 cCw6m0axLYTsQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DA240C43332;
-	Mon, 20 May 2024 17:37:14 +0000 (UTC)
-Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZktYriALqC7ZNQpa@infradead.org>
-References: <ZktYriALqC7ZNQpa@infradead.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZktYriALqC7ZNQpa@infradead.org>
-X-PR-Tracked-Remote: git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.10-2024-05-20
-X-PR-Tracked-Commit-Id: a6016aac5252da9d22a4dc0b98121b0acdf6d2f5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: daa121128a2d2ac6006159e2c47676e4fcd21eab
-Message-Id: <171622663488.4663.13899900592813092105.pr-tracker-bot@kernel.org>
-Date: Mon, 20 May 2024 17:37:14 +0000
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev, netdev@vger.kernel.org
+	s=arc-20240116; t=1716226951; c=relaxed/simple;
+	bh=/mXDHW8VJpO6vlz6465Ksuoe/MWBFR43n1hirMX43fs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zvplo0fo3djQrE1XqGACIdw8sFmpDNe0I9ow/EvZFKwGGx4JNs9OJ0reuSzFtln5HxC9ynjzNRVMhg1gaDN51RUT/jdNPcnWMwb3PMFDAFpfJec0g8iOWiQgZSxKu5dL4MSFXnF1lOa3ZEwrGqL2sdsBKy7YVhkleGljSzp1daU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2BE0E33DAC;
+	Mon, 20 May 2024 17:42:28 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A1DC513A6B;
+	Mon, 20 May 2024 17:42:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3RedJIOLS2ZhUwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Mon, 20 May 2024 17:42:27 +0000
+Date: Mon, 20 May 2024 19:42:26 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [RFC PATCH v2 06/20] powerpc/8xx: Fix size given to
+ set_huge_pte_at()
+Message-ID: <ZkuLgtujN1C2cpaH@localhost.localdomain>
+References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
+ <04f4e737608ea0b177b88057db138fbf0d6ab138.1715971869.git.christophe.leroy@csgroup.eu>
+ <ZksUiwNaKx2n1fJO@localhost.localdomain>
+ <f26807dd-bbd2-405d-9a88-c0654c525a5c@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f26807dd-bbd2-405d-9a88-c0654c525a5c@csgroup.eu>
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Rspamd-Queue-Id: 2BE0E33DAC
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
 
-The pull request you sent on Mon, 20 May 2024 07:05:34 -0700:
+On Mon, May 20, 2024 at 04:31:39PM +0000, Christophe Leroy wrote:
+> Hi Oscar, hi Michael,
+> 
+> Le 20/05/2024 à 11:14, Oscar Salvador a écrit :
+> > On Fri, May 17, 2024 at 09:00:00PM +0200, Christophe Leroy wrote:
+> >> set_huge_pte_at() expects the real page size, not the psize which is
+> > 
+> > "expects the size of the huge page" sounds bettter?
+> 
+> Parameter 'pzize' already provides the size of the hugepage, but not in 
+> the way set_huge_pte_at() expects it.
+> 
+> psize has one of the values defined by MMU_PAGE_XXX macros defined in 
+> arch/powerpc/include/asm/mmu.h while set_huge_pte_at() expects the size 
+> as a value.
 
-> git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.10-2024-05-20
+Yes, psize is an index, which is not a size by itself but used to get
+mmu_psize_def.shift to see the actual size, I guess.
+This is why I thought that being explicit about "expects the size of the
+huge page" was better.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/daa121128a2d2ac6006159e2c47676e4fcd21eab
+But no strong feelings here.
 
-Thank you!
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Oscar Salvador
+SUSE Labs
 
