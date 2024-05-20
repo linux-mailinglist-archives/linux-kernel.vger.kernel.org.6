@@ -1,181 +1,160 @@
-Return-Path: <linux-kernel+bounces-183778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D80DD8C9DF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:15:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C20138C9DF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26A5EB24A87
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:15:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 693B81F21DE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71857135A73;
-	Mon, 20 May 2024 13:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C29134407;
+	Mon, 20 May 2024 13:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="rH9xSN6d"
-Received: from forwardcorp1c.mail.yandex.net (forwardcorp1c.mail.yandex.net [178.154.239.200])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XrQkqERh"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD64A2D
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 13:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F0C1CD18;
+	Mon, 20 May 2024 13:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716210894; cv=none; b=IZZslCCxiH2IYX+N/pPwkqbbJbJgmkC8sk4Wt5LyVIgeptGFOhzeeJkjF3aRifZFq/MqitFXsvI+vYsc8NKi2g9QeHjfBCc5/92gRatkZDNM89WhkFaYUUHoj6vk4jV08ZJDFFxAsS9Wwqb6QsZWpfoE+Dk7slMAoWtruBL1Wbw=
+	t=1716211069; cv=none; b=Gs2eb9IKv416fCFugFRfJwFCcFWU9NQWCAefeD9m/8bjngTRvUHgJjK2V3AGyLfuBdGgglwZspBdtgoMd+lNXCIW3OPhk+a2X7pr3RB1vEC4eH2fUxcFbmOv5yGMuMXM3h9iMekTryQynJMl9wMRgk1eVEhoa7by2X8C65h5Buk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716210894; c=relaxed/simple;
-	bh=4FFRsUY+xzOJgk7w4ROPHEy8MihkfUn1f/M5hoqns3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MbO6SGSYDmFI4QnA2WsfZscCluJHVb4LrMQSiFz4HbVnO+ROzNCtM0odJBB3yfALfGQdD0dNguoLlOMxRh/IVu226MLfL8zu5bxtMFR/FRiLzPeRU6bEq24T67VR7/PhjebEHPWcORFq+9FLjbo52gezpahF7KWwwjXdKPzaTEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=rH9xSN6d; arc=none smtp.client-ip=178.154.239.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net (mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net [IPv6:2a02:6b8:c10:3196:0:640:fabe:0])
-	by forwardcorp1c.mail.yandex.net (Yandex) with ESMTPS id 80D0560B79;
-	Mon, 20 May 2024 16:13:14 +0300 (MSK)
-Received: from [IPV6:2a02:6b8:8f:4:b109:a1eb:adad:8bd8] (unknown [2a02:6b8:8f:4:b109:a1eb:adad:8bd8])
-	by mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id wCIgC50i3iE0-mi5SapIL;
-	Mon, 20 May 2024 16:13:13 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1716210793;
-	bh=d4oQfayslbqnsBQUxY4CRy6I3qaZw7cWiNjlJGC4TIA=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=rH9xSN6drHv3U1XPmTd22R4k5rXFQMXtsZNIbPSnh9RGsjGGk5vGwwXdo5GPxiFWQ
-	 xmjodzWkq+BYVVon5xYKIz7qFuugzEsvLXOiMBeidBbo8FjZ95NrGmTeQcKMuWGPse
-	 4wjZ1TYdEduq+L8dMPYazKSxHpNom18vhb13L9Lo=
-Authentication-Results: mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-Message-ID: <17ab995a-cdc0-43ce-884c-48a263f219c3@yandex-team.ru>
-Date: Mon, 20 May 2024 16:12:58 +0300
+	s=arc-20240116; t=1716211069; c=relaxed/simple;
+	bh=2pc9eb/n0fggHWJGm7ZPYFjRKT4X2r90jaagBTnGttA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOaZa0VM5lbF6miFKV0ZfVT9wiCZXfnXHnqb+nBe8O36PRh3iyudSBWv/M/OzWSMH2/Nw/3CnTfJQ1AHODkMMrx2Ztpx+ttDpejdOXi3skcv4h/LUHs9ii9lUZ2Eiu33T2vIh/HdSZsNsQEkha6YL2AbaLyzbornD0Os3HwJ1EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XrQkqERh; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=kBepfuRSnR60+uXpcB5dLLA7csPWcskh8ZUNfZDMcXI=; b=XrQkqERh5PY8JuDZ54IBjmYc/S
+	OzyanipZZToOSnM3CT9RqesnTEe7B0Jyqt1grcLwm8aDN+oJtl4WJbPB7bnKL9VS+SMFDkY+Vxnfv
+	RKQ9FZI+7i1LHL6p064EIw20vAMW/04AgUsPWZkkHiEeFhbvQgVk3eiKbJNRgeqBxWok=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s92tR-00FhLz-AJ; Mon, 20 May 2024 15:17:33 +0200
+Date: Mon, 20 May 2024 15:17:33 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next v3 4/5] net: phy: mediatek: Extend 1G TX/RX link
+ pulse time
+Message-ID: <5389c04a-40ff-44a1-9592-05c6dc1a9636@lunn.ch>
+References: <20240520113456.21675-1-SkyLake.Huang@mediatek.com>
+ <20240520113456.21675-5-SkyLake.Huang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] x86/bugs: Add 'spectre_bhi=vmexit' cmdline option
-To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Daniel Sneddon <daniel.sneddon@linux.intel.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Alexandre Chartre <alexandre.chartre@oracle.com>,
- Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sean Christopherson <seanjc@google.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Nikolay Borisov <nik.borisov@suse.com>, KP Singh <kpsingh@kernel.org>,
- Waiman Long <longman@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@kernel.org>
-References: <cover.1715059256.git.jpoimboe@kernel.org>
- <66327dcf87284a09ed17ac24227695ea3ba1f287.1715059256.git.jpoimboe@kernel.org>
-Content-Language: en-US
-From: Maksim Davydov <davydov-max@yandex-team.ru>
-In-Reply-To: <66327dcf87284a09ed17ac24227695ea3ba1f287.1715059256.git.jpoimboe@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520113456.21675-5-SkyLake.Huang@mediatek.com>
 
-Hi!
-What is the current status of the series?
+> +static void extend_an_new_lp_cnt_limit(struct phy_device *phydev)
+> +{
+> +	int mmd_read_ret;
+> +	int ret;
+> +	u32 reg_val;
+> +
+> +	ret = read_poll_timeout(mmd_read_ret = phy_read_mmd, reg_val,
+> +				(mmd_read_ret < 0) || reg_val & MTK_PHY_FINAL_SPEED_1000,
+> +				10000, 1000000, false, phydev,
+> +				MDIO_MMD_VEND1, MTK_PHY_LINK_STATUS_MISC);
+> +	if (mmd_read_ret < 0)
+> +		ret = mmd_read_ret;
+> +	/* If final_speed_1000 is raised, try to extend timeout period
+> +	 * of auto downshift.
+> +	 */
+> + if (!ret) {
 
+If you look at other Linux code, the general pattern is to look if a
+function returned an error. If it does, either return immediately, or
+jump to the end of the function where the cleanup is.
 
-On 5/7/24 08:30, Josh Poimboeuf wrote:
-> In cloud environments it can be useful to *only* enable the vmexit
-> mitigation and leave syscalls vulnerable.  Add that as an option.
-> 
-> This is similar to the old spectre_bhi=auto option which was removed
-> with the following commit:
-> 
->    36d4fe147c87 ("x86/bugs: Remove CONFIG_BHI_MITIGATION_AUTO and spectre_bhi=auto")
-> 
-> with the main difference being that this has a more descriptive name and
-> is disabled by default.
-> 
-> Requested-by: Maksim Davydov <davydov-max@yandex-team.ru>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> ---
->   Documentation/admin-guide/kernel-parameters.txt | 12 +++++++++---
->   arch/x86/kernel/cpu/bugs.c                      | 16 +++++++++++-----
->   2 files changed, 20 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 213d0719e2b7..9c1f63f04502 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6072,9 +6072,15 @@
->   			deployment of the HW BHI control and the SW BHB
->   			clearing sequence.
->   
-> -			on   - (default) Enable the HW or SW mitigation
-> -			       as needed.
-> -			off  - Disable the mitigation.
-> +			on     - (default) Enable the HW or SW mitigation as
-> +				 needed.  This protects the kernel from
-> +				 both syscalls and VMs.
-> +			vmexit - On systems which don't have the HW mitigation
-> +				 available, enable the SW mitigation on vmexit
-> +				 ONLY.  On such systems, the host kernel is
-> +				 protected from VM-originated BHI attacks, but
-> +				 may still be vulnerable to syscall attacks.
-> +			off    - Disable the mitigation.
->   
->   	spectre_v2=	[X86,EARLY] Control mitigation of Spectre variant 2
->   			(indirect branch speculation) vulnerability.
-> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> index ab18185894df..6974c8c9792d 100644
-> --- a/arch/x86/kernel/cpu/bugs.c
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -1625,6 +1625,7 @@ static bool __init spec_ctrl_bhi_dis(void)
->   enum bhi_mitigations {
->   	BHI_MITIGATION_OFF,
->   	BHI_MITIGATION_ON,
-> +	BHI_MITIGATION_VMEXIT_ONLY,
->   };
->   
->   static enum bhi_mitigations bhi_mitigation __ro_after_init =
-> @@ -1639,6 +1640,8 @@ static int __init spectre_bhi_parse_cmdline(char *str)
->   		bhi_mitigation = BHI_MITIGATION_OFF;
->   	else if (!strcmp(str, "on"))
->   		bhi_mitigation = BHI_MITIGATION_ON;
-> +	else if (!strcmp(str, "vmexit"))
-> +		bhi_mitigation = BHI_MITIGATION_VMEXIT_ONLY;
->   	else
->   		pr_err("Ignoring unknown spectre_bhi option (%s)", str);
->   
-> @@ -1659,19 +1662,22 @@ static void __init bhi_select_mitigation(void)
->   			return;
->   	}
->   
-> +	/* Mitigate in hardware if supported */
->   	if (spec_ctrl_bhi_dis())
->   		return;
->   
->   	if (!IS_ENABLED(CONFIG_X86_64))
->   		return;
->   
-> -	/* Mitigate KVM by default */
-> -	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
-> -	pr_info("Spectre BHI mitigation: SW BHB clearing on vm exit\n");
-> +	if (bhi_mitigation == BHI_MITIGATION_VMEXIT_ONLY) {
-> +		pr_info("Spectre BHI mitigation: SW BHB clearing on vm exit only\n");
-> +		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
+Since this is a void function:
+
+> +	if (mmd_read_ret < 0)
 > +		return;
-> +	}
->   
-> -	/* Mitigate syscalls when the mitigation is forced =on */
-> +	pr_info("Spectre BHI mitigation: SW BHB clearing on syscall and vm exit\n");
->   	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP);
-> -	pr_info("Spectre BHI mitigation: SW BHB clearing on syscall\n");
-> +	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
->   }
->   
->   static void __init spectre_v2_select_mitigation(void)
 
--- 
-Best regards,
-Maksim Davydov
+And then you don't need the
+
+> + if (!ret) {
+
+
+> +		tr_modify(phydev, 0x0, 0xf, 0x3c, AN_NEW_LP_CNT_LIMIT_MASK,
+> +			  FIELD_PREP(AN_NEW_LP_CNT_LIMIT_MASK, 0xf));
+> +		mdelay(1500);
+> +
+> +		ret = read_poll_timeout(mmd_read_ret = tr_read, reg_val,
+> +					(mmd_read_ret < 0) ||
+> +					(reg_val & AN_STATE_MASK) !=
+> +					(AN_STATE_TX_DISABLE << AN_STATE_SHIFT),
+> +					10000, 1000000, false, phydev,
+> +					0x0, 0xf, 0x2);
+> +
+> +		if (mmd_read_ret < 0)
+> +			ret = mmd_read_ret;
+> +
+> +		if (!ret) {
+
+This if can also be removed.
+
+> +			mdelay(625);
+> +			tr_modify(phydev, 0x0, 0xf, 0x3c, AN_NEW_LP_CNT_LIMIT_MASK,
+> +				  FIELD_PREP(AN_NEW_LP_CNT_LIMIT_MASK, 0x8));
+> +			mdelay(500);
+> +			tr_modify(phydev, 0x0, 0xf, 0x3c, AN_NEW_LP_CNT_LIMIT_MASK,
+> +				  FIELD_PREP(AN_NEW_LP_CNT_LIMIT_MASK, 0xf));
+> +		}
+> +	}
+
+One question i have is, should this really be a void function? What
+does it mean if read_poll_timeout() returns an error? Why is it safe
+to ignore it? Why not return the error?
+
+> +}
+> +
+> +int mtk_gphy_cl22_read_status(struct phy_device *phydev)
+> +{
+> +	int ret;
+> +
+> +	ret = genphy_read_status(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (phydev->autoneg == AUTONEG_ENABLE && !phydev->autoneg_complete) {
+> +		ret = phy_read(phydev, MII_CTRL1000);
+> +		if ((ret & ADVERTISE_1000FULL) || (ret & ADVERTISE_1000HALF))
+> +			extend_an_new_lp_cnt_limit(phydev);
+> +	}
+> +
+> +	return 0;
+
+If extend_an_new_lp_cnt_limit() fails, what does it mean? Do we
+actually want mtk_gphy_cl22_read_status() to indicate something has
+gone wrong? Or does extend_an_new_lp_cnt_limit() failing not matter?
+
+	Andrew
 
