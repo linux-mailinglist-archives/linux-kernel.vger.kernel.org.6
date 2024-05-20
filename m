@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-183571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173A88C9AD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:57:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0895D8C9AD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C20341F217E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:57:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97D04B210E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B89482F4;
-	Mon, 20 May 2024 09:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443DF4AEF0;
+	Mon, 20 May 2024 09:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpQwPz4F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pEp44sC8"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A98B481AA;
-	Mon, 20 May 2024 09:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AB6481AA;
+	Mon, 20 May 2024 09:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716199038; cv=none; b=b6Yztrgo19E+WyVjQBI2eCPQdBYSnAW/q5AyJk59BFmSravHaZ3Amc4CgE6PKSc9I7chag7CiiG28DseibugAP9NIYhg2jvbmaCsXX7enJtkTVCKCskCf/aSIxzPeYdAO9Ow6AkZ8nemM3j0haP/1HFkbV7ZzCGo+9i7CPRtG7M=
+	t=1716199099; cv=none; b=L7ITdvg2AYeD/WZPzxwph8EZ61lG+wdfneLeeiR/qcJyCNtJyDhkpnQD/mGXHn7qjAbs5BEq9Kssgxtoz+sb1bPXJ8rfyEv6t5lVABmDIGzwyPGYzGu3olZY4pbhxuCJznjEGS8TTlJI5mc5W/GiQY7nlcnlVEfKfqYA9HmWoy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716199038; c=relaxed/simple;
-	bh=HAZNjDgSrlri/l7/2sSm0PgdmiazDso7ZHTn27qp3w4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cgIRUx3kQZtLng0ZVmqkzMx66Ow0YVssAkxBSd+psVC1H10k3N/cvrSr6uYGk244vtrbgqWmlkAcNmdumn+BmjvLWF9eoWG0l/ur/W8llyjTX4KUJT5skF9fohClDGi+4U1zZPiXbQ0sidyVcxDFqmWo+Re2xI1zG4k8UwXV2IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpQwPz4F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55DA0C2BD10;
-	Mon, 20 May 2024 09:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716199038;
-	bh=HAZNjDgSrlri/l7/2sSm0PgdmiazDso7ZHTn27qp3w4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CpQwPz4FYqik+KFKwffU3xiNov+7zrvZPhUXsCPbmDagPyqHgtJIfcVpkIUyaoO5c
-	 F+jsEd6YOYLTedikTJ+nMMRs7QfloJUvhT+zAIt4StquwIDPzkEJUbwhFsnA+emUS0
-	 tSTFI43Nk12QsTvb5sLRR+4KD1JIhbT7eWx7Is8GTWJZremSKqRV7BrfGahuH3ixF9
-	 NiC225fxJlYXmcHGeikn2LWQ8egNLApjYLn2sA3JjrNNoO6XAwfQENbO3OI6SiA/fS
-	 pMXf5D/fVzZu1y1vf6MXclePsYLYxKUBD+iRbK/noqI443+Rczw/uMpZ9uAJYa0ndP
-	 J1NCUHdPly6XQ==
-Message-ID: <88c9c7bf-ee32-4fcd-a2ce-12a589fe844f@kernel.org>
-Date: Mon, 20 May 2024 11:57:12 +0200
+	s=arc-20240116; t=1716199099; c=relaxed/simple;
+	bh=9GSZX+aKLnx8y8TUWKzJzkq8VGJDTGApJAWDt61fS7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=WiQEwLdvy76wGpnc5PdIhHCJn6eH6n2JCh4s7tmZo9wjPoX38/MzdrwkEmbnMsdzL3OqR1d2W4u0TAvZzACg+ifAv9IhN6uc2HqU7fsvxFkp/BMcXLtlddgwJumqdye87ROT4Wq/Y9OVEZewaew8mzWb47vFkCanvvbHfgdeXkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pEp44sC8; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716199096;
+	bh=9GSZX+aKLnx8y8TUWKzJzkq8VGJDTGApJAWDt61fS7U=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=pEp44sC8Kg7b5wvV8lTZxd1j2+1nCYixzWpOUBTyDht6mzgSywYdW3sNAopDUn58i
+	 i6qXK/vRW0yMdqdoL1hDe2fSVYa39bo0eN+DshkXDOYp7gooJ9pjpl4X8EFPAy8FbA
+	 +DyACb7P6HMurzFKbpVT/NgpylCb5edcJK48oxfuBfAYyU4hMJNnA7r472ElyhA3Qw
+	 Ieqi3gIR1K357QSiTdOZReaFjC1z99t88w8SwBNKJQGLgO1XfsbCfaM0nmnAk23tB3
+	 uJRd4fp1EOnPl1z09eVhne8VZNnCIGP93pVxSkOVDTRiNyHbpsaDPEuWNoTMntLWaB
+	 V0X+JjMN2aM0Q==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D611537820CD;
+	Mon, 20 May 2024 09:58:15 +0000 (UTC)
+Message-ID: <3b1be547-ac49-40fb-909f-96952c299545@collabora.com>
+Date: Mon, 20 May 2024 11:58:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,79 +56,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v5] nfc: nci: Fix uninit-value in nci_rx_work
-To: Ryosuke Yasuoka <ryasuoka@redhat.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- syoshida@redhat.com, syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
-References: <20240519094304.518279-1-ryasuoka@redhat.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 3/4] arm64: dts: mediatek: mt8365: drop incorrect
+ power-domain-cells
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ MandyJH Liu <mandyjh.liu@mediatek.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240518211159.142920-1-krzysztof.kozlowski@linaro.org>
+ <20240518211159.142920-3-krzysztof.kozlowski@linaro.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240519094304.518279-1-ryasuoka@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20240518211159.142920-3-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 19/05/2024 11:43, Ryosuke Yasuoka wrote:
-> syzbot reported the following uninit-value access issue [1]
+Il 18/05/24 23:11, Krzysztof Kozlowski ha scritto:
+> The top SCPSYS node is not a power domain provider.  It's child
+> "power-controller" is instead.  Fix dtbs_check warnings like:
 > 
-> nci_rx_work() parses received packet from ndev->rx_q. It should be
-> validated header size, payload size and total packet size before
-> processing the packet. If an invalid packet is detected, it should be
-> silently discarded.
+>    mt8365-evk.dtb: syscon@10006000: '#power-domain-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
 > 
-> Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
-> Reported-and-tested-by: syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=d7b4dc6cd50410152534 [1]
-> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Well if you're fixing that by migrating to scpsys compatible, you might as well
+resolve all of the warnings in one commit, removing that power-domain-cells
+property in patch [2/4], otherwise this one is technically a fix for that.
+
+Please squash [2/4] and [3/4], like that it just makes more sense.
+
+Cheers,
+Angelo
+
 > ---
-> v5
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+>   arch/arm64/boot/dts/mediatek/mt8365.dtsi | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8365.dtsi b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
+> index d3da5a22c2d2..eb449bfa8803 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8365.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
+> @@ -302,7 +302,6 @@ syscfg_pctl: syscfg-pctl@10005000 {
+>   		scpsys: syscon@10006000 {
+>   			compatible = "mediatek,mt8365-scpsys", "syscon", "simple-mfd";
+>   			reg = <0 0x10006000 0 0x1000>;
+> -			#power-domain-cells = <1>;
+>   
+>   			/* System Power Manager */
+>   			spm: power-controller {
 
 
