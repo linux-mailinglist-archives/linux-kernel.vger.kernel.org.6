@@ -1,108 +1,149 @@
-Return-Path: <linux-kernel+bounces-183822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F134B8C9E9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:08:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80F18C9E9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E13A1C22F81
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:08:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F065D1C22B26
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD2A13666F;
-	Mon, 20 May 2024 14:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CAC13699A;
+	Mon, 20 May 2024 14:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="q1rmb1I3"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HSu6kHd/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290CF13664B
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 14:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D0C54789;
+	Mon, 20 May 2024 14:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716214086; cv=none; b=rVlY3D/91iGoLp/PAvdqRn93aThQokeXeCFyp4n1AwDeaIPKOfFeu4V6TyJeVGxLxaGRdILDlWhTbXqwB6PbHGrI8CaClr3Fn/BEcaJ4BtNeBi6X8fHozaG62r5Xkgd3VRMh8zqlcV6wxSSesURt9voD6SEP5ujVBiTtDPNUAew=
+	t=1716214412; cv=none; b=ZjZxicGXroRB7tcIVtBoSOtafPHjEap5GPRDX9GdDfU6NvxCnqRtYqVWAvQRLoKOlyn/eJ5e+BOjXJmz2fsDeYI3LlgtmBNFX8yLWKCFw18oK2aIWFKSrVPpnvooRhxHoJsPyaW7Ibx7tfavVp5Jf5QjT1NBb3KE37qFEAJ3ej0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716214086; c=relaxed/simple;
-	bh=jejequIZLQUkXoRwRN38Pai8FJ1AhPODk6cIdwLFiZs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UDH8SkIYr+vUotWq/zWX9A29eqNRoJRlrUHwHvX/HKJVZUzteXxkIBLhulliURCISEGqzfsxnC9FcKypjakXvRVzfnxHCuBbgY6e3zS4453SrjqZsDdLmghvgVorbbZlsufjgqg9WJtBbdwrzh4Coys+yaeUZWrfS66p+NPSDX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=q1rmb1I3; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f2e3249d5eso10156025ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 07:08:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716214083; x=1716818883; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pUPDjNArKJ3mfUMSjW2yhq61IQlP1POL1CAjSweGz24=;
-        b=q1rmb1I3UB2MCbhXDTl8HJk+JlONBra45FPlNABo4ewLHWHA8JXEGtzcm6JDV/G5Z3
-         3fqtG9AJA1wtzwXgSg7u2uqyrKK0NcDIqs23OIcYXFnmAE8p1vzcyw/RRnq3R2w29PPf
-         3gRxtUNYEzUCgmDLwK9Dm5f40o27bx+GDp7QOVSk4ctmu5imbWMJ98Vb70N4b5SySZ/L
-         h3W+CCbHKMwFId+2iQrP/iPZQJDHdKAUjxlCkPdARia5DYqDHKH90faKzgEB/o87W62x
-         NxUKgdIAYdU0+kgpLgykcF5eJSfRiF/i0nb5yrbYE1GprVK2ZKNwyT760abN44mcgYnK
-         J5Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716214083; x=1716818883;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pUPDjNArKJ3mfUMSjW2yhq61IQlP1POL1CAjSweGz24=;
-        b=ClGWYx+Qo39JMfC6r8ct0lbMTZTdfoRhlzaE2ognuCL+O9ScutKZks02UucND3GAxc
-         f8uv01yI17vNM/ztA9+zZDDaJHivUJ/skI5IiIJtTazBeb5RWoOoCre7c4nkWWkw0Lmn
-         my3td4dnmDTMgr6cCrNokoI2tHqjW3UUTSyeMS5I3LrxClZTz1T5/V8+J1UcBU1XmRg9
-         ezJl/xb6+pMIBU/A0VPdDTOgwiw3f6lnDPNjryyijXm+vUjavWIQQNshyPPYWYnCsXNH
-         AjECyAPPzM22YyrpIouu1V+Cf20C+Oq6/+l7ivwm//yYz8nvV497MF2ym2V+o08tQtbF
-         wOdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbP/InytYoMZOgA5Vc4VIpA/oC2PHQwwa5qzIk0MxBVucPK1OT2HYGuwqicjhVN7vi59bolGPuBVT2lUW0/Vj0NkMIZtDq4TZFANwv
-X-Gm-Message-State: AOJu0YwyzPFUXQARJOtttFVqLeyZ7kAb9Dj7xIYYkGtsB9B2drbYe79Z
-	7n2xuX/zqyDSfkXT2Ubs2OolfPHDJxniv64p6coKJCpt7yBc+sN0gE/HyehINYyQOREWzQPR0Ya
-	c
-X-Google-Smtp-Source: AGHT+IFRAVhTX6eDNJiRwOPpKgGY/dBfWAVh7Azrv4tnNy307MGqgnnXihGSFJR0EEXwooshsV6e2g==
-X-Received: by 2002:a17:902:d508:b0:1f3:358:cc30 with SMTP id d9443c01a7336-1f30358e620mr23191555ad.2.1716214083522;
-        Mon, 20 May 2024 07:08:03 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bada431sm203721085ad.100.2024.05.20.07.08.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 07:08:02 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240516-md-t10-pi-v1-1-44a3469374aa@quicinc.com>
-References: <20240516-md-t10-pi-v1-1-44a3469374aa@quicinc.com>
-Subject: Re: [PATCH] block: t10-pi: add MODULE_DESCRIPTION()
-Message-Id: <171621408252.12318.1975684366197625365.b4-ty@kernel.dk>
-Date: Mon, 20 May 2024 08:08:02 -0600
+	s=arc-20240116; t=1716214412; c=relaxed/simple;
+	bh=HEi4o6f1GohHdJ5VdC2hzu1APLIt6YSrw4Kf+Y5ungM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rh4jzJVvFb91JJ0vfwi/BfW0Bqw86A4vqAH3B8FIMZch9uztKQ8ZtYr4j02Ytd9dKn2mh91cjBvGj0luWFB2TCgvR/2hke49wpXRm1xjFSP4dNw4OEwzqI+vFdcVyR6tZF9jL8CD89uQmO/yOy+HZWmBM23pmsg/kYVeWhH4tIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HSu6kHd/; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716214411; x=1747750411;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HEi4o6f1GohHdJ5VdC2hzu1APLIt6YSrw4Kf+Y5ungM=;
+  b=HSu6kHd/KCy5k0qL8HBx2fEAiNdcWYn3QPVJ7jdWktEMcIFnrdcpEDeV
+   ZbAsWOcnUIYm2ZUzGj4rJ+JyNSzSMD1vWknkvx5c4fvNfBit/Y9b6a+p6
+   mZ5wdN1Cf9dAZzcLyMleGpOmIjiEFC4fVKS8qfoB2Za/8uIiS4VQd2qMF
+   FPFO76VF59zcsfuGW68X431kdd/jhhcG77/5TU5HQ3pcyhSzRfmyMXmBr
+   5Nw76EqY1PlDZ4gRxA135YF7wlrenOws0l0lMV/2hWdKYb51UHHwNSnj7
+   klv/ijEsfZTjA9/J0+hq6wHtRwOaPh/sC0fH8tKqrK9SB+VOkP8URetCp
+   g==;
+X-CSE-ConnectionGUID: jdR1eJMxRNGXQM6Qnzq76Q==
+X-CSE-MsgGUID: utXKgrZXS9GfHIWx9eyC/Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12519662"
+X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
+   d="scan'208";a="12519662"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 07:13:30 -0700
+X-CSE-ConnectionGUID: 2Esy9xhMR6yAN+3OekAtrQ==
+X-CSE-MsgGUID: lwbaqOKqTVC9M006gPJSTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
+   d="scan'208";a="32415929"
+Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 20 May 2024 07:13:27 -0700
+Received: from kbuild by 108735ec233b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s93lU-0004t6-2A;
+	Mon, 20 May 2024 14:13:24 +0000
+Date: Mon, 20 May 2024 22:13:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kees Cook <keescook@chromium.org>,
+	Eric Biederman <ebiederm@xmission.com>
+Cc: oe-kbuild-all@lists.linux.dev, Kees Cook <keescook@chromium.org>,
+	Justin Stitt <justinstitt@google.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/2] exec: Add KUnit test for bprm_stack_limits()
+Message-ID: <202405202157.xE9dP8fI-lkp@intel.com>
+References: <20240520021615.741800-1-keescook@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520021615.741800-1-keescook@chromium.org>
+
+Hi Kees,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on kees/for-next/execve]
+[also build test ERROR on kees/for-next/pstore kees/for-next/kspp brauner-vfs/vfs.all linus/master v6.9 next-20240520]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kees-Cook/exec-Avoid-pathological-argc-envc-and-bprm-p-values/20240520-101851
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
+patch link:    https://lore.kernel.org/r/20240520021615.741800-1-keescook%40chromium.org
+patch subject: [PATCH 1/2] exec: Add KUnit test for bprm_stack_limits()
+config: i386-randconfig-004-20240520 (https://download.01.org/0day-ci/archive/20240520/202405202157.xE9dP8fI-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240520/202405202157.xE9dP8fI-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405202157.xE9dP8fI-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   ld: fs/exec.o: in function `exec_test_bprm_stack_limits':
+>> fs/exec_test.c:98:(.text+0xdfc): undefined reference to `kunit_binary_assert_format'
+>> ld: fs/exec_test.c:98:(.text+0xe0c): undefined reference to `__kunit_do_failed_assertion'
+>> ld: fs/exec_test.c:99:(.text+0xe56): undefined reference to `kunit_binary_assert_format'
+   ld: fs/exec_test.c:99:(.text+0xe66): undefined reference to `__kunit_do_failed_assertion'
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for FB_IOMEM_HELPERS
+   Depends on [n]: HAS_IOMEM [=y] && FB_CORE [=n]
+   Selected by [m]:
+   - DRM_XE_DISPLAY [=y] && HAS_IOMEM [=y] && DRM_XE [=m] && DRM_XE [=m]=m
 
 
-On Thu, 16 May 2024 17:15:06 -0700, Jeff Johnson wrote:
-> Fix the allmodconfig 'make W=1' issue:
-> 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in block/t10-pi.o
-> 
-> 
+vim +98 fs/exec_test.c
 
-Applied, thanks!
+    85	
+    86	static void exec_test_bprm_stack_limits(struct kunit *test)
+    87	{
+    88		/* Double-check the constants. */
+    89		KUNIT_EXPECT_EQ(test, _STK_LIM, SZ_8M);
+    90		KUNIT_EXPECT_EQ(test, ARG_MAX, 32 * SZ_4K);
+    91	
+    92		for (int i = 0; i < ARRAY_SIZE(bprm_stack_limits_results); i++) {
+    93			const struct bprm_stack_limits_result *result = &bprm_stack_limits_results[i];
+    94			struct linux_binprm bprm = result->bprm;
+    95			int rc;
+    96	
+    97			rc = bprm_stack_limits(&bprm);
+  > 98			KUNIT_EXPECT_EQ_MSG(test, rc, result->expected_rc, "on loop %d", i);
+  > 99			KUNIT_EXPECT_EQ_MSG(test, bprm.argmin, result->expected_argmin, "on loop %d", i);
+   100		}
+   101	}
+   102	
 
-[1/1] block: t10-pi: add MODULE_DESCRIPTION()
-      commit: f0eab3e8d1530b87f3523cee060004dd513a6d2b
-
-Best regards,
 -- 
-Jens Axboe
-
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
