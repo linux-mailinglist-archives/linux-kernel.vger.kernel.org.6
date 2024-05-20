@@ -1,145 +1,86 @@
-Return-Path: <linux-kernel+bounces-183363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 015628C9800
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 04:43:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C916F8C9802
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 04:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B113E28113D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:43:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 832AA281376
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FEDBA47;
-	Mon, 20 May 2024 02:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A046B666;
+	Mon, 20 May 2024 02:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c21GpFSB"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="P+5+G8A6"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EF0DF51;
-	Mon, 20 May 2024 02:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B9829A0
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 02:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716172978; cv=none; b=dY+d8VkbZsd11F1Iklpx376IZNaxH1VvOo0PHWOqDrEPW3t5torS3LGovWam7e3VPCNAJQ4MsWi9Ou0rHkRnGJh3tH85DLaX4vBKSl10rPan7c5klH7fKDmS5ojNlSazJKSpyF+2TkhjoCdOgpZR9289UIbiBQwpKkchzT5WDfY=
+	t=1716173139; cv=none; b=A8XVsbgVvBVVjPX4xHh1u+2ElLiufuqqKI8xKxvHnKeihdJB38CayBfHyqNnBgrY/cajAr4x3EqPm/DshNirfnfu/CDXODET+06kY+88rag0ZcCXS1FJra16Nzu6r29Y0aWF4cgD9Z7GPllyiCccag1D8i//yea0XJN9HzD2dNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716172978; c=relaxed/simple;
-	bh=u8M29W93CLZk7xFCZDRHfyzapkR9x06WPG1ULAlSECw=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=okoaDjEt5bflGJtyGMUyB01fLgQ81Lzkyu1d1qVfrn4XHV658n7QeBr8gZwfc6N17nROGK1ydlpR/jKBpC7+Vlh3+wnp152GNv67R5dUYnlB4dMILfYkZ4PLTXaUZ/Yhm96XbJoYtbLnFf9wbAtjywEdNVIUxkSKFR6OcAVhgyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c21GpFSB; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-23d3d092a1bso1761333fac.1;
-        Sun, 19 May 2024 19:42:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716172976; x=1716777776; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tr1T7/XjuQtJAqIemXjuLBVV4b7VY8GatTsfPNLXx4Y=;
-        b=c21GpFSBH/ZaUJgQWp6iniMqns0RdzMsJsdv4upSUPNjvmBiK4C4c8b3UMoWcylo65
-         4eRPaLvDbb4FIyWOOZIe2L6TsdA2e3HN+IOqF4TEdyOo1Oy0xHgOfzwRJDrXWA+Un7ii
-         +g8UJvWNGKyNvnoo+5CVdFSfC8kuGUeCFEbp81LYv4SUrS505PkhuSySqe0KXxttmjC+
-         HScU0l48dCByDkRNdirOQUy8OaxPcmEzR76c2nmL+Dapx52r726uKQxJn6ZMVh8vbRlf
-         7IqHGqK/cSFPFsB4AXEnjK0H/Nvq83hf6CVH3PL/6QRLuo8UueIkwhZLp9gC244+MHDg
-         qJ4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716172976; x=1716777776;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tr1T7/XjuQtJAqIemXjuLBVV4b7VY8GatTsfPNLXx4Y=;
-        b=U9pWyIYKt7YQLR+HH32AVUIwN3MhxXkBMEsvVB2LAaRjqRQ6YfyqCEf4TyvQ6g+wiC
-         v3QKbJW4LzNBFalGu+yCdxLMQsQ/8n/nHOUCU9iKH79DMKazNqAcGJpgnIE4r9Z2Rexo
-         Yy5WJ43h5TR6z7AHMs/V9smpOvx+25tlMznXCYx62p2lKNfC8j+A2Yr/5tglZakCaDwv
-         UvWyaXVI+YwaD1UhZihxHGTpfjI7nGEAUFCdU/ZMOUyGTKTOPlpx8PtnQqBVRKEDLbdD
-         ho0Zme00Xg9mC0+GMw5Nf+NWnH+9XR6CBwl8iiuoA2l68k7Gn0yM80nCkHaafUOOtXiU
-         HTag==
-X-Forwarded-Encrypted: i=1; AJvYcCXMaXesKPX+hGM4YhTYRo42YR64z/6a3qwQ4R5xljhisipvJLSR75wzK2tdWXN/qb0iA88K2cX82mH5g7l89FfSrZCEZrE4qK4wjFV2oKWejLrYyv6UDIcMxxogAe0b6OJK1PrI9WczYIdDtBI=
-X-Gm-Message-State: AOJu0Yzg8SPfCUbfgc8LmAQi4roY3W34xdBdYvQn3dBjlYsVB38gzmfV
-	IFoOy3LO5SJrQfeHUlVzGPRFCZOQ4cDVXOOPQqyEJLUvvftj0SV/
-X-Google-Smtp-Source: AGHT+IGFCXVEvzoq9XyGC88P+7whkiD3/8oI+PvChhcLN5Tw7aYEULIzaHp9hLUHxfDb3mO0nLV3pA==
-X-Received: by 2002:a05:6870:4191:b0:233:2f5f:9e1 with SMTP id 586e51a60fabf-24172fc5112mr33193967fac.54.1716172975788;
-        Sun, 19 May 2024 19:42:55 -0700 (PDT)
-Received: from [192.168.7.110] ([190.196.103.34])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a81c8csm18122707b3a.70.2024.05.19.19.42.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 May 2024 19:42:55 -0700 (PDT)
-From: Camila Alvarez Inostroza <cam.alvarez.i@gmail.com>
-X-Google-Original-From: Camila Alvarez Inostroza <calvarez@macbook-pro-de-camila.local>
-Date: Sun, 19 May 2024 22:42:52 -0400 (-04)
-To: Kent Overstreet <kent.overstreet@linux.dev>
-cc: Camila Alvarez <cam.alvarez.i@gmail.com>, 
-    Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, 
-    syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com
-Subject: Re: [PATCH] bcachefs: fix last_seq and last_empty_seq in
- bch2_fs_journal_start()
-In-Reply-To: <c7qpzaeqhyvkbgaplvazj6steii5ayta7gtidmy24u7gfnnkuc@nhc2swhzmuff>
-Message-ID: <69dde6ef-69d3-047c-c1b2-64ac51ac0302@macbook-pro-de-camila.local>
-References: <20240516031919.592696-1-cam.alvarez.i@gmail.com> <c7qpzaeqhyvkbgaplvazj6steii5ayta7gtidmy24u7gfnnkuc@nhc2swhzmuff>
+	s=arc-20240116; t=1716173139; c=relaxed/simple;
+	bh=oR+HWfEbsdoLhwxeid1Mkiujk6fyUB9heA/7roG4ASU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=KZvSm9HJXt3CAUdDsW+NFAe5/OijuTdpbYvwNDKNHm+AaBNVPls1qJDxRMcVAToETR6bFl+bcwjVs7xeccZKiYacZblw1E4D301usD5TKDj/Us5lTMLB7g7IRLtVWZml0EZ/o9ai3JLXnTeHto4ejjJJtO0ueM/wGAZ11iY8o5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=P+5+G8A6; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: osalvador@suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716173134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Psj+gplghZTZV5P82hYySm+e+s2MwlhNyb4BPI/726U=;
+	b=P+5+G8A6X+e54JR1eYsYT+6Aklv6iIWuzBmXUh14NpbfpPtPXiWWDT5UxscDHTwLEnEtTH
+	DdVefn0R5YzlubFqEo5nzmffRd9pYlZAsQ1t3LTnFgWbBTnotw2nNEDtxihO2hQwKfY+jX
+	p+ZK60SyFm3ygswrLakw0zaL0o7lVNE=
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: peterx@redhat.com
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] mm/hugetlb: Drop node_alloc_noretry from
+ alloc_fresh_hugetlb_folio
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <20240516081035.5651-1-osalvador@suse.de>
+Date: Mon, 20 May 2024 10:45:14 +0800
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Linux-MM <linux-mm@kvack.org>,
+ Peter Xu <peterx@redhat.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <5FF6FF52-4798-4496-A8CB-25AC6EF5768F@linux.dev>
+References: <20240516081035.5651-1-osalvador@suse.de>
+To: Oscar Salvador <osalvador@suse.de>
+X-Migadu-Flow: FLOW_OUT
 
 
 
-On Sun, 19 May 2024, Kent Overstreet wrote:
+> On May 16, 2024, at 16:10, Oscar Salvador <osalvador@suse.de> wrote:
+> 
+> Since commit d67e32f26713 ("hugetlb: restructure pool allocations"),
+> the parameter node_alloc_noretry from alloc_fresh_hugetlb_folio()
+> is not used, so drop it.
+> 
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
 
-> On Wed, May 15, 2024 at 11:19:20PM -0400, Camila Alvarez wrote:
->> Values were left as the next possible sequence number when there were no
->> entries.
->>
->> The fix involves updating the last_seq initial value and
->> setting last_empty_seq to cur_seq - 1.
->
-> I think this is correct, but we should try to come up with some better
-> assertions or something to make the code clearer; we don't want off by
-> ones to lurk so easily.
->
-> Could you give it some thought?
->
-You're right. I think the code is written in a confusing way. In 
-particular it seems that cur_seq - 1 is used all over the place.
-I believe we can abstract cur_seq - 1 in an independent variable (since 
-it represents the actual last sequence number), that should make it 
-clearer.
-I'll share an updated version of the patch.
-Thanks for the response!
->>
->> Reported-by: syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com
->> Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
->> ---
->>  fs/bcachefs/journal.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
->> index adec8e1ea73e..3835c458eec9 100644
->> --- a/fs/bcachefs/journal.c
->> +++ b/fs/bcachefs/journal.c
->> @@ -1196,7 +1196,7 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
->>  	struct journal_replay *i, **_i;
->>  	struct genradix_iter iter;
->>  	bool had_entries = false;
->> -	u64 last_seq = cur_seq, nr, seq;
->> +	u64 last_seq = cur_seq - 1, nr, seq;
->>
->>  	genradix_for_each_reverse(&c->journal_entries, iter, _i) {
->>  		i = *_i;
->> @@ -1256,7 +1256,7 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
->>  	}
->>
->>  	if (!had_entries)
->> -		j->last_empty_seq = cur_seq;
->> +		j->last_empty_seq = cur_seq - 1;
->>
->>  	spin_lock(&j->lock);
->>
->> --
->> 2.34.1
->>
->
+Reviewed-by: Muchun Song <muchun.song@linux.dev>
+
+Thanks.
+
 
