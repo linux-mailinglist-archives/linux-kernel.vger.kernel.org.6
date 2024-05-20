@@ -1,199 +1,217 @@
-Return-Path: <linux-kernel+bounces-183955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9345A8CA08D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:11:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4B58CA08F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 18:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B61881C21390
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:11:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2A7FB22604
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4F2139585;
-	Mon, 20 May 2024 16:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mc0vJ9lJ";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mc0vJ9lJ"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AA413791F;
+	Mon, 20 May 2024 16:12:14 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F071369BE;
-	Mon, 20 May 2024 16:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A80137740;
+	Mon, 20 May 2024 16:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716221436; cv=none; b=lQVsUVFVxKJ/SPqKCn/wLaIsQeElIXLa/iCopavPEYQJc9VSlvSwsswaMOVbYdElKfu2oihF13xb9f4aK3yEAFIj2T1aQ1ppfBfs0nYOPuvJ7zMEe8zC8XxW0hDFqc+c1gSMlW5ihFQr6Mg0F1fphW8Yc6txWUKlOffHPeurU1M=
+	t=1716221534; cv=none; b=IfLxqPDyIAcJUy4bVcF+wFakOHfKwAp0dP3i0HUnXbe2JJkOg0/EVNkqwbZkRBJTGEBTze90WyVwfOV4IeQqJtw9bqDJGOTUaZLbEiIlSxdNYrRJNaQV22uza9okL79xHr201yXf6EcHekWnUVaEkuOiuwmChQd/BrIILlxiz54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716221436; c=relaxed/simple;
-	bh=IOs4DH5M43q00GczYFv9Oi8cYP+skYziCQpw1joauX4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NvaSV1v8XfxeH8XXt+ffdjqUR+XtgqkoZk1Zf9KyM6gci//fUpgfzRp1q006NUUDkaOZum4yJ+7CmKe8z6I0SoUUIeJpRgJEATxicOdrPJ56msd+pL5vV6oyhrTNDFYJ5mZ87lNfnxZRskvXk3oYEITH0APgMbW1ByaidNM7q9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=mc0vJ9lJ; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=mc0vJ9lJ; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1716221433;
-	bh=IOs4DH5M43q00GczYFv9Oi8cYP+skYziCQpw1joauX4=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=mc0vJ9lJ9uyQHkslbAiOF7LcKLywrCmbXqyLOuJN/rtYUGVMzMXu50NQnOvRaFb2w
-	 c640ichN1OQL0Q1LUA7xfxtKtIF/r5Gv6gtLf8qq3LSuCCWzDTPDAZeSudrk2yRgWi
-	 C2/+gK8V5Q85uDck52PW1+bQ2ILDf1wOM5FBFOE4=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 44D8B1280773;
-	Mon, 20 May 2024 12:10:33 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id 6LAfKhO5IFA9; Mon, 20 May 2024 12:10:33 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1716221433;
-	bh=IOs4DH5M43q00GczYFv9Oi8cYP+skYziCQpw1joauX4=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=mc0vJ9lJ9uyQHkslbAiOF7LcKLywrCmbXqyLOuJN/rtYUGVMzMXu50NQnOvRaFb2w
-	 c640ichN1OQL0Q1LUA7xfxtKtIF/r5Gv6gtLf8qq3LSuCCWzDTPDAZeSudrk2yRgWi
-	 C2/+gK8V5Q85uDck52PW1+bQ2ILDf1wOM5FBFOE4=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 65CE11280728;
-	Mon, 20 May 2024 12:10:32 -0400 (EDT)
-Message-ID: <a1aa10f9d97b2d80048a26f518df2a4b90c90620.camel@HansenPartnership.com>
-Subject: Re: [GIT PULL] bcachefs updates fro 6.10-rc1
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>, Kees Cook
-	 <keescook@chromium.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Torvalds
-	 <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 20 May 2024 12:10:31 -0400
-In-Reply-To: <2uuhtn5rnrfqvwx7krec6lc57gptqearrwwbtbpedvlbor7ziw@zgbzssfacdbe>
-References: 
-	<zhtllemg2gcex7hwybjzoavzrsnrwheuxtswqyo3mn2dlhsxbx@dkfnr5zx3r2x>
-	 <202405191921.C218169@keescook>
-	 <2uuhtn5rnrfqvwx7krec6lc57gptqearrwwbtbpedvlbor7ziw@zgbzssfacdbe>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1716221534; c=relaxed/simple;
+	bh=TGRn8nQiBIP7pFxI0vEU7EOZ9M0KlisQD3v6znpQzhQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fOy40CsjIpud/rj8bdkuUZ++QvB9fO7817hm2fjqvGxyaDSgrhWMckPPowAgaaWIKnbb+2as3BSm0jGyH1KbRFP59u4FR4plwf+oklBvhX/MKLIF2U8wwuhIdXeCrsPwR1jcmv4SLhovamL2Al/RHkwAVk3HZr/hp7WstvGNiEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VjjD12x13z6JBjm;
+	Tue, 21 May 2024 00:08:33 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 60B7F1400DD;
+	Tue, 21 May 2024 00:12:07 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 20 May
+ 2024 17:12:06 +0100
+Date: Mon, 20 May 2024 17:12:05 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: David Lechner <dlechner@baylibre.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Michael Hennerich
+	<Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+	<nuno.sa@analog.com>, Julien Stephan <jstephan@baylibre.com>, Esteban Blanc
+	<eblanc@baylibre.com>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC 3/4] iio: add support for multiple scan types per
+ channel
+Message-ID: <20240520171205.000035b0@Huawei.com>
+In-Reply-To: <ebf18ed1-a82f-4c0a-9a63-2c428b5aee40@baylibre.com>
+References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
+	<20240507-iio-add-support-for-multiple-scan-types-v1-3-95ac33ee51e9@baylibre.com>
+	<20240519201241.7c60abac@jic23-huawei>
+	<ebf18ed1-a82f-4c0a-9a63-2c428b5aee40@baylibre.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Sun, 2024-05-19 at 23:52 -0400, Kent Overstreet wrote:
-> On Sun, May 19, 2024 at 07:39:38PM -0700, Kees Cook wrote:
-> > On Sun, May 19, 2024 at 12:14:34PM -0400, Kent Overstreet wrote:
-> > > [...]
-> > > bcachefs changes for 6.10-rc1
-> > > [...]
-> > >       bcachefs: bch2_btree_path_to_text()
+On Mon, 20 May 2024 08:51:52 -0500
+David Lechner <dlechner@baylibre.com> wrote:
+
+> On 5/19/24 2:12 PM, Jonathan Cameron wrote:
+> > On Tue,  7 May 2024 14:02:07 -0500
+> > David Lechner <dlechner@baylibre.com> wrote:
+> >   
+> >> This adds new fields to the iio_channel structure to support multiple
+> >> scan types per channel. This is useful for devices that support multiple
+> >> resolution modes or other modes that require different data formats of
+> >> the raw data.
+> >>
+> >> To make use of this, drivers can still use the old scan_type field for
+> >> the "default" scan type and use the new scan_type_ext field for any
+> >> additional scan types.  
 > > 
-> > Hi Kent,
+> > Comment inline says that you should commit scan_type if scan_type_ext
+> > is provided.  That makes sense to me rather that a default no one reads.
 > > 
-> > I've asked after this before[1], but there continues to be a lot of
-> > bcachefs development going on that is only visible when it appears
-> > in
-> > -next or during the merge window. I cannot find the above commit on
-> > any mailing list on lore.kernel.org[2]. The rules for -next are
-> > clear: patches _must_ appear on a list _somewhere_ before they land
-> > in -next (much less Linus's tree). The point is to get additional
-> > reviews, and to serve as a focal point for any discussions that pop
-> > up over a given change. Please adjust the bcachefs development
-> > workflow to address this.
+> > The example that follows in patch 4 uses both the scan_type and
+> > the scan_type_ext which is even more confusing.
+> >   
+> >> And they must implement the new callback
+> >> get_current_scan_type() to return the current scan type based on the
+> >> current state of the device.
+> >>
+> >> The buffer code is the only code in the IIO core code that is using the
+> >> scan_type field. This patch updates the buffer code to use the new
+> >> iio_channel_validate_scan_type() function to ensure it is returning the
+> >> correct scan type for the current state of the device when reading the
+> >> sysfs attributes. The buffer validation code is also update to validate
+> >> any additional scan types that are set in the scan_type_ext field. Part
+> >> of that code is refactored to a new function to avoid duplication.
+> >>
+> >> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> >> ---  
+> >   
+> >> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+> >> index 19de573a944a..66f0b4c68f53 100644
+> >> --- a/include/linux/iio/iio.h
+> >> +++ b/include/linux/iio/iio.h
+> >> @@ -205,6 +205,9 @@ struct iio_scan_type {
+> >>   * @scan_index:		Monotonic index to give ordering in scans when read
+> >>   *			from a buffer.
+> >>   * @scan_type:		struct describing the scan type
+> >> + * @ext_scan_type:	Used in rare cases where there is more than one scan
+> >> + *			format for a channel. When this is used, omit scan_type.  
+> > 
+> > Here is the disagreement with the patch description.
+> >   
+> >> + * @num_ext_scan_type:	Number of elements in ext_scan_type.
+> >>   * @info_mask_separate: What information is to be exported that is specific to
+> >>   *			this channel.
+> >>   * @info_mask_separate_available: What availability information is to be
+> >> @@ -256,6 +259,8 @@ struct iio_chan_spec {
+> >>  	unsigned long		address;
+> >>  	int			scan_index;
+> >>  	struct iio_scan_type scan_type;
+> >> +	const struct iio_scan_type *ext_scan_type;
+> >> +	unsigned int		num_ext_scan_type;  
+> > 
+> > Let's make it explicit that you can't do both.
+> > 
+> > 	union {
+> > 		struct iio_scan_type scan_type;
+> > 		struct {
+> > 			const struct iio_scan_type *ext_scan_type;
+> > 			unsigned int num_ext_scan_type;
+> > 		};
+> > 	};
+> > should work for that I think.
+> > 
+> > However this is I think only used for validation. If that's the case
+> > do we care about values not in use?  Can we move the validation to
+> > be runtime if the get_current_scan_type() callback is used.  
 > 
-> Over the course of my career, I've found the kind of workflow and
-> level of review you seem to asking for to be at best not useful, and
-> at worst harmful to productive functioning of a team - to my ability
-> to teach people and get them happy and productive.
+> I like the suggestion of the union to use one or the other. But I'm not
+> sure I understand the comments about validation.
 > 
-> The reality has just been that no one has ever been able to keep up
-> with the rate at which I work and write code [0], and attempting to
-> do code review of every patch means no one else gets anything done
-> and we get sidetracked on irrelevant details. When I do post my
-> patches to the list, the majority of what I get ends up being
-> spelling fixes or at best the kinds of bugs that shake out quickly in
-> real testing. In short, I've had to learn to write code without
-> anyone looking over my shoulder, and I take pride in debugging my own
-> code and not saddling other people with that.
+> If you are referring to iio_channel_validate_scan_type(), it only checks
+> for programmer error of realbits > storagebits, so it seems better to
+> keep it where it is to fail as early as possible.
 
-I get that in your head you have a superior development methodology but
-if I look at the reasons you advance below: 
+That requires the possible scan masks to be listed here but there is
+nothing enforcing the callback returning one from here.  Maybe make it
+return an index instead?
 
 > 
-> So instead, I prioritize:
->  - real discussion over the work being done, which does tend to
-> happen
->    person to person or in meetings (getting more of that on the list
->    would not be a bad idea; I do need to be spending more time
-> writing
->    documentation and design docs, especially at this point).
->  - good effective test infrastructure
->  - heavy and thoughtful use of assertions; there's a real art to
->    effective use of assertions, where you think about what the
->    correctness proof would look like and write assertions for the
->    invariants (and assertions should be on _state_, not _logic_)
+> > 
+> >   
+> >>  	long			info_mask_separate;
+> >>  	long			info_mask_separate_available;
+> >>  	long			info_mask_shared_by_type;
+> >> @@ -435,6 +440,9 @@ struct iio_trigger; /* forward declaration */
+> >>   *			for better event identification.
+> >>   * @validate_trigger:	function to validate the trigger when the
+> >>   *			current trigger gets changed.
+> >> + * @get_current_scan_type: must be implemented by drivers that use ext_scan_type
+> >> + *			in the channel spec to return the currently active scan
+> >> + *			type based on the current state of the device.
+> >>   * @update_scan_mode:	function to configure device and scan buffer when
+> >>   *			channels have changed
+> >>   * @debugfs_reg_access:	function to read or write register value of device
+> >> @@ -519,6 +527,9 @@ struct iio_info {
+> >>  
+> >>  	int (*validate_trigger)(struct iio_dev *indio_dev,
+> >>  				struct iio_trigger *trig);
+> >> +	const struct iio_scan_type *(*get_current_scan_type)(
+> >> +					const struct iio_dev *indio_dev,
+> >> +					const struct iio_chan_spec *chan);
+> >>  	int (*update_scan_mode)(struct iio_dev *indio_dev,
+> >>  				const unsigned long *scan_mask);
+> >>  	int (*debugfs_reg_access)(struct iio_dev *indio_dev,
+> >> @@ -804,6 +815,28 @@ static inline bool iio_read_acpi_mount_matrix(struct device *dev,
+> >>  }
+> >>  #endif
+> >>  
+> >> +/**
+> >> + * iio_get_current_scan_type - Get the current scan type for a channel
+> >> + * @indio_dev:	the IIO device to get the scan type for
+> >> + * @chan:	the channel to get the scan type for
+> >> + *
+> >> + * Most devices only have one scan type per channel and can just access it
+> >> + * directly without calling this function. Core IIO code and drivers that
+> >> + * implement ext_scan_type in the channel spec should use this function to
+> >> + * get the current scan type for a channel.
+> >> + *
+> >> + * Returns: the current scan type for the channel
+> >> + */
+> >> +static inline const struct iio_scan_type *iio_get_current_scan_type(
+> >> +					const struct iio_dev *indio_dev,
+> >> +					const struct iio_chan_spec *chan)
+> >> +{
+> >> +	if (indio_dev->info->get_current_scan_type)
+> >> +		return indio_dev->info->get_current_scan_type(indio_dev, chan);
+> >> +
+> >> +	return &chan->scan_type;
+> >> +}
+> >> +
+> >>  ssize_t iio_format_value(char *buf, unsigned int type, int size, int *vals);
+> >>  
+> >>  int iio_str_to_fixpoint(const char *str, int fract_mult, int *integer,
+> >>  
+> >   
 > 
-> I also do (try to) post patches to the list that are doing something
-> interesting and worth discussion; the vast majority this cycle has
-> been boring syzbot crap...
-
-you still don't say what problem not posting most patches solves?  You
-imply it would slow you down, but getting git-send-email to post to a
-mailing list can actually be automated through a pre-push commit hook
-with no slowdown in the awesome rate at which you apply patches to your
-own tree.
-
-Linux kernel process exists because it's been found to work over time.
-That's not to say it can't be changed, but it usually requires at least
-some stab at a reason before that happens.
-
-> IOW, I'm not trying to _flout_ process here, even if I do things
-> somewhat differently; I've got quite a few people I'm actively
-> teaching and bringing in and that's where most of my energy is going.
-> And we do spend a lot of time going over code together, the meetings
-> I run (especially with the younger guys) are very much code-and-
-> workflow focused.
-
-These are echo chamber reviews.  Even if you echo chamber happens
-produce good reviews there's still no harm in getting them from outside
-it as well.  Plus we can't make this generic workflow because too many
-less awesome contributors would take advantage of the laxity it offers.
-
-> You'll also find I'm quite responsive, on IRC and the list, should
-> you have anything you wish to complain or yell about.
 > 
-> (btw, there's also been some discussions in fs land about other
-> people changing their workflows to something that looks more like
-> mine; get the important stuff on the list, make the list less spammy,
-> work with each other on a quicker timeline than that. They're not
-> quite doing what I'm doing, but I do think there's room for the /way/
-> we do code review and the expectations around it to evolve a bit.
-> Personally, I mostly just want code to be readable).
-> 
-> I personally approach code review as being primarily about
-> mentorship... I don't want people to have the expectation that I'm
-> going to pore over their code and find their bugs; I'm not going to
-> do that.
-
-Just because you won't check others' code for bugs doesn't mean that
-others won't check your code for bugs...
-
-> I expect people to be adults, and take as much time as they need to
-> to get it right; if there's something they're not sure about, I
-> expect _them_ to bring it up.
-
-This is an unknown unknown problem: you can't bring up to others things
-you don't know about yourself. 
-
->  I personally feel that this mindset teaches more responsibility and
-> the "right" kind of defensiveness that it takes to write reliable
-> code.
-
-So you didn't answer whether you ran checkpatch and ignored the warning
-(in which case a commit comment explaining why would have been useful)
-or didn't run checkpatch (in which case why not?).
-
-James
 
 
