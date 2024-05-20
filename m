@@ -1,73 +1,54 @@
-Return-Path: <linux-kernel+bounces-183698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19D68C9CBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:55:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A1D8C9CBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3CA81C22024
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:55:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B251F22CC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA9453E02;
-	Mon, 20 May 2024 11:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15485381D;
+	Mon, 20 May 2024 11:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JnxtWrNn"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Pz57cOLc"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF484502AC
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 11:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B818F1B960;
+	Mon, 20 May 2024 11:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716206131; cv=none; b=bsqMnjgiBplxvzSWOWG4bqBCemTAkGJ2ilkER0RDYsMijzD6HgUdXg88RTW+20fn1Qbhjk1RL1puJb2Bv3vhG/aNiNbYAuaLZELVeQZc+RelZc4xTvh+Om3TgQ34Teu/GrAorHrSjTl33VcCmv2EeaNmgnvuZ62HUdQjXsQdQWE=
+	t=1716206161; cv=none; b=LAyeTdUU9BW9MrClYMMziLJ+QLUN7vS4lrAbH/NK7wu5vhOLR7ypw/vo7P7u5g1lEOhX5SHLWksrywsBV+Ml7A5kGKAiwlKajVM/Jiyza/DLwrDZGBKRN2tDPYqLpmAi5TXP6c8c0lWwVaqARWQ2xmITTwt/IlQ9iIN0tufXACQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716206131; c=relaxed/simple;
-	bh=kEoGgqB0rzX9HUVUIPEKmyOuoLj4yGARQKNBWGYuBtw=;
+	s=arc-20240116; t=1716206161; c=relaxed/simple;
+	bh=HVdVs5WsRae2+1QNnkZk8b+8Vke7zSeq7GNWP4iLtE0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UzjyQcTrcZWqC8h+l+Wu8TONjI0OiQZXYoe4Tr4caZcF8SaRGkZGJg8WPvuy5bPmPzsCCFh3PZ8AZJHvj1aRcu/KbrTddzm4oO3Jz079BFp5ZZyTehI6RqY9OsqWuA4iPLhO4eKuULEiejWRnrY4fatBdt8qJMigC0lF5YkOjgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JnxtWrNn; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4202cea9941so17760895e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 04:55:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1716206127; x=1716810927; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J52kMpMDHoKvOAndzN0rC/vV/Kub3GsExDvSDouYLys=;
-        b=JnxtWrNn/i+nS87br6CxiUNNov5H1ZeYDfntBGPoelIRMrqOGKC9e+sfZ4bNf9Uuer
-         nzsxA8+ZFEBvFZEbBCt22/Jj5y4N4qs2cJmuyIugpiLJizbVUtqIi9S2wKlwP4IXAgeO
-         yy0jUKxtJoahWzDC6CdEQBVD7pLvVcXD8rLZ0f8I6jeT5Ur8fya3ykB6Sbl+HKTUZI/s
-         C1AAr3KehqEQNz2RrC21FTvLNu3u0tNb1uBzP4T8iONuA/YdQaWqd1K3Xwim/AUMN4Zn
-         MBvh7O1NIJzsKHAX1vI6fJbwMDP2FRckNuCvN9dOLYvy4h8F8w+as59N02tLlYvnQ4B0
-         BLJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716206127; x=1716810927;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J52kMpMDHoKvOAndzN0rC/vV/Kub3GsExDvSDouYLys=;
-        b=u6tT3Ljxg3NIG0Nm+ggWR/c2K5Cb4sK4IuvlXjvaRWtjcRKN+hpYzjeyzAK2IWQVeu
-         1c8j7JCx7af8V6Sher6eiA9hSOWbP65c4T60deYqDKVqTPCqipuGBPdH8rhANh/VCXaQ
-         houcD9/Kk9WfTTr+pxAtTxoulkis9Iv7gs21KLCPYF1dADKGR8Sbivf6xLC2rZvp9DDq
-         b1+gTO535ygpqZn4nKJ8DF7SV4wWLaPRrvSbWlFedFrtOTzLoQknGVrYEDVE1KkgudD3
-         TQk+Y4eZKMj/b3UYZAkAguP/TtcKl1tG4kUw6wI270G0YUhQ4oQqbOHoyyEe8o7odBRw
-         /A8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVbJVFMvdgwXmoivl+AUEbhKEtd20r8NHz/NRDBNW0EI5gEIXjZi5PGzc2MSKZ08EUWB4qyri0L1l8qFAEjvQKz0/ToIWVg0uutxR1s
-X-Gm-Message-State: AOJu0YyhIcN+k9K/HgRkS82DJ9X5wzH6P6BODF3+yq39FpCncEbrcNsC
-	1Vh8P7/aVlZUwDKZ5hmOZtlcr74X301XowZ9rU+Fy/OMbNw1YtHYfc0UCgpAf68=
-X-Google-Smtp-Source: AGHT+IFlvSqANMGIFrY7ueIY75b5WZsPp07glKW9CXJYkzLlO1bcGTsSAd5RIIjQcSQBq4MnYIRKvQ==
-X-Received: by 2002:adf:c7cb:0:b0:351:b7fa:ccbf with SMTP id ffacd0b85a97d-351b7facde5mr23107427f8f.61.1716206126884;
-        Mon, 20 May 2024 04:55:26 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbca98sm29018734f8f.112.2024.05.20.04.55.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 May 2024 04:55:26 -0700 (PDT)
-Message-ID: <559ad243-b43b-471a-99a4-2f42e0930a64@tuxon.dev>
-Date: Mon, 20 May 2024 14:55:24 +0300
+	 In-Reply-To:Content-Type; b=piKObkai6XTyBA7Vnv7l7w88Cv2FgpO5RRaWO6J6GvHTzHYWxu8Sx1tiB/Y8TM/Oa92v4BYvkMhdDezriMtUEwbN3Fs0HibA8iRpzcWBR1rS0uyObY7TNtCM5FgSs+681Izl3YySLA59VP7TnecEm4F09T0ZeEYtOuD9d9B97Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Pz57cOLc; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716206157;
+	bh=HVdVs5WsRae2+1QNnkZk8b+8Vke7zSeq7GNWP4iLtE0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Pz57cOLcladhmdo5+/6Yy/Ks3GaYaTeKHcKTulsGnX7erKkpYOuVfk9HZAMKqnUy3
+	 t5SxNsaK0MHnaYCs7Iofizh3vsfHicUMyp1YOWul5M/ED7vFcj8y4QSU0I5E4WLFpb
+	 l/RqSzWiOq83+TlinnXWNfxJ7xVLRus4h5vUcgMU1HR8myXFmQYOmihk1hgLIbDbAc
+	 otfrAnUpt8A0LM43u4m3Fbf0Vf0+FIoZtEGN1Xc5aEYoTHgj2YrDshVMA5bRORqpWk
+	 Qq3s8hMeFveAo193c4XDBnxSuy1hSsZlehIycchb46jTXjThyfZ0QN6snIYwlGXveL
+	 JdseYdQ8dOAmA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6141C3780BFE;
+	Mon, 20 May 2024 11:55:56 +0000 (UTC)
+Message-ID: <df152312-a8ab-40d8-a361-fe5100e11dd9@collabora.com>
+Date: Mon, 20 May 2024 13:55:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,213 +56,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v8 09/10] watchdog: rzg2l_wdt: Power on the PM
- domain in rzg2l_wdt_restart()
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: wim@linux-watchdog.org, linux@roeck-us.net, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
- geert+renesas@glider.be, magnus.damm@gmail.com, biju.das.jz@bp.renesas.com,
- linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240410134044.2138310-1-claudiu.beznea.uj@bp.renesas.com>
- <20240410134044.2138310-10-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFqq+gMDHx_-g-j9rO3nBDcXRSoXRjJK9D51=VaQ5XaGvw@mail.gmail.com>
- <af9c6747-120e-48c1-8c04-9594c9b49666@tuxon.dev>
- <2d674a18-006f-4182-bc85-bcfa50615495@tuxon.dev>
- <CAPDyKFp+8VnxDfhDzvP1KWCN_oRHrVMCru9BXO_55GkF=gHUBA@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH v4 2/3] dt-bindings: arm: mediatek: mmsys: Add OF graph
+ support for board path
+To: Alexandre Mergnat <amergnat@baylibre.com>, chunkuang.hu@kernel.org
+Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ matthias.bgg@gmail.com, shawn.sung@mediatek.com, yu-chang.lee@mediatek.com,
+ ck.hu@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ wenst@chromium.org, kernel@collabora.com
+References: <20240516081104.83458-1-angelogioacchino.delregno@collabora.com>
+ <20240516081104.83458-3-angelogioacchino.delregno@collabora.com>
+ <ce1de395-3f60-4f7f-9424-bf036134de94@baylibre.com>
+ <7dbe08cf-47a1-4da6-9035-6b0932cf8426@collabora.com>
+ <67f13b3c-18b2-4042-9908-b4d41c24cdb0@baylibre.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <CAPDyKFp+8VnxDfhDzvP1KWCN_oRHrVMCru9BXO_55GkF=gHUBA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <67f13b3c-18b2-4042-9908-b4d41c24cdb0@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi, Ulf,
-
-On 29.04.2024 17:19, Ulf Hansson wrote:
-> On Wed, 24 Apr 2024 at 13:14, claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
+Il 20/05/24 13:49, Alexandre Mergnat ha scritto:
+> 
+> 
+> On 20/05/2024 12:53, AngeloGioacchino Del Regno wrote:
+>>> So, I don't know how you want to manage multiple display, but IMHO there are 2 
+>>> ways:
+>>> - removing the current "oneOf".
 >>
->> Hi, Ulf,
+>> ...eh I think this should be anyOf instead :-)
 >>
->> On 12.04.2024 17:02, claudiu beznea wrote:
->>> Hi, Ulf,
->>>
->>> On 12.04.2024 14:14, Ulf Hansson wrote:
->>>> On Wed, 10 Apr 2024 at 16:19, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>>>>
->>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>
->>>>> The rzg2l_wdt_restart() is called from atomic context. Calling
->>>>> pm_runtime_{get_sync, resume_and_get}() or any other runtime PM resume
->>>>> APIs is not an option as it may lead to issues as described in commit
->>>>> e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait context'")
->>>>> that removed the pm_runtime_get_sync() and used directly the
->>>>> clk_prepare_enable() APIs.
->>>>>
->>>>> Starting with RZ/G3S the watchdog could be part of its own software
->>>>> controlled power domain (see the initial implementation in Link section).
->>>>> In case the watchdog is not used the power domain is off and accessing
->>>>> watchdog registers leads to aborts.
->>>>>
->>>>> To solve this the patch powers on the power domain using
->>>>> dev_pm_genpd_resume() API before enabling its clock. This is not
->>>>> sleeping or taking any other locks as the power domain will not be
->>>>> registered with GENPD_FLAG_IRQ_SAFE flags.
->>>>>
->>>>> Link: https://lore.kernel.org/all/20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com
->>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>> ---
->>>>>
->>>>> Changes in v8:
->>>>> - none, this patch is new
->>>>>
->>>>>  drivers/watchdog/rzg2l_wdt.c | 12 ++++++++++++
->>>>>  1 file changed, 12 insertions(+)
->>>>>
->>>>> diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
->>>>> index c8c20cfb97a3..98e5e9914a5d 100644
->>>>> --- a/drivers/watchdog/rzg2l_wdt.c
->>>>> +++ b/drivers/watchdog/rzg2l_wdt.c
->>>>> @@ -12,6 +12,7 @@
->>>>>  #include <linux/module.h>
->>>>>  #include <linux/of.h>
->>>>>  #include <linux/platform_device.h>
->>>>> +#include <linux/pm_domain.h>
->>>>>  #include <linux/pm_runtime.h>
->>>>>  #include <linux/reset.h>
->>>>>  #include <linux/units.h>
->>>>> @@ -164,6 +165,17 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
->>>>>         struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
->>>>>         int ret;
->>>>>
->>>>> +       /*
->>>>> +        * The device may be part of a power domain that is currently
->>>>> +        * powered off. We need to power it up before accessing registers.
->>>>> +        * We don't undo the dev_pm_genpd_resume() as the device need to
->>>>> +        * be up for the reboot to happen. Also, as we are in atomic context
->>>>> +        * here there is no need to increment PM runtime usage counter
->>>>> +        * (to make sure pm_runtime_active() doesn't return wrong code).
->>>>> +        */
->>>>> +       if (!pm_runtime_active(wdev->parent))
->>>>> +               dev_pm_genpd_resume(wdev->parent);
->>>>> +
->>>>
->>>> I doubt this is the correct solution, but I may be wrong. Unless this
->>>> is invoked at the syscore stage?
->>>
->>> On my case I see it invoked from kernel_restart(). As of my code reading,
->>
->> With the above explanations, do you consider calling dev_pm_genpd_resume()
->> here is still wrong?
+>> I'll check later and send a v5.
 > 
-> Yes. At least, those genpd functions were not added to cope for cases like this.
-
-Sorry to bother you, do you have some suggestions on this topic?
-
-On my side I did some investigation to see how else it could be implemented
-but I don't have much clue how to go forward.
-
-Would you prefer to have a separate API to deal with domain power on in
-this scenario? Maybe one that should run only in the reboot context?
-
-Would you consider only updating the description of  dev_pm_genpd_resume()
-and genpd_sync_power_on() to specify that it could run in a reboot context?
-
-Would you consider updating the genpd_switch_state() to take into system
-reboot state and do locking based on that, too?
-
-
+> "anyOf" behavior works as expected on my side, dt-validate pass ;)
 > 
-> Moreover, you still need to find another solution as
-> clk_prepare_enable() can't be called in this path.
 
-The clock driver doesn't implement clk_ops::prepare in all
-micro-architectures that this watchdog driver is used. This may be the
-reason the clk_prepare_enable() was used on this path from the beginning.
+Hey, thanks for the test, buys me some important time.
 
-Even though, a simple solution I have in mind for this is to keep the clk
-prepared all the time.
-
-Thank you,
-Claudiu Beznea
-
-> 
->>
->> Do you have any suggestions I could try?
-> 
-> Not at the moment, but I will try to circle back to this topic more
-> thinking next week, when I have some more time.
-> 
->>
->> Thank you,
->> Claudiu Beznea
-> 
-> Kind regards
-> Uffe
-> 
->>
->>> at that point only one CPU is active with IRQs disabled (done in
->>> machine_restart()). Below is the stack trace decoded on next-20240410 with
->>> this series
->>> (https://lore.kernel.org/all/20240410134044.2138310-1-claudiu.beznea.uj@bp.renesas.com/)
->>> on top and the one from here (adding power domain support):
->>> https://lore.kernel.org/all/20240410122657.2051132-1-claudiu.beznea.uj@bp.renesas.com/
->>>
->>> Hardware name: Renesas SMARC EVK version 2 based on r9a08g045s33 (DT)
->>> Call trace:
->>> dump_backtrace (arch/arm64/kernel/stacktrace.c:319)
->>> show_stack (arch/arm64/kernel/stacktrace.c:326)
->>> dump_stack_lvl (lib/dump_stack.c:117)
->>> dump_stack (lib/dump_stack.c:124)
->>> rzg2l_wdt_restart (drivers/watchdog/rzg2l_wdt.c:180)
->>> watchdog_restart_notifier (drivers/watchdog/watchdog_core.c:188)
->>> atomic_notifier_call_chain (kernel/notifier.c:98 kernel/notifier.c:231)
->>> do_kernel_restart (kernel/reboot.c:236)
->>> machine_restart (arch/arm64/kernel/process.c:145)
->>> kernel_restart (kernel/reboot.c:287)
->>> __do_sys_reboot (kernel/reboot.c:755)
->>> __arm64_sys_reboot (kernel/reboot.c:715)
->>> invoke_syscall (arch/arm64/include/asm/current.h:19
->>> arch/arm64/kernel/syscall.c:53)
->>> el0_svc_common.constprop.0 (include/linux/thread_info.h:127
->>> arch/arm64/kernel/syscall.c:141)
->>> do_el0_svc (arch/arm64/kernel/syscall.c:153)
->>> el0_svc (arch/arm64/include/asm/irqflags.h:56
->>> arch/arm64/include/asm/irqflags.h:77 arch/arm64/kernel/entry-common.c:165
->>> arch/arm64/kernel/entry-common.c:178 arch/arm64/kernel/entry-common.c:713)
->>> el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:731)
->>> el0t_64_sync (arch/arm64/kernel/entry.S:598)
->>>
->>> The watchdog restart handler is added in restart_handler_list and this list
->>> is invoked though do_kernel_restart(). As of my code investigation the
->>> restart_handler_list is invoked only though do_kernel_restart() and only
->>> though the stack trace above.
->>>
->>> Thank you,
->>> Claudiu Beznea
->>>
->>>>
->>>>>         clk_prepare_enable(priv->pclk);
->>>>>         clk_prepare_enable(priv->osc_clk);
->>>>>
->>>>> --
->>>>> 2.39.2
->>>>>
->>>>>
->>>>
->>>> Can you redirectly me to the complete series, so I can have a better
->>>> overview of the problem?
->>>
->>> This is the series that adds power domain support for RZ/G3S SoC:
->>> https://lore.kernel.org/all/20240410122657.2051132-1-claudiu.beznea.uj@bp.renesas.com/
->>>
->>> This is the series that adds watchdog support for RZ/G3S SoC:
->>> https://lore.kernel.org/all/20240410134044.2138310-1-claudiu.beznea.uj@bp.renesas.com/
->>>
->>> Thank you for your review,
->>> Claudiu Beznea
->>>
->>>>
->>>> Kind regards
->>>> Uffe
+Cheers!
+Angelo
 
