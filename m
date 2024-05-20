@@ -1,209 +1,176 @@
-Return-Path: <linux-kernel+bounces-183706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75538C9CCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:59:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D00D28C9CCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 166941C2087D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:59:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47F89B20B0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649A853E2D;
-	Mon, 20 May 2024 11:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fsUmlYuo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6EKitTSP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KZ5b86gE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3XhpOVOA"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F3C53E25;
+	Mon, 20 May 2024 11:59:06 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6A71B960;
-	Mon, 20 May 2024 11:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C2E54BF6;
+	Mon, 20 May 2024 11:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716206335; cv=none; b=FSmjl9oyaUMdsvKP65KVkzbUY91ykhVGW+qwPgpwJYkaK5TbwCHRXMjQcveJAGwCSzJHkJHHz0uGX+7vAy3+tC8lsBRY2McUHeCTq6ABH/q6X+jAHscion41oac9J1w4L9jQpTzAoGzLAW2FbFlIgnoqSdfeAWTEa6wiiIWXVCA=
+	t=1716206345; cv=none; b=neTYBgtreGpu5BVnk+szmVGROGTa3r2a9xMtbYqdkfQ1ZFvNA7y/Lg5gq8FYGcG9Dz+BdJBrH/trOAdDrgzIS5wSjk7Cs/lvaFUJlPna730GN87ZbyETXLxgDxYvm2o0LsEl9QxGbBPeov+sPOPLDUjOVXtVee4WbOXSDloq+TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716206335; c=relaxed/simple;
-	bh=bHNHl9JcLOSKGTPq7jvpEWQfUxyRDiDCngPc1F2Y4h8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K/ImfIGUNGzeLZYPnAfBR+ylt6yKfuruZlOEyDId+omTY+WPA97aIuWcHwRQ7lY/AFFRufVEm/OfB2V2TzgK8tGGgVo79Uv0fwiC9IbC0J0a/R3wcTCLVt/GLEaQYCKCJFm5UemohG7pAV9bAfD7rNzpdp5C8iHWlvmbDXxs0oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fsUmlYuo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6EKitTSP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KZ5b86gE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3XhpOVOA; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E847E20CBB;
-	Mon, 20 May 2024 11:58:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716206332; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UQ0h6zaNbKQHduY01o7fAQC33d55GnLQirB81SYs06U=;
-	b=fsUmlYuoYYddvJ7cs0YoGabDIp5ofkSffhBkM/sYifMORlwhS2rMb24AuMZSx81AAiYG1c
-	b2ZqyHRBDNBKBrkFr08SfYHMpqRC5VgYBIyqjQKWVfvrjAgj7uHTfjk9NmmNWbXSs2EGKd
-	exU9ARjDeCA63yXc3X5OwDZk+LfPG0I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716206332;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UQ0h6zaNbKQHduY01o7fAQC33d55GnLQirB81SYs06U=;
-	b=6EKitTSPmN7XLWrVvRRWnBAo6dHpgTGe7Bj1R1Z8VainveiJBvxV/BWjGX8BFHecApfzeF
-	lgE1+l78EUQzIVCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KZ5b86gE;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=3XhpOVOA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716206331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UQ0h6zaNbKQHduY01o7fAQC33d55GnLQirB81SYs06U=;
-	b=KZ5b86gEJ4Ml/imRWLmSSHHasp1i7AXhSLcXjO5y/Y18zv6ZGmPcoX0pZpiKBq/lx7xuXo
-	tXsG2IDB3QanEKNwrVG2QJ7xQj7n25DDRGQ85tR0LshrO7IZfbKZllw9SNmEiPnhGcg6xc
-	p7qFzY+vNm32pV/P0iJGcWjS/sQSrEU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716206331;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UQ0h6zaNbKQHduY01o7fAQC33d55GnLQirB81SYs06U=;
-	b=3XhpOVOAADnPbdL/pAVyLGDYnXa6G6dD60Zjq5x8BRZQgxyjn+cEJU1M+Oc82dKbSjZMfa
-	UIoAgRchQEQeVHBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D4AD313A6B;
-	Mon, 20 May 2024 11:58:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mvPaM/s6S2ZaWgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 20 May 2024 11:58:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5A29CA08D8; Mon, 20 May 2024 13:58:51 +0200 (CEST)
-Date: Mon, 20 May 2024 13:58:51 +0200
-From: Jan Kara <jack@suse.cz>
-To: Justin Stitt <justinstitt@google.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3] fs: fix unintentional arithmetic wraparound in offset
- calculation
-Message-ID: <20240520115851.gcwj3nwicvr2c4j3@quack3>
-References: <20240517-b4-sio-read_write-v3-1-f180df0a19e6@google.com>
+	s=arc-20240116; t=1716206345; c=relaxed/simple;
+	bh=LnBJ8MxDkQz+E/8LFMQ1ASsV9F3ldjuT22qaa1zk5ps=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hQzSlIgwElwcu2khIHcDgZpwxa33VhAJqJ6C6Z2WPd+E+Fbx1mxCBZBy0cL3REQRuxzq8dfEOnP8pkvbo9DXZQk8LVZOgFxJ3DWmihKRXS4tZ3ePV5NOpjoelAlCBMvNgXyxITy4L8zvepgQlR+pAStorP2GLdorn579hZHqKVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Vjbby5TsBz6JBPr;
+	Mon, 20 May 2024 19:55:26 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3287B140A36;
+	Mon, 20 May 2024 19:59:00 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 20 May
+ 2024 12:58:59 +0100
+Date: Mon, 20 May 2024 12:58:57 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Shiju Jose <shiju.jose@huawei.com>
+CC: Borislav Petkov <bp@alien8.de>, Dan Williams <dan.j.williams@intel.com>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "dave@stgolabs.net"
+	<dave@stgolabs.net>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
+	"alison.schofield@intel.com" <alison.schofield@intel.com>,
+	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, "ira.weiny@intel.com"
+	<ira.weiny@intel.com>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "david@redhat.com" <david@redhat.com>,
+	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>, "leo.duran@amd.com"
+	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
+	"rientjes@google.com" <rientjes@google.com>, "jiaqiyan@google.com"
+	<jiaqiyan@google.com>, "tony.luck@intel.com" <tony.luck@intel.com>,
+	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>, "naoya.horiguchi@nec.com"
+	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
+	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
+	<duenwen@google.com>, "mike.malvestuto@intel.com"
+	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, tanxiaofei
+	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
+	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>, wanghuiqiang
+	<wanghuiqiang@huawei.com>, Linuxarm <linuxarm@huawei.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Jean Delvare
+	<jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
+	<dmitry.torokhov@gmail.com>
+Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
+Message-ID: <20240520125857.00007641@Huawei.com>
+In-Reply-To: <6645f0738ead48a79f1baf753fc709c6@huawei.com>
+References: <4ceb38897d854cc095fca1220d49a4d2@huawei.com>
+	<20240508192546.GHZjvRuvtu0XSJbkmz@fat_crate.local>
+	<20240509101939.0000263a@Huawei.com>
+	<D9511DC1-1566-473A-A426-111BB1F7F9F0@alien8.de>
+	<20240509200306.GAZj0r-h5Tnc0ecIOz@fat_crate.local>
+	<663d3e58a0f73_1c0a1929487@dwillia2-xfh.jf.intel.com.notmuch>
+	<20240509215147.GBZj1Fc06Ieg8EQfnR@fat_crate.local>
+	<663d55515a2d9_db82d2941e@dwillia2-xfh.jf.intel.com.notmuch>
+	<20240510092511.GBZj3n9ye_BCSepFZy@fat_crate.local>
+	<663e55c59d9d_3d7b429475@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	<20240511101705.GAZj9FoVbThp7JUK16@fat_crate.local>
+	<6645f0738ead48a79f1baf753fc709c6@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517-b4-sio-read_write-v3-1-f180df0a19e6@google.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: E847E20CBB
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri 17-05-24 00:29:06, Justin Stitt wrote:
-> When running syzkaller with the newly reintroduced signed integer
-> overflow sanitizer we encounter this report:
+On Mon, 20 May 2024 11:54:50 +0100
+Shiju Jose <shiju.jose@huawei.com> wrote:
+
+> >-----Original Message-----
+> >From: Borislav Petkov <bp@alien8.de>
+> >Sent: 11 May 2024 11:17
+> >To: Dan Williams <dan.j.williams@intel.com>
+> >Cc: Jonathan Cameron <jonathan.cameron@huawei.com>; Shiju Jose
+> ><shiju.jose@huawei.com>; linux-cxl@vger.kernel.org; linux-
+> >acpi@vger.kernel.org; linux-mm@kvack.org; dave@stgolabs.net;
+> >dave.jiang@intel.com; alison.schofield@intel.com; vishal.l.verma@intel.com;
+> >ira.weiny@intel.com; linux-edac@vger.kernel.org; linux-
+> >kernel@vger.kernel.org; david@redhat.com; Vilas.Sridharan@amd.com;
+> >leo.duran@amd.com; Yazen.Ghannam@amd.com; rientjes@google.com;
+> >jiaqiyan@google.com; tony.luck@intel.com; Jon.Grimm@amd.com;
+> >dave.hansen@linux.intel.com; rafael@kernel.org; lenb@kernel.org;
+> >naoya.horiguchi@nec.com; james.morse@arm.com; jthoughton@google.com;
+> >somasundaram.a@hpe.com; erdemaktas@google.com; pgonda@google.com;
+> >duenwen@google.com; mike.malvestuto@intel.com; gthelen@google.com;
+> >wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
+> >wbs@os.amperecomputing.com; nifan.cxl@gmail.com; tanxiaofei
+> ><tanxiaofei@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>;
+> >kangkang.shen@futurewei.com; wanghuiqiang <wanghuiqiang@huawei.com>;
+> >Linuxarm <linuxarm@huawei.com>; Greg Kroah-Hartman
+> ><gregkh@linuxfoundation.org>; Jean Delvare <jdelvare@suse.com>; Guenter
+> >Roeck <linux@roeck-us.net>; Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> >Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
+> >
+> >On Fri, May 10, 2024 at 10:13:41AM -0700, Dan Williams wrote:  
+> >> In fact this question matches my reaction to the last posting [1], and
+> >> led to a much improved cover letter and the "Comparison of scrubbing
+> >> features". To your point there are scrub capabilities already in the
+> >> kernel and we would need to make a decision about what to do about them.  
+> >
+> >The answer to that question is whether this new userspace usage is going to
+> >want to control those too.
+> >
+> >So
+> >
+> >"Use case of scrub control feature"
+> >
+> >from the cover letter is giving two short sentences about what one would do but
+> >I'm still meh. A whole subsystem needing a bunch of effort would need a lot
+> >more justification.
+> >
+> >So can anyone please elaborate more on the use cases and why this new thing is
+> >needed?  
 > 
-> UBSAN: signed-integer-overflow in ../fs/read_write.c:91:10
-> 9223372036854775807 + 4096 cannot be represented in type 'loff_t' (aka 'long long')
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x93/0xd0
->  handle_overflow+0x171/0x1b0
->  generic_file_llseek_size+0x35b/0x380
+> Following are some of the use cases of generic scrub control subsystem as given in the cover letter.
+> Request please add any other use cases, which I missed.
 > 
-> ... amongst others:
-> UBSAN: signed-integer-overflow in ../fs/read_write.c:1657:12
-> 142606336 - -9223372036854775807 cannot be represented in type 'loff_t' (aka 'long long')
-> ...
-> UBSAN: signed-integer-overflow in ../fs/read_write.c:1666:11
-> 9223372036854775807 - -9223231299366420479 cannot be represented in type 'loff_t' (aka 'long long')
+> 1. There are several types of interfaces to HW memory scrubbers identified such as ACPI NVDIMM ARS(Address Range Scrub), CXL memory device patrol scrub, CXL DDR5 ECS, ACPI RAS2 memory scrubbing features and software based memory scrubber(discussed in the community Reference [5] in the cover letter). Also some scrubbers support controlling (background) patrol scrubbing(ACPI RAS2, CXL)  and/or on-demand scrubbing(ACPI RAS2, ACPI ARS).  However the scrub controls varies between memory scrubbers. Thus there is  a need  for a standard generic ABI and sysfs scrub controls for the userspace tools, which control HW and SW scrubbers in the system, for the easiness of use.
+> 2. Scrub controls in user space allow the user space tool to disable and enable the feature in case disabling of the background patrol  scrubbing and changing the scrub rate are needed for other purposes such as performance-aware operations which requires the background operations to be turned off or reduced.
+> 3. Allows to perform on-demand scrubbing for specific address range if supported by the scrubber.
+> 4. User space tools controls scrub the memory DIMMs regularly at a configurable scrub rate using the sysfs scrub controls discussed help, 
+>     - to detect uncorrectable memory errors early before user accessing memory, which helps to recover the detected memory errors.
+>     -  reduces the chance of a correctable error becoming uncorrectable.
+
+Just to add one more reason a user space interface is needed.
+5. Policy control for hotplugged memory.  There is not necessarily a system wide bios
+   or similar in the loop to control the scrub settings on a CXL device that wasn't
+   there at boot.  What that setting should be is a policy decision as we are trading
+   of reliability vs performance - hence it should be in control of userspace.
+   As such, 'an' interface is needed. Seems more sensible to try and unify it with
+   other similar interfaces than spin yet another one.
+
 > 
-> Fix the accidental overflow in these position and offset calculations
-> by checking for negative position values, using check_add_overflow()
-> helpers and clamping values to expected ranges.
+> Regards,
+> Shiju
 > 
-> Link: https://github.com/llvm/llvm-project/pull/82432 [1]
-> Closes: https://github.com/KSPP/linux/issues/358
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Justin Stitt <justinstitt@google.com>
 
-Except for the unfortunate wording in the changelog, the code actually
-looks easier to grasp to me and if it helps the compiler as well, I'm in
-favor of this change (but I definitely don't want to overrule Al if he
-hates it ;)).
-
-Regarding the code:
-
-> @@ -1467,8 +1470,8 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
->  
->  	/* Don't allow overlapped copying within the same file. */
->  	if (inode_in == inode_out &&
-> -	    pos_out + count > pos_in &&
-> -	    pos_out < pos_in + count)
-> +	    out_sum > pos_in &&
-> +	    pos_out < in_sum)
->  		return -EINVAL;
-
-This is actually subtly wrong becaue 'count' could have been updated
-(shrinked) between the check_add_overflow() and this place. So please keep
-the old checks here.
-
-> @@ -1649,6 +1652,9 @@ int generic_write_check_limits(struct file *file, loff_t pos, loff_t *count)
->  	loff_t max_size = inode->i_sb->s_maxbytes;
->  	loff_t limit = rlimit(RLIMIT_FSIZE);
->  
-> +	if (pos < 0)
-> +		return -EINVAL;
-> +
->  	if (limit != RLIM_INFINITY) {
->  		if (pos >= limit) {
->  			send_sig(SIGXFSZ, current, 0);
-
-Here I'm a bit confused. How is this related to the signed overflow
-handling?
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
