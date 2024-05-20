@@ -1,253 +1,78 @@
-Return-Path: <linux-kernel+bounces-184154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A148CA346
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:27:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D24B8CA34A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 22:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA881C20BE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:27:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1336F1F2242C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 20:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D6113956D;
-	Mon, 20 May 2024 20:27:24 +0000 (UTC)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC6F139584;
+	Mon, 20 May 2024 20:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTb+EUbA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F810D27A;
-	Mon, 20 May 2024 20:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A091384A3
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716236843; cv=none; b=sH0XDhRLEKeWhyrqSyt4FWbt3L92MgJTMZd0fcv8AN9kmJqBDmCTxJuzByq2+qJ94GUZiORp3o5LRfBD1FXiX+9hhe5oWbUd1PVkJepWUV0N7frhN3Uhz0V3pmThv466UeTaxOFnGJcpMlKtIHX0DlKm/9FGRwRH8sC9h2aF8gY=
+	t=1716237019; cv=none; b=WEjLCGb/bsldV3xnTkyOMnyjFxIR2wXGexYJOJ52moCr/kPAWbUc2n+gR0dteXjYhkxCsgu21ttlxV3GjejzBtnsDADH3HOKbzM55WJOhHlhAUK5fyN4iB5lWVznYz0cnA/u0cO+FB+7LbcM8W/VOGPs667OW9flXRyvFhIXUAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716236843; c=relaxed/simple;
-	bh=DPNMR0dai6CsnVakgvW2Fd/A5c8P+Rm2HMfKXqeK+vQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ml+O5PtJwINxAyU2AwUnFb1hn/ZN6dxZKXWdqA+kNkdYxSLnVfGE8VSTtptphjQerjFXp7EEkznFubpeRu0ewKsXxDUBdg++vYBzE/fzyVt7Cy1sVhIEOgHmGI1j5s+9sRcKI76b/8Jb3Pl14WOljahk+V8soU7AIbbeF7rv5xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1eeabda8590so82073645ad.0;
-        Mon, 20 May 2024 13:27:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716236841; x=1716841641;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MBBDVdk3mUf9czCJHGBFp0f/PIa7dl2k3ghnmPWelu4=;
-        b=cqNOujb/C6P/uLb/O5Pi0zBCwKQShb03EEyyccBxO925f6W7IfpbMWsPIjPa+vdefx
-         pXE2fxoF6cMvXnTrqWf4+krQM0Ua65h7Jbljf30se5D9lz9mc84BkxSdUrm3t7UKaavl
-         /ujZ+zmuePPylRx5LmEln1PrFy169ZAt4E8LbI42G/gF7rDWe+Wg0xYX5LyaYTwsDUy/
-         otYBEJE4R2ZU5O6of2I0z1ludtZNHsJ8gtLx9JxdNdFayzOeXO3l9CJqgC3l3VIupRcI
-         65a9OyPsnGC445CNZA6nOBtbfSCtdtaoykI6dSf4JhB11G++wxcj/bjM+84zatga4u62
-         HQzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRC9b8rJJJ3nh+n1WuddXtCPehZAAUJnoOPh46tWIFD9ivdnKBXaOjuxBVL69+sqKb5DNXWMTHzPaJ13mIpnMJf9ezjQrp+0HatRddysCb8SRELFd4scadkajzsy5jsf/1TbQ0LhpP4VbGneOrW2/S4330LqtzR/lDupGnOAFzjU5hdw==
-X-Gm-Message-State: AOJu0Yye1bCZQpvQSDNvatQTb/bfbZI/F4Gamlgn4pK2gMiXfjGVbvpf
-	+jRXVKosvoe8svAGk9U+wpNkJBGjEBASpQjO3xh/BDGsyl4r2onctjXaSHeg/0+rkA2cYjgn7xk
-	dhPIrLcqmAOzG2eD4c5ZvlZ+AuR4=
-X-Google-Smtp-Source: AGHT+IGNnQWAhn/RHc22IBMOv2bxhlwMzwavLARkBxkn2TShIAhlwUJLGDusFMTrK/I/hcs/NJUQQI/tIoIHurH0IYY=
-X-Received: by 2002:a05:6a20:101a:b0:1af:a4bc:1f71 with SMTP id
- adf61e73a8af0-1afde10de4amr25390712637.26.1716236841435; Mon, 20 May 2024
- 13:27:21 -0700 (PDT)
+	s=arc-20240116; t=1716237019; c=relaxed/simple;
+	bh=LXSUUECeY4XGsL7QYyf+TXUuVGBlieNNwYUMtHidaqE=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Tk2fLT67Bc2ZB4m7wEs9S7vQw7WrepgLVDQz0mOWUaSRcQ6pjCQmNJCNXdOOLHv63aqsdJww4u8Fnv7Y7LKt94327cKgKsNqwKqBcLcFcC/ehtJ+9pSkJiJ8uyDp3qq4R8skJjqZRQEQss40v5jzYPANqKcSkQJv7qarlaqlsjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTb+EUbA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0B4BDC2BD10;
+	Mon, 20 May 2024 20:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716237019;
+	bh=LXSUUECeY4XGsL7QYyf+TXUuVGBlieNNwYUMtHidaqE=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=OTb+EUbAbXv9bhBO4rBXIP7Cx+DlLSsv3bcc0BuFmCPtCVxlCHbwxP5iOl7qUtz9N
+	 HDumJOrV7UM6ZFsUurMdEO5ZbxPSierzoDds6ShQtdOT5Of88+NZP8D8d5mN6tACbm
+	 ZE/eosaEWWgfNNc5z10D3YPAPDAGxofvX4DwnLm6Lt3Wo5ssGiTyND0BuUQa1JO61q
+	 QLB5bAAi8RAiHaPQECx4xEc/PIefs6itzXkaRo6ZgwPy4gw7w9/flLL2ZW2uZ/AS2u
+	 RqbPNUpmYZsr7Xt9Ala9Pcx0iBzUPYZmkiNa2dMw+vDDfhIhT3QqZ8Hahur0Tai64o
+	 Cb+U0Pz9Erg3Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EB91CC54BDA;
+	Mon, 20 May 2024 20:30:18 +0000 (UTC)
+Subject: Re: [f2fs-dev] [GIT PULL] f2fs update for 6.10-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZkumXs7POGImbr-k@google.com>
+References: <ZkumXs7POGImbr-k@google.com>
+X-PR-Tracked-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+X-PR-Tracked-Message-Id: <ZkumXs7POGImbr-k@google.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.10.rc1
+X-PR-Tracked-Commit-Id: 16409fdbb8828d7ae829bc4ac4e09e7ff02f8878
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 72ece20127a366518d91c5ab8e9dd8bf7d7fdb2f
+Message-Id: <171623701895.8142.8608336086340569971.pr-tracker-bot@kernel.org>
+Date: Mon, 20 May 2024 20:30:18 +0000
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240516041948.3546553-1-irogers@google.com> <20240516041948.3546553-2-irogers@google.com>
- <CAM9d7ch51JK8Xu+kOYUdxgM10_gS2=vjfW5sqFwrRS2eC8cYXA@mail.gmail.com> <CAP-5=fXNQ0=8mKKkBrmA9JpNLZEoQxb=AEYjBT-_brFt3Qom-A@mail.gmail.com>
-In-Reply-To: <CAP-5=fXNQ0=8mKKkBrmA9JpNLZEoQxb=AEYjBT-_brFt3Qom-A@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Mon, 20 May 2024 13:27:09 -0700
-Message-ID: <CAM9d7cj4c-twjH5TgLiJ-9qoxkdh0v5mmU_dA87BrjsO5q7brA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] perf bpf filter: Give terms their own enum
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Changbin Du <changbin.du@huawei.com>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 17, 2024 at 8:30=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Fri, May 17, 2024 at 6:36=E2=80=AFPM Namhyung Kim <namhyung@kernel.org=
-> wrote:
-> >
-> > On Wed, May 15, 2024 at 9:20=E2=80=AFPM Ian Rogers <irogers@google.com>=
- wrote:
-> > >
-> > > Give the term types their own enum so that additional terms can be
-> > > added that don't correspond to a PERF_SAMPLE_xx flag. The term values
-> > > are numerically ascending rather than bit field positions, this means
-> > > they need translating to a PERF_SAMPLE_xx bit field in certain places
-> > > and they are more densely encoded.
-> > >
-> > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > ---
-> > [SNIP]
-> > > diff --git a/tools/perf/util/bpf_skel/sample_filter.bpf.c b/tools/per=
-f/util/bpf_skel/sample_filter.bpf.c
-> > > index fb94f5280626..8666c85e9333 100644
-> > > --- a/tools/perf/util/bpf_skel/sample_filter.bpf.c
-> > > +++ b/tools/perf/util/bpf_skel/sample_filter.bpf.c
-> > > @@ -48,31 +48,50 @@ static inline __u64 perf_get_sample(struct bpf_pe=
-rf_event_data_kern *kctx,
-> > >  {
-> > >         struct perf_sample_data___new *data =3D (void *)kctx->data;
-> > >
-> > > -       if (!bpf_core_field_exists(data->sample_flags) ||
-> > > -           (data->sample_flags & entry->flags) =3D=3D 0)
-> > > +       if (!bpf_core_field_exists(data->sample_flags))
-> > >                 return 0;
-> > >
-> > > -       switch (entry->flags) {
-> > > -       case PERF_SAMPLE_IP:
-> > > +       switch (entry->term) {
-> > > +       case PBF_TERM_NONE:
-> > > +               return 0;
-> > > +       case PBF_TERM_IP:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_IP) =3D=3D 0)
-> > > +                       return 0;
-> >
-> > Can we check this in a single place like in the original code
-> > instead of doing it in every case?  I think we can keep the
-> > entry->flags and check it only if it's non zero.  Then uid and
-> > gid will have 0 to skip.
->
-> I found the old way confusing. As the flags are a bitmap it looks like
-> more than one can be set, if that were the case then the switch
-> statement would be broken as the case wouldn't exist. Using an enum
+The pull request you sent on Mon, 20 May 2024 19:37:02 +0000:
 
-The entry->flags is set by the bpf-filter code and it's guaranteed
-to have a single bit.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.10.rc1
 
-> like this allows warnings to occur when a term is missing in the
-> switch statement - which is good when you are adding new terms. I
-> think it more obviously matches the man page. We could arrange for the
-> enum values to encode the shift position of the flag. Something like:
->
-> if ((entry->term > PBF_TERM_NONE && entry->term <=3D PBF_TERM_DATA_SRC) &=
-&
->     (data->sample_flags & (1 << entry->term)) =3D=3D 0)
->    return 0;
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/72ece20127a366518d91c5ab8e9dd8bf7d7fdb2f
 
-Actually I'm ok with enum (and bit shift if needed).  I'm just thinking
-if it'd be nicer if we can have a check in a single place.
+Thank you!
 
->
-> But the problem there is that not every sample type has an enum value,
-> and I'm not sure it makes sense for things like STREAM_ID. We could do
-> some macro magic to reduce the verbosity like:
->
-> #define SAMPLE_CASE(x) \
->     case PBF_TERM_##x: \
->         if ((data->sample_flags & PERF_SAMPLE_x) =3D=3D 0) \
->             return 0
->
-> But I thought that made the code harder to read given the relatively
-> small number of sample cases.
-
-I also want to avoid the macro if possible.
-
-Thanks,
-Namhyung
-
-
-> >
-> > >                 return kctx->data->ip;
-> > > -       case PERF_SAMPLE_ID:
-> > > +       case PBF_TERM_ID:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_ID) =3D=3D 0)
-> > > +                       return 0;
-> > >                 return kctx->data->id;
-> > > -       case PERF_SAMPLE_TID:
-> > > +       case PBF_TERM_TID:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_TID) =3D=3D 0)
-> > > +                       return 0;
-> > >                 if (entry->part)
-> > >                         return kctx->data->tid_entry.pid;
-> > >                 else
-> > >                         return kctx->data->tid_entry.tid;
-> > > -       case PERF_SAMPLE_CPU:
-> > > +       case PBF_TERM_CPU:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_CPU) =3D=3D 0)
-> > > +                       return 0;
-> > >                 return kctx->data->cpu_entry.cpu;
-> > > -       case PERF_SAMPLE_TIME:
-> > > +       case PBF_TERM_TIME:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_TIME) =3D=3D 0)
-> > > +                       return 0;
-> > >                 return kctx->data->time;
-> > > -       case PERF_SAMPLE_ADDR:
-> > > +       case PBF_TERM_ADDR:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_ADDR) =3D=3D 0)
-> > > +                       return 0;
-> > >                 return kctx->data->addr;
-> > > -       case PERF_SAMPLE_PERIOD:
-> > > +       case PBF_TERM_PERIOD:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_PERIOD) =3D=3D =
-0)
-> > > +                       return 0;
-> > >                 return kctx->data->period;
-> > > -       case PERF_SAMPLE_TRANSACTION:
-> > > +       case PBF_TERM_TRANSACTION:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_TRANSACTION) =
-=3D=3D 0)
-> > > +                       return 0;
-> > >                 return kctx->data->txn;
-> > > -       case PERF_SAMPLE_WEIGHT_STRUCT:
-> > > +       case PBF_TERM_WEIGHT_STRUCT:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_WEIGHT_STRUCT) =
-=3D=3D 0)
-> > > +                       return 0;
-> > >                 if (entry->part =3D=3D 1)
-> > >                         return kctx->data->weight.var1_dw;
-> > >                 if (entry->part =3D=3D 2)
-> > > @@ -80,15 +99,25 @@ static inline __u64 perf_get_sample(struct bpf_pe=
-rf_event_data_kern *kctx,
-> > >                 if (entry->part =3D=3D 3)
-> > >                         return kctx->data->weight.var3_w;
-> > >                 /* fall through */
-> > > -       case PERF_SAMPLE_WEIGHT:
-> > > +       case PBF_TERM_WEIGHT:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_WEIGHT) =3D=3D =
-0)
-> > > +                       return 0;
-> > >                 return kctx->data->weight.full;
-> > > -       case PERF_SAMPLE_PHYS_ADDR:
-> > > +       case PBF_TERM_PHYS_ADDR:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_PHYS_ADDR) =3D=
-=3D 0)
-> > > +                       return 0;
-> > >                 return kctx->data->phys_addr;
-> > > -       case PERF_SAMPLE_CODE_PAGE_SIZE:
-> > > +       case PBF_TERM_CODE_PAGE_SIZE:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_CODE_PAGE_SIZE)=
- =3D=3D 0)
-> > > +                       return 0;
-> > >                 return kctx->data->code_page_size;
-> > > -       case PERF_SAMPLE_DATA_PAGE_SIZE:
-> > > +       case PBF_TERM_DATA_PAGE_SIZE:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_DATA_PAGE_SIZE)=
- =3D=3D 0)
-> > > +                       return 0;
-> > >                 return kctx->data->data_page_size;
-> > > -       case PERF_SAMPLE_DATA_SRC:
-> > > +       case PBF_TERM_DATA_SRC:
-> > > +               if ((data->sample_flags & PERF_SAMPLE_DATA_SRC) =3D=
-=3D 0)
-> > > +                       return 0;
-> > >                 if (entry->part =3D=3D 1)
-> > >                         return kctx->data->data_src.mem_op;
-> > >                 if (entry->part =3D=3D 2)
-> > > --
-> > > 2.45.0.rc1.225.g2a3ae87e7f-goog
-> > >
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
