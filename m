@@ -1,349 +1,143 @@
-Return-Path: <linux-kernel+bounces-183847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B23B8C9EDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:34:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0508C9EE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C22841F21EF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:34:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D651F21EE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC34137775;
-	Mon, 20 May 2024 14:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4516713699B;
+	Mon, 20 May 2024 14:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggletEnJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U5u7d1NX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9622E7C0B2;
-	Mon, 20 May 2024 14:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7B8182DF;
+	Mon, 20 May 2024 14:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716215604; cv=none; b=ZehN82VuTMLd0hMvUz7U2bvMLBcCHTkkVCe0mw0ULMXKYZKqKtw+DVYIFAsIC7yCA96Byaxdqdva+BeQwGGuqEaP6G5HsrRFFfCl6Fm1PkueKJxAOaW1bwqFrne2HDdvVk3JCI9mCqIaQfh7AXmTZtkla6TL49cDJM5wGc7ChOI=
+	t=1716215716; cv=none; b=nxcxMVQiCnetOn6Xc+V2ouT8bRvdYXny/tQFGPO7j1LtITMi+udaeICXUTpw/i3hpNh+R0mt0H9qIGG2XiRN2f8Il54/MfIbUiExDIAN384hS2pfVWiL5jffZfExTWjlzGxTbFJMaUE8hZASYuZaSZ3ekZ0cg8XyQxW/lZ3HAKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716215604; c=relaxed/simple;
-	bh=xciCHReFFZlVddQDu0g7FFTsuuoF7H/QKFVGKEg8Gc4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZEqlV5guO/Ct8vqbCOTk5eiTvEjLIiJPon8L5Gty0iWGAivT9MuvzSn9oKK53gtc7vKbxMzBljdZcAkwY7t5ZZovx1WKUTz6GJrNElDJXrIvn6FCLdWhBZnReaKob+33gi/mJpSLEp8TNsQIt1T6J7AYKW/jDUFl9SpdlIyXnEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggletEnJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D3EC2BD10;
-	Mon, 20 May 2024 14:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716215604;
-	bh=xciCHReFFZlVddQDu0g7FFTsuuoF7H/QKFVGKEg8Gc4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ggletEnJVNvT+XMfBN6K1gVjC0KEbb4ExeLzLf0vbaRRHkZ7IEvEOZKQ/PDc2oi8E
-	 pXage4QdiC0oUqSrpJiUeB0dKqWhB9I2hK5C8yyHuxu3ceh9gv3Z3LhdYf2h19+aDY
-	 oFvXuSOCMpaBZfU2sTrfs2yKp2E1sJ2bpIDWvK9q4yAf2KdBD459pZm2g4WzKYdPaZ
-	 9LKPkZgdyYVLe5mOYkhyVJZG4nDEp5EiHkvCVT78MBz3DJ+jvCWsC1a70wZeVO+0qJ
-	 P7lIZ7Cvagfs8b82Dg3wnyXYXdq61GunvMX/02kzLwD+9UncB7By2qWgOYlHFsdMqd
-	 ZZ624nKVYYE4w==
-Message-ID: <c31f663f-36c0-4db2-8bf6-8e3c699073ca@kernel.org>
-Date: Mon, 20 May 2024 16:33:15 +0200
+	s=arc-20240116; t=1716215716; c=relaxed/simple;
+	bh=yCoPR1d+Zt+QtoUbnC3otqSv3QoByt1aVGPymXoVu5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SrkjuxHZFVzOEGFJ7QdGe9pjWfiDiqrhEeRJHG8JLIHd7IJdQpGoCgAycQUgCQ73/Rm0mdebbL1fGvJDN9WZYs27EKIEs9/zVj2AdJLHsp2nMhjaWgg5e/purx02+JaffAnTK2P8N10BS1KqvLrDnFTqJbpmIQNLis1YCcTs6io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U5u7d1NX; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716215714; x=1747751714;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yCoPR1d+Zt+QtoUbnC3otqSv3QoByt1aVGPymXoVu5Y=;
+  b=U5u7d1NXhq4z7FMTINQmbgMHKIHAiZ8OarvD4hIpHE8Cba9PCjWn1C8w
+   GGv0AteNCSIQlMkpe6NPOXtoAwQf6l7rmXyYOWj8kBHRFsCRm2s+YoGzY
+   J4JGrfSyNtVGNGK2Ez/bNRBtYuF8lGLUYA4V9dKjQPboZs6veT3KlVfrN
+   a11ifo05wzrPePviDMU92Gyu4awXnbqfoIb8N6wE1ctOKkUEKzEoFLsVx
+   4vo5AiUVqylIpmNHYbz37/cXNXyQTBjz6s85PQwg0ReGr02qc7HdbljWa
+   iMighBxHslfh499uG5BCx9xgsEO1v0Oda4niYRN/agRaMr7lLg2l+yWhg
+   w==;
+X-CSE-ConnectionGUID: qh4/56dITF2iDPCF63LiaA==
+X-CSE-MsgGUID: +8qul86URUq9pANi3rFneA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="29866678"
+X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
+   d="scan'208";a="29866678"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 07:35:13 -0700
+X-CSE-ConnectionGUID: 8ZK9kJk8RlmKxp8jpC69jA==
+X-CSE-MsgGUID: SsWd1+giTGaMnFnAdrEnAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
+   d="scan'208";a="32588040"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 07:35:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s946S-00000009L88-12iK;
+	Mon, 20 May 2024 17:35:04 +0300
+Date: Mon, 20 May 2024 17:35:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: Daniel Latypov <dlatypov@google.com>, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benjamin.gaignard@collabora.com,
+	sebastian.fricke@collabora.com, akpm@linux-foundation.org,
+	gregkh@linuxfoundation.org, adobriyan@gmail.com,
+	jani.nikula@intel.com, p.zabel@pengutronix.de, airlied@gmail.com,
+	daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+	laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
+	vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
+	detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
+	andrzej.p@collabora.com, nicolas@ndufresne.ca, davidgow@google.com
+Subject: Re: [PATCH v8 07/10] lib: add basic KUnit test for lib/math
+Message-ID: <ZktfmF1a7gzc-hqB@smile.fi.intel.com>
+References: <20240517171532.748684-1-devarsht@ti.com>
+ <20240517173607.800549-1-devarsht@ti.com>
+ <Zke6o3HYnUrgtD0K@smile.fi.intel.com>
+ <7b8cd37b-5b16-2d99-ab62-5d6876e6571c@ti.com>
+ <ZktAlza1zEke1eCx@smile.fi.intel.com>
+ <01bd1d88-2cff-ad12-c7fb-3f2eddcfd899@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 01/12] block: Introduce queue limits and sysfs for
- copy-offload support
-To: Nitesh Shetty <nj.shetty@samsung.com>, Jens Axboe <axboe@kernel.dk>,
- Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
- hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
- joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
- <CGME20240520102830epcas5p27274901f3d0c2738c515709890b1dec4@epcas5p2.samsung.com>
- <20240520102033.9361-2-nj.shetty@samsung.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20240520102033.9361-2-nj.shetty@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01bd1d88-2cff-ad12-c7fb-3f2eddcfd899@ti.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 2024/05/20 12:20, Nitesh Shetty wrote:
-> Add device limits as sysfs entries,
-> 	- copy_max_bytes (RW)
-> 	- copy_max_hw_bytes (RO)
+On Mon, May 20, 2024 at 07:51:24PM +0530, Devarsh Thakkar wrote:
+> On 20/05/24 17:52, Andy Shevchenko wrote:
+> > On Mon, May 20, 2024 at 05:11:18PM +0530, Devarsh Thakkar wrote:
+> >> On 18/05/24 01:44, Andy Shevchenko wrote:
+> >>> On Fri, May 17, 2024 at 11:06:07PM +0530, Devarsh Thakkar wrote:
+
+[..]
+
+> > Yes, and one should follow IWYU principle and not cargo cult or whatever
+> > arbitrary lists.
 > 
-> Above limits help to split the copy payload in block layer.
-> copy_max_bytes: maximum total length of copy in single payload.
-> copy_max_hw_bytes: Reflects the device supported maximum limit.
+> Agreed.
+
+> >>>> +#include <linux/lcm.h>
+> >>>
+> >>> + math.h // obviously
+> >>> + module.h
+> >>>
+> >>>> +#include <linux/reciprocal_div.h>
+> >>>
+> >>> + types.h
+> >>
+> >> All the above headers are already included as part of kernel.h
+> > 
+> > Yes, that's why you should not use "proxy" headers.
+> > Have you read the top comment in the kernel.h?
 > 
-> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> ---
->  Documentation/ABI/stable/sysfs-block | 23 +++++++++++++++
->  block/blk-settings.c                 | 34 ++++++++++++++++++++--
->  block/blk-sysfs.c                    | 43 ++++++++++++++++++++++++++++
->  include/linux/blkdev.h               | 14 +++++++++
->  4 files changed, 112 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
-> index 831f19a32e08..52d8a253bf8e 100644
-> --- a/Documentation/ABI/stable/sysfs-block
-> +++ b/Documentation/ABI/stable/sysfs-block
-> @@ -165,6 +165,29 @@ Description:
->  		last zone of the device which may be smaller.
->  
->  
-> +What:		/sys/block/<disk>/queue/copy_max_bytes
-> +Date:		May 2024
-> +Contact:	linux-block@vger.kernel.org
-> +Description:
-> +		[RW] This is the maximum number of bytes that the block layer
-> +		will allow for a copy request. This is always smaller or
-> +		equal to the maximum size allowed by the hardware, indicated by
-> +		'copy_max_hw_bytes'. An attempt to set a value higher than
-> +		'copy_max_hw_bytes' will truncate this to 'copy_max_hw_bytes'.
-> +		Writing '0' to this file will disable offloading copies for this
-> +		device, instead copy is done via emulation.
-> +
-> +
-> +What:		/sys/block/<disk>/queue/copy_max_hw_bytes
-> +Date:		May 2024
-> +Contact:	linux-block@vger.kernel.org
-> +Description:
-> +		[RO] This is the maximum number of bytes that the hardware
-> +		will allow for single data copy request.
-> +		A value of 0 means that the device does not support
-> +		copy offload.
-> +
-> +
->  What:		/sys/block/<disk>/queue/crypto/
->  Date:		February 2022
->  Contact:	linux-block@vger.kernel.org
-> diff --git a/block/blk-settings.c b/block/blk-settings.c
-> index a7fe8e90240a..67010ed82422 100644
-> --- a/block/blk-settings.c
-> +++ b/block/blk-settings.c
-> @@ -52,6 +52,9 @@ void blk_set_stacking_limits(struct queue_limits *lim)
->  	lim->max_write_zeroes_sectors = UINT_MAX;
->  	lim->max_zone_append_sectors = UINT_MAX;
->  	lim->max_user_discard_sectors = UINT_MAX;
-> +	lim->max_copy_hw_sectors = UINT_MAX;
-> +	lim->max_copy_sectors = UINT_MAX;
-> +	lim->max_user_copy_sectors = UINT_MAX;
->  }
->  EXPORT_SYMBOL(blk_set_stacking_limits);
->  
-> @@ -219,6 +222,9 @@ static int blk_validate_limits(struct queue_limits *lim)
->  		lim->misaligned = 0;
->  	}
->  
-> +	lim->max_copy_sectors =
-> +		min(lim->max_copy_hw_sectors, lim->max_user_copy_sectors);
-> +
->  	return blk_validate_zoned_limits(lim);
->  }
->  
-> @@ -231,10 +237,11 @@ int blk_set_default_limits(struct queue_limits *lim)
->  {
->  	/*
->  	 * Most defaults are set by capping the bounds in blk_validate_limits,
-> -	 * but max_user_discard_sectors is special and needs an explicit
-> -	 * initialization to the max value here.
-> +	 * but max_user_discard_sectors and max_user_copy_sectors are special
-> +	 * and needs an explicit initialization to the max value here.
+> Yes, it says it is not recommended to include this inside another header file.
+> Although here we are adding it inside c file, but I can still try avoid it and
+> include only the required headers instead of kernel.h as you recommended.
 
-s/needs/need
+Right, but the first sentence there is
+"This header has combined a lot of unrelated to each other stuff."
 
->  	 */
->  	lim->max_user_discard_sectors = UINT_MAX;
-> +	lim->max_user_copy_sectors = UINT_MAX;
->  	return blk_validate_limits(lim);
->  }
->  
-> @@ -316,6 +323,25 @@ void blk_queue_max_discard_sectors(struct request_queue *q,
->  }
->  EXPORT_SYMBOL(blk_queue_max_discard_sectors);
->  
-> +/*
-> + * blk_queue_max_copy_hw_sectors - set max sectors for a single copy payload
-> + * @q:	the request queue for the device
-> + * @max_copy_sectors: maximum number of sectors to copy
-> + */
-> +void blk_queue_max_copy_hw_sectors(struct request_queue *q,
-> +				   unsigned int max_copy_sectors)
-> +{
-> +	struct queue_limits *lim = &q->limits;
-> +
-> +	if (max_copy_sectors > (BLK_COPY_MAX_BYTES >> SECTOR_SHIFT))
-> +		max_copy_sectors = BLK_COPY_MAX_BYTES >> SECTOR_SHIFT;
-> +
-> +	lim->max_copy_hw_sectors = max_copy_sectors;
-> +	lim->max_copy_sectors =
-> +		min(max_copy_sectors, lim->max_user_copy_sectors);
-> +}
-> +EXPORT_SYMBOL_GPL(blk_queue_max_copy_hw_sectors);
+Can you explain how you use in your code all that unrelated stuff?
+For example, how do you use *trace_*() calls? Or maybe might_*() calls?
+or anything else that is directly provided by kernel.h?
 
-Hmm... Such helper seems to not fit with Christoph's changes of the limits
-initialization as that is not necessarily done using &q->limits but depending on
-the driver, a different limit structure. So shouldn't this function be passed a
-queue_limits struct pointer instead of the request queue pointer ?
-
-> +
->  /**
->   * blk_queue_max_secure_erase_sectors - set max sectors for a secure erase
->   * @q:  the request queue for the device
-> @@ -633,6 +659,10 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
->  	t->max_segment_size = min_not_zero(t->max_segment_size,
->  					   b->max_segment_size);
->  
-> +	t->max_copy_sectors = min(t->max_copy_sectors, b->max_copy_sectors);
-> +	t->max_copy_hw_sectors = min(t->max_copy_hw_sectors,
-> +				     b->max_copy_hw_sectors);
-> +
->  	t->misaligned |= b->misaligned;
->  
->  	alignment = queue_limit_alignment_offset(b, start);
-> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-> index f0f9314ab65c..805c2b6b0393 100644
-> --- a/block/blk-sysfs.c
-> +++ b/block/blk-sysfs.c
-> @@ -205,6 +205,44 @@ static ssize_t queue_discard_zeroes_data_show(struct request_queue *q, char *pag
->  	return queue_var_show(0, page);
->  }
->  
-> +static ssize_t queue_copy_hw_max_show(struct request_queue *q, char *page)
-> +{
-> +	return sprintf(page, "%llu\n", (unsigned long long)
-> +		       q->limits.max_copy_hw_sectors << SECTOR_SHIFT);
-> +}
-> +
-> +static ssize_t queue_copy_max_show(struct request_queue *q, char *page)
-> +{
-> +	return sprintf(page, "%llu\n", (unsigned long long)
-> +		       q->limits.max_copy_sectors << SECTOR_SHIFT);
-> +}
-
-Given that you repeat the same pattern twice, may be add a queue_var64_show()
-helper ? (naming can be changed).
-
-> +
-> +static ssize_t queue_copy_max_store(struct request_queue *q, const char *page,
-> +				    size_t count)
-> +{
-> +	unsigned long max_copy_bytes;
-> +	struct queue_limits lim;
-> +	ssize_t ret;
-> +	int err;
-> +
-> +	ret = queue_var_store(&max_copy_bytes, page, count);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (max_copy_bytes & (queue_logical_block_size(q) - 1))
-> +		return -EINVAL;
-> +
-> +	blk_mq_freeze_queue(q);
-> +	lim = queue_limits_start_update(q);
-> +	lim.max_user_copy_sectors = max_copy_bytes >> SECTOR_SHIFT;
-
-max_copy_bytes is an unsigned long, so 64 bits on 64-bit arch and
-max_user_copy_sectors is an unsigned int, so 32-bits. There are thus no
-guarantees that this will not overflow. A check is needed.
-
-> +	err = queue_limits_commit_update(q, &lim);
-> +	blk_mq_unfreeze_queue(q);
-> +
-> +	if (err)
-
-You can reuse ret here. No need for adding the err variable.
-
-> +		return err;
-> +	return count;
-> +}
-> +
->  static ssize_t queue_write_same_max_show(struct request_queue *q, char *page)
->  {
->  	return queue_var_show(0, page);
-> @@ -505,6 +543,9 @@ QUEUE_RO_ENTRY(queue_nr_zones, "nr_zones");
->  QUEUE_RO_ENTRY(queue_max_open_zones, "max_open_zones");
->  QUEUE_RO_ENTRY(queue_max_active_zones, "max_active_zones");
->  
-> +QUEUE_RO_ENTRY(queue_copy_hw_max, "copy_max_hw_bytes");
-> +QUEUE_RW_ENTRY(queue_copy_max, "copy_max_bytes");
-> +
->  QUEUE_RW_ENTRY(queue_nomerges, "nomerges");
->  QUEUE_RW_ENTRY(queue_rq_affinity, "rq_affinity");
->  QUEUE_RW_ENTRY(queue_poll, "io_poll");
-> @@ -618,6 +659,8 @@ static struct attribute *queue_attrs[] = {
->  	&queue_discard_max_entry.attr,
->  	&queue_discard_max_hw_entry.attr,
->  	&queue_discard_zeroes_data_entry.attr,
-> +	&queue_copy_hw_max_entry.attr,
-> +	&queue_copy_max_entry.attr,
->  	&queue_write_same_max_entry.attr,
->  	&queue_write_zeroes_max_entry.attr,
->  	&queue_zone_append_max_entry.attr,
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index aefdda9f4ec7..109d9f905c3c 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -309,6 +309,10 @@ struct queue_limits {
->  	unsigned int		discard_alignment;
->  	unsigned int		zone_write_granularity;
->  
-> +	unsigned int		max_copy_hw_sectors;
-> +	unsigned int		max_copy_sectors;
-> +	unsigned int		max_user_copy_sectors;
-> +
->  	unsigned short		max_segments;
->  	unsigned short		max_integrity_segments;
->  	unsigned short		max_discard_segments;
-> @@ -933,6 +937,8 @@ void blk_queue_max_secure_erase_sectors(struct request_queue *q,
->  		unsigned int max_sectors);
->  extern void blk_queue_max_discard_sectors(struct request_queue *q,
->  		unsigned int max_discard_sectors);
-> +extern void blk_queue_max_copy_hw_sectors(struct request_queue *q,
-> +					  unsigned int max_copy_sectors);
->  extern void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
->  		unsigned int max_write_same_sectors);
->  extern void blk_queue_logical_block_size(struct request_queue *, unsigned int);
-> @@ -1271,6 +1277,14 @@ static inline unsigned int bdev_discard_granularity(struct block_device *bdev)
->  	return bdev_get_queue(bdev)->limits.discard_granularity;
->  }
->  
-> +/* maximum copy offload length, this is set to 128MB based on current testing */
-
-Current testing will not be current in a while... So may be simply say
-"arbitrary" or something. Also please capitalize the first letter of the
-comment. So something like:
-
-/* Arbitrary absolute limit of 128 MB for copy offload. */
-
-> +#define BLK_COPY_MAX_BYTES		(1 << 27)
-
-Also, it is not clear from the name if this is a soft limit or a cap on the
-hardware limit... So at least please adjust the comment to say which one it is.
-
-> +
-> +static inline unsigned int bdev_max_copy_sectors(struct block_device *bdev)
-> +{
-> +	return bdev_get_queue(bdev)->limits.max_copy_sectors;
-> +}
-> +
->  static inline unsigned int
->  bdev_max_secure_erase_sectors(struct block_device *bdev)
->  {
+Besides IWYU principle above, it's good to have a justification for each
+inclusion the C file has. I believe there is no a such in _this_ case.
 
 -- 
-Damien Le Moal
-Western Digital Research
+With Best Regards,
+Andy Shevchenko
+
 
 
