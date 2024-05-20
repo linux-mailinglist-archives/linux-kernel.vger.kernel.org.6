@@ -1,410 +1,174 @@
-Return-Path: <linux-kernel+bounces-184119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9E38CA2C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:38:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB1F8CA2CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 607AA1F22309
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:38:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31226281178
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3896619BBA;
-	Mon, 20 May 2024 19:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7B913792E;
+	Mon, 20 May 2024 19:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jfv5w/C6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ecY0cSRs"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2097.outbound.protection.outlook.com [40.107.243.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0607F1E878;
-	Mon, 20 May 2024 19:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716233901; cv=none; b=gYZ8NScmvRdIrbBjxroFiTN2AgSGdwDOQuSMt6t+Src2k6O4l9VtIRlyi1hsG+wUWCvtWvhAsyMW00dOENOHWzF0juY+qTpsn/1ceD3boGF/h7y/aEWE9tGLR8xZMWAA2u8kIQeqf/6qtZpoWiodcfyiokn6fm2JNqpg4OJVn+Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716233901; c=relaxed/simple;
-	bh=mFwxHcnKu1CEeeaWmEEHiBTn0+332GiwmLzNdKjPuxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DZ2GTHisrTZakxsGnt2G+U5lB8O7djxWzhZCJ5viN+IacDvNe8PQkbF4brlXgXM4HqIdWI8nNrY466qeUHbI5oZDHbAL7laMaT7SounKGSyWQAZiWuzgODpiZWuii0n5NkL1Dj/+08Ng7xB5zoK+Pm6Coj7UIh4sheF8DS6/sVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jfv5w/C6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7981FC2BD10;
-	Mon, 20 May 2024 19:38:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716233900;
-	bh=mFwxHcnKu1CEeeaWmEEHiBTn0+332GiwmLzNdKjPuxc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jfv5w/C6H2HchJM+z58h7XzUaVxKrYyGOX+bH3mKftBR3YvCpHP8Fe+Mtvl7vNTNr
-	 P8+GBml8ieP48tZz/0LfdTNr/ypJmBOCxgkuKVEzbR6RDdp5o2T00ZbQqBxZHtLlYM
-	 El2Hfd5mhx3pqqKQvtE/0FufB5sKp86lbGKiwSmh1rNAKgeWv8WTX2C2CdKAcgNbd4
-	 i+eK41Kf6DozvGiF2v+4r5bTC88IBla6jDxCHjSf1rmDhfEIixORE3FYDdiy4eXYSi
-	 UTS8YwotfIy44oX7ObvE1AThnhHERQm/gfEPxYUuPJ3i6zFDBjgOoMetDt2upkN+3K
-	 ZefxxplT3g01Q==
-Date: Mon, 20 May 2024 12:38:19 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dave Chinner <david@fromorbit.com>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH v2 04/30] rust: fs: introduce `FileSystem::fill_super`
-Message-ID: <20240520193819.GB25504@frogsfrogsfrogs>
-References: <20240514131711.379322-1-wedsonaf@gmail.com>
- <20240514131711.379322-5-wedsonaf@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DE41095B;
+	Mon, 20 May 2024 19:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.97
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716234023; cv=fail; b=hv2248DXqu12UEeYHeZXzPqR0T67lrBdN9dnJirccYu9QYfZp3xDxu9o3w9SUxpAklwtJPicqO3x5lsIzjtlBAVA9hoUdTr+bYrCNToa9zX/3IyFx/0LqDI3G48HUE6D9cXZhnE2FgQ0L24dW24I7xQXbA6sTHS9GC+vNazdmvk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716234023; c=relaxed/simple;
+	bh=OwJOtvmXlGSqnzDQ75Dt9wr5shUixSxAS7SoygpN+JQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qyEtKjYFysCu5Wejsu2R7pmxPNWeaq598DZ/OZDCp8Yu/YF1wCkTQ5gWEwODtY1q2oVNZ2gCo8rSYrOIyHiuHcFQuocmUxux1nfcUxaFNEJFpWVvx7hRAgG+Uxu4pQ7hsjMHrbd9Of+OwaxTWXLLqtYy/xhFBlIsX0ZwuL58KBE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=ecY0cSRs; arc=fail smtp.client-ip=40.107.243.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZDI/9x5mcffcKA6rEPPdCv+T4ltQyoD0CCr6BDRsjycRq1rDorR0jvh+eYtCZL0vUhKZFNtr+ChMUFKLB9eWA+dRTlaD3xGQONlkHvOUfEBOnXavhEXlR7KItnE1lnMqL9GFGx10vbssDH2tQxQUQFJFEFKN/72SUglzWzExsydCTcpdFdHNU89+KDsZ/BcJdfb2ZXid6SJN+eNVk4IgbQEkUZRenkFJ7YGNI8DKR2aZrRMLOi6nylgGgoxCyWdVafYOqmpnATNbMU4udkfF2EgTqGCNkFtYwcoWcBLj/6DCc3+KWy6dOUS2qsK7KQ7+aKYvVu5Gbp96nAq0blfozg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OwJOtvmXlGSqnzDQ75Dt9wr5shUixSxAS7SoygpN+JQ=;
+ b=LvEmRSoShwTptrBNl1zysMCgcv2Kqtre/JCkse6BVVqxeo5wnuhnXPuX8Z0BFMeONk0j24UsOiuPgOzinWvvKOoPeT2NKPR9apNLBChCcWNtd69u2c8LwVHt9v1utSeNnYM1OxqluX0rvEapmqo1hcCNbFqY3SY0aSXm1DZ8VKMvUy31HN029RNuEHTt0pAKAcEdiMq4dxS/3XZ6DpIaSXyx+Jsz9dkV12R3xWworMJwdRnoQ35+lfbUjdTnFmOpwT8isX2gnqO09fQPp4VngpUt6tXYyuFS1GFYpJfaiU/Tn+PRxT5yDCOWNHijbdJM7B3gxMAECNcXMPlCjgdO+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OwJOtvmXlGSqnzDQ75Dt9wr5shUixSxAS7SoygpN+JQ=;
+ b=ecY0cSRsVW9yC/li0NKRMn/VAWjejGnDnhkSCPd0VdcBeZQoCpUP5SupiE0BgwN3nRfaufH9T+viYx+eTwycLImo1TgaggG1ey3fjfZj+oPsavlJnT2KznI1djnCt/VFms2iKNIxpp0G9cZshREItdqrmV/vX7AHBJaUbHrbg3Q=
+Received: from PH7PR21MB3071.namprd21.prod.outlook.com (2603:10b6:510:1d0::12)
+ by SJ1PR21MB3456.namprd21.prod.outlook.com (2603:10b6:a03:454::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.0; Mon, 20 May
+ 2024 19:40:19 +0000
+Received: from PH7PR21MB3071.namprd21.prod.outlook.com
+ ([fe80::204c:c88b:65d2:7d3a]) by PH7PR21MB3071.namprd21.prod.outlook.com
+ ([fe80::204c:c88b:65d2:7d3a%6]) with mapi id 15.20.7633.000; Mon, 20 May 2024
+ 19:40:19 +0000
+From: Long Li <longli@microsoft.com>
+To: Konstantin Taranov <kotaranov@linux.microsoft.com>, Konstantin Taranov
+	<kotaranov@microsoft.com>, "sharmaajay@microsoft.com"
+	<sharmaajay@microsoft.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "leon@kernel.org"
+	<leon@kernel.org>
+CC: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH rdma-next 1/3] RDMA/mana_ib: Create and destroy RC QP
+Thread-Topic: [PATCH rdma-next 1/3] RDMA/mana_ib: Create and destroy RC QP
+Thread-Index: AQHaoGRmS3lu0CflYUSPC0b9UVbGLrGgmkMw
+Date: Mon, 20 May 2024 19:40:19 +0000
+Message-ID:
+ <PH7PR21MB3071DF00F6D22AEFF9DC1B81CEE92@PH7PR21MB3071.namprd21.prod.outlook.com>
+References: <1715075595-24470-1-git-send-email-kotaranov@linux.microsoft.com>
+ <1715075595-24470-2-git-send-email-kotaranov@linux.microsoft.com>
+In-Reply-To: <1715075595-24470-2-git-send-email-kotaranov@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=5c077ae2-c61d-48b4-8357-703441c5f0ba;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-05-20T19:40:09Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR21MB3071:EE_|SJ1PR21MB3456:EE_
+x-ms-office365-filtering-correlation-id: 78724c6f-b976-41fb-8223-08dc7904ae7a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|366007|1800799015|376005|38070700009;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?yOb7m03dHtZ07r3k2IBSyuuOEZfurZTY33NLPtrbH2UbRR3d+7My8h18rE8v?=
+ =?us-ascii?Q?dVHIYALRAvHB9yDPffUWMBkjjBP6FPbHfslDWsLqAdOCvwU/T1qynnr45C+V?=
+ =?us-ascii?Q?3jEQSNAtXDo83Ud2GdzgiMvA2+nfEOcxcuThWNdGym0CHVoMtupYJE1RfUBc?=
+ =?us-ascii?Q?N3FY4SyORQAaguw7DpdNVGM5H/tHKcVEEs+ef+eJEu6mjRg/PAJqH3j9kRYK?=
+ =?us-ascii?Q?R3tssV1UKA8EyEeZgGKyqrTUZpnoOQPWpmC/1ejlvYokbk+Qow/zfXku/Dco?=
+ =?us-ascii?Q?3eP2FMMK+FLazFZiuycN4vk3Q5Q6AhgqMWOy58kwyKv1zDwhPcnOwecEdHcA?=
+ =?us-ascii?Q?miLGsDy4P+M2WqmYfrYBw1TS7ZLcvTQmhRE98btszrtELbyiQPeUoasKmaPV?=
+ =?us-ascii?Q?l6NH2WJz4J6OB5EYMkP6QWuX9o4G2Bb896j9SWL7i/Xat5DlDg1RSKbcI6uO?=
+ =?us-ascii?Q?eN89xI3YvmvPmTz/LguaRjns/4CZiCNrp57b7rT/IWKNf4xu0MndsEl1HXt9?=
+ =?us-ascii?Q?pWOXxp+EAd6ukQEheEiNE9p+4qvWPub4NdFlVOU0FZ6scfihobu5gaAkhYYO?=
+ =?us-ascii?Q?iq+UBz75/cOJod8vTgRvm7k1bBqhVfZYCrcYFpx+SCaSrTTATFUB4ueFJpXs?=
+ =?us-ascii?Q?7S4vqGVjlq19x5mN3j9ZA6Wnaztg906CG2sZD1CUqxtGf9zRPuCc25WFtBqA?=
+ =?us-ascii?Q?CqpWDZfcVCY8S6Y6fV0QKkQp2cTHzFl9lK3fCS/6C/24qyccNL5lKW18z4HC?=
+ =?us-ascii?Q?xvn6j+U3JNFiRRLnRgpRog2Jj+sLqKInstwmM4Wcr4FXCYPeo9QqVo5/OzGi?=
+ =?us-ascii?Q?l3oxrQuuh+yXR5SU33hLciFO1RabVw2NJudnDD+tqQIxRJ6xGdCS21kZ7Ene?=
+ =?us-ascii?Q?CpAozdl0x9L/zJEK6XeVa81SoCRRQ+AAzCtt+p4lsHofTb1lB/gGm7hnSTyN?=
+ =?us-ascii?Q?NSLD+st3Xjoo2/hi+7IPAKwXthUjzUqrPv1knZLAqXXGHtyoZnRSvrQ8KKRo?=
+ =?us-ascii?Q?Tc1u5qBNWW7bEyrTSPXZWJ4E5uZ5gazYslHphxln5NLGKhkJweBTrlUNIgfX?=
+ =?us-ascii?Q?eGy1+GHIzRldvqIydEREaZ6LBTKgjmWooDq3JZBNiW2wVnMBuzO9diDnGMyH?=
+ =?us-ascii?Q?zbkB3oEJuP4hRbZcbm1apehI/tsH6muDybwuicENPdDgxzAdl7VzGPHwreWn?=
+ =?us-ascii?Q?JDWdWxVxU87A7b1aBnkRDXqN0/dSpAIX8Np5o5vCrWSBFWevgIsZSdSVKHws?=
+ =?us-ascii?Q?+ExU/BHpvAFogrrgB0LuIDaMXzHSq47B/ue8smK1qJ3RdUgUHJSRJODYAaK3?=
+ =?us-ascii?Q?96VfM7QS7hxt4kQB5yNVga0BbEXRKhhrqHiR4VBlJ8I4PA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR21MB3071.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?cft7vGhWRfZSbSOvb11H6/szdCXO3pBb8zexELyPSQ3zlkPrKgiSQ4G/ZTYc?=
+ =?us-ascii?Q?D0FcT/bdcMcpu3a8O9mkk5yM9UN0Qk7cVuNYdV5xwiKiwAL+87X2rNW4pxAp?=
+ =?us-ascii?Q?FWOD8DCy7niPyal6TkBNZLsn/mL5cbm7GQcxNrfHHmZXbvx30UdvyxggxXxH?=
+ =?us-ascii?Q?BiN9xa8mKCPocJYK4rgwVvctLQNFJNu1C3sjFHxhhyRCXRysAeMXfUKgN8Iv?=
+ =?us-ascii?Q?P8VH2alcd0tQH9j1T65ZJn2G3pz6Wejt1D6kpf0SDlAFg+YvTOUDHnCnejrI?=
+ =?us-ascii?Q?PsQwNpfW8CSmtAQmniaX7XFGXQYt7ZN3bVmBT1TKfBSytKbKtKspXI0Ive6U?=
+ =?us-ascii?Q?jlp1P6qqx7cFEVK05/s037L6GfFk08TB9ZPrfb6NoRsJPsqddo3FYgAtMBMr?=
+ =?us-ascii?Q?jiTkIHoCFZ/i7DyuZA4LNyLcX5BB00tlK+TZOvgw2oML+gjtbuiyGvvtzb8y?=
+ =?us-ascii?Q?NjNc0RGAkR0TsmFbrZcF3IXIrBs1nimCd3gnc8YOzA4/tPjky4pULO8FDFX5?=
+ =?us-ascii?Q?sL7BjdEkyaeKtrL1Qjdc0YjXuzQe2gekGF+mEllO00d0xoihBw0VFULct30B?=
+ =?us-ascii?Q?61LO7KQbA7Cl+Y3QeKWhM+sSVevc826z2wU3lpVvvcgNwFwq/khkTl7BSe2J?=
+ =?us-ascii?Q?vQW6ZzEW+NmdvNJS7Smtteu3qAtykandZenp4OIwVG1IByMFkBSPr89NGPDg?=
+ =?us-ascii?Q?livQ8hSXpvTuOTHwJ0935BZr+aK3h1up+W9j/T2niumxsjfqg/Mmv70IaIci?=
+ =?us-ascii?Q?tuZOk9LAcyx2uoNmu3m9hhnBOhvZxjq0+JUXLV4ICbajcdCt/fbE4UsguTkM?=
+ =?us-ascii?Q?glJQM8idykkuam/oGn/7ZzRyfT3a2iwRgKPFLtwGus+TRtWL5Pn2PuXagPoE?=
+ =?us-ascii?Q?L7C9THUtCUP2Fhr8AT5q5cptETwglVLQWkfC26A9BAjWtO1B0qYgzFa5WkXe?=
+ =?us-ascii?Q?x1GbCZ85ja31qk4fnuiI6MTPdQIbGnX9Wg3WHIZ2+cBCWGz+PRlzVSFSZy4R?=
+ =?us-ascii?Q?2ybyPxPTwh8YUlxzqWMA2w2d3nZ6m5M2USt1g7JurkTvcLeRGKbQhvO78zat?=
+ =?us-ascii?Q?B0sQ1Z4CatRvV1yVwzkb+6vO9IrKqGmHU7KaqDNjtglWIWhSMO5dcltHD/uo?=
+ =?us-ascii?Q?2bJHoWdRcDf85hklzROmYusYD/Ke63YShFftb7s95Y6BynGOJRiNP1EDnFT0?=
+ =?us-ascii?Q?oqZH1pKuPDKT8vmviyZXZblhNzhNabTdlZU/itUlM3KxoKXdym2gk+UwkWUW?=
+ =?us-ascii?Q?BuqcurXO1OIb2psNTAIN1rxgGgfknml04pdEp3XlwBj0NzUNFCGw3f1ItEuE?=
+ =?us-ascii?Q?0XcmsZSk04IMGx9EpYt988Mrw+XpJx+mnXTOdFLIJ1Ch5RHqlqEODBNv5zU8?=
+ =?us-ascii?Q?yo2g+ozsNn/fcVrpvsbhLU+wlK6WDLkSpR4QNzikK+eMN7+S7kWb3FHxa7gQ?=
+ =?us-ascii?Q?WqMnEnv3HLQpntcBkjVB2z86FvDOutj1AsLVJtSS4wEW7qV2MN53aNgLx+s1?=
+ =?us-ascii?Q?bPscJUNigW5NMSwgfLB8a2iVvOQ1cxtGb9e4YRx2prM7Z2Jp4cajEy/4iWYk?=
+ =?us-ascii?Q?6KL+A+IiQW8sJ9lgkSmc4BFwNaGY619Cb1VPp3vH?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514131711.379322-5-wedsonaf@gmail.com>
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR21MB3071.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 78724c6f-b976-41fb-8223-08dc7904ae7a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2024 19:40:19.3565
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: A3f5CthlvqlM7KlzLJF5eR12uUWJFEqzSNb4Q/zSJ3F/QdEqH8m4ofdXZ7uR2xzsD0hGNRb2TE2JIJE0LHokfw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR21MB3456
 
-On Tue, May 14, 2024 at 10:16:45AM -0300, Wedson Almeida Filho wrote:
-> From: Wedson Almeida Filho <walmeida@microsoft.com>
-> 
-> Allow Rust file systems to initialise superblocks, which allows them
-> to be mounted (though they are still empty).
-> 
-> Some scaffolding code is added to create an empty directory as the root.
-> It is replaced by proper inode creation in a subsequent patch in this
-> series.
-> 
-> Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
-> ---
->  rust/bindings/bindings_helper.h |   5 ++
->  rust/kernel/fs.rs               | 147 ++++++++++++++++++++++++++++++--
->  rust/kernel/fs/sb.rs            |  50 +++++++++++
->  samples/rust/rust_rofs.rs       |   6 ++
->  4 files changed, 202 insertions(+), 6 deletions(-)
->  create mode 100644 rust/kernel/fs/sb.rs
-> 
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index 1bef4dff3019..dabb5a787e0d 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -12,6 +12,7 @@
->  #include <linux/ethtool.h>
->  #include <linux/file.h>
->  #include <linux/fs.h>
-> +#include <linux/fs_context.h>
->  #include <linux/jiffies.h>
->  #include <linux/mdio.h>
->  #include <linux/phy.h>
-> @@ -32,3 +33,7 @@ const gfp_t RUST_CONST_HELPER___GFP_ZERO = __GFP_ZERO;
->  
->  const slab_flags_t RUST_CONST_HELPER_SLAB_RECLAIM_ACCOUNT = SLAB_RECLAIM_ACCOUNT;
->  const slab_flags_t RUST_CONST_HELPER_SLAB_ACCOUNT = SLAB_ACCOUNT;
-> +
-> +const unsigned long RUST_CONST_HELPER_SB_RDONLY = SB_RDONLY;
-> +
-> +const loff_t RUST_CONST_HELPER_MAX_LFS_FILESIZE = MAX_LFS_FILESIZE;
-> diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
-> index fb7a9b200b85..263b4b6186ae 100644
-> --- a/rust/kernel/fs.rs
-> +++ b/rust/kernel/fs.rs
-> @@ -6,16 +6,30 @@
->  //!
->  //! C headers: [`include/linux/fs.h`](srctree/include/linux/fs.h)
->  
-> -use crate::error::{code::*, from_result, to_result, Error};
-> +use crate::error::{code::*, from_result, to_result, Error, Result};
->  use crate::types::Opaque;
->  use crate::{bindings, init::PinInit, str::CStr, try_pin_init, ThisModule};
->  use core::{ffi, marker::PhantomData, pin::Pin};
->  use macros::{pin_data, pinned_drop};
-> +use sb::SuperBlock;
-> +
-> +pub mod sb;
-> +
-> +/// The offset of a file in a file system.
+> Subject: [PATCH rdma-next 1/3] RDMA/mana_ib: Create and destroy RC QP
+>=20
+> From: Konstantin Taranov <kotaranov@microsoft.com>
+>=20
+> Implement HW requests to create and destroy an RC QP.
+> An RC QP may have 5 queues.
+>=20
+> Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
 
-This is really the position of some data within a file, in bytes.
+Reviewed-by: Long Li <longli@microsoft.com>
 
-> +///
-> +/// This is C's `loff_t`.
-> +pub type Offset = i64;
 
-Ergh, I really wish this was loff (or LOff if we're really doing
-camelcase for rust code) for somewhat better greppability.
-
-> +
-> +/// Maximum size of an inode.
-> +pub const MAX_LFS_FILESIZE: Offset = bindings::MAX_LFS_FILESIZE;
->  
->  /// A file system type.
->  pub trait FileSystem {
->      /// The name of the file system type.
->      const NAME: &'static CStr;
-> +
-> +    /// Initialises the new superblock.
-> +    fn fill_super(sb: &mut SuperBlock<Self>) -> Result;
->  }
->  
->  /// A registration of a file system.
-> @@ -46,7 +60,7 @@ pub fn new<T: FileSystem + ?Sized>(module: &'static ThisModule) -> impl PinInit<
->                  let fs = unsafe { &mut *fs_ptr };
->                  fs.owner = module.0;
->                  fs.name = T::NAME.as_char_ptr();
-> -                fs.init_fs_context = Some(Self::init_fs_context_callback);
-> +                fs.init_fs_context = Some(Self::init_fs_context_callback::<T>);
->                  fs.kill_sb = Some(Self::kill_sb_callback);
->                  fs.fs_flags = 0;
->  
-> @@ -57,11 +71,22 @@ pub fn new<T: FileSystem + ?Sized>(module: &'static ThisModule) -> impl PinInit<
->          })
->      }
->  
-> -    unsafe extern "C" fn init_fs_context_callback(_fc: *mut bindings::fs_context) -> ffi::c_int {
-> -        from_result(|| Err(ENOTSUPP))
-> +    unsafe extern "C" fn init_fs_context_callback<T: FileSystem + ?Sized>(
-> +        fc_ptr: *mut bindings::fs_context,
-> +    ) -> ffi::c_int {
-> +        from_result(|| {
-> +            // SAFETY: The C callback API guarantees that `fc_ptr` is valid.
-> +            let fc = unsafe { &mut *fc_ptr };
-> +            fc.ops = &Tables::<T>::CONTEXT;
-> +            Ok(0)
-> +        })
->      }
->  
-> -    unsafe extern "C" fn kill_sb_callback(_sb_ptr: *mut bindings::super_block) {}
-> +    unsafe extern "C" fn kill_sb_callback(sb_ptr: *mut bindings::super_block) {
-> +        // SAFETY: In `get_tree_callback` we always call `get_tree_nodev`, so `kill_anon_super` is
-> +        // the appropriate function to call for cleanup.
-> +        unsafe { bindings::kill_anon_super(sb_ptr) };
-> +    }
->  }
->  
->  #[pinned_drop]
-> @@ -74,6 +99,113 @@ fn drop(self: Pin<&mut Self>) {
->      }
->  }
->  
-> +struct Tables<T: FileSystem + ?Sized>(T);
-> +impl<T: FileSystem + ?Sized> Tables<T> {
-> +    const CONTEXT: bindings::fs_context_operations = bindings::fs_context_operations {
-> +        free: None,
-> +        parse_param: None,
-> +        get_tree: Some(Self::get_tree_callback),
-> +        reconfigure: None,
-> +        parse_monolithic: None,
-> +        dup: None,
-> +    };
-> +
-> +    unsafe extern "C" fn get_tree_callback(fc: *mut bindings::fs_context) -> ffi::c_int {
-> +        // SAFETY: `fc` is valid per the callback contract. `fill_super_callback` also has
-> +        // the right type and is a valid callback.
-> +        unsafe { bindings::get_tree_nodev(fc, Some(Self::fill_super_callback)) }
-> +    }
-> +
-> +    unsafe extern "C" fn fill_super_callback(
-> +        sb_ptr: *mut bindings::super_block,
-> +        _fc: *mut bindings::fs_context,
-> +    ) -> ffi::c_int {
-> +        from_result(|| {
-> +            // SAFETY: The callback contract guarantees that `sb_ptr` is a unique pointer to a
-> +            // newly-created superblock.
-> +            let new_sb = unsafe { SuperBlock::from_raw_mut(sb_ptr) };
-> +
-> +            // SAFETY: The callback contract guarantees that `sb_ptr`, from which `new_sb` is
-> +            // derived, is valid for write.
-> +            let sb = unsafe { &mut *new_sb.0.get() };
-> +            sb.s_op = &Tables::<T>::SUPER_BLOCK;
-> +            sb.s_flags |= bindings::SB_RDONLY;
-> +
-> +            T::fill_super(new_sb)?;
-> +
-> +            // The following is scaffolding code that will be removed in a subsequent patch. It is
-> +            // needed to build a root dentry, otherwise core code will BUG().
-> +            // SAFETY: `sb` is the superblock being initialised, it is valid for read and write.
-> +            let inode = unsafe { bindings::new_inode(sb) };
-> +            if inode.is_null() {
-> +                return Err(ENOMEM);
-> +            }
-> +
-> +            // SAFETY: `inode` is valid for write.
-> +            unsafe { bindings::set_nlink(inode, 2) };
-> +
-> +            {
-> +                // SAFETY: This is a newly-created inode. No other references to it exist, so it is
-> +                // safe to mutably dereference it.
-> +                let inode = unsafe { &mut *inode };
-> +                inode.i_ino = 1;
-> +                inode.i_mode = (bindings::S_IFDIR | 0o755) as _;
-> +
-> +                // SAFETY: `simple_dir_operations` never changes, it's safe to reference it.
-> +                inode.__bindgen_anon_3.i_fop = unsafe { &bindings::simple_dir_operations };
-
-                         ^^^^^^^^^^^^^^^^
-This is a gross way to handle anonymous struct fields.  What happens
-when struct inode changes and we have to do a giant treewide sed?
-
-(and yes, I understand that's likely going to be a rustc change...)
-
---D
-
-> +
-> +                // SAFETY: `simple_dir_inode_operations` never changes, it's safe to reference it.
-> +                inode.i_op = unsafe { &bindings::simple_dir_inode_operations };
-> +            }
-> +
-> +            // SAFETY: `d_make_root` requires that `inode` be valid and referenced, which is the
-> +            // case for this call.
-> +            //
-> +            // It takes over the inode, even on failure, so we don't need to clean it up.
-> +            let dentry = unsafe { bindings::d_make_root(inode) };
-> +            if dentry.is_null() {
-> +                return Err(ENOMEM);
-> +            }
-> +
-> +            sb.s_root = dentry;
-> +
-> +            Ok(0)
-> +        })
-> +    }
-> +
-> +    const SUPER_BLOCK: bindings::super_operations = bindings::super_operations {
-> +        alloc_inode: None,
-> +        destroy_inode: None,
-> +        free_inode: None,
-> +        dirty_inode: None,
-> +        write_inode: None,
-> +        drop_inode: None,
-> +        evict_inode: None,
-> +        put_super: None,
-> +        sync_fs: None,
-> +        freeze_super: None,
-> +        freeze_fs: None,
-> +        thaw_super: None,
-> +        unfreeze_fs: None,
-> +        statfs: None,
-> +        remount_fs: None,
-> +        umount_begin: None,
-> +        show_options: None,
-> +        show_devname: None,
-> +        show_path: None,
-> +        show_stats: None,
-> +        #[cfg(CONFIG_QUOTA)]
-> +        quota_read: None,
-> +        #[cfg(CONFIG_QUOTA)]
-> +        quota_write: None,
-> +        #[cfg(CONFIG_QUOTA)]
-> +        get_dquots: None,
-> +        nr_cached_objects: None,
-> +        free_cached_objects: None,
-> +        shutdown: None,
-> +    };
-> +}
-> +
->  /// Kernel module that exposes a single file system implemented by `T`.
->  #[pin_data]
->  pub struct Module<T: FileSystem + ?Sized> {
-> @@ -100,7 +232,7 @@ fn init(module: &'static ThisModule) -> impl PinInit<Self, Error> {
->  ///
->  /// ```
->  /// # mod module_fs_sample {
-> -/// use kernel::fs;
-> +/// use kernel::fs::{sb::SuperBlock, self};
->  /// use kernel::prelude::*;
->  ///
->  /// kernel::module_fs! {
-> @@ -114,6 +246,9 @@ fn init(module: &'static ThisModule) -> impl PinInit<Self, Error> {
->  /// struct MyFs;
->  /// impl fs::FileSystem for MyFs {
->  ///     const NAME: &'static CStr = kernel::c_str!("myfs");
-> +///     fn fill_super(_: &mut SuperBlock<Self>) -> Result {
-> +///         todo!()
-> +///     }
->  /// }
->  /// # }
->  /// ```
-> diff --git a/rust/kernel/fs/sb.rs b/rust/kernel/fs/sb.rs
-> new file mode 100644
-> index 000000000000..113d3c0d8148
-> --- /dev/null
-> +++ b/rust/kernel/fs/sb.rs
-> @@ -0,0 +1,50 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! File system super blocks.
-> +//!
-> +//! This module allows Rust code to use superblocks.
-> +//!
-> +//! C headers: [`include/linux/fs.h`](srctree/include/linux/fs.h)
-> +
-> +use super::FileSystem;
-> +use crate::{bindings, types::Opaque};
-> +use core::marker::PhantomData;
-> +
-> +/// A file system super block.
-> +///
-> +/// Wraps the kernel's `struct super_block`.
-> +#[repr(transparent)]
-> +pub struct SuperBlock<T: FileSystem + ?Sized>(
-> +    pub(crate) Opaque<bindings::super_block>,
-> +    PhantomData<T>,
-> +);
-> +
-> +impl<T: FileSystem + ?Sized> SuperBlock<T> {
-> +    /// Creates a new superblock mutable reference from the given raw pointer.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that:
-> +    ///
-> +    /// * `ptr` is valid and remains so for the lifetime of the returned object.
-> +    /// * `ptr` has the correct file system type.
-> +    /// * `ptr` is the only active pointer to the superblock.
-> +    pub(crate) unsafe fn from_raw_mut<'a>(ptr: *mut bindings::super_block) -> &'a mut Self {
-> +        // SAFETY: The safety requirements guarantee that the cast below is ok.
-> +        unsafe { &mut *ptr.cast::<Self>() }
-> +    }
-> +
-> +    /// Returns whether the superblock is mounted in read-only mode.
-> +    pub fn rdonly(&self) -> bool {
-> +        // SAFETY: `s_flags` only changes during init, so it is safe to read it.
-> +        unsafe { (*self.0.get()).s_flags & bindings::SB_RDONLY != 0 }
-> +    }
-> +
-> +    /// Sets the magic number of the superblock.
-> +    pub fn set_magic(&mut self, magic: usize) -> &mut Self {
-> +        // SAFETY: This is a new superblock that is being initialised, so it's ok to write to its
-> +        // fields.
-> +        unsafe { (*self.0.get()).s_magic = magic as core::ffi::c_ulong };
-> +        self
-> +    }
-> +}
-> diff --git a/samples/rust/rust_rofs.rs b/samples/rust/rust_rofs.rs
-> index d465b107a07d..022addf68891 100644
-> --- a/samples/rust/rust_rofs.rs
-> +++ b/samples/rust/rust_rofs.rs
-> @@ -2,6 +2,7 @@
->  
->  //! Rust read-only file system sample.
->  
-> +use kernel::fs::sb;
->  use kernel::prelude::*;
->  use kernel::{c_str, fs};
->  
-> @@ -16,4 +17,9 @@
->  struct RoFs;
->  impl fs::FileSystem for RoFs {
->      const NAME: &'static CStr = c_str!("rust_rofs");
-> +
-> +    fn fill_super(sb: &mut sb::SuperBlock<Self>) -> Result {
-> +        sb.set_magic(0x52555354);
-> +        Ok(())
-> +    }
->  }
-> -- 
-> 2.34.1
-> 
-> 
 
