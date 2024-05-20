@@ -1,221 +1,135 @@
-Return-Path: <linux-kernel+bounces-183804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B4F8C9E5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:49:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89618C9E31
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C6492831E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:49:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F91F287B90
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44739136994;
-	Mon, 20 May 2024 13:48:51 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D4813665A;
+	Mon, 20 May 2024 13:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="KngA7ggd";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jcQS+Dwp"
+Received: from wfhigh1-smtp.messagingengine.com (wfhigh1-smtp.messagingengine.com [64.147.123.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1108136986
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 13:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A411E87C;
+	Mon, 20 May 2024 13:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716212930; cv=none; b=ZvejLYmuL41kekbtS77u8rvFiY1+s0MQpo5xD+usSgTTx0QiTdz4RLFd/vewYEZ3335dEpUNgZOGFtm5G8q3on3JePRIYRHtVFjjqDBForlWn5p7JN+DQJtYa8nJ5K5FyovZsg9a0Gk0nwCqhnjJm/x3mTxzJJLKqRJuwOpwGZA=
+	t=1716211822; cv=none; b=p0MPhX5oNiIQmb1+rjH0R3wHUc1fuOreiL6aWLaM1tHLEwS4HjkEmlxc4fTi2w/HYuN3hYmFi3YJWSdS5kkxIgTdHZtma6kEE2+QxPfikpX/BRyBku6MbFpOOwc9TpRGcmIYm3F7UD84LOgv+SoMHr/g5uMG4391l7LnQ33Se1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716212930; c=relaxed/simple;
-	bh=p71lg6zGyJAtcZ8Xn2jER3pWn4wYpyvMIBfJ1w+2jFI=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Fv3Ud14calVuPfXdvaprDMAb+rLZBeZ4Kw9dJuOP1broAzvextGw9v0/OSoUZw1YcqNz9Mc4GaGN1PjEnp+BBmoVEjsIjY55xM03fGlA2X8njAJiPZuyTzONthxQtl0j9U2pWELY+FKfg/Viz7Ei0MUY4bLtlIZfLDKhAk6OQBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Vjdd40Q08zvXcX;
-	Mon, 20 May 2024 21:26:32 +0800 (CST)
-Received: from canpemm500010.china.huawei.com (unknown [7.192.105.118])
-	by mail.maildlp.com (Postfix) with ESMTPS id C537A180069;
-	Mon, 20 May 2024 21:30:07 +0800 (CST)
-Received: from [10.67.111.82] (10.67.111.82) by canpemm500010.china.huawei.com
- (7.192.105.118) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 20 May
- 2024 21:30:07 +0800
-Subject: Re: [PATCH] arm64: asm-bug: Add .align 2 to the end of __BUG_ENTRY
-To: Mark Rutland <mark.rutland@arm.com>
-References: <1715955208-17109-1-git-send-email-xiaojiangfeng@huawei.com>
- <ZksnARrLkKHcX4C_@J2N7QTR9R3>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <Dave.Martin@arm.com>,
-	<xieyuanbin1@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <nixiaoming@huawei.com>,
-	<wangbing6@huawei.com>, <douzhaolei@huawei.com>, <liaohua4@huawei.com>,
-	<lijiahuan5@huawei.com>, <wangfangpeng1@huawei.com>
-From: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-Message-ID: <8452c8cb-4822-9110-0a3c-51dd94ee3e8d@huawei.com>
-Date: Mon, 20 May 2024 21:30:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1716211822; c=relaxed/simple;
+	bh=qfvNWKn/CQRVv/+cpmMCpprLiCzOA6G5IF/qyBsiOO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gpk8NCBnmy1GBPYQRAc1znoPkHSW2KmH1tZLOc58kqa2YU6bVP4/2kw7ey2HgFm4DazYPXW1PcfcyA461AoJ0768c2h7fpx+r0/oqYpuwlb+u8RA933G+TcET83gV1rpXB9zzKds6malH8azet8lEpfVzywomU+erHRWimHDrRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=KngA7ggd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jcQS+Dwp; arc=none smtp.client-ip=64.147.123.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 1F8EC1800113;
+	Mon, 20 May 2024 09:30:19 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 20 May 2024 09:30:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1716211818; x=1716298218; bh=oa2W4qjwd3
+	7BEc4YnG8uAq9YoHRdThoet19LMJypOJk=; b=KngA7ggdi0drYPof5o7hwmTHRG
+	S1IU/jqt9f39+LLVVayq0jCaruRqJLTNA7Ks8icMsmbv0cfVRKGccFi1pljVa866
+	SYJhvYcWV71/wPhdtsupKguUSphYy8FMJmGL+5CUUFDCMZuKdCPQj2IYpCuetuId
+	Ng4rjvr5M8VMsDg73uJZbUx7uiSmEl3qt2cXtvH0vlyNJsSJNqzIt2nw6mWG3ueS
+	S3bBtq351+HqbQaocyOy1b5Kkgu/XtWYxn0VotlTQg9VSZ25xjNw+EzqymjBmTTS
+	5jPxtYWLB11th1PnC8tJJ65cUBo/TnEkX2taPHdxyflnBj/zCniAj+McRJxA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716211818; x=1716298218; bh=oa2W4qjwd37BEc4YnG8uAq9YoHRd
+	Thoet19LMJypOJk=; b=jcQS+DwpjR6VeZzuQ0pdwmbkcf2+ELvd20o2DZOzD9JW
+	K1Ouc82eECZh2CUyAZmcpgiJ7Aj+RGF+radye4kAqANBgqeSFC5Kc2RS6r73Qq78
+	wQavmUkdh4ZZyLtkeXSLaEfd/rnlxvhQ4uOL9a+JLfA5zqGV6o/L9jVXO/oK0LQx
+	bcN0cQZ5j0UEtgvbU4c3Qm2USaSBWjT68DDFLctcd6yIURrxVx1cxwHiBjvS0/2V
+	AXPv1wbwPmFkFQ8Xz7F5VxiJnuNqQrcN4kcGxKU6hstqC/KeJC34xetLKaWaTR8n
+	0zOYgO/KgxUDu+2UCJP2h3fO5zWI+MJIk5LWg8D3Qw==
+X-ME-Sender: <xms:aVBLZgSicgZjJPlIVVmqiGzabXmY7U6W-0cf6XlPPGb9FjAoRo3i3Q>
+    <xme:aVBLZtyvBNjibT9OIXMtuxSODDNt60MW4Zx1rQGGupWpM5STLV47xJdGO5ceQHoNp
+    Hn6WzBjyUeeWu9cDQM>
+X-ME-Received: <xmr:aVBLZt3gLg6GCxVnil1t54Zgi9M7nf9iJDLZJfgCKaz2OGOO9cDYTRLuhNRlBinQj-htlu-2o_0zCBcSoxwySoI5og>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeitddggeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghh
+    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
+    grthhtvghrnhepleevudetgefhheekueekhfduffethfehteeftdfhvefgteelvedvudev
+    teeufeehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihii
+    iigr
+X-ME-Proxy: <xmx:aVBLZkC4m14s5n4tEp3avfH807qvPwncZ2I4Y8fgrQLUIdPf_FIzKA>
+    <xmx:aVBLZpi3GscB2ljoVCtHmBhYuWCIGQjJd8VIwqqSfz5mb8dIqOnIjg>
+    <xmx:aVBLZgpYWVjDC5IVwGQHAI3G5RpzgHOfzQpd-FVNiarwtvRY71MrWQ>
+    <xmx:aVBLZsgJ-Srgc7YF2SLDksEcZPHG5z1ImBm8SgQp1vv6jyTYTnoSJQ>
+    <xmx:alBLZoT0XhJL2dv8tXkxE_p1f3DxUlYY4oWx8zECBUg_U-dVblg9I4z5>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 20 May 2024 09:30:15 -0400 (EDT)
+Date: Mon, 20 May 2024 07:30:14 -0600
+From: Tycho Andersen <tycho@tycho.pizza>
+To: Jonathan Calmels <jcalmels@3xx0.net>
+Cc: brauner@kernel.org, ebiederm@xmission.com,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
+Message-ID: <ZktQZi5iCwxcU0qs@tycho.pizza>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-4-jcalmels@3xx0.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZksnARrLkKHcX4C_@J2N7QTR9R3>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- canpemm500010.china.huawei.com (7.192.105.118)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516092213.6799-4-jcalmels@3xx0.net>
 
+Hi Jonathan,
 
+On Thu, May 16, 2024 at 02:22:05AM -0700, Jonathan Calmels wrote:
+> +int proc_cap_userns_handler(struct ctl_table *table, int write,
+> +			    void *buffer, size_t *lenp, loff_t *ppos)
+> +{
 
-On 2024/5/20 18:33, Mark Rutland wrote:
+there is an ongoing effort (started at [0]) to constify the first arg
+here, since you're not supposed to write to it. Your usage looks
+correct to me, so I think all it needs is a literal "const" here.
 
-> I reckon we should spell out the reason for this a bit more; would you
-> be happy with the commit message below?
-> 
-> | When CONFIG_DEBUG_BUGVERBOSE=n, we fail to add necessary padding bytes
-> | to bug_table entries, and as a result the last entry in a bug table will
-> | be ignored, potentially leading to an unexpected panic(). All prior
-> | entries in the table will be handled correctly.
-> | 
-> | The arm64 ABI requires that struct fields of up to 8 bytes are
-> | naturally-aligned, with padding added within a struct such that struct
-> | are suitably aligned within arrays.
-> | 
-> | When CONFIG_DEBUG_BUGVERPOSE=y, the layout of a bug_entry is:
-> | 
-> | 	struct bug_entry {
-> | 		signed int      bug_addr_disp;	// 4 bytes
-> | 		signed int      file_disp;	// 4 bytes
-> | 		unsigned short  line;		// 2 bytes
-> | 		unsigned short  flags;		// 2 bytes
-> | 	}
-> | 
-> | ... with 12 bytes total, requiring 4-byte alignment.
-> | 
-> | When CONFIG_DEBUG_BUGVERBOSE=n, the layout of a bug_entry is:
-> | 
-> | 	struct bug_entry {
-> | 		signed int      bug_addr_disp;	// 4 bytes
-> | 		unsigned short  flags;		// 2 bytes
-> | 		< implicit padding >		// 2 bytes
-> | 	}
-> | 
-> | ... with 8 bytes total, with 6 bytes of data and 2 bytes of trailing
-> | padding, requiring 4-byte alginment.
-> | 
-> | When we create a bug_entry in assembly, we align the start of the entry
-> | to 4 bytes, which implicitly handles padding for any prior entries.
-> | However, we do not align the end of the entry, and so when
-> | CONFIG_DEBUG_BUGVERBOSE=n, the final entry lacks the trailing padding
-> | bytes.
-> | 
-> | For the main kernel image this is not a problem as find_bug() doesn't
-> | depend on the trailing padding bytes when searching for entries:
-> | 
-> | 	for (bug = __start___bug_table; bug < __stop___bug_table; ++bug)
-> | 		if (bugaddr == bug_addr(bug))
-> | 			return bug;
-> | 
-> | However for modules, module_bug_finalize() depends on the trailing
-> | bytes when calculating the number of entries:
-> | 
-> | 	mod->num_bugs = sechdrs[i].sh_size / sizeof(struct bug_entry);
-> | 
-> | ... and as the last bug_entry lacks the necessary padding bytes, this entry
-> | will not be counted, e.g. in the case of a single entry:
-> | 	
-> | 	sechdrs[i].sh_size == 6
-> | 	sizeof(struct bug_entry) == 8;
-> | 
-> | 	sechdrs[i].sh_size / sizeof(struct bug_entry) == 0;
-> | 
-> | Consequently module_find_bug() will miss the last bug_entry when it does:
-> | 
-> | 	for (i = 0; i < mod->num_bugs; ++i, ++bug)
-> | 		if (bugaddr == bug_addr(bug))
-> | 			goto out;	
-> | 
-> | ... which can lead to a kenrel panic due to an unhandled bug.
-> | 
-> | This can be demonstrated with the following module:
-> | 
-> | 	static int __init buginit(void)
-> | 	{
-> | 		WARN(1, "hello\n");
-> | 		return 0;
-> | 	}
-> | 
-> | 	static void __exit bugexit(void)
-> | 	{
-> | 	}
-> | 
-> | 	module_init(buginit);
-> | 	module_exit(bugexit);
-> | 	MODULE_LICENSE("GPL");
-> | 
-> | ... which will trigger a kernel panic when loaded:
-> | 
-> | 	------------[ cut here ]------------
-> | 	hello
-> | 	Unexpected kernel BRK exception at EL1
-> | 	Internal error: BRK handler: 00000000f2000800 [#1] PREEMPT SMP
-> | 	Modules linked in: hello(O+)
-> | 	CPU: 0 PID: 50 Comm: insmod Tainted: G           O       6.9.1 #8
-> | 	Hardware name: linux,dummy-virt (DT)
-> | 	pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> | 	pc : buginit+0x18/0x1000 [hello]
-> | 	lr : buginit+0x18/0x1000 [hello]
-> | 	sp : ffff800080533ae0
-> | 	x29: ffff800080533ae0 x28: 0000000000000000 x27: 0000000000000000
-> | 	x26: ffffaba8c4e70510 x25: ffff800080533c30 x24: ffffaba8c4a28a58
-> | 	x23: 0000000000000000 x22: 0000000000000000 x21: ffff3947c0eab3c0
-> | 	x20: ffffaba8c4e3f000 x19: ffffaba846464000 x18: 0000000000000006
-> | 	x17: 0000000000000000 x16: ffffaba8c2492834 x15: 0720072007200720
-> | 	x14: 0720072007200720 x13: ffffaba8c49b27c8 x12: 0000000000000312
-> | 	x11: 0000000000000106 x10: ffffaba8c4a0a7c8 x9 : ffffaba8c49b27c8
-> | 	x8 : 00000000ffffefff x7 : ffffaba8c4a0a7c8 x6 : 80000000fffff000
-> | 	x5 : 0000000000000107 x4 : 0000000000000000 x3 : 0000000000000000
-> | 	x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff3947c0eab3c0
-> | 	Call trace:
-> | 	 buginit+0x18/0x1000 [hello]
-> | 	 do_one_initcall+0x80/0x1c8
-> | 	 do_init_module+0x60/0x218
-> | 	 load_module+0x1ba4/0x1d70
-> | 	 __do_sys_init_module+0x198/0x1d0
-> | 	 __arm64_sys_init_module+0x1c/0x28
-> | 	 invoke_syscall+0x48/0x114
-> | 	 el0_svc_common.constprop.0+0x40/0xe0
-> | 	 do_el0_svc+0x1c/0x28
-> | 	 el0_svc+0x34/0xd8
-> | 	 el0t_64_sync_handler+0x120/0x12c
-> | 	 el0t_64_sync+0x190/0x194
-> | 	Code: d0ffffe0 910003fd 91000000 9400000b (d4210000)
-> | 	---[ end trace 0000000000000000 ]---
-> | 	Kernel panic - not syncing: BRK handler: Fatal exception
-> | 
-> | Fix this by always aligning the end of a bug_entry to 4 bytes, which is
-> | correct regardless of CONFIG_DEBUG_BUGVERBOSE.
-> | 
-> | Fixes: 9fb7410f955f ("arm64/BUG: Use BRK instruction for generic BUG traps")
-> | Signed-off-by: Yuanbin Xie <xieyuanbin1@huawei.com>
-> | Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-> 
-> With that:
-> 
-> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> Mark.
-> 
+[0]: https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net/
 
-Thank you very much for your patience and professional review.
+> +	struct ctl_table t;
+> +	unsigned long mask_array[2];
+> +	kernel_cap_t new_mask, *mask;
+> +	int err;
+> +
+> +	if (write && (!capable(CAP_SETPCAP) ||
+> +		      !capable(CAP_SYS_ADMIN)))
+> +		return -EPERM;
 
-Indeed, we have not clearly expressed the specific layout
-of `struct bug_entry` under the arm64 ABI
-and how it causes the problem. We have only briefly described
-that the assembly code does not consistent with
-the binary layout of the C struct.
+..why CAP_SYS_ADMIN? You mention it in the changelog, but don't
+explain why.
 
-Your commit messge is much more accurate
-in describing the problem, and we couldn't agree more.
-
-I will follow your advice to submit our V2 patch.
+Tycho
 
