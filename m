@@ -1,100 +1,142 @@
-Return-Path: <linux-kernel+bounces-183440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21508C9918
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:05:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA5A8C991B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4BB2818AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:05:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 034D01F21522
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 07:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1698611CBD;
-	Mon, 20 May 2024 07:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCF518059;
+	Mon, 20 May 2024 07:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="SwmpOU74"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CFED52F;
-	Mon, 20 May 2024 07:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pKKrNGmp"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20034C70;
+	Mon, 20 May 2024 07:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716188702; cv=none; b=tnV5ptjznFvmAIfarIGchZ6xZyX9yM7cs/IFc2OJ7qoPz1wyJkFXvTVs6H+qLW1Xw+Zv9ympt6ASD41XUW+AMyLcgg8ZzGX3syAL0H0jvAIZwDzdXRrD3YZpHtpa+O0VyGtTRhHw0wNzWpzenoclApC7z/7ulsVUvLKL0ftbNps=
+	t=1716188831; cv=none; b=IvhcAnLpCGC2LrMjk2wxh4SPNrtWA7dqXTHGfW6A07iCr3K34zfebht9eZtL22QgqYlSHq7NPvSNZns5n1F3Ifm7G8T7Aosa4xRdFWkIzrnvZA1AvCa1zaAx96hFggFFezZ7PNY9yqrjP8Yw8hkE2gEKaw+Z+vvxPjeyp/+m3b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716188702; c=relaxed/simple;
-	bh=WnbEgJrVg99AYuzyNCOFVK0qQHlGCNYi0cLOxUS1aeE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XPdc9Yi1G1OdazjwIB1edG8KWH9QhJV8cDYYExF+Uovg2A/SQybvRBqqy/I83XABWB2rOmKFCvFXBJvQn15UePysM7MEzzYc1UtsBXGPkKnXiHca1DpwYU3QCJCY9+Sbqkwf3NlpidbzCR9Nk9Q934+QUDMzNZCyLFL8/3FNxiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=SwmpOU74; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1716188696;
-	bh=RoV6VIkaAluYtFGJCDi1Z/NPqWiUqa7zI7Xfg4Z2ElY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=SwmpOU74v7iueWM0M4jzR0SSrYnUqrg9pTXGUHWbEImhkFE6CCjSQALlemjffjzUS
-	 rTJPNL2bYsaI51L9wkKVUxPWjtiSWFiG3hMGQ09uGLLHmuiTEiabqsFD7nvqZPSP6q
-	 G6i1Mhg5loGDMEuhFFBVNyeuTbYfGhwS3flwn5rid/8jDwxd5JCseOmRVA4AZZ+/lJ
-	 Vu5Zva3Ykzoehr15evLo86ICfPENU3pt3Wbqv5Uo2pqJI0ldiP2xOGX4v70fpOjqio
-	 c3w4Gk4Lf1fywLRB8Uwa/5KnKXxjiUB2+qkPgs6ypF6MwBs3KHgCVwKkjkpAhVufiA
-	 LeWPLdIuH7G/g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VjT8l5qWsz4wc3;
-	Mon, 20 May 2024 17:04:55 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: cve@kernel.org, linux-kernel@vger.kernel.org,
- linux-cve-announce@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linuxppc-dev@lists.ozlabs.org, Geoff Levand <geoff@infradead.org>
-Subject: Re: CVE-2023-52665: powerpc/ps3_defconfig: Disable
- PPC64_BIG_ENDIAN_ELF_ABI_V2
-In-Reply-To: <2024051725-CVE-2023-52665-1d6f@gregkh>
-References: <2024051725-CVE-2023-52665-1d6f@gregkh>
-Date: Mon, 20 May 2024 17:04:55 +1000
-Message-ID: <87zfslufoo.fsf@mail.lhotse>
+	s=arc-20240116; t=1716188831; c=relaxed/simple;
+	bh=+SQnDsrQshCUMPZhNcFttAuWI2VGZr6oshXOUoVJ8k0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pwjPnTmnKYxxqPYVQHpRVXJ/QS1/oy8dwdCuqKVhUikozgSTGEs11s5cJxGaB8HcnQsPn+7Knvo7CjWfuqBgxZr/TYR5krKBnZujDfxFqv9L+UgR64KQ3iPn/IwFS0kqHZd+k6+vVCVLWvn6ywd2BMOx54I1/+J/K0FQconMooI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=pKKrNGmp; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=pHH88
+	A1P/mDNm/sXFTsJk7x3nuIXe5Q5qI2FV5mexhE=; b=pKKrNGmp/WkrLiCx3zg5F
+	RDaT6zDuN4hbcSbgJcWs9gX13538+6RCt81IIpmz50QtNiusyiFc8dalozGAj5Ln
+	TBlwhxFtQpHyiEjh4kFyvckkhrqym6WpaFhUALf6qcYarBnALlKsJjoPxN3iQZbc
+	PRpCANJEATvDrbGYeFDBn8=
+Received: from localhost.localdomain (unknown [223.104.68.214])
+	by gzga-smtp-mta-g2-2 (Coremail) with SMTP id _____wDnj2p+9kpmpwTbFA--.11787S2;
+	Mon, 20 May 2024 15:06:40 +0800 (CST)
+From: Slark Xiao <slark_xiao@163.com>
+To: manivannan.sadhasivam@linaro.org,
+	loic.poulain@linaro.org
+Cc: mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Slark Xiao <slark_xiao@163.com>
+Subject: [PATCH v2] bus: mhi: host: Add Foxconn SDX72 related support
+Date: Mon, 20 May 2024 15:06:33 +0800
+Message-Id: <20240520070633.308913-1-slark_xiao@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnj2p+9kpmpwTbFA--.11787S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAw1kJr1rur48uF4rtw48tFb_yoW5Zr47pF
+	4rZrW5taykJrWYgay8A34DG3Z5Jws5Ar9xKFnrGw1Ikw1Yy3yYqFWkK3429ryYy34qqFyS
+	yF95WFya93WDJF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRLYFAUUUUU=
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiNQTkZGV4HrV-SwAAsz
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
-> Description
-> ===========
->
-> In the Linux kernel, the following vulnerability has been resolved:
->
-> powerpc/ps3_defconfig: Disable PPC64_BIG_ENDIAN_ELF_ABI_V2
->
-> Commit 8c5fa3b5c4df ("powerpc/64: Make ELFv2 the default for big-endian
-> builds"), merged in Linux-6.5-rc1 changes the calling ABI in a way
-> that is incompatible with the current code for the PS3's LV1 hypervisor
-> calls.
->
-> This change just adds the line '# CONFIG_PPC64_BIG_ENDIAN_ELF_ABI_V2 is not set'
-> to the ps3_defconfig file so that the PPC64_ELF_ABI_V1 is used.
->
-> Fixes run time errors like these:
->
->   BUG: Kernel NULL pointer dereference at 0x00000000
->   Faulting instruction address: 0xc000000000047cf0
->   Oops: Kernel access of bad area, sig: 11 [#1]
->   Call Trace:
->   [c0000000023039e0] [c00000000100ebfc] ps3_create_spu+0xc4/0x2b0 (unreliable)
->   [c000000002303ab0] [c00000000100d4c4] create_spu+0xcc/0x3c4
->   [c000000002303b40] [c00000000100eae4] ps3_enumerate_spus+0xa4/0xf8
->
-> The Linux kernel CVE team has assigned CVE-2023-52665 to this issue.
+Align with Qcom SDX72, add ready timeout item for Foxconn SDX72.
+And also, add firehose support since SDX72.
 
-IMHO this doesn't warrant a CVE. The crash mentioned above happens at
-boot, so the system is not vulnerable it's just broken :)
+Signed-off-by: Slark Xiao <slark_xiao@163.com>
+---
+v2: (1). Update the edl file path and name (2). Set SDX72 support
+trigger edl mode by default
+---
+ drivers/bus/mhi/host/pci_generic.c | 32 ++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-cheers
+diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+index 08844ee79654..0b483c7c76a1 100644
+--- a/drivers/bus/mhi/host/pci_generic.c
++++ b/drivers/bus/mhi/host/pci_generic.c
+@@ -399,6 +399,8 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
+ 	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
+ 	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
+ 	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
++	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
++	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
+ 	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
+ 	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
+ };
+@@ -419,6 +421,16 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
+ 	.event_cfg = mhi_foxconn_sdx55_events,
+ };
+ 
++static const struct mhi_controller_config modem_foxconn_sdx72_config = {
++	.max_channels = 128,
++	.timeout_ms = 20000,
++	.ready_timeout_ms = 50000,
++	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx55_channels),
++	.ch_cfg = mhi_foxconn_sdx55_channels,
++	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
++	.event_cfg = mhi_foxconn_sdx55_events,
++};
++
+ static const struct mhi_pci_dev_info mhi_foxconn_sdx24_info = {
+ 	.name = "foxconn-sdx24",
+ 	.config = &modem_foxconn_sdx55_config,
+@@ -448,6 +460,17 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx65_info = {
+ 	.sideband_wake = false,
+ };
+ 
++static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
++	.name = "foxconn-sdx72",
++	.edl = "fox/sdx72m/edl.mbn",
++	.edl_trigger = true,
++	.config = &modem_foxconn_sdx72_config,
++	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
++	.dma_data_width = 32,
++	.mru_default = 32768,
++	.sideband_wake = false,
++};
++
+ static const struct mhi_channel_config mhi_mv3x_channels[] = {
+ 	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 64, 0),
+ 	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 64, 0),
+@@ -680,6 +703,15 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+ 	/* DW5932e (sdx62), Non-eSIM */
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0f9),
+ 		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx65_info },
++	/* T99W515 (sdx72) */
++	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe118),
++		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx72_info },
++	/* DW5934e(sdx72), With eSIM */
++	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe11d),
++		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx72_info },
++	/* DW5934e(sdx72), Non-eSIM */
++	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe11e),
++		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx72_info },
+ 	/* MV31-W (Cinterion) */
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_THALES, 0x00b3),
+ 		.driver_data = (kernel_ulong_t) &mhi_mv31_info },
+-- 
+2.25.1
+
 
