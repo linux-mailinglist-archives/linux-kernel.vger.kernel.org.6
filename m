@@ -1,131 +1,101 @@
-Return-Path: <linux-kernel+bounces-183775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 406948C9DE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:11:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42508C9DD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F123A28590B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6492F1F21BB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AAA13664C;
-	Mon, 20 May 2024 13:11:29 +0000 (UTC)
-Received: from sakura.ysato.name (ik1-413-38519.vs.sakura.ne.jp [153.127.30.23])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32032A2D;
-	Mon, 20 May 2024 13:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=153.127.30.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2D1135A6F;
+	Mon, 20 May 2024 13:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="R2Ea1JSc"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C471FC0E;
+	Mon, 20 May 2024 13:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716210689; cv=none; b=Hr8SipDM7Vh7HJDDEMqorTDIO2Y48HgvT6hxCGV66pyb4cFGGRD8funkpcfKUGBfElo473lwC2bS6UtQ20EwE6YaJ4AUc/CdIbFiTF3XTtj5JQQ2K82UT1sycA9UJrcTJei0kfLD4DKB9tsu95LOfEVPdge6tqIEfVMYqtxhBhU=
+	t=1716210393; cv=none; b=diUSLvUMu6jFc5bwW4r5ko7/D6C/4LhhcuxxoNKDTm2Ro8NcDxRtX3KNISFltwUGaimCBi/Nb7YHA//3DCkcxI99Rj+0VbaCp0kdxctvD6psfdkV85IukMAgDXQwm8M9BfudSv+/oNTTrJIF39gTJn9WmTiVSM58e3E5x3+SufI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716210689; c=relaxed/simple;
-	bh=a9Beq8MfnmXvgVrRFuX5+jQqyI2S3FJbw4QgKto9ElA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RYGxZmAiWdbSCI1SrWJsI89ERH3yfNPPyBQZ4VU06WKRPFgykhURjPiX+BTveRCb/42h42NPG5FNocAGSqDJMo3VHp9G6DtHZVmZJMQaBdwvj4AJo5ecv6DToGTYtJ87xde6M2z1XQAgdcxE9J+Ovr8pkFRw6DLBlrsBNFK/FSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp; spf=fail smtp.mailfrom=users.sourceforge.jp; arc=none smtp.client-ip=153.127.30.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=users.sourceforge.jp
-Received: from SIOS1075.ysato.ml (ZM005235.ppp.dion.ne.jp [222.8.5.235])
-	by sakura.ysato.name (Postfix) with ESMTPSA id 770791C00F9;
-	Mon, 20 May 2024 22:06:04 +0900 (JST)
-Date: Mon, 20 May 2024 22:06:03 +0900
-Message-ID: <87fruc8wg4.wl-ysato@users.sourceforge.jp>
-From: Yoshinori Sato <ysato@users.sourceforge.jp>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: linux-sh@vger.kernel.org,	Damien Le Moal <dlemoal@kernel.org>,	Niklas
- Cassel <cassel@kernel.org>,	Rob Herring <robh@kernel.org>,	Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,	Conor Dooley
- <conor+dt@kernel.org>,	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,	Stephen Boyd
- <sboyd@kernel.org>,	David Airlie <airlied@gmail.com>,	Daniel Vetter
- <daniel@ffwll.ch>,	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,	Thomas Zimmermann
- <tzimmermann@suse.de>,	Thomas Gleixner <tglx@linutronix.de>,	Bjorn Helgaas
- <bhelgaas@google.com>,	Lorenzo Pieralisi <lpieralisi@kernel.org>,	Krzysztof
- =?ISO-8859-2?Q?Wilczy=F1ski?= <kw@linux.com>,	Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,	Jiri Slaby <jirislaby@kernel.org>,	Magnus
- Damm <magnus.damm@gmail.com>,	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Rich Felker <dalias@libc.org>,	Lee Jones <lee@kernel.org>,	Helge Deller
- <deller@gmx.de>,	Heiko Stuebner <heiko.stuebner@cherry.de>,	Shawn Guo
- <shawnguo@kernel.org>,	Sebastian Reichel <sre@kernel.org>,	Chris Morgan
- <macromorgan@hotmail.com>,	Linus Walleij <linus.walleij@linaro.org>,	Arnd
- Bergmann <arnd@arndb.de>,	David Rientjes <rientjes@google.com>,	Hyeonggon
- Yoo <42.hyeyoo@gmail.com>,	Vlastimil Babka <vbabka@suse.cz>,	Baoquan He
- <bhe@redhat.com>,	Andrew Morton <akpm@linux-foundation.org>,	Guenter Roeck
- <linux@roeck-us.net>,	Kefeng Wang <wangkefeng.wang@huawei.com>,	Stephen
- Rothwell <sfr@canb.auug.org.au>,	Javier Martinez Canillas
- <javierm@redhat.com>,	Guo Ren <guoren@kernel.org>,	Azeem Shaikh
- <azeemshaikh38@gmail.com>,	Max Filippov <jcmvbkbc@gmail.com>,	Jonathan
- Corbet <corbet@lwn.net>,	Jacky Huang <ychuang3@nuvoton.com>,	Herve Codina
- <herve.codina@bootlin.com>,	Manikanta Guntupalli
- <manikanta.guntupalli@amd.com>,	Anup Patel <apatel@ventanamicro.com>,	Biju
- Das <biju.das.jz@bp.renesas.com>,	Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
- <u.kleine-koenig@pengutronix.de>,	Sam Ravnborg <sam@ravnborg.org>,	Sergey
- Shtylyov <s.shtylyov@omp.ru>,	Laurent Pinchart
- <laurent.pinchart+renesas@ideasonboard.com>,	linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org,	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,	linux-pci@vger.kernel.org,
-	linux-serial@vger.kernel.org,	linux-fbdev@vger.kernel.org
-Subject: Re: [RESEND v7 00/37] Device Tree support for SH7751 based board
-In-Reply-To: <455e40c03314294f9c2e64480aa69f8261a3f2d5.camel@physik.fu-berlin.de>
-References: <cover.1712205900.git.ysato@users.sourceforge.jp>
-	<455e40c03314294f9c2e64480aa69f8261a3f2d5.camel@physik.fu-berlin.de>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL-LB/10.8 EasyPG/1.0.0
- Emacs/28.2 (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1716210393; c=relaxed/simple;
+	bh=4+7CddW5We0wU9iMakq2yje3RrOQvVyLh/AcczxCx+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IgHD/CH5PyS5tnlqIFu2B2OERLQ3QuZhN/qI99I3qFOqPF4GkOrYHJWEhlVlmFkFtPeFv9tnr5xIUgwjFX7m+3vIKip1YjvQpMbE6rI5Z5ZOHFkMChP4GCfGdMaMqKm/VyNDQdrYk5Pbiq905ItrOmJCFKdhe8NakIMA2wH+TD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=R2Ea1JSc; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=GVH3hd6GTpYUkd0MY/d50j19yuf6w01ci9ep2ahCSAo=; b=R2Ea1JScnnU0BdrEbQd+F4498S
+	ygj9NGUqj58arOvsoKndxyCcd/jBizW5dFkNtI/7zYtyuReuMoacQezcV9qS0u/WHrlqNlTRyJUnL
+	sfBfRXL5FQELA+o4febjKFzHG4gD0tII+AeTa8BJD57MoULVoI/1ay/tQfPnJNR7B7Uw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s92ib-00FhHS-Ei; Mon, 20 May 2024 15:06:21 +0200
+Date: Mon, 20 May 2024 15:06:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next v3 0/5] net: phy: mediatek: Introduce
+ mtk-phy-lib and add 2.5Gphy support
+Message-ID: <7f99f50b-b5c4-4a90-b32e-f2f7f5ce8e9b@lunn.ch>
+References: <20240520113456.21675-1-SkyLake.Huang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520113456.21675-1-SkyLake.Huang@mediatek.com>
 
-On Sat, 18 May 2024 18:08:30 +0900,
-John Paul Adrian Glaubitz wrote:
+On Mon, May 20, 2024 at 07:34:51PM +0800, Sky Huang wrote:
+> From: "SkyLake.Huang" <skylake.huang@mediatek.com>
 > 
-> Hi Yoshinori,
+> Re-organize MTK ethernet phy drivers and integrate common manipulations
+> into mtk-phy-lib. Also, add support for build-in 2.5Gphy on MT7988.
 > 
-> On Thu, 2024-04-04 at 14:14 +0900, Yoshinori Sato wrote:
-> > Sorry. previus mail is thread broken.
-> > 
-> > This is an updated version of something I wrote about 7 years ago.
-> > Minimum support for R2D-plus and LANDISK.
-> > I think R2D-1 will work if you add AX88796 to dts.
-> > And board-specific functions and SCI's SPI functions are not supported.
-> > 
-> > You can get it working with qemu found here.
-> > https://gitlab.com/yoshinori.sato/qemu/-/tree/landisk
-> > 
-> > v7 changes.
-> > - sh/kernel/setup.c: fix kernel parameter handling.
-> > - clk-sh7750.c: cleanup.
-> > - sh_tmu.c: cleanup.
-> > - irq-renesas-sh7751.c: IPR definition move to code.
-> > - irq-renesas-sh7751irl.c: update register definition.
-> > - pci-sh7751.c: Register initialization fix. 
-> > - sm501 and sm501fb: Re-design Device Tree properties.
+> v2:
+> - Apply correct PATCH tag.
+> - Break LED/Token ring/Extend-link-pulse-time features into 3 patches.
+> - Fix contents according to v1 comments.
 > 
-> Could you push your v7 version to your Gitlab [1] repository so I can fetch
-> it from there?
+> v3:
+> - Fix patch 4/5 & 5/5 according to v2 comments.
 
-updated it.
-I'll be posting v8 soon.
+Ideally state what you actually changed. The purpose of this history
+is to remind reviewers what they said, so they can
 
-> Thanks,
-> Adrian
-> 
-> > [1] https://gitlab.com/yoshinori.sato/linux
-> 
-> -- 
->  .''`.  John Paul Adrian Glaubitz
-> : :' :  Debian Developer
-> `. `'   Physicist
->   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
-> 
+1) Check if anything has been missed
+2) Check if the changes made fit to the review comments.
 
--- 
-Yosinori Sato
+So please include a one line summary per change made.
+
+> - Rebase code and now this patch series can apply to net-next tree.
+
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html#netdev-faq
+
+	Andrew
 
