@@ -1,173 +1,192 @@
-Return-Path: <linux-kernel+bounces-183315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4576D8C9795
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:49:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70B38C9798
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 02:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 725881C20A3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 00:49:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 403591F211C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 00:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510D36AB8;
-	Mon, 20 May 2024 00:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B40F4C80;
+	Mon, 20 May 2024 00:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="klpf68pR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eSww0ioe"
-Received: from wflow3-smtp.messagingengine.com (wflow3-smtp.messagingengine.com [64.147.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KntSlvE7"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F544431;
-	Mon, 20 May 2024 00:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38031367;
+	Mon, 20 May 2024 00:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716166174; cv=none; b=cIKujs99xzhrh3EBUvYH0EOHVeXo6uEUQC9eVDXRX2fg8pQ7OvipksMqarb/YTkhWewhSGk4WmpGcXlPDXas6QnPsgWgnAg593L5H2Jjs6XkyjARDAfM6PAokrinilIZBgqQDxGkYHJLaZ926GYfdWKiD99lpAGdR96poghMNEE=
+	t=1716166720; cv=none; b=hsSiNI5tsqbyvXVMNLLM+DUBpicA8M9KR06oNApBzPUhIgD23OjIlfixZkg9F39RKDU5TyDmIr7+Rl9d9Bs3dyEXUt41gnN61xY8MRRGxfl7Lneg2HfuqU5jLcS5EJOapcZxHPbaHyX6C6GHnuR+SBASx8Wqj2LwExV91ZfT76I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716166174; c=relaxed/simple;
-	bh=CyRV9ILozf4Lntq5G/bNlTgHb6HrAA/zKXB/WqFeBT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dBf6yj8lCYIfx7dvWnNFqGWvS9XIa2VwnU8F4fGDkizLR54li8rm4GwM1M9Y+nQ5g31LGEnPivuA4Pm1uGi2tsldyEWwehs/a0oGX0rOQ5j5C0+1kHT0ibwwOvtqE25HxkAhOzEo6463EDZZrx64Tvee1G6MlYC8dCwxthD/6ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=klpf68pR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eSww0ioe; arc=none smtp.client-ip=64.147.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailflow.west.internal (Postfix) with ESMTP id B54C52CC015A;
-	Sun, 19 May 2024 20:49:30 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Sun, 19 May 2024 20:49:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1716166170; x=1716169770; bh=CyRV9ILozf
-	4Lntq5G/bNlTgHb6HrAA/zKXB/WqFeBT4=; b=klpf68pR983Umz/iMgT4y+ak04
-	n8kwlI8xnnbrnJaKaPnN8jzHHCo870IYXfQdY5ovbS5nfN8+SoAyY1omj9fYWYxy
-	9h9hZGEUAWUNMpao+N0biLGN9dU7EiGBneK0jiTywGV0Td0bREhUOpNmsYWCabOD
-	KgLdZgCbLsgq9pbhd+cfZYVkecyFKBqAv1NxWcrxpYiAFyhJ2MIxpCX3MFWD4hFG
-	leq5CoxnGSkT1yVtIiALfsBK14Bz6uRkvoFCEW/ZIeuoWpOw48FyS28BWCnWN+Zp
-	ykXXRqXE2kFJSHpFwfhRAmo8mmxSL3q6OZOFNt7IhKLWnughIBAmhqJtX+1w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	i76614979.fm1; t=1716166170; x=1716169770; bh=CyRV9ILozf4Lntq5G/
-	bNlTgHb6HrAA/zKXB/WqFeBT4=; b=eSww0ioeIWbQ0Sk25DnYNgGXUAyXLvIvxl
-	KsVsfen8yaGLUrUGKnsSVL9xuDZ8WH3zrh+L9Oh+3oCouC/+/GyrltOWzFQSr9VN
-	+FzrjWTZU4FzaNNNtaPLsX5sOLezJMQ3nEIkPaQkj+QHjJnQGvcBtvZL44ADt8N/
-	e93HP14LmO5DN8yIlOr0bbD4IdQu9Q8QFtzCAUATUsjayWibc+mF6c0au/88nmm4
-	u1IC/k7OIXYQnw71EsRdiOCgw2Ze+UpI/lgIW9F8w/3FvXPIoBZCJo4TwXi7PzWj
-	xRq3z5k3k9ND/dZ0AcRDdhRQV7ZbN9Bge4W08KhAtCt8lrojJmzQ==
-X-ME-Sender: <xms:GJ5KZqRwF-Hmrd_yns_Mk6Mx7Xd4pz1klZb8lQd5YR1_KVDVtqzWVA>
-    <xme:GJ5KZvxpVD0vBJtI6bIvKlzINXnQlBMjfmffdDJ3fjqPTv539QfgCn6-l3CfL49Kg
-    PniH2dcBJXyVAHmQNc>
-X-ME-Received: <xmr:GJ5KZn3g2SePJsmPjv_lL1o9JiTGL3jepRa2FNBvw3l_7BFIYW9-HBms3Mv9trDWGvoA22v28letiaQsofVjBk4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehledgfeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
-    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
-    ftrfgrthhtvghrnhepkeekteegfefgvdefgfefffeufeffjedvudeijeehjeehffekjeek
-    leffueelgffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
-X-ME-Proxy: <xmx:GJ5KZmBPlFW2A-8gZTo0fZw_4OAm5z68khPRoHSXKN0PpurrtTYZbQ>
-    <xmx:GJ5KZjjQOVhrXpqMIu3qX8sA9OHU9wc-gzKYThConkTcb7Hv3agYMA>
-    <xmx:GJ5KZiqUNoZd9eA-_Koz0muherzhe6-eI1CqTzfbj729hJJ64GC9BQ>
-    <xmx:GJ5KZmhjsKPJdXKBIG_jz_nLPQfr4LYRx_iGFZJREt9FKM_xhsv3zg>
-    <xmx:Gp5KZuQ8e6YZc8xP1W7wHecBEsVSVBdrx2L-LybB3XCoxVjdDmmvGXj_>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 19 May 2024 20:49:27 -0400 (EDT)
-Date: Sun, 19 May 2024 17:54:29 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Serge Hallyn <serge@hallyn.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	brauner@kernel.org, ebiederm@xmission.com, Luis Chamberlain <mcgrof@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Joel Granados <j.granados@samsung.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	David Howells <dhowells@redhat.com>, containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-Message-ID: <r44h5pcqg7rh6sbd2yohjrqz2lwaakth7bshmu6qnut3mju6tl@tb5hsz5cdc42>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <2804dd75-50fd-481c-8867-bc6cea7ab986@schaufler-ca.com>
- <D1BBFWKGIA94.JP53QNURY3J4@kernel.org>
- <D1BBI1LX2FMW.3MTQAHW0MA1IH@kernel.org>
- <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
- <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
- <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
- <ZkidDlJwTrUXsYi9@serge-l-PF3DENS3>
- <799f3963-1f24-47a1-9e19-8d0ad3a49e45@schaufler-ca.com>
+	s=arc-20240116; t=1716166720; c=relaxed/simple;
+	bh=i1mOX2qbdDLFdh20/WuRl3gItDHEzJa60ng7LxxRFbQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BFlBTWIKrOm3BEOVJznculBu3yC8YUG/i6SZZ863TFAgrGMZtzQggCyeg8Ae5voWcycSBCig1yEHyT7VNR3P8zLM/rkM+wtU9CbxzkWiClWKbdUGFKkNMs8XrV6SSAYGa7y45+f6XjfyW/fhxf3IasGxgha0uUGGSitQxwogu4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KntSlvE7; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ee42b97b32so60653055ad.2;
+        Sun, 19 May 2024 17:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716166718; x=1716771518; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eDNaJH2eClVaWSLjdzfpUFgxTWpHFkUfhCj+owegG/o=;
+        b=KntSlvE7YsOSALX5B0l1BhMD3zcza0S15qqHMAhoexmcghfzyHsYvQElihj+iWte84
+         CKMlNNQDCnp6yxwiWsFw4hUeK8c+8GKlAnx24UbQPjm64b8CHe8oi6dPvYZoJkK+nREA
+         Vc7ks9tn2+eAsS6R4+28Qzri44GOaFkks+oxut7p4c1+AUAY71H+O9G43aq+a/XKiF/e
+         rLePh0NEKvoIgjX5NDyQuSIwp4obBR/TEP5rQNCQCKPFwWzbHnao4IBn0XiAtmPZhw0N
+         rFJRfFc7x94W1+xtI4Y4bosEOOJ131SzbT3K2CijvcJWe3+fOI4rPRCbC2T5q4K2j1Dq
+         Qiow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716166718; x=1716771518;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eDNaJH2eClVaWSLjdzfpUFgxTWpHFkUfhCj+owegG/o=;
+        b=hkwh+GJ3Szq3UAgfBSUQDWQNBknp43GY5tY3Wt3tTssQthp6bliQzDzmaiOB4XQRdf
+         gsztfWuLFKtZhUlxopBJf7vsBGfQka3omx8f3gbZ6sC3UU5IDtxS6PlKkc5H+J+hhl26
+         yDDSUw+UhM776YmK90FD1nLrG4E/E7V69a+WIfMshOdYpASS5SQpi3YIe4olELKCStrv
+         H5H0n736XTSAmdwaxSvMuVbq0GwIm1n+7GFD+JoHb26Cxt21A/s5z252LAxCOdu3WWb1
+         qVmsgwAwSM2CKQfD2iucz4oMLv3+MS+8sQ1o1VgKDM9dFgvXDOPW7Rxds9VznNcouwi2
+         rbfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvgXMeA04u9udr1bO0b1Q/8RTrGo7F2v8OQ7N/QWpDWCrGB63VuIP/r6H/9c2VOD0CTAzY2OaY2zKWSFPC68iZfBGCnzu59oBBdIYM
+X-Gm-Message-State: AOJu0YzwUVZznmF1COXYhI3ekgNKRv8U/qwHvBN3gI8xuK/f24o9mOxi
+	z6CiJ9OZAij7PRPLdOM1wot253lV5zgKuvEJFJKwPPkFusMjRJ1O
+X-Google-Smtp-Source: AGHT+IH1LWXde24576gl+A3hxZhqwMU0AHScEyfWun2C0EnHqt/S8ICFn/5tAIR5x0Mv7tJ+wDEypg==
+X-Received: by 2002:a05:6a20:e687:b0:1b1:d2a5:c7b1 with SMTP id adf61e73a8af0-1b1d2a5c804mr3114746637.49.1716166718372;
+        Sun, 19 May 2024 17:58:38 -0700 (PDT)
+Received: from localhost.localdomain ([2409:895a:3250:11f0:652a:6d4c:60e5:a0ae])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c25628esm190535385ad.288.2024.05.19.17.58.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 May 2024 17:58:38 -0700 (PDT)
+From: Wardenjohn <zhangwarden@gmail.com>
+To: jpoimboe@kernel.org,
+	mbenes@suse.cz,
+	jikos@kernel.org,
+	pmladek@suse.com,
+	joe.lawrence@redhat.com
+Cc: live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wardenjohn <zhangwarden@gmail.com>
+Subject: [PATCH] livepatch: introduce klp_func called interface
+Date: Mon, 20 May 2024 08:58:26 +0800
+Message-Id: <20240520005826.17281-1-zhangwarden@gmail.com>
+X-Mailer: git-send-email 2.37.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <799f3963-1f24-47a1-9e19-8d0ad3a49e45@schaufler-ca.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 19, 2024 at 10:03:29AM GMT, Casey Schaufler wrote:
-> I do understand that. My objection is not to the intent, but to the approach.
-> Adding a capability set to the general mechanism in support of a limited, specific
-> use case seems wrong to me. I would rather see a mechanism in userns to limit
-> the capabilities in a user namespace than a mechanism in capabilities that is
-> specific to user namespaces.
+Livepatch module usually used to modify kernel functions.
+If the patched function have bug, it may cause serious result
+such as kernel crash.
 
-> An option to clone() then, to limit the capabilities available?
-> I honestly can't recall if that has been suggested elsewhere, and
-> apologize if it's already been dismissed as a stoopid idea.
+This is a kobject attribute of klp_func. Sysfs interface named
+ "called" is introduced to livepatch which will be set as true
+if the patched function is called.
 
-No and you're right, this would also make sense. This was considered as
-well as things like ioctl_ns() (basically introducing the concept of
-capabilities in the user_namespace struct). I also considered reusing
-the existing sets with various schemes to no avail.
+/sys/kernel/livepatch/<patch>/<object>/<function,sympos>/called
 
-The main issue with this approach is that you've to consider how this is
-going to be used. This ties into the other thread we've had with John
-and Eric.
-Basically, we're coming from a model where things are wide open and
-we're trying to tighten things down.
+This value "called" is quite necessary for kernel stability
+assurance for livepatching module of a running system.
+Testing process is important before a livepatch module apply to
+a production system. With this interface, testing process can
+easily find out which function is successfully called.
+Any testing process can make sure they have successfully cover
+all the patched function that changed with the help of this interface.
 
-Quoting John here:
+Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
+---
+ include/linux/livepatch.h |  2 ++
+ kernel/livepatch/core.c   | 18 ++++++++++++++++++
+ kernel/livepatch/patch.c  |  2 ++
+ 3 files changed, 22 insertions(+)
 
-> We are starting from a different posture here. Where applications have
-> assumed that user namespaces where safe and no measures were needed.
-> Tools like unshare and bwrap if set to allow user namespaces in their
-> fcaps will allow exploits a trivial by-pass.
+diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+index 51a258c24ff5..026431825593 100644
+--- a/include/linux/livepatch.h
++++ b/include/linux/livepatch.h
+@@ -37,6 +37,7 @@
+  * @nop:        temporary patch to use the original code again; dyn. allocated
+  * @patched:	the func has been added to the klp_ops list
+  * @transition:	the func is currently being applied or reverted
++ * @called:		the func is called
+  *
+  * The patched and transition variables define the func's patching state.  When
+  * patching, a func is always in one of the following states:
+@@ -75,6 +76,7 @@ struct klp_func {
+ 	bool nop;
+ 	bool patched;
+ 	bool transition;
++	bool called;
+ };
+ 
+ struct klp_object;
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index 52426665eecc..a840ddd41d00 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -470,6 +470,22 @@ static struct attribute *klp_object_attrs[] = {
+ };
+ ATTRIBUTE_GROUPS(klp_object);
+ 
++static ssize_t called_show(struct kobject *kobj,
++				struct kobj_attribute *attr, char *buf)
++{
++	struct klp_func *func;
++
++	func = container_of(kobj, struct klp_func, kobj);
++	return sysfs_emit(buf, "%d\n", func->called);
++}
++
++static struct kobj_attribute called_kobj_attr = __ATTR_RO(called);
++static struct attribute *klp_func_attrs[] = {
++	&called_kobj_attr.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(klp_func);
++
+ static void klp_free_object_dynamic(struct klp_object *obj)
+ {
+ 	kfree(obj->name);
+@@ -631,6 +647,7 @@ static void klp_kobj_release_func(struct kobject *kobj)
+ static const struct kobj_type klp_ktype_func = {
+ 	.release = klp_kobj_release_func,
+ 	.sysfs_ops = &kobj_sysfs_ops,
++	.default_groups = klp_func_groups,
+ };
+ 
+ static void __klp_free_funcs(struct klp_object *obj, bool nops_only)
+@@ -903,6 +920,7 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
+ static void klp_init_func_early(struct klp_object *obj,
+ 				struct klp_func *func)
+ {
++	func->called = false;
+ 	kobject_init(&func->kobj, &klp_ktype_func);
+ 	list_add_tail(&func->node, &obj->func_list);
+ }
+diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
+index 90408500e5a3..75b9603a183f 100644
+--- a/kernel/livepatch/patch.c
++++ b/kernel/livepatch/patch.c
+@@ -118,6 +118,8 @@ static void notrace klp_ftrace_handler(unsigned long ip,
+ 	if (func->nop)
+ 		goto unlock;
+ 
++	if (!func->called)
++		func->called = true;
+ 	ftrace_regs_set_instruction_pointer(fregs, (unsigned long)func->new_func);
+ 
+ unlock:
+-- 
+2.37.3
 
-We can't really expect userspace to patch every single userns callsite
-and opt-in this new security mechanism.
-You said it well yourself:
-
-> Capabilities are already more complicated than modern developers
-> want to deal with.
-
-Moreover, policies are not necessarily enforced at said callsites. Take
-for example a service like systemd-machined, or a PAM session. Those
-need to be able to place restrictions on any processes spawned under
-them.
-
-If we do this in clone() (or similar), we'll also need to come up with
-inheritance rules, being able to query capabilities, etc.
-At this point we're just reinventing capability sets.
-
-Finally the nice thing about having it as a capability set, is that we
-can easily define rules between them. Patch 2 is a good example of this.
-It constrains the userns set to the bounding set of a task. Thus,
-requiring minimal/no change to userspace, and helping with adoption.
-
-> Yes, I understand. I would rather see a change to userns in support of a userns
-> specific need than a change to capabilities for a userns specific need.
-
-Valid point, but at the end of the day, those are really just tasks'
-capabilities. The unshare() just happens to trigger specific rules when it
-comes to the tasks' creds. This isn't so different than the other sets
-and their specific rules for execve() or UID 0.
-
-This could also be reframed as:
-
-Why would setting capabilities on taks in a userns be so different than
-tasks outside of it?
 
