@@ -1,102 +1,102 @@
-Return-Path: <linux-kernel+bounces-183553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0338C9A8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:41:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F01B8C9A8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19BFB2828B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:41:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B26B282159
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B3222619;
-	Mon, 20 May 2024 09:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF5122F17;
+	Mon, 20 May 2024 09:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="L+2yBEhh"
-Received: from msa.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aZ9xzG0X"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91714320E;
-	Mon, 20 May 2024 09:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA3121345
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 09:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716198063; cv=none; b=eCSlYo/F3zdV7PvEHsSIMYBqR7RX7Nr6xS7ZfQjGl29J2kVa1AfCI5tJHUf8GKwFEe3yh4aNHTtOcT4HgXt+LdDiPnB7DDS7FQGURDC16wuP3Y6ArvTCpEsiU7tz8pTIgK7Wrk3B/xsQEoKNXPhyrobVwh91HbW8SiDxHWN2ShI=
+	t=1716198082; cv=none; b=hGoHVQSBlP/+9FWshy9i4dF1umuXUMO4yWNklrBGlB2m86crEeKhwfmrgdYpxOarCPTncXfD9h54NnQHEUbCgyOZCxi3KaHGTqrp3R+Xu0DKTVJVpJtXzZaLKkuUHK2MiqxniIY0xJZytemXeeKSEeC6DpKIYAFDBBiofxmda18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716198063; c=relaxed/simple;
-	bh=nVF0WvM42TTEecOP0ATh7bXHJ+8LpyzwZuXYehCdffM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dUXM3of07wCtXoqqEIH7piH1cSdwhYfCKvLewhcvv+Jfdsr9swmkofQ+1MxNsAFaz0z3HPsEfroL03fkV/L/BizJX7hix44OS7M8RxTtxLv+kkafGL92mVuVgBU5uSdnXISotyMhJJpOBNcf56LaP+n6D0Y+KLtHNKG0fZuEKcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=L+2yBEhh; arc=none smtp.client-ip=80.12.242.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 8zVgsQHohrcIM8zVgsAdfk; Mon, 20 May 2024 11:40:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716198053;
-	bh=3kjknBbjqfJQ6eLw8k3gflhIVcgh33eEwLFPSws9YCE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=L+2yBEhhgXi5xu2+LX9rSSwCMEbjT5QHl4m86H69IUBp1fMCGwNDcI+Uk5cNUKJwO
-	 B5A0GHGgSK3/XSJWXi1qZ+pCVqUX4832Ujg5925ZFmBOsmXN8l5PNZ6/f1C8YjOFrB
-	 ZJ/Q6dJ5aa6zqvnYVCJH/VvJnnclhbgGMuv3uSVpUgE5jX6i3Zah9nfranCk+lXFDM
-	 msfF8qGUAEfd6fTYV3OLoDLqRyRf8yiY+n6b62yr4VutEUjhw8Yv6qGqbEmCh+3XOo
-	 jLgNLXk+QFwblsvPg6jKAIvZKRFLOS0mjQCjeOkwAtE1hmy2EEhkmaq7zDJpXLCgLb
-	 EDrvMFjLxmxlQ==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 20 May 2024 11:40:53 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Michal Simek <michal.simek@amd.com>,
-	Sean Anderson <sean.anderson@linux.dev>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] drm: zynqmp_dpsub: Fix an error handling path in zynqmp_dpsub_probe()
-Date: Mon, 20 May 2024 11:40:37 +0200
-Message-ID: <974d1b062d7c61ee6db00d16fa7c69aa1218ee02.1716198025.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716198082; c=relaxed/simple;
+	bh=7uuugY85m3skoiVn07kJvXcB4zJBbm3CV5cNkHDjjBE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f+mb3DZ+t26UMfB0eJ/ckh38jwnoZB4FmrBvdgo1wvu8jmi42KE+aCI3M3zW5E/CGKn+gQqPZkZEv6r7YirwjyMYAcJDW6tjhIS6uDS1W72zTlyshOTqJ2ejzw3UwTcYM2QcbCdwybxFzfyJj6AcrX1RM9X93ItEFhsxRrshDC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aZ9xzG0X; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4df3ad5520aso1184660e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 02:41:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716198080; x=1716802880; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7uuugY85m3skoiVn07kJvXcB4zJBbm3CV5cNkHDjjBE=;
+        b=aZ9xzG0XRwlnWv4nP42FIH+tiSnaFlqpvRqqYwx3DSorkig6BcVA3qFnSFrId0ELK7
+         Gv/o1Mx2ihBDvkhu/Scg1hZnT+f9612AJM1FqubzNMNcoxI2JbLK4/aMnWHw6mIEBoJN
+         aY7/rm09UQsRSwh412d1d0Kl9fxuczUH7JyAuedJRdMlBbPtnX6YJ48P4C/WCvd4o2BW
+         MH2piopsMHJxymHNPRZ5Sv/EPB/kGQxN7YpQCQxg6+V554VEoigCledMjif+zlYwNW9W
+         I7cLu3O0hQIFlTS5Uqx/0PQ9bUF394LAMiaLAT4hPkyw3A/eOmtPjUJ8v4sxaTHvfw6c
+         veDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716198080; x=1716802880;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7uuugY85m3skoiVn07kJvXcB4zJBbm3CV5cNkHDjjBE=;
+        b=XyVSj+ZwCv9xidecwFc2hWWZ3VwdcXGavVgR6p5F/We5QuU7hOY2z2rjZeyPR5xAeF
+         TMD/Y3ZzW99atR8EoJ/PducKc2yg0+uV8Ynbd5xQnlryVyPkJiI4/bP89vuP3IwS4lbJ
+         6Yvmm4ttBemDduhq74gAe8F/oru2lWfeiTJaEcgjW7riXxR+46eAW7L+2t1AyJo2QEGe
+         +b2aLsjb6lOmPcEMBfnSuEKfDsdA7MJ03qm8OdsjxtMwCtAM/ytTKuMADWPvqDTBnscj
+         TZT/FFHwD+m3EgcRboPnbqBWkbgGVzbCHfvWB/2E3sDgRX9uPn0NLk343KY8Io3Sor3w
+         MFFw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6lQaLkg7maVhzIaQGOblx54WfAsPbqwQ51tDNblShD1irDun9rS8yOhbR1CGKbd0xBBQwEUdAe1cS1GsdAbejVrbLs/+zWwXNIPcL
+X-Gm-Message-State: AOJu0YxSpk7gwwNjvX3M6XcLRXLrbITqOXB6NFX3qqaYO8K8Saia9WcQ
+	3GemGnK87gkkwI9wVZ0X0Q2j8FpwWymJmna4SL/cDRkVAV1uPEPyJrJD4iUbJZRqHVFBhkrMCbS
+	kAOF2/QhHU2m10L8TU66d7rc8nWYtCqNCcD3C
+X-Google-Smtp-Source: AGHT+IHIRXk83gqTUdQImOJqZPIX0uv6AUm05mTPSzxJ+VjagPZfmFf9nOGa5CXpYjIsVt4/l7jOnVOm53CKwZsfOTU=
+X-Received: by 2002:a05:6122:200d:b0:4d4:e92:1a71 with SMTP id
+ 71dfb90a1353d-4df8835c8d1mr26014914e0c.11.1716198079941; Mon, 20 May 2024
+ 02:41:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240519211235.589325-1-ojeda@kernel.org>
+In-Reply-To: <20240519211235.589325-1-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 20 May 2024 11:41:07 +0200
+Message-ID: <CAH5fLgjiKzmmwTrfiAx05tzFYVHDQUsiFmroMcWd3t=P+f6spQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] kbuild: rust: move `-Dwarnings` handling to `Makefile.extrawarn`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If zynqmp_dpsub_drm_init() fails, we must undo the previous
-drm_bridge_add() call.
+On Sun, May 19, 2024 at 11:12=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wr=
+ote:
+>
+> Following commit e88ca24319e4 ("kbuild: consolidate warning flags
+> in scripts/Makefile.extrawarn"), move `-Dwarnings` handling into
+> `Makefile.extrawarn` like C's `-Werror`.
+>
+> No functional change intended.
+>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Fixes: be3f3042391d ("drm: zynqmp_dpsub: Always register bridge")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-index face8d6b2a6f..f5781939de9c 100644
---- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-+++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-@@ -269,6 +269,7 @@ static int zynqmp_dpsub_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_disp:
-+	drm_bridge_remove(dpsub->bridge);
- 	zynqmp_disp_remove(dpsub);
- err_dp:
- 	zynqmp_dp_remove(dpsub);
--- 
-2.45.1
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
