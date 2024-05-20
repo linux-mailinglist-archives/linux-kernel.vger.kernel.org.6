@@ -1,369 +1,428 @@
-Return-Path: <linux-kernel+bounces-183536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1058C9A59
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:29:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 674918C9A42
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF3C01F21C1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ACD41C20EB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101BF210E7;
-	Mon, 20 May 2024 09:29:43 +0000 (UTC)
-Received: from mx.der-flo.net (mx.der-flo.net [193.160.39.236])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F381CD20;
+	Mon, 20 May 2024 09:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJONfR+W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F3F1B27D;
-	Mon, 20 May 2024 09:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.160.39.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ACEFC1D;
+	Mon, 20 May 2024 09:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716197382; cv=none; b=BEN7wnMcRYt4WbCt4FhgYQM8Y+6I+VkrplI0JXPs9zrFjEDGraaZE1VF/GziomB7AdnffCU6B5axO47fzj8gKylpZzSgqi/5GXE5iXB+C/LXXqRNr5tY82mMolT5L/fdrfZgV2EI/j9LzaJZ4Lv3awhqUt0bchpTZ36xT3wQkZQ=
+	t=1716196977; cv=none; b=e671IJ5FFVfkDGvG51xyC++XqYKWforwuc120ixnC+kNw7NP3eEwCTWpbK5ADUjPCAREDPl0guUtnLVx6VGqLwNuuAapE0tarbwuQWdyL3RXWrTl6kx7WqdtQJgx+qMiji5mg4Wha0qdiKgJL9eDcgruwU3tgVl7q2mFpNAuG8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716197382; c=relaxed/simple;
-	bh=SZYZZ5m4hxbxr2qYdBFsTSgOkIcGmrJU4lQ37BRL5oc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iJUrJgjq8PzGvheL+gLnVu7FYVyNOPnr4lF2O+1RidAHCZSdmcb2r9zXT9ga9lc1biEacUn9BIxI47fIeU2G6IgnossfJgypFHiOqqGoXTm6I45rUXZmhbptUl//p3yiOgLR5AG/CUBcfJfn+6tkIHlNq7/xRJKprbo5XZwBynU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=der-flo.net; spf=pass smtp.mailfrom=der-flo.net; arc=none smtp.client-ip=193.160.39.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=der-flo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=der-flo.net
-From: Florian Lehner <dev@der-flo.net>
-To: linux-kernel@vger.kernel.org
-Cc: davem@davemloft.net,
-	netdev@vger.kernel.org,
-	Florian Lehner <dev@der-flo.net>
-Subject: [PATCH] net: sync headers
-Date: Mon, 20 May 2024 11:21:45 +0200
-Message-ID: <20240520092145.13575-1-dev@der-flo.net>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716196977; c=relaxed/simple;
+	bh=3pMKgd4LmFd4C4gJjWdjXdVrkXrPsHj6cGmB/FY1nl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AEtD5IUt9jvQwgR8EMFaRZrxVNeVjqJtz3gEr258Kxu9DMlvbLr1vxKer0IorDPFywdGuHOeJPmnQ8U9GVJ5PdlN0txhwUcwur+/FUuXEQ8zMzIvzZkXmuw6w6AWmGae7xu8tqkSAjctkzzZ1v42ijBhxn4mrfGZgtsnWNSJDMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJONfR+W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F08C2BD10;
+	Mon, 20 May 2024 09:22:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716196977;
+	bh=3pMKgd4LmFd4C4gJjWdjXdVrkXrPsHj6cGmB/FY1nl4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=MJONfR+WtLjhJO70UsIZWSeTbhKyMnQTb8HwATGqEJdrEW2NRwlL84vUl4pTb3PjW
+	 QANfnibBlnfqu4TxcwrPHdLGhr9Sn4Qult5J5zfvEzbXtwJqxbcl2gCC6MjZfdNIJS
+	 2WuCIpnqG7oGP8sCDiPW57Grg392rG0gzZWCrR3Eu/0VxqhHWHa7Isj7VyNqyhYztu
+	 E1P/s+eUTd1LpcgXmUTC6hYhUTAcnAw9VjAzkf0nFR4+zyPnImxOZNz5EsxLBRvblx
+	 54T3YKlHowgB/UUXYbjGYXlLwN4P8tBK+P+oxYAaH2eU3M7hb/bmsobGcChTSDcpLp
+	 aVfPiHYv1YYnw==
+Date: Mon, 20 May 2024 11:22:53 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.10-rc1
+Message-ID: <ZksWbctxiJmcNmg9@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Ci9aXpwAIRAxNlWI"
+Content-Disposition: inline
 
-The header files include/uapi/linux/pkt_cls.h and
-tools/include/uapi/linux/pkt_cls.h did become out of sync. Update the later
-with the changes from the former.
 
-Signed-off-by: Florian Lehner <dev@der-flo.net>
----
- tools/include/uapi/linux/pkt_cls.h | 230 ++++++++++++++++++++++++++++-
- 1 file changed, 226 insertions(+), 4 deletions(-)
+--Ci9aXpwAIRAxNlWI
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/include/uapi/linux/pkt_cls.h b/tools/include/uapi/linux/pkt_cls.h
-index bd4b227ab..229fc925e 100644
---- a/tools/include/uapi/linux/pkt_cls.h
-+++ b/tools/include/uapi/linux/pkt_cls.h
-@@ -16,9 +16,40 @@ enum {
- 	TCA_ACT_STATS,
- 	TCA_ACT_PAD,
- 	TCA_ACT_COOKIE,
-+	TCA_ACT_FLAGS,
-+	TCA_ACT_HW_STATS,
-+	TCA_ACT_USED_HW_STATS,
-+	TCA_ACT_IN_HW_COUNT,
- 	__TCA_ACT_MAX
- };
- 
-+/* See other TCA_ACT_FLAGS_ * flags in include/net/act_api.h. */
-+#define TCA_ACT_FLAGS_NO_PERCPU_STATS (1 << 0) /* Don't use percpu allocator for
-+						* actions stats.
-+						*/
-+#define TCA_ACT_FLAGS_SKIP_HW	(1 << 1) /* don't offload action to HW */
-+#define TCA_ACT_FLAGS_SKIP_SW	(1 << 2) /* don't use action in SW */
-+
-+/* tca HW stats type
-+ * When user does not pass the attribute, he does not care.
-+ * It is the same as if he would pass the attribute with
-+ * all supported bits set.
-+ * In case no bits are set, user is not interested in getting any HW statistics.
-+ */
-+#define TCA_ACT_HW_STATS_IMMEDIATE (1 << 0) /* Means that in dump, user
-+					     * gets the current HW stats
-+					     * state from the device
-+					     * queried at the dump time.
-+					     */
-+#define TCA_ACT_HW_STATS_DELAYED (1 << 1) /* Means that in dump, user gets
-+					   * HW stats that might be out of date
-+					   * for some time, maybe couple of
-+					   * seconds. This is the case when
-+					   * driver polls stats updates
-+					   * periodically or when it gets async
-+					   * stats update from the device.
-+					   */
-+
- #define TCA_ACT_MAX __TCA_ACT_MAX
- #define TCA_OLD_COMPAT (TCA_ACT_MAX+1)
- #define TCA_ACT_MAX_PRIO 32
-@@ -63,12 +94,53 @@ enum {
- #define TC_ACT_GOTO_CHAIN __TC_ACT_EXT(2)
- #define TC_ACT_EXT_OPCODE_MAX	TC_ACT_GOTO_CHAIN
- 
-+/* These macros are put here for binary compatibility with userspace apps that
-+ * make use of them. For kernel code and new userspace apps, use the TCA_ID_*
-+ * versions.
-+ */
-+#define TCA_ACT_GACT 5
-+#define TCA_ACT_IPT 6 /* obsoleted, can be reused */
-+#define TCA_ACT_PEDIT 7
-+#define TCA_ACT_MIRRED 8
-+#define TCA_ACT_NAT 9
-+#define TCA_ACT_XT 10
-+#define TCA_ACT_SKBEDIT 11
-+#define TCA_ACT_VLAN 12
-+#define TCA_ACT_BPF 13
-+#define TCA_ACT_CONNMARK 14
-+#define TCA_ACT_SKBMOD 15
-+#define TCA_ACT_CSUM 16
-+#define TCA_ACT_TUNNEL_KEY 17
-+#define TCA_ACT_SIMP 22
-+#define TCA_ACT_IFE 25
-+#define TCA_ACT_SAMPLE 26
-+
- /* Action type identifiers*/
--enum {
--	TCA_ID_UNSPEC=0,
--	TCA_ID_POLICE=1,
-+enum tca_id {
-+	TCA_ID_UNSPEC = 0,
-+	TCA_ID_POLICE = 1,
-+	TCA_ID_GACT = TCA_ACT_GACT,
-+	TCA_ID_IPT = TCA_ACT_IPT, /* Obsoleted, can be reused */
-+	TCA_ID_PEDIT = TCA_ACT_PEDIT,
-+	TCA_ID_MIRRED = TCA_ACT_MIRRED,
-+	TCA_ID_NAT = TCA_ACT_NAT,
-+	TCA_ID_XT = TCA_ACT_XT,
-+	TCA_ID_SKBEDIT = TCA_ACT_SKBEDIT,
-+	TCA_ID_VLAN = TCA_ACT_VLAN,
-+	TCA_ID_BPF = TCA_ACT_BPF,
-+	TCA_ID_CONNMARK = TCA_ACT_CONNMARK,
-+	TCA_ID_SKBMOD = TCA_ACT_SKBMOD,
-+	TCA_ID_CSUM = TCA_ACT_CSUM,
-+	TCA_ID_TUNNEL_KEY = TCA_ACT_TUNNEL_KEY,
-+	TCA_ID_SIMP = TCA_ACT_SIMP,
-+	TCA_ID_IFE = TCA_ACT_IFE,
-+	TCA_ID_SAMPLE = TCA_ACT_SAMPLE,
-+	TCA_ID_CTINFO,
-+	TCA_ID_MPLS,
-+	TCA_ID_CT,
-+	TCA_ID_GATE,
- 	/* other actions go here */
--	__TCA_ID_MAX=255
-+	__TCA_ID_MAX = 255
- };
- 
- #define TCA_ID_MAX __TCA_ID_MAX
-@@ -120,6 +192,10 @@ enum {
- 	TCA_POLICE_RESULT,
- 	TCA_POLICE_TM,
- 	TCA_POLICE_PAD,
-+	TCA_POLICE_RATE64,
-+	TCA_POLICE_PEAKRATE64,
-+	TCA_POLICE_PKTRATE64,
-+	TCA_POLICE_PKTBURST64,
- 	__TCA_POLICE_MAX
- #define TCA_POLICE_RESULT TCA_POLICE_RESULT
- };
-@@ -286,12 +362,19 @@ enum {
- 
- /* Basic filter */
- 
-+struct tc_basic_pcnt {
-+	__u64 rcnt;
-+	__u64 rhit;
-+};
-+
- enum {
- 	TCA_BASIC_UNSPEC,
- 	TCA_BASIC_CLASSID,
- 	TCA_BASIC_EMATCHES,
- 	TCA_BASIC_ACT,
- 	TCA_BASIC_POLICE,
-+	TCA_BASIC_PCNT,
-+	TCA_BASIC_PAD,
- 	__TCA_BASIC_MAX
- };
- 
-@@ -438,17 +521,76 @@ enum {
- 
- 	TCA_FLOWER_IN_HW_COUNT,
- 
-+	TCA_FLOWER_KEY_PORT_SRC_MIN,	/* be16 */
-+	TCA_FLOWER_KEY_PORT_SRC_MAX,	/* be16 */
-+	TCA_FLOWER_KEY_PORT_DST_MIN,	/* be16 */
-+	TCA_FLOWER_KEY_PORT_DST_MAX,	/* be16 */
-+
-+	TCA_FLOWER_KEY_CT_STATE,	/* u16 */
-+	TCA_FLOWER_KEY_CT_STATE_MASK,	/* u16 */
-+	TCA_FLOWER_KEY_CT_ZONE,		/* u16 */
-+	TCA_FLOWER_KEY_CT_ZONE_MASK,	/* u16 */
-+	TCA_FLOWER_KEY_CT_MARK,		/* u32 */
-+	TCA_FLOWER_KEY_CT_MARK_MASK,	/* u32 */
-+	TCA_FLOWER_KEY_CT_LABELS,	/* u128 */
-+	TCA_FLOWER_KEY_CT_LABELS_MASK,	/* u128 */
-+
-+	TCA_FLOWER_KEY_MPLS_OPTS,
-+
-+	TCA_FLOWER_KEY_HASH,		/* u32 */
-+	TCA_FLOWER_KEY_HASH_MASK,	/* u32 */
-+
-+	TCA_FLOWER_KEY_NUM_OF_VLANS,    /* u8 */
-+
-+	TCA_FLOWER_KEY_PPPOE_SID,	/* be16 */
-+	TCA_FLOWER_KEY_PPP_PROTO,	/* be16 */
-+
-+	TCA_FLOWER_KEY_L2TPV3_SID,	/* be32 */
-+
-+	TCA_FLOWER_L2_MISS,		/* u8 */
-+
-+	TCA_FLOWER_KEY_CFM,		/* nested */
-+
-+	TCA_FLOWER_KEY_SPI,		/* be32 */
-+	TCA_FLOWER_KEY_SPI_MASK,	/* be32 */
-+
- 	__TCA_FLOWER_MAX,
- };
- 
- #define TCA_FLOWER_MAX (__TCA_FLOWER_MAX - 1)
- 
-+enum {
-+	TCA_FLOWER_KEY_CT_FLAGS_NEW = 1 << 0, /* Beginning of a new connection. */
-+	TCA_FLOWER_KEY_CT_FLAGS_ESTABLISHED = 1 << 1, /* Part of an existing connection. */
-+	TCA_FLOWER_KEY_CT_FLAGS_RELATED = 1 << 2, /* Related to an established connection. */
-+	TCA_FLOWER_KEY_CT_FLAGS_TRACKED = 1 << 3, /* Conntrack has occurred. */
-+	TCA_FLOWER_KEY_CT_FLAGS_INVALID = 1 << 4, /* Conntrack is invalid. */
-+	TCA_FLOWER_KEY_CT_FLAGS_REPLY = 1 << 5, /* Packet is in the reply direction. */
-+	__TCA_FLOWER_KEY_CT_FLAGS_MAX,
-+};
-+
- enum {
- 	TCA_FLOWER_KEY_ENC_OPTS_UNSPEC,
- 	TCA_FLOWER_KEY_ENC_OPTS_GENEVE, /* Nested
- 					 * TCA_FLOWER_KEY_ENC_OPT_GENEVE_
- 					 * attributes
- 					 */
-+	TCA_FLOWER_KEY_ENC_OPTS_VXLAN,	/* Nested
-+					 * TCA_FLOWER_KEY_ENC_OPT_VXLAN_
-+					 * attributes
-+					 */
-+	TCA_FLOWER_KEY_ENC_OPTS_ERSPAN,	/* Nested
-+					 * TCA_FLOWER_KEY_ENC_OPT_ERSPAN_
-+					 * attributes
-+					 */
-+	TCA_FLOWER_KEY_ENC_OPTS_GTP,	/* Nested
-+					 * TCA_FLOWER_KEY_ENC_OPT_GTP_
-+					 * attributes
-+					 */
-+	TCA_FLOWER_KEY_ENC_OPTS_PFCP,	/* Nested
-+					 * TCA_FLOWER_KEY_ENC_IPT_PFCP
-+					 * attributes
-+					 */
- 	__TCA_FLOWER_KEY_ENC_OPTS_MAX,
- };
- 
-@@ -466,18 +608,98 @@ enum {
- #define TCA_FLOWER_KEY_ENC_OPT_GENEVE_MAX \
- 		(__TCA_FLOWER_KEY_ENC_OPT_GENEVE_MAX - 1)
- 
-+enum {
-+	TCA_FLOWER_KEY_ENC_OPT_VXLAN_UNSPEC,
-+	TCA_FLOWER_KEY_ENC_OPT_VXLAN_GBP,		/* u32 */
-+	__TCA_FLOWER_KEY_ENC_OPT_VXLAN_MAX,
-+};
-+
-+#define TCA_FLOWER_KEY_ENC_OPT_VXLAN_MAX \
-+		(__TCA_FLOWER_KEY_ENC_OPT_VXLAN_MAX - 1)
-+
-+enum {
-+	TCA_FLOWER_KEY_ENC_OPT_ERSPAN_UNSPEC,
-+	TCA_FLOWER_KEY_ENC_OPT_ERSPAN_VER,              /* u8 */
-+	TCA_FLOWER_KEY_ENC_OPT_ERSPAN_INDEX,            /* be32 */
-+	TCA_FLOWER_KEY_ENC_OPT_ERSPAN_DIR,              /* u8 */
-+	TCA_FLOWER_KEY_ENC_OPT_ERSPAN_HWID,             /* u8 */
-+	__TCA_FLOWER_KEY_ENC_OPT_ERSPAN_MAX,
-+};
-+
-+#define TCA_FLOWER_KEY_ENC_OPT_ERSPAN_MAX \
-+		(__TCA_FLOWER_KEY_ENC_OPT_ERSPAN_MAX - 1)
-+
-+enum {
-+	TCA_FLOWER_KEY_ENC_OPT_GTP_UNSPEC,
-+	TCA_FLOWER_KEY_ENC_OPT_GTP_PDU_TYPE,		/* u8 */
-+	TCA_FLOWER_KEY_ENC_OPT_GTP_QFI,			/* u8 */
-+
-+	__TCA_FLOWER_KEY_ENC_OPT_GTP_MAX,
-+};
-+
-+#define TCA_FLOWER_KEY_ENC_OPT_GTP_MAX \
-+		(__TCA_FLOWER_KEY_ENC_OPT_GTP_MAX - 1)
-+
-+enum {
-+	TCA_FLOWER_KEY_ENC_OPT_PFCP_UNSPEC,
-+	TCA_FLOWER_KEY_ENC_OPT_PFCP_TYPE,		/* u8 */
-+	TCA_FLOWER_KEY_ENC_OPT_PFCP_SEID,		/* be64 */
-+	__TCA_FLOWER_KEY_ENC_OPT_PFCP_MAX,
-+};
-+
-+#define TCA_FLOWER_KEY_ENC_OPT_PFCP_MAX \
-+		(__TCA_FLOWER_KEY_ENC_OPT_PFCP_MAX - 1)
-+
-+enum {
-+	TCA_FLOWER_KEY_MPLS_OPTS_UNSPEC,
-+	TCA_FLOWER_KEY_MPLS_OPTS_LSE,
-+	__TCA_FLOWER_KEY_MPLS_OPTS_MAX,
-+};
-+
-+#define TCA_FLOWER_KEY_MPLS_OPTS_MAX (__TCA_FLOWER_KEY_MPLS_OPTS_MAX - 1)
-+
-+enum {
-+	TCA_FLOWER_KEY_MPLS_OPT_LSE_UNSPEC,
-+	TCA_FLOWER_KEY_MPLS_OPT_LSE_DEPTH,
-+	TCA_FLOWER_KEY_MPLS_OPT_LSE_TTL,
-+	TCA_FLOWER_KEY_MPLS_OPT_LSE_BOS,
-+	TCA_FLOWER_KEY_MPLS_OPT_LSE_TC,
-+	TCA_FLOWER_KEY_MPLS_OPT_LSE_LABEL,
-+	__TCA_FLOWER_KEY_MPLS_OPT_LSE_MAX,
-+};
-+
-+#define TCA_FLOWER_KEY_MPLS_OPT_LSE_MAX \
-+		(__TCA_FLOWER_KEY_MPLS_OPT_LSE_MAX - 1)
-+
- enum {
- 	TCA_FLOWER_KEY_FLAGS_IS_FRAGMENT = (1 << 0),
- 	TCA_FLOWER_KEY_FLAGS_FRAG_IS_FIRST = (1 << 1),
- };
- 
-+enum {
-+	TCA_FLOWER_KEY_CFM_OPT_UNSPEC,
-+	TCA_FLOWER_KEY_CFM_MD_LEVEL,
-+	TCA_FLOWER_KEY_CFM_OPCODE,
-+	__TCA_FLOWER_KEY_CFM_OPT_MAX,
-+};
-+
-+#define TCA_FLOWER_KEY_CFM_OPT_MAX (__TCA_FLOWER_KEY_CFM_OPT_MAX - 1)
-+
-+#define TCA_FLOWER_MASK_FLAGS_RANGE	(1 << 0) /* Range-based match */
-+
- /* Match-all classifier */
- 
-+struct tc_matchall_pcnt {
-+	__u64 rhit;
-+};
-+
- enum {
- 	TCA_MATCHALL_UNSPEC,
- 	TCA_MATCHALL_CLASSID,
- 	TCA_MATCHALL_ACT,
- 	TCA_MATCHALL_FLAGS,
-+	TCA_MATCHALL_PCNT,
-+	TCA_MATCHALL_PAD,
- 	__TCA_MATCHALL_MAX,
- };
- 
--- 
-2.45.1
+The following changes since commit dd5a440a31fae6e459c0d6271dddd62825505361:
 
+  Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-=
+6.10-rc1
+
+for you to fetch changes up to 068a95ef3945033b5355e50fecea18737680d43d:
+
+  power: supply: sbs-manager: Remove class argument from i2c_mux_add_adapte=
+r() (2024-05-14 09:21:43 +0200)
+
+----------------------------------------------------------------
+I2C core removes an argument from the i2c_mux_add_adapter() call to
+further deprecate class based I2C device instantiation. All users are
+converted, too. Other that that, Andi collected a number if I2C host
+driver patches. Those merges have their own description.
+
+----------------------------------------------------------------
+Abhinav Jain (1):
+      i2c: mpc: Removal of of_node_put with __free for auto cleanup
+
+Alexander Stein (1):
+      i2c: lpi2c: Avoid calling clk_get_rate during transfer
+
+Andy Shevchenko (1):
+      i2c: designware: Replace MODULE_ALIAS() with MODULE_DEVICE_TABLE()
+
+Animesh Agarwal (1):
+      dt-bindings: i2c: nxp,pnx-i2c: Convert to dtschema
+
+Arnd Bergmann (1):
+      i2c: ocores: convert to ioport_map() for IORESOURCE_IO
+
+Bryan O'Donoghue (1):
+      dt-bindings: i2c: qcom-cci: Document sc8280xp compatible
+
+Christophe JAILLET (1):
+      i2c: synquacer: Fix an error handling path in synquacer_i2c_probe()
+
+Hamish Martin (1):
+      i2c: acpi: Unbind mux adapters before delete
+
+Hans Hu (6):
+      i2c: wmt: create wmt_i2c_init for general init
+      i2c: wmt: split out common files
+      i2c: wmt: rename something
+      i2c: wmt: fix a bug when thread blocked
+      i2c: wmt: add platform type VIAI2C_PLAT_WMT
+      i2c: add zhaoxin i2c controller driver
+
+Heiner Kallweit (6):
+      i2c: i801: Call i2c_register_spd for muxed child segments
+      i2c: i801: Fix missing Kconfig dependency
+      i2c: i801: Remove usage of I2C_CLASS_SPD
+      i2c: mux: gpio: remove support for class-based device instantiation
+      i2c: i801: Annotate apanel_addr as __ro_after_init
+      i2c: mux: Remove class argument from i2c_mux_add_adapter()
+
+Ji Sheng Teoh (1):
+      i2c: cadence: Add RISCV architecture support
+
+Krzysztof Kozlowski (1):
+      i2c: viperboard: drop driver owner assignment
+
+Lad Prabhakar (4):
+      dt-bindings: i2c: renesas,riic: Document R9A09G057 support
+      i2c: riic: Introduce helper functions for I2C read/write operations
+      i2c: riic: Pass register offsets and chip details as OF data
+      i2c: riic: Add support for R9A09G057 SoC
+
+Lukas Bulwahn (1):
+      MAINTAINERS: adjust file entry in ARM/LPC32XX SOC SUPPORT
+
+Niklas Schnelle (1):
+      i2c: add HAS_IOPORT dependencies
+
+Piyush Malgujar (2):
+      i2c: octeon: Add platform prefix to macros
+      i2c: thunderx: Adding ioclk support
+
+Sai Pavan Boddu (1):
+      i2c: cadence: Avoid fifo clear after start
+
+Shanth Murthy (1):
+      i2c: designware: Add ACPI ID for Granite Rapids-D I2C controller
+
+Suneel Garapati (3):
+      i2c: thunderx: Clock divisor logic changes
+      i2c: thunderx: Support for High speed mode
+      i2c: octeon: Handle watchdog timeout
+
+Wolfram Sang (40):
+      i2c: at91-master: remove printout on handled timeouts
+      i2c: bcm-iproc: remove printout on handled timeouts
+      i2c: bcm2835: remove printout on handled timeouts
+      i2c: cadence: remove printout on handled timeouts
+      i2c: davinci: remove printout on handled timeouts
+      i2c: img-scb: remove printout on handled timeouts
+      i2c: ismt: remove printout on handled timeouts
+      i2c: nomadik: remove printout on handled timeouts
+      i2c: omap: remove printout on handled timeouts
+      i2c: qcom-geni: remove printout on handled timeouts
+      i2c: qup: remove printout on handled timeouts
+      i2c: rk3x: remove printout on handled timeouts
+      i2c: sh_mobile: remove printout on handled timeouts
+      i2c: st: remove printout on handled timeouts
+      i2c: tegra: remove printout on handled timeouts
+      i2c: uniphier-f: remove printout on handled timeouts
+      i2c: uniphier: remove printout on handled timeouts
+      i2c: i801: remove printout on handled timeouts
+      i2c: ali1535: remove printout on handled timeouts
+      i2c: ali1563: remove printout on handled timeouts
+      i2c: ali15x3: remove printout on handled timeouts
+      i2c: amd-mp2-plat: use 'time_left' variable with wait_for_completion_=
+timeout()
+      i2c: digicolor: use 'time_left' variable with wait_for_completion_tim=
+eout()
+      i2c: exynos5: use 'time_left' variable with wait_for_completion_timeo=
+ut()
+      i2c: hix5hd2: use 'time_left' variable with wait_for_completion_timeo=
+ut()
+      i2c: imx-lpi2c: use 'time_left' variable with wait_for_completion_tim=
+eout()
+      i2c: omap: use 'time_left' variable with wait_for_completion_timeout()
+      i2c: st: use 'time_left' variable with wait_for_completion_timeout()
+      i2c: stm32f4: use 'time_left' variable with wait_for_completion_timeo=
+ut()
+      i2c: stm32f7: use 'time_left' variable with wait_for_completion_timeo=
+ut()
+      i2c: synquacer: use 'time_left' variable with wait_for_completion_tim=
+eout()
+      i2c: jz4780: use 'time_left' variable with wait_for_completion_timeou=
+t()
+      i2c: qcom-geni: use 'time_left' variable with wait_for_completion_tim=
+eout()
+      i2c: rk3x: use 'time_left' variable with wait_event_timeout()
+      i2c: s3c2410: use 'time_left' variable with wait_event_timeout()
+      i2c: pxa: use 'time_left' variable with wait_event_timeout()
+      Merge tag 'i2c-host-fixes-6.8-rc8' of git://git.kernel.org/pub/scm/li=
+nux/kernel/git/andi.shyti/linux into i2c/for-mergewindow
+      Merge tag 'i2c-host-6.10' of git://git.kernel.org/pub/scm/linux/kerne=
+l/git/andi.shyti/linux into i2c/for-mergewindow
+      Merge branch 'i2c/for-current' into i2c/for-mergewindow
+      power: supply: sbs-manager: Remove class argument from i2c_mux_add_ad=
+apter()
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Andi Shyti (5):
+      (Rev.) i2c: acpi: Unbind mux adapters before delete
+      (Rev.) i2c: designware: Replace MODULE_ALIAS() with MODULE_DEVICE_TAB=
+LE()
+      (Rev.) i2c: wmt: create wmt_i2c_init for general init
+      (Rev.) i2c: lpi2c: Avoid calling clk_get_rate during transfer
+      (Rev.) MAINTAINERS: adjust file entry in ARM/LPC32XX SOC SUPPORT
+
+Bjorn Andersson (3):
+      (Rev.) i2c: qcom-geni: use 'time_left' variable with wait_for_complet=
+ion_timeout()
+      (Rev.) i2c: qup: remove printout on handled timeouts
+      (Rev.) i2c: qcom-geni: remove printout on handled timeouts
+
+Bryan O'Donoghue (1):
+      (Rev.) i2c: qcom-geni: use 'time_left' variable with wait_for_complet=
+ion_timeout()
+
+Chris Packham (1):
+      (Rev.) i2c: mpc: Removal of of_node_put with __free for auto cleanup
+
+Conor Dooley (1):
+      (Rev.) dt-bindings: i2c: nxp,pnx-i2c: Convert to dtschema
+
+Geert Uytterhoeven (4):
+      (Rev.) i2c: riic: Add support for R9A09G057 SoC
+      (Rev.) i2c: riic: Pass register offsets and chip details as OF data
+      (Rev.) i2c: riic: Introduce helper functions for I2C read/write opera=
+tions
+      (Rev.) dt-bindings: i2c: renesas,riic: Document R9A09G057 support
+
+Jarkko Nikula (1):
+      (Test) i2c: designware: Replace MODULE_ALIAS() with MODULE_DEVICE_TAB=
+LE()
+
+Jean Delvare (4):
+      (Rev.) i2c: ali15x3: remove printout on handled timeouts
+      (Rev.) i2c: ali1563: remove printout on handled timeouts
+      (Rev.) i2c: ali1535: remove printout on handled timeouts
+      (Rev.) i2c: i801: remove printout on handled timeouts
+
+Krzysztof Kozlowski (1):
+      (Rev.) dt-bindings: i2c: qcom-cci: Document sc8280xp compatible
+
+Laurent Pinchart (1):
+      (Rev.) i2c: mux: Remove class argument from i2c_mux_add_adapter()
+
+Linus Walleij (1):
+      (Rev.) i2c: nomadik: remove printout on handled timeouts
+
+Mario Limonciello (1):
+      (Rev.) i2c: designware: Replace MODULE_ALIAS() with MODULE_DEVICE_TAB=
+LE()
+
+Mika Westerberg (1):
+      (Rev.) i2c: acpi: Unbind mux adapters before delete
+
+Peng Fan (1):
+      (Rev.) i2c: imx-lpi2c: use 'time_left' variable with wait_for_complet=
+ion_timeout()
+
+Philippe Mathieu-Daud=C3=A9 (1):
+      (Rev.) i2c: jz4780: use 'time_left' variable with wait_for_completion=
+_timeout()
+
+Serge Semin (1):
+      (Test) i2c: designware: Replace MODULE_ALIAS() with MODULE_DEVICE_TAB=
+LE()
+
+Thomas Zimmermann (1):
+      (Rev.) i2c: mux: Remove class argument from i2c_mux_add_adapter()
+
+Uwe Kleine-K=C3=B6nig (2):
+      (Rev.) i2c: st: use 'time_left' variable with wait_for_completion_tim=
+eout()
+      (Rev.) i2c: lpi2c: Avoid calling clk_get_rate during transfer
+
+Vladimir Zapolskiy (1):
+      (Rev.) dt-bindings: i2c: qcom-cci: Document sc8280xp compatible
+
+Wolfram Sang (11):
+      (Rev.) i2c: wmt: fix a bug when thread blocked
+      (Rev.) i2c: wmt: rename something
+      (Rev.) i2c: wmt: split out common files
+      (Rev.) i2c: wmt: create wmt_i2c_init for general init
+      (Rev.) i2c: i801: Fix missing Kconfig dependency
+      (Rev.) i2c: add HAS_IOPORT dependencies
+      (Rev.) i2c: i801: Call i2c_register_spd for muxed child segments
+      (Rev.) i2c: riic: Add support for R9A09G057 SoC
+      (Rev.) i2c: riic: Pass register offsets and chip details as OF data
+      (Rev.) i2c: riic: Introduce helper functions for I2C read/write opera=
+tions
+      (Rev.) dt-bindings: i2c: renesas,riic: Document R9A09G057 support
+
+ Documentation/devicetree/bindings/i2c/i2c-pnx.txt  |  34 --
+ .../devicetree/bindings/i2c/nxp,pnx-i2c.yaml       |  46 +++
+ .../devicetree/bindings/i2c/qcom,i2c-cci.yaml      |  19 +
+ .../devicetree/bindings/i2c/renesas,riic.yaml      |  19 +-
+ MAINTAINERS                                        |  12 +-
+ drivers/gpu/drm/bridge/sii902x.c                   |   2 +-
+ drivers/i2c/busses/Kconfig                         |  49 ++-
+ drivers/i2c/busses/Makefile                        |   3 +
+ drivers/i2c/busses/i2c-ali1535.c                   |   8 +-
+ drivers/i2c/busses/i2c-ali1563.c                   |   1 -
+ drivers/i2c/busses/i2c-ali15x3.c                   |   4 +-
+ drivers/i2c/busses/i2c-amd-mp2-plat.c              |   8 +-
+ drivers/i2c/busses/i2c-at91-master.c               |   1 -
+ drivers/i2c/busses/i2c-bcm-iproc.c                 |   2 -
+ drivers/i2c/busses/i2c-bcm2835.c                   |   1 -
+ drivers/i2c/busses/i2c-cadence.c                   |   3 +-
+ drivers/i2c/busses/i2c-davinci.c                   |   1 -
+ drivers/i2c/busses/i2c-designware-pcidrv.c         |   2 -
+ drivers/i2c/busses/i2c-designware-platdrv.c        |   9 +-
+ drivers/i2c/busses/i2c-digicolor.c                 |   6 +-
+ drivers/i2c/busses/i2c-exynos5.c                   |  12 +-
+ drivers/i2c/busses/i2c-hix5hd2.c                   |   8 +-
+ drivers/i2c/busses/i2c-i801.c                      |  41 +-
+ drivers/i2c/busses/i2c-img-scb.c                   |   5 +-
+ drivers/i2c/busses/i2c-imx-lpi2c.c                 |  25 +-
+ drivers/i2c/busses/i2c-ismt.c                      |   1 -
+ drivers/i2c/busses/i2c-jz4780.c                    |  22 +-
+ drivers/i2c/busses/i2c-mpc.c                       |  11 +-
+ drivers/i2c/busses/i2c-nomadik.c                   |   7 +-
+ drivers/i2c/busses/i2c-ocores.c                    |  21 +-
+ drivers/i2c/busses/i2c-octeon-core.c               | 141 +++++--
+ drivers/i2c/busses/i2c-octeon-core.h               |  53 ++-
+ drivers/i2c/busses/i2c-omap.c                      |  11 +-
+ drivers/i2c/busses/i2c-pxa.c                       |  14 +-
+ drivers/i2c/busses/i2c-qcom-geni.c                 |  10 +-
+ drivers/i2c/busses/i2c-qup.c                       |   4 +-
+ drivers/i2c/busses/i2c-riic.c                      | 125 ++++--
+ drivers/i2c/busses/i2c-rk3x.c                      |  14 +-
+ drivers/i2c/busses/i2c-s3c2410.c                   |   6 +-
+ drivers/i2c/busses/i2c-sh_mobile.c                 |   1 -
+ drivers/i2c/busses/i2c-st.c                        |  11 +-
+ drivers/i2c/busses/i2c-stm32f4.c                   |   8 +-
+ drivers/i2c/busses/i2c-stm32f7.c                   |   8 +-
+ drivers/i2c/busses/i2c-synquacer.c                 |  26 +-
+ drivers/i2c/busses/i2c-tegra.c                     |   2 -
+ drivers/i2c/busses/i2c-thunderx-pcidrv.c           |  13 +-
+ drivers/i2c/busses/i2c-uniphier-f.c                |   1 -
+ drivers/i2c/busses/i2c-uniphier.c                  |   4 +-
+ drivers/i2c/busses/i2c-viai2c-common.c             | 256 +++++++++++++
+ drivers/i2c/busses/i2c-viai2c-common.h             |  85 +++++
+ drivers/i2c/busses/i2c-viai2c-wmt.c                | 148 ++++++++
+ drivers/i2c/busses/i2c-viai2c-zhaoxin.c            | 298 +++++++++++++++
+ drivers/i2c/busses/i2c-viperboard.c                |   1 -
+ drivers/i2c/busses/i2c-wmt.c                       | 421 -----------------=
+----
+ drivers/i2c/i2c-core-acpi.c                        |  19 +-
+ drivers/i2c/i2c-mux.c                              |  24 +-
+ drivers/i2c/muxes/i2c-arb-gpio-challenge.c         |   2 +-
+ drivers/i2c/muxes/i2c-mux-gpio.c                   |   3 +-
+ drivers/i2c/muxes/i2c-mux-gpmux.c                  |   2 +-
+ drivers/i2c/muxes/i2c-mux-ltc4306.c                |   2 +-
+ drivers/i2c/muxes/i2c-mux-mlxcpld.c                |   2 +-
+ drivers/i2c/muxes/i2c-mux-pca9541.c                |   2 +-
+ drivers/i2c/muxes/i2c-mux-pca954x.c                |   2 +-
+ drivers/i2c/muxes/i2c-mux-pinctrl.c                |   2 +-
+ drivers/i2c/muxes/i2c-mux-reg.c                    |   2 +-
+ drivers/iio/gyro/mpu3050-i2c.c                     |   2 +-
+ drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c          |   2 +-
+ drivers/media/dvb-frontends/af9013.c               |   2 +-
+ drivers/media/dvb-frontends/lgdt3306a.c            |   2 +-
+ drivers/media/dvb-frontends/m88ds3103.c            |   2 +-
+ drivers/media/dvb-frontends/rtl2830.c              |   2 +-
+ drivers/media/dvb-frontends/rtl2832.c              |   2 +-
+ drivers/media/dvb-frontends/si2168.c               |   2 +-
+ drivers/media/i2c/max9286.c                        |   2 +-
+ drivers/media/usb/cx231xx/cx231xx-i2c.c            |   5 +-
+ drivers/of/unittest.c                              |   2 +-
+ drivers/power/supply/sbs-manager.c                 |   2 +-
+ include/linux/i2c-mux.h                            |   3 +-
+ include/linux/platform_data/i2c-mux-gpio.h         |   2 -
+ 79 files changed, 1340 insertions(+), 798 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-pnx.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/nxp,pnx-i2c.yaml
+ create mode 100644 drivers/i2c/busses/i2c-viai2c-common.c
+ create mode 100644 drivers/i2c/busses/i2c-viai2c-common.h
+ create mode 100644 drivers/i2c/busses/i2c-viai2c-wmt.c
+ create mode 100644 drivers/i2c/busses/i2c-viai2c-zhaoxin.c
+ delete mode 100644 drivers/i2c/busses/i2c-wmt.c
+
+--Ci9aXpwAIRAxNlWI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZLFm0ACgkQFA3kzBSg
+KbZJLQ/9EY9Twfk+W2ji0OvXD08U47jMNj2ldxT7Ced23L+TJF02QiG7+ckImGOf
+712dYCeA0QgUZCAkGAcpyQhOlXLUlKjKSHAdJydUgNM9ySaJsvBnWVggJAd3u2aR
+C+AEaagkesk+EQAhFJXwCDEjsf0EQC6lcyKxJ1tMHgj2bpa9oKdswKwduH2SYEt9
+hw9oJcJfT72rnhqYIxT6lbtCGK4yQNd4ot3vdbQ2nwmY48VVfqdGEXVMGB2l6qVl
+dIISSAU5VXI2IfMjfcr4cfGlY+ZSVrIgR09AzkKSq59KZJDYQUNyRoQKO5ZRGEHs
+uSNAwXj5EMGXQBt6Rv+lheuURay9muw1QMuxKWes+IA4MS0w/C59kmKq+bcnovBJ
++i8KV0Da+sOIpPOFambph47JsT0pxqiFpUfrkp7X7VUXPFC/gGyQz3AkM9D5SrRp
+JMu88WzAGo1NKWF7Yu8k6R8/NgRsGExSUGXuHWJ7JU9SfUOLo62JG7JacENeJfnS
+zKIFaEqrt6WFmrjZag8k8jLeLILjyA4ldkb34QUhpRY/82V/OfcELGdfIrHaU3aS
+400dv3IXRRm6SBDhrvi1/+jCJZbQYM7Ktcsnlu3H/aMfoeznsrqEWzo10nPfu6su
+hrTLd+49e8MvpMxALMK900fzYfaR8rBVo6vUiB/BiQjxBeukOd8=
+=r4Iy
+-----END PGP SIGNATURE-----
+
+--Ci9aXpwAIRAxNlWI--
 
