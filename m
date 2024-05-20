@@ -1,171 +1,140 @@
-Return-Path: <linux-kernel+bounces-184027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237A98CA195
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:55:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371848CA198
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1E2FB21DAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:55:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC67B1F21D96
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B1B137C3E;
-	Mon, 20 May 2024 17:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ED0137C48;
+	Mon, 20 May 2024 17:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rr02vDPC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vhfZTKji"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3178913398E;
-	Mon, 20 May 2024 17:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03ED13398E
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 17:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716227726; cv=none; b=RgfhEVfn4lBdOJU3EaLKZ/w7tiEe/8vEJpsxaIGZe3tS6+cQFmQQjy1O3C9+LswWsNR3SFhT73UKyacOzWX9I5+gCiPhVqoe2+gFzFYVqo87HpHIJv5r0t51Pw4/hvAE95b9TTYOeXpZTkhGPtzhmJ6EX6+ClvAlxzg6LlMdaJY=
+	t=1716227801; cv=none; b=r8/Qi8qCRGu6sT81M4JWnxyERFzZEg6/ZPKW3coVDrruq79owd84sQ2Igz2JUHDcj51hToDC7AyoSggG1ZEAOBSLPVId7Y/91XMubDD4976aWPiwq52jT4nzlRo6m52VQbLDmrWy+aPr25Wpv+r/bOtpuxRmIRe+oCXbMa/9KFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716227726; c=relaxed/simple;
-	bh=dzIx0OC26E5dApNJ0s1+EMiQ0pn0lx5sKEcZY24+oKQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b2BJ3tJ5Q1ar+TJydTeTqwQkqOIvFiSlRQXndXbOcLCbd1aNoKLcLkD2Py8E1AoP9Sf0IJeQ02foa/UHOdVoZrRMNRBfdbdKcKGhmFbCvCl6cfoLhtCvz238rXHHgaZD4/lg40DjN7JqXcf4a7e9q21dd3QEgXWYpbwhVTdqgYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rr02vDPC; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716227725; x=1747763725;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=dzIx0OC26E5dApNJ0s1+EMiQ0pn0lx5sKEcZY24+oKQ=;
-  b=Rr02vDPCHwjl/qjEEWe/wJWnkeDsB+LSYkN2eDOdIb7Ov4ikw7/MG3c9
-   pXBFMg7GW1Jwh5Mg4zDkDSElyJ6xDVEFk4VD0wVoOolEAHO1kE5VFrmrz
-   ckRRyioNV+f9FBTe3As3yOR7uQWUCfmxmzkP51GurRjjYcQVdqUtU9v+t
-   Yfh9ggn6EjML/To5aU/cOTGU1JBmfW0WqM7yb1E4fuBOvEd0BWSb9H3LZ
-   s2xkEawCsNNz39IbpBAZPmtmgk0mG9H3gBg7kj+W9Iq1zC3WzQj5Hb9gX
-   yLKjqaUZHw4gNa/jpZp2kGn5j24T9MSaCaB9nampkZSnANpkjelIT5WPl
-   w==;
-X-CSE-ConnectionGUID: 6lJuRs9DQdmh7gpLHwN0MA==
-X-CSE-MsgGUID: kplNK1YNSs+S3+3f1hLQpg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12248092"
-X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
-   d="scan'208";a="12248092"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 10:55:23 -0700
-X-CSE-ConnectionGUID: p7ex7YgvS66k9CZqocFvxA==
-X-CSE-MsgGUID: VrcCacuEQV63JrUoa4EFyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
-   d="scan'208";a="32605467"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.122])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 10:55:21 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Subject:
- Re: [PATCH v3] cxl/events: Use a common struct for DRAM and General Media
- events
-Date: Mon, 20 May 2024 19:55:17 +0200
-Message-ID: <4446774.UPlyArG6xL@fdefranc-mobl3>
-In-Reply-To: <20240518113317.3683718-1-fabio.m.de.francesco@linux.intel.com>
-References: <20240518113317.3683718-1-fabio.m.de.francesco@linux.intel.com>
+	s=arc-20240116; t=1716227801; c=relaxed/simple;
+	bh=hh63JzVkq3RFqwduAXD7nF+C9C+KYPzdxNLZnuAzF64=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lRaWPCirmJlDaUqC0am9Mc9Gyl8hGKbmnQ5vvKK1ezIHv79uryO2F696uiYh1kckyLcU66SXfj8yCGSuyK9o5jEHg8ychM/nFycmpr0kBmE8BcygoJn448Hkuxi5XUshFjCPg9DT9hftIqxICB/t4YGGZ9Hhev5I5wFIaoJ0xjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vhfZTKji; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1f2f9218024so17465895ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 10:56:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716227799; x=1716832599; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tBM9TYW+bx0dFVR3I0872jrLR5NKUzwrIIEe5tnLaNs=;
+        b=vhfZTKji9pvOGcNf4p+ePouAmwdPP4+lRYZQoJkuO+CPIa0v2XQxWdK1Tfb3utSQv2
+         PotqQ7FFZAit5bjFPQhimyRtOk6YIaUyxMCFrGkTl3g7PY1BxlunaWMztsmvkLW6eBhs
+         dGbjuzczB3YfyG36mBtIGx7dT0Q64HOVgINcIUeIwQfD8DL/kMyuCCKen7Igu7/MbFIj
+         +P2yl9lqW3qytcOhc9qJTpGOcIWx8SSvVeMTMCzRUoZQ+ds+8T5AukrTnTDJeaCuMoY3
+         PuBJMPkrxmCVs6tKB8dUUIazGY46rBX5wCy4Cs+9i3t+N+a3H3c6HpZuffk7ny0e0R2N
+         RASg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716227799; x=1716832599;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tBM9TYW+bx0dFVR3I0872jrLR5NKUzwrIIEe5tnLaNs=;
+        b=at4BRH4WyqI75Bt1taq0tff5yipvKNPAgFPE7ee5hwNRCVIljHCyDtwE5XCKrR8TNT
+         mMfvxAi0ZCly5MnEDr3YZ5mrn01NFPBN2S8IfIt/zjqk3y8o7Poz8QLkWeswXXMwvtQf
+         89JD748n3m9Y6aluJI5YgOSSRbwcbHFE722+ttrTjtLSiudBsUy89Z5tEOxEpuqqV/is
+         oPLT061gsEJS107HA7obAUOOIJskdnvqhXdxeT7TIKFTfS80ky0ueTqy08XYwXnvdoZm
+         joc1BZ52y/KclussmBav22PEPcT6bXxkPPlJWQnYduskeqKiQP3wHgp7/VS/tIB5OhTZ
+         cwoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXN/DfhYw6Cj/vPckykC6QwRurHr9YrbdOsQXUk7bOdXTnBCB0zT0NwbAYRV0rFb3Ks9GuMwPHSGDUYpgWyTuOrycj8KGvTANVdrhcp
+X-Gm-Message-State: AOJu0Ywo7yVRcysPovzxce/RuyeLJeTrcTfqDY33+0bMW6DjIQHU7Xm4
+	UgbTYsbBt3ciHJe1IYBxxkLtzbyykCRYyp64wg8b3u0Gnr6/gYLHzj8+0Zjn/bANctnD7R6DIdk
+	F+w==
+X-Google-Smtp-Source: AGHT+IGj95gLCpyblFJ+pwIY+HiJCy20O8Y2ZVsTP33S8ecicT9VG4slD5xQlkr5v4v8OD/7ntCEuybKbio=
+X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
+ (user=edliaw job=sendgmr) by 2002:a17:902:f547:b0:1f3:665:9041 with SMTP id
+ d9443c01a7336-1f306659434mr2255965ad.0.1716227799032; Mon, 20 May 2024
+ 10:56:39 -0700 (PDT)
+Date: Mon, 20 May 2024 17:56:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.215.g3402c0e53f-goog
+Message-ID: <20240520175629.162697-1-edliaw@google.com>
+Subject: [PATCH RESEND 6.6.y] kselftest: Add a ksft_perror() helper
+From: Edward Liaw <edliaw@google.com>
+To: stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+Cc: kernel-team@android.com, Mark Brown <broonie@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Edward Liaw <edliaw@google.com>, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Saturday, May 18, 2024 1:26:21=E2=80=AFPM GMT+2 Fabio M. De Francesco wr=
-ote:
-> cxl_event_common was an unfortunate naming choice and caused confusion wi=
-th
-> the existing Common Event Record. Furthermore, its fields didn't map all
-> the common information between DRAM and General Media Events.
->=20
-> Remove cxl_event_common and introduce cxl_event_media_hdr to record common
-> information between DRAM and General Media events.
->=20
-> cxl_event_media_hdr, which is embedded in both cxl_event_gen_media and
-> cxl_event_dram, leverages the commonalities between the two events to
-> simplify their respective handling.
->=20
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.co=
-m>
-> ---
->=20
-> [...]
-> -
->  union cxl_event {
->  	struct cxl_event_generic generic;
->  	struct cxl_event_gen_media gen_media;
->  	struct cxl_event_dram dram;
->  	struct cxl_event_mem_module mem_module;
-> -	struct cxl_event_common common;
-> +	struct cxl_event_media_hdr media_hdr;
->  } __packed;
+From: Mark Brown <broonie@kernel.org>
 
-Today I was thinking about a comment from Ira. He didn't like the addition =
-of=20
-an event that is not in the specs.[0] (Notice that the other issues have be=
-en=20
-already addressed).=20
+[ Upstream commit 907f33028871fa7c9a3db1efd467b78ef82cce20 ]
 
-I dislike the addition of an artificial event for the very same reasons Ira=
-=20
-expressed.
+The standard library perror() function provides a convenient way to print
+an error message based on the current errno but this doesn't play nicely
+with KTAP output. Provide a helper which does an equivalent thing in a KTAP
+compatible format.
 
-This additional event could be easily removed by something simple like the=
-=20
-following diff.
+nolibc doesn't have a strerror() and adding the table of strings required
+doesn't seem like a good fit for what it's trying to do so when we're using
+that only print the errno.
 
-=46abio
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Stable-dep-of: 071af0c9e582 ("selftests: timers: Convert posix_timers test to generate KTAP output")
+Signed-off-by: Edward Liaw <edliaw@google.com>
+---
+ tools/testing/selftests/kselftest.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-[0] https://lore.kernel.org/linux-cxl/66467b8b47170_8c79294b3@iweiny-mobl.n=
-otmuch/
-
-diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-index a08f050cc1ca..05de8836adea 100644
-=2D-- a/drivers/cxl/core/mbox.c
-+++ b/drivers/cxl/core/mbox.c
-@@ -875,7 +875,13 @@ void cxl_event_trace_record(const struct cxl_memdev=20
-*cxlmd,
-                guard(rwsem_read)(&cxl_region_rwsem);
-                guard(rwsem_read)(&cxl_dpa_rwsem);
-=20
-=2D               dpa =3D le64_to_cpu(evt->media_hdr.phys_addr) & CXL_DPA_M=
-ASK;
-+               if (event_type =3D=3D CXL_CPER_EVENT_GEN_MEDIA)
-+                       dpa =3D le64_to_cpu(evt->gen_media.media_hdr.phys_a=
-ddr)
-+                             & CXL_DPA_MASK;
-+               else if (event_type =3D=3D CXL_CPER_EVENT_GEN_MEDIA)
-+                       dpa =3D le64_to_cpu(evt->dram.media_hdr.phys_addr)
-+                             & CXL_DPA_MASK;
+diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
+index e8eecbc83a60..ad7b97e16f37 100644
+--- a/tools/testing/selftests/kselftest.h
++++ b/tools/testing/selftests/kselftest.h
+@@ -48,6 +48,7 @@
+ #include <stdlib.h>
+ #include <unistd.h>
+ #include <stdarg.h>
++#include <string.h>
+ #include <stdio.h>
+ #include <sys/utsname.h>
+ #endif
+@@ -156,6 +157,19 @@ static inline void ksft_print_msg(const char *msg, ...)
+ 	va_end(args);
+ }
+ 
++static inline void ksft_perror(const char *msg)
++{
++#ifndef NOLIBC
++	ksft_print_msg("%s: %s (%d)\n", msg, strerror(errno), errno);
++#else
++	/*
++	 * nolibc doesn't provide strerror() and it seems
++	 * inappropriate to add one, just print the errno.
++	 */
++	ksft_print_msg("%s: %d)\n", msg, errno);
++#endif
++}
 +
-                cxlr =3D cxl_dpa_to_region(cxlmd, dpa);
-                if (cxlr)
-                        hpa =3D cxl_trace_hpa(cxlr, cxlmd, dpa);
-diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
-index 6562663a036d..f0a5be131e6a 100644
-=2D-- a/include/linux/cxl-event.h
-+++ b/include/linux/cxl-event.h
-@@ -97,7 +97,6 @@ union cxl_event {
-        struct cxl_event_gen_media gen_media;
-        struct cxl_event_dram dram;
-        struct cxl_event_mem_module mem_module;
-=2D       struct cxl_event_media_hdr media_hdr;
- } __packed;
-=20
- /*
-
-
+ static inline void ksft_test_result_pass(const char *msg, ...)
+ {
+ 	int saved_errno = errno;
+-- 
+2.45.0.215.g3402c0e53f-goog
 
 
