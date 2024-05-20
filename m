@@ -1,204 +1,133 @@
-Return-Path: <linux-kernel+bounces-183670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CB98C9C4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:44:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 410BC8C9C4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6EAB1C21E61
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:44:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F051B280E88
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C1753E2E;
-	Mon, 20 May 2024 11:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FdrfVpyt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A1654917;
+	Mon, 20 May 2024 11:44:41 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE7936134;
-	Mon, 20 May 2024 11:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D63E5381D;
+	Mon, 20 May 2024 11:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716205451; cv=none; b=BkPHHmoyO6ts2BLqUGqXXjL3BGrh1I5qsa5s+Be071PMJLq8P1P6luaogopoz3/neA3cNv0zJ2g9jF9dPCTYvdH46sjqsLACD9F6UCwCSmBfuON7VPhAl8tsSt2ggd3BwGsvduWylobjwEWFbK9p9p4ezpHJiSZ4DGAJSTAw07g=
+	t=1716205481; cv=none; b=seqpKNDtS8HxQ3yOw+xaqvzyiDz+PA8A7vCtXZ/u8gi5D5EuKWaYY5WHrpLZ5/gGto/4B2GQ5qSkqErVxm1axU3aCRLa9GOg8bae1KjcVNWFbvAPmaxvIR6PfHQ5/m8Sw3EOpgDqUhfmlF2UeAjumMlWvTf1V8ODEPUU68zeLic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716205451; c=relaxed/simple;
-	bh=JrKEV3MF4JISD4JRKbt9/nLI81LbwnOvu1GLB3l2fNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jInXotTqNF1l3iasUvVFEo8W9Hrn3UjEDT8xWeAgn6SeIDqT/iQay/3jFLcKQQyA7GZftxBUsN7iuBV6buD6SALSqcdyq+J54f8qloF4VE4o21qimMF0DqscTaTWisWD8oQ4AsF/tFGi1aflzIgK6olZrOh50tr1YrFwOzAx49A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FdrfVpyt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99253C2BD10;
-	Mon, 20 May 2024 11:44:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716205450;
-	bh=JrKEV3MF4JISD4JRKbt9/nLI81LbwnOvu1GLB3l2fNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FdrfVpytjcxGNGVDPVM8RdaPNXxGXcvni6qzf356GNvbFx/CVWMxAkrVW7P7m8Ydo
-	 5QzfzSBBEuwyw109jarhFNUFF1TVcQ6NsGP/i66cbxOgUuBHoHU1TinEb3viwydYn9
-	 GDyFwe2dw1zEukYjAhwlgOi31gHRvgZv8mXPs7c7fpW6v+3q7/CN2jp3xfgYolO4an
-	 o9hrWd+PG9SP3+HGvIrBtKlz1rJ9RyrlK8JC+TrFlC9DHZkip3e94tmGZR5gWJqr2r
-	 DXsiBU1cFUS18mficfXtS9l3+hWbnfus8ENNWgxJXgfgjkibd/Y1IRVppOdoioZkiL
-	 F5a+7CwldBNJQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1s91R0-000000004DR-0DSE;
-	Mon, 20 May 2024 13:44:06 +0200
-Date: Mon, 20 May 2024 13:44:06 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Steev Klimaszewski <steev@kali.org>
-Subject: Re: [PATCH v2 4/7] HID: i2c-hid: elan: fix reset suspend current
- leakage
-Message-ID: <Zks3hp5iUhTe3rLH@hovoldconsulting.com>
-References: <20240507144821.12275-1-johan+linaro@kernel.org>
- <20240507144821.12275-5-johan+linaro@kernel.org>
- <CAD=FV=V59t_tZ9Xk=uhbgOdTRYLKu+kZt8cpaksTkJo+D4yt8Q@mail.gmail.com>
+	s=arc-20240116; t=1716205481; c=relaxed/simple;
+	bh=grRLKSxy5wPv87OejPxy7I2fUauVo0L3p0GNWG3P0Jo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=QQlD4/OpRyBVapNI/JGrTaXr6xTtbgpRxVgkjDwXByyspAGIAIIcJ3pGpBCB02FfnYJbuwYjvcDOvQ9KgpmWz15V7zp/DrxmyM6QGF1syxgOGzcZAldLTkAKmqqaO1NnVf8ZAm5UwM9IGbBkvAUVqgS01C1kAJoUF7ZVyfhP+s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjbMF37HHz4f3lfn;
+	Mon, 20 May 2024 19:44:25 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id CF7BF1A0199;
+	Mon, 20 May 2024 19:44:35 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP3 (Coremail) with SMTP id _Ch0CgC3w5ufN0tmJ0vzMw--.3035S2;
+	Mon, 20 May 2024 19:44:34 +0800 (CST)
+Subject: Re: [syzbot] [bpf?] possible deadlock in get_page_from_freelist
+To: Pengfei Xu <pengfei.xu@intel.com>,
+ syzbot <syzbot+a7f061d2d16154538c58@syzkaller.appspotmail.com>,
+ ytcoode@gmail.com
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+ john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+ linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@google.com,
+ song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev,
+ akpm@linux-foundation.org
+References: <000000000000c051d80616195f15@google.com>
+ <ZkcD9H0P8O7Me5Do@xpf.sh.intel.com>
+From: Hou Tao <houtao@huaweicloud.com>
+Message-ID: <554af7a5-4309-cfec-8182-93e61aadc918@huaweicloud.com>
+Date: Mon, 20 May 2024 19:44:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <ZkcD9H0P8O7Me5Do@xpf.sh.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=V59t_tZ9Xk=uhbgOdTRYLKu+kZt8cpaksTkJo+D4yt8Q@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-CM-TRANSID:_Ch0CgC3w5ufN0tmJ0vzMw--.3035S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr15KFW8ZFWUuryxWry5XFb_yoW8tF1Dpa
+	y8KF13Krs5trWjyFW8KF1jgw1jgrs3Gay7GF4vgry0van5Zr1ktr1Iyay8ZrW2vFykAF9x
+	ZF15uwn5tw4vvF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
+	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+	uYvjxUo0eHDUUUU
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-Hi Doug,
+Hi
 
-and sorry about the late reply. Was travelling last week.
+On 5/17/2024 3:15 PM, Pengfei Xu wrote:
+> Hi Yuntao,
+>
+> Greeting!
+>
+> On 2024-04-14 at 19:28:16 -0700, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    7efd0a74039f Merge tag 'ata-6.9-rc4' of git://git.kernel.o..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1358aeed180000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=285be8dd6baeb438
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=a7f061d2d16154538c58
+>> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>>
+>> Unfortunately, I don't have any reproducer for this issue yet.
+>>
+> I used syzkaller and could reproduce the similar issue "WARNING in
+> get_page_from_freelist" in v6.9 mainline kernel.
 
-On Fri, May 10, 2024 at 04:36:08PM -0700, Doug Anderson wrote:
-> On Tue, May 7, 2024 at 7:48 AM Johan Hovold <johan+linaro@kernel.org> wrote:
-> >
-> > @@ -40,17 +41,17 @@ static int elan_i2c_hid_power_up(struct i2chid_ops *ops)
-> >                 container_of(ops, struct i2c_hid_of_elan, ops);
-> >         int ret;
-> >
-> > +       gpiod_set_value_cansleep(ihid_elan->reset_gpio, 1);
-> 
-> Could probably use a comment above it saying that this is important
-> when we have "no_reset_on_power_off" and doesn't do anything bad when
-> we don't so we can just do it unconditionally.
+The warning report is different with the dead-lock syzbot report. The
+warning is "WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1))" in
+rmqueue() and it is caused by "kzalloc(sizeof(struct xfs_mount),
+GFP_KERNEL | __GFP_NOFAIL)" in xfs_init_fs_context().
+>
+> Bisected and found first bad commit:
+> "
+> 816d334afa85 kexec: modify the meaning of the end parameter in kimage_is_destination_range()
+> "
+> Revert above commit on top of v6.9 kernel this issue was gone.
+>
+> All detailed info: https://github.com/xupengfe/syzkaller_logs/tree/main/240517_085953_get_page_from_freelist
+> mount_*.gz are in above link.
+> Syzkaller reproduced code: https://github.com/xupengfe/syzkaller_logs/blob/main/240517_085953_get_page_from_freelist/rep.c
+> Syzkaller syscall repro steps: https://github.com/xupengfe/syzkaller_logs/blob/main/240517_085953_get_page_from_freelist/repro.prog
+> Syzkaller report: https://github.com/xupengfe/syzkaller_logs/blob/main/240517_085953_get_page_from_freelist/repro.report
 
-Possibly, but I'd prefer not to add comments for things like this, which
-should be apparent from just looking at the code. And explicitly
-asserting reset before deasserting it is not unusual in any way.
+I think it is a false positive, because without KASAN enabled, the size
+of xfs_mount is about 2496 bytes and it is impossible to trigger the
+WARN_ON_ONCE(). However with KASAN enabled, the size of xfs_mount will
+be greater than 4096, so the warning will be triggered accordingly when
+the 8KB-slab needs to refill its slabs.
 
-> > +
-> >         if (ihid_elan->vcc33) {
-> >                 ret = regulator_enable(ihid_elan->vcc33);
-> >                 if (ret)
-> > -                       return ret;
-> > +                       goto err_deassert_reset;
-> >         }
-> >
-> >         ret = regulator_enable(ihid_elan->vccio);
-> > -       if (ret) {
-> > -               regulator_disable(ihid_elan->vcc33);
-> > -               return ret;
-> > -       }
-> > +       if (ret)
-> > +               goto err_disable_vcc33;
-> >
-> >         if (ihid_elan->chip_data->post_power_delay_ms)
-> >                 msleep(ihid_elan->chip_data->post_power_delay_ms);
-> > @@ -60,6 +61,15 @@ static int elan_i2c_hid_power_up(struct i2chid_ops *ops)
-> >                 msleep(ihid_elan->chip_data->post_gpio_reset_on_delay_ms);
-> >
-> >         return 0;
-> > +
-> > +err_disable_vcc33:
-> > +       if (ihid_elan->vcc33)
-> > +               regulator_disable(ihid_elan->vcc33);
-> > +err_deassert_reset:
-> > +       if (ihid_elan->no_reset_on_power_off)
-> > +               gpiod_set_value_cansleep(ihid_elan->reset_gpio, 0);
-> 
-> Small nit about the error label: it sounds as if when you go here you
-> _will_ deassert reset when in actuality you might or might not
-> (depending on no_reset_on_power_off).
-
-Yes, this is similar to how err_disable_vcc33 may or may not disable the
-optional regulator.
-
-> Personally I prefer to label
-> error jumps based on things I've done instead of things that the error
-> jump needs to do, so you could call them "err_enabled_vcc33" and
-> "err_asserted_reset"...
-
-Naming labels after what they do is less error prone and also explicitly
-recommended by the coding style.
-
-> I don't feel that strongly about it, though, so if you love the label
-> you have then no need to change it.
-
-So I'd prefer keeping things this way.
- 
-> > @@ -67,7 +77,14 @@ static void elan_i2c_hid_power_down(struct i2chid_ops *ops)
-> >         struct i2c_hid_of_elan *ihid_elan =
-> >                 container_of(ops, struct i2c_hid_of_elan, ops);
-> >
-> > -       gpiod_set_value_cansleep(ihid_elan->reset_gpio, 1);
-> > +       /*
-> > +        * Do not assert reset when the hardware allows for it to remain
-> > +        * deasserted regardless of the state of the (shared) power supply to
-> > +        * avoid wasting power when the supply is left on.
-> > +        */
-> > +       if (!ihid_elan->no_reset_on_power_off)
-> > +               gpiod_set_value_cansleep(ihid_elan->reset_gpio, 1);
-> > +
-> >         if (ihid_elan->chip_data->post_gpio_reset_off_delay_ms)
-> >                 msleep(ihid_elan->chip_data->post_gpio_reset_off_delay_ms);
-> 
-> Shouldn't  the above two lines be inside the "if
-> (!ihid_elan->no_reset_on_power_off)" test? If you're not setting the
-> reset GPIO then you don't need to do the delay, right?
-
-Yes, I guess you're right. The off-delay is weird and not normally used,
-but apparently it is needed by some panel-follower use case. AFAICT it's
-not even related to the reset line, just a hack to add a delay before
-the panel is reset by some other driver (see f2f43bf15d7a ("HID:
-i2c-hid: elan: Add ili9882t timing")).
-
-I think that's why I just looked the other way and left this little
-oddity here unchanged.
-
-> > @@ -79,6 +96,7 @@ static void elan_i2c_hid_power_down(struct i2chid_ops *ops)
-> >  static int i2c_hid_of_elan_probe(struct i2c_client *client)
-> >  {
-> >         struct i2c_hid_of_elan *ihid_elan;
-> > +       int ret;
-> >
-> >         ihid_elan = devm_kzalloc(&client->dev, sizeof(*ihid_elan), GFP_KERNEL);
-> >         if (!ihid_elan)
-> > @@ -93,21 +111,38 @@ static int i2c_hid_of_elan_probe(struct i2c_client *client)
-> >         if (IS_ERR(ihid_elan->reset_gpio))
-> >                 return PTR_ERR(ihid_elan->reset_gpio);
-> >
-> > +       ihid_elan->no_reset_on_power_off = of_property_read_bool(client->dev.of_node,
-> > +                                               "no-reset-on-power-off");
-> 
-> Personally, I'd rather you query for the property before you request
-> the GPIO and then request the GPIO in the "powered off" state just to
-> keep everything in the most consistent state possible.
-
-No, I don't know what state the reset line is in before the driver
-probes. So either I leave it unchanged as I did in v1 or I assert it
-here unconditionally as I do in v2 (e.g. to avoid deasserting reset
-before the supply is stable).
-
-Johan
 
