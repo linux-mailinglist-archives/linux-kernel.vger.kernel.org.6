@@ -1,113 +1,110 @@
-Return-Path: <linux-kernel+bounces-183882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D348C9F49
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:06:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1783A8C9F46
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446D9281091
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:06:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 480B61C2030B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9681369B4;
-	Mon, 20 May 2024 15:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1A2136E05;
+	Mon, 20 May 2024 15:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iLwK1OFU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Uzpt5Kd+"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E13C28E7;
-	Mon, 20 May 2024 15:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBD128E7
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 15:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716217580; cv=none; b=X4aMM85K3AQ8A5Y8sruYF5zXZN8p15eeAjlUp3w44eWc9Bktht/t1V83sKHJdMScoon5QoZYNvB/Ii2UJbc6zNJrLsSvFwgjSUob3WKTf63r+2vOa3kMhOQ9OMTP56Cg4B/ecjm7H53oUu7Ah9EBVNdfW4t2HKRyN0vcmz5efQY=
+	t=1716217564; cv=none; b=Xyysnu619oQqmbsN9ov9NpnKmQS6rJBwyGawGKFKrzKKS/TS3UFuR8fJm16bIsLD+0ls7BXyoiv4cC0woLgSyuIlOPaNs+f/d1vaOHv4xxsgo83ziF9UxvlKl9cRwOzOD0Zyuah/tJmSZ6Zg/c6Ad4t76i22At3pgyjljLlXW5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716217580; c=relaxed/simple;
-	bh=cq2AutFBNcE4IKUuF38V75vCKDlyHWW3DIw4p+lv/Tg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DReMpYsRiANEGWUpQ+U7oqED4BBH1GbztoEJmARD+xYEF7EjuY4Sh1Rpm7MaHym43JFwF918JC0XImS5iEz8ZPaAn/I/cxxvh2lp6z4T5hJgyBzzmqOj+TNl+IQmnOneF6MK+gALWFrvrCs1E6iVE86soePW3qsztnEvyQ7y7P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iLwK1OFU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44KC1fAq030201;
-	Mon, 20 May 2024 15:05:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=cRUbjug0mchDdOc/J9+wic0AfN/3tGGWfkEN3WY8+1A=; b=iL
-	wK1OFUAifEAfVKxl0guSZayGvMo03m9qfZR+hZEYXccgrg+1o1Ko1rhal54mnI1t
-	trB7SQg7NsZEKjOq/srZPuEw7hwsZW0nECMGRjK5JctdyqthVq+XVboleg2Xhssf
-	Mlb0XhfscyC2G1utCfXxJ+zHoMUjpwyUFO/X8qUNF+72uMlz3CbHtg2mukAb3cU2
-	i9ZxC+2lZQ6P/dYjaZFoVKgPLXD+IYsL2uDrxcenslkaEFIPzaoDhCVEdoQPhjkA
-	W+AIiaQris3Sv24PSqJd3M9vlZWyoT8d4q7uZ4jvDEVcp5GBpJq1QGdLbFLLD7tD
-	xlXrbGGCq4HHdGxhzgpA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pqc3fup-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 15:05:57 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44KF5ubq000394
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 15:05:56 GMT
-Received: from [10.216.60.210] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 20 May
- 2024 08:05:53 -0700
-Message-ID: <f2b7c45f-d5d4-8a47-26c4-71f139b69971@quicinc.com>
-Date: Mon, 20 May 2024 20:35:49 +0530
+	s=arc-20240116; t=1716217564; c=relaxed/simple;
+	bh=JLEEiJE2hqlvwzfv15dCNpiJ4+8yygClqa74LeJv6vg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hjxGXNqIlkhekRelVIlz9Qm9GnGjxrlvhYQY8lQBcxEw8BsKr1kvs6L14/pHS4Nlb3ZUmiWYzEIXmRKk9fmr1bB5cY+y1i6w0A/Ow1SJ1Usbhut4Ki6OttmSlwCvBz5NkkR4Yb13rtPyu6bkF6F9xKWJeBfTlFIr5u2UdKP+HI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Uzpt5Kd+; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: christophe.jaillet@wanadoo.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716217561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwzdzS+RKJr1SA2chiorO8WaCu0QC0RukkB2yaWaCbI=;
+	b=Uzpt5Kd+17UKpR36Q0DeS3Lt/g1qwjtJTqxlAfr8GAv0kuaC6N/zuahihA9JVeyHFziDYt
+	Tdaa5+yq08fncTmJuDeQppq6srA3Mp8ea6E2EYxVzzgZfTribQEy4P/HFKeUezQzYSIhwr
+	ta4lJ5r09VJjB7qIYEdzwDfPQktOYvE=
+X-Envelope-To: laurent.pinchart@ideasonboard.com
+X-Envelope-To: tomi.valkeinen@ideasonboard.com
+X-Envelope-To: maarten.lankhorst@linux.intel.com
+X-Envelope-To: mripard@kernel.org
+X-Envelope-To: tzimmermann@suse.de
+X-Envelope-To: airlied@gmail.com
+X-Envelope-To: daniel@ffwll.ch
+X-Envelope-To: michal.simek@amd.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: kernel-janitors@vger.kernel.org
+X-Envelope-To: dri-devel@lists.freedesktop.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+Message-ID: <5288867f-ee45-4930-bde0-14b24b878181@linux.dev>
+Date: Mon, 20 May 2024 11:05:57 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] rpmsg: char: fix rpmsg_eptdev structure documentation
+Subject: Re: [PATCH] drm: zynqmp_dpsub: Fix an error handling path in
+ zynqmp_dpsub_probe()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Michal Simek <michal.simek@amd.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+References: <974d1b062d7c61ee6db00d16fa7c69aa1218ee02.1716198025.git.christophe.jaillet@wanadoo.fr>
 Content-Language: en-US
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20240517165654.427746-1-arnaud.pouliquen@foss.st.com>
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20240517165654.427746-1-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <974d1b062d7c61ee6db00d16fa7c69aa1218ee02.1716198025.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -9YZW9fVy6pa1O6N5mdAL-6MV9-yZGA5
-X-Proofpoint-GUID: -9YZW9fVy6pa1O6N5mdAL-6MV9-yZGA5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-20_05,2024-05-17_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- mlxlogscore=803 impostorscore=0 adultscore=0 lowpriorityscore=0
- phishscore=0 spamscore=0 suspectscore=0 mlxscore=0 clxscore=1011
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405200120
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 5/17/2024 10:26 PM, Arnaud Pouliquen wrote:
-> Add missing @ tags for some rpmsg_eptdev structure parameters.
+On 5/20/24 05:40, Christophe JAILLET wrote:
+> If zynqmp_dpsub_drm_init() fails, we must undo the previous
+> drm_bridge_add() call.
 > 
-> This fixes warning messages on build:
-> drivers/rpmsg/rpmsg_char.c:75: warning: Function parameter or struct member 'remote_flow_restricted' not described in 'rpmsg_eptdev'
-> drivers/rpmsg/rpmsg_char.c:75: warning: Function parameter or struct member 'remote_flow_updated' not described in 'rpmsg_eptdev'
+> Fixes: be3f3042391d ("drm: zynqmp_dpsub: Always register bridge")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only
+> ---
+>  drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Fixes: 5550201c0fe2 ("rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL support")
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> index face8d6b2a6f..f5781939de9c 100644
+> --- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> +++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> @@ -269,6 +269,7 @@ static int zynqmp_dpsub_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  err_disp:
+> +	drm_bridge_remove(dpsub->bridge);
+>  	zynqmp_disp_remove(dpsub);
+>  err_dp:
+>  	zynqmp_dp_remove(dpsub);
 
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
-
--Mukesh
-
+Reviewed-by: Sean Anderson <sean.anderso@linux.dev>
 
