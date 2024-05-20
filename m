@@ -1,100 +1,383 @@
-Return-Path: <linux-kernel+bounces-183616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4933E8C9B6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:36:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5278C9B72
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F341282B19
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:36:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2773CB223FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319C651009;
-	Mon, 20 May 2024 10:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7843151C49;
+	Mon, 20 May 2024 10:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fd6EO12v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SB22LO1C"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D70E50286;
-	Mon, 20 May 2024 10:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BA112E7E;
+	Mon, 20 May 2024 10:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716201363; cv=none; b=SH1KsHTU75XqNRkfp6MuDlY1g5LpcLgHgYHktJcfHrnP+FJOjfkr9XwFUBzxVk1PyMR2WpuDOpf8JK9nG1D1U8kMX5g70RswSs8fF3qy49EiIt1iv5Sg44KIFjOcOZt3J51vbdjbXUY2IP6JyP15dylcZD8XX50GUIEkAnnppBQ=
+	t=1716201523; cv=none; b=dRQcr1+mv0nLoQ269pn4Xw9j5cfRzyrDtuJlsiU0iGIaXRED5bGtxwSPK1Uao8XqnN8DQjl52o+JvDGQxe90Wbt8h220pkeN1cc5v/vAsi+T7k3Oi3gSOCDeNmJZeFUta1RNJ7Wyh+V0YDMMabO+5Lanp3xPkTXGXQx+YDkmr0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716201363; c=relaxed/simple;
-	bh=syda7rkpQQnrGgjV/E2QmFzu1fbgMQWQf+ASj41Ru3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mAbBrwvuIEQu1JOv9ZYj+mwtJiFXi/OK9aFLOJuADH/kBJAHNuvndK3NXs3hYKCMxf+7bsqbj5D1Sq6mNxS34R+8/JH45ZfcBU5mTUCBrAV8cm+90inGL/EoO40AW3LyQMpYE3RLaHCnHLnYV6NRTSKqCiWUvZu2EajwUQ5KKUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fd6EO12v; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716201362; x=1747737362;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=syda7rkpQQnrGgjV/E2QmFzu1fbgMQWQf+ASj41Ru3Q=;
-  b=fd6EO12vUbH3Q10DNh6OqvHz775rCIHYHxjQKGFYyC6PuxRXUbitHikd
-   j2wcKPOmi3YFzhC42S0VNuB8Q2sEObrumBhN7PhI0J2h5DoJkZ1YOsWkq
-   sr5ThtAuzxSy9zZw10YvTSrHnobvUUidUtPiP9vrDjZbij5Ug2yXd8y1T
-   hy5YyoOR947HWgYW7vU0QmOfIxFvVzl6HWqCAgeN066BIlFqSUOWfHxBJ
-   +iXhkgOTGyUT6DoGNbKQnY7rVreYIw3X2sBzqEH/y/tOfsCKUD5pHZfiJ
-   40qJ6TeZVrOTCLku7d4A3sIGwYpicpGsukPXS34h2ik5792o+qLPUZoT4
-   w==;
-X-CSE-ConnectionGUID: fHAW2mC7Sl+gO1OujUAv+w==
-X-CSE-MsgGUID: dkGsCD1rS/K60+A+rrqOzQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="34836384"
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="34836384"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 03:36:01 -0700
-X-CSE-ConnectionGUID: 46FNNeaMSFGrbq2vToqboA==
-X-CSE-MsgGUID: q8r12nkES3agOfd9DnoX6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="32624402"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 20 May 2024 03:35:57 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 206232AD; Mon, 20 May 2024 13:35:56 +0300 (EEST)
-Date: Mon, 20 May 2024 13:35:56 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org
-Subject: Re: [PATCH 02/20] x86/tdx: Add macros to generate TDVMCALL wrappers
-Message-ID: <je6a3ftfcfwhiz26kcy5wkcini6mfjd7czrvmyn245hzbb7aeb@53hvyzvjgzip>
-References: <20240517141938.4177174-1-kirill.shutemov@linux.intel.com>
- <20240517141938.4177174-3-kirill.shutemov@linux.intel.com>
- <58b02adc-7389-4fcd-a443-1856af7886b7@redhat.com>
+	s=arc-20240116; t=1716201523; c=relaxed/simple;
+	bh=hwIUK11OjdQdaDBHznDyjBuzHAdXk6WYhTMYBV91TIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bmHwTQi0SEmOzgfW6uhx9q39CApftVtFqdvDeeAmM3DiHjrPWgdUDuYv5/nnN6YP+8PdNgzo7PjUgCwT6fM6FwnQxkmIbK27eLLPzXlO4aDpxDq5A7esVPwGfyeTsq+XsD5lFc5kLeMmLiijv+o7g9eEi3d06cCYCAxtqgPBdfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SB22LO1C; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716201519;
+	bh=hwIUK11OjdQdaDBHznDyjBuzHAdXk6WYhTMYBV91TIc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SB22LO1CBQBi40bGyF59OeVMVjdBz/3MlrstfXnlBGP01JRu1wzKLolmHtIRAgNbp
+	 zeiIBPLTuIgAxcLjQyy+ONxM1+XumLowRQ7KvmSMgEZqJ+bgW/chVLiv6apmdLvPr9
+	 63FzeJ4I4W0sLtBHB0AVoDxwiFJ9q3U454GZOoKMfszMVrITUoAQA1MyXiY8LSVRxj
+	 ATTcPH9ysQMPkyOZi1DeP5wt58mbAOJJavg3KltR9CbEU18CgVXw5XxXV0ChUdOBO/
+	 n2yXM5dGfsFDvMmo7ek2EYnxGdKpBaHZi+clA6T74xrGGkbg9xGt8B3HM0k8uPQeJX
+	 F4VX3Oi3ZA/ZQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5FA72378219E;
+	Mon, 20 May 2024 10:38:38 +0000 (UTC)
+Message-ID: <448db9fa-22c4-4123-892c-8d1fe4e7d562@collabora.com>
+Date: Mon, 20 May 2024 12:38:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <58b02adc-7389-4fcd-a443-1856af7886b7@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/16] SoC: mediatek: mt8365: support audio clock
+ control
+To: Alexandre Mergnat <amergnat@baylibre.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Lee Jones <lee@kernel.org>,
+ Flora Fu <flora.fu@mediatek.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+References: <20240226-audio-i350-v4-0-082b22186d4c@baylibre.com>
+ <20240226-audio-i350-v4-5-082b22186d4c@baylibre.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240226-audio-i350-v4-5-082b22186d4c@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 17, 2024 at 06:54:15PM +0200, Paolo Bonzini wrote:
-> On 5/17/24 16:19, Kirill A. Shutemov wrote:
-> > Introduce a set of macros that allow to generate wrappers for TDVMCALL
-> > leafs. The macros uses tdvmcall_trmapoline() and provides SYSV-complaint
-> > ABI on top of it.
+Il 26/04/24 19:22, Alexandre Mergnat ha scritto:
+> Add audio clock wrapper and audio tuner control.
 > 
-> Not really SYSV-compliant, more like "The macros use asm() to call
-> tdvmcall_trampoline with its custom parameter passing convention".
+> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> ---
+>   sound/soc/mediatek/mt8365/mt8365-afe-clk.c | 443 +++++++++++++++++++++++++++++
+>   sound/soc/mediatek/mt8365/mt8365-afe-clk.h |  49 ++++
+>   2 files changed, 492 insertions(+)
+> 
+> diff --git a/sound/soc/mediatek/mt8365/mt8365-afe-clk.c b/sound/soc/mediatek/mt8365/mt8365-afe-clk.c
+> new file mode 100644
+> index 000000000000..3a525dae857c
+> --- /dev/null
+> +++ b/sound/soc/mediatek/mt8365/mt8365-afe-clk.c
+> @@ -0,0 +1,443 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Mediatek 8365 AFE clock control
+> + *
+> + * Copyright (c) 2024 MediaTek Inc.
+> + * Authors: Jia Zeng <jia.zeng@mediatek.com>
+> + *          Alexandre Mergnat <amergnat@baylibre.com>
+> + */
+> +
+> +#include "mt8365-afe-clk.h"
+> +#include "mt8365-afe-common.h"
+> +#include "mt8365-reg.h"
+> +#include "../common/mtk-base-afe.h"
+> +#include <linux/device.h>
+> +#include <linux/mfd/syscon.h>
+> +
+> +static const char *aud_clks[MT8365_CLK_NUM] = {
+> +	[MT8365_CLK_TOP_AUD_SEL] = "top_audio_sel",
+> +	[MT8365_CLK_AUD_I2S0_M] = "audio_i2s0_m",
+> +	[MT8365_CLK_AUD_I2S1_M] = "audio_i2s1_m",
+> +	[MT8365_CLK_AUD_I2S2_M] = "audio_i2s2_m",
+> +	[MT8365_CLK_AUD_I2S3_M] = "audio_i2s3_m",
+> +	[MT8365_CLK_ENGEN1] = "engen1",
+> +	[MT8365_CLK_ENGEN2] = "engen2",
+> +	[MT8365_CLK_AUD1] = "aud1",
+> +	[MT8365_CLK_AUD2] = "aud2",
+> +	[MT8365_CLK_I2S0_M_SEL] = "i2s0_m_sel",
+> +	[MT8365_CLK_I2S1_M_SEL] = "i2s1_m_sel",
+> +	[MT8365_CLK_I2S2_M_SEL] = "i2s2_m_sel",
+> +	[MT8365_CLK_I2S3_M_SEL] = "i2s3_m_sel",
+> +	[MT8365_CLK_CLK26M] = "top_clk26m_clk",
+> +};
+> +
+> +int mt8365_afe_init_audio_clk(struct mtk_base_afe *afe)
+> +{
+> +	size_t i;
+> +	struct mt8365_afe_private *afe_priv = afe->platform_priv;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(aud_clks); i++) {
+> +		afe_priv->clocks[i] = devm_clk_get(afe->dev, aud_clks[i]);
+> +		if (IS_ERR(afe_priv->clocks[i])) {
+> +			dev_err(afe->dev, "%s devm_clk_get %s fail\n",
+> +				__func__, aud_clks[i]);
+> +			return PTR_ERR(afe_priv->clocks[i]);
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+> +int mt8365_afe_enable_clk(struct mtk_base_afe *afe, struct clk *clk)
 
-Sounds better, thanks.
+Do you really really really need those helper functions?
+I say that you can simply call the clk API from the users instead, as you are
+really just doing that in those functions...
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> +{
+> +	int ret;
+> +
+> +	if (clk) {
+> +		ret = clk_prepare_enable(clk);
+> +		if (ret) {
+> +			dev_err(afe->dev, "Failed to enable clk\n");
+> +			return ret;
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+> +void mt8365_afe_disable_clk(struct mtk_base_afe *afe, struct clk *clk)
+> +{
+> +	if (clk)
+> +		clk_disable_unprepare(clk);
+> +}
+> +
+> +int mt8365_afe_set_clk_rate(struct mtk_base_afe *afe, struct clk *clk,
+> +			    unsigned int rate)
+> +{
+> +	int ret;
+> +
+> +	if (clk) {
+> +		ret = clk_set_rate(clk, rate);
+> +		if (ret) {
+> +			dev_err(afe->dev, "Failed to set rate\n");
+> +			return ret;
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+> +int mt8365_afe_set_clk_parent(struct mtk_base_afe *afe, struct clk *clk,
+> +			      struct clk *parent)
+> +{
+> +	int ret;
+> +
+> +	if (clk && parent) {
+> +		ret = clk_set_parent(clk, parent);
+> +		if (ret) {
+> +			dev_err(afe->dev, "Failed to set parent\n");
+> +			return ret;
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+
+.snip..
+
+> +int mt8365_afe_enable_apll_tuner_cfg(struct mtk_base_afe *afe, unsigned int apll)
+> +{
+> +	struct mt8365_afe_private *afe_priv = afe->platform_priv;
+> +
+> +	mutex_lock(&afe_priv->afe_clk_mutex);
+> +
+> +	afe_priv->apll_tuner_ref_cnt[apll]++;
+> +	if (afe_priv->apll_tuner_ref_cnt[apll] != 1) {
+> +		mutex_unlock(&afe_priv->afe_clk_mutex);
+> +		return 0;
+> +	}
+> +
+> +	if (apll == MT8365_AFE_APLL1) {
+> +		regmap_update_bits(afe->regmap, AFE_APLL_TUNER_CFG,
+> +				   AFE_APLL_TUNER_CFG_MASK, 0x432);
+> +		regmap_update_bits(afe->regmap, AFE_APLL_TUNER_CFG,
+> +				   AFE_APLL_TUNER_CFG_EN_MASK, 0x1);
+> +	} else {
+> +		regmap_update_bits(afe->regmap, AFE_APLL_TUNER_CFG1,
+> +				   AFE_APLL_TUNER_CFG1_MASK, 0x434);
+> +		regmap_update_bits(afe->regmap, AFE_APLL_TUNER_CFG1,
+> +				   AFE_APLL_TUNER_CFG1_EN_MASK, 0x1);
+> +	}
+> +
+> +	mutex_unlock(&afe_priv->afe_clk_mutex);
+> +	return 0;
+> +}
+> +
+> +int mt8365_afe_disable_apll_tuner_cfg(struct mtk_base_afe *afe,	unsigned int apll)
+
+There's a tabulation here, please use spaces....
+
+> +{
+> +	struct mt8365_afe_private *afe_priv = afe->platform_priv;
+> +
+> +	mutex_lock(&afe_priv->afe_clk_mutex);
+> +
+> +	afe_priv->apll_tuner_ref_cnt[apll]--;
+> +	if (afe_priv->apll_tuner_ref_cnt[apll] == 0) {
+> +		if (apll == MT8365_AFE_APLL1)
+> +			regmap_update_bits(afe->regmap, AFE_APLL_TUNER_CFG,
+> +					   AFE_APLL_TUNER_CFG_EN_MASK, 0x0);
+> +		else
+> +			regmap_update_bits(afe->regmap, AFE_APLL_TUNER_CFG1,
+> +					   AFE_APLL_TUNER_CFG1_EN_MASK, 0x0);
+> +
+> +	} else if (afe_priv->apll_tuner_ref_cnt[apll] < 0) {
+> +		afe_priv->apll_tuner_ref_cnt[apll] = 0;
+> +	}
+> +
+> +	mutex_unlock(&afe_priv->afe_clk_mutex);
+> +	return 0;
+> +}
+> +
+> +int mt8365_afe_enable_apll_associated_cfg(struct mtk_base_afe *afe, unsigned int apll)
+> +{
+> +	struct mt8365_afe_private *afe_priv = afe->platform_priv;
+> +
+> +	if (apll == MT8365_AFE_APLL1) {
+> +		if (clk_prepare_enable(afe_priv->clocks[MT8365_CLK_ENGEN1])) {
+> +			dev_info(afe->dev, "%s Failed to enable ENGEN1 clk\n",
+> +				 __func__);
+> +			return 0;
+> +		}
+> +		mt8365_afe_enable_top_cg(afe, MT8365_TOP_CG_22M);
+> +		mt8365_afe_hd_engen_enable(afe, true);
+> +#ifdef ENABLE_AFE_APLL_TUNER
+> +		mt8365_afe_enable_top_cg(afe, MT8365_TOP_CG_APLL_TUNER);
+> +		mt8365_afe_enable_apll_tuner_cfg(afe, MT8365_AFE_APLL1);
+> +#endif
+> +	} else {
+> +		if (clk_prepare_enable(afe_priv->clocks[MT8365_CLK_ENGEN2])) {
+> +			dev_info(afe->dev, "%s Failed to enable ENGEN2 clk\n",
+> +				 __func__);
+> +			return 0;
+> +		}
+> +		mt8365_afe_enable_top_cg(afe, MT8365_TOP_CG_24M);
+> +		mt8365_afe_hd_engen_enable(afe, false);
+> +#ifdef ENABLE_AFE_APLL_TUNER
+
+Those ifdefs are ugly. If you're not using that code, please remove.
+
+> +		mt8365_afe_enable_top_cg(afe, MT8365_TOP_CG_APLL2_TUNER);
+> +		mt8365_afe_enable_apll_tuner_cfg(afe, MT8365_AFE_APLL2);
+> +#endif
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int mt8365_afe_disable_apll_associated_cfg(struct mtk_base_afe *afe, unsigned int apll)
+> +{
+> +	struct mt8365_afe_private *afe_priv = afe->platform_priv;
+> +
+> +	if (apll == MT8365_AFE_APLL1) {
+> +#ifdef ENABLE_AFE_APLL_TUNER
+> +		mt8365_afe_disable_apll_tuner_cfg(afe, MT8365_AFE_APLL1);
+> +		mt8365_afe_disable_top_cg(afe, MT8365_TOP_CG_APLL_TUNER);
+> +#endif
+> +		mt8365_afe_hd_engen_disable(afe, true);
+> +		mt8365_afe_disable_top_cg(afe, MT8365_TOP_CG_22M);
+> +		clk_disable_unprepare(afe_priv->clocks[MT8365_CLK_ENGEN1]);
+> +	} else {
+> +#ifdef ENABLE_AFE_APLL_TUNER
+> +		mt8365_afe_disable_apll_tuner_cfg(afe, MT8365_AFE_APLL2);
+> +		mt8365_afe_disable_top_cg(afe, MT8365_TOP_CG_APLL2_TUNER);
+> +#endif
+> +		mt8365_afe_hd_engen_disable(afe, false);
+> +		mt8365_afe_disable_top_cg(afe, MT8365_TOP_CG_24M);
+> +		clk_disable_unprepare(afe_priv->clocks[MT8365_CLK_ENGEN2]);
+> +	}
+> +
+> +	return 0;
+> +}
+> diff --git a/sound/soc/mediatek/mt8365/mt8365-afe-clk.h b/sound/soc/mediatek/mt8365/mt8365-afe-clk.h
+> new file mode 100644
+> index 000000000000..14fca6ae2641
+> --- /dev/null
+> +++ b/sound/soc/mediatek/mt8365/mt8365-afe-clk.h
+> @@ -0,0 +1,49 @@
+> +/* SPDX-License-Identifier: GPL-2.0
+> + *
+> + * Mediatek 8365 AFE clock control definitions
+> + *
+> + * Copyright (c) 2024 MediaTek Inc.
+> + * Authors: Jia Zeng <jia.zeng@mediatek.com>
+> + *          Alexandre Mergnat <amergnat@baylibre.com>
+> + */
+> +
+> +#ifndef _MT8365_AFE_UTILS_H_
+> +#define _MT8365_AFE_UTILS_H_
+> +
+> +struct mtk_base_afe;
+> +struct clk;
+> +
+> +int mt8365_afe_init_audio_clk(struct mtk_base_afe *afe);
+> +
+
+Please drop all those blank lines between function signatures, they're not needed.
+
+Cheers,
+Angelo
+
+> +int mt8365_afe_enable_clk(struct mtk_base_afe *afe, struct clk *clk);
+> +
+> +void mt8365_afe_disable_clk(struct mtk_base_afe *afe, struct clk *clk);
+> +
+> +int mt8365_afe_set_clk_rate(struct mtk_base_afe *afe, struct clk *clk, unsigned int rate);
+> +
+> +int mt8365_afe_set_clk_parent(struct mtk_base_afe *afe, struct clk *clk, struct clk *parent);
+> +
+> +int mt8365_afe_enable_top_cg(struct mtk_base_afe *afe, unsigned int cg_type);
+> +
+> +int mt8365_afe_disable_top_cg(struct mtk_base_afe *afe, unsigned int cg_type);
+> +
+> +int mt8365_afe_enable_main_clk(struct mtk_base_afe *afe);
+> +
+> +int mt8365_afe_disable_main_clk(struct mtk_base_afe *afe);
+> +
+> +int mt8365_afe_emi_clk_on(struct mtk_base_afe *afe);
+> +
+> +int mt8365_afe_emi_clk_off(struct mtk_base_afe *afe);
+> +
+> +int mt8365_afe_enable_afe_on(struct mtk_base_afe *afe);
+> +
+> +int mt8365_afe_disable_afe_on(struct mtk_base_afe *afe);
+> +
+> +int mt8365_afe_enable_apll_tuner_cfg(struct mtk_base_afe *afe, unsigned int apll);
+> +
+> +int mt8365_afe_disable_apll_tuner_cfg(struct mtk_base_afe *afe, unsigned int apll);
+> +
+> +int mt8365_afe_enable_apll_associated_cfg(struct mtk_base_afe *afe, unsigned int apll);
+> +
+> +int mt8365_afe_disable_apll_associated_cfg(struct mtk_base_afe *afe, unsigned int apll);
+> +#endif
+> 
+
 
