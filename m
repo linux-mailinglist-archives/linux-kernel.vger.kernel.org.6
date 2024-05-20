@@ -1,135 +1,124 @@
-Return-Path: <linux-kernel+bounces-183547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192898C9A7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFD0A8C9A79
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 175591C2147F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:38:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C5E31C215DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901FA200CB;
-	Mon, 20 May 2024 09:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7148E1F61C;
+	Mon, 20 May 2024 09:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAGIgH48"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IM22dIZi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C268417C67;
-	Mon, 20 May 2024 09:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5549817C67;
+	Mon, 20 May 2024 09:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716197931; cv=none; b=iop5wq8NX4WBcPJQMzCGJvyY3PmsVA/tl6v1cTzOS0jz3Cz6ETa1JSwutiHiKRtEaDRk/AMjOtGR+GRNbtzTSj00UWHOYRmmAdFp9lmRKTODsIIHQZwNsFiJYfqbYyOtnqmmEBm+S2kTs6Pj+63OrCo/EPNtoqODpPrbQbd2M18=
+	t=1716197903; cv=none; b=TudHRwA+2ia1O24nb4xW8n71Yp6NOeLA7LQqxnbrBWrxeEv6MWgkK9LOVIxc4urFmZBPQuzuI/5PMpsVUwtJQ1eZze335NO7qyOO1bTvn7oihTYWPuDJl05ylz/Sv3fRzqyU5fJUxt+/FQFSgS0JvV9IqPffL4FFRladvxdUSgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716197931; c=relaxed/simple;
-	bh=f2ltlTJfrPXs5K86QOoQ6YuDR8HIGkk3pJMklKg3P6s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nZItjFs54f32rjSMRXa/7w/G6CnJzd3QxMuCO+uh1T5NuaML5GshdDF3EfXm4UmwmuFFOGbWHF0gUYRvzjpukoLyxzLWg1XNrx9J8AiA13srHsELExJYcUZt0L2QuUCGul4qRUpHdWBgtiDMqCRqjoKpacYWAhb7JTOVgCWdCIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAGIgH48; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B15FC4AF08;
-	Mon, 20 May 2024 09:38:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716197931;
-	bh=f2ltlTJfrPXs5K86QOoQ6YuDR8HIGkk3pJMklKg3P6s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LAGIgH48/HWLi4pMVeP+Y54RqB4nRlmrFadY+SSIZN1ms2/Z+Xq9ylVZZ6rabqH2H
-	 b8tqnMQtyZtQ2fh6A9Cpu6nfFBllRAFRUAgyHD1+DG7T3wS7/1/QaWau3k+6SMF1EI
-	 QN1PkIF/jln3DDg0aLxM/hrUAQGF9xIM5HPhX4PA8oC63RMuFWBnkSHxIcZ+VUGCxO
-	 fNdZyVKvb9SenaZSgiPncY6esb6ifpn9m9JoDhirxrJf/ByK8R7grQE/zHis4gAWhP
-	 EqEjr6bR3S4vQAjWLJQ7TX+QMxb0GpeXYtVTqXFgHBUG1SGKXrrUbSObjpC28Kvdvh
-	 QoK9rL9fNOz8A==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51f99f9e0faso4685543e87.2;
-        Mon, 20 May 2024 02:38:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX/9vaFE6NOAsa94TAYSgboLg0Tz/XHCdx0IDlBUgyVbHGWGHqvKwz0D/jlvKT1K57UTX0CvVus+IwiKIqke2SnA2zccFEKLFYhzsTOAPW5sTP99HkWJr5G1tcZGppC2xsxb2e1USdMBqjot3gmfBqpEETM0hCnSnNJIqwA9gEvFH7wDebwRIeZSwatnqLZMA==
-X-Gm-Message-State: AOJu0Yx7FjM0Re0Wv3ANXDqSS+2G2BK47bBKh3NDdWPiRtidAV7ZVuv+
-	Gi0hXsCselPuUxBlEg3eck1o/725X6r2pd2Xl1PMlw6gOWB1H+jTb8SwUed9yfmxqLYJy6nd+tH
-	Wfs+4cAAFoiCcW882hMhegAs1VrI=
-X-Google-Smtp-Source: AGHT+IHJ50N0b6yVjcPEnuluIR3E+9C3M5NQS8+OA8xjBOBrvD4f0Q/6GXm3dzXglHKaJPbJ3/n8p7uD8nPWdAXamx8=
-X-Received: by 2002:a05:6512:3448:b0:520:76d0:b054 with SMTP id
- 2adb3069b0e04-524590e5807mr610226e87.57.1716197930086; Mon, 20 May 2024
- 02:38:50 -0700 (PDT)
+	s=arc-20240116; t=1716197903; c=relaxed/simple;
+	bh=7vN5e/K1La2b80PJh96PuKYdGFVnT4q1dY7sER0cMbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pGnxEcUcCxEMwSenYsytgzlR5MIJ5lRtKPMz4rPeN9Qc6KfC4ZJ283Tj5q9N/qw4eWTZ5d7ukZxHNsiHIbCB5f0imYVhnYdq12vcHKiZ6JyETnxU4F6ALe3WfEDaz6cMazJwcsegIyUqVUmo2jI/lKfWYyMgqy5tSNWmjdMLaho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IM22dIZi; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716197902; x=1747733902;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=7vN5e/K1La2b80PJh96PuKYdGFVnT4q1dY7sER0cMbA=;
+  b=IM22dIZixnzDuLlwn960Zw1uLSg4oC4fw3qTz61iwYODfFcQaKECN5rE
+   KvZn0EneRMzIz1EU7pBa9pnso2rkfpR1j7p4ad43KNUi3aGA3Df4ttnBu
+   +LvMzWBHBxMHNZTaobHDYeh31VdnJ8N/qYpEWdK4oWWP9N08KAI8B57CK
+   TgUNHj7kueQ8sqerm0X7xELkH8IVycCLSxOte9epMaNziWK85hI8GPcbd
+   5JaCpcdXARhblHkzIeDOi4ieeVtFLQkRovBCespNQVPOE78HkZO5JrTw1
+   yzeaJ3/zJveNlzp+2dkXQ3zLCmZEPB/zQ18sQPuttzFizaqJsG4xwmb5R
+   g==;
+X-CSE-ConnectionGUID: A/QmbHg3RGejI5GCofHv/A==
+X-CSE-MsgGUID: CyfJcm+pRJy4+kwyD9Otqw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="12113493"
+X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
+   d="scan'208";a="12113493"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 02:38:22 -0700
+X-CSE-ConnectionGUID: HVYRY2VASlW/L1solPB1jg==
+X-CSE-MsgGUID: u8prfVkOT72xkMMf/eGpyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
+   d="scan'208";a="37296745"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 02:38:20 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s8zTE-00000009GRh-44IK;
+	Mon, 20 May 2024 12:38:16 +0300
+Date: Mon, 20 May 2024 12:38:16 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Shyam-sundar.S-k@amd.com, linus.walleij@linaro.org,
+	Basavaraj.Natikar@amd.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+	Kieran Levin <ktl@frame.work>
+Subject: Re: [PATCH] pinctrl: amd: Set up affinity for GPIO lines when
+ enabling interrupt
+Message-ID: <ZksaCG3Q5qHthNcN@smile.fi.intel.com>
+References: <20240519124109.1523-1-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240517042839.544650-1-kris.van.hees@oracle.com> <20240517042839.544650-3-kris.van.hees@oracle.com>
-In-Reply-To: <20240517042839.544650-3-kris.van.hees@oracle.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 20 May 2024 18:38:13 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAST_SbaN9WQRM_k0xE1MUReJvn9AMSg4A1-9b9xotf67w@mail.gmail.com>
-Message-ID: <CAK7LNAST_SbaN9WQRM_k0xE1MUReJvn9AMSg4A1-9b9xotf67w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] trace: add CONFIG_BUILTIN_MODULE_RANGES option
-To: Kris Van Hees <kris.van.hees@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Nick Alcock <nick.alcock@oracle.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni <elena.zannoni@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240519124109.1523-1-mario.limonciello@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, May 17, 2024 at 1:30=E2=80=AFPM Kris Van Hees <kris.van.hees@oracle=
-com> wrote:
->
-> The CONFIG_BUILTIN_MODULE_RANGES option controls whether offset range dat=
-a
-> is generated for kernel modules that are built into the kernel image.
->
-> Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
-> Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
-> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
-> ---
-> Changes since v2:
->  - Add explicit dependency on FTRACE for CONFIG_BUILTIN_MODULE_RANGES
-> ---
->  kernel/trace/Kconfig | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->
-> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> index 47345bf1d4a9f..d0c82b4b3a61e 100644
-> --- a/kernel/trace/Kconfig
-> +++ b/kernel/trace/Kconfig
-> @@ -188,6 +188,24 @@ menuconfig FTRACE
->
->  if FTRACE
->
-> +config BUILTIN_MODULE_RANGES
-> +       bool "Generate address range information for builtin modules"
-> +       depends on FTRACE
-> +       select VMLINUX_MAP
+On Sun, May 19, 2024 at 07:41:09AM -0500, Mario Limonciello wrote:
+> When a touchpad's attention interrupt is triggered on a different
+> CPU than the GPIO controller interrupt multiple CPUs wake up the system
+> and can cause higher power consumption than necessary for operating
+> the touchpad.
+> 
+> Waking up the additional CPUs is especially unnecessary as the
+> irq_ack() callback for pinctrl-amd doesn't do anything.
+> 
+> To solve this save the affinity of the GPIO controller interrupt when
+> it's set up and assign that affinity to the GPIO line IRQ.
+
+I do not much care about AMD :-) case but I think this is quite a big hammer
+with possible undesired effects. It will basically put _all_ GPIO IRQs on
+the same CPU which may slow down other peripherals, like UART, with potential
+of buffer overrun (on the high speed modes).
+
+Ideally it should be done in a way that exact consumer may ask for this from
+its driver. Yet, I have no idea how to achieve this, but it would be really
+nice to have something in I²C HID to
+
+	set_the_same_affinity_as_parent/GPIO_irq()
+
+..
+
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+
+You can move these (Cc lines) to be after ---, that they won't pollute
+the commit message with the same effect made on email, i.e. Cc'ing to
+the listed people.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-I still got this warning.
-
-
-WARNING: unmet direct dependencies detected for VMLINUX_MAP
-  Depends on [n]: EXPERT [=3Dn]
-  Selected by [y]:
-  - BUILTIN_MODULE_RANGES [=3Dy] && FTRACE [=3Dy]
-
-
-
-
-
-I recommend changing 'select VMLINUX_MAP'
-to 'depends on VMLINUX_MAP'.
-
-
-
-BTW, do you need to put this inside 'if FTRACE'?
-
-FTRACE is not required to generate the ranges file.
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
