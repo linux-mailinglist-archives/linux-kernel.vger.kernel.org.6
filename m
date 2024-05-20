@@ -1,90 +1,91 @@
-Return-Path: <linux-kernel+bounces-183702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A498C9CC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F2B8C9CC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20EB281FEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:57:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC475281C71
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDEE548F7;
-	Mon, 20 May 2024 11:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94995578A;
+	Mon, 20 May 2024 11:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kYTN11Nb"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2071.outbound.protection.outlook.com [40.107.243.71])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bEa8RxFT"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2069.outbound.protection.outlook.com [40.107.237.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCEE53380;
-	Mon, 20 May 2024 11:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C55548EC;
+	Mon, 20 May 2024 11:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716206222; cv=fail; b=K2eBhNheZ4CYa3fspV1UL59Dgw1Z3qprPiKg+/IPXWZzMoraBZSLVItcluAHulottBj92FkdYKW0b5+P7BxVHbeVy1ZmhXRViSeCKgmszGmkVH75JWdC+iYJGCLADsQqrsNyyG0pyu5kbwuRxip7bdYlPIVL/h8fFV82ozc1zhc=
+	t=1716206224; cv=fail; b=F7LG+0Cgf/UhThjA19HawyQBoiG1XqnLk7SIf/U+/CbX6R1hn14mR+M1BYIVzOZ3SbJ+0Mf0NrnzkOhUSUWkdyDYEOxPITGH0K9oO0GTw/asjfKI7d9t2lpwAKKqCfo8w3d1drCPCX6nfgcbwbzQXRI2NlveiHWvqYpPjkm3DMg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716206222; c=relaxed/simple;
-	bh=DRN9+kfUKbV3984wUIA6xnWOcm5UEBNSSPcZ25LA6Bo=;
+	s=arc-20240116; t=1716206224; c=relaxed/simple;
+	bh=aYSUZfhA72SyOQKsZXyMWyiNDtSadMWs15VX4HBM4QQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CRnZhH4Kuvo140OZ5M0gqsgmA4qjesTguF5fjfAc06qk+cnYQjxTwsHEKo+Pm7seLktmChhSN4LwsI6gBrorka6pFtgvaRy270aA5ABtaJhP8/gNXHmjOZLJBe8R566NR5TOVpuVE7bR6YMzCvPz/OCCmC56lvU4sRKIjJJDXv8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kYTN11Nb; arc=fail smtp.client-ip=40.107.243.71
+	 MIME-Version:Content-Type; b=CU5NW+PkfEEHO5nYmoyIhp56tXzW/yLDk7W7aWP6YsH5loK5vu8A2RMUtZUM8KrrFPk8SXQHVRU9v2f873M9uK1UEYqSUVzV/J0Ttjzsinjfm6o8oR+U4yBQIcSuPsvSWAOFuHT4wNYt9cEDqkH4KjVOvn5Z/s0I9DfmZE1bnS8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bEa8RxFT; arc=fail smtp.client-ip=40.107.237.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KzDA65NvJalmB5iWaHwwj3ttmyUwpk7dH1C4Xp48VJx13H8IcAxX6R9WAQP3U66rNl5t7IbND6Ql6OkCgjpidhJLK/ZzHq+rY1G2pyABAWG0TIAWDEMswWxs9MaSqPwlbdhPAjaAgyNk4+Sn0GubNsGJajOqfSeRERBcBP+I1JT3DftgzwvgYIj+m4ZzGZNAPw/a51Rp6x02oE0E+fiLfDLuvZUdxWv5zS4lMVqwXfjFe1Do90nHvFuc3Cpk8SK1/Uzo74lWzQ1fIJLWfLJqBJarSeI/lZNo5G0DoUmtKIYJHKEbS8EFgNIzbRLciTz005vJIP4pTWuuYBKb7yRZFQ==
+ b=gNiKVJojEE0shhsU1qVo+X7sWQQwr1hZcBfNr7HgQVtp+XLdT1aJitY7oIX/QZtQoZftYiIJm4FQOEsRVpg+T72Lm46iQbZsAPw0P8gnnaVag7RXqhb22JRc3KXkhXPfXnGBZnPAORqNm5Xyuy1Qfm1Kxxi577nGXm8rpgmY0/Y5/18tv6Mq7sNzWniPGOUC3eNC+JmZYTWk19xP5v5SNdXoT7fWglL7eN03+3qC48xiCItawaDWYoOawUqNQVkmv+bwoiNo9H7Z1F8tlXJY1eKEm5ZwocvO46XT+DF0GTMXONrljNrKHGvUV+9njrVjUxx51LqZcNQACvsT+eHvEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O2EzonrVhq6oIy5zaTYX6aOlc2oQnRc2mw5TlWvysXk=;
- b=ZBjsdmorMT+8M3UpW/Ar5xBu7ux1K2D9iO60aZ72QadF1xaWQoRE3inPuOvXm5xnz8Il3ZKDoiWKKC4AdNHUIU71aV+tobCp8yPC8hZnqFGNO55XoABDY1Rg0RXDGjSF/NCswz6JqDMft77Um/1D/fNs1din8x8qLcT16dUO1+vnpjyeVdgNL4colt8qBEQfOcDcIT7j1HFg8BgDRJjMyhICm+Ex7z9L21l9H28d8yn2xAVMcx9uFMu37EFgM2cDZqMukXVsZmcarHRfUvKVXY/5OXfLcXXXoKVCYi9uMnyIS3uOo+YXVQcFoiK6p6J+d9B4hc8dRaLZL9ZqFHLajA==
+ bh=yl0n7QsT9YnrQ1Cfhcglm5itVaGQMpNsx25HsUjDrEY=;
+ b=cfCKRM9l+Q2RAiTHc1ESBssjFpuT3f6unHhaRck/ceCwIYOMkh3SN1kBciSGoTQ/FtqdoJ7O3hmjBlTCRbxMnXpiuDRBEzixv1VBMshXVkLPLvYt1hsPhcHHONcuE2/Ex3cDN4EkvzK2P45miBK/j/8SEhfMb8ytWrE/ifCDbrnuHH9pBZwJ9rT/7h5NqmqY1o9yNQ7ziMsS5YjA39mfp4ht6ILZUd3tg9rgdWO9XTS7y+epPzRqdaa29IwSW09RTY07JUHcLsY9Nfr2kLQE/3r9aFuISKnFo6SH1JpZGaqc4VK5d2hVA4fD95AN2H0X7JklA1O5CT86VKwV+8v/BA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O2EzonrVhq6oIy5zaTYX6aOlc2oQnRc2mw5TlWvysXk=;
- b=kYTN11NbhOIhxa5xD4w0ZsZpn3cM7+7U40BI4SlUJFWxd+AycCE3q4LH6POlpcChtFF11HBhQgQTQ1ZR6K6FoqNo8oYdl72He/U7Bl4IdTGijLsfFVIXpjVNDj0ygLuWhgPGhE1NWrKqbpoa05mfrs+6sYGo0eZOJKa3CCHQ86hUarDmCbElUJFoqPTLGKYKF05CIxkDCxAo0AD8Zr3pW6MMCwA+asM70SpVQVd7H19X0C1WufbWKbvgcsSalcupQkmQ54xwZZsf/T5vIFl3ayhrLo1zrknqJsY1N7JNJeaD1RlPbTeoG8wl/aRcLMtWjkVPbTf0XpKXPL4YL7iM5A==
-Received: from MN2PR01CA0019.prod.exchangelabs.com (2603:10b6:208:10c::32) by
- CY8PR12MB8364.namprd12.prod.outlook.com (2603:10b6:930:7f::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7587.35; Mon, 20 May 2024 11:56:57 +0000
-Received: from BL02EPF0001A105.namprd05.prod.outlook.com
- (2603:10b6:208:10c:cafe::2b) by MN2PR01CA0019.outlook.office365.com
- (2603:10b6:208:10c::32) with Microsoft SMTP Server (version=TLS1_2,
+ bh=yl0n7QsT9YnrQ1Cfhcglm5itVaGQMpNsx25HsUjDrEY=;
+ b=bEa8RxFTTuzeuFvOEVzs3RnDqaLY0MkxXocj0pUCqMjAVnwJfRfoDDvJwIneyJFEzowQxR4bwyuiLeb42WUJVS5Vz3HzWNUKz7zJmP2HNHV+sYqv7E9ytlkt3XUW7lAo9/rBtX8AKdyZ+tesDusXwctiTczc30og/g+XUZ5/9pMabrHTw/KguMmbek3A64/9sDVTPqvCevirFw4YEGaLPPQaFPpILh8E6OVt/GjMCJRggG7cINoYw49MVqDyD8X2iTpyvszOWTxm1/5es+oVLTIfmQ7A8zQWuB4jPfA0iakBx6cgh+z7YxaXSmkExu/AngvjgzZfRT1ht+R/khGkLg==
+Received: from BN9PR03CA0913.namprd03.prod.outlook.com (2603:10b6:408:107::18)
+ by DS0PR12MB7971.namprd12.prod.outlook.com (2603:10b6:8:14e::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Mon, 20 May
+ 2024 11:56:59 +0000
+Received: from BN1PEPF00004683.namprd03.prod.outlook.com
+ (2603:10b6:408:107:cafe::5c) by BN9PR03CA0913.outlook.office365.com
+ (2603:10b6:408:107::18) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35 via Frontend
- Transport; Mon, 20 May 2024 11:56:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ Transport; Mon, 20 May 2024 11:56:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BL02EPF0001A105.mail.protection.outlook.com (10.167.241.137) with Microsoft
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN1PEPF00004683.mail.protection.outlook.com (10.167.243.89) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7611.14 via Frontend Transport; Mon, 20 May 2024 11:56:56 +0000
+ 15.20.7611.14 via Frontend Transport; Mon, 20 May 2024 11:56:59 +0000
 Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 20 May
- 2024 04:56:45 -0700
+ 2024 04:56:47 -0700
 Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
  (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 20 May
- 2024 04:56:45 -0700
+ 2024 04:56:47 -0700
 Received: from vdi.nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.10)
  with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Mon, 20 May
- 2024 04:56:44 -0700
+ 2024 04:56:46 -0700
 From: Shravan Kumar Ramani <shravankr@nvidia.com>
 To: Hans de Goede <hdegoede@redhat.com>, Ilpo Jarvinen
 	<ilpo.jarvinen@linux.intel.com>, Vadim Pasternak <vadimp@nvidia.com>, "David
  Thompson" <davthompson@nvidia.com>
 CC: Shravan Kumar Ramani <shravankr@nvidia.com>,
 	<platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 1/4] Documentation/ABI: Add document for Mellanox PMC driver
-Date: Mon, 20 May 2024 07:56:33 -0400
-Message-ID: <d8f86ffc4a8a93f13a278ac9c95e0f95b4dd3fb9.1716205838.git.shravankr@nvidia.com>
+Subject: [PATCH v2 2/4] platform/mellanox: mlxbf-pmc: Add support for 64-bit counters and cycle count
+Date: Mon, 20 May 2024 07:56:34 -0400
+Message-ID: <ce077a0db5d4afdbcc63a635fece9793aaae055f.1716205838.git.shravankr@nvidia.com>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <cover.1716205838.git.shravankr@nvidia.com>
 References: <cover.1716205838.git.shravankr@nvidia.com>
@@ -99,117 +100,239 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A105:EE_|CY8PR12MB8364:EE_
-X-MS-Office365-Filtering-Correlation-Id: dcb5f7e6-30b6-4102-b93e-08dc78c3f30d
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004683:EE_|DS0PR12MB7971:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82ace5e2-065d-4709-9f0f-08dc78c3f464
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|376005|1800799015|36860700004;
+	BCL:0;ARA:13230031|82310400017|376005|36860700004|1800799015;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DWVuzaOYGOhRUaSZx/4UdS+3/IpNrRkLAsMY4NO+AE5GU3Orx4hAY2lFXBOp?=
- =?us-ascii?Q?/5dXGcGIvWgO+GlnU0EmgIqT4VFm7XMkN0JwcTtOt9bGgj/cDnCWZ42VHC3R?=
- =?us-ascii?Q?xSry3MnKxAMqN3Azs1vCVpwcwt7B0df+ranLKPl/zGqIPcMd9KxDWGsiuoqX?=
- =?us-ascii?Q?s8T9xpftlit0Xat0BP6i1sLw95DdF8PAa7Oyx4na1pFkrKpWLa3NX18bZXjq?=
- =?us-ascii?Q?cF5sD1NnPoTwnjs5Pr4R9Iw/fqsPgXFz97uBTYNEUi6ZEbyCJhcA22O0U1u8?=
- =?us-ascii?Q?A0+iBzcu7g0LO/yzKkPb8rLGdJ13Ju/bkZVh4VlCcG9D8B3TCJfSyBPC7v5S?=
- =?us-ascii?Q?Yy3StKYfdotBpIxTjtXxLtk4I0/et1ilwKS3+8sMzAwv7Z1FGQuas31j/Nfc?=
- =?us-ascii?Q?NvX1hKyHb4BHRwf47RUG4ybL+HxDrjESDIy1B0GLopGCJ6vxzwjLKkAQbU7H?=
- =?us-ascii?Q?toy6yxVWjZ7jGwyEiU03bd+sRiXLTT+XsyyTfaWv098+jDq9GPyoumJcr7I5?=
- =?us-ascii?Q?He6cbWW0NSFXlLDUqE6FOKQJy6mPrFp8OwqJO81qnqYJ4cx/FxROqEOMc44o?=
- =?us-ascii?Q?ZU1CmoJMg7HlyMSTbEOZwJYbh/wERsDAUIsQTbOlZN05kpcjiaDaJfL3ilB/?=
- =?us-ascii?Q?aFwBCJwE6BTsJUKM9zuchaXGFYIkkKusxfTRLip5hnIBNLYB+0KHvbHc0YKl?=
- =?us-ascii?Q?92E+DFM40UKOLkyqKEwxwqEuU0+7QsMncjtNUIzD8XL6/zvGUOifclEMN6Yw?=
- =?us-ascii?Q?nX81NmgR76supd2CHd7skxau0UkuigsVyfqE4Z4W8GpxoHOMgz1bvKmXcPjB?=
- =?us-ascii?Q?T60hzicHhHrwcoYJYgkz0w19d43phTtEAxNg235f4de89NfjWWFzPOixjig1?=
- =?us-ascii?Q?DROEVqz3IzErzTHIhmrS9oCrcHTk/UqIWpHHyA3qK/Xm0iQl9Fp8YuU8sust?=
- =?us-ascii?Q?kh6nFZkaFBiOAv+/4HsCMzwAp1MMe1rvkOWWxeO0ra1TaVUslsmUUE03bXP9?=
- =?us-ascii?Q?yFvaGUeKTTxLccfJ77aou8DziO5HDf4dxVwxHTzPPjDkyAuqVE1zsGF3iHCY?=
- =?us-ascii?Q?9RZGpTmYNA0rSV/lSIt/I8AtrOwyP+crGqW9PIUjV3j6jxhzDJy3hhjIW654?=
- =?us-ascii?Q?ipmh0WpbhIWLCmRiC2Th68Xx+lts+RJCM20sKiAHwLE9cf9dBKzU3883K2zH?=
- =?us-ascii?Q?4R/293FSM/o3D095uKh4iUZVzcrlZXmH4z8SiKjTqVD6TQw/g8zsqh6lIM+c?=
- =?us-ascii?Q?2lqeffpO/72Npk3l6oW/4K9xZR0w2khFNAKvF0iu+e61W1Qolnt9zGUJo17p?=
- =?us-ascii?Q?/e13a6e77jHxBbeuNK8CngltOItPk6mN2BfVj6x9mjFnZMwRO/zK7/RsFRdr?=
- =?us-ascii?Q?5S5xiBkShp5gdlTAqIKUgtnifDdo?=
+	=?us-ascii?Q?n4WPvjxYWLPvgu7OkdIJ/Y3LbQXXj+ZlTKdxaKsuGnXXtfdoNquYwdNviabT?=
+ =?us-ascii?Q?veDkf6lYvhetG/omFdXbXfcsZtVBJqty+51SU+warzxoAWXn5UNcmVUaE0f9?=
+ =?us-ascii?Q?UT3+CDyVludkbwN7qNOHNUV8Rv/yxLCZckLUTaqiuKJUkz7vjGit4mp+A8eN?=
+ =?us-ascii?Q?ZN+jj4iEbBgBc2efQl/TjPAHn/koQYTV/j/zio6PKhr571ptOJhrAnAXdLpk?=
+ =?us-ascii?Q?lzW5vQNf/irUmrbHj8PcqZZKS1t63yx85bvlBCaHZH2M9j/4xP2BYJHAK9/4?=
+ =?us-ascii?Q?zzqcnL5uoMW6vN3f9OFpdmoH2o3HabE7jJXQCU9a85H7jUux6vnaWzdl1TeS?=
+ =?us-ascii?Q?c6kppS4/ermD53sprhVafPSxh+ncbIRYoj7B/wJ+VBoLdcXQeoPF+EXViExg?=
+ =?us-ascii?Q?oirNFWwzuF206RVcHEGWQjlXsMsJCuy3sBqcgqDStilBf8oFyXlyd3jJtgry?=
+ =?us-ascii?Q?tcdsizlSpLf3nC1TBAe43RiesWUXoigvuYKN0zx44Q5yQXyVBvIyPNHtmIrY?=
+ =?us-ascii?Q?37fgM+eWQILactseZLadn6B301tZw2Z5udOwGGyeUrPSn/Kfq3yYkX1rwIzr?=
+ =?us-ascii?Q?sogKPLp9HN5U6NiEJ6blj3dRj5R7EV4lUdN1aJChxHSOGJtDkcvIs/7yszpO?=
+ =?us-ascii?Q?D6qX35+jKQLIccCQRRfBgDk5w++HlNBudCka/SEr7DFUmACZoDsW2W0RsWqK?=
+ =?us-ascii?Q?Rq+SS6huJa73ZHedYQ3O2gWNkbWRAmVWWx+F0U2et/Wn7c5YlNPxgSGRS9WR?=
+ =?us-ascii?Q?O2HSK7M+RuKl7ADG/1Y/CzCQclovTcggYwAWWx7f0fYxDlvxuBSjW/VaCFIH?=
+ =?us-ascii?Q?wSH27Vza6T2n3uMGiB3S3hkSHLEptav8LSNtINZO3nqi2AdsenuFa1vOI4EC?=
+ =?us-ascii?Q?xxKtv0mQlKTbtu8Bn3gEMEIWE3zNjabaHjm8ER9rArD3nqRxYODnj8NPKC4o?=
+ =?us-ascii?Q?sfYqgKf+qOs6nQGvEN4I8Fi/e+cuoZjsrUJVPbS22mbygp6AKsigvIFs29qc?=
+ =?us-ascii?Q?DoD0GW1+52PNNlQ+Mdu84O6H55rva6f94FiGF9dnv4Q8wu+i66MMRcjli47A?=
+ =?us-ascii?Q?cymfu4of0kxcV3LCTurp54mMKgAbl9xQXjrHhP71EYQdRQS/9BQMjpg65+VX?=
+ =?us-ascii?Q?nc9/2wdVe3NZaAJLd3Is2h1m6tLYXi8MkslFsKtcygF6wEZyqf+jvcDfJTyt?=
+ =?us-ascii?Q?DcquTNktcg4AwC6SovoCrzMgej9NzYnE/GLYo0CybL2WWPwCTAI1s0aDKM4i?=
+ =?us-ascii?Q?5FORZ3DtpgpAgMs/73WjePEDtBGuWNle8AC8m1sWKmHe++bpS+bj3vHgQJ6V?=
+ =?us-ascii?Q?ZED2SLx/KhB4J7plav/iuahn4Zxb7iVEpEC7dtlc1lDCOULqXaLKPu87xU2v?=
+ =?us-ascii?Q?Hz3p6ry0hIRkn7I1iE43ijo0EHhh?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(82310400017)(376005)(1800799015)(36860700004);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(82310400017)(376005)(36860700004)(1800799015);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 11:56:56.9455
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 11:56:59.1771
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dcb5f7e6-30b6-4102-b93e-08dc78c3f30d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82ace5e2-065d-4709-9f0f-08dc78c3f464
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A105.namprd05.prod.outlook.com
+	BN1PEPF00004683.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8364
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7971
 
-The sysfs interface is created for programming and monitoring the
-performance counters in various HW blocks of Mellanox BlueField-1,
-BlueField-2 and BlueField-3.
+Add support for programming any counter to monitor the cycle count.
+Since counting of cycles using 32-bit ocunters would result in frequent
+wraparounds, add the ability to combine 2 adjacent 32-bit counters to
+form 1 64-bit counter.
+Both these features are supported by BlueField-3 PMC hardware, hence
+the required bit-fields are exposed by the driver via sysfs to allow
+the user to configure as needed.
 
 Signed-off-by: Shravan Kumar Ramani <shravankr@nvidia.com>
 Reviewed-by: David Thompson <davthompson@nvidia.com>
+Reviewed-by: Vadim Pasternak <vadimp@nvidia.com>
 ---
- .../ABI/testing/sysfs-platform-mellanox-pmc   | 49 +++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-platform-mellanox-pmc
+ drivers/platform/mellanox/mlxbf-pmc.c | 134 ++++++++++++++++++++++++++
+ 1 file changed, 134 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-platform-mellanox-pmc b/Documentation/ABI/testing/sysfs-platform-mellanox-pmc
-new file mode 100644
-index 000000000000..47094024dbeb
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-platform-mellanox-pmc
-@@ -0,0 +1,49 @@
-+HID           Driver         Description
-+MLNXBFD0      mlxbf-pmc      Performance counters (BlueField-1)
-+MLNXBFD1      mlxbf-pmc      Performance counters (BlueField-2)
-+MLNXBFD2      mlxbf-pmc      Performance counters (BlueField-3)
+diff --git a/drivers/platform/mellanox/mlxbf-pmc.c b/drivers/platform/mellanox/mlxbf-pmc.c
+index 4ed9c7fd2b62..635ecc3b3845 100644
+--- a/drivers/platform/mellanox/mlxbf-pmc.c
++++ b/drivers/platform/mellanox/mlxbf-pmc.c
+@@ -88,6 +88,8 @@
+ #define MLXBF_PMC_CRSPACE_PERFMON_CTL(n) (n * MLXBF_PMC_CRSPACE_PERFMON_REG0_SZ)
+ #define MLXBF_PMC_CRSPACE_PERFMON_EN BIT(30)
+ #define MLXBF_PMC_CRSPACE_PERFMON_CLR BIT(28)
++#define MLXBF_PMC_CRSPACE_PERFMON_UOC GENMASK(15, 0)
++#define MLXBF_PMC_CRSPACE_PERFMON_COUNT_CLOCK(n) (MLXBF_PMC_CRSPACE_PERFMON_CTL(n) + 0x4)
+ #define MLXBF_PMC_CRSPACE_PERFMON_VAL0(n) (MLXBF_PMC_CRSPACE_PERFMON_CTL(n) + 0xc)
+ 
+ /**
+@@ -114,6 +116,8 @@ struct mlxbf_pmc_attribute {
+  * @attr_event: Attributes for "event" sysfs files
+  * @attr_event_list: Attributes for "event_list" sysfs files
+  * @attr_enable: Attributes for "enable" sysfs files
++ * @attr_use_odd_counter: Attributes for "use_odd_counter" sysfs files
++ * @attr_count_clock: Attributes for "count_clock" sysfs files
+  * @block_attr: All attributes needed for the block
+  * @block_attr_grp: Attribute group for the block
+  */
+@@ -126,6 +130,8 @@ struct mlxbf_pmc_block_info {
+ 	struct mlxbf_pmc_attribute *attr_event;
+ 	struct mlxbf_pmc_attribute attr_event_list;
+ 	struct mlxbf_pmc_attribute attr_enable;
++	struct mlxbf_pmc_attribute attr_use_odd_counter;
++	struct mlxbf_pmc_attribute attr_count_clock;
+ 	struct attribute *block_attr[MLXBF_PMC_MAX_ATTRS];
+ 	struct attribute_group block_attr_grp;
+ };
+@@ -1763,6 +1769,103 @@ static ssize_t mlxbf_pmc_enable_store(struct device *dev,
+ 	return count;
+ }
+ 
++/* Show function for "use_odd_counter" sysfs files - only for crspace */
++static ssize_t mlxbf_pmc_use_odd_counter_show(struct device *dev,
++					      struct device_attribute *attr, char *buf)
++{
++	struct mlxbf_pmc_attribute *attr_use_odd_counter = container_of(
++		attr, struct mlxbf_pmc_attribute, dev_attr);
++	unsigned int blk_num;
++	u32 value, reg;
 +
-+What:		/sys/bus/platform/devices/<HID>/hwmon/hwmonX/<block>/event_list
-+Date:		Dec 2020
-+KernelVersion:	5.10
-+Contact:	"Shravan Kumar Ramani <shravankr@nvidia.com>"
-+Description:
-+		List of events supported by the counters in the specific block.
-+		It is used to extract the event number or ID associated with
-+		each event.
++	blk_num = attr_use_odd_counter->nr;
 +
-+What:		/sys/bus/platform/devices/<HID>/hwmon/hwmonX/<block>/event<N>
-+Date:		Dec 2020
-+KernelVersion:	5.10
-+Contact:	"Shravan Kumar Ramani <shravankr@nvidia.com>"
-+Description:
-+		Event monitored by corresponding counter. This is used to
-+		program or read back the event that should be or is currently
-+		being monitored by counter<N>.
++	if (mlxbf_pmc_readl(pmc->block[blk_num].mmio_base +
++			MLXBF_PMC_CRSPACE_PERFMON_CTL(pmc->block[blk_num].counters),
++			&reg))
++		return -EINVAL;
 +
-+What:		/sys/bus/platform/devices/<HID>/hwmon/hwmonX/<block>/counter<N>
-+Date:		Dec 2020
-+KernelVersion:	5.10
-+Contact:	"Shravan Kumar Ramani <shravankr@nvidia.com>"
-+Description:
-+		Counter value of the event being monitored. This is used to
-+		read the counter value of the event which was programmed using
-+		event<N>. This is also used to clear or reset the counter value.
++	value = FIELD_GET(MLXBF_PMC_CRSPACE_PERFMON_UOC, reg);
 +
-+What:		/sys/bus/platform/devices/<HID>/hwmon/hwmonX/<block>/enable
-+Date:		Dec 2020
-+KernelVersion:	5.10
-+Contact:	"Shravan Kumar Ramani <shravankr@nvidia.com>"
-+Description:
-+		Start or stop counters. This is used to start the counters
-+		for monitoring the programmed events and also to stop the
-+		counters after the desired duration.
++	return sysfs_emit(buf, "%u\n", value);
++}
 +
-+What:		/sys/bus/platform/devices/<HID>/hwmon/hwmonX/<block>/<reg>
-+Date:		Dec 2020
-+KernelVersion:	5.10
-+Contact:	"Shravan Kumar Ramani <shravankr@nvidia.com>"
-+Description:
-+		Value of register. This is used to read or reset the registers
-+		where various performance statistics are counted for each block.
++/* Store function for "use_odd_counter" sysfs files - only for crspace */
++static ssize_t mlxbf_pmc_use_odd_counter_store(struct device *dev,
++					       struct device_attribute *attr,
++					       const char *buf, size_t count)
++{
++	struct mlxbf_pmc_attribute *attr_use_odd_counter = container_of(
++		attr, struct mlxbf_pmc_attribute, dev_attr);
++	unsigned int blk_num;
++	u32 uoc, reg;
++	int err;
 +
++	blk_num = attr_use_odd_counter->nr;
++
++	err = kstrtouint(buf, 0, &uoc);
++	if (err < 0)
++		return err;
++
++	err = mlxbf_pmc_readl(pmc->block[blk_num].mmio_base +
++		MLXBF_PMC_CRSPACE_PERFMON_CTL(pmc->block[blk_num].counters),
++		&reg);
++	if (err)
++		return -EINVAL;
++
++	reg &= ~MLXBF_PMC_CRSPACE_PERFMON_UOC;
++	reg |= FIELD_PREP(MLXBF_PMC_CRSPACE_PERFMON_UOC, uoc);
++
++	mlxbf_pmc_write(pmc->block[blk_num].mmio_base +
++		MLXBF_PMC_CRSPACE_PERFMON_CTL(pmc->block[blk_num].counters),
++		MLXBF_PMC_WRITE_REG_32, reg);
++
++	return count;
++}
++
++/* Show function for "count_clock" sysfs files - only for crspace */
++static ssize_t mlxbf_pmc_count_clock_show(struct device *dev,
++					  struct device_attribute *attr, char *buf)
++{
++	struct mlxbf_pmc_attribute *attr_count_clock = container_of(
++		attr, struct mlxbf_pmc_attribute, dev_attr);
++	unsigned int blk_num;
++	u32 reg;
++
++	blk_num = attr_count_clock->nr;
++
++	if (mlxbf_pmc_readl(pmc->block[blk_num].mmio_base +
++			MLXBF_PMC_CRSPACE_PERFMON_COUNT_CLOCK(pmc->block[blk_num].counters),
++			&reg))
++		return -EINVAL;
++
++	return sysfs_emit(buf, "%u\n", reg);
++}
++
++/* Store function for "count_clock" sysfs files - only for crspace */
++static ssize_t mlxbf_pmc_count_clock_store(struct device *dev,
++					   struct device_attribute *attr,
++					   const char *buf, size_t count)
++{
++	struct mlxbf_pmc_attribute *attr_count_clock = container_of(
++		attr, struct mlxbf_pmc_attribute, dev_attr);
++	unsigned int blk_num;
++	u32 reg;
++	int err;
++
++	blk_num = attr_count_clock->nr;
++
++	err = kstrtouint(buf, 0, &reg);
++	if (err < 0)
++		return err;
++
++	mlxbf_pmc_write(pmc->block[blk_num].mmio_base +
++		MLXBF_PMC_CRSPACE_PERFMON_COUNT_CLOCK(pmc->block[blk_num].counters),
++		MLXBF_PMC_WRITE_REG_32, reg);
++
++	return count;
++}
++
+ /* Populate attributes for blocks with counters to monitor performance */
+ static int mlxbf_pmc_init_perftype_counter(struct device *dev, unsigned int blk_num)
+ {
+@@ -1799,6 +1902,37 @@ static int mlxbf_pmc_init_perftype_counter(struct device *dev, unsigned int blk_
+ 		attr = NULL;
+ 	}
+ 
++	if (pmc->block[blk_num].type == MLXBF_PMC_TYPE_CRSPACE) {
++		/*
++		 * Couple adjacent odd and even 32-bit counters to form 64-bit counters
++		 * using "use_odd_counter" sysfs which has one bit per even counter.
++		 */
++		attr = &pmc->block[blk_num].attr_use_odd_counter;
++		attr->dev_attr.attr.mode = 0644;
++		attr->dev_attr.show = mlxbf_pmc_use_odd_counter_show;
++		attr->dev_attr.store = mlxbf_pmc_use_odd_counter_store;
++		attr->nr = blk_num;
++		attr->dev_attr.attr.name = devm_kasprintf(dev, GFP_KERNEL,
++							  "use_odd_counter");
++		if (!attr->dev_attr.attr.name)
++			return -ENOMEM;
++		pmc->block[blk_num].block_attr[++i] = &attr->dev_attr.attr;
++		attr = NULL;
++
++		/* Program crspace counters to count clock cycles using "count_clock" sysfs */
++		attr = &pmc->block[blk_num].attr_count_clock;
++		attr->dev_attr.attr.mode = 0644;
++		attr->dev_attr.show = mlxbf_pmc_count_clock_show;
++		attr->dev_attr.store = mlxbf_pmc_count_clock_store;
++		attr->nr = blk_num;
++		attr->dev_attr.attr.name = devm_kasprintf(dev, GFP_KERNEL,
++							  "count_clock");
++		if (!attr->dev_attr.attr.name)
++			return -ENOMEM;
++		pmc->block[blk_num].block_attr[++i] = &attr->dev_attr.attr;
++		attr = NULL;
++	}
++
+ 	pmc->block[blk_num].attr_counter = devm_kcalloc(
+ 		dev, pmc->block[blk_num].counters,
+ 		sizeof(struct mlxbf_pmc_attribute), GFP_KERNEL);
 -- 
 2.30.1
 
