@@ -1,101 +1,134 @@
-Return-Path: <linux-kernel+bounces-184309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A5018CA532
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 01:47:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B548CA539
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 01:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1D0D1F23420
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:47:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B54CD1C211A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28130137742;
-	Mon, 20 May 2024 23:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FFD1384B1;
+	Mon, 20 May 2024 23:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uZPV7Uc8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="mIUa6X+L"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6AF1847;
-	Mon, 20 May 2024 23:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526921847;
+	Mon, 20 May 2024 23:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716248832; cv=none; b=LPVDHm+QJzd6hCIA1SNe7NV4iQZa6mqfvDvGbVBtCANVIJI2us3gqbIKbSD6/W1hOKZ4mSSn89tKAsQTSY3D9mixo+lI5RP9mdFFb7W6E33emD/5ToMUOTfDa4Fa2j0/ub7MCWX4CboNT/pI0nNQeOOVrqhFYEfPfHGWtlqCzBo=
+	t=1716248867; cv=none; b=JC9TojS6w//7MdfSDpQOx19+sM74OH2QsmWact3QapjOEvNJvjR01P+bTbG+EeZ0eqin03DmDafhXrLJVw0QKvQUbPkbBh/DBpuiMOsxuj1nEzy2+dZK6fMy+LnXG5K8ef9cW6Bc9AA9TZVorCDHObJnvFZYKmb4WAJ5PtEjIfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716248832; c=relaxed/simple;
-	bh=0wjefISUoN96mAPBLJ0rNJILfk9c7am3GfkpyKaDm+M=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To; b=EFF4RzVk+DfCB+duGg4QgsIhJTmCDwG4XRJM1pV1qF8JvzatHH9UdsBhxIh1J8KIDnOVOnrjl/7sc2tedtEVBJjoUyzkzIuq/lXlAVIEJzoWTJkzf2LgbAwlt0XOF9QqmraKKj0PsKiamZ0fXr4h/qsUAfpapz8g+IpGDUvdh9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uZPV7Uc8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31227C2BD10;
-	Mon, 20 May 2024 23:47:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716248831;
-	bh=0wjefISUoN96mAPBLJ0rNJILfk9c7am3GfkpyKaDm+M=;
-	h=Date:Cc:Subject:From:To:From;
-	b=uZPV7Uc8vj1Ur/v/dph3TgINjob4sC3XuILj8TppLdP7C3/YuhLBmDNZBSpb9aSWS
-	 dx1cUF1O9JMCBECBGl0L4og9DbCMITI4eFtm4LcSyGaUqBXQYDVdDBGZutRnfVmMo1
-	 LrzX2arzOnh0ba2JKOAWj72jA2NsTrEhcOdyZtXyvK+wOw4zJ+kyuL9Dj9+DQSta1o
-	 m8gvLrwDDoW+bzupm6J4bHMSyDiQPiFLA5C5BfG2Z0rnmIlWYKLIugY6l1bEifAiSI
-	 ooDAWgRxFiM8zJI6fwr+ARvE2U1vVq2btWc77mNF7W5L2Rh3xoHTWcYb3ZyKPo2iNO
-	 1eKqag9JModHA==
+	s=arc-20240116; t=1716248867; c=relaxed/simple;
+	bh=4+IgDyg4B7yPfEuQUJAjaTTUe81gU2anEh+MnGPtiHw=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pZhrVxEwOmuizdqmg4RtXQg/CBVT9gjG9gNGWug/OFpKSn8LIrNakD11Gh1HBTUjrANnLaTOwC60Jy4XZZuWouUKmBbklnAF3kv4X0BKHwvs8vvIywCFY47Ui8pZ6Acn+Z+8HQu0WzPl5o/tlJTAPKQyGCGIE98sWqQrw6UO4IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=mIUa6X+L; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1716248855;
+	bh=ZYBdGVZXsgtnUlETh21xLRTd4U6kYhG6FJAmkGjakT0=;
+	h=From:To:Subject:In-Reply-To:References:Date:From;
+	b=mIUa6X+LmfwXcoS/EPpABQ7W3oDXcRNGkwfGKvWhXgQOI5WdEhXy439lwCgXzf4bd
+	 PZHhyLc47+wcR3WH34AlEN1gyB5jP2yYf//mQ1ZfQ4s/n+mt0b7kqNDicE6GRty60u
+	 r/8t9FZLqwc3592okM3VN1r1kZLfufXeYTMH0x9+QtEuZZcaBO3veXaFCrKfPH1Ggr
+	 r5SyX1fm2FJ0RaMRhIPlikWrewW/BaIT6sV60jhkRyJz+XyMLbmLXu9dD+ZolWjWs9
+	 bp7xPxBWoUjsOnwSMpKH2NQfYfmdZ2rZhX5FXtfWyZFBzaGVwGiA2CDbS8ROR3Rw/t
+	 6y07XQ8KszD2A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VjvPg3CGCz4wb1;
+	Tue, 21 May 2024 09:47:35 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geoff Levand
+ <geoff@infradead.org>, cve@kernel.org, linux-kernel@vger.kernel.org,
+ linux-cve-announce@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: CVE-2023-52665: powerpc/ps3_defconfig: Disable
+ PPC64_BIG_ENDIAN_ELF_ABI_V2
+In-Reply-To: <2024052016-footnote-smelting-842e@gregkh>
+References: <2024051725-CVE-2023-52665-1d6f@gregkh>
+ <87zfslufoo.fsf@mail.lhotse>
+ <d8c56e37-38c6-454e-81be-a574b42c83be@infradead.org>
+ <2024052016-footnote-smelting-842e@gregkh>
+Date: Tue, 21 May 2024 09:47:33 +1000
+Message-ID: <8734qc3v1m.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 May 2024 02:47:08 +0300
-Message-Id: <D1EVFNB6HJZ8.2ZRZB8Y0K3TV5@kernel.org>
-Cc: "Jason Gunthorpe" <jgg@ziepe.ca>, "David Howells" <dhowells@redhat.com>,
- <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "James
- Bottomley" <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, <keyrings@vger.kernel.org>
-Subject: [GIT PULL] KEYS-TRUSTED: keys-trusted-next-6.10-rc1-part2
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-X-Mailer: aerc 0.17.0
+MIME-Version: 1.0
+Content-Type: text/plain
 
-The following changes since commit 8f6a15f095a63a83b096d9b29aaff4f0fbe6f6e6=
-:
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> On Mon, May 20, 2024 at 05:35:32PM +0900, Geoff Levand wrote:
+>> On 5/20/24 16:04, Michael Ellerman wrote:
+>> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+>> >> Description
+>> >> ===========
+>> >>
+>> >> In the Linux kernel, the following vulnerability has been resolved:
+>> >>
+>> >> powerpc/ps3_defconfig: Disable PPC64_BIG_ENDIAN_ELF_ABI_V2
+>> >>
+>> >> Commit 8c5fa3b5c4df ("powerpc/64: Make ELFv2 the default for big-endian
+>> >> builds"), merged in Linux-6.5-rc1 changes the calling ABI in a way
+>> >> that is incompatible with the current code for the PS3's LV1 hypervisor
+>> >> calls.
+>> >>
+>> >> This change just adds the line '# CONFIG_PPC64_BIG_ENDIAN_ELF_ABI_V2 is not set'
+>> >> to the ps3_defconfig file so that the PPC64_ELF_ABI_V1 is used.
+>> >>
+>> >> Fixes run time errors like these:
+>> >>
+>> >>   BUG: Kernel NULL pointer dereference at 0x00000000
+>> >>   Faulting instruction address: 0xc000000000047cf0
+>> >>   Oops: Kernel access of bad area, sig: 11 [#1]
+>> >>   Call Trace:
+>> >>   [c0000000023039e0] [c00000000100ebfc] ps3_create_spu+0xc4/0x2b0 (unreliable)
+>> >>   [c000000002303ab0] [c00000000100d4c4] create_spu+0xcc/0x3c4
+>> >>   [c000000002303b40] [c00000000100eae4] ps3_enumerate_spus+0xa4/0xf8
+>> >>
+>> >> The Linux kernel CVE team has assigned CVE-2023-52665 to this issue.
+>> > 
+>> > IMHO this doesn't warrant a CVE. The crash mentioned above happens at
+>> > boot, so the system is not vulnerable it's just broken :)
+>> 
+>> As Greg says, with PPC64_BIG_ENDIAN_ELF_ABI_V2 enabled the system won't
+>> boot, so there is no chance of a vulnerability.
+>
+> The definition of "vulnerability" from CVE.org is:
+> 	An instance of one or more weaknesses in a Product that can be
+> 	exploited, causing a negative impact to confidentiality, integrity, or
+> 	availability; a set of conditions or behaviors that allows the
+> 	violation of an explicit or implicit security policy.
+>
+> Having a system that does not boot is a "negative impact to
+> availability", which is why this was selected for a CVE.  I.e. if a new
+> kernel update has this problem in it, it would not allow the system to
+> boot correctly.
 
-  Merge tag 'cocci-for-6.10' of git://git.kernel.org/pub/scm/linux/kernel/g=
-it/jlawall/linux (2024-05-20 16:00:04 -0700)
+I think the key word above is "exploited", implying some sort of
+unauthorised action.
 
-are available in the Git repository at:
+This bug can cause the system to not boot, but only by someone who
+builds a new kernel and installs it - and if they have permission to do
+that they can just replace the kernel with anything, they don't need a
+bug.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags=
-/keys-trusted-next-6.10-rc1-part2
+> But, if the maintainer of the subsystem thinks this should not be
+> assigned a CVE because of this fix, we'll be glad to revoke it.
+>
+> Michael, still want this revoked?
 
-for you to fetch changes up to 050bf3c793a07f96bd1e2fd62e1447f731ed733b:
+Yes please.
 
-  KEYS: trusted: Do not use WARN when encode fails (2024-05-21 02:35:10 +03=
-00)
-
-----------------------------------------------------------------
-Hi,
-
-These are couple of bugs I found from trusted keys while working on a new
-asymmetric key type for TPM2 [1]. Both originate form v5.13. Memory leak is
-more crucial but I don't think it is either good idea if kernel throws WARN
-when ASN.1 parser fails, even if it is related to programming error, as it
-is not that mature code yet.
-
-There's at least two WARN's in that code but I picked just the one more
-likely to trigger. Planning to fix the other one too over time.
-
-BR, Jarkko
-
-[1] https://lore.kernel.org/linux-integrity/D1ERDC16XLUO.578U4ZE7VXW@kernel=
-org/T/#t
-
-----------------------------------------------------------------
-Jarkko Sakkinen (2):
-      KEYS: trusted: Fix memory leak in tpm2_key_encode()
-      KEYS: trusted: Do not use WARN when encode fails
-
- security/keys/trusted-keys/trusted_tpm2.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+cheers
 
