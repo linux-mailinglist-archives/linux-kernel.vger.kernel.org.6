@@ -1,220 +1,102 @@
-Return-Path: <linux-kernel+bounces-183592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0E38C9B09
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:12:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929798C9B06
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63C73280C89
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:12:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E466280E3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB52D50A7A;
-	Mon, 20 May 2024 10:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281EA4D9FB;
+	Mon, 20 May 2024 10:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JWxj4+zE"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3RKlVEnw"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297F4224D7;
-	Mon, 20 May 2024 10:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15061224D7;
+	Mon, 20 May 2024 10:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716199938; cv=none; b=JejqSWDsv1TSt37FeAZb7oJ00P4xcDM9EwV7ey68EDnA+v8pkMqx2VOMWOmmBNQWHHtoWrhdBFRpHDkl8l+OJjMhqsr6vhiBP7wHrVGCVyjzf33IkmpClB4+XAD7SjOoTfXdnkKX4N9ZEixPlSZie9rAaV0yg1ZN1CfY1CBYhUg=
+	t=1716199932; cv=none; b=ifmvggwdRpFfW8TSi3I0UezfU20DuwpQ7KrwuvprVt1A1q6HZd05SPfFR46V44Ri8LxOG5y6TlBFcwRiAL0wi/ntTnx19XHW/szl48GixoRBxxd1zGsfJ/yyJkcyn/xuBvB2ZpwvKaWNXHJ7jekfC7nArURrQCT0p6q1lsThICY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716199938; c=relaxed/simple;
-	bh=lS9fiTkDqJ8rzfSUvjgjk2b4TIh6enhGJt2u6YS5Vbo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n2DOonkrZHcavLGtVDkj0KcWwAENj+QgtNjKfgl9eTPzOweU8fihy+GnEaR1E+TrUsLyMaDudxoDUxK8bqDj/Ya2H3jcELY2yGtBpWvp6KLojgjmgV/toPEPaCAhx2VPxVLqkMug2saNTVpzOz14lYoyL75gGRbLLYhpYEzOyJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JWxj4+zE; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44KAC4r5096218;
-	Mon, 20 May 2024 05:12:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716199924;
-	bh=QQOHrwfGUkMHdVVY/3/uf2kOtlHoJBF9kOADelcJNzc=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=JWxj4+zEkjN8LTJIlzdtQKhPEE7Erd8JHJ5CwGD79l5OUUvsD9Vx6KyBPQ9wadoPV
-	 94aImlGzu1+kLrvCib6Sq4b+1D2Mm1mFGasbUbQaRtsU068Da4Sz3mze3LnTtptIav
-	 iwm2t1QPdP6nho8y8JlsZSxDMm+F4cywPoQIKZv0=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44KAC4Wo021386
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 20 May 2024 05:12:04 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 20
- May 2024 05:12:04 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 20 May 2024 05:12:04 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.227.9])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44KABnjV060604;
-	Mon, 20 May 2024 05:12:01 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <danishanwar@ti.com>,
-        <srk@ti.com>, <s-vadapalli@ti.com>
-Subject: [PATCH v2 3/3] arm64: dts: ti: k3-j784s4-evm: Add overlay for PCIe0 and PCIe1 EP Mode
-Date: Mon, 20 May 2024 15:41:49 +0530
-Message-ID: <20240520101149.3243151-4-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240520101149.3243151-1-s-vadapalli@ti.com>
-References: <20240520101149.3243151-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1716199932; c=relaxed/simple;
+	bh=6NDH0z522me5vrgmflzfx3WQmnMcDdrAZ53MUWxQv/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=g19ZYwiAKNwQcocUsUqqusmbvvBGGUZMTlPxQ9lP6OUvvusEP0h/168aKMhcvpSyuCi+LNIOIU2HMeNAF4n9SZKKVodMipBQBf4bAOT5UbZwhqag0xMZs7Kg+NYDXfw8akkmy+bbs8htezLh2ysWVBecdJayuGqoNV6vAsu/0U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=3RKlVEnw; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716199929;
+	bh=6NDH0z522me5vrgmflzfx3WQmnMcDdrAZ53MUWxQv/4=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=3RKlVEnwwt+L5N6iv4pr5sMiBA1t3K7kWgvqTEz2d1rPQs0u9QxBIfxWjsU5Ch537
+	 MwoEupaZcfEH4C6n5h8R0IDoqxWmROmYlaHoRlRJ7wjPrBZ/Q2kUZEOg5xMLmKHsni
+	 LVSNEE08mvwsn0Jen6ElZtG6U57kCmUC11S4ghbAqW0cEyQAuYpJesHhj8ADRfXdR4
+	 5qHAg0a9Wh0ytta1OEjeFBngPVBUthhT1DGluv2H5NzRfI/2ci45MZdCBWuUId4/nQ
+	 TlCXVJzXpd2Jo6UUexOJwg2S72A7G0xA08/Z8OG9HNea6u1utU6oHEu+C8h44MZUUM
+	 Ah+2Y+6LS3jtA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9B0B037809D1;
+	Mon, 20 May 2024 10:12:08 +0000 (UTC)
+Message-ID: <cf8c87fe-7a4f-423f-9c97-3759eeee4894@collabora.com>
+Date: Mon, 20 May 2024 12:12:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] arm64: dts: mediatek: mt8365: use a specific SCPSYS
+ compatible
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ MandyJH Liu <mandyjh.liu@mediatek.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Alexandre Mergnat <amergnat@baylibre.com>
+References: <20240518211159.142920-1-krzysztof.kozlowski@linaro.org>
+ <20240518211159.142920-2-krzysztof.kozlowski@linaro.org>
+ <f42ef151-6eee-418f-91e1-5ac08d161119@collabora.com>
+ <2cc638ca-0add-4c8c-b844-606e22dbd253@linaro.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <2cc638ca-0add-4c8c-b844-606e22dbd253@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add overlay to enable the PCIe0 and PCIe1 instances of PCIe on J784S4-EVM
-in Endpoint mode of operation.
+Il 20/05/24 12:03, Krzysztof Kozlowski ha scritto:
+> On 20/05/2024 11:55, AngeloGioacchino Del Regno wrote:
+>> Il 18/05/24 23:11, Krzysztof Kozlowski ha scritto:
+>>> SoCs should use dedicated compatibles for each of their syscon nodes to
+>>> precisely describe the block.  Using an incorrect compatible does not
+>>> allow to properly match/validate children of the syscon device.  Replace
+>>> SYSCFG compatible, which does not have children, with a new dedicated
+>>> one for SCPSYS block.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> Technically, that's not a SCPSYS block, but called SYSCFG in MT8365, but the
+>> meaning and the functioning is the same, so it's fine for me.
+> 
+> So there are two syscfg blocks? With exactly the same set of registers
+> or different?
+> 
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
-v1:
-https://lore.kernel.org/r/20240129114749.1197579-4-s-vadapalli@ti.com/
-Changes since v1:
-- Updated "ti,syscon-pcie-ctrl" property to refer to the "pcie0_ctrl"
-  and "pcie1_ctrl" nodes within "scm_conf".
+I'm not sure about that, I don't have the MT8365 datasheet...
 
- arch/arm64/boot/dts/ti/Makefile               |  7 +-
- .../dts/ti/k3-j784s4-evm-pcie0-pcie1-ep.dtso  | 79 +++++++++++++++++++
- 2 files changed, 85 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/ti/k3-j784s4-evm-pcie0-pcie1-ep.dtso
+Adding Alexandre to the loop - I think he can clarify as he should have the
+required documentation.
 
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index 2c327cc320cf..8673685e7528 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -101,6 +101,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm.dtb
- # Boards with J784s4 SoC
- dtb-$(CONFIG_ARCH_K3) += k3-am69-sk.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm.dtb
-+dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-pcie0-pcie1-ep.dtbo
- 
- # Build time test only, enabled by CONFIG_OF_ALL_DTBS
- k3-am625-beagleplay-csi2-ov5640-dtbs := k3-am625-beagleplay.dtb \
-@@ -148,6 +149,8 @@ k3-j721e-sk-csi2-dual-imx219-dtbs := k3-j721e-sk.dtb \
- 	k3-j721e-sk-csi2-dual-imx219.dtbo
- k3-j721s2-evm-pcie1-ep-dtbs := k3-j721s2-common-proc-board.dtb \
- 	k3-j721s2-evm-pcie1-ep.dtbo
-+k3-j784s4-evm-pcie0-pcie1-ep-dtbs := k3-j784s4-evm.dtb \
-+	k3-j784s4-evm-pcie0-pcie1-ep.dtbo
- dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
- 	k3-am625-beagleplay-csi2-tevi-ov5640.dtb \
- 	k3-am625-sk-csi2-imx219.dtb \
-@@ -168,7 +171,8 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
- 	k3-am69-sk-csi2-dual-imx219.dtb \
- 	k3-j721e-evm-pcie0-ep.dtb \
- 	k3-j721e-sk-csi2-dual-imx219.dtb \
--	k3-j721s2-evm-pcie1-ep.dtb
-+	k3-j721s2-evm-pcie1-ep.dtb \
-+	k3-j784s4-evm-pcie0-pcie1-ep.dtb
- 
- # Enable support for device-tree overlays
- DTC_FLAGS_k3-am625-beagleplay += -@
-@@ -186,3 +190,4 @@ DTC_FLAGS_k3-am69-sk += -@
- DTC_FLAGS_k3-j721e-common-proc-board += -@
- DTC_FLAGS_k3-j721e-sk += -@
- DTC_FLAGS_k3-j721s2-common-proc-board += -@
-+DTC_FLAGS_k3-j784s4-evm += -@
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm-pcie0-pcie1-ep.dtso b/arch/arm64/boot/dts/ti/k3-j784s4-evm-pcie0-pcie1-ep.dtso
-new file mode 100644
-index 000000000000..685305092bd8
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm-pcie0-pcie1-ep.dtso
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/**
-+ * DT Overlay for enabling PCIE0 and PCIE1 instances in Endpoint Configuration
-+ * on J784S4 EVM.
-+ *
-+ * J784S4 EVM Product Link: https://www.ti.com/tool/J784S4XEVM
-+ *
-+ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/soc/ti,sci_pm_domain.h>
-+
-+#include "k3-pinctrl.h"
-+
-+/*
-+ * Since Root Complex and Endpoint modes are mutually exclusive
-+ * disable Root Complex mode.
-+ */
-+&pcie0_rc {
-+	status = "disabled";
-+};
-+
-+&pcie1_rc {
-+	status = "disabled";
-+};
-+
-+&cbass_main {
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+	interrupt-parent = <&gic500>;
-+
-+	pcie0_ep: pcie-ep@2900000 {
-+		compatible = "ti,j784s4-pcie-ep";
-+		reg = <0x00 0x02900000 0x00 0x1000>,
-+		      <0x00 0x02907000 0x00 0x400>,
-+		      <0x00 0x0d000000 0x00 0x00800000>,
-+		      <0x00 0x10000000 0x00 0x08000000>;
-+		reg-names = "intd_cfg", "user_cfg", "reg", "mem";
-+		interrupt-names = "link_state";
-+		interrupts = <GIC_SPI 318 IRQ_TYPE_EDGE_RISING>;
-+		ti,syscon-pcie-ctrl = <&pcie0_ctrl 0x0>;
-+		max-link-speed = <3>;
-+		num-lanes = <4>;
-+		power-domains = <&k3_pds 332 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 332 0>;
-+		clock-names = "fck";
-+		max-functions = /bits/ 8 <6>;
-+		max-virtual-functions = /bits/ 8 <4 4 4 4 0 0>;
-+		dma-coherent;
-+		phys = <&serdes1_pcie0_link>;
-+		phy-names = "pcie-phy";
-+	};
-+
-+	pcie1_ep: pcie-ep@2910000 {
-+		compatible = "ti,j784s4-pcie-ep";
-+		reg = <0x00 0x02910000 0x00 0x1000>,
-+		      <0x00 0x02917000 0x00 0x400>,
-+		      <0x00 0x0d800000 0x00 0x00800000>,
-+		      <0x00 0x18000000 0x00 0x08000000>;
-+		reg-names = "intd_cfg", "user_cfg", "reg", "mem";
-+		interrupt-names = "link_state";
-+		interrupts = <GIC_SPI 330 IRQ_TYPE_EDGE_RISING>;
-+		ti,syscon-pcie-ctrl = <&pcie1_ctrl 0x0>;
-+		max-link-speed = <3>;
-+		num-lanes = <2>;
-+		power-domains = <&k3_pds 333 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 333 0>;
-+		clock-names = "fck";
-+		max-functions = /bits/ 8 <6>;
-+		max-virtual-functions = /bits/ 8 <4 4 4 4 0 0>;
-+		dma-coherent;
-+		phys = <&serdes0_pcie1_link>;
-+		phy-names = "pcie-phy";
-+	};
-+};
--- 
-2.40.1
-
+Cheers
 
