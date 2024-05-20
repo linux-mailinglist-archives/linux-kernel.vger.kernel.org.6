@@ -1,171 +1,112 @@
-Return-Path: <linux-kernel+bounces-183605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6108C9B43
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:28:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11DC8C9B46
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 12:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1056CB21FFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:28:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF0C1F22F0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 10:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E8750A7A;
-	Mon, 20 May 2024 10:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26A350A6A;
+	Mon, 20 May 2024 10:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oH2UqPcV"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DTBY7NOn"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C6450286;
-	Mon, 20 May 2024 10:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DD94F5E6
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 10:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716200910; cv=none; b=KpfDTf6sb7Cn/sqXWgPDJMRcdLOo9EMlNYNCGuUz/5uq1K0zGMAgH0WW17Z53oBx0/FtKHLLEiu5VBty8mrLy9YF/07L/gV2ceUGGDUCwZcBosCxSU3Cyx6oWIU+CHbQmCKhJdW1MdeVoX9EL7WrU4Wj0ISkZOdjxU1iyMllkvw=
+	t=1716200956; cv=none; b=R3YZg5HEa81idK59SnqmYIVqMVswEhMPAxFE9vZi4z9NtGuZe12fBdvybpzFBU9sGgm2Obb7c7Q9f1MdgwwiB4mZgjWphGrlnhEJckobxKzizkexPk8RZiQexpVK1Hc3EuShLDUTLIVGxo54XsZNNjSk1CmYkYCbEhTuqBuvVoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716200910; c=relaxed/simple;
-	bh=bRKzyqcLlrX4+PGCOXat0+khakBlpiwK24ehTi1z8yM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Spy0kwcIKHDNIyzic4yu2MuNuBFltOTpDvWix//MGjJeZvo3mHHH7D/R1b0Pd8D+px7U6jX8toLEzZf1D1ZYzJgBILfvmthEDnXZmT5CaTndDx+mXSbcZ4SoV6cUGb+Iff1VuqPxMDGE2rZuXuXdDDw+HMoN0znkTwQ6H+4J95s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oH2UqPcV; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716200907;
-	bh=bRKzyqcLlrX4+PGCOXat0+khakBlpiwK24ehTi1z8yM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oH2UqPcVf6XjzjCSoqpkEqHstieql7cPzcsJsWmHIXOChB7KUapE0PdJGKSIRy41J
-	 CXWTBi+k2jE8u/cFQL2b1EM+QEJu/jIQU5dsC83XXrIuCf5NL4M1xrLnzgvK/9VpGp
-	 0lFlw7NDXoq4SjbEIn96ZNluNpPQiYuz3cPKdEmlRIQudJQHUNE39e9LPi6GjaMJ00
-	 v9BjDdn3thsHM3OCvIrScN/zKKGJNbU/t227ZVc4FUrDP1Lia4DyfgRxTyodCfIHVH
-	 1Xei0WncqWb5WcAePLRDmSSLDNSV4FAo3FQFR6Q78RqO24etRNvRJCzXx/tIRPj94M
-	 8r5mmvtLAMauw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2E64137821B2;
-	Mon, 20 May 2024 10:28:26 +0000 (UTC)
-Message-ID: <08b60894-0023-4ad7-9c6b-b1e99b1b4cd8@collabora.com>
-Date: Mon, 20 May 2024 12:28:25 +0200
+	s=arc-20240116; t=1716200956; c=relaxed/simple;
+	bh=w2v+Tu34CMn7RKVYb55dqY247JQr2d92gD+z+UlCjOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UCmNuITCbspKR1U1BrlcVhfD1MAce7da6Ikn+D/aWNH/TkUmi8K+8jhL6kdyFES8XIJKLFPJHZZF4I9HvCz++vOE9aWB9w+X6aRjj17yfEDu+hD4hznsL1AmqMsAfYYvzBmhsNwpmTp3agKLpnDIyhdgkKpkk7wUFgpv54TNdQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DTBY7NOn; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52389c1308dso3399398e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 03:29:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716200951; x=1716805751; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p5BgnpxvIdvwCUBBX92qJk66NJ04cMwQMD5QktP8CYA=;
+        b=DTBY7NOnJxKRUw6I3XYcOttLl/M+TCdOKfTfnsenrf3CWER467UhAsTmrtVYkMLZ9J
+         P4Gii10ZWV/oyU9/8BvMXv/cE6IPWsBLXCsg+ioQCwq7EALqV5b9/iIX1OCUzJkHEECa
+         TNe2d9LuJ8IOo3IJP9KuHI9HC/eGvBQfloHRxRvRtFYeyDJ6xLb5uqcoE7L9C3tj6WUf
+         KM9eBbexDaVwcooLrR5c4/hCDhoG2efeJe+By7/vTKA98MEOhjMItppKP/3XH/zQOdhv
+         k2naSeL0r6m16LEReEHgT5IPZ5gCNEUq2N+NKM2VmtmE7WBwjrfXXzd280roa4JAsKOA
+         ssOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716200951; x=1716805751;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p5BgnpxvIdvwCUBBX92qJk66NJ04cMwQMD5QktP8CYA=;
+        b=wTWt/qF+Z/5byokeQ3rJPnrEAY2cFQijHr5FK28GKYCaFEeun7kqjjl92z1QiX3s3Z
+         /QCYrs0fAWB4SM1OFJKfKIyWqudYsIy48cMC6G4dDi+F6djOLJ2VXnr/WQ7FMAJS+hvE
+         hrnPRwdZyzsYiR9l/gusv8sHP5SnEWM6MHiNQ8T5GdchM9GSrzF1cs7M57t878j+QsBV
+         gMkEnmNo7nLiYGppjUWPlyVUrZFcqvIHOnTsjmCaGX2sD20gFzEN49Spf/0MfOSlh6WB
+         UhaJTrBP3x4sDiSLpbMVc3aQKSzjJdoRUxfU6Jbtyx5i0Kg1xMuixLeoyuRrOrMIxTfE
+         OHdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSiJfezB/uerUd11k29uuYZxE4HWvleSV20FkJpXNXuYazdHQRAAC0M/kZEg4YI/J/ZyDAZMq+kvpHXrxdYtlOrq1/9mKN1h3UFcOp
+X-Gm-Message-State: AOJu0YyTULwW0FgJOiUUkDw8ze5aHUNjdtwyAwjLyTPXXkvStNTa1gtU
+	3VXxE5Mde9prm0CUXkuNH7mmlD0bh46E2DBIw1dsBSNL40FRzLM2iuakqX+uOuE=
+X-Google-Smtp-Source: AGHT+IHbw7vdPZW/Q/3B127sO5ThFAPWGOkk69KJmFFZ4bAg3sJj0kVFt4UGPkQjZh5b3l81NcjHxw==
+X-Received: by 2002:a05:6512:459:b0:516:d0e3:9275 with SMTP id 2adb3069b0e04-5220fc735e5mr16898943e87.11.1716200951305;
+        Mon, 20 May 2024 03:29:11 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d33dfsm4221651e87.139.2024.05.20.03.29.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 03:29:10 -0700 (PDT)
+Date: Mon, 20 May 2024 13:29:08 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>, 
+	Caleb Connolly <caleb.connolly@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Caleb Connolly <caleb@connolly.tech>, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/panel: lg-sw43408: Fix an error handling path in
+ sw43408_probe()
+Message-ID: <e7dvsrbaaltfqncnlxh7fp27ffkaeylpsih45lzfsawz3vdqih@btzvr72epgrp>
+References: <b8dfafaf1516b33dfc21e9ad27e31fe2a5820a5c.1716197626.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/16] ASoC: mediatek: mt8365: Add PCM DAI support
-To: Alexandre Mergnat <amergnat@baylibre.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Lee Jones <lee@kernel.org>,
- Flora Fu <flora.fu@mediatek.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-References: <20240226-audio-i350-v4-0-082b22186d4c@baylibre.com>
- <20240226-audio-i350-v4-9-082b22186d4c@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240226-audio-i350-v4-9-082b22186d4c@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b8dfafaf1516b33dfc21e9ad27e31fe2a5820a5c.1716197626.git.christophe.jaillet@wanadoo.fr>
 
-Il 26/04/24 19:22, Alexandre Mergnat ha scritto:
-> Add Pulse Code Modulation Device Audio Interface support for MT8365 SoC.
+On Mon, May 20, 2024 at 11:34:31AM +0200, Christophe JAILLET wrote:
+> If mipi_dsi_attach() fails, we must undo the drm_panel_add() call hidden in
+> sw43408_add(), as already done in the remove function.
 > 
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> Fixes: 069a6c0e94f9 ("drm: panel: Add LG sw43408 panel driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->   sound/soc/mediatek/mt8365/mt8365-dai-pcm.c | 293 +++++++++++++++++++++++++++++
->   1 file changed, 293 insertions(+)
+> Compile tested only
+> ---
+>  drivers/gpu/drm/panel/panel-lg-sw43408.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 > 
-> diff --git a/sound/soc/mediatek/mt8365/mt8365-dai-pcm.c b/sound/soc/mediatek/mt8365/mt8365-dai-pcm.c
-> new file mode 100644
-> index 000000000000..a5de47c69620
-> --- /dev/null
-> +++ b/sound/soc/mediatek/mt8365/mt8365-dai-pcm.c
-> @@ -0,0 +1,293 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Mediatek 8365 ALSA SoC Audio DAI PCM Control
-> + *
-> + * Copyright (c) 2024 MediaTek Inc.
-> + * Authors: Jia Zeng <jia.zeng@mediatek.com>
-> + *          Alexandre Mergnat <amergnat@baylibre.com>
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/regmap.h>
-> +#include <sound/pcm_params.h>
-> +#include "mt8365-afe-clk.h"
-> +#include "mt8365-afe-common.h"
-> +
-> +struct mt8365_pcm_intf_data {
-> +	bool slave_mode;
-> +	bool lrck_inv;
-> +	bool bck_inv;
-> +	unsigned int format;
-> +};
-> +
-> +/* DAI Drivers */
-> +
-> +static void mt8365_dai_enable_pcm1(struct mtk_base_afe *afe)
-> +{
-> +	regmap_update_bits(afe->regmap, PCM_INTF_CON1,
-> +			   PCM_INTF_CON1_EN, PCM_INTF_CON1_EN);
-> +}
-> +
-> +static void mt8365_dai_disable_pcm1(struct mtk_base_afe *afe)
-> +{
-> +	regmap_update_bits(afe->regmap, PCM_INTF_CON1,
-> +			   PCM_INTF_CON1_EN, 0x0);
-> +}
-> +
-> +static int mt8365_dai_configure_pcm1(struct snd_pcm_substream *substream,
-> +				     struct snd_soc_dai *dai)
-> +{
-> +	struct mtk_base_afe *afe = snd_soc_dai_get_drvdata(dai);
-> +	struct mt8365_afe_private *afe_priv = afe->platform_priv;
-> +	struct mt8365_pcm_intf_data *pcm_priv = afe_priv->dai_priv[MT8365_AFE_IO_PCM1];
-> +	bool slave_mode = pcm_priv->slave_mode;
-> +	bool lrck_inv = pcm_priv->lrck_inv;
-> +	bool bck_inv = pcm_priv->bck_inv;
-> +	unsigned int fmt = pcm_priv->format;
-> +	unsigned int bit_width = dai->sample_bits;
-> +	unsigned int val = 0;
-> +
-> +	if (!slave_mode) {
-> +		val |= PCM_INTF_CON1_MASTER_MODE |
-> +		       PCM_INTF_CON1_BYPASS_ASRC;
-> +
-> +		if (lrck_inv)
-> +			val |= PCM_INTF_CON1_SYNC_OUT_INV;
-> +		if (bck_inv)
-> +			val |= PCM_INTF_CON1_BCLK_OUT_INV;
-> +	} else {
-> +		val |= PCM_INTF_CON1_SLAVE_MODE;
-> +
-> +		if (lrck_inv)
-> +			val |= PCM_INTF_CON1_SYNC_IN_INV;
-> +		if (bck_inv)
-> +			val |= PCM_INTF_CON1_BCLK_IN_INV;
-> +
-> +		// TODO: add asrc setting
 
-/* TODO ... */
-
-after which:
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
+-- 
+With best wishes
+Dmitry
 
