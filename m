@@ -1,124 +1,135 @@
-Return-Path: <linux-kernel+bounces-183814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C208C9E85
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:01:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB0A8C9E92
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 582A61C210B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:01:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD48B1C216AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D8A13664B;
-	Mon, 20 May 2024 14:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E671313698B;
+	Mon, 20 May 2024 14:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="1oE7Otpp"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yl0zyrE0"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6D645026;
-	Mon, 20 May 2024 14:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9B245026;
+	Mon, 20 May 2024 14:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716213698; cv=none; b=tmModCGTHTsWqSTG5Kktcl0EqAN9eNggAbPuuLparQDZndUE95aBUMy13BZRJUu2om+TsvjqcQrZHqT+3Vg9ThlyIQ/sQgf+jrAhPvCOZEeSgJwTkhinoV1XMQP+HS4ePcu4FP650xYGhrK57R3fjN9vI4W6+MU9wrAjMGsEmjc=
+	t=1716213940; cv=none; b=cMiUCtiWGn/8r8M9YPHkMQ5bgUtjIDwcIFhHmB5CoLHkV5goKF+VJo4Shhf+RPDo6ymbLxv96x1VfyKawU3DRN6toBnsdcEVi3uTOFXSxQR/KPTDp6c5AZjYTbgGv/qb/pTg82u6lQOaP0/h8wQ6oIfax4l0RkU/4aP9D1joX9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716213698; c=relaxed/simple;
-	bh=In9zIq8IukzKSjyjDxEXgTEBcFek8fe0l1bt3l/HRAk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e2QC63oqMItIiJj4dBDAeOUVPgqWFfToG/fdvKpm7yY6LJE9H7KyM8jS61SgeaTUMEwdvM80oZaXX9HatdBaqZe1KIuSa6iMU0XD++vqwNt5yf4GkD4c/OjrPG+6178NysSFCrm6+gilSyuZleh6/5hFpBaCjm9oR4aIeeEBAYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=1oE7Otpp; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44KBMT05021385;
-	Mon, 20 May 2024 16:01:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=
-	selector1; bh=ZgsE3xWv3XDME8Xvz+S9s6R3DQC6mEdB9EsMvdI4S4s=; b=1o
-	E7Otpp6d79XNB/2IazpsVg28JQpX5aqqehm+H8sgpMP7kUUaTFxouySUstnwqm3k
-	8KJiTjNyplYl4Xd/9d6vP57EOTkdiM3MKqPwMt5VttB4GjVOpNKJCatplLqRnBBT
-	bhJVNgz6IZ3s0hLIEtBTKm34ttR0aKUBG+ZGD4jnZRVj4BZcX+OXKRChUbZMNNjT
-	Qr6FHqMWQp0p354LtkuSyrnbtouTbtg9QhyFwT+T6kV2FOsm36wb0J4SROiYUu0e
-	pwbJGMYMW2eXpEYPOErlCcMNPqUfox+yWMOQJ9xkxNLtjAjOwHoo8/OMUesXzNlx
-	0+7zC7Q1IlOhKrqwvUtA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y75w05m43-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 20 May 2024 16:01:11 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2AF044004F;
-	Mon, 20 May 2024 16:01:07 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 578D4222C89;
-	Mon, 20 May 2024 16:00:38 +0200 (CEST)
-Received: from localhost (10.48.86.111) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 20 May
- 2024 16:00:38 +0200
-From: Valentin Caron <valentin.caron@foss.st.com>
-To: Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Valentin Caron <valentin.caron@foss.st.com>
-Subject: [PATCH 3/3] arm64: dts: st: add usart6 on stm32mp257f-ev1 board
-Date: Mon, 20 May 2024 16:00:24 +0200
-Message-ID: <20240520140024.3711080-4-valentin.caron@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240520140024.3711080-1-valentin.caron@foss.st.com>
-References: <20240520140024.3711080-1-valentin.caron@foss.st.com>
+	s=arc-20240116; t=1716213940; c=relaxed/simple;
+	bh=ZCB/XT4/i5g7c4Ik2u1T/Pd2N9bQgzM19SbLCGRSfQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GTYgsN2RxHESDSzCnkMpYsHAaUomhWNO+VB25AUCkhzzF13VJsiNVOfsqL0yucuuyCho/SsWYxRrP6bAXl+cqoFiwAiS4FEib5v+PJ+hAIKxF2F1cA92P0aT8W3R1b+MsaSPl0CAs9ESJgIZmGRwDFOuDAhhuqOJZRFcn6dCJrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yl0zyrE0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Type:MIME-Version:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=TQIxra1MgAXb7lu/CN8hI1DWPOPjSwrGFScXMMALwKM=; b=yl0zyrE0Q5pvLgOIzkxmRUj2ib
+	kISY/cYkKQZA2TqDtD4SKRTcKPyq4GoHREVOqIBfdTpl3nE17+etMeHmHbXuNFDXtaDtGePI4tg3F
+	va6ewVJARgvoo041FMQy7l0XyW79fYcsi0rqZvFyqNzb4gNXrbu1hmsLVnfa10GowXa8kA/vKAi3O
+	FdaVilbh1CLggI6MXB5Yp3gXihzQ2WxZcHbl8e9QcRJ4wYM27+wXPolZpan106z/0RFpD/QHEVDYJ
+	wQY3G9V5P7sOeTCtbUSn0q/gh2OyOT45ronGxhGtDeu4Foyo0wVwaCN0uNRpAuyjBPRlVrgWDpkXq
+	CJ6HnE+w==;
+Received: from [12.37.163.135] (helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s93dv-0000000EfD8-21L3;
+	Mon, 20 May 2024 14:05:35 +0000
+Date: Mon, 20 May 2024 07:05:34 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	netdev@vger.kernel.org
+Subject: [GIT PULL] dma-mapping updates for Linux 6.10
+Message-ID: <ZktYriALqC7ZNQpa@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-20_05,2024-05-17_03,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Add node for USART6 on stm32mp257f-ev1 board.
+Note that the the dma sync optimizations reach into the networking code
+and promptly caused a conflict where the netdev tree constifies the page
+argument to page_pool_dma_sync_for_device and this tree renames that
+function to page_pool_dma_sync_for_device.  The dma-mapping version of
+the merge just works, but you might want to pick the contification
+manually if you think it is useful.
 
-Signed-off-by: Valentin Caron <valentin.caron@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+The following changes since commit e67572cd2204894179d89bd7b984072f19313b03:
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 27b7360e5dbaf..18c6266532b29 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -18,6 +18,7 @@ / {
- 
- 	aliases {
- 		serial0 = &usart2;
-+		serial1 = &usart6;
- 	};
- 
- 	chosen {
-@@ -109,3 +110,12 @@ &usart2 {
- 	pinctrl-2 = <&usart2_sleep_pins_a>;
- 	status = "okay";
- };
-+
-+&usart6 {
-+	pinctrl-names = "default", "idle", "sleep";
-+	pinctrl-0 = <&usart6_pins_a>;
-+	pinctrl-1 = <&usart6_idle_pins_a>;
-+	pinctrl-2 = <&usart6_sleep_pins_a>;
-+	uart-has-rtscts;
-+	status = "disabled";
-+};
--- 
-2.25.1
+  Linux 6.9-rc6 (2024-04-28 13:47:24 -0700)
 
+are available in the Git repository at:
+
+  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.10-2024-05-20
+
+for you to fetch changes up to a6016aac5252da9d22a4dc0b98121b0acdf6d2f5:
+
+  dma: fix DMA sync for drivers not calling dma_set_mask*() (2024-05-09 19:00:29 +0200)
+
+----------------------------------------------------------------
+dma-mapping updates for Linux 6.10
+
+ - optimize DMA sync calls when they are no-ops (Alexander Lobakin)
+ - fix swiotlb padding for untrusted devices (Michael Kelley)
+ - add documentation for swiotb (Michael Kelley)
+
+----------------------------------------------------------------
+Alexander Lobakin (8):
+      dma: compile-out DMA sync op calls when not used
+      dma: avoid redundant calls for sync operations
+      iommu/dma: avoid expensive indirect calls for sync operations
+      page_pool: make sure frag API fields don't span between cachelines
+      page_pool: don't use driver-set flags field directly
+      page_pool: check for DMA sync shortcut earlier
+      xsk: use generic DMA sync shortcut instead of a custom one
+      dma: fix DMA sync for drivers not calling dma_set_mask*()
+
+Michael Kelley (3):
+      Documentation/core-api: add swiotlb documentation
+      swiotlb: remove alloc_size argument to swiotlb_tbl_map_single()
+      iommu/dma: fix zeroing of bounce buffer padding used by untrusted devices
+
+ Documentation/core-api/index.rst                   |   1 +
+ Documentation/core-api/swiotlb.rst                 | 321 +++++++++++++++++++++
+ drivers/iommu/dma-iommu.c                          |  34 ++-
+ drivers/net/ethernet/engleder/tsnep_main.c         |   2 +-
+ drivers/net/ethernet/freescale/dpaa2/dpaa2-xsk.c   |   2 +-
+ drivers/net/ethernet/intel/i40e/i40e_xsk.c         |   2 +-
+ drivers/net/ethernet/intel/ice/ice_xsk.c           |   2 +-
+ drivers/net/ethernet/intel/igc/igc_main.c          |   2 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c       |   2 +-
+ .../net/ethernet/mellanox/mlx5/core/en/xsk/rx.c    |   4 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c    |   2 +-
+ drivers/net/ethernet/netronome/nfp/nfd3/xsk.c      |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   2 +-
+ drivers/xen/swiotlb-xen.c                          |   2 +-
+ include/linux/device.h                             |   4 +
+ include/linux/dma-map-ops.h                        |  12 +
+ include/linux/dma-mapping.h                        | 105 +++++--
+ include/linux/iova.h                               |   5 +
+ include/linux/swiotlb.h                            |   2 +-
+ include/net/page_pool/types.h                      |  25 +-
+ include/net/xdp_sock_drv.h                         |   7 +-
+ include/net/xsk_buff_pool.h                        |  14 +-
+ kernel/dma/Kconfig                                 |   5 +
+ kernel/dma/mapping.c                               |  69 +++--
+ kernel/dma/swiotlb.c                               |  62 +++-
+ net/core/page_pool.c                               |  78 +++--
+ net/xdp/xsk_buff_pool.c                            |  29 +-
+ 27 files changed, 634 insertions(+), 163 deletions(-)
+ create mode 100644 Documentation/core-api/swiotlb.rst
 
