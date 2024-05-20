@@ -1,109 +1,112 @@
-Return-Path: <linux-kernel+bounces-183994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7638CA11E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:15:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA468CA127
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 19:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BFEA1C20F56
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:15:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6D21F21393
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 17:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40708137C2A;
-	Mon, 20 May 2024 17:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BAA137C54;
+	Mon, 20 May 2024 17:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SR2x9wwg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLFOZCVL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAB7138487;
-	Mon, 20 May 2024 17:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3203953E13;
+	Mon, 20 May 2024 17:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716225350; cv=none; b=L6IXdXK6jy0Or1xHQl3QnoGKmO3GRClGxCb2Rl5WEJgfLiksY54YTDgu7s4bG/OHyi7gaKj4bECRwLqOyLF5JMgaUBs6rJbYxUws47lWCHY6IpwEE084LHza9nZg89A03FmdaLKPB+jyEQbdd48Du/MHlowYxEGLNpkb19lapc4=
+	t=1716225477; cv=none; b=TSMETg1RuGHk6Uq1Ytr5F1k3ZYz2ID+WyKLlDuB2Ajzp8Pr+sOdwmR+itOvxQBHtqwqXCywcOPtDvxbldnPBQ+W20KzPvDe8KwyohxMhMTWxujyvsVK7JoD+3JXa2V6elPJcqrprRAUYnVI5N868AjUNue5gKcAYqC+vD0pwN3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716225350; c=relaxed/simple;
-	bh=9OHh++1FUQFyyipccjCfWvE0th+xdBKW3ji9fykzPJc=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Lz6fP+vWgd/bYVLBgXy45cLP3CGMXPt0cbxbDN+D1ySLClkEdAc+9aBhZoEAGXKbgvE1uDvwXGkZdWXAOiX4Iqewb/2rpSOZzSv334y1cINw2GtAM9giq8g9/GYVNIxvvfYDvfphmVFBwyC3gxi9sb+144xPmq5gUwtX4tJANf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SR2x9wwg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BDD0C2BD10;
-	Mon, 20 May 2024 17:15:50 +0000 (UTC)
+	s=arc-20240116; t=1716225477; c=relaxed/simple;
+	bh=dcRbeZXXPhsr3+R4ot9MrqpKhfby+5UfDHXnDXLmTf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QsQ6na8Rljg4EOA9SBz1cG2YhWp/e2TyQPVZbvUJVV/jK1jhTn+ihXHyaRbps3PtPD+CoZqxaQWaYy9lqrpYw+hiUDAU6Vhp21aa8qeVQ5U5MBH09nduZYRHS+hI8/wm5rlH2dHR5oactSWnPl/CrvdhHE8HX6lJeRgiltbYk7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLFOZCVL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2514EC2BD10;
+	Mon, 20 May 2024 17:17:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716225350;
-	bh=9OHh++1FUQFyyipccjCfWvE0th+xdBKW3ji9fykzPJc=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=SR2x9wwgsHzxb93Yd2U+znlvDRB6PlhYj66mRnsYtAF6bFT4fcBY92CwO7QYaetJ4
-	 rwsUVgEgmnX07A8VF13/IZ20ZKk7EsZBbPmJMlLwAx7a15JCV0dknXGbOY1Ta4JrDv
-	 Mrb8f0vlKYpIgoWstHsjLxcOGcZN5h5gCE702aXmTxAjOTpfT1yo4T4YiiUAWinWSe
-	 wmIpgQiD6xQ+K3uR9esRlG6eIXGtLgMlpAdifZMwUDDYGtE0PoFI14YwaKfQmEsPN+
-	 5bhnCbRJ960sOIQ3BETn1aZHmxczudi9sEfJjcovh9iQnPGN2tNpdV55K7tp55DqnM
-	 30dqNFR7LusWw==
-Date: Mon, 20 May 2024 12:15:49 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1716225477;
+	bh=dcRbeZXXPhsr3+R4ot9MrqpKhfby+5UfDHXnDXLmTf8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GLFOZCVLaHTVAadnpMqrFdDPJX9WTFJBxD4XO8BM0QSZPh5vvkHfu2k2z3p2Yppqn
+	 51G/WWUBzwP+2b87UhibetcDxKR1TNUnCB08PDJZieh7Gjo7PmT4ruk+hJMv1s7Jpj
+	 9PU0bVD1+EzXdqvQXhH7k7rn7h3XF/TSAC1kBrELO/doaj6VIeuSTujPNsXZHKA+pU
+	 u4TltHlq2aqR80Ed5WDihbMg++nnYCH/1Q5gRMzN0t8o2P/bqyxQYIY5kdRO0P5NGz
+	 g1Eb9LCsd0fwmI0W1pQgtGG3lUlFdlpHpPseqCsccLput9IQmUQcErFOC8MA7aMpNs
+	 E/sgRobiyYUzg==
+Date: Mon, 20 May 2024 18:17:52 +0100
+From: Conor Dooley <conor@kernel.org>
+To: "Kumar, Udit" <u-kumar1@ti.com>
+Cc: vigneshr@ti.com, nm@ti.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kip Broadhurst <kbroadhurst@ti.com>, w.egorov@phytec.de
+Subject: Re: [PATCH] dt-bindings: net: dp8386x: Add MIT license along with
+ GPL-2.0
+Message-ID: <20240520-discard-fanatic-f8e686a4faad@spud>
+References: <20240517104226.3395480-1-u-kumar1@ti.com>
+ <20240517-poster-purplish-9b356ce30248@spud>
+ <20240517-fastball-stable-9332cae850ea@spud>
+ <8e56ea52-9e58-4291-8f7f-4721dd74c72f@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Pratik Farkase <pratikfarkase94@gmail.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Pratik Farkase <pratik.farkase@wsisweden.com>, 
- Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-In-Reply-To: <20240520154711.7991-1-pratik.farkase@wsisweden.com>
-References: <20240520154711.7991-1-pratik.farkase@wsisweden.com>
-Message-Id: <171622534905.1035434.3869181780414186085.robh@kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: gpio: lsi,zevio-gpio: convert to
- dtschema
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="UePwvSjabeybRF4C"
+Content-Disposition: inline
+In-Reply-To: <8e56ea52-9e58-4291-8f7f-4721dd74c72f@ti.com>
 
 
-On Mon, 20 May 2024 17:47:08 +0200, Pratik Farkase wrote:
-> Convert Zevio GPIO Controller from text to dtschema.
-> 
-> Signed-off-by: Pratik Farkase <pratik.farkase@wsisweden.com>
-> ---
-> Changes in v2:
-> - Renamed file from `gpio-zevio.yaml` to `lsi,zevio-gpio.yaml`
-> - Fixed the space indentation in example
-> ---
-> ---
->  .../devicetree/bindings/gpio/gpio-zevio.txt   | 16 --------
->  .../bindings/gpio/lsi,zevio-gpio.yaml         | 41 +++++++++++++++++++
->  2 files changed, 41 insertions(+), 16 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.txt
->  create mode 100644 Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
-> 
+--UePwvSjabeybRF4C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My bot found errors running 'make dt_binding_check' on your patch:
+On Sat, May 18, 2024 at 02:18:55PM +0530, Kumar, Udit wrote:
+> Hi Conor
+>=20
+> On 5/17/2024 8:11 PM, Conor Dooley wrote:
+> > On Fri, May 17, 2024 at 03:39:20PM +0100, Conor Dooley wrote:
+> > > On Fri, May 17, 2024 at 04:12:26PM +0530, Udit Kumar wrote:
+> > > > Modify license to include dual licensing as GPL-2.0-only OR MIT
+> > > > license for TI specific phy header files. This allows for Linux
+> > > > kernel files to be used in other Operating System ecosystems
+> > > > such as Zephyr or FreeBSD.
+> > > What's wrong with BSD-2-Clause, why not use that?
+> > I cut myself off, I meant to say:
+> > What's wrong with BSD-2-Clause, the standard dual license for
+> > bindings, why not use that?
+>=20
+> want to be inline with License of top level DTS, which is including this
+> header file
 
-yamllint warnings/errors:
+Unless there's a specific reason to use MIT (like your legal won't even
+allow you to use BSD-2-Clause) then please just use the normal license
+for bindings here.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/gpio/gpio-zevio.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
+Cheers,
+Conor.
 
-doc reference errors (make refcheckdocs):
+--UePwvSjabeybRF4C
+Content-Type: application/pgp-signature; name="signature.asc"
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240520154711.7991-1-pratik.farkase@wsisweden.com
+-----BEGIN PGP SIGNATURE-----
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkuFvwAKCRB4tDGHoIJi
+0jFQAP9VmADFwFETab2Xw6u8RNuEmVRMP4CsXPoUSZDuZyWVrwEAypOI3tz6MeUd
+1duYMmtHWNxu9vJjZAZ0lCOfDKr95wg=
+=WAqU
+-----END PGP SIGNATURE-----
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--UePwvSjabeybRF4C--
 
