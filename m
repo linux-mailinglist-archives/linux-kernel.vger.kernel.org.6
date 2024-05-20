@@ -1,143 +1,114 @@
-Return-Path: <linux-kernel+bounces-183848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0508C9EE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:35:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8298C9EE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D651F21EE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:35:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A909E285AF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4516713699B;
-	Mon, 20 May 2024 14:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AE31369AB;
+	Mon, 20 May 2024 14:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U5u7d1NX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyTqSGz/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7B8182DF;
-	Mon, 20 May 2024 14:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F10F182DF;
+	Mon, 20 May 2024 14:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716215716; cv=none; b=nxcxMVQiCnetOn6Xc+V2ouT8bRvdYXny/tQFGPO7j1LtITMi+udaeICXUTpw/i3hpNh+R0mt0H9qIGG2XiRN2f8Il54/MfIbUiExDIAN384hS2pfVWiL5jffZfExTWjlzGxTbFJMaUE8hZASYuZaSZ3ekZ0cg8XyQxW/lZ3HAKk=
+	t=1716215745; cv=none; b=suSQuaczdiOP14Y/n6swZL2rYIww+t21734B5cY5trFy264/1c/Lgz0eQWz3ZRfa7+yVY2ORpGbmJZHKmk9julSgDyGgqLCdVkHLQtiNxCT80OldAS70ufT6ehHdObVjpiYNkfsbml9U0pUzf7slMHo2kkg0A1Qgy8c7P/mmb6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716215716; c=relaxed/simple;
-	bh=yCoPR1d+Zt+QtoUbnC3otqSv3QoByt1aVGPymXoVu5Y=;
+	s=arc-20240116; t=1716215745; c=relaxed/simple;
+	bh=uSKePMg68VHTXgwYY757U7QjRjNo5hrsfRcyRwpLxfY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SrkjuxHZFVzOEGFJ7QdGe9pjWfiDiqrhEeRJHG8JLIHd7IJdQpGoCgAycQUgCQ73/Rm0mdebbL1fGvJDN9WZYs27EKIEs9/zVj2AdJLHsp2nMhjaWgg5e/purx02+JaffAnTK2P8N10BS1KqvLrDnFTqJbpmIQNLis1YCcTs6io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U5u7d1NX; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716215714; x=1747751714;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yCoPR1d+Zt+QtoUbnC3otqSv3QoByt1aVGPymXoVu5Y=;
-  b=U5u7d1NXhq4z7FMTINQmbgMHKIHAiZ8OarvD4hIpHE8Cba9PCjWn1C8w
-   GGv0AteNCSIQlMkpe6NPOXtoAwQf6l7rmXyYOWj8kBHRFsCRm2s+YoGzY
-   J4JGrfSyNtVGNGK2Ez/bNRBtYuF8lGLUYA4V9dKjQPboZs6veT3KlVfrN
-   a11ifo05wzrPePviDMU92Gyu4awXnbqfoIb8N6wE1ctOKkUEKzEoFLsVx
-   4vo5AiUVqylIpmNHYbz37/cXNXyQTBjz6s85PQwg0ReGr02qc7HdbljWa
-   iMighBxHslfh499uG5BCx9xgsEO1v0Oda4niYRN/agRaMr7lLg2l+yWhg
-   w==;
-X-CSE-ConnectionGUID: qh4/56dITF2iDPCF63LiaA==
-X-CSE-MsgGUID: +8qul86URUq9pANi3rFneA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="29866678"
-X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
-   d="scan'208";a="29866678"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 07:35:13 -0700
-X-CSE-ConnectionGUID: 8ZK9kJk8RlmKxp8jpC69jA==
-X-CSE-MsgGUID: SsWd1+giTGaMnFnAdrEnAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
-   d="scan'208";a="32588040"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 07:35:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s946S-00000009L88-12iK;
-	Mon, 20 May 2024 17:35:04 +0300
-Date: Mon, 20 May 2024 17:35:04 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: Daniel Latypov <dlatypov@google.com>, mchehab@kernel.org,
-	hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, benjamin.gaignard@collabora.com,
-	sebastian.fricke@collabora.com, akpm@linux-foundation.org,
-	gregkh@linuxfoundation.org, adobriyan@gmail.com,
-	jani.nikula@intel.com, p.zabel@pengutronix.de, airlied@gmail.com,
-	daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-	laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
-	vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
-	detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
-	andrzej.p@collabora.com, nicolas@ndufresne.ca, davidgow@google.com
-Subject: Re: [PATCH v8 07/10] lib: add basic KUnit test for lib/math
-Message-ID: <ZktfmF1a7gzc-hqB@smile.fi.intel.com>
-References: <20240517171532.748684-1-devarsht@ti.com>
- <20240517173607.800549-1-devarsht@ti.com>
- <Zke6o3HYnUrgtD0K@smile.fi.intel.com>
- <7b8cd37b-5b16-2d99-ab62-5d6876e6571c@ti.com>
- <ZktAlza1zEke1eCx@smile.fi.intel.com>
- <01bd1d88-2cff-ad12-c7fb-3f2eddcfd899@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T0HWKLmYd+KQbY5qmxVjBelUdghqQzJDKZNsL0TwmNZBsbCxIiIXD/4kwjF2FUk5JlBA9YMPLiAHMvDwQljRCX1jGnBgE+AyxtdcAlnSiayvzJBwNVfQY34cyFC+3xEMJ2MQlvnWi6EHA4kjzNGe1UjhHwwhs9SRRJCt8RZS1Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyTqSGz/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D43DAC2BD10;
+	Mon, 20 May 2024 14:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716215745;
+	bh=uSKePMg68VHTXgwYY757U7QjRjNo5hrsfRcyRwpLxfY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FyTqSGz/Is1DZZJFNqP/b4Jk32a1bzHgOfe3VALEG1QyaujqN4mnQoNIGEf3E8DFV
+	 t6U4XsM8T9SCiuud31ZqmvDSwHC70rcdUmh6y1DkKXaeMyKUcfUmIOHWI3/FXWcRo2
+	 Zj/QIQM8Fv9KJI4M+4Ca6uMTjElqkhWNe2MOOdyYQlkQRuiuzAIEZIJp3XQlB6FGvc
+	 ooaBUiLxH/coetBrCjC1ZU+gpEGmBtAOaidl+g5sw0vAW32yAEy61aHjX4f78gZoaG
+	 RadZ3is985KiHJbZYfdbMyqcXY/+4/cDcgcES93ulI3RnalcfaGLXuF0rVBRu81wR7
+	 ++ajJ7TE2BqAQ==
+Date: Mon, 20 May 2024 15:35:38 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v3 3/8] ASoC: samsung: midas_wm1811: Add headset mic bias
+ supply support
+Message-ID: <1aed24a7-ab2a-4c2b-a3bc-2b907e091624@sirena.org.uk>
+References: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
+ <20240519-midas-wm1811-gpio-jack-v3-3-0c1736144c0e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pxaZ0LKbE08JUaU/"
+Content-Disposition: inline
+In-Reply-To: <20240519-midas-wm1811-gpio-jack-v3-3-0c1736144c0e@gmail.com>
+X-Cookie: We are what we are.
+
+
+--pxaZ0LKbE08JUaU/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <01bd1d88-2cff-ad12-c7fb-3f2eddcfd899@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, May 20, 2024 at 07:51:24PM +0530, Devarsh Thakkar wrote:
-> On 20/05/24 17:52, Andy Shevchenko wrote:
-> > On Mon, May 20, 2024 at 05:11:18PM +0530, Devarsh Thakkar wrote:
-> >> On 18/05/24 01:44, Andy Shevchenko wrote:
-> >>> On Fri, May 17, 2024 at 11:06:07PM +0530, Devarsh Thakkar wrote:
+On Sun, May 19, 2024 at 10:17:49AM +0200, Artur Weber wrote:
 
-[..]
+> +static int midas_headset_mic_bias(struct snd_soc_dapm_widget *w,
+> +			     struct snd_kcontrol *kcontrol, int event)
+> +{
+> +	struct snd_soc_card *card = w->dapm->card;
+> +	struct midas_priv *priv = snd_soc_card_get_drvdata(card);
+> +
+> +	if (!priv->reg_headset_mic_bias)
+> +		return 0;
+> +
+> +	switch (event) {
+> +	case SND_SOC_DAPM_PRE_PMU:
+> +		return regulator_enable(priv->reg_headset_mic_bias);
+> +	case SND_SOC_DAPM_POST_PMD:
+> +		return regulator_disable(priv->reg_headset_mic_bias);
+> +	}
 
-> > Yes, and one should follow IWYU principle and not cargo cult or whatever
-> > arbitrary lists.
-> 
-> Agreed.
+We have SND_SOC_DAPM_REGULATOR_SUPPLY?
 
-> >>>> +#include <linux/lcm.h>
-> >>>
-> >>> + math.h // obviously
-> >>> + module.h
-> >>>
-> >>>> +#include <linux/reciprocal_div.h>
-> >>>
-> >>> + types.h
-> >>
-> >> All the above headers are already included as part of kernel.h
-> > 
-> > Yes, that's why you should not use "proxy" headers.
-> > Have you read the top comment in the kernel.h?
-> 
-> Yes, it says it is not recommended to include this inside another header file.
-> Although here we are adding it inside c file, but I can still try avoid it and
-> include only the required headers instead of kernel.h as you recommended.
+--pxaZ0LKbE08JUaU/
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Right, but the first sentence there is
-"This header has combined a lot of unrelated to each other stuff."
+-----BEGIN PGP SIGNATURE-----
 
-Can you explain how you use in your code all that unrelated stuff?
-For example, how do you use *trace_*() calls? Or maybe might_*() calls?
-or anything else that is directly provided by kernel.h?
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZLX7oACgkQJNaLcl1U
+h9B+pQf/bj3bL8onTU8c2fQX8+h6MTpaxgO+m8QtLrABywDZfmRF/bCC0d/FGzGT
+2dAn3CMy8ZhJo65ELhLPkBHKRypcILUsxzjTOL6ddyek3cwtaomzLKt/5BPO6zDn
+XCygGXgK3NXCDSM4ldhW+N7x5n/i3j6ZCZfAxmYtrxpbEeTxRUbBBYfh20/cSEsa
+hhd0GxkGdUdG3ylpnA5n/hi+eMWlGHHB+OxXVJfv/iDrXF8hjOHUbaf82ZR9xwrJ
+2wP4BQNUowOuMBQ84h8zzBYOKtvtWUlig2y4ppzeMFeFw4MhYeeQzp/fz5COeKO+
+7+EiuORd1ry9xIRankV9nGs7JgiAHQ==
+=JVQ0
+-----END PGP SIGNATURE-----
 
-Besides IWYU principle above, it's good to have a justification for each
-inclusion the C file has. I believe there is no a such in _this_ case.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--pxaZ0LKbE08JUaU/--
 
