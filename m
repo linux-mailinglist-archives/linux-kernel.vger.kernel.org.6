@@ -1,132 +1,247 @@
-Return-Path: <linux-kernel+bounces-183526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B238C9A3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:19:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0488C9A3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 358BB1F2144C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:19:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 416681C20E00
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 09:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D946F1CA87;
-	Mon, 20 May 2024 09:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BPaYbHB1"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C0021350;
+	Mon, 20 May 2024 09:19:59 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C93219E0;
-	Mon, 20 May 2024 09:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5352137F;
+	Mon, 20 May 2024 09:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716196788; cv=none; b=ekdK3fqjGS6sssXxVWBnnlbc5afgckXrl4nh4SlCmFMYulxYV4dbBdEs0TjuUCS146oKPCLEygIAKZFjNQp9wHe6jLoRPgl0POcsDknJ2Q7ac9EKbGN/fCyPdga3+vfb80ZgaM07MoQwCZISLso2iejLufKrkOqgSo1Q8910LP0=
+	t=1716196798; cv=none; b=SMSggfRLh6OHHQZlYB8rm3HAzZJZNdoLlWNwkOBpSH25XE5lc7INVQXSFN0O2USFTEWus+sszrnW4RfdckKtvyqm8eMgqdAn14GvfAc14gRv59DRThfIEQTz7YbmZHSfkDpx40cM5q2g5K/Gel23NiuM9PA3etUj8QPL9hKem1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716196788; c=relaxed/simple;
-	bh=WNf6P72bcYi1f7Q/YxEur95rQekBz1J8C+FdIR6DQV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C4eT+NO3IG0TE5S3bp70Q0vFk3coo275igz+z7GFmMYRbywtOZlUDbQNfKuF6068n+aOr9C0Pp5eykQ4sGjgLXx2yLuAR8jZZNPvXnPg0DsNrBJMQQfpBUuZ0z10cnUmKNmWo39RCNWwrjKCiLwTNbqk3CxTvJIGPZXwW1i8ftw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BPaYbHB1; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1eca195a7c8so67105275ad.2;
-        Mon, 20 May 2024 02:19:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716196786; x=1716801586; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WNf6P72bcYi1f7Q/YxEur95rQekBz1J8C+FdIR6DQV4=;
-        b=BPaYbHB1tf+D6Q6vq82Hc38sUpiVlgPJQneZNGRwKPyOPbwj1OJIWYE+Rk6D4+kTwp
-         Lz5xlIKa/kKjPsyljHrcHYwkx6rOjeHxUy7TefQxqqAWBo2AOt0nmpNj8/LWQU/wHqWq
-         yHAdbyCdpBuHklF7gbylOVgStxKuRwPjmK5Kj4QL/xJmXuJyZFuhqzCWtf6zzHF8uS6F
-         t+3BNfXxzA91zorz7RdhxtTGgNCcLZVtxpLktKltAkqyn6KD4lfUMY6TmJcCrh7bGLdj
-         ReEZOj6MAWZq+aN2l+LNIVkNi+hmHOyaklfZB8dW4z43sq4kne0nrZ/oBKD3Y5B3HArs
-         4/1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716196786; x=1716801586;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WNf6P72bcYi1f7Q/YxEur95rQekBz1J8C+FdIR6DQV4=;
-        b=t8qsAcuAUe+ZCDiOAwInG976z0tQ32s080k6Bg5GlxTnFFgCmR7XkwMIm36RT2JFK9
-         Vpn+KbB9dZzMHfbJOIt5hv+L/3lnBN+V6O+O6kvs+9McnPbVOTsFuf1ZPZ3C6BGWS7XA
-         mPlR/+0a0wWuDrl1aul7sRK5/0NGebzuOkOPE3iQSHXqs924KesnTOvfpYjnC2T5ZiLm
-         OO6ZhYeWXiYLza59vH7VGDUF7jD8Gr/CcWopos043svFNJf+ysyrXmS35wkVDi4pgwF4
-         N4fcuFUy/PSNQC7DmEJVa+72yClBXQsWmb5qKb3eJW2jqk9kiJSOlAyGIjsXgGALJOt/
-         8aQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUwBBUmOPe9ovZto2uO2SGfBloTml80YPIt+y+kjEMjKY44+NoeTu7hqaNZeu5JM/DnY3glu2jw2DTmJIEhJkMkGlO+JY3
-X-Gm-Message-State: AOJu0Yz1mMHMiQeKkhSjcqCM8rYxn/2Ah5PzNj/7GYAImGCJI0j8lx21
-	HBbEnZjl9thQnLyrfFJBLQfZpfgwmt4gjraQHtnx5GSOmjUU4qurypz/30VscJxcUhW5qXkl3oQ
-	Wy8rOKyIV/wZrx5CHAdAP+4QytAv20zRZOlg=
-X-Google-Smtp-Source: AGHT+IHA5ALO4rDjGdGMuE0iLP0CBzKlLf/Vl3GUmnak99XjEEyqobY19GgnDDHEooirsYv6X0jKdzTSMgl0uYQLXNY=
-X-Received: by 2002:a17:90a:a083:b0:2b6:24cf:5c32 with SMTP id
- 98e67ed59e1d1-2b6cd0e7f04mr21993872a91.49.1716196785903; Mon, 20 May 2024
- 02:19:45 -0700 (PDT)
+	s=arc-20240116; t=1716196798; c=relaxed/simple;
+	bh=v1mCRc4Cyw1bo9jvOSa3ltHdkaf7YQ1Ul8qqdJDs2Vc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mCvZQzNolDG9NxpcTk0eLML4rQNhr4j9uGSZNWjqzL9hEn2s5igV0jMuFd0pIRBvXK1abZCouPCa7Y7Yl/nBsgz+DUlCeIAUeRhIZoFJbXh8HutxE6mfMxTw1B/a/3IvTIKTKUHLEr/DS7B2OemaFUWpN7fVCTAeMEVZc4T0Fk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjX8L0FhNz4f3jqB;
+	Mon, 20 May 2024 17:19:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id B927D1A0A82;
+	Mon, 20 May 2024 17:19:51 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgAX5g6zFUtmP6KzNA--.3807S3;
+	Mon, 20 May 2024 17:19:51 +0800 (CST)
+Message-ID: <5e3716d1-379a-a052-2ecf-8df497efafef@huaweicloud.com>
+Date: Mon, 20 May 2024 17:19:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHe5sWavQcUTg2zTYaryRsMywSBgBgETG=R1jRexg4qDqwCfdw@mail.gmail.com>
- <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
-In-Reply-To: <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
-From: Gia <giacomo.gio@gmail.com>
-Date: Mon, 20 May 2024 11:19:34 +0200
-Message-ID: <CAHe5sWYnbJAjGp66Q4H0W_yk9uYTcERmW=sPvJSWTsqbFZFCVg@mail.gmail.com>
-Subject: Re: [REGRESSION] Thunderbolt Host Reset Change Causes eGPU
- Disconnection from 6.8.7=>6.8.8
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: linux-kernel@vger.kernel.org, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, kernel@micha.zone, 
-	Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH v2 03/12] cachefiles: fix slab-use-after-free in
+ cachefiles_ondemand_get_fd()
+Content-Language: en-US
+To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
+ dhowells@redhat.com, jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ libaokun@huaweicloud.com
+References: <20240515084601.3240503-1-libaokun@huaweicloud.com>
+ <20240515084601.3240503-4-libaokun@huaweicloud.com>
+ <35561c99-c978-4cf6-82e9-d1308c82a7ff@linux.alibaba.com>
+ <d8154eed-98d0-9cb7-4a2c-6b68ed75b7a2@huaweicloud.com>
+ <d0e6d1f6-002f-4255-a481-6bd17f3da7fc@linux.alibaba.com>
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <d0e6d1f6-002f-4255-a481-6bd17f3da7fc@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAX5g6zFUtmP6KzNA--.3807S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxtF4rXrW5Kw48KF4kKw4fAFb_yoW3Ar43pF
+	Z3tFyxtry5GrykJr1Utr1UJryUtr1UJ3WDXr18JF18Ar4DAr1Yqr1UXr1qgryUGr48Ar4U
+	Jr1UJry7Zr1UJr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9I14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
+	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJb
+	IYCTnIWIevJa73UjIFyTuYvjfUouWlDUUUU
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-Hi Thorsten,
+On 2024/5/20 17:10, Jingbo Xu wrote:
+>
+> On 5/20/24 4:38 PM, Baokun Li wrote:
+>> Hi Jingbo,
+>>
+>> Thanks for your review!
+>>
+>> On 2024/5/20 15:24, Jingbo Xu wrote:
+>>> On 5/15/24 4:45 PM, libaokun@huaweicloud.com wrote:
+>>>> From: Baokun Li <libaokun1@huawei.com>
+>>>>
+>>>> We got the following issue in a fuzz test of randomly issuing the
+>>>> restore
+>>>> command:
+>>>>
+>>>> ==================================================================
+>>>> BUG: KASAN: slab-use-after-free in
+>>>> cachefiles_ondemand_daemon_read+0x609/0xab0
+>>>> Write of size 4 at addr ffff888109164a80 by task ondemand-04-dae/4962
+>>>>
+>>>> CPU: 11 PID: 4962 Comm: ondemand-04-dae Not tainted 6.8.0-rc7-dirty #542
+>>>> Call Trace:
+>>>>    kasan_report+0x94/0xc0
+>>>>    cachefiles_ondemand_daemon_read+0x609/0xab0
+>>>>    vfs_read+0x169/0xb50
+>>>>    ksys_read+0xf5/0x1e0
+>>>>
+>>>> Allocated by task 626:
+>>>>    __kmalloc+0x1df/0x4b0
+>>>>    cachefiles_ondemand_send_req+0x24d/0x690
+>>>>    cachefiles_create_tmpfile+0x249/0xb30
+>>>>    cachefiles_create_file+0x6f/0x140
+>>>>    cachefiles_look_up_object+0x29c/0xa60
+>>>>    cachefiles_lookup_cookie+0x37d/0xca0
+>>>>    fscache_cookie_state_machine+0x43c/0x1230
+>>>>    [...]
+>>>>
+>>>> Freed by task 626:
+>>>>    kfree+0xf1/0x2c0
+>>>>    cachefiles_ondemand_send_req+0x568/0x690
+>>>>    cachefiles_create_tmpfile+0x249/0xb30
+>>>>    cachefiles_create_file+0x6f/0x140
+>>>>    cachefiles_look_up_object+0x29c/0xa60
+>>>>    cachefiles_lookup_cookie+0x37d/0xca0
+>>>>    fscache_cookie_state_machine+0x43c/0x1230
+>>>>    [...]
+>>>> ==================================================================
+>>>>
+>>>> Following is the process that triggers the issue:
+>>>>
+>>>>        mount  |   daemon_thread1    |    daemon_thread2
+>>>> ------------------------------------------------------------
+>>>>    cachefiles_ondemand_init_object
+>>>>     cachefiles_ondemand_send_req
+>>>>      REQ_A = kzalloc(sizeof(*req) + data_len)
+>>>>      wait_for_completion(&REQ_A->done)
+>>>>
+>>>>               cachefiles_daemon_read
+>>>>                cachefiles_ondemand_daemon_read
+>>>>                 REQ_A = cachefiles_ondemand_select_req
+>>>>                 cachefiles_ondemand_get_fd
+>>>>                 copy_to_user(_buffer, msg, n)
+>>>>               process_open_req(REQ_A)
+>>>>                                     ------ restore ------
+>>>>                                     cachefiles_ondemand_restore
+>>>>                                     xas_for_each(&xas, req, ULONG_MAX)
+>>>>                                      xas_set_mark(&xas,
+>>>> CACHEFILES_REQ_NEW);
+>>>>
+>>>>                                     cachefiles_daemon_read
+>>>>                                      cachefiles_ondemand_daemon_read
+>>>>                                       REQ_A =
+>>>> cachefiles_ondemand_select_req
+>>>>
+>>>>                write(devfd, ("copen %u,%llu", msg->msg_id, size));
+>>>>                cachefiles_ondemand_copen
+>>>>                 xa_erase(&cache->reqs, id)
+>>>>                 complete(&REQ_A->done)
+>>>>      kfree(REQ_A)
+>>>>                                       cachefiles_ondemand_get_fd(REQ_A)
+>>>>                                        fd = get_unused_fd_flags
+>>>>                                        file = anon_inode_getfile
+>>>>                                        fd_install(fd, file)
+>>>>                                        load = (void *)REQ_A->msg.data;
+>>>>                                        load->fd = fd;
+>>>>                                        // load UAF !!!
+>>>>
+>>>> This issue is caused by issuing a restore command when the daemon is
+>>>> still
+>>>> alive, which results in a request being processed multiple times thus
+>>>> triggering a UAF. So to avoid this problem, add an additional reference
+>>>> count to cachefiles_req, which is held while waiting and reading, and
+>>>> then
+>>>> released when the waiting and reading is over.
+>>>>
+>>>>
+>>>> Note that since there is only one reference count for waiting, we
+>>>> need to
+>>>> avoid the same request being completed multiple times, so we can only
+>>>> complete the request if it is successfully removed from the xarray.
+>>> Sorry the above description makes me confused.  As the same request may
+>>> be got by different daemon threads multiple times, the introduced
+>>> refcount mechanism can't protect it from being completed multiple times
+>>> (which is expected).  The refcount only protects it from being freed
+>>> multiple times.
+>> The idea here is that because the wait only holds one reference count,
+>> complete(&req->done) can only be called when the req has been
+>> successfully removed from the xarry, otherwise the following UAF may
+>> occur:
+>
+> "complete(&req->done) can only be called when the req has been
+> successfully removed from the xarry ..."
+>
+> How this is done? since the following xarray_erase() following the first
+> xarray_erase() will fail as the xarray slot referred by the same id has
+> already been erased?
+>
+>
+>>>> @@ -455,7 +459,7 @@ static int cachefiles_ondemand_send_req(struct
+>>>> cachefiles_object *object,
+>>>>        wake_up_all(&cache->daemon_pollwq);
+>>>>        wait_for_completion(&req->done);
+>>>>        ret = req->error;
+>>>> -    kfree(req);
+>>>> +    cachefiles_req_put(req);
+>>>>        return ret;
+>>>>    out:
+>>>>        /* Reset the object to close state in error handling path.
+>>> Don't we need to also convert "kfree(req)" to cachefiles_req_put(req)
+>>> for the error path of cachefiles_ondemand_send_req()?
+>>>
+>>> ```
+>>> out:
+>>>      /* Reset the object to close state in error handling path.
+>>>       * If error occurs after creating the anonymous fd,
+>>>       * cachefiles_ondemand_fd_release() will set object to close.
+>>>       */
+>>>      if (opcode == CACHEFILES_OP_OPEN)
+>>>          cachefiles_ondemand_set_object_close(object);
+>>>      kfree(req);
+>>>      return ret;
+>>> ```
+>> When "goto out;" is called in cachefiles_ondemand_send_req(),
+>> it means that the req is unallocated/failed to be allocated/failed to
+>> be inserted into the xarry, and therefore the req can only be accessed
+>> by the current function, so there is no need to consider concurrency
+>> and reference counting.
+> Okay I understand. But this is indeed quite confusing. I see no cost of
+> also converting to cachefiles_req_put(req).
+>
+>
+Yes, kfree(req) converts to cachefiles_req_put(req) at no cost,
+but may trigger a NULL pointer dereference in cachefiles_req_put(req)
+if the req has not been initialised.
 
-I'll try to provide a kernel log ASAP, it's not that easy because when
-I run into this issue my keyboard isn't working. The kernel parameter
-that Mario suggested, thunderbolt.host_reset=3Dfalse, fixes the issue!
+-- 
+With Best Regards,
+Baokun Li
 
-I can add that without the suggested kernel parameter the issue
-persists with the latest Archlinux kernel 6.9.1.
-
-I also found another report of the issue on Archlinux forum:
-https://bbs.archlinux.org/viewtopic.php?id=3D295824
-
-
-On Mon, May 6, 2024 at 2:53=E2=80=AFPM Linux regression tracking (Thorsten
-Leemhuis) <regressions@leemhuis.info> wrote:
->
-> [CCing Mario, who asked for the two suspected commits to be backported]
->
-> On 06.05.24 14:24, Gia wrote:
-> > Hello, from 6.8.7=3D>6.8.8 I run into a similar problem with my Caldigi=
-t
-> > TS3 Plus Thunderbolt 3 dock.
-> >
-> > After the update I see this message on boot "xHCI host controller not
-> > responding, assume dead" and the dock is not working anymore. Kernel
-> > 6.8.7 works great.
->
-> Thx for the report. Could you make the kernel log (journalctl -k/dmesg)
-> accessible somewhere?
->
-> And have you looked into the other stuff that Mario suggested in the
-> other thread? See the following mail and the reply to it for details:
->
-> https://lore.kernel.org/all/1eb96465-0a81-4187-b8e7-607d85617d5f@gmail.co=
-m/T/#u
->
-> Ciao, Thorsten
->
-> P.S.: To be sure the issue doesn't fall through the cracks unnoticed,
-> I'm adding it to regzbot, the Linux kernel regression tracking bot:
->
-> #regzbot ^introduced v6.8.7..v6.8.8
-> #regzbot title thunderbolt: TB3 dock problems, xHCI host controller not
-> responding, assume dead
 
