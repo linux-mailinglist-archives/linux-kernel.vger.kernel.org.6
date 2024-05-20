@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-184193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19ABA8CA3C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:20:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3CB8CA3C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 23:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C48F1282373
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:20:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 820FC1C2108F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 21:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04791386D5;
-	Mon, 20 May 2024 21:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BBC139566;
+	Mon, 20 May 2024 21:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DtupTbvn"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bWOl8kw5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B967134DE
-	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 21:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3770C134DE;
+	Mon, 20 May 2024 21:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716240021; cv=none; b=q1oOG+e0mTnLfLTUDVq3JW9RAaoTTbUOwwHllNWn2XE0+8sL/j2+8t/ugfd6pZFAQBK9QUZlCKd0rilhsm7XJokU95vg4s2VgBhi/X5h0r+aK66vfAiCG3EnLpQVgMiGH9+LKuZtrTh8DHyHlBk5y1FpIV5UTEnJbmt70S4+sKc=
+	t=1716240027; cv=none; b=KbIF8PmhFrPDe3424+1yFmCy26QTmGUgT9/yIO9QmK5Zwj1FxfL8bwqD9CGr9bPXMHga4ViMyM6geLbk02g3x3/HOeqT3BOIPEqRDwQkhkfL4u0/45978DEkN6AuJ0WPg+YBgmVUO6jcVHerjrS7uUfgWdP0KgFRh/L4X2tWQFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716240021; c=relaxed/simple;
-	bh=jhxUnGL3QU1SZuJg8Xn4Pn1yP1t2jyCGzNetH2sp5t4=;
+	s=arc-20240116; t=1716240027; c=relaxed/simple;
+	bh=6q4cLeteQnmYBt4L+ImO6U2iWiRK+PBZwIQS3r+LLZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QSKiIMwaHIBYC5OiiR47JQ+UVquUVhdqgbYEvgI+Dx/CzB/Rp8n7EmWs0nA2oFve3mSoF3ezV5T9HyJgk2adRYFnOxs28ziKc5AtN5FveQc6Oa4Jah3wcf5cAUyejjeke6L1xgKJUHMhYnz5UB03G03pW13z5xP1jC1bJgreFLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DtupTbvn; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51f0b6b682fso5105897e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 14:20:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716240018; x=1716844818; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3OnVUqe8WIOEFDqCc+0DCZdCPjLUoGnkXveHx6yIHnM=;
-        b=DtupTbvncf8moDU1bbJm6HRwdQNMDMsOsJaemkVjRnSAtMY+pUPKIN8WqVn7iV2UnY
-         Q8S9o3TqclvgplkN/8PodbNUfuqMnUqntL+bkt0MVTYQ1e37KpDULuw450nV93AHlMjE
-         1p86kL6Np6s/RXwGNcHkHriUkm2oPbR+Zh9ElJdNeQZLKcC2O9G6bdG0eFFfrGWbFh22
-         X4KNYSCZ4GWpmxjthvkpOBf+KfUyi52LOI8nhT2H1/vZg3+4RYgmg7C2+ec0oHPuQH41
-         mrJflRAOV7T19l93LtcaOtUzZZDKc0LHr7kQph97jTTmSBE3u64eU9i3pQB83GeKfCJs
-         i60A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716240018; x=1716844818;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3OnVUqe8WIOEFDqCc+0DCZdCPjLUoGnkXveHx6yIHnM=;
-        b=qYgK/5cYMtYD4POM5VFhApjo9JyVeUYszJFFWqv4EBADw2+gppTvzxOdoCIgZyGfvj
-         vxFNmBOcIxwbaHZl/pZm2xBNZ314PYzSa9cTAIfOKBaJjVJaLHCpMv+DLDInYeBmiV9Z
-         K+6QqG4Kaf9OTl7mJJFz63/FB06/nRO+tTqpOxL4IdNrorEOhNE7HTgxIwLSxhr/OUJX
-         1Ihzmp/NNAH821fXuIOY4RjW7FQHse2YFN1yAn0nXpW+nucxEtg2VZSqyW22nQhOwPX+
-         QMOxPH1aljT56T178Ed+uz/ydLiQPUGFbYApj0qisIqCHZ0t4sEcEDUXvr+fGnMqC/Vh
-         RV8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXy4Wkcltd4uEzr0xIeTjGTxBJbjpCoIVUy4dx/jIkXMrRPEsXOEOIseGFCvPDI0bedQ+YmUOda/QxlNqN5LInvkC4+Zfu5VuJpgiz6
-X-Gm-Message-State: AOJu0Yy8VGrIEalhDeHg2KpstBeS4P+nanKinvJRUdxjXl2vIw0d1Cvu
-	n6TnPGGUTiW6XNHLxqVkfEOTass5jBBIWIGY84gzy1YE8MkvaGbijMgGsHgLs8A=
-X-Google-Smtp-Source: AGHT+IH8++U4qMlcx4n1na7YaGa/qdPYn/zbKCk2mmxyuC1CZNaV7VzAUp8FuYGfDxIdDohPt4CTqw==
-X-Received: by 2002:a05:6512:3e01:b0:515:d1a6:1b07 with SMTP id 2adb3069b0e04-5220fc7bdc8mr36914963e87.15.1716240017912;
-        Mon, 20 May 2024 14:20:17 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-523765da43dsm2473464e87.121.2024.05.20.14.20.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 14:20:17 -0700 (PDT)
-Date: Tue, 21 May 2024 00:20:16 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: linux@treblig.org
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
-	maarten.lankhorst@linux.intel.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/bridge: analogix: remove unused struct
- 'bridge_init'
-Message-ID: <g4nwb5cgcg2wff4qogzayhdrj3omneeusfjqmdupghy6zlji5m@kp55dmkbj6k3>
-References: <20240520125551.11534-1-linux@treblig.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bq0zLDL50X+pzlkHx0vyQ5bfp6CU0AChsnP/mZPrVAeCLmmVAekzBszSPxf1qaBllmpHTaH98NIjrqovpv56nziVaczb8jEMrb/1/P9Xu/tz3JHxUQO2RyRVdtvF919j8grX6GfxArwIs7bYGCMvbuVgsZu8kKJbkD9Cs3d+m0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bWOl8kw5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8139FC2BD10;
+	Mon, 20 May 2024 21:20:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716240026;
+	bh=6q4cLeteQnmYBt4L+ImO6U2iWiRK+PBZwIQS3r+LLZA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bWOl8kw56ZVeviGOGsr0lbv+k+xZE2NAALVSx796jSXun/d+7j1KNYBiJ+vUA1OEf
+	 ZQGpZdpKHadB1Mg2GFYGx+uiBNU7m04hMWVL802Lt3e4JD7G1z7jCXDmxGBreOgtt7
+	 qclg7Peh7mOecKxMJyocc/JQaBGChHHBtgRDgeckbKkOPo4xn326QKtKjzKVgyx3Ci
+	 v5ll50neonGDnT6+EMyhLewvzL3eXZN7Px0WLszK7SlbA0B9WllUQuugAmRj6XTiw8
+	 X1hyjcj3pydyv68yzY6IUTSquK+17pYqWXlDvEyLL+Obo4SIq7BXvl3WZ5v1u2wHoO
+	 yWYMjK9x4PfKg==
+Date: Mon, 20 May 2024 16:20:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com, Nishanth Menon <nm@ti.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 6/8] dt-bindings: mfd: syscon: Split and enforce
+ documenting MFD children
+Message-ID: <20240520212025.GA1531862-robh@kernel.org>
+References: <20240519-dt-bindings-mfd-syscon-split-v1-0-aaf996e2313a@linaro.org>
+ <20240519-dt-bindings-mfd-syscon-split-v1-6-aaf996e2313a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,27 +67,147 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240520125551.11534-1-linux@treblig.org>
+In-Reply-To: <20240519-dt-bindings-mfd-syscon-split-v1-6-aaf996e2313a@linaro.org>
 
-On Mon, May 20, 2024 at 01:55:51PM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Sun, May 19, 2024 at 08:42:21PM +0200, Krzysztof Kozlowski wrote:
+> Simple syscon nodes can be documented in common syscon.yaml, however
+> devices with simple-mfd compatible, thus with some children, should have
+> their own schema listing these children.  Such listing makes the binding
+> specific, allows better validation (so the incorrect child would not
+> appear in the simple-mfd node) and actually enforces repeated rule for
+> simple-mfd devices:
 > 
-> commit 6a1688ae8794 ("drm/bridge: ptn3460: Convert to I2C driver model")
-> has dropped all the users of the struct bridge_init from the
-> exynos_dp_core, while retaining unused structure definition.
-> Later on the driver was reworked and the definition migrated
-> to the analogix_dp driver. Remove unused struct bridge_init definition.
+>   "simple-mfd" is only for simple devices, where the children do not
+>   depend on the parent.
 > 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Currently the syscon+simple-mfd binding is quite broad and allows
+> any child or property, thus above rule cannot be enforced.
+> 
+> Split the syscon.yaml binding into:
+> 1. Common syscon properties, used potentially by many bindings.
+> 2. Simple syscon devices (NO simple-mfd!).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
 > ---
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 5 -----
->  1 file changed, 5 deletions(-)
 > 
+> Depends on:
+> 1. https://lore.kernel.org/r/20240510123018.3902184-1-robh@kernel.org
+> 2. Previous patches in the series.
+> ---
+>  .../devicetree/bindings/mfd/syscon-common.yaml     |  72 +++++++
+>  Documentation/devicetree/bindings/mfd/syscon.yaml  | 212 +++++++++------------
+>  2 files changed, 162 insertions(+), 122 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/syscon-common.yaml b/Documentation/devicetree/bindings/mfd/syscon-common.yaml
+> new file mode 100644
+> index 000000000000..c3ff3a7afce3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/syscon-common.yaml
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: System Controller Registers R/W Common Properties
+> +
+> +description: |
+> +  System controller node represents a register region containing a set
+> +  of miscellaneous registers. The registers are not cohesive enough to
+> +  represent as any specific type of device. The typical use-case is
+> +  for some other node's driver, or platform-specific code, to acquire
+> +  a reference to the syscon node (e.g. by phandle, node path, or
+> +  search using a specific compatible value), interrogate the node (or
+> +  associated OS driver) to determine the location of the registers,
+> +  and access the registers directly.
+> +
+> +maintainers:
+> +  - Lee Jones <lee@kernel.org>
+> +
+> +select:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - syscon
+> +
+> +  required:
+> +    - compatible
+> +
+> +properties:
+> +  compatible:
+> +    contains:
+> +      const: syscon
+> +    minItems: 2
+> +    maxItems: 5  # Should be enough
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  reg-io-width:
+> +    description: |
+> +      The size (in bytes) of the IO accesses that should be performed
+> +      on the device.
+> +    enum: [1, 2, 4, 8]
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: simple-mfd
+> +    then:
+> +      properties:
+> +        compatible:
+> +          minItems: 3
+> +          maxItems: 5
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    syscon: syscon@1c00000 {
+> +        compatible = "allwinner,sun8i-h3-system-controller", "syscon";
+> +        reg = <0x01c00000 0x1000>;
+> +    };
+> +...
+> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+> index b17fa0487178..70e3961bc96f 100644
+> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/mfd/syscon.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+> -title: System Controller Registers R/W
+> +title: System Controller Devices
+>  
+>  description: |
+>    System controller node represents a register region containing a set
+> @@ -19,122 +19,99 @@ description: |
+>  maintainers:
+>    - Lee Jones <lee@kernel.org>
+>  
+> -select:
+> -  properties:
+> -    compatible:
+> -      contains:
+> -        enum:
+> -          - syscon
+> -
+> -  required:
+> -    - compatible
+> -
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Removing this is only going to work with v2024.04. The only way it 
+works for older versions is listing all the compatibles here. That's a 
+bit new for us to require it.
 
-
--- 
-With best wishes
-Dmitry
+Rob
 
