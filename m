@@ -1,53 +1,60 @@
-Return-Path: <linux-kernel+bounces-183857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5280D8C9EFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:47:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAFF8C9F1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 16:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D90F281A83
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:47:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3AEC1F22242
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 14:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CFF136E03;
-	Mon, 20 May 2024 14:47:24 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A8F136E18;
+	Mon, 20 May 2024 14:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="cPklxUCL"
+Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C93145026;
-	Mon, 20 May 2024 14:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7119613699A
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 14:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716216444; cv=none; b=fe0d5sphvEl4ZOU4ZilSkPrRKAfI5Q/A5all0UkBwQRX5EEn2LFkDENakLWPuyNN3EPYhVbw9LYDQcUVXEVmP9F8rItzp++C4p6Zq0aibK+xMk6Eunxbh3eRk3yQ2OxB3EuvqhrIh0ptNnHJmmozo9Ys79jeHqyXU1O/1nuIUHQ=
+	t=1716216897; cv=none; b=BRVfWnZqcUYROGHRdfBsg/1X/49s0IxqlCanvRfCIpYwHnxoCQ3cWYUAaxg6wRDW+TEZZoXlaMniaRNsyL+lGcq8TRjl8a5TpPyCjpqqEg4qAa99kJzIn60CyStOM9+I7rzYs1yI2cYwZL+Fh78FlR8HJbx4+XEE+kWZVx3/PdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716216444; c=relaxed/simple;
-	bh=NszCYuGG62vA2thKcJ8SoYDRFimKvFGOM29xafLKn54=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MF8uMF+4J/0tY9u+S4D4arEfEPA13cNMZ8/NAP98TP0fSID1fPMkkD7Jc0lD3WdokmIMnaAlIQWTrajyEb5mFl4/FCv+7q/eArNm5XXNHi9xY7pOcPyWvw2UtgEhHaqyabgou0hur2ptq4CM6XsJQr5IXKmvTAqG5pqlRAZANuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 20 May
- 2024 17:47:11 +0300
-Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 20 May
- 2024 17:47:11 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: syzbot <syzbot+83763e624cfec6b462cb@syzkaller.appspotmail.com>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-	<Larry.Finger@lwfinger.net>, <florian.c.schilhabel@googlemail.com>,
-	<gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-	<linux-media@vger.kernel.org>, <linux-staging@lists.linux.dev>,
-	<linux-usb@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [staging?] [usb?] memory leak in _r8712_init_xmit_priv (2)
-Date: Mon, 20 May 2024 07:46:41 -0700
-Message-ID: <20240520144641.17643-1-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <000000000000809328060a8a4c1c@google.com>
-References:
+	s=arc-20240116; t=1716216897; c=relaxed/simple;
+	bh=clpyNQpvD2QjEkJaOz5hsXiNkIjsCTbRMlRun10p+Hs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cDFdoaJY2EUpVxbSJWalzZcvVY+kNKazrtJ8x3YehmyfUBHN6k85Aw/P7K5LbYZA4w8NMhB//tG8Cjfg+mX5M1uaz6e2XNX72vlPVy60pdDYRIRa8hEzWWxa2UaqEaE79ls4rnGwLZRc9BPcjWhQPj8j7mx6PA8ZvJvccO1rTjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=cPklxUCL; arc=none smtp.client-ip=178.154.239.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:c10a:0:640:882f:0])
+	by forwardcorp1b.mail.yandex.net (Yandex) with ESMTPS id 9FD8E60A56;
+	Mon, 20 May 2024 17:51:26 +0300 (MSK)
+Received: from kniv-nix.yandex-team.ru (unknown [2a02:6b8:b081:8810::1:2c])
+	by mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id uoJQX60IfOs0-Q0v947GF;
+	Mon, 20 May 2024 17:51:25 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1716216685;
+	bh=Ype1Fb5hqSSEjjtIwCnPzpbYPBKN0xi6g1o6op9FVBc=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=cPklxUCLMTmMSZtCeZFXAr0nzBmcB7nUUk7qIlxmXaAIrbSQz8KVLY655LJl0Wudq
+	 QUbhiExTTZblIsAUZO4Qv0IP61IwnwqKfuJ+wc+viK+arJf0Vsmeg5Hk/7xe/I1/TY
+	 6QlOcoUvID/PwEmdLBKJrieOazag8RuurjgANBNQ=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+From: Nikolay Kuratov <kniv@yandex-team.ru>
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Nikolay Kuratov <kniv@yandex-team.ru>
+Subject: [PATCH] x86/numa: Bump NR_NODE_MEMBLKS to MAX_NUMNODES * 4
+Date: Mon, 20 May 2024 17:50:21 +0300
+Message-Id: <20240520145021.1528151-1-kniv@yandex-team.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,43 +62,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
 
-Hi,
+With modern AMD EPYC platform we're able to spot 3
+memblocks per NUMA, so bump MAX_NUMNODES multiplier
+from 2 to 4. Problem becomes apparent if MAX_NUMNODES
+close enough to real amount of nodes and leaves us with
+`too many memblk ranges` dmesg error.
 
-> BUG: memory leak
-> unreferenced object 0xffff888107a5c000 (size 4096):
->   comm "kworker/1:0", pid 22, jiffies 4294943134 (age 18.720s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<ffffffff816337cd>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
->     [<ffffffff816337cd>] slab_post_alloc_hook mm/slab.h:766 [inline]
->     [<ffffffff816337cd>] slab_alloc_node mm/slub.c:3478 [inline]
->     [<ffffffff816337cd>] __kmem_cache_alloc_node+0x2dd/0x3f0 mm/slub.c:3517
->     [<ffffffff8157e625>] kmalloc_trace+0x25/0x90 mm/slab_common.c:1098
->     [<ffffffff83cee442>] kmalloc include/linux/slab.h:600 [inline]
->     [<ffffffff83cee442>] _r8712_init_xmit_priv+0x2b2/0x6e0 drivers/staging/rtl8712/rtl871x_xmit.c:130
->     [<ffffffff83ce9033>] r8712_init_drv_sw+0xc3/0x290 drivers/staging/rtl8712/os_intfs.c:311
->     [<ffffffff83ce7ce6>] r871xu_drv_init+0x1c6/0x920 drivers/staging/rtl8712/usb_intf.c:386
->     [<ffffffff832d0f0b>] usb_probe_interface+0x16b/0x3a0 drivers/usb/core/driver.c:396
->     [<ffffffff82c3bb06>] call_driver_probe drivers/base/dd.c:579 [inline]
+Bump also maximal count of immovable regions accordingly.
 
-I am inclined to think that this issue might be false positive. During
-repro the device is initialized correctly, does some work and then
-exits, calling all required functions to clean things up
-(i.e. _free_xmit_priv()), including pxmitbuf->pallocated_buf.
-Kmemleak triggers disappear if you set longer intervals between
-scannning for them (obviously). And if all the things get cleared up
-when the device disconnects, isn't that correct and expected
-behaviour? Could the scanner just "lose track" of some of the objects
-here?
+Signed-off-by: Nikolay Kuratov <kniv@yandex-team.ru>
+---
+ If overhead related to doubled arrays is too undesirable
+ maybe we should consider config option for this? It appears that
+ NR_NODE_MEMBLKS used only on LoongArch and x86 (macro in asm-generic
+ is orphane).
 
-Or am I missing something?
+ arch/x86/boot/compressed/acpi.c | 6 +++---
+ arch/x86/boot/compressed/misc.h | 2 +-
+ arch/x86/include/asm/numa.h     | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-Regards,
-Nikita
+diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+index f196b1d1ddf8..74575a900924 100644
+--- a/arch/x86/boot/compressed/acpi.c
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -17,9 +17,9 @@
+ 
+ /*
+  * Immovable memory regions representation. Max amount of memory regions is
+- * MAX_NUMNODES*2.
++ * MAX_NUMNODES*4.
+  */
+-struct mem_vector immovable_mem[MAX_NUMNODES*2];
++struct mem_vector immovable_mem[MAX_NUMNODES*4];
+ 
+ static acpi_physical_address
+ __efi_get_rsdp_addr(unsigned long cfg_tbl_pa, unsigned int cfg_tbl_len)
+@@ -305,7 +305,7 @@ int count_immovable_mem_regions(void)
+ 				num++;
+ 			}
+ 
+-			if (num >= MAX_NUMNODES*2) {
++			if (num >= ARRAY_SIZE(immovable_mem)) {
+ 				debug_putstr("Too many immovable memory regions, aborting.\n");
+ 				return 0;
+ 			}
+diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+index b353a7be380c..a756569852e5 100644
+--- a/arch/x86/boot/compressed/misc.h
++++ b/arch/x86/boot/compressed/misc.h
+@@ -174,7 +174,7 @@ static inline acpi_physical_address get_rsdp_addr(void) { return 0; }
+ #endif
+ 
+ #if defined(CONFIG_RANDOMIZE_BASE) && defined(CONFIG_MEMORY_HOTREMOVE) && defined(CONFIG_ACPI)
+-extern struct mem_vector immovable_mem[MAX_NUMNODES*2];
++extern struct mem_vector immovable_mem[MAX_NUMNODES*4];
+ int count_immovable_mem_regions(void);
+ #else
+ static inline int count_immovable_mem_regions(void) { return 0; }
+diff --git a/arch/x86/include/asm/numa.h b/arch/x86/include/asm/numa.h
+index ef2844d69173..057eafe6fed5 100644
+--- a/arch/x86/include/asm/numa.h
++++ b/arch/x86/include/asm/numa.h
+@@ -10,7 +10,7 @@
+ 
+ #ifdef CONFIG_NUMA
+ 
+-#define NR_NODE_MEMBLKS		(MAX_NUMNODES*2)
++#define NR_NODE_MEMBLKS		(MAX_NUMNODES*4)
+ 
+ extern int numa_off;
+ 
+-- 
+2.34.1
+
 
