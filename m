@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-183771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D1C48C9DCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:02:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 406948C9DE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 15:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04191B2429D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:02:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F123A28590B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FFF135A6E;
-	Mon, 20 May 2024 13:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UN2Dj719"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765DF13440A;
-	Mon, 20 May 2024 13:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AAA13664C;
+	Mon, 20 May 2024 13:11:29 +0000 (UTC)
+Received: from sakura.ysato.name (ik1-413-38519.vs.sakura.ne.jp [153.127.30.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32032A2D;
+	Mon, 20 May 2024 13:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=153.127.30.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716210165; cv=none; b=lrFdFvGFciXbGt/6A2ZrNI7AYy8rdIVGOOnMYBUASGCm5+2YhZhO4bFW5rHwYcoIkotKDxtsgWAGrFFqMeiljupFA+64s81vmGWKDzx9RQ8KK4dJyqib/QB4+NPXR9pGoAmjSN9VBO4JeZ0HZx4eY8XSJCA4Ei6U6/RlJOtZH9Y=
+	t=1716210689; cv=none; b=Hr8SipDM7Vh7HJDDEMqorTDIO2Y48HgvT6hxCGV66pyb4cFGGRD8funkpcfKUGBfElo473lwC2bS6UtQ20EwE6YaJ4AUc/CdIbFiTF3XTtj5JQQ2K82UT1sycA9UJrcTJei0kfLD4DKB9tsu95LOfEVPdge6tqIEfVMYqtxhBhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716210165; c=relaxed/simple;
-	bh=NqFfNspuNN/u5d6QKlAxvgR1hDJF0mvILHw8f7JFhmM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0QK/e2x9Kjn+8NzcRnNbZ0vokRMAfxNxPFixAz5QMAR+JuzIeLNYWwCGfWl75+Or+O9qvjx2AGp2aNnPybb5OAqI1/e6X1NKybM7cdJONNEoKBURCjCVdcP3MZ/W93kPpOLsEcbAhJzlon6pMljIec+51uyYf7ssfVbTQ/ah6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UN2Dj719; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=j0jIAAuXSP3n0MB/pRJJ3f6EEsygUxZ+BPC7VxBGXp8=; b=UN2Dj7198lyU3K4EVT86LEI9IQ
-	cdtpjZUJU1lns6OAl9EJhTDzjCIZ6Amc/gU+q4KDrYk/EKjrZ5/cOduBfsuv5zno3WL2ocpqj6mjH
-	c7IU4uWoyZtQm4NTJxf5g4ntGMbjOrfxZ6ix/ZG8fj1o2PGdp4DGWTOG0LN5/REsWfl8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s92ej-00FhFN-La; Mon, 20 May 2024 15:02:21 +0200
-Date: Mon, 20 May 2024 15:02:21 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCk=?= <SkyLake.Huang@mediatek.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"dqfext@gmail.com" <dqfext@gmail.com>,
-	Steven Liu =?utf-8?B?KOWKieS6uuixqik=?= <steven.liu@mediatek.com>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"daniel@makrotopia.org" <daniel@makrotopia.org>,
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH net-next v2 5/5] net: phy: add driver for built-in 2.5G
- ethernet PHY on MT7988
-Message-ID: <8a5f14f4-4cd9-48b5-a62c-711800cee942@lunn.ch>
-References: <20240517102908.12079-1-SkyLake.Huang@mediatek.com>
- <20240517102908.12079-6-SkyLake.Huang@mediatek.com>
- <cc0f67de-171e-45e1-90d9-b6b40ec71827@lunn.ch>
- <283c893aa17837e7189a852af4f88662cda5536f.camel@mediatek.com>
+	s=arc-20240116; t=1716210689; c=relaxed/simple;
+	bh=a9Beq8MfnmXvgVrRFuX5+jQqyI2S3FJbw4QgKto9ElA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RYGxZmAiWdbSCI1SrWJsI89ERH3yfNPPyBQZ4VU06WKRPFgykhURjPiX+BTveRCb/42h42NPG5FNocAGSqDJMo3VHp9G6DtHZVmZJMQaBdwvj4AJo5ecv6DToGTYtJ87xde6M2z1XQAgdcxE9J+Ovr8pkFRw6DLBlrsBNFK/FSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp; spf=fail smtp.mailfrom=users.sourceforge.jp; arc=none smtp.client-ip=153.127.30.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=users.sourceforge.jp
+Received: from SIOS1075.ysato.ml (ZM005235.ppp.dion.ne.jp [222.8.5.235])
+	by sakura.ysato.name (Postfix) with ESMTPSA id 770791C00F9;
+	Mon, 20 May 2024 22:06:04 +0900 (JST)
+Date: Mon, 20 May 2024 22:06:03 +0900
+Message-ID: <87fruc8wg4.wl-ysato@users.sourceforge.jp>
+From: Yoshinori Sato <ysato@users.sourceforge.jp>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: linux-sh@vger.kernel.org,	Damien Le Moal <dlemoal@kernel.org>,	Niklas
+ Cassel <cassel@kernel.org>,	Rob Herring <robh@kernel.org>,	Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,	Conor Dooley
+ <conor+dt@kernel.org>,	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,	Stephen Boyd
+ <sboyd@kernel.org>,	David Airlie <airlied@gmail.com>,	Daniel Vetter
+ <daniel@ffwll.ch>,	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,	Thomas Zimmermann
+ <tzimmermann@suse.de>,	Thomas Gleixner <tglx@linutronix.de>,	Bjorn Helgaas
+ <bhelgaas@google.com>,	Lorenzo Pieralisi <lpieralisi@kernel.org>,	Krzysztof
+ =?ISO-8859-2?Q?Wilczy=F1ski?= <kw@linux.com>,	Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,	Jiri Slaby <jirislaby@kernel.org>,	Magnus
+ Damm <magnus.damm@gmail.com>,	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,	Lee Jones <lee@kernel.org>,	Helge Deller
+ <deller@gmx.de>,	Heiko Stuebner <heiko.stuebner@cherry.de>,	Shawn Guo
+ <shawnguo@kernel.org>,	Sebastian Reichel <sre@kernel.org>,	Chris Morgan
+ <macromorgan@hotmail.com>,	Linus Walleij <linus.walleij@linaro.org>,	Arnd
+ Bergmann <arnd@arndb.de>,	David Rientjes <rientjes@google.com>,	Hyeonggon
+ Yoo <42.hyeyoo@gmail.com>,	Vlastimil Babka <vbabka@suse.cz>,	Baoquan He
+ <bhe@redhat.com>,	Andrew Morton <akpm@linux-foundation.org>,	Guenter Roeck
+ <linux@roeck-us.net>,	Kefeng Wang <wangkefeng.wang@huawei.com>,	Stephen
+ Rothwell <sfr@canb.auug.org.au>,	Javier Martinez Canillas
+ <javierm@redhat.com>,	Guo Ren <guoren@kernel.org>,	Azeem Shaikh
+ <azeemshaikh38@gmail.com>,	Max Filippov <jcmvbkbc@gmail.com>,	Jonathan
+ Corbet <corbet@lwn.net>,	Jacky Huang <ychuang3@nuvoton.com>,	Herve Codina
+ <herve.codina@bootlin.com>,	Manikanta Guntupalli
+ <manikanta.guntupalli@amd.com>,	Anup Patel <apatel@ventanamicro.com>,	Biju
+ Das <biju.das.jz@bp.renesas.com>,	Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <u.kleine-koenig@pengutronix.de>,	Sam Ravnborg <sam@ravnborg.org>,	Sergey
+ Shtylyov <s.shtylyov@omp.ru>,	Laurent Pinchart
+ <laurent.pinchart+renesas@ideasonboard.com>,	linux-ide@vger.kernel.org,
+	devicetree@vger.kernel.org,	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,	linux-pci@vger.kernel.org,
+	linux-serial@vger.kernel.org,	linux-fbdev@vger.kernel.org
+Subject: Re: [RESEND v7 00/37] Device Tree support for SH7751 based board
+In-Reply-To: <455e40c03314294f9c2e64480aa69f8261a3f2d5.camel@physik.fu-berlin.de>
+References: <cover.1712205900.git.ysato@users.sourceforge.jp>
+	<455e40c03314294f9c2e64480aa69f8261a3f2d5.camel@physik.fu-berlin.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL-LB/10.8 EasyPG/1.0.0
+ Emacs/28.2 (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <283c893aa17837e7189a852af4f88662cda5536f.camel@mediatek.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 
-> > Is there a version available anywhere for the firmware?
+On Sat, 18 May 2024 18:08:30 +0900,
+John Paul Adrian Glaubitz wrote:
+> 
+> Hi Yoshinori,
+> 
+> On Thu, 2024-04-04 at 14:14 +0900, Yoshinori Sato wrote:
+> > Sorry. previus mail is thread broken.
 > > 
-> Currently, I use "$md5sum /lib/firmware/mediatek/mt7988/i2p5ge-phy-
-> pmb.bin" command to check version.
-
-An md5sum is not really a version. How do you tell if one md5sum is
-newer or older than another?
-
-Is there is an MDIO register you can read to get the version? Or a
-version in a header in the firmware file?
-
-> > > +static int mt798x_2p5ge_phy_get_features(struct phy_device
-> > *phydev)
-> > > +{
-> > > +int ret;
-> > > +
-> > > +ret = genphy_c45_pma_read_abilities(phydev);
-> > > +if (ret)
-> > > +return ret;
-> > > +
-> > > +/* We don't support HDX at MAC layer on mt7988.
+> > This is an updated version of something I wrote about 7 years ago.
+> > Minimum support for R2D-plus and LANDISK.
+> > I think R2D-1 will work if you add AX88796 to dts.
+> > And board-specific functions and SCI's SPI functions are not supported.
 > > 
-> > That is a MAC limitation, so it should be the MAC which disables
-> > this,
-> > not the Phy.
+> > You can get it working with qemu found here.
+> > https://gitlab.com/yoshinori.sato/qemu/-/tree/landisk
 > > 
-> Actually this phy is strictly binded to (XFI)MAC on this platform.
-> So I directly disable HDX feature of PHY.
+> > v7 changes.
+> > - sh/kernel/setup.c: fix kernel parameter handling.
+> > - clk-sh7750.c: cleanup.
+> > - sh_tmu.c: cleanup.
+> > - irq-renesas-sh7751.c: IPR definition move to code.
+> > - irq-renesas-sh7751irl.c: update register definition.
+> > - pci-sh7751.c: Register initialization fix. 
+> > - sm501 and sm501fb: Re-design Device Tree properties.
+> 
+> Could you push your v7 version to your Gitlab [1] repository so I can fetch
+> it from there?
 
-Sorry, i don't follow your answer:
+updated it.
+I'll be posting v8 soon.
 
-Can the PHY do half duplex?
-Can the MAC do half duplex?
+> Thanks,
+> Adrian
+> 
+> > [1] https://gitlab.com/yoshinori.sato/linux
+> 
+> -- 
+>  .''`.  John Paul Adrian Glaubitz
+> : :' :  Debian Developer
+> `. `'   Physicist
+>   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+> 
 
-The part which cannot do half-duplex should be the part which disables
-half-duplex.
-
-You should be able to take any vendors MAC and any vendors PHY and put
-them together, if they have the same MII interface. Say this PHY does
-support half duplex. And some other vendors MAC supports half
-duplex. We want it to work.
-
-	Andrew
+-- 
+Yosinori Sato
 
