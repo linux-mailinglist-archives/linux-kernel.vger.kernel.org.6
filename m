@@ -1,195 +1,148 @@
-Return-Path: <linux-kernel+bounces-183649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-183650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A1A8C9C0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:17:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980718C9C0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 13:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24FA1F227BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ECC128301D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2024 11:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9EF535DB;
-	Mon, 20 May 2024 11:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB75B51C54;
+	Mon, 20 May 2024 11:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="g3O5Mq+L"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b="RE5FvwEK"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A980820EB;
-	Mon, 20 May 2024 11:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA4920EB
+	for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 11:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716203866; cv=none; b=ALkH851idkie/29alWcD0/Lgh5EkEd5Nz/DYiOMLFDdqPjV0wF/MKf0jYHKngT1y6Rdg9zplHNhpPMRtgfvyG/c85wTAri3MtKttIXtqDQ34WUtdhNOaStDuLDMv9Hbk5XKJ6+VBpX3p4RMYKl5ojRBy+RuM1mLjrKGXY05p6T0=
+	t=1716203995; cv=none; b=rFYXWWGKuXwSizO9FqO9Um0uDzkSbInQcKQjdaUvPi0z+uk011s6wCgUElAyOUHLu0xmCOLzzmgJOmMn2yQvsYYs4Hsa0pBaLldcFNth98KU9dEyVklksnjbkpI3MTiUeNYa6LoiRyPZmr/XgGWUIlrJq21quC7ojNO/6sNwxYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716203866; c=relaxed/simple;
-	bh=Tr8/wwJz4pOtQRmig0+vpz4m6s/lwh1H78YLrzvodNA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQ4oiY5HeEZwbge6aFAUJV548Qmn3DkohjUV1y+ILCRN1zIC4by7lNwyfDLHhaztLeM8hguwxmtopc7JMtdG+7eQ0faZnEkmn1m+20+NWJwgp1xh1LrlCUvritu65OWrIUdS1iPf6d5v7e+kvkyai6RMAi42kmj0avOctatAhPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=g3O5Mq+L; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44KBGaTh127346;
-	Mon, 20 May 2024 06:16:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716203796;
-	bh=DtbotRrxlfh+3BepWZTeI8VdjCOrKh6fu9usGat9L9E=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=g3O5Mq+LDVkAiOTfu89f+qA4Hc5CXAw8hwO6CDpVZOWCWTiaPXueaSCSB4aV5yfpo
-	 7kuGcJqh/HJywyzhyxgs+Jn/UDIqkdj825k8R7YYhVLHbxsqxQUNfeptJZiZDPQQU8
-	 /Iwl/AjrCGfhiuyQLi1IETRhlb3zpxdwUt3cYlao=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44KBGahd004860
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 20 May 2024 06:16:36 -0500
-Received: from flwvowa02.ent.ti.com (10.64.41.53) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 20
- May 2024 06:16:36 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by flwvowa02.ent.ti.com
- (10.64.41.53) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Mon, 20 May
- 2024 06:16:35 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 20 May 2024 06:16:35 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44KBGZ84034645;
-	Mon, 20 May 2024 06:16:35 -0500
-Date: Mon, 20 May 2024 16:46:34 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Onkarnath <onkarnath.1@samsung.com>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>,
-        "bhelgaas@google.com"
-	<bhelgaas@google.com>,
-        "vigneshr@ti.com" <vigneshr@ti.com>,
-        "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-        "kw@linux.com"
-	<kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
-        "yue.wang@Amlogic.com"
-	<yue.wang@Amlogic.com>,
-        "neil.armstrong@linaro.org"
-	<neil.armstrong@linaro.org>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
-        "martin.blumenstingl@googlemail.com" <martin.blumenstingl@googlemail.com>,
-        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
-        "shawn.guo@linaro.org" <shawn.guo@linaro.org>,
-        "lchuanhua@maxlinear.com"
-	<lchuanhua@maxlinear.com>,
-        "srikanth.thokala@intel.com"
-	<srikanth.thokala@intel.com>,
-        "songxiaowei@hisilicon.com"
-	<songxiaowei@hisilicon.com>,
-        "wangbinghui@hisilicon.com"
-	<wangbinghui@hisilicon.com>,
-        "manivannan.sadhasivam@linaro.org"
-	<manivannan.sadhasivam@linaro.org>,
-        "thierry.reding@gmail.com"
-	<thierry.reding@gmail.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "hayashi.kunihiko@socionext.com" <hayashi.kunihiko@socionext.com>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "pali@kernel.org"
-	<pali@kernel.org>,
-        "toan@os.amperecomputing.com"
-	<toan@os.amperecomputing.com>,
-        "daire.mcnamara@microchip.com"
-	<daire.mcnamara@microchip.com>,
-        "conor.dooley@microchip.com"
-	<conor.dooley@microchip.com>,
-        "marek.vasut+renesas@gmail.com"
-	<marek.vasut+renesas@gmail.com>,
-        "shawn.lin@rock-chips.com"
-	<shawn.lin@rock-chips.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "nirmal.patel@linux.intel.com" <nirmal.patel@linux.intel.com>,
-        "jonathan.derrick@linux.dev" <jonathan.derrick@linux.dev>,
-        "kishon@kernel.org" <kishon@kernel.org>,
-        "jdmason@kudzu.us"
-	<jdmason@kudzu.us>,
-        "dave.jiang@intel.com" <dave.jiang@intel.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "lenb@kernel.org" <lenb@kernel.org>,
-        "mahesh@linux.ibm.com" <mahesh@linux.ibm.com>,
-        "oohall@gmail.com"
-	<oohall@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-amlogic@lists.infradead.org"
-	<linux-amlogic@lists.infradead.org>,
-        "linux-arm-msm@vger.kernel.org"
-	<linux-arm-msm@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>,
-        Rohit Thapliyal <r.thapliyal@samsung.com>,
-        Maninder Singh <maninder1.s@samsung.com>
-Subject: Re: [PATCH 1/1] PCI : Refactoring error log prints for better
- readability
-Message-ID: <e0e28988-9699-4e6c-abb0-30fa2727c2c3@ti.com>
-References: <4ec3b167-9324-41d3-a086-74ca001b9042@ti.com>
- <20240517105923.2406246-1-onkarnath.1@samsung.com>
- <CGME20240517105941epcas5p3e8dbb97f19c9553bf9942ad146124806@epcms5p5>
- <20240520104358epcms5p50e00970ef70f66e87ceaaa893fc0ba67@epcms5p5>
+	s=arc-20240116; t=1716203995; c=relaxed/simple;
+	bh=XcAkCrUUp3v82N3Nes852/6WDKEZVaV70AZavoqjXfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WCyFuZ1OHoL/n4Xb0kP/gmea+RIwI6rWXrnp0mJQj8F4QECxjpK+dTtpPOrfWBtcLaC33y0f6MzgoBItImfprDo6QNaHcq+WCNhmC4xdh0CzpkxQRKOuJ4zb9JICdbdfOYRo1xbwa/xfD+nzSfBQLHXU8E6koz3AznmayXh/ufs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=none smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b=RE5FvwEK; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7948b7e4e5dso24640285a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 04:19:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar-org.20230601.gappssmtp.com; s=20230601; t=1716203992; x=1716808792; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XcAkCrUUp3v82N3Nes852/6WDKEZVaV70AZavoqjXfU=;
+        b=RE5FvwEK7ya32/MoSF2IKoDFHl0j56tc5kAaE0LxMPbTqUJz94S1RGjCXCgEeKRDV3
+         dDo9XpAfAvQ3UR0HLYMLs2/ZlU5Rqd8nclWAqhWSddxbQklYB4g4MQSIr4a9AKroudCh
+         pEWokGKBgzzlHVZHH6zAGd4+FfcvqepT3lSmUdWZueGNYslM+9dbWvDr29qtmrgI4lcn
+         uNo7quNsPmOcX+EzEPYZV0zwkJ3PC5Y71TvJ9jnIGQPhATgA4+ddod9MfvpLiPoOZwRp
+         kHFTd8c6D00qpGx5RBCnIo6D+g3UZhTdHykOMmgcA+b4n2WW3LS7xcLyo7dwmwyvJOZG
+         eSfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716203992; x=1716808792;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XcAkCrUUp3v82N3Nes852/6WDKEZVaV70AZavoqjXfU=;
+        b=SKgE2d4YXCayuKiOixTDUaUawOXK+zTvKjdzAXPidkb/x0mQXniZXhxE97yu1gTQur
+         Thgcl157PuviQcV28UM2LY92fpnE6VuEjhzQ4+8TwUHk8/arxKo0pYREO4q3pOa3tdJi
+         BQpEqRbhQp8hV+6vRpof003lDH9qq8vPfKZ6cYvItaNh80oy0i0Oj48OknxC3b/xgycm
+         v2ANDZH+9u1arYIDkx6MU/Lzy90C0PLUItuqo7pLd8jSrUTinagpJQz3FL1CjeSfbgHU
+         Rr1K5KJahNn+MbmOa1LR3QS+NBna8IHgvmmAluvjhwhjCjlzlnfiIakOfb3F5Xm+Xytk
+         cjiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcZ+u7wb5r9qmpjmwK4D0yGXIhd36vUorP3yn3O2QCMgGURKpsh3DO4zdeJpz6FtcJDTV2Xh/ohApxzQxwJuEX0BPODRq7ztk0Sz85
+X-Gm-Message-State: AOJu0YyR335kEgDxJ4L2OH6n/cxP0yL828ozuPVdncCSxbcJS/F1Ll3k
+	Ud8qu1l5cKIb6fJRwlfY3Wwnabxvt43HKgaUxFyHnaFJ3EjpoQRoNHzWYvVYscxj+XUh67SqUVh
+	RSCedpuXXklBwbaW7onYwQlu5F2dGURY3aLUjQQ==
+X-Google-Smtp-Source: AGHT+IF9QqTZAJOGL9hX5enwhsws06RKb4rc6h3DEa//4Gpj+yXe03WFhBY5czWR0TmSy2w5QCwMYSbalfMBsJ2uDWE=
+X-Received: by 2002:a05:620a:56d2:b0:790:c017:89e2 with SMTP id
+ af79cd13be357-792c7577a26mr3027043685a.16.1716203991836; Mon, 20 May 2024
+ 04:19:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240520104358epcms5p50e00970ef70f66e87ceaaa893fc0ba67@epcms5p5>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240424063753.3740664-1-tomeu@tomeuvizoso.net>
+ <97eadcba7cabe56f0f4b4d753bd3d53f8540ef4b.camel@pengutronix.de> <CAAObsKAQ=pWQ8MR1W7WwK1nVEeiCFNC3k+NZKsu4Fkts-_+zWg@mail.gmail.com>
+In-Reply-To: <CAAObsKAQ=pWQ8MR1W7WwK1nVEeiCFNC3k+NZKsu4Fkts-_+zWg@mail.gmail.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Mon, 20 May 2024 12:19:40 +0100
+Message-ID: <CAPj87rO7zyDsqUWnkF0pZeNFnNK2UnAVJy4RmB3jmPkKQ+zbEw@mail.gmail.com>
+Subject: Re: [PATCH] drm/etnaviv: Create an accel device node if compute-only
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Lucas Stach <l.stach@pengutronix.de>, linux-kernel@vger.kernel.org, 
+	Oded Gabbay <ogabbay@kernel.org>, Russell King <linux+etnaviv@armlinux.org.uk>, 
+	Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, Daniel Stone <daniels@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 20, 2024 at 04:13:58PM +0530, Onkarnath wrote:
-> Hi,
-> 
-> 
+Hi,
 
-[...]
+On Mon, 20 May 2024 at 08:39, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
+> On Fri, May 10, 2024 at 10:34=E2=80=AFAM Lucas Stach <l.stach@pengutronix=
+de> wrote:
+> > Am Mittwoch, dem 24.04.2024 um 08:37 +0200 schrieb Tomeu Vizoso:
+> > > If we expose a render node for NPUs without rendering capabilities, t=
+he
+> > > userspace stack will offer it to compositors and applications for
+> > > rendering, which of course won't work.
+> > >
+> > > Userspace is probably right in not questioning whether a render node
+> > > might not be capable of supporting rendering, so change it in the ker=
+nel
+> > > instead by exposing a /dev/accel node.
+> > >
+> > > Before we bring the device up we don't know whether it is capable of
+> > > rendering or not (depends on the features of its blocks), so first tr=
+y
+> > > to probe a rendering node, and if we find out that there is no render=
+ing
+> > > hardware, abort and retry with an accel node.
+> >
+> > On the other hand we already have precedence of compute only DRM
+> > devices exposing a render node: there are AMD GPUs that don't expose a
+> > graphics queue and are thus not able to actually render graphics. Mesa
+> > already handles this in part via the PIPE_CAP_GRAPHICS and I think we
+> > should simply extend this to not offer a EGL display on screens without
+> > that capability.
+>
+> The problem with this is that the compositors I know don't loop over
+> /dev/dri files, trying to create EGL screens and moving to the next
+> one until they find one that works.
+>
+> They take the first render node (unless a specific one has been
+> configured), and assumes it will be able to render with it.
+>
+> To me it seems as if userspace expects that /dev/dri/renderD* devices
+> can be used for rendering and by breaking this assumption we would be
+> breaking existing software.
 
-> 
-> >>Similar question as above regarding converting "failed, ret" to
-> 
-> >>"failed:". Is this a new convention that is expected to be followed,
-> 
-> >where all errors are supposed to have "failed: %pe", rather than custom
-> 
-> >statements? Please let me know if this has already been discussed
-> 
-> >elsewhere.
-> 
-> 
-> Bjorn suggested to make all errors consistent.
-> 
-> and I thought printing error like below:
-> 
-> 
-> "gpio request failed: -ENOMEM".
-> 
-> 
-> Seems more suitable than
-> 
-> 
-> "gpio request failed, ret (-ENOMEM)".
-> 
-> 
-> If it needs to be changed in other format, please let me know, i will make all
-> errors in that format.
-> 
-> and will share v2.
+Mm, it's sort of backwards from that. Compositors just take a
+non-render DRM node for KMS, then ask GBM+EGL to instantiate a GPU
+which can work with that. When run in headless mode, we don't take
+render nodes directly, but instead just create an EGLDisplay or
+VkPhysicalDevice and work backwards to a render node, rather than
+selecting a render node and going from there.
 
-Thank you for clarifying. It appeared to me that the suggestion was
-limited to the %d to %pe conversion. The existing implementation looks
-good in that case.
+So from that PoV I don't think it's really that harmful. The only
+complication is in Mesa, where it would see an etnaviv/amdgpu/...
+render node and potentially try to use it as a device. As long as Mesa
+can correctly skip, there should be no userspace API implications.
 
-Regards,
-Siddharth.
+That being said, I'm not entirely sure what the _benefit_ would be of
+exposing a render node for a device which can't be used by any
+'traditional' DRM consumers, i.e. GL/Vulkan/winsys.
+
+Cheers,
+Daniel
 
