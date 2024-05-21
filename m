@@ -1,221 +1,115 @@
-Return-Path: <linux-kernel+bounces-185429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DDB8CB4D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:44:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45FAF8CB4D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 535331F21F32
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:44:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95D91F22D8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F0B149C6D;
-	Tue, 21 May 2024 20:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371951494D8;
+	Tue, 21 May 2024 20:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ElXeTZh+"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SJ7PGXSE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F90353816
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AA41494B9
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716324218; cv=none; b=RV5BZVuCHBK3NeGIby0NAfEDE5bKh3rZXogNWPTf657To6H37UPn1LZuS2/73Q5TerxaMeq4PfB2GqhzyiR226BWFLm+OtmoU0fdhNzFZdDmHcYGZb2ikrSz2Ter9b5LnL055/WowigRPUfDBMUyCHOYH/HXKMo4/EtTMsvn65U=
+	t=1716324303; cv=none; b=e4NKqgY7AAQLoay0tKBUkC705gd2myPsU+r6zI8YCmAHlIF/jpo0cdcGupHa/W20B3IGuihx7EwbTAgn4yn8CHhDrb8ArBr/ALQqEQuUrV05X8dd7eKmGagiydoVLArxuRn7A6Vco7K2CjpHtIJvn3sapGnCdXwn2XclwlR6qwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716324218; c=relaxed/simple;
-	bh=TzQgSTHgyU3RFoY2gln3DsZdwLETCJum6BNwDOVNJoU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iH9/R05O5RJss9CrQ4+6oZk0iHfkIFbMsF6EkCV9/aULkHHKTJt3fRTg7B6Yn+Vt7cGbexkmSN8aeCxaANbet9HkGxm/L/UFdGTQJpnHPIeBb2wSeEK1ZXMxAEcgqj9jWTBsFf1j5RfS3NHiHt09LU+TxTPKyAALr4VcXMtcENQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ElXeTZh+; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: stern@rowland.harvard.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716324213;
+	s=arc-20240116; t=1716324303; c=relaxed/simple;
+	bh=TlKVCaoYqRvYNK3pgRpJ9fAW5uxl8oMMpoPVJEwAYqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gjabNqbrQYN0Jy9rXb1d27n5HjIAYQNQ75DBg+AdvnRsa8jInDFa9zhfue+eKxh0LNCpuyfGZNAAhpmLz2H6bwMYI+DpDp75KRVc0/5x0lTWKBAG/B0NS6mvWcRgSehZCake4oW52DsHDkSftAdO8Vi//gAk0gjl9mc5vIhkP+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SJ7PGXSE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716324300;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Bef2r7PmAPGGh3unVAHDRXktGwmTTWv6IxMkhLqqDqQ=;
-	b=ElXeTZh+E3DhYrztaPCNXbyulyJAnRLZI3D5L4hTmCT2yONO9HkfS5P7cAoAPxZhxxGxJV
-	Mw7eReiwVSbBXJqU7HaukGpck4HYFNe9Z8td+7LwebFNn3b+sIRHWwqqJcDIKWQ2QGzIgW
-	JfcxbZ2oZr7Y5n6Dd2I8hELpKYS4tG0=
-X-Envelope-To: gregkh@linuxfoundation.org
-X-Envelope-To: andreyknvl@gmail.com
-X-Envelope-To: dvyukov@google.com
-X-Envelope-To: elver@google.com
-X-Envelope-To: glider@google.com
-X-Envelope-To: kasan-dev@googlegroups.com
-X-Envelope-To: penguin-kernel@i-love.sakura.ne.jp
-X-Envelope-To: tj@kernel.org
-X-Envelope-To: linux-usb@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: andrey.konovalov@linux.dev
-To: Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Marco Elver <elver@google.com>,
-	Alexander Potapenko <glider@google.com>,
-	kasan-dev@googlegroups.com,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Tejun Heo <tj@kernel.org>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kcov, usb: disable interrupts in kcov_remote_start_usb_softirq
-Date: Tue, 21 May 2024 22:43:24 +0200
-Message-Id: <20240521204324.479972-1-andrey.konovalov@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N0TR9kM7X3WlmPK2GrezdTol6v80HI4XlreEoiOrbJM=;
+	b=SJ7PGXSEY5IzDW2Gkxeea/ZuUxb8LjbVrx9fdfrkjHiXu592DbIGo6WFjMoFLzIGEN0hwK
+	H6VNrnwh2ob9QX1IovZiN24PCEqS09zxFMeKPEW94fpUwsXOiUGSUatVU8VK3tMXT7I7dx
+	bYy4JBiIOp/w/kpytdb7A0Yw2rmdVC4=
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com
+ [209.85.161.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-489-dbu0RH4qOf2MdATu7Re5mw-1; Tue, 21 May 2024 16:44:59 -0400
+X-MC-Unique: dbu0RH4qOf2MdATu7Re5mw-1
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5b2b793a26aso3322657eaf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:44:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716324298; x=1716929098;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N0TR9kM7X3WlmPK2GrezdTol6v80HI4XlreEoiOrbJM=;
+        b=ojZPM5yin50eK+y5e3Xq81VV3CdfvpLtfzpZ0npejAL9zjcEGX74z1If0b+oJN9QxM
+         5LrejKzAbYjaf0e7maTpbbNBcDRE61ZKFI/YoHief+E4hS+GXkjiOxkjszDFu0XfFN+Z
+         NenRUDA1ZGfQ+PoC2evYGpRxr8fUt4JRcniQ4uSytb1ahEuKlw3JVRl0pcSPNI73qXdZ
+         j9PZMDmuZdQeTdn6rwZAI6Wo2sV/CtQYATQMJKE6ZJhv/c0ceRkTfKwRvPm1sla87WVs
+         fFq/UrnVeW6oP3l3hueupTlVnHYTf/T+aGY7FD+qXNuII8dzEQfE/Xr+KDoUw6OTwqYS
+         M1GA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIUCPEzRvjFSDtI6QDFHNOIbBP6mnguYqtSyW+sT59p1RPV/BvoDpIA9cv89zWPUzW+FPKZo2YHUhlTE0WetvnFVAaVunFalW0csB3
+X-Gm-Message-State: AOJu0Yzcfd68T9h1GF+KDnkAVU47PPRGGrxFuwSutdWP6vAIKnFXyxlz
+	FKEmIj4/BZVCGrlEjlaSO+zRcQRTMBGTLqel/GfpON3zXZNo9L5f8gkAEs1mHpJu5FUHli+Ag8g
+	sE4ZObmzy8JWMFfagY5sn6yGhziq3NcxYGUJ/g2AnL8/lE7FWx/kTTb6/GKdWqkW8EW4P0g==
+X-Received: by 2002:a05:6830:7203:b0:6f0:52fb:c693 with SMTP id 46e09a7af769-6f666f78dd4mr150097a34.1.1716324297873;
+        Tue, 21 May 2024 13:44:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFAl3W1EYaiiKZhrcoPIjVfq5uhLIrOvZE99H/jBbHteoo4w+oTXp4PNu54t8HyT9oBCbrbFg==
+X-Received: by 2002:a05:6830:7203:b0:6f0:52fb:c693 with SMTP id 46e09a7af769-6f666f78dd4mr150029a34.1.1716324295821;
+        Tue, 21 May 2024 13:44:55 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792e564e4dbsm915264585a.82.2024.05.21.13.44.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 13:44:55 -0700 (PDT)
+Date: Tue, 21 May 2024 16:44:53 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>, axelrasmussen@google.com,
+	David Hildenbrand <david@redhat.com>, nadav.amit@gmail.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: 6.10/bisected/regression - commit 8430557fc584 cause warning at
+ mm/page_table_check.c:198 __page_table_check_ptes_set+0x306
+Message-ID: <Zk0HxVODITGKqYCw@x1n>
+References: <CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com>
 
-From: Andrey Konovalov <andreyknvl@gmail.com>
+On Wed, May 22, 2024 at 01:17:19AM +0500, Mikhail Gavrilov wrote:
+> Hi,
 
-After commit 8fea0c8fda30 ("usb: core: hcd: Convert from tasklet to BH
-workqueue"), usb_giveback_urb_bh() runs in the BH workqueue with
-interrupts enabled.
+Hi,
 
-Thus, the remote coverage collection section in usb_giveback_urb_bh()->
-__usb_hcd_giveback_urb() might be interrupted, and the interrupt handler
-might invoke __usb_hcd_giveback_urb() again.
+> I also attach below a full kernel log and build config.
+> 
+> My hardware specs: https://linux-hardware.org/?probe=b34f0353df
+> 
+> Peter, can you look please.
 
-This breaks KCOV, as it does not support nested remote coverage collection
-sections within the same context (neither in task nor in softirq).
+Did you forget to attach the kernel config?  If so, please attach it, I'll
+try that, as my local config won't reproduce with CONFIG_DEBUG_VM_PGTABLE=y.
 
-Update kcov_remote_start/stop_usb_softirq() to disable interrupts for the
-duration of the coverage collection section to avoid nested sections in
-the softirq context (in addition to such in the task context, which are
-already handled).
+Thanks,
 
-Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Closes: https://lore.kernel.org/linux-usb/0f4d1964-7397-485b-bc48-11c01e2fcbca@I-love.SAKURA.ne.jp/
-Closes: https://syzkaller.appspot.com/bug?extid=0438378d6f157baae1a2
-Suggested-by: Alan Stern <stern@rowland.harvard.edu>
-Fixes: 8fea0c8fda30 ("usb: core: hcd: Convert from tasklet to BH workqueue")
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
-
----
-
-Changes v1->v2:
-
-- Fix compiler error when CONFIG_KCOV=n.
----
- drivers/usb/core/hcd.c | 12 ++++++-----
- include/linux/kcov.h   | 47 ++++++++++++++++++++++++++++++++++--------
- 2 files changed, 45 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index c0e005670d67..fb1aa0d4fc28 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -1623,6 +1623,7 @@ static void __usb_hcd_giveback_urb(struct urb *urb)
- 	struct usb_hcd *hcd = bus_to_hcd(urb->dev->bus);
- 	struct usb_anchor *anchor = urb->anchor;
- 	int status = urb->unlinked;
-+	unsigned long flags;
- 
- 	urb->hcpriv = NULL;
- 	if (unlikely((urb->transfer_flags & URB_SHORT_NOT_OK) &&
-@@ -1640,13 +1641,14 @@ static void __usb_hcd_giveback_urb(struct urb *urb)
- 	/* pass ownership to the completion handler */
- 	urb->status = status;
- 	/*
--	 * This function can be called in task context inside another remote
--	 * coverage collection section, but kcov doesn't support that kind of
--	 * recursion yet. Only collect coverage in softirq context for now.
-+	 * Only collect coverage in the softirq context and disable interrupts
-+	 * to avoid scenarios with nested remote coverage collection sections
-+	 * that KCOV does not support.
-+	 * See the comment next to kcov_remote_start_usb_softirq() for details.
- 	 */
--	kcov_remote_start_usb_softirq((u64)urb->dev->bus->busnum);
-+	flags = kcov_remote_start_usb_softirq((u64)urb->dev->bus->busnum);
- 	urb->complete(urb);
--	kcov_remote_stop_softirq();
-+	kcov_remote_stop_softirq(flags);
- 
- 	usb_anchor_resume_wakeups(anchor);
- 	atomic_dec(&urb->use_count);
-diff --git a/include/linux/kcov.h b/include/linux/kcov.h
-index b851ba415e03..1068a7318d89 100644
---- a/include/linux/kcov.h
-+++ b/include/linux/kcov.h
-@@ -55,21 +55,47 @@ static inline void kcov_remote_start_usb(u64 id)
- 
- /*
-  * The softirq flavor of kcov_remote_*() functions is introduced as a temporary
-- * work around for kcov's lack of nested remote coverage sections support in
-- * task context. Adding support for nested sections is tracked in:
-- * https://bugzilla.kernel.org/show_bug.cgi?id=210337
-+ * workaround for KCOV's lack of nested remote coverage sections support.
-+ *
-+ * Adding support is tracked in https://bugzilla.kernel.org/show_bug.cgi?id=210337.
-+ *
-+ * kcov_remote_start_usb_softirq():
-+ *
-+ * 1. Only collects coverage when called in the softirq context. This allows
-+ *    avoiding nested remote coverage collection sections in the task context.
-+ *    For example, USB/IP calls usb_hcd_giveback_urb() in the task context
-+ *    within an existing remote coverage collection section. Thus, KCOV should
-+ *    not attempt to start collecting coverage within the coverage collection
-+ *    section in __usb_hcd_giveback_urb() in this case.
-+ *
-+ * 2. Disables interrupts for the duration of the coverage collection section.
-+ *    This allows avoiding nested remote coverage collection sections in the
-+ *    softirq context (a softirq might occur during the execution of a work in
-+ *    the BH workqueue, which runs with in_serving_softirq() > 0).
-+ *    For example, usb_giveback_urb_bh() runs in the BH workqueue with
-+ *    interrupts enabled, so __usb_hcd_giveback_urb() might be interrupted in
-+ *    the middle of its remote coverage collection section, and the interrupt
-+ *    handler might invoke __usb_hcd_giveback_urb() again.
-  */
- 
--static inline void kcov_remote_start_usb_softirq(u64 id)
-+static inline unsigned long kcov_remote_start_usb_softirq(u64 id)
- {
--	if (in_serving_softirq())
-+	unsigned long flags = 0;
-+
-+	if (in_serving_softirq()) {
-+		local_irq_save(flags);
- 		kcov_remote_start_usb(id);
-+	}
-+
-+	return flags;
- }
- 
--static inline void kcov_remote_stop_softirq(void)
-+static inline void kcov_remote_stop_softirq(unsigned long flags)
- {
--	if (in_serving_softirq())
-+	if (in_serving_softirq()) {
- 		kcov_remote_stop();
-+		local_irq_restore(flags);
-+	}
- }
- 
- #ifdef CONFIG_64BIT
-@@ -103,8 +129,11 @@ static inline u64 kcov_common_handle(void)
- }
- static inline void kcov_remote_start_common(u64 id) {}
- static inline void kcov_remote_start_usb(u64 id) {}
--static inline void kcov_remote_start_usb_softirq(u64 id) {}
--static inline void kcov_remote_stop_softirq(void) {}
-+static inline unsigned long kcov_remote_start_usb_softirq(u64 id)
-+{
-+	return 0;
-+}
-+static inline void kcov_remote_stop_softirq(unsigned long flags) {}
- 
- #endif /* CONFIG_KCOV */
- #endif /* _LINUX_KCOV_H */
 -- 
-2.25.1
+Peter Xu
 
 
