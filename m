@@ -1,193 +1,121 @@
-Return-Path: <linux-kernel+bounces-184879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F048CAD5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:28:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DAA78CAD60
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C85D1C21C31
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:28:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACFA01C21CB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6EA757F7;
-	Tue, 21 May 2024 11:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2CA757F2;
+	Tue, 21 May 2024 11:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d31k/vWT"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DFDQ/6M4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6A555E43;
-	Tue, 21 May 2024 11:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD0A73174;
+	Tue, 21 May 2024 11:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716290912; cv=none; b=Ba3VUc6zRmhxFN04hDos5qJRQ7sv0rwV9BzjURO56xYWvtafS7bObG/4ZXImuRQr65t6EwvjA1Um/SqLIYdJOVt3kWTJBJsATN+3aor2AKNmzRo6UMNNeUUFCfwHqGmK+cbVc67rFDJEkyal0V/AhLCyFKFu10bVaU0Nst175zw=
+	t=1716290961; cv=none; b=XbQOZhnbES+IEYY5KgZDQ57rDGVS3ikFALzXbScp3Gk/qq2YaMPbd6FE+rBHNEe0oEO4RyDEBBxO0LJJI9bbDPqqdpc9WOhZn12XbcwJo5ik+/U8Rsc6Hg3pKeGZ5fTfn0zUR5ycxiscYjiyvHnqhICZZ0yjkFiB2j4xK1CuSpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716290912; c=relaxed/simple;
-	bh=bu9mG/J79Ff9Zu/2l4MGoCMW5kuONCzPTI1mTCBFbqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bHc+RR2peYAsViSWZ1vJ1WwE4CpbeSIwocRqe7umRluDjgGJH1Rc1fSbN8reM4NjuigqVn67lkeB/DqneepqaLXB6q0h/19BOoKpyFvJPvogVxYtxtrQYjNeOShGhaVmL9g85nG7yrMyZj1f4TlPr8hUFhUAP2KlJqpOfJ9mwwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d31k/vWT; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42011507a54so19585405e9.0;
-        Tue, 21 May 2024 04:28:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716290908; x=1716895708; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QCvn53QZqHKbd8wXZQruum5PyX2Xyujq+z5EaypRXU8=;
-        b=d31k/vWTuGTKp+v/JaFUWgrKmCkctIxs6h/sY9q83k387DfLGbX9GuFWjQa6+Fms3+
-         Jjo2SKFxYaYIYKUj1BKkcHdY9tN8uT9vNYivXnJLiBEymwHVxGcpq9SZjfjP64kwR6Sr
-         I19Akgs2BAduj+jnpIHcaYO8KDQmklnIo3ELrqCIRfoPBlljFtDFCdaR2u4KdmaADETg
-         t75Wzs/etb1R5Udr1ZE5+Ofx3odZqWylLhsa71UwVfnm9I59gqp5KDsavNmiKBKF4QLE
-         QrcuyoZEuNaxRf93y0BzgKa4ZMP/DI8Nk/16a3wVnW1ca/p7x/osLT7TZ6fFOJdcbku4
-         Utzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716290908; x=1716895708;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QCvn53QZqHKbd8wXZQruum5PyX2Xyujq+z5EaypRXU8=;
-        b=YpYaMKtEk3A0aMWlWHzpcXi1kLBtw7cOUVajzWHylnOGhqdtQWYoBqe2ZaQi3+c92V
-         NdLAVaZIDXvTos4Dh5JO+tCkaVG5HMmJNP3el1ZSyxrDENFDMYCBiBAhp4O1a+3wOAoH
-         2pSoEwL25Auun4Xd14rCcTZPOAtN6iEDbmOaSzZi2U8xhPmkBMld31ENRT9fuVZe4l0D
-         TeinizP9dkVVzSACZOh6Bod91uFsesvukY9pG2EovEn3HkMniHJCSIFltmKeqbm18uWy
-         ri16RemBK6HxqNaDkvi4kxEnvHaiwNg9LbzGvxzK31XfuIzk1HmLrzpsu33NA04T7mg3
-         BAbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcUp6OQQutS/qT/K6J1wQFtM1/LDqP9VRIFN1YPV1s9B8o4UL3hZmSIXNITPECLC+X/DmYVx+sS4bv1aC6AWYAEfbIGkpVZSUtS2VHJhdkD8UG0lQxIfWmpFXixxEZDRCFIgN7cjsZBUbb+W/yygFrq09XYZ0z4q9juyFOpYyPoB/nZ5OQMMlTIswmtIs=
-X-Gm-Message-State: AOJu0YxePyTEK/UBMMfRJgzD5vjuIG3gi7kgvoVOkBkfOttq+fwtOOXH
-	RtfwySIOlTpaXIrJlH/kwQvMaE7OYjRyE/RzXtpkdafmWT8I1wb0
-X-Google-Smtp-Source: AGHT+IFpeGZ9iCxLuTlFb+Vd1m76hVZ2lgoagmtHznB8dVhlERYFGSRgpPrkzrTynhee6VbDMgb7Rw==
-X-Received: by 2002:a05:600c:4f49:b0:420:12df:1f7e with SMTP id 5b1f17b1804b1-420e19e46d4mr76021715e9.9.1716290908433;
-        Tue, 21 May 2024 04:28:28 -0700 (PDT)
-Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe8f8asm460922885e9.10.2024.05.21.04.28.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 04:28:27 -0700 (PDT)
-Message-ID: <473b5f9b-da6d-425b-93c0-5bb6bb49a9bc@gmail.com>
-Date: Tue, 21 May 2024 13:28:25 +0200
+	s=arc-20240116; t=1716290961; c=relaxed/simple;
+	bh=9UyG8NR2nB4nFh3V+pbEi6yVtB+rOBjbai89rumi9dU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nJhHh4BtdGgLI+kHTyNxeo9vkMi6jDJN9x1q0V918tCrS0x7IYcmsrwrrx0WNAERsDBbkpP6Ca2KoyAC82wftxvsUsqXN2piG9Lp19FEN0eGK2//bhV13gqV7km6nzeblQPLghBd42Ohc2+kCK9j/2c/T4Pv38v0+v4chT9HKkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DFDQ/6M4; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716290960; x=1747826960;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9UyG8NR2nB4nFh3V+pbEi6yVtB+rOBjbai89rumi9dU=;
+  b=DFDQ/6M4ei/FLuIYgrdaGiu4KFWHbYsTSKi9K7BRAW7JqzB8IuXT4DDS
+   H0AFJZJhBhJ9Wez4qfqIxwEPW1dZCIZvAI+drH1fTIFpHVnH5rzQKvjur
+   TEif52BvIcYJH8bYNTvIqORDWqJg9ymqV5QsefJ9vYo5rfK3qHVYl8wPy
+   7Tomw6TdL7oJfrz6HqRM9AVGXiSTxK3rzJu4VLFuWkoawHhvCfwk5IiY+
+   IzdHpzbWqFI6CUVuq8p8Q5zbAFAsro/8rnj38MjAUpOhXy+EykRgX5A1E
+   /OOkdDG94k3Kejjzl9Gmx12vAIlOfQogfEwo9iZqXtL9NDJN622cUnRbZ
+   g==;
+X-CSE-ConnectionGUID: CWvuyZOtT5KNugreJYGzWA==
+X-CSE-MsgGUID: +9wMWUlGSpe/SLQoqKoUyw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="23145733"
+X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
+   d="scan'208";a="23145733"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 04:29:19 -0700
+X-CSE-ConnectionGUID: p/A6XjsLRyiWx1rx3gursw==
+X-CSE-MsgGUID: RQLoNqTiQfabFqgjd56z0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
+   d="scan'208";a="37275244"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 21 May 2024 04:29:16 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 4AF2917F; Tue, 21 May 2024 14:29:15 +0300 (EEST)
+Date: Tue, 21 May 2024 14:29:15 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Gia <giacomo.gio@gmail.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"kernel@micha.zone" <kernel@micha.zone>,
+	Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	Benjamin =?utf-8?Q?B=C3=B6hmke?= <benjamin@boehmke.net>,
+	"S, Sanath" <Sanath.S@amd.com>
+Subject: Re: [REGRESSION][BISECTED] "xHCI host controller not responding,
+ assume dead" on stable kernel > 6.8.7
+Message-ID: <20240521112915.GQ1421138@black.fi.intel.com>
+References: <CAHe5sWavQcUTg2zTYaryRsMywSBgBgETG=R1jRexg4qDqwCfdw@mail.gmail.com>
+ <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
+ <lqdpk7lopqq4jn22mycxgg6ps4yfs7hcca33tqb2oy6jxc2y7p@rhjjbzs6wigu>
+ <611f8200-8e0e-40e4-aff4-cc2c55dc6354@amd.com>
+ <CAHe5sWY_YJsyiuwf2TsfRTS9AoGoYh4+UxkkZZ0G9z2pXfbnzg@mail.gmail.com>
+ <20240521051525.GL1421138@black.fi.intel.com>
+ <CAHe5sWY3P7AopLqwaeXSO7n-SFwEZom+MfWpLKGmbuA7L=VdmA@mail.gmail.com>
+ <20240521085501.GN1421138@black.fi.intel.com>
+ <CAHe5sWaABJi0Xo4ygFK4Oa3LdNUiQJSLidGPdAE=gwmy=b+ycw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linaro-mm-sig] [PATCH] dma-buf/fence-array: Add flex array to
- struct dma_fence_array
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Sumit Semwal <sumit.semwal@linaro.org>, Gustavo Padovan
- <gustavo@padovan.org>, =?UTF-8?Q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, Kees Cook <keescook@chromium.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-hardening@vger.kernel.org
-References: <d3204a5b4776553455c2cfb1def72f1dae0dba25.1716054403.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <d3204a5b4776553455c2cfb1def72f1dae0dba25.1716054403.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHe5sWaABJi0Xo4ygFK4Oa3LdNUiQJSLidGPdAE=gwmy=b+ycw@mail.gmail.com>
 
-Am 18.05.24 um 19:47 schrieb Christophe JAILLET:
-> This is an effort to get rid of all multiplications from allocation
-> functions in order to prevent integer overflows [1][2].
->
-> The "struct dma_fence_array" can be refactored to add a flex array in order
-> to have the "callback structures allocated behind the array" be more
-> explicit.
->
-> Do so:
->     - makes the code more readable and safer.
->     - allows using __counted_by() for additional checks
->     - avoids some pointer arithmetic in dma_fence_array_enable_signaling()
->
-> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments [1]
-> Link: https://github.com/KSPP/linux/issues/160 [2]
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
->
-> Also, I don't think that 'cb' is a great name and the associated kernel-doc
-> description could certainly be improved.
-> Any proposal welcomed :)
+On Tue, May 21, 2024 at 11:24:56AM +0200, Gia wrote:
+> Thank you for your suggestion Mika, as a general rule I totally agree
+> with you and I do not mess with kernel default parameters, but I
+> remember "pcie_aspm=off" was necessary at the time I set up the
+> system. Probably a kernel or a BIOS update makes it unnecessary today.
 
-Ah, yes. That was also on my TODO list for a very long time.
+Okay, thanks.
 
-> ---
->   drivers/dma-buf/dma-fence-array.c | 10 ++++------
->   include/linux/dma-fence-array.h   |  3 +++
->   2 files changed, 7 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/dma-buf/dma-fence-array.c b/drivers/dma-buf/dma-fence-array.c
-> index 9b3ce8948351..9c55afaca607 100644
-> --- a/drivers/dma-buf/dma-fence-array.c
-> +++ b/drivers/dma-buf/dma-fence-array.c
-> @@ -70,7 +70,7 @@ static void dma_fence_array_cb_func(struct dma_fence *f,
->   static bool dma_fence_array_enable_signaling(struct dma_fence *fence)
->   {
->   	struct dma_fence_array *array = to_dma_fence_array(fence);
-> -	struct dma_fence_array_cb *cb = (void *)(&array[1]);
-> +	struct dma_fence_array_cb *cb = array->cb;
->   	unsigned i;
->   
->   	for (i = 0; i < array->num_fences; ++i) {
-> @@ -168,22 +168,20 @@ struct dma_fence_array *dma_fence_array_create(int num_fences,
->   					       bool signal_on_any)
->   {
->   	struct dma_fence_array *array;
-> -	size_t size = sizeof(*array);
->   
->   	WARN_ON(!num_fences || !fences);
->   
-> -	/* Allocate the callback structures behind the array. */
-> -	size += num_fences * sizeof(struct dma_fence_array_cb);
-> -	array = kzalloc(size, GFP_KERNEL);
-> +	array = kzalloc(struct_size(array, cb, num_fences), GFP_KERNEL);
->   	if (!array)
->   		return NULL;
->   
-> +	array->num_fences = num_fences;
-> +
->   	spin_lock_init(&array->lock);
->   	dma_fence_init(&array->base, &dma_fence_array_ops, &array->lock,
->   		       context, seqno);
->   	init_irq_work(&array->work, irq_dma_fence_array_work);
->   
-> -	array->num_fences = num_fences;
->   	atomic_set(&array->num_pending, signal_on_any ? 1 : num_fences);
->   	array->fences = fences;
->   
-> diff --git a/include/linux/dma-fence-array.h b/include/linux/dma-fence-array.h
-> index ec7f25def392..a793f9d5c73b 100644
-> --- a/include/linux/dma-fence-array.h
-> +++ b/include/linux/dma-fence-array.h
-> @@ -33,6 +33,7 @@ struct dma_fence_array_cb {
->    * @num_pending: fences in the array still pending
->    * @fences: array of the fences
->    * @work: internal irq_work function
-> + * @cb: array of callback helpers
->    */
->   struct dma_fence_array {
->   	struct dma_fence base;
-> @@ -43,6 +44,8 @@ struct dma_fence_array {
->   	struct dma_fence **fences;
->   
->   	struct irq_work work;
-> +
-> +	struct dma_fence_array_cb cb[] __counted_by(num_fences);
+> I see it removes these messages from my logs but I trust you when you
+> say they have not an impact on functionality:
+> 
+> May 21 11:01:36 um773arch kernel: pcieport 0000:05:04.0: Unable to
+> change power state from D3hot to D0, device inaccessible
+> May 21 11:01:36 um773arch kernel: igb 0000:09:00.0 eth0: PCIe link lost
+> May 21 11:01:36 um773arch kernel: xhci_hcd 0000:08:00.0: xHCI host
+> controller not responding, assume dead
+> May 21 11:01:36 um773arch kernel: xhci_hcd 0000:07:00.0: xHCI host
+> controller not responding, assume dead
 
-Please name that callbacks, apart from that looks good to me.
-
-Regards,
-Christian.
-
-
->   };
->   
->   /**
-
+Correct these are side-effect of the USB4 topology reset we do. As
+explained earlier the tunnels get re-established and the devices will
+come back soon after this.
 
