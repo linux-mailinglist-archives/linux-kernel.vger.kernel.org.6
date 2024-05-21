@@ -1,69 +1,89 @@
-Return-Path: <linux-kernel+bounces-185500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2C48CB5EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:21:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2158CB5F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DCADB217CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:21:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1F11C21A4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5F214A0AE;
-	Tue, 21 May 2024 22:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902D9149E05;
+	Tue, 21 May 2024 22:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbknFbOr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GTn8NoLr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406E01865A;
-	Tue, 21 May 2024 22:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285A81865A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 22:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716330084; cv=none; b=j9nqCnZYN8gjoq5iHIcdrFZIMoSl5v7s4ps94NuPIuJ9mNQz6A8urpFJAxFeUO3vFcw6nAqsGQLQpEeQyZ6LQyi7l9WwXb2Med8/3s/sQgfv//uh0PSqJ8Pv8madc3UXh92xKMerGMbZaDKwfp48yVL6GD8518WF2j6Lzpmv60U=
+	t=1716330106; cv=none; b=uHrffkj2PNhfWLSZTumeS7XEqaTJStVt0oHa/eVrPIebHvCfU3DMyvY/yTX4KcLC97Ul8n2oh+Y4TRucxfY4rwo0vHay2BEsJLyjPjB9cxuZIlr/NA97emuMZ/i7D/NHXkNtcDR4DEXAYtcz0RX0ltW/Dddhg1xlAwtbrp0g7P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716330084; c=relaxed/simple;
-	bh=eTuD8TkoSJENTwFBMEinJkrb+PTHkp3uq6sPx3UUzN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=JfEV1148BwD0Z3xOzPekwo5oYQN5+xmhqLfEGmILCoqDTCJhWk7iEWP8zNRBhRGNVGwadK2dwUZB1ehpVjoFJoODCR4OKxJgumFASn1R/3iBC3xgEPsJkDLfIhh4axaWGZEtyQjRjfYD/bLomYA8GeeLlooVGuTJECpcflHfYGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cbknFbOr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF01C2BD11;
-	Tue, 21 May 2024 22:21:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716330083;
-	bh=eTuD8TkoSJENTwFBMEinJkrb+PTHkp3uq6sPx3UUzN0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=cbknFbOrlq2asl7flaBNs5fBtXasvCVpbovNe1xwvZHA8ibl/wvjz6ialnpg5lH3C
-	 OYZfHlDpi0x0d0WhqKOTT+MImfiymKZIpYgT41eKKMYbDvn/YjEGaFYtzr4Z7rM0VD
-	 XhDjusLnYZK4vbQZdBwdz4NbOPXjejZ4lRZJ7dCyvuYnh/aXwK06d4j6U48nT6Gwz3
-	 BNwC/CEyamHdqbrHMyKSUESNxuZXLqKgcFpEQ9sqvyyewxisaIzi26J8zj24xr5GSz
-	 SuPC8GVpd1YtEgKvmsP9pki406qPwQHVVIHgiWQbVchwSWHiQVPWrkIZvJBBiDjsMS
-	 ft7+VW0CcMoOA==
-Date: Tue, 21 May 2024 17:21:21 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Minda Chen <minda.chen@starfivetech.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Conor Dooley <conor@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-pci@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Mason Huo <mason.huo@starfivetech.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Kevin Xie <kevin.xie@starfivetech.com>
-Subject: Re: [PATCH v16 08/22] PCI: microchip: Change the argument of
- plda_pcie_setup_iomems()
-Message-ID: <20240521222121.GA51329@bhelgaas>
+	s=arc-20240116; t=1716330106; c=relaxed/simple;
+	bh=YcvDZqU/P46ZTkDSYssag9qjA1oPeYrDrhINEr556sk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Il/eodNF+odwQv418VNH0fHjjyEZobj2GsELyjqzDTU0lfL6zHs3e1vSdk+HHnbxytX3rhy84TxzSSIDQLtk0vBJzmc2Yuz25rp4VUiY/6RePzHq/vFRFa+2yBET4ZHaFdgliYC3A3Q8Ktoylc3+im1LFKx79Jv/r5fPpOKhwnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GTn8NoLr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716330103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8RWybJhhMR6yLC10OGnOp+yHf/Jzy4lTuvgT0noPzW0=;
+	b=GTn8NoLrtQFewKlko67rtQSL3GyI+hRYr6i7eYMkpUCJorld6dYqBTDTtG3Ep4UCgwC/U7
+	kmEitR57CLHgBN4JrnN25cqeMw6Un6lUei+spKuO6xSMnyPznTeVJ6Br/XneCBNpdymd72
+	y3G36wojNZArP24JaRcaX1Zn+C+r3hc=
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
+ [209.85.167.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-NPvid_X4NPyC2st9COIaJA-1; Tue, 21 May 2024 18:21:42 -0400
+X-MC-Unique: NPvid_X4NPyC2st9COIaJA-1
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3c9a6d6a8dbso6851807b6e.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:21:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716330102; x=1716934902;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8RWybJhhMR6yLC10OGnOp+yHf/Jzy4lTuvgT0noPzW0=;
+        b=T678KQh1zI+7ZX1N3nlYv8+WFuKgjyqYbAf1mF1RuSHZ2aDSSMmU2kS4F7frooB1oD
+         Lq7qloaw6tCnHClwIOma0dmGFkJm2Nm91eXN5yFhFAKeMcGM/bNyS1EmPVe69AB/yuY0
+         lDAQb+AqqD7HgV2co3p1Im2mV2njkpnVwf4kFN13B6TMvtTY9+ndhRkA47h3HYWy2OTs
+         1e01bsonPfdVHBYo36RLs3Q0MFpklqBCARYTZTLafvA+Dz+PLQdSSM3pTaVmD0g/0NDP
+         DKiiFxlzxJtknc6EVcqVtCmSrT10pkwNP5Avq1TDfQKOVXZ4NSdstqp9SMQWegM0i+UL
+         rmgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWejga0h/lJnYYAMGh1pm7JGIS2N7zrjgsYkgzTDpZulL+Pb1JF/hJDKlp56GnWBtZL07DZ7YLQeKI7M+TblpEJ/2/2fxJVr/7iDxYJ
+X-Gm-Message-State: AOJu0YwUidFyWu+bKL7+sxOky43jkaZupB2xNR9eiAMISc0fT1NMl6dr
+	lsY8rPP92wlIFYgPsb9XQCN9RdgXzhU9V7DCTNi0y+CvNXl0l1Rg6XqtSHwoGjyLzqleKP+ORpf
+	jlbuYEFfqTkT7o55VFq4PDznqn+RuFEdcyKbrcaUXJnwfyK9dNweBxlMcC8MC9g==
+X-Received: by 2002:a05:6808:3af:b0:3c9:9378:f812 with SMTP id 5614622812f47-3cdb9d39ff8mr398767b6e.39.1716330101699;
+        Tue, 21 May 2024 15:21:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZjyboiqH7UQvgyK4AKU1tUuDW+gGANTnn6z4ncSTCw9M4SbeMnP15PyLRdiW9PhMlpk62Eg==
+X-Received: by 2002:a05:6808:3af:b0:3c9:9378:f812 with SMTP id 5614622812f47-3cdb9d39ff8mr398736b6e.39.1716330100982;
+        Tue, 21 May 2024 15:21:40 -0700 (PDT)
+Received: from localhost (pool-71-184-142-128.bstnma.fios.verizon.net. [71.184.142.128])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf275861sm1330673485a.19.2024.05.21.15.21.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 15:21:40 -0700 (PDT)
+Date: Tue, 21 May 2024 18:21:39 -0400
+From: Eric Chanudet <echanude@redhat.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Baoquan He <bhe@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Zhen Lei <thunder.leizhen@huawei.com>, 
+	Yajun Deng <yajun.deng@linux.dev>, Zhang Jianhua <chris.zjh@huawei.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Nick Piggin <npiggin@gmail.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH] arm64: init: override deferred_page_init_max_threads
+Message-ID: <xu2rcjwh35zdxx7c52ygep26dox3glnurfcuxuhj3sjqbopzij@zrazmowdb3x2>
+References: <20240520231555.395979-5-echanude@redhat.com>
+ <ZkzHX-4yYybEJdEQ@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,68 +92,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240328091835.14797-9-minda.chen@starfivetech.com>
+In-Reply-To: <ZkzHX-4yYybEJdEQ@kernel.org>
 
-The patch is OK, but the subject line is not very informative.  It
-should be useful all by itself even without the commit log.  "Change
-the argument of X" doesn't say anything about why we would want to do
-that.
-
-On Thu, Mar 28, 2024 at 05:18:21PM +0800, Minda Chen wrote:
-> If other vendor do not select PCI_HOST_COMMON, the driver data is not
-> struct pci_host_bridge.
-
-Also, I don't think this is the real problem.  Your
-PCIE_MICROCHIP_HOST Kconfig selects PCI_HOST_COMMON, and the driver
-calls pci_host_common_probe(), so the driver wouldn't even build
-without PCI_HOST_COMMON.
-
-This patch is already applied and ready to go, but if you can tell us
-what's really going on here, I'd like to update the commit log.
-
-> Move calling platform_get_drvdata() to mc_platform_init().
+On Tue, May 21, 2024 at 07:10:07PM +0300, Mike Rapoport wrote:
+> (added powerpc folks)
 > 
-> Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  drivers/pci/controller/plda/pcie-microchip-host.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> On Mon, May 20, 2024 at 07:15:59PM -0400, Eric Chanudet wrote:
+> > This was the behavior prior to making the function arch-specific with
+> > commit ecd096506922 ("mm: make deferred init's max threads
+> > arch-specific")
+> > 
+> > Architectures can override the generic implementation that uses only one
+> > CPU. Setting DEFERRED_STRUCT_PAGE_INIT and testing on a few arm64
+> > platforms shows faster deferred_init_memmap completions:
+> > 
+> > |         | x13s        | SA8775p-ride | Ampere R137-P31 | Ampere HR330 |
+> > |         | Metal, 32GB | VM, 36GB     | VM, 58GB        | Metal, 128GB |
+> > |         | 8cpus       | 8cpus        | 8cpus           | 32cpus       |
+> > |---------|-------------|--------------|-----------------|--------------|
+> > | threads |  ms     (%) | ms       (%) |  ms         (%) |  ms      (%) |
+> > |---------|-------------|--------------|-----------------|--------------|
+> > | 1       | 108    (0%) | 72      (0%) | 224        (0%) | 324     (0%) |
+> > | cpus    |  24  (-77%) | 36    (-50%) |  40      (-82%) |  56   (-82%) |
+> > 
+> > Signed-off-by: Eric Chanudet <echanude@redhat.com>
+> > ---
+> >  arch/arm64/mm/init.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> > index 9b5ab6818f7f..71f5188fe63d 100644
+> > --- a/arch/arm64/mm/init.c
+> > +++ b/arch/arm64/mm/init.c
+> > @@ -158,6 +158,13 @@ static void __init zone_sizes_init(void)
+> >  	free_area_init(max_zone_pfns);
+> >  }
+> >  
+> > +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+> > +int __init deferred_page_init_max_threads(const struct cpumask *node_cpumask)
+> > +{
+> > +	return max_t(int, cpumask_weight(node_cpumask), 1);
+> > +}
+> > +#endif
+> > +
 > 
-> diff --git a/drivers/pci/controller/plda/pcie-microchip-host.c b/drivers/pci/controller/plda/pcie-microchip-host.c
-> index 9b367927cd32..805870aed61d 100644
-> --- a/drivers/pci/controller/plda/pcie-microchip-host.c
-> +++ b/drivers/pci/controller/plda/pcie-microchip-host.c
-> @@ -876,11 +876,10 @@ static void plda_pcie_setup_window(void __iomem *bridge_base_addr, u32 index,
->  	writel(0, bridge_base_addr + ATR0_PCIE_WIN0_SRC_ADDR);
->  }
->  
-> -static int plda_pcie_setup_iomems(struct platform_device *pdev,
-> +static int plda_pcie_setup_iomems(struct pci_host_bridge *bridge,
->  				  struct plda_pcie_rp *port)
->  {
->  	void __iomem *bridge_base_addr = port->bridge_addr;
-> -	struct pci_host_bridge *bridge = platform_get_drvdata(pdev);
->  	struct resource_entry *entry;
->  	u64 pci_addr;
->  	u32 index = 1;
-> @@ -1018,6 +1017,7 @@ static int mc_platform_init(struct pci_config_window *cfg)
->  {
->  	struct device *dev = cfg->parent;
->  	struct platform_device *pdev = to_platform_device(dev);
-> +	struct pci_host_bridge *bridge = platform_get_drvdata(pdev);
->  	void __iomem *bridge_base_addr =
->  		port->axi_base_addr + MC_PCIE_BRIDGE_ADDR;
->  	int ret;
-> @@ -1031,7 +1031,7 @@ static int mc_platform_init(struct pci_config_window *cfg)
->  	mc_pcie_enable_msi(port, cfg->win);
->  
->  	/* Configure non-config space outbound ranges */
-> -	ret = plda_pcie_setup_iomems(pdev, &port->plda);
-> +	ret = plda_pcie_setup_iomems(bridge, &port->plda);
->  	if (ret)
->  		return ret;
->  
+> Maybe we should make this default and let architectures that want a single
+> thread override deferred_page_init_max_threads() to return 1?
+
+It would affect more archs than I can try this on. Currently, only x86
+(with this change, arm64) return more than one thread.
+
+I'm happy to send a v2 inverting the logic if you find it preferable.
+
+Best,
+
+> >  int pfn_is_map_memory(unsigned long pfn)
+> >  {
+> >  	phys_addr_t addr = PFN_PHYS(pfn);
+> > -- 
+> > 2.44.0
+> > 
+> 
 > -- 
-> 2.17.1
+> Sincerely yours,
+> Mike.
 > 
+
+-- 
+Eric Chanudet
+
 
