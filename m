@@ -1,232 +1,167 @@
-Return-Path: <linux-kernel+bounces-185234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C614A8CB27C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:52:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 848798CB27D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8B651C216D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:52:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5C601C2225B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF20148FF0;
-	Tue, 21 May 2024 16:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA38214900A;
+	Tue, 21 May 2024 16:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yK8zbv7f"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Gobkc1hM";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lB3uYTCy"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78414148837
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 16:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DB87F46C;
+	Tue, 21 May 2024 16:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716310287; cv=none; b=i37Uq9qpKJXqQsXNAcr8r9Bgfobn3NXaGLpR6/10ht38eVfOOohGt+hy1AHTbc8X60Ycwju2Wr0ET1xJEZUekdYkWIKYezhaPlAzwvPiKXF4oNgYFb7YXFJTigJbhPO01Wx8fbGNNPs4F/yYZUijW6YrKLitIiqVgg/FOreuf1I=
+	t=1716310294; cv=none; b=AI46rxM7ZUbOgJShbCxR/CMmgcyxHig0B6TuOtO9RcOb7sW/2Us0PJRxfHhvTuFGPb1mquJsZ7vH3/omfAX5ZDzqD8OXwet+CgepxEvWGkLKvWL8C+znMr2xVXyndTXhLkb9aIj3efJr6tKoKxcyszr4HVwrberi/bA7DOHzWcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716310287; c=relaxed/simple;
-	bh=Dhw2Jh5mBReYK2KdFz4zu0dZX2l7oWPnI/weHg4qPJE=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=kcFD3q8AH4XDDqfEZ4lrcCV4pHuFUkYY05JfFekUKNPPZeRc9YgxnicPQUlI1XzWur/cXLpR43J3MyOFSVNIusTpbVxIi6wSpHJNsJ9ujV11HJxDKDzFOSGvleL38zTlXItgRQGK1jhegiYmqJEGMFd3IsdNyOp/6iWojUIOj3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yK8zbv7f; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-de468af2b73so23312062276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:51:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716310284; x=1716915084; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PrE0BOJf8HvNnLMD4w6E9MqTE92sz3IiyAicOOYr1ws=;
-        b=yK8zbv7fnnKrxUw0bdPK3liBpBANcPMlNCLuGxIGFX/f8eyTeirdtbmOYA8fX4y6E5
-         zJ8QsSXuLxsdVDLkzjvj/KuHCPI4bNu08ag7y1JOzHG5IahRCpQIQlT9s8ytzSkXgmTD
-         IYaPKoQ8fSiISN70uF0p1IEYCyhuVnFkagzCll74ZgbnsN45q8vkFcec/qd9j0vcJO4q
-         6FQ6TnTHtxNR/TLMfoJyqiCnVqZEEtbgXHWRPGNEK1mTQCr2Kvzn/tjJjC3FJJ9VriTr
-         dSW1YgheM+udjzN8B/oTcXj+KL16eXHkcRXZjd9ZBoGtDsi8BcEYXvgFSRZsggS83xev
-         ZfCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716310284; x=1716915084;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PrE0BOJf8HvNnLMD4w6E9MqTE92sz3IiyAicOOYr1ws=;
-        b=opisP/JBZWBeN/j0iJuGAfDyVBMjJCgYvKlBqrIYoZdGpLDk7T9qREIfH9AByeWUs5
-         G9+67+W48OuUslkMKWymDZAhcltWo3ClbyIwvUrSKbEQCvLcmhw6ClLKdJXzDM8tSwOh
-         fevpoHCYXKlcRQE5mtj+2YxSACw/iM3iuYpwGImBiWU7sc5uEUWKKf0Sxbj3qKNkguhZ
-         eAK+WsTI/hHBKx9CanW/djrYFeRnPHCWRyI9+oDTMx0QtirYbQUKI8vWGVljZ0A1G/8b
-         aaw+W+eL+CtOj2MnFvbyOqXAPkkojl0aClFiNOcqOeI+TJ15+nudAdARIjBRAC1b9W1I
-         77Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVe8V5hpqeWx9hBTfamTjzouWsipxMocEMOAeZDU/fC6scXmAvsQ3zDF71gyr/fptM9dAA1GK6yEoUf7vQ27TLt/d5SqGcl4YuhIZF+
-X-Gm-Message-State: AOJu0Yyx1Kp80jd3bctxD74CmqJCeHcHWt3Mt0ijb62tcOf38MKSJAZ9
-	yt8BgJwH2B3KfRqBdAL1/6aop50WH0K0g4qhSgr4VT00HErPf8nneWWiyryTAEGQy+4efFiOglk
-	u/6mV9g==
-X-Google-Smtp-Source: AGHT+IHTBwsqs2wQ8TlnvMpoDM7P28140rp8Mfd1Iad6gC/LK63BwUOu/9UX9LlDgAfvx3yzOt1h8kHrBWwS
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:8533:b29a:936d:651a])
- (user=irogers job=sendgmr) by 2002:a05:6902:100b:b0:df4:9b3d:66a9 with SMTP
- id 3f1490d57ef6-df49b3d9b15mr2457254276.10.1716310284725; Tue, 21 May 2024
- 09:51:24 -0700 (PDT)
-Date: Tue, 21 May 2024 09:51:09 -0700
-In-Reply-To: <20240521165109.708593-1-irogers@google.com>
-Message-Id: <20240521165109.708593-4-irogers@google.com>
+	s=arc-20240116; t=1716310294; c=relaxed/simple;
+	bh=/Za7lnT4RsmuqCIRbxLG0h0/4OY5h36ZAB8c418kAgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jbwt8Xr+R3dSpln+W58LjNQ/4v1XsRSa1O5tdo0LcwMC1w7rDxFe6KBbx1E/iNVNTallL6avsJ7g2pgBc0zVdJFftmhIc8TrWRKMVPw0O6epLC0NK6yXuqc9blx3/pFerujyMAsnTlBMS+Eu8rqco4+01SkTqVUvyRWdrtphUuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Gobkc1hM; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lB3uYTCy; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E7CB75C306;
+	Tue, 21 May 2024 16:51:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716310289; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5wC6St2W9a0079FlsAxBdt60ygW6DNeyzJ9RWIk3mJk=;
+	b=Gobkc1hMhGR3JTdFeJHDpv94vLnYIgo9oz8G0aoAudQA8Z1gnsghCSZghslpC2gmTZ26Xb
+	TLqg8JTnKLFIEzsLvX8gFFJTP+iUmWqYr8AWbhqqsqw+PBYKuqxJ0Zpa4x17EykbGHKpHM
+	NJMCaNnSnN0AOPpmawF7XPpOV6g1F4I=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=lB3uYTCy
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716310288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5wC6St2W9a0079FlsAxBdt60ygW6DNeyzJ9RWIk3mJk=;
+	b=lB3uYTCyDJNBCZlLYrikF/6JDThFyvL9PGVNLcsW+XifeHfu7lSYHaNEGIgFjxVsnq37C1
+	k4wdav7ecXHW7Cjt9s58/3bsk88QH+bLzkODW3sH4+OfzSCgNHoc+vQtc0albOJ6tUHxxQ
+	rbPedyBUpouzzKhBH4waCqFDa30IIZA=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D243313685;
+	Tue, 21 May 2024 16:51:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id R35IMRDRTGYgJgAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Tue, 21 May 2024 16:51:28 +0000
+Date: Tue, 21 May 2024 18:51:28 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org
+Subject: Re: CVE-2024-35906: drm/amd/display: Send DTBCLK disable message on
+ first commit
+Message-ID: <ZkzREEA5_N_xfqED@tiehlicka>
+References: <2024051954-CVE-2024-35906-1c6f@gregkh>
+ <ZkxbObACcnUMZ3LA@tiehlicka>
+ <2024052136-cubbyhole-ecologist-5b68@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240521165109.708593-1-irogers@google.com>
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Subject: [PATCH v1 3/3] perf maps: Add/use a sorted insert for fixup overlap
- and insert
-From: Ian Rogers <irogers@google.com>
-To: "Steinar H . Gunderson" <sesse@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024052136-cubbyhole-ecologist-5b68@gregkh>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-6.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,linuxfoundation.org:email];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: E7CB75C306
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -6.01
 
-Data may have lots of overlapping mmaps. The regular insert adds at
-the end and relies on a later sort. For data with overlapping mappings
-the sort will happen during a subsequent maps__find or
-__maps__fixup_overlap_and_insert, there's never a period where the
-inserted maps buffer up and a single sort happens. To avoid back to
-back sorts, maintain the sort order when fixing up and
-inserting. Previously the first_ending_after search was O(log n) where
-n is the size of maps, and the insert was O(1) but because of the
-continuous sorting was becoming O(n*log(n)). With maintaining sort
-order, the insert now becomes O(n) for a memmove.
+On Tue 21-05-24 16:39:51, Greg KH wrote:
+> On Tue, May 21, 2024 at 10:28:41AM +0200, Michal Hocko wrote:
+> > CVE-2024-35881 to revert f341055b10bd ("drm/amd/display: Send DTBCLK
+> > disable message on first commit") by 3a6a32b31a11 ("Revert
+> > "drm/amd/display: Send DTBCLK disable message on first commit"") has
+> > been filed as well.
+> > 
+> > Is this really intentional? Should both be rejected?
+> 
+> I don't think so as we had releases with the original commit in it,
 
-For a perf report on a perf.data file containing overlapping mappings
-the time numbers are:
+I do not think so. Looking at stable kernel branches:
+$ git describe-ver 0dab75b433ed2480d57ae4f8f725186a46223e42
+v6.8.5~88
+$ git describe-ver d6d5622f64f3e07620683d61c880f57965fe1b48
+v6.8.5~239
 
-Before:
-real    0m5.894s
-user    0m5.650s
-sys     0m0.231s
+Both of them were released in 6.9-rc1 in Linus tree. I do not see them
+in any other stable trees. Neither of them is even marked for stable and
+they seemed to be merged only because of (stable tree) 7ea8a0e12088eb0c
+which has Stable-dep-of: f341055b10bd ("drm/amd/display: Send DTBCLK
+disable message on first commit"). Btw note that 7ea8a0e12088eb0c is not
+marked for stable, nor I see anybody requesting that on lore.
+Stable rulez!
 
-After:
-real    0m0.675s
-user    0m0.454s
-sys     0m0.196s
+Let's put aside whether f341055b10bd should get a CVE, we have clearly a
+different view on that but looking at the vulns.git tree both CVEs have
+been assigned together
+$ git log ./2024/CVE-2024-35906.sha1 ./2024/CVE-2024-35881.sha1
+commit a6191f0053349c3234f690316d6511e97927f28f
+Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Sun May 19 10:35:32 2024 +0200
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/maps.c | 65 ++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 59 insertions(+), 6 deletions(-)
+    some 6.8.5 cves assigned
 
-diff --git a/tools/perf/util/maps.c b/tools/perf/util/maps.c
-index f6b6df82f4cf..432399cbe5dd 100644
---- a/tools/perf/util/maps.c
-+++ b/tools/perf/util/maps.c
-@@ -735,6 +735,60 @@ static unsigned int first_ending_after(struct maps *maps, const struct map *map)
- 	return first;
- }
- 
-+static int __maps__insert_sorted(struct maps *maps, unsigned int first_after_index,
-+				 struct map *new1, struct map *new2)
-+{
-+	struct map **maps_by_address = maps__maps_by_address(maps);
-+	struct map **maps_by_name = maps__maps_by_name(maps);
-+	unsigned int nr_maps = maps__nr_maps(maps);
-+	unsigned int nr_allocate = RC_CHK_ACCESS(maps)->nr_maps_allocated;
-+	unsigned int to_add = new2 ? 2 : 1;
-+
-+	assert(maps__maps_by_address_sorted(maps));
-+	assert(first_after_index == nr_maps ||
-+	       map__end(new1) <= map__start(maps_by_address[first_after_index]));
-+	assert(!new2 || map__end(new1) <= map__start(new2));
-+	assert(first_after_index == nr_maps || !new2 ||
-+	       map__end(new2) <= map__start(maps_by_address[first_after_index]));
-+
-+	if (nr_maps + to_add > nr_allocate) {
-+		nr_allocate = !nr_allocate ? 32 : nr_allocate * 2;
-+
-+		maps_by_address = realloc(maps_by_address, nr_allocate * sizeof(new1));
-+		if (!maps_by_address)
-+			return -ENOMEM;
-+
-+		maps__set_maps_by_address(maps, maps_by_address);
-+		if (maps_by_name) {
-+			maps_by_name = realloc(maps_by_name, nr_allocate * sizeof(new1));
-+			if (!maps_by_name) {
-+				/*
-+				 * If by name fails, just disable by name and it will
-+				 * recompute next time it is required.
-+				 */
-+				__maps__free_maps_by_name(maps);
-+			}
-+			maps__set_maps_by_name(maps, maps_by_name);
-+		}
-+		RC_CHK_ACCESS(maps)->nr_maps_allocated = nr_allocate;
-+	}
-+	memmove(&maps_by_address[first_after_index+to_add],
-+		&maps_by_address[first_after_index],
-+		(nr_maps - first_after_index) * sizeof(new1));
-+	maps_by_address[first_after_index] = map__get(new1);
-+	if (maps_by_name)
-+		maps_by_name[nr_maps] = map__get(new1);
-+	if (new2) {
-+		maps_by_address[first_after_index + 1] = map__get(new2);
-+		if (maps_by_name)
-+			maps_by_name[nr_maps + 1] = map__get(new2);
-+	}
-+	RC_CHK_ACCESS(maps)->nr_maps = nr_maps + to_add;
-+	maps__set_maps_by_name_sorted(maps, false);
-+	check_invariants(maps);
-+	return 0;
-+}
-+
- /*
-  * Adds new to maps, if new overlaps existing entries then the existing maps are
-  * adjusted or removed so that new fits without overlapping any entries.
-@@ -743,6 +797,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
- {
- 	int err = 0;
- 	FILE *fp = debug_file();
-+	unsigned int i;
- 
- 	if (!maps__maps_by_address_sorted(maps))
- 		__maps__sort_by_address(maps);
-@@ -751,7 +806,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
- 	 * Iterate through entries where the end of the existing entry is
- 	 * greater-than the new map's start.
- 	 */
--	for (unsigned int i = first_ending_after(maps, new); i < maps__nr_maps(maps); ) {
-+	for (i = first_ending_after(maps, new); i < maps__nr_maps(maps); ) {
- 		struct map **maps_by_address = maps__maps_by_address(maps);
- 		struct map *pos = maps_by_address[i];
- 		struct map *before = NULL, *after = NULL;
-@@ -824,9 +879,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
- 				 * 'pos' mapping and therefore there are no
- 				 * later mappings.
- 				 */
--				err = __maps__insert(maps, new);
--				if (!err)
--					err = __maps__insert(maps, after);
-+				err = __maps__insert_sorted(maps, i, new, after);
- 				map__put(after);
- 				check_invariants(maps);
- 				return err;
-@@ -839,7 +892,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
- 			 */
- 			map__put(maps_by_address[i]);
- 			maps_by_address[i] = map__get(new);
--			err = __maps__insert(maps, after);
-+			err = __maps__insert_sorted(maps, i + 1, after, NULL);
- 			map__put(after);
- 			check_invariants(maps);
- 			return err;
-@@ -869,7 +922,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
- 		}
- 	}
- 	/* Add the map. */
--	err = __maps__insert(maps, new);
-+	err = __maps__insert_sorted(maps, i, new, NULL);
- out_err:
- 	return err;
- }
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+which to me indicates that both CVEs were assigned by a script
+without a proper review which is really unfortunate.
+
+Please keep in mind that there are actual consumers of these CVEs and
+you are burning their time evaluating these noops. A waste of time, if
+you ask me, and not something that could be just neglected considering
+how many CVEs you are producing.
 -- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
-
+Michal Hocko
+SUSE Labs
 
