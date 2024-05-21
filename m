@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-185131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B028CB0F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0218D8CB0F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F19562863E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:02:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1ECE286758
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377237EF1D;
-	Tue, 21 May 2024 15:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064067CF1D;
+	Tue, 21 May 2024 15:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTeC6O+M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gsog1FBG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K7VQIgFg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA5477F2F;
-	Tue, 21 May 2024 15:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAD27EF14
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716303761; cv=none; b=JG0Nx/JucnjggJ/Px0PAwqxiENOireo8kQvMIwI8qGt8oiD2MgTDk7sjZMWSM8KCDt4lqJmcmiTHPfeTVCoclrYBK1mG5+OEEQ+mxyA1cQtTR8LxQfwo+Jn0RiJpSoLa5zofgR143j6vt2pSaCD39djsFYQSXrZP2/ZYN/IqsA0=
+	t=1716303774; cv=none; b=EHjNAzyj7MCiykAOE0h3YkIrmNwbcJJEbhudl7AyzPGMmKu68pwTIcGsRLEclhxSahd52cZ84t3eLCXkZryCixAOMjoTeb0EUc+uL2sqdPOz0PGO3wi22xt7XI7gKxA8dNWoT43oqj4vA4+uQIYJuEGe4reChV9WtuLPN+52q3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716303761; c=relaxed/simple;
-	bh=TrukoGqXcpRIafRLbSMOzVg8Pdtim25TWLGDNcDwlYM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=O7Y9iVCWNpKxtkC+xEcBb9Q0SZxpqudyP2VoaiMbL5G1XrpFnvFUFDieSYOfMjxQ3PN2MN89vdn8jkasiKadOGsfsYlv0fvb3ha+rs7UKcOWIvSZZcHkw2inMt7qD2mhFbhMb8yGowQ/DFqtCzcmTkXlIqPbkRAsTbJGTGRCcJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTeC6O+M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86518C2BD11;
-	Tue, 21 May 2024 15:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716303761;
-	bh=TrukoGqXcpRIafRLbSMOzVg8Pdtim25TWLGDNcDwlYM=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=TTeC6O+MOwWsJyFkTSAWYQR3ts/39okiVETpfCzMBPNEws3YSZkpAzN1i7QcBfS1e
-	 /tyAIM/as55a9TkHc3CRyKmib9hpup6BnKCrR+8f73XbPI8c0kwLJa8AqyLp6tn7wx
-	 AKn5so2ZgrtfKDdbeXJRUV6knoxNI+jwkNLSTELBYIFmvqY8UxJZ+qaGVzqImEjKkZ
-	 efcDmBmm9V6FQgLWtwdIw7jPpu3JsMyeR2jMCudktlYKzcC31HdiSUqMcaUbvJZU/A
-	 ZpZSeI1L10ZCFoCNi5KOZDfo9J3oV3OW9NPF/JFV1pK11jA4WOYAh3iBvsbUehiV7K
-	 QjNWXbRHnWe1Q==
+	s=arc-20240116; t=1716303774; c=relaxed/simple;
+	bh=p6SGd9WOw6MT1QXW4IFJph2T6KEZsv6XTgCZYoQ/+mU=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=Qajtlh2z/kZ6mftnheIw38DgXmtj/i1Taj91X0CbdxJ6J2fg2FTMreq+aGLUres7r2p9fkqLs4QLK98N4Qge331TEMPJDoWaAftsUnIkrHrTYHwIvTB4FzTbAo0ITGFlQtjL6CkydyDHc/p/lnWoWHK3y2La3HxYzMWkt7EgsWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gsog1FBG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K7VQIgFg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716303770;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=tJn/S2av5LBb9gVksjvGB1QeFYo8gSkRuluBjoUu/rI=;
+	b=Gsog1FBG1OayfK77M6qOsfp3xiAlSluQMv8GDzw83aQEU3fpfdeK6WgeSxbKEABcbKAaCi
+	UtSwtz2lUZTbE0xQURXBeE+ARO9TtYeTlxbGd4c5rydkDJuWrNkvPz+WvcVluaAw03otnQ
+	XuDTC/U1aH/FmF4IKhNT8amKf9SXH1XQlYjjW0y9eXRg69aiMtNje+68jTOO0dkvtp4FTD
+	V5ORFTYedOjNyo9Md06Dn2mKvfJGuQ+ROWyS51o8F8nxf2YpFR4vWp7MvXM51TY7S04LKj
+	xlWrBK3kCLpdmwcTgzk7DUX97fArtBf4gZJBipyqxUMIKhLK2PrekbySq3EepA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716303770;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=tJn/S2av5LBb9gVksjvGB1QeFYo8gSkRuluBjoUu/rI=;
+	b=K7VQIgFgMK9CDc/bFng6od8GjVnB35+Bfa2cgcq1/jJ1k/7AGnD/erK6+/Dv9MxmFp/b+w
+	8DWALKYF/tae5sDA==
+To: zhuqiuer1@huawei.com, anna-maria@linutronix.de, frederic@kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: zhuqiuer1@huawei.com
+Subject: Re: Question: One-jiffy latency from the checking in
+ run_local_timers()
+In-Reply-To: <20240520132040.259477-1-zhuqiuer1@huawei.com>
+Date: Tue, 21 May 2024 17:02:50 +0200
+Message-ID: <871q5vi4x1.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 May 2024 18:02:36 +0300
-Message-Id: <D1FEWL5L476W.14JEX8FGU79V5@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] tpm: enable HMAC encryption for only x86-64 and aarch64
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
- <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240521130921.15028-1-jarkko@kernel.org>
- <236606947b691049c650bdf82c37324084662147.camel@HansenPartnership.com>
- <D1FDMULT5YRK.GZOPJ9FZ325R@kernel.org>
- <854fa2e1634eb116b979dab499243e40917c637c.camel@HansenPartnership.com>
- <D1FE58VX0KL4.70F6U9Y6HPQC@kernel.org>
- <D1FEC6TB7660.2XD9X21W46X7V@kernel.org>
- <0da89df455617f4dc1c7fdb8890e3219cfce4f7b.camel@HansenPartnership.com>
-In-Reply-To: <0da89df455617f4dc1c7fdb8890e3219cfce4f7b.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Tue May 21, 2024 at 5:56 PM EEST, James Bottomley wrote:
-> On Tue, 2024-05-21 at 17:35 +0300, Jarkko Sakkinen wrote:
-> > On Tue May 21, 2024 at 5:26 PM EEST, Jarkko Sakkinen wrote:
-> > > On Tue May 21, 2024 at 5:13 PM EEST, James Bottomley wrote:
-> > > > On Tue, 2024-05-21 at 17:02 +0300, Jarkko Sakkinen wrote:
-> > > > > Secondly, it also roots to the null key if a parent is not
-> > > > > given. So it covers all the basic features of the HMAC patch
-> > > > > set.
-> > > >=20
-> > > > I don't think that can work.=C2=A0 The key file would be wrapped to
-> > > > the parent and the null seed (and hence the wrapping) changes
-> > > > with every reboot.=C2=A0 If you want a permanent key, it has to be =
-in
-> > > > one of the accessible permanent hierarchies (storage ideally or
-> > > > endorsement).
-> > >=20
-> > > I'm fully aware that null seed is randomized per power cycle.
->
-> OK, as long as this gets documented, I'm OK with it
->
-> > > The fallback was inherited from James Prestwood's original code and
-> > > I decided to keep it as a testing feature, and also to test HMAC
-> > > changes.
-> > >=20
-> > > If you look at the testing transcript in the cover letter, it
-> > > should beobvious that a primary key is created in my basic test.
-> >=20
-> > I think what could be done to it in v3 would be to return -EOPNOTSUPP
-> > if parent is not defined. I.e. rationale here is that this way the
-> > empty option is still usable for something in future kernel releases.
->
-> You can absolutely have null derived parent keys (I use them for
-> testing as well).  However, the spec says the parent handle in that
-> case should be TPM_RH_NULL (i.e. 0x40000007) not zero:
->
-> https://www.hansenpartnership.com/draft-bottomley-tpm2-keys.html#name-par=
-ent
+On Mon, May 20 2024 at 21:20, zhuqiuer1@huawei.com wrote:
+> Hi there, the function "kernel/time/timer.c:run_local_timers" avoids
+> raising a softirq when there are no timers set to expire at the
+> current time.  It achieves this by comparing the current "jiffies"
+> with "base->next_expiry".  However, when working with SMP, it is
+> possible that a few CPUs are reading the jiffies while it is being
+> incremented.  These CPUs may read the old-jiffies value in
+> "run_local_timers" and fail to invoke expired timers at this jiffy.
+> This results in a one-jiffy latency for the timers.
 
-Yep. I somehow recalled that it replaced 0x0 with RH_NULL but it
-actually checked whether the handle is RH_NULL and then loaded
-the null key if that was the case.
+Sure, but one tick latency is not the end of the world. What is the real
+world problem caused by that?
 
-BR, Jarkko
+> Can we simply add 1 to the "jiffies" value when we compare it with
+> next_expiry?  This may result in an unnecessary softirq being raised
+> if a timer expires in the next jiffy, but can remove the one-jiffy
+> latency.  Not sure if this is a positive trade-off.
+
+What guarantees that the jiffies increment has happened when the soft
+interrupt is invoked at the end of the tick interrupt?
+
+Nothing, especially not in virtualized environments.
+
+So I rather keep it simple unless there is a real world problem to be
+solved.
+
+Thanks,
+
+        tglx
 
