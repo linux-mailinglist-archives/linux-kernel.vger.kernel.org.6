@@ -1,421 +1,195 @@
-Return-Path: <linux-kernel+bounces-184669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F098CAA56
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:48:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AF78CAA55
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:48:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 542471F223C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:48:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B0551C211A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D475478B;
-	Tue, 21 May 2024 08:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42AC56475;
+	Tue, 21 May 2024 08:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mQko6Eg2"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="QzCRJBjH"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2127.outbound.protection.outlook.com [40.107.22.127])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC6C56770
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 08:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716281325; cv=none; b=qcM9ZSxwjQiSkfzhaIokUcKkou3DDEGkBEAWDsWPg7ZacFGpfc7+ylArN0I2IvpY/NQ32QLAC8NHeuK0IojgkkBQveOQUBoZShSmYYY6OVTdEHPvkDCizFNtnaNmNzD1gYj0GCTx4KJncFCrgktBiprBBYitvh/eQxSIStPmeds=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716281325; c=relaxed/simple;
-	bh=dmI2lHHhY4cCTr7RsSI0QCMlvhgTmbDVRSf49Jcbg+E=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qretgi0nAsjpwpoEicoBbpOI2nbTUbOQImVvHqlWuFWAojyRWSzJ30rWnuAyi0+URNCiePtL2I8DDfEM75STethXsvvfIm3gr9c+DXj9/WHu1DiJA4lt4DUXbkMbDLcVBGhUy9BI2q5KbwNsEQ10F2CuZP696arsklHk6jPR5bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mQko6Eg2; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44L7ImNt004222;
-	Tue, 21 May 2024 08:48:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=xm3u46wSczENEA6bjd0Y/HTqxRm5xkp6vlY3MezCIds=;
- b=mQko6Eg2jLPH4YBprjZMfrpA/hKnxgcakb4MeOmf0znlB6/APQRLIl/QIpj9suwsXw8m
- +4lrPULaAn8uQKmRiSICJC70KlmLKIu7fGrR/wafMLe09OrB5Ep8eNje0jwK9k3sKHXs
- P2/ZgA9j9hfBG1GFq51rR/vdFd+t/2PTGHeUN0chaRwNF5xdX6rO29vmO7pPuxLeQPWs
- Oz2g91476q7yOriHdmJEm+7Sc/KDLhKXIiC4YN3Y9qwmO6A6KIPBO9mlYfcRuAYQBpCo
- A9Atit0TIPn65UrbboTcfvnVNH5mHnfiDxQxmEkpSYLZ2gp3k+PYd/kp3NPTkCk/PdoB YQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y8q3a0736-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 08:48:19 +0000
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44L8mICi024317;
-	Tue, 21 May 2024 08:48:18 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y8q3a0733-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 08:48:18 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44L64wpR022087;
-	Tue, 21 May 2024 08:48:17 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y76ntmxvv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 08:48:17 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44L8mF6C3473960
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 May 2024 08:48:17 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0CB4B5805D;
-	Tue, 21 May 2024 08:48:15 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 41D0158053;
-	Tue, 21 May 2024 08:48:11 +0000 (GMT)
-Received: from [9.171.37.250] (unknown [9.171.37.250])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 21 May 2024 08:48:10 +0000 (GMT)
-Message-ID: <945416af-3f8b-40b5-9681-49973beb2cb2@linux.ibm.com>
-Date: Tue, 21 May 2024 14:18:09 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] nvme: multipath: Implemented new iopolicy
- "queue-depth"
-To: John Meneghini <jmeneghi@redhat.com>, kbusch@kernel.org, hch@lst.de,
-        sagi@grimberg.me, emilne@redhat.com
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jrani@purestorage.com, randyj@purestorage.com, hare@kernel.org
-References: <20240520202045.427110-1-jmeneghi@redhat.com>
- <20240520202045.427110-2-jmeneghi@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4732E134DE;
+	Tue, 21 May 2024 08:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.127
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716281319; cv=fail; b=EdaQmZypqPpEw+A88x7WAxPZ98WNkQQSs+CZ/YbVC/OcPPDLekAyYctM1uC+vqSwkuWcON9Pg4Bc2PYO2fJ9t2SuPJwVMJ/+KqHBnMMvEz+fb80KAGC+05P3TCKoc2pz3J4ac9eAI9D11YkYXyw4g88SNZevHM2C/5GiZ3dhG4k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716281319; c=relaxed/simple;
+	bh=0vifg2h6BMwMrjwWuzA9wiIaIOHLt7jPucpf/DgUKsA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ClcRqTah8li8dsXjokTcX88y2uDbDUZ6EFHd6N5NHoPDEHgW8IglxElqGN5LvwW4FKCfCxOWUCwLvp/rI4dsLSuGN2zbB737f0GwsM3Tt4KRJDwmbb1STMiBQmOknVglqMV9YJVmVIx2mDkdNo7XzAlxSzE/4bG9BCuKAe7AGls=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=QzCRJBjH; arc=fail smtp.client-ip=40.107.22.127
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FMLQawk1Ke7tZrqtyXxlwu9qXiIq/CjvB/0AOIHO5Fts8wN8Z2Q3gG+qZo1k/TqIThogx5Jg0F7VKo+sB6zB7fJ704UcRSlvMHlYTWqMrGGyz7q5T0/aPoOeF2USuhVCFNrmM6Nq2tZ7U71ur4SQOwKjAI/e42G5axQ3Bu50qX8u2ZYuMgarHSAFFSsb7td82RQzIddr2pCf/+mcl72l/19OZemkKqusmWJA9Yy8kKnfaoNTMUlBiAZ4HhYgPCoaxj5NoPFhEuRbGDmTfy3gsRDiXmXc9frkJudM85eji7KvRkk//mbc9coipv4aggzjsWHZGXoMeONnnk4LTo9J0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0vifg2h6BMwMrjwWuzA9wiIaIOHLt7jPucpf/DgUKsA=;
+ b=dUH4ltk/fCHyO7GXFiqqhMIrAr2bRyxWci0S2fLMnsZ+jw4/hELHK6SrQEpaet2rzqjptc9acm67E8bZnd/f82d/bTfD6ZFoLxlHGI7+a9JCX833k26dxcmENoTc/m74Rb5rhIr6cC6genr9xN0Y88ImZfcyLwdjAAh9CGBOyibgbxbU0s10bXdG6BfIxXNNeBVfe1Jna/wwrBPhMX4owbJDuIyoUhXjldX23CpHrUhF2SY49dA/z2+E7XF97+wO6ya+TI6MI5bKgysnz0WAdBE3xsctPUgvCZB/5CSOvARsUWcFsiJFhNdKGwWS2rW/2dKD+g/oTmoa3pg7mbpvrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0vifg2h6BMwMrjwWuzA9wiIaIOHLt7jPucpf/DgUKsA=;
+ b=QzCRJBjH1Fh64ZHlfCY5AeVZyYDg7RNOq/jLFMx5x370B9SPq0yiPmtsoaYXljx0UptBMvtA9FxXd8NHbw3Q7TruB40nKqgfE5Fv34cEmVe3EMvv83rCM6g1HOQm6q3XPWGHhqQhFyKQjlq3hyf+/y/mR0YSDQjeOKnFOtlw/R0=
+Received: from PAXPR83MB0559.EURPRD83.prod.outlook.com (2603:10a6:102:246::15)
+ by AS4PR83MB0523.EURPRD83.prod.outlook.com (2603:10a6:20b:4f1::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.3; Tue, 21 May
+ 2024 08:48:35 +0000
+Received: from PAXPR83MB0559.EURPRD83.prod.outlook.com
+ ([fe80::3521:3a54:afa1:339e]) by PAXPR83MB0559.EURPRD83.prod.outlook.com
+ ([fe80::3521:3a54:afa1:339e%4]) with mapi id 15.20.7633.001; Tue, 21 May 2024
+ 08:48:35 +0000
+From: Konstantin Taranov <kotaranov@microsoft.com>
+To: Long Li <longli@microsoft.com>, Konstantin Taranov
+	<kotaranov@linux.microsoft.com>, "sharmaajay@microsoft.com"
+	<sharmaajay@microsoft.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "leon@kernel.org"
+	<leon@kernel.org>
+CC: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH rdma-next 2/3] RDMA/mana_ib: Implement uapi to create and
+ destroy RC QP
+Thread-Topic: [PATCH rdma-next 2/3] RDMA/mana_ib: Implement uapi to create and
+ destroy RC QP
+Thread-Index: AQHaoGRoO235XiPReESDhj7S6JB3mrGgmZmAgADZ0vA=
+Date: Tue, 21 May 2024 08:48:34 +0000
+Message-ID:
+ <PAXPR83MB05595340C0BD6AD3BD3789DFB4EA2@PAXPR83MB0559.EURPRD83.prod.outlook.com>
+References: <1715075595-24470-1-git-send-email-kotaranov@linux.microsoft.com>
+ <1715075595-24470-3-git-send-email-kotaranov@linux.microsoft.com>
+ <PH7PR21MB3071EF8F3E4F9381C52225EECEE92@PH7PR21MB3071.namprd21.prod.outlook.com>
+In-Reply-To:
+ <PH7PR21MB3071EF8F3E4F9381C52225EECEE92@PH7PR21MB3071.namprd21.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <20240520202045.427110-2-jmeneghi@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 3l9zGOflHi9wVURUG_KoanMRZ1AsS-er
-X-Proofpoint-GUID: W_P4WROK6Mh8DK3lR-bMsNmLCgglWOf2
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=f547d5dd-f3e3-417f-9124-0981488d0d41;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-05-20T19:36:07Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR83MB0559:EE_|AS4PR83MB0523:EE_
+x-ms-office365-filtering-correlation-id: 319c0321-934b-47bf-504c-08dc7972ccd0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|366007|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?M1haVzIybTJjbGNCLzBjY3BiVHpUc3hPSm1hRUJud1psRWtreWdzcjF1eUFi?=
+ =?utf-8?B?Z0tKQmZ5aWVqTFdKeFp1bUhjMXZSVndTQW1Fbk5PSi8rV0xXaEt5WHd2eTJ6?=
+ =?utf-8?B?NmdXWEJ5Tkk3Y3JVdU1XalFBaFZTREVyZ214VmdIWjFyNCtvWVlmVDVNb21m?=
+ =?utf-8?B?Q1hZUkFIVGUyOElVbm9mYWt0MUczVklRcTE5QnpzRVorRGZDUEpEQzRUUEhE?=
+ =?utf-8?B?VGhpMFZYUjhocU1lNGJJZHM0WEdTYVhkSzh1Z1B4a0tOTzVOMFB5Y3JZMjdK?=
+ =?utf-8?B?M0VTakpjS0Fvd0lIODV3MG55dGMrWDF4V2Z2L3YwRDVTbHR6eC9aTHJiaU0x?=
+ =?utf-8?B?Rm42UTh6ZGUzYVVKUEdoQ2s3M2JSWmJ0bXBCQ1VDWjVUZ29MK1hnSHI1Wm04?=
+ =?utf-8?B?S0hEdGF6SzZSeUpZenQ1VnhqcE1NRVZzMjhDMkZaazQyZ2RZd1ZWbzM2ZFRn?=
+ =?utf-8?B?K2RoYk5hVGdYbDFOOHpubVJ3MXRkdER6SFdvUStKLzNCTTdXNkhRcC9ibGh3?=
+ =?utf-8?B?c2FZVG8yV3BRRGl3LytuZzFEdUpEL3dSR2psYk8xQnFrVHhUKzJIMHpGNWpM?=
+ =?utf-8?B?Z0UwVjRUOEJUYTIwWVY1SXFTSmtlUWw5VHVLdnRXeGhvZ1NIRUZBczBacSta?=
+ =?utf-8?B?WWxhNklnaFdEUDBtZDRGKzRqK0EwZFBwZGVYOTNBbHFnZlB1YWR2b05yeEQy?=
+ =?utf-8?B?enZzRW1Oa2dHYURFeTkyZDk5NVp3L1o1amVUL2NNQnRUWnRwaUZYWFlneFhH?=
+ =?utf-8?B?T0swSFRqUFVhOUFpc0cvdURWTHRrRHdNZVM3dVRucVYxZXBCWm9VTW8yUlB6?=
+ =?utf-8?B?THFxYUFWbDBVbGpGekM4WWhBem5zZ1MweVk0czZDUXJIRkVNSmFKOWtzMkIw?=
+ =?utf-8?B?QzJhVlpWNCtEQUcrbmliQVlyaXhmcU9BN295amJSelpqbFBPa0UyV1lwOCth?=
+ =?utf-8?B?RWtseUZURXhtajBUMkY5WC9CL09iNnQ0WmJWYys0WitHU0lLVUJVU0kvMTVr?=
+ =?utf-8?B?YVZPbHN1ODBkUXNZaTU4enFwTDF3V3hhZWtoQ1VSeDNhZ2NpUFBLSzJOeklY?=
+ =?utf-8?B?dnBnVXdpZkRlUHBsdEpUMjNXUU8zL1liYnhyc1pzbFpLMGxnYWk4eEpPTzBC?=
+ =?utf-8?B?SVpkQ3AwT3pQZFFYRkF5dksxVWpPMFZ2aE1zMnVXWnZHZDZJaXRYWE5rODVQ?=
+ =?utf-8?B?aTlJNkd3VnJNN0dwaDh3cWF5ZmpXSXZpeHMvN0dYWm8wUUZSRTFzb1FwTllF?=
+ =?utf-8?B?MVpvbU5uMnRBbXRsdkdrWVVISEUyN1BVZE9XdytYWDZKZHVoQWRRY2pvcGh5?=
+ =?utf-8?B?TTRWN3VXZDdoQzFjbWIrKzBiT3FxZG5Ob3UwYUhDSHhqSzdNaEg2ZFVoWDRp?=
+ =?utf-8?B?SHNJcE5PRFJBZEozMmFBR0ZlS054RmlPMlVQMlc0WEtKRmM2M2tEdkpsbVhx?=
+ =?utf-8?B?WUpqTUdxeTRtYmtQbVFOWlBjNDdRWEROU1VLVHpxSVY5aTFvNjNoMERJQ282?=
+ =?utf-8?B?VUUvZlJ0TkNGdjZCdXhxVmZ6ekVsWFNEM3hLNk14MmJabGZJeUlZR1hXbDJT?=
+ =?utf-8?B?S3IyRWVCbThST3lJQkdUZ1h3VERQU1d2bEtZbm5oSmdWeUtmNWR2YVFaeVFF?=
+ =?utf-8?B?Vlh3bkhkTDBTSkFCSmxMN09KUm9seW9TYjdyaDJTZFMxcURRZHNYOUhoeXVW?=
+ =?utf-8?B?VUNLbDNHWUJmSzY5OXNYWERDR1RSTkllbDJXQ1N3YXZLb2ZkZGhCQUNsVXB3?=
+ =?utf-8?Q?0mJrXCra156SJHpEbl52BDhBDcy4zDIm/s85J3Q?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR83MB0559.EURPRD83.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?ZkIyc05BRTlRaWtZTm1scHREYlJlRVZISnF0Si9jaUc4NnMrYWxLMDRHeVpI?=
+ =?utf-8?B?a3puZ3RQZ1craUdjM0ZkZnc0dGUwVmVMVlJZdGxhMzI2YUUwa0d1eUxQYUpS?=
+ =?utf-8?B?YXhNcjF1QjltaGZhdmovRkNlRHcwMmV0am5iVjF6dlU4dGZ1M3U3T0F1NzFr?=
+ =?utf-8?B?d1diODgrY2FFODRjc0hYR2tjVzFqL25Ub0p4WTBvc3pIcTVaeEFyUVJVektD?=
+ =?utf-8?B?TlU5a3pmUlJBbGk5QWIzbmJFRUFOdjVUYStpeTZRZmlVMk9UVXJsQWNsdlJ5?=
+ =?utf-8?B?S1gwc0M3RVN2aEl1c05uS0RJWEM2L1hEYitVamthcndMVUhZc2RYVFlVbC8z?=
+ =?utf-8?B?ekg0ZXpienFraGFyb1R3bld1OTZkM2h2VWQxbHRRbGhNUXZTTFMyejd1YkNI?=
+ =?utf-8?B?SElKZWVJRUhnQ24zWFpESGZpdGdCRTByZnVvSzNBZDdJTFJRckR5STA4WVNl?=
+ =?utf-8?B?YXdWKzZCUDVxM1JqZVZNN1V4SW1kZUZXR1hNUEUxYWI0UTY2am5uZzZHaWY5?=
+ =?utf-8?B?OEh6TmhxRTJSK0lqejJUMjNxK09tbTQ4UDBoT2hhaUZNbzZYWjNYU0NYa3FE?=
+ =?utf-8?B?bjU5Z3NuVTNzZmRMNW1ML2xJdzZROWxIbWlGL01VVFdUV25OcTlwZG96YndW?=
+ =?utf-8?B?WC9zZ1Z4QkdwUkhvQUttVEN5T1FYaUQzOUhWNkFvaGdTWjZzMTVpUFlsTFB4?=
+ =?utf-8?B?bkVnZ2Y0NW90YzVaVFZ6bS9vTythMXE4dnV2eFdZazB4VjFOQUtNNkJFcnZw?=
+ =?utf-8?B?Um1PWmE2WWZrRlArZFdOMCt5OWsrSFVrNGJGd2ZiNksxU3ZVT1VNWWlQbFRi?=
+ =?utf-8?B?R3lnTHBQMjIyZ1pQcStXWmNmL25mLzJjanlDWDlKRVVNbkdQb2l5a2F0bnVU?=
+ =?utf-8?B?MWthWFJJSHBsQWNlZEcwSXRicDVLK2VVTmJjYm9EUjBnckpTQ2YzdG12VnJM?=
+ =?utf-8?B?R2ZCaHc4Tjl5aVRTdUkvV2Z6d25GVVRqSkkvWGZrSnNFWmwyUWxEdENGd3gz?=
+ =?utf-8?B?Ym5yQlZVWTAwSHVqYnhIdGJZRzZtand5STNzY3c0enEwNENvZmZwY2h2bU1P?=
+ =?utf-8?B?TjlYZ2V2NlQ0dTNKQU54S1BDanpWV1FRSnRabSsvMXhNQTNGVytKMXR5S1By?=
+ =?utf-8?B?ZVBWWUF1dWJneVJCTk5VWmtYSnZxZFJBL0NkUmptUlhiV1ZqcC9RMmFYWXVB?=
+ =?utf-8?B?Yi81RE4wM0NZSVR0djJpVGNqcWFlbUJHcHV3V0s0L29RN3BqU0taWHZoaW11?=
+ =?utf-8?B?TnJJK01TWmZJS01SVVdodm13cG1SdGV5TWtNbHhsNkJyWnd6dmx3bUpZZm1x?=
+ =?utf-8?B?TW5pa1JYa3g3NGVJQmFnU3RHaDhFejlsUkpSeGpoSzBqOHZPRmMvR1JGbHhq?=
+ =?utf-8?B?U3k1SldGeGl2UlFFVnd0aUltaHJxZVh5ZVJWcXF2dGVCellVTWdzV3VlQS9y?=
+ =?utf-8?B?K25VRnhoQ0xiUmF1SWFuanhkTklQdTFaZ1pFeklidWVicGNGRkNmVDloK2ZY?=
+ =?utf-8?B?YnhCSkNSZHgwYU9CRlNMMHBnWDZ6R0pHWU5JZ1BGWXAwOHY2SGg5ZUF3bHJI?=
+ =?utf-8?B?VWMxajlCUGJZZHp5ekVXWTVBVnIwR1pwQTV2OVB5RFB6QWpaUGRQWlB3SDd3?=
+ =?utf-8?B?L1dFSEZQK2MyYjBWK0d3RmFTMFdzNlhGcks2dDU0VCtOdnNCZ2gzbnJkYTZn?=
+ =?utf-8?B?bzZWZU1tdmtmUkxSVnI4SkpxeTFlZ0hCMUh6UGhweStMTWo5L3hsTmdYQ1NI?=
+ =?utf-8?B?WmZiYVdtZnFHQzEyeGFPaVJjTWNkUnQ4RFhwTzVNMjE1QU5PZkVwRWRvS2E5?=
+ =?utf-8?B?VWQxOTlnZTdsL2tmQi8rQi94Sno0b1p2SWJXTWJWaE9OVnduNm1yWXNSc2pM?=
+ =?utf-8?B?UWRNMWM1SCtQeDZ6ZGJyNG1SemRDWHFXdEtvMW1NRkM4ZHNXOCtWQ1FKaEpo?=
+ =?utf-8?B?dXE0RDYvNGJZK2hwdUpLN2tEc2JzWEtYMTlXZHBHcTQ3UWxsM0ZKMnJTN3RD?=
+ =?utf-8?B?UjJhcC9KMkc2VWplVVpZcHRHVmRDMGw3OTl1UjBVU0V2VG1TZ3h0RDQ4YmRE?=
+ =?utf-8?Q?yYI6Z0?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-21_05,2024-05-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 adultscore=0 phishscore=0 mlxscore=0 bulkscore=0
- mlxlogscore=999 lowpriorityscore=0 suspectscore=0 clxscore=1011
- spamscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2405010000 definitions=main-2405210065
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR83MB0559.EURPRD83.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 319c0321-934b-47bf-504c-08dc7972ccd0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2024 08:48:34.9018
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +x76MUL5LxVKfVz+nIVHDSXn/nVyq+xx4dwixavmYY3bisA1J2RHor86EKvBVv6y1QpAt1EBbrDRz5BYOYuNqQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR83MB0523
 
-
-
-On 5/21/24 01:50, John Meneghini wrote:
-> From: "Ewan D. Milne" <emilne@redhat.com>
-> 
-> The round-robin path selector is inefficient in cases where there is a
-> difference in latency between multiple active optimized paths.  In the
-> presence of one or more high latency paths the round-robin selector
-> continues to the high latency path equally. This results in a bias
-> towards the highest latency path and can cause is significant decrease
-> in overall performance as IOs pile on the lowest latency path. This
-> problem is particularly accute with NVMe-oF controllers.
-> 
-> The queue-depth policy instead sends I/O requests down the path with the
-> least amount of requests in its request queue. Paths with lower latency
-> will clear requests more quickly and have less requests in their queues
-> compared to higher latency paths. The goal of this path selector is to
-> make more use of lower latency paths, which will bring down overall IO
-> latency.
-> 
-> Signed-off-by: Ewan D. Milne <emilne@redhat.com>
-> [tsong: patch developed by Thomas Song @ Pure Storage, fixed whitespace
->       and compilation warnings, updated MODULE_PARM description, and
->       fixed potential issue with ->current_path[] being used]
-> Signed-off-by: Thomas Song <tsong@purestorage.com>
-> [jmeneghi: vairious changes and improvements, addressed review comments]
-> Signed-off-by: John Meneghini <jmeneghi@redhat.com>
-> Link: https://lore.kernel.org/linux-nvme/20240509202929.831680-1-jmeneghi@redhat.com/
-> Tested-by: Marco Patalano <mpatalan@redhat.com>
-> Reviewed-by: Randy Jennings <randyj@redhat.com>
-> Tested-by: Jyoti Rani <jani@purestorage.com>
-> ---
->  drivers/nvme/host/core.c      |  2 +-
->  drivers/nvme/host/multipath.c | 86 +++++++++++++++++++++++++++++++++--
->  drivers/nvme/host/nvme.h      |  9 ++++
->  3 files changed, 92 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index a066429b790d..1dd7c52293ff 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -110,7 +110,7 @@ struct workqueue_struct *nvme_delete_wq;
->  EXPORT_SYMBOL_GPL(nvme_delete_wq);
->  
->  static LIST_HEAD(nvme_subsystems);
-> -static DEFINE_MUTEX(nvme_subsystems_lock);
-> +DEFINE_MUTEX(nvme_subsystems_lock);
->  
->  static DEFINE_IDA(nvme_instance_ida);
->  static dev_t nvme_ctrl_base_chr_devt;
-> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-> index 5397fb428b24..0e2b6e720e95 100644
-> --- a/drivers/nvme/host/multipath.c
-> +++ b/drivers/nvme/host/multipath.c
-> @@ -17,6 +17,7 @@ MODULE_PARM_DESC(multipath,
->  static const char *nvme_iopolicy_names[] = {
->  	[NVME_IOPOLICY_NUMA]	= "numa",
->  	[NVME_IOPOLICY_RR]	= "round-robin",
-> +	[NVME_IOPOLICY_QD]      = "queue-depth",
->  };
->  
->  static int iopolicy = NVME_IOPOLICY_NUMA;
-> @@ -29,6 +30,8 @@ static int nvme_set_iopolicy(const char *val, const struct kernel_param *kp)
->  		iopolicy = NVME_IOPOLICY_NUMA;
->  	else if (!strncmp(val, "round-robin", 11))
->  		iopolicy = NVME_IOPOLICY_RR;
-> +	else if (!strncmp(val, "queue-depth", 11))
-> +		iopolicy = NVME_IOPOLICY_QD;
->  	else
->  		return -EINVAL;
->  
-> @@ -43,7 +46,7 @@ static int nvme_get_iopolicy(char *buf, const struct kernel_param *kp)
->  module_param_call(iopolicy, nvme_set_iopolicy, nvme_get_iopolicy,
->  	&iopolicy, 0644);
->  MODULE_PARM_DESC(iopolicy,
-> -	"Default multipath I/O policy; 'numa' (default) or 'round-robin'");
-> +	"Default multipath I/O policy; 'numa' (default) , 'round-robin' or 'queue-depth'");
->  
->  void nvme_mpath_default_iopolicy(struct nvme_subsystem *subsys)
->  {
-> @@ -127,6 +130,11 @@ void nvme_mpath_start_request(struct request *rq)
->  	struct nvme_ns *ns = rq->q->queuedata;
->  	struct gendisk *disk = ns->head->disk;
->  
-> +	if (READ_ONCE(ns->head->subsys->iopolicy) == NVME_IOPOLICY_QD) {
-> +		atomic_inc(&ns->ctrl->nr_active);
-> +		nvme_req(rq)->flags |= NVME_MPATH_CNT_ACTIVE;
-> +	}
-> +
->  	if (!blk_queue_io_stat(disk->queue) || blk_rq_is_passthrough(rq))
->  		return;
->  
-> @@ -140,8 +148,12 @@ void nvme_mpath_end_request(struct request *rq)
->  {
->  	struct nvme_ns *ns = rq->q->queuedata;
->  
-> +	if ((nvme_req(rq)->flags & NVME_MPATH_CNT_ACTIVE))
-> +		atomic_dec_if_positive(&ns->ctrl->nr_active);
-> +
->  	if (!(nvme_req(rq)->flags & NVME_MPATH_IO_STATS))
->  		return;
-> +
->  	bdev_end_io_acct(ns->head->disk->part0, req_op(rq),
->  			 blk_rq_bytes(rq) >> SECTOR_SHIFT,
->  			 nvme_req(rq)->start_time);
-> @@ -330,6 +342,40 @@ static struct nvme_ns *nvme_round_robin_path(struct nvme_ns_head *head,
->  	return found;
->  }
->  
-I think you may also want to reset nr_active counter if in case, in-flight nvme request 
-is cancelled. If the request is cancelled then nvme_mpath_end_request() wouldn't be invoked.
-So you may want to reset nr_active counter from nvme_cancel_request() as below:
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index bf7615cb36ee..4fea7883ce8e 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -497,8 +497,9 @@ EXPORT_SYMBOL_GPL(nvme_host_path_error);
- 
- bool nvme_cancel_request(struct request *req, void *data)
- {
--       dev_dbg_ratelimited(((struct nvme_ctrl *) data)->device,
--                               "Cancelling I/O %d", req->tag);
-+       struct nvme_ctrl *ctrl = (struct nvme_ctrl *)data;
-+
-+       dev_dbg_ratelimited(ctrl->device, "Cancelling I/O %d", req->tag);
- 
-        /* don't abort one completed or idle request */
-        if (blk_mq_rq_state(req) != MQ_RQ_IN_FLIGHT)
-@@ -506,6 +507,8 @@ bool nvme_cancel_request(struct request *req, void *data)
- 
-        nvme_req(req)->status = NVME_SC_HOST_ABORTED_CMD;
-        nvme_req(req)->flags |= NVME_REQ_CANCELLED;
-+       if ((nvme_req(rq)->flags & NVME_MPATH_CNT_ACTIVE))
-+               atomic_dec(&ctrl->nr_active);
-        blk_mq_complete_request(req);
-        return true;
- }
-
-Please note that I am using atomic_dec() instead of atomic_dec_if_positive()
-above for the same reason as Keith mentioned in his earlier mail.
-
-> +static struct nvme_ns *nvme_queue_depth_path(struct nvme_ns_head *head)
-> +{
-> +	struct nvme_ns *best_opt = NULL, *best_nonopt = NULL, *ns;
-> +	unsigned int min_depth_opt = UINT_MAX, min_depth_nonopt = UINT_MAX;
-> +	unsigned int depth;
-> +
-> +	list_for_each_entry_rcu(ns, &head->list, siblings) {
-> +		if (nvme_path_is_disabled(ns))
-> +			continue;
-> +
-> +		depth = atomic_read(&ns->ctrl->nr_active);
-> +
-> +		switch (ns->ana_state) {
-> +		case NVME_ANA_OPTIMIZED:
-> +			if (depth < min_depth_opt) {
-> +				min_depth_opt = depth;
-> +				best_opt = ns;
-> +			}
-> +			break;
-> +
-> +		case NVME_ANA_NONOPTIMIZED:
-> +			if (depth < min_depth_nonopt) {
-> +				min_depth_nonopt = depth;
-> +				best_nonopt = ns;
-> +			}
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +	}
-> +
-> +	return best_opt ? best_opt : best_nonopt;
-> +}
-> +
->  static inline bool nvme_path_is_optimized(struct nvme_ns *ns)
->  {
->  	return nvme_ctrl_state(ns->ctrl) == NVME_CTRL_LIVE &&
-> @@ -338,15 +384,27 @@ static inline bool nvme_path_is_optimized(struct nvme_ns *ns)
->  
->  inline struct nvme_ns *nvme_find_path(struct nvme_ns_head *head)
->  {
-> -	int node = numa_node_id();
-> +	int iopolicy = READ_ONCE(head->subsys->iopolicy);
-> +	int node;
->  	struct nvme_ns *ns;
->  
-> +	/*
-> +	 * queue-depth iopolicy does not need to reference ->current_path
-> +	 * but round-robin needs the last path used to advance to the
-> +	 * next one, and numa will continue to use the last path unless
-> +	 * it is or has become not optimized
-> +	 */
-> +	if (iopolicy == NVME_IOPOLICY_QD)
-> +		return nvme_queue_depth_path(head);
-> +
-> +	node = numa_node_id();
->  	ns = srcu_dereference(head->current_path[node], &head->srcu);
->  	if (unlikely(!ns))
->  		return __nvme_find_path(head, node);
->  
-> -	if (READ_ONCE(head->subsys->iopolicy) == NVME_IOPOLICY_RR)
-> +	if (iopolicy == NVME_IOPOLICY_RR)
->  		return nvme_round_robin_path(head, node, ns);
-> +
->  	if (unlikely(!nvme_path_is_optimized(ns)))
->  		return __nvme_find_path(head, node);
->  	return ns;
-> @@ -798,6 +856,25 @@ static ssize_t nvme_subsys_iopolicy_show(struct device *dev,
->  			  nvme_iopolicy_names[READ_ONCE(subsys->iopolicy)]);
->  }
->  
-> +void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy)
-> +{
-> +	struct nvme_ctrl *ctrl;
-> +	int old_iopolicy = READ_ONCE(subsys->iopolicy);
-> +
-> +	WRITE_ONCE(subsys->iopolicy, iopolicy);
-> +
-> +	mutex_lock(&nvme_subsystems_lock);
-> +	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
-> +		atomic_set(&ctrl->nr_active, 0);
-> +		nvme_mpath_clear_ctrl_paths(ctrl);
-> +	}
-> +	mutex_unlock(&nvme_subsystems_lock);
-> +
-> +	pr_notice("%s: changed from %s to %s for subsysnqn %s\n", __func__,
-> +			nvme_iopolicy_names[old_iopolicy], nvme_iopolicy_names[iopolicy],
-> +			subsys->subnqn);
-> +}
-> +
->  static ssize_t nvme_subsys_iopolicy_store(struct device *dev,
->  		struct device_attribute *attr, const char *buf, size_t count)
->  {
-> @@ -807,7 +884,7 @@ static ssize_t nvme_subsys_iopolicy_store(struct device *dev,
->  
->  	for (i = 0; i < ARRAY_SIZE(nvme_iopolicy_names); i++) {
->  		if (sysfs_streq(buf, nvme_iopolicy_names[i])) {
-> -			WRITE_ONCE(subsys->iopolicy, i);
-> +			nvme_subsys_iopolicy_update(subsys, i);
->  			return count;
->  		}
->  	}
-> @@ -905,6 +982,7 @@ void nvme_mpath_init_ctrl(struct nvme_ctrl *ctrl)
->  	mutex_init(&ctrl->ana_lock);
->  	timer_setup(&ctrl->anatt_timer, nvme_anatt_timeout, 0);
->  	INIT_WORK(&ctrl->ana_work, nvme_ana_work);
-> +	atomic_set(&ctrl->nr_active, 0);
->  }
->  
->  int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
-> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-> index f243a5822c2b..f5557889b244 100644
-> --- a/drivers/nvme/host/nvme.h
-> +++ b/drivers/nvme/host/nvme.h
-> @@ -50,6 +50,8 @@ extern struct workqueue_struct *nvme_wq;
->  extern struct workqueue_struct *nvme_reset_wq;
->  extern struct workqueue_struct *nvme_delete_wq;
->  
-> +extern struct mutex nvme_subsystems_lock;
-> +
->  /*
->   * List of workarounds for devices that required behavior not specified in
->   * the standard.
-> @@ -190,6 +192,7 @@ enum {
->  	NVME_REQ_CANCELLED		= (1 << 0),
->  	NVME_REQ_USERCMD		= (1 << 1),
->  	NVME_MPATH_IO_STATS		= (1 << 2),
-> +	NVME_MPATH_CNT_ACTIVE	= (1 << 3),
->  };
->  
->  static inline struct nvme_request *nvme_req(struct request *req)
-> @@ -354,6 +357,7 @@ struct nvme_ctrl {
->  	size_t ana_log_size;
->  	struct timer_list anatt_timer;
->  	struct work_struct ana_work;
-> +	atomic_t nr_active;
->  #endif
->  
->  #ifdef CONFIG_NVME_HOST_AUTH
-> @@ -402,6 +406,7 @@ static inline enum nvme_ctrl_state nvme_ctrl_state(struct nvme_ctrl *ctrl)
->  enum nvme_iopolicy {
->  	NVME_IOPOLICY_NUMA,
->  	NVME_IOPOLICY_RR,
-> +	NVME_IOPOLICY_QD,
->  };
->  
->  struct nvme_subsystem {
-> @@ -935,6 +940,7 @@ void nvme_mpath_clear_ctrl_paths(struct nvme_ctrl *ctrl);
->  void nvme_mpath_shutdown_disk(struct nvme_ns_head *head);
->  void nvme_mpath_start_request(struct request *rq);
->  void nvme_mpath_end_request(struct request *rq);
-> +void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy);
->  
->  static inline void nvme_trace_bio_complete(struct request *req)
->  {
-> @@ -1034,6 +1040,9 @@ static inline bool nvme_disk_is_ns_head(struct gendisk *disk)
->  {
->  	return false;
->  }
-> +static inline void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy)
-> +{
-> +}
->  #endif /* CONFIG_NVME_MULTIPATH */
->  
->  int nvme_ns_report_zones(struct nvme_ns *ns, sector_t sector,
-
-Thanks,
---Nilay
+PiANCj4gTmVlZCB0byBjaGFuZ2UgdGhpcyBjb21tZW50IGFzIFJDIGlzIHN1cHBvcnRlZCBub3cu
+DQo+IA0KDQpUaGFua3MsIGZpeGVkLg0KDQo+IA0KPiBZb3UgYXJlIGFkZGluZyBuZXcgVUFQSSB3
+aXRob3V0IGNoYW5naW5nDQo+IE1BTkFfSUJfVVZFUkJTX0FCSV9WRVJTSU9OLg0KPiANCj4gRm9y
+IHRoaXMgdXNlLWNhc2UsIEkgdGhpbmsgaXQncyBva2F5IGJlY2F1c2UgaXQgd2lsbCBmYWlsIHRv
+IGNyZWF0ZSBDUSBiZWZvcmUgdGhpcy4NCj4gQnV0IGl0IG1heSBub3QgYmUgYSBnb29kIGN1c3Rv
+bWVyIGV4cGVyaWVuY2UgZm9yIFJDIHVzYWdlLg0KDQpBQkkgdmVyc2lvbnMgYXJlIGZvciByZXNv
+bHZpbmcgaW5jb21wYXRpYmlsaXRpZXMgaW4gQVBJLCBhbmQgbm90IGZvciB0cmFja2luZyBmZWF0
+dXJlcy4NClNvIElmIGEgdXNlciBmYWlscyB0byBjcmVhdGUgYW4gUkMgUVAgaXQgbWVhbnMgdGhl
+IGtlcm5lbCBpcyBvbGQgYW5kIGRvZXMgbm90IGhhdmUgdGhpcyBmZWF0dXJlLg0KVGhlIGN1c3Rv
+bWVyIGV4cGVyaWVuY2UgaXMgbm90IGFmZmVjdGVkLg0KDQpJbmNyZWFzZSBpbiB0aGUgYWJpIHZl
+cnNpb24gd291bGQgaW52YWxpZGF0ZSBhbGwgcHJldmlvdXMga2VybmVscywgcHJldmVudGluZyBj
+bGllbnRzIHRvIHVzZSB0aGUNCm1hbnkgdmVyc2lvbnMgb2Yga2VybmVscyBhbmQgcmRtYS1jb3Jl
+IHRvZ2V0aGVyLiBBcyBhIHJlc3VsdCwgYnJlYWtpbmcgdGhlIGN1c3RvbWVyIGV4cGVyaWVuY2Uu
+DQoNCktvbnN0YW50aW4NCg==
 
