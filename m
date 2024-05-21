@@ -1,153 +1,98 @@
-Return-Path: <linux-kernel+bounces-185335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B0F8CB39F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:39:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F858CB39C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82D81C216BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:39:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23CD9B216EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A63614901B;
-	Tue, 21 May 2024 18:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54F7148FED;
+	Tue, 21 May 2024 18:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hAvSbqWY"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ee87fqVb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B43B148FE6;
-	Tue, 21 May 2024 18:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0085114884F
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716316775; cv=none; b=oBHopOxoBLb1HKYIU6b76eM8DJharxW26kKiiHX4W0hS6cUwCZto3l0ybdSdVN0AF9HH1SMROaUVQoqVBuGYR0XxrGB1avYrzznKXn1pegLIeIBJv4PUik/Sekp+kvkYdCuvJ1rMfqPpqmbp3hfrUI9/SevnXENxXMx8+LiB8qE=
+	t=1716316773; cv=none; b=gwq//aqyoxnKb+a6iYD+RZ+ySVVwqNEiHmypPBmFFpnsIY2HirRz9sRe+rQFAcjFgk+d1rT4oi/IQr6NrWTqiE3voC4cxh+qI/AVaAbBqSsNYoB6/OEq04WRQ6haXNesqWriHQjdhjeoyfJDEi8zT5C2J3zTBRUuw8dLC7tnyME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716316775; c=relaxed/simple;
-	bh=2OwM9OXUCRq9x0pBAcwrcHhHRTWyszwBTrJVPIxQlXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IgYBpWjswuYSB0ZtO4MydlMQXNx46aHmPhUmyNTjJEyVlLx9Gneiblr/COI+/T24sjB5BUIuKxCEo3/t1K8cJBYbJCgIe3qFr9CBN17JvKgHRigb9yM9azG/JgS5wWEsj1ZphIBKjAKFoNuMa0kr43GWAFkN+KGhpiIErnXFX14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hAvSbqWY; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3934F40E0254;
-	Tue, 21 May 2024 18:39:31 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id z7xw7aBKgNlL; Tue, 21 May 2024 18:39:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1716316767; bh=vidwVOS9FKehluQc192AliUTp5o7jNiEJhT6qtLB4LE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hAvSbqWYOa2w4hqZuivUSRdmM6Lz5CghzlWorfUZLDjG+ebkVjzga3j9/I8ubWgCI
-	 3LCVuAwIGr9XC8YOpPjbV2mQZo0abeOiBpiORrxIBu9km14r8T/QaHTSmhoksxMnwN
-	 4dSqtIF4onTym6QOqwLq+hdnULKVMRAtwLvpd0ak70U3EQ5hb+nef1zyaGQzEPHczH
-	 +YpBQG2aV86n+fFGW7EORrxPMG/YwTvXTS6tNwZYWKj5k4j/ROLbIBd0mxC1gHYxUJ
-	 ApEDENe0rD06lvU6k7zGTY6xkL9bBxp/vuC3Jgdf4ZVq51DPHRdxaeoY01aNdWnggH
-	 eXIJqrhku3IBdiPGie1W1oXYFNc+vuA6hNECILICyKlChlIYekBGq8ugPytW7QUetb
-	 jgkUSc6l4i9mrufS7Yx3VxvYTwYGPgiCJ5HXeXLsDek6/4JsI4T0E9VOLrBGl+K5nT
-	 o1K/XZexD84KUoWkrmcRvjAMDwNuHsFKBqqj4Hrz7hY+1MvwUpck61jgCR8wp2+wNJ
-	 V/I3ecUVxpMJQGGAjwxRv9CuuD/m9HBuElrRxKYr5cGMQxP7PQS+7NWYEAijSl/svZ
-	 m3TUkygWnLGe1abtEzHvskUw3NjuTxP6aAsw7/VNJ7KVcYcIe6Ly6eIiHL1bbyNAEP
-	 LoybpH5kBVac5UrCApsrR7uA=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 898C440E023A;
-	Tue, 21 May 2024 18:39:18 +0000 (UTC)
-Date: Tue, 21 May 2024 20:39:13 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org, rostedt@goodmis.org
-Subject: Re: [RFC PATCH v2 3/3] ACPI: extlog: Make print_extlog_rcd() log
- unconditionally
-Message-ID: <20240521183913.GGZkzqUSN1hdE-_OEY@fat_crate.local>
-References: <20240510112740.667445-1-fabio.m.de.francesco@linux.intel.com>
- <7009544.jJDZkT8p0M@fdefranc-mobl3>
- <20240510192556.GDZj50xFIWSqK2gzQR@fat_crate.local>
- <2881368.Ex9A2HvPv6@fdefranc-mobl3>
- <663e9bd4c2525_db82d29451@dwillia2-xfh.jf.intel.com.notmuch>
- <20240511130801.GBZj9tsenZ5SKXgRTm@fat_crate.local>
- <6641548474088_3dce92942b@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <20240516095714.GCZkXYeiKbUk2QXoIO@fat_crate.local>
- <664656cf7c59b_2c2629493@dwillia2-xfh.jf.intel.com.notmuch>
+	s=arc-20240116; t=1716316773; c=relaxed/simple;
+	bh=ZwNeusr0bjuZXFwILV4/yWqrQt/2j+I7WZxp2xgt54s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D2a5a0uXViUYaqUIUiZU5Bn19TLcDKfld1BHHg4UTj/rY8mHjnBTkslcMepWHieab1g//FaKxW9GFC+GOHBPl2C0Khbov6K29ZzKXQZHdPriNDMWSCz83aSH034GIt6bVqbvjU7dillLgRi6bFsmirLlpHLTP48SeAu46DH0QnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ee87fqVb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91D38C2BD11;
+	Tue, 21 May 2024 18:39:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716316772;
+	bh=ZwNeusr0bjuZXFwILV4/yWqrQt/2j+I7WZxp2xgt54s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Ee87fqVbudv9E2QJx9Gu6ChM52QHTOhc1AQOzeWG/slc82aNt4smDnEKE6wOfs7Vk
+	 oKyO/UkKcDqlrXUPf5sl3xSwpqrZzvLTweYJAeUy6C8xafD4CVHp80QxGAgpix1yDq
+	 JWhi968ZkmTUts/GGHT06sjzpwoH9o/mk5mDq5yM+C3DtJe1HSHZgZeYMCjBKt2ww/
+	 rNPOnEJexkrwlz//7hX37Q02T6m9dy+Pcm7cs8trrK894EG6XCckfnq3DpwTRxKAxi
+	 Sv4mgG4sbo/Fc+4apgPRvRYthZIJsxN6pNiCIvYLB4NTSTRC8vKgx6i+LY4C3vBGRo
+	 bLSHhAcXLTXgA==
+From: Will Deacon <will@kernel.org>
+To: mark.rutland@arm.com,
+	catalin.marinas@arm.com,
+	Dave.Martin@arm.com,
+	xieyuanbin1@huawei.com,
+	Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+Cc: kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	nixiaoming@huawei.com,
+	wangbing6@huawei.com,
+	douzhaolei@huawei.com,
+	liaohua4@huawei.com,
+	lijiahuan5@huawei.com,
+	wangfangpeng1@huawei.com
+Subject: Re: [PATCH v2] arm64: asm-bug: Add .align 2 to the end of __BUG_ENTRY
+Date: Tue, 21 May 2024 19:39:24 +0100
+Message-Id: <171631490546.211397.14650733448270838075.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <1716212077-43826-1-git-send-email-xiaojiangfeng@huawei.com>
+References: <1715955208-17109-1-git-send-email-xiaojiangfeng@huawei.com> <1716212077-43826-1-git-send-email-xiaojiangfeng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <664656cf7c59b_2c2629493@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 16, 2024 at 11:56:15AM -0700, Dan Williams wrote:
-> Something like a new annotation for tracepoints marking them as "emit to
-> kernel log if no-one is watching this high-priority trace event"?
-
-I'm not sure anymore what we want here now... :)
-
-We want for the kernel to not pay attention to whether userspace is
-consuming error info from the tracepoints and to issue errors into the
-kernel log too.
-
-So you have them in the kernel log *and* in the tracepoints.
-
-Right?
-
-Or only through the tracepoints?
-
-> Well no, there is little to complain about in that path because that
-> path does not play "is anybody watching" games. It always emits to the
-> kernel log (subject to rate limiting) and then follows up with always
-> emitting a tracepoint (subject to standard trace filtering).
+On Mon, 20 May 2024 21:34:37 +0800, Jiangfeng Xiao wrote:
+> When CONFIG_DEBUG_BUGVERBOSE=n, we fail to add necessary padding bytes
+> to bug_table entries, and as a result the last entry in a bug table will
+> be ignored, potentially leading to an unexpected panic(). All prior
+> entries in the table will be handled correctly.
 > 
-> For CXL I asked that its events deprecate the kernel log path with the
-> hope of not growing new userspace dependencies on kernel log parsing for
+> The arm64 ABI requires that struct fields of up to 8 bytes are
+> naturally-aligned, with padding added within a struct such that struct
+> are suitably aligned within arrays.
+> 
+> [...]
 
-Yeah, kernel log string format is not an ABI so no problem.
+Applied to arm64 (for-next/core), thanks!
 
-> newfangled CXL errors.
+[1/1] arm64: asm-bug: Add .align 2 to the end of __BUG_ENTRY
+      https://git.kernel.org/arm64/c/ffbf4fb9b5c1
 
-So shuffling hw error info solely through the tracepoints is probably ok
-but I am unable to rule out *all* possible cases where it would still
-make sense to dump to the kernel log, be it there's no userspace, be it
-it is a critical error and you want to dump it immediately or whatnot.
-
-It should probably be configurable.
-
-As in: by default all hw error info goes only through tracepoints with
-the exception of fatal errors - they go both to the kernel log and
-tracepoints.
-
-And then perhaps add "ras=dump_all_error_info_to_kernel_log_too" or so,
-cmdline param.
-
-> At least when the firmware gets out of the way Linux has a chance to
-> solve user issues.
-
-Yeap.
-
-> Yes, tracepoints feel simple and generic to me while kernel log messages
-> with rate-limiting is already a lossy proposition.
-
-Right. Btw, do bear in mind that ratelimiting of hw errors can be bad
-sometimes: imagine it ratelimits exactly that one fatal error which you
-absolutely should've seen... :-\
-
-Thx.
-
+Cheers,
 -- 
-Regards/Gruss,
-    Boris.
+Will
 
-https://people.kernel.org/tglx/notes-about-netiquette
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
