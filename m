@@ -1,95 +1,144 @@
-Return-Path: <linux-kernel+bounces-184873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E77F8CAD48
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01BF38CAD4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17217B229AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:22:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B87EB22D69
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D737C6D5;
-	Tue, 21 May 2024 11:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7342C73173;
+	Tue, 21 May 2024 11:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWtljR7C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H7JUWoy6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1C975818;
-	Tue, 21 May 2024 11:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CA55BAC1
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716290441; cv=none; b=Zu8Z3X1t8DwH362/o45ZmLkB2Z/A1J2oX25BPzbgnJfyHjUUxmjCfjPQyZiX5S9x80L8dHrJVk/kYHoDSCquHWuLhcdtwaa4+I3gz6hyJh6xCiEKw0cXptC+APof/LgQ0+G9uco+myhO/il/7+aU20jIAu1LdkX74mI/CSolBhU=
+	t=1716290576; cv=none; b=FKqthic/z2R5AgQSbikd4Q1nhl6cei9Rjj+V0oSbklCslFjR2+CxGDmbFW80Khv78u9PMLDkNMRZZ0UdqcMi9SvvntILQV1Arcoe44YOCebX5eiOtjWxOwVq/BBOfxsslQRHxejgdY3Dzg18ggAeOtq1/HmaYXH16Q5jzZ/EGTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716290441; c=relaxed/simple;
-	bh=wWzpBfqS6gfocOcYq61FVsITwdyGEdoO2FcMClgUahs=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=TWwHmQTlzrbpOMxIlULvswZu9etAxP84lxAVHKvL50gO11i+6S6SdYWjpqw5fboh53EXALcsUuRfqdtKilKnLETSyz2MtDDJWrtinvjK8iUuDz64D8xrTAFHP/Bgr1PLfM6ybHrwreT9bzAmO4QIWzfQAQezu7Z3Gitnxin/7Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWtljR7C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065A1C2BD11;
-	Tue, 21 May 2024 11:20:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716290441;
-	bh=wWzpBfqS6gfocOcYq61FVsITwdyGEdoO2FcMClgUahs=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=CWtljR7CkZBF4Vz4fhIRTYAUQb9nXzsdaXgTiYY4i+cO9p9i0Ii+LmMUI6DkJqRA1
-	 kFX4MIEXkRG6My5WjKY3emmLMRtADTjc2pydbnYdgpaCEZWSNSajpqQPXAUjCUIE54
-	 uFO2gp5AvOfYsgEfNKwsqnO7VpPH1y+Z1235QczQQwNv8akbiz+6Qtfm89GzT8Lj7x
-	 teHOHdwJHJ8TWg3JnwWacb+BEd5MKrS6dUiJK94dNDmTBu7YsBxcme1Fo5z7pxOvVd
-	 A5oG/3JYqLQPZUOiSebj4gdmVlv/EZYu9SwQ0ftwqZN1lya9nLaxtI1A314yObZ8qt
-	 lncBLEW8P6ZRQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: neil.armstrong@linaro.org,  Bjorn Andersson <andersson@kernel.org>,
-  Konrad Dybcio <konrad.dybcio@linaro.org>,  Loic Poulain
- <loic.poulain@linaro.org>,  Mathieu Poirier <mathieu.poirier@linaro.org>,
-  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>,  linux-kernel@vger.kernel.org,
-  linux-arm-msm@vger.kernel.org,  wcn36xx@lists.infradead.org,
-  linux-wireless@vger.kernel.org,  linux-remoteproc@vger.kernel.org,
-  devicetree@vger.kernel.org,  Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 01/12] soc: qcom: add firmware name helper
-References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
-	<20240521-qcom-firmware-name-v1-1-99a6d32b1e5e@linaro.org>
-	<a45b53f3-b2a5-4094-af5a-1281e0f94d2f@linaro.org>
-	<CAA8EJprxYsoug0ipRHTmX45vaFLzJCUF0dQWOc=QLs4y6uZ1rA@mail.gmail.com>
-Date: Tue, 21 May 2024 14:20:36 +0300
-In-Reply-To: <CAA8EJprxYsoug0ipRHTmX45vaFLzJCUF0dQWOc=QLs4y6uZ1rA@mail.gmail.com>
-	(Dmitry Baryshkov's message of "Tue, 21 May 2024 13:01:45 +0300")
-Message-ID: <878r03csxn.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1716290576; c=relaxed/simple;
+	bh=k/JRGdMuDPu8HhJUTkcTAdkXQAVA5INw/irGgRh31Kw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sN1JJJp87/Tc2iT4UQ3FZIuTZ4HNNQOhz5lcnzW5buj3rjJyN0p+kT71k+JtZFWRxnhMP6eBpkWohvOX3jdnLaTtIfbBDpYWWYly/8gnLZ81msJY11ZNfxMbgAaqBynEng/xTQHfOTmJ87Pu8XT+pPB2bhVJ5W0sQ0JuEp8+k8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H7JUWoy6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716290573;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sHk/Aed3i1ecXpAXSTOJ91mw0z8jVc514DVco1BYwS4=;
+	b=H7JUWoy6BYRxyIEbe/mGhhtALCdP9w0oOOI3Ypq1GhLP28wH8m7q2HEd1meojyLOqWf8ip
+	xQvPP9O3y1ZytWMGLgji6VExi7pT1mk0LmhHxb8+bjaLuwOUXvJrwwuZXbHrwNppDxwoGP
+	7kizDua4z0/O8YHDa1d+ND/SOvp3g4Q=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-388-iluVDoaCPhuxI7B0Crv6gw-1; Tue, 21 May 2024 07:22:52 -0400
+X-MC-Unique: iluVDoaCPhuxI7B0Crv6gw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4206b3500f5so26800835e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 04:22:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716290571; x=1716895371;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sHk/Aed3i1ecXpAXSTOJ91mw0z8jVc514DVco1BYwS4=;
+        b=OXpm6O6qV7JhXc1NGHNu6l9Uda8ANUmAlMEs4sM3SMyJAu31x5gegrQL0nTNgNZRwv
+         bc9qRqGhEoXojLhHBRB1Vdd4/6iBS+LsLIkThWd+3AwkR30ldGr3xP9D0rCLu7ZqhAl1
+         AfQSmheq+lmZqpb7nFk2a4QNDgvbPCFd9Gm7smLcWEKPiugxmLeZEj7UIQauTZk3sJkD
+         9f60/x773CGuwqmhKk7P9xeqBihWeP+QMAJuf7u8S7OrkQzCFW0OGP2t8RP2xsJZxR00
+         DVr1iJlW/e4SEfmMN7iokHZ9JvEZlCVDCtc0UMqXuDMcZ0XShp5K/hf6jrqwr1Jo1n7I
+         7v/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUAZl7uFOIboRBWP8KKnbTslotTRVa01Tj3hbE9Aimovzt7R0p+CMO0cYXPlHuOfurJAoiR0FqCHmEubwUoBODiclzGXzRSYTZxlLuh
+X-Gm-Message-State: AOJu0YzZ+iFsHdAdIpJ4L/GTUrwL4TJ529mOzJIR4tclhhdCxqA7ovtc
+	rdj69ZhvNUBMKoPLuVEn4tAzBGyuXh3q6U0qvsnCpn2+o3uIU6JmsafNXQx+FCZKOOb6OjDHLnf
+	Ho/DJRo2AHOqcYpG9gCtEha631kM+NLMwRiTRT3niCOjVygliWpi7OzdHqVefGw==
+X-Received: by 2002:a1c:7910:0:b0:41b:bb90:4af with SMTP id 5b1f17b1804b1-41feaa44138mr310694925e9.20.1716290571297;
+        Tue, 21 May 2024 04:22:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEnDG2VXNjT+etdhjHBYITRzAAnJCTDKOcgyRnMS50oTbo2a8QHWU4X7fhBAgBVC3r+eIiCew==
+X-Received: by 2002:a1c:7910:0:b0:41b:bb90:4af with SMTP id 5b1f17b1804b1-41feaa44138mr310694755e9.20.1716290570972;
+        Tue, 21 May 2024 04:22:50 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:4b3f:ee94:abf:b8ff:feee:998b? ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baad04dsm31724783f8f.81.2024.05.21.04.22.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 04:22:50 -0700 (PDT)
+Message-ID: <8432d37c-c3fb-4404-ab74-fb0a9940f0de@redhat.com>
+Date: Tue, 21 May 2024 13:22:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 11/11] rust: PCI: add BAR request and ioremap
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, pstanner@redhat.com
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+ ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
+ airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+ ajanulgu@redhat.com, lyude@redhat.com, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20240520172554.182094-1-dakr@redhat.com>
+ <20240520172554.182094-12-dakr@redhat.com>
+ <CANiq72kObXP7-YtcXnWQXJpEQ=N+RtcSeM6A+scBK00VkFj5JA@mail.gmail.com>
+Content-Language: en-US
+From: Danilo Krummrich <dakr@redhat.com>
+Organization: RedHat
+In-Reply-To: <CANiq72kObXP7-YtcXnWQXJpEQ=N+RtcSeM6A+scBK00VkFj5JA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org> writes:
+On 5/21/24 01:27, Miguel Ojeda wrote:
+> On Mon, May 20, 2024 at 7:27 PM Danilo Krummrich <dakr@redhat.com> wrote:
+>> +        let barlen = pdev.resource_len(num)?;
+>> +        if barlen == 0 {
+>> +            return Err(ENOMEM);
+>> +        }
+>> +
+>> +        // SAFETY:
+>> +        // `pdev` is always valid.
+> 
+> Please explain why it is always valid -- the point of a `SAFETY`
+> comment is not to say something is OK, but why it is so.
+> 
+>> +        // `barnr` is checked for validity at the top of the function.
 
-> On Tue, 21 May 2024 at 12:52, <neil.armstrong@linaro.org> wrote:
->>
->> On 21/05/2024 11:45, Dmitry Baryshkov wrote:
->> > Qualcomm platforms have different sets of the firmware files, which
->> > differ from platform to platform (and from board to board, due to the
->> > embedded signatures). Rather than listing all the firmware files,
->> > including full paths, in the DT, provide a way to determine firmware
->> > path based on the root DT node compatible.
->>
->> Ok this looks quite over-engineered but necessary to handle the legacy,
->> but I really think we should add a way to look for a board-specific path
->> first and fallback to those SoC specific paths.
->
-> Again, CONFIG_FW_LOADER_USER_HELPER => delays.
+I added pci::Device::resource_len(), since I needed to get the VRAM bar size in Nova.
 
-To me this also looks like very over-engineered, can you elaborate more
-why this is needed? Concrete examples would help to understand better.
+pci::Device::resource_len() also needs to check for a valid  bar index and is used
+above, hence the check is implicit. I just forgot to change this comment accordingly.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+>> +    /// Returns the size of the given PCI bar resource.
+>> +    pub fn resource_len(&self, bar: u8) -> Result<bindings::resource_size_t> {
+> 
+> Sometimes `bindings::` in signatures of public methods may be
+> justified -- is it the case here? Or should a newtype or similar be
+> provided instead? I only see this function being called inside the
+> module, anyway.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+I agree, I just added this function real quick to let Nova report the VRAM bar size
+and forgot to clean this up.
+
+> 
+>> +    /// Mapps an entire PCI-BAR after performing a region-request on it.
+> 
+> Typo.
+> 
+> Cheers,
+> Miguel
+> 
+
 
