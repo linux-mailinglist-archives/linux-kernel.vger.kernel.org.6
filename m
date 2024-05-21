@@ -1,80 +1,83 @@
-Return-Path: <linux-kernel+bounces-185291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FE48CB320
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:56:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12BA48CB321
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBE21C217E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:56:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 350661C217F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958F2148302;
-	Tue, 21 May 2024 17:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78DD14830B;
+	Tue, 21 May 2024 17:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XBtP+RAI"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Q1nqOSwV";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Q1nqOSwV"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517A27710F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 17:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233077710F;
+	Tue, 21 May 2024 17:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716314204; cv=none; b=UCX5CXaWGw9YKBzXAtu2/XrF0BtnF8LdHf9kVw5tdSb+6O5xGn9apMjrI0zjhOACCmQm78Y6Fhl1t1G27qxLVNIJzYFCKVxhnHG/wdrXMLLzx7qRgoizSkMuKxaDt7w8vq/9Kzfd5jOzgHulNZ2dK4SSiOAPIB5wUM30l/TqDuY=
+	t=1716314219; cv=none; b=PBRNb6xE4cLj15rGUNuOkHROg847slBiyEwN55FPLrpHS+x73PutC+L1IXTkxo/YPemF3zB8Hxo0150vq04zHz4q5pqT4GmRKpCoyO3DVhmoYQf58Rb/e7/+zgil1NKtwf6a7d6JBIm0aCJWjIoXoXiA1XtBjeiXXB8RKE9eprE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716314204; c=relaxed/simple;
-	bh=bDHcmbpIp0r0FWpkiKnjDUI8tY8MBvJykebIsqf3NAA=;
+	s=arc-20240116; t=1716314219; c=relaxed/simple;
+	bh=xfDQO188zHzWOmlwzOQJS8rjKs/2HgeiIclILtQHEFY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y2fAfAhq21WRzXXOwuFiEZsnWhdyLBoIQib4LPrSmVJdUDaSs33MulQUilavRRllVdVh0D17C0AQAz2gHDVcDbUGDxf0FPvB8lXuj25x8URC2X48ozSKQlDsCEza9llztKCHV57ukWq63YAxh4AR9EQqTI9wOeV9VEphOa+J+Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XBtP+RAI; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ed41eb3382so3725275ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:56:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716314201; x=1716919001; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S/0tLDG/7KmzSkl24NrS9rk2GSTb3gpnCYP3/DHpRdA=;
-        b=XBtP+RAIcdmgwvg+hYHylmaFlnZfu2qmS6+ruUqc/hqcK5ilS/xp976ydzTtaw+7Kb
-         vupnMTMRHJK9GY63gmiIYGSqqHjwqCdQqx6wMd519Nyfr4D1lkPNV56Fs3SfFYjLrt8r
-         WdiUS9r/BhsEA+GBIFpvXzXZlP+XDsmeDlPvS4xJj6EgR+p9qy35Ks47ZGFMsXvNijMj
-         37OVq05QUS3PiGKtozzD3nWZ5VpblfCV0mGXmrgnBR73izUZJZo5sqViroSpYfGeJVle
-         tz3ar3oB3IMXfJqP6ffUfe3Brh/GS21CxcvDaDHXyCs3q37EvWIqPPac8m1HjMX3zwOu
-         EFAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716314201; x=1716919001;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S/0tLDG/7KmzSkl24NrS9rk2GSTb3gpnCYP3/DHpRdA=;
-        b=Ko+NzX0uum7yHYyvyZ93aTese78PQogBJjpyCEJxxnFmB+8JftucEaYd39oe1vG2eO
-         ysQBu0yeiFJB4FrPCic+nzWF64542ilSclIuYsvOu1GY8KembQtY24PM7Yx286ohkN64
-         f1WNJWIB81HFP+7EVuAwTqoc6mNWhTvQTfmCLD69UKn3O7KdcPGp46Xj9n46FF2sbx04
-         WVWQpUrAlbuz6Kt6Sn9kyghAAHxtQEUf6qU4+2p2onb4ecutkBS5uyoY1An8DLrjosLm
-         DRC/Ym0u5PFxTFy+yfKmulBG/alO/ucDaCKzAPKA2HeKPK+cydTs8MNwdeVmZ7y9lR0R
-         /hzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVaVl/9MnSBD2PU6mbqeoonVlfxcHu3B3HxkHWgYc3/hMIbys+0GmHudROuD9briFAGc/DHJ38+V4ZEqwtglELNeX4P5YJdVzwMk+o
-X-Gm-Message-State: AOJu0YxmgzAI5nAUPtOsgkLMvQIushIczti06KgKj3tY0Hd1/rJWjGhS
-	MP2VLBkYsv/KRJJFhowL0zu9XXT58yS9CzBiffxfrcD0MZNgiJGNQGo0OrLudqY=
-X-Google-Smtp-Source: AGHT+IEknBswCPs65C6IpOvr2vy7Fw9UnethBJrMAwXqSIUGQaX2rnjHowINfpqRZKZXnW3qSmhJNw==
-X-Received: by 2002:a17:902:e80b:b0:1f3:618:4624 with SMTP id d9443c01a7336-1f306184973mr70267365ad.49.1716314201490;
-        Tue, 21 May 2024 10:56:41 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:df1a:22de:40b2:f110])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad819csm224586005ad.84.2024.05.21.10.56.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 10:56:41 -0700 (PDT)
-Date: Tue, 21 May 2024 11:56:38 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] drivers: remoteproc: xlnx: add attach detach
- support
-Message-ID: <ZkzgVn4+iTcrLEDT@p14s>
-References: <20240511005126.1240430-1-tanmay.shah@amd.com>
- <20240511005126.1240430-2-tanmay.shah@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GXt9qSWQmopHpn4cc7h94olKtUXHvZpd1hWiq6IOSaGOySRk0e4WqXYq+2NeozkK4GaLsaert7tSA9uVwJ/1RHQB5mQ05friorVGHx3sby0Gq2rxYVCNGU27nccIdJCXJOcpCjpLbkHRz1M0yT1AfqD2di4oDCGbrxqeOLB2Tw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Q1nqOSwV; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Q1nqOSwV; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 047A5348C4;
+	Tue, 21 May 2024 17:56:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716314215; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ehWe83GKebpIGUMrOmfiP68kD8jXH869Oz31MmSJNq8=;
+	b=Q1nqOSwVkp/1hlbwwZ7uUSFwaDZQyXQF+W7f+xK3jnzfyhanYplIL2sOtwsSgNNtBOzjdZ
+	N+qEnw7JyRHGHVdjW7midmfJ3ALKk+LAZZvKeYB93J/QaRWYH9HGgXo8k81A1LwNufQ0qV
+	pvynGRDv4VqkADtwQu2xFufVoPJ4ISM=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=Q1nqOSwV
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716314215; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ehWe83GKebpIGUMrOmfiP68kD8jXH869Oz31MmSJNq8=;
+	b=Q1nqOSwVkp/1hlbwwZ7uUSFwaDZQyXQF+W7f+xK3jnzfyhanYplIL2sOtwsSgNNtBOzjdZ
+	N+qEnw7JyRHGHVdjW7midmfJ3ALKk+LAZZvKeYB93J/QaRWYH9HGgXo8k81A1LwNufQ0qV
+	pvynGRDv4VqkADtwQu2xFufVoPJ4ISM=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D938613A1E;
+	Tue, 21 May 2024 17:56:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jnt1MmbgTGaAcQAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Tue, 21 May 2024 17:56:54 +0000
+Date: Tue, 21 May 2024 19:56:54 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org
+Subject: Re: CVE-2024-35906: drm/amd/display: Send DTBCLK disable message on
+ first commit
+Message-ID: <ZkzgZoxF_RD50PdW@tiehlicka>
+References: <2024051954-CVE-2024-35906-1c6f@gregkh>
+ <ZkxbObACcnUMZ3LA@tiehlicka>
+ <2024052136-cubbyhole-ecologist-5b68@gregkh>
+ <ZkzREEA5_N_xfqED@tiehlicka>
+ <2024052110-grasp-liking-22c0@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,286 +86,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240511005126.1240430-2-tanmay.shah@amd.com>
+In-Reply-To: <2024052110-grasp-liking-22c0@gregkh>
+X-Spam-Flag: NO
+X-Spam-Score: -6.01
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 047A5348C4
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-6.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim]
 
-Hi Tanmay,
+On Tue 21-05-24 19:03:58, Greg KH wrote:
+> On Tue, May 21, 2024 at 06:51:28PM +0200, Michal Hocko wrote:
+[...]
+> And really, in the end, if you have a "CVE and fix for CVE" in the same
+> release, applying both doesn't hurt anyone, so this is a "fail secure"
+> mode for everyone, right?
 
-On Fri, May 10, 2024 at 05:51:25PM -0700, Tanmay Shah wrote:
-> It is possible that remote processor is already running before
-> linux boot or remoteproc platform driver probe. Implement required
-> remoteproc framework ops to provide resource table address and
-> connect or disconnect with remote processor in such case.
-> 
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
-> 
-> Changes in v2:
->   - Fix following sparse warnings
-> 
-> drivers/remoteproc/xlnx_r5_remoteproc.c:827:21: sparse:    expected struct rsc_tbl_data *rsc_data_va
-> drivers/remoteproc/xlnx_r5_remoteproc.c:844:18: sparse:    expected struct resource_table *rsc_addr
-> drivers/remoteproc/xlnx_r5_remoteproc.c:898:24: sparse:    expected void volatile [noderef] __iomem *addr
-> 
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 164 +++++++++++++++++++++++-
->  1 file changed, 160 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 84243d1dff9f..039370cffa32 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -25,6 +25,10 @@
->  /* RX mailbox client buffer max length */
->  #define MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
->  				 sizeof(struct zynqmp_ipi_message))
-> +
-> +#define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
-> +				 (uint32_t)'m' << 8 | (uint32_t)'p')
-> +
->  /*
->   * settings for RPU cluster mode which
->   * reflects possible values of xlnx,cluster-mode dt-property
-> @@ -73,6 +77,15 @@ struct mbox_info {
->  	struct mbox_chan *rx_chan;
->  };
->  
-> +/* Xilinx Platform specific data structure */
-> +struct rsc_tbl_data {
-> +	const int version;
-> +	const u32 magic_num;
-> +	const u32 comp_magic_num;
+Look Greg, we have been through this discussion at several occasions and
+I do not want to repeat that again. Stable tree users probably do not
+care because they are getting all these patches, including regressions
+and patches they do not need or even want, anyway. They are getting what
+they are _paying_ for. Marking them CVE doesn't make any difference. But
+stable tree backporting model is simply not a good fit for _many_ users.
 
-Why is a complement magic number needed?
+Now, for $reasons, people _do_ care about CVEs and that is why there is
+an engineering cost on downstreams to review them. Exactly because
+applying all of them blindly is a _risk_. Exactly because the stable
+backporting model/policy and CVE assigning policy is simply incompatible
+with the stability/correctness/performance/$other requirements. 
 
-> +	const u32 rsc_tbl_size;
-> +	const uintptr_t rsc_tbl;
-> +} __packed;
-> +
->  /*
->   * Hardcoded TCM bank values. This will stay in driver to maintain backward
->   * compatibility with device-tree that does not have TCM information.
-> @@ -95,20 +108,24 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
->  /**
->   * struct zynqmp_r5_core
->   *
-> + * @rsc_tbl_va: resource table virtual address
->   * @dev: device of RPU instance
->   * @np: device node of RPU instance
->   * @tcm_bank_count: number TCM banks accessible to this RPU
->   * @tcm_banks: array of each TCM bank data
->   * @rproc: rproc handle
-> + * @rsc_tbl_size: resource table size retrieved from remote
->   * @pm_domain_id: RPU CPU power domain id
->   * @ipi: pointer to mailbox information
->   */
->  struct zynqmp_r5_core {
-> +	struct resource_table *rsc_tbl_va;
+I completely do get why you do not care about that downstream
+engineering cost but generating bogus CVEs on top of a huge pile of
+dubious ones is less than useful, don't you think?
 
-Shouldn't this be of type "void __iomem *"?  Did sparse give you trouble on that
-one?
+Seriously, we can disagree whether something is a security threat that
+is worth marking by a CVE. But making the CVE generation process mostly
+unattended script driven process without any _serious_ review in place
+is burning a lot of man power that could be used in a much more
+productive way. This is not the way how to convince people to use stable
+kernels.
 
->  	struct device *dev;
->  	struct device_node *np;
->  	int tcm_bank_count;
->  	struct mem_bank_data **tcm_banks;
->  	struct rproc *rproc;
-> +	u32 rsc_tbl_size;
->  	u32 pm_domain_id;
->  	struct mbox_info *ipi;
->  };
-> @@ -621,10 +638,19 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
->  {
->  	int ret;
->  
-> -	ret = add_tcm_banks(rproc);
-> -	if (ret) {
-> -		dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
-> -		return ret;
-> +	/**
-
-Using "/**" is for comments that will endup in the documentation, which I don't
-think is needed here.  Please correct throughout the patch.
-
-> +	 * For attach/detach use case, Firmware is already loaded so
-> +	 * TCM isn't really needed at all. Also, for security TCM can be
-> +	 * locked in such case and linux may not have access at all.
-> +	 * So avoid adding TCM banks. TCM power-domains requested during attach
-> +	 * callback.
-> +	 */
-> +	if (rproc->state != RPROC_DETACHED) {
-> +		ret = add_tcm_banks(rproc);
-> +		if (ret) {
-> +			dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
-> +			return ret;
-> +		}
->  	}
->  
->  	ret = add_mem_regions_carveout(rproc);
-> @@ -662,6 +688,123 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
->  	return 0;
->  }
->  
-> +static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc,
-> +							     size_t *size)
-> +{
-> +	struct zynqmp_r5_core *r5_core;
-> +
-> +	r5_core = rproc->priv;
-> +
-> +	*size = r5_core->rsc_tbl_size;
-> +
-> +	return r5_core->rsc_tbl_va;
-> +}
-> +
-> +static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
-> +{
-> +	struct device *dev = r5_core->dev;
-> +	struct rsc_tbl_data *rsc_data_va;
-> +	struct resource_table *rsc_addr;
-> +	struct resource res_mem;
-> +	struct device_node *np;
-> +	int ret;
-> +
-> +	/**
-> +	 * It is expected from remote processor firmware to provide resource
-> +	 * table address via struct rsc_tbl_data data structure.
-> +	 * Start address of first entry under "memory-region" property list
-> +	 * contains that data structure which holds resource table address, size
-> +	 * and some magic number to validate correct resource table entry.
-> +	 */
-> +	np = of_parse_phandle(r5_core->np, "memory-region", 0);
-> +	if (!np) {
-> +		dev_err(dev, "failed to get memory region dev node\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = of_address_to_resource(np, 0, &res_mem);
-> +	if (ret) {
-> +		dev_err(dev, "failed to get memory-region resource addr\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	rsc_data_va = (struct rsc_tbl_data *)devm_ioremap_wc(dev, res_mem.start,
-> +							     sizeof(struct rsc_tbl_data));
-
-There is no point in holding memory until the driver is unloaded.  Please use
-ioremap_wc() and free at the end of the function.
-
-> +	if (!rsc_data_va) {
-> +		dev_err(dev, "failed to map resource table data address\n");
-> +		return -EIO;
-> +	}
-> +
-> +	/**
-> +	 * If RSC_TBL_XLNX_MAGIC number and its complement isn't found then
-> +	 * do not consider resource table address valid and don't attach
-> +	 */
-> +	if (rsc_data_va->magic_num != RSC_TBL_XLNX_MAGIC ||
-> +	    rsc_data_va->comp_magic_num != ~RSC_TBL_XLNX_MAGIC) {
-> +		dev_dbg(dev, "invalid magic number, won't attach\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	rsc_addr = (struct resource_table *)ioremap_wc(rsc_data_va->rsc_tbl,
-> +						       rsc_data_va->rsc_tbl_size);
-> +	if (!rsc_addr) {
-> +		dev_err(dev, "failed to get rsc_addr\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/**
-> +	 * As of now resource table version 1 is expected. Don't fail to attach
-> +	 * but warn users about it.
-> +	 */
-> +	if (rsc_addr->ver != 1)
-> +		dev_warn(dev, "unexpected resource table version %d\n",
-> +			 rsc_addr->ver);
-> +
-> +	r5_core->rsc_tbl_size = rsc_data_va->rsc_tbl_size;
-> +	r5_core->rsc_tbl_va = rsc_addr;
-> +
-> +	return 0;
-> +}
-> +
-> +static int zynqmp_r5_attach(struct rproc *rproc)
-> +{
-> +	struct zynqmp_r5_core *r5_core = rproc->priv;
-> +	int i, pm_domain_id, ret;
-> +
-> +	/*
-> +	 * Firmware is loaded in TCM. Request TCM power domains to notify
-> +	 * platform management controller that TCM is in use. This will be
-> +	 * released during unprepare callback.
-> +	 */
-> +	for (i = 0; i < r5_core->tcm_bank_count; i++) {
-> +		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-> +		ret = zynqmp_pm_request_node(pm_domain_id,
-> +					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-> +					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-> +		if (ret < 0)
-> +			pr_warn("TCM %d can't be requested\n", i);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int zynqmp_r5_detach(struct rproc *rproc)
-> +{
-> +	struct zynqmp_r5_core *r5_core = rproc->priv;
-> +
-> +	/*
-> +	 * Generate last notification to remote after clearing virtio flag.
-> +	 * Remote can avoid polling on virtio reset flag if kick is generated
-> +	 * during detach by host and check virtio reset flag on kick interrupt.
-> +	 */
-> +	zynqmp_r5_rproc_kick(rproc, 0);
-> +
-> +	iounmap((void __iomem *)r5_core->rsc_tbl_va);
-> +	r5_core->rsc_tbl_va = NULL;
-
-This is puzzling...  What happens to ->tsc_tbl_va when the remote processor is
-re-attached?  
-
-I will not look at the SRAM part.  Please re-submit when we are done with the
-attach/detach feature.
-
-Thanks,
-Mathieu
-
-> +
-> +	return 0;
-> +}
-> +
->  static const struct rproc_ops zynqmp_r5_rproc_ops = {
->  	.prepare	= zynqmp_r5_rproc_prepare,
->  	.unprepare	= zynqmp_r5_rproc_unprepare,
-> @@ -673,6 +816,9 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
->  	.sanity_check	= rproc_elf_sanity_check,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
->  	.kick		= zynqmp_r5_rproc_kick,
-> +	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
-> +	.attach		= zynqmp_r5_attach,
-> +	.detach		= zynqmp_r5_detach,
->  };
->  
->  /**
-> @@ -723,6 +869,16 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
->  		goto free_rproc;
->  	}
->  
-> +	/*
-> +	 * Move rproc state to DETACHED to give one time opportunity to attach
-> +	 * if firmware is already available in the memory. This can happen if
-> +	 * firmware is loaded via debugger or by any other agent in the system.
-> +	 * If firmware isn't available in the memory and resource table isn't found,
-> +	 * then rproc state stay OFFLINE.
-> +	 */
-> +	if (!zynqmp_r5_get_rsc_table_va(r5_core))
-> +		r5_rproc->state = RPROC_DETACHED;
-> +
->  	r5_core->rproc = r5_rproc;
->  	return r5_core;
->  
-> -- 
-> 2.25.1
-> 
+Bye
+-- 
+Michal Hocko
+SUSE Labs
 
