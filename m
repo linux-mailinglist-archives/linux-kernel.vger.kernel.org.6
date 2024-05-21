@@ -1,229 +1,156 @@
-Return-Path: <linux-kernel+bounces-184817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF838CAC70
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C388CAC74
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 418DC1C218C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:46:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C3431C2186C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3BE6EB5D;
-	Tue, 21 May 2024 10:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lNic/U2b"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A126D1AE;
+	Tue, 21 May 2024 10:47:06 +0000 (UTC)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6839F45BE4;
-	Tue, 21 May 2024 10:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F0645BE4;
+	Tue, 21 May 2024 10:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716288383; cv=none; b=i81m0pEl/0GIEii7JQOeu4bWPiRHuPF4aBnJ3COR3xFWSGM5sbZNXjdwR9tsew3PqOdTkXAdoPTzbuJmTCqhyXyIotsE964f2T8HuUx0BrxJIUswkdNdoLn4vOQ1SkWRhOOw/rkFBZGz0sNbS4Bo7iG5a0+zxqX6rfLWVjdECDE=
+	t=1716288425; cv=none; b=HRehXNVGFczj7pzyxnGTGlOL9ec6fzfkBYUEdIK3QpantXcAqsCCT1OUnzUmR81wPBxYLdOa/xqzO6PC2CBryLsFXcRO73h0Iv18XNrpTGJxw2rQHr/EtSONOAB7GAhWUIjtxowN/wBIQ35wBWIA+s/pcRL8W0VQCY/M/j6KKe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716288383; c=relaxed/simple;
-	bh=bDGTQIbNuU6qDiiUTtPdQm0ymaZxO0OTHbB+zw8NqVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bZm1aKjz19FHSYms5SMiyxX5oL9fwPZR/qRePPzeFxc7H0ocSyT4Agbjf0Yg0780kj1fglAWMSCq80pCMpW9HxmS3WjOdRd33Czx56vm7tFr8s34Plb+cACzs8ZGw45pQ+2jVS5VLfc1yolo2nPDfTT9mKCNZDp+8pUjnH0i32k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lNic/U2b; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716288381; x=1747824381;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bDGTQIbNuU6qDiiUTtPdQm0ymaZxO0OTHbB+zw8NqVs=;
-  b=lNic/U2bIh3W1BGq3Sbo63J2h64vOHEzmz0fsSz55IUYps7pYI7tFBKW
-   01CB0PxL44f3h+Oe5Zga3rJILd6F7mfWkKxEi25BiWG7kI0dLxDGizEeS
-   6ouOw03icNM9Ae2cNPzZMOgTDvnRTSa+g3L1HtQiQqVX8ljUdUzFYisd9
-   V71dVuP0YBxNPCp8uaKXz4B03I0B2cAQI91YjugjGavXsZGzyzGDk9eGf
-   LlB3zrjFRFZpnL5w+BFxrL6lWQkiD+1GCSBS/HNBKaIYj039qqkAHy3LE
-   JN3GclAnvHu1hi5eXZTBZJcFSRvyUDSlxis0oj+HnN46gDmffwOnm4Tm6
-   Q==;
-X-CSE-ConnectionGUID: 5tnv7gY8R2KkH73jmozXrQ==
-X-CSE-MsgGUID: HsMjbi/JT2iO20DId9ItEA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="11629505"
-X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="11629505"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 03:46:21 -0700
-X-CSE-ConnectionGUID: Ec61e1E7SDOnvg/9Ah+dqA==
-X-CSE-MsgGUID: mj2BKImBTxWfm+JEvhDBOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="32991818"
-Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 21 May 2024 03:46:18 -0700
-Received: from kbuild by 108735ec233b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s9N0Z-0006I4-2d;
-	Tue, 21 May 2024 10:46:15 +0000
-Date: Tue, 21 May 2024 18:45:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sameer Pujar <spujar@nvidia.com>, broonie@kernel.org,
-	linux-sound@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
-	thierry.reding@gmail.com, jonathanh@nvidia.com, mkumard@nvidia.com,
-	spujar@nvidia.com
-Subject: Re: [PATCH 2/2] ASoC: tegra: I2S client convert formats handling
-Message-ID: <202405211805.UMAdiH0d-lkp@intel.com>
-References: <20240520114902.1663695-3-spujar@nvidia.com>
+	s=arc-20240116; t=1716288425; c=relaxed/simple;
+	bh=hJS2RR8aVknN6ThkqUFI7laRMezAFpVk76pzBbaVOcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p/8tZDXujVw81bgHb5UIZ9V6aqlJDYO60lkMBEZqIOTk/d4NBMm8qok4UTVG9JoKLhWhb4K3ZUwkXOeRTl9QOiMJJKlf8iQIyJdXnrxGbrWyIYe0GEp5dLzQWo6q00ltHV9n35ATf5CsyVYRQgl+zy2Zf4Epf/U1cc3z3a8Zwvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4202ca70287so21794415e9.3;
+        Tue, 21 May 2024 03:47:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716288422; x=1716893222;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wuaVmJGr5Kq6ft/XK2PUm0gpxXEysYv+8xDN87xLZ7E=;
+        b=h3tb6RW64EgpMDcZUwTwPVPiO62lMzcRJ8k46CP6F7B760vJCnLmnVVL1MDCkO6530
+         bitKTeiBSQLq1SvQEmUVOQwyxy49+6/S5M/FKkO4BLeZwq2fvdC/qVOS4ULXsrnHDzje
+         21kJIJVawaEJGw7VPDhxnjzgirzc0PsTKuKaFEUbLeCH8CWmO0KvN6CKas4mUBdyjxbc
+         0z+2lfzIySOQVg7Y+IHDAjUM3GYfKJiULyRZGrGSNhMcmARJrBFe1a5gxxE49KTnpXtp
+         A1FYFrN9zfK/ZtsPR+CQjKnXQNIqZVyOXRMgwCilAZP64smZ6n4bSyIaPXzMjqRln6Ze
+         FDPw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8Jl32KHGwn9m9wbksjmh2L096VScE1W96stVu7gGzbfrN4IGfJRUsRkNW5sHrtjwoTqhRFepc/bOrqWoCU4yxjPaKadIVxTMK41KWa1EzS4DWoCfw7JfVKo+ibTQPlj/zslVZQ/o6CclO
+X-Gm-Message-State: AOJu0YyeWdjCHmS5mpRECEnfX7HlOJHPvoe4VNuoqxXRZSD6tpZWckAu
+	RnqprjPZNM4U9/wQuJyTcOJHyVYZkXdBIhIFdSR+RyYp3EiR/Q+hyPKSjg==
+X-Google-Smtp-Source: AGHT+IGq4zPt9iYC18BD3xfEUiPic9psp5wd0btkf+Q3CHOuhoyEWSRcJgUaqr4nwGDKBhisikTRcg==
+X-Received: by 2002:a05:600c:a02:b0:41f:d1e0:5ba9 with SMTP id 5b1f17b1804b1-41fead64487mr335747315e9.37.1716288422266;
+        Tue, 21 May 2024 03:47:02 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe9011sm458838635e9.7.2024.05.21.03.47.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 03:47:01 -0700 (PDT)
+Message-ID: <63a5a3c5-8362-4b93-a50e-10c9cdcffdd2@kernel.org>
+Date: Tue, 21 May 2024 12:47:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520114902.1663695-3-spujar@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: N_HDLC line discipline: Race condition
+To: Dianne Skoll <dianne@skoll.ca>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20240424173114.035ddd7b@gato.skoll.ca>
+ <20240425140127.6504ade1@gato.skoll.ca>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20240425140127.6504ade1@gato.skoll.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Sameer,
+On 25. 04. 24, 20:01, Dianne Skoll wrote:
+> Hi,
+> 
+> I have (somewhat) narrowed down when the kernel bug appeared by installing
+> Debian 10, 11 and 12 in KVM virtual machines.
+> 
+> The bug is NOT present in Debian 10, kernel version 4.19.67.
+> 
+> The bug IS present in Debian 11, kernel version 5.10.209
+> 
+> The bug IS present in Debian 12, kernel version 6.1.85
+> 
+> So I guess it was introduced sometime between 4.19.67 and 5.10.209.  I'll
+> take a look to see if I can do a git bisect.
+> 
+> [To recap, the bug is that the N_HDLC line discipline sometimes
+> coalesces two write()s so you get them both back in a single read()
+> which is contrary to what it's supposed to do... preserve the write
+> boundaries as individual frames.]
 
-kernel test robot noticed the following build warnings:
+I believe it is a correct behavior after all. As you use pty for 
+testing, the "framing" is lost during the pty-to-pty pass on the flush 
+to ldisc path (receive_buf()).
 
-[auto build test WARNING on broonie-sound/for-next]
-[also build test WARNING on tegra/for-next tiwai-sound/for-next tiwai-sound/for-linus linus/master v6.9 next-20240521]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[ T1056] n_hdlc_send_frames: ptm2 sending frame 0000000081e69927, count=6
+[ T1056]        frame 0000000081e69927 completed
+[ T1056] n_hdlc_send_frames: ptm2 sending frame 00000000576db119, count=5
+[ T1056]        frame 00000000576db119 completed
+[  T123] n_hdlc_tty_receive: pts2 buf=00000000a616a2be count=11
+[ T1056] n_hdlc_tty_read: pts2 rbuf=00000000a616a2be 
+kbuf=000000004abc3c35 offset=0 ret=11
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sameer-Pujar/ASoC-simple-card-utils-Split-simple_fixup_sample_fmt-func/20240520-195311
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-patch link:    https://lore.kernel.org/r/20240520114902.1663695-3-spujar%40nvidia.com
-patch subject: [PATCH 2/2] ASoC: tegra: I2S client convert formats handling
-config: arm-randconfig-r122-20240521 (https://download.01.org/0day-ci/archive/20240521/202405211805.UMAdiH0d-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce: (https://download.01.org/0day-ci/archive/20240521/202405211805.UMAdiH0d-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405211805.UMAdiH0d-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> sound/soc/tegra/tegra210_i2s.c:640:23: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int sample_format @@     got restricted snd_pcm_format_t @@
-   sound/soc/tegra/tegra210_i2s.c:640:23: sparse:     expected unsigned int sample_format
-   sound/soc/tegra/tegra210_i2s.c:640:23: sparse:     got restricted snd_pcm_format_t
->> sound/soc/tegra/tegra210_i2s.c:649:14: sparse: sparse: restricted snd_pcm_format_t degrades to integer
-   sound/soc/tegra/tegra210_i2s.c:654:14: sparse: sparse: restricted snd_pcm_format_t degrades to integer
-   sound/soc/tegra/tegra210_i2s.c:659:14: sparse: sparse: restricted snd_pcm_format_t degrades to integer
-
-vim +640 sound/soc/tegra/tegra210_i2s.c
-
-   599	
-   600	static int tegra210_i2s_hw_params(struct snd_pcm_substream *substream,
-   601					  struct snd_pcm_hw_params *params,
-   602					  struct snd_soc_dai *dai)
-   603	{
-   604		struct device *dev = dai->dev;
-   605		struct tegra210_i2s *i2s = snd_soc_dai_get_drvdata(dai);
-   606		unsigned int sample_size, channels, srate, val, reg, path;
-   607		struct tegra_cif_conf cif_conf;
-   608		unsigned int sample_format;
-   609	
-   610		memset(&cif_conf, 0, sizeof(struct tegra_cif_conf));
-   611	
-   612		channels = params_channels(params);
-   613		if (channels < 1) {
-   614			dev_err(dev, "invalid I2S %d channel configuration\n",
-   615				channels);
-   616			return -EINVAL;
-   617		}
-   618	
-   619		cif_conf.audio_ch = channels;
-   620		cif_conf.client_ch = channels;
-   621		if (i2s->client_channels)
-   622			cif_conf.client_ch = i2s->client_channels;
-   623	
-   624		/* AHUB CIF Audio bits configs */
-   625		switch (params_format(params)) {
-   626		case SNDRV_PCM_FORMAT_S8:
-   627			cif_conf.audio_bits = TEGRA_ACIF_BITS_8;
-   628			break;
-   629		case SNDRV_PCM_FORMAT_S16_LE:
-   630			cif_conf.audio_bits = TEGRA_ACIF_BITS_16;
-   631			break;
-   632		case SNDRV_PCM_FORMAT_S32_LE:
-   633			cif_conf.audio_bits = TEGRA_ACIF_BITS_32;
-   634			break;
-   635		default:
-   636			dev_err(dev, "unsupported params audio bit format!\n");
-   637			return -EOPNOTSUPP;
-   638		}
-   639	
- > 640		sample_format = params_format(params);
-   641		if (i2s->client_sample_format >= 0)
-   642			sample_format = i2s->client_sample_format;
-   643	
-   644		/*
-   645		 * Format of the I2S for sending/receiving the audio
-   646		 * to/from external device.
-   647		 */
-   648		switch (sample_format) {
- > 649		case SNDRV_PCM_FORMAT_S8:
-   650			val = I2S_BITS_8;
-   651			sample_size = 8;
-   652			cif_conf.client_bits = TEGRA_ACIF_BITS_8;
-   653			break;
-   654		case SNDRV_PCM_FORMAT_S16_LE:
-   655			val = I2S_BITS_16;
-   656			sample_size = 16;
-   657			cif_conf.client_bits = TEGRA_ACIF_BITS_16;
-   658			break;
-   659		case SNDRV_PCM_FORMAT_S32_LE:
-   660			val = I2S_BITS_32;
-   661			sample_size = 32;
-   662			cif_conf.client_bits = TEGRA_ACIF_BITS_32;
-   663			break;
-   664		default:
-   665			dev_err(dev, "unsupported client bit format!\n");
-   666			return -EOPNOTSUPP;
-   667		}
-   668	
-   669		/* Program sample size */
-   670		regmap_update_bits(i2s->regmap, TEGRA210_I2S_CTRL,
-   671				   I2S_CTRL_BIT_SIZE_MASK, val);
-   672	
-   673		srate = params_rate(params);
-   674	
-   675		/* For playback I2S RX-CIF and for capture TX-CIF is used */
-   676		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-   677			path = I2S_RX_PATH;
-   678		else
-   679			path = I2S_TX_PATH;
-   680	
-   681		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-   682			unsigned int max_th;
-   683	
-   684			/* FIFO threshold in terms of frames */
-   685			max_th = (I2S_RX_FIFO_DEPTH / cif_conf.audio_ch) - 1;
-   686	
-   687			if (i2s->rx_fifo_th > max_th)
-   688				i2s->rx_fifo_th = max_th;
-   689	
-   690			cif_conf.threshold = i2s->rx_fifo_th;
-   691	
-   692			reg = TEGRA210_I2S_RX_CIF_CTRL;
-   693		} else {
-   694			reg = TEGRA210_I2S_TX_CIF_CTRL;
-   695		}
-   696	
-   697		cif_conf.mono_conv = i2s->mono_to_stereo[path];
-   698		cif_conf.stereo_conv = i2s->stereo_to_mono[path];
-   699	
-   700		tegra_set_cif(i2s->regmap, reg, &cif_conf);
-   701	
-   702		return tegra210_i2s_set_timing_params(dev, sample_size, srate,
-   703						      cif_conf.client_ch);
-   704	}
-   705	
-
+thanks,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+js
+suse labs
+
 
