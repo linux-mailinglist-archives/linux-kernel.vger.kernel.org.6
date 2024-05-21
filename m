@@ -1,116 +1,124 @@
-Return-Path: <linux-kernel+bounces-185349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF748CB3CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:47:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 627E58CB3D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EFE9B2106F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:47:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDD10B22B45
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484F1148820;
-	Tue, 21 May 2024 18:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6012D14900F;
+	Tue, 21 May 2024 18:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="QViIUyaS"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="ayD/YF31"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848591FBB;
-	Tue, 21 May 2024 18:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C85926AF5
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716317220; cv=none; b=G6r1r8wEXXSjcDSnaqPJwL3Ztvau8ELi/q4lJgPVmwLRC6jOjlq5tmEP9/Uq1DjcIBClX7kQ5NcSTK1HX3bMIYTaBb4d4um1Sf304gv9BufUgtfzvCmLZI/y843Ub45OP7+0nYC4tHrquCY8jlNQYS7woPp6NXw3Odg05nPl0Uw=
+	t=1716317293; cv=none; b=rxYX/mcHRM9BR4K5wptrOWWYwqBOMXt0HxX3VcjeBwlFRfB8SmkuFc0AB7Y7lvOxFKFVKjyge+KSeCDZJYThoU5nodzpP4v6BWXnGCoOORVFQ2gXOroAxvZYDRRbrV0+9LedkLyvOti1gcMyfqRMWUi5J2wGfpnLKgMPzqjmR7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716317220; c=relaxed/simple;
-	bh=XqxKOHttdZ46eK91LTby3jcYvDTPEtz6AIEvPA04bec=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RCZL2fD6tStyg5mWU1MrKARDuNO+jj09RPtEJifUY3X98IP0QGaNjOe7iOKYMosHook+ixhy0sKLMzRRe0asbis8/H98ubVV4oO4Yi0pEiXP1ukQ8sCiSFMjLLNmfZEo/Plc2h4HIJaMqiNr26q27PMOmVwRlf4W/bJLY/Bua94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=QViIUyaS; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Y/5UVdvZ1lmITZcH56jVLeBbXXMJ/x+KMGtg8QR5gjY=; t=1716317216; x=1716922016; 
-	b=QViIUyaS5g6cq8jZ5a/2fvkWiF9aPY3NhmBPcJT79gYbWliHfzldPeb5SaE77ubNshtmy/0sjQq
-	b64/RFVed8TLdLUFDgcdnUhmFeja3+w/oKty+K61hsn5WVvjWjyjua9dxuZAkqTbJ8kB9CxZujkyF
-	5kfDWG/tT/O0xqWqWSkSeX6CWyasiT9s9bKENiuCju2yjrsBNUojQ+8QnJa85v4bV6nhU1OT4+3Ph
-	2E7qIYrRDEVYg4Mo0H+X+kib7qHNvcLCb5ohmbRPLo2ol7W7S0aXsvi5DHEvWtFtXAPQwnUwtCmO8
-	nEwcmqWzWeWZMcb4Lk1hDJiwDWv/BBoH9Pjg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.97)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1s9UVh-00000000hEi-0uCa; Tue, 21 May 2024 20:46:53 +0200
-Received: from p57bd9a40.dip0.t-ipconnect.de ([87.189.154.64] helo=z6.fritz.box)
-          by inpost2.zedat.fu-berlin.de (Exim 4.97)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1s9UVh-00000001cSH-020X; Tue, 21 May 2024 20:46:53 +0200
-Received: from glaubitz by z6.fritz.box with local (Exim 4.96)
-	(envelope-from <glaubitz@physik.fu-berlin.de>)
-	id 1s9UVg-007rnG-2B;
-	Tue, 21 May 2024 20:46:52 +0200
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: mattst88@gmail.com
-Cc: keescook@chromium.org,
-	linux-alpha@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Regression bisected to f2f84b05e02b (bug: consolidate warn_slowpath_fmt() usage)
-Date: Tue, 21 May 2024 20:46:52 +0200
-Message-Id: <20240521184652.1875074-1-glaubitz@physik.fu-berlin.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20200602024804.GA3776630@p50-ethernet.mattst88.com>
-References: <20200602024804.GA3776630@p50-ethernet.mattst88.com>
+	s=arc-20240116; t=1716317293; c=relaxed/simple;
+	bh=LNVqPFrD15mPoYptpTPAV/FgXo4EuDLhS2IHIgpVvVw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Zk8XxrQ6eS2WW+srNq01ZDbVCcyAaiEZFjsQ3YGgBnGTatIH/tcjyqypybCzJYkcVES+3BonM6LvIFwj7GXHs0C9b5sCskrLw0GF0fidrcbM142AjJwUV/tF4DWlfvQKfbC4zFpTIKZEAoHgyN3QQppVzK8WuchxGyGSkarnjR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=ayD/YF31; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59a0e4b773so878529266b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1716317290; x=1716922090; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TBBomwXn0DM772nuekwi6UD6QZQUxUGf+kbYusNDyPI=;
+        b=ayD/YF3115BrqUUzwEzRCv6B4c/SjgTh1R84kInti8wY+nmDiIDNrre4Jq/dQJAv6/
+         Dux5BQh6TCKEejQY4P0Hdd2fezHhlpFVqblIHl/MVnWRyWEERJuRQwbwXik90cgi56h9
+         Pia0xrXmYECixJi+c7ZY4AB4qah089tZKhoWZ6p/tlUiV9QF8QBU+gyPiBpGuVHrfrzq
+         /7Jo89p9nXQyrzSbIevd4X8mfWo6z1+wDMJVBIZFw6NhgPAdqJoizd0KUW5lrBNNIWAi
+         Q6yjsWfzKNVO/Apoe4ZFM64ifyfxc/+QmXhAODbmoq5qh6ouB3pYBVg5qvaipHcgOTDM
+         fLwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716317290; x=1716922090;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TBBomwXn0DM772nuekwi6UD6QZQUxUGf+kbYusNDyPI=;
+        b=iBk/nHPx4uIi0qh3iYHDzJj97xcqBoECuFI7AF/ZmtdzvJjIYK1gHi4u6xMB99seEG
+         ZnzVI3B47iTdG2cNT5X2htBbTCqbLgskZ78UQELhpNNQP0hTGMDVx6rQ3TGH3k1K8mbo
+         E6M4BBlG5wbJPswLQd5YMg8A3+JzLaIwYkp/LcZq1sOhWhDRL+NWutcUfc178qUgTnFX
+         n+fddvppI68XGPpouEMvpt5DRzv9BKjbIrq6J4FVlwzN1M6L3iEp/UxT3sKIBvE9o2jc
+         ymBLm8nmUgZttmWvMdPYHGh+62Qq4qz/t5A2SpNbjaHSwMsN2jpB8kfdhYcO5VuQQdRy
+         U33g==
+X-Forwarded-Encrypted: i=1; AJvYcCVqydwZ2kEvzsCxc5mysRsOD/F5H9Dir8EC/IeJqm/rnAOEkUmf+2Xv49o/vmgCd1ykPoDry7T50TNkIkvr5cwMub/IT7vB7bU8ekBP
+X-Gm-Message-State: AOJu0YwBahsum8TUl7xMJVgg222UQyQWvPlqm1Gfx8V8AN8W3+Jq3uaD
+	k5qcN4gT38kBXFnOFUpZ8phVGmLM6mTPR2ML/F+YHF18YRiD8sSgW2CAW7FE/5E=
+X-Google-Smtp-Source: AGHT+IGwzI5vKnF5RscLl5qzclGErCciKuC7xjKohu60VtKLxkJ4nTDhs+enXEqJCFYG+J00QOQiTQ==
+X-Received: by 2002:a17:906:81d8:b0:a59:b784:ced5 with SMTP id a640c23a62f3a-a5a2d6797f9mr1904402666b.67.1716317290430;
+        Tue, 21 May 2024 11:48:10 -0700 (PDT)
+Received: from cloudflare.com ([2a09:bac5:5063:2387::38a:3a])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a7b53fc8fsm1049418566b.38.2024.05.21.11.48.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 11:48:09 -0700 (PDT)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: syzbot <syzbot+ec941d6e24f633a59172@syzkaller.appspotmail.com>
+Cc: andrii@kernel.org,  ast@kernel.org,  bpf@vger.kernel.org,
+  daniel@iogearbox.net,  davem@davemloft.net,  edumazet@google.com,
+  john.fastabend@gmail.com,  kuba@kernel.org,
+  linux-kernel@vger.kernel.org,  netdev@vger.kernel.org,
+  pabeni@redhat.com,  syzkaller-bugs@googlegroups.com,
+  xrivendell7@gmail.com
+Subject: Re: [syzbot] [net?] [bpf?] possible deadlock in
+ sock_hash_delete_elem (2)
+In-Reply-To: <000000000000d0b87206170dd88f@google.com> (syzbot's message of
+	"Fri, 26 Apr 2024 23:08:19 -0700")
+References: <000000000000d0b87206170dd88f@google.com>
+User-Agent: mu4e 1.12.4; emacs 29.1
+Date: Tue, 21 May 2024 20:48:08 +0200
+Message-ID: <87jzjnxaqf.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain
 
-Hi,
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git master
 
-Replacing the calls to raw_smp_processor_id() in __warn() with just "0" fixes the problem for me:
-
-diff --git a/kernel/panic.c b/kernel/panic.c
-index 8bff183d6180..12f6cea6b8b0 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -671,11 +671,11 @@ void __warn(const char *file, int line, void *caller, unsigned taint,
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 77da1f438bec..f6e694457886 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -8882,7 +8882,8 @@ static bool may_update_sockmap(struct bpf_verifier_env *env, int func_id)
+ 	enum bpf_attach_type eatype = env->prog->expected_attach_type;
+ 	enum bpf_prog_type type = resolve_prog_type(env->prog);
  
-        if (file)
-                pr_warn("WARNING: CPU: %d PID: %d at %s:%d %pS\n",
--                       raw_smp_processor_id(), current->pid, file, line,
-+                       0, current->pid, file, line,
-                        caller);
-        else
-                pr_warn("WARNING: CPU: %d PID: %d at %pS\n",
--                       raw_smp_processor_id(), current->pid, caller);
-+                       0, current->pid, caller);
+-	if (func_id != BPF_FUNC_map_update_elem)
++	if (func_id != BPF_FUNC_map_update_elem &&
++	    func_id != BPF_FUNC_map_delete_elem)
+ 		return false;
  
- #pragma GCC diagnostic push
- #ifndef __clang__
-
-So, I assume the problem is that SMP support is not fully initialized at this
-point yet such that raw_smp_processor_id() causes the zero pointer dereference.
-
-Adrian
-
--- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+ 	/* It's not possible to get access to a locked struct sock in these
+@@ -8988,7 +8989,6 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
+ 	case BPF_MAP_TYPE_SOCKMAP:
+ 		if (func_id != BPF_FUNC_sk_redirect_map &&
+ 		    func_id != BPF_FUNC_sock_map_update &&
+-		    func_id != BPF_FUNC_map_delete_elem &&
+ 		    func_id != BPF_FUNC_msg_redirect_map &&
+ 		    func_id != BPF_FUNC_sk_select_reuseport &&
+ 		    func_id != BPF_FUNC_map_lookup_elem &&
+@@ -8998,7 +8998,6 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
+ 	case BPF_MAP_TYPE_SOCKHASH:
+ 		if (func_id != BPF_FUNC_sk_redirect_hash &&
+ 		    func_id != BPF_FUNC_sock_hash_update &&
+-		    func_id != BPF_FUNC_map_delete_elem &&
+ 		    func_id != BPF_FUNC_msg_redirect_hash &&
+ 		    func_id != BPF_FUNC_sk_select_reuseport &&
+ 		    func_id != BPF_FUNC_map_lookup_elem &&
 
