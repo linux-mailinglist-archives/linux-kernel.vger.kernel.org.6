@@ -1,100 +1,98 @@
-Return-Path: <linux-kernel+bounces-184586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85F48CA936
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:44:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFEE58CA953
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843CC282CBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:44:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FD9F1F23471
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E11351C52;
-	Tue, 21 May 2024 07:44:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEFC5466C;
-	Tue, 21 May 2024 07:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E6F5337D;
+	Tue, 21 May 2024 07:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="length tag value exceeds body size" (2048-bit key) header.d=unstable.cc header.i=a@unstable.cc header.b="n0Rr0caw"
+Received: from wilbur.contactoffice.com (wilbur.contactoffice.com [212.3.242.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B4F54BDB;
+	Tue, 21 May 2024 07:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.3.242.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716277463; cv=none; b=Z/9Fj3E3ekhV/8zSlzcb+zNbTx1p6iFx9AkwzdVxkQoa3n8esOIFJuuZBrqhZ9zWqa4aqZUFplvDtZKpMK+E3qLPzcvEtiDTs7/205vyw2395h22LX76YEQMXx4sqYiVbSHtJ4LnqMPQNXG7F/NSjgK1dDTDWW1TaGvO36kov7g=
+	t=1716277800; cv=none; b=b9fa944iDjhhJ6o09EG21BuY+8Fm1ivf8Prx5v58wb+dcHXOU2MrKltTntR5Hf1NhY44Z3CjUEEwwuWi2CfNXlD6naQItvDJHsUjncnE/NWHSLRjwd/qwAgw2kfGhniPWJMQnkBQFP+a7zsWszAx1uB67vTp/5BuIA9hnvFBXwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716277463; c=relaxed/simple;
-	bh=12ORrgVkQoBujtx3I4EyW1vH6oJF0P0A90rYX72bXiM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WqMb5k0OUZrRaeC/BlTu/wRnrCPZqtSEfgjMrBugdlm7WO3KOE+qMyzUQzE0COigqa79a1bmUJOvlgAhCIjT+cL6lw46WGWoa7PLZYv7x8PW78cuYKsFNtQSGqxDqLjuQVCJSjlmw6imwDOkLAFEoxCto2N1BCxUpaoc+0fV/Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B37CDA7;
-	Tue, 21 May 2024 00:44:43 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.16])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 73AD63F641;
-	Tue, 21 May 2024 00:44:16 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	shuah@kernel.org
-Cc: linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Anshuman.Khandual@arm.com,
-	sjayaram@akamai.com,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v2 0/3] Fixes for compaction_test
-Date: Tue, 21 May 2024 13:13:55 +0530
-Message-Id: <20240521074358.675031-1-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716277800; c=relaxed/simple;
+	bh=ngJA16RR/OPoMkf7Y90IPOnKzfACzKGIQnec9KB66OI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qg36nT1+X4FA65KElU04xqqrpghMhVJdyFgcgIbEAIW8J3G5UfPMVb6mZYU5CJjC+qcDS906NEFwWmgNHnuu/n9qWtwGTcYFaGXGkpaKyySeFs1rUCcf5aym2VbBh9cUaw7XM7HONRxHGxx9edlxazhPCprmX1inqEN0nP7dB9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unstable.cc; spf=pass smtp.mailfrom=unstable.cc; dkim=pass (2048-bit key) header.d=unstable.cc header.i=a@unstable.cc header.b=n0Rr0caw; arc=none smtp.client-ip=212.3.242.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unstable.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unstable.cc
+Received: from smtpauth2.co-bxl (smtpauth2.co-bxl [10.2.0.24])
+	by wilbur.contactoffice.com (Postfix) with ESMTP id 1C6E662B;
+	Tue, 21 May 2024 09:42:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1716277352;
+	s=20220809-q8oc; d=unstable.cc; i=a@unstable.cc;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	l=806; bh=bq5w2dOXUmXaYoJcODSZnEnefduxYXuMwA2eq9OQaUA=;
+	b=n0Rr0cawN+9kwK/ld4MhADhhB/ovjNsZrbSNOP/1cmqTKmB9LLbYztcKxx/iG45B
+	8BItVLyL5olFXnSfgXZ/OlPPqLbm2n3lWooU97HUgdBI6twWM1pTtD/6ecg5QumlISP
+	Lmkra4a2jae/+hlsnTg3RvdHCo8Vg1FjDy+jxdqhBV9QSPFQ+KQbWxnsT1VbDNg60y1
+	7VsQV4ymKsGkCn+u1vgGl93f3DXaWhZp3rfzc1xeOtbgA4iEvOx1fhqqrRxWdV5Hypw
+	hvI9iGdsGpg1IseQjzzHfRmHCvMafwlEVhbMYZr5bflQO/uhDvOt/GDwqkKYOuF9eOa
+	98nLFdfUNw==
+Received: by smtp.mailfence.com with ESMTPSA ; Tue, 21 May 2024 09:42:30 +0200 (CEST)
+Message-ID: <cef03d6c-7be8-4527-b38b-eadca2789f9b@unstable.cc>
+Date: Tue, 21 May 2024 09:43:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: cfg80211: Lock wiphy in cfg80211_get_station
+To: Remi Pommarel <repk@triplefau.lt>,
+ Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, b.a.t.m.a.n@lists.open-mesh.org,
+ linux-kernel@vger.kernel.org
+References: <983b24a6a176e0800c01aedcd74480d9b551cb13.1716046653.git.repk@triplefau.lt>
+Content-Language: en-US
+From: Antonio Quartulli <a@unstable.cc>
+In-Reply-To: <983b24a6a176e0800c01aedcd74480d9b551cb13.1716046653.git.repk@triplefau.lt>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-ContactOffice-Account: com:375058688
 
-The compaction_test memory selftest introduces fragmentation in memory
-and then tries to allocate as many hugepages as possible. This series
-addresses some problems.
+Hi,
 
-On Aarch64, if nr_hugepages == 0, then the test trivially succeeds since
-compaction_index becomes 0, which is less than 3, due to no division by
-zero exception being raised. We fix that by checking for division by
-zero.
+On 18/05/2024 17:50, Remi Pommarel wrote:
+> Wiphy should be locked before calling rdev_get_station() (see lockdep
+> assert in ieee80211_get_station()).
 
-Secondly, correctly set the number of hugepages to zero before trying
-to set a large number of them.
+Adding the lock is fine as nowadays it is taken in pre_doit and released 
+in post_doit (with some exceptions). Therefore when invoking 
+get_station from a side path the lock should be taken too.
 
-Now, consider a situation in which, at the start of the test, a non-zero
-number of hugepages have been already set (while running the entire
-selftests/mm suite, or manually by the admin). The test operates on 80%
-of memory to avoid OOM-killer invocation, and because some memory is
-already blocked by hugepages, it would increase the chance of OOM-killing.
-Also, since mem_free used in check_compaction() is the value before we
-set nr_hugepages to zero, the chance that the compaction_index will
-be small is very high if the preset nr_hugepages was high, leading to a
-bogus test success.
+It was actually a05829a7222e9d10c416dd2dbbf3929fe6646b89 that introduced 
+this requirement AFAICS.
 
-This series applies on top of the stable 6.9 kernel.
+> 
+> This fixes the following kernel NULL dereference:
 
-Changes in v2:
-- Handle an unsigned long number of hugepages
-- Combine the first patch (previously standalone) with this series
+As already said by Johannes, I am not sure it truly fixes this NULL 
+dereference though.
 
-Link to v1:
-https://lore.kernel.org/all/20240513082842.4117782-1-dev.jain@arm.com/
-https://lore.kernel.org/all/20240515093633.54814-1-dev.jain@arm.com/
+Have you checked where in ath10k_sta_statistics this is exactly 
+happening? Do you think some sta was partly released and thus fields 
+were NULLified?
 
-Dev Jain (3):
-  selftests/mm: compaction_test: Fix bogus test success on Aarch64
-  selftests/mm: compaction_test: Fix incorrect write of zero to
-    nr_hugepages
-  selftests/mm: compaction_test: Fix bogus test success and reduce
-    probability of OOM-killer invocation
+Regards,
 
- tools/testing/selftests/mm/compaction_test.c | 85 ++++++++++++++------
- 1 file changed, 60 insertions(+), 25 deletions(-)
 
 -- 
-2.34.1
-
+Antonio Quartulli
 
