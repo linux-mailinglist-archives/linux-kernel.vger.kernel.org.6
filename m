@@ -1,354 +1,260 @@
-Return-Path: <linux-kernel+bounces-185017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316F08CAF6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:31:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706D78CAF94
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B47051F215AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:31:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBA111F226EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820307F48A;
-	Tue, 21 May 2024 13:30:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3291B7F7FC;
-	Tue, 21 May 2024 13:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC607EF12;
+	Tue, 21 May 2024 13:43:09 +0000 (UTC)
+Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490677F46B;
+	Tue, 21 May 2024 13:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716298246; cv=none; b=tek6jurWsLGq12pOb62eEDVrSRZtKSpCPa8lUfUfF88R0gHKGfhOZdihsCl8A16I3ZpMK9Y0Y/Y/wOWn0i4aT9WCBcNe0al8uZ067sMD6cAXOUxTnJj585TNOrOn8ClPGOxIsMqWqVOWst4wVX+qRoWrJVh72amZVJtxmgSwMiE=
+	t=1716298988; cv=none; b=tVMXjhKjIzIzarKsRVNaIW4luU/qaEKOaGgEuRSbVMg5t20akBTvibiMrmLIGg/FTV74WmjHap99eyvoZAdslP3D1FoPZpbmzWu/SwGc/jHkYxA8eNBfgK94qlxLqfPqtUOSYQ98S7JYJ8MeNbRxDFW9XFzgATFty3XQmzjLaks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716298246; c=relaxed/simple;
-	bh=v13Dt602tJnaqyKpadsMo9w6iuh3ZNfEnTiEaz+kZIw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H6s6xlrL7n9F4cS+ARJ4kX5dxV0Qz0eqSexhZ3mMeSY8PvjZovHClJ25WprQgcboC9Wwvzmjza2vvrUidr+aJzmDnCYmjz/sh4rJgDwhdYIEd0BskV5uOr11GBXbUnH93FTihuV8ONx15FwQU6DPCS4OnRwnSYo63xJBGkeMSJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE0D6FEC;
-	Tue, 21 May 2024 06:31:08 -0700 (PDT)
-Received: from e126817.cambridge.arm.com (e126817.cambridge.arm.com [10.2.3.5])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2C2AF3F641;
-	Tue, 21 May 2024 06:30:43 -0700 (PDT)
-From: Ben Gainey <ben.gainey@arm.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org
-Cc: james.clark@arm.com,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ben Gainey <ben.gainey@arm.com>
-Subject: [PATCH v6 4/4] tools/perf: Allow inherit + PERF_SAMPLE_READ when opening events
-Date: Tue, 21 May 2024 14:30:29 +0100
-Message-ID: <20240521133029.83654-5-ben.gainey@arm.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240521133029.83654-1-ben.gainey@arm.com>
-References: <20240521133029.83654-1-ben.gainey@arm.com>
+	s=arc-20240116; t=1716298988; c=relaxed/simple;
+	bh=zjB8v+NoVOfwtkTTGvRVzO2+JLMrRbv6D0wkhQKyrv0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TR2wMQ+K8g/IQNOkiSYHHM4Kb2qIOhWAXVi4eBowQVgsBTzHF4sjUUhGb0fMeV6fknrwmxVOzILQb3KoZ62svVFjWTPuF1PFHkYvIRvsk9EWXemaTgTFALAvyfosDgDTvPEsfCXNavTrZUIJDAm1JQOK06OWWWI/9YrbIhTgAYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
+Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
+	by unicorn.mansr.com (Postfix) with ESMTPS id 5E1C915362;
+	Tue, 21 May 2024 14:35:47 +0100 (BST)
+Received: by raven.mansr.com (Postfix, from userid 51770)
+	id 4E7CB219E4D; Tue, 21 May 2024 14:35:47 +0100 (BST)
+From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To: Frank Oltmanns <frank@oltmanns.dev>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Guido
+ =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>, Purism Kernel Team
+ <kernel@puri.sm>, Ondrej
+ Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>, Jessica
+ Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and
+ maximum rate
+In-Reply-To: <20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
+	(Frank Oltmanns's message of "Sun, 10 Mar 2024 14:21:11 +0100")
+References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
+	<20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
+Date: Tue, 21 May 2024 14:35:47 +0100
+Message-ID: <yw1xo78z8ez0.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.3 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-The tool will now default to this new mode if the user specifies a
-sampling group when not in system-wide mode, and when --no-inherit
-is not specified.
+Frank Oltmanns <frank@oltmanns.dev> writes:
 
-This change updates evsel to allow the combination of inherit
-and PERF_SAMPLE_READ.
+> The Allwinner SoC's typically have an upper and lower limit for their
+> clocks' rates. Up until now, support for that has been implemented
+> separately for each clock type.
+>
+> Implement that functionality in the sunxi-ng's common part making use of
+> the CCF rate liming capabilities, so that it is available for all clock
+> types.
+>
+> Suggested-by: Maxime Ripard <mripard@kernel.org>
+> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> Cc: stable@vger.kernel.org
+> ---
+>  drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu_common.h |  3 +++
+>  2 files changed, 22 insertions(+)
 
-A fallback is implemented for kernel versions where this feature is not
-supported.
+This just landed in 6.6 stable, and it broke HDMI output on an A20 based
+device, the clocks ending up all wrong as seen in this diff of
+/sys/kernel/debug/clk/clk_summary:
 
-Signed-off-by: Ben Gainey <ben.gainey@arm.com>
----
- tools/perf/tests/attr/README                  |  2 +
- .../tests/attr/test-record-group-sampling     | 39 ------------
- .../tests/attr/test-record-group-sampling1    | 50 ++++++++++++++++
- .../tests/attr/test-record-group-sampling2    | 60 +++++++++++++++++++
- tools/perf/tests/attr/test-record-group2      |  9 +--
- tools/perf/util/evsel.c                       | 19 +++++-
- tools/perf/util/evsel.h                       |  1 +
- 7 files changed, 135 insertions(+), 45 deletions(-)
- delete mode 100644 tools/perf/tests/attr/test-record-group-sampling
- create mode 100644 tools/perf/tests/attr/test-record-group-sampling1
- create mode 100644 tools/perf/tests/attr/test-record-group-sampling2
+@@ -70,16 +71,14 @@
+           apb1-i2c0                  0       0        0        24000000   =
+ 0=20=20=20
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20
+        pll-gpu                       0       0        0        1200000000 =
+ 0=20=20=20
+-       pll-video1                    3       3        1        159000000  =
+ 0=20=20=20
++       pll-video1                    2       2        1        159000000  =
+ 0=20=20=20
+           hdmi                       1       1        0        39750000   =
+ 0=20=20=20
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20
+           tcon0-ch1-sclk2            1       1        1        39750000   =
+ 0=20=20=20
+              tcon0-ch1-sclk1         1       1        1        39750000   =
+ 0=20=20=20
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20
+-          pll-video1-2x              1       1        0        318000000  =
+ 0=20=20=20
++          pll-video1-2x              0       0        0        318000000  =
+ 0=20=20=20
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20
+-             hdmi-tmds               2       2        0        39750000   =
+ 0=20=20=20
+-                hdmi-ddc             1       1        0        1987500    =
+ 0=20=20=20
+        pll-periph-base               2       2        0        1200000000 =
+ 0=20=20=20
+           mbus                       1       1        0        300000000  =
+ 0=20=20=20
+           pll-periph-sata            0       0        0        100000000  =
+ 0=20=20=20
+@@ -199,7 +198,7 @@
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20
+           ace                        0       0        0        384000000  =
+ 0=20=20=20
+           ve                         0       0        0        384000000  =
+ 0=20=20=20
+-       pll-video0                    4       4        2        297000000  =
+ 0=20=20=20
++       pll-video0                    5       5        2        297000000  =
+ 0=20=20=20
+           hdmi1                      0       0        0        297000000  =
+ 0=20=20=20
+           tcon1-ch1-sclk2            0       0        0        297000000  =
+ 0=20=20=20
+              tcon1-ch1-sclk1         0       0        0        297000000  =
+ 0=20=20=20
+@@ -222,8 +221,10 @@
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20
+           de-be0                     1       1        1        297000000  =
+ 0=20=20=20
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20
+-          pll-video0-2x              0       0        0        594000000  =
+ 0=20=20=20
++          pll-video0-2x              1       1        0        594000000  =
+ 0=20=20=20
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20
++             hdmi-tmds               2       2        0        594000000  =
+ 0=20=20=20
++                hdmi-ddc             1       1        0        29700000   =
+ 0=20=20=20
+        pll-audio-base                0       0        0        1500000    =
+ 0=20=20=20
+           pll-audio-8x               0       0        0        3000000    =
+ 0=20=20=20
+              i2s2                    0       0        0        3000000    =
+ 0=20=20=20
 
-diff --git a/tools/perf/tests/attr/README b/tools/perf/tests/attr/README
-index 4066fec7180a8..67c4ca76b85d5 100644
---- a/tools/perf/tests/attr/README
-+++ b/tools/perf/tests/attr/README
-@@ -51,6 +51,8 @@ Following tests are defined (with perf commands):
-   perf record --call-graph fp kill              (test-record-graph-fp-aarch64)
-   perf record -e '{cycles,instructions}' kill   (test-record-group1)
-   perf record -e '{cycles/period=1/,instructions/period=2/}:S' kill (test-record-group2)
-+  perf record -e '{cycles,cache-misses}:S' kill (test-record-group-sampling1)
-+  perf record -c 10000 -e '{cycles,cache-misses}:S' kill (test-record-group-sampling2)
-   perf record -D kill                           (test-record-no-delay)
-   perf record -i kill                           (test-record-no-inherit)
-   perf record -n kill                           (test-record-no-samples)
-diff --git a/tools/perf/tests/attr/test-record-group-sampling b/tools/perf/tests/attr/test-record-group-sampling
-deleted file mode 100644
-index 97e7e64a38f07..0000000000000
---- a/tools/perf/tests/attr/test-record-group-sampling
-+++ /dev/null
-@@ -1,39 +0,0 @@
--[config]
--command = record
--args    = --no-bpf-event -e '{cycles,cache-misses}:S' kill >/dev/null 2>&1
--ret     = 1
--
--[event-1:base-record]
--fd=1
--group_fd=-1
--sample_type=343
--read_format=12|28
--inherit=0
--
--[event-2:base-record]
--fd=2
--group_fd=1
--
--# cache-misses
--type=0
--config=3
--
--# default | PERF_SAMPLE_READ
--sample_type=343
--
--# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST
--read_format=12|28
--task=0
--mmap=0
--comm=0
--enable_on_exec=0
--disabled=0
--
--# inherit is disabled for group sampling
--inherit=0
--
--# sampling disabled
--sample_freq=0
--sample_period=0
--freq=0
--write_backward=0
-diff --git a/tools/perf/tests/attr/test-record-group-sampling1 b/tools/perf/tests/attr/test-record-group-sampling1
-new file mode 100644
-index 0000000000000..9b87306266329
---- /dev/null
-+++ b/tools/perf/tests/attr/test-record-group-sampling1
-@@ -0,0 +1,50 @@
-+[config]
-+command = record
-+args    = --no-bpf-event -e '{cycles,cache-misses}:S' kill >/dev/null 2>&1
-+ret     = 1
-+
-+[event-1:base-record]
-+fd=1
-+group_fd=-1
-+
-+# cycles
-+type=0
-+config=0
-+
-+# default | PERF_SAMPLE_READ
-+sample_type=343
-+
-+# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST | PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING
-+read_format=28|31
-+task=1
-+mmap=1
-+comm=1
-+enable_on_exec=1
-+disabled=1
-+
-+# inherit is enabled for group sampling
-+inherit=1
-+
-+[event-2:base-record]
-+fd=2
-+group_fd=1
-+
-+# cache-misses
-+type=0
-+config=3
-+
-+# default | PERF_SAMPLE_READ
-+sample_type=343
-+
-+# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST | PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING
-+read_format=28|31
-+task=0
-+mmap=0
-+comm=0
-+enable_on_exec=0
-+disabled=0
-+freq=0
-+
-+# inherit is enabled for group sampling
-+inherit=1
-+
-diff --git a/tools/perf/tests/attr/test-record-group-sampling2 b/tools/perf/tests/attr/test-record-group-sampling2
-new file mode 100644
-index 0000000000000..8e29fc13f6668
---- /dev/null
-+++ b/tools/perf/tests/attr/test-record-group-sampling2
-@@ -0,0 +1,60 @@
-+[config]
-+command = record
-+args    = --no-bpf-event -c 10000 -e '{cycles,cache-misses}:S' kill >/dev/null 2>&1
-+ret     = 1
-+
-+[event-1:base-record]
-+fd=1
-+group_fd=-1
-+
-+# cycles
-+type=0
-+config=0
-+
-+# default | PERF_SAMPLE_READ
-+sample_type=87
-+
-+# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST | PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING
-+read_format=28|31
-+task=1
-+mmap=1
-+comm=1
-+enable_on_exec=1
-+disabled=1
-+
-+# inherit is enabled for group sampling
-+inherit=1
-+
-+# sampling disabled
-+sample_freq=0
-+sample_period=10000
-+freq=0
-+write_backward=0
-+
-+[event-2:base-record]
-+fd=2
-+group_fd=1
-+
-+# cache-misses
-+type=0
-+config=3
-+
-+# default | PERF_SAMPLE_READ
-+sample_type=87
-+
-+# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST | PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING
-+read_format=28|31
-+task=0
-+mmap=0
-+comm=0
-+enable_on_exec=0
-+disabled=0
-+
-+# inherit is enabled for group sampling
-+inherit=1
-+
-+# sampling disabled
-+sample_freq=0
-+sample_period=0
-+freq=0
-+write_backward=0
-diff --git a/tools/perf/tests/attr/test-record-group2 b/tools/perf/tests/attr/test-record-group2
-index cebdaa8e64e47..785892a54d9e1 100644
---- a/tools/perf/tests/attr/test-record-group2
-+++ b/tools/perf/tests/attr/test-record-group2
-@@ -9,8 +9,9 @@ group_fd=-1
- config=0|1
- sample_period=1234000
- sample_type=87
--read_format=12|28
--inherit=0
-+read_format=28|31
-+disabled=1
-+inherit=1
- freq=0
- 
- [event-2:base-record]
-@@ -19,9 +20,9 @@ group_fd=1
- config=0|1
- sample_period=6789000
- sample_type=87
--read_format=12|28
-+read_format=28|31
- disabled=0
--inherit=0
-+inherit=1
- mmap=0
- comm=0
- freq=0
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 3536404e9447b..557d409c53d6c 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1156,7 +1156,15 @@ void evsel__config(struct evsel *evsel, struct record_opts *opts,
- 		 */
- 		if (leader->core.nr_members > 1) {
- 			attr->read_format |= PERF_FORMAT_GROUP;
--			attr->inherit = 0;
-+		}
-+
-+		/*
-+		 * Inherit + SAMPLE_READ requires SAMPLE_TID in the read_format
-+		 */
-+		if (attr->inherit) {
-+			evsel__set_sample_bit(evsel, TID);
-+			evsel->core.attr.read_format |=
-+				PERF_FORMAT_ID;
- 		}
- 	}
- 
-@@ -1832,6 +1840,8 @@ static int __evsel__prepare_open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 
- static void evsel__disable_missing_features(struct evsel *evsel)
- {
-+	if (perf_missing_features.inherit_sample_read)
-+		evsel->core.attr.inherit = 0;
- 	if (perf_missing_features.branch_counters)
- 		evsel->core.attr.branch_sample_type &= ~PERF_SAMPLE_BRANCH_COUNTERS;
- 	if (perf_missing_features.read_lost)
-@@ -1887,7 +1897,12 @@ bool evsel__detect_missing_features(struct evsel *evsel)
- 	 * Must probe features in the order they were added to the
- 	 * perf_event_attr interface.
- 	 */
--	if (!perf_missing_features.branch_counters &&
-+	if (!perf_missing_features.inherit_sample_read &&
-+	    evsel->core.attr.inherit && (evsel->core.attr.sample_type & PERF_SAMPLE_READ)) {
-+		perf_missing_features.inherit_sample_read = true;
-+		pr_debug2("Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.\n");
-+		return true;
-+	} else if (!perf_missing_features.branch_counters &&
- 	    (evsel->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COUNTERS)) {
- 		perf_missing_features.branch_counters = true;
- 		pr_debug2("switching off branch counters support\n");
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 517cff431de20..21b8b7e70e75e 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -192,6 +192,7 @@ struct perf_missing_features {
- 	bool weight_struct;
- 	bool read_lost;
- 	bool branch_counters;
-+	bool inherit_sample_read;
- };
- 
- extern struct perf_missing_features perf_missing_features;
--- 
-2.45.1
+Reverting this commit makes it work again.
 
+> diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu=
+_common.c
+> index 8babce55302f..ac0091b4ce24 100644
+> --- a/drivers/clk/sunxi-ng/ccu_common.c
+> +++ b/drivers/clk/sunxi-ng/ccu_common.c
+> @@ -44,6 +44,16 @@ bool ccu_is_better_rate(struct ccu_common *common,
+>  			unsigned long current_rate,
+>  			unsigned long best_rate)
+>  {
+> +	unsigned long min_rate, max_rate;
+> +
+> +	clk_hw_get_rate_range(&common->hw, &min_rate, &max_rate);
+> +
+> +	if (current_rate > max_rate)
+> +		return false;
+> +
+> +	if (current_rate < min_rate)
+> +		return false;
+> +
+>  	if (common->features & CCU_FEATURE_CLOSEST_RATE)
+>  		return abs(current_rate - target_rate) < abs(best_rate - target_rate);
+>
+> @@ -122,6 +132,7 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, str=
+uct device *dev,
+>
+>  	for (i =3D 0; i < desc->hw_clks->num ; i++) {
+>  		struct clk_hw *hw =3D desc->hw_clks->hws[i];
+> +		struct ccu_common *common =3D hw_to_ccu_common(hw);
+>  		const char *name;
+>
+>  		if (!hw)
+> @@ -136,6 +147,14 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, st=
+ruct device *dev,
+>  			pr_err("Couldn't register clock %d - %s\n", i, name);
+>  			goto err_clk_unreg;
+>  		}
+> +
+> +		if (common->max_rate)
+> +			clk_hw_set_rate_range(hw, common->min_rate,
+> +					      common->max_rate);
+> +		else
+> +			WARN(common->min_rate,
+> +			     "No max_rate, ignoring min_rate of clock %d - %s\n",
+> +			     i, name);
+>  	}
+>
+>  	ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
+> diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu=
+_common.h
+> index 942a72c09437..329734f8cf42 100644
+> --- a/drivers/clk/sunxi-ng/ccu_common.h
+> +++ b/drivers/clk/sunxi-ng/ccu_common.h
+> @@ -31,6 +31,9 @@ struct ccu_common {
+>  	u16		lock_reg;
+>  	u32		prediv;
+>
+> +	unsigned long	min_rate;
+> +	unsigned long	max_rate;
+> +
+>  	unsigned long	features;
+>  	spinlock_t	*lock;
+>  	struct clk_hw	hw;
+>
+> --=20
+>
+> 2.44.0
+>
+
+--=20
+M=E5ns Rullg=E5rd
 
