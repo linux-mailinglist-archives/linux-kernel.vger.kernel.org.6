@@ -1,354 +1,169 @@
-Return-Path: <linux-kernel+bounces-184754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6DB8CAB84
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:09:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6578CAB85
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE31D1C21397
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:09:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD70F1C21301
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D818D6BFD5;
-	Tue, 21 May 2024 10:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB886BFA3;
+	Tue, 21 May 2024 10:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BLWYKzAd"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UzhUU4iQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830CA4F88A;
-	Tue, 21 May 2024 10:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6E94F88A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716286176; cv=none; b=IHPxKQO0XopMuTxn2Cv8JIxy2dOCe7g3ITWqkZJfEou7DkSrUR0jy+y6X1zAzSWUJhdAKJ629jm7HBJr1+2ByZQiLSAkvSEFec4mBVUEW+HV9HAeQ06/K+znupYOPAGAqv9GI67Hgb4DMLR+OrLtY/SYf36VLIDNAkG5rvGu5i4=
+	t=1716286188; cv=none; b=hP6xOdGX/A6F+r8XMlKCH7Tdvz+jkBqeLA0mUynXvejIs/nO4GZwV/g7Vm7m+jmMXDwgu3ZEb7GOjHNU9TGzocIOWUn2D7lN4mtcBo8HB2dkK6xkaGQ43VoFM2L2tQsKlmhL37JkYkbQE2SjY1XFGlu+F/JHeqSJOlixXo9rlR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716286176; c=relaxed/simple;
-	bh=z1eCyzrs0kaldb2RBdt3QhyvlygYoxrEnoe6oO53hus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W894ffbitP8mCj+VZp8rcLfHc5z/1zTXbTRIEbx2Df2STvtfeOzPR16YMMQDCAXYkaHrw9UR6Pxb6y1okI7C8flh/xKAYpbfqgxC4Ck+PUnT6LAOZej5AzAdcxy8QNFbmK6/9fBok1PCZfqdGh3O6TZ6AKapAFc2/RKFfhsXUSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BLWYKzAd; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7003BCE3;
-	Tue, 21 May 2024 12:09:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716286159;
-	bh=z1eCyzrs0kaldb2RBdt3QhyvlygYoxrEnoe6oO53hus=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BLWYKzAdAP+LSHQaQF7h3RE7g4o0YJ72wpqvprflzLTLU3plcMYvvXgJap3k8BPg3
-	 NDaJ+72b6hIA3+wLqoevoKYC0cnf+2dhReO5gXglD5YcttO4xOdb59173wlv7UkZ2s
-	 IPtfWePKgEhACWOWG9CCQ2YRlgfuR4BjI9LzBj88=
-Date: Tue, 21 May 2024 13:09:22 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Alexandru Ardelean <alexandru.ardelean@analog.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Clark Wang <xiaoning.wang@nxp.com>
-Subject: Re: [PATCH 5/5] pwm: adp5585: Add Analog Devices ADP5585 support
-Message-ID: <20240521100922.GF16345@pendragon.ideasonboard.com>
-References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
- <20240520195942.11582-6-laurent.pinchart@ideasonboard.com>
- <dl7a6puox5lc36fpto2fgyfgmpd3uboqc4lcfdtuaxzzsboqld@alw7vyi7pqjz>
+	s=arc-20240116; t=1716286188; c=relaxed/simple;
+	bh=LY84E1RWWk3jAofPEJLObQHNu/Ia/tP48sDzh7KJUqo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fXt1aJHh8saRK1WooL1WzoiYk0qpo3ukO9RJyVfACZPRoswuEZWNM7IAdMrqQZ0v3Fyzw8mxjGiu6HkhdkxEL1N7WWlr35nX5ui6y40u7ZntVufnFRt7Jqze1RYD0HPUbULezzJhstGzfFo1lDUPXojIgec3Nis6w0bhQ4+fqVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UzhUU4iQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716286185;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nIc2pXGjQ+me7ZvTYeZx+G3dW7IZswOqXUWkt6vgNEc=;
+	b=UzhUU4iQspAGZogVP8iIm3SY29UXhsjMJaZ5omLad4CVsIsMemWzALSn/IwoUdICbULDsa
+	qC3sM1JtCEFNPePfq4e3ddZsRDnC1K/px0d5k6snCMcKgGNEbkv+J/HRFdoM9EjZDOzYYk
+	1yJXNuc337JQecqqNvtuhXc7N29nFcQ=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-448-z7dxmzcjO6eWSBrF0wuZmQ-1; Tue, 21 May 2024 06:09:44 -0400
+X-MC-Unique: z7dxmzcjO6eWSBrF0wuZmQ-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a59eea00cafso829701566b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:09:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716286183; x=1716890983;
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nIc2pXGjQ+me7ZvTYeZx+G3dW7IZswOqXUWkt6vgNEc=;
+        b=WtWT0L77aN+MZ5OIHc32gOrX7FjqyJ8bvQ9usphJAsQykEH6bMlUsQGWpl+3Nw9pxn
+         Ccim+aUOqn3dowFiQRubF481xaa/KXa+6RerZgVXtrC40U5aNmz3JIq3MXd7sO+uSlV9
+         xH6oz5/4sKQIA85smEqzMLrhTYKo9DXhEEV8veo3yO3ywLM8pjb5eSQ3hn8g0bmPJjpc
+         CWyqECkp+ndQxq8eVbEuZyhW+Z3t0bUsnp5CJvVvNl06tKXznif546wHucOyhfAHq9jq
+         k4aO2z/VVsnY4n8vXTH7tF8MQvZs/ZqEY4OyVAEd1+ApOwmgdhCeCAVuyLahocL57rac
+         i31g==
+X-Forwarded-Encrypted: i=1; AJvYcCUirWMWSlE5IK7kPiZywqi82A8AJqxCwAN77zvK6RRHLU0NiX3kYMQqUUxq9dMSNouz4eAD7JvDqSwZJQUknXTmk1rIVYxIXa1hXBPi
+X-Gm-Message-State: AOJu0YxoaVmUD/5dxK8C1xvzQvDuLEJdFfMynh9uzntAGA+gW5ic3akH
+	acWFs+u6WAPnU9VDZucmqEyd7dB/utu7PJt4UcdlaTV6/uTG+iJKrcQnkXY6Y8IUl6HgT5L/bxR
+	btAu7HIV0gOhZEuOJQh+yeSW98nZT6hfIlKH4gGoPR673uJN7Yk2QDAzS8S9VjBEW8lqchg==
+X-Received: by 2002:a17:906:fe07:b0:a5a:81b0:a6a9 with SMTP id a640c23a62f3a-a5a81b0a73cmr2446484666b.53.1716286182722;
+        Tue, 21 May 2024 03:09:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFRdhoc2N3wtE730xVnMpA89nBQtXnC9LJWRX7m/mx+FTIPUDLCEt36je34xFicbR7eTgGF6A==
+X-Received: by 2002:a17:906:fe07:b0:a5a:81b0:a6a9 with SMTP id a640c23a62f3a-a5a81b0a73cmr2446481266b.53.1716286182230;
+        Tue, 21 May 2024 03:09:42 -0700 (PDT)
+Received: from [172.16.2.75] (5920ab7b.static.cust.trined.nl. [89.32.171.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01dfcsm1589898066b.187.2024.05.21.03.09.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 May 2024 03:09:40 -0700 (PDT)
+From: Eelco Chaudron <echaudro@redhat.com>
+To: Aaron Conole <aconole@redhat.com>
+Cc: netdev@vger.kernel.org, dev@openvswitch.org, linux-kernel@vger.kernel.org,
+ Pravin B Shelar <pshelar@ovn.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Jesse Gross <jesse@nicira.com>,
+ Ilya Maximets <i.maximets@ovn.org>, Simon Horman <horms@ovn.org>,
+ Jaime Caamano <jcaamano@redhat.com>
+Subject: Re: [PATCH v2 net] openvswitch: Set the skbuff pkt_type for proper
+ pmtud support.
+Date: Tue, 21 May 2024 12:09:39 +0200
+X-Mailer: MailMate (1.14r6030)
+Message-ID: <701FCF52-7D25-4094-9B0E-8F7AE8A68107@redhat.com>
+In-Reply-To: <20240516200941.16152-1-aconole@redhat.com>
+References: <20240516200941.16152-1-aconole@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dl7a6puox5lc36fpto2fgyfgmpd3uboqc4lcfdtuaxzzsboqld@alw7vyi7pqjz>
+Content-Type: text/plain
 
-Hi Uwe,
 
-Thank you for the quick review.
 
-On Tue, May 21, 2024 at 10:51:26AM +0200, Uwe Kleine-König wrote:
-> On Mon, May 20, 2024 at 10:59:41PM +0300, Laurent Pinchart wrote:
-> > diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
-> > new file mode 100644
-> > index 000000000000..709713d8f47a
-> > --- /dev/null
-> > +++ b/drivers/pwm/pwm-adp5585.c
-> > @@ -0,0 +1,230 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Analog Devices ADP5585 PWM driver
-> > + *
-> > + * Copyright 2022 NXP
-> > + * Copyright 2024 Ideas on Board Oy
-> > + */
-> 
-> Please document some hardware properties here in the same format as many
-> other PWM drivers. The things I'd like to read there are:
-> 
->  - Only supports normal polarity
->  - How does the output pin behave when the hardware is disabled
->    (typically "low" or "high-Z" or "freeze")
->  - Does changing parameters or disabling complete the currently running
->    period?
->  - Are there glitches in .apply()? E.g. when the new duty_cycle is
->    already written but the new period is not.
-> 
-> > +#include <linux/container_of.h>
-> > +#include <linux/device.h>
-> > +#include <linux/math.h>
-> > +#include <linux/minmax.h>
-> > +#include <linux/mfd/adp5585.h>
-> > +#include <linux/module.h>
-> > +#include <linux/mutex.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/pwm.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/time.h>
-> 
-> Do you need these all? I wounder about time.h.
+On 16 May 2024, at 22:09, Aaron Conole wrote:
 
-Yes I've checked them all :-) time.h is for NSEC_PER_SEC (defined in
-vdso/time64.h, which I thought would be better replaced by time.h).
+> Open vSwitch is originally intended to switch at layer 2, only dealing with
+> Ethernet frames.  With the introduction of l3 tunnels support, it crossed
+> into the realm of needing to care a bit about some routing details when
+> making forwarding decisions.  If an oversized packet would need to be
+> fragmented during this forwarding decision, there is a chance for pmtu
+> to get involved and generate a routing exception.  This is gated by the
+> skbuff->pkt_type field.
+>
+> When a flow is already loaded into the openvswitch module this field is
+> set up and transitioned properly as a packet moves from one port to
+> another.  In the case that a packet execute is invoked after a flow is
+> newly installed this field is not properly initialized.  This causes the
+> pmtud mechanism to omit sending the required exception messages across
+> the tunnel boundary and a second attempt needs to be made to make sure
+> that the routing exception is properly setup.  To fix this, we set the
+> outgoing packet's pkt_type to PACKET_OUTGOING, since it can only get
+> to the openvswitch module via a port device or packet command.
+>
+> Even for bridge ports as users, the pkt_type needs to be reset when
+> doing the transmit as the packet is truly outgoing and routing needs
+> to get involved post packet transformations, in the case of
+> VXLAN/GENEVE/udp-tunnel packets.  In general, the pkt_type on output
+> gets ignored, since we go straight to the driver, but in the case of
+> tunnel ports they go through IP routing layer.
+>
+> This issue is periodically encountered in complex setups, such as large
+> openshift deployments, where multiple sets of tunnel traversal occurs.
+> A way to recreate this is with the ovn-heater project that can setup
+> a networking environment which mimics such large deployments.  We need
+> larger environments for this because we need to ensure that flow
+> misses occur.  In these environment, without this patch, we can see:
+>
+>   ./ovn_cluster.sh start
+>   podman exec ovn-chassis-1 ip r a 170.168.0.5/32 dev eth1 mtu 1200
+>   podman exec ovn-chassis-1 ip netns exec sw01p1 ip r flush cache
+>   podman exec ovn-chassis-1 ip netns exec sw01p1 \
+>          ping 21.0.0.3 -M do -s 1300 -c2
+>   PING 21.0.0.3 (21.0.0.3) 1300(1328) bytes of data.
+>   From 21.0.0.3 icmp_seq=2 Frag needed and DF set (mtu = 1142)
+>
+>   --- 21.0.0.3 ping statistics ---
+>   ...
+>
+> Using tcpdump, we can also see the expected ICMP FRAG_NEEDED message is not
+> sent into the server.
+>
+> With this patch, setting the pkt_type, we see the following:
+>
+>   podman exec ovn-chassis-1 ip netns exec sw01p1 \
+>          ping 21.0.0.3 -M do -s 1300 -c2
+>   PING 21.0.0.3 (21.0.0.3) 1300(1328) bytes of data.
+>   From 21.0.0.3 icmp_seq=1 Frag needed and DF set (mtu = 1222)
+>   ping: local error: message too long, mtu=1222
+>
+>   --- 21.0.0.3 ping statistics ---
+>   ...
+>
+> In this case, the first ping request receives the FRAG_NEEDED message and
+> a local routing exception is created.
+>
+> Tested-by: Jaime Caamano <jcaamano@redhat.com>
+> Reported-at: https://issues.redhat.com/browse/FDP-164
+> Fixes: 58264848a5a7 ("openvswitch: Add vxlan tunneling support.")
+> Signed-off-by: Aaron Conole <aconole@redhat.com>
 
-> > +#define ADP5585_PWM_CHAN_NUM		1
-> > +
-> > +#define ADP5585_PWM_OSC_FREQ_HZ		1000000U
-> > +#define ADP5585_PWM_MIN_PERIOD_NS	(2ULL * NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ)
-> > +#define ADP5585_PWM_MAX_PERIOD_NS	(2ULL * 0xffff * NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ)
-> > +
-> > +struct adp5585_pwm_chip {
-> > +	struct pwm_chip chip;
-> > +	struct regmap *regmap;
-> > +	struct mutex lock;
-> 
-> What does this mutex protect against? You can safely assume that there
-> are no concurrent calls of the callbacks. (This isn't ensured yet, but I
-> consider a consumer who does this buggy and it will soon be ensured.)
+Thanks for the additional comments and detailed commit message. The change looks good to me.
 
-That's good to know. I couldn't find that information. I'll revisit the
-locking in v2, and add a comment to document the mutex in case it's
-still needed.
+Acked-by: Eelco Chaudron <echaudro@redhat.com>
 
-> > +	u8 pin_config_val;
-> > +};
-> > +
-> > +static inline struct adp5585_pwm_chip *
-> > +to_adp5585_pwm_chip(struct pwm_chip *chip)
-> > +{
-> > +	return container_of(chip, struct adp5585_pwm_chip, chip);
-> > +}
-> > +
-> > +static int pwm_adp5585_request(struct pwm_chip *chip, struct pwm_device *pwm)
-> > +{
-> > +	struct adp5585_pwm_chip *adp5585_pwm = to_adp5585_pwm_chip(chip);
-> > +	unsigned int val;
-> > +	int ret;
-> > +
-> > +	guard(mutex)(&adp5585_pwm->lock);
-> > +
-> > +	ret = regmap_read(adp5585_pwm->regmap, ADP5585_PIN_CONFIG_C, &val);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	adp5585_pwm->pin_config_val = val;
-> > +
-> > +	ret = regmap_update_bits(adp5585_pwm->regmap, ADP5585_PIN_CONFIG_C,
-> > +				 ADP5585_R3_EXTEND_CFG_MASK,
-> > +				 ADP5585_R3_EXTEND_CFG_PWM_OUT);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = regmap_update_bits(adp5585_pwm->regmap, ADP5585_GENERAL_CFG,
-> > +				 ADP5585_OSC_EN, ADP5585_OSC_EN);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return 0;
-> 
-> The last four lines are equivalent to
-> 
-> 	return ret;
-
-I prefer the existing code but can also change it.
-
-> What is the purpose of this function? Setup some kind of pinmuxing? The
-> answer to that question goes into a code comment. If it's pinmuxing, is
-> this a hint to use the pinctrl subsystem? (Maybe it's overkill, but if
-> it's considered a good idea later, it might be hard to extend the dt
-> bindings, so thinking about that now might be a good idea.)
-
-The ADP5585_R3_EXTEND_CFG_PWM_OUT bit is about pinmuxing, yes. I'll add
-a comment. I considered pinctrl too, but I think it's overkill.
-
-> > +}
-> > +
-> > +static void pwm_adp5585_free(struct pwm_chip *chip, struct pwm_device *pwm)
-> > +{
-> > +	struct adp5585_pwm_chip *adp5585_pwm = to_adp5585_pwm_chip(chip);
-> > +
-> > +	guard(mutex)(&adp5585_pwm->lock);
-> > +
-> > +	regmap_update_bits(adp5585_pwm->regmap, ADP5585_PIN_CONFIG_C,
-> > +			   ADP5585_R3_EXTEND_CFG_MASK,
-> > +			   adp5585_pwm->pin_config_val);
-> 
-> I wonder if writing a deterministic value instead of whatever was in
-> that register before .request() would be more robust and less
-> surprising.
-
-I'll change that. It looks like the last remains of the original code
-are going away :-)
-
-> > +	regmap_update_bits(adp5585_pwm->regmap, ADP5585_GENERAL_CFG,
-> > +			   ADP5585_OSC_EN, 0);
-> > +}
-> > +
-> > +static int pwm_adp5585_apply(struct pwm_chip *chip,
-> > +			     struct pwm_device *pwm,
-> > +			     const struct pwm_state *state)
-> > +{
-> > +	struct adp5585_pwm_chip *adp5585_pwm = to_adp5585_pwm_chip(chip);
-> > +	u32 on, off;
-> > +	int ret;
-> > +
-> > +	if (!state->enabled) {
-> > +		guard(mutex)(&adp5585_pwm->lock);
-> > +
-> > +		return regmap_update_bits(adp5585_pwm->regmap, ADP5585_PWM_CFG,
-> > +					  ADP5585_PWM_EN, 0);
-> > +	}
-> > +
-> > +	if (state->period < ADP5585_PWM_MIN_PERIOD_NS ||
-> > +	    state->period > ADP5585_PWM_MAX_PERIOD_NS)
-> > +		return -EINVAL;
-> 
-> Make this:
-> 
-> 	if (state->period < ADP5585_PWM_MIN_PERIOD_NS)
-> 		return -EINVAL;
-> 
-> 	period = min(ADP5585_PWM_MAX_PERIOD_NS, state->period)
-> 	duty_cycle = min(period, state->period);
-
-I haven't been able to find documentation about the expected behaviour.
-What's the rationale for returning an error if the period is too low,
-but silently clamping it if it's too high ?
-
-> > +
-> > +	/*
-> > +	 * Compute the on and off time. As the internal oscillator frequency is
-> > +	 * 1MHz, the calculation can be simplified without loss of precision.
-> > +	 */
-> > +	on = DIV_ROUND_CLOSEST_ULL(state->duty_cycle,
-> > +				   NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ);
-> > +	off = DIV_ROUND_CLOSEST_ULL(state->period - state->duty_cycle,
-> > +				    NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ);
-> 
-> round-closest is wrong. Testing with PWM_DEBUG should point that out.
-> The right algorithm is:
-> 
-> 	on = duty_cycle / (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ)
-> 	off = period / (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ) - on
-> 
-> 
-> > +	if (state->polarity == PWM_POLARITY_INVERSED)
-> > +		swap(on, off);
-> 
-> Uhh, no. Either you can do inverted polarity or you cannot. Don't claim
-> you can.
-
-OK, but what's the rationale ? This is also an area where I couldn't
-find documentation.
-
-> > [...]
-> > +static int adp5585_pwm_probe(struct platform_device *pdev)
-> > +{
-> > +	struct adp5585_dev *adp5585 = dev_get_drvdata(pdev->dev.parent);
-> > +	struct adp5585_pwm_chip *adp5585_pwm;
-> > +	int ret;
-> > +
-> > +	adp5585_pwm = devm_kzalloc(&pdev->dev, sizeof(*adp5585_pwm), GFP_KERNEL);
-> > +	if (!adp5585_pwm)
-> > +		return -ENOMEM;
-> > +
-> > +	platform_set_drvdata(pdev, adp5585_pwm);
-> > +
-> > +	adp5585_pwm->regmap = adp5585->regmap;
-> > +
-> > +	mutex_init(&adp5585_pwm->lock);
-> > +
-> > +	adp5585_pwm->chip.dev = &pdev->dev;
-> > +	adp5585_pwm->chip.ops = &adp5585_pwm_ops;
-> > +	adp5585_pwm->chip.npwm = ADP5585_PWM_CHAN_NUM;
-> 
-> That is wrong since commit
-> 05947224ff46 ("pwm: Ensure that pwm_chips are allocated using pwmchip_alloc()")
-
-I'll update the code.
-
-> > +	ret = devm_pwmchip_add(&pdev->dev, &adp5585_pwm->chip);
-> > +	if (ret) {
-> > +		mutex_destroy(&adp5585_pwm->lock);
-> > +		return dev_err_probe(&pdev->dev, ret, "failed to add PWM chip\n");
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static void adp5585_pwm_remove(struct platform_device *pdev)
-> > +{
-> > +	struct adp5585_pwm_chip *adp5585_pwm = platform_get_drvdata(pdev);
-> > +
-> > +	mutex_destroy(&adp5585_pwm->lock);
-> 
-> Huh, this is a bad idea. The mutex is gone while the pwmchip is still
-> registered. AFAIK calling mutex_destroy() is optional, and
-> adp5585_pwm_remove() can just be dropped. Ditto in the error paths of
-> .probe().
-
-mutex_destroy() is a no-op when !CONFIG_DEBUG_MUTEXES. When the config
-option is selected, it gets more useful. I would prefer moving away from
-the devm_* registration, and unregister the pwm_chip in .remove()
-manually, before destroying the mutex.
-
-> > +}
-> > +
-> > +static const struct of_device_id adp5585_pwm_of_match[] = {
-> > +	{ .compatible = "adi,adp5585-pwm" },
-> > +	{ /* sentinel */ }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, adp5585_pwm_of_match);
-> 
-> Is it normal/usual for mfd drivers to use of stuff? I thought they use
-> plain platform style binding, not sure though.
-
-I'll test it.
-
-> > +static struct platform_driver adp5585_pwm_driver = {
-> > +	.driver	= {
-> > +		.name = "adp5585-pwm",
-> > +		.of_match_table = adp5585_pwm_of_match,
-> > +	},
-> > +	.probe = adp5585_pwm_probe,
-> > +	.remove_new = adp5585_pwm_remove,
-> > +};
-> > +module_platform_driver(adp5585_pwm_driver);
-> > +
-> > +MODULE_AUTHOR("Xiaoning Wang <xiaoning.wang@nxp.com>");
-> > +MODULE_DESCRIPTION("ADP5585 PWM Driver");
-> > +MODULE_LICENSE("GPL");
-
--- 
-Regards,
-
-Laurent Pinchart
 
