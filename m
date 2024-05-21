@@ -1,98 +1,120 @@
-Return-Path: <linux-kernel+bounces-184338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B588CA5A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:12:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073ED8CA58A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8401F226DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 01:12:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B6E71F22768
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 01:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237628C13;
-	Tue, 21 May 2024 01:12:43 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE0A8C1A;
+	Tue, 21 May 2024 01:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="clp322AP"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72ADB7F;
-	Tue, 21 May 2024 01:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132907F
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 01:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716253962; cv=none; b=RRTN+rxopU2IXBX/WwEL7UqiCNEeWK+XDeiMlGNZa6bQhPClNKKnLvYgox6H/LTcMH0lKj6oHOvBtoqoLOW3X2efXjEH0zw27ydfMTbgcDFUV83FZgdK0rvUMTYESji1oVuXhhmPJeeEq/eWetjOHmfwUjnVovaRLYY/18AZfeE=
+	t=1716253493; cv=none; b=V0zsbOtErTeMEYUbCCCE8Imj8trqxXOqS/ygq21fsyY7qFeloMmQ0ko7Soh9buk5G2UJpuLBR6rxCJxZ6zS1s1xTd7ToUsRqGQnWe8Y/iIOx3NBuuM9STIcXSXMhDx3FS5J6d6C/5inewuCxsBou/CIA/fh3Wm0VvAC86gT1/RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716253962; c=relaxed/simple;
-	bh=mUJ68N6msczBB9C/8LlQHDYjFu+UJe5YHP1HFLKiZyg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nC0p42FF/Qn2BqcTqaevU33RmSku0DjBi5mXkbVqrg3hk4Ly/0F3v7AJ4w+35Sc7M5qHU8XbLYV9xyGwil96Se6rSbaQrOEb+/DxTpHdtXapxd4lgicMexJh3ZTEflNnGhZbLg28enErC95Qe5fgI1TMC3DXiHiDFmvHghryqiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowABXXhoe80tmEMlyBg--.49483S2;
-	Tue, 21 May 2024 09:04:30 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: g@b4.vu,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ALSA: scarlett2: Prevent leaking urb
-Date: Tue, 21 May 2024 09:03:52 +0800
-Message-Id: <20240521010352.1082164-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1716253493; c=relaxed/simple;
+	bh=HnZOyTLA1z7HGjFiTaimfVCHoyCYiv6gxIK1l/WLd9c=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=bh/CUognetbl1yIF/N2PDqBxGIHj3IgQ37Ts+3VT0FC5yTUyidXphO+Qsh1l2ANwDdfLhMvooHUJ/6vWZLgk5COK0Y1BNaUlcZTQUMwvOwUYqs/kvDfH3fnWmzx68Jm3hWyVIinRXZGmKmTQaS+r7nCFOl/FZNPEJmPC5qW3bGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=clp322AP; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6202fd268c1so220343337b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 18:04:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716253491; x=1716858291; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qpOLP0XnzrTQf20d05HSRvs4OM1Ncix8hyKknNTHteQ=;
+        b=clp322APGH01SehhXEomMqOXDsUBlV6LzkR909b/LG8TnlVmQEEo0d/q4XoQV/UcRd
+         NI6q9shi93Gg4LvAfTMCTlGnZjdej2Y3WUbP6vEbJ0Twq7mnkfJs0c2MdMWqBiqwTMy0
+         YibS5OYcVH7V9qvruf7e5BmdjqNfTuytX9mDhfTNOo03vyiVcKDA6/ggKpJxzwAHpJhT
+         9J2ItzI2Om2OR+/NFgsuFoBWxeAvvOEKJcylOYBatDtFBWOZeXtAHKRBn8CzBbVVVu37
+         za0huhStK95cGnKTpVW5nYYK75uNLGswQOLfg0BjGDCoDE3tbwkhbZKcdBAamaxqLdiM
+         y29g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716253491; x=1716858291;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qpOLP0XnzrTQf20d05HSRvs4OM1Ncix8hyKknNTHteQ=;
+        b=c+czjIxb9ZyiJIYIbmccweUtlzEE7aunGzjLazX4vkO5oAm8XWAAxssGpQJQtv3yhh
+         0DPjw/H7awwc1Y9FeCszURBVJiljnoRQk+EGI6vFWaL+Pcwc520cin3S9+vf226xY1js
+         Q6arrb/cpON9z5SPSf3BNOMIvO7b6cyqwaR8HszsgNIOj8kC16wwJ9X1BTl+rvgURa2v
+         prlpd1wn5HsdhaW4+e//WVruGbmpq7Kk9fOxTGepBjmklxG6/pE4RebuykYiky1dV9f6
+         1k37t+5Smq2aTtBhboRlcJHS3qsw2hlCNpg7+SH5bsMeG19/qqbhJ0Gb9/fFwdiGZiXZ
+         Bo0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWqrx5r28OKyvMzr/V72wimqozhZwlDit/0D2cQBevZP+ELI4jBpSo68cBirzY8zw1MIwPVeER7vmBZGMphSVw4IeTLETwkIV9YgxQN
+X-Gm-Message-State: AOJu0YwSlupmUeWMW65l4WXzi9uysognxrDImAKHgFL0d32e3mKd97Q8
+	MLw0a6wM+nUmm2vuzV7N0nsNEeUXf8/NG3h/dHOf3hSBsykZVwhZrvrJ9Bq01OmcJMfao9ZQAYt
+	lwrC4XQ==
+X-Google-Smtp-Source: AGHT+IH3laioA2ReSfTb001L3Np4E6P0YRTj77ACLXkl114QIRHb+vY7xJeursyPnrL6W1q5Bah5nKB5u06g
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:8533:b29a:936d:651a])
+ (user=irogers job=sendgmr) by 2002:a05:6902:a8b:b0:dc7:7ce9:fb4d with SMTP id
+ 3f1490d57ef6-dee4f322140mr7251230276.12.1716253491136; Mon, 20 May 2024
+ 18:04:51 -0700 (PDT)
+Date: Mon, 20 May 2024 18:04:36 -0700
+Message-Id: <20240521010439.321264-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABXXhoe80tmEMlyBg--.49483S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZr43XryUAw4UCw45Ar45GFg_yoWfXwc_Wa
-	yI9w1DAF1DWrnIkry5CrWSvF40kwnrAF18uFsI9397tF9Fq34rtw1Iqrn8CF1xZFs5JF4D
-	Xrn7Z343try29jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb2xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
-	1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVWkMxAI
-	w28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
-	4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxG
-	rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
-	CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2
-	z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUFVyIUUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
+Subject: [PATCH v2 0/3] Use BPF filters for a "perf top -u" workaround
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Changbin Du <changbin.du@huawei.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-In scarlett2_init_notify() if kmalloc() fails the allocated urb should
-be released.
+Allow uid and gid to be terms in BPF filters by first breaking the
+connection between filter terms and PERF_SAMPLE_xx values. Calculate
+the uid and gid using the bpf_get_current_uid_gid helper, rather than
+from a value in the sample. Allow filters to be passed to perf top, this allows:
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- sound/usb/mixer_scarlett2.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+$ perf top -e cycles:P --filter "uid == $(id -u)"
 
-diff --git a/sound/usb/mixer_scarlett2.c b/sound/usb/mixer_scarlett2.c
-index 1150cf104985..4cad6b2a0292 100644
---- a/sound/usb/mixer_scarlett2.c
-+++ b/sound/usb/mixer_scarlett2.c
-@@ -8637,9 +8637,10 @@ static int scarlett2_init_notify(struct usb_mixer_interface *mixer)
- 		return -ENOMEM;
- 
- 	transfer_buffer = kmalloc(private->wMaxPacketSize, GFP_KERNEL);
--	if (!transfer_buffer)
-+	if (!transfer_buffer) {
-+		usb_free_urb(mixer->urb);
- 		return -ENOMEM;
--
-+	}
- 	usb_fill_int_urb(mixer->urb, dev, pipe,
- 			 transfer_buffer, private->wMaxPacketSize,
- 			 scarlett2_notify, mixer, private->bInterval);
+to work as a "perf top -u" workaround, as "perf top -u" usually fails
+due to processes/threads terminating between the /proc scan and the
+perf_event_open.
+
+v2. Allow PERF_SAMPLE_xx to be computed from the PBF_TERM_xx value
+    using a shift as requested by Namhyung.
+
+Ian Rogers (3):
+  perf bpf filter: Give terms their own enum
+  perf bpf filter: Add uid and gid terms
+  perf top: Allow filters on events
+
+ tools/perf/Documentation/perf-record.txt     |  2 +-
+ tools/perf/Documentation/perf-top.txt        |  4 ++
+ tools/perf/builtin-top.c                     |  9 +++
+ tools/perf/util/bpf-filter.c                 | 33 ++++++----
+ tools/perf/util/bpf-filter.h                 |  5 +-
+ tools/perf/util/bpf-filter.l                 | 66 ++++++++++----------
+ tools/perf/util/bpf-filter.y                 |  7 ++-
+ tools/perf/util/bpf_skel/sample-filter.h     | 61 +++++++++++++++++-
+ tools/perf/util/bpf_skel/sample_filter.bpf.c | 54 +++++++++++-----
+ 9 files changed, 171 insertions(+), 70 deletions(-)
+
 -- 
-2.25.1
+2.45.0.rc1.225.g2a3ae87e7f-goog
 
 
