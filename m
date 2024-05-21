@@ -1,350 +1,132 @@
-Return-Path: <linux-kernel+bounces-184412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A428CA6A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:09:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCED8CA6A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCFD91F21C7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:09:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C3271F21994
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C4C17C6D;
-	Tue, 21 May 2024 03:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="Nnj1fXRR"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2071.outbound.protection.outlook.com [40.107.255.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5DB1CA8A;
+	Tue, 21 May 2024 03:10:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B501078B;
-	Tue, 21 May 2024 03:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716260974; cv=fail; b=CqDr2wxtb5ZMV/8YBAHy4/Nz+EOc6sS8oZHRfYAXltibMUMKLKwVT5tiX2SrR4+dpbSesm9xybTt4lhm5w4hUh6Vd+lqfcje6wOwM+0r01dCQ6q2VT8gRV8YR3im0MSxmoD4/CaJdgn3DjnmP3rBraSKO9Nacc9KeGfCPKJ71mU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716260974; c=relaxed/simple;
-	bh=HpPJxtvSRd2MidkJ+CvJEsXnkDHl9JEwBnw8hESO53U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=UhD90fKyB7N8pVs0lY98Fr+9z5v2xle3v3pdDnvHRGcC/y4zzv0R1qJTagG6sG2PSGTn/FKAUqxJOtkCjkUGgncF5s/DEQ2TegZk+w9K0VjAZjtR92TkB+dN83GzNmUeDAnXevA256Nxf/dgWhxI4xXq8H+dscEtY7XLZR6NBDk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=Nnj1fXRR; arc=fail smtp.client-ip=40.107.255.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SNfMYvt1QOMbUeAEoX7pHw6d6Iy2vOyNz00whu0lZFZ0Y1MjpQbeZaEiLX0zByD0eedPjNMRyjlBF0dUUCvqAmv3Ww15Ja7FZFA88WNP52ctwttA7rUPmxsU7+VStzkgSN0y4KHTAU9wXzTC5T+XV2TEA643HhNPNGE0/n1clJBMV3Zup1QXO9ZcVL+1M8M0zPBxxyzIciAZm4xp3NUNDkiNpeSiVYGL1XB5ILFj3oUciiW1A4Wogsdo5wxhDpMPrT+pay1YHMJsDPq1K8VjfhOG88GJd5fiNfOrXJJTacSvU5YfAHRHPEMCmGmfZEMTKtcNwOBIb0f+UbZaBxxiYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yXdsrX0cYGZL/aomMDm+5gf/T0QwsuL2dkgtYbCiIjU=;
- b=fPXR25neoyXn3ZyeqBjNZigaTUIEANrOZTSH9WxAK4f+OTsQUZcbXqZxAjYSSV9hg9L6G0Pylvwqao5nLA+/Vaa2qZUS39EPtkTlGb0qwxB/c/OeELxkQiy2wn+TyDQ9pbRSMjsIne2KPGOarHhlZnz2EOJ1UFjlbW74UXfap3/PjUEA9ObreQwz5QqqMFZIF4iz7DfUoD/f9TgXkjKsNc+nb7L+fOgAPzlVl7jtT9aRqI6Bb5XEW5YNVz7M+88v38CFl7+6qLZTjwPlyW80OsV6OhscfkiMemcuZq85Ppr3fuEWXWBHs60rRP5SzrnFu7beoXafjHV7bax38C8gWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yXdsrX0cYGZL/aomMDm+5gf/T0QwsuL2dkgtYbCiIjU=;
- b=Nnj1fXRRAdS2m1qdg1a8NH5/PJc2+VbxaP4XN8MItyl5sW1LN3BltP07rhsShx7gnvTI6oR1K9OhHK0dotgg/6ANib7C5DtIewaIyzFfgRk9w1VJ/e53M4C0fSG2NZioJ4Zw/TfbEYFK5yL2oYa5i850vHcL56SVYR+Vt3pW4XzW1keo3uDT/OsLuNqP1hlbTs6r14v4bpVG05ufffNb2g2Mqn5B0rdqLjAnxx23i5iI5tX1OEvEcQajVhrbtYKKjKIYupaY7yRKuuGLUZBuO9j7eCIGppRs5EZbXv25Z3jWCAk5xRa9/uRRFqbxF85dxH6tsCOc1aCqQFFvFAbpsg==
-Received: from SG2PR02CA0025.apcprd02.prod.outlook.com (2603:1096:3:18::13) by
- PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7587.35; Tue, 21 May 2024 03:09:27 +0000
-Received: from SG2PEPF000B66CF.apcprd03.prod.outlook.com
- (2603:1096:3:18:cafe::59) by SG2PR02CA0025.outlook.office365.com
- (2603:1096:3:18::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36 via Frontend
- Transport; Tue, 21 May 2024 03:09:26 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
- smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
-Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
- designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
- client-ip=211.20.1.79; helo=localhost.localdomain;
-Received: from localhost.localdomain (211.20.1.79) by
- SG2PEPF000B66CF.mail.protection.outlook.com (10.167.240.23) with Microsoft
- SMTP Server id 15.20.7611.14 via Frontend Transport; Tue, 21 May 2024
- 03:09:25 +0000
-From: DelphineCCChiu <delphine_cc_chiu@wiwynn.com>
-To: patrick@stwcx.xyz,
-	Samuel Mendoza-Jonas <sam@mendozajonas.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: DelphineCCChiu <delphine_cc_chiu@wiwynn.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] net/ncsi: Fix the multi thread manner of NCSI driver
-Date: Tue, 21 May 2024 11:09:21 +0800
-Message-Id: <20240521030922.3973426-1-delphine_cc_chiu@wiwynn.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E411C68F
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716261006; cv=none; b=SeIcn1eBHLca40zkI6IZESROe9kUeYfgAUy+uaHDX0/9TWTRohDprN1fAP0lcDO4asDfn3CH2KVC80AO/I9SX63r3xRBAXX2JPSk60F+2k+f7jDddDg0Qq72vaALzM2Vtyyz+XmN0ck/lqhck23k49Zk+4tyNNWzuStCAgUF9TU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716261006; c=relaxed/simple;
+	bh=jNpgdmywX/Q8NX3pZmMoxw1gBEXlgBwbRE/UD4+nwUE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=WAjSD7aSWR6544QNjyOYfa05prh335/yh8KUHRWk2GnZZiI1CHdEWPiR1wdChw2iGRJ4b5DnFpjLmmptIthnEoNGDDl6IDO4ek2SSsJ9BPUgVaLwhDj79U2YsUDRgKt5FLrJbjTxWkZDyu1ywpQqZjKYRIxaDeSSPlPghjr1PQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e21af40435so203519339f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:10:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716261004; x=1716865804;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D5UeTxuze7jcviZy9h2jYdcX38BRjbzfYR5h9j7b2uY=;
+        b=khrtkEpMLsck/XS/4PgClBIsqEYoioMZlOKiZl0mOaqiN9c9jsvgHzoqjtw3zfCEiV
+         yMeR/pPuHD3CTSSrCVoqp1wbsaOjjqF5dBVGjuBMvNn6vrueUMQZU5jrUKGGZZ+BjebA
+         2b6JFfx8xI95DQZKMcA7HOErsVV+Jf839VWrUQTDvCN96srthkjlGqvTYFYsFugBuV/G
+         ywYCCHIdyfsj7YxJNdlFI97AivN+8L1XDY35y3LcS85cFfcoVe1zq2GHtIrYW8efuywL
+         zSbvBvUAZ/ZjnJxb67OQINQaZaMN0ioXw7w1uKa7l8u/kImjQoh2xpDhP6Rts5iQHcQi
+         /AuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyIIa+iq5ouJp5KgjA/g1hI9m5kaPDqtZXvI+Diq9T3KvreSOj8MLU1Tp6RCLpiylf6PPm/FBtf5l+YqNRdO6lCQd58xcoV8VELghN
+X-Gm-Message-State: AOJu0Ywwb4jXFGXe1YrrfYI36W0nAN0fqPOuGFQxb6//DXzUKgcgOzbo
+	/gJRHtfKISgxGmxH5v2ye7fYrFWLoJCvib37PKCxaEJhAJHpzCMg3jcyXqa4i/4gl6NxMrlvvI4
+	2WbngqpOu5/3RBCMkdFuLbmtjpu0tl6RFAf4zcbywHqVVD7P2dUS2V9o=
+X-Google-Smtp-Source: AGHT+IHfsCooj9kt+MDjyTXfGsTEVJt5pggy+ePsEcaoDtbfJc8ksCv3pL4XphzE33Ul5hGiYAurLwWJtXNU9AeJt3bVOC9Xeppp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CF:EE_|PUZPR04MB6316:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: d222ee36-4805-4beb-68fc-08dc79436bfd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|376005|1800799015|36860700004;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lxO/X8fPTtPssDfK0J7XIzHvtCQi7dyIg2gTeSFrYDlJK+Mpf0IS4c4eXLKU?=
- =?us-ascii?Q?yjYk8xdqClm3SaQGIOMH7gaUc2TFZA3WhxmeVxTEI4JOey3zw6/VFzXX33ik?=
- =?us-ascii?Q?o5b+SRTOEushrQNOxUrqNIByULRmz6VPIBXzHl6cJudfv7WNPPGGT6jjmtqn?=
- =?us-ascii?Q?uZYryOTk3bwebYfN2jeendiLs6D1mrzzOQUgOnFJTZ8GY20KV7yTDuC3ErRl?=
- =?us-ascii?Q?eqV6M1wdweIPZ557TpKKfvleVkRHkGpZ5+QZW3+A0qcOj5j2+c8Pt+pEeSnL?=
- =?us-ascii?Q?KPJtApo4247v41hbT9+802pM+JyTeJ8+JAvpq9Aoum3IA03BJgkwoSMd8haA?=
- =?us-ascii?Q?UyV4xLGvTmuSvZ3lYpTyMUxX51WbBgM4BrDL1SYVl16cwps9EER+ktRpk1Hy?=
- =?us-ascii?Q?DFW79MfNgqG4CJ3RKyGpUTTHKGJsUClgAt5PuCyTmaZixn5VFHf2U+0w6ACp?=
- =?us-ascii?Q?W1fEYWKAMQ+MBDt2jb9FiixNC6et/boy8vwBEQ+8oPsV2sYYU9q7V/UBEIyA?=
- =?us-ascii?Q?QJ0MfSVB32tkxkuorsMveSvsEVppSyjRUTcEd2MXmCl1II3ibMT3Kf2R1430?=
- =?us-ascii?Q?mwNJIAYfqNAf3EeB3hoL2ULsftElJNAcVG9rmIZ3RoGd8z5d8zA1LB7D4NX7?=
- =?us-ascii?Q?R5uGVFiGr3jaHqSulpcLeaDnwzXPt2DRrxdDvfe+S1ITDOTfWSylAKWt0VVO?=
- =?us-ascii?Q?RRPVSOTpAGulIK4EfnTuBjkA8BxZ5y66tspORu7VNppOX+hh3kwRppwhCEJe?=
- =?us-ascii?Q?kvPBIesCRQ8ilq97pWWr9v3+sdGYozdD1pLeGh+sUIRIDTL41VhsxTjclEl5?=
- =?us-ascii?Q?9nqJ5JVIbTNBKDCxXpsWrcpAzy3CH09Bu8aByhEYLxtBUdDGElgsLk8vFMml?=
- =?us-ascii?Q?FT8j/rXUTFD/4Y3RhGcWSvBCR0eRJdtKYWM39rtd7zGQl4sMRpFPBs8PnBYM?=
- =?us-ascii?Q?K83kMkRHk9/QlMEAVgEXiYCYg1IEdd+OhtPwPaxA8tgY6IwMOLd4PuuNE889?=
- =?us-ascii?Q?BrhU++gwA/CZm/O9lGQosKyEeEMGEki6zVYDUARgGwIyvOaJv6nN6TpHuW1v?=
- =?us-ascii?Q?UrHajdvGhXyZUJqOWjBYBWLO3VkqsPIQfZ3P/0/gfAZ7THIFRAes8gxxaJ3y?=
- =?us-ascii?Q?Fj7g16OzvkUebUNOaAhesVfNcN6cEmyVRnsF5L5FiwIKkUwlQK8rxtgfLzvI?=
- =?us-ascii?Q?T8lI6sEa+LsRIFuymni2jhWO3op2T3RCOmvRYhlwcapft7HxRDXYflJ7DZpO?=
- =?us-ascii?Q?C6oylWQoMDZxVDR5gldDN3Xs7xTgWX39dRIAzcONFdEtUJxx+jL2F/wpvttg?=
- =?us-ascii?Q?+dVIfSjXLmaoZ6AuYYROYn/WAPugrVZEoH791By+hl9PJBQbtfBVZUT+hQGN?=
- =?us-ascii?Q?NmeI9Tw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230031)(82310400017)(376005)(1800799015)(36860700004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 03:09:25.5682
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d222ee36-4805-4beb-68fc-08dc79436bfd
-X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG2PEPF000B66CF.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR04MB6316
+X-Received: by 2002:a05:6602:2c8b:b0:7e2:b00:224b with SMTP id
+ ca18e2360f4ac-7e2304d4053mr23696839f.0.1716261004697; Mon, 20 May 2024
+ 20:10:04 -0700 (PDT)
+Date: Mon, 20 May 2024 20:10:04 -0700
+In-Reply-To: <tencent_CAB0DDA2192E4FE30DA8A5990DFD923A5D07@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000086f5b40618ee2716@google.com>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in copy_name
+From: syzbot <syzbot+efde959319469ff8d4d7@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Currently NCSI driver will send several NCSI commands back to back without
-waiting the response of previous NCSI command or timeout in some state
-when NIC have multi channel. This operation against the single thread
-manner defined by NCSI SPEC(section 6.3.2.3 in DSP0222_1.1.1)
+Hello,
 
-According to NCSI SPEC(section 6.2.13.1 in DSP0222_1.1.1), we should probe
-one channel at a time by sending NCSI commands (Clear initial state, Get
-version ID, Get capabilities...), than repeat this steps until the max
-number of channels which we got from NCSI command (Get capabilities) has
-been probed.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in hfsplus_listxattr
 
-Signed-off-by: DelphineCCChiu <delphine_cc_chiu@wiwynn.com>
----
- net/ncsi/internal.h    |  1 +
- net/ncsi/ncsi-manage.c | 80 +++++++++++++++++++++---------------------
- net/ncsi/ncsi-rsp.c    |  4 ++-
- 3 files changed, 44 insertions(+), 41 deletions(-)
+loop0: detected capacity change from 0 to 1024
+1sb: ffff888027b26c00, xnl: 762, hfsplus_listxattr
+res: 1, cc: 121, op:ffff888027b26c12, len: 744, ustrlen: 0, hfsplus_uni2asc
+=====================================================
+BUG: KMSAN: uninit-value in string_nocheck lib/vsprintf.c:647 [inline]
+BUG: KMSAN: uninit-value in string+0x36f/0x580 lib/vsprintf.c:728
+ string_nocheck lib/vsprintf.c:647 [inline]
+ string+0x36f/0x580 lib/vsprintf.c:728
+ vsnprintf+0x1b3b/0x2a00 lib/vsprintf.c:2824
+ vprintk_store+0x414/0x13f0 kernel/printk/printk.c:2228
+ vprintk_emit+0x1e4/0xbc0 kernel/printk/printk.c:2329
+ vprintk_default+0x3e/0x50 kernel/printk/printk.c:2363
+ vprintk+0xee/0xf0 kernel/printk/printk_safe.c:45
+ _printk+0x157/0x190 kernel/printk/printk.c:2373
+ hfsplus_listxattr+0xb53/0x1740 fs/hfsplus/xattr.c:743
+ vfs_listxattr fs/xattr.c:493 [inline]
+ listxattr+0x1f3/0x6b0 fs/xattr.c:840
+ path_listxattr fs/xattr.c:864 [inline]
+ __do_sys_listxattr fs/xattr.c:876 [inline]
+ __se_sys_listxattr fs/xattr.c:873 [inline]
+ __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
+ x64_sys_call+0x2ba0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:195
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
-index 374412ed780b..ea641491cb01 100644
---- a/net/ncsi/internal.h
-+++ b/net/ncsi/internal.h
-@@ -343,6 +343,7 @@ struct ncsi_dev_priv {
- 	bool                multi_package;   /* Enable multiple packages   */
- 	bool                mlx_multi_host;  /* Enable multi host Mellanox */
- 	u32                 package_whitelist; /* Packages to configure    */
-+	unsigned char       max_channel;     /* Num of channels to probe   */
- };
- 
- struct ncsi_cmd_arg {
-diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
-index 745c788f1d1d..57e2518ab8ac 100644
---- a/net/ncsi/ncsi-manage.c
-+++ b/net/ncsi/ncsi-manage.c
-@@ -470,6 +470,7 @@ static void ncsi_suspend_channel(struct ncsi_dev_priv *ndp)
- 	struct ncsi_package *np;
- 	struct ncsi_channel *nc, *tmp;
- 	struct ncsi_cmd_arg nca;
-+	static unsigned char channel_index;
- 	unsigned long flags;
- 	int ret;
- 
-@@ -510,17 +511,19 @@ static void ncsi_suspend_channel(struct ncsi_dev_priv *ndp)
- 
- 		break;
- 	case ncsi_dev_state_suspend_gls:
--		ndp->pending_req_num = np->channel_num;
-+		ndp->pending_req_num = 1;
- 
- 		nca.type = NCSI_PKT_CMD_GLS;
- 		nca.package = np->id;
-+		nca.channel = channel_index;
-+		ret = ncsi_xmit_cmd(&nca);
-+		if (ret)
-+			goto error;
-+		channel_index++;
- 
--		nd->state = ncsi_dev_state_suspend_dcnt;
--		NCSI_FOR_EACH_CHANNEL(np, nc) {
--			nca.channel = nc->id;
--			ret = ncsi_xmit_cmd(&nca);
--			if (ret)
--				goto error;
-+		if (channel_index == ndp->max_channel) {
-+			channel_index = 0;
-+			nd->state = ncsi_dev_state_suspend_dcnt;
- 		}
- 
- 		break;
-@@ -1345,9 +1348,9 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- {
- 	struct ncsi_dev *nd = &ndp->ndev;
- 	struct ncsi_package *np;
--	struct ncsi_channel *nc;
- 	struct ncsi_cmd_arg nca;
--	unsigned char index;
-+	unsigned char package_index;
-+	static unsigned char channel_index;
- 	int ret;
- 
- 	nca.ndp = ndp;
-@@ -1362,8 +1365,8 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- 		/* Deselect all possible packages */
- 		nca.type = NCSI_PKT_CMD_DP;
- 		nca.channel = NCSI_RESERVED_CHANNEL;
--		for (index = 0; index < 8; index++) {
--			nca.package = index;
-+		for (package_index = 0; package_index < NCSI_MAX_PACKAGE; package_index++) {
-+			nca.package = package_index;
- 			ret = ncsi_xmit_cmd(&nca);
- 			if (ret)
- 				goto error;
-@@ -1423,23 +1426,6 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- 
- 		nd->state = ncsi_dev_state_probe_cis;
- 		break;
--	case ncsi_dev_state_probe_cis:
--		ndp->pending_req_num = NCSI_RESERVED_CHANNEL;
--
--		/* Clear initial state */
--		nca.type = NCSI_PKT_CMD_CIS;
--		nca.package = ndp->active_package->id;
--		for (index = 0; index < NCSI_RESERVED_CHANNEL; index++) {
--			nca.channel = index;
--			ret = ncsi_xmit_cmd(&nca);
--			if (ret)
--				goto error;
--		}
--
--		nd->state = ncsi_dev_state_probe_gvi;
--		if (IS_ENABLED(CONFIG_NCSI_OEM_CMD_KEEP_PHY))
--			nd->state = ncsi_dev_state_probe_keep_phy;
--		break;
- 	case ncsi_dev_state_probe_keep_phy:
- 		ndp->pending_req_num = 1;
- 
-@@ -1452,14 +1438,17 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- 
- 		nd->state = ncsi_dev_state_probe_gvi;
- 		break;
-+	case ncsi_dev_state_probe_cis:
- 	case ncsi_dev_state_probe_gvi:
- 	case ncsi_dev_state_probe_gc:
- 	case ncsi_dev_state_probe_gls:
- 		np = ndp->active_package;
--		ndp->pending_req_num = np->channel_num;
-+		ndp->pending_req_num = 1;
- 
--		/* Retrieve version, capability or link status */
--		if (nd->state == ncsi_dev_state_probe_gvi)
-+		/* Clear initial state Retrieve version, capability or link status */
-+		if (nd->state == ncsi_dev_state_probe_cis)
-+			nca.type = NCSI_PKT_CMD_CIS;
-+		else if (nd->state == ncsi_dev_state_probe_gvi)
- 			nca.type = NCSI_PKT_CMD_GVI;
- 		else if (nd->state == ncsi_dev_state_probe_gc)
- 			nca.type = NCSI_PKT_CMD_GC;
-@@ -1467,19 +1456,29 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- 			nca.type = NCSI_PKT_CMD_GLS;
- 
- 		nca.package = np->id;
--		NCSI_FOR_EACH_CHANNEL(np, nc) {
--			nca.channel = nc->id;
--			ret = ncsi_xmit_cmd(&nca);
--			if (ret)
--				goto error;
--		}
-+		nca.channel = channel_index;
- 
--		if (nd->state == ncsi_dev_state_probe_gvi)
-+		ret = ncsi_xmit_cmd(&nca);
-+		if (ret)
-+			goto error;
-+
-+		if (nd->state == ncsi_dev_state_probe_cis) {
-+			nd->state = ncsi_dev_state_probe_gvi;
-+			if (IS_ENABLED(CONFIG_NCSI_OEM_CMD_KEEP_PHY) && channel_index == 0)
-+				nd->state = ncsi_dev_state_probe_keep_phy;
-+		} else if (nd->state == ncsi_dev_state_probe_gvi) {
- 			nd->state = ncsi_dev_state_probe_gc;
--		else if (nd->state == ncsi_dev_state_probe_gc)
-+		} else if (nd->state == ncsi_dev_state_probe_gc) {
- 			nd->state = ncsi_dev_state_probe_gls;
--		else
-+		} else {
-+			nd->state = ncsi_dev_state_probe_cis;
-+			channel_index++;
-+		}
-+
-+		if (channel_index == ndp->max_channel) {
-+			channel_index = 0;
- 			nd->state = ncsi_dev_state_probe_dp;
-+		}
- 		break;
- 	case ncsi_dev_state_probe_dp:
- 		ndp->pending_req_num = 1;
-@@ -1780,6 +1779,7 @@ struct ncsi_dev *ncsi_register_dev(struct net_device *dev,
- 		ndp->requests[i].ndp = ndp;
- 		timer_setup(&ndp->requests[i].timer, ncsi_request_timeout, 0);
- 	}
-+	ndp->max_channel = NCSI_RESERVED_CHANNEL;
- 
- 	spin_lock_irqsave(&ncsi_dev_lock, flags);
- 	list_add_tail_rcu(&ndp->node, &ncsi_dev_list);
-diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
-index bee290d0f48b..246b120ad3c1 100644
---- a/net/ncsi/ncsi-rsp.c
-+++ b/net/ncsi/ncsi-rsp.c
-@@ -795,12 +795,13 @@ static int ncsi_rsp_handler_gc(struct ncsi_request *nr)
- 	struct ncsi_rsp_gc_pkt *rsp;
- 	struct ncsi_dev_priv *ndp = nr->ndp;
- 	struct ncsi_channel *nc;
-+	struct ncsi_package *np;
- 	size_t size;
- 
- 	/* Find the channel */
- 	rsp = (struct ncsi_rsp_gc_pkt *)skb_network_header(nr->rsp);
- 	ncsi_find_package_and_channel(ndp, rsp->rsp.common.channel,
--				      NULL, &nc);
-+				      &np, &nc);
- 	if (!nc)
- 		return -ENODEV;
- 
-@@ -835,6 +836,7 @@ static int ncsi_rsp_handler_gc(struct ncsi_request *nr)
- 	 */
- 	nc->vlan_filter.bitmap = U64_MAX;
- 	nc->vlan_filter.n_vids = rsp->vlan_cnt;
-+	np->ndp->max_channel = rsp->channel_cnt;
- 
- 	return 0;
- }
--- 
-2.25.1
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3877 [inline]
+ slab_alloc_node mm/slub.c:3918 [inline]
+ kmalloc_trace+0x57b/0xbe0 mm/slub.c:4065
+ kmalloc include/linux/slab.h:628 [inline]
+ hfsplus_listxattr+0x4b6/0x1740 fs/hfsplus/xattr.c:699
+ vfs_listxattr fs/xattr.c:493 [inline]
+ listxattr+0x1f3/0x6b0 fs/xattr.c:840
+ path_listxattr fs/xattr.c:864 [inline]
+ __do_sys_listxattr fs/xattr.c:876 [inline]
+ __se_sys_listxattr fs/xattr.c:873 [inline]
+ __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
+ x64_sys_call+0x2ba0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:195
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 PID: 5518 Comm: syz-executor.0 Not tainted 6.9.0-syzkaller-01768-ga5131c3fdf26-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+=====================================================
+
+
+Tested on:
+
+commit:         a5131c3f Merge tag 'x86-shstk-2024-05-13' of git://git..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=14dc197c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=64e100d74625a6a5
+dashboard link: https://syzkaller.appspot.com/bug?extid=efde959319469ff8d4d7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1234ddf0980000
 
 
