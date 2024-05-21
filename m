@@ -1,252 +1,248 @@
-Return-Path: <linux-kernel+bounces-185333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889F38CB39B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:38:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E45E8CB3BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 408C6281F69
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:38:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E9DFB23264
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D824148FFA;
-	Tue, 21 May 2024 18:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048D914A0BD;
+	Tue, 21 May 2024 18:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WK1u2T4d"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2075.outbound.protection.outlook.com [40.107.93.75])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YJh/HUGQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB74148317;
-	Tue, 21 May 2024 18:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716316673; cv=fail; b=gN5AHvzThMKmb5mvOa6zJWnsuHjIxR4P7opV8qxe6OWD5y8FkqKQ8HIA1lEd6JfSEM8R/xw62Z/otzhv18wfF956w/FpvhnMrY1SJyRGtl6aeOadpT+GTyLJnw1qGQAPcvoQU78BkRKLY6CkFQcrM7IrtympxY3L8yPbE8OiAZw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716316673; c=relaxed/simple;
-	bh=lZM1oowUOxsbGlvv3UbmXUTY3ZMmN9mkQt8XQYBwO7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CjmgASa03PCQFhOvZA62rLfAgiG4Umo11D2/CviIeSHVAaWftkIf6uE3L3CUHLJ3vnc6x6ZryK59kAWrji6A3tm/JmRx+2TW2zHL4VpzB2oFL5n6RstBEERSTHRY14JUSlmBhOkfcxlv/+bCHyDcBOWPSDEDsifM8VL2TDao4ys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WK1u2T4d; arc=fail smtp.client-ip=40.107.93.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TEjuRZu6eAIu0YXDPPb6koxqWJAGmhBhr509UUTJHfdzb3v49E660woCJQb4Mrf91nJt5U7XZQNA38eUDPJetJMpraXGhNyhZuw8ITnXFVSfesDBXTEW1ZNyvf2NyfQCIJdrU7aKO05dWEKQTN0jpmOssg4B/IdvK6xeQIDgHP5rJsn9wWQro5YmEN+fvwJ2D6gjGKBrTVHGPOb4CSlxKhNlD0WmRZhnHMcM17OmxV5X7j2W2naQcM/HAPi3npWCGKqHkFPI4XbF6kTD7EVSMY0cMEKM+c7zKiLsBPo3Crl5SXkrcFwI7Yiw4sPI3EPeylfn7iVkfdEkZi0wnovYMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o3YdUoRpaN2pxEMho0Y9IwcFgSiYSHJO0yLYJYjLwwg=;
- b=UTwSbn3UKouezR61Bn8VSoimznAMia894tEdfArqbImcmYAMnva0WVhB0UQMSrioRoM1t06rwgO1rVbeiW+GMZcAAPZs/Zr3UFvZRgYYt5z78HpipVVODLn+z2F8QEoWb6CzyAVVjsoXCqa/DYXxUneoB4mk0OPr4Oo3cCSG8pAe7iGLZLXZJ2deVq9U5Jvi2/CKImPJs55/toQWYOlGJqssTvHnTgDlSJWz33jTMUU1m22MGsFcHO2Qs+9VZF/RZH+2Joqg5OsLutLckE1i2lIxUuspNiSyey9vVcWcCIudn0+hQ4PIupDOeQiZdcIc1sjDxTaMrYoVWEmuDt0xTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o3YdUoRpaN2pxEMho0Y9IwcFgSiYSHJO0yLYJYjLwwg=;
- b=WK1u2T4dbRwBjcVZi6jIRrYVLP0mmtn0BN0admYChrvssPj0yN/yXZNgvz1C+P6SUisP4FTMg0ghh/IE5YLvfEG1iHuk5um8YcndQ4uAyJ0iAoxFMrGTfTnNE78Zo4Q4XPgy/d+d9CtsgRc7DkT6VljoW70C6tSygWOpKZ2A9LTX9h14baUlMw29id4j6aOV6T1Qe7vGBWrH/NuqTMfCzaXb6/+lg5L1NMN+SOKN1hvT9bl0+d5HnOySIxk1P9nUbayrfX/RZIsPZJ3RfWXbcZ8+sEnRKFHW7IY6zqPzTCmqsvjnkOmw2DIQuKb1SwKHO3OEZSwSSZlWFFHizYCkKw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB3843.namprd12.prod.outlook.com (2603:10b6:a03:1a4::17)
- by DM4PR12MB9071.namprd12.prod.outlook.com (2603:10b6:8:bd::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Tue, 21 May
- 2024 18:37:48 +0000
-Received: from BY5PR12MB3843.namprd12.prod.outlook.com
- ([fe80::efc8:672:884:fafe]) by BY5PR12MB3843.namprd12.prod.outlook.com
- ([fe80::efc8:672:884:fafe%4]) with mapi id 15.20.7587.035; Tue, 21 May 2024
- 18:37:48 +0000
-Date: Tue, 21 May 2024 15:37:45 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>,
-	"Vetter, Daniel" <daniel.vetter@intel.com>,
-	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"luto@kernel.org" <luto@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"Liu, Yi L" <yi.l.liu@intel.com>
-Subject: Re: [PATCH 4/5] vfio/type1: Flush CPU caches on DMA pages in
- non-coherent domains
-Message-ID: <20240521183745.GP20229@nvidia.com>
-References: <20240510105728.76d97bbb.alex.williamson@redhat.com>
- <ZkG9IEQwi7HG3YBk@yzhao56-desk.sh.intel.com>
- <BN9PR11MB52766D78684F6206121590B98CED2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240516143159.0416d6c7.alex.williamson@redhat.com>
- <20240517171117.GB20229@nvidia.com>
- <BN9PR11MB5276250B2CF376D15D16FF928CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240521160714.GJ20229@nvidia.com>
- <20240521102123.7baaf85a.alex.williamson@redhat.com>
- <20240521163400.GK20229@nvidia.com>
- <20240521121945.7f144230.alex.williamson@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521121945.7f144230.alex.williamson@redhat.com>
-X-ClientProxiedBy: MN2PR03CA0024.namprd03.prod.outlook.com
- (2603:10b6:208:23a::29) To BY5PR12MB3843.namprd12.prod.outlook.com
- (2603:10b6:a03:1a4::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DE6149000;
+	Tue, 21 May 2024 18:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716316848; cv=none; b=oIIuOH+m1i0Eackbi/o0nFPuCydW7PFVyuaPtlfG4bPGB7FrCS2Gu0glmybasiVFODn+Eai7i+V9D7VT0bsc9or1Qf0shxmbA4de0ZEYyozF91wGnkfV/o2Vokya5qR+c7Yvw9kM1ElF6PUUUltQJcPtkwZIDhXe1sMXKBFp9S4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716316848; c=relaxed/simple;
+	bh=e4ygBOINpSdwHF3mQDHTXQMBIQSSSq90dYAi2ZOVZhY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=i37e45fyaIXRC40uyltZGp/CuUu+/vfUBKvWe4KctIZVLfeePDsXVXEgKN3kt7SSqDrdRm1qmqCTullMR9MYcZW0KrzGNfn0AGWgj4lcEHTfCL4mP3H9r4nSOBuWhgjSaCLdLvB/dz05UVwcxiPdg/NiPyxPL16tFRSpj/0OB+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YJh/HUGQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44LE68Rb014675;
+	Tue, 21 May 2024 18:38:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding:to:cc; s=qcppdkim1; bh=4uSXdFfximv0oQ
+	RetrCZeXvAHa7zXbz/Qsqp9yfbIzk=; b=YJh/HUGQPHEuMOluteBSc6E/u5nC3i
+	0/jEjrs9NsJGvkSDD9T8pxVTCE8/qLYkqSti30bPAsahNg8SuTeHU05Tt+C8ye0z
+	6S7KNrabP6WHVFje9pdXjn0tbLJyX8wskGxLwb6I76QQHvcuiT8BQTjDGKIH6Lyo
+	DXkdEyiaG30gFnmbebyehWcxpbOL3NAIE77VXs4tqAzomZrGaHXdMYsFOzWgpgqb
+	5lmviy1u7KoMnHFjOb1gTuqc/JqP4tygm1sX8xCRE0TNL09gYzcJdeZlYH6fbU2b
+	pYS2PnZibUn+AznbEr9qpGpi6SYaXcbLtdGDlPeK7cKOHipE1LU7cCZA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pqc6mbc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 May 2024 18:38:26 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44LIcPnt014421
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 May 2024 18:38:25 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 21 May 2024 11:38:24 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+Subject: [PATCH RFC v3 0/9] dt-bindings: hwinfo: Introduce board-id
+Date: Tue, 21 May 2024 11:37:57 -0700
+Message-ID: <20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB3843:EE_|DM4PR12MB9071:EE_
-X-MS-Office365-Filtering-Correlation-Id: 110841c2-36f4-48e2-55f5-08dc79c51d1c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005|7416005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2N+PMxbbWM/oM0np7x7XbiWCEP2wsMpttIsEzTrOJtnuioFJpoJew/uHDZ4o?=
- =?us-ascii?Q?zgw+5Ui/9Y0eZhvwCibLb0SBU1yKf9igE1nb9pXMiUWE4wOb95oawB3PWbXb?=
- =?us-ascii?Q?2IleRXbupfgAMTAj1FZdjN8PmCjJfzAl1DWGyqKyFhdMGRo3zfTKrpU82Fos?=
- =?us-ascii?Q?LeZmNFoOREf9ZQ9fRAlo72inkjBqOnylVt8F9lYBXXcynwMu9LJzX3s51b95?=
- =?us-ascii?Q?WWGpUBEQy+XF27KrUo2AiFn/I1qORCdsmltb6x1hTim/LzKlxxILmfrw8r06?=
- =?us-ascii?Q?OEC3oON5w4TutBKrOM1s6fLzPZdH5FVlie6ut/hiDX9ZXMM4pHcRaJboAl4y?=
- =?us-ascii?Q?d8yDQ+H4+VB8jjuW9knamZs35IjVP5wKB45isiGk4qqgset2QFY/OEJJoXGD?=
- =?us-ascii?Q?aoOMBmj9iHPmIIqwA7kXavvt+aZdNMSa0OxCa2clLc6SIEdyUy7Jr7mNqkt5?=
- =?us-ascii?Q?9uKgBoIal/JqhQGtCFmiG4LgKMp16j9GBsvuch1F2ENoMceVmV6DUSh+Lysj?=
- =?us-ascii?Q?e+85E/23wNl49ZOfqIHLGPBHa6hImy5XR1ZY8AapnsshIDys+EFWFwpQAPdy?=
- =?us-ascii?Q?zDuFrf+D9UBbb4oi2i5Gy2c3UDzaNt5nw+N37xDGsSvTv3gsGnZKMRW/pqEQ?=
- =?us-ascii?Q?nfHg5x+Rg4c9QNbhw0NJpYBYGSlAUU02DXdddWLKAbo+MT9Vpzi0N67rs4c5?=
- =?us-ascii?Q?DSsSulsdsbOVWQndhZrQbYLoggG4ZmMRjeTNjBZqj+6XDCt7LZtF90mnZAF7?=
- =?us-ascii?Q?8sUBad4m8ogWC+LfEziAZzbGTqWqHBF+RTxANLuBYevsQlQioAifDsbIMzbW?=
- =?us-ascii?Q?KXakSZ9klNdvx/1xArV2xTN/6mwmPPF9EfQ1KDr9GWP0M/fLUk/j3Ti1cJTj?=
- =?us-ascii?Q?bWac/4d7fBYTClaW9HN4bmduyYOqNVxkjlLPFrPDR00W5N2G0muXgLNH5KzN?=
- =?us-ascii?Q?QkNrrHSR3O34/jdXSlD+B6jkXPjJzC5uOqT5B3RI6CRqQUuYp9HiAxfcqJm7?=
- =?us-ascii?Q?RBhfSA7FAQZ5VeJ0grkWnUNDDr69omj4Fd4dJHfY/x3n/RJIVkQpIHfOkozA?=
- =?us-ascii?Q?js0NEawnPdgSY0mZ3OLK4iWpHHR/C5p4cCA0C8j849mOn8PZSBcdM5Rvd9kw?=
- =?us-ascii?Q?RtgAXlps1sAkcL/L1mfZVkPjPRVKUGzStVKuaZiDvDPBwqGxKrIaShL/vkBL?=
- =?us-ascii?Q?qK+IX52Kk12guwQBNRHClK+bmdt34jyEAJuv7WopLnQxovV8AhLZXXA6sm/l?=
- =?us-ascii?Q?y85eARzuYffdsjhLkBHlTIoJejuOCenlIKDgYTdK/w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB3843.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(7416005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?roIl7ffFd8cs9Tu/lQn51Rb4tFwg0atu6wvpnGD0CdhdUhUIAzho4LsupAzd?=
- =?us-ascii?Q?3UHng216FlOIPkgkS4nl5I554E90FLIZzZ85cB1hyZ6JSK1VqIqhzpbHd0v0?=
- =?us-ascii?Q?KGY5aLcb9zuA7++wc1GtzSI5aJS0akPtAFL9ModIjr2oTHA22U4N0uennnpl?=
- =?us-ascii?Q?dFbkZHtsUMQ2Q0qY7uzrysZdhSa79FBQlDZnriEYm3sAg15LPmQdeaWy6fVW?=
- =?us-ascii?Q?GpeAQqu2CzPYz781C9Hg2+UQc+0m+sld2j0CVOllQLb9JL7C5wqNfoW2iWPX?=
- =?us-ascii?Q?gowLCbYrg6rzr5EPletpX00DqistEPtUsKlfNY9DYHwhCXi76Erm/R/0GTYS?=
- =?us-ascii?Q?vcMjAg0kQlEDdWKLxtW6z+Yx9LWUKVwqjFDLP4QOjkyZRXTavfRcW1uopgT+?=
- =?us-ascii?Q?iE+BHRnAt02NTlnw5W9CORFBTM33p3yrB8o+joGpYjmLNEC6tSlpoL1iQNMz?=
- =?us-ascii?Q?Ib3B2x4e2wxfxuaTUBAm01CLpOCmDeSW/fHbbRfDWK+vZzCZZiYkNKBgEcPz?=
- =?us-ascii?Q?NZ3kVtaGh0er6HjwbVrZjylMPfzBuCGhg7FxNx2HMMpqlHbkrDQCv8pFV41e?=
- =?us-ascii?Q?uwPxh5f2MKdgnXPKKqxA/cSknyFOa+4PIiMo+dMEofotqHTF3LnJ0358G1ty?=
- =?us-ascii?Q?rPe/3/R1bzFJFqgqQ2wmXhZgPPO9xAOzyAslE7WRQOSXz4YNFmyragggCykt?=
- =?us-ascii?Q?QesS3mry97Q8jEHNZ7ChIw9f4AqGbRBMCEIWxQNJMTUxlv/n6J6HD7zkic4k?=
- =?us-ascii?Q?ZC5CAX8TVb3x9jK7VDI0Yu1gBr8LHGmKeJSu48EdAWy0IdPFuxYd9UGbFOT4?=
- =?us-ascii?Q?4nrYBn2qgpI0yP36zWzZDFLF6D6NFOOE3gBZQyFi+ug9q7plqaTQ5yaBflrp?=
- =?us-ascii?Q?05iGViq0XSOO8MjnUwcwED2nta8k3TnIg4eoKX13SPqD52DOSzl8Nse28Ky6?=
- =?us-ascii?Q?cMb9mntgGqvBWmUjKsEqBaIToGTevuPSF2+M+reoAZ2Q+IOBBGs2rjdGwe9u?=
- =?us-ascii?Q?AzU0xmduvF8WWnh8QsqCxXehPrnU+p02Ah2i7hUH0uXabcintcRdneHXfxwp?=
- =?us-ascii?Q?Oio4kCVHsnR72D8heXkw0FNJ31iQw6xzPbWN1PjxAxmHwk3dDZtT7qP3oFdm?=
- =?us-ascii?Q?4r5zFRnkaxNAI6kdTWzFpEOIyjerccE0PAP+u4+qXSqZdc4XV2amyphzETPy?=
- =?us-ascii?Q?ay8kQjEAehMve75650r8RqzrFnm4Zj9BFqAAXHajyiKhEgiU0uejNXz+neM8?=
- =?us-ascii?Q?BcCrzv6XP+vBvMubAulchRcUrCVdK7R05woA6K421wD5tEBw6IDB8v3lWoNT?=
- =?us-ascii?Q?+UJlYd/vCJmXQoUVDdAiz85fQU0/7Xl/AWAAEeJyZHAtdAufWUbDY1e1en78?=
- =?us-ascii?Q?h/M6qifcfuXH3SkJCbUsMvinpwXtpfKqePXQlR9VcLOWk875znC1m5Vn5Xhi?=
- =?us-ascii?Q?zllQckKNqVSO+szn1y2b49OLOmdTLBKJfnJGYdEM1zYolRX1UHgQdhJsssXM?=
- =?us-ascii?Q?qZ/N1zjOwcdyYMcQHS29BInJS6/1V8lnM7x6KFNZSaxpo5vwqxrqjki2q27K?=
- =?us-ascii?Q?D0Xme9PUNrQ3UFqaEHU=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 110841c2-36f4-48e2-55f5-08dc79c51d1c
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB3843.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 18:37:48.6565
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: flrFkPeC6Mf2nUHqefp2z9wXBcfdh+Q/ahv9IlOPGOyblvK+MZ7Q4RodOBT1Ks2i
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB9071
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAXqTGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDQ0Mj3aT8xKIUoGCxroWBZVqagZGFYWqqqRJQfUFRalpmBdisaKUgN2e
+ l2NpaALIGQPFgAAAA
+To: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>
+CC: Amrit Anand <quic_amrianan@quicinc.com>,
+        Peter Griffin
+	<peter.griffin@linaro.org>,
+        Caleb Connolly <caleb.connolly@linaro.org>,
+        "Andy
+ Gross" <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Doug
+ Anderson" <dianders@chromium.org>,
+        Simon Glass <sjg@chromium.org>, "Chen-Yu
+ Tsai" <wenst@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        "Humphreys,
+ Jonathan" <j-humphreys@ti.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        "Jon
+ Hunter" <jonathanh@nvidia.org>,
+        Michal Simek <michal.simek@amd.com>,
+        <boot-architecture@lists.linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        Elliot Berman <quic_eberman@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: iMkoVwtpieLMiTIoo9Lf7718t7nbtrTW
+X-Proofpoint-GUID: iMkoVwtpieLMiTIoo9Lf7718t7nbtrTW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-21_11,2024-05-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ mlxlogscore=999 impostorscore=0 adultscore=0 lowpriorityscore=0
+ phishscore=0 spamscore=0 suspectscore=0 mlxscore=0 clxscore=1011
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405210140
 
-On Tue, May 21, 2024 at 12:19:45PM -0600, Alex Williamson wrote:
-> > I'm OK with this. If devices are insecure then they need quirks in
-> > vfio to disclose their problems, we shouldn't punish everyone who
-> > followed the spec because of some bad actors.
-> > 
-> > But more broadly in a security engineered environment we can trust the
-> > no-snoop bit to work properly.
-> 
->  The spec has an interesting requirement on devices sending no-snoop
->  transactions anyway (regarding PCI_EXP_DEVCTL_NOSNOOP_EN):
-> 
->  "Even when this bit is Set, a Function is only permitted to Set the No
->   Snoop attribute on a transaction when it can guarantee that the
->   address of the transaction is not stored in any cache in the system."
-> 
-> I wouldn't think the function itself has such visibility and it would
-> leave the problem of reestablishing coherency to the driver, but am I
-> overlooking something that implicitly makes this safe?  
+Device manufacturers frequently ship multiple boards or SKUs under a
+single software package. These software packages will ship multiple
+devicetree blobs and require some mechanism to pick the correct DTB for
+the board the software package was deployed. Introduce a common
+definition for adding board identifiers to device trees. board-id
+provides a mechanism for bootloaders to select the appropriate DTB which
+is vendor/OEM-agnostic.
 
-I think it is just bad spec language! People are clearly using
-no-snoop on cachable memory today. The authors must have had some
-other usage in mind than what the industry actually did.
+This series is based off a talk I gave at EOSS NA 2024 [1]. There is
+some further discussion about how to do devicetree selection in the
+boot-architecture mailing list [2].
 
-> But there's no capability bit that allows us to report whether the
-> device supports no-snoop, we're just hoping that a driver writing to
-> the bit doesn't generate a fault if the bit doesn't stick.  For example
-> the no-snoop bit in the TLP itself may only be a bandwidth issue, but
-> if the driver thinks no-snoop support is enabled it may request the
-> device use the attribute for a specific transaction and the device
-> could fault if it cannot comply.
+[1]: https://sched.co/1aBFy
+[2]: https://lists.linaro.org/archives/list/boot-architecture@lists.linaro.org/thread/DZCZSOCRH5BN7YOXEL2OQKSDIY7DCW2M/
 
-It could, but that is another wierdo quirk IMHO. We already see things
-in config space under hypervisor control because the VF don't have the
-bits :\
+Quick summary
+-------------
+This series introduces a new subnode in the root:
+/ {
+	board-id {
+		some-hw-id = <value>;
+		other-hw-id = <val1>, <val2>;
+	};
+};
 
-> > > The more secure approach might be that we need to do these cache
-> > > flushes for any IOMMU that doesn't maintain coherency, even for
-> > > no-snoop transactions.  Thanks,  
-> > 
-> > Did you mean 'even for snoop transactions'?
-> 
-> I was referring to IOMMUs that maintain coherency regardless of
-> no-snoop transactions, ie domain->enforce_cache_coherency (ex. snoop
-> control/SNP on Intel), so I meant as typed, the IOMMU maintaining
-> coherency even for no-snoop transactions.
-> 
-> That's essentially the case we expect and we don't need to virtualize
-> no-snoop enable on the device.
+Firmware provides a mechanism to fetch the values of "some-hw-id" and
+"other-hw-id" based on the property name. I'd like to leave exact
+mechanism data out of the scope of this proposal to keep this proposal 
+flexible because it seems architecture specific, although I think we we
+should discuss possible approaches. A DTB matches if firmware can
+provide a matching value for every one of the properties under
+/board-id. In the above example, val1 and val2 are both valid values and
+firmware only provides the one that actually describes the board. 
 
-It is the most robust case to be sure, and then we don't need
-flushing.
+It's expected that devicetree's board-id don't describe all the
+properties firmware could provide. For instance, a devicetree overlay
+may only care about "other-hw-id" and not "some-hw-id". Thus, it need 
+only mention "other-hw-id" in its board-id node.
 
-My point was we could extend the cases where we don't need to flush if
-we pay attention to, or virtualize, the PCI_EXP_DEVCTL_NOSNOOP_EN.
+Isn't that what the compatible property is for?
+-----------------------------------------------
+The compatible property can be used for board matching, but requires
+bootloaders and/or firmware to maintain a database of possible strings
+to match against or implement complex compatible string matching.
+Compatible string matching becomes complicated when there are multiple
+versions of board: the device tree selector should recognize a DTB that
+cares to distinguish between v1/v2 and a DTB that doesn't make the
+distinction.  An eeprom either needs to store the compatible strings
+that could match against the board or the bootloader needs to have
+vendor-specific decoding logic for the compatible string. Neither
+increasing eeprom storage nor adding vendor-specific decoding logic is
+desirable.
 
-> > That is where this series is, it assumes a no-snoop transaction took
-> > place even if that is impossible, because of config space, and then
-> > does pessimistic flushes.
-> 
-> So are you proposing that we can trust devices to honor the
-> PCI_EXP_DEVCTL_NOSNOOP_EN bit and virtualize it to be hardwired to zero
-> on IOMMUs that do not enforce coherency as the entire solution?
+How is this better than Qualcomm's qcom,msm-id/qcom,board-id?
+-------------------------------------------------------------
+The selection process for devicetrees was Qualcomm-specific and not
+useful for other devices and bootloaders that were not developed by
+Qualcomm because a complex algorithm was used to implement. Board-ids
+provide a matching solution that can be implemented by bootloaders
+without introducing vendor-specific code. Qualcomm uses three
+devicetree properties: msm-id (interchangeably: soc-id), board-id, and
+pmic-id.  This does not scale well for use casese which use identifiers,
+for example, to distinguish between a display panel. For a display
+panel, an approach could be to add a new property: display-id, but now
+bootloaders need to be updated to also read this property. We want to
+avoid requiring to update bootloaders with new hardware identifiers: a
+bootloader need only recognize the identifiers it can handle.
 
-Maybe not entire, but as an additional step to reduce the cost of
-this. ARM would like this for instance.
- 
-> Or maybe we trap on setting the bit to make the flushing less
-> pessimistic?
+Notes about the patches
+-----------------------
+In my opinion, most of the patches in this series should be submitted to
+libfdt and/or dtschema project. I've made them apply on the kernel tree
+to be easier for other folks to pick them up and play with them. As the
+patches evolve, I can send them to the appropriate projects.
 
-Also a good idea. The VMM could then decide on policy.
+Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+---
+Changes in v3:
+ - Follow new "/board-id {}" approach, which uses key-value pairs
+ - Add match algorithm in libfdt and some examples to demo how the
+   selection could work in tools/board-id
 
-Jason
+Changes in V2:
+ - Addressed few comments related to board-id, and DDR type.
+ - Link to V2:  https://lore.kernel.org/all/a930a3d6-0846-a709-8fe9-44335fec92ca@quicinc.com/#r
+
+---
+Amrit Anand (1):
+      dt-bindings: arm: qcom: Update Devicetree identifiers
+
+Elliot Berman (8):
+      libfdt: board-id: Implement board-id scoring
+      dt-bindings: board: Introduce board-id
+      fdt-select-board: Add test tool for selecting dtbs based on board-id
+      dt-bindings: board: Document board-ids for Qualcomm devices
+      arm64: boot: dts: sm8650: Add board-id
+      arm64: boot: dts: qcom: Use phandles for thermal_zones
+      arm64: boot: dts: qcom: sm8550: Split into overlays
+      tools: board-id: Add test suite
+
+ .../devicetree/bindings/board/board-id.yaml        |  24 ++++
+ .../devicetree/bindings/board/qcom,board-id.yaml   | 144 ++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/Makefile                  |   4 +
+ arch/arm64/boot/dts/qcom/pm8010.dtsi               |  62 ++++-----
+ arch/arm64/boot/dts/qcom/pm8550.dtsi               |  32 ++---
+ arch/arm64/boot/dts/qcom/pm8550b.dtsi              |  36 +++--
+ arch/arm64/boot/dts/qcom/pm8550ve.dtsi             |  38 +++---
+ arch/arm64/boot/dts/qcom/pm8550vs.dtsi             | 128 +++++++++--------
+ arch/arm64/boot/dts/qcom/pmr735d_a.dtsi            |  38 +++---
+ arch/arm64/boot/dts/qcom/pmr735d_b.dtsi            |  38 +++---
+ .../dts/qcom/{sm8550-mtp.dts => sm8550-mtp.dtso}   |  24 +++-
+ .../dts/qcom/{sm8550-qrd.dts => sm8550-qrd.dtso}   |  22 ++-
+ .../boot/dts/qcom/{sm8550.dtsi => sm8550.dts}      |  10 +-
+ arch/arm64/boot/dts/qcom/sm8650-mtp.dts            |   6 +
+ arch/arm64/boot/dts/qcom/sm8650-qrd.dts            |   6 +
+ arch/arm64/boot/dts/qcom/sm8650.dtsi               |   2 +-
+ include/dt-bindings/arm/qcom,ids.h                 |  86 ++++++++++--
+ scripts/dtc/.gitignore                             |   1 +
+ scripts/dtc/Makefile                               |   3 +-
+ scripts/dtc/fdt-select-board.c                     | 126 +++++++++++++++++
+ scripts/dtc/libfdt/fdt_ro.c                        |  76 +++++++++++
+ scripts/dtc/libfdt/libfdt.h                        |  54 ++++++++
+ tools/board-id/test.py                             | 151 +++++++++++++++++++++
+ 23 files changed, 901 insertions(+), 210 deletions(-)
+---
+base-commit: e8f897f4afef0031fe618a8e94127a0934896aba
+change-id: 20240112-board-ids-809ff0281ee5
+
+Best regards,
+-- 
+Elliot Berman <quic_eberman@quicinc.com>
+
 
