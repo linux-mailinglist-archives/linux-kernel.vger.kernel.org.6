@@ -1,149 +1,154 @@
-Return-Path: <linux-kernel+bounces-184541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 394548CA84C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:01:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ECBB8CA847
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7316282ACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:01:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16671B21771
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C104CE04;
-	Tue, 21 May 2024 07:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F495482D7;
+	Tue, 21 May 2024 06:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLrxZN6W"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d4Dl3Diw"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C087F;
-	Tue, 21 May 2024 07:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313EE4EB24;
+	Tue, 21 May 2024 06:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716274873; cv=none; b=plSiT53Ly4fNZECSMVfzceRvmbr6Y9ewVXpjZOJCIt7XSQxlyhOAW1qneA+gEr1OD6utyZ99UO+19LJpHxxvMH3GXOCsJ8yh2F0c5jsocN48/bTzXj/4VKr2NoJDtuBVNst8xWsn2J0HrddG6BhQAGGYjZgSH1kkWJn/EOzocuo=
+	t=1716274694; cv=none; b=WaSCXrgyuFpz7wna0j7vRX2TbGkN18wS21Iyk4Ega81Sx+/aXYTfMvSNcjoY+qz5j3CsHMkaOR7r+jYCdALFSKFJjJ3lC5pwL+4+ZBbqd+7e5DA73yzs6mMZBA8gvn+ugcDXFzWsSotN0b9MpSQYbyKuPbd1h+AvgKm/iby1N60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716274873; c=relaxed/simple;
-	bh=HkA7G+WZziI0+WY66bqy3c/uUl0leQntthhE7ntsiok=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=qwmTxdWGXDSK/nY4uu1zjJwMHoDEDCGdvWErzUlVLINEAxCFxYLeZ3R3Yts5oUgYzWGXhjOg+NUHe/542tjOiixUY6pmKZQPCUbsJrcplX1GcjpCpEZaI1MbS4K1wZK6jOQsV4CQ0Tkbe0Adt4vWknltJhGbpycesoSstR44vgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLrxZN6W; arc=none smtp.client-ip=209.85.208.177
+	s=arc-20240116; t=1716274694; c=relaxed/simple;
+	bh=S1L5vmGoC0m8fnlP6zf0XqLv3lg1zpGo7r8IcCTbE6U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RVEdWX6Ta7H9FC8H4tD6CNAN6ZiXL2FAVeL5KC6k3Gztj1XKj6/TRqEG7rICRhZerm7+T1gCvAhvsQSI976cLDrcTJPRANEEDJMVDi0aKZ10wQl3CAzlqxO0NEN+Wrilp7fM3V/mx/r7bjyJzmb60en3UMF5RTdFjO4PrOu5JDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d4Dl3Diw; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e271acb015so64928481fa.1;
-        Tue, 21 May 2024 00:01:11 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59cf8140d0so658441666b.3;
+        Mon, 20 May 2024 23:58:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716274870; x=1716879670; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UkWR+t4coTvUfqKps9eZBaaz7b4Ay7sWZdC6HnQxB+Y=;
-        b=XLrxZN6WHCjRXtbKf6ynCl5u5U0kGOwmPWG7zrO8Z7rkGdGkurKHBVBt0MmIU4Ekxu
-         kW1MQyZupWyIDHVEvSxoWtZkWDFtxFP8q6okW7ruhv6Ie7eWAn1bACtNRgZQWIJybH8+
-         zQSAfPvaQMnUfKko3slutqgEUrufJWt7k2VJVIr51pjYAtiyEkgfcA8Kdfc0w3VP67v9
-         /SzDI1oDEUfYXn1aGBkj6tGaiA17zRMgKI4W0cD5N7WOlQtERLtRfVX2sZ7wuNI43VSt
-         xmL0JkDpwoF/d+sxDVGaUvbNWfm6xd5hb+71KRRKxEDZ8A3ki2cyEeapmaGw7vpsM4Ku
-         upZA==
+        d=gmail.com; s=20230601; t=1716274691; x=1716879491; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WUq+MD3cDlgv9ew/G/k6DDudnFMyeCNHou9Fxg3fOAI=;
+        b=d4Dl3DiwDjWZ/u8F9UecEp1RIwH9R7rzOC79wGr9fsiq8+QMIynU0sHsU6bjxFl8An
+         l3FzDX71kbbxdiIwOOQ1NIO7WJQb2MghqKE8+d9pRN/porWm0ZAv9Pu5ZAEjUkAYCdMk
+         fnAygq0faLRTtczoeY6ZxJze+BksfI65IxIdxGFx9wYxlpW82hxyWyCjepnNio+C5JQu
+         Bkazf+jAjXoZyCMjG9cEZIimv+iV+DIPHcEcT3QMcnBJYcP6es7OG/wz8cxAkBRfvOAP
+         vJIAzwc7VbvoHP6kxb3eZHXS+5VpaUiYNiXFe1CqSediYkWEh1KwhNBv6BKw9FXJnEn3
+         /PTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716274870; x=1716879670;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UkWR+t4coTvUfqKps9eZBaaz7b4Ay7sWZdC6HnQxB+Y=;
-        b=CT5T1PGZWnqT04T+6v/LKl8SR188AtT0i3ZdxyvGPopd7iQrwpJEzTzP3xngmrVEt4
-         KVqzXCIlFkzLoZxYbv9P6dfB6XVBkQ9Sdq6YtfAhcefAXIZihnXB0DOirKBkghbqT/ia
-         hR5RrzWJPlL6389M0vlSb9TBT1p6agHeYGn0yqkPVpf6ys7Q/Q11BUkfyHiUFeX0WrzW
-         jaJER31Rmo0dcLWPpKZJ4vqtRh0eifYyjDhtu3nDbYuan/9nWuw+NDi6CSTypEBErTM2
-         KNv9yHIFEyVDcRsFZNKMTu+muFWKZZnyJrnlLd2jukwEHij5ouyHYKWPBA2gTEza7QVX
-         QMNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnSBN6rdabwvQW43eMXefNpbaiC3hknYc6c81QGAtnlb56A/5TrL0KmiiOluyDdy+mS6XPc8J/kFwUpo8g0OjvGGbAloXbu+mdQwY+UQCymxwFWuJvQSCw27HNGt/gzEZTLoDEu8suh4ls3D4=
-X-Gm-Message-State: AOJu0YzRdDdijShNIYrSMOwAutluwu0w8/yeYgjxrxqbhHqITpNE7FTt
-	mQYBGBLBCAmNeORARx4kVNnZelnW+/b7/jg9r4kYtW9WoiCdinG50uhqWg==
-X-Google-Smtp-Source: AGHT+IGMUIWoeq0jhoFs/GRtfBhQ/rk6jS/l8R79/kT9O7NdrOKMHEpwVp27euETugMllwP1USmcSA==
-X-Received: by 2002:a2e:730b:0:b0:2dd:409:3b25 with SMTP id 38308e7fff4ca-2e51fd42038mr215262941fa.4.1716274869853;
-        Tue, 21 May 2024 00:01:09 -0700 (PDT)
-Received: from localhost (freebox.vlq16.iliad.fr. [213.36.7.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42012a025dbsm351827435e9.23.2024.05.21.00.01.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 00:01:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716274691; x=1716879491;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WUq+MD3cDlgv9ew/G/k6DDudnFMyeCNHou9Fxg3fOAI=;
+        b=OUbDMTj4WdX1sPfROUojgzs6m9SgtZ7cK3DzvjukzDkuIaGHxZGwTri4xeW2B6Xf/2
+         9oQWReJ1paaZDotA2W6EhH3Hu5v0azhb+N2BikWKS0ZPH5nKI4uvN7gOC1703DnJ4ZnC
+         xQqmcvVE6nSOiRM8lgaOSSAvqeqJ9VL5mZcrxrPiEG0nvlxfbSKhjJyCGe0Oq6DSR0eK
+         YUHHEn78ku8MfbC7ZN2c9NdgveBKmzAoFZd0J1CNaFbtcVgFFM4eUNVqGy4YmWySfBpE
+         2Syl/Dyf89O/salZchdesfueB5oT6ahdPm5DbWheFUwtHaju4xJWDU60ce4JjdtHS43T
+         Ds/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXqGmgpQ2KK7WguFpoLZB+yB6ZqXxj+ImJsgJIXyjDvvTaNpSjo2E7sly4AzEU7u7cu/7YkIN+v+pYopWBdGb72IdFuZHjolFH3ICmMrWxv6g+gNivyz84T72eC2kb2tmsaCIneBQ==
+X-Gm-Message-State: AOJu0YwkyoEKJt2LqH/eT3aoYO+duLK1qjKCKMmRqZ2NuxeX/Y9Ma3hQ
+	U8ACYgmEUX8aFmnTqRBqF+4oprk+ckew3s90Sx2L4l323GzpZrk8G9V0aFbhIj4=
+X-Google-Smtp-Source: AGHT+IGLsXZvaNr+YSms8SZ+29sSYLe8eRuQc58MenAVXVrTTR+c0UdLaIjSH88FAy3dKmfcfZAiEA==
+X-Received: by 2002:a17:906:3a8d:b0:a59:ad2b:ec95 with SMTP id a640c23a62f3a-a5a2d67e2c0mr1805961166b.67.1716274691247;
+        Mon, 20 May 2024 23:58:11 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:994e:fbde:478:1ce1? (p200300f6ef1cc500994efbde04781ce1.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:994e:fbde:478:1ce1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b177f0sm1561543466b.209.2024.05.20.23.58.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 23:58:10 -0700 (PDT)
+Message-ID: <1b93cc45944c7d1491184adafb55e0c99675ff32.camel@gmail.com>
+Subject: Re: [PATCH v3 9/9] drivers: iio: imu: Add support for adis1657x
+ family
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Ramona Gradinariu
+	 <ramona.bolboaca13@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, conor+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, nuno.sa@analog.com
+Date: Tue, 21 May 2024 09:01:54 +0200
+In-Reply-To: <20240519195707.71163f84@jic23-huawei>
+References: <20240517074750.87376-1-ramona.bolboaca13@gmail.com>
+	 <20240517074750.87376-10-ramona.bolboaca13@gmail.com>
+	 <20240519195707.71163f84@jic23-huawei>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 May 2024 09:01:08 +0200
-Message-Id: <D1F4NY5F73YD.1T55A9QAAA1N@gmail.com>
-Subject: Re: [PATCH] wifi: cfg80211: Lock wiphy in cfg80211_get_station
-From: "Nicolas Escande" <nico.escande@gmail.com>
-To: "Remi Pommarel" <repk@triplefau.lt>, "Johannes Berg"
- <johannes@sipsolutions.net>
-Cc: "Antonio Quartulli" <antonio@open-mesh.com>,
- <linux-wireless@vger.kernel.org>, <b.a.t.m.a.n@lists.open-mesh.org>,
- <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <983b24a6a176e0800c01aedcd74480d9b551cb13.1716046653.git.repk@triplefau.lt>
-In-Reply-To: <983b24a6a176e0800c01aedcd74480d9b551cb13.1716046653.git.repk@triplefau.lt>
+MIME-Version: 1.0
 
-On Sat May 18, 2024 at 5:50 PM CEST, Remi Pommarel wrote:
-> Wiphy should be locked before calling rdev_get_station() (see lockdep
-> assert in ieee80211_get_station()).
->
-> This fixes the following kernel NULL dereference:
->
->  Unable to handle kernel NULL pointer dereference at virtual address 0000=
-000000000050
->  Mem abort info:
->    ESR =3D 0x0000000096000006
->    EC =3D 0x25: DABT (current EL), IL =3D 32 bits
->    SET =3D 0, FnV =3D 0
->    EA =3D 0, S1PTW =3D 0
->    FSC =3D 0x06: level 2 translation fault
->  Data abort info:
->    ISV =3D 0, ISS =3D 0x00000006
->    CM =3D 0, WnR =3D 0
->  user pgtable: 4k pages, 48-bit VAs, pgdp=3D0000000003001000
->  [0000000000000050] pgd=3D0800000002dca003, p4d=3D0800000002dca003, pud=
-=3D08000000028e9003, pmd=3D0000000000000000
->  Internal error: Oops: 0000000096000006 [#1] SMP
->  Modules linked in: netconsole dwc3_meson_g12a dwc3_of_simple dwc3 ip_gre=
- gre ath10k_pci ath10k_core ath9k ath9k_common ath9k_hw ath
->  CPU: 0 PID: 1091 Comm: kworker/u8:0 Not tainted 6.4.0-02144-g565f9a3a791=
-1-dirty #705
->  Hardware name: RPT (r1) (DT)
->  Workqueue: bat_events batadv_v_elp_throughput_metric_update
->  pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
->  pc : ath10k_sta_statistics+0x10/0x2dc [ath10k_core]
->  lr : sta_set_sinfo+0xcc/0xbd4
->  sp : ffff000007b43ad0
->  x29: ffff000007b43ad0 x28: ffff0000071fa900 x27: ffff00000294ca98
->  x26: ffff000006830880 x25: ffff000006830880 x24: ffff00000294c000
->  x23: 0000000000000001 x22: ffff000007b43c90 x21: ffff800008898acc
->  x20: ffff00000294c6e8 x19: ffff000007b43c90 x18: 0000000000000000
->  x17: 445946354d552d78 x16: 62661f7200000000 x15: 57464f445946354d
->  x14: 0000000000000000 x13: 00000000000000e3 x12: d5f0acbcebea978e
->  x11: 00000000000000e3 x10: 000000010048fe41 x9 : 0000000000000000
->  x8 : ffff000007b43d90 x7 : 000000007a1e2125 x6 : 0000000000000000
->  x5 : ffff0000024e0900 x4 : ffff800000a0250c x3 : ffff000007b43c90
->  x2 : ffff00000294ca98 x1 : ffff000006831920 x0 : 0000000000000000
->  Call trace:
->   ath10k_sta_statistics+0x10/0x2dc [ath10k_core]
->   sta_set_sinfo+0xcc/0xbd4
->   ieee80211_get_station+0x2c/0x44
->   cfg80211_get_station+0x80/0x154
->   batadv_v_elp_get_throughput+0x138/0x1fc
->   batadv_v_elp_throughput_metric_update+0x1c/0xa4
->   process_one_work+0x1ec/0x414
->   worker_thread+0x70/0x46c
->   kthread+0xdc/0xe0
->   ret_from_fork+0x10/0x20
->  Code: a9bb7bfd 910003fd a90153f3 f9411c40 (f9402814)
->
-> Fixes: 7406353d43c8 ("cfg80211: implement cfg80211_get_station cfg80211 A=
-PI")
-> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+On Sun, 2024-05-19 at 19:57 +0100, Jonathan Cameron wrote:
+> On Fri, 17 May 2024 10:47:50 +0300
+> Ramona Gradinariu <ramona.bolboaca13@gmail.com> wrote:
+>=20
+> > Add support for ADIS1657X family devices in already exiting ADIS16475
+> > driver.
+> >=20
+> > Signed-off-by: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+>=20
+> Whilst it's not necessarily vital to support, it I'm curious about
+> what happens to the hardware timestamp? I thought we had one driver
+> still doing hardware timestamps directly to the buffer, but I can't
+> find it so I guess we now deal with alignment in the few devices with
+> this support.=C2=A0 The st_lsm6dsx has this sort of combining of local
+> and fifo timestamps for example.
+>=20
+> As it stands I think you push the same timestamp for all scans read
+> from the fifo on a particular watermark interrupt?=C2=A0 That isn't
+> ideal given we should definitely be able to do better than that.
+>=20
+> > +
+> > +static const struct iio_dev_attr *adis16475_fifo_attributes[] =3D {
+> > +	&iio_dev_attr_hwfifo_watermark_min.dev_attr.attr,
+> > +	&iio_dev_attr_hwfifo_watermark_max.dev_attr.attr,
+> > +	&iio_dev_attr_hwfifo_watermark.dev_attr.attr,
+> > +	&iio_dev_attr_hwfifo_enabled.dev_attr.attr,
+> The autobuilder caught this one.=C2=A0 Drop the dev_attr.attr.
+>=20
+> > +	NULL
+> > +};
+> > +
+>=20
+> > +
+> > +static const struct iio_buffer_setup_ops adis16475_buffer_ops =3D {
+> > +	.postenable =3D adis16475_buffer_postenable,
+> > +	.postdisable =3D adis16475_buffer_postdisable,
+> > +};
+> > +
+> > +static int adis16475_set_watermark(struct iio_dev *indio_dev, unsigned=
+ int
+> > val)
+> > +{
+> > +	struct adis16475 *st=C2=A0 =3D iio_priv(indio_dev);
+> > +	int ret;
+> > +	u16 wm_lvl;
+> > +
+> > +	adis_dev_lock(&st->adis);
+>=20
+> As a follow up perhaps consider defining magic to use guard() for these a=
+s
+> there are
+> enough users that will be simplified to make it worth the effort.=09
+>=20
 
-Reviewed-by: Nicolas Escande <nico.escande@gmail.com>
+Already on my queue but if Ramona wants to step in, good. I already have pl=
+enty
+to do :)
+
+- Nuno S=C3=A1
+>=20
+
 
