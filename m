@@ -1,99 +1,97 @@
-Return-Path: <linux-kernel+bounces-185089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E79E8CB05B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:24:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A7A8CB059
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39550284F12
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:24:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE5D1F22955
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E627A130A41;
-	Tue, 21 May 2024 14:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771FC130491;
+	Tue, 21 May 2024 14:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ulH9wtsf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RCIW0InT"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304E012FF91;
-	Tue, 21 May 2024 14:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2B812FB35;
+	Tue, 21 May 2024 14:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716301448; cv=none; b=euVJnpAG8zWrdxHS/A+rSGVf4GvIs9dRH7hNeJxxlT70PQo39EKv0bAgB86lx+5FTtLKietGEK6dmCEnJKwtowc5+rLVERx5n/mJV9Hkpbl2/jUjEVmM6ReSPsy4AkfLtVJjFL1K72KrqeVHr4ydbCew/wTYeZXkkfrfCn3AsRU=
+	t=1716301445; cv=none; b=gmO2/XMgSDHxE59VlTw31z5ERMNEnXRpHoRV2sbau+W0n74ERh1vhpg5a2j6ok1OL+YJp7UB+0kSUFPNCE6UME1sPBHA28NwNUuq8piPr0D+nOJ21F34q9Xll3pRBu1qQ0JRQqdZGztTVEhrpAolRhKOge0+ixDuMWC4bggIO+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716301448; c=relaxed/simple;
-	bh=UYG+Mo/SlKwLkAr3mfG47g2wcUb2YUUolbRO3KgUlg8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E6QTijuvwBACO10MAzH3JQfzusSdOYW+2KkK5dBByTOc9aG/ABk4eWLNFre83yXVx+9U8nXW/q/oWQWn0T0HHYDwnTzAvDseObHafOIwceseq/wLYN/5h0mixndbJ79kI6rtNi+l6DwyjS/6lYaFcwooBmOQgsTcf+OajgaO2Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ulH9wtsf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8599C32786;
-	Tue, 21 May 2024 14:24:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716301448;
-	bh=UYG+Mo/SlKwLkAr3mfG47g2wcUb2YUUolbRO3KgUlg8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ulH9wtsfTkUy1lUxilIe3+S9Uje8kA0uChlBdcDylLyjHjD02MfrFXVijDoePdXn1
-	 w7IHqLCCVMEVsY/ykz1Zk2cZ7SYg5fObUzOyOTf7oCcffNK7UhblCyfjnzZ4LaloLH
-	 nHTCTS3I0Qnpav3BXPvEkfUz0OynBJOyUP6oexUk0JIu8qK8D7Js/b1dS/4sBihO/7
-	 uStjCW70e5lsYI2jwxGO/G6vEqVtLxDB7Wn9F9phb4fxuj0Jqll/AMonMUsOvjCJXG
-	 SsI0uwznFuueAX4Hjn0B7fxpuBL59hueZ6FKv5bDGtodYw+JDGTdroba1AD9DjnsnR
-	 xPtXlNaotxbPw==
-From: Christian Brauner <brauner@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>,
-	Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH 1/2] signalfd: fix error return code
-Date: Tue, 21 May 2024 16:23:58 +0200
-Message-ID: <20240521-hausarbeit-angekauft-974dea89dcce@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240520090819.76342-1-pchelkin@ispras.ru>
-References: <20240520090819.76342-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1716301445; c=relaxed/simple;
+	bh=Ufb8V9EXfBATCWAkkaDHd9SSjQcvqH4KeGWG5MbMraM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LS8c6Y6r/rG+Jc6UaZJsIe3/XCr3pOiFM5o+5bvgQUFtpSDOd/rOWPw+I0Ni4hUd7kFIEikGIWvHyjavA3taz1s2Y6DVk53HrbfZrf6DkZwuTCWd4eD7ab2Tqb4M3rsToe8AfJkfTnnJt5yNZKFqc9kDC3rD0I4mdZEpNzCK11M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RCIW0InT; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=Tbk+wAckI7ORsUezlOoBQgzIj7S/QOcUIP0Sm5u3+ZQ=; b=RCIW0InT9c6CkHpwaXWKUslILM
+	wfV9AWbKMedHc/FwlBmxyT8cdpp7PLtOn9mWgY4CASuTe5E6GH3InTKuzibwwV9cu8g0UXm3csKcY
+	jJoihHKXsjC3/Aio3Ana0S6Idpg+43QklOI9jd6SGwkDjLzPXWqs5edFmkSyVSyHm5rQBqxsSUkl8
+	js2TFxYLQG+/BPTuZEqhT8MK83kMuLTJfrsX4NR+QATb9X4UdG8Pk7vzKlqqHllilH363uhQR4y/F
+	A01rvslh3xmh0Hb6pPHDkr5hWgflcM1P9NKVFVYt9n2DF+cr6+frnNETe5mGgJ1uOV7PkoRCmYgmX
+	38kGJr2g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s9QPL-00000000AG1-0CtD;
+	Tue, 21 May 2024 14:24:03 +0000
+Date: Tue, 21 May 2024 07:24:03 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: =?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, rds-devel@oss.oracle.com,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+	Allison Henderson <allison.henderson@oracle.com>,
+	Manjunath Patil <manjunath.b.patil@oracle.com>,
+	Mark Zhang <markzhang@nvidia.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Shiraz Saleem <shiraz.saleem@intel.com>,
+	Yang Li <yang.lee@linux.alibaba.com>
+Subject: Re: [PATCH v2 0/6] rds: rdma: Add ability to force GFP_NOIO
+Message-ID: <Zkyug8ZQP_4ULAeA@infradead.org>
+References: <20240515125342.1069999-1-haakon.bugge@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1143; i=brauner@kernel.org; h=from:subject:message-id; bh=UYG+Mo/SlKwLkAr3mfG47g2wcUb2YUUolbRO3KgUlg8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT5rGuMO/KM9SNPdPuj9W5uvYG93BqWt6Xfilx5r2zZ/ +6K041tHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABM52cvI0L9ognbLrqNLNqp9 2Td9n9XWlEef7eMefjEJepVs5aRvcJSRoePWigXv1IN2/dff5Ht5E9uahu2Kecpim5z07uhKNtl nsAAA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240515125342.1069999-1-haakon.bugge@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, 20 May 2024 12:08:18 +0300, Fedor Pchelkin wrote:
-> If anon_inode_getfile() fails, return appropriate error code. This looks
-> like a single typo: the similar code changes in timerfd and userfaultfd
-> are okay.
+On Wed, May 15, 2024 at 02:53:36PM +0200, Håkon Bugge wrote:
+> This series enables RDS and the RDMA stack to be used as a block I/O
+> device. This to support a filesystem on top of a raw block device
+> which uses RDS and the RDMA stack as the network transport layer.
 > 
-> Found by Linux Verification Center (linuxtesting.org).
-> 
-> 
-> [...]
+> Under intense memory pressure, we get memory reclaims. Assume the
+> filesystem reclaims memory, goes to the raw block device, which calls
+> into RDS, which calls the RDMA stack. Now, if regular GFP_KERNEL
+> allocations in RDS or the RDMA stack require reclaims to be fulfilled,
+> we end up in a circular dependency.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Use of network block devices or file systems from the local system
+simply isn't supported in the Linux reclaim hierchary.  Trying to
+hack in through module options for code you haven't even submitted
+is a complete nogo.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+NAK.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/2] signalfd: fix error return code
-      https://git.kernel.org/vfs/vfs/c/e8df0c67191f
-[2/2] signalfd: drop an obsolete comment
-      https://git.kernel.org/vfs/vfs/c/0dda1466f355
 
