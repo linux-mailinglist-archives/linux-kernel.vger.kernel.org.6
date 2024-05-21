@@ -1,347 +1,119 @@
-Return-Path: <linux-kernel+bounces-184697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6510E8CAAB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:22:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D465A8CAAB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7021F22A5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E650283337
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D96745E4;
-	Tue, 21 May 2024 09:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80FD374C08;
+	Tue, 21 May 2024 09:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="p5DV15iL";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="p5DV15iL"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PV+Azz+l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC37355C29;
-	Tue, 21 May 2024 09:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9690174BF8;
+	Tue, 21 May 2024 09:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716283297; cv=none; b=YygjyYAlTzB+Tz9tAPgiZ8Wjf1hlvHHfqgrU9HHC/d70c1YFOlbvpz8YbMXC7ObXH21sFHVLpiZ213GHTDNODMrcR30Dh516ocFwK20lV0ODsuZkQUl5mN/0tqS/O27bb7vF5wLJsMvI43MzktQ43mC5ZpiiRRx9VzswS2sPFWM=
+	t=1716283302; cv=none; b=LOzOOnvtlmobzw6pX2ww4tSItofwbbNUABusmBkUM9Cr30pDkV18gwj8BJRPWDnQZozSBF3s8d0QtsQaKTGKU5NrU4/tcfYGnbteez+qA0lM45wmHBB2AhrMG/4TIDo6zhMEqT+VoZHwqoOscj5LMfEah/cIRSrvQX700v0XvYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716283297; c=relaxed/simple;
-	bh=4dFrYdcmVtwA9VZJt2v3HgZmwGamkp49n3Wy0o+6jxU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iY/hM2a5ZJoXFJNj2hoRp1S0raNPqXvglg5eAPfuFNRwrBH3L/4OuYU0Wydsikqh+tiea0bMgvPreG03vIX8L8E9/3GAKuAmJA6nkQUync/uYMKPs+Q6sck9AbXEMQ42NuvFC7kCyBwRD/JmWRPpdbpwfxRp3J7B0qWBIpNDRio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=p5DV15iL; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=p5DV15iL; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0C0485BFD9;
-	Tue, 21 May 2024 09:21:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716283292; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X37ZRyOgbOIAdXd7wOkCKb16c9+K3Y5mi/hhGEonRpo=;
-	b=p5DV15iLN5DIJWQ8v6ZWwPalnQDNriEmykiKfpG9rAld0VGRCccuXxPfq5o0Ruf5q7t0gj
-	SmOfUURe7oXNbEHJ8AxR5+07RKO0PSTnuWaIoikj6SklOC95IVKB3sE5pyB+KNUx2J0YN7
-	/o0eORNxm9vTEVFHrJSXlPsVS7U9GWE=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716283292; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X37ZRyOgbOIAdXd7wOkCKb16c9+K3Y5mi/hhGEonRpo=;
-	b=p5DV15iLN5DIJWQ8v6ZWwPalnQDNriEmykiKfpG9rAld0VGRCccuXxPfq5o0Ruf5q7t0gj
-	SmOfUURe7oXNbEHJ8AxR5+07RKO0PSTnuWaIoikj6SklOC95IVKB3sE5pyB+KNUx2J0YN7
-	/o0eORNxm9vTEVFHrJSXlPsVS7U9GWE=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E175B13A7C;
-	Tue, 21 May 2024 09:21:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oJXtNptnTGaZYgAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Tue, 21 May 2024 09:21:31 +0000
-From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-To: cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
-Subject: [PATCH v5 5/5] selftests: cgroup: Add basic tests for pids controller
-Date: Tue, 21 May 2024 11:21:30 +0200
-Message-ID: <20240521092130.7883-6-mkoutny@suse.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240521092130.7883-1-mkoutny@suse.com>
-References: <20240521092130.7883-1-mkoutny@suse.com>
+	s=arc-20240116; t=1716283302; c=relaxed/simple;
+	bh=JG9To5Cuq6BpNkfkCV3g6Yj0GSTuoo0uGKuW/Ta8t9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=quIWzY7oUd8EvQ2jaKxqOl6nABaqKEWvo/e+9XCu527/kLHin5SDZZancDzPR7Yzb7PgV16tjHA+pp1n0PP+dLaHmLnptcuMhMTtCL06TV97E4VkT01bu2n5s+HFIJ+j1ZYf+O+33sRTRnaruXdnrIxmtJkz7B3QlCZ5tGAqXog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PV+Azz+l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D2D9C4AF08;
+	Tue, 21 May 2024 09:21:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716283302;
+	bh=JG9To5Cuq6BpNkfkCV3g6Yj0GSTuoo0uGKuW/Ta8t9k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PV+Azz+lsh8f2wXff+eHkuk6PlpjIDF5pBhQcupI4gOpmuX/umv9yjqyGt5bPJPsW
+	 6huNenQnF3WKJO/Qg2tX8yYu1/q6SSxLQFkxRI/W0cU4uTtGeaprqCUPpg/cS42Jn7
+	 RFq3Tcqd0gP/jzZrc3J7JTv0w8U6vNdq2mGXxXFs=
+Date: Tue, 21 May 2024 11:21:39 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [RFC PATCH 00/11] [RFC] Device / Driver and PCI Rust abstractions
+Message-ID: <2024052125-privatize-tingly-054f@gregkh>
+References: <20240520172554.182094-1-dakr@redhat.com>
+ <2024052029-unbridle-wildcard-fbf8@gregkh>
+ <2024052020-basket-amuser-222f@gregkh>
+ <ZkupaTM+xjCiBbb4@pollux.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL6j1h7wxugqfdyj8pnx7tibp9)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkupaTM+xjCiBbb4@pollux.localdomain>
 
-This commit adds (and wires in) new test program for checking basic pids
-controller functionality -- restricting tasks in a cgroup and correct
-event counting.
+On Mon, May 20, 2024 at 09:50:01PM +0200, Danilo Krummrich wrote:
+> On Mon, May 20, 2024 at 08:16:19PM +0200, Greg KH wrote:
+> > On Mon, May 20, 2024 at 08:14:57PM +0200, Greg KH wrote:
+> > > On Mon, May 20, 2024 at 07:25:37PM +0200, Danilo Krummrich wrote:
+> > > > This patch sereis implements basic generic device / driver Rust abstractions,
+> > > > as well as some basic PCI abstractions.
+> > > > 
+> > > > This patch series is sent in the context of [1], and the corresponding patch
+> > > > series [2], which contains some basic DRM Rust abstractions and a stub
+> > > > implementation of the Nova GPU driver.
+> > > > 
+> > > > Nova is intended to be developed upstream, starting out with just a stub driver
+> > > > to lift some initial required infrastructure upstream. A more detailed
+> > > > explanation can be found in [1].
+> > > > 
+> > > > Some patches, which implement the generic device / driver Rust abstractions have
+> > > > been sent a couple of weeks ago already [3]. For those patches the following
+> > > > changes have been made since then:
+> > > > 
+> > > > - remove RawDevice::name()
+> > > > - remove rust helper for dev_name() and dev_get_drvdata()
+> > > > - use AlwaysRefCounted for struct Device
+> > > > - drop trait RawDevice entirely in favor of AsRef and provide
+> > > >   Device::from_raw(), Device::as_raw() and Device::as_ref() instead
+> > > > - implement RevocableGuard
+> > > > - device::Data, remove resources and replace it with a Devres abstraction
+> > > > - implement Devres abstraction for resources
+> > 
+> > Ah, here's the difference from the last time, sorry, it wasn't obvious.
+> > 
+> > Still nothing about proper handling and use of 'remove' in the context
+> > of all of this, that's something you really really really need to get
+> > right if you want to attempt to have a driver in rust interact with the
+> > driver core properly.
+> 
+> We were right in the middle of discussing about the correct wording when I sent
+> those patches the first time. There were some replies from my side, e.g. [1] and
+> another reply from Wedson [2] about this, which you did not want to reply to any
+> more.
+> 
+> I'm not saying I insist on not changing those comments up, but first we have to
+> agree on how we want them to be rephrased, especially since from the
+> discussions so far I got the impression that we might talk a bit past each
+> other.
+> 
+> Hence, I'd propose to just continue the discussion, where we need to.
 
-Signed-off-by: Michal Koutný <mkoutny@suse.com>
----
- tools/testing/selftests/cgroup/.gitignore  |   1 +
- tools/testing/selftests/cgroup/Makefile    |   2 +
- tools/testing/selftests/cgroup/test_pids.c | 178 +++++++++++++++++++++
- 3 files changed, 181 insertions(+)
- create mode 100644 tools/testing/selftests/cgroup/test_pids.c
+See my responses in this thread, let's continue this there.
 
-diff --git a/tools/testing/selftests/cgroup/.gitignore b/tools/testing/selftests/cgroup/.gitignore
-index ec635a0ef488..952e4448bf07 100644
---- a/tools/testing/selftests/cgroup/.gitignore
-+++ b/tools/testing/selftests/cgroup/.gitignore
-@@ -7,5 +7,6 @@ test_hugetlb_memcg
- test_kill
- test_kmem
- test_memcontrol
-+test_pids
- test_zswap
- wait_inotify
-diff --git a/tools/testing/selftests/cgroup/Makefile b/tools/testing/selftests/cgroup/Makefile
-index b91f60f3402c..1b897152bab6 100644
---- a/tools/testing/selftests/cgroup/Makefile
-+++ b/tools/testing/selftests/cgroup/Makefile
-@@ -15,6 +15,7 @@ TEST_GEN_PROGS += test_hugetlb_memcg
- TEST_GEN_PROGS += test_kill
- TEST_GEN_PROGS += test_kmem
- TEST_GEN_PROGS += test_memcontrol
-+TEST_GEN_PROGS += test_pids
- TEST_GEN_PROGS += test_zswap
- 
- LOCAL_HDRS += $(selfdir)/clone3/clone3_selftests.h $(selfdir)/pidfd/pidfd.h
-@@ -29,4 +30,5 @@ $(OUTPUT)/test_hugetlb_memcg: cgroup_util.c
- $(OUTPUT)/test_kill: cgroup_util.c
- $(OUTPUT)/test_kmem: cgroup_util.c
- $(OUTPUT)/test_memcontrol: cgroup_util.c
-+$(OUTPUT)/test_pids: cgroup_util.c
- $(OUTPUT)/test_zswap: cgroup_util.c
-diff --git a/tools/testing/selftests/cgroup/test_pids.c b/tools/testing/selftests/cgroup/test_pids.c
-new file mode 100644
-index 000000000000..9ecb83c6cc5c
---- /dev/null
-+++ b/tools/testing/selftests/cgroup/test_pids.c
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+
-+#include <errno.h>
-+#include <linux/limits.h>
-+#include <signal.h>
-+#include <string.h>
-+#include <sys/stat.h>
-+#include <sys/types.h>
-+#include <unistd.h>
-+
-+#include "../kselftest.h"
-+#include "cgroup_util.h"
-+
-+static int run_success(const char *cgroup, void *arg)
-+{
-+	return 0;
-+}
-+
-+static int run_pause(const char *cgroup, void *arg)
-+{
-+	return pause();
-+}
-+
-+/*
-+ * This test checks that pids.max prevents forking new children above the
-+ * specified limit in the cgroup.
-+ */
-+static int test_pids_max(const char *root)
-+{
-+	int ret = KSFT_FAIL;
-+	char *cg_pids;
-+	int pid;
-+
-+	cg_pids = cg_name(root, "pids_test");
-+	if (!cg_pids)
-+		goto cleanup;
-+
-+	if (cg_create(cg_pids))
-+		goto cleanup;
-+
-+	if (cg_read_strcmp(cg_pids, "pids.max", "max\n"))
-+		goto cleanup;
-+
-+	if (cg_write(cg_pids, "pids.max", "2"))
-+		goto cleanup;
-+
-+	if (cg_enter_current(cg_pids))
-+		goto cleanup;
-+
-+	pid = cg_run_nowait(cg_pids, run_pause, NULL);
-+	if (pid < 0)
-+		goto cleanup;
-+
-+	if (cg_run_nowait(cg_pids, run_success, NULL) != -1 || errno != EAGAIN)
-+		goto cleanup;
-+
-+	if (kill(pid, SIGINT))
-+		goto cleanup;
-+
-+	ret = KSFT_PASS;
-+
-+cleanup:
-+	cg_enter_current(root);
-+	cg_destroy(cg_pids);
-+	free(cg_pids);
-+
-+	return ret;
-+}
-+
-+/*
-+ * This test checks that pids.events are counted in cgroup associated with pids.max
-+ */
-+static int test_pids_events(const char *root)
-+{
-+	int ret = KSFT_FAIL;
-+	char *cg_parent = NULL, *cg_child = NULL;
-+	int pid;
-+
-+	cg_parent = cg_name(root, "pids_parent");
-+	cg_child = cg_name(cg_parent, "pids_child");
-+	if (!cg_parent || !cg_child)
-+		goto cleanup;
-+
-+	if (cg_create(cg_parent))
-+		goto cleanup;
-+	if (cg_write(cg_parent, "cgroup.subtree_control", "+pids"))
-+		goto cleanup;
-+	if (cg_create(cg_child))
-+		goto cleanup;
-+
-+	if (cg_write(cg_parent, "pids.max", "2"))
-+		goto cleanup;
-+
-+	if (cg_read_strcmp(cg_child, "pids.max", "max\n"))
-+		goto cleanup;
-+
-+	if (cg_enter_current(cg_child))
-+		goto cleanup;
-+
-+	pid = cg_run_nowait(cg_child, run_pause, NULL);
-+	if (pid < 0)
-+		goto cleanup;
-+
-+	if (cg_run_nowait(cg_child, run_success, NULL) != -1 || errno != EAGAIN)
-+		goto cleanup;
-+
-+	if (kill(pid, SIGINT))
-+		goto cleanup;
-+
-+	if (cg_read_key_long(cg_child, "pids.events", "max ") != 0)
-+		goto cleanup;
-+	if (cg_read_key_long(cg_parent, "pids.events", "max ") != 1)
-+		goto cleanup;
-+
-+
-+	ret = KSFT_PASS;
-+
-+cleanup:
-+	cg_enter_current(root);
-+	if (cg_child)
-+		cg_destroy(cg_child);
-+	if (cg_parent)
-+		cg_destroy(cg_parent);
-+	free(cg_child);
-+	free(cg_parent);
-+
-+	return ret;
-+}
-+
-+
-+
-+#define T(x) { x, #x }
-+struct pids_test {
-+	int (*fn)(const char *root);
-+	const char *name;
-+} tests[] = {
-+	T(test_pids_max),
-+	T(test_pids_events),
-+};
-+#undef T
-+
-+int main(int argc, char **argv)
-+{
-+	char root[PATH_MAX];
-+
-+	ksft_print_header();
-+	ksft_set_plan(ARRAY_SIZE(tests));
-+	if (cg_find_unified_root(root, sizeof(root), NULL))
-+		ksft_exit_skip("cgroup v2 isn't mounted\n");
-+
-+	/*
-+	 * Check that pids controller is available:
-+	 * pids is listed in cgroup.controllers
-+	 */
-+	if (cg_read_strstr(root, "cgroup.controllers", "pids"))
-+		ksft_exit_skip("pids controller isn't available\n");
-+
-+	if (cg_read_strstr(root, "cgroup.subtree_control", "pids"))
-+		if (cg_write(root, "cgroup.subtree_control", "+pids"))
-+			ksft_exit_skip("Failed to set pids controller\n");
-+
-+	for (int i = 0; i < ARRAY_SIZE(tests); i++) {
-+		switch (tests[i].fn(root)) {
-+		case KSFT_PASS:
-+			ksft_test_result_pass("%s\n", tests[i].name);
-+			break;
-+		case KSFT_SKIP:
-+			ksft_test_result_skip("%s\n", tests[i].name);
-+			break;
-+		default:
-+			ksft_test_result_fail("%s\n", tests[i].name);
-+			break;
-+		}
-+	}
-+
-+	ksft_finished();
-+}
--- 
-2.44.0
+thanks,
 
+greg k-h
 
