@@ -1,99 +1,137 @@
-Return-Path: <linux-kernel+bounces-184739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7F98CAB4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:54:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 109508CAB4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8934E28176A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:54:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 412FF1C21619
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038146BB56;
-	Tue, 21 May 2024 09:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8ED66BB58;
+	Tue, 21 May 2024 09:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="UUfABhN3"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hzoa8u/P"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB9A6BB20;
-	Tue, 21 May 2024 09:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6B06BB54
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716285260; cv=none; b=qIRvMEBfsGIAnkFhLnkPnqNNduxB+RT+MvF2VaUAbGZ7HBUhUjQzdVFhLXfnvL+vuwEnjzeG+yDL38kTVghUkqH1H+Gp07ILAMsMx/fPnDsSlOzSm6TKTJR3qqEtPsYFOExBPjQB/qK2SvJ4ECQwsl/Mo4Sy41ZdsyYRrOlv2xw=
+	t=1716285352; cv=none; b=h1ImdSR72uqEqhNMoOMmqzfEypQQYIY9mcHgGlDMMdYNgqMrGteXTtWefCpaFjty8lXx65fay6XWa5hdxo1mcVByLH6SwNOtqkHedcglMv1ZcbFkAZU3a97oRQYPpcw/MSdJJ4YZa9YBDYPz+7b54zhUXxBrZDY5Qh3ETD8D3hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716285260; c=relaxed/simple;
-	bh=kIBK/TXl0EdrSBki4Xtx0zg3YhBsx/YlEAh607eYTTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QwPhaYRnvk4hoKX7lir/dQcFmY0KxWHNEBCLA9Gws0ZeZELktr6hkkc+xK5fq0Qt8pQHfjgyZBgKqF/luSpi1Wyd0e0kJ8TCG0EAZkNBdmFuky5VLJ1q+3B6GXn+Ph9KOwhb1mzQhsg3SiZYR1MnJJbZujMK9hFzB5pGqGWovw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=UUfABhN3; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 6E0CC206CE;
-	Tue, 21 May 2024 11:54:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1716285248;
-	bh=YrMaapKOCmWxZh7K2wOvL1ZSRLa5q+qreSWpLytaCas=; h=From:To:Subject;
-	b=UUfABhN3Se2UKhxDPzbGrtxI32ZpyPyoyFZZA62pFnr53HioNzOA7RG8mUAnXACuY
-	 gW2Ypyywpc07swpvIvUkGADqzcCmzanqwfI4JzTk+0toWJVp/S9TMQMlQfOqDZ19aL
-	 zaoGH0jaBqHpLQESBW+w+wT7pzj69sAGISSSRceIrgBOWwjecAE1W9ha+fqgqKx1SS
-	 WpozmnlCGyGD5V8Ofn2tvqsQLdeuemI9qR6aJjgdT8oHc5zE1IrfhRjSBavMTOj703
-	 NdyMCoWPHOJlIbej8I4Q1HkmKSIdJL1QIHS7gHJZVRSGq3jeiyM8Y/QO3XmUHZcPPS
-	 Nujkt7Hynhx1g==
-Date: Tue, 21 May 2024 11:54:02 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>, regressions@lists.linux.dev,
-	Stephen Boyd <sboyd@kernel.org>, ulf.hansson@linaro.org
-Cc: ulf.hansson@linaro.org, heiko@sntech.de, u.kleine-koenig@pengutronix.de,
-	geert+renesas@glider.be, rafael@kernel.org,
-	linux-pm@vger.kernel.org, abelvesa@kernel.org, peng.fan@nxp.com,
-	mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	imx@lists.linux.dev, shengjiu.wang@gmail.com, frank.li@nxp.com,
-	mkl@pengutronix.de, linus.walleij@linaro.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] pmdomain: imx: gpcv2: Add delay after power up
- handshake
-Message-ID: <20240521095402.GA11937@francesco-nb>
-References: <1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com>
+	s=arc-20240116; t=1716285352; c=relaxed/simple;
+	bh=qMTfM2RqcLcFcnpmgsM4+ekw46TcyOHKMEZUctQ7tns=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LhXuOKTPJj/5RN/b4bUyAVpG6RQcu4hFI9S0GY/DD0O+qANLanS6K3W3tRpNrI07SiLQEy2pCCfDSEN2Vh2ZEBjGMxN7d706IkMf+fEWqgBT5zDGsN1/0wxfrntE1OoeVyrLvXP4wdmh9Pt2uDdERFaFvYWQgEEyrrt1okS49rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hzoa8u/P; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f0ecec6411so2674513a34.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:55:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716285349; x=1716890149; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QIL8bJvqQtt10T5yeC3JXxYF7RA/JJU1vyZUZM4XpQE=;
+        b=hzoa8u/P0M2zf2nPp2UUHs+5wCwCHYSNz7tFQN7N00aelg3onWOiAGArUGn5iXUcCD
+         +OlDGmjAFf6u9KrxnrurSgfcdR0hJ8U4HcHuIEZ7FRF8rulDFvJ+uJxP8U2Lofh9DEnV
+         U1YSvoOsIvQlSHfFeY96fE8Qy4J5s9YGFVn1I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716285349; x=1716890149;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QIL8bJvqQtt10T5yeC3JXxYF7RA/JJU1vyZUZM4XpQE=;
+        b=jYcYDGbyoNAHCPzla9Z+5AciJEYJSSxuDcO4U2ZYwf5C+8u3iaisqOvK2N/UFfyb8W
+         b2UrRHikfBYoemE1q5gvvkUQFQ7ZuYxM8miukhqSuheWoAJJ2oIGTnREwzwH2l6MLEgG
+         XELy6JSRzj8FenpIMY6i9S7yynxtvA6QadvpeNotjZeFKdB+B+Tm6Ruf8PIS+dkn2M0C
+         2Car2BjeCBNdSJ3RmQbCwtt90WrhFA6SwsogYUzsdWAXzI1pC1neYsfLvXpuHHsuQKCM
+         aL7IoM1XeEbLEVoFaPomHXC3wUB11wS1vF10Q91p/T8G1vwDDdSTr+Dp7fxe6jC1HBEz
+         7Nwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXClOU+EyB5r2TY+zPuYr9W5IzSpqHvXBBpiBs0h1CvqyJBaZxQDA5QQTuAlaoSDcIRM3mzgQ9jIPmd8Sr/A/D7kK1IQtxVjBbre8Y/
+X-Gm-Message-State: AOJu0Yyf10KAdaiLMqRVpuDd6OYgH6g2q5Xef4TtVmLeEqR/AXY7oi6K
+	B8K3eOyge4zFtngrBLlI9pxN/eRPj9DVY8CMzo9ApO7TBjSjhg6BdoeGdSxY2A==
+X-Google-Smtp-Source: AGHT+IFKIYFqTMarrGIwJW/xjD4E5TP4smgp1LW/1jUBwGpm9C4Gsb/IKEVVDk5X70ezxhmNydvPxw==
+X-Received: by 2002:a05:6830:3299:b0:6f2:5b44:593c with SMTP id 46e09a7af769-6f25b445a16mr6106649a34.35.1716285349487;
+        Tue, 21 May 2024 02:55:49 -0700 (PDT)
+Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:7412:b980:a8eb:dfa3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f679902e57sm10016198b3a.110.2024.05.21.02.55.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 02:55:49 -0700 (PDT)
+From: Fei Shao <fshao@chromium.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Fei Shao <fshao@chromium.org>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Xiaoyong Lu <xiaoyong.lu@mediatek.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] media: mediatek: vcodec: Reduce msg queue trans buffer size
+Date: Tue, 21 May 2024 17:54:56 +0800
+Message-ID: <20240521095536.3869399-1-fshao@chromium.org>
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-Hello Stephen and Ulf, 
+In the MediaTek HW vcodec pipeline, the `trans` buffer is used to
+transfer the data decoded by the lat decoder to the core decoder.
 
-On Sat, May 11, 2024 at 10:55:25AM +0800, Shengjiu Wang wrote:
-> AudioMix BLK-CTRL on i.MX8MP encountered an accessing register issue
-> after power up.
-> 
-> [    2.181035] Kernel panic - not syncing: Asynchronous SError Interrupt
-..
+In the beginning, 6MB and 30MB were allocated for the trans buffer to
+handle FHD and higher-resolution contents respectively, but it turns out
+that's more than enough in practice and there's room for improvement.
 
-> Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for power saving")
-> Reported-by: Francesco Dolcini <francesco@dolcini.it>
+The buffer sizes were reduced to 5MB / 8MB respectively and the decoders
+have been validated to work normally on the MediaTek Android products.
+It's time to adopt that change in the upstream MediaTek vcodec driver.
 
-Any chances to get this into mainline with some priority?
+Reduce the msg queue trans buffer size to 5MB / 8MB respectively to
+optimize the memory usage per decoder instance and improve the overall
+system performance.
 
-If in your opinion the fix is not correct I can just send a revert of
-the buggy commit.
+Signed-off-by: Fei Shao <fshao@chromium.org>
 
-I reported the bug 4 weeks ago, the same day the broken commit was
-merged into -next [1], now we have a regression in mainline that is
-preventing booting with a kernel panic and because of that our whole CI
-is not able to test anything and therefore preventing us to look into
-any other regression.
+CC: Yunfei Dong <yunfei.dong@mediatek.com>
 
-Thanks,
-Francesco
+---
+I consulted Yunfei and he confirmed that these are the sizes they are
+using today.
 
-[1] https://lore.kernel.org/all/20240424164725.GA18760@francesco-nb/
+ .../media/platform/mediatek/vcodec/decoder/vdec_msg_queue.c   | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_msg_queue.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec_msg_queue.c
+index f283c4703dc6..e36741179a97 100644
+--- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_msg_queue.c
++++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_msg_queue.c
+@@ -29,9 +29,9 @@
+ static int vde_msg_queue_get_trans_size(int width, int height)
+ {
+ 	if (width > 1920 || height > 1088)
+-		return 30 * SZ_1M;
++		return 8 * SZ_1M;
+ 	else
+-		return 6 * SZ_1M;
++		return 5 * SZ_1M;
+ }
+ 
+ void vdec_msg_queue_init_ctx(struct vdec_msg_queue_ctx *ctx, int hardware_index)
+-- 
+2.45.0.rc1.225.g2a3ae87e7f-goog
+
 
