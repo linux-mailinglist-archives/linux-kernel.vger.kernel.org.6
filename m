@@ -1,267 +1,426 @@
-Return-Path: <linux-kernel+bounces-184527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39A48CA81E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:46:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452878CA81F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23B69B21AAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:46:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 636001C2101C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42535482DA;
-	Tue, 21 May 2024 06:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A40344384;
+	Tue, 21 May 2024 06:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bang-olufsen.dk header.i=@bang-olufsen.dk header.b="ibJEDjeA"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2131.outbound.protection.outlook.com [40.107.21.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KhQ8oypW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XKOKGJ08";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KhQ8oypW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XKOKGJ08"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE63510A1A;
-	Tue, 21 May 2024 06:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.131
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716273989; cv=fail; b=S6tq+ebFb1sJrUnk8q3rBBspADT8rkoE7q5+akrmdkWIe+niurvtlwEat2poToLfNjZ8Kg4Y9vDnTON9wL+1WCF43E33j6AUOwD2JD0F8D/rdBicjVvZn9q36S2UrgmOj/1IJWHFg0FPAYQ3BPYZfxVEjOCdC04pb3gVfpkfY3k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716273989; c=relaxed/simple;
-	bh=lUGaIxvEhGXM+5vcNYxtk6vqFVPHYsePhBOaT+GhOrA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=EgqVtBGZgndDMZPTXFNR5qk+H+WqzfrkRqI21X7Vp8wj3VuD4ZxHW29YA9Q9IWgnkzUo3190rvoWPR7UvhCRrQsk82HyvR/Mz7MHZsWjQXXsWQ+4gpUUrdXmXkIQuuEPShjzBm0DDUVKZQtT7aCIjptTHT3i5GHugJro4wkSnC0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bang-olufsen.dk; spf=pass smtp.mailfrom=bang-olufsen.dk; dkim=pass (1024-bit key) header.d=bang-olufsen.dk header.i=@bang-olufsen.dk header.b=ibJEDjeA; arc=fail smtp.client-ip=40.107.21.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bang-olufsen.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bang-olufsen.dk
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MWIHiXP6g6wO3qqMUcecVEowd0FO7O3Em44JeSFiqHhbsZ/w68azz0zxJluLhiRi6NEOwNejLKy/99yFQrXL83j96fHD/DR0J54tUwhHDcaBd5DxguFfigZHCpSctoicEcqGFSlUhQMDgsoUOp1NvviBsXsHixALAJIHdhqDWCNHFb2CbTMsr3nzcogu6QR0CovwGXIUbRK7n20zIYJNDFnSA7XmlXUUaQwB+E7meRYX3skJQSvCoPhH1ug/AKmKaPAbrmvsYciC+AhFv2lsah8kHdDMU446tEtH7mnnoyyon2o/39c5beBnDKZoKJ+oJ2Dt0WrDdNbE6HM7CDKnHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lUGaIxvEhGXM+5vcNYxtk6vqFVPHYsePhBOaT+GhOrA=;
- b=My8nrVzhCiLfY8wFyt1wwgmghQmBeW11d8ms14PGlw23/8J2qCAVBx7slyiuHloojkewM35iTCzjaJI9i9A+egdrJA5Rm85hKZ3tbxBQezxyGY7k5CQ8IR+RvU7nSipICH+Ba3OrMgpmEEZ2sRNv7CVBQEu/o91tXBB7nhxhZgAimFvQ3kaFg1Jw7Ju60CsKL7enMbA0aLwguAcuhcd+KmazWRZjgs0jHMUcSg5IXqLAGNkTW9QBZStFDsOH/rEuiATXo2OIKRBha1tQ69XvWUvCxoHTsmQPAc6V8CJ898JYhIoTJhjklb1BSY0c7Iv+Xn8ZxBpZ62Ytnqn0cRyQ4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bang-olufsen.dk; dmarc=pass action=none
- header.from=bang-olufsen.dk; dkim=pass header.d=bang-olufsen.dk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bang-olufsen.dk;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lUGaIxvEhGXM+5vcNYxtk6vqFVPHYsePhBOaT+GhOrA=;
- b=ibJEDjeAojhOpKwQiX2Y2Jj8lDAcTbcnJsB5xSTvBYJkrGDgFC8y2xmuVnLcrLT0w5n4p1Vh0WSlsl2HzW/2wti9DFpgmhPeNc846sunWKjkaj834k2MV+NLA1/I6ifZaughxi3n5Yyji0JCq9nzyYhq2KP0rgSgzWwSNosPXO8=
-Received: from AS8PR03MB8805.eurprd03.prod.outlook.com (2603:10a6:20b:53e::20)
- by PA6PR03MB10307.eurprd03.prod.outlook.com (2603:10a6:102:3d0::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.16; Tue, 21 May
- 2024 06:46:22 +0000
-Received: from AS8PR03MB8805.eurprd03.prod.outlook.com
- ([fe80::6ac3:b09a:9885:d014]) by AS8PR03MB8805.eurprd03.prod.outlook.com
- ([fe80::6ac3:b09a:9885:d014%5]) with mapi id 15.20.7611.013; Tue, 21 May 2024
- 06:46:22 +0000
-From: =?utf-8?B?QWx2aW4gxaBpcHJhZ2E=?= <ALSI@bang-olufsen.dk>
-To: Mark Brown <broonie@kernel.org>
-CC: =?utf-8?B?QWx2aW4gxaBpcHJhZ2E=?= <alvin@pqrs.dk>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
- Shyti <andi.shyti@kernel.org>, Saravana Kannan <saravanak@google.com>, Emil
- Abildgaard Svendsen <EMAS@bang-olufsen.dk>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "linux-sound@vger.kernel.org"
-	<linux-sound@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-i2c@vger.kernel.org"
-	<linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH 07/13] ASoC: codecs: add AD24xx codec driver
-Thread-Topic: [PATCH 07/13] ASoC: codecs: add AD24xx codec driver
-Thread-Index: AQHaqFo0SMnbu61NEECPfAr7oK1v6LGbhiUAgAW+UoA=
-Date: Tue, 21 May 2024 06:46:21 +0000
-Message-ID: <edv5aqfnb5gdxfmrh5nywnzg3tzfdq27kfvpkhg2t2q2jwf7ej@vjqgiw3ssv3b>
-References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
- <20240517-a2b-v1-7-b8647554c67b@bang-olufsen.dk>
- <e5782aef-d64d-46f3-ab5c-dc01285e08c2@sirena.org.uk>
-In-Reply-To: <e5782aef-d64d-46f3-ab5c-dc01285e08c2@sirena.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bang-olufsen.dk;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR03MB8805:EE_|PA6PR03MB10307:EE_
-x-ms-office365-filtering-correlation-id: 9b7ce719-3a06-47d8-e8ef-08dc7961ba0f
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230031|366007|7416005|1800799015|376005|38070700009;
-x-microsoft-antispam-message-info:
- =?utf-8?B?blo0anNvd3l5MUE0WTQ0Q0J0SkcwTVlPYlVpTEJSZ3dHdmpSU3U1N3hqSUJs?=
- =?utf-8?B?UVBPZFZVL3MxcUJhR0FtR043RDJlaHRIVVNkeDRwN2tDbDVydEZMaEljN1lQ?=
- =?utf-8?B?aWc4ZTJmZWc3SFNSdXVWTUlqKzFTV0lRZnFtd0R4WVMyNWdVTllMZldWRVY1?=
- =?utf-8?B?d0h5MGRuWlJZQk10VmVoNXNiS2J3ZHpXWU5zMVNmZERrRmR1YTFkYWY2b2NF?=
- =?utf-8?B?K2NNSURaSllYL043dkMxOWc3UnhSWFhyKy80Zm8wVWtUWTVNR0F5d05yTlF4?=
- =?utf-8?B?NzJMWXk0K3RlRnN2WWJDN0RESzVpSEZ5Z0xFWGdEL2pmNUtLQnRjLzdONG02?=
- =?utf-8?B?TU9aY1pFZkZkSkFiZmhrTWpvVXJJSjR6Znl3VjR3aytPNjBqTlAxN3hWbjB4?=
- =?utf-8?B?OU1xZ09yNkRlSjAxZ29ZMytwTXROMStPeUxJNmdqS0RmZGdrS2xiaEt0eTFB?=
- =?utf-8?B?Mmo5SjIvV0NBRlZtdFJBam9LUUhxQ2lGalZhUDV5OUtzbXhteVp2Nm1DNVVq?=
- =?utf-8?B?Ukcvc3FKZTQ1TnFkdlo4c1dONi9HbUx6aGhFL3lpZElyZVY3eHQ3aDJqS2M4?=
- =?utf-8?B?cFFyU1lVZ3l4YldoN0g0RlR2alhJaFBaUG9vNUtXdTZuTEdlVWNxT3o0WlFX?=
- =?utf-8?B?bWdlajJyWm5qdHR6d1BLYzNGZEZ5ZkV1YXR5UzlJN1M4ck5nTHA3YzRWeWov?=
- =?utf-8?B?M1h5NHpOTGdnSFp1NEw2cVYwOVBDNDg3eGx4a0VaQzlYQXMzNVl3RnF6Y2lX?=
- =?utf-8?B?a2FxRllMRG45b1dRSGI2ajF1eWwyeFJKVGdyTlk2R1RXL3EwaUFCcGlqS01M?=
- =?utf-8?B?L1JoZnFuRFdjam1zUm5ZZ0QvWncyUHQwWXBsek9kWENyVVZPUEtzWjVkWnhm?=
- =?utf-8?B?Z0pXQXhKQWo3dkpTbFd2cG01cU5NS3FzWFRWcVRRdTZxbUlsSnRra1NVck0z?=
- =?utf-8?B?cVF0NzVxY1RlZ2lkTXdkcUFwc1ZucWJMSjFkTGJjOS9Zb2k4NXk4RVVnMVNt?=
- =?utf-8?B?KzVIOFBxK1hjR3haZVJZeDl6bk1KMUJGakpXcXUya3FQRWUyZldLV1FQSUZs?=
- =?utf-8?B?a09JT1Ixd3hVbmtFS3hSWFlJbTVJSWVSUXliUHdzVy9zcVlSL1Bib2tDR1Qv?=
- =?utf-8?B?V3JMcHFYTE5PNTEwcHJveldMTlVYM2twMTIrWDNIRjMwT3R3RjVCRTdSa2RK?=
- =?utf-8?B?YVdYZlF0QWZ5T0F6dmxwRDU1amJMdTBnUS9jRzlhR2laclNKOG93SThma2Y2?=
- =?utf-8?B?a1RRemM1VFVmbzVzVHpsSUVFWDRPVlBzeTNjRHM4bFFNdHpmdDZMcEVRN1Ey?=
- =?utf-8?B?enBvZXNDd216UkVxMnpVWTdXeWI0T1A5VGp6bFl6ajkzS2VFSXUvVkpCSUlF?=
- =?utf-8?B?RDZJN1dsMDJtR1JtSDUrMmRTblVaOHluczQwY3RsOWVpdmhWbWxUVHlVVTdt?=
- =?utf-8?B?eDVoYk5GMnNxb1BEckgwR3U0M0FyOHRYOXRpNFExYldYaW1jTVJNYndLaFl6?=
- =?utf-8?B?UmpIcS9nTmdVMmNiY2RVTTVNb3orN1FOT2p1ZlRmb1Nva2s0eXM5VWptTkdU?=
- =?utf-8?B?T0lLSnRpdTVTb2RKYkFESC9hOWN2bmwvTjB5WHNiTzNLOW90RVYzOUdST2p1?=
- =?utf-8?B?OTBFLzdyakd5dENRcGVIeC9zMDVZV3YxN1U1bXgydlgxVEVacWQrQk1DOTZn?=
- =?utf-8?B?YkQvYUVRVUduc3FRUWNWS1hKNFJlcHFxRXRUQ0ZtTHRFbUxxKytwbDR1ckZh?=
- =?utf-8?B?emJEamcyVGNqYUVQeGMzSlhmTkRWenh3bDZDeUtreWd2RnhGK3VCVFJ3SDNy?=
- =?utf-8?B?dTFmY2IwM3VCRGlSMjlmUT09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB8805.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(1800799015)(376005)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YzJ5MjhUa2hMNFFRamlBcWRGUnEwTXJCTHR6dzROcTVKTUtkemVsblBXNkJl?=
- =?utf-8?B?dmEvbHdLcll2bG1iSVRkUFozeWl1SmFRNWo3L3UrdEl6M0NHYnhzN3kvK1VK?=
- =?utf-8?B?T1hPK0duQUVmWndKWElNQml2ekpLTlN6NDNKKzl4RmRzdEl6VHhXeVpuMlFE?=
- =?utf-8?B?Um1Qb1pHS0RCUFBuMGQ1bUw1dUpvT2hRamdXb1VSZHk1SmRUY2JiNzYrU3hX?=
- =?utf-8?B?WlcvcTFRYkNoUzhUdmxmNjY5L3RjSUdzUnJrRmRjYTVrVFM1SnlyQXd1OTJT?=
- =?utf-8?B?bDZ1N3B5aG9zUnNnaFZaa0hialc0R205Mk5CNmxmeDdzQThsSVcvUTZWZ0hp?=
- =?utf-8?B?MEk5ZkY0bzhFdXQvOUI2MzBTekxoS0FzblZNR1pHcytHc0tORFRuSVNlNVBJ?=
- =?utf-8?B?UzB3Yzhtb3RwaUJPSTVjYi9xZ2NEVDlpaUhNVkQ5MFFHY2ZHSEZ4U3dBVFhh?=
- =?utf-8?B?RnMxeTNaci9XQ3pERkczOHlpM2dmNFVEbTAxbWhpMmdRTWMzb24wS1g5NFl4?=
- =?utf-8?B?SUdrbndRcHI2L0h1YVRDYTBtMnl4OWlyN3o5NVN3dzNyRmRZbFFTNGhkR0Rz?=
- =?utf-8?B?eW42Y0VJSitGWHc5NFVXY1JCZFhaUGlXRzlENFU5WHBGcmt2ZFVtMUdjLzhK?=
- =?utf-8?B?NkI1U0dlOG55SWprNFV6NmV0Vk12eXV6NlB4WDhNcHFGL2ExZmdBcHFncEll?=
- =?utf-8?B?cTljMVQwbUNXUXFaK3ZnYnc5c1BpQmRFZTlEZHZkZDRNRTE0VlYrNXJlTE1K?=
- =?utf-8?B?TzY0V0luZjJ1MGdPOWt3U3VPUm5Ud0JXTk5BaGRreUZNbFNyZnZpamFiZ29C?=
- =?utf-8?B?Sm5TMDlHaW9FaTBkZ3c2RE9ITjkxdVdDRWxWT0k0Ny9jVko1VzZSUW53TEVQ?=
- =?utf-8?B?SFVIWE5GM3pTSW9KWDJFS2puRnhnMGtXaFMrZVhwMmMrNDZWL1UvZUV0MWts?=
- =?utf-8?B?ZW1yYUhBQ0RXNFloTkhBMXFXSUd3SEwzcmdnM2ZlVWxnRGt1OGl2R254SGpo?=
- =?utf-8?B?L1cwdkxUUmhBTTlWTjBiTTYrSm1tQWt3bjZkRDE2b0RDdjN4VzlRejJUYU1Y?=
- =?utf-8?B?SGpjUzd3aUtXU243SFh1VElhV3NNT0tDM3EyMEd2UGprUGM1RWlyRVRpN21w?=
- =?utf-8?B?WVJKVTY5dDdyNGtWMmt4ZHorSW1YbFFtcU8vTDc4NmlWaFRQS3ZTenJyYVhP?=
- =?utf-8?B?NEV6dXNPTUtCejJqOFNnK1Jkc2pyMVhtamVMMDZsSjc1UFhXNmhVM3hDdEpX?=
- =?utf-8?B?U1VJWVZBalJaMWc4MTc2bTZ3YWl4SG5tVDdYSEZzNXo1K0Q5ekI2M21OdlJ4?=
- =?utf-8?B?RnF3dmZxd2JYR3NkbVd2UFNxNlplZ3h6MjNGSU5LWC9RK2dYYTI2MFlHQVhB?=
- =?utf-8?B?U2NFK1VmUW5lWEwrZDZFWTErc1lzSG1OTmNVM3ROU1VzcHlrMnBhd1I2TmlO?=
- =?utf-8?B?TXIvZ0pRVHRmV3l1QkFEWkJPaTIxSEFUWENxejUyWTloWXdTUHRDbHN2ZVp4?=
- =?utf-8?B?bVl0YmJTOC8yMWtuN21sTFlsSmRZYVdmL2RQSWhKb050WElQWUtnTVlqdkFw?=
- =?utf-8?B?ZThNQ3hmL0hZSlZ0M2NzRHUrZXhRNEw2RW1jODMvQ21DaU04MkNJdlUzMkM2?=
- =?utf-8?B?aXpYNkw1T1B5VnE4TEppazN4ajdSQmNoTlZjM1ZNeHkzR2pmUHhJS1ZhbXQ2?=
- =?utf-8?B?bU9scmNLZS9BWUxmVGFzVjc4NjdBbkFSbExtdXdQN0FjbVdWdFRhN1BiQStY?=
- =?utf-8?B?Vm5iM2RuOXZiV2xUZFJPUXF4MjBFYSt0RmdweWE0eGdOMG1uV2oyQjArM01u?=
- =?utf-8?B?OHF3TEk3OEVoeVU3bDVwK3dwblNGanRuQjJjUVdqd25nT2ZzcGJBMnpRUGt0?=
- =?utf-8?B?YVRjZFRDN2FyYklVMFMrUjJ4NUlNd3ViYVhHZUxIMUx6ZCtVeUpzcW85azZy?=
- =?utf-8?B?d2sreGd1MGJXWXArd05ES0ZLQVE4RGZzYjhjQzI1aGkvVmxDTlU3dUNOazA2?=
- =?utf-8?B?NmhBbUppYzhlelJNVFgxbi83NDNBaEpacW1sWTVLbUNZRVJiNHM0UVNua3BP?=
- =?utf-8?B?QnUwYmM0cUg4eUhQYnpnc1FYM2NFREwwMWJ1OVEzOEpKU2grOXN1R0IwV0U2?=
- =?utf-8?B?ejBoLzg4REJWcy9IUjFlSXZHSndhSkt3cTdrUWRSdkVjQW5OaVlaL3NQOGxi?=
- =?utf-8?B?L3c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6096C915A5472848A15619D0F3F62380@eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFB24CE04
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 06:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716273998; cv=none; b=A4Yy9dVY4rEDWCsrM15fEFwo2xdr/s9bQCF9QhsZPvp66EHckyXwEti2JwKe4yGmlwHaXQ22bvLwe+v5k1s3G7YAWydjobBvl4z6SuwHxz7hA5UvFH4tekFFu5EfOksiWDzdMIqv2BYSEv69eiciTcDNpYP/uXRG9Ud9e6S1vuM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716273998; c=relaxed/simple;
+	bh=Q04kddmeQa7sMo80Ap662CWmusBjMgovmxStM1nW6nw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PMhpHPALEu+LRHZv5DS7H3Pu2OcMzJBDjrZ/uREt6wrhaJ7cDeEp/4Y3WWOgEhkOx0ZMIGIDzRyIXzPUD6tBn8RgyEIV/gn4DA0b4aRyNP8vOpYrA6cAXhkXqq0Cywh0Mr6cJv1us+45p2I/cMRS5Xnh6KCR52917YzI9zZblFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KhQ8oypW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XKOKGJ08; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KhQ8oypW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XKOKGJ08; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6262120A87;
+	Tue, 21 May 2024 06:46:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716273989; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=//tTej+aTayCrYxzBUucKq2/q2m6pA14E1kIG6nEVwI=;
+	b=KhQ8oypWi64G8hSauIDcEONRqgoOvPGi061TmTRMy4/s+0rFFvMTCvHO+hnZ/R/ydoOLD3
+	nqXbY+YlyCsKYWZuJf+xIHrNX0bzjh1Azrv4TX+wh0efbwSUjdED8RtRC07eQuTB3NH6jm
+	hpAdD2OLvqig1g2IqpvVTgrhurmh4XY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716273989;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=//tTej+aTayCrYxzBUucKq2/q2m6pA14E1kIG6nEVwI=;
+	b=XKOKGJ08H6MbYBXJhazGpg/i7tDS8txqHVyLOgcrfFsFzD9uRnNtGyhCfP2Ou51utxiZLx
+	GkG8KjpUDHZ6wAAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716273989; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=//tTej+aTayCrYxzBUucKq2/q2m6pA14E1kIG6nEVwI=;
+	b=KhQ8oypWi64G8hSauIDcEONRqgoOvPGi061TmTRMy4/s+0rFFvMTCvHO+hnZ/R/ydoOLD3
+	nqXbY+YlyCsKYWZuJf+xIHrNX0bzjh1Azrv4TX+wh0efbwSUjdED8RtRC07eQuTB3NH6jm
+	hpAdD2OLvqig1g2IqpvVTgrhurmh4XY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716273989;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=//tTej+aTayCrYxzBUucKq2/q2m6pA14E1kIG6nEVwI=;
+	b=XKOKGJ08H6MbYBXJhazGpg/i7tDS8txqHVyLOgcrfFsFzD9uRnNtGyhCfP2Ou51utxiZLx
+	GkG8KjpUDHZ6wAAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 01F0913A1E;
+	Tue, 21 May 2024 06:46:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zyM1OkRDTGYBawAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 21 May 2024 06:46:28 +0000
+Message-ID: <f808fa46-e7c7-48e6-8c80-3d28efd0afec@suse.de>
+Date: Tue, 21 May 2024 08:46:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bang-olufsen.dk
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB8805.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b7ce719-3a06-47d8-e8ef-08dc7961ba0f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2024 06:46:21.9855
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 210d08b8-83f7-470a-bc96-381193ca14a1
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DituBkLJymu/jFq6bIS8w0dJIVXSOhhv5NfiUgmprtIT4DII6On9VXPbgolmKCeFMb57XX82JQHCyYC+1+U5dg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA6PR03MB10307
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] nvme: multipath: Implemented new iopolicy
+ "queue-depth"
+Content-Language: en-US
+To: John Meneghini <jmeneghi@redhat.com>, kbusch@kernel.org, hch@lst.de,
+ sagi@grimberg.me, emilne@redhat.com
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ jrani@purestorage.com, randyj@purestorage.com, hare@kernel.org
+References: <20240520202045.427110-1-jmeneghi@redhat.com>
+ <20240520202045.427110-2-jmeneghi@redhat.com>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240520202045.427110-2-jmeneghi@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Score: -4.29
+X-Spam-Flag: NO
 
-T24gRnJpLCBNYXkgMTcsIDIwMjQgYXQgMDQ6MDM6NTBQTSBHTVQsIE1hcmsgQnJvd24gd3JvdGU6
-DQo+IE9uIEZyaSwgTWF5IDE3LCAyMDI0IGF0IDAyOjU4OjA1UE0gKzAyMDAsIEFsdmluIMWgaXBy
-YWdhIHdyb3RlOg0KPiANCj4gPiArKysgYi9zb3VuZC9zb2MvY29kZWNzL2FkMjR4eC1jb2RlYy5j
-DQo+ID4gQEAgLTAsMCArMSw2NjUgQEANCj4gPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6
-IEdQTC0yLjAtb25seQ0KPiA+ICsvKg0KPiA+ICsgKiBBRDI0eHggY29kZWMgZHJpdmVyDQo+IA0K
-PiBQbGVhc2UgbWFrZSB0aGUgd2hvbGUgY29tbWVudCBhIEMrKyBjb21tZW50Lg0KDQpPSw0KDQo+
-IA0KPiA+ICtzdGF0aWMgY29uc3QgY2hhciAqY29uc3QgYWQyNHh4X2NvZGVjX3Nsb3Rfc2l6ZV90
-ZXh0W10gPSB7DQo+ID4gKwkiOCBiaXRzIiwgICIxMiBiaXRzIiwgIjE2IGJpdHMiLCAiMjAgYml0
-cyIsDQo+ID4gKwkiMjQgYml0cyIsICIyOCBiaXRzIiwgIjMyIGJpdHMiLA0KPiA+ICt9Ow0KPiAN
-Cj4gV2h5IGlzIHRoaXMgY29uZmlndXJlZCBieSB0aGUgdXNlciByYXRoZXIgdGhhbiB2aWEgc2V0
-X3RkbV9zbG90KCksIGFuZA0KPiBob3cgd291bGQgb25lIHVzZWZ1bGx5IHVzZSB0aGlzIGF0IHJ1
-bnRpbWU/DQoNClRoaXMgY29uZmlndXJlcyB0aGUgc2xvdCBzaXplIG9mIEEyQiBkYXRhIHNsb3Rz
-LCBub3QgdGhlIHNsb3Qgc2l6ZSBvbg0KdGhlIFRETSBpbnRlcmZhY2UuIFR5cGljYWxseSBvbmUg
-d291bGQgZXhwZWN0IGl0IHRvIGJlIHRoZSBzYW1lLCBzbyB5b3VyDQpxdWVzdGlvbiBpcyB2YWxp
-ZC4gQnV0IGl0IGlzIG5vdCBhIHN0cmljdCByZXF1aXJlbWVudCBhcyBmYXIgYXMgdGhlIEEyQg0K
-YnVzIGFuZCBoYXJkd2FyZSBpcyBjb25jZXJuZWQuDQoNClRvIGdpdmUgYSBjb25jcmV0ZSBleGFt
-cGxlLCB0aGUgVERNIGludGVyZmFjZSBtaWdodCBydW4gd2l0aCBhIFRETSBzbG90DQpzaXplIG9m
-IDMyIGJpdHMsIGJ1dCB0aGUgUENNIGRhdGEgaXMgaW4gcmVhbGl0eSAyNCBiaXRzIHBhZGRlZCB0
-byAzMg0KYml0cy4gSW4gdGhpcyBjYXNlLCBBMkIgYnVzIGJhbmR3aWR0aCBjYW4gYmUgc2F2ZWQg
-YnkgY29uZmlndXJpbmcgdGhlDQoie1VwLERvd259c3RyZWFtIFNsb3QgU2l6ZSIga2NvbnRyb2wg
-dG8gIjI0IGJpdHMiLg0KDQpNb3JlIGRldGFpbGVkIGluZm9ybWF0aW9uIGNhbiBiZSBmb3VuZCBp
-biB0aGUgbWFudWFsIGluIFsxXSBzZWN0aW9uIDMtMjINCiJJMlMvVERNIFBvcnQgUHJvZ3JhbW1p
-bmcgQ29uY2VwdHMiLCB3aGVyZSBhbiBhbmFsb2dvdXMgZXhhbXBsZSBpcw0KZ2l2ZW4uDQoNCj4g
-DQo+ID4gK3N0YXRpYyBpbnQgYWQyNHh4X2NvZGVjX3Nsb3RfY29uZmlnX3B1dChzdHJ1Y3Qgc25k
-X2tjb250cm9sICprY29udHJvbCwNCj4gPiArCQkJCQlzdHJ1Y3Qgc25kX2N0bF9lbGVtX3ZhbHVl
-ICp1Y29udHJvbCkNCj4gPiArew0KPiANCj4gPiArCX0gZWxzZSBpZiAocHJpdiA9PSAmYWQyNHh4
-X2NvZGVjX3VwX3Nsb3RfZm9ybWF0X2VudW0gfHwNCj4gPiArCQkgICBwcml2ID09ICZhZDI0eHhf
-Y29kZWNfZG5fc2xvdF9mb3JtYXRfZW51bSkgew0KPiA+ICsJCWlmICh2YWwgPj0gQVJSQVlfU0la
-RShhZDI0eHhfY29kZWNfc2xvdF9mb3JtYXRfdGV4dCkpDQo+ID4gKwkJCXJldHVybiAtRUlOVkFM
-Ow0KPiA+ICsJCXNsb3RfY29uZmlnLT5mb3JtYXRbZGlyZWN0aW9uXSA9IHZhbDsNCj4gPiArCX0g
-ZWxzZQ0KPiA+ICsJCXJldHVybiAtRU5PRU5UOw0KPiANCj4gSWYgb25lIHNpZGUgaGFzIHt9IGJv
-dGggc2lkZXMgc2hvdWxkLCBzZWUgY29kaW5nLXN0eWxlLnJzdC4NCg0KT0sNCg0KPiANCj4gPiAr
-DQo+ID4gKwlyZXR1cm4gMDsNCj4gPiArfQ0KPiANCj4gVGhpcyB3b24ndCBmbGFnIGNoYW5nZXMg
-YnkgcmV0dXJuaW5nIDEgd2hpY2ggd2lsbCBtZWFuIG5vIGV2ZW50cyBhcmUNCj4gZ2VuZXJhdGVk
-IGFuZCBicmVhayBzb21lIFVJcy4gIFBsZWFzZSBzaG93IHRoZSBvdXRwdXQgb2YgdGhlIG1peGVy
-LXRlc3QNCj4gc2VsZnRlc3Qgb24gbmV3IHN1Ym1pc3Npb25zLCBpdCB3aWxsIGNoZWNrIGZvciB0
-aGlzIGFuZCBvdGhlciBpc3N1ZXMuDQoNCk9LLCBJIHdpbGwgaGF2ZSBhIGdvLiBUaGFua3MhDQoN
-Cj4gDQo+ID4gKwkvKiBNYWluIG5vZGUgbXVzdCBiZSBCQ0xLL0ZTWU5DIGNvbnN1bWVyLCBzdWJv
-cmRpbmF0ZSBub2RlIHByb3ZpZGVyICovDQo+ID4gKwlpZiAoKGZtdCAmIFNORF9TT0NfREFJRk1U
-X0NMT0NLX1BST1ZJREVSX01BU0spICE9DQo+ID4gKwkgICAgKGlzX2EyYl9tYWluKGFkYy0+bm9k
-ZSkgPyBTTkRfU09DX0RBSUZNVF9DQkNfQ0ZDIDoNCj4gPiArCQkJCSAgICAgIFNORF9TT0NfREFJ
-Rk1UX0NCUF9DRlApKQ0KPiA+ICsJCXJldHVybiAtRUlOVkFMOw0KPiANCj4gUGxlYXNlIGRvbid0
-IHVzZSB0aGUgdGVybmVyeSBvcGVyYXRvciBsaWtlIHRoaXMsIGl0IGp1c3QgbWFrZXMgdGhpbmdz
-DQo+IGhhcmRlciB0byByZWFkLg0KPiANCj4gPiArCXZhbCA9IGJjbGtfaW52ZXJ0ID8gQTJCX0ky
-U0NGR19SWEJDTEtJTlZfTUFTSyA6DQo+ID4gKwkJCSAgICBBMkJfSTJTQ0ZHX1RYQkNMS0lOVl9N
-QVNLOw0KPiANCj4gU2ltaWxhcmx5LCBwbGVhc2UgdXNlIG5vcm1hbCBjb25kaXRpb25hbCBzdGF0
-ZW1lbnRzLg0KDQpPSyB0byBib3RoLg0KDQo+IA0KPiA+ICtzdGF0aWMgaW50IGFkMjR4eF9jb2Rl
-Y19od19wYXJhbXMoc3RydWN0IHNuZF9wY21fc3Vic3RyZWFtICpzdWJzdHJlYW0sDQo+ID4gKwkJ
-CQkgIHN0cnVjdCBzbmRfcGNtX2h3X3BhcmFtcyAqcGFyYW1zLA0KPiA+ICsJCQkJICBzdHJ1Y3Qg
-c25kX3NvY19kYWkgKmRhaSkNCj4gDQo+ID4gKw0KPiA+ICsJLyogRmluYWxseSwgcmVxdWVzdCBz
-bG90cyAqLw0KPiA+ICsJcmV0ID0gYTJiX25vZGVfcmVxdWVzdF9zbG90cyhhZGMtPm5vZGUsICZz
-bG90X3JlcSk7DQo+ID4gKwlpZiAocmV0KQ0KPiA+ICsJCXJldHVybiByZXQ7DQo+IA0KPiBOb3Rl
-IHRoYXQgaHdfcGFyYW1zKCkgY2FuIGJlIGNhbGxlZCBtdWx0aXBsZSB0aW1lcyBiZWZvcmUgc3Rh
-cnRpbmcgdGhlDQo+IGF1ZGlvIHN0cmVhbSwgd2lsbCB0aGlzIGxlYWs/DQoNCkkgd2lsbCB0YWtl
-IGFub3RoZXIgbG9vayBiZWZvcmUgc2VuZGluZyB2Mi4NCg0KPiANCj4gPiArCQkJCXN0cnVjdCBz
-bmRfc29jX2RhaSAqZGFpKQ0KPiA+ICt7DQo+ID4gKwlzdHJ1Y3Qgc25kX3NvY19jb21wb25lbnQg
-KmNvbXBvbmVudCA9IGRhaS0+Y29tcG9uZW50Ow0KPiA+ICsJc3RydWN0IGFkMjR4eF9jb2RlYyAq
-YWRjID0gc25kX3NvY19jb21wb25lbnRfZ2V0X2RydmRhdGEoY29tcG9uZW50KTsNCj4gPiArCWlu
-dCByZXQ7DQo+ID4gKw0KPiA+ICsJcmV0ID0gYTJiX25vZGVfZnJlZV9zbG90cyhhZGMtPm5vZGUp
-Ow0KPiA+ICsJaWYgKHJldCkNCj4gPiArCQlyZXR1cm4gcmV0Ow0KPiANCj4gV2hhdCBpZiB3ZSBj
-bG9zZSB3aXRob3V0IGhhdmluZyBjYWxsZWQgaHdfcGFyYW1zKCk/DQoNCkRpdHRvLg0KDQo+IA0K
-PiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHNuZF9zb2NfZGFpX2RyaXZlciBhZDI0eHhfY29kZWNf
-ZGFpX2RydltdID0gew0KPiA+ICsJW0FEMjRYWF9EQUlfSTJTXSA9IHsNCj4gPiArCQkubmFtZSA9
-ICJhZDI0eHgtaTJzIiwNCj4gPiArCQkucGxheWJhY2sgPSB7DQo+ID4gKwkJCS5zdHJlYW1fbmFt
-ZSA9ICJJMlMgUGxheWJhY2siLA0KPiA+ICsJCQkuY2hhbm5lbHNfbWluID0gMSwNCj4gPiArCQkJ
-LmNoYW5uZWxzX21heCA9IDMyLA0KPiA+ICsJCX0sDQo+ID4gKwkJLmNhcHR1cmUgPSB7DQo+ID4g
-KwkJCS5zdHJlYW1fbmFtZSA9ICJJMlMgQ2FwdHVyZSIsDQo+ID4gKwkJCS5jaGFubmVsc19taW4g
-PSAxLA0KPiA+ICsJCQkuY2hhbm5lbHNfbWF4ID0gMzIsDQo+ID4gKwkJfSwNCj4gPiArCQkub3Bz
-ID0gJmFkMjR4eF9jb2RlY19kYWlfb3BzLA0KPiA+ICsJCS5zeW1tZXRyaWNfcmF0ZSA9IDEsDQo+
-ID4gKwl9LA0KPiA+ICt9Ow0KPiANCj4gV2h5IGlzIHRoaXMgYW4gYXJyYXk/DQoNCkl0IG5lZWRu
-J3QgYmUsIHdpbGwgZmxhdHRlbiBpdC4NCg0KPiANCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBy
-ZWdtYXBfY29uZmlnIGFkMjR4eF9jb2RlY19yZWdtYXBfY29uZmlnID0gew0KPiA+ICsJLnJlZ19i
-aXRzID0gOCwNCj4gPiArCS52YWxfYml0cyA9IDgsDQo+ID4gKwkuY2FjaGVfdHlwZSA9IFJFR0NB
-Q0hFX1JCVFJFRSwNCj4gPiArfTsNCj4gDQo+IE5ldyBjb2RlIHNob3VsZCB1c2UgX01BUExFIHVu
-bGVzcyB0aGVyZSdzIGEgc3Ryb25nIHJlYXNvbiB0byB1c2UNCj4gc29tZXRoaW5nIGVsc2UuDQoN
-Ck9L
+On 5/20/24 22:20, John Meneghini wrote:
+> From: "Ewan D. Milne" <emilne@redhat.com>
+> 
+> The round-robin path selector is inefficient in cases where there is a
+> difference in latency between multiple active optimized paths.  In the
+> presence of one or more high latency paths the round-robin selector
+> continues to the high latency path equally. This results in a bias
+> towards the highest latency path and can cause is significant decrease
+> in overall performance as IOs pile on the lowest latency path. This
+> problem is particularly accute with NVMe-oF controllers.
+> 
+> The queue-depth policy instead sends I/O requests down the path with the
+> least amount of requests in its request queue. Paths with lower latency
+> will clear requests more quickly and have less requests in their queues
+> compared to higher latency paths. The goal of this path selector is to
+> make more use of lower latency paths, which will bring down overall IO
+> latency.
+> 
+> Signed-off-by: Ewan D. Milne <emilne@redhat.com>
+> [tsong: patch developed by Thomas Song @ Pure Storage, fixed whitespace
+>        and compilation warnings, updated MODULE_PARM description, and
+>        fixed potential issue with ->current_path[] being used]
+> Signed-off-by: Thomas Song <tsong@purestorage.com>
+> [jmeneghi: vairious changes and improvements, addressed review comments]
+> Signed-off-by: John Meneghini <jmeneghi@redhat.com>
+> Link: https://lore.kernel.org/linux-nvme/20240509202929.831680-1-jmeneghi@redhat.com/
+> Tested-by: Marco Patalano <mpatalan@redhat.com>
+> Reviewed-by: Randy Jennings <randyj@redhat.com>
+> Tested-by: Jyoti Rani <jani@purestorage.com>
+> ---
+>   drivers/nvme/host/core.c      |  2 +-
+>   drivers/nvme/host/multipath.c | 86 +++++++++++++++++++++++++++++++++--
+>   drivers/nvme/host/nvme.h      |  9 ++++
+>   3 files changed, 92 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index a066429b790d..1dd7c52293ff 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -110,7 +110,7 @@ struct workqueue_struct *nvme_delete_wq;
+>   EXPORT_SYMBOL_GPL(nvme_delete_wq);
+>   
+>   static LIST_HEAD(nvme_subsystems);
+> -static DEFINE_MUTEX(nvme_subsystems_lock);
+> +DEFINE_MUTEX(nvme_subsystems_lock);
+>   
+>   static DEFINE_IDA(nvme_instance_ida);
+>   static dev_t nvme_ctrl_base_chr_devt;
+> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+> index 5397fb428b24..0e2b6e720e95 100644
+> --- a/drivers/nvme/host/multipath.c
+> +++ b/drivers/nvme/host/multipath.c
+> @@ -17,6 +17,7 @@ MODULE_PARM_DESC(multipath,
+>   static const char *nvme_iopolicy_names[] = {
+>   	[NVME_IOPOLICY_NUMA]	= "numa",
+>   	[NVME_IOPOLICY_RR]	= "round-robin",
+> +	[NVME_IOPOLICY_QD]      = "queue-depth",
+>   };
+>   
+>   static int iopolicy = NVME_IOPOLICY_NUMA;
+> @@ -29,6 +30,8 @@ static int nvme_set_iopolicy(const char *val, const struct kernel_param *kp)
+>   		iopolicy = NVME_IOPOLICY_NUMA;
+>   	else if (!strncmp(val, "round-robin", 11))
+>   		iopolicy = NVME_IOPOLICY_RR;
+> +	else if (!strncmp(val, "queue-depth", 11))
+> +		iopolicy = NVME_IOPOLICY_QD;
+>   	else
+>   		return -EINVAL;
+>   
+> @@ -43,7 +46,7 @@ static int nvme_get_iopolicy(char *buf, const struct kernel_param *kp)
+>   module_param_call(iopolicy, nvme_set_iopolicy, nvme_get_iopolicy,
+>   	&iopolicy, 0644);
+>   MODULE_PARM_DESC(iopolicy,
+> -	"Default multipath I/O policy; 'numa' (default) or 'round-robin'");
+> +	"Default multipath I/O policy; 'numa' (default) , 'round-robin' or 'queue-depth'");
+>   
+>   void nvme_mpath_default_iopolicy(struct nvme_subsystem *subsys)
+>   {
+> @@ -127,6 +130,11 @@ void nvme_mpath_start_request(struct request *rq)
+>   	struct nvme_ns *ns = rq->q->queuedata;
+>   	struct gendisk *disk = ns->head->disk;
+>   
+> +	if (READ_ONCE(ns->head->subsys->iopolicy) == NVME_IOPOLICY_QD) {
+> +		atomic_inc(&ns->ctrl->nr_active);
+> +		nvme_req(rq)->flags |= NVME_MPATH_CNT_ACTIVE;
+> +	}
+> +
+>   	if (!blk_queue_io_stat(disk->queue) || blk_rq_is_passthrough(rq))
+>   		return;
+>   
+> @@ -140,8 +148,12 @@ void nvme_mpath_end_request(struct request *rq)
+>   {
+>   	struct nvme_ns *ns = rq->q->queuedata;
+>   
+> +	if ((nvme_req(rq)->flags & NVME_MPATH_CNT_ACTIVE))
+> +		atomic_dec_if_positive(&ns->ctrl->nr_active);
+> +
+>   	if (!(nvme_req(rq)->flags & NVME_MPATH_IO_STATS))
+>   		return;
+> +
+
+Pointless newline.
+
+>   	bdev_end_io_acct(ns->head->disk->part0, req_op(rq),
+>   			 blk_rq_bytes(rq) >> SECTOR_SHIFT,
+>   			 nvme_req(rq)->start_time);
+> @@ -330,6 +342,40 @@ static struct nvme_ns *nvme_round_robin_path(struct nvme_ns_head *head,
+>   	return found;
+>   }
+>   
+> +static struct nvme_ns *nvme_queue_depth_path(struct nvme_ns_head *head)
+> +{
+> +	struct nvme_ns *best_opt = NULL, *best_nonopt = NULL, *ns;
+> +	unsigned int min_depth_opt = UINT_MAX, min_depth_nonopt = UINT_MAX;
+> +	unsigned int depth;
+> +
+> +	list_for_each_entry_rcu(ns, &head->list, siblings) {
+> +		if (nvme_path_is_disabled(ns))
+> +			continue;
+> +
+> +		depth = atomic_read(&ns->ctrl->nr_active);
+> +
+> +		switch (ns->ana_state) {
+> +		case NVME_ANA_OPTIMIZED:
+> +			if (depth < min_depth_opt) {
+> +				min_depth_opt = depth;
+> +				best_opt = ns;
+> +			}
+> +			break;
+> +
+> +		case NVME_ANA_NONOPTIMIZED:
+> +			if (depth < min_depth_nonopt) {
+> +				min_depth_nonopt = depth;
+> +				best_nonopt = ns;
+> +			}
+> +			break;
+> +		default:
+> +			break;
+> +		}
+> +	}
+> +
+> +	return best_opt ? best_opt : best_nonopt;
+> +}
+> +
+>   static inline bool nvme_path_is_optimized(struct nvme_ns *ns)
+>   {
+>   	return nvme_ctrl_state(ns->ctrl) == NVME_CTRL_LIVE &&
+> @@ -338,15 +384,27 @@ static inline bool nvme_path_is_optimized(struct nvme_ns *ns)
+>   
+>   inline struct nvme_ns *nvme_find_path(struct nvme_ns_head *head)
+>   {
+> -	int node = numa_node_id();
+> +	int iopolicy = READ_ONCE(head->subsys->iopolicy);
+> +	int node;
+>   	struct nvme_ns *ns;
+>   
+> +	/*
+> +	 * queue-depth iopolicy does not need to reference ->current_path
+> +	 * but round-robin needs the last path used to advance to the
+> +	 * next one, and numa will continue to use the last path unless
+> +	 * it is or has become not optimized
+> +	 */
+> +	if (iopolicy == NVME_IOPOLICY_QD)
+> +		return nvme_queue_depth_path(head);
+> +
+> +	node = numa_node_id();
+>   	ns = srcu_dereference(head->current_path[node], &head->srcu);
+>   	if (unlikely(!ns))
+>   		return __nvme_find_path(head, node);
+>   
+> -	if (READ_ONCE(head->subsys->iopolicy) == NVME_IOPOLICY_RR)
+> +	if (iopolicy == NVME_IOPOLICY_RR)
+>   		return nvme_round_robin_path(head, node, ns);
+> +
+>   	if (unlikely(!nvme_path_is_optimized(ns)))
+>   		return __nvme_find_path(head, node);
+>   	return ns;
+> @@ -798,6 +856,25 @@ static ssize_t nvme_subsys_iopolicy_show(struct device *dev,
+>   			  nvme_iopolicy_names[READ_ONCE(subsys->iopolicy)]);
+>   }
+>   
+> +void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy)
+> +{
+> +	struct nvme_ctrl *ctrl;
+> +	int old_iopolicy = READ_ONCE(subsys->iopolicy);
+> +
+> +	WRITE_ONCE(subsys->iopolicy, iopolicy);
+> +
+> +	mutex_lock(&nvme_subsystems_lock);
+> +	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
+> +		atomic_set(&ctrl->nr_active, 0);
+> +		nvme_mpath_clear_ctrl_paths(ctrl);
+
+You always reset the variables here, even if specified iopolicy is
+the same than the currently active one.
+I'd rather check if the iopolicy is different before changing the settings.
+
+> +	}
+> +	mutex_unlock(&nvme_subsystems_lock);
+> +
+> +	pr_notice("%s: changed from %s to %s for subsysnqn %s\n", __func__,
+> +			nvme_iopolicy_names[old_iopolicy], nvme_iopolicy_names[iopolicy],
+> +			subsys->subnqn);
+> +}
+> +
+>   static ssize_t nvme_subsys_iopolicy_store(struct device *dev,
+>   		struct device_attribute *attr, const char *buf, size_t count)
+>   {
+> @@ -807,7 +884,7 @@ static ssize_t nvme_subsys_iopolicy_store(struct device *dev,
+>   
+>   	for (i = 0; i < ARRAY_SIZE(nvme_iopolicy_names); i++) {
+>   		if (sysfs_streq(buf, nvme_iopolicy_names[i])) {
+> -			WRITE_ONCE(subsys->iopolicy, i);
+> +			nvme_subsys_iopolicy_update(subsys, i);
+>   			return count;
+>   		}
+>   	}
+> @@ -905,6 +982,7 @@ void nvme_mpath_init_ctrl(struct nvme_ctrl *ctrl)
+>   	mutex_init(&ctrl->ana_lock);
+>   	timer_setup(&ctrl->anatt_timer, nvme_anatt_timeout, 0);
+>   	INIT_WORK(&ctrl->ana_work, nvme_ana_work);
+> +	atomic_set(&ctrl->nr_active, 0);
+>   }
+>   
+>   int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+> index f243a5822c2b..f5557889b244 100644
+> --- a/drivers/nvme/host/nvme.h
+> +++ b/drivers/nvme/host/nvme.h
+> @@ -50,6 +50,8 @@ extern struct workqueue_struct *nvme_wq;
+>   extern struct workqueue_struct *nvme_reset_wq;
+>   extern struct workqueue_struct *nvme_delete_wq;
+>   
+> +extern struct mutex nvme_subsystems_lock;
+> +
+>   /*
+>    * List of workarounds for devices that required behavior not specified in
+>    * the standard.
+> @@ -190,6 +192,7 @@ enum {
+>   	NVME_REQ_CANCELLED		= (1 << 0),
+>   	NVME_REQ_USERCMD		= (1 << 1),
+>   	NVME_MPATH_IO_STATS		= (1 << 2),
+> +	NVME_MPATH_CNT_ACTIVE	= (1 << 3),
+>   };
+>   
+>   static inline struct nvme_request *nvme_req(struct request *req)
+> @@ -354,6 +357,7 @@ struct nvme_ctrl {
+>   	size_t ana_log_size;
+>   	struct timer_list anatt_timer;
+>   	struct work_struct ana_work;
+> +	atomic_t nr_active;
+>   #endif
+>   
+>   #ifdef CONFIG_NVME_HOST_AUTH
+> @@ -402,6 +406,7 @@ static inline enum nvme_ctrl_state nvme_ctrl_state(struct nvme_ctrl *ctrl)
+>   enum nvme_iopolicy {
+>   	NVME_IOPOLICY_NUMA,
+>   	NVME_IOPOLICY_RR,
+> +	NVME_IOPOLICY_QD,
+>   };
+>   
+>   struct nvme_subsystem {
+> @@ -935,6 +940,7 @@ void nvme_mpath_clear_ctrl_paths(struct nvme_ctrl *ctrl);
+>   void nvme_mpath_shutdown_disk(struct nvme_ns_head *head);
+>   void nvme_mpath_start_request(struct request *rq);
+>   void nvme_mpath_end_request(struct request *rq);
+> +void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy);
+>   
+>   static inline void nvme_trace_bio_complete(struct request *req)
+>   {
+> @@ -1034,6 +1040,9 @@ static inline bool nvme_disk_is_ns_head(struct gendisk *disk)
+>   {
+>   	return false;
+>   }
+> +static inline void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy)
+> +{
+> +}
+>   #endif /* CONFIG_NVME_MULTIPATH */
+>   
+>   int nvme_ns_report_zones(struct nvme_ns *ns, sector_t sector,
+
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+
 
