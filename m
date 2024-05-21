@@ -1,337 +1,157 @@
-Return-Path: <linux-kernel+bounces-185389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5763F8CB45E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:43:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733EA8CB460
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D385E1F2322C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:43:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9759C1C2258D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFD51494B9;
-	Tue, 21 May 2024 19:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA9314901B;
+	Tue, 21 May 2024 19:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="D+CeS+gJ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MlqlcRnJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1427433AD;
-	Tue, 21 May 2024 19:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2160148301;
+	Tue, 21 May 2024 19:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716320602; cv=none; b=Hq+9z6ZmZpltpT8jEHUo203N9VnS8uM6r5OFJIuP231ZCUKxu2By+Miaz1JyLkxvWEmRKeJpLu0/JDWzubYFwbhQ1gO+i+Vuh9uTLYY+f2UraHWfU0VBAE8tlLdfzoBZA3u14HaWI79u/HTBrZUAzWK37xocnrW7wGlh96C1MWo=
+	t=1716320616; cv=none; b=Vr6TmG6OXD5sESUMMhuzwGn8yydIQAU6mvnAR+a8eNedYd3GdHrYFpwK8jAR4IGeK/5F+8TWzLXr0zm2Fped5aGC78pvebRrE998BkikeqgQKSkcBbheO9SnHpZfRkqIX1W3zRREa6i7trVY/NXjNnB9Cm6x+9COXodguniMd9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716320602; c=relaxed/simple;
-	bh=6GWHtegSVvL3L0DC6XS+r+/hqyotmvJxS0QqwcXV5nA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lkr1wCFme0B7NRxLusQ6WV1wEbK/K/GwnaSAZlQCeb2iyxNUrCObDW/IUENF/YMvtOF8DvoNqRnnuVR0mdDrB4nwLG8JZ4qDJwk/JFMwOWkrxtXWKhe103KfDZjtsQcV0ybrbFFCcX/96/Ocqs9pwg6DGPiRpqeRdmr+E66Ricc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=D+CeS+gJ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 674FEC8E;
-	Tue, 21 May 2024 21:43:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716320586;
-	bh=6GWHtegSVvL3L0DC6XS+r+/hqyotmvJxS0QqwcXV5nA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D+CeS+gJqF/hgy30UsprUq0Gu1iilZYeB6vN8Tc+iOsWhppRztMj1DSpyLFh/i7iA
-	 BS3+d+W7+HuaNODKhXJV4meWQ6G1+kVzz6S1QUXgGPRWuRo8dVipfbXuWftIxjSAFE
-	 JlceWhfoJ1mnC956vYe8eHRY/fA5l9oab3nZ5o44=
-Date: Tue, 21 May 2024 22:43:09 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Alexandru Ardelean <alexandru.ardelean@analog.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Subject: Re: [PATCH 2/5] dt-bindings: Add bindings for the Analog Devices
- ADP5585
-Message-ID: <20240521194309.GA8863@pendragon.ideasonboard.com>
-References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
- <20240520195942.11582-3-laurent.pinchart@ideasonboard.com>
- <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
+	s=arc-20240116; t=1716320616; c=relaxed/simple;
+	bh=3HxYsuE4vwht7mgql4QlXI/YmOzZn0ERD38uVvGnylQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ESKb53X8nZgHLRzcoYpEIwVHqIcIEj2Jym9Uyw9wH4mImZouwaEcabU9ORIy8WXIMa0SOtB1s/M/pYMa9pMR1w6jbAE7nW5GMXVUYpTPsGyojLu4w4XcGXmeDL2AzOlslSePiEDGMvG3pLynYRBPSMteqPfwn5t07tUBlgWVsn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MlqlcRnJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44LDx5tV012339;
+	Tue, 21 May 2024 19:43:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:content-transfer-encoding:in-reply-to; s=
+	qcppdkim1; bh=cqoHDuBiUbHtYw/508huYL/EIPtHAho3rzh0DMUdW4k=; b=Ml
+	qlcRnJBx3RY8asyCvl8tw2mf1bUkBJAPv2Ge8J0Tfjird/l4Yg4sofkYXUry9OW3
+	K0XNrL5pXBxy6DjypnuINVJ6zx7UU9PNzXbzVDWZmr9VhgopDRHF/sMK/cYXQohg
+	sxGe0nfO4hymr4KHjblmZSRKCIDNcx8zQo4+aSVQQZyGRAUD78j2uvd6NKf/ulBr
+	nnKVpz1+wUnVPwMEb4ix4Vh7kiuVaU7qRhBK+MfVaUGkr/4vg/XgUPFyKrhkriHh
+	Vvn/c+jgA1Eq+vFaXWPHqOlQCc5Xq10jGgDZxo2tHEHe+JAkvBKFXSto28jG5oQ7
+	uWsJrWoJxgyCLC19UWtA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6psay0hv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 May 2024 19:43:26 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44LJhOYN030881
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 May 2024 19:43:24 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 21 May 2024 12:43:23 -0700
+Date: Tue, 21 May 2024 12:43:22 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: prabhav kumar <pvkumar5749404@gmail.com>
+CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <julia.lawall@inria.fr>, <javier.carrasco@wolfvision.net>,
+        <skhan@linuxfoundation.org>
+Subject: Re: [PATCH next] drivers: soc: qcom: Auto cleanup using
+ __free(device_node)
+Message-ID: <Zkz5WtB0pBLqlc+3@hu-bjorande-lv.qualcomm.com>
+References: <20240407072330.229076-1-pvkumar5749404@gmail.com>
+ <Zkzz7PZUnU/xP/O2@hu-bjorande-lv.qualcomm.com>
+ <CAH8oh8UY9FkHy=RyMU2AOZr+1x_KyH4m166kVmQd6peRNvFVTw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH8oh8UY9FkHy=RyMU2AOZr+1x_KyH4m166kVmQd6peRNvFVTw@mail.gmail.com>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BI_p40hjresZpelIRK7LbPciGlFMhhMa
+X-Proofpoint-ORIG-GUID: BI_p40hjresZpelIRK7LbPciGlFMhhMa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-21_12,2024-05-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ adultscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ priorityscore=1501 phishscore=0 impostorscore=0 spamscore=0 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405210148
 
-Hi Krzysztof,
+On Wed, May 22, 2024 at 01:01:22AM +0530, prabhav kumar wrote:
+> On Wed, May 22, 2024 at 12:50 AM Bjorn Andersson
+> <quic_bjorande@quicinc.com> wrote:
+> >
+> > On Sun, Apr 07, 2024 at 12:53:30PM +0530, Prabhav Kumar Vaish wrote:
+> > > Use automated cleanup to replace of_node_put() in qcom_smem_resolve_mem().
+> > >
+> >
+> > I don't find this easier to read or maintain.
+> Should I change it , explaining the change ??
+> >
+> > Also, your subject prefix does not match other changes to this driver.
+> The patch is to add a __free function attribute to np pointer
+> initialization ensuring
+> the pointers are freed as soon as they go out of scope, thus removing
+> the work to
+> manually free them using of_node_put.
 
-On Tue, May 21, 2024 at 09:05:50PM +0200, Krzysztof Kozlowski wrote:
-> On 20/05/2024 21:59, Laurent Pinchart wrote:
-> > The ADP5585 is a 10/11 input/output port expander with a built in keypad
-> > matrix decoder, programmable logic, reset generator, and PWM generator.
-> > These bindings model the device as an MFD, and support the GPIO expander
-> > and PWM functions.
-> > 
-> > These bindings support the GPIO and PWM functions.
-> > 
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > ---
-> > I've limited the bindings to GPIO and PWM as I lack hardware to design,
-> > implement and test the rest of the features the chip supports.
-> > ---
-> >  .../bindings/gpio/adi,adp5585-gpio.yaml       |  36 ++++++
-> >  .../devicetree/bindings/mfd/adi,adp5585.yaml  | 117 ++++++++++++++++++
-> >  .../bindings/pwm/adi,adp5585-pwm.yaml         |  35 ++++++
-> >  MAINTAINERS                                   |   7 ++
-> >  4 files changed, 195 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
-> > new file mode 100644
-> > index 000000000000..210e4d53e764
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
-> > @@ -0,0 +1,36 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/gpio/adi,adp5585-gpio.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Analog Devices ADP5585 GPIO Expander
-> > +
-> > +maintainers:
-> > +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > +
-> > +description: |
-> > +  The Analog Devices ADP5585 has up to 11 GPIOs represented by a "gpio" child
-> > +  node of the parent MFD device. See
-> > +  Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further details as
-> > +  well as an example.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: adi,adp5585-gpio
-> > +
-> > +  gpio-controller: true
-> > +
-> > +  '#gpio-cells':
-> > +    const: 2
-> > +
-> > +  gpio-reserved-ranges: true
-> 
-> There are no resources here, so new compatible is not really warranted.
-> Squash the node into parent.
+Yes, that is what the __free() attribute does, but I don't find it
+easier to read and unless I'm missing something you're not fixing an
+actual issue here?
 
-Child nodes seem (to me) to be the standard way to model functions in
-MFD devices. Looking at mfd_add_device(), for OF-based systems, the
-function iterates over child nodes. I don't mind going a different
-routes, could you indicate what you have in mind, perhaps pointing to an
-existing driver as an example ?
-
-> > +
-> > +required:
-> > +  - compatible
-> > +  - gpio-controller
-> > +  - "#gpio-cells"
-> > +
-> > +additionalProperties: false
-> > +
-> > +...
-> > diff --git a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-> > new file mode 100644
-> > index 000000000000..217c038b2842
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-> > @@ -0,0 +1,117 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/mfd/adi,adp5585.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Analog Devices ADP5585 Keypad Decoder and I/O Expansion
-> > +
-> > +maintainers:
-> > +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > +
-> > +description: |
-> 
-> Do not need '|' unless you need to preserve formatting.
-> 
-> > +  The ADP5585 is a 10/11 input/output port expander with a built in keypad
-> > +  matrix decoder, programmable logic, reset generator, and PWM generator.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - enum:
-> > +          - adi,adp5585-00  # Default
-> > +          - adi,adp5585-01  # 11 GPIOs
-> > +          - adi,adp5585-02  # No pull-up resistors by default on special pins
-> > +          - adi,adp5585-03  # Alternate I2C address
-> > +          - adi,adp5585-04  # Pull-down resistors on all pins by default
-> > +      - const: adi,adp5585
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  vdd-supply: true
-> > +
-> > +  gpio:
-> > +    $ref: /schemas/gpio/adi,adp5585-gpio.yaml
-> > +
-> > +  pwm:
-> > +    $ref: /schemas/pwm/adi,adp5585-pwm.yaml
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - gpio
-> > +  - pwm
-> > +
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: adi,adp5585-01
-> > +    then:
-> > +      properties:
-> > +        gpio:
-> > +          properties:
-> > +            gpio-reserved-ranges: false
-> 
-> This also points to fact your child node is pointless. It does not stand
-> on its own...
-
-That doesn't make the child pointless just for that reason. There are
-numerous examples of child nodes that don't stand on their own.
-
-> > +    else:
-> > +      properties:
-> > +        gpio:
-> > +          properties:
-> > +            gpio-reserved-ranges:
-> > +              items:
-> > +                - const: 5
-> > +                - const: 1
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    i2c {
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        mfd@34 {
-> > +            compatible = "adi,adp5585-00", "adi,adp5585";
-> > +            reg = <0x34>;
-> > +
-> > +            gpio {
-> > +                compatible = "adi,adp5585-gpio";
-> > +                gpio-controller;
-> > +                #gpio-cells = <2>;
-> > +                gpio-reserved-ranges = <5 1>;
-> > +            };
-> > +
-> > +            pwm {
-> > +                compatible = "adi,adp5585-pwm";
-> > +                #pwm-cells = <3>;
-> > +            };
-> > +        };
-> > +    };
-> > +
-> > +  - |
-> > +    i2c {
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        mfd@34 {
-> > +            compatible = "adi,adp5585-01", "adi,adp5585";
-> > +            reg = <0x34>;
-> > +
-> > +            vdd-supply = <&reg_3v3>;
-> > +
-> > +            gpio {
-> > +                compatible = "adi,adp5585-gpio";
-> > +                gpio-controller;
-> > +                #gpio-cells = <2>;
-> 
-> Different by one property? So just keep one example, unless there are
-> more differences.
-
-I found the two examples useful during development of the binding to
-test the gpio-reserved-ranges rule (I got it wrong in the first place,
-and the dt schema validator told me), but I'm fine dropping one of the
-two.
-
-> > +            };
-> > +
-> > +            pwm {
-> > +                compatible = "adi,adp5585-pwm";
-> > +                #pwm-cells = <3>;
-> > +            };
-> > +        };
-> > +    };
-> > +
-> > +...
-> > diff --git a/Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml b/Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
-> > new file mode 100644
-> > index 000000000000..351a9d5da566
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
-> > @@ -0,0 +1,35 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pwm/adi,adp5585-pwm.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Analog Devices ADP5585 PWM Generator
-> > +
-> > +maintainers:
-> > +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > +
-> > +description: |
-> 
-> Do not need '|' unless you need to preserve formatting.
-> 
-> > +  The Analog Devices ADP5585 generates a PWM output with configurable frequency
-> > +  and duty cycle represented by a "pwm" child node of the parent MFD device.
-> > +  See Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further
-> > +  details as well as an example.
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/pwm/pwm.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - adi,adp5585-pwm
-> > +
-> > +  "#pwm-cells":
-> > +    const: 3
-> 
-> Also no resources, so this can be part of the parent node.
-
-I'll sure follow the same design for the GPIO and PWM functions :-)
-Let's answer the above question first.
-
--- 
 Regards,
+Bjorn
 
-Laurent Pinchart
+> >
+> > Regards,
+> > Bjorn
+> >
+> > > Signed-off-by: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
+> > > ---
+> > > drivers/soc/qcom/smem.c | 4 +---
+> > >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
+> > > index 7191fa0c087f..ad1cf8dcc6ec 100644
+> > > --- a/drivers/soc/qcom/smem.c
+> > > +++ b/drivers/soc/qcom/smem.c
+> > > @@ -1032,18 +1032,16 @@ static int qcom_smem_resolve_mem(struct qcom_smem *smem, const char *name,
+> > >                                struct smem_region *region)
+> > >  {
+> > >       struct device *dev = smem->dev;
+> > > -     struct device_node *np;
+> > >       struct resource r;
+> > >       int ret;
+> > > +     struct device_node *np __free(device_node) = of_parse_phandle(dev->of_node, name, 0);
+> > >
+> > > -     np = of_parse_phandle(dev->of_node, name, 0);
+> > >       if (!np) {
+> > >               dev_err(dev, "No %s specified\n", name);
+> > >               return -EINVAL;
+> > >       }
+> > >
+> > >       ret = of_address_to_resource(np, 0, &r);
+> > > -     of_node_put(np);
+> > >       if (ret)
+> > >               return ret;
+> > >
+> > > --
+> > > 2.34.1
+> > >
 
