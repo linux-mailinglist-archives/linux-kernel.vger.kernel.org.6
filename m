@@ -1,88 +1,171 @@
-Return-Path: <linux-kernel+bounces-185207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9465A8CB208
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:17:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450448CB20C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF7E6B22ACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:17:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2DB9281EF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC54C1CD3B;
-	Tue, 21 May 2024 16:17:37 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1204C2262B;
+	Tue, 21 May 2024 16:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="2ePbt1cS"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3930D4C66
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 16:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CADA7F49F;
+	Tue, 21 May 2024 16:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716308257; cv=none; b=AVTfP/slQZOHuLmV0nqVQkwedjCF4YlVhgVqlbMkfsEVZRKB9VQDV0D0yvhexzc0/5Et41BQd152k6XXbokzTGREzAgwem161mDrlz6XEl+s+/mCBvAtzlIuMamo3+oN/34KZFQToBBRnMvf7LhRavO3RB8gYtf2ZAfcMpoPoUI=
+	t=1716308303; cv=none; b=Sc+7cSmDitSZwNKPAvBfsczKmA+OrICgR2tuSAovnZvZam9JNUFrfDUxv8r+9A3XEtr0B5yaQdnUFzfGfsKz9GveCIQzjEL6hnNj9lsTdVIrMdanMuan43o7RDHOQ6K+RlMCqbRyLjHARXU174FmyUDn9ZNk2cI0ZaaN4//OVM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716308257; c=relaxed/simple;
-	bh=Mp+X4n+G4e+9QIapZ3qaEU0CrBdfMJsKLNODW33+ROE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fVfg8f4QuYd57ciiFqomo1J4DO7Ka4OujephlGvXnn53Qfgo7AsFYZszVm2ERp3f0fo6ODdKPfErfNlsQ6PwMIMfGgPa8Wq+Yn98TIJzxYnkbBlYWuNAOfTnuD+WlLMA1pJS7daLQunpx6F/e1Sceu6hRyibWNNlvUaC764D6N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: 2zYdvrMlTIS1fAj8yLSpqA==
-X-CSE-MsgGUID: LWCeBn2GTO+fj129Higj0w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="23652296"
-X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
-   d="scan'208";a="23652296"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 09:17:21 -0700
-X-CSE-ConnectionGUID: FInIGSHkSASZXYn4LNWvgw==
-X-CSE-MsgGUID: P/ernt7WR92JzSqFzPwp9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
-   d="scan'208";a="70387499"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 09:17:17 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andy@kernel.org>)
-	id 1s9SAr-00000009i16-3hrV;
-	Tue, 21 May 2024 19:17:13 +0300
-Date: Tue, 21 May 2024 19:17:13 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Tony Luck <tony.luck@intel.com>
-Cc: ak@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-kernel@vger.kernel.org, mingo@redhat.com, mjguzik@gmail.com,
-	patches@lists.linux.dev, peterz@infradead.org,
-	rick.p.edgecombe@intel.com, tglx@linutronix.de, trenn@suse.de,
-	ubizjak@gmail.com, x86@kernel.org
-Subject: Re: [PATCH v6.1 16/49] x86/platform/intel-mid: Switch to new Intel
- CPU model defines
-Message-ID: <ZkzJCWIahaYPYwDz@smile.fi.intel.com>
-References: <Zkyrtgj7yQR8H-Bz@smile.fi.intel.com>
- <20240521161002.12866-1-tony.luck@intel.com>
+	s=arc-20240116; t=1716308303; c=relaxed/simple;
+	bh=bA0tI6GGwwdaer6m/e4cegaAzkbPrHmQiPYZHjJJzSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fjTt8nY3o5N/8otwMkrGPjTiF2TJAyUkpSjGYA9swiSnFJlbrmC+412knuMSMxQOgDRKaDW9VdkwDYMl7cHUCsfz5uJ7v+6oNebOXt4GJoKUugHnOVn2buRz6bBy/OnCAzSCa+07xjiq2KsneEU8xRGTYPiHPdA/LEZKnj0zogI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=2ePbt1cS; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716308299;
+	bh=bA0tI6GGwwdaer6m/e4cegaAzkbPrHmQiPYZHjJJzSU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=2ePbt1cSLye6Jut4LJ0iwx44sKk10UDJ0K45HFlR+YX01ZdJ2OJMQL6bPnCbWCCJx
+	 nTpvL4+zoaCMwbbjDu5Zz3iyUbz8xlNJr/vbYwOPPdm6OADtHRFTfzKVM3+F6psMqP
+	 ED6Db6iBbhIfUibCyhCTgC7ZmR/sgEu0zzFmXed1M5Sj4mUqcCNHaelaz6qNyB4Vyi
+	 fJm6lqYE3YE53jAlwer7wlKeh7laXL7qCLulSYCCsD+s8xcFmI6UxKD0vYPrUa8/ii
+	 6m1Z9p0/4XnxTv0kNMmZ5MWt5gOuTP+3RtOVJnjqedeZ45rQq2LhVRW5EBVIqRBbNi
+	 zqtoKAx+wZwlw==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A7BE5378001E;
+	Tue, 21 May 2024 16:18:18 +0000 (UTC)
+Date: Tue, 21 May 2024 18:18:17 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, Qiang Yu <yuq825@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, David Airlie <airlied@gmail.com>, Daniel Vetter
+ <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, Steven Price
+ <steven.price@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>, Christian
+ Koenig= <christian.koenig@amd.com>, Dmitry Osipenko
+ <dmitry.osipenko@collabora.com>, Zack Rusin <zack.rusin@broadcom.com>,
+ kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ lima@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v3 0/2] drm: Fix dma_resv deadlock at drm object pin
+ time
+Message-ID: <20240521181817.097af5e1@collabora.com>
+In-Reply-To: <t64xneene7m7x2akecvrmr44yottiicy2mle7e5fimg7vacb4n@n4cjdf7g3nlp>
+References: <20240501065650.2809530-1-adrian.larumbe@collabora.com>
+	<84a5f7b6-d20a-4c69-83a8-d8394fea2b68@suse.de>
+	<20240502135941.136ad639@collabora.com>
+	<20240502140012.68e88831@collabora.com>
+	<d520ea1b-e399-4c3d-8546-87c68e480cbc@suse.de>
+	<t64xneene7m7x2akecvrmr44yottiicy2mle7e5fimg7vacb4n@n4cjdf7g3nlp>
+Organization: Collabora
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521161002.12866-1-tony.luck@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2024 at 09:10:01AM -0700, Tony Luck wrote:
-> New CPU #defines encode vendor and family as well as model.
-> 
-> N.B. Drop Haswell. CPU model 0x3C was included by mistake
-> in upstream code.
+On Fri, 17 May 2024 19:16:21 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-Yep, the result looks good. Dunno if it's better to have a separate patch with
-proper Fixes tag. Up to you, folks.
+> Hi Boris and Thomas,
+>=20
+> On 02.05.2024 14:18, Thomas Zimmermann wrote:
+> > Hi
+> >=20
+> > Am 02.05.24 um 14:00 schrieb Boris Brezillon: =20
+> > > On Thu, 2 May 2024 13:59:41 +0200
+> > > Boris Brezillon <boris.brezillon@collabora.com> wrote:
+> > >  =20
+> > > > Hi Thomas,
+> > > >=20
+> > > > On Thu, 2 May 2024 13:51:16 +0200
+> > > > Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> > > >  =20
+> > > > > Hi,
+> > > > >=20
+> > > > > ignoring my r-b on patch 1, I'd like to rethink the current patch=
+es in
+> > > > > general.
+> > > > >=20
+> > > > > I think drm_gem_shmem_pin() should become the locked version of _=
+pin(),
+> > > > > so that drm_gem_shmem_object_pin() can call it directly. The exis=
+ting
+> > > > > _pin_unlocked() would not be needed any longer. Same for the _unp=
+in()
+> > > > > functions. This change would also fix the consistency with the se=
+mantics
+> > > > > of the shmem _vmap() functions, which never take reservation lock=
+s.
+> > > > >=20
+> > > > > There are only two external callers of drm_gem_shmem_pin(): the t=
+est
+> > > > > case and panthor. These assume that drm_gem_shmem_pin() acquires =
+the
+> > > > > reservation lock. The test case should likely call drm_gem_pin()
+> > > > > instead. That would acquire the reservation lock and the test wou=
+ld
+> > > > > validate that shmem's pin helper integrates well into the overall=
+ GEM
+> > > > > framework. The way panthor uses drm_gem_shmem_pin() looks wrong t=
+o me.
+> > > > > For now, it could receive a wrapper that takes the lock and that'=
+s it. =20
+> > > > I do agree that the current inconsistencies in the naming is
+> > > > troublesome (sometimes _unlocked, sometimes _locked, with the versi=
+on
+> > > > without any suffix meaning either _locked or _unlocked depending on
+> > > > what the suffixed version does), and that's the very reason I asked
+> > > > Dmitry to address that in his shrinker series [1]. So, ideally I'd
+> > > > prefer if patches from Dmitry's series were applied instead of
+> > > > trying to fix that here (IIRC, we had an ack from Maxime). =20
+> > > With the link this time :-).
+> > >=20
+> > > [1]https://lore.kernel.org/lkml/20240105184624.508603-1-dmitry.osipen=
+ko@collabora.com/T/ =20
+> >=20
+> > Thanks. I remember these patches. Somehow I thought they would have been
+> > merged already. I wasn't super happy about the naming changes in patch =
+5,
+> > because the names of the GEM object callbacks do no longer correspond w=
+ith
+> > their implementations. But anyway.
+> >=20
+> > If we go that direction, we should here simply push drm_gem_shmem_pin()=
+ and
+> > drm_gem_shmem_unpin() into panthor and update the shmem tests with
+> > drm_gem_pin(). Panfrost and lima would call drm_gem_shmem_pin_locked().=
+ IMHO
+> > we should not promote the use of drm_gem_shmem_object_*() functions, as=
+ they
+> > are meant to be callbacks for struct drm_gem_object_funcs. (Auto-genera=
+ting
+> > them would be nice.) =20
+>=20
+> I'll be doing this in the next patch series iteration, casting the pin fu=
+nction's
+> drm object parameter to an shmem object.
+>=20
+> Also for the sake of leaving things in a consistent state, and against Bo=
+ris' advice,
+> I think I'll leave the drm WARN statement inside drm_gem_shmem_pin_locked.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Sure, that's fine.
 
