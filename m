@@ -1,77 +1,87 @@
-Return-Path: <linux-kernel+bounces-184608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFDE48CA98C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:02:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDA58CA95B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3FB1F21EAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:02:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E22283B31
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6440254277;
-	Tue, 21 May 2024 08:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB1751C5C;
+	Tue, 21 May 2024 07:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="irqOQyYa"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="jkYkyCPZ"
+Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D1447A48;
-	Tue, 21 May 2024 08:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C425B5337D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716278565; cv=none; b=fdFt2Lctz+NBY8+gWSyl8ugEaVRMyxZsWhOSs5GPIwKwzA2LkolFBJtsiKdxQWrO6PQIqe4mGzot8WpcZlYM/NbJzG07ngi/JfpRjZD9Q4dmibrqc6fPhgPsyqv/jEQW1N6qz3w2jNPF+oNglLzypSTdtYzp50GB5TpBOVLgcKA=
+	t=1716277883; cv=none; b=sd9rnpaWhppC6o6b+mypU2mUHW8VF7g28EekISUcv97z31nq2I+uUH0lCKCuL9W+mKfisIt+K1jUliWBOP2ftc5gVv9NCx+2cxiOO+mOnfRlyGfblfg7V8OO3IDj+P+QG5VxDcYNonEb65YNbL5ciFtSwpbDNI3LntnuIQFfDkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716278565; c=relaxed/simple;
-	bh=7Bg0EkekzT1leAOQM31BuKsgT0tR/z20yhvwOHsgw8M=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ORefNZ9PK3aEjbODTQYllGylptCIkQbcNv0l9v0PwVlk1e3Dj0JLu0kcGfYAO8CyJ6NDr5SVX9S8qG8CSRJtAvQQMdNXsxvaK4oohIFKUk1ng+ZF5Lmhx2IFL+79Oh1QvrgEVSxK/BilgqySkC02i+0OTDhGVZQAw8QjRfXTfVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=irqOQyYa; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44L2RvGh002296;
-	Tue, 21 May 2024 10:02:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding:content-type; s=selector1; bh=9dp1VLe
-	jRl1NLDB777JA8IKm3sHxNgriMqBjr0bCdkg=; b=irqOQyYamV00GN2VL6RTJlT
-	+vYAtKyMZZY9NCmfExD9dJq5DvPfFfCn9NJyhRkKZvSRTimcAfwBebWaQ/4c4KYB
-	31QLg+unoaEpGdu+t9ywWtVfoZ3NtlMPnwdJZIMF26JO/nDJT3EkLhxOEZs/LVsx
-	M68KMZ13/7TLoA6TvFvvCShD/2yNDCqcP3OdMpztcU7kTbEjtMc16OdbdTK0qidy
-	lECiIvs4dYZFN8QmYJpnkWE9hub/8bcQvT7qgLyb97/fc9LTU6RBD5o6NKBCS3lU
-	9uo9Q/k+dFy/3palvYP1qsw7gHRNEgZzbYaiWj0AyStyAsaAWi/fzpg4UdfG+kQ=
-	=
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y6n42av1n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 10:02:16 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B023A4002D;
-	Tue, 21 May 2024 10:02:12 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6AB402122E8;
-	Tue, 21 May 2024 10:01:38 +0200 (CEST)
-Received: from localhost (10.48.86.232) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 21 May
- 2024 10:01:38 +0200
-From: Pascal Paillet <p.paillet@foss.st.com>
-To: Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <p.paillet@foss.st.com>
-Subject: [PATCH] arm64: dts: st: OP-TEE async notif on PPI 15 for stm32mp25
-Date: Tue, 21 May 2024 10:01:31 +0200
-Message-ID: <20240521080131.473447-1-p.paillet@foss.st.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716277883; c=relaxed/simple;
+	bh=tNcwUJFLX7BXbp1Qcrg2ogpxcmB/m5eICmF7z+JYRD8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kYCo7piInOO3Polatc/wxFU4l1kFp0kvcwYiTTrLiwJJ7AURFEtBvo+W1EYdx+k/lZEYwZZLlXNTDkkXv8xNkS6KkAKf9W0ha/wqqKQXztlSQRj/E7ZjRGy+1to6dKVO0Mut1JjbRi4yz2yfwDW17ktLsxDWgJWOOAj/VpptinM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=jkYkyCPZ reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=ite.com.tw; s=dkim;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rJA9OD/hotGu+pdBYSa5wol5mrcgE/6y01wA9gkNaok=;
+  b=jkYkyCPZj+YAIvNbRY5Cs5xD8fbAoOAB42BGJ4k1y7N4FzoWvAcIdbYb
+   tCPZ3zJFh8zt127AwRj3FyfXFRL2z1hSZE9veKyll+sxiigH/GLLgthpA
+   XsXvl5scqblpB3zYG65lvIpuVWMFXVVyZW7N8FSeZYwB/orrnoEO5Zv9M
+   s5B8nIcrgGlo1cISjxiB8fUJoJlsIiDgAvsCyJTXqoVDz0rPoxHsfNYk7
+   PuTPwulx6FCRqb6gVRg5FVaxeA35kjGAWMpGt9reqtm/QGXNtzhDVzBBK
+   yWCR/Xxxg12dNiyXSpLmPDJ22ENKNvPPjoJCzm73VVGfy81hcBe6eHtNm
+   A==;
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 21 May 2024 15:51:12 +0800
+Received: from CSBMAIL1.internal.ite.com.tw (CSBMAIL1.internal.ite.com.tw [192.168.65.58])
+	by mse.ite.com.tw with ESMTP id 44L7p9ME031040;
+	Tue, 21 May 2024 15:51:09 +0800 (GMT-8)
+	(envelope-from kuro.chung@ite.com.tw)
+Received: from ite-XPS-13-9360.internal.ite.com.tw (192.168.72.42) by
+ CSBMAIL1.internal.ite.com.tw (192.168.65.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 21 May 2024 15:51:08 +0800
+From: kuro <kuro.chung@ite.com.tw>
+To: Pin-yen Lin <treapking@chromium.org>,
+        Kenneth Haung
+	<kenneth.hung@ite.com.tw>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil
+ Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman
+	<jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Allen Chen
+	<allen.chen@ite.com.tw>, Hermes Wu <hermes.wu@ite.com.tw>,
+        AngeloGioacchino
+ Del Regno <angelogioacchino.delregno@collabora.com>,
+        "open list:DRM DRIVERS"
+	<dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+CC: Kuro Chung <kuro.chung@ite.com.tw>
+Subject: [PATCH v12] drm/bridge: it6505: fix hibernate to resume no display issue
+Date: Tue, 21 May 2024 16:01:48 +0800
+Message-ID: <20240521080149.1047892-1-kuro.chung@ite.com.tw>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,54 +90,174 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-21_04,2024-05-21_01,2024-05-17_01
+X-ClientProxiedBy: CSBMAIL1.internal.ite.com.tw (192.168.65.58) To
+ CSBMAIL1.internal.ite.com.tw (192.168.65.58)
+X-TM-SNTS-SMTP:
+	F9F34C0A94CA35CD4F5911CF8E0B2FE07EA2AA2D0DBBCFD05078346A7B31A6D02002:8
+X-MAIL:mse.ite.com.tw 44L7p9ME031040
 
-From: Etienne Carriere <etienne.carriere@foss.st.com>
+From: Kuro Chung <kuro.chung@ite.com.tw>
 
-Define GIC PPI 15 (aka GIC interrupt line 31) for OP-TEE asynchronous
-notification.
+When the system power resumes, the TTL input of IT6505 may experience
+some noise before the video signal stabilizes, necessitating a video
+reset. This patch is implemented to prevent a loop of video error
+interrupts, which can occur when a video reset in the video FIFO error
+interrupt triggers another such interrupt. The patch processes the SCDT
+and FIFO error interrupts simultaneously and ignores any video FIFO
+error interrupts caused by a video reset.
 
-Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
-Signed-off-by: Pascal Paillet <p.paillet@foss.st.com>
+Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
+Signed-off-by: Kuro Chung <kuro.chung@ite.com.tw>
+Signed-off-by: Hermes Wu <hermes.wu@ite.com.tw>
+
 ---
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 4 +++-
- arch/arm64/boot/dts/st/stm32mp253.dtsi | 4 ++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+V1->V3: update MAINTAINERS mail list
+V3->V4: remove function it6505_irq_video_fifo_error,it6505_irq_io_latch_fifo_overflow
+V4->V5: customer feedback again, update again, kernel build pass
+V5->V6: remove unrelated patch change, split into another patch
+V6->V7: modify code 0x02 to TX_FIFO_RESET by macro define
+V7->V8: fix merge conflict, change mail from 'cc' to 'to'
+V8->V9: modify patch description, patch summary
+V9->V10: modify patch summary, add Fixes
+V10->V11: modify patch description, add Signed-off-by
+V11->V12: moidfy patch description.
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index 4b48e4ed2d28..d0e10dda96b6 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -51,9 +51,11 @@ clk_rcbsec: clk-rcbsec {
- 	};
- 
- 	firmware {
--		optee {
-+		optee: optee {
- 			compatible = "linaro,optee-tz";
- 			method = "smc";
-+			interrupt-parent = <&intc>;
-+			interrupts = <GIC_PPI 15 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
- 		};
- 
- 		scmi {
-diff --git a/arch/arm64/boot/dts/st/stm32mp253.dtsi b/arch/arm64/boot/dts/st/stm32mp253.dtsi
-index 029f88981961..69001f924d17 100644
---- a/arch/arm64/boot/dts/st/stm32mp253.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp253.dtsi
-@@ -28,3 +28,7 @@ timer {
- 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- };
+---
+ drivers/gpu/drm/bridge/ite-it6505.c | 73 +++++++++++++++++++----------
+ 1 file changed, 49 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
+index 469157341f3ab..5703fcf4b7b00 100644
+--- a/drivers/gpu/drm/bridge/ite-it6505.c
++++ b/drivers/gpu/drm/bridge/ite-it6505.c
+@@ -1307,9 +1307,15 @@ static void it6505_video_reset(struct it6505 *it6505)
+ 	it6505_link_reset_step_train(it6505);
+ 	it6505_set_bits(it6505, REG_DATA_MUTE_CTRL, EN_VID_MUTE, EN_VID_MUTE);
+ 	it6505_set_bits(it6505, REG_INFOFRAME_CTRL, EN_VID_CTRL_PKT, 0x00);
+-	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET);
 +
-+&optee {
-+	interrupts = <GIC_PPI 15 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+};
++	it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, TX_FIFO_RESET);
++	it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, 0x00);
++
+ 	it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, RST_501_FIFO);
+ 	it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, 0x00);
++
++	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET);
++	usleep_range(1000, 2000);
+ 	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, 0x00);
+ }
+ 
+@@ -2245,12 +2251,11 @@ static void it6505_link_training_work(struct work_struct *work)
+ 	if (ret) {
+ 		it6505->auto_train_retry = AUTO_TRAIN_RETRY;
+ 		it6505_link_train_ok(it6505);
+-		return;
+ 	} else {
+ 		it6505->auto_train_retry--;
++		it6505_dump(it6505);
+ 	}
+ 
+-	it6505_dump(it6505);
+ }
+ 
+ static void it6505_plugged_status_to_codec(struct it6505 *it6505)
+@@ -2471,31 +2476,53 @@ static void it6505_irq_link_train_fail(struct it6505 *it6505)
+ 	schedule_work(&it6505->link_works);
+ }
+ 
+-static void it6505_irq_video_fifo_error(struct it6505 *it6505)
++static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
+ {
+-	struct device *dev = it6505->dev;
+-
+-	DRM_DEV_DEBUG_DRIVER(dev, "video fifo overflow interrupt");
+-	it6505->auto_train_retry = AUTO_TRAIN_RETRY;
+-	flush_work(&it6505->link_works);
+-	it6505_stop_hdcp(it6505);
+-	it6505_video_reset(it6505);
++	return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
+ }
+ 
+-static void it6505_irq_io_latch_fifo_overflow(struct it6505 *it6505)
++static void it6505_irq_video_handler(struct it6505 *it6505, const int *int_status)
+ {
+ 	struct device *dev = it6505->dev;
++	int reg_0d, reg_int03;
+ 
+-	DRM_DEV_DEBUG_DRIVER(dev, "IO latch fifo overflow interrupt");
+-	it6505->auto_train_retry = AUTO_TRAIN_RETRY;
+-	flush_work(&it6505->link_works);
+-	it6505_stop_hdcp(it6505);
+-	it6505_video_reset(it6505);
+-}
++	/*
++	 * When video SCDT change with video not stable,
++	 * Or video FIFO error, need video reset
++	 */
+ 
+-static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
+-{
+-	return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
++	if ((!it6505_get_video_status(it6505) &&
++		(it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *) int_status))) ||
++		(it6505_test_bit(BIT_INT_IO_FIFO_OVERFLOW, (unsigned int *) int_status)) ||
++		(it6505_test_bit(BIT_INT_VID_FIFO_ERROR, (unsigned int *) int_status))) {
++
++		it6505->auto_train_retry = AUTO_TRAIN_RETRY;
++		flush_work(&it6505->link_works);
++		it6505_stop_hdcp(it6505);
++		it6505_video_reset(it6505);
++
++		usleep_range(10000, 11000);
++
++		/*
++		 * Clear FIFO error IRQ to prevent fifo error -> reset loop
++		 * HW will trigger SCDT change IRQ again when video stable
++		 */
++
++		reg_int03 = it6505_read(it6505, INT_STATUS_03);
++		reg_0d = it6505_read(it6505, REG_SYSTEM_STS);
++
++		reg_int03 &= (BIT(INT_VID_FIFO_ERROR) | BIT(INT_IO_LATCH_FIFO_OVERFLOW));
++		it6505_write(it6505, INT_STATUS_03, reg_int03);
++
++		DRM_DEV_DEBUG_DRIVER(dev, "reg08 = 0x%02x", reg_int03);
++		DRM_DEV_DEBUG_DRIVER(dev, "reg0D = 0x%02x", reg_0d);
++
++		return;
++	}
++
++
++	if (it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *) int_status))
++		it6505_irq_scdt(it6505);
+ }
+ 
+ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
+@@ -2508,15 +2535,12 @@ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
+ 	} irq_vec[] = {
+ 		{ BIT_INT_HPD, it6505_irq_hpd },
+ 		{ BIT_INT_HPD_IRQ, it6505_irq_hpd_irq },
+-		{ BIT_INT_SCDT, it6505_irq_scdt },
+ 		{ BIT_INT_HDCP_FAIL, it6505_irq_hdcp_fail },
+ 		{ BIT_INT_HDCP_DONE, it6505_irq_hdcp_done },
+ 		{ BIT_INT_AUX_CMD_FAIL, it6505_irq_aux_cmd_fail },
+ 		{ BIT_INT_HDCP_KSV_CHECK, it6505_irq_hdcp_ksv_check },
+ 		{ BIT_INT_AUDIO_FIFO_ERROR, it6505_irq_audio_fifo_error },
+ 		{ BIT_INT_LINK_TRAIN_FAIL, it6505_irq_link_train_fail },
+-		{ BIT_INT_VID_FIFO_ERROR, it6505_irq_video_fifo_error },
+-		{ BIT_INT_IO_FIFO_OVERFLOW, it6505_irq_io_latch_fifo_overflow },
+ 	};
+ 	int int_status[3], i;
+ 
+@@ -2546,6 +2570,7 @@ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
+ 			if (it6505_test_bit(irq_vec[i].bit, (unsigned int *)int_status))
+ 				irq_vec[i].handler(it6505);
+ 		}
++		it6505_irq_video_handler(it6505, (unsigned int *) int_status);
+ 	}
+ 
+ 	pm_runtime_put_sync(dev);
 -- 
-2.34.1
+2.25.1
 
 
