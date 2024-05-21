@@ -1,259 +1,146 @@
-Return-Path: <linux-kernel+bounces-184473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2675C8CA72D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:59:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F078CA727
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6DE4281AAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:59:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84E281C20CEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708B6225DD;
-	Tue, 21 May 2024 03:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AA21F959;
+	Tue, 21 May 2024 03:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=damenly.org header.i=@damenly.org header.b="wbV+ZaZB"
-Received: from mail-108-mta55.mxroute.com (mail-108-mta55.mxroute.com [136.175.108.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DiMe3lGB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C042E17722
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01AE9DDD7
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716263989; cv=none; b=r4TBIBl23dO1g/brW4KndyhiCXIvLGJwq0gVc6t1rCnOZUD1egoVNI6I1bd7o2j1pxDu8Ls+CT4LIiW1+R57XNfEW0wNbQZTP46SrfhUlOyqfPoOvSd2tZd4qSCCGpGTr7e8XUmGQtlfASEphzGK9Yp2iIsc1P2dCwyGWLwfI84=
+	t=1716263469; cv=none; b=jHyDVtWghI4NHGQXICSzDhAzOHFd+gCGIuyaJhhXMNAkyzANvzaH61WS6jUZ0YHXs5LNwbMc/+oshYMHvyoE++3FKyhi6ls63Ed5fweOH8N07i+IxUudcIwP0WbCeWieZyIYte/Tqc6oTdrK0LRIntu2SgGCSF4SDR2JHzVdoug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716263989; c=relaxed/simple;
-	bh=kYIKHYmpfxlDrhJ93GDwspPDhBxwB6XwqWN/aBb/pHg=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=Iil3GB9tFTRoDRLhNv8+cp3ZqPaoUQv3dDWekLyeab1Uqb/FMTkCs7DnZqSZayoyd//LwPgnOS0r5bfHJgVCeOWqI5OQhH6jCTT7MzoiH6mgbPELSR7wHFsqeU/hRRWF3INwcvk3XpCFN02vCbDfFLLI6wVuf9U9RSNWF6vA5DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damenly.org; spf=pass smtp.mailfrom=damenly.org; dkim=pass (2048-bit key) header.d=damenly.org header.i=@damenly.org header.b=wbV+ZaZB; arc=none smtp.client-ip=136.175.108.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damenly.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damenly.org
-Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
- (Authenticated sender: mN4UYu2MZsgR)
- by mail-108-mta55.mxroute.com (ZoneMTA) with ESMTPSA id 18f99496bb9000efce.00b
- for <linux-kernel@vger.kernel.org>
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
- Tue, 21 May 2024 03:54:36 +0000
-X-Zone-Loop: 642db6ad4060857bc08602831e1531a33dc75b61c152
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=damenly.org
-	; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	In-reply-to:Date:Subject:Cc:To:From:References:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=DPtLHpKIAy/sjrt9Mpwp5EnxqKTtyHFZBeLVILI3AVc=; b=wbV+ZaZB6yxToKDmVhy5+7W38E
-	Ppd+wkmExCJpOCDd31JxfDvq8IiLoLoXiEpn14JCfSmg8akvKXMtd1tn8sEGFQBlmOoqYjzxFRhrN
-	1amjV4tK4u+ZOAkbuFZFhoKjksU9vSzAleg4aNAfRmCwmvD6XxsFK3arqj+OmqRuprzCbGPpxocWP
-	efoNcVSGt9NjcWepT2KrDOZ0iIQOQQ12OEmNgESfWzCBszhDK1FFImJ9MVvVh5kaNWS/LTQDgjAxU
-	XgEQ8XpT8jTIZE03WAMdy6GWU17k3qfIWTx6GwMjWwKUKqxwD7LD34goMR6eWXPTb+pJWjHKdUDsb
-	4/QrCszA==;
-References: <20240509011900.2694291-1-yukuai1@huaweicloud.com>
- <20240509011900.2694291-4-yukuai1@huaweicloud.com>
- <v838ekaa.fsf@damenly.org>
- <CALTww28PVgS3D+9JsNv4PvDLAi=hOyT14QMkk5245_a8JXvgNQ@mail.gmail.com>
-User-agent: mu4e 1.7.5; emacs 28.2
-From: Su Yue <l@damenly.org>
-To: Xiao Ni <xni@redhat.com>
-Cc: Su Yue <l@damenly.org>, Yu Kuai <yukuai1@huaweicloud.com>,
- agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
- dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com
-Subject: Re: [PATCH md-6.10 3/9] md: add new helpers for sync_action
-Date: Tue, 21 May 2024 11:50:53 +0800
-In-reply-to: <CALTww28PVgS3D+9JsNv4PvDLAi=hOyT14QMkk5245_a8JXvgNQ@mail.gmail.com>
-Message-ID: <r0dves7n.fsf@damenly.org>
+	s=arc-20240116; t=1716263469; c=relaxed/simple;
+	bh=BCjuTKMiV0cn4O5twtOwrfBUB/gPCarjL14EkA7FQJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g/M05UzTMpt0CftJRoQJTSa62CVkptdHCGrnEUX3dKlzdOTn/cxsC7hYvXvjLH2suLvgzt0Fi8lPMw/aOmu86Woz+z9WCNDcGelN4WdoMk5DJnR2vWoIw9XKKC8eyyg+p+EeQFymphhLoFl354ixF81RznJFz5XMiL4mV8R2Mqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DiMe3lGB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716263466;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+1//QAX2V35y7ue97weY5s6BlfgEJ/aIsjDY5//7erc=;
+	b=DiMe3lGBSS6hFwwho2bGK5dz8MFWj0FVGv2R4rJHZlSNRCAFC3ZF8iTjV4SsucHI6XzLEw
+	+uXF+BGpmGQUiNJmI2azTDmypkotxMTsxfIfRbVjA/4267+GMiaFQE0p51sdpasAb7a3Lc
+	gd8uOxXiYrKwVxIIuMMIIoDppXxCu3k=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-179-ASJivBHvNIG_K8643YWBYA-1; Mon,
+ 20 May 2024 23:51:05 -0400
+X-MC-Unique: ASJivBHvNIG_K8643YWBYA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6448429AB3E2;
+	Tue, 21 May 2024 03:51:04 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.65])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 74E2551BF;
+	Tue, 21 May 2024 03:51:03 +0000 (UTC)
+Date: Tue, 21 May 2024 11:51:00 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Coiby Xu <coxu@redhat.com>
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Thomas Staudt <tstaudt@de.ibm.com>,
+	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	 Jan Pazdziora <jpazdziora@redhat.com>,
+	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Dave Hansen <dave.hansen@intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v3 7/7] x86/crash: make the page that stores the dm crypt
+ keys inaccessible
+Message-ID: <ZkwZ+PubwfDzEQ4v@MiWiFi-R3L-srv>
+References: <20240425100434.198925-1-coxu@redhat.com>
+ <20240425100434.198925-8-coxu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Authenticated-Id: l@damenly.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240425100434.198925-8-coxu@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
+On 04/25/24 at 06:04pm, Coiby Xu wrote:
+> This adds an addition layer of protection for the saved copy of dm
+> crypt key. Trying to access the saved copy will cause page fault.
+> 
+> Suggested-by: Pingfan Liu <kernelfans@gmail.com>
+> Signed-off-by: Coiby Xu <coxu@redhat.com>
+> ---
+>  arch/x86/kernel/machine_kexec_64.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> index b180d8e497c3..fc0a80f4254e 100644
+> --- a/arch/x86/kernel/machine_kexec_64.c
+> +++ b/arch/x86/kernel/machine_kexec_64.c
+> @@ -545,13 +545,34 @@ static void kexec_mark_crashkres(bool protect)
+>  	kexec_mark_range(control, crashk_res.end, protect);
+>  }
+>  
+> +static void kexec_mark_dm_crypt_keys(bool protect)
+> +{
+> +	unsigned long start_paddr, end_paddr;
+> +	unsigned int nr_pages;
+> +
+> +	if (kexec_crash_image->dm_crypt_keys_addr) {
+> +		start_paddr = kexec_crash_image->dm_crypt_keys_addr;
+> +		end_paddr = start_paddr + kexec_crash_image->dm_crypt_keys_sz - 1;
+> +		nr_pages = (PAGE_ALIGN(end_paddr) - PAGE_ALIGN_DOWN(start_paddr))/PAGE_SIZE;
+> +		if (protect)
+> +			set_memory_np((unsigned long)phys_to_virt(start_paddr), nr_pages);
+> +		else
+> +			__set_memory_prot(
+> +				(unsigned long)phys_to_virt(start_paddr),
+> +				nr_pages,
+> +				__pgprot(_PAGE_PRESENT | _PAGE_NX | _PAGE_RW));
+> +	}
+> +}
+> +
+>  void arch_kexec_protect_crashkres(void)
+>  {
+>  	kexec_mark_crashkres(true);
+> +	kexec_mark_dm_crypt_keys(true);
 
-On Tue 21 May 2024 at 11:25, Xiao Ni <xni@redhat.com> wrote:
+Really? Are all x86 systems having this dm_crypt_keys and need be
+handled in kdump?
 
-> On Mon, May 20, 2024 at 8:38=E2=80=AFPM Su Yue <l@damenly.org> wrote:
->>
->>
->> On Thu 09 May 2024 at 09:18, Yu Kuai <yukuai1@huaweicloud.com>
->> wrote:
->>
->> > From: Yu Kuai <yukuai3@huawei.com>
->> >
->> > The new helpers will get current sync_action of the array,=20
->> > will
->> > be used
->> > in later patches to make code cleaner.
->> >
->> > Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> > ---
->> >  drivers/md/md.c | 64
->> >  +++++++++++++++++++++++++++++++++++++++++++++++++
->> >  drivers/md/md.h |  3 +++
->> >  2 files changed, 67 insertions(+)
->> >
->> > diff --git a/drivers/md/md.c b/drivers/md/md.c
->> > index 00bbafcd27bb..48ec35342d1b 100644
->> > --- a/drivers/md/md.c
->> > +++ b/drivers/md/md.c
->> > @@ -69,6 +69,16 @@
->> >  #include "md-bitmap.h"
->> >  #include "md-cluster.h"
->> >
->> > +static char *action_name[NR_SYNC_ACTIONS] =3D {
->> >
->>
->> Th array will not be modified, so:
->>
->> static const char * const action_names[NR_SYNC_ACTIONS]
->>
->> > +     [ACTION_RESYNC]         =3D "resync",
->> > +     [ACTION_RECOVER]        =3D "recover",
->> > +     [ACTION_CHECK]          =3D "check",
->> > +     [ACTION_REPAIR]         =3D "repair",
->> > +     [ACTION_RESHAPE]        =3D "reshape",
->> > +     [ACTION_FROZEN]         =3D "frozen",
->> > +     [ACTION_IDLE]           =3D "idle",
->> > +};
->> > +
->> >  /* pers_list is a list of registered personalities protected=20
->> >  by
->> >  pers_lock. */
->> >  static LIST_HEAD(pers_list);
->> >  static DEFINE_SPINLOCK(pers_lock);
->> > @@ -4867,6 +4877,60 @@ metadata_store(struct mddev *mddev,=20
->> > const
->> > char *buf, size_t len)
->> >  static struct md_sysfs_entry md_metadata =3D
->> >  __ATTR_PREALLOC(metadata_version, S_IRUGO|S_IWUSR,
->> >  metadata_show, metadata_store);
->> >
->> > +enum sync_action md_sync_action(struct mddev *mddev)
->> > +{
->> > +     unsigned long recovery =3D mddev->recovery;
->> > +
->> > +     /*
->> > +      * frozen has the highest priority, means running=20
->> > sync_thread
->> > will be
->> > +      * stopped immediately, and no new sync_thread can=20
->> > start.
->> > +      */
->> > +     if (test_bit(MD_RECOVERY_FROZEN, &recovery))
->> > +             return ACTION_FROZEN;
->> > +
->> > +     /*
->> > +      * idle means no sync_thread is running, and no new
->> > sync_thread is
->> > +      * requested.
->> > +      */
->> > +     if (!test_bit(MD_RECOVERY_RUNNING, &recovery) &&
->> > +         (!md_is_rdwr(mddev) ||=20
->> > !test_bit(MD_RECOVERY_NEEDED,
->> > &recovery)))
->> > +             return ACTION_IDLE;
->> My brain was lost sometimes looking into nested conditions of=20
->> md
->> code...
->
-> agree+
->
->> I agree with Xiao Ni's suggestion that more comments about the
->> array
->> state should be added.
->
-> In fact, I suggest to keep the logic which is in action_show=20
-> now. The
-> logic in action_show is easier to understand for me.
->
+>  }
+>  
+>  void arch_kexec_unprotect_crashkres(void)
+>  {
+> +	kexec_mark_dm_crypt_keys(false);
+>  	kexec_mark_crashkres(false);
+>  }
+>  #endif
+> -- 
+> 2.44.0
+> 
 
-I'm in the middle, either of new/old logic looks good to me ;)
-Thanks for clarifying.
-
---
-Su
-> Best Regards
-> Xiao
->>
->> > +     if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
->> > +         mddev->reshape_position !=3D MaxSector)
->> > +             return ACTION_RESHAPE;
->> > +
->> > +     if (test_bit(MD_RECOVERY_RECOVER, &recovery))
->> > +             return ACTION_RECOVER;
->> > +
->> >
->> In action_show, MD_RECOVERY_SYNC is tested first then
->> MD_RECOVERY_RECOVER.
->> After looking through the logic of MD_RECOVERY_RECOVER
->> clear/set_bit, the
->> change is fine to me. However, better to follow old pattern=20
->> unless
->> there
->> have resons.
->>
->>
->> > +     if (test_bit(MD_RECOVERY_SYNC, &recovery)) {
->> > +             if (test_bit(MD_RECOVERY_CHECK, &recovery))
->> > +                     return ACTION_CHECK;
->> > +             if (test_bit(MD_RECOVERY_REQUESTED, &recovery))
->> > +                     return ACTION_REPAIR;
->> > +             return ACTION_RESYNC;
->> > +     }
->> > +
->> > +     return ACTION_IDLE;
->> > +}
->> > +
->> > +enum sync_action md_sync_action_by_name(char *page)
->> > +{
->> > +     enum sync_action action;
->> > +
->> > +     for (action =3D 0; action < NR_SYNC_ACTIONS; ++action) {
->> > +             if (cmd_match(page, action_name[action]))
->> > +                     return action;
->> > +     }
->> > +
->> > +     return NR_SYNC_ACTIONS;
->> > +}
->> > +
->> > +char *md_sync_action_name(enum sync_action action)
->> >
->>
->> And 'const char *'
->>
->> --
->> Su
->>
->> > +{
->> > +     return action_name[action];
->> > +}
->> > +
->> >  static ssize_t
->> >  action_show(struct mddev *mddev, char *page)
->> >  {
->> > diff --git a/drivers/md/md.h b/drivers/md/md.h
->> > index 2edad966f90a..72ca7a796df5 100644
->> > --- a/drivers/md/md.h
->> > +++ b/drivers/md/md.h
->> > @@ -864,6 +864,9 @@ extern void md_unregister_thread(struct
->> > mddev *mddev, struct md_thread __rcu **t
->> >  extern void md_wakeup_thread(struct md_thread __rcu=20
->> >  *thread);
->> >  extern void md_check_recovery(struct mddev *mddev);
->> >  extern void md_reap_sync_thread(struct mddev *mddev);
->> > +extern enum sync_action md_sync_action(struct mddev *mddev);
->> > +extern enum sync_action md_sync_action_by_name(char *page);
->> > +extern char *md_sync_action_name(enum sync_action action);
->> >  extern bool md_write_start(struct mddev *mddev, struct bio
->> >  *bi);
->> >  extern void md_write_inc(struct mddev *mddev, struct bio=20
->> >  *bi);
->> >  extern void md_write_end(struct mddev *mddev);
->>
 
