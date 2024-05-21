@@ -1,150 +1,137 @@
-Return-Path: <linux-kernel+bounces-185316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEEC98CB365
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:18:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4B48CB36B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 693742831C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:18:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40BBD1C21408
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926B37EF18;
-	Tue, 21 May 2024 18:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DA4148822;
+	Tue, 21 May 2024 18:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="MkKGpjw7"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="okvqzxgp";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="okvqzxgp"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AF01F959
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB3F3D982;
+	Tue, 21 May 2024 18:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716315513; cv=none; b=EDOOzzJb1mHq8kxPxx3NYWFqpwzHFp07sCsro6LVrGr/4xTscC0GQSxphL6DvDooATk7Ah+7ph1DHQNDPFI0t40u5NQpkFKjslzF9/wWPP0GXzRsf0nmJVdVaaqVPMWeOXI95JfzBwqf/KEHw8SEU6oMLzEp5fZsFtPdxuJywWA=
+	t=1716315533; cv=none; b=mtMQFo6nbXzrXRPHbCit8oxyfbybC4MMV9JIEHxo/BXVjNJWmZqWxyJo/4cTIV0kF3uymLUiQiY6tuOyQbPfqUlilaw4DclQaV8derfmITmUAKoNjJdk76+YBM1su4ttKyiNcH0UvCXxcbkl66vWqRwEgSt6IqtqdhsOErHJ+g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716315513; c=relaxed/simple;
-	bh=lfq3/p0h5MKLio19PWndwbYN7MTFoTHLcIZ5Z+wNiy4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=MowisPxQwdEiuB5u2D95Q8O74fSqOf+8AKR4rT6gUq830go7FJanXwH99ancaZmIirROI9qbr9lqcVyNIaOISoaVRmiSoRmgkVstffldtDtfs8ctMa9g4JOGqGcoiyv2CMRTjFbH9EWhw3ImE2vbJXnhOFI7ixbuXKQg9NNzyWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MkKGpjw7; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-de54be7066bso22855964276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:18:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716315510; x=1716920310; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TwQ9snbu95pE4x0LUCjBq9CW+c6Rq1RORndHTBMHkaw=;
-        b=MkKGpjw7yRyu7hFkfcAWL/Ua8etRSiR/yt3NX3LgjfpIoZcwBfK79AIiXZd9XHl084
-         h8PXOiALT9wdbP6pJN7+OlUn6vBwbOoc3AMHPyK1h4jGnM0IIoTFrEqHIDtjSTSplD6A
-         NuqrmnsvAc9Nofrw2qfT7N7FGJAHR3xj9RdX7l/Yry4ufvkIB52rr7lT6eWWGxMWvFA2
-         XcdEGW6ZODGFGARytnWO7fYHhj3XpFiXvRZ14UjjO1qAdE8pHohGykFxmo3StyBUJc/5
-         J0CK5VTgmNYgwMaEUk5TpdIHqluy189p/8l2ZzBcvIHos4fYQUn3NenWZ7YUsDlMTEfE
-         qSuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716315510; x=1716920310;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TwQ9snbu95pE4x0LUCjBq9CW+c6Rq1RORndHTBMHkaw=;
-        b=p1deFhdUqPFYf7QudpOQys39bBEVh97QVlESLHqv60y+vrno6b7rsCAdzErifZKSdT
-         WsrTUILASFvSRear3jMnsucQrRn+O3OpV59t/WeopQser2ED/Yvjx62/gdtG3HT6F9V9
-         8Xd+0au6YDrf78Zh6yRIjWi+WB7TAsCzkW9EhJMHrWvGU5cGFfqLqfrufCl+GCkSGJl/
-         u7nInZ2mzWZg36pApuzX5UO+Fvv/nNElv1dLjLlg6NnyxTJehbOJxRKO/plUJZLfcx79
-         cUHRLnqKB/cWiF+j/kvdh9QzvlXMZypuzsU6aoHXyPGZyAXjMdWLItJmHJ+h2HsgKwa3
-         2tlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqVu9BHaRh5OsQpsPqsRKOtbJCzUqwK8Iepw3RrJWTIorX5i2pIabzSyvVJt53M+yWCrThSoXqbs57KFX/cZQP68eyRSutbTjvn+tZ
-X-Gm-Message-State: AOJu0YyrTsezh3k0SzzaLH7GiAEPQDkfSX7dEP6eGghJjQq4T+d29ji4
-	Kyo94wG2jPp4xg8MhMyZkrDOB2SS2yb890z1ApBp4f0vdmj3Cr1LYc1O/dt9XZE0agN3CThn4fG
-	LGw==
-X-Google-Smtp-Source: AGHT+IGHGDBMmiK5t+GbcsuTKyZDDKZC3FkQs9ca5TrM1ADcpb5DnT7k1vbmiAW7NmfDK1CcFHd1cmlhwBY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:149:b0:de5:5225:c3a4 with SMTP id
- 3f1490d57ef6-dee4f304cb7mr7842641276.7.1716315510346; Tue, 21 May 2024
- 11:18:30 -0700 (PDT)
-Date: Tue, 21 May 2024 11:18:28 -0700
-In-Reply-To: <CABgObfYo3jR7b4ZkkuwKWbon-xAAn+Lvfux7ifQUXpDWJds1hg@mail.gmail.com>
+	s=arc-20240116; t=1716315533; c=relaxed/simple;
+	bh=2/WNvNUaxZWBWFghnTzz7COI4nb5mN2JEaGF6GoBrSg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ENw5Z1qCprjaqFu8l/O2VLE9PCXLg1/iIaKKCnSSudnRQLq2Dtmg8RNqaC3znQMj+tLilWfJg5PRuhcNa8W0LwvWXcPPh4Xzd3BDAORRYKc711DPEp+a/0QJ65H0hHL03hatcWYlfvnE/8Yp37l1iT7uzJRONsa5X/PFQKxheyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=okvqzxgp; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=okvqzxgp; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1716315529;
+	bh=2/WNvNUaxZWBWFghnTzz7COI4nb5mN2JEaGF6GoBrSg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=okvqzxgpTRIrIDxwVOWW9RZLReb/uwFXXxGhf6NhiUFe5cd2R2pAvrywW4gN1QBJG
+	 GBilIfhWNh1rPu6RHKi88EY+5VrHB5atLe3SPchZiFN0RngFBaGRDfjkunvWK1/oFl
+	 I8ho0o3LMZMWxf1NzcocsSDud8C2Ty/Yk6jDBDLk=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8D54A1286DC8;
+	Tue, 21 May 2024 14:18:49 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id JesuGFsTjEfu; Tue, 21 May 2024 14:18:49 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1716315529;
+	bh=2/WNvNUaxZWBWFghnTzz7COI4nb5mN2JEaGF6GoBrSg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=okvqzxgpTRIrIDxwVOWW9RZLReb/uwFXXxGhf6NhiUFe5cd2R2pAvrywW4gN1QBJG
+	 GBilIfhWNh1rPu6RHKi88EY+5VrHB5atLe3SPchZiFN0RngFBaGRDfjkunvWK1/oFl
+	 I8ho0o3LMZMWxf1NzcocsSDud8C2Ty/Yk6jDBDLk=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id BD1251286DBE;
+	Tue, 21 May 2024 14:18:47 -0400 (EDT)
+Message-ID: <cc3d952f8295b52b052fbffe009b796ffb45707a.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 4/6] KEYS: trusted: Move tpm2_key_decode() to the TPM
+ driver
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Herbert Xu
+	 <herbert@gondor.apana.org.au>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+ Andreas.Fuchs@infineon.com, James Prestwood <prestwoj@gmail.com>, David
+ Woodhouse <dwmw2@infradead.org>, Eric Biggers <ebiggers@kernel.org>, "David
+ S. Miller" <davem@davemloft.net>, "open list:CRYPTO API"
+ <linux-crypto@vger.kernel.org>,  open list <linux-kernel@vger.kernel.org>,
+ Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, Mimi Zohar
+ <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
+ <serge@hallyn.com>, "open list:SECURITY SUBSYSTEM"
+ <linux-security-module@vger.kernel.org>
+Date: Tue, 21 May 2024 14:18:45 -0400
+In-Reply-To: <20240521031645.17008-5-jarkko@kernel.org>
+References: <20240521031645.17008-1-jarkko@kernel.org>
+	 <20240521031645.17008-5-jarkko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240518000430.1118488-1-seanjc@google.com> <20240518000430.1118488-10-seanjc@google.com>
- <CABgObfYo3jR7b4ZkkuwKWbon-xAAn+Lvfux7ifQUXpDWJds1hg@mail.gmail.com>
-Message-ID: <ZkzldN0SwEhstwEB@google.com>
-Subject: Re: [PATCH 9/9] KVM: x86: Disable KVM_INTEL_PROVE_VE by default
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 21, 2024, Paolo Bonzini wrote:
-> On Sat, May 18, 2024 at 2:04=E2=80=AFAM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> > Disable KVM's "prove #VE" support by default, as it provides no functio=
-nal
-> > value, and even its sanity checking benefits are relatively limited.  I=
-e.
-> > it should be fully opt-in even on debug kernels, especially since EPT
-> > Violation #VE suppression appears to be buggy on some CPUs.
->=20
-> More #VE trapping than #VE suppression.
->
-> I wouldn't go so far as making it *depend* on DEBUG_KERNEL.  EXPERT
-> plus the scary help message is good enough.
+On Tue, 2024-05-21 at 06:16 +0300, Jarkko Sakkinen wrote:
+[...]
+> diff --git a/include/crypto/tpm2_key.h b/include/crypto/tpm2_key.h
+> new file mode 100644
+> index 000000000000..acf41b2e0c92
+> --- /dev/null
+> +++ b/include/crypto/tpm2_key.h
+> @@ -0,0 +1,33 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +#ifndef __LINUX_TPM2_KEY_H__
+> +#define __LINUX_TPM2_KEY_H__
+> +
+> +#include <linux/slab.h>
+> +
+> +/*
+> + * TPM2 ASN.1 key
+> + */
+> +struct tpm2_key {
+> +       u32 parent;
+> +       const u8 *blob;
+> +       u32 blob_len;
+> +       const u8 *pub;
+> +       u32 pub_len;
+> +       const u8 *priv;
+> +       u32 priv_len;
+> +};
+> +
+> +int tpm2_key_decode(const u8 *src, u32 src_len, struct tpm2_key
+> *key,
+> +                   u32 max_key_len);
 
-Works for me.
+I don't think this is a good idea.  Trusted keys already have a pre-
+defined max payload size (MAX_BLOB_SIZE in include/keys/trusted-type.h)
+and I've already had to increase this several times because once you
+get policy attached to a key, it can get pretty big (over a page). 
+Exactly the same thing will happen to asymmetric keys as well, so it
+does make sense that they share the same maximum (probably in a more
+generic header, though).
 
->=20
-> What about this:
->=20
-> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-> index b6831e17ec31..2864608c7016 100644
-> --- a/arch/x86/kvm/Kconfig
-> +++ b/arch/x86/kvm/Kconfig
-> @@ -97,14 +97,15 @@ config KVM_INTEL
->=20
->  config KVM_INTEL_PROVE_VE
->          bool "Check that guests do not receive #VE exceptions"
-> -        depends on KVM_INTEL && DEBUG_KERNEL && EXPERT
-> +        depends on KVM_INTEL && EXPERT
->          help
->            Checks that KVM's page table management code will not incorrec=
-tly
->            let guests receive a virtualization exception.  Virtualization
->            exceptions will be trapped by the hypervisor rather than injec=
-ted
->            in the guest.
->=20
-> -          This should never be enabled in a production environment.
-> +          Note that #VE trapping appears to be buggy on some CPUs.
+Since the code already right sizes the allocation and all we check with
+this is whether it's over a pre-defined maximum, it's way easier if
+that maximum is defined in a header rather than passed in in several
+places making increasing the maximum really hard because you have to
+chase all the threading.
 
-I see where you're coming from, but I don't think "trapping" is much better=
-,
-e.g. it suggests there's something broken with the interception of #VEs.  A=
-h,
-the entire help text is weird.
+James
 
-This?
-
-config KVM_INTEL_PROVE_VE
-        bool "Verify guests do not receive unexpected EPT Violation #VEs"
-        depends on KVM_INTEL && EXPERT
-        help
-          Enable EPT Violation #VEs (when supported) for all VMs, to verify
-	  that KVM's EPT management code will not incorrectly result in a #VE
-	  (KVM is supposed to supress #VEs by default).  Unexpected #VEs will
-	  be intercepted by KVM and will trigger a WARN, but are otherwise
-	  transparent to the guest.
-	 =20
-	  Note, EPT Violation #VE support appears to be buggy on some CPUs.
-
-          This should never be enabled in a production environment!
-
-          If unsure, say N.
 
