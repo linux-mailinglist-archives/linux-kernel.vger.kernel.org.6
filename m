@@ -1,116 +1,98 @@
-Return-Path: <linux-kernel+bounces-184748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9524E8CAB66
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:01:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 907968CAB61
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C61A91C21A0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:01:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D263281733
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF01A6CDAF;
-	Tue, 21 May 2024 10:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A046BB20;
+	Tue, 21 May 2024 10:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RBwG+Be9"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="vc7D2ADM"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37E74206E
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18AE6A8AD;
+	Tue, 21 May 2024 10:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716285702; cv=none; b=UyaIs6b5fAR9wbArkuyP+dy6ajHOVEP0PcFWqamifU/j1sOLGLN2PkmjIEDsRpQ+3f7C6frEDJcA8b0BKALE4qjFj4HA1n4rW7XnnVAqa6r5nG/w+waINYDUdZENLfGBH+4Y1+ec9L4J8nknnhXbMDrMb9GPPOIr3GETmleKMJ4=
+	t=1716285689; cv=none; b=jqBtiGstXpFuK2jm8o7qHxFSyME1vpfeGzu8hJzcOf32dCEm6NKPvBS8UU+k1qlkg0GuEuE6ksP3JfnzXxY7c50AKZLnh0Ak7rUS6C6rtudhhpUTQaX5qoUpMLMCMpvgmwTSge8WQTmMiIXdyCu6Swu5iT4rjRoq9g43eRk1py8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716285702; c=relaxed/simple;
-	bh=eSvaMBIbPocMUUAl2gCaybx5KCg+piZs3ZrESkEh/t4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YuM6uGWsvS1uUltZorXJsGR4kr0KoByMjoaTwyl8l6jBQPYYek65HpRBQmjEj7VvT5gnoz6XpyE+fSAHxiYRPdgfg5mWDo6fkXvlLZEXQnC8telgjOVMDoRCAqXnBkJ9C/VkWEAGmPWzwl3tx0DQZTEvtvkfJOZGe56MemCh5Fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RBwG+Be9; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-43f84f53f66so12730431cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:01:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716285699; x=1716890499; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=05P/WlwWKKhut6I1eqLgXZLr7T/6QQDhvGE0vkqsqJo=;
-        b=RBwG+Be9ISsaQ9wSEh5/7UhbNY26zueVmxaSRIwPcub+SFxb2Kpwc9C6GoYx4pUwHS
-         IGvJk/ZQ7zrlTC0VhKbpd5/Akik4LiOOAl7XUH8xMq/GpERYeonlifxAGH2E+0HCkRVU
-         9/YVsFB4kGs9prmVZREu5rViJ6Xp7axxWQnY9NL3Cxm3N02cqSJ6fVuhgJNPdko/H/eq
-         DKVW7NTQ6MoPe1uZKfVulGfwDTgEPaebagIu7gIeyq2igu618c7vz9m9+8XVRuPLbTfu
-         8MC8bdyQVQpWRFF+i1CaWLn/DDcDT4e3ZSU+10gkCLSLM8i2syOq7uz+NGuBYmaUyctx
-         eTcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716285699; x=1716890499;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=05P/WlwWKKhut6I1eqLgXZLr7T/6QQDhvGE0vkqsqJo=;
-        b=Iu+KrsNhzvDexxEw6LNkczESCrs49SgKFXeFTcn4fAjieOJ3IansIN2UoLm1hQOdS1
-         KV7sxpZF6R2LPbnnGymf4dY9iRPNjRJcpWDJWdUq7Tnw0iwmw4IwkoiBCpWAhZzBoxir
-         jWD7elBtZCKvC/NZjTiTiiWrlvMfj8M1x3rs+TfHDfWqbklR4x4EzvTA5xs5sHeoi8Xh
-         UexwiUC/BHke6aOlK2je3uf8m9JVr9tsKPE7rs2VHmX/TGFUT3kx9xJo+s4fSqD6qemr
-         7zuQR9LxtXQES0Hg17WjsSpSWJPZg/RZOiTCTVADnE3HPLBR3DFV4uQxfwu/9HC+8QXt
-         rwKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyFC3d2lvh9V0XB1lfmETysq7Qlfz2JcnyFtS+OWTqGENjosAMWSe4p7DceTOuSlNNQcgRZH17OZb3vJFXzoCBxXSf3ElMrQRugh6V
-X-Gm-Message-State: AOJu0YyY4PiOJ2e2poiPQ4gdFrc0qvPAsd6erdZuOr5KJeH6HZQHI3Aa
-	3Dvq4kqrMAbVjP2XQSwjbKjO3mxoh0Koxyz/aEAIwlO+mLZQHP7GHwS4cvO4rt2+RYrmbPJ0JSQ
-	JL0jLdhbCfze1j6CRppN53sFXbQGyFA2muCu99tD/Ubw/6UtV8P4=
-X-Google-Smtp-Source: AGHT+IHBg8oA+nkRXQ2kYvjQcVJRCg+dFqmIUTocHTkS2BlcGovr4ox8u9dBOyyUejfPP8YcSa3ykxFw12tBsBCGjcA=
-X-Received: by 2002:a17:90b:4d8d:b0:2bd:69ce:1966 with SMTP id
- 98e67ed59e1d1-2bd69ce2345mr5713134a91.29.1716285678586; Tue, 21 May 2024
- 03:01:18 -0700 (PDT)
+	s=arc-20240116; t=1716285689; c=relaxed/simple;
+	bh=n8+o3NVnL57asI8p4M/36TOmWj7QNAqCHYBIEm6XABA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CjikhbNzy6UEX5nrM0WPSJueA3MRy2U+dEmDp31eo7iaoOPxY8HMW692nvIoGWwKsmEQ/lwfLAx0oUuH3t1Ye33pIVcg2UEsPflKmWiDoOzX33deqQPZPmcvI2TjOqid4fcijVk9cgq01okws1POFyDMLRUGrzpNI0LjMmvllIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=vc7D2ADM; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=j75BGBZI1XcWKMkzeEf52Hy2BMGSWC5SHXSgriK1ehQ=;
+	t=1716285688; x=1716717688; b=vc7D2ADMAp/nMoHfrkYJjjr00DE67wlW7XHbaK4S8r6U5yH
+	dfK8Cdna3KtqnWE5l7Fw+LJ2wfb5LJhehJ8vaWQpbZvoCaSrnCM4282CxGesNrlmVy89gb6mHoSZp
+	3wsMC6deVsKvs5kY+ut+3s85J0oa6V7TRSd2iKNHwCVfloijByOmH9Al8SKiLI5apoX9aK7X6PPdY
+	zwbF/4pna8g9ZKoABiQXvlM/PfG7f1ttHehgjmUw8N2EwCpJNq35+VHMSP93Sk9e6w5535gk3Rh8T
+	g0Yn9NQte1OmaS78fjNMxqec0arpAcDVpJBgpToxlOgEtlts4fc8Kl1bbeercsrA==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1s9MJ3-0000k3-Uj; Tue, 21 May 2024 12:01:18 +0200
+Message-ID: <b20b567f-ce96-45e8-aab7-29768f8313f5@leemhuis.info>
+Date: Tue, 21 May 2024 12:01:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
- <20240521-qcom-firmware-name-v1-6-99a6d32b1e5e@linaro.org> <a314906d-b297-474d-910c-6634c8c23042@linaro.org>
-In-Reply-To: <a314906d-b297-474d-910c-6634c8c23042@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 21 May 2024 13:01:05 +0300
-Message-ID: <CAA8EJppLtsQmjC93_zPSqeWAk9vM_ZVF96pcWLRHHpm4KrY2cg@mail.gmail.com>
-Subject: Re: [PATCH 06/12] remoteproc: qcom_q6v5_pas: switch to mbn files by default
-To: neil.armstrong@linaro.org
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Loic Poulain <loic.poulain@linaro.org>, Kalle Valo <kvalo@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, wcn36xx@lists.infradead.org, 
-	linux-wireless@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [PATCH] gpiolib: acpi: Move ACPI device NULL check to
+ acpi_can_fallback_to_crs()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Laura Nao <laura.nao@collabora.com>
+Cc: mika.westerberg@linux.intel.com, linus.walleij@linaro.org, brgl@bgdev.pl,
+ kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "kernelci.org bot" <bot@kernelci.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240513095610.216668-1-laura.nao@collabora.com>
+ <ZkHlLLLoagsYlll7@smile.fi.intel.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <ZkHlLLLoagsYlll7@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1716285688;572a1b2c;
+X-HE-SMSGID: 1s9MJ3-0000k3-Uj
 
-On Tue, 21 May 2024 at 12:49, <neil.armstrong@linaro.org> wrote:
->
-> On 21/05/2024 11:45, Dmitry Baryshkov wrote:
-> > We have been pushing userspace to use mbn files by default for ages.
-> > As a preparation for making the firmware-name optional, make the driver
-> > use .mbn instead of .mdt files by default.
->
-> I think we should have a mechanism to fallback to .mdt since downstream
-> uses split mdt on the devices filesystem.
->
-> Perhaps only specify .firmware_name = "adsp" and add a list of allowed extension
-> it will try in a loop ?
 
-Such loops can cause unnecessary delays if the
-CONFIG_FW_LOADER_USER_HELPER is enabled.
-Since it is not possible to use vendor's firmware partition as is (you
-have to either bind-mount a subdir or use a plenty of symlinks) one
-might as well symlink .mbn to .mdt file.
-Another option is to explicitly specify something like `firmware-name
-= "./adsp.mdt";'
 
-But yes, this whole series is a balance of pros and cons, as it was
-discussed last week.
+On 13.05.24 12:02, Andy Shevchenko wrote:
+> On Mon, May 13, 2024 at 11:56:10AM +0200, Laura Nao wrote:
+>> Following the relocation of the function call outside of
+>> __acpi_find_gpio(), move the ACPI device NULL check to
+>> acpi_can_fallback_to_crs().
+> 
+> Thank you, I'll add this to my tree as we have already the release happened.
+> I will be available after v6.10-rc1 is out.
 
--- 
-With best wishes
-Dmitry
+Hmm, what exactly do you mean with that? It sounds as you only want to
+add this to the tree once -rc1 is out -- which seems likely at this
+point, as that patch is not yet in -next. If that's the case allow me to
+ask: why? I'd say it should be fixes rather sooner than later, as other
+people might run into this as well and then have to deal with bisecing,
+reporting, ...
+
+Ciao, Thorsten
+
 
