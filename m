@@ -1,121 +1,224 @@
-Return-Path: <linux-kernel+bounces-185279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADBAE8CB306
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:39:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0828CB30B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6993228284C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:39:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 713421F22203
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1FE1482FD;
-	Tue, 21 May 2024 17:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A332148837;
+	Tue, 21 May 2024 17:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hj3LQXko"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZedaQEgu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA685482D0
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 17:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5669D482D0;
+	Tue, 21 May 2024 17:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716313150; cv=none; b=UyZCYygdc8SLUad0T3BBfRcbfyrACHBkrNJk8DhBNgIBbec3ldWrGndLcgJocvimyfIfrGAO9UIP66/zqOkCqlI+NjaNLIlHbDdxCYQ5NvM+tpf6QMCGaKBaJ+MCQ+6VH2mMXIyim1B/FmSbo7T+P/k24foIbyWts0GODHvh4rw=
+	t=1716313199; cv=none; b=LCzo+LF2SHXmAEe9WcpnF9FX+Nnk6A1d38Bp9zkPTiLPkcAsiPj8bNhjHNIRgx0uIecnLUuAe7I/pZc0Pplz7dG0HRmZ8pleYo1y+pJ47qVezfYifHrsBdeboJPD97T2rxwx5FcUiKuHEfzwFl8DqG2lwwF7ae++/IlXda5rBSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716313150; c=relaxed/simple;
-	bh=/XhjSFuvkXzuGm8TOE4bt1Gx2/2a15udsyjEKI16Wmo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N0flYzTQmOE9isRA5YKsbJCoSU918YkNHLLiBPp2BGrBVGxtLL+SoYc54CMRk+qXq+jyTF7+JBmZI9xjqh0OhKasELDpsOaZJ40VznyJ0AfTM+Dxq0lowjXi/HcrNstYQBEG/D2ZhqsDTH8kWyRCNuSF5W0tk2OdOrdxYaDIEi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hj3LQXko; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1eb0e08bfd2so110657165ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:39:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716313148; x=1716917948; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uV3GrqVP0qYMNyLcMp5DeTAEtIzneWxCv77ALTeKoVk=;
-        b=hj3LQXkoNDCJqWFu9Qo0sLpcvoiC6yw/Oq/XkxIRrqmUs3769ADEGt/bFjUg9MAa7A
-         0pRsY/38p2TkTwXAgpI/kK0d/gIZr8GiD7H2jvi+Fr1sGkMENH5nIF7WC3WeqbEg54Kq
-         r0HtCZWrcltwkB/yJmLjpmaz1fvKXEQM3dJYBVx3JYm0VMaGV5DgErCbIZ9doSNOSW/B
-         567EqmZbeLtvNXkxLBtbO7dAEnW2gNhD8YWAPhAwCD0uFhYiTzl2Qp7Rx+eTdx1lJn1x
-         g/CfbAtyucE6vRb+Z+bYR+KDBCZzS1Y9IuQUO1qLr8YxKokUkdML9hbrBb+FvKjwrbOy
-         9NyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716313148; x=1716917948;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uV3GrqVP0qYMNyLcMp5DeTAEtIzneWxCv77ALTeKoVk=;
-        b=dwwiwSZlOnspFgIuccvIRhUu2HnHKIMkl55adI77YrhzDSsg5PFyZCXpoYv4nC7HBg
-         u3LpSXhOJ/nYe4oX2fZ2ey76aZeVo6iCfvrKauQdZhCFkgl6yiMAoBIbMBb5woq3BJ4s
-         xN1u5ezbiLjQz9uNykru9sUeLOdfffK55S9nAa1/UO3vi3pEkJ53Y+rzRg4eMMN23aD5
-         b2vl7/AxZ5+KfBGuVAynYfYBYoroTVJxXWOvfkWuFy8XyzFw7zGqA26LNCtSsAgUSeNZ
-         kYWYte0Ju6zqBNp86oW5d4Ic95qDFRk0pNaQwlMseyfNq9nqfp+YPA4TVTc59xMZ/y/r
-         YO4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVqVrfnf3u0icUdIj9ZlfDPFPZqZCzHWiAZQI6yX42DBB+DZC9leh1Ots9fdArbRauw/X6U2+x3ojNzXj6kjJpI1Pn8UgbpA21HTiZQ
-X-Gm-Message-State: AOJu0YyM3qTzpf8BVF5uIR5MB6zLkcM3FumYxfXXkG7pKP1zo70su1jY
-	MpmicXsqWDt6bWDYR/85JqhxEdbctoCbHmIUvHjIJ7+Mtw/BwnNb
-X-Google-Smtp-Source: AGHT+IGjD6OYIpckFwaXQYt3LAcRXmZvaDuzHbk7bgUa8MB4MekY1TOiVYfkBkDV1dIBIo7GwHFClg==
-X-Received: by 2002:a17:902:c402:b0:1ee:1fcf:e19a with SMTP id d9443c01a7336-1ef4404adbcmr379970535ad.59.1716313147899;
-        Tue, 21 May 2024 10:39:07 -0700 (PDT)
-Received: from localhost.localdomain ([27.7.152.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f0958d1e3csm112759285ad.191.2024.05.21.10.39.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 10:39:06 -0700 (PDT)
-From: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
-To: nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev
-Cc: linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1716313199; c=relaxed/simple;
+	bh=PNdzHnRn/PnOCUikfVwtfCpLWlvvqc78Sicg+9KqnGU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mYZBebSIL4pwUlPw3OIFFaRQp0X/ZcSQk4SyD+R/5RzUv0PCU0RptKvp7Tp5CxnqBI3A1ui3xQIT8H1IORBQl8bx+k7s4CuQwlhyAKcvIULvuSBkkr0fUVLxwYXjyZlUJOnz2vfaQpPROWkXJ/4/FYqgMq3bpAChs1Wz1drb+MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZedaQEgu; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716313197; x=1747849197;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=PNdzHnRn/PnOCUikfVwtfCpLWlvvqc78Sicg+9KqnGU=;
+  b=ZedaQEguB03HA1B0pnRd+ABku7dWRZRJ2/wGqPdSP/bi/kjeuCQ2u0LU
+   eANEjWyISrcZPPt7FRiZcuMFyhmUWVhVguE35lJQyVXpZdIPXUc6X7NuE
+   /AbKFEZnVuu2LWUFfY8H+iKEW1iZo5B0kH2peEm/AGcwR/9oR6U2OHLQL
+   kyMj5pO2QDjxCWXEDnkkNB326NOQcdNiy6LaqgCS34jlyk9vOqLkFRs7X
+   M1If5nfGSjnmc6VjNHmQclyENznGmjXmoHypX80BoenOZLJzSyTy3KyhM
+   sEqe27gYt9POJE5QsbV1TB9xlao/a/SoNUE5lU/RoOFYq40cmCwleAqjD
+   w==;
+X-CSE-ConnectionGUID: 62Rn0SE8TI+wonunbE/MRg==
+X-CSE-MsgGUID: ebbGo4XYT+yrIsele8dYlQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="12317637"
+X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
+   d="scan'208";a="12317637"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 10:39:56 -0700
+X-CSE-ConnectionGUID: IJ1hew+nQpyzklvcWi+8Ng==
+X-CSE-MsgGUID: KPjOfuo/SdisIsmtpGRA/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
+   d="scan'208";a="32924933"
+Received: from fl31ca102ks0602.deacluster.intel.com (HELO gnr-bkc.deacluster.intel.com) ([10.75.133.163])
+  by fmviesa007.fm.intel.com with ESMTP; 21 May 2024 10:39:56 -0700
+From: weilin.wang@intel.com
+To: weilin.wang@intel.com,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	julia.lawall@inria.fr,
-	javier.carrasco@wolfvision.net,
-	skhan@linuxfoundation.org,
-	Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
-Subject: [PATCH] drivers: soc: atmel: Automated Cleanup using __free()
-Date: Tue, 21 May 2024 23:08:57 +0530
-Message-Id: <20240521173857.1080030-1-pvkumar5749404@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	Perry Taylor <perry.taylor@intel.com>,
+	Samantha Alt <samantha.alt@intel.com>,
+	Caleb Biggers <caleb.biggers@intel.com>
+Subject: [RFC PATCH v9 0/7] TPEBS counting mode support
+Date: Tue, 21 May 2024 13:39:28 -0400
+Message-ID: <20240521173952.3397644-1-weilin.wang@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Using automated cleanup to replace of_node_put() handling
-allows for a simplified flow to enable direct returns on errors.
+From: Weilin Wang <weilin.wang@intel.com>
 
-Signed-off-by: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
----
- drivers/soc/atmel/soc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Changes in v9:
+- Update the retire_latency result print and metric calculation method. Plugin
+the value to evsel so that no special code is required.
+- Update --control:fifo to use pipe instead of named pipe.
+- Add test for TPEBS counting mode.
+- Update Document with more details.
 
-diff --git a/drivers/soc/atmel/soc.c b/drivers/soc/atmel/soc.c
-index cc9a3e107479..8c7fe37b4f21 100644
---- a/drivers/soc/atmel/soc.c
-+++ b/drivers/soc/atmel/soc.c
-@@ -250,7 +250,7 @@ static const struct at91_soc socs[] __initconst = {
- 
- static int __init at91_get_cidr_exid_from_dbgu(u32 *cidr, u32 *exid)
- {
--	struct device_node *np;
-+	struct device_node *np __free(device_node);
- 	void __iomem *regs;
- 
- 	np = of_find_compatible_node(NULL, NULL, "atmel,at91rm9200-dbgu");
-@@ -261,7 +261,6 @@ static int __init at91_get_cidr_exid_from_dbgu(u32 *cidr, u32 *exid)
- 		return -ENODEV;
- 
- 	regs = of_iomap(np, 0);
--	of_node_put(np);
- 
- 	if (!regs) {
- 		pr_warn("Could not map DBGU iomem range");
--- 
-2.34.1
+Changes in v8:
+- In this revision, the code is updated to base on Ian's patch on R modifier
+parser https://lore.kernel.org/lkml/20240428053616.1125891-3-irogers@google.com/
+After this change, there is no special code required for R modifier in
+metricgroup.c and metricgroup.h files.
+
+Caveat of this change:
+  Ideally, we will need to add special handling to skip counting events with R
+modifier in evsel. Currently, this is not implemented so the event with :R will
+be both counted and sampled. Usually, in a metric formula that uses retire_latency,
+it would already require to count the event. As a result, we will endup count the
+same event twice. This should be able to be handled properly when we finalize our
+design on evsel R modifier support.
+
+- Move TPEBS specific code out from main perf stat code to separate files in
+util/intel-tpebs.c and util/intel-tpebs.h. [Namhyung]
+- Use --control:fifo to ack perf stat from forked perf record instead of sleep(2) [Namhyung]
+- Add introductions about TPEBS and R modifier in Documents. [Namhyung]
+
+
+Changes in v7:
+- Update code and comments for better code quality [Namhyung]
+- Add a separate commit for perf data [Namhyung]
+- Update retire latency print function to improve alignment [Namhyung]
+
+Changes in v6:
+- Update code and add comments for better code quality [Namhyung]
+- Remove the added fd var and directly pass the opened fd to data.file.fd [Namhyung]
+- Add kill() to stop perf record when perf stat exists early [Namhyung]
+- Add command opt check to ensure only start perf record when -a/-C given [Namhyung]
+- Squash commits [Namhyung]
+
+Changes in v5:
+- Update code and add comments for better code quality [Ian]
+
+Changes in v4:
+- Remove uncessary debug print and update code and comments for better
+readability and quality [Namhyung]
+- Update mtl metric json file with consistent TmaL1 and TopdownL1 metricgroup
+
+Changes in v3:
+- Remove ':' when event name has '@' [Ian]
+- Use 'R' as the modifier instead of "retire_latency" [Ian]
+
+Changes in v2:
+- Add MTL metric file
+- Add more descriptions and example to the patch [Arnaldo]
+
+Here is an example of running perf stat to collect a metric that uses
+retire_latency value of event MEM_INST_RETIRED.STLB_HIT_STORES on a MTL system.
+
+In this simple example, there is no MEM_INST_RETIRED.STLB_HIT_STORES sample.
+Therefore, the MEM_INST_RETIRED.STLB_HIT_STORES:p count and retire_latency value
+are all 0.
+
+/perf stat -M tma_dtlb_store -a -- sleep 1
+
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.000 MB - ]
+
+ Performance counter stats for 'system wide':
+
+       181,047,168      cpu_core/TOPDOWN.SLOTS/          #      0.6 %  tma_dtlb_store
+         3,195,608      cpu_core/topdown-retiring/
+        40,156,649      cpu_core/topdown-mem-bound/
+         3,550,925      cpu_core/topdown-bad-spec/
+       117,571,818      cpu_core/topdown-fe-bound/
+        57,118,087      cpu_core/topdown-be-bound/
+            69,179      cpu_core/EXE_ACTIVITY.BOUND_ON_STORES/
+             4,582      cpu_core/MEM_INST_RETIRED.STLB_HIT_STORES/
+        30,183,104      cpu_core/CPU_CLK_UNHALTED.DISTRIBUTED/
+        30,556,790      cpu_core/CPU_CLK_UNHALTED.THREAD/
+           168,486      cpu_core/DTLB_STORE_MISSES.WALK_ACTIVE/
+              0.00 MEM_INST_RETIRED.STLB_HIT_STORES:p       0        0
+
+       1.003105924 seconds time elapsed
+
+v1:
+TPEBS is one of the features provided by the next generation of Intel PMU.
+Please refer to Section 8.4.1 of "Intel® Architecture Instruction Set Extensions
+Programming Reference" [1] for more details about this feature.
+
+This set of patches supports TPEBS in counting mode. The code works in the
+following way: it forks a perf record process from perf stat when retire_latency
+of one or more events are used in a metric formula. Perf stat would send a
+SIGTERM signal to perf record before it needs the retire latency value for
+metric calculation. Perf stat will then process sample data to extract the
+retire latency data for metric calculations. Currently, the code uses the
+arithmetic average of retire latency values.
+
+[1] https://www.intel.com/content/www/us/en/content-details/812218/intel-architecture-instruction-set-extensions-programming-reference.html?wapkw=future%20features
+
+
+Weilin Wang (7):
+  perf vendor events intel: Add MTL metric json files
+  perf data: Allow to use given fd in data->file.fd
+  perf stat: Fork and launch perf record when perf stat needs to get
+    retire latency value for a metric.
+  perf stat: Plugin retire_lat value from sampled data to evsel
+  perf stat: Add command line option for enabling tpebs recording
+  perf Document: Add TPEBS to Documents
+  perf test: Add test for Intel TPEBS counting mode
+
+ tools/perf/Documentation/perf-list.txt        |    1 +
+ tools/perf/Documentation/topdown.txt          |   30 +
+ tools/perf/arch/x86/util/evlist.c             |    6 +
+ tools/perf/builtin-stat.c                     |   24 +
+ .../arch/x86/meteorlake/metricgroups.json     |  127 +
+ .../arch/x86/meteorlake/mtl-metrics.json      | 2551 +++++++++++++++++
+ .../perf/tests/shell/test_stat_intel_tpebs.sh |   27 +
+ tools/perf/util/Build                         |    1 +
+ tools/perf/util/data.c                        |    7 +-
+ tools/perf/util/evsel.c                       |   53 +
+ tools/perf/util/evsel.h                       |    5 +
+ tools/perf/util/intel-tpebs.c                 |  301 ++
+ tools/perf/util/intel-tpebs.h                 |   30 +
+ tools/perf/util/stat.h                        |    1 +
+ 14 files changed, 3163 insertions(+), 1 deletion(-)
+ create mode 100644 tools/perf/pmu-events/arch/x86/meteorlake/metricgroups.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/meteorlake/mtl-metrics.json
+ create mode 100755 tools/perf/tests/shell/test_stat_intel_tpebs.sh
+ create mode 100644 tools/perf/util/intel-tpebs.c
+ create mode 100644 tools/perf/util/intel-tpebs.h
+
+--
+2.43.0
 
 
