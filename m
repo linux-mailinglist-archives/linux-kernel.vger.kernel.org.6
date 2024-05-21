@@ -1,76 +1,126 @@
-Return-Path: <linux-kernel+bounces-185404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295168CB48F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:09:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1772B8CB48E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75435B217B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:09:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62BD9B20B98
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611802BCF9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9903149C49;
 	Tue, 21 May 2024 20:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Lcsmmyjz"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="urezVFcw"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FECB1EB40;
-	Tue, 21 May 2024 20:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D2277105
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716322161; cv=none; b=iMYVJIr2pUwUFdpixE2QbNkvGBC4/H+e1IJ2J1BOfSrTPIeVitjTYP7/vqjtRpufzT8XovxyqZB94iGiIAMA/5eX+lVIJXLEt2/QmWpr/6mMH1T0+I50V80koy1QKRTIMGIRu6FmnNFszvS0q/Jouy1LyrAic+aADLKlEv//jnI=
+	t=1716322162; cv=none; b=pnZ7BACZ4hZmOTAFP46we4hWfBfv4hoZOtLoUqB6uJ/Xfbn11NcgW9LdH/+5rDkKN+jI9mPz6GDaj5qPkWdZzOr8scn7PzpcmkGO2POfOAymaRWGafhlzEk2BQhHC6fiWmyjEeew4VaNiTwJMHaKnn1BIxKdwkEaN9iDUivDSUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716322161; c=relaxed/simple;
-	bh=YCLaesMRPgnx2aWOX6S2yUSocPC0B/e6abnb5jWAWX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qEhtrw/yridDeZRF5edVgwugp5wndTgC4KlUKCiivbL1wy51TMH4ZJYfece3GINX4p1VnVBZpNtJpwVcahnxHA1ZUezh+13qzCJQQukj6WlOunug/JLyZfZvv6SDOUgScPgFnsQe7iuBgUUIZ4ysGuB7idP8aNdDv0wBkvyBujI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Lcsmmyjz; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 5A0121F92C;
-	Tue, 21 May 2024 22:09:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1716322153;
-	bh=YCLaesMRPgnx2aWOX6S2yUSocPC0B/e6abnb5jWAWX8=; h=From:To:Subject;
-	b=LcsmmyjzgZXG+t7HZzn4eC+53qXG+3dl40qZGRZ/dXVNXu47/Cf/YA+xiegVRducl
-	 MSt442z0qcX5D1fPZd3fON7JnyhjFStGjx/CZ1QGyMxxEYn53DHyOOFm8TR3eGyqru
-	 AKOT8jMJplxT6rJTCfzpzCGrVUXXFmx201ZAkibN3jgHi0pYysLnMob0MmK2YE7VXx
-	 9wznEEW7avj/JGL94847zdDavEfRy9SK8ey14nZYLxxB3Y+JiBkiFKdwWCPWD4QcSX
-	 +M7nS2sH3OO+jAeC651ULbsDb9Dw7uTuylbnhq6ZW7xh04zg44riSv5Px6v7Ul9DtL
-	 vpbuQEW+yKrwA==
-Date: Tue, 21 May 2024 22:09:09 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	danishanwar@ti.com, srk@ti.com
-Subject: Re: [PATCH v2 1/3] arm64: dts: ti: k3-j784s4-main: Add PCIe nodes
-Message-ID: <20240521200909.GA3707@francesco-nb>
-References: <20240520101149.3243151-1-s-vadapalli@ti.com>
- <20240520101149.3243151-2-s-vadapalli@ti.com>
+	s=arc-20240116; t=1716322162; c=relaxed/simple;
+	bh=Ia5u62ZgalmlFXflRn8jvvJ7YquyeyNuoWA9RxmS/I8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ek2DJuz+QhRQLkVoOe+078Me3kSxwwhhqdhdd5Os0xoeMfMg+VhkjZtjYM1Qff2faAvZ92I5+RiCiAULvfAMxQ5eIIemRgMDGvztz1Xt6esa3aKQ106Rvdr5p1CkntpdLQlgMpRsBC2F7TvbHcM44EX+8nNXY4CFoNCGQZZUbw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=urezVFcw; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-36c86ad15caso4574595ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:09:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716322159; x=1716926959; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EWrpteYcdBNlx+6493QsXpUMihLRMiYDww87eKY9bg8=;
+        b=urezVFcwAiXBmGxAsFkm97cF+UsuRLuHC0dXkrDQK/jCNIKBo1Yr3nZYS5q80L5Eu7
+         GDyuu7LMQKf2LpA+z8dtn4OmRvdZE7fNN+cIDxjXtsIrDgrUZS4b9hc8nOyH5iLxvts+
+         LXjfDggMZclw0guNwFOJJedhCjUHL3/Lw8FzuQpdD144HIbi/cUZuBH09mDS+kAbydZf
+         NNpADEiNiL0gRuLH7vz0pMWsKBzGLk7NeoqzsUKHN5v8yNcAJyqRpRPVcIsxbCncGg2p
+         EO6qBsC+lCGSHhn8dVfu2KU4QEJLJeQ0H1XPivealkzgHmYh5+hNh6c65K74RDtX5kGF
+         ShYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716322159; x=1716926959;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EWrpteYcdBNlx+6493QsXpUMihLRMiYDww87eKY9bg8=;
+        b=tKvFyNYNLAT+l7zM6Eo1JfDnerCuWEklv9etgqZCk07zP9lJMbEClnn3XQjIZmSEZX
+         vSMq+IG0j/R4t9rq33PH+xTl8Fg0sEA1Vt+Ktz0REUKjdVXz63XKKDkCvlj0O6+2YXGO
+         CoAYrNfXXkC+pPLiZAi7hJcCZKlklIco2w3ICLo7sVQjVGaxEmZGocbLbuB97qxOpXNJ
+         OL53NynM/BXeffk2C3y46/2s9gu0MCrMpZeNqW9CZEQybwUrY7OIO6553xM6EcikGGfI
+         0R5iGVDpvFd6A4EvvOQ6nJ8YYabi12b5rB+rz6wWIXtF27ckTHChJn0tIIBS6+fwD0/Y
+         JhXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXgnYsUqazOU0rHWlzZeLddXAM3wsY+JHGu7fbcwpmcjINOkIubtihdQKAWXtGsNdRQ2efXeYVo484B+mWBOSpSwoB7Yz00PAu++66q
+X-Gm-Message-State: AOJu0YwhjFWcZJqE7aKH7zsldzghmMJqZUWZ6wBqlV6Ef9hv2YEWn9JM
+	7DEcQ6beuIwUAeYEW4hrAhBi52yS3mm60ic4LqQeVfQfy+Kxt6ZOvZ6OIaUhYpo=
+X-Google-Smtp-Source: AGHT+IFmqPzAUfkTViTVSpsDLLwhzPZ48S3LYwKXKDRY2ly4piMizKtsvAivJxLfypb9ZtbG417izA==
+X-Received: by 2002:a05:6e02:13af:b0:369:f53b:6c2 with SMTP id e9e14a558f8ab-371f9405868mr782595ab.1.1716322159199;
+        Tue, 21 May 2024 13:09:19 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4893703b15bsm7042659173.54.2024.05.21.13.09.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 13:09:18 -0700 (PDT)
+Message-ID: <6c7676ae-f0a3-4a9d-bcfa-f6fa0a03c928@kernel.dk>
+Date: Tue, 21 May 2024 14:09:16 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520101149.3243151-2-s-vadapalli@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
+To: David Howells <dhowells@redhat.com>
+Cc: Steve French <stfrench@microsoft.com>, Jeff Layton <jlayton@kernel.org>,
+ Enzo Matsumiya <ematsumiya@suse.de>, Matthew Wilcox <willy@infradead.org>,
+ Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
+ v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+ linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <110d2995-f473-4781-9412-30f7f96858dd@kernel.dk>
+ <2e73c659-06a3-426c-99c0-eff896eb2323@kernel.dk>
+ <316306.1716306586@warthog.procyon.org.uk>
+ <316428.1716306899@warthog.procyon.org.uk>
+ <322229.1716321947@warthog.procyon.org.uk>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <322229.1716321947@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 20, 2024 at 03:41:47PM +0530, Siddharth Vadapalli wrote:
-> TI's J784S4 has two instances of Gen3 x4 Lane PCIe Controllers namely
-> PCIE0 and PCIE1. Add support for the Root Complex Mode of operation of
-> these PCIe instances.
+On 5/21/24 2:05 PM, David Howells wrote:
+> Jens Axboe <axboe@kernel.dk> wrote:
+> 
+>> On 5/21/24 9:54 AM, David Howells wrote:
+>>> Jens Axboe <axboe@kernel.dk> wrote:
+>>>
+>>>> However, I'll note that BDP_ASYNC is horribly named, it should be
+>>>> BDP_NOWAIT instead. But that's a separate thing, fix looks correct
+>>>> as-is.
+>>>
+>>> I thought IOCB_NOWAIT was related to RWF_NOWAIT, but apparently not from the
+>>> code.
+>>
+>> It is, something submitted with RWF_NOWAIT should have IOCB_NOWAIT set.
+>> But RWF_NOWAIT isn't the sole user of IOCB_NOWAIT, and no assumptions
+>> should be made about whether something is sync or async based on whether
+>> or not RWF_NOWAIT is set. Those aren't related other than _some_ proper
+>> async IO will have IOCB_NOWAIT set, and others will not.
+> 
+> Are you sure?  RWF_NOWAIT seems to set IOCB_NOIO.
 
-What about PCIE2? J784S4 has 3 PCIe instances, it would be beneficial to
-add all 3, not just the first twos.
+As it should, no-wait should imply not blocking on other IO. This is
+completely orthogonal to whether or not it's async or sync IO.
 
-Francesco
+I have a distinct feeling we're talking past each other :-)
+
+-- 
+Jens Axboe
 
 
