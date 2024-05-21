@@ -1,120 +1,287 @@
-Return-Path: <linux-kernel+bounces-185275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05BDE8CB2FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:36:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 119D18CB300
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45092828E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:36:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 770B4B21E61
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FEA74BF0;
-	Tue, 21 May 2024 17:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1721A482D0;
+	Tue, 21 May 2024 17:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FRiFGX5Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KKwXM+oy"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35FC7F48D;
-	Tue, 21 May 2024 17:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D13D74BF0
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 17:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716312990; cv=none; b=ttkvjaMdwtR3iqZy8SCD1ND49CgOT4++r3PgJJI1I9hSfPOHmMf+pvaSpNAPuq+iFvbuVJsd7LDrPq22p6W1rle1OxMlru2L8Bww0n3jEAGDmjfXoaFpQpST016jvpbZ0RjtFDAKzJ7wbe2UDdYT/g7qXRxzz704YrmXAX4pxWc=
+	t=1716313073; cv=none; b=b22oR05OO6cSU/97ub5EylSqn1OMLln+gxm4j3QcTQuZLF6VWl9aCEElS+CjCJqyLM4G5KbQsAbDOEujsf46e1qO81FxPafIxLRTDrxjBrSwrUh27esBqOPrEfbOxYstuI24qlF/kk4HyYXFYkevmIxYVmuhWq+V/L8IKH9chaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716312990; c=relaxed/simple;
-	bh=UUgYo1pJjsln1cMSgisDH1/jsYW8CqI5x6WXoM4b6NE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pvuohXim8vj1nyKe2hruwtcpj5NBKbnN3F0RUFHEMzqPq5a6TULyguDfTNcQNB4zB4PRpHhLGkmhs/RSrsgHwzbX2+2fBLfo8gV2CfdbLmmTVQ9yqzPvk3jqKHaFzCne/HiJBberjKVCdf4GX2iWe8mSLgpyTQkamHQ1bW56qqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FRiFGX5Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D36CCC4AF0A;
-	Tue, 21 May 2024 17:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716312989;
-	bh=UUgYo1pJjsln1cMSgisDH1/jsYW8CqI5x6WXoM4b6NE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FRiFGX5Y+SAZYXmQNh1/2GZKEhPgQwEK78NgJS1H2n/EqyuF9+aA0v2OMp7eYVYBe
-	 qhFyV37j1zZE0XMIZZoRrfvHw3WaMHPBuER8PUpDmXEQBNt8+HGDWeTzgqfXRKrF4A
-	 tTu3xYnBEd7PFj2LmrwrXSx8KKlaDclDK3lRMjnf+OvJ/Fma+15J6b51g/arzFWbTD
-	 Qj+WmtWlJdmu7A0t1EvQEODSAIlxm/GjssM3WduZeeIm7dIvPoxzwQr3BWNvrkvryl
-	 wvlIceP3l25SaY0ipwEMhM3AzsePJPDLR+Skcz7zsw4UBMjVQkjHPSgeKFI71DOI61
-	 NHZ2wTBc+TeWQ==
-Date: Tue, 21 May 2024 10:36:27 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Tony Luck <tony.luck@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik <mjguzik@gmail.com>,
-	Thomas Renninger <trenn@suse.de>, Andi Kleen <ak@linux.intel.com>,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v6 01/49] crypto: x86/aes-xts - Switch to new Intel CPU
- model defines
-Message-ID: <20240521173627.GA50837@sol.localdomain>
-References: <20240520224620.9480-1-tony.luck@intel.com>
- <20240520224620.9480-2-tony.luck@intel.com>
- <20240521172202.GFZkzYOh0pET7B1SFW@fat_crate.local>
+	s=arc-20240116; t=1716313073; c=relaxed/simple;
+	bh=9Z2IJRB5BE9yg+NKoqUCptIUQCXUW0WqDTrVapCxPAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=adLxSdvEl8yEbpincDjNzq2mQNCdHAsdphm6vrc5ucVs36Fnhr0YSjqPage386mhOlMBk5E7EMqzmF5ukxwupx0N2Oc9+RPGQXKwnmqd0rVy3RjdffLR2r3rRO2KH19+G5zyKQ3KnHOpWoNtgUwjFiYdzwNucUWj9HzTRUbWhkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KKwXM+oy; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42011507a57so35047385e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716313070; x=1716917870; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=oTBotdZlBu0CAtWz80+2Z0RURHjFMppRN4GP/Il7qqE=;
+        b=KKwXM+oyfD9W8oxPOEhzqUkpUmsJOYqLPHuWjKCGGnAYZnWrsZdLToWoJQ8TWS7yQ6
+         pnZiKJlISEulGZGBYBUVfuQkSIE7Ey0o33HcGEmOo/VSifAxyOXpDDaHB7w0rZznkz82
+         sln37ODKpoBILieGETfeee6gvlk/yEAoxZTbNnBHCjBpt77xaX4hAURMVin2vq/yYL1i
+         h2D65yStdX3PjZ9vevITvBDA8QxMDby6LDqEsOofTfuIGL0k4O3vP083czVrBbZQIkc2
+         tA/kLyYj4V/wwTgbfwhN9eO9xVw5/zJm4WUWFZhSwIkQGppsox/2fAY6JksJZHB1crxH
+         WKXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716313070; x=1716917870;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oTBotdZlBu0CAtWz80+2Z0RURHjFMppRN4GP/Il7qqE=;
+        b=D90flsJEgeSXnFWwyBEDaM0PkMSPbh8LuecTGRE7oT70BVvW1z9NGpehFeWdUfTHjT
+         S5Om9cygORIKAT4IsWZzGB1Z94lEknkM3xtxi0Rd7pwAbANo52HzTqjvrWdD07eAfoaO
+         kS7WNoisQFdTN4rHIPpxWkApHaFXwkVHHc9Gi7HxrnNBiHfgFY+Xht+OC86Bc25kn8tH
+         te1tATpz4SfGmAF641jdxFvA/KdmP07PzK72H9dSYLohNSNsf4dGmtTrnI5UZWy02PLO
+         LJxPDdSuNHwDvZ42+MjrV9fwvZ6M9Onis1flkhVDN5OjpUHKxKgeSDraR6zM2LasPXp1
+         ehsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXehq/9DWBcdJuCJJzVkaKIpqjlAlH7zYrN0Nm5Fr0RBATpYv0Uxnr044A5vxbQ7S07aAeH2UAHxBhNdDpzV8zR79M34IOi9uKIILAb
+X-Gm-Message-State: AOJu0Yytqlmg5M/lPGunPzTLsKNAzr62i4KPCthK4ssWn2L2IhRsQjoP
+	bCjx7GvMYU/DeDJ3VxevIAmrF5z8D4OeusRY50cymy59W39sSnEQAGZu9uB1aR4=
+X-Google-Smtp-Source: AGHT+IG7UaUVX/Ba2cvMeEsXYCybkc9fslKVMiS+qAEQq115fhmptSfr5lzygGAnpVcBJPjvfezZ7A==
+X-Received: by 2002:a05:600c:1913:b0:420:141d:994f with SMTP id 5b1f17b1804b1-420141d9a56mr223114665e9.18.1716313069722;
+        Tue, 21 May 2024 10:37:49 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe8f8asm471704455e9.10.2024.05.21.10.37.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 10:37:49 -0700 (PDT)
+Message-ID: <2110ba34-658e-4d60-b524-2f5ead6c8d3e@linaro.org>
+Date: Tue, 21 May 2024 19:37:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521172202.GFZkzYOh0pET7B1SFW@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add ST VD56G3 camera sensor
+ binding
+To: Sylvain Petinot <sylvain.petinot@foss.st.com>,
+ benjamin.mugnier@foss.st.com, mchehab@kernel.org, robh@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240521162950.6987-1-sylvain.petinot@foss.st.com>
+ <20240521162950.6987-2-sylvain.petinot@foss.st.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240521162950.6987-2-sylvain.petinot@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 21, 2024 at 07:22:02PM +0200, Borislav Petkov wrote:
-> + Herbert as an FYI that I'll pick up this one and the next for 6.10 as
-> it is a fix for a regression that got discovered.
+On 21/05/2024 18:29, Sylvain Petinot wrote:
+> Add devicetree bindings Documentation for ST VD56G3 & ST VD66GY camera
+> sensors. Update MAINTAINERS file.
 > 
-> Thx.
+
+A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
+prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
+
+> Signed-off-by: Sylvain Petinot <sylvain.petinot@foss.st.com>
+> ---
+>  .../bindings/media/i2c/st,st-vd56g3.yaml      | 132 ++++++++++++++++++
+>  MAINTAINERS                                   |   9 ++
+>  2 files changed, 141 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/st,st-vd56g3.yaml
 > 
-> On Mon, May 20, 2024 at 03:45:32PM -0700, Tony Luck wrote:
-> > New CPU #defines encode vendor and family as well as model.
-> > 
-> > Signed-off-by: Tony Luck <tony.luck@intel.com>
-> > ---
-> >  arch/x86/crypto/aesni-intel_glue.c | 16 ++++++++--------
-> >  1 file changed, 8 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/arch/x86/crypto/aesni-intel_glue.c b/arch/x86/crypto/aesni-intel_glue.c
-> > index 5b25d2a58aeb..ef031655b2d3 100644
-> > --- a/arch/x86/crypto/aesni-intel_glue.c
-> > +++ b/arch/x86/crypto/aesni-intel_glue.c
-> > @@ -1223,14 +1223,14 @@ DEFINE_XTS_ALG(vaes_avx10_512, "xts-aes-vaes-avx10_512", 800);
-> >   * implementation with ymm registers (256-bit vectors) will be used instead.
-> >   */
-> >  static const struct x86_cpu_id zmm_exclusion_list[] = {
-> > -	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_SKYLAKE_X },
-> > -	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_ICELAKE_X },
-> > -	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_ICELAKE_D },
-> > -	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_ICELAKE },
-> > -	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_ICELAKE_L },
-> > -	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_ICELAKE_NNPI },
-> > -	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_TIGERLAKE_L },
-> > -	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_TIGERLAKE },
-> > +	X86_MATCH_VFM(INTEL_SKYLAKE_X,		0),
-> > +	X86_MATCH_VFM(INTEL_ICELAKE_X,		0),
-> > +	X86_MATCH_VFM(INTEL_ICELAKE_D,		0),
-> > +	X86_MATCH_VFM(INTEL_ICELAKE,		0),
-> > +	X86_MATCH_VFM(INTEL_ICELAKE_L,		0),
-> > +	X86_MATCH_VFM(INTEL_ICELAKE_NNPI,	0),
-> > +	X86_MATCH_VFM(INTEL_TIGERLAKE_L,	0),
-> > +	X86_MATCH_VFM(INTEL_TIGERLAKE,		0),
-> >  	/* Allow Rocket Lake and later, and Sapphire Rapids and later. */
-> >  	/* Also allow AMD CPUs (starting with Zen 4, the first with AVX-512). */
-> >  	{},
-> > -- 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/st,st-vd56g3.yaml b/Documentation/devicetree/bindings/media/i2c/st,st-vd56g3.yaml
+> new file mode 100644
+> index 000000000000..22cb2557e311
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/st,st-vd56g3.yaml
 
-Reviewed-by: Eric Biggers <ebiggers@google.com>
+Why duplicated 'st'?
 
-- Eric
+> @@ -0,0 +1,132 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +# Copyright (c) 2024 STMicroelectronics SA.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/i2c/st,st-vd56g3.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: STMicroelectronics VD56G3 Global Shutter Image Sensor
+> +
+> +maintainers:
+> +  - Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+> +  - Sylvain Petinot <sylvain.petinot@foss.st.com>
+> +
+> +description: |-
+> +  The STMicroelectronics VD56G3 is a 1.5 M pixel global shutter image sensor
+
+This claims device is VD56G3, not ST-VD56G3.
+
+> +  with an active array size of 1124 x 1364 (portrait orientation). It is
+> +  programmable through I2C, the address is fixed to 0x10. The sensor output is
+> +  available via CSI-2, which is configured as either 1 or 2 data lanes. The
+> +  sensor provides 8 GPIOS that can be used for external LED signal
+> +  (synchronized with sensor integration periods)
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - st,st-vd56g3
+> +      - st,st-vd66gy
+> +    description:
+> +      Two variants are availables; VD56G3 is a monochrome sensor while VD66GY
+> +      is a colour variant.
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  vcore-supply:
+> +    description: Digital core power supply (1.15V)
+> +
+> +  vddio-supply:
+> +    description: Digital IO power supply (1.8V)
+> +
+> +  vana-supply:
+> +    description: Analog power supply (2.8V)
+> +
+> +  reset-gpios:
+> +    description: Sensor reset active low GPIO (XSHUTDOWN)
+> +    maxItems: 1
+> +
+> +  st,leds:
+> +    description:
+> +      Sensor's GPIOs used for external LED control. Signal being the enveloppe
+> +      of the integration time.
+
+More information is needed. GPIOs coming from LED or SoC? What's the
+meaning of values?
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 1
+> +    maxItems: 8
+> +    items:
+> +      minimum: 0
+> +      maximum: 7
+> +
+> +  port:
+> +    $ref: /schemas/graph.yaml#/$defs/port-base
+
+missing additionalProperties: false
+
+> +
+> +    properties:
+> +      endpoint:
+> +        $ref: /schemas/media/video-interfaces.yaml#
+> +        unevaluatedProperties: false
+> +
+> +        properties:
+> +          data-lanes:
+> +            minItems: 1
+> +            maxItems: 2
+> +            items:
+> +              enum: [1, 2]
+
+
+> +
+> +          link-frequencies:
+> +            minItems: 1
+
+maxItems is enough
+
+> +            maxItems: 1
+> +            items:
+> +              enum: [402000000, 750000000]
+> +
+> +          lane-polarities:
+> +            minItems: 1
+> +            maxItems: 3
+> +            description: Any lane can be inverted or not.
+> +
+> +        required:
+> +          - data-lanes
+> +          - link-frequencies
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - vcore-supply
+> +  - vddio-supply
+> +  - vana-supply
+> +  - reset-gpios
+> +  - port
+> +
+
+
+Not a video-interface-device.yaml type of device?
+
+Best regards,
+Krzysztof
+
 
