@@ -1,212 +1,165 @@
-Return-Path: <linux-kernel+bounces-184691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A7A8CAA99
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:18:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E718CAAAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 782361C21A55
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:18:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD941F229D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2E656B91;
-	Tue, 21 May 2024 09:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634A46CDB7;
+	Tue, 21 May 2024 09:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hlV36nte"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="FJekK48L";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="gtLbwtE9"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673872EB1D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC43456773;
+	Tue, 21 May 2024 09:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716283128; cv=none; b=AgH5ixhWlBaUPocGD5zhAKmRW7iFoReR64mxzeeWldq7/xQyttPgPYs80NU4RVneRm8tErnCuM9NVtxnRAhIE5CiIeXh97nMz7cSeK/W3YfMZhfkdrJ/cubeEO5074s6JJqcrqCpnod1T0ho6+mYBr4JmXVKZ8CjaTi2C7Mvja8=
+	t=1716283296; cv=none; b=BKe4LnCZOKjCGfkzOHujbWeaqSLz7HdxkxGc6pidaBMG7W6mTRI3PPWbzye5j0HZc7LsckH3YhQxPkUFlA0qpYm+npBKa06kWDxrb6rntB//FxHk/Gqy0KTDPlkBSdvolnQBYjuDAsNBcd/qlae6SYlleMufrJtXYPJmViAv4yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716283128; c=relaxed/simple;
-	bh=0X9YsczLkwuQQ1uVOKhEJVPPv/H07Bx6pD3Fm3d0QGI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L40g5DD57uZbscAg3677FZjOU56oXwT7k7gvmkJE2Cbiy3u3u2QWCYkjQ28l3oLVXqmotJ+bZ9svrJeDKpH60TS3VVtmvsje4QTY+Ozm2S4Z2C+Fj40EOdRaexkkOY+l7puvY/iw0uYd8K/TuOnRIyVzxseareKeQIPFXM3X/Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hlV36nte; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716283126;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dnj58lhRSj3HFW+3WnRIrRV99SqSMaIOOL0f1Q9rFks=;
-	b=hlV36nteK5h/vsQxHWjGyYZdfRhe5Quu9jhbkCEZvFnpfHl/uD0KcUTR0CXP4YE8qFB3eY
-	3gW1f17qguRwNXkR0aWYNdHf4YgPYIXgnETT1YoHyt7DjY57KRiiknZbgktttn5B5rk3kI
-	1WMGgS/QScxiCGa5TcbKGKjYOd47toI=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-671-wPz5GIhnNKmSCA8hootIYQ-1; Tue, 21 May 2024 05:18:44 -0400
-X-MC-Unique: wPz5GIhnNKmSCA8hootIYQ-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2e1f38cb631so112309631fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:18:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716283123; x=1716887923;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dnj58lhRSj3HFW+3WnRIrRV99SqSMaIOOL0f1Q9rFks=;
-        b=HJZ9Rh8WDR/PFCh8Eu7j+97jDhJU92pOtK5bYBmmMEPK2wTYNwVZlmJMipZmJPGHjB
-         wEvSbv3ATPET/9beT6XNhJErQkfdddQpCMbjO5GQSxXdgZ/AILiJCak2jHLm1ZZtKrDK
-         BcLskFluD1ZL1bGtweZ0CfEfiOcx/9J+LxmD+zQH3UTKHN46Nrc9Y4cquWEiN14Uo3tV
-         DU1g3S6hY0aQne9vrx39Iurnm4C/Pw4xV1B5gGsxLIkKEuC7kowQLoxzXHhN+0dsOwWC
-         LzxuBv6Vq9rf7/ZUuW2TDyxtCXFagtsMQhygCXTIq3iUB0wn0Si8Y9q9RD8rKyMNqoIj
-         5JCw==
-X-Gm-Message-State: AOJu0Yz0SQOC4V4nAOmEFshOVIsEwfINsfSxCsV3dH4CSaEXAvQDcwI2
-	UaKiTFDQMPhBp+hcYasYpKtJrOj1uPNK3xxAOjd9tq5AsNqpglTK2Dr+KgZi1rvusqO0+k9q0L1
-	26YAUixnpCg/YQtOI8rt9vI+IiHqvBgVVLQ6bikYUe0lH4+lBGz9GIO/E+z4lnw==
-X-Received: by 2002:a2e:9ac2:0:b0:2e0:298d:65ec with SMTP id 38308e7fff4ca-2e51fd45214mr271433801fa.17.1716283123243;
-        Tue, 21 May 2024 02:18:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHtI3Nqf10gi5+vvA+q89PR5+fFmUED7YWM/0b2KlxJbM+vtt+wifUlgzEsUFkC/F+dL/OK4A==
-X-Received: by 2002:a2e:9ac2:0:b0:2e0:298d:65ec with SMTP id 38308e7fff4ca-2e51fd45214mr271433571fa.17.1716283122764;
-        Tue, 21 May 2024 02:18:42 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe8fa6sm457113275e9.2.2024.05.21.02.18.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 02:18:42 -0700 (PDT)
-Message-ID: <dde2f22d-c57f-44ac-9f2c-4a1790de084b@redhat.com>
-Date: Tue, 21 May 2024 11:18:41 +0200
+	s=arc-20240116; t=1716283296; c=relaxed/simple;
+	bh=L8uimhUWPGJ0KgFqNtZBzgCwE1GHpNZQQzxQkiu/s8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iOet4Yd6jPua90IeXB0cQLwZjqY2yofAGmFBNV4sYvQs7S5yBlNwCaG0L1enuUzDVbNVz+21IKWbi20SLRs/KlMmP6/zvquDO+kZkgE1zL/fQW7cS7e1U6SmfCHqJv7gexSL+wQSCZEeux74wFB7lOlgA+KLv5AdwJ0dCuwdzeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=FJekK48L; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=gtLbwtE9; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BAFFF5BFD4;
+	Tue, 21 May 2024 09:21:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716283292; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RZ4Ycnq4O0FTSEXxyM/FN9hxtXkMlycqRzRAQFk7JpY=;
+	b=FJekK48LN8HJZVGjtkX1O8HxoUAslBvUSpjlLDF0K3O/d4dxHKLY4p6wvRRoDVvWhkme7m
+	jkcGKhWTgpBSSYaFUFy2Nx542HB0B7EAgcIwiXwAJq0VOavL/FPMxTuQ8wrHrKzP6OkSwJ
+	2fpRbKlyR8KLzGzw1DXhmOIwc93QG7c=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716283291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RZ4Ycnq4O0FTSEXxyM/FN9hxtXkMlycqRzRAQFk7JpY=;
+	b=gtLbwtE9AF682EdeTUVgQjtZYm8yEWrW72jaD5lqZYaOnunV0DVvRf2IzZFZGPPu7Avm5V
+	Cm+z7F+aEk4jSpCJTu30jomQ4HWXgT120dwOVU5bGtlD4GBhfsF6WUMVtqTcf0PG42pJw2
+	TYq28W+k2BLdii+PetWtWUYbKoE/BQc=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ADB5513A1E;
+	Tue, 21 May 2024 09:21:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7fc8KptnTGaZYgAAD6G6ig
+	(envelope-from <mkoutny@suse.com>); Tue, 21 May 2024 09:21:31 +0000
+From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+To: cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <shuah@kernel.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>
+Subject: [PATCH v5 0/5] pids controller events rework
+Date: Tue, 21 May 2024 11:21:25 +0200
+Message-ID: <20240521092130.7883-1-mkoutny@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] mm/memory: cleanly support zeropage in
- vm_insert_page*(), vm_map_pages*() and vmf_insert_mixed()
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Dan Williams <dan.j.williams@intel.com>, rostedt@goodmis.org
-References: <20240430204044.52755-1-david@redhat.com>
- <20240430204044.52755-2-david@redhat.com> <Zkdys7YKC5pe1vAu@google.com>
- <3decc6c8-9035-44d6-89c6-8d42a5e0bc40@redhat.com>
- <ZkxkDPnPiQzPEm-0@google.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZkxkDPnPiQzPEm-0@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RL6j1h7wxugqfdyj8pnx7tibp9)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-On 21.05.24 11:06, Vincent Donnefort wrote:
-> On Tue, May 21, 2024 at 10:25:43AM +0200, David Hildenbrand wrote:
->> On 17.05.24 17:07, Vincent Donnefort wrote:
->>> Hi David,
->>>
->>> [...]
->>>
->>>> -static int validate_page_before_insert(struct page *page)
->>>> +static bool vm_mixed_zeropage_allowed(struct vm_area_struct *vma)
->>>> +{
->>>> +	VM_WARN_ON_ONCE(vma->vm_flags & VM_PFNMAP);
->>>> +	/*
->>>> +	 * Whoever wants to forbid the zeropage after some zeropages
->>>> +	 * might already have been mapped has to scan the page tables and
->>>> +	 * bail out on any zeropages. Zeropages in COW mappings can
->>>> +	 * be unshared using FAULT_FLAG_UNSHARE faults.
->>>> +	 */
->>>> +	if (mm_forbids_zeropage(vma->vm_mm))
->>>> +		return false;
->>>> +	/* zeropages in COW mappings are common and unproblematic. */
->>>> +	if (is_cow_mapping(vma->vm_flags))
->>>> +		return true;
->>>> +	/* Mappings that do not allow for writable PTEs are unproblematic. */
->>>> +	if (!(vma->vm_flags & (VM_WRITE | VM_MAYWRITE)))
->>>> +		return false;
->>>
->>> Shouldn't we return true here?
->>
->> Indeed, thanks! I wish we would have user in the tree already that could
->> exercise that code path.
-> 
-> I have a patch ready to use this path from the memory map tracing! I can either
-> send it once this one is picked-up or you can add it to your series?
+This makes pids.events:max affine to pids.max limit.
 
-Whatever works for you! To debug, it would be good if you could send me 
-the patch and simple instructions on how to test it (do we have a 
-selftest as well?).
+How are the new events supposed to be useful?
 
-> 
->>
->> [...]
->>
->>>> @@ -2043,7 +2085,7 @@ static int insert_page_in_batch_locked(struct vm_area_struct *vma, pte_t *pte,
->>>>    	if (!page_count(page))
->>>>    		return -EINVAL;
->>>
->>> This test here prevents inserting the zero-page.
->>
->> You mean the existing page_count() check? or the (wrong) vma->vm_flags check
->> in vm_mixed_zeropage_allowed() ?
-> 
-> I meant this page_count() here. As a quick test, I removed that check (also fixed
-> the vm_flags above) and the zero-page was properly mapped!
+- pids.events.local:max
+  - tells that cgroup's limit is hit (too tight?)
+- pids.events:*
+  - "only" directs top-down search to cgroups of interest
 
-That's weird and might indicate another issue.
+Changes from v4 (https://lore.kernel.org/r/20240416142014.27630-1-mkoutny@suse.com)
+- rebased on cgroup/for-6.10 (rather cgroup/for-next, there's no rush)
+- introduce pids_files_legacy at one place (Tejun)
+- more descriptive Documentation/ (Tejun)
 
-The refcount of the shared zeropage should be initialized to 1, just 
-like for any other reserved pages 
-(mm/mm_init.c:__init_single_page()->init_page_count())
+Changes from v3 (https://lore.kernel.org/r/20240405170548.15234-1-mkoutny@suse.com)
+- use existing functions for TAP output in selftest (Muhammad)
+- formatting in selftest (Muhammad)
+- remove pids.events:max.imposed event, keep it internal (Johannes)
+- allow legacy behavior with a mount option
+- detach migration charging patches
+- drop RFC prefix
 
-Hm ...
+Changes from v2 (https://lore.kernel.org/r/20200205134426.10570-1-mkoutny@suse.com)
+- implemented pids.events.local (Tejun)
+- added migration charging
 
+[1] https://lore.kernel.org/r/20230202155626.1829121-1-hannes@cmpxchg.org/
+
+Michal Koutný (5):
+  cgroup/pids: Separate semantics of pids.events related to pids.max
+  cgroup/pids: Make event counters hierarchical
+  cgroup/pids: Add pids.events.local
+  selftests: cgroup: Lexicographic order in Makefile
+  selftests: cgroup: Add basic tests for pids controller
+
+ Documentation/admin-guide/cgroup-v1/pids.rst |   3 +-
+ Documentation/admin-guide/cgroup-v2.rst      |  21 ++-
+ include/linux/cgroup-defs.h                  |   7 +-
+ kernel/cgroup/cgroup.c                       |  15 +-
+ kernel/cgroup/pids.c                         | 129 +++++++++++---
+ tools/testing/selftests/cgroup/.gitignore    |  11 +-
+ tools/testing/selftests/cgroup/Makefile      |  25 +--
+ tools/testing/selftests/cgroup/test_pids.c   | 178 +++++++++++++++++++
+ 8 files changed, 346 insertions(+), 43 deletions(-)
+ create mode 100644 tools/testing/selftests/cgroup/test_pids.c
+
+
+base-commit: 21c38a3bd4ee3fb7337d013a638302fb5e5f9dc2
 -- 
-Cheers,
-
-David / dhildenb
+2.44.0
 
 
