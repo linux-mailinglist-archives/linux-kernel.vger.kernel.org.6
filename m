@@ -1,65 +1,56 @@
-Return-Path: <linux-kernel+bounces-185071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C09A8CB025
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:14:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2D98CB028
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BF43285A6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:14:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0218B258F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B217F7C5;
-	Tue, 21 May 2024 14:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EA07F490;
+	Tue, 21 May 2024 14:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDdLV31M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtLLmbNU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C45C535B7
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964A67F7C1;
+	Tue, 21 May 2024 14:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716300840; cv=none; b=u42rB8IMVeLqs4hRgtE3XT5CBTMY+CjmelNFy1ivNdgh2QFy9KctXWbrv6Mpe52TlPgtFdUjc7tT/b3pnBWqKjf+ESKeF3AfPSW+ARTy6OCtNQ+k4svNI10ZTsHY00cfQ1vSUHLRMz6ZPzEDmLktGRzHfb66O2kSYRQ4y4oXwMo=
+	t=1716300874; cv=none; b=TxbmjBbuW/l2XH7/IjXy5QdWvqs5ylbHWAnsMwhBR62yx4VtJ4yWDn2C4P28yyTxyMA92ZCODjyu42C9EnD23mPXPC1F+EY5fklwp/bWw8s9AoManAnxNopb3ocwo5JWRqB6jmSn+UoDKPrC/SGHmNhqWgjRwb0lQWUwearGzn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716300840; c=relaxed/simple;
-	bh=IfBzG6Jslwq80j1PaUKC/nbk7dw2f5dLPW+Dn8TzDk4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=H941EX4qqaF8cc/mIGdNfdS1T6fX5KhsayxLBymZLtJ1ND2PepXexdHmqKMILxDHYh6mSNtQ9QphlT6cNXnPqxjC6unnY0x11NDk0jv5leAO3MXMeTt2ngg4qGLG/cFaq3dvhwi9QI3Dajr/0FQp9FdFluy+XRtH/Y7bnv2OxrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDdLV31M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09770C2BD11;
-	Tue, 21 May 2024 14:13:59 +0000 (UTC)
+	s=arc-20240116; t=1716300874; c=relaxed/simple;
+	bh=AY9z2jOOOiWR4ihFpXH0l9LYmrbHOhfxQ20WcMzm54U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=BrHiCoKdTwlugHcka0qTDTYr3+VaWXwgC0hrVGh1OFgHBFW+iVoozExzXTH2/4ATYSTwh28xPXJ7Dn1i6ccO+ZFSZMNdtfeqqs+caBeMWVR/zTPzrDWsv0fH/wI7xgysaPI67PM1uLuuVOiW87zOLy+Iyc6poOd1d0+cggz27n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtLLmbNU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6AA5C2BD11;
+	Tue, 21 May 2024 14:14:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716300840;
-	bh=IfBzG6Jslwq80j1PaUKC/nbk7dw2f5dLPW+Dn8TzDk4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=rDdLV31M/Rnssi32k8I78G80H12gj4bfX7j9DaXPEN1aX9BUsimWeZ3+kOnXz4pfR
-	 KQthzpqNHet08+kfxxXHnZeMmeKBMbvK1UQpJukKPcYVOKTUE6xasKg+9d3p8/MaAh
-	 qqcoqfuEt0DTPChsVyUvpCpLlnZBSWbAFQKsLWtXGaYOopGv5mnPuPiULVt90bwASL
-	 8y0h+7Ann3k0lAFjAhqmVCAcWb879VbULQ0qQ2LqMezYPJIwWtlCSEw+3Ify3QQ1Lh
-	 nDZjCDP/b3nGxujpdhnSLcI/76WZC0/20AtQ3lCE5861wlb213399eLa/lrT0ly4Lb
-	 Q9qh9GAbQp5rQ==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, David Hildenbrand <david@redhat.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org, Oscar
- Salvador <osalvador@suse.de>, =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, Andrew
- Bresticker <abrestic@rivosinc.com>, Chethan Seshadri
- <Chethan.Seshadri@catalinasystems.io>, Lorenzo Stoakes
- <lstoakes@gmail.com>, Santosh Mamila <santosh.mamila@catalinasystems.io>,
- Sivakumar Munnangi <siva.munnangi@catalinasystems.io>, Sunil V L
- <sunilvl@ventanamicro.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v3 9/9] riscv: mm: Add support for ZONE_DEVICE
-In-Reply-To: <CAHVXubirHPj1pZhU7sFxFTzBWz_Psf5uts9y3Dji-a03nb=_iw@mail.gmail.com>
-References: <20240521114830.841660-1-bjorn@kernel.org>
- <20240521114830.841660-10-bjorn@kernel.org>
- <CAHVXubirHPj1pZhU7sFxFTzBWz_Psf5uts9y3Dji-a03nb=_iw@mail.gmail.com>
-Date: Tue, 21 May 2024 16:13:57 +0200
-Message-ID: <87pltfdzh6.fsf@all.your.base.are.belong.to.us>
+	s=k20201202; t=1716300874;
+	bh=AY9z2jOOOiWR4ihFpXH0l9LYmrbHOhfxQ20WcMzm54U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=UtLLmbNUJPJuLX2G+rdPKrRs7Ld64KuKOmLlxZ2dTcolrqBtoDWoaKqStL+aY95ve
+	 WIkYNwO7nZeBFPRPVSQuyf6byue/iEs0+gIxT86alE5gxzb9BJewOmkgt0faX4Ht/A
+	 d2Dc56JmsOUM1mDwqRDsuN40nf27LcmEKNLQHMr/NUS8Ay+te6wDx47kht6jMDdLr0
+	 y9UpyW/ZwIeNxJ3nDTZ9cmSrlpWAp67K9fItN0K6vW0Rm/QEWkmPe7Oi9YcNoUFkL6
+	 pcm5XQ2zyXLRQnZMLVX1p+XWn0NfMK1EuQCFwl6e4jX5quZjTuH7U1XZkZ/Cb5fmjp
+	 H5k1enDRV9Q4A==
+Date: Tue, 21 May 2024 09:14:31 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	bhelgaas@google.com, mani@kernel.org, Frank Li <Frank.Li@nxp.com>,
+	imx@lists.linux.dev, jdmason@kudzu.us, jingoohan1@gmail.com,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	lpieralisi@kernel.org, robh@kernel.org, dlemoal@kernel.org
+Subject: Re: [PATCH v4 1/1] PCI: dwc: Fix index 0 incorrectly being
+ interpreted as a free ATU slot
+Message-ID: <20240521141431.GA25673@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,142 +58,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zkx0lzP76bmp4K0r@ryzen.lan>
 
-Alexandre Ghiti <alexghiti@rivosinc.com> writes:
+On Tue, May 21, 2024 at 12:16:55PM +0200, Niklas Cassel wrote:
+> On Sat, May 18, 2024 at 02:06:50AM +0900, Krzysztof Wilczyński wrote:
+> > Hello,
+> > 
+> > > When PERST# assert and deassert happens on the PERST# supported platforms,
+> > > the both iATU0 and iATU6 will map inbound window to BAR0. DMA will access
+> > > to the area that was previously allocated (iATU0) for BAR0, instead of the
+> > > new area (iATU6) for BAR0.
+> > > 
+> > > Right now, we dodge the bullet because both iATU0 and iATU6 should
+> > > currently translate inbound accesses to BAR0 to the same allocated memory
+> > > area. However, having two separate inbound mappings for the same BAR is a
+> > > disaster waiting to happen.
+> > > 
+> > > The mapping between PCI BAR and iATU inbound window are maintained in the
+> > > dw_pcie_ep::bar_to_atu[] array. While allocating a new inbound iATU map for
+> > > a BAR, dw_pcie_ep_inbound_atu() API will first check for the availability
+> > > of the existing mapping in the array and if it is not found (i.e., value in
+> > > the array indexed by the BAR is found to be 0), then it will allocate a new
+> > > map value using find_first_zero_bit().
+> > > 
+> > > The issue here is, the existing logic failed to consider the fact that the
+> > > map value '0' is a valid value for BAR0. Because, find_first_zero_bit()
+> > > will return '0' as the map value for BAR0 (note that it returns the first
+> > > zero bit position).
+> > > 
+> > > Due to this, when PERST# assert + deassert happens on the PERST# supported
+> > > platforms, the inbound window allocation restarts from BAR0 and the
+> > > existing logic to find the BAR mapping will return '6' for BAR0 instead of
+> > > '0' due to the fact that it considers '0' as an invalid map value.
+> > > 
+> > > So fix this issue by always incrementing the map value before assigning to
+> > > bar_to_atu[] array and then decrementing it while fetching. This will make
+> > > sure that the map value '0' always represents the invalid mapping."
+> > 
+> > Applied to controller/dwc, thank you!
+> > 
+> > [1/1] PCI: dwc: Fix index 0 incorrectly being interpreted as a free ATU slot
+> >       https://git.kernel.org/pci/pci/c/cd3c2f0fff46
+> > 
+> > 	Krzysztof
+> 
+> Hello PCI maintainers,
+> 
+> There was a message sent out that this patch was applied, yet the patch does
+> not appear to be part of the pull request that was sent out yesterday:
+> https://lore.kernel.org/linux-pci/20240520222943.GA7973@bhelgaas/T/#u
+> 
+> In fact, there seems to be many PCI patches that have been reviewed and ready
+> to be included (some of them for months) that is not part of the pull request.
+> 
+> Looking at pci/next, these patches do not appear there either, so I assume
+> that these patches will also not be included in a follow-up pull request.
+> 
+> Some of these patches are actual fixes, like the patch in $subject, and do not
+> appear to depend on any other patches, so what is the reason for not including
+> them in the PCI pull request?
 
-> On Tue, May 21, 2024 at 1:49=E2=80=AFPM Bj=C3=B6rn T=C3=B6pel <bjorn@kern=
-el.org> wrote:
->>
->> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
->>
->> ZONE_DEVICE pages need DEVMAP PTEs support to function
->> (ARCH_HAS_PTE_DEVMAP). Claim another RSW (reserved for software) bit
->> in the PTE for DEVMAP mark, add the corresponding helpers, and enable
->> ARCH_HAS_PTE_DEVMAP for riscv64.
->>
->> Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
->> ---
->>  arch/riscv/Kconfig                    |  1 +
->>  arch/riscv/include/asm/pgtable-64.h   | 20 ++++++++++++++++++++
->>  arch/riscv/include/asm/pgtable-bits.h |  1 +
->>  arch/riscv/include/asm/pgtable.h      | 17 +++++++++++++++++
->>  4 files changed, 39 insertions(+)
->>
->> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->> index 2724dc2af29f..0b74698c63c7 100644
->> --- a/arch/riscv/Kconfig
->> +++ b/arch/riscv/Kconfig
->> @@ -36,6 +36,7 @@ config RISCV
->>         select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
->>         select ARCH_HAS_PMEM_API
->>         select ARCH_HAS_PREPARE_SYNC_CORE_CMD
->> +       select ARCH_HAS_PTE_DEVMAP if 64BIT && MMU
->>         select ARCH_HAS_PTE_SPECIAL
->>         select ARCH_HAS_SET_DIRECT_MAP if MMU
->>         select ARCH_HAS_SET_MEMORY if MMU
->> diff --git a/arch/riscv/include/asm/pgtable-64.h b/arch/riscv/include/as=
-m/pgtable-64.h
->> index 221a5c1ee287..c67a9bbfd010 100644
->> --- a/arch/riscv/include/asm/pgtable-64.h
->> +++ b/arch/riscv/include/asm/pgtable-64.h
->> @@ -400,4 +400,24 @@ static inline struct page *pgd_page(pgd_t pgd)
->>  #define p4d_offset p4d_offset
->>  p4d_t *p4d_offset(pgd_t *pgd, unsigned long address);
->>
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +static inline int pte_devmap(pte_t pte);
->> +static inline pte_t pmd_pte(pmd_t pmd);
->> +
->> +static inline int pmd_devmap(pmd_t pmd)
->> +{
->> +       return pte_devmap(pmd_pte(pmd));
->> +}
->> +
->> +static inline int pud_devmap(pud_t pud)
->> +{
->> +       return 0;
->> +}
->> +
->> +static inline int pgd_devmap(pgd_t pgd)
->> +{
->> +       return 0;
->> +}
->> +#endif
->> +
->>  #endif /* _ASM_RISCV_PGTABLE_64_H */
->> diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/=
-asm/pgtable-bits.h
->> index 179bd4afece4..a8f5205cea54 100644
->> --- a/arch/riscv/include/asm/pgtable-bits.h
->> +++ b/arch/riscv/include/asm/pgtable-bits.h
->> @@ -19,6 +19,7 @@
->>  #define _PAGE_SOFT      (3 << 8)    /* Reserved for software */
->>
->>  #define _PAGE_SPECIAL   (1 << 8)    /* RSW: 0x1 */
->> +#define _PAGE_DEVMAP    (1 << 9)    /* RSW, devmap */
->>  #define _PAGE_TABLE     _PAGE_PRESENT
->>
->>  /*
->> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/p=
-gtable.h
->> index 7933f493db71..02fadc276064 100644
->> --- a/arch/riscv/include/asm/pgtable.h
->> +++ b/arch/riscv/include/asm/pgtable.h
->> @@ -387,6 +387,13 @@ static inline int pte_special(pte_t pte)
->>         return pte_val(pte) & _PAGE_SPECIAL;
->>  }
->>
->> +#ifdef CONFIG_ARCH_HAS_PTE_DEVMAP
->> +static inline int pte_devmap(pte_t pte)
->> +{
->> +       return pte_val(pte) & _PAGE_DEVMAP;
->> +}
->> +#endif
->
-> Not sure you need the #ifdef here.
+The problem was that we didn't get these applied soon enough for them
+to get any time in linux-next before the merge window opened.  I don't
+like to add non-trivial things during the merge window, so I deferred
+most of these.  I plan to get them in linux-next as soon as v6.10-rc1
+is tagged.
 
-W/o it 32b builds break (!defined(CONFIG_ARCH_HAS_PTE_DEVMAP) will have
-a default implementation).. Maybe it's cleaner just to use that instead?
+If we can make a case for post-merge window fixes, e.g., to fix a
+regression in the pull request or other serious issue, that's always a
+possibility.
 
->> +
->>  /* static inline pte_t pte_rdprotect(pte_t pte) */
->>
->>  static inline pte_t pte_wrprotect(pte_t pte)
->> @@ -428,6 +435,11 @@ static inline pte_t pte_mkspecial(pte_t pte)
->>         return __pte(pte_val(pte) | _PAGE_SPECIAL);
->>  }
->>
->> +static inline pte_t pte_mkdevmap(pte_t pte)
->> +{
->> +       return __pte(pte_val(pte) | _PAGE_DEVMAP);
->> +}
->> +
->>  static inline pte_t pte_mkhuge(pte_t pte)
->>  {
->>         return pte;
->> @@ -711,6 +723,11 @@ static inline pmd_t pmd_mkdirty(pmd_t pmd)
->>         return pte_pmd(pte_mkdirty(pmd_pte(pmd)));
->>  }
->>
->> +static inline pmd_t pmd_mkdevmap(pmd_t pmd)
->> +{
->> +       return pte_pmd(pte_mkdevmap(pmd_pte(pmd)));
->> +}
->> +
->>  static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
->>                                 pmd_t *pmdp, pmd_t pmd)
->>  {
->> --
->> 2.40.1
->>
->
-> Otherwise, you can add:
->
-> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thank you!
-
-
-Bj=C3=B6rn
+Bjorn
 
