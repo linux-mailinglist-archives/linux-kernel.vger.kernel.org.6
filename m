@@ -1,100 +1,117 @@
-Return-Path: <linux-kernel+bounces-184484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C188CA748
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:16:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA6A8CA740
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A1AFB21562
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E3391F218DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAC42B9BC;
-	Tue, 21 May 2024 04:16:41 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D0923777;
+	Tue, 21 May 2024 04:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TCJteCuG"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DE51DA53;
-	Tue, 21 May 2024 04:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B4314F62
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 04:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716265001; cv=none; b=fFGEzmxyEyIwMLKSnK7AhdMaGvQ/5a7lXNQjHTOV+0vIoJMaDJGNl13ipFhITDBj18Up4iMVD2RBNhClkhuluqai1ESrdA/iDP3awWFD0DPrx5MmNVxDhFFFE/54gTySS3oOnnYc1322fDrhB5nY4ehP6WvDD7OPHKetJp+uC2k=
+	t=1716264763; cv=none; b=I6X+gtjH3nBKLm8yyriC6eH243Tm9hEfn5H7o4+Jjy5LvaXAu0OfwQ5o90nIOLb5ZuZLv2qsKtAceLgceVmAgSTwJxoMDipc8KOK9Rv89akTbWZdmL72AoptRCggf2cayw6LnUzH9qkYvs81Y6M2oPUTazhiGbBQpvm5N4yrdK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716265001; c=relaxed/simple;
-	bh=8SrMCv0rwVNVT7qEZxTkQBKqwmbJBcICUOH07mFes1M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MvqMVxdY9HKkVwh3TQF79SrfN5teKNzByRf/vZJDkeWlh6kRCF+Wo3MghsCVLtcEJgCD+tMmjZx72BfJ090YbeLeJ5SSELX3q3xAExPcKB+CONC9K8ZvwOyfzonESrxcC9Dd4FU9xX9P6GHYaI7119rJ5nFfRYlyjvQR/GBtLZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowAC3vxsOIExmzSh6Bg--.25702S2;
-	Tue, 21 May 2024 12:16:15 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: mkl@pengutronix.de,
-	mailhol.vincent@wanadoo.fr,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	extja@kvaser.com,
-	carsten.schmidt-achim@t-online.de
-Cc: linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] can: kvaser_usb: fix return value for hif_usb_send_regout
-Date: Tue, 21 May 2024 12:10:20 +0800
-Message-Id: <20240521041020.1519416-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1716264763; c=relaxed/simple;
+	bh=O92KeYUkA1edHwlwkgSl2dByMiiKmyF/6D5jrMUsaIQ=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IRwaVKyJYEovB05PdDKQL76A0cjOMMacsV4fC6QoubXAknBtFR+fJdXJaBMRZTzTgY9sWBdEoQDqcBblkD9TiYu8rNmzdK9DbKopOwQP3OKNZBfE8vREcGkRpPLxcTlnc2QRCgWQVRKFRoxP+G2+9rfBVE6mTsRIInn2YUDJRw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TCJteCuG; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-792b934de39so269649585a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 21:12:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716264760; x=1716869560; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HDK8WDfUBYYirSWO06T0TVOheARrNR/0B8M0BZ3uAqU=;
+        b=TCJteCuGSX2EXaKRCsBoBMOb5dK/dicBSL/0kUkHsR5XHVrmHiW4JVmw6yw6n/CBUV
+         fCjAnIeV/ERNQw6Vt5mn1GKy55xVI5VxFbyPfmMJK/SMRciX+IPrbIeyMZlZOMlrRsAu
+         1ASGpxwwtPo5n8+cPwJ+EGutcFouHcM+wSIL8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716264760; x=1716869560;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HDK8WDfUBYYirSWO06T0TVOheARrNR/0B8M0BZ3uAqU=;
+        b=UX0mnpLUwfIA2Gdxs3y6l76rhA8qChj9zqJPsLiFSlKNUKW7RPUNX2xOmohF4zmnB/
+         fSEU7nmDhmo4iBpVsk9Db1ze/qlHT1OO+ttjBaoHqWA33meWmN0B5+E0D/HodID93koy
+         bdt+Ojf0b+cJhpJ88FrrAVnu5l6cOD9+91pIshv8OWLQvDRwZGJCw4/a7Lk7QKVGP5n5
+         udKVXjV2/hocalqH9MiVf1V+XGPBwtu2VQUedAJpZ8XaNYUzG+09b+yhV1LcNP0ejNP4
+         shc3otBvLuHBjhMlAnLA0sLVHQ2pmHzA+F7RPWCs8qsAC2SBqhBE/rvdwNaEzSn7eS0R
+         gppA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDAjn5ZXaOFi0ODdDo6pEOfAeOavx8dTS98hZIsIecFRNID3i07l/4b1EPeVq0uV63qhBk70PCekF+p55NRdSL69O/HX0lK/bNRjE/
+X-Gm-Message-State: AOJu0Yw62YZgvHmD/pBoLF7JD61azW9K3+8DT1j0kUIyTPL+htoNjUUJ
+	+w7RaxbImQXbwzV083YxSlNDOK7+Bp1fdLgz0Xj6kJPvqJEVqhgvl34FMrd41hcE+5SOTqhQW+a
+	Zq1i16vMetnkG18USySWNipVKEXJLoi2thYkY
+X-Google-Smtp-Source: AGHT+IH+wekBZ0lrLtGQB1o7O9rCbCkIv21Dk0Sq8vPde6mos/k0ulEy29KCnMHFyBn7FO/k9cX+aqOaPP9RXBhho0Q=
+X-Received: by 2002:a05:620a:280e:b0:793:b91:2dbe with SMTP id
+ af79cd13be357-7930b912e08mr1615135785a.40.1716264760099; Mon, 20 May 2024
+ 21:12:40 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 21 May 2024 00:12:39 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAC3vxsOIExmzSh6Bg--.25702S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrurWDAF1fZr4xZF1DJFWkWFg_yoW3Zwc_KF
-	y7Gw47Wry7Cry7Kw15Wa13Arn0y3WUZF4S9ayaqFyay347tr1jyr4ayrZ7G3sxWFy7XasF
-	9Fs3A348Jw1xZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbxxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
-	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUoO
-	J5UUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+In-Reply-To: <20240517233801.4071868-2-quic_abhinavk@quicinc.com>
+References: <20240517233801.4071868-1-quic_abhinavk@quicinc.com> <20240517233801.4071868-2-quic_abhinavk@quicinc.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Tue, 21 May 2024 00:12:39 -0400
+Message-ID: <CAE-0n517DSbNim+K3=N2J2R0iZn44MS3siLKkhdLq05GTfaHtQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/4] drm/msm: register a fault handler for display mmu faults
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	David Airlie <airlied@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Rob Clark <robdclark@gmail.com>, 
+	Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, seanpaul@chromium.org, 
+	dianders@chromium.org, quic_jesszhan@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-As the potential failure of usb_submit_urb(), it should be better to
-return the err variable to catch the error.
+Quoting Abhinav Kumar (2024-05-17 16:37:56)
+> diff --git a/drivers/gpu/drm/msm/msm_kms.c b/drivers/gpu/drm/msm/msm_kms.c
+> index af6a6fcb1173..62c8e6163e81 100644
+> --- a/drivers/gpu/drm/msm/msm_kms.c
+> +++ b/drivers/gpu/drm/msm/msm_kms.c
+> @@ -200,6 +200,28 @@ struct msm_gem_address_space *msm_kms_init_aspace(struct drm_device *dev)
+>         return aspace;
+>  }
+>
+> +static int msm_kms_fault_handler(void *arg, unsigned long iova, int flags, void *data)
+> +{
+> +       struct msm_kms *kms = arg;
+> +       struct msm_disp_state *state;
+> +       int ret;
+> +
+> +       ret = mutex_lock_interruptible(&kms->dump_mutex);
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+From past experience I've seen the smmu fault handler called in hardirq
+context, so it can't sleep. Is there some way to grab the register
+contents without sleeping? Otherwise this will have to fork off
+somewhere else that can take locks, runtime PM resume, etc.
 
-diff --git a/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c b/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
-index 8faf8a462c05..871cd83bcabc 100644
---- a/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
-+++ b/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
-@@ -294,7 +294,7 @@ int kvaser_usb_send_cmd_async(struct kvaser_usb_net_priv *priv, void *cmd,
- 	}
- 	usb_free_urb(urb);
- 
--	return 0;
-+	return err;
- }
- 
- int kvaser_usb_can_rx_over_error(struct net_device *netdev)
--- 
-2.25.1
-
+> +       if (ret)
+> +               return ret;
+> +
+> +       state = msm_disp_snapshot_state_sync(kms);
+> +
+> +       mutex_unlock(&kms->dump_mutex);
+> +
 
