@@ -1,128 +1,86 @@
-Return-Path: <linux-kernel+bounces-185422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C5328CB4C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:35:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72338CB4C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17BE8282E4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:35:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 399CE1F22A2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336261494C5;
-	Tue, 21 May 2024 20:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324A2149C47;
+	Tue, 21 May 2024 20:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="B12jAF1u"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bk0XI5tv"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B59D208D0;
-	Tue, 21 May 2024 20:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA248208D0;
+	Tue, 21 May 2024 20:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716323734; cv=none; b=GKP/TM5uD4KERMyBXswY3Dx0f8rffmXFgoTqSjZyiaq2Iv+jpJHn00O9a0Szp8IupgL4AZa3aVLFc9xgeo2wSRy/tXAo7vLm3m3jX3PKzFjEFK+zwOYoNPBivd+3tMftuGGntPRxmojWEKiWtSsFUeYvgxeakJLmMl8aKl8v5is=
+	t=1716323868; cv=none; b=e8tXNBvi6rKRTHIZfp4aYZibK6PJW/dGJhGCqj8kJKurqY29pHaL0hsJbqdw3SJML2X7UopvNoUD38UzabmOWRy6M3SFX97Ov2n/6ukK2pxCN3l+I1XH1npNTxyIZPc10I+MjtD4u/5NVF/afe/RaFrSXaX2BtPUbI13cB1O1n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716323734; c=relaxed/simple;
-	bh=VD0WPH4YtO8joXqpqEu3C3HFCEbCEhDdVQcK/6wzdIE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GVX5f8Ub35AL5rbgNVwM24YRvo+pCeOifjl2fNVreoIg6lHSz2bRoy7irjDrZgoBa9ii3QCsimuZ45buWhKbJVjfaGn6tNR1/tzY/6Lq6TrBpczK1TceJ5zOCQd7OqWFlAuKj/b/9idQ5IWkQthdEbNDpbUuWFVhQkUp4ZR+mJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=B12jAF1u; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
-	t=1716323725; bh=VD0WPH4YtO8joXqpqEu3C3HFCEbCEhDdVQcK/6wzdIE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=B12jAF1udb/kmzGgJ0dTaa5Ev3EAM6BJ3vy/kgHmqQrHRP0KU74Z0MeQakzQNvu8L
-	 lsjUzX5MV2KvuJQhLcl52TA2D68ncTsb7iB8rk0SqQ5nZSWdLaxUUxr1gchQZtGkVA
-	 J5CiVF/G/2wWGETx1CEm0wsgdYNEBjFPH1KBU95Q=
-From: Luca Weiss <luca@z3ntu.xyz>
-To: Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH RFC 1/2] dt-bindings: soc: qcom,smsm: Allow specifying mboxes
- instead of qcom,ipc
-Date: Tue, 21 May 2024 22:35:22 +0200
-Message-ID: <5780452.DvuYhMxLoT@g550jk>
-In-Reply-To: <06565532-987a-465a-b2ab-a03fce7279e1@kernel.org>
-References:
- <20240424-smsm-mbox-v1-0-555f3f442841@z3ntu.xyz> <12437992.O9o76ZdvQC@g550jk>
- <06565532-987a-465a-b2ab-a03fce7279e1@kernel.org>
+	s=arc-20240116; t=1716323868; c=relaxed/simple;
+	bh=B9ViOYqXgDpQjV19AK5VUQQ4TV/W0LZcZ1p/e/v3QyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTZqcmQBJ1+fXpZRHge+3YXpSDZGCQ6l6pt7p/QyVV0o2Pgp9/FeM7Z5bSTVdqNjIWI2E4uUy2BZ4fUOPcel6ZlmKQO2sKebjvALzN2WbUcs1H0yGsEHWNqTiMqiwzv1m+hW+U6aspEjQ5nxBXZ16Otq9B9BQM5mV/aW/aswjPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bk0XI5tv; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=9NLbNUDlzC2jcO08AefJjvDOuFA0wNb9S8kYwaE3wt4=; b=bk0XI5tv5egsQIv1BwYpYtr4T4
+	62h+8SAf9m3BGEYEmvolS+Ux2TyeGE7hvRr8FslC7hEgdYQkkmzsWGi6JPeEI6OjFd5MZxwfuqg2r
+	75fvqdxUc765PwSoAXJ2yZ+0OALvTGlPTz+0J5/mw0uX/e7C954wnI9xFM2YlUFhBW4s=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s9WEn-00Fmf6-2T; Tue, 21 May 2024 22:37:33 +0200
+Date: Tue, 21 May 2024 22:37:33 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Gregor Herburger <gregor.herburger@ew.tq-group.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Thomas Kopp <thomas.kopp@microchip.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux@ew.tq-group.com
+Subject: Re: [PATCH v3 7/8] can: mcp251xfd: add gpio functionality
+Message-ID: <e24b16a1-2a69-4aea-9ad0-135ed0a87547@lunn.ch>
+References: <20240521-mcp251xfd-gpio-feature-v3-0-7f829fefefc2@ew.tq-group.com>
+ <20240521-mcp251xfd-gpio-feature-v3-7-7f829fefefc2@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240521-mcp251xfd-gpio-feature-v3-7-7f829fefefc2@ew.tq-group.com>
 
-On Dienstag, 21. Mai 2024 10:58:07 MESZ Krzysztof Kozlowski wrote:
-> On 20/05/2024 17:11, Luca Weiss wrote:
-> > Hi Krzysztof
-> > 
-> > Ack, sounds good.
-> > 
-> > Maybe also from you, any opinion between these two binding styles?
-> > 
-> > So first using index of mboxes for the numbering, where for the known
-> > usages the first element (and sometimes the 3rd - ipc-2) are empty <>.
-> > 
-> > The second variant is using mbox-names to get the correct channel-mbox
-> > mapping.
-> > 
-> > -               qcom,ipc-1 = <&apcs 8 13>;
-> > -               qcom,ipc-2 = <&apcs 8 9>;
-> > -               qcom,ipc-3 = <&apcs 8 19>;
-> > +               mboxes = <0>, <&apcs 13>, <&apcs 9>, <&apcs 19>;
-> > 
-> > vs.
-> > 
-> > -               qcom,ipc-1 = <&apcs 8 13>;
-> > -               qcom,ipc-2 = <&apcs 8 9>;
-> > -               qcom,ipc-3 = <&apcs 8 19>;
-> > +               mboxes = <&apcs 13>, <&apcs 9>, <&apcs 19>;
-> > +               mbox-names = "ipc-1", "ipc-2", "ipc-3";
-> 
-> Sorry, don't get, ipc-1 is the first mailbox, so why would there be <0>
-> in first case?
+On Tue, May 21, 2024 at 03:04:57PM +0200, Gregor Herburger wrote:
+> The mcp251xfd devices allow two pins to be configured as gpio. Add this
+> functionality to driver.
 
-Actually not, ipc-0 would be permissible by the driver, used for the 0th host
+I have a basic understanding of GPIO drivers, which is probably more
+than average for netdev reviewers. This code looks O.K. to me, but i
+would prefer you run it by the GPIO maintainers, since that is there
+domain of expertise. I don't think any are in Cc:
 
-e.g. from:
+    Andrew
 
-	/* Iterate over all hosts to check whom wants a kick */
-	for (host = 0; host < smsm->num_hosts; host++) {
-		hostp = &smsm->hosts[host];
-
-Even though no mailbox is specified in any upstream dts for this 0th host I
-didn't want the bindings to restrict that, that's why in the first example
-there's an empty element (<0>) for the 0th smsm host
-
-> Anyway, the question is if you need to know that some
-> mailbox is missing. But then it is weird to name them "ipc-1" etc.
-
-In either case we'd just query the mbox (either by name or index) and then
-see if it's there? Not quite sure I understand the sentence..
-Pretty sure either binding would work the same way.
-
-Regards
-Luca
-
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-
-
-
-
+---
+pw-bot: cr
 
