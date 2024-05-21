@@ -1,54 +1,95 @@
-Return-Path: <linux-kernel+bounces-184547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D30978CA85E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:05:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCFE8CA867
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F2B7283191
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:05:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 174BAB20F34
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45504AEC8;
-	Tue, 21 May 2024 07:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910414CE04;
+	Tue, 21 May 2024 07:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qm0vO6hS"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lkYoiFQK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LzZM6u+0";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lkYoiFQK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LzZM6u+0"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D867F;
-	Tue, 21 May 2024 07:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C783FB8B;
+	Tue, 21 May 2024 07:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716275141; cv=none; b=mf9h68Eo12RIEKSmXZAh4Ec9L6Ehjz6YulVHMoJOmJHFrG/f8Pf7W1wIKB2pIyY4dEjFimL8abmuXHQiBJT6T2BsTzAkSchLj/77l6KH2vVpdQdzfdY3RquzU4m8cY6cbHvOP3LhM2eAiwyTczisnyR5U8Fw1OI5qNujotfmfT8=
+	t=1716275209; cv=none; b=iz4G1tQQaSVfUR3cCVApSiIJ3h+y03sBss2fs2fHpM9UmXV9Mafq4u90iu+5ittYy1K5jLMUUTj0A2IZhNk9yxQW3GxUaWdLxZkIc3atrFtwfgXL68Vh+qs37tgOTuwP7llAj1u8kaXF2XR6/ZiAI3zNT0PWMN+PTcA/QUdJJbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716275141; c=relaxed/simple;
-	bh=nS/Dr2W3vGanwW9ifFd+bOFrHEwvBrs3b1sW5lLV82U=;
+	s=arc-20240116; t=1716275209; c=relaxed/simple;
+	bh=2ZY/PSAzoW1ZOz6dI6RDJtEq54XyjN4jqvcdtBtMkYg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UXasFjNFRARvwbyr1U+0tEk6mJ6tkL04vEKb1cVP4Me/amhRdRbZZHbo67JEGuYTkG+QVMnaOFsguWme47ZHU82+J5tn/3RaN7acmC3ctDgv5icfB2NGLXLUeeEpTbW7GjyNLXiYbg85qIq1ZTdi9BfDdG8CwqRpjydd3fq6GXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qm0vO6hS; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716275137;
-	bh=nS/Dr2W3vGanwW9ifFd+bOFrHEwvBrs3b1sW5lLV82U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qm0vO6hSCRlLszYJes6vtZsP0qVLDOWOlMVSXIEkovjNeL4Dq+Cc+8MXdXP7o9Ngt
-	 dEgAlzV+KObOGcAdS/6I44aVkdi+dzENzBC+C8438w5ZDIY3qhWEdam1o+AodVwzjv
-	 LXMakGJRGQchKxC8P/1xweTSAiUSv5m/wIebY9OQ7ZoehiIA9kMjvWzZlPc043uEtL
-	 I9WPKXT+MUL2ESyAvmJo630D/7kottF1JQB7ihruCKvj6sjbQnA/ZmNcTgV2aj4M44
-	 yBEOL1WXeyBsLFdR4/W1aZOQopqDRLXK/J8L1Xq3XC3FW2nsXiT1XtAj/HU/gghFaX
-	 X7t22RCH7dZsQ==
-Received: from [100.66.96.193] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 In-Reply-To:Content-Type; b=sMsN97qy2nmaD3XMEN3o9nuD6Lb5pb0WSzpHWA7W7EC+eSto9TVsovLdN2tlHpUOBOHIQu6JeD/LytVivZ1fN4y+5dD2+PAUVGNBgWRVWPnJlEp33Lfi1lyXAWeWO4a4B72S1LhG/j1/nZ48zYyqyhlQLub/SQXwNUXpZrjZuC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lkYoiFQK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LzZM6u+0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lkYoiFQK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LzZM6u+0; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E0B0A378202E;
-	Tue, 21 May 2024 07:05:33 +0000 (UTC)
-Message-ID: <9ab7eb04-d4c6-4a79-87cb-2d21e4bfa9c4@collabora.com>
-Date: Tue, 21 May 2024 12:35:32 +0530
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 303545BF13;
+	Tue, 21 May 2024 07:06:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716275205; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W+x/MszspGfaxPeUMNwt99V1Aq3KDkqnswX/iPLB774=;
+	b=lkYoiFQKZmKC+ZXYy1QE+LlPKIKD6HPyZi7R4V0VCniW9Z3jYQlGvB8AlItyWFTUH0vhvk
+	kx7xgT5zz6jCbuxC5/t6L8S5Jx66CtUqWJMljoRTuR5ECeDMXdYGwhAppk161LFPtGBkYH
+	ydWcq1NIn/G3os7CarT8KbKE9zKqock=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716275205;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W+x/MszspGfaxPeUMNwt99V1Aq3KDkqnswX/iPLB774=;
+	b=LzZM6u+0gBsii5yIjl6R2k1CYDzZkOJUHm4SONegMmAuPbmVe7T1o/K3urJMWXKHZPMhtG
+	NjKWll4f87/0bcAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=lkYoiFQK;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=LzZM6u+0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716275205; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W+x/MszspGfaxPeUMNwt99V1Aq3KDkqnswX/iPLB774=;
+	b=lkYoiFQKZmKC+ZXYy1QE+LlPKIKD6HPyZi7R4V0VCniW9Z3jYQlGvB8AlItyWFTUH0vhvk
+	kx7xgT5zz6jCbuxC5/t6L8S5Jx66CtUqWJMljoRTuR5ECeDMXdYGwhAppk161LFPtGBkYH
+	ydWcq1NIn/G3os7CarT8KbKE9zKqock=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716275205;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W+x/MszspGfaxPeUMNwt99V1Aq3KDkqnswX/iPLB774=;
+	b=LzZM6u+0gBsii5yIjl6R2k1CYDzZkOJUHm4SONegMmAuPbmVe7T1o/K3urJMWXKHZPMhtG
+	NjKWll4f87/0bcAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3095B13A1E;
+	Tue, 21 May 2024 07:06:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7vEPCgRITGZpZgAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 21 May 2024 07:06:44 +0000
+Message-ID: <cf6929e1-0dea-4216-bbc5-c00d963372f7@suse.de>
+Date: Tue, 21 May 2024 09:06:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,90 +97,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] drm/ci: generate testlist from build
+Subject: Re: [PATCH v20 04/12] block: add emulation for copy
 Content-Language: en-US
-To: Helen Koike <helen.koike@collabora.com>, dri-devel@lists.freedesktop.org
-Cc: daniels@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
- robdclark@gmail.com, david.heidelberg@collabora.com,
- guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
- dmitry.baryshkov@linaro.org, mcanal@igalia.com,
- linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org, amd-gfx@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <20240517092502.647420-1-vignesh.raman@collabora.com>
- <20240517092502.647420-3-vignesh.raman@collabora.com>
- <c7e0a8b1-5be6-460b-b489-2ab5a8248d32@collabora.com>
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <c7e0a8b1-5be6-460b-b489-2ab5a8248d32@collabora.com>
+To: Nitesh Shetty <nj.shetty@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+ Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
+ damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
+ nitheshshetty@gmail.com, gost.dev@samsung.com,
+ Vincent Fu <vincent.fu@samsung.com>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102906epcas5p15b5a0b3c8edd0bf3073030a792a328bb@epcas5p1.samsung.com>
+ <20240520102033.9361-5-nj.shetty@samsung.com>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240520102033.9361-5-nj.shetty@samsung.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.50
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 303545BF13
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[28];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,acm.org,fromorbit.com,opensource.wdc.com,samsung.com,gmail.com,vger.kernel.org,lists.linux.dev,lists.infradead.org];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[samsung.com:email,suse.de:dkim,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
 
-Hi Helen,
+On 5/20/24 12:20, Nitesh Shetty wrote:
+> For the devices which does not support copy, copy emulation is added.
+> It is required for in-kernel users like fabrics, where file descriptor is
+> not available and hence they can't use copy_file_range.
+> Copy-emulation is implemented by reading from source into memory and
+> writing to the corresponding destination.
+> At present in kernel user of emulation is fabrics.
+> 
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> Signed-off-by: Vincent Fu <vincent.fu@samsung.com>
+> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> ---
+>   block/blk-lib.c        | 223 +++++++++++++++++++++++++++++++++++++++++
+>   include/linux/blkdev.h |   4 +
+>   2 files changed, 227 insertions(+)
+> 
+Again, I'm not sure if we need this.
+After all, copy offload _is_optional, so we need to be prepared to 
+handle systems where it's not supported. In the end, the caller might
+decide to do something else entirely; having an in-kernel emulation 
+would defeat that.
+And with adding an emulation to nullblk we already have an emulation
+target to try if people will want to start experimenting.
+So I'd rather not have this but rather let the caller deal with the
+fact that copy offload is optional.
 
-On 21/05/24 01:54, Helen Koike wrote:
-> 
-> 
-> On 17/05/2024 06:24, Vignesh Raman wrote:
->> Stop vendoring the testlist into the kernel. Instead, use the
->> testlist from the IGT build to ensure we do not miss renamed
->> or newly added tests.
->>
->> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
->> ---
->>
->> v2:
->>    - Fix testlist generation for arm and arm64 builds.
->>
->> ---
->>   drivers/gpu/drm/ci/build-igt.sh  |   34 +
->>   drivers/gpu/drm/ci/igt_runner.sh |    9 +-
->>   drivers/gpu/drm/ci/testlist.txt  | 2761 ------------------------------
->>   3 files changed, 39 insertions(+), 2765 deletions(-)
->>   delete mode 100644 drivers/gpu/drm/ci/testlist.txt
->>
->> diff --git a/drivers/gpu/drm/ci/build-igt.sh 
->> b/drivers/gpu/drm/ci/build-igt.sh
->> index 7859554756c4..e62244728613 100644
->> --- a/drivers/gpu/drm/ci/build-igt.sh
->> +++ b/drivers/gpu/drm/ci/build-igt.sh
->> @@ -3,6 +3,30 @@
->>   set -ex
->> +function generate_testlist {
->> +    set +x
->> +    while read -r line; do
->> +        if [ "$line" = "TESTLIST" ] || [ "$line" = "END TESTLIST" ]; 
->> then
->> +            continue
->> +        fi
->> +
->> +        tests=$(echo "$line" | tr ' ' '\n')
->> +
->> +        for test in $tests; do
->> +            output=$(/igt/libexec/igt-gpu-tools/"$test" 
->> --list-subtests || true)
->> +
->> +            if [ -z "$output" ]; then
->> +                echo "$test"
->> +            else
->> +                echo "$output" | while read -r subtest; do
->> +                    echo "$test@$subtest"
->> +                done
->> +            fi
->> +        done
->> +    done < /igt/libexec/igt-gpu-tools/test-list.txt > 
->> /igt/libexec/igt-gpu-tools/testlist.txt
-> 
-> Just a nit, could you rename the file to ci-testlist.txt ? Since 
-> test-list.txt and testlist.txt can be easily confused.
+Cheers,
 
-Sure, will rename it. I missed to add the generating testlist print also.
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
-Regards,
-Vignesh
-
-> 
-> Regards,
-> Helen
-> 
 
