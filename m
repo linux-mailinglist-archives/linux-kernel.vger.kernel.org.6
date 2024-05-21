@@ -1,283 +1,131 @@
-Return-Path: <linux-kernel+bounces-184958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB7A8CAE82
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:47:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3856B8CAE85
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C54891F22F3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:47:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 695741C215D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D082574E11;
-	Tue, 21 May 2024 12:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8036770E4;
+	Tue, 21 May 2024 12:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bs1YC+i+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WS0nnLue"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8E52F5B
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72632F5B;
+	Tue, 21 May 2024 12:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716295625; cv=none; b=sm31K/NVcGTd+dX3PHUpn0yTLNDKPvLZuPzung+H+90ROtJe7/MKSYIKsN5uuufwLrFEAsk9/xzi3FfBzq5iSCesWAWukOH/BHQShPCAoMe11N0fY141n1DOXFIM51mOSinACa0Zv2fbFq9vhrbe7m3rzeGK6rGnngVVnvUC+LI=
+	t=1716295695; cv=none; b=Yj93+ikYfDmTptvmNkCSBr84GoEX3arj1jMsG6JRche+EeuBH31B3jpxgx3DFRN4fgD2FVW+PCulkSWV5Qc85nSbIUHRY47HjHdRbsKYYy74ZF0F9eeaU3qp/VNKeLGlQppyTicRdJJx8YBbueNGs+SN63lOwI9ryCfxD2a9QHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716295625; c=relaxed/simple;
-	bh=XrmoUJhlU/7bc8VrKrGuLyJ3TJTPjZrW2vhspqHfNdg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZeZ6mSwbx6rHkvgG6RAxThedvxKeOAmpdw29yPFoO/1l0QhyD0kWroHcb0GUOOkiINvRhcWXySjqMeezXFBh1G8oSWTdCOYlHHN4w/uppierzpXEo5SlNgv1mFK8hMlM93EIm/KsNeLL1UBvMamwewT54S242sOmwuz+e2lsKbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bs1YC+i+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 560EAC4AF18
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716295625;
-	bh=XrmoUJhlU/7bc8VrKrGuLyJ3TJTPjZrW2vhspqHfNdg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bs1YC+i+B0zqCkEQPSnVW00xHFKrAIpmcQuRqQ21Ag9g/wMtZzc+Kv6+LjP9KrdMp
-	 l9nLroAlertIVW1wMIk4znNsWrp51c4IDMypVHGcOUy9+M3mr+mDcCJkJR3lBjZ+Ap
-	 eFYVp5eOr4uRF0PN+5V/0kulCaIcwL/VMROqVue5eIOjQOLHO9f2rzxhdu/ALc1DeM
-	 6Pk4bSJSjBbr+IfwVIP8X8YibK9qF3Ehft5/v4AwS+pTp0WmONUj20xb6q1qNJj5FZ
-	 hBOjV57mXg9GHgqarLkIF9/r+DdSW2F6x0Cfk4XP5bxpGyq6klXCH+FQMf4jn74iaF
-	 WjIbbYUrL39jw==
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-deb5f006019so3361067276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 05:47:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWcTTiAJCb9lw9f2rAWqtyYrM0nMKHg8IMbMbDKgoD5PMGTxbWFJRhM8gbk2HIt23ZBG8a9tiC6WRWqR80Zw8ayAKbQW5j46649TT50
-X-Gm-Message-State: AOJu0YwtJ5JOiUExSUc81bokkRrWo7UrP3qFGzRXZO0o5Xl5kbBRUZVD
-	WQ8kywjZPDJ+D42ZOLG1ToKd7rY76PIoQ/hHNh7kPmPxo8EKBaPajI+ERTLTwzYPNitiTXP2rvl
-	2SvWLsilZI2C+Q51vluUGGt0E1LBdvbXoqEdTkg==
-X-Google-Smtp-Source: AGHT+IF7l4XX7l5reCGXrOLAv02SHRdBHksZn1pO49ZL7lhTkI15PZwDPMMPL1gmx/OnXSMcHfkJUQCo3B+kw4bfUjA=
-X-Received: by 2002:a25:a125:0:b0:dd0:76e:d630 with SMTP id
- 3f1490d57ef6-dee4f37cd06mr28033009276.53.1716295624118; Tue, 21 May 2024
- 05:47:04 -0700 (PDT)
+	s=arc-20240116; t=1716295695; c=relaxed/simple;
+	bh=WH6yHvZe8ZnUhsEU59EABadEg8fdoJa3lZaDRDvNCIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jHXM7nh0zHkBBgrcBlBnbvKNWOaLMyomSoRj/lbY4EnThABqdZ0d2WtdXzcx+fSWVAI7KVsOm/ocYR2rzgMesKTkAUT1VCVog3xHDpdAezk8XiSJH7XZtR+RP5xlKaOU6GkS2KpmqOIKLAHROX38wQxmZijw3cTAC+q/R1+m51k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=WS0nnLue; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Ubv672vfpBfLZf0g0gqsR9OC8qCCoIkzl2ciJouZUwg=; b=WS0nnLuevgRcN5fKDdqcjtMzBH
+	WNi1Fp5E4puGALwTpiMuOEB1UGAN3YooKD6lYWKjiiaM7/3Uf3dGcDE+bIRVcXL5yuQFx/oIWOMPA
+	V5Nv7PjFhaphyUCya/FcAUIm2X/iCUt0JJAGdOK6LsQQ9c3466KdaEVf/v2tdn5p0Z28=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s9OuJ-00Fl8b-QO; Tue, 21 May 2024 14:47:55 +0200
+Date: Tue, 21 May 2024 14:47:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Larry Chiu <larry.chiu@realtek.com>
+Cc: Justin Lai <justinlai0215@realtek.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"jiri@resnulli.us" <jiri@resnulli.us>,
+	"horms@kernel.org" <horms@kernel.org>,
+	Ping-Ke Shih <pkshih@realtek.com>
+Subject: Re: [PATCH net-next v19 01/13] rtase: Add pci table supported in
+ this module
+Message-ID: <97e30c5f-1656-46d0-b06c-3607a90ec96f@lunn.ch>
+References: <20240517075302.7653-1-justinlai0215@realtek.com>
+ <20240517075302.7653-2-justinlai0215@realtek.com>
+ <d840e007-c819-42df-bc71-536328d4f5d7@lunn.ch>
+ <e5d7a77511f746bdb0b38b6174ef5de4@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521080149.1047892-1-kuro.chung@ite.com.tw>
-In-Reply-To: <20240521080149.1047892-1-kuro.chung@ite.com.tw>
-From: Robert Foss <rfoss@kernel.org>
-Date: Tue, 21 May 2024 14:46:53 +0200
-X-Gmail-Original-Message-ID: <CAN6tsi4QkALMhwYT7XAHksq7D6CKXsmE4ownCSoaQ5gqr1decA@mail.gmail.com>
-Message-ID: <CAN6tsi4QkALMhwYT7XAHksq7D6CKXsmE4ownCSoaQ5gqr1decA@mail.gmail.com>
-Subject: Re: [PATCH v12] drm/bridge: it6505: fix hibernate to resume no
- display issue
-To: kuro <kuro.chung@ite.com.tw>
-Cc: Pin-yen Lin <treapking@chromium.org>, Kenneth Haung <kenneth.hung@ite.com.tw>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Allen Chen <allen.chen@ite.com.tw>, Hermes Wu <hermes.wu@ite.com.tw>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e5d7a77511f746bdb0b38b6174ef5de4@realtek.com>
 
-Hey,
+On Tue, May 21, 2024 at 06:20:04AM +0000, Larry Chiu wrote:
+> 
+> >> + *  Below is a simplified block diagram of the chip and its relevant interfaces.
+> >> + *
+> >> + *               *************************
+> >> + *               *                       *
+> >> + *               *  CPU network device   *
+> >> + *               *                       *
+> >> + *               *   +-------------+     *
+> >> + *               *   |  PCIE Host  |     *
+> >> + *               ***********++************
+> >> + *                          ||
+> >> + *                         PCIE
+> >> + *                          ||
+> >> + *      ********************++**********************
+> >> + *      *            | PCIE Endpoint |             *
+> >> + *      *            +---------------+             *
+> >> + *      *                | GMAC |                  *
+> >> + *      *                +--++--+  Realtek         *
+> >> + *      *                   ||     RTL90xx Series  *
+> >> + *      *                   ||                     *
+> >> + *      *     +-------------++----------------+    *
+> >> + *      *     |           | MAC |             |    *
+> >> + *      *     |           +-----+             |    *
+> >> + *      *     |                               |    *
+> >> + *      *     |     Ethernet Switch Core      |    *
+> >> + *      *     |                               |    *
+> >> + *      *     |   +-----+           +-----+   |    *
+> >> + *      *     |   | MAC |...........| MAC |   |    *
+> >> + *      *     +---+-----+-----------+-----+---+    *
+> >> + *      *         | PHY |...........| PHY |        *
+> >> + *      *         +--++-+           +--++-+        *
+> >> + *      *************||****************||***********
+> >> + *
+> >> + *  The block of the Realtek RTL90xx series is our entire chip 
+> >> + architecture,
+> >> + *  the GMAC is connected to the switch core, and there is no PHY in between.
+> >
+> >Given this architecture, this driver cannot be used unless there is a switch driver as well. This driver is nearly ready to be merged. So what are your plans for the switch driver? Do you have a first version you can post? That will reassure us you do plan to release a switch driver, and not use a SDK in userspace.
+> >
+> >        Andrew
+> 
+> Hi Andrew,
+> This GMAC is configured after the switch is boot-up and does not require a switch driver to work.
 
-Thanks for spinning another few revisions.
+But if you cannot configure the switch, it is pointless passing the
+switch packets. The Linux architecture is that Linux needs to be able
+to control the switch somehow. There needs to be a driver with the
+switchdev API on its upper side which connects it to the Linux network
+stack. Ideally the lower side of this driver can directly write switch
+registers. Alternatively it can make some sort of RPC to firmware
+which configures the switch.
 
-On Tue, May 21, 2024 at 9:51=E2=80=AFAM kuro <kuro.chung@ite.com.tw> wrote:
->
-> From: Kuro Chung <kuro.chung@ite.com.tw>
->
-> When the system power resumes, the TTL input of IT6505 may experience
-> some noise before the video signal stabilizes, necessitating a video
-> reset. This patch is implemented to prevent a loop of video error
-> interrupts, which can occur when a video reset in the video FIFO error
-> interrupt triggers another such interrupt. The patch processes the SCDT
-> and FIFO error interrupts simultaneously and ignores any video FIFO
-> error interrupts caused by a video reset.
->
-> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-> Signed-off-by: Kuro Chung <kuro.chung@ite.com.tw>
-> Signed-off-by: Hermes Wu <hermes.wu@ite.com.tw>
->
-> ---
-> V1->V3: update MAINTAINERS mail list
-> V3->V4: remove function it6505_irq_video_fifo_error,it6505_irq_io_latch_f=
-ifo_overflow
-> V4->V5: customer feedback again, update again, kernel build pass
-> V5->V6: remove unrelated patch change, split into another patch
-> V6->V7: modify code 0x02 to TX_FIFO_RESET by macro define
-> V7->V8: fix merge conflict, change mail from 'cc' to 'to'
-> V8->V9: modify patch description, patch summary
-> V9->V10: modify patch summary, add Fixes
-> V10->V11: modify patch description, add Signed-off-by
-> V11->V12: moidfy patch description.
->
-> ---
->  drivers/gpu/drm/bridge/ite-it6505.c | 73 +++++++++++++++++++----------
->  1 file changed, 49 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge=
-/ite-it6505.c
-> index 469157341f3ab..5703fcf4b7b00 100644
-> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> @@ -1307,9 +1307,15 @@ static void it6505_video_reset(struct it6505 *it65=
-05)
->         it6505_link_reset_step_train(it6505);
->         it6505_set_bits(it6505, REG_DATA_MUTE_CTRL, EN_VID_MUTE, EN_VID_M=
-UTE);
->         it6505_set_bits(it6505, REG_INFOFRAME_CTRL, EN_VID_CTRL_PKT, 0x00=
-);
-> -       it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET)=
-;
-> +
-> +       it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, TX_FIFO=
-_RESET);
-> +       it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, 0x00);
-> +
->         it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, RST_501_=
-FIFO);
->         it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, 0x00);
-> +
-> +       it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET)=
-;
-> +       usleep_range(1000, 2000);
->         it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, 0x00);
->  }
->
-> @@ -2245,12 +2251,11 @@ static void it6505_link_training_work(struct work=
-_struct *work)
->         if (ret) {
->                 it6505->auto_train_retry =3D AUTO_TRAIN_RETRY;
->                 it6505_link_train_ok(it6505);
-> -               return;
->         } else {
->                 it6505->auto_train_retry--;
-> +               it6505_dump(it6505);
->         }
->
-> -       it6505_dump(it6505);
->  }
->
->  static void it6505_plugged_status_to_codec(struct it6505 *it6505)
-> @@ -2471,31 +2476,53 @@ static void it6505_irq_link_train_fail(struct it6=
-505 *it6505)
->         schedule_work(&it6505->link_works);
->  }
->
-> -static void it6505_irq_video_fifo_error(struct it6505 *it6505)
-> +static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
->  {
-> -       struct device *dev =3D it6505->dev;
-> -
-> -       DRM_DEV_DEBUG_DRIVER(dev, "video fifo overflow interrupt");
-> -       it6505->auto_train_retry =3D AUTO_TRAIN_RETRY;
-> -       flush_work(&it6505->link_works);
-> -       it6505_stop_hdcp(it6505);
-> -       it6505_video_reset(it6505);
-> +       return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
->  }
->
-> -static void it6505_irq_io_latch_fifo_overflow(struct it6505 *it6505)
-> +static void it6505_irq_video_handler(struct it6505 *it6505, const int *i=
-nt_status)
->  {
->         struct device *dev =3D it6505->dev;
-> +       int reg_0d, reg_int03;
->
-> -       DRM_DEV_DEBUG_DRIVER(dev, "IO latch fifo overflow interrupt");
-> -       it6505->auto_train_retry =3D AUTO_TRAIN_RETRY;
-> -       flush_work(&it6505->link_works);
-> -       it6505_stop_hdcp(it6505);
-> -       it6505_video_reset(it6505);
-> -}
-> +       /*
-> +        * When video SCDT change with video not stable,
-> +        * Or video FIFO error, need video reset
-> +        */
->
-> -static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
-> -{
-> -       return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
-> +       if ((!it6505_get_video_status(it6505) &&
-> +               (it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *) int_st=
-atus))) ||
-> +               (it6505_test_bit(BIT_INT_IO_FIFO_OVERFLOW, (unsigned int =
-*) int_status)) ||
-> +               (it6505_test_bit(BIT_INT_VID_FIFO_ERROR, (unsigned int *)=
- int_status))) {
-> +
-> +               it6505->auto_train_retry =3D AUTO_TRAIN_RETRY;
-> +               flush_work(&it6505->link_works);
-> +               it6505_stop_hdcp(it6505);
-> +               it6505_video_reset(it6505);
-> +
-> +               usleep_range(10000, 11000);
-> +
-> +               /*
-> +                * Clear FIFO error IRQ to prevent fifo error -> reset lo=
-op
-> +                * HW will trigger SCDT change IRQ again when video stabl=
-e
-> +                */
-> +
-> +               reg_int03 =3D it6505_read(it6505, INT_STATUS_03);
-> +               reg_0d =3D it6505_read(it6505, REG_SYSTEM_STS);
-> +
-> +               reg_int03 &=3D (BIT(INT_VID_FIFO_ERROR) | BIT(INT_IO_LATC=
-H_FIFO_OVERFLOW));
-> +               it6505_write(it6505, INT_STATUS_03, reg_int03);
-> +
-> +               DRM_DEV_DEBUG_DRIVER(dev, "reg08 =3D 0x%02x", reg_int03);
-> +               DRM_DEV_DEBUG_DRIVER(dev, "reg0D =3D 0x%02x", reg_0d);
-> +
-> +               return;
-> +       }
-> +
-> +
-> +       if (it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *) int_status)=
-)
-> +               it6505_irq_scdt(it6505);
->  }
->
->  static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
-> @@ -2508,15 +2535,12 @@ static irqreturn_t it6505_int_threaded_handler(in=
-t unused, void *data)
->         } irq_vec[] =3D {
->                 { BIT_INT_HPD, it6505_irq_hpd },
->                 { BIT_INT_HPD_IRQ, it6505_irq_hpd_irq },
-> -               { BIT_INT_SCDT, it6505_irq_scdt },
->                 { BIT_INT_HDCP_FAIL, it6505_irq_hdcp_fail },
->                 { BIT_INT_HDCP_DONE, it6505_irq_hdcp_done },
->                 { BIT_INT_AUX_CMD_FAIL, it6505_irq_aux_cmd_fail },
->                 { BIT_INT_HDCP_KSV_CHECK, it6505_irq_hdcp_ksv_check },
->                 { BIT_INT_AUDIO_FIFO_ERROR, it6505_irq_audio_fifo_error }=
-,
->                 { BIT_INT_LINK_TRAIN_FAIL, it6505_irq_link_train_fail },
-> -               { BIT_INT_VID_FIFO_ERROR, it6505_irq_video_fifo_error },
-> -               { BIT_INT_IO_FIFO_OVERFLOW, it6505_irq_io_latch_fifo_over=
-flow },
->         };
->         int int_status[3], i;
->
-> @@ -2546,6 +2570,7 @@ static irqreturn_t it6505_int_threaded_handler(int =
-unused, void *data)
->                         if (it6505_test_bit(irq_vec[i].bit, (unsigned int=
- *)int_status))
->                                 irq_vec[i].handler(it6505);
->                 }
-> +               it6505_irq_video_handler(it6505, (unsigned int *) int_sta=
-tus);
->         }
->
->         pm_runtime_put_sync(dev);
-> --
-> 2.25.1
->
+Before committing this MAC driver, we will want to be convinced there
+is a switchdev driver for the switch.
 
-This patch has a few checkpatch --strict warnings, do you mind fixing
-those and then we can merge this patch?
-
-linux/scripts/checkpatch.pl --strict --no-signoff --git 'HEAD~0'
-
-
-Rob.
+	Andrew
 
