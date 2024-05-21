@@ -1,189 +1,127 @@
-Return-Path: <linux-kernel+bounces-184962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1D18CAE92
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:51:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FAAE8CAE96
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEC611F230AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:51:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CCEF284BAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC103770E4;
-	Tue, 21 May 2024 12:51:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E1B12E6A;
-	Tue, 21 May 2024 12:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF988770FA;
+	Tue, 21 May 2024 12:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fn7TJR7J"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849A976F1B;
+	Tue, 21 May 2024 12:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716295877; cv=none; b=VXZsjYpaSpsgXUjxhPHxZ1coRBHU3nf3imZRhid7TuuH4PCz6gVh+c6fKV7zmA4CDMQZOybPDVMrH2KFlxgF11IWSqBHWqh8ncfhVHt2Z+8Id/L+6QwLYSN4JT/nftFJHS4wovCVDLAh2Iici0reph9+hUGCW+ue8rB9M2I5WX8=
+	t=1716295917; cv=none; b=WRyXzUcnMMYJLtU4qNYUI1dA+9CpJ3eu8g3EC6cmu8zm1wKrL/2YYoPtTzIlh1bZ/oSOcAZeaPFWXuVpUBX7/SoX2yLOx1wDQKM3WEAq+s2ZtWuoMusXWGwyCwDzCJtiye9Bddl6Gimc/wEJRiX+A+bDB2lkNDjTP3A600ub/uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716295877; c=relaxed/simple;
-	bh=WY2XyDJtXE1LjxFvWXph1an3HyHAqYE6QVllgkoifVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VbcCNCUn8pUYJzuSOA4KnpfaYpDNicBm3p2SKcNBSdFx5HU0vs47zlXI71xfG+ja99aFguznVIbMsI030iV5l5Gt2PesLWw3ua31Z2pRT+/3/6bmipLJH+IfPpMvbiK1XmQSpr+UmbTs/7+n3G5/lI0GPEKOyl6YEcMUrSUpGh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90749DA7;
-	Tue, 21 May 2024 05:51:37 -0700 (PDT)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 107A23F641;
-	Tue, 21 May 2024 05:51:11 -0700 (PDT)
-Message-ID: <ef951861-2759-40ed-9d8c-d2eb92da632c@arm.com>
-Date: Tue, 21 May 2024 14:51:04 +0200
+	s=arc-20240116; t=1716295917; c=relaxed/simple;
+	bh=icE+zgucSAptcZJ5/Z+UxeRoHsi5nzBe52cwqZkMHr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XnXuf3xaD98fGgufBivA9J9qfvXtyPMol58P9io80aidyzJDNSeZj1H6hTbCEC5Yi5aUhNl+CcHjgYgI/p6vRPDMZjru9A0q/Gw8HLudpf2H9lYXQyJmbmsR9fv4z2vjsbfM/Gzbbw7+yeMSFPOwO8hRmCgwwk+yxM6Tpc82sLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fn7TJR7J; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 755B4C0003;
+	Tue, 21 May 2024 12:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1716295906;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Omcb3hmFzLM0PKq5FT4qc5DXx74BroUN9lLWyMAGIEY=;
+	b=Fn7TJR7Jra9ZpK15bDB3o7qBNfTwpcPl6DSumQgmazugCe/z6ztB/P2qDSdecb5kXB7nKL
+	G1yy4xnzlpow7F1p7Rpot/bSF1ozu0Ke+Wmn6plg6tUO9Y4W7b9+lxm+qXWE8GMlYNfgh6
+	XJjyG85wHN8TsOucgowOWTvjT4Li7audLDxSPZP9Nq3jA6ztOVxo+H1i6wDGQeQeh42vBy
+	Uvtjt9SQbm8pSD1dsZgNVQeRF1rd/TNTkXvlvbp4UFfn21HeyJTGLJVY2fXOgEqUXp8387
+	oMjC2bM0amVfzhfXLVJqB/cefM0SqvskRRUr2rLzOpwZv3uSZZS2yxYxqH+/Nw==
+Date: Tue, 21 May 2024 14:51:40 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+ richard@nod.at, vigneshr@ti.com, manivannan.sadhasivam@linaro.org,
+ linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, quic_srichara@quicinc.com,
+ quic_varada@quicinc.com
+Subject: Re: [PATCH v6 4/8] drivers: mtd: nand: Add qpic_common API file
+Message-ID: <20240521145140.5cb49946@xps-13>
+In-Reply-To: <20240521105532.1537845-5-quic_mdalam@quicinc.com>
+References: <20240521105532.1537845-1-quic_mdalam@quicinc.com>
+	<20240521105532.1537845-5-quic_mdalam@quicinc.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v1 3/3] cpufreq: intel_pstate: Set asymmetric CPU
- capacity on hybrid systems
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86 Maintainers
- <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
-References: <7663799.EvYhyI6sBW@kreacher> <1799046.VLH7GnMWUR@kreacher>
- <050c561c-487e-4e89-a7b2-9752cebc9f46@arm.com>
- <CAJZ5v0hGiwoytVmVr=h8JJ1yf5KTcr+p7BrRgSUM-L_X6fciUA@mail.gmail.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <CAJZ5v0hGiwoytVmVr=h8JJ1yf5KTcr+p7BrRgSUM-L_X6fciUA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On 06/05/2024 16:39, Rafael J. Wysocki wrote:
-> On Thu, May 2, 2024 at 12:43 PM Dietmar Eggemann
-> <dietmar.eggemann@arm.com> wrote:
->>
->> On 25/04/2024 21:06, Rafael J. Wysocki wrote:
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi,
 
-[...]
+>  drivers/mtd/nand/Makefile            |    4 +-
+>  drivers/mtd/nand/qpic_common.c       |  740 +++++++++++++++++
+>  drivers/mtd/nand/raw/qcom_nandc.c    | 1090 +-------------------------
+>  include/linux/mtd/nand-qpic-common.h |  467 +++++++++++
+>  4 files changed, 1222 insertions(+), 1079 deletions(-)
+>  create mode 100644 drivers/mtd/nand/qpic_common.c
+>  create mode 100644 include/linux/mtd/nand-qpic-common.h
+>=20
+> diff --git a/drivers/mtd/nand/Makefile b/drivers/mtd/nand/Makefile
+> index 19e1291ac4d5..e59106e0a3af 100644
+> --- a/drivers/mtd/nand/Makefile
+> +++ b/drivers/mtd/nand/Makefile
+> @@ -3,7 +3,9 @@
+>  nandcore-objs :=3D core.o bbt.o
+>  obj-$(CONFIG_MTD_NAND_CORE) +=3D nandcore.o
+>  obj-$(CONFIG_MTD_NAND_ECC_MEDIATEK) +=3D ecc-mtk.o
+> -
+> +ifeq ($(CONFIG_MTD_NAND_QCOM),y)
+> +obj-y	+=3D qpic_common.o
+> +endif
 
->> So cpu_capacity has a direct mapping to itmt prio. cpu_capacity is itmt
->> prio with max itmt prio scaled to 1024.
-> 
-> Right.
-> 
-> The choice to make the ITMT prio reflect the capacity is deliberate,
-> although this code works with values retrieved via CPPC (which are the
-> same as the HWP_CAP values in the majority of cases but not always).
-> 
->> Running it on i7-13700K (while allowing SMT) gives:
->>
->> root@gulliver:~# dmesg | grep sched_set_itmt_core_prio
->> [    3.957826] sched_set_itmt_core_prio() cpu=0 prio=68
->> [    3.990401] sched_set_itmt_core_prio() cpu=1 prio=68
->> [    4.015551] sched_set_itmt_core_prio() cpu=2 prio=68
->> [    4.040720] sched_set_itmt_core_prio() cpu=3 prio=68
->> [    4.065871] sched_set_itmt_core_prio() cpu=4 prio=68
->> [    4.091018] sched_set_itmt_core_prio() cpu=5 prio=68
->> [    4.116175] sched_set_itmt_core_prio() cpu=6 prio=68
->> [    4.141374] sched_set_itmt_core_prio() cpu=7 prio=68
->> [    4.166543] sched_set_itmt_core_prio() cpu=8 prio=69
->> [    4.196289] sched_set_itmt_core_prio() cpu=9 prio=69
->> [    4.214964] sched_set_itmt_core_prio() cpu=10 prio=69
->> [    4.239281] sched_set_itmt_core_prio() cpu=11 prio=69
-> 
-> CPUs 8 - 10 appear to be "favored cores" that can turbo up higher than
-> the other P-cores.
-> 
->> [    4.263438] sched_set_itmt_core_prio() cpu=12 prio=68
->> [    4.283790] sched_set_itmt_core_prio() cpu=13 prio=68
->> [    4.308905] sched_set_itmt_core_prio() cpu=14 prio=68
->> [    4.331751] sched_set_itmt_core_prio() cpu=15 prio=68
->> [    4.356002] sched_set_itmt_core_prio() cpu=16 prio=42
->> [    4.381639] sched_set_itmt_core_prio() cpu=17 prio=42
->> [    4.395175] sched_set_itmt_core_prio() cpu=18 prio=42
->> [    4.425625] sched_set_itmt_core_prio() cpu=19 prio=42
->> [    4.449670] sched_set_itmt_core_prio() cpu=20 prio=42
->> [    4.479681] sched_set_itmt_core_prio() cpu=21 prio=42
->> [    4.506319] sched_set_itmt_core_prio() cpu=22 prio=42
->> [    4.523774] sched_set_itmt_core_prio() cpu=23 prio=42
+Breaks if you set CONFIG_MTD_NAND_QCOM =3D m
 
-I wonder what the relation between this CPU capacity value based on
-HWP_CAP is to the per-IPC class performance values of the 'HFI
-performance and efficiency score' table is.
+>  obj-y	+=3D onenand/
+>  obj-y	+=3D raw/
+>  obj-y	+=3D spi/
+> diff --git a/drivers/mtd/nand/qpic_common.c b/drivers/mtd/nand/qpic_commo=
+n.c
+> new file mode 100644
+> index 000000000000..dfbbb5f626b6
+> --- /dev/null
+> +++ b/drivers/mtd/nand/qpic_common.c
+> @@ -0,0 +1,740 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2016, The Linux Foundation. All rights reserved.
+> + */
+> +#include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/dmaengine.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/dma/qcom_adm.h>
+> +#include <linux/dma/qcom_bam_dma.h>
+> +#include <linux/module.h>
+> +#include <linux/mtd/partitions.h>
 
-Running '[PATCH v3 00/24] sched: Introduce classes of tasks for load
-balance' on i7-13700K w/ 'nosmt' I get:
+Didn't you say you would remove that include?
 
-			Score
-CPUs	         Class  0 	1	2	3
-			SSE	AVX2	VNNI	PAUSE		
-
-0 2,4,6, 12, 14		68 	80	106	53
-8, 10			69 	81	108	54
-16-23			42 	42	42	42
-
-Looks like the HWP_CAP values are in sync with the scores of IPP Class
-0. I was expecting that the HWP_CAP values reflect more an average over
-all classes? Or maybe I misinterpret this relation?
-
-[...]
-
->>> If the driver's "no_trubo" sysfs attribute is updated, all of the CPU
->>> capacity information is computed from scratch to reflect the new turbo
->>> status.
->>
->> So if I do:
->>
->> echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo
->>
->> I get:
->>
->> [ 1692.801368] hybrid_update_cpu_scaling() called
->> [ 1692.801381] hybrid_update_cpu_scaling() max_cap_perf=44, max_perf_cpu=0
->> [ 1692.801389] hybrid_set_cpu_capacity() cpu=1 cap=1024
->> [ 1692.801395] hybrid_set_cpu_capacity() cpu=2 cap=1024
->> [ 1692.801399] hybrid_set_cpu_capacity() cpu=3 cap=1024
->> [ 1692.801402] hybrid_set_cpu_capacity() cpu=4 cap=1024
->> [ 1692.801405] hybrid_set_cpu_capacity() cpu=5 cap=1024
->> [ 1692.801408] hybrid_set_cpu_capacity() cpu=6 cap=1024
->> [ 1692.801410] hybrid_set_cpu_capacity() cpu=7 cap=1024
->> [ 1692.801413] hybrid_set_cpu_capacity() cpu=8 cap=1024
->> [ 1692.801416] hybrid_set_cpu_capacity() cpu=9 cap=1024
->> [ 1692.801419] hybrid_set_cpu_capacity() cpu=10 cap=1024
->> [ 1692.801422] hybrid_set_cpu_capacity() cpu=11 cap=1024
->> [ 1692.801425] hybrid_set_cpu_capacity() cpu=12 cap=1024
->> [ 1692.801428] hybrid_set_cpu_capacity() cpu=13 cap=1024
->> [ 1692.801431] hybrid_set_cpu_capacity() cpu=14 cap=1024
->> [ 1692.801433] hybrid_set_cpu_capacity() cpu=15 cap=1024
->> [ 1692.801436] hybrid_set_cpu_capacity() cpu=16 cap=605
->> [ 1692.801439] hybrid_set_cpu_capacity() cpu=17 cap=605
->> [ 1692.801442] hybrid_set_cpu_capacity() cpu=18 cap=605
->> [ 1692.801445] hybrid_set_cpu_capacity() cpu=19 cap=605
->> [ 1692.801448] hybrid_set_cpu_capacity() cpu=20 cap=605
->> [ 1692.801451] hybrid_set_cpu_capacity() cpu=21 cap=605
->> [ 1692.801453] hybrid_set_cpu_capacity() cpu=22 cap=605
->> [ 1692.801456] hybrid_set_cpu_capacity() cpu=23 cap=605
->>
->> Turbo on this machine stands only for the cpu_capacity diff 1009 vs 1024?
-> 
-> Not really.
-> 
-> The capacity of the fastest CPU is always 1024 and the capacities of
-> all of the other CPUs are adjusted to that.
-> 
-> When turbo is disabled, the capacity of the "favored cores" is the
-> same as for the other P-cores (i.e. 1024) and the capacity of E-cores
-> is relative to that.
-> 
-> Of course, this means that task placement may be somewhat messed up
-> after disabling or enabling turbo (which is a global switch), but I
-> don't think that there is a way to avoid it.
-
-I assume that this is OK. In task placement we don't deal with a system
-of perfectly aligned values (including their sums) anyway.
-And we recreate the sched domains (including updating the capacity sums
-on sched groups) after this so the so load balance (smp nice etc) should
-be fine too.
+Thanks,
+Miqu=C3=A8l
 
