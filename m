@@ -1,177 +1,328 @@
-Return-Path: <linux-kernel+bounces-184393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0BB8CA666
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:53:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 659CB8CA668
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C64BB216DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:53:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D1EB28236C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F86ED520;
-	Tue, 21 May 2024 02:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0CC1B970;
+	Tue, 21 May 2024 02:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NIjW9hxV"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rGPQ+wVh"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237E6CA40
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41B81BC46;
+	Tue, 21 May 2024 02:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716260015; cv=none; b=FX9awHfa6WQq2Ss8gSM972c4D0x7uHxW2s7Wvs6orH2NXWX2A0jGscpSHlcL09ftCAGVmF7RoJ2ghDVQyWwPbrFr/j0D5WDtCQxcrab/r4aveB+mZLqZKlxIEwD2M+lO0BHh0ApRwFi4rW6ggz65BwWxct0d1+uS4QI84SIe07g=
+	t=1716260025; cv=none; b=emi9cM6PWlj7kW0xKp07Dti9RCWh8QJphrGGAFRLTGf5HQqc85O9mh2g0QeXC/DAgiXg194u8M9Z1mcTPNJhTSkg22IILH+3Z3tXOTczzh+n63rYJbUili9wj2xySnQ8iERfsuVv+l1QKMoKyslQn4Hjb0pSr0XEFJZZFlAMQEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716260015; c=relaxed/simple;
-	bh=MB+TtiSD6Cd1t17tquKgP8i2c8ExALiwPjCgQVMlpiM=;
-	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
-	 Content-Type:References; b=pDB352SH6nlFzcTRy6kU24e7qA/PYnmQ44qZ73QiiqYQ5FHP1p+8KV5sMBrrNew6gi3QOvmwb98C9KTo7mAVp/EgrcSP9ATPnHHQ0BDdqrxdJ0NpZolDH0smfdz1XO50/GY1FbVnvt+t2Gukppdf36iwkG9M/4jTKCHPW1fdjZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NIjW9hxV; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240521025330epoutp038b6fc59c9ff1b27ecfc1b085e8b3a671~RYWMHorD72163121631epoutp03h
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:53:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240521025330epoutp038b6fc59c9ff1b27ecfc1b085e8b3a671~RYWMHorD72163121631epoutp03h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716260011;
-	bh=MB+TtiSD6Cd1t17tquKgP8i2c8ExALiwPjCgQVMlpiM=;
-	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-	b=NIjW9hxVJUQh32TV/axNgXlUf0mHqcmXVZO+VEh6g7yp+ymwXH0E/Ehiy4jt56kDk
-	 oeLXQxupTGr1R6vQ5s4w4mNhYfZGiTE4m1Ef2gdJJDFr1OmhZFKIpzsXUhU4gy8XQ1
-	 5m4gvPnG/OfhDbcy1eKJdiTDrxwSepTzU15MY9yo=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240521025330epcas1p2a345947c7794f54f0801b14f7d44500e~RYWLuGQMQ1275512755epcas1p2B;
-	Tue, 21 May 2024 02:53:30 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.38.247]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4VjzXB09m4z4x9Pp; Tue, 21 May
-	2024 02:53:30 +0000 (GMT)
-X-AuditID: b6c32a38-b41fa700000027ae-44-664c0ca93284
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	34.25.10158.9AC0C466; Tue, 21 May 2024 11:53:29 +0900 (KST)
+	s=arc-20240116; t=1716260025; c=relaxed/simple;
+	bh=AaMch7EOgDmxXHW148dTxGAgT6ItbrjQugrNad3BlTA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kKtpdJupVdN73rfgVEbz+XIpvuUiFBZidBa18DQUa0VqY2C0TAbCOuvoFJtCOaeNo891yfmUyWMs+tZsd3HF0bsgvAReeBARGL0DCG5+J5A/XVbXwUI7+nh0nSmJ66egqg6rE7VfjbmhC0S45tiuekq0R7jDSJ5jP6n3MS1GyYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rGPQ+wVh; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716260018; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=C6+2SGWtEsiv4yDPMdsLJIjpofJxi5cWwH1qGfi1jJc=;
+	b=rGPQ+wVhH8W+wfH2Kf20T12Sbt1WrOG86I0yq9Oi9YIr/1moFZJX3WeRyo6XyUT+pQ+3mWYJkoWDnlnl0hGcx/mM6kovhIJ02q+BB3Hvtw5xO7Y0LKJJg/OuRCHOpS517UJXxLnANVWlpusi1DV6cX3ZVm/xoBLFHVmGKbBSS1w=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R421e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W6vzjor_1716260012;
+Received: from 30.97.48.219(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W6vzjor_1716260012)
+          by smtp.aliyun-inc.com;
+          Tue, 21 May 2024 10:53:37 +0800
+Message-ID: <0702ac5b-4c25-440a-a877-bbb1b0afe949@linux.alibaba.com>
+Date: Tue, 21 May 2024 10:53:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: RE: [RESEND PATCH 00/10] memblock: introduce memsize showing
- reserved memory
-Reply-To: jaewon31.kim@samsung.com
-Sender: Jaewon Kim <jaewon31.kim@samsung.com>
-From: Jaewon Kim <jaewon31.kim@samsung.com>
-To: Jaewon Kim <jaewon31.kim@samsung.com>, "rppt@kernel.org"
-	<rppt@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
-CC: "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jaewon31.kim@gmail.com" <jaewon31.kim@gmail.com>, "tkjos@google.com"
-	<tkjos@google.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20240521023957.2587005-1-jaewon31.kim@samsung.com>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
-Date: Tue, 21 May 2024 11:53:29 +0900
-X-CMS-MailID: 20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmvu5KHp80g9XrrCzmrF/DZvHykKZF
-	9+aZjBa9718xWVzeNYfN4t6a/6wWR9ZvZ7J4P7nYYnZjH6MDp8fOWXfZPRZsKvXYtKqTzWPT
-	p0nsHidm/Gbx6NuyitHjzIIj7B6fN8kFcERl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY
-	6hpaWpgrKeQl5qbaKrn4BOi6ZeYAHaekUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJ
-	KTAr0CtOzC0uzUvXy0stsTI0MDAyBSpMyM64evcIe8E/tYo9l1+wNTB+V+1i5OSQEDCR+NT/
-	mrWLkYtDSGAHo8Sb1+eYuhg5OHgFBCX+7hAGqREWCJeYs38VE4gtJKAkcfbHFXaIuK5EU/dq
-	FhCbTUBb4v2CSWBzRATWMUo0t55iAXGYBc4wSry/vIsFYhuvxIz2p1C2tMT25VsZQWxOAQeJ
-	+VMWs0PERSVurn4LZ78/Np8RwhaRaL13lhnCFpR48HM3I8ycP8efs0HYxRLLOh8wQdg1EivO
-	rYKKm0s0vF0JZvMK+EosaPsPVsMioCrR/fMTVI2LxMq5G8D2MgN9s2zha2ZQQDALaEqs36UP
-	EeaTePe1hxXmlYaNv9mxsXfMewJ1gppEy7OvUPUyEn//PYOyPSTuXtvNMoFRcRYiqGchWTwL
-	YfECRuZVjGKpBcW56anFhgUm8NhNzs/dxAhOqFoWOxjnvv2gd4iRiYPxEKMEB7OSCO+mLZ5p
-	QrwpiZVVqUX58UWlOanFhxhNgV6eyCwlmpwPTOl5JfGGJpYGJmZGJhbGlsZmSuK8Z66UpQoJ
-	pCeWpGanphakFsH0MXFwSjUwlah94y1zWmtmPVVyyf7KBAWjzmluald5bmR5f5kUu08sXvf2
-	R9YXChc0T4trG25baM/KbMn+2/mSxwHvhPLk5tmHVBlKXiu4p5/mCX296ObGw/+YdlWsv8O0
-	XCtOLuANzxXzfVOS3hT7/nvTeUbjtZHKlLeKn3tcby9f9i9Dy6BoptHc3Yt3v6ya9VqUJenl
-	FmvvL5Zx+m/TX6etFH8W3HTxW/Y749XlmYL8819+iP+xuODOsmzxv0f73Mo+rLDtC+tLP5Sn
-	dmCO0vlJUwI36WifPt+16L1J3fuDU/iu6grmTJ1sdzSGaZbr08YTtX0TQt4d2DbTiZHr07N9
-	p+a8D+nZ8WzOt66CvS29G2zSbiixFGckGmoxFxUnAgDFa8dbMQQAAA==
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76
-References: <20240521023957.2587005-1-jaewon31.kim@samsung.com>
-	<CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcms1p6>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] cachefiles: cyclic allocation of msg_id to avoid
+ reuse
+To: Baokun Li <libaokun@huaweicloud.com>, Jeff Layton <jlayton@kernel.org>,
+ netfs@lists.linux.dev, dhowells@redhat.com
+Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
+References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
+ <20240515125136.3714580-5-libaokun@huaweicloud.com>
+ <f449f710b7e1ba725ec9f73cace6c1289b9225b6.camel@kernel.org>
+ <d3f5d0c4-eda7-87e3-5938-487ab9ff6b81@huaweicloud.com>
+ <4b1584787dd54bb95d700feae1ca498c40429551.camel@kernel.org>
+ <a4d57830-2bde-901f-72c4-e1a3f714faa5@huaweicloud.com>
+ <d82277a4-aeab-4eb7-bdfd-377edd8b8737@linux.alibaba.com>
+ <bc76e529-7904-0650-7fa9-dc5561ff6668@huaweicloud.com>
+ <b75ec357-4189-4ea6-8f16-b0e2923921fd@linux.alibaba.com>
+ <f4319b36-0f94-d648-0fe6-7f279db5db5d@huaweicloud.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <f4319b36-0f94-d648-0fe6-7f279db5db5d@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
->--------- Original Message ---------
->Sender : =EA=B9=80=EC=9E=AC=EC=9B=90=20<jaewon31.kim=40samsung.com>System=
-=20Performance=20Lab.(MX)/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90=0D=0A>Date=
-=20=20=20:=202024-05-21=2011:40=20(GMT+9)=0D=0A>Title=20=20:=20=5BRESEND=20=
-PATCH=2000/10=5D=20memblock:=20introduce=20memsize=20showing=20reserved=20m=
-emory=0D=0A>?=0D=0A>Some=20of=20memory=20regions=20can=20be=20reserved=20fo=
-r=20a=20specific=20purpose.=20They=20are=0D=0A>usually=20defined=20through=
-=20reserved-memory=20in=20device=20tree.=20If=20only=20size=0D=0A>without=
-=20address=20is=20specified=20in=20device=20tree,=20the=20address=20of=20th=
-e=20region=0D=0A>will=20be=20determined=20at=20boot=20time.=0D=0A>=0D=0A>We=
-=20may=20find=20the=20address=20of=20the=20memory=20regions=20through=20boo=
-ting=20log,=20but=0D=0A>it=20does=20not=20show=20all.=20And=20it=20could=20=
-be=20hard=20to=20catch=20the=20very=20beginning=0D=0A>log.=20The=20memblock=
-_dump_all=20shows=20all=20memblock=20status=20but=20it=20does=20not=0D=0A>s=
-how=20region=20name=20and=20its=20information=20is=20difficult=20to=20summa=
-rize.=0D=0A>=0D=0A>This=20patch=20introduce=20a=20debugfs=20node,=20membloc=
-k/memsize,=20to=20see=20reserved=0D=0A>memory=20easily.=0D=0A>=0D=0A>Here's=
-=20an=20example=0D=0A>=0D=0A>=24=20cat=20debugfs/memblock/memsize=0D=0A>=0D=
-=0A>0x0000000000000000-0x0000000000000000=200x02000000=20(?=20=2032768=20KB=
-=20)?=20=20map=20reusable=20linux,cma=0D=0A>0x0000000000000000-0x0000000000=
-000000=200x01000000=20(?=20=2016384=20KB=20)?=20=20map=20reusable=20vxxxxx=
-=0D=0A>...=0D=0A>0x0000000000000000-0x0000000000000000=200x004e0000=20(?=20=
-?=204992=20KB=20)=20nomap=20unusable=20unknown=0D=0A>0x0000000000000000-0x0=
-000000000000000=200x00400000=20(?=20?=204096=20KB=20)=20nomap=20unusable=20=
-cxxxxx=0D=0A>0x0000000000000000-0x0000000000000000=200x00e00000=20(?=20=201=
-4336=20KB=20)=20nomap=20unusable=20gxxxxx=0D=0A>=0D=0A>Reserved?=20?=20:=20=
-1223856=20KB=0D=0A>=20.kernel?=20?=20:?=20275208=20KB=0D=0A>?=20.text?=20?=
-=20=20:?=20=2016576=20KB=0D=0A>?=20.rwdata?=20=20:?=20?=201963=20KB=0D=0A>?=
-=20.rodata?=20=20:?=20=2011920=20KB=0D=0A>?=20.bss?=20?=20?=20:?=20?=202450=
-=20KB=0D=0A>?=20.memmap?=20=20:?=20186368=20KB=0D=0A>?=20.etc?=20?=20?=20:?=
-=20=2055933=20KB=0D=0A>=20.unusable?=20:?=20948648=20KB=0D=0A>System?=20?=
-=20?=20:=2011359056=20KB=0D=0A>=20.common?=20?=20:=2010306384=20KB=0D=0A>=
-=20.reusable?=20:=201052672=20KB=0D=0A>Total?=20?=20?=20=20:=2012582912=20K=
-B=20(=2012288.00=20MB=20)=0D=0A>=0D=0A>Jaewon=20Kim=20(10):=0D=0A>?=20membl=
-ock:=20introduce=20memsize=20showing=20reserved=20memory=0D=0A>?=20memblock=
-:=20detect=20hidden=20memory=20hole=20size=0D=0A>?=20memblock:=20handle=20o=
-verlapped=20reserved=20memory=20region=0D=0A>?=20memblock:=20take=20a=20reg=
-ion=20intersecting=20an=20unknown=20region=0D=0A>?=20memblock:=20track=20me=
-mblock=20changed=20at=20early=20param=0D=0A>?=20memblock:=20recognize=20lat=
-e=20freed=20size=20by=20checking=20PageReserved=0D=0A>?=20memblock:=20track=
-=20kernel=20size=20on=20memsize=0D=0A>?=20memblock:=20print=20memsize=20sum=
-mary=20information=0D=0A>?=20memblock:=20print=20kernel=20internal=20size=
-=0D=0A>?=20memblock:=20support=20memsize=20reusable=20to=20consider=20as=20=
-reusable=0D=0A>=0D=0A>=20drivers/of/fdt.c?=20?=20?=20?=20?=20?=20=20=7C?=20=
-11=20+=0D=0A>=20drivers/of/of_reserved_mem.c=20=7C?=2012=20+-=0D=0A>=20incl=
-ude/linux/memblock.h?=20?=20=20=7C?=2029=20++=0D=0A>=20init/main.c?=20?=20?=
-=20?=20?=20?=20?=20?=20?=20=7C?=2013=20+-=0D=0A>=20kernel/dma/contiguous.c?=
-=20?=20?=20=7C?=20=209=20+-=0D=0A>=20mm/Kconfig?=20?=20?=20?=20?=20?=20?=20=
-?=20?=20=20=7C?=2016=20++=0D=0A>=20mm/memblock.c?=20?=20?=20?=20?=20?=20?=
-=20?=20=7C=20502=20++++++++++++++++++++++++++++++++++-=0D=0A>=20mm/mm_init.=
-c?=20?=20?=20?=20?=20?=20?=20?=20=20=7C?=20=206=20+-=0D=0A>=20mm/page_alloc=
-c?=20?=20?=20?=20?=20?=20?=20=7C?=2010=20+-=0D=0A>=209=20files=20changed,=
-=20597=20insertions(+),=2011=20deletions(-)=0D=0A>=0D=0A>--=20=0D=0A>2.25.1=
-=0D=0A=0D=0AHello=20Mike=20=0D=0A=0D=0AThis=20is=20actually=20RESEND=20as=
-=20it=20was=20introduced=202=20years=20ago.=0D=0APlease=20refer=20to=20http=
-s://lore.kernel.org/linux-mm/YkQB6Ah603yPR3qf=40kernel.org/=23t=0D=0A=0D=0A=
->=20But=20you=20never=20provided=20details=20about=20*why*=20you=20want=20t=
-his=20information=20exposed.=0D=0A=0D=0AFor=20your=20question,=20I'd=20like=
-=20to=20say=20;=0D=0AWe=20can=20see=20the=20same=20format=20and=20exact=20i=
-nformation=20between=20different=20version=20of=20kernel=20status.=0D=0A=0D=
-=0A1)=20Internally=20we=20can=20check=20if=20the=20reserved=20memory=20chan=
-ges.=0D=0A2)=20Externally=20we=20can=20communicate=20between=20chipset=20ve=
-ndors=20and=20OEM,=20with=20a=20same=20format.=0D=0A=0D=0AThis=20helps=20us=
-=20to=20communitcate=20well,=20to=20easily=20detect=20changes=20or=20just=
-=20to=20see=20differences.=0D=0A=0D=0AJaewon=20Kim=0D=0A
+
+
+On 2024/5/21 10:36, Baokun Li wrote:
+> On 2024/5/20 22:56, Gao Xiang wrote:
+>> Hi Baokun,
+>>
+>> On 2024/5/20 21:24, Baokun Li wrote:
+>>> On 2024/5/20 20:54, Gao Xiang wrote:
+>>>>
+>>>>
+>>>> On 2024/5/20 20:42, Baokun Li wrote:
+>>>>> On 2024/5/20 18:04, Jeff Layton wrote:
+>>>>>> On Mon, 2024-05-20 at 12:06 +0800, Baokun Li wrote:
+>>>>>>> Hi Jeff,
+>>>>>>>
+>>>>>>> Thank you very much for your review!
+>>>>>>>
+>>>>>>> On 2024/5/19 19:11, Jeff Layton wrote:
+>>>>>>>> On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
+>>>>>>>>> From: Baokun Li <libaokun1@huawei.com>
+>>>>>>>>>
+>>>>>>>>> Reusing the msg_id after a maliciously completed reopen request may cause
+>>>>>>>>> a read request to remain unprocessed and result in a hung, as shown below:
+>>>>>>>>>
+>>>>>>>>>          t1       |      t2       |      t3
+>>>>>>>>> -------------------------------------------------
+>>>>>>>>> cachefiles_ondemand_select_req
+>>>>>>>>>    cachefiles_ondemand_object_is_close(A)
+>>>>>>>>>    cachefiles_ondemand_set_object_reopening(A)
+>>>>>>>>>    queue_work(fscache_object_wq, &info->work)
+>>>>>>>>>                   ondemand_object_worker
+>>>>>>>>> cachefiles_ondemand_init_object(A)
+>>>>>>>>> cachefiles_ondemand_send_req(OPEN)
+>>>>>>>>>                       // get msg_id 6
+>>>>>>>>> wait_for_completion(&req_A->done)
+>>>>>>>>> cachefiles_ondemand_daemon_read
+>>>>>>>>>    // read msg_id 6 req_A
+>>>>>>>>>    cachefiles_ondemand_get_fd
+>>>>>>>>>    copy_to_user
+>>>>>>>>>                                   // Malicious completion msg_id 6
+>>>>>>>>>                                   copen 6,-1
+>>>>>>>>> cachefiles_ondemand_copen
+>>>>>>>>> complete(&req_A->done)
+>>>>>>>>>                                    // will not set the object to close
+>>>>>>>>>                                    // because ondemand_id && fd is valid.
+>>>>>>>>>
+>>>>>>>>>                   // ondemand_object_worker() is done
+>>>>>>>>>                   // but the object is still reopening.
+>>>>>>>>>
+>>>>>>>>>                                   // new open req_B
+>>>>>>>>> cachefiles_ondemand_init_object(B)
+>>>>>>>>> cachefiles_ondemand_send_req(OPEN)
+>>>>>>>>>                                    // reuse msg_id 6
+>>>>>>>>> process_open_req
+>>>>>>>>>    copen 6,A.size
+>>>>>>>>>    // The expected failed copen was executed successfully
+>>>>>>>>>
+>>>>>>>>> Expect copen to fail, and when it does, it closes fd, which sets the
+>>>>>>>>> object to close, and then close triggers reopen again. However, due to
+>>>>>>>>> msg_id reuse resulting in a successful copen, the anonymous fd is not
+>>>>>>>>> closed until the daemon exits. Therefore read requests waiting for reopen
+>>>>>>>>> to complete may trigger hung task.
+>>>>>>>>>
+>>>>>>>>> To avoid this issue, allocate the msg_id cyclically to avoid reusing the
+>>>>>>>>> msg_id for a very short duration of time.
+>>>>>>>>>
+>>>>>>>>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
+>>>>>>>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>>>>>>>>> ---
+>>>>>>>>>    fs/cachefiles/internal.h |  1 +
+>>>>>>>>>    fs/cachefiles/ondemand.c | 20 ++++++++++++++++----
+>>>>>>>>>    2 files changed, 17 insertions(+), 4 deletions(-)
+>>>>>>>>>
+>>>>>>>>> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+>>>>>>>>> index 8ecd296cc1c4..9200c00f3e98 100644
+>>>>>>>>> --- a/fs/cachefiles/internal.h
+>>>>>>>>> +++ b/fs/cachefiles/internal.h
+>>>>>>>>> @@ -128,6 +128,7 @@ struct cachefiles_cache {
+>>>>>>>>>        unsigned long            req_id_next;
+>>>>>>>>>        struct xarray            ondemand_ids;    /* xarray for ondemand_id allocation */
+>>>>>>>>>        u32                ondemand_id_next;
+>>>>>>>>> +    u32                msg_id_next;
+>>>>>>>>>    };
+>>>>>>>>>    static inline bool cachefiles_in_ondemand_mode(struct cachefiles_cache *cache)
+>>>>>>>>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+>>>>>>>>> index f6440b3e7368..b10952f77472 100644
+>>>>>>>>> --- a/fs/cachefiles/ondemand.c
+>>>>>>>>> +++ b/fs/cachefiles/ondemand.c
+>>>>>>>>> @@ -433,20 +433,32 @@ static int cachefiles_ondemand_send_req(struct cachefiles_object *object,
+>>>>>>>>>            smp_mb();
+>>>>>>>>>            if (opcode == CACHEFILES_OP_CLOSE &&
+>>>>>>>>> - !cachefiles_ondemand_object_is_open(object)) {
+>>>>>>>>> + !cachefiles_ondemand_object_is_open(object)) {
+>>>>>>>>> WARN_ON_ONCE(object->ondemand->ondemand_id == 0);
+>>>>>>>>>                xas_unlock(&xas);
+>>>>>>>>>                ret = -EIO;
+>>>>>>>>>                goto out;
+>>>>>>>>>            }
+>>>>>>>>> -        xas.xa_index = 0;
+>>>>>>>>> +        /*
+>>>>>>>>> +         * Cyclically find a free xas to avoid msg_id reuse that would
+>>>>>>>>> +         * cause the daemon to successfully copen a stale msg_id.
+>>>>>>>>> +         */
+>>>>>>>>> +        xas.xa_index = cache->msg_id_next;
+>>>>>>>>>            xas_find_marked(&xas, UINT_MAX, XA_FREE_MARK);
+>>>>>>>>> +        if (xas.xa_node == XAS_RESTART) {
+>>>>>>>>> +            xas.xa_index = 0;
+>>>>>>>>> +            xas_find_marked(&xas, cache->msg_id_next - 1, XA_FREE_MARK);
+>>>>>>>>> +        }
+>>>>>>>>>            if (xas.xa_node == XAS_RESTART)
+>>>>>>>>>                xas_set_err(&xas, -EBUSY);
+>>>>>>>>> +
+>>>>>>>>>            xas_store(&xas, req);
+>>>>>>>>> -        xas_clear_mark(&xas, XA_FREE_MARK);
+>>>>>>>>> -        xas_set_mark(&xas, CACHEFILES_REQ_NEW);
+>>>>>>>>> +        if (xas_valid(&xas)) {
+>>>>>>>>> +            cache->msg_id_next = xas.xa_index + 1;
+>>>>>>>> If you have a long-standing stuck request, could this counter wrap
+>>>>>>>> around and you still end up with reuse?
+>>>>>>> Yes, msg_id_next is declared to be of type u32 in the hope that when
+>>>>>>> xa_index == UINT_MAX, a wrap around occurs so that msg_id_next
+>>>>>>> goes to zero. Limiting xa_index to no more than UINT_MAX is to avoid
+>>>>>>> the xarry being too deep.
+>>>>>>>
+>>>>>>> If msg_id_next is equal to the id of a long-standing stuck request
+>>>>>>> after the wrap-around, it is true that the reuse in the above problem
+>>>>>>> may also occur.
+>>>>>>>
+>>>>>>> But I feel that a long stuck request is problematic in itself, it means
+>>>>>>> that after we have sent 4294967295 requests, the first one has not
+>>>>>>> been processed yet, and even if we send a million requests per
+>>>>>>> second, this one hasn't been completed for more than an hour.
+>>>>>>>
+>>>>>>> We have a keep-alive process that pulls the daemon back up as
+>>>>>>> soon as it exits, and there is a timeout mechanism for requests in
+>>>>>>> the daemon to prevent the kernel from waiting for long periods
+>>>>>>> of time. In other words, we should avoid the situation where
+>>>>>>> a request is stuck for a long period of time.
+>>>>>>>
+>>>>>>> If you think UINT_MAX is not enough, perhaps we could raise
+>>>>>>> the maximum value of msg_id_next to ULONG_MAX?
+>>>>>>>> Maybe this should be using
+>>>>>>>> ida_alloc/free instead, which would prevent that too?
+>>>>>>>>
+>>>>>>> The id reuse here is that the kernel has finished the open request
+>>>>>>> req_A and freed its id_A and used it again when sending the open
+>>>>>>> request req_B, but the daemon is still working on req_A, so the
+>>>>>>> copen id_A succeeds but operates on req_B.
+>>>>>>>
+>>>>>>> The id that is being used by the kernel will not be allocated here
+>>>>>>> so it seems that ida _alloc/free does not prevent reuse either,
+>>>>>>> could you elaborate a bit more how this works?
+>>>>>>>
+>>>>>> ida_alloc and free absolutely prevent reuse while the id is in use.
+>>>>>> That's sort of the point of those functions. Basically it uses a set of
+>>>>>> bitmaps in an xarray to track which IDs are in use, so ida_alloc only
+>>>>>> hands out values which are not in use. See the comments over
+>>>>>> ida_alloc_range() in lib/idr.c.
+>>>>>>
+>>>>> Thank you for the explanation!
+>>>>>
+>>>>> The logic now provides the same guarantees as ida_alloc/free.
+>>>>> The "reused" id, indeed, is no longer in use in the kernel, but it is still
+>>>>> in use in the userland, so a multi-threaded daemon could be handling
+>>>>> two different requests for the same msg_id at the same time.
+>>>>>
+>>>>> Previously, the logic for allocating msg_ids was to start at 0 and look
+>>>>> for a free xas.index, so it was possible for an id to be allocated to a
+>>>>> new request just as the id was being freed.
+>>>>>
+>>>>> With the change to cyclic allocation, the kernel will not use the same
+>>>>> id again until INT_MAX requests have been sent, and during the time
+>>>>> it takes to send requests, the daemon has enough time to process
+>>>>> requests whose ids are still in use by the daemon, but have already
+>>>>> been freed in the kernel.
+>>>>
+>>>> Again, If I understand correctly, I think the main point
+>>>> here is
+>>>>
+>>>> wait_for_completion(&req_A->done)
+>>>>
+>>>> which could hang due to some malicious deamon.  But I think it
+>>>> should be switched to wait_for_completion_killable() instead. *
+>>>> It's up to users to kill the mount instance if there is a
+>>>> malicious user daemon.
+>>>>
+>>>> So in that case, hung task will not be triggered anymore, and
+>>>> you don't need to care about cyclic allocation too.
+>>>>
+>>>> Thanks,
+>>>> Gao Xiang
+>>> Hi Xiang,
+>>>
+>>> The problem is not as simple as you think.
+>>>
+>>> If you make it killable, it just won't trigger a hung task in
+>>> cachefiles_ondemand_send_req(), and the process waiting for the
+>>> resource in question will also be hung.
+>>>
+>>> * When the open/read request in the mount process gets stuck,
+>>>    the sync/drop cache will trigger a hung task panic in iterate_supers()
+>>>    as it waits for sb->umount to be unlocked.
+>>> * After umount, anonymous fd is not closed causing a hung task panic
+>>>    in fscache_hash_cookie() because of waiting for cookie unhash.
+>>> * The dentry is in a loop up state, because the read request is not being
+>>>    processed, another process looking for the same dentry is waiting for
+>>>    the previous lookup to finish, which triggers a hung task panic in
+>>>    d_alloc_parallel().
+>>
+>>
+>> As for your sb->umount, d_alloc_parallel() or even i_rwsem,
+>> which are all currently unkillable, also see some previous
+>> threads like:
+>>
+>> https://lore.kernel.org/linux-fsdevel/CAJfpegu6v1fRAyLvFLOPUSAhx5aAGvPGjBWv-TDQjugqjUA_hQ@mail.gmail.com/T/#u
+>>
+>> I don't think it's the issue of on-demand cachefiles, even
+>> NVMe or virtio-blk or networking can be stuck in
+>> .lookup, fill_sb or whatever.
+>>
+>> Which can makes sb->umount, d_alloc_parallel() or even
+>> i_rwsem unkillable.
+>>
+> Everyone and every company has different requirements for quality,
+> and if you don't think these hung_task_panic are problems, I respect
+> your opinion.
+> 
+> But the company I work for has much higher requirements for quality,
+> and it's not acceptable to leave these issues that have been tested out
+> unresolved.
+>>>
+>>> Can all this be made killable?
+>>
+>> I can understand your hung_task_panic concern but it
+>> sounds like a workaround to me anyway.
+>>
+>> Thanks,
+>> Gao Xiang
+>>
+>  From the current perspective, cyclic allocation is a valid solution to
+> the current msg_id collision problem, and it also makes it fairer to
+> copy out requests than it was before.
+
+Okay, for this patch, I agree it's better than none and it can
+indeed cause fairer requests, so
+
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+
+Thanks,
+Gao Xiang
+
+> 
+> Thanks!
+> 
 
