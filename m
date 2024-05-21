@@ -1,192 +1,256 @@
-Return-Path: <linux-kernel+bounces-184459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7228CA703
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:26:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 755F28CA706
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A25CCB22FCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:26:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE28D1F21F80
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09EA224FA;
-	Tue, 21 May 2024 03:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F032B9A4;
+	Tue, 21 May 2024 03:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FOQRTBf4"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2046.outbound.protection.outlook.com [40.107.100.46])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e+pmog6K"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4020848A
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716261793; cv=fail; b=JInI2ijbAzwcX9DbvOvVWi+rBoN+mCkN0Nv2FX+7erpoy59rezls3bkIlUpVLvl/9wmP+USJwi2Do+iSJbFTgGWdaQZHEBHGtPSBdj+xlmA6TvJk/c5PBUbaH6kCdINQJMlU2m2ShDVNaA9PXrPfYH93stHGQM046M2Hbas+ho8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716261793; c=relaxed/simple;
-	bh=lFV+JiONFpqVWH3yLEG6AnsXe+8sVNl7WCfNpnuVJXU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=nUY0BBvjaH6Mmey2qpBs/GTOJPNya+RNgBUm1GXvcdMKh8H6Ex8b4DsYlbiQEYzmNaelpxBEZs54lG0FTC0D+wCkw+LK4HkMoTkS2JBEx7ax61iQN4xGR3fEQbxKxbNDCezk+eFWDTXpjR058Jd2V1lWYocPC0kXbep9opUibwA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FOQRTBf4; arc=fail smtp.client-ip=40.107.100.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NqYpnPfp53tVdv2XVCzDQ80Lol+8tFnbT2+sUDHnDm1/BAQIJ0k7a6UHhC1WcgFccBAVwSZUgsPNR16bUA8ojwQJo6e7CgtgH5bHaJd2UT80I5n0PbmjJAn1uvxSNAxIQZ4yMOUFXPJEpRg9ykMLZtMyY+EAsSC4T3yFTxJ4Cq4XtA7ZKJn/dvWyUJIHoUwVIbtZ6GaQ/tEmBxRN3qsCGrvdt458xF9z8War4JgdF+6+KJ3ChfAwHFo11F5RBmmH6RrVhM+PJdLaqJJcrPob52VXgIeUxXRtEDlLWEtpfTs+GDGEcOIA+ZXr90qzyjw74BdbH+Olf8tmN/bCGWXJLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ILcX6jCnY1c7du0HMR52kxAwqcIOD6lLrdm3u8+eZV4=;
- b=CZxm0REpAYu1Wx427W2TUur5C+WNf2unkXrVT/7/t/BKYUGr4BPfnn8b+Lcj2rqWB3DOF+Yxa29RSHqo5XgOnduAy7zYHYNBBzN6hVFIPmnI1D8RblD/JQG/ICbiDc+XSXn+BUcDWw/ZJew/6+Ts9wiOlj0eXQjYhEFVG34ScV9Z03/maUWOsr7LZeX1HZbA2Ix7cnWNrM08Rf6jYHMwylAn8ZWexz3mPOcspX1AdmOUyznt5Rn61oSXhqMdOAHGyejg3B3av7QysIn2hH3yDV4CWvd2bCBFnwx3CbHWH2GA4RDvjki1hI6W2XVbQl1LANlVTaE6QHHyPc1HsvZ9IQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=ideasonboard.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ILcX6jCnY1c7du0HMR52kxAwqcIOD6lLrdm3u8+eZV4=;
- b=FOQRTBf4afTdr39BJRUMhI05EhPsxxEimGKVzSsAcLzX5AZ3zInaSRmUE8coS1X1n0v0dSMyOZ1ubO+XYLuGNOwtjpI5UHd11+BoSd6ztUuQTsYmc1XNQv/yEdTkVIWLCW5pfIGKV5b5TcybhWDd19rdqaexBAny9LxCzlYAMmM=
-Received: from MW4P221CA0026.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::31)
- by LV8PR12MB9269.namprd12.prod.outlook.com (2603:10b6:408:1fe::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.31; Tue, 21 May
- 2024 03:23:09 +0000
-Received: from MWH0EPF000989E8.namprd02.prod.outlook.com
- (2603:10b6:303:8b:cafe::34) by MW4P221CA0026.outlook.office365.com
- (2603:10b6:303:8b::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36 via Frontend
- Transport; Tue, 21 May 2024 03:23:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- MWH0EPF000989E8.mail.protection.outlook.com (10.167.241.135) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7611.14 via Frontend Transport; Tue, 21 May 2024 03:23:08 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 20 May
- 2024 22:22:35 -0500
-Received: from xsjanatoliy50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 20 May 2024 22:22:34 -0500
-From: Anatoliy Klymenko <anatoliy.klymenko@amd.com>
-Date: Mon, 20 May 2024 20:22:31 -0700
-Subject: [PATCH] drm: xlnx: zynqmp_dpsub: Enable plane in atomic update
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8798D28DBC
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716261949; cv=none; b=ZJdYzj7DI451LUR9rFdoI3RCItSdZZoLnYEDzq6SQ0Oe8xxCpWMNUvkxKMYZVA1HHl+MrnJG0BmNUY6T2tAbSgd35cGx1jgb3RsyUv767YVyLvk9oHoseNhKcS4WyQW/4gQFSG9TGvcFWs0zKCWraTGbEspXT3HNSYX97+bX6Hg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716261949; c=relaxed/simple;
+	bh=dAps9Jje+W4BKsGAWJ7FOYkkRW+Moe63q6k+RBEUFkQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m0zytOMP6c1m0FOxuDSMDsxD5y13NXiVCLn0tzhPs5znQeo8TOjXuGef7iXd4xEhghDVzXRFSnKxk6I/1KXse91eJOWgdOPbgnZl09bOU1JvpzatDtrOUjdwfZFv3Y/hFriEGl9oKxLXVT+gCwwqYTWLOz4pCn61rbgHVFNTw80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e+pmog6K; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716261946;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OTqNoq7Ywwug/KZupHOhiNfUyNAblVbOrSzbZCVlky8=;
+	b=e+pmog6KS0VoQoVpwGjZgEiCDf0C+P0UC3p7l14CtECoWtOV/XwLw8vHt3iETlp37DNa7z
+	HjB6E4T0kBQ/7ZI6N4vcjg34utLIgp9OdLCh7LKw96LecT27v3YWgnorbBloaq0IGslThr
+	+DvJ2N6TQwhZn6dUGkxtZTk8K4nxqkg=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-624-qHK5-hQcOsWjDitsljIqMQ-1; Mon, 20 May 2024 23:25:44 -0400
+X-MC-Unique: qHK5-hQcOsWjDitsljIqMQ-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5b27c7a007cso13665589eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:25:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716261943; x=1716866743;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OTqNoq7Ywwug/KZupHOhiNfUyNAblVbOrSzbZCVlky8=;
+        b=FHU4DLOSGu7Z6RWbSER1RumYH9x331hGkruQdvj73CzPTn/RvLUF7jTTCW8aJd8fUO
+         7vdI7i+MnZa3loiLopqJQ3BgqkNfmpi9pjDDSYdVqEumaynnIzYh9V2usCP6RUgWr4+h
+         iKCO5qcdRpvcz2dChA3iwTFeFymJMAJdonqOEwf6VbdiKXQqeJ5IY2aqInlHpPGYVksl
+         /yQYmcbhqKwqJPQxJfhxPJgmT8NRGKcAeI4eeoxcv1ysyfItyni7rSKMPMLY04Qm+Ubu
+         nuigF6dplHG4NM734Y48PHtwx8QFwaXQbqsM5SrKcB7cTAzmch8g0vGMZtbHd0GgjTDI
+         PGyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzdp9Lt7p7COx1ImYaskhXb3q1k+84jGroQrPsuMMNeJe+/lY7H0gSVke5sXNevXNoDv8aWEvmzZui8iZ72TdlYMwNnFnRU6ObeGk/
+X-Gm-Message-State: AOJu0YwH/+hqysuJfJzD+etamUn8R4At2rK4Uzfu9bSLXF3TrzGyYCkl
+	TCvIUl3saIrEPCBla3OSUfVRt/kYNDbEkJg9+h4lnXbp5yuwokS6tiRuiNMJDnfT3JKfIO0PTL6
+	Txn0cmfUfndqwYcnT+umAOZng2DfLvd3X+lOdO0yQxkwOBVulhKkkbZ89PkPb2tomMAtoezz2UP
+	M7Zyry9HGsXhZm0GrOb9JXolAynz+xQk/tHOis
+X-Received: by 2002:a05:6358:3992:b0:18a:e062:ff55 with SMTP id e5c5f4694b2df-193badda3e1mr3424984455d.0.1716261943009;
+        Mon, 20 May 2024 20:25:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGXijquOe3UDtI/IZRj3oWKr9KI+JW7yIIBbhlVb8Ah6rYdv037aA7CPM7ivMIE5RK0N7pQ6Ld6KJnSA19IZLU=
+X-Received: by 2002:a05:6358:3992:b0:18a:e062:ff55 with SMTP id
+ e5c5f4694b2df-193badda3e1mr3424982455d.0.1716261942568; Mon, 20 May 2024
+ 20:25:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240520-dp-layer-enable-v1-1-c9b481209115@amd.com>
-X-B4-Tracking: v=1; b=H4sIAHYTTGYC/x3MSwqAMAwA0atI1gZqsf6uIi5SjRqQKimIIt7d4
- vItZh6IrMIRuuwB5VOi7CGhyDMYVwoLo0zJYI0tjbMGpwM3ulmRA/mNsfauKmi27UgNpOpQnuX
- 6j/3wvh/BmHVXYQAAAA==
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen
-	<tomi.valkeinen@ideasonboard.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>, Michal Simek <michal.simek@amd.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Anatoliy Klymenko <anatoliy.klymenko@amd.com>
-X-Mailer: b4 0.13.0
-Received-SPF: None (SATLEXMB03.amd.com: anatoliy.klymenko@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E8:EE_|LV8PR12MB9269:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7ea75946-8e13-4d67-95fa-08dc7945563f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|376005|7416005|1800799015|36860700004;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UmxmOS9GM0lBeFczM0JhZHBJOWRZMElyWk1UMGdyQkQrNElSU25XekZjNlln?=
- =?utf-8?B?WktWVmVUWkhna1NHdm5GbVV2S3YzNU45bXBOOWpjeStMcy9yc2xCSmt2eWxy?=
- =?utf-8?B?elNORzRsYVdBdFQ5Sng1MTMrSVR2aGhzVXZ1MFZpTTByM2w3a0d0ejdPOTMw?=
- =?utf-8?B?dUFmVytwbGVRS2hDcHNkTG92djB4RVMwWlJYeDdaZTROcElzNEc1SmRmVksr?=
- =?utf-8?B?NzhwcHJQRmdmdmJzdVRLNk5QM1NaaHRwSWdOV05UWWVNazUraEJScnNGTlFD?=
- =?utf-8?B?cTBldms3Z3JOT1RSY0pWaDZaVktzc1BXYlJBOGxMV2ZLRUNEWlYzK3R5dGFr?=
- =?utf-8?B?UlgxZjlHUFc4OXYzMHFHMW0xTUpMTkxqVkpIVlJ2ZUlBSkU5L0w1bURVUGRk?=
- =?utf-8?B?WTVMMFp6eTR5VnR3dUtPN1FCcG9MSXk2TU1JSUlHWXhJbVVZUnI4anJHUHpi?=
- =?utf-8?B?UHIyZC91SGYrZXVKbTY1QmFXRmQwN2xkOHVHZjl6eXpldnJZUkREbHFVWkFR?=
- =?utf-8?B?TGRkMVYwaGJvT3k3Njh0L1Nsdkw2SlZSL2V5VnpJa2lTV0VLNVI2bXBOdFlp?=
- =?utf-8?B?SHdCOG9TR0x2RDNtRkV4MEdteTQ1YUFaampleUJzeWR4bFlibTN0WE5IaG1R?=
- =?utf-8?B?bHI2cmRINUkwa3Q0NklwMnNXd25RUkd1cU5TY1lINEE5Z1Z4Y2IrMUxuRTV1?=
- =?utf-8?B?em84UDdxV3RUY3d6aFFDVHZ5NTJvUmdCQzhqY00vaUtEeVg2Q1FKdTFMR25z?=
- =?utf-8?B?dEk3YmFZSURjZkFsZ3N3MWlOTVdtQnJSV2dOeVpzZXZEQS93MG1YbXR4QytE?=
- =?utf-8?B?SVBYY1h6ZzdqVi8rUlJ5WUE4MlFyVGdQZWM3dXZTNkJpQjBwVm9lbTFyK3Jp?=
- =?utf-8?B?WFZ4K1dlZGdsTHdyUTF3eHZvWCs2NkxpbVZJNmVZa25EalZ3cVVjV3BXNURa?=
- =?utf-8?B?T1pieWNZaUdmU21JVU0rcU05b2didThSMEIyT20wNHB6TnZ6a3c3bDAzQlA5?=
- =?utf-8?B?QmFYSUtZY2QyREJkd3A2ZG94OWhKQk1hWmxLY1JQMGhMQW5xUzU3YmlYazk4?=
- =?utf-8?B?R2dGSm9VeVRNT1VxeTJOZjc0STBnU0pWYXo3SWkrSVJOZW9kYVMyVkFlTWx1?=
- =?utf-8?B?c1UyNGNjTVJkek1hOG91c0NicXF6YVdKem5MMkkyYWJwZzFkbmRWb3pudkNH?=
- =?utf-8?B?SUJhbkJDeDM5NWZlNnZ6SHdlWitvNzVsTEZmWnJLNEFXdmZYUVZReHZ5ZjVy?=
- =?utf-8?B?V20zZHlVZVNhMmEzcDhwTFJFK2VuM2JKNzBnWXFMRzdtK05ndWNXR0dwd2pw?=
- =?utf-8?B?b0MxazRzSjlVcWhaRFBnOE1rZUp5bnFyblhUSkZyVDk2eWtTY2pRdEgxdEJO?=
- =?utf-8?B?dURvM0VqdnZnUFhab0laYmFMeVRFZGxQd0xqVjU3RXdVTFVIaUppSUw1NDZ2?=
- =?utf-8?B?RHhTZzlXUFJ4WHVGNlVIWEZaR1NrQ0owZEdMSXQ2T253eS9CRE4zcW5rK0pv?=
- =?utf-8?B?Tk5pNzdZWkZpODJnd2RPbmlxS1F2eEM5ZDRkcFYzTlhoY2VWL3ZkdWVxUk9D?=
- =?utf-8?B?d3ljaXlXcy82NUhJZkh0ZEZBOXpBQTk0NExIVVd5OGQ5S1p0RGQ1SzIxN3Nq?=
- =?utf-8?B?NkZ1Kzc1YWxZc1BUbzF3YTBIMlpnd3FUZ0VwM0UxTzdLTFVIMStnc3FFRXpa?=
- =?utf-8?B?STZaODM2ajlNdWVIUkxPeFNXUDdnYWZ2MG5remNld3dJRlJ6cTZGaFVvYzJ5?=
- =?utf-8?B?c3JUVDJnSk8vck5lMTFJckhVU1IrMHdWRUZGVGMxelNLazhXdkc5Q2svZHZ6?=
- =?utf-8?B?RXFsemxOT0E3RHdkaEdrZUp4RDd4ME9jNzRQekErWU9rUUNTcFpiM01WZ1Vn?=
- =?utf-8?Q?n+OZcguTO0dcU?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(376005)(7416005)(1800799015)(36860700004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 03:23:08.4292
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ea75946-8e13-4d67-95fa-08dc7945563f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E8.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9269
+References: <20240509011900.2694291-1-yukuai1@huaweicloud.com>
+ <20240509011900.2694291-4-yukuai1@huaweicloud.com> <v838ekaa.fsf@damenly.org>
+In-Reply-To: <v838ekaa.fsf@damenly.org>
+From: Xiao Ni <xni@redhat.com>
+Date: Tue, 21 May 2024 11:25:31 +0800
+Message-ID: <CALTww28PVgS3D+9JsNv4PvDLAi=hOyT14QMkk5245_a8JXvgNQ@mail.gmail.com>
+Subject: Re: [PATCH md-6.10 3/9] md: add new helpers for sync_action
+To: Su Yue <l@damenly.org>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, agk@redhat.com, snitzer@kernel.org, 
+	mpatocka@redhat.com, song@kernel.org, dm-devel@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com, 
+	yi.zhang@huawei.com, yangerkun@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Unconditionally enable the DPSUB layer in the corresponding atomic plane
-update callback. Setting the new display mode may require disabling and
-re-enabling the CRTC. This effectively resets DPSUB to the default state
-with all layers disabled. The original implementation of the plane atomic
-update enables the corresponding DPSUB layer only if the framebuffer
-format has changed. This would leave the layer disabled after switching to
-a different display mode with the same framebuffer format.
+On Mon, May 20, 2024 at 8:38=E2=80=AFPM Su Yue <l@damenly.org> wrote:
+>
+>
+> On Thu 09 May 2024 at 09:18, Yu Kuai <yukuai1@huaweicloud.com>
+> wrote:
+>
+> > From: Yu Kuai <yukuai3@huawei.com>
+> >
+> > The new helpers will get current sync_action of the array, will
+> > be used
+> > in later patches to make code cleaner.
+> >
+> > Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> > ---
+> >  drivers/md/md.c | 64
+> >  +++++++++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/md/md.h |  3 +++
+> >  2 files changed, 67 insertions(+)
+> >
+> > diff --git a/drivers/md/md.c b/drivers/md/md.c
+> > index 00bbafcd27bb..48ec35342d1b 100644
+> > --- a/drivers/md/md.c
+> > +++ b/drivers/md/md.c
+> > @@ -69,6 +69,16 @@
+> >  #include "md-bitmap.h"
+> >  #include "md-cluster.h"
+> >
+> > +static char *action_name[NR_SYNC_ACTIONS] =3D {
+> >
+>
+> Th array will not be modified, so:
+>
+> static const char * const action_names[NR_SYNC_ACTIONS]
+>
+> > +     [ACTION_RESYNC]         =3D "resync",
+> > +     [ACTION_RECOVER]        =3D "recover",
+> > +     [ACTION_CHECK]          =3D "check",
+> > +     [ACTION_REPAIR]         =3D "repair",
+> > +     [ACTION_RESHAPE]        =3D "reshape",
+> > +     [ACTION_FROZEN]         =3D "frozen",
+> > +     [ACTION_IDLE]           =3D "idle",
+> > +};
+> > +
+> >  /* pers_list is a list of registered personalities protected by
+> >  pers_lock. */
+> >  static LIST_HEAD(pers_list);
+> >  static DEFINE_SPINLOCK(pers_lock);
+> > @@ -4867,6 +4877,60 @@ metadata_store(struct mddev *mddev, const
+> > char *buf, size_t len)
+> >  static struct md_sysfs_entry md_metadata =3D
+> >  __ATTR_PREALLOC(metadata_version, S_IRUGO|S_IWUSR,
+> >  metadata_show, metadata_store);
+> >
+> > +enum sync_action md_sync_action(struct mddev *mddev)
+> > +{
+> > +     unsigned long recovery =3D mddev->recovery;
+> > +
+> > +     /*
+> > +      * frozen has the highest priority, means running sync_thread
+> > will be
+> > +      * stopped immediately, and no new sync_thread can start.
+> > +      */
+> > +     if (test_bit(MD_RECOVERY_FROZEN, &recovery))
+> > +             return ACTION_FROZEN;
+> > +
+> > +     /*
+> > +      * idle means no sync_thread is running, and no new
+> > sync_thread is
+> > +      * requested.
+> > +      */
+> > +     if (!test_bit(MD_RECOVERY_RUNNING, &recovery) &&
+> > +         (!md_is_rdwr(mddev) || !test_bit(MD_RECOVERY_NEEDED,
+> > &recovery)))
+> > +             return ACTION_IDLE;
+> My brain was lost sometimes looking into nested conditions of md
+> code...
 
-Signed-off-by: Anatoliy Klymenko <anatoliy.klymenko@amd.com>
----
- drivers/gpu/drm/xlnx/zynqmp_kms.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+agree+
 
-diff --git a/drivers/gpu/drm/xlnx/zynqmp_kms.c b/drivers/gpu/drm/xlnx/zynqmp_kms.c
-index 43bf416b33d5..c4f038e34814 100644
---- a/drivers/gpu/drm/xlnx/zynqmp_kms.c
-+++ b/drivers/gpu/drm/xlnx/zynqmp_kms.c
-@@ -120,9 +120,8 @@ static void zynqmp_dpsub_plane_atomic_update(struct drm_plane *plane,
- 		zynqmp_disp_blend_set_global_alpha(dpsub->disp, true,
- 						   plane->state->alpha >> 8);
- 
--	/* Enable or re-enable the plane if the format has changed. */
--	if (format_changed)
--		zynqmp_disp_layer_enable(layer);
-+	/* Enable or re-enable the plane. */
-+	zynqmp_disp_layer_enable(layer);
- }
- 
- static const struct drm_plane_helper_funcs zynqmp_dpsub_plane_helper_funcs = {
+> I agree with Xiao Ni's suggestion that more comments about the
+> array
+> state should be added.
 
----
-base-commit: 673087d8b023faf34b84e8faf63bbeea3da87bab
-change-id: 20240520-dp-layer-enable-7b561af29ca8
+In fact, I suggest to keep the logic which is in action_show now. The
+logic in action_show is easier to understand for me.
 
-Best regards,
--- 
-Anatoliy Klymenko <anatoliy.klymenko@amd.com>
+Best Regards
+Xiao
+>
+> > +     if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
+> > +         mddev->reshape_position !=3D MaxSector)
+> > +             return ACTION_RESHAPE;
+> > +
+> > +     if (test_bit(MD_RECOVERY_RECOVER, &recovery))
+> > +             return ACTION_RECOVER;
+> > +
+> >
+> In action_show, MD_RECOVERY_SYNC is tested first then
+> MD_RECOVERY_RECOVER.
+> After looking through the logic of MD_RECOVERY_RECOVER
+> clear/set_bit, the
+> change is fine to me. However, better to follow old pattern unless
+> there
+> have resons.
+>
+>
+> > +     if (test_bit(MD_RECOVERY_SYNC, &recovery)) {
+> > +             if (test_bit(MD_RECOVERY_CHECK, &recovery))
+> > +                     return ACTION_CHECK;
+> > +             if (test_bit(MD_RECOVERY_REQUESTED, &recovery))
+> > +                     return ACTION_REPAIR;
+> > +             return ACTION_RESYNC;
+> > +     }
+> > +
+> > +     return ACTION_IDLE;
+> > +}
+> > +
+> > +enum sync_action md_sync_action_by_name(char *page)
+> > +{
+> > +     enum sync_action action;
+> > +
+> > +     for (action =3D 0; action < NR_SYNC_ACTIONS; ++action) {
+> > +             if (cmd_match(page, action_name[action]))
+> > +                     return action;
+> > +     }
+> > +
+> > +     return NR_SYNC_ACTIONS;
+> > +}
+> > +
+> > +char *md_sync_action_name(enum sync_action action)
+> >
+>
+> And 'const char *'
+>
+> --
+> Su
+>
+> > +{
+> > +     return action_name[action];
+> > +}
+> > +
+> >  static ssize_t
+> >  action_show(struct mddev *mddev, char *page)
+> >  {
+> > diff --git a/drivers/md/md.h b/drivers/md/md.h
+> > index 2edad966f90a..72ca7a796df5 100644
+> > --- a/drivers/md/md.h
+> > +++ b/drivers/md/md.h
+> > @@ -864,6 +864,9 @@ extern void md_unregister_thread(struct
+> > mddev *mddev, struct md_thread __rcu **t
+> >  extern void md_wakeup_thread(struct md_thread __rcu *thread);
+> >  extern void md_check_recovery(struct mddev *mddev);
+> >  extern void md_reap_sync_thread(struct mddev *mddev);
+> > +extern enum sync_action md_sync_action(struct mddev *mddev);
+> > +extern enum sync_action md_sync_action_by_name(char *page);
+> > +extern char *md_sync_action_name(enum sync_action action);
+> >  extern bool md_write_start(struct mddev *mddev, struct bio
+> >  *bi);
+> >  extern void md_write_inc(struct mddev *mddev, struct bio *bi);
+> >  extern void md_write_end(struct mddev *mddev);
+>
 
 
