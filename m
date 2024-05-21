@@ -1,107 +1,93 @@
-Return-Path: <linux-kernel+bounces-185064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D2D8CB010
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:09:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0390A8CB013
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5AEC2852F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:09:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 999D72838FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07057F7CA;
-	Tue, 21 May 2024 14:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB907F49F;
+	Tue, 21 May 2024 14:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CSWuwS47"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jt7rX7V8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48527EF1F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F96535B7
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716300548; cv=none; b=GcIXv7IaMIEMUhY1hv3hHeHogVufiKEc21Wn34nvXTLyrDKCCF9qurnZ5z7Aw3N3XPOBZVcz1LBHX36YO27PU/7C4AnYCaBFmvUE+GSMPX+mjDlRBxkh5ShlLjxivQZxJLaRpCL5TRFOe824GE4vhEfAv0GOe9Lkdf18Csx9k34=
+	t=1716300621; cv=none; b=lUSt/lfbC9s8YLPyft/+72wklkt2ufnyA2J09igM8aPam/BFBDJZ8bXwYpAI1YsRxK2LLzQT4mQuJ4Jp+xandZwvTV6E2n4AFyfqmENTFRoUauJeRFEJXJ2xHc3wfymDBKdKQIQKlvB3ow/C/6Fa2uMHnurZavt3FIpmxeM5dnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716300548; c=relaxed/simple;
-	bh=/caslErRT+Hc56Anfjhz6C34hVHNqoRgVZhJ+3+OHxg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Q6IosqXhyzg9d3DU4WIptG0hvnekpNAWNN7OTSA6b5E4hGNYTK+cwYX4XZAYbA5qvJF0CKZMHdXi5xJ9nUH4ngJWhXd9zqR7ENByoT5NcoIYsUEfpavGxlu/OsZT2df6I11LOtFGue7uGWWjdQ0C2VgjKZp2r8npa3bUe0NPWZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CSWuwS47; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dee8315174dso18105496276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:09:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716300546; x=1716905346; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ESvGWXS0fD/t8ylmnmWa5FToXUokd2bJzguAulWr/QU=;
-        b=CSWuwS477MsQct4LeuXgF5z9n9kh2YlCgMjA2JxFq3sOuBI2xWwJJNEP/RQd1DQTEg
-         2FwyO8ZofUSODa58yTwTD7FTA7hQUBFVaTJfTWRusfMSp8XR5f/BUAvJWZfH2k+28iKn
-         Z4nnUe0nvrQVpFezJXUH1c2i23QfMjb7sEcP+rcaz+MYdKsn0EzQtjMJFR64eni4drvj
-         Bbh3cpNTHlVLPYdXdAf/nroyAaoQ6LRiaqxi5foEjQXUaBIZEFrY9W/QBirPsoIKKFBE
-         mcWIKVrNZQPCJ8ns2PbyEUKR7k2NmNWkafFk+7pHQ+WvKsKHAUlJ6r/zpzw3O6/+WPdN
-         Zulg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716300546; x=1716905346;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ESvGWXS0fD/t8ylmnmWa5FToXUokd2bJzguAulWr/QU=;
-        b=hihRAqJ/jzV6XnOv7Y0SVhZ1cbZOLXP4jVlgnSBY9t64XGhY0nVtBybS6hSDcH9LgN
-         iXO0sZPSyUT5n0saRJ2xinoZa/WX2wwUSDk8uEkeKOV4z8+N9vdpfZRuEjZs2vpDn6NB
-         lZwE2c9gtP5UtebqN7Q+pBSBeqjgZ/oZDm7+dfCvf/5wEtujIr2MgbByklNtxfnD0TtX
-         PWHjeHyTpf+3B0E5Bd7aOL5imLKRk/4zZuO6MQ/ytfKn3rGQkzT8koYhXE9jNTRaf7sa
-         XkhkVqECIi3kYjC7bdVXdYm/11A9OAeLxoe4pksL1oUH5FPAUBc2H2Mup3zzF/UaVxhu
-         qdXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHOTRcKJ79rnH3eFjNmoyCKbeXQQfxBvACz6BneBngm1cJAipsjS3JjAw1Ue+yc++08jbfIryMUETfsgrixob8A9tWF8c1Dnbx0pyh
-X-Gm-Message-State: AOJu0YxoJZL0qb4ENeD4tREiYjySQDcnyOySZIWT6yVJaI3xGjxqZlEF
-	6AIvzzFYMeJYUqF3KKRcdmiWd07bU1umU4gDju6uedkMJx+DOd8AHpxrwtF56f0FJrUD6I5wQIN
-	m8Q==
-X-Google-Smtp-Source: AGHT+IGnbtKlGqlagUBFegiT63ZwMXiGV3RsvKr3ciCENN1Eb4Oh3qQ6ZMNolc8nj81o5KcT7HCT/rT0m+g=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:100f:b0:dda:c4ec:7db5 with SMTP id
- 3f1490d57ef6-df49063341cmr2813975276.4.1716300545914; Tue, 21 May 2024
- 07:09:05 -0700 (PDT)
-Date: Tue, 21 May 2024 07:09:04 -0700
-In-Reply-To: <20240521020049.tm3pa2jdi2pg4agh@amd.com>
+	s=arc-20240116; t=1716300621; c=relaxed/simple;
+	bh=amWnjt4JjeCxkbq0DcmeXrYrb3QX2mJNLgyTI5kZlMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fxz/WL0BpJzXWppXKGn1yAUgd6bUPJ5/tcN7eKv1XSDgn3PX81tssy4Pf8yXO0PpVlxPOQppGi06DZdpgwxPefUTiDIrq7DnJ+1t4PjYFVVzm7u60lfcsESVLvjumXzhrDGgoYX4uuK2mRCTGOO6DSrqKJnlViWPJxbpJm8tV+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jt7rX7V8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DC87C2BD11;
+	Tue, 21 May 2024 14:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716300621;
+	bh=amWnjt4JjeCxkbq0DcmeXrYrb3QX2mJNLgyTI5kZlMg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jt7rX7V87jSD6Pg/RJE+R+B+xHXjLuKsp7h91efnNLo9h9dCsX9mUCF9mvWRfzv7b
+	 hRFiibRtI9BqRKbgP7fN12FIOa2sSx/qeC++FlkL9c6RVGAi5j9xsAoAgGFfF41tCN
+	 hfNU2jjvFlwMSu2bNL3A9Yi7jmMGXdLLxZ5LgfsLXjMeivPKjy9vYJGYNQeOwdaNKp
+	 PnXzASPuvJUcnjeHpQF6q4vqyNhrSjIVSkv8TJl8ZoNSeDEG2rwatv6b1r82UeXFDw
+	 DXXjMzOz+vgS2wXujor3bQFJOuGK/bVZ50BFHvGKSPk+dbwAxIaxNJrCKK76u2rR1e
+	 Nx0E71iXijzgg==
+Date: Tue, 21 May 2024 08:10:18 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: John Meneghini <jmeneghi@redhat.com>
+Cc: Hannes Reinecke <hare@suse.de>, hch@lst.de, sagi@grimberg.me,
+	emilne@redhat.com, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org, jrani@purestorage.com,
+	randyj@purestorage.com, hare@kernel.org
+Subject: Re: [PATCH v3 1/1] nvme: multipath: Implemented new iopolicy
+ "queue-depth"
+Message-ID: <ZkyrSqGQX6kQf7nG@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240520202045.427110-1-jmeneghi@redhat.com>
+ <20240520202045.427110-2-jmeneghi@redhat.com>
+ <f808fa46-e7c7-48e6-8c80-3d28efd0afec@suse.de>
+ <595e5988-b94d-41ba-a233-f87aed55028d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <58492a1a-63bb-47d2-afef-164557d15261@redhat.com>
- <20240518150457.1033295-1-michael.roth@amd.com> <ZktbBRLXeOp9X6aH@google.com>
- <iqzde53xfkcpqpjvrpyetklutgqpepy3pzykwpdwyjdo7rth3m@taolptudb62c>
- <ZkvddEe3lnAlYQbQ@google.com> <20240521020049.tm3pa2jdi2pg4agh@amd.com>
-Message-ID: <ZkyrAETobNEjI4Tr@google.com>
-Subject: Re: [PATCH] KVM: SEV: Fix guest memory leak when handling guest requests
-From: Sean Christopherson <seanjc@google.com>
-To: Michael Roth <michael.roth@amd.com>
-Cc: Michael Roth <mdroth@utexas.edu>, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ashish.kalra@amd.com, thomas.lendacky@amd.com, 
-	rick.p.edgecombe@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <595e5988-b94d-41ba-a233-f87aed55028d@redhat.com>
 
-On Mon, May 20, 2024, Michael Roth wrote:
-> On Mon, May 20, 2024 at 04:32:04PM -0700, Sean Christopherson wrote:
-> > On Mon, May 20, 2024, Michael Roth wrote:
-> > > But there is a possibility that the guest will attempt access the response
-> > > PFN before/during that reporting and spin on an #NPF instead though. So
-> > > maybe the safer more repeatable approach is to handle the error directly
-> > > from KVM and propagate it to userspace.
+On Tue, May 21, 2024 at 09:58:31AM -0400, John Meneghini wrote:
+> On 5/21/24 02:46, Hannes Reinecke wrote:
+> > > +    list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
+> > > +        atomic_set(&ctrl->nr_active, 0);
+> > > +        nvme_mpath_clear_ctrl_paths(ctrl);
 > > 
-> > I was thinking more along the lines of KVM marking the VM as dead/bugged.  
+> > You always reset the variables here, even if specified iopolicy is
+> > the same than the currently active one.
+> > I'd rather check if the iopolicy is different before changing the settings.
 > 
-> In practice userspace will get an unhandled exit and kill the vcpu/guest,
-> but we could additionally flag the guest as dead.
+> Yes, Keith pointed this out too.  This is actually a feature not a bug.  In
+> situations were we want to "reset" the nr_active counters on all controllers
+> the user can simply set the queue-depth iopolicy a second time.  I don't
+> expect users to do this very often... they shouldn't be changing IO policies
+> back and forth too much... but the ability to "reset" the nr_active counters
+> during testing has been very helpful and important to do.  So I'd like to
+> keep this.  Moreover, this is NOT the performance path. I don't see the
+> point in making performance optimizations in a code path that is run once a
+> year.
 
-Honest question, does it make sense from KVM to make the VM unusable?  E.g. is
-it feasible for userspace to keep running the VM?  Does the page that's in a bad
-state present any danger to the host?
-
-> Is there a existing mechanism for this?
-
-kvm_vm_dead()
+I missed that you actually want to reset the counters on a live queue.
+Wouldn't that just lead to an imbalance? If that is really a feature,
+then I retract a previous comment: you do need the atomic_dec_not_zero
+(or whatever it was called) since the active count is no longer tied to
+the inc's.
 
