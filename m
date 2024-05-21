@@ -1,163 +1,94 @@
-Return-Path: <linux-kernel+bounces-185421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BFB8CB4BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:31:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB168CB4D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEF4F1F22B8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B10C1C2194E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7A11494C3;
-	Tue, 21 May 2024 20:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89588149C7F;
+	Tue, 21 May 2024 20:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q8xTUZJh"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="SKT3Wtix"
+Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D734547A5C
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0779853816;
+	Tue, 21 May 2024 20:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716323505; cv=none; b=ThTWEPMK8OlmtH4e8f7tYCtgXHOHku66PyhSjxJrVAaZTZ0+f6/5lVqnQyg7mu8jTZmkQ6+davfsXV13zIwVcqXRuyszZUWforHBIk8cnkiEB24+xg90u6StoMKpPkXSJ5uilL7v3N9YKR4lO98s+D6BWsgIiDaTWlDuOVI6Sag=
+	t=1716324201; cv=none; b=NH5Gz/jrp/xwFUjtJjeOwyBQua7J6f0B4pogNORlZOcKC5ZTj4X9Wraqs/rOKIjaVSMlQGeHtOpVgWCo7Bv7Q/Oc75XikctdkV3eGOr30OjnGi0q/zjrpZLVwqZfNJbIhQFNvNln2mD/apN1cFBDAYYYPdEUCksZXtaOlD0jtKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716323505; c=relaxed/simple;
-	bh=QuUd2WIszBgiRLRMwosQW3GxJBwnIuQ7/If73ZyYbfA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TTnMwaL6F8UB2E5Q4H/HdqjofHp2Ond8pXMe1Nh62Fy5klcN5GeOaiJw25EE/6db/FVFGn0nziqWeg8hJMNa6dhwdLIIOpN5i02ObaSGwwasz5UaXQUXs8woL4LOUtgfcvnBk0Xl7QpyhIcsK/Bm+Sidxuqr/v0Uqd72ugGnzlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q8xTUZJh; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-6f46eb81892so12712913b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716323503; x=1716928303; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RIxYIUY6xfa0Z61X8hb/LG8bYVX3fiRC8Zg5CcwCluY=;
-        b=Q8xTUZJhveLvXkoO/x1fUOd7lVkYsmwGekVBSXOGvD7dOcNFBllInms6rwOKzACnzl
-         ET+wZ0hm5g0QORofywxELACZAF6GOVfvKiNobkumnvSLli7p2gMJh2qrrA5fULNzAdNK
-         gjqK4k11nClvwgtd2jHOeGYkurDSlZwJGoqhQPsViubV612do1xo1vGTSMKwvVsnJWSs
-         3f0Dw1VZwLPzH4QyfnNx0WSE221vP0WW3x9cagaa8raPCearALdajpMK7fIR7NpY/Ts3
-         jP8ruxTOZEoMVIXIKYJMFS4aAganq5VtCZNdcpCQ6iWwkIhMpRz4JhZqiOWqbnpXiKql
-         m6Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716323503; x=1716928303;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RIxYIUY6xfa0Z61X8hb/LG8bYVX3fiRC8Zg5CcwCluY=;
-        b=g+DHo1wFsc0QGVSgj6NZVFgNxAQ5IJprYNbWwoL1/3b+fEE/AqQBWQ4iOumZPFdppx
-         w4qUGLIxUWnSkvEfm24eX8AV/xQ6tYD3lUIuAKqT0spaQsEq3bK8Xf6cZt/BtQ3wCzJZ
-         0SM1oQJIVyuys2KAiXWXVqUvTobrYgy4+dchra1hj+HgLSEnLv+G/51xdCMBlvMjRvhg
-         sH2CRJ+ZCAAOJYXfK+mjw+OJX5DWhR52nFwZapS5oMhnF31sFrz3WXcTS7nCjPFgz757
-         Lq7aVpF/Z2cdhGwUPYbMBNDHJ9D0ZCQYNUyBKqOQGWrI/bEMHQks25Jk9S0Eyl3lHJ8C
-         RjBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFjreq9kixVVtumcZ9ytZ6n5qLPelXZlaRUa6U+HLatdpALEJYisMKAOmUosEVk8xmkuDnVzq4DZu09WgQI1RZyP80mzX6yMYgNxBv
-X-Gm-Message-State: AOJu0Yx34wVyLM7030A3Rn7BWih6Xz7Sblb6kHgPUWiQzj3rCfYW/5/X
-	+issYmzSYtVf1HK9nR/pi7A89bX0OHG0Bt+/C9Ad20MH5IujqliEKr3b68XZpNA8W3OVKBpMiZg
-	KNg==
-X-Google-Smtp-Source: AGHT+IHh7glVSft5QaLCRrxXDi7uu5WLdc5qtZ1rOL0wAEurEIF+QY6zQhvvtTu4XmwUuxKFnuuMpe8K5ec=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:2e8f:b0:6f3:f447:57e1 with SMTP id
- d2e1a72fcca58-6f6d6002b65mr392b3a.1.1716323502715; Tue, 21 May 2024 13:31:42
- -0700 (PDT)
-Date: Tue, 21 May 2024 13:31:41 -0700
-In-Reply-To: <b66ea07a-f57e-014c-68b4-729f893c2fbd@amd.com>
+	s=arc-20240116; t=1716324201; c=relaxed/simple;
+	bh=UJeYAx0s+riUtaDffRhQZniXYmFCQfIeCHnUNZFJ0/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KXLxz9oWhsS+xNVmezMv6wJMRn+JrlOidz8UXXIXDQ5jswXb+sY8E+ZwuTon3ZKAukSWdC5qEpsNjiAgcukHruNKUjVm2Gt9+uADzS1vtJQ3boVet07yBRLDUNjF/Y/V8H2wRSHSsyR1bPJ9f+oBBPFtef01woUaDuuhx/OTJuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=SKT3Wtix; arc=none smtp.client-ip=178.154.239.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:39ad:0:640:62fe:0])
+	by forward500b.mail.yandex.net (Yandex) with ESMTPS id A3851613DB;
+	Tue, 21 May 2024 23:35:18 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id GZQB3w8oDmI0-W1EtqRHB;
+	Tue, 21 May 2024 23:35:17 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1716323717; bh=c7N6rlTa5ppx9RAeRPq2mB8w6Nw+lsRi9BsRkwM6uhE=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=SKT3Wtixr0847bCZuU1FA1EPajMmaeICi/K5joOm6b1Mz7LA/Cppwhwg8u2r4Ktya
+	 YpQ8xO8wgnibdHZKHCD+LE9aoIid3dWuSfUBaGb8QMRb4J2jjIZcxvZMsVyWzm8Y+v
+	 iqxosxvl1YnrIWLIPuRa48u/NAleBv8ge33M8tlA=
+Authentication-Results: mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <125b6804-d9f8-4c36-83cd-36143ba1045d@yandex.ru>
+Date: Tue, 21 May 2024 23:35:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240416050338.517-1-ravi.bangoria@amd.com> <ZjQnFO9Pf4OLZdLU@google.com>
- <9252b68e-2b6a-6173-2e13-20154903097d@amd.com> <Zjp8AIorXJ-TEZP0@google.com>
- <305b84aa-3897-40f4-873b-dc512a2da61f@amd.com> <ZkdqW8JGCrUUO3RA@google.com> <b66ea07a-f57e-014c-68b4-729f893c2fbd@amd.com>
-Message-ID: <Zk0ErRQt3XH7xK6O@google.com>
-Subject: Re: [PATCH v2] KVM: SEV-ES: Don't intercept MSR_IA32_DEBUGCTLMSR for
- SEV-ES guests
-From: Sean Christopherson <seanjc@google.com>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, michael.roth@amd.com, nikunj.dadhania@amd.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, santosh.shukla@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/3] implement OA2_CRED_INHERIT flag for openat2()
+Content-Language: en-US
+To: Jann Horn <jannh@google.com>
+Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
+ Eric Biederman <ebiederm@xmission.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>,
+ David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+References: <20240427112451.1609471-1-stsp2@yandex.ru>
+ <CAG48ez0rOch3wemsmrL-ocadG1YeJ6Lyhz1uLxJod22Unbb_GA@mail.gmail.com>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <CAG48ez0rOch3wemsmrL-ocadG1YeJ6Lyhz1uLxJod22Unbb_GA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 20, 2024, Ravi Bangoria wrote:
-> On 17-May-24 8:01 PM, Sean Christopherson wrote:
-> > On Fri, May 17, 2024, Ravi Bangoria wrote:
-> >> On 08-May-24 12:37 AM, Sean Christopherson wrote:
-> >>> So unless I'm missing something, the only reason to ever disable LBRV would be
-> >>> for performance reasons.  Indeed the original commits more or less says as much:
-> >>>
-> >>>   commit 24e09cbf480a72f9c952af4ca77b159503dca44b
-> >>>   Author:     Joerg Roedel <joerg.roedel@amd.com>
-> >>>   AuthorDate: Wed Feb 13 18:58:47 2008 +0100
-> >>>
-> >>>     KVM: SVM: enable LBR virtualization
-> >>>     
-> >>>     This patch implements the Last Branch Record Virtualization (LBRV) feature of
-> >>>     the AMD Barcelona and Phenom processors into the kvm-amd module. It will only
-> >>>     be enabled if the guest enables last branch recording in the DEBUG_CTL MSR. So
-> >>>     there is no increased world switch overhead when the guest doesn't use these
-> >>>     MSRs.
-> >>>
-> >>> but what it _doesn't_ say is what the world switch overhead is when LBRV is
-> >>> enabled.  If the overhead is small, e.g. 20 cycles?, then I see no reason to
-> >>> keep the dynamically toggling.
-> >>>
-> >>> And if we ditch the dynamic toggling, then this patch is unnecessary to fix the
-> >>> LBRV issue.  It _is_ necessary to actually let the guest use the LBRs, but that's
-> >>> a wildly different changelog and justification.
-> >>
-> >> The overhead might be less for legacy LBR. But upcoming hw also supports
-> >> LBR Stack Virtualization[1]. LBR Stack has total 34 MSRs (two control and
-> >> 16*2 stack). Also, Legacy and Stack LBR virtualization both are controlled
-> >> through the same VMCB bit. So I think I still need to keep the dynamic
-> >> toggling for LBR Stack virtualization.
-> > 
-> > Please get performance number so that we can make an informed decision.  I don't
-> > want to carry complexity because we _think_ the overhead would be too high.
-> 
-> LBR Virtualization overhead for guest entry + exit roundtrip is ~450 cycles* on
+21.05.2024 22:01, Jann Horn пишет:
+> On Sat, Apr 27, 2024 at 1:24 PM Stas Sergeev <stsp2@yandex.ru> wrote:
+>> This patch-set implements the OA2_CRED_INHERIT flag for openat2() syscall.
+>> It is needed to perform an open operation with the creds that were in
+>> effect when the dir_fd was opened, if the dir was opened with O_CRED_ALLOW
+>> flag. This allows the process to pre-open some dirs and switch eUID
+>> (and other UIDs/GIDs) to the less-privileged user, while still retaining
+>> the possibility to open/create files within the pre-opened directory set.
+> As Andy Lutomirski mentioned before, Linux already has Landlock
+> (https://docs.kernel.org/userspace-api/landlock.html) for unprivileged
+> filesystem sandboxing. What benefits does OA2_CRED_INHERIT have
+> compared to Landlock?
 
-Ouch.  Just to clearify, that's for LBR Stack Virtualization, correct?
+The idea is different.
+OA2_CRED_INHERIT was supposed to give you an additional access (to what 
+you can't access otherwise, after a priv drop), while landlock allows 
+you to explicitly restrict an access. OA2_CRED_INHERIT more answered 
+with idmapped mounts rather than the landlock, but idmapped mounts are 
+not fully unpriv'd.
 
-Ugh, I was going to say that we could always enable "legacy" LBR virtualization,
-and do the dynamic toggling iff DebugExtnCtl.LBRS=1, but they share an enabling
-flag.  What a mess.
-
-> a Genoa machine. Also, LBR MSRs (except MSR_AMD_DBG_EXTN_CFG) are of swap type
-> C so this overhead is only for guest MSR save/restore.
-
-Lovely.
-
-Have I mentioned that the SEV-ES behavior of force-enabling every feature under
-the sun is really, really annoying?
-
-Anyways, I agree that we need to keep the dynamic toggling.
-
-But I still think we should delete the "lbrv" module param.  LBR Stack support has
-a CPUID feature flag, i.e. userspace can disable LBR support via CPUID in order
-to avoid the overhead on CPUs with LBR Stack.  The logic for MSR_IA32_DEBUGCTLMSR
-will be bizarre, but I don't see a way around that since legacy LBR virtualization
-and LBR Stack virtualization share a control.
-
-E.g. I think we'll want to end up with something like this?
-
-	case MSR_IA32_DEBUGCTLMSR:
-		if (data & DEBUGCTL_RESERVED_BITS)
-			return 1;
-
-		if (kvm_cpu_cap_has(X86_FEATURE_LBR_STACK) &&
-		    !guest_cpuid_has(vcpu, X86_FEATURE_LBR_STACK)) {
-		    	kvm_pr_unimpl_wrmsr(vcpu, ecx, data);
-			break;
-		}
-
-		svm_get_lbr_vmcb(svm)->save.dbgctl = data;
-		svm_update_lbrv(vcpu);
-		break;
 
