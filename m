@@ -1,109 +1,139 @@
-Return-Path: <linux-kernel+bounces-184406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0E48CA694
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:02:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 049C48CA698
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DBF91C214C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:02:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 358ED1C215B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB66B17BA8;
-	Tue, 21 May 2024 03:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CE71B299;
+	Tue, 21 May 2024 03:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSlCxhG1"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="bLvymVVa"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF421BC44;
-	Tue, 21 May 2024 03:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C4118054
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716260517; cv=none; b=LLSIJj2BJIsMPajoWpc4XbO9Itkf7DaYf0YDNOn3sN9JDHjmgyv2tg/eXaACw5Xg97aH8xcfhDycmB5gY53vaYbBuGNjslzZ/chJ0LLcQf0f2R5KELxxqYjuIxHfM4bZWlTfxa2eeyrCLstXcg+9RQBcey05ePfIExaEbX3M8KY=
+	t=1716260542; cv=none; b=iSYRe3r2cHOqF61aREm6EDknbqFMhnEISADSl3VOmYq9MjTsgQXkg9J021H6JBTYf7RBdqUBPP2pLI+NGzD2dcIau5tNtzNXJyPbvW4UUt+2vG0mfssLaQuqdHG6jkEOwsh6evu/MJq/gq+ARaZhsTQW/tsyHM1GMPws6t3la1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716260517; c=relaxed/simple;
-	bh=akufwTAxaGwYpcPiUZ4tvDW/YYUXHCiwJM49ewu8Q34=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ceUqOwcrHVuL0SWjLue7IUBujqlQod9uCsksph4OmWpfFLFq1SxJJng3c0loklUqWSgWuwo9w2P3fxpPqhVJG5/0nBVA+E9jnCWXcz5/+1Gy6fRBgWsnCkgAHZZDjINtvK7K4tAyKoVKzUSNo8UgcBQko5+JS6y2IGm41HouDtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RSlCxhG1; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-df475159042so2683187276.1;
-        Mon, 20 May 2024 20:01:55 -0700 (PDT)
+	s=arc-20240116; t=1716260542; c=relaxed/simple;
+	bh=rmQ4T+nGAvY9sCmAPKBpE2xvlymeLhT8/MbFVAM0HMI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lq/SkFEPyfiihwTefmTNEkE3vkt8QMkCkizTEXEj4HaTp7c8512Fh1/N8YeYhHul7aVAMBvO2TG3gSwJUbdfTqDxb91+6/BFt5SSlnYJ7Q5H+qZBpAUoBeGKR6T/tioMF8CzDdtR8Tn0za8C7VvInciyZyA60cH10fnGkgphUpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=bLvymVVa; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1eca195a7c8so93050475ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:02:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716260515; x=1716865315; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=akufwTAxaGwYpcPiUZ4tvDW/YYUXHCiwJM49ewu8Q34=;
-        b=RSlCxhG1V6P2kT2DRXdwZXlQvcinFC1YgWJJdA2Ti7gWwOBXzjDWEjKDXwizl4JaUq
-         It+QxURrVVwPrfv/4CVxowy/Zrb8ubJBf6oD/u8PTwfvm+jqFu6hgtDMKs8jz+KnpEh3
-         ilUIv2fr5J+58fmKndfWKwu9JjH+fwkKDFdzPXL2aqwDFbc3QrFNFtSFdLFlaQaC0veU
-         AUFhbSg9p0MgkiRep3EzagG6g+xc++OaEUbhC3yBpezWOJhgcIQ1J8VS3EGKOl9iPToj
-         z3AvNPnnnoeEAgaxjeEMEglT8NEUrgaX4W0KfWO+Qhhga62eWIv9/wF3WZVNNNIuDCGO
-         iUAA==
+        d=darkphysics.net; s=google; t=1716260540; x=1716865340; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FTRE2aAD7nMAx0mWWNU5WX8ozRRvU4vGs8kuCzV19R0=;
+        b=bLvymVVa/7EB+KQQC7oIuEejyrP3LaqfpRBQ42u08Qndmd3/KnkprZH+lR2aB9Cu+g
+         GxFhMVWxeRNjlYMzICdxMh2zhGgBydrqIRn/Tj02NfCT0/Wi29RNwUBUU0np2rtbgVgE
+         xrESXTe5wEQjOhcsMx3RpSfeBpAk73EE1THfV1+WO8esQiV8v8Xpb9cuwt3evlKZA4eB
+         oKOpgHTxz1yB4nwXZULZgqFdlLcN3Qdg5KZ/HbChAJhlUoIcQdi85coKxSozU6wkYbSK
+         O0pJHuYG7xsHqm3ZO7Dk3xUYEW9UUkbSmY5ZpOyRsIqbJn/P5eVjA6f1NgcgrSPbumaD
+         UP2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716260515; x=1716865315;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1716260540; x=1716865340;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=akufwTAxaGwYpcPiUZ4tvDW/YYUXHCiwJM49ewu8Q34=;
-        b=QnIsgZO0Jabmkceo7CY1jqmV8hW86muxWVXRlavuzEo5j4sHuiRwYRDVdbYLk2kTE/
-         9L0GbXzzzuCdIjo58JRVNq54X2/zUtKyv3and8hmUf0j3qN0SlQGrujMGq3kcUcRTdL5
-         qLmi5Yfq1jotc8NaFmLU5EHjPXeyql9SiquA+idGbDnN7b9EYDksEWsbRABWWEn+dQfc
-         nyaa4RSeYyaHU5/HsB2QU7ZiHPb/3t6Y5JQ+WtnAnyhjEyPDl+ysaEpskS0kmBhopJGN
-         3u8docqx2pxE6AW92HfRUz2/3uV5f0q4h6CYct1GIpXdPHA00vZpYatDThzCV+5w56H7
-         c6Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjv/NvYNJxOj9xX2cUyZs6zKmMaYo/S5TQMsekP4zNSmf2ska+F23Zi64KoQpbLFv7a63ETNU4DzJF5RVxP4wMzZs8teenYU685508SMINibszxWl67zafYAJZvghmiiAuI301Nxrsm02hW46jdCGGcYTRVpL0EPSpqygzHTNW9iimskGx/5A=
-X-Gm-Message-State: AOJu0YzHEdL++ZKf6WqnACOe6YTHKwWcK8878VyBVxMpTaJMcwUNEq8k
-	OFm1EyCQnqPUkLVhL5DGaCazWt2w+d6Usa34TKEr15NqYf8HNP1cpvPrcCyBVWYqNBcFoTw42yc
-	AyHi+3rRvXWIx+FlkIYG0HJGEfzQ=
-X-Google-Smtp-Source: AGHT+IE0/WVO6nR4/cHU1sX1iomx+pe/SEQq3X/aVg/mNrKACAn0MJCQM6DnG6b8Mgh1xr/qfS4c6yNYgy2o1QZO8ek=
-X-Received: by 2002:a25:c945:0:b0:de5:5b81:c724 with SMTP id
- 3f1490d57ef6-dee4f1a61ebmr26963127276.23.1716260514826; Mon, 20 May 2024
- 20:01:54 -0700 (PDT)
+        bh=FTRE2aAD7nMAx0mWWNU5WX8ozRRvU4vGs8kuCzV19R0=;
+        b=jj3YoPM7qYmY1JsTUrj0pVqVNIGWaMWjKoaidzIzX2AAjpVRurpK72G1NVZvgZiJ2M
+         yk2JVXqi+XCuGUhf6Fg3vxt+Ksa//DQ9GmHO0xsI4gMFT539HtOkqHyQBQcdGLG7Hjqc
+         zhm4xTLPyn/mYPI17Je8Wsh+fleZmpA+MsiDZOkyfBzFiW9dg+P7IKhPxRlpGtsnSBoC
+         hFUUpJmWt+j4u1FmH0TeZPTubfKBKMiTS0aOu3BYy8dcFFT7pKX3CrJCEJ1ix0U3+eBK
+         bAZ6ybpdLTsfz8TStJjXxaU4oLYfRtYOZzFciOXGeUxmTLENUIqStnHzlalwMGrpjmyf
+         c7tA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhgrPrJHOa/jBLMFwtkj3WHHXinkJhZ3yGbxCWzxnQ+hfI4ehMgdvV1qGH/ISbSewDK+rUTrlOHeYH9548VWwC1gxozNR2iov+L5ET
+X-Gm-Message-State: AOJu0YzjVtiSOfHLyzPr8FAq/sOOhwpSUGZ+/B2IUBAUcLHjUHpuA6aA
+	YdQZ91o5Fsj/HUPrkBBY/9uiCVD7JCQvHgk2vlR5fHs2tZd2zJTFsbRUI64FKXE=
+X-Google-Smtp-Source: AGHT+IHxVX9iKGp3mUZ7MrQHFcpj9+avbawMj0Nyc9UVoPpd9OzQp70+XukMmO0BFRk2ZOf0MntDCQ==
+X-Received: by 2002:a05:6a00:18a0:b0:6f4:3c65:d05a with SMTP id d2e1a72fcca58-6f4e0384f7fmr34486334b3a.30.1716260540065;
+        Mon, 20 May 2024 20:02:20 -0700 (PDT)
+Received: from lunchbox.darkphysics (c-76-146-178-2.hsd1.wa.comcast.net. [76.146.178.2])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6341134694dsm20213029a12.77.2024.05.20.20.02.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 20:02:19 -0700 (PDT)
+From: Tree Davies <tdavies@darkphysics.net>
+To: gregkh@linuxfoundation.org,
+	philipp.g.hortmann@gmail.com
+Cc: dan.carpenter@linaro.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Tree Davies <tdavies@darkphysics.net>
+Subject: [PATCH 00/31] [PATCH 00/31] Staging: rtl8192e: rtllib_rx.c Rename camelcase variables
+Date: Mon, 20 May 2024 20:01:45 -0700
+Message-Id: <20240521030216.16842-1-tdavies@darkphysics.net>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520172554.182094-1-dakr@redhat.com> <20240520172554.182094-11-dakr@redhat.com>
- <CANiq72kHrgOVrdw7rB9KpHvOMy244TgmEzAcL=v5O9rchs8T1g@mail.gmail.com> <CAPM=9txb5STBo05xiTy9+wF7=mMO=X2==BP4JVORPFAtX=nS0g@mail.gmail.com>
-In-Reply-To: <CAPM=9txb5STBo05xiTy9+wF7=mMO=X2==BP4JVORPFAtX=nS0g@mail.gmail.com>
-From: Wedson Almeida Filho <wedsonaf@gmail.com>
-Date: Tue, 21 May 2024 00:01:45 -0300
-Message-ID: <CANeycqpNeHFUu-RwSc6Ewa3r5TMhYYFDC6bO+sj3OZ398JfJ1A@mail.gmail.com>
-Subject: Re: [RFC PATCH 10/11] rust: add basic abstractions for iomem operations
-To: Dave Airlie <airlied@gmail.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Danilo Krummrich <dakr@redhat.com>, 
-	gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	a.hindborg@samsung.com, aliceryhl@google.com, fujita.tomonori@gmail.com, 
-	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com, 
-	lyude@redhat.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 20 May 2024 at 23:07, Dave Airlie <airlied@gmail.com> wrote:
->
-> >
-> > Wedson wrote a similar abstraction in the past
-> > (`rust/kernel/io_mem.rs` in the old `rust` branch), with a
-> > compile-time `SIZE` -- it is probably worth taking a look.
-> >
->
-> Just on this point, we can't know in advance what size the IO BARs are
-> at compile time.
->
-> The old method just isn't useful for real devices with runtime IO BAR sizes.
+This is v2 of series renaming camelcase variables to meet style
+guide requirements. Thank you in advance to reviewers.
+~ Tree
 
-The compile-time `SIZE` in my implementation is a minimum size.
+Changes:
+#16 Renamed plist to list
+#17 Renamed npadding_length to pad_len
+#19 Deleted ChkLength variable
 
-Attempts to read/write with constants within that size (offset + size)
-were checked at compile time, that is, they would have zero additional
-runtime cost when compared to C. Reads/writes beyond the minimum would
-have to be checked at runtime.
+Tree Davies (31):
+  Staging: rtl8192e: Rename variable IsPassiveChannel
+  Staging: rtl8192e: Rename variable CountryIeBuf
+  Staging: rtl8192e: Rename variable CountryIeLen
+  Staging: rtl8192e: Rename variable bWithAironetIE
+  Staging: rtl8192e: Rename variable bContainHTC
+  Staging: rtl8192e: Rename variable MBssid
+  Staging: rtl8192e: Rename variable MBssidMask
+  Staging: rtl8192e: Rename variable elementID
+  Staging: rtl8192e: Rename variable rtllib_rx_Monitor
+  Staging: rtl8192e: Rename variable rtllib_rx_InfraAdhoc
+  Staging: rtl8192e: Rename variable IsLegacyDataFrame
+  Staging: rtl8192e: Rename variable RxReorderIndicatePacket
+  Staging: rtl8192e: Rename variable RfdArray
+  Staging: rtl8192e: Rename variable Decrypted
+  Staging: rtl8192e: Rename variable AddReorderEntry
+  Staging: rtl8192e: Rename variable pList
+  Staging: rtl8192e: Rename variable nPadding_Length
+  Staging: rtl8192e: Rename variable LLCOffset
+  Staging: rtl8192e: Remove variable ChkLength
+  Staging: rtl8192e: Rename variable WinEnd
+  Staging: rtl8192e: Rename variable WinSize
+  Staging: rtl8192e: Rename variable IsDataFrame
+  Staging: rtl8192e: Rename variable bMatchWinStart
+  Staging: rtl8192e: Rename variable bMBssidValid
+  Staging: rtl8192e: Rename variable bWithCcxVerNum
+  Staging: rtl8192e: Rename variable Frame_QoSTID
+  Staging: rtl8192e: Rename variable CcxRmState
+  Staging: rtl8192e: Rename variable IsQoSDataFrame
+  Staging: rtl8192e: Rename variable RfdCnt
+  Staging: rtl8192e: Rename variable prxbIndicateArray
+  Staging: rtl8192e: Rename variable bPktInBuf
+
+ .../staging/rtl8192e/rtl8192e/r8192E_dev.c    |   2 +-
+ drivers/staging/rtl8192e/rtl819x_HTProc.c     |   2 +-
+ drivers/staging/rtl8192e/rtl819x_TSProc.c     |   8 +-
+ drivers/staging/rtl8192e/rtllib.h             |  36 ++--
+ drivers/staging/rtl8192e/rtllib_rx.c          | 183 +++++++++---------
+ drivers/staging/rtl8192e/rtllib_tx.c          |   4 +-
+ 6 files changed, 116 insertions(+), 119 deletions(-)
+
+-- 
+2.30.2
+
 
