@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-185424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281748CB4C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:38:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A438CB4B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6806B225FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:38:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E63B51F22B1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832EB14883E;
-	Tue, 21 May 2024 20:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2291E1494D4;
+	Tue, 21 May 2024 20:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="kZC2fsXs"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="b4laSxmh"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [167.172.40.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D71149016
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6F51494A8
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.40.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716323929; cv=none; b=C7RubzoyniHOBsRjbxBlKxia2ELwp4+Wbhqw+ddU2nJwqdT7HQ7V+zljEFzbIcwByWdnWulQLli+TakWYYk670ygXBCL/8Bw7GzBr4/ekfwWwO6tkwP551RB5U3pQETxjkJScc1cuy/ysYIkJAbifWv80RVuHlxffpZ8eoNrpEU=
+	t=1716323337; cv=none; b=b5F+f7EEgZYGgWpDDMlh29RZnKdp+Fluf/e/g7QYk3aE8HE58mVU1v+mSTOJ6vS1dX8u0felG4WVqRivuklNJ/1OdK6/IVS3pQDi/w0pTuvKpgtovQ+/5yrGL1TUb1JFSwftVm9OtVi5ann/6ApRt4PUfYzuUUp4bdY/IRgyDIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716323929; c=relaxed/simple;
-	bh=kL+AiRs4MPmPF4sXVMGvvpFfAdaVHq7HuYZNorSYnec=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SIwtczNZaR9DOJfgIRj0Z1mkB2NaGUN9IRRhEktaPA2k2femtfRT6TDJjHR4M2UXWH8rMJNJSW5n60mocmlk5U2pIZtMntFM/3lCD1Vv48nusDVfd411+JCBzoskr7QVHL5gmRUTuRyLIuGwApiGNi4RJSp1wOHt/dBMLZu/zP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=kZC2fsXs; arc=none smtp.client-ip=149.28.215.223
+	s=arc-20240116; t=1716323337; c=relaxed/simple;
+	bh=i9RtT9crBjtAme5G9mmfSOcopOxJUXbwe5ZvznIypVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qL2nfudXmqABJ8NjBwxoWC0RvIOniczaOgTtCxTuPT82PgbNHhPKe5Yey7LjVrZdycGQWY/0RrzFvC6KnUQ2Y0FDaaHoCOSRRE5RrvNk6fgVe13pdllELAw1ejzqD2X7gYspvjg6ovxNWB4GxJnYzK5PoJanEUUZUq+Hx/nRFAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=b4laSxmh; arc=none smtp.client-ip=167.172.40.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
- To: From; q=dns/txt; s=fe-e1b5cab7be; t=1716323917;
- bh=7w1YK0PAlX2rnVkpWCKz2KPIKlOShCuH6VsJyB17muk=;
- b=kZC2fsXspWSpKsXzUd6uxxDiIvGjwAhNPStAKcza/hAtbb8TPjzlEfNGq1Od92lPV2t+vhQtt
- sNmSPemi7KlhAr+vKSB6WrVWMOfDWHcqjajBRQ+UCKk83YuQrTuzn1aEmcFKyXrCjbOIS6Wb7hJ
- xnmZZ6arFLl7UkbLG9DKlF0qnmTZgJSDFl80D9Trk3n+MbCh6UPJO+C0liAm+xF23DnMlmtOa6k
- t1pJ8R+Q9sU716473bAx6x6TNCtqSPbepHLWZlAct1NC61KoQcy8UjmiNuejBNiuKbgi36GJkBv
- Q9gJtOz3f0zh2VHUTblX2P447HQ2UdtFbLGKqb2J2Npw==
+ h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
+ Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
+ t=1716323304; bh=fcefaUUjcIVFz8cXLo03BezrzCivGislzB62c0WvQU0=;
+ b=b4laSxmhyQ/5aQXtN8M9kEY7oRw+GMri4Sw+4HGzpCj46o0z6I43AiHJ//Dsdshc4DKZoMFaR
+ 8Zp77mZr/VTxdVVqz0r6f9DdOI4SFZ8prV6KN4d0hvfyVtoma9b8xyUzYv2XvO3ZkhAWSuTp7Ek
+ ZivYfPO02ctu8AVE/W+kLOzLLc000IqcvHHp3cSHpLB1kWwdLBVA3hE/U8mj7QXt4cvGnEN9L1z
+ ez32KWO9yAZr+v3YF6sCVD2nJ36KoEj+rDV6Sw3ZCNgN4PVNX3VYw/ACfDZmFYvz9S0qIKFE3M8
+ 6jlw1yTyx+X/a3LbbaJYaKHw8Zzu6DlVqjAJMMMmTRSw==
 From: Jonas Karlman <jonas@kwiboo.se>
 To: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Jonas
- Karlman <jonas@kwiboo.se>
-Subject: [PATCH v6 0/2] arm64: dts: rockchip: Add Radxa ZERO 3W/3E
-Date: Tue, 21 May 2024 20:28:03 +0000
-Message-ID: <20240521202810.1225636-1-jonas@kwiboo.se>
+ Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v6 1/2] dt-bindings: arm: rockchip: Add Radxa ZERO 3W/3E
+Date: Tue, 21 May 2024 20:28:04 +0000
+Message-ID: <20240521202810.1225636-2-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20240521202810.1225636-1-jonas@kwiboo.se>
+References: <20240521202810.1225636-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,67 +65,45 @@ X-Report-Abuse: abuse@forwardemail.net
 X-Complaints-To: abuse@forwardemail.net
 X-ForwardEmail-Version: 0.4.40
 X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-ForwardEmail-ID: 664d03e0f0b0d6a40951746e
+ 167.172.40.54
+X-ForwardEmail-ID: 664d03e4f0b0d6a409517482
 
-This series adds initial support for the Radxa ZERO 3W/3E boards.
+Add devicetree binding documentation for Radxa ZERO 3W/3E boards.
 
 The Radxa ZERO 3W/3E is an ultra-small, high-performance single board
 computer based on the Rockchip RK3566, with a compact form factor and
 rich interfaces.
 
-Schematic for ZERO 3W and ZERO 3E can be found at:
-https://dl.radxa.com/zero3/docs/hw/3w/radxa_zero_3w_v1110_schematic.pdf
-https://dl.radxa.com/zero3/docs/hw/3e/radxa_zero_3e_v1200_schematic.pdf
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+v2: Collect acked-by tag
+v3: Fix devicetree spelling
+v4: No change
+v5: No change
+v6: No change
+---
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Changes in v2:
-- Collect acked-by tag
-- Add to Makefile
-- Add patch to fix #sound-dai-cells warning
-
-Changes in v3:
-- Fix devicetree spelling
-- Sort hdmi-con, leds, pmic@20 and regulator@40 nodes
-- Change to regulator-off-in-suspend for vdd_logic
-- Drop patch to fix #sound-dai-cells warning, similar patch [1] already
-  exists
-
-Changes in v4:
-- Change compatible of vdd_logic
-- Add vcc5v_midu and vbus regulator and related vcc8/vcc9-supply prop
-- Adjust clock_in_out prop for gmac1
-- Add cap-mmc-highspeed prop to sdhci
-- Add sdmmc1 and uart1 nodes used for wifi/bt on 3W
-- Rename rk3566-radxa-zero3.dtsi to rk3566-radxa-zero-3.dtsi
-- Rebase on latest mmind/for-next tree
-
-Changes in v5:
-- Rename regulator-fixed nodes
-- Add keep-power-in-suspend to sdmmc1 node
-- Add uart-has-rtscts to uart1 node
-
-Changes in v6:
-- Use imperative wording in commit message 
-- Move led-green pinctrl props to gpio-leds node
-- Add pinctrl props to ethernet-phy node
-- Add no-mmc/no-sd/no-sdio props to sdhci/sdmmc0 nodes
-
-[1] https://lore.kernel.org/linux-rockchip/3a035c16-75b5-471d-aa9d-e91c2bb9f8d0@gmail.com/
-
-Jonas Karlman (2):
-  dt-bindings: arm: rockchip: Add Radxa ZERO 3W/3E
-  arm64: dts: rockchip: Add Radxa ZERO 3W/3E
-
- .../devicetree/bindings/arm/rockchip.yaml     |   7 +
- arch/arm64/boot/dts/rockchip/Makefile         |   2 +
- .../dts/rockchip/rk3566-radxa-zero-3.dtsi     | 463 ++++++++++++++++++
- .../dts/rockchip/rk3566-radxa-zero-3e.dts     |  51 ++
- .../dts/rockchip/rk3566-radxa-zero-3w.dts     |  91 ++++
- 5 files changed, 614 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3e.dts
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3w.dts
-
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index e04c213a0dee..51cdaabaf0d9 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -814,6 +814,13 @@ properties:
+           - const: radxa,rock-5b
+           - const: rockchip,rk3588
+ 
++      - description: Radxa ZERO 3W/3E
++        items:
++          - enum:
++              - radxa,zero-3e
++              - radxa,zero-3w
++          - const: rockchip,rk3566
++
+       - description: Rikomagic MK808 v1
+         items:
+           - const: rikomagic,mk808
 -- 
 2.43.2
 
