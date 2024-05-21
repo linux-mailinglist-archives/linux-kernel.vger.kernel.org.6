@@ -1,146 +1,111 @@
-Return-Path: <linux-kernel+bounces-184690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4668CAA98
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:18:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D466B8CAA8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2BCD1F22A29
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:18:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A9F01F228D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589F859147;
-	Tue, 21 May 2024 09:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FD457C8B;
+	Tue, 21 May 2024 09:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FsFmmGOE"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKf0BoTu"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D542EB1D;
-	Tue, 21 May 2024 09:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA764776A;
+	Tue, 21 May 2024 09:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716283099; cv=none; b=PZSKkf5WH/FnEamiU7oIR3IU9/xYo3FBOfwxWpH2BSh+R7PGNnyFw3z85HkpztU6m4bosZUbbPt/ay138L8wzABHJpVG9Yn1bSE5EY95IL/FuWEyNuZVFma5mROu42qPn62zPmQ2Zpmv29gVnqjRlId8cEyMWM7WCl+J5RcLMtw=
+	t=1716282884; cv=none; b=GSGBBwyaXPcrwr+7BCqaYVwpqS/zdaSvbOwFDU1Q2f3gPvE9jG9VzxIMSaHimIFrjVOWQm35aeCe0eqhUzuDaIHRNMLDHhX9M4GFQ8Dy8p1sfmNiBhgdwZefJkjtvlmNGE/8IDZ2/8k6DdiyC6ggEacFUEIHS8EFDbYy+LEeGHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716283099; c=relaxed/simple;
-	bh=evIKBeDjrjIyrHQrE6yLoAQSN9K9vIdfXRpSaiKjBgE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lo24sDu/byA9YSvJsJwpM4vrhZCg64aaL9I8NFchZkQkCq99crRJjFtJLYCXNwJPSSUx3PM9M36/ScwfbJXT9yyN/ieVtmXpXZtjECnkSo8phj7i8Zl6BEdWbkAws9tcinlOdsRlI4SL5CFr01KAwPtzV7AyXpdxc2Mtt23qm8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FsFmmGOE; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1716282884; c=relaxed/simple;
+	bh=KFQK1c4PQyE7m3PzOehKHpBHvcc8reWa8UWw8E/vUj4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Qz634UyzOZ3zvQWvjhozGmI1OQ0+1PR/kzA1cMzCtngY/OBcirWDDwjWhKrSIiQzPkif43ctWup9wZty4l+axtZzIcBIU6kEq0deewsAH/d1eJZip/QWzx/zYHC/1eoeJf1GFcpYwMN1r0n4anCKYT4Ttah1xRSa7qwxSVST8Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKf0BoTu; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1eb0e08bfd2so106299215ad.1;
-        Tue, 21 May 2024 02:18:18 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a599c55055dso795095966b.0;
+        Tue, 21 May 2024 02:14:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716283097; x=1716887897; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=evIKBeDjrjIyrHQrE6yLoAQSN9K9vIdfXRpSaiKjBgE=;
-        b=FsFmmGOEC/VhY0UUXUWBNpzNjtvFmEfMl3npl973KK7v+92QY7xSWH8phaAOQeZd1r
-         1o4m/wncg2yy6V1dBctSYohnyOBOMZGcoFIn3HmbfuZCz0UWQfrKaO1GtYBwtspe0ws7
-         Q/aEPMM20YB58OffunAPcoVJjRnxIc2H5E9k4k8UND8dURoD0+4FcDBWB0nmA1DE9ZXS
-         uzNfssLVprmuxh2tElgkRbYr/RrEZaDM63ArcEYsMT/tAMb0djl1EnlKXbh2Bprsnac4
-         bEucmxJS9bR09XK0yfjEOcdOHVQxJ7fFTJhpK0wG8IBQvuVoSbKn1eQYk6aRlLuVYKz3
-         sF/Q==
+        d=gmail.com; s=20230601; t=1716282881; x=1716887681; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KFQK1c4PQyE7m3PzOehKHpBHvcc8reWa8UWw8E/vUj4=;
+        b=WKf0BoTuzHHlEtiB53BsfRqn4jEP0yEFSXBP7fOWvT5QWuC9RMQpIO10rkJ+Ft8+wZ
+         m7dv86j4LVOpU07HHbwdwRzeeqNcIuNgvYj2O6Ua5XnoMbUOmDcXdYvdk4HuqErdVWEO
+         PxivgHo5ePliVXKaaYUuQiDvZEInY9tePwGAJIhtR/Dayc0cFgbu9+4+B9KGkM3gsJdf
+         rPo4fVqamhlhlY0wbClUhiaIWRJdFxnEg78qLi+6eLa/fb1LMlHoAsKsOPTDKfAo0h+S
+         lbcK4S0vezdYGmUu6HPGvTY7+at//D/kJQ6TyAlnEQCW1fgP7Owl75AIhsAoYaxDh2tB
+         kCwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716283097; x=1716887897;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=evIKBeDjrjIyrHQrE6yLoAQSN9K9vIdfXRpSaiKjBgE=;
-        b=AosQKbJ4XKolCiyW9z3X5/aulE+WV6E/4DOUHhtWgve0jsKdx/G+W7YfglRmqtmtSj
-         ojrjq+ROZnyy2xiZQF+aiIYgRsId2lbrVZzFPciW8QBYMyi2cyscDMwTmEGhkndPeL4R
-         HxknI6dBEvWDjSvib8wzmEmbu41oe0HNj/UKsnD6/f7sC5nS5SXm837Hz6zEAOGDxVj9
-         7ijh+lUM9OoCZCTfFS5APAaHe7+o9ZEpSOqxDGXX3FMUUfduCNfFi4trRJ+l/cn6sF70
-         sY2dHB8/OJdOack7YqXp9Uz3qFqrP6OnsT6kQKh59T9VjCpNWFqLcmJKbV7895xEGb2C
-         4UAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUV5aVN8sUq6a/QOmkHHgPU+xNUZh2Yj9oPvdNY3bBj/hye+tDjZZgvl78fkoteMo3splLuB/mAlE+Maxj9ZFW+Qs/gF3Gx3AekBn5m08eqireICG/aeYjkNCve4MBePZgaB+krDbtTSBxA56c/cL17lPXVYbkwStDtsFjv8o2exRYSu61FgRk=
-X-Gm-Message-State: AOJu0YxRdCn7E16TDRNIG1zem0kobVUI+Cogv+RDdq1G8oCAuNMurVgu
-	jEKviECqyYFdZEW3uvWUT1E6CjgUEJUDuaChdf9M9Wm968397MbtMs1XcrxxJd5chUW9aXvQdIj
-	YzamfY2vvnUYtY6haCyN2yoFSOis=
-X-Google-Smtp-Source: AGHT+IFieXXoG+hRo4v8ZQFVy0FPx0LzOZqLI2NQxeJ8z3p0jf0pXavFZ5ZiMD9/R71xHVho3OeDGCXPVB6CXwJTom4=
-X-Received: by 2002:a17:90b:100d:b0:2b6:2ef4:e2aa with SMTP id
- 98e67ed59e1d1-2b6cc780466mr24891904a91.25.1716283097622; Tue, 21 May 2024
- 02:18:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716282881; x=1716887681;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KFQK1c4PQyE7m3PzOehKHpBHvcc8reWa8UWw8E/vUj4=;
+        b=XqDgMbh0xAurifUrqraS1DiiJxS91XtQSXZ5/zU2iQ7BZf0dNO5b7qunDn2dDPh/Hy
+         hlZbmBz9s6u4VJs8+kkhytGp5CclSo5JMtZ2H1S6MRFSIQ5NSEUq35OKncEskBZGS4uX
+         kVcD99JhiWD8PgYwLnaJLjvvpBxr92b8pajPVo12X3HdKM0gWNCrZBT4cJiS2yOEUJP0
+         VFiYN8xGwqT6uZAbawmSKTCihTowglfQbd3bdRebUzCD7tEtnT7NCfreRRoLMBr1kJUh
+         B/FxtTLacmIVruL/ViKkJ514FJvocU8WUETSHyYl8iiaMLQNzdqkN80jxgSgDKlLu49e
+         pGrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvdYxZ3Gek0fT/gVewyFLs/gcNYAyYH2qnNk0/GVyhaLzWL8T2xiblgRt0MtVe+Kklxdw12x+T61BBjPKGmnhepXjU2Xg9mtCd0LSJkx0g1wLDbpgNI1h1fXcQ5Ly/UkWtJ0uzKb31
+X-Gm-Message-State: AOJu0Yz+v25TrqmvENHWlXYLv1YTIiGXf7cySmAZJccqrVGmNzR+Sf00
+	QKMos1sklCqaJOCApF5kHEl7Cd84wCbWC0Yz9okvHHY0GNLcP3va
+X-Google-Smtp-Source: AGHT+IE/7gJpJG9wiUiEYW3ilUdR4829vb87RX4BE7XTz5YsALoI/o56dKfV0CPJZj/Y/y8iIT2EKQ==
+X-Received: by 2002:a17:906:f6ca:b0:a59:a0ec:e02d with SMTP id a640c23a62f3a-a5a2d53b08emr1739780166b.8.1716282881293;
+        Tue, 21 May 2024 02:14:41 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:994e:fbde:478:1ce1? (p200300f6ef1cc500994efbde04781ce1.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:994e:fbde:478:1ce1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5ceb46c33fsm668469666b.142.2024.05.21.02.14.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 02:14:41 -0700 (PDT)
+Message-ID: <e1277a004b5aef8e6b407089ac1e3df6ff6fee50.camel@gmail.com>
+Subject: Re: [PATCH RFC 0/4] iio: add support for multiple scan types
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+ <jic23@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Julien Stephan
+ <jstephan@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 21 May 2024 11:18:24 +0200
+In-Reply-To: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
+References: 
+	<20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520172554.182094-1-dakr@redhat.com> <20240520172554.182094-11-dakr@redhat.com>
- <CANiq72kHrgOVrdw7rB9KpHvOMy244TgmEzAcL=v5O9rchs8T1g@mail.gmail.com> <cf89c02d45545b67272aba933fbc8a8a0df83358.camel@redhat.com>
-In-Reply-To: <cf89c02d45545b67272aba933fbc8a8a0df83358.camel@redhat.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 21 May 2024 11:18:04 +0200
-Message-ID: <CANiq72k7H3Y0ksdquVsrAbRtj_5CqMCYfo79UrhSVcK5VwfG5Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 10/11] rust: add basic abstractions for iomem operations
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Danilo Krummrich <dakr@redhat.com>, gregkh@linuxfoundation.org, rafael@kernel.org, 
-	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
-	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com, 
-	lina@asahilina.net, ajanulgu@redhat.com, lyude@redhat.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2024 at 9:36=E2=80=AFAM Philipp Stanner <pstanner@redhat.co=
-m> wrote:
->
-> Justified questions =E2=80=93 it is public because the Drop implementatio=
-n for
-> pci::Bar requires the ioptr to pass it to pci_iounmap().
->
-> The alternative would be to give pci::Bar a copy of ioptr (it's just an
-> integer after all), but that would also not be exactly beautiful.
+On Tue, 2024-05-07 at 14:02 -0500, David Lechner wrote:
+> Following up from this thread [1]...
+>=20
+> Unless I've overlooked something important, I think adding support for
+> multiple scan types per channels should be rather trivial, at least in
+> the kernel. Userspace tools will need to learn to re-read buffer _type
+> attributes though. For example, it looks like libiio caches these values.
+> I had to restart iiod to get a proper capture with the iio-oscilloscope
+> after changing the scan type at runtime.
 
-If by copy you mean keeping an actual copy elsewhere, then you could
-provide an access method instead.
+No for now but to add more future fun, we may consider in having something
+similar as hwmon [1]. Hence, userspace could do things like poll(2) on the
+specific file rather than having to read it over and over...
 
-If you meant the access method, it may not be "beautiful" (Why? What
-do you mean?), but it is way more important to be sound.
+[1]: https://elixir.bootlin.com/linux/latest/source/drivers/hwmon/hwmon.c#L=
+649
+- Nuno S=C3=A1
 
-> The commit message states (btw this file would get more extensive
-> comments soonish) that with this design its the subsystem that is
-> responsible for creating IoMem validly, because the subsystem is the
-> one who knows about the memory regions and lengths and stuff.
->
-> The driver should only ever take an IoMem through a subsystem, so that
-> would be safe.
 
-The Rust safety boundary is normally the module -- you want that
-subsystems cannot make mistakes either when using the `iomem` module,
-not just drivers when using the subsystem APIs.
-
-So you can't rely on a user, even if it is a subsystem, to "validly
-create" objects and also hope that they do not modify the fields later
-etc. If you need to ask subsystems for that, then you need to require
-`unsafe` somewhere, e.g. the constructor (and make the field private,
-and add an invariant to the type, and add `INVARIANT:` comments).
-
-Think about it this way: if we were to write all the code like that
-(e.g. with all structs using public fields), then essentially we would
-be back at C, since we would be trusting everybody not to touch what
-they shouldn't, and not to put values that could later lead something
-else into UB, and we would not even have the documentation/invariants
-to verify those either, etc.
-
-> Yes, if the addition violates the capacity of a usize. But that would
-> then be a bug we really want to notice, wouldn't we?
-
-Definitely, but what I wanted is that you consider whether it is
-reasonable to have the panic possibility there, since it depends on a
-value that others control. For instance, would it make sense to make
-it a fallible operation instead? Should the panic be documented
-otherwise? Could it be prevented somehow? etc.
-
-Please check Wedson's `io_mem` in the old `rust` branch for some ideas too.
-
-Cheers,
-Miguel
 
