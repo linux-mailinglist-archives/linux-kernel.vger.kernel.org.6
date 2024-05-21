@@ -1,165 +1,137 @@
-Return-Path: <linux-kernel+bounces-184411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 848D98CA6A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:07:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 904D08CA6B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E50A6B217CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:07:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C20F81C21052
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADB417758;
-	Tue, 21 May 2024 03:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8526217BA4;
+	Tue, 21 May 2024 03:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYxRUIlL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MQvEDn+k"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512A712E71;
-	Tue, 21 May 2024 03:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A4517722
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716260850; cv=none; b=SqmiMNqYhbznDiqzVhUmSTmmybbOX1Apd0Wyfcyjj1OqRbIwG8CaMS5vI6UTt+VyXHVD4iIU9C2re+n9ytjumqXbAZEzbAqtkmgKb0kAnjlt1r/JpJz2cGk/LgUUXcBkxqX1iBfN6jjatNvgiPE96E3iQ5g5jP4jlXBVP49oDL8=
+	t=1716261232; cv=none; b=ERw32rF/hzVu+CwtxeO629RwUxGkYwJTqZ0hj8F1Glds6JJVuco8NimznxdUTNNkwbyNNBwtz6wK63yWYl5wnYibQUJO4wMiyEmHzgnU/hm7OCALGfqfLpqUw+amR7viN2avJBkb5FcfVl76fFZyD8s0S3l7qVNFMRXs+BwgzbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716260850; c=relaxed/simple;
-	bh=vEd79klzMu+zXxA36ZyoEIFWyZeEXCjN1gTxWpfDYJU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AIXbh5GYkgD1nBorSdHjgt3k2ZMq/+tCBWod065/5IHEpq1CBMjL1MYf1utgSsjsKKTrN5Q0g9SZ/xiw2ewF5RR1h1EAOMQQc5YjpkH7uVDVHyAFZDHvvA8h2D0xIc4ejObdfC2ERGXd83sxrgJOavLebCN4WVf43WwKniy8M9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYxRUIlL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8382C2BD10;
-	Tue, 21 May 2024 03:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716260849;
-	bh=vEd79klzMu+zXxA36ZyoEIFWyZeEXCjN1gTxWpfDYJU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=tYxRUIlLUxfTbilHW90OZgh2Xy8TfUn8o4d+bzDudrtGoRKJ/JKL6yZfxmkMCVNpm
-	 hKL8FonW62Eckn0/htLchsqLx8uCj8Vg/PLSo9/07g8gKYh7vp7jJPIB1gDcDqmaEF
-	 SZQi38uvtnSOTm+yB4poxiUKCWxlye22zgyBCwUTjNaNpiczlcSvPYA086coivSkTe
-	 rUL6lPOz0ay2wf9VGe5s2pb8hdz+0k+NqULCm5U+Cr+TSd3TDvgmRKQKCpRw/XMTJx
-	 KaA6kUbrn1hCv1JSsL/kQtjLkUVFpYnPO8jqfUgWfZ0Ym9CAwqXd1LDhhcgbQZClqd
-	 gZ7Es71EHMYFw==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tanmay Shah <tanmay.shah@amd.com>,
-	Luca Weiss <luca@z3ntu.xyz>,
-	Olivia Wen <olivia.wen@mediatek.com>,
-	Beleswar Padhi <b-padhi@ti.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Apurva Nandan <a-nandan@ti.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	"Ricardo B . Marliere" <ricardo@marliere.net>
-Subject: [GIT PULL] remoteproc updates for v6.10
-Date: Mon, 20 May 2024 20:12:20 -0700
-Message-ID: <20240521031222.236250-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1716261232; c=relaxed/simple;
+	bh=L6WVvuL+gFvZL0110Lldc+1hgtwVEmdlAqsIL6YHMe0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XmFJET6qMG0or2Gz54e/wjK+cnC1UgveDuyHUQBUgij41PN2PSBpvXkmkaKtsRuD8JBQSW7rvry/u2dOrTInJsXgrm1xrIYVtodfCWNLbX2BxrusXv3l/n6RDj8yRGFcw+zK4GEkvq3HicMqSUwPkzK5QVgGzAAX5RBCklUIsQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MQvEDn+k; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716261230;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3/HzK1apeoYY0DujLj2rbx8MJd+TQtas5Uof0p135Ck=;
+	b=MQvEDn+kYWtnJ7xzsJW9XzEZ+zBO5K30hu0Kv8OmZLZcmHyYnYR22WrrhmBUAPIQMsjlto
+	ei4wjpMAGH59qz4VeHZ5lSbzOuUPJePtXehfl3Rx87rDa6c/lEV2lN/dnk4S0RxQcKWjNr
+	6c6pvk3bT/4lA6ulnuMbGL6OykVmO+I=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-141-ugmp0PizN2unNesMjqUHGA-1; Mon, 20 May 2024 23:13:48 -0400
+X-MC-Unique: ugmp0PizN2unNesMjqUHGA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2FE3C101A54F;
+	Tue, 21 May 2024 03:13:48 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.65])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 28DF440C6EB7;
+	Tue, 21 May 2024 03:13:46 +0000 (UTC)
+Date: Tue, 21 May 2024 11:13:43 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Coiby Xu <coxu@redhat.com>
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Thomas Staudt <tstaudt@de.ibm.com>,
+	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	Jan Pazdziora <jpazdziora@redhat.com>,
+	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Dave Hansen <dave.hansen@intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [PATCH v3 1/7] kexec_file: allow to place kexec_buf randomly
+Message-ID: <ZkwRZxGw2dWStd1C@MiWiFi-R3L-srv>
+References: <20240425100434.198925-1-coxu@redhat.com>
+ <20240425100434.198925-2-coxu@redhat.com>
+ <ZkrqkzJlW2RZkmH9@MiWiFi-R3L-srv>
+ <y5ogivx7qbdm6u37t5o6na4jewn6qofzrbibnsneoqlwns63y5@eg62cytuvwql>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <y5ogivx7qbdm6u37t5o6na4jewn6qofzrbibnsneoqlwns63y5@eg62cytuvwql>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
+On 05/21/24 at 09:58am, Coiby Xu wrote:
+> On Mon, May 20, 2024 at 02:16:43PM +0800, Baoquan He wrote:
+> > On 04/25/24 at 06:04pm, Coiby Xu wrote:
+> > > Currently, kexec_buf is placed in order which means for the same
+> > > machine, the info in the kexec_buf is always located at the same
+> > > position each time the machine is booted. This may cause a risk for
+> > > sensitive information like LUKS volume key. Now struct kexec_buf has a
+> > > new field random which indicates it's supposed to be placed in a random
+> > > position.
+> > 
+> > Do you want to randomize the key's position for both kdump and kexec
+> > rebooting? Assume you only want to do that for kdump. If so, we may need
+> > to make that more specific in code.
+> 
+> Thanks for the suggestion! Currently, no one has requested this feature
+> for kexec reboot so yes, I only have kdump in mind. But kdump depends
+> on kexec thus I'm not sure how we can make it kdump specfic. Do you have
+> a further suggestion?
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+I remember you said kexec reboot doesn't need the key passed from 1st
+kernel to 2nd kernel because the 2nd kernel will calculate one during
+boot.
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+kbuf has the information, the similar handling has been in
+kernel/kexec_file.c:
 
-are available in the Git repository at:
+#ifdef CONFIG_CRASH_DUMP
+        if (kbuf->image->type == KEXEC_TYPE_CRASH)
+                ....;
+#endif
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.10
+> 
+> 
+> > diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+> > index 060835bb82d5..fc1e20d565d5 100644
+> > --- a/include/linux/kexec.h
+> > +++ b/include/linux/kexec.h
+> > @@ -171,6 +171,7 @@ int kexec_image_post_load_cleanup_default(struct kimage *image);
+> >  * @buf_min:	The buffer can't be placed below this address.
+> >  * @buf_max:	The buffer can't be placed above this address.
+> >  * @top_down:	Allocate from top of memory.
+> > + * @random:	Place the buffer at a random position.
+> 
+> How about a comment here saying this is currently only used by kdump.
 
-for you to fetch changes up to 4d5ba6ead1dc9fa298d727e92db40cd98564d1ac:
+No, it's not good. Please don't do this, let code tell it.
 
-  dt-bindings: remoteproc: qcom,sdm845-adsp-pil: Fix qcom,halt-regs definition (2024-05-06 19:41:38 -0700)
+By the way, can you rebase this series on the latest v6.9 and resend? I
+rebase my code and can't apply your patchset.
 
-----------------------------------------------------------------
-remoteproc updates for v6.10
-
-This makes the remoteproc core rproc_class const.
-
-DeviceTree bindings for a few different Qualcomm remoteprocs are updated
-to remove a range of validation warnings/errors.  The Qualcomm SMD
-binding marks qcom,ipc deprecated, in favor or the mailbox interface.
-
-The TI K3 R5 remoteproc driver is updated to ensure that cores are
-powered up in the appropriate order. The driver also see a couple of
-fixes related to cleanups in error paths during probe.
-
-The Mediatek remoteproc driver is extended to support the MT8188 SCP
-core 1. Support for varying DRAM and IPI shared buffer sizes are
-introduced. This together with a couple of bug fixes and improvements to
-the driver.
-
-Support for the AMD-Xilinx Versal and Versal-NET platforms are added.
-Coredump support and support for parsing TCM information from DeviceTree
-is added to the Xilinx R5F remoteproc driver.
-
-----------------------------------------------------------------
-AngeloGioacchino Del Regno (1):
-      remoteproc: mediatek: Make sure IPI buffer fits in L2TCM
-
-Apurva Nandan (1):
-      remoteproc: k3-r5: Wait for core0 power-up before powering up core1
-
-Beleswar Padhi (2):
-      remoteproc: k3-r5: Do not allow core1 to power up before core0 via sysfs
-      remoteproc: k3-r5: Jump to error handling labels in start/stop errors
-
-Dan Carpenter (1):
-      remoteproc: mediatek: Fix error code in scp_rproc_init()
-
-Dmitry Baryshkov (1):
-      dt-bindings: remoteproc: qcom,msm8996-mss-pil: allow glink-edge on msm8996
-
-Leonard Crestez (1):
-      remoteproc: zynqmp: Add coredump support
-
-Luca Weiss (4):
-      dt-bindings: remoteproc: qcom,smd-edge: Mark qcom,ipc as deprecated
-      dt-bindings: remoteproc: qcom,qcs404-cdsp-pil: Fix qcom,halt-regs definition
-      dt-bindings: remoteproc: qcom,sc7280-wpss-pil: Fix qcom,halt-regs definition
-      dt-bindings: remoteproc: qcom,sdm845-adsp-pil: Fix qcom,halt-regs definition
-
-Olivia Wen (4):
-      dt-bindings: remoteproc: mediatek: Support MT8188 dual-core SCP
-      remoteproc: mediatek: Support MT8188 SCP core 1
-      remoteproc: mediatek: Support setting DRAM and IPI shared buffer sizes
-      remoteproc: mediatek: Add IMGSYS IPI command
-
-Radhey Shyam Pandey (1):
-      dt-bindings: remoteproc: Add Tightly Coupled Memory (TCM) bindings
-
-Ricardo B. Marliere (1):
-      remoteproc: Make rproc_class constant
-
-Tanmay Shah (5):
-      remoteproc: zynqmp: fix lockstep mode memory region
-      remoteproc: zynqmp: parse TCM from device tree
-      drivers: remoteproc: xlnx: Add Versal and Versal-NET support
-      drivers: remoteproc: xlnx: Fix uninitialized variable use
-      drivers: remoteproc: xlnx: Fix uninitialized tcm mode
-
- .../devicetree/bindings/remoteproc/mtk,scp.yaml    |   2 +
- .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml  |   1 -
- .../bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml  |   6 +-
- .../bindings/remoteproc/qcom,sc7280-wpss-pil.yaml  |   6 +-
- .../bindings/remoteproc/qcom,sdm845-adsp-pil.yaml  |   6 +-
- .../bindings/remoteproc/qcom,smd-edge.yaml         |   3 +-
- .../bindings/remoteproc/xlnx,zynqmp-r5fss.yaml     | 279 +++++++++++++++--
- drivers/remoteproc/mtk_common.h                    |  11 +-
- drivers/remoteproc/mtk_scp.c                       | 241 +++++++++++++--
- drivers/remoteproc/mtk_scp_ipi.c                   |   7 +-
- drivers/remoteproc/remoteproc_internal.h           |   2 +-
- drivers/remoteproc/remoteproc_sysfs.c              |   2 +-
- drivers/remoteproc/ti_k3_r5_remoteproc.c           |  58 +++-
- drivers/remoteproc/xlnx_r5_remoteproc.c            | 329 ++++++++++-----------
- include/linux/remoteproc/mtk_scp.h                 |   1 +
- 15 files changed, 721 insertions(+), 233 deletions(-)
 
