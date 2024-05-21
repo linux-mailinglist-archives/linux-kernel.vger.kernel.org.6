@@ -1,96 +1,118 @@
-Return-Path: <linux-kernel+bounces-185189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 410DE8CB1C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:55:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A6B8CB1C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A7A1C21EB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:55:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66164284487
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FCD142E73;
-	Tue, 21 May 2024 15:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C70214831D;
+	Tue, 21 May 2024 15:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PVmTtRd4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aImJhakQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3346142E72
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BB51448C7;
+	Tue, 21 May 2024 15:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716306907; cv=none; b=HLOXYpYbsWvX09iqdK52H6l0NgEtG6j2K0JyZFU+bnMAMrOf2Yvx42vV0Mmnb0xZtWy6RWP9JolZkVZpTY9E7xOxVFXr3tpGwB6CDiCOHEF3x29crAdjzX6Yd9cYBKEzUKfmDUhUWmylUvrU4VTdeEsRlUJkLiRCrIA/4unzA/w=
+	t=1716306918; cv=none; b=Db/SAzPnREVMgMN3bUffDjlxUGbGrdTCnkh6Ow0Fbczy+u1KLGsDd7tuAoBfW+Edz6TUtQNR0gQKhZzdTNQq/Bcx0HkpZpfkrNdqUSqZvKBsMX/KpEdvK9kmCgnsieaVCTcWvx5JjFAp7cPNYjcOIH+0Plw9KaVUh+cuZCwVYBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716306907; c=relaxed/simple;
-	bh=ETMyAjhAyjRrYjH6gWRvwzWDDJXx1j3zk86x7NvOJmw=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=T48Js/deK+fTQGzkNRWpbZSQidNmyJ+sEhGH6fVHTIwTDhkQxgdeqxt9nmYncyM/YnJkw0bkxzOoi8jvt5k83m8RrwmTovelwLQR00NViKkvXDrzbEeaf+s0rfOwS8yMKOPxucxWM7oncwg7BIgjHPKLvGF4majLfy/pbOhi1Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PVmTtRd4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716306904;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ETMyAjhAyjRrYjH6gWRvwzWDDJXx1j3zk86x7NvOJmw=;
-	b=PVmTtRd4Q7pRIvGB2Mpv10JitSPu8cGNZl7K7REufTiFiqCheD77oAXRhHdX6fcEZfT0D8
-	Vu5q9/my5OVNqh2islmzF7gRH5NiJjqyXVt4aPxtM+7f658BJyhl8ylb8HhNS6ie002Rbx
-	ktUuNYZwh5zF1U7/h7ycGwWYSpJ437I=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-646-l7H-i_idMlq5SSTveGjq1Q-1; Tue,
- 21 May 2024 11:55:02 -0400
-X-MC-Unique: l7H-i_idMlq5SSTveGjq1Q-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7132329AB3E2;
-	Tue, 21 May 2024 15:55:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 0CB731C09481;
-	Tue, 21 May 2024 15:54:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <2e73c659-06a3-426c-99c0-eff896eb2323@kernel.dk>
-References: <2e73c659-06a3-426c-99c0-eff896eb2323@kernel.dk> <316306.1716306586@warthog.procyon.org.uk>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: dhowells@redhat.com, Steve French <stfrench@microsoft.com>,
-    Jeff Layton <jlayton@kernel.org>,
-    Enzo Matsumiya <ematsumiya@suse.de>,
-    Matthew Wilcox <willy@infradead.org>,
-    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
-    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
+	s=arc-20240116; t=1716306918; c=relaxed/simple;
+	bh=ETX7OlYVaf7lHnLpkZDxTXz9uHxRNuqfRK69QfLpOHY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=BF56i10m73Okpm2luibzVLFAayfp/F5rcH6fCL5ZJmgV24zPsjmfqCT9XDnPLaEpBYvqmlOdG9p4psNt8zlaMrS+QDGvbPEn2fqQyO0BJt3injyqMoxEF+auaI7IoGuozc9xSuS0ZGIoS8fZA1db92VQS5tYsN84WbVGl9ZDSkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aImJhakQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CCC0C2BD11;
+	Tue, 21 May 2024 15:55:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716306918;
+	bh=ETX7OlYVaf7lHnLpkZDxTXz9uHxRNuqfRK69QfLpOHY=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=aImJhakQPS4KIkXVzI+H6A9AfMNwMnmfCUz6GT1bjDe5T4Xc9p/fk5639f0eNx7B/
+	 BFEVawJpn7eeaYPj2rW94xTK4JHt/TByeAyU79nGjizkGHCMdShhSK22dbQBonxv3d
+	 jCw+Boyf7BkF/jwU+ImVm5Q6w+BGFgFcOkM276PRL2HrDnn3ijm21rrAMg9BwijI//
+	 1mS1j38BifPJw0DAIxAMpEEy2stTluso09KsGjh3/w5ON8r6nzWD7GAtj2KhxgGWfd
+	 NgXf3U9K1VIx9jkV/Gj3Ax9+iKEzRkkpllq2NGCRYRIMlHuN9V5ZbwX6UM3BtUPlmw
+	 jnCB5fsM68gyA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <316427.1716306899.1@warthog.procyon.org.uk>
-Date: Tue, 21 May 2024 16:54:59 +0100
-Message-ID: <316428.1716306899@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 21 May 2024 18:55:14 +0300
+Message-Id: <D1FG0VPIBMJI.2XLL7FD5DYXBX@kernel.org>
+Cc: <va@nvidia.com>, <csoto@nvidia.com>
+Subject: Re: [PATCH] tpm_tis_spi: Account for SPI header when allocating TPM
+ SPI xfer buffer
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Matthew R. Ochs" <mochs@nvidia.com>, <peterhuewe@gmx.de>,
+ <jgg@ziepe.ca>, <kyarlagadda@nvidia.com>, <linux-tegra@vger.kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240521154028.3339742-1-mochs@nvidia.com>
+In-Reply-To: <20240521154028.3339742-1-mochs@nvidia.com>
 
-Jens Axboe <axboe@kernel.dk> wrote:
+On Tue May 21, 2024 at 6:40 PM EEST, Matthew R. Ochs wrote:
+> The TPM SPI transfer mechanism uses MAX_SPI_FRAMESIZE for computing the
+> maximum transfer length and the size of the transfer buffer. As such, it
+> does not account for the 4 bytes of header that prepends the SPI data
+> frame. This can result in out-of-bounds accesses and was confirmed with
+> KASAN.
+>
+> Introduce MAX_SPI_BUFSIZE to account for the header and use to allocate
+> the transfer buffer.
+>
+> Fixes: a86a42ac2bd6 ("tpm_tis_spi: Add hardware wait polling")
+> Signed-off-by: Matthew R. Ochs <mochs@nvidia.com>
+> Tested-by: Carol Soto <csoto@nvidia.com>
+> ---
+>  drivers/char/tpm/tpm_tis_spi_main.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_t=
+is_spi_main.c
+> index 3f9eaf27b41b..ba50eaead9d8 100644
+> --- a/drivers/char/tpm/tpm_tis_spi_main.c
+> +++ b/drivers/char/tpm/tpm_tis_spi_main.c
+> @@ -37,6 +37,8 @@
+>  #include "tpm_tis_spi.h"
+> =20
+>  #define MAX_SPI_FRAMESIZE 64
+> +#define MAX_SPI_HDRSIZE 4
+> +#define MAX_SPI_BUFSIZE (MAX_SPI_HDRSIZE + MAX_SPI_FRAMESIZE)
 
-> However, I'll note that BDP_ASYNC is horribly named, it should be
-> BDP_NOWAIT instead. But that's a separate thing, fix looks correct
-> as-is.
+"MAX_" prefix does not make sense in the new entries.
 
-I thought IOCB_NOWAIT was related to RWF_NOWAIT, but apparently not from the
-code.
+> =20
+>  /*
+>   * TCG SPI flow control is documented in section 6.4 of the spec[1]. In =
+short,
+> @@ -247,7 +249,7 @@ static int tpm_tis_spi_write_bytes(struct tpm_tis_dat=
+a *data, u32 addr,
+>  int tpm_tis_spi_init(struct spi_device *spi, struct tpm_tis_spi_phy *phy=
+,
+>  		     int irq, const struct tpm_tis_phy_ops *phy_ops)
+>  {
+> -	phy->iobuf =3D devm_kmalloc(&spi->dev, MAX_SPI_FRAMESIZE, GFP_KERNEL);
+> +	phy->iobuf =3D devm_kmalloc(&spi->dev, MAX_SPI_BUFSIZE, GFP_KERNEL);
 
-David
+It would better to open code here "SPI_HDRSIZE + MAX_SPI_FRAMESIZE".
 
+I.e. less cross-referencing and documents better what is going on at
+the call site.
+
+>  	if (!phy->iobuf)
+>  		return -ENOMEM;
+> =20
+
+BR, Jarkko
 
