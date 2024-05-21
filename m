@@ -1,154 +1,204 @@
-Return-Path: <linux-kernel+bounces-184800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9C98CAC24
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:25:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 772CC8CAC2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDBDD282F7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:25:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E1342839EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5943D73514;
-	Tue, 21 May 2024 10:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE6B74262;
+	Tue, 21 May 2024 10:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vt32vn5w"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jngtXm0a"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DEB7E58D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D74557C83
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716286731; cv=none; b=tNzQAhjyg6sYOo0WpJWvTsspQ93cCr3sd9k03YIZU+SIeg43StnTCJDIM++B+KFG4m66LWg7cTagpebpNNT3u5Rn9rjPYR9Co0pnZrDCL83FhpyvKOsJLWc4H1Kytj4wiJjtCVmv0LTkkV4c7dSIJPT1gQkDmioMRmmSQMrwpv8=
+	t=1716287000; cv=none; b=izbvTQ7KdWctnSFjpBURTOj6x9r2YqSiKpSP07qqlsakBbxQHxbOGsd2R7gBjfi1ViRyL5Mq/8dt/Pty8WG0Qh7oQJYZvLOHNTKSpaL5/IHmcUOc15bugLFh9Oc4pTle2JrdsQkLfVlfS9IupVLmJmjdjjKmRJcnB3TLPaKrZ5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716286731; c=relaxed/simple;
-	bh=W/Ea7UwOsSwE66EuxmYqet+tkiFW4foSZQFxc+kHG/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WPTlnqanRAmfDbw/pu1lyw4B/3ShiGJqKZp8G6BAfAo6VPv49ftlktLrNeSW+radaRcSOc9EJPWpsqoZZSHbCE83Nh2ZpQcGohY/IFFMdhJsxPZWsVi3pHi5CzX47cPaaXrFbQ4bGQNs5ipcVlUujkjbse/Yi432kex2z+xjy7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vt32vn5w; arc=none smtp.client-ip=209.85.210.49
+	s=arc-20240116; t=1716287000; c=relaxed/simple;
+	bh=lNI0Hg8IC9ycV+6uxxjEMkC5MeHystRDrTQLKIOejwQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BvihmSEvrXL8Puyku7YKBHVp4mD3lBZS11zB20rA7inK1GWUzt0YQ8xKwjSIAr4f+kIBAQYNXl5W/PoD6cOuBB2J3WBqzZbZKFtpsOrBWO/q0ixhiR0Z47v7chzlLtJ3MCnNktkwPRxl/muHgO+Ru7iI5MtxtyrnqgV61BnmUMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jngtXm0a; arc=none smtp.client-ip=209.85.219.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6f12ff2da3fso1525961a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:18:49 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-df3dfcf7242so3485724276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:23:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716286729; x=1716891529; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Srt9XjNNUKRwVZJcA/A+f+ONnFoW//paZ2d8/vHomfM=;
-        b=Vt32vn5wVvEYqCO2WFGdBhcqk1QthLGEf0Yr4VYThBtsxcwa/O9KPlE4ylDtEtSHIr
-         cr03dN0zZOEoUAm0kahmvD8QrpiRm8Lmm6cDlLem0D+Lkhyu/KA8/fLd5iwa3EsOtKGb
-         x0dzv5m2YUynPQaxARbnlYoV0ODotUi9GoqGRcF1AUogV5zKlAMwydSFuVSP30rUV3SK
-         IrlAsw3nfdc52ObOhojQziCBEYb14kcaSbDiTGbDItathtM1DnJvvhvKGtFoBvYR8/OK
-         t8QerDOtVzd9/BbROcnZwc8JUNtjFAV4IRa8ogusW3MpMsEmLc0fav4qRSW2AXbSbdI9
-         YJwQ==
+        d=linaro.org; s=google; t=1716286997; x=1716891797; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eQal9jlDbLEH1BqRzTobfVTZmQmUTVx0/uC+Hwtv/IM=;
+        b=jngtXm0al9OXO5noZQIZwetNA7ZGfjFdE7rWdfSyq6QZxSeI7dN4F/Nh8EvN0ZPZSk
+         aCeHrqhN+7gO+hGx+RYVyAaMQ0eZ5b9gVlqyT4sYwrjJ3eyl1KuS8Yl3/VarGqQaCPQq
+         aLCHnbJ529IHLP3Je+Dldczz43NAlIP5sLMCZHUem13LigxRYUYTGjB7GiZkbYE2cTiV
+         3rkA0lDy1IEJ2iznYSe8LA21GaSmRbC1hjdfNY5HgdzgQn1csNWjmENNpY8n2GNLVD4e
+         LdWEVIZMttP2sdhqA+gQGd6koRTdUfDHJmPmbukwUo3mbdYNwCJAIjv+ZUvXVjdcfjAk
+         lBVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716286729; x=1716891529;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1716286997; x=1716891797;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Srt9XjNNUKRwVZJcA/A+f+ONnFoW//paZ2d8/vHomfM=;
-        b=f40OnG0CZZsONKpDhMwmntspnzQhg0oxQEHcsyZO8S37olzHjSHhdKNOeezKbeJR5s
-         V4qyHcJ8e5ca7cfLsbv11oqll0Hr93mQkmtAA+zT+uIwSfFMvlIYo0wnVOwhVV6cxdWn
-         iD3lGD9mzI4Nx1bwM7CWSh5rEvUnZHoFct0RxLvTilYtN026/G6hpOVzJmvmdm0qp1Td
-         Td0s3sAjHgP9+nm686ZV0XKgZUmcJ7Bt4D7seVeSd/5mccG3O0holD0/QL/2/4Y1k/T3
-         5e8yRM0jOgtdlJXqbpHeaFIZ/wJ5XxpzKNUOP18K3KpJVzB77cCWS/pQyB/QhZXJzXy1
-         Cmjg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4nXwg6pgF9xG8OwiE+/l2YVGr1yPwa8EGILK8MQMjHhmHJN2DChgCoYU5odPmaBSXEp7/ONMref1KOUtsgBmclORKRXvJFDS6OqUI
-X-Gm-Message-State: AOJu0YxXQH4CCyA+NwtZiUSAEhd2QbnESU5aLxjeU1x7cJuJSilG0Igt
-	2JdIPWeZpUTwi6IpMRaHElHoGW4HeZYQYD7MFqwmppGlhruChELorBrsBibKSnQ=
-X-Google-Smtp-Source: AGHT+IFfaSQif9YYomjDiv5QjzxodDdKKO9XUFwDUynCNNjIQhl3MuajZhlUTtUEYxbkAsacdj1rmw==
-X-Received: by 2002:a05:6830:4784:b0:6f1:128e:c7f6 with SMTP id 46e09a7af769-6f1128ec94emr22053349a34.31.1716286729138;
-        Tue, 21 May 2024 03:18:49 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f0ff995ccdsm3465922a34.34.2024.05.21.03.18.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 03:18:48 -0700 (PDT)
-Message-ID: <555ec8bb-f4eb-4fe4-8213-dfc5939dbb20@linaro.org>
-Date: Tue, 21 May 2024 12:18:40 +0200
+        bh=eQal9jlDbLEH1BqRzTobfVTZmQmUTVx0/uC+Hwtv/IM=;
+        b=HKPTOEB3KcKrtKHTT8tWXIQUFYiEET25jTAIgvt+cvEp8bi/qx4f3kjMXdWymvVeaJ
+         KuZn6WzGSa3iDZ0yZkJoDHRCI+JbTNIhtRvSNMASVHushEPL5CarizNjqDqeVTSOYxzY
+         KUuuWDYd98gYMKYqK9dt93aU7tedDanM+rw7No/Bn2iKTItsFTnXdAWCtlaj10sMnDUh
+         UsVzrLn2hQazYxTK+dYe1QhNjLFBaYT82KjY3souxy9qi/YgT+5b6vP6p/Wqv5d3YB3B
+         r9jlZGWM32P8WcGfjk6ualbp+r8lo/iKcpEzOonRsKVlcII9glziZlGvPH5K7jHBhktT
+         SELw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNeVqu6Z6jlqWwxdcxW5YCCtW6x+fV0iX+Ki2Yy2c7n5zGdtSPK8R3tKd3/6B+SSd3ssT40Pf9n39U30Xz3Zm8XWaE/uoGMTZTwRbD
+X-Gm-Message-State: AOJu0YwzNcU+8Oop7wTbgAZ5BQvcHZu4RHmXbcUTw1hkX1NuYG+nyddD
+	VfxGWs2mvfU47SQ8+s21gra1prGSaCVycNlEPyxFgam2FgKNrB+8Y4Ww7iSFWbR82tBzY/Ga/Yv
+	q3DTVII5FSusZSpJ/TXC/AY+l5gWJvHXe2sEVLw==
+X-Google-Smtp-Source: AGHT+IFusdwxmPQewGjPt+54YRS/caX7jsa//59b5F79W2aGKtmYSc/Hc4mM2ZuST8VV01w+uClOUSg1l5sjccug07M=
+X-Received: by 2002:a25:3619:0:b0:dee:9baa:7760 with SMTP id
+ 3f1490d57ef6-dee9baa77e6mr22767700276.19.1716286997611; Tue, 21 May 2024
+ 03:23:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: milbeaut: Drop providers and
- consumers from example
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Taichi Sugaya <sugaya.taichi@socionext.com>,
- Takao Orito <orito.takao@socionext.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240520222646.1741958-1-robh@kernel.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240520222646.1741958-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 21 May 2024 12:22:41 +0200
+Message-ID: <CAPDyKFp4V8f0iyeRASSEu4YaCSz0m56=8ssBJ9ogSvqG1dzMZA@mail.gmail.com>
+Subject: Re: [PATCH v3] pmdomain: imx: gpcv2: Add delay after power up handshake
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: heiko@sntech.de, u.kleine-koenig@pengutronix.de, geert+renesas@glider.be, 
+	rafael@kernel.org, linux-pm@vger.kernel.org, abelvesa@kernel.org, 
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, imx@lists.linux.dev, shengjiu.wang@gmail.com, 
+	frank.li@nxp.com, mkl@pengutronix.de, linus.walleij@linaro.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 21/05/2024 00:26, Rob Herring (Arm) wrote:
-> Convention for examples is to only show what's covered by the binding,
-> so drop the consumer "socionext,milbeaut-usio-uart" and input clock
-> provider "fixed-clock" from the example. "socionext,milbeaut-usio-uart"
-> is also not documented by a schema which caused a warning.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+On Sat, 11 May 2024 at 05:15, Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
+>
+> AudioMix BLK-CTRL on i.MX8MP encountered an accessing register issue
+> after power up.
+>
+> [    2.181035] Kernel panic - not syncing: Asynchronous SError Interrupt
+> [    2.181038] CPU: 1 PID: 48 Comm: kworker/u16:2 Not tainted 6.9.0-rc5-next-20240424-00003-g21cec88845c6 #171
+> [    2.181047] Hardware name: NXP i.MX8MPlus EVK board (DT)
+> [    2.181050] Workqueue: events_unbound deferred_probe_work_func
+> [    2.181064] Call trace:
+> [...]
+> [    2.181142]  arm64_serror_panic+0x6c/0x78
+> [    2.181149]  do_serror+0x3c/0x70
+> [    2.181157]  el1h_64_error_handler+0x30/0x48
+> [    2.181164]  el1h_64_error+0x64/0x68
+> [    2.181171]  clk_imx8mp_audiomix_runtime_resume+0x34/0x44
+> [    2.181183]  __genpd_runtime_resume+0x30/0x80
+> [    2.181195]  genpd_runtime_resume+0x110/0x244
+> [    2.181205]  __rpm_callback+0x48/0x1d8
+> [    2.181213]  rpm_callback+0x68/0x74
+> [    2.181224]  rpm_resume+0x468/0x6c0
+> [    2.181234]  __pm_runtime_resume+0x50/0x94
+> [    2.181243]  pm_runtime_get_suppliers+0x60/0x8c
+> [    2.181258]  __driver_probe_device+0x48/0x12c
+> [    2.181268]  driver_probe_device+0xd8/0x15c
+> [    2.181278]  __device_attach_driver+0xb8/0x134
+> [    2.181290]  bus_for_each_drv+0x84/0xe0
+> [    2.181302]  __device_attach+0x9c/0x188
+> [    2.181312]  device_initial_probe+0x14/0x20
+> [    2.181323]  bus_probe_device+0xac/0xb0
+> [    2.181334]  deferred_probe_work_func+0x88/0xc0
+> [    2.181344]  process_one_work+0x150/0x290
+> [    2.181357]  worker_thread+0x2f8/0x408
+> [    2.181370]  kthread+0x110/0x114
+> [    2.181381]  ret_from_fork+0x10/0x20
+> [    2.181391] SMP: stopping secondary CPUs
+>
+> According to comments in power up handshake:
+>
+>         /* request the ADB400 to power up */
+>         if (domain->bits.hskreq) {
+>                 regmap_update_bits(domain->regmap, domain->regs->hsk,
+>                                    domain->bits.hskreq, domain->bits.hskreq);
+>
+>                 /*
+>                  * ret = regmap_read_poll_timeout(domain->regmap, domain->regs->hsk, reg_val,
+>                  *                                (reg_val & domain->bits.hskack), 0,
+>                  *                                USEC_PER_MSEC);
+>                  * Technically we need the commented code to wait handshake. But that needs
+>                  * the BLK-CTL module BUS clk-en bit being set.
+>                  *
+>                  * There is a separate BLK-CTL module and we will have such a driver for it,
+>                  * that driver will set the BUS clk-en bit and handshake will be triggered
+>                  * automatically there. Just add a delay and suppose the handshake finish
+>                  * after that.
+>                  */
+>         }
+>
+> The BLK-CTL module needs to add delay to wait for a handshake request finished.
+> For some BLK-CTL module (eg. AudioMix on i.MX8MP) doesn't have BUS clk-en
+> bit, it is better to add delay in this driver, as the BLK-CTL module doesn't
+> need to care about how it is powered up.
+>
+> regmap_read_bypassed() is to make sure the above write IO transaction already
+> reaches target before udelay().
+>
+> Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for power saving")
+> Reported-by: Francesco Dolcini <francesco@dolcini.it>
+> Closes: https://lore.kernel.org/all/66293535.170a0220.21fe.a2e7@mx.google.com/
+> Suggested-by: Frank Li <frank.li@nxp.com>
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+
+Sorry for the delay!
+
+Applied for fixes, thanks!
+
+Kind regards
+Uffe
+
 > ---
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+> changes in v3:
+> - move change to gpcv2.c, as it is more reasonable to let power driver
+>   to handle such power issue, suggested by Frank Li
+>
+> changes in v2:
+> - reduce size of panic log in commit message
+>
+>  drivers/pmdomain/imx/gpcv2.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/drivers/pmdomain/imx/gpcv2.c b/drivers/pmdomain/imx/gpcv2.c
+> index 4b828d74a606..856eaac0ec14 100644
+> --- a/drivers/pmdomain/imx/gpcv2.c
+> +++ b/drivers/pmdomain/imx/gpcv2.c
+> @@ -393,6 +393,17 @@ static int imx_pgc_power_up(struct generic_pm_domain *genpd)
+>                  * automatically there. Just add a delay and suppose the handshake finish
+>                  * after that.
+>                  */
+> +
+> +               /*
+> +                * For some BLK-CTL module (eg. AudioMix on i.MX8MP) doesn't have BUS
+> +                * clk-en bit, it is better to add delay here, as the BLK-CTL module
+> +                * doesn't need to care about how it is powered up.
+> +                *
+> +                * regmap_read_bypassed() is to make sure the above write IO transaction
+> +                * already reaches target before udelay()
+> +                */
+> +               regmap_read_bypassed(domain->regmap, domain->regs->hsk, &reg_val);
+> +               udelay(5);
+>         }
+>
+>         /* Disable reset clocks for all devices in the domain */
+> --
+> 2.34.1
+>
 
