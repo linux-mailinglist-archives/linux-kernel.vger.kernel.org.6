@@ -1,159 +1,127 @@
-Return-Path: <linux-kernel+bounces-185261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFA38CB2D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:23:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CFF48CB2C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 366BAB22BDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:23:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7E71F2492A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE72C14BF92;
-	Tue, 21 May 2024 17:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11A6149E0C;
+	Tue, 21 May 2024 17:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BKttZFon"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="dtbyA5bA"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DE2149DF3;
-	Tue, 21 May 2024 17:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B952514885D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 17:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716311975; cv=none; b=IFgSZecPgPQo3VJUqnqqG9i5ZlAVJwuonFvnjdVbWhwFH/0Y74l9rqOYuvnBdxT+CRkJdFzOZcoexYeganYx/NxWCvcTUgjr8VZZTxbcQociWbIW15vcIbrlMKVlnbxRqfcVSCgMH/2MARBbERyyIXEnwnBDef8VxTSIrBm7SPc=
+	t=1716311971; cv=none; b=U0NsYEEBeggRS/FeXBIIPXtgxG+Vv2fWtM90Py/ATGsp1WXxnbLtE9XaUvk8+db0WEcQ3xlseAgGc7rTX7oKApUyVKVowvcq5V0vCVHK22U+/91M/kS2sc2VTVqLn7Fe+3NODFuuBCegxII4BIm5bB9MBqRjDhcAx1Fx8YLKh1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716311975; c=relaxed/simple;
-	bh=H+k5pwMVAH1TrCVZ+UnRjUspzQhspP1lsEjFjjjU2TA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rqsrtz0Lyn3RLLRb9CgSA+BNxGDj9dEJ7yogp46JGmgMljckOWrkYSftbbAZ4pBgB9MkUXZoskxg7Dx7UwK2BbE13Wxmj/eutzcDlKAJBK5mwAHcj2lVyV347b+vB/AFpq3lclLz0UTpAxbwW8sc16WXzufY9tj1ASqxO3SFBkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BKttZFon; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44LHJKw7096885;
-	Tue, 21 May 2024 12:19:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716311960;
-	bh=Bi5+8k3P0V55rdOxPtYkR4ijU3UD3RgqR+lnNSBqfu0=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=BKttZFonPi1Kk6fcQJNScOaq2A42wDNM94pInlpQhb4Kss12Pg9y7GqYNkr82P5Lo
-	 fdWNcfxb8PPTA2UlSxtEwHdaY/O83q0g3/JZyHZntjMssvT4tOeeVbCABknbDDzxhk
-	 /F0Fa/6DEXcoDGCc47e5ewTKrSh9Gubb2NTPrBoM=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44LHJKCW015211
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 21 May 2024 12:19:20 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 21
- May 2024 12:19:20 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 21 May 2024 12:19:20 -0500
-Received: from localhost (uda0389739.dhcp.ti.com [137.167.1.114])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44LHJJq5023637;
-	Tue, 21 May 2024 12:19:20 -0500
-From: <michael.nemanov@ti.com>
-To: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
-        Breno Leitao <leitao@debian.org>,
-        Justin Stitt <justinstitt@google.com>,
-        Kees
- Cook <keescook@chromium.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Sabeeh Khan <sabeeh-khan@ti.com>, Michael Nemanov <michael.nemanov@ti.com>
-Subject: [PATCH 17/17] Add ti,cc33xx.yaml
-Date: Tue, 21 May 2024 20:18:41 +0300
-Message-ID: <20240521171841.884576-18-michael.nemanov@ti.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240521171841.884576-1-michael.nemanov@ti.com>
-References: <20240521171841.884576-1-michael.nemanov@ti.com>
+	s=arc-20240116; t=1716311971; c=relaxed/simple;
+	bh=SnjQmmHj3682eqik0h6BacYnsaW2Q1DcBY8AcxJVqp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EuU+6LJIkEkLUgFJZdgpQn/9VeXNWeUNESoUggC64zHOqaSlEkTsmv1VuoVUDciY5xEthdE3PczUQN3YJs3187ptjX+pspTvlgcmdu2IWQE2jXPZJ/Gy1yqnwcoQ03fRkR4kspToYpN/UhXMy8Wywvc17ALT2gSCK5lDPaNFNZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=dtbyA5bA; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 561A140E02A7;
+	Tue, 21 May 2024 17:19:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id F2vLtku8JMay; Tue, 21 May 2024 17:19:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1716311956; bh=dJikrL1uuSAnJySe0ZT1Y6BvwVtJE8CcgDSwOfEYw28=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dtbyA5bA2FTWkiYSSQbn80ZNL3oQB3QQZd7Ll/zSq/zOvO7HkF0V0NiBvU5hvGMRJ
+	 GI296/OBkRqkZNlLVPCG6IPqte/m1kZDMWF4XQ5qO2JLGEd7z4QMq0Iw+APOan/az9
+	 0gdJoqVrHkAogSShPJscoWsZQDN6hb9Cj8zlgIeftI64VAGbKJ8yu+ovR3AmrjhRZV
+	 APa9nsGWgrgN4ZOSQH7Fo/V7d+I4KhV06ae8hxF+Q07T1ZDG2A/MtI/XUyanv3ob2m
+	 8GOTejDa9Mze/vqsWeWv7rEHa56AjDdqGVoIsfjO4WZlXVwAocTM8EwHUVzzodibtX
+	 4gOEGcSo0Rzo5Ob+CK2TOajV5YhKDPduOiz2sFncXsVeIMHP5sA3kRYcDqL2JoXEHP
+	 wrmdhZuT8WHfqdNg+A7Z911bsPvk0FlrEuQktJGRjGswFojeZLKf6xQuh/fwSuYSZe
+	 b8rGQKjk2LP9QwGkJoa35MoTq5kdHhlYjo34qVwNn6MGPrqO3YpEuoWBqYoYf/0THx
+	 ypi1kCwnt7rH6ZrhedfMGzE6VVsHaRbheHohE5DB+oBzXKm4OpOzS0rZhVCaz7GP0H
+	 VwKfx+mx6qPI+vMy/2FYb/ExoVOamL2IlFj3oJXD80zaqjBPIBOWZgtquD2gq8Zo8U
+	 BrDnbrzirsOq2GLkrEMFoRx0=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 91FB440E01A3;
+	Tue, 21 May 2024 17:19:01 +0000 (UTC)
+Date: Tue, 21 May 2024 19:18:56 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tony Luck <tony.luck@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik <mjguzik@gmail.com>,
+	Thomas Renninger <trenn@suse.de>, Andi Kleen <ak@linux.intel.com>,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v6 02/49] x86/cpu: Fix x86_match_cpu() to match just
+ X86_VENDOR_INTEL
+Message-ID: <20240521171856.GEZkzXgH4z4hYKOZOA@fat_crate.local>
+References: <20240520224620.9480-1-tony.luck@intel.com>
+ <20240520224620.9480-3-tony.luck@intel.com>
+ <20240521074947.GAZkxSG_u08uLDqZ_m@fat_crate.local>
+ <ZkzCUj7zCcGPT-IX@agluck-desk3.sc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZkzCUj7zCcGPT-IX@agluck-desk3.sc.intel.com>
 
-From: Michael Nemanov <michael.nemanov@ti.com>
+On Tue, May 21, 2024 at 08:48:34AM -0700, Tony Luck wrote:
+> I didn't include a Cc: stable. Is there some better way to report
+> the source commit for a problem without triggering a backport?
 
-Signed-off-by: Michael Nemanov <michael.nemanov@ti.com>
----
- .../bindings/net/wireless/ti,cc33xx.yaml      | 60 +++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
+Looking at:
 
-diff --git a/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml b/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
-new file mode 100644
-index 000000000000..342e4e59d4cf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
-@@ -0,0 +1,60 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/wireless/ti,cc33xx.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments CC33xx Wireless LAN Controller
-+
-+maintainers:
-+  - Michael Nemanov <michael.nemanov@ti.com> 
-+
-+description: 
-+  These are dt entries for the IEEE 802.11ax chips CC33xx from Texas Instruments. 
-+  Currently, these chips must be connected via SDIO.
-+
-+properties:
-+  compatible:
-+    enum: 
-+      - ti,cc3300
-+      - ti,cc3301
-+      - ti,cc3350
-+      - ti,cc3351
-+
-+  reg: 
-+    description: 
-+      For WLAN communication, <reg> must be set to 2. 
-+    maxItems: 1
-+  
-+  interrupts:
-+    description: The interrupt line. Can be IRQ_TYPE_EDGE_RISING or IRQ_TYPE_LEVEL_HIGH. 
-+      When SDIO is used, the "in-band" interrupt provided by the SDIO bus is used 
-+      unless an interrupt is defined in the Device Tree.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    // SDIO example:
-+    mmc3 {
-+        vmmc-supply = <&wlan_en_reg>;
-+        bus-width = <4>;
-+        cap-power-off-card;
-+        keep-power-in-suspend;
-+
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        cc33xx: cc33xx@0 {
-+            compatible = "ti,cc3300";
-+            reg = <2>;
-+            interrupts = <19 IRQ_TYPE_EDGE_RISING>;
-+        };
-+    };
+Documentation/process/stable-kernel-rules.rst
+
+I guess this:
+
+"There furthermore is a variant of the stable tag you can use to make the stable
+team's backporting tools (e.g AUTOSEL or scripts that look for commits
+containing a 'Fixes:' tag) ignore a change::
+
+     Cc: <stable+noautosel@kernel.org> # reason goes here, and must be present"
+
+Might want to explain in that reason there what the situation is and
+that this patch should be backported only when the SNC change is in the
+tree or so, yadda yadda.
+
+Or the crypto one - your patch 1 in this thread.
+
+> Agreed. Looks better to keep the define out of a <linux/*.h> file.
+> 
+> Do you want me to spin a new patch? Or can you fold your change into
+> my patch when applying?
+
+Nah, I can fold everything in.
+
+Thx.
+
 -- 
-2.25.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
