@@ -1,190 +1,282 @@
-Return-Path: <linux-kernel+bounces-185503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368CE8CB5F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:22:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D20E8CB601
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B451C20643
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:22:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C11221C21B58
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87B914A089;
-	Tue, 21 May 2024 22:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D74149E17;
+	Tue, 21 May 2024 22:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dNpEabnP"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QoSDIrC1"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2055.outbound.protection.outlook.com [40.107.96.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E480149E09
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 22:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716330137; cv=none; b=odWkW6Z/rLsNMYZGkqFxud/stqb7Ukkybuod95UPtF7xVVWVuW7v8B+RdBd22iP2I/D0fpKycFBQcXF2JHPB68A/oMwPjZCWORKqqti5PShLrALWr8AeXV/rm7OJ01EKP+/5F4jGe+YJkr2B96Fqz1F35zdNXWfeUB8ft8ufZ5Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716330137; c=relaxed/simple;
-	bh=9OG6YJiBWX1BZTcot8mqUeoZzedcfSoPqvFGl2LVFE0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=suTBmyihQckNeszow1Db/RTSEjt+1YwAwh8wCLbKCeO+jLcIxFRernWb5ZytVgHeRUn7dLNLF3eGR8vVoQ27D2sJxQpqeXCXa1KMChUzh8oLAdynmUgVS6nHxFr6xkoKuhhywrhQ1PIjSvZgLgrDRobsV3jDLKxRQloQHAH+NTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dNpEabnP; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-6f441afba80so14836834b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:22:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716330136; x=1716934936; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p5X8zj2X7DR7aVs20Q87SeB4Pux8IsayFQH3hL1ralw=;
-        b=dNpEabnP3S6jjmxWAmxrZe1HXhtbmCABbBBmvejSZcruo5FbFsGdNRFLvoJdMtkVdO
-         JMRxn1AsghyXRY1HNzGkI0kNIPCt/PjUmkIb+Ju9nuxWwfpBlp8UxLKjqhoqBhGacsbN
-         TgaGcgIouISItwpdsOkFkoTcRVtn22yZTDI1G6MsZVpFc4Got536HJR4ung/pFbZDcxG
-         4dW8kOCeDF+VxGecUJxmBWrhMgBMBamRqT5441HX+GfOrEoAvXkU6BG8AV2pTcB8F0nH
-         X5eCZK24K1aRhnvaEJzsfz7PiSa90WB1M4iotYVunipKoIhZl8yf+52IDQhLWK43GbN/
-         ob+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716330136; x=1716934936;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=p5X8zj2X7DR7aVs20Q87SeB4Pux8IsayFQH3hL1ralw=;
-        b=q+yK2t3JSD+9W85PHpOIZ68c1UWcaI4bikO3gp9Mq+tH39B2D78D0dQEc4Y2ip7YcX
-         rHgBU7hwYUSPUmTTp5j5EtQ3s5syP7KdnGwbNMGQUD9EVgUfdmPol9sdURfJb2Iv1iWU
-         kum8jsog2/E2w2rNrR+vVJ7tT7jE/K4zP+Z49QI0VMbPnxvRipah9AmsReTQH+lZcAOj
-         Gh1iNzjHINcPQX48alvl1YCm2rC104pdmjMhPF+pxYMZ9ubTfBtqTzFTHP110cMAQhZW
-         rkeNhxGzXYUOJSYK86bB8hhrCbEbHfz9u3txY59NcrIEbcOtS3G2sWpjsBxDYGPJkIa3
-         xgag==
-X-Forwarded-Encrypted: i=1; AJvYcCVo/N5DaCZPlZD6/UuXEoDnyiW1cpT52waF1k3Sa+PxjPM9g/m5WSaaIqo37eklr5HpHVSUSIM0gasZEsr8jXLUqr5UTMsC4i97k9Gv
-X-Gm-Message-State: AOJu0Yzc+THpaxP1RLtF9MpFcIpNwfiu3TvG4p6VtGXnavRAAmVp8Sz/
-	AGpcFzPUFfREpeqxo0Jp/NQF4EwGc+rEvAiyH7CKt/auOu01LgjG9Jbb/3RqYrjswg8xtp2pTFp
-	10Q==
-X-Google-Smtp-Source: AGHT+IHFPsL3uiNWYdiJkx1v3DG58IcGSEF/hxExDOJYHbxUqqUBZhntnVfZeeHm5febwPQFWTQoov/b8rQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:2349:b0:6ea:baf6:57a3 with SMTP id
- d2e1a72fcca58-6f6d649cfebmr638b3a.6.1716330135521; Tue, 21 May 2024 15:22:15
- -0700 (PDT)
-Date: Tue, 21 May 2024 15:22:14 -0700
-In-Reply-To: <CABgObfaXAERePMQrrpWg8PqM1TOq8TJT65i3WgU0n0-vePDGNg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15F4149C76;
+	Tue, 21 May 2024 22:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716330456; cv=fail; b=H4zH/7eGbMNM96jl8sdoV+Ic7wHA5h1hkSTkkmHeW43Ve0VGdrvpzif6CQYxdU0bT0n8/qOws0JrhgGv1CKU1qCjlciBDUBNzKzZ8bmPyM8q9XRRCger6C0Q68ZFm+IS8DFXbIYvGQ9xhVduVLr93ghtIbdRpvYuDfqZTOgibt8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716330456; c=relaxed/simple;
+	bh=iOjA4Qg6gg76SC0e4uToKZ5t9dWlsWhZW85Lsb6hPA8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IW6gM+wjtJ/2IhC2lz569oM0biKohq4IxEe55GWQ5qeT469nAde34AGOAx3s3QUsSleNWo+GM10++XzRXL65fUnpJmlkwsOM2/iUPDRMVUN52yJK6HUqXQa2kAjAqBPFkfy9VmVnf2/XEmWEFHGjCd3qZXVgTMvyE3ojxiH3qNU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QoSDIrC1; arc=fail smtp.client-ip=40.107.96.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kOmK3GHfL5nU+U+wXBN0N90bBHh2MBo9XdOoklCN6oI5Wg2bjpGJ9xw6lPL4rzjjvW1ndBAlB1xgWvPS/DBxmv0BLRinMtvy7tVQim5msmnU37R0HurfR4I/8PQEJJ+Ug4Wjic1LcW/ymmiseodLnrzvCZrMliCTPXDULYVSvkkJdFbRa6QA2EBCAlqL7mBOGzpNzvJC/rW6ZfZMXq5Q/Qo6Fg+zrt0VZLCfXwBjjAUmyl6ksQSP3KzMTWvFd4TVHuWknsLcqMqqQcx4GqOiSbWRt1IxR/Fo+me9Km+p4jVoPO+v+uzZm3QHTiQrrqoHZDABxL9ZxUE7MmBZnTyGQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gPXD2YtyBU74GRpG/IzmQd1DNNffv0XfhMCCqq74z3U=;
+ b=WoGGI9kR6CKd0fikuvxHMVtKM90Hm55q0bsWX150FbEkSRo8E0VN28hAuTaEAXUrszTsO6pY4p9dxI+o7FtSsRfyFt+T2OorVvOgB1N1v3siXZRZbuYd0nha/yT1YK3fXvD+9UwzW3jMARY423rOLn4G2jwl8vmzyMhfiDcv+qLxMf/sgnxZuC3VShdIdN5B9TbYxgHNZNHbQa+sampgY4Ar+s53DzAwTnLCdRLc2JsHvmIR5GwFq0+jOwRaBijaunuZH06cYfka05k8/XmCMIKXWtAQ9iHUXTHSmcFxGnvc7I+rOMZoZBI761FVIOJHJbEXT7EBBM9MsieYuqXyMQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gPXD2YtyBU74GRpG/IzmQd1DNNffv0XfhMCCqq74z3U=;
+ b=QoSDIrC14aK+Rs7yQ3fyqs/Xl/x8HnARDFw0xOXav/SyEvI7/ZRlKbZOPXkOmzrMIog/M55RBa06QSsCmCz3n1BV7977K8d5fuSfsJ3pewCW/W7JTYOpU31YksPgsh4sPmZrFPtNE7e8kXIE9Cc+NNtMV1LeJGdNXd2yD07F2W6HilO3UKEqiznDDe+/vdBYMFTd4/LBC8XTFVaWsoNHOSbdUTapWhwQ6pvvqvSvbta/zyV6/TRaHxc8vQURoLswgN9KbUWaAOPlpBBKafAFUS3OXXlEuFgjao0JtoUrs1V44XE9e24TMEOotwC6NyHFr9UStF5Oswa+Xv/psAv0Kg==
+Received: from DM6PR06CA0013.namprd06.prod.outlook.com (2603:10b6:5:120::26)
+ by MW6PR12MB8835.namprd12.prod.outlook.com (2603:10b6:303:240::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Tue, 21 May
+ 2024 22:27:24 +0000
+Received: from DS3PEPF000099DA.namprd04.prod.outlook.com
+ (2603:10b6:5:120:cafe::d2) by DM6PR06CA0013.outlook.office365.com
+ (2603:10b6:5:120::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.37 via Frontend
+ Transport; Tue, 21 May 2024 22:27:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS3PEPF000099DA.mail.protection.outlook.com (10.167.17.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7611.14 via Frontend Transport; Tue, 21 May 2024 22:27:23 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 21 May
+ 2024 15:27:09 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 21 May
+ 2024 15:27:09 -0700
+Received: from nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 21 May 2024 15:27:04 -0700
+Date: Tue, 21 May 2024 15:27:02 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <kevin.tian@intel.com>,
+	<suravee.suthikulpanit@amd.com>, <joro@8bytes.org>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<yi.l.liu@intel.com>, <eric.auger@redhat.com>, <vasant.hegde@amd.com>,
+	<jon.grimm@amd.com>, <santosh.shukla@amd.com>, <Dhaval.Giani@amd.com>,
+	<shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH RFCv1 07/14] iommufd: Add viommu set/unset_dev_id ops
+Message-ID: <Zk0ftlf3f4gBaNgy@nvidia.com>
+References: <cover.1712978212.git.nicolinc@nvidia.com>
+ <6e57d7b5aa1705bdd547b1cd2aca93d3bf70dfa4.1712978212.git.nicolinc@nvidia.com>
+ <ZkDWXnPW7CaX5TtA@nvidia.com>
+ <ZkGZc5dvLigXcWib@nvidia.com>
+ <ZkOI8ztR1mUMJ8oe@nvidia.com>
+ <ZkQW6/OAQ8MzN6Go@nvidia.com>
+ <20240521182448.GN20229@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240416050338.517-1-ravi.bangoria@amd.com> <ZjQnFO9Pf4OLZdLU@google.com>
- <9252b68e-2b6a-6173-2e13-20154903097d@amd.com> <Zjp8AIorXJ-TEZP0@google.com>
- <305b84aa-3897-40f4-873b-dc512a2da61f@amd.com> <ZkdqW8JGCrUUO3RA@google.com>
- <b66ea07a-f57e-014c-68b4-729f893c2fbd@amd.com> <Zk0ErRQt3XH7xK6O@google.com> <CABgObfaXAERePMQrrpWg8PqM1TOq8TJT65i3WgU0n0-vePDGNg@mail.gmail.com>
-Message-ID: <Zk0elnvnF0n_exKt@google.com>
-Subject: Re: [PATCH v2] KVM: SEV-ES: Don't intercept MSR_IA32_DEBUGCTLMSR for
- SEV-ES guests
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>, thomas.lendacky@amd.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, michael.roth@amd.com, nikunj.dadhania@amd.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, santosh.shukla@amd.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240521182448.GN20229@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099DA:EE_|MW6PR12MB8835:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2264309-9905-4dff-5625-08dc79e52ff9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|7416005|82310400017|36860700004|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ubJHmYb+kUyqE3KG1t4xu3XNWSG+ZsN6rP/pmZWaiqsLRDjNdsTs2r9+oDWs?=
+ =?us-ascii?Q?PvkTf+qmfoz/5EdE6GKOnnG3ZjNnXmKoEMewPBhm73iQrccB5dzOkULw8EIG?=
+ =?us-ascii?Q?yvho6+1fnltqeYymskXqzZ3CLZUwVRgnEKC+WTFwf1IK1UQvzvSKWYPBpw5u?=
+ =?us-ascii?Q?36gVUL+IE2eDNer24e5WbKMF0bF7PTfJNSOIMJASkCCDF+mpzQMUjuK02EBY?=
+ =?us-ascii?Q?IgvzkrNaOydFv/hV7vmeRVyRC+GpD4B+AWcC+Z/zKC58WxgZ9jgBck4R46VM?=
+ =?us-ascii?Q?6X0nldHs4TIsU1hfAOIWsNgzECFtzzcFTzIQJ2A1WaJBhtR+sYJE/Zz2PHGU?=
+ =?us-ascii?Q?HK8bLZiFGZHChe+BfhVVck3c31jM7bIeKnSIxQlRhRZBf/vXkRwJenXiC2aK?=
+ =?us-ascii?Q?cz0YhVFRpbvp/lhNrhUb2e2gfJienBY5wH+y5ZQc9Ri7mmXdknF6yORoUy98?=
+ =?us-ascii?Q?luFFHFiDLHiUoyyUXfqSnj34qJ/FaZk3tzjNo7uQ3GRC2ezhpet/83rhKGfj?=
+ =?us-ascii?Q?Mxnvn5FHYU6ZA+A/F4rf3NbxRv4309BmEd7Pg2ywzu+iGQQXcmLHfPiE8Q34?=
+ =?us-ascii?Q?O3OFgHW5kCBqeBqLpS2XQ2MnxO1y4v8p2G9pa3g6M/1HNvnBwl6m30ZYBAXy?=
+ =?us-ascii?Q?gVZzzDidMcRj+tRKX65o7v0RFNdPvgi+HbvzRrD74omTKimQ9O69SpkxHU86?=
+ =?us-ascii?Q?hqV/N2XiUTxWwtwplGGeAiFg17FP9knNFctWmw64bxLphIlmA1KwYBOJ1BFR?=
+ =?us-ascii?Q?+oZGfENT4I/vcE3kl/Iv+zApqj1u9ZLeeMDJOTIe8JfMFIFlkrizCdw7e6n7?=
+ =?us-ascii?Q?7JhyIII7PbGCbgv9MTBlSalsHW6lZLbo5XJmglcUMwPx5blZaf6PGLSnCBb9?=
+ =?us-ascii?Q?yr/3jrn8ewMbVMYKQmbFdqAlKwgjEBEIba+seIXdf0uS/fyPnpAoGuqNdjed?=
+ =?us-ascii?Q?ufqusxhp4GKJh9ULhk8rqeHGWKkdp2vwaKvE0YT/OlHCK5CgBnvvuPXFLPwm?=
+ =?us-ascii?Q?hGudiEODuD25xiLljusatzDZGYOg3ajAvaqqEB+lTuaFwz+t99CiO9jAnv3+?=
+ =?us-ascii?Q?0EYVSqQsVJFyh0cpMfkronZvhvJv0kyj4XpIEy1aaPTl2Br0bhPspzc19PGm?=
+ =?us-ascii?Q?2DS7+RGWlDr4nLtPt1u9b2blpGqWU07W8b33Y7G2spZcuYIL7tqJEIWXSYY2?=
+ =?us-ascii?Q?SfLqhMxsEXqXweMPLWkW44OTbiRWunSz5Co/ThLAVfDjk5pEX+UFaz1YNKhw?=
+ =?us-ascii?Q?793jXWEq6otSpKnfmuX26WFy8vKRnfONqDsEoseCOXlzuFovIXUnQ/yfT1MI?=
+ =?us-ascii?Q?wD6WGHBKO2nAnUzHkFEgvu6vClQ/BbeX6RMYwXKmIeHU+kvIziwmvtcha3o6?=
+ =?us-ascii?Q?pgyZXXFPJXhCgpbgDfgVMNdnBm4p?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(7416005)(82310400017)(36860700004)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 22:27:23.7234
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2264309-9905-4dff-5625-08dc79e52ff9
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099DA.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8835
 
-On Tue, May 21, 2024, Paolo Bonzini wrote:
-> On Tue, May 21, 2024 at 10:31=E2=80=AFPM Sean Christopherson <seanjc@goog=
-le.com> wrote:
-> >
-> > On Mon, May 20, 2024, Ravi Bangoria wrote:
-> > > On 17-May-24 8:01 PM, Sean Christopherson wrote:
-> > > > On Fri, May 17, 2024, Ravi Bangoria wrote:
-> > > >> On 08-May-24 12:37 AM, Sean Christopherson wrote:
-> > > >>> So unless I'm missing something, the only reason to ever disable =
-LBRV would be
-> > > >>> for performance reasons.  Indeed the original commits more or les=
-s says as much:
-> > > >>>
-> > > >>>   commit 24e09cbf480a72f9c952af4ca77b159503dca44b
-> > > >>>   Author:     Joerg Roedel <joerg.roedel@amd.com>
-> > > >>>   AuthorDate: Wed Feb 13 18:58:47 2008 +0100
-> > > >>>
-> > > >>>     KVM: SVM: enable LBR virtualization
-> > > >>>
-> > > >>>     This patch implements the Last Branch Record Virtualization (=
-LBRV) feature of
-> > > >>>     the AMD Barcelona and Phenom processors into the kvm-amd modu=
-le. It will only
-> > > >>>     be enabled if the guest enables last branch recording in the =
-DEBUG_CTL MSR. So
-> > > >>>     there is no increased world switch overhead when the guest do=
-esn't use these
-> > > >>>     MSRs.
-> > > >>>
-> > > >>> but what it _doesn't_ say is what the world switch overhead is wh=
-en LBRV is
-> > > >>> enabled.  If the overhead is small, e.g. 20 cycles?, then I see n=
-o reason to
-> > > >>> keep the dynamically toggling.
-> > > >>>
-> > > >>> And if we ditch the dynamic toggling, then this patch is unnecess=
-ary to fix the
-> > > >>> LBRV issue.  It _is_ necessary to actually let the guest use the =
-LBRs, but that's
-> > > >>> a wildly different changelog and justification.
-> > > >>
-> > > >> The overhead might be less for legacy LBR. But upcoming hw also su=
-pports
-> > > >> LBR Stack Virtualization[1]. LBR Stack has total 34 MSRs (two cont=
-rol and
-> > > >> 16*2 stack). Also, Legacy and Stack LBR virtualization both are co=
-ntrolled
-> > > >> through the same VMCB bit. So I think I still need to keep the dyn=
-amic
-> > > >> toggling for LBR Stack virtualization.
-> > > >
-> > > > Please get performance number so that we can make an informed decis=
-ion.  I don't
-> > > > want to carry complexity because we _think_ the overhead would be t=
-oo high.
-> > >
-> > > LBR Virtualization overhead for guest entry + exit roundtrip is ~450 =
-cycles* on
-> >
-> > Ouch.  Just to clearify, that's for LBR Stack Virtualization, correct?
->=20
-> And they are all in the VMSA, triggered by LBR_CTL_ENABLE_MASK, for
-> non SEV-ES guests?
->=20
-> > Anyways, I agree that we need to keep the dynamic toggling.
-> > But I still think we should delete the "lbrv" module param.  LBR Stack =
-support has
-> > a CPUID feature flag, i.e. userspace can disable LBR support via CPUID =
-in order
-> > to avoid the overhead on CPUs with LBR Stack.
->=20
-> The "lbrv" module parameter is only there to test the logic for
-> processors (including nested virt) that don't have LBR virtualization.
-> But the only effect it has is to drop writes to
-> MSR_IA32_DEBUGCTL_MSR...
->=20
-> >                 if (kvm_cpu_cap_has(X86_FEATURE_LBR_STACK) &&
-> >                     !guest_cpuid_has(vcpu, X86_FEATURE_LBR_STACK)) {
-> >                         kvm_pr_unimpl_wrmsr(vcpu, ecx, data);
-> >                         break;
-> >                 }
->=20
-> ... and if you have this, adding an "!lbrv ||" is not a big deal, and
-> allows testing the code on machines without LBR stack.
+On Tue, May 21, 2024 at 03:24:48PM -0300, Jason Gunthorpe wrote:
+> On Tue, May 14, 2024 at 06:59:07PM -0700, Nicolin Chen wrote:
+> > So, you want a proxy S1 domain for a device to attach, in case
+> > of a stage-2 only setup, because an S2 domain will no longer has
+> > a VMID, since it's shared among viommus. In the SMMU driver case,
+> > an arm_smmu_domain won't have an smmu pointer, so a device can't
+> > attach to an S2 domain but always an nested S1 domain, right?
+> 
+> That seems like a simple solution to the VMID lifetime, but it means
+> the kernel has to decode more types of vSTE.
 
-Yeah, but keeping lbrv also requires tying KVM's X86_FEATURE_LBR_STACK capa=
-bility
-to lbrv, i.e. KVM shouldn't advetise X86_FEATURE_LBR_STACK if lbrv=3Dfalse.=
-  And
-KVM needs to condition SEV-ES on lbrv=3Dtrue.  Neither of those are difficu=
-lt to
-handle, e.g. svm_set_cpu_caps() already checks plenty of module params, I'm=
- just
-not convinced legacy LRB virtualization is interesting enough to warrant a =
-module
-param.
+Yea. For vSTE=abort, likely we need a nested block domain too?
 
-That said, I'm ok keeping the param if folks prefer that approach.
+> > > Functionally we could use that global nesting domain
+> > > to deliver the DEV_INVALIDATE too.
+> > 
+> > If my narrative above is correct, the device is actually still
+> > attached to S2 domain via a proxy nested S1 domain. What cache
+> > do we need to invalidate except S2 mappings in this case?
+> 
+> qemu needs a reliable place to send the invalidation commands to (ie
+> what ID to provide).
+> 
+> If we add IOMMU_VIOMMU_INVALIDATE then the ID is the viommu id.
+> 
+> If we enhance IOMMU_HWPT_INVALIDATE then the ID is the identity
+> nesting domain.
+> 
+> Either case leads to the viommu object in the kernel.
+
+Ooohh! I didn't connect the dots this far. Yes. This turns the
+IOMMU_HWPT_INVALIDATE back to the very first version supporting
+device cache flush. Though using IOMMU_HWPT_INVALIDATE feels a
+bit rule breaking now since it assumes the nested HWPT keeps a
+vdev_id lookup table somewhere in its associates...
+
+> I don't know if there is merit one way or the other. A more specific
+> API surface is nice, but the two APIs are completely duplicating.
+> 
+> So maybe:
+> 
+> #define IOMMU_VIOMMU_INVALIDATE IOMMU_HWPT_INVALIDATE
+> 
+> As documentation and have the kernel just detect based on the type of
+> the passed ID?
+
+Yea, the only difference is viommu_id v.s. hwpt_id that we can
+document.
+
+Then in this case, we have two mostly identical uAPIs for the
+SMMU driver to use. Should we implement both?
+
+> > > > So again, yes, it makes sense to me that we move viommu and the
+> > > > set_dev_id to the nested series, and then drop DEV_INVALIDATE.
+> > > 
+> > > I would like to do this bit by bit. viommu is a big series on its own.
+> > > 
+> > > DEV_INVALIDATE is fine, it just can't do ATS invalidation.
+> > 
+> > I am not very sure about AMD.
+> 
+> AMD will need the same vRID -> pRID stuff and we want that to run on
+> the VIOMMU
+> 
+> > Same question: any other case can we use the DEV_INVALIDATE for?
+> 
+> DEV_INVALIDATE was interesting before the viommu idea because
+> userspace could process each invalidation command and when it reaches
+> ATS it would invoke the correct DEV_INVALIDATE.
+
+Agreed. That helped a lot in VMM dispatching the invalidation
+requests.
+
+> With viommu we expect ATS supporting drivers to support viommu and
+> then to do vRID -> pRID in the other invalidation paths. In this case
+> I don't see a reason to do DEV_INVALIDATE right now.
+
+Yea. I guessed so.
+
+> > > We can add ATS invalidation after either as an enhancement as part of
+> > > adding the VIOMMU either as DEV_INVALIDATE or VIOMMU_INVALIDATE (or
+> > > both)
+> > 
+> > Yea, maybe step by step like this:
+> > 
+> > Part-1 VIOMMU_ALLOC and VIOMMU_ATTACH
+> > Part-2 VIOMMU_SET/UNSET_VDEV_ID
+> > Part-3 VIOMMU_INVALIDATE
+> > Part-4 VQUEUE_ALLOC
+> > ...
+> 
+> So we have this stuff still open:
+>  - Identity STE with PASID (part 2b)
+>  - IOMMU_GET_HW_INFO (part 3)
+>  - IOMMU_HWPT_ALLOC_NEST_PARENT (part 3)
+>  - IOMMU_HWPT_DATA_ARM_SMMUV3 (part 3)
+>  - IOMMU_HWPT_INVALIDATE_DATA_ARM_SMMUV3
+>  - VIOMMU_ALLOC, VIOMMU_ATTACH
+>  - VIOMMU_INVALIDATE
+>  - VIOMMU_SET/UNSET_VDEV_ID
+>  - VQUEUE_ALLOC / vCMDQ
+> 
+> I feel like IOMMU_HWPT_INVALIDATE_DATA_ARM_SMMUV3 is a reasonable fit
+> to part 3. Then part 4 would be VIOMMU_ALLOC -> VIOMMU_SET/UNSET_VDEV_ID
+> which brings ATS support the API.
+
+There is some conflict at passing in viommu_id/viommu v.s. parent
+hwpt_id/domain for a nested domain allocation. Do you think that
+should be addressed later in VIOMMU series v.s. part3?
+
+More specifically, I have two drafts in my viommu series:
+87a659e65229 WAR: iommufd: Allow pt_it to carry viommu_id
+7c5fd8f50bc9 WAR pass in viommu pointer to domain_alloc_user op
+
+I know that these two only make sense with VIOMMU_ALOC. Yet, will
+there be a problem, if we establish nested domain allocation with
+parent domain/hwpt by part3, in the uAPI, and then change later?
+Will we end up with supporting two for backward compatibility?
+
+> vCMDQ hypervisor support would sit on top of that with just VQUEUE?
+
+Yea.
+
+Thanks
+Nicolin
 
