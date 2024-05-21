@@ -1,136 +1,168 @@
-Return-Path: <linux-kernel+bounces-185001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA9C8CAF43
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:17:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E458CAF45
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDFECB21666
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:17:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C921F2314A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A60E76410;
-	Tue, 21 May 2024 13:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6BB6BB37;
+	Tue, 21 May 2024 13:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qiWcp7U6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBygUZI6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F782F5B;
-	Tue, 21 May 2024 13:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658D12F5B
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716297424; cv=none; b=WqXPSMez3yYj4T8yJqq5MqG4vNDiVgsq+7PAQnI1YXXeuqatAYiTv+kdY3vrYds/pPyecctkIfGnGYxBUAkNDTjqUGiEyS/dRBzWYpo+yRL/cgH0faOzZzDQXR4SlmWIy+RfRtyOUltYtDmWDj8Yd4YLATgaGu44orK3MwQSD44=
+	t=1716297519; cv=none; b=t0UP1f2O/R3S8e5UjPsDcdVdlDxt05Z5ntjO6iF0k+6InHPdXfdvrACOyN5BPCZz61/L4FZvTBlhWSIBnsd0cTW5w/75OvhVjMXq67ONfjtCHyB9MDYHEvvxTMBVzAMtpAc1p5EBWtiV3lucUcCjUQhTkfRBlfvk6X0kpzH0c7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716297424; c=relaxed/simple;
-	bh=Ai2UN0LumvAanxRSQJC3Es5pR8OR/INMnpLu0uelGtQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=b0Ha9pgxTqz1PcHAKI0tY2F/S6uJOguapp2i9Az7VCwnbHGSndcbVQewDEUpn6+eD+KcNB5MY5MvwWyeoI7ogaJR47tRuq8A1f+f6Exb5wC9n7L0goodcH0ZUttGO5/Rp/PhDbbm+dFrSlk853dwdJNHkCejUItdVPkoo98fKKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qiWcp7U6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69DCFC2BD11;
-	Tue, 21 May 2024 13:17:01 +0000 (UTC)
+	s=arc-20240116; t=1716297519; c=relaxed/simple;
+	bh=jPyGMIbDpl3l7dFh6G+NEKdDAZJ/vPGjnYIHZdX+PQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SIQXuO6F4UVTxC6ceDSR2KZENlrvd2HVpiq99gRDhiy5D8lI0bl4DbgcYK4AawXyen+WKTDr9cZSnXAF2KrabJDOW1FXmSggs5ceFPUHbnfjJVjoYod7jWhhd+c4QBeGJQsYVfKQlYahFzb2D/Y2VYmsqH/Q9V9ZCq5N+2HQOUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBygUZI6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF5FC2BD11;
+	Tue, 21 May 2024 13:18:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716297424;
-	bh=Ai2UN0LumvAanxRSQJC3Es5pR8OR/INMnpLu0uelGtQ=;
+	s=k20201202; t=1716297519;
+	bh=jPyGMIbDpl3l7dFh6G+NEKdDAZJ/vPGjnYIHZdX+PQk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qiWcp7U6aaRusNrCfCcYq71aaFluW10yy7PaNxi4OgrN30vHaG2yCETzFMdhFsKrp
-	 u/5ZwIC7RPBou0hV3p9fnwEwSFXMAJJlyLonaYwbo+g/8+m+exzDCtF3wTOv7wsnya
-	 3FhQjJ4zRTSnQ4r34CI72aDK0gwr+ZCC9qaDuYhmFPG+P2mVkuwSjDqyAHBst1dlC/
-	 Cy0wUl91ydLlrPQV2m9PSbOsGyGf+7Ji0dD7V8lw8Afbq2/ehF0SIHOwKVPJSEdgAI
-	 0nhRt2/sGYCvt/b1NmQX5f/neMZRwdQ/d3RM56Cw1/X4XPD2bo25E4AMEai6vMZqYA
-	 4cepH/35woKBw==
+	b=JBygUZI6h3wiJ1r0fiMhwyPWz/g/VWy4zOKC6sY98d7k11DCB9bEZvrnfhNFgFCI7
+	 xONxkMque5q41YgEwatCLixrPwAQb+yO1jeqzd6Sxieebr9/gXaK6JDEfs9V5Ae/Wl
+	 4szb8FD7aIaqmJLvLO7K13LA1J3ce/5ROnaqV39R3yYl+JOU8/d8rMoGoreDS1v+K2
+	 e/y7kjUDLPdWlN4/NoXfaDBXH6Xl/3VFY8HgLrEVEjvCk4Jh1ZqIKyjd8AyuwmHXSG
+	 8xpf3GCNszw65mqGxSAzYOIthD8D4TBxcGBMxhK40ZirGTsC0wws5iWkm9XyiWTvCZ
+	 ADsTbJswppPkg==
+Date: Tue, 21 May 2024 15:18:36 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Aradhya Bhatia <a-bhatia1@ti.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, DRI Development List <dri-devel@lists.freedesktop.org>, 
+	Linux Kernel List <linux-kernel@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>, 
+	Thierry Reding <treding@nvidia.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>, Devarsh Thakkar <devarsht@ti.com>, 
+	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+Subject: Re: [PATCH 1/7] drm/tidss: Add CRTC mode_fixup
+Message-ID: <20240521-lean-dragon-of-perfection-043fad@houat>
+References: <20240511153051.1355825-1-a-bhatia1@ti.com>
+ <20240511153051.1355825-2-a-bhatia1@ti.com>
+ <20240516-tuscan-mamba-of-debate-c4cddf@penduick>
+ <1c4f5862-b1a2-4812-a109-987338ec3a72@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="qr4b63zzpq7nl4wu"
+Content-Disposition: inline
+In-Reply-To: <1c4f5862-b1a2-4812-a109-987338ec3a72@ti.com>
+
+
+--qr4b63zzpq7nl4wu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 May 2024 16:16:59 +0300
-Message-Id: <D1FCNPSEPCC0.228MKP1CG12F0@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Vitor Soares" <ivitro@gmail.com>,
- <linux-integrity@vger.kernel.org>
-Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-X-Mailer: aerc 0.17.0
-References: <20240519235122.3380-1-jarkko@kernel.org>
- <20240519235122.3380-2-jarkko@kernel.org>
- <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
- <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
- <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
- <D1FCAPJSYLTS.R9VC1CXDCIHH@kernel.org>
- <D1FCJ71B0HAO.2CD8A7N7DR5DP@kernel.org>
-In-Reply-To: <D1FCJ71B0HAO.2CD8A7N7DR5DP@kernel.org>
 
-On Tue May 21, 2024 at 4:11 PM EEST, Jarkko Sakkinen wrote:
-> On Tue May 21, 2024 at 4:00 PM EEST, Jarkko Sakkinen wrote:
-> > On Tue May 21, 2024 at 3:33 PM EEST, James Bottomley wrote:
-> > > On Tue, 2024-05-21 at 10:10 +0300, Jarkko Sakkinen wrote:
-> > > > This benchmark could be done in user space using /dev/tpm0.
-> > >
-> > > Let's actually try that.  If you have the ibmtss installed, the comma=
-nd
-> > > to time primary key generation from userspace on your tpm is
-> > >
-> > > time tsscreateprimary -hi n -ecc nistp256
-> > >
-> > >
-> > > And just for chuckles and grins, try it in the owner hierarchy as wel=
-l
-> > > (sometimes slow TPMs cache this)
-> > >
-> > > time tsscreateprimary -hi o -ecc nistp256
-> > >
-> > > And if you have tpm2 tools, the above commands should be:
-> > >
-> > > time tpm2_createprimary -C n -G ecc256
-> > > time tpm2_createprimary -C o -G ecc256
+On Thu, May 16, 2024 at 04:33:40PM GMT, Aradhya Bhatia wrote:
+> Hi Maxime,
+>=20
+> Thank you for reviewing the patches.
+>=20
+> On 16/05/24 13:40, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Sat, May 11, 2024 at 09:00:45PM +0530, Aradhya Bhatia wrote:
+> >> Add support for mode_fixup for the tidss CRTC.
+> >>
+> >> Some bridges like the cdns-dsi consume the crtc_* timing parameters for
+> >> programming the blanking values. Allow for the normal timing parameters
+> >> to get copied to crtc_* timing params.
+> >>
+> >> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> >> ---
+> >>  drivers/gpu/drm/tidss/tidss_crtc.c | 11 +++++++++++
+> >>  1 file changed, 11 insertions(+)
+> >>
+> >> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tids=
+s/tidss_crtc.c
+> >> index 94f8e3178df5..797ef53d9ad2 100644
+> >> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
+> >> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
+> >> @@ -309,12 +309,23 @@ enum drm_mode_status tidss_crtc_mode_valid(struc=
+t drm_crtc *crtc,
+> >>  	return dispc_vp_mode_valid(tidss->dispc, tcrtc->hw_videoport, mode);
+> >>  }
+> >> =20
+> >> +static
+> >> +bool tidss_crtc_mode_fixup(struct drm_crtc *crtc,
+> >> +			   const struct drm_display_mode *mode,
+> >> +			   struct drm_display_mode *adjusted_mode)
+> >> +{
+> >> +	drm_mode_set_crtcinfo(adjusted_mode, 0);
+> >> +
+> >> +	return true;
+> >> +}
+> >> +
+> >>  static const struct drm_crtc_helper_funcs tidss_crtc_helper_funcs =3D=
+ {
+> >>  	.atomic_check =3D tidss_crtc_atomic_check,
+> >>  	.atomic_flush =3D tidss_crtc_atomic_flush,
+> >>  	.atomic_enable =3D tidss_crtc_atomic_enable,
+> >>  	.atomic_disable =3D tidss_crtc_atomic_disable,
+> >> =20
+> >> +	.mode_fixup =3D tidss_crtc_mode_fixup,
+> >>  	.mode_valid =3D tidss_crtc_mode_valid,
+> >>  };
+> >=20
+> > mode_fixup is deprecated for atomic drivers, so the solution must be
+> > different there.
+> >=20
+> > It's also not clear to me how it could change anything there:
+> > drm_mode_set_crtcinfo with no flags will make crtc_* field exactly
+> > identical to their !crtc counterparts.
 > >
-> > Thanks, I definitely want to try these in my NUC7. I can try both
-> > stacks and it is pretty good test machine because it is old'ish
-> > and slow ;-)
-> >
-> > I'm also thinking differently than when I put out this pull request.
-> > I honestly think that it must be weird use case to use TPM with
-> > a machine that dies with a HMAC pipe. It makes no sense to me and
-> > I think we should focus on common sense here.
-> >
-> > I could imagine one use case: pre-production hardware that is not
-> > yet in ASIC. But in that case you would probably build your kernel
-> > picking exactly the right options. I mean it is only a default
-> > after all.
-> >
-> > I think we could add this:
-> >
-> > 	default X86 || ARM64
-> >
-> > This pretty covers the spectrum where HMAC does make sense by
-> > default. We can always relax it but this does not really take
-> > away the legit user base from the feature.
-> >
-> > It would be a huge bottleneck to make HMAC also opt-in because
-> > the stuff it adds makes a lot of sense when build on top. E.g.
-> > the asymmetric key patch set that I sent within early week was
-> > made possible by all this great work that you've done.
-> >
-> > So yeah, I'd like to send the above Kconfig changes, but that
-> > is all I want to do this at this point.
->
-> Patch is out (lore link was not yet available):
->
-> https://lkml.org/lkml/2024/5/21/583
+>=20
+> I checked the flag options. There isn't any flag required. The only
+> reason to add this call is because cdns-dsi strictly requires the crtc_*
+> fields to be populated during the bridge enable.
+>=20
+> Secondly, if mode_fixup is deprecated, I think the crtc_atomic_check
+> would be the next best place to add this call.
 
-Right also: TCG_TPM is neither default in x86 defconfig. So it would
-require two switches turned on to get basic TPM support ongoing. So
-yeah, I think we're in a sweet spot with above patch.
+That would be better, yes, but we shouldn't even have to do that in the
+first place. AFAIK all the path that create a drm_display_mode will call
+drm_mode_set_crtcinfo on it to fill those fields. So if they are missing
+somewhere, that's what the actual bug is, not something we should work
+around of at the driver level.
 
-BR, Jarkko
+Maxime
+
+--qr4b63zzpq7nl4wu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkyfLAAKCRAnX84Zoj2+
+dnpoAX4kO2icxTnf/r4NWxn0+BU8veVEni74msZxDWSUcBWceEwWieQmjI55HRcW
+IqYQEtsBfAzAcuPszPO3YqPwyNvcfeoWh/YqtgrQ3Ml5B8ucnSi0wrdpq6fDaz93
+W2QAo5X+wQ==
+=s00g
+-----END PGP SIGNATURE-----
+
+--qr4b63zzpq7nl4wu--
 
