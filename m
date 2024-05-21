@@ -1,162 +1,87 @@
-Return-Path: <linux-kernel+bounces-184576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295438CA909
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:36:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77CDD8CA946
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A137B22360
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F201C21537
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6D151C4C;
-	Tue, 21 May 2024 07:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZNQoD+w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBF652F71;
+	Tue, 21 May 2024 07:46:06 +0000 (UTC)
+Received: from new-mail.astralinux.ru (new-mail.astralinux.ru [51.250.53.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965714AEEA;
-	Tue, 21 May 2024 07:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B85717740;
+	Tue, 21 May 2024 07:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.250.53.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716276970; cv=none; b=hGbDbzdxYAk9UsftQjDNdZNAaf3Paen2OLGmY+9WXVZlkPqfYHcnI0nNB3amTlahCqMZ2t8ZHNZ/O2Glz0kQFSfbOt8vWclJz7EF75yKqsQe8pnZMP95oyA4w4ViBAW5+5znIeMqpoknjeB3VUmvoJ0gQBvhTa+sdLSv9pmKcIg=
+	t=1716277565; cv=none; b=ZT0fTQ/CnAPfx/41LdT72I/QdtpeBystaN08ii1wO3XNfoW5l/J5YHZHUXxyO8L+A0D0EKOnkhg85Z9M8YuJ39B2tJSi3IgeSo/ldGXlaOccM9U8WsiBv84/Xn2l9keAlZN4EzhsS6SVeji7jWsaEh07KjUfKEzpXoMAr/O58Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716276970; c=relaxed/simple;
-	bh=TSHH3TFEnI88JgnRvSkdY7vzKnYn1JgNXRhpBIdSkVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CM03N9/Nlr9/L4Ra8FKpJXKzd3WzkDuGvaP2ARH82XV1q5MR51AyDvW7n0WuZBZwLAHCM9ldVMGufCutZY+lkithDn9JLoUZSrWJ4ZzNFWfaAAhRM3kKSp92PLhds+L0+PANstXnw4hPPjYnZ357uE77PW0A5pr0WQ6sgQRti/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZNQoD+w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D08AC2BD11;
-	Tue, 21 May 2024 07:36:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716276970;
-	bh=TSHH3TFEnI88JgnRvSkdY7vzKnYn1JgNXRhpBIdSkVE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mZNQoD+wrg2KP/FaOfxM7OJQtdwDGyPYiPGU1xhhmVtz8zj9faHSKv8zwUyRg17Ay
-	 OeYwnA34MPly41sMng9rjAnSKqlYVVE5eyadxY99cybyJXaxSn/a3/zLuWvD+aZ9Oa
-	 1Ep4+NrwfzDL9SicNe0ihPr8fhc2YPe7yHwaHJKwgpPM1goTrhJFRajAPqAgjs8bZg
-	 GYtGXjqlzL/AsM/9T/x26Jb6Fk6Gq+j+moexQrhxirhC0eI9a0CfttXeqHG/9EJMee
-	 Yq2yjh7xdql6vTDhJFM2oiF6nGEQ/5kwFIdEliJXPgCITiU9zVRcwcB4HW2qEDxZ53
-	 moaIxJeDtL1mg==
-Message-ID: <c9882ba0-bbbf-44ec-9606-ebe68bcb8866@kernel.org>
-Date: Tue, 21 May 2024 09:36:03 +0200
+	s=arc-20240116; t=1716277565; c=relaxed/simple;
+	bh=ReNLlDgpjZ1jaZiHgCEwYSvsQ1fg9dcm9wtlMCL728U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lhX2nNAswCQzGcohMdA7edf2M3tkAOjAtQyCEgquALohsUfd3RKnGxONyA8HNk/Hmh+qRIq9pJQKVO8z0JazS35MbJBv15gf9e8l0FoGRhxEfgqrpsgLb8jM5lJwEr8tOaX/Er8Lz8bxArzmPQeqIPA5qo5ZItzkjhoQKIGJaAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=51.250.53.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from rbta-msk-lt-106062.astralinux.ru (unknown [10.177.15.104])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4Vk5qD5KW8zqSR3;
+	Tue, 21 May 2024 10:36:56 +0300 (MSK)
+From: Anastasia Belova <abelova@astralinux.ru>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Anastasia Belova <abelova@astralinux.ru>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RFC] [media] s5p-fimc: fix sleep in atomic in flite_hw_reset
+Date: Tue, 21 May 2024 10:36:07 +0300
+Message-Id: <20240521073607.19426-1-abelova@astralinux.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] dt-bindings: remoteproc: qcom,pas: Add hwlocks
-To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
- <20240516-hwspinlock-bust-v1-5-47a90a859238@quicinc.com>
- <3521519f-34b8-472d-be37-f0e64bba24fc@kernel.org>
- <a944418a-1699-44fa-bdfc-2e57129adea1@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <a944418a-1699-44fa-bdfc-2e57129adea1@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-DrWeb-SpamScore: -100
+X-DrWeb-SpamState: legit
+X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetnhgrshhtrghsihgruceuvghlohhvrgcuoegrsggvlhhovhgrsegrshhtrhgrlhhinhhugidrrhhuqeenucggtffrrghtthgvrhhnpeffhfffiefggedvjeduhfdtjefgvdfhteeivdfgleevleeihfejhfefkeethfegheenucfkphepuddtrddujeejrdduhedruddtgeenucfrrghrrghmpehhvghloheprhgsthgrqdhmshhkqdhlthdquddtiedtiedvrdgrshhtrhgrlhhinhhugidrrhhupdhinhgvthepuddtrddujeejrdduhedruddtgeemfeehgeeigedpmhgrihhlfhhrohhmpegrsggvlhhovhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopedutddprhgtphhtthhopehsrdhnrgifrhhotghkihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopegrsggvlhhovhgrsegrshhtrhgrlhhinhhugidrrhhupdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihksehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhhimhdrrghkhhhtrghrsehsrghmshhunhhgrdgtohhmpdhrtghpthhtohepkhihuhhnghhmihhnrdhprghrkh
+ esshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqshgrmhhsuhhnghdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-DrWeb-SpamVersion: Vade Retro 01.423.251#02 AS+AV+AP Profile: DRWEB; Bailout: 300
+X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.62.01180, Virus records: 12694235, Updated: 2024-May-21 05:22:48 UTC]
 
-On 21/05/2024 06:08, Chris Lew wrote:
-> 
-> 
-> On 5/19/2024 10:36 AM, Krzysztof Kozlowski wrote:
->> On 17/05/2024 00:58, Chris Lew wrote:
->>> Add hwlocks property to describe the hwspinlock that remoteproc can try
->>> to bust on behalf of the remoteproc's smem.
->>
->> Sorry, as you wrote, the lock is part of smem, not here. Drivers do not
->> crash, so if your crashes as you imply in the cover letter, then first
->> fix the driver.
->>
-> 
-> Hi Krzysztof,
-> 
-> Sorry for the confusion, I dont think I meant that the smem driver will 
-> ever crash. The referred to crash in the cover letter is a crash in the 
-> firmware running on the remoteproc. The remoteproc could crash for any 
-> unexpected reason, related or unrelated to smem, while holding the tcsr 
-> mutex. I want to ensure that all resources that a remoteproc might be 
-> using are released as part of remoteproc stop.
-> 
-> The SMEM driver manages the lock/unlock operations on the tcsr mutex 
-> from the Linux CPU's perspective. This case is for cleaning up from the 
-> remote side's perspective.
-> 
-> In this case it's the hwspinlock used to synchronize SMEM, but it's 
-> conceivable that firmware running on the remoteproc has additional locks 
-> that need to be busted in order for the system to continue executing 
-> until the firmware is reinitialized.
-> 
-> We did consider tying this to the SMEM instance, but the entitiy 
-> relating to firmware is the remoteproc instance.
+flite_hw_reset is called in fimc_lite_resume with spinlock
+acquired that is forbidden. Replace usleep_range with udelay.
 
-I still do not understand why you have to add hwlock to remoteproc, even
-though it is not directly used. Your driver problem looks like lack of
-proper driver architecture - you want to control the locks not from the
-layer took the lock, but one layer up. Sorry, no, fix the driver
-architecture.
+Fixes: 2b511edb986f ("[media] s5p-fimc: Add FIMC-LITE register definitions")
+Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+---
+ drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c b/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c
+index 2483277a6cb0..f1e7375c9a5f 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c
+@@ -30,7 +30,7 @@ void flite_hw_reset(struct fimc_lite *dev)
+ 		cfg = readl(dev->regs + FLITE_REG_CIGCTRL);
+ 		if (cfg & FLITE_REG_CIGCTRL_SWRST_RDY)
+ 			break;
+-		usleep_range(1000, 5000);
++		udelay(1000);
+ 	}
+ 
+ 	cfg |= FLITE_REG_CIGCTRL_SWRST;
+-- 
+2.30.2
 
 
