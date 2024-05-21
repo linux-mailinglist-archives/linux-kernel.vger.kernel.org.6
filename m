@@ -1,78 +1,124 @@
-Return-Path: <linux-kernel+bounces-185353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB388CB3E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:53:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF1D8CB3EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C672A1F21FF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:53:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB77F1F2241B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8059E1494A5;
-	Tue, 21 May 2024 18:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A546A149019;
+	Tue, 21 May 2024 18:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DiJ6jo22"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b="MYS8fL3w"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22B41442E3;
-	Tue, 21 May 2024 18:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEF1219ED
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716317581; cv=none; b=UR9JVXfWzu9V7dQwkIt/WcDO0LNFrZKlHKoYeKVYD8ZZG2W4AAKtW46tRJ7wcxzOprqAiSn5RjszUddS0F+9y+koQbSKcDaQhit33y99Sm+sgm337JIJlS58+O1RKf/06IfMEdQmwRgUYEjbI5gdk90UL6x90XUxg/PXI2VKTPA=
+	t=1716317821; cv=none; b=uB2kIuG97H//8Zaz5Gxzzkq492wc0/Duv1VPRVoh1KJSYvBG76maLo1Z5/3di/Zoe4zFNLGJYMbofogqxAGAUdoTvc7JPozdzBjtpVwspyN/bV7m9VJamJWJjcjkGdrLJzsO9IZbOh9GSP+QMB+Gx7ZTv4ewb7WPk6NBrQoZLeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716317581; c=relaxed/simple;
-	bh=Y3dZuNN5JyJkgPvGR61kgXm8bYcgxSA3OcvYWH1+HMM=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=H3/uUW/DBZ6GXF1alwxYyiFicJhK3INq09bLtXjCea59E/7plUQMFPfmNu18rTno9kJ5qZX7QSf8zNJKW4g0G59nwMUlgeAs1LWO0jXE3A4gwuvaMoGQceUYzhHypW3RyeJNgJGLxjz9NCUSboAURH2SmAbECW8we4mEkFSbdxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DiJ6jo22; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A2BC8C32789;
-	Tue, 21 May 2024 18:53:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716317581;
-	bh=Y3dZuNN5JyJkgPvGR61kgXm8bYcgxSA3OcvYWH1+HMM=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=DiJ6jo22BvXEttqWTaTmWjx1IyVQ5kYwT0TLw8OStD/MPHX8WINZVzaUenR1NOMpP
-	 cChezj1IbV4VRDxDbJJHnYZCBE10RnLoxW/YLvwUEFkItMU3Y5TJcgBbja6Zk+H28h
-	 8KQreNpmqP0YRYVj+luHrDSdjgS8J77HNvZFtZgPvICdvORB7ajSHHkkrEatX93vaP
-	 KuZHpEavLOHmXeeC4pPzym35CSASaLlhpum2TxhaOfNnOTMfhrh7uXF0KOucCT8r1J
-	 165chofRdhkUSZAQigDRwzi377edsKr0Pxa9H9QR+qPKwh/HDZEPNOTgG0DuIgFvIZ
-	 bmfqUcbM47W+Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 90CA8C54BB2;
-	Tue, 21 May 2024 18:53:01 +0000 (UTC)
-Subject: Re: [GIT PULL] ACPI fixes for v6.10-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0gPXNa+DjUbHpPYvBzt3Thdke9rvdbSXEcJ5qXPBQJtpQ@mail.gmail.com>
-References: <CAJZ5v0gPXNa+DjUbHpPYvBzt3Thdke9rvdbSXEcJ5qXPBQJtpQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0gPXNa+DjUbHpPYvBzt3Thdke9rvdbSXEcJ5qXPBQJtpQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.10-rc1-2
-X-PR-Tracked-Commit-Id: 98a83da39b482c638954b111803906843a83a747
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 62a12816cb2006776ac8ee9ef026fd99c3a47de6
-Message-Id: <171631758158.16717.6415831548092022365.pr-tracker-bot@kernel.org>
-Date: Tue, 21 May 2024 18:53:01 +0000
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
+	s=arc-20240116; t=1716317821; c=relaxed/simple;
+	bh=uT+ls486dG8nHmi/MyCGG3XvVfsPdmT4J2Rnn+NHSdE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=e/Wbx08RLY0CQaoRVL1F/b7Mjzxghw/pRGU8P1A8mejPUq1f8pXNIAMo3SY+JzltdV6TX1cRoyXw7njVQ9g6kvyXlmBCQx4Gd4tjAaAqkoV27Jmg+XCDpK8jNidbWcieMAJKsD5zx/RSNFqhNXlp0hIXP6XIQ2JalB//sYIg/NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer; spf=none smtp.mailfrom=libretech.co; dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b=MYS8fL3w; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=libretech.co
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e564cad1f6so82976181fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:56:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=libre.computer; s=google; t=1716317816; x=1716922616; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wK5e67Jdl5vfjzEOu3Eo6/JgeP8I4p2OioGReqzd8h8=;
+        b=MYS8fL3wPzIJIPY41/mzt1cBgKJp0tSU7hDVp+u3Rva+IadjYFBeNQnVBc7ywkbHRz
+         zWAikAMUJSB0xaWxHd+wvf2WDxKWizgBCCzJ/8M299ZekO0lG55Mf8NMI2lep/I4Xh+f
+         0Azn578DgfvXtKippuirqphAY/2SQoVgRLao8PaXRAhiwVc+Z7MOrVGl0cGgsAeRH1ih
+         IzBMPegnpgpf466ZE7sl5mYWJivlIkWm1rRvKNDDbSqMLuEmyDObGfTlPlyQxunMlqcC
+         oFOiJ5wBSbLfNYx9Jfda7YX6JMh/KoasB/YJ+wVjX9NDWK/zjcoNhDEmJyGDhCsvRDmh
+         uq0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716317816; x=1716922616;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wK5e67Jdl5vfjzEOu3Eo6/JgeP8I4p2OioGReqzd8h8=;
+        b=RSN59M/5YGtlvIenVVbBvJ67NBmBjwuDVEJzq/XMEQLlF50ThaYuvOQUNxhh2NGG1Z
+         5VxugvngROMRiwdPp/g96kTRDmFLVcT2HyWkvOJe/68Oi2ELT4lqDFb0EkpB0J2RxKmZ
+         G9+Y6BUcaURnDoUnF3mNtHwzIoPOCQwwsVo3avmky2TXjXwbywt3IwRclv9I3klJCN3z
+         EQguth4obzQbXkXktOxTI0FKcZZDmGDYpw4epppECMcExHurRXRJtnkpxxjj6W2S2mwx
+         952Ga62XT0o8qe2gMJl3lkXh/yxbuTfqk0MedBfs3nm+KsjMGTmXIv44LqUftEzgGB4M
+         sQlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkVwA66SyvxAMSCBXBs75YGy0frFjsA4dqUXARjgbqbglxCtHYi6T87bANss5DjAf0XP2PizkR4WtYnuGpperAUAdC7xsHkFoTgF0C
+X-Gm-Message-State: AOJu0YwTjpuGb5/XC7ro0yeVSPxTKSIh1uQYNeF9pDXilOrnGF+B8NFk
+	52QyM/lD53Row2qjqDgiW2JUWSSlZBCkFnT/R9pYdTfAzHt93T/GjEFQykGDhrFHugIi5fFAABB
+	Y/D/d15VWTLu61XRUEtWucv5Lf+s3OEMD2jQt
+X-Google-Smtp-Source: AGHT+IEqPa+du8fjYKGXkpILJkupqk3Qb0cGifkvSVqA1SHvtN7Dt3pRQ9a8SeREQmZzpASy17m8MSkPD92GjkUvBm8=
+X-Received: by 2002:a2e:a58b:0:b0:2e2:891d:5f62 with SMTP id
+ 38308e7fff4ca-2e51ff6692amr237140221fa.29.1716317816220; Tue, 21 May 2024
+ 11:56:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: Da Xue <da@libre.computer>
+Date: Tue, 21 May 2024 14:56:45 -0400
+Message-ID: <CACqvRUbx-KsrMwCHYQS6eGXBohynD8Q1CQx=8=9VhqZi13BCQQ@mail.gmail.com>
+Subject: [PATCH] net: mdio: meson-gxl set 28th bit in eth_reg2
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, netdev@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Cc: linux-stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The pull request you sent on Tue, 21 May 2024 11:35:26 +0200:
+This bit is necessary to enable packets on the interface. Without this
+bit set, ethernet behaves as if it is working but no activity occurs.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.10-rc1-2
+The vendor SDK sets this bit along with the PHY_ID bits. u-boot will set
+this bit as well but if u-boot is not compiled with networking, the
+interface will not work.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/62a12816cb2006776ac8ee9ef026fd99c3a47de6
+Fixes: 9a24e1ff4326 ("net: mdio: add amlogic gxl mdio mux support");
 
-Thank you!
+Signed-off-by: Da Xue <da@libre.computer>
+---
+ drivers/net/mdio/mdio-mux-meson-gxl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/net/mdio/mdio-mux-meson-gxl.c
+b/drivers/net/mdio/mdio-mux-meson-gxl.c
+index 89554021b5cc..b2bd57f54034 100644
+--- a/drivers/net/mdio/mdio-mux-meson-gxl.c
++++ b/drivers/net/mdio/mdio-mux-meson-gxl.c
+@@ -17,6 +17,7 @@
+ #define  REG2_LEDACT GENMASK(23, 22)
+ #define  REG2_LEDLINK GENMASK(25, 24)
+ #define  REG2_DIV4SEL BIT(27)
++#define  REG2_RESERVED_28 BIT(28)
+ #define  REG2_ADCBYPASS BIT(30)
+ #define  REG2_CLKINSEL BIT(31)
+ #define ETH_REG3 0x4
+@@ -65,7 +66,7 @@ static void gxl_enable_internal_mdio(struct
+gxl_mdio_mux *priv)
+  * The only constraint is that it must match the one in
+  * drivers/net/phy/meson-gxl.c to properly match the PHY.
+  */
+- writel(FIELD_PREP(REG2_PHYID, EPHY_GXL_ID),
++ writel(REG2_RESERVED_28 | FIELD_PREP(REG2_PHYID, EPHY_GXL_ID),
+         priv->regs + ETH_REG2);
+
+  /* Enable the internal phy */
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.39.2
 
