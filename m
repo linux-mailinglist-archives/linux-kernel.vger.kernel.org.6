@@ -1,115 +1,92 @@
-Return-Path: <linux-kernel+bounces-185091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD99C8CB060
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:25:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D164A8CB053
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4672AB267F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:25:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3EF281DD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D199130A6F;
-	Tue, 21 May 2024 14:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D690712FF8E;
+	Tue, 21 May 2024 14:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BcC+kn0q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FDsC2F5o";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hluSej/x"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A7513048D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2539212EBEE;
+	Tue, 21 May 2024 14:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716301462; cv=none; b=Ht/jXcPHQdXnyz/VpWOHmXc9sk3MQg4Si+HE8LOkLtXiH3zWw06x5gOoy6PHmq89pg6QcLcJgaw1qhkSs1Wg8REVcPydcmatA9OkVBKBQwh4G6i/tpybFflbzJ/j1TQ21w0PY01gud2IrnZlIcCNcxDU13+a8xVNQKTHDxeJlAs=
+	t=1716301386; cv=none; b=cTOomSXBAy9i6QTqMi97YcunQ+Vl3d6KwN3k/i+iuHA4HTePGbDWIarJtXft98TZ86xdORPFbA7c1ZkbST1+JTK2DS1l8I8c86mmXy9VD+yQqrHX9PSTUrGdTCpHqe8MHZQR79Ps1whtBGt8lQnXkSt36tfS5CisEC2Dy15rk4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716301462; c=relaxed/simple;
-	bh=tfhs4G1UxiGQsBmQ8SRV1xtzgUc9WBEgAUO1utJnNF0=;
+	s=arc-20240116; t=1716301386; c=relaxed/simple;
+	bh=PC2VzjdE9pOS7qDKBe4Km1hSRdFZqxdUgECUk1pKFzo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d0QYPZbXNKaq+blMzroJiE6TbOCDg02pey+1svVaANYwNNTgLv0Hnpyb4sJ/v++tfJ5Pct4NLBaP+N9Ai5IoDHSnc47TSLP5Yylt/JtqiSDIuFSuujEDEHzHPSWmD4QyvWGBwPRE/h+kQbS82YhqIZdnmyQeVlV5Y5Cej68ASmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BcC+kn0q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716301460;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Slx3ZNLTnyFCODrjcTDQIHXE3YXudue5N2aXNcmyFVyPBXU/xxc/n4+SzqID1TiUnlo34mPDt/hihfJ441ETdkO7pkV+V3uauA49b/cJJfVv23NWqPZehCP1l2s/rhsT1QImIBCUjUk3mQ1xiKfSHBG4rkdvwAU9ROO2/kBRd6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FDsC2F5o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hluSej/x; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 21 May 2024 16:22:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716301381;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tfhs4G1UxiGQsBmQ8SRV1xtzgUc9WBEgAUO1utJnNF0=;
-	b=BcC+kn0qLh+yFfZiRhtW95a5JJbuKaawHXcJqc0+z6sHe8JkTErFJ8XCjcaV3yWpmra1iG
-	3hPXFN7oTIbX20HoiVCQBljJNEda23Okv/xZ5wY2xK/+tG62P5zFqwgsqJhadUb0sz0ftt
-	Pj07vfY7kfwkrNxFnQr7ss9eqgn42vU=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-nhnsxC0UO6SnsoRjeBDPPg-1; Tue,
- 21 May 2024 10:24:12 -0400
-X-MC-Unique: nhnsxC0UO6SnsoRjeBDPPg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C79A11C03150;
-	Tue, 21 May 2024 14:23:53 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.64])
-	by smtp.corp.redhat.com (Postfix) with SMTP id CBF361C0948E;
-	Tue, 21 May 2024 14:23:48 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 21 May 2024 16:22:27 +0200 (CEST)
-Date: Tue, 21 May 2024 16:22:21 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org,
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>
-Subject: Re: [PATCHv6 bpf-next 1/9] x86/shstk: Make return uprobe work with
- shadow stack
-Message-ID: <20240521142221.GA19434@redhat.com>
-References: <20240521104825.1060966-1-jolsa@kernel.org>
- <20240521104825.1060966-2-jolsa@kernel.org>
+	bh=4UKsg7qQvlG77Y7q+ZHUhtxz8eupkMhNXaXZZpb8kN8=;
+	b=FDsC2F5oI6AuYvrT9NOQp/6JLwEshM6R1b/Hody5w598azHds13+S7na12ycfSGFLSg1p3
+	XLR7t8H985ILRAq87I33A1J3NyfKipFvCnztSSrLJRkPnNnMUt65N/hBC56TTGKOKaomcW
+	uDXaAC4/0/Q1yTimdqFT4sdFgY45+xhLx2aiTNGWh2kc3Fwt0WYAepRVUDvB3H58d1iLzp
+	w3TRabN2I8PXEbh7Mau4MFDiGpJZpEUmDD1wTTgPePKAYo91ZgCoJvyFbXuaAjrCWl0E9/
+	OE+B3aeXzd0b/7p2+kOllTT2bO2xYtdYeIdZYXOGeJe6nLPkc/BX6gj5pxxEWQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716301381;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4UKsg7qQvlG77Y7q+ZHUhtxz8eupkMhNXaXZZpb8kN8=;
+	b=hluSej/xipmQweXuZ8G5wzxwRmRlDLhkaQQUVK20vJyruBc4o0BFGgNvckm/+SFKp8u+Cf
+	yRErcUTmNtFg8ADQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, linus.walleij@linaro.org,
+	didi.debian@cknow.org, efault@gmx.de,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH] pinctrl: renesas: rzg2l: use
+ spin_{lock,unlock}_irq{save,restore}
+Message-ID: <20240521142259.Pm56N8P-@linutronix.de>
+References: <20240520072033.228049-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240521104825.1060966-2-jolsa@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+In-Reply-To: <20240520072033.228049-1-claudiu.beznea.uj@bp.renesas.com>
 
-On 05/21, Jiri Olsa wrote:
->
-> Currently the application with enabled shadow stack will crash
-> if it sets up return uprobe. The reason is the uretprobe kernel
-> code changes the user space task's stack, but does not update
-> shadow stack accordingly.
->
-> Adding new functions to update values on shadow stack and using
-> them in uprobe code to keep shadow stack in sync with uretprobe
-> changes to user stack.
+On 2024-05-20 10:20:33 [+0300], Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> On PREEMPT_RT kernels the spinlock_t maps to an rtmutex. Using
+> raw_spin_lock_irqsave()/raw_spin_unlock_irqrestore() on
+> &pctrl->lock.rlock breaks the PREEMPT_RT builds. To fix this use
+> spin_lock_irqsave()/spin_unlock_irqrestore() on &pctrl->lock.
+> 
+> Fixes: e1fd1f9f457b ("pinctrl: renesas: rzg2l: Configure the interrupt type on resume")
 
-I don't think my ack has any value in this area but looks good to me.
+02cd2d3be1c31 ("pinctrl: renesas: rzg2l: Configure the interrupt type on resume")
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> Reported-by: Diederik de Haas <didi.debian@cknow.org>
+> Closes: https://lore.kernel.org/all/131999629.KQPSlr0Zke@bagend
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-
-> Fixes: 8b1c23543436 ("x86/shstk: Add return uprobe support")
-
-Hmm... Was this commit ever applied?
-
-Oleg.
-
+Sebastian
 
