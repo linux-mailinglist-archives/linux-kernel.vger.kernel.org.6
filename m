@@ -1,542 +1,246 @@
-Return-Path: <linux-kernel+bounces-184567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12C08CA8EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:30:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 987248CA8EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66FBE28213D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:30:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EC972811CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0963950241;
-	Tue, 21 May 2024 07:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F155D50277;
+	Tue, 21 May 2024 07:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXwU1WUR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIwUPfqh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D7E17BA4;
-	Tue, 21 May 2024 07:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208C017BA4
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716276632; cv=none; b=gX1MOFplbV73fmyum4iSD9ouTJWIvnDZwTy//44hIhmxiwh6C3NEDxDCP9GmzfXlzS64xl/8Y7Q5G21qL1SHk5XKJQvXpXWpjSsBxVY0RikmuQffDKrRZevLn7LN6W8wz8cHFl+wR47VHTQDJzF8UUIwbiDnZ8SEzMERM5HakhM=
+	t=1716276658; cv=none; b=ahunwdGE0U52qlnCUIkvXdG1mFn4y6Jbve/FMPtpJMC0tn2sd/raerZWg1Kx/nQ+cEmxNZtTeDaEsHEfNsy+lnfsmtl6ziO44XRPx3Se8tXoOAgZuFWE9dUK6ghnaPur0NhndHfVs+A3GcOlRktfoZfkE2XnB3yw9jIuHsOxdoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716276632; c=relaxed/simple;
-	bh=2qmHpXwLWibIrPyOcn+S+r963k18i1mHmvdPzTnlcS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n8508bMhHUrAzUkZ64YVJ4rebxNsekKkCfCTwA54G9noqqGiBrIADZfrcdfwyyABOKHOep9N7ipGzY2HR33iTGu9Le2zsGTZbk26orODPxUveof+ELlw89TIDXFZPjv1ECqhMKHusT/buuPCUE9sPAO8yb+81J9Ux52Ei1P2g54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXwU1WUR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40743C2BD11;
-	Tue, 21 May 2024 07:30:23 +0000 (UTC)
+	s=arc-20240116; t=1716276658; c=relaxed/simple;
+	bh=SnF23GOaDcRK71+h88Eqd4LUvUO/WlsaCrWdu7H+bpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WBvwBl3fMAYG4TQ3Dpcc8wHDVDfHZGICs82ouUyGdNMkhBUSMxqPe4xihDYq6e0Ua0UkRJ8BpOzbaRU3AIUDrNWHMFrGhlkSe7zB6PVdTSCm8L5YzoIxuWmF79/RC1qtVISE5TwzCYnybGyU+7+UDYHMVshIK+eUfY6Jm/vVoJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIwUPfqh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167FEC2BD11;
+	Tue, 21 May 2024 07:30:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716276632;
-	bh=2qmHpXwLWibIrPyOcn+S+r963k18i1mHmvdPzTnlcS0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RXwU1WURy3nz0+Nw+UC2THf6WhIqgoRW6lr7XXq0MogTkwOu1PmNrg9KIiAOdQwqd
-	 cvhQp2WKU/D6oCcR95RVfQxhYKMxKkvODU3LW22gTr2LYlpa3f5dHnzCDhBIL4tyaQ
-	 R5o9sc8V1SNehvU0cGfY4xWE4gOQdXOcEdCHHmkhqj+ywDqTH7DuUfjLKOpIAmTHRj
-	 VCVRdslPPuXLomOP4PfS9rA+Y2K9r7P4ZM1OyDbkdeitmDwzbt0mlPy4SB7sV26CLw
-	 t0eInnw/TpucmJBEuXdYZ1Fad1ivlrlWrfWMzBx2CA+bmQb+7EwG0ppTkkJAsxzxNK
-	 gWhWfS6KthH3A==
-Message-ID: <be622341-c849-4a6f-99f5-0de350693270@kernel.org>
-Date: Tue, 21 May 2024 09:30:22 +0200
+	s=k20201202; t=1716276657;
+	bh=SnF23GOaDcRK71+h88Eqd4LUvUO/WlsaCrWdu7H+bpE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aIwUPfqhXrQA/EwlL1vanNfFaANsQFEn92+tk3dgok+YDiqEilcvL7FXrLPjhJYgZ
+	 WsT9dLxFEZIrU6dkF0DRgy3gpvlcexDjGuxqntsOfs20o3TqcrWAIO8n/Elyj/VwvP
+	 ePkt/+8vrmHAsI/AAjCiBf4AjTURZqxGJLgS4w4W9bgjVaoyUK7kVlqZ6CiOfwdOZN
+	 DKq2MR4IoamdhZ+9R6+sNOyD3K89alRX2lNHlPsWKppU1keT0R7BxQtInGTwfLKBZi
+	 sb1470vNfnOhjuxNadUxp5x5+/HDpMJHU93alR2mE9ibpTGaEeIjf8xU3saeCFv2fB
+	 IuYhWZRkNlFDg==
+Date: Tue, 21 May 2024 13:00:53 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: dmaengine updates for v6.10
+Message-ID: <ZkxNrbkVaSGSWSA_@matsya>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/10] dt-bindings: display: Add YAML schema for JH7110
- display pipeline
-To: keith <keith.zhao@starfivetech.com>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- xingyu.wu@starfivetech.com, p.zabel@pengutronix.de,
- jack.zhu@starfivetech.com, shengyang.chen@starfivetech.com
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240521105817.3301-1-keith.zhao@starfivetech.com>
- <20240521105817.3301-2-keith.zhao@starfivetech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240521105817.3301-2-keith.zhao@starfivetech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 21/05/2024 12:58, keith wrote:
-> JH7110 SoC display pipeline includes a display controller and hdmi.
-> Dc controller IP : Vivante DC8200 Dual Display
-> HDMI IP : INNOSILICON HDMI2.0
-> 
-> As the INNO hdmi ip is also used by rockchip SoC in the driver code,
-> the innosilicon,inno-hdmi.yaml schema containing the common properties
-> for the INNO DesignWare HDMI TX controller isn't a full device
-> tree binding specification, but is meant to be referenced by
-> platform-specific bindings for the IP core.
-> 
-> Signed-off-by: keith <keith.zhao@starfivetech.com>
-> ---
->  .../display/bridge/innosilicon,inno-hdmi.yaml |  49 +++++
->  .../display/rockchip/rockchip,inno-hdmi.yaml  |  27 +--
->  .../starfive/starfive,dsi-encoder.yaml        |  92 ++++++++++
->  .../starfive/starfive,jh7110-dc8200.yaml      | 169 ++++++++++++++++++
->  .../starfive/starfive,jh7110-inno-hdmi.yaml   |  75 ++++++++
->  .../soc/starfive/starfive,jh7110-syscon.yaml  |   1 +
->  MAINTAINERS                                   |   8 +
->  7 files changed, 396 insertions(+), 25 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/innosilicon,inno-hdmi.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/starfive/starfive,dsi-encoder.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/starfive/starfive,jh7110-dc8200.yaml
->  create mode 100644 Documentation/devicetree/bindings/display/starfive/starfive,jh7110-inno-hdmi.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/innosilicon,inno-hdmi.yaml b/Documentation/devicetree/bindings/display/bridge/innosilicon,inno-hdmi.yaml
-> new file mode 100644
-> index 000000000000..8540174dcaeb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/innosilicon,inno-hdmi.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/bridge/innosilicon,inno-hdmi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Common Properties for Innosilicon HDMI TX IP
-
-Your patch is difficult to review. Split changing existing bindings (and
-defining common part) to a separate patch.
-
-> +
-> +maintainers:
-> +  - Keith Zhao <keith.zhao@starfivetech.com>
-> +
-> +description: |
-> +  This document defines device tree properties for the Innosilicon HDMI TX
-
-Nothing improved here. Don't say obvious that this documents says
-something. It cannot do anything else.
-
-"Innosilicon HDMI TX is a foo bar device present on zap SoC ...."
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="QXtt0r7IPz6BO5L0"
+Content-Disposition: inline
 
 
-> +  controller (INNO HDMI) IP core. It doesn't constitute a full device tree
-> +  binding specification by itself but is meant to be referenced by device tree
-> +  bindings for the platform-specific integrations of the INNO HDMI.
+--QXtt0r7IPz6BO5L0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I don't understand this at all. I don't know what is "full device tree
-binding specification".
+Hello Linus,
 
-> +
-> +  When referenced from platform device tree bindings the properties defined in
-> +  this document are defined as follows. The platform device tree bindings are
-> +  responsible for defining whether each property is required or optional.
+Back from Linaro Connect, time to send the pull requests. Here is the
+first one for dmaengine subsystem.
+This one has couple of new device support and updates in drivers
 
-Nothing improved - drop paragraph.
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-> +
-> +properties:
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description:
-> +          Port node with one endpoint connected to a display controller node.
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description:
-> +          Port node with one endpoint connected to a hdmi-connector node.
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
 
-..
+are available in the Git repository at:
 
-> diff --git a/Documentation/devicetree/bindings/display/starfive/starfive,dsi-encoder.yaml b/Documentation/devicetree/bindings/display/starfive/starfive,dsi-encoder.yaml
-> new file mode 100644
-> index 000000000000..07aa147a9db1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/starfive/starfive,dsi-encoder.yaml
-> @@ -0,0 +1,92 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/starfive/starfive,dsi-encoder.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: starfive jh7110 SoC Encoder
-> +
-> +maintainers:
-> +  - Keith Zhao <keith.zhao@starfivetech.com>
-> +
-> +description:
-> +  Device-Tree bindings for simple encoder.
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
+aengine-6.10-rc1
 
-Again you ignored the comments.
+for you to fetch changes up to 28059ddbee0eb92730931a652e16a994499a7858:
 
-When you receive a comment, apply it everywhere, not in only one part of
-patch while keeping wrong code everywhere else.
+  MAINTAINERS: Update role for IDXD driver (2024-05-04 18:13:33 +0530)
 
-> +  Simple encoder driver only has basic functionality.
+----------------------------------------------------------------
+dmaengine updates for v6.10
 
-Not related to bindings, drop. This is about hardware, not your driver.
+ New support:
+  - Freescale i.MX8ULP edma support in edma driver
+  - StarFive JH8100 DMA support in Synopsis axi-dmac driver
 
-> +  the hardware of dc8200 has 2 output interface, and uses
-> +  syscon to select which one to be used.
+ Updates:
+ - Tracing support for freescale edma driver, updates to dpaa2 driver
+ - Remove unused QCom hidma DT support
+ - Support for i2c dma in imx-sdma
+ - Maintainers update for idxd and edma drivers
 
-Nothing improved.
+----------------------------------------------------------------
+Baruch Siach (1):
+      dma: dw-axi-dmac: support per channel interrupt
 
-Read my previous comments:
+Chen Ni (1):
+      dmaengine: idma64: Add check for dma_set_max_seg_size
 
-1. Please make it a proper sentences, with proper wrapping.
+Colin Ian King (1):
+      dmaengine: pch_dma: remove unused function chan2parent
 
-> +
-> +properties:
-> +  compatible:
-> +    const: starfive,dsi-encoder
-> +
-> +  starfive,syscon:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    items:
-> +      - items:
-> +          - description: phandle to syscon that select crtc output.
-> +          - description: Offset of crtc selection
-> +          - description: Shift of crtc selection
-> +    description:
-> +      A phandle to syscon with two arguments that configure select output.
-> +      The argument one is the offset of crtc selection, the
-> +      argument two is the shift of crtc selection.
+Dave Jiang (1):
+      MAINTAINERS: Update role for IDXD driver
 
-Don't repeat constraints in free form text. Say something useful
-instead, like what is its purpose.
+Erick Archer (1):
+      dmaengine: pl08x: Use kcalloc() instead of kzalloc()
 
-No reg? Then why this is not just part of syscon? That's not a separate
-device, no.
+Fenghua Yu (1):
+      dmaengine: idxd: Avoid unnecessary destruction of file_ida
 
-You received a feedback already about this: do not create fake bindings
-just to instantiate your drivers.
+Frank Li (15):
+      dmaengine: fsl-edma: remove 'slave_id' from fsl_edma_chan
+      dmaengine: fsl-edma: add safety check for 'srcid'
+      dmaengine: fsl-edma: clean up chclk and FSL_EDMA_DRV_HAS_CHCLK
+      dmaengine: fsl-dpaa2-qdma: clean up unused macro
+      dmaengine: fsl-dpaa2-qdma: Remove unused function dpdmai_create()
+      dmaengine: fsl-dpaa2-qdma: Add dpdmai_cmd_open
+      dmaengine: fsl-edma: fix miss mutex unlock at an error return path
+      dmaengine: fsl-dpaa2-qdma: Update DPDMAI interfaces to version 3
+      dt-bindings: fsl-imx-sdma: Add I2C peripheral types ID
+      dmaengine: imx-sdma: utilize compiler to calculate ADDRS_ARRAY_SIZE_V=
+<n>
+      dmaengine: fsl-dpaa2-qdma: Fix kernel-doc check warning
+      dt-bindings: dma: fsl-edma: remove 'clocks' from required
+      dt-bindings: dma: fsl-edma: allow 'power-domains' property
+      dmaengine: fsl-edma: add trace event support
+      dmaengine: fsl-edma: use _Generic to handle difference type
 
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description:
-> +          The first port should be the input coming from the associated dc channel.
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description:
-> +          The second port should be the output coming from the associated bridge.
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +
-> +required:
-> +  - compatible
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +        dssctrl: dssctrl@295b0000 {
+Jerry Snitselaar (1):
+      dmaengine: idxd: Check for driver name match before sva user feature
 
-Drop node, not erlated.
+Joao Pinto (1):
+      Avoid hw_desc array overrun in dw-axi-dmac
 
-> +            compatible = "starfive,jh7110-vout-syscon", "syscon";
-> +            reg = <0x295b0000 0x90>;
-> +        };
-> +
-> +        dsi_encoder: dsi_encoder {
+Joy Zou (4):
+      dt-bindings: dma: fsl-edma: add fsl,imx8ulp-edma compatible string
+      dmaengine: fsl-edma: add i.MX8ULP edma support
+      dmaengine: fsl-edma: clean up unused "fsl,imx8qm-adma" compatible str=
+ing
+      dt-bindings: fsl-dma: fsl-edma: clean up unused "fsl,imx8qm-adma" com=
+patible string
 
-Totally messed indentation. Use 4 spaces for example indentation.
+Krzysztof Kozlowski (1):
+      dmaengine: xilinx: xdma: fix module autoloading
 
-Also, drop label.
+Manivannan Sadhasivam (1):
+      MAINTAINERS: Drop Gustavo Pimentel as EDMA Reviewer
 
-Also, underscores are not allowed in node names.
+Nicolin Chen (1):
+      dmaengine: imx-sdma: Support allocate memory from internal SRAM (iram)
 
-Also, Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+Nuno Sa (2):
+      dmaengine: axi-dmac: fix possible race in remove()
+      dmaengine: axi-dmac: move to device managed probe
 
-This is terrible code.
+Rob Herring (1):
+      dt-bindings: dma: snps,dma-spear1340: Fix data{-,_}width schema
 
-> +            compatible = "starfive,dsi-encoder";
-> +            starfive,syscon = <&dssctrl 0x8 0x12>;
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +                /* input */
-> +                port@0 {
-> +                    #address-cells = <1>;
-> +                    #size-cells = <0>;
-> +                    reg = <0>;
-> +                    dsi_input0:endpoint@0 {
-> +                        reg = <0>;
-> +                        remote-endpoint = <&dc_out_dpi1>;
-> +                    };
-> +                };
-> +                /* output */
-> +                port@1 {
-> +                    reg = <1>;
-> +                    #address-cells = <1>;
-> +                    #size-cells = <0>;
-> +                    dsi_out:endpoint {
-> +                        remote-endpoint = <&mipi_in>;
-> +                    };
-> +                };
-> +            };
-> +        };
-> diff --git a/Documentation/devicetree/bindings/display/starfive/starfive,jh7110-dc8200.yaml b/Documentation/devicetree/bindings/display/starfive/starfive,jh7110-dc8200.yaml
-> new file mode 100644
-> index 000000000000..a28dfdd471b6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/starfive/starfive,jh7110-dc8200.yaml
-> @@ -0,0 +1,169 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/starfive/starfive,jh7110-dc8200.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: STARFIVE JH7110 SoC display controller
-> +
-> +description:
-> +  The STARFIVE JH7110 SoC uses the display controller based on Verisilicon IP(DC8200)
-> +  to transfer the image data from a video memory buffer to an external LCD interface.
-> +
-> +  pipe0 binds HDMI for primary display,
-> +  pipe1 binds DSI for external display.
-> +
-> +          +------------------------------+
-> +          |                              |
-> +          |                              |
-> +  +----+  |   +-------------------+      |   +-------+   +------+   +------+
-> +  |    +----->+  dc controller 0  +--->----->+HDMICtl| ->+ PHY  +-->+PANEL0+
-> +  |AXI |  |   +-------------------+      |   +-------+   +------+   +------+
-> +  |    |  |                              |
-> +  |    |  |                              |
-> +  |    |  |                              |
-> +  |    |  |                              |
-> +  |APB |  |   +-------------------+         +---------+    +------+  +-------+
-> +  |    +----->+  dc controller 1  +--->---->+ dsiTx   +--->+DPHY  +->+ PANEL1+
-> +  |    |  |   +-------------------+         +---------+    +------+  +-------+
-> +  +----+  |                              |
-> +          +------------------------------+
-> +
-> +maintainers:
-> +  - Keith Zhao <keith.zhao@starfivetech.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: starfive,jh7110-dc8200
-> +
-> +  reg:
-> +    items:
-> +      - description: host interface address and length
-> +      - description: display physical base address and length
-> +
-> +  reg-names:
-> +    items:
-> +      - const: host
-> +      - const: base
-> +
-> +  clocks:
-> +    items:
-> +      - description: Clock for display system noc bus.
-> +      - description: Core clock for display controller.
-> +      - description: Clock for axi bus to access ddr.
-> +      - description: Clock for ahb bus to R/W the phy regs.
-> +      - description: Pixel clock for display channel 0.
-> +      - description: Pixel clock for display channel 1.
-> +      - description: Pixel clock from hdmi.
-> +      - description: Pixel clock for soc .
-> +
-> +  clock-names:
-> +    items:
-> +      - const: noc_bus
-> +      - const: dc_core
-> +      - const: axi_core
-> +      - const: ahb
-> +      - const: channel0
-> +      - const: channel1
-> +      - const: hdmi_tx
-> +      - const: dc_parent
-> +
-> +  resets:
-> +    items:
-> +      - description: Reset for axi bus.
-> +      - description: Reset for ahb bus.
-> +      - description: Core reset of display controller.
-> +
-> +  reset-names:
-> +    items:
-> +      - const: axi
-> +      - const: ahb
-> +      - const: core
-> +
-> +  interrupts:
-> +    items:
-> +      - description: The interrupt will be generated when DC finish one frame
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description:
-> +          channel 0 output
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description:
-> +          channel 1 output
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/starfive,jh7110-crg.h>
-> +    #include <dt-bindings/reset/starfive,jh7110-crg.h>
-> +    dc8200: lcd-controller@29400000 {
-> +      compatible = "starfive,jh7110-dc8200";
-> +        reg = <0x29400000 0x100>,
-> +              <0x29400800 0x2000>;
-> +        reg-names = "host", "base";
-> +
-> +        interrupts = <95>;
-> +        clocks = <&syscrg JH7110_SYSCLK_NOC_BUS_DISP_AXI>,
-> +            <&voutcrg JH7110_VOUTCLK_DC8200_CORE>,
+Rob Herring (Arm) (2):
+      dmaengine: qcom: Drop hidma DT support
+      dt-bindings: dma: Drop unused QCom hidma binding
 
-Align the lines. In other places as well.
+Robin Gong (1):
+      dmaengine: imx-sdma: Add i2c dma support
 
-> +            <&voutcrg JH7110_VOUTCLK_DC8200_AXI>,
-> +            <&voutcrg JH7110_VOUTCLK_DC8200_AHB>,
-> +            <&voutcrg JH7110_VOUTCLK_DC8200_PIX0>,
-> +            <&voutcrg JH7110_VOUTCLK_DC8200_PIX1>,
-> +            <&hdmitx0_pixelclk>,
-> +            <&voutcrg JH7110_VOUTCLK_DC8200_PIX>;
-> +        clock-names = "noc_bus", "dc_core", "axi_core", "ahb",
-> +                  "channel0", "channel1", "hdmi_tx", "dc_parent";
-> +        resets = <&voutcrg JH7110_VOUTRST_DC8200_AXI>,
-> +             <&voutcrg JH7110_VOUTRST_DC8200_AHB>,
-> +             <&voutcrg JH7110_VOUTRST_DC8200_CORE>;
-> +        reset-names = "axi","ahb", "core";
-> +
-> +      crtc_out: ports {
+Sean Anderson (2):
+      dma: xilinx_dpdma: Remove unnecessary use of irqsave/restore
+      dma: Add lockdep asserts to virt-dma
 
-Totally messed indentation.
+Shengjiu Wang (2):
+      dmaengine: imx-sdma: Support 24bit/3bytes for sg mode
+      dmaengine: imx-sdma: support dual fifo for DEV_TO_DEV
 
+Tan Chun Hau (2):
+      dt-bindings: dma: snps,dw-axi-dmac: Add JH8100 support
+      dmaengine: dw-axi-dmac: Add support for StarFive JH8100 DMA
 
-> diff --git a/Documentation/devicetree/bindings/display/starfive/starfive,jh7110-inno-hdmi.yaml b/Documentation/devicetree/bindings/display/starfive/starfive,jh7110-inno-hdmi.yaml
-> new file mode 100644
-> index 000000000000..bfd7dc41fc14
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/starfive/starfive,jh7110-inno-hdmi.yaml
-> @@ -0,0 +1,75 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/starfive/starfive,jh7110-inno-hdmi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Starfive JH7110 Innosilicon HDMI controller
-> +
-> +maintainers:
-> +  - Keith Zhao <keith.zhao@starfivetech.com>
-> +
-> +allOf:
-> +  - $ref: ../bridge/innosilicon,inno-hdmi.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: "starfive,jh7110-inno-hdmi"
+ .../devicetree/bindings/dma/fsl,edma.yaml          | 139 ++++++++++++++---=
+----
+ .../devicetree/bindings/dma/fsl,imx-sdma.yaml      |   1 +
+ .../devicetree/bindings/dma/qcom_hidma_mgmt.txt    |  95 --------------
+ .../bindings/dma/snps,dma-spear1340.yaml           |  42 +++----
+ .../devicetree/bindings/dma/snps,dw-axi-dmac.yaml  |   1 +
+ MAINTAINERS                                        |   3 +-
+ drivers/dma/Makefile                               |   6 +-
+ drivers/dma/amba-pl08x.c                           |   4 +-
+ drivers/dma/dma-axi-dmac.c                         |  78 +++++-------
+ drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c     |  38 ++++--
+ drivers/dma/dw-axi-dmac/dw-axi-dmac.h              |   3 +-
+ drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c            |  14 +--
+ drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h            |   5 +-
+ drivers/dma/fsl-dpaa2-qdma/dpdmai.c                | 113 +++++++----------
+ drivers/dma/fsl-dpaa2-qdma/dpdmai.h                |  61 +++++----
+ drivers/dma/fsl-edma-common.c                      |  25 ++--
+ drivers/dma/fsl-edma-common.h                      | 110 ++++++++--------
+ drivers/dma/fsl-edma-main.c                        |  50 +++++---
+ drivers/dma/fsl-edma-trace.c                       |   4 +
+ drivers/dma/fsl-edma-trace.h                       | 132 +++++++++++++++++=
+++
+ drivers/dma/idma64.c                               |   4 +-
+ drivers/dma/idxd/cdev.c                            |  18 +--
+ drivers/dma/imx-sdma.c                             |  97 +++++++++++---
+ drivers/dma/mcf-edma-main.c                        |   4 +-
+ drivers/dma/pch_dma.c                              |   5 -
+ drivers/dma/qcom/hidma.c                           |  11 --
+ drivers/dma/qcom/hidma_mgmt.c                      | 109 +---------------
+ drivers/dma/virt-dma.h                             |  10 ++
+ drivers/dma/xilinx/xdma.c                          |   1 +
+ drivers/dma/xilinx/xilinx_dpdma.c                  |  10 +-
+ include/linux/dma/imx-dma.h                        |   1 +
+ 31 files changed, 620 insertions(+), 574 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/dma/qcom_hidma_mgmt.t=
+xt
+ create mode 100644 drivers/dma/fsl-edma-trace.c
+ create mode 100644 drivers/dma/fsl-edma-trace.h
 
-You did not test it. Drop quotes.
+--=20
+~Vinod
 
-Untested bindings, so I will skip review for now.
+--QXtt0r7IPz6BO5L0
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAEBCAAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmZMTa0ACgkQfBQHDyUj
+g0dtABAApJwuJgEKic6pOOEVlce1+m/njin7L2IGCbpzkpT3uC3RMMTUudCe7PmM
+1JyeyE7vXdMsia1tXOt0GJlUNyq2Bzyg4QNiL/DGocXV+aiKtO4tn+q5aeR5I02t
+ZDgeUhErDCAVWULeNh6dZicHwmzRtEVJksNyrB2oJzLHv6GI4QK/DZOfp2QSVequ
+AC+J0K+M6bn6kkBhUT1gqIztZfXgId/Db0wJBeFp9zxE4+ZtWquBPPRg0G1STnwu
+EOssmHGC6v/06e3TwQD244VdSyqXbiVVi30NjyifH5YZhfSQlzZ52UD+WvtBZAq5
+XrzED7foJemfIf266CLQiR4/Ow21owUZ774a58IiW4rC+EPbjr6XEIbVrXrxPvVz
+rZUTimiTB53RVZV57v4A0NSzdsFC/B5NLa8SwYJLrFs9HdyFGTJvU2LvPQnMTKZn
+Qo9fjjD+PtbkGsGeeCkQn9F+0XMock+jQQKvy1sLuWD3jF5bJQY39pTyyjStFzME
+zOXsF8eO8Jy7W69AMV9xTCoSNj26L7rQlzMpteG+fqsZLUEG77T47m5ZWsxTNJRX
+XRZQMwvYEfQ02S7xodZViMRdb9iMQtqFvqxisQFY1jJ724hbYFPpgEjuSiiX2+1T
+qJ3av9YZUd615B2XEuib9RC3Fku52D6mJd+1NquweD/BlRxnBbc=
+=B8tC
+-----END PGP SIGNATURE-----
 
-
-Best regards,
-Krzysztof
-
+--QXtt0r7IPz6BO5L0--
 
