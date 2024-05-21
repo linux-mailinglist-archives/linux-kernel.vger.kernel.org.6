@@ -1,232 +1,117 @@
-Return-Path: <linux-kernel+bounces-185128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49398CB0E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:59:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECB38CB0D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B4902821D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:59:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6EF2813E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409C0142E6C;
-	Tue, 21 May 2024 14:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I4TCcxKG"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE91142E6C;
+	Tue, 21 May 2024 14:58:14 +0000 (UTC)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4AD130A54;
-	Tue, 21 May 2024 14:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AF61E87C;
+	Tue, 21 May 2024 14:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716303508; cv=none; b=dtDL5id5Gs/yl85HFfzXQzi3r/FsUJYrUCt88Qb0gBex02UfPAFCkqXct/qQIu4+VmXM2X04mfoKHf1bPnHCcwO/0sBL/AXFNCgenfCMnvErQ0eneoapjBMAZtQZAeAZArDvUIoAKW4Qel2D4XDBG5zyHYfEQCXJBKB6e7lClqo=
+	t=1716303493; cv=none; b=Z55epLVsv9RFCY3z/Cii8/VlmcxTV17oG3tCK6sCmzaW+ncFLMIT0pqlTAm1l5NtNkCb8yBvhBOrF2cE3nDMG+PXKsp1SRdOE6+Qp4GXGyeZOSr9dwewskIifv3VIksIgtar2wCMSZ61xH7WSyD7fRpKGEhkR/kumqJxGPmMvls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716303508; c=relaxed/simple;
-	bh=Uiscs0U341tdEUrH05/ILKU4Gt6KpnkNj6+JQX2v6Wg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=og8n/RoDpRvqSssvLlC4+E0hKDML/29w9jgsaztouFSKmtNZpymvLkwsnIUHGm0VeX8wjTzzPhG7B98IPlhniRzpNRDmbrJmusBCqQMVcUrtFeqGhz5Sw8ey5j7OGFJqQRF7nZ1VhnHRtcy93q2AWak4o2qqVgC/nz5kPTKqfdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I4TCcxKG; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1716303493; c=relaxed/simple;
+	bh=qY9qPo3NRmBbi/V8Gj0FAiIWKBBNAyjG++HDaNkSY/I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YGG/ffn8R68WwwyaBNXKoIEQDrkJCD3HcI4UNWg5S8wr81tYV0WIxd+KSw2SMlvG6zjXWCYkGZiltSdb+Tf5bCnUDwzLRQlZYZMl8c056b0IeZXs8yVONwv1erYIgWQ/u7I6vpq/XGP8aB0MOMXVTxxSNWNPVi6f9JpB/YWAVAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-354cd8da8b9so1090785f8f.0;
-        Tue, 21 May 2024 07:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716303505; x=1716908305; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uCP0JX7AzC1ediVXRIfcPiizg+qYKlRX3WKBJgSjoaY=;
-        b=I4TCcxKGN4kx7h2tQNsaBNI9/W5l403RWVw4ZFfQOKzolLxhFWQZ9qpniyor7lR/TD
-         o4sLo7zYwuVeStKoY971v6WAavxXK2vM0xjdGReVCBHTtl89gR5iJgOeDW/e75q0sgYq
-         pg2zvplK766s0cb+m3AcYBxPqhwdjnKtwbu7uZdtY8LY6hUiAwULT1KyctiVcdXzYnpA
-         pe6EnpOnaD5G+eVkHR6XdikrSYWZiKZu5j4xk/KAJCYisAJ8lVFsmqcta9aAGB/FsDb0
-         /ab7Oj/R2jesKl8G5GM2yxjp477Sz0Dx4B2M0xdBGKjp5+axo9ndb1rJSPeRsZlZVfV4
-         KbvQ==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5751bcb3139so5984506a12.1;
+        Tue, 21 May 2024 07:58:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716303505; x=1716908305;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uCP0JX7AzC1ediVXRIfcPiizg+qYKlRX3WKBJgSjoaY=;
-        b=CAumdYeG+kUX8OVsM9NKpxlO6hd71BCz18Ma/gf4MrnbXeI+cYUxQj6BIJdJYX1iy8
-         JMyuYFQIcsD46oXoUwvf233H8NPzOqycAJISOat1C8vEzOes2AeIsXnAIojXDwTs0MIT
-         RUCioW4K5y/mCg3GdsxS4BPpPc6D9XjSKuNEbcaPYgyj9pu2+FEmXtNP+3iC13n4m0qJ
-         V3xlek2/hClqhOQiqeqAAFAvmRAyzieiYXr7Te9giKlvQOSWXJzEyAV3kGHLRgOgzlMY
-         lAnW3saL/HhUwjV76fPvZlMQAxlbq6SWheDWqGailo+xoSPsN+FNC2imSMjblWfR8tsB
-         Ia0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVdljxvLqnEazuk28DnKyCpuQ1YfI36WsIuSE/s9yZdAS+qOvW7aUMahcaTQ/BLMCzbxqnUJygWOynALCYoLBlo3Pg1GK7r2Kb6Q1sGzsZgyAtz4hk8q/XLhpyO86kG05ScCw+xZ0lj
-X-Gm-Message-State: AOJu0YzaA5mMuyiGcSVD2dDTXht0KM57m64j0mSaUI/BP+ETeiSKTA/o
-	slvc/HulFxpX5JvmzQPK+oYVK6LNMhn/Zv/mcX9cK9+HIBWaPpPaQfX0OGbUr+KbdyNcH/8NYo1
-	K2x1Yxn4hYxuRR4w0A12pfz89UOM=
-X-Google-Smtp-Source: AGHT+IEhTPHhWH44XdUrjqpD9flq+8cQ79/myMXTedt2Biaf1H6BFKDKRWN+fCSUNcRVJ9zwxcBWyP2bsbyLtcnWSoQ=
-X-Received: by 2002:adf:f60d:0:b0:34d:aaca:2f6f with SMTP id
- ffacd0b85a97d-3504aa667e9mr19890043f8f.69.1716303504810; Tue, 21 May 2024
- 07:58:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716303490; x=1716908290;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9FXxkD2/lKUVaQGuLAgx7YvHLe5+oUAHOSstP23vnTE=;
+        b=cYVab177OBFkqdoWVkXypjhrmwnuvcAZN69rKL6AjCi7jR1+JBcIfkQExVJsQPIm1c
+         zRrzSaM1wEKmjz1M/SW7mFmvN1zdVNqlBXlvlPIIa6pIR8NVojAwebCyHSQwZRsWU3+k
+         IeIZIYj5GhxN+8wVVY7ABT94IOPugKPLCJMmONp0iuv72sYAuaWPEKVBJjXc1JjD0kBd
+         XeIeuIsWWiHw6LbymIL9WMSqvAW7/x1essgEzLFt7vSdJO+rL6lIAiBMnOX+pyTFxjje
+         Q9oDCp2uuhIGz6aHVaJWkdSf26PkufZm794RF77rm+jYtFBYzM9iDJuVuTwKHMQIQFAw
+         pSmA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3d9S4Wd9nrcn/1dZuTwkaXGIxjIRqhlLUeTsbmk68Yu9VjVjD6PTctFUu1MYfMPprualmcfCFs3KVX8Sf2RQClEyH31TIK3pfX2ixH+zwQ5WvZqbd/XMP+oDnAAt53dbGj1qFfd2Rry0=
+X-Gm-Message-State: AOJu0YwgS+oRLUGtR5cm4BHw1BYBQYpFSRU3xeHbwFP3hhYcG/13XVhu
+	XKHXVDzrAx4bvirZBHdNtz3mnbajDDAsJhag1CRdIvZyThrqiTlizF36fI1s
+X-Google-Smtp-Source: AGHT+IEtyGFPtFYyY/s/Auqg8Nw6iVcaLWz0FzqpSJAUsEZ93QNpIlcZajRQf+Ro0YsF6bCOvlwh+Q==
+X-Received: by 2002:a50:955c:0:b0:572:a16f:294 with SMTP id 4fb4d7f45d1cf-5734d67f7edmr22248777a12.30.1716303490296;
+        Tue, 21 May 2024 07:58:10 -0700 (PDT)
+Received: from [127.0.0.1] (p200300f6f709b700fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f709:b700:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-574f6b8b9d7sm8912502a12.82.2024.05.21.07.58.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 07:58:08 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+Subject: [PATCH v3 0/2] btrfs: zoned: always set aside a zone for
+ relocation
+Date: Tue, 21 May 2024 16:58:06 +0200
+Message-Id: <20240521-zoned-gc-v3-0-7db9742454c7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516174357.26755-1-jim.cromie@gmail.com> <20240516174357.26755-20-jim.cromie@gmail.com>
- <CALwA+NYNPfpyM8ZH3L-fbrqSpzKw61gZU+u_uxP6tjnFe7UJ-w@mail.gmail.com>
-In-Reply-To: <CALwA+NYNPfpyM8ZH3L-fbrqSpzKw61gZU+u_uxP6tjnFe7UJ-w@mail.gmail.com>
-From: jim.cromie@gmail.com
-Date: Tue, 21 May 2024 08:57:57 -0600
-Message-ID: <CAJfuBxyMBh-1BQMqgXj1GBZ=pwbFK3PuBhRDzM7DNd4ML2hSzw@mail.gmail.com>
-Subject: Re: [PATCH v8-RESEND 19/33] dyndbg-doc: add classmap info to howto
-To: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
-Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, 
-	mcgrof@kernel.org, daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
-	jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org, 
-	robdclark@gmail.com, groeck@google.com, yanivt@google.com, bleung@google.com, 
-	linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH62TGYC/22Myw6CMBBFf4XM2pq+oKkr/8O4gGGARtOa1jQq4
+ d8trDBxeW7uOTMkio4SnKoZImWXXPAF1KECnFo/EnN9YZBcal4LzT7BU89GZBLJWKVrS52Bcn9
+ EGtxrS12uhSeXniG+t3IW6/onkgXjTHA7iLZBo7U53yh6uh9DHGGtZLk3650piyk5GuysaRT2P
+ +ayLF/NBAlp2wAAAA==
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+ David Sterba <dsterba@suse.com>
+Cc: Hans Holmberg <Hans.Holmberg@wdc.com>, linux-btrfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>, 
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>
+X-Mailer: b4 0.12.4
 
-On Tue, May 21, 2024 at 5:57=E2=80=AFAM =C5=81ukasz Bartosik <ukaszb@chromi=
-um.org> wrote:
->
-> On Thu, May 16, 2024 at 7:45=E2=80=AFPM Jim Cromie <jim.cromie@gmail.com>=
- wrote:
-> >
-> > Describe the 3 API macros providing dynamic_debug's classmaps
-> >
-> > DYNDBG_CLASSMAP_DEFINE - create, exports a module's classmap
->
-> create, exports a module's classmap - > creates and exports a module's cl=
-assmap
+For zoned filesytsems we heavily rely on relocation for garbage collecting
+as we cannot do any in-place updates of disk blocks.
 
-I was going for an imperative "thou shalt" voice,
-rather than a descriptive/passive voice
-since its an API, and thou shalt use it "this way"
-( s/creates/create/ if so)
+But there can be situations where we're running out of space for doing the
+relocation.
 
-Do we / linux-doc  have a preference in this regard ?
+To solve this, always have a zone reserved for relocation.
 
+This is a subset of another approach to this problem I've submitted in 
+https://lore.kernel.org/r/20240328-hans-v1-0-4cd558959407@kernel.org
 
+---
+Changes in v3:
+- Rename btrfs_reserve_relocation_zone -> btrfs_reserve_relocation_bg
+- Bail out if we already have a relocation bg set
+- Link to v2: https://lore.kernel.org/r/20240515-zoned-gc-v2-0-20c7cb9763cd@kernel.org
 
+Changes in v2:
+- Incorporate Naohiro's review
+- Link to v1: https://lore.kernel.org/r/20240514-zoned-gc-v1-0-109f1a6c7447@kernel.org
 
->
-> > DYNDBG_CLASSMAP_USE    - refer to exported map
->
-> DYNDBG_CLASSMAP_USE - refers to exported map
->
-> > DYNDBG_CLASSMAP_PARAM  - bind control param to the classmap
->
-> bind -> binds
->
-> > DYNDBG_CLASSMAP_PARAM_REF + use module's storage - __drm_debug
-> >
->
-> + use module's storage - __drm_debug -> - uses module's storage (for
-> example __drm_debug)
->
-> > cc: linux-doc@vger.kernel.org
-> > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-> > ---
-> > v5 adjustments per Randy Dunlap
-> > v7 checkpatch fixes
-> > v8 more
-> > ---
-> >  .../admin-guide/dynamic-debug-howto.rst       | 63 ++++++++++++++++++-
-> >  1 file changed, 62 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Docume=
-ntation/admin-guide/dynamic-debug-howto.rst
-> > index 6a8ce5a34382..742eb4230c6e 100644
-> > --- a/Documentation/admin-guide/dynamic-debug-howto.rst
-> > +++ b/Documentation/admin-guide/dynamic-debug-howto.rst
-> > @@ -225,7 +225,6 @@ the ``p`` flag has meaning, other flags are ignored=
-.
-> >  Note the regexp ``^[-+=3D][fslmpt_]+$`` matches a flags specification.
-> >  To clear all flags at once, use ``=3D_`` or ``-fslmpt``.
-> >
-> > -
-> >  Debug messages during Boot Process
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > @@ -375,3 +374,65 @@ just a shortcut for ``print_hex_dump(KERN_DEBUG)``=
-.
-> >  For ``print_hex_dump_debug()``/``print_hex_dump_bytes()``, format stri=
-ng is
-> >  its ``prefix_str`` argument, if it is constant string; or ``hexdump``
-> >  in case ``prefix_str`` is built dynamically.
-> > +
-> > +Dynamic Debug classmaps
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +Dyndbg allows selection/grouping of *prdbg* callsites using structural
-> > +info: module, file, function, line.  Classmaps allow authors to add
-> > +their own domain-oriented groupings using class-names.  Classmaps are
-> > +exported, so they referencable from other modules.
->
-> Typo referencable -> are referenceable
->
->
->
-> > +
-> > +  # enable classes individually
-> > +  :#> ddcmd class DRM_UT_CORE +p
-> > +  :#> ddcmd class DRM_UT_KMS +p
-> > +  # or more selectively
-> > +  :#> ddcmd class DRM_UT_CORE module drm +p
-> > +
-> > +The "class FOO" syntax protects class'd prdbgs from generic overwrite:=
-:
-> > +
-> > +  # IOW this doesn't wipe any DRM.debug settings
-> > +  :#> ddcmd -p
-> > +
-> > +To support the DRM.debug parameter, DYNDBG_CLASSMAP_PARAM* updates all
-> > +classes in a classmap, mapping param-bits 0..N onto the classes:
-> > +DRM_UT_<*> for the DRM use-case.
-> > +
-> > +Dynamic Debug Classmap API
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> > +
-> > +DYNDBG_CLASSMAP_DEFINE - modules use this to create classmaps, naming
-> > +each of the classes (stringified enum-symbols: "DRM_UT_<*>"), and
-> > +type, and mapping the class-names to consecutive _class_ids.
-> > +
-> > +By doing so, modules tell dyndbg that they have prdbgs with those
-> > +class_ids, and they authorize dyndbg to accept "class FOO" for the
-> > +module defining the classmap, and its contained classnames.
-> > +
-> > +DYNDBG_CLASSMAP_USE - drm drivers invoke this to ref the CLASSMAP that
-> > +drm DEFINEs.  This shares the classmap definition, and authorizes
-> > +dyndbg to apply changes to the user module's class'd pr_debugs.  It
-> > +also tells dyndbg how to initialize the user's prdbgs at modprobe,
-> > +based upon the current setting of the parent's controlling param.
-> > +
-> > +There are 2 types of classmaps:
-> > +
-> > + DD_CLASS_TYPE_DISJOINT_BITS: classes are independent, like DRM.debug
-> > + DD_CLASS_TYPE_LEVEL_NUM: classes are relative, ordered (V3 > V2)
-> > +
-> > +DYNDBG_CLASSMAP_PARAM - modelled after module_param_cb, it refers to a
-> > +DEFINEd classmap, and associates it to the param's data-store.  This
-> > +state is then applied to DEFINEr and USEr modules when they're modprob=
-ed.
-> > +
-> > +This interface also enforces the DD_CLASS_TYPE_LEVEL_NUM relation
-> > +amongst the contained classnames; all classes are independent in the
-> > +control parser itself.
-> > +
-> > +Modules or module-groups (drm & drivers) can define multiple
-> > +classmaps, as long as they share the limited 0..62 per-module-group
-> > +_class_id range, without overlap.
-> > +
-> > +``#define DEBUG`` will enable all pr_debugs in scope, including any
-> > +class'd ones.  This won't be reflected in the PARAM readback value,
-> > +but the class'd pr_debug callsites can be forced off by toggling the
-> > +classmap-kparam all-on then all-off.
-> > --
-> > 2.45.0
-> >
+---
+Johannes Thumshirn (2):
+      btrfs: zoned: reserve relocation block-group on mount
+      btrfs: reserve new relocation block-group after successful relocation
+
+ fs/btrfs/disk-io.c    |  2 ++
+ fs/btrfs/relocation.c |  7 ++++++
+ fs/btrfs/zoned.c      | 65 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/btrfs/zoned.h      |  3 +++
+ 4 files changed, 77 insertions(+)
+---
+base-commit: d52875a6df98dc77933853e8427bd77f4598a9a7
+change-id: 20240514-zoned-gc-2ce793459eb7
+
+Best regards,
+-- 
+Johannes Thumshirn <jth@kernel.org>
+
 
