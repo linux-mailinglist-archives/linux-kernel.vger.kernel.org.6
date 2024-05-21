@@ -1,204 +1,115 @@
-Return-Path: <linux-kernel+bounces-185105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C40C8CB098
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:41:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7648CB09C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED8E1C21593
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:41:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAF5A1F21776
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0E4142E61;
-	Tue, 21 May 2024 14:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C18142E7C;
+	Tue, 21 May 2024 14:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bFVAHxie"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAASLyei"
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E5314290C
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E02142E6C
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716302497; cv=none; b=lQCTZ3AG6cBocPWsCwv8KvB/LFkCmMvopAOXb9bPQYeWTFvUXLijH2KCp4f6mOOL63EY6wZzUOx61C4rnruq43quSP7KRvf3jdZAgbCKKLfk6ZUZczIMilJ6ycERkd6DfG7w5esIoEuiTWIwJuH/5/2CbXEo5ndybNqrly9BP+M=
+	t=1716302537; cv=none; b=F1NoXmIeCd6zX9Abmn6TU0ZuDOWwo8h7m04WlHUca2OnfYDKRRqbcFNVwtw0bGVBsn9QWX/a2fcL9IpKyTOO9VWWlTDw7dp6azz0aeJ4kpGpZzfFA5ZD8WLTxKG8/7AHhlXimW/3QkUbaJ3EbHcvvbRGWU15wjRCNPIdajashxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716302497; c=relaxed/simple;
-	bh=nZ1k0uetES8u8MlD8iJUWjUc76+6FpZkYnzMg83sWbo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QHMs+f4ez4rpadu6SXj6vhZTtOC0yBokSlBelAuLsP8UHWbfDHUU5PpgwgTaZ2FHaUPDxmqeVvhgyUKvXRZSbjcYNIRuh4cA+n/EPtBhutoLp5Q4VWkjpFXndJ7sPHV7lUr39isnmB5hK0HrAd8CgavgSVt21+nrjWrN4zeJXsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bFVAHxie; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-34dc8d3fbf1so2805381f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:41:34 -0700 (PDT)
+	s=arc-20240116; t=1716302537; c=relaxed/simple;
+	bh=hBe3vNhy5rd6p0YbIFGsDgfDT7OSLlZtKRupRbi27uI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R5NoSFveVnFzO+pR2YBsLPduWpEGWCYhxqQi8wjVbBke6w6b6SK3b+Av2+sWde7e+x7UEx7UZrK7yv5bji6r588HuQf+xjNztKMClrZNu6PfEJrlW1icrs0wtCr6PsZ4H75r0hOxbv3gEWCO88O7sx8CTrFuyQLVWh+/v7ZlMFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eAASLyei; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-488e8cb86c9so857085137.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:42:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716302493; x=1716907293; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nZ1k0uetES8u8MlD8iJUWjUc76+6FpZkYnzMg83sWbo=;
-        b=bFVAHxieuQVjKck7HTM7uyqnBMRA5+8K6e1D0lKLtcMXg1K9abX455xrGOQtqmdy/N
-         MxfAwCutRAHQpNhbyCeEDQgzSmAxRJ+jduKZJE+RYSt/Y/013h6bHqhSY2IxWU6HYS6F
-         xAIopEhpomgvfMWAVqzpt8xnmYgFhMlbdAPyBB9qApkgZkiYsHMpD0YSP0SstDXtbByH
-         y13mcAdN8nIRSLsCs/pL6LOwor+CsCPuoq4iitkRtRGX43w98JWyT5xvFNfUQWNtC/vA
-         jIWr1GaKvXu9xoThtiLe9mU6IY2ktXKzXOCRSBnGdbmDVSe4DrH893zG0S9hkUAQdV3N
-         wgSg==
+        d=gmail.com; s=20230601; t=1716302534; x=1716907334; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hBe3vNhy5rd6p0YbIFGsDgfDT7OSLlZtKRupRbi27uI=;
+        b=eAASLyeiKEMhxoYGfS6+BUY+ZaNKdNMkJYOWkeJssjK6b7xscjUBm7/bvVit1ky3Es
+         Gqw6vjIv+k04eS1I7Va4GPeLjsTRo4xUgyqwc4Sd86yqCxlyjJ9zaVz6qu2R9w/kTEYO
+         JfZmc3MzFxkHsnkD46LYBcf/ikJ7aYjPiRoUfdnwPBKHy4WQzBVh4r+oTwmUTnNUlmLK
+         0RQRbGCWGfPNhhCy4meoFW1kvx1Xcx+gr90Ot+1fatOdQP84r9Se82jhiEOFAIbTXQcS
+         Z8GIc/gmT6l5xc79FtaeOR+J6kxOJgxlpnzy95ogVLqDWs3P3lM2N1ZiJ4LnqBatBIHl
+         SFfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716302493; x=1716907293;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nZ1k0uetES8u8MlD8iJUWjUc76+6FpZkYnzMg83sWbo=;
-        b=HLqvCdehQaETyr3sqp5ykzTHU2BzQn5rUyCFlANZVUJ4eyIVA8GlXnN7hZfq/gyNFD
-         Yr/1UaUu2naOQ36dGgr9qxe08Pyx3ZzpWADx+JqCWPlUg5eOst9k9HZ4+xb9rNUVUVbE
-         BS+P2XVEprYCAIZ2sQYZ5rb/+OjsVnHyzuqLW063PCxnxCrdl9wjEFwKJ/0g33PS/vd2
-         Ck9kp+s30tiWIDxHjNps6TL/C2dtt6nnKQDbTk5VEYCV4S2Jyg9MB3UX39ZbfbljjEIe
-         uFec/HWTGkBjBD8LmLPgKOyQRdfzqUR+WsRsysfkzz8/NSzf0ufyDM58dt/dXqH2/lcP
-         cDbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMrg8OMTEpIUbE9XGPQiUWywt5YA2Q4jmCKCY7elGmsf8OmmJSdLynRPrY8DV+GimEhsAs66edpks/otpkbkmrRj4YVRW/VE/bCsom
-X-Gm-Message-State: AOJu0YwzB/nxfIh0rrq1hGAe5nz4zaxam3vcT42Q4ge2Pi0RUBVYbUNg
-	tNvnqZj7kO1r7gKAaGYwVzt3WqyBMaYEUl2f8zAxc+nq1NmNIrr9FlHi+Adql/E=
-X-Google-Smtp-Source: AGHT+IHj1hRyPZRmpYHWeU3LYRrDP7CJ224DzJ6GRA/c94bv1YnN1lYSiHKxZR3Gf4iM4ruXYyQNOA==
-X-Received: by 2002:a05:600c:1794:b0:41e:454b:2f7 with SMTP id 5b1f17b1804b1-41feab40be5mr262645805e9.23.1716302492758;
-        Tue, 21 May 2024 07:41:32 -0700 (PDT)
-Received: from [10.2.5.115] (abordeaux-651-1-78-161.w90-5.abo.wanadoo.fr. [90.5.97.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41ff5e3dcfbsm428288055e9.22.2024.05.21.07.41.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 07:41:32 -0700 (PDT)
-Message-ID: <8078d106-0173-4f04-aab7-4b2726b0bb3a@baylibre.com>
-Date: Tue, 21 May 2024 16:41:30 +0200
+        d=1e100.net; s=20230601; t=1716302534; x=1716907334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hBe3vNhy5rd6p0YbIFGsDgfDT7OSLlZtKRupRbi27uI=;
+        b=eM9PYVUcPiW+75k0vEr19LhcBTrkRH2wcpZQhi88RkrjGNsKU5wjYXRxv3XXDr7Gta
+         SjECJ6t1AGyXwkjftV3QDzCByw4bqqVforYR1q4Jjrlt9R2+XhrchvDZAjUWbn0588dZ
+         0LD2KUgMlAc10S+g3FWUbzqjcHJHOGtT7dFjIVT2GasmbJ9UkYPNQMUQ8T8bngEcW2Gj
+         FOkI9zp3BL8pUXVcXxy077hbEm61c36b3Z0VcWpkM9svOVX9D8oCJ/pxda0KhaHqtiWJ
+         VKgHlLEaRpDn1LgFWOmmLU7y0FojxthHTz9WFnlZ8opMOAJPkSb8PWaPGsVW3Bq6sMWe
+         oz0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX67m8V6GLWdKsR0fdgOjvwe4q5XYeZBreWZfPKaJz5yUUFqVsWKqJN5098MzhqMmMw4zshqJz1qSESA45y89AsRhIgXLw6j86aDrue
+X-Gm-Message-State: AOJu0YxndtD6sqb7DqJ0xYLPAwlXKDutCO5WC4dIjpvDQHjNwtrzXj+B
+	cVSft/p26O0Uuxu5tzgrqBD6G7mjYqEuiYq7D359F4c9j8wBi39AIoIx4bbEWT/rkwOf7zUltXY
+	TUEma0kmGiQmaloG22qL/MVWa3G4=
+X-Google-Smtp-Source: AGHT+IGahFDuxkcW4dbI8TtFQ3JprquFkEjBkZoxG6RpZ1SrCdd6FyEPWiq8HQNkzwyL5OEbqf2jJQTCL7SIAXC0R1w=
+X-Received: by 2002:a05:6102:6d3:b0:47f:2478:b763 with SMTP id
+ ada2fe7eead31-48077e9dd37mr28234583137.33.1716302533056; Tue, 21 May 2024
+ 07:42:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] arm64: dts: mediatek: mt8188: add default thermal
- zones
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- Nicolas Pitre <npitre@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240521-mtk-thermal-mt818x-dtsi-v4-0-b91ee678411c@baylibre.com>
- <20240521-mtk-thermal-mt818x-dtsi-v4-4-b91ee678411c@baylibre.com>
- <ff12e104-da8b-4800-bfbe-a006ffe1b840@collabora.com>
-Content-Language: en-US
-From: Julien Panis <jpanis@baylibre.com>
-In-Reply-To: <ff12e104-da8b-4800-bfbe-a006ffe1b840@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240516174357.26755-1-jim.cromie@gmail.com> <20240516174357.26755-5-jim.cromie@gmail.com>
+ <CALwA+NZP7OkAh3_h+bk_iKosBmbshvMfwU58JVjRwG46XevXSQ@mail.gmail.com>
+In-Reply-To: <CALwA+NZP7OkAh3_h+bk_iKosBmbshvMfwU58JVjRwG46XevXSQ@mail.gmail.com>
+From: jim.cromie@gmail.com
+Date: Tue, 21 May 2024 08:41:45 -0600
+Message-ID: <CAJfuBxyera+QsjgH95Qm1bAzUY0PivwvO7Pg1-oUQ5esj+dZ=A@mail.gmail.com>
+Subject: Re: [PATCH v8-RESEND 04/33] dyndbg: make ddebug_class_param union
+ members same size
+To: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
+Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, 
+	mcgrof@kernel.org, daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
+	jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org, 
+	robdclark@gmail.com, groeck@google.com, yanivt@google.com, bleung@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/21/24 16:19, AngeloGioacchino Del Regno wrote:
-> Il 21/05/24 16:05, Julien Panis ha scritto:
->> From: Nicolas Pitre <npitre@baylibre.com>
->>
->> Inspired by the vendor kernel but adapted to the upstream thermal
->> driver version.
->>
->> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
->> Signed-off-by: Julien Panis <jpanis@baylibre.com>
->> ---
->>   arch/arm64/boot/dts/mediatek/mt8188.dtsi | 432 +++++++++++++++++++++++++++++++
->>   1 file changed, 432 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
->> index a9f1b9db54a6..2b0f3e03acc1 100644
->> --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
->> +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
->> @@ -12,6 +12,8 @@
->>   #include <dt-bindings/pinctrl/mediatek,mt8188-pinfunc.h>
->>   #include <dt-bindings/power/mediatek,mt8188-power.h>
->>   #include <dt-bindings/reset/mt8188-resets.h>
->> +#include <dt-bindings/thermal/thermal.h>
->> +#include <dt-bindings/thermal/mediatek,lvts-thermal.h>
->>     / {
->>       compatible = "mediatek,mt8188";
+On Tue, May 21, 2024 at 5:42=E2=80=AFAM =C5=81ukasz Bartosik <ukaszb@chromi=
+um.org> wrote:
 >
-> ..snip..
+> On Thu, May 16, 2024 at 7:44=E2=80=AFPM Jim Cromie <jim.cromie@gmail.com>=
+ wrote:
+> >
+> > struct ddebug_class_param keeps a ref to the state-storage of the
+> > param; make both class-types use the same unsigned long storage type.
+> > ISTM this is simpler and safer.
 >
->> +
->> +        gpu1-thermal {
+> Why is it safer for members of a union to have the same size ?
 >
-> You forgot to implement my feedback to Nicolas - this must be gpu-thermal
 
-Sorry, I did not forget. I just did not understand correctly.
-Even after looking at mt8195, I thought that only the '_'
-in 'cpu_big0-thermal' and 'cpu_big1-thermal' were wrong
-in v3. Thanks for making it clear.
+Its mostly extra paranoia.
+but if 2 users somehow get the class-type mixed up,
+at least theres no alignment issue added into it.
 
->
->> +            polling-delay = <1000>;
->> +            polling-delay-passive = <250>;
->> +            thermal-sensors = <&lvts_ap MT8188_AP_GPU1>;
->> +
->> +            trips {
->> +                gpu1_alert0: trip-alert0 {
->> +                    temperature = <85000>;
->> +                    hysteresis = <2000>;
->> +                    type = "passive";
->> +                };
->> +
->> +                gpu1_alert1: trip-alert1 {
->> +                    temperature = <95000>;
->> +                    hysteresis = <2000>;
->> +                    type = "hot";
->> +                };
->> +
->> +                gpu1_crit: trip-crit {
->> +                    temperature = <100000>;
->> +                    hysteresis = <0>;
->> +                    type = "critical";
->> +                };
->> +            };
->> +        };
->> +
->> +        gpu2-thermal {
->
-> ...and for consistency with the other SoCs, this must be gpu1-thermal.
+And a problem like this would naturally happen (murphys law)
+when the PARAM_REF macro is used, which uses/shares the existing storage,
+so that existing code can use that storage.
+For example, DRM uses PARAM_REF so it can continue to use __drm_debug
+for a few spots in code that still examine the value during normal operatio=
+ns.
 
-Now I think I get it, thank you.
-
->
->> +            polling-delay = <1000>;
->> +            polling-delay-passive = <250>;
->> +            thermal-sensors = <&lvts_ap MT8188_AP_GPU2>;
->> +
->> +            trips {
->> +                gpu2_alert0: trip-alert0 {
->> +                    temperature = <85000>;
->> +                    hysteresis = <2000>;
->> +                    type = "passive";
->> +                };
->> +
->> +                gpu2_alert1: trip-alert1 {
->> +                    temperature = <95000>;
->> +                    hysteresis = <2000>;
->> +                    type = "hot";
->> +                };
->> +
->> +                gpu2_crit: trip-crit {
->> +                    temperature = <100000>;
->> +                    hysteresis = <0>;
->> +                    type = "critical";
->> +                };
->> +            };
->> +        };
->> +
->> +        soc1-thermal {
->
-> Any idea of what can "soc1" ever be? What measurement point is that?
->
-> VPU? IMG? INFRA?
->
-> soc1, soc2, soc3 make little sense.
-
-No idea to be honest. I'll try to find out that information
-and will change that in v5.
-
-Julien
+I'll reword the commit msg to say that more clearly (than this?)
 
