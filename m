@@ -1,334 +1,230 @@
-Return-Path: <linux-kernel+bounces-184890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08F78CAD7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:45:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6ECF8CAD82
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED5801C21738
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9F551C2210B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792C17580B;
-	Tue, 21 May 2024 11:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A44F762E0;
+	Tue, 21 May 2024 11:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="BfZ23q3n"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FP2Yd3RL";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="qyClTgij"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FF974C09
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716291905; cv=none; b=Yzod111cRP+JP9scH0/H50FhEutb+OSSipUaneIGYIxmQs3VFpW//mPQnK0fBDxFukxXK2bXu758wE1vKyl0b0RvAGLdDJFAyW+jwlhvAc8S9CcyCbbp7ZR54YiX03t2bXfMKzyO7IGLk5EQUh3TVqxVZ+HMhafUYDYEvuM6rcw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716291905; c=relaxed/simple;
-	bh=2Gy3xvFckSkNvjNEWhGj/kHspLan6ykQQUl7cs/HI5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qmO9hexidKXkKTzm1fkMbpiikdhu4raFFu7+qY/w9RRNa+iiTCzogt6RhoRha4hkrG4nnc5EH8I0bKQ8OOwitAgV4SBZbrWmlHC47j8jDTzbYE2YaSv6qdR3V4RZeXwYsBcX/jdwWsm4ZPj7auV8UyGZ2V6P0L5bJlg1WHqmUDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=BfZ23q3n; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-574d96f71efso1615969a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 04:45:03 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C110B74C04;
+	Tue, 21 May 2024 11:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716291939; cv=fail; b=bCqd3zsl7PqL7sbwhd52cKiH6WPJnkCCu3nnrVxNGG03dmdI+ldk3IZLLDce6RAwohVulHv+YgSclDKJQb8H9uRmrkMwYT9yztJXusDwIplewVe9X2vJE90O8iMdierbTMWykVi/4JtblyFNwlm/6WOpnrqx76WYtbYAwn8ok6o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716291939; c=relaxed/simple;
+	bh=vkuSwsocVFGsX1FypA1fKMw3v9lr4vGxQYR3SDHryNQ=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JH9D0d7V0WU7iuwGl6JDYe1dFIpXnJQCeCRaDTk1oWWM3OYzYLpnmFnM8dtIrPCFrjj76LKttt0Ehfw9P0JI3wn7M6cU3gx1W+1ShDpCjAbGq1mLKVmPM63pkhkKz9n9U83TSRMAB6LqZU64ru7/8y0paWsT+0pjoVnRTXrOM70=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FP2Yd3RL; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=qyClTgij; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44L7xXcw000537;
+	Tue, 21 May 2024 11:45:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=hKAv+liS1fKXbGR5wRrAj7CrMQPZYtnH2M+rjmh3t/g=;
+ b=FP2Yd3RL21B1R7J9HS8HwP0S5EQgPRACJpsqb1qgCgNDUKAtYMv1SPuSRma6Vh6MOsij
+ nE1k3Os4G9/UBldSIa3udlvCpGoFbkmVIgidO2pzx9tY8iIosAgVhBxH5IAR054uYfgZ
+ s7axR5ywBg8WUNEn9u6ix4ZnBPC5fHlyvmQTohZYjteoPQYlnt7Ux/FvGvyMYsnhjlyE
+ y9lcuLPiEQd3c0LF884KxzZXGViM78vuOIp4JqWR/WfJ0fe+ewodVjhaBV7xFHOprNxn
+ n3dUCqDtRD0qentEYEOnL0vnXhCXdefjkER3uRgDxnvVTHYsRYzmVnJ6hu2C2U48D5dj mA== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y6mvv51fs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 21 May 2024 11:45:11 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44LBEOKW004963;
+	Tue, 21 May 2024 11:45:10 GMT
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2040.outbound.protection.outlook.com [104.47.74.40])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3y6js7t18p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 21 May 2024 11:45:10 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cNgo2P/69WiaVO5KevSUsoj+kiElhGcLfO0x4T28z0AiSSujB6OBHHe8KTwq9sf1ZtBrgbTxA6wGNJa3oB7uqA0HnpNnQ/Kf7AF3TgbVwViFwdUi9wpgMZFOR3i1GhXmPqvD0KMhUB1Zlo7UU7K2N9Wd0Cc5ezRln3Ub0uSbH1B632fakSXRYPgzn6BnjTFE0nQuW0E+/760Cvzzgh104HKhv/Nm5RXDVxnyjX90qWINWebIrZJrJ2U9XYR1lgHY9G6p7z11tZFX/17gVutO97Mr9Czf3HIxdiwl+Usa41KHwHoGqsKYo8Iywaqc+u+0p36pF9QZUaNXMPxL4kw5ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hKAv+liS1fKXbGR5wRrAj7CrMQPZYtnH2M+rjmh3t/g=;
+ b=jjGGpOl++5uL6cOzmViQOCXLjwUMHbACRZlWbvoy2GjuKaWuH/BLyDBGm03QF4xQPJnHVhobaooSbSAhVyrif349uuOHdSLwuFZV50NduwLa4in1heyvNnIAlXABaXbXVYFJ31ObWz3tyRBfmxAFXe5KAKupvblzD4fB9sgnPuR0tvGGjN8dab41wNEnxCVOVufiihFaumRU9IXEsVuelUPOJ4MQeDHdik5O2eNCQVHtc3Ficf0DkvP4R0B98yDuvP01fm7RjtyFTIVnxuyIqD5I7lhwEJpO38rmllNqrUTy8+IUQrO8sJiVnjhLaRtKOhS6/edxOyrLQ3jEYjIMfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1716291902; x=1716896702; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IOG87kRKqhGoWjQDtxhtb40Vr6tjKxEiEr57hLDOyAs=;
-        b=BfZ23q3nMD1kkd6L5j55kbUxd9Wg3VONWI+oBQgfIzIAIXeyk3kt5+nyXf9Rr1ZQmj
-         zNEJALztllfTNxoJD4IdOl9BXQW9UZtW8YK2+C6OVVfw905Fsc/aU0HIhn9TDKYR3I7g
-         jSOCiXE1uRUGlhqjmNrgq7hQMTNFHO0M95cuM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716291902; x=1716896702;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IOG87kRKqhGoWjQDtxhtb40Vr6tjKxEiEr57hLDOyAs=;
-        b=imSZdI/+CqnVIHax5Abg5+kJUVKIotuYyVubyIeHiZ/Ygb0FznFR2PDeTQvZX17t4F
-         +lXHEHinSGf7DThzFFi4tsZIKKEieQD4Gj3hrgn7XIuxLvZqyJYYuzUkKQOB0Hw3lC7a
-         SYqqjpXUh62LbbuLBMF4WYurSHK62LluYFoJZzjxZWeyq86PvKke0IaPyLryKcivCZuG
-         A3N+7xyvYukWf17T73y6J+wE5MD2mHqVSopeC3lIsqFZAVxyiVnxd++02yiFl/FCgXW2
-         iUpc+IXF3OFwggZFMJ62rHvwVgT+JqdNW7wNBk9nklr7vTJmAz1RtFE7FPeE/HXgCqlA
-         ds4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXCKGjc0t1ihlQR9Zo4I37igynPZXkHIeFI3Et/A3yAgkjYqPm7TiUctUw7jd3Zv9yrOeneNX9XccP8kJ56kf2yBgFzEeezL/rURFt1
-X-Gm-Message-State: AOJu0YxzoOn6ZI1NNnraJ/Ew2KooKtiX3RS4HoReE0TyUl9mCv7q6tAv
-	fxg7XusQmgvVn39yskmdTYyxj1PuJpQKGU8szxP3vwiXDxg+fcJwRyGJ/d1ad2M=
-X-Google-Smtp-Source: AGHT+IHpqPsQEMClqFfPwE8hlGKP0FeodEfBdWinlRo0GJs8wdzebX+3CZQPu/6okkJEhteu1rblhw==
-X-Received: by 2002:a05:6402:8d0:b0:572:5c95:50fe with SMTP id 4fb4d7f45d1cf-5734d444320mr21767661a12.0.1716291901588;
-        Tue, 21 May 2024 04:45:01 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-574bcad0362sm13110306a12.20.2024.05.21.04.45.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 04:45:01 -0700 (PDT)
-Date: Tue, 21 May 2024 13:44:59 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: =?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, kernel@collabora.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Rob Clark <robdclark@gmail.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>
-Subject: Re: [PATCH v2 1/1] drm: Add ioctl for querying a DRM device's list
- of open client PIDs
-Message-ID: <ZkyJO01lvuVhFlMG@phenom.ffwll.local>
-Mail-Followup-To: =?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, kernel@collabora.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Rob Clark <robdclark@gmail.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>
-References: <20240501185047.3126832-1-adrian.larumbe@collabora.com>
- <20240501185047.3126832-2-adrian.larumbe@collabora.com>
- <ZjNKLVZgekRqw5AL@phenom.ffwll.local>
- <a3hakatontuh535xkvwz3txbaocjx44ajkarmiigt3prekqysc@hp2zayht4hbh>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hKAv+liS1fKXbGR5wRrAj7CrMQPZYtnH2M+rjmh3t/g=;
+ b=qyClTgijuUzskEcTL6zWnsfla466Ws+C0onslRgoChefmeBIVfhmgVm3KP6hjiUI0+rV9OPgLbjkTWJWQUgJgvxwPDYQK+KR9ogplqHjJt6RhTxYm2WOlUz1uj0L/PGiWQ9hdOGFAzLiSvh8odC4WYWfukg7395gmkpQ0uNFyMs=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by PH0PR10MB4437.namprd10.prod.outlook.com (2603:10b6:510:3a::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Tue, 21 May
+ 2024 11:45:08 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.7587.035; Tue, 21 May 2024
+ 11:45:08 +0000
+Message-ID: <e3e483ff-d160-4bf2-a1e7-ae541c59f63d@oracle.com>
+Date: Tue, 21 May 2024 07:45:05 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] perf jevents: Autogenerate empty-pmu-events.c
+To: Ian Rogers <irogers@google.com>, Weilin Wang <weilin.wang@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Jing Zhang <renyu.zj@linux.alibaba.com>,
+        Sandipan Das
+ <sandipan.das@amd.com>, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20240520203643.182920-1-irogers@google.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20240520203643.182920-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1PR13CA0323.namprd13.prod.outlook.com
+ (2603:10b6:208:2c1::28) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a3hakatontuh535xkvwz3txbaocjx44ajkarmiigt3prekqysc@hp2zayht4hbh>
-X-Operating-System: Linux phenom 6.8.9-amd64 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH0PR10MB4437:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2ae71813-4338-4f6e-240d-08dc798b76ce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230031|366007|7416005|376005|1800799015|921011;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?cElrYklET3BpK0J5eW0wSkQ0bHJqNnRwanpIdlVIZWhuNjUxQUtIeElSZWJV?=
+ =?utf-8?B?VkZKYmEvUlhjT1BUdWVxTys2U1JLNy9EdTZwR0JaNkpmMHk5RUNlTHd4TEkw?=
+ =?utf-8?B?ai92MlkwcXBUOG1wV0NqclFycWJ0bXFTeDdqL1dRaWlyaWg0TzZiOFl5WW4w?=
+ =?utf-8?B?anM0LzNNUmN0Y3JFYnQrTEQyUHVidFEwWDdNUUhNUVU1OWd5WlZpbmtqWE9D?=
+ =?utf-8?B?V2xsWmNzU2laK2lIVGlOTG9RZUpNUytIbWlZbzFOUmZic0RsVUZkcy94SlNa?=
+ =?utf-8?B?cGNJN2pxOVdGTjc2dWRkbFM4ckN4dk1pdC9oL1JuM0tuZU5UdU56QlR0OWpN?=
+ =?utf-8?B?eUhQL3lQQ2JET3duWWwzdDg0dVdrZWFEc21oRzh0VktUZGNOTDVSaHo0WHBG?=
+ =?utf-8?B?T3NIVW1acmZvb0RuTUEvUnNtOHpJY21ackNlcjBkclU4MXIxTE55NUlldEUy?=
+ =?utf-8?B?SkF3bVpBVTdjZDE3ZkVhVWdUYjFsV0dqbFVSVXl1WGViNUYzWCthNTNqd0p0?=
+ =?utf-8?B?ZzRWMitmUXZERmwvOWxPWU9aTm9vU1FlZWhvelVKcDBqY29NL2k4T1hPbDlQ?=
+ =?utf-8?B?R28yYlVSakZoK2ZnSUlXeVFNZER6RkZ4UVVWYy91T2pxMDVmWXBhelFSMTJU?=
+ =?utf-8?B?aEgrc2czdWJONitiYzlwc1FEOG5XOEZhNDhBcHpLSzRJZy9DTmNKUWFjd2Rq?=
+ =?utf-8?B?b3JudWorZ3o0b2JraVRqQjRTUDJPaGJYRVVhc1Q4WnhHcXVHUlc0QWtMYnNJ?=
+ =?utf-8?B?WFJqaHJjd0NGK0tTZGpUcnc0UHo0dEEwYmtLSW55U1hpVW5oM3ZYTkgzOHJu?=
+ =?utf-8?B?ZGF3b0E2REJaK0E4bWRzMC9tNXp1bEVwdU42bkkydVBYVkJwM1daY2ZRQmNE?=
+ =?utf-8?B?VCttcHVGVjl4Q2hqZFpTRVBNcldYZ0tyMndTcnNwb1VHUlZBdzBQRHNGWkhL?=
+ =?utf-8?B?UDlRRFVvTW0vbEhoZnR1Wmg4YWlaUmh4Nld1UWpyVmdaaFNtSHRQeWF1OGR0?=
+ =?utf-8?B?TkwyakpvWWwxdkR6ODgyWU5GQkVlRlovV0czODlPUHRpcmkyZ2t3RXVJTU5o?=
+ =?utf-8?B?OEZGRTdEQklwT2dxU3R2WDVHZFN6WjByRFBBSzNnZFFjQjlicHhNZ1RMRnNn?=
+ =?utf-8?B?RVUxdkRFZjFCSXVjQ1hlT1ZLaDhqSUQ2bnNOK2Q3RXFoenk1elpXdmhSMHZL?=
+ =?utf-8?B?V2c1cFBFbjJCenFYUTBQaEpFbEI0eTlMM3R2WlZmcDQ3d1JBRlhGdXZsaTZw?=
+ =?utf-8?B?Ull1T1dNMHVCQTNSb2h6cUIvc3I3SFVkTTNVaEo2cDE2MSs1UW5DKzNFcXJv?=
+ =?utf-8?B?ZUxlMU5MUllpdmkrZldBWTRQYXRPWVpYbUszOUowUHpjOEs5NGxaT3hBdmJy?=
+ =?utf-8?B?bkNla1J1WEpvUUhBMGt0M0g1d0RCVkgyc3kwd1liZUJkNVkzZE55VDdWNTNi?=
+ =?utf-8?B?cWhvaGI5YlpxOXYzRzI0cFozOGVRcER2Y2xDUkFsN2Jna1pUNktTSU52RmM3?=
+ =?utf-8?B?R0RVZHdKRkUzeFZZR0owaUo2VFJRbkZsRVNNZmxUdUdCeU9zZVBUdzdlSjRT?=
+ =?utf-8?B?a0U4VWZSR1FaOXlMajBCeWFmN3BXemJEWE1Zc2U2NDVRRGp4RFUvaU5DTnJ2?=
+ =?utf-8?B?Q0w4VDB2Q0x6WUt4anFtMVRRT0xudHlyZUUvdWh1enhjZElIM280bUZ5ak5i?=
+ =?utf-8?B?THVSRE16a08wV1JHdm9CUFo2Y3J5T3JlTHcyR2ZhblhsOWZ0c2Y1TGcvZXJv?=
+ =?utf-8?Q?1UJbuSgKobfFFJvhLKLVeLtZ5CpSiQLVh56fRXg?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(376005)(1800799015)(921011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?Zk5yZjV1ZTdHMjlUL2kvN21xY1VDeVEydU5NOFlHVjhNR0tYcjZza0VoTWdP?=
+ =?utf-8?B?eUhTT09XeWwrRzh2TXpxbjNoTEEzUGFqZUNldGdEbThINTVkOTZnVnM5L0N0?=
+ =?utf-8?B?SjQzd25CbnA2MHQ2cklaaFZSV1RUSnMrUy9lbnpSZnNicmVDNEJzK3I3N2Zq?=
+ =?utf-8?B?WW9lb2VOQitJaU04MEd0bTcvZjdOclJlYzZCN25peEFsT0lGVjlCMGRWWmJB?=
+ =?utf-8?B?M1BkcjZXSWxOVG95Qjc3R0FDUnp5QWtGQlVsbmExQzVYN21SaDlsTVBvVldr?=
+ =?utf-8?B?ZTZlbEc3OGtJMStjd2lWUTlnTDlnVWVwT045Y2E4K0piUTFrK0tPOVFLeEJr?=
+ =?utf-8?B?Ni9xQXBtaVZqOFN6Y1NNMHlBcXRqdU5HaFVFMndjbkxrMlZ3YWRNaVhPTUht?=
+ =?utf-8?B?TzlLNGR1WHZEMVVVTTNiQ1JlSFpVQXo4SURiSm00OW53NHVnQnhpRVFrMG1G?=
+ =?utf-8?B?d3BpT2dObkU2WmRBNjFRVjVQaFNYeFo3dWUrVlBia1JXR2k5ZnVaNUgyTTQv?=
+ =?utf-8?B?OHN3dTRhS1hNSjF1b245eE9OSVFNem11YjhPYWdIb2RKaUlFblpNSkI0MWJs?=
+ =?utf-8?B?Wno1d0NvK0ErejF3dW1RU0JsREFqMlVJSDdIK29wWDJzT2Z4aDIwdlJFTXBG?=
+ =?utf-8?B?SGt4Ung4a1JYNXQwR0ZyMnhXSDVEMWkyQSsyWjIybXZMWWhwU3ZZdWRBWUpL?=
+ =?utf-8?B?VlhRTi80bVJBUlFXcElLb21xdlVIUUVEdmVVbzlMSW1lK01OU0FhZ0pPK2R5?=
+ =?utf-8?B?RE1xeWQrek5udjdjR3RuS3hlZXIwcko0OXhvMEJCNEZYa09CQ2E5UnVCLzB4?=
+ =?utf-8?B?V2lJRGREWnBWVFAxeHU0L3FkTjdMbWpQYTFjU2hjWEc2WUVXWUp1QXpRcHpx?=
+ =?utf-8?B?am9WcWhhdzJCckxMTmh4ZTBOZzFyY29pSm95MnJBaS9ab0d0VWd6Z0JJNGFK?=
+ =?utf-8?B?eUwzYklWa2lQUnZDWFNvbmdBYlBEUWhGZGpkQy9VYkd4bGcrWEZ6YXZvTXQ0?=
+ =?utf-8?B?SmxXdU1VS01ZTlZxM2tXazJkOEV5UmhpbWxCUG1QbHh3YnFmZVpJSFp3ay9o?=
+ =?utf-8?B?VWZua1VnSUVmZHlYekI1UmpoNkVRWmRuZGhPUlRQR1dWWUprWThSQjQvQk1i?=
+ =?utf-8?B?dlRWY09KeUFDckhiUFNYbjhnMCs5eGpYdUJJUkM1RmtLb0M0a0ZnOFJCWFJt?=
+ =?utf-8?B?a3FXUys5UXFkMWVua3d3dktnemt5VUdSUFlqZEJ6WS9ENXBubG8xSGRIN1Er?=
+ =?utf-8?B?cU1hN2luaFp4Z0FZTmtSTm10OG4xQ3hEbjZtOFp0U1ZQaFFmbTllMEZkUzNj?=
+ =?utf-8?B?SjdUUnhadE1hTjdyWTJUaFFRQUxKbmJ1ZVZtVGs4emwyd2l4di9BNkRTYzFy?=
+ =?utf-8?B?dHpaYmsvWmZIeGthMzZqM2JFcDNBUXlORGlZalE0b0hiOUo1anpEYWFiQWhE?=
+ =?utf-8?B?aWpBdGcxbmplY2t5ZEQ4UUlFdG9YYUZndSt0bmJvNEtRRGZxNUo1bzdTamVX?=
+ =?utf-8?B?c0hVSmQybkNUYTBMM0hMdjlqa01HYkxYMmIvM051MU0vRXdlTWdWbW1TbTQz?=
+ =?utf-8?B?Z3VlU2Q5MDE1dVFHTlZkYklXNHhHNlBGRSs0ejRNMjhMWjF6bWZvMlZrYWxW?=
+ =?utf-8?B?VWpkaVAxRXFGVCtMR2tOeGhPQXh6Zk0xMEorazArR0hCdHhSYXVIT0RwN0F5?=
+ =?utf-8?B?TGNEYkpQVzdSVjN2ajJ4dmE5T1VYcFVsSkJKeTcwa3VVRFp3am43ZGQydEQy?=
+ =?utf-8?B?OGdiZ0tiTUV5SWJyT1dtSXdjNXB2YjBPbk1PTmgyMG95SVVORThjZXZoaXNO?=
+ =?utf-8?B?ZitxaFRNdTRMbFhnNG5ZK2wwK24xOWl1TTBHMVlDeWpkU1BJd0FndGFYc0Z5?=
+ =?utf-8?B?UThRUVVGMFVNSVhyQUNyMlI2SEYxWnNqTHQ3aUR6dERrVGZhcy9VclJIR0Ex?=
+ =?utf-8?B?YlFIdldRSUxhYlZzd2ZqUnlKYnJKOGd6KzI4UWpQWVJ3RXJaRG85bDNoamxK?=
+ =?utf-8?B?RGlJalBQV1pncTZOQWpQakszTEZCSU1Hcm9LTUlYc0dHdER3WVk2Z2VPRzJI?=
+ =?utf-8?B?V094aks3aEhJdjJnUXp4RUFQdGxMSncvdnoxdmRIeW1Lek1nRDFHU05VbGhl?=
+ =?utf-8?B?VkhyeHhUMk0rZ2ZIYVg3N1Z3dXYzRXluNm9CdWxKZUs4RlVpSFJQUWpNRWFZ?=
+ =?utf-8?B?TkE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	ZUc1A82T5A7oPrnCa+NeadTAjZby/yYx4UWaswSyauortBPWfZCmbX0wD3P28yuNxNb0S9NIjF/mhdt+nouYosv62dqLiZRFDaqWPBPyjAJcqHCpJCPvgu1pEfAynKnrFHlndEtgfn921nerz3qjPBwgJSROSTbe5qVt8km10d8OPXxM0uBi0NrNFGiNMl17FdxxZijmxuqKwNro1uGBQZAxK6qjlvWkGhsGKRt8oAslbKVhX6W0PVWk/hKgSobc8gsClKoGfPZPAe/YrUVqshHXgJieKxz7K7bHjA5DwYJY4Nk65ZhFQSTcnBxR2zbZrpeiRJ1na8PUv74QFLsGZEfgj0WHcRtqsZRsPVOdTiR7QYReiK81p4EVAxOBe66pUujpEZEbmoxJnYAe2UjQW8cFjfwWclwbXyh/sBz7/OK3UIaQpErROv/6mpOZdGk5XpHOspT46gPqy2/a4vCsFuwNtMnvoaOgVwR4L09HYpLumUCBs3bZSOZfU9XEdFv98LHThW/fQqM/8oQ494zg4OmSNrLCfbGBzOIeE5u2w5tBo3YlACCWrU3XKK5ovPZMZIAvHHYgDoavMZo5OUa/bjGh3TPwb/CNT0LuAPmMrRc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ae71813-4338-4f6e-240d-08dc798b76ce
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 11:45:08.1985
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: P5RT8gTScHAJMzN+OaJskSk/69aa98gT4t7/uwTrCXM4GxDEF7FdccLv2OrW5wDmu79oxXJ3/pgRPyUtvjG+7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4437
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-21_07,2024-05-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
+ suspectscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405210088
+X-Proofpoint-ORIG-GUID: BJdGZN3O9wH2LmZJ4MtDok4Tz57dIM1N
+X-Proofpoint-GUID: BJdGZN3O9wH2LmZJ4MtDok4Tz57dIM1N
 
-On Thu, May 16, 2024 at 11:12:19PM +0100, Adrián Larumbe wrote:
-> Hi Daniel,
-> 
-> On 02.05.2024 10:09, Daniel Vetter wrote:
-> > On Wed, May 01, 2024 at 07:50:43PM +0100, Adrián Larumbe wrote:
-> > > Up to this day, all fdinfo-based GPU profilers must traverse the entire
-> > > /proc directory structure to find open DRM clients with fdinfo file
-> > > descriptors. This is inefficient and time-consuming.
-> > > 
-> > > This patch adds a new DRM ioctl that allows users to obtain a list of PIDs
-> > > for clients who have opened the DRM device. Output from the ioctl isn't
-> > > human-readable, and it's meant to be retrieved only by GPU profilers like
-> > > gputop and nvtop.
-> > > 
-> > > Cc: Rob Clark <robdclark@gmail.com>
-> > > Cc: Tvrtko Ursulin <tursulin@ursulin.net>
-> > > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> > > ---
-> > >  drivers/gpu/drm/drm_internal.h |  1 +
-> > >  drivers/gpu/drm/drm_ioctl.c    | 89 ++++++++++++++++++++++++++++++++++
-> > >  include/uapi/drm/drm.h         |  7 +++
-> > >  3 files changed, 97 insertions(+)
-> > > 
-> > > diff --git a/drivers/gpu/drm/drm_internal.h b/drivers/gpu/drm/drm_internal.h
-> > > index 690505a1f7a5..6f78954cae16 100644
-> > > --- a/drivers/gpu/drm/drm_internal.h
-> > > +++ b/drivers/gpu/drm/drm_internal.h
-> > > @@ -243,6 +243,7 @@ static inline void drm_debugfs_encoder_remove(struct drm_encoder *encoder)
-> > >  drm_ioctl_t drm_version;
-> > >  drm_ioctl_t drm_getunique;
-> > >  drm_ioctl_t drm_getclient;
-> > > +drm_ioctl_t drm_getclients;
-> > >  
-> > >  /* drm_syncobj.c */
-> > >  void drm_syncobj_open(struct drm_file *file_private);
-> > > diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-> > > index e368fc084c77..da7057376581 100644
-> > > --- a/drivers/gpu/drm/drm_ioctl.c
-> > > +++ b/drivers/gpu/drm/drm_ioctl.c
-> > > @@ -207,6 +207,93 @@ int drm_getclient(struct drm_device *dev, void *data,
-> > >  	}
-> > >  }
-> > >  
-> > > +/*
-> > > + * Get list of client PIDs who have opened a DRM file
-> > > + *
-> > > + * \param dev DRM device we are querying
-> > > + * \param data IOCTL command input.
-> > > + * \param file_priv DRM file private.
-> > > + *
-> > > + * \return zero on success or a negative number on failure.
-> > > + *
-> > > + * Traverses list of open clients for the given DRM device, and
-> > > + * copies them into userpace as an array of PIDs
-> > > + */
-> > > +int drm_getclients(struct drm_device *dev, void *data,
-> > > +		   struct drm_file *file_priv)
-> > > +
-> > > +{
-> > > +	struct drm_get_clients *get_clients = data;
-> > > +	ssize_t size = get_clients->len;
-> > > +	char __user *pid_buf;
-> > > +	ssize_t offset = 0;
-> > > +	int ret = 0;
-> > > +
-> > > +	/*
-> > > +	 * We do not want to show clients of display only devices so
-> > > +	 * as to avoid confusing UM GPU profilers
-> > > +	 */
-> > > +	if (!dev->render) {
-> > > +		get_clients->len = 0;
-> > > +		return 0;
-> > > +	}
-> > > +
-> > > +	/*
-> > > +	 * An input size of zero means UM wants to know the size of the PID buffer
-> > > +	 * We round it up to the nearest multiple of the page size so that we can have
-> > > +	 * some spare headroom in case more clients came in between successive calls
-> > > +	 * of this ioctl, and also to simplify parsing of the PIDs buffer, because
-> > > +	 * sizeof(pid_t) will hopefully always divide PAGE_SIZE
-> > > +	 */
-> > > +	if (size == 0) {
-> > > +		get_clients->len =
-> > > +			roundup(atomic_read(&dev->open_count) * sizeof(pid_t), PAGE_SIZE);
-> > > +		return 0;
-> > > +	}
-> > > +
-> > > +	pid_buf = (char *)(void *)get_clients->user_data;
-> > > +
-> > > +	if (!pid_buf)
-> > > +		return -EINVAL;
-> > > +
-> > > +	mutex_lock(&dev->filelist_mutex);
-> > > +	list_for_each_entry_reverse(file_priv, &dev->filelist, lhead) {
-> > > +		pid_t pid_num;
-> > > +
-> > > +		if ((size - offset) < sizeof(pid_t))
-> > > +			break;
-> > > +
-> > > +		rcu_read_lock();
-> > > +		pid_num = pid_vnr(rcu_dereference(file_priv->pid));
-> > > +		rcu_read_unlock();
-> > > +
-> > > +		/* We do not want to return the profiler's PID */
-> > > +		if (pid_vnr(task_tgid(current)) == pid_num)
-> > > +			continue;
-> > > +
-> > > +		ret = copy_to_user(pid_buf + offset, &pid_num, sizeof(pid_t));
-> > > +		if (ret)
-> > > +			break;
-> > > +
-> > > +		offset += sizeof(pid_t);
-> > > +	}
-> > > +	mutex_unlock(&dev->filelist_mutex);
-> > > +
-> > > +	if (ret)
-> > > +		return -EFAULT;
-> > > +
-> > > +	if ((size - offset) >= sizeof(pid_t)) {
-> > > +		pid_t pid_zero = 0;
-> > > +
-> > > +		ret = copy_to_user(pid_buf + offset,
-> > > +				   &pid_zero, sizeof(pid_t));
-> > > +		if (ret)
-> > > +			return -EFAULT;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  /*
-> > >   * Get statistics information.
-> > >   *
-> > > @@ -672,6 +759,8 @@ static const struct drm_ioctl_desc drm_ioctls[] = {
-> > >  	DRM_IOCTL_DEF(DRM_IOCTL_MODE_LIST_LESSEES, drm_mode_list_lessees_ioctl, DRM_MASTER),
-> > >  	DRM_IOCTL_DEF(DRM_IOCTL_MODE_GET_LEASE, drm_mode_get_lease_ioctl, DRM_MASTER),
-> > >  	DRM_IOCTL_DEF(DRM_IOCTL_MODE_REVOKE_LEASE, drm_mode_revoke_lease_ioctl, DRM_MASTER),
-> > > +
-> > > +	DRM_IOCTL_DEF(DRM_IOCTL_GET_CLIENTS, drm_getclients, DRM_RENDER_ALLOW),
-> > 
-> > Uh RENDER_ALLOW sounds like a very bad idea for this, flat out leaks
-> > information that really paranoid people don't want to have leaked.
-> 
-> I'm curious, how is this ioctl leakier than, let's say, any of the driver
-> getparam ioctls, like Panfrost's panfrost_ioctl_get_param() ?
-> 
-> I'm asking this because I checked the way access to a drm file is being handled
-> in drm_ioctl_permit(), and it seems in the case of a render node (which are the
-> kind we're most interested in retrieving the list of client PIDs for),
-> DRM_RENDER_ALLOW access is mandatory.
+On 20/05/2024 16:36, Ian Rogers wrote:
+> 	}
+> +                ret = pmu_events_table__find_event_pmu(table, table_pmu, name, fn, data);
+> +                if (ret != -1000)
+> +                        return ret;
+> +        }
+>           return -1000;
 
-All the resources are attached to a file, and that's fundamentally what
-the ioctls we have operate on. Or invariant stuff from the driver/hw, like
-the get_param ioctl you mention.
+what's -1000 meaning? It would be nice to use some standard error codes.
 
-What your ioctl does is give us information about _other_ files opened of
-the same underlying render node, which is entirely new and does break the
-full isolation between different open render node files we've hade thus
-far.
+Thanks,
+John
 
-> > Natural would be to limit to ptrace ability, but ptrace is for processes
-> > and fd aren't tied to that. So I'm not sure ...
-> > 
-> > I think a separate file (whether in procfs or a special chardev) where you
-> > can set access rights that suit feels a lot better for this. Plus putting
-> > it into procfs would also give the natural property that you can only read
-> > it if you have access to procfs anyway, so imo that feels like the best
-> > place for this ...
-> > 
-> > And yes that means some lkml bikeshedding with procfs folks, but I do
-> > think that's good here since we're likely not the only ones who need a bit
-> > faster procfs trawling for some special use-cases. So consistency across
-> > subsystems would be nice to at least try to aim for.
-> > -Sima
-> 
-> I think using procfs would make sense if we were displaying process-specific
-> information, and such is the case of fdinfo directories therein, but this ioctl
-> (and the device sysfs knob that it replaces from a previous patch series) is
-> meant to yield all the device's client PIDs. To me that doesn't sound like
-> something that is tied to a single render client, but to the device as a whole.
 
-procfs because it's an algorithmic improvement for an interface that _is_
-in procfs. If you don't have access to procfs and it's fdinfo files, then
-this "give me the list of all open files" is no use. Also with pid name
-spaces we need to make sure that the list we hand out matches the relevant
-pid name space, if it's global that's a bug. So it's also relevant to the
-specific procfs instance a process has.
-
-So from a security pov, that's where it belongs.
--Sima
-
-> 
-> > >  };
-> > >  
-> > >  #define DRM_CORE_IOCTL_COUNT	ARRAY_SIZE(drm_ioctls)
-> > > diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-> > > index 16122819edfe..c47aa9de51ab 100644
-> > > --- a/include/uapi/drm/drm.h
-> > > +++ b/include/uapi/drm/drm.h
-> > > @@ -1024,6 +1024,11 @@ struct drm_crtc_queue_sequence {
-> > >  	__u64 user_data;	/* user data passed to event */
-> > >  };
-> > >  
-> > > +struct drm_get_clients {
-> > > +	__u64 user_data;
-> > > +	__kernel_size_t len;
-> > > +};
-> > > +
-> > >  #if defined(__cplusplus)
-> > >  }
-> > >  #endif
-> > > @@ -1236,6 +1241,8 @@ extern "C" {
-> > >  #define DRM_IOCTL_SYNCOBJ_TRANSFER	DRM_IOWR(0xCC, struct drm_syncobj_transfer)
-> > >  #define DRM_IOCTL_SYNCOBJ_TIMELINE_SIGNAL	DRM_IOWR(0xCD, struct drm_syncobj_timeline_array)
-> > >  
-> > > +#define DRM_IOCTL_GET_CLIENTS		DRM_IOWR(0xD1, struct drm_get_clients)
-> > > +
-> > >  /**
-> > >   * DRM_IOCTL_MODE_GETFB2 - Get framebuffer metadata.
-> > >   *
-> > > -- 
-> > > 2.44.0
-> > > 
-> 
-> Adrian Larumbe
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
 
