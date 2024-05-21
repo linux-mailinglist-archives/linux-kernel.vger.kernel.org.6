@@ -1,181 +1,122 @@
-Return-Path: <linux-kernel+bounces-185227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357588CB25D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:42:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6698CB269
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57BF01C221E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:42:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19DCEB227FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3302147C73;
-	Tue, 21 May 2024 16:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4D62E620;
+	Tue, 21 May 2024 16:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fq2IK6AX"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P1vr8UKl"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD6E14291A;
-	Tue, 21 May 2024 16:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F51F1FBB
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 16:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716309759; cv=none; b=I7yiqe7q+eB3VHyntlhLLwFrGwk3pzXhR/WAj8sydlpKnDDZaFnW58uODwuGtLoy51zNjD/l2oQqrpMBCW8qB2zCX26QOX2DS568VSKp1lT6vrRzcXVUkBjZP5hYqYI+qgTaCVQTNzE6GP0SviwpnYgzCnpA62aOBw9qhCSRZ+8=
+	t=1716310058; cv=none; b=HALcrsoTgD9KZwBYefNBAi+hGe20D8ALOl9Qn73bCl1SOL8eDObcvPx3lx+5JwdbwuczE48RAdKm415l/CF5iXFCXvHiiHUSrmrtug8k2v0qKVGmeC7faQNgH/ZgLP5CQzk3ODewYKtmm8re+WmrI1zFZOcBaCBgZ+SobTvmR0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716309759; c=relaxed/simple;
-	bh=b3vJYeq2c/Fy9GBJ9NFMGIQ1sY8Bu/WdYlNzn1s5Gg8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O/fr8M5QeTZPhjFY5v7ZbOIvK6PS8wZesY/+sS7/pQGUJWDaVc7Yfysem8ys7tAHY3U53rfuvz+vvQQ2D+8sNtwZwSZhVxlo8OiuVL9RSTyjBnp2Z24y3WG+rH/DySF7sg8OkrllJTA95DK4Z9E9OmGT6jGxQjWeefYQcevY9n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fq2IK6AX; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6f361af4cb6so436536a34.3;
-        Tue, 21 May 2024 09:42:38 -0700 (PDT)
+	s=arc-20240116; t=1716310058; c=relaxed/simple;
+	bh=7iOACG5IfAwJdby/0fwuDdIGvtdK3YwQtEFtX0fPrkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p8DaDDJI6FqxaxHaNIUq9NcfJgSvIGaGY/BScU9lNFWiM845K7Iax9qdThvgz/BNLdaIarjv8ou4jvyT1NZyZ2iDgOyhW8iDMLcZs9tXcUpMzwB6CvmsM8H1266gpwv0DPyRwShvISRTkvT5cYl/aMcBSG4PQ6AJLmfYdg76SQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P1vr8UKl; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f67f4bebadso557075b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:47:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716309757; x=1716914557; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b3vJYeq2c/Fy9GBJ9NFMGIQ1sY8Bu/WdYlNzn1s5Gg8=;
-        b=fq2IK6AXX4nv+RPz1i1r41qNyzRkItjKpFFUfr7bQnTOSCkj7BTuBHnaXUr0tHqB3u
-         2lWrY5MtUwDy/39XIfMAk1oRew5JiCELgrDMkDkgJKTO7121itL1hNCVMlI/qrj0C+vp
-         mBBPH5VJRby2vReEZ2w9XGoNA7rccEtpaZvgWp+tMS6f5jq4dhFP/LmOarQfWPqs4Hjv
-         VXJOvAbCOTR0WI6ljI66x//ufm7Rdizi86pr3p+R1XqyfbkAFWpCLevCLW1GWb+8C9Z4
-         oGtXg1dvPiJjcLi0dF4rEcEPuSGFSBIvMdYkUhl3jO1PJ1QqGYedA0KSqzTNLWCVHtrK
-         59sw==
+        d=linaro.org; s=google; t=1716310056; x=1716914856; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PZAIDSZz5noc6if4QKqooN9MLNYkeL9UbakI+8iRBos=;
+        b=P1vr8UKl70aTwginlilJZb+vlUxgG6NpmM1BZ8cHGDE1j3UirMTlGYF1UMF4bqTyrG
+         x02MCGUxqFpjwERKKh/qAQPKtzxN679ahg29hNLRkAH5SboMnYsBULDhGhdLd7ysCI2l
+         blmkyU8J49BSz6m991r0ULZnYpPo6zqkR0ne0X9Mac90Dj9yczmO1cyAO4SdVvH0mDI0
+         5O8rFf5CyLnOtdT6oRbx5TAVrCmThYkOLBY39sH4c7fQbBdwRfDtscl9V5hCclbR/DuD
+         hdlJ0HLGeZ8Ta93Hn8cLNVrBkXOEK/L2O7K/oeVhaWqVhSo16ZtRBr8wNv3nokLElWfk
+         1p9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716309757; x=1716914557;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b3vJYeq2c/Fy9GBJ9NFMGIQ1sY8Bu/WdYlNzn1s5Gg8=;
-        b=ck6jBph3wrT36i6ehSa2EZSybzNnZ9qIwFh6X39bPpzi9iah0zqO86R+ZMJEr+ovx5
-         ThTHj0faiVK1nsLujeEXwvcOPGygotoVBptX0McA6evbLmREZkwZC+wZyOlRJajcNWg/
-         yr5Um+2MbCFdRuNeZoclVe6myzo6nUxN5U8Z4FsLE0mc4x2XS7VaWtgGLtKfgxAlj16D
-         HEl05LhP/Y10UvYvk5MD5WiQ4qn4lGqQb4erKc8ONfR4dFJ6uPInsR0dCmXVlCu85Mzs
-         p1VGiMTpd/g/Vif38l3BaWyJI6SAf4jOe+NmP7oxoXNlAVlXlekzgUZr3kfkjDQ6PBli
-         a/jA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNs/nHDez8xJtzw2FrUYrYLtVZic7jNH/NsAm/jxFlQLYHYSv6SqYejKTBERXiLYh48IWGBm4+7gk77A06Zu5UbRsCEskcGvX3gWZ1zTe+GYtEjE6ZbOQtoHixSSPy0kA7ySrgdSt8nQ60ao7S5bOa9uZBxd2+WlXB4H4yoQfwGjXLQ6Kw9w==
-X-Gm-Message-State: AOJu0YyGOmBiGnooQ58lCA76T7aw9T7pQrwO18LYnanjGMGe+/IN9t2C
-	5vRuNU9TcxMemmV0yshK4DljIyWtKWM56s76oQ+LLYWOxiHlKxaMSIrDU0uLGpIjEQn9GBcinB+
-	fUVfhu1ICzwWj2JCpXTw1tw/hxh0=
-X-Google-Smtp-Source: AGHT+IFVFIsEpDpaEBEW3QKQFxNBTB3wyzGGSV9GszInZywIc5OPzc/pYM52Mn5aPmPMog3xsBZ4s3rtmI0vyqROLdE=
-X-Received: by 2002:a05:6870:13d4:b0:233:5557:c6a2 with SMTP id
- 586e51a60fabf-24172c4da6dmr37618771fac.34.1716309757190; Tue, 21 May 2024
- 09:42:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716310056; x=1716914856;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PZAIDSZz5noc6if4QKqooN9MLNYkeL9UbakI+8iRBos=;
+        b=emdwWuJMOfRbgQHqLJeCcs2AREA3c0H8dPPws6FVgTHyeqQGP8YuCZFqd9YCmpE4IS
+         sfjMpfwx8nXp8FRC5tbrPE0qgpB2pKe/vEtVV9uJAME9arP8pIQN86OMP+RzOn7qEraV
+         2NyIDivmDa28+3UQEm+3P4ziw5ee13fKWoMPvPp5MPg4QA9khOngu/bcwp40LfgKOJAV
+         Po5B3Q6QBVzi0wuHR0wNTh/pmQooW5d1n0i2N0mIDueSyowiZrAVDV7sq14q0ZXq8plr
+         JTh3M1wPz9X5adl+sLl6yD0pCWWovtbVObXNhA08u0dnylTAWgS8FBx2ljM1G3Gz1wEN
+         CZYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4ikF9UYpR6rr5NvFAZpVLkYEEjyxZPNve9hHgc9gQ1V36hVykQeOUBUlHKDxhXT7hpPj4qgTptwkOHmTCCsZEr1Wn7t6v1BaMTKTO
+X-Gm-Message-State: AOJu0YwG8igvkPj4OCf61HVVFK3BP8jQ9lukxVUtGvR01yZbBEdeJnIL
+	9JIt67tdeW9WCZ07P4yAkhQ71aG4KJo3F3GrSgm41m/JCDZcUb7XMVs21pkPwis=
+X-Google-Smtp-Source: AGHT+IEM61ROSOw0CzG0X8FSdmCEEg6WGFlarYhclikyQ2fR7QmVIqgP4xaOcvcYDgnr0vf49H+LBA==
+X-Received: by 2002:a05:6a00:2284:b0:6ee:1d68:d33 with SMTP id d2e1a72fcca58-6f4e02ca2abmr35478343b3a.15.1716310056526;
+        Tue, 21 May 2024 09:47:36 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:df1a:22de:40b2:f110])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6584e7897bdsm9707304a12.21.2024.05.21.09.47.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 09:47:36 -0700 (PDT)
+Date: Tue, 21 May 2024 10:47:33 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: andersson@kernel.org, matthias.bgg@gmail.com,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH] remoteproc: mediatek: Zero out only remaining bytes of
+ IPI buffer
+Message-ID: <ZkzQJepyjPz4Su+k@p14s>
+References: <20240520112724.139945-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
- <20240521-verplanen-fahrschein-392a610d9a0b@brauner> <20240521-patentfrei-weswegen-0395678c9f9a@brauner>
- <d225561221f558fe917e5554102394ce778a3758.camel@kernel.org>
-In-Reply-To: <d225561221f558fe917e5554102394ce778a3758.camel@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 21 May 2024 19:42:25 +0300
-Message-ID: <CAOQ4uxhbOzzawKeCNSCbFtPZAfiZFDXCqK4b_VSXeNyHxpbQsw@mail.gmail.com>
-Subject: Re: [PATCH RFC] fhandle: expose u64 mount id to name_to_handle_at(2)
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520112724.139945-1-angelogioacchino.delregno@collabora.com>
 
-On Tue, May 21, 2024 at 5:27=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> On Tue, 2024-05-21 at 16:11 +0200, Christian Brauner wrote:
-> > On Tue, May 21, 2024 at 03:46:06PM +0200, Christian Brauner wrote:
-> > > On Mon, May 20, 2024 at 05:35:49PM -0400, Aleksa Sarai wrote:
-> > > > Now that we have stabilised the unique 64-bit mount ID interface in
-> > > > statx, we can now provide a race-free way for name_to_handle_at(2) =
-to
-> > > > provide a file handle and corresponding mount without needing to wo=
-rry
-> > > > about racing with /proc/mountinfo parsing.
-> > > >
-> > > > As with AT_HANDLE_FID, AT_HANDLE_UNIQUE_MNT_ID reuses a statx AT_* =
-bit
-> > > > that doesn't make sense for name_to_handle_at(2).
-> > > >
-> > > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > > > ---
-> > >
-> > > So I think overall this is probably fine (famous last words). If it's
-> > > just about being able to retrieve the new mount id without having to
-> > > take the hit of another statx system call it's indeed a bit much to
-> > > add a revised system call for this. Althoug I did say earlier that I
-> > > wouldn't rule that out.
-> > >
-> > > But if we'd that then it'll be a long discussion on the form of the n=
-ew
-> > > system call and the information it exposes.
-> > >
-> > > For example, I lack the grey hair needed to understand why
-> > > name_to_handle_at() returns a mount id at all. The pitch in commit
-> > > 990d6c2d7aee ("vfs: Add name to file handle conversion support") is t=
-hat
-> > > the (old) mount id can be used to "lookup file system specific
-> > > information [...] in /proc/<pid>/mountinfo".
-> > >
-> > > Granted, that's doable but it'll mean a lot of careful checking to av=
-oid
-> > > races for mount id recycling because they're not even allocated
-> > > cyclically. With lots of containers it becomes even more of an issue.=
- So
-> > > it's doubtful whether exposing the mount id through name_to_handle_at=
-()
-> > > would be something that we'd still do.
-> > >
-> > > So really, if this is just about a use-case where you want to spare t=
-he
-> > > additional system call for statx() and you need the mnt_id then
-> > > overloading is probably ok.
-> > >
-> > > But it remains an unpleasant thing to look at.
-> >
-> > And I'd like an ok from Jeff and Amir if we're going to try this. :)
->
-> I don't have strong feelings about it other than "it looks sort of
-> ugly", so I'm OK with doing this.
->
-> I suspect we will eventually need name_to_handle_at2, or something
-> similar, as it seems like we're starting to grow some new use-cases for
-> filehandles, and hitting the limits of the old syscall. I don't have a
-> good feel for what that should look like though, so I'm happy to put
-> that off for a while.
+On Mon, May 20, 2024 at 01:27:24PM +0200, AngeloGioacchino Del Regno wrote:
+> In scp_ipi_handler(), instead of zeroing out the entire shared
+> buffer, which may be as large as 600 bytes, overwrite it with the
+> received data, then zero out only the remaining bytes.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  drivers/remoteproc/mtk_scp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index e5214d43181e..dc70cf7db44d 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -117,8 +117,8 @@ static void scp_ipi_handler(struct mtk_scp *scp)
+>  		return;
+>  	}
+>  
+> -	memset(scp->share_buf, 0, scp_sizes->ipi_share_buffer_size);
+>  	memcpy_fromio(scp->share_buf, &rcv_obj->share_buf, len);
+> +	memset(&scp->share_buf[len], 0, scp_sizes->ipi_share_buffer_size - len);
 
-I'm ok with it, but we cannot possibly allow it without any bikeshedding...
-
-Please call it AT_HANDLE_MNT_ID_UNIQUE to align with
-STATX_MNT_ID_UNIQUE
-
-and as I wrote, I do not like overloading the AT_*_SYNC flags
-and as there is no other obvious candidate to overload, so
-I think that it is best to at least declare in a comment that
-
-/* 0x00ff flags are reserved for per-syscall flags */
-
-and use one of those bits for AT_HANDLE_MNT_ID_UNIQUE.
-
-It does not matter whether we decide to unify the AT_ flags
-namespace with RENAME_ flags namespace or not.
-
-The fact that there is a syscall named renameat2() with a flags
-argument, means that someone is bound to pass in an AT_ flags
-in this syscall sooner or later, so the least we can do is try to
-delay the day that this will not result in EINVAL.
+I will apply this patch when rc1 comes out next week.
 
 Thanks,
-Amir.
+Mathieu
 
-P.S.: As I mentioned to Jeff in LSFMM, I have a patch in my tree
-to add AT_HANDLE_CONNECTABLE which I have not yet
-decided if it is upstream worthy.
+>  	handler(scp->share_buf, len, ipi_desc[id].priv);
+>  	scp_ipi_unlock(scp, id);
+>  
+> -- 
+> 2.45.1
+> 
 
