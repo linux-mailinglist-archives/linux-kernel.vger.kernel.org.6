@@ -1,121 +1,113 @@
-Return-Path: <linux-kernel+bounces-185401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2EA8CB484
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:03:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15DD28CB486
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C1B71F222FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:03:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2B31F23168
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C59149006;
-	Tue, 21 May 2024 20:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D729148821;
+	Tue, 21 May 2024 20:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TGrTax9z"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FEH9Wz1X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31ABF1DA53
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB631EB40
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716321779; cv=none; b=uUyrAushZ+SE+LMKjeEhC5BlFC44eg/OFYvsdxsutOr85L4ONe/1tolwu+eoJFNK5TCL8TsQtVqwkG7Qd/wQaK58VIom0Tc5bPpMvhQR5r+3Yr2JTBLnUYodig70vXGmL+V12OHWD1kY1qqpmOq/SzNO7fReQn/zTUaJjSBdOSE=
+	t=1716321956; cv=none; b=Ea42IsDAMTXiGzo+y+2tnoy1s4Ey5A4addSqXAZKLQb1cqOX/6CgpHSChitmT3y0SPb7EZtJp3PVl7jyHSL1c1nL7A7RkZFX/iWwsNPsp+e99hU6sbxG+F+ZQebbORCJsRMG4Wp7AFZDRrONHhYpJI3E7C9y+gOfVBXUtBlpsLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716321779; c=relaxed/simple;
-	bh=iIAKgcqkrQku6Mr29zl/Q3Aq3+KvXVwIDxnt8qxjWcA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=X2LphUT6ccjfzfKN21Y/zbHlGRcf1a/jGKb29vUL1caNv1C1jKXkZOTxLBDbw8x1kpdgOFziOWeiotw8sJyd0Aj231vPmqbQ7zZsHtLBidasxYCQOFJHjjnSv32BM0ad4TcOhVGQJDvjfhEKgCGYb4dFhhrai8dUxHSct724PN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TGrTax9z; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ba0fd5142dso141191a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:02:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716321777; x=1716926577; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Z2y/OBkKxgzmvSuCRJlFU+1HEUO6FATvJsnEDlaTHY=;
-        b=TGrTax9zbcNDUbLBxHleJWLVRommRaTHeZ7MtchmGSTapWxyg0608eh8SjanQ1+KS4
-         C6MQ0fEKgnZ1ltX8uqYQXDvd2gFUdnq4qr86GVgPZDvMJVsbtHEhYLP7v/hlKXHs6p2O
-         Vfn0iNyc4Wt1XxIzIio9x76UFxDw5WZuFF6Nk8I/bKVpPl57Dm4oi0gkw1kGiW8jPx7o
-         bavfnYkzSLtKZse6MR4ngDAjzhb8wTJJCY8O7O9PEW/sZImXQAZP6K8ntW9uYLIPcvyJ
-         KmZeezt0idsCVTokFhmd+bigDde/6/ZzEu424tfqxvfT8xER+NCwIKaHTLDmxicgDLWF
-         wDtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716321777; x=1716926577;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Z2y/OBkKxgzmvSuCRJlFU+1HEUO6FATvJsnEDlaTHY=;
-        b=LCgPkjKPxP+ghxI7p6RpHvHHe2dasXZxyY4hEF+LuzCzmezTzLcx3e9TcJwpYUFTyN
-         P5MIitUYSjo0ySfbL0RuYcNBqBJbUwFZv7iyZDgsrgQg/OnBls6HT1USnwjMTcp2UuIP
-         MFp1utS9t+T94EqmsGmxk6TmkV0CGGFcOPFXntKsGJFFNPpqb3Eop+JKooAFhDJeGqUN
-         TrohdQZho/eI7VsQDa5z7pBK/dIzyRHXoegFmaZepGKvnqwyLjjCO+3HqZlpjNnl+Efq
-         HlX5ZOOwHFpgkk7cABOp3znrJFcdN20Uk+8zmSfBspQYBrdTE6qO0ATQXW/eYHCNzA72
-         KDYw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7YSwaEikjlcAafNTe4BkwNs8AF/OUkObDvGjkaczCVv7tvXwmXATq2I7qNCocK+OvjqT2I/IkUs9JVIpmV9/tGmWWqiE9I9QdajQO
-X-Gm-Message-State: AOJu0Yysb8zc7e9PkQ6nTKfK2ibqNoGTggxBxdLKwOKlm6QSwH5UQa6d
-	exQ2TpryfgiIM/xDignkATYkIwxf2Xz149KMUnDbSh9QIQPljaiT5MvYpkrHt8g2WJs2HWlJkCl
-	eUQ==
-X-Google-Smtp-Source: AGHT+IGc8AMfLKM+eg0g6UQUcqfUBCYk4fTqnxjiZdUzMhtJbdwzeQwWLJW3iNG9Bbk6zyIuCWPv8Gd0+4Y=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:5384:b0:2af:b21b:6432 with SMTP id
- 98e67ed59e1d1-2bd9f5c1a8amr520a91.2.1716321777329; Tue, 21 May 2024 13:02:57
- -0700 (PDT)
-Date: Tue, 21 May 2024 13:02:55 -0700
-In-Reply-To: <1dbb09c5-35c7-49b9-8c6f-24b532511f0b@intel.com>
+	s=arc-20240116; t=1716321956; c=relaxed/simple;
+	bh=n1XYT0f8NZ7GY+qdmS7k5N3aMcsAOCFt6lECER9tD1I=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=fetFT3rOLDhZD48HVwLJYe/D1vrjtbvvU6S4+0bRrMqkhAMD/m3hGb66wNGQ+3ZElDWadq396doXS6R888uPKsadj8kvKxHFg/D7L0NpRK0MkV4xx2PftlCEXrPZcW36zG8uKA+el6Gbm7ZvJLDEtK3BewHtxUwxDeHHk2x3hEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FEH9Wz1X; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716321954;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kUcZx+GYvnpd0qagpN08S3w0mckRV0Hazws3JBEBOHw=;
+	b=FEH9Wz1XXIi293NSIf/plGpADF71XNQAb5nC6IJTUJmgqAq3CvbwEaVHSeG7rhFM3vFP5q
+	g7HT64B7uVgkltweLFiKDrDBeacHYAJzNVWOXTSfhySGd60Tfq8K1YwsA+QUiVXYkJni0Q
+	Yvbgm25ofYpJLNrX7ydr2SUNhw51I/I=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-504-g-ZkIjQxPvWuKP4dSTmyWw-1; Tue, 21 May 2024 16:05:52 -0400
+X-MC-Unique: g-ZkIjQxPvWuKP4dSTmyWw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BB112101A52C;
+	Tue, 21 May 2024 20:05:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 6178A51BF;
+	Tue, 21 May 2024 20:05:48 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <110d2995-f473-4781-9412-30f7f96858dd@kernel.dk>
+References: <110d2995-f473-4781-9412-30f7f96858dd@kernel.dk> <2e73c659-06a3-426c-99c0-eff896eb2323@kernel.dk> <316306.1716306586@warthog.procyon.org.uk> <316428.1716306899@warthog.procyon.org.uk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: dhowells@redhat.com, Steve French <stfrench@microsoft.com>,
+    Jeff Layton <jlayton@kernel.org>,
+    Enzo Matsumiya <ematsumiya@suse.de>,
+    Matthew Wilcox <willy@infradead.org>,
+    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
+    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240425233951.3344485-1-seanjc@google.com> <20240425233951.3344485-2-seanjc@google.com>
- <5dfc9eb860a587d1864371874bbf267fa0aa7922.camel@intel.com>
- <ZkI5WApAR6iqCgil@google.com> <6100e822-378b-422e-8ff8-f41b19785eea@intel.com>
- <1dbb09c5-35c7-49b9-8c6f-24b532511f0b@intel.com>
-Message-ID: <Zkz97y9VVAFgqNJB@google.com>
-Subject: Re: [PATCH 1/4] x86/reboot: Unconditionally define
- cpu_emergency_virt_cb typedef
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-ID: <322228.1716321947.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 21 May 2024 21:05:47 +0100
+Message-ID: <322229.1716321947@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-On Wed, May 15, 2024, Kai Huang wrote:
-> How about we just make all emergency virtualization disable code
-> unconditional but not guided by CONFIG_KVM_INTEL || CONFIG_KVM_AMD, i.e.,
-> revert commit
-> 
->    261cd5ed934e ("x86/reboot: Expose VMCS crash hooks if and only if
-> KVM_{INTEL,AMD} is enabled")
-> 
-> It makes sense anyway from the perspective that it allows the out-of-tree
-> kernel module hypervisor to use this mechanism w/o needing to have the
-> kernel built with KVM enabled in Kconfig.  Otherwise, strictly speaking,
-> IIUC, the kernel won't be able to support out-of-tree module hypervisor as
-> there's no other way the module can intercept emergency reboot.
+Jens Axboe <axboe@kernel.dk> wrote:
 
-Practically speaking, no one is running an out-of-tree hypervisor without either
-(a) KVM being enabled in the .config, or (b) non-trivial changes to the kernel.
+> On 5/21/24 9:54 AM, David Howells wrote:
+> > Jens Axboe <axboe@kernel.dk> wrote:
+> > =
 
-Exposing/exporting select APIs and symbols if and only if KVM is enabled is a
-a well-established pattern, and there are concrete benefits to doing so.  E.g.
-it allows minimizing the kernel footprint for use cases that don't want/need KVM.
+> >> However, I'll note that BDP_ASYNC is horribly named, it should be
+> >> BDP_NOWAIT instead. But that's a separate thing, fix looks correct
+> >> as-is.
+> > =
 
-> This approach avoids the weirdness of the unconditional define for only
-> cpu_emergency_virt_cb.
+> > I thought IOCB_NOWAIT was related to RWF_NOWAIT, but apparently not fr=
+om the
+> > code.
+> =
 
-I genuinely don't understand why you find it weird to unconditionally define
-cpu_emergency_virt_cb.  There are myriad examples throughout the kernel where a
-typedef, struct, enum, etc. is declared/defined even though support for its sole
-end consumer is disabled.  E.g. include/linux/mm_types.h declares "struct mem_cgroup"
-for pretty much the exact same reason, even though the structure is only fully
-defined if CONFIG_MEMCG=y.
+> It is, something submitted with RWF_NOWAIT should have IOCB_NOWAIT set.
+> But RWF_NOWAIT isn't the sole user of IOCB_NOWAIT, and no assumptions
+> should be made about whether something is sync or async based on whether
+> or not RWF_NOWAIT is set. Those aren't related other than _some_ proper
+> async IO will have IOCB_NOWAIT set, and others will not.
 
-The only oddity here is that the API that the #ifdef that guards the usage happens
-to be right below the typedef, but it shouldn't take that much brain power to
-figure out why a typedef exists outside of an #ifdef.
+Are you sure?  RWF_NOWAIT seems to set IOCB_NOIO.
+
+David
+
 
