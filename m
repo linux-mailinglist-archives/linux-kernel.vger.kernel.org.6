@@ -1,86 +1,99 @@
-Return-Path: <linux-kernel+bounces-184486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319E38CA74C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:21:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0178CA750
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6544CB2194F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297BC1F21CA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E6828DBC;
-	Tue, 21 May 2024 04:21:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309BC2B9A3;
+	Tue, 21 May 2024 04:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Mg80VdDM"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B76210E4
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 04:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A187A17C8;
+	Tue, 21 May 2024 04:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716265265; cv=none; b=bOIU0uISvqgA2Q/beC0nzv1X4kYDfQj678XAPdopHxIpTfjRzDrIzTTlHyF6YwiiBPKJgE2/t3uwzpfUP0XICA3m7jpN5A4xLM1DA9VJnJjWlSjvAf0wiLYwvXzs4IE99hnuVOyc1MiM7THr0hmAVVTQtWz2wbmN+pA9odOH/1s=
+	t=1716265661; cv=none; b=JBgPkVdKvnXVU0mTO2z+tHtWGF0NxWFxdm2WWL/Lre0xf6ReSXllOVxNOZGRl9BXjj4AlXlZV0rVga0/dMj0qHs+S2EuuN7G9qlAhsE21428L3+tAW0WM57EEdPUQ6RS7znQ+a7KeXjiTjwqQGOyLgPgTwgyFxhzcHtpPFnax+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716265265; c=relaxed/simple;
-	bh=lUAsxpeONMhX1IC9R4qHe81NbisGOaZADbrjZP2G+Eg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WmPltxC6TXFCTpM3jXe7C8JjQY25lpgMecrawcIcDbzaz6wWNf53P8Uop/aoOOiJZ5wQLqQ8rxeBrjCul24h4YZ9tb0BgB7LTOgXMs/nE+ultWyu3zRDDDByyRrfHeogJmbcR5xqKhqHmZhbLCuGACZ0tivaZjiVZl+qRMOIuyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e17a8bed9eso1225816939f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 21:21:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716265263; x=1716870063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fSsHD2Hl2AC8EhhzRcg3ormCwiAPS1drALI/1hMFbes=;
-        b=AjiCoQLzixabN/CJnCejWiyU3r/2FvPCDfgq42c92jkxWZ7VzRoiNCePfr8JGZqsiX
-         ysAo9BQxYgh+WzHoROHqtVFLbkPZK2GKN2VuVVi+fQArscOltFNa5wjjA/U9qKMVLKOj
-         mg99Q8HRKPwUD6IIJz8hijXxNiCtCzAnI3THK7WZRfvuLGkss1BPI+L71Nnffe+pI/Ie
-         GXzRaHIa6crSRBY9yxYqAHekqSz6tplOUKWoUFBegghGesEpH3nFiI/xh2DDkXKY9pSB
-         oyHl3iYYSswWGU6H2tUeAhtDj/KWgVUB24AbaWjX9YrDTqOdK/a0Pk9a6+GsGDSbWfpg
-         dkrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrJeqK8RiU96IU+8JNAFMqtpsIzKsQfucIQy7j+8YRIJAJu5ZoPCgIOZvADMFvRXQ7Qw2713jsuNL2EIVjTl9aYcteJQKrzH65yjIu
-X-Gm-Message-State: AOJu0Yxnx0oMQvp+9KaFs44UBSatOTXvBkEtbOLfFzqv5mDevEkxsgXH
-	9OzFA6RlBy3feuuMwfH53EIDWBA8LepTIDE4HISEKj67Ja2HXSn8wGJxL6Oxk44w/Ie84NZZNWJ
-	ws+41VeIkdlN0AxAe5gqLyZEfUl8RPK7ZvJaJxLOdgQkFGhPddem9CpY=
-X-Google-Smtp-Source: AGHT+IFKJarv6jv6qN53kzHlc3UwfWgnQYEsSs+ZPGBExF17fUlgyH6YqwTwHxjg9xTKaWtkvH7Tr48NyQL9IAKFqYZQLVrCMVkv
+	s=arc-20240116; t=1716265661; c=relaxed/simple;
+	bh=DyyAmWCOuSSPvvCCUKaCM6Ayg4sujehxnhhyX8oe/3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=bGeg4ohd4bwLULMPgvsSAp4IXmnaDK9M6nwZ3c5sax55w8fkThwsdklnFMf9gjUd+nV0FeVONiCV4z2ZRc2oIlcJMwAAilkREfptr1cXSEd3qK83clA4C6PAU63KOhqel7Xq2IjwJOBPqYe1YF8UFFogGJNEcBNiSolgQ8IZfl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Mg80VdDM; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1716265656;
+	bh=UmWxLsavKqo8/VKWOVXIpSEFzAkAD5QyAX8AhKdl0ds=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Mg80VdDMCUgwe4819IqEYazpu8kpKREF179RVrF5kmJI3zSApFg77OOOtmUP2wV5D
+	 s9ATEjJbI7u7onWo1eq5OlAY8poFae74PpWdMLbaTOh1IKE0r3iPMLYCrG/JIwEnYv
+	 8n0KRLGaNV87AAZfOr18DQeODH6WKvDQI19Wl0omU11u2RKccUuMuEQDl2M4742h3g
+	 Ldg9kGNTkN6U0HV8phaJLzml/DI0xWqCLoFwYCjnggbInO1N6gllxWeWteDzPicvZP
+	 Y41tiueKzSGr7TyejDAyPiOgeKnKUvtwboJsw2FVPNpOFy4M5aA5oHaEuKg+M+LEsC
+	 FcPTPQZ9EXRWg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vk1cm0Xs6z4wxf;
+	Tue, 21 May 2024 14:27:36 +1000 (AEST)
+Date: Tue, 21 May 2024 14:27:34 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the kbuild-current
+ tree
+Message-ID: <20240521142734.3dd04bc0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8917:b0:488:9fae:e95c with SMTP id
- 8926c6da1cb9f-48958e02868mr3107976173.4.1716265263041; Mon, 20 May 2024
- 21:21:03 -0700 (PDT)
-Date: Mon, 20 May 2024 21:21:03 -0700
-In-Reply-To: <tencent_FFE5365E9608362A4B7474FF76E567C03C09@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005823230618ef25bf@google.com>
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in copy_name
-From: syzbot <syzbot+efde959319469ff8d4d7@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/WeeyBT62UyOdz0Eo8cCJprl";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello,
+--Sig_/WeeyBT62UyOdz0Eo8cCJprl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hi all,
 
-Reported-and-tested-by: syzbot+efde959319469ff8d4d7@syzkaller.appspotmail.com
+Commit
 
-Tested on:
+  5b3d83d46584 ("kbuild: scripts/gdb: Replace missed $(srctree)/$(src) w/ $=
+(src)")
 
-commit:         a5131c3f Merge tag 'x86-shstk-2024-05-13' of git://git..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1564ef84980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=64e100d74625a6a5
-dashboard link: https://syzkaller.appspot.com/bug?extid=efde959319469ff8d4d7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12057dd0980000
+is missing a Signed-off-by from its committer.
 
-Note: testing is done by a robot and is best-effort only.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/WeeyBT62UyOdz0Eo8cCJprl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZMIrYACgkQAVBC80lX
+0GyWKAf+MM49yzM4wVCPeffZ4H+ul9PibeIPigpNqE6lBusLA8M8EYfiasKse4p5
+sq1i3vd7nI2M9dsrtP3/BLo4/xoiLp3qj1/ZzoUmX2ffBFS4uEX3L5Qe10pD1jby
+ch0xv24CVMs8TsKPHMGNcEo8b+wK3PSbRoynxpl3w12gulcTgBJ/qtHjeVJA/vSN
+VU4H35SIwevY4isIZeo/fcSR3ACIVm4AEJEeQDOXmyhyqwU+MtO76GW5KOSdK3Ef
+Up5EnyMGZTEBj7WiCj3lHk704qze9cpve3zhqTZQWL8CSsk6GzMEZK81/U/pt+sU
+FI/k41TJnvyPjyMqw/LidYV0FfGGsg==
+=sARc
+-----END PGP SIGNATURE-----
+
+--Sig_/WeeyBT62UyOdz0Eo8cCJprl--
 
