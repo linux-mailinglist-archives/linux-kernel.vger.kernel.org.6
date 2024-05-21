@@ -1,177 +1,127 @@
-Return-Path: <linux-kernel+bounces-185183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2898CB1AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C59F68CB1AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 927B11F2355B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E241F234DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFA51448C7;
-	Tue, 21 May 2024 15:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F3A148820;
+	Tue, 21 May 2024 15:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hydB7utl"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2067.outbound.protection.outlook.com [40.107.223.67])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L+xEGeeE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFDD1FBB;
-	Tue, 21 May 2024 15:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716306585; cv=fail; b=YA7dN0ot2EV3A82t1lD836HrZU5e+4ygy4VPmpl3w2NfbhhNUxXvVUVDytPhRrCB1VUC7btzU7nnwDqNm4m+uQDId8VmmYTc6WibuROGQw0YZlHzgKaQFGSo7vK2+0wrHOuRVUyUPgDtQfLaJvdrgh2OgNOO4MozlR9rqQYS34g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716306585; c=relaxed/simple;
-	bh=EddNggBkzWvMtIX3VJX/oV4enCPs3K7rOmDfaZBSvLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jVhruyHNcBrNQa1lX/TcZ3WhoMSHO4zC6FBEhMw1j9OxRWCiSGq2jVojyP88JDuS4MoUl/HlBss72rynX9uUN3cnMgWZwdxqx8q3VXrEmB02HOap6Pmelv5iQx+MJdjupl8hwrKPme+1BJr/cNSaOepBJm8crJOf9PmOMo260Vc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hydB7utl; arc=fail smtp.client-ip=40.107.223.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LQAXmKPQu1petPrbS9YOltmzKbtEfSaE5F3dng8ZjCQO5Itz2ejPj3MN+BTStEYmrvvcn/i47ehZSn4fErXmOiC4OOYmk34i88caix+aEYQ5t/Lt+EbH4IXacvUbI29dNBHavHJ3+NKJWjs8UIy8Vr1BdvdfhxAu+SUtTMOdcwUpB4YTJ2zLa+Eg/gITLe9YPK+xnzV6LYbLUKNvx/bDOzaYlyu/E4P3GDmj8X0pBkgXTCRaRzSdrSfLdmlrbmcvyDqql0lOiawViX3uW0QRpP+66dvcI0XU+LrsHCbaFfJgdzwfetlC+zjmR7kkfWWqTWDOYvj0VAuac1cfZiUX/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pDzz+oHhaNjHDdpFnUZkTho7vXmx9z8b3iiocy/5bmc=;
- b=T0z522/bUH2s4ttvRFo3x/RW4CA0MpqSagWBn52zPVzms5EHFdFwL68M0kQT3eEhDc8vMQ0YSTPQuEQcINTj8QJep5ko6Oo/CPcHtUMcQutJDKRq0DDiwbZOaUwNKOo5IxWhwId0qWZfe1Av7bcJ5DaJgT99YlWYDYl7k6uEOrs+Kj3Fqmnfq8+y7reO9VivsIowlpQL9zGXlrgC3MdrznQTX/TlWKj90bBCIDCwbbZRL9eKFnIa16cgjD/F3VDmeVf0+9nh4y9aVfQ3kNqebCP9QKSt4XKQSnhFUNudibPxGEe1WW1vBbr8+ztryE9spWnbKAgadKFIDPq8VXY+Ow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pDzz+oHhaNjHDdpFnUZkTho7vXmx9z8b3iiocy/5bmc=;
- b=hydB7utl1jEQNo9Qwx5XxzGymCgD3ijF+fN+GreeLoOdQcy8RxLplzgDL1xNwzKUZ6dxKCYwU+1AwLdhmkbv2DoxTZQ7W6U1oqRHDi8O6fUHETlkteEphdio99QwAfeeiHxHtRM5bG+cFHU70JC4uICGV++6rLIIsXiMMYo+l56QhcFYhaQ0ysnpXfgT7FbFl9gtbKXmrtussgACL546KvfGdvjfhP8QDJNip5bP8t6/aMSm3U0imgcfkKks1QvgLBMWo1y1C3YkzD3Ais8cIWpd0F7ZL69oh+L78S4/cxjqcUSDtK15HamFRXm/GEiif1AUHvk89Q/FdrDz+hFCcQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by SA1PR12MB8698.namprd12.prod.outlook.com (2603:10b6:806:38b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Tue, 21 May
- 2024 15:49:40 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7587.035; Tue, 21 May 2024
- 15:49:40 +0000
-Date: Tue, 21 May 2024 12:49:39 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Yan Zhao <yan.y.zhao@intel.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	alex.williamson@redhat.com, kevin.tian@intel.com,
-	iommu@lists.linux.dev, pbonzini@redhat.com, seanjc@google.com,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-	corbet@lwn.net, joro@8bytes.org, will@kernel.org,
-	robin.murphy@arm.com, baolu.lu@linux.intel.com, yi.l.liu@intel.com,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH 3/5] x86/mm: Introduce and export interface
- arch_clean_nonsnoop_dma()
-Message-ID: <20240521154939.GH20229@nvidia.com>
-References: <20240507061802.20184-1-yan.y.zhao@intel.com>
- <20240507062044.20399-1-yan.y.zhao@intel.com>
- <ZktZDmcNnsHhp4Tm@infradead.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZktZDmcNnsHhp4Tm@infradead.org>
-X-ClientProxiedBy: BL1P221CA0019.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:208:2c5::20) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65AC142E72
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716306598; cv=none; b=LcMR5+TCK3TERy1pqgqkyrUXWQnJF1VnPvhYDLl9b0bvgN1X33UdqQ20bGfOKM/fSGkIoHYF3Fw1YN8KcSN+xbihxMBRb4hssV+loFKjIrkNBDr76i8Yz5h2INCI7UAMeDNDIxshVVIuMIZ8SJuPi4Mdm8yCTD/DNk43UwBI3ac=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716306598; c=relaxed/simple;
+	bh=EsNjHQD8onwzJqeFZmAIuXFOW2blNrOa1Rp4vndUGRU=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=M0IJ1o3PJC4jhjivh9D60uvzKB/tJ8RUrnZWKw/XhTyjtrfD/eIefDNwy0ND98AK6akvq9IP4dxZcKKfOw4PNdAcr2NfRpHnblReE/psoulyJ/+IFXYgRgiC8dqnYG+Qs/0rq66mZnljB5TROgLRGKJY5InI51OONsqVqoVyQwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L+xEGeeE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716306595;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3JK4qzqYYZMoo+8Y+hbMdVVgqmEeOKBQ3rxyZn96arA=;
+	b=L+xEGeeEPbXLhXsNh6NDv1B5qmFMl9avC6U0MCOrLOR8uu7l3cfLc/+EH+YFW3qCEarlW0
+	wEX5ybnQggCab81rMqsMyTJp0SYt0aPjsiSf6hau/qEvmkG2+FEjtoVYdThuyowzOYdvei
+	lQyFfG+X9oqgLG4dGTevEyXpk8J05dM=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-210-q3c8SPE5M_WT51A7n4paVw-1; Tue,
+ 21 May 2024 11:49:50 -0400
+X-MC-Unique: q3c8SPE5M_WT51A7n4paVw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B3CE41C05129;
+	Tue, 21 May 2024 15:49:49 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 97E4F21EE56B;
+	Tue, 21 May 2024 15:49:47 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Steve French <stfrench@microsoft.com>
+cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    Enzo Matsumiya <ematsumiya@suse.de>, Jens Axboe <axboe@kernel.dk>,
+    Matthew Wilcox <willy@infradead.org>,
+    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
+    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|SA1PR12MB8698:EE_
-X-MS-Office365-Filtering-Correlation-Id: 41418c12-cec0-47b1-4389-08dc79ada019
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|366007|1800799015|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?D7Zj8uJwmtFhWsPQmDbcxDJpIKQqepklYHj8V6caKWxX4VkIfvEa5rXawc+Q?=
- =?us-ascii?Q?CFp1ndC2jVwkb0+Rp7/mZKjlf18sAuQSFhODlQ54wWKuEAyxHH8SDclnnuOb?=
- =?us-ascii?Q?/V4oAG/H/aEAqBkJy91pI2VDbc7U0GGxI/qFpqvV1YS30Hm+vK6XiMIni14B?=
- =?us-ascii?Q?0FhjM58oQu/QSb2ep41gX0McELvb7BrRX2/TdaIkV+vgxB931yN204o6i3OE?=
- =?us-ascii?Q?bd8TS/zoEX9TyGs6BRbPSSJo6rUOElHJEAHHkTvNDALx5aPyjRURjG52bChP?=
- =?us-ascii?Q?CjgI29/oVmNyXa7WY8gTDuGQ1jPYE2pGX/xE2IDrGtZujBitozpAN6owo6Vs?=
- =?us-ascii?Q?XUi7er6kYDMObu9VGSRPOD+PwYjqJ7zDLiTGT/QlAU2QhLS7HizXiZcPSpTN?=
- =?us-ascii?Q?0NW7Ok0RSDfgI6gYYg9Z2ke6hqRXpY7F8SZ9G607T7aCN+hOMiKyzeGqbwAy?=
- =?us-ascii?Q?weQqWzLD5W5VTl9Pu/MFeNIDwt0skF5lvJT/4HqmQ/gJuhatJd1geiUiU3eH?=
- =?us-ascii?Q?2xrkZdDiz+lEbf1UM6s7CyhcpbYfvlGulqnuvHG7UPuix5SQksQG+LTfaFI2?=
- =?us-ascii?Q?LM18rNWC+3lIuAmZv6o7kKV88GXRqWXp7Q1RUt60iWX0q+rCkBPDmbSQcx7E?=
- =?us-ascii?Q?DjlNtdTZtu6bcUmvuQQc6nQGqBmhMOWhZL8eXYAEL3dLMj4Qdf3OwFeGEQDV?=
- =?us-ascii?Q?v3fGXo/ckyEzMJZVhPQBjzNbY8xejmk9Sh5e40CcXPTDnjp+NXWEj1iTx0CZ?=
- =?us-ascii?Q?ibMaXaGxIO22kyUcnCcJjehiRLos3LarZfc02iPHgMG/iW7MbXqEnTBgp+3v?=
- =?us-ascii?Q?bpz9q63ZJTUH4WZk5FAd47f4SpbKoqZBl+uLkIg9m70pQZXH9l0jnoQZTBzL?=
- =?us-ascii?Q?hdGANrBz4l9G/NYQtvfYmQ5v46wHAVd5LmkVBgW9tGEPLm5SOUstgrOC8M+E?=
- =?us-ascii?Q?gbIq3X6PC0fWlF8cBdxiLxrPG8KzkZ+HG7zU5qnOQt58f4lmVR2umVV2Yefq?=
- =?us-ascii?Q?1/C++iX2yXSn91IyUhUlRqV4jMs2yzQXuuMKa3k4tEZVYhQ6oK/e5plNhzJ0?=
- =?us-ascii?Q?ZCk5IqeHTRKfPULusyL6yAVruYy2P/Q49kYY3tRVi9GudUGhJelK5ELERYV3?=
- =?us-ascii?Q?Heej0xmRZQW62zxB2DDCR5S6jsS8IIvaYmaoNYvwv2JgtFqN/i3H+9NU+GOs?=
- =?us-ascii?Q?toGj4ooUsySqJMb7Av/LSiWxnxCAJgAX8v3g4lfhVsx9UXLPGklfAOrf3NwD?=
- =?us-ascii?Q?9I24L/WvxkqXqnfG2qMXtDceaQ69CoamjH3FNABzZQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?remzpClW+5wyQmLs87vxxkViMgA+nV3y01obTS8nksET7K8XJG2Fd5MyWoXl?=
- =?us-ascii?Q?9dbtQJgiIGcAnaV4KW6OjKhOciM8lch8siOOUXZ+V9qUi+y2DRZ22oZTFRQ2?=
- =?us-ascii?Q?yhumezBfAFkcze6WICBlMc3D7ub7yig9jJnZxOkr/9UJWjZegQjsFKHTq8Dm?=
- =?us-ascii?Q?NFU0zYV3o1PEWjDFAQfTx1JXpCTmPGXMo7E8QV3Hs8toVSWi1Jw+/qBh9LSH?=
- =?us-ascii?Q?f9Y59VvwuqEVb93y30oq9+lyzFv9QglUJav7KO2gq9VCWP/7Xa7SK3PCdYNZ?=
- =?us-ascii?Q?1jqnXxr3EFEHOUW3SCLZ+e5SCTXQMFjFdtJh6MaI1Sj+h7TqDmX7WsZxgmOg?=
- =?us-ascii?Q?XqNr62K0jY7bJ28FKPaF+m5wx/fhJnYPq3gvHmK+jAqS8PZrXZQySxuoUVY9?=
- =?us-ascii?Q?boEIMO7D8Q8SbRDrfXBPmivzDZXrHC6idED06pKASzHCN/uO816Psa+94z0F?=
- =?us-ascii?Q?/nzL7F11awEEPhALSSsZGKX6pmMB/7m+f7GWOumhJm50IvDAhaxbW0zEQH9W?=
- =?us-ascii?Q?n6nV67TinmlOH5nmm6oxhFI2TChjs6xkhvLFrGEYfcJIcRT3SqYlA2elkBHw?=
- =?us-ascii?Q?vx4lFrXM23YVz0hVtg4VFSCXN+ka8iTIWLarndCoMe0OluJRBCXwlYxwrJZR?=
- =?us-ascii?Q?cZfRFapQD/gJtaKgVbFo3gZ9tmV6O3A+A/FrwXaTIOTjmNRq3LHMfHGYMaEQ?=
- =?us-ascii?Q?erc/DH94sqvleIvC+chpGkDSZpc3FEv81uZqRmRZTeI2oWeNVrHzb/drc0dl?=
- =?us-ascii?Q?9fqjXK5ispFY/NGvBjDVOPR27xVS1lewrFpEZ1wdmG7RjdPJcnPkiWvf3QFG?=
- =?us-ascii?Q?3Zum7EZJA13S9W6j/FcCG7z/InijDOONxxnYN1p8Eb2vvNrBT7DFu+msFrs1?=
- =?us-ascii?Q?KTzR8yUDQtYo1v4JzTdTAePKTSKhdZ8tvqX035+987UjopsgcDVRAcklsOn/?=
- =?us-ascii?Q?Jyckt9QfC0dVjSH2O0qy1rvj6Yq0E8kzG/kbubBfIXiXoUIl2llPKJ77azWZ?=
- =?us-ascii?Q?jpOCvGYtKkA2G2Nbjxs+JBtXnXR3amjL7o5XmslO7oGV/7GIsuDtPEn6bHj6?=
- =?us-ascii?Q?GxxctJPCe+aR5uS1ESMubEi2h3Uw0ax/H5io2EQpW8G9nLXk41Q7AGhqIeWG?=
- =?us-ascii?Q?Wl08ZGbUcmP0sTI7yKs9REn/I6dW1n9ZvkXosegmk4kX88VURhcNbM67XIiM?=
- =?us-ascii?Q?/bE//YAd9SSlp3XRTkTLbBH4XdgY6orZriJXYoX3LRD63ooVnMiw5HqIe6zk?=
- =?us-ascii?Q?80TYMlrVsvu58hJUe5TWIMUn/FxaAI7U/FNQ5rOsv/DM75BUzVgHJMqO06Cj?=
- =?us-ascii?Q?WLN/gQ8uEVbIAB0gaVVyrn3pmBlVbi2epjJ5hh3a2sd47Od3oZtuAzATBfQE?=
- =?us-ascii?Q?q9Z4/ixZ89FqGEfQHEw4WGfgz3I+94XSi4DrR1NtuNyc8wP97FnhZKsO9oul?=
- =?us-ascii?Q?iH9NQr79KWbUT1Sibhs5jfC0t5VoLsnMPuyZwNuHkOGzFzqITGO1mlDSJnT4?=
- =?us-ascii?Q?xg5P22rlYHiv6lPkb0HZwPG44hdEfLHAjAMs3gJsqf/fgi0frKyJ7K9OrdRl?=
- =?us-ascii?Q?QrubkfPGnhaehcx+YCX5T3bRA6oOQbJG4C4Sg9VN?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41418c12-cec0-47b1-4389-08dc79ada019
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 15:49:40.3321
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tJNWQPjvRcIaldxRSuhGtgHPn7fAHfEpvIHcPmQY+KtAND1ta2yO4pBf7HYBqWHI
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8698
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <316305.1716306586.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 21 May 2024 16:49:46 +0100
+Message-ID: <316306.1716306586@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On Mon, May 20, 2024 at 07:07:10AM -0700, Christoph Hellwig wrote:
-> On Tue, May 07, 2024 at 02:20:44PM +0800, Yan Zhao wrote:
-> > Introduce and export interface arch_clean_nonsnoop_dma() to flush CPU
-> > caches for memory involved in non-coherent DMAs (DMAs that lack CPU cache
-> > snooping).
-> 
-> Err, no.  There should really be no exported cache manipulation macros,
-> as drivers are almost guaranteed to get this wrong.  I've added
-> Russell to the Cc list who has been extremtly vocal about this at least
-> for arm.
+Fix netfs_perform_write() to set BDP_ASYNC if IOCB_NOWAIT is set rather
+than if IOCB_SYNC is not set.  It reflects asynchronicity in the sense of
+not waiting rather than synchronicity in the sense of not returning until
+the op is complete.
 
-We could possibly move this under some IOMMU core API (ie flush and
-map, unmap and flush), the iommu APIs are non-modular so this could
-avoid the exported symbol.
+Without this, generic/590 fails on cifs in strict caching mode with a
+complaint that one of the writes fails with EAGAIN.  The test can be
+distilled down to:
 
-Jason
+        mount -t cifs /my/share /mnt -ostuff
+        xfs_io -i -c 'falloc 0 8191M -c fsync -f /mnt/file
+        xfs_io -i -c 'pwrite -b 1M -W 0 8191M' /mnt/file
+
+Fixes: c38f4e96e605 ("netfs: Provide func to copy data to pagecache for bu=
+ffered write")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Enzo Matsumiya <ematsumiya@suse.de>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: netfs@lists.linux.dev
+cc: v9fs@lists.linux.dev
+cc: linux-afs@lists.infradead.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/netfs/buffered_write.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+index 1121601536d1..07bc1fd43530 100644
+--- a/fs/netfs/buffered_write.c
++++ b/fs/netfs/buffered_write.c
+@@ -181,7 +181,7 @@ ssize_t netfs_perform_write(struct kiocb *iocb, struct=
+ iov_iter *iter,
+ 	struct folio *folio, *writethrough =3D NULL;
+ 	enum netfs_how_to_modify howto;
+ 	enum netfs_folio_trace trace;
+-	unsigned int bdp_flags =3D (iocb->ki_flags & IOCB_SYNC) ? 0: BDP_ASYNC;
++	unsigned int bdp_flags =3D (iocb->ki_flags & IOCB_NOWAIT) ? BDP_ASYNC : =
+0;
+ 	ssize_t written =3D 0, ret, ret2;
+ 	loff_t i_size, pos =3D iocb->ki_pos, from, to;
+ 	size_t max_chunk =3D PAGE_SIZE << MAX_PAGECACHE_ORDER;
+
 
