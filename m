@@ -1,106 +1,183 @@
-Return-Path: <linux-kernel+bounces-185170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A2D8CB182
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:37:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00FB8CB188
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FD57B23F61
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180491F22ABC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A24E1474C6;
-	Tue, 21 May 2024 15:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712251474A5;
+	Tue, 21 May 2024 15:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="1PDxK98a"
-Received: from out0-217.mail.aliyun.com (out0-217.mail.aliyun.com [140.205.0.217])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KwITdQ4g"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C0414535F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAF0446B4;
+	Tue, 21 May 2024 15:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716305825; cv=none; b=OgSrBi/sWwvAsMqxmzzNWWFagd/f2VmiZkczUMkkaVOGG9jTdjlaa8kjVPav0915DBDLG+eQZ+T6XXjsqMS0uPZc3AzX9fDbE7oox3TMiXpPxZ/N+kKD/bO40WBxAMfKiD/VewhfK5H+TYBu+ZkEOAog4wUCFX2ZH47x1WVUFss=
+	t=1716305947; cv=none; b=ZBLlZ4aug7YL+0Za06gp37+qKGPV1+DEvCXLi4CBE9NRHNBQiAs5j+ssiiFE1I69DZ80sLhMF9HvzLNvpQpEK192+QFvoQbKOhNsJox0lDlj8uiQ8iBF2cpQF1ZqWx+BpwdFmoQrK7IQXmvfeZTxxIaakiMaVt4KO8a3hv9Ay3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716305825; c=relaxed/simple;
-	bh=7cMYQjWrFB8NyPN7IxbC0FNw72IWwl12mZnaAWXxAHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ToGjCm+hhNa5SR6t10U03UREMCfqNbwOmEhbMpHpotbCW1ReXGbqTnoIm/Ljattxxi4gWvk9N/iBPg+WyZHwb2tBWjyKqVPu4MbfV83AwT/SPzAnQB2klPtBX/FglL39itEYyRPtJE6EKRsrRXFN1tXBk+i8LkLnDBHTJQL299w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=1PDxK98a; arc=none smtp.client-ip=140.205.0.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1716305815; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=0F8utKmHBsqT5aaZ1shtTgjkR7zRzQ1wD7Atj7HfE5s=;
-	b=1PDxK98ajQsWd/viW0gggAq08f+ifUj2FceeJqLSs6nXi9MYzV7VPNV2Xk9K12oxMUybl/GA+3vakqhG03qn7nKdVet9x3d0hHzLCDRhuWiC6UUebIWMacK+eYVsAJPFBDajnhr0FHKUcbAuLKmkt0cFS3VN1292lk/1uyNsYPU=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033038033188;MF=libang.li@antgroup.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---.XjOK43f_1716305812;
-Received: from 30.236.49.195(mailfrom:libang.li@antgroup.com fp:SMTPD_---.XjOK43f_1716305812)
-          by smtp.aliyun-inc.com;
-          Tue, 21 May 2024 23:36:53 +0800
-Message-ID: <7d00705a-8a6b-48a5-8aba-7e789c536e2e@antgroup.com>
-Date: Tue, 21 May 2024 23:36:51 +0800
+	s=arc-20240116; t=1716305947; c=relaxed/simple;
+	bh=SaoDykVHDT1haqx/gobymWgMMDw49xu2u/ehUnA457s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IAzxM2hx7LY3UirLuYNC7fWFW0OkhRtzcTOKOGq33qcHXJAb1DEdXERBFuW/+I4XOYXJFUbRbNOvY+As0SktBc2pblptmi+2I4t5OMryVu3y6kjl3l7/y0FTtXCnpiG7c4n0k05SVChQLXvRuJaDKy3JOorKBUtFRbt0MNWGXlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KwITdQ4g; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e1fa824504so50413911fa.0;
+        Tue, 21 May 2024 08:39:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716305944; x=1716910744; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Re8Wl04dqGPF7qQ9KzoZRZT9kKy3SUlswFv2Sj3Vy1Q=;
+        b=KwITdQ4gtEzQKyC1uafxOdr/5QHc9+PBSIHoFNJwmcXyy3Ply8NLEWh/dhiiL9ylYb
+         GH3CSQtelaFDz3GYZvpmBv038A/F+AVEBdPfgo3QSTG2vhkqzpC7WlVeYNV/G8vrcNgk
+         Wfucfb/w00TNrKgMch1M5+3j9M6xGI5rh3tEmo8zijDhgchA9RJ30ZbU48qQDKwysNSm
+         OkWmapsKz1M4keo7ACeW84qFcU0QZU5yyN+Ju2fS90rXMKgt5UaY3kC083dNiZ8bsEEv
+         B9RCuxEiMLMwJ7hDLtNFxMuVDiXkpTbDiRyaG1qCoWkwmJ5NhMzEfwWRyOH7sZRlkf7G
+         9DiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716305944; x=1716910744;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Re8Wl04dqGPF7qQ9KzoZRZT9kKy3SUlswFv2Sj3Vy1Q=;
+        b=NaACMrIZG1kIy+CP/G2rahlebpYGvVSI57dmUNYIoRpgKBKNbiMapClwoO4nH7j152
+         fMqCx8+Fx53uIKyqBgXf4Hl2Cv7Oa8pdgPvIoDv9EFIjjgZEHxvLYI/bj0PvIC22cNXt
+         HJFHx9JKE28D27g4tRpIM0lR2eneFP4AfmIy2UY7nMmBmeEc22fJyH1NguFTFJ5Ird8i
+         4pjd3mCWkM8ddU4UINngIcuwcK3FKDkbsCmvp5cYW6G1n7eloJzDuwudnWtqREruBPea
+         1tCVg0m2j4L168VVfy0xnoq47ZQTXS9lpHe0Pj4iksSD5HE/V67WPBM9SsQDtGyTaZs8
+         oq9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXrBs9LHGFJrBuk/T403KjeJsFwetJYRjdSkFAExi1utniFaVds4dt0TuZI4R2Q9iRcZaLBA0as0y4LFgUysYdvn6Dn0raHqp97g/F3kTinZ9ps7RA3GPqJmlooT2RtES9+ZfZNqryJYxcpciDnF+im4vxc3Lc+a8Mf
+X-Gm-Message-State: AOJu0Yxree6V//rhlX+vM8qXcEKdklmdnfmKnRj9a2ae6cGRg4/unjsX
+	C+U7tvLzqw1qHZDJbZjEhrgwBHt6U7nr9ZSYfnvqb4b4TZXvlR6iiz4KujzjpR0G3unEnXTkg65
+	ZB2LmhTNBacpKETp8aTGR/665+/M=
+X-Google-Smtp-Source: AGHT+IFaGIESxaIVgOuXFNadzUbBxUG8lqP5Jsv9vQbu94Ihc13oMyxcq9BJ/Wa9ujLSsAIJ+axGQK/3JuRVLT8D5pc=
+X-Received: by 2002:a2e:9e48:0:b0:2e5:67bc:6f2 with SMTP id
+ 38308e7fff4ca-2e567bc07c3mr158550351fa.44.1716305943818; Tue, 21 May 2024
+ 08:39:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] mm: Refactor update_mmu_tlb()
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
- chenhuacai@kernel.org, tsbogend@alpha.franken.de, paul.walmsley@sifive.com,
- palmer@dabbelt.com, chris@zankel.net, jcmvbkbc@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- ryan.roberts@arm.com, ioworker0@gmail.com, libang.linux@gmail.com
-References: <20240518074914.52170-1-libang.li@antgroup.com>
- <20240518074914.52170-3-libang.li@antgroup.com>
- <4650b888-d90f-40e3-8c53-c9949e539959@redhat.com>
-Content-Language: en-US
-From: "Bang Li" <libang.li@antgroup.com>
-In-Reply-To: <4650b888-d90f-40e3-8c53-c9949e539959@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp>
+In-Reply-To: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 21 May 2024 08:38:52 -0700
+Message-ID: <CAADnVQKuPJv-GNH9SAWL-esSERMXJmSamWRe7AG3cW=NTnf51w@mail.gmail.com>
+Subject: Re: [PATCH] bpf, sockmap: defer sk_psock_free_link() using RCU
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: John Fastabend <john.fastabend@gmail.com>, Jakub Sitnicki <jakub@cloudflare.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+On Sun, May 12, 2024 at 12:22=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> If a BPF program is attached to kfree() event, calling kfree()
+> with psock->link_lock held triggers lockdep warning.
+>
+> Defer kfree() using RCU so that the attached BPF program runs
+> without holding psock->link_lock.
+>
+> Reported-by: syzbot+ec941d6e24f633a59172@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3Dec941d6e24f633a59172
+> Tested-by: syzbot+ec941d6e24f633a59172@syzkaller.appspotmail.com
+> Reported-by: syzbot+a4ed4041b9bea8177ac3@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3Da4ed4041b9bea8177ac3
+> Tested-by: syzbot+a4ed4041b9bea8177ac3@syzkaller.appspotmail.com
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> ---
+>  include/linux/skmsg.h | 7 +++++--
+>  net/core/skmsg.c      | 2 ++
+>  net/core/sock_map.c   | 2 ++
+>  3 files changed, 9 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/skmsg.h b/include/linux/skmsg.h
+> index a509caf823d6..66590f20b777 100644
+> --- a/include/linux/skmsg.h
+> +++ b/include/linux/skmsg.h
+> @@ -66,7 +66,10 @@ enum sk_psock_state_bits {
+>  };
+>
+>  struct sk_psock_link {
+> -       struct list_head                list;
+> +       union {
+> +               struct list_head        list;
+> +               struct rcu_head         rcu;
+> +       };
+>         struct bpf_map                  *map;
+>         void                            *link_raw;
+>  };
+> @@ -418,7 +421,7 @@ static inline struct sk_psock_link *sk_psock_init_lin=
+k(void)
+>
+>  static inline void sk_psock_free_link(struct sk_psock_link *link)
+>  {
+> -       kfree(link);
+> +       kfree_rcu(link, rcu);
+>  }
+>
+>  struct sk_psock_link *sk_psock_link_pop(struct sk_psock *psock);
+> diff --git a/net/core/skmsg.c b/net/core/skmsg.c
+> index fd20aae30be2..9cebfeecd3c9 100644
+> --- a/net/core/skmsg.c
+> +++ b/net/core/skmsg.c
+> @@ -791,10 +791,12 @@ static void sk_psock_link_destroy(struct sk_psock *=
+psock)
+>  {
+>         struct sk_psock_link *link, *tmp;
+>
+> +       rcu_read_lock();
+>         list_for_each_entry_safe(link, tmp, &psock->link, list) {
+>                 list_del(&link->list);
+>                 sk_psock_free_link(link);
+>         }
+> +       rcu_read_unlock();
+>  }
+>
+>  void sk_psock_stop(struct sk_psock *psock)
+> diff --git a/net/core/sock_map.c b/net/core/sock_map.c
+> index 8598466a3805..8bec4b7a8ec7 100644
+> --- a/net/core/sock_map.c
+> +++ b/net/core/sock_map.c
+> @@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *sk,
+>         bool strp_stop =3D false, verdict_stop =3D false;
+>         struct sk_psock_link *link, *tmp;
+>
+> +       rcu_read_lock();
+>         spin_lock_bh(&psock->link_lock);
 
-Thanks for you review!
+I think this is incorrect.
+spin_lock_bh may sleep in RT and it won't be safe to do in rcu cs.
 
-On 2024/5/21 17:36, David Hildenbrand wrote:
-> On 18.05.24 09:49, Bang Li wrote:
->> Remove update_mmu_tlb() from those architectures and define
->> generically via update_mmu_tlb_range(), removing the ability
->> for arches to override it.
-> 
-> I'd suggest something like
-> 
-> "mm: implement update_mmu_tlb() using update_mmu_tlb_range()
-> 
-> Let's make update_mmu_tlb() simply a generic wrapper around 
-> update_mmu_tlb_range(). Only the latter can now be overridden by the 
-> architecture. We can now remove __HAVE_ARCH_UPDATE_MMU_TLB as well.
-> "
+pw-bot: cr
 
-Agree! Thank you for your suggestion, I will modify it in the next version
-
-> 
-> [...]
-> 
->> +#ifndef update_mmu_tlb_range
->> +static inline void update_mmu_tlb_range(struct vm_area_struct *vma,
->> +                unsigned long address, pte_t *ptep, unsigned int nr)
->> +{
->> +}
->> +#endif
-> 
-> With that in patch #1
-
-Thanks again.
-Bang
-
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
-> 
+>         list_for_each_entry_safe(link, tmp, &psock->link, list) {
+>                 if (link->link_raw =3D=3D link_raw) {
+> @@ -159,6 +160,7 @@ static void sock_map_del_link(struct sock *sk,
+>                 }
+>         }
+>         spin_unlock_bh(&psock->link_lock);
+> +       rcu_read_unlock();
+>         if (strp_stop || verdict_stop) {
+>                 write_lock_bh(&sk->sk_callback_lock);
+>                 if (strp_stop)
+> --
+> 2.34.1
+>
 
