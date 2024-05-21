@@ -1,428 +1,149 @@
-Return-Path: <linux-kernel+bounces-184403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE6338CA68D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:59:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6058CA73C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47C3B1F2256E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:59:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35E01F21BB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56AD1758F;
-	Tue, 21 May 2024 02:58:54 +0000 (UTC)
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2093.outbound.protection.partner.outlook.cn [139.219.17.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4372AE6A;
+	Tue, 21 May 2024 04:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CI+TuwHv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D90E2262B;
-	Tue, 21 May 2024 02:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.93
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716260333; cv=fail; b=OYuC3n9gCGs16Jaus1UzttiXSz411iAL/t0Nbo4k7Uq1Uufw0+HkXIIUTaRX6lZCuzNO6p8PopB5wGxPT81mNQr14b2njGbILSbqYw34YZFioFGMFO+sdkHGjipzw3YR9d4hdOchZO232c5mtEJrDLgJw3q5b5DlCzg+hO7JB7A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716260333; c=relaxed/simple;
-	bh=CD37qjOhh3Jyob44YPmnThpZ/HO1MJ21IY4JoGjK8UU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lelICLfQNr4z3DLtMZEaZ3nIFKIumLr4veJUW4SrEty3ryL2YygSuzFfdNm3h7oT8NacHRlw5kKL0dPH7yN9XSuzs8VDwCkF45jNHiwSRNNQs9B67L349ZblTNaIfkHhB3QuGg7h6P/a2qDdMUbNNem4eLtzWu0kxVTjK+qe2dU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IwQKgxlszXQIjm1CJ559Tyb9amWP6JCSrXPOISMBaExvR1IfFTBoJCQqTa3+Hjg+8ou30oTYWYXivss9cjLjgjj+1TPsvAdcwb1LlPVQTIOglMq96gCpeRsjLksy+lPVn01QmqxfyCWWe9l1EMaWwOcSgjyAvKhIKGqhYAdbRYBNEkiXcYKMD3SGAft/kalhLi5Sf5xLPzFCw4+5PyyOaaKD5Vy2Bf7bFcEXe8RlHXcNcq/sd8TJtTrseK45b/io0eVGTRi0r+1l39CmnhBxrvcyUNEkExItFIQEwQTPjpyTqYfoELwkgYUckBG749xYW8kasNZshM6LyOY503amRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ImRJqOjUKRUALgJH4yL5SYVCqs+ZZF49yWn6rduhMTM=;
- b=k3rfaZ9utWQrg3qoKf3hpHg4vZi3JF3krkbUDX8On7jS/1JZeJKlp2oOgJ1Akom5LvV1YTKeBJFRP+sjI/7tNJctuf0Xbo4zHyxktl3LSfIYmsIxE6pidIOYa3QAOzdpExZSvC7E53gRdSM2YXkg5ssa/njn6lQ8ABN9+hNUlUAai3cngMS8nlOO0zWzT+sMuawaX2KMXb1D+vlrxjhz7PeOiw6ToQAfZqIkSnLzg9VLEU5FkilbQnCCABCGizJArB3Br780seOe3hNmmKBN9lTJpQ/nebSB+GAMTfz9JKOMzM5/Kx2jR0wqA+0XZBtRXILYu2beBXB9jm0IDdVeSA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ0PR01MB1047.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:c::7) by ZQ0PR01MB1128.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:c::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Tue, 21 May
- 2024 02:58:36 +0000
-Received: from ZQ0PR01MB1047.CHNPR01.prod.partner.outlook.cn
- ([fe80::39be:8ed9:67b7:adc6]) by
- ZQ0PR01MB1047.CHNPR01.prod.partner.outlook.cn ([fe80::39be:8ed9:67b7:adc6%6])
- with mapi id 15.20.7472.044; Tue, 21 May 2024 02:58:36 +0000
-From: keith <keith.zhao@starfivetech.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	xingyu.wu@starfivetech.com,
-	p.zabel@pengutronix.de,
-	jack.zhu@starfivetech.com,
-	shengyang.chen@starfivetech.com
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	keith.zhao@starfivetech.com
-Subject: [PATCH v4 10/10] drm/vs: add simple dsi encoder
-Date: Tue, 21 May 2024 18:58:17 +0800
-Message-Id: <20240521105817.3301-11-keith.zhao@starfivetech.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20240521105817.3301-1-keith.zhao@starfivetech.com>
-References: <20240521105817.3301-1-keith.zhao@starfivetech.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHXPR01CA0020.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:1b::29) To ZQ0PR01MB1047.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:c::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185486FDC;
+	Tue, 21 May 2024 04:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716264566; cv=none; b=nHYXJHnZpOIxV8N8AHOKQd5ihv1sTNstWiyFcewpZAhnV7/01EZmai6tufD9/Pr6Yh1YxaOCWWEVu7eebAkG7eW2t3BtN8T2ssuQ0/4B7hK3shOu6D6GUjkBiwDTobxQDy3w8u91Vp8MyeRqlR8l9nF3N3INb9wHbD1qtlTJOVk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716264566; c=relaxed/simple;
+	bh=G0RfpzHbQbPEMYGRnyOaBLmaQauY+K1fa3zLkroTKx8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uO7vJ8DZMeNuEylUkYrI4IrH71pjxBVbNC4siwMDmJZXJeu1AYPCYQA+21GdL8t8/7+aDUZa0714X8K+sO+bSqygbriuOW/RhUVIZX/xMbgziMTnhn/kfipotQho0QQE0yU9K01C2+frCeW751Fy4MiAM50aWo43iEJktMkVrXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CI+TuwHv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44L2aMF2015841;
+	Tue, 21 May 2024 04:08:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=iMFmbqJV/ZTR9bccmUFxM94fDgUi8bcxTAUWFmwoJEU=; b=CI
+	+TuwHv8t8B3DjGrwIxloD0ctJVkMYEM2hFEwzVL9gNH2Yoyk2Bk28xiQSxRsyoGz
+	l7f5PC+jkufTedoPNIugVyVRmNnC6/3XzUUXIGwPWWSv4pDXl1zmLmvkTAlPeSqG
+	QhqqaTSM2+LPf/Tu5d/KPDJTO/1ActyDcGrhEf6k5aTTFifvhmGzG6Y0tXyEY+j3
+	IX0TpjrQExH9wFEgYXCYinW7X+hxFRh48zKC+2EqHkNNVNXasanDQyZtf50KJStL
+	sEJmEHqC/YZUx+4BxevxwxdJCOeQwm6zAL/N4iWONovLu994B02cU7bD2ouGwkjV
+	XGTMbkiQTqEZ9klQjUog==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6psncsm5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 May 2024 04:08:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44L48r16026215
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 May 2024 04:08:53 GMT
+Received: from [10.110.15.188] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 20 May
+ 2024 21:08:52 -0700
+Message-ID: <a944418a-1699-44fa-bdfc-2e57129adea1@quicinc.com>
+Date: Mon, 20 May 2024 21:08:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1047:EE_|ZQ0PR01MB1128:EE_
-X-MS-Office365-Filtering-Correlation-Id: ee1c1c63-5995-4f54-43ec-08dc7941e8e0
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	X+anbPRpR4G3glKdGF5S/M0uZdIxmF63ePgLHKxPOa2Quk6oCxbZ4atbTvJB0XkF6ldl8UEftCE695qhgGmWiJXjk2mhkZ/pbxUI2BDy8ukRePZEK3A0bQg2qOL1pNOQOMposbiZWy4ZUsUkdXtwuB7AlyM8n3oceB+E9xX3yXfp1NRGI4Qn5QHH1kt2WW1Xk8OGWd2YuFBzo+htofe91QqIH1PhNfL/5tgFniNHH5xSFlsXLbE6MrxqvgCsEppH9qpo26Zyv2XHII/XzqL0GDm9bIk0LACa1/XOgeyvnU4rxXE+zF+SKIWbrpLeUSfbGTmObeVztKZli7M0RavpbSnMkbgk31ESE4qFcoi4nQ3YRYbvUg6Q0h1OQrKBIXer82PdoVRjTeKbyoSwwAZkJRb2lB4N5H41A2TSUYeyQCUCJmBTLgBJJ8GgdL59KURcNgrEU0N5vM2lc2LgE4QVUWweJr6AsyaacejJ18VyqjD6YLxIY11KQ1cEU6kdv1JNnye3ySl0rJ/DxxUHc8H7MenAhYNJ84Njt/80W1hrj2AZYEzFM919GORlNxBb3FpPqnuBQ7BuxzEsYRgfwkJ40F/1vniRLwa+cnFkZd0cJVGfjBUrxnOpXRrVWvV2z73c4JI/+aoe0Afu+PPxVy/V5g==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1047.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(41320700004)(52116005)(7416005)(1800799015)(366007)(38350700005)(921011);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?PODdSKnexI6aBQ2l46x+jGk9ocxa41YJNpuOkoq8yeLMgz+I/NCVLZoqRx1O?=
- =?us-ascii?Q?18Vbt+82tY0IBe7k1Vf4rYaqA80yLeusXCbZfYUL50PVkQZrgx5sc669Fj6w?=
- =?us-ascii?Q?0Mc4T8Q6NTanEbpBy94MruNDwdFrdz+L6V+mkh15YhUCujbOzcnBNqsD25jK?=
- =?us-ascii?Q?GASIDHF2OuPshSGumQkKMc0VqEfHYqNJGbPqJjBoS2wYksvanZe4HhDpXPR3?=
- =?us-ascii?Q?wb1i/W44YYvXQ4aFEPwr0HTWSguVQd60qZuXRuSiKghyRm9aJIsM3HtkSeWr?=
- =?us-ascii?Q?fVFK7A/MkGwFZ+4+g7xLg7tFNr9FfKTXXJKbxuN9FLU2Q5WkJHXHcL+x6FFC?=
- =?us-ascii?Q?zOKa/lX6SOcxeuFzGCW4rMbnowJgewQRQzNbKXGfxt8GKENvEy94WClsU3u5?=
- =?us-ascii?Q?nzqQW5K/pFKXbTjq4Gc/+4Wm8QNtSGBPGaK2L9eNbWZSLsGZU830hX9XAp4l?=
- =?us-ascii?Q?9NOMs2K0c++kAacCFkeGP/f+4AJChT+OVTFyiGSlSs45ncoWNc8Wa1aCFdzA?=
- =?us-ascii?Q?KPcG4C6x58uhjHnacAW377arQflGd5Yv5vd/rVL3aMMmLUmNhDkM6ZKQ+7Ei?=
- =?us-ascii?Q?elip8s4S0G4xiY/T/urS5gnABsxCyAp/CsNq0yLTOJR2c8Sb4ELO9o4S03dZ?=
- =?us-ascii?Q?aRWElYLqbcpKDCYN5KyWxycrZ+VwFRTvAhnviFyEAlPbDY7oTBpXoWBvW1f4?=
- =?us-ascii?Q?EteEKhd29HZujUcSkt6eOlacBRXC/Z5g0nfHaSgPbT5L9BSejyuWcFV5O2ew?=
- =?us-ascii?Q?0G5W7yN4nQEX2MQk0J89ygWR783uRnovA20QAKPIEKmVK1ya4Y4cfRuqKSoO?=
- =?us-ascii?Q?L/dZ7EPCWnlFcDcusY99uIgCTiCEKMbp9zoEwqAnIxAroMvqP1zyyL0cLwYN?=
- =?us-ascii?Q?VHdEjJt3vylzp0EuuTUYNy6f6QTcFZ3zYfQRQFtfkANbJxGs3MYaREB+0Oms?=
- =?us-ascii?Q?Noa51vxwhxqoNaBgZjlOo2cZcOp1FlXUrrFDgQFge+ag2YUDeNWcBiljP1O9?=
- =?us-ascii?Q?udiydsRkFXTDT3UXeXsGbtktGG/D2D0hBl/LGKEK5cyz5kZgn5qv/l2KqCiv?=
- =?us-ascii?Q?yhKgXSx2/B2Hh8xioD8iTP2n8Gwdnaso8UxopHKLelozH8P+krobDBWAm6QL?=
- =?us-ascii?Q?kVCkgaaS5bO14r6dCku0iIQCUWXDBfRC6wWCWeVlL4neI0UKOEMkTNzsilTl?=
- =?us-ascii?Q?8HOe+lm3K+hZXsrMdVCY74OYMrTTcwXF3sPoCaGTW1Z6VlQjQNCdERHrpqP2?=
- =?us-ascii?Q?/00SwS2Uw81XJzrQ9mv4SpdFR3ZztSIEd3K2cBeKPk7oUoXRUBrSlLUuKnWn?=
- =?us-ascii?Q?lZT9VRD2gcAg+PNFHJ62Oyrv6AqnIM29zsuwd5LnkompEn86GkVWQtiix/31?=
- =?us-ascii?Q?TlwcLkxD5IMJNqdBX/2RpOLuHWid3OGs5STdIxTmh7sf8OR6hkblDSN1WJP6?=
- =?us-ascii?Q?8lWhBFXhjmAahXmZ0itPIR1IWJgXm7ls8ByjGODB7VKR8UY4txDgxmJGwTVD?=
- =?us-ascii?Q?rgtkdkQGFGWr/sWj29XAeeb1GQwd3iea0kZiuWjersANfbPk91c3Ri85D4Sd?=
- =?us-ascii?Q?RE0YjoP5x8fbKoj5jn+cVuYY+meqItlApOGYL5iDmZ9pPA1Wket7AwUdjGlk?=
- =?us-ascii?Q?fQ=3D=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee1c1c63-5995-4f54-43ec-08dc7941e8e0
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1047.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 02:58:36.7699
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PMRyhVvmRJxHiiRYTM4Poz0em0d2Zurn1A80bYQ6TFvm4Dgz+8wVPLjerPhTbQx3dnTaAz1uHpTnEUFsO6XPUZQdi8l82ToHXvoTpOYKNmc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1128
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] dt-bindings: remoteproc: qcom,pas: Add hwlocks
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Peter
+ Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon
+	<will@kernel.org>, Waiman Long <longman@redhat.com>,
+        Boqun Feng
+	<boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
+ <20240516-hwspinlock-bust-v1-5-47a90a859238@quicinc.com>
+ <3521519f-34b8-472d-be37-f0e64bba24fc@kernel.org>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <3521519f-34b8-472d-be37-f0e64bba24fc@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: lGa-4i3d4YmAMe17lVnHXa2N3V772CGJ
+X-Proofpoint-ORIG-GUID: lGa-4i3d4YmAMe17lVnHXa2N3V772CGJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-21_02,2024-05-17_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 bulkscore=0 phishscore=0 impostorscore=0 adultscore=0
+ mlxlogscore=999 clxscore=1011 priorityscore=1501 suspectscore=0
+ spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405210031
 
-add encoder to match cdns dsi driver
 
-Signed-off-by: keith <keith.zhao@starfivetech.com>
----
- drivers/gpu/drm/verisilicon/Makefile        |   3 +-
- drivers/gpu/drm/verisilicon/vs_drv.c        |   1 +
- drivers/gpu/drm/verisilicon/vs_drv.h        |   1 +
- drivers/gpu/drm/verisilicon/vs_simple_enc.c | 190 ++++++++++++++++++++
- drivers/gpu/drm/verisilicon/vs_simple_enc.h |  25 +++
- 5 files changed, 219 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/verisilicon/vs_simple_enc.c
- create mode 100644 drivers/gpu/drm/verisilicon/vs_simple_enc.h
 
-diff --git a/drivers/gpu/drm/verisilicon/Makefile b/drivers/gpu/drm/verisilicon/Makefile
-index 2d02b4a3a567..c35ba9bd6f81 100644
---- a/drivers/gpu/drm/verisilicon/Makefile
-+++ b/drivers/gpu/drm/verisilicon/Makefile
-@@ -4,7 +4,8 @@ vs_drm-objs := vs_dc_hw.o \
- 		vs_modeset.o \
- 		vs_plane.o \
- 		vs_crtc.o \
--		vs_drv.o
-+		vs_drv.o \
-+		vs_simple_enc.o
- 
- vs_drm-$(CONFIG_DRM_INNO_STARFIVE_HDMI) += inno_hdmi-starfive.o
- obj-$(CONFIG_DRM_VERISILICON_DC8200) += vs_drm.o
-diff --git a/drivers/gpu/drm/verisilicon/vs_drv.c b/drivers/gpu/drm/verisilicon/vs_drv.c
-index 6f04102b05b3..2748d48f2c7e 100644
---- a/drivers/gpu/drm/verisilicon/vs_drv.c
-+++ b/drivers/gpu/drm/verisilicon/vs_drv.c
-@@ -612,6 +612,7 @@ static struct platform_driver *drm_sub_drivers[] = {
- #ifdef CONFIG_DRM_INNO_STARFIVE_HDMI
- 	&starfive_hdmi_driver,
- #endif
-+	&simple_encoder_driver,
- };
- 
- static struct component_match *vs_add_external_components(struct device *dev)
-diff --git a/drivers/gpu/drm/verisilicon/vs_drv.h b/drivers/gpu/drm/verisilicon/vs_drv.h
-index c3c08ed5f8ac..f3f0f170777d 100644
---- a/drivers/gpu/drm/verisilicon/vs_drv.h
-+++ b/drivers/gpu/drm/verisilicon/vs_drv.h
-@@ -17,6 +17,7 @@
- #include <drm/drm_managed.h>
- 
- #include "vs_dc_hw.h"
-+#include "vs_simple_enc.h"
- 
- /*@pitch_alignment: buffer pitch alignment required by sub-devices.*/
- struct vs_drm_device {
-diff --git a/drivers/gpu/drm/verisilicon/vs_simple_enc.c b/drivers/gpu/drm/verisilicon/vs_simple_enc.c
-new file mode 100644
-index 000000000000..d0b1755d77d2
---- /dev/null
-+++ b/drivers/gpu/drm/verisilicon/vs_simple_enc.c
-@@ -0,0 +1,190 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2020 VeriSilicon Holdings Co., Ltd.
-+ */
-+#include <linux/component.h>
-+#include <linux/of_device.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/media-bus-format.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_bridge.h>
-+#include <drm/drm_crtc_helper.h>
-+#include <drm/drm_of.h>
-+
-+#include "vs_crtc.h"
-+#include "vs_simple_enc.h"
-+
-+static const struct simple_encoder_priv dsi_priv = {
-+	.encoder_type = DRM_MODE_ENCODER_DSI
-+};
-+
-+static inline struct vs_simple_encoder *to_simple_encoder(struct drm_encoder *enc)
-+{
-+	return container_of(enc, struct vs_simple_encoder, encoder);
-+}
-+
-+static int encoder_parse_dt(struct device *dev)
-+{
-+	struct vs_simple_encoder *simple = dev_get_drvdata(dev);
-+	unsigned int args[2];
-+
-+	simple->dss_regmap = syscon_regmap_lookup_by_phandle_args(dev->of_node,
-+								  "starfive,syscon",
-+								  2, args);
-+
-+	if (IS_ERR(simple->dss_regmap)) {
-+		return dev_err_probe(dev, PTR_ERR(simple->dss_regmap),
-+				     "getting the regmap failed\n");
-+	}
-+
-+	simple->offset = args[0];
-+	simple->mask = args[1];
-+
-+	return 0;
-+}
-+
-+static void vs_encoder_atomic_enable(struct drm_encoder *encoder, struct drm_atomic_state *state)
-+{
-+	struct vs_simple_encoder *simple = to_simple_encoder(encoder);
-+
-+	regmap_update_bits(simple->dss_regmap, simple->offset, simple->mask, simple->mask);
-+}
-+
-+static int vs_encoder_atomic_check(struct drm_encoder *encoder,
-+				   struct drm_crtc_state *crtc_state,
-+				   struct drm_connector_state *conn_state)
-+{
-+	struct vs_crtc_state *vs_crtc_state = to_vs_crtc_state(crtc_state);
-+	struct drm_connector *connector = conn_state->connector;
-+	int ret = 0;
-+
-+	vs_crtc_state->encoder_type = encoder->encoder_type;
-+	if (connector->display_info.num_bus_formats)
-+		vs_crtc_state->output_fmt = connector->display_info.bus_formats[0];
-+	else
-+		vs_crtc_state->output_fmt = MEDIA_BUS_FMT_FIXED;
-+
-+	switch (vs_crtc_state->output_fmt) {
-+	case MEDIA_BUS_FMT_FIXED:
-+	case MEDIA_BUS_FMT_RGB565_1X16:
-+	case MEDIA_BUS_FMT_RGB666_1X18:
-+	case MEDIA_BUS_FMT_RGB888_1X24:
-+	case MEDIA_BUS_FMT_RGB666_1X24_CPADHI:
-+	case MEDIA_BUS_FMT_RGB101010_1X30:
-+	case MEDIA_BUS_FMT_UYYVYY8_0_5X24:
-+	case MEDIA_BUS_FMT_UYVY8_1X16:
-+	case MEDIA_BUS_FMT_YUV8_1X24:
-+	case MEDIA_BUS_FMT_UYYVYY10_0_5X30:
-+	case MEDIA_BUS_FMT_UYVY10_1X20:
-+	case MEDIA_BUS_FMT_YUV10_1X30:
-+		ret = 0;
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
-+
-+	/* If MEDIA_BUS_FMT_FIXED, set it to default value */
-+	if (vs_crtc_state->output_fmt == MEDIA_BUS_FMT_FIXED)
-+		vs_crtc_state->output_fmt = MEDIA_BUS_FMT_RGB888_1X24;
-+
-+	return ret;
-+}
-+
-+static const struct drm_encoder_helper_funcs encoder_helper_funcs = {
-+	.atomic_check = vs_encoder_atomic_check,
-+	.atomic_enable = vs_encoder_atomic_enable,
-+};
-+
-+static int vs_encoder_bind(struct device *dev, struct device *master, void *data)
-+{
-+	struct drm_device *drm_dev = data;
-+	struct vs_simple_encoder *simple = dev_get_drvdata(dev);
-+	struct drm_encoder *encoder;
-+	struct drm_bridge *bridge;
-+	int ret;
-+
-+	encoder = &simple->encoder;
-+
-+	ret = drmm_encoder_init(drm_dev, encoder, NULL, simple->priv->encoder_type, NULL);
-+	if (ret)
-+		return ret;
-+
-+	drm_encoder_helper_add(encoder, &encoder_helper_funcs);
-+
-+	encoder->possible_crtcs =
-+			drm_of_find_possible_crtcs(drm_dev, dev->of_node);
-+
-+	/* output port is port1*/
-+	bridge = devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
-+	if (IS_ERR(bridge)) {
-+		if (PTR_ERR(bridge) == -ENODEV) {
-+			bridge = NULL;
-+			return 0;
-+		}
-+
-+		return PTR_ERR(bridge);
-+	}
-+
-+	return drm_bridge_attach(encoder, bridge, NULL, 0);
-+}
-+
-+static const struct component_ops encoder_component_ops = {
-+	.bind = vs_encoder_bind,
-+};
-+
-+static int vs_encoder_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct vs_simple_encoder *simple;
-+	int ret;
-+
-+	simple = devm_kzalloc(dev, sizeof(*simple), GFP_KERNEL);
-+	if (!simple)
-+		return -ENOMEM;
-+
-+	simple->priv = of_device_get_match_data(dev);
-+
-+	simple->dev = dev;
-+
-+	dev_set_drvdata(dev, simple);
-+
-+	ret = encoder_parse_dt(dev);
-+	if (ret)
-+		return ret;
-+
-+	return component_add(dev, &encoder_component_ops);
-+}
-+
-+static int vs_encoder_remove(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+
-+	component_del(dev, &encoder_component_ops);
-+	dev_set_drvdata(dev, NULL);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id simple_encoder_dt_match[] = {
-+	{ .compatible = "starfive,dsi-encoder", .data = &dsi_priv},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, simple_encoder_dt_match);
-+
-+struct platform_driver simple_encoder_driver = {
-+	.probe = vs_encoder_probe,
-+	.remove = vs_encoder_remove,
-+	.driver = {
-+		.name = "vs-simple-encoder",
-+		.of_match_table = of_match_ptr(simple_encoder_dt_match),
-+	},
-+};
-+
-+MODULE_DESCRIPTION("Simple Encoder Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/verisilicon/vs_simple_enc.h b/drivers/gpu/drm/verisilicon/vs_simple_enc.h
-new file mode 100644
-index 000000000000..73e356bfeb2c
---- /dev/null
-+++ b/drivers/gpu/drm/verisilicon/vs_simple_enc.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2022 VeriSilicon Holdings Co., Ltd.
-+ */
-+
-+#ifndef __VS_SIMPLE_ENC_H_
-+#define __VS_SIMPLE_ENC_H_
-+
-+#include <drm/drm_encoder.h>
-+
-+struct simple_encoder_priv {
-+	unsigned char encoder_type;
-+};
-+
-+struct vs_simple_encoder {
-+	struct drm_encoder encoder;
-+	struct device *dev;
-+	const struct simple_encoder_priv *priv;
-+	struct regmap *dss_regmap;
-+	unsigned int offset;
-+	unsigned int mask;
-+};
-+
-+extern struct platform_driver simple_encoder_driver;
-+#endif /* __VS_SIMPLE_ENC_H_ */
--- 
-2.27.0
+On 5/19/2024 10:36 AM, Krzysztof Kozlowski wrote:
+> On 17/05/2024 00:58, Chris Lew wrote:
+>> Add hwlocks property to describe the hwspinlock that remoteproc can try
+>> to bust on behalf of the remoteproc's smem.
+> 
+> Sorry, as you wrote, the lock is part of smem, not here. Drivers do not
+> crash, so if your crashes as you imply in the cover letter, then first
+> fix the driver.
+>
 
+Hi Krzysztof,
+
+Sorry for the confusion, I dont think I meant that the smem driver will 
+ever crash. The referred to crash in the cover letter is a crash in the 
+firmware running on the remoteproc. The remoteproc could crash for any 
+unexpected reason, related or unrelated to smem, while holding the tcsr 
+mutex. I want to ensure that all resources that a remoteproc might be 
+using are released as part of remoteproc stop.
+
+The SMEM driver manages the lock/unlock operations on the tcsr mutex 
+from the Linux CPU's perspective. This case is for cleaning up from the 
+remote side's perspective.
+
+In this case it's the hwspinlock used to synchronize SMEM, but it's 
+conceivable that firmware running on the remoteproc has additional locks 
+that need to be busted in order for the system to continue executing 
+until the firmware is reinitialized.
+
+We did consider tying this to the SMEM instance, but the entitiy 
+relating to firmware is the remoteproc instance.
+
+> Best regards,
+> Krzysztof
+> 
 
