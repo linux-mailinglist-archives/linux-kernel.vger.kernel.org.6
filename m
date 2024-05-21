@@ -1,167 +1,150 @@
-Return-Path: <linux-kernel+bounces-184956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCCD8CAE6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:37:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5992C8CAE7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:43:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF1B31C218D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:37:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AF551C21548
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A038A7602B;
-	Tue, 21 May 2024 12:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A62C770EF;
+	Tue, 21 May 2024 12:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BTUbSOeb"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T0TPkoOP"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C05E28E7
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36D428E7;
+	Tue, 21 May 2024 12:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716295034; cv=none; b=U/T30SDn+nip9Jw+TuNVSf+pVT+UWdIeS9qkaWupI+IQwvm7mLU74kfLgCF+MOq1fhsanZwpT5Vlb5P3Hxu5nfMQ6YYyMkz3cX9iJQaOeuvMTNmJjm6dG9JIB9SYpaDvfvMZr3J85Z+qPZzdErxnqOhfKQZ2YAR8BoW3G5jLaaY=
+	t=1716295428; cv=none; b=Y3oOMtxWyvR2bDzxBzF10HjwRLnfHc2d3htezVCWPUu5cMMwkLm/knt60fzHIeI1vPyhcRNZPYka0qoTq3v4Rn8BxCrsO61/KIMDEJXrkkvPLtNuEr/sg8XejYwNnmiQxNlhlj7sNIj1i20pVGvkwUW72wvd2Ke527xEf7iEU8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716295034; c=relaxed/simple;
-	bh=Klu0gGVfZMfblIpCTCUXJjJGPJyTfcM5cThq4DA/HRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f2OHoktFUCQTeTUgzBr1d4kJLHkELWPnm7qqNJyXNmrikPyqhf5RU/LCVIzSRK7895K0pjPMcL1SI5pZMpWLTo0sFAVIiLC6SPhx1EtFpy2mdqXOBmpMvCB/mbB4wKs2Dn21kGLPfyAgBrmfBX8rlvXdPoUrKkr8mA/vmKKPwK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BTUbSOeb; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59a352bbd9so1210194466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 05:37:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716295031; x=1716899831; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CkFOGlpOKeStDNfuqkdG9T+khvpIoGQQxktttnrUnLI=;
-        b=BTUbSOebTd+Sqv0Yc+PlFN9xQgdX0wWyVjDpkC3PjB41FRA9a5dJbwIlgDGVCGiU72
-         X3OYXqL1DQ8SW4AmjjDTW4yuv5fDr4x+jP0xTB5nA2j3hvNA01YbKEqVE81bIEmwXXwj
-         mwbjjHTy4HVc3L9OLQyVOHa9HYbByTDu3q1yfSvGYNGT1Rs1VGeyjTHZOcOMchZnR8yO
-         6JPy1vcgbWQgLl5LfSAONhdSSCblhIVXYbgXUKCHvCOqjjezbPOGNRQpKHWZTs4rU90H
-         NnoVkQGkXQEFGU287joUyQ33OyxBBnxtXUuVuEWf3QTDmmGpDwL2H4Ciju9IkHCW5ETt
-         JMlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716295031; x=1716899831;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CkFOGlpOKeStDNfuqkdG9T+khvpIoGQQxktttnrUnLI=;
-        b=i+/jrIsICf1aWJwZ9SBpFsxxgRcrJN5hvAG63SmASrRTKY6/Rxur5YqpUJD1j6jvt9
-         NiVkwozZEeC7zHa/MxapN/kRgk3U7G+qjrtvbdQW+8T1VdazjvHx3LKrHX79U+YBmQ+Z
-         hCci1jGYCSYoJ10t1pAgx2tHsKQIfhJXjNKL2IfAm8NoHEZMmPs1leIt1nYg50ikOwRY
-         zzJpbG1VW1LxYzFnnIMQ3XZ5AcfwVfs2bnN0d41m1SU8R/0ftvYUAY8C6DjmeLDMSeNr
-         PjZexmcAaGDrddaYY15b0//FRYZxJ1ugbU6vuFe8FD4o637LznsZL837ni5k8ot+CmHN
-         NIUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbFOA5zT8yRWDw7Qv9nOG32R8wFCAY5N2XyQrZCxQUam7JWObEwJJ8ZSepk7UbzjW9jeZm4Gc4PzwNVPH435zGVC/BEoW/CiBi583R
-X-Gm-Message-State: AOJu0YxiugzHRAcFj7faUu2i7AJfupsOvRT8Why2sc9pjv9raDbgKb7I
-	S/Lr7JxTaJUuch23CSV8VUncPVRGlwOYXY9dpxuIuiQnmpVF4cFgp9KHvKNaafM=
-X-Google-Smtp-Source: AGHT+IGx+uKqMOPmDdmS4fZiU9QA5JxbX3rice58bs7ue1OBEk2/fM+Wtt8aCfDy/pQWV36HyJc+9A==
-X-Received: by 2002:a17:906:a05a:b0:a59:a7ea:dd22 with SMTP id a640c23a62f3a-a5d5a376cb2mr762273666b.14.1716295030667;
-        Tue, 21 May 2024 05:37:10 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a5c033afasm1263036866b.156.2024.05.21.05.37.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 05:37:10 -0700 (PDT)
-Date: Tue, 21 May 2024 14:37:08 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH printk v5 26/30] printk: nbcon: Implement emergency
- sections
-Message-ID: <ZkyVdD4alTWw2I_a@pathway.suse.cz>
-References: <20240502213839.376636-1-john.ogness@linutronix.de>
- <20240502213839.376636-27-john.ogness@linutronix.de>
- <87h6fbi5q8.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1716295428; c=relaxed/simple;
+	bh=De/fD9//lDT8ckW0UEfL/y/2vXEAMHB5t/X7InMzgMc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=J+spu9DUGdMtd3CGqI/Me2G5OVeBLqW2C4jG63mVQygRrwiAQ4eQ/p+TGjvnppIEuwl38Ar8YXw2HdsEzU3K3xuBHts/AXiWJm2LOk92izSgE2u9ylzWYmxN6A2oPbv6DVpBkAgAKX7U3quf8vUgoeA0eUpvi0lFCGRQSu3DkB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T0TPkoOP; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C39972000D;
+	Tue, 21 May 2024 12:43:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1716295423;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sBHQDVV1jw6tvsDFIyAbBrREYTF4ioSRIEty/E5nqPU=;
+	b=T0TPkoOP0Oln6RdV1lZQCjpQhTbgt3GaQ2j94Yw+Z8ea1ETp/x9tnsAhm4sBjHTyc6FJgn
+	ytWWeoxfxTEk9DRNo9H0PwHB7pR2Pneu3gAkZMBkMNmRjUKRSysG1FysIfeyhisO+FGl/C
+	1M0B2q6KFUg4mUr/1La3Z1dM/N8QS2k8w0lqGNJNER9rQ48bQBD3G7P1A2yjXX43m5bIiF
+	PPYfG4iD+8h8bvYfzF+aqwAynnJ4FrKOTo9mpAs0uERH4ylCAm5P8jy+o+JUEya2/dc16T
+	04ABdjNOV7G8j+J1cf9hnRsL52YYj1FjUXuFLcv32oLzhnCOb8y2jKxLCeGxXA==
+From: Romain Gantois <romain.gantois@bootlin.com>
+Date: Tue, 21 May 2024 14:44:11 +0200
+Subject: [PATCH net] net: ti: icssg_prueth: Fix NULL pointer dereference in
+ prueth_probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h6fbi5q8.fsf@jogness.linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240521-icssg-prueth-fix-v1-1-b4b17b1433e9@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIABqXTGYC/x2MQQ5AQAwAvyI9a1K7y8FXxIFV9LJki0jE3zWOM
+ 8nMA8pZWKEtHsh8icqWDKqygLgOaWGUyRgcuUC1q1Ci6oJ7PvlYcZYbyY/kqQmxjgyW7ZlN/8s
+ OEh/Qv+8HZjSKXWcAAAA=
+To: MD Danish Anwar <danishanwar@ti.com>, Roger Quadros <rogerq@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Romain Gantois <romain.gantois@bootlin.com>
+X-Mailer: b4 0.13.0
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On Mon 2024-05-06 12:45:59, John Ogness wrote:
-> On 2024-05-02, John Ogness <john.ogness@linutronix.de> wrote:
-> > diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-> > index 8f6b3858ab27..991e2702915c 100644
-> > --- a/kernel/printk/nbcon.c
-> > +++ b/kernel/printk/nbcon.c
-> > +void nbcon_cpu_emergency_exit(void)
-> > +{
-> > +	unsigned int *cpu_emergency_nesting;
-> > +	bool do_trigger_flush = false;
-> > +
-> > +	cpu_emergency_nesting = nbcon_get_cpu_emergency_nesting();
-> > +
-> > +	/*
-> > +	 * Flush the messages before enabling preemtion to see them ASAP.
-> > +	 *
-> > +	 * Reduce the risk of potential softlockup by using the
-> > +	 * flush_pending() variant which ignores messages added later. It is
-> > +	 * called before decrementing the counter so that the printing context
-> > +	 * for the emergency messages is NBCON_PRIO_EMERGENCY.
-> > +	 */
-> > +	if (*cpu_emergency_nesting == 1) {
-> > +		nbcon_atomic_flush_pending();
-> > +		do_trigger_flush = true;
-> > +	}
-> > +
-> > +	(*cpu_emergency_nesting)--;
-> > +
-> > +	if (WARN_ON_ONCE(*cpu_emergency_nesting < 0))
-> > +		*cpu_emergency_nesting = 0;
-> 
-> I see two issues here. First, this is unsigned. kernel test robot
-> reported:
-> 
-> > kernel/printk/nbcon.c:1540 nbcon_cpu_emergency_exit() warn: unsigned
-> > '*cpu_emergency_nesting' is never less than zero.
-> 
-> Also, in this situation, we are allowing a brief window of activated
-> emergency mode by allowing it to become !0 before correcting
-> it. Instead, we should avoid illegally decrementing. I suggest:
+In the prueth_probe() function, if one of the calls to emac_phy_connect()
+fails due to of_phy_connect() returning NULL, then the subsequent call to
+phy_attached_info() will dereference a NULL pointer.
 
-Great catch!
+Check the return code of emac_phy_connect and fail cleanly if there is an
+error.
 
-> void nbcon_cpu_emergency_exit(void)
-> {
-> 	unsigned int *cpu_emergency_nesting;
-> 	bool do_trigger_flush = false;
-> 
-> 	cpu_emergency_nesting = nbcon_get_cpu_emergency_nesting();
-> 
-> 	/*
-> 	 * Flush the messages before enabling preemtion to see them ASAP.
-> 	 *
-> 	 * Reduce the risk of potential softlockup by using the
-> 	 * flush_pending() variant which ignores messages added later. It is
-> 	 * called before decrementing the counter so that the printing context
-> 	 * for the emergency messages is NBCON_PRIO_EMERGENCY.
-> 	 */
-> 	if (*cpu_emergency_nesting == 1) {
-> 		nbcon_atomic_flush_pending();
-> 		do_trigger_flush = true;
-> 	}
-> 
-> 	if (!WARN_ON_ONCE(*cpu_emergency_nesting == 0))
-> 		(*cpu_emergency_nesting)--;
+Fixes: 128d5874c082 ("net: ti: icssg-prueth: Add ICSSG ethernet driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+---
+Hello everyone,
 
-Looks good.
+There is a possible NULL pointer dereference in the prueth_probe() function of
+the icssg_prueth driver. I discovered this while testing a platform with one
+PRUETH MAC enabled out of the two available.
 
-> 	preempt_enable();
-> 
-> 	if (do_trigger_flush)
-> 		printk_trigger_flush();
-> }
+These are the requirements to reproduce the bug:
+
+prueth_probe() is called
+either eth0_node or eth1_node is not NULL
+in emac_phy_connect: of_phy_connect() returns NULL
+
+Then, the following leads to the NULL pointer dereference:
+
+prueth->emac[PRUETH_MAC0]->ndev->phydev is set to NULL
+prueth->emac[PRUETH_MAC0]->ndev->phydev is passed to phy_attached_info()
+-> phy_attached_print() dereferences phydev which is NULL
+
+This series provides a fix by checking the return code of emac_phy_connect().
 
 Best Regards,
-Petr
+
+Romain
+---
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+index 7c9e9518f555a..1ea3fbd5e954e 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+@@ -1039,7 +1039,12 @@ static int prueth_probe(struct platform_device *pdev)
+ 
+ 		prueth->registered_netdevs[PRUETH_MAC0] = prueth->emac[PRUETH_MAC0]->ndev;
+ 
+-		emac_phy_connect(prueth->emac[PRUETH_MAC0]);
++		ret = emac_phy_connect(prueth->emac[PRUETH_MAC0]);
++		if (ret) {
++			dev_err(dev,
++				"can't connect to MII0 PHY, error -%d", ret);
++			goto netdev_unregister;
++		}
+ 		phy_attached_info(prueth->emac[PRUETH_MAC0]->ndev->phydev);
+ 	}
+ 
+@@ -1051,7 +1056,12 @@ static int prueth_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		prueth->registered_netdevs[PRUETH_MAC1] = prueth->emac[PRUETH_MAC1]->ndev;
+-		emac_phy_connect(prueth->emac[PRUETH_MAC1]);
++		ret = emac_phy_connect(prueth->emac[PRUETH_MAC1]);
++		if (ret) {
++			dev_err(dev,
++				"can't connect to MII1 PHY, error %d", ret);
++			goto netdev_unregister;
++		}
+ 		phy_attached_info(prueth->emac[PRUETH_MAC1]->ndev->phydev);
+ 	}
+ 
+
+---
+base-commit: e4a87abf588536d1cdfb128595e6e680af5cf3ed
+change-id: 20240521-icssg-prueth-fix-03b03064c5ce
+
+Best regards,
+-- 
+Romain Gantois <romain.gantois@bootlin.com>
+
 
