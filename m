@@ -1,124 +1,100 @@
-Return-Path: <linux-kernel+bounces-185073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9D78CB02C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2812F8CB02F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077C2282CE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:15:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D88D62844F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FA17F7DA;
-	Tue, 21 May 2024 14:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29167FBC4;
+	Tue, 21 May 2024 14:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=skoll.ca header.i=@skoll.ca header.b="Ts6GvWNw"
-Received: from dianne.skoll.ca (dianne.skoll.ca [144.217.161.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouUbzHOi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03EA1E4A2;
-	Tue, 21 May 2024 14:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.217.161.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E621271B48;
+	Tue, 21 May 2024 14:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716300938; cv=none; b=MSibRVvcezaFDoYSn3zu/+zbThKcQCLHElsQxY8WS8bIaXaBid9mI+lXHuhr9L2VFwx3FaijBLnMo0PF3+R2/63lg9OVY6U6Xiqif7gRccO+Z7aAa28lgLAkjpBNF1tyvwiQk2ivuXP5NiFwv90xIiQPDMSIawz8F3Tdc6WoV5E=
+	t=1716300972; cv=none; b=Ob0rv9PASElMpzaOHAWJ6uLmXz4JEFAaEhnLyidTM2BFSbLPUp7u3Fae5xw+mfbWYG5baD/v51kLWd6JOTcByhoK4U7394rjvGX8F9J8KsQ9alnMcmPlNXVgc8XF1erN34Ht9wevBkE1+yi8Ol56yYKkDQfsVSksAG5W8+CNT0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716300938; c=relaxed/simple;
-	bh=CQY/u8kxhmHJD+6fMC5R8Nze8D98YruqQ6VlBkAoDwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tjSZdP4VXHcHULn4IHNnmI5VdCu/NNGT+iIs36J9cxmBVS1ZsX5R57vQSXpb7q4XVvVYEDqOBaAvRx7F7dFnwzDcnT2NZ+0yq4YvY0URfrxWep5uTZ2p6C43VSCvELMc4lXYCBc4RIEHbQbSd177jrOnG/3ddbzk0fFgjeyw5bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=skoll.ca; spf=pass smtp.mailfrom=skoll.ca; dkim=pass (2048-bit key) header.d=skoll.ca header.i=@skoll.ca header.b=Ts6GvWNw; arc=none smtp.client-ip=144.217.161.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=skoll.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skoll.ca
-Received: from pi4.skoll.ca ([192.168.84.18])
-	by dianne.skoll.ca (8.17.1.9/8.17.1.9/Debian-2) with ESMTPS id 44LEFG18319952
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 10:15:17 -0400
-Received: from gato.skoll.ca (gato.skoll.ca [192.168.83.21])
-	by pi4.skoll.ca (Postfix) with ESMTPS id 4VkGfr1Q0mzgd52Y;
-	Tue, 21 May 2024 10:15:16 -0400 (EDT)
-Date: Tue, 21 May 2024 10:15:14 -0400
-From: Dianne Skoll <dianne@skoll.ca>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: N_HDLC line discipline: Race condition
-Message-ID: <20240521101435.0b6b3420@gato.skoll.ca>
-In-Reply-To: <63a5a3c5-8362-4b93-a50e-10c9cdcffdd2@kernel.org>
-References: <20240424173114.035ddd7b@gato.skoll.ca>
-	<20240425140127.6504ade1@gato.skoll.ca>
-	<63a5a3c5-8362-4b93-a50e-10c9cdcffdd2@kernel.org>
+	s=arc-20240116; t=1716300972; c=relaxed/simple;
+	bh=QzfF+EFnCDCxFr4kbXOmJ2u12v1wZA/7KB6nqUZ27qc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ahQtoKfnFW0fu7xaI/56v+CxTX+74hFhe45lu4p325yMyxSRc45fElxdyvGoHIDOwPvSOeXNDxPWeTLh/QSsSvUdxsb++2rFqg8UjeBHDCcclQlIeV6rQUInFkLZLdcrzRcY2tNoMlnNSFA2yqyI5mslnk1h06nV03HT9KMFT68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouUbzHOi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A19CC2BD11;
+	Tue, 21 May 2024 14:16:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716300971;
+	bh=QzfF+EFnCDCxFr4kbXOmJ2u12v1wZA/7KB6nqUZ27qc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ouUbzHOiGuwDb7dxQAPrA0+vH+s2nu6ziinxfrQwSpKu/ViJUOJ7AmC1QKr6FlCzS
+	 cODYGRQLPduIqIox2nNxLvgLpKcuWHFUIBQNTpBG2ImM0SdxQ2iHWvgNkWdTC2PDTI
+	 8iLCRm81GUvbxilTftjxKr86rFugqE5hQqQtWK7AAvqZuUYy5QLfc1CyB7Lp+ruVqi
+	 Rf9TvORajynsPXbNAS6bubeL7C4/QPXJg6mHdOEeCbXqitr160MZgZPrDLks6BVt33
+	 IP4UhT9Ah/J6yi181U8/scaP3MnVsEPapipX4EkqFA0wppUmYD32e3mttlupgMHzFi
+	 GjPXrYD/0nDKQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Steve French <stfrench@microsoft.com>,
+	David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Enzo Matsumiya <ematsumiya@suse.de>,
+	netfs@lists.linux.dev,
+	v9fs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix io_uring based write-through
+Date: Tue, 21 May 2024 16:15:59 +0200
+Message-ID: <20240521-teigwaren-gehindert-316a25d666fb@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <295086.1716298663@warthog.procyon.org.uk>
+References: <295086.1716298663@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=skoll.ca; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=canit2;
-	 bh=s2YFZC7GmOEsW+N8EbYEKSMbTn8bmL6bKKFlud97oVQ=; b=Ts6GvWNwzAiq
-	DIuDmgOV2oME9wuzHhxo9iWwVqa8zXPl0g7RTZ64gzt6zYCazsA68oIDgGJcgmWS
-	VI8yEyijE4zM8A34rHCXNlUrAulJfL+ceIz4pknLua+j37mvii7vIWBp51h9yAT7
-	3TYZR4whLHlFzbyz0P9bHItOda0BkJ2Uyiq33apzr0viAzbqJWEFIwvUJ0QqgBtj
-	+NGGEEAFw6Dnel99ZFp2etgKGPezpnDrfFnfD/Opjb0Vus3la79CleieHNZPkQZD
-	cKXt4rtBemn6P5bQz2gDhfL++Q9B36y4wUzPTNiReuWT/NwWKcuHPKTG7PBkNirR
-	zxuIzqnpAA==
-X-Scanned-By: CanIt (www . roaringpenguin . com)
-X-Scanned-By: mailmunge 3.16 on 192.168.83.18
-X-Spam-Score: undef - relay 192.168.84.18 marked with skip_spam_scan
-X-CanIt-Geo: No geolocation information available for 192.168.84.18
-X-CanItPRO-Stream: outbound (inherits from default)
-X-Canit-Stats-ID: Bayes signature not available
-X-CanIt-Archive-Cluster: tWKWaF/NcZkqjWIj0BEJTBHJhwY
-X-CanIt-Archived-As: base/20240521 / 01cpOfh1S
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1116; i=brauner@kernel.org; h=from:subject:message-id; bh=QzfF+EFnCDCxFr4kbXOmJ2u12v1wZA/7KB6nqUZ27qc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT5rFnE4m8x45/62gSOdNld15xUDxTflL8eOu/uQo9J0 5keLp97tKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiWQ4Mv5jPHN/z8/PNp+9n lJ/faN5zQWrViSXb43a4nuZvWGqi9TKV4Z9uXuCTO+9PdT/K4b4vxXPkQpXOo5THz5254pYn6QV OXcwHAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, 21 May 2024 12:47:00 +0200
-Jiri Slaby <jirislaby@kernel.org> wrote:
+On Tue, 21 May 2024 14:37:43 +0100, David Howells wrote:
+> This can be triggered by mounting a cifs filesystem with a cache=strict
+> mount option and then, using the fsx program from xfstests, doing:
+> 
+>         ltp/fsx -A -d -N 1000 -S 11463 -P /tmp /cifs-mount/foo \
+>           --replay-ops=gen112-fsxops
+> 
+> Where gen112-fsxops holds:
+> 
+> [...]
 
-> I believe it is a correct behavior after all. As you use pty for 
-> testing, the "framing" is lost during the pty-to-pty pass on the
-> flush to ldisc path (receive_buf()).
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-That might be what's happening, but I don't think it matches the documentation
-in n_hdlc.c.  If you read the comment block near the top of the file,
-it says this:
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
- * All HDLC data is frame oriented which means:
- *
- * 1. tty write calls represent one complete transmit frame of data
- *    The device driver should accept the complete frame or none of
- *    the frame (busy) in the write method. Each write call should have
- *    a byte count in the range of 2-65535 bytes (2 is min HDLC frame
- *    with 1 addr byte and 1 ctrl byte). The max byte count of 65535
- *    should include any crc bytes required. For example, when using
- *    CCITT CRC32, 4 crc bytes are required, so the maximum size frame
- *    the application may transmit is limited to 65531 bytes. For CCITT
- *    CRC16, the maximum application frame size would be 65533.
- *
- *
- * 2. receive callbacks from the device driver represents
- *    one received frame. The device driver should bypass
- *    the tty flip buffer and call the line discipline receive
- *    callback directly to avoid fragmenting or concatenating
- *    multiple frames into a single receive callback.
- *
- *    The HDLC line discipline queues the receive frames in separate
- *    buffers so complete receive frames can be returned by the
- *    tty read calls.
- *
- * 3. tty read calls returns an entire frame of data or nothing.
-[...] */
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Point 2 says that the driver should avoid fragmenting frames, or concatenating
-frames into a single receive callback.  Doesn't this imply that frame
-boundaries should be preserved when you read() data, which happens reliably
-when you add a small delay between write()'s?
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Regards,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-Dianne.
+[1/1] netfs: Fix io_uring based write-through
+      https://git.kernel.org/vfs/vfs/c/c51124cbc622
 
