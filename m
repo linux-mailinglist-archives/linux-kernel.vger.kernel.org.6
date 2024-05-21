@@ -1,69 +1,80 @@
-Return-Path: <linux-kernel+bounces-184428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805778CA6DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:19:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A03668CA6D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BEC21F21296
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:19:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1AE81C20A12
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D735028B;
-	Tue, 21 May 2024 03:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D499DBA53;
+	Tue, 21 May 2024 03:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvcwd8Qy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="i8r4Us9G"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA40F4778C;
-	Tue, 21 May 2024 03:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDB73FB94
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716261447; cv=none; b=VOC1FVicFYzE3DgV1d93Kc9G2ee89SZF8fNIoDXvpDEuxFaPbzR/gd1e7pJxVphM0Vbs0Ie8RvLjmOW5HYUUJGLtk3eMevo8/mPa7zkQJZQuF9lzZoTFUXlYgGTXH0X2B59JRUMMjEdhSob3PsYXKuxdtHME3EfoCe4Vo1aTPS0=
+	t=1716261445; cv=none; b=gfLDmu4+sg2hAE3xH49PHWxF8JSKJtRB4YURjhGGO1pQ7DsBoFm88JAc53X4icqX1DvPJlLMc9Dpr6teZSiFIK22Qt2FCspkQYbZr7/MfNldC9rDelalyGbjkQnNN7U7gNND9AF6NWpIck0Qc/taexxjnuJv7xdX04UFC1sswKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716261447; c=relaxed/simple;
-	bh=hL4NU79dwSPxBcJfy9fvF5qBi4urlXwoW9kEtncl2Gg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eq+OY1aXWTvcqxxBjL7pxoWL32WFkPQfyGL7k/9x9oFBpqo6zv6DvoKbShAgeiCanijT46a90ww6l4DSm6mXycfTcHJxHOKCZ8o3CTOwqHvdS2jOPg0dsC5venRCDNTlBUzBte4tCz+zk74BBWyvGLAcCpL9bshBl+lPyXDHGt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvcwd8Qy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3EC4C4AF0F;
-	Tue, 21 May 2024 03:17:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716261447;
-	bh=hL4NU79dwSPxBcJfy9fvF5qBi4urlXwoW9kEtncl2Gg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hvcwd8Qy7jfSxXMjyodOkt0Ku/d1zvvmj6pw5LnSbTsOdQ3sdd+nz5zd/I4nSfEB7
-	 NbQMFP2H91rJWDkYsrtGX48OOVz0Xqc9kCieanYvMxGPsiqfcLP4RPwVZcN8YxOGam
-	 VsJkCaVJqRFjfZnFLcOg+Vp6VeKP6HbVyomOwNzi4VnweUwFtqrgkwzyl33K2khrXl
-	 op/tGE2UdW4m0qchIsUfPaGQVzYZrWQAlf3vi9Ux5F2pk5RnMdijq9YygCAzjqMwum
-	 iXeKhaSdKsGQ58IqtDn0WvraTLcdzZH9trqUX4tZ+/YL+xwP5P6pg9QwJko81Jf4Jt
-	 rsufWuWoDaH6A==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	Andreas.Fuchs@infineon.com,
-	James Prestwood <prestwoj@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-crypto@vger.kernel.org (open list:CRYPTO API),
-	linux-kernel@vger.kernel.org (open list),
-	David Howells <dhowells@redhat.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH v2 6/6] keys: asymmetric: ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE
-Date: Tue, 21 May 2024 06:16:31 +0300
-Message-ID: <20240521031645.17008-7-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240521031645.17008-1-jarkko@kernel.org>
-References: <20240521031645.17008-1-jarkko@kernel.org>
+	s=arc-20240116; t=1716261445; c=relaxed/simple;
+	bh=rmQ4T+nGAvY9sCmAPKBpE2xvlymeLhT8/MbFVAM0HMI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=huuR02qKvJoYJeCkhOlegj7Y2NLjF/h/gaoEx8Nq+0vlntX1TEXnp1n3SHhXKen/ZI70hcmu+N28NHPzcjw80CQAgjmz0hcBAdDyk0UknZftZMfqWctf+Jf6b/w9vQPBfwoUZw56so7WHWmfykSu2BcmWrc7A/To3MUvj8DtYaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=i8r4Us9G; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ecd3867556so97637395ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:17:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=darkphysics.net; s=google; t=1716261442; x=1716866242; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FTRE2aAD7nMAx0mWWNU5WX8ozRRvU4vGs8kuCzV19R0=;
+        b=i8r4Us9GRiyeOyVPSEt2w7a32KEbiOgy5tJ1XFvN4S3QdeLXyeG2+z6P8NpYPIq8Z8
+         oKqnZCi6wqg7Ak2nESlXcfIolDWh/PckweczGSxq8hlWrGf/nWv/TaPc3m/Y5r46/TWR
+         kKUUwWEbCI+UwMXAzdFbvuqzaeEsDv1W/MgmwEbBG/1Ts1CfaG8s4zDpx2kiNfIuTArD
+         2SA+BO3G7EzYlph3rKpGBYyI/ZgVdvb3XDIiUxKiEAoY9WDhZw127wVJoSqlAqeK0fr4
+         Pr1RsWRXtt0zt/w4AXiIitm+j7aWAXEk4M7D0v+otLmvC9gXE6YiMFMRsRhTBUSwiNKF
+         0hHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716261442; x=1716866242;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FTRE2aAD7nMAx0mWWNU5WX8ozRRvU4vGs8kuCzV19R0=;
+        b=gAX3y/sJGFepyn6emoASFBJ0FtufKM6TLC4bK0UkWZtl+t1Y++1xe9JbKFEFnU6Do6
+         XvSt3OYfz1nQdbw6NFn3oszFH/l9WIQ6JFz20+QAm+ckWfpaU6wXB9uwcYfyx9HnN9cv
+         HnHAsXKrWf72tCW8Cju1OIRSrOJ43sWPdD6VIpQ4T9hXPRsnPLnf0ZdgrnvjahRnFaAz
+         iTwiXXO25ol7GuxSSLq3Vfe/vobiB6d0xsukqNzDK69kWVqrCNjeYYGgmv5QkNZZkeu0
+         +XGzZmkyih1SyP9diA0aHOl590Bxvb6VimM9sg/H1DWkO1akfioTEeQxtq8lujy2S+fv
+         FX+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUCOsR8fZonqFpcUeTPUNPL+96ySBGd7HzU/YgGy5qGgshdb72XF48sb70sOourffFZngo32bmgP/vAfxW1tgq/gXRcc1Vk7r4SVljl
+X-Gm-Message-State: AOJu0YypK8oK+dpkv3gjTL8VgD3TMZJIQN2J4hhlqIMwTUadPjfgsmtL
+	5RiMRa493igHVwbaOQRzgDsEFCtsbBfcyDnHPXqlvAwjMlcQ9gO2VkQF0OtKo7g=
+X-Google-Smtp-Source: AGHT+IFviQB0DFnx5N0Y7fin5e/l+PBKg41SVlyUvy91vBLvTO11XDubSEkoRXnQvu5lNy7nUz6N5A==
+X-Received: by 2002:a17:903:2986:b0:1f2:f0a5:5cf9 with SMTP id d9443c01a7336-1f2f0a561b7mr82883635ad.50.1716261441515;
+        Mon, 20 May 2024 20:17:21 -0700 (PDT)
+Received: from lunchbox.darkphysics (c-76-146-178-2.hsd1.wa.comcast.net. [76.146.178.2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf31a93sm214885415ad.134.2024.05.20.20.17.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 20:17:21 -0700 (PDT)
+From: Tree Davies <tdavies@darkphysics.net>
+To: gregkh@linuxfoundation.org,
+	philipp.g.hortmann@gmail.com
+Cc: dan.carpenter@linaro.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Tree Davies <tdavies@darkphysics.net>
+Subject: [PATCH v2 00/31] Staging: rtl8192e: rtllib_rx.c Rename camelcase variables
+Date: Mon, 20 May 2024 20:16:47 -0700
+Message-Id: <20240521031718.17852-1-tdavies@darkphysics.net>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,807 +83,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: James Prestwood <prestwoj@gmail.com>
+This is v2 of series renaming camelcase variables to meet style
+guide requirements. Thank you in advance to reviewers.
+~ Tree
 
-Based on earlier work by James Prestwood.
+Changes:
+#16 Renamed plist to list
+#17 Renamed npadding_length to pad_len
+#19 Deleted ChkLength variable
 
-Add ASN.1 compatible asymmetric TPM2 RSA key subtype:
+Tree Davies (31):
+  Staging: rtl8192e: Rename variable IsPassiveChannel
+  Staging: rtl8192e: Rename variable CountryIeBuf
+  Staging: rtl8192e: Rename variable CountryIeLen
+  Staging: rtl8192e: Rename variable bWithAironetIE
+  Staging: rtl8192e: Rename variable bContainHTC
+  Staging: rtl8192e: Rename variable MBssid
+  Staging: rtl8192e: Rename variable MBssidMask
+  Staging: rtl8192e: Rename variable elementID
+  Staging: rtl8192e: Rename variable rtllib_rx_Monitor
+  Staging: rtl8192e: Rename variable rtllib_rx_InfraAdhoc
+  Staging: rtl8192e: Rename variable IsLegacyDataFrame
+  Staging: rtl8192e: Rename variable RxReorderIndicatePacket
+  Staging: rtl8192e: Rename variable RfdArray
+  Staging: rtl8192e: Rename variable Decrypted
+  Staging: rtl8192e: Rename variable AddReorderEntry
+  Staging: rtl8192e: Rename variable pList
+  Staging: rtl8192e: Rename variable nPadding_Length
+  Staging: rtl8192e: Rename variable LLCOffset
+  Staging: rtl8192e: Remove variable ChkLength
+  Staging: rtl8192e: Rename variable WinEnd
+  Staging: rtl8192e: Rename variable WinSize
+  Staging: rtl8192e: Rename variable IsDataFrame
+  Staging: rtl8192e: Rename variable bMatchWinStart
+  Staging: rtl8192e: Rename variable bMBssidValid
+  Staging: rtl8192e: Rename variable bWithCcxVerNum
+  Staging: rtl8192e: Rename variable Frame_QoSTID
+  Staging: rtl8192e: Rename variable CcxRmState
+  Staging: rtl8192e: Rename variable IsQoSDataFrame
+  Staging: rtl8192e: Rename variable RfdCnt
+  Staging: rtl8192e: Rename variable prxbIndicateArray
+  Staging: rtl8192e: Rename variable bPktInBuf
 
-1. Signing and decryption (with the private key) is handled by
-   TPM2_RSA_Decrypt.
-2. Encryption (with the public key) is handled by the kernel RSA
-   implementation.
+ .../staging/rtl8192e/rtl8192e/r8192E_dev.c    |   2 +-
+ drivers/staging/rtl8192e/rtl819x_HTProc.c     |   2 +-
+ drivers/staging/rtl8192e/rtl819x_TSProc.c     |   8 +-
+ drivers/staging/rtl8192e/rtllib.h             |  36 ++--
+ drivers/staging/rtl8192e/rtllib_rx.c          | 183 +++++++++---------
+ drivers/staging/rtl8192e/rtllib_tx.c          |   4 +-
+ 6 files changed, 116 insertions(+), 119 deletions(-)
 
-Link: https://lore.kernel.org/all/20200518172704.29608-1-prestwoj@gmail.com/
-Signed-off-by: James Prestwood <prestwoj@gmail.com>
-Co-developed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v2:
-* Remove two spurios pr_info() messsages that I forgot to remove.
-* Clean up padding functions and add additional checks for length
-  also in tpm2_unpad_pcks1().
-* Add the missing success check kzalloc() in tpm2_key_rsa_decrypt().
-* Check that params->out_len for capacity before copying the result.
----
- crypto/asymmetric_keys/Kconfig        |  16 +
- crypto/asymmetric_keys/Makefile       |   1 +
- crypto/asymmetric_keys/tpm2_key_rsa.c | 698 ++++++++++++++++++++++++++
- include/linux/tpm.h                   |   2 +
- 4 files changed, 717 insertions(+)
- create mode 100644 crypto/asymmetric_keys/tpm2_key_rsa.c
-
-diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
-index e1345b8f39f1..4d14bb0c346e 100644
---- a/crypto/asymmetric_keys/Kconfig
-+++ b/crypto/asymmetric_keys/Kconfig
-@@ -15,6 +15,7 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
- 	select MPILIB
- 	select CRYPTO_HASH_INFO
- 	select CRYPTO_AKCIPHER
-+	select CRYPTO_RSA
- 	select CRYPTO_SIG
- 	select CRYPTO_HASH
- 	help
-@@ -23,6 +24,21 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
- 	  appropriate hash algorithms (such as SHA-1) must be available.
- 	  ENOPKG will be reported if the requisite algorithm is unavailable.
- 
-+config ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE
-+	tristate "Asymmetric TPM2 RSA crypto algorithm subtype"
-+	depends on TCG_TPM
-+	select TCG_TPM2_HMAC
-+	select CRYPTO_RSA
-+	select CRYPTO_SHA256
-+	select CRYPTO_HASH_INFO
-+	select ASN1
-+	select ASN1_ENCODER
-+	help
-+	  This option provides support for asymmetric TPM2 key type handling.
-+	  If signature generation and/or verification are to be used,
-+	  appropriate hash algorithms (such as SHA-256) must be available.
-+	  ENOPKG will be reported if the requisite algorithm is unavailable.
-+
- config X509_CERTIFICATE_PARSER
- 	tristate "X.509 certificate parser"
- 	depends on ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
-index bc65d3b98dcb..c6da84607824 100644
---- a/crypto/asymmetric_keys/Makefile
-+++ b/crypto/asymmetric_keys/Makefile
-@@ -11,6 +11,7 @@ asymmetric_keys-y := \
- 	signature.o
- 
- obj-$(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE) += public_key.o
-+obj-$(CONFIG_ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE) += tpm2_key_rsa.o
- 
- #
- # X.509 Certificate handling
-diff --git a/crypto/asymmetric_keys/tpm2_key_rsa.c b/crypto/asymmetric_keys/tpm2_key_rsa.c
-new file mode 100644
-index 000000000000..32250ff38268
---- /dev/null
-+++ b/crypto/asymmetric_keys/tpm2_key_rsa.c
-@@ -0,0 +1,698 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/* TPM2 asymmetric public-key crypto subtype
-+ *
-+ * See Documentation/crypto/asymmetric-keys.rst
-+ *
-+ * Copyright (c) 2020 Intel Corporation
-+ */
-+
-+#include <asm/unaligned.h>
-+#include <crypto/akcipher.h>
-+#include <crypto/public_key.h>
-+#include <crypto/rsa-pkcs1pad.h>
-+#include <crypto/tpm2_key.h>
-+#include <keys/asymmetric-parser.h>
-+#include <keys/asymmetric-subtype.h>
-+#include <keys/trusted-type.h>
-+#include <linux/asn1_encoder.h>
-+#include <linux/keyctl.h>
-+#include <linux/module.h>
-+#include <linux/scatterlist.h>
-+#include <linux/slab.h>
-+#include <linux/tpm.h>
-+
-+#undef pr_fmt
-+#define pr_fmt(fmt) "tpm2_key_rsa: "fmt
-+
-+#define PUB_KEY_BUF_SIZE 512
-+
-+struct tpm2_key_rsa {
-+	struct tpm2_key key;
-+	const u8 *pub;
-+	int pub_len;
-+};
-+
-+static const int PKCS1_PAD_MIN_SIZE = 11;
-+
-+/*
-+ * Fill the data with PKCS#1 v1.5 padding.
-+ */
-+static int tpm2_pad_pkcs1(const u8 *in, int in_len, u8 *out, int out_len)
-+{
-+	unsigned int prefix_len = out_len - in_len - 3;
-+
-+	if (in_len > out_len - PKCS1_PAD_MIN_SIZE)
-+		return -EBADMSG;
-+
-+	/* prefix */
-+	out[0] = 0;
-+	out[1] = 1;
-+	memset(&out[2], 0xff, prefix_len);
-+	out[2 + prefix_len] = 0;
-+	/* payload */
-+	memcpy(&out[2 + prefix_len + 1], in, in_len);
-+
-+	return 0;
-+}
-+
-+/*
-+ * RFC 3447 - Section 7.2.2
-+ * Size of the input data should be checked against public key size by
-+ * the caller.
-+ */
-+static const u8 *tpm2_unpad_pkcs1(const u8 *in, int in_len, int *out_len)
-+{
-+	int i;
-+
-+	if (in[0] != 0 || in[1] != 2)
-+		return NULL;
-+
-+	i = 2;
-+	while (in[i] != 0 && i < in_len)
-+		i++;
-+
-+	if (i == in_len || i < (PKCS1_PAD_MIN_SIZE - 1))
-+		return NULL;
-+
-+	*out_len = in_len - i - 1;
-+	return in + i + 1;
-+}
-+
-+/*
-+ * Outputs the cipher algorithm name on success, and retuns -ENOPKG
-+ * on failure.
-+ */
-+static int tpm2_key_get_akcipher(const char *encoding, const char *hash_algo,
-+				 char *cipher)
-+{
-+	ssize_t ret;
-+
-+	if (strcmp(encoding, "pkcs1") == 0) {
-+		if (!hash_algo) {
-+			strcpy(cipher, "pkcs1pad(rsa)");
-+			return 0;
-+		}
-+
-+		ret = snprintf(cipher, CRYPTO_MAX_ALG_NAME,
-+			       "pkcs1pad(rsa,%s)",
-+			       hash_algo);
-+		if (ret >= CRYPTO_MAX_ALG_NAME)
-+			return -ENOPKG;
-+
-+		return 0;
-+	}
-+
-+	if (strcmp(encoding, "raw") == 0) {
-+		strcpy(cipher, "rsa");
-+		return 0;
-+	}
-+
-+	return -ENOPKG;
-+}
-+
-+static int tpm2_key_rsa_extract_pub(struct tpm2_key_rsa *key_rsa)
-+{
-+	struct tpm2_key *key = &key_rsa->key;
-+	struct tpm_buf buf;
-+	off_t offset = 2;
-+	u16 policy_len;
-+	u32 attr;
-+	u16 bits;
-+	u16 type;
-+	u16 len;
-+	u16 alg;
-+	u32 exp;
-+
-+	buf.flags = TPM_BUF_TPM2B;
-+	buf.length = key->pub_len;
-+	buf.data = (void *)key->pub;
-+
-+	if (get_unaligned_be16(key->pub) != buf.length - 2)
-+		return -EINVAL;
-+
-+	type = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub type: 0x%04x\n", type);
-+	if (type != TPM_ALG_RSA)
-+		return -EINVAL;
-+
-+	alg = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub name alg: 0x%04x\n", alg);
-+	attr = tpm_buf_read_u32(&buf, &offset);
-+	pr_debug("pub attributes: 0x%08x\n", attr);
-+	policy_len = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub policy length: %u bytes\n", policy_len);
-+	offset += policy_len;
-+
-+	alg = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub symmetric: 0x%04x\n", alg);
-+	if (alg != TPM_ALG_NULL)
-+		return -EINVAL;
-+
-+	alg = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub symmetric scheme: 0x%04x\n", alg);
-+	if (alg != TPM_ALG_NULL)
-+		return -EINVAL;
-+
-+	bits = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub bits: %u\n", bits);
-+
-+	exp = tpm_buf_read_u32(&buf, &offset);
-+	pr_debug("pub exponent: 0x%08x\n", exp);
-+	if (exp != 0x00000000 && exp !=  0x00010001)
-+		return -EINVAL;
-+
-+	len = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub modulus: %u bytes\n", len);
-+	key_rsa->pub = key->pub + offset;
-+	key_rsa->pub_len = len;
-+
-+	return buf.flags & TPM_BUF_BOUNDARY_ERROR ? -EIO : 0;
-+}
-+
-+static int tpm2_key_rsa_encode(const struct tpm2_key_rsa *key, u8 *buf)
-+{
-+	const int SCRATCH_SIZE = PAGE_SIZE;
-+	const u8 exp[3] = {1, 0, 1};
-+	u8 *scratch, *work, *work1, *end_work;
-+	int pub_len = key->pub_len;
-+	const u8 *pub = key->pub;
-+	int ret;
-+
-+	scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
-+	if (!scratch)
-+		return -ENOMEM;
-+
-+	work = scratch;
-+	end_work = &scratch[SCRATCH_SIZE];
-+
-+	work = asn1_encode_integer(work, end_work, pub, pub_len);
-+	if (IS_ERR(work)) {
-+		ret = PTR_ERR(work);
-+		goto err;
-+	}
-+
-+	work = asn1_encode_integer(work, end_work, exp, 3);
-+	if (IS_ERR(work)) {
-+		ret = PTR_ERR(work);
-+		goto err;
-+	}
-+
-+	work1 = buf;
-+	work1 = asn1_encode_sequence(work1, &work1[PUB_KEY_BUF_SIZE],
-+				     scratch, work - scratch);
-+	if (IS_ERR(work1)) {
-+		ret = PTR_ERR(work1);
-+		goto err;
-+	}
-+
-+	memset(work1, 0, 8);
-+
-+	kfree(scratch);
-+	return work1 - buf;
-+
-+err:
-+	kfree(scratch);
-+	return ret;
-+}
-+
-+/*
-+ * Encryption operation is performed with the public key.  Hence it is done
-+ * in software
-+ */
-+static int tpm2_key_rsa_encrypt(struct tpm2_key_rsa *key,
-+				struct kernel_pkey_params *params,
-+				const void *in, void *out)
-+{
-+	char cipher[CRYPTO_MAX_ALG_NAME];
-+	struct scatterlist in_sg, out_sg;
-+	u8 enc_pub_key[PUB_KEY_BUF_SIZE];
-+	struct akcipher_request *req;
-+	struct crypto_akcipher *tfm;
-+	struct crypto_wait cwait;
-+	int rc;
-+
-+	rc = tpm2_key_get_akcipher(params->encoding, params->hash_algo, cipher);
-+	if (rc < 0)
-+		return rc;
-+
-+	tfm = crypto_alloc_akcipher(cipher, 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	rc = tpm2_key_rsa_encode(key, enc_pub_key);
-+	if (rc < 0)
-+		goto err_tfm;
-+
-+	rc = crypto_akcipher_set_pub_key(tfm, enc_pub_key, rc);
-+	if (rc < 0)
-+		goto err_tfm;
-+
-+	req = akcipher_request_alloc(tfm, GFP_KERNEL);
-+	if (!req) {
-+		rc = -ENOMEM;
-+		goto err_tfm;
-+	}
-+
-+	sg_init_one(&in_sg, in, params->in_len);
-+	sg_init_one(&out_sg, out, params->out_len);
-+	akcipher_request_set_crypt(req, &in_sg, &out_sg, params->in_len,
-+				   params->out_len);
-+
-+	crypto_init_wait(&cwait);
-+	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
-+				      CRYPTO_TFM_REQ_MAY_SLEEP,
-+				      crypto_req_done, &cwait);
-+
-+	rc = crypto_akcipher_encrypt(req);
-+	rc = crypto_wait_req(rc, &cwait);
-+
-+	if (!rc)
-+		rc = req->dst_len;
-+
-+	akcipher_request_free(req);
-+
-+err_tfm:
-+	crypto_free_akcipher(tfm);
-+
-+	return rc;
-+}
-+
-+static int __tpm2_key_rsa_decrypt(struct tpm_chip *chip,
-+				  struct tpm2_key_rsa *key,
-+				  struct kernel_pkey_params *params,
-+				  const void *in, int in_len, void *out)
-+{
-+	unsigned int offset = 0;
-+	u32 key_handle = 0;
-+	struct tpm_buf buf;
-+	u16 decrypted_len;
-+	u32 parent;
-+	u8 *pos;
-+	int ret;
-+
-+	ret = tpm_try_get_ops(chip);
-+	if (ret)
-+		return ret;
-+
-+	ret = tpm2_start_auth_session(chip);
-+	if (ret)
-+		goto err_ops;
-+
-+	if (key->key.parent == TPM2_RH_NULL) {
-+		ret = tpm2_load_context(chip, chip->null_key_context, &offset,
-+					&parent);
-+		if (ret) {
-+			ret = -EIO;
-+			goto err_auth;
-+		}
-+	} else {
-+		parent = key->key.parent;
-+	}
-+
-+	ret = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
-+	if (ret < 0)
-+		goto err_parent;
-+
-+	tpm_buf_append_name(chip, &buf, parent, NULL);
-+	tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_CONTINUE_SESSION |
-+				    TPM2_SA_ENCRYPT, NULL, 0);
-+	tpm_buf_append(&buf, key->key.blob, key->key.blob_len);
-+	if (buf.flags & TPM_BUF_OVERFLOW) {
-+		ret = -E2BIG;
-+		goto err_buf;
-+	}
-+	tpm_buf_fill_hmac_session(chip, &buf);
-+	ret = tpm_transmit_cmd(chip, &buf, 4, "RSA key loading");
-+	ret = tpm_buf_check_hmac_response(chip, &buf, ret);
-+	if (ret) {
-+		ret = -EIO;
-+		goto err_buf;
-+	}
-+	key_handle = be32_to_cpup((__be32 *)&buf.data[TPM_HEADER_SIZE]);
-+
-+	tpm_buf_reset(&buf, TPM2_ST_SESSIONS, TPM2_CC_RSA_DECRYPT);
-+	tpm_buf_append_name(chip, &buf, key_handle, NULL);
-+	tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_DECRYPT, NULL, 0);
-+	tpm_buf_append_u16(&buf, in_len);
-+	tpm_buf_append(&buf, in, in_len);
-+	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
-+	tpm_buf_append_u16(&buf, 0);
-+	tpm_buf_fill_hmac_session(chip, &buf);
-+	ret = tpm_transmit_cmd(chip, &buf, 4, "RSA key decrypting");
-+	ret = tpm_buf_check_hmac_response(chip, &buf, ret);
-+	if (ret) {
-+		ret = -EIO;
-+		goto err_blob;
-+	}
-+
-+	pos = buf.data + TPM_HEADER_SIZE + 4;
-+	decrypted_len = be16_to_cpup((__be16 *)pos);
-+	pos += 2;
-+
-+	if (params->out_len < decrypted_len) {
-+		ret = -EMSGSIZE;
-+		goto err_blob;
-+	}
-+
-+	memcpy(out, pos, decrypted_len);
-+	ret = decrypted_len;
-+
-+err_blob:
-+	tpm2_flush_context(chip, key_handle);
-+
-+err_buf:
-+	tpm_buf_destroy(&buf);
-+
-+err_parent:
-+	if (key->key.parent == TPM2_RH_NULL)
-+		tpm2_flush_context(chip, parent);
-+
-+err_auth:
-+	if (ret < 0)
-+		tpm2_end_auth_session(chip);
-+
-+err_ops:
-+	tpm_put_ops(chip);
-+	return ret;
-+}
-+
-+static int tpm2_key_rsa_decrypt(struct tpm_chip *chip, struct tpm2_key_rsa *key,
-+				struct kernel_pkey_params *params,
-+				const void *in, void *out)
-+{
-+	const u8 *ptr;
-+	int out_len;
-+	u8 *work;
-+	int ret;
-+
-+	work = kzalloc(params->out_len, GFP_KERNEL);
-+	if (!work)
-+		return -ENOMEM;
-+
-+	ret = __tpm2_key_rsa_decrypt(chip, key, params, in, params->in_len,
-+				     work);
-+	if (ret < 0)
-+		goto err;
-+
-+	ptr = tpm2_unpad_pkcs1(work, ret, &out_len);
-+	if (!ptr) {
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
-+	if (out_len > params->out_len) {
-+		ret = -EMSGSIZE;
-+		goto err;
-+	}
-+
-+	memcpy(out, ptr, out_len);
-+	kfree(work);
-+	return out_len;
-+
-+err:
-+	kfree(work);
-+	return ret;
-+}
-+
-+/*
-+ * Sign operation is an encryption using the TPM's private key. With RSA the
-+ * only difference between encryption and decryption is where the padding goes.
-+ * Since own padding can be used, TPM2_RSA_Decrypt can be repurposed to do
-+ * encryption.
-+ */
-+static int tpm2_key_rsa_sign(struct tpm_chip *chip, struct tpm2_key_rsa *key,
-+			     struct kernel_pkey_params *params,
-+			     const void *in, void *out)
-+{
-+	const struct rsa_asn1_template *asn1;
-+	u32 in_len = params->in_len;
-+	void *asn1_wrapped = NULL;
-+	int pub_len = key->pub_len;
-+	u8 *padded;
-+	int ret;
-+
-+	if (strcmp(params->encoding, "pkcs1") != 0) {
-+		ret = -ENOPKG;
-+		goto err;
-+	}
-+
-+	if (params->hash_algo) {
-+		asn1 = rsa_lookup_asn1(params->hash_algo);
-+		if (!asn1) {
-+			ret = -ENOPKG;
-+			goto err;
-+		}
-+
-+		/* Request enough space for the ASN.1 template + input hash */
-+		asn1_wrapped = kzalloc(in_len + asn1->size, GFP_KERNEL);
-+		if (!asn1_wrapped) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
-+
-+		/* Copy ASN.1 template, then the input */
-+		memcpy(asn1_wrapped, asn1->data, asn1->size);
-+		memcpy(asn1_wrapped + asn1->size, in, in_len);
-+
-+		in = asn1_wrapped;
-+		in_len += asn1->size;
-+	}
-+
-+	/* with padding: */
-+	padded = kmalloc(pub_len, GFP_KERNEL);
-+	tpm2_pad_pkcs1(in, in_len, padded, pub_len);
-+	ret = __tpm2_key_rsa_decrypt(chip, key, params, padded, pub_len, out);
-+	kfree(padded);
-+
-+err:
-+	kfree(asn1_wrapped);
-+	return ret;
-+}
-+
-+static void tpm2_key_rsa_describe(const struct key *asymmetric_key,
-+				  struct seq_file *m)
-+{
-+	struct tpm2_key_rsa *key = asymmetric_key->payload.data[asym_crypto];
-+
-+	if (!key) {
-+		pr_err("key blob missing");
-+		return;
-+	}
-+
-+	seq_puts(m, "TPM2/RSA");
-+}
-+
-+static void tpm2_key_rsa_destroy(void *payload0, void *payload3)
-+{
-+	struct tpm2_key *key = payload0;
-+
-+	if (!key)
-+		return;
-+
-+	tpm2_key_destroy(key);
-+	kfree(key);
-+}
-+
-+static int tpm2_key_rsa_eds_op(struct kernel_pkey_params *params,
-+			       const void *in, void *out)
-+{
-+	struct tpm2_key_rsa *key = params->key->payload.data[asym_crypto];
-+	struct tpm_chip *chip = tpm_default_chip();
-+
-+	if (!chip)
-+		return -ENODEV;
-+
-+	switch (params->op) {
-+	case kernel_pkey_encrypt:
-+		return tpm2_key_rsa_encrypt(key, params, in, out);
-+	case kernel_pkey_decrypt:
-+		return tpm2_key_rsa_decrypt(chip, key, params, in, out);
-+	case kernel_pkey_sign:
-+		return tpm2_key_rsa_sign(chip, key, params, in, out);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+static int tpm2_key_rsa_verify(const struct key *key,
-+			       const struct public_key_signature *sig)
-+{
-+	const struct tpm2_key_rsa *tpm2_key = key->payload.data[asym_crypto];
-+	char alg_name[CRYPTO_MAX_ALG_NAME];
-+	u8 enc_pub_key[PUB_KEY_BUF_SIZE];
-+	struct akcipher_request *req;
-+	struct scatterlist src_sg[2];
-+	struct crypto_akcipher *tfm;
-+	struct crypto_wait cwait;
-+	int rc;
-+
-+	if (!sig->digest)
-+		return -ENOPKG;
-+
-+	rc = tpm2_key_get_akcipher(sig->encoding, sig->hash_algo, alg_name);
-+	if (rc < 0)
-+		return rc;
-+
-+	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	rc = tpm2_key_rsa_encode(tpm2_key, enc_pub_key);
-+	if (rc < 0)
-+		goto err_tfm;
-+
-+	rc = crypto_akcipher_set_pub_key(tfm, enc_pub_key, rc);
-+	if (rc < 0)
-+		goto err_tfm;
-+
-+	rc = -ENOMEM;
-+	req = akcipher_request_alloc(tfm, GFP_KERNEL);
-+	if (!req)
-+		goto err_tfm;
-+
-+	sg_init_table(src_sg, 2);
-+	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
-+	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
-+	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
-+				   sig->digest_size);
-+	crypto_init_wait(&cwait);
-+	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
-+				      CRYPTO_TFM_REQ_MAY_SLEEP,
-+				      crypto_req_done, &cwait);
-+	rc = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
-+
-+	akcipher_request_free(req);
-+
-+err_tfm:
-+	crypto_free_akcipher(tfm);
-+	return rc;
-+}
-+
-+static int tpm2_key_rsa_query(const struct kernel_pkey_params *params,
-+			      struct kernel_pkey_query *info)
-+{
-+	struct tpm2_key_rsa *tk = params->key->payload.data[asym_crypto];
-+	char alg_name[CRYPTO_MAX_ALG_NAME];
-+	u8 enc_pub_key[PUB_KEY_BUF_SIZE];
-+	struct crypto_akcipher *tfm;
-+	unsigned int len;
-+	int ret;
-+
-+	ret = tpm2_key_get_akcipher(params->encoding, params->hash_algo, alg_name);
-+	if (ret < 0)
-+		return ret;
-+
-+	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	ret = tpm2_key_rsa_encode(tk, enc_pub_key);
-+	if (ret < 0)
-+		goto err_tfm;
-+
-+	ret = crypto_akcipher_set_pub_key(tfm, enc_pub_key, ret);
-+	if (ret < 0)
-+		goto err_tfm;
-+
-+	len = crypto_akcipher_maxsize(tfm);
-+
-+	info->key_size = tk->pub_len * 8;
-+	info->max_data_size = tk->pub_len;
-+	info->max_sig_size = len;
-+	info->max_enc_size = len;
-+	info->max_dec_size = tk->pub_len;
-+
-+	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT |
-+			      KEYCTL_SUPPORTS_DECRYPT |
-+			      KEYCTL_SUPPORTS_VERIFY |
-+			      KEYCTL_SUPPORTS_SIGN;
-+
-+err_tfm:
-+	crypto_free_akcipher(tfm);
-+	return ret;
-+}
-+
-+/*
-+ * Asymmetric TPM2 RSA key. Signs and decrypts with TPM.
-+ */
-+struct asymmetric_key_subtype tpm2_key_rsa_subtype = {
-+	.owner			= THIS_MODULE,
-+	.name			= "tpm2_key_rsa",
-+	.name_len		= sizeof("tpm2_key_rsa") - 1,
-+	.describe		= tpm2_key_rsa_describe,
-+	.destroy		= tpm2_key_rsa_destroy,
-+	.query			= tpm2_key_rsa_query,
-+	.eds_op			= tpm2_key_rsa_eds_op,
-+	.verify_signature	= tpm2_key_rsa_verify,
-+};
-+EXPORT_SYMBOL_GPL(tpm2_key_rsa_subtype);
-+
-+/*
-+ * Attempt to parse a data blob for a key as a TPM private key blob.
-+ */
-+static int tpm2_key_preparse(struct key_preparsed_payload *prep)
-+{
-+	struct tpm2_key_rsa *key;
-+	int ret;
-+
-+	key = kzalloc(sizeof(*key), GFP_KERNEL);
-+	if (!key)
-+		return -ENOMEM;
-+
-+	/*
-+	 * TPM 2.0 RSA keys are recommended to be 2048 bits long. Assume the
-+	 * blob is no more than 4x that.
-+	 */
-+	if (prep->datalen > 256 * 4) {
-+		kfree(key);
-+		return -EMSGSIZE;
-+	}
-+
-+	ret = tpm2_key_decode(prep->data, prep->datalen, &key->key, PAGE_SIZE);
-+	if (ret) {
-+		kfree(key);
-+		return ret;
-+	}
-+
-+	if (key->key.oid != OID_TPMLoadableKey) {
-+		tpm2_key_destroy(&key->key);
-+		kfree(key);
-+		return -EINVAL;
-+	}
-+
-+	ret = tpm2_key_rsa_extract_pub(key);
-+	if (ret < 0) {
-+		tpm2_key_destroy(&key->key);
-+		kfree(key);
-+		return ret;
-+	}
-+
-+	prep->payload.data[asym_subtype] = &tpm2_key_rsa_subtype;
-+	prep->payload.data[asym_key_ids] = NULL;
-+	prep->payload.data[asym_crypto] = key;
-+	prep->payload.data[asym_auth] = NULL;
-+	prep->quotalen = 100;
-+	return 0;
-+}
-+
-+static struct asymmetric_key_parser tpm2_key_rsa_parser = {
-+	.owner	= THIS_MODULE,
-+	.name	= "tpm2_key_rsa_parser",
-+	.parse	= tpm2_key_preparse,
-+};
-+
-+static int __init tpm2_key_rsa_init(void)
-+{
-+	return register_asymmetric_key_parser(&tpm2_key_rsa_parser);
-+}
-+
-+static void __exit tpm2_key_rsa_exit(void)
-+{
-+	unregister_asymmetric_key_parser(&tpm2_key_rsa_parser);
-+}
-+
-+module_init(tpm2_key_rsa_init);
-+module_exit(tpm2_key_rsa_exit);
-+
-+MODULE_DESCRIPTION("Asymmetric TPM2 RSA key");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 2f25ca07127b..8161758da19a 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -43,6 +43,7 @@ enum tpm2_session_types {
- /* if you add a new hash to this, increment TPM_MAX_HASHES below */
- enum tpm_algorithms {
- 	TPM_ALG_ERROR		= 0x0000,
-+	TPM_ALG_RSA		= 0x0001,
- 	TPM_ALG_SHA1		= 0x0004,
- 	TPM_ALG_AES		= 0x0006,
- 	TPM_ALG_KEYEDHASH	= 0x0008,
-@@ -271,6 +272,7 @@ enum tpm2_command_codes {
- 	TPM2_CC_NV_READ                 = 0x014E,
- 	TPM2_CC_CREATE		        = 0x0153,
- 	TPM2_CC_LOAD		        = 0x0157,
-+	TPM2_CC_RSA_DECRYPT	        = 0x0159,
- 	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
- 	TPM2_CC_UNSEAL		        = 0x015E,
- 	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
 -- 
-2.45.1
+2.30.2
 
 
