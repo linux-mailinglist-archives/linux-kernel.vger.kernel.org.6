@@ -1,113 +1,209 @@
-Return-Path: <linux-kernel+bounces-185402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15DD28CB486
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:06:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 458C18CB48A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2B31F23168
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:06:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6BE41F222F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D729148821;
-	Tue, 21 May 2024 20:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EC5148821;
+	Tue, 21 May 2024 20:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FEH9Wz1X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAu16S+8"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB631EB40
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B612B1EB40
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716321956; cv=none; b=Ea42IsDAMTXiGzo+y+2tnoy1s4Ey5A4addSqXAZKLQb1cqOX/6CgpHSChitmT3y0SPb7EZtJp3PVl7jyHSL1c1nL7A7RkZFX/iWwsNPsp+e99hU6sbxG+F+ZQebbORCJsRMG4Wp7AFZDRrONHhYpJI3E7C9y+gOfVBXUtBlpsLw=
+	t=1716321995; cv=none; b=RVBthdsF7IrrdciiFS9GMDiGmqOQ9SQidM0qiyTIUasTv7T+bFyYTEBMi/3pVspGDB/fnJg5ycHYLcOwX30q+GGVad7DqJ9/UyM9okMFKnsjcu9HAh12Xfz/Org52UIbcREVkxlg5r0qLfheUojTunqnVvtXHcgQLgpclGQDFfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716321956; c=relaxed/simple;
-	bh=n1XYT0f8NZ7GY+qdmS7k5N3aMcsAOCFt6lECER9tD1I=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=fetFT3rOLDhZD48HVwLJYe/D1vrjtbvvU6S4+0bRrMqkhAMD/m3hGb66wNGQ+3ZElDWadq396doXS6R888uPKsadj8kvKxHFg/D7L0NpRK0MkV4xx2PftlCEXrPZcW36zG8uKA+el6Gbm7ZvJLDEtK3BewHtxUwxDeHHk2x3hEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FEH9Wz1X; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716321954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kUcZx+GYvnpd0qagpN08S3w0mckRV0Hazws3JBEBOHw=;
-	b=FEH9Wz1XXIi293NSIf/plGpADF71XNQAb5nC6IJTUJmgqAq3CvbwEaVHSeG7rhFM3vFP5q
-	g7HT64B7uVgkltweLFiKDrDBeacHYAJzNVWOXTSfhySGd60Tfq8K1YwsA+QUiVXYkJni0Q
-	Yvbgm25ofYpJLNrX7ydr2SUNhw51I/I=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-504-g-ZkIjQxPvWuKP4dSTmyWw-1; Tue, 21 May 2024 16:05:52 -0400
-X-MC-Unique: g-ZkIjQxPvWuKP4dSTmyWw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BB112101A52C;
-	Tue, 21 May 2024 20:05:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 6178A51BF;
-	Tue, 21 May 2024 20:05:48 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <110d2995-f473-4781-9412-30f7f96858dd@kernel.dk>
-References: <110d2995-f473-4781-9412-30f7f96858dd@kernel.dk> <2e73c659-06a3-426c-99c0-eff896eb2323@kernel.dk> <316306.1716306586@warthog.procyon.org.uk> <316428.1716306899@warthog.procyon.org.uk>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: dhowells@redhat.com, Steve French <stfrench@microsoft.com>,
-    Jeff Layton <jlayton@kernel.org>,
-    Enzo Matsumiya <ematsumiya@suse.de>,
-    Matthew Wilcox <willy@infradead.org>,
-    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
-    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
+	s=arc-20240116; t=1716321995; c=relaxed/simple;
+	bh=g0a7jYdSW9M5tWeX6z9IaFT24DgjNiPY8aicptuhv6U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TSJqScx59TB+9EqdnK1K1DiMWeSn6Zb2YLuetiVqLEzN0++IUWPXMhs7SIsfYY3OPXFYUv+TpStPgCuBGzorqxyiMsGBlPEgHQBvuboIOW2S/PUfvJCM6OUt5atqO1xQPVjpoEz1GKW7hE61g21F/1dLJHmTwV4HumuMFxkqxpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eAu16S+8; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-df4d7babf3bso15144276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716321992; x=1716926792; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2MR5DjSv8xW5VPd+KWcp/T0DpzQM38Nn27tvEAji7BQ=;
+        b=eAu16S+8zfoCltmdX/n5NPWhq5vjoWJKps1I0UV23Un5n89VgcEurGj/w7NsUS7YMj
+         AVmBKHMG1IoG/b6mKMcGD7GGW3aKLABZcOWGftrSpUltSHG9Z/+frWjvM2j6gpfili9y
+         C0j0x2/jAyHhSBaHFExhCXECCnG4WnEq/UF5cA9WZvDG2O4TUf3StAObfuNAwUP9+PIQ
+         BmMOSygCIE4c1hKP/NQVogbzauKvVy338vE+0bQf8/c/sINbJ9t2wYIsKKjpVGQ9zl76
+         UEOr9bet/jnYbBwIAVD1292fF9aHOJT2zUn3dOboWTQey3aumgnw1Mj8tAM7EXj4FYOp
+         EpCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716321992; x=1716926792;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2MR5DjSv8xW5VPd+KWcp/T0DpzQM38Nn27tvEAji7BQ=;
+        b=JOmM65eoWPTAHX2gN7BwjW7daFVhAkeJNkKQph2Ujvd2e+gGOYIehrpx505WJocYKl
+         SS215Kr2+ez9PTuJorwApAZDIQReZoiYzYFSGxiafxZYcRimcbP/vSI70r1aZ4pMivAU
+         MtyP3IZ7bI9NOuJfpCB033kg0zLWhUFjpEgEixr2T+q6MMz9IObHxTH4520wd/EJvVRZ
+         Qld0vmi6ca5DPp2Gewxc9cbzgS8MRRYoYhVRMKgqEBEA9jhIKObTxzEc5GFFC/PDfmlq
+         wDZ5wcd2pnDwcTOJ6l27+iTWKw2VOVlBrzPIV1NJ2qamvAYVk4AajaJLc2N7zT8TH808
+         TljQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUD0qI7qpWmDSmEMXwrE8B98rtbjV1aPHy6HXNZ2XHXt5aAIHm99FcyGr5AX2eazbdjLzhLPWtGED7sz9RZklR1TCdcvAmuapULHsed
+X-Gm-Message-State: AOJu0YxkPtY8L2s3kdrWLPSNszDU+FcuNoHX4+to92u8g+Vzotdy8/mm
+	pBpmFO97XPBATWghCivReKMDT1vbvU5RnDzxDS5+sJbTOfy1VlRVXZZenTXrMNRDaPv4bfkg84A
+	98dM2da/DgpFxgLl/CBt6+36Ru3M=
+X-Google-Smtp-Source: AGHT+IH9ydijh7ECa75vs0HHHE6Ew1epoA/bhjnzTRRSWClpr4GNuvnDgBkbRVrKvtoiMy0L/6EgqNr4XwkjbQ2Fz2Q=
+X-Received: by 2002:a05:6902:1587:b0:df4:8c19:1da6 with SMTP id
+ 3f1490d57ef6-df4e0ebdadbmr106482276.6.1716321992557; Tue, 21 May 2024
+ 13:06:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <322228.1716321947.1@warthog.procyon.org.uk>
+References: <fa885eca-d7e6-415a-8a08-9103b002c6bb@amd.com> <20240521051140.30509-1-rinoandrejohnsen@gmail.com>
+ <17782a6e-db84-4c20-874a-342b9655ffc5@amd.com>
+In-Reply-To: <17782a6e-db84-4c20-874a-342b9655ffc5@amd.com>
+From: =?UTF-8?Q?Rino_Andr=C3=A9_Johnsen?= <rinoandrejohnsen@gmail.com>
+Date: Tue, 21 May 2024 22:06:21 +0200
+Message-ID: <CAACkh=-B-jH6g7KY7Nn_7Y_+gHPQ7G5Z5AZ0=a=_ifjcmsorcw@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/amd/display: Add pixel encoding info to debugfs
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: alexander.deucher@amd.com, Harry Wentland <harry.wentland@amd.com>, 
+	Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Aurabindo Pillai <aurabindo.pillai@amd.com>, Hersen Wu <hersenxs.wu@amd.com>, 
+	Hamza Mahfooz <hamza.mahfooz@amd.com>, Wayne Lin <wayne.lin@amd.com>, 
+	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>, Fangzhi Zuo <jerry.zuo@amd.com>, 
+	Tom Chung <chiahsuan.chung@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 21 May 2024 21:05:47 +0100
-Message-ID: <322229.1716321947@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-Jens Axboe <axboe@kernel.dk> wrote:
+What is already there in debugfs is 'bpc' and 'colorspace', but not
+the pixel encoding/format.
+I have searched high and low for that to be able to verify that my
+monitor and computer are using my preferred combination of all those
+three values.
 
-> On 5/21/24 9:54 AM, David Howells wrote:
-> > Jens Axboe <axboe@kernel.dk> wrote:
-> > =
+I do think it should be available as a standard DRM CRTC property, but
+for the time being, I figured that a simple debugfs property would be
+sufficient for time being.
 
-> >> However, I'll note that BDP_ASYNC is horribly named, it should be
-> >> BDP_NOWAIT instead. But that's a separate thing, fix looks correct
-> >> as-is.
-> > =
+Rino
 
-> > I thought IOCB_NOWAIT was related to RWF_NOWAIT, but apparently not fr=
-om the
-> > code.
-> =
 
-> It is, something submitted with RWF_NOWAIT should have IOCB_NOWAIT set.
-> But RWF_NOWAIT isn't the sole user of IOCB_NOWAIT, and no assumptions
-> should be made about whether something is sync or async based on whether
-> or not RWF_NOWAIT is set. Those aren't related other than _some_ proper
-> async IO will have IOCB_NOWAIT set, and others will not.
-
-Are you sure?  RWF_NOWAIT seems to set IOCB_NOIO.
-
-David
-
+On Tue, May 21, 2024 at 9:04=E2=80=AFPM Christian K=C3=B6nig
+<christian.koenig@amd.com> wrote:
+>
+> Am 21.05.24 um 07:11 schrieb Rino Andre Johnsen:
+> > [Why]
+> > For debugging and testing purposes.
+> >
+> > [How]
+> > Create amdgpu_current_pixelencoding debugfs entry.
+> > Usage: cat /sys/kernel/debug/dri/1/crtc-0/amdgpu_current_pixelencoding
+>
+> Why isn't that available as standard DRM CRTC property in either sysfs
+> or debugfs?
+>
+> I think the format specifiers should already be available somewhere there=
+.
+>
+> Regards,
+> Christian.
+>
+> >
+> > Signed-off-by: Rino Andre Johnsen <rinoandrejohnsen@gmail.com>
+> > ---
+> >
+> > Changes in v2:
+> > 1. Do not initialize dm_crtc_state to NULL.
+> > ---
+> >   .../amd/display/amdgpu_dm/amdgpu_dm_debugfs.c | 47 ++++++++++++++++++=
++
+> >   1 file changed, 47 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c =
+b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+> > index 27d5c6077630..4254d4a4b56b 100644
+> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+> > @@ -1160,6 +1160,51 @@ static int amdgpu_current_colorspace_show(struct=
+ seq_file *m, void *data)
+> >   }
+> >   DEFINE_SHOW_ATTRIBUTE(amdgpu_current_colorspace);
+> >
+> > +/*
+> > + * Returns the current pixelencoding for the crtc.
+> > + * Example usage: cat /sys/kernel/debug/dri/0/crtc-0/amdgpu_current_pi=
+xelencoding
+> > + */
+> > +static int amdgpu_current_pixelencoding_show(struct seq_file *m, void =
+*data)
+> > +{
+> > +     struct drm_crtc *crtc =3D m->private;
+> > +     struct drm_device *dev =3D crtc->dev;
+> > +     struct dm_crtc_state *dm_crtc_state;
+> > +     int res =3D -ENODEV;
+> > +
+> > +     mutex_lock(&dev->mode_config.mutex);
+> > +     drm_modeset_lock(&crtc->mutex, NULL);
+> > +     if (crtc->state =3D=3D NULL)
+> > +             goto unlock;
+> > +
+> > +     dm_crtc_state =3D to_dm_crtc_state(crtc->state);
+> > +     if (dm_crtc_state->stream =3D=3D NULL)
+> > +             goto unlock;
+> > +
+> > +     switch (dm_crtc_state->stream->timing.pixel_encoding) {
+> > +     case PIXEL_ENCODING_RGB:
+> > +             seq_puts(m, "RGB");
+> > +             break;
+> > +     case PIXEL_ENCODING_YCBCR422:
+> > +             seq_puts(m, "YCBCR422");
+> > +             break;
+> > +     case PIXEL_ENCODING_YCBCR444:
+> > +             seq_puts(m, "YCBCR444");
+> > +             break;
+> > +     case PIXEL_ENCODING_YCBCR420:
+> > +             seq_puts(m, "YCBCR420");
+> > +             break;
+> > +     default:
+> > +             goto unlock;
+> > +     }
+> > +     res =3D 0;
+> > +
+> > +unlock:
+> > +     drm_modeset_unlock(&crtc->mutex);
+> > +     mutex_unlock(&dev->mode_config.mutex);
+> > +
+> > +     return res;
+> > +}
+> > +DEFINE_SHOW_ATTRIBUTE(amdgpu_current_pixelencoding);
+> >
+> >   /*
+> >    * Example usage:
+> > @@ -3688,6 +3733,8 @@ void crtc_debugfs_init(struct drm_crtc *crtc)
+> >                           crtc, &amdgpu_current_bpc_fops);
+> >       debugfs_create_file("amdgpu_current_colorspace", 0644, crtc->debu=
+gfs_entry,
+> >                           crtc, &amdgpu_current_colorspace_fops);
+> > +     debugfs_create_file("amdgpu_current_pixelencoding", 0644, crtc->d=
+ebugfs_entry,
+> > +                         crtc, &amdgpu_current_pixelencoding_fops);
+> >   }
+> >
+> >   /*
+>
 
