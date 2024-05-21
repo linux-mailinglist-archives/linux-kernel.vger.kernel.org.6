@@ -1,115 +1,137 @@
-Return-Path: <linux-kernel+bounces-185430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45FAF8CB4D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D898CB4D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95D91F22D8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:45:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2ED41F22DBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371951494D8;
-	Tue, 21 May 2024 20:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E154D1494C5;
+	Tue, 21 May 2024 20:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SJ7PGXSE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzYYGIFO"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AA41494B9
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A1DD51E;
+	Tue, 21 May 2024 20:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716324303; cv=none; b=e4NKqgY7AAQLoay0tKBUkC705gd2myPsU+r6zI8YCmAHlIF/jpo0cdcGupHa/W20B3IGuihx7EwbTAgn4yn8CHhDrb8ArBr/ALQqEQuUrV05X8dd7eKmGagiydoVLArxuRn7A6Vco7K2CjpHtIJvn3sapGnCdXwn2XclwlR6qwo=
+	t=1716324415; cv=none; b=rRIM+ONINqvkN/QNVQSK39nldnYfxvc152Oa3ksupPghLEbgzxMwPAlmoAJ0xzjVrBHiGohVv5RoGLOThyhSa+HvppeJbVT/M3IxrhoHnGmFaziw7U0gRCK3uMqBSkDUtjonsHSzjjwi1x8qoHVkAuNQdOM67tw2YwzhTbpbrHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716324303; c=relaxed/simple;
-	bh=TlKVCaoYqRvYNK3pgRpJ9fAW5uxl8oMMpoPVJEwAYqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gjabNqbrQYN0Jy9rXb1d27n5HjIAYQNQ75DBg+AdvnRsa8jInDFa9zhfue+eKxh0LNCpuyfGZNAAhpmLz2H6bwMYI+DpDp75KRVc0/5x0lTWKBAG/B0NS6mvWcRgSehZCake4oW52DsHDkSftAdO8Vi//gAk0gjl9mc5vIhkP+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SJ7PGXSE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716324300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N0TR9kM7X3WlmPK2GrezdTol6v80HI4XlreEoiOrbJM=;
-	b=SJ7PGXSEY5IzDW2Gkxeea/ZuUxb8LjbVrx9fdfrkjHiXu592DbIGo6WFjMoFLzIGEN0hwK
-	H6VNrnwh2ob9QX1IovZiN24PCEqS09zxFMeKPEW94fpUwsXOiUGSUatVU8VK3tMXT7I7dx
-	bYy4JBiIOp/w/kpytdb7A0Yw2rmdVC4=
-Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com
- [209.85.161.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-489-dbu0RH4qOf2MdATu7Re5mw-1; Tue, 21 May 2024 16:44:59 -0400
-X-MC-Unique: dbu0RH4qOf2MdATu7Re5mw-1
-Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5b2b793a26aso3322657eaf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:44:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716324298; x=1716929098;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1716324415; c=relaxed/simple;
+	bh=RwCS/BKSDM1f7z64QrAXpA4rfh3F6s6yn7di6QgXgHU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LoywmstoGkXFNky7ttAGyJnoHlV7sWDhVnsw0uujOfEu+5f+RCCLX+Ih+2Q/s4F57bS2DUEZKdSyER9Ch6ye/y9PuUn5eHqGTGEqqdRvod35T2MinO1a7ZPQc1BTLGszpLXyl/HWAQzhz8Rbnpp3XI0bxJKZ9Pw8KULfLconxts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AzYYGIFO; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4200ee78f35so26401285e9.1;
+        Tue, 21 May 2024 13:46:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716324412; x=1716929212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N0TR9kM7X3WlmPK2GrezdTol6v80HI4XlreEoiOrbJM=;
-        b=ojZPM5yin50eK+y5e3Xq81VV3CdfvpLtfzpZ0npejAL9zjcEGX74z1If0b+oJN9QxM
-         5LrejKzAbYjaf0e7maTpbbNBcDRE61ZKFI/YoHief+E4hS+GXkjiOxkjszDFu0XfFN+Z
-         NenRUDA1ZGfQ+PoC2evYGpRxr8fUt4JRcniQ4uSytb1ahEuKlw3JVRl0pcSPNI73qXdZ
-         j9PZMDmuZdQeTdn6rwZAI6Wo2sV/CtQYATQMJKE6ZJhv/c0ceRkTfKwRvPm1sla87WVs
-         fFq/UrnVeW6oP3l3hueupTlVnHYTf/T+aGY7FD+qXNuII8dzEQfE/Xr+KDoUw6OTwqYS
-         M1GA==
-X-Forwarded-Encrypted: i=1; AJvYcCWIUCPEzRvjFSDtI6QDFHNOIbBP6mnguYqtSyW+sT59p1RPV/BvoDpIA9cv89zWPUzW+FPKZo2YHUhlTE0WetvnFVAaVunFalW0csB3
-X-Gm-Message-State: AOJu0Yzcfd68T9h1GF+KDnkAVU47PPRGGrxFuwSutdWP6vAIKnFXyxlz
-	FKEmIj4/BZVCGrlEjlaSO+zRcQRTMBGTLqel/GfpON3zXZNo9L5f8gkAEs1mHpJu5FUHli+Ag8g
-	sE4ZObmzy8JWMFfagY5sn6yGhziq3NcxYGUJ/g2AnL8/lE7FWx/kTTb6/GKdWqkW8EW4P0g==
-X-Received: by 2002:a05:6830:7203:b0:6f0:52fb:c693 with SMTP id 46e09a7af769-6f666f78dd4mr150097a34.1.1716324297873;
-        Tue, 21 May 2024 13:44:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFAl3W1EYaiiKZhrcoPIjVfq5uhLIrOvZE99H/jBbHteoo4w+oTXp4PNu54t8HyT9oBCbrbFg==
-X-Received: by 2002:a05:6830:7203:b0:6f0:52fb:c693 with SMTP id 46e09a7af769-6f666f78dd4mr150029a34.1.1716324295821;
-        Tue, 21 May 2024 13:44:55 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792e564e4dbsm915264585a.82.2024.05.21.13.44.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 13:44:55 -0700 (PDT)
-Date: Tue, 21 May 2024 16:44:53 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>, axelrasmussen@google.com,
-	David Hildenbrand <david@redhat.com>, nadav.amit@gmail.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: 6.10/bisected/regression - commit 8430557fc584 cause warning at
- mm/page_table_check.c:198 __page_table_check_ptes_set+0x306
-Message-ID: <Zk0HxVODITGKqYCw@x1n>
-References: <CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com>
+        bh=RwCS/BKSDM1f7z64QrAXpA4rfh3F6s6yn7di6QgXgHU=;
+        b=AzYYGIFOfIYAdWflhdP3WFQQvZ6kfM1c+3bnsZWrq4ctQ58568thTSjjhyErKGFlYq
+         U+W0N9Wg456aeUUJtiOZGGQdnC3ip7xnpiBHkm0kFuJPSf9U0ex/w9qEULKpTUle1IOI
+         47xc3FIlhCkWxdCdJSe3WEJqiCf5DkTPkqN09Mz7U/dXPtJy9BA1qlcGRmkJbaoZdcvT
+         svoZvmw+TCa2U0lXxSk9M2RmVR4hijnn3e5+BHEDHA1Y1JRGipUtQS0zKboqFUMD45Rn
+         zRO0rP5e0ydoxuj6eYmejr/QeyxhHmRrDw6ZPNdJYfDbhwzVo3C/Wyp/E1auBx+bezwN
+         cwQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716324412; x=1716929212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RwCS/BKSDM1f7z64QrAXpA4rfh3F6s6yn7di6QgXgHU=;
+        b=D1cnBOorONL0sYJbE7/hD/B6qVoc0vCSG+QGIVRCensIvU8Lb4zGli5fJQNOSAcUAf
+         K1UAkJ4uIwJUisRntLv/84XEp6mWLVxZEll1fHNj1rhu8NsQFM8O/6XJ7ayqpT+a1d0M
+         qiO489QzEZ3gd8g8DVn3l7Brl1/35dqZIFN24Y2Gt7MNF4Ri+OwCT+iYYnWwe7aDckMD
+         OwNpNfJLQfM013FwvNfdakL2iekLukfQqAodiigp4kgg4nMumZDfDmRbhM1cCdhL4aVE
+         /YYSZ8T+mrQAayqpX+j0pyo4rtV4uLPAdJO8UyXki3guDRFu8qPZ5YI6XrtrZ/Asilf5
+         5/dA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNrivzw2bCR/W+xI+vK021QcnIlBdOhJ/9EJpgCW5JyEZBXAlXe1Exru8STedSGh+2BJ7YKLcdSA/RFlpus6QTVqJb4qKuMst79H9Gt1Q1549UjMz0XnY1U+b6eeG4GjGtMwbwF9Pe
+X-Gm-Message-State: AOJu0Yz/qCZJuvQELUmMkTflmyo7NBRIPxRZLWtLpV51Zm/JQ3bTfTPq
+	NyZzeIAOkHVHw2STc1tFAOCLlw5jA11iM6yjJLKUegkd6rhyehtMAZpiwMIvbYKl8TlViMRPIOX
+	6luJGd+MAfid4wtg6zIXaVfBmu8Q=
+X-Google-Smtp-Source: AGHT+IGcLrfBXeHBA92XbgnHbiKtGAUgfZhqxUuqLn9hCITg0wXgeu05E4oKOYBsbBo34+QofYiTzipnKVFp8jKBeXY=
+X-Received: by 2002:a7b:c30b:0:b0:41f:bcd7:303f with SMTP id
+ 5b1f17b1804b1-420fd30e480mr156395e9.16.1716324411817; Tue, 21 May 2024
+ 13:46:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com>
+References: <20240520205856.162910-1-andrey.konovalov@linux.dev> <CACT4Y+bO03Efd48XW7V6F2D9FMUoWytV8L9BL8OK2DR8scJgmQ@mail.gmail.com>
+In-Reply-To: <CACT4Y+bO03Efd48XW7V6F2D9FMUoWytV8L9BL8OK2DR8scJgmQ@mail.gmail.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Tue, 21 May 2024 22:46:40 +0200
+Message-ID: <CA+fCnZcd2nJ6XLmJcPfwVJf9wUcHqWjYnafDdV8pmm3HpjY7Wg@mail.gmail.com>
+Subject: Re: [PATCH] kcov, usb: disable interrupts in kcov_remote_start_usb_softirq
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: andrey.konovalov@linux.dev, Alan Stern <stern@rowland.harvard.edu>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marco Elver <elver@google.com>, 
+	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Tejun Heo <tj@kernel.org>, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 01:17:19AM +0500, Mikhail Gavrilov wrote:
-> Hi,
+On Tue, May 21, 2024 at 6:35=E2=80=AFAM Dmitry Vyukov <dvyukov@google.com> =
+wrote:
+>
+> On Mon, 20 May 2024 at 22:59, <andrey.konovalov@linux.dev> wrote:
+> >
+> > From: Andrey Konovalov <andreyknvl@gmail.com>
+> >
+> > After commit 8fea0c8fda30 ("usb: core: hcd: Convert from tasklet to BH
+> > workqueue"), usb_giveback_urb_bh() runs in the BH workqueue with
+> > interrupts enabled.
+> >
+> > Thus, the remote coverage collection section in usb_giveback_urb_bh()->
+> > __usb_hcd_giveback_urb() might be interrupted, and the interrupt handle=
+r
+> > might invoke __usb_hcd_giveback_urb() again.
+> >
+> > This breaks KCOV, as it does not support nested remote coverage collect=
+ion
+> > sections within the same context (neither in task nor in softirq).
+> >
+> > Update kcov_remote_start/stop_usb_softirq() to disable interrupts for t=
+he
+> > duration of the coverage collection section to avoid nested sections in
+> > the softirq context (in addition to such in the task context, which are
+> > already handled).
+>
+> Besides the issue pointed by the test robot:
+>
+> Acked-by: Dmitry Vyukov <dvyukov@google.com>
+>
+> Thanks for fixing this.
 
-Hi,
+Thanks for the ack!
 
-> I also attach below a full kernel log and build config.
-> 
-> My hardware specs: https://linux-hardware.org/?probe=b34f0353df
-> 
-> Peter, can you look please.
+> This section of code does not rely on reentrancy, right? E.g. one
+> callback won't wait for completion of another callback?
 
-Did you forget to attach the kernel config?  If so, please attach it, I'll
-try that, as my local config won't reproduce with CONFIG_DEBUG_VM_PGTABLE=y.
+I think all should be good. Before the BH workqueue change, the code
+ran with interrupts disabled.
 
-Thanks,
+> At some point we started seeing lots of "remote cover enable write
+> trace failed (errno 17)" errors while running syzkaller. Can these
+> errors be caused by this issue?
 
--- 
-Peter Xu
+This looks like a different issue. I also noticed this when I tried
+running a log with a bunch of USB programs via syz-execprog. Not sure
+why this happens, but I still see it with this patch applied.
 
+Thanks!
 
