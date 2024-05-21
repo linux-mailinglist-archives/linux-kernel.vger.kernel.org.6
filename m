@@ -1,217 +1,120 @@
-Return-Path: <linux-kernel+bounces-185230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF9F8CB277
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:50:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04C728CB278
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F43A1F2295E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:50:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DBF81C21522
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47217BB1B;
-	Tue, 21 May 2024 16:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB987710F;
+	Tue, 21 May 2024 16:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bhKR62PI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AkIxJPC7"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0058128DA0;
-	Tue, 21 May 2024 16:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E973C2C181
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 16:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716310209; cv=none; b=bKlH94vAVBy6oJ+Gx0MLD9+Z8NVdAXzlyjyJckyky8aYrSiOqCUKVNY2JFfxvKxjvqUj2rOZvTQoF/Tf+214zDjP92i9t+Al+Z7SvjEMu7Al447UCaRSavNNsGGXMj1QluTbjhhwT0pYQ5BcDOxShkAbaWmQdzGd19QS7d1gaY4=
+	t=1716310281; cv=none; b=mg8BMyzl3OFySwB9k5Lce6C4DBsLyBbpSZQBexeJgSCSzFY/0joVQO8Qjz3EGIl19EJPTxmlHxMof0U3OmjRjyqAJAecYBnZCSN6xCN8rmu8LzDkVIwV7ixdwKdD6VH67OYB5AS1qdcE6hClMBbNq3muWqiBFk2bCv0wC6k5Hew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716310209; c=relaxed/simple;
-	bh=aX8ee/F7iuxv4JaXn0INGjz6humhOGXV3AkccPo5LiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d3CWmylMzkUd8KXSte5Y2faRRnmUFXS5xTctjpri4d3kOAFzkYK/fDLGbM5dLVMkJ0DMDYbK7qG8oDUPotXtRVVip0KMzYpUF915EVceuLAOnAXTcNfb3u0GO78S1gbaQYxg9V7X7ScEYyvFDvseJ+QNf2BA7gGoC3IE+GjnaHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bhKR62PI; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716310208; x=1747846208;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aX8ee/F7iuxv4JaXn0INGjz6humhOGXV3AkccPo5LiQ=;
-  b=bhKR62PI93Bp+R131V3ZU13XRcEO1rPZAqd+r/8gFFsAyiKKIwLkrZ32
-   u7pxfKCYZf2CkCrog/Miebvpwph+47rsO/dDDzFFXxW6UYW0ssdG/txtv
-   nl990KMk4HBrEA8laVF2MOYF6X/5hF+JbhTxik7P282B3w8LheUT446cC
-   TtLEz2QqO+WEsQENlTGPi3TBm121gSKKlRuHzMKHC3AQF9rDPQqjrm0S9
-   t/WOjLRfreoxzsene/R6ixO1mYnK7SI43YOPbGrbfHffFPV5++0NT6lxm
-   e1msnHrhIbA/UtkdEj0DJvtFGNG0aoqIe3zN7hXO0qUG4z4Sq1P9VGImD
-   g==;
-X-CSE-ConnectionGUID: DNiqadI1Q36FS2SwdpfinQ==
-X-CSE-MsgGUID: i5DX3DfFTtSMHHUrETxnUQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12370418"
-X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
-   d="scan'208";a="12370418"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 09:50:08 -0700
-X-CSE-ConnectionGUID: IWaBplqBTrCn4gS1fIWOeQ==
-X-CSE-MsgGUID: HDnW4Zw3TUOChCy9F83uTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
-   d="scan'208";a="33596113"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 09:50:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s9Sgb-00000009iWD-1uSr;
-	Tue, 21 May 2024 19:50:01 +0300
-Date: Tue, 21 May 2024 19:50:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Laura Nao <laura.nao@collabora.com>,
-	mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
-	brgl@bgdev.pl, kernel@collabora.com, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"kernelci.org bot" <bot@kernelci.org>
-Subject: Re: [PATCH] gpiolib: acpi: Move ACPI device NULL check to
- acpi_can_fallback_to_crs()
-Message-ID: <ZkzQuWmLZGhIQl-2@smile.fi.intel.com>
-References: <20240513095610.216668-1-laura.nao@collabora.com>
- <ZkHlLLLoagsYlll7@smile.fi.intel.com>
- <b20b567f-ce96-45e8-aab7-29768f8313f5@leemhuis.info>
- <Zkyo6DL7NQltLLNr@smile.fi.intel.com>
- <c10a77b6-e7b1-43c0-af38-79092eeb34f1@leemhuis.info>
- <Zky1UgJSf_ybRMOI@smile.fi.intel.com>
- <4f1bcc8b-1795-4e3c-90a6-742cd8443396@leemhuis.info>
- <Zky9bovo_99LwDfY@smile.fi.intel.com>
+	s=arc-20240116; t=1716310281; c=relaxed/simple;
+	bh=bjhkqCLwFh5x4/YQNYhbvCnOXQQwYWrnkQRg+dc4jVc=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=YdKtLjQUfRt5ImeQm1GspfKrQxgOpD3y1rHlhKvGvyCqVlG8b+I01GqTWv39zzZ0rjdQV3q1QCvnnEnqcg7lXHW2+LCBHXakHxj7bp2E1aRX/8gjsimD0xMHUPOHaNdz6HqtCvyPT1UugakvQRTH/2Olf3SoxllGjQ7T6I61ZWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AkIxJPC7; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-de59e612376so18921145276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:51:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716310278; x=1716915078; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dTzCtBYqo5qPAcuxKyv6ANbzvYtg0N+sVJ3rcLshDVM=;
+        b=AkIxJPC70HmEjjUS3NF1ZSWTj2RcmTW1Hj86YylWMN+Ig+oNfZRZI84xCSzms6w0+4
+         CoWVlpQvzzZJuowDVt/ESbkP0x7rj0MleC5AlOZQGpXg96qhg73jp3WRUB7bKhCpOdgV
+         tJjDZ7B7MwbTawxFTC1M3cymtb4eDpFyufmqO2XWTmAt5kwzSiRntF/ROOE6mtV6y6rN
+         N2QfUtrtxzAMN+klzEG5FT8dTWhOJogLAJa714M8QwE2e1Dfpiowdvv6NgyjumC6wJ21
+         EAl1bjRG2le8lFzUbvqVuSjm30Hsqoq0qkSohoQ6Oaczp4UjXJBKzhKTdBwfrSb2ZsCt
+         M1Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716310278; x=1716915078;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dTzCtBYqo5qPAcuxKyv6ANbzvYtg0N+sVJ3rcLshDVM=;
+        b=uyUxeAjTqdwA8PFfSWD+u7Zrs5PNztyXVr6+fgPLvNOsjgtKpWEUP7oS1KDbIledQ+
+         VfrpNjX0nHYCn2ke0N2ObvyeeidJslH6mzysjwHGmWq9O7y8drbf8BaAGmq4w/7WPgdv
+         e52roRcXsI4XrJA/CDp/FHDeUiETWWBnuyV1mpJAFUlr/X6Gd66gsnnDwjVuerGpWG5D
+         W/gsSRjoALuvBa24wDzCpvyc8FJH4NZ82QV696qZatzZS1oc15E31cIy1qja3VvFdD+W
+         zCRAg6Lp7K+lCI56F8Gg3mH1zLJ6WnYIFvWUIDE7J7Q0DbmY4NLA5kNvzQo9YGW5u2Ke
+         iyWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF3yo7kEjRl/4nUqgmZS+zp30dcddiB1ejUliGByKUI0LZiE55u29mKFbDwveczb7D6wr98lV6kppRaOeGPuocFsPPGuv7iCMO/TZA
+X-Gm-Message-State: AOJu0YzfbGeQQBKi3ZKrDplEusmBZew9jOjTEtLsyycKFj2my5vK3ApE
+	vmANu3JQAew5t1XKUzz235KCfMami1sTFEYBL0z795FRdiIm3qj/oqiStHa5WoVnb8C0f9UcQE7
+	pHDDHHA==
+X-Google-Smtp-Source: AGHT+IEmMr0Lb0d9RryWzApjev8jwTAxZLwt8l5tfrfEm3fDSReYbTbe5ajh9TwlpM6kOzRv5E2xItYNLzXm
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:8533:b29a:936d:651a])
+ (user=irogers job=sendgmr) by 2002:a25:8211:0:b0:deb:9d56:b498 with SMTP id
+ 3f1490d57ef6-dee4f321076mr2428304276.13.1716310277923; Tue, 21 May 2024
+ 09:51:17 -0700 (PDT)
+Date: Tue, 21 May 2024 09:51:06 -0700
+Message-Id: <20240521165109.708593-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zky9bovo_99LwDfY@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
+Subject: [PATCH v1 0/3] Fix and improve __maps__fixup_overlap_and_insert
+From: Ian Rogers <irogers@google.com>
+To: "Steinar H . Gunderson" <sesse@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 21, 2024 at 06:27:42PM +0300, Andy Shevchenko wrote:
-> On Tue, May 21, 2024 at 05:14:07PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> > On 21.05.24 16:53, Andy Shevchenko wrote:
-> > > On Tue, May 21, 2024 at 04:26:32PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> > >> On 21.05.24 16:00, Andy Shevchenko wrote:
-> > >>> On Tue, May 21, 2024 at 12:01:17PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> > >>>> On 13.05.24 12:02, Andy Shevchenko wrote:
-> > >>>>> On Mon, May 13, 2024 at 11:56:10AM +0200, Laura Nao wrote:
+Fix latent unlikely bugs in __maps__fixup_overlap_and_insert.
 
-..
+Improve __maps__fixup_overlap_and_insert's performance 21x in the case
+of overlapping mmaps. sesse@google.com reported slowness opening
+perf.data files from chromium where the files contained a large number
+of overlapping mappings. Improve this case primarily by avoiding
+unnecessary sorting.
 
-> > >>>>> Thank you, I'll add this to my tree as we have already the release happened.
-> > >>>>> I will be available after v6.10-rc1 is out.
-> > >>>>
-> > >>>> Hmm, what exactly do you mean with that? It sounds as you only want to
-> > >>>> add this to the tree once -rc1 is out -- which seems likely at this
-> > >>>> point, as that patch is not yet in -next. If that's the case allow me to
-> > >>>> ask: why?
-> > >>>
-> > >>> Because:
-> > >>>
-> > >>> - that's the policy of Linux Next (do not include what's not supposed to be
-> > >>>   merged during merge window), Cc'ed to Stephen to clarify, it might be that
-> > >>>   I'm mistaken
-> > >>>
-> > >>> - the process of how we maintain the branches is to have them based on top of
-> > >>>   rc1 (rarely on other rcX and never on an arbitrary commit from vanilla
-> > > 
-> > > Note, besides above reasons the one is (was in this case as you noticed)
-> > > to wait until dependencies laid down in the upstream.
-> > 
-> > Well, that can be a reason, sure. But I still wonder if Linus would have
-> > preferred to get 49c02f6e901c and this fix for it in the same pull.
-> > Sure, adding this fix would have been a late addition, but when it is a
-> > fix and mentioned in the PR that from what I can see is no problem at
-> > all for him.
-> 
-> 
-> > >> Something like that is what I feared. And yes, some of that is true. But
-> > >> the patch in this thread contains a Fixes: tag for commit 49c02f6e901c
-> > >> which was merged during this merge window -- and that patch thus ideally
-> > >> should (ideally after some testing in -next) be merge during the merge
-> > >> window as well, to ensure the problem does not even hit -rc1.
-> > > 
-> > >> That's something a lot of subsystem master all the time. The scheduler
-> > >> for example:
-> > >>
-> > >> https://git.kernel.org/torvalds/c/6e5a0c30b616bfff6926ecca5d88e3d06e6bf79a
-> > >> https://git.kernel.org/torvalds/c/8dde191aabba42e9c16c8d9c853a72a062db27ee
-> > >>
-> > >> Other subsystems (perf, x86, net) do this, too. Not sure how they
-> > >> exactly do that with git; I think some (most?) have a dedicated -fixes
-> > >> branch (based on master and fast-forwarded after Linus merged from it)
-> > >> for that is also included in next in parallel to their "for-next"
-> > >> branch.  Stephen will know for sure.
-> > > 
-> > > This part of the kernel is not so critical as scheduler, but in general I agree
-> > > that sooner we get this in is better.
-> > 
-> > Side note: with all those CIs that "sooner" became more important I'd
-> > say, as I frequently see multiple CI systems running into and bisecting
-> > problems -- which humans then look into and report, which is a waste of
-> > time.
-> 
-> Oh, yes, our processes are completely non-ideal. Once I tried to micro-optimize
-> the way of Cc'ing people for the patches to avoid waste of resources and you
-> know what? This is a dead end. I gave up, so I don't care anymore and don't
-> buy this argument anymore. If people are serious about this, they should be
-> serious consistently.
-> 
-> For your reference:
-> 20240423132024.2368662-1-andriy.shevchenko@linux.intel.com
-> 
-> > > The other thing, that we have 3 regressions
-> > > now for very this code. And some of them are still under discussions.
-> > > 
-> > > Wouldn't be better to gather all fixes and send a bunch via proper process
-> > > after rc1? 
-> > 
-> > Depends on the situation. As a general approach I'd say no, but there
-> > definitely can be situations where that is wise.
-> > 
-> > > This will ensure that everything we know about is covered properly
-> > > and processed accordingly,
-> > > 
-> > > In broader way, the process should be amended if you want a fast track for
-> > > the patches like this. I'm on the second level here, Bart is the maintainer
-> > > who sends PRs directly to Linus. Do we have anything like this?
-> > 
-> > Pretty sure Linus wants maintains to just fast-track things when needed
-> > by sending an additional PR; he multiple times said that this is not a
-> > problem.
-> > 
-> > But there is a way to fast track things: just ask Linus to pull a patch
-> > from the list (e.g. in a reply to the patch while CCIng tim). He
-> > multiple times said this is no problem for him, unless it becomes the
-> > norm. This is documented in
-> > Documentation/process/handling-regressions.rst /
-> > https://docs.kernel.org/process/handling-regressions.html
-> 
-> "For urgent regressions, consider asking Linus to pick up the fix straight from
-> the mailing list: he is totally fine with that for uncontroversial fixes.
-> Ideally though such requests should happen in accordance with the subsystem
-> maintainers or come directly from them."
-> 
-> The first thing I'm not so comfortable with is that Bart as a subsystem
-> maintainer will be by-passed. The second one, is the metrics of urgency.
-> I can assume that something from a TIP tree is really urgent and they
-> even have established fast track for ages. But why do you think this fix
-> is of the same level of urgency? I haven't found in the documentation
-> the checklist which I can count numbers, compare with a table and have
-> a clear answer "yes, I have do it".
+Unscientific timing data processing a perf.data file with overlapping
+mmap events from chromium:
 
-FWIW, I have just sent a PR to Linus and GPIO maintainers with this one
-included. Hopefully everybody is now happy.
+Before:
+real    0m9.856s
+user    0m9.637s
+sys     0m0.204s
+
+After:
+real    0m0.675s
+user    0m0.454s
+sys     0m0.196s
+
+Tested with address/leak sanitizer, invariant checks and validating
+the before and after output are identical.
+
+Ian Rogers (3):
+  perf maps: Fix use after free in __maps__fixup_overlap_and_insert
+  perf maps: Reduce sorting for overlapping mappings
+  perf maps: Add/use a sorted insert for fixup overlap and insert
+
+ tools/perf/util/maps.c | 113 +++++++++++++++++++++++++++++++++--------
+ 1 file changed, 92 insertions(+), 21 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.45.0.rc1.225.g2a3ae87e7f-goog
 
 
