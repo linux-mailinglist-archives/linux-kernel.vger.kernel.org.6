@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-184377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5565B8CA641
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:41:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE468CA647
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB6081F21CF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:40:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14D81C2117C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5A11CD13;
-	Tue, 21 May 2024 02:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED89F433A0;
+	Tue, 21 May 2024 02:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jO48A+0n"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nmo4ySHF"
 Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C4118054
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499181BF24
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716259219; cv=none; b=s3DjJczS0jixbSqn4g52NdKD2Da5+q7D8qj98sUVDBw7MiJaIF/8wCS86Qz+1/GO/D+7/VaF+J1sJmlMKNSzsaC63DqZ1OVx6/6NpRhjVjn+BWbY02rMfKWKhn/xc0B20s61+TdOdutChPZM7zUfqbdt3ymyLWyJIMu6YN4ioWM=
+	t=1716259220; cv=none; b=h5QvZ3y4K+NXR6+S5zGDYoP5d2/UM3XuR4JUwlXH0v63ROHQZMCiErFnxpcTZqWyL8T9OzvEmvqQGuOKYeLODPs3geEoNccF8kBGQXDqNL7QmEhsdDkm/8zs1Vk6f2bAgcCx1El1OdglWWt4xD8FpqDCLuiaHgtDMlKq9jzmjGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716259219; c=relaxed/simple;
-	bh=p1LIY4nA/ORBBuK5Yt6eAXXigY9eY+XuuCSpefG0JBY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=I6O7tOLmfy8jHCF5N7Mcs4gC0xDDEDSx5Qd5yqNpu8BSfig5pJGloe47bnMtyx18ZNKXNlOqwmxJCt02hL4idJeTu6nRk3Rw4J0RIb+CuANTfvZyshB6jyf4q1crChtYOO0/Ts1FV0ezamCrjCx0o+QsbLcXG6a2XzYm065R6x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jO48A+0n; arc=none smtp.client-ip=203.254.224.33
+	s=arc-20240116; t=1716259220; c=relaxed/simple;
+	bh=im36wEU2WHavWkkRoWVAdzV3iT/tMu+qzFAlTzvfQ68=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=dkjtkcouqXfg2VK8+BvapHivowc+AI1n4JKIMOgVPDSf0ZHFcnf4/oV3Gd52gcFh9R1XNgRhI1u98Y9lAKQbE55LqEs0Ge8nsPOC6cKSU9b+T7AqnlKIINrJWkniJ12RjOOaKzUIzr53G1D4taupXzce3y12h89B4GR+jfd26CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nmo4ySHF; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240521024010epoutp0381a1b0b22cc0e663af2baccdc722b333~RYKiMOJfr0903709037epoutp03Y
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240521024010epoutp03a8cd09909fd80acaf03a9f6c901ba881~RYKiqCAdB0915109151epoutp03L
 	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:40:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240521024010epoutp0381a1b0b22cc0e663af2baccdc722b333~RYKiMOJfr0903709037epoutp03Y
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240521024010epoutp03a8cd09909fd80acaf03a9f6c901ba881~RYKiqCAdB0915109151epoutp03L
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
 	s=mail20170921; t=1716259210;
-	bh=2nyw+C7rNp+l+xPXOp2Qx9L1AYg4BMnfedd/ZCD1HbI=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=jO48A+0nhry5TPIeFUlp1Mf85t/dskGK9LyipAyGt7qld3oQX5/IHbzQiv+r9Ww2e
-	 ecibNebBwxeTfvgCgJDMU7uJgKgfy+d2Dat22Yq/PpIxFxQllMdOQPQyL/di6Sf4fE
-	 Gbt8Vd6sCkpJcvsdqg78N+yjp0dvaolDwWt1O8OQ=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240521024009epcas1p2b2862f74e82056485388c1927517d774~RYKhps6ou0671506715epcas1p2w;
+	bh=PxYQXA34qCgfe8GO97dXEa7W4zQKRhqOk+fXrigSuB4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=nmo4ySHFeHa1k8OqFW4m4SdJ1CA+2GltoaYHpQeo2QbBAq4L8KVMYNLvoXC7Z66OS
+	 fG1qVVh8mlTlloumnvo2K/Sqpbu8Mr/90g9qnxUiJqazMaX6opy6shNPGQnpfCQcVr
+	 7KEk5SYFKj2AKbfWKoZM9RNowTP9iDIL6mG/ms2A=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+	20240521024009epcas1p4c9f71380c8227e6c9d58ad4a55f15698~RYKiEKIk_2938729387epcas1p4a;
 	Tue, 21 May 2024 02:40:09 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.36.227]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4VjzDn2YPRz4x9Pq; Tue, 21 May
+Received: from epsmges1p4.samsung.com (unknown [182.195.38.240]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4VjzDn3hdbz4x9Q3; Tue, 21 May
 	2024 02:40:09 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-	epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-	AE.B2.10076.9890C466; Tue, 21 May 2024 11:40:09 +0900 (KST)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E2.13.10158.9890C466; Tue, 21 May 2024 11:40:09 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76~RYKhQBRoC2349123491epcas1p1Z;
+	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240521024009epcas1p4451928c8f5b32bf84082a24c59ca7dd0~RYKhVWO221520715207epcas1p43;
 	Tue, 21 May 2024 02:40:09 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240521024009epsmtrp2f02cd063e59c1418c1cdcf0d843f09e4~RYKhO8aTB2496124961epsmtrp2m;
-	Tue, 21 May 2024 02:40:08 +0000 (GMT)
-X-AuditID: b6c32a39-59dff7000000275c-c5-664c0989c64a
+	20240521024009epsmtrp28aac1566bc1d70947e63cddc2b6abc54~RYKhUfLwN2496224962epsmtrp2h;
+	Tue, 21 May 2024 02:40:09 +0000 (GMT)
+X-AuditID: b6c32a38-b41fa700000027ae-08-664c09890d7b
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BD.EA.09238.8890C466; Tue, 21 May 2024 11:40:08 +0900 (KST)
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	45.D3.19234.8890C466; Tue, 21 May 2024 11:40:08 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.253.104.99]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240521024008epsmtip2f022c4301ade9151768656be3085c125~RYKhF2BnR1132711327epsmtip2Q;
+	20240521024008epsmtip211bad4828adbe078dc88acc85576b390~RYKhIrXH91232612326epsmtip2E;
 	Tue, 21 May 2024 02:40:08 +0000 (GMT)
 From: Jaewon Kim <jaewon31.kim@samsung.com>
 To: rppt@kernel.org, vbabka@suse.cz, akpm@linux-foundation.org
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
 	jaewon31.kim@gmail.com, Jaewon Kim <jaewon31.kim@samsung.com>
-Subject: [RESEND PATCH 00/10] memblock: introduce memsize showing reserved
+Subject: [RESEND PATCH 01/10] memblock: introduce memsize showing reserved
  memory
-Date: Tue, 21 May 2024 11:39:47 +0900
-Message-Id: <20240521023957.2587005-1-jaewon31.kim@samsung.com>
+Date: Tue, 21 May 2024 11:39:48 +0900
+Message-Id: <20240521023957.2587005-2-jaewon31.kim@samsung.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240521023957.2587005-1-jaewon31.kim@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,45 +84,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNKsWRmVeSWpSXmKPExsWy7bCmrm4np0+aweTpghZz1q9hs+jePJPR
-	ovf9KyaLy7vmsFncW/Of1eLI+u1MFrMb+xgd2D12zrrL7rFpVSebx6ZPk9g9Tsz4zeLRt2UV
-	o8eZBUfYPT5vkgtgj8q2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVV
-	cvEJ0HXLzAE6SEmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFagV5yYW1yal66X
-	l1piZWhgYGQKVJiQnbH7x2vGgk3CFTM+X2BpYNzP18XIySEhYCIx5cxvli5GLg4hgR2MEivW
-	fmaFcD4xSjybcIkJwvnGKDH9/h8ghwOs5etDcYj4XkaJGyv3Q7V/ZpQ4fXQzK8hcNgFtifcL
-	JoHZIgJ2Et9mHwCzmQVKJd6+OcEMYgsLBEssOHSHEcRmEVCV+LjpCROIzStgL7H+6Go2iPvk
-	JWZe+s4OEReUODnzCQvEHHmJ5q2zmUEWSwjcYpd4Ob+JEaLBReLdyzZ2CFtY4tXxLVC2lMTn
-	d3uhhuZLXLj4CuqbGomFEw0hwvYSu77OYAUJMwtoSqzfpQ+xik/i3dceVohqXomONiGIajWJ
-	lmdfWSFsGYm//55B2R4Sd6/tZgEpFxKIlTh8wWACo9wsJPfPQnL/LIRdCxiZVzGKpRYU56an
-	FhsWmMKjMTk/dxMjOBVqWe5gnP72g94hRiYOxkOMEhzMSiK8m7Z4pgnxpiRWVqUW5ccXleak
-	Fh9iNAWG6ERmKdHkfGAyziuJNzSxNDAxMzKxMLY0NlMS5z1zpSxVSCA9sSQ1OzW1ILUIpo+J
-	g1OqgSmlUcL58FGHj4zFBp+2HSg1PCfbdPDjYumTwVeVv7Ln51581u3x9dtjT7+1XkK5N7+K
-	bHtVdeaO5q18Uf3rO5XfSNbNONP3W/KAuiHjkrTzwV2sxv+vunxyspqXv/HEwQ3535fHXNLR
-	v6y2i/1D43P5VI011w6GK2Yv+SX6xqSgXGB7zpZY5Ucfz56Mnsecfcf89ZlN5vflpYszbjnz
-	vdgquzMqgPVDSGmk74KQzH+Pdn7YHvtwvrqbwhyplTcDni8MCTzA9rw/YI16sfOfhgkqd2uu
-	Rr+8wZ4385yUNofytEZzlcIPtscrOP7Msootcdwd2f88TW8j16Vpy6+J2HuI3/h/NkPyQHR+
-	MtvszXZKLMUZiYZazEXFiQBHPXi1DgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsWy7bCSvG4Hp0+awcPLlhZz1q9hs+jePJPR
-	ovf9KyaLy7vmsFncW/Of1eLI+u1MFrMb+xgd2D12zrrL7rFpVSebx6ZPk9g9Tsz4zeLRt2UV
-	o8eZBUfYPT5vkgtgj+KySUnNySxLLdK3S+DK2P3jNWPBJuGKGZ8vsDQw7ufrYuTgkBAwkfj6
-	ULyLkYtDSGA3o0TT1O2sXYycQHEZiTfnn7JA1AhLHD5cDFHzkVFi1pRbjCA1bALaEu8XTAKr
-	FxFwkthwZTULiM0sUCnx7/YtsLiwQKDEvMNbwepZBFQlPm56wgRi8wrYS6w/upoNYpe8xMxL
-	39kh4oISJ2c+gZojL9G8dTbzBEa+WUhSs5CkFjAyrWKUTC0ozk3PTTYsMMxLLdcrTswtLs1L
-	10vOz93ECA5bLY0djPfm/9M7xMjEwXiIUYKDWUmEd9MWzzQh3pTEyqrUovz4otKc1OJDjNIc
-	LErivIYzZqcICaQnlqRmp6YWpBbBZJk4OKUamMKbLRaIiDtk2U6o+HmVc6l2+zXl7UyuCT/v
-	Fx3eXx1wtsQ+7buN807z/OxnHJp3W+1lsrhVNYLu1ejaV7nK/ebJya6NWvmPYQFvJVNg6pPO
-	iE3Nc+bw1dxzlG5c23/00abp5f4aW5l9uJRnu8+7LKTMpp/qeyZGL8PFsnGVczyHh+aMs4qR
-	kgIM75T9JfmnrPGXXOZU7jJRN6D/v/aXU2WibysO/n8r9fH7obfrDvsekviuVbO8ZNGu9LbE
-	GC8WscJ/z1Ydcv3k+HFO+Grz3cFnyp4/WR20PbJk9Ue1Z9nPOdTjmH5MnTKt51flR+N1DWdT
-	ixcuZtSUbeu7+vMs741ZDp6rNX+35D0P+rNEiaU4I9FQi7moOBEAjXhfpMoCAAA=
-X-CMS-MailID: 20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupik+LIzCtJLcpLzFFi42LZdlhTT7eT0yfN4MhvcYs569ewWXRvnslo
+	0fv+FZPF5V1z2CzurfnPanFk/XYmi9mNfYwO7B47Z91l99i0qpPNY9OnSeweJ2b8ZvHo27KK
+	0ePMgiPsHp83yQWwR2XbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoq
+	ufgE6Lpl5gAdpKRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMCvQK07MLS7NS9fL
+	Sy2xMjQwMDIFKkzIzvg19SVzwUnvirn7rrE3MB626WLk5JAQMJF4d+gHaxcjF4eQwA5Gib5P
+	k5ghnE+MEp+m7GWBc84++soO03Lu+VEmiMRORollU6dDVX1mlNj7+i4LSBWbgLbE+wWTWEFs
+	EQE7iW+zD4DZzAKlEm/fnGAGsYUFgiX+PFsKZrMIqErMOL8VzOYVsJdoW/4Oapu8xMxL38Fs
+	TgEHiflTFrND1AhKnJz5hAViprxE89bZYHdLCHxkl7h4/hUrRLOLxPznr6AGCUu8Or4FypaS
+	+PxuLxuEnS9x4eIroHc4gOwaiYUTDSHC9hK7vs5gBQkzC2hKrN+lD7GKT+Ld1x5WiGpeiY42
+	IYhqNYmWZ1+hlspI/P33DMr2kNi85TI0rCYzSrxYsZRpAqP8LCQfzELywSyEbQsYmVcxiqUW
+	FOempxYbFpjAYzU5P3cTIzhRalnsYJz79oPeIUYmDsZDjBIczEoivJu2eKYJ8aYkVlalFuXH
+	F5XmpBYfYjQFhu9EZinR5Hxgqs4riTc0sTQwMTMysTC2NDZTEuc9c6UsVUggPbEkNTs1tSC1
+	CKaPiYNTqoFJ99f/yOMcU1ZfaZ72wIzl5s2nMu5zdly7/kz1lkpl8+FncZMZ/peePP2Fe/ZX
+	3c2cPC4H/jro7fXmmPE3I0767ckpQeVs7NVlbcKqM3S3ZXdv5ebfke9Z8f9SSXl9kUZynPTU
+	FwaRmspbhWdIpfiVHQlrW5FtXnSQp0PYtYh1kptsutzs0itSX5N9irUOqTbLZ3LJ/tL4d2fx
+	XcarCw7YrZz1dVX74+bc+l3/S5Y/anj1LjQr/+bvHc+M5n1T7tqcyMy6oe/j+cagk1cd3rhJ
+	5N2TtHv3WmGHWsPXaZt4/BR4K2Ieqs15tJ45I/zCY47TExjr3ULV7qjkmy5b8tzo/M0o3TMf
+	zd/O4o5K7b+mxFKckWioxVxUnAgAhdToVx0EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsWy7bCSvG4Hp0+aQf9rG4s569ewWXRvnslo
+	0fv+FZPF5V1z2CzurfnPanFk/XYmi9mNfYwO7B47Z91l99i0qpPNY9OnSeweJ2b8ZvHo27KK
+	0ePMgiPsHp83yQWwR3HZpKTmZJalFunbJXBl/Jr6krngpHfF3H3X2BsYD9t0MXJySAiYSJx7
+	fpSpi5GLQ0hgO6PE27nNbBAJGYk355+ydDFyANnCEocPF0PUfGSUOPNkP1gNm4C2xPsFk1hB
+	bBEBJ4kNV1azgNjMApUS/27fAosLCwRKvFv3ByzOIqAqMeP8VmYQm1fAXqJt+Tt2iF3yEjMv
+	fQezOQUcJOZPWQxmCwHVnLl0nhWiXlDi5MwnUPPlJZq3zmaewCgwC0lqFpLUAkamVYyiqQXF
+	uem5yQWGesWJucWleel6yfm5mxjBAa4VtINx2fq/eocYmTgYDzFKcDArifBu2uKZJsSbklhZ
+	lVqUH19UmpNafIhRmoNFSZxXOaczRUggPbEkNTs1tSC1CCbLxMEp1cAkEmxWovrH48vF7S8a
+	7yr7/6xuCHGYFJwwLbd4H0t2jRSPvVzM99jVjOvnz786kZ9vd+qHP+wONaIXVm58yD/pYLCr
+	VgHD78rg0P/pk7xO6tX6bI43MD6/5eQDr3KFfYr3/4XMLXyxPXVK5EnlyQ1sZvtnmU3r6HO3
+	9r34ezL7j8lmO480l/WovBfk5XKY7JR34/u3s0ftzspZOE3M+iInxfB0hmVb2PW9/if7L/v8
+	d9g9yfO0wJcVURc2lIWY79p9hJF1vbHX7zVhqneOSrQzf4sXO/aQOWOntGnSzRWvz02pWHjq
+	4W7nftuC3ECzni6Ns+eDfdyehVifqbl44GzH9PsXepkVGG6Lci/nye9RYinOSDTUYi4qTgQA
+	Jn5UF98CAAA=
+X-CMS-MailID: 20240521024009epcas1p4451928c8f5b32bf84082a24c59ca7dd0
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76
-References: <CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcas1p1.samsung.com>
+X-CMS-RootMailID: 20240521024009epcas1p4451928c8f5b32bf84082a24c59ca7dd0
+References: <20240521023957.2587005-1-jaewon31.kim@samsung.com>
+	<CGME20240521024009epcas1p4451928c8f5b32bf84082a24c59ca7dd0@epcas1p4.samsung.com>
 
 Some of memory regions can be reserved for a specific purpose. They are
 usually defined through reserved-memory in device tree. If only size
@@ -136,54 +139,298 @@ show region name and its information is difficult to summarize.
 This patch introduce a debugfs node, memblock/memsize, to see reserved
 memory easily.
 
-Here's an example
+The first patch here will show the only reserved-memory in device tree
+like following example. The next patches will show more information.
+
+There is a case in which the reserved memory region name has @ staring
+string at the end. That information is not actually needed. Let's remove
+those string.
 
 $ cat debugfs/memblock/memsize
+0x0f9000000-0x0fb000000 0x02000000 (   32768 KB )   map reusable linux,cma
+0x0b1900000-0x0b1b00000 0x00200000 (    2048 KB ) nomap unusable test1
+0x0b0200000-0x0b0400000 0x00200000 (    2048 KB )   map unusable test2
 
-0x0000000000000000-0x0000000000000000 0x02000000 (   32768 KB )   map reusable linux,cma
-0x0000000000000000-0x0000000000000000 0x01000000 (   16384 KB )   map reusable vxxxxx
-..
-0x0000000000000000-0x0000000000000000 0x004e0000 (    4992 KB ) nomap unusable unknown
-0x0000000000000000-0x0000000000000000 0x00400000 (    4096 KB ) nomap unusable cxxxxx
-0x0000000000000000-0x0000000000000000 0x00e00000 (   14336 KB ) nomap unusable gxxxxx
+unusable  :   4096 KB
+reusable  :  32768 KB
 
-Reserved    : 1223856 KB
- .kernel    :  275208 KB
-  .text     :   16576 KB
-  .rwdata   :    1963 KB
-  .rodata   :   11920 KB
-  .bss      :    2450 KB
-  .memmap   :  186368 KB
-  .etc      :   55933 KB
- .unusable  :  948648 KB
-System      : 11359056 KB
- .common    : 10306384 KB
- .reusable  : 1052672 KB
-Total       : 12582912 KB ( 12288.00 MB )
+Signed-off-by: Jaewon Kim <jaewon31.kim@samsung.com>
+---
+ drivers/of/fdt.c             |   3 +
+ drivers/of/of_reserved_mem.c |   9 ++-
+ include/linux/memblock.h     |   9 +++
+ kernel/dma/contiguous.c      |   2 +
+ mm/Kconfig                   |  16 +++++
+ mm/memblock.c                | 120 +++++++++++++++++++++++++++++++++++
+ 6 files changed, 156 insertions(+), 3 deletions(-)
 
-Jaewon Kim (10):
-  memblock: introduce memsize showing reserved memory
-  memblock: detect hidden memory hole size
-  memblock: handle overlapped reserved memory region
-  memblock: take a region intersecting an unknown region
-  memblock: track memblock changed at early param
-  memblock: recognize late freed size by checking PageReserved
-  memblock: track kernel size on memsize
-  memblock: print memsize summary information
-  memblock: print kernel internal size
-  memblock: support memsize reusable to consider as reusable
-
- drivers/of/fdt.c             |  11 +
- drivers/of/of_reserved_mem.c |  12 +-
- include/linux/memblock.h     |  29 ++
- init/main.c                  |  13 +-
- kernel/dma/contiguous.c      |   9 +-
- mm/Kconfig                   |  16 ++
- mm/memblock.c                | 502 ++++++++++++++++++++++++++++++++++-
- mm/mm_init.c                 |   6 +-
- mm/page_alloc.c              |  10 +-
- 9 files changed, 597 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index a8a04f27915b..605c7f471908 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -502,6 +502,8 @@ static void __init fdt_reserve_elfcorehdr(void)
+ 	}
+ 
+ 	memblock_reserve(elfcorehdr_addr, elfcorehdr_size);
++	memblock_memsize_record("elfcorehdr", elfcorehdr_addr, elfcorehdr_size,
++				false, false);
+ 
+ 	pr_info("Reserving %llu KiB of memory at 0x%llx for elfcorehdr\n",
+ 		elfcorehdr_size >> 10, elfcorehdr_addr);
+@@ -531,6 +533,7 @@ void __init early_init_fdt_scan_reserved_mem(void)
+ 		if (!size)
+ 			break;
+ 		memblock_reserve(base, size);
++		memblock_memsize_record("memreserve", base, size, false, false);
+ 	}
+ 
+ 	fdt_init_reserved_mem();
+diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+index 46e1c3fbc769..ece678e07304 100644
+--- a/drivers/of/of_reserved_mem.c
++++ b/drivers/of/of_reserved_mem.c
+@@ -438,9 +438,10 @@ void __init fdt_init_reserved_mem(void)
+ 		struct reserved_mem *rmem = &reserved_mem[i];
+ 		unsigned long node = rmem->fdt_node;
+ 		int err = 0;
+-		bool nomap;
++		bool nomap, reusable;
+ 
+ 		nomap = of_get_flat_dt_prop(node, "no-map", NULL) != NULL;
++		reusable = of_get_flat_dt_prop(node, "reusable", NULL) != NULL;
+ 
+ 		if (rmem->size == 0)
+ 			err = __reserved_mem_alloc_size(node, rmem->name,
+@@ -457,14 +458,16 @@ void __init fdt_init_reserved_mem(void)
+ 							   rmem->size);
+ 			} else {
+ 				phys_addr_t end = rmem->base + rmem->size - 1;
+-				bool reusable =
+-					(of_get_flat_dt_prop(node, "reusable", NULL)) != NULL;
+ 
+ 				pr_info("%pa..%pa (%lu KiB) %s %s %s\n",
+ 					&rmem->base, &end, (unsigned long)(rmem->size / SZ_1K),
+ 					nomap ? "nomap" : "map",
+ 					reusable ? "reusable" : "non-reusable",
+ 					rmem->name ? rmem->name : "unknown");
++
++				memblock_memsize_record(rmem->name, rmem->base,
++							rmem->size, nomap,
++							reusable);
+ 			}
+ 		}
+ 	}
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index e2082240586d..9ccba9bb20cb 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -613,5 +613,14 @@ static inline void early_memtest(phys_addr_t start, phys_addr_t end) { }
+ static inline void memtest_report_meminfo(struct seq_file *m) { }
+ #endif
+ 
++#ifdef CONFIG_MEMBLOCK_MEMSIZE
++extern void memblock_memsize_record(const char *name, phys_addr_t base,
++				    phys_addr_t size, bool nomap,
++				    bool reusable);
++#else
++static inline void memblock_memsize_record(const char *name, phys_addr_t base,
++				    phys_addr_t size, bool nomap,
++				    bool reusable) { }
++#endif
+ 
+ #endif /* _LINUX_MEMBLOCK_H */
+diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+index 055da410ac71..437c85878280 100644
+--- a/kernel/dma/contiguous.c
++++ b/kernel/dma/contiguous.c
+@@ -286,6 +286,8 @@ int __init dma_contiguous_reserve_area(phys_addr_t size, phys_addr_t base,
+ 	dma_contiguous_early_fixup(cma_get_base(*res_cma),
+ 				cma_get_size(*res_cma));
+ 
++	memblock_memsize_record("dma_cma", cma_get_base(*res_cma),
++				cma_get_size(*res_cma), false, true);
+ 	return 0;
+ }
+ 
+diff --git a/mm/Kconfig b/mm/Kconfig
+index b4cb45255a54..7fd25088b9b8 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -476,6 +476,22 @@ config HAVE_GUP_FAST
+ 	depends on MMU
+ 	bool
+ 
++config MAX_MEMBLOCK_MEMSIZE
++	int "Maximum number of tracking regions"
++	depends on MEMBLOCK_MEMSIZE
++	default 100
++	range 0 200
++	help
++	  This number sets maximum number of tracking regions. If this is set to
++	  0, nothing will be saved.
++
++config MEMBLOCK_MEMSIZE
++	bool "memblock based reserved memory profiling"
++	default n
++	help
++	  This patch introduce a node, memblock/memsize, to see reserved memory
++	  easily.
++
+ # Don't discard allocated memory used to track "memory" and "reserved" memblocks
+ # after early boot, so it can still be used to test for validity of memory.
+ # Also, memblocks are updated with memory hot(un)plug.
+diff --git a/mm/memblock.c b/mm/memblock.c
+index d09136e040d3..f05e7df2f8e1 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -19,6 +19,7 @@
+ 
+ #include <asm/sections.h>
+ #include <linux/io.h>
++#include <linux/sort.h>
+ 
+ #include "internal.h"
+ 
+@@ -2025,6 +2026,66 @@ static int __init early_memblock(char *p)
+ }
+ early_param("memblock", early_memblock);
+ 
++#ifdef CONFIG_MEMBLOCK_MEMSIZE
++
++#define NAME_SIZE	100
++struct memsize_rgn_struct {
++	phys_addr_t	base;
++	long		size;
++	bool		nomap;			/*  1/32 byte */
++	bool		reusable;		/*  1/32 byte */
++	char		name[NAME_SIZE];	/* 30/32 byte */
++};
++
++static struct memsize_rgn_struct memsize_rgn[CONFIG_MAX_MEMBLOCK_MEMSIZE] __initdata_memblock;
++static int memsize_rgn_count __initdata_memblock;
++
++static void __init_memblock memsize_get_valid_name(char *valid_name, const char *name)
++{
++	char *head, *tail, *found;
++	int val_size;
++
++	head = (char *)name;
++	tail = head + strlen(name);
++
++	/* get tail position after valid char */
++	found = strchr(name, '@');
++	if (found)
++		tail = found;
++
++	val_size = tail - head;
++	if (val_size > NAME_SIZE - 1)
++		val_size = NAME_SIZE - 1;
++	strscpy(valid_name, head, val_size);
++	valid_name[val_size] = '\0';
++}
++
++void __init_memblock memblock_memsize_record(const char *name, phys_addr_t base,
++			     phys_addr_t size, bool nomap, bool reusable)
++{
++	struct memsize_rgn_struct *rgn;
++	phys_addr_t end;
++
++	if (memsize_rgn_count == CONFIG_MAX_MEMBLOCK_MEMSIZE) {
++		pr_err("not enough space on memsize_rgn\n");
++		return;
++	}
++	rgn = &memsize_rgn[memsize_rgn_count++];
++	rgn->base = base;
++	rgn->size = size;
++	rgn->nomap = nomap;
++	rgn->reusable = reusable;
++
++	if (!name)
++		strscpy(rgn->name, "unknown", sizeof(rgn->name));
++	else
++		memsize_get_valid_name(rgn->name, name);
++	end = base + size - 1;
++	memblock_dbg("%s %pa..%pa nomap:%d reusable:%d\n",
++		     __func__, &base, &end, nomap, reusable);
++}
++#endif /* MEMBLOCK_MEMSIZE */
++
+ static void __init free_memmap(unsigned long start_pfn, unsigned long end_pfn)
+ {
+ 	struct page *start_pg, *end_pg;
+@@ -2289,6 +2350,61 @@ static int memblock_debug_show(struct seq_file *m, void *private)
+ }
+ DEFINE_SHOW_ATTRIBUTE(memblock_debug);
+ 
++#ifdef CONFIG_MEMBLOCK_MEMSIZE
++
++static int memsize_rgn_cmp(const void *a, const void *b)
++{
++	const struct memsize_rgn_struct *ra = a, *rb = b;
++
++	if (ra->base > rb->base)
++		return -1;
++
++	if (ra->base < rb->base)
++		return 1;
++
++	return 0;
++}
++
++static int memblock_memsize_show(struct seq_file *m, void *private)
++{
++	int i;
++	struct memsize_rgn_struct *rgn;
++	unsigned long reserved = 0, reusable = 0;
++
++	sort(memsize_rgn, memsize_rgn_count,
++	     sizeof(memsize_rgn[0]), memsize_rgn_cmp, NULL);
++	for (i = 0; i < memsize_rgn_count; i++) {
++		phys_addr_t base, end;
++		long size;
++
++		rgn = &memsize_rgn[i];
++		base = rgn->base;
++		size = rgn->size;
++		end = base + size;
++
++		seq_printf(m, "0x%pK-0x%pK 0x%08lx ( %7lu KB ) %s %s %s\n",
++			   (void *)base, (void *)end,
++			   size, DIV_ROUND_UP(size, SZ_1K),
++			   rgn->nomap ? "nomap" : "  map",
++			   rgn->reusable ? "reusable" : "unusable",
++			   rgn->name);
++		if (rgn->reusable)
++			reusable += (unsigned long)rgn->size;
++		else
++			reserved += (unsigned long)rgn->size;
++	}
++
++	seq_puts(m, "\n");
++	seq_printf(m, " .unusable  : %7lu KB\n",
++		   DIV_ROUND_UP(reserved, SZ_1K));
++	seq_printf(m, " .reusable  : %7lu KB\n",
++		   DIV_ROUND_UP(reusable, SZ_1K));
++	return 0;
++}
++
++DEFINE_SHOW_ATTRIBUTE(memblock_memsize);
++#endif
++
+ static int __init memblock_init_debugfs(void)
+ {
+ 	struct dentry *root = debugfs_create_dir("memblock", NULL);
+@@ -2301,6 +2417,10 @@ static int __init memblock_init_debugfs(void)
+ 	debugfs_create_file("physmem", 0444, root, &physmem,
+ 			    &memblock_debug_fops);
+ #endif
++#ifdef CONFIG_MEMBLOCK_MEMSIZE
++	debugfs_create_file("memsize", 0444, root,
++			    NULL, &memblock_memsize_fops);
++#endif
+ 
+ 	return 0;
+ }
 -- 
 2.25.1
 
