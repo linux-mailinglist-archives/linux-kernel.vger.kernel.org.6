@@ -1,159 +1,118 @@
-Return-Path: <linux-kernel+bounces-184812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA89C8CAC52
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:35:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F418CAC60
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA982827D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:35:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 610541F22552
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B992A6EB75;
-	Tue, 21 May 2024 10:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854516EB65;
+	Tue, 21 May 2024 10:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VIchhHxi"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KkASYUL/"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF0B6CDC2;
-	Tue, 21 May 2024 10:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058A657318;
+	Tue, 21 May 2024 10:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716287686; cv=none; b=GxJlV10pdRUwG8Iu0hAvqPdQnNEijbmxpqsrhy0onzXCGK3527+CaKN/bAkulBFUZqIMkx0zfS33V4tpe3S+ewxNddBsJy4kCm3GMyGrQ6g1HUYxCd/MXziE8hH77Ol+ZJLu1IMwxPJbvfZOFiycaiXcgynWFs5Xmt1seTWsA3Y=
+	t=1716288177; cv=none; b=bC3//djn7Wgy6ET7QW1txtjWr0NtufCDROGZppz9Pr1P3UJl5RVCAnwvVMjLBLXwawTX3cd4qSkswwJ0hmd/2+C5UKU1Je0+mKX/IDtZDMFh8PE7Eeb5IJUaXMAB+NCgZ47CG43bnL/vPga2yHoiPzZ0uO/7sbBBHkOqtyf2ddA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716287686; c=relaxed/simple;
-	bh=CXiGuTveBYvikiaixrSuzN6fvkoLiUDszUlj3xGQpqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PpQxu3n9bkLKaufseUqCDNdRctJqPQylmbn+Trdsi8HIZxaHTsVGhYNCaGq8Z1TPk8mh+0CKg1LiS0Phy8WYtOuMSJNZMqG3omAxOOucXATYoupFdgOkNBWE4xurX76VOniAi9CGxEhEpPJ6VOHBkwro3TucBs6DCVtNhjlPb7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VIchhHxi; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f0937479f8so100825035ad.3;
-        Tue, 21 May 2024 03:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716287684; x=1716892484; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3sehLpck2yDqjDYvjgEiEstrq/QyxjTksSBaL92La0k=;
-        b=VIchhHxiDLNJ+BMv013vvKhrqTZL6H9jVpweToPDwUKRq2gbeZuZj+w2ZWk6ooTC/D
-         bK7aPBzkW98ZGOYyiQTMOjF/STx/H4y9QuQUhaNb/G2sGQE2/7oVNrPkudZ6CWsNhVUp
-         pK2hFlctQ59wGXHhmSeQ5MRQTeD/InVYxzweLmG1qniBaV/8i6KITqq2+cFEBR0s9CRV
-         514hS89YcL5O8OzVYT6hJzTpcWUmDTdGz2i2gwrp7Jm8zoy8nwv7zd2xRuBF/yQ1xb3r
-         FiuoIp9ngV4cvMc28iWNLyCAads5CrmxFAizssFySOakULLtgKVsNBjQnuTp+5LXSFmG
-         PDnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716287684; x=1716892484;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3sehLpck2yDqjDYvjgEiEstrq/QyxjTksSBaL92La0k=;
-        b=lK1Vj3Pk51KcGdUfV8eZS2oUXMN+tizkBExlwEvzACXuoiQbSNzL8Difv4cKVlO/3x
-         g1C2jSkNlSm5G25Hdn7AN4wVKqnp/v4uofsloNyW2eMa6DLotv3cxAE+J4zKYw0stGQg
-         b5rx8bESr5Rb4cuTRcDbGOD9TaVjGUOsaoNbnpRIbLdj/ABEgg4YoigVu5T40AeYGJDd
-         9CUPN2PDtrc496RlWVlKc2lSsLO1GttRvJcYmFtmwS5dzzimppK4UQi8R3WtA1HdyeCR
-         s+WYBNLGSfjm+uMcT9L+kXsNW8+WFfZCdBPswf3eT+mu9NAo+iD5Vy90C686C8RZbsXT
-         WZ0A==
-X-Forwarded-Encrypted: i=1; AJvYcCV5YIlRVs2FDQxFThvvqIIEv7AJNd1XhFl0nN0GjBfmz6GZS6mkIp0OdS27x9D6osAG72Xf9MeFh3LTdKg12aC7cFxSjahZpDWhFRTlot0COHlegvwb3VffAOtF9eYSTUg58hMa
-X-Gm-Message-State: AOJu0YxwTWY6SngaD1I97zDrK9geU/5Fbd4IYRP7IiAIzRF0dVUa27DL
-	D7DvpRkesuS+kTXcaoH906QTH0F+BOrtYeNSdb+PoLqWt2/uW4al
-X-Google-Smtp-Source: AGHT+IE25aL/4/zxxn8w2FeumCv7Id50mPpsNfynpk5yhqLATIeyR5dw4/rKWteVt4uHrqMDd2BZXQ==
-X-Received: by 2002:a17:903:184:b0:1f3:704:8304 with SMTP id d9443c01a7336-1f307048b69mr40697395ad.9.1716287683934;
-        Tue, 21 May 2024 03:34:43 -0700 (PDT)
-Received: from libra05 ([143.248.188.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f312268e60sm4851155ad.15.2024.05.21.03.34.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 03:34:43 -0700 (PDT)
-Date: Tue, 21 May 2024 19:34:38 +0900
-From: Yewon Choi <woni9911@gmail.com>
-To: Boris Pismenny <borisp@nvidia.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jakub Sitnicki <jakub@cloudflare.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "Dae R. Jeong" <threeearcat@gmail.com>
-Subject: [PATCH net v2] tls: fix missing memory barrier in tls_init
-Message-ID: <Zkx4vjSFp0mfpjQ2@libra05>
+	s=arc-20240116; t=1716288177; c=relaxed/simple;
+	bh=Tg4pXebzYZXN2Pli6Vmk3YgtbtHbGDQkMW1CuDQ2UqA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GJFkzVLe/v58kzI1O2pd4mvUbjV/Keiba+tDy7INqC1yCT1812yAkRD4rLe6V/8eDT2uH2iRYeKLpDF3USbKXxsw3sQKNviBpdO2aoND1eww3+0VjSNlVokuok5q3nE5fOb/Gf68GsULcLv26RoxlD53Il0fW5NgpOksmPve3ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KkASYUL/; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716288160; x=1716892960; i=markus.elfring@web.de;
+	bh=Tg4pXebzYZXN2Pli6Vmk3YgtbtHbGDQkMW1CuDQ2UqA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=KkASYUL/b+oDYMPxcdxRaEanFcZT/GbzLyYWPS9Ry1okmAQBVzUFm3pTgX903FwB
+	 aJCXNreTH4zvKxGm5uHzRdDrLnN8oLo7k0HxxY6WcrgNJDC8r/JSTqmDA/7x3iV0N
+	 Nunk3t6K16CHRmVXM32l8zH29mY5IvvvN20CEMYdvd9uY3VvbYW91aB3TcXHM93US
+	 4SF008Ff9Lnsh00pyTvzcI0R+aEbDnxZJNBVoPwjRC8iHIHMHDuMIRcHlRCYr8Wdf
+	 Dt1Hzyy559zsN//Su827EHQ4B43T1ofDmIyjJy/09Q83O6OWf/MMuKoSGG243y0lE
+	 eaHmta5ITEdzGYrtbg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MVJNT-1s0C9f1NXL-00SaQj; Tue, 21
+ May 2024 12:42:40 +0200
+Message-ID: <7b903568-d8e8-4a06-b501-8d49f3f0fffa@web.de>
+Date: Tue, 21 May 2024 12:42:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2] platform/x86: ISST: fix use-after-free in
+ tpmi_sst_dev_remove()
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Dan Carpenter <error27@gmail.com>
+References: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
+ <d5203ff5-8ed4-48ea-8e58-a2e6680b0542@web.de>
+ <6d1bf351-77cc-7fe9-2d62-8bd99789e4f1@linux.intel.com>
+ <d73fe99b-dea3-4792-aa1c-c3317f296003@web.de>
+ <5287fc2e-91c5-442b-b66c-6eb1fe334ce4@redhat.com>
+ <51368bcf-d2e3-42cc-a112-a1a485f29c73@web.de>
+ <a8eb3ba6-eeab-6c0c-7b57-4fde508853ed@linux.intel.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <a8eb3ba6-eeab-6c0c-7b57-4fde508853ed@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:EN4cLFIiM2svvyDD2RmxxV50adw9OX/fWs+YpzfL+1IB9FpHEK+
+ byKHXsShKMbUf4GZCzuVmc9vgXaSntUzXJAumBnkFlMrDrOJH/lLS6Zbg17KxCO6xtgPOWu
+ ScimlLF28wJdXBDMlc2nwtdtbYl9cMUNlJVs1r7Qf0R3apIEpRu/AWkisjXgSwZpGJOEz41
+ 3eWwOAvardOS4AiZvuhJg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ktQrzzxWaeM=;fsO8QLzb+L2UgLn0l+EubfkilLu
+ NvUoNwwjkypEz5jybvD3DLczurW7KWLQXf62TEda0F3V/aw7VMKXfzME48akj8D7wedcEuOBI
+ QybPU+nNqQDBa04giBS484SQv8CLRiQfrHDzghJZ+0M0C6iyE08W0BueOQecLD3z5E6eAPspK
+ lTt8uOr7tNtqhhaQNTLjqYhBE3FARJlPqkGvcCa9ejM5Jm8UOZNuJzIhw6ZXX2Cc9VNVbZQB4
+ 3phamZW77AIz7zK3DSFyhDhXDq33J3JEw71qyjA/vxiuoqwSPxsRGCj+VhnM9qfnb1hnDdUaC
+ nBdUo7giUh/kFuFvJJvOcN7fetq+yvs5WS4ETnwtrBgysHB5styEfLbxTDDupwoO4Mwvw97D4
+ hfVbPo6lUd5WEsnM4tza/MtuOHkHxv/EFQbVWAmxXT5SES1yWrp/axS+zljIFe5xO1zHgM5jZ
+ vrfgZB3Em27dvkBkaiYPXGWqzdyI5Lojv++sZSH8GZousjREBw0r03Dgyod25TU348x3z2Pc+
+ 13sxCLtM2PWRccYOEO7yo/v1bPpLt4wOmqVkmDivqqEecDZvqO9d4VZND1Jb+85TCP2XnO4Wf
+ QW10h4TcneX3dQrdKaU+rDUWkCnvDgabeeWhX76h//AS5csqD7GIR+JwkkEvSRlFv1csoZe3z
+ 4klnx/Wo3r4b47k36Z/fhqroCUIJPC++i2ms3BUOy+AiLZw9lNlVqrindXy3MrMFDCgv6ibAT
+ g7A2znhfcc2VCzQDyZYRW4NHKTzY14bfKijCgqfu5cFqEAqStSgq3rp0n0BSGFUH0P/wwWaKC
+ PPqvzjTbvzmyH6utB2+n/ycbguZuc58fkcvauTISb5dlI=
 
-From: Dae R. Jeong <threeearcat@gmail.com>
+>>>>>> =E2=80=A6
+>>>>>>> Fix this by reordering the kfree() post the dereference.
+=E2=80=A6
+> We'll not waste our time in wordsmithing commit messages to perfection,
 
-In tls_init(), a write memory barrier is missing, and store-store
-reordering may cause NULL dereference in tls_{setsockopt,getsockopt}.
+I hope that you would also like to avoid typos in change descriptions.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9#n45
 
-CPU0                               CPU1
------                              -----
-// In tls_init()
-// In tls_ctx_create()
-ctx = kzalloc()
-ctx->sk_proto = READ_ONCE(sk->sk_prot) -(1)
 
-// In update_sk_prot()
-WRITE_ONCE(sk->sk_prot, tls_prots)     -(2)
+> the current one is good enough as was stated to you already.
 
-                                   // In sock_common_setsockopt()
-                                   READ_ONCE(sk->sk_prot)->setsockopt()
+I dared to present some wording concerns according to the running patch re=
+view.
 
-                                   // In tls_{setsockopt,getsockopt}()
-                                   ctx->sk_proto->setsockopt()    -(3)
-
-In the above scenario, when (1) and (2) are reordered, (3) can observe
-the NULL value of ctx->sk_proto, causing NULL dereference.
-
-To fix it, we rely on rcu_assign_pointer() which implies the release
-barrier semantic. By moving rcu_assign_pointer() after ctx->sk_proto is
-initialized, we can ensure that ctx->sk_proto are visible when
-changing sk->sk_prot.
-
-Fixes: d5bee7374b68 ("net/tls: Annotate access to sk_prot with READ_ONCE/WRITE_ONCE")
-Signed-off-by: Yewon Choi <woni9911@gmail.com>
-Signed-off-by: Dae R. Jeong <threeearcat@gmail.com>
-Link: https://lore.kernel.org/netdev/ZU4OJG56g2V9z_H7@dragonet/T/
----
-v2:
-  - We don't get rid of tls_ctx_create() because it is called in multiple 
-    places (tls_init(), tls_toe_bypass()). Instead, just move 
-    rcu_assign_pointer() to the last of tls_ctx_create(). If needed, removing 
-    tls_ctx_create() can be considered as later patch.
-  - Added Fixes tag
-v1: https://lore.kernel.org/all/ZU4Mk_RfzvRpwkmX@dragonet/
-
- net/tls/tls_main.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
-index b4674f03d71a..90b7f253d363 100644
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@ -816,9 +816,17 @@ struct tls_context *tls_ctx_create(struct sock *sk)
- 		return NULL;
- 
- 	mutex_init(&ctx->tx_lock);
--	rcu_assign_pointer(icsk->icsk_ulp_data, ctx);
- 	ctx->sk_proto = READ_ONCE(sk->sk_prot);
- 	ctx->sk = sk;
-+	/* Release semantic of rcu_assign_pointer() ensures that
-+	 * ctx->sk_proto is visible before changing sk->sk_prot in
-+	 * update_sk_prot(), and prevents reading uninitialized value in
-+	 * tls_{getsockopt, setsockopt}. Note that we do not need a
-+	 * read barrier in tls_{getsockopt,setsockopt} as there is an
-+	 * address dependency between sk->sk_proto->{getsockopt,setsockopt}
-+	 * and ctx->sk_proto.
-+	 */
-+	rcu_assign_pointer(icsk->icsk_ulp_data, ctx);
- 	return ctx;
- }
- 
--- 
-2.43.0
-
+Regards,
+Markus
 
