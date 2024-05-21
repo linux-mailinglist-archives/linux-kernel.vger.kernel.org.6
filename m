@@ -1,61 +1,74 @@
-Return-Path: <linux-kernel+bounces-185034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D6508CAFA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:47:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE0E68CAFAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5B97B22A7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:47:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 967531F22AC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A5F7EEF2;
-	Tue, 21 May 2024 13:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8A07EF06;
+	Tue, 21 May 2024 13:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdnWDP7a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RGMmqm7c"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8C055783;
-	Tue, 21 May 2024 13:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46E355783;
+	Tue, 21 May 2024 13:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716299265; cv=none; b=PDoljsqvqX+n3LrNxUmiiTaVaW0TjtoPorr8zQICNkHeWjmGp5Una96MX6l4u/g6EhTljrHRr9WxYcKDMoZulNzSx1/TEpgdXyL7ChtfakafPD862DCQX98ynEjCTyR3xDLRkCfe1qIKLKoGedmwnW5SlGI19N9BLaeNEgV74CI=
+	t=1716299490; cv=none; b=tcKBnP/CEfDZSrUbX16bNWCl6rc81NbabMabafBXVxaycY4w/joZR5DdYQ0bxUIIy0aI2tRFiXqyGrDCuyGJqrdZNntgjYrbgIZalm+rV1ProNnZO24YF1bjkFwKy6xpujI9vnTTOY+LhKeO0ectrQXhxieK0hl3XkuFiyhqhOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716299265; c=relaxed/simple;
-	bh=Rs0778QKzKCdk0BVA98zOTHQl+mRFeefvwXEHJ/1we8=;
+	s=arc-20240116; t=1716299490; c=relaxed/simple;
+	bh=/Hd/hqTFsk9NCSs8oalLv788+rthDwiVYXez3GwSjEc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IByw8ck5vaj1XHI2O2ap/sJNIdV21FiO9lHDyTBb4x8Q+KWkSMT8wTSb2LhzealfEULxF8v0VqnPVYvkqzjxbbYixCmvw8Amvwxz0ezX1JkZEgwAU0u/WXNEsBeG4chMc6fK6iwi2Ri4/cwodsu2HYLeQQs+uKpTPJ+3iMR77B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdnWDP7a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC6CC2BD11;
-	Tue, 21 May 2024 13:47:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716299264;
-	bh=Rs0778QKzKCdk0BVA98zOTHQl+mRFeefvwXEHJ/1we8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RdnWDP7adAioYkB3/+Il09h51NgpF8SMAVZyOlo4p1vHsDU8W/MmkscYN3ZaqPUvh
-	 LJJyfhttBT1gQbWzZA65iJeGWv8wz+cfco9WKnizzAj4wSwPNVeM6kXOtfvJ4VxIC/
-	 dKTVtxVgFa0pORmupAShSMqwC9XPkDPG0YVZBHckGuCWfwRbis10RHmhNEm6ZftgNK
-	 GZp1T6A/upBmVnSxgjJoNZU+xemHpmENftx9Etor5hVqexWIToaxjbOpVh+eYiI2Mm
-	 fFfbLAACqP4MQk/LeEay0vniuHCpwirjQeLw/3fxCUglIuP+4KEpcYTmG6SEWS1+Es
-	 O1BAaRNoj3u9A==
-Date: Tue, 21 May 2024 14:47:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: MD Danish Anwar <danishanwar@ti.com>, Roger Quadros <rogerq@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>, Diogo Ivo <diogo.ivo@siemens.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH net] net: ti: icssg_prueth: Fix NULL pointer dereference
- in prueth_probe()
-Message-ID: <20240521134739.GE764145@kernel.org>
-References: <20240521-icssg-prueth-fix-v1-1-b4b17b1433e9@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iBmMXZRbK5Qcfe+dYjBekhzTT/bRjvWdfDLskcmiCH9gKBJhw0/1JIZNJFxd2pAvZnTh1lX+O+Wy6TeeOfww/rD9nathf7nl/n5HYIBILOuDwvZ42EP1ckQ+PNMjnh8WUdeQ7lHxrPPtdfESv5RpO+yYm4ZH4IJ4LBWzWV6+Fpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RGMmqm7c; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716299489; x=1747835489;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/Hd/hqTFsk9NCSs8oalLv788+rthDwiVYXez3GwSjEc=;
+  b=RGMmqm7crKEIS7SYsL0ryVv7n/KmfFQA1f2OcK3NihgnNZU8u5IHfcC4
+   HXiB6FEWVMbXQARxSQeNAYUhKVsThACIhIxy/DkT/iys8X0Br2IzSP4hB
+   hziv33foMc+1h3BkdCT143jF5DSq95Y25BnRODE5gRhqd5dUy2l4aIEDR
+   k7m8MPNjJIAi/0MDW4+PspHVA7a9Q7+BooA1FpH81f1judM+6ODNG3iFB
+   +5Ew1FY4j85YtnJLTU7ZcNjr3APD3EQCdtkHY6z69nMiwin55Tn+MznGe
+   Jxmd3uyVrGiMBOcEcxaJaLSO83wmMPB+q41eYcKYp08EBhK8q2iXJR2bq
+   Q==;
+X-CSE-ConnectionGUID: IbC/W18qRtmOLeWFyiQxiA==
+X-CSE-MsgGUID: bsCRWzU5T7ydiIiUdcETdQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="16320039"
+X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
+   d="scan'208";a="16320039"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 06:51:28 -0700
+X-CSE-ConnectionGUID: qJ0r4cG4TGqzzhu3VyiI7w==
+X-CSE-MsgGUID: AbBacB3XQdaM1z4OzNPbMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
+   d="scan'208";a="33052469"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmviesa010.fm.intel.com with SMTP; 21 May 2024 06:51:22 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 21 May 2024 16:51:21 +0300
+Date: Tue, 21 May 2024 16:51:21 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc: gregkh@linuxfoundation.org, dmitry.baryshkov@linaro.org,
+	bleung@chromium.org, pmalani@chromium.org, jthies@google.com,
+	abhishekpandit@chromium.org, lk@c--e.de, saranya.gopal@intel.com,
+	dan.carpenter@linaro.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: ucsi: Add new notification bits
+Message-ID: <Zkym2UtGXp8GwuaK@kuha.fi.intel.com>
+References: <3filrg6mbh6m3galir7ew5juakd25uvksimr7mqd7uc5td3xza@fdvxcewozqeh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,99 +77,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240521-icssg-prueth-fix-v1-1-b4b17b1433e9@bootlin.com>
+In-Reply-To: <3filrg6mbh6m3galir7ew5juakd25uvksimr7mqd7uc5td3xza@fdvxcewozqeh>
 
-+ Andrew Lunn, Diogo Ivo, Vignesh Raghavendra
-  Not trimming reply to provide context for these people
-
-On Tue, May 21, 2024 at 02:44:11PM +0200, Romain Gantois wrote:
-> In the prueth_probe() function, if one of the calls to emac_phy_connect()
-> fails due to of_phy_connect() returning NULL, then the subsequent call to
-> phy_attached_info() will dereference a NULL pointer.
+On Wed, May 08, 2024 at 04:43:40PM +0100, Diogo Ivo wrote:
+> Newer UCSI versions defined additional notification bits that can be
+> enabled by the PPM. Add their definitions and convert all definitions
+> to BIT_ULL() as we now cross the 32-bit boundary.
 > 
-> Check the return code of emac_phy_connect and fail cleanly if there is an
-> error.
-> 
-> Fixes: 128d5874c082 ("net: ti: icssg-prueth: Add ICSSG ethernet driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 
-For Networking patches, please consider seeding the CC
-list using ./scripts/get_maintainer.pl this.patch.
-I've added the people who seemed to be missing.
-
-The patch itself looks good to me.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
 > ---
-> Hello everyone,
+>  drivers/usb/typec/ucsi/ucsi.h | 29 +++++++++++++++++------------
+>  1 file changed, 17 insertions(+), 12 deletions(-)
 > 
-> There is a possible NULL pointer dereference in the prueth_probe() function of
-> the icssg_prueth driver. I discovered this while testing a platform with one
-> PRUETH MAC enabled out of the two available.
-> 
-> These are the requirements to reproduce the bug:
-> 
-> prueth_probe() is called
-> either eth0_node or eth1_node is not NULL
-> in emac_phy_connect: of_phy_connect() returns NULL
-> 
-> Then, the following leads to the NULL pointer dereference:
-> 
-> prueth->emac[PRUETH_MAC0]->ndev->phydev is set to NULL
-> prueth->emac[PRUETH_MAC0]->ndev->phydev is passed to phy_attached_info()
-> -> phy_attached_print() dereferences phydev which is NULL
-> 
-> This series provides a fix by checking the return code of emac_phy_connect().
-> 
-> Best Regards,
-> 
-> Romain
-> ---
->  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> index 7c9e9518f555a..1ea3fbd5e954e 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> @@ -1039,7 +1039,12 @@ static int prueth_probe(struct platform_device *pdev)
+> diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
+> index c4d103db9d0f..e70cf5b15562 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.h
+> +++ b/drivers/usb/typec/ucsi/ucsi.h
+> @@ -124,18 +124,23 @@ void ucsi_connector_change(struct ucsi *ucsi, u8 num);
+>  #define UCSI_ACK_COMMAND_COMPLETE		BIT(17)
 >  
->  		prueth->registered_netdevs[PRUETH_MAC0] = prueth->emac[PRUETH_MAC0]->ndev;
+>  /* SET_NOTIFICATION_ENABLE command bits */
+> -#define UCSI_ENABLE_NTFY_CMD_COMPLETE		BIT(16)
+> -#define UCSI_ENABLE_NTFY_EXT_PWR_SRC_CHANGE	BIT(17)
+> -#define UCSI_ENABLE_NTFY_PWR_OPMODE_CHANGE	BIT(18)
+> -#define UCSI_ENABLE_NTFY_CAP_CHANGE		BIT(21)
+> -#define UCSI_ENABLE_NTFY_PWR_LEVEL_CHANGE	BIT(22)
+> -#define UCSI_ENABLE_NTFY_PD_RESET_COMPLETE	BIT(23)
+> -#define UCSI_ENABLE_NTFY_CAM_CHANGE		BIT(24)
+> -#define UCSI_ENABLE_NTFY_BAT_STATUS_CHANGE	BIT(25)
+> -#define UCSI_ENABLE_NTFY_PARTNER_CHANGE		BIT(27)
+> -#define UCSI_ENABLE_NTFY_PWR_DIR_CHANGE		BIT(28)
+> -#define UCSI_ENABLE_NTFY_CONNECTOR_CHANGE	BIT(30)
+> -#define UCSI_ENABLE_NTFY_ERROR			BIT(31)
+> +#define UCSI_ENABLE_NTFY_CMD_COMPLETE		BIT_ULL(16)
+> +#define UCSI_ENABLE_NTFY_EXT_PWR_SRC_CHANGE	BIT_ULL(17)
+> +#define UCSI_ENABLE_NTFY_PWR_OPMODE_CHANGE	BIT_ULL(18)
+> +#define UCSI_ENABLE_NTFY_ATTENTION		BIT_ULL(19)
+> +#define UCSI_ENABLE_NTFY_LPM_FW_UPDATE_REQ	BIT_ULL(20)
+> +#define UCSI_ENABLE_NTFY_CAP_CHANGE		BIT_ULL(21)
+> +#define UCSI_ENABLE_NTFY_PWR_LEVEL_CHANGE	BIT_ULL(22)
+> +#define UCSI_ENABLE_NTFY_PD_RESET_COMPLETE	BIT_ULL(23)
+> +#define UCSI_ENABLE_NTFY_CAM_CHANGE		BIT_ULL(24)
+> +#define UCSI_ENABLE_NTFY_BAT_STATUS_CHANGE	BIT_ULL(25)
+> +#define UCSI_ENABLE_NTFY_SECURITY_REQ_PARTNER	BIT_ULL(26)
+> +#define UCSI_ENABLE_NTFY_PARTNER_CHANGE		BIT_ULL(27)
+> +#define UCSI_ENABLE_NTFY_PWR_DIR_CHANGE		BIT_ULL(28)
+> +#define UCSI_ENABLE_NTFY_SET_RETIMER_MODE	BIT_ULL(29)
+> +#define UCSI_ENABLE_NTFY_CONNECTOR_CHANGE	BIT_ULL(30)
+> +#define UCSI_ENABLE_NTFY_ERROR			BIT_ULL(31)
+> +#define UCSI_ENABLE_NTFY_SINK_PATH_STS_CHANGE	BIT_ULL(32)
+>  #define UCSI_ENABLE_NTFY_ALL			0xdbe70000
 >  
-> -		emac_phy_connect(prueth->emac[PRUETH_MAC0]);
-> +		ret = emac_phy_connect(prueth->emac[PRUETH_MAC0]);
-> +		if (ret) {
-> +			dev_err(dev,
-> +				"can't connect to MII0 PHY, error -%d", ret);
-> +			goto netdev_unregister;
-> +		}
->  		phy_attached_info(prueth->emac[PRUETH_MAC0]->ndev->phydev);
->  	}
->  
-> @@ -1051,7 +1056,12 @@ static int prueth_probe(struct platform_device *pdev)
->  		}
->  
->  		prueth->registered_netdevs[PRUETH_MAC1] = prueth->emac[PRUETH_MAC1]->ndev;
-> -		emac_phy_connect(prueth->emac[PRUETH_MAC1]);
-> +		ret = emac_phy_connect(prueth->emac[PRUETH_MAC1]);
-> +		if (ret) {
-> +			dev_err(dev,
-> +				"can't connect to MII1 PHY, error %d", ret);
-> +			goto netdev_unregister;
-> +		}
->  		phy_attached_info(prueth->emac[PRUETH_MAC1]->ndev->phydev);
->  	}
->  
-> 
-> ---
-> base-commit: e4a87abf588536d1cdfb128595e6e680af5cf3ed
-> change-id: 20240521-icssg-prueth-fix-03b03064c5ce
-> 
-> Best regards,
+>  /* SET_UOR command bits */
 > -- 
-> Romain Gantois <romain.gantois@bootlin.com>
-> 
-> 
+> 2.45.0
+
+-- 
+heikki
 
