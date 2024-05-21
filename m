@@ -1,137 +1,146 @@
-Return-Path: <linux-kernel+bounces-185175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D0E08CB192
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:42:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F1A8CB19F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AA7D1F212FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:42:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A46401C2198A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66D6147C8B;
-	Tue, 21 May 2024 15:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0995314430B;
+	Tue, 21 May 2024 15:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JuM6Mlq6"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pn39ud18"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7943F78289;
-	Tue, 21 May 2024 15:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C831FBB;
+	Tue, 21 May 2024 15:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716306140; cv=none; b=HTerAZO6BsO8MMzxQlicLfVhRtXHyQaWCfTDEp0PYIyiqpxOAvQTlYl1hb4Yu/72myirwD+yGjbffXzWd4Jz/LbxdygIk9+W9H7jJ3DkIEI/axY6OI0VrdXbT0ihzXsbZOnzWhlg3j2LwXo6gsVaZfuhgTpfqpdeFZQHG6XxiwU=
+	t=1716306367; cv=none; b=LQngton6/Wy9yLvaLuf4JuQQJaFEJtFkiUscIOgAMYYVIw9Du9dEyfu/KN4v7HYpDfDWvSL/RqYUpB93LovrHt2WGAA6lpv9Aw7mK85bSk0V7FuuOHW8RuDhozDJRLSWOrjOXykhGN7klUA/bUrF1QAM619nPS1rpsEO7a9OzRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716306140; c=relaxed/simple;
-	bh=Wzp8U0x/I8sGmZ5v/VZqkhRsn4w7093y01qjtT5BQdQ=;
+	s=arc-20240116; t=1716306367; c=relaxed/simple;
+	bh=MOYqpIyTHcQhEowSXCmF5d6zPRCuQIn/+Gsq0JSaqfI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=upfO6ciahF3SgS7lDo64H2eBY1KI80vK5HmaKEb/xABNqHyx8L0wHdSf9VlB9iWHCdXZ0EQq3oT7T9yuXZigplBoWynJQmuG5bl9oVRSO/tcKLXlqRs74tjqnym3YFV9ZZWVpbaU6wKfA6FzhkBQqRn0uU/lHsy9ZFut1yAZq10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JuM6Mlq6; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 79F6B150E;
-	Tue, 21 May 2024 17:42:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716306123;
-	bh=Wzp8U0x/I8sGmZ5v/VZqkhRsn4w7093y01qjtT5BQdQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JuM6Mlq6qkbWUBlomT3fhYWQw85C4s/iyTLpdoHctqBE+5nX7ed3B7ex5fQaTH4JP
-	 Jil01J72OrOnEQQ04CD/Oh3TZ+6njSW2CUb0ELZHyladV5LGdOqrdovSGvJ/1Is/AI
-	 wzx5/eY0MIlhDJQ3SJJXwCG0gFrvC8TFkrz2vKTs=
-Date: Tue, 21 May 2024 18:42:06 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Alex Bee <knaerzche@gmail.com>
-Cc: keith <keith.zhao@starfivetech.com>, andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org, rfoss@kernel.org, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	daniel@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, hjc@rock-chips.com, heiko@sntech.de,
-	andy.yan@rock-chips.com, xingyu.wu@starfivetech.com,
-	p.zabel@pengutronix.de, jack.zhu@starfivetech.com,
-	shengyang.chen@starfivetech.com, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 02/10] drm/bridge: add common api for inno hdmi
-Message-ID: <20240521154206.GA1935@pendragon.ideasonboard.com>
-References: <20240521105817.3301-1-keith.zhao@starfivetech.com>
- <20240521105817.3301-3-keith.zhao@starfivetech.com>
- <58ddfc8f-1995-4f41-9d63-35a00c6f92b9@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CMoyORLubVmtZTjUyMttxc3qYbEWvGtg5kCXppvgIUhCYUmu2eibmJu/63JCv3fEkd84eMgj1DHqtpf7PJ/DN16ZsOQt//uJdHwo7x/P6YYkF0jo/KJV67k1bhbfR3PVtD7pnYDRqUBETYjKhNFBH+gD5qQ3S6/uBKzpKdly9gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pn39ud18; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716306363; x=1747842363;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MOYqpIyTHcQhEowSXCmF5d6zPRCuQIn/+Gsq0JSaqfI=;
+  b=Pn39ud188BRP0FsKIF2nLa9SIIEWQ/UDjZwRaV0aI3CncpubvLHvQDa2
+   XYS6ZedRtY/TpuxY4g9lTfD8UgQsFNjiDEWttitqmR0PVdFjwM6z8s58j
+   t7whGvTgzUWdjntAD8FqMiCrgd+3NKPe3AjBoyZzo/1N1ZYLEqPTItjsM
+   U/m2Ah1uHMQDT/Nvcq1j8CPGSSHBrsFK/NuTQ5luHBjlnaQnwKz9gck5b
+   ifjBYBXL314dVGyKhQRbAezU8CkKzP0WQ5ov7Hf4q4J2J4wK2znVbrkBO
+   eWSL9fAUXMk66pZ/0lgL4FyStqXaM1a8hPDtQgjZqaBe6fQ03jQIMIlss
+   A==;
+X-CSE-ConnectionGUID: gEJXe1QEREeQ0xe7hzU2lw==
+X-CSE-MsgGUID: Ldfq0+gKTp2wF0qgwMU1PQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="15459798"
+X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
+   d="scan'208";a="15459798"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 08:46:02 -0700
+X-CSE-ConnectionGUID: NDMP6qFGSFq7XsAgJ6OJ3g==
+X-CSE-MsgGUID: Ldro2/GCQ6mYjf2suJvVkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
+   d="scan'208";a="63793459"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 21 May 2024 08:45:57 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s9RgY-0000UQ-1Q;
+	Tue, 21 May 2024 15:45:54 +0000
+Date: Tue, 21 May 2024 23:44:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vidya Sagar <vidyas@nvidia.com>, corbet@lwn.net, bhelgaas@google.com,
+	galshalom@nvidia.com, leonro@nvidia.com, jgg@nvidia.com,
+	treding@nvidia.com, jonathanh@nvidia.com
+Cc: oe-kbuild-all@lists.linux.dev, mmoshrefjava@nvidia.com,
+	shahafs@nvidia.com, vsethi@nvidia.com, sdonthineni@nvidia.com,
+	jan@nvidia.com, tdave@nvidia.com, linux-doc@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com,
+	sagar.tv@gmail.com
+Subject: Re: [PATCH V2] PCI: Extend ACS configurability
+Message-ID: <202405212300.S6fsze09-lkp@intel.com>
+References: <20240521110925.3876786-1-vidyas@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <58ddfc8f-1995-4f41-9d63-35a00c6f92b9@gmail.com>
+In-Reply-To: <20240521110925.3876786-1-vidyas@nvidia.com>
 
-On Tue, May 21, 2024 at 05:36:43PM +0200, Alex Bee wrote:
-> Hi Keith,
-> 
-> thanks a lot for working on this. See some general remarks below
->
-> Am 21.05.24 um 12:58 schrieb keith:
-> > Add INNO common api so that it can be used by vendor
-> > drivers which implement vendor specific extensions to Innosilicon HDMI.
-> > 
-> > Signed-off-by: keith <keith.zhao@starfivetech.com>
-> > ---
-> >   MAINTAINERS                                   |   2 +
-> >   drivers/gpu/drm/bridge/Kconfig                |   2 +
-> >   drivers/gpu/drm/bridge/Makefile               |   1 +
-> >   drivers/gpu/drm/bridge/innosilicon/Kconfig    |   6 +
-> >   drivers/gpu/drm/bridge/innosilicon/Makefile   |   2 +
-> >   .../gpu/drm/bridge/innosilicon/inno-hdmi.c    | 587 ++++++++++++++++++
-> >   .../gpu/drm/bridge/innosilicon/inno-hdmi.h    |  97 +++
-> >   include/drm/bridge/inno_hdmi.h                |  69 ++
-> >   8 files changed, 766 insertions(+)
-> >   create mode 100644 drivers/gpu/drm/bridge/innosilicon/Kconfig
-> >   create mode 100644 drivers/gpu/drm/bridge/innosilicon/Makefile
-> >   create mode 100644 drivers/gpu/drm/bridge/innosilicon/inno-hdmi.c
-> >   create mode 100644 drivers/gpu/drm/bridge/innosilicon/inno-hdmi.h
-> >   create mode 100644 include/drm/bridge/inno_hdmi.h
-> > 
-> ....
-> 
-> > +	drm_encoder_helper_add(encoder, pdata->helper_private);
-> > +
-> > +	hdmi->connector.polled = DRM_CONNECTOR_POLL_HPD;
-> > +
-> > +	drm_connector_helper_add(&hdmi->connector,
-> > +				 &inno_hdmi_connector_helper_funcs);
-> > +
-> > +	drmm_connector_init(drm, &hdmi->connector,
-> > +			    &inno_hdmi_connector_funcs,
-> > +			    DRM_MODE_CONNECTOR_HDMIA,
-> > +			    hdmi->ddc);
-> > +
->
-> I really don't want to anticipate bridge maintainer's feedback, but new
-> bridge drivers must not contain connector creation. That must happen
-> somewhere else.
+Hi Vidya,
 
-You're absolutely right :-) Connector creation should be handled by the
-drm_bridge_connector helper. The HDMI bridge driver should focus on the
-HDMI bridge itself.
+kernel test robot noticed the following build warnings:
 
-> Also I'm neither seeing any drm_brige struct nor drm_bridge_funcs, which
-> are both essential for a bridge driver. I don't think moving a part of a
-> driver to .../drm/bridge/ makes it a bridge driver.
-> 
-> > +	drm_connector_attach_encoder(&hdmi->connector, encoder);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> ....
-> 
+[auto build test WARNING on pci/next]
+[also build test WARNING on pci/for-linus linus/master v6.9 next-20240521]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Vidya-Sagar/PCI-Extend-ACS-configurability/20240521-191317
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20240521110925.3876786-1-vidyas%40nvidia.com
+patch subject: [PATCH V2] PCI: Extend ACS configurability
+config: parisc-defconfig (https://download.01.org/0day-ci/archive/20240521/202405212300.S6fsze09-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240521/202405212300.S6fsze09-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405212300.S6fsze09-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/pci/pci.c:1044: warning: Function parameter or struct member 'caps' not described in 'pci_std_enable_acs'
+
+
+vim +1044 drivers/pci/pci.c
+
+cbe420361f92a31 Rajat Jain      2020-07-07  1038  
+cbe420361f92a31 Rajat Jain      2020-07-07  1039  /**
+cbe420361f92a31 Rajat Jain      2020-07-07  1040   * pci_std_enable_acs - enable ACS on devices using standard ACS capabilities
+cbe420361f92a31 Rajat Jain      2020-07-07  1041   * @dev: the PCI device
+cbe420361f92a31 Rajat Jain      2020-07-07  1042   */
+a0bcc944f0e307a Vidya Sagar     2024-05-21  1043  static void pci_std_enable_acs(struct pci_dev *dev, struct pci_acs *caps)
+cbe420361f92a31 Rajat Jain      2020-07-07 @1044  {
+cbe420361f92a31 Rajat Jain      2020-07-07  1045  	/* Source Validation */
+a0bcc944f0e307a Vidya Sagar     2024-05-21  1046  	caps->ctrl |= (caps->cap & PCI_ACS_SV);
+cbe420361f92a31 Rajat Jain      2020-07-07  1047  
+cbe420361f92a31 Rajat Jain      2020-07-07  1048  	/* P2P Request Redirect */
+a0bcc944f0e307a Vidya Sagar     2024-05-21  1049  	caps->ctrl |= (caps->cap & PCI_ACS_RR);
+cbe420361f92a31 Rajat Jain      2020-07-07  1050  
+cbe420361f92a31 Rajat Jain      2020-07-07  1051  	/* P2P Completion Redirect */
+a0bcc944f0e307a Vidya Sagar     2024-05-21  1052  	caps->ctrl |= (caps->cap & PCI_ACS_CR);
+cbe420361f92a31 Rajat Jain      2020-07-07  1053  
+cbe420361f92a31 Rajat Jain      2020-07-07  1054  	/* Upstream Forwarding */
+a0bcc944f0e307a Vidya Sagar     2024-05-21  1055  	caps->ctrl |= (caps->cap & PCI_ACS_UF);
+cbe420361f92a31 Rajat Jain      2020-07-07  1056  
+7cae7849fccee81 Alex Williamson 2021-06-18  1057  	/* Enable Translation Blocking for external devices and noats */
+7cae7849fccee81 Alex Williamson 2021-06-18  1058  	if (pci_ats_disabled() || dev->external_facing || dev->untrusted)
+a0bcc944f0e307a Vidya Sagar     2024-05-21  1059  		caps->ctrl |= (caps->cap & PCI_ACS_TB);
+cbe420361f92a31 Rajat Jain      2020-07-07  1060  }
+cbe420361f92a31 Rajat Jain      2020-07-07  1061  
 
 -- 
-Regards,
-
-Laurent Pinchart
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
