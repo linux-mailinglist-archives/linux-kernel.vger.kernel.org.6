@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-184733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720A98CAB36
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B208CAB38
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A30FF1C2028E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:48:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3447D1C213FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F597D071;
-	Tue, 21 May 2024 09:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F8D7E588;
+	Tue, 21 May 2024 09:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lu3JTEfa"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vedFmH6u"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563D5762E0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F671770E9
 	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716284737; cv=none; b=p/ukS5XVzdhiEloBJTjExCcfuu9lRDExhn3KdfihxFPaJZZAFms+xd2aTiDWofUC9br5y2qL1rgho77HUXFaiUzDxm7VOAa3rhKNrpjH998NHG7nKNljL1a+6IheYS6jZKHgD5H/mnxZ9P2zFsEn/+Tlvr5Wf5sMFG0V480hZfU=
+	t=1716284738; cv=none; b=pbDAV/9UKi8ucXotWi1Sf7w87ppcArvnO+qtWjk/gJIeCAKnWLKM54dRFLHTfJ25sIEoRrQFtdgJsYR/gjVDuX7SJ9mYiaKD5zVECNRToz0WF8gH0GJMAQdXUdoQi8+AHZIlKXLFkaMgfabO/VYJeMG4YCC1Y8aKpqjL96QWXhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716284737; c=relaxed/simple;
-	bh=lOURPTyf/MozPD5HW7XYKU/orijtd9gkaS/jV+RA0uo=;
+	s=arc-20240116; t=1716284738; c=relaxed/simple;
+	bh=hNIcpe1sOvV0/2oq2E+Wm6ZeAwz5DUtQCi+I+XlGNEg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UmylVVkXa/g79Hx850mOZYl8EpS/MpVYK+Z9eLJOdHpcpO3zc3pwgYybVGZM9sZBDgXlJ30T6EpJwbhc407kbZB7h4YRtxqzdL6EhL2VNQ6GvSx46qJKgGRkfLhqSaFIksivGWj7PzK7JQn1TvtC8KkD70woHq1Apflcc+BGMmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lu3JTEfa; arc=none smtp.client-ip=209.85.208.180
+	 In-Reply-To:To:Cc; b=pX/C7xrNx3oUMUzRxFbDqaJQTjIz/dyrqQe+9Db5dO4OOqgbx4WiFM8+G52Cq0221+9seR8PNV+JbpbnCk6d18nICB9kSmTPUzcyYTGjIk1WotA66+Cmgn0b9aLVuZx6bVF+KrxX66cBgO0azx4/DFq6K0b8De4vNb3mdzupa1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vedFmH6u; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e719bab882so28046701fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:45:34 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e538a264e0so67507021fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:45:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716284733; x=1716889533; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716284734; x=1716889534; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zw7OrzfdTgB4KC/AhplUeUEfJhFyKT0ay66VXG+9Ap4=;
-        b=lu3JTEfaoZMk2UrZXbGstpdm8WjFBesZ8GOXMH0gGSli0Vbxkn9Ygxn0iMaJrmmPPc
-         azZX+QbWxrLJMUuX1u5isOgjrb28feVZxq00tkNwHyGNL1lmWhLx+kNU4W5zTbcuIBOq
-         kYdtdcxLXBo8LVFugpXCa/tszxsbAYDfZAKhPk8igcHL43oMskAV8bFUb7WGHYCs9P37
-         V/HIO3ZEomUy13DvWNgAvQPvKwbrG9FfJq73e1bvy5WD8BDw2D9ecucoHnh/llDm+GiG
-         3ZgIDz1SCBuYLLZSZiwwZA3hEErBAiP1mqLsi9LvRhUNATYw49YM3G3wUSbcm5nTQGpa
-         rzYw==
+        bh=76RXMDJdIf87Lj/v6tqI1Ofql4asvJ4Gr33M+iMz2pU=;
+        b=vedFmH6uMnaY+QyRY8kx0Vo9hwWJdGbzVK4qhTHM9qRMGF2cuZFGYXdd4P21TUhQeB
+         9WuPOjhZ5lHNk/TzXG6JDVd0F6NbevPJ+TcdFxH7yoOs0byedvPaZuC8D5eaUSPIlWdq
+         Ton8I38Llz3dn90vZcIKUdj0GYu4zPwTfaNYS4CJgjVlR1b/QmVzg94ssdCTJFh/udNW
+         RfHpfLvCqtJTifmWicsQAk6SwCCrTNAmEIvTxhxkEbELiTEQZn9IcacKd/UdZucaBX+V
+         LA78k51Rzr/vDNK9nKm/taAYokPXKJ9QkgXttDsuLZvaVab8mhgpcP2V/5Y2jmM36ihm
+         uHPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716284733; x=1716889533;
+        d=1e100.net; s=20230601; t=1716284734; x=1716889534;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zw7OrzfdTgB4KC/AhplUeUEfJhFyKT0ay66VXG+9Ap4=;
-        b=w0VBHQHjhb6hXeQbMJpLYhj6m+iJV0MLjCMXo3EsvIvvpkPtBnZdWoV5Fp4GdEXzwu
-         Cp28fsx72wuhkSUQbNdr+mI37esxI6+gUFW/vvAvXmcq8bSthBeKGKY50A1sjWBWiuU9
-         dmWr5SfXRRPgPK5WGa0OXp19YbyvbOcohbS6Js4WxDlkqPGEexCdx0jQHG+9J2/ucBW8
-         vKJH9s2iHFqrD1kRqljUfw+8b38H/7zodD77RaP2M/OOKFtFymmHYfsoTBUSSR92mHod
-         DOOox6ES5sb9wVWZ3j9WvKR+g8vGQMCqMZz/7U/FwgANp6X+Pj6TXtvYA0SY1m5USbUo
-         F7gw==
-X-Gm-Message-State: AOJu0YxeVeDWV4TXaUEkqMLQ4n5OTXm0qMxLYh+ehPCWLD2B1Lx9rG6k
-	JRsPZz7/K0hXtld9gbpTbtJaRFFTY2k2hab5nPy2AS0MQC9BG+y0GUTX9oUt7Pc=
-X-Google-Smtp-Source: AGHT+IGX1Q176IzT5QXdTwJ4xeLLRxar3B9GcFke5IAQRDPGkKTD4QJYxG6uph4uMX4AvCo7vIqoIw==
-X-Received: by 2002:a05:651c:14f:b0:2e4:e02c:a0bc with SMTP id 38308e7fff4ca-2e51ff65d1amr221714241fa.31.1716284733338;
+        bh=76RXMDJdIf87Lj/v6tqI1Ofql4asvJ4Gr33M+iMz2pU=;
+        b=PG2nXca7ri/ZDRH5WWmMc/82t8bHioIR+A+YvdBZoRvDTTCKcuibGDy3HAhyJQ5gWf
+         rjAEucKZeMmIahuQ+2oGUIgsk/5hbaLInif8SdgCHXyxnPD1HkfuoJZDIQhVTy/box1X
+         FsHBqpOFSU5P9X4h36InXdxYCyQgKn4UgSgHGPigha980aaZ9HWxBEpcfGyuTdR7zM5Y
+         LIpTlNp0X3dRfftlz4mdABkbdFabp2UXB1Q0va5CzlHV2Q/2UDrxKSjNB/3JdOru3dtK
+         D7Ww49za8S2qyGAvHKNzQiGdTOLswv0yW/tswU+MuI8NatZJRDsEcgJ3Sa2ImCssB0U5
+         Rm9g==
+X-Gm-Message-State: AOJu0YzWyp2SuIbdnlLJKA4qQs14Zu0L+8NV2fojsZmzHPNW3r6V3vVl
+	tbOfr0XsyZvHJ0W65rF1xeDq/xdJ4+I09+jso2qkzOepjvMtzm6hZmuBb6QDLcs=
+X-Google-Smtp-Source: AGHT+IEqAy4DTdCoeAv2Vdxu6aMYdVExJ0VTzJA4oaoyPSmsMWau+PJh35LHB+sTJu87BfIxRz3YVQ==
+X-Received: by 2002:a2e:98cf:0:b0:2dc:e3da:8025 with SMTP id 38308e7fff4ca-2e5203b41dfmr336605301fa.36.1716284733986;
         Tue, 21 May 2024 02:45:33 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e706ee0a65sm13906261fa.112.2024.05.21.02.45.32
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e706ee0a65sm13906261fa.112.2024.05.21.02.45.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 02:45:32 -0700 (PDT)
+        Tue, 21 May 2024 02:45:33 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 21 May 2024 12:45:31 +0300
-Subject: [PATCH 11/12] arm64: dts: qcom: apq8016-sbc: drop firmware-name
+Date: Tue, 21 May 2024 12:45:32 +0300
+Subject: [PATCH 12/12] arm64: dts: qcom: apq8096-db820c: drop firmware-name
  properties
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240521-qcom-firmware-name-v1-11-99a6d32b1e5e@linaro.org>
+Message-Id: <20240521-qcom-firmware-name-v1-12-99a6d32b1e5e@linaro.org>
 References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
 In-Reply-To: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -92,55 +92,47 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  Arnd Bergmann <arnd@arndb.de>, 
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1078;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=867;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=lOURPTyf/MozPD5HW7XYKU/orijtd9gkaS/jV+RA0uo=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmTG004RzknfFr2xUTYDfig7qbAJdCOKGDfe99k
- 9euDeWDqcCJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZkxtNAAKCRCLPIo+Aiko
- 1feYB/9kr5Vq0IGkYGlqoyLUubukycE69t/Ty8gnlJ3JC5immim+H5tkJHAjolUChQrwcLzpChb
- QyH01xEy28Z34X99QnGbZn9THweOucUS83xmb3RFt0qpYUXmqIc7bxQdiglfTjJm918Z4WKH/J3
- 6UrEaVSu99ghVgwEOwXSka2rAIkiJxlQu74fIymcuD0qYyHsHbeWWnqjr47ngNnQ2wDrFDRPwF/
- JgRxhptkMB3tCOteUbsbhF8s9DCzU6/5MMv1/C4CVsqJWY1SvtEzvwtU0BWxTvp8C8v1AA4txXW
- WXRDEWkyvxigO3lJ8uadhOc25kg0ZP2tqEuUdt/TbRwKFONB
+ bh=hNIcpe1sOvV0/2oq2E+Wm6ZeAwz5DUtQCi+I+XlGNEg=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmTG00XZHHmjrQ3qkPBy9bf5pX47eUXttvZKwjl
+ K3ZuOLJ9+uJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZkxtNAAKCRCLPIo+Aiko
+ 1SULCACrryMAqbZ1Va3cYrmE/JyS2h5P2T1NgaXOI8XFucKAREQa56inkv1aVjV+lM4Q/los5rx
+ Hse4D3WZur17W5buWRif/FSoXkFlBFHq11Bum/3KV8490wuSElXP6Z+w0LfGe+920BdLspNtHzb
+ nD1kWhyBQI0WRxmgp252Fxj4/bkX5UhX7R1cXsSA/r9pViUggXL5LhL2XUwfvqxG9ZGj0kggVUF
+ O4qhJCSZIfLe8VNu9T4ZxR3YBBBP252aQidYgJ72qXoFsM8ccXKuodksJHJaVh+P6B/TcyO7l6R
+ efJMaqM8Cg/9a3N0h1leWK3V/ArWR5g2a/tzOhxLJQ5i3WaB
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
 As the drivers default to loading the firmware from the board-specific
-location, drop the firmware-name properties. In case of the WCNSS
-calibration data drop the path to the file, retaining just the file
-name.
+location, drop the firmware-name properties.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/apq8016-sbc.dts | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dts b/arch/arm64/boot/dts/qcom/apq8016-sbc.dts
-index aba08424aa38..24779238cc18 100644
---- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dts
-+++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dts
-@@ -260,8 +260,6 @@ &mdss_dsi0_out {
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+index e8148b3d6c50..2c8a77401aa3 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+@@ -161,7 +161,6 @@ bluetooth {
  
- &mpss {
+ &adsp_pil {
  	status = "okay";
--
--	firmware-name = "qcom/apq8016/mba.mbn", "qcom/apq8016/modem.mbn";
+-	firmware-name = "qcom/apq8096/adsp.mbn";
  };
  
- &mpss_mem {
-@@ -388,11 +386,10 @@ &venus_mem {
- 
- &wcnss {
+ &blsp2_i2c1 {
+@@ -253,7 +252,6 @@ &mmcc {
+ &mss_pil {
  	status = "okay";
--	firmware-name = "qcom/apq8016/wcnss.mbn";
+ 	pll-supply = <&vreg_l12a_1p8>;
+-	firmware-name = "qcom/apq8096/mba.mbn", "qcom/apq8096/modem.mbn";
  };
  
- &wcnss_ctrl {
--	firmware-name = "qcom/apq8016/WCNSS_qcom_wlan_nv_sbc.bin";
-+	firmware-name = "WCNSS_qcom_wlan_nv_sbc.bin";
- };
- 
- &wcnss_iris {
+ &pm8994_resin {
 
 -- 
 2.39.2
