@@ -1,109 +1,278 @@
-Return-Path: <linux-kernel+bounces-185413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4418CB4A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:23:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E258CB4AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 080A9283091
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:23:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9B2F1C217E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D8A1494D4;
-	Tue, 21 May 2024 20:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E55149C57;
+	Tue, 21 May 2024 20:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rutwDc1b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKN2yFP/"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935F63FB8B;
-	Tue, 21 May 2024 20:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B1C3FB8B;
+	Tue, 21 May 2024 20:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716322982; cv=none; b=r94WPhgosVIsowBwbe/dQzf7VYSvCgpaIpwwfVp212Vi433WHJhXN7Sa6uN0+Ss+Zayav/Ls6jZFpf9T8xeAUm2CgtzPBHjlRLcf10U0wpFFIHR4qfU5DnQaf19wMCR6ZLVrMyxtXvXeUuDtcbOOeHDT/fX41ZasD4Skvvd+U6g=
+	t=1716323077; cv=none; b=p5DiG7qPvdlDPi9gGGVJx02T4v6WhB7QCLvEs3GkLC8XmSDWiDrvIOvPcx16n7tPF/innPlq6O6dxUqGy2vTwT4Nk+Rg2ltiB40BDP4lwWHVJZG/djsKuJKeRxynxl7b9tA3seON06apEZ7y6eWgM25il/d7dsplCtGPx4hR7fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716322982; c=relaxed/simple;
-	bh=Rygel7lRWEl019erYolLr+9sOFGxdECPHVMoJ63saII=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A5U254ZiOMNSC7H+tOGqGn38z+tpxpno44DlD65hz2A3L34S0j0cwWM2sD67DVYtz6Ng+ZcTaRBeXSdL0UWDkYAk7HW5eT41AsSnebm6SaVoVTC0KD7Tda99FrU9YGEc59bOPFQpU5kwa1mosnD9uR+qmjhDFW76rjODe2sWZ84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rutwDc1b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E6B3C2BD11;
-	Tue, 21 May 2024 20:23:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716322982;
-	bh=Rygel7lRWEl019erYolLr+9sOFGxdECPHVMoJ63saII=;
-	h=From:Date:Subject:To:Cc:From;
-	b=rutwDc1bDK07kt3hJHrIuDUuEQBLD+AqyYOJpXQRoajkZSY5x+zk35HlNw8LB9X5q
-	 NllptBlAPdcyEWo67NuCbux9UtcPtjr15uP3vjyxXKxIWFD7agPtwOj8TGP9tbZ83z
-	 kyu0IcN9Dkfs3JR3RlWyhRiiSNBQ4Rwuhd3Rd0Zsx971jZclFTE5Le5G4ZNe5qGghx
-	 +s/xXTzQogpUee54SeiCjIz2bjzMgtBXypGjl6sD+PhAmYA10UsKX91GaC9Ur779yP
-	 UY6Gwaxbob4gBa/4lWH98gD8kZ1+4zaOtkJf8Q52Ojole28vr/sD5B5EDje9XIZR72
-	 95+b+1zeSNgqQ==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 21 May 2024 21:22:49 +0100
-Subject: [PATCH] arm64/crypto: Raise priority of NEON crct10dif
- implementation
+	s=arc-20240116; t=1716323077; c=relaxed/simple;
+	bh=/UG2kuAuMTEuajL7u1UkPBllsxmrQaa1uMNhHwaSNKQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZZYX8FkJnFlgfmDEdM4DT5cJRJ1jHtQWX4ziQ/sVw1NVid257a7w9cfczRgyW3GsWo1o6vPi+PHj5hib/LDPquPMxU4sYGgjbIu0b1ks2fF1ebHNrgXl1zvtrgPT62HKTw3S99emBRI2HXepCen51izSzIIe5cHJRHamGef4nrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKN2yFP/; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-574f7c0bab4so420744a12.0;
+        Tue, 21 May 2024 13:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716323074; x=1716927874; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OYnvnXcE3D/kvzMwZLCJA06YMqi27boOmTrkHntlVqc=;
+        b=HKN2yFP/lyi/+RWnO83w3FarOOZ5AwzDMNfV9eQ6XJHAnM9Spx7haut7ndYa/c322F
+         gwjwdXhPpoeMaQTPVlnfRSAeulOIQvAiGDSrPycFQgJZW/T2JNLQB8UA8Ocr7rDnewCk
+         F9Zf3YgOstAxA4B0kq2ziixP9GGeD48sH4BpmXmoopEWb4TJoDFo5a+U7eIwrW8Wba33
+         adr/tCB/9XKTudjAgvPT4ebo8WYqCujfkpfFHNOL0kUzXFJ1DGAH+4QSfJWwiX98oNL0
+         UdX0uSnUyI+0zLfs+UBb4uqTLGVcI38XMuCpeZahllEWLFxd8jPVgQ+Tdm0p/Gv8fy6d
+         jvwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716323074; x=1716927874;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OYnvnXcE3D/kvzMwZLCJA06YMqi27boOmTrkHntlVqc=;
+        b=SwyDfhpBXo06nlxACwqlQYy6T+bBwo9Vt/+0kPUYoeV9FPia3CdqSQTEvRaEJX4LLa
+         vvZ6sRHt+q1iTZhAMkueJtUm0DcdQRtzjjwgT/q6tBzwcPCtJwuabn8hikY5uBG2swcG
+         OuFxvlbjslvj9/jVEyQmwCUe89vw4kX/cxMKfPBAd6IUSeewVCpfszbpCUQdwrOuyg7f
+         G5aneuTVT42SnDwgMuyUziXhPsyoUhF2ovQ3HZhak4gBS8IOGiHxan4paJVVCj8AjaFs
+         t61Va39012UQvapsk/smlqYCfOPbFhOwA8ywbGLxDfFQMv/ov0PkkduUHTQhEm27Heh5
+         Bdjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWh82GU1Un3d1QzOFtcNCVD8YRNq0HKw2NaRqLg8XlRpDR4MsXSMZE+SVA5gy6BPYF+hXLJMT3qL9pC8XbD6RVkVQQbRHKojuJIVN8a6aPgsCZ022nfkr0jLTwul7Ssg4Y/ecijqVFHRkMl2LhNoRC/keCp5J7wKztNxe5rQ0WbwH324tF8drI44EHHbOZVlsHM9XHtybpr2NqgfVEGGTxnz4TwESZnzboXdiPHZkO79wYWHfFfk/aSVMZ0
+X-Gm-Message-State: AOJu0YzRrISSvPkbm6pZrnhV7d4Um2R5L+CoRk8NjiVP3kTde77W1WC7
+	6FZ6/pPzOJycXRb5NB59jbsp18An5jGF/lDFNK96gc7ZWXx6bmna
+X-Google-Smtp-Source: AGHT+IEiOq3YhqETpKwsUd1R/rNi0bETGeC8Gk4xXoSQWd28rw7Q0HtpnLbLaW3hdtGHuy7n+J5naQ==
+X-Received: by 2002:a50:d4d1:0:b0:575:17ca:7f7b with SMTP id 4fb4d7f45d1cf-57831140f4cmr129623a12.15.1716323073367;
+        Tue, 21 May 2024 13:24:33 -0700 (PDT)
+Received: from krava ([83.240.61.240])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733becfbd3sm17643868a12.44.2024.05.21.13.24.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 13:24:33 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 21 May 2024 22:24:30 +0200
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Alejandro Colomar <alx@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>
+Subject: Re: [PATCHv6 9/9] man2: Add uretprobe syscall page
+Message-ID: <Zk0C_vm3T2L79-_W@krava>
+References: <20240521104825.1060966-1-jolsa@kernel.org>
+ <20240521104825.1060966-10-jolsa@kernel.org>
+ <j6qxudmvwccpqnle4evabxbswdygmx35bgqwhemuzsjs5iuydv@fk2iumwucifx>
+ <ZkyKKwfhNZxrGWsa@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240521-arm64-crct10dif-neon-prio-v1-1-e2975754b8f3@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAJgCTWYC/x3MQQqAIBBA0avErBtQs6iuEi3EpppFGmNEIN09a
- fkW/2dIJEwJxiqD0M2JYyjQdQV+d2Ej5KUYjDJWtUajk6Oz6MVfWi28YqAY8BSO2A/WDU2ryGu
- C0p9CKz//e5rf9wMUHWYxawAAAA==
-To: Herbert Xu <herbert@gondor.apana.org.au>, 
- "David S. Miller" <davem@davemloft.net>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.14-dev-621fa
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1152; i=broonie@kernel.org;
- h=from:subject:message-id; bh=Rygel7lRWEl019erYolLr+9sOFGxdECPHVMoJ63saII=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmTQKjC8Hyhfk9Z/Am/ERXw2VRa5M7c/f+qBckBcpx
- DRkrkHKJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZk0CowAKCRAk1otyXVSH0FmcB/
- 9Y+2EzwkuxrDQd7go9lzx6cNqRoPw8Q26bVcw+O2MECipm5HITkaTzvpoSSgpjEfQKS8iYfxigCVnO
- kYGCH52imMrpH18q7sR+8fgCS9Z/eIuBFNqorhslc+Pjb/6w4xHFGdg7CORU/jI+M/8vfu7XPmwC07
- lFk9Ss2RXGkXOeu6RyTOpKrm7zDVEMaGsbKZuROmGQ9rHJ26rF007LOEFLp6mX6V1fDco4U3T4PV2R
- eQAaRhgbsG6YHrUytJuARtPQFlcMYecoqN2ou08PXoPv3VxAHd13NVNE7lKXVKwaBiQw9nUjrKtZgW
- pb0NV1KNe/BjEPfQ91nRqqSwFNuwrd
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkyKKwfhNZxrGWsa@krava>
 
-The NEON implementation of crctd10dif is registered with a priority of 100
-which is identical to that used by the generic C implementation. Raise the
-priority to 150, half way between the PMULL based implementation and the
-NEON one, so that it will be preferred over the generic implementation.
+On Tue, May 21, 2024 at 01:48:59PM +0200, Jiri Olsa wrote:
+> On Tue, May 21, 2024 at 01:36:25PM +0200, Alejandro Colomar wrote:
+> > Hi Jiri,
+> > 
+> > On Tue, May 21, 2024 at 12:48:25PM GMT, Jiri Olsa wrote:
+> > > Adding man page for new uretprobe syscall.
+> > > 
+> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > > ---
+> > >  man2/uretprobe.2 | 50 ++++++++++++++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 50 insertions(+)
+> > >  create mode 100644 man2/uretprobe.2
+> > > 
+> > > diff --git a/man2/uretprobe.2 b/man2/uretprobe.2
+> > > new file mode 100644
+> > > index 000000000000..690fe3b1a44f
+> > > --- /dev/null
+> > > +++ b/man2/uretprobe.2
+> > > @@ -0,0 +1,50 @@
+> > > +.\" Copyright (C) 2024, Jiri Olsa <jolsa@kernel.org>
+> > > +.\"
+> > > +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> > > +.\"
+> > > +.TH uretprobe 2 (date) "Linux man-pages (unreleased)"
+> > > +.SH NAME
+> > > +uretprobe \- execute pending return uprobes
+> > > +.SH SYNOPSIS
+> > > +.nf
+> > > +.B int uretprobe(void)
+> > > +.fi
+> > 
+> > What header file provides this system call?
+> 
+> there's no header, it's used/called only by user space trampoline
+> provided by kernel, it's not expected to be called by user
+> 
+> > 
+> > > +.SH DESCRIPTION
+> > > +The
+> > > +.BR uretprobe ()
+> > > +syscall is an alternative to breakpoint instructions for
+> > > +triggering return uprobe consumers.
+> > > +.P
+> > > +Calls to
+> > > +.BR uretprobe ()
+> > > +suscall are only made from the user-space trampoline provided by the kernel.
+> > 
+> > s/suscall/system call/
+> 
+> ugh leftover sry
+> 
+> > 
+> > > +Calls from any other place result in a
+> > > +.BR SIGILL .
+> > 
+> > Maybe add an ERRORS section?
+> > 
+> > > +
+> > 
+> > We don't use blank lines; it causes a groff(1) warning, and other
+> > problems.  Instead, use '.P'.
+> > 
+> > > +.SH RETURN VALUE
+> > > +The
+> > > +.BR uretprobe ()
+> > > +syscall return value is architecture-specific.
+> > > +
+> > 
+> > .P
+> > 
+> > > +.SH VERSIONS
+> > > +This syscall is not specified in POSIX,
+> > 
+> > Redundant with "STANDARDS: None.".
+> > 
+> > > +and details of its behavior vary across systems.
+> > 
+> > Keep this.
+> 
+> ok
+> 
+> > 
+> > > +.SH STANDARDS
+> > > +None.
+> > > +.SH HISTORY
+> > > +TBD
+> > > +.SH NOTES
+> > > +The
+> > > +.BR uretprobe ()
+> > > +syscall was initially introduced for the x86_64 architecture where it was shown
+> > > +to be faster than breakpoint traps. It might be extended to other architectures.
+> > 
+> > Please use semantic newlines.
+> > 
+> > $ MANWIDTH=72 man man-pages | sed -n '/Use semantic newlines/,/^$/p'
+> >    Use semantic newlines
+> >      In the source of a manual page, new sentences should be started on
+> >      new lines, long sentences should be split  into  lines  at  clause
+> >      breaks  (commas,  semicolons, colons, and so on), and long clauses
+> >      should be split at phrase boundaries.  This convention,  sometimes
+> >      known as "semantic newlines", makes it easier to see the effect of
+> >      patches, which often operate at the level of individual sentences,
+> >      clauses, or phrases.
+> 
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
+how about the change below?
+
+thanks,
+jirka
+
+
 ---
- arch/arm64/crypto/crct10dif-ce-glue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/crypto/crct10dif-ce-glue.c b/arch/arm64/crypto/crct10dif-ce-glue.c
-index 09eb1456aed4..59016518f44d 100644
---- a/arch/arm64/crypto/crct10dif-ce-glue.c
-+++ b/arch/arm64/crypto/crct10dif-ce-glue.c
-@@ -98,7 +98,7 @@ static struct shash_alg crc_t10dif_alg[] = {{
- 
- 	.base.cra_name		= "crct10dif",
- 	.base.cra_driver_name	= "crct10dif-arm64-neon",
--	.base.cra_priority	= 100,
-+	.base.cra_priority	= 150,
- 	.base.cra_blocksize	= CRC_T10DIF_BLOCK_SIZE,
- 	.base.cra_module	= THIS_MODULE,
- }, {
-
----
-base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-change-id: 20240521-arm64-crct10dif-neon-prio-894a9350ec1e
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
-
+diff --git a/man/man2/uretprobe.2 b/man/man2/uretprobe.2
+new file mode 100644
+index 000000000000..959b7a47102b
+--- /dev/null
++++ b/man/man2/uretprobe.2
+@@ -0,0 +1,55 @@
++.\" Copyright (C) 2024, Jiri Olsa <jolsa@kernel.org>
++.\"
++.\" SPDX-License-Identifier: Linux-man-pages-copyleft
++.\"
++.TH uretprobe 2 (date) "Linux man-pages (unreleased)"
++.SH NAME
++uretprobe \- execute pending return uprobes
++.SH SYNOPSIS
++.nf
++.B int uretprobe(void)
++.fi
++.SH DESCRIPTION
++The
++.BR uretprobe ()
++system call is an alternative to breakpoint instructions for triggering return
++uprobe consumers.
++.P
++Calls to
++.BR uretprobe ()
++system call are only made from the user-space trampoline provided by the kernel.
++Calls from any other place result in a
++.BR SIGILL .
++.SH RETURN VALUE
++The
++.BR uretprobe ()
++system call return value is architecture-specific.
++.SH ERRORS
++.BR SIGILL
++The
++.BR uretprobe ()
++system call was called by user.
++.SH VERSIONS
++Details of the
++.BR uretprobe ()
++system call behavior vary across systems.
++.SH STANDARDS
++None.
++.SH HISTORY
++TBD
++.SH NOTES
++The
++.BR uretprobe ()
++system call was initially introduced for the x86_64 architecture where it was shown
++to be faster than breakpoint traps.
++It might be extended to other architectures.
++.P
++The
++.BR uretprobe ()
++system call exists only to allow the invocation of return uprobe consumers.
++It should
++.B never
++be called directly.
++Details of the arguments (if any) passed to
++.BR uretprobe ()
++and the return value are architecture-specific.
 
