@@ -1,189 +1,189 @@
-Return-Path: <linux-kernel+bounces-184497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1EF8CA785
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:04:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC7478CA791
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 352AF2824A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 695DB1F211C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D54D3FB3B;
-	Tue, 21 May 2024 05:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AA42EB1D;
+	Tue, 21 May 2024 05:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="krQXJ+iv"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yw6lzc8U"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A65B610C;
-	Tue, 21 May 2024 05:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877362E85E
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 05:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716267863; cv=none; b=OCtZ46ssT98TfvRzR5Z79l1vmClCiPGL6uc0rDcUa9/251QiyhNtFHvDnfDd4BB4OaGCO4LQwQnHQYnmfqEvtrLRR/YiepS+w44Am+9jTeUrhrocJYmlAFg9SdD2D9Yymw/PSiXEmRXG/Hh5dCm88v9RaXPsCrBjGqocrI1mKvM=
+	t=1716268349; cv=none; b=gDdwuC6E4jN4pOeBhLoKv+KDoKwtrlyWJz9X6BMgaPrMQZumorVDB5oHmCgxpidhh0zlpzrbML1yA8UyE7ylj9zF+ta5f/ooLHWjn7ORctUB/MuCV4azu8sLfhk6NcA8Ib8lzONKUd30PUNZNlBi3Yb5I3TmIStd0zSojZjcitA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716267863; c=relaxed/simple;
-	bh=97PxihTc9hshgLJfsF3ImXlIAmhViSK96qjnNgOAQgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iIXNRHPc4xtJnfaBUkfreySI/9PntBEmOpUW7C/Fh7P6npY7L9EhuXLVGYRqCpuNZtUBG8TS6JH8Nj6e0rzK7BE43zI6Tm9cEKWxcDwoSYF+3N72ain2kJq0ppd5et4pYJOHGl57OQlf+U0MVDGLJlrzEXkFtrypYNxmfQQJnWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=krQXJ+iv; arc=none smtp.client-ip=209.85.128.170
+	s=arc-20240116; t=1716268349; c=relaxed/simple;
+	bh=DJcQJid1iwq86SYshDjjvgo7lJTAqL3J+xs5+ZhIU/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZNd2Y5sXJLom8ijXUCouZJCN8BhAVPLIv/tsUSlO12/6DE8Y8S6DLYywaRJOem+GG9jXJfwjkuTwYLHbaCMPumUR+j3Ig29q90jRXaYVM0V1JiNltcrjY8UV5p9HTN+mKbl0/dFldaVDCN6jPgPmaCXvXjIVW2+CsiYNAX/wtHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yw6lzc8U; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-61b4cbb8834so28487307b3.0;
-        Mon, 20 May 2024 22:04:21 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e2da49e86bso5936441fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 22:12:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716267861; x=1716872661; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1716268346; x=1716873146; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7QDbtlT09zWn+TAG8clpVDLU8Z+ZeH0+DkEI12Wz3R4=;
-        b=krQXJ+ivbSxkKKtshRBNG2kYcMqe368oPriMH/PjXjx1PvXD9JPjW72dETLZXGMKM+
-         S/BicnzamBfHLG4YZe4mgGX6a1QBdYkfvp+TZu+MR8qTJCYkktn7TWkK+Vx//d6S5qEl
-         C8GMAQ7xz+XCjNYidCmPG18decEqjRmNv9vOsSyzGu7VmUMrsN92/64InDaC8MSRxX4A
-         gM2BYKCHhLn8YRfumA7hA+CY2tTFx0jSdNE9t4y9zDHCWNVL9fgzVKNaEIpwJ/6ZausV
-         ASv65/1WApiRPfKIGA2VoGC3OfL5imAI7PtJmLfNVB2Bu31ATe1fkq0P++ZuYUpmNGky
-         zM8Q==
+        bh=GUapn7dPFkmrdlk6ElpkaCznwDwGsC/allixWXQKesY=;
+        b=Yw6lzc8UawtHbKelfELy31eKj6XJwJBG7BoaI36fccQ9oaBlXRhuIxEIWV00bCwwQZ
+         +ZLTMoPf+QIe3/fyk4hGyg0sE0iafH97Ir8aBS2h9yN0gnJxDRRWW8btH7xeeL8BYzIY
+         U+ZqlejFx5c319g0vHJD8Ed2BcUJenD22oG1b8LPiZrfD5UOPkdgYZBQExuel5ySdVqU
+         75ciI9F4IZHZpgV0yE3+7yNfww9tFqWvSOvseTRV0xCLXLfoHqvLso3ZJQDykyrQBysL
+         YX78DRmEAffM+Uy+iD2cD9JIn8nVEowPRjOcCGToGZIzfZjyxQ+VRpbkgA+TPOEqsRa1
+         EZxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716267861; x=1716872661;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1716268346; x=1716873146;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7QDbtlT09zWn+TAG8clpVDLU8Z+ZeH0+DkEI12Wz3R4=;
-        b=PDJs/UtUEXh7njDtc/b1saaS4IPx2ousnE7rnSVaAPbPHk+O1VH+220xiO+sUX+Wik
-         kwUzqMWKfxg+O+MMkfwkhPVcKA0YEsensMASkDN9UIOCv60xaiLTJpkgfJ6LfWlBmOX2
-         ogJuifbWvcb/Sb6aOqVRDXbCqoY0I4kwSbcco3jb0ChZgVoTz8nQqyU5jnu31c9MCt7Z
-         nvGfCEZonEoXM624aewCcpFzSK8qM4YCZtAHQzTf0mTWN78g5xtp/Bt3bRa6qYdKBy0S
-         NmglV3fznsUX9DG+UglNUYdxp6ejXztSmEvMqfLOfP9EvsWcoSB3oTZoEtEgZILBiQMr
-         EFsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXk66P+F8MRA/NGwdBIDD3S+e1gidef5f40HXqFD3XNPnkb+YDJuciG/NbszQTbzL4U+nVVZvuHOuJQk9odwD+RN0VVnPHkaWu4F4XeTn+pxf1EwJyeFtRzsgHPZOLvjDVMBctnltErmNBkRcZXyuLcx8FN68KE4UnaPOMvvAsDdLfaAEtIng==
-X-Gm-Message-State: AOJu0YwV5Nmx/uTFsSvwgWtnjr8vVwM23LomL+YT2fa00vTH6R0eE6bn
-	aHp47Ws8g/FQG839H9HN6uargb6uXe6b/AxzfOO06Mg+YmkLWsiYRZdRq82df4+AEBi1CoSd/Sq
-	OWFNPz6ZODivg37rMJ+RPBmUNB27/c5lQ
-X-Google-Smtp-Source: AGHT+IHkbaVvQ38fmMR3spKzkIG6N5rKJ/HA3RUD4jPnsho+kRoMUSZXDTU0WasN2QSwtHDmYkonxdTqYqLL94MD8eU=
-X-Received: by 2002:a81:4503:0:b0:61b:bd65:3025 with SMTP id
- 00721157ae682-622b00218bcmr305383337b3.40.1716267860942; Mon, 20 May 2024
- 22:04:20 -0700 (PDT)
+        bh=GUapn7dPFkmrdlk6ElpkaCznwDwGsC/allixWXQKesY=;
+        b=AyE800LEfVk8V4KbXwQkcR/mfAqXyS/z1UBUnP+1fdPnycvEWuM7fXwrF731HLvns3
+         LkcN1t10BL19A14ubsv/xMT1891263sk6VmjoOs92VkJoLCAEoDljFHR9HJgA+T+vZtn
+         N7wiVLuuMztqBWTK1/dmmAR1NrTqU3R9txfhckbO7EZ+kBIw4nyw+R2nzMeg9Iv/MQWN
+         ww4omG+NQcAMNmVJL3uC0rLPDo4RiNdOcR5Gy63wzPcOT8raA0zBCEUyQQ8/VTiQQU9C
+         C9OF2stT3H67jmsWRW6cNabh/c7i0tVb0WbbLNhjyPvqIVjgYPwVmDJkXnR91fi7/LAt
+         5ijg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8QvUwf+K8GqfJk/MwsQLGBKrayE7ncaNnBNzzOajex/ind/qVtZ1bX/s1aIWGSRT5FL3JF7Xym6zKyQ4DeobVLkZNxeTleWo+nlqg
+X-Gm-Message-State: AOJu0YyXIRIIoLzfYqY2habMqlKv4ASUmGG6Jd/OvZuMwJPCaEVWQs6j
+	+YeILOt4kAlN439RHENzG+wkfq751gafnCfesmZpIhqVBN2tRCsp
+X-Google-Smtp-Source: AGHT+IE2K6Julfu2AI4B9GNwgJRleFux2hV74ux3F8eePubIgAX73mqeQXyDMoHW0hxgc0awiuq59g==
+X-Received: by 2002:a2e:a1ca:0:b0:2e5:67a7:dda7 with SMTP id 38308e7fff4ca-2e567a7df67mr201821891fa.3.1716268345399;
+        Mon, 20 May 2024 22:12:25 -0700 (PDT)
+Received: from workstation.localdomain ([2001:4647:930d:0:6cc8:8362:4e13:c7e4])
+        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-2e4d0ef09ffsm35540931fa.59.2024.05.20.22.12.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 22:12:24 -0700 (PDT)
+From: Rino Andre Johnsen <rinoandrejohnsen@gmail.com>
+To: alexander.deucher@amd.com
+Cc: Rino Andre Johnsen <rinoandrejohnsen@gmail.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Aurabindo Pillai <aurabindo.pillai@amd.com>,
+	Hersen Wu <hersenxs.wu@amd.com>,
+	Hamza Mahfooz <hamza.mahfooz@amd.com>,
+	Wayne Lin <wayne.lin@amd.com>,
+	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+	Fangzhi Zuo <jerry.zuo@amd.com>,
+	Tom Chung <chiahsuan.chung@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/amd/display: Add pixel encoding info to debugfs
+Date: Tue, 21 May 2024 07:11:23 +0200
+Message-ID: <20240521051140.30509-1-rinoandrejohnsen@gmail.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <fa885eca-d7e6-415a-8a08-9103b002c6bb@amd.com>
+References: <fa885eca-d7e6-415a-8a08-9103b002c6bb@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
- <f51a4bf68289268206475e3af226994607222be4.camel@kernel.org> <20240520.221843-swanky.buyers.maroon.prison-MAgYEXR0vg7P@cyphar.com>
-In-Reply-To: <20240520.221843-swanky.buyers.maroon.prison-MAgYEXR0vg7P@cyphar.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 21 May 2024 08:04:09 +0300
-Message-ID: <CAOQ4uxiaRGypAB0v49FW8Se+=4e4to1FAg77sxLPCkO55KcuHQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] fhandle: expose u64 mount id to name_to_handle_at(2)
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 21, 2024 at 1:28=E2=80=AFAM Aleksa Sarai <cyphar@cyphar.com> wr=
-ote:
->
-> On 2024-05-20, Jeff Layton <jlayton@kernel.org> wrote:
-> > On Mon, 2024-05-20 at 17:35 -0400, Aleksa Sarai wrote:
-> > > Now that we have stabilised the unique 64-bit mount ID interface in
-> > > statx, we can now provide a race-free way for name_to_handle_at(2) to
-> > > provide a file handle and corresponding mount without needing to worr=
-y
-> > > about racing with /proc/mountinfo parsing.
+[Why]
+For debugging and testing purposes.
 
-Both statx() and name_to_handle_at() support AT_EMPTY_PATH, so
-there is a race-free way to get a file handle and unique mount id
-for statmount().
+[How]
+Create amdgpu_current_pixelencoding debugfs entry.
+Usage: cat /sys/kernel/debug/dri/1/crtc-0/amdgpu_current_pixelencoding
 
-Why do you mean /proc/mountinfo parsing?
+Signed-off-by: Rino Andre Johnsen <rinoandrejohnsen@gmail.com>
+---
 
-> > >
-> > > As with AT_HANDLE_FID, AT_HANDLE_UNIQUE_MNT_ID reuses a statx AT_* bi=
-t
-> > > that doesn't make sense for name_to_handle_at(2).
+Changes in v2:
+1. Do not initialize dm_crtc_state to NULL.
+---
+ .../amd/display/amdgpu_dm/amdgpu_dm_debugfs.c | 47 +++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-Christian is probably regretting merging AT_HANDLE_FID now ;-)
-
-Seriously, I would rearrange the AT_* flags namespace this way to
-explicitly declare the overloaded per-syscall AT_* flags and possibly
-prepare for the upcoming setxattrat(2) syscall [1].
-
-[1] https://lore.kernel.org/linux-fsdevel/20240426162042.191916-1-cgoettsch=
-e@seltendoof.de/
-
-The reason I would avoid overloading the AT_STATX_* flags is that
-they describe a generic behavior that could potentially be relevant to
-other syscalls in the future, e.g.:
-renameat2(..., AT_RENAME_TEMPFILE | AT_FORCE_SYNC);
-
-But then again, I don't understand why you need to extend name_to_handle_at=
-()
-at all for your purpose...
-
-Thanks,
-Amir.
-
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-[...]
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+index 27d5c6077630..4254d4a4b56b 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+@@ -1160,6 +1160,51 @@ static int amdgpu_current_colorspace_show(struct seq_file *m, void *data)
+ }
+ DEFINE_SHOW_ATTRIBUTE(amdgpu_current_colorspace);
+ 
++/*
++ * Returns the current pixelencoding for the crtc.
++ * Example usage: cat /sys/kernel/debug/dri/0/crtc-0/amdgpu_current_pixelencoding
++ */
++static int amdgpu_current_pixelencoding_show(struct seq_file *m, void *data)
++{
++	struct drm_crtc *crtc = m->private;
++	struct drm_device *dev = crtc->dev;
++	struct dm_crtc_state *dm_crtc_state;
++	int res = -ENODEV;
 +
-+#define AT_PRIVATE_FLAGS       0x2ff   /* Per-syscall flags mask.  */
++	mutex_lock(&dev->mode_config.mutex);
++	drm_modeset_lock(&crtc->mutex, NULL);
++	if (crtc->state == NULL)
++		goto unlock;
 +
-+/* Common flags for *at() syscalls */
- #define AT_SYMLINK_NOFOLLOW    0x100   /* Do not follow symbolic links.  *=
-/
--#define AT_EACCESS             0x200   /* Test access permitted for
--                                           effective IDs, not real IDs.  *=
-/
--#define AT_REMOVEDIR           0x200   /* Remove directory instead of
--                                           unlinking file.  */
- #define AT_SYMLINK_FOLLOW      0x400   /* Follow symbolic links.  */
- #define AT_NO_AUTOMOUNT                0x800   /* Suppress terminal
-automount traversal */
- #define AT_EMPTY_PATH          0x1000  /* Allow empty relative pathname */
++	dm_crtc_state = to_dm_crtc_state(crtc->state);
++	if (dm_crtc_state->stream == NULL)
++		goto unlock;
++
++	switch (dm_crtc_state->stream->timing.pixel_encoding) {
++	case PIXEL_ENCODING_RGB:
++		seq_puts(m, "RGB");
++		break;
++	case PIXEL_ENCODING_YCBCR422:
++		seq_puts(m, "YCBCR422");
++		break;
++	case PIXEL_ENCODING_YCBCR444:
++		seq_puts(m, "YCBCR444");
++		break;
++	case PIXEL_ENCODING_YCBCR420:
++		seq_puts(m, "YCBCR420");
++		break;
++	default:
++		goto unlock;
++	}
++	res = 0;
++
++unlock:
++	drm_modeset_unlock(&crtc->mutex);
++	mutex_unlock(&dev->mode_config.mutex);
++
++	return res;
++}
++DEFINE_SHOW_ATTRIBUTE(amdgpu_current_pixelencoding);
+ 
+ /*
+  * Example usage:
+@@ -3688,6 +3733,8 @@ void crtc_debugfs_init(struct drm_crtc *crtc)
+ 			    crtc, &amdgpu_current_bpc_fops);
+ 	debugfs_create_file("amdgpu_current_colorspace", 0644, crtc->debugfs_entry,
+ 			    crtc, &amdgpu_current_colorspace_fops);
++	debugfs_create_file("amdgpu_current_pixelencoding", 0644, crtc->debugfs_entry,
++			    crtc, &amdgpu_current_pixelencoding_fops);
+ }
+ 
+ /*
+-- 
+2.45.1
 
-+/* Flags for statx(2) */
- #define AT_STATX_SYNC_TYPE     0x6000  /* Type of synchronisation
-required from statx() */
- #define AT_STATX_SYNC_AS_STAT  0x0000  /* - Do whatever stat() does */
- #define AT_STATX_FORCE_SYNC    0x2000  /* - Force the attributes to
-be sync'd with the server */
-[...]
-
- #define AT_RECURSIVE           0x8000  /* Apply to the entire subtree */
-
--/* Flags for name_to_handle_at(2). We reuse AT_ flag space to save bits...=
- */
--#define AT_HANDLE_FID          AT_REMOVEDIR    /* file handle is needed to
-+/* Flags for name_to_handle_at(2) */
-+#define AT_HANDLE_FID          0x200   /* file handle is needed to
-                                        compare object identity and may not
-                                        be usable to open_by_handle_at(2) *=
-/
-+/* Flags for faccessat(2) */
-+#define AT_EACCESS             0x200   /* Test access permitted for
-+                                           effective IDs, not real IDs.  *=
-/
-+/* Flags for unlinkat(2) */
-+#define AT_REMOVEDIR           0x200   /* Remove directory instead of
-+                                           unlinking file.  */
-+
-+/* Flags for renameat2(2) (should match legacy RENAME_* flags) */
-+#define AT_RENAME_NOREPLACE    0x001   /* Don't overwrite target */
-+#define AT_RENAME_EXCHANGE     0x002   /* Exchange source and dest */
-+#define AT_RENAME_WHITEOUT     0x004   /* Whiteout source */
-+#define AT_RENAME_TEMPFILE     0x008   /* Source file is O_TMPFILE */
-+
-+/* Flags for setxattrat(2) (should match legacy XATTR_* flags) */
-+#define AT_XATTR_CREATE                0x001   /* set value, fail if
-attr already exists */
-+#define AT_XATTR_REPLACE       0x002   /* set value, fail if attr
-does not exist */
-+
 
