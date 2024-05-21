@@ -1,187 +1,113 @@
-Return-Path: <linux-kernel+bounces-185449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77EAE8CB517
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:09:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0701A8CB51A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFAFE1F22AA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:09:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CE712825F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73653149DF7;
-	Tue, 21 May 2024 21:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D22149DE2;
+	Tue, 21 May 2024 21:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lFZGxUCM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="0Q7Z6al0"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ED450276;
-	Tue, 21 May 2024 21:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F8750276
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 21:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716325758; cv=none; b=mgwFoqowbAtfuVQ9g8ff4QsF9f73xv10DctTZAq/SqvXAVCyo8meUKnYFbrgOxw28uIZzt7WbCJuMrmd/WU4dFfiWickl20L3+oMieVdtU/TrupREYjTZ297DIZAftJx5DgNwrbnBhSoF2NovCfEqOToCPKnq/rhMw20XtpL4n8=
+	t=1716325843; cv=none; b=JjbKmjY9L9mnzSxI2z7Jsu3aOUcbYjhsAqJv1k4Hv3hSxJB6wykN113d05q+8Kf89VyOohEhbQGMvB98g4cQVrUfDuSAsfjCwj+L8wWes+EWkRornJY9s87N8Q3IaJJSncqbQX0qEyC+Z2nT+Imcgc3SZrmgMCu+mijkZR0gCTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716325758; c=relaxed/simple;
-	bh=fWTZ0YL6B99AewY8dgQyLES5eEQR41BuHBhzfW1g0U0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=s5YYbjCFOk1CQp85DeEZsSJuQCzfQzVXxjAXajqGtXJSjGODDkT4NOlOyqzISuy/MGz/yW4MHvdixBg1/XpNXn4xsXrL41Vgrz9il2pSSDruKorJdZ046xk6gHvI/UY2BLLAdpzm4VQwJNYSpXSy8FT1Yy07VokZ0Hd1SKM09ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lFZGxUCM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44LFwKYA025366;
-	Tue, 21 May 2024 21:09:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=w9/5guYkECepYKB8XK5sU9BE3zxUvknZ5WiVyjmhhLo=; b=lF
-	ZGxUCMuslSRJn4N26BP4lDiJjjWzYFQ3uZqdMotRHrtDUNSphEy0DQOaGblGiZUw
-	hLkDWByNnf8mEImGKHvT7cqOlAbnNXxlyRFa6r8MUDP8jxFWG13Wt6sMRDu57bnh
-	42rzAuPuQ2IKE7XN0eUWTMMfovUHgMo4iTl9h9MRx5aQKOJgisnh4c93XYDjv1CT
-	Z5B7fcdAxEcAyUwBMS56Xy1EQtoCUZLjmHeKSvjnfbL4+gq9zlkSBpHZbBMaOanU
-	B4IR65szxn188sSklrtR6TBslZNK+lwsB3lMPQlhDMoaoAsCQNzBZ/ZbcGXff5xU
-	Oa0Hi3ruTWc6Yl6onbZQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6n45q33y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 21:09:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44LL8xCg007503
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 21:08:59 GMT
-Received: from [10.110.98.12] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 21 May
- 2024 14:08:58 -0700
-Message-ID: <93ae2776-a661-40fc-86da-cfb9a39d9fce@quicinc.com>
-Date: Tue, 21 May 2024 14:08:58 -0700
+	s=arc-20240116; t=1716325843; c=relaxed/simple;
+	bh=8JBMNubzBlrNFlIoszTi2j2WKGqaWIMzeKz/8RA/I9c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=taZXwmj0GYsQnOI4h0c0zqDHyIUrdWwBoFIzkqM9dd0gbCFVjozkgq2f/hT6gvChgBHchLu/VRMm9YRlJw8BPhtVO8KoMko42pnRkHrDMVEIBu77X1TQpS88vV7o7oQ1w2fB7W3FJDEAcEy2+q5Hs260ybRyA42JZhGITWyR6Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=0Q7Z6al0; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
+ To: From; q=dns/txt; s=fe-e1b5cab7be; t=1716325836;
+ bh=CngQAMHgs11xPbXeeW6bhvCsMpbYaqV/+RYWVdlvtmw=;
+ b=0Q7Z6al0I4Ke4HeLwCaNYwpxM/WxgoWi77FQLARLAD2zl5mcBrN5YXjGbYLoXvRMXElMr2VX2
+ QfCajEkB/FVXcudoboBshN6yTG79nd7Om4e1iG0zILX7CHfUF1P1xwRBkEmf2m2LWd9i/Ancwks
+ xzSKbNk+lA28ypNsNErK/Nhapcw3mnOucYF6o1Yw5ko6AssD3hBgT2ZmKrXA6VwfUKO3ZqZdGOM
+ sDEUaHPvAgpDcGhJK4LuvY5fv6ss00q97Z3zSBqIdeiwgGuaAUpd2ttwOnzfJyHLAyKEP/GjJBo
+ jrZ/jqtnLFHOxgSiEmwBFufyMvfljV+oztpcOqMucNVg==
+From: Jonas Karlman <jonas@kwiboo.se>
+To: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Jonas
+ Karlman <jonas@kwiboo.se>
+Subject: [PATCH 00/13] rockchip: Fixes and improvements for ROCK Pi S
+Date: Tue, 21 May 2024 21:10:03 +0000
+Message-ID: <20240521211029.1236094-1-jonas@kwiboo.se>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] remoteproc: qcom_q6v5_pas: Add hwspinlock bust on
- stop
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Peter
- Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon
-	<will@kernel.org>, Waiman Long <longman@redhat.com>,
-        Boqun Feng
-	<boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Richard Maina <quic_rmaina@quicinc.com>
-References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
- <20240516-hwspinlock-bust-v1-6-47a90a859238@quicinc.com>
- <722c57dc-98cf-4ec8-93c5-aef55e6084c7@linaro.org>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <722c57dc-98cf-4ec8-93c5-aef55e6084c7@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: MWScqxPqfOfjDa96N-XmRutGCCzySS8-
-X-Proofpoint-ORIG-GUID: MWScqxPqfOfjDa96N-XmRutGCCzySS8-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-21_12,2024-05-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- bulkscore=0 impostorscore=0 priorityscore=1501 adultscore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405210159
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 664d0dcb8b6b0c828344ae94
 
+This series include fixes for DT schema validation, fixes and improve
+support for onboard features of the Radxa ROCK Pi S board.
 
+Patch 1-2 fixes DT schema validation of ethernet and audio codec.
 
-On 5/21/2024 10:38 AM, Konrad Dybcio wrote:
-> 
-> 
-> On 5/17/24 00:58, Chris Lew wrote:
->> From: Richard Maina <quic_rmaina@quicinc.com>
->>
->> When remoteproc goes down unexpectedly this results in a state where any
->> acquired hwspinlocks will remain locked possibly resulting in deadlock.
->> In order to ensure all locks are freed we include a call to
->> hwspin_lock_bust() during remoteproc shutdown.
->>
->> For qcom_q6v5_pas remoteprocs, each remoteproc has an assigned id that
->> is used to take the hwspinlock. Remoteproc should use this id to try and
->> bust the lock on remoteproc stop.
->>
->> This edge case only occurs with q6v5_pas watchdog crashes. The error
->> fatal case has handling to clear the hwspinlock before the error fatal
->> interrupt is triggered.
->>
->> Signed-off-by: Richard Maina <quic_rmaina@quicinc.com>
->> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
->> ---
-> 
-> 
->>   drivers/remoteproc/qcom_q6v5_pas.c | 28 ++++++++++++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>
->> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c 
->> b/drivers/remoteproc/qcom_q6v5_pas.c
->> index 54d8005d40a3..57178fcb9aa3 100644
->> --- a/drivers/remoteproc/qcom_q6v5_pas.c
->> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
->> @@ -10,6 +10,7 @@
->>   #include <linux/clk.h>
->>   #include <linux/delay.h>
->>   #include <linux/firmware.h>
->> +#include <linux/hwspinlock.h>
->>   #include <linux/interrupt.h>
->>   #include <linux/kernel.h>
->>   #include <linux/module.h>
->> @@ -52,6 +53,7 @@ struct adsp_data {
->>       const char *ssr_name;
->>       const char *sysmon_name;
->>       int ssctl_id;
->> +    int hwlock_id;
->>       int region_assign_idx;
->>       int region_assign_count;
->> @@ -84,6 +86,9 @@ struct qcom_adsp {
->>       bool decrypt_shutdown;
->>       const char *info_name;
->> +    struct hwspinlock *hwlock;
->> +    int hwlock_id;
-> 
-> IIRC, this is the same one that is passed in the DT.
-> 
-> Can we get it dynamically from there?
-> 
+Patch 3 fixes use of onboard SD NAND and eMMC.
 
-The argument passed in DT is the index of the hwlock in the TCSR mutex 
-region. The index determines use of hwlock[0..n]
+Patch 4-7 improve details and support for onboard features.
 
-This id is supposed to be the identifier that is passed into 
-hwspin_lock_bust(). The actual value that we would read from 
-hwlock[0..n] to see if we need to bust the lock.
+Patch 8 add OTP device node to SoC DT.
 
-Maybe the naming of this variable is confusing. Do you have any 
-suggestions to make it clearer? Could call it hwlock_bust_id.
+Patch 9-11 add support for RK3308 IO voltage domain to driver and DT.
 
-We could also try increasing the #hwlock-cells to 2 and have something 
-like <&phandle index bust_id>. To me this seemed odd for clients that 
-weren't planning on using the bust_id.
+Patch 12-13 correctly configures IO voltage domain and fixes WiFi/BT.
 
-> Konrad
+This series have been tested on a v1.3 board having a RK3308B SoC.
+
+David Wu (1):
+  soc: rockchip: io-domain: Add RK3308 IO voltage domains
+
+Jonas Karlman (12):
+  dt-bindings: net: rockchip-dwmac: Fix rockchip,rk3308-gmac compatible
+  arm64: dts: rockchip: rk3308: Fix codec@ff560000 reset-names
+  arm64: dts: rockchip: rk3308-rock-pi-s: Fix SD NAND and eMMC init
+  arm64: dts: rockchip: rk3308-rock-pi-s: Add sdmmc related properties
+  arm64: dts: rockchip: rk3308-rock-pi-s: Add pinctrl for UART0
+  arm64: dts: rockchip: rk3308-rock-pi-s: Rename LED related pinctrl
+    nodes
+  arm64: dts: rockchip: rk3308-rock-pi-s: Add mdio and ethernet-phy
+    nodes
+  arm64: dts: rockchip: Add OTP device node for RK3308
+  dt-bindings: power: rockchip: Document RK3308 IO voltage domains
+  arm64: dts: rockchip: Add RK3308 IO voltage domains
+  arm64: dts: rockchip: rk3308-rock-pi-s: Enable the io-domains node
+  arm64: dts: rockchip: rk3308-rock-pi-s: Update WIFi/BT related nodes
+
+ .../devicetree/bindings/net/snps,dwmac.yaml   |  1 +
+ .../bindings/power/rockchip-io-domain.yaml    | 24 +++++
+ .../boot/dts/rockchip/rk3308-rock-pi-s.dts    | 99 ++++++++++++++++---
+ arch/arm64/boot/dts/rockchip/rk3308.dtsi      | 31 +++++-
+ drivers/soc/rockchip/io-domain.c              | 40 ++++++++
+ 5 files changed, 182 insertions(+), 13 deletions(-)
+
+-- 
+2.43.2
+
 
