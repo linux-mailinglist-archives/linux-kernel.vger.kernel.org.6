@@ -1,260 +1,162 @@
-Return-Path: <linux-kernel+bounces-185029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 706D78CAF94
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:43:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1AF8CAF73
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBA111F226EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:43:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 979BFB2090F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC607EF12;
-	Tue, 21 May 2024 13:43:09 +0000 (UTC)
-Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D1E76049;
+	Tue, 21 May 2024 13:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mfFo78A3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490677F46B;
-	Tue, 21 May 2024 13:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBA26E602
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716298988; cv=none; b=tVMXjhKjIzIzarKsRVNaIW4luU/qaEKOaGgEuRSbVMg5t20akBTvibiMrmLIGg/FTV74WmjHap99eyvoZAdslP3D1FoPZpbmzWu/SwGc/jHkYxA8eNBfgK94qlxLqfPqtUOSYQ98S7JYJ8MeNbRxDFW9XFzgATFty3XQmzjLaks=
+	t=1716298553; cv=none; b=KIC53jBc9BUjUKHTSa7SuBIGvEdSIfr6qGwrsKXX9UfX577ogVr7hH1M/HVheIzhwLh14W5y06HIIZiK8koPUELaA3guk73Z5+QZ8x0OggF67H9o8wZmjSBpjPr0Ozgp8vspO6IYbxJMRdavLL484rSnlNrmKXP28wsKUFA5TTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716298988; c=relaxed/simple;
-	bh=zjB8v+NoVOfwtkTTGvRVzO2+JLMrRbv6D0wkhQKyrv0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TR2wMQ+K8g/IQNOkiSYHHM4Kb2qIOhWAXVi4eBowQVgsBTzHF4sjUUhGb0fMeV6fknrwmxVOzILQb3KoZ62svVFjWTPuF1PFHkYvIRvsk9EWXemaTgTFALAvyfosDgDTvPEsfCXNavTrZUIJDAm1JQOK06OWWWI/9YrbIhTgAYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
-Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
-	by unicorn.mansr.com (Postfix) with ESMTPS id 5E1C915362;
-	Tue, 21 May 2024 14:35:47 +0100 (BST)
-Received: by raven.mansr.com (Postfix, from userid 51770)
-	id 4E7CB219E4D; Tue, 21 May 2024 14:35:47 +0100 (BST)
-From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-To: Frank Oltmanns <frank@oltmanns.dev>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Guido
- =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>, Purism Kernel Team
- <kernel@puri.sm>, Ondrej
- Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>, Jessica
- Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and
- maximum rate
-In-Reply-To: <20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
-	(Frank Oltmanns's message of "Sun, 10 Mar 2024 14:21:11 +0100")
-References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
-	<20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
-Date: Tue, 21 May 2024 14:35:47 +0100
-Message-ID: <yw1xo78z8ez0.fsf@mansr.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.3 (gnu/linux)
+	s=arc-20240116; t=1716298553; c=relaxed/simple;
+	bh=Jatn8u4QFUuL+pR08zoVUZZsvNQF78BGvon9Gukephw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=erMtP6JqpS/J26fQpnIXkJjadRJxAnylhRatWZPls2Q0LAmtoGCDu7fokLFROFm/6paUUMukopVXWAKzbti0+hPFR6MFFzpmh4fUq+/NGnVy5eKFCABbhgih/7xhiErhM+dzPiRPS/0m3SK3NiqcBMcmliZAl4beIe6iVQWbpew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mfFo78A3; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716298552; x=1747834552;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Jatn8u4QFUuL+pR08zoVUZZsvNQF78BGvon9Gukephw=;
+  b=mfFo78A3pJc7R0fus06fompILajLRMU7cfU2h7+435yv1ZRMUIsIcfkT
+   n+8+NNmvKpoqQIzJ1YhDMvbC2HrEzyqRWPzuKFo0lYJ8iJ/DsXZSIukaL
+   jCCNHvywlMzeG1s3WB2W9vBEcPgHNVClW3xI1k1xosbC4GbMcWRYWwgWZ
+   h9qyL5y9Z9+XH+O6dM062+AiC6+8Sknrz5Wc7lpEhGStKskuQ5p1w36D4
+   ERpDXTz4ymdkVcp4M+I3TqmSyaUM21U/jwTP3IXdMDmxK6Ef4cZzSNHhV
+   lle2SCgG9YjH2v0e5R4Rew1M3dt4dzc2xMBKUYuxYyb6th2ocraAmy7er
+   w==;
+X-CSE-ConnectionGUID: +i49ERRsTheevRXL4W7JaQ==
+X-CSE-MsgGUID: D2gWwjYSRhKBvY9IIzMelA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="16330966"
+X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
+   d="scan'208";a="16330966"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 06:35:51 -0700
+X-CSE-ConnectionGUID: kPBC/OVTTnG2naU3R85JMA==
+X-CSE-MsgGUID: 71kxtUr8T8mlgwjFVvkliA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
+   d="scan'208";a="33526496"
+Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.221.140]) ([10.124.221.140])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 06:35:50 -0700
+Message-ID: <38dec9ee-1dde-4b3b-87c7-a65161d4a015@linux.intel.com>
+Date: Tue, 21 May 2024 06:35:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/tdx: Generate SIGBUS on userspace MMIO
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+ cho@microsoft.com, decui@microsoft.com, John.Starks@microsoft.com
+References: <20240521073505.2190633-1-kirill.shutemov@linux.intel.com>
+Content-Language: en-US
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+In-Reply-To: <20240521073505.2190633-1-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Frank Oltmanns <frank@oltmanns.dev> writes:
 
-> The Allwinner SoC's typically have an upper and lower limit for their
-> clocks' rates. Up until now, support for that has been implemented
-> separately for each clock type.
+On 5/21/24 12:35 AM, Kirill A. Shutemov wrote:
+> Currently attempt to do MMIO from userspace in TDX guest leads to
+> warning about unexpect #VE and SIGSEGV being delivered to the process.
 >
-> Implement that functionality in the sunxi-ng's common part making use of
-> the CCF rate liming capabilities, so that it is available for all clock
-> types.
+> Enlightened userspace might choose to deal with MMIO on their own if
+> kernel doesn't emulate it.
+
+Any specific use cases ? Like who is using it?
+
+> Handle EPT_VIOLATION exit reason for userspace and deliver SIGBUS
+> instead of SIGSEV. SIGBUS is more appropriate for MMIO situation.
 >
-> Suggested-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> Cc: stable@vger.kernel.org
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 > ---
->  drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu_common.h |  3 +++
->  2 files changed, 22 insertions(+)
 
-This just landed in 6.6 stable, and it broke HDMI output on an A20 based
-device, the clocks ending up all wrong as seen in this diff of
-/sys/kernel/debug/clk/clk_summary:
+Code looks good to me.
 
-@@ -70,16 +71,14 @@
-           apb1-i2c0                  0       0        0        24000000   =
- 0=20=20=20
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-        pll-gpu                       0       0        0        1200000000 =
- 0=20=20=20
--       pll-video1                    3       3        1        159000000  =
- 0=20=20=20
-+       pll-video1                    2       2        1        159000000  =
- 0=20=20=20
-           hdmi                       1       1        0        39750000   =
- 0=20=20=20
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-           tcon0-ch1-sclk2            1       1        1        39750000   =
- 0=20=20=20
-              tcon0-ch1-sclk1         1       1        1        39750000   =
- 0=20=20=20
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
--          pll-video1-2x              1       1        0        318000000  =
- 0=20=20=20
-+          pll-video1-2x              0       0        0        318000000  =
- 0=20=20=20
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
--             hdmi-tmds               2       2        0        39750000   =
- 0=20=20=20
--                hdmi-ddc             1       1        0        1987500    =
- 0=20=20=20
-        pll-periph-base               2       2        0        1200000000 =
- 0=20=20=20
-           mbus                       1       1        0        300000000  =
- 0=20=20=20
-           pll-periph-sata            0       0        0        100000000  =
- 0=20=20=20
-@@ -199,7 +198,7 @@
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-           ace                        0       0        0        384000000  =
- 0=20=20=20
-           ve                         0       0        0        384000000  =
- 0=20=20=20
--       pll-video0                    4       4        2        297000000  =
- 0=20=20=20
-+       pll-video0                    5       5        2        297000000  =
- 0=20=20=20
-           hdmi1                      0       0        0        297000000  =
- 0=20=20=20
-           tcon1-ch1-sclk2            0       0        0        297000000  =
- 0=20=20=20
-              tcon1-ch1-sclk1         0       0        0        297000000  =
- 0=20=20=20
-@@ -222,8 +221,10 @@
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-           de-be0                     1       1        1        297000000  =
- 0=20=20=20
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
--          pll-video0-2x              0       0        0        594000000  =
- 0=20=20=20
-+          pll-video0-2x              1       1        0        594000000  =
- 0=20=20=20
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-+             hdmi-tmds               2       2        0        594000000  =
- 0=20=20=20
-+                hdmi-ddc             1       1        0        29700000   =
- 0=20=20=20
-        pll-audio-base                0       0        0        1500000    =
- 0=20=20=20
-           pll-audio-8x               0       0        0        3000000    =
- 0=20=20=20
-              i2s2                    0       0        0        3000000    =
- 0=20=20=20
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Reverting this commit makes it work again.
-
-> diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu=
-_common.c
-> index 8babce55302f..ac0091b4ce24 100644
-> --- a/drivers/clk/sunxi-ng/ccu_common.c
-> +++ b/drivers/clk/sunxi-ng/ccu_common.c
-> @@ -44,6 +44,16 @@ bool ccu_is_better_rate(struct ccu_common *common,
->  			unsigned long current_rate,
->  			unsigned long best_rate)
->  {
-> +	unsigned long min_rate, max_rate;
-> +
-> +	clk_hw_get_rate_range(&common->hw, &min_rate, &max_rate);
-> +
-> +	if (current_rate > max_rate)
-> +		return false;
-> +
-> +	if (current_rate < min_rate)
-> +		return false;
-> +
->  	if (common->features & CCU_FEATURE_CLOSEST_RATE)
->  		return abs(current_rate - target_rate) < abs(best_rate - target_rate);
+>  arch/x86/coco/tdx/tdx.c | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
 >
-> @@ -122,6 +132,7 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, str=
-uct device *dev,
->
->  	for (i =3D 0; i < desc->hw_clks->num ; i++) {
->  		struct clk_hw *hw =3D desc->hw_clks->hws[i];
-> +		struct ccu_common *common =3D hw_to_ccu_common(hw);
->  		const char *name;
->
->  		if (!hw)
-> @@ -136,6 +147,14 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, st=
-ruct device *dev,
->  			pr_err("Couldn't register clock %d - %s\n", i, name);
->  			goto err_clk_unreg;
->  		}
+> diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
+> index c1cb90369915..d2aa93cebf5a 100644
+> --- a/arch/x86/coco/tdx/tdx.c
+> +++ b/arch/x86/coco/tdx/tdx.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/cpufeature.h>
+>  #include <linux/export.h>
+>  #include <linux/io.h>
+> +#include <linux/sched/signal.h>
+>  #include <asm/coco.h>
+>  #include <asm/tdx.h>
+>  #include <asm/vmx.h>
+> @@ -630,6 +631,11 @@ void tdx_get_ve_info(struct ve_info *ve)
+>  	ve->instr_info  = upper_32_bits(args.r10);
+>  }
+>  
+> +static inline bool is_private_gpa(u64 gpa)
+> +{
+> +	return gpa == cc_mkenc(gpa);
+> +}
 > +
-> +		if (common->max_rate)
-> +			clk_hw_set_rate_range(hw, common->min_rate,
-> +					      common->max_rate);
-> +		else
-> +			WARN(common->min_rate,
-> +			     "No max_rate, ignoring min_rate of clock %d - %s\n",
-> +			     i, name);
+>  /*
+>   * Handle the user initiated #VE.
+>   *
+> @@ -641,17 +647,20 @@ static int virt_exception_user(struct pt_regs *regs, struct ve_info *ve)
+>  	switch (ve->exit_reason) {
+>  	case EXIT_REASON_CPUID:
+>  		return handle_cpuid(regs, ve);
+> +	case EXIT_REASON_EPT_VIOLATION:
+> +		if (is_private_gpa(ve->gpa))
+> +			panic("Unexpected EPT-violation on private memory.");
+> +
+> +		force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)ve->gla);
+> +
+> +		/* Return 0 to avoid incrementing RIP */
+> +		return 0;
+>  	default:
+>  		pr_warn("Unexpected #VE: %lld\n", ve->exit_reason);
+>  		return -EIO;
 >  	}
->
->  	ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
-> diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu=
-_common.h
-> index 942a72c09437..329734f8cf42 100644
-> --- a/drivers/clk/sunxi-ng/ccu_common.h
-> +++ b/drivers/clk/sunxi-ng/ccu_common.h
-> @@ -31,6 +31,9 @@ struct ccu_common {
->  	u16		lock_reg;
->  	u32		prediv;
->
-> +	unsigned long	min_rate;
-> +	unsigned long	max_rate;
-> +
->  	unsigned long	features;
->  	spinlock_t	*lock;
->  	struct clk_hw	hw;
->
-> --=20
->
-> 2.44.0
->
+>  }
+>  
+> -static inline bool is_private_gpa(u64 gpa)
+> -{
+> -	return gpa == cc_mkenc(gpa);
+> -}
+> -
+>  /*
+>   * Handle the kernel #VE.
+>   *
 
---=20
-M=E5ns Rullg=E5rd
+-- 
+Sathyanarayanan Kuppuswamy
+Linux Kernel Developer
+
 
