@@ -1,72 +1,172 @@
-Return-Path: <linux-kernel+bounces-184598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2258CA963
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:53:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA4E68CA972
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CA2C1C20A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:53:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 331FA1F21FBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34E95381A;
-	Tue, 21 May 2024 07:53:07 +0000 (UTC)
-Received: from zg8tmtu5ljy1ljeznc42.icoremail.net (zg8tmtu5ljy1ljeznc42.icoremail.net [159.65.134.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624161DA53;
-	Tue, 21 May 2024 07:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.65.134.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F79E54BCF;
+	Tue, 21 May 2024 07:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LBVIbCSt"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B123251C5F;
+	Tue, 21 May 2024 07:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716277987; cv=none; b=Fs5Ta116PleoC+p6hPI+vYEOl8O3VJAUit4yfxPclOrLJbB04YFMGUvq+hplQ/V+njUlpxvdnoEyw1H5FLYoZeRvmz/QAPiEDT/6xqV1Z5gk63H634LnIRpFgD/RPYIqySVX2yNGY3bjh8m8uCbPO8dzwrNe0oq5GxY/qSrVmPU=
+	t=1716278253; cv=none; b=XF6CY6R5uD+l70wFHNAFG8IBOpReze7mR/TUM8xL7bs/POJwEf7VI1rETNuqItDJA6p3UvWCMoNKqV8v7u2uJZqTLsBwqKP+6161BSAbMy5AQXyPFSVc6MtLmZkzx7jdCRyN6pGS0J/8+LJdB11vJa453Fanm7VY8wnGeXemPCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716277987; c=relaxed/simple;
-	bh=Ed/mU92lRZOOTt8qyjeVjCl7Dcw57Tgbu2JuglKnYdo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=tw/Fme90OLWkHjkfovfB/JoQUWJ57wbV68Z13LPrNz6HVCLLvdt+owUAjFDvPSR7pNuW0jXMg2vlCMYB9eL/QRYLhJ8FeRq6apxYR1WLjQnwdVGJsqTRFWnqQetDoUZVeJClgfHU3+GFvNNU2tYBDlcAveuAVsmb9mSlIZSDJTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=159.65.134.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from linma$zju.edu.cn ( [42.120.103.55] ) by
- ajax-webmail-mail-app3 (Coremail) ; Tue, 21 May 2024 15:52:40 +0800
- (GMT+08:00)
-Date: Tue, 21 May 2024 15:52:40 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Lin Ma" <linma@zju.edu.cn>
-To: "Johannes Berg" <johannes@sipsolutions.net>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 net] cfg80211: pmsr: use correct nla_get_uX functions
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT5 build
- 20231205(37e20f0e) Copyright (c) 2002-2024 www.mailtech.cn zju.edu.cn
-In-Reply-To: <b7583de35462b06bbfbeb39bf2435bcb5f04be06.camel@sipsolutions.net>
-References: <20240520073311.44117-1-linma@zju.edu.cn>
- <b7583de35462b06bbfbeb39bf2435bcb5f04be06.camel@sipsolutions.net>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1716278253; c=relaxed/simple;
+	bh=UV3oiJ3DoGjT3mmgDCUUEAq/37YTbI+I9dS8P5EBex8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z4uuYKBK+3c57P7ZC5+o0UeaMOQi5PUr2kTrdlImVJNLpOAsBKje5y9f4qfu+i5bBrnvk18Ltd73Z2kWF/3CmjPkfSN50t7UpkZQRv252xSMDDvRgGacg00/W/XRW0vnsj00LLMtV7e3eR2Kj48B0CY3qEoepMZEmAA97uZKcfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LBVIbCSt; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716278246;
+	bh=UV3oiJ3DoGjT3mmgDCUUEAq/37YTbI+I9dS8P5EBex8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LBVIbCSt0+3R9yRCbYrXWF6yRFUlnx4X85vxJtP8yl1TPoN8WTZILOjYi+dVxE7gz
+	 v10LMJty1+pTxzcKGgKSxRTGmjpGqmwa/j+d7MH18X3vyTuWqDFHcZ5fDEJJjQK7Xy
+	 J8w67WaAxBwn1Nm7H8PNP3D2/b/FoSOrm/JUy3ohZ7jMWwEPQFeWcO0qGBZD2/DzuV
+	 B9rl3djGW0rfCcenZTpSkgUlq6K8Hu0BrYs8wLteg1WA1CMAcGPsBOCQdTa0mf3CPe
+	 iL3aHDTwIyEU5CJPPaa+FeezqVVHu5oF/Vyr0wXeSbGvp9Ly2FAk0afHLylcUkocmX
+	 BcLO6MI6EwpIg==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B1BC5378001E;
+	Tue, 21 May 2024 07:57:24 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: chunkuang.hu@kernel.org
+Cc: robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	shawn.sung@mediatek.com,
+	yu-chang.lee@mediatek.com,
+	ck.hu@mediatek.com,
+	jitao.shi@mediatek.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	wenst@chromium.org,
+	kernel@collabora.com
+Subject: [PATCH v5 0/3] drm/mediatek: Add support for OF graphs
+Date: Tue, 21 May 2024 09:57:14 +0200
+Message-ID: <20240521075717.50330-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <453346a6.15c2e.18f9a235eed.Coremail.linma@zju.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:cC_KCgBn4VjIUkxmEmfSAA--.24115W
-X-CM-SenderInfo: qtrwiiyqvtljo62m3hxhgxhubq/1tbiAwMCEmZDiAoQOgAVsI
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Transfer-Encoding: 8bit
 
-SGVsbG8gdGhlcmUsCgo+IAo+IE1heWJlIG1lbnRpb24gYSBiaXQgbW9yZSBjbGVhcmx5IHRoYXQg
-dGhlIF9wb2xpY3lfIGFjdHVhbGx5IGRlZmluZXMgdGhlbQo+IHdpdGggdGhvc2UgdHlwZXMsIHNv
-IHRoZSB1c2VycyBhcmUgaW5jb3JyZWN0LCB2cy4gYSBwb3NzaWJsZSBzY2VuYXJpbwo+IHdoZXJl
-IHRoZSBrZXJuZWwncyBkb2N1bWVudGF0aW9uIGlzIGp1c3QgaW5jb3JyZWN0IGFuZCB3ZSBoYXZl
-IHRvIGtlZXAKPiB0aGUgY29kZSBhcy1pcyBmb3IgdXNlcnNwYWNlIHRvIGNvbnRpbnVlIHRvIGZ1
-bmN0aW9uLgo+IAo+IEkgYmVsaWV2ZSB0aGUgY2hhbmdlcyBhcmUgY29ycmVjdCBzaW5jZSB0aGUg
-cG9saWN5IHdhbnRzIHRoZSByaWdodCB0eXBlcwo+IGFuZCB0aGVuIG9uIGxpdHRsZS1lbmRpYW4g
-cGxhdGZvcm1zIGl0J2xsIGFsbCB3b3JrIC4uLgo+IAo+IGpvaGFubmVzCgpUaGFua3MgZm9yIHRo
-ZSBraW5kIHJlcGx5IGFuZCBzdWdnZXN0aW9ucywKSSd2ZSBzZW50IHRoZSBWMiB2ZXJzaW9uIGFu
-ZCBwbGVhc2UgY2hlY2sgdGhhdC4KClJlZ2FyZHMKTGlu
+Changes in v5:
+ - Fixed commit [2/3], changed allOf -> anyOf to get the
+   intended allowance in the binding
+
+Changes in v4:
+ - Fixed a typo that caused pure OF graphs pipelines multiple
+   concurrent outputs to not get correctly parsed (port->id); 
+ - Added OVL_ADAPTOR support for OF graph specified pipelines;
+ - Now tested with fully OF Graph specified pipelines on MT8195
+   Chromebooks and MT8395 boards;
+ - Rebased on next-20240516
+
+Changes in v3:
+ - Rebased on next-20240502 because of renames in mediatek-drm
+
+Changes in v2:
+ - Fixed wrong `required` block indentation in commit [2/3]
+
+
+The display IPs in MediaTek SoCs are *VERY* flexible and those support
+being interconnected with different instances of DDP IPs (for example,
+merge0 or merge1) and/or with different DDP IPs (for example, rdma can
+be connected with either color, dpi, dsi, merge, etc), forming a full
+Display Data Path that ends with an actual display.
+
+This series was born because of an issue that I've found while enabling
+support for MT8195/MT8395 boards with DSI output as main display: the
+current mtk_drm_route variations would not work as currently, the driver
+hardcodes a display path for Chromebooks, which have a DisplayPort panel
+with DSC support, instead of a DSI panel without DSC support.
+
+There are other reasons for which I wrote this series, and I find that
+hardcoding those paths - when a HW path is clearly board-specific - is
+highly suboptimal. Also, let's not forget about keeping this driver from
+becoming a huge list of paths for each combination of SoC->board->disp
+and... this and that.
+
+For more information, please look at the commit description for each of
+the commits included in this series.
+
+This series is essential to enable support for the MT8195/MT8395 EVK,
+Kontron i1200, Radxa NIO-12L and, mainly, for non-Chromebook boards
+and Chromebooks to co-exist without conflicts.
+
+Besides, this is also a valid option for MT8188 Chromebooks which might
+have different DSI-or-eDP displays depending on the model (as far as I
+can see from the mtk_drm_route attempt for this SoC that is already
+present in this driver).
+
+This series was tested on MT8195 Cherry Tomato and on MT8395 Radxa
+NIO-12L with both hardcoded paths, OF graph support and partially
+hardcoded paths, and pure OF graph support including pipelines that
+require OVL_ADAPTOR support.
+
+AngeloGioacchino Del Regno (3):
+  dt-bindings: display: mediatek: Add OF graph support for board path
+  dt-bindings: arm: mediatek: mmsys: Add OF graph support for board path
+  drm/mediatek: Implement OF graphs support for display paths
+
+ .../bindings/arm/mediatek/mediatek,mmsys.yaml |  28 ++
+ .../display/mediatek/mediatek,aal.yaml        |  40 +++
+ .../display/mediatek/mediatek,ccorr.yaml      |  21 ++
+ .../display/mediatek/mediatek,color.yaml      |  22 ++
+ .../display/mediatek/mediatek,dither.yaml     |  22 ++
+ .../display/mediatek/mediatek,dpi.yaml        |  25 +-
+ .../display/mediatek/mediatek,dsc.yaml        |  24 ++
+ .../display/mediatek/mediatek,dsi.yaml        |  27 +-
+ .../display/mediatek/mediatek,ethdr.yaml      |  22 ++
+ .../display/mediatek/mediatek,gamma.yaml      |  19 ++
+ .../display/mediatek/mediatek,merge.yaml      |  23 ++
+ .../display/mediatek/mediatek,od.yaml         |  22 ++
+ .../display/mediatek/mediatek,ovl-2l.yaml     |  22 ++
+ .../display/mediatek/mediatek,ovl.yaml        |  22 ++
+ .../display/mediatek/mediatek,postmask.yaml   |  21 ++
+ .../display/mediatek/mediatek,rdma.yaml       |  22 ++
+ .../display/mediatek/mediatek,ufoe.yaml       |  21 ++
+ drivers/gpu/drm/mediatek/mtk_disp_drv.h       |   1 +
+ .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  40 ++-
+ drivers/gpu/drm/mediatek/mtk_dpi.c            |  16 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 282 ++++++++++++++++--
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h        |   2 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c            |  10 +-
+ 23 files changed, 713 insertions(+), 41 deletions(-)
+
+-- 
+2.45.1
+
 
