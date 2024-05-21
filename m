@@ -1,191 +1,131 @@
-Return-Path: <linux-kernel+bounces-184552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB658CA87D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:09:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC0E8CA882
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E51C285097
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:09:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DA421F2243B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F228B4CDE0;
-	Tue, 21 May 2024 07:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2811C4C3C3;
+	Tue, 21 May 2024 07:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dMb57hvR"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpWBGTXV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9E47F;
-	Tue, 21 May 2024 07:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEC17F;
+	Tue, 21 May 2024 07:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716275369; cv=none; b=soSrapzWa6m82ICgThdyneLh8whr/3ePIsIzNdTOzuVqGnEJ1iCbRsfGgV5yysF4qUz//DlRWjjGLkkMh0YyyYTK9ql7gTSURJBJmxd0f5awE0VkGBsWvtXWQ2zBVf49T3xAurDyY4Ku19oiRELh5pMSWJBm6dt8/1G9HgfI2Bw=
+	t=1716275445; cv=none; b=K5nsMzWwaaH/+HjujHqR3n7gWqAFS0Fc+C0GjFO+l3FLDLVyUpBehd0u40TgPnlDqooOesLjzwSfZb4SEFQDizQBlsky3CeZ1bFK7eQLw5sh60SIbOPc1tuivnVGMPeNdoDu88Wo9alb3xQpXrzaAvFkotav9v1aX8zDTUNC+gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716275369; c=relaxed/simple;
-	bh=2kRe9Ce8rakW5lnoclVrGvOqgAaS9QJgR7+JBCR7qys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iWZ29YEjIP2qwZr1IZF1bd7E4afgussz8YFKflhlmrxMODbZX1fYbDozuWyngWLi+/M4DgxOj1sL5JLJgR2c8HXLdNU+S/js0numL9kO6o64iXu8flN6J+pZ5Oswd1yKLv48/dMQ1tGMHpmcuFEuw6g3MKyIK2s7vRq12vVTQ9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dMb57hvR; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716275365;
-	bh=2kRe9Ce8rakW5lnoclVrGvOqgAaS9QJgR7+JBCR7qys=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dMb57hvRLq5Ogx/eVkr0GikvvOOcmA5elS88vCrGss1/i4ZaMGyJDakkzpsPqdKT0
-	 orLLIzRjSegeeBGqdqT+YLzJOOqeU4I3VEw+Wyz6V/8JUomxmKVqURakWOBdWDGMhc
-	 a8uCQLH53IZiJhwL5OhP7wuPoxDUYVsSHadDZiP0iwDeoqLby10l9/7WR9H1v92C4z
-	 GO4BQg9kw2QgpPDnELBL9rBKXBR05jMVNEwyv7QDoC9dNX7xJ579aMYDO0a3pLAUBx
-	 e4xY/BitVag16MsRrKACbRbrpr6Ufokn02bNWB4NaOnAPDNsq22TPAVjmswEHYFEQY
-	 Uo90BDiUZNPUQ==
-Received: from [100.66.96.193] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 97C6B378202E;
-	Tue, 21 May 2024 07:09:21 +0000 (UTC)
-Message-ID: <f3646d66-01f0-476c-8b7f-5df102790fcb@collabora.com>
-Date: Tue, 21 May 2024 12:39:19 +0530
+	s=arc-20240116; t=1716275445; c=relaxed/simple;
+	bh=g6jdq9Eo2tX9QZqCluaga06jjI3BOxeso2ueEO1aims=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=g+P6I2ZPqVxSdh/XdJN5m7DLWQJO+piiCxrLqadNLx5i6vaS8z7aCd8vDbWe44x5wWF/Aw8HdB+u+m6iJDVqW8fdjwV2J0jHu0mSBBA5sUyyg0p2EdaPuyUjSYS5ynPMKh4ui67ZqivYRig6MMld8L9O0cE9zCPYv1OPFK2UTn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpWBGTXV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4759CC2BD11;
+	Tue, 21 May 2024 07:10:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716275444;
+	bh=g6jdq9Eo2tX9QZqCluaga06jjI3BOxeso2ueEO1aims=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=tpWBGTXV1vLaw5vPfplS928SwDv8FHJ98ii8MQ15vQYYhjBTcWOTQQ269FmbhMiCK
+	 wOMAbIoZbAhs9ne9LdGUHcTymNi6+kRAz4G05CcvMkz4/a0ZY7RMvVmbpp2uqLFMuH
+	 f3HU8nl6BU2xp+CY/pgQgBynrKizqau/AMD7pWfxfPTBoitilyqPHWiordxGL03W8i
+	 ZiXXMqO+gwld2z5EwIKba1lAcrkD3aaSSNpEgyB3exmEmGyHu3icGaaAi9gyyMaTeB
+	 Ad6UpOG0yBpU6vP3HRLFSQMbPeJeoEw698tXFt57+jETx/FizONubK+uGrpqS7Cn7q
+	 cTjbkCkU/7z3A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] drm/ci: build virtual GPU driver as module
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
- helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
- robdclark@gmail.com, david.heidelberg@collabora.com,
- guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
- mcanal@igalia.com, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org,
- amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org,
- linux-kernel@vger.kernel.org
-References: <20240517092502.647420-1-vignesh.raman@collabora.com>
- <20240517092502.647420-4-vignesh.raman@collabora.com>
- <elftuzsd7lhz6y5ow6rb5uu5fb5b5jcprxtvxtxtojo774rnyr@swpeg4vkgtnc>
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <elftuzsd7lhz6y5ow6rb5uu5fb5b5jcprxtvxtxtojo774rnyr@swpeg4vkgtnc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 21 May 2024 10:10:40 +0300
+Message-Id: <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
+Cc: <keyrings@vger.kernel.org>, <James.Bottomley@HansenPartnership.com>,
+ "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>, "Mimi
+ Zohar" <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul
+ Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, <linux-kernel@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Vitor Soares" <ivitro@gmail.com>, <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240519235122.3380-1-jarkko@kernel.org>
+ <20240519235122.3380-2-jarkko@kernel.org>
+ <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
+In-Reply-To: <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
 
-Hi Dmitry,
+On Tue May 21, 2024 at 10:03 AM EEST, Vitor Soares wrote:
+> Hi Jarkko,
+>
+> On Mon, 2024-05-20 at 02:51 +0300, Jarkko Sakkinen wrote:
+> > Causes performance drop in initialization so needs to be opt-in.
+> > Distributors are capable of opt-in enabling this. Could be also handled=
+ by
+> > kernel-command line in the future.
+> >=20
+> > Reported-by: Vitor Soares <ivitro@gmail.com>
+> > Closes:
+> > https://lore.kernel.org/linux-integrity/bf67346ef623ff3c452c4f968b7d900=
+911e250c3.camel@gmail.com/#t
+> > Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > =C2=A0drivers/char/tpm/Kconfig | 2 +-
+> > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+> > index e63a6a17793c..db41301e63f2 100644
+> > --- a/drivers/char/tpm/Kconfig
+> > +++ b/drivers/char/tpm/Kconfig
+> > @@ -29,7 +29,7 @@ if TCG_TPM
+> > =C2=A0
+> > =C2=A0config TCG_TPM2_HMAC
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool "Use HMAC and encr=
+ypted transactions on the TPM bus"
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0default y
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0default n
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select CRYPTO_ECDH
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select CRYPTO_LIB_AESCF=
+B
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select CRYPTO_LIB_SHA25=
+6
+>
+> I did the test on my side, and with TCG_TPM2_HMAC set to "n" the time to =
+probe
+> tpm_tis_spi driver has reduced to:
+> real    0m2.009s
+> user    0m0.001s
+> sys     0m0.019s
+>
+> Thanks for your help.
+>
+> Best regards,
+> Vitor Soares
 
-On 20/05/24 16:32, Dmitry Baryshkov wrote:
-> On Fri, May 17, 2024 at 02:54:59PM +0530, Vignesh Raman wrote:
->> With latest IGT, the tests tries to load the module and it
->> fails. So build the virtual GPU driver for virtio as module.
-> 
-> Why? If the test fails on module loading (if the driver is built-in)
-> then it's the test that needs to be fixed, not the kerenel config.
-> 
-> It's fine as a temporal workaround, but please include a link to the
-> patch posted to fix the issue.
+Yeah, well overall benefits still weight a lot. Primary keys are
+obviously essential for any use of TPM, so better idea might then
+just disable the whole TPM if this does not scale.
 
-I will recheck this issue and post a link to the fix.
+But as James pointed out in some other response it is not objectively
+clear where performance hit is. I guess it would make sense to analyze
+how much hmac vs w/o hmac in the pipe costs for TPM commands.
 
-Regards,
-Vignesh
+This benchmark could be done in user space using /dev/tpm0.
 
-> 
->>
->> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
->> ---
->>
->> v2:
->>    - No changes.
->>
->> ---
->>   drivers/gpu/drm/ci/build.sh       | 1 -
->>   drivers/gpu/drm/ci/igt_runner.sh  | 6 +++---
->>   drivers/gpu/drm/ci/image-tags.yml | 4 ++--
->>   drivers/gpu/drm/ci/test.yml       | 1 +
->>   drivers/gpu/drm/ci/x86_64.config  | 2 +-
->>   5 files changed, 7 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/ci/build.sh b/drivers/gpu/drm/ci/build.sh
->> index a67871fdcd3f..e938074ac8e7 100644
->> --- a/drivers/gpu/drm/ci/build.sh
->> +++ b/drivers/gpu/drm/ci/build.sh
->> @@ -157,7 +157,6 @@ fi
->>   
->>   mkdir -p artifacts/install/lib
->>   mv install/* artifacts/install/.
->> -rm -rf artifacts/install/modules
->>   ln -s common artifacts/install/ci-common
->>   cp .config artifacts/${CI_JOB_NAME}_config
->>   
->> diff --git a/drivers/gpu/drm/ci/igt_runner.sh b/drivers/gpu/drm/ci/igt_runner.sh
->> index 20026612a9bd..55532f79fbdc 100755
->> --- a/drivers/gpu/drm/ci/igt_runner.sh
->> +++ b/drivers/gpu/drm/ci/igt_runner.sh
->> @@ -30,10 +30,10 @@ case "$DRIVER_NAME" in
->>               export IGT_FORCE_DRIVER="panfrost"
->>           fi
->>           ;;
->> -    amdgpu)
->> +    amdgpu|virtio_gpu)
->>           # Cannot use HWCI_KERNEL_MODULES as at that point we don't have the module in /lib
->> -        mv /install/modules/lib/modules/* /lib/modules/.
->> -        modprobe amdgpu
->> +        mv /install/modules/lib/modules/* /lib/modules/. || true
->> +        modprobe --first-time $DRIVER_NAME
->>           ;;
->>   esac
->>   
->> diff --git a/drivers/gpu/drm/ci/image-tags.yml b/drivers/gpu/drm/ci/image-tags.yml
->> index 60323ebc7304..328f5c560742 100644
->> --- a/drivers/gpu/drm/ci/image-tags.yml
->> +++ b/drivers/gpu/drm/ci/image-tags.yml
->> @@ -4,9 +4,9 @@ variables:
->>      DEBIAN_BASE_TAG: "${CONTAINER_TAG}"
->>   
->>      DEBIAN_X86_64_BUILD_IMAGE_PATH: "debian/x86_64_build"
->> -   DEBIAN_BUILD_TAG: "2023-10-08-config"
->> +   DEBIAN_BUILD_TAG: "2024-05-09-virtio"
->>   
->> -   KERNEL_ROOTFS_TAG: "2023-10-06-amd"
->> +   KERNEL_ROOTFS_TAG: "2024-05-09-virtio"
->>   
->>      DEBIAN_X86_64_TEST_BASE_IMAGE: "debian/x86_64_test-base"
->>      DEBIAN_X86_64_TEST_IMAGE_GL_PATH: "debian/x86_64_test-gl"
->> diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
->> index 612c9ede3507..864ac3809d84 100644
->> --- a/drivers/gpu/drm/ci/test.yml
->> +++ b/drivers/gpu/drm/ci/test.yml
->> @@ -350,6 +350,7 @@ virtio_gpu:none:
->>     script:
->>       - ln -sf $CI_PROJECT_DIR/install /install
->>       - mv install/bzImage /lava-files/bzImage
->> +    - mkdir -p /lib/modules
-> 
-> Is it necessary to create it manually here?
-> 
->>       - mkdir -p $CI_PROJECT_DIR/results
->>       - ln -sf $CI_PROJECT_DIR/results /results
->>       - install/crosvm-runner.sh install/igt_runner.sh
->> diff --git a/drivers/gpu/drm/ci/x86_64.config b/drivers/gpu/drm/ci/x86_64.config
->> index 1cbd49a5b23a..78479f063e8e 100644
->> --- a/drivers/gpu/drm/ci/x86_64.config
->> +++ b/drivers/gpu/drm/ci/x86_64.config
->> @@ -91,7 +91,7 @@ CONFIG_KVM=y
->>   CONFIG_KVM_GUEST=y
->>   CONFIG_VIRT_DRIVERS=y
->>   CONFIG_VIRTIO_FS=y
->> -CONFIG_DRM_VIRTIO_GPU=y
->> +CONFIG_DRM_VIRTIO_GPU=m
->>   CONFIG_SERIAL_8250_CONSOLE=y
->>   CONFIG_VIRTIO_NET=y
->>   CONFIG_VIRTIO_CONSOLE=y
->> -- 
->> 2.40.1
->>
-> 
+Anyway, I did not include this to my PR, which I already sent to Linus.
+If anyone wants to make kernel command-line option for hmac, I'm willing
+to review that (no bandwidth to do it myself).
+
+BR, Jarkko
 
