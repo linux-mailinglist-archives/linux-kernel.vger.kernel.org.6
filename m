@@ -1,124 +1,78 @@
-Return-Path: <linux-kernel+bounces-185521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C448CB63D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 016868CB63F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5475F1C21CE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:00:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C351C2039F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD6514A4D7;
-	Tue, 21 May 2024 23:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA40A149C60;
+	Tue, 21 May 2024 23:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNYTRCOy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LW1usw0D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74EA14A096;
-	Tue, 21 May 2024 23:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B6AA2D;
+	Tue, 21 May 2024 23:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716332403; cv=none; b=Qc82HpKyMgWLR3CdxNKi6B3uAuqy+n08G/iavWxRAwizMjuqp3n8bATCIfa5Zw6rOQ1rOniOTTG3coNuieLwgfhKeKJegwZFGoM4KFjJeymsSynJl9IZypABv/Cv4VlxZlAPLnDZa9UpsK3w/EdWH0WSMRrkCJkJCsw9qBiVj6s=
+	t=1716332557; cv=none; b=QbxyFq+ecgB5IUnDhKx/H+3YLRSJkinpZ6HTQ5f74LzQ+39Z2bDddtsPb2hu5Y5mXJor9+QZ5AklXFIXhPNydJpl0JPJjtFHzrBNRGTy6EbCRCFIUtyblMXpcUl9E/YTuvdcDSad0U4Kgndk9QTy0N0UHEOW96NuSX3HFzpYMT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716332403; c=relaxed/simple;
-	bh=iJA/F33R/LtZ4Uq9GOkWjVAyXoIG43uY1j5/qRey5p8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=Th2043Z4su3YFnOjaDbORBHbkUK0D3M26mujJRR8eAvLrvV+XBqBMhjmdb+qn2iUXhJ8jPB4BPjCdsv2h6C+m2mJfUbUayzt0fX/Rqa6jXbU4ldcK+ifSp3jx0miM5PHU0fcXhmvKQCr5oUlIx1dZXNe4osX+YqfonS7aMz0tRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNYTRCOy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DC9C2BD11;
-	Tue, 21 May 2024 22:59:58 +0000 (UTC)
+	s=arc-20240116; t=1716332557; c=relaxed/simple;
+	bh=ifQyzic2NNtFqbnYPsEyP/mg7BBSJGDsjj6YuGS4WH0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=aMZ6lw3S+gGwLtXHZpNk52876lIgW+y2o2/nXN8K18hbM1JW6zqbxen/GfEeozriGrdSZf4xevsEAN2Cm80ZO7ZD9y6WjXneIo7/POIzX0CN2kPkTUwYtqyLRX/CJesndGdN2ELfdplIWGaPULn2OE52vvj7j76LeN+iIR1AGGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LW1usw0D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DF291C2BD11;
+	Tue, 21 May 2024 23:02:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716332402;
-	bh=iJA/F33R/LtZ4Uq9GOkWjVAyXoIG43uY1j5/qRey5p8=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=qNYTRCOyd10U8Dr2Tzw965mydVoF/OGlzzJ5W/HyNMqxVBkWDVFKqoZ7fksXI+LQB
-	 mFEDpwCOG0p3F/8x+twrJZl5NPzq4k26K1y+SXj2Pozxb7kfirdV1PbuoPP/PK30QK
-	 H68apjdPEGtqD1XzySMrxVzvx5KXtFRQeDlxzaoUJjc4LNwXArvNuU3ggro0D+JPZi
-	 ySWzSgReIviOIq05uCA8Y0a1/COtseXeLrdAXZ7vCC05BdNmtZkmwQ/Ajep9Q8jib9
-	 M3C7OAcBXd+VZ6O5+LWtvlSfB7tSIQgcYD5VHDy1BOa1F6SEZUJzVESvVagccF1v+g
-	 LPYCZ+LEW55GA==
+	s=k20201202; t=1716332557;
+	bh=ifQyzic2NNtFqbnYPsEyP/mg7BBSJGDsjj6YuGS4WH0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=LW1usw0DahmmzJz2mWNJ1ntF65/ebxnhz2MiYljevD5ccL/eGaVPic1YgCM3dYKSV
+	 asRLfvOp7jCeU9qB9jZyX73LqCpPWlP7uYYWksxUvXf/vgwMiEzMB0Nmv4R2mf9MwL
+	 93O4eoWJLshwGNGijuBx1nnxDiVoVKOd46nV/cPpl1NjBn2179f2BGPbhtkGy+uVLU
+	 lZrj1tK2xoeY2XDqq1JWEwAOm9hUR4S4MMwFG3PPqK8OmY9oTVLqCLlliUR5NYMa3Z
+	 F6YL9CERUbD8+FDEWYqZqHc5GhW1JPrn9HW6hQWS50hC/CIwgoZP0ONIOYcClibuZA
+	 3J2IMqm+JFsGg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CE5BDC4936D;
+	Tue, 21 May 2024 23:02:36 +0000 (UTC)
+Subject: Re: [GIT PULL] perf tools changes for v6.10
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240521192614.3937942-1-acme@kernel.org>
+References: <20240521192614.3937942-1-acme@kernel.org>
+X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240521192614.3937942-1-acme@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-for-v6.10-1-2024-05-21
+X-PR-Tracked-Commit-Id: ea558c86248b4955e5c5f3c0c921df450880605e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 29c73fc794c83505066ee6db893b2a83ac5fac63
+Message-Id: <171633255683.31098.16627302013499975744.pr-tracker-bot@kernel.org>
+Date: Tue, 21 May 2024 23:02:36 +0000
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Clark Williams <williams@redhat.com>, Kate Carcia <kcarcia@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, Anne Macedo <retpolanne@posteo.net>, Bhaskar Chowdhury <unixbhaskar@gmail.com>, Ethan Adams <j.ethan.adams@gmail.com>, James Clark <james.clark@arm.com>, Kan Liang <kan.liang@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, Tycho Andersen <tycho@tycho.pizza>, Yang Jihong <yangjihong@bytedance.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 May 2024 01:59:56 +0300
-Message-Id: <D1FP21Y7J8QO.7JCTW22LRSXF@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "David Howells"
- <dhowells@redhat.com>
-Cc: "Herbert Xu" <herbert@gondor.apana.org.au>,
- <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
- <Andreas.Fuchs@infineon.com>, "James Prestwood" <prestwoj@gmail.com>,
- "David Woodhouse" <dwmw2@infradead.org>, "Eric Biggers"
- <ebiggers@kernel.org>, "David S. Miller" <davem@davemloft.net>, "open
- list:CRYPTO API" <linux-crypto@vger.kernel.org>, "open list"
- <linux-kernel@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "open list:SECURITY SUBSYSTEM"
- <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 4/6] KEYS: trusted: Move tpm2_key_decode() to the TPM
- driver
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <D1FMVEJWGLEW.14QGHPAYPHQG1@kernel.org>
- <20240521031645.17008-1-jarkko@kernel.org>
- <20240521031645.17008-5-jarkko@kernel.org>
- <cc3d952f8295b52b052fbffe009b796ffb45707a.camel@HansenPartnership.com>
- <336755.1716327854@warthog.procyon.org.uk>
- <239a52eb5ed3a6c891382b63d08fe7b264850d38.camel@HansenPartnership.com>
- <D1FOQSFNZ794.23R2JV1SD8X8W@kernel.org>
-In-Reply-To: <D1FOQSFNZ794.23R2JV1SD8X8W@kernel.org>
 
-On Wed May 22, 2024 at 1:45 AM EEST, Jarkko Sakkinen wrote:
-> On Wed May 22, 2024 at 12:59 AM EEST, James Bottomley wrote:
-> > On Tue, 2024-05-21 at 22:44 +0100, David Howells wrote:
-> > > Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > >=20
-> > > > On Tue May 21, 2024 at 9:18 PM EEST, James Bottomley wrote:
-> > > > ...
-> > > > You don't save a single byte of memory with any constant that
-> > > > dictates the size requirements for multiple modules in two disjoint
-> > > > subsystems.
-> > >=20
-> > > I think James is just suggesting you replace your limit argument with
-> > > a constant not that you always allocate that amount of memory.
-> >
-> > Exactly.  All we use it for is the -E2BIG check to ensure user space
-> > isn't allowed to run away with loads of kernel memory.
->
-> Not true.
->
-> It did return -EINVAL. This patch changes it to -E2BIG.
->
-> >
-> > > What the limit should be, OTOH, is up for discussion, but PAGE_SIZE
-> > > seems not unreasonable.
-> >
-> > A page is fine currently (MAX_BLOB_SIZE is 512).  However, it may be
-> > too small for some of the complex policies when they're introduced.=20
-> > I'm not bothered about what it currently is, I just want it to be able
-> > to be increased easily when the time comes.
->
-> MAX_BLOB_SIZE would be used to cap key blob, not the policy.
->
-> And you are ignoring it yourself too in the driver.
+The pull request you sent on Tue, 21 May 2024 16:26:14 -0300:
 
-Obviously policy is part of the key blob i.e. expected value for that.
+> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-for-v6.10-1-2024-05-21
 
-.. but that does not reduce space requirements to rsa asymmetric keys.
-It increases them but I think at this point 8192 is good starting point.
-And it cap can be scaled later.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/29c73fc794c83505066ee6db893b2a83ac5fac63
 
-Being a parameter also allows to have even kernel-command line or sysfs
-parameter and stuff like that. It is robust not a bad choice.
+Thank you!
 
-BR, Jarkko
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
