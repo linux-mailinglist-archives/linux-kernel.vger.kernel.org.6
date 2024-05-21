@@ -1,357 +1,186 @@
-Return-Path: <linux-kernel+bounces-185305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213378CB345
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:02:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 335538CB33C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27C3E1C21DC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72942836CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14ED14AD2B;
-	Tue, 21 May 2024 17:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7F014A088;
+	Tue, 21 May 2024 17:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ke1Bi5bD"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kwVAmwBW"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2078.outbound.protection.outlook.com [40.107.96.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C0E14A638;
-	Tue, 21 May 2024 17:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716314393; cv=none; b=JemiOJ/Olegs0cJ96ix4BWGofKl02WdYViu7oDPrFmhhbVMLLJqrwFgdKCEcbdawRa/4VrrVoXuSHWzEpVEQ3tEbJCsB0h+eeA0LkBn0uzEbUk5WYKKJwi/IRHi/HjbexVncL6X4a7X5y8xRGQC8WQVeKAjz4hUFdLLpPbDgyrc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716314393; c=relaxed/simple;
-	bh=61MriWGtPLPpZsrO73fCBAhdwQo0/XaJgc8eagLcVXc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DRDidvLU26GJ+Y67lt1o/AW7tYxGC7Yq3Sa+d9GnmU+9gS2ZB+AwUMVBaVwqk1BsIv+rQ0BMslVBq6WdCSVxv5+vh/BSZLtK2VcgCoIGYR4dZV05V8zyqylkQuz60hDZCIUPA67ejNsxjx2mZTFMGqaU6Exq5Yw2/wPYwB2wapI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ke1Bi5bD; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1ed904c2280so3304305ad.2;
-        Tue, 21 May 2024 10:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716314391; x=1716919191; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jX6zUCloIMLeC0AtUUIo54oV7OGNQUUzaEpWo4Ucc+8=;
-        b=ke1Bi5bDcBWNP3Nf3MDgLLxSoGYKpmrBe6HYtKvwgJguKqRmSAOb5hsHK/Ci5+umRf
-         eqK357InbnULcr3Y6ON3lCa6yp8WWAxYuaj5DGPb3TzKoRn2QNqxqq7EsfXHX2mfYLY/
-         5z0g7Cw5Da/Rhac8kwpACW2zoNYTFvSVt5z0VbS1gB1Ci1uPjPdZlO571uB2hR229i1y
-         QD7M4sj57sSNXh0WnUpn08tE//Qws4pqkM/p4S7Ku7z6UccFYbTMXxQTM2tWI5DqSeIb
-         /nN/dhx6m+HEkBXccQIa7QXBxjeQOou5YUzRSpQhqUvvSIJINCmyCfRhyD2ACgwv3IAy
-         4Efg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716314391; x=1716919191;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jX6zUCloIMLeC0AtUUIo54oV7OGNQUUzaEpWo4Ucc+8=;
-        b=W7FEMkxH9qjt/RLq4QAsNpC1/0Pqhu+HRzf+COH6FiegMI8csVdu2osrY17EKjfsye
-         aGUZqAKUU+uWp6Kl6vrzPk+d8xFFumaaPekZqv7PJxhVvqeK6CeIILwnlsPMKJo5TDRa
-         I6wNlDIoJhYoWxuUnMdnzV9KJzIHE1kHsoYNZ1K7AREypksLlX++UjjASnAxVrPEEMb5
-         pgn40JsvIMnzlEXfQlkX5+i0rkqT0CWPzQDISG4mFH648MuBURmq4AX/THGrryA8FmnF
-         VbvzknDNtRfE7R2DKhrQdoUNEBQJ9LYkotkogRnS4zL5Uu2kZxK/q9GsehOjVIPE7040
-         GD0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUK0FeFEM3lR9cebua1hGlCGavCy65WUbmOavtwwWvP16hQ8tHUs8eIJfbmj2hPQlEmQS0lz6nQOOL2jOUNlddEk8dUIBRGMCEfCtVPwubpoUTFovEO/qQuJAPxIktNcse8WGkf95eqnwTVPQ==
-X-Gm-Message-State: AOJu0Ywx0osXnJAzMDDbiS48bpSqNnViLWle0MZsiaDu0wYrpzuSfaqB
-	s5p0FCcbLvRlhHbz5kQrAgb4IrVF0InWYSVejk3fScQMue+BOdaF
-X-Google-Smtp-Source: AGHT+IExAfgsIwWGDABBN/J81IQxzi7Xmus1MnTq7EO1h5SpSUKVtCl9UBUAT3KpqGVr3jZT+Cbd4w==
-X-Received: by 2002:a17:902:bb17:b0:1e0:115c:e03c with SMTP id d9443c01a7336-1ef43f4ce9fmr320876095ad.53.1716314391332;
-        Tue, 21 May 2024 10:59:51 -0700 (PDT)
-Received: from localhost.localdomain ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f2fcdf87besm44646935ad.105.2024.05.21.10.59.47
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 21 May 2024 10:59:50 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Chris Li <chrisl@kernel.org>,
-	Barry Song <v-songbaohua@oppo.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Neil Brown <neilb@suse.de>,
-	Minchan Kim <minchan@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v6 11/11] mm/swap: reduce swap cache search space
-Date: Wed, 22 May 2024 01:58:53 +0800
-Message-ID: <20240521175854.96038-12-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240521175854.96038-1-ryncsn@gmail.com>
-References: <20240521175854.96038-1-ryncsn@gmail.com>
-Reply-To: Kairui Song <kasong@tencent.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094801482ED;
+	Tue, 21 May 2024 17:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716314377; cv=fail; b=aXybysDoj0a6Tc0xnDqmrqa/6Y/0snVerGiWqeUYui/UDLAhe7+rP72cRvRmWh1izGnUagSqw9Eksf09/gxTq/f12d3FZfeA7o3wyJsyJWV8Rk5tfjXVTdxcnJgMetvRaDRQJuwg9SbVaq4+5Nk6FAzypU864i6XnKn+NamgE+w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716314377; c=relaxed/simple;
+	bh=5BNizYjrlQgZSAU2yp/PoRnMVqo19i8zEzXcBHwAZ/w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MyrMtPNDLPIUTpgcuNhe8aThgVOm37qxBPhEOgEh8Zmc5y9DO61+fhBLfkmxvKy5e0ZzKGGfLkvVaMvNC7FUObKzxYMM4Ep4MHsJtnXaflWXORH0IxUfh2mJJDQ1GToJtKp8Pf/4k7NFhEzy/ow4tvseOdWpc+MYGnafegBalVY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kwVAmwBW; arc=fail smtp.client-ip=40.107.96.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eJy7XCp0FIBgLfyw0Hfs8omROUQwdkXQ8A4Z60sHNpbWcM7avOItyPyh2awkDH391pNVfJnuKoKpBia31M19R9xLIytaDJ/cZnhswFBJWgoZVV3l89+FLbocDrCb6j6c4BhbKq6agsMUSkxx1qlEtafLNxm24wD914e5rAlpdIQeDGEvsY3TqdnGodWAluOQY8A/wxY3FObaF586tuYiqQy1P1lVJLTWtFMTcpQG+C5ju255afFiaPCZwyeZPdeFt9ryf5K0SFZPt5CPS7xhGC3eyEIu3BWs2KaVXSJvQmkFwwxm+apOg5BbShJxeWpTPhSHja0O/lzA59mzL6tSsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eyyTeyCuq2tDBgxMM6OeQ92w6ezHTtkwlXUEbqpEGJY=;
+ b=U0jfdR4x8OYznPF15kzMX5nnjr8rUZqk6iFmQbDwMVZwp1RZ0o3PqbRT4Tzn9xMT2wQMxBSxmqPyeEJ3TMeDaEZKcn1HvZ1ObRc+gYY004h+6M59U3gzyn8nEh+KemrpooIUzxbBoqxV3Tn9YFMtpvdnlwPH245Z2UYGwzxm1ksvSyHdz0xp1XgHtTcaQdJxjLWqG5a5Z3M7XhrS9kom0ORdlj7Dhdgc55XbsdY+H/Yi6zPCqiRQesaWS5LrSf1kIb6OrGaVie6rSsqPluBQxzg+AV3QhjDGNtZrEo1O8AmRuf0aQA/C6rm4YGmOzvVsX8Zdk+2QsoLKgSW11J2I7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eyyTeyCuq2tDBgxMM6OeQ92w6ezHTtkwlXUEbqpEGJY=;
+ b=kwVAmwBWzyHx7ThsExMv04Lt0807mf3oJzqN22nt/gy8LhxRlY7XXTUDY2hoJMAAzgz6uBPFhZBJ4ZwGyM5b45l62TZ7LYy/EkRHPEZDXSIByMJLcdmdBpELbKTlbpwtafjdVpm/J5C/JbGmvJdPd1+CqOGPob3ulZamyT+U7pAqDNLL5sB+5dYY3KPKzivaOdbRZof+hC/tVJsDJhBGKIlj/TufjIrfjDDCf4z7mHuLt7EheGoTRdnzeDh6CxKeYPZSc86A9zIPGiFjFtrdXcs06eJtmV8+oXxtGc9EAP95Qk7ZDAdxQ7THK7iv0O6qbj5mdhVu6moJqj6V9JX/fg==
+Received: from MN0PR12MB5954.namprd12.prod.outlook.com (2603:10b6:208:37d::15)
+ by DM6PR12MB4402.namprd12.prod.outlook.com (2603:10b6:5:2a5::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Tue, 21 May
+ 2024 17:59:28 +0000
+Received: from MN0PR12MB5954.namprd12.prod.outlook.com
+ ([fe80::883a:d386:a572:80c7]) by MN0PR12MB5954.namprd12.prod.outlook.com
+ ([fe80::883a:d386:a572:80c7%6]) with mapi id 15.20.7587.030; Tue, 21 May 2024
+ 17:59:28 +0000
+From: Matt Ochs <mochs@nvidia.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+CC: "peterhuewe@gmx.de" <peterhuewe@gmx.de>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+	Krishna Yarlagadda <kyarlagadda@nvidia.com>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "linux-integrity@vger.kernel.org"
+	<linux-integrity@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Vishwaroop A <va@nvidia.com>, Carol Soto
+	<csoto@nvidia.com>
+Subject: Re: [PATCH] tpm_tis_spi: Account for SPI header when allocating TPM
+ SPI xfer buffer
+Thread-Topic: [PATCH] tpm_tis_spi: Account for SPI header when allocating TPM
+ SPI xfer buffer
+Thread-Index: AQHaq5U1+o85zWpeVkyK4ZdirY6tErGh114AgAAitgA=
+Date: Tue, 21 May 2024 17:59:28 +0000
+Message-ID: <66503B6E-44C3-42DF-B423-7D0214620686@nvidia.com>
+References: <20240521154028.3339742-1-mochs@nvidia.com>
+ <D1FG0VPIBMJI.2XLL7FD5DYXBX@kernel.org>
+In-Reply-To: <D1FG0VPIBMJI.2XLL7FD5DYXBX@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR12MB5954:EE_|DM6PR12MB4402:EE_
+x-ms-office365-filtering-correlation-id: 9a97e9aa-59a8-45a2-2000-08dc79bfc27e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?1koNU42Fxz3SwdxSWxjZzTuqHKGkDCrTlMnlzcCI/IyoB1pHmhW4/zuUUN/a?=
+ =?us-ascii?Q?V9nGBtp1PDIGVbXovaAxw4/5uN2VeXUj8YjobU86xpXLOI6naD7TjENSpG+z?=
+ =?us-ascii?Q?C4zK7MOAvAd29WaPg8Xm6EJVH+YUka5VfagBa79sVlEFwjK857s0CK3BMLad?=
+ =?us-ascii?Q?8hhm57R0wLmrP9HZRV5vvieWQt09DigMl9TQbwe7NKw0EgzLThjQqm7m/rzE?=
+ =?us-ascii?Q?QF6PXBe1z4JSeMyjOJLmHlSDmuYrE5RP46DUwHWgWeEx+HnlGJ28T6+TQw6m?=
+ =?us-ascii?Q?yNtV7pbuZ4QvftXw3w4jTu1f3cZnKxroAiv4gyjivpz3r2CsF5KDd5odDu7s?=
+ =?us-ascii?Q?1RNw0DpISvVIXtgZfoJULliEuXzp/xfOHEhzhqa90uwdZHvDv59z652CvTPe?=
+ =?us-ascii?Q?IrBT08bKEeLdH8jfOOBArbjyEkbjvHREc4rW8NzUevN1+W4luhWtMaM4b7TT?=
+ =?us-ascii?Q?9oLgT/0P57hF4oezweZ1NAy/+pROMAjo9Vdh/pVRA/WqS1f1m8zZ65uqBbCG?=
+ =?us-ascii?Q?B+uRiuh9PdcTO/MhnVTevYRnP53VbT1SKxrgmIP5cLkKTyj8PwhbsX9VcOs3?=
+ =?us-ascii?Q?AeVjWxdbDY5riorKLAgvzMbGpfMwS5fULFA7m0/mucwYoDCPJZ8VEo1wB/Zg?=
+ =?us-ascii?Q?7FTpzRxW1CcJ473rSPU/VdAFXWa+AIbr7Pi7wfFn6gU4me6QHk2xNpBB6d07?=
+ =?us-ascii?Q?3hZbPhuwbBuSzqxQUOa3Rj+Ikh388zfMxAhZM5ynlWrWtBdUNM/0UXjhe2bg?=
+ =?us-ascii?Q?WnF95qA1vvbimTItrjnHym81G7qE3PFoTXrNZZLDsXsAz6KGz+yoHdkchzhP?=
+ =?us-ascii?Q?q0mKPX1qNOYFhPmT/Ojh1xAzSe1hHhOYctlEdJvsrDXpeQvQ0xoxoFt6BM18?=
+ =?us-ascii?Q?kta+64BBxUR3LRBRl+MeRlKPtG0SOUMu8OQTI3QJ9Oh29rMX5xY+PdSrjSHH?=
+ =?us-ascii?Q?cQAzwJkrrcS3LlyWVLoHjVyQ0OuCD2Ro/cfHLAMb2K9pjIL3QhMLjozEmY57?=
+ =?us-ascii?Q?jMYgCDXzO7tmfSow7j7XVei3kYSncPHk1Q44IlHMcXqgmEhD+c0dubQp06KE?=
+ =?us-ascii?Q?Gs6VYxzYB4LMChBYdAFPTtMosCBqvqcqxIhJSDORZGvUDb0s8RlXNzdQS2qT?=
+ =?us-ascii?Q?Z8mI9OjyF0D6HXEFQFSWYow5lMQvqwup/kQRmne6MB/zOh7q+7tggdgVMNDm?=
+ =?us-ascii?Q?FTgJpTd0c2GGg0y1c38paKWVbKOLdm+yM8BurGeqg3SjDSXRVVd+93Npzpmt?=
+ =?us-ascii?Q?okFUT8RvFq5hxHb+xQOA8KihxM6e8gTF0YM4wxv8UHiP5FdA59cTQveKYBoe?=
+ =?us-ascii?Q?l/khL2a03gLSy5JxG6wNTUT2wqcbMG25EUclzMm97urSpA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5954.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?+QJiaXqreoSo/5zrD5eoTSJ3d5mJfkFBiHnV1xbkyu27Z85vmNeETh1rPb+D?=
+ =?us-ascii?Q?tXVWb8GYz0+xky2LsgKAgOGqPJvxuyQ5foUIxDzUe472hC8JMDoEhfkrnepH?=
+ =?us-ascii?Q?j7CNwedZR6d8QXAjbTU8f6Nq9WnjZhc5GKWE6ypISdinLBwC0sr3JL7Rx2nR?=
+ =?us-ascii?Q?l6mYTEWw1DL7DxsgoWrxYzf9vFKKIl8LuojwWBOfYWJLPP/DDZFmfPKP2lkY?=
+ =?us-ascii?Q?EEbyCHD7QC2UBhYKn8fQm2pcI7plb187xDCwg7UEfMGhiCW8/RFXMPskVUmy?=
+ =?us-ascii?Q?OzHbhzOBBZVLHXsjxsLevKQNbf2F0Ed4CG+GCW9Zdce3bVhqLRJs+EgxhxLu?=
+ =?us-ascii?Q?493L2Mz6uykEXJdvgk4TKipm7p8I64BEbDTjMJULD7F9BEy5y8hEMwi7LIeK?=
+ =?us-ascii?Q?ytc896ME3/EpAnJVrL1rPj7gJupaY9s3z7AwENhmtcRsms0EzG577sY4mjqy?=
+ =?us-ascii?Q?Grl8IJSKGYS7g8G4ZAQeeu5xqgLF4Uogk6nPkTIcdVBhQKrZLijuPQm7s36u?=
+ =?us-ascii?Q?HlzcTG4DONDnAl90xqgj8biMtCyEmPh6qaTgScPDESYuXvJLXlEwqU+8NTVJ?=
+ =?us-ascii?Q?pvu4FK6Zl8HQRzMwlfmz/l78xWsCHxhjZFLeMMS0eR3ojNDiEj3FcZFGZvh5?=
+ =?us-ascii?Q?quY4n42r42Ijgx+tBAWBfVnJjBIFfKW5eyaI0uoOrx9LedIQYfakWDN9RQSM?=
+ =?us-ascii?Q?W6tzs4Og5vUAivlc38gQGyJ4tHtnbJ3M4f10+ilzrU/Bh9eJnn99oydRXl2I?=
+ =?us-ascii?Q?LAJaMcluS98qDGkxi4lag29jpFIXATw3PONCDjQWzxu+kJTBINlOY81XsA0z?=
+ =?us-ascii?Q?5Kk7UrN36Kh1IGFSrKzrXH9FezcZjiPZxq+bY6+6Qy5OS2BQ45qgYrSoN3Ce?=
+ =?us-ascii?Q?e5suYvsEIlTUNntoMOl0prV90w8Uuq6OQz7oWzaDm2R76adABUcsvdPAXCOA?=
+ =?us-ascii?Q?Nz9oalyLIuJrLOAHnppAAeZ20zIA5l8N/tnmzFiLEY2hkbupQYUHJOkpYcEF?=
+ =?us-ascii?Q?1m1iKxazWhhsmLxKxSNQngw7wgoS49TsBC2/H4RuduKYYI5KH31ljukU+PvC?=
+ =?us-ascii?Q?Ja1x2vq0RgrNf05VhJDNmJG6F2hW/RiIh7uFTadOMwQVqnxGfILgCJGQdg8p?=
+ =?us-ascii?Q?4GtxXpVYXUwoW/PCJdTg/MSElSZNEJ3cwMCwyerkagL504IGXvMQskgdF0XH?=
+ =?us-ascii?Q?GEtHZZsB7wbonfdj/FZpp33kPWhs3ZjfQbg4n0/Q/NEmSGuj3zDBud6b8MiP?=
+ =?us-ascii?Q?xvlzEtp5HEeKWk0l/GTf+2HzJuwnuNMr+5hdo3ho5YIMgFPrEFGTd7G1Nu2U?=
+ =?us-ascii?Q?hnYevKcd6LePsK1VOgR43Ribc/BZpYPOhdoE2RvBG4DkIDqW6zTWVfPU8VNg?=
+ =?us-ascii?Q?aCVUpyBPJ5v9eGEgd6x1bEFHa7O4Ub/Qf27w6Q815E3+BGglD3pNVInkZKaD?=
+ =?us-ascii?Q?p2MMPYl2v6mjQt9pGZ9Gu/4mUicofY4MP4CVTzT4ExC7t0Sh2keyLDyGzg2G?=
+ =?us-ascii?Q?CGMpqVpDPDi9eVSGiV9SxedvWvAd80UzDAjqLl1H66hQuaEHmrk+hyDAG71a?=
+ =?us-ascii?Q?yg+jEH0ZBuiXnT6Rv7GVUWDMnk7f8Vs6ljT6u5p3?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <BE1BC66B012A0040948D7D337313B297@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5954.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a97e9aa-59a8-45a2-2000-08dc79bfc27e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2024 17:59:28.8251
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: G3lv00tRaKA8TC8L84QcY/kRxh+pjI56h8UssAwHjsPeIjyyRSXJbnhUNL5unVPxvN+xyVspsiA0luYg5eXNDg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4402
 
-From: Kairui Song <kasong@tencent.com>
+> On May 21, 2024, at 10:55 AM, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+>>=20
+>> /*
+>>  * TCG SPI flow control is documented in section 6.4 of the spec[1]. In =
+short,
+>> @@ -247,7 +249,7 @@ static int tpm_tis_spi_write_bytes(struct tpm_tis_da=
+ta *data, u32 addr,
+>> int tpm_tis_spi_init(struct spi_device *spi, struct tpm_tis_spi_phy *phy=
+,
+>> 		     int irq, const struct tpm_tis_phy_ops *phy_ops)
+>> {
+>> -	phy->iobuf =3D devm_kmalloc(&spi->dev, MAX_SPI_FRAMESIZE, GFP_KERNEL);
+>> +	phy->iobuf =3D devm_kmalloc(&spi->dev, MAX_SPI_BUFSIZE, GFP_KERNEL);
+>=20
+> It would better to open code here "SPI_HDRSIZE + MAX_SPI_FRAMESIZE".
+>=20
+> I.e. less cross-referencing and documents better what is going on at
+> the call site.
 
-Currently we use one swap_address_space for every 64M chunk to reduce lock
-contention, this is like having a set of smaller swap files inside one
-swap device. But when doing swap cache look up or insert, we are
-still using the offset of the whole large swap device. This is OK for
-correctness, as the offset (key) is unique.
+Sure, will make this change in a v2.
 
-But Xarray is specially optimized for small indexes, it creates the
-radix tree levels lazily to be just enough to fit the largest key
-stored in one Xarray. So we are wasting tree nodes unnecessarily.
 
-For 64M chunk it should only take at most 3 levels to contain everything.
-But if we are using the offset from the whole swap device, the offset (key)
-value will be way beyond 64M, and so will the tree level.
-
-Optimize this by using a new helper swap_cache_index to get a swap
-entry's unique offset in its own 64M swap_address_space.
-
-I see a ~1% performance gain in benchmark and actual workload with
-high memory pressure.
-
-Test with `time memhog 128G` inside a 8G memcg using 128G swap (ramdisk
-with SWP_SYNCHRONOUS_IO dropped, tested 3 times, results are stable. The
-test result is similar but the improvement is smaller if SWP_SYNCHRONOUS_IO
-is enabled, as swap out path can never skip swap cache):
-
-Before:
-6.07user 250.74system 4:17.26elapsed 99%CPU (0avgtext+0avgdata 8373376maxresident)k
-0inputs+0outputs (55major+33555018minor)pagefaults 0swaps
-
-After (1.8% faster):
-6.08user 246.09system 4:12.58elapsed 99%CPU (0avgtext+0avgdata 8373248maxresident)k
-0inputs+0outputs (54major+33555027minor)pagefaults 0swaps
-
-Similar result with MySQL and sysbench using swap:
-Before:
-94055.61 qps
-
-After (0.8% faster):
-94834.91 qps
-
-Radix tree slab usage is also very slightly lower.
-
-Signed-off-by: Kairui Song <kasong@tencent.com>
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
----
- mm/huge_memory.c |  2 +-
- mm/memcontrol.c  |  2 +-
- mm/mincore.c     |  2 +-
- mm/shmem.c       |  2 +-
- mm/swap.h        | 15 +++++++++++++++
- mm/swap_state.c  | 17 +++++++++--------
- mm/swapfile.c    |  6 +++---
- 7 files changed, 31 insertions(+), 15 deletions(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 317de2afd371..fcc0e86a2589 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2838,7 +2838,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 	split_page_memcg(head, order, new_order);
- 
- 	if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
--		offset = swp_offset(folio->swap);
-+		offset = swap_cache_index(folio->swap);
- 		swap_cache = swap_address_space(folio->swap);
- 		xa_lock(&swap_cache->i_pages);
- 	}
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 7fad15b2290c..cee66c30d31e 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -6148,7 +6148,7 @@ static struct page *mc_handle_swap_pte(struct vm_area_struct *vma,
- 	 * Because swap_cache_get_folio() updates some statistics counter,
- 	 * we call find_get_page() with swapper_space directly.
- 	 */
--	page = find_get_page(swap_address_space(ent), swp_offset(ent));
-+	page = find_get_page(swap_address_space(ent), swap_cache_index(ent));
- 	entry->val = ent.val;
- 
- 	return page;
-diff --git a/mm/mincore.c b/mm/mincore.c
-index dad3622cc963..e31cf1bde614 100644
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -139,7 +139,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 			} else {
- #ifdef CONFIG_SWAP
- 				*vec = mincore_page(swap_address_space(entry),
--						    swp_offset(entry));
-+						    swap_cache_index(entry));
- #else
- 				WARN_ON(1);
- 				*vec = 1;
-diff --git a/mm/shmem.c b/mm/shmem.c
-index f5d60436b604..f9b0c34c435a 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1756,7 +1756,7 @@ static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
- 
- 	old = *foliop;
- 	entry = old->swap;
--	swap_index = swp_offset(entry);
-+	swap_index = swap_cache_index(entry);
- 	swap_mapping = swap_address_space(entry);
- 
- 	/*
-diff --git a/mm/swap.h b/mm/swap.h
-index 82023ab93205..2c0e96272d49 100644
---- a/mm/swap.h
-+++ b/mm/swap.h
-@@ -27,6 +27,7 @@ void __swap_writepage(struct folio *folio, struct writeback_control *wbc);
- /* One swap address space for each 64M swap space */
- #define SWAP_ADDRESS_SPACE_SHIFT	14
- #define SWAP_ADDRESS_SPACE_PAGES	(1 << SWAP_ADDRESS_SPACE_SHIFT)
-+#define SWAP_ADDRESS_SPACE_MASK		(SWAP_ADDRESS_SPACE_PAGES - 1)
- extern struct address_space *swapper_spaces[];
- #define swap_address_space(entry)			    \
- 	(&swapper_spaces[swp_type(entry)][swp_offset(entry) \
-@@ -40,6 +41,15 @@ static inline loff_t swap_dev_pos(swp_entry_t entry)
- 	return ((loff_t)swp_offset(entry)) << PAGE_SHIFT;
- }
- 
-+/*
-+ * Return the swap cache index of the swap entry.
-+ */
-+static inline pgoff_t swap_cache_index(swp_entry_t entry)
-+{
-+	BUILD_BUG_ON((SWP_OFFSET_MASK | SWAP_ADDRESS_SPACE_MASK) != SWP_OFFSET_MASK);
-+	return swp_offset(entry) & SWAP_ADDRESS_SPACE_MASK;
-+}
-+
- void show_swap_cache_info(void);
- bool add_to_swap(struct folio *folio);
- void *get_shadow_from_swap_cache(swp_entry_t entry);
-@@ -86,6 +96,11 @@ static inline struct address_space *swap_address_space(swp_entry_t entry)
- 	return NULL;
- }
- 
-+static inline pgoff_t swap_cache_index(swp_entry_t entry)
-+{
-+	return 0;
-+}
-+
- static inline void show_swap_cache_info(void)
- {
- }
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 642c30d8376c..6e86c759dc1d 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -72,7 +72,7 @@ void show_swap_cache_info(void)
- void *get_shadow_from_swap_cache(swp_entry_t entry)
- {
- 	struct address_space *address_space = swap_address_space(entry);
--	pgoff_t idx = swp_offset(entry);
-+	pgoff_t idx = swap_cache_index(entry);
- 	void *shadow;
- 
- 	shadow = xa_load(&address_space->i_pages, idx);
-@@ -89,7 +89,7 @@ int add_to_swap_cache(struct folio *folio, swp_entry_t entry,
- 			gfp_t gfp, void **shadowp)
- {
- 	struct address_space *address_space = swap_address_space(entry);
--	pgoff_t idx = swp_offset(entry);
-+	pgoff_t idx = swap_cache_index(entry);
- 	XA_STATE_ORDER(xas, &address_space->i_pages, idx, folio_order(folio));
- 	unsigned long i, nr = folio_nr_pages(folio);
- 	void *old;
-@@ -144,7 +144,7 @@ void __delete_from_swap_cache(struct folio *folio,
- 	struct address_space *address_space = swap_address_space(entry);
- 	int i;
- 	long nr = folio_nr_pages(folio);
--	pgoff_t idx = swp_offset(entry);
-+	pgoff_t idx = swap_cache_index(entry);
- 	XA_STATE(xas, &address_space->i_pages, idx);
- 
- 	xas_set_update(&xas, workingset_update_node);
-@@ -253,13 +253,14 @@ void clear_shadow_from_swap_cache(int type, unsigned long begin,
- 
- 	for (;;) {
- 		swp_entry_t entry = swp_entry(type, curr);
-+		unsigned long index = curr & SWAP_ADDRESS_SPACE_MASK;
- 		struct address_space *address_space = swap_address_space(entry);
--		XA_STATE(xas, &address_space->i_pages, curr);
-+		XA_STATE(xas, &address_space->i_pages, index);
- 
- 		xas_set_update(&xas, workingset_update_node);
- 
- 		xa_lock_irq(&address_space->i_pages);
--		xas_for_each(&xas, old, end) {
-+		xas_for_each(&xas, old, min(index + (end - curr), SWAP_ADDRESS_SPACE_PAGES)) {
- 			if (!xa_is_value(old))
- 				continue;
- 			xas_store(&xas, NULL);
-@@ -350,7 +351,7 @@ struct folio *swap_cache_get_folio(swp_entry_t entry,
- {
- 	struct folio *folio;
- 
--	folio = filemap_get_folio(swap_address_space(entry), swp_offset(entry));
-+	folio = filemap_get_folio(swap_address_space(entry), swap_cache_index(entry));
- 	if (!IS_ERR(folio)) {
- 		bool vma_ra = swap_use_vma_readahead();
- 		bool readahead;
-@@ -420,7 +421,7 @@ struct folio *filemap_get_incore_folio(struct address_space *mapping,
- 	si = get_swap_device(swp);
- 	if (!si)
- 		return ERR_PTR(-ENOENT);
--	index = swp_offset(swp);
-+	index = swap_cache_index(swp);
- 	folio = filemap_get_folio(swap_address_space(swp), index);
- 	put_swap_device(si);
- 	return folio;
-@@ -447,7 +448,7 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 		 * that would confuse statistics.
- 		 */
- 		folio = filemap_get_folio(swap_address_space(entry),
--						swp_offset(entry));
-+					  swap_cache_index(entry));
- 		if (!IS_ERR(folio))
- 			goto got_folio;
- 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 0b0ae6e8c764..4f0e8b2ac8aa 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -142,7 +142,7 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
- 	struct folio *folio;
- 	int ret = 0;
- 
--	folio = filemap_get_folio(swap_address_space(entry), offset);
-+	folio = filemap_get_folio(swap_address_space(entry), swap_cache_index(entry));
- 	if (IS_ERR(folio))
- 		return 0;
- 	/*
-@@ -2158,7 +2158,7 @@ static int try_to_unuse(unsigned int type)
- 	       (i = find_next_to_unuse(si, i)) != 0) {
- 
- 		entry = swp_entry(type, i);
--		folio = filemap_get_folio(swap_address_space(entry), i);
-+		folio = filemap_get_folio(swap_address_space(entry), swap_cache_index(entry));
- 		if (IS_ERR(folio))
- 			continue;
- 
-@@ -3476,7 +3476,7 @@ EXPORT_SYMBOL_GPL(swapcache_mapping);
- 
- pgoff_t __folio_swap_cache_index(struct folio *folio)
- {
--	return swp_offset(folio->swap);
-+	return swap_cache_index(folio->swap);
- }
- EXPORT_SYMBOL_GPL(__folio_swap_cache_index);
- 
--- 
-2.45.0
-
+-matt=
 
