@@ -1,139 +1,98 @@
-Return-Path: <linux-kernel+bounces-184771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB43A8CABD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:17:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084418CAC0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F989B22A4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:17:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39AC1F21775
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F65D7C081;
-	Tue, 21 May 2024 10:14:24 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8366D1B4;
+	Tue, 21 May 2024 10:15:40 +0000 (UTC)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C54E71B4F;
-	Tue, 21 May 2024 10:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B990A42AB3
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716286463; cv=none; b=F11vOt5+3xVEIuLIQFS8WrhfJ6IJDW4nWXXofYp/fa7lk942W9wEe/+GggRw9soAk5SRSzfjaCIACl3MbZobeIr3b7cTSVof/fqD2W4YdnUt46y4+jUFxoJ9EhDXSt/XSHaeH4Jjl+fmmyFJnQ6pWiznWJ3P0Z0esU3Q9l65AG0=
+	t=1716286540; cv=none; b=NiUnbPnxVIXAAeLrTA2phGutz549EgfsRUb5XJaQqQEHxovOpltMhmBgQd/8LXePIkVgQayeW9yPnuHFAUDV6Qt78k0uOs8i313EK6OcU9uB8DYbi2CB8Cnwgd/Lxf5+9HMKq8LcQKdb/6Sygn9YQbM9V+DdffIR+MAx742Ma3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716286463; c=relaxed/simple;
-	bh=S+wZXg5uTKAmZeL4zCJdXSkIvMKrrXSNrng1U4wro3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FzI0gtfirjkzaC6pnJfEOjPMXhTGT3DtJaNKv9sv/Da0mLEmaIT0li7jRj/U7PwYw0umKe3JunIo5eSghSAvZSkE969sk95TqZfaY0L95NdEnyVN1ZQ7RKehX7wYJbjzo36Af6PCXTO25lMvg3LrTTK5zIC8vFAxF9AafOXqAn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E364EC4AF09;
-	Tue, 21 May 2024 10:14:19 +0000 (UTC)
-Date: Tue, 21 May 2024 11:14:17 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v2 09/14] arm64: Enable memory encrypt for Realms
-Message-ID: <Zkxz-QfzUM_D0SAm@arm.com>
-References: <20240412084213.1733764-1-steven.price@arm.com>
- <20240412084213.1733764-10-steven.price@arm.com>
- <ZkOmrMIMFCgEKuVw@arm.com>
- <5b2db977-7f0f-4c3a-b278-f195c7ddbd80@arm.com>
- <ZkuABQlGgtbzyQFT@arm.com>
- <SN6PR02MB41578D7BFEDE33BD2E8246EFD4E92@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1716286540; c=relaxed/simple;
+	bh=441uZjfbDDbYWyVfUP8BlDIxjNcNaPwhAz8pHkqsEdY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IqueFZMgU09EsZg46sF0mo50VuST5B7f/WyPdwNnnfXwKdO+XeXQTjsb16nctPq4jBx4/sVQbqIgDzTWzn/gIc7VUV8GMOak3q0Cw/ONa5o1DvWMAPr7oB6TM6oyo7ra5j+tlN5BzaWqam18cyR7gNxD/qLPAEQBhw8lDSAlyfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-354c28d4e2aso67012f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:15:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716286537; x=1716891337;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=02gpweHNfk6o1OCbPBEfCdIF01f37RIcxSIg5M42u9A=;
+        b=TXu1+XRINcjiMYEnODQOm2VICBFEieaMjcdmitxn4cQn/lc8FC8KmnTj0F8+dT/lP6
+         gs97gSpjJXIVtvKo75WbKlRYY1c4eZ+/a9JJo3QxMm6Zcvpee9WWzLVvIwS9f9EyIfTb
+         rSr4ddnI43YiGJ+NbLfd9wRTvbxI3aNSATPJelTz0xfaT4WHPUNDtrSV0+1W2eOTmUrK
+         Q34pKc0sBLS/XKaPmJxoD99BgHF5UyutpGyGRH/rOlj0eCuU7TQTTXeMLoLBSn3xPYzF
+         5qhJv7i9CdJFsAOILxvkY4w40u9RCukXjyS7DNiy2R/80lulOMctXVuN2TvTCzG+qoJL
+         9Q2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV+aTzGaGlYHeG1btT5F5YFTPdAnEZ4gIQQZc1zZZtQayDQPAMp0V9WcokJsLHgG9NOOkeCUTJl5VhbOw4/haRl56200p7+LHufkN2l
+X-Gm-Message-State: AOJu0YxfzkE6H+qJExHPwzYFTaLb0nbdD9+8vGL2xvbZvdEaXSDCL/CO
+	ZyStTS3qoZg5IxPif98jiz+tAS6LFbh970f9urv2jAw1Lb4Miz7Q
+X-Google-Smtp-Source: AGHT+IF4BXDJznls9ehBgndP4S1CgsuNMagJiUCcK7yhCwY/0ywrmv1mc2ukP92qRRaDBfRtgnvBig==
+X-Received: by 2002:a05:6000:184f:b0:354:c5d5:295b with SMTP id ffacd0b85a97d-354c5d52d27mr4580284f8f.2.1716286536869;
+        Tue, 21 May 2024 03:15:36 -0700 (PDT)
+Received: from [10.100.102.74] (85.65.193.189.dynamic.barak-online.net. [85.65.193.189])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-351d2df8449sm15110023f8f.12.2024.05.21.03.15.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 03:15:35 -0700 (PDT)
+Message-ID: <073ae18a-a80e-4a95-a093-36210a3bb230@grimberg.me>
+Date: Tue, 21 May 2024 13:15:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB41578D7BFEDE33BD2E8246EFD4E92@SN6PR02MB4157.namprd02.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] nvme: multipath: Implemented new iopolicy
+ "queue-depth"
+From: Sagi Grimberg <sagi@grimberg.me>
+To: Nilay Shroff <nilay@linux.ibm.com>, John Meneghini <jmeneghi@redhat.com>,
+ kbusch@kernel.org, hch@lst.de, emilne@redhat.com
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ jrani@purestorage.com, randyj@purestorage.com, hare@kernel.org
+References: <20240520202045.427110-1-jmeneghi@redhat.com>
+ <20240520202045.427110-2-jmeneghi@redhat.com>
+ <945416af-3f8b-40b5-9681-49973beb2cb2@linux.ibm.com>
+ <3b8d33db-f2c3-469a-bfa0-8fc52594f243@grimberg.me>
+ <95fe3168-ec39-4932-b9fc-26484de49191@linux.ibm.com>
+ <da35bc8b-6813-42c8-b446-8a07b08db156@grimberg.me>
+Content-Language: he-IL, en-US
+In-Reply-To: <da35bc8b-6813-42c8-b446-8a07b08db156@grimberg.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 20, 2024 at 08:32:43PM +0000, Michael Kelley wrote:
-> From: Catalin Marinas <catalin.marinas@arm.com> Sent: Monday, May 20, 2024 9:53 AM
-> > > > On Fri, Apr 12, 2024 at 09:42:08AM +0100, Steven Price wrote:
-> > > > >   static int change_page_range(pte_t *ptep, unsigned long addr, void *data)
-> > > > > @@ -41,6 +45,7 @@ static int change_page_range(pte_t *ptep, unsigned long addr, void *data)
-> > > > >   	pte = clear_pte_bit(pte, cdata->clear_mask);
-> > > > >   	pte = set_pte_bit(pte, cdata->set_mask);
-> > > > > +	/* TODO: Break before make for PROT_NS_SHARED updates */
-> > > > >   	__set_pte(ptep, pte);
-> > > > >   	return 0;
-[...]
-> > Thanks for the clarification on RIPAS states and behaviour in one of
-> > your replies. Thinking about this, since the page is marked as
-> > RIPAS_EMPTY prior to changing the PTE, the address is going to fault
-> > anyway as SEA if accessed. So actually breaking the PTE, TLBI, setting
-> > the new PTE would not add any new behaviour. Of course, this assumes
-> > that set_memory_decrypted() is never called on memory being currently
-> > accessed (can we guarantee this?).
-> 
-> While I worked on CoCo VM support on Hyper-V for x86 -- both AMD
-> SEV-SNP and Intel TDX, I haven't ramped up on the ARM64 CoCo
-> VM architecture yet.  With that caveat in mind, the assumption is that callers
-> of set_memory_decrypted() and set_memory_encrypted() ensure that
-> the target memory isn't currently being accessed.   But there's a big
-> exception:  load_unaligned_zeropad() can generate accesses that the
-> caller can't control.  If load_unaligned_zeropad() touches a page that is
-> in transition between decrypted and encrypted, a SEV-SNP or TDX architectural
-> fault could occur.  On x86, those fault handlers detect this case, and
-> fix things up.  The Hyper-V case requires a different approach, and marks
-> the PTEs as "not present" before initiating a transition between decrypted
-> and encrypted, and marks the PTEs "present" again after the transition.
 
-Thanks. The load_unaligned_zeropad() case is a good point. I thought
-we'd get away with this on arm64 since accessing such decrypted page
-would trigger a synchronous exception but looking at the code, the
-do_sea() path never calls fixup_exception(), so we just kill the whole
-kernel.
 
-> This approach causes a reference generated by load_unaligned_zeropad() 
-> to take the normal page fault route, and use the page-fault-based fixup for
-> load_unaligned_zeropad(). See commit 0f34d11234868 for the Hyper-V case.
+On 21/05/2024 13:11, Sagi Grimberg wrote:
+>
+>>> Don't think this matters because cancellation only happens when we
+>>> teardown the controller anyways...
+>>>
+>> I think in case if we reset the nvme controller then we don't teardown
+>> controller, isn't it? In this case we cancel all pending requests, and
+>> later restart the controller.
+>
+> Exactly, nvme_mpath_init_ctrl resets the counter.
 
-I think for arm64 set_memory_decrypted() (and encrypted) would have to
-first make the PTE invalid, TLBI, set the RIPAS_EMPTY state, set the new
-PTE. Any page fault due to invalid PTE would be handled by the exception
-fixup in load_unaligned_zeropad(). This way we wouldn't get any
-synchronous external abort (SEA) in standard uses. Not sure we need to
-do anything hyper-v specific as in the commit above.
-
-> > (I did come across the hv_uio_probe() which, if I read correctly, it
-> > ends up calling set_memory_decrypted() with a vmalloc() address; let's
-> > pretend this code doesn't exist ;))
-> 
-> While the Hyper-V UIO driver is perhaps a bit of an outlier, the Hyper-V
-> netvsc driver also does set_memory_decrypted() on 16 Mbyte vmalloc()
-> allocations, and there's not really a viable way to avoid this. The
-> SEV-SNP and TDX code handles this case.   Support for this case will
-> probably also be needed for CoCo guests on Hyper-V on ARM64.
-
-Ah, I was hoping we can ignore it. So the arm64 set_memory_*() code will
-have to detect and change both the vmalloc map and the linear map.
-Currently this patchset assumes the latter only.
-
-Such buffers may end up in user space as well but I think at the
-set_memory_decrypted() call there aren't any such mappings and
-subsequent remap_pfn_range() etc. would handle the permissions properly
-through the vma->vm_page_prot attributes (assuming that someone set
-those pgprot attributes).
-
--- 
-Catalin
+Except you're right, the counter reset needs to move to 
+nvme_mpath_init_identify()
+or some place that is called on every controller reset.
 
