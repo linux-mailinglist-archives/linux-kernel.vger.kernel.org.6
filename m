@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-184637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 187108CA9E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:26:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E6A8CA9E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4291F21BB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:26:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8888BB20FA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DBE54675;
-	Tue, 21 May 2024 08:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B55B54F89;
+	Tue, 21 May 2024 08:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TgStdCms"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DeAtIO/I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4123054762
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 08:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE2D54777;
+	Tue, 21 May 2024 08:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716279961; cv=none; b=qSUUhfcUMapzGLSPfZtlSPX1fIl9oqR6hTIdxv6vjokW5bUAnat94L0lXx1WtI6Hsw5Go7WSLFjU6hjtSQfI2WkmsdjPEg1kawSrV8OThCoLjOcndZ1wmAxFiA0Vtg4NSFN+BBUUZew8/dk75TzIPoyGHi7ZLGjQibrSHHrB76M=
+	t=1716280015; cv=none; b=SWmJn9d1LxL+P1IJ5xz6WwYXaHCxfGhtlWxKzyE+X+4qdtdsTeMkNR/9E72Ye9Mz5RTRLHhjhorKw2lVPyIWdPYAevkw9r6Fq/IwuRjWOn1yCZ9iBQxpgcM4i9c3O/U8wibbWreHQoXAL5K1XWG5e3MjBgG9AVM9Z3hu1z1ey80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716279961; c=relaxed/simple;
-	bh=CooYznksIfhq9y9rSyIpA/vdXmFQUbjQr7VQPSD1MwA=;
+	s=arc-20240116; t=1716280015; c=relaxed/simple;
+	bh=tv6yy5kHc6AAE39BqUVHJ2LFtdoFuzOvYG6HtKaB4Pk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O4Kz34ADoshP/EtPzJjh+aDX4V9pMYwFxRc/gLoGeI2BLt6q1aoHg5w09im713PYVkY/E6qlYFtxgWKvfcd4IdqqsS6mAkaKriEFVcnt6rZYUTWUChzCTMix4/mjJIuYfu1BGuEacO8/P283DWMm+DWpS2zNbLSIDRI+k1qd7O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TgStdCms; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716279958;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=27+XXDjguxbwELklYAYivLGJcV/6bKWX/XsoeP/QUDE=;
-	b=TgStdCmsqulooalds26hGtlaDDvoGz5KoV0KpwbfxbH2bhrxWCBkUVKTNKRRm1FwRxYLsx
-	QSA86/OrG3xSMoz3TWgpfWxeGriUkADuwyShsu8T0bh11N54fffvdHkEZ2Jq/nUlHxLn/K
-	YI6kUOyKqx5s44dGVZrdixcAuro09X0=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-290-z4mp-uoQOiOGYwrM8AYvXQ-1; Tue, 21 May 2024 04:25:47 -0400
-X-MC-Unique: z4mp-uoQOiOGYwrM8AYvXQ-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2e22623b573so110330041fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 01:25:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716279946; x=1716884746;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=27+XXDjguxbwELklYAYivLGJcV/6bKWX/XsoeP/QUDE=;
-        b=qW16epvV7OgM1QUiO0uSypMXKgCs34AW0NWgYk96UzzhQSn0m9er6cpEFPiRO1gNZ1
-         WG+QC5WEWdRNUygPTqPfe16N3kADVuSmkUG0yV1xdF5pFmS4k5Vae2lt3q/eGTeWZjFd
-         4HZl9QdGqavuNKPRzo6oy8od+KGRsSBcffrm+rTKrSjd0ni4Z4LtJsb9yRZXoTZrI5rt
-         AB3ROPeV7/X/BCSSlzuaU6SNj8cyfXkZKVJLK3e0yP3yhYtshk7hgU1BRa2LDiMzx4Sw
-         c5fCRkZgAlkjFEv9ZXAUhhavRIi7v19Vv8bXS1Z2Uliuzzea+hOM2vlNn3sJmQ8/MGfG
-         /ybQ==
-X-Gm-Message-State: AOJu0YzFvYi8+A39099EwaZU7TNOIiBLSldMg/ABcW/hzpjwzLvPMJp0
-	B0A7H8tW73VD1sXtZEd8JdnlhrBoIprvKBIvZtIEDu9w9HwRMoHPmWBSY88hwAS5bhWx8ZE3Oda
-	KGy3+HqOMeR2omZnl7uctskDA8YGR5DdTpB9HBOv6045OZqw17QZRrC5Wb7ZKoKR4KjDXsw==
-X-Received: by 2002:a2e:b168:0:b0:2d8:9d8c:9533 with SMTP id 38308e7fff4ca-2e5204b1c3cmr183028981fa.53.1716279946037;
-        Tue, 21 May 2024 01:25:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGfyam75ZPtIOYWnv7FXSVBfH5/OMq/FxbPCJqznlwD2SFbT6PkalQ3oVJpEflMKJhWF3DEPg==
-X-Received: by 2002:a2e:b168:0:b0:2d8:9d8c:9533 with SMTP id 38308e7fff4ca-2e5204b1c3cmr183028611fa.53.1716279944516;
-        Tue, 21 May 2024 01:25:44 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41ff7a840d2sm415707655e9.39.2024.05.21.01.25.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 01:25:44 -0700 (PDT)
-Message-ID: <3decc6c8-9035-44d6-89c6-8d42a5e0bc40@redhat.com>
-Date: Tue, 21 May 2024 10:25:43 +0200
+	 In-Reply-To:Content-Type; b=Yh0j8Tkg2EKoTXI7+AMw2vQ1QY6A12ffUeWF+4SVsMiHjXNjHmeFug1p1BGr5VwlBQuMm0u35EV1QNG4Fa07pWkT00PtagX/CY1Mp/vUujrngEUmHyEO3qDwnaIfXbZl3UfPH+jh2OV5jxvos4N8hgA0XVM4o5z7iZCOvV9u23s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DeAtIO/I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6B9CC2BD11;
+	Tue, 21 May 2024 08:26:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716280014;
+	bh=tv6yy5kHc6AAE39BqUVHJ2LFtdoFuzOvYG6HtKaB4Pk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DeAtIO/IMKUgSJl2VhFPZMh2EPp+bLNHxDBVjluZ+tQeUif3WB/9HJvhdNwNKKnPk
+	 K3Nb17yJHuMjwnV6MRjnKCOxTLlW4Z01tbjHf8v6/f+ZH6XtQhNAy79rL+YbRDnh+4
+	 MC4ZYfWDuEq8SSlgJudgRA/ZzFDWYEridFAPzhuulzP35UEwi75Ahx0v27RKFoP1/q
+	 iiDUQ40YzFR9JXX584cyYVpyRfc1622rzORW+FaFFFrV49x0jh6j5e/h8is80uL777
+	 qQMaaEOjOyveietda0tsTrA+UHZvDtsGCRePJUngawYvLhs3UCjJ3t/STdZb64Fxvk
+	 Rx5NQmww9FVgw==
+Message-ID: <8a0e5863-27f7-47e4-9325-a686d5adffec@kernel.org>
+Date: Tue, 21 May 2024 10:26:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,109 +49,159 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] mm/memory: cleanly support zeropage in
- vm_insert_page*(), vm_map_pages*() and vmf_insert_mixed()
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Dan Williams <dan.j.williams@intel.com>, rostedt@goodmis.org
-References: <20240430204044.52755-1-david@redhat.com>
- <20240430204044.52755-2-david@redhat.com> <Zkdys7YKC5pe1vAu@google.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 1/1] dt-bindings: fsl-qdma: Convert to yaml format
+To: Frank Li <Frank.Li@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM"
+ <dmaengine@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240520203907.749347-1-Frank.Li@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zkdys7YKC5pe1vAu@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240520203907.749347-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17.05.24 17:07, Vincent Donnefort wrote:
-> Hi David,
+On 20/05/2024 22:39, Frank Li wrote:
+> Convert binding doc from txt to yaml.
 > 
-> [...]
-> 
->> -static int validate_page_before_insert(struct page *page)
->> +static bool vm_mixed_zeropage_allowed(struct vm_area_struct *vma)
->> +{
->> +	VM_WARN_ON_ONCE(vma->vm_flags & VM_PFNMAP);
->> +	/*
->> +	 * Whoever wants to forbid the zeropage after some zeropages
->> +	 * might already have been mapped has to scan the page tables and
->> +	 * bail out on any zeropages. Zeropages in COW mappings can
->> +	 * be unshared using FAULT_FLAG_UNSHARE faults.
->> +	 */
->> +	if (mm_forbids_zeropage(vma->vm_mm))
->> +		return false;
->> +	/* zeropages in COW mappings are common and unproblematic. */
->> +	if (is_cow_mapping(vma->vm_flags))
->> +		return true;
->> +	/* Mappings that do not allow for writable PTEs are unproblematic. */
->> +	if (!(vma->vm_flags & (VM_WRITE | VM_MAYWRITE)))
->> +		return false;
-> 
-> Shouldn't we return true here?
+> Re-order interrupt-names to align example.
 
-Indeed, thanks! I wish we would have user in the tree already that could 
-exercise that code path.
 
-[...]
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,ls1021a-qdma
+> +      - fsl,ls1028a-qdma
+> +      - fsl,ls1043a-qdma
+> +      - fsl,ls1046a-qdma
+> +
+> +  reg:
+> +    items:
+> +      - description: Controller regs
+> +      - description: Status regs
+> +      - description: Block regs
+> +
+> +  interrupts:
+> +    minItems: 2
+> +    maxItems: 5
+> +
+> +  interrupt-names:
+> +    minItems: 2
+> +    items:
+> +      - const: qdma-error
+> +      - const: qdma-queue0
+> +      - const: qdma-queue1
+> +      - const: qdma-queue2
+> +      - const: qdma-queue3
+> +
+> +  dma-channels:
+> +    minItems: 1
+> +    maxItems: 64
 
->> @@ -2043,7 +2085,7 @@ static int insert_page_in_batch_locked(struct vm_area_struct *vma, pte_t *pte,
->>   
->>   	if (!page_count(page))
->>   		return -EINVAL;
-> 
-> This test here prevents inserting the zero-page.
+That's not a list. Did you just copy buggy fsl-edma?
 
-You mean the existing page_count() check? or the (wrong) vma->vm_flags 
-check in vm_mixed_zeropage_allowed() ?
+> +
+> +  fsl,dma-queues:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Should contain number of queues supported.
 
--- 
-Cheers,
+Constraints?
 
-David / dhildenb
+> +
+> +  block-number:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: the virtual block number
+> +
+> +  block-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: the offset of different virtual block
+> +
+> +  status-sizes:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: status queue size of per virtual block
+> +
+> +  queue-sizes:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      command queue size of per virtual block, the size number
+> +      based on queues
+> +
+> +  big-endian:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      If present registers and hardware scatter/gather descriptors
+> +      of the qDMA are implemented in big endian mode, otherwise in little
+> +      mode.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-names
+> +  - fsl,dma-queues
+> +  - block-number
+> +  - block-offset
+> +  - status-sizes
+> +  - queue-sizes
+> +
+> +unevaluatedProperties: false
+> +
+> +allOf:
+> +  - $ref: dma-controller.yaml#
+
+This goes above unevaluatedProperties.
+
+Please constrain interrupts per variant.
+
+
+Best regards,
+Krzysztof
 
 
