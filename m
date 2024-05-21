@@ -1,125 +1,271 @@
-Return-Path: <linux-kernel+bounces-185360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5E98CB3FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:05:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 668518CB3FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8011F23076
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:05:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5F51B24087
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA271494B2;
-	Tue, 21 May 2024 19:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769161494C4;
+	Tue, 21 May 2024 19:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZB0eYjsP"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="b+UsNRJh"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2064.outbound.protection.outlook.com [40.107.95.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE06142910
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 19:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716318232; cv=none; b=F3TW1S+4cSEJDTsnICQlQYXIjHLx5PJ/HE0AnkFuUNlmozkUa1gP6nSHxLw/gfVtxJVxapYEJxNGWPyswpaStAiDK9izBeHuxZu5U1KR+T0Ls283zbVkpuDxPRvcSLuKi4z2crFnsUKkd38SCqjO0Bu8co5rRZGsMdVkR/dsGjc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716318232; c=relaxed/simple;
-	bh=j93r0x2LLl5DrCShcGy1ILGc6pv/qMlYGnlPMpRuj10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dUofNpdlQNMLYbom8Jd6lQg5UH3OJ/dhBmh4IvCjcyty03Z5JkMuN0MjJP86XiCqH1yaku2mPBi6MIs7y+x8JABERMqbD6jRqpcDkzx3P8MVVlCUyPTFCjPGev2Ce8QbLVcI/TRRleyp91k7+LFuEPp7qck/34spd/QYq96YK88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZB0eYjsP; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a5a5ccebff9so112638866b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:03:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716318229; x=1716923029; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yP70HlVsmQBP1saZ9APp+m5Pne5zk0a5fTtAUISwyBw=;
-        b=ZB0eYjsP5IfAuW+e4XXbXvuuE0gvUbQIR/fTCi707WyRicYMhT9pmcOfaNewUTr3EP
-         BkfCHwZpBlgk+qsQuVisQGTx+dI140OkI17DOr+jBh/CfqJvoBXFZh43C/LVvV7C8+k4
-         ldFEyOfBlZcAnFcD7EsLdTAqP6D8Z6SM06OdxhPqMhTDqyifLbLj74PdhLSVTaBcVbNQ
-         CO0c3aRWvgX3SIGlkQn8PSU6eOd++Qu2IWbF62fdq6jygH7wbZYZe5LdXJshX1iyVUo2
-         +jZxcrn9NI7NysFEvKrTbBqc/Iy+Cpjv2PSwWDjYu2D9ak+wQ8OOlOm7bhE+eMV7nOrH
-         putQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716318229; x=1716923029;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yP70HlVsmQBP1saZ9APp+m5Pne5zk0a5fTtAUISwyBw=;
-        b=QowyfSbyHhDLHOiWJ4usal+os2J4bpHL46U4oPCaBbP6VJdq/0pdDTqP0FhPsrsvxn
-         Annlo4xQ9330r20uYXK6TlL4/7ix4etCyU2WMQOs5CQlRgekYo9KM5ai3Z2qLQu7JCSC
-         AMaxK+h4+2h9PviRkHNAgPpWjpU9pJjbz+Gv5LTEL+GqHeJrSbiHUwWm3aCyLmWLRL/2
-         kX0IuX1F3tqO4+Ow6pzGrLFh7GAnKk6Lq1b5skjE6RV+fAXySgvHhMlsJ3Ush5hvx1+0
-         e6AGyjwNmA73GSpCqNT9jqE+QtVE1Az4nE675jOrf4QO20ITMxHhHwJ4EV4mZ3kdlVjj
-         TlZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmQ9i7uvKLOY+FpPYWe5jYHRmGGGX5KkAnYowo4KrvZcxADHstMNH4FYkI6K/O8SvL68Lf0nag9fqnjic5icvrXtURxKp8ZdHGJIUY
-X-Gm-Message-State: AOJu0YwStPXlynwxAThQu1aVYsZrFAoqCSWFCwqPK8s8laUYhHOUQZqf
-	ECsN4PJyRKLPHuKvxw+oUWlHIt7ki3IZzgML1LmR8x8ZugFZUo66
-X-Google-Smtp-Source: AGHT+IHPmmhK06HEQmbWaGAFGJKH6vmoFuJ+phNwATanBst8AWfKvLNvPwHhyc5tKZ8r5UKkqCBB7Q==
-X-Received: by 2002:a17:906:5a53:b0:a59:cb29:3f9e with SMTP id a640c23a62f3a-a5a2d508447mr2094984866b.1.1716318228601;
-        Tue, 21 May 2024 12:03:48 -0700 (PDT)
-Received: from [192.168.0.103] (p57935690.dip0.t-ipconnect.de. [87.147.86.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c814dsm1639029066b.118.2024.05.21.12.03.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 12:03:48 -0700 (PDT)
-Message-ID: <1aefa708-b1fe-4246-bb67-36f25919c766@gmail.com>
-Date: Tue, 21 May 2024 21:03:47 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBBA142910
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 19:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716318254; cv=fail; b=BaGniR8mtedYn83eB33g4k87IqPGXE4X0aoHs+UEf+G6p9VO0VTfJyivKF1wcoNlfaWe3bQp7z5kmZ76A1Lt6q9487qqswp93JcR/woVV7SkKX77aOcUAvDyFHylPqmtlEA+vV438lauk80mxMGoiPF3qyd6qmz/2onDy4zIWnc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716318254; c=relaxed/simple;
+	bh=p/niD2Rfi2lPQBF04U6Ai5d9604pLKy/hRVCdn+HtF0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZC1SKc9BfJ4y/C0sYFfax74IUiMscB2tjVatR4PrG914o68WvRW2cFYOqxRXXGjikveW+Gq7J/YWrikPSYfam+UKro+dRe7ZL2MyKKOmVMsPD5rCQEDEWt3u2nN7dLf3LcJMhFIQGFIjKtKJOBz4OGU2tP0hkzr73tBWbwVA2EA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=b+UsNRJh; arc=fail smtp.client-ip=40.107.95.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=K4J18LMOC5Sn2QnoTaq7k3HdoP342OVbQnXRfpkA4pxN1vGuSCjX9icBDaL1wkf9VhhgK85TEBOFHwHmsv4vgXadHYzZRWrrJEzFU3FhvkqYHfsk/mjpm8CxVXIIQc3/fUYNkQpHRUjLU6zL5CPK4Xae5+5O0EP89oTk7/kaJBYN4K+phSHix7Kn0nf+2yxyrRN5lis1JphW+bVNIMhzUp7DS2KgyrPkEnrFxqaq8UlkO/nJadeSxV2dfNCYopjYsDsSIRus+9MVzadEWDfwARg02cbjm4yOq9NWU7fYSxSmzrUANazgnASSV6Ljc1GbV6xFWf2uAvENNiIZP2jfPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KqCQoH+cH8laJp4LOdYfB91k8nSbzCOdASW+yxBqb/4=;
+ b=IEEwlKnR980a+fsZsLMIIkWOeKm8QwXK6e+AIYsFulOSvvFbIgmtFbbAeiBIuNzmBmfn4S2UmD8e86/yJHtEKpyvP4FE/FWuHk83CMOOWH8q3YFPvHmelSEcM1srxkftru3VbCeAXUFBUFZ+6g6nqWuZT3GBGzL0JtZfhvCgLiL60kR1Xup/2yGEajQmdatGMp0dvgt7ykIJqNu60cPFo0tVqGmrCA6PfHjA9eTLGQX//o4GakJMcgGxVFSsazMuTCgaPNggpReEIORW4CJJy0GMRVI2+cyMe6BANF974EXeWgqBqaHd8vSBO5Y7gXIH7p184O1besmDdlQmmckzQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KqCQoH+cH8laJp4LOdYfB91k8nSbzCOdASW+yxBqb/4=;
+ b=b+UsNRJhpJbG/1y20Ilw+R9xTMUpoxhS130IxR5XP2Rzskk5FbPgjd+knDI0IjCL3x4xRNjqIUxsLKE2ViseWPlBhfYHknK+C29KwtMCsMZYfmEFFyM7f9lf3l4Wy8ytjyWhk1C8nzinj8nwVdMnceIZvjKpbSnYEO4oAkqTuEU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by CY8PR12MB7537.namprd12.prod.outlook.com (2603:10b6:930:94::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Tue, 21 May
+ 2024 19:04:08 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.7587.030; Tue, 21 May 2024
+ 19:04:08 +0000
+Message-ID: <17782a6e-db84-4c20-874a-342b9655ffc5@amd.com>
+Date: Tue, 21 May 2024 21:03:59 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/amd/display: Add pixel encoding info to debugfs
+To: Rino Andre Johnsen <rinoandrejohnsen@gmail.com>, alexander.deucher@amd.com
+Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, "Pan, Xinhui"
+ <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Aurabindo Pillai
+ <aurabindo.pillai@amd.com>, Hersen Wu <hersenxs.wu@amd.com>,
+ Hamza Mahfooz <hamza.mahfooz@amd.com>, Wayne Lin <wayne.lin@amd.com>,
+ Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+ Fangzhi Zuo <jerry.zuo@amd.com>, Tom Chung <chiahsuan.chung@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <fa885eca-d7e6-415a-8a08-9103b002c6bb@amd.com>
+ <20240521051140.30509-1-rinoandrejohnsen@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20240521051140.30509-1-rinoandrejohnsen@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0004.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:15::9) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] staging: rtl8712: Fix spelling mistake in
- rtl871x_event.h
-To: Roshan Khatri <topofeverest8848@gmail.com>, Larry.Finger@lwfinger.net,
- florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org,
- ayushtiw0110@gmail.com, dan.carpenter@linaro.org, namcaov@gmail.com,
- linux-kernel@vger.kernel.org
-Cc: linux-staging@lists.linux.dev
-References: <20240521095633.50753-1-topofeverest8848@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240521095633.50753-1-topofeverest8848@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CY8PR12MB7537:EE_
+X-MS-Office365-Filtering-Correlation-Id: 49546291-3b42-4a6d-7575-08dc79c8ca80
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RFczYmx6UE1RTWlHNU43TDNQS29OMWNIczJva0grMlVZUVpjWjZLMUVGZ1FM?=
+ =?utf-8?B?NzNxcXo4b2RXbjFxcWw3aUlCVWZQNXlHY2trcnBRWUhFS29ibER5dzNDeXR3?=
+ =?utf-8?B?OE54cWVJallyb0ZXZy8xTnRFeVJXNG5oR1RGL2VENU1SNFhvMnZqREQ5MTYw?=
+ =?utf-8?B?aUIzZmFNa1hKc2R1cS9yanBVWWNzR0NMRUp4M1lQeHZwaGlsNDVrU0ZzR2x1?=
+ =?utf-8?B?aHZpb0F0QTI2aXQ1K2hwd3V4SDU1NEJPWVdubE5IdDB6aUlWSkx4UWd3MUJF?=
+ =?utf-8?B?OGkrVVAxZGJVekJVR0g5WnhOQmdEc1BiMlV3enZXR3ZTT3VVd2xUdFpYKzFw?=
+ =?utf-8?B?SG1YalR5enRVbWMzTzhOSDRWU1I2R0N5YzJ5Y1MwT21FNnNOdTBIREtRK3Rl?=
+ =?utf-8?B?azlLTEhLekltSE9hSGZNWDFkdjVLNVM5Z2dZajFlSDZRQm0yeDN4NXAweHAz?=
+ =?utf-8?B?MkN4ZXhVTit4VVZ0SnJidEo2VFlkVG5obmdrSG5pSStRQ2JFR0ZQWk9Ma0I1?=
+ =?utf-8?B?K0lpMlpmQjJ4K1BKTW5FSVZzczBaQjgwSmdXcmsxNjU3VHBTZU5KdWt0azVE?=
+ =?utf-8?B?VVVYWWZNNGJNYUVwK09TMkUvSldaN0VLbkc1VktxY25BVjRHT0hXS2JIRkU0?=
+ =?utf-8?B?aHEwWE1xNzV6a0FoSTlWTVlEVnA4UHE0ck45bVdkemRaSXplcFpRME1UK2tr?=
+ =?utf-8?B?dkRLUXU4SVgvWjJtL0poTmgzNGNRQVhRa3YrK3ZIUEhQTCthTkZOME43KzZX?=
+ =?utf-8?B?Ui8zYnJxUi9CYjRpYUJpOVdOaWlNVHJMOVN5MnRESThKQ3JYaHozbWo3RDlL?=
+ =?utf-8?B?RE5GL3U2U1RDcDlkVGRoNndrK2pFRGU2aHdEUExBcUVuTC9lK25wdEJERDhp?=
+ =?utf-8?B?VDhKUmY0dkNpSndKTlEzTUZpck5lV21Jc3g2WElERWF4dm9aZ2RkTm9QQnZy?=
+ =?utf-8?B?Y0tJTSs0RzJWa0FQWDU1c1JaVUtWZ0crS0lEMnlVd0c3blNzdWVLcHhaazFu?=
+ =?utf-8?B?S2JGWnhyK1FiMEVqTjcvZ1MvRTRWSGxNYms5VWdJU1lHUGpCSUFzM1pPTitI?=
+ =?utf-8?B?ODF6Lzh3LzFXNml3ajhwdEpjQXdyd0lJNUxsNlZwa205S2FXNkRVUGhrQTlU?=
+ =?utf-8?B?RmFkWDJ1RzlHK1p5M1RNOUJxVlo1NWltSHAyZEZlU1NwUkI4WFMvb003aDJC?=
+ =?utf-8?B?cktGNW9DQmhMU0VqWEpGTE5PMzM0SGxoL2dIdWxSQk54UHVGWldvOUliKzUv?=
+ =?utf-8?B?QTgrQS9WdGVhazZ0RlJzL0VXT1ZWTHhvd010OFE1Z3hhbXBremVVUXY3Mklp?=
+ =?utf-8?B?SlNGTHI5a2cxdUhjNzdaM2o1WHorQ25ML1phWXVnMjNVM1pqVnlhOGlPVHhm?=
+ =?utf-8?B?SWVndlQ4YVlNdzJIbVZmTExBMCtMVHpiWmlJbFBIbTFpOVBUeFU2TDNaV3NU?=
+ =?utf-8?B?NUNEZ1oxc2QvSUxmYU9EcDk3a2ptMDYreEpnVGNvQzJKL2R2VllsUUlsdzV6?=
+ =?utf-8?B?bXlEbjhsV085TEcyVUZJczhiQVFqSWl5bjVncVFSN3NSOHNzUU1EN0dPckhC?=
+ =?utf-8?B?ck9qUFZRaE5nUnpDWkJVN1krNkdya2t2L0pReWJkYWJRVUNEQWJUdlBJZ0Zs?=
+ =?utf-8?B?cVBjbU95ZDlFNm1tQXNkVEJtdUZ2ZFAwMFh6aFdlemtnMGtmcklVSWRycUYx?=
+ =?utf-8?B?OWRPVnNFR0s0RUtGcWFJUE9BWmFlMnlUNEFjNzBmc0M0UTJPSEtDU0F3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YlhqZGxtSC8rVEFQRTdlQU1wNXB6Qy9FNnZYQzd1YTB4N3VBbFRwUG80N2Ru?=
+ =?utf-8?B?NS90MHlOdk9GQkw4Y0V4dityWHBkM1N0UWUzWUVTOUk5eWgvT05VRnRVRG03?=
+ =?utf-8?B?Y2p3VkRjMkNBMnhtUU5qdCtCdlZwamtCUU5zeW43RXZQQXRTS2tyUkc1RlBa?=
+ =?utf-8?B?WGVIZ1NGNGhnQUlOMC9samQ3Nnp4aGVpbEZVZ2tIK0pkTUZwMUQ5TlFFd2Za?=
+ =?utf-8?B?WFY1clMwaW1wQWlCK0ZSMmF2b0gzT1ZpOU9YenZuanZlazc3T2s4TStaYXZ0?=
+ =?utf-8?B?cFoyeUFqT01PNytOSG1WK21YUDdxYU5vNzJWNlg2azVISjNTNWNrOHMxeGZX?=
+ =?utf-8?B?a0g0cDRZTCt3SUVZUGNQSEY5eUJJeklEMFBBdVVUWVVReHZmeEJObjFMRlgr?=
+ =?utf-8?B?ay9xRU5OZWxMUWRFZXRxZGpMYWtFNzc0MEY3RUVqSjkwdFRHbmlOdDIzc3pH?=
+ =?utf-8?B?TWlsRmlFamk5QktIZXVpZXMrMGpsYW1HMmtPcnZubkhleEwyTjRrY2V6MVdU?=
+ =?utf-8?B?NXNhZ2x0TTFLRkFSbXl6S2JCblQvdm5aWUVIZE90c29qKyswNWg2dlZ3cXRt?=
+ =?utf-8?B?WEI5L0RUTVRuRDladWFuY1kyeWVJVm1keXBQd3lIaE5qeDRxQWZTMkpXMEd1?=
+ =?utf-8?B?U3poalNUQkFUcGZQc1hrUUVnOU03RUFKU3pySEc2NDJsZE5STWwvd0ttWmxU?=
+ =?utf-8?B?bnZLVk9VNGlRN1h6dlVwc3NhMjJQVGNUUlhaZWNMMXBRQkszUDBZSXJyeHZZ?=
+ =?utf-8?B?WHBYWlBSVFdsRWxINEpNS3FtYURnOTBrTnlhazVad0JXclc5Ylp1cFkweThZ?=
+ =?utf-8?B?L3B6bDlYbUxiZmZZdWdJaDJhbGkrZUYveE1MOTdUVi9YUHQxQ29FcExPQ2tL?=
+ =?utf-8?B?L1lMemVSUzAwM0NLQ3REQW5PbkhLRmFPbHRoMGVaSVNpUW9PV0x3b00zcmI0?=
+ =?utf-8?B?ZzN2RUFoRkVERWNEVlFzSUR6bkFRM2VhdFRxeUxpa0ZCSWdqVkdHSmhzSjVl?=
+ =?utf-8?B?SWxIZVh0aTZIVExlWTN3akJwc2hDdlVwdkRCZUFrVld3akEvNG1sOEhBclFG?=
+ =?utf-8?B?cW9yK2FCMTRmUVNicXU5cEpoTkk0K2I1UnVEWkRFci80cnQ1SkdPenNmMVlo?=
+ =?utf-8?B?NU1uQ04rdjNzVHdIVHFaVnROYTJEYlhiWDVwUWI1dnNwbCtWUjdVQk8xajNZ?=
+ =?utf-8?B?SzRUalBsN3JzblFiTVdGLzlKaUQ3OFVTU1RqaVZVL2dxMEdHY1FuZFUycW5v?=
+ =?utf-8?B?Y2F5cUQ1THByTDdBYUtxb1RMeFRtK2oyVzZZWm5xY3lTcUMyV0h6SVBGR1k1?=
+ =?utf-8?B?alJHWnE1ZjhDUXBkSkh6VHl5cGtRWDRJZEVkZ2QzVTI2ZHlmS005a2QzMUNp?=
+ =?utf-8?B?cmpaQTJCMzEvRlg5Zjc2a2NzZ2dhcHVpVDRpUWtnYWpGcGlKdWhxSWJPY1Zu?=
+ =?utf-8?B?eWZXbTV3emplcUNIWWluTVNiZXptR01WYWxsRXN1ZDJROEw5QUlKbkJBL1hJ?=
+ =?utf-8?B?dkZJWkQ1dC9sUzBKVVpzYXE3cW9nRHEyQ3FNR0JLdm0rZlVDVEFQSzNvc0dk?=
+ =?utf-8?B?WEpYcGlUQjNYdE1VRitZRmNKZDA5aGZYVmR4aHBFbXJxcmc4RGJaaEJncStk?=
+ =?utf-8?B?WHAzSUlRbGFHeldJWHdjTW5ZSGlWcHNWVWFDN2hQM2hkbU8vWUhVZVJBUnB0?=
+ =?utf-8?B?elpsU21BTnhWdTVsNFlvMDlKYXVQVlhQcWh6VXRFeGFwRnFLMHBoU0h1Mitz?=
+ =?utf-8?B?TldjZ1VhWTNBL0VUWTRoNE1pVHNGZkZ5UVp4U1NMWFRGOUtlbk1COFhIeUlO?=
+ =?utf-8?B?TVlJYXBUTGJSalRGeWpsYWZNdGw1bmxzU1MxcDBxa2t2SDlmc1RNUzlUTjY4?=
+ =?utf-8?B?bExubTl3YVIycTlkMWdrRGwzVEtQbE9YNjlIRXh0czZHVE9VZnFzTG1veWpQ?=
+ =?utf-8?B?UHpWcUJzUHlEbUxtb2JubTlod0lIVmg4dnRJRk0wc2U1dkQ4dUxWR0pPdGdj?=
+ =?utf-8?B?eERCQ1VpY2ZMUmMxQVNENU1LU2FHSHFnQUJ2NEhiL0RLRzlzOFo2aWYzZVF1?=
+ =?utf-8?B?anRDWnRZQ1N5MU1kWXd3aHpoQ0dTU0dWU1VvcE9jRmVONGNxb3ZiWUNicUM4?=
+ =?utf-8?Q?lUN9SmjTOQewbRAvY+iVoft9r?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 49546291-3b42-4a6d-7575-08dc79c8ca80
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 19:04:08.0629
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZZ3owDklt4l2REPplDtJyw3rsqgIVftoqZ3EGXPwv32lwkVu7UNTq52o64u57KRs
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7537
 
-On 5/21/24 11:56, Roshan Khatri wrote:
-> codespell reported misspelled joining in rtl871x_event.h. Correcting the
-> misspelled word improves readability and helps in searching.
-> 
-> Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
+Am 21.05.24 um 07:11 schrieb Rino Andre Johnsen:
+> [Why]
+> For debugging and testing purposes.
+>
+> [How]
+> Create amdgpu_current_pixelencoding debugfs entry.
+> Usage: cat /sys/kernel/debug/dri/1/crtc-0/amdgpu_current_pixelencoding
+
+Why isn't that available as standard DRM CRTC property in either sysfs 
+or debugfs?
+
+I think the format specifiers should already be available somewhere there.
+
+Regards,
+Christian.
+
+>
+> Signed-off-by: Rino Andre Johnsen <rinoandrejohnsen@gmail.com>
 > ---
-> v3:
->   - Fixed misspelled word "readability" in patch description
-> v2:
->   - Changed "mistakes" to "mistake" in the patch title as suggested by Philipp
->   - Updated the patch description to reflect why this change is important
->     as suggested by Philipp
->   - https://lore.kernel.org/all/20240521082510.50422-1-topofeverest8848@gmail.com/
-> v1: https://lore.kernel.org/all/20240520064750.48912-1-topofeverest8848@gmail.com/
-> 
->   drivers/staging/rtl8712/rtl871x_event.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rtl8712/rtl871x_event.h b/drivers/staging/rtl8712/rtl871x_event.h
-> index 759a2d27d8f2..0cc780cf4341 100644
-> --- a/drivers/staging/rtl8712/rtl871x_event.h
-> +++ b/drivers/staging/rtl8712/rtl871x_event.h
-> @@ -37,7 +37,7 @@ struct surveydone_event {
->   };
+>
+> Changes in v2:
+> 1. Do not initialize dm_crtc_state to NULL.
+> ---
+>   .../amd/display/amdgpu_dm/amdgpu_dm_debugfs.c | 47 +++++++++++++++++++
+>   1 file changed, 47 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+> index 27d5c6077630..4254d4a4b56b 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+> @@ -1160,6 +1160,51 @@ static int amdgpu_current_colorspace_show(struct seq_file *m, void *data)
+>   }
+>   DEFINE_SHOW_ATTRIBUTE(amdgpu_current_colorspace);
+>   
+> +/*
+> + * Returns the current pixelencoding for the crtc.
+> + * Example usage: cat /sys/kernel/debug/dri/0/crtc-0/amdgpu_current_pixelencoding
+> + */
+> +static int amdgpu_current_pixelencoding_show(struct seq_file *m, void *data)
+> +{
+> +	struct drm_crtc *crtc = m->private;
+> +	struct drm_device *dev = crtc->dev;
+> +	struct dm_crtc_state *dm_crtc_state;
+> +	int res = -ENODEV;
+> +
+> +	mutex_lock(&dev->mode_config.mutex);
+> +	drm_modeset_lock(&crtc->mutex, NULL);
+> +	if (crtc->state == NULL)
+> +		goto unlock;
+> +
+> +	dm_crtc_state = to_dm_crtc_state(crtc->state);
+> +	if (dm_crtc_state->stream == NULL)
+> +		goto unlock;
+> +
+> +	switch (dm_crtc_state->stream->timing.pixel_encoding) {
+> +	case PIXEL_ENCODING_RGB:
+> +		seq_puts(m, "RGB");
+> +		break;
+> +	case PIXEL_ENCODING_YCBCR422:
+> +		seq_puts(m, "YCBCR422");
+> +		break;
+> +	case PIXEL_ENCODING_YCBCR444:
+> +		seq_puts(m, "YCBCR444");
+> +		break;
+> +	case PIXEL_ENCODING_YCBCR420:
+> +		seq_puts(m, "YCBCR420");
+> +		break;
+> +	default:
+> +		goto unlock;
+> +	}
+> +	res = 0;
+> +
+> +unlock:
+> +	drm_modeset_unlock(&crtc->mutex);
+> +	mutex_unlock(&dev->mode_config.mutex);
+> +
+> +	return res;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(amdgpu_current_pixelencoding);
 >   
 >   /*
-> - * Used to report the link result of joinning the given bss
-> + * Used to report the link result of joining the given bss
->    * join_res:
->    *  -1: authentication fail
->    *  -2: association fail
+>    * Example usage:
+> @@ -3688,6 +3733,8 @@ void crtc_debugfs_init(struct drm_crtc *crtc)
+>   			    crtc, &amdgpu_current_bpc_fops);
+>   	debugfs_create_file("amdgpu_current_colorspace", 0644, crtc->debugfs_entry,
+>   			    crtc, &amdgpu_current_colorspace_fops);
+> +	debugfs_create_file("amdgpu_current_pixelencoding", 0644, crtc->debugfs_entry,
+> +			    crtc, &amdgpu_current_pixelencoding_fops);
+>   }
+>   
+>   /*
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 
