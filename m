@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-184911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D79C48CADB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:54:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72ECD8CADC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0643F1C22260
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D9F328336F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7191A7581A;
-	Tue, 21 May 2024 11:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085D9770F7;
+	Tue, 21 May 2024 11:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="adE6vLVc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="Sd76a240"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D4B6CDC4;
-	Tue, 21 May 2024 11:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A30076035;
+	Tue, 21 May 2024 11:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716292473; cv=none; b=b4zNdmHl5BCzGujZEHeTr3Ntvvn9kdMH3BX5zaVc8A6vl2zGS4fbHP/q//6/DNm45UhzSntDDl86/XIPqX5Yu7TGMTTRUksUCbF3t6SufH8rrzZNPP+AnUUoEiYLOjFOxPbnKtTytMjMuBIV6AoWDySu1A0rfEYa84VsKHdfbAM=
+	t=1716292641; cv=none; b=sWJLgjIlFOopM1MGz6u33/W8Z9+qBMvWsJnR1k+JvO7Yw96lltquQLjv55hXGCoTwIWMfhYn8fBADHz3F2NT2uT3oEZeTI2INcOGWcEL+l3586t+Rb2sp2rgw/UPhNZpktZHtlU3wpu9EAfI3FYfmn4WM4johgJiSWAnKPZne/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716292473; c=relaxed/simple;
-	bh=4OhIZejYCjSPXM9z8wDdv4QtFL7DtFYeHk/qWRFsolw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YBqnC1DKsZHneRaoXRyZixuZ0eo829C6BWz19VK+pi0STp4NXBscrAXsTIZ/CLTFAK+s3kgjyGlCuSfLxnlEIhxvMttXrEOR+SuAwkUbuzscEMeZax7D+RHlRq0IRP75Cnz9tbSXaWYwxAsceI1/8yDIBP6gQxeHzSP+YHVPOvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=adE6vLVc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEDEDC2BD11;
-	Tue, 21 May 2024 11:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716292473;
-	bh=4OhIZejYCjSPXM9z8wDdv4QtFL7DtFYeHk/qWRFsolw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=adE6vLVcdzyKVSr4Ye4HAfgZaCiR0M6Qeq3WHsu9HKjqU4c0TwBsZvU9myCxUt+V3
-	 qNtlXkZSpwNPaap7+YVhrjlYyloXFjW4scIRf0LJb4Td1WDLF4NYZw6e3ZpaKD/BV3
-	 u4bYxxMbSljKGemMh5Tu1s3ju7w6RjIeBC7OQLVhzuhFDB/iCf4vR6dJeZgyAq/kFP
-	 87y9ubPfMjGZaUsv8mo1QoOo5F7idjR4xRlwCwBGtIW6nwdJn6yNAy1k+TRl1ySN26
-	 BmX6GJQwF98qDbLyqvSSVs8QKY6C4GbYxXmUh3hYiFXiAobE3NUlfQt0fpG6PErYdC
-	 WLOUnteTC2iEw==
-Message-ID: <38517491-678e-4aba-ad5a-f7cb7519ef1c@kernel.org>
-Date: Tue, 21 May 2024 13:54:25 +0200
+	s=arc-20240116; t=1716292641; c=relaxed/simple;
+	bh=myNuxgtOJqDXVT+HSRgtuecaI5gwxkJHVxARIgcJq/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mBljf0STnfFvKKv/zCx7XKaO8QOHpQ1JUQYlg5vKWnfNei/drnMeQT/iQzbaHdCrIUfVpp3+oB8g8j7SXdr5BQ76DkYjhWf02KyBkToHh3UJbdtWb2M79WWMpPt9k7ZxGrrVhFv4CcpEWWk+XAxM6+VKoDMJqZzzpdS3LKnVa7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=Sd76a240; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1716292614; x=1716897414; i=wahrenst@gmx.net;
+	bh=MKxjmztR/jHkdYlpsG3v22N+vXjLHvDaMqP5hmX66zU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Sd76a240RQLy/1ECWGoEKxh2IQ4HK02TpUyj+SKcx3EU3iOvkrk5TyBp/AIg2evQ
+	 anjIp0LmZYguOujWpFjRZJwlvEjHpWTojzzmo5zEt5YGCJzMDEC0XIKK22JhLmKfk
+	 FZAAPtOUGMTSfNt7VHuUWx1VDoffDDD+R888PdMbwFrazVhtLEKe3gsmD11d5NRUi
+	 3auJe4M3OwtABwsKnrBwib2yY6+3Mq8f5lvfY2kAy9CnxwbtdG7jICCt6zjwEIOQh
+	 qQ9zUN1KPCt0o9GQSS3aL/tuAoKrxuez+I3SuBnuVErLLzg1RLi0ZFwQGJqrziBgr
+	 m1gMlPJ4um/m2PTafA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.126] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MmDIu-1srHaI0niq-00i8j9; Tue, 21
+ May 2024 13:56:54 +0200
+Message-ID: <bc1eb98c-9d49-4424-ab89-16be6c67c3f5@gmx.net>
+Date: Tue, 21 May 2024 13:56:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,80 +57,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/8] drivers: mtd: nand: Add qpic_common API file
-To: Md Sadre Alam <quic_mdalam@quicinc.com>, broonie@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konrad.dybcio@linaro.org, miquel.raynal@bootlin.com,
- richard@nod.at, vigneshr@ti.com, manivannan.sadhasivam@linaro.org,
- linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
-References: <20240521105532.1537845-1-quic_mdalam@quicinc.com>
- <20240521105532.1537845-5-quic_mdalam@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 2/4] dt-bindings: mmc: Add support for BCM2712 SD host
+ controller
+To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Marc Zyngier <maz@kernel.org>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org
+References: <cover.1716277695.git.andrea.porta@suse.com>
+ <d7c8bc0143c6b8c8b313413860840ae5bf2dc22a.1716277695.git.andrea.porta@suse.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240521105532.1537845-5-quic_mdalam@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <d7c8bc0143c6b8c8b313413860840ae5bf2dc22a.1716277695.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RemX3IIs/au4ReeRx6ZGARXTRzVD7neD4wJdYjz7HTzsO8Ft2Ef
+ XCUSPctDOQfm9J9h5aNR9coXl+VHWpZIUG0WIBSG2kfrJorlqdQ/Klkm3/M3iU10vDSwNm9
+ eXgM6/Kt5gRB/+RMnUMQL1FpFI6qeSCHybbk0KdXjgFl1zCDxEt2CQRnUVYsJDgJSrJJLtW
+ 2b1TUHSmwIOX134TEiYcA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Q+I2IaHxwcs=;qn8CZNtHsTD/R40C4OBokdVT9hY
+ N1fuyvGihk6k4pKUYgCUA2NT1ROWEHgqnRxQVJeWujQqUcGDfzbsozaFH5y4WD61Iu6ijpygI
+ dKJdgvFkfJcCBd+F3SaFbEFYG5ITK/IlS0IS2/gEWAbLb5Brbji78QeBDERokpFAYg5mW7INa
+ oKqOOOPYlT6sZiab4SXddeF/C4CpQur/9se1G5yXZYU8mwDNApaQPRuYDJLFlPWXsutgG2fvb
+ PjjPY23b/LRM84yJG+7bc/WAlIbjidOn8lsRqgSzJY7YJiqnNamIVixzGkrc3HWgmPa2ay8f4
+ e2YUOFgU7mbz8RDvTd393f2WMGi71DIfZzvG1MYa6mptauM8dlGp9fsC9/YNlEEF3OzDN06ap
+ lhdrby2XltiAaeWMJK2Pr1Ob5FJf7+RD7EBrIsQY4rQ+0IxlC0NZn6dhUcN2hWYYhmHjSPcpI
+ Cq5ri61rZwQxzl4p4/vRg1lS45hrKcF35xPKKptFHlyPofJbdiVlHEb80sKObh6oLULP/Mutp
+ SwIWKpIs+ZV/ybZB/r4Wr7VsNzibjwQKOUQrvQNkTez6h6R0JA/pOI7QPSYyGmYxnoF0qmOFC
+ aQoC04GYMwWgjXvs20kda/TgOm74QpH30JEAoJnR7+a96Keqt69c+j2LAPq8xET0e+/5QZ86k
+ WXmeyzytWIf2jZdV4qtCtF1crIAwDrpbB9xjcxUQ9ltivyVm09X2l0aXFMi5D9weyFQs871/2
+ 64OJn50lPAIIjtsMl0zYorsnzWeFkxzdQb7/tJPk5JpsaISt3bR4Oa1mOoF2JwFfJjNMsnvUc
+ eA5VDIBNKWWQdVN2lvlMB44Wtt0m0OWlDrreNf7AioRV4=
 
-On 21/05/2024 12:55, Md Sadre Alam wrote:
-> Add qpic_common.c file which hold all the common
-> qpic APIs which will be used by both qpic raw nand
-> driver and qpic spi nand driver.
-> 
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+Hi Andrea,
+
+Am 21.05.24 um 10:35 schrieb Andrea della Porta:
+> The BCM2712 has an SDHCI capable host interface similar to the one found
+> in other STB chipsets. Add the relevant compatible string.
+>
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 > ---
-> Change in [v6]
-> 
-
-This is v6, but you still keep prefixing in the subject as "drivers".
-Drop it finally from all your patches.
-
-Best regards,
-Krzysztof
+>   Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.ya=
+ml b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
+> index cbd3d6c6c77f..d584a7ea707a 100644
+> --- a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
+> @@ -13,6 +13,10 @@ maintainers:
+>   properties:
+>     compatible:
+>       oneOf:
+> +      - items:
+> +          - enum:
+> +              - brcm,bcm2712-sdhci
+> +          - const: brcm,sdhci-brcmstb
+sorry i didn't noticed in V2, but why can't we just extend the second
+items list?
+>         - items:
+>             - enum:
+>                 - brcm,bcm7216-sdhci
 
 
