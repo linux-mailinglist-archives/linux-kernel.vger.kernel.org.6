@@ -1,191 +1,200 @@
-Return-Path: <linux-kernel+bounces-184584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 961C38CA92B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:42:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F178CA932
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8D081C217C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:42:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7A8D1C20953
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F4B524D6;
-	Tue, 21 May 2024 07:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6071052F71;
+	Tue, 21 May 2024 07:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NPrvlaAW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CM9AT0ap"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374C251C49
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BD5C12C;
+	Tue, 21 May 2024 07:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716277310; cv=none; b=SKb1XHLJWIEHu9lCrUAk1fNsWYILjD94ilo2Y3o58xnupdhP0+q+umCgEu/51am6gnknFxORHTMokCOXGQ4WEn5WdWzC9ZTcyRb8p7RvYQXl+sIPrp4u9gv+COT1oywgUEkz4yMl3YSdBtaFv1nlS1/4/wpwz2mOA11QDsAARKw=
+	t=1716277431; cv=none; b=METutlkr+aoYLGhZPuL8v475/6fxL1x0FylJC1rvDWI8aF45TSs9EuKXsiyltlSL7dJDMETbysP5TzdW+1nF7ASBNwhaJ1FXNFkXejbUvUt9yoFXZ3HqmWODOtGjIx93u7lqQ8KAyh01Z68VpRUCYSySFMw/G89cCvFZPsw5SW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716277310; c=relaxed/simple;
-	bh=fFHb4IvKsJ/FJ57OiQUokeqzIuDvktQiCaQrNEdks/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Gj6YeAV3sKNde3HonZOokra2JTnKFp6Fay2h6hHa4KdPFtaSVWH3kbXbYxoMfVA+nRPGe4EQW+hIFoa/GGfTwIJIgeJlrOiaDevfj8n+imeMXv7xhOv4Eub8aNY/BjMACNh0ib3VPVefgAUYzL9QjVKt3XUQnqGhRdf6VfG6TN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NPrvlaAW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C9AC2BD11;
-	Tue, 21 May 2024 07:41:49 +0000 (UTC)
+	s=arc-20240116; t=1716277431; c=relaxed/simple;
+	bh=A9IoVr57gmQQXvYv0Uila/oUZpM/Kyt0jnAtAwEIOdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TTEcQZUV6dK7/LgoeM6IUS+FrxbvxzVpy7o/3/M2hXFaWUY9p6gqKWiPjjYRwovLATQME1OJF8sAHqTdMIusot5zaLU5PLIFYiY6uBB02YyoZcnuzJQpejyezQwkbu1ztR5ax651a4uOlfQn5RVoG7GcqiOBsxAVrIE/PgOppFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CM9AT0ap; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F99FC2BD11;
+	Tue, 21 May 2024 07:43:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716277309;
-	bh=fFHb4IvKsJ/FJ57OiQUokeqzIuDvktQiCaQrNEdks/k=;
-	h=Date:From:To:Cc:Subject:From;
-	b=NPrvlaAWBZ+8J4vSsNvNqOnKrYlbQbbqe0BKziBQuLD3LxBjeJ4tlMNam6omPGd5d
-	 pw77rQfMsCaL+c1uKxGz0kIupmmnQ1ObCqfzQhAAtBcmyQgyJtPvIw45/ZBphAoxlb
-	 olaOjJxHq+wbzsgPGTbycJEDSQs2bKtY0XlAw45Q3a16XR1CPkh4BqPhfg9/2bEhvI
-	 CHXaplEmxJnG5wVeJ9tWPyg4Lz3ftojee13kqOIuqnqRBb4Gkb06Fnq0QrMg0UrlQ6
-	 btRDaPRE2wOYkdn/V4XuHl5XkTzwvPLK55rUSHdClMooado3cZ/pkyFMfQObxzjABr
-	 KNn3bSwnlSyRg==
-Date: Tue, 21 May 2024 13:11:45 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: soundwire updates for v6.10
-Message-ID: <ZkxQObZQUTGealkZ@matsya>
+	s=k20201202; t=1716277431;
+	bh=A9IoVr57gmQQXvYv0Uila/oUZpM/Kyt0jnAtAwEIOdM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CM9AT0apq+pZCL0u4THZUTsWP9EETGIxjdkiLNHh0cj02ai8FUL0JrZPgOP/GwGH5
+	 7gL+3RguyfWuUEhL3mHYspEfmDS3wZnrnxlz2MlbdJkZu25tJMULW1kZkDEGSKSjw7
+	 rytD152qkcnXY3HM9O6QKKApQkGYzT8vsllfbEImOW7/nVgPVkIYPOKy3dzX6U2pFl
+	 J90Xhkq2vVMqew4OOXYzknCC2edddAo1nKoA9ivnAwQxLmQmZ1E8JPftPTW95lDVVE
+	 iO/uJ9bJEhiskYxB8kVQObAWg+JPdifmIEENjJ6CSX4+S4T6cMWxLZAfumeNjgXnJn
+	 OVzOlU48ZsLBg==
+Message-ID: <bc9079e8-0f20-4875-80e9-bccf7d1f761b@kernel.org>
+Date: Tue, 21 May 2024 09:43:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bwx0dWf4wvOwxB+n"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: usb: gpio-sbu-mux: Add an entry for
+ TMUXHS4212
+To: Nishanth Menon <nm@ti.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+ Parth Pancholi <parth105105@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Parth Pancholi <parth.pancholi@toradex.com>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, vigneshr@ti.com
+References: <20240517111140.859677-1-parth105105@gmail.com>
+ <1675a33d-47af-4de9-a0e7-177cbe208e2b@kernel.org>
+ <20240519202754.GA3334@francesco-nb>
+ <469be7c2-6865-40d4-bd06-15dc3a08b3e3@kernel.org>
+ <20240520121441.svp6oabjyev4vmih@magazine>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240520121441.svp6oabjyev4vmih@magazine>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 20/05/2024 14:14, Nishanth Menon wrote:
+> On 08:53-20240520, Krzysztof Kozlowski wrote:
+>> On 19/05/2024 22:27, Francesco Dolcini wrote:
+> 
+> [...]
+>>> If it's not the case we'll send the patch later on, however some
+>>> DT files maintainers (e.g. arch/arm64/boot/dts/ti/) have a policy to
+>>> just accept DT file in which the binding changes are already merged
+>>> therefore I was trying to be a little bit proactive here.
+>>
+>> TI? Never heard something like this from them... Such requirement would
+>> seriously slow down any work, so it's not really reasonable. Expectation
+>> is to post both binding change and an user, so DTS, in case of USB in
+>> separate patchsets.
+> 
+> There is a reason we have set that "soft rule":
+> - Driver subsystem merges have known to be broken from time to time and
+>   the dt maintainer is left holding compatibles that have not made to
+>   master.
+
+You mean driver tree took the bindings (because then you take the DTS)
+but they did not make it up to the master? Yeah, happens, but postponing
+DTS code for this is quite harsh.
+
+> - ARM subsystem merges prefers not to see checkpatch warnings -
+>   typically, this happens with new compatibles in the driver subsystem.
+
+Never heard any comment about this. Maybe because I always do checkpatch
+tests (part of workflow), so then any warning, which there are pretty
+lot like touching maintainer files, is understood as accepted.
+
+> - Off chance that driver subsystem maintainer picks up the dt changes as
+>   well (should not happen, but has happened)
+
+DTS changes? Yes, that's why they should be in separate patchsets for
+few known trees, like USB, net, media.
+
+> 
+> We have however flexed the rule when:
+> a) driver maintainer is willing to provide us an immutable tag that we
+>    can merge in and base the dts on top.
+
+You cannot base DTS on top of any driver branch. In the past Arnd and
+Olof were rejecting this, recently this got more flexible, but still cannot.
+
+This implies dependency, which is a no-go.
+
+> b) We felt that the chances of the driver not making it is very very low
+>    (typically after 1+ month in next) and the dts change is in the wider
+>    interest of the community. In such case, we have to explicitly take
+>    the action of letting the patch submitter, driver subsystem to let us
+>    know if something bad happens to the PR, also in our PR to SoC
+>    maintainers, we have to call it out along with rationale why this is
+>    OK. This is a bunch of work from a lot of folks, so prefer only to
+>    trigger this path in case of exceptional cases - there have been a
+>    few far in between.
+> 
+> Again, the default rule (driver in one window, binding in next) has
+> kept us out of trouble for a few years now at the detriment of pace
+> of merges, but that took care of a lot of conflicts that we had seen
+> during initial days of k3 - there are few chains in the lakml list
+> where this was the direction we ended up in after discussion.
+> 
+> But, yes - as you mentioned, send the patches of the "user" of the dt
+> binding and driver gives the subsystem and dt maintainers a chance to
+> review in the context of usage prior to the driver and binding merge.
+
+Anyway, I am fine, but then I expect from the contributor to explain
+where is the user.
+
+Specifically, for completely new bindings I will NAK them if there is no
+driver or DTS posted. Why? Because experience shown me that people post
+some bindings and then entirely different DTS, without running full
+dtbs_check. Therefore I want to see both - bindings and DTS, if applicable.
+
+It is easy to fulfill both requirements - mine and yours. Post bindings.
+Post DTS and link the bindings, with explanation it should be picked up
+*later*, because that's what TI expects. That's way I can still find
+both pieces, but you do not risk taking DTS too early.
 
 
---bwx0dWf4wvOwxB+n
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Best regards,
+Krzysztof
 
-Hi again,
-
-This is last pull request for today. Please pull to receive soundwire
-subsystem updates features Greg's sysfs group cleanup, Intel ace2x and pm
-improvements and qcom multi link device support.
-
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
-
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/so=
-undwire-6.10-rc1
-
-for you to fetch changes up to a0df7e04eab07cb2c08517209f792a8070504f0d:
-
-  soundwire: intel_ace2.x: add support for DOAISE property (2024-05-04 18:2=
-6:50 +0530)
-
-----------------------------------------------------------------
-soundwire updates for 6.10
-
- - cleanup and conversion for soundwire sysfs groups
- - intel support for ace2x bits, auxdevice pm improvements
- - qcom multi link device support
-
-----------------------------------------------------------------
-Bard Liao (3):
-      soundwire: intel_auxdevice: use pm_runtime_resume() instead of pm_req=
-uest_resume()
-      soundwire: intel: export intel_resume_child_device
-      soundwire: intel_init: resume all devices on exit.
-
-Greg Kroah-Hartman (5):
-      soundwire: sysfs: move sdw_slave_dev_attr_group into the existing lis=
-t of groups
-      soundwire: sysfs: cleanup the logic for creating the dp0 sysfs attrib=
-utes
-      soundwire: sysfs: have the driver core handle the creation of the dev=
-ice groups
-      soundwire: sysfs: remove sdw_slave_sysfs_init()
-      soundwire: sysfs: remove unneeded ATTRIBUTE_GROUPS() comments
-
-Krzysztof Kozlowski (1):
-      soundwire: qcom: allow multi-link on newer devices
-
-Pierre-Louis Bossart (21):
-      soundwire: bus: don't clear SDCA_CASCADE bit
-      soundwire: cadence: fix invalid PDI offset
-      soundwire: cadence: remove PDI offset completely
-      soundwire: remove unused sdw_bus_conf structure
-      soundwire: clarify maximum allowed address
-      soundwire: cadence: show the bus frequency and frame shape
-      soundwire: bus: extend base clock checks to 96 MHz
-      soundwire: intel: add more values for SYNCPRD
-      soundwire: intel: add support for MeteorLake additional clocks
-      soundwire: intel_ace2x: move and extend clock selection
-      soundwire: intel_ace2.x: power-up first before setting SYNCPRD
-      soundwire: intel_ace2x: set the clock source
-      soundwire: reconcile dp0_prop and dpn_prop
-      soundwire: intel_ace2x: use legacy formula for intel_alh_id
-      ASoC: SOF: Intel: hda: disable SoundWire interrupt later
-      soundwire: intel_ace2x: fix wakeup handling
-      soundwire: intel_ace2x: simplify check_wake()
-      soundwire: intel_ace2x: cleanup DOAIS/DODS settings
-      soundwire: intel_ace2x: use DOAIS and DODS settings from firmware
-      soundwire: intel_ace2.x: add support for DODSE property
-      soundwire: intel_ace2.x: add support for DOAISE property
-
-Ranjani Sridharan (1):
-      soundwire: intel: add intel_free_stream() back
-
-Uwe Kleine-K=F6nig (1):
-      soundwire: qcom: Convert to platform remove callback returning void
-
-Vijendar Mukunda (1):
-      soundwire: amd: use inline function for register update
-
- drivers/soundwire/amd_init.c            |  36 +++++-----
- drivers/soundwire/amd_init.h            |   8 +++
- drivers/soundwire/amd_manager.c         |  13 ++--
- drivers/soundwire/bus.c                 |  14 ++--
- drivers/soundwire/bus_type.c            |   5 +-
- drivers/soundwire/cadence_master.c      |  36 ++++------
- drivers/soundwire/intel.c               |  68 ++++++++++++++++--
- drivers/soundwire/intel.h               |   7 ++
- drivers/soundwire/intel_ace2x.c         | 119 +++++++++++++++++++++++-----=
-----
- drivers/soundwire/intel_auxdevice.c     |  41 +++++++++--
- drivers/soundwire/intel_auxdevice.h     |   1 +
- drivers/soundwire/intel_init.c          |  14 ++++
- drivers/soundwire/qcom.c                |  28 ++++++--
- drivers/soundwire/sysfs_local.h         |   4 +-
- drivers/soundwire/sysfs_slave.c         |  66 +++++++++---------
- drivers/soundwire/sysfs_slave_dpn.c     |   3 +
- include/linux/soundwire/sdw.h           |  19 ++---
- include/linux/soundwire/sdw_intel.h     |  11 ++-
- include/linux/soundwire/sdw_registers.h |   2 +-
- sound/soc/sof/intel/hda.c               |   4 +-
- 20 files changed, 338 insertions(+), 161 deletions(-)
-
---=20
-~Vinod
-
---bwx0dWf4wvOwxB+n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmZMUDkACgkQfBQHDyUj
-g0dHfw/+OqCuwNkLnrCaFx2DuaNzV+5HoWl9t8wgbzXxvYzklyCvXWlFlWGV5+LZ
-EFghhNlBEKUATbK4xkH8p1SGbByeF2PKjXd2P7Uu60wZ2Rd6ix1gKfZZXmK349/p
-AKTitMatekUiKVDd1KIBoPGUIn9PIRblYJK9oGb4iD+c/FE/p+koSCrmEcWczZS+
-9HCJSARKF6E/g/QWGxsyo06DxLAMI+p4Hbjiy+KbWmTpisSvP8QB7f8/FIAk43qC
-gO3rDpA3dEH62BsU9kM+dclD8Rxf0CI8HbTs3NXQduHK9AIQTtIf1JzlRsBUZtGq
-gBjkSWF55Vii5uyMPQJ/NPBzaUw0Ybkz+djHbevCqcf/P9Bde69NlQc2tMpwpzyC
-0C1IkcOLmn+mpGwJyKindjugKnfogclAnZby/LSdReE/pxh/UiY2ieAKQjo/hzDU
-WZxFhWDla1b2FaDTSSyi6S/lioHdbIBxh+cMQUYpUlsxL+KK7g2c59HBKtGQ9bSp
-WmE3eddh8REAegFr/Ic6g9auWBcqi8SWoryvOCSqc8jcwhpsGpeHS7ZkdjRnNWpy
-LJYHLJ+2+UcuJC/2SlTuC3roWI2m7yWRv2LUipIUnGI5YmDNnQfdk/QAw+od8chc
-Za/MGg8kgOErrOYiWEssRJ/aZnGidO7b/jXRN/hjVsCjWmb1fZs=
-=OaIO
------END PGP SIGNATURE-----
-
---bwx0dWf4wvOwxB+n--
 
