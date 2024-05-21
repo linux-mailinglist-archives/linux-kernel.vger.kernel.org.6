@@ -1,105 +1,127 @@
-Return-Path: <linux-kernel+bounces-184793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 824248CAC16
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:24:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E33C78CAC19
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18EC51F227C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:24:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2002C1C218E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA1877F08;
-	Tue, 21 May 2024 10:16:40 +0000 (UTC)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E4C78C7D;
+	Tue, 21 May 2024 10:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1kAgxiu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8D97710E
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E0778C6B;
+	Tue, 21 May 2024 10:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716286600; cv=none; b=aP5YrtrVi0uKW4NtP7MjyS2OkkhYxdQmtrsdWyY1o+V+C/vwMy0Ey7+Q1qWirN6aBZBjPTfNoE1jVrMQ92bRgpN7RijhYFfK1vU8xwR8UtGtJeY+5HQ+0stCt3UhxtcdiCvepZQe9+UY89nNwQbAP2FuNgznIEnoBQmt8tltgK4=
+	t=1716286621; cv=none; b=XvsNktlwIh56ilJUPQV7miPsefnMsmWRlYlRjGOXlMrTPPDYLVBenVUDP69xYPYLIpECmJovj+QkSUz86v1sCBt2GumqHQ53WyHtQNbi7LAwGmc/ofqZKY6T5Uz4AgpTcPFMV3OCb6pwQLZLxAkRRvNMhM3XG3pHvHbvNpgN8kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716286600; c=relaxed/simple;
-	bh=MPwGTcO7SdKLGmSlXO+JkZTIVE5nYQNq+c4qRkuXs+k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ag5guCxHAYsHrYEfEmS2v2Ggsznp06dTlsspeav2n0eCosCQo5iSDDAPitlv8hHuLg0xH12RuaZuu26kg4KYpia6ibBJ3J4oXewoOm/AeFdMgRlI5pFWkX39L2dO7jOIIr1C9vwMpqcdFSoasZvj1CYkjMPjgGpZAAC7cb6frTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-354c84d4604so491008f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:16:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716286597; x=1716891397;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zaiAWU3NXtCfmiYvgYy3wEGjD3mnbg8XC2Sk28TmeCE=;
-        b=WZGyxuJsXhhhCmuu63iWA7xpa3DI6eqWvIdRJGfsG2cfLFsxH68IAwJfXXNTk+f0f+
-         I3ZWA7YVEBpcVKY8JSDuA0DDXG1JF8XXUaFvLKekVHDs6Y4/A9IC4NGzqj1LccIVrFY7
-         Xlve4a6GdgLmtelMM6RScTYDE/C28bvq/Ml/gQN/spgJ+v5Z1KeWzP5SC2RiMECgxIV7
-         KKaR4LYuirVU1KO/SiWTAq+7eTxWEnHEvIrs1ws239IFvPvkLAZ0fO0FEy6stW9cQiS8
-         TwGdmtVvYhMZRK29BBD8NsfxwNtQ2ibOhbWoErHUre7hk+Pq+fSimzb+I9Bevcgug4Hs
-         ooBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUv5RgphO3HnIjcTCv8YyLM0W33e7fmhM2QO3Ak5hqPDvpmKNo+wVpKlVpMNPcAymMh1J3RZ165rz6YBpYj6rPfWR8RO3YJFAuG7avj
-X-Gm-Message-State: AOJu0YzFOqn3DhV2juIyuXTpY9RpRDPz1fQYbE06+ZO5FwLzC0ieKjyF
-	rudqio2n512Shm95IIhQuB3j5W3U47GZuRXXoXOohq+46QW3LRwW
-X-Google-Smtp-Source: AGHT+IHzm5XmKjKZ6tsHMVzBPcQUMKdYpRr8I/AR7wUCjqE+6Br3cDXCQYKdwXv8uiY0N0OcPJJHrg==
-X-Received: by 2002:a05:6000:227:b0:34b:5cef:4af3 with SMTP id ffacd0b85a97d-3504aa689d9mr22396035f8f.6.1716286597126;
-        Tue, 21 May 2024 03:16:37 -0700 (PDT)
-Received: from [10.100.102.74] (85.65.193.189.dynamic.barak-online.net. [85.65.193.189])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-351d2df8449sm15112285f8f.12.2024.05.21.03.16.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 03:16:36 -0700 (PDT)
-Message-ID: <ba2a6973-ba58-492c-9785-31e50ab40957@grimberg.me>
-Date: Tue, 21 May 2024 13:16:34 +0300
+	s=arc-20240116; t=1716286621; c=relaxed/simple;
+	bh=PNikNaHR6zU/zfXGkNmZ8iumO7c9iBa0+ICynQKy2Rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISgpIW5XQsU/ja8m42+XFcEqymdLDc4eI6srhO+olh8pqK885Pi1qsO9o38Os9yx8zRC9zjih4oxp6BziY6pgLvBEnU3OGAxvdo4HG98SuEtKpRETPurwMa7vEitqZzp+6/NrSH25ReAR6H+sdKDz+TNB2vPIENa93YAklNUjHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1kAgxiu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A21C5C32782;
+	Tue, 21 May 2024 10:16:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716286621;
+	bh=PNikNaHR6zU/zfXGkNmZ8iumO7c9iBa0+ICynQKy2Rw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k1kAgxiuE9rA/Hvqgct3mNL21APMt0RhL2f9/WJ2DjnIvh+b5obh7vYvCpVkGp/sv
+	 vkl6CSnH56jgHicS/YPmlipskcvM9TjM6lMZ1T3PvbznCzAkGkd1KjMisOIhh8nZyB
+	 HKBb8iY4/PmKfQpdFNZKpwfHuneh2I5IibdZDpXy5WCNAKwbQGxUa2SLIrzJsn6sR+
+	 C6u5ex1q0wx4YC9h42PDhx3Q5jkuiZPD/VsUxilW9LQCGwGPtPbGOgTE5lOilzZXYo
+	 bTXFqg3XHr95K26mBd0gJ0xU8KvqLd2kF64SNS2hi8EWRwTjV0hAWRQ7Luc9teBZtG
+	 /wQ/33ZvivwXw==
+Date: Tue, 21 May 2024 12:16:55 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	bhelgaas@google.com, mani@kernel.org
+Cc: Frank Li <Frank.Li@nxp.com>, helgaas@kernel.org, imx@lists.linux.dev,
+	jdmason@kudzu.us, jingoohan1@gmail.com,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	lpieralisi@kernel.org, robh@kernel.org, dlemoal@kernel.org
+Subject: Re: [PATCH v4 1/1] PCI: dwc: Fix index 0 incorrectly being
+ interpreted as a free ATU slot
+Message-ID: <Zkx0lzP76bmp4K0r@ryzen.lan>
+References: <20240412160841.925927-1-Frank.Li@nxp.com>
+ <20240517170650.GC1947919@rocinante>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] nvme: multipath: Implemented new iopolicy
- "queue-depth"
-From: Sagi Grimberg <sagi@grimberg.me>
-To: Nilay Shroff <nilay@linux.ibm.com>, John Meneghini <jmeneghi@redhat.com>,
- kbusch@kernel.org, hch@lst.de, emilne@redhat.com
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- jrani@purestorage.com, randyj@purestorage.com, hare@kernel.org
-References: <20240520202045.427110-1-jmeneghi@redhat.com>
- <20240520202045.427110-2-jmeneghi@redhat.com>
- <945416af-3f8b-40b5-9681-49973beb2cb2@linux.ibm.com>
- <3b8d33db-f2c3-469a-bfa0-8fc52594f243@grimberg.me>
- <95fe3168-ec39-4932-b9fc-26484de49191@linux.ibm.com>
- <da35bc8b-6813-42c8-b446-8a07b08db156@grimberg.me>
- <073ae18a-a80e-4a95-a093-36210a3bb230@grimberg.me>
-Content-Language: he-IL, en-US
-In-Reply-To: <073ae18a-a80e-4a95-a093-36210a3bb230@grimberg.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240517170650.GC1947919@rocinante>
+
+On Sat, May 18, 2024 at 02:06:50AM +0900, Krzysztof Wilczyński wrote:
+> Hello,
+> 
+> > When PERST# assert and deassert happens on the PERST# supported platforms,
+> > the both iATU0 and iATU6 will map inbound window to BAR0. DMA will access
+> > to the area that was previously allocated (iATU0) for BAR0, instead of the
+> > new area (iATU6) for BAR0.
+> > 
+> > Right now, we dodge the bullet because both iATU0 and iATU6 should
+> > currently translate inbound accesses to BAR0 to the same allocated memory
+> > area. However, having two separate inbound mappings for the same BAR is a
+> > disaster waiting to happen.
+> > 
+> > The mapping between PCI BAR and iATU inbound window are maintained in the
+> > dw_pcie_ep::bar_to_atu[] array. While allocating a new inbound iATU map for
+> > a BAR, dw_pcie_ep_inbound_atu() API will first check for the availability
+> > of the existing mapping in the array and if it is not found (i.e., value in
+> > the array indexed by the BAR is found to be 0), then it will allocate a new
+> > map value using find_first_zero_bit().
+> > 
+> > The issue here is, the existing logic failed to consider the fact that the
+> > map value '0' is a valid value for BAR0. Because, find_first_zero_bit()
+> > will return '0' as the map value for BAR0 (note that it returns the first
+> > zero bit position).
+> > 
+> > Due to this, when PERST# assert + deassert happens on the PERST# supported
+> > platforms, the inbound window allocation restarts from BAR0 and the
+> > existing logic to find the BAR mapping will return '6' for BAR0 instead of
+> > '0' due to the fact that it considers '0' as an invalid map value.
+> > 
+> > So fix this issue by always incrementing the map value before assigning to
+> > bar_to_atu[] array and then decrementing it while fetching. This will make
+> > sure that the map value '0' always represents the invalid mapping."
+> 
+> Applied to controller/dwc, thank you!
+> 
+> [1/1] PCI: dwc: Fix index 0 incorrectly being interpreted as a free ATU slot
+>       https://git.kernel.org/pci/pci/c/cd3c2f0fff46
+> 
+> 	Krzysztof
+
+Hello PCI maintainers,
+
+There was a message sent out that this patch was applied, yet the patch does
+not appear to be part of the pull request that was sent out yesterday:
+https://lore.kernel.org/linux-pci/20240520222943.GA7973@bhelgaas/T/#u
+
+In fact, there seems to be many PCI patches that have been reviewed and ready
+to be included (some of them for months) that is not part of the pull request.
+
+Looking at pci/next, these patches do not appear there either, so I assume
+that these patches will also not be included in a follow-up pull request.
+
+Some of these patches are actual fixes, like the patch in $subject, and do not
+appear to depend on any other patches, so what is the reason for not including
+them in the PCI pull request?
 
 
-
-On 21/05/2024 13:15, Sagi Grimberg wrote:
->
->
-> On 21/05/2024 13:11, Sagi Grimberg wrote:
->>
->>>> Don't think this matters because cancellation only happens when we
->>>> teardown the controller anyways...
->>>>
->>> I think in case if we reset the nvme controller then we don't teardown
->>> controller, isn't it? In this case we cancel all pending requests, and
->>> later restart the controller.
->>
->> Exactly, nvme_mpath_init_ctrl resets the counter.
->
-> Except you're right, the counter reset needs to move to 
-> nvme_mpath_init_identify()
-> or some place that is called on every controller reset.
-
-This however raises the question of how much failover/reset tests this 
-patch has seen...
+Kind regards,
+Niklas
 
