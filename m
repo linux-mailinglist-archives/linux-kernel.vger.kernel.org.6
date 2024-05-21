@@ -1,123 +1,137 @@
-Return-Path: <linux-kernel+bounces-185046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E218CAFD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:00:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 226568CAFE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A3C1C2163B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:00:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C4D1F23E55
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7BB7F47F;
-	Tue, 21 May 2024 14:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BE67F466;
+	Tue, 21 May 2024 14:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GED+tXhJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xlt6Klh9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7435A1E502;
-	Tue, 21 May 2024 14:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687AF8004B;
+	Tue, 21 May 2024 14:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716300016; cv=none; b=s/3Besofhh+5A55A23DjvIRCECGOI7VCRqeVPGMcPreDMOG9n+CKCVgstjpU7t6YSBGrL5/BM/IryA0N3mDPVW+tdaRaNBgx6li7cX5zzOASWuFgssOSvZmL4hW8tLecDJ9LrLk5XCxxr9qBXcz2Qhmq36KCMzQc9nn9L4UOWN4=
+	t=1716300130; cv=none; b=m7Ual5wE6Roc2T3aaXYOjml7T1oqqdAooaoOxOZJJEVKLVa5N6FbndV9Lrw3wYPBoTNUUUTjV3g8vCQS3oL6OGCP/sYBBT2i4FNQ/zI+jgV3xINhANUjX+wRTNozvGjooGreMK+4aNmutTuuEDL9JH/F4nITea17nf7Qul6kQ9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716300016; c=relaxed/simple;
-	bh=1fC1qPkHIzJeKGkFtyxB3WvFL7tvcX3u9xMga4DyzdM=;
+	s=arc-20240116; t=1716300130; c=relaxed/simple;
+	bh=wQfXmBBSl62bShtRXM5vAkuDb1swhN55UnYuHS+luY8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qKru6iv4CpOO3307B67R5QuLsfIUY7F6/Qrm59snCVg7gW4+omeprvfTmWJiIxZONuuavzIpmDwdZtKgyiUOjDRwVT3LdRrzFgd6HpBolLZnC0EeLsYXXot0wdmaTv+u0gDxTcPHsdL3o8MMwugFxzTWP2fwVb5eQQSuvzvb76c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GED+tXhJ; arc=none smtp.client-ip=192.198.163.12
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q34vAvF1yv8qqXlkYNUXmVbhN83Ws+I+ntYhrICVrv6uEY58xCxOtYA7kMSwUnGq6SWTdX116+TdMjrPZ7joWhaKnqnmk20qlSaZPEmaxMfrBt5kSsUiZvEJwVsBDt37d1cDF30RwXyiydTYGntz0CU8pbiCREaQCdcY2coBbNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xlt6Klh9; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716300015; x=1747836015;
+  t=1716300128; x=1747836128;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1fC1qPkHIzJeKGkFtyxB3WvFL7tvcX3u9xMga4DyzdM=;
-  b=GED+tXhJWaBT6iq2YZ9TiYJpplDYEpVn+Mag5IVZTOCjVMC2xHjIjNx2
-   uPArEkvz/+lmz0zndvnUaKJBpvUoReuuqHE80J3nHub5bEfMcTWm8UFrQ
-   n9WiH3o/JwcEHjIWwk+itGXZm7HuFP03KAThvVv9DTDc2v8cTititeDvg
-   /xQUxdx/FWAKVRUswEcC0kiYS4+bFy0kgd1SNAibkrWc4BUxSB82xB24n
-   aRZ/B4Vc/MVOTKLqH4IRxeCkRUJvwxgJekjce1DNPRZqLKQoeGS/hBh26
-   2qr1VshiPpywsqHp1swwG1PEqjtlFjBrksgJRsOvC4YwfK+N1jDOnECGm
-   w==;
-X-CSE-ConnectionGUID: iytRVh3hQdabtI2Ydo+yrA==
-X-CSE-MsgGUID: 5KIGelyUS2KVGTaU8gpB2Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="16334075"
-X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="16334075"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 07:00:14 -0700
-X-CSE-ConnectionGUID: D+4sqOvIR1S+ndvCyQ4I8Q==
-X-CSE-MsgGUID: CHCjpVRuSsq5mWwTi2UUpA==
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=wQfXmBBSl62bShtRXM5vAkuDb1swhN55UnYuHS+luY8=;
+  b=Xlt6Klh9cGmbfa6pbzq6pPu67JfFzxYtYXEXez+SZcMcyNGQf7thMJZo
+   nTPBnsKMHWjES3dmxwjlf1TQNRzrG1Vs5ridajY1GqHghPjvDXwN1zMr3
+   pdrz9f6Is4T/tXS/BWDSoDWETVAWSavBmy4RExTnNmQmur+RhZLHbar9d
+   wDsnzCkr60Xziz4FW/F3vkylCjldgpxuAFcNxr/O8R1ZxBTnrIAPDqMGB
+   dg76goY+ws1pRhWFMuUtSt6iKIJffxEDnIGzE2AdEojrlVguhLvH5rhnm
+   N4Y5VgE7EixL7qCxwB1UyrfIx2+m63SVSDKsbFSeiGFG1Q/qFUOJRc6zJ
+   A==;
+X-CSE-ConnectionGUID: HFNzCFDwTbewJsjxC8AKCA==
+X-CSE-MsgGUID: Brtutuj6RFi2/8pIYAo3/Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12722094"
+X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
+   d="scan'208";a="12722094"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 07:02:07 -0700
+X-CSE-ConnectionGUID: NnpcorRrRxOl9UgpIatVcQ==
+X-CSE-MsgGUID: ywsKWMMdTo21rmxXRI8mCQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="33531814"
+   d="scan'208";a="70350936"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 07:00:12 -0700
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 07:02:05 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.97)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s9Q2D-00000009fnx-0Pr9;
-	Tue, 21 May 2024 17:00:09 +0300
-Date: Tue, 21 May 2024 17:00:08 +0300
+	id 1s9Q42-00000009fqg-2JFR;
+	Tue, 21 May 2024 17:02:02 +0300
+Date: Tue, 21 May 2024 17:02:02 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linux regressions mailing list <regressions@lists.linux.dev>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Laura Nao <laura.nao@collabora.com>, mika.westerberg@linux.intel.com,
-	linus.walleij@linaro.org, brgl@bgdev.pl, kernel@collabora.com,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"kernelci.org bot" <bot@kernelci.org>
-Subject: Re: [PATCH] gpiolib: acpi: Move ACPI device NULL check to
- acpi_can_fallback_to_crs()
-Message-ID: <Zkyo6DL7NQltLLNr@smile.fi.intel.com>
-References: <20240513095610.216668-1-laura.nao@collabora.com>
- <ZkHlLLLoagsYlll7@smile.fi.intel.com>
- <b20b567f-ce96-45e8-aab7-29768f8313f5@leemhuis.info>
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v1 1/1] spi: pxa2xx: Move PXA SSP bindings to the correct
+ folder
+Message-ID: <ZkypWt2AxfjUQSgO@smile.fi.intel.com>
+References: <20240517171103.221856-1-andriy.shevchenko@linux.intel.com>
+ <e81d43f8-a3ba-41b4-a86f-af2d6943e917@sirena.org.uk>
+ <Zke2yG-WPkaWg5PV@smile.fi.intel.com>
+ <CAL_JsqKA7AnY7w3sjrT+khrat348v7uNpAP1+FZ=mdYMhJkf3Q@mail.gmail.com>
+ <ZksqPiSLY8OlE5lT@smile.fi.intel.com>
+ <20240520203600.GA1424819-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b20b567f-ce96-45e8-aab7-29768f8313f5@leemhuis.info>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240520203600.GA1424819-robh@kernel.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, May 21, 2024 at 12:01:17PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 13.05.24 12:02, Andy Shevchenko wrote:
-> > On Mon, May 13, 2024 at 11:56:10AM +0200, Laura Nao wrote:
-> >> Following the relocation of the function call outside of
-> >> __acpi_find_gpio(), move the ACPI device NULL check to
-> >> acpi_can_fallback_to_crs().
+On Mon, May 20, 2024 at 03:36:00PM -0500, Rob Herring wrote:
+> On Mon, May 20, 2024 at 01:47:26PM +0300, Andy Shevchenko wrote:
+> > On Fri, May 17, 2024 at 03:19:51PM -0500, Rob Herring wrote:
+> > > On Fri, May 17, 2024 at 2:58 PM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > On Fri, May 17, 2024 at 06:24:37PM +0100, Mark Brown wrote:
+> > > > > On Fri, May 17, 2024 at 08:11:03PM +0300, Andy Shevchenko wrote:
+
+..
+
+> > > > > > SSP stands for Serial Synchronous Protocol and has nothing to do with
+> > > > > > UART, also known as USART, where 'A' stands for Asynchronous.
+> > > > > >
+> > > > > > Move the SSP bindings to where it belongs.
+> > > > >
+> > > > > It's a serial device which is also used for other applications (the
+> > > > > other one upstream being audio) so I can see where the current binding
+> > > > > comes from and it's not super obvious that spi is especially better
+> > > > > here.
+> > > >
+> > > > Hmm... okay. Then it's question to DT people. Consider this as a report.
+> > > > Because UART (aka serial) is definitely not the place for SPI/SSP bindings
+> > > > either.
+> > > 
+> > > Move it when it is converted.
 > > 
-> > Thank you, I'll add this to my tree as we have already the release happened.
-> > I will be available after v6.10-rc1 is out.
+> > The problem is that somebody added a binding (in YAML) for SPI PXA2xx
+> > in the spi/ folder while this one kept unconverted.
 > 
-> Hmm, what exactly do you mean with that? It sounds as you only want to
-> add this to the tree once -rc1 is out -- which seems likely at this
-> point, as that patch is not yet in -next. If that's the case allow me to
-> ask: why?
+> Ah, well that detail was missed.
+> 
+> > 
+> > If it dangles more, it might be that we will have two asynchronous bindings
+> > for the co-existed drivers.
+> 
+> Looks like all that is needed is adding the compatible strings and 
+> 'dmas' property to spi/marvell,mmp2-ssp.yaml. The examples in the old 
+> binding have other stuff, but looks like that's garbage.
 
-Because:
-
-- that's the policy of Linux Next (do not include what's not supposed to be
-  merged during merge window), Cc'ed to Stephen to clarify, it might be that
-  I'm mistaken
-
-- the process of how we maintain the branches is to have them based on top of
-  rc1 (rarely on other rcX and never on an arbitrary commit from vanilla
-
-> I'd say it should be fixes rather sooner than later, as other
-> people might run into this as well and then have to deal with bisecing,
-> reporting, ...
-
-Yes, but we have a process during merge window, it's special and different
-from vX.Y-rc1..vX.Y times.
+I'm not an expert in DT, anybody to join them in a nicest possible way?
 
 -- 
 With Best Regards,
