@@ -1,88 +1,261 @@
-Return-Path: <linux-kernel+bounces-184348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611058CA5CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:32:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6558CA5D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15EBC281995
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 01:32:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EEEA28116F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 01:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5274C138;
-	Tue, 21 May 2024 01:32:33 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29839BA53;
+	Tue, 21 May 2024 01:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bIqCixtd"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2089.outbound.protection.outlook.com [40.107.100.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B958814;
-	Tue, 21 May 2024 01:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716255153; cv=none; b=BB90kgXWymFvChLWbmGTAiNWKJRk2fq1jynntzXTaRwn9Y4lK9ckZyKj3MkILTSjFdyziJlxrCJ+nsFLOJ0Q7Oqpvnkm6ampjteftPU3JNX8p2+rI5ESC0RFY4VIJB6L1hUlglOcxvVNUVfS6iAHqn911zf6ITFajob+L/cP6/w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716255153; c=relaxed/simple;
-	bh=IvdU1mR04Rm53UqVrqrAsPcYHZm2yrWPQHcHxfLoVq8=;
-	h=Message-ID:Date:From:MIME-Version:To:CC:Subject:References:
-	 In-Reply-To:Content-Type; b=obLiVHJ6KRU40TJemutEA8j2oQd1AdC1CGp+Dc60HmIqXX0ZNxU8eOhO6yk/dwb+EpRtTtsedZWQrfGTY3BqoXcK/VbX/1dAzdp4lRy+Jp4tw6ji4aGs9oG/Vlfua7Z4yWmP18Y925AIIhPAy58ok8qE+bFOda14gu9YtlHTO4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Vjxff6Rs0z2Cj9t;
-	Tue, 21 May 2024 09:28:58 +0800 (CST)
-Received: from kwepemd500014.china.huawei.com (unknown [7.221.188.63])
-	by mail.maildlp.com (Postfix) with ESMTPS id A27421A0188;
-	Tue, 21 May 2024 09:32:26 +0800 (CST)
-Received: from [10.67.121.2] (10.67.121.2) by kwepemd500014.china.huawei.com
- (7.221.188.63) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 21 May
- 2024 09:32:26 +0800
-Message-ID: <664BF9A9.3020206@hisilicon.com>
-Date: Tue, 21 May 2024 09:32:25 +0800
-From: Wei Xu <xuwei5@hisilicon.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:24.0) Gecko/20100101 Thunderbird/24.2.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232548814
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 01:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716255315; cv=fail; b=dRLjNiAOewtSaZ96P7ROsVlbfSYuUhUmYq8b3CW1MFtq8XEqOreZxlwmaHcLJ8j15WDqRzogfOsjZfS0HL33j90/GlWuq7NbK84JVeEMIzfBlhczT/uuyA+KAl2lLPsVvZoSPC1GExCOw+0B9/yrUZfz6mZcU2ky0hrLQqVo9kY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716255315; c=relaxed/simple;
+	bh=nZlFcpeHOA+kzymphoWKKAkH+kslGBpNMP90kfeu5x4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DJe/MVVpDieEV2orFLAoyRAlvScnVVLkoITraQyddSzDrtEvWwvMaT+xip3ZheEUbeQWE8eGf/sjZPE2Gxsxdr5mW024lTVO53lceRKP4TyYqZaCAhihFSgSAidiXLmvOCjWVtRpfXD2dKiPQJCeCZrxEwvt5q/ucgTPANj8S9g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bIqCixtd; arc=fail smtp.client-ip=40.107.100.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LnefnSw/K+tq853OR5BWjXQ1RRS0vWrRWN1yg5RVdQXz/dlz46M3CZlJbA8O326EhvPxcvbbatHFH/1GGsw88LMjYDKZx0aw/LVTr/s3/Yp65/82hp2VJ4Wq0ylivRvYRACLaj6VD5orPA2UiatwOhF/3O19C7YC6OL9/EJj90EjHTMOmrYBtEYVzOYuN0+gq3itaA4L8gxcs0wDKvQZzFMX7KIKN1aX3UIHZons+NQBMjaBzJ/vtT70KAdX8AnIu5fg8Q0PfFHnOsZAZJ09ZXET4YpPDORh19gwi4/cQ9mc8K9j7Mvgf4y6B/VxJtQeQ+eBTQOay/QiyJ8wk2fVDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TMIe1tkasjQPYAJ8pFqVS+FNpmlqlj2k+Hj1dhqykIU=;
+ b=Ey6VewMwbhCE4PJgYCB7fgk89qI+aXF5gypTpozqDLofWOXVqPRWH/Jzly/kn45Da19M5MNa4ct+4/qZJORGahDr2s17kOElyebBlunXooazdiymB4FsRk8WSlWh155oL1E4NMnaDSh3+7+YObinUDQeR4OAaM0hJ0d5dak3UoDjbdpXOimHhjKCjQmarzG11Ea79o0a8OgOCm6mLSDPi81yKGZ3BDJg87AI4EsOr9XPWYrANTn61PFO7R3Jo6mhn6fhc1tBuA0upmdfRcMx2mhQ7AsB1btFGeNdqzdjGqf8x2PFHLyd6XS0gNwN44tKZLpt1rn9DY2fK1MXbOkTuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TMIe1tkasjQPYAJ8pFqVS+FNpmlqlj2k+Hj1dhqykIU=;
+ b=bIqCixtdAdZFhmevGDf3OvyssLeflM50o38szhrJNE9b4StHOEk5+k1ZiPJuFxZ/jhPBnxVL8z2mLyOoKS7bPBXXTNx+Hble8rUmBLCtby5uf7qUXJkIa9nm2MmukWp1sM9kyGK7fu7EElMwwzXFARgYrJa9ObAfcyCdp+2bLp8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by DS7PR12MB6069.namprd12.prod.outlook.com (2603:10b6:8:9f::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Tue, 21 May
+ 2024 01:35:10 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7587.035; Tue, 21 May 2024
+ 01:35:10 +0000
+Message-ID: <fa885eca-d7e6-415a-8a08-9103b002c6bb@amd.com>
+Date: Mon, 20 May 2024 20:35:06 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amd/display: Add pixel encoding info to debugfs
+To: Rino Andre Johnsen <rinoandrejohnsen@gmail.com>, alexander.deucher@amd.com
+Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Aurabindo Pillai
+ <aurabindo.pillai@amd.com>, Hamza Mahfooz <hamza.mahfooz@amd.com>,
+ Wayne Lin <wayne.lin@amd.com>, Hersen Wu <hersenxs.wu@amd.com>,
+ Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+ Fangzhi Zuo <jerry.zuo@amd.com>, Tom Chung <chiahsuan.chung@amd.com>,
+ Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20240520210817.9943-1-rinoandrejohnsen@gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20240520210817.9943-1-rinoandrejohnsen@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DS7PR03CA0169.namprd03.prod.outlook.com
+ (2603:10b6:5:3b2::24) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-To: Conor Dooley <conor@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Carvalho Chehab
-	<mchehab+huawei@kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH 1/2] dt-bindings: soc: hisilicon: document hi3660-usb3-otg-bc
-References: <20240518204443.122586-1-krzysztof.kozlowski@linaro.org> <20240520-bronzing-crumpet-c7b54753d2f1@spud>
-In-Reply-To: <20240520-bronzing-crumpet-c7b54753d2f1@spud>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd500014.china.huawei.com (7.221.188.63)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DS7PR12MB6069:EE_
+X-MS-Office365-Filtering-Correlation-Id: 414dadd2-9f49-4fb4-d133-08dc793640a5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?K3paQkNXOGJtdTgrZkJVaGZXazRmeWZGNTJOWkdDKzk2cWJXNnhmU3dEanNw?=
+ =?utf-8?B?bnY5M2VDREE4Vk0yZUpUdk1nS1JZUzJ6ZCtVbm5EWkVvYVNxMEJXQUF2cXVY?=
+ =?utf-8?B?MWlmcXV3aXBLenp4OCtNajQ5QTE3V3JlYzJEY240dGllYXp3aS8vOGw3S3Vk?=
+ =?utf-8?B?Nk9SMVZxcVpQc0F6U2NuaGlHWkNQcTFQWlc1eVBJRlNhWSswTWxhOW1MY3Zo?=
+ =?utf-8?B?K29XRUhwWVM4KzRaOHIxUGZUby9acXJlVHVZd2hsQWdtV2NxeCtSOUJ0cDlS?=
+ =?utf-8?B?ZjFNSlduamVkVVI1SjFmSDkySVN6dGRDTXdvWndwT29oRHBuWWMvMDlMLzQv?=
+ =?utf-8?B?bzNVZkowWncrZkVlaTNEUVY3OWlFWFU3VmZWYnRsQTVoWnZ5eVYxTlpiWm1m?=
+ =?utf-8?B?TFBLU1BTbXJkdUE3RnpPbC9lK1laUlpKZVpJdmtSNjg3bXp4TWloMks4d2x0?=
+ =?utf-8?B?QkhBdk1HNVE3dGpMSWM2cEkrdS81SWNBbkxOZ1REcU5uM0JVa3VwYjgzTVJK?=
+ =?utf-8?B?R2xOazIrNlI5cXY5amgrMGlFZk1HMlpSc3M0andadnF4NS9nQW5WV05hekdu?=
+ =?utf-8?B?b1JmS01MakNZY0hHeURwYXRhQ0c4d3piS2dabnNpNUszVTFMV1hQcFpSN1Vx?=
+ =?utf-8?B?TFBZSTBpRUpSYk5JaGpOZUllUU5mQzVpTnNpc2lHTG5hZWdUdllSbGhsekU5?=
+ =?utf-8?B?cEZsZHVJOTJvbmFLK2s5YTg4UTc3dlhTTC93WnZzdWxSU2s3czZoU1FZcVMv?=
+ =?utf-8?B?V0RLd1lHaVFxZ2g3Q2ZqcEs2QVl2VlNHaVlBdEZZM2xGeUVtY3BQTGc4cUs5?=
+ =?utf-8?B?OEg2MzJDWjRhTzdJS0ZZNE1aV3JCYjBIY3RENFZDSUxxT1czM0o4dnpuZjFZ?=
+ =?utf-8?B?K3d5bkdTZE9TU2JDOE9jZ1NJQTY4MnZFV2t1L1YyRXdPd0xCWUlGYTRVZlJV?=
+ =?utf-8?B?Y0xackxsVEg2Z1c1bm9EL2JjUUlFa1JUUEIzUStDbGthY0hQc1A5TGtoU296?=
+ =?utf-8?B?TjRFZkJiYUt3S01hWGhMQ2xvSEUvMFBvR2NFbkpwZnBsZkQyTnRlb01mRGJt?=
+ =?utf-8?B?dHRTRXNZeDBwN2l2ZHpkVlpEbEZ4SGJkQlF2WWwzZzZNZVZQMHROM0E5UnBo?=
+ =?utf-8?B?M0pDMHB0TFhaeFphTmMxL0c3ZUFPWmcxVzVHb1VVcVZNak5sVnhRaFRpRWcw?=
+ =?utf-8?B?L25ScC92cnE0OTNQalArUmVreE0zRHdkZWtaMkNNcW1NaHlwUWxWcnh6NTM3?=
+ =?utf-8?B?QUNUdENXQjVEeGdhdElENU1yb1dta3crbldTR29HODlLbis2UTlPcWVHVDZN?=
+ =?utf-8?B?aXU0ZXpFMXNkd0o0dGljakVOS1pSdk83VE5ObS9qR3Z4RnBpUUlHQXlNbk5y?=
+ =?utf-8?B?YWpRWU5CWXBsZVJ4Y0ZFblIrTkpBb0pONnQvZUh6MVFXS3Q2dDUydElzNjBP?=
+ =?utf-8?B?ZWdpbmRXcDlwSWRiNFErZ1VZTzF0TVdKZzJmTG5FTHNrRHpOKytZb2pBNm9C?=
+ =?utf-8?B?MDJ3Q1oyNitSaStGWmxsNU1PVy9VS2ZybVZ3dVBkaXlJYW5DNCtIUkx6TmNn?=
+ =?utf-8?B?OUxxbWk1MTJtSWxuUHF4TU0wc0Jidk1qNElweDg2S2xEU29SVE9KalR6WWMy?=
+ =?utf-8?B?bFlpS09GNEkyRllDR25pRHByUDhCWEYyN0hISEI1SHhaYUdKbDYvbXRmeDkx?=
+ =?utf-8?B?VVFVMCsrTWVjbW1wUVVWOXRRM1ozcEl4WUNybkZhOUcxSko2MFlvVmlnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TzZXcWJOSmNYd3FsTEdrRWRQTXJMcGtTdmpXYVU2N2JpdmNmT2JqQ3ZSQUVh?=
+ =?utf-8?B?eWxlM29RU3R1YU1tQUwxdVYrK0VtQlZuaUdlNGpmL0VCbWtQZHdhRzJCT3FD?=
+ =?utf-8?B?dWp3WlFFZUVqNXdXUlJISHB0ejI5TWN2bjVvWk00elZpN0xuVm44TEkwTXpQ?=
+ =?utf-8?B?ZWZpRVkyZ2lzN2JFU3c5enlKT04wL3FLNjdFY3lhcThjVDRSTzhOV0dvc3lF?=
+ =?utf-8?B?UXd2dHBEc25QQnI0NjBBelA1Uk9BSDFOUExUR0dJV2JqTjNTdTFBcnFiT1Jn?=
+ =?utf-8?B?ZDhyUjJQWk8yNTBOWDB0OVVxcHRyeTE0L096L1ZKNXY3RzRhZU1hM0RYK2xB?=
+ =?utf-8?B?V016WVlKN1loTkJyRjJ1NVBLTERobTFZV0dmWjUxSWFvRVBWZE5ZOXlNSXdG?=
+ =?utf-8?B?WXptajcrbEtCU0I3Rlp4aXp6aC9SdC8vVEE4SWtvN0U4ckwyemVnQWliK3JQ?=
+ =?utf-8?B?b04xRGZ0TklKd3ZsMDRDZ0lSWDllY1p1c0RMcUd0SlNjLzQxVVlQenVsczcr?=
+ =?utf-8?B?QWt2VzVucEVOTW5uemNEN3BucWs3VjQ2UVdoSW83NUJwL1E2WDZ1L203SUI2?=
+ =?utf-8?B?MnZkZ280eWY0YkNPazduQzR3Ly92dHo2S3hnTC82cXdiMFFaalNDeFh0WElq?=
+ =?utf-8?B?QXFrT3dyRGc1MXlZSnl2Ymh5Sk9LQ1BaRWFOTUNJRE0zbDdRaXBqc3BXbC9Z?=
+ =?utf-8?B?dTBoWTdpRENQRkJBOUhjb1NWcGM2RW9Eb1F3OTRmaHVrQWJ1SDRrSDN5SHAx?=
+ =?utf-8?B?c2FkcENTUUF0OUswVG5pSnpiL3R0bWQ1QmN2Zlhua1hzWC9ONFlHOHJNUm5J?=
+ =?utf-8?B?K1VFZXJsaXFleGVieERJSlVlRDNMR0NJSG8zeU5wZWZSRUoxWEJwSk5LbWVQ?=
+ =?utf-8?B?dTdDU2tjVUx1YzNJWkp2dVk5Mm9wSHEvb1UyYk12YmZUOHZjcytMNElIS1Vv?=
+ =?utf-8?B?a0MxSlRoMWY2Tm1yTFlma3lXeFBmcitia08zUkZwcEhJLzQ1eTRSalZOTkRR?=
+ =?utf-8?B?ZzJxcTVpNHNJV0EyVWZzQVFJVXNFbVV0b3VMTUhaRnFiK2VRc2hLVE5UcW40?=
+ =?utf-8?B?SHBsdXd4a1JtYTkzTkx0d2FWc1NqenRwRGxJRzlwWUZpalhXSVpaa0ovODRi?=
+ =?utf-8?B?V0d2b20vY3pXV0RuRGJHSEVKbmx0NTBUNmNoRTVqekNjNDM3cVAwYmRDYVBB?=
+ =?utf-8?B?SHBZTVYzVjZyTFN4NUt5TC9qNTNsYzNvVTNNUjR2WnowQmpEcjJ1bm1PWHpJ?=
+ =?utf-8?B?c0w2d3JxcnEzYStuN1kzSE82Q3g4Ym1GLzVaQ2NIUXpNdmlEN1lKQ0lIMWN6?=
+ =?utf-8?B?T3FCNllkTUdjc2crSUJxcGkwUU52ZHZ1MzBOVk1pZ3N1MGlTOWhUVkg2blMz?=
+ =?utf-8?B?NkhFcVEzeWRNb0puYmhBRmlyUFAvL01abnlXK1Nzbnpmb1RJRU1WUzNQSGti?=
+ =?utf-8?B?akhLN0ljMjNSVU95NFo1U3Z2MEZMWUJ2bEQzZzhJYTF4Z1N3QTJNUzVMc2Nz?=
+ =?utf-8?B?Z0FlQmtoZzRZM1lDUldoL202eDVEWDhGL3IvclZRWFVmRTBuRUZJR0wxSXBF?=
+ =?utf-8?B?T0J5VXUrZzBxWk9Md1pPRHlUUm9zaHdlUjNMLzQ4NnJWZEpkaWNQU3V4aWNx?=
+ =?utf-8?B?cEhKMG9lVHE2cEc4SXFYNzREVWJVVzk2c09zRUNRSVNZN0FSNWFvZUdvMFIr?=
+ =?utf-8?B?QkNPV0NPQVhqVmxzVndBcUQvNDVuRkhaOVF6ZXNYbzBoenF1KzlDalR4UHhD?=
+ =?utf-8?B?ZmttMjFMRDh4UzVSK1U2U3dyc0dWcHJJQUtsUDgveU53WTFJeW1lUmp1dDdR?=
+ =?utf-8?B?bkxyeG1nZHI0Z2dLR1NvcWtHY1dWVnVURVlLYWgvTjVveHQ3d083RUJEUk1S?=
+ =?utf-8?B?R0F2Rk5CcnIwaE9INGIvQWFXaERRd3VQNVpGQXZ2YUtsRFJPMXkzSHhoYlFS?=
+ =?utf-8?B?L1ZsUkNnT2pva1o0OEN2SE94NFdPQjZnSERHZm5PSlhEaDlxZ1k0c29ZSE96?=
+ =?utf-8?B?L0MzWWNabDBzdE9OTWl2ZWJINHM5dmNwLzhkRlJyZXYrVmxvZnhGMTM0V25r?=
+ =?utf-8?B?M1J1dHJoMEJXNXNwM2tzbngvOCt0c3BuUUxOMGRuaU5uYWlCOGhHeE92U2lB?=
+ =?utf-8?Q?KxV+yDNU2SQE6KjoyK5toy9ZS?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 414dadd2-9f49-4fb4-d133-08dc793640a5
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 01:35:10.1101
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0kJy8j+7pAWbBpp9Ftk4QOjHy1U4qjkLShaYu5goIQGESGdYIDEV8wCoX9v3QY+9VATxll1VrM9mF6IQJTIwSg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6069
 
-Hi Conor,
-
-On 2024/5/21 1:10, Conor Dooley wrote:
-> On Sat, May 18, 2024 at 10:44:42PM +0200, Krzysztof Kozlowski wrote:
->> Add dedicated bindings for the Hisilicon Kirin 960 USB OTG Syscon,
->> to fully document the block and also fix dtbs_check warning:
->  
->>   hi3660-hikey960.dtb: usb3_otg_bc@ff200000: compatible: ['syscon', 'simple-mfd'] is too short
+On 5/20/2024 16:07, Rino Andre Johnsen wrote:
+> [Why]
+> For debugging and testing purposes.
 > 
->> +title: Hisilicon Kirin 960 USB OTG Syscon
->> +      - const: hisilicon,hi3660-usb3-otg-bc
+> [How]
+> Create amdgpu_current_pixelencoding debugfs entry.
+> Usage: cat /sys/kernel/debug/dri/1/crtc-0/amdgpu_current_pixelencoding
 > 
-> I know you got it from the node name, what does "bc" mean here?
-
-I think it might be the USB Battery Charging Specification.
-
-Best Regards,
-Wei
-
-> Otherwise,
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Rino Andre Johnsen <rinoandrejohnsen@gmail.com>
+> ---
+>   .../amd/display/amdgpu_dm/amdgpu_dm_debugfs.c | 47 +++++++++++++++++++
+>   1 file changed, 47 insertions(+)
 > 
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+> index 27d5c6077630..d275e5522335 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
+> @@ -1160,6 +1160,51 @@ static int amdgpu_current_colorspace_show(struct seq_file *m, void *data)
+>   }
+>   DEFINE_SHOW_ATTRIBUTE(amdgpu_current_colorspace);
+>   
+> +/*
+> + * Returns the current pixelencoding for the crtc.
+> + * Example usage: cat /sys/kernel/debug/dri/0/crtc-0/amdgpu_current_pixelencoding
+> + */
+> +static int amdgpu_current_pixelencoding_show(struct seq_file *m, void *data)
+> +{
+> +	struct drm_crtc *crtc = m->private;
+> +	struct drm_device *dev = crtc->dev;
+> +	struct dm_crtc_state *dm_crtc_state = NULL;
+
+There is no need to initialize dm_crtc_state to NULL.  You set it before 
+its first use.
+
+> +	int res = -ENODEV;
+> +
+> +	mutex_lock(&dev->mode_config.mutex);
+> +	drm_modeset_lock(&crtc->mutex, NULL);
+> +	if (crtc->state == NULL)
+> +		goto unlock;
+> +
+> +	dm_crtc_state = to_dm_crtc_state(crtc->state);
+> +	if (dm_crtc_state->stream == NULL)
+> +		goto unlock;
+> +
+> +	switch (dm_crtc_state->stream->timing.pixel_encoding) {
+> +	case PIXEL_ENCODING_RGB:
+> +		seq_puts(m, "RGB");
+> +		break;
+> +	case PIXEL_ENCODING_YCBCR422:
+> +		seq_puts(m, "YCBCR422");
+> +		break;
+> +	case PIXEL_ENCODING_YCBCR444:
+> +		seq_puts(m, "YCBCR444");
+> +		break;
+> +	case PIXEL_ENCODING_YCBCR420:
+> +		seq_puts(m, "YCBCR420");
+> +		break;
+> +	default:
+> +		goto unlock;
+> +	}
+> +	res = 0;
+> +
+> +unlock:
+> +	drm_modeset_unlock(&crtc->mutex);
+> +	mutex_unlock(&dev->mode_config.mutex);
+> +
+> +	return res;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(amdgpu_current_pixelencoding);
+>   
+>   /*
+>    * Example usage:
+> @@ -3688,6 +3733,8 @@ void crtc_debugfs_init(struct drm_crtc *crtc)
+>   			    crtc, &amdgpu_current_bpc_fops);
+>   	debugfs_create_file("amdgpu_current_colorspace", 0644, crtc->debugfs_entry,
+>   			    crtc, &amdgpu_current_colorspace_fops);
+> +	debugfs_create_file("amdgpu_current_pixelencoding", 0644, crtc->debugfs_entry,
+> +			    crtc, &amdgpu_current_pixelencoding_fops);
+>   }
+>   
+>   /*
+
 
