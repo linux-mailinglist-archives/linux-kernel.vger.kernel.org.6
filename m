@@ -1,109 +1,191 @@
-Return-Path: <linux-kernel+bounces-184583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97DC28CA929
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:42:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961C38CA92B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 346C91F2208E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:42:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8D081C217C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7588A54277;
-	Tue, 21 May 2024 07:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F4B524D6;
+	Tue, 21 May 2024 07:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G76J0h5B"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NPrvlaAW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826CA53E3D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374C251C49
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716277301; cv=none; b=Buj+VKGdxRinDeoYTdbcZ6aPv7Ir6z3UjjsJ8VIVyIe7j5vkB09tdvcNd/kljadft5CX4eBCDEZLwge2FfaxSo5Bzl58n/1gr2ZTzNjA4GnbSRODUHpIKvILkAYmtWCEb06Vo+QnreIC0sBIb8vwQ8WCPJy4bE9bTfLkr5ZRBW8=
+	t=1716277310; cv=none; b=SKb1XHLJWIEHu9lCrUAk1fNsWYILjD94ilo2Y3o58xnupdhP0+q+umCgEu/51am6gnknFxORHTMokCOXGQ4WEn5WdWzC9ZTcyRb8p7RvYQXl+sIPrp4u9gv+COT1oywgUEkz4yMl3YSdBtaFv1nlS1/4/wpwz2mOA11QDsAARKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716277301; c=relaxed/simple;
-	bh=mjtELKkUwfrpNggY/xDLDUgrykHboLmzHpj/LSUmYww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NKwWrSmKAooLCvtveaJQtKokT5Roh8gmNZU0eIXh2fUmCnYaBeYSkpunyFuxRyNp/Di9qMmZuR1EEhf1ffX0h9CjmgIccImCmWAw36zCVyPK/pPvNt/16tVHhFI+SibQM8t0Vg470xJUv5DxdSOIeHPe5ETmF3degiSrHjNl/x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G76J0h5B; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1ed012c1afbso28418175ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 00:41:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716277300; x=1716882100; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RTurDbUPbvkS6PUjuhL+IuKT0RxpYi0vhPM0kCjr1C0=;
-        b=G76J0h5BGRX9xvU3gGzDJtFCSoXpLf5MgNTMrQ+9y2T5CQiWAmAJnvRA99FoUsCV76
-         hH+Fpz110gU9ns7DT9De/f6ga1ZB4ERuZcb201e+NxQH75x8/S41P+uIFAKK+su1mSZ5
-         R8P9F5uRpuD65fyJJaej1qN3I4qfBpz63JcUt0DJPpUqwGgHNwlNpIH1vcB4JOMwwXZB
-         uh4f2V+LF7F8D2HZQKXwohuliRAL6XFWJlZptsZmTIeJDjJR4pnpo/GAFcQL+qa+F7VN
-         yKO2O+zd+Wz03SwAWE2VNM76lmiJVrQ9E4cBK/mgI4PnrsmZSG5Xh28B9rwn2ec12RiO
-         E8fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716277300; x=1716882100;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RTurDbUPbvkS6PUjuhL+IuKT0RxpYi0vhPM0kCjr1C0=;
-        b=dD+gRKYZE55ZTjMQwWMrzYj+iGh6MHdGSRgQKSwL3VGp7Jv85PxhoDBaCtlpvecuns
-         wFjZOrklwZufzkaUKcnXssCHBGIbwgm7JYydOEmOKzjFrmbifwtZ/iWaW2Hgixcpc0/R
-         AXW2bHuHVYIYmh7saDBPW5jXIysY9OhjGnP64Mv74Kh6fGNP1nqFTs2bDtfvzR/Lho3h
-         txL6EjmHESWggAU5LTFO2x9VPT3duxs8CXUT/3ZRn8huorxEtP9Iv3P8jGf6PIfa31F9
-         rkF5PDp/jV+3xjOQJvsgw8Dxb1nI6No/DmTAIApAEj+Oc9llAo24bc6pAksPjBOcl0Pl
-         z+nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUN51qGuKPtF7KIR5/ig8/JuDAEagtVslssr5NPxMNhtdZruDepCAIs9+hrwRsPiuAR5dW4CBvmPV8f6VWTtVpu9yMdAYp74ki9EJLL
-X-Gm-Message-State: AOJu0YzGB6NRIlg9q99g4fBOnGx8z4OnbI9+c7nANPjP7eTort80mS7v
-	Z4Sv1jBS01l6ltpU2ngnSyYqfqehwc6mZFut5PwgCJwz4PYwVdSutAL2SESsHw4=
-X-Google-Smtp-Source: AGHT+IF44Xi0aDyYujmDzZKwTTyNDVJcAd8OezFjpsoezFltxjzyFbaz9O76NbyQkXwu4OlPguIFRQ==
-X-Received: by 2002:a17:902:ce8e:b0:1f3:81c:c17 with SMTP id d9443c01a7336-1f3081c5fc2mr48526185ad.23.1716277299740;
-        Tue, 21 May 2024 00:41:39 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c137fc2sm215397955ad.258.2024.05.21.00.41.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 00:41:39 -0700 (PDT)
-Date: Tue, 21 May 2024 13:11:37 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: David Dai <davidai@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Quentin Perret <qperret@google.com>,
-	Masami Hiramatsu <mhiramat@google.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Pavan Kondeti <quic_pkondeti@quicinc.com>,
-	Gupta Pankaj <pankaj.gupta@amd.com>, Mel Gorman <mgorman@suse.de>,
-	kernel-team@android.com, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/2] Improve VM CPUfreq and task placement behavior
-Message-ID: <20240521074137.eip3jcnu6yhryrgq@vireshk-i7>
-References: <20240521043102.2786284-1-davidai@google.com>
+	s=arc-20240116; t=1716277310; c=relaxed/simple;
+	bh=fFHb4IvKsJ/FJ57OiQUokeqzIuDvktQiCaQrNEdks/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Gj6YeAV3sKNde3HonZOokra2JTnKFp6Fay2h6hHa4KdPFtaSVWH3kbXbYxoMfVA+nRPGe4EQW+hIFoa/GGfTwIJIgeJlrOiaDevfj8n+imeMXv7xhOv4Eub8aNY/BjMACNh0ib3VPVefgAUYzL9QjVKt3XUQnqGhRdf6VfG6TN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NPrvlaAW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C9AC2BD11;
+	Tue, 21 May 2024 07:41:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716277309;
+	bh=fFHb4IvKsJ/FJ57OiQUokeqzIuDvktQiCaQrNEdks/k=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NPrvlaAWBZ+8J4vSsNvNqOnKrYlbQbbqe0BKziBQuLD3LxBjeJ4tlMNam6omPGd5d
+	 pw77rQfMsCaL+c1uKxGz0kIupmmnQ1ObCqfzQhAAtBcmyQgyJtPvIw45/ZBphAoxlb
+	 olaOjJxHq+wbzsgPGTbycJEDSQs2bKtY0XlAw45Q3a16XR1CPkh4BqPhfg9/2bEhvI
+	 CHXaplEmxJnG5wVeJ9tWPyg4Lz3ftojee13kqOIuqnqRBb4Gkb06Fnq0QrMg0UrlQ6
+	 btRDaPRE2wOYkdn/V4XuHl5XkTzwvPLK55rUSHdClMooado3cZ/pkyFMfQObxzjABr
+	 KNn3bSwnlSyRg==
+Date: Tue, 21 May 2024 13:11:45 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: soundwire updates for v6.10
+Message-ID: <ZkxQObZQUTGealkZ@matsya>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="bwx0dWf4wvOwxB+n"
 Content-Disposition: inline
-In-Reply-To: <20240521043102.2786284-1-davidai@google.com>
 
-On 20-05-24, 21:30, David Dai wrote:
-> v5 -> v6:
-> -Updated driver to use .target instead of .target_index
 
-May have missed the discussion, but why is this done ?
+--bwx0dWf4wvOwxB+n
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-viresh
+Hi again,
+
+This is last pull request for today. Please pull to receive soundwire
+subsystem updates features Greg's sysfs group cleanup, Intel ace2x and pm
+improvements and qcom multi link device support.
+
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/so=
+undwire-6.10-rc1
+
+for you to fetch changes up to a0df7e04eab07cb2c08517209f792a8070504f0d:
+
+  soundwire: intel_ace2.x: add support for DOAISE property (2024-05-04 18:2=
+6:50 +0530)
+
+----------------------------------------------------------------
+soundwire updates for 6.10
+
+ - cleanup and conversion for soundwire sysfs groups
+ - intel support for ace2x bits, auxdevice pm improvements
+ - qcom multi link device support
+
+----------------------------------------------------------------
+Bard Liao (3):
+      soundwire: intel_auxdevice: use pm_runtime_resume() instead of pm_req=
+uest_resume()
+      soundwire: intel: export intel_resume_child_device
+      soundwire: intel_init: resume all devices on exit.
+
+Greg Kroah-Hartman (5):
+      soundwire: sysfs: move sdw_slave_dev_attr_group into the existing lis=
+t of groups
+      soundwire: sysfs: cleanup the logic for creating the dp0 sysfs attrib=
+utes
+      soundwire: sysfs: have the driver core handle the creation of the dev=
+ice groups
+      soundwire: sysfs: remove sdw_slave_sysfs_init()
+      soundwire: sysfs: remove unneeded ATTRIBUTE_GROUPS() comments
+
+Krzysztof Kozlowski (1):
+      soundwire: qcom: allow multi-link on newer devices
+
+Pierre-Louis Bossart (21):
+      soundwire: bus: don't clear SDCA_CASCADE bit
+      soundwire: cadence: fix invalid PDI offset
+      soundwire: cadence: remove PDI offset completely
+      soundwire: remove unused sdw_bus_conf structure
+      soundwire: clarify maximum allowed address
+      soundwire: cadence: show the bus frequency and frame shape
+      soundwire: bus: extend base clock checks to 96 MHz
+      soundwire: intel: add more values for SYNCPRD
+      soundwire: intel: add support for MeteorLake additional clocks
+      soundwire: intel_ace2x: move and extend clock selection
+      soundwire: intel_ace2.x: power-up first before setting SYNCPRD
+      soundwire: intel_ace2x: set the clock source
+      soundwire: reconcile dp0_prop and dpn_prop
+      soundwire: intel_ace2x: use legacy formula for intel_alh_id
+      ASoC: SOF: Intel: hda: disable SoundWire interrupt later
+      soundwire: intel_ace2x: fix wakeup handling
+      soundwire: intel_ace2x: simplify check_wake()
+      soundwire: intel_ace2x: cleanup DOAIS/DODS settings
+      soundwire: intel_ace2x: use DOAIS and DODS settings from firmware
+      soundwire: intel_ace2.x: add support for DODSE property
+      soundwire: intel_ace2.x: add support for DOAISE property
+
+Ranjani Sridharan (1):
+      soundwire: intel: add intel_free_stream() back
+
+Uwe Kleine-K=F6nig (1):
+      soundwire: qcom: Convert to platform remove callback returning void
+
+Vijendar Mukunda (1):
+      soundwire: amd: use inline function for register update
+
+ drivers/soundwire/amd_init.c            |  36 +++++-----
+ drivers/soundwire/amd_init.h            |   8 +++
+ drivers/soundwire/amd_manager.c         |  13 ++--
+ drivers/soundwire/bus.c                 |  14 ++--
+ drivers/soundwire/bus_type.c            |   5 +-
+ drivers/soundwire/cadence_master.c      |  36 ++++------
+ drivers/soundwire/intel.c               |  68 ++++++++++++++++--
+ drivers/soundwire/intel.h               |   7 ++
+ drivers/soundwire/intel_ace2x.c         | 119 +++++++++++++++++++++++-----=
+----
+ drivers/soundwire/intel_auxdevice.c     |  41 +++++++++--
+ drivers/soundwire/intel_auxdevice.h     |   1 +
+ drivers/soundwire/intel_init.c          |  14 ++++
+ drivers/soundwire/qcom.c                |  28 ++++++--
+ drivers/soundwire/sysfs_local.h         |   4 +-
+ drivers/soundwire/sysfs_slave.c         |  66 +++++++++---------
+ drivers/soundwire/sysfs_slave_dpn.c     |   3 +
+ include/linux/soundwire/sdw.h           |  19 ++---
+ include/linux/soundwire/sdw_intel.h     |  11 ++-
+ include/linux/soundwire/sdw_registers.h |   2 +-
+ sound/soc/sof/intel/hda.c               |   4 +-
+ 20 files changed, 338 insertions(+), 161 deletions(-)
+
+--=20
+~Vinod
+
+--bwx0dWf4wvOwxB+n
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmZMUDkACgkQfBQHDyUj
+g0dHfw/+OqCuwNkLnrCaFx2DuaNzV+5HoWl9t8wgbzXxvYzklyCvXWlFlWGV5+LZ
+EFghhNlBEKUATbK4xkH8p1SGbByeF2PKjXd2P7Uu60wZ2Rd6ix1gKfZZXmK349/p
+AKTitMatekUiKVDd1KIBoPGUIn9PIRblYJK9oGb4iD+c/FE/p+koSCrmEcWczZS+
+9HCJSARKF6E/g/QWGxsyo06DxLAMI+p4Hbjiy+KbWmTpisSvP8QB7f8/FIAk43qC
+gO3rDpA3dEH62BsU9kM+dclD8Rxf0CI8HbTs3NXQduHK9AIQTtIf1JzlRsBUZtGq
+gBjkSWF55Vii5uyMPQJ/NPBzaUw0Ybkz+djHbevCqcf/P9Bde69NlQc2tMpwpzyC
+0C1IkcOLmn+mpGwJyKindjugKnfogclAnZby/LSdReE/pxh/UiY2ieAKQjo/hzDU
+WZxFhWDla1b2FaDTSSyi6S/lioHdbIBxh+cMQUYpUlsxL+KK7g2c59HBKtGQ9bSp
+WmE3eddh8REAegFr/Ic6g9auWBcqi8SWoryvOCSqc8jcwhpsGpeHS7ZkdjRnNWpy
+LJYHLJ+2+UcuJC/2SlTuC3roWI2m7yWRv2LUipIUnGI5YmDNnQfdk/QAw+od8chc
+Za/MGg8kgOErrOYiWEssRJ/aZnGidO7b/jXRN/hjVsCjWmb1fZs=
+=OaIO
+-----END PGP SIGNATURE-----
+
+--bwx0dWf4wvOwxB+n--
 
