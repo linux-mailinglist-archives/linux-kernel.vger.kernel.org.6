@@ -1,162 +1,147 @@
-Return-Path: <linux-kernel+bounces-184571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A1C48CA8F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:33:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C228CA8F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 278DCB2288C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248D71C20E38
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3821A54277;
-	Tue, 21 May 2024 07:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F3051C46;
+	Tue, 21 May 2024 07:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Degd8G0m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDZQ5awV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFD553E0A
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF18D50293;
+	Tue, 21 May 2024 07:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716276797; cv=none; b=hKMlx0FTGQLoqIWWDHwAKZ4X/yjdl377gdbsoRWgMPJcXqXQm+SD2BMliQLv1UjSz6ULSQuzDl2wu6P+cz2OswcujaDd6rrii6VQqESW0ek14f0Zgvsf5BuOQr2LAO81kRQgiA4zYaPJ8l0ZsslY51C/IAx0FHkmOqqHd99hYIA=
+	t=1716276777; cv=none; b=I5sDGMUskdDthuzsM7sE7FYyogd98RtMKAsbpte9ou3ZicrJbCWnDtDk0/kUumw2oLsRawqyUbJdm5SqskR3YZoleYb5ltZPwLMBbirZrEhD2IfQ22vmF3TeXgv8aVZzBxHYbY1vAluOnZBVBoPOUDAM4m6ilb2lkoXC7b9WHPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716276797; c=relaxed/simple;
-	bh=DvwhrxxsccQSrw9QTfMS9cC8aa8Ng49TDT7sFzlr740=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+SgCjDUzo40xwyRQJPgfC6l/0ehA7nj4A77JS5Yu/g1iIgODWdJj/WXjS9lYOgB2QyL0JaFaBg95Fr0CjFbM3UUD0keIYDf9uejfV+BtgqUyqDuIlkGciU7fPOjvEqCmq2XwD6vkOnEk5h10rmV+81HmPd2aXZ6f/XRcmIrnLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Degd8G0m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996B0C4AF07;
-	Tue, 21 May 2024 07:33:14 +0000 (UTC)
+	s=arc-20240116; t=1716276777; c=relaxed/simple;
+	bh=CowBC+IWvKhvHnany9BQK3hu1JMh8smw8qL7iP9OtkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ooh4JsOWeIx0P0LHgjxoLmUKQKxyhv4vSkhGbqKi//wDD2k0/9ThJKT27GNQaeAl4x+Y1ttLSnd4hiz73iBJJA5bI6BN0b7rU51JeY6td2wl3r+F88ezJ3Kmht5upS3lUjLSaffKoHjTcLyW8f5cyyqTuBDn+lkOW1XBKGiH1lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDZQ5awV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC143C2BD11;
+	Tue, 21 May 2024 07:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716276797;
-	bh=DvwhrxxsccQSrw9QTfMS9cC8aa8Ng49TDT7sFzlr740=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Degd8G0mcC24obZPCioMA8GZLLkhmrbvq97vKhDminCEXOieMRtSfj16TjW1afYlu
-	 JeTfVFrYSgrfjhFw220IL/rvqfUbvGQts5I0aO6/hFOJ+vNhKT4aR4t9e6SvweYZms
-	 oZFmWsxKcB0LWLo2Zs9SdI1fAsBf6gAzSfE4hr2mDhNJVzHbzs1EL1p5oicA1hdfGg
-	 BCLD+XzW7sUumjHEQ6STLt4n7XXY6mChMkapkkGETW40yvV9WEUj8+z9cvHCYSrXSz
-	 iLRvo/R3UleCpZ14PLwqlumuhWfKzqpebWuQGZO+IIy+9rvbSRS+8Yvy4LDdp8LF1I
-	 1lyDUZaXn42iw==
-Date: Tue, 21 May 2024 10:31:31 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Jaewon Kim <jaewon31.kim@samsung.com>
-Cc: "vbabka@suse.cz" <vbabka@suse.cz>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jaewon31.kim@gmail.com" <jaewon31.kim@gmail.com>,
-	"tkjos@google.com" <tkjos@google.com>
-Subject: Re: [RESEND PATCH 00/10] memblock: introduce memsize showing
- reserved memory
-Message-ID: <ZkxN0yQ7Fb0X26hT@kernel.org>
-References: <20240521023957.2587005-1-jaewon31.kim@samsung.com>
- <CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcms1p6>
- <20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
+	s=k20201202; t=1716276776;
+	bh=CowBC+IWvKhvHnany9BQK3hu1JMh8smw8qL7iP9OtkU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rDZQ5awVQKHV/qVKVuy3Jt/vQ6TG5lKDzwLMVeudufRW4KjBMt/S82hQKhj/nlIEQ
+	 jvNgp3RJLwXy0nSvenvAFW66XWDAfJah2gSu6DEaCQIDK0K//zFN46/DoukitD3HuN
+	 9Q8gM/lYpuKHUUUr97mDGukj1I2ykaihq7acOnXqsCZ3ujIGV7nfWV/SsPtiJnlrYc
+	 ZbRTsdajukryxecJJnAGD6S5syM5688Z0FGLLec9IfBkHGaMnHjRRetTEthIKTCwVY
+	 J+MoD08nqT9oo9Eq9zFT3ke2JZO11O8uf5mG2UrcUC9KGxhE/jFCLJBeEU3Tt9aIR/
+	 n39lxkIPq6g4g==
+Message-ID: <98e8d8f5-1542-4ea0-9f0c-10bb0dbebe6f@kernel.org>
+Date: Tue, 21 May 2024 09:32:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/13] dt-bindings: a2b: add compatible string for
+ Beosound Shape node
+To: =?UTF-8?Q?Alvin_=C5=A0ipraga?= <ALSI@bang-olufsen.dk>
+Cc: =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alvin@pqrs.dk>,
+ Mark Brown <broonie@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Liam Girdwood <lgirdwood@gmail.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Saravana Kannan <saravanak@google.com>,
+ Emil Abildgaard Svendsen <EMAS@bang-olufsen.dk>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
+ <20240517-a2b-v1-11-b8647554c67b@bang-olufsen.dk>
+ <2d311fd3-8d07-40df-bc91-e4df522efb99@kernel.org>
+ <3mt6nziqmdrwl34hmt7ilwy5m2x5mtraiokimn742whc5agtpv@3z2hmpc3mmeh>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <3mt6nziqmdrwl34hmt7ilwy5m2x5mtraiokimn742whc5agtpv@3z2hmpc3mmeh>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
 
-On Tue, May 21, 2024 at 11:53:29AM +0900, Jaewon Kim wrote:
-> >--------- Original Message ---------
-> >Sender : 김재원 <jaewon31.kim@samsung.com>System Performance Lab.(MX)/삼성전자
-> >Date   : 2024-05-21 11:40 (GMT+9)
-> >Title  : [RESEND PATCH 00/10] memblock: introduce memsize showing reserved memory
-> >?
-> >Some of memory regions can be reserved for a specific purpose. They are
-> >usually defined through reserved-memory in device tree. If only size
-> >without address is specified in device tree, the address of the region
-> >will be determined at boot time.
-> >
-> >We may find the address of the memory regions through booting log, but
-> >it does not show all. And it could be hard to catch the very beginning
-> >log. The memblock_dump_all shows all memblock status but it does not
-> >show region name and its information is difficult to summarize.
-> >
-> >This patch introduce a debugfs node, memblock/memsize, to see reserved
-> >memory easily.
-> >
-> >Here's an example
-> >
-> >$ cat debugfs/memblock/memsize
-> >
-> >0x0000000000000000-0x0000000000000000 0x02000000 (?  32768 KB )?  map reusable linux,cma
-> >0x0000000000000000-0x0000000000000000 0x01000000 (?  16384 KB )?  map reusable vxxxxx
-> >...
-> >0x0000000000000000-0x0000000000000000 0x004e0000 (? ? 4992 KB ) nomap unusable unknown
-> >0x0000000000000000-0x0000000000000000 0x00400000 (? ? 4096 KB ) nomap unusable cxxxxx
-> >0x0000000000000000-0x0000000000000000 0x00e00000 (?  14336 KB ) nomap unusable gxxxxx
-> >
-> >Reserved? ? : 1223856 KB
-> > .kernel? ? :? 275208 KB
-> >? .text? ?  :?  16576 KB
-> >? .rwdata?  :? ? 1963 KB
-> >? .rodata?  :?  11920 KB
-> >? .bss? ? ? :? ? 2450 KB
-> >? .memmap?  :? 186368 KB
-> >? .etc? ? ? :?  55933 KB
-> > .unusable? :? 948648 KB
-> >System? ? ? : 11359056 KB
-> > .common? ? : 10306384 KB
-> > .reusable? : 1052672 KB
-> >Total? ? ?  : 12582912 KB ( 12288.00 MB )
-> >
-> >Jaewon Kim (10):
-> >? memblock: introduce memsize showing reserved memory
-> >? memblock: detect hidden memory hole size
-> >? memblock: handle overlapped reserved memory region
-> >? memblock: take a region intersecting an unknown region
-> >? memblock: track memblock changed at early param
-> >? memblock: recognize late freed size by checking PageReserved
-> >? memblock: track kernel size on memsize
-> >? memblock: print memsize summary information
-> >? memblock: print kernel internal size
-> >? memblock: support memsize reusable to consider as reusable
-> >
-> > drivers/of/fdt.c? ? ? ? ? ?  |? 11 +
-> > drivers/of/of_reserved_mem.c |? 12 +-
-> > include/linux/memblock.h? ?  |? 29 ++
-> > init/main.c? ? ? ? ? ? ? ? ? |? 13 +-
-> > kernel/dma/contiguous.c? ? ? |?  9 +-
-> > mm/Kconfig? ? ? ? ? ? ? ? ?  |? 16 ++
-> > mm/memblock.c? ? ? ? ? ? ? ? | 502 ++++++++++++++++++++++++++++++++++-
-> > mm/mm_init.c? ? ? ? ? ? ? ?  |?  6 +-
-> > mm/page_alloc.c? ? ? ? ? ? ? |? 10 +-
-> > 9 files changed, 597 insertions(+), 11 deletions(-)
-> >
-> >-- 
-> >2.25.1
+On 21/05/2024 09:12, Alvin Šipraga wrote:
+> On Sun, May 19, 2024 at 01:41:48PM GMT, Krzysztof Kozlowski wrote:
+>> On 17/05/2024 15:02, Alvin Šipraga wrote:
+>>> From: Alvin Šipraga <alsi@bang-olufsen.dk>
+>>>
+>>> The Beosound Shape has the same device tree bindings as an AD2425, so it
+>>> is sufficient to just add an entry to the compatible enum.
+>>
+>> ? If it has the same, then devices are compatible but your binding did
+>> not express it.
 > 
-> Hello Mike 
-> 
-> This is actually RESEND as it was introduced 2 years ago.
-> Please refer to https://lore.kernel.org/linux-mm/YkQB6Ah603yPR3qf@kernel.org/#t
-> 
-> > But you never provided details about *why* you want this information exposed.
-> 
-> For your question, I'd like to say ;
-> We can see the same format and exact information between different version of kernel status.
-> 
-> 1) Internally we can check if the reserved memory changes.
-> 2) Externally we can communicate between chipset vendors and OEM, with a same format.
+> OK, you're basically saying I should add it all in one patch?
 
-Why the existing debugfs interface is not sufficient?
- 
-> This helps us to communitcate well, to easily detect changes or just to see differences.
-> 
-> Jaewon Kim
-> 
+No, I said that your commit msg suggests they are compatible. I don't
+fully understand what you wanted to say by "same device tree bindings".
 
--- 
-Sincerely yours,
-Mike.
+But anyway, make it one patch.
+
+Best regards,
+Krzysztof
+
 
