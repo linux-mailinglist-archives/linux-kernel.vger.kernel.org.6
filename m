@@ -1,384 +1,134 @@
-Return-Path: <linux-kernel+bounces-184355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F98B8CA601
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:57:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A45B8CA607
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72C7CB2166A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 01:57:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 418471F2146F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0B5125D5;
-	Tue, 21 May 2024 01:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70738D51D;
+	Tue, 21 May 2024 02:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TuaagVfz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GTswUnPi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DECDBA53;
-	Tue, 21 May 2024 01:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8A681E
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716256629; cv=none; b=l1PxfBHegnsq5rZqSfSqFsg+zls4XUU6M107iuLfIoScahMe7lXOdzrcue8BuZdspVSu3zsuss4GYB7u7aBhtCKBzRhPBkxa8uAN19VF56X/zwXDY2TtnIlUBel2PSSckuRjkgOU18i//od/gZEqT11+iQrxdrdhtAf0A71+Igk=
+	t=1716256852; cv=none; b=IIVm/dBt+ZFOVN7VOfiHzc5bvD6XSfPNd7dEcSk6NmP+xCS0nv5o76oxv6zKeadrzrAHKyZ8p29a+/ur/0N7XDwQm33ZMvwgN1RiIZT8O7zu8Me9ySQs6L3t1fnhK2ytSKP0Ba/DHIoDfIqke40IPa6wZ3Gz6GfZmvvHE5ri8jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716256629; c=relaxed/simple;
-	bh=ITWtfA6bcNI269UC3bTvcAMOvzlYAm+IE2CMwB+SLMY=;
+	s=arc-20240116; t=1716256852; c=relaxed/simple;
+	bh=LEe8CaSmZOU+/uH6TFaHHAqDZVuU4bc8AcBiyab2VOs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OkPyTtn3geinZ7sUfXUOJCrWA8Jw4Tu66pnBtKGBe87etdDyoedh9fEZuKAaQ+eodeBahZXJbDG9fi7DqTq6KSMSX4Lasz6KEHp1o3ElORjUP8WEHaKevBMgMcCXA7Cz1cHSe1l8E/BETd6MRgS3WcWMiWfYzxN6QGa4hpi29UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TuaagVfz; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716256627; x=1747792627;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ITWtfA6bcNI269UC3bTvcAMOvzlYAm+IE2CMwB+SLMY=;
-  b=TuaagVfzjGmJi/54Jd6M2+GinpwtpCPYwYuOrm+rwc8iwcoJ4ZUU0Pny
-   LKig8O+/0aM2NHjsopjwnM/fIV8TRtE+khCzhImg30CBcAAtv8DlONZkE
-   j0lL6nA+tGvL417WWhtErxoC/lQKUngwVLsovbnIF7RrXxle69uaS0ZRh
-   cxZ5zDQ7VaXBYT3I4SN8i2R0BjayRNPy+wuGUrcYYCZD9sahXHHcD8zOc
-   2JjF3GisxM5XGWUMxYaoh08DSu2G5S3GZ/u0fmryP+oEqGRZkFBWbT0IC
-   zXdVEe3cRBT+6m0Ub/x8NfYlYDSpizJN5nExGvPSEUhicZ52gcsgS+/BB
-   w==;
-X-CSE-ConnectionGUID: mZApEOkOQFu27/UfFBJEKA==
-X-CSE-MsgGUID: 73i/Em6DR42MRYbj8uicXg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="16209459"
-X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="16209459"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 18:57:07 -0700
-X-CSE-ConnectionGUID: gkEx2B0PQjme+xutkoXRBw==
-X-CSE-MsgGUID: GreslKcMQbSzX9LpbAHzsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="32636555"
-Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 20 May 2024 18:57:02 -0700
-Received: from kbuild by 108735ec233b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s9Ek4-0005P2-1e;
-	Tue, 21 May 2024 01:56:50 +0000
-Date: Tue, 21 May 2024 09:56:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: andrey.konovalov@linux.dev, Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>,
-	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Tejun Heo <tj@kernel.org>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kcov, usb: disable interrupts in
- kcov_remote_start_usb_softirq
-Message-ID: <202405210906.RYSUrzQH-lkp@intel.com>
-References: <20240520205856.162910-1-andrey.konovalov@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/TljI7H9wZvhlOq/LwRSCBsYsg/0xV+n5KivtY7xv2w271AvPzjJdWUCQxImsjp17XoOGZSnfJjishWAO2AwxtRikCM06aZmgGA9MvL+SROuBVEWU/fd7sR5f1rwm1Oz971c+wAneFDmhq3v1ShoX5ZMJn1pvZVaHQTeWdBsP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GTswUnPi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716256849;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5UjzgLZqQ1A3A/STroNQKIAanlssx47OVX19tlPyfkk=;
+	b=GTswUnPiD0BvMqWkDscfajb6KPX+6OmmwRRvd7MRs5z3We7lP/MouP1Id49tOdMcgHVhR6
+	kqA4x2VpuIifeGqobPYNH+p0jL1uEzMirL07gsfxBbTFxAKOvTCSHgRS5/DeBYgl4c3fci
+	EftXDp8VQhr/bLiFyrDae2SNEqNt7Tg=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-648-0Vr78hk1Ml23CrnB0BzL6Q-1; Mon, 20 May 2024 22:00:48 -0400
+X-MC-Unique: 0Vr78hk1Ml23CrnB0BzL6Q-1
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-6f446a1ec59so11027934b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 19:00:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716256847; x=1716861647;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5UjzgLZqQ1A3A/STroNQKIAanlssx47OVX19tlPyfkk=;
+        b=XhjTXpMnVkt5SXeOk63cynA4Mv/2JuwfW+bjWyByB47mON+0rBcuaXZuzLQtH+PXPi
+         WzbQLwtTCDaoijKtHxxh83D5oLA9R6QbknOH0WIy59t+P65I6ARYtfQT8RBjIhDcHrrx
+         Nl3zKk5Dia/RtAi9YYSs+aQW7vzGLv2aKTegQnNAEbqw8vlrg92X4UAUzntlKejPC6jU
+         P1Krb2Q5B4VyWbh7XBGmXSW3Dz+dXvllY34rl0Pa1HjC+B+H/M5/M3jsvRjOoGBgHaL8
+         darvUOFjQedJDSN907wwiGljDeVBwtk4bZ2cRm8/RQvqJzVfircGK46s/8+8SFuHGK5b
+         PD+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUDsWjDrG5S/EsNWborODqD+QDvg5ZihaT0QAHNHCmInXW3hZPJyq6jFvcVSGlWFl3+xriB+uW5mG0lIKRmKvOW9l2JIy3+j6EESZif
+X-Gm-Message-State: AOJu0Yw9n+L0Yy1UgecX3DWJ+seqw3G2gFFGvDpBicA0fx6eNO1B65qG
+	RDGBKsxEn0v8ZVjvzBggN5+58CJupQX+jYKSdgVVmyNkrNHQ42MSuhuWBRjFNp3EzE243sdUPmT
+	GtftBNl4QMV5/beduCG6EGfU9QiYADxLAB/vc0dRbJAGQe0ZmfKRFpiYWkuYLgA==
+X-Received: by 2002:a05:6a00:c93:b0:6f3:ea4b:d235 with SMTP id d2e1a72fcca58-6f4e01b91eamr37168624b3a.0.1716256846918;
+        Mon, 20 May 2024 19:00:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGh7HhBHnJNneyIw7ihYF0Kt+meuvDu1Ef/rXN+B35MEGXdllcXI7mvKKuXqDyPl0gxaXLFSQ==
+X-Received: by 2002:a05:6a00:c93:b0:6f3:ea4b:d235 with SMTP id d2e1a72fcca58-6f4e01b91eamr37168566b3a.0.1716256846045;
+        Mon, 20 May 2024 19:00:46 -0700 (PDT)
+Received: from localhost ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-634103f67f3sm19982062a12.62.2024.05.20.19.00.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 19:00:45 -0700 (PDT)
+Date: Tue, 21 May 2024 09:58:36 +0800
+From: Coiby Xu <coxu@redhat.com>
+To: Baoquan He <bhe@redhat.com>
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>, 
+	Milan Broz <gmazyland@gmail.com>, Thomas Staudt <tstaudt@de.ibm.com>, 
+	Daniel P =?utf-8?B?LiBCZXJyYW5nw6k=?= <berrange@redhat.com>, Kairui Song <ryncsn@gmail.com>, 
+	Jan Pazdziora <jpazdziora@redhat.com>, Pingfan Liu <kernelfans@gmail.com>, 
+	Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Dave Hansen <dave.hansen@intel.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [PATCH v3 1/7] kexec_file: allow to place kexec_buf randomly
+Message-ID: <y5ogivx7qbdm6u37t5o6na4jewn6qofzrbibnsneoqlwns63y5@eg62cytuvwql>
+References: <20240425100434.198925-1-coxu@redhat.com>
+ <20240425100434.198925-2-coxu@redhat.com>
+ <ZkrqkzJlW2RZkmH9@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20240520205856.162910-1-andrey.konovalov@linux.dev>
+In-Reply-To: <ZkrqkzJlW2RZkmH9@MiWiFi-R3L-srv>
 
-Hi,
+On Mon, May 20, 2024 at 02:16:43PM +0800, Baoquan He wrote:
+>On 04/25/24 at 06:04pm, Coiby Xu wrote:
+>> Currently, kexec_buf is placed in order which means for the same
+>> machine, the info in the kexec_buf is always located at the same
+>> position each time the machine is booted. This may cause a risk for
+>> sensitive information like LUKS volume key. Now struct kexec_buf has a
+>> new field random which indicates it's supposed to be placed in a random
+>> position.
+>
+>Do you want to randomize the key's position for both kdump and kexec
+>rebooting? Assume you only want to do that for kdump. If so, we may need
+>to make that more specific in code.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on usb/usb-testing]
-[also build test WARNING on usb/usb-next usb/usb-linus westeri-thunderbolt/next linus/master v6.9 next-20240520]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/andrey-konovalov-linux-dev/kcov-usb-disable-interrupts-in-kcov_remote_start_usb_softirq/20240521-050030
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-patch link:    https://lore.kernel.org/r/20240520205856.162910-1-andrey.konovalov%40linux.dev
-patch subject: [PATCH] kcov, usb: disable interrupts in kcov_remote_start_usb_softirq
-config: s390-allnoconfig (https://download.01.org/0day-ci/archive/20240521/202405210906.RYSUrzQH-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project fa9b1be45088dce1e4b602d451f118128b94237b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240521/202405210906.RYSUrzQH-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405210906.RYSUrzQH-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from kernel/fork.c:30:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:173:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2210:
-   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from kernel/fork.c:46:
-   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
-         |                                    ~~~~~~~~~~~ ^ ~~~
-   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
-         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
-   In file included from kernel/fork.c:79:
-   In file included from include/linux/tty.h:11:
-   In file included from include/linux/tty_port.h:5:
-   In file included from include/linux/kfifo.h:42:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     547 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from kernel/fork.c:79:
-   In file included from include/linux/tty.h:11:
-   In file included from include/linux/tty_port.h:5:
-   In file included from include/linux/kfifo.h:42:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from kernel/fork.c:79:
-   In file included from include/linux/tty.h:11:
-   In file included from include/linux/tty_port.h:5:
-   In file included from include/linux/kfifo.h:42:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     584 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     692 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     700 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     708 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     717 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     726 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     735 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   In file included from kernel/fork.c:92:
->> include/linux/kcov.h:132:68: warning: non-void function does not return a value [-Wreturn-type]
-     132 | static inline unsigned long kcov_remote_start_usb_softirq(u64 id) {}
-         |                                                                    ^
-   16 warnings generated.
---
-   In file included from kernel/exit.c:8:
-   In file included from include/linux/mm.h:2210:
-   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from kernel/exit.c:21:
-   In file included from include/linux/tty.h:11:
-   In file included from include/linux/tty_port.h:5:
-   In file included from include/linux/kfifo.h:42:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     547 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from kernel/exit.c:21:
-   In file included from include/linux/tty.h:11:
-   In file included from include/linux/tty_port.h:5:
-   In file included from include/linux/kfifo.h:42:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from kernel/exit.c:21:
-   In file included from include/linux/tty.h:11:
-   In file included from include/linux/tty_port.h:5:
-   In file included from include/linux/kfifo.h:42:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     584 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     692 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     700 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     708 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     717 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     726 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     735 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   In file included from kernel/exit.c:62:
->> include/linux/kcov.h:132:68: warning: non-void function does not return a value [-Wreturn-type]
-     132 | static inline unsigned long kcov_remote_start_usb_softirq(u64 id) {}
-         |                                                                    ^
-   14 warnings generated.
---
-   In file included from kernel/sched/core.c:9:
-   In file included from include/linux/highmem.h:10:
-   In file included from include/linux/mm.h:2210:
-   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from kernel/sched/core.c:33:
-   In file included from include/linux/sched/isolation.h:7:
-   In file included from include/linux/tick.h:8:
-   In file included from include/linux/clockchips.h:14:
-   In file included from include/linux/clocksource.h:22:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     547 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from kernel/sched/core.c:33:
-   In file included from include/linux/sched/isolation.h:7:
-   In file included from include/linux/tick.h:8:
-   In file included from include/linux/clockchips.h:14:
-   In file included from include/linux/clocksource.h:22:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from kernel/sched/core.c:33:
-   In file included from include/linux/sched/isolation.h:7:
-   In file included from include/linux/tick.h:8:
-   In file included from include/linux/clockchips.h:14:
-   In file included from include/linux/clocksource.h:22:
-   In file included from arch/s390/include/asm/io.h:78:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     584 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     692 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     700 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     708 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     717 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     726 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     735 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   In file included from kernel/sched/core.c:48:
->> include/linux/kcov.h:132:68: warning: non-void function does not return a value [-Wreturn-type]
-     132 | static inline unsigned long kcov_remote_start_usb_softirq(u64 id) {}
-         |                                                                    ^
-   kernel/sched/core.c:6548:20: warning: unused function 'sched_core_cpu_deactivate' [-Wunused-function]
-    6548 | static inline void sched_core_cpu_deactivate(unsigned int cpu) {}
-         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-   15 warnings generated.
+Thanks for the suggestion! Currently, no one has requested this feature
+for kexec reboot so yes, I only have kdump in mind. But kdump depends
+on kexec thus I'm not sure how we can make it kdump specfic. Do you have
+a further suggestion?
 
 
-vim +132 include/linux/kcov.h
+>diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+>index 060835bb82d5..fc1e20d565d5 100644
+>--- a/include/linux/kexec.h
+>+++ b/include/linux/kexec.h
+>@@ -171,6 +171,7 @@ int kexec_image_post_load_cleanup_default(struct kimage *image);
+>  * @buf_min:	The buffer can't be placed below this address.
+>  * @buf_max:	The buffer can't be placed above this address.
+>  * @top_down:	Allocate from top of memory.
+>+ * @random:	Place the buffer at a random position.
 
-   119	
-   120	static inline void kcov_task_init(struct task_struct *t) {}
-   121	static inline void kcov_task_exit(struct task_struct *t) {}
-   122	static inline void kcov_prepare_switch(struct task_struct *t) {}
-   123	static inline void kcov_finish_switch(struct task_struct *t) {}
-   124	static inline void kcov_remote_start(u64 handle) {}
-   125	static inline void kcov_remote_stop(void) {}
-   126	static inline u64 kcov_common_handle(void)
-   127	{
-   128		return 0;
-   129	}
-   130	static inline void kcov_remote_start_common(u64 id) {}
-   131	static inline void kcov_remote_start_usb(u64 id) {}
- > 132	static inline unsigned long kcov_remote_start_usb_softirq(u64 id) {}
-   133	static inline void kcov_remote_stop_softirq(unsigned long flags) {}
-   134	
+How about a comment here saying this is currently only used by kdump.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Coiby
+
 
