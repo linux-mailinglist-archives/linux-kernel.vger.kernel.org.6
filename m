@@ -1,115 +1,131 @@
-Return-Path: <linux-kernel+bounces-185397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9F48CB477
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:50:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B698CB479
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08A8F282765
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:49:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED1EF2826AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F14A149DE5;
-	Tue, 21 May 2024 19:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9785C1494A2;
+	Tue, 21 May 2024 19:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKAcwqxM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOoSLhwp"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7652E149C58;
-	Tue, 21 May 2024 19:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919D24500C
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 19:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716320965; cv=none; b=D0qSjb7CAYQGGOAoyxmmsIchK6/NRNqwCPtEd2I/gvwEXv0IHEddz56pKPSgGHj8jMMX4coZAjiWh0Ogzfeovhb2j0l1L9GnuE3XFsI/+I2tCzWL49FK0Hu3n8xxoSAKn9xhbLTtO2emaPvBhnkdZESIf0v6kFsSYFnFO33x7oY=
+	t=1716321173; cv=none; b=itBFw5639dOHgp/wLbMf6x1v229/OrKQvI8bl3my4Xsx60CQb+V6uo/y28lquw4Xjnk4fyH/lGwJTf3PXcWLZyUc7JYGqbHagrS2JaB7PNLul9bAJ2eaAwZwbEJ5K6po8Zf+IpSTIHGVyoZOrVyLmFbY/F12tHqN0323dBV0r0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716320965; c=relaxed/simple;
-	bh=5VxfSyKHqzOTEZZXzZT0aLiSoKTpopx0vsuhYEVZU44=;
+	s=arc-20240116; t=1716321173; c=relaxed/simple;
+	bh=AIk3Te5Khbgkj4dKDNmyOBw5nTwQzUiQDLhOI3cOvyk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hwzbzb+96TJdTjoH5+0zfitPjW3uXA6HSvaHE/NC1zIm3FTV1Hxh8fidbhFw8w5QIZV7E0OUNjd7OJinTdHuiKM48jiBdBlAUCLpUHgt+dbM3NYqgFWQguw5VXwZyIy1MO2ndW/JCZJgJblIJIdmP5OjkNEY1XEt4H3jQfB7iU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKAcwqxM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDBDAC32782;
-	Tue, 21 May 2024 19:49:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716320965;
-	bh=5VxfSyKHqzOTEZZXzZT0aLiSoKTpopx0vsuhYEVZU44=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bKAcwqxMdvphissksxBIPo4FGq5KPKX5AEWVVQ7lfMWYqInRJAiv62MhaLPG8X/CJ
-	 LPy2sNv63Ns1zkEtgNV5LYXsdZZxw2z9bmmmUBOV3XvxhyUmm4NLiRft4/a/9tvmAd
-	 JgFA+/vxMLqr18xEdz4O8WjbWSLTvY6QSkQxiJ6Ch2Kk63BOeNCBoMoSppWHHAC6T4
-	 u73/wl8C6JEKK1Dbz+0RbvlfAn/zKENyT8qj2OlRC6J9rtupS9o2Okfe8K2dsqSxoE
-	 zSHmCE6ARjH+EqqoV+acJDZTEK2z5xBLiavm3H8wzLBpW9uDz+1021dqaMh7HmU4Ld
-	 opUY8g2tiYyLA==
-Date: Tue, 21 May 2024 20:49:19 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
-	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 08/16] riscv: add ISA parsing for Zca, Zcf, Zcd and Zcb
-Message-ID: <20240521-spiny-undergrad-efa1a391ad3d@spud>
-References: <20240517145302.971019-1-cleger@rivosinc.com>
- <20240517145302.971019-9-cleger@rivosinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ElWrlUvPl3xSwgqhZ1NwsBf43jRkds/DU4e8yLWWO+OaQPxHa5VJk/a5zHUqt8VszlQClExOr15KdxJYsWjxGUitJHhOMm5c5wP1+XXV2ZFuQnpNGkoTYGTCM8m6CKeDsIgJFxxdtkguF2w0YJQ/9nDzageThgDE+27ELieEoaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOoSLhwp; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-66afccbee0cso583979a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:52:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716321172; x=1716925972; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uwoRMUgGVs4zYJZWQT/GwK3gau3xPXSHiwBTODwTHaY=;
+        b=MOoSLhwp5TAMxPAlIRtfpX8l8XN3Ar3DAHflCzDsp2mDZ//dfsj3GPuarBlhSwZtRA
+         i0L+JfgG0Rtn/OwpQ7MZSSMU/Sj2B+1lvyL0U4eaPywoqjfcuMkMebgx382emxO/L6a7
+         QYjivSfT2Q/JscznXz7SA7j5m7V9lU0pZMbifnLnine+g5zXykts4sxvB+D3zCUdwP3p
+         WZXBEDHh3tsvknYFy2LWFE6lbcXh6g+o27fgWWR8Xtzz/3KqUTzpVMuiZsUdBysqln4M
+         iK5jfN5mAY5xdm6t30XtKL05r+vIAU6z7LPXNtqUbqr+KVtP+9VLhgoyClpiQpwdw4rb
+         bkaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716321172; x=1716925972;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uwoRMUgGVs4zYJZWQT/GwK3gau3xPXSHiwBTODwTHaY=;
+        b=mDlW7w7ZENPIEj5UGGao+SfEzB/6xpVbeiYVpf5b4AtQXypUn/gvuH/F+k0dbgGd3X
+         22LkYazfKYmtwIrxSN8d2ikeel+xcd9/jscDJlsyACUCRnaSiyj+/h0E/2ADoPN86ald
+         frGXwcK/+6xbr5azLlmOSPSntIrkUL3fyHq3BP5GsFEhEIxLF7LQK/2G+AnTK0Uz5d+N
+         7mzLIrSpthzzmoRIg0l5e7lNw1yOspLfRd7aySTgPtobKVIEdwSRre9L1Ut/aT/SyeKR
+         P2F+RQcuVDuYGu/dfjehsCS1DfzdtlJYT4MVIjqeS9GGNvcI2+dh80VlhUGle9dDhBa0
+         wy7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUicVBBsW8TCMv6y1wIC4B45wBRm7KTs9fgHOkjCcdyzvxpx7f0m7qxRrgTtYsc4IDvJeD+cJu3WjD8PwCB+i/89EPfN2yU1AA9keJV
+X-Gm-Message-State: AOJu0YylnAwi6tuZRs2AcB/wz5n2gdUyQ8rD4F0zeh6EwaJmddQdEJZe
+	o9/aknO+trbzs5d61V2fRH7Zmnu59adt+PmGWo5F3Fyf8OTsB1bx
+X-Google-Smtp-Source: AGHT+IEFd/vGdGtVxyc5m8sFqOz/xr2BLWYWyVMmaQij104lOaWQWm5gWr9QT9MPwCP16LKSRll+cw==
+X-Received: by 2002:a17:90a:b30a:b0:2bd:7fa1:29cf with SMTP id 98e67ed59e1d1-2bd9f5adbdfmr100383a91.39.1716321171722;
+        Tue, 21 May 2024 12:52:51 -0700 (PDT)
+Received: from localhost ([216.228.127.129])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b671782d89sm22160498a91.55.2024.05.21.12.52.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 12:52:50 -0700 (PDT)
+Date: Tue, 21 May 2024 12:52:47 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Michal Schmidt <mschmidt@redhat.com>
+Cc: Alex Elder <elder@linaro.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH] bitfield.h: add FIELD_MAX_CONST
+Message-ID: <Zkz7jyR1HJCIPqku@yury-ThinkPad>
+References: <20240515172732.288391-1-mschmidt@redhat.com>
+ <Zkuksm3K+pKugjgF@yury-ThinkPad>
+ <3f3b75df-3488-4915-bc21-54cb6a6e2a74@linaro.org>
+ <CADEbmW0BZbJQbaycqq+vfisEJyGd57uzEgFEckusGLJSLvmYDA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ZUPGMxJHsaJik2Qb"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240517145302.971019-9-cleger@rivosinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADEbmW0BZbJQbaycqq+vfisEJyGd57uzEgFEckusGLJSLvmYDA@mail.gmail.com>
 
+On Tue, May 21, 2024 at 04:44:33PM +0200, Michal Schmidt wrote:
+> On Tue, May 21, 2024 at 2:33 PM Alex Elder <elder@linaro.org> wrote:
+> > On 5/20/24 2:29 PM, Yury Norov wrote:
+> > > + Alex Elder <elder@linaro.org>, Jakub Kicinski <kuba@kernel.org> and
+> > > David S. Miller <davem@davemloft.net>
+> >
+> > Thanks for adding me to this.
+> >
+> > My bottom line response is that I don't understand exactly
+> > what problem this is solving (but I trust it solves a
+> > problem for you).  It *seems* like the existing macro(s)
+> > should work for you, and if they don't, you might not be
+> > using it (them) correctly.  And... if a fix is needed, it
+> > should be made to the existing macro if possible.
+> 
+> Yury, Jakub, Alex,
+> thanks for your reviews so far.
+> 
+> All of you want to avoid adding another macro. I agree and I will be back
+> with v2.
+> 
+> To clarify where exactly I ran into the current limitations of FIELD_MAX:
+> I am reworking drivers/net/ethernet/intel/ice/ice_gnss.c:ice_gnss_read().
+> There, I will be changing "buf" to a small on-stack array:
+>   char buf[ICE_MAX_I2C_DATA_SIZE];
+> where ICE_MAX_I2C_DATA_SIZE is defined using FIELD_MAX.
+> 
+> There are a few more issues. I extracted them into this test case that
+> I would like to make compilable:
 
---ZUPGMxJHsaJik2Qb
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Whatever you make with this, please add a 2nd patch with a test(s)
+covering your cases. You can refer the test_bitmap_const_eval() in
+lib/test_bitmap.c for an examples of how the compile-time expressions
+are tested. The best place for the test would be lib/test_bitops, I
+think.
 
-On Fri, May 17, 2024 at 04:52:48PM +0200, Cl=E9ment L=E9ger wrote:
-
-> +static int riscv_ext_zca_depends(const struct riscv_isa_ext_data *data,
-> +				 const unsigned long *isa_bitmap)
-> +{
-> +	return __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA) ?=
- 0 : -EPROBE_DEFER;
-> +}
-> +static int riscv_ext_zcd_validate(const struct riscv_isa_ext_data *data,
-> +				  const unsigned long *isa_bitmap)
-> +{
-> +	return __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA) &&
-> +	       __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_d) ? 0=
- : -EPROBE_DEFER;
-> +}
-
-Could you write the logic in these out normally please? I think they'd
-be more understandable (particular this second one) broken down and with
-early return.
-
-Otherwise,
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-Cheers,
-Conor.
-
---ZUPGMxJHsaJik2Qb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkz6vwAKCRB4tDGHoIJi
-0kLvAQCE6VdTKzQsLhuTCAot4T9V9f4Lr+mwFH/JYa+PN4XSawEA4Bpid+JyrYkM
-5yKjg6DZQIn95XuoTjrLNnKL0qkRvw0=
-=XDFW
------END PGP SIGNATURE-----
-
---ZUPGMxJHsaJik2Qb--
+Thanks,
+Yury
 
