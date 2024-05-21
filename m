@@ -1,256 +1,188 @@
-Return-Path: <linux-kernel+bounces-184460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755F28CA706
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:27:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90CED8CA711
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE28D1F21F80
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5075D28252E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F032B9A4;
-	Tue, 21 May 2024 03:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E01D182DB;
+	Tue, 21 May 2024 03:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e+pmog6K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="dVZY/b1w"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8798D28DBC
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA297210FB
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716261949; cv=none; b=ZJdYzj7DI451LUR9rFdoI3RCItSdZZoLnYEDzq6SQ0Oe8xxCpWMNUvkxKMYZVA1HHl+MrnJG0BmNUY6T2tAbSgd35cGx1jgb3RsyUv767YVyLvk9oHoseNhKcS4WyQW/4gQFSG9TGvcFWs0zKCWraTGbEspXT3HNSYX97+bX6Hg=
+	t=1716262318; cv=none; b=SvxL4qYpFoxo2wEfrqTkIsJAaFIOldhluSw/a1pqxRuQAfo5EBHSdArf8e3doNef98EjdGAa56hzIR51WWB9i8jTyDRZ/oCB0m5LEtjXuFGj8vffSd0mg0r7vbfmj9u/dCLrKhBYyYS/DQOOWTrBRgLCL8UbgpzuNTIE+uyFVi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716261949; c=relaxed/simple;
-	bh=dAps9Jje+W4BKsGAWJ7FOYkkRW+Moe63q6k+RBEUFkQ=;
+	s=arc-20240116; t=1716262318; c=relaxed/simple;
+	bh=MFCU+pjB3KCKhjmKoPu7wpzHpc58NnIFXFSypYZ2ds4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m0zytOMP6c1m0FOxuDSMDsxD5y13NXiVCLn0tzhPs5znQeo8TOjXuGef7iXd4xEhghDVzXRFSnKxk6I/1KXse91eJOWgdOPbgnZl09bOU1JvpzatDtrOUjdwfZFv3Y/hFriEGl9oKxLXVT+gCwwqYTWLOz4pCn61rbgHVFNTw80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e+pmog6K; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716261946;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OTqNoq7Ywwug/KZupHOhiNfUyNAblVbOrSzbZCVlky8=;
-	b=e+pmog6KS0VoQoVpwGjZgEiCDf0C+P0UC3p7l14CtECoWtOV/XwLw8vHt3iETlp37DNa7z
-	HjB6E4T0kBQ/7ZI6N4vcjg34utLIgp9OdLCh7LKw96LecT27v3YWgnorbBloaq0IGslThr
-	+DvJ2N6TQwhZn6dUGkxtZTk8K4nxqkg=
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
- [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-624-qHK5-hQcOsWjDitsljIqMQ-1; Mon, 20 May 2024 23:25:44 -0400
-X-MC-Unique: qHK5-hQcOsWjDitsljIqMQ-1
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5b27c7a007cso13665589eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:25:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=nFiKkwRDarmAPxCxPCY8g1f9e655IqKI4xS0fFslsPLoTXoNg4r/IhkUYLVtF9eYCuDqp8+10UXrE8OktGLPhSKyi/t/6Iz/bCKJOwBscx26IafLpC6BMQY476jv8QrhrjJ0ah3svmkJDLkVc/FFUQTVF1ytzeI60DaQlm7qGK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=dVZY/b1w; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A20763F331
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:31:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1716262313;
+	bh=oRT4EC1vFVwwe/RwAMWjDpt+UAEk61rLUizH+FeKckE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=dVZY/b1wgbSp1oD1d6pAxFCX6N/oFTO9SFqa74hRmKu0YIaPS/0DgHKQ83RDXpCnn
+	 LxlmB00qb7Qzmr1nvPoaMCgKUPNLHP9zYV8dhWHgTISsH2bXkWJmlP2jryKldkJF+k
+	 Wppy1wf2c4TpUBpCi3tlwftGzosyplpaJTGMHCbxoRpKVAo6h/+Hv0t63/F0Y+JsT6
+	 G9XnhFMc5xU+Rve7C525juoO56tDZ95TvgUk6Fjlz0lvpPyKgpfb/nAZo0pdcurEWX
+	 cmwcK9UKcfUPpdjrNyecsWZr/IRd3222VtesOVtfPWsGx3PTsyQVkyQ5glvqJCXVEE
+	 PFHo8l0ExVAAQ==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a59a63a1f78so707596766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:31:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716261943; x=1716866743;
+        d=1e100.net; s=20230601; t=1716262313; x=1716867113;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OTqNoq7Ywwug/KZupHOhiNfUyNAblVbOrSzbZCVlky8=;
-        b=FHU4DLOSGu7Z6RWbSER1RumYH9x331hGkruQdvj73CzPTn/RvLUF7jTTCW8aJd8fUO
-         7vdI7i+MnZa3loiLopqJQ3BgqkNfmpi9pjDDSYdVqEumaynnIzYh9V2usCP6RUgWr4+h
-         iKCO5qcdRpvcz2dChA3iwTFeFymJMAJdonqOEwf6VbdiKXQqeJ5IY2aqInlHpPGYVksl
-         /yQYmcbhqKwqJPQxJfhxPJgmT8NRGKcAeI4eeoxcv1ysyfItyni7rSKMPMLY04Qm+Ubu
-         nuigF6dplHG4NM734Y48PHtwx8QFwaXQbqsM5SrKcB7cTAzmch8g0vGMZtbHd0GgjTDI
-         PGyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzdp9Lt7p7COx1ImYaskhXb3q1k+84jGroQrPsuMMNeJe+/lY7H0gSVke5sXNevXNoDv8aWEvmzZui8iZ72TdlYMwNnFnRU6ObeGk/
-X-Gm-Message-State: AOJu0YwH/+hqysuJfJzD+etamUn8R4At2rK4Uzfu9bSLXF3TrzGyYCkl
-	TCvIUl3saIrEPCBla3OSUfVRt/kYNDbEkJg9+h4lnXbp5yuwokS6tiRuiNMJDnfT3JKfIO0PTL6
-	Txn0cmfUfndqwYcnT+umAOZng2DfLvd3X+lOdO0yQxkwOBVulhKkkbZ89PkPb2tomMAtoezz2UP
-	M7Zyry9HGsXhZm0GrOb9JXolAynz+xQk/tHOis
-X-Received: by 2002:a05:6358:3992:b0:18a:e062:ff55 with SMTP id e5c5f4694b2df-193badda3e1mr3424984455d.0.1716261943009;
-        Mon, 20 May 2024 20:25:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGXijquOe3UDtI/IZRj3oWKr9KI+JW7yIIBbhlVb8Ah6rYdv037aA7CPM7ivMIE5RK0N7pQ6Ld6KJnSA19IZLU=
-X-Received: by 2002:a05:6358:3992:b0:18a:e062:ff55 with SMTP id
- e5c5f4694b2df-193badda3e1mr3424982455d.0.1716261942568; Mon, 20 May 2024
- 20:25:42 -0700 (PDT)
+        bh=oRT4EC1vFVwwe/RwAMWjDpt+UAEk61rLUizH+FeKckE=;
+        b=a3LnLFd2pUtlkSpv1jWTxzgymn1X/BIO0smsQiwfo8FZHBgRgb4cydzWxREu50/t3x
+         dGN/yDjjJDiCZ0Ex2ZiEFiy1v7C1TQLX+YKqL/rMn+go3Lw1pi4Sb9WHjaCYOfAD8ivb
+         LkKUPAFZO49iTiBUiLNOaykJP+3A7OmOME+TWfWAy1tY7nU22jtD2uIthSV4QKda+kA0
+         WE0hcKs/+HhI+RtzXOck0RKJK4z1rzBI4EKTo8qmogrwIXi8zBrAM2JYy7gX2HFks2Mw
+         Gidw7hWb5ylG9JitGab7cxkbmxqijGQoQvjBjqypmmftFblxmYNjdr2DkAiwGf9ioDrM
+         q3NA==
+X-Forwarded-Encrypted: i=1; AJvYcCUv/4HMrf939qsopeEC74kbMPO8BKIu0hzLrewMnKhKPKvrS83tnzMhHDy8obH29QHUakzm/KqcylirqPcT2e5xZkFpmVkxR4Dx8e5y
+X-Gm-Message-State: AOJu0YyfXjCt6tUsQHg87tqpj2hltRKRlUsOkxOJbz8L5ERiqDUS0GGH
+	hNs1gtsw/SUPc1OQTrtk1BVCszH+hwx/MCgD4AQzG+3ERHFz2buIcha42bTASyFt3P7jzwYAavM
+	WhKYSoBogd2iHQbWzpSKDYudcMpJvGQc1+lorurVuYDMxF1SuDkvOC85IOIYZNcej4PiPrEPGFv
+	mvfB+cxjp3oitwFV9kDwMzcm+3ycyDyCGQvW97iXhoO0dYWlIQ/BVL
+X-Received: by 2002:a17:906:c452:b0:a59:ee81:fd68 with SMTP id a640c23a62f3a-a5a2d68089bmr1950750366b.71.1716262313284;
+        Mon, 20 May 2024 20:31:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGOJPK5+qn5c923mZ3slXAnGra7/NlJptA4G/g7FgwPIMj5jx6DIRqcDO0o17J+ODRWW86LPcncRhI9GyxkwF0=
+X-Received: by 2002:a17:906:c452:b0:a59:ee81:fd68 with SMTP id
+ a640c23a62f3a-a5a2d68089bmr1950749466b.71.1716262312944; Mon, 20 May 2024
+ 20:31:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509011900.2694291-1-yukuai1@huaweicloud.com>
- <20240509011900.2694291-4-yukuai1@huaweicloud.com> <v838ekaa.fsf@damenly.org>
-In-Reply-To: <v838ekaa.fsf@damenly.org>
-From: Xiao Ni <xni@redhat.com>
-Date: Tue, 21 May 2024 11:25:31 +0800
-Message-ID: <CALTww28PVgS3D+9JsNv4PvDLAi=hOyT14QMkk5245_a8JXvgNQ@mail.gmail.com>
-Subject: Re: [PATCH md-6.10 3/9] md: add new helpers for sync_action
-To: Su Yue <l@damenly.org>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, agk@redhat.com, snitzer@kernel.org, 
-	mpatocka@redhat.com, song@kernel.org, dm-devel@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com, 
-	yi.zhang@huawei.com, yangerkun@huawei.com
+References: <20240520070348.26725-1-chengen.du@canonical.com> <664b97e8abe7a_12b4762946f@willemb.c.googlers.com.notmuch>
+In-Reply-To: <664b97e8abe7a_12b4762946f@willemb.c.googlers.com.notmuch>
+From: Chengen Du <chengen.du@canonical.com>
+Date: Tue, 21 May 2024 11:31:42 +0800
+Message-ID: <CAPza5qcGyfcUYOoznci4e=1eaScVTgkzAhXfKSG3bTzC=aOwew@mail.gmail.com>
+Subject: Re: [PATCH] af_packet: Handle outgoing VLAN packets without hardware offloading
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 20, 2024 at 8:38=E2=80=AFPM Su Yue <l@damenly.org> wrote:
->
->
-> On Thu 09 May 2024 at 09:18, Yu Kuai <yukuai1@huaweicloud.com>
-> wrote:
->
-> > From: Yu Kuai <yukuai3@huawei.com>
-> >
-> > The new helpers will get current sync_action of the array, will
-> > be used
-> > in later patches to make code cleaner.
-> >
-> > Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> > ---
-> >  drivers/md/md.c | 64
-> >  +++++++++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/md/md.h |  3 +++
-> >  2 files changed, 67 insertions(+)
-> >
-> > diff --git a/drivers/md/md.c b/drivers/md/md.c
-> > index 00bbafcd27bb..48ec35342d1b 100644
-> > --- a/drivers/md/md.c
-> > +++ b/drivers/md/md.c
-> > @@ -69,6 +69,16 @@
-> >  #include "md-bitmap.h"
-> >  #include "md-cluster.h"
-> >
-> > +static char *action_name[NR_SYNC_ACTIONS] =3D {
-> >
->
-> Th array will not be modified, so:
->
-> static const char * const action_names[NR_SYNC_ACTIONS]
->
-> > +     [ACTION_RESYNC]         =3D "resync",
-> > +     [ACTION_RECOVER]        =3D "recover",
-> > +     [ACTION_CHECK]          =3D "check",
-> > +     [ACTION_REPAIR]         =3D "repair",
-> > +     [ACTION_RESHAPE]        =3D "reshape",
-> > +     [ACTION_FROZEN]         =3D "frozen",
-> > +     [ACTION_IDLE]           =3D "idle",
-> > +};
-> > +
-> >  /* pers_list is a list of registered personalities protected by
-> >  pers_lock. */
-> >  static LIST_HEAD(pers_list);
-> >  static DEFINE_SPINLOCK(pers_lock);
-> > @@ -4867,6 +4877,60 @@ metadata_store(struct mddev *mddev, const
-> > char *buf, size_t len)
-> >  static struct md_sysfs_entry md_metadata =3D
-> >  __ATTR_PREALLOC(metadata_version, S_IRUGO|S_IWUSR,
-> >  metadata_show, metadata_store);
-> >
-> > +enum sync_action md_sync_action(struct mddev *mddev)
-> > +{
-> > +     unsigned long recovery =3D mddev->recovery;
-> > +
-> > +     /*
-> > +      * frozen has the highest priority, means running sync_thread
-> > will be
-> > +      * stopped immediately, and no new sync_thread can start.
-> > +      */
-> > +     if (test_bit(MD_RECOVERY_FROZEN, &recovery))
-> > +             return ACTION_FROZEN;
-> > +
-> > +     /*
-> > +      * idle means no sync_thread is running, and no new
-> > sync_thread is
-> > +      * requested.
-> > +      */
-> > +     if (!test_bit(MD_RECOVERY_RUNNING, &recovery) &&
-> > +         (!md_is_rdwr(mddev) || !test_bit(MD_RECOVERY_NEEDED,
-> > &recovery)))
-> > +             return ACTION_IDLE;
-> My brain was lost sometimes looking into nested conditions of md
-> code...
+Hi Willem,
 
-agree+
+Thank you for your response.
 
-> I agree with Xiao Ni's suggestion that more comments about the
-> array
-> state should be added.
+I would appreciate any suggestions you could offer, as I am not as
+familiar with this area as you are.
 
-In fact, I suggest to keep the logic which is in action_show now. The
-logic in action_show is easier to understand for me.
+I encountered an issue while capturing packets using tcpdump, which
+leverages the libpcap library for sniffing functionalities.
+Specifically, when I use "tcpdump -i any" to capture packets and
+hardware VLAN offloading is unavailable, some bogus packets appear.
+In this scenario, Linux uses cooked-mode capture (SLL) for the "any"
+device, reading from a PF_PACKET/SOCK_DGRAM socket instead of the
+usual PF_PACKET/SOCK_RAW socket.
 
-Best Regards
-Xiao
+Using SOCK_DGRAM instead of SOCK_RAW means that the Linux socket code
+does not supply the packet's link-layer header.
+Based on the code in af_packet.c, SOCK_DGRAM strips L2 headers from
+the original packets and provides SLL for some L2 information.
+From the receiver's perspective, the VLAN information can only be
+parsed from SLL, which causes issues if the kernel stores VLAN
+information in the payload.
+
+As you mentioned, this modification affects existing PF_PACKET receivers.
+For example, libpcap needs to change how it parses VLAN packets with
+the PF_PACKET/SOCK_RAW socket.
+The lack of VLAN information in SLL may prevent the receiver from
+properly decoding the L3 frame in cooked mode.
+
+I am new to this area and would appreciate it if you could kindly
+correct any misunderstandings I might have about the mechanism.
+I would also be grateful for any insights you could share on this issue.
+Additionally, I am passionate about contributing to resolving this
+issue and am willing to work on patches based on your suggestions.
+
+Thank you for your time and assistance.
+
+Best regards,
+Chengen Du
+
+On Tue, May 21, 2024 at 2:35=E2=80=AFAM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
 >
-> > +     if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
-> > +         mddev->reshape_position !=3D MaxSector)
-> > +             return ACTION_RESHAPE;
-> > +
-> > +     if (test_bit(MD_RECOVERY_RECOVER, &recovery))
-> > +             return ACTION_RECOVER;
-> > +
+> Chengen Du wrote:
+> > In the outbound packet path, if hardware VLAN offloading is unavailable=
+,
+> > the VLAN tag is inserted into the payload but then cleared from the
+> > metadata. Consequently, this could lead to a false negative result when
+> > checking for the presence of a VLAN tag using skb_vlan_tag_present(),
+> > causing the packet sniffing outcome to lack VLAN tag information. As a
+> > result, the packet capturing tool may be unable to parse packets as
+> > expected.
 > >
-> In action_show, MD_RECOVERY_SYNC is tested first then
-> MD_RECOVERY_RECOVER.
-> After looking through the logic of MD_RECOVERY_RECOVER
-> clear/set_bit, the
-> change is fine to me. However, better to follow old pattern unless
-> there
-> have resons.
+> > Signed-off-by: Chengen Du <chengen.du@canonical.com>
 >
+> This is changing established behavior, which itself may confuse
+> existing PF_PACKET receivers.
 >
-> > +     if (test_bit(MD_RECOVERY_SYNC, &recovery)) {
-> > +             if (test_bit(MD_RECOVERY_CHECK, &recovery))
-> > +                     return ACTION_CHECK;
-> > +             if (test_bit(MD_RECOVERY_REQUESTED, &recovery))
-> > +                     return ACTION_REPAIR;
-> > +             return ACTION_RESYNC;
-> > +     }
-> > +
-> > +     return ACTION_IDLE;
-> > +}
-> > +
-> > +enum sync_action md_sync_action_by_name(char *page)
-> > +{
-> > +     enum sync_action action;
-> > +
-> > +     for (action =3D 0; action < NR_SYNC_ACTIONS; ++action) {
-> > +             if (cmd_match(page, action_name[action]))
-> > +                     return action;
-> > +     }
-> > +
-> > +     return NR_SYNC_ACTIONS;
-> > +}
-> > +
-> > +char *md_sync_action_name(enum sync_action action)
-> >
+> The contract is that the VLAN tag can be observed in the payload or
+> as tp_vlan_* fields if it is offloaded.
 >
-> And 'const char *'
+> > @@ -2457,7 +2464,8 @@ static int tpacket_rcv(struct sk_buff *skb, struc=
+t net_device *dev,
+> >       sll->sll_halen =3D dev_parse_header(skb, sll->sll_addr);
+> >       sll->sll_family =3D AF_PACKET;
+> >       sll->sll_hatype =3D dev->type;
+> > -     sll->sll_protocol =3D skb->protocol;
+> > +     sll->sll_protocol =3D eth_type_vlan(skb->protocol) ?
+> > +             vlan_eth_hdr(skb)->h_vlan_encapsulated_proto : skb->proto=
+col;
 >
-> --
-> Su
+> This is a particularly subtle change of behavior.
 >
-> > +{
-> > +     return action_name[action];
-> > +}
-> > +
-> >  static ssize_t
-> >  action_show(struct mddev *mddev, char *page)
-> >  {
-> > diff --git a/drivers/md/md.h b/drivers/md/md.h
-> > index 2edad966f90a..72ca7a796df5 100644
-> > --- a/drivers/md/md.h
-> > +++ b/drivers/md/md.h
-> > @@ -864,6 +864,9 @@ extern void md_unregister_thread(struct
-> > mddev *mddev, struct md_thread __rcu **t
-> >  extern void md_wakeup_thread(struct md_thread __rcu *thread);
-> >  extern void md_check_recovery(struct mddev *mddev);
-> >  extern void md_reap_sync_thread(struct mddev *mddev);
-> > +extern enum sync_action md_sync_action(struct mddev *mddev);
-> > +extern enum sync_action md_sync_action_by_name(char *page);
-> > +extern char *md_sync_action_name(enum sync_action action);
-> >  extern bool md_write_start(struct mddev *mddev, struct bio
-> >  *bi);
-> >  extern void md_write_inc(struct mddev *mddev, struct bio *bi);
-> >  extern void md_write_end(struct mddev *mddev);
+> >               if (skb_vlan_tag_present(skb)) {
+> >                       aux.tp_vlan_tci =3D skb_vlan_tag_get(skb);
+> >                       aux.tp_vlan_tpid =3D ntohs(skb->vlan_proto);
+> > -                     aux.tp_status |=3D TP_STATUS_VLAN_VALID | TP_STAT=
+US_VLAN_TPID_VALID;
+> > +             } else if (eth_type_vlan(skb->protocol)) {
+> > +                     aux.tp_vlan_tci =3D ntohs(vlan_eth_hdr(skb)->h_vl=
+an_TCI);
+> > +                     aux.tp_vlan_tpid =3D ntohs(skb->protocol);
+> >               } else {
+> >                       aux.tp_vlan_tci =3D 0;
+> >                       aux.tp_vlan_tpid =3D 0;
+> >               }
+> > +             if (aux.tp_vlan_tci || aux.tp_vlan_tpid)
+> > +                     aux.tp_status |=3D TP_STATUS_VLAN_VALID | TP_STAT=
+US_VLAN_TPID_VALID;
+> >               put_cmsg(msg, SOL_PACKET, PACKET_AUXDATA, sizeof(aux), &a=
+ux);
 >
-
+> vlan_tci 0 is valid identifier. That's the reason explicit field
+> TP_STATUS_VLAN_VALID was added.
+>
 
