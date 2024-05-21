@@ -1,90 +1,368 @@
-Return-Path: <linux-kernel+bounces-185290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 833D48CB31E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:55:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FE48CB320
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD431F2266F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:55:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBE21C217E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D3C14883E;
-	Tue, 21 May 2024 17:55:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958F2148302;
+	Tue, 21 May 2024 17:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XBtP+RAI"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4556130A4D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 17:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517A27710F
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 17:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716314105; cv=none; b=mQEQ5q5ILzWBJTe1thxtV8Q+ltFeJD95Ep9OGgUi8Gi4qizN7S8bI2I3e1OK3Sj2me6Qr54jul4AWj6hn4cmHUlCtFW5dF0Ky/fMFFpnnusAWYNQ4E54HunyNGg9F6h5mM8nkJtHOTfeChwpudUMuuWjBpGU5A7LyNSxMXMhzKo=
+	t=1716314204; cv=none; b=UCX5CXaWGw9YKBzXAtu2/XrF0BtnF8LdHf9kVw5tdSb+6O5xGn9apMjrI0zjhOACCmQm78Y6Fhl1t1G27qxLVNIJzYFCKVxhnHG/wdrXMLLzx7qRgoizSkMuKxaDt7w8vq/9Kzfd5jOzgHulNZ2dK4SSiOAPIB5wUM30l/TqDuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716314105; c=relaxed/simple;
-	bh=zoIdtgb34NADuLjc3tV+N7aGplUZrQnoZrFXqAvUrMw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YE4pJYQ0cRDQ6/zpeRvXoFKkSAtqb3q61Lxkcg1k1bWZDV9t1LBxzIFNGlzHGunVF45W3VXQLU1xqWKui71ek4hDjN3XCMgtyJ/qmHPT2FrJmM9qt531q3BHmQ/qPOtGGmbQJ5xVwHf0XUeexWGC+B71vTMP2RtLxJ+uksC0O1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e1db7e5386so1255148039f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:55:03 -0700 (PDT)
+	s=arc-20240116; t=1716314204; c=relaxed/simple;
+	bh=bDHcmbpIp0r0FWpkiKnjDUI8tY8MBvJykebIsqf3NAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y2fAfAhq21WRzXXOwuFiEZsnWhdyLBoIQib4LPrSmVJdUDaSs33MulQUilavRRllVdVh0D17C0AQAz2gHDVcDbUGDxf0FPvB8lXuj25x8URC2X48ozSKQlDsCEza9llztKCHV57ukWq63YAxh4AR9EQqTI9wOeV9VEphOa+J+Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XBtP+RAI; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ed41eb3382so3725275ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:56:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716314201; x=1716919001; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S/0tLDG/7KmzSkl24NrS9rk2GSTb3gpnCYP3/DHpRdA=;
+        b=XBtP+RAIcdmgwvg+hYHylmaFlnZfu2qmS6+ruUqc/hqcK5ilS/xp976ydzTtaw+7Kb
+         vupnMTMRHJK9GY63gmiIYGSqqHjwqCdQqx6wMd519Nyfr4D1lkPNV56Fs3SfFYjLrt8r
+         WdiUS9r/BhsEA+GBIFpvXzXZlP+XDsmeDlPvS4xJj6EgR+p9qy35Ks47ZGFMsXvNijMj
+         37OVq05QUS3PiGKtozzD3nWZ5VpblfCV0mGXmrgnBR73izUZJZo5sqViroSpYfGeJVle
+         tz3ar3oB3IMXfJqP6ffUfe3Brh/GS21CxcvDaDHXyCs3q37EvWIqPPac8m1HjMX3zwOu
+         EFAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716314103; x=1716918903;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pWWQLx0u45d0F/7cndUkioBv+DcKIil18vzCB0kWDY0=;
-        b=ijEeoEPvCfrfFaJA8mNVhdZ5t6n/K1+2pnFKAX1OGRgsWSssw9P8xzsJUkCWoMca5j
-         42RKqJFtrnAYlko7cGEgp08UkG/k020iVP6+6Cr9QDG9G6EJlyMofiD/YqmPCrOQU4vL
-         mgyVkejRFRFH1GxIy58sfzjTjyJBiQSrfmqPNT20RMdNfOMWZGKwRU7q/BvBQ0JGKi1g
-         25AhsouejOl2z7yaWLiiEHuVjWOsDeXjwcKPqqunulxnqFoB86NTPHrADrUm9Nsim3FN
-         Ygt+2FEPU5uaB2tg+53JfPvm61tz8UOar7zgliBZ0H3aQWa0VVrTJEvkCzXPLwxEFE4t
-         J8KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8RsD6JVDHMQgsXvzV1Qs/abL7qamARnI/cikZgDX1C0E9y97vrKfF92HzxUbmcPF0m89cBF9jlTwvGfq6hJy5ReIHNPJwuUJOgyPX
-X-Gm-Message-State: AOJu0YyxTIu55D+qhMJkfoxsKGOjkZTuRfyZoBLxo/xMK3MDl0J5WUNF
-	iHznLQarXURzJAGKcw7MxWBzii41fk4XmeCYUUBv2ti0K4SeDQW0CrO8NBkIFz33ctK4LmRtIZn
-	jPN5Po9NXjjPPieIGWayFmP46cGzpa/sOx+n9jybBuHD6bPxpkCDeI28=
-X-Google-Smtp-Source: AGHT+IG8Ql4z9HzJhkI0jOEQuDwYKu1tx4wtIVtXYjZPGYlAVV52rq2rg+5tujQGh1Dx5VbozJX4mR6bvWCsHCXQtZv6kZaztANH
+        d=1e100.net; s=20230601; t=1716314201; x=1716919001;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S/0tLDG/7KmzSkl24NrS9rk2GSTb3gpnCYP3/DHpRdA=;
+        b=Ko+NzX0uum7yHYyvyZ93aTese78PQogBJjpyCEJxxnFmB+8JftucEaYd39oe1vG2eO
+         ysQBu0yeiFJB4FrPCic+nzWF64542ilSclIuYsvOu1GY8KembQtY24PM7Yx286ohkN64
+         f1WNJWIB81HFP+7EVuAwTqoc6mNWhTvQTfmCLD69UKn3O7KdcPGp46Xj9n46FF2sbx04
+         WVWQpUrAlbuz6Kt6Sn9kyghAAHxtQEUf6qU4+2p2onb4ecutkBS5uyoY1An8DLrjosLm
+         DRC/Ym0u5PFxTFy+yfKmulBG/alO/ucDaCKzAPKA2HeKPK+cydTs8MNwdeVmZ7y9lR0R
+         /hzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVaVl/9MnSBD2PU6mbqeoonVlfxcHu3B3HxkHWgYc3/hMIbys+0GmHudROuD9briFAGc/DHJ38+V4ZEqwtglELNeX4P5YJdVzwMk+o
+X-Gm-Message-State: AOJu0YxmgzAI5nAUPtOsgkLMvQIushIczti06KgKj3tY0Hd1/rJWjGhS
+	MP2VLBkYsv/KRJJFhowL0zu9XXT58yS9CzBiffxfrcD0MZNgiJGNQGo0OrLudqY=
+X-Google-Smtp-Source: AGHT+IEknBswCPs65C6IpOvr2vy7Fw9UnethBJrMAwXqSIUGQaX2rnjHowINfpqRZKZXnW3qSmhJNw==
+X-Received: by 2002:a17:902:e80b:b0:1f3:618:4624 with SMTP id d9443c01a7336-1f306184973mr70267365ad.49.1716314201490;
+        Tue, 21 May 2024 10:56:41 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:df1a:22de:40b2:f110])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad819csm224586005ad.84.2024.05.21.10.56.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 10:56:41 -0700 (PDT)
+Date: Tue, 21 May 2024 11:56:38 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] drivers: remoteproc: xlnx: add attach detach
+ support
+Message-ID: <ZkzgVn4+iTcrLEDT@p14s>
+References: <20240511005126.1240430-1-tanmay.shah@amd.com>
+ <20240511005126.1240430-2-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8725:b0:488:5e26:ffb5 with SMTP id
- 8926c6da1cb9f-48958694bafmr2302849173.2.1716314102929; Tue, 21 May 2024
- 10:55:02 -0700 (PDT)
-Date: Tue, 21 May 2024 10:55:02 -0700
-In-Reply-To: <87o78zxgvq.fsf@cloudflare.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006dab5b0618fa8405@google.com>
-Subject: Re: [syzbot] [net?] [bpf?] possible deadlock in sock_hash_delete_elem (2)
-From: syzbot <syzbot+ec941d6e24f633a59172@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com, 
-	jakub@cloudflare.com, john.fastabend@gmail.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, xrivendell7@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240511005126.1240430-2-tanmay.shah@amd.com>
 
-Hello,
+Hi Tanmay,
 
-syzbot tried to test the proposed patch but the build/boot failed:
+On Fri, May 10, 2024 at 05:51:25PM -0700, Tanmay Shah wrote:
+> It is possible that remote processor is already running before
+> linux boot or remoteproc platform driver probe. Implement required
+> remoteproc framework ops to provide resource table address and
+> connect or disconnect with remote processor in such case.
+> 
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+> 
+> Changes in v2:
+>   - Fix following sparse warnings
+> 
+> drivers/remoteproc/xlnx_r5_remoteproc.c:827:21: sparse:    expected struct rsc_tbl_data *rsc_data_va
+> drivers/remoteproc/xlnx_r5_remoteproc.c:844:18: sparse:    expected struct resource_table *rsc_addr
+> drivers/remoteproc/xlnx_r5_remoteproc.c:898:24: sparse:    expected void volatile [noderef] __iomem *addr
+> 
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 164 +++++++++++++++++++++++-
+>  1 file changed, 160 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index 84243d1dff9f..039370cffa32 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -25,6 +25,10 @@
+>  /* RX mailbox client buffer max length */
+>  #define MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
+>  				 sizeof(struct zynqmp_ipi_message))
+> +
+> +#define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
+> +				 (uint32_t)'m' << 8 | (uint32_t)'p')
+> +
+>  /*
+>   * settings for RPU cluster mode which
+>   * reflects possible values of xlnx,cluster-mode dt-property
+> @@ -73,6 +77,15 @@ struct mbox_info {
+>  	struct mbox_chan *rx_chan;
+>  };
+>  
+> +/* Xilinx Platform specific data structure */
+> +struct rsc_tbl_data {
+> +	const int version;
+> +	const u32 magic_num;
+> +	const u32 comp_magic_num;
 
-failed to checkout kernel repo git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git/main: failed to run ["git" "fetch" "--force" "9bf55af7188d6db60300eb8cc78d9b6572cad83d" "main"]: exit status 128
-fatal: couldn't find remote ref main
+Why is a complement magic number needed?
 
+> +	const u32 rsc_tbl_size;
+> +	const uintptr_t rsc_tbl;
+> +} __packed;
+> +
+>  /*
+>   * Hardcoded TCM bank values. This will stay in driver to maintain backward
+>   * compatibility with device-tree that does not have TCM information.
+> @@ -95,20 +108,24 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+>  /**
+>   * struct zynqmp_r5_core
+>   *
+> + * @rsc_tbl_va: resource table virtual address
+>   * @dev: device of RPU instance
+>   * @np: device node of RPU instance
+>   * @tcm_bank_count: number TCM banks accessible to this RPU
+>   * @tcm_banks: array of each TCM bank data
+>   * @rproc: rproc handle
+> + * @rsc_tbl_size: resource table size retrieved from remote
+>   * @pm_domain_id: RPU CPU power domain id
+>   * @ipi: pointer to mailbox information
+>   */
+>  struct zynqmp_r5_core {
+> +	struct resource_table *rsc_tbl_va;
 
+Shouldn't this be of type "void __iomem *"?  Did sparse give you trouble on that
+one?
 
-Tested on:
+>  	struct device *dev;
+>  	struct device_node *np;
+>  	int tcm_bank_count;
+>  	struct mem_bank_data **tcm_banks;
+>  	struct rproc *rproc;
+> +	u32 rsc_tbl_size;
+>  	u32 pm_domain_id;
+>  	struct mbox_info *ipi;
+>  };
+> @@ -621,10 +638,19 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
+>  {
+>  	int ret;
+>  
+> -	ret = add_tcm_banks(rproc);
+> -	if (ret) {
+> -		dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
+> -		return ret;
+> +	/**
 
-commit:         [unknown 
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git main
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
-dashboard link: https://syzkaller.appspot.com/bug?extid=ec941d6e24f633a59172
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1136a5cc980000
+Using "/**" is for comments that will endup in the documentation, which I don't
+think is needed here.  Please correct throughout the patch.
 
+> +	 * For attach/detach use case, Firmware is already loaded so
+> +	 * TCM isn't really needed at all. Also, for security TCM can be
+> +	 * locked in such case and linux may not have access at all.
+> +	 * So avoid adding TCM banks. TCM power-domains requested during attach
+> +	 * callback.
+> +	 */
+> +	if (rproc->state != RPROC_DETACHED) {
+> +		ret = add_tcm_banks(rproc);
+> +		if (ret) {
+> +			dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	ret = add_mem_regions_carveout(rproc);
+> @@ -662,6 +688,123 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> +static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc,
+> +							     size_t *size)
+> +{
+> +	struct zynqmp_r5_core *r5_core;
+> +
+> +	r5_core = rproc->priv;
+> +
+> +	*size = r5_core->rsc_tbl_size;
+> +
+> +	return r5_core->rsc_tbl_va;
+> +}
+> +
+> +static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+> +{
+> +	struct device *dev = r5_core->dev;
+> +	struct rsc_tbl_data *rsc_data_va;
+> +	struct resource_table *rsc_addr;
+> +	struct resource res_mem;
+> +	struct device_node *np;
+> +	int ret;
+> +
+> +	/**
+> +	 * It is expected from remote processor firmware to provide resource
+> +	 * table address via struct rsc_tbl_data data structure.
+> +	 * Start address of first entry under "memory-region" property list
+> +	 * contains that data structure which holds resource table address, size
+> +	 * and some magic number to validate correct resource table entry.
+> +	 */
+> +	np = of_parse_phandle(r5_core->np, "memory-region", 0);
+> +	if (!np) {
+> +		dev_err(dev, "failed to get memory region dev node\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = of_address_to_resource(np, 0, &res_mem);
+> +	if (ret) {
+> +		dev_err(dev, "failed to get memory-region resource addr\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	rsc_data_va = (struct rsc_tbl_data *)devm_ioremap_wc(dev, res_mem.start,
+> +							     sizeof(struct rsc_tbl_data));
+
+There is no point in holding memory until the driver is unloaded.  Please use
+ioremap_wc() and free at the end of the function.
+
+> +	if (!rsc_data_va) {
+> +		dev_err(dev, "failed to map resource table data address\n");
+> +		return -EIO;
+> +	}
+> +
+> +	/**
+> +	 * If RSC_TBL_XLNX_MAGIC number and its complement isn't found then
+> +	 * do not consider resource table address valid and don't attach
+> +	 */
+> +	if (rsc_data_va->magic_num != RSC_TBL_XLNX_MAGIC ||
+> +	    rsc_data_va->comp_magic_num != ~RSC_TBL_XLNX_MAGIC) {
+> +		dev_dbg(dev, "invalid magic number, won't attach\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	rsc_addr = (struct resource_table *)ioremap_wc(rsc_data_va->rsc_tbl,
+> +						       rsc_data_va->rsc_tbl_size);
+> +	if (!rsc_addr) {
+> +		dev_err(dev, "failed to get rsc_addr\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/**
+> +	 * As of now resource table version 1 is expected. Don't fail to attach
+> +	 * but warn users about it.
+> +	 */
+> +	if (rsc_addr->ver != 1)
+> +		dev_warn(dev, "unexpected resource table version %d\n",
+> +			 rsc_addr->ver);
+> +
+> +	r5_core->rsc_tbl_size = rsc_data_va->rsc_tbl_size;
+> +	r5_core->rsc_tbl_va = rsc_addr;
+> +
+> +	return 0;
+> +}
+> +
+> +static int zynqmp_r5_attach(struct rproc *rproc)
+> +{
+> +	struct zynqmp_r5_core *r5_core = rproc->priv;
+> +	int i, pm_domain_id, ret;
+> +
+> +	/*
+> +	 * Firmware is loaded in TCM. Request TCM power domains to notify
+> +	 * platform management controller that TCM is in use. This will be
+> +	 * released during unprepare callback.
+> +	 */
+> +	for (i = 0; i < r5_core->tcm_bank_count; i++) {
+> +		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+> +		ret = zynqmp_pm_request_node(pm_domain_id,
+> +					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+> +					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> +		if (ret < 0)
+> +			pr_warn("TCM %d can't be requested\n", i);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int zynqmp_r5_detach(struct rproc *rproc)
+> +{
+> +	struct zynqmp_r5_core *r5_core = rproc->priv;
+> +
+> +	/*
+> +	 * Generate last notification to remote after clearing virtio flag.
+> +	 * Remote can avoid polling on virtio reset flag if kick is generated
+> +	 * during detach by host and check virtio reset flag on kick interrupt.
+> +	 */
+> +	zynqmp_r5_rproc_kick(rproc, 0);
+> +
+> +	iounmap((void __iomem *)r5_core->rsc_tbl_va);
+> +	r5_core->rsc_tbl_va = NULL;
+
+This is puzzling...  What happens to ->tsc_tbl_va when the remote processor is
+re-attached?  
+
+I will not look at the SRAM part.  Please re-submit when we are done with the
+attach/detach feature.
+
+Thanks,
+Mathieu
+
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct rproc_ops zynqmp_r5_rproc_ops = {
+>  	.prepare	= zynqmp_r5_rproc_prepare,
+>  	.unprepare	= zynqmp_r5_rproc_unprepare,
+> @@ -673,6 +816,9 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
+>  	.sanity_check	= rproc_elf_sanity_check,
+>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+>  	.kick		= zynqmp_r5_rproc_kick,
+> +	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
+> +	.attach		= zynqmp_r5_attach,
+> +	.detach		= zynqmp_r5_detach,
+>  };
+>  
+>  /**
+> @@ -723,6 +869,16 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+>  		goto free_rproc;
+>  	}
+>  
+> +	/*
+> +	 * Move rproc state to DETACHED to give one time opportunity to attach
+> +	 * if firmware is already available in the memory. This can happen if
+> +	 * firmware is loaded via debugger or by any other agent in the system.
+> +	 * If firmware isn't available in the memory and resource table isn't found,
+> +	 * then rproc state stay OFFLINE.
+> +	 */
+> +	if (!zynqmp_r5_get_rsc_table_va(r5_core))
+> +		r5_rproc->state = RPROC_DETACHED;
+> +
+>  	r5_core->rproc = r5_rproc;
+>  	return r5_core;
+>  
+> -- 
+> 2.25.1
+> 
 
