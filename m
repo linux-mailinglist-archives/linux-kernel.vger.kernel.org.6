@@ -1,162 +1,115 @@
-Return-Path: <linux-kernel+bounces-185396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB7978CB473
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:49:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9F48CB477
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 186DF1C21912
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:49:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08A8F282765
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C794149C57;
-	Tue, 21 May 2024 19:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F14A149DE5;
+	Tue, 21 May 2024 19:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="sBmPlD3F"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKAcwqxM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03238149015
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 19:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7652E149C58;
+	Tue, 21 May 2024 19:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716320964; cv=none; b=Ux30amFz0oNCvRDIrYTw7bxYC2XPqlbWN/QcbQpcleHlsO0YDVDl5ST3FpFxTgZiC1zQNiY53vnUi6vL8XBo+KmJ76G5nJXb8fO6s+s42rYeaTd3x4M8Z5d/g21VRhAHuQUHimSCnMgosPNDHowHUYfES1WZDW/XoaD+CkknS+g=
+	t=1716320965; cv=none; b=D0qSjb7CAYQGGOAoyxmmsIchK6/NRNqwCPtEd2I/gvwEXv0IHEddz56pKPSgGHj8jMMX4coZAjiWh0Ogzfeovhb2j0l1L9GnuE3XFsI/+I2tCzWL49FK0Hu3n8xxoSAKn9xhbLTtO2emaPvBhnkdZESIf0v6kFsSYFnFO33x7oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716320964; c=relaxed/simple;
-	bh=Tooj6Y95pxQ5NpSlmeomxmuNcm9R63NtHWlrO8VM0ZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tFlY3xwQXSD+zxSSh12AIjH7aF1/XDuG23rAghqF1j9iFQDrzMdOZ+LFwQfPlUr23YyMk+1Pg4l4pYe/ocsIcIHq/MQStyxaNT8642DJBLSaAXQZ8l9by0svDjHa5o8yYBUND72/VlDCxk3Dap413AcGKqSLkUPs2NLTA5OXOEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=sBmPlD3F; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-23f0d7d2ce6so3031342fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:49:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716320961; x=1716925761; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nZqjqst6IA8s4Y0Tix3Y2ed1HRW8o5RgtxqsUgjpfM8=;
-        b=sBmPlD3FiShGzMSRE1qIn4c9t6NoypMiypCaiqR/LsouXj3cQjHZINdoIk5XI5nX5C
-         q4m51xRNFallri6Rpq5lTREUd7gdYfB9IsW+f+sF/puAI7AYWsePCnaog9akR5VIBcfi
-         E0lHo0iCHjR8x210+ZmNs4MFAi5lAubWHFPfBqeLGwCqpZNmvWmCkK3J/WeEg3CIxVGk
-         pBBn41wXJOsdFipOpLwAofMJzl3EQ2hyYYUFAgbTEABBKqo/JopyDB55/W1kvFJma4if
-         yTL4iBz9+Lf449qBxvG9V2EmVkNgF8Li0b+d97cVsVnoOZ7B0lqv+bXQyWabEmBtejzY
-         5I3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716320961; x=1716925761;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nZqjqst6IA8s4Y0Tix3Y2ed1HRW8o5RgtxqsUgjpfM8=;
-        b=kdPERgFdwFktQJqGsNShulmJnmjTapmOLJ16DPZbqKuyJrO9i2YSdCGuKLHPe+VXr4
-         RSg8w/XSdkOmVqPRZ40jsFimOKBq4e8bjJRcN5MCEFsPOrFsiEvAz5RVgmJkE/lUA9B0
-         aN45xRSCXqjPXB8mjIV3c1Op1SUC5QES8zwdgB7voFfehZaXD3PMZKqIKF0IdupsGvHG
-         RC+WMCOplD+84SEP5ufW5r+GWlFUjAGiDSbiOHA9PpHcyB4gbMY01tK9dZm1vOGZyw/y
-         Lo/SBXJLNICTtlNN8rfssh1M7D1G2WbotqOnKeen7qQ76029ntIEHGVmtnJ4L5Q5PlYR
-         A4ZQ==
-X-Gm-Message-State: AOJu0YwBfhNlTxZgVi8/Iw6pkYRje2xeFmmfwcSTO+Ab0dKdgcauhFbb
-	Zypfx7VnMNgxqzy0x7CiFcUkloFPFK5ZUJkiJaxPj7EK2eWUJ+hksF0VIldqsvo=
-X-Google-Smtp-Source: AGHT+IEXbAcssGSEqg2FFDiVusT4NNfPEryqOcuyeXi3Pw+DSNm9s1FRNgKW5xThmneBDiVA2Juu/A==
-X-Received: by 2002:a05:6871:712:b0:23d:c09b:e5eb with SMTP id 586e51a60fabf-24c68ddeb4emr106959fac.36.1716320960765;
-        Tue, 21 May 2024 12:49:20 -0700 (PDT)
-Received: from megalith.oryx-coho.ts.net (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df54d85a0sm161723611cf.23.2024.05.21.12.49.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 12:49:20 -0700 (PDT)
-From: Trevor Gamblin <tgamblin@baylibre.com>
-To: linux-pwm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	u.kleine-koenig@pengutronix.de,
-	michael.hennerich@analog.com,
-	nuno.sa@analog.com,
-	tgamblin@baylibre.com,
-	dlechner@baylibre.com
-Subject: [PATCH 2/2 v3] pwm: axi-pwmgen: add duty offset support
-Date: Tue, 21 May 2024 15:49:16 -0400
-Message-ID: <20240521194916.1897909-3-tgamblin@baylibre.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240521194916.1897909-1-tgamblin@baylibre.com>
-References: <20240521194916.1897909-1-tgamblin@baylibre.com>
+	s=arc-20240116; t=1716320965; c=relaxed/simple;
+	bh=5VxfSyKHqzOTEZZXzZT0aLiSoKTpopx0vsuhYEVZU44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hwzbzb+96TJdTjoH5+0zfitPjW3uXA6HSvaHE/NC1zIm3FTV1Hxh8fidbhFw8w5QIZV7E0OUNjd7OJinTdHuiKM48jiBdBlAUCLpUHgt+dbM3NYqgFWQguw5VXwZyIy1MO2ndW/JCZJgJblIJIdmP5OjkNEY1XEt4H3jQfB7iU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKAcwqxM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDBDAC32782;
+	Tue, 21 May 2024 19:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716320965;
+	bh=5VxfSyKHqzOTEZZXzZT0aLiSoKTpopx0vsuhYEVZU44=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bKAcwqxMdvphissksxBIPo4FGq5KPKX5AEWVVQ7lfMWYqInRJAiv62MhaLPG8X/CJ
+	 LPy2sNv63Ns1zkEtgNV5LYXsdZZxw2z9bmmmUBOV3XvxhyUmm4NLiRft4/a/9tvmAd
+	 JgFA+/vxMLqr18xEdz4O8WjbWSLTvY6QSkQxiJ6Ch2Kk63BOeNCBoMoSppWHHAC6T4
+	 u73/wl8C6JEKK1Dbz+0RbvlfAn/zKENyT8qj2OlRC6J9rtupS9o2Okfe8K2dsqSxoE
+	 zSHmCE6ARjH+EqqoV+acJDZTEK2z5xBLiavm3H8wzLBpW9uDz+1021dqaMh7HmU4Ld
+	 opUY8g2tiYyLA==
+Date: Tue, 21 May 2024 20:49:19 +0100
+From: Conor Dooley <conor@kernel.org>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
+	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 08/16] riscv: add ISA parsing for Zca, Zcf, Zcd and Zcb
+Message-ID: <20240521-spiny-undergrad-efa1a391ad3d@spud>
+References: <20240517145302.971019-1-cleger@rivosinc.com>
+ <20240517145302.971019-9-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZUPGMxJHsaJik2Qb"
+Content-Disposition: inline
+In-Reply-To: <20240517145302.971019-9-cleger@rivosinc.com>
 
-Enable duty_offset feature now that it is supported in the pwm
-subsystem. Related macros and struct fields related to duty_offset are
-renamed to be consistent.
 
-Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
----
-v3 changes:
-* rebased on top of latest pwm/for-next
+--ZUPGMxJHsaJik2Qb
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v2 changes:
-* Address feedback for driver in v1:
-  * Remove line setting supports_offset flag in pwm_chip, since that has
-    been removed from the struct in core.c.
----
- drivers/pwm/pwm-axi-pwmgen.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+On Fri, May 17, 2024 at 04:52:48PM +0200, Cl=E9ment L=E9ger wrote:
 
-diff --git a/drivers/pwm/pwm-axi-pwmgen.c b/drivers/pwm/pwm-axi-pwmgen.c
-index e0bf90cc2ba3..9ae06b105d07 100644
---- a/drivers/pwm/pwm-axi-pwmgen.c
-+++ b/drivers/pwm/pwm-axi-pwmgen.c
-@@ -56,7 +56,7 @@ static int axi_pwmgen_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	struct axi_pwmgen_ddata *ddata = pwmchip_get_drvdata(chip);
- 	unsigned int ch = pwm->hwpwm;
- 	struct regmap *regmap = ddata->regmap;
--	u64 period_cnt, duty_cnt;
-+	u64 period_cnt, duty_cnt, duty_offset_cnt;
- 	int ret;
- 
- 	if (state->polarity != PWM_POLARITY_NORMAL)
-@@ -81,6 +81,14 @@ static int axi_pwmgen_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 		ret = regmap_write(regmap, AXI_PWMGEN_CHX_DUTY(ch), duty_cnt);
- 		if (ret)
- 			return ret;
-+
-+		duty_offset_cnt = mul_u64_u64_div_u64(state->duty_offset, ddata->clk_rate_hz, NSEC_PER_SEC);
-+		if (duty_offset_cnt > UINT_MAX)
-+			duty_offset_cnt = UINT_MAX;
-+
-+		ret = regmap_write(regmap, AXI_PWMGEN_CHX_OFFSET(ch), duty_offset_cnt);
-+		if (ret)
-+			return ret;
- 	} else {
- 		ret = regmap_write(regmap, AXI_PWMGEN_CHX_PERIOD(ch), 0);
- 		if (ret)
-@@ -89,6 +97,10 @@ static int axi_pwmgen_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 		ret = regmap_write(regmap, AXI_PWMGEN_CHX_DUTY(ch), 0);
- 		if (ret)
- 			return ret;
-+
-+		ret = regmap_write(regmap, AXI_PWMGEN_CHX_OFFSET(ch), 0);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	return regmap_write(regmap, AXI_PWMGEN_REG_CONFIG, AXI_PWMGEN_LOAD_CONFIG);
-@@ -117,6 +129,12 @@ static int axi_pwmgen_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
- 
- 	state->duty_cycle = DIV_ROUND_UP_ULL((u64)cnt * NSEC_PER_SEC, ddata->clk_rate_hz);
- 
-+	ret = regmap_read(regmap, AXI_PWMGEN_CHX_OFFSET(ch), &cnt);
-+	if (ret)
-+		return ret;
-+
-+	state->duty_offset = DIV_ROUND_UP_ULL((u64)cnt * NSEC_PER_SEC, ddata->clk_rate_hz);
-+
- 	state->polarity = PWM_POLARITY_NORMAL;
- 
- 	return 0;
--- 
-2.45.1
+> +static int riscv_ext_zca_depends(const struct riscv_isa_ext_data *data,
+> +				 const unsigned long *isa_bitmap)
+> +{
+> +	return __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA) ?=
+ 0 : -EPROBE_DEFER;
+> +}
+> +static int riscv_ext_zcd_validate(const struct riscv_isa_ext_data *data,
+> +				  const unsigned long *isa_bitmap)
+> +{
+> +	return __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA) &&
+> +	       __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_d) ? 0=
+ : -EPROBE_DEFER;
+> +}
 
+Could you write the logic in these out normally please? I think they'd
+be more understandable (particular this second one) broken down and with
+early return.
+
+Otherwise,
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+--ZUPGMxJHsaJik2Qb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkz6vwAKCRB4tDGHoIJi
+0kLvAQCE6VdTKzQsLhuTCAot4T9V9f4Lr+mwFH/JYa+PN4XSawEA4Bpid+JyrYkM
+5yKjg6DZQIn95XuoTjrLNnKL0qkRvw0=
+=XDFW
+-----END PGP SIGNATURE-----
+
+--ZUPGMxJHsaJik2Qb--
 
