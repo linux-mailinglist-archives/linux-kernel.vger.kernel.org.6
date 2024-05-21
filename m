@@ -1,183 +1,146 @@
-Return-Path: <linux-kernel+bounces-184699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9781D8CAAB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:24:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D50EB8CAABA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2845EB22146
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:24:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44E58B21A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD715E22C;
-	Tue, 21 May 2024 09:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90556A8A6;
+	Tue, 21 May 2024 09:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="v1HmjlGW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G16UvPy1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6E147A7C;
-	Tue, 21 May 2024 09:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFD360279;
+	Tue, 21 May 2024 09:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716283482; cv=none; b=XvhU8ktDDrxvCkn4VPuaFEMlX4v5YZc4onADowUPjuBdAidFwzw9PbNFeaMjCweHd7sxMAm6IORCQnKLip/LpSqG2W0Aq8XcxdvOs7gX+lh2l/DVjQqoaHVZCkx28LQQdIhz8f7hEfWzUieyIIs8+HgG9CPBp/KhCcYY8vXdcFI=
+	t=1716283484; cv=none; b=NSpiOsJoB60THvO4kBxj/ADKvYFMYOWPCPXLZ6HvvVcXEy4kSdWWpaEiHY98eujWOESyYtqNPU5tn+gJDrc4GQq7YlnKY+Rnrinp0dCXidiWce8SRY1Lb2e+BFIAlpPkMqinEXjXAclsZnmG1RHeCz8Iose65WgNQNyFt5YJjLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716283482; c=relaxed/simple;
-	bh=FEogP54CIU9xaB8QKnpEHU5LEWGFTI1i0FIogAWOYnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eYNqIVo8DRBbvZINU66MKABc/OO0v69cyvfZF4aqYYXY7M59xi7p4PCJtFLKCHpi0RRatji1a1q6LcbVxSn8GE6jR1VizHUd9IW7vlzm0miSxIfkngNe1JAwSxW+IYxc9XmAjLCXtwklLZ4I1N7V+lhSAiYsRYpYty78V1v+rPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=v1HmjlGW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6764FC2BD11;
-	Tue, 21 May 2024 09:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716283481;
-	bh=FEogP54CIU9xaB8QKnpEHU5LEWGFTI1i0FIogAWOYnk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=v1HmjlGWxxHiyySnPlxSFqAvAIuGRYYuvq8udMwgQx56u166ipR6O1snh2qaWLBYq
-	 9pNUn1pfdZSXkDbWXuHJgcMvvQwdJAm+hCjgwcn/r7YPWVpB6M30/W8Uag488+YIre
-	 TCf94Vw6F+3IVv+LzHKfFJdD8SD3NqW8BBSbJsNk=
-Date: Tue, 21 May 2024 11:24:38 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [RFC PATCH 01/11] rust: add abstraction for struct device
-Message-ID: <2024052144-alibi-mourner-d463@gregkh>
-References: <20240520172554.182094-1-dakr@redhat.com>
- <20240520172554.182094-2-dakr@redhat.com>
- <2024052038-deviancy-criteria-e4fe@gregkh>
- <Zkuw/nOlpAe1OesV@pollux.localdomain>
+	s=arc-20240116; t=1716283484; c=relaxed/simple;
+	bh=jOR72qLIFTZ/1R7L4DUIJmbfyfVXT4jDz+9hdqwOnQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SSHZiZcuuDXsize4h68MVgyBHJ0rjbGM7x6TrHLZwh/+Or2UyTZUguVp1ECF4Pve3G4JekksS9L2cag928mYppCTSoDfuPyEDMoZPC/3FMMdb1WCo7973kLMYhZ2VNUS/JNkOUat99Hpa1/2b7oL80wuRfiQF5PVN/O/WEF6Qc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G16UvPy1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F726C4AF07;
+	Tue, 21 May 2024 09:24:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716283483;
+	bh=jOR72qLIFTZ/1R7L4DUIJmbfyfVXT4jDz+9hdqwOnQo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G16UvPy1o/OSTi65gBTrTm2ySmNTyueORZGvpDL2GmZb0Rj1iszQm8ty63EUwfEgf
+	 ISHeAsq+V3ccTU3oir4H3Pl2muXc/xOjjO14FaeyJ+o7Elq3KZs4EpkwmpfPVdwXCJ
+	 AoEX/6qbu/Iw8q8LyeKDMh5ab6XuORwtVFMz+7e/3GfIJgFUf1+2j81+EsEyRUaVBq
+	 2CLvsEyiB1DQ/lxUNzKoba673j1X6VQFiV0+mJyQQde7XaF+ZnakRQy7EGZ8TqySzh
+	 YMmikC7fLkWPbaZ6CP1vU4ubBR7DsgBfhDc0/jJ/7NRBtryB6B8LrMMc5Sq491D6Hi
+	 6U29iQIwoCuiQ==
+Message-ID: <918ca28c-2498-4c98-a257-33e828134087@kernel.org>
+Date: Tue, 21 May 2024 11:24:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zkuw/nOlpAe1OesV@pollux.localdomain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: dma: Add reg-names to
+ nvidia,tegra210-adma
+To: Sameer Pujar <spujar@nvidia.com>, vkoul@kernel.org,
+ thierry.reding@gmail.com, dmaengine@vger.kernel.org
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mkumard@nvidia.com, ldewangan@nvidia.com
+References: <20240520122351.1691058-1-spujar@nvidia.com>
+ <20240520122351.1691058-2-spujar@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240520122351.1691058-2-spujar@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 20, 2024 at 10:22:22PM +0200, Danilo Krummrich wrote:
-> On Mon, May 20, 2024 at 08:00:23PM +0200, Greg KH wrote:
-> > On Mon, May 20, 2024 at 07:25:38PM +0200, Danilo Krummrich wrote:
-> > > Add an (always) reference counted abstraction for a generic struct
-> > > device. This abstraction encapsulates existing struct device instances
-> > > and manages its reference count.
-> > > 
-> > > Subsystems may use this abstraction as a base to abstract subsystem
-> > > specific device instances based on a generic struct device.
-> > > 
-> > > Co-developed-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> > > Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> > > Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-> > > ---
-> > >  rust/helpers.c        |  1 +
-> > >  rust/kernel/device.rs | 76 +++++++++++++++++++++++++++++++++++++++++++
-> > 
-> > What's the status of moving .rs files next to their respective .c files
-> > in the build system?  Keeping them separate like this just isn't going
-> > to work, sorry.
-> > 
-> > > --- /dev/null
-> > > +++ b/rust/kernel/device.rs
-> > > @@ -0,0 +1,76 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +//! Generic devices that are part of the kernel's driver model.
-> > > +//!
-> > > +//! C header: [`include/linux/device.h`](../../../../include/linux/device.h)
-> > 
-> > relative paths for a common "include <linux/device.h" type of thing?
-> > Rust can't handle include paths from directories?
+On 20/05/2024 14:23, Sameer Pujar wrote:
+> From: Mohan Kumar <mkumard@nvidia.com>
 > 
-> Going to change this to `srctree/` as proposed by Miguel.
+> For Non-Hypervisor mode, Tegra ADMA driver requires the register
+> resource range to include both global and channel page in the reg
+> entry. For Hypervisor more, Tegra ADMA driver requires only the
+> channel page and global page range is not allowed for access.
 > 
-> > 
-> > > +
-> > > +use crate::{
-> > > +    bindings,
-> > > +    types::{ARef, Opaque},
-> > > +};
-> > > +use core::ptr;
-> > > +
-> > > +/// A ref-counted device.
-> > > +///
-> > > +/// # Invariants
-> > > +///
-> > > +/// The pointer stored in `Self` is non-null and valid for the lifetime of the ARef instance. In
-> > > +/// particular, the ARef instance owns an increment on underlying object’s reference count.
-> > > +#[repr(transparent)]
-> > > +pub struct Device(Opaque<bindings::device>);
-> > > +
-> > > +impl Device {
-> > > +    /// Creates a new ref-counted instance of an existing device pointer.
-> > > +    ///
-> > > +    /// # Safety
-> > > +    ///
-> > > +    /// Callers must ensure that `ptr` is valid, non-null, and has a non-zero reference count.
-> > 
-> > Callers NEVER care about the reference count of a struct device, anyone
-> > poking in that is asking for trouble.
+> Add reg-names DT binding for Hypervisor mode to help driver to
+> differentiate the config between Hypervisor and Non-Hypervisor
+> mode of execution.
 > 
-> That's confusing, if not the caller who's passing the device pointer somewhere,
-> who else?
-> 
-> Who takes care that a device' reference count is non-zero when a driver's probe
-> function is called?
+> Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 
-A device's reference count will be non-zero, I'm saying that sometimes,
-some driver core functions are called with a 'struct device' that is
-NULL, and it can handle it just fine.  Hopefully no callbacks to the
-rust code will happen that way, but why aren't you checking just "to be
-sure!" otherwise you could have a bug here, and it costs nothing to
-verify it, right?
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-> It's the same here. The PCI code calls Device::from_raw() from its
-> probe_callback() function, which is called from the C side. For instance:
-> 
-> extern "C" fn probe_callback(
->    pdev: *mut bindings::pci_dev,
->    id: *const bindings::pci_device_id,
-> ) -> core::ffi::c_int {
->    // SAFETY: This is safe, since the C side guarantees that pdev is a valid,
->    // non-null pointer to a struct pci_dev with a non-zero reference count.
->    let dev = unsafe { device::Device::from_raw(&mut (*pdev).dev) };
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline), work on fork of kernel
+(don't, instead use mainline) or you ignore some maintainers (really
+don't). Just use b4 and everything should be fine, although remember
+about `b4 prep --auto-to-cc` if you added new patches to the patchset.
 
-Yes, that's fine, if you are calling this from a probe callback, but
-again, the driver core has lots of functions in it :)
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time, thus I will skip this patch entirely till you follow
+the process allowing the patch to be tested.
 
->    [...]
-> }
-> 
-> > 
-> > And why non-NULL?  Can't you check for that here?  Shouldn't you check
-> > for that here?  Many driver core functions can handle a NULL pointer
-> > just fine (i.e. get/put_device() can), why should Rust code assume that
-> > a pointer passed to it from the C layer is going to have stricter rules
-> > than the C layer can provide?
-> 
-> We could check for NULL here, but I think it'd be pointless. Even if the pointer
-> is not NULL, it can still be an invalid one. There is no check we can do to
-> guarantee safety, hence the function is and remains unsafe and has safety
-> requirements instead that the caller must guarantee to fulfil.
-> 
-> Like in the example above, probe_callback() can give those guarantees instead.
+Please kindly resend and include all necessary To/Cc entries.
 
-Ok, if you say so, should we bookmark this thread for when this does
-happen?  :)
+Best regards,
+Krzysztof
 
-What will the rust code do if it is passed in a NULL pointer?  Will it
-crash like C code does?  Or something else?
-
-thanks,
-
-greg k-h
 
