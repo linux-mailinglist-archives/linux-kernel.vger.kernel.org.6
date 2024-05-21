@@ -1,98 +1,132 @@
-Return-Path: <linux-kernel+bounces-184594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFEE58CA953
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:50:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 588908CA939
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FD9F1F23471
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:50:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89D981C21441
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E6F5337D;
-	Tue, 21 May 2024 07:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="length tag value exceeds body size" (2048-bit key) header.d=unstable.cc header.i=a@unstable.cc header.b="n0Rr0caw"
-Received: from wilbur.contactoffice.com (wilbur.contactoffice.com [212.3.242.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B4F54BDB;
-	Tue, 21 May 2024 07:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.3.242.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDBF54663;
+	Tue, 21 May 2024 07:44:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16EB524DA;
+	Tue, 21 May 2024 07:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716277800; cv=none; b=b9fa944iDjhhJ6o09EG21BuY+8Fm1ivf8Prx5v58wb+dcHXOU2MrKltTntR5Hf1NhY44Z3CjUEEwwuWi2CfNXlD6naQItvDJHsUjncnE/NWHSLRjwd/qwAgw2kfGhniPWJMQnkBQFP+a7zsWszAx1uB67vTp/5BuIA9hnvFBXwM=
+	t=1716277465; cv=none; b=s3ChEOvtshQHBHbUzrMFMy2SVqYAisCKQb2k2kKTroawQFPlIosJ8SC6dSoV7eztUdKz55H2AWVwgF+WfsHH2U13hIjQMcJ+RAOJ39q7VO2DqUnlCI4cqqL1jeMnfBY+qHjfxS3exQBkCQCTq7vp+fUglQjiiI0pDHsYJ49vnBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716277800; c=relaxed/simple;
-	bh=ngJA16RR/OPoMkf7Y90IPOnKzfACzKGIQnec9KB66OI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qg36nT1+X4FA65KElU04xqqrpghMhVJdyFgcgIbEAIW8J3G5UfPMVb6mZYU5CJjC+qcDS906NEFwWmgNHnuu/n9qWtwGTcYFaGXGkpaKyySeFs1rUCcf5aym2VbBh9cUaw7XM7HONRxHGxx9edlxazhPCprmX1inqEN0nP7dB9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unstable.cc; spf=pass smtp.mailfrom=unstable.cc; dkim=pass (2048-bit key) header.d=unstable.cc header.i=a@unstable.cc header.b=n0Rr0caw; arc=none smtp.client-ip=212.3.242.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unstable.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unstable.cc
-Received: from smtpauth2.co-bxl (smtpauth2.co-bxl [10.2.0.24])
-	by wilbur.contactoffice.com (Postfix) with ESMTP id 1C6E662B;
-	Tue, 21 May 2024 09:42:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1716277352;
-	s=20220809-q8oc; d=unstable.cc; i=a@unstable.cc;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	l=806; bh=bq5w2dOXUmXaYoJcODSZnEnefduxYXuMwA2eq9OQaUA=;
-	b=n0Rr0cawN+9kwK/ld4MhADhhB/ovjNsZrbSNOP/1cmqTKmB9LLbYztcKxx/iG45B
-	8BItVLyL5olFXnSfgXZ/OlPPqLbm2n3lWooU97HUgdBI6twWM1pTtD/6ecg5QumlISP
-	Lmkra4a2jae/+hlsnTg3RvdHCo8Vg1FjDy+jxdqhBV9QSPFQ+KQbWxnsT1VbDNg60y1
-	7VsQV4ymKsGkCn+u1vgGl93f3DXaWhZp3rfzc1xeOtbgA4iEvOx1fhqqrRxWdV5Hypw
-	hvI9iGdsGpg1IseQjzzHfRmHCvMafwlEVhbMYZr5bflQO/uhDvOt/GDwqkKYOuF9eOa
-	98nLFdfUNw==
-Received: by smtp.mailfence.com with ESMTPSA ; Tue, 21 May 2024 09:42:30 +0200 (CEST)
-Message-ID: <cef03d6c-7be8-4527-b38b-eadca2789f9b@unstable.cc>
-Date: Tue, 21 May 2024 09:43:56 +0200
+	s=arc-20240116; t=1716277465; c=relaxed/simple;
+	bh=Lg0/Tt1SOS/F7tOaSVGCmlbI8p0YWMpg6DSqNS8Dvpw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=riLsPI0JuORtsWsUxwSFykHRQqAQHb7oax1zWsPOOzN0dPmEwJHDx5yXXhIfE2jkdfXcorE1jvzqYygSKYM2Xywv3epdlMy3Nt9WwbCG/WkW44UcpIb9mP3BeC3iB7dEw+Nzo11TXJd6FdKtWWFD5Ij9arbsr7WFEZYzYwy9Gw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4435CFEC;
+	Tue, 21 May 2024 00:44:47 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DB03C3F641;
+	Tue, 21 May 2024 00:44:19 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	shuah@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Anshuman.Khandual@arm.com,
+	sjayaram@akamai.com,
+	Dev Jain <dev.jain@arm.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2 1/3] selftests/mm: compaction_test: Fix bogus test success on Aarch64
+Date: Tue, 21 May 2024 13:13:56 +0530
+Message-Id: <20240521074358.675031-2-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240521074358.675031-1-dev.jain@arm.com>
+References: <20240521074358.675031-1-dev.jain@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: cfg80211: Lock wiphy in cfg80211_get_station
-To: Remi Pommarel <repk@triplefau.lt>,
- Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, b.a.t.m.a.n@lists.open-mesh.org,
- linux-kernel@vger.kernel.org
-References: <983b24a6a176e0800c01aedcd74480d9b551cb13.1716046653.git.repk@triplefau.lt>
-Content-Language: en-US
-From: Antonio Quartulli <a@unstable.cc>
-In-Reply-To: <983b24a6a176e0800c01aedcd74480d9b551cb13.1716046653.git.repk@triplefau.lt>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-ContactOffice-Account: com:375058688
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Currently, if at runtime we are not able to allocate a huge page, the
+test will trivially pass on Aarch64 due to no exception being raised on
+division by zero while computing compaction_index. Fix that by checking
+for nr_hugepages == 0. Anyways, in general, avoid a division by zero by
+exiting the program beforehand. While at it, fix a typo, and handle the
+case where the number of hugepages may overflow an integer.
 
-On 18/05/2024 17:50, Remi Pommarel wrote:
-> Wiphy should be locked before calling rdev_get_station() (see lockdep
-> assert in ieee80211_get_station()).
+Changes in v2:
+- Combine with this series, handle unsigned long number of hugepages
 
-Adding the lock is fine as nowadays it is taken in pre_doit and released 
-in post_doit (with some exceptions). Therefore when invoking 
-get_station from a side path the lock should be taken too.
+v1:
+- https://lore.kernel.org/all/20240513082842.4117782-1-dev.jain@arm.com/
 
-It was actually a05829a7222e9d10c416dd2dbbf3929fe6646b89 that introduced 
-this requirement AFAICS.
+Fixes: bd67d5c15cc1 ("Test compaction of mlocked memory")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+ tools/testing/selftests/mm/compaction_test.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-> 
-> This fixes the following kernel NULL dereference:
-
-As already said by Johannes, I am not sure it truly fixes this NULL 
-dereference though.
-
-Have you checked where in ath10k_sta_statistics this is exactly 
-happening? Do you think some sta was partly released and thus fields 
-were NULLified?
-
-Regards,
-
-
+diff --git a/tools/testing/selftests/mm/compaction_test.c b/tools/testing/selftests/mm/compaction_test.c
+index 4f42eb7d7636..0b249a06a60b 100644
+--- a/tools/testing/selftests/mm/compaction_test.c
++++ b/tools/testing/selftests/mm/compaction_test.c
+@@ -82,12 +82,13 @@ int prereq(void)
+ 	return -1;
+ }
+ 
+-int check_compaction(unsigned long mem_free, unsigned int hugepage_size)
++int check_compaction(unsigned long mem_free, unsigned long hugepage_size)
+ {
++	unsigned long nr_hugepages_ul;
+ 	int fd, ret = -1;
+ 	int compaction_index = 0;
+-	char initial_nr_hugepages[10] = {0};
+-	char nr_hugepages[10] = {0};
++	char initial_nr_hugepages[20] = {0};
++	char nr_hugepages[20] = {0};
+ 
+ 	/* We want to test with 80% of available memory. Else, OOM killer comes
+ 	   in to play */
+@@ -134,7 +135,12 @@ int check_compaction(unsigned long mem_free, unsigned int hugepage_size)
+ 
+ 	/* We should have been able to request at least 1/3 rd of the memory in
+ 	   huge pages */
+-	compaction_index = mem_free/(atoi(nr_hugepages) * hugepage_size);
++	nr_hugepages_ul = strtoul(nr_hugepages, NULL, 10);
++	if (!nr_hugepages_ul) {
++		ksft_print_msg("ERROR: No memory is available as huge pages\n");
++		goto close_fd;
++	}
++	compaction_index = mem_free/(nr_hugepages_ul * hugepage_size);
+ 
+ 	lseek(fd, 0, SEEK_SET);
+ 
+@@ -145,11 +151,11 @@ int check_compaction(unsigned long mem_free, unsigned int hugepage_size)
+ 		goto close_fd;
+ 	}
+ 
+-	ksft_print_msg("Number of huge pages allocated = %d\n",
+-		       atoi(nr_hugepages));
++	ksft_print_msg("Number of huge pages allocated = %lu\n",
++		       nr_hugepages_ul);
+ 
+ 	if (compaction_index > 3) {
+-		ksft_print_msg("ERROR: Less that 1/%d of memory is available\n"
++		ksft_print_msg("ERROR: Less than 1/%d of memory is available\n"
+ 			       "as huge pages\n", compaction_index);
+ 		goto close_fd;
+ 	}
 -- 
-Antonio Quartulli
+2.34.1
+
 
