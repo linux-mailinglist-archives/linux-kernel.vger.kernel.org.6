@@ -1,137 +1,144 @@
-Return-Path: <linux-kernel+bounces-184416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 904D08CA6B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:13:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB8C8CA6BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C20F81C21052
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:13:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 597B0B20CCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8526217BA4;
-	Tue, 21 May 2024 03:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CAD1B299;
+	Tue, 21 May 2024 03:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MQvEDn+k"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mufnkycR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A4517722
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBB3848A;
+	Tue, 21 May 2024 03:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716261232; cv=none; b=ERw32rF/hzVu+CwtxeO629RwUxGkYwJTqZ0hj8F1Glds6JJVuco8NimznxdUTNNkwbyNNBwtz6wK63yWYl5wnYibQUJO4wMiyEmHzgnU/hm7OCALGfqfLpqUw+amR7viN2avJBkb5FcfVl76fFZyD8s0S3l7qVNFMRXs+BwgzbQ=
+	t=1716261411; cv=none; b=PPtYCziyFlAFhS3tkAW6VrB+TDjG04zBTB3X6dL1I70BYn1JLQsjUCaSXw/cfZQjLnva2DREiv+S3sdwt+kkuhL71dRsQblZzKxROAcCkoLlFwAGfemg0D/1dt2o5VpvyncLEygv5G8ZP/qh4VvGC/vqjyCgaHinuwlWu/77i1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716261232; c=relaxed/simple;
-	bh=L6WVvuL+gFvZL0110Lldc+1hgtwVEmdlAqsIL6YHMe0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmFJET6qMG0or2Gz54e/wjK+cnC1UgveDuyHUQBUgij41PN2PSBpvXkmkaKtsRuD8JBQSW7rvry/u2dOrTInJsXgrm1xrIYVtodfCWNLbX2BxrusXv3l/n6RDj8yRGFcw+zK4GEkvq3HicMqSUwPkzK5QVgGzAAX5RBCklUIsQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MQvEDn+k; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716261230;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3/HzK1apeoYY0DujLj2rbx8MJd+TQtas5Uof0p135Ck=;
-	b=MQvEDn+kYWtnJ7xzsJW9XzEZ+zBO5K30hu0Kv8OmZLZcmHyYnYR22WrrhmBUAPIQMsjlto
-	ei4wjpMAGH59qz4VeHZ5lSbzOuUPJePtXehfl3Rx87rDa6c/lEV2lN/dnk4S0RxQcKWjNr
-	6c6pvk3bT/4lA6ulnuMbGL6OykVmO+I=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-141-ugmp0PizN2unNesMjqUHGA-1; Mon, 20 May 2024 23:13:48 -0400
-X-MC-Unique: ugmp0PizN2unNesMjqUHGA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2FE3C101A54F;
-	Tue, 21 May 2024 03:13:48 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.65])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 28DF440C6EB7;
-	Tue, 21 May 2024 03:13:46 +0000 (UTC)
-Date: Tue, 21 May 2024 11:13:43 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
-	Milan Broz <gmazyland@gmail.com>,
-	Thomas Staudt <tstaudt@de.ibm.com>,
-	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>,
-	Jan Pazdziora <jpazdziora@redhat.com>,
-	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Dave Hansen <dave.hansen@intel.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>
-Subject: Re: [PATCH v3 1/7] kexec_file: allow to place kexec_buf randomly
-Message-ID: <ZkwRZxGw2dWStd1C@MiWiFi-R3L-srv>
-References: <20240425100434.198925-1-coxu@redhat.com>
- <20240425100434.198925-2-coxu@redhat.com>
- <ZkrqkzJlW2RZkmH9@MiWiFi-R3L-srv>
- <y5ogivx7qbdm6u37t5o6na4jewn6qofzrbibnsneoqlwns63y5@eg62cytuvwql>
+	s=arc-20240116; t=1716261411; c=relaxed/simple;
+	bh=YK2OIxpfjJaaDk91GjlEjElige5eBrqgDYVjkNdZEEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EaYkFn1zbWWA1ih4COtb5l5+3tKQGL1RLl7hMxFdTdCgyWW31T6YKHQOjNLo78sfy+b0gIdMAR2GB8L84x8QMa4QDQjF64UGNeJ6VXuedQFTO4IeuqyM30cvWre9vBRjXOgYi58m+wovV6rLNFgZ2Kpo7FmrL2BApQ8kHY08jcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mufnkycR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E9C3C32786;
+	Tue, 21 May 2024 03:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716261410;
+	bh=YK2OIxpfjJaaDk91GjlEjElige5eBrqgDYVjkNdZEEo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mufnkycRqgDnEKVs0Z8YdZMXrmiM4FjhjHgsPPRH415K1hGvGc7FXZohKtrutljZJ
+	 kzd5d40xulh0Pe5nG+T9w48QmMwWGQXAldO8h/DZog93F7AE5pzXbZ032XIqjcl1HH
+	 j17xXmiw2y+BaaDIcYOlsBhX+uhkAPJRDMwvsqn7qQD8oTHoyolRomqbdwfq9mnCaQ
+	 prQhbvBXSTkiKRUzsk21QcU5fe7yrqYz8bLuKCF7t5FVaZu2GMtZQdGb6VGXk2Q8Nw
+	 fvol5NhCQvOKBf1nRvfjBr+GGbNKOs+3gDoo40MfjcXmDjrNMIVlESEVI/GzH9f4Vk
+	 UJ/mPhE6LgNCg==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	Andreas.Fuchs@infineon.com,
+	James Prestwood <prestwoj@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org (open list:CRYPTO API),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 0/6] KEYS: asymmetric: tpm2_key_rsa
+Date: Tue, 21 May 2024 06:16:25 +0300
+Message-ID: <20240521031645.17008-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <y5ogivx7qbdm6u37t5o6na4jewn6qofzrbibnsneoqlwns63y5@eg62cytuvwql>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+Content-Transfer-Encoding: 8bit
 
-On 05/21/24 at 09:58am, Coiby Xu wrote:
-> On Mon, May 20, 2024 at 02:16:43PM +0800, Baoquan He wrote:
-> > On 04/25/24 at 06:04pm, Coiby Xu wrote:
-> > > Currently, kexec_buf is placed in order which means for the same
-> > > machine, the info in the kexec_buf is always located at the same
-> > > position each time the machine is booted. This may cause a risk for
-> > > sensitive information like LUKS volume key. Now struct kexec_buf has a
-> > > new field random which indicates it's supposed to be placed in a random
-> > > position.
-> > 
-> > Do you want to randomize the key's position for both kdump and kexec
-> > rebooting? Assume you only want to do that for kdump. If so, we may need
-> > to make that more specific in code.
-> 
-> Thanks for the suggestion! Currently, no one has requested this feature
-> for kexec reboot so yes, I only have kdump in mind. But kdump depends
-> on kexec thus I'm not sure how we can make it kdump specfic. Do you have
-> a further suggestion?
+## Overview
 
-I remember you said kexec reboot doesn't need the key passed from 1st
-kernel to 2nd kernel because the 2nd kernel will calculate one during
-boot.
+Introduce tpm2_key_rsa module, which implements asymmetric TPM2 RSA key.
+The feature can be enabled with the CONFIG_ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE 
+kconfig option.
 
-kbuf has the information, the similar handling has been in
-kernel/kexec_file.c:
+The idea in the design is to over time to have submodule per key type
+For instance, tpm2_key_ecdsa could be one potential future addition in
+the future. Perhaps, it might sense to consider at that point also a
+top-level tpm2_key module. The gist is that the naming convention is
+free from potential future bottlencks.
 
-#ifdef CONFIG_CRASH_DUMP
-        if (kbuf->image->type == KEXEC_TYPE_CRASH)
-                ....;
-#endif
+## Change Log
 
-> 
-> 
-> > diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-> > index 060835bb82d5..fc1e20d565d5 100644
-> > --- a/include/linux/kexec.h
-> > +++ b/include/linux/kexec.h
-> > @@ -171,6 +171,7 @@ int kexec_image_post_load_cleanup_default(struct kimage *image);
-> >  * @buf_min:	The buffer can't be placed below this address.
-> >  * @buf_max:	The buffer can't be placed above this address.
-> >  * @top_down:	Allocate from top of memory.
-> > + * @random:	Place the buffer at a random position.
-> 
-> How about a comment here saying this is currently only used by kdump.
+v2
+Cleaned up all the low-hanging fruit for the sake of saving everyones
+time. After this I move into reactive mode (I promise) ;-)
 
-No, it's not good. Please don't do this, let code tell it.
+## Testing
 
-By the way, can you rebase this series on the latest v6.9 and resend? I
-rebase my code and can't apply your patchset.
+tpm2_createprimary --hierarchy o -G rsa2048 -c owner.txt
+tpm2_evictcontrol -c owner.txt 0x81000001
+tpm2_getcap handles-persistent
+openssl genrsa -out private.pem 2048
+tpm2_import -C 0x81000001 -G rsa -i private.pem -u key.pub -r key.priv
+tpm2_encodeobject -C 0x81000001 -u key.pub -r key.priv -o key.priv.pem
+openssl asn1parse -inform pem -in key.priv.pem -noout -out key.priv.der
+serial=`cat key.priv.der | keyctl padd asymmetric tpm @u`
+echo "abcdefg" > plaintext.txt
+keyctl pkey_encrypt $serial 0 plaintext.txt enc=pkcs1 > encrypted.dat
+keyctl pkey_decrypt $serial 0 encrypted.dat enc=pkcs1 > decrypted.dat
+keyctl pkey_sign $serial 0 plaintext.txt enc=pkcs1 hash=sha256 > signed.dat
+keyctl pkey_verify $serial 0 plaintext.txt signed.dat enc=pkcs1 hash=sha256
+
+## References
+
+- v1: https://lore.kernel.org/linux-integrity/20240520184727.22038-1-jarkko@kernel.org/
+- Derived from https://lore.kernel.org/all/20200518172704.29608-1-prestwoj@gmail.com/
+
+James Prestwood (1):
+  keys: asymmetric: ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE
+
+Jarkko Sakkinen (5):
+  crypto: rsa-pkcs1pad: export rsa1_asn_lookup()
+  lib: Expand asn1_encode_integer() to variable size integers
+  tpm: Export tpm2_load_context()
+  KEYS: trusted: Move tpm2_key_decode() to the TPM driver
+  tpm: tpm2_key: Extend parser to TPM_LoadableKey
+
+ crypto/asymmetric_keys/Kconfig                |  16 +
+ crypto/asymmetric_keys/Makefile               |   1 +
+ crypto/asymmetric_keys/tpm2_key_rsa.c         | 698 ++++++++++++++++++
+ crypto/rsa-pkcs1pad.c                         |  16 +-
+ drivers/char/tpm/Kconfig                      |   1 +
+ drivers/char/tpm/Makefile                     |   5 +
+ drivers/char/tpm/tpm.h                        |   2 -
+ drivers/char/tpm/tpm2-cmd.c                   |  77 ++
+ drivers/char/tpm/tpm2-space.c                 |  61 --
+ drivers/char/tpm/tpm2_key.c                   | 119 +++
+ .../char/tpm}/tpm2key.asn1                    |   0
+ include/crypto/rsa-pkcs1pad.h                 |  20 +
+ include/crypto/tpm2_key.h                     |  35 +
+ include/linux/asn1_encoder.h                  |   3 +-
+ include/linux/tpm.h                           |   4 +
+ lib/asn1_encoder.c                            | 185 ++---
+ security/keys/trusted-keys/Makefile           |   2 -
+ security/keys/trusted-keys/trusted_tpm2.c     | 135 +---
+ 18 files changed, 1110 insertions(+), 270 deletions(-)
+ create mode 100644 crypto/asymmetric_keys/tpm2_key_rsa.c
+ create mode 100644 drivers/char/tpm/tpm2_key.c
+ rename {security/keys/trusted-keys => drivers/char/tpm}/tpm2key.asn1 (100%)
+ create mode 100644 include/crypto/rsa-pkcs1pad.h
+ create mode 100644 include/crypto/tpm2_key.h
+
+-- 
+2.45.1
 
 
