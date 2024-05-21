@@ -1,121 +1,119 @@
-Return-Path: <linux-kernel+bounces-185526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE418CB648
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:10:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF39A8CB64B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5B01C21AA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:10:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CC61F21C62
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C23149C75;
-	Tue, 21 May 2024 23:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9777149DFC;
+	Tue, 21 May 2024 23:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghEbiT1C"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sO6x8+ui"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A1B6BFD5;
-	Tue, 21 May 2024 23:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5AB36134
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 23:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716333001; cv=none; b=KCqxDP7QarhTHQSy+SHw/BjQLoxXn0U1TeI83Z2/MpKVi5BgV1AckqokJfsFM92hAXbs3lWr0dxWaqJXK1TCoCSPPPyOU5ZVaKdZGN5XVYm3DpZetDucI5vfzIFWTziIT429QB4pgPmsYN9PxVOF71DwgsQYsRfP+LqHWepv1z4=
+	t=1716333410; cv=none; b=Dh1brHyu7yBHbUIdUsfLs21/XhWku2Yfcs3+ijxw8G4bT4kZUiPhVURgOcstrzP4u0Pqw9J0YcasHOxveBATdKoV2dkJgDG8vw6Whpim5+pJfDw4F4RrF5AAd24QB8Z3fAqiK3goRkFG7UXSyX0tV/4cpFyiMQchiPc4TdhGZ7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716333001; c=relaxed/simple;
-	bh=+C7gsf8/DDUlWKuGaYzLxwz3xDgCyKhla7uqE1E7D8A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OUE90lNWrlXPBK89EPzwLZ/I+ckvPPHfdw1V/R+u3LSCpQgVqsI38PbLTflzajxI7ujAnP51k2w8C/F3Mi1HTnkDpiCC4cZN14lq0EmyXfREjqc3c/QAq9Q/nOiUFfZM1YgI/Pf+qamS+CabuyvYMhx9YQKShWaHvVvREgIcihE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghEbiT1C; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1eecc71311eso5850125ad.3;
-        Tue, 21 May 2024 16:09:59 -0700 (PDT)
+	s=arc-20240116; t=1716333410; c=relaxed/simple;
+	bh=Ry2b6kPu+p8kFrAdVbxwjoeTuHCP60XH1ZnfrYTGACg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Gz3hCiku9N1BozFebTtKDax33YuCJ06qoIecWQPItzmZLVuh0GWIbPJFVSLOEkrlev30EO2M6J6UUOT6MkCHqD7zd4c4vxzND/5gR7jXZyIY1iSHQflt+90vsuHpx4xcsSl59Zno3hp+6sYw4jjAbWir3xZ4dRUn3gHhMaABxq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sO6x8+ui; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-61cb5628620so13228837a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 16:16:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716332999; x=1716937799; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WVlapK7IICqNZRk9AkY2koCiGjAfMcvjxFmJh5c+ZKA=;
-        b=ghEbiT1CZedTHrP9WS1xxYepuO7+3UUlf3L/Kn/pBb5Hza5JQn7bTmMSvHJh/lq10F
-         O0vlojDiwwAgeeO33Zg3uSAwMVkR73D4vjgeUFGQUTyozVXqc+3AG3BZpBBN33/D1wdp
-         tkBXn8x47lxyNm2ZVbNPxqg967PWVwzsBvwlPdy791KQ8+evxmAgeIwvW3D1osjBBEWN
-         bCNCjihH2NNb4vwPLktjCuOo5VsobDmqLq9bT3YSeW1f8IuV0TN2ckv1GXj5R2T72wHo
-         MJh23bCWYpVUpL/DzD3yg46twxTDfRoD0uCEEH3NNmfXVqwdbzNWr3zK6vhx1LBaXAXt
-         WfrQ==
+        d=google.com; s=20230601; t=1716333408; x=1716938208; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QWx4tDap5TnZgWN5L1koc75NADyLaUKfEEEhuyV4lik=;
+        b=sO6x8+uicoxNklsL2/aYHgIbUc7fISL8tdierG5vn525pY0EBb/36Y87Lg6ztoDkqW
+         8fbVmUdn3cRbOB036HaCtrARvhgXCWmE68MAhJW2pTRnHN0GU33tWelogC/f9gw732VX
+         kBBtcyBbn0Jr7vUfj4UtOWMjv6D5kxIu6aUsSgStMqV1eTaWLjaeI2Zq8IvSPuJGi/x6
+         61poF7EXA4PEOV5DGK1GdalVBBg3RpatoxxeiGIpt8XKWnD7NcXvApC5JxKxEoIpgzBE
+         RDzgcTlVZ8e8tdCcScO54UqdP8V1d6988RjbFHmUzmUtZZw+3+6tWax3Q8QzgcUEq39n
+         NvEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716332999; x=1716937799;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WVlapK7IICqNZRk9AkY2koCiGjAfMcvjxFmJh5c+ZKA=;
-        b=F4f3e8cf5lxMd8IqlhciIG/piZFSeZtr5YjfM50Tx0DUpjTQhJd9kES0nUYwbWUrnk
-         5ZVssvwyntO9iSxOjohQhNCYkbqak+qiYR9nl9NDh3bMv9rBZwFTfwfBHbqpYL/+zzEJ
-         XjW65IsbcOiwYZ+oAgn62p7dalZZ8BM0U0B6/Zq6zO9i5Gbl1HbAop6jAXA34U0b6Ubx
-         tyBXtfNA6jqo2rHTOoiAd9/zSdcQ6DVRE9Ku2sWwbCDJXyGdB+//8kois7EXk73yWe7y
-         ZdJd9i7bocKNb/wTBR/xeFcKqgvRwokpT8IvGH3Iss5/4EXmjuJM1ruZlUBfd39BgNnE
-         64qg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvMqWEth87is1PRvDEHs0zlKYHOdXsClgL0WJvh8P+fwkf42xr8Lvz2tvN/YZL2w0+vGQrEk8CpTT/S4vTs2F69OwzqvYAGCaWc9Y=
-X-Gm-Message-State: AOJu0Yx3CaL4+b9UbxE0N1NxOXOQmyXdh8qtB3KHzniFidL1KNIrSHva
-	Re22Br5ntsePNAO/94wmkwYz1JMnZzazUNwA9VZTnzhVgB+4ggWC
-X-Google-Smtp-Source: AGHT+IEUSJRxNrS6yUKVErdzlXWzg1sH39tRKWgKSQHqMOwe8nC/k5w4dzEH8hp/XPLGR9/bKnntHA==
-X-Received: by 2002:a17:902:7d82:b0:1e3:e1d5:c680 with SMTP id d9443c01a7336-1f31c9f8a37mr4576725ad.63.1716332999363;
-        Tue, 21 May 2024 16:09:59 -0700 (PDT)
-Received: from [192.168.0.107] ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f679902e57sm10876926b3a.110.2024.05.21.16.09.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 16:09:58 -0700 (PDT)
-Message-ID: <32775b1a-7bc3-491f-bcab-af48d2d82d79@gmail.com>
-Date: Wed, 22 May 2024 06:09:49 +0700
+        d=1e100.net; s=20230601; t=1716333408; x=1716938208;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QWx4tDap5TnZgWN5L1koc75NADyLaUKfEEEhuyV4lik=;
+        b=JVmViI7q1nt91glGT0L1x2RhiHiOovpAlpt1X1+/eRTyBlw7h7Rf/M0nY2oY+avOA2
+         Ooaa8U7oLuHTIJX1fIp07xSSaL9DksbwhvdUSUPPYGuJwF5xQ7yY6q9Lv4PFBFnCTbWr
+         v/QYscoqc/GetBdz2wXZLK5FrS9NiZHQ2RQmASZCvnX5UmP3slkZPek6NV7xyttW66tP
+         9jkAGW/62WC5andNpHYxIpgJVfM72MEATpNuogFeqEN+8PeYLs1MuKuQW0chBdsBuGMC
+         UiyUuLRY403JAlAJcxZ4J7J8PdSbw1Rxv9eodfyLCrLqRv+9O5zAPtk9C8Iaj+7L/hj3
+         Iz6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWR48/hNYsIQcNKqsZQOicP8vUP9zSPuX04lgqOUDWsWZ+58ol2HMrtAuz+ByBZj2xvekzOWyDcCrZ4X3pvuqEcWvP40A2QyLBrvBvt
+X-Gm-Message-State: AOJu0YxKLqR74mDIb4l8/EAXZT7dnCs1X7hUIX904NBsx67iV0AOyI94
+	fH7uJCxVupMiGg2EgFSg3dn2hYaODjslgOH+6zuoziETr+Dc8xF7Bos5q2b19yIqT1CyTrd7PzK
+	Yvw==
+X-Google-Smtp-Source: AGHT+IHnzE+ZthCssIlHmxg20CnLlKr6bsQKxZ55A80mzM4vh3TMlx+g+JnYoV4TUMf74JNjUWU33z9Lcwc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:f7cd:b0:1f3:97f:8f13 with SMTP id
+ d9443c01a7336-1f31c975cd3mr10815ad.6.1716333408149; Tue, 21 May 2024 16:16:48
+ -0700 (PDT)
+Date: Tue, 21 May 2024 16:16:46 -0700
+In-Reply-To: <00c59dce-e1e4-47cf-a109-722a033b00d8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Fwd: Garbled sound at start of a playback after some inactivity
- on said channel with DP/HDMI on RDNA devices
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Sound System <linux-sound@vger.kernel.org>,
- sound-open-firmware@alsa-project.org,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Daniel Baluta <daniel.baluta@nxp.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Mete <yurnerolinux@yandex.com>
-References: <ZkHKYocpP-abFwLB@archie.me>
- <03d0fd01-278d-40ff-afcb-7107394b89eb@sirena.org.uk>
-Content-Language: en-US
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <03d0fd01-278d-40ff-afcb-7107394b89eb@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240425233951.3344485-1-seanjc@google.com> <20240425233951.3344485-2-seanjc@google.com>
+ <5dfc9eb860a587d1864371874bbf267fa0aa7922.camel@intel.com>
+ <ZkI5WApAR6iqCgil@google.com> <6100e822-378b-422e-8ff8-f41b19785eea@intel.com>
+ <1dbb09c5-35c7-49b9-8c6f-24b532511f0b@intel.com> <Zkz97y9VVAFgqNJB@google.com>
+ <00c59dce-e1e4-47cf-a109-722a033b00d8@intel.com>
+Message-ID: <Zk0rXkXkchNnRxwQ@google.com>
+Subject: Re: [PATCH 1/4] x86/reboot: Unconditionally define
+ cpu_emergency_virt_cb typedef
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On 5/22/24 01:36, Mark Brown wrote:
-> On Mon, May 13, 2024 at 03:08:02PM +0700, Bagas Sanjaya wrote:
+On Wed, May 22, 2024, Kai Huang wrote:
+> On 22/05/2024 8:02 am, Sean Christopherson wrote:
+> > On Wed, May 15, 2024, Kai Huang wrote:
+> > > How about we just make all emergency virtualization disable code
+> > > unconditional but not guided by CONFIG_KVM_INTEL || CONFIG_KVM_AMD, i.e.,
+> > > revert commit
+> > > 
+> > >     261cd5ed934e ("x86/reboot: Expose VMCS crash hooks if and only if
+> > > KVM_{INTEL,AMD} is enabled")
+> > > 
+> > > It makes sense anyway from the perspective that it allows the out-of-tree
+> > > kernel module hypervisor to use this mechanism w/o needing to have the
+> > > kernel built with KVM enabled in Kconfig.  Otherwise, strictly speaking,
+> > > IIUC, the kernel won't be able to support out-of-tree module hypervisor as
+> > > there's no other way the module can intercept emergency reboot.
+> > 
+> > Practically speaking, no one is running an out-of-tree hypervisor without either
+> > (a) KVM being enabled in the .config, or (b) non-trivial changes to the kernel.
 > 
->>>   Device-1: AMD Navi 31 [Radeon RX 7900 XT/7900 XTX/7900M]
->>>     vendor: Sapphire PULSE driver: amdgpu v: kernel arch: RDNA-3 bus-ID: 03:00.0
->>>   Device-2: AMD Raphael vendor: Gigabyte driver: amdgpu v: kernel
->>>     arch: RDNA-2 bus-ID: 12:00.0 temp: 39.0 C
-> 
-> You've CCed a bunch of Intel and NXP people for some reason but whatever
-> this is it seems to be an AMD issue?
+> Just for curiosity: why b) is required to support out-of-tree hypervisor
+> when KVM is disabled in Kconfig?  I am probably missing something.
 
-Yep, I found these addresses by `scripts/get_maintainer.pl 
-sound/soc/sof/amd/rembrandt.c` since I thought it was rembrandt
-driver issue.
+A variety of hooks that are likely needed for any x86 hypervisor (especially on
+Intel) are guarded by CONFIG_KVM.  E.g. the posted interrupt vectors (though it's
+definitely possible to use a different model than KVM), the entry point for
+trampolining NMIs (though again, a hypervisor could just do "INT 2", at least
+until FRED comes along), and probably a few other things.
 
-Thanks.
-
--- 
-An old man doll... just what I always wanted! - Clara
-
+I'm sure it's possible to workaround any issues, but I would be quite surprised
+if out-of-tree code went through the effort of functioning with a kernel built
+to play nice with KVM.  Who knows, maybe I'm entirely wrong :-)
 
