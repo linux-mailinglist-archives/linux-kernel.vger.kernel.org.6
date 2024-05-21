@@ -1,109 +1,98 @@
-Return-Path: <linux-kernel+bounces-184744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91208CAB5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:59:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B6D8CAB5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25E0D1C216F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:59:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 621781C210C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953306BB5D;
-	Tue, 21 May 2024 09:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC096BB54;
+	Tue, 21 May 2024 10:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Yszcimwy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XyfMop+B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF3C56763;
-	Tue, 21 May 2024 09:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93AF561664;
+	Tue, 21 May 2024 10:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716285578; cv=none; b=hGVulJzO6RFxg5LWodrh2JWLLu6a7TBGzQbeZ01Sr8NMapVYkXsHC0+3MwofYFlcVEbm1L4mKYv7dTuuwH6fH3qHciVKCqVmOZdw0/25+q3d3y+Iq6SMayeRftcdmktuiBXBUHBZ+qxJc7MXmr8N4UnaBIbRaO3hXntCoh5JJiE=
+	t=1716285600; cv=none; b=b1rATSMgFrTyBL8lQroZyU7algCWRIUb1YCm3MKtmaW8lWJU1VaVrJthtKrzsCYlWuRuZyy0f1aRPCPVwkZJWh4wB9OWDetiVGj33F4+2Pk73IUC+yCFXQ0MtMYJSF8dFMAIEcRkZMb1YflGqdLlBVkaJY4TsIbHq+w1kLnjntc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716285578; c=relaxed/simple;
-	bh=xfWhlHbdXog64Mscjfj1ATrii7G5sb/JK0wl+AddZTk=;
+	s=arc-20240116; t=1716285600; c=relaxed/simple;
+	bh=1V+29lB8btSlk68MGRUu8mgqZi72yOl5RrQVg1+kexY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ha5W72OtfRKLaKu5pAF0Vg6G9vQYQ9xLbxumzOgGY5ihE7nv0SHbw+TPAPR7m3MPhvUUB9L2stt9BmeotTNBP4HJj0WZlJd0sFMcn5jG4zJV74b0ek0QowiWvXqgc/6Gv3PkfEq9Upy2+fOnfOa4IUBl8WZFedSWEHsKy502H3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Yszcimwy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8A90C2BD11;
-	Tue, 21 May 2024 09:59:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716285578;
-	bh=xfWhlHbdXog64Mscjfj1ATrii7G5sb/JK0wl+AddZTk=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=N9B/q/p0EajYritAlaOBoO3JHDQTM/ckvsVPGr7Lp0PQkELFGTobpG5hk81/k97tK6vOegkBX0ZdmvGixCtnOgwRSVdTqdWe/qCp5VyVwQMTtUUGffUR4f9fHc0LpfltTwcistaXem/SBSOiGdiV2nzAXNyXR4RaiJo1/xNHTn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XyfMop+B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C31C5C2BD11;
+	Tue, 21 May 2024 09:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716285600;
+	bh=1V+29lB8btSlk68MGRUu8mgqZi72yOl5RrQVg1+kexY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YszcimwycM+IexTz0jrEP8E1xDPyyLZSdnrf55ZBaRCTBl1Z32sFg2y/o04kDfJIM
-	 J9Mmp4eWJk5PV2MDSnDoq43cqd+AcvgR/HRnLRCbMTP6nHY6vxZLScbJTXDuZsLzbg
-	 P+HnCKR88qUgsXY0v2pEByLIx/IjqRddliCZnV60=
-Date: Tue, 21 May 2024 11:59:35 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [RFC PATCH 02/11] rust: add driver abstraction
-Message-ID: <2024052140-unchanged-huntress-1ea4@gregkh>
-References: <20240520172554.182094-1-dakr@redhat.com>
- <20240520172554.182094-3-dakr@redhat.com>
- <2024052045-lived-retiree-d8b9@gregkh>
- <ZkvPDbAQLo2/7acY@pollux.localdomain>
- <2024052155-pulverize-feeble-49bb@gregkh>
+	b=XyfMop+BD1EOaHMDOUcgxCjgGH4r0BVXE4kkuV9vX3spvPSyjikPXNRngWxSruEQF
+	 Fp8mI6YDGTv/v7LiRB1vLcaLntsQwG/BOk8Ywn0HUiXBo2PDwLqcUy0xQ/fZCwo2YQ
+	 YUhj1SLn0tavDdt3dd03SMM3IAubupU6w4QM0VczXp5us61s12Px/QLrNHzsS/1Q2l
+	 iKaNEaX6NUf7piEuuwFkYFDVyvoPIUqbR3n7R9F32bWn07cAgmMjdS2a/AMZ7NgJe9
+	 rzNFi792eS2R9KUkxgIrgUn5nzX/TGiAPPQStT0TykVpFo7ZdUElYS6e2WT+HVcz2E
+	 a54SjffkfzIDg==
+Date: Tue, 21 May 2024 11:59:57 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 2/2] rcu/tasks: Further comment ordering around current
+ task snapshot on TASK-TRACE
+Message-ID: <ZkxwnZacvXqfHxZD@localhost.localdomain>
+References: <20240517152303.19689-1-frederic@kernel.org>
+ <20240517152303.19689-3-frederic@kernel.org>
+ <adf836b2-c660-4dc5-82dd-55d18596c803@paulmck-laptop>
+ <Zku1kDj_LjK3WxaA@pavilion.home>
+ <24467166-5f00-45f2-867f-40b8a836d085@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <2024052155-pulverize-feeble-49bb@gregkh>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <24467166-5f00-45f2-867f-40b8a836d085@paulmck-laptop>
 
-On Tue, May 21, 2024 at 11:35:43AM +0200, Greg KH wrote:
-> On Tue, May 21, 2024 at 12:30:37AM +0200, Danilo Krummrich wrote:
-> > > > +impl<T: DriverOps> Drop for Registration<T> {
-> > > > +    fn drop(&mut self) {
-> > > > +        if self.is_registered {
-> > > > +            // SAFETY: This path only runs if a previous call to `T::register` completed
-> > > > +            // successfully.
-> > > > +            unsafe { T::unregister(self.concrete_reg.get()) };
-> > > 
-> > > Can't the rust code ensure that this isn't run if register didn't
-> > > succeed?  Having a boolean feels really wrong here (can't that race?)
-> > 
-> > No, we want to automatically unregister once this object is destroyed, but not
-> > if it was never registered in the first place.
-> > 
-> > This shouldn't be racy, we only ever (un)register things in places like probe()
-> > / remove() or module_init() / module_exit().
+Le Mon, May 20, 2024 at 04:25:33PM -0700, Paul E. McKenney a écrit :
+> Good points!  How about the following?
 > 
-> probe/remove never calls driver_register/unregister on itself, so that's
-> not an issue.  module_init/exit() does not race with itself and again,
-> module_exit() is not called if module_init() fails.
+> 		// Note that cpu_curr_snapshot() picks up the target
+> 		// CPU's current task while its runqueue is locked with
+> 		// an smp_mb__after_spinlock().  This ensures that either
+> 		// the grace-period kthread will see that task's read-side
+> 		// critical section or the task will see the updater's pre-GP
+> 		// accesses.  The trailng smp_mb() in cpu_curr_snapshot()
+
+*trailing
+
+> 		// does not currently play a role other than simplify
+> 		// that function's ordering semantics.  If these simplified
+> 		// ordering semantics continue to be redundant, that smp_mb()
+> 		// might be removed.
 > 
-> Again, you are adding logic here that is not needed.  Or if it really is
-> needed, please explain why the C code does not need this today and let's
-> work to fix that.
+> Keeping in mind that the commit's log fully lays out the troublesome
+> scenario.
 
-And, to be more explicit, a driver should not have any state of its own,
-any "internal state" should always be bound to the device that it is
-controlling, NOT generic to the driver itself, as a driver can, and
-should, be able to control multiple devices all at the same time without
-ever knowing anything is going on.  A driver is just code, not data or
-state.
+Yep, looks very good!
 
-Yes, we have bad examples in the kernel where drivers do keep
-independent state, but those are the exceptions, never the rule, and I
-would argue, should be fixed to not do that.  Most were due to being
-created before the driver model existed, or programmers being lazy :)
+Thanks!
 
-thanks,
-
-greg k-h
+> 
+> 							Thanx, Paul
+> 
 
