@@ -1,116 +1,155 @@
-Return-Path: <linux-kernel+bounces-185135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66038CB101
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:10:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB8E8CB105
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FBE91C21470
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7F21C21AC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5820143C58;
-	Tue, 21 May 2024 15:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DA6143C57;
+	Tue, 21 May 2024 15:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SYaiRjdA"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lVYAWRBU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC90143C46
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616CF143C4F
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716304208; cv=none; b=QXTBF8+FQhNKSsU//U7K3jbSx96G4SoNDpxTi3x4D5cKCUv5dvUbXLHkg/r5We5Kb5gj4l8or2fvRH/sJTv+XUWNVyZSu3HTbF4cwsKexawXmgTUQizqlOgFUSTEFblsHl5Tl3JZrc3ps+hX2Bdu0kerq6Ll01InjnTnBuksTCM=
+	t=1716304233; cv=none; b=koXD3pWnPpfNUTqCVPg82rYOXbvUei3io+ofTgTgb3sAU6VkPS8mL6/Zyx532raUBr36eeV9CSx0f9XO6Qx2rhmbeZ7a4UXL7Vf5sOGJHnp6acJUOU4vkUGjYybAigFlUgKZwDFCgq9GXirehhS5M/QLjLpwzc/7vw8ERHfbss4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716304208; c=relaxed/simple;
-	bh=/5a3h4M20FUoYZhlXVbMuNxjpi38FtVo4tnwNlycoEM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gg4VBbsoolPdT9ttMwyYEWJJaTHiFONLD4FJdnUpxHz6jsfIZ7At+Ob+H9Rhv+MCQyq56af32uII9JGZgWItRABsSPIQMDks5AB4YZaonB+7k9QXvZ7oilWZFz9VyRKx+hJkIyuiQM8g0uM+WAr2uxnsakqc60sZpysGPngXcA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SYaiRjdA; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-36daacdbf21so1475795ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 08:10:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1716304206; x=1716909006; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HZPbXhzIjF9CTIYlsze2Xc3NxTWVq0EkO8P78eNK6Zw=;
-        b=SYaiRjdAwVfXv+VGpEa/G6bRcjZkcTFFpUKGcKeW+aO1l52sv5wN+ouxjmEEbAn8ik
-         9pIIC0dEKf8OuNH3JoMp+wX/QqExrRRnC7pkzFQjQbsSeKVqNE/ZXXlrwON7M2MIXobu
-         bRbLSMOkLlKRjzSkCSyPhHIzbHDazY+3AN1gs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716304206; x=1716909006;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HZPbXhzIjF9CTIYlsze2Xc3NxTWVq0EkO8P78eNK6Zw=;
-        b=alJ8yPLJzYoXd0DP137GPMXfU3np5Mag4omPuz5ggntnIhMFL3kkehV0wSjw+h2huU
-         0qqz6/+whqpA8Isls7JgUFn34+YI32WjxB4fs7+ihwbD3eEJyTZmENdAQoeTRjjAe6lj
-         iSlGXb6JmYX8FZersUptP4+p2PdqiHuQ13kA2vf3Dy8bvr9x/tPqS14hRGpYPp8BXEJ2
-         taIbg5g+vSMfBFVgIRjrS+tq11lTHL/GPWK4iS/QOfMR8cs7M7CfaY+HwxWANYZ+8+/K
-         QGwUkycCkBtFDGwj/gvVnpkQbKecuywBpPyvxK0t7abVwy1lL9Qjq49uir+FoGE1y5rw
-         yg+A==
-X-Gm-Message-State: AOJu0Yz7m9qkpDGUDIoI6IVvYBoA5NZqXGqpBSoRWPLhMQmQStOWcIVd
-	oJpBOoDY+vHlUfPtyjtDLfijtPT20O2TtTr4ys/6gqkA6yuoJ/3+lC4rWW+6qYk=
-X-Google-Smtp-Source: AGHT+IESEt4nFF0aT8EhBUwdWsXz0bCKQ0ruhojcanJcimk1/Ix+PO0KtmO3gxLFKazgT5fxv/vXPQ==
-X-Received: by 2002:a6b:d203:0:b0:7de:e04b:42c3 with SMTP id ca18e2360f4ac-7e1b5022577mr3286292639f.0.1716304205729;
-        Tue, 21 May 2024 08:10:05 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-48937141644sm7017385173.69.2024.05.21.08.10.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 08:10:05 -0700 (PDT)
-Message-ID: <2d65388d-753f-423d-9682-60b00fb66879@linuxfoundation.org>
-Date: Tue, 21 May 2024 09:10:03 -0600
+	s=arc-20240116; t=1716304233; c=relaxed/simple;
+	bh=EHYF7HSAAGP6IsO1C3kwUfIiiidpH5FaYpY1q8dpGNM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XzNr4Opt+4tUAkM6R2PAQNYb2AXl5b3CbIlR5rV0eRFLZ3n0ItMNuhRLbuabi6VBqlK8X9NT69y5g/Mq8fEHkNg8awdZvHXtzW4JhsX5EHZmZ7WXneitBity91Z8qfC5cgeODTdyJYV4BUBKPQybQrOQ1DxLk+bZnW039dWxXgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lVYAWRBU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44LEj8J7031089;
+	Tue, 21 May 2024 15:10:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=Qn4a7U5EFTYvJ9ioNxoOdApph5VlgHcMCKWRJlk0lbM=; b=lV
+	YAWRBUHegBVCIyACSukvVvyzc4g/+rEsUV5bRKZ9BHq2cHF4U1uYYeE07zpwWgmu
+	m6R9wklhbdfLuBRaHHAfiu3TOIzA2JloTsWb6gigDSP+yXqS8ZZ9Yvsxx1wbdO7C
+	TWsm789ece426nC07MPRB8rzzoSsjTyLvw9hLmiSPzMqWSZdCTMQZ9hqCJlqkyrU
+	P9xYxax4ZKWYfUxFMQNzsxso26WuLOFOC0NJsAaDYNGJbQSRBIciIWmIHW84oKvI
+	eYk/Y1gdipHRfCZaurfUe+/AnPBs/CdnLmwzfdzWjZ/+F+HLIVsZahJfn0JJuLhc
+	6zkp28t5EtMVwgLBUozQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6psax92a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 May 2024 15:10:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44LFAA1O031574
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 May 2024 15:10:10 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 21 May
+ 2024 08:10:09 -0700
+Message-ID: <e22ffdea-3c18-3a23-e526-25809e98fcd9@quicinc.com>
+Date: Tue, 21 May 2024 09:10:08 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tracing/selftests: Fix kprobe event name test for .isra.
- functions
-To: Steven Rostedt <rostedt@goodmis.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Shuah Khan <shuahkhan@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240520205737.5085e53a@gandalf.local.home>
- <20240521104919.c8fd7a91b4a9c0435d17017b@kernel.org>
- <20240520215148.287e417f@gandalf.local.home>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: DRM Accel BoF at Linux Plumbers
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240520215148.287e417f@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+        open list
+	<linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Oded Gabbay
+	<ogabbay@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Lucas Stach
+	<l.stach@pengutronix.de>
+References: <CAAObsKAw174AhGaA13Hyw0ANW=TxJHpK10+OwQGNMVca85Urdg@mail.gmail.com>
+ <ZkyPoIXBeBUqFJ48@phenom.ffwll.local>
+ <CAAObsKAJvgg54zBEP-e3PKPLVeX+akZFJudjutjzVVZOJa-41g@mail.gmail.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <CAAObsKAJvgg54zBEP-e3PKPLVeX+akZFJudjutjzVVZOJa-41g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: hxakFKEuUBJeIGJ_WXH_kjQc2IOtJ4v1
+X-Proofpoint-ORIG-GUID: hxakFKEuUBJeIGJ_WXH_kjQc2IOtJ4v1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-21_09,2024-05-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ adultscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ priorityscore=1501 phishscore=0 impostorscore=0 spamscore=0 clxscore=1011
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405210113
 
-On 5/20/24 19:51, Steven Rostedt wrote:
-> On Tue, 21 May 2024 10:49:19 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> 
->>> It is listed twice. This causes the attached kprobe to it to fail which in
->>> turn fails the test. Instead of just picking the function function that is
->>> found in available_filter_functions, pick the first one that is listed
->>> only once in available_filter_functions.
->>>    
+On 5/21/2024 8:41 AM, Tomeu Vizoso wrote:
+> On Tue, May 21, 2024 at 2:12 PM Daniel Vetter <daniel@ffwll.ch> wrote:
 >>
->> Looks good to me.
+>> On Sat, May 18, 2024 at 10:46:01AM +0200, Tomeu Vizoso wrote:
+>>> Hi,
+>>>
+>>> I would like to use the chance at the next Plumbers to discuss the
+>>> present challenges related to ML accelerators in mainline.
+>>>
+>>> I'm myself more oriented towards edge-oriented deployments, and don't
+>>> know enough about how these accelerators are being used in the cloud
+>>> (and maybe desktop?) to tell if there is enough overlap to warrant a
+>>> common BoF.
+>>>
+>>> In any case, these are the topics I would like to discuss, some
+>>> probably more relevant to the edge than to the cloud or desktop:
+>>>
+>>> * What is stopping vendors from mainlining their drivers?
+>>>
+>>> * How could we make it easier for them?
+>>>
+>>> * Userspace API: how close are we from a common API that we can ask
+>>> userspace drivers to implement? What can be done to further this goal?
+>>>
+>>> * Automated testing: DRM CI can be used, but would be good to have a
+>>> common test suite to run there. This is probably dependent on a common
+>>> userspace API.
+>>>
+>>> * Other shared userspace infrastructure (compiler, execution,
+>>> synchronization, virtualization, ...)
+>>>
+>>> * Firmware-mediated IP: what should we do about it, if anything?
+>>>
+>>> * Any standing issues in DRM infra (GEM, gpu scheduler, DMABuf, etc)
+>>> that are hurting accel drivers?
+>>>
+>>> What do people think, should we have a drivers/accel-wide BoF at
+>>> Plumbers? If so, what other topics should we have in the agenda?
 >>
->> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->>
+>> Yeah sounds good, and I'll try to at least attend lpc this year since it's
+>> rather close ... Might be good to explicitly ping teams of merged and
+>> in-flight drivers we have in accel already.
 > 
-> Thanks Masami,
-> 
-> Shuah, can you take this through your tree?
+> Sounds like a good idea to me. Will check if the people that sent the
+> previous aborted attempts are still interested in this
 
-Yes. I will take this though mine.
+Looks like the Intel VPU folks are missing from this thread.
 
-thanks,
--- Shuah
+I like the idea of a BoF.  I suspect I will be remote but this list of 
+topics looks good to me.  Nothing obvious missing from what I can tell.
 
+-Jeff
 
