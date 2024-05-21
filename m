@@ -1,161 +1,152 @@
-Return-Path: <linux-kernel+bounces-184363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD008CA621
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:21:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4318F8CA623
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C7B01C2100A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:21:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C7EA1C20F36
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7DC13FF6;
-	Tue, 21 May 2024 02:21:07 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3648513FF9;
+	Tue, 21 May 2024 02:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UxpVGf3P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636D2C2E9;
-	Tue, 21 May 2024 02:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC079C2E9;
+	Tue, 21 May 2024 02:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716258066; cv=none; b=seHjREBOPMTSEF7QjwP7qu5sFJqwfmAZEpWdq57LZHKpvgD5+0nKjMwhH0lNGjNuCOsiF3WDeChAolJD52o0rkHc5w11uUO0Df+TK15sjyXZR84hHUnAypdfK7Ujha7qkwUGqa2e3Bxv2xuoLwWMcMhnB2fvjHwAvC6r7CtmtRc=
+	t=1716258308; cv=none; b=Kr4Ga6ddOl8iG0NkmOLt4S94S3Egnp+NUMw0Qxnca+YfIV95qRGgWJnmgsSS5xaUZEUsT1dwbnqg5A9hX/o1fXiCdoW3V/LSWc2tUeJLXUo7gZoKgoItemBJTo4hWXXK8Kahvo1qSGnCWP6vtEy1ac2Q6uuubIloUpkM0Kx5NFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716258066; c=relaxed/simple;
-	bh=/BeO9hMos7UNImzu/E+YX89R+mqzXMBXTshZYQsGyrQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=lPl2Lzbe08q9QR6faBoJRuOujjEUDdam+C5jc02osz0KQq4NHPQYv4z7gn3pA+i2jAbnbmcYW2JccOYpt6nxUGBXGihIXKfh32bgiVM5+Gcvh7+ccxE4X7+LOSaSGLNaPubaUXjXGSlRbLWR7TPBcqgrcIvqCXQcMdnIhU/XTxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjypZ2PJsz4f3jjr;
-	Tue, 21 May 2024 10:20:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 1868A1A0182;
-	Tue, 21 May 2024 10:21:00 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgBnOBEGBUxmrkD1NA--.31413S3;
-	Tue, 21 May 2024 10:20:56 +0800 (CST)
-Subject: Re: [PATCH md-6.10 5/9] md: replace sysfs api sync_action with new
- helpers
-To: kernel test robot <oliver.sang@intel.com>,
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-raid@vger.kernel.org,
- agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
- xni@redhat.com, dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <202405202204.4e3dc662-oliver.sang@intel.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <c9406496-7b97-a3c5-b48c-32f8248cee39@huaweicloud.com>
-Date: Tue, 21 May 2024 10:20:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1716258308; c=relaxed/simple;
+	bh=2JQdNkN8Va5J2PBw3j2euQZnhUifo/T3OFWx1yC23Lg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r5y3TbFOtsdQOjPavDKCZR/wIwgA2y7Kp7Z8+tu7FnnqAexrciVQmYdCF3yUyqa5sN9GxsQpR0+UmjxeeYrGCCFO8x8CH+BzJxkFiGjY/G1ZESFiQhorNXctJPrDrv695fddUE6s+3FZYscLUEn6EC+d/r22IhHonk9CjR+X2kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UxpVGf3P; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716258307; x=1747794307;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2JQdNkN8Va5J2PBw3j2euQZnhUifo/T3OFWx1yC23Lg=;
+  b=UxpVGf3PTSJVK29zOfryRhxuDGvC1xLCKHEHz6VnqcYarTf5eiMgJvg5
+   ZUkIXm0Uo0yPt/6v9LjFu1u3BVrXjqsiPex/CT3FhSi6BOEIVLpIKgUdn
+   7h1QE82Y16HIXDuUQVzSn2GFE7m4g3bjnKKSsf7zDO0R0WlAnuBSzpls7
+   /1P72UuY7qXAR/N60G3hSdbeDp4Uj/4dREFlRND7WbFp5YfYfHGeju0CT
+   uAXRu1v8aealBMHOh1tefaqgMEeZ1H+FkRokFqVgLztv4tNOHBZoc7fl1
+   u0CpLCrprHgRIJKKOtNETz0zizQIGfT7Y8rW0MZS/OkVODURtZVVRYelE
+   w==;
+X-CSE-ConnectionGUID: a2dR5rnNRnmjhbwLZVoTCg==
+X-CSE-MsgGUID: bga4bYxbQqOStw/XlJv8eQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="23563707"
+X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
+   d="scan'208";a="23563707"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 19:25:06 -0700
+X-CSE-ConnectionGUID: HSKawQjaTIWB1uxViNhqyA==
+X-CSE-MsgGUID: /9AsGmROS4iOnBCH+sDvYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
+   d="scan'208";a="32613622"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 19:25:05 -0700
+Date: Mon, 20 May 2024 19:25:05 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "Huang, Kai" <kai.huang@intel.com>,
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"sagis@google.com" <sagis@google.com>,
+	"isaku.yamahata@linux.intel.com" <isaku.yamahata@linux.intel.com>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"dmatlack@google.com" <dmatlack@google.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"Aktas, Erdem" <erdemaktas@google.com>
+Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
+ TDP MMU
+Message-ID: <20240521022505.GB29916@ls.amr.corp.intel.com>
+References: <eb7417cccf1065b9ac5762c4215195150c114ef8.camel@intel.com>
+ <20240516194209.GL168153@ls.amr.corp.intel.com>
+ <ffd24fa5-b573-4334-95c6-42429fd9ee38@intel.com>
+ <20240517081440.GM168153@ls.amr.corp.intel.com>
+ <b6ca3e0a18d7a472d89eeb48aaa22f5b019a769c.camel@intel.com>
+ <0d48522f37d75d63f09d2a5091e3fa91913531ee.camel@intel.com>
+ <791ab3de8170d90909f3e053bf91485784d36c61.camel@intel.com>
+ <20240520185817.GA22775@ls.amr.corp.intel.com>
+ <91444be8576ac220fb66cd8546697912988c4a87.camel@intel.com>
+ <2ee12c152c8db9f5e4acd131b95411bac0abb22c.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <202405202204.4e3dc662-oliver.sang@intel.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBnOBEGBUxmrkD1NA--.31413S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxArW7ZryDGFW5Zr1kAF47Jwb_yoW5tw1xpw
-	48G3Z0kF4rJFnYyFW8Gay0va4Yqan3Jw15G34DG340yF4jkr1Syr1Sqrya9rnFkrZ093yS
-	v397Xry5Kw4qg3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
-	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2ee12c152c8db9f5e4acd131b95411bac0abb22c.camel@intel.com>
 
-Hi,
+On Mon, May 20, 2024 at 11:39:06PM +0000,
+"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> wrote:
 
-ÔÚ 2024/05/20 23:01, kernel test robot Ð´µÀ:
+> On Mon, 2024-05-20 at 12:02 -0700, Rick Edgecombe wrote:
+> > 
+> > reflect is a nice name. I'm trying this path right now. I'll share a branch.
 > 
-> 
-> Hello,
-> 
-> kernel test robot noticed "mdadm-selftests.07reshape5intr.fail" on:
-> 
-> commit: 18effaab5f57ef44763e537c782f905e06f6c4f5 ("[PATCH md-6.10 5/9] md: replace sysfs api sync_action with new helpers")
-> url: https://github.com/intel-lab-lkp/linux/commits/Yu-Kuai/md-rearrange-recovery_flage/20240509-093248
-> base: https://git.kernel.org/cgit/linux/kernel/git/device-mapper/linux-dm.git for-next
-> patch link: https://lore.kernel.org/all/20240509011900.2694291-6-yukuai1@huaweicloud.com/
-> patch subject: [PATCH md-6.10 5/9] md: replace sysfs api sync_action with new helpers
-> 
-> in testcase: mdadm-selftests
-> version: mdadm-selftests-x86_64-5f41845-1_20240412
-> with following parameters:
-> 
-> 	disk: 1HDD
-> 	test_prefix: 07reshape5intr
-> 
-> 
-> 
-> compiler: gcc-13
-> test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-4790T CPU @ 2.70GHz (Haswell) with 16G memory
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202405202204.4e3dc662-oliver.sang@intel.com
-> 
-> 2024-05-14 21:36:26 mkdir -p /var/tmp
-> 2024-05-14 21:36:26 mke2fs -t ext3 -b 4096 -J size=4 -q /dev/sda1
-> 2024-05-14 21:36:57 mount -t ext3 /dev/sda1 /var/tmp
-> sed -e 's/{DEFAULT_METADATA}/1.2/g' \
-> -e 's,{MAP_PATH},/run/mdadm/map,g'  mdadm.8.in > mdadm.8
-> /usr/bin/install -D -m 644 mdadm.8 /usr/share/man/man8/mdadm.8
-> /usr/bin/install -D -m 644 mdmon.8 /usr/share/man/man8/mdmon.8
-> /usr/bin/install -D -m 644 md.4 /usr/share/man/man4/md.4
-> /usr/bin/install -D -m 644 mdadm.conf.5 /usr/share/man/man5/mdadm.conf.5
-> /usr/bin/install -D -m 644 udev-md-raid-creating.rules /lib/udev/rules.d/01-md-raid-creating.rules
-> /usr/bin/install -D -m 644 udev-md-raid-arrays.rules /lib/udev/rules.d/63-md-raid-arrays.rules
-> /usr/bin/install -D -m 644 udev-md-raid-assembly.rules /lib/udev/rules.d/64-md-raid-assembly.rules
-> /usr/bin/install -D -m 644 udev-md-clustered-confirm-device.rules /lib/udev/rules.d/69-md-clustered-confirm-device.rules
-> /usr/bin/install -D  -m 755 mdadm /sbin/mdadm
-> /usr/bin/install -D  -m 755 mdmon /sbin/mdmon
-> Testing on linux-6.9.0-rc2-00012-g18effaab5f57 kernel
-> /lkp/benchmarks/mdadm-selftests/tests/07reshape5intr... FAILED - see /var/tmp/07reshape5intr.log and /var/tmp/fail07reshape5intr.log for detail
-[root@fedora mdadm]# ./test --dev=loop --tests=07reshape5intr
-test: skipping tests for multipath, which is removed in upstream 6.8+ 
-kernels
-test: skipping tests for linear, which is removed in upstream 6.8+ kernels
-Testing on linux-6.9.0-rc2-00023-gf092583596a2 kernel
-/root/mdadm/tests/07reshape5intr... FAILED - see 
-/var/tmp/07reshape5intr.log and /var/tmp/fail07reshape5intr.log for details
-   (KNOWN BROKEN TEST: always fails)
+> Here is the branch:
+> https://github.com/rpedgeco/linux/commit/674cd68b6ba626e48fe2446797d067e38dca80e3
 
-So, since this test is marked BROKEN.
+Thank you for sharing it. It makes it easy to create further patches on top of
+it.
 
-Please share the whole log, and is it possible to share the two logs?
+..
 
-Thanks,
-Kuai
+> In this solution, the tdp_mmu.c doesn't have a concept of private vs shared EPT
+> or GPA aliases. It just knows KVM_PROCESS_PRIVATE/SHARED, and fault->is_private.
+> 
+> Based on the PROCESS enums or fault->is_private, helpers in mmu.h encapsulate
+> whether to operate on the normal "direct" roots or the mirrored roots. When
+> !TDX, it always operates on direct.
+> 
+> The code that does PTE setting/zapping etc, calls out the mirrored "reflect"
+> helper and does the extra atomicity stuff when it sees the mirrored role bit.
+> 
+> In Isaku's code to make gfn's never have shared bits, there was still the
+> concept of "shared" in the TDP MMU. But now since the TDP MMU focuses on
+> mirrored vs direct instead, an abstraction is introduced to just ask for the
+> mask for the root. For TDX the direct root is for shared memory, so instead the
+> kvm_gfn_direct_mask() gets applied when operating on the direct root.
 
-> 
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20240520/202405202204.4e3dc662-oliver.sang@intel.com
-> 
-> 
-> 
+"direct" is better than "shared".  It might be confusing with the existing
+role.direct, but I don't think of better other name.
 
+I resorted to pass around kvm for gfn_direct_mask to the iterator.  Alternative
+way is to stash it in struct kvm_mmu_page of root somehow.  Then, we can strip
+kvm from the iterator and the related macros.
+
+
+> I think there are still some things to be polished in the branch, but overall it
+> does a good job of cleaning up the confusion about the connection between
+> private and mirrored. And also between this and the previous changes, improves
+> littering the generic MMU code with private/shared alias concepts.
+> 
+> At the same time, I think the abstractions have a small cost in clarity if you
+> are looking at the code from TDX's perspective. It probably wont raise any
+> eyebrows for people used to tracing nested EPT violations through paging_tmpl.h.
+> But compared to naming everything mirrored_private, there is more obfuscation of
+> the bits twiddled.
+
+The rename makes the code much less confusing.  I noticed that mirror and
+mirrored are mixed. I'm not sure whether it's intentional or accidental.
+-- 
+Isaku Yamahata <isaku.yamahata@intel.com>
 
