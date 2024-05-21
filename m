@@ -1,246 +1,114 @@
-Return-Path: <linux-kernel+bounces-185195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B05D8CB1E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:05:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA568CB1E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87767B22938
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:05:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F271BB23255
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B5F1CD13;
-	Tue, 21 May 2024 16:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C0574BF0;
+	Tue, 21 May 2024 16:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="E9QmSGSO"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2045.outbound.protection.outlook.com [40.107.236.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Db7NzW+E"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067AA1B299;
-	Tue, 21 May 2024 16:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716307490; cv=fail; b=sf8/hhfPU+aaxVieXnxOvZJhtgU0f4GrMO9kxoky88Va93cjvatzMSy1t1Nwt6vpfCr5Y7j9keOfDHhOYRPeJDShLSsGKfQv2BYcm1AIcY8GAqE+wsXK6Ef3IKg01IBJpuQQkXDQjwXsmvdfo2+K9RL7pXlBO33LtqmLROYWCe0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716307490; c=relaxed/simple;
-	bh=H6GorP1SMmREUaDGHPBjwc6OyitWYKYQ9WTn9inOXBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hf150Y+EBDXrOTjL2OCeRkuxAkcQqRbLuDL/m/guxxxgV8O5DvpD0PHLDuLbYzfgFOlt/Y8MgctN0ZYKpGLM1sV7sTu/Ek0SiJZQG6MypPr483rBhoyufjrWvXIlg2+M+yEbVSBToaFIQSNGZytSEcOP9bamUmlehAg2ZQWJ2qc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=E9QmSGSO; arc=fail smtp.client-ip=40.107.236.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RLNW5OHugjNEEbCZwFSpAZVRTy8k8L69rxLMQw3GICiuEawUVm99qXuX/MdBUFk3w57y57VAXTctGI2es1B8cpfzG2NQMf69SxlnbrVs67AIcUyktjbNiOAmcb5zM4Wwi4txtgNEeAeFSYN1GY9plhkZF5He634lH14R+bSppsUJA4L3CIgR0AneOuMXXXydrpfkX41S40bmGUDS3GXeoHIRsicQmXymawzaS8VP/HjFSUDl9CmNhc2ckeMDzoc58NpPnZdnXfi8pok+4PMy8IdKKooYepSltslA88+tvHCOzeLm7CWctPQReDJb5b8oI95/9+oJgypSKso3EtzlWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vubmO6mYkwi2Us/xq6nY3qb3WsTaPG7UxbtKV0v3tko=;
- b=cuSJDkAiY77cNxyldlSQnR1MVgQWYRxxyjOiGymGqaGtutR5ZiRuly/W2KGz7kiGsUfDV/JMA+H5EEq/fc9IlfUfLOhXG+pZDIaqrqt2Pa1rIsyTYQiDsRwgYzKuz6/HWoiYlnMjMqiz+crhqhEm+wQ6OOhrz92mmWfbw1Mi3z66fLkCIDO4DND6B7oxbcjMws5BYLN0+WA0HA7UtKGKheDShBV3B5v2b6YlOz0iYO4B/JlOMxH6Tu5QWNk024Ze6RBVP3c3lcqe3vDiagwuD1rqN4HxvBscEeiYOSnsOqg4yemnm75blu4grbxmJHIPtSWIyBWq4w94ktDz0u9MiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vubmO6mYkwi2Us/xq6nY3qb3WsTaPG7UxbtKV0v3tko=;
- b=E9QmSGSOsaaPzeQu4Fu4QbqGruTy7dx6+JcP2Q3X5CPsE8cQX6spcHj2VT3rSFOfMrP4uRDhF5BwsMw/AvVJksZe1/6bwaDNU29utyHrlE/x3vAIO0MnFZszQcgikYWc7CAwBXI/A3cZzsM0ty5JCioXiUgXw+MTPPskLLA5KDIZugNLbLRn6a/Cmrai0rPxZel64F06XJ7HFPO0d4U6WvqA4kRh0WyUdQ125jTe+QRkbHEc/NXZtpLbxDTWGIh4Sg2gk6J39aT7G3uAhkMvBEu8/xw/MPnr/NxlHU/d/f3gidwdJRYkf/u2u476u09PV4+l6Uve2f4LYKPkv81KtA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by MN2PR12MB4318.namprd12.prod.outlook.com (2603:10b6:208:1d8::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Tue, 21 May
- 2024 16:04:44 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7587.035; Tue, 21 May 2024
- 16:04:44 +0000
-Date: Tue, 21 May 2024 13:04:42 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-	alex.williamson@redhat.com, kevin.tian@intel.com,
-	iommu@lists.linux.dev, pbonzini@redhat.com, seanjc@google.com,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-	corbet@lwn.net, joro@8bytes.org, will@kernel.org,
-	robin.murphy@arm.com, baolu.lu@linux.intel.com, yi.l.liu@intel.com
-Subject: Re: [PATCH 5/5] iommufd: Flush CPU caches on DMA pages in
- non-coherent domains
-Message-ID: <20240521160442.GI20229@nvidia.com>
-References: <20240509141332.GP4650@nvidia.com>
- <Zj3UuHQe4XgdDmDs@yzhao56-desk.sh.intel.com>
- <20240510132928.GS4650@nvidia.com>
- <ZkHEsfaGAXuOFMkq@yzhao56-desk.sh.intel.com>
- <ZkN/F3dGKfGSdf/6@nvidia.com>
- <ZkRe/HeAIgscsYZw@yzhao56-desk.sh.intel.com>
- <ZkUeWAjHuvIhLcFH@nvidia.com>
- <ZkVwS8n7ARzKAbyW@yzhao56-desk.sh.intel.com>
- <20240517170418.GA20229@nvidia.com>
- <Zkq5ZL+saJbEkfBQ@yzhao56-desk.sh.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zkq5ZL+saJbEkfBQ@yzhao56-desk.sh.intel.com>
-X-ClientProxiedBy: YT1PR01CA0150.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:2f::29) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB53D2E62F
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 16:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716307504; cv=none; b=eMJi2vAcIArqJDOc6vxbjI58kzoJjpC0/vp4NEbe0evI48FjKpTTS2kIPiMz7YvCK72n9qPftP2/0IQceSo+K9XX94+BmFc93kJwmF6OWIF1iNeIhe1y1XYd2LuuE34ipUOOgwvKWydKy6m/Wc48dQHgVCOSZH5lxQMVx4W1Oj0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716307504; c=relaxed/simple;
+	bh=bKdqkY8H9wTw5y+8oj6M+om12H9BkqcMweVk8ln1A/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XGLD4pkRk9dcTfn/7YiMixsXwPJISUZSJUFKnF0u1Ft7rq+tXkrZOfN4rk67Z1k5A467XaRRCLsEGrgZeUyf5UFeK2x1jbbRa4JEca9/ONZepk08Vi9ukR47pvnpkS4GQEPBmNp44snm5uwQCtJPAbVFMsuZ4amO4FdDha+5ugc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Db7NzW+E; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3711744c61cso479785ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:05:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716307502; x=1716912302; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2nt4NT2eZ7AdGPqZ8UIZ+5/ykmoqBj7Ymiyz5OlxoaQ=;
+        b=Db7NzW+EBXUhuNcDgbMNrT0eqz5RlvT2kO+XlAGZeQ8CNgE6YmV9nXVVBFUF0l2nQ0
+         7LVd6iNvRiDF5d5PkB5C57dAw6cPoYQWZyhafZ2v8H57HMHWmRUlEzhu/QtU5EhgaUOZ
+         fZxkXJVQ11OKQZDKkwQIHk8HH8fFhPUYUU7Enn6/BKUNxm66nKrfSaYaohwAOZiGvtdI
+         vtumnXT1wRh2KNTjhizQpoUuviH3xoqBfWL19ml0+S60lpIJ1saiEuWzNo8DZEJZanHr
+         DeuIwZFUty3mkIib9nEAYcIrfFY4VJXCt+B1/sEgz7IbjaF8Mvz0pC74VGtKWalbduX8
+         Mrrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716307502; x=1716912302;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2nt4NT2eZ7AdGPqZ8UIZ+5/ykmoqBj7Ymiyz5OlxoaQ=;
+        b=FKhzEgmYMDkN8Ip0PGCKQbxjr/IF9NJ3cMylkmzy9eKl9POnAZ9uy/dUVN+KeStALf
+         bYfLYlPCTN8bkkGPriFHwgg8oRxK9RCCvRLgJ+rleQhhILmOKzu7hI/ptYe7PCeTWZao
+         u/u6zMe5YQ1NsGS0ZG71TRXUtj+qdWZEwGtEMjKVn3Vpg/INRSxUNDUl68kn8//atPEg
+         8vRKuD2JbJNcIcbJRO2Wjs1cJGwUn/ZXvLcEXPlbjoF9jY43DNAjIuxDXJxrJ7Btj/sr
+         I9rgB3821Pv4EoKCK6j0Fj5uu6UeGhB077iwUaWoavp7Yu9LAaT5R3lD91CKn1RTGOey
+         +rhw==
+X-Forwarded-Encrypted: i=1; AJvYcCX640m41Ap/2/sk9siC128TVZtjtsaDfWsw056L3AffRQu8ztTxdFKm3VUNsNtr85FWZPTMJL8W30hQXTnkP1xglz/MSMp6Cm1hvBGZ
+X-Gm-Message-State: AOJu0YywxBIVl0HzhyhVvLdzUlBaYiejrlmi8+iQsaeXGMBJAk2h4QJV
+	yWfZio8SkG2+6hfaCv6Gr1Tdde1797cM6keOUMN12PC+Z1NGfHflXuXKKuvExP4=
+X-Google-Smtp-Source: AGHT+IENbxbCIveBfU+56Mh8grD6M5RzWxhN7Hek5IRjzUTl0X8SyhHShX4YeSl1RmBxMd1Vsijtiw==
+X-Received: by 2002:a92:d3d1:0:b0:36c:5440:7454 with SMTP id e9e14a558f8ab-36cc1444bedmr308848125ab.1.1716307501743;
+        Tue, 21 May 2024 09:05:01 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-36cb9d9c943sm64565475ab.49.2024.05.21.09.05.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 09:05:01 -0700 (PDT)
+Message-ID: <110d2995-f473-4781-9412-30f7f96858dd@kernel.dk>
+Date: Tue, 21 May 2024 10:04:59 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|MN2PR12MB4318:EE_
-X-MS-Office365-Filtering-Correlation-Id: d07096b5-d507-4160-2379-08dc79afbab9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Mu8jQJ3KEq0mCxypdO9sNWokcBkBCWms1ZmiMfS8wl4ETQSWhVL8yU3xn64T?=
- =?us-ascii?Q?7feXnxm93Wc6f+hfZjwHhXGx3lmdJx8lIS09wXjVita69P5c4RH5qhxFnJAR?=
- =?us-ascii?Q?Prhhxaoaj9puWcOlLfI8U4l/wZH6VK4iCAJ4oXixT1BggOOM4PGPkf9dV9nx?=
- =?us-ascii?Q?5qYMhjpiYU0hJ635MCtwtFRUY9vzycrcF0p92xiRUqlLtwLVuI5X5OAR+nYi?=
- =?us-ascii?Q?aeAbQ6YVC28kEvzEj6qXpdDMVZJ0fSeBiiP9YHvAz9DLKuLyzzLqsWsSJKWL?=
- =?us-ascii?Q?OCd0MwE9YMt365IJ3F1pGef0Tj5ixB6oPlBd7DueKpDqq+2CI9Hr3VmWdves?=
- =?us-ascii?Q?PTx1BtsZe+NmRDrspn8znGYXzhTOiuFy6kC1fsXyLedzX978p9LSnYtBZ2JT?=
- =?us-ascii?Q?escvyOwutLOgHFGvfI7/w1mrdEhheM9hO1dsnEzU/vX91XWAigAUInqpDWb+?=
- =?us-ascii?Q?mykppe/ceOTUv2vWoIxm+SDkBDuvWk+5NlivZj+MddlMfgwPNf+Wh+m8RzeR?=
- =?us-ascii?Q?baFA7l+G7F/noW88CGwbfJ/qXhT2nxklddmEaMfgCApyrqrTIoFjgJ4B3k2I?=
- =?us-ascii?Q?hXLhuoRL1+sFD2E7dIccXnrvqHDXztMdxdKLpCmVtK0dHqWU/FvHtUjk+AXC?=
- =?us-ascii?Q?SVnJrW3NMIffsUZ0MaOBURXHPBTpKHLFREvXFc3PFxsKH8N4wNHXGwap1B6f?=
- =?us-ascii?Q?TmN83qBc2QwUG6uHi46lwbzqI1GsSqIK9yIac+4VGduf54ojZxJGrq3hpytb?=
- =?us-ascii?Q?Lhiwjmxrg6aI+R3KA9tA4z6AqIqY4TkeS97RWMbmyNoy4WWt5MeZxtOuodEr?=
- =?us-ascii?Q?C4gG751JPJ9kHslzxefIbmUmQoyGnei37ypmDB7kBc+wchUqDu1pGbxHhGQd?=
- =?us-ascii?Q?PyKk5ZyKmhU289j+EMwtF90RygbmiQBjh0W/ThC+7kYsIXtzGZhr6wUIbS+7?=
- =?us-ascii?Q?KjRHeQ44XSAoL0XE0XZZeM2GmHY059EvNxTvJ6dDXBpRMj6JaxsTLVviDR5d?=
- =?us-ascii?Q?ocKxO7sDOffadb2a5Vm5EE0Zaue47Z3F1eSIVzNPK9u4RytGmNyxL+GFNNo9?=
- =?us-ascii?Q?NAekiHdwzHA1QjDP7txz7aMDLYcnEVUEwjj7NjTFhHnBzPDctqFxXcXlShJM?=
- =?us-ascii?Q?vpgIn6V5lZfJjgz0dtE+1dYTYLcwgOZ0PREzbN18f/Lf8sMgVx1sxtrg0JG1?=
- =?us-ascii?Q?QaJJ7ld0wWeEWyjwU0jGXwgUMg6ljjTu/ZOeuycf0ncEIqEFIEBXVHWoyNtM?=
- =?us-ascii?Q?r8A0AuSTWKmE4dR+oHB4i/YDzQW/PQO/tfYX6tprhg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?FSVU0tgJcdaLB5lAnf7nfMZcY1nWun2GsxB4l1PpP7V+llmKyUzUx72UGc3P?=
- =?us-ascii?Q?8MRp9kiErATXJQfRxucnNSeO4v623gpZ4CGvxbCU75xSQn7NdAGWJb+6/a8y?=
- =?us-ascii?Q?5nuTxQbLczBeAF7TR72CZLqqRnyV0vuIgEV5He1z1J9IWzG8uD0+7RcTNrlS?=
- =?us-ascii?Q?7pL6BIPFDbi8f7ti9u5kcG0fnQ2ELxtA5JwsmqSH/cVAgtkhYFv5kXwBtisT?=
- =?us-ascii?Q?kJFJSz1R5XcQd4rlEZhPTHqqv7xoJkazfYYDX9HktrQ3e7C5E9JgW8gJCT0V?=
- =?us-ascii?Q?d1jUHu/P8WEy4LQGKaqs5O6O1lwoyckuNnAD5fsH+aBWnTcsUfGmbPVoOl7G?=
- =?us-ascii?Q?4NCU6/Tj5mvfisRktH/AAdZAA0mg+5mQ43kI04eU20x2UCbOlKX5Vuumqx3R?=
- =?us-ascii?Q?YmKT3s1spN+CGbOZPMLwK0HJ3Cb0TMTtsan7kj5yyERVM45xsI5CNIku996k?=
- =?us-ascii?Q?PaSsa+UvWQwLKBB5WgMJJoxUy3Loxlm3W1v+6J/rouZ4w3oWhFjWCqbeU75O?=
- =?us-ascii?Q?zOu6qR0CwqCDDalBei/w81U1aQmHn87ny87+SOY31LRsGI3njfh4psv6OD03?=
- =?us-ascii?Q?H1BNkeOCnupId7OEWPe4E1QExLqAAJ/rJP/UX7RxjTsjJZCAa0JjBmo0JMZ7?=
- =?us-ascii?Q?M33eJNxd+M5LtXyL0/94hT3vgQyP9G9GOvBolvKaE4acIY2+2deMXVEySKbd?=
- =?us-ascii?Q?rVxoEa2AiI9YkNWtVqMN38W2LeyBfhl94T4I6wp9Jtwj83D5xrfN9NQWvG++?=
- =?us-ascii?Q?FRrPyQ9MT2mJ4H5d135NQM+3VDv32RlARQuSHLBRZ+FeXQorgdu+8rWak6I9?=
- =?us-ascii?Q?Jfqt648fzkwuYoknjknwj8XOQu7hzkibdAt7WERWhQPx7YnZY8L8chjzI3Oy?=
- =?us-ascii?Q?+WX3ba0RuVFrv+BU2RVg6fsMjB7nb62lIAiOUiK5SJ8NEXU7CE2pf/QuFRoh?=
- =?us-ascii?Q?ak6zrLPJu6P0CRLrJHxA/ZtF3/63ihVLzFLVd8hHUyOHO0H8mwiN7l4cXf/n?=
- =?us-ascii?Q?AEzwYBmKZzHHY5dklTutQNMXzM9OUei7C5yIFUBrQpypKwohL0G01UfD5Xx9?=
- =?us-ascii?Q?9+QL4u85V4nuMtmiXlM1SlW9MIk7Q3aQh+iCjRtROWblfoxnKxB1nf6BBXHR?=
- =?us-ascii?Q?fs+O2tiznvQQdOeQeg1DmTawHT2LqjEpjTQvACK5/ybdMaytBcR4NQdb9cSt?=
- =?us-ascii?Q?Gld8Ma+EcCYEjHFh9sUDz1qh5FQMMl85R750D8a7AC2ErZVamGEILDyCIaFh?=
- =?us-ascii?Q?VjgLw1f42P8QZQl1/11dNdlFoiN0RhEcwXP334i1e7Ol4BwwjHzwayvC5yKa?=
- =?us-ascii?Q?SowburwEcNJip5q9HH6ciwo26kmYsAHXXv8GzXXIG42l5c90CT9HcAqAfayq?=
- =?us-ascii?Q?oXnGL1ZbfBuYXyzQOuqrU5dZAG84hE6sdGZhC3lV7T+8g+YhzIiJzkMv5tvA?=
- =?us-ascii?Q?uMJ4NT88o3pghSyfzXZOLp3FD8XdufznimWjSiPSExPZBgI8ZBCzOBU01DZT?=
- =?us-ascii?Q?plf3QYQSwmY0PhsDEpTRJ+UJm6u8IzzWc4WO5eDS9SjJvdXxnEgH/PEUFnCw?=
- =?us-ascii?Q?OiajU32Sqj6MZKRDsXr7HasnCxB7D2KJoCQkm0wV?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d07096b5-d507-4160-2379-08dc79afbab9
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 16:04:43.9727
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DwMQrypeYdldiybK4J0tYLMqZVTVtGWm8b+Q4fsIMeaw9of8aCfgvcUqvHol73wG
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4318
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
+To: David Howells <dhowells@redhat.com>
+Cc: Steve French <stfrench@microsoft.com>, Jeff Layton <jlayton@kernel.org>,
+ Enzo Matsumiya <ematsumiya@suse.de>, Matthew Wilcox <willy@infradead.org>,
+ Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
+ v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+ linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <2e73c659-06a3-426c-99c0-eff896eb2323@kernel.dk>
+ <316306.1716306586@warthog.procyon.org.uk>
+ <316428.1716306899@warthog.procyon.org.uk>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <316428.1716306899@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 20, 2024 at 10:45:56AM +0800, Yan Zhao wrote:
-> On Fri, May 17, 2024 at 02:04:18PM -0300, Jason Gunthorpe wrote:
-> > On Thu, May 16, 2024 at 10:32:43AM +0800, Yan Zhao wrote:
-> > > On Wed, May 15, 2024 at 05:43:04PM -0300, Jason Gunthorpe wrote:
-> > > > On Wed, May 15, 2024 at 03:06:36PM +0800, Yan Zhao wrote:
-> > > > 
-> > > > > > So it has to be calculated on closer to a page by page basis (really a
-> > > > > > span by span basis) if flushing of that span is needed based on where
-> > > > > > the pages came from. Only pages that came from a hwpt that is
-> > > > > > non-coherent can skip the flushing.
-> > > > > Is area by area basis also good?
-> > > > > Isn't an area either not mapped to any domain or mapped into all domains?
-> > > > 
-> > > > Yes, this is what the span iterator turns into in the background, it
-> > > > goes area by area to cover things.
-> > > > 
-> > > > > But, yes, considering the limited number of non-coherent domains, it appears
-> > > > > more robust and clean to always flush for non-coherent domain in
-> > > > > iopt_area_fill_domain().
-> > > > > It eliminates the need to decide whether to retain the area flag during a split.
-> > > > 
-> > > > And flush for pin user pages, so you basically always flush because
-> > > > you can't tell where the pages came from.
-> > > As a summary, do you think it's good to flush in below way?
-> > > 
-> > > 1. in iopt_area_fill_domains(), flush before mapping a page into domains when
-> > >    iopt->noncoherent_domain_cnt > 0, no matter where the page is from.
-> > >    Record cache_flush_required in pages for unpin.
-> > > 2. in iopt_area_fill_domain(), pass in hwpt to check domain non-coherency.
-> > >    flush before mapping a page into a non-coherent domain, no matter where the
-> > >    page is from.
-> > >    Record cache_flush_required in pages for unpin.
-> > > 3. in batch_unpin(), flush if pages->cache_flush_required before
-> > >    unpin_user_pages.
-> > 
-> > It does not quite sound right, there should be no tracking in the
-> > pages of this stuff.
-> What's the downside of having tracking in the pages?
+On 5/21/24 9:54 AM, David Howells wrote:
+> Jens Axboe <axboe@kernel.dk> wrote:
+> 
+>> However, I'll note that BDP_ASYNC is horribly named, it should be
+>> BDP_NOWAIT instead. But that's a separate thing, fix looks correct
+>> as-is.
+> 
+> I thought IOCB_NOWAIT was related to RWF_NOWAIT, but apparently not from the
+> code.
 
-Well, a counter doesn't make sense. You could have a single sticky bit
-that indicates that all PFNs are coherency dirty and overflush them on
-every map and unmap operation.
+It is, something submitted with RWF_NOWAIT should have IOCB_NOWAIT set.
+But RWF_NOWAIT isn't the sole user of IOCB_NOWAIT, and no assumptions
+should be made about whether something is sync or async based on whether
+or not RWF_NOWAIT is set. Those aren't related other than _some_ proper
+async IO will have IOCB_NOWAIT set, and others will not.
 
-This is certainly the simplest option, but gives the maximal flushes.
+-- 
+Jens Axboe
 
-If you want to minimize flushes then you can't store flush
-minimization information in the pages because it isn't global to the
-pages and will not be accurate enough.
-
-> > If pfn_reader_fill_span() does batch_from_domain() and
-> > the source domain's storage_domain is non-coherent then you can skip
-> > the flush. This is not pedantically perfect in skipping all flushes, but
-> > in practice it is probably good enough.
-
-> We don't know whether the source storage_domain is non-coherent since
-> area->storage_domain is of "struct iommu_domain".
- 
-> Do you want to add a flag in "area", e.g. area->storage_domain_is_noncoherent,
-> and set this flag along side setting storage_domain?
-
-Sure, that could work.
-
-> > __iopt_area_unfill_domain() (and children) must flush after
-> > iopt_area_unmap_domain_range() if the area's domain is
-> > non-coherent. This is also not perfect, but probably good enough.
-> Do you mean flush after each iopt_area_unmap_domain_range() if the domain is
-> non-coherent?
-> The problem is that iopt_area_unmap_domain_range() knows only IOVA, the
-> IOVA->PFN relationship is not available without iommu_iova_to_phys() and
-> iommu_domain contains no coherency info.
-
-Yes, you'd have to read back the PFNs on this path which it doesn't do
-right now.. Given this pain it would be simpler to have one bit in the
-pages that marks it permanently non-coherent and all pfns will be
-flushed before put_page is called.
-
-The trouble with a counter is that the count going to zero doesn't
-really mean we flushed the PFN if it is being held someplace else.
-
-Jason
 
