@@ -1,145 +1,189 @@
-Return-Path: <linux-kernel+bounces-184961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22C08CAE87
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:48:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1D18CAE92
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 809112848CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:48:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEC611F230AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C1D77111;
-	Tue, 21 May 2024 12:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qc3s0X63";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="FKbQfGhk"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34833770F0
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC103770E4;
+	Tue, 21 May 2024 12:51:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E1B12E6A;
+	Tue, 21 May 2024 12:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716295717; cv=none; b=JJYazLC/XN7FMDBzp7JMToiPAn9AGjnyJGtg3Da8YYaYcljlZh95ftCW7iL0cacgdHYcsSCNDaI7DEVHivuaZEXUc43kveRCh/KcSVoGvPNlO2rOGg6kf6bQ/xBbJsGqFm+x4FlctJR2YqbRGjGeFhukJfBRuHBgF/nYk8ML97A=
+	t=1716295877; cv=none; b=VXZsjYpaSpsgXUjxhPHxZ1coRBHU3nf3imZRhid7TuuH4PCz6gVh+c6fKV7zmA4CDMQZOybPDVMrH2KFlxgF11IWSqBHWqh8ncfhVHt2Z+8Id/L+6QwLYSN4JT/nftFJHS4wovCVDLAh2Iici0reph9+hUGCW+ue8rB9M2I5WX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716295717; c=relaxed/simple;
-	bh=kJPwlfNSt4lRbMzy2in8uS3czPJ6Spymu1LJUHyk+9s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B+MOsUPNcTB3yqD4KGgKwHxdHmbXBptGWQ3Y54+qshaZ9Dh8AC+mSo0qOkFX+L00dk1sq8wwvaBqASigtMv/GWbZufKQ/KxdYHqsZBIu4fuZgkpRjf8KtZBx5RMZCrAbGngCzCMCTMUTH5+V6ZjG6sVQBC3rYUxAx5B0u0srgIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qc3s0X63; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=FKbQfGhk; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7751222A0A;
-	Tue, 21 May 2024 12:48:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716295714; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ZKWV+AsBJjmDRa8bjqWRom+SbZLV0WLxFg7rfkNBR3Y=;
-	b=qc3s0X637V/prCNm5tfNlWU8gicAYq4ROc9Scf8R0WetejpruCvwz8dKKp6L6wwfWVAegZ
-	EdNmJ3+i2zw+M2HeeQ2qTsZe8k97OTfd9gv+0alnFhYPvaXIaqDeMYoWJl4IbpgR8yNd2N
-	KwMKmgqSRznYnkTOfwekLdaMYeHZeUI=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=FKbQfGhk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716295713; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ZKWV+AsBJjmDRa8bjqWRom+SbZLV0WLxFg7rfkNBR3Y=;
-	b=FKbQfGhkXLBEa9IxXF0SYFPvBAq0DI9YgCNRbHAV9V30vvddusQ0UMw2K5flfZGyRmNLCv
-	hE26In06PAX+QdgNf1+CG0+I7mzEbGzEJDNkHG9wzJq3kcxU4SnI8Tw34Z+bKUIbfXq9Wn
-	x0zoYXOkFeW/b7Am6sIWUmXNUBOlWDI=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4472513A1E;
-	Tue, 21 May 2024 12:48:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XUh1DiGYTGbmOQAAD6G6ig
-	(envelope-from <nik.borisov@suse.com>); Tue, 21 May 2024 12:48:33 +0000
-From: Nikolay Borisov <nik.borisov@suse.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Nikolay Borisov <nik.borisov@suse.com>
-Subject: [PATCH] x86/cpu: Consolidate identical branches
-Date: Tue, 21 May 2024 15:48:32 +0300
-Message-Id: <20240521124832.486390-1-nik.borisov@suse.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716295877; c=relaxed/simple;
+	bh=WY2XyDJtXE1LjxFvWXph1an3HyHAqYE6QVllgkoifVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VbcCNCUn8pUYJzuSOA4KnpfaYpDNicBm3p2SKcNBSdFx5HU0vs47zlXI71xfG+ja99aFguznVIbMsI030iV5l5Gt2PesLWw3ua31Z2pRT+/3/6bmipLJH+IfPpMvbiK1XmQSpr+UmbTs/7+n3G5/lI0GPEKOyl6YEcMUrSUpGh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90749DA7;
+	Tue, 21 May 2024 05:51:37 -0700 (PDT)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 107A23F641;
+	Tue, 21 May 2024 05:51:11 -0700 (PDT)
+Message-ID: <ef951861-2759-40ed-9d8c-d2eb92da632c@arm.com>
+Date: Tue, 21 May 2024 14:51:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v1 3/3] cpufreq: intel_pstate: Set asymmetric CPU
+ capacity on hybrid systems
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86 Maintainers
+ <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Linux PM <linux-pm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
+References: <7663799.EvYhyI6sBW@kreacher> <1799046.VLH7GnMWUR@kreacher>
+ <050c561c-487e-4e89-a7b2-9752cebc9f46@arm.com>
+ <CAJZ5v0hGiwoytVmVr=h8JJ1yf5KTcr+p7BrRgSUM-L_X6fciUA@mail.gmail.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <CAJZ5v0hGiwoytVmVr=h8JJ1yf5KTcr+p7BrRgSUM-L_X6fciUA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.03 / 50.00];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	BAYES_HAM(-0.02)[54.33%];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 7751222A0A
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -2.03
 
-It's pointless to have 2 identical branches one after the other, simply
-collapse them in a single branch. No functional changes.
+On 06/05/2024 16:39, Rafael J. Wysocki wrote:
+> On Thu, May 2, 2024 at 12:43 PM Dietmar Eggemann
+> <dietmar.eggemann@arm.com> wrote:
+>>
+>> On 25/04/2024 21:06, Rafael J. Wysocki wrote:
+>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
----
- arch/x86/kernel/cpu/common.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+[...]
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 69265c0acaea..369037a166fd 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1732,12 +1732,11 @@ static void generic_identify(struct cpuinfo_x86 *c)
- {
- 	c->extended_cpuid_level = 0;
- 
--	if (!have_cpuid_p())
-+	if (!have_cpuid_p()) {
- 		identify_cpu_without_cpuid(c);
--
--	/* cyrix could have cpuid enabled via c_identify()*/
--	if (!have_cpuid_p())
-+		/* cyrix could have cpuid enabled via c_identify()*/
- 		return;
-+	}
- 
- 	cpu_detect(c);
- 
--- 
-2.34.1
+>> So cpu_capacity has a direct mapping to itmt prio. cpu_capacity is itmt
+>> prio with max itmt prio scaled to 1024.
+> 
+> Right.
+> 
+> The choice to make the ITMT prio reflect the capacity is deliberate,
+> although this code works with values retrieved via CPPC (which are the
+> same as the HWP_CAP values in the majority of cases but not always).
+> 
+>> Running it on i7-13700K (while allowing SMT) gives:
+>>
+>> root@gulliver:~# dmesg | grep sched_set_itmt_core_prio
+>> [    3.957826] sched_set_itmt_core_prio() cpu=0 prio=68
+>> [    3.990401] sched_set_itmt_core_prio() cpu=1 prio=68
+>> [    4.015551] sched_set_itmt_core_prio() cpu=2 prio=68
+>> [    4.040720] sched_set_itmt_core_prio() cpu=3 prio=68
+>> [    4.065871] sched_set_itmt_core_prio() cpu=4 prio=68
+>> [    4.091018] sched_set_itmt_core_prio() cpu=5 prio=68
+>> [    4.116175] sched_set_itmt_core_prio() cpu=6 prio=68
+>> [    4.141374] sched_set_itmt_core_prio() cpu=7 prio=68
+>> [    4.166543] sched_set_itmt_core_prio() cpu=8 prio=69
+>> [    4.196289] sched_set_itmt_core_prio() cpu=9 prio=69
+>> [    4.214964] sched_set_itmt_core_prio() cpu=10 prio=69
+>> [    4.239281] sched_set_itmt_core_prio() cpu=11 prio=69
+> 
+> CPUs 8 - 10 appear to be "favored cores" that can turbo up higher than
+> the other P-cores.
+> 
+>> [    4.263438] sched_set_itmt_core_prio() cpu=12 prio=68
+>> [    4.283790] sched_set_itmt_core_prio() cpu=13 prio=68
+>> [    4.308905] sched_set_itmt_core_prio() cpu=14 prio=68
+>> [    4.331751] sched_set_itmt_core_prio() cpu=15 prio=68
+>> [    4.356002] sched_set_itmt_core_prio() cpu=16 prio=42
+>> [    4.381639] sched_set_itmt_core_prio() cpu=17 prio=42
+>> [    4.395175] sched_set_itmt_core_prio() cpu=18 prio=42
+>> [    4.425625] sched_set_itmt_core_prio() cpu=19 prio=42
+>> [    4.449670] sched_set_itmt_core_prio() cpu=20 prio=42
+>> [    4.479681] sched_set_itmt_core_prio() cpu=21 prio=42
+>> [    4.506319] sched_set_itmt_core_prio() cpu=22 prio=42
+>> [    4.523774] sched_set_itmt_core_prio() cpu=23 prio=42
 
+I wonder what the relation between this CPU capacity value based on
+HWP_CAP is to the per-IPC class performance values of the 'HFI
+performance and efficiency score' table is.
+
+Running '[PATCH v3 00/24] sched: Introduce classes of tasks for load
+balance' on i7-13700K w/ 'nosmt' I get:
+
+			Score
+CPUs	         Class  0 	1	2	3
+			SSE	AVX2	VNNI	PAUSE		
+
+0 2,4,6, 12, 14		68 	80	106	53
+8, 10			69 	81	108	54
+16-23			42 	42	42	42
+
+Looks like the HWP_CAP values are in sync with the scores of IPP Class
+0. I was expecting that the HWP_CAP values reflect more an average over
+all classes? Or maybe I misinterpret this relation?
+
+[...]
+
+>>> If the driver's "no_trubo" sysfs attribute is updated, all of the CPU
+>>> capacity information is computed from scratch to reflect the new turbo
+>>> status.
+>>
+>> So if I do:
+>>
+>> echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo
+>>
+>> I get:
+>>
+>> [ 1692.801368] hybrid_update_cpu_scaling() called
+>> [ 1692.801381] hybrid_update_cpu_scaling() max_cap_perf=44, max_perf_cpu=0
+>> [ 1692.801389] hybrid_set_cpu_capacity() cpu=1 cap=1024
+>> [ 1692.801395] hybrid_set_cpu_capacity() cpu=2 cap=1024
+>> [ 1692.801399] hybrid_set_cpu_capacity() cpu=3 cap=1024
+>> [ 1692.801402] hybrid_set_cpu_capacity() cpu=4 cap=1024
+>> [ 1692.801405] hybrid_set_cpu_capacity() cpu=5 cap=1024
+>> [ 1692.801408] hybrid_set_cpu_capacity() cpu=6 cap=1024
+>> [ 1692.801410] hybrid_set_cpu_capacity() cpu=7 cap=1024
+>> [ 1692.801413] hybrid_set_cpu_capacity() cpu=8 cap=1024
+>> [ 1692.801416] hybrid_set_cpu_capacity() cpu=9 cap=1024
+>> [ 1692.801419] hybrid_set_cpu_capacity() cpu=10 cap=1024
+>> [ 1692.801422] hybrid_set_cpu_capacity() cpu=11 cap=1024
+>> [ 1692.801425] hybrid_set_cpu_capacity() cpu=12 cap=1024
+>> [ 1692.801428] hybrid_set_cpu_capacity() cpu=13 cap=1024
+>> [ 1692.801431] hybrid_set_cpu_capacity() cpu=14 cap=1024
+>> [ 1692.801433] hybrid_set_cpu_capacity() cpu=15 cap=1024
+>> [ 1692.801436] hybrid_set_cpu_capacity() cpu=16 cap=605
+>> [ 1692.801439] hybrid_set_cpu_capacity() cpu=17 cap=605
+>> [ 1692.801442] hybrid_set_cpu_capacity() cpu=18 cap=605
+>> [ 1692.801445] hybrid_set_cpu_capacity() cpu=19 cap=605
+>> [ 1692.801448] hybrid_set_cpu_capacity() cpu=20 cap=605
+>> [ 1692.801451] hybrid_set_cpu_capacity() cpu=21 cap=605
+>> [ 1692.801453] hybrid_set_cpu_capacity() cpu=22 cap=605
+>> [ 1692.801456] hybrid_set_cpu_capacity() cpu=23 cap=605
+>>
+>> Turbo on this machine stands only for the cpu_capacity diff 1009 vs 1024?
+> 
+> Not really.
+> 
+> The capacity of the fastest CPU is always 1024 and the capacities of
+> all of the other CPUs are adjusted to that.
+> 
+> When turbo is disabled, the capacity of the "favored cores" is the
+> same as for the other P-cores (i.e. 1024) and the capacity of E-cores
+> is relative to that.
+> 
+> Of course, this means that task placement may be somewhat messed up
+> after disabling or enabling turbo (which is a global switch), but I
+> don't think that there is a way to avoid it.
+
+I assume that this is OK. In task placement we don't deal with a system
+of perfectly aligned values (including their sums) anyway.
+And we recreate the sched domains (including updating the capacity sums
+on sched groups) after this so the so load balance (smp nice etc) should
+be fine too.
 
