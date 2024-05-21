@@ -1,162 +1,127 @@
-Return-Path: <linux-kernel+bounces-185018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1AF8CAF73
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:36:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B77B8CAF74
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 979BFB2090F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:36:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCA3A1C2203A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D1E76049;
-	Tue, 21 May 2024 13:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691CE7EF06;
+	Tue, 21 May 2024 13:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mfFo78A3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U1/1cCNh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBA26E602
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B69E6E602
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716298553; cv=none; b=KIC53jBc9BUjUKHTSa7SuBIGvEdSIfr6qGwrsKXX9UfX577ogVr7hH1M/HVheIzhwLh14W5y06HIIZiK8koPUELaA3guk73Z5+QZ8x0OggF67H9o8wZmjSBpjPr0Ozgp8vspO6IYbxJMRdavLL484rSnlNrmKXP28wsKUFA5TTs=
+	t=1716298596; cv=none; b=KV7oTW5OoNe2HW1l8sAFeSMts8A1t/3snKg5nlGBBEQvxZuuKBIyhZOefPYQFxmHIOg2Ad33loL6SHSOFmUIUNo2jFbRoTdFMGx83CE6WTIUkFfAMh2gQDhuEs/dqdGX/PlKOibNpJH71T0E4em2nqBrA3JnlsUQi2oXSyc+exw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716298553; c=relaxed/simple;
-	bh=Jatn8u4QFUuL+pR08zoVUZZsvNQF78BGvon9Gukephw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=erMtP6JqpS/J26fQpnIXkJjadRJxAnylhRatWZPls2Q0LAmtoGCDu7fokLFROFm/6paUUMukopVXWAKzbti0+hPFR6MFFzpmh4fUq+/NGnVy5eKFCABbhgih/7xhiErhM+dzPiRPS/0m3SK3NiqcBMcmliZAl4beIe6iVQWbpew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mfFo78A3; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716298552; x=1747834552;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Jatn8u4QFUuL+pR08zoVUZZsvNQF78BGvon9Gukephw=;
-  b=mfFo78A3pJc7R0fus06fompILajLRMU7cfU2h7+435yv1ZRMUIsIcfkT
-   n+8+NNmvKpoqQIzJ1YhDMvbC2HrEzyqRWPzuKFo0lYJ8iJ/DsXZSIukaL
-   jCCNHvywlMzeG1s3WB2W9vBEcPgHNVClW3xI1k1xosbC4GbMcWRYWwgWZ
-   h9qyL5y9Z9+XH+O6dM062+AiC6+8Sknrz5Wc7lpEhGStKskuQ5p1w36D4
-   ERpDXTz4ymdkVcp4M+I3TqmSyaUM21U/jwTP3IXdMDmxK6Ef4cZzSNHhV
-   lle2SCgG9YjH2v0e5R4Rew1M3dt4dzc2xMBKUYuxYyb6th2ocraAmy7er
-   w==;
-X-CSE-ConnectionGUID: +i49ERRsTheevRXL4W7JaQ==
-X-CSE-MsgGUID: D2gWwjYSRhKBvY9IIzMelA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="16330966"
-X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="16330966"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 06:35:51 -0700
-X-CSE-ConnectionGUID: kPBC/OVTTnG2naU3R85JMA==
-X-CSE-MsgGUID: 71kxtUr8T8mlgwjFVvkliA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="33526496"
-Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.221.140]) ([10.124.221.140])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 06:35:50 -0700
-Message-ID: <38dec9ee-1dde-4b3b-87c7-a65161d4a015@linux.intel.com>
-Date: Tue, 21 May 2024 06:35:49 -0700
+	s=arc-20240116; t=1716298596; c=relaxed/simple;
+	bh=wooh8rG/Ageclm++Zoo32v4gpqwOYEvywXeGxlbSL1c=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=LlmEgdMXfQrpW1On8xI+A1fHtmo0LHWpilgEnm9TbeazajXPZS9b4kwV9yrloU1/iWPPrfW6XNKKIxvf4eP27Qsi6aYInm/OVrTwwtOf1gpCWM9xS+rPd5C0PwE2ahJJOY9A/GpSC2RSYKAjekfseWltMPe5RhccW3EdHsWwyn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U1/1cCNh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716298594;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tQ93YOLA+ZarT84k8WHzLRGgN4pa3R9T2oT8BE3LSw4=;
+	b=U1/1cCNhueMTsclJTn9V+sm3pyiBrO+XRhsFKk7Ow8GF+euzA88wbCviPfIulfasawm3BM
+	V7xxNSPLwpDv2U8L5CNXBOr6/F4AScARiHRQHaY0TPJB4auuI1Yi0tkcZtsWx5Kga6x35A
+	YmJVqVB0LtkXtsZfuIB8XzlFA0TyPkw=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-85-IRM4g2I6Pu-_TFIqfGEhVw-1; Tue, 21 May 2024 09:36:30 -0400
+X-MC-Unique: IRM4g2I6Pu-_TFIqfGEhVw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D422818188A1;
+	Tue, 21 May 2024 13:36:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 6CA4E200A35C;
+	Tue, 21 May 2024 13:36:28 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Steve French <stfrench@microsoft.com>
+cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    Enzo Matsumiya <ematsumiya@suse.de>,
+    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
+    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs: Fix AIO error handling when doing write-through
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/tdx: Generate SIGBUS on userspace MMIO
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
- cho@microsoft.com, decui@microsoft.com, John.Starks@microsoft.com
-References: <20240521073505.2190633-1-kirill.shutemov@linux.intel.com>
-Content-Language: en-US
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20240521073505.2190633-1-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <295051.1716298587.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 21 May 2024 14:36:27 +0100
+Message-ID: <295052.1716298587@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
+If an error occurs whilst we're doing an AIO write in write-through mode,
+we may end up calling ->ki_complete() *and* returning an error from
+->write_iter().  This can result in either a UAF (the ->ki_complete() func
+pointer may get overwritten, for example) or a refcount underflow in
+io_submit() as ->ki_complete is called twice.
 
-On 5/21/24 12:35 AM, Kirill A. Shutemov wrote:
-> Currently attempt to do MMIO from userspace in TDX guest leads to
-> warning about unexpect #VE and SIGSEGV being delivered to the process.
->
-> Enlightened userspace might choose to deal with MMIO on their own if
-> kernel doesn't emulate it.
+Fix this by making netfs_end_writethrough() - and thus
+netfs_perform_write() - unconditionally return -EIOCBQUEUED if we're doing
+an AIO write and wait for completion if we're not.
 
-Any specific use cases ? Like who is using it?
+Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Enzo Matsumiya <ematsumiya@suse.de>
+cc: netfs@lists.linux.dev
+cc: v9fs@lists.linux.dev
+cc: linux-afs@lists.infradead.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/netfs/write_issue.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-> Handle EPT_VIOLATION exit reason for userspace and deliver SIGBUS
-> instead of SIGSEV. SIGBUS is more appropriate for MMIO situation.
->
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index e190043bc0da..acbfd1f5ee9d 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -636,7 +636,12 @@ int netfs_end_writethrough(struct netfs_io_request *w=
+req, struct writeback_contr
+ =
 
-Code looks good to me.
+ 	mutex_unlock(&ictx->wb_lock);
+ =
 
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-
->  arch/x86/coco/tdx/tdx.c | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-> index c1cb90369915..d2aa93cebf5a 100644
-> --- a/arch/x86/coco/tdx/tdx.c
-> +++ b/arch/x86/coco/tdx/tdx.c
-> @@ -7,6 +7,7 @@
->  #include <linux/cpufeature.h>
->  #include <linux/export.h>
->  #include <linux/io.h>
-> +#include <linux/sched/signal.h>
->  #include <asm/coco.h>
->  #include <asm/tdx.h>
->  #include <asm/vmx.h>
-> @@ -630,6 +631,11 @@ void tdx_get_ve_info(struct ve_info *ve)
->  	ve->instr_info  = upper_32_bits(args.r10);
->  }
->  
-> +static inline bool is_private_gpa(u64 gpa)
-> +{
-> +	return gpa == cc_mkenc(gpa);
-> +}
-> +
->  /*
->   * Handle the user initiated #VE.
->   *
-> @@ -641,17 +647,20 @@ static int virt_exception_user(struct pt_regs *regs, struct ve_info *ve)
->  	switch (ve->exit_reason) {
->  	case EXIT_REASON_CPUID:
->  		return handle_cpuid(regs, ve);
-> +	case EXIT_REASON_EPT_VIOLATION:
-> +		if (is_private_gpa(ve->gpa))
-> +			panic("Unexpected EPT-violation on private memory.");
-> +
-> +		force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)ve->gla);
-> +
-> +		/* Return 0 to avoid incrementing RIP */
-> +		return 0;
->  	default:
->  		pr_warn("Unexpected #VE: %lld\n", ve->exit_reason);
->  		return -EIO;
->  	}
->  }
->  
-> -static inline bool is_private_gpa(u64 gpa)
-> -{
-> -	return gpa == cc_mkenc(gpa);
-> -}
-> -
->  /*
->   * Handle the kernel #VE.
->   *
-
--- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+-	ret =3D wreq->error;
++	if (wreq->iocb) {
++		ret =3D -EIOCBQUEUED;
++	} else {
++		wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS, TASK_UNINTERRUPTIBLE)=
+;
++		ret =3D wreq->error;
++	}
+ 	netfs_put_request(wreq, false, netfs_rreq_trace_put_return);
+ 	return ret;
+ }
 
 
