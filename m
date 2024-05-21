@@ -1,192 +1,171 @@
-Return-Path: <linux-kernel+bounces-184525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA3278CA80C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:35:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF458CA819
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E545EB211A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:34:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BBF01F2205B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCFC46BA6;
-	Tue, 21 May 2024 06:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8C1481D1;
+	Tue, 21 May 2024 06:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lJq72kFv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4D4uKXIe";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UMvuNjdK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4h3o2of1"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NAJbt7a5"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564BA41C63;
-	Tue, 21 May 2024 06:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E718941C63;
+	Tue, 21 May 2024 06:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716273292; cv=none; b=pStt1UrT4Mg4dMWQQtpYr97Gqw44IpWj28bbT1qrzF8J9gNbAGOzUV+SX/dGBafavdz7w/xK81DBTn9hJQbmjZvzXyRHeoZUwYJVTFClBk+EinGPkopicGUwoksr+2QOxXbVZGQrY/YRz4TXYK4G6oPh1ALViqH69QXnXJMYmug=
+	t=1716273843; cv=none; b=hByU3+wNTgnJJxYBykBjO7OJM/OcsiThj1fd7HKyiWDDQjvvrh6Z/l1W5dfAPfOy7jTpuh61pXQe9yQgxVe4vbND4L3fllKVGeBpkzgk47rbEGnfU8/V/eWYp2mJ3VW9s2Pg5aLc8JxsewXktdFElm6qRI3l5d7kNgDgfIvkm+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716273292; c=relaxed/simple;
-	bh=4ts5pYQV3oug49Y920NlVmae5l/HmS5VVHrB2NE+Qpk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Y3VX5IrPfF0TPgxmRpnWhK48whZqt8OQ5f0+1heAd5ZGEk5UVoIsmr4yKC18dwxZxCX+pWC0Sn0sh2UiyIY3qxVCBAIEWK1rwSUydwEFqcDYwG5FQGSeHlMOhTzoYFGgVqTDPYweM2iXLk93RcfvQHxtKGdUHOHzViIFcXS5dGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lJq72kFv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4D4uKXIe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UMvuNjdK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4h3o2of1; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2588033A03;
-	Tue, 21 May 2024 06:34:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716273288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=goqT7bQnK98dqnw2gijHAX4F/v81FNGH9wk6IRyAp0U=;
-	b=lJq72kFvj2eyb2LF3jq6l2Dld1ffnIPvcSvUmiUOEfcKWRTx2P2kUTn4W9ctur9v62k/Fh
-	E86a7Jk4ld/YMe8SDZLQ8MW0gjYzDF6dCXhdgQlS/9CPrhouzsJFXjsmmrfwkUdDFmonYK
-	Eee59yz3/4/Fm8cxTGyXhjOLr1dkqFg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716273288;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=goqT7bQnK98dqnw2gijHAX4F/v81FNGH9wk6IRyAp0U=;
-	b=4D4uKXIeQq3Kt+KMsIjXi2r4ef9o87HfyjzGnMmgbAkDCXPGvmbIQB/6zDY72NR9JZPeBF
-	8lsFFctKle8SU8AQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716273287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=goqT7bQnK98dqnw2gijHAX4F/v81FNGH9wk6IRyAp0U=;
-	b=UMvuNjdKAzObHolRoxvs2lInhD/eKGHGV0EInN6YUADXwODbS4vY+HKkJyoDWKY76yWPXF
-	IpYoc+fv/cG0dQyHOpkOzfvdtRdV+SSlfUugWIneqoHhBuXHnc7FFyDS6p4GEX9+5X8VEg
-	rj4hYg7LVB6mf16IkshoOrW7n1ZgWYE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716273287;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=goqT7bQnK98dqnw2gijHAX4F/v81FNGH9wk6IRyAp0U=;
-	b=4h3o2of1mcBcefjmaqfMjJEUdYsDDD3yzHCl/S7LFqeYzZrDxoFJ5S8jiK2SaCabxggum0
-	nOw7CF8ZP2zRCZAw==
-Date: Tue, 21 May 2024 08:34:46 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: zhang warden <zhangwarden@gmail.com>
-cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
-    Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, 
-    live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] livepatch: introduce klp_func called interface
-In-Reply-To: <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
-Message-ID: <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
-References: <20240520005826.17281-1-zhangwarden@gmail.com> <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz> <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1716273843; c=relaxed/simple;
+	bh=eck8LkiBmFIk3D6cjAJWmIkNyfD/MCEdYcx9mI2Wz8U=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cKDve+HkMDHCR1OoFAkwilNEbNfxuKZsxzmqXl4T+BTpQ04CfxFVcTyT1j4O1lfPtI2gyobv61pp3hTDYjLdwJWtyiSlF7kuiG0+D1yz5KOIaHJfuZV9yuSIeJHiGJU2UU2yWd8IIURliE6y422Ngly8gd0fKVogzKttW/79Kdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NAJbt7a5; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44L6gmm0011241;
+	Tue, 21 May 2024 01:42:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716273768;
+	bh=+ZfOONRU6juW9FS/6TxFdABLBWxqz7rqnKx7hWQStMk=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=NAJbt7a5DoTR+zca5xHgtqfKuYpVEVUoncFcDAa9rnhd0cNDBfAjwlhHiy9tha2Vb
+	 g+Gb2EgkITFo0mgOhhaULzAGqx7RAEEAtxvOqpq8731MIkkNr26sB2h4ivC48fprL6
+	 wDMkTrcTcJlygDX4vsPSR2HaVHGcYvfXEn8aKLKI=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44L6gmJG015907
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 21 May 2024 01:42:48 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 21
+ May 2024 01:42:48 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 21 May 2024 01:42:48 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44L6gldU029813;
+	Tue, 21 May 2024 01:42:48 -0500
+Date: Tue, 21 May 2024 12:12:46 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Onkarnarth <onkarnath.1@samsung.com>
+CC: <bhelgaas@google.com>, <helgaas@kernel.org>, <vigneshr@ti.com>,
+        <s-vadapalli@ti.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <robh@kernel.org>, <yue.wang@Amlogic.com>, <neil.armstrong@linaro.org>,
+        <khilman@baylibre.com>, <jbrunet@baylibre.com>,
+        <martin.blumenstingl@googlemail.com>, <thomas.petazzoni@bootlin.com>,
+        <shawn.guo@linaro.org>, <lchuanhua@maxlinear.com>,
+        <srikanth.thokala@intel.com>, <songxiaowei@hisilicon.com>,
+        <wangbinghui@hisilicon.com>, <manivannan.sadhasivam@linaro.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <hayashi.kunihiko@socionext.com>, <mhiramat@kernel.org>,
+        <pali@kernel.org>, <toan@os.amperecomputing.com>,
+        <daire.mcnamara@microchip.com>, <conor.dooley@microchip.com>,
+        <marek.vasut+renesas@gmail.com>, <shawn.lin@rock-chips.com>,
+        <heiko@sntech.de>, <nirmal.patel@linux.intel.com>,
+        <jonathan.derrick@linux.dev>, <kishon@kernel.org>, <jdmason@kudzu.us>,
+        <dave.jiang@intel.com>, <rafael@kernel.org>, <lenb@kernel.org>,
+        <mahesh@linux.ibm.com>, <oohall@gmail.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <r.thapliyal@samsung.com>,
+        Maninder Singh <maninder1.s@samsung.com>
+Subject: Re: [PATCH v2 1/1] PCI : Refactoring error log prints for better
+ readability
+Message-ID: <2227b0ed-a57f-4bca-8f3e-721bc2e2055a@ti.com>
+References: <CGME20240521061553epcas5p1c7db70b37a70f599face675bc4dedda9@epcas5p1.samsung.com>
+ <20240521061528.3559751-1-onkarnath.1@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="1678380546-445900224-1716272894=:4805"
-Content-ID: <alpine.LSU.2.21.2405210833040.4805@pobox.suse.cz>
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	CTYPE_MIXED_BOGUS(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[multipart/mixed,text/plain];
-	RCVD_COUNT_ZERO(0.00)[0];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[pobox.suse.cz:helo,suse.cz:email]
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240521061528.3559751-1-onkarnath.1@samsung.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Tue, May 21, 2024 at 11:45:28AM +0530, Onkarnarth wrote:
+> From: Onkarnath <onkarnath.1@samsung.com>
 
---1678380546-445900224-1716272894=:4805
-Content-Type: text/plain; CHARSET=ISO-8859-7
-Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.LSU.2.21.2405210833041.4805@pobox.suse.cz>
-
-Hello,
-
-On Mon, 20 May 2024, zhang warden wrote:
+nitpick: In $subject:
+s/Refactoring/Refactor
+to follow the convention of using imperative mood.
 
 > 
+> As %pe is already introduced, it's better to use it in place of (%ld) or
+> (%d) for printing error in logs. It will enhance readability of logs.
 > 
-> > On May 20, 2024, at 14:46, Miroslav Benes <mbenes@suse.cz> wrote:
-> > 
-> > Hi,
-> > 
-> > On Mon, 20 May 2024, Wardenjohn wrote:
-> > 
-> >> Livepatch module usually used to modify kernel functions.
-> >> If the patched function have bug, it may cause serious result
-> >> such as kernel crash.
-> >> 
-> >> This is a kobject attribute of klp_func. Sysfs interface named
-> >> "called" is introduced to livepatch which will be set as true
-> >> if the patched function is called.
-> >> 
-> >> /sys/kernel/livepatch/<patch>/<object>/<function,sympos>/called
-> >> 
-> >> This value "called" is quite necessary for kernel stability
-> >> assurance for livepatching module of a running system.
-> >> Testing process is important before a livepatch module apply to
-> >> a production system. With this interface, testing process can
-> >> easily find out which function is successfully called.
-> >> Any testing process can make sure they have successfully cover
-> >> all the patched function that changed with the help of this interface.
-> > 
-> > Even easier is to use the existing tracing infrastructure in the kernel 
-> > (ftrace for example) to track the new function. You can obtain much more 
-> > information with that than the new attribute provides.
-> > 
-> > Regards,
-> > Miroslav
-> Hi Miroslav
+> Error print style is more consistent now.
 > 
-> First, in most cases, testing process is should be automated, which make 
-> using existing tracing infrastructure inconvenient.
+> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
+> Co-developed-by: Maninder Singh <maninder1.s@samsung.com>
+> Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+> Signed-off-by: Onkarnath <onkarnath.1@samsung.com>
 
-could you elaborate, please? We use ftrace exactly for this purpose and 
-our testing process is also more or less automated.
+Thank you for the patch. LGTM.
 
-> Second, livepatch is 
-> already use ftrace for functional replacement, I don¢t think it is a 
-> good choice of using kernel tracing tool to trace a patched function.
+Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-Why?
+> ---
+> Suggested by Bjorn Helgaas in below discussion
+> https://patchwork.kernel.org/comment/25712288/
+> 
+> v1 -> v2: Added suggested by tag
+> 
+>  drivers/pci/bus.c                             |   2 +-
+>  drivers/pci/controller/dwc/pci-dra7xx.c       |   2 +-
+>  drivers/pci/controller/dwc/pci-meson.c        |  16 +--
+>  drivers/pci/controller/dwc/pcie-armada8k.c    |   4 +-
+>  drivers/pci/controller/dwc/pcie-histb.c       |   6 +-
+>  drivers/pci/controller/dwc/pcie-intel-gw.c    |  10 +-
+>  drivers/pci/controller/dwc/pcie-keembay.c     |   2 +-
+>  drivers/pci/controller/dwc/pcie-kirin.c       |   6 +-
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c     |  18 +--
+>  drivers/pci/controller/dwc/pcie-qcom.c        |  18 +--
+>  drivers/pci/controller/dwc/pcie-tegra194.c    | 132 +++++++++---------
+>  drivers/pci/controller/dwc/pcie-uniphier-ep.c |   2 +-
+>  drivers/pci/controller/pci-aardvark.c         |   6 +-
+>  drivers/pci/controller/pci-ftpci100.c         |   2 +-
+>  drivers/pci/controller/pci-tegra.c            |  86 ++++++------
+>  drivers/pci/controller/pci-xgene.c            |   4 +-
+>  drivers/pci/controller/pcie-microchip-host.c  |   2 +-
+>  drivers/pci/controller/pcie-rcar-host.c       |  14 +-
+>  drivers/pci/controller/pcie-rockchip.c        |  34 ++---
+>  drivers/pci/controller/vmd.c                  |   2 +-
+>  drivers/pci/doe.c                             |   4 +-
+>  drivers/pci/endpoint/functions/pci-epf-mhi.c  |   8 +-
+>  drivers/pci/endpoint/functions/pci-epf-ntb.c  |   2 +-
+>  drivers/pci/endpoint/functions/pci-epf-test.c |   4 +-
+>  drivers/pci/endpoint/functions/pci-epf-vntb.c |   2 +-
+>  drivers/pci/endpoint/pci-ep-cfs.c             |  12 +-
+>  drivers/pci/endpoint/pci-epf-core.c           |  16 +--
+>  drivers/pci/hotplug/acpiphp_core.c            |   2 +-
+>  drivers/pci/hotplug/pciehp_core.c             |   8 +-
+>  drivers/pci/hotplug/shpchp_core.c             |   4 +-
+>  drivers/pci/of.c                              |   6 +-
+>  drivers/pci/pci-driver.c                      |   4 +-
+>  drivers/pci/pcie/dpc.c                        |   4 +-
+>  drivers/pci/quirks.c                          |   2 +-
+>  drivers/pci/setup-bus.c                       |   2 +-
+>  drivers/pci/slot.c                            |   4 +-
+>  drivers/pci/vgaarb.c                          |   2 +-
+>  37 files changed, 227 insertions(+), 227 deletions(-)
+> 
 
-> At last, this attribute can be thought of as a state of a livepatch 
-> function. It is a state, like the "patched" "transition" state of a 
-> klp_patch.  Adding this state will not break the state consistency of 
-> livepatch.
-
-Yes, but the information you get is limited compared to what is available 
-now. You would obtain the information that a patched function was called 
-but ftrace could also give you the context and more.
-
-It would not hurt to add a new attribute per se but I am wondering about 
-the reason and its usage. Once we have it, the commit message should be 
-improved based on that.
+[...]
 
 Regards,
-Miroslav
---1678380546-445900224-1716272894=:4805--
+Siddharth.
 
