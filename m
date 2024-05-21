@@ -1,156 +1,147 @@
-Return-Path: <linux-kernel+bounces-184595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0188CA954
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:50:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8736F8CA95E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDCE01C2098F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:50:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4204D283F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E8A52F81;
-	Tue, 21 May 2024 07:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AvpIwQgu"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0DE51C4F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C10354675;
+	Tue, 21 May 2024 07:51:35 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [207.46.229.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222E442056;
+	Tue, 21 May 2024 07:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.46.229.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716277819; cv=none; b=CyEJNnzqGgKr9Javdl/dCjDhMnw/o1i/RyI+ps8x6exkDcBDzpftKNE77eYaiNNst4yYcp2xk9JNAmTVWzURbwPZ7X7s3PwikB+ntUMrlioCPPsjaDUKxoRQIqjwaZOrRapR95aELVZD7vNmqSXv5grCrr5SewmGTUDPTtQDq5s=
+	t=1716277894; cv=none; b=DBueFVAw/ZIIj4Ifl2BqibnC3L88fHFMaTnyej14E4mSNSZsMVsArFnKa/MaYYEIqLqktuwF4sSdDrYB2vUAwF//s3jtg7lN+xH+K8dvrnEvTQvZGPrIHSjb25HnFO158KWNjvHrDSwE786Pw3o6qkGVqWsNZRVxHSqJMIY1zEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716277819; c=relaxed/simple;
-	bh=L/Vg3azzF1AwIKur+spgX2StqpWHdR2fCI0O12zbwSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3Khy/qjOaiDwSLXsM3XNs54KqFOzJ5MKFqJNJ9YCUEyCx8EZWXqr1z4Rp0Zjg7gGzBL+cuImSWQte4FXDLUB1fyDc5XTkca58DcVuj7IvRGKfkWCWbRElIRc/g7nsACREIZp/aLi+Un/lYByh2JQwmDFjAYP/1oH/nlXpEfwX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AvpIwQgu; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BAD0840E02A7;
-	Tue, 21 May 2024 07:50:13 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id AmG9K47KQcgt; Tue, 21 May 2024 07:50:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1716277810; bh=zhriVY1YS+s2GEj2LKPeJWhuxKvrjyAYCIq8RfPBJmc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AvpIwQguEOYipaAs1bqZf9/1aizrJp2VZs+MIa4qYBj8OM+yUXvGDzqwbtozuO5J2
-	 e8GQ9/s6/EwMPYkF/1Obts1F6p8npJwJ5j4YIGN1e+yQ4oRzr2yJsxPlQaCvz1tlxv
-	 EEAKPz9iPha0lY5n50fUVrunpcedc8+5guTc3niIZOp23OKhfYFpnqfNK+uXwpK2jC
-	 VITHotBZsh78UXx7GM+MZTwXVCdq1JvIvBk2i5Yqrbrjk4kprjZn3Oxdne3leiS7qO
-	 GTgLZDGUUYocUmxy7IXknRk4exZudgbFgsdtxr4vW1e+G2Vn95J6kQ+MVQT8/F3IAs
-	 CagJ9IdpDAoPgKGawFLI13NlBq/4FQT7D/3lvgCosJH5MF4nQSkX05FyIiF6j/gxJP
-	 1E98yMy/Cf+eV851+hB5NArK+xAjZR0+YqDofd1xChB5pNoF5qRObGfeJlbn10Tmzr
-	 MBsQN7HJrbE5uNNMhOkxs9tXGRTc1b4BRWwv1JQUOec5lxJcP2MwtI41jr59Qk2/Wf
-	 KiLhWj13UOGFUMfhQx4OLuTsg3J+vESA2prJt5cQ+6mrczjar1Nau+P+TgERTK6dYr
-	 aM8Q5CyXUc3z1eAsYBxp0Z5KfgwdMRVpYcTbVuOY2fkT+XZAAarm+RO5WYhkO2vVAa
-	 nW476cxFb6Hf+9IiueKkmAfw=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1859240E01A3;
-	Tue, 21 May 2024 07:49:55 +0000 (UTC)
-Date: Tue, 21 May 2024 09:49:47 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik <mjguzik@gmail.com>,
-	Thomas Renninger <trenn@suse.de>, Andi Kleen <ak@linux.intel.com>,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v6 02/49] x86/cpu: Fix x86_match_cpu() to match just
- X86_VENDOR_INTEL
-Message-ID: <20240521074947.GAZkxSG_u08uLDqZ_m@fat_crate.local>
-References: <20240520224620.9480-1-tony.luck@intel.com>
- <20240520224620.9480-3-tony.luck@intel.com>
+	s=arc-20240116; t=1716277894; c=relaxed/simple;
+	bh=GwBgZ6A2Vqzcd5K1LmY0jwLdyR/P2V7/O9bkM2fxAHE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AQHZtPUUCrScxJhGbXvrdJocaF41tgJ9Pu+TFtRRQUeuRHGJk1Lvzx/D7SUjtNZKJe4EE5bYWs5CcABO/u80Jv/LDhHIjKRkFi2X05rBXxgEjkmAc1m36zdKPX77zyHwu90opRbq2m4sECHOBEw0g+T/jjo2MiOhsiri59lKGtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=207.46.229.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from gui.. (unknown [115.206.161.197])
+	by mail-app3 (Coremail) with SMTP id cC_KCgD3T1ZkUkxmSGTSAA--.6741S4;
+	Tue, 21 May 2024 15:51:01 +0800 (CST)
+From: Lin Ma <linma@zju.edu.cn>
+To: johannes@sipsolutions.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Lin Ma <linma@zju.edu.cn>
+Subject: [PATCH v2 net] wifi: cfg80211: pmsr: use correct nla_get_uX functions
+Date: Tue, 21 May 2024 15:50:59 +0800
+Message-Id: <20240521075059.47999-1-linma@zju.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240520224620.9480-3-tony.luck@intel.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cC_KCgD3T1ZkUkxmSGTSAA--.6741S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxXF1fJF48Xw1DtF45Aw1fZwb_yoW5uFWkpa
+	1kta98tas8J348urykCw18WF9Fgr17Arn5CFW3WF1fCr4vga4Yy347ur4qq3WDA34kW395
+	tr1vy3y8Cw15trDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	tVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUb8hL5UUUU
+	U==
+X-CM-SenderInfo: qtrwiiyqvtljo62m3hxhgxhubq/
 
-On Mon, May 20, 2024 at 03:45:33PM -0700, Tony Luck wrote:
-> Fixes: 644e9cbbe3fc ("Add driver auto probing for x86 features v4")
+The commit 9bb7e0f24e7e ("cfg80211: add peer measurement with FTM
+initiator API") defines four attributes NL80211_PMSR_FTM_REQ_ATTR_
+{NUM_BURSTS_EXP}/{BURST_PERIOD}/{BURST_DURATION}/{FTMS_PER_BURST} in
+following ways.
 
-Do you really want to backport this to everything since 2012, as that
-patch is from then?
+static const struct nla_policy
+nl80211_pmsr_ftm_req_attr_policy[NL80211_PMSR_FTM_REQ_ATTR_MAX + 1] = {
+    ...
+    [NL80211_PMSR_FTM_REQ_ATTR_NUM_BURSTS_EXP] =
+        NLA_POLICY_MAX(NLA_U8, 15),
+    [NL80211_PMSR_FTM_REQ_ATTR_BURST_PERIOD] = { .type = NLA_U16 },
+    [NL80211_PMSR_FTM_REQ_ATTR_BURST_DURATION] =
+        NLA_POLICY_MAX(NLA_U8, 15),
+    [NL80211_PMSR_FTM_REQ_ATTR_FTMS_PER_BURST] =
+        NLA_POLICY_MAX(NLA_U8, 31),
+    ...
+};
 
-> @@ -690,6 +690,7 @@ struct x86_cpu_id {
->  	__u16 model;
->  	__u16 steppings;
->  	__u16 feature;	/* bit index */
-> +	__u16 flags;
->  	kernel_ulong_t driver_data;
->  };
->  
-> @@ -700,6 +701,9 @@ struct x86_cpu_id {
->  #define X86_STEPPING_ANY 0
->  #define X86_FEATURE_ANY 0	/* Same as FPU, you can't test for that */
->  
-> +/* x86_cpu_id::flags */
-> +#define X86_CPU_ID_FLAG_ENTRY_VALID	BIT(0)
+That is, those attributes are expected to be NLA_U8 and NLA_U16 types.
+However, the consumers of these attributes in `pmsr_parse_ftm` blindly
+all use `nla_get_u32`, which is incorrect and causes functionality issues
+on little-endian platforms. Hence, fix them with the correct `nla_get_u8`
+and `nla_get_u16` functions.
 
-I would definitely not want to have those visible in userspace.
+Fixes: 9bb7e0f24e7e ("cfg80211: add peer measurement with FTM initiator API")
+Signed-off-by: Lin Ma <linma@zju.edu.cn>
+---
+V1->V2: add wifi prefix in title,
+        mention the policy that defines those attributes as suggested by johannes
 
-IOW, something like this:
+ net/wireless/pmsr.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
-index 54a71c669ce9..b6325ee30871 100644
---- a/arch/x86/include/asm/cpu_device_id.h
-+++ b/arch/x86/include/asm/cpu_device_id.h
-@@ -53,6 +53,9 @@
- #define X86_CENTAUR_FAM6_C7_D		0xd
- #define X86_CENTAUR_FAM6_NANO		0xf
+diff --git a/net/wireless/pmsr.c b/net/wireless/pmsr.c
+index e106dcea3977..c569c37da317 100644
+--- a/net/wireless/pmsr.c
++++ b/net/wireless/pmsr.c
+@@ -56,7 +56,7 @@ static int pmsr_parse_ftm(struct cfg80211_registered_device *rdev,
+ 	out->ftm.burst_period = 0;
+ 	if (tb[NL80211_PMSR_FTM_REQ_ATTR_BURST_PERIOD])
+ 		out->ftm.burst_period =
+-			nla_get_u32(tb[NL80211_PMSR_FTM_REQ_ATTR_BURST_PERIOD]);
++			nla_get_u16(tb[NL80211_PMSR_FTM_REQ_ATTR_BURST_PERIOD]);
  
-+/* x86_cpu_id::flags */
-+#define X86_CPU_ID_FLAG_ENTRY_VALID	BIT(0)
-+
- #define X86_STEPPINGS(mins, maxs)    GENMASK(maxs, mins)
- /**
-  * X86_MATCH_VENDOR_FAM_MODEL_STEPPINGS_FEATURE - Base macro for CPU matching
-diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
-index ca3468ad06ff..4338b1b4ac44 100644
---- a/include/linux/mod_devicetable.h
-+++ b/include/linux/mod_devicetable.h
-@@ -690,6 +690,7 @@ struct x86_cpu_id {
- 	__u16 model;
- 	__u16 steppings;
- 	__u16 feature;	/* bit index */
-+	/* Solely for kernel-internal use: DO NOT EXPORT to userspace! */
- 	__u16 flags;
- 	kernel_ulong_t driver_data;
- };
-@@ -701,9 +702,6 @@ struct x86_cpu_id {
- #define X86_STEPPING_ANY 0
- #define X86_FEATURE_ANY 0	/* Same as FPU, you can't test for that */
+ 	out->ftm.asap = !!tb[NL80211_PMSR_FTM_REQ_ATTR_ASAP];
+ 	if (out->ftm.asap && !capa->ftm.asap) {
+@@ -75,7 +75,7 @@ static int pmsr_parse_ftm(struct cfg80211_registered_device *rdev,
+ 	out->ftm.num_bursts_exp = 0;
+ 	if (tb[NL80211_PMSR_FTM_REQ_ATTR_NUM_BURSTS_EXP])
+ 		out->ftm.num_bursts_exp =
+-			nla_get_u32(tb[NL80211_PMSR_FTM_REQ_ATTR_NUM_BURSTS_EXP]);
++			nla_get_u8(tb[NL80211_PMSR_FTM_REQ_ATTR_NUM_BURSTS_EXP]);
  
--/* x86_cpu_id::flags */
--#define X86_CPU_ID_FLAG_ENTRY_VALID	BIT(0)
--
- /*
-  * Generic table type for matching CPU features.
-  * @feature:	the bit number of the feature (0 - 65535)
-
+ 	if (capa->ftm.max_bursts_exponent >= 0 &&
+ 	    out->ftm.num_bursts_exp > capa->ftm.max_bursts_exponent) {
+@@ -88,7 +88,7 @@ static int pmsr_parse_ftm(struct cfg80211_registered_device *rdev,
+ 	out->ftm.burst_duration = 15;
+ 	if (tb[NL80211_PMSR_FTM_REQ_ATTR_BURST_DURATION])
+ 		out->ftm.burst_duration =
+-			nla_get_u32(tb[NL80211_PMSR_FTM_REQ_ATTR_BURST_DURATION]);
++			nla_get_u8(tb[NL80211_PMSR_FTM_REQ_ATTR_BURST_DURATION]);
+ 
+ 	out->ftm.ftms_per_burst = 0;
+ 	if (tb[NL80211_PMSR_FTM_REQ_ATTR_FTMS_PER_BURST])
+@@ -107,7 +107,7 @@ static int pmsr_parse_ftm(struct cfg80211_registered_device *rdev,
+ 	out->ftm.ftmr_retries = 3;
+ 	if (tb[NL80211_PMSR_FTM_REQ_ATTR_NUM_FTMR_RETRIES])
+ 		out->ftm.ftmr_retries =
+-			nla_get_u32(tb[NL80211_PMSR_FTM_REQ_ATTR_NUM_FTMR_RETRIES]);
++			nla_get_u8(tb[NL80211_PMSR_FTM_REQ_ATTR_NUM_FTMR_RETRIES]);
+ 
+ 	out->ftm.request_lci = !!tb[NL80211_PMSR_FTM_REQ_ATTR_REQUEST_LCI];
+ 	if (out->ftm.request_lci && !capa->ftm.request_lci) {
 -- 
-Regards/Gruss,
-    Boris.
+2.34.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
