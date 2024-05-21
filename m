@@ -1,66 +1,61 @@
-Return-Path: <linux-kernel+bounces-185149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA7C8CB133
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:26:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5788CB13E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C7F41C21596
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:26:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ACEB2835FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C29144D1C;
-	Tue, 21 May 2024 15:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1081448EF;
+	Tue, 21 May 2024 15:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YRcCxUSo"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sH+WHB4e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA88514431C;
-	Tue, 21 May 2024 15:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDCF4F8A1;
+	Tue, 21 May 2024 15:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716305173; cv=none; b=dxCylBFF+lmG/v148tuuBbkmHWw3BKtBK+8Fe05riqK6lG4ZR4SFO6IdsOr+B6NpUDPP77KR5aalcbTg0X7xVgoaqSur744XxZ+ZofuFLddDEuKo3ea2kuKwb4p2H0dY9VuES1d1E35G56yiXnFyFCTQNuBU7iXG//9GAFWjRYk=
+	t=1716305225; cv=none; b=Fhja2hCgnPQCrHbG2wUD3X4+LEK4RXIFOKIpS626W0zF0CPEtwtmv6iWyk4yBbglSriWZi6okSnpwRhhcIaXoUbi/bfRI3+lxCqex1JAjHpcF0nHenPQmUmD/yMAYXxJ17vI/hDGYM/it5xu1zxLAJIeajyGZPJG4WfEXEaiSuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716305173; c=relaxed/simple;
-	bh=ehEGmLPbdflG9SwAJyNTXNFXo36LoESCFkUyqyn/9rE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Du8cvLHYKwy5eeV18yMONo7zXF/xB6IP9LVzlVAgxnW8O4i3GsDQ3HnQxrU2GaVQRiTXcKYfu/2j608eag8vdcdHtrSl165HMBwSTZKhRmB7XVBsGx3IYWzYfpH+oqe3nJr9wsehvoGG+F6sIaye6b8kIwZhC5Dg6V+VCW8Sb/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YRcCxUSo; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716305169;
-	bh=ehEGmLPbdflG9SwAJyNTXNFXo36LoESCFkUyqyn/9rE=;
+	s=arc-20240116; t=1716305225; c=relaxed/simple;
+	bh=n/t9ygsCu+dIywdceMNRbQoZd1YbzShavt/GF+DNRdU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RvEKnWyahgSmum+qR700n/ADm4zeC+1P2L2oSrpUhPBeOOfY/IQikXrVGkP0s4C2phcK0B+kye48vBeXjHGFr+ZkrZEXNkj7sYraSlc8fmJ/RV7qu/xekcGg8AXe8gaQk7WVTrBqT0TrEiiAE15NSTRuxGbow/CBrAxl63+o6HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sH+WHB4e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C5BAC2BD11;
+	Tue, 21 May 2024 15:27:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716305224;
+	bh=n/t9ygsCu+dIywdceMNRbQoZd1YbzShavt/GF+DNRdU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=YRcCxUSoYk2jqtJS2oUMkMYXVP2UsiGWYpj6GvD6ACMAvrMToPH4gjF+lTPCTsjdp
-	 AaMBchr/vwUGg/XyzzNA3Efh9iIHJSootB6GzHKCE4MXxaTnrBg3RIng/o9eGXHjyG
-	 8auuIIJFlzei0KUr1ce2kFTvMehyHkOHVY1BZ0W4BPckuNRC6a+3H8baySiOBr6KXq
-	 ouGAP6zR2tuQ9pq5mlNa4mjm19lowg/gQ1D2dN8TD8duZdYWcKckxtyQumCCglzg9h
-	 3XZSYJNZMKTYG7WeeyTTVLWaCOSgD7lBFOEP2myOGOYAfZ8rFAdBwu05eOJ5yYiEgQ
-	 k0UYBVDpn7y9w==
-Received: from benjamin-XPS-13-9310.. (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: benjamin.gaignard)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 94768378212E;
-	Tue, 21 May 2024 15:26:08 +0000 (UTC)
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-To: ezequiel@vanguardiasur.com.ar,
-	p.zabel@pengutronix.de,
-	mchehab@kernel.org,
-	heiko@sntech.de
-Cc: linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: [PATCH] media: verisilicon: AV1: Correct some registers fields size or position
-Date: Tue, 21 May 2024 17:26:03 +0200
-Message-Id: <20240521152603.120723-1-benjamin.gaignard@collabora.com>
-X-Mailer: git-send-email 2.40.1
+	b=sH+WHB4epJLkHySfroputnQcIAMiaITheMYk7sAGDYNYfT0N34aPZ0Szrpe2cY4qX
+	 XrikC0QsSvnM1zcQ0Mp5a2c81BOKzRg+XGJg58gn/WkbpH+nNUFBDebgog8SMcb2VU
+	 xWtCqfGZWN9lil9vwXtAfvEC8neiyW1PJ/IjxHPZakZVooxC5XHnWwIVl4FA2w7VAX
+	 UqKJ6VewEp6pcbpwrIEvgM1zyciF3vAi6nSw4FhtQPa79ajk7ynxcdWYdKeoy+RC8q
+	 37rumUIJpOHv9wrWHFJ72LyxjemfYTBVQiO6tFSr2JR4QCJ/sI5Wsgo1az9hzpDgYA
+	 3wMSDE367mlcQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	Andreas.Fuchs@infineon.com,
+	James Prestwood <prestwoj@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org (open list:CRYPTO API),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 0/5] KEYS: asymmetric: tpm2_key_rsa
+Date: Tue, 21 May 2024 18:26:42 +0300
+Message-ID: <20240521152659.26438-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,46 +64,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some fields aren't well positionned or with incorrect size inside the
-hardware registers. Fix them.
+## Overview
 
-That doesn't impact Fluster score test.
+Introduce tpm2_key_rsa module, which implements asymmetric TPM2 RSA key.
+The feature can be enabled with the CONFIG_ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE 
+kconfig option.
 
-Fixes: 727a400686a2 ("media: verisilicon: Add Rockchip AV1 decoder")
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
----
- .../media/platform/verisilicon/rockchip_vpu981_regs.h  | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+The idea in the design is to over time to have submodule per key type
+For instance, tpm2_key_ecdsa could be one potential future addition in
+the future. Perhaps, it might sense to consider at that point also a
+top-level tpm2_key module. The gist is that the naming convention is
+free from potential future bottlencks.
 
-diff --git a/drivers/media/platform/verisilicon/rockchip_vpu981_regs.h b/drivers/media/platform/verisilicon/rockchip_vpu981_regs.h
-index 182e6c830ff6..990f8e69524a 100644
---- a/drivers/media/platform/verisilicon/rockchip_vpu981_regs.h
-+++ b/drivers/media/platform/verisilicon/rockchip_vpu981_regs.h
-@@ -327,7 +327,7 @@
- 
- #define av1_apf_threshold		AV1_DEC_REG(55, 0, 0xffff)
- #define av1_apf_single_pu_mode		AV1_DEC_REG(55, 30, 0x1)
--#define av1_apf_disable			AV1_DEC_REG(55, 30, 0x1)
-+#define av1_apf_disable			AV1_DEC_REG(55, 31, 0x1)
- 
- #define av1_dec_max_burst		AV1_DEC_REG(58, 0, 0xff)
- #define av1_dec_buswidth		AV1_DEC_REG(58, 8, 0x7)
-@@ -337,10 +337,10 @@
- #define av1_dec_mc_polltime		AV1_DEC_REG(58, 17, 0x3ff)
- #define av1_dec_mc_pollmode		AV1_DEC_REG(58,	27, 0x3)
- 
--#define av1_filt_ref_adj_3		AV1_DEC_REG(59, 0, 0x3f)
--#define av1_filt_ref_adj_2		AV1_DEC_REG(59, 7, 0x3f)
--#define av1_filt_ref_adj_1		AV1_DEC_REG(59, 14, 0x3f)
--#define av1_filt_ref_adj_0		AV1_DEC_REG(59, 21, 0x3f)
-+#define av1_filt_ref_adj_3		AV1_DEC_REG(59, 0, 0x7f)
-+#define av1_filt_ref_adj_2		AV1_DEC_REG(59, 7, 0x7f)
-+#define av1_filt_ref_adj_1		AV1_DEC_REG(59, 14, 0x7f)
-+#define av1_filt_ref_adj_0		AV1_DEC_REG(59, 21, 0x7f)
- #define av1_ref0_sign_bias		AV1_DEC_REG(59, 28, 0x1)
- #define av1_ref1_sign_bias		AV1_DEC_REG(59, 29, 0x1)
- #define av1_ref2_sign_bias		AV1_DEC_REG(59, 30, 0x1)
+## Change Log
+
+v3:
+* Dropped special policy when RH_NULL is given. Kernel will just try to
+  use the handle as parent given.
+* Thus could drop the patch exporting tpm2_load_context().
+v2:
+* Cleaned up all the low-hanging fruit for the sake of saving everyones
+  time. After this I move into reactive mode (I promise) ;-)
+
+## Testing
+
+tpm2_createprimary --hierarchy o -G rsa2048 -c owner.txt
+tpm2_evictcontrol -c owner.txt 0x81000001
+tpm2_getcap handles-persistent
+openssl genrsa -out private.pem 2048
+tpm2_import -C 0x81000001 -G rsa -i private.pem -u key.pub -r key.priv
+tpm2_encodeobject -C 0x81000001 -u key.pub -r key.priv -o key.priv.pem
+openssl asn1parse -inform pem -in key.priv.pem -noout -out key.priv.der
+serial=`cat key.priv.der | keyctl padd asymmetric tpm @u`
+echo "abcdefg" > plaintext.txt
+keyctl pkey_encrypt $serial 0 plaintext.txt enc=pkcs1 > encrypted.dat
+keyctl pkey_decrypt $serial 0 encrypted.dat enc=pkcs1 > decrypted.dat
+keyctl pkey_sign $serial 0 plaintext.txt enc=pkcs1 hash=sha256 > signed.dat
+keyctl pkey_verify $serial 0 plaintext.txt signed.dat enc=pkcs1 hash=sha256
+
+## References
+
+- v2: https://lore.kernel.org/linux-integrity/20240521031645.17008-1-jarkko@kernel.org/
+- v1: https://lore.kernel.org/linux-integrity/20240520184727.22038-1-jarkko@kernel.org/
+- Derived from https://lore.kernel.org/all/20200518172704.29608-1-prestwoj@gmail.com/
+
+James Prestwood (1):
+  keys: asymmetric: ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE
+
+Jarkko Sakkinen (4):
+  crypto: rsa-pkcs1pad: export rsa1_asn_lookup()
+  lib: Expand asn1_encode_integer() to variable size integers
+  KEYS: trusted: Move tpm2_key_decode() to the TPM driver
+  tpm: tpm2_key: Extend parser to TPM_LoadableKey
+
+ crypto/asymmetric_keys/Kconfig                |  16 +
+ crypto/asymmetric_keys/Makefile               |   1 +
+ crypto/asymmetric_keys/tpm2_key_rsa.c         | 688 ++++++++++++++++++
+ crypto/rsa-pkcs1pad.c                         |  16 +-
+ drivers/char/tpm/Kconfig                      |   1 +
+ drivers/char/tpm/Makefile                     |   5 +
+ drivers/char/tpm/tpm2_key.c                   | 118 +++
+ .../char/tpm}/tpm2key.asn1                    |   0
+ include/crypto/rsa-pkcs1pad.h                 |  20 +
+ include/crypto/tpm2_key.h                     |  35 +
+ include/linux/asn1_encoder.h                  |   3 +-
+ include/linux/tpm.h                           |   2 +
+ lib/asn1_encoder.c                            | 185 ++---
+ security/keys/trusted-keys/Makefile           |   2 -
+ security/keys/trusted-keys/trusted_tpm2.c     | 135 +---
+ 15 files changed, 1020 insertions(+), 207 deletions(-)
+ create mode 100644 crypto/asymmetric_keys/tpm2_key_rsa.c
+ create mode 100644 drivers/char/tpm/tpm2_key.c
+ rename {security/keys/trusted-keys => drivers/char/tpm}/tpm2key.asn1 (100%)
+ create mode 100644 include/crypto/rsa-pkcs1pad.h
+ create mode 100644 include/crypto/tpm2_key.h
+
 -- 
-2.40.1
+2.45.1
 
 
