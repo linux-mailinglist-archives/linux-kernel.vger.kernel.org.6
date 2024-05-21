@@ -1,161 +1,186 @@
-Return-Path: <linux-kernel+bounces-185086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923508CB054
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:23:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C9BF8CB056
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60ED1C219B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:23:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31C782814B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92FA12FF89;
-	Tue, 21 May 2024 14:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F196912FF83;
+	Tue, 21 May 2024 14:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdzUt2Dz"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="g7tdXcB3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="M6Gna1Ii";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZahKT0ke";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+J9kbIcF"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F44612FB3B
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C0012FB35
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716301401; cv=none; b=sL0kaRBppgkDELJjIfzLAr8LNxRbyxZjDseLIpR1VqbC3UTOIbKh6cMDkAR5MXTyMXpVKG/C8TNIZCblN5aXdWWYErhb7uDL0bMA0LM56fPrnwoHnc6WgTea2lcvGx2MCyajHArOQ94VpRlKVsu6LVfYai7NH1dXFT5nbm9hpbE=
+	t=1716301437; cv=none; b=cnDGlDTPFnmiZHfcL+d9EGAitqu9C0J7o9jVLivBPZ2s6vwnyTsLQP40khYtACzTOQs/1y7DcDv3lEa2q3lQZQryY4VrfzQ/TvCnGcXfW2jTQFk85EV6k/y+3Ud2Qndx9gPkUdGsMKci97kpQX8y0vFQ34nkjNfjFHLWB1I3XK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716301401; c=relaxed/simple;
-	bh=71UgpGIZEFfJ+KGXozBoCU5MTohSKlbdRGH4aeJ7qog=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Gr8eeWv3uvbryaiOzTakEIn2w6q/HjgDtM3zgbtdOg92kcR2Rb93F9Yy2Kt/7YgOVwC9ML54Q97P7gHOVzmpkf6M5+GqZflXf38F0iISxXSnlJ6iG5J4FMGhPNqs/qP/Qw+p9XzKrkOK3qpa8g2MBSffKRU8JDHjpQztyiMSTgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TdzUt2Dz; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-572baf393ddso12167078a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:23:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716301397; x=1716906197; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FSeatY39v4lNrv05Efy2Iau7owaq9W7mexnGZNIfuwo=;
-        b=TdzUt2DzazdxyJ7sqo7V6zN7EsByQMaT1/8l1X2PF8NNcBsdOOReh61N+9M4L8y1OI
-         lfzWkbeDU59+SggLU1mJPiQK7Z671/TTnDPZrmjaiQs6a/jBJikTHG4nMcce+PrtrGKx
-         DxME+l4BrK9DXStVdGa6uZSKWxizR8C2rcQnHU9Eeg0Jo3mKDbUqdfqLfYdg4NZNLZue
-         JzXqFZfN/REhCoanm7O/4S6n+rwczAcniC0tcaXjsmrG2Q2bt/gb/DrI6bCiSTQJcFN3
-         R3DdJuj5nCp97p3F5vF8NRkbiet2CXcUASIM/fT/ZHONT3qHeoa5NLU/EpmwhUO5lpyK
-         z3qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716301397; x=1716906197;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FSeatY39v4lNrv05Efy2Iau7owaq9W7mexnGZNIfuwo=;
-        b=nQzTbOxc1VjNawUwEgczKyhe0Ee8vbQGMWoJ15YbC6jmL4Jdpj4wGMsyHhGB/4I1CO
-         Shl8+YFCvIiRT07in1VEWJTjllyd3yFJScH0C4KMpvufkN5a0CLa1yo/LP8fDQ52OrKj
-         e8EGZfNADxMqedThggu+NhLWVe8cX8P4Qq5Z72lUDSTzCpREMme4Sbh63r8nsDvq86lZ
-         o9yctCLiXlSNyrQhtzeOymJowy0CUQPnJOt/fZ2uHpLKmSSeKoB8AYx6Ov9MgOo2weAK
-         b8VPlCTo13h1J5Dw9tS15VC6Nnk8vXtK2ragzu9DIRzsJw6Hakqv72qLX1z/JfPcelu7
-         zi8w==
-X-Gm-Message-State: AOJu0YwWDCW9iAL4y55P1TEhpZyOrrHtrMDddWWnwSU7h3COMQkmlpY7
-	AooWN14ayiQP/M0rBXNcb4ytUN7MRjP3Fm2jPIjd96UIDU+GheDI2omUAikNi8Q8lowEql7X7DI
-	biELoA+DkiOF9KlgBiwzU9dugZwAsN7YjH6k=
-X-Google-Smtp-Source: AGHT+IGkKKK7/yW/tyV2dWbXhFvovat4yr6cGsPFa7TrVd3HPJJ1jP2HMXWXC+eAVNd7YLORJVq+Dk9nIeI2pmW9VxQ=
-X-Received: by 2002:a17:906:40b:b0:a59:ac10:9be5 with SMTP id
- a640c23a62f3a-a5d5c825fc2mr850458666b.27.1716301397373; Tue, 21 May 2024
- 07:23:17 -0700 (PDT)
+	s=arc-20240116; t=1716301437; c=relaxed/simple;
+	bh=rIDd75rbjRTrPL9hfPJp0QMBEv5zevUBhRcTS5dTPfg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WBz+QPGMbjc+3demr6cs9+gvHl2+h38+Jw8YmALF9FmbtbgB8ncu7I808nxxGCPQYhc6S/sCAI+XwR55oU5YqHncIfWtLrz6v0JzxhR7/SYHBeFXYDFQ41eDTCKjiLco40QN5578aJvxIvS2M+SECCSuEwmpBem1GDbRyo5H+Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=g7tdXcB3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=M6Gna1Ii; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZahKT0ke; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+J9kbIcF; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D5DE621F30;
+	Tue, 21 May 2024 14:23:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716301434; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hwcDxOQ6pMSkl1QmM4849RB+YcZAC4TGgNQOUHZaoVk=;
+	b=g7tdXcB39KNS8WdFtJn52wuwAySC0q6KRg0Z/PrhvOFdsTTabEjtNeuvHi3WLJ94McQDuV
+	/UGwLpGe0nENe50QVY4thYdEvHmZuyCS1C8DZMzz0TXsAEvPi04Xle3hrQ/1/clW093duo
+	kHToGsjGAcd8aN2HROlgt87Em9yFCvM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716301434;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hwcDxOQ6pMSkl1QmM4849RB+YcZAC4TGgNQOUHZaoVk=;
+	b=M6Gna1IilS619jmNwu2oEwx2c6QG72sMUpeUhiG106lcQpEzkNHRpjXYesAmw/LNeVbBYN
+	nPliXiL5N88kGSCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716301433; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hwcDxOQ6pMSkl1QmM4849RB+YcZAC4TGgNQOUHZaoVk=;
+	b=ZahKT0keeWaUlD2YKQ9twPNc1vfZMhj5MMJXOL9esWEP9lA+M6N34/QkDDCjW93O6S89aV
+	KZbm/fyiZE1FCPC2HgQwpx0EpjA+BlXNMjz3v93pPNt7uwyiR9AbUKQlVxeh7WaOTtJTQL
+	yXsjsul3ZWyYAB31Xo1HyQ7qSZyU8CQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716301433;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hwcDxOQ6pMSkl1QmM4849RB+YcZAC4TGgNQOUHZaoVk=;
+	b=+J9kbIcF/fkeBDN03mRV9flYCB/1MNDJbNB9J3HgTS7ZBHjAvaLnXnbuleeoPUv9ja0ywr
+	9KkDUCiol5/UnfDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B2C2B13A1E;
+	Tue, 21 May 2024 14:23:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dP/lKnmuTGYdQAAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 21 May 2024 14:23:53 +0000
+Message-ID: <872f0ebd-124e-4a39-987c-ef9c273f1957@suse.de>
+Date: Tue, 21 May 2024 16:23:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Tue, 21 May 2024 09:23:06 -0500
-Message-ID: <CABb+yY2nxEXZkRt_Myyqh_e0CTkVemPwLUBaqt7AWvRB+94pfw@mail.gmail.com>
-Subject: [GIT PULL] Mailbox changes for v6.10
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] nvme: multipath: Implemented new iopolicy
+ "queue-depth"
+To: John Meneghini <jmeneghi@redhat.com>, kbusch@kernel.org, hch@lst.de,
+ sagi@grimberg.me, emilne@redhat.com
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ jrani@purestorage.com, randyj@purestorage.com, hare@kernel.org
+References: <20240520202045.427110-1-jmeneghi@redhat.com>
+ <20240520202045.427110-2-jmeneghi@redhat.com>
+ <f808fa46-e7c7-48e6-8c80-3d28efd0afec@suse.de>
+ <595e5988-b94d-41ba-a233-f87aed55028d@redhat.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <595e5988-b94d-41ba-a233-f87aed55028d@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -4.29
+X-Spam-Flag: NO
 
-Hi Linus,
-The following changes since commit e67572cd2204894179d89bd7b984072f19313b03:
+On 5/21/24 15:58, John Meneghini wrote:
+> On 5/21/24 02:46, Hannes Reinecke wrote:
+>> On 5/20/24 22:20, John Meneghini wrote:
+>>> From: "Ewan D. Milne" <emilne@redhat.com>
+>>>
+> ...
+>>> Tested-by: Marco Patalano <mpatalan@redhat.com>
+>>> Reviewed-by: Randy Jennings <randyj@redhat.com>
+> 
+> I need to fix this. Randy doesn't have a redhat.com email address... Cut 
+> an paste error :-(
+> 
+>>> Tested-by: Jyoti Rani <jani@purestorage.com>
+>>>
+> ...
+>>> +void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int 
+>>> iopolicy)
+>>> +{
+>>> +    struct nvme_ctrl *ctrl;
+>>> +    int old_iopolicy = READ_ONCE(subsys->iopolicy);
+>>> +
+>>> +    WRITE_ONCE(subsys->iopolicy, iopolicy);
+>>> +
+>>> +    mutex_lock(&nvme_subsystems_lock);
+>>> +    list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
+>>> +        atomic_set(&ctrl->nr_active, 0);
+>>> +        nvme_mpath_clear_ctrl_paths(ctrl);
+>>
+>> You always reset the variables here, even if specified iopolicy is
+>> the same than the currently active one.
+>> I'd rather check if the iopolicy is different before changing the 
+>> settings.
+> 
+> Yes, Keith pointed this out too.  This is actually a feature not a bug.  
+> In situations were we want to "reset" the nr_active counters on all 
+> controllers the user can simply set the queue-depth iopolicy a second 
+> time.  I don't expect users to do this very often... they shouldn't be 
+> changing IO policies back and forth too much... but the ability to 
+> "reset" the nr_active counters during testing has been very helpful and 
+> important to do.  So I'd like to keep this.  Moreover, this is NOT the 
+> performance path. I don't see the point in making performance 
+> optimizations in a code path that is run once a year.
+> 
+Please add a comment indicating that.
+Just to make it clear that it's by design.
 
-  Linux 6.9-rc6 (2024-04-28 13:47:24 -0700)
+Cheers,
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jassibrar/mailbox.git
-tags/mailbox-v6.10
-
-for you to fetch changes up to 10b98582bc76a65b7c9dcee82b7918d7949740de:
-
-  dt-bindings: mailbox: qcom-ipcc: Document the SDX75 IPCC (2024-05-19
-22:33:58 -0500)
-
-----------------------------------------------------------------
-omap: redo the driver from legacy to mailbox api
-zynqmp: enable bufferless IPI
-arm: add mhu-v3 driver
-common: convert from tasklet to BH workqueue
-qcom: MSM8974 APCS compatible
-
-----------------------------------------------------------------
-Allen Pais (1):
-      mailbox: Convert from tasklet to BH workqueue
-
-Andrew Davis (13):
-      mailbox: omap: Remove unused omap_mbox_{enable,disable}_irq() functions
-      mailbox: omap: Remove unused omap_mbox_request_channel() function
-      mailbox: omap: Move omap_mbox_irq_t into driver
-      mailbox: omap: Move fifo size check to point of use
-      mailbox: omap: Remove unneeded header omap-mailbox.h
-      mailbox: omap: Remove device class
-      mailbox: omap: Use devm_pm_runtime_enable() helper
-      mailbox: omap: Merge mailbox child node setup loops
-      mailbox: omap: Use function local struct mbox_controller
-      mailbox: omap: Use mbox_controller channel list directly
-      mailbox: omap: Remove mbox_chan_to_omap_mbox()
-      mailbox: omap: Reverse FIFO busy check logic
-      mailbox: omap: Remove kernel FIFO message queuing
-
-Ben Levinsky (3):
-      mailbox: zynqmp: Move of_match structure closer to usage
-      mailbox: zynqmp: Move buffered IPI setup to of_match selected routine
-      mailbox: zynqmp: Enable Bufferless IPI usage on Versal-based SOC's
-
-Cristian Marussi (2):
-      dt-bindings: mailbox: arm,mhuv3: Add bindings
-      mailbox: arm_mhuv3: Add driver
-
-Jason-JH.Lin (1):
-      mailbox: mtk-cmdq: Fix pm_runtime_get_sync() warning in mbox shutdown
-
-Krzysztof Kozlowski (1):
-      mailbox: mtk-cmdq-mailbox: fix module autoloading
-
-Luca Weiss (1):
-      dt-bindings: mailbox: qcom: Add MSM8974 APCS compatible
-
-Rohit Agarwal (1):
-      dt-bindings: mailbox: qcom-ipcc: Document the SDX75 IPCC
-
-Tanmay Shah (1):
-      mailbox: zynqmp: handle SGI for shared IPI
-
- .../devicetree/bindings/mailbox/arm,mhuv3.yaml     |  224 ++++
- .../bindings/mailbox/qcom,apcs-kpss-global.yaml    |    1 +
- .../devicetree/bindings/mailbox/qcom-ipcc.yaml     |    1 +
- MAINTAINERS                                        |    9 +
- drivers/mailbox/Kconfig                            |   21 +-
- drivers/mailbox/Makefile                           |    2 +
- drivers/mailbox/arm_mhuv3.c                        | 1103 ++++++++++++++++++++
- drivers/mailbox/bcm-pdc-mailbox.c                  |   21 +-
- drivers/mailbox/imx-mailbox.c                      |   16 +-
- drivers/mailbox/mtk-cmdq-mailbox.c                 |    3 +-
- drivers/mailbox/omap-mailbox.c                     |  519 ++-------
- drivers/mailbox/zynqmp-ipi-mailbox.c               |  412 +++++++-
- include/dt-bindings/arm/mhuv3-dt.h                 |   13 +
- include/linux/omap-mailbox.h                       |   13 -
- 14 files changed, 1856 insertions(+), 502 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mailbox/arm,mhuv3.yaml
- create mode 100644 drivers/mailbox/arm_mhuv3.c
- create mode 100644 include/dt-bindings/arm/mhuv3-dt.h
+Hannes
 
