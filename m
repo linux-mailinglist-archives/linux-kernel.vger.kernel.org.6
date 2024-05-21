@@ -1,94 +1,128 @@
-Return-Path: <linux-kernel+bounces-185428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB168CB4D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5328CB4C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B10C1C2194E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:43:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17BE8282E4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89588149C7F;
-	Tue, 21 May 2024 20:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336261494C5;
+	Tue, 21 May 2024 20:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="SKT3Wtix"
-Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="B12jAF1u"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0779853816;
-	Tue, 21 May 2024 20:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B59D208D0;
+	Tue, 21 May 2024 20:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716324201; cv=none; b=NH5Gz/jrp/xwFUjtJjeOwyBQua7J6f0B4pogNORlZOcKC5ZTj4X9Wraqs/rOKIjaVSMlQGeHtOpVgWCo7Bv7Q/Oc75XikctdkV3eGOr30OjnGi0q/zjrpZLVwqZfNJbIhQFNvNln2mD/apN1cFBDAYYYPdEUCksZXtaOlD0jtKw=
+	t=1716323734; cv=none; b=GKP/TM5uD4KERMyBXswY3Dx0f8rffmXFgoTqSjZyiaq2Iv+jpJHn00O9a0Szp8IupgL4AZa3aVLFc9xgeo2wSRy/tXAo7vLm3m3jX3PKzFjEFK+zwOYoNPBivd+3tMftuGGntPRxmojWEKiWtSsFUeYvgxeakJLmMl8aKl8v5is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716324201; c=relaxed/simple;
-	bh=UJeYAx0s+riUtaDffRhQZniXYmFCQfIeCHnUNZFJ0/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KXLxz9oWhsS+xNVmezMv6wJMRn+JrlOidz8UXXIXDQ5jswXb+sY8E+ZwuTon3ZKAukSWdC5qEpsNjiAgcukHruNKUjVm2Gt9+uADzS1vtJQ3boVet07yBRLDUNjF/Y/V8H2wRSHSsyR1bPJ9f+oBBPFtef01woUaDuuhx/OTJuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=SKT3Wtix; arc=none smtp.client-ip=178.154.239.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:39ad:0:640:62fe:0])
-	by forward500b.mail.yandex.net (Yandex) with ESMTPS id A3851613DB;
-	Tue, 21 May 2024 23:35:18 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id GZQB3w8oDmI0-W1EtqRHB;
-	Tue, 21 May 2024 23:35:17 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1716323717; bh=c7N6rlTa5ppx9RAeRPq2mB8w6Nw+lsRi9BsRkwM6uhE=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=SKT3Wtixr0847bCZuU1FA1EPajMmaeICi/K5joOm6b1Mz7LA/Cppwhwg8u2r4Ktya
-	 YpQ8xO8wgnibdHZKHCD+LE9aoIid3dWuSfUBaGb8QMRb4J2jjIZcxvZMsVyWzm8Y+v
-	 iqxosxvl1YnrIWLIPuRa48u/NAleBv8ge33M8tlA=
-Authentication-Results: mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <125b6804-d9f8-4c36-83cd-36143ba1045d@yandex.ru>
-Date: Tue, 21 May 2024 23:35:16 +0300
+	s=arc-20240116; t=1716323734; c=relaxed/simple;
+	bh=VD0WPH4YtO8joXqpqEu3C3HFCEbCEhDdVQcK/6wzdIE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GVX5f8Ub35AL5rbgNVwM24YRvo+pCeOifjl2fNVreoIg6lHSz2bRoy7irjDrZgoBa9ii3QCsimuZ45buWhKbJVjfaGn6tNR1/tzY/6Lq6TrBpczK1TceJ5zOCQd7OqWFlAuKj/b/9idQ5IWkQthdEbNDpbUuWFVhQkUp4ZR+mJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=B12jAF1u; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
+	t=1716323725; bh=VD0WPH4YtO8joXqpqEu3C3HFCEbCEhDdVQcK/6wzdIE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=B12jAF1udb/kmzGgJ0dTaa5Ev3EAM6BJ3vy/kgHmqQrHRP0KU74Z0MeQakzQNvu8L
+	 lsjUzX5MV2KvuJQhLcl52TA2D68ncTsb7iB8rk0SqQ5nZSWdLaxUUxr1gchQZtGkVA
+	 J5CiVF/G/2wWGETx1CEm0wsgdYNEBjFPH1KBU95Q=
+From: Luca Weiss <luca@z3ntu.xyz>
+To: Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH RFC 1/2] dt-bindings: soc: qcom,smsm: Allow specifying mboxes
+ instead of qcom,ipc
+Date: Tue, 21 May 2024 22:35:22 +0200
+Message-ID: <5780452.DvuYhMxLoT@g550jk>
+In-Reply-To: <06565532-987a-465a-b2ab-a03fce7279e1@kernel.org>
+References:
+ <20240424-smsm-mbox-v1-0-555f3f442841@z3ntu.xyz> <12437992.O9o76ZdvQC@g550jk>
+ <06565532-987a-465a-b2ab-a03fce7279e1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/3] implement OA2_CRED_INHERIT flag for openat2()
-Content-Language: en-US
-To: Jann Horn <jannh@google.com>
-Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
- Eric Biederman <ebiederm@xmission.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Alexander Aring <alex.aring@gmail.com>,
- David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-References: <20240427112451.1609471-1-stsp2@yandex.ru>
- <CAG48ez0rOch3wemsmrL-ocadG1YeJ6Lyhz1uLxJod22Unbb_GA@mail.gmail.com>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <CAG48ez0rOch3wemsmrL-ocadG1YeJ6Lyhz1uLxJod22Unbb_GA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-21.05.2024 22:01, Jann Horn пишет:
-> On Sat, Apr 27, 2024 at 1:24 PM Stas Sergeev <stsp2@yandex.ru> wrote:
->> This patch-set implements the OA2_CRED_INHERIT flag for openat2() syscall.
->> It is needed to perform an open operation with the creds that were in
->> effect when the dir_fd was opened, if the dir was opened with O_CRED_ALLOW
->> flag. This allows the process to pre-open some dirs and switch eUID
->> (and other UIDs/GIDs) to the less-privileged user, while still retaining
->> the possibility to open/create files within the pre-opened directory set.
-> As Andy Lutomirski mentioned before, Linux already has Landlock
-> (https://docs.kernel.org/userspace-api/landlock.html) for unprivileged
-> filesystem sandboxing. What benefits does OA2_CRED_INHERIT have
-> compared to Landlock?
+On Dienstag, 21. Mai 2024 10:58:07 MESZ Krzysztof Kozlowski wrote:
+> On 20/05/2024 17:11, Luca Weiss wrote:
+> > Hi Krzysztof
+> > 
+> > Ack, sounds good.
+> > 
+> > Maybe also from you, any opinion between these two binding styles?
+> > 
+> > So first using index of mboxes for the numbering, where for the known
+> > usages the first element (and sometimes the 3rd - ipc-2) are empty <>.
+> > 
+> > The second variant is using mbox-names to get the correct channel-mbox
+> > mapping.
+> > 
+> > -               qcom,ipc-1 = <&apcs 8 13>;
+> > -               qcom,ipc-2 = <&apcs 8 9>;
+> > -               qcom,ipc-3 = <&apcs 8 19>;
+> > +               mboxes = <0>, <&apcs 13>, <&apcs 9>, <&apcs 19>;
+> > 
+> > vs.
+> > 
+> > -               qcom,ipc-1 = <&apcs 8 13>;
+> > -               qcom,ipc-2 = <&apcs 8 9>;
+> > -               qcom,ipc-3 = <&apcs 8 19>;
+> > +               mboxes = <&apcs 13>, <&apcs 9>, <&apcs 19>;
+> > +               mbox-names = "ipc-1", "ipc-2", "ipc-3";
+> 
+> Sorry, don't get, ipc-1 is the first mailbox, so why would there be <0>
+> in first case?
 
-The idea is different.
-OA2_CRED_INHERIT was supposed to give you an additional access (to what 
-you can't access otherwise, after a priv drop), while landlock allows 
-you to explicitly restrict an access. OA2_CRED_INHERIT more answered 
-with idmapped mounts rather than the landlock, but idmapped mounts are 
-not fully unpriv'd.
+Actually not, ipc-0 would be permissible by the driver, used for the 0th host
+
+e.g. from:
+
+	/* Iterate over all hosts to check whom wants a kick */
+	for (host = 0; host < smsm->num_hosts; host++) {
+		hostp = &smsm->hosts[host];
+
+Even though no mailbox is specified in any upstream dts for this 0th host I
+didn't want the bindings to restrict that, that's why in the first example
+there's an empty element (<0>) for the 0th smsm host
+
+> Anyway, the question is if you need to know that some
+> mailbox is missing. But then it is weird to name them "ipc-1" etc.
+
+In either case we'd just query the mbox (either by name or index) and then
+see if it's there? Not quite sure I understand the sentence..
+Pretty sure either binding would work the same way.
+
+Regards
+Luca
+
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+
+
+
 
 
