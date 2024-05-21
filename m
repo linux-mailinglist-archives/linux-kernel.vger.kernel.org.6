@@ -1,114 +1,140 @@
-Return-Path: <linux-kernel+bounces-185196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA568CB1E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:05:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B9988CB1E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F271BB23255
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:05:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CA7C1C22069
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C0574BF0;
-	Tue, 21 May 2024 16:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EE12233A;
+	Tue, 21 May 2024 16:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Db7NzW+E"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hlWyJHcd";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hlWyJHcd"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB53D2E62F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 16:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E13A1CD13;
+	Tue, 21 May 2024 16:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716307504; cv=none; b=eMJi2vAcIArqJDOc6vxbjI58kzoJjpC0/vp4NEbe0evI48FjKpTTS2kIPiMz7YvCK72n9qPftP2/0IQceSo+K9XX94+BmFc93kJwmF6OWIF1iNeIhe1y1XYd2LuuE34ipUOOgwvKWydKy6m/Wc48dQHgVCOSZH5lxQMVx4W1Oj0=
+	t=1716307517; cv=none; b=PFsrHJHoYNvVtA3diu8AU/81TMWwbgCCeDVA35H2VwsaPx40duiMu9Rh4skd1khV/2oR3Z5wxzlB8Vk5UjmR/ctdrt3KP8CaEVxA+qA6bm2bB8O85lEUbF3292AubrmTzeSOXrTvYe+MHJvQzYP1Q4tVLfrvFKjTAFHVyk5rAjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716307504; c=relaxed/simple;
-	bh=bKdqkY8H9wTw5y+8oj6M+om12H9BkqcMweVk8ln1A/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XGLD4pkRk9dcTfn/7YiMixsXwPJISUZSJUFKnF0u1Ft7rq+tXkrZOfN4rk67Z1k5A467XaRRCLsEGrgZeUyf5UFeK2x1jbbRa4JEca9/ONZepk08Vi9ukR47pvnpkS4GQEPBmNp44snm5uwQCtJPAbVFMsuZ4amO4FdDha+5ugc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Db7NzW+E; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3711744c61cso479785ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:05:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716307502; x=1716912302; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2nt4NT2eZ7AdGPqZ8UIZ+5/ykmoqBj7Ymiyz5OlxoaQ=;
-        b=Db7NzW+EBXUhuNcDgbMNrT0eqz5RlvT2kO+XlAGZeQ8CNgE6YmV9nXVVBFUF0l2nQ0
-         7LVd6iNvRiDF5d5PkB5C57dAw6cPoYQWZyhafZ2v8H57HMHWmRUlEzhu/QtU5EhgaUOZ
-         fZxkXJVQ11OKQZDKkwQIHk8HH8fFhPUYUU7Enn6/BKUNxm66nKrfSaYaohwAOZiGvtdI
-         vtumnXT1wRh2KNTjhizQpoUuviH3xoqBfWL19ml0+S60lpIJ1saiEuWzNo8DZEJZanHr
-         DeuIwZFUty3mkIib9nEAYcIrfFY4VJXCt+B1/sEgz7IbjaF8Mvz0pC74VGtKWalbduX8
-         Mrrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716307502; x=1716912302;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2nt4NT2eZ7AdGPqZ8UIZ+5/ykmoqBj7Ymiyz5OlxoaQ=;
-        b=FKhzEgmYMDkN8Ip0PGCKQbxjr/IF9NJ3cMylkmzy9eKl9POnAZ9uy/dUVN+KeStALf
-         bYfLYlPCTN8bkkGPriFHwgg8oRxK9RCCvRLgJ+rleQhhILmOKzu7hI/ptYe7PCeTWZao
-         u/u6zMe5YQ1NsGS0ZG71TRXUtj+qdWZEwGtEMjKVn3Vpg/INRSxUNDUl68kn8//atPEg
-         8vRKuD2JbJNcIcbJRO2Wjs1cJGwUn/ZXvLcEXPlbjoF9jY43DNAjIuxDXJxrJ7Btj/sr
-         I9rgB3821Pv4EoKCK6j0Fj5uu6UeGhB077iwUaWoavp7Yu9LAaT5R3lD91CKn1RTGOey
-         +rhw==
-X-Forwarded-Encrypted: i=1; AJvYcCX640m41Ap/2/sk9siC128TVZtjtsaDfWsw056L3AffRQu8ztTxdFKm3VUNsNtr85FWZPTMJL8W30hQXTnkP1xglz/MSMp6Cm1hvBGZ
-X-Gm-Message-State: AOJu0YywxBIVl0HzhyhVvLdzUlBaYiejrlmi8+iQsaeXGMBJAk2h4QJV
-	yWfZio8SkG2+6hfaCv6Gr1Tdde1797cM6keOUMN12PC+Z1NGfHflXuXKKuvExP4=
-X-Google-Smtp-Source: AGHT+IENbxbCIveBfU+56Mh8grD6M5RzWxhN7Hek5IRjzUTl0X8SyhHShX4YeSl1RmBxMd1Vsijtiw==
-X-Received: by 2002:a92:d3d1:0:b0:36c:5440:7454 with SMTP id e9e14a558f8ab-36cc1444bedmr308848125ab.1.1716307501743;
-        Tue, 21 May 2024 09:05:01 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-36cb9d9c943sm64565475ab.49.2024.05.21.09.05.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 09:05:01 -0700 (PDT)
-Message-ID: <110d2995-f473-4781-9412-30f7f96858dd@kernel.dk>
-Date: Tue, 21 May 2024 10:04:59 -0600
+	s=arc-20240116; t=1716307517; c=relaxed/simple;
+	bh=N7gDzwrxS3u32IRNatT6UTzz15/lI/SVlb6Xi9bZwPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CzhY1QnBLCRyFV5X8tlDhItlcUXPW3JxfrvvewKjBgESMKsOonc7TtSIv0C7lHN1SyQjNohnaI1czijEaG6bbsrfDuYP8jSSLHV7ByvvHSf2frR4zIozTjDyW8cpUkFsE+yGOlRD57H+p+ZIg5ilBD/lvI2l97iw2TEPU8SaYvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hlWyJHcd; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hlWyJHcd; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8EBA75BDBC;
+	Tue, 21 May 2024 16:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716307513; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ju4HNRiaOvRrYI7sR7Tczm4YBlqCQdYlg/CzuEceDBI=;
+	b=hlWyJHcdQ3/8wmaYYDDHuX2FB9ta379fxwid5iToThDQ2ggLqDNUCmkA4vVrekbRS+PLc5
+	Dd9n/kYjc4WBI50qRKDd/FtJMs9/Sr6b9mn/R8ud6xYMZ6i05Ha+uht2vQMSkdXrwTtCDc
+	eHgWzQGG4lUwsLwP5scU/vAILMcEvX0=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=hlWyJHcd
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716307513; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ju4HNRiaOvRrYI7sR7Tczm4YBlqCQdYlg/CzuEceDBI=;
+	b=hlWyJHcdQ3/8wmaYYDDHuX2FB9ta379fxwid5iToThDQ2ggLqDNUCmkA4vVrekbRS+PLc5
+	Dd9n/kYjc4WBI50qRKDd/FtJMs9/Sr6b9mn/R8ud6xYMZ6i05Ha+uht2vQMSkdXrwTtCDc
+	eHgWzQGG4lUwsLwP5scU/vAILMcEvX0=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7A8BD13A1E;
+	Tue, 21 May 2024 16:05:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 14nxGjnGTGYTPwAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Tue, 21 May 2024 16:05:13 +0000
+Date: Tue, 21 May 2024 18:05:03 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	Jason Xing <kernelxing@tencent.com>,
+	linux-cve-announce@vger.kernel.org
+Subject: Re: CVE-2024-27429: netrom: Fix a data-race around
+ sysctl_netrom_obsolescence_count_initialiser
+Message-ID: <ZkzGL_vXciG7ipm5@tiehlicka>
+References: <2024051722-CVE-2024-27429-878c@gregkh>
+ <ZkxdqOUek_MHqIMn@tiehlicka>
+ <2024052105-pulsate-reborn-119a@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
-To: David Howells <dhowells@redhat.com>
-Cc: Steve French <stfrench@microsoft.com>, Jeff Layton <jlayton@kernel.org>,
- Enzo Matsumiya <ematsumiya@suse.de>, Matthew Wilcox <willy@infradead.org>,
- Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
- v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
- linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <2e73c659-06a3-426c-99c0-eff896eb2323@kernel.dk>
- <316306.1716306586@warthog.procyon.org.uk>
- <316428.1716306899@warthog.procyon.org.uk>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <316428.1716306899@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024052105-pulsate-reborn-119a@gregkh>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 8EBA75BDBC
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
 
-On 5/21/24 9:54 AM, David Howells wrote:
-> Jens Axboe <axboe@kernel.dk> wrote:
+On Tue 21-05-24 16:40:24, Greg KH wrote:
+> On Tue, May 21, 2024 at 10:39:04AM +0200, Michal Hocko wrote:
+> > This and couple of others are all having the same pattern. Adding
+> > READ_ONCE for an integer value with a claim that this might race with
+> > sysctl updates. While the claim about the race is correct I fail to see
+> > how this could have any security consequences. Even if a partial write
+> > was observed which sounds _more_ than theoretical these all are merely
+> > timeouts and delays.
+> > 
+> > Is there anything I am missing?
 > 
->> However, I'll note that BDP_ASYNC is horribly named, it should be
->> BDP_NOWAIT instead. But that's a separate thing, fix looks correct
->> as-is.
-> 
-> I thought IOCB_NOWAIT was related to RWF_NOWAIT, but apparently not from the
-> code.
+> Nope, you are right, our fault, I'll go revoke this now.
 
-It is, something submitted with RWF_NOWAIT should have IOCB_NOWAIT set.
-But RWF_NOWAIT isn't the sole user of IOCB_NOWAIT, and no assumptions
-should be made about whether something is sync or async based on whether
-or not RWF_NOWAIT is set. Those aren't related other than _some_ proper
-async IO will have IOCB_NOWAIT set, and others will not.
+please also revoke all others touching the same function.
 
 -- 
-Jens Axboe
-
+Michal Hocko
+SUSE Labs
 
