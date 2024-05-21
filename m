@@ -1,122 +1,230 @@
-Return-Path: <linux-kernel+bounces-184579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179418CA915
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:37:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28658CA91A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F49282DB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:37:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41F881F21FD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF8551C5C;
-	Tue, 21 May 2024 07:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7BD51C34;
+	Tue, 21 May 2024 07:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="w+h3wPb3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FF2GoAgC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818864F88A;
-	Tue, 21 May 2024 07:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E061256A;
+	Tue, 21 May 2024 07:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716277054; cv=none; b=fgMu2NNBULwCWuFsj+bOx9NXOaYFQY0W0bA+7DMRqWG3hEOiPfPsbWGGdfjaS7nSMVIookaAvH6LbE8aSms5hIuxb4ss2UcmJDOHo56TRelw6sxEyyNOnyonbyTPWlFRpu039V9Gyv7NLP/vDFlgZpNt3wxL3AQNOCNXag71bXc=
+	t=1716277131; cv=none; b=eWOns4g0hU5Wh04tVgt3ydNhISPltyzge3tto+NuL57XXEyG2E1oXlQRxs1JZu8WKAOL2UEFRmI5VK6qQyi5szIWhihwmjFF/BJtbCCqSY7hUcrAMJOR4rWpWLr8qCP69f02Gr9DDinjbL9HH/a9IFcSA9UZJOmFMKnY/lScO5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716277054; c=relaxed/simple;
-	bh=RN8I5CgBWEareyxEJP4IkpgAm7z5y/urYtXZ/8ompBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CmrLvigURIyTf168QC+3BVuOqXQbTLRHevgP4Hvx5xy2AVn+GlxkZLTBr5EQihrdw3VxOzWaECGkgxgUfee6BWdelstWSGx8MuDEHcey39nHUKW/tclkvRW9HzYDJcK80WSXYhfLB7BON+v+Xf4+SQu49zfNH2+9+P+9SZu4yGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=w+h3wPb3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77DF1C2BD11;
-	Tue, 21 May 2024 07:37:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716277054;
-	bh=RN8I5CgBWEareyxEJP4IkpgAm7z5y/urYtXZ/8ompBo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=w+h3wPb3d5y6PqxztT/3uSjmCzHd8j91s3v55vG0W9UzvecyWPU9rHEKyyGVd6iwS
-	 OfD85bH15kzgNuq9PWN5gtEA1i91+BS8YCQldzB7xLEWFafRV5cqN2Jd/H5laBE/i8
-	 qO8Kj8qNl8dX/qxQlF754LJD2smyTcePz5Vv3uQY=
-Date: Tue, 21 May 2024 09:37:31 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Alvin =?utf-8?Q?=C5=A0ipraga?= <ALSI@bang-olufsen.dk>,
-	devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>,
-	Emil Abildgaard Svendsen <EMAS@bang-olufsen.dk>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stephen Boyd <sboyd@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Subject: Re: [PATCH 01/13] a2b: add A2B driver core
-Message-ID: <2024052125-washroom-hardened-820a@gregkh>
-References: <20240517-a2b-v1-1-b8647554c67b@bang-olufsen.dk>
- <feb239b1-7a14-479a-87f2-dcbf9966bffd@web.de>
- <alv4rqrrnjqw3fb5vsw5r4f6lv7ymvuatcqovt7ddxi5ich5on@aan7wybzrzru>
- <7ffeb91e-97b7-4f60-851e-120062b63c17@web.de>
+	s=arc-20240116; t=1716277131; c=relaxed/simple;
+	bh=n3xfaBqyzHw0uuGiyp3gaPzVQKCAlmedilfKQVu9mgo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=r9Xe8jbnnHeMuzGilBT3aolUdo3DmLleO0zSKRCvm5ziGyWggPMaer5c2A8Aa920u18t2N56GhQ/69ddcsaerAluPPb8MvtI++fq4xZ1yymi9isV6J1rR18BgxPd2WG1gbqkCdXU7I/71S8o8HqjqplGKIlWuaZNXpbz0y4yqVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FF2GoAgC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99EC7C2BD11;
+	Tue, 21 May 2024 07:38:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716277131;
+	bh=n3xfaBqyzHw0uuGiyp3gaPzVQKCAlmedilfKQVu9mgo=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=FF2GoAgCjJ498XNO6RAlKNhFWaypadqZPrO9K2pDtYj81cNYbQoUelahRp//zSwIK
+	 dEVKHEHcKNGy/JAom8vs4u6fsKrVwqx3sABZTq4bYPjLuAJvucsv7edvjUBK7RFz0X
+	 9BJc5Kg5yCzmfPti5qB/vRRA0KSv7PlzkM6KDx4ML/y9KlkjyxY5R4UCslzidFccGh
+	 AWwit3scKE2v1fcoo/vu2mWN/VbylF2mvX5qDRp6CiQGJWgcDEuobS+iS3rxS54ngk
+	 /icdK1nFDzd2ShkqAGZhaeOomcZ7N1X1PVLn8lz3O9vwWySaswsXTJPXT80Rz9TmdZ
+	 KchKbYY5CwgDQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7ffeb91e-97b7-4f60-851e-120062b63c17@web.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 21 May 2024 10:38:45 +0300
+Message-Id: <D1F5GQYP9JFC.3MXMKUM0CKGS5@kernel.org>
+Cc: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+ "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+ "Andreas.Fuchs@infineon.com" <Andreas.Fuchs@infineon.com>, "James
+ Prestwood" <prestwoj@gmail.com>, "David Woodhouse" <dwmw2@infradead.org>,
+ "Eric Biggers" <ebiggers@kernel.org>, "James Bottomley"
+ <James.Bottomley@hansenpartnership.com>, "David S. Miller"
+ <davem@davemloft.net>, "open list:CRYPTO API"
+ <linux-crypto@vger.kernel.org>, "open list" <linux-kernel@vger.kernel.org>,
+ "David Howells" <dhowells@redhat.com>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Stefan Berger"
+ <stefanb@linux.ibm.com>, "Ard Biesheuvel" <ardb@kernel.org>, "Mario
+ Limonciello" <mario.limonciello@amd.com>
+Subject: Re: [EXTERNAL] [PATCH v2 6/6] keys: asymmetric:
+ ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Bharat Bhushan" <bbhushan2@marvell.com>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>
+X-Mailer: aerc 0.17.0
+References: <20240521031645.17008-1-jarkko@kernel.org>
+ <20240521031645.17008-7-jarkko@kernel.org>
+ <SN7PR18MB531494159D3996799475209DE3EA2@SN7PR18MB5314.namprd18.prod.outlook.com>
+In-Reply-To: <
+ <SN7PR18MB531494159D3996799475209DE3EA2@SN7PR18MB5314.namprd18.prod.outlook.com>
 
-On Tue, May 21, 2024 at 09:33:51AM +0200, Markus Elfring wrote:
-> >> …
-> >>> +++ b/drivers/a2b/a2b.c
-> >>> @@ -0,0 +1,1252 @@
-> >> …
-> >>> +static int a2b_bus_of_add_node(struct a2b_bus *bus, struct device_node *np,
-> >>> +                            unsigned int addr)
-> >>> +{
-> >> …
-> >>> +     node = kzalloc(sizeof(*node), GFP_KERNEL);
-> >>> +     if (IS_ERR(node))
-> >>> +             return -ENOMEM;
-> >>
-> >> Please improve the distinction for checks according to the handling of error/null pointers.
-> >
-> > Right, I think it returns NULL on error.
-> 
-> Do you see possibilities to reduce “confusion” about the properties of such a programming interface
-> any further?
-> https://elixir.bootlin.com/linux/v6.9.1/A/ident/kzalloc
+On Tue May 21, 2024 at 10:25 AM EEST, Bharat Bhushan wrote:
+> > +	rc =3D crypto_akcipher_encrypt(req);
+> > +	rc =3D crypto_wait_req(rc, &cwait);
+> > +
+>
+> Few Minor comments,=20
+> Extra line here=20
+
+Yeah, makes sense.
 
 
-Hi,
+> > +	if (!rc)
+> > +		rc =3D req->dst_len;
+> > +
+> > +	akcipher_request_free(req);
+> > +
+> > +err_tfm:
+> > +	crypto_free_akcipher(tfm);
+> > +
+> > +	return rc;
+> > +}
+> > +
+> > +static int __tpm2_key_rsa_decrypt(struct tpm_chip *chip,
+> > +				  struct tpm2_key_rsa *key,
+> > +				  struct kernel_pkey_params *params,
+> > +				  const void *in, int in_len, void *out)
+> > +{
+> > +	unsigned int offset =3D 0;
+> > +	u32 key_handle =3D 0;
+> > +	struct tpm_buf buf;
+> > +	u16 decrypted_len;
+> > +	u32 parent;
+> > +	u8 *pos;
+> > +	int ret;
+> > +
+> > +	ret =3D tpm_try_get_ops(chip);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret =3D tpm2_start_auth_session(chip);
+> > +	if (ret)
+> > +		goto err_ops;
+> > +
+> > +	if (key->key.parent =3D=3D TPM2_RH_NULL) {
+> > +		ret =3D tpm2_load_context(chip, chip->null_key_context,
+> > &offset,
+> > +					&parent);
+> > +		if (ret) {
+> > +			ret =3D -EIO;
+> > +			goto err_auth;
+> > +		}
+> > +	} else {
+> > +		parent =3D key->key.parent;
+> > +	}
+>
+> Do we need braces here?
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+I think I added them because checkpatch complained me about not having
+them. So I guess the rule is that if any branch has braces, all of them
+should have...
+>
+> > +
+> > +	ret =3D tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
+> > +	if (ret < 0)
+> > +		goto err_parent;
+> > +
+> > +	tpm_buf_append_name(chip, &buf, parent, NULL);
+> > +	tpm_buf_append_hmac_session(chip, &buf,
+> > TPM2_SA_CONTINUE_SESSION |
+> > +				    TPM2_SA_ENCRYPT, NULL, 0);
+> > +	tpm_buf_append(&buf, key->key.blob, key->key.blob_len);
+> > +	if (buf.flags & TPM_BUF_OVERFLOW) {
+> > +		ret =3D -E2BIG;
+> > +		goto err_buf;
+> > +	}
+> > +	tpm_buf_fill_hmac_session(chip, &buf);
+> > +	ret =3D tpm_transmit_cmd(chip, &buf, 4, "RSA key loading");
+> > +	ret =3D tpm_buf_check_hmac_response(chip, &buf, ret);
+> > +	if (ret) {
+> > +		ret =3D -EIO;
+> > +		goto err_buf;
+> > +	}
+> > +	key_handle =3D be32_to_cpup((__be32
+> > *)&buf.data[TPM_HEADER_SIZE]);
+> > +
+> > +	tpm_buf_reset(&buf, TPM2_ST_SESSIONS, TPM2_CC_RSA_DECRYPT);
+> > +	tpm_buf_append_name(chip, &buf, key_handle, NULL);
+> > +	tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_DECRYPT,
+> > NULL, 0);
+> > +	tpm_buf_append_u16(&buf, in_len);
+> > +	tpm_buf_append(&buf, in, in_len);
+> > +	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
+> > +	tpm_buf_append_u16(&buf, 0);
+> > +	tpm_buf_fill_hmac_session(chip, &buf);
+> > +	ret =3D tpm_transmit_cmd(chip, &buf, 4, "RSA key decrypting");
+> > +	ret =3D tpm_buf_check_hmac_response(chip, &buf, ret);
+> > +	if (ret) {
+> > +		ret =3D -EIO;
+> > +		goto err_blob;
+> > +	}
+> > +
+> > +	pos =3D buf.data + TPM_HEADER_SIZE + 4;
+> > +	decrypted_len =3D be16_to_cpup((__be16 *)pos);
+> > +	pos +=3D 2;
+> > +
+> > +	if (params->out_len < decrypted_len) {
+> > +		ret =3D -EMSGSIZE;
+> > +		goto err_blob;
+> > +	}
+> > +
+> > +	memcpy(out, pos, decrypted_len);
+> > +	ret =3D decrypted_len;
+> > +
+> > +err_blob:
+> > +	tpm2_flush_context(chip, key_handle);
+> > +
+> > +err_buf:
+> > +	tpm_buf_destroy(&buf);
+> > +
+> > +err_parent:
+> > +	if (key->key.parent =3D=3D TPM2_RH_NULL)
+> > +		tpm2_flush_context(chip, parent);
+> > +
+> > +err_auth:
+> > +	if (ret < 0)
+> > +		tpm2_end_auth_session(chip);
+> > +
+> > +err_ops:
+> > +	tpm_put_ops(chip);
+> > +	return ret;
+> > +}
+> > +
+> > +static int tpm2_key_rsa_decrypt(struct tpm_chip *chip, struct tpm2_key=
+_rsa
+> > *key,
+> > +				struct kernel_pkey_params *params,
+> > +				const void *in, void *out)
+> > +{
+> > +	const u8 *ptr;
+> > +	int out_len;
+> > +	u8 *work;
+> > +	int ret;
+> > +
+> > +	work =3D kzalloc(params->out_len, GFP_KERNEL);
+> > +	if (!work)
+> > +		return -ENOMEM;
+>
+> Maybe use ERR_PTR() here and couple of more places
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+Hmm... but the function returns 'int'?
 
-thanks,
-
-greg k-h's patch email bot
+BR, Jarkko
 
