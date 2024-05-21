@@ -1,137 +1,165 @@
-Return-Path: <linux-kernel+bounces-184677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6849A8CAA73
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:03:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC9B8CAA76
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B82FFB22546
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:02:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71EA31C21A50
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B048356766;
-	Tue, 21 May 2024 09:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754E057881;
+	Tue, 21 May 2024 09:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i5tllo+N"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N/AnxtBw"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDC3548E0
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2241BF31
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716282168; cv=none; b=oR586HiPTaYKDmxHXnaWQ3/erm3v3DaS/wh2XAX+HPDxAj2yuyel5H6Ao3LLTS+lIErvWyrrpkHNWCt3VLtHJBjhFDAmGxQjT0IJCS/s6DTIhWZlaMSm3Jb11ih9D8nGeECikfAf0O0z1uOArLoUhdPMrUhUh9gvOXwhRtK4EPA=
+	t=1716282225; cv=none; b=pJ4cuRDlIIFPeShuIq1AvFNGqqFRbkh7JELgqDaZ44t/WgqA16qVGQ88XyUjnTBw69bt1CbQa/74iXfC5GkqySLVaM6jquC8q4R+sRTdttEW0mPfClkkKkzBM2meW0/GpOHrJMtMEiL3DiY3//JVmTJN0P9DYkpPoFeDy2bswiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716282168; c=relaxed/simple;
-	bh=Xdz6QUFW+rW6BlNRe4XrmlEQwanc5lfzIz63TRXPqsE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J8CTrp2fFRY9KTjkEi2ihB1xH7Pzc/7kCeu+TU/e8VdftwFkv05IDIRKTumAXCNbxDG0jGXSLGKSoYXayXH0Aim7XZlB9e67/PmhWCr3FycEht4Cf8FCQsXf2nI3tLUbtZO/+hoA+sV+8nt24Rbr5952SpviF75pOoBR64kAi6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i5tllo+N; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1716282225; c=relaxed/simple;
+	bh=WwubyTck14hSYWNd+EZHq+sIN0JioSBlvg43BrUZZ3Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WqS7t9Oo6p12OutE2boYWJk/aTia3Rb1sCVTn+WM3bSiYnbGohSda2WYPWC+R1P9ZwDOXCcbeVdm3DZVlNiB4mdoallic7vtRtelaAXPhs3gacYhpyfzDxgrHzy9v3Fj3VQP0qXDaMOIqSxGu4OuCmUp9gYXTJg5CtdtbqjmDWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N/AnxtBw; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716282166;
+	s=mimecast20190719; t=1716282223;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Xdz6QUFW+rW6BlNRe4XrmlEQwanc5lfzIz63TRXPqsE=;
-	b=i5tllo+N+X97IrKgkJskbv+yHZAhZvQMvZD0+5ILxqzm9KKoGimeAfHKJTRF8TpvihD7Ww
-	LqzYLzI6u06rkFH0/v3QqQKn7gYC+ClMOnnjjQUvHOLYJ+k/CfUnFRScFUrIH0d0pOlXQy
-	XCtJ6/JHh/wSmEPtGHWME7UkJ6Bc9YI=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references;
+	bh=Bh7W8N7Kjlu+sUoloK6kktcE+ERzsp6+vlPGr92bmBc=;
+	b=N/AnxtBwSe9NXPfQNlj6KsmMMdCg6LsLqyO067buGSNQcn99rJfHGWpou+VLtocsUPC3kt
+	j0JXklvf8dCWaphmDQlRRYSWSEObsNMl9b7PF2AczI0tqgdOKULXKanVqSQbftnpFbGm50
+	VMXdElzCNiQ8jJYn2z1N30wr/jL0+sM=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-Iox63rF0PP-2qAqRMzWGwQ-1; Tue, 21 May 2024 05:02:44 -0400
-X-MC-Unique: Iox63rF0PP-2qAqRMzWGwQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-34d7a7585f3so1437143f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:02:44 -0700 (PDT)
+ us-mta-157-flggU6naOaeznaJwlYCUJQ-1; Tue, 21 May 2024 05:03:41 -0400
+X-MC-Unique: flggU6naOaeznaJwlYCUJQ-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a5a8f3bc8e0so430888366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:03:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716282163; x=1716886963;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xdz6QUFW+rW6BlNRe4XrmlEQwanc5lfzIz63TRXPqsE=;
-        b=G946oBiNGLMYgYBasIvT4LKbeP0gjVfs0r6pJRq13ev34p52+P8FeOGBmDwl9czRqs
-         R0R5fC1VX+XteKz08Yjkj4Iar58OwY/XBhw6Rgq8Lfb+8lit71Wuneq+134Q1D9GBE1o
-         wVix1KzXdptHhAeIctUJnLbgT+ik1XgQjculMNFcUpHwolYZPKXgeHp+zAaklvB8IOdx
-         3UnMmrU2MMCywXd5ScjK4OmMVosNfjr7VrD6yxutGPcSNvYvUHNNSdzdPOC784oVVL5k
-         7k1oJ/UH4RiOhY8GWRczqs2z0CQFrfA+q21O2tZN822Rs+Dvv3qmBRzYlCSvqcqPdfG7
-         xrYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWinI2PCVEVqBQatxsz0uNf5XFEIBMVdG2yveOEUXKCWMmznHG7CEV9ua/1CAyb99cqqMR9Z/HPEbjChokGDMujvA/PR0IkfQERCNgb
-X-Gm-Message-State: AOJu0YwAkdV8nfOVOZkyCYWZaUCyW0+3OSUqu/maDc81gVl4mZGwVUGO
-	UKfjhQEWpEXB/mRPRmHUr7TA/jZ8fVlNJ1NhetoykcB5RL5vzyFHQZmY5GBxxNIYnEYcL/iYma6
-	+1dhhg3Y5XRevaLG21sPqqMfD8GTz8rv6qA4s3d7hICNRVcru1gsiqYAF9flP0A==
-X-Received: by 2002:a5d:40cc:0:b0:351:d33b:51e8 with SMTP id ffacd0b85a97d-351d33b541amr11476595f8f.4.1716282163459;
-        Tue, 21 May 2024 02:02:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6ppuw/YOxqH8DWHT7g/LpQTmm+BolzBbnDsK+hsqNiq9m8nV53drRDHojunFzIKyG7fmtNw==
-X-Received: by 2002:a5d:40cc:0:b0:351:d33b:51e8 with SMTP id ffacd0b85a97d-351d33b541amr11476563f8f.4.1716282162734;
-        Tue, 21 May 2024 02:02:42 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3341:b094:ab10:29ae:cdc:4db4:a22a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b896ad0sm31089318f8f.47.2024.05.21.02.02.41
+        d=1e100.net; s=20230601; t=1716282221; x=1716887021;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bh7W8N7Kjlu+sUoloK6kktcE+ERzsp6+vlPGr92bmBc=;
+        b=qnwAOxDbcAOraorU9Eabl0IeCZ5rsB9t78zAlCmZd5Lk6mZ5I7XPcaAmd+UHM4KRzT
+         IhQ/gslB35J73NfC+xZxKl9LVFdiNhwP3FllcEo2oNZtMWZrJhKUOLYeEc1w/ceuLncJ
+         nVkg91RdkZBhgtBcERv+h+L8BpM2mWJ+jS4XBAUHXeolJxZvi2lkDsGYbptcWZk4vYaS
+         YJutxDZcPf63nQdHSpnIboY2dFs0HQ0wexfsk726gaeFYT5db0ythLeJPYT11PRYqXIF
+         /Qs0oGzcug2s8OeRXY3v4mcL3z7NgNm49wRvA0u3mU5Q6Pp3NTH1oxE5RiBuoRJfK8Dh
+         2jCw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8bx5OZ9uMeCihviZV47u4L+7xGG5eX8JSvEszXShIdLMRCzck9smTnZuZ8dC+3dRlDKoRUoek8PwyN7VvzbgdfBShi10wJHLXb86N
+X-Gm-Message-State: AOJu0YwxZk+jFW9JmqsnSWRGTp3Sadb49Dqvbb4sfGxd63jfB5MblhI+
+	Jw7mF58PBIMzG4kr05YAr/PVnhmC4p9C79p5gNGAYMrs15Da/7oDoV28Fg1R7bJi0huHw/nqsiS
+	foZqJ0UdvH4/pJKPP7fsciWNnmDwiJuJIwH9yAibSpi+il081DzyiGHyePzgVzw==
+X-Received: by 2002:a17:906:97c8:b0:a5a:a2b6:ba8b with SMTP id a640c23a62f3a-a5aa2b6bf6fmr1116718566b.0.1716282220784;
+        Tue, 21 May 2024 02:03:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxqKRsunIxFaw1bjjhsPptQS1sOpnXosxR5QnsbZTH38nqbmmFGPIDoOXWZ5Q5DFr5QtCfCg==
+X-Received: by 2002:a17:906:97c8:b0:a5a:a2b6:ba8b with SMTP id a640c23a62f3a-a5aa2b6bf6fmr1116716766b.0.1716282220404;
+        Tue, 21 May 2024 02:03:40 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a51eea36dsm1334475466b.58.2024.05.21.02.03.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 02:02:41 -0700 (PDT)
-Message-ID: <30afabc0e8e4435cc05909136289e812c38c286c.camel@redhat.com>
-Subject: Re: [PATCH net-next v3 0/5] net: phy: mediatek: Introduce
- mtk-phy-lib and add 2.5Gphy support
-From: Paolo Abeni <pabeni@redhat.com>
-To: Sky Huang <SkyLake.Huang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>, 
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Daniel
- Golle <daniel@makrotopia.org>, Qingfang Deng <dqfext@gmail.com>, Matthias
- Brugger <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Cc: Steven Liu <Steven.Liu@mediatek.com>
-Date: Tue, 21 May 2024 11:02:40 +0200
-In-Reply-To: <20240520113456.21675-1-SkyLake.Huang@mediatek.com>
-References: <20240520113456.21675-1-SkyLake.Huang@mediatek.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+        Tue, 21 May 2024 02:03:39 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: dccp@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org, "David S.
+ Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, mleitner@redhat.com, David Ahern
+ <dsahern@kernel.org>, Juri Lelli <juri.lelli@redhat.com>, Tomas Glozar
+ <tglozar@redhat.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v5 0/2] tcp/dcpp: Un-pin tw_timer
+In-Reply-To: <xhsmhbk618o4y.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+References: <20240415113436.3261042-1-vschneid@redhat.com>
+ <CANn89iJYX8e_3Or9a5Q55NuQ8ZAHfYL+p_SpM0yz91sdj4HqtQ@mail.gmail.com>
+ <xhsmhmspu8zlj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <CANn89iJRev5Kn_jEgimDfyHosmiyYeaz2gHRGS2tcFC-yMbGaQ@mail.gmail.com>
+ <xhsmhbk618o4y.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Date: Tue, 21 May 2024 11:03:38 +0200
+Message-ID: <xhsmho78z7d05.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-05-20 at 19:34 +0800, Sky Huang wrote:
-> From: "SkyLake.Huang" <skylake.huang@mediatek.com>
->=20
-> Re-organize MTK ethernet phy drivers and integrate common manipulations
-> into mtk-phy-lib. Also, add support for build-in 2.5Gphy on MT7988.
->=20
-> v2:
-> - Apply correct PATCH tag.
-> - Break LED/Token ring/Extend-link-pulse-time features into 3 patches.
-> - Fix contents according to v1 comments.
->=20
-> v3:
-> - Fix patch 4/5 & 5/5 according to v2 comments.
-> - Rebase code and now this patch series can apply to net-next tree.
 
-## Form letter - net-next-closed
+Hi,
 
-The merge window for v6.10 has begun and we have already posted our
-pull
-request. Therefore net-next is closed for new drivers, features, code
-refactoring and optimizations. We are currently accepting bug fixes
-only.
+On 22/04/24 16:31, Valentin Schneider wrote:
+> Apologies for the delayed reply, I was away for most of last week;
+>
+> On 16/04/24 17:01, Eric Dumazet wrote:
+>> On Mon, Apr 15, 2024 at 4:33=E2=80=AFPM Valentin Schneider <vschneid@red=
+hat.com> wrote:
+>>>
+>>> On 15/04/24 14:35, Eric Dumazet wrote:
+>>> > On Mon, Apr 15, 2024 at 1:34=E2=80=AFPM Valentin Schneider <vschneid@=
+redhat.com> wrote:
+>>> >> v4 -> v5
+>>> >> ++++++++
+>>> >>
+>>> >> o Rebased against latest Linus' tree
+>>> >> o Converted tw_timer into a delayed work following Jakub's bug repor=
+t on v4
+>>> >>   http://lore.kernel.org/r/20240411100536.224fa1e7@kernel.org
+>>> >
+>>> > What was the issue again ?
+>>> >
+>>> > Please explain precisely why it was fundamentally tied to the use of
+>>> > timers (and this was not possible to fix the issue without
+>>> > adding work queues and more dependencies to TCP stack)
+>>>
+>>> In v4 I added the use of the ehash lock to serialize arming the timewait
+>>> timer vs destroying it (inet_twsk_schedule() vs inet_twsk_deschedule_pu=
+t()).
+>>>
+>>> Unfortunately, holding a lock both in a timer callback and in the conte=
+xt
+>>> in which it is destroyed is invalid. AIUI the issue is as follows:
+>>>
+>>>   CPUx                        CPUy
+>>>   spin_lock(foo);
+>>>                               <timer fires>
+>>>                               call_timer_fn()
+>>>                                 spin_lock(foo) // blocks
+>>>   timer_shutdown_sync()
+>>>     __timer_delete_sync()
+>>>       __try_to_del_timer_sync() // looped as long as timer is running
+>>>                        <deadlock>
+>>>
+>>> In our case, we had in v4:
+>>>
+>>>   inet_twsk_deschedule_put()
+>>>     spin_lock(ehash_lock);
+>>>                                           tw_timer_handler()
+>>>                                             inet_twsk_kill()
+>>>                                               spin_lock(ehash_lock);
+>>>                                               __inet_twsk_kill();
+>>>     timer_shutdown_sync(&tw->tw_timer);
+>>>
+>>> The fix here is to move the timer deletion to a non-timer
+>>> context. Workqueues fit the bill, and as the tw_timer_handler() would j=
+ust queue
+>>> a work item, I converted it to a delayed_work.
 
-Please repost when net-next reopens after May 26th.
-
-RFC patches sent for review only are obviously welcome at any time.
-
-See:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#develop=
-ment-cycle
+Does this explanation make sense? This is the reasoning that drove me to
+involve workqueues. I'm open to suggestions on alternative approaches.
 
 
