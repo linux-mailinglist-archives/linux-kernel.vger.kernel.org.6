@@ -1,255 +1,250 @@
-Return-Path: <linux-kernel+bounces-184938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488CC8CAE24
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:26:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 560538CAE27
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A12C7B22E2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D0F3283960
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8139076049;
-	Tue, 21 May 2024 12:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC50763F1;
+	Tue, 21 May 2024 12:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="lGLfg6/v"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="BCQTuMzs"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E748524C9
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA5E6CDC0;
+	Tue, 21 May 2024 12:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716294365; cv=none; b=W1GGPwcBY3FNiQ0F/Hfg0ySfbrGUDCG+tgDpRuCQy6a/hSEvqavnCOqNAGwfijOF7bmBuXDugk1yQMN337Ze/1b2+UOcMtCMrP0+HxySlxIraKV/3rpqCsJaPjy8D9zoWMmHRr5F0qn8zT70FJxcf/tTIAMOXLpnC3OofgE3hEM=
+	t=1716294392; cv=none; b=udrK7wlecU2KUGlyHUEbCF3jfE9Tc3sVsqfzPNRXWmESSr/aage/7P1WqWBpHN17wFbAWGklS4MrgceldtRbQkVWX6JL3kgnz9k1m8lktLVZd5EKXP0dB+a3bpM97lTFO9PKpvUhPWO3wTVFYNQ9UFBGGStz1umbC5J/jAaDscY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716294365; c=relaxed/simple;
-	bh=e3FeemwfVGogJlKVgEzIdHKe3B73R9pNmOj9gCNkGt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=APoeaP0+2CN9yafB8LelS/bv6bRLEi3aCXbJ5A/b5A6v8ku6aSAA1XvRB5q9R0uvY7qCu9yN4Kj6nCNhh7w3ggSF0PCrjNQviyFPCmLT7aNNeUwQKk2r/Z2lOKTWMjuRmOXEv3NgEtG4vLZ+GYTxSxf/JytqHVHvvp2aTXRxE20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=lGLfg6/v; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59a86fb052so57326066b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 05:26:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1716294361; x=1716899161; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RdRNtZABzSdYhamYjWVVxK02xAUTnq7URjJCd5KnlOs=;
-        b=lGLfg6/v9KjAonRDSQftWbY5HbjJxSaEp28YrdSHL/Sk/mWMSAW8NAAAtSoLONuKV1
-         RbuWbjBAOQLOtHNUnlkjaMQFtiuu1RNAlVRtZyOu8w2i91pkaYYfyCCX0NVrh+k4uZHM
-         +4OsJz6urgAd7tzX44ol/ctieuQGjpNJ/mXbk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716294361; x=1716899161;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RdRNtZABzSdYhamYjWVVxK02xAUTnq7URjJCd5KnlOs=;
-        b=SVhrXhChOJwvIPp/5L6xpdLztsw8n2Bkahi4EjQt6Wor/a1j3nvUN3k3DjtwWTf5rO
-         ItIbTlxmBRgu1u9FbKzmLRXbjEOr3/hX0iZSmxzfQhNRtTsb9BMYk5vTXRMIE86RRHcF
-         gfvJg5nauIgKIagV3+nuQZYI4T7aA0RV2D493xTqUKsgw3Ua9XCGGPYqiNJgU/YU2WWa
-         MR4XgKb8m4e0W6bWGDPtsylzDZtu+QOGbnR3WFFm9TUCW1Y9Vnj+edc5H0QyIUmMETBn
-         CQrlDj+Yi/mkaUdRT1A/SyJ8UnReIfmbT8YwLHG3ccdJk6x5zC/nNyFhBNci7i0BKY8j
-         GcGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfZtZ6Ojze10PZxBMPT2GzdYj0J7xf0ZdfNdWhb7nLQD48DTwg/4Cu/Kf+7Fkv4n+LyQC7fMKyXrwvEoI+O3teQqSm/4zuiTfcHNc4
-X-Gm-Message-State: AOJu0YyIwkXFSwdBZSaTXsbsQRS678Q1okwTzNGqRzHk/xzYRyqxUKSP
-	M6gtlQ6urkg6k6Pdm1Hv/aimWrTJ9iE80da4+2mNASEeojxo05pvjoJO+W/xPkA=
-X-Google-Smtp-Source: AGHT+IHxhnAGFUScDl3IlqhfMmQn0o9GDUXBNO57XpFrPU+//uAG7drXpi7vj0AI2MW2rT7JliFGlQ==
-X-Received: by 2002:a17:906:f591:b0:a5a:5bf2:b889 with SMTP id a640c23a62f3a-a5a5bf2b8b4mr2570842966b.0.1716294360690;
-        Tue, 21 May 2024 05:26:00 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a61c18561casm239391966b.91.2024.05.21.05.25.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 05:25:56 -0700 (PDT)
-Date: Tue, 21 May 2024 14:25:54 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-Cc: Louis Chauvet <louis.chauvet@bootlin.com>,
-	Jim Shargo <jshargo@google.com>, daniel@ffwll.ch,
-	brpol@chromium.org, corbet@lwn.net, dri-devel@lists.freedesktop.org,
-	hamohammed.sa@gmail.com, hirono@chromium.org, jshargo@chromium.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mairacanal@riseup.net, marius.vlad@collabora.com,
-	mduggan@chromium.org, melissa.srw@gmail.com, mripard@kernel.org,
-	rodrigosiqueiramelo@gmail.com, tzimmermann@suse.de
-Subject: Re: [PATCH v6 0/7] Adds support for ConfigFS to VKMS!
-Message-ID: <ZkyS0q9GnCzla2EV@phenom.ffwll.local>
-Mail-Followup-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
-	Louis Chauvet <louis.chauvet@bootlin.com>,
-	Jim Shargo <jshargo@google.com>, brpol@chromium.org, corbet@lwn.net,
-	dri-devel@lists.freedesktop.org, hamohammed.sa@gmail.com,
-	hirono@chromium.org, jshargo@chromium.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mairacanal@riseup.net, marius.vlad@collabora.com,
-	mduggan@chromium.org, melissa.srw@gmail.com, mripard@kernel.org,
-	rodrigosiqueiramelo@gmail.com, tzimmermann@suse.de
-References: <ZjCtgSaL50YrS-F-@phenom.ffwll.local>
- <20240508181744.7030-1-jose.exposito89@gmail.com>
- <CACmi3jF6Dp3PE8X=T5kTO2+eYJQi7jWACFdmp9jzKxUtcQphnQ@mail.gmail.com>
- <Zj5JIah0jWnIn2Ix@localhost.localdomain>
- <ZkHKhtBmyS12i3fH@fedora>
+	s=arc-20240116; t=1716294392; c=relaxed/simple;
+	bh=nubv3Ssyz42cMLMtiiGjL2NthUA/jwxK15fytFgof9Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=TMds3KUWUUFauRdZYAFUthjHCDE0QcSwJK4OnRXhrUCywhfTOdsgHyWoTRx56yxeap2A3kCOXBJ/k2tj70LSmNAJdNAY2Ankdej2XKolyshIHzi0UpGUOb6oJ1dYR7esncjpuGQGjTaHeVXc60/7WimUws2OEr8PNpFVORH43ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=BCQTuMzs; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1716294373; x=1716899173; i=wahrenst@gmx.net;
+	bh=Ik/83sXmHwQbQMcvXH6krjU366NMUVdg+a6AS/Ux1h8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=BCQTuMzsrkI7oT5ZA79xX/UCMnWI027/ijWHJjr1BS9//ZpkVfcHnHpN6Sc/QQ9f
+	 q/rbTXdTCNbxZLEZyy0x8zFeV6eDXjxfWBbVWE20ON/LxcPwJTJ2AMHneoiYA3j4y
+	 2lz+i3VMgb5fhxucSU3tI/6qD7jEXKKtV0B3qv1ldEwytoQTaFkrRrsL9wmWA3S5X
+	 LGX2LeTO2aAzKuV7Zi40olCFnvaa7WrIyYtmGf/JeqA4ktn9DwdkHk8McmGS5qKfx
+	 OH3w8lsNZfB/6olfJZtqHqPdcSPRHvSC4OkQ9WmcYv7zNNF6UNZiElf7d59TIvWUj
+	 FDmwCffO4V3w5fsl7A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.126] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MvbG2-1sQNQA3fXy-00sglH; Tue, 21
+ May 2024 14:26:12 +0200
+Message-ID: <f27aaf92-8109-4cad-94ba-6f72cd9bdabf@gmx.net>
+Date: Tue, 21 May 2024 14:26:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZkHKhtBmyS12i3fH@fedora>
-X-Operating-System: Linux phenom 6.8.9-amd64 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] mmc: sdhci-brcmstb: Add BCM2712 support
+To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Marc Zyngier <maz@kernel.org>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org
+References: <cover.1716277695.git.andrea.porta@suse.com>
+ <c413737f538d9bd403c30104a83a7fbb1ea7461d.1716277695.git.andrea.porta@suse.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <c413737f538d9bd403c30104a83a7fbb1ea7461d.1716277695.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:iQHoBjHwHK9vT/wN4cVqFD2QZSORuPKXX0FuHBqu25pr76llXa2
+ O8GOEnO5F0MH53MC080AU0MtN3A1h71ZIdAuShRnPN66c+tH1TraE1Hs2sn+mUSV904vOhS
+ syfUdSHNofm6S94aBYlBAkZ06mbdvr0OoVNj+cTityV/NES2QLuHMmGzR+QwkYE/EpjtXdl
+ Td+WA+CHWHFoemtm/RYcg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:BZeqmSh2A/o=;W3zIYW4pDntFO7HErWtXhF1nrvS
+ 4bv94zh6mzR6kOCKPmkzi9izaDlx8hu10JbrihVS/n/WEgOyx0R/7qVE5K5n1gyz7Sti5kv4u
+ y5KlfxXbS5tcYqV+jcpcipfzM8xJN5LevHvLncJRIO+OgDR71AxPI8PxWN8s0QBlBLTJ5mvd7
+ 16O/Boh4bo64r3SenodBInuSbLCeyvljmAsPah7Zxr1vlL2kjzXHl+iwBewaNbEZZlQ0xZdWy
+ TxOlVTcI/g6P4MZzZWmhPxbn6SxNLlx8X9JgeHKPbprAo8yEZ1GgfWHsVgrWx2AEAHY/kaPdZ
+ qKgrokbwzGhRe76kEp4n3O4qR3NRKSwyktbFb90B0fqCfb3Vt1BiBhwhuo3by3heVH9uUkbm3
+ aSmDTWX6i1E4yCoecWF5YjtyuOk2dzOB8aJ4EZeeJd6Zc18aNJXXXL6OzTY+YJtWbErHfMQts
+ zLAWDkIN9Iaor91aH+0a80kg+2IMMaN/nplv/0t29aiETrQbqOp+7KbAX4XxODyNGeln9n+sD
+ LLfHSTW7zFar72tid8czoPD2WYChUp4RG3QG70VZq8SpWA5+Cq4KURWZQ/KwsZqW94OcYtWmQ
+ A80qKr1uQ8wzbws0/Z/dZAYt4DKYuwOEWJn1J5y4GcttHHJIIut6smvuY1zvidyz3YDb/nCeU
+ 3k1/5yu/KaDEg4f3j1aLf4YFAM3TD6q78uvI5/IAnoFkr91UE6s77ssdAeIxfJY9Q7mFAERJ/
+ Hw5v2JxHnfa+88TKWmiWRZP14Z3pBKPa++LL7qHBMaqjGHy8t3dGsHq6Vxl0P+2y5p1QvOxqZ
+ 0RG5PhAzYu6HjDLSKUykDT0MwA92VqxcP7bc2FrDzYnyY=
 
-On Mon, May 13, 2024 at 10:08:38AM +0200, José Expósito wrote:
-> On Fri, May 10, 2024 at 06:19:45PM +0200, Louis Chauvet wrote:
-> > Le 09/05/24 - 18:18, Jim Shargo a écrit :
-> > > Sima--thanks SO MUCH for going through with everything leaving a
-> > > detailed review. I am excited to go through your feedback.
-> > > 
-> > > It makes me extremely happy to see these patches get people excited.
-> > > 
-> > > They've bounced between a few people, and I recently asked to take
-> > > them over again from the folks who were most recently looking at them
-> > > but haven't since had capacity to revisit them. I'd love to contribute
-> > > more but I am currently pretty swamped and I probably couldn't
-> > > realistically make too much headway before the middle of June.
-> > > 
-> > > José--if you've got capacity and interest, I'd love to see this work
-> > > get in! Thanks!! Please let me know your timeline and if you want to
-> > > split anything up or have any questions, I'd love to help if possible.
-> > > But most important to me is seeing the community benefit from the
-> > > feature.
-> > > 
-> > > And (in case it got lost in the shuffle of all these patches) the IGT
-> > > tests really make it much easier to develop this thing. Marius has
-> > > posted the most recent patches:
-> > > https://lore.kernel.org/igt-dev/?q=configfs
-> > > 
-> > > Thanks!
-> > > -- Jim
-> > > 
-> > > 
-> > > 
-> > > On Wed, May 8, 2024 at 2:17 PM José Expósito <jose.exposito89@gmail.com> wrote:
-> > > >
-> > > > Hi everyone,
-> > > >
-> > > > I wasn't aware of these patches, but I'm really glad they are getting
-> > > > some attention, thanks a lot for your review Sima.
-> > > >
-> > > > Given that it's been a while since the patches were emailed, I'm not
-> > > > sure if the original authors of the patches could implement your
-> > > > comments. If not, I can work on it. Please let me know.
-> > > >
-> > > > I'm working on a Mutter feature that'd greatly benefit from this uapi
-> > > > and I'm sure other compositors would find it useful.
-> > > >
-> > > > I'll start working on a new version in a few days if nobody else is
-> > > > already working on it.
-> > > >
-> > > > Best wishes,
-> > > > José Expósito
-> > 
-> > Hi all!
-> > 
-> > Very nice to see other people working on this subject. As the series 
-> > seemed inactive, I started two weeks ago to rebase it on top of [1]. I 
-> > also started some work to use drmm_* helpers instead of using lists in 
-> > vkms. I currently struggle with a deadlock during rmmod.
-> > 
-> > I need to clean my commits, but I can share a WIP version.
-> 
-> Hi Louis,
-> 
-> If you could share a RFC/WIP series it would be awesome!
-> 
-> Since you are already working on the kernel patches (and I guess IGT?),
-> I'll start working on a libdrm high level API to interact with VKMS from
-> user-space on top of your patches. I'll share a link as soon as I have a
-> draft PR.
+Hi Andrea,
 
-Great to see all the enthusiasm here, this is awesome.
+Am 21.05.24 um 10:35 schrieb Andrea della Porta:
+> Broadcom BCM2712 SoC has an SDHCI card controller using the SDIO CFG
+> register block present on other STB chips. Add support for BCM2712
+> SD capabilities of this chipset.
+> The silicon is SD Express capable but this driver port does not currentl=
+y
+> include that feature yet.
+> Based on downstream driver by raspberry foundation maintained kernel.
+>
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>   drivers/mmc/host/sdhci-brcmstb.c | 65 ++++++++++++++++++++++++++++++++
+>   1 file changed, 65 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-b=
+rcmstb.c
+> index 9053526fa212..b349262da36e 100644
+> --- a/drivers/mmc/host/sdhci-brcmstb.c
+> +++ b/drivers/mmc/host/sdhci-brcmstb.c
+> @@ -30,6 +30,21 @@
+>
+>   #define SDHCI_ARASAN_CQE_BASE_ADDR		0x200
+>
+> +#define SDIO_CFG_CQ_CAPABILITY			0x4c
+> +#define SDIO_CFG_CQ_CAPABILITY_FMUL		GENMASK(13, 12)
+> +
+> +#define SDIO_CFG_CTRL				0x0
+> +#define SDIO_CFG_CTRL_SDCD_N_TEST_EN		BIT(31)
+> +#define SDIO_CFG_CTRL_SDCD_N_TEST_LEV		BIT(30)
+> +
+> +#define SDIO_CFG_MAX_50MHZ_MODE			0x1ac
+> +#define SDIO_CFG_MAX_50MHZ_MODE_STRAP_OVERRIDE	BIT(31)
+> +#define SDIO_CFG_MAX_50MHZ_MODE_ENABLE		BIT(0)
+> +
+> +#define MMC_CAP_HSE_MASK	(MMC_CAP2_HSX00_1_2V | MMC_CAP2_HSX00_1_8V)
+> +/* Select all SD UHS type I SDR speed above 50MB/s */
+> +#define MMC_CAP_UHS_I_SDR_MASK	(MMC_CAP_UHS_SDR50 | MMC_CAP_UHS_SDR104)
+> +
+>   struct sdhci_brcmstb_priv {
+>   	void __iomem *cfg_regs;
+>   	unsigned int flags;
+> @@ -38,6 +53,7 @@ struct sdhci_brcmstb_priv {
+>   };
+>
+>   struct brcmstb_match_priv {
+> +	void (*cfginit)(struct sdhci_host *host);
+>   	void (*hs400es)(struct mmc_host *mmc, struct mmc_ios *ios);
+>   	struct sdhci_ops *ops;
+>   	const unsigned int flags;
+> @@ -168,6 +184,38 @@ static void sdhci_brcmstb_set_uhs_signaling(struct =
+sdhci_host *host,
+>   	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
+>   }
+>
+> +static void sdhci_brcmstb_cfginit_2712(struct sdhci_host *host)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+> +	struct sdhci_brcmstb_priv *brcmstb_priv =3D sdhci_pltfm_priv(pltfm_hos=
+t);
+> +	u32 reg, base_clk_mhz;
+> +
+> +	/*
+> +	 * If we support a speed that requires tuning,
+> +	 * then select the delay line PHY as the clock source.
+> +	 */
+> +	if ((host->mmc->caps & MMC_CAP_UHS_I_SDR_MASK) || (host->mmc->caps2 & =
+MMC_CAP_HSE_MASK)) {
+> +		reg =3D readl(brcmstb_priv->cfg_regs + SDIO_CFG_MAX_50MHZ_MODE);
+> +		reg &=3D ~SDIO_CFG_MAX_50MHZ_MODE_ENABLE;
+> +		reg |=3D SDIO_CFG_MAX_50MHZ_MODE_STRAP_OVERRIDE;
+> +		writel(reg, brcmstb_priv->cfg_regs + SDIO_CFG_MAX_50MHZ_MODE);
+> +	}
+> +
+> +	if ((host->mmc->caps & MMC_CAP_NONREMOVABLE) ||
+> +	    (host->mmc->caps & MMC_CAP_NEEDS_POLL)) {
+> +		/* Force presence */
+> +		reg =3D readl(brcmstb_priv->cfg_regs + SDIO_CFG_CTRL);
+> +		reg &=3D ~SDIO_CFG_CTRL_SDCD_N_TEST_LEV;
+> +		reg |=3D SDIO_CFG_CTRL_SDCD_N_TEST_EN;
+> +		writel(reg, brcmstb_priv->cfg_regs + SDIO_CFG_CTRL);
+> +	}
+> +
+> +	/* Guesstimate the timer frequency (controller base clock) */
+> +	base_clk_mhz =3D max_t(u32, clk_get_rate(pltfm_host->clk) / (1000 * 10=
+00), 1);
+> +	reg =3D SDIO_CFG_CQ_CAPABILITY_FMUL | base_clk_mhz;
+> +	writel(reg, brcmstb_priv->cfg_regs + SDIO_CFG_CQ_CAPABILITY);
+This part assumes the clock isn't changed afterwards, see below ...
+> +}
+> +
+>   static void sdhci_brcmstb_dumpregs(struct mmc_host *mmc)
+>   {
+>   	sdhci_dumpregs(mmc_priv(mmc));
+> @@ -200,6 +248,14 @@ static struct sdhci_ops sdhci_brcmstb_ops =3D {
+>   	.set_uhs_signaling =3D sdhci_set_uhs_signaling,
+>   };
+>
+> +static struct sdhci_ops sdhci_brcmstb_ops_2712 =3D {
+> +	.set_clock =3D sdhci_set_clock,
+> +	.set_power =3D sdhci_set_power_and_bus_voltage,
+> +	.set_bus_width =3D sdhci_set_bus_width,
+> +	.reset =3D sdhci_reset,
+> +	.set_uhs_signaling =3D sdhci_set_uhs_signaling,
+> +};
+> +
+>   static struct sdhci_ops sdhci_brcmstb_ops_7216 =3D {
+>   	.set_clock =3D sdhci_brcmstb_set_clock,
+>   	.set_bus_width =3D sdhci_set_bus_width,
+> @@ -214,6 +270,11 @@ static struct sdhci_ops sdhci_brcmstb_ops_74165b0 =
+=3D {
+>   	.set_uhs_signaling =3D sdhci_brcmstb_set_uhs_signaling,
+>   };
+>
+> +static const struct brcmstb_match_priv match_priv_2712 =3D {
+> +	.cfginit =3D sdhci_brcmstb_cfginit_2712,
+> +	.ops =3D &sdhci_brcmstb_ops_2712,
+> +};
+> +
+>   static struct brcmstb_match_priv match_priv_7425 =3D {
+>   	.flags =3D BRCMSTB_MATCH_FLAGS_NO_64BIT |
+>   	BRCMSTB_MATCH_FLAGS_BROKEN_TIMEOUT,
+> @@ -238,6 +299,7 @@ static struct brcmstb_match_priv match_priv_74165b0 =
+=3D {
+>   };
+>
+>   static const struct of_device_id __maybe_unused sdhci_brcm_of_match[] =
+=3D {
+> +	{ .compatible =3D "brcm,bcm2712-sdhci", .data =3D &match_priv_2712 },
+>   	{ .compatible =3D "brcm,bcm7425-sdhci", .data =3D &match_priv_7425 },
+>   	{ .compatible =3D "brcm,bcm7445-sdhci", .data =3D &match_priv_7445 },
+>   	{ .compatible =3D "brcm,bcm7216-sdhci", .data =3D &match_priv_7216 },
+> @@ -370,6 +432,9 @@ static int sdhci_brcmstb_probe(struct platform_devic=
+e *pdev)
+>   	    (host->mmc->caps2 & MMC_CAP2_HS400_ES))
+>   		host->mmc_host_ops.hs400_enhanced_strobe =3D match_priv->hs400es;
+>
+> +	if (match_priv->cfginit)
+> +		match_priv->cfginit(host);
+> +
+I'm not sure this is the right place to call cfginit.
+sdhci_brcmstb_cfginit_2712 retrives the current controller base clock,
+but at the end of=C2=A0 sdhci_brcmstb_probe this clock frequency could be
+adjusted by the device property "clock-frequency". So i'm not sure this
+is intended.
+>   	/*
+>   	 * Supply the existing CAPS, but clear the UHS modes. This
+>   	 * will allow these modes to be specified by device tree
 
-Note that I'm out of office for two weeks next week, so if I miss any
-patches please ping me again (sima in #dri-devel on oftc tends to work
-best) when I'm back.
-
-> > Maybe we can discuss a bit the comment from Daniel (split init between 
-> > default/configfs, use or not a real platform device...)
-> > 
-> > For the split, I think the first solution (struct vkms_config) can be 
-> > easier to understand and to implement, for two reasons:
-> > - No need to distinguish between the "default" and the "configfs" devices 
-> >   in the VKMS "core". All is managed with only one struct vkms_config.
-> > - Most of the lifetime issue should be gone. The only thing to 
-> >   synchronize is passing this vkms_config from ConfigFS to VKMS.
-> 
-> I agree, this seems like the easiest solution.
-> 
-> > The drawback of this is that it can become difficult to do the "runtime" 
-> > configuration (today only hotplug, but I plan to add more complex stuff 
-> > like DP emulation, EDID selection, MST support...). Those configuration 
-> > must be done "at runtime" and will require a strong synchronization with 
-> > the vkms "core".
-> > 
-> > Maybe we can distinguish between the "creation" and the "runtime 
-> > configuration", in two different configFS directory? Once a device is 
-> > created, it is moved to the "enabled" directory and will have a different 
-> > set of attribute (connection status, current EDID...)
-> 
-> Once the device is enabled (i.e, `echo 1 > /config/vkms/my-device/enabled`),
-> would it make sense to use sysfs instead of another configfs directory?
-> The advantage is that with sysfs the kernel controls the lifetime of the
-> objects and I think it *might* simplify the code, but I'll need to write a
-> proof of concept to see if this works.
-
-sysfs is very opinionated about lifetime, so we might actually make this
-more complicated. Plus for the only thing we can hotplug (connectors) we
-already have sysfs directories, so there could be a lifetime/name fight
-between the sysfs interfaces to prepare a hotplugged connector, and the
-connector sysfs files which are part of the existing uapi.
-
-Also the second issue I'm seeing is that we're mixing up
-testing/configuration apis with the generic uapi that should hold for
-every kms driver. This could make the code in igt testcase or for driving
-compositor end-to-end testcases a lot more confusing. I think separation
-would be better.
-
-The third point I'm seeing is that connectors can be created both before
-we create the device, and at runtime. If we have two totally separate
-interfaces for this, we might end up with needless code duplication.
-
-But it's a complex topic, I think it does make sense to give sysfs some
-serious thought. But maybe as part of the vkms driver directory, and not
-in the drm_device chardev directories. So we could have some separation
-that way maybe?
-
-> > For the platform driver part, it seems logic to me to use a "real" 
-> > platform driver and a platform device for each pipeline, but I don't have 
-> > the experience to tell if this is a good idea or not.
-> 
-> I'm afraid I don't know which approach could work better. Trusting Sima and
-> Maíra on this one.
-
-As I've said, I'm not opposed to a switch. I just think it's an orthogonal
-issue to the configfs and should be separately justified.
-
-We're trying hard to get away from kms userspace sneaking too much under
-the hood of the driver, and have gone a long way from the o.g. drm days
-where "everything is pci" was encoded into uapi. So from that pov I kinda
-like the fact that vkms is special and fairly free-floating.
-
-But maybe userspace does want to be able to test their device enumeration
-more like a real device, so if vkms currently sticks out there that would
-be a really good reason to change things and make it look more like a real
-driver/device.
-
-Cheers, Sima
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
 
