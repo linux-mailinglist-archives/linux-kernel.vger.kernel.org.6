@@ -1,174 +1,109 @@
-Return-Path: <linux-kernel+bounces-184743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC01C8CAB57
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:58:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91208CAB5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CC1DB20FAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25E0D1C216F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD38F6BB4A;
-	Tue, 21 May 2024 09:58:05 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953306BB5D;
+	Tue, 21 May 2024 09:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Yszcimwy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CEB56763;
-	Tue, 21 May 2024 09:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF3C56763;
+	Tue, 21 May 2024 09:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716285485; cv=none; b=t/1hrVTGc4M+wa+qOC7YCBtbvRSLF+fp6H5UGHhbDLjUfkCETsViAVU71sJv40Ns0+J1L9FTKzDi5TXaFRG5BNWcs6HbmbJeug+dQTqISosVerNpqNUoECEuTFEJxuv9yynkUaWAFePDPSdnR6NHTA9PamPROCrTvRjHqWRSYB0=
+	t=1716285578; cv=none; b=hGVulJzO6RFxg5LWodrh2JWLLu6a7TBGzQbeZ01Sr8NMapVYkXsHC0+3MwofYFlcVEbm1L4mKYv7dTuuwH6fH3qHciVKCqVmOZdw0/25+q3d3y+Iq6SMayeRftcdmktuiBXBUHBZ+qxJc7MXmr8N4UnaBIbRaO3hXntCoh5JJiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716285485; c=relaxed/simple;
-	bh=FR1c2S746F6o3Xj8394Kf/wJ/lD8QmFz+4mC//y5RA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r1RbglSDAWla/CMoqGTzhXOKd0cZrDGRlU7xqbJH9bkRHK279rNmIXwXbUKryJVbFHd5Nn2d80n2btCfHIoyEyNoHMEflxiqMlHONn6V3w8YW4ztaKQ19okM+b4JFP2d80C7SKjh6KWXZAhojVPO4QktUvy97U4MfE47GAa62xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vk8Z10HFxz9v7Hm;
-	Tue, 21 May 2024 17:40:41 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 773E91404F7;
-	Tue, 21 May 2024 17:57:43 +0800 (CST)
-Received: from [10.81.202.68] (unknown [10.81.202.68])
-	by APP2 (Coremail) with SMTP id GxC2BwC38SUMcExm4emUCA--.12318S2;
-	Tue, 21 May 2024 10:57:42 +0100 (CET)
-Message-ID: <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
-Date: Tue, 21 May 2024 11:57:29 +0200
+	s=arc-20240116; t=1716285578; c=relaxed/simple;
+	bh=xfWhlHbdXog64Mscjfj1ATrii7G5sb/JK0wl+AddZTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ha5W72OtfRKLaKu5pAF0Vg6G9vQYQ9xLbxumzOgGY5ihE7nv0SHbw+TPAPR7m3MPhvUUB9L2stt9BmeotTNBP4HJj0WZlJd0sFMcn5jG4zJV74b0ek0QowiWvXqgc/6Gv3PkfEq9Upy2+fOnfOa4IUBl8WZFedSWEHsKy502H3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Yszcimwy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8A90C2BD11;
+	Tue, 21 May 2024 09:59:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716285578;
+	bh=xfWhlHbdXog64Mscjfj1ATrii7G5sb/JK0wl+AddZTk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YszcimwycM+IexTz0jrEP8E1xDPyyLZSdnrf55ZBaRCTBl1Z32sFg2y/o04kDfJIM
+	 J9Mmp4eWJk5PV2MDSnDoq43cqd+AcvgR/HRnLRCbMTP6nHY6vxZLScbJTXDuZsLzbg
+	 P+HnCKR88qUgsXY0v2pEByLIx/IjqRddliCZnV60=
+Date: Tue, 21 May 2024 11:59:35 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [RFC PATCH 02/11] rust: add driver abstraction
+Message-ID: <2024052140-unchanged-huntress-1ea4@gregkh>
+References: <20240520172554.182094-1-dakr@redhat.com>
+ <20240520172554.182094-3-dakr@redhat.com>
+ <2024052045-lived-retiree-d8b9@gregkh>
+ <ZkvPDbAQLo2/7acY@pollux.localdomain>
+ <2024052155-pulverize-feeble-49bb@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: LKMM: Making RMW barriers explicit
-To: Alan Stern <stern@rowland.harvard.edu>,
- Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, kernel-team@meta.com, parri.andrea@gmail.com,
- boqun.feng@gmail.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- Joel Fernandes <joel@joelfernandes.org>
-References: <72c804c8-2511-4349-a823-bc1de8bb729e@rowland.harvard.edu>
- <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
- <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
- <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwC38SUMcExm4emUCA--.12318S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZFyDJw1fWr4xKr15KryfWFg_yoW5CrWfpa
-	13Ka4UKr4DJw4vk3Wq9FsIqFyF9a1rJrWUXr93twsakas0gr1IgF15t3yUuF9rXrZ7Z3Wj
-	vr13tas7ua4DArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbU
-	UUUUU==
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024052155-pulverize-feeble-49bb@gregkh>
 
-
-
-Am 5/18/2024 um 2:31 AM schrieb Alan Stern:
-> On Thu, May 16, 2024 at 10:44:05AM +0200, Hernan Ponce de Leon wrote:
->> On 5/16/2024 10:31 AM, Jonas Oberhauser wrote:
->>>
->>>
->>> Am 5/16/2024 um 3:43 AM schrieb Alan Stern:
->>>> Hernan and Jonas:
->>>>
->>>> Can you explain more fully the changes you want to make to herd7 and/or
->>>> the LKMM?  The goal is to make the memory barriers currently implicit in
->>>> RMW operations explicit, but I couldn't understand how you propose to do
->>>> this.
->>>>
->>>> Are you going to change herd7 somehow, and if so, how?  It seems like
->>>> you should want to provide sufficient information so that the .bell
->>>> and .cat files can implement the appropriate memory barriers associated
->>>> with each RMW operation.  What additional information is needed?  And
->>>> how (explained in English, not by quoting source code) will the .bell
->>>> and .cat files make use of this information?
->>>>
->>>> Alan
->>>
->>>
->>> I don't know whether herd7 needs to be changed. Probably, herd7 does the
->>> following:
->>> - if a tag called Mb appears on an rmw instruction (by instruction I
->>> mean things like xchg(), atomic_inc_return_relaxed()), replace it with
->>> one of those things:
->>>     * full mb ; once (the rmw) ; full mb, if a value returning
->>> (successful) rmw
->>>     * once (the rmw)   otherwise
->>> - everything else gets translated 1:1 into some internal representation
->>
->> This is my understanding from reading the source code of CSem.ml in herd7's
->> repo.
->>
->> Also, this is exactly what dartagnan is currently doing.
->>
->>>
->>> What I'm proposing is:
->>> 1. remove this transpilation step,
->>> 2. and instead allow the Mb tag to actually appear on RMW instructions
->>> 3. change the cat file to explicitly define the behavior of the Mb tag
->>> on RMW instructions
->>
->> These are the exact 3 things I changed in dartagnan for testing what Jonas
->> proposed.
->>
->> I am not sure if further changes are needed for herd7.
+On Tue, May 21, 2024 at 11:35:43AM +0200, Greg KH wrote:
+> On Tue, May 21, 2024 at 12:30:37AM +0200, Danilo Krummrich wrote:
+> > > > +impl<T: DriverOps> Drop for Registration<T> {
+> > > > +    fn drop(&mut self) {
+> > > > +        if self.is_registered {
+> > > > +            // SAFETY: This path only runs if a previous call to `T::register` completed
+> > > > +            // successfully.
+> > > > +            unsafe { T::unregister(self.concrete_reg.get()) };
+> > > 
+> > > Can't the rust code ensure that this isn't run if register didn't
+> > > succeed?  Having a boolean feels really wrong here (can't that race?)
+> > 
+> > No, we want to automatically unregister once this object is destroyed, but not
+> > if it was never registered in the first place.
+> > 
+> > This shouldn't be racy, we only ever (un)register things in places like probe()
+> > / remove() or module_init() / module_exit().
 > 
-> Okay, good.  This answers the first part of what I asked.  What about
-> the second part?  That is, how will the changes to the .def, .bell, and
-> .cat files achieve your goals?
+> probe/remove never calls driver_register/unregister on itself, so that's
+> not an issue.  module_init/exit() does not race with itself and again,
+> module_exit() is not called if module_init() fails.
 > 
-> Alan
+> Again, you are adding logic here that is not needed.  Or if it really is
+> needed, please explain why the C code does not need this today and let's
+> work to fix that.
 
+And, to be more explicit, a driver should not have any state of its own,
+any "internal state" should always be bound to the device that it is
+controlling, NOT generic to the driver itself, as a driver can, and
+should, be able to control multiple devices all at the same time without
+ever knowing anything is going on.  A driver is just code, not data or
+state.
 
-Firstly, we'd allow 'mb as a barrier mode in events, e.g.
+Yes, we have bad examples in the kernel where drivers do keep
+independent state, but those are the exceptions, never the rule, and I
+would argue, should be fixed to not do that.  Most were due to being
+created before the driver model existed, or programmers being lazy :)
 
-instructions RMW[{'once,'acquire,'release,'mb}]
+thanks,
 
-then the Mb tags would appear in the graph. And then I'd define the 
-ordering explicitly. One way is to say that an Mb tag orders all memory 
-accesses before(or at) the tag with all memory accesses after(or at) the 
-tag, except the accesses of the rmw with each other.
-This is the same as the full fence before the read, which orders all 
-memory accesses before the read with every access after(or at) the read,
-plus the full fence after the write, which orders all memory accesses 
-before(or at) the write with all accesses after the write.
-
-That would be done by adding
-
-      [M] ; (po \ rmw) & (po^?; [RMW_MB] ; po^?) ; [M]
-
-to ppo.
-
-
-One could also split it into two rules to keep with the "two full 
-fences" analogy. Maybe a good way would be like this:
-
-      [M] ; po; [RMW_MB & R] ; po^? ; [M]
-
-      [M] ; po^?; [RMW_MB & W] ; po ; [M]
-
-
-Hope that makes sense,
-
-jonas
-
+greg k-h
 
