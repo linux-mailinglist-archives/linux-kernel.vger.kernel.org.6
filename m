@@ -1,131 +1,284 @@
-Return-Path: <linux-kernel+bounces-184675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3558CAA6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:59:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0850A8CAA71
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2E31F22990
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8853A1F2272C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC6356B72;
-	Tue, 21 May 2024 08:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDAF5645B;
+	Tue, 21 May 2024 09:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZpTGooHQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktcy8cgE"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF47956757;
-	Tue, 21 May 2024 08:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D196E8C05;
+	Tue, 21 May 2024 09:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716281972; cv=none; b=RqmEKAz/7ZgL4XukAJpTFHQKhg0TZsXpz3BFOAbJDldb0mk5tO87S9upbHh2+NfMYWsNLy+GFI9Q0v3obtAu8UHdtbsNsaXrLdpxJPAcjNyfsbQDEK4YpUSJGsUYcJnc0sZ0hnIwgeYBpfXDyyi6OAJ+7ixHzi6RLetYARBq3U4=
+	t=1716282150; cv=none; b=Wkn+XZ/LR4FdZdjLg58v4xl8l4I8UyLFt+qvln1ObP8hlW+xdWVOfP1sMqwr+T6yj0jli3WEa0W7L9yy9zFi8i0zhGwATusTpJSZV5oNQunk7prVPU8PB5qEEMdl1MXGBPKTNHaLNXcUHOK68RPH+fxGtURwvxX3SOFGG5Z8vyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716281972; c=relaxed/simple;
-	bh=eLQ0BJe2tf8WdoA4nuR/w6z7pYRZ+D8yZ7mBE5sZuTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jtUGPaUR5rO7qF8oHgr5yPnc25LzbDnwALFy83RkKQ+OutC3CZPzhUj9erLxaRQ8I2Sgh+aMn3DlT0CbV5Xz1Tl+E/qIDzCwBOiKwrkvC39xXIgU4e4tQxs81DuqC4WC35BNqeWXoMSZfVLVdTVgieK33eAMPIGHKCCR9HKHjc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZpTGooHQ; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716281972; x=1747817972;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=eLQ0BJe2tf8WdoA4nuR/w6z7pYRZ+D8yZ7mBE5sZuTE=;
-  b=ZpTGooHQ8j1InIoqUrX/OYmMK41tQRePHgqWKBzlz5Tl71bhNKKAFAqs
-   X55BuUjLT48aWOtGNZzL2JlaB5OQgVYlCpZ8NCLpVJXlGEPw4Dnu+LzNY
-   CAXDPNAMF0TUp+Xyt487bh/2eiqVH8aqrHrFCtCW+PF7RfySTEmOJUEue
-   G8eYDACzLwwpSU8Rh3e9Zj7OPT3ckjt4amPV49vi2Vx6S8ohS8s36qswL
-   KqZWy4KFKAuT5/llc2XGx4S/K8aUSNvTy+Jvbs+vKU46AX/GUIy2ZRvj7
-   1PBjv3qoSjMVYRyc4EzL6bdhqA4ExjUohkWVlqy3yjBBugvxfP116e9eb
-   g==;
-X-CSE-ConnectionGUID: xG398G0YQgWhXpEoW7LQmw==
-X-CSE-MsgGUID: 9tpoe4gPSVihGVGJsBUHmw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12397954"
-X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="12397954"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 01:59:32 -0700
-X-CSE-ConnectionGUID: FftiZykYSUCdUe0RkF1edQ==
-X-CSE-MsgGUID: HMoiWVMPT/GmbDeTOoP0Pw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="32706683"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 21 May 2024 01:59:28 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id E4AD7179; Tue, 21 May 2024 11:59:26 +0300 (EEST)
-Date: Tue, 21 May 2024 11:59:26 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Gia <giacomo.gio@gmail.com>
-Cc: Benjamin =?utf-8?Q?B=C3=B6hmke?= <benjamin@boehmke.net>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"kernel@micha.zone" <kernel@micha.zone>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"S, Sanath" <Sanath.S@amd.com>
-Subject: Re: [REGRESSION][BISECTED] "xHCI host controller not responding,
- assume dead" on stable kernel > 6.8.7
-Message-ID: <20240521085926.GO1421138@black.fi.intel.com>
-References: <CAHe5sWavQcUTg2zTYaryRsMywSBgBgETG=R1jRexg4qDqwCfdw@mail.gmail.com>
- <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
- <lqdpk7lopqq4jn22mycxgg6ps4yfs7hcca33tqb2oy6jxc2y7p@rhjjbzs6wigu>
- <611f8200-8e0e-40e4-aff4-cc2c55dc6354@amd.com>
- <61-664b6880-3-6826fc80@79948770>
- <20240520162100.GI1421138@black.fi.intel.com>
- <5d-664b8000-d-70f82e80@161590144>
- <CAHe5sWazL96zPa-v9S515ciE46JLZ1ROL7gmGikfn-vhUoDaZg@mail.gmail.com>
- <20240521051151.GK1421138@black.fi.intel.com>
- <CAHe5sWb7kHurBvu6JC6OgXZm9mSg5a2W2XK9L8gCygYaFZz7JQ@mail.gmail.com>
+	s=arc-20240116; t=1716282150; c=relaxed/simple;
+	bh=RwE9G1AHX7ZjXVbyV9XVN52DNEC9+ZEfHiWdMHcDgTA=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Lw+yHP9VMjDj8ZWrmu96hg+kX5zx+WDgmRUMj4NjcTjas05hrg+7ktJYdNoQ2TAclWew1CntGF7NBUamP8pQplFGrCQXfx7/I130RIVvW7bt6WtL8IKqZi1k12Qg7SSXdXH//UvUwiQcSJHVkQHrKM2TjY4RO2zZEDjXZq96Vos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ktcy8cgE; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-351d79b56cdso2542245f8f.1;
+        Tue, 21 May 2024 02:02:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716282147; x=1716886947; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZogKwDOYNbRUIvcc+8rJh/bCHgcSMtWaJCVVcFKFVEc=;
+        b=ktcy8cgEMjPT/gvRHmYUo/5zxlL9ojpGG+ZzKRxZ6PsSkIcmdbmSe3Tpf3vPAUlPD1
+         0pOqIGJBC0AxC6MtXegyQX/vTeA3c27yvLyNJa029HxwKlD/Ro8nj92ToabJ2wT2bdEG
+         gBOQvcUY3Vig3b7A9RGd2rF4aG4BYr3d9PnAkA8QFmEKkyZuV+NFrROAGTp1jmh0poaO
+         GqX8SdHb43mNSeoxag8uFYWD+UdEE34nvq0Va6nt8sT9zw7LSyKxudTQAvBodeU25HgN
+         VEm7KF0vlG8Z+gWWF870gq5XBsh52/wKa49mIwIeGLE9JSPFIJZkw1STUJUVy5qE+RVT
+         iNOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716282147; x=1716886947;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZogKwDOYNbRUIvcc+8rJh/bCHgcSMtWaJCVVcFKFVEc=;
+        b=NjGGdjRHWPtrH2tHr8OU8nBBzah6KS6OOH0H0pzDd4e8pwEds4h3XdWjn1TKAv2MiD
+         wa+BZkMiviL9OJzTYhVanKd8aXA9E0b+GTAKj8sg3wjwLAMJK+M7FmaGAQ+nPXmmeflt
+         46qQS+qGn8m+jENeyFBpKX7jq23guTqj+I8tbnWKWngWRIsSVXAWMtsiNKJsm7Mzh2cC
+         adfj9fi4LIzUExXvYeYqb3ArlzadYUJ+YHn+/Z+vw3uS3Yl5mKqUPMWb6k06x1jIHDLV
+         co+gsGDwXdtmmxiKX6th5nOrREJ/PQsUX9czQx+uvryiY3ffv5Ewn0FPS3ip+flBbQbj
+         RcpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRWCN+p9kP0WzGzlzK8NKpRJg9l0BQ0XQYCeEZnKfeL5Be9QXkFavQOzYDcegx/6X/Yh1XgrZ8qnmVAIkVAzU+8yqc1Y/RnzDjY642
+X-Gm-Message-State: AOJu0YwofWKbejeAwUPkXgFxw77IQE71jq5iwOtTSTgNvp7Cv5Hqu9P3
+	epIF3l5U83rUte5Ga44GdnJGiUpC8XIzIHn35Qj6PXy6jX6hU0KokwkZYQ==
+X-Google-Smtp-Source: AGHT+IFDKrLIZtRdbQTwK/AStvRmrcyQHx8BagEty4XCcPMcA15y0xt0wqHWsXhWwel6lOfVALoGwA==
+X-Received: by 2002:a05:6000:502:b0:34c:b483:4f56 with SMTP id ffacd0b85a97d-3504a73753amr19224044f8f.31.1716282146910;
+        Tue, 21 May 2024 02:02:26 -0700 (PDT)
+Received: from [10.16.124.60] ([212.227.34.98])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a78cdsm31293804f8f.58.2024.05.21.02.02.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 02:02:26 -0700 (PDT)
+From: Zhu Yanjun <zyjzyj2000@gmail.com>
+X-Google-Original-From: Zhu Yanjun <yanjun.zhu@linux.dev>
+Message-ID: <5e6917de-53e2-467e-aa95-fa52eda9cd2c@linux.dev>
+Date: Tue, 21 May 2024 11:02:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHe5sWb7kHurBvu6JC6OgXZm9mSg5a2W2XK9L8gCygYaFZz7JQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH rdma-next v2 2/3] RDMA/mana_ib: Implement uapi to create
+ and destroy RC QP
+To: Konstantin Taranov <kotaranov@linux.microsoft.com>,
+ kotaranov@microsoft.com, sharmaajay@microsoft.com, longli@microsoft.com,
+ jgg@ziepe.ca, leon@kernel.org
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1716280453-24387-1-git-send-email-kotaranov@linux.microsoft.com>
+ <1716280453-24387-3-git-send-email-kotaranov@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <1716280453-24387-3-git-send-email-kotaranov@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 21, 2024 at 10:15:28AM +0200, Gia wrote:
-> Here you go:
+On 21.05.24 10:34, Konstantin Taranov wrote:
+> From: Konstantin Taranov <kotaranov@microsoft.com>
 > 
-> 0x0080 0x003c01c0 0b00000000 00111100 00000001 11000000 .... LANE_ADP_CS_0
->   [00:07]       0xc0 Next Capability Pointer
->   [08:15]        0x1 Capability ID
->   [16:19]        0xc Supported Link Speeds
->   [20:21]        0x3 Supported Link Widths (SLW)
->   [22:23]        0x0 Gen 4 Asymmetric Support (G4AS)
->   [26:26]        0x0 CL0s Support
->   [27:27]        0x0 CL1 Support
->   [28:28]        0x0 CL2 Support
-> 0x0081 0x0828003c 0b00001000 00101000 00000000 00111100 .... LANE_ADP_CS_1
->   [00:03]        0xc Target Link Speed → Router shall attempt Gen 3 speed
->   [04:05]        0x3 Target Link Width → Establish a Symmetric Link
->   [06:07]        0x0 Target Asymmetric Link → Establish Symmetric Link
->   [10:10]        0x0 CL0s Enable
->   [11:11]        0x0 CL1 Enable
->   [12:12]        0x0 CL2 Enable
->   [14:14]        0x0 Lane Disable (LD)
->   [15:15]        0x0 Lane Bonding (LB)
->   [16:19]        0x8 Current Link Speed → Gen 2
->   [20:25]        0x2 Negotiated Link Width → Symmetric Link (x2)
->   [26:29]        0x2 Adapter State → CL0
->   [30:30]        0x0 PM Secondary (PMS)
+> Implement user requests to create and destroy an RC QP.
+> As the user does not have an FMR queue, it is skipped and NO_FMR flag
+> is used.
+> 
+> Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
+> ---
+>   drivers/infiniband/hw/mana/mana_ib.h |  4 ++
+>   drivers/infiniband/hw/mana/qp.c      | 94 +++++++++++++++++++++++++++-
+>   include/uapi/rdma/mana-abi.h         |  9 +++
+>   3 files changed, 105 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/infiniband/hw/mana/mana_ib.h b/drivers/infiniband/hw/mana/mana_ib.h
+> index a3e229c83..5cccbe397 100644
+> --- a/drivers/infiniband/hw/mana/mana_ib.h
+> +++ b/drivers/infiniband/hw/mana/mana_ib.h
+> @@ -248,6 +248,10 @@ struct mana_rnic_destroy_cq_resp {
+>   	struct gdma_resp_hdr hdr;
+>   }; /* HW Data */
+>   
+> +enum mana_rnic_create_rc_flags {
+> +	MANA_RC_FLAG_NO_FMR = 2,
+> +};
+> +
+>   struct mana_rnic_create_qp_req {
+>   	struct gdma_req_hdr hdr;
+>   	mana_handle_t adapter;
+> diff --git a/drivers/infiniband/hw/mana/qp.c b/drivers/infiniband/hw/mana/qp.c
+> index ba13c5abf..e04e5e778 100644
+> --- a/drivers/infiniband/hw/mana/qp.c
+> +++ b/drivers/infiniband/hw/mana/qp.c
+> @@ -398,6 +398,78 @@ static int mana_ib_create_qp_raw(struct ib_qp *ibqp, struct ib_pd *ibpd,
+>   	return err;
+>   }
+>   
+> +static int mana_ib_create_rc_qp(struct ib_qp *ibqp, struct ib_pd *ibpd,
+> +				struct ib_qp_init_attr *attr, struct ib_udata *udata)
+> +{
+> +	struct mana_ib_dev *mdev = container_of(ibpd->device, struct mana_ib_dev, ib_dev);
+> +	struct mana_ib_qp *qp = container_of(ibqp, struct mana_ib_qp, ibqp);
+> +	struct mana_ib_create_rc_qp_resp resp = {};
+> +	struct mana_ib_ucontext *mana_ucontext;
+> +	struct mana_ib_create_rc_qp ucmd = {};
+> +	int i, err, j;
+> +	u64 flags = 0;
+> +	u32 doorbell;
+> +
+> +	if (!udata || udata->inlen < sizeof(ucmd))
+> +		return -EINVAL;
+> +
+> +	mana_ucontext = rdma_udata_to_drv_context(udata, struct mana_ib_ucontext, ibucontext);
+> +	doorbell = mana_ucontext->doorbell;
+> +	flags = MANA_RC_FLAG_NO_FMR;
+> +	err = ib_copy_from_udata(&ucmd, udata, min(sizeof(ucmd), udata->inlen));
+> +	if (err) {
+> +		ibdev_dbg(&mdev->ib_dev, "Failed to copy from udata, %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	for (i = 0, j = 0; i < MANA_RC_QUEUE_TYPE_MAX; ++i) {
+> +		// skip FMR for user-level RC QPs
 
-Thanks this looks fine (although the link is still Gen 2). Can you run
-the same from the dock upstream port too?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/dev-tools/checkpatch.rst?h=v6.9#n497
 
-  # tbdump -r 2 -a 1 -vv -N2 LANE_ADP_CS_0
+"
+   **C99_COMMENTS**
+     C99 style single line comments (//) should not be used.
+     Prefer the block comment style instead.
+
+     See: 
+https://www.kernel.org/doc/html/latest/process/coding-style.html#commenting
+"
+
+Zhu Yanjun
+
+> +		if (i == MANA_RC_SEND_QUEUE_FMR) {
+> +			qp->rc_qp.queues[i].id = INVALID_QUEUE_ID;
+> +			qp->rc_qp.queues[i].gdma_region = GDMA_INVALID_DMA_REGION;
+> +			continue;
+> +		}
+> +		err = mana_ib_create_queue(mdev, ucmd.queue_buf[j], ucmd.queue_size[j],
+> +					   &qp->rc_qp.queues[i]);
+> +		if (err) {
+> +			ibdev_err(&mdev->ib_dev, "Failed to create queue %d, err %d\n", i, err);
+> +			goto destroy_queues;
+> +		}
+> +		j++;
+> +	}
+> +
+> +	err = mana_ib_gd_create_rc_qp(mdev, qp, attr, doorbell, flags);
+> +	if (err) {
+> +		ibdev_err(&mdev->ib_dev, "Failed to create rc qp  %d\n", err);
+> +		goto destroy_queues;
+> +	}
+> +	qp->ibqp.qp_num = qp->rc_qp.queues[MANA_RC_RECV_QUEUE_RESPONDER].id;
+> +	qp->port = attr->port_num;
+> +
+> +	if (udata) {
+> +		for (i = 0, j = 0; i < MANA_RC_QUEUE_TYPE_MAX; ++i) {
+> +			if (i == MANA_RC_SEND_QUEUE_FMR)
+> +				continue;
+> +			resp.queue_id[j] = qp->rc_qp.queues[i].id;
+> +			j++;
+> +		}
+> +		err = ib_copy_to_udata(udata, &resp, min(sizeof(resp), udata->outlen));
+> +		if (err) {
+> +			ibdev_dbg(&mdev->ib_dev, "Failed to copy to udata, %d\n", err);
+> +			goto destroy_qp;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +
+> +destroy_qp:
+> +	mana_ib_gd_destroy_rc_qp(mdev, qp);
+> +destroy_queues:
+> +	while (i-- > 0)
+> +		mana_ib_destroy_queue(mdev, &qp->rc_qp.queues[i]);
+> +	return err;
+> +}
+> +
+>   int mana_ib_create_qp(struct ib_qp *ibqp, struct ib_qp_init_attr *attr,
+>   		      struct ib_udata *udata)
+>   {
+> @@ -409,8 +481,9 @@ int mana_ib_create_qp(struct ib_qp *ibqp, struct ib_qp_init_attr *attr,
+>   						     udata);
+>   
+>   		return mana_ib_create_qp_raw(ibqp, ibqp->pd, attr, udata);
+> +	case IB_QPT_RC:
+> +		return mana_ib_create_rc_qp(ibqp, ibqp->pd, attr, udata);
+>   	default:
+> -		/* Creating QP other than IB_QPT_RAW_PACKET is not supported */
+>   		ibdev_dbg(ibqp->device, "Creating QP type %u not supported\n",
+>   			  attr->qp_type);
+>   	}
+> @@ -473,6 +546,22 @@ static int mana_ib_destroy_qp_raw(struct mana_ib_qp *qp, struct ib_udata *udata)
+>   	return 0;
+>   }
+>   
+> +static int mana_ib_destroy_rc_qp(struct mana_ib_qp *qp, struct ib_udata *udata)
+> +{
+> +	struct mana_ib_dev *mdev =
+> +		container_of(qp->ibqp.device, struct mana_ib_dev, ib_dev);
+> +	int i;
+> +
+> +	/* Ignore return code as there is not much we can do about it.
+> +	 * The error message is printed inside.
+> +	 */
+> +	mana_ib_gd_destroy_rc_qp(mdev, qp);
+> +	for (i = 0; i < MANA_RC_QUEUE_TYPE_MAX; ++i)
+> +		mana_ib_destroy_queue(mdev, &qp->rc_qp.queues[i]);
+> +
+> +	return 0;
+> +}
+> +
+>   int mana_ib_destroy_qp(struct ib_qp *ibqp, struct ib_udata *udata)
+>   {
+>   	struct mana_ib_qp *qp = container_of(ibqp, struct mana_ib_qp, ibqp);
+> @@ -484,7 +573,8 @@ int mana_ib_destroy_qp(struct ib_qp *ibqp, struct ib_udata *udata)
+>   						      udata);
+>   
+>   		return mana_ib_destroy_qp_raw(qp, udata);
+> -
+> +	case IB_QPT_RC:
+> +		return mana_ib_destroy_rc_qp(qp, udata);
+>   	default:
+>   		ibdev_dbg(ibqp->device, "Unexpected QP type %u\n",
+>   			  ibqp->qp_type);
+> diff --git a/include/uapi/rdma/mana-abi.h b/include/uapi/rdma/mana-abi.h
+> index 2c41cc315..45c2df619 100644
+> --- a/include/uapi/rdma/mana-abi.h
+> +++ b/include/uapi/rdma/mana-abi.h
+> @@ -45,6 +45,15 @@ struct mana_ib_create_qp_resp {
+>   	__u32 reserved;
+>   };
+>   
+> +struct mana_ib_create_rc_qp {
+> +	__aligned_u64 queue_buf[4];
+> +	__u32 queue_size[4];
+> +};
+> +
+> +struct mana_ib_create_rc_qp_resp {
+> +	__u32 queue_id[4];
+> +};
+> +
+>   struct mana_ib_create_wq {
+>   	__aligned_u64 wq_buf_addr;
+>   	__u32 wq_buf_size;
+
 
