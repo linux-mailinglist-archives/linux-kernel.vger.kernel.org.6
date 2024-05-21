@@ -1,135 +1,118 @@
-Return-Path: <linux-kernel+bounces-184519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335628CA7F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:20:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF108CA7F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90509B22541
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:20:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB10E2818CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509BF46433;
-	Tue, 21 May 2024 06:20:46 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458AE4654D;
+	Tue, 21 May 2024 06:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zk6wIy05"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADEF219ED;
-	Tue, 21 May 2024 06:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714382F873;
+	Tue, 21 May 2024 06:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716272445; cv=none; b=fnI8/BsAxSsPYwSyAjkEnJj0HYi2OFCPJVsq08NZ99u38XiGhJW9dCpktopv8CWsoyW02xfrhDcieUvstG0nCVI1HT4NWHIVgTMlijyodyxQSBzXHPrkfSUIv1zFBcCtYd6IFCUhgrHXyS8yyoJay7JlsqxfivAEesu+LkLvGZU=
+	t=1716272479; cv=none; b=m5KGJW9XPMcotqgb+7MMK2nl/ozZqgFi/qdDeO9JTbR5iD64waPj/pQuNwqyH18c1icjzjStU/oZOG5ezOa05MQ7gBGkh2z1pXFrbiEat/GzKmUWuFLk0pWxPRy3XbYZ0Ox5fMxZItjSqk8yQATBR3k5ftSM8VseLtTzXq1iY6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716272445; c=relaxed/simple;
-	bh=Xh6d491DDdpGmslXz15RAaeZh0mydbiKq45shHXbaTY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:Content-Type:
-	 MIME-Version; b=sbm5sORVLPgi0ZIODmy2O1zTm3uCcz4hyyIO8LkEABkTeC1bloIlZCqRp7/vO/bry3VXfGbLpM5xmqYdaDvjozUpP5fV80H+JMtJq4Xdz9d7flA4BGv3KPbvyexM4RMheLfkSo73HOBZoHxI5Dda2AG0JGmaieDmzqhtKhqXZJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 44L6K43t82253130, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 44L6K43t82253130
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 May 2024 14:20:04 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 21 May 2024 14:20:04 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 21 May 2024 14:20:04 +0800
-Received: from RTEXMBS03.realtek.com.tw ([fe80::b9ff:7c04:a2d:c266]) by
- RTEXMBS03.realtek.com.tw ([fe80::b9ff:7c04:a2d:c266%2]) with mapi id
- 15.01.2507.035; Tue, 21 May 2024 14:20:04 +0800
-From: Larry Chiu <larry.chiu@realtek.com>
-To: Justin Lai <justinlai0215@realtek.com>, Andrew Lunn <andrew@lunn.ch>
-CC: "kuba@kernel.org" <kuba@kernel.org>,
-        "davem@davemloft.net"
-	<davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        "horms@kernel.org" <horms@kernel.org>,
-        Ping-Ke Shih <pkshih@realtek.com>
-Subject: RE: [PATCH net-next v19 01/13] rtase: Add pci table supported in this module
-Thread-Topic: [PATCH net-next v19 01/13] rtase: Add pci table supported in
- this module
-Thread-Index: AQHaqC9Rjgvgl8xidUGsWwGzPtgZ5LGa66SAgAZDQWCAAA0PoA==
-Date: Tue, 21 May 2024 06:20:04 +0000
-Message-ID: <e5d7a77511f746bdb0b38b6174ef5de4@realtek.com>
-References: <20240517075302.7653-1-justinlai0215@realtek.com>
- <20240517075302.7653-2-justinlai0215@realtek.com>
- <d840e007-c819-42df-bc71-536328d4f5d7@lunn.ch> 
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1716272479; c=relaxed/simple;
+	bh=QyUpE9XMBlIHRQI24cofeK5f6AJE0q3j683mGK5cjDY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=kJ1LW1FEAO6obSAZnQhd235kSPdukWAcGCE9e//h51ofpJkKijoFMS9yOKAdNNnUeDHsBVUxximAhB/btsKauRaocmJ790V0FIDhqvto1G2lb2qLg91JUnpZfS67TYXO2jXRwlsJlb05hzSUDdLiCfPFe5CR6Vx5nMC5Rqoiem8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zk6wIy05; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 164CBC2BD11;
+	Tue, 21 May 2024 06:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716272479;
+	bh=QyUpE9XMBlIHRQI24cofeK5f6AJE0q3j683mGK5cjDY=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=Zk6wIy05euOzmcXyJOhTEMXSwUCBLLbNmutx4DJWeQKgDBCsGHTdgJ2ye40xhT7Bx
+	 E7tEs0ICA6UnoPtZidAmJxR96tVEtqw24CCfjv1adGEOR/xwiPFEhgF8pMWYvuD4fn
+	 +Ftd7ZLD2YAeivD+WrNUfCbSwlAea0diZhY67GXE9g4LzIOoGU8JAHVzv7/ZCWFgTu
+	 V0UVpqskI52zf4oDajPygkppndTTDdoKh5vOLY3CleXkGNugG2kKf6YWD8BFCC9APH
+	 rKAJPHN19uITBasQD8Id7qIkJY2krieGpzuHRpuwIB4Hx2vylCiM8myEHLudLfkCiy
+	 LCmB8FfKRf3ww==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 21 May 2024 09:21:13 +0300
+Message-Id: <D1F3TDIAMTW0.2X7QDQ6TSUAGT@kernel.org>
+Cc: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+ "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+ "Andreas.Fuchs@infineon.com" <Andreas.Fuchs@infineon.com>, "James
+ Prestwood" <prestwoj@gmail.com>, "David Woodhouse" <dwmw2@infradead.org>,
+ "Eric Biggers" <ebiggers@kernel.org>, "James Bottomley"
+ <James.Bottomley@hansenpartnership.com>, "David S. Miller"
+ <davem@davemloft.net>, "open list:CRYPTO API"
+ <linux-crypto@vger.kernel.org>, "open list" <linux-kernel@vger.kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "open list:SECURITY SUBSYSTEM"
+ <linux-security-module@vger.kernel.org>
+Subject: Re: [EXTERNAL] [PATCH v2 2/6] lib: Expand asn1_encode_integer() to
+ variable size integers
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Bharat Bhushan" <bbhushan2@marvell.com>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>
+X-Mailer: aerc 0.17.0
+References: <20240521031645.17008-1-jarkko@kernel.org>
+ <20240521031645.17008-3-jarkko@kernel.org>
+ <SN7PR18MB5314CFBD18B011F292809EBFE3EA2@SN7PR18MB5314.namprd18.prod.outlook.com>
+In-Reply-To: <
+ <SN7PR18MB5314CFBD18B011F292809EBFE3EA2@SN7PR18MB5314.namprd18.prod.outlook.com>
 
-
->> + *  Below is a simplified block diagram of the chip and its relevant in=
-terfaces.
->> + *
->> + *               *************************
->> + *               *                       *
->> + *               *  CPU network device   *
->> + *               *                       *
->> + *               *   +-------------+     *
->> + *               *   |  PCIE Host  |     *
->> + *               ***********++************
->> + *                          ||
->> + *                         PCIE
->> + *                          ||
->> + *      ********************++**********************
->> + *      *            | PCIE Endpoint |             *
->> + *      *            +---------------+             *
->> + *      *                | GMAC |                  *
->> + *      *                +--++--+  Realtek         *
->> + *      *                   ||     RTL90xx Series  *
->> + *      *                   ||                     *
->> + *      *     +-------------++----------------+    *
->> + *      *     |           | MAC |             |    *
->> + *      *     |           +-----+             |    *
->> + *      *     |                               |    *
->> + *      *     |     Ethernet Switch Core      |    *
->> + *      *     |                               |    *
->> + *      *     |   +-----+           +-----+   |    *
->> + *      *     |   | MAC |...........| MAC |   |    *
->> + *      *     +---+-----+-----------+-----+---+    *
->> + *      *         | PHY |...........| PHY |        *
->> + *      *         +--++-+           +--++-+        *
->> + *      *************||****************||***********
->> + *
->> + *  The block of the Realtek RTL90xx series is our entire chip=20
->> + architecture,
->> + *  the GMAC is connected to the switch core, and there is no PHY in be=
-tween.
+On Tue May 21, 2024 at 8:36 AM EEST, Bharat Bhushan wrote:
+> > -	data_len -=3D 2;
+> > +	(*data++) =3D _tag(UNIV, PRIM, INT);
 >
->Given this architecture, this driver cannot be used unless there is a swit=
-ch driver as well. This driver is nearly ready to be merged. So what are yo=
-ur plans for the switch driver? Do you have a first version you can post? T=
-hat will reassure us you do plan to release a switch driver, and not use a =
-SDK in userspace.
+> Just for my clarification:=20
+> 	First index of "data" is updated here with tag and data pointer incremen=
+ted.
+> 	Next comment for continuation
 >
->        Andrew
+> > +	data_len--;
+> >=20
+> > -	data[0] =3D _tag(UNIV, PRIM, INT);
+> > -	if (integer =3D=3D 0) {
+> > -		*d++ =3D 0;
+> > -		goto out;
+> > +	if (!memchr_inv(integer, 0, integer_len)) {
+> > +		data[1] =3D 1;
+> > +		data[2] =3D 0;
+> > +		return &data[2];
+>
+> Here we are effectively setting second and third index of original
+> "data" pointer as "data" pointer was incremented earlier.
+> So second index of original "data" pointer is not touched. Also
+> returning 3rd index pointer of original data pointer
+>
+> Is that intentional?
 
-Hi Andrew,
-This GMAC is configured after the switch is boot-up and does not require a =
-switch driver to work.
+No! I read the diff few times, and I think you have a point.
+
+Indices should be 0 (length) and 1 (value). I.e. it forms an encoded
+version of zero. The last index what it should be, i.e. return address
+of the next byte after the encoded integer.
+
+Thanks for pointing this out.
+
+> Thanks
+> -Bharat
+
+BR, Jarkko
 
