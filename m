@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-184604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2BC88CA97F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:59:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4906F8CA986
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01D8A1C2129E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03307283118
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1814D53816;
-	Tue, 21 May 2024 07:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2510537FB;
+	Tue, 21 May 2024 08:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u4ADaoeW"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEG1oVRD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8C951C5F;
-	Tue, 21 May 2024 07:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE45B20B3E;
+	Tue, 21 May 2024 08:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716278345; cv=none; b=PsWo2+Oht6ax8MCHIersHz9VKOiEoqNePowE44I2hqsYofO3VAIrclwAgohSRr2Bo+P0nVyTczyCDQtc+hoP+Ygfw8yQfCj/t31fQKmP05G5D5Jh90Z6YywKN2CUB7z0ZBeHjqVNamAOl84dFd6J8rIf02DkhuHtoXi2bVbRnb8=
+	t=1716278454; cv=none; b=lkfeDOmG0t/VvmF/2IBqGva3Mrea5+itYBb2ZnNDO4oblwBvIel2sVk1KREFfPRY7r+L5PTPFnGnydVa2nDD6bCKWf5d+NDShY6Df+PYnSIGXXrX5dFI+S2YhF8zKMN6t4QdH34Rdzd+jl6Q0djGZPyPCqtKI239lUgZcp0cw2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716278345; c=relaxed/simple;
-	bh=FS9DQ4RsdW/wKyzu3gL+ApzVoigUb1QeBR3iqUhplBA=;
+	s=arc-20240116; t=1716278454; c=relaxed/simple;
+	bh=UMpk2XmZFk9Hk1ptfnrlb3PT18Y5P5/o13Gl8p/rTa8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JU7d12E/Emgmd3p2rK3IfTlYxRUS9y+r8KPK60e0MAA7Jjr3cDaUiR3PHIgo2NBQhRsLFb9WSaQYoiU6HDriUCfZY3lJf9IDJK306tKg0NOvRkSBq5Os1mJXMJ6uv6h5PNjNxHYsa43CzpdmT0UkQNid0OqV5pQ8maMqCKdsJHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u4ADaoeW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 340CEC2BD11;
-	Tue, 21 May 2024 07:59:02 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=V9JaJ3OrSe0L54DDNnLYn1BzP+euSXThgruC9vR6f6tgZQk3lUUCeYGBtFIuWG2mL8xcEeezeWzhXFGiCYXQe+3FosZeuk2HBDyvlDM3eKbPX5jWWNOKhSqlcK8GRlt+jtChUplOpv7CbuntVQRuCZiqPXaBg+Pueob7arqwlMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEG1oVRD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FB7BC2BD11;
+	Tue, 21 May 2024 08:00:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716278344;
-	bh=FS9DQ4RsdW/wKyzu3gL+ApzVoigUb1QeBR3iqUhplBA=;
+	s=k20201202; t=1716278453;
+	bh=UMpk2XmZFk9Hk1ptfnrlb3PT18Y5P5/o13Gl8p/rTa8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=u4ADaoeW9KYO81+dk8O/RPfZbUlxYU1sC3CmI5IYqlMrTenR7GbfRFt5iXb+Fk+vU
-	 vA7MVcSDS0Dq3aQL484kTd0aIuV1VKzlXEOv9S5XDxaXnBxM6T+DQ53VlbEkBYh9sm
-	 isDbq4TrDixPxLoKp2Me3eG3NnhleNdi5tn6bSCXGGUq09oMZgDhp7AKxtKl1Mv3gU
-	 Dk6TOej3byUHBnsEaCtw1ed0gdDvbBpTO7TzNj0jCQKT0yY1/Q/lhRT11fovEOxtXm
-	 B7/Yqa86vMdnjmvMG7g2ezj51XbcZV0cW0ErRaYxs+13IGyXzEoPvp7vO3mmKCISxA
-	 zw83S48gfee3g==
-Message-ID: <a3c76bd2-f453-4320-8675-66ecb4bc6fc8@kernel.org>
-Date: Tue, 21 May 2024 09:59:00 +0200
+	b=GEG1oVRDFQZ3M8NXYgC62/zcQW/TtmqELe4qJdxz6mUqysgfKAgxQY69Y6m1vqaqd
+	 cTyKSO3eXTTNUJvm+U6h3BEC+aQreWmR848UD37c33veGWJKnPeCTgnJYCeIBdLbVm
+	 miabfZE5RdCJWafgZkKm2DFSlcDqn5feIJ6fDcJq27FaGi/OlvsTqGCgJAtWBymkY6
+	 MDDX4Ydjtya156CW1WiBPh2oXLmypoTZ+u6LE7Li4sjt/Ca7nmhcYOkra6AbZHbvFk
+	 FD0kE3YdPMW5hxy2i5RRSGyS1AiNbov/DUpEQriACHVyt1p6mEiJ8xawxfyXVxJz66
+	 /og1CepEkGusA==
+Message-ID: <fe8af4fb-0cf6-4eb8-9500-dbe42b3a6a4b@kernel.org>
+Date: Tue, 21 May 2024 10:00:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: rtc: Convert rtc-fsl-ftm-alarm.txt to
- yaml format
-To: Frank Li <Frank.Li@nxp.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20240520214614.863539-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH 3/8] dt-bindings: soc: intel: lgm-syscon: Move to
+ dedicated schema
+To: Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lars Povlsen
+ <lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>,
+ Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com,
+ Nishanth Menon <nm@ti.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240519-dt-bindings-mfd-syscon-split-v1-0-aaf996e2313a@linaro.org>
+ <20240519-dt-bindings-mfd-syscon-split-v1-3-aaf996e2313a@linaro.org>
+ <20240520210729.GA1509114-robh@kernel.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,172 +110,41 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240520214614.863539-1-Frank.Li@nxp.com>
+In-Reply-To: <20240520210729.GA1509114-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/05/2024 23:46, Frank Li wrote:
-> Convert dt-binding doc "rtc-fsl-ftm-alarm.txt" to yaml format.
+On 20/05/2024 23:07, Rob Herring wrote:
+> On Sun, May 19, 2024 at 08:42:18PM +0200, Krzysztof Kozlowski wrote:
+>> intel,lgm-syscon is not a simple syscon device - it has children - thus
+>> it should be fully documented in its own binding.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+..
+
+>> +
+>> +maintainers:
+>> +  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - const: intel,lgm-syscon
+>> +      - const: syscon
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  "#address-cells":
+>> +    const: 1
+>> +
+>> +  "#size-cells":
+>> +    const: 1
 > 
-> Change example's reg to 32bit address and length.
-> Remove unrelated rcpm@1e34040 in example.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> 
-> Notes:
->     make dt_binding_check DT_SCHEMA_FILES=rtc-fsl-ftm-alarm.yaml
->       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
->       CHKDT   Documentation/devicetree/bindings
->       LINT    Documentation/devicetree/bindings
->       DTEX    Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.example.dts
->       DTC_CHK Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.example.dtb
-> 
->  .../bindings/rtc/rtc-fsl-ftm-alarm.txt        | 36 -----------
->  .../bindings/rtc/rtc-fsl-ftm-alarm.yaml       | 61 +++++++++++++++++++
->  2 files changed, 61 insertions(+), 36 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
->  create mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-> deleted file mode 100644
-> index fffac74999da6..0000000000000
-> --- a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-> +++ /dev/null
-> @@ -1,36 +0,0 @@
-> -Freescale FlexTimer Module (FTM) Alarm
-> -
-> -Required properties:
-> -- compatible : Should be "fsl,<chip>-ftm-alarm", the
-> -	       supported chips include
-> -	       "fsl,ls1012a-ftm-alarm"
-> -	       "fsl,ls1021a-ftm-alarm"
-> -	       "fsl,ls1028a-ftm-alarm"
-> -	       "fsl,ls1043a-ftm-alarm"
-> -	       "fsl,ls1046a-ftm-alarm"
-> -	       "fsl,ls1088a-ftm-alarm"
-> -	       "fsl,ls208xa-ftm-alarm"
-> -	       "fsl,lx2160a-ftm-alarm"
-> -- reg : Specifies base physical address and size of the register sets for the
-> -  FlexTimer Module.
-> -- interrupts : Should be the FlexTimer Module interrupt.
-> -- fsl,rcpm-wakeup property and rcpm node : Please refer
-> -	Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-> -
-> -Optional properties:
-> -- big-endian: If the host controller is big-endian mode, specify this property.
-> -  The default endian mode is little-endian.
-> -
-> -Example:
-> -rcpm: rcpm@1e34040 {
-> -	compatible = "fsl,ls1088a-rcpm", "fsl,qoriq-rcpm-2.1+";
-> -	reg = <0x0 0x1e34040 0x0 0x18>;
-> -	#fsl,rcpm-wakeup-cells = <6>;
-> -};
-> -
-> -ftm_alarm0: timer@2800000 {
-> -	compatible = "fsl,ls1088a-ftm-alarm";
-> -	reg = <0x0 0x2800000 0x0 0x10000>;
-> -	fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
-> -	interrupts = <0 44 4>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.yaml b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.yaml
-> new file mode 100644
-> index 0000000000000..69b44e9920033
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.yaml
+> Should have ranges.
 
-fsl,ls-ftm-alarm.yaml
-
-or
-
-fsl,ls1012a-ftm-alarm.yaml
-
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/rtc-fsl-ftm-alarm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Freescale FlexTimer Module (FTM) Alarm
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - fsl,ls1012a-ftm-alarm
-> +      - fsl,ls1021a-ftm-alarm
-> +      - fsl,ls1028a-ftm-alarm
-> +      - fsl,ls1043a-ftm-alarm
-> +      - fsl,ls1046a-ftm-alarm
-> +      - fsl,ls1088a-ftm-alarm
-> +      - fsl,ls208xa-ftm-alarm
-> +      - fsl,lx2160a-ftm-alarm
-> +
-> +  reg:
-> +    description:
-> +      Specifies base physical address and size of the register sets for the
-> +      FlexTimer Module.
-
-Drop description, redundant.
-
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description: Should be the FlexTimer Module interrupt.
-
-Drop description, redundant.
-
-
-> +    maxItems: 1
-> +
-> +  fsl,rcpm-wakeup:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-
-Please describe the items (see syscon-like phandles).
-
-> +    description:
-> +      phandle to rcpm node, Please refer
-> +      documentation/devicetree/bindings/soc/fsl/rcpm.txt
-> +
-> +  big-endian:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      If the host controller is big-endian mode, specify this property.
-> +      The default endian mode is little-endian.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - fsl,rcpm-wakeup
-> +
-
-Missing allOf with ref to rtc.yaml.
-
-> +unevaluatedProperties: false
-
-becauase otherwise above does not make much sense... unless this is not
-a RTC?
-
-> +
-> +examples:
-> +  - |
-> +    timer@2800000 {
-
-timer or rtc?
-
-> +        compatible = "fsl,ls1088a-ftm-alarm";
-> +        reg = <0x2800000 0x10000>;
-> +        fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
-> +        interrupts = <0 44 4>;
-
-Include proper header and use defines for GIC and flags.
-
-> +    };
+ack
 
 Best regards,
 Krzysztof
