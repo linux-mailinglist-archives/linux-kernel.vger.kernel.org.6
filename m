@@ -1,138 +1,183 @@
-Return-Path: <linux-kernel+bounces-184630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0E768CA9D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:18:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFD08CA9DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 560282814C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:18:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAA5AB218F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284675478B;
-	Tue, 21 May 2024 08:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339745579F;
+	Tue, 21 May 2024 08:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZ8VP87F"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RqFt/s8n";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jvFuB72T"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12DD51C4F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 08:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDB551C4F;
+	Tue, 21 May 2024 08:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716279514; cv=none; b=sLAPou+fbg+hjdp2buIYhKIUNVs1l/2pW2BrA/qpor0t4/AoyeI0M1l+Rvo5ivt1l2aA1URe4AEWp9gfb/V65oW4I52E/uUynZoDpXZncOrR93L8PImesA2G4QHYu3lQverS14JI8k35cGSYNBr6F7Cs1uFKaH92PJg0AiBCcIU=
+	t=1716279691; cv=none; b=hLKrYyKaCveLwswFdSUN2uCOXQUGqhe+nyOiYZIbLMKoj94a2X7LnZUTtSfpaOLfdXi82KyGR4/r0vMPLqhnWsoVsNH4XybP6AGMQxbCuqp4zeZ09cf6Cz/3rdu4JY0ePF8rNV1FYQvZhQmdlA5v4nI2IfcBzrWhKgrePOfRQvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716279514; c=relaxed/simple;
-	bh=iVc81OSdxb5pERXF6+iUCUmWh0yhsTTa7HTkE+s0Rgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lu6/sEszAm0wO5smi1qFkyR7P/dWpbs981Fy8pEGYaoATNGL5daEw1UWb8sj0ndpZjfsyF2ggXtT9InR9T9YvbLuYkXuBeQecyr6GJOH+jmpbimtON8UthIFknJNx9kX3lrjRLuVuwT6b18729PoT3eVgBqYRJ0bc2Qo+2F8hHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZ8VP87F; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57825ff689bso198763a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 01:18:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716279511; x=1716884311; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sNToKk98k1H7Spnqg2uOPUCXlDMEsg6fOLbiC3/CZak=;
-        b=UZ8VP87FQkI8R+/RkJzzJsCRf02zqORd9TroTYHbY8fbTXlQLc4UteyWwarmoH/sHr
-         CH/+5wV8Qr6rF2TYYiTlw4Vt4M5mfF3cQWlfyvJY6zCnPNWRqbFJ/Woc2pQqrZQLRZEK
-         PYk6tkQMPF6Yy5XGnAnX3yL9D5MS/n5Ia/7uY5VXnm42n2MDtaW3W+u/KLqDOxFL3L31
-         XYbkbDypUD5HejERbja4tmSshJVJSVT5NzFKGkX0Ra6yujecCafvgdXakHrRCzoa10sk
-         mtIi76ru+2NKPXMIf2CqknNgXsSHyPx/8CCbWuGpma4L0FIHpp/F8j3KU4G15eGokGQM
-         MkfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716279511; x=1716884311;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sNToKk98k1H7Spnqg2uOPUCXlDMEsg6fOLbiC3/CZak=;
-        b=OkP2gw0I1trHYrh2iTIoE23zg/vfolm8CRHTfQWG9IBPLMtJ+K1qOLI4gPaUNpNFv+
-         OgPGjLvznYDr9DfEYHgA+XnDe0jtzrT+DnSmwd1ii9MOqYkAddamYzLZ1pyieYR3tp3J
-         VV0Y5knFCPCpr23wY1I3V0jSXstKjUemfYPLu40N7nZEVsObMi7+GET+YR7tn4/O6No/
-         JcuJoYlx2gka0L428ZivLPUqGqddVm6GPWvuztvMpRfkoLrtWfR2XQ7VZ/pftiNYsJyf
-         /v9Nsqk8K4O5RKA7uYnYGNlbuK16eJ7oaemWt0yarF89plGSTphI7/3OCcnx5ZbYCR6l
-         qyJQ==
-X-Gm-Message-State: AOJu0YyqN7GAIEtl2yoYhfNEwMuQSenc1gDVHkXqd5UXAqpw17/qxID/
-	KJzDhQcjdAQEJZeamxaWVOMoNqGHvb9QA+jK0p2nLt940YuR2wVtjBQQybKM
-X-Google-Smtp-Source: AGHT+IHlEHOib9NDYDqzIR09r1rtbz1uLpCgROxsqzFO8gPg5xl74alEy0rhcXS6byPPy9MxaQdLcg==
-X-Received: by 2002:a50:bac4:0:b0:572:9f40:514d with SMTP id 4fb4d7f45d1cf-5734d67aadbmr19405007a12.29.1716279510748;
-        Tue, 21 May 2024 01:18:30 -0700 (PDT)
-Received: from gmail.com (1F2EF63D.unconfigured.pool.telekom.hu. [31.46.246.61])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733becfbd3sm16764046a12.44.2024.05.21.01.18.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 01:18:29 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Tue, 21 May 2024 10:18:27 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH] x86/percpu: Enable named address spaces for all capable
- GCC versions
-Message-ID: <ZkxY04qY7spBvlYb@gmail.com>
-References: <20240520082134.121320-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1716279691; c=relaxed/simple;
+	bh=TPNf0DN9ZUALd+1/r4ahQlBuhwHVsSYRR+3/ur3Jz9U=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=hKJiNBkBc0vS3HGFNNSUjPnKavD/IFlPC0hfJkIFcY4aDwIZIpAmOlA7z6YpvsLu5R5nWN6VcP32GBZf2tkT0xEwAONMmcCcBoBhrdf6hhmlmYwMYmbXXE4eshwG7mYFpcy3tpwsGY0+qC/qTmLQ9kMvNCBlrLgnTMTmK5/VwwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RqFt/s8n; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jvFuB72T; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 21 May 2024 08:21:26 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716279687;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JqGa1COheHGNBGh5TZ+qFIrrxvZKLlcTiRfbU4RvjQA=;
+	b=RqFt/s8nvcHTGmCNNx6GOfa/r2DVlSgS2Q8c2sydrLswj5DucfLkUJMwfXuzVr7x1vs9e0
+	H9ikQHuqsx8vlYCjw/AEQvaNKQwHjV0IKrT71RkKxRIZfPk1wFe9Z3qCaj62K53+fjHPWU
+	UU7nEGQeA1xWIPODOeWUDOm5/kO2S72RKnVcTsSD+EW9dxyK5aCS0dEHYIMMul8zJYemca
+	EpTLEImhPmRE6sy7nfyC1JZTqgC92mq4flmzvDCUT0NRIxy/NhYHz9mq34DNS23a+fSxte
+	YAIU5bf/N4cP4JpZ6AV4R4m9d/2bW21lzwXKYoYccdOHyDqhSHe8/SMxa+osGA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716279687;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JqGa1COheHGNBGh5TZ+qFIrrxvZKLlcTiRfbU4RvjQA=;
+	b=jvFuB72TAfPUSshNPIPmTP4uQnoM3sYmUkKERYWt7Vo8GhTqkFFr3x6yDmcQgcXGL5O4Ul
+	CZ/7DbhJGhD2K9Dw==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/percpu] x86/percpu: Move some percpu accessors around to
+ reduce ifdeffery
+Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240520080951.121049-2-ubizjak@gmail.com>
+References: <20240520080951.121049-2-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520082134.121320-1-ubizjak@gmail.com>
+Message-ID: <171627968673.10875.680212759397687471.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/percpu branch of tip:
 
-* Uros Bizjak <ubizjak@gmail.com> wrote:
+Commit-ID:     47c9dbd2fb5f98453840e18ebced9138ec8b4cc5
+Gitweb:        https://git.kernel.org/tip/47c9dbd2fb5f98453840e18ebced9138ec8b4cc5
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Mon, 20 May 2024 10:09:25 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 20 May 2024 10:25:31 +02:00
 
-> Enable named address spaces also for GCC 6, GCC 7 and GCC 8
-> releases. These compilers all produce kernel images that boot
-> without problems.
-> 
-> Use compile-time test to detect compiler support for named
-> address spaces. The test passes with GCC 6 as the earliest
-> compiler version where the support for named address spaces
-> was introduced.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Brian Gerst <brgerst@gmail.com>
-> Cc: Denys Vlasenko <dvlasenk@redhat.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> ---
->  arch/x86/Kconfig | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 9d16fee6bdb8..c9e0a54f469e 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2430,7 +2430,8 @@ source "kernel/livepatch/Kconfig"
->  endmenu
->  
->  config CC_HAS_NAMED_AS
-> -	def_bool CC_IS_GCC && GCC_VERSION >= 90100
-> +	def_bool $(success,echo 'int __seg_fs fs; int __seg_gs gs;' | $(CC) -x c - -S -o /dev/null)
-> +	depends on CC_IS_GCC
+x86/percpu: Move some percpu accessors around to reduce ifdeffery
 
-So ... will this test also trigger on Clang, which might have a 
-__seg_fs/__seg_gs work-alike definition?
+Move some percpu accessors around, mainly to reduce ifdeffery
+and improve readabilty by following dependencies between
+accessors.
 
-Thanks,
+No functional change intended.
 
-	Ingo
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20240520080951.121049-2-ubizjak@gmail.com
+---
+ arch/x86/include/asm/percpu.h | 40 ++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 21 deletions(-)
+
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index 39762fc..0f0d897 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -445,17 +445,6 @@ do {									\
+ #define this_cpu_try_cmpxchg128(pcp, ovalp, nval)	percpu_try_cmpxchg128_op(16, volatile, pcp, ovalp, nval)
+ #endif
+ 
+-/*
+- * this_cpu_read() makes gcc load the percpu variable every time it is
+- * accessed while this_cpu_read_stable() allows the value to be cached.
+- * this_cpu_read_stable() is more efficient and can be used if its value
+- * is guaranteed to be valid across cpus.  The current users include
+- * pcpu_hot.current_task and pcpu_hot.top_of_stack, both of which are
+- * actually per-thread variables implemented as per-CPU variables and
+- * thus stable for the duration of the respective task.
+- */
+-#define this_cpu_read_stable(pcp)	__pcpu_size_call_return(this_cpu_read_stable_, pcp)
+-
+ #define raw_cpu_read_1(pcp)		__raw_cpu_read(1, , pcp)
+ #define raw_cpu_read_2(pcp)		__raw_cpu_read(2, , pcp)
+ #define raw_cpu_read_4(pcp)		__raw_cpu_read(4, , pcp)
+@@ -470,16 +459,6 @@ do {									\
+ #define this_cpu_write_2(pcp, val)	__raw_cpu_write(2, volatile, pcp, val)
+ #define this_cpu_write_4(pcp, val)	__raw_cpu_write(4, volatile, pcp, val)
+ 
+-#ifdef CONFIG_X86_64
+-#define raw_cpu_read_8(pcp)		__raw_cpu_read(8, , pcp)
+-#define raw_cpu_write_8(pcp, val)	__raw_cpu_write(8, , pcp, val)
+-
+-#define this_cpu_read_8(pcp)		__raw_cpu_read(8, volatile, pcp)
+-#define this_cpu_write_8(pcp, val)	__raw_cpu_write(8, volatile, pcp, val)
+-#endif
+-
+-#define this_cpu_read_const(pcp)	__raw_cpu_read_const(pcp)
+-
+ #define this_cpu_read_stable_1(pcp)	__raw_cpu_read_stable(1, pcp)
+ #define this_cpu_read_stable_2(pcp)	__raw_cpu_read_stable(2, pcp)
+ #define this_cpu_read_stable_4(pcp)	__raw_cpu_read_stable(4, pcp)
+@@ -535,6 +514,12 @@ do {									\
+  * 32 bit must fall back to generic operations.
+  */
+ #ifdef CONFIG_X86_64
++#define raw_cpu_read_8(pcp)		__raw_cpu_read(8, , pcp)
++#define raw_cpu_write_8(pcp, val)	__raw_cpu_write(8, , pcp, val)
++
++#define this_cpu_read_8(pcp)		__raw_cpu_read(8, volatile, pcp)
++#define this_cpu_write_8(pcp, val)	__raw_cpu_write(8, volatile, pcp, val)
++
+ #define this_cpu_read_stable_8(pcp)	__raw_cpu_read_stable(8, pcp)
+ 
+ #define raw_cpu_add_8(pcp, val)			percpu_add_op(8, , (pcp), val)
+@@ -561,6 +546,19 @@ do {									\
+ #define raw_cpu_read_long(pcp)		raw_cpu_read_4(pcp)
+ #endif
+ 
++#define this_cpu_read_const(pcp)	__raw_cpu_read_const(pcp)
++
++/*
++ * this_cpu_read() makes gcc load the percpu variable every time it is
++ * accessed while this_cpu_read_stable() allows the value to be cached.
++ * this_cpu_read_stable() is more efficient and can be used if its value
++ * is guaranteed to be valid across cpus.  The current users include
++ * pcpu_hot.current_task and pcpu_hot.top_of_stack, both of which are
++ * actually per-thread variables implemented as per-CPU variables and
++ * thus stable for the duration of the respective task.
++ */
++#define this_cpu_read_stable(pcp)	__pcpu_size_call_return(this_cpu_read_stable_, pcp)
++
+ #define x86_this_cpu_constant_test_bit(_nr, _var)			\
+ ({									\
+ 	unsigned long __percpu *addr__ =				\
 
