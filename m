@@ -1,247 +1,448 @@
-Return-Path: <linux-kernel+bounces-184830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA6D8CACA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:51:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E850A8CAD0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E31D284373
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:51:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 343BDB22BCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C94677F15;
-	Tue, 21 May 2024 10:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2F1745E4;
+	Tue, 21 May 2024 11:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uJRmu4sl"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2077.outbound.protection.outlook.com [40.107.223.77])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="T0tRzF6L"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18297353F;
-	Tue, 21 May 2024 10:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716288634; cv=fail; b=uUGthX1vtcQWr7s5bWIPFJwRBUu1T1nFPh20vUZwa+Lx23IjVjffsAvd4s+sSEzSRCnV3GD/fbL0ffmsPL1Y1StPVxDNGUP8mPn00TkfFdnUkjGMY7Wh+bSjr0Sz6kRxO2Bgik47yfoip0cno8SxOd/t+hsQE/NolyiC84WLeY4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716288634; c=relaxed/simple;
-	bh=i6AAUfUc9ShIGlAcNt2PjQKn0WqP3YNWWk/Bl4brhjM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VBE9rqfwuPqOKunNWPfB1qkUSQGi/V3tvGirfD+fMQgwXEkUZLv6d1rYIPf/JbBRvWPze4EUNOEIEqa2x+JsgcKutJmk9WVlo5aMqd/4nczwfJZNdC2LwWyUsuH4q/JE0at44L3UvDa6+cJd58p4gy/+ws6LibW/yCRumuspcEA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uJRmu4sl; arc=fail smtp.client-ip=40.107.223.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BKoveyQPWUoFlUm+RWDeVKYPT990qo26Q6S597yEa/TM1lW9z+sbeVYwgpgGex+0iMSCTLVdAIFRa50DlncgHA8TJnuW8irhr09F2WP1m6BKuqkSHfPz0OorgFBjTHV4/sT06jXvNFzIcEMNebPqsbnAfuet+4Tlu4obxgjOSa37qwHDJv+Bo74P3RrECgbqZx8JVi3X0Iydk4ljGwibkg4ZOBxKqLuN3g1YxwqvBPVM4BGK+8mHK2zJdDKZUyVtRCj9RlqiumwZ79KhUZq93L44eg56K2Fba5jzplQZJ2wswiRd1jE+Og3AwuKy/5WIeJyo/B+xei84BoW+f5oORw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XbA9ikWOn3+DIOrybZA/FX5cdsLJ2m5Uz2Ut7wquqFo=;
- b=ZplKVdUr62tgt0JjD5j7NBPS69WP54hUTti2b/ZcZSg3Nw9ktwMl667yHu4/Rd4RDZdiHLognLV9hegK/NNqgbr8euJTQyo6kIwG8+JO4bfVaLigk9VtloXHZs06sgJhDNgnMp2AYQ2GRou6egSekcmVeQCcEepOFoGRe8guO3Re2wbsz1rgdvLtvT87XKAUddRawHUGmZ7Mh8W5hDe94eH5ozEzICyCcmxOJAJMfIWM6vt4NXzcJasYpvh3ciUG/lv7WV0ypDJ3vXvfilDk7iKHsxJQ/Y/65bIJkXorAhh0dHk2HZeq0H5B1DYC0conLydsmGV3j6sQpvMtw4MHSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XbA9ikWOn3+DIOrybZA/FX5cdsLJ2m5Uz2Ut7wquqFo=;
- b=uJRmu4slio9FO2XHzddM012hPzv6oLZ2BwRHPfX2JE0DH6oaZa202YHNXBwAjBwmoNeTBWqDTBBOCFNThw+II9SOCtSWx5x8a5rLSuOaHcJA/9aoAS7wifWb097sTAl4o/Nz1h1kNfENBz40ZtlylcYUZobV7DfcasMKN8/w02A=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by MN0PR12MB6056.namprd12.prod.outlook.com (2603:10b6:208:3cc::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Tue, 21 May
- 2024 10:50:30 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7587.035; Tue, 21 May 2024
- 10:50:30 +0000
-Message-ID: <b04e04bc-a0dc-434f-b7cb-7df2cd3abab1@amd.com>
-Date: Tue, 21 May 2024 05:50:23 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION][BISECTED] "xHCI host controller not responding,
- assume dead" on stable kernel > 6.8.7
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
- Gia <giacomo.gio@gmail.com>
-Cc: Christian Heusel <christian@heusel.eu>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- "kernel@micha.zone" <kernel@micha.zone>,
- Andreas Noever <andreas.noever@gmail.com>,
- Michael Jamet <michael.jamet@intel.com>,
- Yehezkel Bernat <YehezkelShB@gmail.com>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- =?UTF-8?Q?Benjamin_B=C3=B6hmke?= <benjamin@boehmke.net>,
- "S, Sanath" <Sanath.S@amd.com>
-References: <CAHe5sWavQcUTg2zTYaryRsMywSBgBgETG=R1jRexg4qDqwCfdw@mail.gmail.com>
- <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
- <lqdpk7lopqq4jn22mycxgg6ps4yfs7hcca33tqb2oy6jxc2y7p@rhjjbzs6wigu>
- <611f8200-8e0e-40e4-aff4-cc2c55dc6354@amd.com>
- <CAHe5sWY_YJsyiuwf2TsfRTS9AoGoYh4+UxkkZZ0G9z2pXfbnzg@mail.gmail.com>
- <20240521051525.GL1421138@black.fi.intel.com>
- <CAHe5sWY3P7AopLqwaeXSO7n-SFwEZom+MfWpLKGmbuA7L=VdmA@mail.gmail.com>
- <20240521085501.GN1421138@black.fi.intel.com>
-Content-Language: en-US
-From: "Limonciello, Mario" <mario.limonciello@amd.com>
-In-Reply-To: <20240521085501.GN1421138@black.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR08CA0023.namprd08.prod.outlook.com
- (2603:10b6:805:66::36) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC1C62A02
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716289568; cv=none; b=sZjjtEEXvSlz3eZrOvg4EC12kdB/VR/GEqrbXXRw0bcThSrkDmCWaSVNuqycGb2XCKvowoAC3YavZv2MS5DTw2GAmSChS9IiZKYzMszrbq49GduWOdOY6gCGvmNXIl8JzOCseQ+UcoSFQmgycx76S9HstmxSQmBOrenVsnQ65Ns=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716289568; c=relaxed/simple;
+	bh=o44WQQLOr+jbcEqW8C4R1uKdiNVbrDAo5or5/+ckeJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=pbZ/Zw482k7/dJX6qYyHQwz/YTVXDd0oLZDviXGKfGIZzXjz1yTdACEj5xH7h+dhTiX0P8u411YBdXS0Ed95lC2vSjnRpfp6InuPzuNIrKV97EZB1Cd2BC8kAIicJHMxSSMbC3pegtiIH5DJOUTOJE0+IR5NE2NxoPfCBFKOZv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=T0tRzF6L; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240521110603epoutp01ded94bf2a7b6d8048960b1c3a695f9c7~RfEOqx2wp1544915449epoutp01D
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:06:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240521110603epoutp01ded94bf2a7b6d8048960b1c3a695f9c7~RfEOqx2wp1544915449epoutp01D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716289563;
+	bh=wSEDsytbD7se0+xPMl8QsO9Y8bzwKozeONYaDOcAYkA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=T0tRzF6LU8276fv8261/fxJeIFN9Ksolvziaebf34uYjfjshTKtrQayMgOdyf2uFU
+	 wAGdszepUEDFNtWfWo6l1dTeiiT5TdgEbv/2RBnl6qjpIJx2idC89y0iInW5d9UHhx
+	 +Au0Q7ghjg41uhEv9zQzakOIIJLMRfK6AlBIOgEM=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240521110602epcas5p1a38d5dca6dd409e90b38345b9894409f~RfEN9tTPy0892108921epcas5p1C;
+	Tue, 21 May 2024 11:06:02 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4VkBSS3vmJz4x9Px; Tue, 21 May
+	2024 11:06:00 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	09.F5.09688.8108C466; Tue, 21 May 2024 20:06:00 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240521105753epcas5p18f2c0624aeed49d549cc041a79de0ca3~Re9GlZHVd0195801958epcas5p1r;
+	Tue, 21 May 2024 10:57:53 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240521105753epsmtrp203ee2b39fa95d524d64b55226de24106~Re9GiyYM91824018240epsmtrp2K;
+	Tue, 21 May 2024 10:57:53 +0000 (GMT)
+X-AuditID: b6c32a4a-837fa700000025d8-af-664c8018f4a0
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	DA.1C.19234.13E7C466; Tue, 21 May 2024 19:57:53 +0900 (KST)
+Received: from green245 (unknown [107.99.41.245]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240521105749epsmtip1e6401767b96e4918e0ae9e0e52120cd2~Re9CmycwF2242022420epsmtip1l;
+	Tue, 21 May 2024 10:57:48 +0000 (GMT)
+Date: Tue, 21 May 2024 16:20:50 +0530
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
+	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
+	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
+	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
+	<kch@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
+	Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
+	hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+Message-ID: <20240521105050.r7webdbevi2ywsni@green245>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MN0PR12MB6056:EE_
-X-MS-Office365-Filtering-Correlation-Id: a65a8de7-9ef9-472a-7835-08dc7983d4de
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bXZIYVFmazFrN3BGVUlzOEwxTDZEeU5CTDZYNU0ycFJXSUtzVkRZeVNIcytG?=
- =?utf-8?B?YXdNRFhjVzgwNnFYTmV4M3NjbVVYOTEzZnFDSkJMbWhmdHE1anc0T1JHRGJ4?=
- =?utf-8?B?bmpublVMa2R0eGJ1Y1ovZDV5dURNcUJUQSsyVHI0cG82Qlc2Q0pCMFB1Um1x?=
- =?utf-8?B?UG42QzNJTzhXanlNbVJPNExjczhIL2hjRFZmV2FwaGtwQXJDYktsUTdwQzNG?=
- =?utf-8?B?cjIveUJYQ2RNWEFTMHNvVWdyZXdzeGxkTyt4dEJ5SWlxenczZ09oRVl0Ujk3?=
- =?utf-8?B?MHNld0hGUXpCK2g0MVRMbVNHaGY2NzFNVVZEeEN3Wm8zNk5WRFRJUUlRb3hG?=
- =?utf-8?B?SFZpdnBCZHpUQ2xmUjRCdEtyWkxGNStPak9iYnQxdUMwWnZGWDI2aHpwWGEx?=
- =?utf-8?B?eXdVUzM0WkUzMVdPdWZ1ZFVYeXFzVXBQc041czZFclRMNW5KaXdMd2lPQXQ5?=
- =?utf-8?B?TFIzTDBjS2xmN1Z5d1hCdThsWHdmUE5QTW9tamlVaDhQdm9aVEJRQnhNK0ta?=
- =?utf-8?B?ZUJDZzlEV1lGMHJUVkRwT1A4WlpMSVJBYWtQazNoTXVYdVV3NWtrV3hJVk9I?=
- =?utf-8?B?OGFWUy9FS0Yxb2tzcEQ2eWc0S015OUdCaWtOdFphTmpGbHRRK2xBaCs5bXgx?=
- =?utf-8?B?S09maVdkOG1ya3FLVE5FUjFITzV4dHoxTWhma0xnYTk1U2hQMnBYbzFObENS?=
- =?utf-8?B?aWpUTCtHVVBrOWFwWnZZVy9pQWVxd3lDK0JPemNKaGNseHE0MHBVSThuSWZS?=
- =?utf-8?B?QUZRc3lGN1ZDaXZzeEpZVDZjSWc0LzR1ZGhJd1NTYXNUQmZtSmdsUnR3SzlS?=
- =?utf-8?B?Z0NPVDZjZjQ0ajNoN1dxQU12ck9Fdmp1TlpiaDkzclBzWmZXaHcxeTc2cVAy?=
- =?utf-8?B?VjA0YnVudW1jY09lRVE5WjlBSjdFUTF6TE1zaVZ0OWxSNzExYTI2ckhBeklJ?=
- =?utf-8?B?Y2ZRTDdKSGhrSXRkSC83TExhVUxCY3ZPOHFRTGEzbGxCZW5QOHh0S0RLSzJx?=
- =?utf-8?B?a2JWNWFzMTFlYzFXNzhwMFVleEFyZkMzaVNWK2dUcHJsNzFsT1lJSHpjRDhi?=
- =?utf-8?B?a0p3TkhvRTFjWU9KOS81cVFvTzZVRTd3QnlYRXhjb2F0cDVrWG1NWDVzSlFE?=
- =?utf-8?B?NG1MeHdwZncrQ0ZLamtheG0vS1ZuNldwWklmQ2pwVzNubkxyYXRuWFRLMzBo?=
- =?utf-8?B?SEFFY0hJbUdYb2Mvdzd4M0VSUkpsUGJOWjFMbCtIcjBqeFNhNnprQW1kZ2pp?=
- =?utf-8?B?U3NjTEdlMUtlS29reVBRNGdIaUVkeVhWSGkxMWdqUHlSSVJlN0FpUW5adFVy?=
- =?utf-8?B?dGp5OVFKVytaM2xOdExGbWZnWGthY0I3Z2p3VVlkOFlZcjJBTG9BQ3d4b1Ri?=
- =?utf-8?B?N05aR1BhOXM5Q3pqYThHa1BEcFVicTdYajFqWWlyRUFYY2lVb1lpdnRWNWxR?=
- =?utf-8?B?QUhLL0VzdlNCUEsxWHZzNHpheXFEeVlCZktadVBJWWdyRVo3ajBhd2RRL0Zt?=
- =?utf-8?B?bmRrQlJsaVJCcjRWUURzTWEvZnQ3NlRjYXVMaDhHSU93OGo5L2NNcndPN0I4?=
- =?utf-8?B?N1FWb2VSQ1k1akl1TkFHZjlmSkluelExVTZCNEtNVU9vWUZSMXQ2NFU3c2Jp?=
- =?utf-8?Q?9ADxlsLxBEtd79LgbLR7hzO8+qqzreLDtOLFCuUfgAW4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cWJCVlV3THpTVVlYOVRPWGJtOTJCYWlUYlV0aEJXdERrSmdLbkJRNkJNbGl1?=
- =?utf-8?B?TGUzRkRTUWlhNHlobEJtaDJ2a0IrNWlaY0FXcEVsblRFcTRzZFF4QzZXRU95?=
- =?utf-8?B?TXdEM2V2NlhzaXFoOU1RN20xdGZMQkM1OFNlTkRveko5Z25LeFVDbWNaenY2?=
- =?utf-8?B?MDFMYnlpK3RkVW5mTEo0anAvN1ZuelcwSDZoOVNKZGpQcVhGbDlucEt4akRL?=
- =?utf-8?B?TmdxNnRIUHlLNnk0Z1c4QVlPOFNIY3hlS09KOFZWZ0Rqa0ovZXJXNHdYT1py?=
- =?utf-8?B?UWI3bVNKV1Axc0tZVGVMa00wdkY1R3p6S1c2bTltYVpBQ0VZR1QrdDVhVzVN?=
- =?utf-8?B?V2JMMGJUM1ZyWFltSk9ROUZRWWJycWdiaEJSUC93SEdxUmpQTmt0Yjgra0tD?=
- =?utf-8?B?RDlqSXFyanQ5WkRIY2N3M0c5UTRlTDVXQ3JDODkzRlkwVVMvZnlNNCtqQ3JS?=
- =?utf-8?B?cWF6TTJZSmIwRWVkVVdmcEkrWFp5STY4M3dhQW54RHBwRkwreG85MFZwVXJ4?=
- =?utf-8?B?b2gxMjhQM3Bpa1BUM2dsT2QrZThxNFUwK1djd0V0ekVQdjIzUGlockV1K2Ft?=
- =?utf-8?B?STlrcW81cWxYengrTVJ4dzVpazhnV3lYRDdvckRBcERZNDBUQXRZNDA1RnJ0?=
- =?utf-8?B?azhqQjRXTm1DYzN1c0lDUnNzRTVibmhxZk9QaUxJUnFhdWpYcTVEMlM1eXZ1?=
- =?utf-8?B?YmZLWXBTUDIzc2FxU3dlYndUWjkrbUpqd25MaEUveXZXanZQZnZJby9MMkt2?=
- =?utf-8?B?aFluN0NjQVJORThzZ0xJZ2FweEVEQUhMbmg3WmxTVFVMN1RZbEJrNVRxOTBG?=
- =?utf-8?B?TU02VGJIL1dtNUJ1cEorNnNNWFgvWnlZanVFaTQ0K0E5OElTWjQxbk1MQnpC?=
- =?utf-8?B?YW01VW42NmVnZXlhdnZjcG9wbVVtZ3dGU0c3d2FkTVhTTXJtNjludGJsSDZS?=
- =?utf-8?B?N093NWNOWGYyMjFqZDVHZjRvZTFwUTdjdG1ValNWWldvS0hpTk9McnhWeEYv?=
- =?utf-8?B?b2l6OURPdGdjclF3WXlnK1A3K01uSVNicExiNGduUm4rUHQrVUh0WmNlalI0?=
- =?utf-8?B?UUFmdmdxSTBrL21MOHU3NHF3VWRYMEVtcHJIYk45MTAzMVV2WnhJeHV5cnBw?=
- =?utf-8?B?NWhoT1EyTmRQT0YwcktsalhCa0Z6Wm1oTDllcC9XaEZzTWxtSEFKNjhZWHBQ?=
- =?utf-8?B?ZlBKWDdJVis2VDJuVklYVHp3Y0d4MjcvNnBvUkcydmZyRDNtdjdZT0tSSFF4?=
- =?utf-8?B?REtKWVVjd0F5eE5YUE5HNWRyUnFNQkFaMS9yYyttNjdSYzE4QnVLcFQwcXZC?=
- =?utf-8?B?dWxWenkrMk5HTVVUUWJEVnJoZXRPZGNPbW00Q2IwL1A1TzUyZ2ovWmZtUGpa?=
- =?utf-8?B?S2s2RXVFaFBlbWk4ckhFVGIxb2l6aVZVUXo2TTMybUZpYUkzQjVhNDRGbDRs?=
- =?utf-8?B?U3NmZkJ6dERHMG9QMEdORUM3K0djbDI3V3RYdWxPdVpGSncyZkozR015VmR0?=
- =?utf-8?B?amNMQVNwZHgrTjN5VmhCWG9pcDI0Zy9FeitITG12QVVERVlkZ3pQb1F1eitN?=
- =?utf-8?B?Z2ZHTVdUZ295dzVOWEsxQkJoWDBiZjN4K1lxdjVXVEdFcngxMXhKbkw2MFJs?=
- =?utf-8?B?bnNJb1lWUStkbmFPdWs1N2Y4b3VMNTZ2d2kyVHZsTWk4QUJiczlINHE2S0RI?=
- =?utf-8?B?dTFjQXdSSEtzcTNZYy9CK1Nlb2V1a0cwMHpEVG9WUFRtcHNkdW5rc0RHeEhl?=
- =?utf-8?B?dUhNUWVLMEQ2TmxVMm1YQ3JOSk1kcy9ybHp3ZnZXa0lIYVNFc2ZrNjdWYXRZ?=
- =?utf-8?B?M3JiQnJYdDVNdlhIaDJtY01FYXVtZDNxVFQ5TjlNM01vdGdKZ0F5OE0zMlRj?=
- =?utf-8?B?ektoTU1IYitOTGkxOFBRazFiUjFQNGs3TnVZYXRlQTJvNDV0eHV5VUdaMTBB?=
- =?utf-8?B?WHgzVE0wT25tdW8vRS9sVUxqK1BjdHFiaWdIR3ZjK0ZQd0NLR20rUlVWOG1y?=
- =?utf-8?B?WWdXSFNGRzRZeXFMQTZsVFBEVmJxOXAweVc4bjFHSjRsSzV0aDdzZ2FrTjJW?=
- =?utf-8?B?YVgzQ08wSXZOd21PZTNpczk3cXdVTDc2VWFiU0ZOQkp0bWVHbkNhRld4cUs4?=
- =?utf-8?Q?i5GVOvgQQ7N6JT9JiE9VVKGiL?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a65a8de7-9ef9-472a-7835-08dc7983d4de
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 10:50:30.0166
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZqtJCnq0m3AhHA2ci9BJTemTfpJjF//5Fzd7kbHSjH8PVM6Ii8kdTpQ0y9yuoEBRTsT8VgfoQ2F1nhbibz7/9g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6056
+In-Reply-To: <8f60ed88-1978-4d7c-9149-aee672aa1b09@kernel.org>
+User-Agent: NeoMutt/20171215
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTdxTH97v39lJIMFdA9xPYIDWGV4CCUH+oPIZEL+ACCxE3nIOGXigC
+	bdfCFJNtIEMUw1sUykPGmMyC1kG38RQCKFCpbGIRcCAsZVnkLTpinDDKVeN/n9/3nO85Oefk
+	x8UtmkysuQmSFEYuESbxSDPi1x4nZ1eYfjiOv1pmg9TaOzg6U/AKR/UT+SSa7XkK0KWlFzgy
+	dGUD9FI3hCPNnUmApjr9UXVNJYHGulow1F5ThKFr9bcxVH45E0O31+dJVNQ9AtCMXomhjnEX
+	9P3ZWgK1dwwQaLi1gkRXrs6YoLq+NQwVntNjqNmQAdCN2UUC9Y/boKFXfZwAW3r4QSitrYF0
+	i3LChB6a/Jmgh3WpdKPqPEk31X5L/9NUBui2sXSS/iGvmEPnZi6QdEvWYw69PDNO0Iu39CSd
+	p1EBerC61yTcMipxv5gRihi5PSOJlYoSJPG+vNCI6APR3gK+h6uHD9rDs5cIkxlfXtDhcNeD
+	CUkbC+LZfyVMSt2QwoUKBc/db79cmprC2IulihRfHiMTJcm8ZG4KYbIiVRLvJmFS9nrw+Z7e
+	G4kxieLnl24C2UDEqUd5tVg6aD2QA0y5kPKCOt1lMgeYcS2oNgBfqIuBMWBBPQWw7tz2tzzU
+	YJsDuJuGklufsfktAC60dRPs428A9RMPOEYDQe2C9aWthNFAUi7w7jrXKFtRDrCkuB0Y83Hq
+	FxJWPcvfzLekYuC8tnCTzSkBXKooNWF5KxwoM2zWMaX84NI6bZS3Ubaw9MfnuLEOpCZN4Zph
+	CWenCYKqCT3BsiV80qcxYdkarix0kCyfhNcu/kSy5u8AVD5UAjbgD7O0+ZuFcEoMBw2a10U/
+	gCXaGxirb4G5Lw0Yq5vD5qo3vBM2qKtfN9gBR1YzSHZbNHzUYMcuaBnAqgu9oADYKd+ZTflO
+	O5b3wvNLZzjKDTtO2cC6NS6LTlDd6l4NOCqwg5EpkuMZhbfMU8KcfHvuWGlyI9j8Pc4hzWB6
+	asmtG2Bc0A0gF+dZmTdqguMszEXCtNOMXBotT01iFN3Ae+NWhbj1tljpxveTpER7ePnwvQQC
+	gZfPboEH733z2axKkQUVL0xhEhlGxsjf+DCuqXU6pu4NOHI1cL5QekymKTzxrPDLkT3iKwnR
+	kZzOzNmc0k+2wCN9BdPa0KD8mVMRo10BiiCVQ5pusvzj5UG++4nw6ONim3xT5Rw/K+2mY+7o
+	E+V/K9Ln5O7ZMsEhFPwwMfBeiJtOlte/1Q8nphci71tO/H5Q/9s+16+LCj6Srbi0PLbfWdFo
+	N7rYY8/hhP1haHQUhWbvc+m7wPEzC+x8b/tx/7CVew4O6XPuUaueVTyZz32rbMcosbLi828y
+	ul2Cne5q4o+qVZFzy+Zrp5vGPvxC/a+2a1wg1Sn7//y0ixtRPvTXlC62Kms8PsHN7mjYMX1W
+	5brvrvqCmLi16yEjQYaLEZrrZ3mEQiz0cMblCuH/8ReFMMYEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTZxjHfc85nJ5WGw8FxkvrjFbUBCNC0umLNqgLJq9RicH4QWKUKgeK
+	UGxa2UREGQSEDpxCuFhFLpZiqQEFIlAuIsh9ShRxgahzWuIFseCEYEhhHMii3375P//Ll4ch
+	JROUlImKPcXpYlUxclpE3W2Xr9zof25vhF/VlAhV9XaSKPmSk0TWF3/QaLT9M0B5419JZG+9
+	ANDMw34S1Xa+BOjVve2ouLSQQkOtDQRqKs0mkMXaQaCr+SkE6pgbo1F22zOARgaNBGoe3oBK
+	0kwUamruodCA7RqNiswjAlTeNUugy+mDBKq3/wZQ5aiDQt3DMtTv7HLZsQIPPN2De0shbjC+
+	EOD+l3coPPAwDldXZNC4xnQev6u5AnDjUBKNb1zMccFZKZ9o3JD6twueGBmmsKNlkMYXaysA
+	/rP4gWC/W6hIGc7FRP3C6TYFhonUhXXdtHZm/+kP5kaQBNJ2GgDDQFYBc1sOGYCIkbB1AL4e
+	/CgwAOG87gXNzgfkIrtBy+zbBV3C2udN1h94pti10Fpgo/gemt0A++YYXnZn18PcnCbAd5Js
+	Iw1nvvYtZN3YMDjWe9mFZzG7GY5fKxAsDk8A+OXRPXLx4Ap7rtgpnsl50/Waf0h+gGRlsHyW
+	4VHIBsLxOcw7PNgVsKBskrwEXI3fhY3fhY3fwsWArAAenFavidQc1/r76lUafVxspO/xk5pq
+	sPAVPiH1wFzl9G0DBAPaAGRIubu4unZ3hEQcroo/w+lOHtXFxXD6NiBjKLmneE1MRriEjVSd
+	4qI5Tsvp/r8SjFCaRCR0BICyBIXSM8pxIuB5Wd1wNkEFrOrN3x7kBLdvKbLSpyKmy0PeL9+a
+	oAn9UXsoxe3fny/ER3+ZEo/lNlt3UUpvs0QY9KFCuqTFJsvJqv74WJ33pGjdK9NPLW+2hZTl
+	nUnHtq2/YntQ8d2JqKsOWeDZ4Ps3vaKNJanjfgdGuoLrhCWk3qf1eepBb0Visl+y0nLinfR8
+	pj66e9l9qx2q/4p3bouoZ90zPRsKM8KzH1nab41mujI3i8pXH85IS03M2xm2Pm3NMS+0pVMx
+	NfS61ARVd5Yulf6+r3CyoNIcPK3Ofey77Ii3UunobjY9IW6fsxhGFYbNQY7E0Moum6avRE7p
+	1Sp/H1KnV/0HFww+7oQDAAA=
+X-CMS-MailID: 20240521105753epcas5p18f2c0624aeed49d549cc041a79de0ca3
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----0ARpVfROdpzmGW4Ln12FwIta42jNjH8le_L8dBWq-uMGoSqN=_1575d_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240520102842epcas5p4949334c2587a15b8adab2c913daa622f
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+	<CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
+	<20240520102033.9361-3-nj.shetty@samsung.com>
+	<8f60ed88-1978-4d7c-9149-aee672aa1b09@kernel.org>
 
+------0ARpVfROdpzmGW4Ln12FwIta42jNjH8le_L8dBWq-uMGoSqN=_1575d_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
+On 20/05/24 05:00PM, Damien Le Moal wrote:
+>On 2024/05/20 12:20, Nitesh Shetty wrote:
+>> We add two new opcode REQ_OP_COPY_DST, REQ_OP_COPY_SRC.
+>> Since copy is a composite operation involving src and dst sectors/lba,
+>> each needs to be represented by a separate bio to make it compatible
+>> with device mapper.
+>
+>Why ? The beginning of the sentence isn't justification enough for the two new
+>operation codes ? The 2 sentences should be reversed for easier reading:
+>justification first naturally leads to the reader understanding why the codes
+>are needed.
+>
+>Also: s/opcode/operations
+>
+>
+Acked
 
-On 5/21/2024 3:55 AM, Mika Westerberg wrote:
-> Hi,
-> 
-> On Tue, May 21, 2024 at 10:07:23AM +0200, Gia wrote:
->> Thank you Mika,
+>> We expect caller to take a plug and send bio with destination information,
+>> followed by bio with source information.
+>
+>expect ? Plugging is optional. Does copy offload require it ? Please clarify this.
+>
+"caller" here refers to blkdev_copy_offload. The caller of blkdev_copy_offload
+does not need to take the plug. We should have made this clear.
+Sorry for the confusion, will update the description to reflect the same
+in next version.
+
+>> Once the dst bio arrives we form a request and wait for source
+>
+>arrives ? You mean "is submitted" ?
+>
+>s/and wait for/and wait for the
+>
+>> bio. Upon arrival of source bio we merge these two bio's and send
+>
+>s/arrival/submission ?
+>
+>s/of/of the
+>s/bio's/BIOs
+>s/and send/and send the
+>s/down to/down to the
+>
+acked for above.
+
+>> corresponding request down to device driver.
+>> Merging non copy offload bio is avoided by checking for copy specific
+>> opcodes in merge function.
+>
+>Super unclear... What are you trying to say here ? That merging copy offload
+>BIOs with other BIOs is not allowed ? That is already handled. Only BIOs &
+>requests with the same operation can be merged. The code below also suggests
+>that you allow merging copy offloads... So I really do not understand this.
+>
+You are right, only BIOs & requests with same operation can be merged.
+We are not merging copy offloads. We are only merging src and dst BIO to
+form a copy offload request.
+We will remove this in next version.
+
+>> diff --git a/block/blk-merge.c b/block/blk-merge.c
+>> index 8534c35e0497..f8dc48a03379 100644
+>> --- a/block/blk-merge.c
+>> +++ b/block/blk-merge.c
+>> @@ -154,6 +154,20 @@ static struct bio *bio_split_write_zeroes(struct bio *bio,
+>>  	return bio_split(bio, lim->max_write_zeroes_sectors, GFP_NOIO, bs);
+>>  }
 >>
->> Here you have the output of sudo journalctl -k without enabling the
->> kernel option "pcie_aspm=off": https://codeshare.io/7JPgpE. Without
->> "pcie_aspm=off", "thunderbolt.host_reset=false" is not needed, my
->> thunderbolt dock does work. I also connected a 4k monitor to the
->> thunderbolt dock thinking it could provide more data.
+>> +static struct bio *bio_split_copy(struct bio *bio,
+>> +				  const struct queue_limits *lim,
+>> +				  unsigned int *nsegs)
+>> +{
+>> +	*nsegs = 1;
+>> +	if (bio_sectors(bio) <= lim->max_copy_sectors)
+>> +		return NULL;
+>> +	/*
+>> +	 * We don't support splitting for a copy bio. End it with EIO if
+>> +	 * splitting is required and return an error pointer.
+>> +	 */
+>> +	return ERR_PTR(-EIO);
+>> +}
+>
+>Hmm... Why not check that the copy request is small enough and will not be split
+>when it is submitted ? Something like blk_check_zone_append() does with
+>REQ_OP_ZONE_APPEND ? So adding a blk_check_copy_offload(). That would also
+>include the limits check from the previous hunk.
+Yes, that could be one way. But we followed approach similar to discard.
+
+>
+>> +
+>>  /*
+>>   * Return the maximum number of sectors from the start of a bio that may be
+>>   * submitted as a single request to a block device. If enough sectors remain,
+>> @@ -362,6 +376,12 @@ struct bio *__bio_split_to_limits(struct bio *bio,
+>>  	case REQ_OP_WRITE_ZEROES:
+>>  		split = bio_split_write_zeroes(bio, lim, nr_segs, bs);
+>>  		break;
+>> +	case REQ_OP_COPY_SRC:
+>> +	case REQ_OP_COPY_DST:
+>> +		split = bio_split_copy(bio, lim, nr_segs);
+>> +		if (IS_ERR(split))
+>> +			return NULL;
+>> +		break;
+>
+>See above.
+>
+>>  	default:
+>>  		split = bio_split_rw(bio, lim, nr_segs, bs,
+>>  				get_max_io_size(bio, lim) << SECTOR_SHIFT);
+>> @@ -925,6 +945,9 @@ bool blk_rq_merge_ok(struct request *rq, struct bio *bio)
+>>  	if (!rq_mergeable(rq) || !bio_mergeable(bio))
+>>  		return false;
 >>
->> I'm almost sure I used this option when I set up this system because
->> it solved some issues with system suspending, but it happened many
->> months ago.
-> 
-> Okay. I recommend not to use it. The defaults should always be the best
-> option (unless you really know what you are doing or working around some
-> issue).
+>> +	if (blk_copy_offload_mergable(rq, bio))
+>> +		return true;
+>> +
+>>  	if (req_op(rq) != bio_op(bio))
+>>  		return false;
+>>
+>> @@ -958,6 +981,8 @@ enum elv_merge blk_try_merge(struct request *rq, struct bio *bio)
+>>  {
+>>  	if (blk_discard_mergable(rq))
+>>  		return ELEVATOR_DISCARD_MERGE;
+>> +	else if (blk_copy_offload_mergable(rq, bio))
+>> +		return ELEVATOR_COPY_OFFLOAD_MERGE;
+>>  	else if (blk_rq_pos(rq) + blk_rq_sectors(rq) == bio->bi_iter.bi_sector)
+>>  		return ELEVATOR_BACK_MERGE;
+>>  	else if (blk_rq_pos(rq) - bio_sectors(bio) == bio->bi_iter.bi_sector)
+>> @@ -1065,6 +1090,20 @@ static enum bio_merge_status bio_attempt_discard_merge(struct request_queue *q,
+>>  	return BIO_MERGE_FAILED;
+>>  }
+>>
+>> +static enum bio_merge_status bio_attempt_copy_offload_merge(struct request *req,
+>> +							    struct bio *bio)
+>> +{
+>> +	if (req->__data_len != bio->bi_iter.bi_size)
+>> +		return BIO_MERGE_FAILED;
+>> +
+>> +	req->biotail->bi_next = bio;
+>> +	req->biotail = bio;
+>> +	req->nr_phys_segments++;
+>> +	req->__data_len += bio->bi_iter.bi_size;
+>
+>Arg... You seem to be assuming that the source BIO always comes right after the
+>destination request... What if copy offloads are being concurrently issued ?
+>Shouldn't you check somehow that the pair is a match ? Or are you relying on the
+>per-context plugging which prevents that from happening in the first place ? But
+>that would assumes that you never ever sleep trying to allocate the source BIO
+>after the destination BIO/request are prepared and plugged.
+>
+Yes, we are rely on per-context plugging for copy to work.
+Incase for any reason we are not able to merge src and dst BIOs, and the
+request reaches driver layer with only one of the src or dst BIO,
+we fail this request in driver layer.
+This approach simplifies the overall copy plumbing.
 
-Windows and Linux handle port pm differently at suspend.  I've had a few 
-patch series attempts to allow unifying them with some "smaller" pieces 
-landing as well as a quirk for one of the root ports.
+>> +
+>> +	return BIO_MERGE_OK;
+>> +}
+>> +
+>>  static enum bio_merge_status blk_attempt_bio_merge(struct request_queue *q,
+>>  						   struct request *rq,
+>>  						   struct bio *bio,
+>> @@ -1085,6 +1124,8 @@ static enum bio_merge_status blk_attempt_bio_merge(struct request_queue *q,
+>>  		break;
+>>  	case ELEVATOR_DISCARD_MERGE:
+>>  		return bio_attempt_discard_merge(q, rq, bio);
+>> +	case ELEVATOR_COPY_OFFLOAD_MERGE:
+>> +		return bio_attempt_copy_offload_merge(rq, bio);
+>>  	default:
+>>  		return BIO_MERGE_NONE;
+>>  	}
+>> diff --git a/block/blk.h b/block/blk.h
+>> index 189bc25beb50..6528a2779b84 100644
+>> --- a/block/blk.h
+>> +++ b/block/blk.h
+>> @@ -174,6 +174,20 @@ static inline bool blk_discard_mergable(struct request *req)
+>>  	return false;
+>>  }
+>>
+>> +/*
+>> + * Copy offload sends a pair of bio with REQ_OP_COPY_DST and REQ_OP_COPY_SRC
+>> + * operation by taking a plug.
+>> + * Initially DST bio is sent which forms a request and
+>> + * waits for SRC bio to arrive. Once SRC bio arrives
+>> + * we merge it and send request down to driver.
+>> + */
+>> +static inline bool blk_copy_offload_mergable(struct request *req,
+>> +					     struct bio *bio)
+>> +{
+>> +	return (req_op(req) == REQ_OP_COPY_DST &&
+>> +		bio_op(bio) == REQ_OP_COPY_SRC);
+>> +}
+>
+>This function is really not needed at all (used in one place only).
+>
+This is used at two places and we felt this provides better readability,
+similar to discard.
 
-But the specific issue that was happening was a platform bug that 
-occurred due to this.  It's since then been fixed, and I guess you have 
-a new BIOS Gia.
+>> +
+>>  static inline unsigned int blk_rq_get_max_segments(struct request *rq)
+>>  {
+>>  	if (req_op(rq) == REQ_OP_DISCARD)
+>> @@ -323,6 +337,8 @@ static inline bool bio_may_exceed_limits(struct bio *bio,
+>>  	case REQ_OP_DISCARD:
+>>  	case REQ_OP_SECURE_ERASE:
+>>  	case REQ_OP_WRITE_ZEROES:
+>> +	case REQ_OP_COPY_SRC:
+>> +	case REQ_OP_COPY_DST:
+>>  		return true; /* non-trivial splitting decisions */
+>
+>See above. Limits should be checked on submission.
+>
+>>  	default:
+>>  		break;
+>> diff --git a/block/elevator.h b/block/elevator.h
+>> index e9a050a96e53..c7a45c1f4156 100644
+>> --- a/block/elevator.h
+>> +++ b/block/elevator.h
+>> @@ -18,6 +18,7 @@ enum elv_merge {
+>>  	ELEVATOR_FRONT_MERGE	= 1,
+>>  	ELEVATOR_BACK_MERGE	= 2,
+>>  	ELEVATOR_DISCARD_MERGE	= 3,
+>> +	ELEVATOR_COPY_OFFLOAD_MERGE	= 4,
+>>  };
+>>
+>>  struct blk_mq_alloc_data;
+>> diff --git a/include/linux/bio.h b/include/linux/bio.h
+>> index d5379548d684..528ef22dd65b 100644
+>> --- a/include/linux/bio.h
+>> +++ b/include/linux/bio.h
+>> @@ -53,11 +53,7 @@ static inline unsigned int bio_max_segs(unsigned int nr_segs)
+>>   */
+>>  static inline bool bio_has_data(struct bio *bio)
+>>  {
+>> -	if (bio &&
+>> -	    bio->bi_iter.bi_size &&
+>> -	    bio_op(bio) != REQ_OP_DISCARD &&
+>> -	    bio_op(bio) != REQ_OP_SECURE_ERASE &&
+>> -	    bio_op(bio) != REQ_OP_WRITE_ZEROES)
+>> +	if (bio && (bio_op(bio) == REQ_OP_READ || bio_op(bio) == REQ_OP_WRITE))
+>>  		return true;
+>
+>This change seems completely broken and out of place. This would cause a return
+>of false for zone append operations.
+>
+We changed this based on previous review comments[1].
+Idea is to replace this with a positive check.
+But we did miss adding ZONE_APPEND in this.
+We will add ZONE_APPEND check in next version.
 
-Completely agree with Mika the default policy for Linux is generally 
-right though.
+[1] https://lore.kernel.org/linux-block/20230720074256.GA5042@lst.de/
+>>
+>>  	return false;
+>> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+>> index 781c4500491b..7f692bade271 100644
+>> --- a/include/linux/blk_types.h
+>> +++ b/include/linux/blk_types.h
+>> @@ -342,6 +342,10 @@ enum req_op {
+>>  	/* reset all the zone present on the device */
+>>  	REQ_OP_ZONE_RESET_ALL	= (__force blk_opf_t)15,
+>>
+>> +	/* copy offload src and dst operation */
+>
+>s/src/source
+>s/dst/destination
+>s/operation/operations
+>
+Acked
 
-> 
-> The dmesg you shared looks good, there are few oddities but they should
-> not matter from functional perspective (unless you are planning to have
-> a second monitor connected).
-> 
-> First is this:
-> 
->    May 21 09:59:40 um773arch kernel: thunderbolt 0000:36:00.5: IOMMU DMA protection is disabled
-> 
-> It should really be enabled but I'm not familiar with AMD hardware to
-> tell more so hoping Mario can comment on that.
+>> +	REQ_OP_COPY_SRC		= (__force blk_opf_t)18,
+>> +	REQ_OP_COPY_DST		= (__force blk_opf_t)19,
+>> +
+>>  	/* Driver private requests */
+>>  	REQ_OP_DRV_IN		= (__force blk_opf_t)34,
+>>  	REQ_OP_DRV_OUT		= (__force blk_opf_t)35,
+>> @@ -430,6 +434,12 @@ static inline bool op_is_write(blk_opf_t op)
+>>  	return !!(op & (__force blk_opf_t)1);
+>>  }
+>>
+>> +static inline bool op_is_copy(blk_opf_t op)
+>> +{
+>> +	return ((op & REQ_OP_MASK) == REQ_OP_COPY_SRC ||
+>> +		(op & REQ_OP_MASK) == REQ_OP_COPY_DST);
+>> +}
+>
+>May be use a switch here to avoid the double masking of op ?
+>
+Acked
 
-This is controlled by OEM BIOS policy.
-You should try to turn it on if you can as it's a more secure setup.
-Some of the Linux stack (for example bolt) will automatically authorize 
-PCIe and TBT3 devices when it's deemed secure.
+Thank you,
+Nitesh Shetty
 
-I'm not familiar with the OEM for your machine, but some strings you can 
-look for that might point you in that direction to enable it:
+------0ARpVfROdpzmGW4Ln12FwIta42jNjH8le_L8dBWq-uMGoSqN=_1575d_
+Content-Type: text/plain; charset="utf-8"
 
-1) "Kernel DMA protection"
-2) "Security levels"
 
-I know some OEMs also only enable it when you "load optimized defaults".
-
-> 
-> The second thing is the USB4 link that seems to be degraded to 2x10G =
-> 20G even though you say it is a Thunderbolt cable. I'll comment more on
-> that in the other email.
+------0ARpVfROdpzmGW4Ln12FwIta42jNjH8le_L8dBWq-uMGoSqN=_1575d_--
 
