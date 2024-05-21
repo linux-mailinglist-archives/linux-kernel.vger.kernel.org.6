@@ -1,98 +1,98 @@
-Return-Path: <linux-kernel+bounces-184333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07AE8CA582
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:02:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43B588CA5A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4BF51C20B4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 01:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8401F226DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 01:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA24947E;
-	Tue, 21 May 2024 01:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ngnLFSgM"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237628C13;
+	Tue, 21 May 2024 01:12:43 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A40E256A
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 01:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72ADB7F;
+	Tue, 21 May 2024 01:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716253357; cv=none; b=lMyfqvpsS/RiISBePJ2982l/oJK42MVStX21uXYNDzLCZhpoh+amWsiOTUFczmHP1TbEN7rya4k9PVh80+tNsWmxXLru2shDmz8SJcwhYUOv45zor5GfvqMeJhXdBVPrS7XdMqLbTcoOMTjSeAptU0A5FYjc0lWQidV7a8ne52Y=
+	t=1716253962; cv=none; b=RRTN+rxopU2IXBX/WwEL7UqiCNEeWK+XDeiMlGNZa6bQhPClNKKnLvYgox6H/LTcMH0lKj6oHOvBtoqoLOW3X2efXjEH0zw27ydfMTbgcDFUV83FZgdK0rvUMTYESji1oVuXhhmPJeeEq/eWetjOHmfwUjnVovaRLYY/18AZfeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716253357; c=relaxed/simple;
-	bh=62s9ZBQLECjqwaw8IyELeu4N6Gxe1GRRUiarSV+DbTA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VHdnqNmQMh58gUAaxOS4qpB4Zdfjwey4OOLOSWIrDp1avFhzBtQOckghgptEZA/LXuDZdq87qemWGRe5DK3X6rHrRIXnu2MR+TLtUZnZEERI5MmR0juTVJWmv2b0N7+miE6djo9Wzp9fpUrRs2sVvJCYOi2o8wsJyUkTv9GB3MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ngnLFSgM; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-6f49fc7b5e6so13183265b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 18:02:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716253356; x=1716858156; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kj18FI+spxVo0wYyt5GLsAf9LnUaY68HrretgdhL1+Q=;
-        b=ngnLFSgMBYAqDnM+eXECVqCMKjSpijc4jSlWkGw5T2ec4kJG64E+oRuDhS5t1B6MkL
-         gDVNSvnk/OZqO3lw5Bknh66lBq23xfVujP6gY8JQ0LTOrK04gDP7QSfdE3YDCLaE/0f8
-         0uO+/nvEfhV6n7Lv3hDDcaITVTe/dOpZGdQX52tfJ8jDwpkAz0VBjPf5Vytu9+67Osjf
-         /GYqtinm8/UpkPqQFIuvegYwBU7PKbiWUOhv6lQvzJQ0guUjikqgfZbOnhhtcLouNAm1
-         fWA8Rjr7NjV0TUfJLCDGAB3TvouPDYRKBLSanh/U6E5UjsCAr7NEbDVhw7g5HiogOg/H
-         w4mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716253356; x=1716858156;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kj18FI+spxVo0wYyt5GLsAf9LnUaY68HrretgdhL1+Q=;
-        b=UXP4UMCQI5G9mGJh693JrekALZsP9lzuEVjXj+hZP4KIxZadziusL3QXAPbNCC7YKf
-         Qn822rafS2pOifjObhj3bWlDZ2p4XF9vSiRP8MFjX2kbBzpTIqViS8nNMChp8VxqJSJT
-         yhkyVnMBwZL1PJFMKZhsqqBjMfHuyVdrHKthDIJmQOb358L28uqzB1d3sSOy5B4Mn8d7
-         dQ1TMiX/HpgU9EAg7u2cwOcxhNRoRXvkBtooG9Kfjp8JEwYDqGHYrju9fYWLBqBlIYab
-         bHDBd+zTde5RQger3q7bC4lxbWtF5OwDDTuEUyTUqX2Mn/OZHdDUHzD6aNAdF3JMOXbH
-         cuMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDSSCdy9cA4/cI1nhWWtkDW0zxvePPvgU/jbB0n0mMxIO2yIiqbwqqgqoXWrmdtgx6n/QscOANhf1sx7m9iXyW7xyWFX2R79mZUzuM
-X-Gm-Message-State: AOJu0Yzwzag9UVfI2K5pUuozd2kwGDOhq5XtPoDGWwbM/mVKrkzaxU93
-	YJyl+ImXMKFvip5LSD8iV/ogLcVPmW9KViCLODqDczqN1ZQJIJLhun/B6m0MOL0zVr7AOYlcxFj
-	GFw==
-X-Google-Smtp-Source: AGHT+IG2yAJanvKyU97focG/MqnEJX7x8reSfJL3QGZKYOWsxkzVO6QuYNNBaybkLhpdSDhQ/N8gw84H7eA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:a91:b0:6f4:d079:bb24 with SMTP id
- d2e1a72fcca58-6f4e0296acamr1399421b3a.1.1716253355725; Mon, 20 May 2024
- 18:02:35 -0700 (PDT)
-Date: Mon, 20 May 2024 18:02:34 -0700
-In-Reply-To: <3e7413b5-482a-4243-be6c-21a0ee232cc4@intel.com>
+	s=arc-20240116; t=1716253962; c=relaxed/simple;
+	bh=mUJ68N6msczBB9C/8LlQHDYjFu+UJe5YHP1HFLKiZyg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nC0p42FF/Qn2BqcTqaevU33RmSku0DjBi5mXkbVqrg3hk4Ly/0F3v7AJ4w+35Sc7M5qHU8XbLYV9xyGwil96Se6rSbaQrOEb+/DxTpHdtXapxd4lgicMexJh3ZTEflNnGhZbLg28enErC95Qe5fgI1TMC3DXiHiDFmvHghryqiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowABXXhoe80tmEMlyBg--.49483S2;
+	Tue, 21 May 2024 09:04:30 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: g@b4.vu,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] ALSA: scarlett2: Prevent leaking urb
+Date: Tue, 21 May 2024 09:03:52 +0800
+Message-Id: <20240521010352.1082164-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240518000430.1118488-1-seanjc@google.com> <20240518000430.1118488-3-seanjc@google.com>
- <78b3a0ef-54dc-4f49-863e-fe8288a980a7@intel.com> <ZkvbUNGEZwUHgHV9@google.com>
- <b1def408-f6e8-4ab5-ac7a-52f11f490337@intel.com> <ZkvpDkOTW8SwrO5g@google.com>
- <3e7413b5-482a-4243-be6c-21a0ee232cc4@intel.com>
-Message-ID: <ZkvyqjLoGxuf-AdC@google.com>
-Subject: Re: [PATCH 2/9] KVM: nVMX: Initialize #VE info page for vmcs02 when
- proving #VE support
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowABXXhoe80tmEMlyBg--.49483S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZr43XryUAw4UCw45Ar45GFg_yoWfXwc_Wa
+	yI9w1DAF1DWrnIkry5CrWSvF40kwnrAF18uFsI9397tF9Fq34rtw1Iqrn8CF1xZFs5JF4D
+	Xrn7Z343try29jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb2xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
+	1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVWkMxAI
+	w28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
+	4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxG
+	rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
+	CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2
+	z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUFVyIUUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Tue, May 21, 2024, Kai Huang wrote:
-> But now L0 always handles #VE exits from L2, and AFAICT L0 will just kill
-> the L1, until the patch:
-> 
-> 	KVM: VMX: Don't kill the VM on an unexpected #VE
-> 
-> lands.
-> 
-> So looks that patch at least should be done first.  Otherwise it doesn't
-> make a lot sense to kill L1 for #VE exits from L2.
+In scarlett2_init_notify() if kmalloc() fails the allocated urb should
+be released.
 
-I have no objection to changing the order.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ sound/usb/mixer_scarlett2.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sound/usb/mixer_scarlett2.c b/sound/usb/mixer_scarlett2.c
+index 1150cf104985..4cad6b2a0292 100644
+--- a/sound/usb/mixer_scarlett2.c
++++ b/sound/usb/mixer_scarlett2.c
+@@ -8637,9 +8637,10 @@ static int scarlett2_init_notify(struct usb_mixer_interface *mixer)
+ 		return -ENOMEM;
+ 
+ 	transfer_buffer = kmalloc(private->wMaxPacketSize, GFP_KERNEL);
+-	if (!transfer_buffer)
++	if (!transfer_buffer) {
++		usb_free_urb(mixer->urb);
+ 		return -ENOMEM;
+-
++	}
+ 	usb_fill_int_urb(mixer->urb, dev, pipe,
+ 			 transfer_buffer, private->wMaxPacketSize,
+ 			 scarlett2_notify, mixer, private->bInterval);
+-- 
+2.25.1
+
 
