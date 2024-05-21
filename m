@@ -1,176 +1,144 @@
-Return-Path: <linux-kernel+bounces-184679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31DD88CAA7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:05:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9E8B8CAA7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ABABB225D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:05:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8FC41C21A8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DDE56B91;
-	Tue, 21 May 2024 09:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE9156766;
+	Tue, 21 May 2024 09:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qk49nriR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cfDtXDG0"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF412209F;
-	Tue, 21 May 2024 09:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FE52209F
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716282296; cv=none; b=ejw/J/AkbHytPyW4PmhUXtZyHJCG3sU2rskS0sMkwqp3rngxsCe6f1DxZ/NOBKa8IQKOJiHlK9XIEhIyl6f0lfONQNjr4FMN7bMpGcJCcA4oT75KjoLHRR1KAt+S42XGwH+E70WEYLjsowwVgNw/aeD0PbfMO7sSr1dWjj3GMa4=
+	t=1716282388; cv=none; b=tL3WzqZuKx/pHhBh1gpr/Hnc4SabesDiKl3mgAZTVGOC+85C3u6Py+rPKKdyyAK0gqzUq3b7xgXP5GyYpF2Wmcmjw/aQCo5YnJ94ZfSbaVWmJYQIvbuFa5XXtgj2dnTA6itDlJfGHysW7/B/UdHxZ2xbQfGKpGfuSlBUKtAMLnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716282296; c=relaxed/simple;
-	bh=Fyo1MJcuF94YoHNRRQ/5sBEEN0ct+O/7ZaeMoc0v3WA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EyRE7gQUJCnZ2KU26OaN4FhbQcl1g2nP1KGA6cjQ8Gd3XjKIdp45WfWJWvE8rvNfPNZQRWZ/LQCVp42gQ1xQI5Drsl6+P42vgyIqelKwM3JChmEpcAlAF04dau4qO2AS+EOFB35np3l4Jio5Z76qZz1Q+STo/9N5PxuJgYFqxHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qk49nriR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C92C2BD11;
-	Tue, 21 May 2024 09:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716282296;
-	bh=Fyo1MJcuF94YoHNRRQ/5sBEEN0ct+O/7ZaeMoc0v3WA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Qk49nriRU+zDbVHXmZD8vdLcGTi3K/henx+dAf6+H8xARBbLFiEldkAFammQRnEuQ
-	 IX3Nm/Z6uEvWaqO25jatU9Woq0SMMsH1O0MAG6wKspkW0Uufsls+UhhbkFUFtOS+vs
-	 O0GlzLqdusGaLSo68g645Lj9+d0RfHLzKY3UxGt5z8kubJZnVD+dhO745qBbF+1/c/
-	 WagC/SscHg8p6GO3Aiimbh0mlAbhpWLH6upJ+r7+4hAF0cgN5BLL1EmfQZ979EOZaf
-	 Y6V625/rL9ZThgBbchPoYfmF+y8X+r9ppZiNYhUPZGwiS7gh9+hO9e59oQXQue53k1
-	 l8KOSChSiP0cA==
-Message-ID: <67eef030-7965-4ea6-a390-568c18ae9451@kernel.org>
-Date: Tue, 21 May 2024 11:04:51 +0200
+	s=arc-20240116; t=1716282388; c=relaxed/simple;
+	bh=bsAhFihn815vBtTHR8DbQhKVT37veYmF+S7PhbmBdXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bdOKY3kisZXf1JC2zMiIFbTmUELeAYJMbQpneiVudemF/+4vmyp9/e8JVIc7GJY6hVQnA0d+8q2cgAVo6ln4PublzJnei7yagB3K+QeZdE7wuJDbNN0xVoS0lRLeQWMDXCigSD4BvsqRd+FqsSRcZ2Dsq7UnIJx4zqKb88efAiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cfDtXDG0; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-354cd8da8b9so787857f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:06:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716282385; x=1716887185; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WMYY1KE/ZtKqUz0lxLzk49TxJFJt2lbdNgplL1dA484=;
+        b=cfDtXDG099m9goonTvN5W8iYXDbnqWN6IoWRMRIymvSVEzsRctnmgnFV7C0LTg9i6Z
+         sOiDlxDJSS7/wT7Sj+iros54L9ejCYkPeIP4SosF216bX6Q1jgibfM64IhO58lBgbTr1
+         aymGocrJeszB6sm4I2w2AQt93hGxdc5SEt5bC3f5BWQQThqlMGK1xccWcHhP/RdZbGTp
+         75CYoPqvnE4hzVtpHqwxhhjzHzXwM9nrQjL4soE1T5S4pX34RVurXJlymYbPBxC3ULL6
+         WqXkR5yYTIT9/gdypWYFOOXhMV/NwfUdZyum0vsQJSGr8Ycr9GDW6e2bloljmva1aLXU
+         s96Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716282385; x=1716887185;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WMYY1KE/ZtKqUz0lxLzk49TxJFJt2lbdNgplL1dA484=;
+        b=cllsMTYFWTxVymo3odKkTrbcqQCu2Dvkkkz9KznAJTP0TCsYGKg9h/g/2qpUChkUso
+         jB2snqooSX4PmKEKFdvSKtqjdGMx+goZFsfikunGwyXJJpyOREmiwwKJfC91UvHqJgCp
+         +X1flkQTCEhRlsPXMUOMCo44kqbwuFj+y0TANT39p56MBdWd55ICDCn+nhh55xFGO6mH
+         yrP0S4onJdJjAH19sLS9vYjenHRgwGOiLSZACFxAGLpVBqKVsPisQquvKRSqV769RrOJ
+         /4xIzmbFaRtUKdIjKsNl4Jmte2bSb0LffZ0HkqJ8GjFhvlR3wNW479g3e9kT0tYAqI2N
+         qwyA==
+X-Gm-Message-State: AOJu0YzZjDyCIAzFKacxpRt3NJD/fYrURSM69HvA1uOfrFSZ2H4sDMz0
+	0VQiF32/lGet09/rPXcz8Zj/goxmwEI9xCKny16J5xuVKDoj6j7q02MgH4MZhg==
+X-Google-Smtp-Source: AGHT+IHqJ0D1Y0alYMEKM4YqnGdv6JwZaQcHewLXB9jPc03xtcncpFKk1Dw9zFUsOpMdR6786VBPXg==
+X-Received: by 2002:a5d:698d:0:b0:34d:354:b9ba with SMTP id ffacd0b85a97d-3504a73e32dmr21835351f8f.30.1716282384666;
+        Tue, 21 May 2024 02:06:24 -0700 (PDT)
+Received: from google.com (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b79bdbcsm31255495f8f.23.2024.05.21.02.06.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 02:06:24 -0700 (PDT)
+Date: Tue, 21 May 2024 10:06:20 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>, rostedt@goodmis.org
+Subject: Re: [PATCH v1 1/2] mm/memory: cleanly support zeropage in
+ vm_insert_page*(), vm_map_pages*() and vmf_insert_mixed()
+Message-ID: <ZkxkDPnPiQzPEm-0@google.com>
+References: <20240430204044.52755-1-david@redhat.com>
+ <20240430204044.52755-2-david@redhat.com>
+ <Zkdys7YKC5pe1vAu@google.com>
+ <3decc6c8-9035-44d6-89c6-8d42a5e0bc40@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dt-bindings: ssm2305: convert to dt schema
-To: Xiaxi Shen <shenxiaxi26@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
- javier.carrasco.cruz@gmail.com, skhan@linuxfoundation.org
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-References: <20240511214716.242807-1-shenxiaxi26@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240511214716.242807-1-shenxiaxi26@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3decc6c8-9035-44d6-89c6-8d42a5e0bc40@redhat.com>
 
-On 11/05/2024 23:47, Xiaxi Shen wrote:
-> Convert adi,ssm2305 binding to DT schema
+On Tue, May 21, 2024 at 10:25:43AM +0200, David Hildenbrand wrote:
+> On 17.05.24 17:07, Vincent Donnefort wrote:
+> > Hi David,
+> > 
+> > [...]
+> > 
+> > > -static int validate_page_before_insert(struct page *page)
+> > > +static bool vm_mixed_zeropage_allowed(struct vm_area_struct *vma)
+> > > +{
+> > > +	VM_WARN_ON_ONCE(vma->vm_flags & VM_PFNMAP);
+> > > +	/*
+> > > +	 * Whoever wants to forbid the zeropage after some zeropages
+> > > +	 * might already have been mapped has to scan the page tables and
+> > > +	 * bail out on any zeropages. Zeropages in COW mappings can
+> > > +	 * be unshared using FAULT_FLAG_UNSHARE faults.
+> > > +	 */
+> > > +	if (mm_forbids_zeropage(vma->vm_mm))
+> > > +		return false;
+> > > +	/* zeropages in COW mappings are common and unproblematic. */
+> > > +	if (is_cow_mapping(vma->vm_flags))
+> > > +		return true;
+> > > +	/* Mappings that do not allow for writable PTEs are unproblematic. */
+> > > +	if (!(vma->vm_flags & (VM_WRITE | VM_MAYWRITE)))
+> > > +		return false;
+> > 
+> > Shouldn't we return true here?
 > 
-> It passed dt_binding_check and dtbs_check. Let me know
-> if you think it should include something else
+> Indeed, thanks! I wish we would have user in the tree already that could
+> exercise that code path.
 
-That's not really related to the commit.
+I have a patch ready to use this path from the memory map tracing! I can either
+send it once this one is picked-up or you can add it to your series?
 
 > 
-> Signed-off-by: Xiaxi Shen <shenxiaxi26@gmail.com>
-> ---
->  .../devicetree/bindings/sound/adi,ssm2305.txt | 14 --------
->  .../bindings/sound/adi,ssm2305.yaml           | 35 +++++++++++++++++++
-
-
-Same comment as usual... there are no DTS users. Are we done with arm64
-defconfig and arm multi_v7 undocumented compatibles? I doubt, 2 months
-ago there were hundreds of them. Why touching something without users?
-
-I was speaking about this *multiple times*. Can you update your GSoC or
-mentorship guidelines to include this information?
-
-
->  2 files changed, 35 insertions(+), 14 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/adi,ssm2305.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/adi,ssm2305.yaml
+> [...]
 > 
+> > > @@ -2043,7 +2085,7 @@ static int insert_page_in_batch_locked(struct vm_area_struct *vma, pte_t *pte,
+> > >   	if (!page_count(page))
+> > >   		return -EINVAL;
+> > 
+> > This test here prevents inserting the zero-page.
+> 
+> You mean the existing page_count() check? or the (wrong) vma->vm_flags check
+> in vm_mixed_zeropage_allowed() ?
 
-..
+I meant this page_count() here. As a quick test, I removed that check (also fixed
+the vm_flags above) and the zero-page was properly mapped!
 
-
-> +maintainers:
-> +  - Liam Girdwood <lgirdwood@gmail.com>
-> +  - Mark Brown <broonie@kernel.org>
-> +  - Rob Herring <robh@kernel.org>
-> +  - Krzysztof Kozlowski <krzk+dt@kernel.org>
-> +  - Conor Dooley <conor+dt@kernel.org>
-
-Not really, this should be someone responsible for the device. No
-maintainers or recent, main contributors?
-
-> +
-> +properties:
-> +  compatible:
-> +    const: adi,ssm2305
-> +
-> +  shutdown-gpios:
-> +    maxItems: 1
-> +    description: The gpio connected to the shutdown pin. The gpio signal is ACTIVE_LOW.
-> +
-> +required:
-> +  - compatible
-> +  - shutdown-gpios> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +   analog-amplifier {
-> +     compatible = "adi,ssm2305";
-> +     shutdown-gpios = <&gpio3 20 0>;
-
-Use proper define for the flag.
-
-> +   };
-
-Best regards,
-Krzysztof
-
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
