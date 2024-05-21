@@ -1,88 +1,104 @@
-Return-Path: <linux-kernel+bounces-185093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD828CB06B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:27:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F8538CB070
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44AC21C20B22
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:27:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 350AE2859D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E59130481;
-	Tue, 21 May 2024 14:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E500130484;
+	Tue, 21 May 2024 14:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTzoosUc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y90ecRCg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBB312FF92;
-	Tue, 21 May 2024 14:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABA212FF91;
+	Tue, 21 May 2024 14:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716301619; cv=none; b=rhyt1fmrehjVh9IA03EHZ+qP0JuhO/9Wjz5/OvzN3ouCxGQ+F2tiYJRG43Jfeh1ZcAK8dhHo5CapIzXS1C+BOHmQYXQriGs5xhjfc6yvqvYLvbXhbBPRBBqKvSeWp/7Ort6CQWab88W675I1uiwvDieoyPYiNHcMLaHgjw+9Ibo=
+	t=1716301667; cv=none; b=tJcy3d86sF876lf6t3YVPvCr7dzQ13UtNv2p6zplbgiGK8dl9n60dPZEMt3+sGRu1/zcbkcrs2/UWXkSwJSeiXtdosmV5tSktAlZnTRThGL4VMZYFVk1YbOIYnA9Q7kgFj1nKx/E5ghWomaC5zaD+/57yr7v4JsDc1ABvzi0BzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716301619; c=relaxed/simple;
-	bh=1g2QcHXVGrgKGcleBAKJcmGbMkt1SO1MJSLlE1cOLmw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=KcQSMND8CkLCBiC0JvQfa06C2lYgF3Qd77CEpZfQAfmPjYogkdgUIalP71mJDcmatON3T0p4+4UWiJdSE54anrxnQuuqofDvvPYBNRsnONvtYgTDzOuPaeD8vHM5VoUZTbM2dtG5wN/eHy0/FJXVw4W8E0Li+5bKMYnF9QQhEBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTzoosUc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EACCC2BD11;
-	Tue, 21 May 2024 14:26:56 +0000 (UTC)
+	s=arc-20240116; t=1716301667; c=relaxed/simple;
+	bh=N0cM3yxnHhctCSdjxbIjzQRvpL3SVaCTMfYfSYckKMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nOX0V3PuTMHSf9vL2WFdNdNXho1eHN7KJZp3fIUeF1k0srtU2o8faNuqeTtyQWIXGOqe0O86wWaE2WF6IkHVkCEmtvp4IFh2hywf191G2joV78dsUwpj6foJvicogEyfakY1gdyOCF372NaI/uBGvN4RI4VcNFuKl9h/KzMHjcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y90ecRCg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9287CC2BD11;
+	Tue, 21 May 2024 14:27:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716301619;
-	bh=1g2QcHXVGrgKGcleBAKJcmGbMkt1SO1MJSLlE1cOLmw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oTzoosUcMowiKdDmdDCn3VHirfdkeXbkWRAuIezBZldov1LQpPyNftWBVWMcq3Zqw
-	 /J/wjBLNxTVoWsTIBinFzMc6K4MPZ2JZBOBQ3kO6C7S59+fOG0v+zrdmTS2r+QyQRZ
-	 H6JHusUp+xtT2YeNmXCLwbOiSNhS05SS64SGkmEi0pmojqOssWrj/0GmRe5bdBEN2A
-	 gwSNGzo05bomi/6E5ZJ+yx1i/BaSacwvDs0FvyQ0RnTtVlBd5BeFeTkpe6oB1zIub9
-	 PAvDqGBb62/GZGe0kB++B6xIVQoz6P7ep7KyuOY3CH+QTcaVcBoZQ+VixFzYgvBJ2K
-	 L5vGMD08zSvlg==
+	s=k20201202; t=1716301667;
+	bh=N0cM3yxnHhctCSdjxbIjzQRvpL3SVaCTMfYfSYckKMA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Y90ecRCg3gZjCzCB3pUZ/OESTWKCiQ2XZ2dZ5hC7U+Z6nyhFbCg7qStWUjaC5HH/4
+	 EOytmejLfW1WpSGaV74JHScIuN2h9Mi5dCBa+1pFssdOGZJjwPN8nOKH9iwPavOULs
+	 EQ06xY10pvhxDAsCkaBoJvjFYNKoQ2A9OyahmTxspSm4pzjTb5MZHyTwinrW3Za3ui
+	 pZ2C9Eha9+eX4hbkaFYgGGLERnzgAxosmKEuSP2ZSjaDJi/Bh2kch2g3XibU9xWkr2
+	 rvGKZvpDFfHAEz5+YnJ7RTFDQjjU8a6WG3z3ERjJwuGWSVLIGaqphGMalG/uZBJvFc
+	 /FQUmp1ZmT35w==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	Amir Goldstein <amir73il@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: switch timespec64 fields in inode to discrete integers
+Date: Tue, 21 May 2024 16:27:10 +0200
+Message-ID: <20240521-unwiederholbar-stelzen-84e3769c4349@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240517-amtime-v1-1-7b804ca4be8f@kernel.org>
+References: <20240517-amtime-v1-1-7b804ca4be8f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 May 2024 17:26:54 +0300
-Message-Id: <D1FE58VX0KL4.70F6U9Y6HPQC@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
- <linux-integrity@vger.kernel.org>
-Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] tpm: enable HMAC encryption for only x86-64 and aarch64
-X-Mailer: aerc 0.17.0
-References: <20240521130921.15028-1-jarkko@kernel.org>
- <236606947b691049c650bdf82c37324084662147.camel@HansenPartnership.com>
- <D1FDMULT5YRK.GZOPJ9FZ325R@kernel.org>
- <854fa2e1634eb116b979dab499243e40917c637c.camel@HansenPartnership.com>
-In-Reply-To: <854fa2e1634eb116b979dab499243e40917c637c.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1458; i=brauner@kernel.org; h=from:subject:message-id; bh=N0cM3yxnHhctCSdjxbIjzQRvpL3SVaCTMfYfSYckKMA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT5rI/e/OZx3abalri8R2mNOyrnL9csmDb7VHXY9Yl2f zTee1Zv7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIxtuMDJ0+VsZnFyc7csvZ 3xHni/Zp/5BzL/mgrm55rKBDcFbcZYb/mee1BUK2G/bZyv6MUbJv3/H1x4TlD7b1lZ376/jzm4A KPwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue May 21, 2024 at 5:13 PM EEST, James Bottomley wrote:
-> On Tue, 2024-05-21 at 17:02 +0300, Jarkko Sakkinen wrote:
-> > Secondly, it also roots to the null key if a parent is not given. So
-> > it covers all the basic features of the HMAC patch set.
->
-> I don't think that can work.  The key file would be wrapped to the
-> parent and the null seed (and hence the wrapping) changes with every
-> reboot.  If you want a permanent key, it has to be in one of the
-> accessible permanent hierarchies (storage ideally or endorsement).
+On Fri, 17 May 2024 20:08:40 -0400, Jeff Layton wrote:
+> Adjacent struct timespec64's pack poorly. Switch them to discrete
+> integer fields for the seconds and nanoseconds. This shaves 8 bytes off
+> struct inode with a garden-variety Fedora Kconfig on x86_64, but that
+> also moves the i_lock into the previous cacheline, away from the fields
+> it protects.
+> 
+> To remedy that, move i_generation above the i_lock, which moves the new
+> 4-byte hole to just after the i_fsnotify_mask in my setup. Amir has
+> plans to use that to expand the i_fsnotify_mask, so add a comment to
+> that effect as well.
+> 
+> [...]
 
-I'm fully aware that null seed is randomized per power cycle.
+Let's see what the performance bot thing has to say...
 
-The fallback was inherited from James Prestwood's original code and I
-decided to keep it as a testing feature, and also to test HMAC changes.
+---
 
-If you look at the testing transcript in the cover letter, it should be
-obvious that a primary key is created in my basic test.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-BR, Jarkko
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs: switch timespec64 fields in inode to discrete integers
+      https://git.kernel.org/vfs/vfs/c/ad401d976810
 
