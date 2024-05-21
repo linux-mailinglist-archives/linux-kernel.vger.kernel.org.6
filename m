@@ -1,169 +1,537 @@
-Return-Path: <linux-kernel+bounces-184504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9A98CA7A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:35:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 274738CA7AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6621F22585
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:35:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E88CB21812
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DC4433B9;
-	Tue, 21 May 2024 05:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E0C433D4;
+	Tue, 21 May 2024 05:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fy3FKwR2"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="KDDtA1fd"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325FE3F8C7;
-	Tue, 21 May 2024 05:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716269736; cv=none; b=gC1A2yX0xGea0bOFaR2FW9oWMFKjMH8zYoCaIV9FhASGKDvi4QpFAi1Thnj9MeJRzHpZCj0jqJPB0etx2n7l0YN7HhOsiXPViGFBTxOESl/f7VoDKb+UdtYT79Lq5jmNJ370taakFARMvoAh87xGQ4RRtmLeFQTpffshyn58vQE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716269736; c=relaxed/simple;
-	bh=v5v+mxXJGbuu9swM4ML+rIqDChwIBSC5ilbvTHWRBV0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ed2SjhpvRDUFdXMO3feS9ZFuPWMDJ6J8BF19OGAJ0gxm9g+DmXK/hu/RewwBdWSwlNEDgkRKSJeJlBWVn7DK+y+DxdJqc76WHM+X2YNvvjWn8QnZ8ZEvPltsmxrucqq+prEiZ+UL25acIWmC54ZRPvk5OdFUGBHp8pAzoBN6/OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fy3FKwR2; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-51f40b5e059so4884493e87.0;
-        Mon, 20 May 2024 22:35:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716269733; x=1716874533; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ig5IFTDhN8p1vBKS35cjX3QT6gQn7mrpFK4GK2Ml+nc=;
-        b=Fy3FKwR2gGECnTGbYbS07J79qntf7O3zkKO14YOLzLwZltPqUJrEwDLwCmuPxRc/aG
-         XEoIV3f3Xd1MZoVzukgpNu0opfR+dPRbK127sSOqDUSdypxnfKDVsIjF8bzMxmXON7S1
-         dMIM3vvU8mQA/sutxuSfBDFjDsEm/qZlf1d0Nh1+fgFtDo6py0mPYZ0JeAp8vpazWGAe
-         /RMXDU5iTffc/9FNhVa9K0U4EaGdAPmN34aIWYrHGiZY+VPOnyMGItpCjwUrvjs4Vale
-         jwhTVCV9aF8auMxZKeiMBgnO0KEEYiQJ2mVcAWdRSPQrKzqFnL4bNkN4oBNqqtNkHQO1
-         +sOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716269733; x=1716874533;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ig5IFTDhN8p1vBKS35cjX3QT6gQn7mrpFK4GK2Ml+nc=;
-        b=UVpGdk4hYMkzy5ZNwHHRO/E/IN+cwnnl1VC+tHDeSnZKNPQ6gKlk+JFbM1uWg2I0Im
-         rJP0U5XIDgOdFtBf/2qLYPfu3pQuAZOC4ixeRU04lSmLPN9+ITa40hnfRYM06pdR9EdR
-         KQLnzA9NcZFxP3Tzp8zq6oL0UoRHEZ8qIZ2lkWMCnVtoPLboEnAShkj7fBc16bamEcKk
-         KNSseGQ04pQJtRfUX0YjVodekWB3UfLIIunQtT/y3vV32PKotPomFjOXgb1EWhZh/2Cd
-         i1A3s7fETvjTgczOn2+Ir5qycrUMDwLo7vRGMGeBLnp1jJJDfnOU2fGMxlZ4D+ukGoxP
-         YsVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbU71RToWk18VPSAmcl6uz3hGlSVKBXHPKVQS7BiixnZKrDXFKVTsmgknJBYlSPZTiCiXP4I7hSK28+LQDOfiHRE9b0GD9P89ghXQxlOKT82LE3nQELMP2gDNQwrr+oBwXji2k3giGKA==
-X-Gm-Message-State: AOJu0YwBCPrEURTw1/EM2UjEUf6OMKDqooO2nucHz4doCLd4n99HwUww
-	Wby0iasNAfgEZ/ogcgIsNd4Ron2MgStC1FhLUcAalvnCxehTc5gKnknoJMY+C23DnPQNbBbglhB
-	jbcbVBTYosFMr0j5AYdqjEnKN5Sg=
-X-Google-Smtp-Source: AGHT+IEwwSxGvw+su8rRrZrkNwlYiQ2EFKkWxDMRK3KWzk3cnll9uMBfnc1fpRtZZF+HmjwRiHVlXMVqPB5OOrvsChI=
-X-Received: by 2002:a05:6512:2248:b0:523:3be3:cbfe with SMTP id
- 2adb3069b0e04-5233be3cc5bmr18150114e87.65.1716269733053; Mon, 20 May 2024
- 22:35:33 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0D23D963;
+	Tue, 21 May 2024 05:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716269818; cv=fail; b=kSD6KAHjZwk5AoDmgy0Ahosz0AsP8DPzVmWZo8FY50I6wyOOnfoSG/7wK77xTYB05sYhwQG1Q/ib74WJr8WLkCOGZhvtm6q8xX9zub+nYTu4Gyn9xgW+zIx403FOLo2hGztiYqyKxp9zEBRq/B3NNl4M5ybZ9SsWnnTDKSlhjk0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716269818; c=relaxed/simple;
+	bh=tinYeyzVm2oS39TRgchi6Fw82lZqYjzgRXE1DV7K3vE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IWAX8NuTtpWFPNsRG8wSSiDGwmDaJUFfE6sj70WWhH5Y8nNEFiqK+SdiYkZUM5B+enyjxkNpwuY17gqgvnAPpT9dxfDx1h0RtwOyPaB1DfwonUEo81IrsQs5bagTJ85/6iC8T4RQq0Z9nt4bQUhcqM7IC6PokcQnzywfOzBoN0k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=KDDtA1fd; arc=fail smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44L0loPC027487;
+	Mon, 20 May 2024 22:36:12 -0700
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3y6uuj7uxf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 20 May 2024 22:36:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RvMpE2tqB9jiuzLQuFbgKlUsB1jZKgV3DJDjvCbzVfh14U1H8JdyYujlKXEhUX8QfW5cC95uBvYk4N7agWlqEVRtmYcdUkhe7pS3vAl94WzvcxTT1yMXVuyVknvDM7vuUvsc6oHrFHMwNbxuYd+uueDuDH/VFWH45SAIypLBQRnWoYTFFfnjqgrdy2z+pBR/4QFnl1UTITGqmZ4QqBTLjK/cBiCXZvyL6jaXNwbtwTEhYAcLG1mMpmLw3uqf60s1hAhvZZLVJ30xfM06jKs3wQ/pRMdscBbITQhAtlW7OY/oPibAkj1WNU21XE6dhkzhzGG517UZPCMm1M6KzgwxYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vOeTm8WW03Xd4oO4DWyAVFTtMILVrWTjGdCaWkLj2hY=;
+ b=lAUK0duKeI1t/ea8qizB3+j0F3i4A+xTGGLwyEiI9Hb50d3l2jtGsB90JtwarwEyVudPy9/nd2sa7YLIW8dJK8Kz3ohumlxxcw1v2NVUszzZDcjv4s8WHX6JsTGqpnk8kGPGnZselv1C4uIlSqEG6XakVpcJW0MB2f9ddVa+mQQQCAkc5yxadqUQzGAL7XCdIl8H/KdFJvZssnjrMTi6AdczFmTW3Y9Q34clPDlqtMqYfKBZn1YY8P6iDTTjmR4z1bD+Er6jiwg53Y85DEm7jHCQtWX7SBQptzTYaKnPmEZYMXEhUKFlOOwRpyG1wLeGj9MrMve8IcPhIadLwRHfQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vOeTm8WW03Xd4oO4DWyAVFTtMILVrWTjGdCaWkLj2hY=;
+ b=KDDtA1fd0cstdLM4UKoPf80gwOwCf/dRgMHq2Kekz61F03jd+ZGrg0ebFRveJraDU8qh3uV3RtxAQFphgA3FPNMIiySziX9rd9IZVzEdJI3I6J++FjXz2DKtqcX+hMoz68CRTFaRHLn7IAIc+yftxNQLrNLwuIMKGEndusssK1E=
+Received: from SN7PR18MB5314.namprd18.prod.outlook.com (2603:10b6:806:2ef::8)
+ by BN9PR18MB4346.namprd18.prod.outlook.com (2603:10b6:408:11f::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Tue, 21 May
+ 2024 05:36:06 +0000
+Received: from SN7PR18MB5314.namprd18.prod.outlook.com
+ ([fe80::f808:b798:6233:add8]) by SN7PR18MB5314.namprd18.prod.outlook.com
+ ([fe80::f808:b798:6233:add8%6]) with mapi id 15.20.7544.041; Tue, 21 May 2024
+ 05:36:06 +0000
+From: Bharat Bhushan <bbhushan2@marvell.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>
+CC: "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "Andreas.Fuchs@infineon.com" <Andreas.Fuchs@infineon.com>,
+        James Prestwood
+	<prestwoj@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Eric Biggers
+	<ebiggers@kernel.org>,
+        James Bottomley
+	<James.Bottomley@hansenpartnership.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Andrew Morton
+	<akpm@linux-foundation.org>,
+        James Bottomley
+	<James.Bottomley@HansenPartnership.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, James
+ Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "open
+ list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: RE: [EXTERNAL] [PATCH v2 2/6] lib: Expand asn1_encode_integer() to
+ variable size integers
+Thread-Topic: [EXTERNAL] [PATCH v2 2/6] lib: Expand asn1_encode_integer() to
+ variable size integers
+Thread-Index: AQHaqy1p2zvgm4tnqE+UVehWWg/JF7GhJ8Iw
+Date: Tue, 21 May 2024 05:36:06 +0000
+Message-ID: 
+ <SN7PR18MB5314CFBD18B011F292809EBFE3EA2@SN7PR18MB5314.namprd18.prod.outlook.com>
+References: <20240521031645.17008-1-jarkko@kernel.org>
+ <20240521031645.17008-3-jarkko@kernel.org>
+In-Reply-To: <20240521031645.17008-3-jarkko@kernel.org>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN7PR18MB5314:EE_|BN9PR18MB4346:EE_
+x-ms-office365-filtering-correlation-id: 5615ef97-4e0b-4129-306a-08dc7957e977
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230031|7416005|376005|1800799015|366007|38070700009;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?tRh6NVC7LfUrRSePkYwcj7CZNTM70btnEz+QsxW0WwtDqOpnzPCv8d+UzpCh?=
+ =?us-ascii?Q?qVZAMCL3To0CgsEqxrqvCTtqtleTwvxVP2TtKP3wwp/NomrNJUgy3H6vE5GK?=
+ =?us-ascii?Q?qy+YO/8A2z82H9i1Zq1SgR9HlzqfeIce/kECtdqsd1zMYVW9AOdL90yLtNUF?=
+ =?us-ascii?Q?7oSRKz0zg4ZpIlEVYffNzBFTZbS5/Ok2oX6s3cFJqKa5IHPEYNmdyqlb6FgE?=
+ =?us-ascii?Q?Tm6mGf/8MXjAMSPA/gVkY3kX9uTM22Ar6t1DyCKfuj9ygFCzXxIX8xpCtH//?=
+ =?us-ascii?Q?AgcSJ+TLvpwKT7VGphetXDlf8mXBgBlWu5dSPJ7oCzjiQpbExQ6Gfe6PpQlO?=
+ =?us-ascii?Q?K44VnJeu5l5jx/PkerldOat/bIg4c8cVkNxHJKdsRiZY8Wma+dSYRoYHxpue?=
+ =?us-ascii?Q?MTOyODLxsnYK63mxaYppEMU7lzrA8LoZrGVn4ThDtqIX3IIiE2VwMufHkb/D?=
+ =?us-ascii?Q?ur/DMuAtK+OMxF0cwAqBDdDISkIjeuZMU8vUjiugcc4DDi4Nr/OMbNkiRntq?=
+ =?us-ascii?Q?F6eU7cnGQ89KLORLOS90s1eyxRPEFvjt8ctHObkLzT3D1pFRNtvY/g+U4owK?=
+ =?us-ascii?Q?TYqgxMW1SABnYtnqvHPTrBBMZwDL+1+7h7jO7moZnT+WLESbAsKFMiD1fTcL?=
+ =?us-ascii?Q?yyO9JfMLlVfKUtfgNLHJosVdL2o0EgPsKDDD2Qo/I7+UfecpncYGKptKmvhY?=
+ =?us-ascii?Q?18ae6qvxVfGpydE1WgkruoKLQejAe16Ghv34etvtfBVJH8WKMzyBdp+xEjMR?=
+ =?us-ascii?Q?LqUynv1nYVsUBcES2FHIAMO7e+sMk6TAPBdz9+fi4wFixhr7WivX3pLaYnrX?=
+ =?us-ascii?Q?QKZ6KmRDsLHQWFP8Q/TI2Z0UR6PrLb3cc7zUOuVfdBZuEpy2LWvagcF8fnA2?=
+ =?us-ascii?Q?VquBTuNjt0uSv/uZGDBL/L5DZcyWJha341RVpV47iJfwuhtlKzSaJEuyTF6V?=
+ =?us-ascii?Q?H/08MVD9Qclys5uAcskjjwP57bOS0INXSRHGsl0B1/WelJCvCGX0m9x173zw?=
+ =?us-ascii?Q?3YPj6S/KyiqUBW32wMK7Et+/xpq7d5p2+unp/lZeoAtLuedPGKurozVK5Klf?=
+ =?us-ascii?Q?hQw7THGSrzZpLh4z2XpMe9+ssy++hcFZWA11dIogXO4gX+6B214NIWEsODyk?=
+ =?us-ascii?Q?PYKi5jccRnNQGsRZOXmI+QnZ9n5YHnYcKRGykvdUhMTPqNfxbj9q7zhM1hIr?=
+ =?us-ascii?Q?KldDodKfGhB62/iUBb/1AmcgTrJ/bHnUQ3Q8bY69xWYfjIHimiLrRj+wHakh?=
+ =?us-ascii?Q?TOBF2CSqgInDKkIvZ9k9IUHAa6sVgb/aTbUHrEw+W7djTzX8Fwf8l0SeiEAT?=
+ =?us-ascii?Q?fejCWK8NyuMhh9xqafWMqc25/7RtkjYUbeSrvFIzhxq5zA=3D=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR18MB5314.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?SOjq+ekV5wcsf31qNyaCv5Fimjhib26pEwHa0ssFgXbn664X4eHImxDrFJL/?=
+ =?us-ascii?Q?bHd07Ebo9VMvwoaqWsIvKrz4zNyDXlE96MwtgzXXcXcZVL75BwA3LDzvBDQG?=
+ =?us-ascii?Q?FtJsHzVRyBZWgOqfcKmlXEH8lNj2v31L7vABkiEcuEWNbiZJS7zO56J+UH6w?=
+ =?us-ascii?Q?iqAEJsz4no6npEDlh0Lcbolw8rOuYegO3ElSkc2dw2JN+gPvJb49EAca9MZQ?=
+ =?us-ascii?Q?kySnpZK34ogZriHSys7uBELdgsy9nCx6USOa1D72HqpLDObOLLgQUkZIH3S5?=
+ =?us-ascii?Q?JIGP973zDDD+6Mo7BZ+Gpb8JKUsi5/g1ZtM0JjRCY+Ra9wDtjXc8Jh6ahO5c?=
+ =?us-ascii?Q?9+FwX7BQ8Lhf+KoA07BwGPXTNzcGF3KflKeUipUoKHt2iXtkQiDtWCDP7fbm?=
+ =?us-ascii?Q?6mDjTZ7z/kZ4FKBMre1rIptYg80C8Tv79JxPrbZ1dxxNXfvKO+vR92uxWxG0?=
+ =?us-ascii?Q?067Y0KCX8L4b6syLo7qBeXZ/0m9dkWJY2R5lhh3YbFVRgT9Prg7DmRI+33bI?=
+ =?us-ascii?Q?BRKAO/vn+sAICapljvUeyWzP3ahvA3VUmp4Uy3EO3TUAvezLI971KPJGvCJL?=
+ =?us-ascii?Q?bvNzAUcb+nxDXCzRlgsjY9VIJCDLiNSGWTENrHVRXoTMFK3e8LgGyMlIeuD6?=
+ =?us-ascii?Q?qczZLODDgTUN52yREbx1ZFL3FA76nHh2tpGYggIkfgr9iiNLQDDlqq3il+F0?=
+ =?us-ascii?Q?QbWEipj1oBdvjerLK87o1EeeBAxhRDefaTZVO3AY2dpHHuRp1vprekgVgV2L?=
+ =?us-ascii?Q?VTVRxjMPLJDJlwhAjJUR/9JSVbtZ08/DX7IgwQ+05sK+WTvX9/z2Q8IvFZdn?=
+ =?us-ascii?Q?2ZjrRer7R07lWqJXHCkuY30PTEkOImlvb9vncGfoKdPgT6i5Qk3gcEe4ZIK0?=
+ =?us-ascii?Q?5C4iEfFHvK08D3BqdRdWMWaSJTpMZTidGs1JZYTohPHWpzRf5DySO+W5N0Kr?=
+ =?us-ascii?Q?gnhRJSH1dczFdR+kbN2dje24LYSF9iyOcz3RnAfkKzsTWA+cQ59P3OAEpyNc?=
+ =?us-ascii?Q?s/mpWHmPb9DizJQZM7RF0whJEy+fAl6nPszSuV+cyczHfs3cS9JsA9BNmHZ1?=
+ =?us-ascii?Q?9oRYsHnDtiAyYJQp2gUgNffSt/ILTty80hDPWy8mtsEViwwKXAxj3Jo76fS/?=
+ =?us-ascii?Q?AbtXQvzuGQKeph8sihGUrzjyRiwAU5KfapdkvnrgZJB6LdmPqzrynaN4fnOm?=
+ =?us-ascii?Q?iLG1uHhTke7OuGbbdUY7x0O52CYNyUxIXXmmmZWtgzuJm3Lv31AD2W8kt0oo?=
+ =?us-ascii?Q?NhiVQdN6QL4S7jTolkQZTD0sONk2F5zqhjYl2tOlL+qYueKP1dr05FhojD7N?=
+ =?us-ascii?Q?vTQpigjz4NIbZzitEfx9/LcisEEPaCzTwdIPbDe1NPEuiTnYo8KDzniXOsUn?=
+ =?us-ascii?Q?/6eiCfkFjh9c5UfOYTeTilqHMi66w7T/4QU3YrJQlktg4BMoFALmzzxMQIlM?=
+ =?us-ascii?Q?6YNcCag+3XC0W29iAo1J28TRrLhHgktqwQquNnApILL+hGEi02NG1mKj5EzA?=
+ =?us-ascii?Q?p7YJ3YIiUYh1E1QDwX7qK1BobSJevTXtNjeyWtdxoklThno346b+N7ka5IY4?=
+ =?us-ascii?Q?gR2Wrn1cQ/Ae7SOMIAlZYjVQloHiTikdIhc4aP6q?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1713778236.git.haibo1.xu@intel.com> <5c3a005a67096010cf3c465f8e3362651763fe3b.1713778236.git.haibo1.xu@intel.com>
-In-Reply-To: <5c3a005a67096010cf3c465f8e3362651763fe3b.1713778236.git.haibo1.xu@intel.com>
-From: Haibo Xu <xiaobo55x@gmail.com>
-Date: Tue, 21 May 2024 13:35:21 +0800
-Message-ID: <CAJve8okHV1r4H-yCNbMTg_Bg1pTgeh6zPTyqZtS25G+GVOu8ww@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] ACPI: NUMA: change the ACPI_NUMA to a hidden option
-To: Haibo Xu <haibo1.xu@intel.com>
-Cc: sunilvl@ventanamicro.com, arnd@arndb.de, ajones@ventanamicro.com, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Robert Moore <robert.moore@intel.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Guo Ren <guoren@kernel.org>, Baoquan He <bhe@redhat.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Greentime Hu <greentime.hu@sifive.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Zong Li <zong.li@sifive.com>, 
-	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Chen Jiahao <chenjiahao16@huawei.com>, Jisheng Zhang <jszhang@kernel.org>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, James Morse <james.morse@arm.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Evan Green <evan@rivosinc.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ard Biesheuvel <ardb@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	Yuntao Wang <ytcoode@gmail.com>, Alison Schofield <alison.schofield@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR18MB5314.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5615ef97-4e0b-4129-306a-08dc7957e977
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2024 05:36:06.5273
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vT4OBEprTMUSN8dovZ0F4Knekmi/F9Y/ar88GqzT69FO8n7K5Fg2jIAVu30dUbLcZUBxDAwAulcpKFa3K3Rj0g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR18MB4346
+X-Proofpoint-GUID: OLPvYt0GgHqWd98zH9fuwhzx7RowhoXz
+X-Proofpoint-ORIG-GUID: OLPvYt0GgHqWd98zH9fuwhzx7RowhoXz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-21_03,2024-05-21_01,2024-05-17_01
 
-@Arnd Bergmann
-
-Could you help review this patch?
-
-Thanks,
-Haibo
-
-On Wed, Apr 24, 2024 at 1:31=E2=80=AFPM Haibo Xu <haibo1.xu@intel.com> wrot=
-e:
->
-> x86/arm64/loongarch would select ACPI_NUMA by default and riscv
-> would do the same thing, so change it to a hidden option and the
-> select statements except for the X86_64_ACPI_NUMA can also go away.
->
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Suggested-by: Sunil V L <sunilvl@ventanamicro.com>
-> Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
+> -----Original Message-----
+> From: Jarkko Sakkinen <jarkko@kernel.org>
+> Sent: Tuesday, May 21, 2024 8:46 AM
+> To: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: linux-integrity@vger.kernel.org; keyrings@vger.kernel.org;
+> Andreas.Fuchs@infineon.com; James Prestwood <prestwoj@gmail.com>;
+> David Woodhouse <dwmw2@infradead.org>; Eric Biggers
+> <ebiggers@kernel.org>; James Bottomley
+> <James.Bottomley@hansenpartnership.com>; Jarkko Sakkinen
+> <jarkko@kernel.org>; David S. Miller <davem@davemloft.net>; open
+> list:CRYPTO API <linux-crypto@vger.kernel.org>; open list <linux-
+> kernel@vger.kernel.org>; Andrew Morton <akpm@linux-foundation.org>;
+> James Bottomley <James.Bottomley@HansenPartnership.com>; Mimi Zohar
+> <zohar@linux.ibm.com>; David Howells <dhowells@redhat.com>; Paul Moore
+> <paul@paul-moore.com>; James Morris <jmorris@namei.org>; Serge E. Hallyn
+> <serge@hallyn.com>; open list:SECURITY SUBSYSTEM <linux-security-
+> module@vger.kernel.org>
+> Subject: [EXTERNAL] [PATCH v2 2/6] lib: Expand asn1_encode_integer() to
+> variable size integers
+>=20
+> ----------------------------------------------------------------------
+> Expand asn1_encode_integer() to variable size integers, meaning that it
+> will get a blob in big-endian format as integer and length of the blob as
+> parameters. This is required in order to encode RSA public key modulus.
+>=20
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 > ---
->  arch/arm64/Kconfig        | 1 -
->  arch/loongarch/Kconfig    | 1 -
->  drivers/acpi/numa/Kconfig | 5 +----
->  3 files changed, 1 insertion(+), 6 deletions(-)
->
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 7b11c98b3e84..c6c667898da6 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -1439,7 +1439,6 @@ config HOTPLUG_CPU
->  config NUMA
->         bool "NUMA Memory Allocation and Scheduler Support"
->         select GENERIC_ARCH_NUMA
-> -       select ACPI_NUMA if ACPI
->         select OF_NUMA
->         select HAVE_SETUP_PER_CPU_AREA
->         select NEED_PER_CPU_EMBED_FIRST_CHUNK
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index a5f300ec6f28..29d574a5c34c 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -465,7 +465,6 @@ config NR_CPUS
->  config NUMA
->         bool "NUMA Support"
->         select SMP
-> -       select ACPI_NUMA if ACPI
->         help
->           Say Y to compile the kernel with NUMA (Non-Uniform Memory Acces=
-s)
->           support.  This option improves performance on systems with more
-> diff --git a/drivers/acpi/numa/Kconfig b/drivers/acpi/numa/Kconfig
-> index 849c2bd820b9..f33194d1e43f 100644
-> --- a/drivers/acpi/numa/Kconfig
-> +++ b/drivers/acpi/numa/Kconfig
-> @@ -1,9 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  config ACPI_NUMA
-> -       bool "NUMA support"
-> -       depends on NUMA
-> -       depends on (X86 || ARM64 || LOONGARCH)
-> -       default y if ARM64
-> +       def_bool NUMA && !X86
->
->  config ACPI_HMAT
->         bool "ACPI Heterogeneous Memory Attribute Table Support"
+>  include/linux/asn1_encoder.h              |   3 +-
+>  lib/asn1_encoder.c                        | 185 ++++++++++++----------
+>  security/keys/trusted-keys/trusted_tpm2.c |   4 +-
+>  3 files changed, 103 insertions(+), 89 deletions(-)
+>=20
+> diff --git a/include/linux/asn1_encoder.h b/include/linux/asn1_encoder.h
+> index 08cd0c2ad34f..ad5fb18db9e2 100644
+> --- a/include/linux/asn1_encoder.h
+> +++ b/include/linux/asn1_encoder.h
+> @@ -9,9 +9,10 @@
+>  #include <linux/bug.h>
+>=20
+>  #define asn1_oid_len(oid) (sizeof(oid)/sizeof(u32))
+> +
+>  unsigned char *
+>  asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
+> -		    s64 integer);
+> +		    const u8 *integer, int integer_len);
+>  unsigned char *
+>  asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
+>  		u32 oid[], int oid_len);
+> diff --git a/lib/asn1_encoder.c b/lib/asn1_encoder.c
+> index 0fd3c454a468..51a2d7010a67 100644
+> --- a/lib/asn1_encoder.c
+> +++ b/lib/asn1_encoder.c
+> @@ -9,12 +9,78 @@
+>  #include <linux/bug.h>
+>  #include <linux/string.h>
+>  #include <linux/module.h>
+> +#include <linux/slab.h>
+> +
+> +/**
+> + * asn1_encode_length() - encode a length to follow an ASN.1 tag
+> + * @data: pointer to encode at
+> + * @data_len: pointer to remaining length (adjusted by routine)
+> + * @len: length to encode
+> + *
+> + * This routine can encode lengths up to 65535 using the ASN.1 rules.
+> + * It will accept a negative length and place a zero length tag
+> + * instead (to keep the ASN.1 valid).  This convention allows other
+> + * encoder primitives to accept negative lengths as singalling the
+> + * sequence will be re-encoded when the length is known.
+> + */
+> +static int asn1_encode_length(unsigned char **data, int *data_len, int l=
+en)
+> +{
+> +	if (*data_len < 1)
+> +		return -EINVAL;
+> +
+> +	if (len < 0) {
+> +		*((*data)++) =3D 0;
+> +		(*data_len)--;
+> +		return 0;
+> +	}
+> +
+> +	if (len <=3D 0x7f) {
+> +		*((*data)++) =3D len;
+> +		(*data_len)--;
+> +		return 0;
+> +	}
+> +
+> +	if (*data_len < 2)
+> +		return -EINVAL;
+> +
+> +	if (len <=3D 0xff) {
+> +		*((*data)++) =3D 0x81;
+> +		*((*data)++) =3D len & 0xff;
+> +		*data_len -=3D 2;
+> +		return 0;
+> +	}
+> +
+> +	if (*data_len < 3)
+> +		return -EINVAL;
+> +
+> +	if (len <=3D 0xffff) {
+> +		*((*data)++) =3D 0x82;
+> +		*((*data)++) =3D (len >> 8) & 0xff;
+> +		*((*data)++) =3D len & 0xff;
+> +		*data_len -=3D 3;
+> +		return 0;
+> +	}
+> +
+> +	if (WARN(len > 0xffffff, "ASN.1 length can't be > 0xffffff"))
+> +		return -EINVAL;
+> +
+> +	if (*data_len < 4)
+> +		return -EINVAL;
+> +	*((*data)++) =3D 0x83;
+> +	*((*data)++) =3D (len >> 16) & 0xff;
+> +	*((*data)++) =3D (len >> 8) & 0xff;
+> +	*((*data)++) =3D len & 0xff;
+> +	*data_len -=3D 4;
+> +
+> +	return 0;
+> +}
+>=20
+>  /**
+>   * asn1_encode_integer() - encode positive integer to ASN.1
+> - * @data:	pointer to the pointer to the data
+> - * @end_data:	end of data pointer, points one beyond last usable byte in
+> @data
+> - * @integer:	integer to be encoded
+> + * @data:		pointer to the pointer to the data
+> + * @end_data:		end of data pointer, points one beyond last usable
+> byte in @data
+> + * @integer:		integer to be encoded
+> + * @integer_len:	length in bytes of the integer blob
+>   *
+>   * This is a simplified encoder: it only currently does
+>   * positive integers, but it should be simple enough to add the
+> @@ -22,15 +88,17 @@
+>   */
+>  unsigned char *
+>  asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
+> -		    s64 integer)
+> +		    const u8 *integer, int integer_len)
+>  {
+>  	int data_len =3D end_data - data;
+> -	unsigned char *d =3D &data[2];
+>  	bool found =3D false;
+> +	unsigned char *d;
+> +	int encoded_len;
+> +	u8 *encoded;
+> +	int ret;
+>  	int i;
+>=20
+> -	if (WARN(integer < 0,
+> -		 "BUG: integer encode only supports positive integers"))
+> +	if (WARN(!integer, "BUG: integer is null"))
+>  		return ERR_PTR(-EINVAL);
+>=20
+>  	if (IS_ERR(data))
+> @@ -40,17 +108,22 @@ asn1_encode_integer(unsigned char *data, const
+> unsigned char *end_data,
+>  	if (data_len < 3)
+>  		return ERR_PTR(-EINVAL);
+>=20
+> -	/* remaining length where at d (the start of the integer encoding) */
+> -	data_len -=3D 2;
+> +	(*data++) =3D _tag(UNIV, PRIM, INT);
+
+Just for my clarification:=20
+	First index of "data" is updated here with tag and data pointer incremente=
+d.
+	Next comment for continuation
+
+> +	data_len--;
+>=20
+> -	data[0] =3D _tag(UNIV, PRIM, INT);
+> -	if (integer =3D=3D 0) {
+> -		*d++ =3D 0;
+> -		goto out;
+> +	if (!memchr_inv(integer, 0, integer_len)) {
+> +		data[1] =3D 1;
+> +		data[2] =3D 0;
+> +		return &data[2];
+
+Here we are effectively setting second and third index of original "data" p=
+ointer as "data" pointer was incremented earlier.
+So second index of original "data" pointer is not touched. Also returning 3=
+rd index pointer of original data pointer
+
+Is that intentional?
+
+Thanks
+-Bharat
+
+>  	}
+>=20
+> -	for (i =3D sizeof(integer); i > 0 ; i--) {
+> -		int byte =3D integer >> (8 * (i - 1));
+> +	encoded =3D kzalloc(integer_len, GFP_KERNEL);
+> +	if (!encoded)
+> +		return ERR_PTR(-ENOMEM);
+> +	d =3D encoded;
+> +
+> +	for (i =3D 0; i < integer_len; i++) {
+> +		int byte =3D integer[i];
+>=20
+>  		if (!found && byte =3D=3D 0)
+>  			continue;
+> @@ -67,21 +140,23 @@ asn1_encode_integer(unsigned char *data, const
+> unsigned char *end_data,
+>  			 * have len >=3D 1
+>  			 */
+>  			*d++ =3D 0;
+> -			data_len--;
+>  		}
+>=20
+>  		found =3D true;
+> -		if (data_len =3D=3D 0)
+> -			return ERR_PTR(-EINVAL);
+> -
+>  		*d++ =3D byte;
+> -		data_len--;
+>  	}
+>=20
+> - out:
+> -	data[1] =3D d - data - 2;
+> +	encoded_len =3D d - encoded;
+>=20
+> -	return d;
+> +	ret =3D asn1_encode_length(&data, &data_len, encoded_len);
+> +	if (ret)  {
+> +		kfree(encoded);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	memcpy(data, encoded, encoded_len);
+> +	kfree(encoded);
+> +	return data + encoded_len;
+>  }
+>  EXPORT_SYMBOL_GPL(asn1_encode_integer);
+>=20
+> @@ -176,70 +251,6 @@ asn1_encode_oid(unsigned char *data, const
+> unsigned char *end_data,
+>  }
+>  EXPORT_SYMBOL_GPL(asn1_encode_oid);
+>=20
+> -/**
+> - * asn1_encode_length() - encode a length to follow an ASN.1 tag
+> - * @data: pointer to encode at
+> - * @data_len: pointer to remaining length (adjusted by routine)
+> - * @len: length to encode
+> - *
+> - * This routine can encode lengths up to 65535 using the ASN.1 rules.
+> - * It will accept a negative length and place a zero length tag
+> - * instead (to keep the ASN.1 valid).  This convention allows other
+> - * encoder primitives to accept negative lengths as singalling the
+> - * sequence will be re-encoded when the length is known.
+> - */
+> -static int asn1_encode_length(unsigned char **data, int *data_len, int l=
+en)
+> -{
+> -	if (*data_len < 1)
+> -		return -EINVAL;
+> -
+> -	if (len < 0) {
+> -		*((*data)++) =3D 0;
+> -		(*data_len)--;
+> -		return 0;
+> -	}
+> -
+> -	if (len <=3D 0x7f) {
+> -		*((*data)++) =3D len;
+> -		(*data_len)--;
+> -		return 0;
+> -	}
+> -
+> -	if (*data_len < 2)
+> -		return -EINVAL;
+> -
+> -	if (len <=3D 0xff) {
+> -		*((*data)++) =3D 0x81;
+> -		*((*data)++) =3D len & 0xff;
+> -		*data_len -=3D 2;
+> -		return 0;
+> -	}
+> -
+> -	if (*data_len < 3)
+> -		return -EINVAL;
+> -
+> -	if (len <=3D 0xffff) {
+> -		*((*data)++) =3D 0x82;
+> -		*((*data)++) =3D (len >> 8) & 0xff;
+> -		*((*data)++) =3D len & 0xff;
+> -		*data_len -=3D 3;
+> -		return 0;
+> -	}
+> -
+> -	if (WARN(len > 0xffffff, "ASN.1 length can't be > 0xffffff"))
+> -		return -EINVAL;
+> -
+> -	if (*data_len < 4)
+> -		return -EINVAL;
+> -	*((*data)++) =3D 0x83;
+> -	*((*data)++) =3D (len >> 16) & 0xff;
+> -	*((*data)++) =3D (len >> 8) & 0xff;
+> -	*((*data)++) =3D len & 0xff;
+> -	*data_len -=3D 4;
+> -
+> -	return 0;
+> -}
+> -
+>  /**
+>   * asn1_encode_tag() - add a tag for optional or explicit value
+>   * @data:	pointer to place tag at
+> diff --git a/security/keys/trusted-keys/trusted_tpm2.c
+> b/security/keys/trusted-keys/trusted_tpm2.c
+> index 8b7dd73d94c1..ec59f9389a2d 100644
+> --- a/security/keys/trusted-keys/trusted_tpm2.c
+> +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> @@ -38,6 +38,7 @@ static int tpm2_key_encode(struct trusted_key_payload
+> *payload,
+>  	u8 *end_work =3D scratch + SCRATCH_SIZE;
+>  	u8 *priv, *pub;
+>  	u16 priv_len, pub_len;
+> +	u32 key_handle;
+>  	int ret;
+>=20
+>  	priv_len =3D get_unaligned_be16(src) + 2;
+> @@ -77,7 +78,8 @@ static int tpm2_key_encode(struct trusted_key_payload
+> *payload,
+>  		goto err;
+>  	}
+>=20
+> -	work =3D asn1_encode_integer(work, end_work, options->keyhandle);
+> +	key_handle =3D cpu_to_be32(options->keyhandle);
+> +	work =3D asn1_encode_integer(work, end_work, (u8 *)&key_handle, 4);
+>  	work =3D asn1_encode_octet_string(work, end_work, pub, pub_len);
+>  	work =3D asn1_encode_octet_string(work, end_work, priv, priv_len);
+>=20
 > --
-> 2.34.1
->
+> 2.45.1
+>=20
+
 
