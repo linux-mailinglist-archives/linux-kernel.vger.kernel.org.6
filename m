@@ -1,79 +1,44 @@
-Return-Path: <linux-kernel+bounces-184741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F068CAB52
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:57:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC01C8CAB57
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 207591C218E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:57:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CC1DB20FAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C95E6BB20;
-	Tue, 21 May 2024 09:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ICTv7+bH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD38F6BB4A;
+	Tue, 21 May 2024 09:58:05 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172E056763
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CEB56763;
+	Tue, 21 May 2024 09:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716285423; cv=none; b=WgM5gS8nXh+tjFnlv198mdYV4B/YUpm47eWLFfMNQIGvVeCPkdnf04YnwovmQNjjdmFUozx/BDB+Hi+F6aPmSVYgYOmM87WoL3zOvsBly8WG+Vgwrhp+Ac5y5AZmwWFYFF2VWUnvjaSKzUCYBzMKBtWYDNoF11CDTBj13ph+xP8=
+	t=1716285485; cv=none; b=t/1hrVTGc4M+wa+qOC7YCBtbvRSLF+fp6H5UGHhbDLjUfkCETsViAVU71sJv40Ns0+J1L9FTKzDi5TXaFRG5BNWcs6HbmbJeug+dQTqISosVerNpqNUoECEuTFEJxuv9yynkUaWAFePDPSdnR6NHTA9PamPROCrTvRjHqWRSYB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716285423; c=relaxed/simple;
-	bh=JKPlMAB3CGLTGnfn/LIYfXmddkB77QG77ZBKJkFQ+Lo=;
+	s=arc-20240116; t=1716285485; c=relaxed/simple;
+	bh=FR1c2S746F6o3Xj8394Kf/wJ/lD8QmFz+4mC//y5RA0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lOYI/xSRDodfIG2Dl4APRPexAPDJJG7jJ+vZnP6cjeYPxRELywdGdo5tGpw0F7ZKTRnKaGlHq/prjZKgBFtWypcIfv8gGczbDnvtQ2/L8dcyP+IrPKmh1ciCluI5CN3qN1hsmhq3NMsDmF+yBTcHLrp3i9VeivGziLB2XvUw78Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ICTv7+bH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716285421;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wd9inBZlBGfzSq9NxBy6Ikm8gocZxSrZzTYPRX0fGwk=;
-	b=ICTv7+bH0x8DBySJj8qKbprvN1pbwvZLEm5n+DPZzqMpazHnDytkvOAntlueOz7bWYhEQW
-	cG4zuZOigoxW88jhg4n2R1+pr2tAhgwTg/230o8b2GL2R2jfg9bzwnCe44VhUpRj2nm3GQ
-	NWT1ketDVXRDs5p+IPXVNldEd7X5Y54=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-611-VGvs2EZvOpm_7yvmNzsHAQ-1; Tue, 21 May 2024 05:56:58 -0400
-X-MC-Unique: VGvs2EZvOpm_7yvmNzsHAQ-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-523936877a3so5984090e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:56:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716285417; x=1716890217;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wd9inBZlBGfzSq9NxBy6Ikm8gocZxSrZzTYPRX0fGwk=;
-        b=t8dvn8ulvB2IJeWk2vvU7yLRrxxBxZq59ROi/dudcTVi2nH/Raid1Iren4iObhJSUx
-         9s8keLGKamjVE7h+6+WGkD991UG3oFFWrCtgLnpT38YBWTOf4gOdBHgz7mR3TrPgPGDl
-         9VEOs83wCi+wwpDRgtrMgfKJrTIJIVffcBfZTKQMrtrm0dl//sORxPu8OgZV5SPQZKC1
-         RY1d6XEVQs6z/qmrdj/eTmRyqciNvRRgBzjWu+Xo1na4EOcmekwR5vKkPJSS+UxOa7Hd
-         KDITnb7JitJ/LDt/ZQycRIbnosGMSq82ljGxAAZVmHOQcBz34pvaknyh6rsIHhJzVnnH
-         Msag==
-X-Gm-Message-State: AOJu0Yw4X6F29d4zMGTxfM7d0qgergTZP6zsssTYP914c+raBoHotgBS
-	YYDR5GDHm6X2s5h1u0G9/8YsE+yAGz987WjHDfxG8FB5sljm9CZ4TGYBY3g23ZodOSlmyDmmHvd
-	ZRT9h9QvgTZM+jOxGSWjlkvCHqS8F70A/BurzhMI96WFDaT0ybaBJe2a8XKkrwQ==
-X-Received: by 2002:a05:6512:3e1e:b0:523:2ed9:edf9 with SMTP id 2adb3069b0e04-5232ed9ef10mr18293682e87.63.1716285416886;
-        Tue, 21 May 2024 02:56:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF0Sg4El9iGO0U7Fxi/Q3arD6oI4iwFMyrSYUV6cFdEDesXTLG6Kw66eWdy2pSCcuhq5EJ+7g==
-X-Received: by 2002:a05:6512:3e1e:b0:523:2ed9:edf9 with SMTP id 2adb3069b0e04-5232ed9ef10mr18293666e87.63.1716285416436;
-        Tue, 21 May 2024 02:56:56 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5236d2e9ad9sm2710005e87.178.2024.05.21.02.56.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 02:56:55 -0700 (PDT)
-Message-ID: <338b4d56-7e5a-4d8f-8908-610f2c59e29e@redhat.com>
-Date: Tue, 21 May 2024 11:56:54 +0200
+	 In-Reply-To:Content-Type; b=r1RbglSDAWla/CMoqGTzhXOKd0cZrDGRlU7xqbJH9bkRHK279rNmIXwXbUKryJVbFHd5Nn2d80n2btCfHIoyEyNoHMEflxiqMlHONn6V3w8YW4ztaKQ19okM+b4JFP2d80C7SKjh6KWXZAhojVPO4QktUvy97U4MfE47GAa62xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vk8Z10HFxz9v7Hm;
+	Tue, 21 May 2024 17:40:41 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 773E91404F7;
+	Tue, 21 May 2024 17:57:43 +0800 (CST)
+Received: from [10.81.202.68] (unknown [10.81.202.68])
+	by APP2 (Coremail) with SMTP id GxC2BwC38SUMcExm4emUCA--.12318S2;
+	Tue, 21 May 2024 10:57:42 +0100 (CET)
+Message-ID: <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
+Date: Tue, 21 May 2024 11:57:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,130 +46,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/hugetlb: Move vmf_anon_prepare upfront in hugetlb_wp
-To: Oscar Salvador <osalvador@suse.de>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Muchun Song <muchun.song@linux.dev>, Vishal Moola <vishal.moola@gmail.com>
-References: <20240521073446.23185-1-osalvador@suse.de>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240521073446.23185-1-osalvador@suse.de>
+Subject: Re: LKMM: Making RMW barriers explicit
+To: Alan Stern <stern@rowland.harvard.edu>,
+ Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, kernel-team@meta.com, parri.andrea@gmail.com,
+ boqun.feng@gmail.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ Joel Fernandes <joel@joelfernandes.org>
+References: <72c804c8-2511-4349-a823-bc1de8bb729e@rowland.harvard.edu>
+ <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
+ <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
+ <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwC38SUMcExm4emUCA--.12318S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZFyDJw1fWr4xKr15KryfWFg_yoW5CrWfpa
+	13Ka4UKr4DJw4vk3Wq9FsIqFyF9a1rJrWUXr93twsakas0gr1IgF15t3yUuF9rXrZ7Z3Wj
+	vr13tas7ua4DArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbU
+	UUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On 21.05.24 09:34, Oscar Salvador wrote:
-> hugetlb_wp calls vmf_anon_prepare() after having allocated a page, which
-> means that we might need to call restore_reserve_on_error() upon error.
-> vmf_anon_prepare() releases the vma lock before returning, but
-> restore_reserve_on_error() expects the vma lock to be held by the caller.
+
+
+Am 5/18/2024 um 2:31 AM schrieb Alan Stern:
+> On Thu, May 16, 2024 at 10:44:05AM +0200, Hernan Ponce de Leon wrote:
+>> On 5/16/2024 10:31 AM, Jonas Oberhauser wrote:
+>>>
+>>>
+>>> Am 5/16/2024 um 3:43 AM schrieb Alan Stern:
+>>>> Hernan and Jonas:
+>>>>
+>>>> Can you explain more fully the changes you want to make to herd7 and/or
+>>>> the LKMM?  The goal is to make the memory barriers currently implicit in
+>>>> RMW operations explicit, but I couldn't understand how you propose to do
+>>>> this.
+>>>>
+>>>> Are you going to change herd7 somehow, and if so, how?  It seems like
+>>>> you should want to provide sufficient information so that the .bell
+>>>> and .cat files can implement the appropriate memory barriers associated
+>>>> with each RMW operation.  What additional information is needed?  And
+>>>> how (explained in English, not by quoting source code) will the .bell
+>>>> and .cat files make use of this information?
+>>>>
+>>>> Alan
+>>>
+>>>
+>>> I don't know whether herd7 needs to be changed. Probably, herd7 does the
+>>> following:
+>>> - if a tag called Mb appears on an rmw instruction (by instruction I
+>>> mean things like xchg(), atomic_inc_return_relaxed()), replace it with
+>>> one of those things:
+>>>     * full mb ; once (the rmw) ; full mb, if a value returning
+>>> (successful) rmw
+>>>     * once (the rmw)   otherwise
+>>> - everything else gets translated 1:1 into some internal representation
+>>
+>> This is my understanding from reading the source code of CSem.ml in herd7's
+>> repo.
+>>
+>> Also, this is exactly what dartagnan is currently doing.
+>>
+>>>
+>>> What I'm proposing is:
+>>> 1. remove this transpilation step,
+>>> 2. and instead allow the Mb tag to actually appear on RMW instructions
+>>> 3. change the cat file to explicitly define the behavior of the Mb tag
+>>> on RMW instructions
+>>
+>> These are the exact 3 things I changed in dartagnan for testing what Jonas
+>> proposed.
+>>
+>> I am not sure if further changes are needed for herd7.
 > 
-> Fix it by calling vmf_anon_prepare() before allocating the page.
+> Okay, good.  This answers the first part of what I asked.  What about
+> the second part?  That is, how will the changes to the .def, .bell, and
+> .cat files achieve your goals?
 > 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> Fixes: 9acad7ba3e25 ("hugetlb: use vmf_anon_prepare() instead of anon_vma_prepare()")
-> ---
-> I did not hit this bug, I just spotted this because I was looking at hugetlb_wp
-> for some other reason. And I did not want to get creative to see if I could
-> trigger this so I could get a backtrace.
-> My assumption is that we could trigger this if 1) this was a shared mapping,
-> so no anon_vma and 2) we call in GUP code with FOLL_WRITE, which would cause
-> the FLAG_UNSHARE to be passed, so we will end up in hugetlb_wp().
+> Alan
 
-FOLL_WRITE should never result in FLAG_UNSHARE.
 
-> 
->   mm/hugetlb.c | 17 +++++++++--------
->   1 file changed, 9 insertions(+), 8 deletions(-)
-> 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 6be78e7d4f6e..eb0d8a45505e 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -6005,6 +6005,15 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
->   	 * be acquired again before returning to the caller, as expected.
->   	 */
->   	spin_unlock(vmf->ptl);
-> +
-> +	/*
-> +	 * When the original hugepage is shared one, it does not have
-> +	 * anon_vma prepared.
-> +	 */
-> +	ret = vmf_anon_prepare(vmf);
-> +	if (unlikely(ret))
-> +		goto out_release_old;
-> +
->   	new_folio = alloc_hugetlb_folio(vma, vmf->address, outside_reserve);
->   
->   	if (IS_ERR(new_folio)) {
-> @@ -6058,14 +6067,6 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
->   		goto out_release_old;
->   	}
->   
-> -	/*
-> -	 * When the original hugepage is shared one, it does not have
-> -	 * anon_vma prepared.
-> -	 */
-> -	ret = vmf_anon_prepare(vmf);
-> -	if (unlikely(ret))
-> -		goto out_release_all;
-> -
->   	if (copy_user_large_folio(new_folio, old_folio, vmf->real_address, vma)) {
->   		ret = VM_FAULT_HWPOISON_LARGE | VM_FAULT_SET_HINDEX(hstate_index(h));
->   		goto out_release_all;
+Firstly, we'd allow 'mb as a barrier mode in events, e.g.
 
-The joy of hugetlb reservation code.
+instructions RMW[{'once,'acquire,'release,'mb}]
 
-LGTM
+then the Mb tags would appear in the graph. And then I'd define the 
+ordering explicitly. One way is to say that an Mb tag orders all memory 
+accesses before(or at) the tag with all memory accesses after(or at) the 
+tag, except the accesses of the rmw with each other.
+This is the same as the full fence before the read, which orders all 
+memory accesses before the read with every access after(or at) the read,
+plus the full fence after the write, which orders all memory accesses 
+before(or at) the write with all accesses after the write.
 
--- 
-Cheers,
+That would be done by adding
 
-David / dhildenb
+      [M] ; (po \ rmw) & (po^?; [RMW_MB] ; po^?) ; [M]
+
+to ppo.
+
+
+One could also split it into two rules to keep with the "two full 
+fences" analogy. Maybe a good way would be like this:
+
+      [M] ; po; [RMW_MB & R] ; po^? ; [M]
+
+      [M] ; po^?; [RMW_MB & W] ; po ; [M]
+
+
+Hope that makes sense,
+
+jonas
 
 
