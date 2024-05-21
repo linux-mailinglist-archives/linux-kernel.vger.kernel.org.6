@@ -1,195 +1,154 @@
-Return-Path: <linux-kernel+bounces-185384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7833C8CB445
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:32:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C703B8CB44F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB1E2851A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:32:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03DCD1C22263
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEBC148FF9;
-	Tue, 21 May 2024 19:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7328714900A;
+	Tue, 21 May 2024 19:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Qa0PguJH";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="dfy7rXAx"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="5X8nQJ+M"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA0D1DFE8;
-	Tue, 21 May 2024 19:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07671DFE8;
+	Tue, 21 May 2024 19:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716319920; cv=none; b=KjHGywe+whT5XXi+wkQsLumt7dtmHe+pRUwNB1534XPLonS/z3ejkO/x3X0HdDMjmGI0vYt4qQ3tofaQliEbtXJeu4SMlYga+8LA42+wOTuCIn3Q9SpYJleLEqKUTab+DdqidJUeIbqLWdov7++x5aCrNANJVlTCc+PyKxO8GMQ=
+	t=1716320245; cv=none; b=ioKlIqWdpZeT0efNIbrYanUotGVRN8sPaqNO0eE7+Zk3B1DGcJqC80HoAcGH56PZeGsHyxYtZDBNs7XN5Rgu/vVf28kbqzb/VjLD+Sx4ONAyPR6KHgG5q9rCO0tCD8/8o3CyVtOLvvLcpNqYBK0GZoXj/kiNqzc3Ro8+mBAZnXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716319920; c=relaxed/simple;
-	bh=oDQXQs3+I0KevbjnesJf0FJvciTtn0Zm0YVg/mU5+44=;
+	s=arc-20240116; t=1716320245; c=relaxed/simple;
+	bh=wXDcMa9BCYSyaXMMmTl9LN4ze2E6leCzM04dQwdFaRM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bzOMXAGgkp/eDXHNJ4SChJmFEsKVkFCL9dpNjfrZitjox1p+Fa2dwzRnNO8X/HnUYOTJ8vmiX7dCM/Ss1L4RHGSst9C7l/ClbCvwm9XUf7KDwHZTceVFMoMzqTTl02w+K1X5X3qQhtZw+aUHyUKAwzTk4FU+tjlJh68KHfI6OP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Qa0PguJH; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=dfy7rXAx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=ObeN41Gc7xQyiaXkdT/Cp2UC5V48yl32HWeMY0R72cgxy1hSL7gX7M7rnn5Fqjc0qu/1G6WukNk+h0fFLPX/bF1PMWX5yMdzB9vw5toqtc/dUTgafi8Rf3lGl+RwtxX36dEu+mW8pZJvqvK8Ky8J36XOpR9TLLiVRnV9fpsqZHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=5X8nQJ+M; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716320241;
+	bh=wXDcMa9BCYSyaXMMmTl9LN4ze2E6leCzM04dQwdFaRM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=5X8nQJ+MU7gpqCnK/j2pEAXml/E84t8yPhv1xQpdLoc8LPYVDKPFa5+M6n38NzU80
+	 Z+j1/At6hOVYn8VmZls82EutWaY7Ehg2OYpdMykTy2cV7JvEzs8SqHBT2UpPRVDfNr
+	 5iFDu/JCq3KkmiDCMBioXP3XC4g4bvuLjbusOcohr88wASA9NJZ30Tep5/AIOq2M8h
+	 YTJZ0SWhHE+FDm5yZvE+Em2ioQ7ePT9r175ZagbbP6JMAxf0AnxGu0Jyb781LbEytZ
+	 GVvqgRbFNw8QaxI19BZXaYArrw9Eatwxu+YreHu91wPwTVdwtzjrvUXKdBLJ9Ln3Ix
+	 RKXLDTV7ZZCNQ==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D79CA34926;
-	Tue, 21 May 2024 19:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716319915; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jqv5tIf2GMmwwVp9SIK+mTMvcMTD2xp5tSh2Rv/alOk=;
-	b=Qa0PguJHLId2cDcjdwweNHy70PGIXIoEPLZBbxycw2YbCCH8COgJDknk8BVtp5qgF/cuiD
-	gj5192Ta0rYQgnUaWzMK6hkzb4MgdZOEjz+RsmH3ERIUoZXGqS0iH8ywFj60NORfjGaIv8
-	7LNvBUirJiLl2Qnkc1jj88mEpdo+rjo=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=dfy7rXAx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716319914; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jqv5tIf2GMmwwVp9SIK+mTMvcMTD2xp5tSh2Rv/alOk=;
-	b=dfy7rXAxw1PhGzKeIfUAm/jKom23MoWvbtWSmH6RFDRlsbbJkVtgJbZxZeWEJM7WtE/Ifx
-	WVjfcMTEJkmujyPaU/HEm3wzlKopMrlxitnLP1rP1xdpg0mefaEv6ANYy0hztKOZWov6p6
-	Rtocwsl0IsZ/DtcarWs/4m2M0p0Tte8=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BBBD813685;
-	Tue, 21 May 2024 19:31:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kUDPKqr2TGaFaAAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Tue, 21 May 2024 19:31:54 +0000
-Date: Tue, 21 May 2024 21:31:54 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-cve-announce@vger.kernel.org, Lee Jones <lee@kernel.org>
-Subject: Re: CVE-2024-26650: platform/x86: p2sb: Allow p2sb_bar() calls
- during PCI device probe
-Message-ID: <Zkz2qpUP-HVROO1I@tiehlicka>
-References: <20240326175007.1388794-18-lee@kernel.org>
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 245963782183;
+	Tue, 21 May 2024 19:37:18 +0000 (UTC)
+Date: Tue, 21 May 2024 15:37:16 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Eric Biggers <ebiggers@kernel.org>, Jarkko Sakkinen <jarkko@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	regressions@lists.linux.dev, kernel@collabora.com,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Tejun Heo <tj@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [v2 PATCH] crypto: api - Do not load modules if called by async
+ probing
+Message-ID: <07512097-8198-4a84-b166-ef9809c2913b@notapiano>
+References: <CAMj1kXHi4r8KY9GvX573kwqvLpMfX-J=K2hWiGAKkf5bnicwYQ@mail.gmail.com>
+ <0d260c2f7a9f67ec8bd2305919636678d06000d1.camel@HansenPartnership.com>
+ <CAMj1kXFE_R_x10BVkU+8vrMz0RHiX0+rz-ZL+w08FH2CLQHZXA@mail.gmail.com>
+ <66ec985f3ee229135bf748f1b0874d5367a74d7f.camel@HansenPartnership.com>
+ <dfb0d930-7cbe-46c5-be19-d132b4906ecf@notapiano>
+ <D1C2NPOBHAHK.20O4IME8OK1FH@kernel.org>
+ <20240518043115.GA53815@sol.localdomain>
+ <ZkhS1zrobNwAuANI@gondor.apana.org.au>
+ <00bcfa65-384d-46ae-ab8b-30f12487928b@notapiano>
+ <ZkwMnrTR_CbXcjWe@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240326175007.1388794-18-lee@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-6.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	MISSING_XM_UA(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: D79CA34926
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -6.01
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZkwMnrTR_CbXcjWe@gondor.apana.org.au>
 
-This patch has been reverted in upstream by 03c6284df179 ("Revert
-"drm/amd/amdgpu: Fix potential ioremap() memory leaks in
-amdgpu_device_init()"") and based on the changelog the CVE should be
-rejected.
+On Tue, May 21, 2024 at 10:53:18AM +0800, Herbert Xu wrote:
+> On Mon, May 20, 2024 at 11:49:56AM -0400, Nícolas F. R. A. Prado wrote:
+> >
+> > Unfortunately this patch didn't work either. The warning is still there
+> > unchanged.
+> 
+> OK perhaps we can do it by calling current_is_async ourselves.
+> But this is really a nasty hack because it basically defeats
+> the whole point of loading optional algorithm by module.
+> 
+> Linus/Tejun, is it time perhaps to remove the warning introduced
+> by commit 0fdff3ec6d87856cdcc99e69cf42143fdd6c56b4 since it's
+> been ten years since the warning caused a real problem?
+> 
+> For the Crypto API, if it is called by some random driver via the
+> async context, this warning stops us from loading any modules
+> without printing a nasty warning that isn't relevant as the Crypto
+> API never calls async_synchronize_full.
+> 
+> ---8<---
+> Do not call request_module if this is the case or a warning will
+> be printed.
+> 
+> Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> Reported-by: Eric Biggers <ebiggers@kernel.org>
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> ---
+>  crypto/api.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/crypto/api.c b/crypto/api.c
+> index 22556907b3bc..7c4b9f86c1ad 100644
+> --- a/crypto/api.c
+> +++ b/crypto/api.c
+> @@ -10,6 +10,7 @@
+>   * and Nettle, by Niels Möller.
+>   */
+>  
+> +#include <linux/async.h>
+>  #include <linux/err.h>
+>  #include <linux/errno.h>
+>  #include <linux/jump_label.h>
+> @@ -280,7 +281,8 @@ static struct crypto_alg *crypto_larval_lookup(const char *name, u32 type,
+>  	mask &= ~(CRYPTO_ALG_LARVAL | CRYPTO_ALG_DEAD);
+>  
+>  	alg = crypto_alg_lookup(name, type, mask);
+> -	if (!alg && !(mask & CRYPTO_NOLOAD)) {
+> +	if (!alg && !(mask & CRYPTO_NOLOAD) &&
+> +	    (!IS_BUILTIN(CONFIG_CRYPTO) || !current_is_async())) {
+>  		request_module("crypto-%s", name);
+>  
+>  		if (!((type ^ CRYPTO_ALG_NEED_FALLBACK) & mask &
+> -- 
+> 2.39.2
 
-On Tue 26-03-24 17:50:16, Lee Jones wrote:
-> Description
-> ===========
-> 
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> platform/x86: p2sb: Allow p2sb_bar() calls during PCI device probe
-> 
-> p2sb_bar() unhides P2SB device to get resources from the device. It
-> guards the operation by locking pci_rescan_remove_lock so that parallel
-> rescans do not find the P2SB device. However, this lock causes deadlock
-> when PCI bus rescan is triggered by /sys/bus/pci/rescan. The rescan
-> locks pci_rescan_remove_lock and probes PCI devices. When PCI devices
-> call p2sb_bar() during probe, it locks pci_rescan_remove_lock again.
-> Hence the deadlock.
-> 
-> To avoid the deadlock, do not lock pci_rescan_remove_lock in p2sb_bar().
-> Instead, do the lock at fs_initcall. Introduce p2sb_cache_resources()
-> for fs_initcall which gets and caches the P2SB resources. At p2sb_bar(),
-> refer the cache and return to the caller.
-> 
-> Before operating the device at P2SB DEVFN for resource cache, check
-> that its device class is PCI_CLASS_MEMORY_OTHER 0x0580 that PCH
-> specifications define. This avoids unexpected operation to other devices
-> at the same DEVFN.
-> 
-> Tested-by Klara Modin <klarasmodin@gmail.com>
-> 
-> The Linux kernel CVE team has assigned CVE-2024-26650 to this issue.
-> 
-> 
-> Affected and fixed versions
-> ===========================
-> 
-> 	Issue introduced in 6.0 with commit 9745fb07474f and fixed in 6.1.76 with commit 2841631a0365
-> 	Issue introduced in 6.0 with commit 9745fb07474f and fixed in 6.6.15 with commit 847e1eb30e26
-> 	Issue introduced in 6.0 with commit 9745fb07474f and fixed in 6.7.3 with commit d281ac9a987c
-> 	Issue introduced in 6.0 with commit 9745fb07474f and fixed in 6.8 with commit 5913320eb0b3
-> 
-> Please see https://www.kernel.org for a full list of currently supported
-> kernel versions by the kernel community.
-> 
-> Unaffected versions might change over time as fixes are backported to
-> older supported kernel versions.  The official CVE entry at
-> 	https://cve.org/CVERecord/?id=CVE-2024-26650
-> will be updated if fixes are backported, please check that for the most
-> up to date information about this issue.
-> 
-> 
-> Affected files
-> ==============
-> 
-> The file(s) affected by this issue are:
-> 	drivers/platform/x86/p2sb.c
-> 
-> 
-> Mitigation
-> ==========
-> 
-> The Linux kernel CVE team recommends that you update to the latest
-> stable kernel version for this, and many other bugfixes.  Individual
-> changes are never tested alone, but rather are part of a larger kernel
-> release.  Cherry-picking individual commits is not recommended or
-> supported by the Linux kernel community at all.  If however, updating to
-> the latest release is impossible, the individual changes to resolve this
-> issue can be found at these commits:
-> 	https://git.kernel.org/stable/c/2841631a03652f32b595c563695d0461072e0de4
-> 	https://git.kernel.org/stable/c/847e1eb30e269a094da046c08273abe3f3361cf2
-> 	https://git.kernel.org/stable/c/d281ac9a987c553d93211b90fd4fe97d8eca32cd
-> 	https://git.kernel.org/stable/c/5913320eb0b3ec88158cfcb0fa5e996bf4ef681b
+FWIW this patch fixes the warning. So feel free to add
 
--- 
-Michal Hocko
-SUSE Labs
+Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+if you choose to apply this patch (I'm happy to help test other patches too). In
+any case, please also add the following trailers so the regression gets closed
+automatically in regzbot:
+
+Fixes: 1b6d7f9eb150 ("tpm: add session encryption protection to tpm2_get_random()")
+Link: https://lore.kernel.org/r/119dc5ed-f159-41be-9dda-1a056f29888d@notapiano/
+
+Thanks,
+Nícolas
 
