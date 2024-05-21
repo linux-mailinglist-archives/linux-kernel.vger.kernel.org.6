@@ -1,320 +1,293 @@
-Return-Path: <linux-kernel+bounces-185492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDEC8CB581
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:49:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB8E8CB584
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FA13282B35
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F0D81C20D88
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE58149C46;
-	Tue, 21 May 2024 21:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AC114A083;
+	Tue, 21 May 2024 21:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V/jFOLmo"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IHdzH6/7"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2040.outbound.protection.outlook.com [40.107.223.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717CF487B0
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 21:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716328167; cv=none; b=mtwV8UuUIz+jOMi0y1tpgy6ALJ0df6t3oUQB0ZkLubQmi69slU0YKsRh9zFAnMhHbKRKQ0vduZZECoffIkzxdzDmm1h7e7vLRWCIHSKFPhbBBxrY/SVxPF3Wp94YItTaQxgsgggxitSVUq9I9D+OdYGnx+DepyIpaKSLtD11pAM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716328167; c=relaxed/simple;
-	bh=QkS/qn8DxEq7/cSkd29Toj5P91ZjzFb7thiexZ+Q+Vk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LvPNUfSutJAZUSGo5qs7AflQCoeTmndlUNpxsD4vxzIVo0lG0798LSFRYEd3feLnY9GWjgtpY1jVHCqddow9v6nTyBezTIcrzjV91pbXvWZZYc0SGHSi+7GHI1bGroDhp/VfDREq4FJGKILprITY+qZ5I10p2frT22XSpiP86Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V/jFOLmo; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ecd9a81966so2096235ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:49:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716328165; x=1716932965; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8GGCRq2Ndy1hxp/g1PB5jr/b9oZhFBCgGqizCUbAq1E=;
-        b=V/jFOLmonieSUqVI/wvInnqEZnn/vGbWSKktw9sDjRrUI1VJMLNrNOXt3M84eXCEgu
-         AS3CW55iz8bgmuq0qNyA56DOOhPtSsB4+9jRvKLRZMjdOt6maez3XmzMN/9aC5l8x0LI
-         RIFlAGVzqLWon2UJHCc8pj+YUlCjMNla3647I2+52VMdFg5MPlPYxF6XkLTv+okN45VP
-         6vvq4kwspSIcGkvuZtSI05iyHNVvUqq5vtBP7DmbFWo9mg760o5dil1bU2FLibzDlapB
-         ojex9TuNSgE2jA+EpDbETR/fw7o0+lBGk2Yzd8xYhJ6UrIPN90JknVgsg+C0uYhrwtY/
-         ClUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716328165; x=1716932965;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8GGCRq2Ndy1hxp/g1PB5jr/b9oZhFBCgGqizCUbAq1E=;
-        b=GQ5NyzhviYMxy9/B9Q9sFw/oyXqIEiuV6b/pG2Jen9MHOD73z7oZRZaCqVnxyFYPbl
-         aexQvqfT6KMsGSYBRwMkkpfdsUxH4vO2PSqTDtL8L05tt62l4mAz/6JQd2M5bh8N65AM
-         E8YjSSZo8vnHfnEu9H1WMMyVpySJMIo1csqpsB9qCm/o23/WFMOLye86Hex3/dwROyfa
-         YYx8NYubvrA8WkHgRzVv+POMbCL8pkugEOCHpECL2vBZcAmGs8yh3l5iwwCYTFUaXwfT
-         v0b52HdOUKnRO6xKyg49bHWXPJM+xWCbfvCVehvyGMV0fNg3B5lpCw5o9W8uZXmiZTzb
-         N0Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwfVjQjHPQhrGCOfMYDL23XNtdkaFv2lh4JSVW3bIkLykPa/mRWudPCSaatz6InDrIF6SqB9mtS5vSdssIbhLE3G8VWwJJ4cRv5wuQ
-X-Gm-Message-State: AOJu0Yx6tLpst1rXg+qJ0XK8JTxCh/WKOw5Efc5c2tafLq/0C70u9Twh
-	+medJ9OD4YW4fHo46t1qN8egTpINTTWDVbHiPqRwKQPmnbU2/VMX8I7vLDjNAn0VOzuV+7bmrSL
-	EH2EDnjSAgeewxP9CqTXa+Vg5RHU=
-X-Google-Smtp-Source: AGHT+IHk/Bh8czYalA/qer60Z/oouST3IPJB3/UsdD32RIJw9mWN4Evo2jZ3J4LCsyDWQo52hJgmYhGRYo9YtVObCwY=
-X-Received: by 2002:a17:903:41c7:b0:1f3:3b0:61a7 with SMTP id
- d9443c01a7336-1f303b06359mr84827515ad.12.1716328164614; Tue, 21 May 2024
- 14:49:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0707A487B0;
+	Tue, 21 May 2024 21:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716328212; cv=fail; b=Xjh6FgbYibHBl9BGbvr0LUzoA0gJM/jNV4LEtFiCzJNLPIhXldPwfKigiFOk1qYJTvgxM8D2HBaNCIu21eqijE5fAljgvBDc0uyNomNK++7dfxI6kCiZtT9LBtgx6PiAL5Z1Fsn+f9u8l53e9nXNxg5YA61WLfoXfOdjtTGrwzE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716328212; c=relaxed/simple;
+	bh=1j9HU7TKWQG+XG6DmlOPfHSMDisJOt4ywq9VOWn8i5E=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hsJqAtqhivyUPcQTn63sOTU71KH2TmYri5YUD9oLIBRSoRgh0Syfuf2/HsXzO8mbo/5y+kllmqP4IsA9OqJvaQdMhvxQK0+m2I8D8dSOBaGMpJXxjufur/4AJiJOIQKNWldofgZ86WxLD9okXSme5t8zrhXnFGX7pYVnX8+Y3RM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IHdzH6/7; arc=fail smtp.client-ip=40.107.223.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gCccnwRW3fjLahBHYVw+c+4+kY3Y5HxYxlkL4mqKKfVGeEEWXWKv71Gro4kAHqPjgkr+1cG9lfywPjxe3FRHm6sDLI0d3a6v/ou8ss34eMa96pamzwxVoenRZBA6T0Xey5oCp1oyJv+DeSEUKuD5coksCIs+WAUy5XpDnOUgwoQwXbXovvjMVCskfKg+byRmaucKnxcXgog1iCCMQID/osYvuJ+/wINcCuE6AovVe+JykV0Jr3+U41cNufVh3+1V/kvfRSH7HF1XINtk2Tr0Pc4bP9FZ16pcyr4CJaAQwqfnJ7BhnBWIzJPTsfvzQ7kTriPPOBMNPuQpMXLYgc86DQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wBQhXSIf5/bV10qJtYQEWvygY5ww87h3UADznhCFS14=;
+ b=L5OXYvLuM623l8vmQ1fXIgO/xUMrGKWLQaNsCHU1JASr4VcV29IhlG/ID1M1os/zRdgQ2u5Y68dZoe0FWqiE09TRQoWU9HvXyKywWNd+6dsrIWY76yYo0avsrwEUuNXpWPsnUFDTOVGBZRhD/izPHR/vtqm5utljrjQWVCydhoVwRxvgdjO7Wroba1dykUC9GalDQONM7V18OrpvG3kBcrpVo6jZi85kLWtxKWrtQp80Ve2KESNaP8CVqlPQc2vqBChJ1sx3MJcm/fLDdqXIQPPP3z7JQ7efUr9NaFhlqFmYIR7eOCH1XXZgPrEA0XOyzD3mFhq0OlQF6WKwN3m35g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wBQhXSIf5/bV10qJtYQEWvygY5ww87h3UADznhCFS14=;
+ b=IHdzH6/7J0glGFeKrinC5LZm8/9yBbChp2cC+GCYIrqkBsOFlNsX3ZS9Hj/YJ53Y8YhFpvD6Bc1h46Eeo7evhBEwFP1n9lZVg9yt5jpck+AqEh1OpH7ofkYNWbWCPHPb9GPuEtGgPTv1C7+nIWjdixVZcDJacMl5TfrUUV/Shl8=
+Received: from CH0PR03CA0247.namprd03.prod.outlook.com (2603:10b6:610:e5::12)
+ by MW4PR12MB6828.namprd12.prod.outlook.com (2603:10b6:303:209::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Tue, 21 May
+ 2024 21:50:08 +0000
+Received: from CH2PEPF00000141.namprd02.prod.outlook.com
+ (2603:10b6:610:e5:cafe::8f) by CH0PR03CA0247.outlook.office365.com
+ (2603:10b6:610:e5::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19 via Frontend
+ Transport; Tue, 21 May 2024 21:50:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH2PEPF00000141.mail.protection.outlook.com (10.167.244.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7611.14 via Frontend Transport; Tue, 21 May 2024 21:50:07 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 21 May
+ 2024 16:50:07 -0500
+Date: Tue, 21 May 2024 16:49:52 -0500
+From: Michael Roth <michael.roth@amd.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-coco@lists.linux.dev>, <linux-mm@kvack.org>,
+	<linux-crypto@vger.kernel.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<jroedel@suse.de>, <thomas.lendacky@amd.com>, <hpa@zytor.com>,
+	<ardb@kernel.org>, <seanjc@google.com>, <vkuznets@redhat.com>,
+	<jmattson@google.com>, <luto@kernel.org>, <dave.hansen@linux.intel.com>,
+	<slp@redhat.com>, <pgonda@google.com>, <peterz@infradead.org>,
+	<srinivas.pandruvada@linux.intel.com>, <rientjes@google.com>,
+	<dovmurik@linux.ibm.com>, <tobin@ibm.com>, <bp@alien8.de>, <vbabka@suse.cz>,
+	<kirill@shutemov.name>, <ak@linux.intel.com>, <tony.luck@intel.com>,
+	<sathyanarayanan.kuppuswamy@linux.intel.com>, <alpergun@google.com>,
+	<jarkko@kernel.org>, <ashish.kalra@amd.com>, <nikunj.dadhania@amd.com>,
+	<pankaj.gupta@amd.com>, <liam.merwick@oracle.com>, Brijesh Singh
+	<brijesh.singh@amd.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>
+Subject: Re: [PATCH v15 09/20] KVM: SEV: Add support to handle MSR based Page
+ State Change VMGEXIT
+Message-ID: <rczrxq3lhqguarwh4cwxwa35j5riiagbilcw32oaxd7aqpyaq7@6bqrqn6ontba>
+References: <20240501085210.2213060-1-michael.roth@amd.com>
+ <20240501085210.2213060-10-michael.roth@amd.com>
+ <84e8460d-f8e7-46d7-a274-90ea7aec2203@linux.intel.com>
+ <CABgObfaXmMUYHEuK+D+2E9pybKMJqGZsKB033X1aOSQHSEqqVA@mail.gmail.com>
+ <7d6a4320-89f5-48ce-95ff-54b00e7e9597@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516101006.2388767-1-victor.liu@nxp.com> <evnxopqt5be56vxuxqdj4l3mcd5nrrvucio7jhwgg4emraai3t@gherubdynyip>
- <e2d4e8b4-bab4-448f-8b67-21f2902fdcd2@linux.dev> <CAA8EJppH1rYQ5pzkGP+V-=cOPBYMWm=ZK2Ei1ttjOiN6GRDP+w@mail.gmail.com>
- <acc508e2-b067-47ef-b3e2-fcac51403fe0@linux.dev> <CAA8EJpowLnrnV8ezXYj=oWBFFTa6LqkPFFHc9F49un6AYgZvzw@mail.gmail.com>
- <CAHCN7x+5L+fjkDgR_mJ2BQ1M52oBZyU0nUca1Uvhyh1pFSJChw@mail.gmail.com> <lpgtwv74vlazlzpurey3qdhs6qygauw2xr3g4gcfp6kvbio4zj@2puyycoaqqay>
-In-Reply-To: <lpgtwv74vlazlzpurey3qdhs6qygauw2xr3g4gcfp6kvbio4zj@2puyycoaqqay>
-From: Adam Ford <aford173@gmail.com>
-Date: Tue, 21 May 2024 16:49:12 -0500
-Message-ID: <CAHCN7xKAByP3CHM-VGopS1e5mO9N6yv54GkigyXHb3jmfy-jrg@mail.gmail.com>
-Subject: Re: [PATCH] drm/bridge: adv7511: Exit interrupt handling when necessary
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Sui Jingfeng <sui.jingfeng@linux.dev>, Liu Ying <victor.liu@nxp.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, biju.das.jz@bp.renesas.com, 
-	u.kleine-koenig@pengutronix.de, jani.nikula@intel.com, bli@bang-olufsen.dk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7d6a4320-89f5-48ce-95ff-54b00e7e9597@linux.intel.com>
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000141:EE_|MW4PR12MB6828:EE_
+X-MS-Office365-Filtering-Correlation-Id: a71eca91-3d01-41f5-8e37-08dc79dffb2e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|7416005|82310400017|1800799015|36860700004|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aVk2K0VhTVZ0OHN5WFExYWFuVlRySFRrZHdCa0g2VmthZk84SXNFSTdxVE9N?=
+ =?utf-8?B?MW5PUzZhek5rTzA4MHJKU1Raclp6bzdNc0l1c3hjUjlFZFdMa0lUS0szTXo5?=
+ =?utf-8?B?c3NXVmxja0NDdnF5TDhuc1A3SlhJdys1cFlhNS9EZ0pOTk9aSzY2UzIreDZE?=
+ =?utf-8?B?VVM1S3BMaGZJbEVhbGVFbVkwRERtQmJMQXFtUnRtSTFvQmZkZmplN2g5UmRH?=
+ =?utf-8?B?L2E2dWZ2QmZaN0NaSGZEVnJaRC80RzdRc3YyT3cxemZRS2MrOE1LdTJ2RU9Y?=
+ =?utf-8?B?cC9WMmgwc1JOelg3NVpTdGhQa25LdGVGTFI5TXBmdy9VaDZsOWFjZUZ2NnNm?=
+ =?utf-8?B?cFpaZmNlT0pLSitsSWlPM1hDRlVwdVY3MCs5VVorWEVicTd2anYrQ1owYXM5?=
+ =?utf-8?B?anRTWlBPV2ZNV2hRYlB0Vkc4QXRoSDM2SlFpMWFqOTFEZ2JFYitKenBCRDVk?=
+ =?utf-8?B?ZDBST1VSa0hXS2hXcTNFS2tOZ3FyNmhpUXo1U2l3WGpodmhvRExYTWtyNUtO?=
+ =?utf-8?B?aGFlbTBMVTdTeXlnRkhQSUFrV1hlZkNlUGxuUE8wOE1PY0ZDSFNRSzRlSnRQ?=
+ =?utf-8?B?U0JDREFLRWJSYXR6cjgzenZBU0NzMHArSEtZTkdSdUhvaXNoWFYvN3Bva1ZX?=
+ =?utf-8?B?WGlQRmhHWi9GVGJtTTB4V243YW9tb3NkU0QxWGFDVFRPRjFMSjBMM3VQakdx?=
+ =?utf-8?B?MU42N2R2b0pVdG5vTUgvMHZmYjlZK0xCanorWmlBcjI2YTA4RGxHcUdZZ3Vl?=
+ =?utf-8?B?eFhBejFGaGJHd1c2Y2RQd2g2cU9waGYyTlAxSWtaZGRsamdROWt3cWNick5x?=
+ =?utf-8?B?SjhDZnhDalQwRHFtQVZxMWpDR3JDZzI2UTZSeGFvOThtRk8xMEQ0Uk1hb1dy?=
+ =?utf-8?B?clIzTjYxS0FvVG1qdGpjTkptdVJma3NUY2lyaW1obTJyZmtPdTJrTUF3Mk9x?=
+ =?utf-8?B?N2RMY2pVOWJ4elI5Wnh3Ty9mUWJnMHJUM2V3YjlvUkN3QzRSN0xYd0JHSVk3?=
+ =?utf-8?B?K3Bqczg1Yll3SXR1YUhnWkVaV2NFYXRmemZpeEpBSTNaanNPSHdaalZ3dEtC?=
+ =?utf-8?B?WE9XbW5nVkV2dDkrOWNLc1YvRnBNRE1UYnoyWmFtdXV2OXZYMWFPaDQzbEFE?=
+ =?utf-8?B?K2ZvZllBT1ZLbWZ1WnhkVFhNYmxwZ2pEeWtMQmxYVFVBWFdoWlFUWGVOY2pq?=
+ =?utf-8?B?QjRUMEw5WC9hUGZvc1N3TGVFaVN6NWRVbXFhczdsaVM3Yy96Sks3Wml0ZXM4?=
+ =?utf-8?B?NWFCMkVISmVvdlprYmZRQncxdFRCTEE0bmo3Z2YzWTZtNmtqdVJNWUxTc2hV?=
+ =?utf-8?B?aWRmQmlBMXJkaHBXTkVRNW94c00rOUtzalVDOWYxSytCUUFDWDUxcWhESkJN?=
+ =?utf-8?B?ZjRIa1ZZUnFzd2pybXpsTUVZL1cwbmRxVlE3OFEvSHoyVTJ2TXM2aTIraEJm?=
+ =?utf-8?B?aG5RRGNEZ1VTbHJPUWNCbUc1eUVWQTUwVmY2SU5uOW5OMlM3MEhFRUVzWU1x?=
+ =?utf-8?B?RWdXcUNCcXhQbUlMRzR4dnZZYmpKbmx5dmt6a0pKVUt2VnJXVVBQRzNMdTMz?=
+ =?utf-8?B?dS83SW9IZGVSeFJqYTdHZFJEYTArU2EwVkVjRU9JZnJRZHE2Zk4vYyt4Nlo4?=
+ =?utf-8?B?cUR2SUUvaHlSbm9GSzVXbVdpZ0hPcXpUd2VCQkw4d0hnU1A3NlpKcFNYU2Vm?=
+ =?utf-8?B?dWphb2hIcnRrbDRYYndrTm91TW8wYU9zbFk0SDV4TloyeUs5SEF6QnhLWXVp?=
+ =?utf-8?Q?ZhXQ+PGBq9xymVsVG098wwA48OAASNKBs4YIBdK?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(7416005)(82310400017)(1800799015)(36860700004)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 21:50:07.7943
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a71eca91-3d01-41f5-8e37-08dc79dffb2e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000141.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6828
 
-On Mon, May 20, 2024 at 4:16=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Mon, May 20, 2024 at 07:46:05AM -0500, Adam Ford wrote:
-> > On Mon, May 20, 2024 at 7:00=E2=80=AFAM Dmitry Baryshkov
-> > <dmitry.baryshkov@linaro.org> wrote:
-> > >
-> > > On Mon, 20 May 2024 at 14:48, Sui Jingfeng <sui.jingfeng@linux.dev> w=
-rote:
-> > > >
-> > > > Hi,
-> > > >
-> > > >
-> > > > On 5/20/24 19:13, Dmitry Baryshkov wrote:
-> > > > > On Mon, 20 May 2024 at 14:11, Sui Jingfeng <sui.jingfeng@linux.de=
-v> wrote:
-> > > > >>
-> > > > >> Hi,
-> > > > >>
-> > > > >> On 5/20/24 06:11, Dmitry Baryshkov wrote:
-> > > > >>> On Thu, May 16, 2024 at 06:10:06PM +0800, Liu Ying wrote:
-> > > > >>>> Commit f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share =
-GPIO pins")
-> > > > >>>> fails to consider the case where adv7511->i2c_main->irq is zer=
-o, i.e.,
-> > > > >>>> no interrupt requested at all.
-> > > > >>>>
-> > > > >>>> Without interrupt, adv7511_wait_for_edid() could return -EIO s=
-ometimes,
-> > > > >>>> because it polls adv7511->edid_read flag by calling adv7511_ir=
-q_process()
-> > > > >>>> a few times, but adv7511_irq_process() happens to refuse to ha=
-ndle
-> > > > >>>> interrupt by returning -ENODATA.  Hence, EDID retrieval fails =
-randomly.
-> >
-> > Sorry about that.  I did some testing and didn't see any regressions,
-> > but if it was random, it's likely I just was lucky to not see it.
-> >
-> > > > >>>>
-> > > > >>>> Fix the issue by checking adv7511->i2c_main->irq before exitin=
-g interrupt
-> > > > >>>> handling from adv7511_irq_process().
-> > > > >>>>
-> > > > >>>> Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share =
-GPIO pins")
-> > > > >>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> > > > >>>> ---
-> > > > >>>>    drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 3 ++-
-> > > > >>>>    1 file changed, 2 insertions(+), 1 deletion(-)
-> > > > >>>>
-> > > > >>>> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/dr=
-ivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> > > > >>>> index 6089b0bb9321..2074fa3c1b7b 100644
-> > > > >>>> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> > > > >>>> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> > > > >>>> @@ -479,7 +479,8 @@ static int adv7511_irq_process(struct adv7=
-511 *adv7511, bool process_hpd)
-> > > > >>>>               return ret;
-> > > > >>>>
-> > > > >>>>       /* If there is no IRQ to handle, exit indicating no IRQ =
-data */
-> > > > >>>> -    if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)=
-) &&
-> > > > >>>> +    if (adv7511->i2c_main->irq &&
-> > > > >>>> +        !(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)=
-) &&
-> > > > >>>>           !(irq1 & ADV7511_INT1_DDC_ERROR))
-> > > > >>>>               return -ENODATA;
-> > > > >>>
-> > > > >>> I think it might be better to handle -ENODATA in adv7511_wait_f=
-or_edid()
-> > > > >>> instead. WDYT?
-> > > > >>>
-> > > > >>
-> > > > >> I think this is may deserve another patch.
-> > > > >
-> > > > > My point is that the IRQ handler is fine to remove -ENODATA here,
-> > > >
-> > > > [...]
-> > > >
-> > > > > there is no pending IRQ that can be handled.
-> > > >
-> > > > But there may has other things need to do in the adv7511_irq_proces=
-s()
-> > > > function.
-> > >
-> > > But the function returns anyway. So, we know that the condition is br=
-oken.
-> >
-> > When I originally submitted the patch, I only added the shared IRQ
-> > flag without any IRQ condition checks, IRQ because I didn't want to
-> > break anything. The feedback I got was to check to see if the IRQ was
-> > intended by the device.  My focus was the adv7511_drv.c file because
-> > that appears to be what the registered IRQ hander was, but after
-> > looking through adv7511_cec, I see that adv7511_cec_irq_process checks
-> > adv_cec_tx_raw_status and returns if there is nothing to do.
-> >
-> > Would it make sense to move the if statement  did the following things:
-> >
-> > -  Make adv7511_cec_irq_process return an int and modify it to return
-> > 0 in normal operation or return -ENODATA where there is nothing to do.
-> > It already has the checks in place to determine if there is work to
-> > do, so the impact here should be minimal.
-> >
-> > - Move the check I added on whether or not there is an interrupt  to
-> > the very end of adv7511_irq_process just before the return 0.
-> >
-> > - Instead of blindly returning 0, modify the if statement to read the
-> > state of the return code of adv7511_cec_irq_process and the IRQ flags
-> > it already checks.  If ADV7511_INT0_HPD, ADV7511_INT0_EDID_READY and
-> > ADV7511_INT1_DDC_ERROR are all not true and adv7511_cec_irq_process
-> > returned early, return ENODATA, but if any of the interrupts was
-> > present and adv7511_cec_irq_process did work, it would return 0.
-> >
-> > I think that would cover the situation where adv7511_cec_irq_process
-> > would get called, and also prevent a false return of the IRQ being
-> > handled when this part didn't handle anything.
-> >
-> > It would look something like:
-> >
-> > cec_irq =3D adv7511_cec_irq_process(adv7511, irq1);
-> >
-> > /* If there is no IRQ to handle, exit indicating no IRQ data */)
-> > if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
-> >    !(irq1 & ADV7511_INT1_DDC_ERROR) &&
-> >   cec_irq =3D=3D  -ENODATA)
-> >         return -ENODATA;
-> > else
-> >         return 0
-> >
-> >
-> > OR...
-> >
-> >
-> > Another alternative to all this is to modify the check that I added to
-> > verify all the following flags which are currently checked in
-> > adv7511_cec_irq_process :
-> >
-> > ADV7511_INT1_CEC_TX_READY
-> > ADV7511_INT1_CEC_TX_ARBIT_LOST
-> > ADV7511_INT1_CEC_TX_RETRY_TIMEOUT
-> > ADV7511_INT1_CEC_RX_READY1
-> > ADV7511_INT1_CEC_RX_READY2
-> > ADV7511_INT1_CEC_RX_READY3
-> >
-> > It would look something like:
-> >
-> > /* If there is no IRQ to handle, exit indicating no IRQ data */
-> > if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
-> >    !(irq1 & ADV7511_INT1_DDC_ERROR) &&
-> >    !(irq1 & ADV7511_INT1_CEC_TX_READY) &&
-> >   !(irq1 & ADV7511_INT1_CEC_TX_ARBIT_LOST) &&
-> >   !(irq1 & ADV7511_INT1_CEC_TX_RETRY_TIMEOUT) &&
-> >   !(irq1 & ADV7511_INT1_CEC_RX_READY1) &&
-> >   !(irq1 & ADV7511_INT1_CEC_RX_READY2) &&
-> >   !(irq1 & ADV7511_INT1_CEC_RX_READY3))
-> > return -ENODATA;
->
-> This definitely looks ugly. At least it should be a mask.
->
-> I have a slightly different solution:
->
-> Make adv7511_irq_process return <0 for error, IRQ_NONE or IRQ_HANDLED.
-> This would also require tracking whether HPD, EDID or CEC processing
-> actually took place (add temp var for the current 'handled' status, make
-> adv7511_cec_irq_process() return IRQ_HANDLED too).
+On Tue, May 21, 2024 at 08:49:59AM +0800, Binbin Wu wrote:
+> 
+> 
+> On 5/17/2024 1:23 AM, Paolo Bonzini wrote:
+> > On Thu, May 16, 2024 at 10:29 AM Binbin Wu <binbin.wu@linux.intel.com> wrote:
+> > > 
+> > > 
+> > > On 5/1/2024 4:51 PM, Michael Roth wrote:
+> > > > SEV-SNP VMs can ask the hypervisor to change the page state in the RMP
+> > > > table to be private or shared using the Page State Change MSR protocol
+> > > > as defined in the GHCB specification.
+> > > > 
+> > > > When using gmem, private/shared memory is allocated through separate
+> > > > pools, and KVM relies on userspace issuing a KVM_SET_MEMORY_ATTRIBUTES
+> > > > KVM ioctl to tell the KVM MMU whether or not a particular GFN should be
+> > > > backed by private memory or not.
+> > > > 
+> > > > Forward these page state change requests to userspace so that it can
+> > > > issue the expected KVM ioctls. The KVM MMU will handle updating the RMP
+> > > > entries when it is ready to map a private page into a guest.
+> > > > 
+> > > > Use the existing KVM_HC_MAP_GPA_RANGE hypercall format to deliver these
+> > > > requests to userspace via KVM_EXIT_HYPERCALL.
+> > > > 
+> > > > Signed-off-by: Michael Roth <michael.roth@amd.com>
+> > > > Co-developed-by: Brijesh Singh <brijesh.singh@amd.com>
+> > > > Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
+> > > > Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> > > > ---
+> > > >    arch/x86/include/asm/sev-common.h |  6 ++++
+> > > >    arch/x86/kvm/svm/sev.c            | 48 +++++++++++++++++++++++++++++++
+> > > >    2 files changed, 54 insertions(+)
+> > > > 
+> > > > diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
+> > > > index 1006bfffe07a..6d68db812de1 100644
+> > > > --- a/arch/x86/include/asm/sev-common.h
+> > > > +++ b/arch/x86/include/asm/sev-common.h
+> > > > @@ -101,11 +101,17 @@ enum psc_op {
+> > > >        /* GHCBData[11:0] */                            \
+> > > >        GHCB_MSR_PSC_REQ)
+> > > > 
+> > > > +#define GHCB_MSR_PSC_REQ_TO_GFN(msr) (((msr) & GENMASK_ULL(51, 12)) >> 12)
+> > > > +#define GHCB_MSR_PSC_REQ_TO_OP(msr) (((msr) & GENMASK_ULL(55, 52)) >> 52)
+> > > > +
+> > > >    #define GHCB_MSR_PSC_RESP           0x015
+> > > >    #define GHCB_MSR_PSC_RESP_VAL(val)                  \
+> > > >        /* GHCBData[63:32] */                           \
+> > > >        (((u64)(val) & GENMASK_ULL(63, 32)) >> 32)
+> > > > 
+> > > > +/* Set highest bit as a generic error response */
+> > > > +#define GHCB_MSR_PSC_RESP_ERROR (BIT_ULL(63) | GHCB_MSR_PSC_RESP)
+> > > > +
+> > > >    /* GHCB Hypervisor Feature Request/Response */
+> > > >    #define GHCB_MSR_HV_FT_REQ          0x080
+> > > >    #define GHCB_MSR_HV_FT_RESP         0x081
+> > > > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> > > > index e1ac5af4cb74..720775c9d0b8 100644
+> > > > --- a/arch/x86/kvm/svm/sev.c
+> > > > +++ b/arch/x86/kvm/svm/sev.c
+> > > > @@ -3461,6 +3461,48 @@ static void set_ghcb_msr(struct vcpu_svm *svm, u64 value)
+> > > >        svm->vmcb->control.ghcb_gpa = value;
+> > > >    }
+> > > > 
+> > > > +static int snp_complete_psc_msr(struct kvm_vcpu *vcpu)
+> > > > +{
+> > > > +     struct vcpu_svm *svm = to_svm(vcpu);
+> > > > +
+> > > > +     if (vcpu->run->hypercall.ret)
+> > > Do we have definition of ret? I didn't find clear documentation about it.
+> > > According to the code, 0 means succssful. Is there any other error codes
+> > > need to or can be interpreted?
+> > They are defined in include/uapi/linux/kvm_para.h
+> > 
+> > #define KVM_ENOSYS        1000
+> > #define KVM_EFAULT        EFAULT /* 14 */
+> > #define KVM_EINVAL        EINVAL /* 22 */
+> > #define KVM_E2BIG        E2BIG /* 7 */
+> > #define KVM_EPERM        EPERM /* 1*/
+> > #define KVM_EOPNOTSUPP        95
+> > 
+> > Linux however does not expect the hypercall to fail for SEV/SEV-ES; and
+> > it will terminate the guest if the PSC operation fails for SEV-SNP.  So
+> > it's best for userspace if the hypercall always succeeds. :)
+> Thanks for the info.
+> 
+> For TDX, it wants to restrict the size of memory range for conversion in one
+> hypercall to avoid a too long latency.
+> Previously, in TDX QEMU patchset v5, the limitation is in userspace and  if
+> the size is too big, the status_code will set to TDG_VP_VMCALL_RETRY and the
+> failed GPA for guest to retry is updated.
+> https://lore.kernel.org/all/20240229063726.610065-51-xiaoyao.li@intel.com/
+> 
+> When TDX converts TDVMCALL_MAP_GPA to KVM_HC_MAP_GPA_RANGE, do you think
+> which is more reasonable to set the restriction? In KVM (TDX specific code)
+> or userspace?
+> If userspace is preferred, then the interface needs to  be extended to
+> support it.
 
-Dmitry,
+With SNP we might get a batch of requests in a single GHCB request, and
+potentially each of those requests need to get set out to userspace as 
+a single KVM_HC_MAP_GPA_RANGE. The subsequent patch here handles that in
+a loop by issuing a new KVM_HC_MAP_GPA_RANGE via the completion handler.
+So we also sort of need to split large requests into multiple userspace
+requests in some cases.
 
-I think I have addressed your concerns.  I got feedback from a build
-bot with one warning, so I'll address that, but i wasn't sure if I
-should wait for feedback from you.  I am traveling Friday-Tuesday, so
-I was hoping to send a V2 on Thursday if there are no other concerns.
+It seems like TDX should be able to do something similar by limiting the
+size of each KVM_HC_MAP_GPA_RANGE to TDX_MAP_GPA_MAX_LEN, and then
+returning TDG_VP_VMCALL_RETRY to guest if the original size was greater
+than TDX_MAP_GPA_MAX_LEN. But at that point you're effectively done with
+the entire request and can return to guest, so it actually seems a little
+more straightforward than the SNP case above. E.g. TDX has a 1:1 mapping
+between TDG_VP_VMCALL_MAP_GPA and KVM_HC_MAP_GPA_RANGE events. (And even
+similar names :))
 
+So doesn't seem like there's a good reason to expose any of these
+throttling details to userspace, in which case existing
+KVM_HC_MAP_GPA_RANGE interface seems like it should be sufficient.
 
-Liu,
+-Mike
 
-I realized that I didn't properly copy-paste your e-mail address, so
-you didn't get copied on the submission I just did.  I'll reply to the
-thread where I posted a bug fix with your proper e-mail address.  If
-you can try it to see if it addresses your issue, that would be really
-helpful.
-
-thanks,
-
-adam
-
->
-> >
-> >
-> > Please let me know what is preferred or if there is a third possible so=
-lution.
-> >
-> > I can write up a patch with a fixes tag later today when I get back to
-> > my build machine.
-> >
-> > adam
-> > >
-> > > >
-> > > > > So instead of continuing
-> > > > > the execution when we know that IRQ bits are not set,
-> > > >
-> > > > Even when IRQ bits are not set, it just means that there is no HPD
-> > > > and no EDID ready-to-read signal. HDMI CEC interrupts still need
-> > > > to process.
-> > >
-> > > Yes. Let's get the CEC fixed. Then maybe we won't need this commit at=
- all.
-> > >
-> > > >
-> > > >
-> > > > > it's better to
-> > > > > ignore -ENODATA in the calling code and go on with msleep().
-> > > > >
-> > > >
-> > > > So, It's confusing to ignore the -ENODATA here.
-> > >
-> > > [BTW: you had quotation levels wrong in two places, I've fixed them]
-> > >
-> > > --
-> > > With best wishes
-> > > Dmitry
->
-> --
-> With best wishes
-> Dmitry
+> 
+> 
+> > 
+> > > For TDX, it may also want to use KVM_HC_MAP_GPA_RANGE hypercall  to
+> > > userspace via KVM_EXIT_HYPERCALL.
+> > Yes, definitely.
+> > 
+> > Paolo
+> > 
+> 
 
