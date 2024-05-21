@@ -1,120 +1,127 @@
-Return-Path: <linux-kernel+bounces-185045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0648CAFD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:58:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52E218CAFD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B943E283009
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:58:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A3C1C2163B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65BE7F47B;
-	Tue, 21 May 2024 13:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7BB7F47F;
+	Tue, 21 May 2024 14:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bgfg9BMT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GED+tXhJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFD67EEE3
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7435A1E502;
+	Tue, 21 May 2024 14:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716299919; cv=none; b=Vm+pDEBYWAa4GAFxwV2v+1a51dFogmOs2Y1pa5qlPBerXhLmHtL0iuvjJdzn7SyW1l00A1dy3tfQV9vGg9tVhCaYEsMxRbiOCJzQgBrQZe5ZewBoQ5flBA+pl+WSjkMAaJkwO+krYbxvIN64H1EuqYcG8oCRVBhZ79D7XbesSE4=
+	t=1716300016; cv=none; b=s/3Besofhh+5A55A23DjvIRCECGOI7VCRqeVPGMcPreDMOG9n+CKCVgstjpU7t6YSBGrL5/BM/IryA0N3mDPVW+tdaRaNBgx6li7cX5zzOASWuFgssOSvZmL4hW8tLecDJ9LrLk5XCxxr9qBXcz2Qhmq36KCMzQc9nn9L4UOWN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716299919; c=relaxed/simple;
-	bh=OdiLWC8p0c/xtlG1gTvjqnMjTJiLAZdf1ma8L/gIMus=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GS7s2WNnSNVy8/rRV5pWTR0CXbNd4C2o7jt6+lzdUO1nOTnwoL7I03+G1ExPSC7xGpDbgGN/Qx27FV8KHxA+HHffLlA4HqBT9SyXS/SG3YXb3jSc3Qs2D7OLrkFwkerdxvhO7mjeJbDeldXF8Hfz/M3ytasfc1ukAni8a61wcBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bgfg9BMT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716299916;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0xFecaKFdNpZIUStP8/Na+T+oYYUztuWZCoP2Kb73pg=;
-	b=Bgfg9BMTqM+y9yeEjkMvzeGyzT94m6BSBkTVMBjhAe6ruRMf4uDBU5hk3ajoax/Ju6y/d1
-	/J1jEQeb4z9J7KAe4/Aak680iDbRIP79SL7ul2d6RhAjOClv4cKhtjRFFjThEw0JACnXDe
-	NFwDd/ex1GNlv/88HDd8J1sxr7XuZT0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-443-qYX4PxAMPmarNOzC7BUlZw-1; Tue, 21 May 2024 09:58:33 -0400
-X-MC-Unique: qYX4PxAMPmarNOzC7BUlZw-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A4FCE185A780;
-	Tue, 21 May 2024 13:58:32 +0000 (UTC)
-Received: from [10.22.8.193] (unknown [10.22.8.193])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 128FD40004D;
-	Tue, 21 May 2024 13:58:32 +0000 (UTC)
-Message-ID: <595e5988-b94d-41ba-a233-f87aed55028d@redhat.com>
-Date: Tue, 21 May 2024 09:58:31 -0400
+	s=arc-20240116; t=1716300016; c=relaxed/simple;
+	bh=1fC1qPkHIzJeKGkFtyxB3WvFL7tvcX3u9xMga4DyzdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qKru6iv4CpOO3307B67R5QuLsfIUY7F6/Qrm59snCVg7gW4+omeprvfTmWJiIxZONuuavzIpmDwdZtKgyiUOjDRwVT3LdRrzFgd6HpBolLZnC0EeLsYXXot0wdmaTv+u0gDxTcPHsdL3o8MMwugFxzTWP2fwVb5eQQSuvzvb76c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GED+tXhJ; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716300015; x=1747836015;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1fC1qPkHIzJeKGkFtyxB3WvFL7tvcX3u9xMga4DyzdM=;
+  b=GED+tXhJWaBT6iq2YZ9TiYJpplDYEpVn+Mag5IVZTOCjVMC2xHjIjNx2
+   uPArEkvz/+lmz0zndvnUaKJBpvUoReuuqHE80J3nHub5bEfMcTWm8UFrQ
+   n9WiH3o/JwcEHjIWwk+itGXZm7HuFP03KAThvVv9DTDc2v8cTititeDvg
+   /xQUxdx/FWAKVRUswEcC0kiYS4+bFy0kgd1SNAibkrWc4BUxSB82xB24n
+   aRZ/B4Vc/MVOTKLqH4IRxeCkRUJvwxgJekjce1DNPRZqLKQoeGS/hBh26
+   2qr1VshiPpywsqHp1swwG1PEqjtlFjBrksgJRsOvC4YwfK+N1jDOnECGm
+   w==;
+X-CSE-ConnectionGUID: iytRVh3hQdabtI2Ydo+yrA==
+X-CSE-MsgGUID: 5KIGelyUS2KVGTaU8gpB2Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="16334075"
+X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
+   d="scan'208";a="16334075"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 07:00:14 -0700
+X-CSE-ConnectionGUID: D+4sqOvIR1S+ndvCyQ4I8Q==
+X-CSE-MsgGUID: CHCjpVRuSsq5mWwTi2UUpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
+   d="scan'208";a="33531814"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 07:00:12 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s9Q2D-00000009fnx-0Pr9;
+	Tue, 21 May 2024 17:00:09 +0300
+Date: Tue, 21 May 2024 17:00:08 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linux regressions mailing list <regressions@lists.linux.dev>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Laura Nao <laura.nao@collabora.com>, mika.westerberg@linux.intel.com,
+	linus.walleij@linaro.org, brgl@bgdev.pl, kernel@collabora.com,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"kernelci.org bot" <bot@kernelci.org>
+Subject: Re: [PATCH] gpiolib: acpi: Move ACPI device NULL check to
+ acpi_can_fallback_to_crs()
+Message-ID: <Zkyo6DL7NQltLLNr@smile.fi.intel.com>
+References: <20240513095610.216668-1-laura.nao@collabora.com>
+ <ZkHlLLLoagsYlll7@smile.fi.intel.com>
+ <b20b567f-ce96-45e8-aab7-29768f8313f5@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] nvme: multipath: Implemented new iopolicy
- "queue-depth"
-To: Hannes Reinecke <hare@suse.de>, kbusch@kernel.org, hch@lst.de,
- sagi@grimberg.me, emilne@redhat.com
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- jrani@purestorage.com, randyj@purestorage.com, hare@kernel.org
-References: <20240520202045.427110-1-jmeneghi@redhat.com>
- <20240520202045.427110-2-jmeneghi@redhat.com>
- <f808fa46-e7c7-48e6-8c80-3d28efd0afec@suse.de>
-Content-Language: en-US
-From: John Meneghini <jmeneghi@redhat.com>
-Organization: RHEL Core Storge Team
-In-Reply-To: <f808fa46-e7c7-48e6-8c80-3d28efd0afec@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b20b567f-ce96-45e8-aab7-29768f8313f5@leemhuis.info>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 5/21/24 02:46, Hannes Reinecke wrote:
-> On 5/20/24 22:20, John Meneghini wrote:
->> From: "Ewan D. Milne" <emilne@redhat.com>
->>
-..
->> Tested-by: Marco Patalano <mpatalan@redhat.com>
->> Reviewed-by: Randy Jennings <randyj@redhat.com>
-
-I need to fix this. Randy doesn't have a redhat.com email address... Cut an paste error :-(
-
->> Tested-by: Jyoti Rani <jani@purestorage.com>
->> 
-..
->> +void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy)
->> +{
->> +    struct nvme_ctrl *ctrl;
->> +    int old_iopolicy = READ_ONCE(subsys->iopolicy);
->> +
->> +    WRITE_ONCE(subsys->iopolicy, iopolicy);
->> +
->> +    mutex_lock(&nvme_subsystems_lock);
->> +    list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
->> +        atomic_set(&ctrl->nr_active, 0);
->> +        nvme_mpath_clear_ctrl_paths(ctrl);
+On Tue, May 21, 2024 at 12:01:17PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+> On 13.05.24 12:02, Andy Shevchenko wrote:
+> > On Mon, May 13, 2024 at 11:56:10AM +0200, Laura Nao wrote:
+> >> Following the relocation of the function call outside of
+> >> __acpi_find_gpio(), move the ACPI device NULL check to
+> >> acpi_can_fallback_to_crs().
+> > 
+> > Thank you, I'll add this to my tree as we have already the release happened.
+> > I will be available after v6.10-rc1 is out.
 > 
-> You always reset the variables here, even if specified iopolicy is
-> the same than the currently active one.
-> I'd rather check if the iopolicy is different before changing the settings.
+> Hmm, what exactly do you mean with that? It sounds as you only want to
+> add this to the tree once -rc1 is out -- which seems likely at this
+> point, as that patch is not yet in -next. If that's the case allow me to
+> ask: why?
 
-Yes, Keith pointed this out too.  This is actually a feature not a bug.  In situations were we want to "reset" the nr_active 
-counters on all controllers the user can simply set the queue-depth iopolicy a second time.  I don't expect users to do this 
-very often... they shouldn't be changing IO policies back and forth too much... but the ability to "reset" the nr_active 
-counters during testing has been very helpful and important to do.  So I'd like to keep this.  Moreover, this is NOT the 
-performance path. I don't see the point in making performance optimizations in a code path that is run once a year.
+Because:
 
-/John
+- that's the policy of Linux Next (do not include what's not supposed to be
+  merged during merge window), Cc'ed to Stephen to clarify, it might be that
+  I'm mistaken
+
+- the process of how we maintain the branches is to have them based on top of
+  rc1 (rarely on other rcX and never on an arbitrary commit from vanilla
+
+> I'd say it should be fixes rather sooner than later, as other
+> people might run into this as well and then have to deal with bisecing,
+> reporting, ...
+
+Yes, but we have a process during merge window, it's special and different
+from vX.Y-rc1..vX.Y times.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
