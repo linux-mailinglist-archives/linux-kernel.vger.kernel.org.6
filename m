@@ -1,189 +1,235 @@
-Return-Path: <linux-kernel+bounces-184906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8348CADA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:51:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC018CAD97
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F7D1F2356D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:51:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB41F281F7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDC97CF1F;
-	Tue, 21 May 2024 11:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBEC78C6B;
+	Tue, 21 May 2024 11:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rESFWlwt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRATUtNB"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C02E76045
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCD476EEA;
+	Tue, 21 May 2024 11:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716292165; cv=none; b=dkS7wBpl/vvB5l4gjYx48zbU9PAkguRYwYLMwucnhjsFkhQF3VP2/VSg5Npmy/7M3d8iH/AeiSm27Yi02blDMPsk1fQXkRM1OLIqco0sF8pkzDPUm6RjHDgVBYZb8LiJVklYti5bNY/JSSI8zrZSQffGFS7m4hKH726tKApIkM0=
+	t=1716292145; cv=none; b=osN6zRyXf7zlXf3ySZpmqf2lwId24eGGiwZLAbXlSwZS4FVvD1IrJl0bbGIRZvnPdMk7MXQPxe003nzb3U/rBrth+FTk5ypCjqAIdqNXVOOK+c7Ic3r6gnTvVadTWVHsIbPw0Pc5o/y9z8vLZrbLcm+XSwLo9fYBbZPGz+3KRGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716292165; c=relaxed/simple;
-	bh=UfTTCJAd6gAR/W/+kWuHX2+0dwTK25Vi11SpkX7YGOg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LpCPrrD9Mg7l5FjKa1yruJQPuHRmMtubSkXjjm5Unw6KlIIxueQ6FzUDleLcoQUFbbz2J5Osg+4eaStSodYUGBvOzk0JRxfzI/WC/4V0hBxOZcu6WYbU9fBC+GFdBW29k3RtIb01lyvdW9FOW2KcSkNKEkEc2lhn0kYOlZeSUcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rESFWlwt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F4EC2BD11;
-	Tue, 21 May 2024 11:49:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716292164;
-	bh=UfTTCJAd6gAR/W/+kWuHX2+0dwTK25Vi11SpkX7YGOg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rESFWlwtcK7rvFv8Um9btQJZUwRB2RdO8MjvUB2BICQEPh/EbugiTsxumyL5292hX
-	 SaghKnmizBA/pp7A+Dtlq+qwqNSRixbwdlsADGbs6CIn15dyBN0k28FwBbMS8aiTPI
-	 Kp1INLM1FgGFhmvmSsgoX0Ju3Cx9yzirSxLHZ/7IJ7s8WGmxnG22tVNZm7926LBz6M
-	 m49b2985aSBi87GawTioSdpHQvEIGdWaOc7nHUaGWvtz6CXRNKEfKQBtE6tGfFo5qO
-	 sEpBR+MlOfCff/Ge6iR1CKDRfbGBh0FxjrF7lgu/xXIUY28Ntlxfpz6GDjZg2lyHDr
-	 N+eN0jCwq4bcw==
-From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	David Hildenbrand <david@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	linux-riscv@lists.infradead.org,
-	Oscar Salvador <osalvador@suse.de>
-Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
-	Andrew Bresticker <abrestic@rivosinc.com>,
-	Chethan Seshadri <Chethan.Seshadri@catalinasystems.io>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Santosh Mamila <santosh.mamila@catalinasystems.io>,
-	Sivakumar Munnangi <siva.munnangi@catalinasystems.io>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	virtualization@lists.linux-foundation.org
-Subject: [PATCH v3 9/9] riscv: mm: Add support for ZONE_DEVICE
-Date: Tue, 21 May 2024 13:48:30 +0200
-Message-Id: <20240521114830.841660-10-bjorn@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240521114830.841660-1-bjorn@kernel.org>
-References: <20240521114830.841660-1-bjorn@kernel.org>
+	s=arc-20240116; t=1716292145; c=relaxed/simple;
+	bh=IrfXhbXwURjgjuHcPJbS1Tsok2bkF7dHlUYlkUOlva0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sIvJ8+cAYCjmGq1xrrMt/usb9ncrpy5TUwstgdSCxzZx/Q2ftBBjObnkF6hS9UyS15Cpiy+aoNiwTNxuGb9rFp0jqL+A8fSz6VBvup0OZ+1xn6IqPB7KsUNpGvR5Po/gobST7YgFxc6pqetGXXiAzVq+ee9MwnCMIH/lkL+iWno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KRATUtNB; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59b49162aeso818450966b.3;
+        Tue, 21 May 2024 04:49:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716292142; x=1716896942; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P1AwFEaypQQLUmXbNtkojgKjia4yiQwYD/QyNFzC+5c=;
+        b=KRATUtNBBi935SBhY6BDOfpCu0zFcbutBY9zw7KMKnnpi/CwYYKwq5USs2qkNeArkj
+         pL829Mq4IiOgCCt1yBOjSgGyzqd7Cv5n0xrax3nT9qGKz63QPIiKTA3gD1p84+ItUObB
+         J8VGqHHpsQWjB9E90X3jB00o05LPjSFV3USSR42Mfp/Pv/oMHhtvIyzSGjMCv6ODyFn8
+         JBI29GocO8GHajLZrf5vGdtQ9/v4iTbwDbvOeQbsSbc72K16D0vgDQXO+dzopkYQL5Qd
+         HWhyLLh1dI8mvi8d3C8SO1iEQsNnWn5qI87sM41XaYAHeL6NiEumnCzLRqA5EUWeyzH9
+         lAGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716292142; x=1716896942;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P1AwFEaypQQLUmXbNtkojgKjia4yiQwYD/QyNFzC+5c=;
+        b=IO8hz3APQ3BnKsVxW/QkE9PU6jOIFXhJ2Hh04uDVU7AVv4LxOinuzj0f8qGWPX66qv
+         rJeQm9C+jT5JWceccwoGATL13t6b6yaLVpXXCi0uL4f+kfxu327Hle2sNrxkmKeWDqI0
+         Ve2bSvz/qaMpdR6ozJqCynTMknOF0+pGwBWURA174wJ/0m4G/MTIMmA+NMj6Kc30ffT0
+         cMFwI/lqXQ1CUrA2ZZgtTJ9Tn3K6b5jKlErb2GrcfgLyfJIgJmG2XAmiLjaVg6JiNPBH
+         eid6wUY0GJwPGb7/GNpdMEdzmeQNMeX7u5cMoqzsNURH2xKHJRU+NS1gHvBsjcRyKuGo
+         zE+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXES8Ete+7MD9Kz4oe0OwR+HsDQhZebPmTUkbD5CiR2XUJWar/Sw1m+ZDj8uHkAHoB7AZipa161R9e6MTnGkGEIOVK+HjAiMnozFjkxQxtFIRry4zYTexyW5Crq8br0EWvFykB4P4sLgsShN3jLf7GYpbIyR1mHS2yX8ZTqvGmLP9fft392MIkJ2uaQPNs7Tw83lfCR+z9sEqmR3ZYoMtuevsd1GFJRoH8P4prZUaafwE5AaAXMzUDgu27q
+X-Gm-Message-State: AOJu0YyMEpzPulLwJZKDVoew5g3cV1OzGmW2Ftn+Ep9are/ilWdW09/Q
+	uqSg3pRxCBCqxuQlAuUS0X6Sb160ILs7kRYu0di/VckS3RckqsQG
+X-Google-Smtp-Source: AGHT+IGwOqATHZsFbhwbjGwzE+zJgNafqxC0GyQxz3SfE0Isw4IdDy3aa3zuC1fKlhcm7n7zVqrcQw==
+X-Received: by 2002:a17:906:305a:b0:a59:db0f:6be4 with SMTP id a640c23a62f3a-a5a2d534ec4mr2038795166b.5.1716292141970;
+        Tue, 21 May 2024 04:49:01 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a178923fesm1599960166b.64.2024.05.21.04.49.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 04:49:01 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 21 May 2024 13:48:59 +0200
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>
+Subject: Re: [PATCHv6 9/9] man2: Add uretprobe syscall page
+Message-ID: <ZkyKKwfhNZxrGWsa@krava>
+References: <20240521104825.1060966-1-jolsa@kernel.org>
+ <20240521104825.1060966-10-jolsa@kernel.org>
+ <j6qxudmvwccpqnle4evabxbswdygmx35bgqwhemuzsjs5iuydv@fk2iumwucifx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <j6qxudmvwccpqnle4evabxbswdygmx35bgqwhemuzsjs5iuydv@fk2iumwucifx>
 
-From: Björn Töpel <bjorn@rivosinc.com>
+On Tue, May 21, 2024 at 01:36:25PM +0200, Alejandro Colomar wrote:
+> Hi Jiri,
+> 
+> On Tue, May 21, 2024 at 12:48:25PM GMT, Jiri Olsa wrote:
+> > Adding man page for new uretprobe syscall.
+> > 
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  man2/uretprobe.2 | 50 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 50 insertions(+)
+> >  create mode 100644 man2/uretprobe.2
+> > 
+> > diff --git a/man2/uretprobe.2 b/man2/uretprobe.2
+> > new file mode 100644
+> > index 000000000000..690fe3b1a44f
+> > --- /dev/null
+> > +++ b/man2/uretprobe.2
+> > @@ -0,0 +1,50 @@
+> > +.\" Copyright (C) 2024, Jiri Olsa <jolsa@kernel.org>
+> > +.\"
+> > +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> > +.\"
+> > +.TH uretprobe 2 (date) "Linux man-pages (unreleased)"
+> > +.SH NAME
+> > +uretprobe \- execute pending return uprobes
+> > +.SH SYNOPSIS
+> > +.nf
+> > +.B int uretprobe(void)
+> > +.fi
+> 
+> What header file provides this system call?
 
-ZONE_DEVICE pages need DEVMAP PTEs support to function
-(ARCH_HAS_PTE_DEVMAP). Claim another RSW (reserved for software) bit
-in the PTE for DEVMAP mark, add the corresponding helpers, and enable
-ARCH_HAS_PTE_DEVMAP for riscv64.
+there's no header, it's used/called only by user space trampoline
+provided by kernel, it's not expected to be called by user
 
-Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
----
- arch/riscv/Kconfig                    |  1 +
- arch/riscv/include/asm/pgtable-64.h   | 20 ++++++++++++++++++++
- arch/riscv/include/asm/pgtable-bits.h |  1 +
- arch/riscv/include/asm/pgtable.h      | 17 +++++++++++++++++
- 4 files changed, 39 insertions(+)
+> 
+> > +.SH DESCRIPTION
+> > +The
+> > +.BR uretprobe ()
+> > +syscall is an alternative to breakpoint instructions for
+> > +triggering return uprobe consumers.
+> > +.P
+> > +Calls to
+> > +.BR uretprobe ()
+> > +suscall are only made from the user-space trampoline provided by the kernel.
+> 
+> s/suscall/system call/
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 2724dc2af29f..0b74698c63c7 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -36,6 +36,7 @@ config RISCV
- 	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
- 	select ARCH_HAS_PMEM_API
- 	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
-+	select ARCH_HAS_PTE_DEVMAP if 64BIT && MMU
- 	select ARCH_HAS_PTE_SPECIAL
- 	select ARCH_HAS_SET_DIRECT_MAP if MMU
- 	select ARCH_HAS_SET_MEMORY if MMU
-diff --git a/arch/riscv/include/asm/pgtable-64.h b/arch/riscv/include/asm/pgtable-64.h
-index 221a5c1ee287..c67a9bbfd010 100644
---- a/arch/riscv/include/asm/pgtable-64.h
-+++ b/arch/riscv/include/asm/pgtable-64.h
-@@ -400,4 +400,24 @@ static inline struct page *pgd_page(pgd_t pgd)
- #define p4d_offset p4d_offset
- p4d_t *p4d_offset(pgd_t *pgd, unsigned long address);
- 
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+static inline int pte_devmap(pte_t pte);
-+static inline pte_t pmd_pte(pmd_t pmd);
-+
-+static inline int pmd_devmap(pmd_t pmd)
-+{
-+	return pte_devmap(pmd_pte(pmd));
-+}
-+
-+static inline int pud_devmap(pud_t pud)
-+{
-+	return 0;
-+}
-+
-+static inline int pgd_devmap(pgd_t pgd)
-+{
-+	return 0;
-+}
-+#endif
-+
- #endif /* _ASM_RISCV_PGTABLE_64_H */
-diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-index 179bd4afece4..a8f5205cea54 100644
---- a/arch/riscv/include/asm/pgtable-bits.h
-+++ b/arch/riscv/include/asm/pgtable-bits.h
-@@ -19,6 +19,7 @@
- #define _PAGE_SOFT      (3 << 8)    /* Reserved for software */
- 
- #define _PAGE_SPECIAL   (1 << 8)    /* RSW: 0x1 */
-+#define _PAGE_DEVMAP    (1 << 9)    /* RSW, devmap */
- #define _PAGE_TABLE     _PAGE_PRESENT
- 
- /*
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 7933f493db71..02fadc276064 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -387,6 +387,13 @@ static inline int pte_special(pte_t pte)
- 	return pte_val(pte) & _PAGE_SPECIAL;
- }
- 
-+#ifdef CONFIG_ARCH_HAS_PTE_DEVMAP
-+static inline int pte_devmap(pte_t pte)
-+{
-+	return pte_val(pte) & _PAGE_DEVMAP;
-+}
-+#endif
-+
- /* static inline pte_t pte_rdprotect(pte_t pte) */
- 
- static inline pte_t pte_wrprotect(pte_t pte)
-@@ -428,6 +435,11 @@ static inline pte_t pte_mkspecial(pte_t pte)
- 	return __pte(pte_val(pte) | _PAGE_SPECIAL);
- }
- 
-+static inline pte_t pte_mkdevmap(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_DEVMAP);
-+}
-+
- static inline pte_t pte_mkhuge(pte_t pte)
- {
- 	return pte;
-@@ -711,6 +723,11 @@ static inline pmd_t pmd_mkdirty(pmd_t pmd)
- 	return pte_pmd(pte_mkdirty(pmd_pte(pmd)));
- }
- 
-+static inline pmd_t pmd_mkdevmap(pmd_t pmd)
-+{
-+	return pte_pmd(pte_mkdevmap(pmd_pte(pmd)));
-+}
-+
- static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
- 				pmd_t *pmdp, pmd_t pmd)
- {
--- 
-2.40.1
+ugh leftover sry
+
+> 
+> > +Calls from any other place result in a
+> > +.BR SIGILL .
+> 
+> Maybe add an ERRORS section?
+> 
+> > +
+> 
+> We don't use blank lines; it causes a groff(1) warning, and other
+> problems.  Instead, use '.P'.
+> 
+> > +.SH RETURN VALUE
+> > +The
+> > +.BR uretprobe ()
+> > +syscall return value is architecture-specific.
+> > +
+> 
+> .P
+> 
+> > +.SH VERSIONS
+> > +This syscall is not specified in POSIX,
+> 
+> Redundant with "STANDARDS: None.".
+> 
+> > +and details of its behavior vary across systems.
+> 
+> Keep this.
+
+ok
+
+> 
+> > +.SH STANDARDS
+> > +None.
+> > +.SH HISTORY
+> > +TBD
+> > +.SH NOTES
+> > +The
+> > +.BR uretprobe ()
+> > +syscall was initially introduced for the x86_64 architecture where it was shown
+> > +to be faster than breakpoint traps. It might be extended to other architectures.
+> 
+> Please use semantic newlines.
+> 
+> $ MANWIDTH=72 man man-pages | sed -n '/Use semantic newlines/,/^$/p'
+>    Use semantic newlines
+>      In the source of a manual page, new sentences should be started on
+>      new lines, long sentences should be split  into  lines  at  clause
+>      breaks  (commas,  semicolons, colons, and so on), and long clauses
+>      should be split at phrase boundaries.  This convention,  sometimes
+>      known as "semantic newlines", makes it easier to see the effect of
+>      patches, which often operate at the level of individual sentences,
+>      clauses, or phrases.
+
+ok
+
+thanks,
+jirka
+
+> 
+> > +.P
+> > +The
+> > +.BR uretprobe ()
+> > +syscall exists only to allow the invocation of return uprobe consumers.
+> 
+> s/syscall/system call/
+> 
+> > +It should
+> > +.B never
+> > +be called directly.
+> > +Details of the arguments (if any) passed to
+> > +.BR uretprobe ()
+> > +and the return value are architecture-specific.
+> > -- 
+> > 2.44.0
+> 
+> Have a lovely day!
+> Alex
+> 
+> -- 
+> <https://www.alejandro-colomar.es/>
+
 
 
