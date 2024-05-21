@@ -1,131 +1,120 @@
-Return-Path: <linux-kernel+bounces-184915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72ECD8CADC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:57:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4228CADB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D9F328336F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989B12831C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085D9770F7;
-	Tue, 21 May 2024 11:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EE37580E;
+	Tue, 21 May 2024 11:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="Sd76a240"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j2koresz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kvToPjsn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A30076035;
-	Tue, 21 May 2024 11:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BB96CDC4;
+	Tue, 21 May 2024 11:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716292641; cv=none; b=sWJLgjIlFOopM1MGz6u33/W8Z9+qBMvWsJnR1k+JvO7Yw96lltquQLjv55hXGCoTwIWMfhYn8fBADHz3F2NT2uT3oEZeTI2INcOGWcEL+l3586t+Rb2sp2rgw/UPhNZpktZHtlU3wpu9EAfI3FYfmn4WM4johgJiSWAnKPZne/w=
+	t=1716292624; cv=none; b=i3aGxXTE3Dq6WR+9oqDO6VY2p2ltqLaxxrSTfBVZyl5fmusfQto05uMAgMywap4Bwgt3gUAyPFT8Hnv1iSYDHJIgQvn6mVUWSkQTCw+HJXxxOMXH5mdRAi/3im0CXGeFxhjKyO9l7t2CYFE3N8hz/nI0x/UH5pgo/PAQYd1RYuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716292641; c=relaxed/simple;
-	bh=myNuxgtOJqDXVT+HSRgtuecaI5gwxkJHVxARIgcJq/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mBljf0STnfFvKKv/zCx7XKaO8QOHpQ1JUQYlg5vKWnfNei/drnMeQT/iQzbaHdCrIUfVpp3+oB8g8j7SXdr5BQ76DkYjhWf02KyBkToHh3UJbdtWb2M79WWMpPt9k7ZxGrrVhFv4CcpEWWk+XAxM6+VKoDMJqZzzpdS3LKnVa7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=Sd76a240; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1716292614; x=1716897414; i=wahrenst@gmx.net;
-	bh=MKxjmztR/jHkdYlpsG3v22N+vXjLHvDaMqP5hmX66zU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Sd76a240RQLy/1ECWGoEKxh2IQ4HK02TpUyj+SKcx3EU3iOvkrk5TyBp/AIg2evQ
-	 anjIp0LmZYguOujWpFjRZJwlvEjHpWTojzzmo5zEt5YGCJzMDEC0XIKK22JhLmKfk
-	 FZAAPtOUGMTSfNt7VHuUWx1VDoffDDD+R888PdMbwFrazVhtLEKe3gsmD11d5NRUi
-	 3auJe4M3OwtABwsKnrBwib2yY6+3Mq8f5lvfY2kAy9CnxwbtdG7jICCt6zjwEIOQh
-	 qQ9zUN1KPCt0o9GQSS3aL/tuAoKrxuez+I3SuBnuVErLLzg1RLi0ZFwQGJqrziBgr
-	 m1gMlPJ4um/m2PTafA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.126] ([37.4.248.43]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MmDIu-1srHaI0niq-00i8j9; Tue, 21
- May 2024 13:56:54 +0200
-Message-ID: <bc1eb98c-9d49-4424-ab89-16be6c67c3f5@gmx.net>
-Date: Tue, 21 May 2024 13:56:52 +0200
+	s=arc-20240116; t=1716292624; c=relaxed/simple;
+	bh=Xrdr431T0DFBXM3LLa9LNptGoGbSvbG9e7q6cs2jaos=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=fKuvlWQyIq+XhZuzbk9bn2czR4PL1cT3btqng+NowL2jIyrt25Txw0NGZrdjlYLWslxAn6wi4MWKGeCmbLSIyBoUwR+9Mj4fTWWwWhe9KUMN+QuFOdsPe20RjIZuUN9TPZcBAjc53owRvBMLkgILIT9Jx0CQpWb9tTkJtoNbCY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j2koresz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kvToPjsn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 21 May 2024 11:57:00 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716292621;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aEI4SdcRYabaSTOLSIeu7XfK6qRDcKJ8S+m9FjIEDsE=;
+	b=j2koresz79STAkDRiSELqUKw+gbjU3/99gHjPIdEEwn0uUfKhH+FSA5AVv3cBGxm+znhrr
+	MbMpBsY3P1AY/jltgSWFtMyv0XQkSPewypgXD9l3MlxWl4O4lP01xhmoLyCY1OPN0Ic5TP
+	H/JqsIuuRnvt0r79WnDwfM47dbsZugkePioerVIso/nq1dyN3CSZgF+V5bnLv5moAFDxj7
+	lIf3yYIcyD0no87zGEPke2TcYHlQyXb+9Kyo+oVwiJ6fMrZfNHNR8oO/rmIC8+yULSUISn
+	7Xb/7nuGXGHxLIEqeGuvkQ6SJke9zrs3qKN0tP/FrItIumGp/8PQ6HEmEEhkMQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716292621;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aEI4SdcRYabaSTOLSIeu7XfK6qRDcKJ8S+m9FjIEDsE=;
+	b=kvToPjsntBrKF4129XhctlOeddi12pjV5qcQrTcgNrR7WHECl+nSaCeMIlJKIVV2ckDabV
+	q/EazoIrJ7d9OUDg==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/boot] x86/boot: Use current_stack_pointer to avoid asm() in
+ init_heap()
+Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240520083011.135342-1-ubizjak@gmail.com>
+References: <20240520083011.135342-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] dt-bindings: mmc: Add support for BCM2712 SD host
- controller
-To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Marc Zyngier <maz@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org
-References: <cover.1716277695.git.andrea.porta@suse.com>
- <d7c8bc0143c6b8c8b313413860840ae5bf2dc22a.1716277695.git.andrea.porta@suse.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <d7c8bc0143c6b8c8b313413860840ae5bf2dc22a.1716277695.git.andrea.porta@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:RemX3IIs/au4ReeRx6ZGARXTRzVD7neD4wJdYjz7HTzsO8Ft2Ef
- XCUSPctDOQfm9J9h5aNR9coXl+VHWpZIUG0WIBSG2kfrJorlqdQ/Klkm3/M3iU10vDSwNm9
- eXgM6/Kt5gRB/+RMnUMQL1FpFI6qeSCHybbk0KdXjgFl1zCDxEt2CQRnUVYsJDgJSrJJLtW
- 2b1TUHSmwIOX134TEiYcA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Q+I2IaHxwcs=;qn8CZNtHsTD/R40C4OBokdVT9hY
- N1fuyvGihk6k4pKUYgCUA2NT1ROWEHgqnRxQVJeWujQqUcGDfzbsozaFH5y4WD61Iu6ijpygI
- dKJdgvFkfJcCBd+F3SaFbEFYG5ITK/IlS0IS2/gEWAbLb5Brbji78QeBDERokpFAYg5mW7INa
- oKqOOOPYlT6sZiab4SXddeF/C4CpQur/9se1G5yXZYU8mwDNApaQPRuYDJLFlPWXsutgG2fvb
- PjjPY23b/LRM84yJG+7bc/WAlIbjidOn8lsRqgSzJY7YJiqnNamIVixzGkrc3HWgmPa2ay8f4
- e2YUOFgU7mbz8RDvTd393f2WMGi71DIfZzvG1MYa6mptauM8dlGp9fsC9/YNlEEF3OzDN06ap
- lhdrby2XltiAaeWMJK2Pr1Ob5FJf7+RD7EBrIsQY4rQ+0IxlC0NZn6dhUcN2hWYYhmHjSPcpI
- Cq5ri61rZwQxzl4p4/vRg1lS45hrKcF35xPKKptFHlyPofJbdiVlHEb80sKObh6oLULP/Mutp
- SwIWKpIs+ZV/ybZB/r4Wr7VsNzibjwQKOUQrvQNkTez6h6R0JA/pOI7QPSYyGmYxnoF0qmOFC
- aQoC04GYMwWgjXvs20kda/TgOm74QpH30JEAoJnR7+a96Keqt69c+j2LAPq8xET0e+/5QZ86k
- WXmeyzytWIf2jZdV4qtCtF1crIAwDrpbB9xjcxUQ9ltivyVm09X2l0aXFMi5D9weyFQs871/2
- 64OJn50lPAIIjtsMl0zYorsnzWeFkxzdQb7/tJPk5JpsaISt3bR4Oa1mOoF2JwFfJjNMsnvUc
- eA5VDIBNKWWQdVN2lvlMB44Wtt0m0OWlDrreNf7AioRV4=
+Message-ID: <171629262087.10875.8849677586858232819.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Andrea,
+The following commit has been merged into the x86/boot branch of tip:
 
-Am 21.05.24 um 10:35 schrieb Andrea della Porta:
-> The BCM2712 has an SDHCI capable host interface similar to the one found
-> in other STB chipsets. Add the relevant compatible string.
->
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> ---
->   Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml | 4 ++++
->   1 file changed, 4 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.ya=
-ml b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
-> index cbd3d6c6c77f..d584a7ea707a 100644
-> --- a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
-> @@ -13,6 +13,10 @@ maintainers:
->   properties:
->     compatible:
->       oneOf:
-> +      - items:
-> +          - enum:
-> +              - brcm,bcm2712-sdhci
-> +          - const: brcm,sdhci-brcmstb
-sorry i didn't noticed in V2, but why can't we just extend the second
-items list?
->         - items:
->             - enum:
->                 - brcm,bcm7216-sdhci
+Commit-ID:     b855cc58fc93c175fd5bb868d5e3a45cb3e1a42b
+Gitweb:        https://git.kernel.org/tip/b855cc58fc93c175fd5bb868d5e3a45cb3e1a42b
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Mon, 20 May 2024 10:29:55 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 21 May 2024 13:36:36 +02:00
 
+x86/boot: Use current_stack_pointer to avoid asm() in init_heap()
+
+Use current_stack_pointer to avoid asm() in the calculation of
+stack_end in init_heap(). The new code is more readable and
+results in exactly the same object file.
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20240520083011.135342-1-ubizjak@gmail.com
+---
+ arch/x86/boot/main.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/boot/main.c b/arch/x86/boot/main.c
+index 9049f39..ac78f8c 100644
+--- a/arch/x86/boot/main.c
++++ b/arch/x86/boot/main.c
+@@ -119,9 +119,8 @@ static void init_heap(void)
+ 	char *stack_end;
+ 
+ 	if (boot_params.hdr.loadflags & CAN_USE_HEAP) {
+-		asm("leal %n1(%%esp),%0"
+-		    : "=r" (stack_end) : "i" (STACK_SIZE));
+-
++		stack_end = (char *)
++			(current_stack_pointer - STACK_SIZE);
+ 		heap_end = (char *)
+ 			((size_t)boot_params.hdr.heap_end_ptr + 0x200);
+ 		if (heap_end > stack_end)
 
