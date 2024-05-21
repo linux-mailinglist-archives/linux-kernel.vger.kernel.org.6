@@ -1,335 +1,217 @@
-Return-Path: <linux-kernel+bounces-185236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88428CB27F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:52:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF9F8CB277
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EAF31C22530
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:52:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F43A1F2295E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF00130A4D;
-	Tue, 21 May 2024 16:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47217BB1B;
+	Tue, 21 May 2024 16:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="F2mZ4dG9"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bhKR62PI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F94149011;
-	Tue, 21 May 2024 16:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0058128DA0;
+	Tue, 21 May 2024 16:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716310297; cv=none; b=EVfZU+o0QNi83mUKxP06bdspkjJcqux9Ca30riyh+BQyH/eSyx9jwtTAhrO7XHbof2QSLnpc4xbYrZ/cWt/qqhGVyg+UmVX8GoTTYZqWX0e6AOjK7yQv9w7KuwgkfufDGKP77b/qHMyQ8IZSitJ/1eisYbeLVEwK0etbf9F9UGg=
+	t=1716310209; cv=none; b=bKlH94vAVBy6oJ+Gx0MLD9+Z8NVdAXzlyjyJckyky8aYrSiOqCUKVNY2JFfxvKxjvqUj2rOZvTQoF/Tf+214zDjP92i9t+Al+Z7SvjEMu7Al447UCaRSavNNsGGXMj1QluTbjhhwT0pYQ5BcDOxShkAbaWmQdzGd19QS7d1gaY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716310297; c=relaxed/simple;
-	bh=MbxIlm1F1CftDArD/fbBDsY/ikx10Bf2AwJ2lPAjTEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=o+MNtegoijko6EzYRHaqy9+yMg1lXmm1enTTpeg6KGdbwDbuS/hgVdNILNnsSqMfwHcShegRzUVU7/A3N7eyDkC1eNHhJTVSdWduh/2pAoM1/xiVmrItMabn4HZh1XktkbnBPJ3HdS3Yd4D0QHZrmf74qfPqtIVuhT1VjrcY/68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=F2mZ4dG9; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44LGRJip015326;
-	Tue, 21 May 2024 16:51:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : content-type : mime-version; s=pp1;
- bh=yJXgAWuTn7T0lxNogq5rVdTLQl7RguyR9RKOIJL+Ktg=;
- b=F2mZ4dG9EhsTCHO4dv+wH/KVFrNFiajT7rFs5dFDK2wFhVXCys6Lwfe9l1UgDN0Y3La2
- I2EskF93XW7YfvfaGlWwSwFuS1TvpYbfn2Wrc+YE1dETNjlFgV0PAMvwRY6L6oOBv5RT
- IL84ESYv7wRuXgj4ZY2tEEWft0JVHp2N7XUBWincj69+qiGLKQ6g4mryNnMyHpint460
- iJYT/DjrrEQwlxgcm1wVZXrzeTrneQiGvZ3BX6m2RX9NfNFhJ6OfQLSIboEDz2ROXeTz
- BxtVbWAPyRbjBVirhB0vXjtU6Fr9vRTo477IcG7uV/tOBaUUQXHv4KnD6a+OkZp4kJ5q 4g== 
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y8xum83nu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 16:51:33 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44LFubAO008090;
-	Tue, 21 May 2024 16:48:28 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y79c2xcmx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 16:48:28 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44LGmMoS43647294
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 May 2024 16:48:24 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C42CD2004B;
-	Tue, 21 May 2024 16:48:22 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 897AA20040;
-	Tue, 21 May 2024 16:48:22 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 21 May 2024 16:48:22 +0000 (GMT)
-Date: Tue, 21 May 2024 18:48:21 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] more s390 updates for 6.10 merge window
-Message-ID: <ZkzQVaKfNZFEnd2j@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 5z3GABba3bDFysTz5SFpQyyt_9Iy0Zcm
-X-Proofpoint-ORIG-GUID: 5z3GABba3bDFysTz5SFpQyyt_9Iy0Zcm
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1716310209; c=relaxed/simple;
+	bh=aX8ee/F7iuxv4JaXn0INGjz6humhOGXV3AkccPo5LiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3CWmylMzkUd8KXSte5Y2faRRnmUFXS5xTctjpri4d3kOAFzkYK/fDLGbM5dLVMkJ0DMDYbK7qG8oDUPotXtRVVip0KMzYpUF915EVceuLAOnAXTcNfb3u0GO78S1gbaQYxg9V7X7ScEYyvFDvseJ+QNf2BA7gGoC3IE+GjnaHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bhKR62PI; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716310208; x=1747846208;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aX8ee/F7iuxv4JaXn0INGjz6humhOGXV3AkccPo5LiQ=;
+  b=bhKR62PI93Bp+R131V3ZU13XRcEO1rPZAqd+r/8gFFsAyiKKIwLkrZ32
+   u7pxfKCYZf2CkCrog/Miebvpwph+47rsO/dDDzFFXxW6UYW0ssdG/txtv
+   nl990KMk4HBrEA8laVF2MOYF6X/5hF+JbhTxik7P282B3w8LheUT446cC
+   TtLEz2QqO+WEsQENlTGPi3TBm121gSKKlRuHzMKHC3AQF9rDPQqjrm0S9
+   t/WOjLRfreoxzsene/R6ixO1mYnK7SI43YOPbGrbfHffFPV5++0NT6lxm
+   e1msnHrhIbA/UtkdEj0DJvtFGNG0aoqIe3zN7hXO0qUG4z4Sq1P9VGImD
+   g==;
+X-CSE-ConnectionGUID: DNiqadI1Q36FS2SwdpfinQ==
+X-CSE-MsgGUID: i5DX3DfFTtSMHHUrETxnUQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12370418"
+X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
+   d="scan'208";a="12370418"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 09:50:08 -0700
+X-CSE-ConnectionGUID: IWaBplqBTrCn4gS1fIWOeQ==
+X-CSE-MsgGUID: HDnW4Zw3TUOChCy9F83uTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
+   d="scan'208";a="33596113"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 09:50:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s9Sgb-00000009iWD-1uSr;
+	Tue, 21 May 2024 19:50:01 +0300
+Date: Tue, 21 May 2024 19:50:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Laura Nao <laura.nao@collabora.com>,
+	mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
+	brgl@bgdev.pl, kernel@collabora.com, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"kernelci.org bot" <bot@kernelci.org>
+Subject: Re: [PATCH] gpiolib: acpi: Move ACPI device NULL check to
+ acpi_can_fallback_to_crs()
+Message-ID: <ZkzQuWmLZGhIQl-2@smile.fi.intel.com>
+References: <20240513095610.216668-1-laura.nao@collabora.com>
+ <ZkHlLLLoagsYlll7@smile.fi.intel.com>
+ <b20b567f-ce96-45e8-aab7-29768f8313f5@leemhuis.info>
+ <Zkyo6DL7NQltLLNr@smile.fi.intel.com>
+ <c10a77b6-e7b1-43c0-af38-79092eeb34f1@leemhuis.info>
+ <Zky1UgJSf_ybRMOI@smile.fi.intel.com>
+ <4f1bcc8b-1795-4e3c-90a6-742cd8443396@leemhuis.info>
+ <Zky9bovo_99LwDfY@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-21_10,2024-05-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- clxscore=1015 lowpriorityscore=0 malwarescore=0 priorityscore=1501
- spamscore=0 mlxscore=0 suspectscore=0 mlxlogscore=953 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405210127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zky9bovo_99LwDfY@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Linus,
+On Tue, May 21, 2024 at 06:27:42PM +0300, Andy Shevchenko wrote:
+> On Tue, May 21, 2024 at 05:14:07PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+> > On 21.05.24 16:53, Andy Shevchenko wrote:
+> > > On Tue, May 21, 2024 at 04:26:32PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+> > >> On 21.05.24 16:00, Andy Shevchenko wrote:
+> > >>> On Tue, May 21, 2024 at 12:01:17PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+> > >>>> On 13.05.24 12:02, Andy Shevchenko wrote:
+> > >>>>> On Mon, May 13, 2024 at 11:56:10AM +0200, Laura Nao wrote:
 
-please pull more s390 updates for the 6.10 merge window.
+..
 
-Please note a merge conflict in scripts/Makefile.vdsoinst with commit
-1c369b6c9492 ("kbuild: simplify generic vdso installation code").
+> > >>>>> Thank you, I'll add this to my tree as we have already the release happened.
+> > >>>>> I will be available after v6.10-rc1 is out.
+> > >>>>
+> > >>>> Hmm, what exactly do you mean with that? It sounds as you only want to
+> > >>>> add this to the tree once -rc1 is out -- which seems likely at this
+> > >>>> point, as that patch is not yet in -next. If that's the case allow me to
+> > >>>> ask: why?
+> > >>>
+> > >>> Because:
+> > >>>
+> > >>> - that's the policy of Linux Next (do not include what's not supposed to be
+> > >>>   merged during merge window), Cc'ed to Stephen to clarify, it might be that
+> > >>>   I'm mistaken
+> > >>>
+> > >>> - the process of how we maintain the branches is to have them based on top of
+> > >>>   rc1 (rarely on other rcX and never on an arbitrary commit from vanilla
+> > > 
+> > > Note, besides above reasons the one is (was in this case as you noticed)
+> > > to wait until dependencies laid down in the upstream.
+> > 
+> > Well, that can be a reason, sure. But I still wonder if Linus would have
+> > preferred to get 49c02f6e901c and this fix for it in the same pull.
+> > Sure, adding this fix would have been a late addition, but when it is a
+> > fix and mentioned in the PR that from what I can see is no problem at
+> > all for him.
+> 
+> 
+> > >> Something like that is what I feared. And yes, some of that is true. But
+> > >> the patch in this thread contains a Fixes: tag for commit 49c02f6e901c
+> > >> which was merged during this merge window -- and that patch thus ideally
+> > >> should (ideally after some testing in -next) be merge during the merge
+> > >> window as well, to ensure the problem does not even hit -rc1.
+> > > 
+> > >> That's something a lot of subsystem master all the time. The scheduler
+> > >> for example:
+> > >>
+> > >> https://git.kernel.org/torvalds/c/6e5a0c30b616bfff6926ecca5d88e3d06e6bf79a
+> > >> https://git.kernel.org/torvalds/c/8dde191aabba42e9c16c8d9c853a72a062db27ee
+> > >>
+> > >> Other subsystems (perf, x86, net) do this, too. Not sure how they
+> > >> exactly do that with git; I think some (most?) have a dedicated -fixes
+> > >> branch (based on master and fast-forwarded after Linus merged from it)
+> > >> for that is also included in next in parallel to their "for-next"
+> > >> branch.  Stephen will know for sure.
+> > > 
+> > > This part of the kernel is not so critical as scheduler, but in general I agree
+> > > that sooner we get this in is better.
+> > 
+> > Side note: with all those CIs that "sooner" became more important I'd
+> > say, as I frequently see multiple CI systems running into and bisecting
+> > problems -- which humans then look into and report, which is a waste of
+> > time.
+> 
+> Oh, yes, our processes are completely non-ideal. Once I tried to micro-optimize
+> the way of Cc'ing people for the patches to avoid waste of resources and you
+> know what? This is a dead end. I gave up, so I don't care anymore and don't
+> buy this argument anymore. If people are serious about this, they should be
+> serious consistently.
+> 
+> For your reference:
+> 20240423132024.2368662-1-andriy.shevchenko@linux.intel.com
+> 
+> > > The other thing, that we have 3 regressions
+> > > now for very this code. And some of them are still under discussions.
+> > > 
+> > > Wouldn't be better to gather all fixes and send a bunch via proper process
+> > > after rc1? 
+> > 
+> > Depends on the situation. As a general approach I'd say no, but there
+> > definitely can be situations where that is wise.
+> > 
+> > > This will ensure that everything we know about is covered properly
+> > > and processed accordingly,
+> > > 
+> > > In broader way, the process should be amended if you want a fast track for
+> > > the patches like this. I'm on the second level here, Bart is the maintainer
+> > > who sends PRs directly to Linus. Do we have anything like this?
+> > 
+> > Pretty sure Linus wants maintains to just fast-track things when needed
+> > by sending an additional PR; he multiple times said that this is not a
+> > problem.
+> > 
+> > But there is a way to fast track things: just ask Linus to pull a patch
+> > from the list (e.g. in a reply to the patch while CCIng tim). He
+> > multiple times said this is no problem for him, unless it becomes the
+> > norm. This is documented in
+> > Documentation/process/handling-regressions.rst /
+> > https://docs.kernel.org/process/handling-regressions.html
+> 
+> "For urgent regressions, consider asking Linus to pick up the fix straight from
+> the mailing list: he is totally fine with that for uncontroversial fixes.
+> Ideally though such requests should happen in accordance with the subsystem
+> maintainers or come directly from them."
+> 
+> The first thing I'm not so comfortable with is that Bart as a subsystem
+> maintainer will be by-passed. The second one, is the metrics of urgency.
+> I can assume that something from a TIP tree is really urgent and they
+> even have established fast track for ages. But why do you think this fix
+> is of the same level of urgency? I haven't found in the documentation
+> the checklist which I can count numbers, compare with a table and have
+> a clear answer "yes, I have do it".
 
-The resolution seems to be straightforward as resolved in next-20240521 commit
-1c6d596096c4 ("Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git").
+FWIW, I have just sent a PR to Linus and GPIO maintainers with this one
+included. Hopefully everybody is now happy.
 
-Thanks,
-Alexander
+-- 
+With Best Regards,
+Andy Shevchenko
 
-The following changes since commit d65e1a0f305ba3e7aabf6261a37bb871790d9f93:
 
-  Merge tag 's390-6.10-1' of git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux (2024-05-13 08:33:52 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.10-2
-
-for you to fetch changes up to c1248638f8c35b74400efa7e02e78ecda23373f9:
-
-  s390/zcrypt: Use kvcalloc() instead of kvmalloc_array() (2024-05-17 10:43:43 +0200)
-
-----------------------------------------------------------------
-more s390 updates for 6.10 merge window
-
-- Switch read and write software bits for PUDs
-
-- Add missing hardware bits for PUDs and PMDs
-
-- Generate unwind information for C modules to fix GDB unwind
-  error for vDSO functions
-
-- Create .build-id links for unstripped vDSO files to enable
-  vDSO debugging with symbols
-
-- Use standard stack frame layout for vDSO generated stack frames
-  to manually walk stack frames without DWARF information
-
-- Rework perf_callchain_user() and arch_stack_walk_user() functions
-  to reduce code duplication
-
-- Skip first stack frame when walking user stack
-
-- Add basic checks to identify invalid instruction pointers when
-  walking stack frames
-
-- Introduce and use struct stack_frame_vdso_wrapper within vDSO user
-  wrapper code to automatically generate an asm-offset define. Also
-  use STACK_FRAME_USER_OVERHEAD instead of STACK_FRAME_OVERHEAD to
-  document that the code works with user space stack
-
-- Clear the backchain of the extra stack frame added by the vDSO user
-  wrapper code. This allows the user stack walker to detect and skip
-  the non-standard stack frame. Without this an incorrect instruction
-  pointer would be added to stack traces.
-
-- Rewrite psw_idle() function in C to ease maintenance and further
-  enhancements
-
-- Remove get_vtimer() function and use get_cpu_timer() instead
-
-- Mark psw variable in __load_psw_mask() as __unitialized to avoid
-  superfluous clearing of PSW
-
-- Remove obsolete and superfluous comment about removed TIF_FPU flag
-
-- Replace memzero_explicit() and kfree() with kfree_sensitive() to
-  fix warnings reported by Coccinelle
-
-- Wipe sensitive data and all copies of protected- or secure-keys
-  from stack when an IOCTL fails
-
-- Both do_airq_interrupt() and do_io_interrupt() functions set
-  CIF_NOHZ_DELAY flag. Move it in do_io_irq() to simplify the code
-
-- Provide iucv_alloc_device() and iucv_release_device() helpers,
-  which can be used to deduplicate more or less identical IUCV
-  device allocation and release code in four different drivers
-
-- Make use of iucv_alloc_device() and iucv_release_device()
-  helpers to get rid of quite some code and also remove a
-  cast to an incompatible function (clang W=1)
-
-- There is no user of iucv_root outside of the core IUCV code left.
-  Therefore remove the EXPORT_SYMBOL
-
-- __apply_alternatives() contains a runtime check which verifies
-  that the size of the to be patched code area is even. Convert
-  this to a compile time check
-
-- Increase size of buffers for sending z/VM CP DIAGNOSE X'008'
-  commands from 128 to 240
-
-- Do not accept z/VM CP DIAGNOSE X'008' commands longer than
-  maximally allowed
-
-- Use correct defines IPL_BP_NVME_LEN and IPL_BP0_NVME_LEN instead
-  of IPL_BP_FCP_LEN and IPL_BP0_FCP_LEN ones to initialize NVMe
-  reIPL block on 'scp_data' sysfs attribute update
-
-- Initialize the correct fields of the NVMe dump block, which
-  were confused with FCP fields
-
-- Refactor macros for 'scp_data' (re-)IPL sysfs attribute to
-  reduce code duplication
-
-- Introduce 'scp_data' sysfs attribute for dump IPL to allow tools
-  such as dumpconf passing additional kernel command line parameters
-  to a stand-alone dumper
-
-- Rework the CPACF query functions to use the correct RRE or RRF
-  instruction formats and set instruction register fields correctly
-
-- Instead of calling BUG() at runtime force a link error during
-  compile when a unsupported opcode is used with __cpacf_query()
-  or __cpacf_check_opcode() functions
-
-- Fix a crash in ap_parse_bitmap_str() function on /sys/bus/ap/apmask
-  or /sys/bus/ap/aqmask sysfs file update with a relative mask value
-
-- Fix "bindings complete" udev event which should be sent once all AP
-  devices have been bound to device drivers and again when unbind/bind
-  actions take place and all AP devices are bound again
-
-- Facility list alt_stfle_fac_list is nowhere used in the decompressor,
-  therefore remove it there
-
-- Remove custom kprobes insn slot allocator in favour of the standard
-  module_alloc() one, since kernel image and module areas are located
-  within 4GB
-
-- Use kvcalloc() instead of kvmalloc_array() in zcrypt driver to avoid
-  calling memset() with a large byte count and get rid of the sparse
-  warning as result
-
-----------------------------------------------------------------
-Alexander Egorenkov (6):
-      s390/ipl: Fix size of vmcmd buffers for sending z/VM CP diag X'008' cmds
-      s390/ipl: Do not accept z/VM CP diag X'008' cmds longer than max length
-      s390/ipl: Fix incorrect initialization of len fields in nvme reipl block
-      s390/ipl: Fix incorrect initialization of nvme dump block
-      s390/ipl: Introduce macros for (re)ipl sysfs attribute 'scp_data'
-      s390/ipl: Introduce sysfs attribute 'scp_data' for dump ipl
-
-Claudio Imbrenda (2):
-      s390/pgtable: Switch read and write softbits for puds
-      s390/pgtable: Add missing hardware bits for puds, pmds
-
-Harald Freudenberger (4):
-      s390/cpacf: Split and rework cpacf query functions
-      s390/cpacf: Make use of invalid opcode produce a link error
-      s390/ap: Fix crash in AP internal function modify_bitmap()
-      s390/ap: Fix bind complete udev event sent after each AP bus scan
-
-Heiko Carstens (15):
-      s390/vdso: Use standard stack frame layout
-      s390/stacktrace: Merge perf_callchain_user() and arch_stack_walk_user()
-      s390/stacktrace: Skip first user stack frame
-      s390/stacktrace: Improve detection of invalid instruction pointers
-      s390/vdso: Introduce and use struct stack_frame_vdso_wrapper
-      s390/stackstrace: Detect vdso stack frames
-      s390/iucv: Provide iucv_alloc_device() / iucv_release_device()
-      s390/vmlogrdr: Make use of iucv_alloc_device()
-      s390/netiucv: Make use of iucv_alloc_device()
-      s390/smsgiucv_app: Make use of iucv_alloc_device()
-      tty: hvc-iucv: Make use of iucv_alloc_device()
-      s390/iucv: Unexport iucv_root
-      s390/alternatives: Convert runtime sanity check into compile time check
-      s390/kprobes: Remove custom insn slot allocator
-      s390/zcrypt: Use kvcalloc() instead of kvmalloc_array()
-
-Holger Dengler (3):
-      s390/pkey: Wipe sensitive data on failure
-      s390/pkey: Wipe copies of clear-key structures on failure
-      s390/pkey: Wipe copies of protected- and secure-keys
-
-Jens Remus (2):
-      s390/vdso: Generate unwind information for C modules
-      s390/vdso: Create .build-id links for unstripped vdso files
-
-Jules Irenge (1):
-      s390/pkey: Use kfree_sensitive() to fix Coccinelle warnings
-
-Sven Schnelle (5):
-      s390/idle: Rewrite psw_idle() in C
-      s390/vtime: Use get_cpu_timer()
-      s390: Mark psw in __load_psw_mask() as __unitialized
-      s390/irq: Set CIF_NOHZ_DELAY in do_io_irq()
-      s390/boot: Remove alt_stfle_fac_list from decompressor
-
-Thomas Huth (1):
-      s390/fpu: Remove comment about TIF_FPU
-
- arch/s390/boot/startup.c                    |   1 -
- arch/s390/include/asm/alternative-asm.h     |   1 +
- arch/s390/include/asm/alternative.h         |   1 +
- arch/s390/include/asm/cpacf.h               | 109 ++++++++--
- arch/s390/include/asm/pgtable.h             |  12 +-
- arch/s390/include/asm/processor.h           |  17 +-
- arch/s390/include/asm/stacktrace.h          |  12 ++
- arch/s390/kernel/Makefile                   |   1 -
- arch/s390/kernel/alternative.c              |   7 -
- arch/s390/kernel/asm-offsets.c              |   9 +-
- arch/s390/kernel/entry.S                    |  23 --
- arch/s390/kernel/idle.c                     |  10 +-
- arch/s390/kernel/ipl.c                      | 319 ++++++++++++----------------
- arch/s390/kernel/irq.c                      |   1 +
- arch/s390/kernel/kprobes.c                  |  67 +-----
- arch/s390/kernel/kprobes.h                  |   9 -
- arch/s390/kernel/kprobes_insn_page.S        |  22 --
- arch/s390/kernel/perf_event.c               |  34 +--
- arch/s390/kernel/process.c                  |   5 -
- arch/s390/kernel/setup.c                    |   2 +-
- arch/s390/kernel/stacktrace.c               |  89 ++++++--
- arch/s390/kernel/vdso.c                     |  13 +-
- arch/s390/kernel/vdso32/Makefile            |   4 +-
- arch/s390/kernel/vdso64/Makefile            |   4 +-
- arch/s390/kernel/vdso64/vdso_user_wrapper.S |  19 +-
- arch/s390/kernel/vtime.c                    |  10 +-
- drivers/s390/char/vmlogrdr.c                |  20 +-
- drivers/s390/cio/airq.c                     |   1 -
- drivers/s390/cio/cio.c                      |   1 -
- drivers/s390/crypto/ap_bus.c                |  10 +-
- drivers/s390/crypto/pkey_api.c              | 109 +++++-----
- drivers/s390/crypto/zcrypt_api.c            |   9 +-
- drivers/s390/crypto/zcrypt_ccamisc.c        |  12 +-
- drivers/s390/crypto/zcrypt_ep11misc.c       |   6 +-
- drivers/s390/net/netiucv.c                  |  20 +-
- drivers/s390/net/smsgiucv_app.c             |  21 +-
- drivers/tty/hvc/hvc_iucv.c                  |  15 +-
- include/net/iucv/iucv.h                     |   7 +-
- net/iucv/iucv.c                             |  38 +++-
- scripts/Makefile.vdsoinst                   |   2 +-
- 40 files changed, 517 insertions(+), 555 deletions(-)
- delete mode 100644 arch/s390/kernel/kprobes.h
- delete mode 100644 arch/s390/kernel/kprobes_insn_page.S
 
