@@ -1,140 +1,251 @@
-Return-Path: <linux-kernel+bounces-184365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAEA8CA626
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:29:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC138CA62A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F6F01F21FA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:29:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72D701C21021
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4C212E71;
-	Tue, 21 May 2024 02:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U6UMxeLq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E72614286;
+	Tue, 21 May 2024 02:30:27 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75212134A9
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6C628FC;
+	Tue, 21 May 2024 02:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716258555; cv=none; b=aM7e/PwapK1UPDszA5qSq/1n3Elo7zCawu4GAHGuYM+73JS7O/xpHfiW3CiZeOjY7xRtd++QmzKvQzuRSV4TrPTu9GtQY87RkWS13qBpgc1mVcAVogW38OFIQMWcg7dTXD4/Sy9rDhLqQHw3ceK5QOnz/ztb6sdodb+w2XWQCPo=
+	t=1716258627; cv=none; b=JVX4q0zn6ej62dbCR4u7mxFX+qbpEj1vKvRgWFdlbFgddzcl9XkJVxykPu5YOS3gG6jx0IcDiopkP6mLtdV1lF/RrTmomLicZLIESJdrYohYg2p1i0x1YEa9L7fWDlUkhKQQddefzSMBgC02b2j+5gqu2ko/3cRjxFHx1lQ9Yu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716258555; c=relaxed/simple;
-	bh=fHuz2izoRrXrdHAlUrSjhQX2YUje7YUBi+uJY+FIFow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rMxTmviRZbTSYHEophSSMhYvweRaTVEkXYgp9/IKVdhCjfB+FWS3tDgAaHU7wJP+yyDHgq9G5o5JTa/VN4GN0mPDlv5JCDnf3CZEvLGNKbA1o2voIhOcR6tPRBEkBrKKY56IPn0SU6j1KDqgd6nm/9QffjHQvl1wxveiFyxN5a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U6UMxeLq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716258552;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w/SMSLTAXFZZwyaLr5kA0B7cu9hCGbcKtCcSYK2/MZg=;
-	b=U6UMxeLqj/g244r0zOY7+I7RFOf2HAzZTcrIOhanm5KzQLnEI+LHkpu1yIdnJFgkKszaim
-	lNnbGb2CG7XRuK0+3f3Alcl/BK/V2yhZ44Xm1SotweippXOs9OFwZX2Cml+x1MsOaBYDSM
-	Vd/59X2MS4DoSZvcFE9rTD9gKiGHtys=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-368-8DZktjcVMpWbsHmFAzGJOA-1; Mon, 20 May 2024 22:29:10 -0400
-X-MC-Unique: 8DZktjcVMpWbsHmFAzGJOA-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2b4330e57b6so12201921a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 19:29:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716258549; x=1716863349;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w/SMSLTAXFZZwyaLr5kA0B7cu9hCGbcKtCcSYK2/MZg=;
-        b=YBZ/JlYDvk/LiRuuJPmabTz5bsxUl2tmYo9gNh9L1R8ahceIM9eLQWZcBrwG/U3AuJ
-         kG2mlAnNJL+1/oPAN4MyzEW3FNl/Wj8Mf+HCzV/5S/G36JCJMHwDEtXUMIduDWMPWnLk
-         SvdgBLoKkHiBdkM1hj7UfJddgh9v4ePes9LMUPvQ2Nv5rX3c8CNJ/UE+1RJJePxRIaoq
-         SbpgMsp1ZcJ7W+GMwbOCGslT4LVrlOt6qvqmcPD0i3MkC3dk/wuAnNuDngsoQ189wgTe
-         WsGSidl5DBpiZyrP8r+xCQIjpmM6/6UIHr+XRyxdtREwuIX7XvZSgTWPX9Q1fMQeNQeJ
-         fOlg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGBV/LSLmCe5GAGvJCThS8CSR9PaDdJMqkKM1JVMyIblTNYtPAbynJONqabCxGZwCUsCgfAsZgo3JB2Yo/cVBeXgj8O5KIfq+q4Owv
-X-Gm-Message-State: AOJu0YwadAf5t8kJDAjzBcISdv9DHi4VafZF8LbzK+N/+Aesy71s4y7w
-	KRxDMdqMSTT99P0/iEt2LLjn+g2awxETWjCE6hjI44qtZ2z7qVnNv8lT9V56sVRji1sMU3mpXPY
-	pfOXTIJGwAypZoYYiG/OOhuOHoj/Ldn0k9WlXpk8iAlv7LBlB2Zbiep94/faAkTCtOMNaBgdLXF
-	FZHfTNt5pN+f7SdquD78si1KTjJ5lXw+6PYQ+o
-X-Received: by 2002:a17:90a:590e:b0:2bd:9319:3da1 with SMTP id 98e67ed59e1d1-2bd93193deemr634200a91.25.1716258549715;
-        Mon, 20 May 2024 19:29:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEo2Z7xohL05uhMNAfGrDbx9YpWpz1z4P9YFEzrqlUWpKPu7N+uZF6UrdhiOEzsxGwb66VvqwEqJFlwaQIRHdY=
-X-Received: by 2002:a17:90a:590e:b0:2bd:9319:3da1 with SMTP id
- 98e67ed59e1d1-2bd93193deemr634190a91.25.1716258549414; Mon, 20 May 2024
- 19:29:09 -0700 (PDT)
+	s=arc-20240116; t=1716258627; c=relaxed/simple;
+	bh=SQAXyf6L7XuEdCbgIa3EmActvAdEy2nEqSVCdmhz/Fk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=QfQFC4E9A+tuEmHJucBsYJqlMtGZw1rySGQ0MjN/6i+rpsq/Gdy+7FNQDLpve21TL0Z4Sm95W9kKzf9fre4mwHl6byT3sk68S7EOWQmeGyzWwOE/gZbERhD4NFVRke8ybD0K8IuXFsq6qmzLVNE1HjIZCpY8OiBT3wN3H7WW+RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vjz1G6vwqz4f3lgN;
+	Tue, 21 May 2024 10:30:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 645781A017F;
+	Tue, 21 May 2024 10:30:21 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgBnOBE8B0xmVN31NA--.31652S3;
+	Tue, 21 May 2024 10:30:21 +0800 (CST)
+Subject: Re: [PATCH md-6.10 3/9] md: add new helpers for sync_action
+To: Su Yue <l@damenly.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
+ xni@redhat.com, dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240509011900.2694291-1-yukuai1@huaweicloud.com>
+ <20240509011900.2694291-4-yukuai1@huaweicloud.com> <v838ekaa.fsf@damenly.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <4c69570f-86d6-9b5d-883c-0ab54b2feb33@huaweicloud.com>
+Date: Tue, 21 May 2024 10:30:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1716218462-84587-1-git-send-email-steven.sistare@oracle.com> <1716218462-84587-2-git-send-email-steven.sistare@oracle.com>
-In-Reply-To: <1716218462-84587-2-git-send-email-steven.sistare@oracle.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 21 May 2024 10:28:57 +0800
-Message-ID: <CACGkMEvhs_-wD4p-i2VCmQnmdNPLsH9FkhkGePB5LxZQf4B30A@mail.gmail.com>
-Subject: Re: [PATCH V3 1/3] vhost-vdpa: flush workers on suspend
-To: Steve Sistare <steven.sistare@oracle.com>
-Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
-	Eugenio Perez Martin <eperezma@redhat.com>, Xie Yongji <xieyongji@bytedance.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <v838ekaa.fsf@damenly.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBnOBE8B0xmVN31NA--.31652S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3WFWrXw18XF17XF1Duw1DAwb_yoW7ZFW7pF
+	4kAFW5urWUArn3Jr17tFyUJay5Ar1Iq34DAFyxWa48JFnrKrnYg3WUXF1q9F1DJr48Gr1U
+	Zr1UXF9xuF43ArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
+	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x0JUZa9-UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, May 20, 2024 at 11:21=E2=80=AFPM Steve Sistare
-<steven.sistare@oracle.com> wrote:
->
-> Flush to guarantee no workers are running when suspend returns.
->
-> Fixes: f345a0143b4d ("vhost-vdpa: uAPI to suspend the device")
-> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
-> Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> ---
->  drivers/vhost/vdpa.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> index ba52d128aeb7..189596caaec9 100644
-> --- a/drivers/vhost/vdpa.c
-> +++ b/drivers/vhost/vdpa.c
-> @@ -594,6 +594,7 @@ static long vhost_vdpa_suspend(struct vhost_vdpa *v)
->         struct vdpa_device *vdpa =3D v->vdpa;
->         const struct vdpa_config_ops *ops =3D vdpa->config;
->         int ret;
-> +       struct vhost_dev *vdev =3D &v->vdev;
->
->         if (!(ops->get_status(vdpa) & VIRTIO_CONFIG_S_DRIVER_OK))
->                 return 0;
-> @@ -601,6 +602,8 @@ static long vhost_vdpa_suspend(struct vhost_vdpa *v)
->         if (!ops->suspend)
->                 return -EOPNOTSUPP;
->
-> +       vhost_dev_flush(vdev);
+Hi,
 
-vhost-vDPA doesn't use workers, see:
+在 2024/05/20 19:51, Su Yue 写道:
+> 
+> On Thu 09 May 2024 at 09:18, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+> 
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> The new helpers will get current sync_action of the array, will be used
+>> in later patches to make code cleaner.
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>  drivers/md/md.c | 64  +++++++++++++++++++++++++++++++++++++++++++++++++
+>>  drivers/md/md.h |  3 +++
+>>  2 files changed, 67 insertions(+)
+>>
+>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>> index 00bbafcd27bb..48ec35342d1b 100644
+>> --- a/drivers/md/md.c
+>> +++ b/drivers/md/md.c
+>> @@ -69,6 +69,16 @@
+>>  #include "md-bitmap.h"
+>>  #include "md-cluster.h"
+>>
+>> +static char *action_name[NR_SYNC_ACTIONS] = {
+>>
+> 
+> Th array will not be modified, so:
+> 
+> static const char * const action_names[NR_SYNC_ACTIONS]
 
-        vhost_dev_init(dev, vqs, nvqs, 0, 0, 0, false,
-                       vhost_vdpa_process_iotlb_msg);
+Yes, this make sense.
+> 
+>> +    [ACTION_RESYNC]        = "resync",
+>> +    [ACTION_RECOVER]    = "recover",
+>> +    [ACTION_CHECK]        = "check",
+>> +    [ACTION_REPAIR]        = "repair",
+>> +    [ACTION_RESHAPE]    = "reshape",
+>> +    [ACTION_FROZEN]        = "frozen",
+>> +    [ACTION_IDLE]        = "idle",
+>> +};
+>> +
+>>  /* pers_list is a list of registered personalities protected by 
+>>  pers_lock. */
+>>  static LIST_HEAD(pers_list);
+>>  static DEFINE_SPINLOCK(pers_lock);
+>> @@ -4867,6 +4877,60 @@ metadata_store(struct mddev *mddev, const char 
+>> *buf, size_t len)
+>>  static struct md_sysfs_entry md_metadata =
+>>  __ATTR_PREALLOC(metadata_version, S_IRUGO|S_IWUSR,  metadata_show, 
+>> metadata_store);
+>>
+>> +enum sync_action md_sync_action(struct mddev *mddev)
+>> +{
+>> +    unsigned long recovery = mddev->recovery;
+>> +
+>> +    /*
+>> +     * frozen has the highest priority, means running sync_thread 
+>> will be
+>> +     * stopped immediately, and no new sync_thread can start.
+>> +     */
+>> +    if (test_bit(MD_RECOVERY_FROZEN, &recovery))
+>> +        return ACTION_FROZEN;
+>> +
+>> +    /*
+>> +     * idle means no sync_thread is running, and no new sync_thread is
+>> +     * requested.
+>> +     */
+>> +    if (!test_bit(MD_RECOVERY_RUNNING, &recovery) &&
+>> +        (!md_is_rdwr(mddev) || !test_bit(MD_RECOVERY_NEEDED, 
+>> &recovery)))
+>> +        return ACTION_IDLE;
+> My brain was lost sometimes looking into nested conditions of md code...
+> I agree with Xiao Ni's suggestion that more comments about the array
+> state should be added.
 
-So I wonder if this is a must.
+Okay, perhaps you're refering md_is_rdwr()? which is supposed to be
+related to "no new sync_thread is requestd", perhaps following is
+better:
 
-Thanks
+/* only read-write array can start sync_thread */
+if (!(md_is_rdwr(mddev))
+	return ACTION_IDLE;
 
-> +
->         ret =3D ops->suspend(vdpa);
->         if (!ret)
->                 v->suspended =3D true;
-> --
-> 2.39.3
->
+/* sync_thread is not running, and no new sync_thread is requested */
+if (!test_bit(MD_RECOVERY_RUNNING, &recovery) &&
+     !test_bit(MD_RECOVERY_NEEDED, &recovery)
+	return ACTION_IDLE;
+
+> 
+>> +    if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
+>> +        mddev->reshape_position != MaxSector)
+>> +        return ACTION_RESHAPE;
+>> +
+>> +    if (test_bit(MD_RECOVERY_RECOVER, &recovery))
+>> +        return ACTION_RECOVER;
+>> +
+>>
+> In action_show, MD_RECOVERY_SYNC is tested first then MD_RECOVERY_RECOVER.
+> After looking through the logic of MD_RECOVERY_RECOVER clear/set_bit, the
+> change is fine to me. However, better to follow old pattern unless there
+> have resons.
+
+It's just because MD_RECOVERY_SYNC is more complicated, and I move it to
+the last, just programming habits. :)
+> 
+> 
+>> +    if (test_bit(MD_RECOVERY_SYNC, &recovery)) {
+>> +        if (test_bit(MD_RECOVERY_CHECK, &recovery))
+>> +            return ACTION_CHECK;
+>> +        if (test_bit(MD_RECOVERY_REQUESTED, &recovery))
+>> +            return ACTION_REPAIR;
+>> +        return ACTION_RESYNC;
+>> +    }
+>> +
+>> +    return ACTION_IDLE;
+>> +}
+>> +
+>> +enum sync_action md_sync_action_by_name(char *page)
+>> +{
+>> +    enum sync_action action;
+>> +
+>> +    for (action = 0; action < NR_SYNC_ACTIONS; ++action) {
+>> +        if (cmd_match(page, action_name[action]))
+>> +            return action;
+>> +    }
+>> +
+>> +    return NR_SYNC_ACTIONS;
+>> +}
+>> +
+>> +char *md_sync_action_name(enum sync_action action)
+>>
+> 
+> And 'const char *'
+
+Yes
+
+Thanks,
+Kuai
+
+> 
+> -- 
+> Su
+> 
+>> +{
+>> +    return action_name[action];
+>> +}
+>> +
+>>  static ssize_t
+>>  action_show(struct mddev *mddev, char *page)
+>>  {
+>> diff --git a/drivers/md/md.h b/drivers/md/md.h
+>> index 2edad966f90a..72ca7a796df5 100644
+>> --- a/drivers/md/md.h
+>> +++ b/drivers/md/md.h
+>> @@ -864,6 +864,9 @@ extern void md_unregister_thread(struct mddev 
+>> *mddev, struct md_thread __rcu **t
+>>  extern void md_wakeup_thread(struct md_thread __rcu *thread);
+>>  extern void md_check_recovery(struct mddev *mddev);
+>>  extern void md_reap_sync_thread(struct mddev *mddev);
+>> +extern enum sync_action md_sync_action(struct mddev *mddev);
+>> +extern enum sync_action md_sync_action_by_name(char *page);
+>> +extern char *md_sync_action_name(enum sync_action action);
+>>  extern bool md_write_start(struct mddev *mddev, struct bio  *bi);
+>>  extern void md_write_inc(struct mddev *mddev, struct bio *bi);
+>>  extern void md_write_end(struct mddev *mddev);
+> .
+> 
 
 
