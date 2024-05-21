@@ -1,153 +1,163 @@
-Return-Path: <linux-kernel+bounces-185420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DBFA8CB4BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:31:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BFB8CB4BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEEB51C219EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:31:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEF4F1F22B8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BA1149C7B;
-	Tue, 21 May 2024 20:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7A11494C3;
+	Tue, 21 May 2024 20:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FzgKnagN"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q8xTUZJh"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA0E54F91
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D734547A5C
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716323452; cv=none; b=ZojPhYnJwhczSJzA15zWzFGYM7xXYnAcTg0a4Ien+H/r8jBMRwXzk60aOaZ01lhcxg3Z7qmSYBXA6IIhgaVvEawTqK5nE6H195TZjAfo4KwvBVkz/2xhLRWc8OWjrn6b3YSLi2zfWl84oLMCnM7VtAdeqF+jG5SLTj+cQZC0J6w=
+	t=1716323505; cv=none; b=ThTWEPMK8OlmtH4e8f7tYCtgXHOHku66PyhSjxJrVAaZTZ0+f6/5lVqnQyg7mu8jTZmkQ6+davfsXV13zIwVcqXRuyszZUWforHBIk8cnkiEB24+xg90u6StoMKpPkXSJ5uilL7v3N9YKR4lO98s+D6BWsgIiDaTWlDuOVI6Sag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716323452; c=relaxed/simple;
-	bh=mMkzAyWz/qVN9O2XMqdjyNpMMewXubKPHRJ1nIx25Rg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kYSKxU9O3TT4c3L4By6mVK3DAOnIQLdhGWIGmOk/Q+KplCFK/lBkOfK0rATUmh5nL5/AbRP4uso3Yq6AJXWneiucgZEgOD6h/okelCoE5NasAwZECJfS82lawrd3iB0N7+ZGFVJBPYz7RnJekc7HZxfg09Gbwx8yBS65W4tO9xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FzgKnagN; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5241b49c0daso3716378e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:30:50 -0700 (PDT)
+	s=arc-20240116; t=1716323505; c=relaxed/simple;
+	bh=QuUd2WIszBgiRLRMwosQW3GxJBwnIuQ7/If73ZyYbfA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=TTnMwaL6F8UB2E5Q4H/HdqjofHp2Ond8pXMe1Nh62Fy5klcN5GeOaiJw25EE/6db/FVFGn0nziqWeg8hJMNa6dhwdLIIOpN5i02ObaSGwwasz5UaXQUXs8woL4LOUtgfcvnBk0Xl7QpyhIcsK/Bm+Sidxuqr/v0Uqd72ugGnzlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q8xTUZJh; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-6f46eb81892so12712913b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:31:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716323449; x=1716928249; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Pp0wgsOf+otlTEcxeglIqsX7pRYpEdZKxDMC0pyUGd0=;
-        b=FzgKnagNn332CgOgZlxGOZxxV4fDLxEM7R4iRSH2GsI6kZ50HFodr/ELTEzt9NlerI
-         9BopCnNit6OmxNVGZoQEdhT8eKoB6bv0cmtIOElQR0vi2aVC2MTUP379XfI7XlpK1mYE
-         AY9AlVgNnupjCf4cvjGJK5igSg6USlHBsg0/kj+qeCQI8oGOQLW7clAl+Ga8KIjHLNAw
-         qgTI2odD3cMCQ1l+sUn9GzaYzHOZWp0cy2pX+YZgA21/7bWWvHecB4/ORr3gRUf3tXiQ
-         FG+B0QD8hoC2Z1iu1hjADLROnR4229G1V6mS9OiMzcno0ZV/Y4D1DUqIXoCDQN9OXTza
-         +nOA==
+        d=google.com; s=20230601; t=1716323503; x=1716928303; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RIxYIUY6xfa0Z61X8hb/LG8bYVX3fiRC8Zg5CcwCluY=;
+        b=Q8xTUZJhveLvXkoO/x1fUOd7lVkYsmwGekVBSXOGvD7dOcNFBllInms6rwOKzACnzl
+         ET+wZ0hm5g0QORofywxELACZAF6GOVfvKiNobkumnvSLli7p2gMJh2qrrA5fULNzAdNK
+         gjqK4k11nClvwgtd2jHOeGYkurDSlZwJGoqhQPsViubV612do1xo1vGTSMKwvVsnJWSs
+         3f0Dw1VZwLPzH4QyfnNx0WSE221vP0WW3x9cagaa8raPCearALdajpMK7fIR7NpY/Ts3
+         jP8ruxTOZEoMVIXIKYJMFS4aAganq5VtCZNdcpCQ6iWwkIhMpRz4JhZqiOWqbnpXiKql
+         m6Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716323449; x=1716928249;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pp0wgsOf+otlTEcxeglIqsX7pRYpEdZKxDMC0pyUGd0=;
-        b=lfurwRpytgu912TcGWUhF9IeDYUMcPGX5jmgYE+BupZDO4wL34UPoY/KjS1z2MXGEC
-         P6Zo44xepnteiQ8pA2DqfVx/CsB+yD+FZV29tNgU1v+yMiKbbO0sBZRgmgmdFKGw0qYx
-         5ENnOv7dB4+co/o3tr3HxlUDL5BTHU+G42oYDP98+pqnSLsNThFKvrDk7PX6ebJpQ/Ax
-         LqbA5v85c1u+UwE58te6bi4kisLsx/Yps8IJJpPXP0qhZ/Hei59RPK9rwTFHWs1abmcl
-         Mg5mf2EwYb92cyybGyeXRSAVwOTZMDMh8mnUKu+VhRrRysX58kItpeba7dYdFts0JkZ+
-         z8tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6EldBSmjPxvrqB9cm2Q5V+KsltfTls5sxfbxkZolIasx3jAuKfPMo0/lJdGa4Bje4tA+XUekBc41WJNPMlaq/VvZZibDdUUs10sN6
-X-Gm-Message-State: AOJu0Yx/OlFZsRHOv29MITQlEtX3ZBBtHPuzpS+rOoShIM0NpitGEbRh
-	UhxhraW39+eo2GCJVSv6L8OhNbZkCrkNsD6aAuw5VE1H2GwhIslyX0Wik7P94IA=
-X-Google-Smtp-Source: AGHT+IEx8QHVp0uTJ2cLWhq4ftpPXl3iBNLrS/c1OcCJiaHJ6hbKc/1kI1/oPi+SIpmEttUD6fzuZg==
-X-Received: by 2002:a19:2d0e:0:b0:51b:567e:7ea4 with SMTP id 2adb3069b0e04-5220fc7945cmr20433710e87.26.1716323449129;
-        Tue, 21 May 2024 13:30:49 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5238ec18fd2sm2538664e87.155.2024.05.21.13.30.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 13:30:48 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 21 May 2024 23:30:46 +0300
-Subject: [PATCH 2/2] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: drop
- second output clock name
+        d=1e100.net; s=20230601; t=1716323503; x=1716928303;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RIxYIUY6xfa0Z61X8hb/LG8bYVX3fiRC8Zg5CcwCluY=;
+        b=g+DHo1wFsc0QGVSgj6NZVFgNxAQ5IJprYNbWwoL1/3b+fEE/AqQBWQ4iOumZPFdppx
+         w4qUGLIxUWnSkvEfm24eX8AV/xQ6tYD3lUIuAKqT0spaQsEq3bK8Xf6cZt/BtQ3wCzJZ
+         0SM1oQJIVyuys2KAiXWXVqUvTobrYgy4+dchra1hj+HgLSEnLv+G/51xdCMBlvMjRvhg
+         sH2CRJ+ZCAAOJYXfK+mjw+OJX5DWhR52nFwZapS5oMhnF31sFrz3WXcTS7nCjPFgz757
+         Lq7aVpF/Z2cdhGwUPYbMBNDHJ9D0ZCQYNUyBKqOQGWrI/bEMHQks25Jk9S0Eyl3lHJ8C
+         RjBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFjreq9kixVVtumcZ9ytZ6n5qLPelXZlaRUa6U+HLatdpALEJYisMKAOmUosEVk8xmkuDnVzq4DZu09WgQI1RZyP80mzX6yMYgNxBv
+X-Gm-Message-State: AOJu0Yx34wVyLM7030A3Rn7BWih6Xz7Sblb6kHgPUWiQzj3rCfYW/5/X
+	+issYmzSYtVf1HK9nR/pi7A89bX0OHG0Bt+/C9Ad20MH5IujqliEKr3b68XZpNA8W3OVKBpMiZg
+	KNg==
+X-Google-Smtp-Source: AGHT+IHh7glVSft5QaLCRrxXDi7uu5WLdc5qtZ1rOL0wAEurEIF+QY6zQhvvtTu4XmwUuxKFnuuMpe8K5ec=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:2e8f:b0:6f3:f447:57e1 with SMTP id
+ d2e1a72fcca58-6f6d6002b65mr392b3a.1.1716323502715; Tue, 21 May 2024 13:31:42
+ -0700 (PDT)
+Date: Tue, 21 May 2024 13:31:41 -0700
+In-Reply-To: <b66ea07a-f57e-014c-68b4-729f893c2fbd@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240521-fix-pcie-phy-compat-v1-2-8aa415b92308@linaro.org>
-References: <20240521-fix-pcie-phy-compat-v1-0-8aa415b92308@linaro.org>
-In-Reply-To: <20240521-fix-pcie-phy-compat-v1-0-8aa415b92308@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- devicetree@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1599;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=mMkzAyWz/qVN9O2XMqdjyNpMMewXubKPHRJ1nIx25Rg=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmTQR2ydgr373/+ZrReuBiiCPXPsnPvPUpPweIk
- +4iPSaWE9qJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZk0EdgAKCRCLPIo+Aiko
- 1XXhB/4mZQjQ8rLR/uJtqT2Pi4rQQ8eH+AKYTjGYWRIhpsGtkGy1LeqMfQCnMFUpfQg7c8dWDWa
- yqDNA3P5D5tnmknhaoH6yEFDYmqoEiATcnZHvevWqpqmrUwr3pYKLU7jsp739WyZLbJxljZholR
- P8rIhnhnNzw3rAs+1i18LeUkqjbhzgJWrnZRN0O5u+HcrZh9jpKSZciUtrEr9SlKsNsE3PgNHNS
- sIVbzJk/PM2HrFWAGvYTQJViogzeQuKWdENWW6J+5aTwf1K/7eNjQr9IZEd8wPKrOv/WO5+dW2r
- G5Fiebvg29UJ3A0bYdISOnCukq1AM0os/84vW2k6ycze5vVt
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Mime-Version: 1.0
+References: <20240416050338.517-1-ravi.bangoria@amd.com> <ZjQnFO9Pf4OLZdLU@google.com>
+ <9252b68e-2b6a-6173-2e13-20154903097d@amd.com> <Zjp8AIorXJ-TEZP0@google.com>
+ <305b84aa-3897-40f4-873b-dc512a2da61f@amd.com> <ZkdqW8JGCrUUO3RA@google.com> <b66ea07a-f57e-014c-68b4-729f893c2fbd@amd.com>
+Message-ID: <Zk0ErRQt3XH7xK6O@google.com>
+Subject: Re: [PATCH v2] KVM: SEV-ES: Don't intercept MSR_IA32_DEBUGCTLMSR for
+ SEV-ES guests
+From: Sean Christopherson <seanjc@google.com>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, michael.roth@amd.com, nikunj.dadhania@amd.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, santosh.shukla@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-There is no need to specify exact name for the second (AUX) output
-clock. It has never been used for the lookups based on the system clock
-name. Partially revert commit 72bea132f368 ("dt-bindings: phy:
-qcom,sc8280xp-qmp-pcie-phy: document PHY AUX clock on SM8[456]50 SoCs"),
-returning compatibility with the existing device tree: reduce
-clock-output-names to always contain a single entry.
+On Mon, May 20, 2024, Ravi Bangoria wrote:
+> On 17-May-24 8:01 PM, Sean Christopherson wrote:
+> > On Fri, May 17, 2024, Ravi Bangoria wrote:
+> >> On 08-May-24 12:37 AM, Sean Christopherson wrote:
+> >>> So unless I'm missing something, the only reason to ever disable LBRV would be
+> >>> for performance reasons.  Indeed the original commits more or less says as much:
+> >>>
+> >>>   commit 24e09cbf480a72f9c952af4ca77b159503dca44b
+> >>>   Author:     Joerg Roedel <joerg.roedel@amd.com>
+> >>>   AuthorDate: Wed Feb 13 18:58:47 2008 +0100
+> >>>
+> >>>     KVM: SVM: enable LBR virtualization
+> >>>     
+> >>>     This patch implements the Last Branch Record Virtualization (LBRV) feature of
+> >>>     the AMD Barcelona and Phenom processors into the kvm-amd module. It will only
+> >>>     be enabled if the guest enables last branch recording in the DEBUG_CTL MSR. So
+> >>>     there is no increased world switch overhead when the guest doesn't use these
+> >>>     MSRs.
+> >>>
+> >>> but what it _doesn't_ say is what the world switch overhead is when LBRV is
+> >>> enabled.  If the overhead is small, e.g. 20 cycles?, then I see no reason to
+> >>> keep the dynamically toggling.
+> >>>
+> >>> And if we ditch the dynamic toggling, then this patch is unnecessary to fix the
+> >>> LBRV issue.  It _is_ necessary to actually let the guest use the LBRs, but that's
+> >>> a wildly different changelog and justification.
+> >>
+> >> The overhead might be less for legacy LBR. But upcoming hw also supports
+> >> LBR Stack Virtualization[1]. LBR Stack has total 34 MSRs (two control and
+> >> 16*2 stack). Also, Legacy and Stack LBR virtualization both are controlled
+> >> through the same VMCB bit. So I think I still need to keep the dynamic
+> >> toggling for LBR Stack virtualization.
+> > 
+> > Please get performance number so that we can make an informed decision.  I don't
+> > want to carry complexity because we _think_ the overhead would be too high.
+> 
+> LBR Virtualization overhead for guest entry + exit roundtrip is ~450 cycles* on
 
-Fixes: 72bea132f368 ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: document PHY AUX clock on SM8[456]50 SoCs")
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- .../devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml        | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+Ouch.  Just to clearify, that's for LBR Stack Virtualization, correct?
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-index 16634f73bdcf..03dbd02cf9e7 100644
---- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-@@ -91,8 +91,7 @@ properties:
-   "#clock-cells": true
- 
-   clock-output-names:
--    minItems: 1
--    maxItems: 2
-+    maxItems: 1
- 
-   "#phy-cells":
-     const: 0
-@@ -222,14 +221,10 @@ allOf:
-               - qcom,sm8650-qmp-gen4x2-pcie-phy
-     then:
-       properties:
--        clock-output-names:
--          minItems: 2
-         "#clock-cells":
-           const: 1
-     else:
-       properties:
--        clock-output-names:
--          maxItems: 1
-         "#clock-cells":
-           const: 0
- 
+Ugh, I was going to say that we could always enable "legacy" LBR virtualization,
+and do the dynamic toggling iff DebugExtnCtl.LBRS=1, but they share an enabling
+flag.  What a mess.
 
--- 
-2.39.2
+> a Genoa machine. Also, LBR MSRs (except MSR_AMD_DBG_EXTN_CFG) are of swap type
+> C so this overhead is only for guest MSR save/restore.
 
+Lovely.
+
+Have I mentioned that the SEV-ES behavior of force-enabling every feature under
+the sun is really, really annoying?
+
+Anyways, I agree that we need to keep the dynamic toggling.
+
+But I still think we should delete the "lbrv" module param.  LBR Stack support has
+a CPUID feature flag, i.e. userspace can disable LBR support via CPUID in order
+to avoid the overhead on CPUs with LBR Stack.  The logic for MSR_IA32_DEBUGCTLMSR
+will be bizarre, but I don't see a way around that since legacy LBR virtualization
+and LBR Stack virtualization share a control.
+
+E.g. I think we'll want to end up with something like this?
+
+	case MSR_IA32_DEBUGCTLMSR:
+		if (data & DEBUGCTL_RESERVED_BITS)
+			return 1;
+
+		if (kvm_cpu_cap_has(X86_FEATURE_LBR_STACK) &&
+		    !guest_cpuid_has(vcpu, X86_FEATURE_LBR_STACK)) {
+		    	kvm_pr_unimpl_wrmsr(vcpu, ecx, data);
+			break;
+		}
+
+		svm_get_lbr_vmcb(svm)->save.dbgctl = data;
+		svm_update_lbrv(vcpu);
+		break;
 
