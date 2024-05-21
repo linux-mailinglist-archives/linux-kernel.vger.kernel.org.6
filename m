@@ -1,435 +1,228 @@
-Return-Path: <linux-kernel+bounces-185151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83EF8CB138
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:27:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A938CB12F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D9DB283737
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:27:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF7291F2508A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF310144D35;
-	Tue, 21 May 2024 15:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945B41448C5;
+	Tue, 21 May 2024 15:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="VDk1JRV0"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DZ7+lHJC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7099F1FDD
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716305204; cv=none; b=n2lgVTB24P+zQkJEAWf4o/KuxCsGzyzIaORJEk++cOJZVlCHyg0MkczBLtGw54OnN9R5yA3LpusAtcSCG0Liiz5aJXlaESLbwi0OroI2i7GPeT/lmdV8lbjfWPXMYW84DfmIUDNjgBfOAzujPvD4hQw7oOj7enGjPCQfAPGzwfA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716305204; c=relaxed/simple;
-	bh=cTHe3yMlR9xXw7lxXZ7eArbEWi0LYEzeSOzMMlbzFG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ew6wvBNsmkyhSOuNfgTmy2BzVaWWQ1eezqbKDHhxRDe8/ROJhdxcPCJEFJO9ZY+axYsdK0rM5c+T9IwOQQ/W1Z9qySGvwvoYrC6c2vMbOuNSj3tAijwmfglmlCGfp/afWFch7OxTh97d9zKCafaYUVdjITNMCIqIdDd3o+ApYLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=VDk1JRV0; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a5cdd6cfae7so909139466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 08:26:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1716305201; x=1716910001; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4rjLn6crkk+FZyvtitmZt9qDIbYFZ00Z0BFOR6L2o2c=;
-        b=VDk1JRV08quZhxkgg7UIK46JjKqK+j0cX/GitHW+YcBkCXalnN9/7vSVhFMDPUiVIn
-         DW+wcLlPl8VmtH0sYAXmKmHDEOESNh+kZH34yB/5C0NMMMu283YV8OMJTjT7tMx3gfN+
-         IdREOfCWbl8WT/kaga2M//LYczNL5jDvJpHXtLchHRaKUaOCI4hxp7ZO9EX3d3b3VeWu
-         l6CMAfrtOIaFAZnyI8Tp3AlGg/cdY4y0V0CchoUbsRe8we9vX2s4sHDRtthat9zYkhMX
-         O7XZOMihBdfpI6ZwH9d7xtV0Fsk+gvM5uK2yDxRDLGw/s0iCrclbYirhD2hwWuWbfmDe
-         +qcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716305201; x=1716910001;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4rjLn6crkk+FZyvtitmZt9qDIbYFZ00Z0BFOR6L2o2c=;
-        b=djyACtIdRls7exceSQYuWWGzHxV+7fuxRjZkeIexxAelX3yeNUuQutSeeyRT0C4k75
-         qg/DN9SejwWQq93JOhwj25bKhYflrTYgRtD2UsGCVQyvnHX7iX2FEEiWAiWLjhaoagJ/
-         LuWXUqxqwxruuHUn8AbGLCyYYFK4P4FZRWiULmlkRTcwRkLsrNTDj0V/dlSsekUw8Np6
-         jPV8n1OcnBonwSnuXXgNcLRgWa9Yq4kcihvrGnrn30PT6cc8tk2B2BqjRnh/OuwRr59V
-         t2yx/4VWiJweQ2GMmF3t4yey5cf+avT2wqF66T7cIPoKmEslj/XXa5xFPGCwZr4ASk+K
-         Pdhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnXPZZ68fYso2R8J8ae8E++ogLSnI5ImXOA5Nho1ZPZidszPwobN0X2SuRImz6SWJYKR4asAGhKp6AHVgfIDj8rdwBaDumpUYu619x
-X-Gm-Message-State: AOJu0YwifNlF25GE1cv9ApmYZq2zbjfrbRqtr360h+/uzkfSwFJdmDLT
-	d2sHbktiFzUtCQMHXou8JGJgZWSnYuz8zNqsq3NvpJdGA3BvyZdIcrTxGFHm5tQ=
-X-Google-Smtp-Source: AGHT+IFbzN83Lvjgry3fYhyDeN6yz/WEJGyQWb1CTLP6cXz+H50bserwMnATmoFQKxpesjnBptrf6w==
-X-Received: by 2002:a17:906:3a9a:b0:a5a:7493:5b68 with SMTP id a640c23a62f3a-a5d5ecdc977mr785308366b.24.1716305200732;
-        Tue, 21 May 2024 08:26:40 -0700 (PDT)
-Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b180c7sm1638327666b.221.2024.05.21.08.26.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 08:26:40 -0700 (PDT)
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
-To: Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: naresh.solanki@9elements.com,
-	andy.shevchenko@gmail.com,
-	broonie@kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] pinctrl: cy8c95x0: Use regmap ranges
-Date: Tue, 21 May 2024 17:25:58 +0200
-Message-ID: <20240521152602.1097764-2-patrick.rudolph@9elements.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240521152602.1097764-1-patrick.rudolph@9elements.com>
-References: <20240521152602.1097764-1-patrick.rudolph@9elements.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DA81FDD;
+	Tue, 21 May 2024 15:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716305170; cv=fail; b=C+8jteiLSN+q09yRPXc7d4oCEkjNEOeEPP9gYTbRlI0Hhuy7WC1Jfe1eDINIIS5xrWz0WWGbPS0IYRSe9LxJHknNlgrwSyzIq4K9MV8ztn4/Louc81yRjhEWkYVrhEMxDSXfoCF+dbqp3q6ERcbiRi7oCm1UYN51NpHM76cMwcM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716305170; c=relaxed/simple;
+	bh=opwiXITfGQDkVg57NYPhC+vPiPiHRcya+4JzMnLl+og=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jPS1L1ljzrqmsnPNvCdiCTL4sivK6IqgIq2L+z/CtG6RPa5LSdu+VRl7WIqFkRtQxlMseDVNSyurXgzEzy2/hLQGIiyWAf3ZIpLw4yR7I/CysahnwFfz1RMrym0q4eFccqyWNd2cXT5jdvRGCaHtEQPTx0/iZZHg1kt4w+KslJ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DZ7+lHJC; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716305169; x=1747841169;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=opwiXITfGQDkVg57NYPhC+vPiPiHRcya+4JzMnLl+og=;
+  b=DZ7+lHJCaaUAgmhp9mpuoRUCTxtoWE7arTKXC0D5onjyQsEMI2nlodGR
+   dCXNEFRtw4NLyqvLchbvrK4VcWfGpmHNjM7ya3syWxPQAOJwoBfCokeav
+   ZQ41ZSoP1aebS5szuBU9Ph0hHqmbXB6u3psniuFP83xZ219gZDoNVqowh
+   ncC5vYMrV1vtLbxOdEvXtwLeN9msLp93hqOSmlQmBcxBZfs9kxlz9tk4N
+   EEgD4fcQFOrUw/8poL+S95ique9GKXmHbEMgXaqt0VCOEx+qkaMAp6XF9
+   NREOncal8u79/Unzi+l0qWPfnSWAiamZMeI+xygwiGG1tKwY9pf9AnM69
+   w==;
+X-CSE-ConnectionGUID: 2/bLJGWaTKGnEN3obVWR2Q==
+X-CSE-MsgGUID: 8VIQF0c5QquLkd1JLRZJKg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="23115095"
+X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
+   d="scan'208";a="23115095"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 08:26:08 -0700
+X-CSE-ConnectionGUID: Z8465AKPRjeHFdKWVhw61A==
+X-CSE-MsgGUID: h43v74roTOawDtb7Kqhvzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
+   d="scan'208";a="37455493"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 May 2024 08:26:09 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 21 May 2024 08:26:07 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 21 May 2024 08:26:07 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 21 May 2024 08:26:07 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.101)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 21 May 2024 08:26:07 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IgKVv2jI2kT99vozLQPKXcm3NIj2G8mAeWcprpxO83WiLVFfShueboOr5+n1a/iD0iACTJR2zlcTgyh8QlOBXGGXqmK2xXDub+3VLIHvFvnHKyIU4vdksf0CyRnK8LS6IDc4O5sCsy4Z9fajKOt6By702WYmNne732a8oHAw2Unhq2V09sIpFpuDj5crQNteG2vJbtSVOL2/0ptRJ5mkN6N6SBDjr1vs173mJD8TZaeShQWYPYCmjnx1/dbX+JhnhJl+YVAhNzje5R9MRT0FvxXdcbDSLNnKs6/2Rc41M2/xqsO5g5B7X6hpaEiyVYzzqPAKtd6xBxRI42SwUu4ykQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5KwZT+9BcJxcNSOSLoT0pm9oxZGSa3+6EYVzWeM4HTc=;
+ b=Hpq/Pu7fccPGHPlbM3mHb0k+CoR1MwicDS4C0NZPDEJ45VRE1a19KuXrf9KaZV+mU4XdE8V88727vp/h1xfeLfx6rLTpAiHdS9TwszoMB/hit/8+8hRmZuaLOIvdMHTiLdSoWnW9Bfd7zcgn2ZWIpV4n/9YaqGzobzFNeTpnLrgO3UB+BX5AoqBykRRqYDmUCZeuLqBdkMqdv065xHNQ/23crw8+wAc+e00wwv8OqZ4uIO/X2bkgG0PCdJzE0j+uFue7xsn/p6/URplVzGvS/GKpJRUpizrnEW12HdfvaEF8D4vw4NHhg3Y7IKRMYgAbxK7PZ1QA2xUSx+CvNZXMEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by IA0PR11MB7749.namprd11.prod.outlook.com (2603:10b6:208:442::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Tue, 21 May
+ 2024 15:26:03 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%4]) with mapi id 15.20.7587.030; Tue, 21 May 2024
+ 15:26:03 +0000
+Date: Tue, 21 May 2024 10:25:58 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: <nifan.cxl@gmail.com>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <dan.j.williams@intel.com>,
+	<Jonathan.Cameron@huawei.com>
+CC: <linux-cxl@vger.kernel.org>, <a.manzanares@samsung.com>,
+	<dave@stgolabs.net>, <linux-kernel@vger.kernel.org>, <nifan.cxl@gmail.com>,
+	Fan Ni <fan.ni@samsung.com>
+Subject: Re: [PATCH] cxl/region: Add module license declaration to cxl region
+ module source code
+Message-ID: <664cbd06b5342_364af29491@iweiny-mobl.notmuch>
+References: <20240520193106.994172-1-nifan.cxl@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240520193106.994172-1-nifan.cxl@gmail.com>
+X-ClientProxiedBy: SJ0PR03CA0031.namprd03.prod.outlook.com
+ (2603:10b6:a03:33e::6) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|IA0PR11MB7749:EE_
+X-MS-Office365-Filtering-Correlation-Id: b777b81a-4415-410b-6e15-08dc79aa5369
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?FkbQDyrJIssGYejBU1qZI6xKhndR7mqgquph4lWZKlZbpUZmLFv6bydbLWHF?=
+ =?us-ascii?Q?Su99n/PCIFWxsJqfZHdfhIDUMJu+jQgEOKvVa3lezyJxpBG01RyU/onm1pcS?=
+ =?us-ascii?Q?CYmopyWEkqaUqjNAAGp2kTNYxD3w8Z9b61dm2Pd6428r8T6cxjqMpfSnYt7G?=
+ =?us-ascii?Q?gbS4A/m5q1bKbZHIZfm+iFZ5eUv7Fjh3uelDUbgTy58zai8Dnx2NBK7nySKP?=
+ =?us-ascii?Q?+7PoraIZoo7XrpWhM4y2WSxRDiKk5Pzi6jMTTcmwDPowvmp7cav36i3x2lo7?=
+ =?us-ascii?Q?1VsGuKl96DhF+NHZeY8tZMuH4XNg1zfWRisoEo7zkwJw6K/EAxM/EbYtAHgG?=
+ =?us-ascii?Q?xU9L37laTpVt8o6NJn12jHPsSmccZX6mC5EELZacIa1sUK4vN303tz5V69jn?=
+ =?us-ascii?Q?6GpnLA2t51muuSdb1/uO0r4Lcz5mjs8hq6SduQPCPTmRVhzKp+aNAn/qqPEo?=
+ =?us-ascii?Q?YH1SM4DvayEhd3+YWKhBBK9PKvKGeEAFv0nAzLlEjoqtbUs2AbYCnkWE+WCe?=
+ =?us-ascii?Q?RPX8XGPO2ZPy1JDp+byknA8Ib/YwoOamkOCgEzVUlPvxzj6Dxmz+ElWYEYMe?=
+ =?us-ascii?Q?e8YkVgxEpG4cdckEPXsxhMKGRPRFzZIz6JFxtT2fQUKNzWt83eETkqPJqaFR?=
+ =?us-ascii?Q?KKNwEZtrSHSQZbFqcTxBurSjA/FIlHQtE/qt1NIFjGua+qaFCdr65cuLTDLr?=
+ =?us-ascii?Q?Nfre7lVk/q9TsX22em5gN1sDoi2OQWF92WdTniHxOXa88HkqIuOeCgKgRruP?=
+ =?us-ascii?Q?ydnRJPbwh9C0GSt+UXxazOTa1aQFd0LGMd9IvKjSYyAm3gcCS6mJzfVQlR/h?=
+ =?us-ascii?Q?LhSs77etCUbaFDSVojjH5ifUgzRgSK+vUoDtLAgx3g5qQWIZFB4fY4EUa8fo?=
+ =?us-ascii?Q?EpoPY6z+WHEbCyC+vHMb1GJc+aYkZcGxjdVuNLcJLXaFa+hlHlZK826xUlDr?=
+ =?us-ascii?Q?5MJPjCfSBqOLWhNnEk8ggDLvuGq23L0eXZiHZQzw72V+UwAnDPZqY8U0d56P?=
+ =?us-ascii?Q?glT0YvomrfZzsl4OFmf6J1iAZRolaFhfVsWcMBZ+k/lnl+1r/6J9qmu1gzUl?=
+ =?us-ascii?Q?euxE92VhmvxA2BHDKQdQziQYKZb+OUZGg9IKGJEpMDN7lM//lSLcYGMOVHgd?=
+ =?us-ascii?Q?RaPDkQA5kgnrgZIXVe/EBkQMtDW6KWZepBAV2c403DwLTdJ9d+BLeVb53G9n?=
+ =?us-ascii?Q?HtBemOyJzv7yrZEi30dVipz+3i6zD2n9LeNy3EmUWLM4YobQ3s4iYq2ar37x?=
+ =?us-ascii?Q?PUzG/dCypAhlfRVQITG0VuIK7XT90rRS0FA4Jn1p1w=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?nvgpOuZhdHPZxHmlufE2JNcYAYnWiR1SzrOb6gSPfJDfLR3p5QG63zEBsFtV?=
+ =?us-ascii?Q?tXMHYHyeGAehQIy2LLEMzmbQZlHnGCv3/IxsGk+vqXhSiHAP1jyeZxpV8eqx?=
+ =?us-ascii?Q?/HNk9bUHf+HnARVeEpbaPkUsIbEBZdo/BqE32fBwbNEL3ExQU6Op7khkX4FF?=
+ =?us-ascii?Q?AK+pxAaHuTE4rJg3PG5+oZr5BXZyixpaahD/8xHsul3Vm7J4+2zFXwwC8sEp?=
+ =?us-ascii?Q?Sn8RCj78ZgK+Jfn9OT+0Qdgeh0LwL+xKkVPNtZmrgCNJ08UmICNcIHpI3NMV?=
+ =?us-ascii?Q?83kFLX6K88mQghIWYE4Rnod8ZlhcAJWoCwLaBue/71Zgk4MArv8/uSf9hZjI?=
+ =?us-ascii?Q?+9JStRwhvNl7lFBBBwVgw1YEiih0QBpil+jz5cEMyMg8iYDzJYL3nNW9ZIx0?=
+ =?us-ascii?Q?DY5slZ4cOGi6hGutuHzVyzwRc8Bifzsj9EvchkaqGrSTJ1H1tluB9qMO9JEP?=
+ =?us-ascii?Q?Evr1JrbLH8AdKsI0PemQ3Yr3Ebk0IO3slTSUZh5e3ZTK7Spf1jAGNc1qJfYP?=
+ =?us-ascii?Q?KeCki1GgVEsBcfkKYBeNr/26auX4NAybhpZZIilHrdfUwcY4j33+fWUH6dfT?=
+ =?us-ascii?Q?SHFZ3HY5XzGXjOBY6loO4+1d3AQarTaexseLOVczyPvFjdCCWLyJwVvlSGIF?=
+ =?us-ascii?Q?uoABV4t4cza5Enc8sAW+nmlEFKKanGUsTiQIJojpjX4IJcsQ9+KbR4+W+MMh?=
+ =?us-ascii?Q?1scCqFqJPxwMbVH4UYEIQGRAaRO7c5MsUTSybmL2R+yOSr3ic/BkjQuZ/SCo?=
+ =?us-ascii?Q?l8ngmKz9SdPr3EvHMw1XoMqZ6elTHkKGIj+McyXakrjNfsdWU7u2/2yxdcKT?=
+ =?us-ascii?Q?rBFMIbdiUzujKU7dbE/Kc96psnML5RFGPLezdcsNuMXweG0cHNmZ+dsmz01H?=
+ =?us-ascii?Q?ua/jdXKEbdths4ZH9kM9S4TSXzUI8n82MPwNZM5EhuluujMv6uLRpw0gWExv?=
+ =?us-ascii?Q?2dg3N61ncgA9wb/Xg3LdZF2mlxRB+oUYs5x2q2QFX8lBWxt+SlomcLEDnn/N?=
+ =?us-ascii?Q?ZVYJMrh1+5ochyuD7jU5skH6TOjCMZ85+9XGjjoWCLJ+CZdbtWo6pL2WY+dy?=
+ =?us-ascii?Q?X4+kyovt7xLjhcegO0VsH7SZN2jDTa6sF3Nu4qgYWcTaqO4k4TTjZbY6p61P?=
+ =?us-ascii?Q?Jq7/rnZbEkFizzeAaWfDy6d6L8JHQMuchUspPj6v6efjzIo92AESym6eVEjF?=
+ =?us-ascii?Q?1ryV7IWuxG8YOFtGEueZ5oaBZVkNeAvr4RdUwDVqJbL++jMrerT1fH+wMjGN?=
+ =?us-ascii?Q?Gchm9/iiJaXJoucgsmsl0+g5Oa6CECfPGtlswmN8cTtWMJamSGN6BBww+tks?=
+ =?us-ascii?Q?X09/0LEmGPPrIarme4rICmDeDJlqwX7gobRJWM21OTeW7awVy4xOuQJ4+oFT?=
+ =?us-ascii?Q?bCBmqNppcb9hYzJWB8t3rY5FlU5uIasxPCj2NC9ZXtEAK9jT9hbIs9bvIlGO?=
+ =?us-ascii?Q?ZaosJwyyrZHExHHM9kHwv5EjWA9ZQXfIcsCdhjmyg9W8TQMs2qSWKHt2yFJH?=
+ =?us-ascii?Q?cHElP7eZTn2iuqigo41j5I4a7Ac3vBYTsWRWYstPc/Wiytmpkjlkkv8o2meH?=
+ =?us-ascii?Q?HIQzhP0SZ4SEwRacCFfhg/00Gt9vzGa9ngyH/tf3?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b777b81a-4415-410b-6e15-08dc79aa5369
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 15:26:03.2975
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BDCmm99mOB7RpLIxDWptATrlsMfQ/gpzksKuw7T0O/VUs1xwOV8LCbsT3UvlxFhVnzglAVNcpiH4xRZKtG7LKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7749
+X-OriginatorOrg: intel.com
 
-Instead of implementing a custom register paging mechanism in
-the driver use the existing regmap ranges feature.
+nifan.cxl@ wrote:
+> From: Fan Ni <fan.ni@samsung.com>
+> 
+> This change explicitly specifies the licensing terms for the CXL region
+> module as GPL v2. This commit does not introduce any functional changes
+> to the behavior or functionality of the CXL region module.
+> It solely adds the MODULE_LICENSE declaration to the module source file.
 
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
----
- drivers/pinctrl/pinctrl-cy8c95x0.c | 179 +++++++++--------------------
- 1 file changed, 53 insertions(+), 126 deletions(-)
+Why is this needed?  The region code is added to cxl_core when built and
+that module already reports the correct module license.
 
-diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index ca54d91fdc77..9570de598193 100644
---- a/drivers/pinctrl/pinctrl-cy8c95x0.c
-+++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -58,9 +58,14 @@
- 
- #define CY8C95X0_PIN_TO_OFFSET(x) (((x) >= 20) ? ((x) + 4) : (x))
- 
--#define CY8C95X0_MUX_REGMAP_TO_PORT(x) ((x) / MUXED_STRIDE)
--#define CY8C95X0_MUX_REGMAP_TO_REG(x) (((x) % MUXED_STRIDE) + CY8C95X0_INTMASK)
--#define CY8C95X0_MUX_REGMAP_TO_OFFSET(x, p) ((x) - CY8C95X0_INTMASK + (p) * MUXED_STRIDE)
-+#define MAX_BANK		8
-+#define BANK_SZ			8
-+#define MAX_LINE		(MAX_BANK * BANK_SZ)
-+#define MUXED_STRIDE		(CY8C95X0_DRV_HIZ - CY8C95X0_INTMASK)
-+#define CY8C95X0_GPIO_MASK	GENMASK(7, 0)
-+#define CY8C95X0_VIRTUAL	(CY8C95X0_COMMAND + 1)
-+#define CY8C95X0_MUX_REGMAP_TO_OFFSET(x, p) \
-+	(CY8C95X0_VIRTUAL + (x) - CY8C95X0_INTMASK + (p) * MUXED_STRIDE)
- 
- static const struct i2c_device_id cy8c95x0_id[] = {
- 	{ "cy8c9520", 20, },
-@@ -120,18 +125,11 @@ static const struct dmi_system_id cy8c95x0_dmi_acpi_irq_info[] = {
- 	{}
- };
- 
--#define MAX_BANK 8
--#define BANK_SZ 8
--#define MAX_LINE	(MAX_BANK * BANK_SZ)
--#define MUXED_STRIDE	16
--#define CY8C95X0_GPIO_MASK		GENMASK(7, 0)
--
- /**
-  * struct cy8c95x0_pinctrl - driver data
-  * @regmap:         Device's regmap. Only direct access registers.
-- * @muxed_regmap:   Regmap for all muxed registers.
-  * @irq_lock:       IRQ bus lock
-- * @i2c_lock:       Mutex for the device internal mux register
-+ * @i2c_lock:       Mutex to hold while using the regmap
-  * @irq_mask:       I/O bits affected by interrupts
-  * @irq_trig_raise: I/O bits affected by raising voltage level
-  * @irq_trig_fall:  I/O bits affected by falling voltage level
-@@ -152,7 +150,6 @@ static const struct dmi_system_id cy8c95x0_dmi_acpi_irq_info[] = {
-  */
- struct cy8c95x0_pinctrl {
- 	struct regmap *regmap;
--	struct regmap *muxed_regmap;
- 	struct mutex irq_lock;
- 	struct mutex i2c_lock;
- 	DECLARE_BITMAP(irq_mask, MAX_LINE);
-@@ -331,6 +328,9 @@ static int cypress_get_pin_mask(struct cy8c95x0_pinctrl *chip, unsigned int pin)
- 
- static bool cy8c95x0_readable_register(struct device *dev, unsigned int reg)
- {
-+	if (reg >= CY8C95X0_VIRTUAL)
-+		return true;
-+
- 	switch (reg) {
- 	case 0x24 ... 0x27:
- 		return false;
-@@ -341,6 +341,9 @@ static bool cy8c95x0_readable_register(struct device *dev, unsigned int reg)
- 
- static bool cy8c95x0_writeable_register(struct device *dev, unsigned int reg)
- {
-+	if (reg >= CY8C95X0_VIRTUAL)
-+		return true;
-+
- 	switch (reg) {
- 	case CY8C95X0_INPUT_(0) ... CY8C95X0_INPUT_(7):
- 		return false;
-@@ -433,106 +436,33 @@ static bool cy8c95x0_quick_path_register(unsigned int reg)
- 	}
- }
- 
--static const struct reg_default cy8c95x0_reg_defaults[] = {
--	{ CY8C95X0_OUTPUT_(0), GENMASK(7, 0) },
--	{ CY8C95X0_OUTPUT_(1), GENMASK(7, 0) },
--	{ CY8C95X0_OUTPUT_(2), GENMASK(7, 0) },
--	{ CY8C95X0_OUTPUT_(3), GENMASK(7, 0) },
--	{ CY8C95X0_OUTPUT_(4), GENMASK(7, 0) },
--	{ CY8C95X0_OUTPUT_(5), GENMASK(7, 0) },
--	{ CY8C95X0_OUTPUT_(6), GENMASK(7, 0) },
--	{ CY8C95X0_OUTPUT_(7), GENMASK(7, 0) },
--	{ CY8C95X0_PORTSEL, 0 },
--	{ CY8C95X0_PWMSEL, 0 },
--};
--
--static int
--cy8c95x0_mux_reg_read(void *context, unsigned int off, unsigned int *val)
--{
--	struct cy8c95x0_pinctrl *chip = context;
--	u8 port = CY8C95X0_MUX_REGMAP_TO_PORT(off);
--	int ret, reg = CY8C95X0_MUX_REGMAP_TO_REG(off);
--
--	/* Select the correct bank */
--	ret = regmap_write(chip->regmap, CY8C95X0_PORTSEL, port);
--	if (ret < 0)
--		goto out;
--
--	/*
--	 * Read the register through direct access regmap. The target range
--	 * is marked volatile.
--	 */
--	return regmap_read(chip->regmap, reg, val);
--}
--
--static int
--cy8c95x0_mux_reg_write(void *context, unsigned int off, unsigned int val)
--{
--	struct cy8c95x0_pinctrl *chip = context;
--	u8 port = CY8C95X0_MUX_REGMAP_TO_PORT(off);
--	int ret, reg = CY8C95X0_MUX_REGMAP_TO_REG(off);
--
--	/* Select the correct bank */
--	ret = regmap_write(chip->regmap, CY8C95X0_PORTSEL, port);
--	if (ret < 0)
--		goto out;
--
--	/*
--	 * Write the register through direct access regmap. The target range
--	 * is marked volatile.
--	 */
--	return regmap_write(chip->regmap, reg, val);
--}
--
--static bool cy8c95x0_mux_accessible_register(struct device *dev, unsigned int off)
--{
--	struct i2c_client *i2c = to_i2c_client(dev);
--	struct cy8c95x0_pinctrl *chip = i2c_get_clientdata(i2c);
--	u8 port = CY8C95X0_MUX_REGMAP_TO_PORT(off);
--	u8 reg = CY8C95X0_MUX_REGMAP_TO_REG(off);
--
--	if (port >= chip->nport)
--		return false;
--
--	return cy8c95x0_muxed_register(reg);
--}
--
--static struct regmap_bus cy8c95x0_regmap_bus = {
--	.reg_read = cy8c95x0_mux_reg_read,
--	.reg_write = cy8c95x0_mux_reg_write,
--};
--
--/* Regmap for muxed registers CY8C95X0_INTMASK - CY8C95X0_DRV_HIZ */
--static const struct regmap_config cy8c95x0_muxed_regmap = {
--	.name = "muxed",
--	.reg_bits = 8,
--	.val_bits = 8,
--	.cache_type = REGCACHE_FLAT,
--	.use_single_read = true,
--	.use_single_write = true,
--	.max_register = MUXED_STRIDE * BANK_SZ,
--	.num_reg_defaults_raw = MUXED_STRIDE * BANK_SZ,
--	.readable_reg = cy8c95x0_mux_accessible_register,
--	.writeable_reg = cy8c95x0_mux_accessible_register,
--	.disable_locking = true,
-+static const struct regmap_range_cfg cy8c95x0_ranges[] = {
-+	{
-+		.range_min = CY8C95X0_VIRTUAL,
-+		.range_max = 0,		/* Updated at runtime */
-+		.selector_reg = CY8C95X0_PORTSEL,
-+		.selector_mask = 0x07,
-+		.selector_shift = 0x0,
-+		.window_start = CY8C95X0_INTMASK,
-+		.window_len = MUXED_STRIDE,
-+	}
- };
- 
--/* Direct access regmap */
--static const struct regmap_config cy8c95x0_i2c_regmap = {
--	.name = "direct",
-+static const struct regmap_config cy8c9520_i2c_regmap = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 
--	.reg_defaults = cy8c95x0_reg_defaults,
--	.num_reg_defaults = ARRAY_SIZE(cy8c95x0_reg_defaults),
--
- 	.readable_reg = cy8c95x0_readable_register,
- 	.writeable_reg = cy8c95x0_writeable_register,
- 	.volatile_reg = cy8c95x0_volatile_register,
- 	.precious_reg = cy8c95x0_precious_register,
- 
- 	.cache_type = REGCACHE_FLAT,
--	.max_register = CY8C95X0_COMMAND,
-+	.ranges	= NULL,			/* Updated at runtime */
-+	.num_ranges = 1,
-+	.max_register = 0,		/* Updated at runtime */
-+	.num_reg_defaults_raw = 0,	/* Updated at runtime */
-+	.use_single_read = true,	/* Workaround for regcache bug */
- 	.disable_locking = true,
- };
- 
-@@ -544,7 +474,6 @@ static inline int cy8c95x0_regmap_update_bits_base(struct cy8c95x0_pinctrl *chip
- 						   bool *change, bool async,
- 						   bool force)
- {
--	struct regmap *regmap;
- 	int ret, off, i, read_val;
- 
- 	/* Caller should never modify PORTSEL directly */
-@@ -553,12 +482,10 @@ static inline int cy8c95x0_regmap_update_bits_base(struct cy8c95x0_pinctrl *chip
- 
- 	mutex_lock(&chip->i2c_lock);
- 
--	/* Registers behind the PORTSEL mux have their own regmap */
-+	/* Registers behind the PORTSEL mux have their own range in regmap */
- 	if (cy8c95x0_muxed_register(reg)) {
--		regmap = chip->muxed_regmap;
- 		off = CY8C95X0_MUX_REGMAP_TO_OFFSET(reg, port);
- 	} else {
--		regmap = chip->regmap;
- 		/* Quick path direct access registers honor the port argument */
- 		if (cy8c95x0_quick_path_register(reg))
- 			off = reg + port;
-@@ -566,7 +493,7 @@ static inline int cy8c95x0_regmap_update_bits_base(struct cy8c95x0_pinctrl *chip
- 			off = reg;
- 	}
- 
--	ret = regmap_update_bits_base(regmap, off, mask, val, change, async, force);
-+	ret = regmap_update_bits_base(chip->regmap, off, mask, val, change, async, force);
- 	if (ret < 0)
- 		goto out;
- 
-@@ -577,16 +504,16 @@ static inline int cy8c95x0_regmap_update_bits_base(struct cy8c95x0_pinctrl *chip
- 				continue;
- 			off = CY8C95X0_MUX_REGMAP_TO_OFFSET(i, port);
- 
--			ret = regmap_read(regmap, off, &read_val);
-+			ret = regmap_read(chip->regmap, off, &read_val);
- 			if (ret < 0)
- 				continue;
- 
- 			if (!(read_val & mask & val))
- 				continue;
- 
--			regcache_cache_only(regmap, true);
--			regmap_update_bits(regmap, off, mask & val, 0);
--			regcache_cache_only(regmap, false);
-+			regcache_cache_only(chip->regmap, true);
-+			regmap_update_bits(chip->regmap, off, mask & val, 0);
-+			regcache_cache_only(chip->regmap, false);
- 		}
- 	}
- out:
-@@ -662,17 +589,14 @@ static int cy8c95x0_regmap_update_bits(struct cy8c95x0_pinctrl *chip, unsigned i
- static int cy8c95x0_regmap_read(struct cy8c95x0_pinctrl *chip, unsigned int reg,
- 				unsigned int port, unsigned int *read_val)
- {
--	struct regmap *regmap;
- 	int off, ret;
- 
- 	mutex_lock(&chip->i2c_lock);
- 
--	/* Registers behind the PORTSEL mux have their own regmap */
-+	/* Registers behind the PORTSEL mux have their own range in regmap */
- 	if (cy8c95x0_muxed_register(reg)) {
--		regmap = chip->muxed_regmap;
- 		off = CY8C95X0_MUX_REGMAP_TO_OFFSET(reg, port);
- 	} else {
--		regmap = chip->regmap;
- 		/* Quick path direct access registers honor the port argument */
- 		if (cy8c95x0_quick_path_register(reg))
- 			off = reg + port;
-@@ -680,7 +604,7 @@ static int cy8c95x0_regmap_read(struct cy8c95x0_pinctrl *chip, unsigned int reg,
- 			off = reg;
- 	}
- 
--	ret = regmap_read(regmap, off, read_val);
-+	ret = regmap_read(chip->regmap, off, read_val);
- 
- 	mutex_unlock(&chip->i2c_lock);
- 
-@@ -1513,6 +1437,8 @@ static int cy8c95x0_detect(struct i2c_client *client,
- static int cy8c95x0_probe(struct i2c_client *client)
- {
- 	struct cy8c95x0_pinctrl *chip;
-+	struct regmap_config regmap_conf;
-+	struct regmap_range_cfg regmap_range_conf;
- 	struct regulator *reg;
- 	int ret;
- 
-@@ -1532,15 +1458,20 @@ static int cy8c95x0_probe(struct i2c_client *client)
- 	chip->tpin = chip->driver_data & CY8C95X0_GPIO_MASK;
- 	chip->nport = DIV_ROUND_UP(CY8C95X0_PIN_TO_OFFSET(chip->tpin), BANK_SZ);
- 
-+	memcpy(&regmap_range_conf, &cy8c95x0_ranges[0], sizeof(regmap_range_conf));
-+
- 	switch (chip->tpin) {
- 	case 20:
- 		strscpy(chip->name, cy8c95x0_id[0].name, I2C_NAME_SIZE);
-+		regmap_range_conf.range_max = CY8C95X0_VIRTUAL + 3 * MUXED_STRIDE;
- 		break;
- 	case 40:
- 		strscpy(chip->name, cy8c95x0_id[1].name, I2C_NAME_SIZE);
-+		regmap_range_conf.range_max = CY8C95X0_VIRTUAL + 6 * MUXED_STRIDE;
- 		break;
- 	case 60:
- 		strscpy(chip->name, cy8c95x0_id[2].name, I2C_NAME_SIZE);
-+		regmap_range_conf.range_max = CY8C95X0_VIRTUAL + 8 * MUXED_STRIDE;
- 		break;
- 	default:
- 		return -ENODEV;
-@@ -1573,22 +1504,18 @@ static int cy8c95x0_probe(struct i2c_client *client)
- 		gpiod_set_consumer_name(chip->gpio_reset, "CY8C95X0 RESET");
- 	}
- 
--	/* Generic regmap for direct access registers */
--	chip->regmap = devm_regmap_init_i2c(client, &cy8c95x0_i2c_regmap);
-+	/* Regmap for direct and paged registers */
-+	memcpy(&regmap_conf, &cy8c9520_i2c_regmap, sizeof(regmap_conf));
-+	regmap_conf.ranges = &regmap_range_conf;
-+	regmap_conf.max_register = regmap_range_conf.range_max;
-+	regmap_conf.num_reg_defaults_raw = regmap_range_conf.range_max;
-+
-+	chip->regmap = devm_regmap_init_i2c(client, &regmap_conf);
- 	if (IS_ERR(chip->regmap)) {
- 		ret = PTR_ERR(chip->regmap);
- 		goto err_exit;
- 	}
- 
--	/* Port specific regmap behind PORTSEL mux */
--	chip->muxed_regmap = devm_regmap_init(&client->dev, &cy8c95x0_regmap_bus,
--					      chip, &cy8c95x0_muxed_regmap);
--	if (IS_ERR(chip->muxed_regmap)) {
--		ret = dev_err_probe(&client->dev, PTR_ERR(chip->muxed_regmap),
--				    "Failed to register muxed regmap\n");
--		goto err_exit;
--	}
--
- 	bitmap_zero(chip->push_pull, MAX_LINE);
- 	bitmap_zero(chip->shiftmask, MAX_LINE);
- 	bitmap_set(chip->shiftmask, 0, 20);
--- 
-2.44.0
+10:24:55 > modinfo cxl_core | grep lic
+license:        GPL v2
+
+Ira
+
+> 
+> Signed-off-by: Fan Ni <fan.ni@samsung.com>
+> ---
+>  drivers/cxl/core/region.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 5c186e0a39b9..e299ddcbd1a2 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -3204,3 +3204,4 @@ void cxl_region_exit(void)
+>  MODULE_IMPORT_NS(CXL);
+>  MODULE_IMPORT_NS(DEVMEM);
+>  MODULE_ALIAS_CXL(CXL_DEVICE_REGION);
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.43.0
+> 
+
 
 
