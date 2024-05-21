@@ -1,205 +1,136 @@
-Return-Path: <linux-kernel+bounces-184616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C5B8CA9A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:07:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A88CA8CA9A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4992A284B8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:07:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DACC41C21054
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF813548E0;
-	Tue, 21 May 2024 08:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D209B54917;
+	Tue, 21 May 2024 08:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TbMaAm5p"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a57UL3If"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E782209F;
-	Tue, 21 May 2024 08:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F2A2209F;
+	Tue, 21 May 2024 08:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716278841; cv=none; b=EbN45Sws2fb3osoIY7Luk2/UIPrkJZMBsKhO7HjC3841Pm78eLeHyHFXmfYo9sPtZwjEMElTHEUpUXjpZB3YVo26S6rpoAMyOpD+Rr9NihVYw7hCw8st3XhTJUM+a7Q+xOiBhD5euuxXiy597Dp+ZwxQ1EP4l/6F8R15MMR5H+Q=
+	t=1716278857; cv=none; b=fMnNZa8HOtusXGX+vwGZrxM4F9PJ2SHJmV70zG0d997+SFC3IKVFpjrTCnHHo1QIEgYOev+dLNwbRUiB4SYZ888qrz5u9AMlZksi0xHl/KZVgDxrzsngVcmNC2SmCSC2lXIQ9W7H/AygDeuNK71C+QmkZah/uLsLdVrTCtqdhCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716278841; c=relaxed/simple;
-	bh=ckPMRuIbbfcjK4leF67Zyjh1c9FjVXVpqOAReRsiJgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVX8lui7gfNaWAiMvscczfuJ81ZMYidiNLxcTcMHFicQWGpHbw+7CHSqNqKZWm12TuJQO2MSYiT1VjPGJeFiRmfBZt7MrpC+ETAA2ReDLGXH5H2g82wkPGb+Sd2w3xfRhTbdd++FlbLtPprlUpFX9qKMpKHw/8WKqJhInhitFHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TbMaAm5p; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AD51140E0254;
-	Tue, 21 May 2024 08:07:16 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id FQIIf5xTKZTj; Tue, 21 May 2024 08:07:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1716278833; bh=bUrz/vVy5veieaUpjlFebAVZrIuR6VrAhNkZf46x+aM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TbMaAm5pqlP8mAwrgyTY1siPWBqt9Xdn3FfN+/H4eL+oqvHy69dDQYM148H7Ud3V9
-	 5ljZCdAobGwLYqllyGYk/mpW1jH1vCKur0QKIDU6DB7z0ZUNh4lpcXgibYeJLoW03p
-	 t2qrLEapGwEMIOB/xDkdN+zRn0IeVFKlFo/sKzQfophQumyLjD4lRt55TdNT46WCDE
-	 EOgKVOnCYNpEzdyk7E4CLMmUrlmDXb9Ww3ClEDBHHyBaXNk+uYfdvx18Sse4vl+AXt
-	 Jl2nVWN73SEgL8+IDfk9Kgke6QDnN7nDNG+A7kqxGEjhSZw5kjk+9sVIPL3+ien+/9
-	 Zz0rWImSt2CnDhZIlD7sVFBQvHpEwpeEyzEcrQFqWIyImymWw2dfS1L4JYmTIoOWmV
-	 anUIcAhaYFRCSoSZGeGZbsX+X0pN537YYXUNhJeFbAcMnqbvKkTh4OXPh75nOQztHc
-	 l0YXYKtmfpsJjFvNrjbqTp0l7YjuZlZkQo5gFpOzn+0fP9PNheNhdx1A2kygHA1ued
-	 XKXh2RIk+TArNwtjnkqCET45albjyozv4L2u9vHCCG/MHK9IBfdN6+WqTTuwWsCis/
-	 zq/e79l4rwRCUbc14OBhFQ6fVrzR3+XooxlVQ54/8izgmCWgAsiPtVXl8kX9/9Nj50
-	 ervES1GITMpUmD2qO8MTN1CE=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C3AF740E01A3;
-	Tue, 21 May 2024 08:06:26 +0000 (UTC)
-Date: Tue, 21 May 2024 10:06:21 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"dave@stgolabs.net" <dave@stgolabs.net>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-	"ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
-	"leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>,
-	"jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"tony.luck@intel.com" <tony.luck@intel.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>,
-	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
-	"erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>,
-	"duenwen@google.com" <duenwen@google.com>,
-	"mike.malvestuto@intel.com" <mike.malvestuto@intel.com>,
-	"gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
-	tanxiaofei <tanxiaofei@huawei.com>,
-	"Zengtao (B)" <prime.zeng@hisilicon.com>,
-	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
-	wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
-Message-ID: <20240521080621.GBZkxV_ZWnbbrq-yV_@fat_crate.local>
-References: <D9511DC1-1566-473A-A426-111BB1F7F9F0@alien8.de>
- <20240509200306.GAZj0r-h5Tnc0ecIOz@fat_crate.local>
- <663d3e58a0f73_1c0a1929487@dwillia2-xfh.jf.intel.com.notmuch>
- <20240509215147.GBZj1Fc06Ieg8EQfnR@fat_crate.local>
- <663d55515a2d9_db82d2941e@dwillia2-xfh.jf.intel.com.notmuch>
- <20240510092511.GBZj3n9ye_BCSepFZy@fat_crate.local>
- <663e55c59d9d_3d7b429475@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <20240511101705.GAZj9FoVbThp7JUK16@fat_crate.local>
- <20240517121554.000031d4@Huawei.com>
- <20240517124418.00000b48@Huawei.com>
+	s=arc-20240116; t=1716278857; c=relaxed/simple;
+	bh=hBUirWutusPtAd5yaIQhJwK+OZj1KlZPuozs+O8z/cw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vEK6ezKTTy0B0CW/LafV5oTKylFvUrMujQfaNshkAyGlkbZpHunuUswzKi838n9UBBAchiW2Mbqw2LfeWAS44XIaZZ9+IFvOgA18Uaeu6UWA+CELX1ulVotuyefNQSfM5AJGn8/LN8IrwCF4P3nqaQf2Wf5p5CGW2/6fVUbzGu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a57UL3If; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-663d2e6a3d7so1896000a12.0;
+        Tue, 21 May 2024 01:07:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716278855; x=1716883655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hBUirWutusPtAd5yaIQhJwK+OZj1KlZPuozs+O8z/cw=;
+        b=a57UL3If20IgzWKcpBuzOXj7JubOgF7gAdPHkfC/otkKm17oXIhhUNiFqnX0k6sNAA
+         f828wXAeWgt0ffT/sYV9VmUKtwxoBrauijsvKHd3zCDgy3IVutPteyBsvJ+ySfam9dOG
+         PRi0vuoCxmRHtCdaB2HputIKzNJDCQPJALaVUmZvLnVfsF8aTd459JEUQ5kCse1a240O
+         jKBeq2zxz82BGkh5Uv+xyADyWvAyojeTJ7HVciiAhrM/zITg8I2n3zmltTOyT37HIx+l
+         BRE6al1xOq70dQgZb3jQ96tHJ6Kz9Zt2XF9ZC8ZQ5YRoD3gtZ/J3fKh9Jhmva7aMfseJ
+         aHng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716278855; x=1716883655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hBUirWutusPtAd5yaIQhJwK+OZj1KlZPuozs+O8z/cw=;
+        b=iz3BF4GiVexPELyM+XSHsoK/0O1KKbNofgJMc9tc7bI/bmD9az+be5UH3cf/Qp7ikS
+         3y6TSq/L5qLFy2LLTmstuFtf3M2qb50MWSm2HMgNh9RiJbqmDk9QVXPUpQBYG7yQxKWY
+         W1R6ZULcH45EN3GcviTIJZ7nlDsL+tdfMDbvnvwB3QQPz4kzjlQ3t1EgfnQ83vaazYwb
+         ZjxKASGnghXo/Sk1wy3+VgU3MFauVmlMRplduDhs5YgDivHNwq8ELtMDzSVlHNJHDHcm
+         OaCJDSBSuCoK2fCGjfGZWxtXAtPa2zPjkNrYDzv8vJx5NV5DgTc8dmQQMNCKfSlpDw9z
+         VxPA==
+X-Forwarded-Encrypted: i=1; AJvYcCU//mHtqXmqVocMYnZ5Re7ZGF8QL4SOxrHAXHpJ6D7nOTXilHQIegQEIp/DJyD2PycI0ou61xDOe6yFUsWX6dNmcjtd6xNqpJDRZRO0MV03tXrb3cFasB4DwOS7tNH7F11TRaov5CzkuNE7mhfn3OuXiDIlNkvqxXe20FH9n47b
+X-Gm-Message-State: AOJu0YzoxFiDBNRrnUTpSUmQ24skPoMe7BF39OCv0dSTrlWo6LUa/C7n
+	SL8rli7cFFPo8PVM9VRknN4aGDEbk1bR9/o3bB93PurZXmCQsNb9wbOcX5e4DO3eWtwxfedYE95
+	nFvRTbLII/6UlOVicQv/voScs7fItX7GZFz8=
+X-Google-Smtp-Source: AGHT+IGmfAeYbPUIkVmO8kZCcRcccTLZauVNvcfzcB7SNd4lIdVN8vxwNDRATuv964jxZEOekKjrWFp08NKB5cRA558=
+X-Received: by 2002:a17:90a:4a88:b0:2b2:195a:d7bd with SMTP id
+ 98e67ed59e1d1-2bd60352ae4mr10916962a91.2.1716278855107; Tue, 21 May 2024
+ 01:07:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240517124418.00000b48@Huawei.com>
+References: <CAHe5sWavQcUTg2zTYaryRsMywSBgBgETG=R1jRexg4qDqwCfdw@mail.gmail.com>
+ <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info> <lqdpk7lopqq4jn22mycxgg6ps4yfs7hcca33tqb2oy6jxc2y7p@rhjjbzs6wigu>
+ <611f8200-8e0e-40e4-aff4-cc2c55dc6354@amd.com> <CAHe5sWY_YJsyiuwf2TsfRTS9AoGoYh4+UxkkZZ0G9z2pXfbnzg@mail.gmail.com>
+ <20240521051525.GL1421138@black.fi.intel.com>
+In-Reply-To: <20240521051525.GL1421138@black.fi.intel.com>
+From: Gia <giacomo.gio@gmail.com>
+Date: Tue, 21 May 2024 10:07:23 +0200
+Message-ID: <CAHe5sWY3P7AopLqwaeXSO7n-SFwEZom+MfWpLKGmbuA7L=VdmA@mail.gmail.com>
+Subject: Re: [REGRESSION][BISECTED] "xHCI host controller not responding,
+ assume dead" on stable kernel > 6.8.7
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, Christian Heusel <christian@heusel.eu>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, "kernel@micha.zone" <kernel@micha.zone>, 
+	Andreas Noever <andreas.noever@gmail.com>, Michael Jamet <michael.jamet@intel.com>, 
+	Yehezkel Bernat <YehezkelShB@gmail.com>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, =?UTF-8?Q?Benjamin_B=C3=B6hmke?= <benjamin@boehmke.net>, 
+	"S, Sanath" <Sanath.S@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 17, 2024 at 12:44:18PM +0100, Jonathan Cameron wrote:
-> Given we are talking about something new, maybe this is an opportunity
-> to not perpetuate this?
-> 
-> If we add scrub in here I'd prefer to just use the normal bus registration
-> handling rather than creating a nest of additional nodes.  So perhaps we
-> could consider
-> /sys/bus/edac/device/scrub0 (or whatever name makes sense, as per the
-> earlier discussion of cxl_scrub0 or similar).
+Thank you Mika,
 
-Yes, my main worry is how this RAS functionality is going to be all
-organized in the tree. Yes, EDAC legacy methods can die but the
-user-visible part can't so we might as well use it to concentrate stuff
-there.
+Here you have the output of sudo journalctl -k without enabling the
+kernel option "pcie_aspm=3Doff": https://codeshare.io/7JPgpE. Without
+"pcie_aspm=3Doff", "thunderbolt.host_reset=3Dfalse" is not needed, my
+thunderbolt dock does work. I also connected a 4k monitor to the
+thunderbolt dock thinking it could provide more data.
 
-> Could consider moving the bus location of mc0 etc in future to there with
-> symlinks to /sys/bus/edac/device/mc/* for backwards compatibility either
-> via setting their parents or more explicit link creation.
+I'm almost sure I used this option when I set up this system because
+it solved some issues with system suspending, but it happened many
+months ago.
 
-You can ignore the mc - that's the memory controller representation EDAC
-does and that's also kind of semi-legacy considering how heterogeneous
-devices are becoming. Nowadays, scrubbing functionality can be on
-anything that has memory and that's not only a memory controller.
 
-So it would actually be the better thing to abstract that differently
-and use .../edac/device/ for the different RAS functionalities. I.e.,
-have the "device" organize it all.
 
-> These scrub0 would have their dev->parent set to who ever actually
-> registered them providing that reference cleanly and letting all the
-> normal device model stuff work more simply.
-
-Ack.
-
-> If we did that with the scrub nodes, the only substantial change from
-> a separate subsystem as seen in this patch set would be to register
-> them on the edac bus rather than a separate class.
-> 
-> As you pointed out, there is a simple scrub interface in the existing
-> edac memory controller code. How would you suggest handling that?
-> Have them all register an additional device on the bus (as a child
-> of the mcX devices) perhaps?  Seems an easy step forwards and should
-> be no backwards compatibility concerns.
-
-Well, you guys want to control that scrubbing from userspace and those
-old things probably do not fit that model? We could just not convert
-them for now and add them later if really needed. I.e., leave sleeping
-dogs lie.
-
-> It absolutely doesn't as long as we can do it fairly cleanly within
-> existing code. I wasn't sure that was possible, but you know edac
-> a lot better than me and so I'll defer to you on that!
-
-Meh, I'm simply maintaining it because no one else wants to. :)
-
-> Several options for that, but fair question - bringing (at least some of)
-> the RAS mess together will focus reviewer bandwidth etc better.
-
-Review is more than appreciated, as always.
-
-> I'm definitely keen on unifying things as I agree, this mixture of different
-> RAS functionality is a ever worsening mess.
-
-Yap, it needs to be unified and reigned into something more
-user-friendly and manageable.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+On Tue, May 21, 2024 at 7:15=E2=80=AFAM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+>
+> Hi,
+>
+> On Mon, May 20, 2024 at 05:57:42PM +0200, Gia wrote:
+> > Hi Mario,
+> >
+> > In my case in both cases the value for:
+> >
+> > $ cat /sys/bus/thunderbolt/devices/domain0/iommu_dma_protection
+> >
+> > is 0.
+> >
+> > Output of sudo journalctl -k with kernel option thunderbolt.dyndbg=3D+p=
+:
+> > https://codeshare.io/qAXLoj
+> >
+> > Output of sudo dmesg with kernel option thunderbolt.dyndbg=3D+p:
+> > https://codeshare.io/zlPgRb
+>
+> I see you have "pcie_aspm=3Doff" in the kernel command line. That kind of
+> affects things. Can you drop that and see if it changes anything? And
+> also provide a new full dmesg with "thunderbolt.dyndbg=3D+p" in the
+> command line (dropping pcie_aspm_off)?
+>
+> Also is there any particular reason you have it there?
 
