@@ -1,78 +1,98 @@
-Return-Path: <linux-kernel+bounces-185523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15BE98CB640
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:02:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D177B8CB643
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2BCD1F218E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:02:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7B9FB20A1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A129148FF1;
-	Tue, 21 May 2024 23:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58858149C75;
+	Tue, 21 May 2024 23:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRldVw0k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gIztIkT0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B4AA2D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 23:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6CF5579F;
+	Tue, 21 May 2024 23:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716332564; cv=none; b=Rx1pINlYH0g5Va2rp/weF8nco4o2U5dmtFN4Y3zjdc1TcuyNkD0gXTice+bwUvKMqSEEc+KwCrGtUZ6pxaF2vVmBuBRHJCJwiazc5GhcNlfWUHZgP+GIz6kToMQ+E4ltLGLjqcIeJ6galbPv4knKAA0Xlr5b0bHLM/celwAIK3g=
+	t=1716332647; cv=none; b=NVtCZW0kP5nt7hbItEtlIZp/Zg1uyLtv5OmkMbLzGkJuZcRFBki1kKeNrsa2V9xMK5qI2qZlXAjEXWOEoLa5Rw63O/XaNPnP6hmNSpInaWTmSu/Nee2srn99K/TGa4QeDSDL72Nfc1c7T/ATHa7UJd2WNLRQtUkT75ttQQj/ISE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716332564; c=relaxed/simple;
-	bh=Z9ptGN8To4l/mxHq/+mzmoUUexo8QrdnkmyTNOQ8zII=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=sszOao3QdXHFHFuQ3JN3dLaMp9nU3qGBBK3TXfRo5aeBkRo8yEeob0A2kKG3fKnwbGEnQ6j9LYoQL91gQQ0VyknwQr6kqFoQjTO3gbaBimCi677y3+dalmuvVBOCWtb2s76RSpPUoSQXaGBwxJbAAu5vXf3eT8T9AEP/SXYOkjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRldVw0k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 408C6C2BD11;
-	Tue, 21 May 2024 23:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716332564;
-	bh=Z9ptGN8To4l/mxHq/+mzmoUUexo8QrdnkmyTNOQ8zII=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=VRldVw0kp+mcyLHc+8he23peUazimnSBTz+72EAgGNyK8cmtkS0KpXmYDqiZ+Q5Ag
-	 Tg+st54gY7RndM6vH0IfF7Tej9apJtIxwyeE77Zas67lZAESHfnqyXew1KeK6O4Gb1
-	 j6FvlKNdtvYcSlM7QWScG73vEKqUJeprSQGxePmzOOxPKlmo/2qTYE+bY+G6Mv7al8
-	 SbWzTzcH9lM5v0Rc2l2wv+Gd1sj/r/Hngv9vDScWebAn9i/2SXBX9LTrkC4AEt/ELk
-	 qhxyTTojbfQ/3r14y7mZqFxmy4ABiZCcizzlBCZVuLIV7ZuDK9kjE6bLp8bwYBOcEn
-	 JmmArA/EqEKiQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 363BBC4936D;
-	Tue, 21 May 2024 23:02:44 +0000 (UTC)
-Subject: Re: [GIT PULL v2] bitmap changes for 6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZkqJlKdwMU+LrLqC@yury-ThinkPad>
-References: <ZkqJlKdwMU+LrLqC@yury-ThinkPad>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZkqJlKdwMU+LrLqC@yury-ThinkPad>
-X-PR-Tracked-Remote: https://github.com:/norov/linux.git tags/bitmap-for-6.10v2
-X-PR-Tracked-Commit-Id: 5671dca241b9a2f4ecf88d8e992041cfb580e0a5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4865a27c66fda6a32511ec5492f4bbec437f512d
-Message-Id: <171633256421.31098.8207023545957351603.pr-tracker-bot@kernel.org>
-Date: Tue, 21 May 2024 23:02:44 +0000
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Yury Norov <yury.norov@gmail.com>, Kyle Meyer <kyle.meyer@hpe.com>, Kuan-Wei Chiu <visitorckw@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+	s=arc-20240116; t=1716332647; c=relaxed/simple;
+	bh=uU493qNl8Qt1zL3HSPNR/cmVFEpRdjE18t7GID/lt1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uND+l0+azb8hKAoKC1WENuPwPV87eAszRAKpcbuVeprpCnAd3gCPtGCtccEUxUd7tiaHr+uQBP2f1g0CGiCaxiXtJl2dKgyRRBjgucv0+oIlkuryioqE0uF+BOSL9+NZ3l8IYTUep34sQnppHf8CQCfHyjwImIs9Eb93vSmWdts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gIztIkT0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1716332643;
+	bh=AxT+Spph1wgNuPwBwNjeSkPiACdg/bXk+3ATRuAuvuY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gIztIkT0oRsUjrN53V1DTOh7304pH6SiKprgoDsUMxVpPoVUY/wPuShTLalNNYRu5
+	 jsuujzBqqGAK/NQNJD4ZQHKI9/O5EWqbu92uIbCV/pB7BxVWu6HGnYydbdVKCgREzG
+	 9qnEJt2dIzhhdshrEnmpZCiwqwYHOEv6CPut5PloUDMW3Wo3ymhvrY4hv3KZx/0HdO
+	 G05C2qnuRTZMYPAqxDOJ+qqT7uTlLgV2u3rGbW/iT2OoG99Iw/LgJmrXQ7lkEWV8h0
+	 YDrh1PlTLrowdWEoSvfJKdSQ/JOphD0dtxLGZh5Q5p0uWKyFvpj7cebPCnxT+c+Luy
+	 8BYFztmgl5Q3Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VkVNz0fKxz4wx5;
+	Wed, 22 May 2024 09:04:02 +1000 (AEST)
+Date: Wed, 22 May 2024 09:04:01 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the tip tree
+Message-ID: <20240522090401.4826762b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/.3Q1U2I/sw12nPh6hiOJOGO";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The pull request you sent on Sun, 19 May 2024 16:21:56 -0700:
+--Sig_/.3Q1U2I/sw12nPh6hiOJOGO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> https://github.com:/norov/linux.git tags/bitmap-for-6.10v2
+Hi all,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4865a27c66fda6a32511ec5492f4bbec437f512d
+Commit
 
-Thank you!
+  15c4fbf8eacf ("x86/boot: Clean up the arch/x86/boot/main.c code a bit")
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+is missing a Signed-off-by from its author and committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/.3Q1U2I/sw12nPh6hiOJOGO
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZNKGEACgkQAVBC80lX
+0GxG7gf/bjNUSurjUffrgdp9XtVjFHobNBYf7axlilNLtJDXB/Pj1thOMJSzFRwH
++XBZIMVEmmwAI0cS1OJu04nZizwFTHybVq2j4WLhOGWrn3xEbeCBRshbAZjwN74/
+hhhvgrvdAyGH3oCf9qdxgPM6PdcYkNdAevfff1YBq0TTbUk+C29UGMNMKoNL2cI6
+r5NqZGsoVIJDDveMUnbHnQn87URta3PrR3io685gn6g8mf3x2VigMpv+pFWX9dec
+gDn2LgJ/Yba8Xe9DFm6Zyi6MW3obMpa20ySkcAiAg6MJg9p/ZzPlrLUh1VGBKVek
+dG2S0vzZLpumi7FwmC81mR25Z1BkVA==
+=vqSl
+-----END PGP SIGNATURE-----
+
+--Sig_/.3Q1U2I/sw12nPh6hiOJOGO--
 
