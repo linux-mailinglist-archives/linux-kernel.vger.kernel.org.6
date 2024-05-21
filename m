@@ -1,94 +1,112 @@
-Return-Path: <linux-kernel+bounces-185026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2DC88CAF8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:41:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A508A8CAF90
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 300EC1C22090
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:41:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425F51F23A1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD83B7EF08;
-	Tue, 21 May 2024 13:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8E57EEFD;
+	Tue, 21 May 2024 13:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fj2MpE1B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HekusvH9"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FDB71B48;
-	Tue, 21 May 2024 13:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD62E7E573
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716298882; cv=none; b=cq4Q18fol47QbporK5TP7thX19cvdAlJc/NDVgXkKhLwnZlCUS5xw1BQocTwYTLHEmHPOTQqEWWg5cXB4xUFZZBk8JsdmxnnSIhnkC8BxOfYZW6yxLCyZmKq0v4xyxrseFg9sK+sB5SZ5cqkEHRlYbYfzvUw76wJz8kzhFYBP6Q=
+	t=1716298969; cv=none; b=HBYHY8AaELxAXn7APjzF1F/gJKofFEZmHUMBZNukvEbkcIgyUSlelpIB9+6VLQLhxt5gZFXEtewt7bx049EBbMcvm9HXMEf8SjzQZAVhbSL37DLLmrSOegwEaF0pqL55RJ9sBELMjcYmK4T7lWVf+yNbyjoIu+DYd0MU7l/+PAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716298882; c=relaxed/simple;
-	bh=QsCpNPWVAP11wS/oCn4UMHOx030abCVcy2yNRatBuQk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=UJrEY4J9Egb3/eey+oLWK2KvWN9tJCxF1Dxkt7tcTWN6/GNqLhUtE7utZ+mrTdZXgrBjp4O9Hey0JJuOTDKhoahIhpAkOe2wi9vunfQAWN+Qi0uYhWd+Zi7YXH82ZUTy+MZ3ubtEis73H3PkngmM6uOFMYnz9I5rlnLA+ibbi0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fj2MpE1B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B201DC2BD11;
-	Tue, 21 May 2024 13:41:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716298881;
-	bh=QsCpNPWVAP11wS/oCn4UMHOx030abCVcy2yNRatBuQk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Fj2MpE1Bna0iH5UkMrpzvSbYEJN/hR2khqBxR+jKZubYynkdhl4YWFGAJ+JamLEHO
-	 QcB2EEeq6nvLoY0TEA6surqtQcRNKDsKBEESeoeoA2OM5OVOfhX3CDtjGfi3eSwZN+
-	 GAr3xwqWXVikGEQSFO9CgkbafdgbPHRGC7FWb5sIRp2/9+qyOOlQcW1mfQi+qWygJo
-	 55VSYloLX5AQJIw/dW7sM7iviakA8NYB/+veSIwbcpXZzHzFlhet0fk2OQV42SoMzc
-	 iQH9WSaoBiQiBl/I1acsPPDa2uZgvkQzhZ88ehGot32mM7gURgya4dc2uLq4gci/jl
-	 aL25FplfSTtYw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A762CC54BB5;
-	Tue, 21 May 2024 13:41:21 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1716298969; c=relaxed/simple;
+	bh=nskXoVH0tSdwHwBT5lpfPvxc/GCyARcFwFwmmtGRg6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m7SZ2mfpJLa+PnctSEPYtAIKrigNWcPdB+ay98C35stKAEuuM7vSLc4M+dTg+zE2fvE7OzYSStsQnSn98aYOLvvAM5QHVlUKM94Tetp1HOyFUrFKZYOvsDYwuwV2xonJQx+ezogqv+KC9kvAC1nl/PQjJzLgpsxwG4sv2ym8cYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HekusvH9; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: visitorckw@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716298964;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kmyyYf/FNg0lJsmtTVqGM2lJeyBvXRDagDqrypf1zFs=;
+	b=HekusvH9FhSlsL2OyjT4vkM4ik7uEwHkVk8gsvKfpd8/M5RpCJQmDraUJy1+MaAxgXr2QI
+	e0R0rRKH/vHme7hLcBDbhROJv+giXL8hrerLAMoVHQYkmKxSIJ8V/AGxs1HHYdvjB77CR1
+	FhNqpeRhk6/HUwh6bR4QEZONdydGonM=
+X-Envelope-To: sfr@canb.auug.org.au
+X-Envelope-To: axboe@kernel.dk
+X-Envelope-To: colyli@suse.de
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-next@vger.kernel.org
+X-Envelope-To: matthew@mm12.xyz
+X-Envelope-To: bagasdotme@gmail.com
+Date: Tue, 21 May 2024 09:42:40 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, 
+	Coly Li <colyli@suse.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Matthew Mirvish <matthew@mm12.xyz>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: Re: linux-next: manual merge of the refactor-heap tree with the
+ block tree
+Message-ID: <qqdgvzivlg7uapdv6vkpqsodonzlvptrqn4h4sgyhtrqlfggej@zaudibjtmylj>
+References: <20240509152745.08af752f@canb.auug.org.au>
+ <20240521121803.399705b0@canb.auug.org.au>
+ <ZkwKe15cyhgRP4Qy@visitorckw-System-Product-Name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net] openvswitch: Set the skbuff pkt_type for proper pmtud
- support.
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171629888168.10197.12754177627496640695.git-patchwork-notify@kernel.org>
-Date: Tue, 21 May 2024 13:41:21 +0000
-References: <20240516200941.16152-1-aconole@redhat.com>
-In-Reply-To: <20240516200941.16152-1-aconole@redhat.com>
-To: Aaron Conole <aconole@redhat.com>
-Cc: netdev@vger.kernel.org, dev@openvswitch.org, linux-kernel@vger.kernel.org,
- pshelar@ovn.org, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, jesse@nicira.com, echaudro@redhat.com, i.maximets@ovn.org,
- horms@ovn.org, jcaamano@redhat.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkwKe15cyhgRP4Qy@visitorckw-System-Product-Name>
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Thu, 16 May 2024 16:09:41 -0400 you wrote:
-> Open vSwitch is originally intended to switch at layer 2, only dealing with
-> Ethernet frames.  With the introduction of l3 tunnels support, it crossed
-> into the realm of needing to care a bit about some routing details when
-> making forwarding decisions.  If an oversized packet would need to be
-> fragmented during this forwarding decision, there is a chance for pmtu
-> to get involved and generate a routing exception.  This is gated by the
-> skbuff->pkt_type field.
+On Tue, May 21, 2024 at 10:44:11AM +0800, Kuan-Wei Chiu wrote:
+> On Tue, May 21, 2024 at 12:18:03PM +1000, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > On Thu, 9 May 2024 15:27:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > 
+> > > Today's linux-next merge of the refactor-heap tree got conflicts in:
+> > > 
+> > >   drivers/md/bcache/bset.c
+> > >   drivers/md/bcache/bset.h
+> > >   drivers/md/bcache/btree.c
+> > >   drivers/md/bcache/writeback.c
+> > > 
+> > > between commit:
+> > > 
+> > >   3a861560ccb3 ("bcache: fix variable length array abuse in btree_iter")
+> > > 
+> > > from the block tree and commit:
+> > > 
+> > >   afa5721abaaa ("bcache: Remove heap-related macros and switch to generic min_heap")
+> > > 
+> > > from the refactor-heap tree.
+> > > 
+> > > Ok, these conflicts are too extensive, so I am dropping the refactor-heap
+> > > tree for today.  I suggest you all get together and sort something out.
+> > 
+> > I am still dropping the refactor-heap tree ...
 > 
-> [...]
+> Hi Kent,
+> 
+> Are you still planning to send the pull request in this merge window?
+> I've sent the v5 patch series [1] to resolve the conflicts some time ago.
+> Is there anything missing from my side?
 
-Here is the summary with links:
-  - [v2,net] openvswitch: Set the skbuff pkt_type for proper pmtud support.
-    https://git.kernel.org/netdev/net/c/30a92c9e3d6b
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Unfortunately it's going to have to wait until next merge window, all
+the conferences the past week have meant I've been pretty distracted,
+still not fully caught back up.
 
