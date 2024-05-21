@@ -1,161 +1,86 @@
-Return-Path: <linux-kernel+bounces-185224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 472B28CB24E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:37:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8D48CB254
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 783921C22147
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:36:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5B3B1C219F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468CC146D4C;
-	Tue, 21 May 2024 16:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54097146D4C;
+	Tue, 21 May 2024 16:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R125lnd/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWzoU0PZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813B314291B;
-	Tue, 21 May 2024 16:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8AB1CA80;
+	Tue, 21 May 2024 16:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716309405; cv=none; b=F+MwEzHIBsTfj0Y6q1H2VdS67SvpWf5Ks4YnTljISsNfBXf62HSme6pnM483vcAbWMOq07iJRWoaS7H3VFP20AcdCdyX0fLUvZ89qU0+izrHhOJlzbW6U7dNht/jyDU//7/oSPJYEWNhQsPtnjqYl5OhBVTYvvVUNEd7uLvDMwM=
+	t=1716309600; cv=none; b=e0C338iPyLdTUN/qILc/vdIjWK9pTgwQnaI7fPGyHH5WO2wPLY35JPYvnRiC7eJnCZNxPcAkmITXAOLZsFWhnaBiM3KQdJAG5/fdBirjzQRm3K/DaousxJ/pQNerVO5fEiGz3ydX60Ddlqub5AqZ30Fa3W76gGo6Av7mouLNZh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716309405; c=relaxed/simple;
-	bh=lYt216ymFJHBZ77aQufJ3Q3bw6WnfSXmHT40ibI+voI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BHamugJo4dc8JmCZoxXMIIFKlhyPnML6B83vrSWl8BL9ix4HrvYTkbSxLZZ3totwdEuqEU3MEBE6qwMNCExNBDQFk4z0gz4VvBdh6dTSXLPJEgrt03zEcgoGCrzv8iaDiTssib4Un5cyNw8j4J1y/WGqc6/P2kq0NxNgBWVhDo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R125lnd/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79D4DC4AF09;
-	Tue, 21 May 2024 16:36:41 +0000 (UTC)
+	s=arc-20240116; t=1716309600; c=relaxed/simple;
+	bh=DVQA79nAV89v/vOYQVh9+5YPKXdr+s2r4gOfo9ZPLpc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=URjMECeaIbkAOCIZoHVNmXyY3s+JYpBa4RFf1vfdASEi4bmYWttP2IxsnaKqwBhSThKRJ97fQrT6DqDCduEgWOGz0AWDdpBPxvsJb7T2HGcSCgVh5cm6xqw/zg/IkEcBW27xodGagqtjo0AB59zUD7kj4sPz2YQnlltowjlTJE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWzoU0PZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85C43C2BD11;
+	Tue, 21 May 2024 16:39:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716309405;
-	bh=lYt216ymFJHBZ77aQufJ3Q3bw6WnfSXmHT40ibI+voI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R125lnd/GrW8NgD1Z4m0tbheWzZqVzXgZ+EsSDoel2OsjLM3dXYDHKxiV8i7szfBL
-	 nGYAuwPC6KixOq3bAkHAX4scDgOhC3h8U/zPhYkYa6ZiuwRyNv3bivkKE+v4FnT/p6
-	 Vo3xKNFwHnJ/ehFdJY6W8RoHOuybIgv5kirLnk5lBZgZYrqQdxg3K1TftWnvM1mvkU
-	 c3Ezvo6WAXWP5zdlPdBfp64eNQc1D4WPuJZcpbZLDt6UJguBNGDi2fXI0Y9RD8tp/l
-	 u2A2FoQlZkmXmHnBosKB+rJA9kAJDm1xN0JjCstmU+1sa8SJi0yiTbdVtA7bS3H1M7
-	 xnPG0srtngn2w==
-Date: Tue, 21 May 2024 17:36:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v4 1/5] net: phy: mediatek: Re-organize MediaTek
- ethernet phy drivers
-Message-ID: <20240521163639.GB839490@kernel.org>
-References: <20240521101548.9286-1-SkyLake.Huang@mediatek.com>
- <20240521101548.9286-2-SkyLake.Huang@mediatek.com>
+	s=k20201202; t=1716309600;
+	bh=DVQA79nAV89v/vOYQVh9+5YPKXdr+s2r4gOfo9ZPLpc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=KWzoU0PZy2xmR2e8CBeSJLQmhF/d1L+1C+0YQj2XyBqFYvJ17jZL7lrKjrI9qkYBw
+	 ttqikMltUBSFM+kdw5gTV/KOn63eq776q6j6RWaFnN//Dq4IFCe/8tBkcQ0mR5CCLx
+	 A+mqNZtxTpDzEmVPzAApsWjLg1BgnIYxMY69WH2FdHWMG4gKwQ7m+fiQ8RCpLhirCc
+	 7P8b9jj1WXz5hc+Earjs/zDbIjIDkCVo+rEqZOD2qM8Q7MN0BRkigcJtCsK9midVFx
+	 kb+hQD5d1jPgzJcYqqpE3xSlbptbR+XxiWpwKL3RF7DZo1/EVnSIcL5zEvV/BnQe4O
+	 3mGSkZw6dxQWQ==
+From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To: Xiao Wang <xiao.w.wang@intel.com>, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, luke.r.nels@gmail.com,
+ xi.wang@gmail.com
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, pulehui@huawei.com, haicheng.li@intel.com, Xiao Wang
+ <xiao.w.wang@intel.com>
+Subject: Re: [PATCH] riscv, bpf: Introduce shift add helper with Zba
+ optimization
+In-Reply-To: <20240520071631.2980798-1-xiao.w.wang@intel.com>
+References: <20240520071631.2980798-1-xiao.w.wang@intel.com>
+Date: Tue, 21 May 2024 18:39:56 +0200
+Message-ID: <874jardspv.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521101548.9286-2-SkyLake.Huang@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2024 at 06:15:44PM +0800, Sky Huang wrote:
-> From: "SkyLake.Huang" <skylake.huang@mediatek.com>
-> 
-> Re-organize MediaTek ethernet phy driver files and get ready to integrate
-> some common functions and add new 2.5G phy driver.
-> mtk-ge.c: MT7530 Gphy on MT7621 & MT7531 Gphy
-> mtk-ge-soc.c: Built-in Gphy on MT7981 & Built-in switch Gphy on MT7988
-> mtk-2p5ge.c: Planned for built-in 2.5G phy on MT7988
-> 
-> Signed-off-by: SkyLake.Huang <skylake.huang@mediatek.com>
+Xiao Wang <xiao.w.wang@intel.com> writes:
 
-..
+> Zba extension is very useful for generating addresses that index into arr=
+ay
+> of basic data types. This patch introduces sh2add and sh3add helpers for
+> RV32 and RV64 respectively, to accelerate pointer array addressing.
+>
+> Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
 
-> diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-> index 1df0595..e0e4b5e 100644
-> --- a/drivers/net/phy/Kconfig
-> +++ b/drivers/net/phy/Kconfig
-> @@ -251,22 +251,7 @@ config MAXLINEAR_GPHY
->  	  Support for the Maxlinear GPY115, GPY211, GPY212, GPY215,
->  	  GPY241, GPY245 PHYs.
->  
-> -config MEDIATEK_GE_PHY
-> -	tristate "MediaTek Gigabit Ethernet PHYs"
-> -	help
-> -	  Supports the MediaTek Gigabit Ethernet PHYs.
-> -
-> -config MEDIATEK_GE_SOC_PHY
-> -	tristate "MediaTek SoC Ethernet PHYs"
-> -	depends on (ARM64 && ARCH_MEDIATEK) || COMPILE_TEST
-> -	depends on NVMEM_MTK_EFUSE
-> -	help
-> -	  Supports MediaTek SoC built-in Gigabit Ethernet PHYs.
-> -
-> -	  Include support for built-in Ethernet PHYs which are present in
-> -	  the MT7981 and MT7988 SoCs. These PHYs need calibration data
-> -	  present in the SoCs efuse and will dynamically calibrate VCM
-> -	  (common-mode voltage) during startup.
-> +source "drivers/net/phy/mediatek/Kconfig"
->  
->  config MICREL_PHY
->  	tristate "Micrel PHYs"
+This is dependent on [1], and given it hasn't been accepted yet, I'd
+make this patch part of that series.
 
-..
 
-> diff --git a/drivers/net/phy/mediatek/Kconfig b/drivers/net/phy/mediatek/Kconfig
-> new file mode 100644
-> index 0000000..2fa3a78
-> --- /dev/null
-> +++ b/drivers/net/phy/mediatek/Kconfig
-> @@ -0,0 +1,22 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config MEDIATEK_GE_PHY
-> +	tristate "MediaTek Gigabit Ethernet PHYs"
-> +	help
-> +	  Supports the MediaTek non-built-in Gigabit Ethernet PHYs.
-> +
-> +	  Non-built-in Gigabit Ethernet PHYs include mt7530/mt7531.
-> +	  You may find mt7530 inside mt7621. This driver shares some
-> +	  common operations with MediaTek SoC built-in Gigabit
-> +	  Ethernet PHYs.
-> +
-> +config MEDIATEK_GE_SOC_PHY
-> +	bool "MediaTek SoC Ethernet PHYs"
+Bj=C3=B6rn
 
-Hi,
-
-This patch changes this kconfig option from tristate to bool.
-
-This seems to break allmodconfig builds.
-
-I think that is because MEDIATEK_GE_SOC_PHY is builtin while
-PHYLIB is a module, and this driver uses symbols from PHYLIB.
-
-> +	depends on (ARM64 && ARCH_MEDIATEK) || COMPILE_TEST
-> +	select NVMEM_MTK_EFUSE
-> +	help
-> +	  Supports MediaTek SoC built-in Gigabit Ethernet PHYs.
-> +
-> +	  Include support for built-in Ethernet PHYs which are present in
-> +	  the MT7981 and MT7988 SoCs. These PHYs need calibration data
-> +	  present in the SoCs efuse and will dynamically calibrate VCM
-> +	  (common-mode voltage) during startup.
-
-..
-
--- 
-pw-bot: changes-requested
+[1] https://lore.kernel.org/linux-riscv/20240516090430.493122-1-xiao.w.wang=
+@intel.com/
 
