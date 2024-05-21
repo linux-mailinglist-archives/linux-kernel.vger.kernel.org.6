@@ -1,164 +1,119 @@
-Return-Path: <linux-kernel+bounces-185501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2158CB5F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D49808CB5FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1F11C21A4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:21:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 121DC1C21A59
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902D9149E05;
-	Tue, 21 May 2024 22:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C1F14A4C5;
+	Tue, 21 May 2024 22:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GTn8NoLr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="azYnNpfp"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285A81865A
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 22:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B05B149DE5;
+	Tue, 21 May 2024 22:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716330106; cv=none; b=uHrffkj2PNhfWLSZTumeS7XEqaTJStVt0oHa/eVrPIebHvCfU3DMyvY/yTX4KcLC97Ul8n2oh+Y4TRucxfY4rwo0vHay2BEsJLyjPjB9cxuZIlr/NA97emuMZ/i7D/NHXkNtcDR4DEXAYtcz0RX0ltW/Dddhg1xlAwtbrp0g7P8=
+	t=1716330189; cv=none; b=pnoYdc2uuyhCfRkaISTgOJjztSUwW3YBMj3OVpzcJhe7f+axg6kj9bXEusfIGsTERdt5Bn5JQQTwU+LSXyAAj6Tpk7357TikIIZ2aHPL8IixSkAj4PJ+TdXCbQlBk03Eqc3pDt+Ftk1kgQ/OCb+69clhpy62FbY2btbUa0c3X8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716330106; c=relaxed/simple;
-	bh=YcvDZqU/P46ZTkDSYssag9qjA1oPeYrDrhINEr556sk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Il/eodNF+odwQv418VNH0fHjjyEZobj2GsELyjqzDTU0lfL6zHs3e1vSdk+HHnbxytX3rhy84TxzSSIDQLtk0vBJzmc2Yuz25rp4VUiY/6RePzHq/vFRFa+2yBET4ZHaFdgliYC3A3Q8Ktoylc3+im1LFKx79Jv/r5fPpOKhwnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GTn8NoLr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716330103;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8RWybJhhMR6yLC10OGnOp+yHf/Jzy4lTuvgT0noPzW0=;
-	b=GTn8NoLrtQFewKlko67rtQSL3GyI+hRYr6i7eYMkpUCJorld6dYqBTDTtG3Ep4UCgwC/U7
-	kmEitR57CLHgBN4JrnN25cqeMw6Un6lUei+spKuO6xSMnyPznTeVJ6Br/XneCBNpdymd72
-	y3G36wojNZArP24JaRcaX1Zn+C+r3hc=
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
- [209.85.167.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-631-NPvid_X4NPyC2st9COIaJA-1; Tue, 21 May 2024 18:21:42 -0400
-X-MC-Unique: NPvid_X4NPyC2st9COIaJA-1
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3c9a6d6a8dbso6851807b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:21:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716330102; x=1716934902;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8RWybJhhMR6yLC10OGnOp+yHf/Jzy4lTuvgT0noPzW0=;
-        b=T678KQh1zI+7ZX1N3nlYv8+WFuKgjyqYbAf1mF1RuSHZ2aDSSMmU2kS4F7frooB1oD
-         Lq7qloaw6tCnHClwIOma0dmGFkJm2Nm91eXN5yFhFAKeMcGM/bNyS1EmPVe69AB/yuY0
-         lDAQb+AqqD7HgV2co3p1Im2mV2njkpnVwf4kFN13B6TMvtTY9+ndhRkA47h3HYWy2OTs
-         1e01bsonPfdVHBYo36RLs3Q0MFpklqBCARYTZTLafvA+Dz+PLQdSSM3pTaVmD0g/0NDP
-         DKiiFxlzxJtknc6EVcqVtCmSrT10pkwNP5Avq1TDfQKOVXZ4NSdstqp9SMQWegM0i+UL
-         rmgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWejga0h/lJnYYAMGh1pm7JGIS2N7zrjgsYkgzTDpZulL+Pb1JF/hJDKlp56GnWBtZL07DZ7YLQeKI7M+TblpEJ/2/2fxJVr/7iDxYJ
-X-Gm-Message-State: AOJu0YwUidFyWu+bKL7+sxOky43jkaZupB2xNR9eiAMISc0fT1NMl6dr
-	lsY8rPP92wlIFYgPsb9XQCN9RdgXzhU9V7DCTNi0y+CvNXl0l1Rg6XqtSHwoGjyLzqleKP+ORpf
-	jlbuYEFfqTkT7o55VFq4PDznqn+RuFEdcyKbrcaUXJnwfyK9dNweBxlMcC8MC9g==
-X-Received: by 2002:a05:6808:3af:b0:3c9:9378:f812 with SMTP id 5614622812f47-3cdb9d39ff8mr398767b6e.39.1716330101699;
-        Tue, 21 May 2024 15:21:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZjyboiqH7UQvgyK4AKU1tUuDW+gGANTnn6z4ncSTCw9M4SbeMnP15PyLRdiW9PhMlpk62Eg==
-X-Received: by 2002:a05:6808:3af:b0:3c9:9378:f812 with SMTP id 5614622812f47-3cdb9d39ff8mr398736b6e.39.1716330100982;
-        Tue, 21 May 2024 15:21:40 -0700 (PDT)
-Received: from localhost (pool-71-184-142-128.bstnma.fios.verizon.net. [71.184.142.128])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf275861sm1330673485a.19.2024.05.21.15.21.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 15:21:40 -0700 (PDT)
-Date: Tue, 21 May 2024 18:21:39 -0400
-From: Eric Chanudet <echanude@redhat.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Baoquan He <bhe@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Zhen Lei <thunder.leizhen@huawei.com>, 
-	Yajun Deng <yajun.deng@linux.dev>, Zhang Jianhua <chris.zjh@huawei.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Nick Piggin <npiggin@gmail.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH] arm64: init: override deferred_page_init_max_threads
-Message-ID: <xu2rcjwh35zdxx7c52ygep26dox3glnurfcuxuhj3sjqbopzij@zrazmowdb3x2>
-References: <20240520231555.395979-5-echanude@redhat.com>
- <ZkzHX-4yYybEJdEQ@kernel.org>
+	s=arc-20240116; t=1716330189; c=relaxed/simple;
+	bh=lT0go+khrIBtFYj4jcepsMnSbYwOAjo0s7O87/hfYSE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GBwyx45sOQjK/TmqgqDcM+zrEjgDLtMWz6/G3jNUYchBACKBodyRZ11LJ5SQxrH3FVeFx4AQhmalKHT2hSmcC97B5op5YbFERbDcYI2Hc2MygXfiS2AwRfoEh32NbW8l9zTkg8osAKU+3SV5neMbescXQqOnX1oLyQA1EtrRLxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=azYnNpfp; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id B98B1100013;
+	Wed, 22 May 2024 01:23:03 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru B98B1100013
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1716330183;
+	bh=CZg76scw7v97dA0RfUhhSpMZL+RjQmhtnVdo0IGU76s=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=azYnNpfppiSYmIT828TB71EKKKOpRNG//yHacsHcbgs4+t4RXrVevSBAPpzyYPOC0
+	 HcQArDScq+RvxC+Tr/db5qO56fQSilYqkT9s7n6Gp1Zt1ZundkxvFHsR5qcsNLPlIl
+	 7ENARXbh6mlDzEJaIsPP6rO60LNgsrvwfnx2qzSMHdqJnHxEKd/Fi5ZqwDm5upqFuM
+	 M+7QVo+dNIHPiC5YTE4u6YO5R/V3+oYNphQCo7c8AKWIoG2FkPn7JBbSuQKRYlfzxw
+	 yltDNktVf81Gdtuf65FnkryDPsuA2qN4P2C6RaUIQXgnzqkKCQ/egH0YUx5VC/w9Un
+	 fuyxWrY4HSHvg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Wed, 22 May 2024 01:23:03 +0300 (MSK)
+Received: from CAB-WSD-0003115.sberdevices.ru (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Wed, 22 May 2024 01:23:03 +0300
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
+	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Dmitry Rokosov
+	<ddrokosov@sberdevices.ru>, Jerome Brunet <jbrunet@baylibre.com>, Kevin
+ Hilman <khilman@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Lucas Tanure <tanure@linux.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, Xianwei Zhao
+	<xianwei.zhao@amlogic.com>
+Subject: [PATCH 0/3] Introduce initial support of Amlogic AC200 board
+Date: Wed, 22 May 2024 01:21:52 +0300
+Message-ID: <20240521222155.28094-1-jan.dakinevich@salutedevices.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkzHX-4yYybEJdEQ@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185400 [May 21 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_smtp_not_equal_from}, sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/21 08:41:00 #25230763
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Tue, May 21, 2024 at 07:10:07PM +0300, Mike Rapoport wrote:
-> (added powerpc folks)
-> 
-> On Mon, May 20, 2024 at 07:15:59PM -0400, Eric Chanudet wrote:
-> > This was the behavior prior to making the function arch-specific with
-> > commit ecd096506922 ("mm: make deferred init's max threads
-> > arch-specific")
-> > 
-> > Architectures can override the generic implementation that uses only one
-> > CPU. Setting DEFERRED_STRUCT_PAGE_INIT and testing on a few arm64
-> > platforms shows faster deferred_init_memmap completions:
-> > 
-> > |         | x13s        | SA8775p-ride | Ampere R137-P31 | Ampere HR330 |
-> > |         | Metal, 32GB | VM, 36GB     | VM, 58GB        | Metal, 128GB |
-> > |         | 8cpus       | 8cpus        | 8cpus           | 32cpus       |
-> > |---------|-------------|--------------|-----------------|--------------|
-> > | threads |  ms     (%) | ms       (%) |  ms         (%) |  ms      (%) |
-> > |---------|-------------|--------------|-----------------|--------------|
-> > | 1       | 108    (0%) | 72      (0%) | 224        (0%) | 324     (0%) |
-> > | cpus    |  24  (-77%) | 36    (-50%) |  40      (-82%) |  56   (-82%) |
-> > 
-> > Signed-off-by: Eric Chanudet <echanude@redhat.com>
-> > ---
-> >  arch/arm64/mm/init.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> > index 9b5ab6818f7f..71f5188fe63d 100644
-> > --- a/arch/arm64/mm/init.c
-> > +++ b/arch/arm64/mm/init.c
-> > @@ -158,6 +158,13 @@ static void __init zone_sizes_init(void)
-> >  	free_area_init(max_zone_pfns);
-> >  }
-> >  
-> > +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-> > +int __init deferred_page_init_max_threads(const struct cpumask *node_cpumask)
-> > +{
-> > +	return max_t(int, cpumask_weight(node_cpumask), 1);
-> > +}
-> > +#endif
-> > +
-> 
-> Maybe we should make this default and let architectures that want a single
-> thread override deferred_page_init_max_threads() to return 1?
+ - Make some cosmetics in existing device tree files;
 
-It would affect more archs than I can try this on. Currently, only x86
-(with this change, arm64) return more than one thread.
+ - Add the board.
 
-I'm happy to send a v2 inverting the logic if you find it preferable.
+Jan Dakinevich (3):
+  arch/arm64: dts: ac2xx: make common the sound card
+  dt-bindings: arm: amlogic: document AC200 support
+  arch/arm64: dts: ac200: introduce initial support of the board
 
-Best,
-
-> >  int pfn_is_map_memory(unsigned long pfn)
-> >  {
-> >  	phys_addr_t addr = PFN_PHYS(pfn);
-> > -- 
-> > 2.44.0
-> > 
-> 
-> -- 
-> Sincerely yours,
-> Mike.
-> 
+ .../devicetree/bindings/arm/amlogic.yaml      |  1 +
+ .../dts/amlogic/meson-sm1-a95xf3-air-gbit.dts | 87 -------------------
+ .../boot/dts/amlogic/meson-sm1-a95xf3-air.dts | 87 -------------------
+ .../boot/dts/amlogic/meson-sm1-ac200.dts      | 22 +++++
+ .../boot/dts/amlogic/meson-sm1-ac2xx.dtsi     | 87 +++++++++++++++++++
+ .../boot/dts/amlogic/meson-sm1-h96-max.dts    | 87 -------------------
+ .../dts/amlogic/meson-sm1-x96-air-gbit.dts    | 87 -------------------
+ .../boot/dts/amlogic/meson-sm1-x96-air.dts    | 87 -------------------
+ 8 files changed, 110 insertions(+), 435 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-sm1-ac200.dts
 
 -- 
-Eric Chanudet
+2.34.1
 
 
