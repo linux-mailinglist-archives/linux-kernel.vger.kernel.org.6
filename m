@@ -1,123 +1,337 @@
-Return-Path: <linux-kernel+bounces-185388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8978CB459
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:40:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5763F8CB45E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8957A282C35
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:40:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D385E1F2322C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EC21494C3;
-	Tue, 21 May 2024 19:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFD51494B9;
+	Tue, 21 May 2024 19:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W0xm7JCs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="D+CeS+gJ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE17433AD;
-	Tue, 21 May 2024 19:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1427433AD;
+	Tue, 21 May 2024 19:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716320436; cv=none; b=QlOUm20Sc04yP/yLueAYMYKJpka9Flk0zDf5V0BUmXfUPCAif8Xxhtr3Q4+FQo9Q/3+ENWzMe/xV4HoV0TcG4GUUa4mIQs2x5SwUOe8D4vJYiwtVEevaoZe5gIZmJsBoVCOfjpkw3gGk0KBwFSpp3vqVqPbJipTqGelX2+GQ8iY=
+	t=1716320602; cv=none; b=Hq+9z6ZmZpltpT8jEHUo203N9VnS8uM6r5OFJIuP231ZCUKxu2By+Miaz1JyLkxvWEmRKeJpLu0/JDWzubYFwbhQ1gO+i+Vuh9uTLYY+f2UraHWfU0VBAE8tlLdfzoBZA3u14HaWI79u/HTBrZUAzWK37xocnrW7wGlh96C1MWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716320436; c=relaxed/simple;
-	bh=PSJzz3wBgM4Nov61eoQKU/G3JLPzuVohtgY4OMFxi4c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dYl/YbwIuVFbJPjAKQzREoioNPQIVvP2PAr1ZZ/Y3SarWLShE4C7E8N6yW2wcMgY/MQrqhqKngT5eEVOh0upxpKUIXBM5vbU4imyh5C4BvbIebMVKo8I/enjSJNEQuQjBu3WuD007VQcjYWRbOvKgqxFO08LltRHJwiZJp3prFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W0xm7JCs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44LF9oJu026154;
-	Tue, 21 May 2024 19:40:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=nZuM5wFSsss4g1FMYAGG9
-	HP332Eng3D3fi1g85v+vW8=; b=W0xm7JCs2OpfXRlrdSE/erqZ0i2Prsuk6I207
-	mfU8vv8gNPFSyXzlFAiK7OVuESsQyBpzUA1vHP4oiINET1Aa4AX1Ce/HFQjhz4ia
-	j0PNqNlTZRph5i25ytrmkzFTAkEz+sL1OMTJAWmQEPBZkdxvbw+X0iVLiM11E6Bm
-	eS8pjubf/Rlc8HuK8bISK1wlDWEOZgHz9Cr7bgEu56IBveuNi5j9/VnvwWqq9TLO
-	wCnIV3LZFOb9+QajBZUdpMvWtTRDjWrySlXUWCWMW8TB1ClDYwkgDqi6WQyZdY9O
-	1YavNp3AAGm1F3t+Kkd75aLGDLOmtOQN43411FnPeoJqMkESg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pqc74v9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 19:40:24 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44LJeNvI013710
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 19:40:23 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 21 May 2024 12:40:22 -0700
-Date: Tue, 21 May 2024 12:40:21 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: <neil.armstrong@linaro.org>
-CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Loic
- Poulain <loic.poulain@linaro.org>, Kalle Valo <kvalo@kernel.org>,
-        Mathieu
- Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <wcn36xx@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Arnd
- Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 06/12] remoteproc: qcom_q6v5_pas: switch to mbn files by
- default
-Message-ID: <Zkz4pf00lYCx185i@hu-bjorande-lv.qualcomm.com>
-References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
- <20240521-qcom-firmware-name-v1-6-99a6d32b1e5e@linaro.org>
- <a314906d-b297-474d-910c-6634c8c23042@linaro.org>
+	s=arc-20240116; t=1716320602; c=relaxed/simple;
+	bh=6GWHtegSVvL3L0DC6XS+r+/hqyotmvJxS0QqwcXV5nA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lkr1wCFme0B7NRxLusQ6WV1wEbK/K/GwnaSAZlQCeb2iyxNUrCObDW/IUENF/YMvtOF8DvoNqRnnuVR0mdDrB4nwLG8JZ4qDJwk/JFMwOWkrxtXWKhe103KfDZjtsQcV0ybrbFFCcX/96/Ocqs9pwg6DGPiRpqeRdmr+E66Ricc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=D+CeS+gJ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 674FEC8E;
+	Tue, 21 May 2024 21:43:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1716320586;
+	bh=6GWHtegSVvL3L0DC6XS+r+/hqyotmvJxS0QqwcXV5nA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D+CeS+gJqF/hgy30UsprUq0Gu1iilZYeB6vN8Tc+iOsWhppRztMj1DSpyLFh/i7iA
+	 BS3+d+W7+HuaNODKhXJV4meWQ6G1+kVzz6S1QUXgGPRWuRo8dVipfbXuWftIxjSAFE
+	 JlceWhfoJ1mnC956vYe8eHRY/fA5l9oab3nZ5o44=
+Date: Tue, 21 May 2024 22:43:09 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Alexandru Ardelean <alexandru.ardelean@analog.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Subject: Re: [PATCH 2/5] dt-bindings: Add bindings for the Analog Devices
+ ADP5585
+Message-ID: <20240521194309.GA8863@pendragon.ideasonboard.com>
+References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
+ <20240520195942.11582-3-laurent.pinchart@ideasonboard.com>
+ <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a314906d-b297-474d-910c-6634c8c23042@linaro.org>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 3gCDzfA-TlFLM7-69lgS-CJjFqRAVhLw
-X-Proofpoint-GUID: 3gCDzfA-TlFLM7-69lgS-CJjFqRAVhLw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-21_12,2024-05-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0
- priorityscore=1501 bulkscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405210148
+In-Reply-To: <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
 
-On Tue, May 21, 2024 at 11:49:42AM +0200, neil.armstrong@linaro.org wrote:
-> On 21/05/2024 11:45, Dmitry Baryshkov wrote:
-> > We have been pushing userspace to use mbn files by default for ages.
-> > As a preparation for making the firmware-name optional, make the driver
-> > use .mbn instead of .mdt files by default.
+Hi Krzysztof,
+
+On Tue, May 21, 2024 at 09:05:50PM +0200, Krzysztof Kozlowski wrote:
+> On 20/05/2024 21:59, Laurent Pinchart wrote:
+> > The ADP5585 is a 10/11 input/output port expander with a built in keypad
+> > matrix decoder, programmable logic, reset generator, and PWM generator.
+> > These bindings model the device as an MFD, and support the GPIO expander
+> > and PWM functions.
+> > 
+> > These bindings support the GPIO and PWM functions.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > ---
+> > I've limited the bindings to GPIO and PWM as I lack hardware to design,
+> > implement and test the rest of the features the chip supports.
+> > ---
+> >  .../bindings/gpio/adi,adp5585-gpio.yaml       |  36 ++++++
+> >  .../devicetree/bindings/mfd/adi,adp5585.yaml  | 117 ++++++++++++++++++
+> >  .../bindings/pwm/adi,adp5585-pwm.yaml         |  35 ++++++
+> >  MAINTAINERS                                   |   7 ++
+> >  4 files changed, 195 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+> >  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+> >  create mode 100644 Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+> > new file mode 100644
+> > index 000000000000..210e4d53e764
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+> > @@ -0,0 +1,36 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/gpio/adi,adp5585-gpio.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Analog Devices ADP5585 GPIO Expander
+> > +
+> > +maintainers:
+> > +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > +
+> > +description: |
+> > +  The Analog Devices ADP5585 has up to 11 GPIOs represented by a "gpio" child
+> > +  node of the parent MFD device. See
+> > +  Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further details as
+> > +  well as an example.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: adi,adp5585-gpio
+> > +
+> > +  gpio-controller: true
+> > +
+> > +  '#gpio-cells':
+> > +    const: 2
+> > +
+> > +  gpio-reserved-ranges: true
 > 
-> I think we should have a mechanism to fallback to .mdt since downstream
-> uses split mdt on the devices filesystem.
+> There are no resources here, so new compatible is not really warranted.
+> Squash the node into parent.
+
+Child nodes seem (to me) to be the standard way to model functions in
+MFD devices. Looking at mfd_add_device(), for OF-based systems, the
+function iterates over child nodes. I don't mind going a different
+routes, could you indicate what you have in mind, perhaps pointing to an
+existing driver as an example ?
+
+> > +
+> > +required:
+> > +  - compatible
+> > +  - gpio-controller
+> > +  - "#gpio-cells"
+> > +
+> > +additionalProperties: false
+> > +
+> > +...
+> > diff --git a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+> > new file mode 100644
+> > index 000000000000..217c038b2842
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+> > @@ -0,0 +1,117 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/mfd/adi,adp5585.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Analog Devices ADP5585 Keypad Decoder and I/O Expansion
+> > +
+> > +maintainers:
+> > +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > +
+> > +description: |
 > 
+> Do not need '|' unless you need to preserve formatting.
+> 
+> > +  The ADP5585 is a 10/11 input/output port expander with a built in keypad
+> > +  matrix decoder, programmable logic, reset generator, and PWM generator.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - adi,adp5585-00  # Default
+> > +          - adi,adp5585-01  # 11 GPIOs
+> > +          - adi,adp5585-02  # No pull-up resistors by default on special pins
+> > +          - adi,adp5585-03  # Alternate I2C address
+> > +          - adi,adp5585-04  # Pull-down resistors on all pins by default
+> > +      - const: adi,adp5585
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  vdd-supply: true
+> > +
+> > +  gpio:
+> > +    $ref: /schemas/gpio/adi,adp5585-gpio.yaml
+> > +
+> > +  pwm:
+> > +    $ref: /schemas/pwm/adi,adp5585-pwm.yaml
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - gpio
+> > +  - pwm
+> > +
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: adi,adp5585-01
+> > +    then:
+> > +      properties:
+> > +        gpio:
+> > +          properties:
+> > +            gpio-reserved-ranges: false
+> 
+> This also points to fact your child node is pointless. It does not stand
+> on its own...
 
-Let's ignore and continue to move away from the split .mdt files.
+That doesn't make the child pointless just for that reason. There are
+numerous examples of child nodes that don't stand on their own.
 
-Combining split files is trivial and removes a class of problems where
-people mix and match their parts. (And worst case you can rename/symlink
-your downstream firmware to match the requested filename)
+> > +    else:
+> > +      properties:
+> > +        gpio:
+> > +          properties:
+> > +            gpio-reserved-ranges:
+> > +              items:
+> > +                - const: 5
+> > +                - const: 1
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    i2c {
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> > +
+> > +        mfd@34 {
+> > +            compatible = "adi,adp5585-00", "adi,adp5585";
+> > +            reg = <0x34>;
+> > +
+> > +            gpio {
+> > +                compatible = "adi,adp5585-gpio";
+> > +                gpio-controller;
+> > +                #gpio-cells = <2>;
+> > +                gpio-reserved-ranges = <5 1>;
+> > +            };
+> > +
+> > +            pwm {
+> > +                compatible = "adi,adp5585-pwm";
+> > +                #pwm-cells = <3>;
+> > +            };
+> > +        };
+> > +    };
+> > +
+> > +  - |
+> > +    i2c {
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> > +
+> > +        mfd@34 {
+> > +            compatible = "adi,adp5585-01", "adi,adp5585";
+> > +            reg = <0x34>;
+> > +
+> > +            vdd-supply = <&reg_3v3>;
+> > +
+> > +            gpio {
+> > +                compatible = "adi,adp5585-gpio";
+> > +                gpio-controller;
+> > +                #gpio-cells = <2>;
+> 
+> Different by one property? So just keep one example, unless there are
+> more differences.
 
+I found the two examples useful during development of the binding to
+test the gpio-reserved-ranges rule (I got it wrong in the first place,
+and the dt schema validator told me), but I'm fine dropping one of the
+two.
+
+> > +            };
+> > +
+> > +            pwm {
+> > +                compatible = "adi,adp5585-pwm";
+> > +                #pwm-cells = <3>;
+> > +            };
+> > +        };
+> > +    };
+> > +
+> > +...
+> > diff --git a/Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml b/Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
+> > new file mode 100644
+> > index 000000000000..351a9d5da566
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
+> > @@ -0,0 +1,35 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pwm/adi,adp5585-pwm.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Analog Devices ADP5585 PWM Generator
+> > +
+> > +maintainers:
+> > +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > +
+> > +description: |
+> 
+> Do not need '|' unless you need to preserve formatting.
+> 
+> > +  The Analog Devices ADP5585 generates a PWM output with configurable frequency
+> > +  and duty cycle represented by a "pwm" child node of the parent MFD device.
+> > +  See Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further
+> > +  details as well as an example.
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/pwm/pwm.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - adi,adp5585-pwm
+> > +
+> > +  "#pwm-cells":
+> > +    const: 3
+> 
+> Also no resources, so this can be part of the parent node.
+
+I'll sure follow the same design for the GPIO and PWM functions :-)
+Let's answer the above question first.
+
+-- 
 Regards,
-Bjorn
+
+Laurent Pinchart
 
