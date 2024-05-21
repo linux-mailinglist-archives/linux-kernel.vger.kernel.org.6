@@ -1,138 +1,443 @@
-Return-Path: <linux-kernel+bounces-184736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A158CAB3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:50:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26BCF8CAB42
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB0E52817C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:50:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A24A1C217BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD0D6CDC4;
-	Tue, 21 May 2024 09:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EF95FBA0;
+	Tue, 21 May 2024 09:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f05aP2+M"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UlVEIXeF"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFC7605CD
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD966EB41
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716284894; cv=none; b=H7KIgUvbc/wr1awlOjA2AwHIq56o/CChSSoLmOI3yj178gucwMXvFIFWxMh1IwSmBtPcrwKLJiq3xllYWgMSaXHV1gDslwm/VHK/VFU3EEq+gDz/WUGV4Hf9qAK4djndXoW6VsfIp/vD1CecVqUPplKLywyLslYRE3tHQF+vxMo=
+	t=1716284991; cv=none; b=rvDaM3hvKlWpimYItdy3pa5dxVm6m4xawBa+qO1UStdPq9R0XD6Q8vLIDgvhE8O/buB7LUFm0ubge9I5bQFypQEuLafDgARURXLAomW58zoUDpUv/D1N+xpQ3bwIgyRdMK9sDTWeVOVefgBRIwHLkOsgNYk+g7D9jf5Gx2g0H1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716284894; c=relaxed/simple;
-	bh=vMUsIvJJY9WMiLki2w/dTwhSNZAndJ90fmU01eNF4YA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MSZDsiKYUwBxkH3NzHhPNcGGaqBocaVl40sqEiTlT4PoWPmP65RQD7ijECQ+aSKLHy9dZJNJOPGVeTW38ot+IaJPhcBK9v/ekbrtgSBH6y66wwcmqfofQ8aqfz/loRr6Pq7xOKzdyu0JhOYyKcnles5MRFiGppwIk/56/gOw2L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=f05aP2+M; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44L9m2Zp045964;
-	Tue, 21 May 2024 04:48:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716284882;
-	bh=PUT7bUu3EzT0iI5LQVCpwGce7FMSJEQZw1AeX5Vgo94=;
-	h=From:To:CC:Subject:Date;
-	b=f05aP2+MeiY1i/YXkBmozrWxxpikCgQeBFhr/tXbQzju9Np5IE9kAZjW84+7zuqDc
-	 76aBZSsuyupMum+ZJCBUO4l7xT6o48kzmsZWLzyvEjCmG3hpP/e0ZqJ1Vmqiaai4Ru
-	 fhGa7kMf333uBWMffn4XUarxdYot+pzxQR/7EsmU=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44L9m2ig052000
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 21 May 2024 04:48:02 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 21
- May 2024 04:48:02 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 21 May 2024 04:48:02 -0500
-Received: from a0497641-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.36])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44L9lwsO074347;
-	Tue, 21 May 2024 04:47:59 -0500
-From: Neha Malcom Francis <n-francis@ti.com>
-To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <jneanne@baylibre.com>,
-        <eblanc@baylibre.com>, <linux-kernel@vger.kernel.org>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <u-kumar1@ti.com>, <j-keerthy@ti.com>,
-        <n-francis@ti.com>
-Subject: [PATCH] drivers: regulator: tps6594-regulator: Correct multi-phase configuration
-Date: Tue, 21 May 2024 15:17:58 +0530
-Message-ID: <20240521094758.2190331-1-n-francis@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716284991; c=relaxed/simple;
+	bh=cyctKyZ6xv3Jcv1nSJ8Y7GXV2A4M4LjyR/6XGLxRfIA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RjiMG8lETTgwRSV0/fzCPXo4Ni7O6M4ekQNcNTlaqu/R3zj4M0q2JlCX1Tu31j8iaImz/7QdZqzXx8SzHpOFsj1u55GJRzcfj54ASjfsWXT11JP7L5/Yjb4Hn2O+BTc9ilFSPGlVHSwhCrn7CfZ73Pl6KbIBP7J7AFPuwd5Iob4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UlVEIXeF; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-56e6a1edecfso11840256a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:49:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716284987; x=1716889787; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ttQWlXfImZ6VMs6eXr/g1fKwqzPLEk4Ki4n5JP6tD3U=;
+        b=UlVEIXeF9L9VmYBcySFxxm6Zn0A0DmUQkHGoAvQbuTBGaLKYQEQHUY594AhxtSM4Z4
+         t5ho59eXcPy5DlgX6V1bVXdaUw1fCpVI/2o5VdSa3mS/m5f09QiJXgrpzX5uZEePjYeE
+         O4suCcEynHh5bZ67boxxGQJ8N3uJkm7Y3HRtyPStgmGGpzKR0xprTP2udDQivbMvkprh
+         knZCtK5W0XBRIVYws0vYcKs09/U6SkfERQAvInThiv2xBq7LcyUYQAJSYgKQJkaFTPbJ
+         Gw0lMuqCOXyMcV8YtcZe7fYXPVFrgGnmL3l7v3rCLeB648pJmEDtnn4zD2Q2xEXCCuju
+         00Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716284987; x=1716889787;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ttQWlXfImZ6VMs6eXr/g1fKwqzPLEk4Ki4n5JP6tD3U=;
+        b=qmV1+RiukSaTXZoqcu8FEhqOj/yAzGkzpxA/8aUL6LVAmp1emw4PFfFSOC5sN6ZDhz
+         S7jyY2xbZs1wxEP2+JdzJGDCHqTaviOTZAzyF8H3AH+dKzVBo8Q8fe560G3e8MaHztbc
+         5mLq3dFkuJ+ZURXaAlRlcw+6KIANRdhMhuq6FwMiKnsQF/BeNv1ZE0G3iNFKYCFpAW9u
+         h9l8KktCygEJR1TP2bs7W3Bx2EMBXD32U/gtaNME6fuGSIRZtCoNH+VvmSBxdHU7NBxJ
+         U22M+vFo0BhcZoiUMw5udkfbanBvW4A6ur5fEivzriRXmBKh4La/q4PNQjoeRhn8dSZ2
+         ebBQ==
+X-Gm-Message-State: AOJu0Yy9Fih9KJxg3fFsfqo1SHY8RWtUcLaUNWG5Am6gvbSeEzD7VE9P
+	oc4iJjLM4LH3Pb6V/5ijNjJqQr6YZKACKP3/mSvMc3bsj/vZLgYCLDQ5KjdxL+Y=
+X-Google-Smtp-Source: AGHT+IGYZltjqowB77AWpArr9RoGUzhswwEoZofmoJx6mtx/FkQZFqOw8katShiW6munDZHWImZ4gg==
+X-Received: by 2002:a17:906:4a49:b0:a59:ba2b:590f with SMTP id a640c23a62f3a-a5a2d67806emr1778800866b.67.1716284987191;
+        Tue, 21 May 2024 02:49:47 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:adf9:e5d:4c15:f725? ([2a01:e0a:982:cbb0:adf9:e5d:4c15:f725])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5d08d36feasm577491566b.15.2024.05.21.02.49.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 02:49:46 -0700 (PDT)
+Message-ID: <a314906d-b297-474d-910c-6634c8c23042@linaro.org>
+Date: Tue, 21 May 2024 11:49:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 06/12] remoteproc: qcom_q6v5_pas: switch to mbn files by
+ default
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Loic Poulain <loic.poulain@linaro.org>, Kalle Valo <kvalo@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ Arnd Bergmann <arnd@arndb.de>
+References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
+ <20240521-qcom-firmware-name-v1-6-99a6d32b1e5e@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240521-qcom-firmware-name-v1-6-99a6d32b1e5e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-According to the TPS6594 PMIC Manual (linked) 8.3.2.1.4 Multi-Phase BUCK
-Regulator Configurations section, the PMIC ignores all the other bucks'
-except the primary buck's regulator registers. This is BUCK1 for
-configurations BUCK12, BUCK123 and BUCK1234 while it is BUCK3 for
-BUCK34. Correct the registers mapped for these configurations
-accordingly.
+On 21/05/2024 11:45, Dmitry Baryshkov wrote:
+> We have been pushing userspace to use mbn files by default for ages.
+> As a preparation for making the firmware-name optional, make the driver
+> use .mbn instead of .mdt files by default.
 
-Fixes: f17ccc5deb4d ("regulator: tps6594-regulator: Add driver for TI TPS6594 regulators")
-Link: https://www.ti.com/lit/gpn/tps6594-q1
-Signed-off-by: Neha Malcom Francis <n-francis@ti.com>
----
-Boot logs: https://gist.github.com/nehamalcom/94595895a7f28385fb5c1ec6c1abda23
+I think we should have a mechanism to fallback to .mdt since downstream
+uses split mdt on the devices filesystem.
 
- drivers/regulator/tps6594-regulator.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Perhaps only specify .firmware_name = "adsp" and add a list of allowed extension
+it will try in a loop ?
 
-diff --git a/drivers/regulator/tps6594-regulator.c b/drivers/regulator/tps6594-regulator.c
-index b7f0c8779757..5fad61785e72 100644
---- a/drivers/regulator/tps6594-regulator.c
-+++ b/drivers/regulator/tps6594-regulator.c
-@@ -287,30 +287,30 @@ static struct tps6594_regulator_irq_type *tps6594_ldos_irq_types[] = {
- static const struct regulator_desc multi_regs[] = {
- 	TPS6594_REGULATOR("BUCK12", "buck12", TPS6594_BUCK_1,
- 			  REGULATOR_VOLTAGE, tps6594_bucks_ops, TPS6594_MASK_BUCKS_VSET,
--			  TPS6594_REG_BUCKX_VOUT_1(1),
-+			  TPS6594_REG_BUCKX_VOUT_1(0),
- 			  TPS6594_MASK_BUCKS_VSET,
--			  TPS6594_REG_BUCKX_CTRL(1),
-+			  TPS6594_REG_BUCKX_CTRL(0),
- 			  TPS6594_BIT_BUCK_EN, 0, 0, bucks_ranges,
- 			  4, 4000, 0, NULL, 0, 0),
- 	TPS6594_REGULATOR("BUCK34", "buck34", TPS6594_BUCK_3,
- 			  REGULATOR_VOLTAGE, tps6594_bucks_ops, TPS6594_MASK_BUCKS_VSET,
--			  TPS6594_REG_BUCKX_VOUT_1(3),
-+			  TPS6594_REG_BUCKX_VOUT_1(2),
- 			  TPS6594_MASK_BUCKS_VSET,
--			  TPS6594_REG_BUCKX_CTRL(3),
-+			  TPS6594_REG_BUCKX_CTRL(2),
- 			  TPS6594_BIT_BUCK_EN, 0, 0, bucks_ranges,
- 			  4, 0, 0, NULL, 0, 0),
- 	TPS6594_REGULATOR("BUCK123", "buck123", TPS6594_BUCK_1,
- 			  REGULATOR_VOLTAGE, tps6594_bucks_ops, TPS6594_MASK_BUCKS_VSET,
--			  TPS6594_REG_BUCKX_VOUT_1(1),
-+			  TPS6594_REG_BUCKX_VOUT_1(0),
- 			  TPS6594_MASK_BUCKS_VSET,
--			  TPS6594_REG_BUCKX_CTRL(1),
-+			  TPS6594_REG_BUCKX_CTRL(0),
- 			  TPS6594_BIT_BUCK_EN, 0, 0, bucks_ranges,
- 			  4, 4000, 0, NULL, 0, 0),
- 	TPS6594_REGULATOR("BUCK1234", "buck1234", TPS6594_BUCK_1,
- 			  REGULATOR_VOLTAGE, tps6594_bucks_ops, TPS6594_MASK_BUCKS_VSET,
--			  TPS6594_REG_BUCKX_VOUT_1(1),
-+			  TPS6594_REG_BUCKX_VOUT_1(0),
- 			  TPS6594_MASK_BUCKS_VSET,
--			  TPS6594_REG_BUCKX_CTRL(1),
-+			  TPS6594_REG_BUCKX_CTRL(0),
- 			  TPS6594_BIT_BUCK_EN, 0, 0, bucks_ranges,
- 			  4, 4000, 0, NULL, 0, 0),
- };
--- 
-2.34.1
+Neil
+
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/remoteproc/qcom_q6v5_pas.c | 76 +++++++++++++++++++-------------------
+>   1 file changed, 38 insertions(+), 38 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 54d8005d40a3..4694ec4f038d 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -812,7 +812,7 @@ static void adsp_remove(struct platform_device *pdev)
+>   
+>   static const struct adsp_data adsp_resource_init = {
+>   	.crash_reason_smem = 423,
+> -	.firmware_name = "adsp.mdt",
+> +	.firmware_name = "adsp.mbn",
+>   	.pas_id = 1,
+>   	.auto_boot = true,
+>   	.ssr_name = "lpass",
+> @@ -822,7 +822,7 @@ static const struct adsp_data adsp_resource_init = {
+>   
+>   static const struct adsp_data sdm845_adsp_resource_init = {
+>   	.crash_reason_smem = 423,
+> -	.firmware_name = "adsp.mdt",
+> +	.firmware_name = "adsp.mbn",
+>   	.pas_id = 1,
+>   	.auto_boot = true,
+>   	.load_state = "adsp",
+> @@ -833,7 +833,7 @@ static const struct adsp_data sdm845_adsp_resource_init = {
+>   
+>   static const struct adsp_data sm6350_adsp_resource = {
+>   	.crash_reason_smem = 423,
+> -	.firmware_name = "adsp.mdt",
+> +	.firmware_name = "adsp.mbn",
+>   	.pas_id = 1,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -849,7 +849,7 @@ static const struct adsp_data sm6350_adsp_resource = {
+>   
+>   static const struct adsp_data sm6375_mpss_resource = {
+>   	.crash_reason_smem = 421,
+> -	.firmware_name = "modem.mdt",
+> +	.firmware_name = "modem.mbn",
+>   	.pas_id = 4,
+>   	.minidump_id = 3,
+>   	.auto_boot = false,
+> @@ -864,7 +864,7 @@ static const struct adsp_data sm6375_mpss_resource = {
+>   
+>   static const struct adsp_data sm8150_adsp_resource = {
+>   	.crash_reason_smem = 423,
+> -	.firmware_name = "adsp.mdt",
+> +	.firmware_name = "adsp.mbn",
+>   	.pas_id = 1,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -879,7 +879,7 @@ static const struct adsp_data sm8150_adsp_resource = {
+>   
+>   static const struct adsp_data sm8250_adsp_resource = {
+>   	.crash_reason_smem = 423,
+> -	.firmware_name = "adsp.mdt",
+> +	.firmware_name = "adsp.mbn",
+>   	.pas_id = 1,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -895,7 +895,7 @@ static const struct adsp_data sm8250_adsp_resource = {
+>   
+>   static const struct adsp_data sm8350_adsp_resource = {
+>   	.crash_reason_smem = 423,
+> -	.firmware_name = "adsp.mdt",
+> +	.firmware_name = "adsp.mbn",
+>   	.pas_id = 1,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -911,7 +911,7 @@ static const struct adsp_data sm8350_adsp_resource = {
+>   
+>   static const struct adsp_data msm8996_adsp_resource = {
+>   	.crash_reason_smem = 423,
+> -	.firmware_name = "adsp.mdt",
+> +	.firmware_name = "adsp.mbn",
+>   	.pas_id = 1,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -925,7 +925,7 @@ static const struct adsp_data msm8996_adsp_resource = {
+>   
+>   static const struct adsp_data cdsp_resource_init = {
+>   	.crash_reason_smem = 601,
+> -	.firmware_name = "cdsp.mdt",
+> +	.firmware_name = "cdsp.mbn",
+>   	.pas_id = 18,
+>   	.auto_boot = true,
+>   	.ssr_name = "cdsp",
+> @@ -935,7 +935,7 @@ static const struct adsp_data cdsp_resource_init = {
+>   
+>   static const struct adsp_data sdm845_cdsp_resource_init = {
+>   	.crash_reason_smem = 601,
+> -	.firmware_name = "cdsp.mdt",
+> +	.firmware_name = "cdsp.mbn",
+>   	.pas_id = 18,
+>   	.auto_boot = true,
+>   	.load_state = "cdsp",
+> @@ -946,7 +946,7 @@ static const struct adsp_data sdm845_cdsp_resource_init = {
+>   
+>   static const struct adsp_data sm6350_cdsp_resource = {
+>   	.crash_reason_smem = 601,
+> -	.firmware_name = "cdsp.mdt",
+> +	.firmware_name = "cdsp.mbn",
+>   	.pas_id = 18,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -962,7 +962,7 @@ static const struct adsp_data sm6350_cdsp_resource = {
+>   
+>   static const struct adsp_data sm8150_cdsp_resource = {
+>   	.crash_reason_smem = 601,
+> -	.firmware_name = "cdsp.mdt",
+> +	.firmware_name = "cdsp.mbn",
+>   	.pas_id = 18,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -977,7 +977,7 @@ static const struct adsp_data sm8150_cdsp_resource = {
+>   
+>   static const struct adsp_data sm8250_cdsp_resource = {
+>   	.crash_reason_smem = 601,
+> -	.firmware_name = "cdsp.mdt",
+> +	.firmware_name = "cdsp.mbn",
+>   	.pas_id = 18,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -992,7 +992,7 @@ static const struct adsp_data sm8250_cdsp_resource = {
+>   
+>   static const struct adsp_data sc8280xp_nsp0_resource = {
+>   	.crash_reason_smem = 601,
+> -	.firmware_name = "cdsp.mdt",
+> +	.firmware_name = "cdsp.mbn",
+>   	.pas_id = 18,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -1006,7 +1006,7 @@ static const struct adsp_data sc8280xp_nsp0_resource = {
+>   
+>   static const struct adsp_data sc8280xp_nsp1_resource = {
+>   	.crash_reason_smem = 633,
+> -	.firmware_name = "cdsp.mdt",
+> +	.firmware_name = "cdsp.mbn",
+>   	.pas_id = 30,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -1020,8 +1020,8 @@ static const struct adsp_data sc8280xp_nsp1_resource = {
+>   
+>   static const struct adsp_data x1e80100_adsp_resource = {
+>   	.crash_reason_smem = 423,
+> -	.firmware_name = "adsp.mdt",
+> -	.dtb_firmware_name = "adsp_dtb.mdt",
+> +	.firmware_name = "adsp.mbn",
+> +	.dtb_firmware_name = "adsp_dtb.mbn",
+>   	.pas_id = 1,
+>   	.dtb_pas_id = 0x24,
+>   	.lite_pas_id = 0x1f,
+> @@ -1040,8 +1040,8 @@ static const struct adsp_data x1e80100_adsp_resource = {
+>   
+>   static const struct adsp_data x1e80100_cdsp_resource = {
+>   	.crash_reason_smem = 601,
+> -	.firmware_name = "cdsp.mdt",
+> -	.dtb_firmware_name = "cdsp_dtb.mdt",
+> +	.firmware_name = "cdsp.mbn",
+> +	.dtb_firmware_name = "cdsp_dtb.mbn",
+>   	.pas_id = 18,
+>   	.dtb_pas_id = 0x25,
+>   	.minidump_id = 7,
+> @@ -1060,7 +1060,7 @@ static const struct adsp_data x1e80100_cdsp_resource = {
+>   
+>   static const struct adsp_data sm8350_cdsp_resource = {
+>   	.crash_reason_smem = 601,
+> -	.firmware_name = "cdsp.mdt",
+> +	.firmware_name = "cdsp.mbn",
+>   	.pas_id = 18,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -1076,7 +1076,7 @@ static const struct adsp_data sm8350_cdsp_resource = {
+>   
+>   static const struct adsp_data mpss_resource_init = {
+>   	.crash_reason_smem = 421,
+> -	.firmware_name = "modem.mdt",
+> +	.firmware_name = "modem.mbn",
+>   	.pas_id = 4,
+>   	.minidump_id = 3,
+>   	.auto_boot = false,
+> @@ -1093,7 +1093,7 @@ static const struct adsp_data mpss_resource_init = {
+>   
+>   static const struct adsp_data sc8180x_mpss_resource = {
+>   	.crash_reason_smem = 421,
+> -	.firmware_name = "modem.mdt",
+> +	.firmware_name = "modem.mbn",
+>   	.pas_id = 4,
+>   	.auto_boot = false,
+>   	.proxy_pd_names = (char*[]){
+> @@ -1108,7 +1108,7 @@ static const struct adsp_data sc8180x_mpss_resource = {
+>   
+>   static const struct adsp_data msm8996_slpi_resource_init = {
+>   	.crash_reason_smem = 424,
+> -	.firmware_name = "slpi.mdt",
+> +	.firmware_name = "slpi.mbn",
+>   	.pas_id = 12,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -1122,7 +1122,7 @@ static const struct adsp_data msm8996_slpi_resource_init = {
+>   
+>   static const struct adsp_data sdm845_slpi_resource_init = {
+>   	.crash_reason_smem = 424,
+> -	.firmware_name = "slpi.mdt",
+> +	.firmware_name = "slpi.mbn",
+>   	.pas_id = 12,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -1138,7 +1138,7 @@ static const struct adsp_data sdm845_slpi_resource_init = {
+>   
+>   static const struct adsp_data wcss_resource_init = {
+>   	.crash_reason_smem = 421,
+> -	.firmware_name = "wcnss.mdt",
+> +	.firmware_name = "wcnss.mbn",
+>   	.pas_id = 6,
+>   	.auto_boot = true,
+>   	.ssr_name = "mpss",
+> @@ -1148,7 +1148,7 @@ static const struct adsp_data wcss_resource_init = {
+>   
+>   static const struct adsp_data sdx55_mpss_resource = {
+>   	.crash_reason_smem = 421,
+> -	.firmware_name = "modem.mdt",
+> +	.firmware_name = "modem.mbn",
+>   	.pas_id = 4,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -1163,7 +1163,7 @@ static const struct adsp_data sdx55_mpss_resource = {
+>   
+>   static const struct adsp_data sm8450_mpss_resource = {
+>   	.crash_reason_smem = 421,
+> -	.firmware_name = "modem.mdt",
+> +	.firmware_name = "modem.mbn",
+>   	.pas_id = 4,
+>   	.minidump_id = 3,
+>   	.auto_boot = false,
+> @@ -1181,8 +1181,8 @@ static const struct adsp_data sm8450_mpss_resource = {
+>   
+>   static const struct adsp_data sm8550_adsp_resource = {
+>   	.crash_reason_smem = 423,
+> -	.firmware_name = "adsp.mdt",
+> -	.dtb_firmware_name = "adsp_dtb.mdt",
+> +	.firmware_name = "adsp.mbn",
+> +	.dtb_firmware_name = "adsp_dtb.mbn",
+>   	.pas_id = 1,
+>   	.dtb_pas_id = 0x24,
+>   	.minidump_id = 5,
+> @@ -1200,8 +1200,8 @@ static const struct adsp_data sm8550_adsp_resource = {
+>   
+>   static const struct adsp_data sm8550_cdsp_resource = {
+>   	.crash_reason_smem = 601,
+> -	.firmware_name = "cdsp.mdt",
+> -	.dtb_firmware_name = "cdsp_dtb.mdt",
+> +	.firmware_name = "cdsp.mbn",
+> +	.dtb_firmware_name = "cdsp_dtb.mbn",
+>   	.pas_id = 18,
+>   	.dtb_pas_id = 0x25,
+>   	.minidump_id = 7,
+> @@ -1220,8 +1220,8 @@ static const struct adsp_data sm8550_cdsp_resource = {
+>   
+>   static const struct adsp_data sm8550_mpss_resource = {
+>   	.crash_reason_smem = 421,
+> -	.firmware_name = "modem.mdt",
+> -	.dtb_firmware_name = "modem_dtb.mdt",
+> +	.firmware_name = "modem.mbn",
+> +	.dtb_firmware_name = "modem_dtb.mbn",
+>   	.pas_id = 4,
+>   	.dtb_pas_id = 0x26,
+>   	.minidump_id = 3,
+> @@ -1243,7 +1243,7 @@ static const struct adsp_data sm8550_mpss_resource = {
+>   
+>   static const struct adsp_data sc7280_wpss_resource = {
+>   	.crash_reason_smem = 626,
+> -	.firmware_name = "wpss.mdt",
+> +	.firmware_name = "wpss.mbn",
+>   	.pas_id = 6,
+>   	.auto_boot = true,
+>   	.proxy_pd_names = (char*[]){
+> @@ -1259,8 +1259,8 @@ static const struct adsp_data sc7280_wpss_resource = {
+>   
+>   static const struct adsp_data sm8650_cdsp_resource = {
+>   	.crash_reason_smem = 601,
+> -	.firmware_name = "cdsp.mdt",
+> -	.dtb_firmware_name = "cdsp_dtb.mdt",
+> +	.firmware_name = "cdsp.mbn",
+> +	.dtb_firmware_name = "cdsp_dtb.mbn",
+>   	.pas_id = 18,
+>   	.dtb_pas_id = 0x25,
+>   	.minidump_id = 7,
+> @@ -1283,8 +1283,8 @@ static const struct adsp_data sm8650_cdsp_resource = {
+>   
+>   static const struct adsp_data sm8650_mpss_resource = {
+>   	.crash_reason_smem = 421,
+> -	.firmware_name = "modem.mdt",
+> -	.dtb_firmware_name = "modem_dtb.mdt",
+> +	.firmware_name = "modem.mbn",
+> +	.dtb_firmware_name = "modem_dtb.mbn",
+>   	.pas_id = 4,
+>   	.dtb_pas_id = 0x26,
+>   	.minidump_id = 3,
+> 
 
 
