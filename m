@@ -1,123 +1,103 @@
-Return-Path: <linux-kernel+bounces-185365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF80B8CB408
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:06:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E318CB409
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91D3E1F2359D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:06:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E73831F23508
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCB61494C9;
-	Tue, 21 May 2024 19:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B8714901C;
+	Tue, 21 May 2024 19:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWoUZi6L"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P4AX6Tf6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c1SblpWy"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE13142916;
-	Tue, 21 May 2024 19:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345AF142916
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 19:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716318394; cv=none; b=KfazDQeYlZOF+9SA3fTewq9EeFIGwloMH6LWkUqM4yDRpO64EULS5qVrKpXhL5/OE4zxyl7m1oGnU0LLIxWhBZJalAiQeebT/zcLa2eXzVHzHmnmBYYyr0NwvEC6R24KPsP1UWnB2HB5t+MSz2sPjVr6jlWWk6zA+hQTTuKsyPI=
+	t=1716318451; cv=none; b=lxqXiclB8uZnhX3PrXOUMVfAEyIiKBjSVRfPhzucsJjQC72RK5b+kHpiRZUMNZT97fXGOC/kHoGZk4idShZPnzUQai1HFuL1XnMoMp8NTZsimG4XYT/43CWHJ0sirrkVQJFIDPQyeFf7jz7enjtSR+cs16Xzi9/uI5muUTWxWxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716318394; c=relaxed/simple;
-	bh=jf3PoTCYyoGQlltkoN5drs/N/MbZHqPObDflP8b6Ij4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ESHMlzM7dxrx6GxlsQPkq2iZenVkE+xwg2F1D7yUrffkquWys6ifu7/gapcLsuKgKEKz1UuZoXyDouugKsS2avJ/3M33uKMwnqXBScfcqYG9yxwwh5PRhEeeKUwiFloIHTunePakA0LR5N4oGtIjlInuolHHFzgDPdMCygiVuKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWoUZi6L; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2b432be5cc9so652824a91.3;
-        Tue, 21 May 2024 12:06:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716318392; x=1716923192; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kCi2tgKaPoizRmS2HCm41p2WvP6QyyrMLgfX9gf4Sao=;
-        b=VWoUZi6L6e6Mkx3aSJ+rQUx7g6lOr+AshA7ABLT0ykZidVXPZgDRcT003h/5z5437e
-         0Xgdwfy/zk/Mv9AaFE0juK9saNBj75Sd4nkyz7NQWmfRlDf9J1cMQhDRf1KOeUG54Xqc
-         8soCLcLN6f6JNZv1pFUP8auhEV89yFplfq0106Wq+4JtrepDaVZusevh4W1zZuCoxqiw
-         XgX+jALqu/bC29baGjgxnMu9dBDGcKihNj2oRjvp4rrzG2Epx484DwAPJLd8XG/EOvqs
-         Yv2Gqxk4+cYmQ7V1HW+gf/D7zIEB2B1AGmJuDxAdxRs6B2F8VxCeVmFlsjQlOFZJUvi4
-         ln9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716318392; x=1716923192;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kCi2tgKaPoizRmS2HCm41p2WvP6QyyrMLgfX9gf4Sao=;
-        b=HLL4Q5Pc/aTyOHEvEQjoIcIEXCqmvLfhpd2RZDf4JDlf+rI8/jIAZ16ZMaLBSA/tuY
-         YxwOZ5MUNVol2fI3fvdrPAQ70N2sCGBpUXnpiahT8pH1+5lwQQgsT79rff1q4Ym3nJmL
-         zQRUG/VJjcXJpiC1eSMP8pKpj8PGZBN8zDCZEy9ZGCRKkfoT58W3SUqUtajsLX9n9i4S
-         gzd8DrGp5B521rqHldgd5+7W59Gz4gPExM6yXinfeArKFoJbMyGKascuBVLQIIWytMdy
-         nnxoUMKFbBGvmk73gtIHqZ49JgviOEpQNBfAIveJizdB4prI2LPcCBFkZtWgn+QdWPEA
-         Pm9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUVn8IHDGZZN4ItKJEGLoUaSk+y9OzTLMAIX6tmHOYgN+6cTfMJxx/7RBx/sd9Te4XFzJgQ2/QHRSBDJZtZmRtF3gB8/qodhos6xEcd
-X-Gm-Message-State: AOJu0Yw9znZUNO1qvHrwglJSFJUuNWWlaRixi7SOmf5hwdtroxZdh6+4
-	ucB2Y+5VSMaqNqSaM+MqhItcw50/EWMEHwGrUyuofJ7Ry5S9xn2b
-X-Google-Smtp-Source: AGHT+IEYGFDa0EL7fznkIwua/pLhml67HOs1OCiKfl5rty5U01lfBd3pLOVVWeBS2HgqE1CYrR0Dfg==
-X-Received: by 2002:a17:90b:1485:b0:2bd:92da:23a0 with SMTP id 98e67ed59e1d1-2bd9f460769mr28984a91.25.1716318391936;
-        Tue, 21 May 2024 12:06:31 -0700 (PDT)
-Received: from localhost.localdomain ([27.7.152.139])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bd94c3d18csm1495277a91.49.2024.05.21.12.06.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 12:06:31 -0700 (PDT)
-From: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
-To: andersson@kernel.org,
-	konrad.dybcio@linaro.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	julia.lawall@inria.fr,
-	javier.carrasco@wolfvision.net,
-	skhan@linuxfoundation.org,
-	Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
-Subject: [PATCH next RESEND] drivers: soc: qcom: Auto cleanup using __free()
-Date: Wed, 22 May 2024 00:36:24 +0530
-Message-Id: <20240521190624.1087210-1-pvkumar5749404@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716318451; c=relaxed/simple;
+	bh=UV1GwPjRYKJek6MZ689XDfh23nHLwYeqapg2ckKYh4Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=A7OBEbTCigrmPMwKDu1+6hV2OLeUhYITrahXDtygloj156O7s28uyiPp58Qwv3xGN9mxv555n7YAhl/t1PK9GnUpiqHb2Pf4DQC8vWT8D4F01dabcWO+1rSdOPvcnBXFZqMgug//ky2lRjzhDloB3KMJT9/DWGBTXu2jM+dtXNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P4AX6Tf6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c1SblpWy; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716318441;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ppUtLbpu54U428XjsLiaEeb2s73JCEqX0+Mtd4NH/l4=;
+	b=P4AX6Tf6BLCdrGmVzfVNnL/DZbUvT94AtZ1pnnkQm16sBcxjFh3wNoXsyAlUXnLkPxt8Wd
+	VKLcpGmezk0/Gb8gmC+Xd7UwTLrbDZyadlR6ZoclMyCx5JiQ1T54BHh5zFCfsYwBlzNHE0
+	QmRt0Yu2jbBOQlE3utCug9u7ZeSJAQDg5DKSwK2US/9FnGH2qiiROAK6X5IcT9BPCB5xqE
+	ZDE/lVdoHQpW1O/HTsKlLpSdyAI371U2MRAF5wMeEP3uYVZ0z7CLWT7NcS9iqoHyKwGGY/
+	tmrVVU+An2oYyL0PPNvpNcOnyzZQrcJ3RZbyg5VQ67VIg1dnKVUi0u3thCjFxQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716318441;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ppUtLbpu54U428XjsLiaEeb2s73JCEqX0+Mtd4NH/l4=;
+	b=c1SblpWybs74zN6Oz72KDKlAkV0vsDrQTMsk4T38lilQNpKnvyYRJFVWrk7FjkvndUoYpg
+	00wT8M5ncyGfwJDg==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v5 19/30] printk: nbcon: Provide function to
+ flush using write_atomic()
+In-Reply-To: <ZktmhL2hos8-IrNb@pathway.suse.cz>
+References: <20240502213839.376636-1-john.ogness@linutronix.de>
+ <20240502213839.376636-20-john.ogness@linutronix.de>
+ <ZktmhL2hos8-IrNb@pathway.suse.cz>
+Date: Tue, 21 May 2024 21:13:09 +0206
+Message-ID: <87seybdlwi.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Use automated cleanup to replace of_node_put() in
-qcom_smem_resolve_mem().
+On 2024-05-20, Petr Mladek <pmladek@suse.com> wrote:
+> What about reshufling the code a bit?
+>
+> <proposal>
+  [...]
+> </proposal>
 
-Signed-off-by: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
----
- drivers/soc/qcom/smem.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Your proposal is fine and is easier to follow. Thanks.
 
-diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
-index 7191fa0c087f..ad1cf8dcc6ec 100644
---- a/drivers/soc/qcom/smem.c
-+++ b/drivers/soc/qcom/smem.c
-@@ -1032,18 +1032,16 @@ static int qcom_smem_resolve_mem(struct qcom_smem *smem, const char *name,
- 				 struct smem_region *region)
- {
- 	struct device *dev = smem->dev;
--	struct device_node *np;
- 	struct resource r;
- 	int ret;
-+	struct device_node *np __free(device_node) = of_parse_phandle(dev->of_node, name, 0);
- 
--	np = of_parse_phandle(dev->of_node, name, 0);
- 	if (!np) {
- 		dev_err(dev, "No %s specified\n", name);
- 		return -EINVAL;
- 	}
- 
- 	ret = of_address_to_resource(np, 0, &r);
--	of_node_put(np);
- 	if (ret)
- 		return ret;
- 
--- 
-2.34.1
+>> +	/*
+>> +	 * This context must flush any new records added while the console
+>> +	 * was locked. The console_srcu_read_lock must be taken to ensure
+>> +	 * the console is usable throughout flushing.
+>> +	 */
+>> +	cookie = console_srcu_read_lock();
+>
+> In principle, this should not be needed because the console is
+> added/removed under con->device_lock() in
+> register_console()/unregister_console().  And this function
+> nbcon_driver_release() should be called under the same lock.
 
+I added a comment here to make it clear why it is needed. It is about
+making sure the console is _usable_ during the flushing, i.e. it
+prevents console_suspend() and console_stop() from exiting while the
+flush is in progress.
+
+I will leave this as is for v6.
+
+John
 
