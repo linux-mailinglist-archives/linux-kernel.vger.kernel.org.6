@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-185418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB5A8CB4B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:31:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DBFA8CB4BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD6DD282B83
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:31:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEEB51C219EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0F5149C60;
-	Tue, 21 May 2024 20:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BA1149C7B;
+	Tue, 21 May 2024 20:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gdwzOf54"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FzgKnagN"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9D050269
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA0E54F91
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716323451; cv=none; b=oE4jlZBlQ1zSzCQNvzQ7pgrl9UlibZVDeswXCM995K2cCtLCcojKkmseEAZ+VV8BUiUbO5RZRtMG4FNFXteSoowjefPFFyf7ggPXEDL+9uH2BE7tSPPMxIucj6bZVh9B4prqPVEJtrOqWWGdr8vxuqp44RWyXdoJ0hOqVhwNCBs=
+	t=1716323452; cv=none; b=ZojPhYnJwhczSJzA15zWzFGYM7xXYnAcTg0a4Ien+H/r8jBMRwXzk60aOaZ01lhcxg3Z7qmSYBXA6IIhgaVvEawTqK5nE6H195TZjAfo4KwvBVkz/2xhLRWc8OWjrn6b3YSLi2zfWl84oLMCnM7VtAdeqF+jG5SLTj+cQZC0J6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716323451; c=relaxed/simple;
-	bh=+BCS5fG7t1ac6ivgcoP/WGAfPI0hUuFmhb/yRKE0Y3Q=;
+	s=arc-20240116; t=1716323452; c=relaxed/simple;
+	bh=mMkzAyWz/qVN9O2XMqdjyNpMMewXubKPHRJ1nIx25Rg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lnKQ/+2YVyVzEmQIotneD7eGt2gFfvDUNW3CXW6ZHTCSTrn6Ov6FHU3nbaRNEFDtuQUd56w/QaKzDr8OXP0bzT4sATC33Ls7wODsC74exTk20LqEkpBgAUBqeq8/NC2mAn/1dCih8x/DblZxQCIoosqjgnJMBDpT0exXCygRdz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gdwzOf54; arc=none smtp.client-ip=209.85.208.180
+	 In-Reply-To:To:Cc; b=kYSKxU9O3TT4c3L4By6mVK3DAOnIQLdhGWIGmOk/Q+KplCFK/lBkOfK0rATUmh5nL5/AbRP4uso3Yq6AJXWneiucgZEgOD6h/okelCoE5NasAwZECJfS82lawrd3iB0N7+ZGFVJBPYz7RnJekc7HZxfg09Gbwx8yBS65W4tO9xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FzgKnagN; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e3e18c240fso54694721fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:30:49 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5241b49c0daso3716378e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:30:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716323448; x=1716928248; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716323449; x=1716928249; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=61aHwd2183bAP0kT15DI6K+JvUWTUFMjXYFTY8xR2sg=;
-        b=gdwzOf54YG5qRzUKwmvrPBZkODYT+zOz7+fIOuD3MAgzaqDo3tC/74S7SMLAUe4GOM
-         MWwC91nlJ24SVSpkJxEflSIVUoKDfMfAmOFCcbpDOl5R6gt+bkiQzMrplrotM/BkUN8g
-         2v/6Lh3LfMz4d9fCre3sV1qWOuErFKwoUYkCDjoIgAJCzkPzXZFbWQc2e4pp3k7x6IlI
-         15+GtvHLiZWkH6flAjJwLiciCvg/4zt5Uf/Ui5ekc4C/wbrRNkgh8zjT4R/NH4NpEOj2
-         lYpv7NPkl9pz+oivlEX+adRk3N1VWxuNtDF9KfmweOTkRDtVkPAkTlqRYiJmX71srPPH
-         KvqQ==
+        bh=Pp0wgsOf+otlTEcxeglIqsX7pRYpEdZKxDMC0pyUGd0=;
+        b=FzgKnagNn332CgOgZlxGOZxxV4fDLxEM7R4iRSH2GsI6kZ50HFodr/ELTEzt9NlerI
+         9BopCnNit6OmxNVGZoQEdhT8eKoB6bv0cmtIOElQR0vi2aVC2MTUP379XfI7XlpK1mYE
+         AY9AlVgNnupjCf4cvjGJK5igSg6USlHBsg0/kj+qeCQI8oGOQLW7clAl+Ga8KIjHLNAw
+         qgTI2odD3cMCQ1l+sUn9GzaYzHOZWp0cy2pX+YZgA21/7bWWvHecB4/ORr3gRUf3tXiQ
+         FG+B0QD8hoC2Z1iu1hjADLROnR4229G1V6mS9OiMzcno0ZV/Y4D1DUqIXoCDQN9OXTza
+         +nOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716323448; x=1716928248;
+        d=1e100.net; s=20230601; t=1716323449; x=1716928249;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=61aHwd2183bAP0kT15DI6K+JvUWTUFMjXYFTY8xR2sg=;
-        b=bv9euzbJlSbpWC1oqtj+G1UkPkNt/9OKbVTLBwnPe5fKaHnNigqTSns6r6ZPwCjcai
-         ijZmBdVYF7+bRVO8AgjLIriQ56XFV5YiIo1Y8CkIQps96WbOYzFZjI8ZC6C6T12jxE5q
-         lsbiN6x3CEuHZw1As7Al4VTR/6hc7e7pKyLCFsaSj2Mhg5h4g6NdT6bVmvYjlMQISoeb
-         9WeW+aZ9+zwAHjCHVdou+sx6UTn8GAG152xHjM4q9iPhor2E5TEBFd7caNP6LumVZ4o1
-         5UuWKnWtU71zgy+xQnO+abWvFiiLla+q2FLOgMFrtEgXmZZzZg4FZLP94insXAfn+rAD
-         xEIg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9eCAf7CPwzAZUTYLzSYHiPl/zTVc4i38F/IANg3OKcoJMOU3SK0KEMt7OoaIMzlBtywdVas0O1wm9sWQm+uDEkxTj/Ef0WL5jbtom
-X-Gm-Message-State: AOJu0YyCSRGD0wuQlBtSILGUnWiwn8wbMAf0uDrxulqi0HJ3S4D4NOUI
-	18DkVLP/AbYO0ZnJABCzWrEWMKMxGNMJrkiKVdFJ8lWqrKUBxBMqd9+ym+E4Syk=
-X-Google-Smtp-Source: AGHT+IHy0pjC5CDy3P6mbf7msRN50iLlv/wcGutIEXt9GlQXiF1OAnp2jM95uZzEJ4jxdQSM2h9I+w==
-X-Received: by 2002:a05:6512:3294:b0:51b:6366:3459 with SMTP id 2adb3069b0e04-5221027800cmr27851507e87.67.1716323448405;
-        Tue, 21 May 2024 13:30:48 -0700 (PDT)
+        bh=Pp0wgsOf+otlTEcxeglIqsX7pRYpEdZKxDMC0pyUGd0=;
+        b=lfurwRpytgu912TcGWUhF9IeDYUMcPGX5jmgYE+BupZDO4wL34UPoY/KjS1z2MXGEC
+         P6Zo44xepnteiQ8pA2DqfVx/CsB+yD+FZV29tNgU1v+yMiKbbO0sBZRgmgmdFKGw0qYx
+         5ENnOv7dB4+co/o3tr3HxlUDL5BTHU+G42oYDP98+pqnSLsNThFKvrDk7PX6ebJpQ/Ax
+         LqbA5v85c1u+UwE58te6bi4kisLsx/Yps8IJJpPXP0qhZ/Hei59RPK9rwTFHWs1abmcl
+         Mg5mf2EwYb92cyybGyeXRSAVwOTZMDMh8mnUKu+VhRrRysX58kItpeba7dYdFts0JkZ+
+         z8tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6EldBSmjPxvrqB9cm2Q5V+KsltfTls5sxfbxkZolIasx3jAuKfPMo0/lJdGa4Bje4tA+XUekBc41WJNPMlaq/VvZZibDdUUs10sN6
+X-Gm-Message-State: AOJu0Yx/OlFZsRHOv29MITQlEtX3ZBBtHPuzpS+rOoShIM0NpitGEbRh
+	UhxhraW39+eo2GCJVSv6L8OhNbZkCrkNsD6aAuw5VE1H2GwhIslyX0Wik7P94IA=
+X-Google-Smtp-Source: AGHT+IEx8QHVp0uTJ2cLWhq4ftpPXl3iBNLrS/c1OcCJiaHJ6hbKc/1kI1/oPi+SIpmEttUD6fzuZg==
+X-Received: by 2002:a19:2d0e:0:b0:51b:567e:7ea4 with SMTP id 2adb3069b0e04-5220fc7945cmr20433710e87.26.1716323449129;
+        Tue, 21 May 2024 13:30:49 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5238ec18fd2sm2538664e87.155.2024.05.21.13.30.47
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5238ec18fd2sm2538664e87.155.2024.05.21.13.30.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 13:30:47 -0700 (PDT)
+        Tue, 21 May 2024 13:30:48 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 21 May 2024 23:30:45 +0300
-Subject: [PATCH 1/2] phy: qcom: qmp-pcie: restore compatibility with
- existing DTs
+Date: Tue, 21 May 2024 23:30:46 +0300
+Subject: [PATCH 2/2] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: drop
+ second output clock name
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240521-fix-pcie-phy-compat-v1-1-8aa415b92308@linaro.org>
+Message-Id: <20240521-fix-pcie-phy-compat-v1-2-8aa415b92308@linaro.org>
 References: <20240521-fix-pcie-phy-compat-v1-0-8aa415b92308@linaro.org>
 In-Reply-To: <20240521-fix-pcie-phy-compat-v1-0-8aa415b92308@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -91,56 +91,61 @@ Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
  devicetree@vger.kernel.org
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1536;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1599;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=+BCS5fG7t1ac6ivgcoP/WGAfPI0hUuFmhb/yRKE0Y3Q=;
- b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ5ovS1mu0/nibRkdWhw9d1ZFnVJhnxugl2whuDxytnRy/
- /WWbM5ORmMWBkYuBlkxRRafgpapMZuSwz7smFoPM4iVCWQKAxenAEwkcDn7f4/f+0RuqrBI3jzO
- vCPyrtznwwsSlvofCw/N5zt1STu9c1tpQOfU4J2szYYa2nHJobY338T6mjFWzznGPbnv8lR7wYz
- VLt1mTE+SZulbFW9h2LXY1UPX5lCDcdzfF5wrXum9ETn+uuzEqg8TZ2zPKb82T6n6tMKPimUMFQ
- 0bC9VXXW6anzql8L/jp7zWZuVzlfPWbM9g2zT1A+f7kBvzbH5VxqossUw9v2hKMzefXVrcErFLA
- u1P/2TzFRt42ukcWLOEyaV2CaeAdR7j12cCF/1+rr8drih4g684313fZNVEU8WvDQafQto8jCdW
- bprhx1uhdHyiq75HrsnF/Wycrb8WPgnZaVge83J2w0o/AA==
+ bh=mMkzAyWz/qVN9O2XMqdjyNpMMewXubKPHRJ1nIx25Rg=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmTQR2ydgr373/+ZrReuBiiCPXPsnPvPUpPweIk
+ +4iPSaWE9qJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZk0EdgAKCRCLPIo+Aiko
+ 1XXhB/4mZQjQ8rLR/uJtqT2Pi4rQQ8eH+AKYTjGYWRIhpsGtkGy1LeqMfQCnMFUpfQg7c8dWDWa
+ yqDNA3P5D5tnmknhaoH6yEFDYmqoEiATcnZHvevWqpqmrUwr3pYKLU7jsp739WyZLbJxljZholR
+ P8rIhnhnNzw3rAs+1i18LeUkqjbhzgJWrnZRN0O5u+HcrZh9jpKSZciUtrEr9SlKsNsE3PgNHNS
+ sIVbzJk/PM2HrFWAGvYTQJViogzeQuKWdENWW6J+5aTwf1K/7eNjQr9IZEd8wPKrOv/WO5+dW2r
+ G5Fiebvg29UJ3A0bYdISOnCukq1AM0os/84vW2k6ycze5vVt
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Existing device trees specify only a single clock-output-name for the
-PCIe PHYs. The function phy_aux_clk_register() expects a second entry in
-that property. When it doesn't find it, it returns an error, thus
-failing the probe of the PHY and thus breaking support for the
-corresponding PCIe host.
+There is no need to specify exact name for the second (AUX) output
+clock. It has never been used for the lookups based on the system clock
+name. Partially revert commit 72bea132f368 ("dt-bindings: phy:
+qcom,sc8280xp-qmp-pcie-phy: document PHY AUX clock on SM8[456]50 SoCs"),
+returning compatibility with the existing device tree: reduce
+clock-output-names to always contain a single entry.
 
-Follow the approach of the combo USB+DT PHY and generate the name for
-the AUX clocks instead of requiring it in DT.
-
-Fixes: 583ca9ccfa80 ("phy: qcom: qmp-pcie: register second optional PHY AUX clock")
+Fixes: 72bea132f368 ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: document PHY AUX clock on SM8[456]50 SoCs")
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ .../devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml        | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-index 6c796723c8f5..b4767b8cc014 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-@@ -3730,14 +3730,11 @@ static int phy_aux_clk_register(struct qmp_pcie *qmp, struct device_node *np)
- {
- 	struct clk_fixed_rate *fixed = &qmp->aux_clk_fixed;
- 	struct clk_init_data init = { };
--	int ret;
-+	char name[64];
+diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+index 16634f73bdcf..03dbd02cf9e7 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+@@ -91,8 +91,7 @@ properties:
+   "#clock-cells": true
  
--	ret = of_property_read_string_index(np, "clock-output-names", 1, &init.name);
--	if (ret) {
--		dev_err(qmp->dev, "%pOFn: No clock-output-names index 1\n", np);
--		return ret;
--	}
-+	snprintf(name, sizeof(name), "%s::pipe_aux_clk", dev_name(qmp->dev));
+   clock-output-names:
+-    minItems: 1
+-    maxItems: 2
++    maxItems: 1
  
-+	init.name = name;
- 	init.ops = &clk_fixed_rate_ops;
+   "#phy-cells":
+     const: 0
+@@ -222,14 +221,10 @@ allOf:
+               - qcom,sm8650-qmp-gen4x2-pcie-phy
+     then:
+       properties:
+-        clock-output-names:
+-          minItems: 2
+         "#clock-cells":
+           const: 1
+     else:
+       properties:
+-        clock-output-names:
+-          maxItems: 1
+         "#clock-cells":
+           const: 0
  
- 	fixed->fixed_rate = qmp->cfg->aux_clock_rate;
 
 -- 
 2.39.2
