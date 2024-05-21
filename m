@@ -1,152 +1,131 @@
-Return-Path: <linux-kernel+bounces-185116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA2E8CB0AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D72EA8CB0B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7F681F217AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:46:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 730E51F235AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC10142E69;
-	Tue, 21 May 2024 14:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F09A7EF02;
+	Tue, 21 May 2024 14:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTfMZ3+n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QiGJhf24"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D745A1CD32;
-	Tue, 21 May 2024 14:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4601CD32
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716302758; cv=none; b=QmBUV0aTegrohR1HT1attII7UZ8UB5s6XIElBwpaOd3V9UUhFTeoYZQ321ekjtC7xI+pz4MFLmW/HG+qpUraoPhBVeCpzBZT2ojx4ls0YR2x9SW7o0KAOOeK+nzYlHpPMHgaRviy8RL1a05ij1pIb7B3yq/suuKmQnRwMIMMo/c=
+	t=1716302876; cv=none; b=UQh8E2WooFPXp2nj9ew/cx4XRSCBDFKUcjSWbDZ2yhtGohrWnufk8FrnbztV8hjHrQBbBbsMYqXmw43IG+0pRDaMFl376Ypr2N2NKaTAHer691FKMMtyTU7mgPdFmk14hoZmJbdZJXUI6ZWDdUL2JeIEjrsyf6AY+o9BXc37SIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716302758; c=relaxed/simple;
-	bh=h56f1QL3jb+GHUV4CymHSyb4E4n54peG+Qn4CsaG9Ts=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=hovhlnMbpxvTx4NgzMVrZQ3SCV4qBpfVBf2tXmDCJwf8JzQ3kvdS7dx+IXDxqvIUGur0mVTjreDKyJ73yfHLnSx49FUom3X85xXj/L593Qw9S7zytKIy9qOCVBpIJsTQYpEXKJiZ/RI7g64wu8DkK7Z1bndUi5wrzVCPuaySw4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTfMZ3+n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 186EFC2BD11;
-	Tue, 21 May 2024 14:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716302757;
-	bh=h56f1QL3jb+GHUV4CymHSyb4E4n54peG+Qn4CsaG9Ts=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=bTfMZ3+ncJE7OLdODIqNXZ6D9GrNsCumq/EQpRt77Z9Zv7L06eor07wgeqfv89scD
-	 Uu5zX7o+SWFtkq9wHB9lE/UtUdRmwKpQBgwRnvvp2cHsqRR8vyS2nNzlR1KKKnWhLp
-	 8bBJbDfB1DCxyn5/IIE7YnJq/C6naem9KgEpliUFexiziI0pbrWlMRHmeziBo4ys97
-	 8TadNnKqkHCElBZv7jUzucCHAqq2gyM3nonTLdTBj0hKRr34OgEyAkBVe01MumVDa8
-	 Q2k7oOBbEXFe5GZyAZnviDypZ41Kw/7IZhkms94HsIXqgAiMA3oqJQfIWDASrPv1zd
-	 qFAIt4azUjK/A==
+	s=arc-20240116; t=1716302876; c=relaxed/simple;
+	bh=8RjIHIRy05YNlY6wzjQTN4uDGH/wp3L0vBIoPBxibv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M5rX7FVooFIRx+xioqTvi1/dDKYei7tJtRBjjljajDjGiazFIDwh5hbOpxPAt4oHMeihQq2fEuOc8MB1MRMjoex2i4r6MS3x/6cD64CN5aR/cbGXwc8vo8vWZOhOUrGZUen1eipe+iZIZnQbadBknUYjghiwT1e5xBHpLoi8aSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QiGJhf24; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716302874;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6rlVQj7o2xHqikPOD3/lh2xGlv7yRjX/lAkh0YjzPMc=;
+	b=QiGJhf24suPtynYr8LOeU1+44J+E1WQbkd1quBvmmuP22OGMXBbQI+9GjEiqP0HdXz9kC5
+	cAG8doy5bBqM62l3gmEy2TLEYt0FtSY20BdH2Q0MtH8BGa4qO4KJOWevLK5GJkjYIHSOhJ
+	K8L5N3sAY5jOTnqTHQyoeHPKvDTGDcQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-425-Ly-6srLsNUmtRT95Eod9nQ-1; Tue, 21 May 2024 10:47:47 -0400
+X-MC-Unique: Ly-6srLsNUmtRT95Eod9nQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DFF31101A557;
+	Tue, 21 May 2024 14:47:38 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.65])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id BDB2FC15BB1;
+	Tue, 21 May 2024 14:47:37 +0000 (UTC)
+Date: Tue, 21 May 2024 22:47:34 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Eric Chanudet <echanude@redhat.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Zhen Lei <thunder.leizhen@huawei.com>,
+	Yajun Deng <yajun.deng@linux.dev>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Zhang Jianhua <chris.zjh@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: init: override deferred_page_init_max_threads
+Message-ID: <Zky0Bl+H8aWCVP3m@MiWiFi-R3L-srv>
+References: <20240520231555.395979-5-echanude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 May 2024 17:45:52 +0300
-Message-Id: <D1FEJRLKVVXK.2GSTW5LNF9OFY@kernel.org>
-Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Tycho Andersen" <tycho@tycho.pizza>
-Cc: "Jonathan Calmels" <jcalmels@3xx0.net>, <brauner@kernel.org>,
- <ebiederm@xmission.com>, "Luis Chamberlain" <mcgrof@kernel.org>, "Kees
- Cook" <keescook@chromium.org>, "Joel Granados" <j.granados@samsung.com>,
- "Serge Hallyn" <serge@hallyn.com>, "Paul Moore" <paul@paul-moore.com>,
- "James Morris" <jmorris@namei.org>, "David Howells" <dhowells@redhat.com>,
- <containers@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <keyrings@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-4-jcalmels@3xx0.net> <ZktQZi5iCwxcU0qs@tycho.pizza>
- <ptixqmplbovxmqy3obybwphsie2xaybfj46xyafdnol7bme4z4@4kwdljmrkdpn>
- <Zku8839xgFRAEcl+@tycho.pizza> <D1ETFJFE9Y48.1T8I7SIPGFMQ2@kernel.org>
- <Zkyvz122pigJGgEw@tycho.pizza>
-In-Reply-To: <Zkyvz122pigJGgEw@tycho.pizza>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520231555.395979-5-echanude@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-On Tue May 21, 2024 at 5:29 PM EEST, Tycho Andersen wrote:
-> On Tue, May 21, 2024 at 01:12:57AM +0300, Jarkko Sakkinen wrote:
-> > On Tue May 21, 2024 at 12:13 AM EEST, Tycho Andersen wrote:
-> > > On Mon, May 20, 2024 at 12:25:27PM -0700, Jonathan Calmels wrote:
-> > > > On Mon, May 20, 2024 at 07:30:14AM GMT, Tycho Andersen wrote:
-> > > > > there is an ongoing effort (started at [0]) to constify the first=
- arg
-> > > > > here, since you're not supposed to write to it. Your usage looks
-> > > > > correct to me, so I think all it needs is a literal "const" here.
-> > > >=20
-> > > > Will do, along with the suggestions from Jarkko
-> > > >=20
-> > > > > > +	struct ctl_table t;
-> > > > > > +	unsigned long mask_array[2];
-> > > > > > +	kernel_cap_t new_mask, *mask;
-> > > > > > +	int err;
-> > > > > > +
-> > > > > > +	if (write && (!capable(CAP_SETPCAP) ||
-> > > > > > +		      !capable(CAP_SYS_ADMIN)))
-> > > > > > +		return -EPERM;
-> > > > >=20
-> > > > > ...why CAP_SYS_ADMIN? You mention it in the changelog, but don't
-> > > > > explain why.
-> > > >=20
-> > > > No reason really, I was hoping we could decide what we want here.
-> > > > UMH uses CAP_SYS_MODULE, Serge mentioned adding a new cap maybe.
-> > >
-> > > I don't have a strong preference between SETPCAP and a new capability=
-,
-> > > but I do think it should be just one. SYS_ADMIN is already god mode
-> > > enough, IMO.
-> >=20
-> > Sometimes I think would it make more sense to invent something
-> > completely new like capabilities but more modern and robust, instead of
-> > increasing complexity of a broken mechanism (especially thanks to
-> > CAP_MAC_ADMIN).
-> >=20
-> > I kind of liked the idea of privilege tokens both in Symbian and Maemo
-> > (have been involved professionally in both). Emphasis on the idea not
-> > necessarily on implementation.
-> >=20
-> > Not an LSM but like something that you could use in the place of POSIX
-> > caps. Probably quite tedious effort tho because you would need to pull
-> > the whole industry with the new thing...
->
-> And then we have LSM hooks, (ns_)capable(), __secure_computing() plus
-> a new set of hooks for this new thing sprinkled around. I guess
-> kernel developers wouldn't be excited about it, let alone the rest of
-> the industry :)
->
-> Thinking out loud: I wonder if fixing the seccomp TOCTOU against
-> pointers would help here. I guess you'd still have issues where your
-> policy engine resolves a path arg to open() and that inode changes
-> between the decision and the actual vfs access, you have just changed
-> the TOCTOU.
->
-> Or even scarier: what if you could change the return value at any
-> kprobe? :)
+On 05/20/24 at 07:15pm, Eric Chanudet wrote:
+> This was the behavior prior to making the function arch-specific with
+> commit ecd096506922 ("mm: make deferred init's max threads
+> arch-specific")
+> 
+> Architectures can override the generic implementation that uses only one
+> CPU. Setting DEFERRED_STRUCT_PAGE_INIT and testing on a few arm64
+> platforms shows faster deferred_init_memmap completions:
+> 
+> |         | x13s        | SA8775p-ride | Ampere R137-P31 | Ampere HR330 |
+> |         | Metal, 32GB | VM, 36GB     | VM, 58GB        | Metal, 128GB |
+> |         | 8cpus       | 8cpus        | 8cpus           | 32cpus       |
+> |---------|-------------|--------------|-----------------|--------------|
+> | threads |  ms     (%) | ms       (%) |  ms         (%) |  ms      (%) |
+> |---------|-------------|--------------|-----------------|--------------|
+> | 1       | 108    (0%) | 72      (0%) | 224        (0%) | 324     (0%) |
+> | cpus    |  24  (-77%) | 36    (-50%) |  40      (-82%) |  56   (-82%) |
+> 
+> Signed-off-by: Eric Chanudet <echanude@redhat.com>
+> ---
+>  arch/arm64/mm/init.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index 9b5ab6818f7f..71f5188fe63d 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -158,6 +158,13 @@ static void __init zone_sizes_init(void)
+>  	free_area_init(max_zone_pfns);
+>  }
+>  
+> +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+> +int __init deferred_page_init_max_threads(const struct cpumask *node_cpumask)
+> +{
+> +	return max_t(int, cpumask_weight(node_cpumask), 1);
+> +}
+> +#endif
 
-I had one crazy idea related to seccomp filters once.
+LGTM,
 
-What if there was way to compose tokens that would be just a seccomp
-filter like the one that you pass to PR_SET_SECCOMP but presented with a
-file descriptor?
+Reviewed-by: Baoquan He <bhe@redhat.com>
 
-Then you could send these with SCM_RIGHTS to other processes and they
-could upgrade their existing filter with them. So it would be a kind of
-extension mechanism for a seccomp filter.
+> +
+>  int pfn_is_map_memory(unsigned long pfn)
+>  {
+>  	phys_addr_t addr = PFN_PHYS(pfn);
+> -- 
+> 2.44.0
+> 
 
-Not something I'm seriously suggesting but though to flush this out now
-that we are on these topics anyhow ;-)
-
-> Tycho
-
-PS. Sorry if my language was a bit harsh earlier but I think I had also
-a point related to at least to the patch set presentation. I.e. you
-are very precise describing the mechanism but motivation and bringing
-topic somehow to a context is equally important :-)
-
-BR, Jarkko
 
