@@ -1,158 +1,256 @@
-Return-Path: <linux-kernel+bounces-185292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BA48CB321
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:57:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3108CB325
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 350661C217F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:57:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 626FC1C2181A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78DD14830B;
-	Tue, 21 May 2024 17:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D90148820;
+	Tue, 21 May 2024 17:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Q1nqOSwV";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Q1nqOSwV"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JkVGVoY6"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233077710F;
-	Tue, 21 May 2024 17:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A595522EF5;
+	Tue, 21 May 2024 17:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716314219; cv=none; b=PBRNb6xE4cLj15rGUNuOkHROg847slBiyEwN55FPLrpHS+x73PutC+L1IXTkxo/YPemF3zB8Hxo0150vq04zHz4q5pqT4GmRKpCoyO3DVhmoYQf58Rb/e7/+zgil1NKtwf6a7d6JBIm0aCJWjIoXoXiA1XtBjeiXXB8RKE9eprE=
+	t=1716314343; cv=none; b=Va8hwXCFIMCuZnkU4M1YKre8u/sFHEbA4rUtjWZhqH//EK38vynIE7mkEbSle8A6Cp+LPI/CgT3c+7AUNUW7Ol8tfTr9nkifDzQYlu2E4fPZrIk/70B9uoTqgv0GUAbY4k5WkcMyGjjWdQ1GSIw2QYQU5a4rXCM3O6Ee3TKlUrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716314219; c=relaxed/simple;
-	bh=xfDQO188zHzWOmlwzOQJS8rjKs/2HgeiIclILtQHEFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXt9qSWQmopHpn4cc7h94olKtUXHvZpd1hWiq6IOSaGOySRk0e4WqXYq+2NeozkK4GaLsaert7tSA9uVwJ/1RHQB5mQ05friorVGHx3sby0Gq2rxYVCNGU27nccIdJCXJOcpCjpLbkHRz1M0yT1AfqD2di4oDCGbrxqeOLB2Tw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Q1nqOSwV; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Q1nqOSwV; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 047A5348C4;
-	Tue, 21 May 2024 17:56:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716314215; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ehWe83GKebpIGUMrOmfiP68kD8jXH869Oz31MmSJNq8=;
-	b=Q1nqOSwVkp/1hlbwwZ7uUSFwaDZQyXQF+W7f+xK3jnzfyhanYplIL2sOtwsSgNNtBOzjdZ
-	N+qEnw7JyRHGHVdjW7midmfJ3ALKk+LAZZvKeYB93J/QaRWYH9HGgXo8k81A1LwNufQ0qV
-	pvynGRDv4VqkADtwQu2xFufVoPJ4ISM=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=Q1nqOSwV
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716314215; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ehWe83GKebpIGUMrOmfiP68kD8jXH869Oz31MmSJNq8=;
-	b=Q1nqOSwVkp/1hlbwwZ7uUSFwaDZQyXQF+W7f+xK3jnzfyhanYplIL2sOtwsSgNNtBOzjdZ
-	N+qEnw7JyRHGHVdjW7midmfJ3ALKk+LAZZvKeYB93J/QaRWYH9HGgXo8k81A1LwNufQ0qV
-	pvynGRDv4VqkADtwQu2xFufVoPJ4ISM=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D938613A1E;
-	Tue, 21 May 2024 17:56:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jnt1MmbgTGaAcQAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Tue, 21 May 2024 17:56:54 +0000
-Date: Tue, 21 May 2024 19:56:54 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org
-Subject: Re: CVE-2024-35906: drm/amd/display: Send DTBCLK disable message on
- first commit
-Message-ID: <ZkzgZoxF_RD50PdW@tiehlicka>
-References: <2024051954-CVE-2024-35906-1c6f@gregkh>
- <ZkxbObACcnUMZ3LA@tiehlicka>
- <2024052136-cubbyhole-ecologist-5b68@gregkh>
- <ZkzREEA5_N_xfqED@tiehlicka>
- <2024052110-grasp-liking-22c0@gregkh>
+	s=arc-20240116; t=1716314343; c=relaxed/simple;
+	bh=E/LTP9Z6P0rD4Gsv84boqKsliteigMI9RQ6iIz3hFs0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TlCubVJgU4W+61DUze5FW81cdyfW+eEQSloHsmtE/t/PmsIquswSMpJUAEVMTCQuMaY8RAAFgce4+G/CpgOGJXrJLWfFVIBQF3EOmng1vSZkLj5TLtuHhYrMeRv9fjZioh9vlcu4QOAdYvn9L3ZIJa/XrChb136ogHkzMGBS1X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JkVGVoY6; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ec69e3dbcfso3507905ad.0;
+        Tue, 21 May 2024 10:59:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716314341; x=1716919141; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RinISbwEJW1UkjXRq/8lwpL1dDqKAk8192kSmAu+1f8=;
+        b=JkVGVoY6Ry6BYjUonilSclkFjnvQAnI1HxAIHiB6DbhWqTi6x4GZQM6UauCO5BW5YA
+         5IaD9jdmHJ1YNk662NCBV9RUIggjhKqaA2wQAqKklptwMBGDi3TOgSfK2G3f3YtTYJ4/
+         66kYidIJIjDoYP8DDfjih3b+fmNFwD9fm/CcVLqr0QWyQ1yguIMr8X/00lNhAGhGo+3F
+         FLJwEXf2JuyAklj4+oM6HTkSfm+KlHqEiQPObjJSTpz5yYqnFuN06ad5Xf9S5+9fv9cG
+         rXUyG7TL9RArOg14QHPasQld/S9y/l0YKnhbZHCpydg/uPr2YqeX/qkANMM57EaMbYVw
+         sZzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716314341; x=1716919141;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RinISbwEJW1UkjXRq/8lwpL1dDqKAk8192kSmAu+1f8=;
+        b=HLMYdfEeNKJtO3FowH4l2Lpi+qoBYjiPNS0q9HlHYN/b3KOKkdS7gVrSNXQP8+5Tul
+         N8XqQoLiM2MBGDeMVmUtXDSMyqeLd856mnSn8UpIOaDRh35vuMg9QmuTekjM3MZpUxFR
+         tiLFwOoIoAwtrbs7BSyqRLjHID48ZDAvHuUZfT/hA/ASq3AdKfVTRxeMovIBL9OAqy3K
+         lmoAui0dJxXTw2aP86vHh/TPCQ2QKz6CQoz9bOHq2I556YnObc3L84kfcbziZi94ZYby
+         82x4pj+Lg2jOg5s0LQY55cCpQLz7+TlE15LvUq0pDSabq4VnOpRMU1VVznV/Hpc1XFZ+
+         NFLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcUUH1xnikLY4cSTrmS6+MxfFDrzLJntNufsqeGsv6bgJ/csGWlRXHM47Pey9KYndXLbDUZ88gQbUhFdcnKA7wr/Fll96d0fpSheTPA/nG/teHlwsrEzWirPcxxgfXznqNGI35R++PFE11Pw==
+X-Gm-Message-State: AOJu0Yw7uh+/LcfvS7pakzilnFil/pS6b0GWuJe8adLjhOLrdurKa7nR
+	C+ovcC45TW8Yg/ouk2Ktgd6mr+djvUYOpTo6Fbs0NjIgWXgad5yNPuOhs7VxJLs=
+X-Google-Smtp-Source: AGHT+IHDrvLWvdibZENp61Cxr0fCv/ILh0BWg974hKQ4HfS02Qj05+dAEbbzDzDLEBqsmocIboOsbA==
+X-Received: by 2002:a17:903:244d:b0:1f3:a5b:9705 with SMTP id d9443c01a7336-1f30a5b9d66mr50029645ad.48.1716314340929;
+        Tue, 21 May 2024 10:59:00 -0700 (PDT)
+Received: from localhost.localdomain ([101.32.222.185])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f2fcdf87besm44646935ad.105.2024.05.21.10.58.57
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 21 May 2024 10:59:00 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Chris Li <chrisl@kernel.org>,
+	Barry Song <v-songbaohua@oppo.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Neil Brown <neilb@suse.de>,
+	Minchan Kim <minchan@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: [PATCH v6 00/11] mm/swap: clean up and optimize swap cache index
+Date: Wed, 22 May 2024 01:58:42 +0800
+Message-ID: <20240521175854.96038-1-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.45.0
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024052110-grasp-liking-22c0@gregkh>
-X-Spam-Flag: NO
-X-Spam-Score: -6.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 047A5348C4
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-6.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	MISSING_XM_UA(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim]
+Content-Transfer-Encoding: 8bit
 
-On Tue 21-05-24 19:03:58, Greg KH wrote:
-> On Tue, May 21, 2024 at 06:51:28PM +0200, Michal Hocko wrote:
-[...]
-> And really, in the end, if you have a "CVE and fix for CVE" in the same
-> release, applying both doesn't hurt anyone, so this is a "fail secure"
-> mode for everyone, right?
+From: Kairui Song <kasong@tencent.com>
 
-Look Greg, we have been through this discussion at several occasions and
-I do not want to repeat that again. Stable tree users probably do not
-care because they are getting all these patches, including regressions
-and patches they do not need or even want, anyway. They are getting what
-they are _paying_ for. Marking them CVE doesn't make any difference. But
-stable tree backporting model is simply not a good fit for _many_ users.
+Patch 1/11 is not needed if f2fs converted .readahead to use folio,
+I included it for easier test and review.
 
-Now, for $reasons, people _do_ care about CVEs and that is why there is
-an engineering cost on downstreams to review them. Exactly because
-applying all of them blindly is a _risk_. Exactly because the stable
-backporting model/policy and CVE assigning policy is simply incompatible
-with the stability/correctness/performance/$other requirements. 
+Currently we use one swap_address_space for every 64M chunk to reduce lock
+contention, this is like having a set of smaller files inside a
+swap device. But when doing swap cache look up or insert, we are
+still using the offset of the whole large swap device. This is OK for
+correctness, as the offset (key) is unique.
 
-I completely do get why you do not care about that downstream
-engineering cost but generating bogus CVEs on top of a huge pile of
-dubious ones is less than useful, don't you think?
+But Xarray is specially optimized for small indexes, it creates the
+redix tree levels lazily to be just enough to fit the largest key
+stored in one Xarray. So we are wasting tree nodes unnecessarily.
 
-Seriously, we can disagree whether something is a security threat that
-is worth marking by a CVE. But making the CVE generation process mostly
-unattended script driven process without any _serious_ review in place
-is burning a lot of man power that could be used in a much more
-productive way. This is not the way how to convince people to use stable
-kernels.
+For 64M chunk it should only take at most 3 level to contain everything.
+But if we are using the offset from the whole swap device, the offset (key)
+value will be way beyond 64M, and so will the tree level.
 
-Bye
+Optimize this by reduce the swap cache search space into 64M scope.
+
+Test with `time memhog 128G` inside a 8G memcg using 128G swap (ramdisk
+with SWP_SYNCHRONOUS_IO dropped, tested 3 times, results are stable. The
+test result is similar but the improvement is smaller if SWP_SYNCHRONOUS_IO
+is enabled, as swap out path can never skip swap cache):
+
+Before:
+6.07user 250.74system 4:17.26elapsed 99%CPU (0avgtext+0avgdata 8373376maxresident)k
+0inputs+0outputs (55major+33555018minor)pagefaults 0swaps
+
+After (+1.8% faster):
+6.08user 246.09system 4:12.58elapsed 99%CPU (0avgtext+0avgdata 8373248maxresident)k
+0inputs+0outputs (54major+33555027minor)pagefaults 0swaps
+
+Similar result with MySQL and sysbench using swap:
+Before:
+94055.61 qps
+
+After (+0.8% faster):
+94834.91 qps
+
+There is alse a very slight drop of radix tree node slab usage:
+Before: 303952K
+After:  302224K
+
+For this series:
+
+There are multiple places that expect mixed type of pages (page cache or
+swap cache), eg. migration, huge memory split; There are four helpers
+for that:
+
+- page_index
+- page_file_offset
+- folio_index
+- folio_file_pos
+
+To keep the code clean and compatible, this series first cleaned up
+usage of them.
+
+page_file_offset and folio_file_pos are historical helpes that can
+be simply dropped after clean up. And page_index can be all converted to
+folio_index or folio->index.
+
+Then introduce two new helpers swap_cache_index and swap_dev_pos
+for swap. Replace swp_offset with swap_cache_index when used to
+retrieve folio from swap cache, and use swap_dev_pos when needed
+to retrieve the device position of a swap entry. This way,
+swap_cache_index can return the optimized value with no compatibility
+issue.
+
+The result is better performance and reduced LOC.
+
+Idealy, in the future, we may want to reduce SWAP_ADDRESS_SPACE_SHIFT
+from 14 to 12: Default Xarray chunk offset is 6, so we have 3 level
+trees instead of 2 level trees just for 2 extra bits. But swap cache
+is based on address_space struct, with 4 times more metadata sparsely
+distributed in memory it waste more cacheline, the performance gain
+from this series is almost canceled according to my test. So first,
+just have a cleaner seperation of offsets and smaller search space.
+
+Patch 1/11 - 10/11: Clean up usage of above helpers.
+Patch 11/11: Apply the optmization.
+
+V5: https://lore.kernel.org/linux-mm/20240510114747.21548-1-ryncsn@gmail.com/
+Update from V5:
+- Rebase to latest mainline.
+- Drop cifs patch as is have already converted to use folio.
+- Collect Review-by [Huang, Ying].
+
+V4: https://lore.kernel.org/all/20240502084609.28376-1-ryncsn@gmail.com/
+Update from V4:
+- Collect Review-by and Acked-by.
+- Fix a leftover error in commit message found by [David Hildenbrand].
+- A few code clean up for better readability [Huang, Ying]
+
+V3: https://lore.kernel.org/all/20240429190500.30979-1-ryncsn@gmail.com/
+Update from V3:
+- Help remove a redundant loop in nilfs2 [Matthew Wilcox]
+- Update commit message, use the term swap device instead of swap file
+  to avoid confusion [Huang, Ying]
+- Add more details in commit message about folio_file_pos usage in NFS.
+- Fix a shadow leak in clear_shadow_from_swap_cache.
+
+V2: https://lore.kernel.org/linux-mm/20240423170339.54131-1-ryncsn@gmail.com/
+Update from V2:
+- Clean up usage of page_file_offset and folio_file_pos [Matthew Wilcox]
+  https://lore.kernel.org/linux-mm/ZiiFHTwgu8FGio1k@casper.infradead.org/
+- Use folio in nilfs_bmap_data_get_key [Ryusuke Konishi]
+
+V1: https://lore.kernel.org/all/20240417160842.76665-1-ryncsn@gmail.com/
+Update from V1:
+- Convert more users to use folio directly when possible [Matthew Wilcox]
+- Rename swap_file_pos to swap_dev_pos [Huang, Ying]
+- Update comments and commit message.
+- Adjust headers and add dummy function to fix build error.
+
+This series is part of effort to reduce swap cache overhead, and ultimately
+remove SWP_SYNCHRONOUS_IO and unify swap cache usage as proposed before:
+https://lore.kernel.org/lkml/20240326185032.72159-1-ryncsn@gmail.com/
+
+Kairui Song (11):
+  f2fs: drop usage of page_index
+  nilfs2: drop usage of page_index
+  ceph: drop usage of page_index
+  NFS: remove nfs_page_lengthg and usage of page_index
+  afs: drop usage of folio_file_pos
+  netfs: drop usage of folio_file_pos
+  nfs: drop usage of folio_file_pos
+  mm/swap: get the swap device offset directly
+  mm: remove page_file_offset and folio_file_pos
+  mm: drop page_index and simplify folio_index
+  mm/swap: reduce swap cache search space
+
+ fs/afs/dir.c              |  6 +++---
+ fs/afs/dir_edit.c         |  4 ++--
+ fs/ceph/dir.c             |  2 +-
+ fs/ceph/inode.c           |  2 +-
+ fs/f2fs/data.c            |  2 +-
+ fs/netfs/buffered_read.c  |  4 ++--
+ fs/netfs/buffered_write.c |  2 +-
+ fs/nfs/file.c             |  2 +-
+ fs/nfs/internal.h         | 19 -------------------
+ fs/nfs/nfstrace.h         |  4 ++--
+ fs/nfs/write.c            |  6 +++---
+ fs/nilfs2/bmap.c          | 10 ++--------
+ include/linux/mm.h        | 13 -------------
+ include/linux/pagemap.h   | 25 ++++---------------------
+ mm/huge_memory.c          |  2 +-
+ mm/memcontrol.c           |  2 +-
+ mm/mincore.c              |  2 +-
+ mm/page_io.c              |  6 +++---
+ mm/shmem.c                |  2 +-
+ mm/swap.h                 | 24 ++++++++++++++++++++++++
+ mm/swap_state.c           | 17 +++++++++--------
+ mm/swapfile.c             | 11 +++++------
+ 22 files changed, 68 insertions(+), 99 deletions(-)
+
 -- 
-Michal Hocko
-SUSE Labs
+2.45.0
+
 
