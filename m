@@ -1,79 +1,96 @@
-Return-Path: <linux-kernel+bounces-185188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65A68CB1BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:55:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 410DE8CB1C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82096284379
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:55:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A7A1C21EB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5226F14831D;
-	Tue, 21 May 2024 15:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FCD142E73;
+	Tue, 21 May 2024 15:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ficKUcQ1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PVmTtRd4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913D31FBB;
-	Tue, 21 May 2024 15:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3346142E72
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716306891; cv=none; b=JELJqdoc/FGWIkdfxQjWaTzZGRSTIAuGDbdMO6Dx12FXFT31ILQLnpkVYzebe8AT+22u06H2Wyuc9vDTsl1ic4htH2z6wTx3MCtF4vJyLrTqcL6GR0NHmkbT7QUn73JFMZRikpqhO1Z1mZA9y4JZOdUaS31AAnlBymRZWofA/m4=
+	t=1716306907; cv=none; b=HLOXYpYbsWvX09iqdK52H6l0NgEtG6j2K0JyZFU+bnMAMrOf2Yvx42vV0Mmnb0xZtWy6RWP9JolZkVZpTY9E7xOxVFXr3tpGwB6CDiCOHEF3x29crAdjzX6Yd9cYBKEzUKfmDUhUWmylUvrU4VTdeEsRlUJkLiRCrIA/4unzA/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716306891; c=relaxed/simple;
-	bh=ZiVylaIhpmU5Y8L5i/SnpTaX9nQlLaIxh9KusDNt/0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MpINgXWYOrwsD4MBjA7rrIT5IaFQkjdXaOoJuuKS98nc7a/h+t0djrCSXzO3QUrUrDINJccndi6Yn89NuW6GR4BafSYpwOE1im6f5ZFpwHwBJM7h8q91JrZIwiWHixt8rAPK19sNQk4uklZysGdOknh2vJ1b9iB824e//KC5Dcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ficKUcQ1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA61C4AF0D;
-	Tue, 21 May 2024 15:54:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716306891;
-	bh=ZiVylaIhpmU5Y8L5i/SnpTaX9nQlLaIxh9KusDNt/0A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ficKUcQ1Rlp3RRbru0nSthZ9Uzc2zECFLSArZF+Vf7KqkzQ7XxyWFHrpz7bZ9O1vz
-	 7sLnUe+3scjTsJg4VHrQJy7gNszTmzQP0cNvYOTaCXHW68de3vyWnZUJZHBINmJuaD
-	 J7pR5CmQBb6bFjzhsK4VRZUkRLE7QotGW7hWYC/0Hab7jQjS8XXvCUtpNvlZ7H8ADM
-	 EpLPNdOiQZlrf5aUO0fS08ScQWeAR4Qm8/5EGVkPho8v0JedicM5EW3Ka3CQH1O7PH
-	 L4EtClo2MfNqL66YJkSwfiwHpbiCHW9AkYwqAzZwB7w0hSnZMargpH7LoHndxuYVgx
-	 QixH0o3hqqqVg==
-Date: Tue, 21 May 2024 16:54:46 +0100
-From: Simon Horman <horms@kernel.org>
-To: Ryosuke Yasuoka <ryasuoka@redhat.com>
-Cc: krzk@kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syoshida@redhat.com
-Subject: Re: [PATCH net v3] nfc: nci: Fix handling of zero-length payload
- packets in nci_rx_work()
-Message-ID: <20240521155446.GA839490@kernel.org>
-References: <20240521153444.535399-1-ryasuoka@redhat.com>
+	s=arc-20240116; t=1716306907; c=relaxed/simple;
+	bh=ETMyAjhAyjRrYjH6gWRvwzWDDJXx1j3zk86x7NvOJmw=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=T48Js/deK+fTQGzkNRWpbZSQidNmyJ+sEhGH6fVHTIwTDhkQxgdeqxt9nmYncyM/YnJkw0bkxzOoi8jvt5k83m8RrwmTovelwLQR00NViKkvXDrzbEeaf+s0rfOwS8yMKOPxucxWM7oncwg7BIgjHPKLvGF4majLfy/pbOhi1Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PVmTtRd4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716306904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ETMyAjhAyjRrYjH6gWRvwzWDDJXx1j3zk86x7NvOJmw=;
+	b=PVmTtRd4Q7pRIvGB2Mpv10JitSPu8cGNZl7K7REufTiFiqCheD77oAXRhHdX6fcEZfT0D8
+	Vu5q9/my5OVNqh2islmzF7gRH5NiJjqyXVt4aPxtM+7f658BJyhl8ylb8HhNS6ie002Rbx
+	ktUuNYZwh5zF1U7/h7ycGwWYSpJ437I=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-646-l7H-i_idMlq5SSTveGjq1Q-1; Tue,
+ 21 May 2024 11:55:02 -0400
+X-MC-Unique: l7H-i_idMlq5SSTveGjq1Q-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7132329AB3E2;
+	Tue, 21 May 2024 15:55:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 0CB731C09481;
+	Tue, 21 May 2024 15:54:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <2e73c659-06a3-426c-99c0-eff896eb2323@kernel.dk>
+References: <2e73c659-06a3-426c-99c0-eff896eb2323@kernel.dk> <316306.1716306586@warthog.procyon.org.uk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: dhowells@redhat.com, Steve French <stfrench@microsoft.com>,
+    Jeff Layton <jlayton@kernel.org>,
+    Enzo Matsumiya <ematsumiya@suse.de>,
+    Matthew Wilcox <willy@infradead.org>,
+    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
+    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521153444.535399-1-ryasuoka@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <316427.1716306899.1@warthog.procyon.org.uk>
+Date: Tue, 21 May 2024 16:54:59 +0100
+Message-ID: <316428.1716306899@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-On Wed, May 22, 2024 at 12:34:42AM +0900, Ryosuke Yasuoka wrote:
-> When nci_rx_work() receives a zero-length payload packet, it should not
-> discard the packet and exit the loop. Instead, it should continue
-> processing subsequent packets.
-> 
-> Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
-> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
-> ---
-> v3
-> - Remove inappropriate Reported-by tag
-> 
-> v2
-> - Fix commit msg to be clearer to say
-> - Remove inappropriate Closes tag
+Jens Axboe <axboe@kernel.dk> wrote:
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+> However, I'll note that BDP_ASYNC is horribly named, it should be
+> BDP_NOWAIT instead. But that's a separate thing, fix looks correct
+> as-is.
+
+I thought IOCB_NOWAIT was related to RWF_NOWAIT, but apparently not from the
+code.
+
+David
+
 
