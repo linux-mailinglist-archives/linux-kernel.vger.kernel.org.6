@@ -1,116 +1,122 @@
-Return-Path: <linux-kernel+bounces-185244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0209C8CB297
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:08:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D53E8CB2A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 818CC2820EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:08:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAEF0B22B53
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52720147C94;
-	Tue, 21 May 2024 17:07:55 +0000 (UTC)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4090C147C99;
+	Tue, 21 May 2024 17:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hpEgDhib"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB9722F11;
-	Tue, 21 May 2024 17:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430017711E
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 17:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716311274; cv=none; b=bglJvZ5laAuiVXs7hys5rJFtb7zOQqRVXWUslAAjS60WKzaqWBSrZx3dcKZyL2ibdXwfWismC3UkyvXbU9L7NnoDw15GLIPOQcWCXFt0s+K6csu5QrLl3k9tMQWK6HyCrNu/cFBmjnuSni/3xnb1FiFU9nsiIjQ9nQspq5OGooc=
+	t=1716311602; cv=none; b=DFStnLORIAmJwJnJInQJDUsuNofheZbk9NtfHOfFHo1G8cCuDRT7SB7R3C9LsFjNYrUEg00IkNbZ6DqOwpJCK6ZqGU/z9sF5si0mq8EsxtHgnFh94Y60ggrkLzMvdy6B/iRfTOj66FtaobW1w1z9DMsaL2L2bQBRCqvZR8xIF/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716311274; c=relaxed/simple;
-	bh=4f/C9c7ipxOsSvQmsAVBs2332WEtJ7P3HVXcExUQcgE=;
+	s=arc-20240116; t=1716311602; c=relaxed/simple;
+	bh=8dd+3CyB9ZfUsu9ED1coxbk8SB2YtRQF+xW5vW/Nv/4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kogstMHotsCLJDEzZc4J0Onik1zjK7LHO/DPa0JHBJFabK/bytkezLVhwpdbGE6GhcsDEUkAg0Lsk9LIC2OKsVhxTjvWl+lDZcfbqHo1YabHygCMsLsESUYj/u4CJXz5zcwKc/CLqCK3XsASHgcrx8kkkG5oWVS5z4dwfLEM0HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-5c229dabbb6so487657a12.0;
-        Tue, 21 May 2024 10:07:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=rveN+ouD+N1esUCh3ppCMp2czZ5YZyjDv59e0OtZCiajm97V0JgjaBp4c3AHFkphb7Qakul2638HdHVVup30wxiMvy6Qt3KihaCbfqhmIfvvPV5DD9XsV/pnGpzQe5X75fSm1CYNWy0BjvVWydOXKT9uXCasAxCQUouDC7kQVAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hpEgDhib; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ee5f3123d8so6455ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:13:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716311600; x=1716916400; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xvy3vZOZ+DrbSfTr1Y7exdXqXahpXO1bzaeP7lN+Ufk=;
+        b=hpEgDhibUlLJxFY55sGD/DxKWW5nybslYJUsHbVtn6N3fRZpXMYhOrpyU/+xXnxp07
+         FlEdWGg936tel9MPXpUizcMCcCtp+9IvLMf/K5ZdvoryBHUVVwLnC1qNS2zWxVwpISiB
+         P9/HkI2MCLMC4ckECMPhaOzLA7XfoRxav2iX1rbH0piDpOYPbPWfuA1NAx4oaZUDDdmw
+         ydJ4Nnul3N4ecj3mIS5DVHBMUM7SFxbi1zL5YqbmWmtHkV+Kmje2idD3QmjVVCjduIUy
+         qIcD5oXk1oRFwVOekab9pNSQZ/MX+EAt99dNJ3tg59SHWE9NqgKn7/H1kEEqoafoFM5W
+         QGIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716311273; x=1716916073;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xg+oV7v8UxI/sVUAL8gF5mbiN42OB/uM83jie5ZyfWc=;
-        b=Kakh+U5AjjFLVXOtRQLyCWyhyWahO5jVL7KTszYs8tgCvqrmEYq/Th9xDIjTQT4dIf
-         uCbfp6knpQARvE/SpyBnv/Ud3+oBc0xNh67fyZHIoiG7MBD5G8TSC7wX/swZJexxTnd7
-         ThlUsgOcv5KqQYdcuLFsyVn6Om/3Xx5TiGqqwqMM3jwz/3J0V4vpfqdqOOJebubFkeRC
-         gW3/WyPFIniLjog2hezn/TStVvcPB4Cs8tO5h9F3y0pf15QWVWDuRBoSsxTir23S2XE6
-         j8/+o3c6Lcq1sB9NCvTQaLX+9gx5Oml/goT8a7hLrS2JZ9Xs47ebV/vuXZt50jWobDXy
-         WflA==
-X-Forwarded-Encrypted: i=1; AJvYcCUA74g2RowsL/lytv9c4aBzDm66Q5Bn0syY785zplX1WgTidOf07/DkRceW6QdtQp3h8xA1mWL4FQYechuqjt4MsOKSUrY8DbjJYuvmQg7Gz3wZ5k7Jcae/QvbECUMR1X33hBYCNCf3jtyIfov6KA==
-X-Gm-Message-State: AOJu0YxmKC338jGtDgyjFrx1Jpm67l4Npo3nKnFbP14nLIG14F3Tn5Z7
-	JLx7or1AMwrJHodt4C5udKC/Acfd3iXjepifTyPDNrhW9mwNhpg1J40yyrNYiGakR4BbrNiqckd
-	J9KyI5ZjAidQkPzCiQU/UWj8zvcA=
-X-Google-Smtp-Source: AGHT+IFvFYzo6dlUwfBLl6Qah/52Q9PZ92l8yj2n5Wpl/LRcNcQOQbhJZ6imF7X8p/pV71lwH0gTuIYtCiB22x04gpQ=
-X-Received: by 2002:a17:90b:683:b0:2bd:768b:6df8 with SMTP id
- 98e67ed59e1d1-2bd768b6f5emr5439960a91.19.1716311272794; Tue, 21 May 2024
- 10:07:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716311600; x=1716916400;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xvy3vZOZ+DrbSfTr1Y7exdXqXahpXO1bzaeP7lN+Ufk=;
+        b=CcahK0r0FdLMqYyY3Sx5V+k8HfRS8LJxVIcuUQF5JupxKBuHPVgqDY37DIyMDPYDnP
+         Mt4gatIDYDZ682+o9yNR5IFfGgvEmzyeDyJsKweEVJmrDwGaYj2lIdHFABTRc+WmxljA
+         zDMu9Q7AAOGCCpl0FJTPDoySQ/LG05CB0JKtV5SUwpu0ZiXe5Cabz42VcHFtJzR2yBnQ
+         zDjfbXlk2uNwOAbEJL/JEgfHUBGyMeQrmdo0SJrT73RtTcdM8jZ61wBXP/Dcjc5Pnqkl
+         rbfBEU3ff+So3CmkhQ+/tKJwjUs7uhGd4+aIA9exFf0xYfeCUJCv7+kJxTnhzQGIXJX7
+         rI1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUTFAQHaoTy6phYwze7I9y1eHycWTWSJ33B9k/kwI1tg8fB6TIAgo29uGZ+6Ti5ttcXXutfdTkFkT6k7XXQUloir4WJ1l4kfj/3dx3Z
+X-Gm-Message-State: AOJu0YyjS+UHC3fZuQzqXyIRY92gPSqLs4+1/335nb1XjHFdsqL8r+L4
+	sn3XM6T0veNIrRITIA0FhkwC+g6Wn7PJr2+NCnSyiz87s3YM0o4OMa9ecBaLufcSDN3QGr+XPI7
+	WQC6I2rOzWcRSS6jsb0lu5gTA6VtFpM/OQcZ5
+X-Google-Smtp-Source: AGHT+IH7MCJIERIUNSu5RuWQS0e+JMaobcia4kPXAmSM9jwR4UnOl+yPIfG2Fs55+kkzwmCz/U8IMakT9c6t53PCvhk=
+X-Received: by 2002:a17:902:c106:b0:1e8:88b2:17cd with SMTP id
+ d9443c01a7336-1f2ecb14a62mr6705655ad.12.1716311599190; Tue, 21 May 2024
+ 10:13:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZjssGrj+abyC6mYP@gmail.com> <CAP-5=fUvLiCDVDFFfJ78ng4T1FZ8j2N9Yt1sGTeGsupkbFEEug@mail.gmail.com>
- <ZkG4LWr7w11wQ/PR@gmail.com> <CAP-5=fVHrKcqwczoU1uMD4tP5DTVhfQ1T_hXnm_y5Ji3M6K_ag@mail.gmail.com>
- <ZkJK3x3zQ9a4wp8E@gmail.com> <CAP-5=fUh+GoqERAF-qf8zx4kwq2uzwR2Ugop5XOkPexYGAqF3A@mail.gmail.com>
- <CAP-5=fWXDPfNqLz6DHYe9+dev_e6X5TcTe_xzOOz27yDkT7o7A@mail.gmail.com>
-In-Reply-To: <CAP-5=fWXDPfNqLz6DHYe9+dev_e6X5TcTe_xzOOz27yDkT7o7A@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Tue, 21 May 2024 10:07:40 -0700
-Message-ID: <CAM9d7ch5HTr+k+_GpbMrX0HUo5BZ11byh1xq0Two7B7RQACuNw@mail.gmail.com>
-Subject: Re: Makefile.perf:1149: *** Missing bpftool input for generating
- vmlinux.h. Stop.
-To: Ian Rogers <irogers@google.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kan Liang <kan.liang@linux.intel.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+References: <20240520203643.182920-1-irogers@google.com> <e3e483ff-d160-4bf2-a1e7-ae541c59f63d@oracle.com>
+In-Reply-To: <e3e483ff-d160-4bf2-a1e7-ae541c59f63d@oracle.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 21 May 2024 10:13:07 -0700
+Message-ID: <CAP-5=fXtahvLa5hFqdQpPyeHYsUNe=MkJBn8Yf5npNUvGJOU0w@mail.gmail.com>
+Subject: Re: [PATCH v1] perf jevents: Autogenerate empty-pmu-events.c
+To: John Garry <john.g.garry@oracle.com>
+Cc: Weilin Wang <weilin.wang@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jing Zhang <renyu.zj@linux.alibaba.com>, Sandipan Das <sandipan.das@amd.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ian and Ingo,
+On Tue, May 21, 2024 at 4:45=E2=80=AFAM John Garry <john.g.garry@oracle.com=
+> wrote:
+>
+> On 20/05/2024 16:36, Ian Rogers wrote:
+> >       }
+> > +                ret =3D pmu_events_table__find_event_pmu(table, table_=
+pmu, name, fn, data);
+> > +                if (ret !=3D -1000)
+> > +                        return ret;
+> > +        }
+> >           return -1000;
+>
+> what's -1000 meaning? It would be nice to use some standard error codes.
 
-The failure happens when you don't have vmlinux.h or vmlinux with BTF.
+This is a pre-existing thing. 0 means continue and anything else
+generally aborts a search, -1000 is used when searching multiple
+tables to indicate not found in 1 table but potentially not all.
 
-ifeq ($(VMLINUX_H),)
-  ifeq ($(VMLINUX_BTF),)
-    $(error Missing bpftool input for generating vmlinux.h)
-  endif
-endif
-
-VMLINUX_BTF can be empty if you didn't build a kernel or
-it doesn't have a BTF section and the current kernel also
-has no BTF.  This is totally ok.
-
-But VMLINUX_H should be set to the minimal version in
-the source tree (unless you overwrite it manually) when you
-don't pass GEN_VMLINUX_H=1 (which requires VMLINUX_BTF
-should not be empty).  The problem is that it's defined in
-Makefile.config which is not included for `make clean`.
-
-Can you please verify if the below patch fixes it?
+Commit 3d5045492ab2 ("perf pmu-events: Add
+pmu_events_table__find_event()") added this [1], you were on the cc
+list ;-) I think moving to a named constant would make this more
+intention revealing so I'll add this to a v2 set.
 
 Thanks,
-Namhyung
+Ian
 
----8<---
+[1] https://lore.kernel.org/r/20230824041330.266337-9-irogers@google.com
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 5c35c0d89306..e6d56b555369 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -214,6 +214,7 @@ NON_CONFIG_TARGETS := clean python-clean TAGS tags
-cscope help
-
- ifdef MAKECMDGOALS
- ifeq ($(filter-out $(NON_CONFIG_TARGETS),$(MAKECMDGOALS)),)
-+  VMLINUX_H=$(src-perf)/util/bpf_skel/vmlinux/vmlinux.h
-   config := 0
- endif
- endif
+> Thanks,
+> John
+>
+>
 
