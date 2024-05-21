@@ -1,80 +1,145 @@
-Return-Path: <linux-kernel+bounces-184546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74F58CA85B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:05:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D30978CA85E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7CB11C21694
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:05:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F2B7283191
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F443482EE;
-	Tue, 21 May 2024 07:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45504AEC8;
+	Tue, 21 May 2024 07:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FpubFwbD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qm0vO6hS"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9ECA7F;
-	Tue, 21 May 2024 07:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D867F;
+	Tue, 21 May 2024 07:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716275129; cv=none; b=ZIMdwTEU1lmBJLRVF6lKv/0WxKWTQVAZhn1VqME/vX2liFPmgEGtPJlB6/Fcn7lEeCPrEi0r6Kfn5x5PWRzPlERP7/LaOQb1Vepm6nQ5VD48h+UB23CEJXVhTIvIPmZfc+lUgpB73A42kt3qxIZ97gqIwdTEETRdkIzDaeKu8P0=
+	t=1716275141; cv=none; b=mf9h68Eo12RIEKSmXZAh4Ec9L6Ehjz6YulVHMoJOmJHFrG/f8Pf7W1wIKB2pIyY4dEjFimL8abmuXHQiBJT6T2BsTzAkSchLj/77l6KH2vVpdQdzfdY3RquzU4m8cY6cbHvOP3LhM2eAiwyTczisnyR5U8Fw1OI5qNujotfmfT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716275129; c=relaxed/simple;
-	bh=c15ujsRuh9F0sSf6p/i3/BKLdIXyJaOjwGLssPCITqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdAXttJjAnReh/xPQ77/RYnmO2rP5PSImmBDfkretqTTH/0chwYtBlztco+HtN/kH6r5DgKNeRTH8xLOLgyu5vWT3d8Pyi7fDRy9B1kW0/XzbAOhN09lDWN7eJSJki9wMJpgBLgVMkiej4KtrTf12JE5pTIgrb60nO2heCIyVhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FpubFwbD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51E85C2BD11;
-	Tue, 21 May 2024 07:05:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716275129;
-	bh=c15ujsRuh9F0sSf6p/i3/BKLdIXyJaOjwGLssPCITqs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FpubFwbDdYhOWxbBwoG1Ci3LjO/ByT9N4wesTog2P8vjKzZ0vWa+Qfq9hjCq0xYXc
-	 hbS5SwJF9nUGLvqCjIIJRg4wvvyCaeHze642XBmWvDio2qdRDIoOJzvJGF4tJLpb5+
-	 XKp0pGe4LyLaaR5+IVRemhJa9/IP9S1Om/XM2m7s=
-Date: Tue, 21 May 2024 09:05:27 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Filipe Manana <fdmanana@kernel.org>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org
-Subject: Re: CVE-2024-26904: btrfs: fix data race at btrfs_use_block_rsv()
- when accessing block reserve
-Message-ID: <2024052155-raking-onshore-f6f3@gregkh>
-References: <2024041746-CVE-2024-26904-e3a8@gregkh>
- <Zkt48ug3KKOTQk42@debian0.Home>
+	s=arc-20240116; t=1716275141; c=relaxed/simple;
+	bh=nS/Dr2W3vGanwW9ifFd+bOFrHEwvBrs3b1sW5lLV82U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UXasFjNFRARvwbyr1U+0tEk6mJ6tkL04vEKb1cVP4Me/amhRdRbZZHbo67JEGuYTkG+QVMnaOFsguWme47ZHU82+J5tn/3RaN7acmC3ctDgv5icfB2NGLXLUeeEpTbW7GjyNLXiYbg85qIq1ZTdi9BfDdG8CwqRpjydd3fq6GXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qm0vO6hS; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716275137;
+	bh=nS/Dr2W3vGanwW9ifFd+bOFrHEwvBrs3b1sW5lLV82U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qm0vO6hSCRlLszYJes6vtZsP0qVLDOWOlMVSXIEkovjNeL4Dq+Cc+8MXdXP7o9Ngt
+	 dEgAlzV+KObOGcAdS/6I44aVkdi+dzENzBC+C8438w5ZDIY3qhWEdam1o+AodVwzjv
+	 LXMakGJRGQchKxC8P/1xweTSAiUSv5m/wIebY9OQ7ZoehiIA9kMjvWzZlPc043uEtL
+	 I9WPKXT+MUL2ESyAvmJo630D/7kottF1JQB7ihruCKvj6sjbQnA/ZmNcTgV2aj4M44
+	 yBEOL1WXeyBsLFdR4/W1aZOQopqDRLXK/J8L1Xq3XC3FW2nsXiT1XtAj/HU/gghFaX
+	 X7t22RCH7dZsQ==
+Received: from [100.66.96.193] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E0B0A378202E;
+	Tue, 21 May 2024 07:05:33 +0000 (UTC)
+Message-ID: <9ab7eb04-d4c6-4a79-87cb-2d21e4bfa9c4@collabora.com>
+Date: Tue, 21 May 2024 12:35:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zkt48ug3KKOTQk42@debian0.Home>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] drm/ci: generate testlist from build
+Content-Language: en-US
+To: Helen Koike <helen.koike@collabora.com>, dri-devel@lists.freedesktop.org
+Cc: daniels@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
+ robdclark@gmail.com, david.heidelberg@collabora.com,
+ guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
+ dmitry.baryshkov@linaro.org, mcanal@igalia.com,
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, amd-gfx@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <20240517092502.647420-1-vignesh.raman@collabora.com>
+ <20240517092502.647420-3-vignesh.raman@collabora.com>
+ <c7e0a8b1-5be6-460b-b489-2ab5a8248d32@collabora.com>
+From: Vignesh Raman <vignesh.raman@collabora.com>
+In-Reply-To: <c7e0a8b1-5be6-460b-b489-2ab5a8248d32@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 20, 2024 at 05:23:14PM +0100, Filipe Manana wrote:
-> On Wed, Apr 17, 2024 at 12:29:19PM +0200, Greg Kroah-Hartman wrote:
-> > Description
-> > ===========
-> > 
-> > In the Linux kernel, the following vulnerability has been resolved:
-> > 
-> > btrfs: fix data race at btrfs_use_block_rsv() when accessing block reserve
-> 
-> May I ask why is this classified a CVE?
-> 
-> How can a malicious user exploit this to do something harmful?
-> 
-> The race was solved to silence KCSAN warnings, as from time to time we have
-> someone reporting it, but other than that, it should be harmless.
+Hi Helen,
 
-Oops, you are right, the line "BUG:" triggered our review to tag this as
-a CVE.  I'll go reject it now, thanks for the review.
+On 21/05/24 01:54, Helen Koike wrote:
+> 
+> 
+> On 17/05/2024 06:24, Vignesh Raman wrote:
+>> Stop vendoring the testlist into the kernel. Instead, use the
+>> testlist from the IGT build to ensure we do not miss renamed
+>> or newly added tests.
+>>
+>> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+>> ---
+>>
+>> v2:
+>>    - Fix testlist generation for arm and arm64 builds.
+>>
+>> ---
+>>   drivers/gpu/drm/ci/build-igt.sh  |   34 +
+>>   drivers/gpu/drm/ci/igt_runner.sh |    9 +-
+>>   drivers/gpu/drm/ci/testlist.txt  | 2761 ------------------------------
+>>   3 files changed, 39 insertions(+), 2765 deletions(-)
+>>   delete mode 100644 drivers/gpu/drm/ci/testlist.txt
+>>
+>> diff --git a/drivers/gpu/drm/ci/build-igt.sh 
+>> b/drivers/gpu/drm/ci/build-igt.sh
+>> index 7859554756c4..e62244728613 100644
+>> --- a/drivers/gpu/drm/ci/build-igt.sh
+>> +++ b/drivers/gpu/drm/ci/build-igt.sh
+>> @@ -3,6 +3,30 @@
+>>   set -ex
+>> +function generate_testlist {
+>> +    set +x
+>> +    while read -r line; do
+>> +        if [ "$line" = "TESTLIST" ] || [ "$line" = "END TESTLIST" ]; 
+>> then
+>> +            continue
+>> +        fi
+>> +
+>> +        tests=$(echo "$line" | tr ' ' '\n')
+>> +
+>> +        for test in $tests; do
+>> +            output=$(/igt/libexec/igt-gpu-tools/"$test" 
+>> --list-subtests || true)
+>> +
+>> +            if [ -z "$output" ]; then
+>> +                echo "$test"
+>> +            else
+>> +                echo "$output" | while read -r subtest; do
+>> +                    echo "$test@$subtest"
+>> +                done
+>> +            fi
+>> +        done
+>> +    done < /igt/libexec/igt-gpu-tools/test-list.txt > 
+>> /igt/libexec/igt-gpu-tools/testlist.txt
+> 
+> Just a nit, could you rename the file to ci-testlist.txt ? Since 
+> test-list.txt and testlist.txt can be easily confused.
 
-greg k-h
+Sure, will rename it. I missed to add the generating testlist print also.
+
+Regards,
+Vignesh
+
+> 
+> Regards,
+> Helen
+> 
 
