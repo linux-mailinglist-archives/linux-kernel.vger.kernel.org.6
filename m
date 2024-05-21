@@ -1,148 +1,131 @@
-Return-Path: <linux-kernel+bounces-184674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332CD8CAA6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:58:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E3558CAA6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E259D2820FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:58:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2E31F22990
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DAC56770;
-	Tue, 21 May 2024 08:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC6356B72;
+	Tue, 21 May 2024 08:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWEYiY3K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZpTGooHQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351D11F951;
-	Tue, 21 May 2024 08:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF47956757;
+	Tue, 21 May 2024 08:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716281894; cv=none; b=PEmViUV9o5FbGDsqFe8dQnnne9S/HVQhdROHGoELx09kYWy2z3AaCEcmKGgb0BDf+OGcgr8Pns2oHw+KN2OYitEbddL133ZgG7dgG3GVZg9ihpEXsXCjIJuXg/XXdhyJgTfzttDxfEe2C0xrtvMzwactdsEbynOxVEaBYkAH0dA=
+	t=1716281972; cv=none; b=RqmEKAz/7ZgL4XukAJpTFHQKhg0TZsXpz3BFOAbJDldb0mk5tO87S9upbHh2+NfMYWsNLy+GFI9Q0v3obtAu8UHdtbsNsaXrLdpxJPAcjNyfsbQDEK4YpUSJGsUYcJnc0sZ0hnIwgeYBpfXDyyi6OAJ+7ixHzi6RLetYARBq3U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716281894; c=relaxed/simple;
-	bh=Yb9S3qcvqNTBPcx8/jgoqgRqjkneywUyKMXmfw7NoqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aTYcoAurh2Vol7d9M1kP1Sj6KSg0xM05RvhvLkSFjftMuljp2OH6KC2s50L1QJHj2c1Ny0AT8O3rQh5z4cMRE3gbt98Q2RHNZ+fALMIk/EtRZNt9hnWucO23uXV3gD3LcMMSxsuE2/n3mA+QXB8exkuokHcdx5Uc57cpqp/tNeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XWEYiY3K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50B78C2BD11;
-	Tue, 21 May 2024 08:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716281893;
-	bh=Yb9S3qcvqNTBPcx8/jgoqgRqjkneywUyKMXmfw7NoqI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XWEYiY3KUox0XoQh+DTDf/kyFjxeG6DD+EyfLNeYYOhDkTaBrKmbD/szBgKbeBlda
-	 AIIgAzHFzastY9VZfsO9wF3QUhC11fwusu4Ye8LVe6knrs+41MWxXlQayGawxhi2hL
-	 m582TzfkJfhJJ+5xP8IVSQBNQB49YFtKzTJxrgfbRWd/2JUYJxubYyCGi0Gn7odRsr
-	 hql5Tj5fB86D4ZxzeG6Dmz79dkYuLWlsExpL6JSd4fbI0eky5eOGnXVRz6vent45f4
-	 DApp4Ky2k6nEQvDLQ/6v3sssYnCQpGInjq9NInDXK3vwUaUOXUWG0QOgWVcX5j2Ras
-	 SMGBi+uSUZrzg==
-Message-ID: <06565532-987a-465a-b2ab-a03fce7279e1@kernel.org>
-Date: Tue, 21 May 2024 10:58:07 +0200
+	s=arc-20240116; t=1716281972; c=relaxed/simple;
+	bh=eLQ0BJe2tf8WdoA4nuR/w6z7pYRZ+D8yZ7mBE5sZuTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jtUGPaUR5rO7qF8oHgr5yPnc25LzbDnwALFy83RkKQ+OutC3CZPzhUj9erLxaRQ8I2Sgh+aMn3DlT0CbV5Xz1Tl+E/qIDzCwBOiKwrkvC39xXIgU4e4tQxs81DuqC4WC35BNqeWXoMSZfVLVdTVgieK33eAMPIGHKCCR9HKHjc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZpTGooHQ; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716281972; x=1747817972;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=eLQ0BJe2tf8WdoA4nuR/w6z7pYRZ+D8yZ7mBE5sZuTE=;
+  b=ZpTGooHQ8j1InIoqUrX/OYmMK41tQRePHgqWKBzlz5Tl71bhNKKAFAqs
+   X55BuUjLT48aWOtGNZzL2JlaB5OQgVYlCpZ8NCLpVJXlGEPw4Dnu+LzNY
+   CAXDPNAMF0TUp+Xyt487bh/2eiqVH8aqrHrFCtCW+PF7RfySTEmOJUEue
+   G8eYDACzLwwpSU8Rh3e9Zj7OPT3ckjt4amPV49vi2Vx6S8ohS8s36qswL
+   KqZWy4KFKAuT5/llc2XGx4S/K8aUSNvTy+Jvbs+vKU46AX/GUIy2ZRvj7
+   1PBjv3qoSjMVYRyc4EzL6bdhqA4ExjUohkWVlqy3yjBBugvxfP116e9eb
+   g==;
+X-CSE-ConnectionGUID: xG398G0YQgWhXpEoW7LQmw==
+X-CSE-MsgGUID: 9tpoe4gPSVihGVGJsBUHmw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12397954"
+X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
+   d="scan'208";a="12397954"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 01:59:32 -0700
+X-CSE-ConnectionGUID: FftiZykYSUCdUe0RkF1edQ==
+X-CSE-MsgGUID: HMoiWVMPT/GmbDeTOoP0Pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
+   d="scan'208";a="32706683"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 21 May 2024 01:59:28 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id E4AD7179; Tue, 21 May 2024 11:59:26 +0300 (EEST)
+Date: Tue, 21 May 2024 11:59:26 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Gia <giacomo.gio@gmail.com>
+Cc: Benjamin =?utf-8?Q?B=C3=B6hmke?= <benjamin@boehmke.net>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"kernel@micha.zone" <kernel@micha.zone>,
+	Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"S, Sanath" <Sanath.S@amd.com>
+Subject: Re: [REGRESSION][BISECTED] "xHCI host controller not responding,
+ assume dead" on stable kernel > 6.8.7
+Message-ID: <20240521085926.GO1421138@black.fi.intel.com>
+References: <CAHe5sWavQcUTg2zTYaryRsMywSBgBgETG=R1jRexg4qDqwCfdw@mail.gmail.com>
+ <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
+ <lqdpk7lopqq4jn22mycxgg6ps4yfs7hcca33tqb2oy6jxc2y7p@rhjjbzs6wigu>
+ <611f8200-8e0e-40e4-aff4-cc2c55dc6354@amd.com>
+ <61-664b6880-3-6826fc80@79948770>
+ <20240520162100.GI1421138@black.fi.intel.com>
+ <5d-664b8000-d-70f82e80@161590144>
+ <CAHe5sWazL96zPa-v9S515ciE46JLZ1ROL7gmGikfn-vhUoDaZg@mail.gmail.com>
+ <20240521051151.GK1421138@black.fi.intel.com>
+ <CAHe5sWb7kHurBvu6JC6OgXZm9mSg5a2W2XK9L8gCygYaFZz7JQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] dt-bindings: soc: qcom,smsm: Allow specifying
- mboxes instead of qcom,ipc
-To: Luca Weiss <luca@z3ntu.xyz>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240424-smsm-mbox-v1-0-555f3f442841@z3ntu.xyz>
- <2729475.mvXUDI8C0e@g550jk> <1ab150cd-68f0-4153-8d4e-5bd30bb01dfe@linaro.org>
- <12437992.O9o76ZdvQC@g550jk>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <12437992.O9o76ZdvQC@g550jk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHe5sWb7kHurBvu6JC6OgXZm9mSg5a2W2XK9L8gCygYaFZz7JQ@mail.gmail.com>
 
-On 20/05/2024 17:11, Luca Weiss wrote:
-> Hi Krzysztof
+On Tue, May 21, 2024 at 10:15:28AM +0200, Gia wrote:
+> Here you go:
 > 
-> Ack, sounds good.
-> 
-> Maybe also from you, any opinion between these two binding styles?
-> 
-> So first using index of mboxes for the numbering, where for the known
-> usages the first element (and sometimes the 3rd - ipc-2) are empty <>.
-> 
-> The second variant is using mbox-names to get the correct channel-mbox
-> mapping.
-> 
-> -               qcom,ipc-1 = <&apcs 8 13>;
-> -               qcom,ipc-2 = <&apcs 8 9>;
-> -               qcom,ipc-3 = <&apcs 8 19>;
-> +               mboxes = <0>, <&apcs 13>, <&apcs 9>, <&apcs 19>;
-> 
-> vs.
-> 
-> -               qcom,ipc-1 = <&apcs 8 13>;
-> -               qcom,ipc-2 = <&apcs 8 9>;
-> -               qcom,ipc-3 = <&apcs 8 19>;
-> +               mboxes = <&apcs 13>, <&apcs 9>, <&apcs 19>;
-> +               mbox-names = "ipc-1", "ipc-2", "ipc-3";
+> 0x0080 0x003c01c0 0b00000000 00111100 00000001 11000000 .... LANE_ADP_CS_0
+>   [00:07]       0xc0 Next Capability Pointer
+>   [08:15]        0x1 Capability ID
+>   [16:19]        0xc Supported Link Speeds
+>   [20:21]        0x3 Supported Link Widths (SLW)
+>   [22:23]        0x0 Gen 4 Asymmetric Support (G4AS)
+>   [26:26]        0x0 CL0s Support
+>   [27:27]        0x0 CL1 Support
+>   [28:28]        0x0 CL2 Support
+> 0x0081 0x0828003c 0b00001000 00101000 00000000 00111100 .... LANE_ADP_CS_1
+>   [00:03]        0xc Target Link Speed → Router shall attempt Gen 3 speed
+>   [04:05]        0x3 Target Link Width → Establish a Symmetric Link
+>   [06:07]        0x0 Target Asymmetric Link → Establish Symmetric Link
+>   [10:10]        0x0 CL0s Enable
+>   [11:11]        0x0 CL1 Enable
+>   [12:12]        0x0 CL2 Enable
+>   [14:14]        0x0 Lane Disable (LD)
+>   [15:15]        0x0 Lane Bonding (LB)
+>   [16:19]        0x8 Current Link Speed → Gen 2
+>   [20:25]        0x2 Negotiated Link Width → Symmetric Link (x2)
+>   [26:29]        0x2 Adapter State → CL0
+>   [30:30]        0x0 PM Secondary (PMS)
 
-Sorry, don't get, ipc-1 is the first mailbox, so why would there be <0>
-in first case? Anyway, the question is if you need to know that some
-mailbox is missing. But then it is weird to name them "ipc-1" etc.
+Thanks this looks fine (although the link is still Gen 2). Can you run
+the same from the dock upstream port too?
 
-Best regards,
-Krzysztof
-
+  # tbdump -r 2 -a 1 -vv -N2 LANE_ADP_CS_0
 
