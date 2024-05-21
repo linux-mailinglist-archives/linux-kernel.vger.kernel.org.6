@@ -1,109 +1,103 @@
-Return-Path: <linux-kernel+bounces-185127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4A298CB0E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:58:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 142CB8CB0EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F937281768
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:58:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 456311C22009
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA3F14389E;
-	Tue, 21 May 2024 14:58:16 +0000 (UTC)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B65A7F7C5;
+	Tue, 21 May 2024 15:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/Awd0Bh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356E1142E70;
-	Tue, 21 May 2024 14:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFC814A8E;
+	Tue, 21 May 2024 15:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716303495; cv=none; b=mu/kk+AvoK0933z70KSeS0/pVaqPfEdYQDLbRlRRGLd7Co3luGTb/9/YadBOxRxBuMAT67lAhxv/VbeWqaQy47oowAo+CnmDANcOUZEMH/VNW8Ku/MxFdRZKwlmpoYsFPwTf5M3DwNu5g5XAbNN8jFRab4XomiyhmjG8lebWeVs=
+	t=1716303679; cv=none; b=rc+7Ma09vlBG94GqnGgRzubIOnSqIe7qU+bJG5DM93vn39YCiL9rJi4MzWOQdsW0dpiHNQiitq83MxmcFFKKspR/Af2Me37AkcoCICFp6BfGiBwpYcy60Om8n4Mpa4PID7IXfLHT3CJNSMv/SIVk3skASaQTMOHdW5tg26HUYWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716303495; c=relaxed/simple;
-	bh=siUgWbHhxL4TK76HiW2ed7T6aitCV6weK3PRkTuu578=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CRiWpD1s40gA9/JngizfR2oMXi3vRausQBffuF0XF4JwuvTI8ZD9qnjEkFhx+UkYgCkP9W8XotkRWwQwj7wMTrSKnNNoIBy5/K0Dr2TR3AC9IaFUaf+fOarUSZk3TG31cs45TFIgw6oxA7v+Ldi41Bl3OJdjSwcMFhckxErK5n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-572669fd9f9so9032630a12.0;
-        Tue, 21 May 2024 07:58:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716303492; x=1716908292;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8GFlLsFYMU0MyX+LsJFXhkG/Vkyrq1yBglyohH/2pv0=;
-        b=LpWcZ+g757cWIJfVxDaAjy6tXylNW4ceK8eyMcCTDctMQEcz0ZGF6CYsNK8Lbx9YEk
-         Sea3pIC161c5tfC45F/hyejplVw3HKr48vkXxRedq9nwKYGtpgFIyC48nxKsEuaUSn+A
-         r08qmacyntK2bZ+3vzuvivoHVGONKZn8kHsa5p73U32ZOBkXSvLD8SG35RYSNWw/NPk1
-         Nb+r3jgn/wJEmcTb6B6tw0OY7L3cWR1DIQuvlgHkrkGA1eBGng4kEaIj6y8nk27GRDvu
-         P2imC359S+rhYjmZuy6tG+7Dlu/lXRS4+d9IlZQnIbQpivmeL+WrtzHOitoFI9v2OHRq
-         jBuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUv2oU6D58HbhWPAdb9UyV5hAKJeJzaS1jGxgSwWXymNrF/0LfVrIyzque0TTG+HpDerl1D3xmBCPvSUYtZyI6999VFfiD0aTeXP3ffIWtyPtvqJb4nAfPxOhvePJS24yhVBbwPZ/K4MNQ=
-X-Gm-Message-State: AOJu0YwW7+OdsuNwFWbdtxxL0zM1DdkZc8GWasofJRV8He9gddRO8+LD
-	Wfjk12ZevpIAO3bV47GS+n3AFpKTdzgbznwGGkA9m0LyEiSYFfQuBixsOlMy
-X-Google-Smtp-Source: AGHT+IF3vFtNu0QeIcZyZxcuFIGxi+SMkfdq6OXjzr0hZUcY3XxJrukTZw1J6eFwtigh8UU9OUvYvw==
-X-Received: by 2002:a50:a44f:0:b0:572:9dbf:1538 with SMTP id 4fb4d7f45d1cf-5734d6b2914mr21805142a12.31.1716303492553;
-        Tue, 21 May 2024 07:58:12 -0700 (PDT)
-Received: from [127.0.0.1] (p200300f6f709b700fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f709:b700:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-574f6b8b9d7sm8912502a12.82.2024.05.21.07.58.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 07:58:12 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-Date: Tue, 21 May 2024 16:58:08 +0200
-Subject: [PATCH v3 2/2] btrfs: reserve new relocation block-group after
- successful relocation
+	s=arc-20240116; t=1716303679; c=relaxed/simple;
+	bh=yGL1b5jDn2L0XbTPDWxQIH214UessiBnvjxazrUzlj4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=eUm+zR60Gpd7W9E6gZFPcDJxeBQvcrPu+Er20xhUqWKZXlP5AGNOTdSHgXA0Xb7Nx7nINhaSbeJKMCE/xFlhBnyCRs183MbI9dx8rtDPn1WUPyIHqNE5lIXEcX38rbCqUnN+SIhmYJdvepaBcQjekntXMn/4kPug6uYO8f+v5vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/Awd0Bh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A618C32786;
+	Tue, 21 May 2024 15:01:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716303678;
+	bh=yGL1b5jDn2L0XbTPDWxQIH214UessiBnvjxazrUzlj4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G/Awd0BhJdtU2Yi4LJvaYBBW6Ua1Yvtvc3AWUhHGrRs/dOMJAXA8/GhdqMxyDEawl
+	 AWC8JG0wtbbxB8j8YvHjV9wD6uVTMh82oQ/CpPoUKTdWoms9oxaKNOcb7IgUomrFbl
+	 NPfgWGgppkzVudXAHnyX9xno43pga2E5vxG9zQn4bia8lqVrmXa0luHbF0bisZl/cy
+	 sUjJHQhb9HATp9Jsm2LuffcWwk40aCWgH0syWicGBwL2xitfnt//g/5jleXYPGA4c8
+	 U3Hvw6CLiM8LmsWofVFA3A9GcCLiHNGY5C/Gpu4WyhLVW8zWA4oMOIgOGknSoLHAwc
+	 lHwF4lvQ2bB2g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240521-zoned-gc-v3-2-7db9742454c7@kernel.org>
-References: <20240521-zoned-gc-v3-0-7db9742454c7@kernel.org>
-In-Reply-To: <20240521-zoned-gc-v3-0-7db9742454c7@kernel.org>
-To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
- David Sterba <dsterba@suse.com>
-Cc: Hans Holmberg <Hans.Holmberg@wdc.com>, linux-btrfs@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>, 
- Johannes Thumshirn <johannes.thumshirn@wdc.com>
-X-Mailer: b4 0.12.4
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 21 May 2024 18:01:14 +0300
+Message-Id: <D1FEVJ7DO7PS.NL5BCC4RSE1A@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
+Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
+ Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
+ Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] tpm: enable HMAC encryption for only x86-64 and aarch64
+X-Mailer: aerc 0.17.0
+References: <20240521130921.15028-1-jarkko@kernel.org>
+ <236606947b691049c650bdf82c37324084662147.camel@HansenPartnership.com>
+ <D1FDMULT5YRK.GZOPJ9FZ325R@kernel.org>
+ <854fa2e1634eb116b979dab499243e40917c637c.camel@HansenPartnership.com>
+ <D1FE58VX0KL4.70F6U9Y6HPQC@kernel.org>
+ <D1FEC6TB7660.2XD9X21W46X7V@kernel.org>
+In-Reply-To: <D1FEC6TB7660.2XD9X21W46X7V@kernel.org>
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+On Tue May 21, 2024 at 5:35 PM EEST, Jarkko Sakkinen wrote:
+> On Tue May 21, 2024 at 5:26 PM EEST, Jarkko Sakkinen wrote:
+> > On Tue May 21, 2024 at 5:13 PM EEST, James Bottomley wrote:
+> > > On Tue, 2024-05-21 at 17:02 +0300, Jarkko Sakkinen wrote:
+> > > > Secondly, it also roots to the null key if a parent is not given. S=
+o
+> > > > it covers all the basic features of the HMAC patch set.
+> > >
+> > > I don't think that can work.  The key file would be wrapped to the
+> > > parent and the null seed (and hence the wrapping) changes with every
+> > > reboot.  If you want a permanent key, it has to be in one of the
+> > > accessible permanent hierarchies (storage ideally or endorsement).
+> >
+> > I'm fully aware that null seed is randomized per power cycle.
+> >
+> > The fallback was inherited from James Prestwood's original code and I
+> > decided to keep it as a testing feature, and also to test HMAC changes.
+> >
+> > If you look at the testing transcript in the cover letter, it should be
+> > obvious that a primary key is created in my basic test.
+>
+> I think what could be done to it in v3 would be to return -EOPNOTSUPP
+> if parent is not defined. I.e. rationale here is that this way the
+> empty option is still usable for something in future kernel releases.
 
-After we've committed a relocation transaction, we know we have just freed
-up space. Set it as hint for the next relocation.
+It was actually like this: if you explicitly set handle to RH_NULL.
+Have not used it a lot so did not recall this.
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- fs/btrfs/relocation.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+That said I'd actually just take away any special substitution logic
+and use any handle given by the user space as it is.
 
-diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
-index 8b24bb5a0aa1..764317a1c55d 100644
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -3811,6 +3811,13 @@ static noinline_for_stack int relocate_block_group(struct reloc_control *rc)
- 	ret = btrfs_commit_transaction(trans);
- 	if (ret && !err)
- 		err = ret;
-+
-+	/*
-+	 * We know we have just freed space, set it as hint for the
-+	 * next relocation.
-+	 */
-+	if (!err)
-+		btrfs_reserve_relocation_bg(fs_info);
- out_free:
- 	ret = clean_dirty_subvols(rc);
- 	if (ret < 0 && !err)
-
--- 
-2.43.0
-
+BR, Jarkko
 
