@@ -1,169 +1,164 @@
-Return-Path: <linux-kernel+bounces-184755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6578CAB85
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:09:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346B58CAB87
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD70F1C21301
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:09:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D35F1F22865
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB886BFA3;
-	Tue, 21 May 2024 10:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FA96BFA3;
+	Tue, 21 May 2024 10:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UzhUU4iQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D54Y9xHE"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6E94F88A
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6854F88A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716286188; cv=none; b=hP6xOdGX/A6F+r8XMlKCH7Tdvz+jkBqeLA0mUynXvejIs/nO4GZwV/g7Vm7m+jmMXDwgu3ZEb7GOjHNU9TGzocIOWUn2D7lN4mtcBo8HB2dkK6xkaGQ43VoFM2L2tQsKlmhL37JkYkbQE2SjY1XFGlu+F/JHeqSJOlixXo9rlR4=
+	t=1716286224; cv=none; b=madMJuNQHU9fjwL8ajdGruyUCJsunsQCiqisrYTk8FNmW/eDsbe2SXPdu/NGeGYdoAmd4SBOnCJygu5ormMpsfk8vFsvH6fmyV5dfGRlk4oLv553CBdxLDpfKr/tfBmu4OFSHR1EP5H2xa7KWcNfwdl3VEdJU4QxERE8Mp4zMsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716286188; c=relaxed/simple;
-	bh=LY84E1RWWk3jAofPEJLObQHNu/Ia/tP48sDzh7KJUqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fXt1aJHh8saRK1WooL1WzoiYk0qpo3ukO9RJyVfACZPRoswuEZWNM7IAdMrqQZ0v3Fyzw8mxjGiu6HkhdkxEL1N7WWlr35nX5ui6y40u7ZntVufnFRt7Jqze1RYD0HPUbULezzJhstGzfFo1lDUPXojIgec3Nis6w0bhQ4+fqVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UzhUU4iQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716286185;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nIc2pXGjQ+me7ZvTYeZx+G3dW7IZswOqXUWkt6vgNEc=;
-	b=UzhUU4iQspAGZogVP8iIm3SY29UXhsjMJaZ5omLad4CVsIsMemWzALSn/IwoUdICbULDsa
-	qC3sM1JtCEFNPePfq4e3ddZsRDnC1K/px0d5k6snCMcKgGNEbkv+J/HRFdoM9EjZDOzYYk
-	1yJXNuc337JQecqqNvtuhXc7N29nFcQ=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-448-z7dxmzcjO6eWSBrF0wuZmQ-1; Tue, 21 May 2024 06:09:44 -0400
-X-MC-Unique: z7dxmzcjO6eWSBrF0wuZmQ-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a59eea00cafso829701566b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:09:44 -0700 (PDT)
+	s=arc-20240116; t=1716286224; c=relaxed/simple;
+	bh=lzP6WVfGnZ2gRAVw3Iw9YAiEUFJTomWHX1OVcSfqHoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pemHT8aO889Ato8LPmPRHPhmOoiMtpDF5v+XoN5kAxgPfNgjEafbG/ILZiqBRz3YH3vGZeQDPP9t5yNhQeTYe18ddQvFKjxhSXTyyHgxTHgxHqPpjGgFBwhMIcLQNg5omoJJmG2kfGH8OW4YEGi17CFGSbcm1nrrQ91Pi6IYTQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D54Y9xHE; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3504f34a086so2755813f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:10:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716286221; x=1716891021; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uqy/BrI0+zdFA8alFTtjRQNHBs3pPPaugw1diVg336k=;
+        b=D54Y9xHEgI0t0VCnnK/xk14UbrZCUHScdtld/LwLRO4Znoh55VGoYL6v5PwwgCAnnZ
+         yCc+Qybo2Q0P4B+XL3/mbkQAGqu9moo6gLFanhkyZRbLvezIr+bj0x9/Vi5T4/SZnX5V
+         bqCFyzcZLWdqWWBcCOZPRs2PnMSkPQAdmOpOluorQH7/N67YOG887jNetz2ODtL7SF30
+         7KrTWpxgUgPaObdGn1oiblHGwj0bJuLs37WVDEPbILJU4sjExSljr37NDwpjyN0/fxef
+         RrWm8g/ausKlydAh3F33Eymadfi0Jk02NkWK8QYf4u16x1tsniZC6xp7cy9gSm97WNEC
+         NoDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716286183; x=1716890983;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nIc2pXGjQ+me7ZvTYeZx+G3dW7IZswOqXUWkt6vgNEc=;
-        b=WtWT0L77aN+MZ5OIHc32gOrX7FjqyJ8bvQ9usphJAsQykEH6bMlUsQGWpl+3Nw9pxn
-         Ccim+aUOqn3dowFiQRubF481xaa/KXa+6RerZgVXtrC40U5aNmz3JIq3MXd7sO+uSlV9
-         xH6oz5/4sKQIA85smEqzMLrhTYKo9DXhEEV8veo3yO3ywLM8pjb5eSQ3hn8g0bmPJjpc
-         CWyqECkp+ndQxq8eVbEuZyhW+Z3t0bUsnp5CJvVvNl06tKXznif546wHucOyhfAHq9jq
-         k4aO2z/VVsnY4n8vXTH7tF8MQvZs/ZqEY4OyVAEd1+ApOwmgdhCeCAVuyLahocL57rac
-         i31g==
-X-Forwarded-Encrypted: i=1; AJvYcCUirWMWSlE5IK7kPiZywqi82A8AJqxCwAN77zvK6RRHLU0NiX3kYMQqUUxq9dMSNouz4eAD7JvDqSwZJQUknXTmk1rIVYxIXa1hXBPi
-X-Gm-Message-State: AOJu0YxoaVmUD/5dxK8C1xvzQvDuLEJdFfMynh9uzntAGA+gW5ic3akH
-	acWFs+u6WAPnU9VDZucmqEyd7dB/utu7PJt4UcdlaTV6/uTG+iJKrcQnkXY6Y8IUl6HgT5L/bxR
-	btAu7HIV0gOhZEuOJQh+yeSW98nZT6hfIlKH4gGoPR673uJN7Yk2QDAzS8S9VjBEW8lqchg==
-X-Received: by 2002:a17:906:fe07:b0:a5a:81b0:a6a9 with SMTP id a640c23a62f3a-a5a81b0a73cmr2446484666b.53.1716286182722;
-        Tue, 21 May 2024 03:09:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFRdhoc2N3wtE730xVnMpA89nBQtXnC9LJWRX7m/mx+FTIPUDLCEt36je34xFicbR7eTgGF6A==
-X-Received: by 2002:a17:906:fe07:b0:a5a:81b0:a6a9 with SMTP id a640c23a62f3a-a5a81b0a73cmr2446481266b.53.1716286182230;
-        Tue, 21 May 2024 03:09:42 -0700 (PDT)
-Received: from [172.16.2.75] (5920ab7b.static.cust.trined.nl. [89.32.171.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01dfcsm1589898066b.187.2024.05.21.03.09.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2024 03:09:40 -0700 (PDT)
-From: Eelco Chaudron <echaudro@redhat.com>
-To: Aaron Conole <aconole@redhat.com>
-Cc: netdev@vger.kernel.org, dev@openvswitch.org, linux-kernel@vger.kernel.org,
- Pravin B Shelar <pshelar@ovn.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Jesse Gross <jesse@nicira.com>,
- Ilya Maximets <i.maximets@ovn.org>, Simon Horman <horms@ovn.org>,
- Jaime Caamano <jcaamano@redhat.com>
-Subject: Re: [PATCH v2 net] openvswitch: Set the skbuff pkt_type for proper
- pmtud support.
-Date: Tue, 21 May 2024 12:09:39 +0200
-X-Mailer: MailMate (1.14r6030)
-Message-ID: <701FCF52-7D25-4094-9B0E-8F7AE8A68107@redhat.com>
-In-Reply-To: <20240516200941.16152-1-aconole@redhat.com>
-References: <20240516200941.16152-1-aconole@redhat.com>
+        d=1e100.net; s=20230601; t=1716286221; x=1716891021;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uqy/BrI0+zdFA8alFTtjRQNHBs3pPPaugw1diVg336k=;
+        b=KCUkRbjrIKSQd62U5AbrblwQw4D25X+gD52zPquyMo2OajWeXOZKE/0cdDXHnOd4NE
+         9YPCBUiyVHYxgRayYYcQeIcjPQz5uXkXJOQiJZFYBepp4VHypiqANHL5lUCafYWqG6Eh
+         igVIDHktY3FgPiPhyCRHk6OXQN2jZbFsb219mxAy2E19zCjOmEuslNYB3HxOEY1yeSH9
+         MT/jlg+N1X3jRYerGVBLC8tAsqwjPu+uUgk1fw6rRVX99sZm4ltDKDwpebVIAZ3qiUVb
+         ES9+bYlZ/W++KMwojnrYXkktZD3eimvYLvDood57wYnPdoMgF4Hf/IiN/VXA315dZVe4
+         iocA==
+X-Gm-Message-State: AOJu0YyIvQ/FGBTyHorTgzfDnRqh3l/aFRgCLXsbdGh1fGeaNO+zDmdB
+	cQdyWubDQFAHAf5McbGq5BH2oTEvGggj45b1v1+rujEtSHM7LI4An409Z3wemA==
+X-Google-Smtp-Source: AGHT+IEdiaPzj2fVXiCyAzh85qZvLoxFo3FQ3i9W9ds24I0Tn1nGrmo7cQoNrmxaf/0G40TEJfoY5A==
+X-Received: by 2002:a05:6000:e8d:b0:34a:5d79:dfe2 with SMTP id ffacd0b85a97d-3504a632e5emr22499956f8f.13.1716286220800;
+        Tue, 21 May 2024 03:10:20 -0700 (PDT)
+Received: from google.com (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b79bc3bsm31525781f8f.13.2024.05.21.03.10.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 03:10:20 -0700 (PDT)
+Date: Tue, 21 May 2024 11:10:16 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>, rostedt@goodmis.org
+Subject: Re: [PATCH v1 1/2] mm/memory: cleanly support zeropage in
+ vm_insert_page*(), vm_map_pages*() and vmf_insert_mixed()
+Message-ID: <ZkxzCJBihAddyb4D@google.com>
+References: <20240430204044.52755-1-david@redhat.com>
+ <20240430204044.52755-2-david@redhat.com>
+ <Zkdys7YKC5pe1vAu@google.com>
+ <3decc6c8-9035-44d6-89c6-8d42a5e0bc40@redhat.com>
+ <ZkxkDPnPiQzPEm-0@google.com>
+ <dde2f22d-c57f-44ac-9f2c-4a1790de084b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dde2f22d-c57f-44ac-9f2c-4a1790de084b@redhat.com>
 
+On Tue, May 21, 2024 at 11:18:41AM +0200, David Hildenbrand wrote:
+> On 21.05.24 11:06, Vincent Donnefort wrote:
+> > On Tue, May 21, 2024 at 10:25:43AM +0200, David Hildenbrand wrote:
+> > > On 17.05.24 17:07, Vincent Donnefort wrote:
+> > > > Hi David,
+> > > > 
+> > > > [...]
+> > > > 
+> > > > > -static int validate_page_before_insert(struct page *page)
+> > > > > +static bool vm_mixed_zeropage_allowed(struct vm_area_struct *vma)
+> > > > > +{
+> > > > > +	VM_WARN_ON_ONCE(vma->vm_flags & VM_PFNMAP);
+> > > > > +	/*
+> > > > > +	 * Whoever wants to forbid the zeropage after some zeropages
+> > > > > +	 * might already have been mapped has to scan the page tables and
+> > > > > +	 * bail out on any zeropages. Zeropages in COW mappings can
+> > > > > +	 * be unshared using FAULT_FLAG_UNSHARE faults.
+> > > > > +	 */
+> > > > > +	if (mm_forbids_zeropage(vma->vm_mm))
+> > > > > +		return false;
+> > > > > +	/* zeropages in COW mappings are common and unproblematic. */
+> > > > > +	if (is_cow_mapping(vma->vm_flags))
+> > > > > +		return true;
+> > > > > +	/* Mappings that do not allow for writable PTEs are unproblematic. */
+> > > > > +	if (!(vma->vm_flags & (VM_WRITE | VM_MAYWRITE)))
+> > > > > +		return false;
+> > > > 
+> > > > Shouldn't we return true here?
+> > > 
+> > > Indeed, thanks! I wish we would have user in the tree already that could
+> > > exercise that code path.
+> > 
+> > I have a patch ready to use this path from the memory map tracing! I can either
+> > send it once this one is picked-up or you can add it to your series?
+> 
+> Whatever works for you! To debug, it would be good if you could send me the
+> patch and simple instructions on how to test it (do we have a selftest as
+> well?).
 
+Of course, I'll share something with you today! It includes an update to the
+selftest to make sure we check the padding with the zero-page.
 
-On 16 May 2024, at 22:09, Aaron Conole wrote:
-
-> Open vSwitch is originally intended to switch at layer 2, only dealing with
-> Ethernet frames.  With the introduction of l3 tunnels support, it crossed
-> into the realm of needing to care a bit about some routing details when
-> making forwarding decisions.  If an oversized packet would need to be
-> fragmented during this forwarding decision, there is a chance for pmtu
-> to get involved and generate a routing exception.  This is gated by the
-> skbuff->pkt_type field.
->
-> When a flow is already loaded into the openvswitch module this field is
-> set up and transitioned properly as a packet moves from one port to
-> another.  In the case that a packet execute is invoked after a flow is
-> newly installed this field is not properly initialized.  This causes the
-> pmtud mechanism to omit sending the required exception messages across
-> the tunnel boundary and a second attempt needs to be made to make sure
-> that the routing exception is properly setup.  To fix this, we set the
-> outgoing packet's pkt_type to PACKET_OUTGOING, since it can only get
-> to the openvswitch module via a port device or packet command.
->
-> Even for bridge ports as users, the pkt_type needs to be reset when
-> doing the transmit as the packet is truly outgoing and routing needs
-> to get involved post packet transformations, in the case of
-> VXLAN/GENEVE/udp-tunnel packets.  In general, the pkt_type on output
-> gets ignored, since we go straight to the driver, but in the case of
-> tunnel ports they go through IP routing layer.
->
-> This issue is periodically encountered in complex setups, such as large
-> openshift deployments, where multiple sets of tunnel traversal occurs.
-> A way to recreate this is with the ovn-heater project that can setup
-> a networking environment which mimics such large deployments.  We need
-> larger environments for this because we need to ensure that flow
-> misses occur.  In these environment, without this patch, we can see:
->
->   ./ovn_cluster.sh start
->   podman exec ovn-chassis-1 ip r a 170.168.0.5/32 dev eth1 mtu 1200
->   podman exec ovn-chassis-1 ip netns exec sw01p1 ip r flush cache
->   podman exec ovn-chassis-1 ip netns exec sw01p1 \
->          ping 21.0.0.3 -M do -s 1300 -c2
->   PING 21.0.0.3 (21.0.0.3) 1300(1328) bytes of data.
->   From 21.0.0.3 icmp_seq=2 Frag needed and DF set (mtu = 1142)
->
->   --- 21.0.0.3 ping statistics ---
->   ...
->
-> Using tcpdump, we can also see the expected ICMP FRAG_NEEDED message is not
-> sent into the server.
->
-> With this patch, setting the pkt_type, we see the following:
->
->   podman exec ovn-chassis-1 ip netns exec sw01p1 \
->          ping 21.0.0.3 -M do -s 1300 -c2
->   PING 21.0.0.3 (21.0.0.3) 1300(1328) bytes of data.
->   From 21.0.0.3 icmp_seq=1 Frag needed and DF set (mtu = 1222)
->   ping: local error: message too long, mtu=1222
->
->   --- 21.0.0.3 ping statistics ---
->   ...
->
-> In this case, the first ping request receives the FRAG_NEEDED message and
-> a local routing exception is created.
->
-> Tested-by: Jaime Caamano <jcaamano@redhat.com>
-> Reported-at: https://issues.redhat.com/browse/FDP-164
-> Fixes: 58264848a5a7 ("openvswitch: Add vxlan tunneling support.")
-> Signed-off-by: Aaron Conole <aconole@redhat.com>
-
-Thanks for the additional comments and detailed commit message. The change looks good to me.
-
-Acked-by: Eelco Chaudron <echaudro@redhat.com>
-
+> 
+> > 
+> > > 
+> > > [...]
+> > > 
+> > > > > @@ -2043,7 +2085,7 @@ static int insert_page_in_batch_locked(struct vm_area_struct *vma, pte_t *pte,
+> > > > >    	if (!page_count(page))
+> > > > >    		return -EINVAL;
+> > > > 
+> > > > This test here prevents inserting the zero-page.
+> > > 
+> > > You mean the existing page_count() check? or the (wrong) vma->vm_flags check
+> > > in vm_mixed_zeropage_allowed() ?
+> > 
+> > I meant this page_count() here. As a quick test, I removed that check (also fixed
+> > the vm_flags above) and the zero-page was properly mapped!
+> 
+> That's weird and might indicate another issue.
+> 
+> The refcount of the shared zeropage should be initialized to 1, just like
+> for any other reserved pages
+> (mm/mm_init.c:__init_single_page()->init_page_count())
+> 
+> Hm ...
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
