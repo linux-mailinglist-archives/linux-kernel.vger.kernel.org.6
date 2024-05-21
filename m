@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-184707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E53888CAACE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:30:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBDCF8CAAD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 266ADB211FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1D0628107C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB06859147;
-	Tue, 21 May 2024 09:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0751559147;
+	Tue, 21 May 2024 09:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOV95p0M"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPrBYDFC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA32F3B1A1;
-	Tue, 21 May 2024 09:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6241D554;
+	Tue, 21 May 2024 09:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716283830; cv=none; b=uwEEbk105RYXahZoAwn0KmzAq3Tmk7DfDXlhg7e2/nHbh5aPY+nenN8IzURGkfUkB5X0buDeexGOFTxvw+la96fH5/J6S+Es/a6PPlo+OBVW/SuA0FjDLMlZ/k4aYmg0NLQK4oDvUNdAC6Odnntu0eL+hCHjDKLeTFlLtmq2kzk=
+	t=1716283914; cv=none; b=CZBGjIxZv1JbNg299w7qLVeOsFTw00c35cCo3ku9MgCwPLViyhi4kDKIvdazickJsX/zwZTKT/AUtqnlXWkLJqM1WmEY5fQx9Q3rt4QdLGfOIpy/rRIVd9hdO0d5q5l3oHRSfb4CGXFq/AfySAfaNHUVYwclg/GUzYiosYCQR+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716283830; c=relaxed/simple;
-	bh=dK7zzThPWoX0Tl/h413qAPmj7A3KkKjcLZB+0ecLH1o=;
+	s=arc-20240116; t=1716283914; c=relaxed/simple;
+	bh=UWCVCjCl906tjXacuShzM1G1T44KjkD2GCeJ9RE58ZE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LuwiJp9XAwpdU01w84OrbZ/s7H2WOSbX4P5UAHf3rFOt3pBE/Co0S4OwE9/HO2n87fBVkfCcnJsptnv4qNcKufW2aeEjh0mOSjLDSW/JgQg4isgWRop3AS44klK9Pz2YAhy/kfl2b8c+kNT86QP5hD+N6MWn0Ll94oMeKpNA1d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOV95p0M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E071C2BD11;
-	Tue, 21 May 2024 09:30:21 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=io7pMzyRitagnc+Iwl2kIyv3m7hqvzSTtQz/JD/WQxnUCYiDR5+0pPmyBl5qvQEPKFzpiQnZKagU9b/gqaZGKMxYLBu2q9l2C+hlBk4J0a8KEDptuK1rNyyXSDVICjhaBvzCofA1VI3E3EsatWlFdxQMF7xwFAIFJXxhoIvHGEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPrBYDFC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13FDEC2BD11;
+	Tue, 21 May 2024 09:31:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716283829;
-	bh=dK7zzThPWoX0Tl/h413qAPmj7A3KkKjcLZB+0ecLH1o=;
+	s=k20201202; t=1716283913;
+	bh=UWCVCjCl906tjXacuShzM1G1T44KjkD2GCeJ9RE58ZE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QOV95p0MwWmW0FKD2XbVKxIjoQAppi/NX9+/wU29NCp/RXB29DzQPbF10NVE5vLUJ
-	 lqtBOvgI01OiyXmRKf6IszObIIItcD/drHBtiwjragDmbnDN1JEZfZ+fLNGsUN+iG2
-	 ay6kDfdUO3nxEPuBwnuCHEmzgsAGT2NnEsYCERLSzYyK7r4TTnewguQg0HyxFpVTYa
-	 yfgfULe9H8Gn6bAb5CO7zebi2njO8/b38rjxjZM0l4vLY132LBdDnri/Boxar+JmLx
-	 6qHqFql9LJ/fMzI3aw+x75d8bVNkyIkl2uoMzd2+xOIySGKWSKsxbDs9a2olMB5K9N
-	 7zr2eJ+njU8oQ==
-Message-ID: <f09e599b-15df-4a15-ada0-09278ab4991e@kernel.org>
-Date: Tue, 21 May 2024 11:30:18 +0200
+	b=GPrBYDFCLb7oH1fnTJb3RthIZJRAGxX4QWMFlYRjJpLobkalbXqGxRAmZ5WILY3Oe
+	 qfL7Nppcy3DMA1rIurkwUhtwDOXaZIc/8US5QmoNAS/a0yvSurSx4liX2vmSLj6YFk
+	 eH9N/r7c01KSo/zoIzHo0WTt0paoChUc8SvLV/1RiqCB8hGLCi4m01n5PslUkOSKWO
+	 OcQd3YB1FynF9Njl1TvmGD6gYHzDcPjV0pP9lpr0qNV+A4VI5rbzfn6V4rqSKOnU/4
+	 4cbjUFWl0ZJ94EOvz+aEevKATlmXbh+SYrae3FsRLZRzrkasgdp/ESzQ2MI+RAOsi0
+	 b4FwXwr9va0Fg==
+Message-ID: <6c936567-bb22-47d0-8759-983a2d99c994@kernel.org>
+Date: Tue, 21 May 2024 11:31:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/10] drm/bridge: add common api for inno hdmi
+Subject: Re: [PATCH v4 09/10] drm/vs: Innosilicon HDMI support
 To: keith <keith.zhao@starfivetech.com>, andrzej.hajda@intel.com,
  neil.armstrong@linaro.org, rfoss@kernel.org,
  Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
@@ -62,7 +62,7 @@ To: keith <keith.zhao@starfivetech.com>, andrzej.hajda@intel.com,
 Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20240521105817.3301-1-keith.zhao@starfivetech.com>
- <20240521105817.3301-3-keith.zhao@starfivetech.com>
+ <20240521105817.3301-10-keith.zhao@starfivetech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,70 +108,66 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240521105817.3301-3-keith.zhao@starfivetech.com>
+In-Reply-To: <20240521105817.3301-10-keith.zhao@starfivetech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 21/05/2024 12:58, keith wrote:
-> Add INNO common api so that it can be used by vendor
-> drivers which implement vendor specific extensions to Innosilicon HDMI.
+> add inno hdmi driver which binds to vs display controller
+> and this driver uses the commom api from the inno hdmi
 > 
 > Signed-off-by: keith <keith.zhao@starfivetech.com>
 > ---
->  MAINTAINERS                                   |   2 +
 
-> +}
-> +
-> +static u32 inno_hdmi_i2c_func(struct i2c_adapter *adapter)
+..
+
+> +static int starfive_hdmi_bind(struct device *dev, struct device *master,
+> +			      void *data)
 > +{
-> +	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-> +}
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct drm_device *drm = dev_get_drvdata(master);
+> +	struct stf_inno_hdmi *stf_hdmi;
+> +	struct inno_hdmi *hdmi;
+> +	struct resource *iores;
 > +
-> +static const struct i2c_algorithm inno_hdmi_algorithm = {
-> +	.master_xfer	= inno_hdmi_i2c_xfer,
-> +	.functionality	= inno_hdmi_i2c_func,
-> +};
-> +
-> +static struct i2c_adapter *inno_hdmi_i2c_adapter(struct inno_hdmi *hdmi)
-> +{
-> +	struct i2c_adapter *adap;
-> +	struct inno_hdmi_i2c *i2c;
 > +	int ret;
+> +	unsigned long long rate;
 > +
-> +	i2c = devm_kzalloc(hdmi->dev, sizeof(*i2c), GFP_KERNEL);
-> +	if (!i2c)
-> +		return ERR_PTR(-ENOMEM);
+> +	stf_hdmi = drmm_simple_encoder_alloc(drm, struct stf_inno_hdmi,
+> +					     encoder, DRM_MODE_ENCODER_TMDS);
+> +	hdmi = &stf_hdmi->inno_hdmi;
 > +
-> +	mutex_init(&i2c->lock);
-> +	init_completion(&i2c->cmp);
+> +	hdmi->dev = dev;
+> +	hdmi->plat_data = (struct inno_hdmi_plat_data *)of_device_get_match_data(dev);
 > +
-> +	adap = &i2c->adap;
-> +	adap->owner = THIS_MODULE;
-> +	adap->dev.parent = hdmi->dev;
-> +	adap->dev.of_node = hdmi->dev->of_node;
-> +	adap->algo = &inno_hdmi_algorithm;
-> +	strscpy(adap->name, "Inno HDMI", sizeof(adap->name));
-> +	i2c_set_adapdata(adap, hdmi);
-> +
-> +	ret = i2c_add_adapter(adap);
-> +	if (ret) {
-> +		dev_warn(hdmi->dev, "cannot add %s I2C adapter\n", adap->name);
-> +		devm_kfree(hdmi->dev, i2c);
+> +	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	hdmi->regs = devm_ioremap_resource(dev, iores);
 
-Hm, why freeing? That's a devm. You don't free other pieces in bind paths...
+There's a helper combining these two.
 
-> +		return ERR_PTR(ret);
-> +	}
+> +	if (IS_ERR(hdmi->regs))
+> +		return PTR_ERR(hdmi->regs);
 > +
-> +	hdmi->i2c = i2c;
+> +	ret = starfive_hdmi_get_clk_rst(dev, stf_hdmi);
+> +	if (ret < 0)
+> +		return ret;
 > +
-> +	DRM_DEV_INFO(hdmi->dev, "registered %s I2C bus driver\n", adap->name);
+> +	ret = starfive_hdmi_enable_clk_rst(dev, stf_hdmi);
+> +	if (ret)
+> +		return ret;
+> +
+> +	rate = clk_get_rate(stf_hdmi->clk_hdmi[CLK_SYS].clk);
+> +	inno_hdmi_i2c_init(hdmi, rate);
+> +
+> +	ret = inno_hdmi_bind(drm, hdmi, &stf_hdmi->encoder);
+> +	if (ret)
+> +		goto err_disable_clk;
+> +
+> +	dev_set_drvdata(dev, stf_hdmi);
+> +
+> +	return 0;
+> +
 
-Please do not print simple success messages. Tracing tells you this and
-driver should be quiet in typical cases.
-
-You have also some weird tabs instead of spaces here and there... like
-before 'encoder' arguments. This is needs some basic style check.
 
 
 Best regards,
