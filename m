@@ -1,120 +1,88 @@
-Return-Path: <linux-kernel+bounces-184950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1238CAE57
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:32:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E728CAE58
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C2071C22632
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:32:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0BE1F2273E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D20770E2;
-	Tue, 21 May 2024 12:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E95770E3;
+	Tue, 21 May 2024 12:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OKnzGjWb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="csNPwieI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945A428E7;
-	Tue, 21 May 2024 12:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C09776F1B;
+	Tue, 21 May 2024 12:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716294716; cv=none; b=FCwFPyvXd9LBcPzWs3KDrr86ryUxOq96mGBY6SR1wmVauPrlv4+BYXJzsNjprxgV1NSGuGGlhymHHjGuYamtIiewdOmgy3O5Goqki1iJWI2i1sB/KtZa4bKu/JuKi0H1kcs95d9cIcdRs7NH0GAHai/54A3/W8YztwHlZxCSsMY=
+	t=1716294745; cv=none; b=HhOhRSr5oLRpmj8Ez5WYUIqpqf0GFE3rQ+zQmVgoUTu5BSSblET2i/ljNtRbWqpc7jsCBnYFlyUk6lq04FERz8GmJp2V9UlPsItriionavqYuPTnSG3CREGjU20deOHc14KUTB1JVJMHh44LtpznXS9RuwMCmJLhnwdiz5iGnCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716294716; c=relaxed/simple;
-	bh=2VUP4B/6QYT/IYsnqmX+BdABbHu7lo+RmKillgVoklM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CJ9PTo3Pq1OKouz2N/AMZaBazA8qAkvRwL7okC2S/5BiqvYSL2SxkU5SxQTQc1xVsmRSTOw2Zb1i3ttHwvrpyYC5Oyd53kkMItfilCHI+TA0MWmrqP7tJe7ESR0i6vSnt26cKuYgpflAGZ7dtrkj8UNShIhPFgUiMO6N4gmn0fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OKnzGjWb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44L3aVf6030616;
-	Tue, 21 May 2024 12:31:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=IlNoFCAo5nlH1H6C7luAGx5l0cpdPI2BaL3sVZ5ChUQ=; b=OK
-	nzGjWb/xQ3SL22yP1AOVCAM5+gVyAZHPnyFuj1TYnDxBCWe9hxm887WNawshFbrb
-	14Cs9hjVRCPM1sqYfqvsCuqM8lsc1bcgwxyUb617i5zi0WfqTsDCartXQgriQ/la
-	fM/t3979B0oaUnOcqjha2f3/TSlAUzAZomXqe8JoRMSsx/O3Cbby/Dz0xDCwkI8N
-	cY4aB1zAEIujCe9PvtSCrwV05APVYRDc5wWOwURfeCaoXufo892lAELuU4iNDaSF
-	wuyz5yt2cmcWNyrERzFHhakhzX78lQDoNVsRrTWnjPrQA9NvCoC3U//DS9YdZRH7
-	Fk6YfjoSTnGl99RYbIsA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pr2nqmd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 12:31:38 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44LCVbnB004681
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 12:31:37 GMT
-Received: from [10.216.52.184] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 21 May
- 2024 05:31:30 -0700
-Message-ID: <abead689-de3f-eed1-fcd8-6347a2518ce6@quicinc.com>
-Date: Tue, 21 May 2024 18:01:27 +0530
+	s=arc-20240116; t=1716294745; c=relaxed/simple;
+	bh=lJH99oEfELQo4YpxFi9oSnZr1WynJ4J1GXjG73y39yc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hqgz6LLFDR+BPP7NQSa/QuE9QQXLHOUJOsFHV72aRNz4aF6ohCIfv2wBiupTYxv6aVpZw5/DZ2nQInjLHDeeebtLM474cTpe12MIljnlJWBPeKD8SXIt02GaQSbcz9Vzt6w/9adBmDcNxxh0hBKXsz4C1y+q8xgoaKIqxoSWl0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=csNPwieI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C906C2BD11;
+	Tue, 21 May 2024 12:32:24 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="csNPwieI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1716294742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bOeW+XNOZlEkfc+I6ht2irFCJlPanLIdFnPaPKj/f3k=;
+	b=csNPwieIdOzQfSLoGZnqiMjjip5EKQIo/6RLLoUAwB2Pyn95T9sN0R5Ak8dLeh6VaBLN1r
+	DPwt+3zJpLFN1u5NTarkvpU7OBxK6L42JOrNeYQKkpgvGYcSCekH8XYmIzfuVYjoWCwfoF
+	X05lwNv9Zw8+7LDYV+W8AqALn3N4Srs=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 88714705 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Tue, 21 May 2024 12:32:22 +0000 (UTC)
+Date: Tue, 21 May 2024 14:32:20 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, adhemerval.zanella@linaro.org
+Subject: Re: [PATCH v15 2/5] random: add vgetrandom_alloc() syscall
+Message-ID: <ZkyUVOXzYg7h9OqV@zx2c4.com>
+References: <20240521111958.2384173-1-Jason@zx2c4.com>
+ <20240521111958.2384173-3-Jason@zx2c4.com>
+ <87msoj5qth.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v6 4/8] drivers: mtd: nand: Add qpic_common API file
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, <broonie@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
-        <manivannan.sadhasivam@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20240521105532.1537845-1-quic_mdalam@quicinc.com>
- <20240521105532.1537845-5-quic_mdalam@quicinc.com>
- <38517491-678e-4aba-ad5a-f7cb7519ef1c@kernel.org>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <38517491-678e-4aba-ad5a-f7cb7519ef1c@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: L6mg3MFywzwiotuHjWfx-Ee_7MeP3vZ4
-X-Proofpoint-GUID: L6mg3MFywzwiotuHjWfx-Ee_7MeP3vZ4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-21_08,2024-05-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=802 bulkscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 impostorscore=0
- clxscore=1011 lowpriorityscore=0 adultscore=0 suspectscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405210094
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87msoj5qth.fsf@oldenburg.str.redhat.com>
 
+On Tue, May 21, 2024 at 01:48:10PM +0200, Florian Weimer wrote:
+> * Jason A. Donenfeld:
+> 
+> > Libc is expected to allocate a chunk of these on first use, and then
+> > dole them out to threads as they're created, allocating more when
+> > needed. The returned address of the first state may be passed to
+> > munmap(2) with a length of `num * size_per_each`, in order to deallocate
+> > the memory.
+> 
+> I think “first use” actually means “processs start” here?  We don't have
+> a way to report failure from arc4random and similar interfaces.
 
+First use, actually. On failure this just falls back to slow syscall
+getrandom() with identical semantics.
 
-On 5/21/2024 5:24 PM, Krzysztof Kozlowski wrote:
-> On 21/05/2024 12:55, Md Sadre Alam wrote:
->> Add qpic_common.c file which hold all the common
->> qpic APIs which will be used by both qpic raw nand
->> driver and qpic spi nand driver.
->>
->> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->> ---
->> Change in [v6]
->>
-> 
-> This is v6, but you still keep prefixing in the subject as "drivers".
-> Drop it finally from all your patches.
-  Sorry, Will correct in next patch.
-> 
-> Best regards,
-> Krzysztof
-> 
+Adhemerval has a branch of libc where he implemented this, if you're
+interested. He's in CC to send the link.
+
+Jason
 
