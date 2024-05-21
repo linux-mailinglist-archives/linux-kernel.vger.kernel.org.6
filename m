@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-184655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78B78CAA1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:36:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0652D8CAA22
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E19F1F2236B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:36:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6AC1F21A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C436BFBC;
-	Tue, 21 May 2024 08:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F1A6EB7E;
+	Tue, 21 May 2024 08:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GGrm8FTu"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L3hCpjwy"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE185579F
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 08:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A01F59B56
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 08:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716280514; cv=none; b=T/dXfF+MW62GkmQOXb+OZFAYqa8YluJIl5DC3W+aj63cFSTlqveqPCG99p/0qKoFtG2RqOluzmZcPVpjjHU5xE2RndO1C7NSwxuyLdbbqAmwRzjAM2Oa3SZI+pxxyHtyzwAx4DPthbqs1WGZ7m0vd2pgey03PSRpG18bA4x/gVk=
+	t=1716280516; cv=none; b=M+E4QzWxXm1kDQGosOvFQWGSWJ3IOohhb7HGWEyB9J8byVJfEkx5qNWuFNMaoC6tDos/0ie1brLMCQw1ZDTiQElsvsYhXl5Thb7RNFwFhODzdCUhNpuJQq3oBiedM8ASItbhZvPKa8waW4v5hDakwaXgv8HmOStPtqdCxB4GojY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716280514; c=relaxed/simple;
-	bh=y5QaR0C7PpeJzmsQ9dDbD7B8GvNZlMj9O7OXHSq0r6o=;
+	s=arc-20240116; t=1716280516; c=relaxed/simple;
+	bh=uXU5QfaH5qlqXoA4DPbAYFEaIVRvOPrHJFlST/zPwXU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Mm9g1F3W4uAOWMRrScruG8onQ1TWTjsH6SzjhnibAeZVJlxB1x1qO06FcZqpdYQkt+hdInUVmsiIT25wUuzbebXA/Fz4C0ywIui4MwC9tvgXihLtvXVg4P9QH50/0j3VADAckVNDNT+R4Y8/2zKRHggXjLizHYpm1zOMcJz3qYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GGrm8FTu; arc=none smtp.client-ip=209.85.218.45
+	 MIME-Version; b=jtjjKcgZXk+Q/WrvH0BrAbr2TDGDb2VqdI0QKTmyFjg/o2T+4eV93/X7EJQkK4RicZiZLzpucncVNavgQDeB2IKyPyi7YfwIpCNZWjeWac1Soh63v7vhAxK8U3YRvVmMm0cmYHyniPTIjFtfdZcNZb5K22i++BCZM0vFXtbmXYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L3hCpjwy; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a5dcb5a0db4so328956666b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 01:35:12 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5751237a79bso5787410a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 01:35:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716280511; x=1716885311; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1716280513; x=1716885313; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D2fOQltsojx/EfK7u7I+TssNN5t4CrMscEHwUz7PdS4=;
-        b=GGrm8FTu7m9CxZw9AcltcugEzu3enmPkwFmjcZ/BHbJLM7GchV7K0iccW6t8Vh0sbG
-         N3CZShY0vu78WFMhWFgSQyFLAxl4hi3hM8OxP/0nz903Mi2rS77YuSyjCEU1ttrZEhp2
-         0Z6/rCVLM67T3YQ4QIaT1hRoaBRja9mEY6zrsbJcAu+shkjFY7NyfS+8Yg7zI7iK9Gjp
-         k6DrdSy5/sUqAO0yoF6U2/kmqjKzGKGA8gmXzzIXbXCwRzjWqLYANKC+e60Ui6r6GbML
-         OM+dp/jYJ4EZ+ffokDb/jKByoK4x052DmLWlT6z1FDEDSnTfDz7KKrWitnoteg0ev1+x
-         Bcbw==
+        bh=P80V1HVAEHdvXLPhNcgfiUJ7gY/EImR+9FLANrvqAlM=;
+        b=L3hCpjwyzSmKYFQdh4zdoTwgNdCPQoP0VvHut6NC8vFehTQEYQbcrLtAlh1WAWOXby
+         djFoMX7EHYXER2dSMuW7SogbFCwq4v5rgqLTngkyfwAvu6J+MeFLYddgCi+I3DWIb/ef
+         sLwzPEUUVnBe9Dp6PXFp5+Iz9VLfVwhPvyOCQSdVn3ju8jIryuBWT3U1SKG6zv/gAgYQ
+         ryoSiPDyEm4NiqX1yYrdw7Ng2yPNgaoWIcbR5HhAyNFtEd9AEPRIG5uQgGkSHTcF5qeE
+         1MH3YFBqV114kZMGQef8IymUOrA2BTdUs39NemMn6ADslblrMjh30pdn7KWShAH5rc/J
+         nT/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716280511; x=1716885311;
+        d=1e100.net; s=20230601; t=1716280513; x=1716885313;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D2fOQltsojx/EfK7u7I+TssNN5t4CrMscEHwUz7PdS4=;
-        b=nE0FqV931eUJKPTDMbo2uM4YUI2X82lVM216wfwIQn+ij77mZ8OOQZkwkupPdOu+cg
-         tFqgp21lR8E16A2G90iZgdHAoTBC5ospSvboAlaiDe8dO8TUE1cWQEYY8zxHhXuqzUAV
-         4yTWiS+AIhYRDB6JBhu+1Hc6XAbkqHiWFcO61nviIgq2CiXM3w/Z1AXyY0llQXA8XRPb
-         GN/AudZgaWzh6zOU09CWd/85UcyZYJpV6OpY+TXCEQjr5SxH/ACBOXRmwASwlDmlLwp6
-         rcOvg9SIUKXaP6q0UKNaZ7TWEFO+dEC8o8500jMg5eqf6z86rMTyLszt3vj/I2WYLKJK
-         EiTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKB8ztphIhd2PFK0R9QPUKjqxG9SzdLkOTearvUO4hGUXKsfZ5FM9958UBTgE0cXXHYbdlFpLQem0+8QTNtKN9zo0x5QxIbJB1KLCF
-X-Gm-Message-State: AOJu0YzIgukNPkbVdz6ofHF/omreLjhH4C7LzNQQnoL944P31n3AM2Ie
-	h1r/Nvwfb+H0B/VWcggf+UWb/TtlkyEe3CdzcxwuidurebqqlG4QTCT+21HX7yc=
-X-Google-Smtp-Source: AGHT+IEvkv22JFzUjiKZ/QCHeIdDQIX0EZHONqalNwfZwbu9gG6VO37bmkSctPmgWFlMfN25yeFZrQ==
-X-Received: by 2002:a17:906:37d6:b0:a55:9dec:355f with SMTP id a640c23a62f3a-a5a2d676774mr1842300566b.70.1716280510921;
-        Tue, 21 May 2024 01:35:10 -0700 (PDT)
+        bh=P80V1HVAEHdvXLPhNcgfiUJ7gY/EImR+9FLANrvqAlM=;
+        b=FQ+AsY6wJ6+aGYOHxr196gpBcWWNArbyEV6aYVTof0UJmxEo6pZd4Z3zqmNj30UXEj
+         fkcXdDJHw28Dl1ZoPwsPRBe2CSLKJk9Q5v1S2ECdnfnOCCXKVTRuMDkYsouBDvQ9oYri
+         Qojtc5mIqUqSQqsR5SEUuvxhFd6bbXEvzZnnVF+ZC3EpR8yL8lKkYIl4VeZkGzU150/D
+         Mif96DhnrQdUYUzbb0QpjM4J7zxPTL2IpIUR0Of2x6wiq7l3xRJy4HzOaO0sSF6Ox5MF
+         +uhIA1the4WnJVqtDINgeRj9NPejO8XPactU5tJThk0rp3Jf/1SV1oqSEaR2TUqkz0IH
+         6yFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtfsTZMkqAbaNWv/ZBE6FyPKi2nXCnGjlOwfgy1iRdxE+YzY8ma6O7U1rFwSk4vBOEDNHOWdV2w3l9AROOSMqHM0rqhxhIoffzV80B
+X-Gm-Message-State: AOJu0YyGH/MYYbqWuAYgRvXSEY3y3LdfqcyXBguiHMnFj6hVgowpiKWA
+	jp7BKprg3Bmw97+ojbQ2wmvcrf6bCP1TQVsO+pzArl1raYDs2M4qDmE8H0f5i7E=
+X-Google-Smtp-Source: AGHT+IHz9p5OTO55wUBRLM61KvuJyO1Ga+w2762Be3+GlQAj9VUKOINFTaXF5ZLfnK8vzmTXiTKfeA==
+X-Received: by 2002:a50:9fc9:0:b0:572:ad86:d317 with SMTP id 4fb4d7f45d1cf-5734d5b90e3mr22304712a12.11.1716280512646;
+        Tue, 21 May 2024 01:35:12 -0700 (PDT)
 Received: from localhost (host-87-18-209-253.retail.telecomitalia.it. [87.18.209.253])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01932sm1570871666b.168.2024.05.21.01.35.10
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c2c7e0dsm16388546a12.71.2024.05.21.01.35.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 01:35:10 -0700 (PDT)
+        Tue, 21 May 2024 01:35:12 -0700 (PDT)
 From: Andrea della Porta <andrea.porta@suse.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -86,9 +86,9 @@ To: Rob Herring <robh@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	linux-mmc@vger.kernel.org
 Cc: Andrea della Porta <andrea.porta@suse.com>
-Subject: [PATCH v3 3/4] mmc: sdhci-brcmstb: Add BCM2712 support
-Date: Tue, 21 May 2024 10:35:15 +0200
-Message-ID: <c413737f538d9bd403c30104a83a7fbb1ea7461d.1716277695.git.andrea.porta@suse.com>
+Subject: [PATCH v3 4/4] arm64: dts: broadcom: Add support for BCM2712
+Date: Tue, 21 May 2024 10:35:16 +0200
+Message-ID: <f62a3c66e7fe8fa1fde7fbb81e6ce5c6e1e6c2eb.1716277695.git.andrea.porta@suse.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1716277695.git.andrea.porta@suse.com>
 References: <cover.1716277695.git.andrea.porta@suse.com>
@@ -100,136 +100,399 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Broadcom BCM2712 SoC has an SDHCI card controller using the SDIO CFG
-register block present on other STB chips. Add support for BCM2712
-SD capabilities of this chipset.
-The silicon is SD Express capable but this driver port does not currently
-include that feature yet.
-Based on downstream driver by raspberry foundation maintained kernel.
+The BCM2712 SoC family can be found on Raspberry Pi 5.
+Add minimal SoC and board (Rpi5 specific) dts file to be able to
+boot from SD card and use console on debug UART.
 
 Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 ---
- drivers/mmc/host/sdhci-brcmstb.c | 65 ++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+ arch/arm64/boot/dts/broadcom/Makefile         |   1 +
+ .../boot/dts/broadcom/bcm2712-rpi-5-b.dts     |  64 ++++
+ arch/arm64/boot/dts/broadcom/bcm2712.dtsi     | 292 ++++++++++++++++++
+ 3 files changed, 357 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
+ create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712.dtsi
 
-diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-brcmstb.c
-index 9053526fa212..b349262da36e 100644
---- a/drivers/mmc/host/sdhci-brcmstb.c
-+++ b/drivers/mmc/host/sdhci-brcmstb.c
-@@ -30,6 +30,21 @@
- 
- #define SDHCI_ARASAN_CQE_BASE_ADDR		0x200
- 
-+#define SDIO_CFG_CQ_CAPABILITY			0x4c
-+#define SDIO_CFG_CQ_CAPABILITY_FMUL		GENMASK(13, 12)
+diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
+index 8b4591ddd27c..92565e9781ad 100644
+--- a/arch/arm64/boot/dts/broadcom/Makefile
++++ b/arch/arm64/boot/dts/broadcom/Makefile
+@@ -6,6 +6,7 @@ DTC_FLAGS := -@
+ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-400.dtb \
+ 			      bcm2711-rpi-4-b.dtb \
+ 			      bcm2711-rpi-cm4-io.dtb \
++			      bcm2712-rpi-5-b.dtb \
+ 			      bcm2837-rpi-3-a-plus.dtb \
+ 			      bcm2837-rpi-3-b.dtb \
+ 			      bcm2837-rpi-3-b-plus.dtb \
+diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
+new file mode 100644
+index 000000000000..2bdbb6780242
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
+@@ -0,0 +1,64 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/dts-v1/;
 +
-+#define SDIO_CFG_CTRL				0x0
-+#define SDIO_CFG_CTRL_SDCD_N_TEST_EN		BIT(31)
-+#define SDIO_CFG_CTRL_SDCD_N_TEST_LEV		BIT(30)
++#include <dt-bindings/gpio/gpio.h>
++#include "bcm2712.dtsi"
 +
-+#define SDIO_CFG_MAX_50MHZ_MODE			0x1ac
-+#define SDIO_CFG_MAX_50MHZ_MODE_STRAP_OVERRIDE	BIT(31)
-+#define SDIO_CFG_MAX_50MHZ_MODE_ENABLE		BIT(0)
++/ {
++	compatible = "raspberrypi,5-model-b", "brcm,bcm2712";
++	model = "Raspberry Pi 5";
 +
-+#define MMC_CAP_HSE_MASK	(MMC_CAP2_HSX00_1_2V | MMC_CAP2_HSX00_1_8V)
-+/* Select all SD UHS type I SDR speed above 50MB/s */
-+#define MMC_CAP_UHS_I_SDR_MASK	(MMC_CAP_UHS_SDR50 | MMC_CAP_UHS_SDR104)
++	aliases {
++		serial10 = &uart10;
++	};
 +
- struct sdhci_brcmstb_priv {
- 	void __iomem *cfg_regs;
- 	unsigned int flags;
-@@ -38,6 +53,7 @@ struct sdhci_brcmstb_priv {
- };
- 
- struct brcmstb_match_priv {
-+	void (*cfginit)(struct sdhci_host *host);
- 	void (*hs400es)(struct mmc_host *mmc, struct mmc_ios *ios);
- 	struct sdhci_ops *ops;
- 	const unsigned int flags;
-@@ -168,6 +184,38 @@ static void sdhci_brcmstb_set_uhs_signaling(struct sdhci_host *host,
- 	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
- }
- 
-+static void sdhci_brcmstb_cfginit_2712(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_brcmstb_priv *brcmstb_priv = sdhci_pltfm_priv(pltfm_host);
-+	u32 reg, base_clk_mhz;
++	chosen: chosen {
++		stdout-path = "serial10:115200n8";
++	};
 +
-+	/*
-+	 * If we support a speed that requires tuning,
-+	 * then select the delay line PHY as the clock source.
-+	 */
-+	if ((host->mmc->caps & MMC_CAP_UHS_I_SDR_MASK) || (host->mmc->caps2 & MMC_CAP_HSE_MASK)) {
-+		reg = readl(brcmstb_priv->cfg_regs + SDIO_CFG_MAX_50MHZ_MODE);
-+		reg &= ~SDIO_CFG_MAX_50MHZ_MODE_ENABLE;
-+		reg |= SDIO_CFG_MAX_50MHZ_MODE_STRAP_OVERRIDE;
-+		writel(reg, brcmstb_priv->cfg_regs + SDIO_CFG_MAX_50MHZ_MODE);
-+	}
++	/* Will be filled by the bootloader */
++	memory@0 {
++		device_type = "memory";
++		reg = <0 0 0 0x28000000>;
++	};
 +
-+	if ((host->mmc->caps & MMC_CAP_NONREMOVABLE) ||
-+	    (host->mmc->caps & MMC_CAP_NEEDS_POLL)) {
-+		/* Force presence */
-+		reg = readl(brcmstb_priv->cfg_regs + SDIO_CFG_CTRL);
-+		reg &= ~SDIO_CFG_CTRL_SDCD_N_TEST_LEV;
-+		reg |= SDIO_CFG_CTRL_SDCD_N_TEST_EN;
-+		writel(reg, brcmstb_priv->cfg_regs + SDIO_CFG_CTRL);
-+	}
++	sd_io_1v8_reg: sd-io-1v8-reg {
++		compatible = "regulator-gpio";
++		regulator-name = "vdd-sd-io";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++		regulator-settling-time-us = <5000>;
++		gpios = <&gio_aon 3 GPIO_ACTIVE_HIGH>;
++		states = <1800000 1>,
++			 <3300000 0>;
++	};
 +
-+	/* Guesstimate the timer frequency (controller base clock) */
-+	base_clk_mhz = max_t(u32, clk_get_rate(pltfm_host->clk) / (1000 * 1000), 1);
-+	reg = SDIO_CFG_CQ_CAPABILITY_FMUL | base_clk_mhz;
-+	writel(reg, brcmstb_priv->cfg_regs + SDIO_CFG_CQ_CAPABILITY);
-+}
-+
- static void sdhci_brcmstb_dumpregs(struct mmc_host *mmc)
- {
- 	sdhci_dumpregs(mmc_priv(mmc));
-@@ -200,6 +248,14 @@ static struct sdhci_ops sdhci_brcmstb_ops = {
- 	.set_uhs_signaling = sdhci_set_uhs_signaling,
- };
- 
-+static struct sdhci_ops sdhci_brcmstb_ops_2712 = {
-+	.set_clock = sdhci_set_clock,
-+	.set_power = sdhci_set_power_and_bus_voltage,
-+	.set_bus_width = sdhci_set_bus_width,
-+	.reset = sdhci_reset,
-+	.set_uhs_signaling = sdhci_set_uhs_signaling,
++	sd_vcc_reg: sd-vcc-reg {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc-sd";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		enable-active-high;
++		gpios = <&gio_aon 4 GPIO_ACTIVE_HIGH>;
++	};
 +};
 +
- static struct sdhci_ops sdhci_brcmstb_ops_7216 = {
- 	.set_clock = sdhci_brcmstb_set_clock,
- 	.set_bus_width = sdhci_set_bus_width,
-@@ -214,6 +270,11 @@ static struct sdhci_ops sdhci_brcmstb_ops_74165b0 = {
- 	.set_uhs_signaling = sdhci_brcmstb_set_uhs_signaling,
- };
- 
-+static const struct brcmstb_match_priv match_priv_2712 = {
-+	.cfginit = sdhci_brcmstb_cfginit_2712,
-+	.ops = &sdhci_brcmstb_ops_2712,
++/* The Debug UART, on Rpi5 it's on JST-SH 1.0mm 3-pin connector
++ * labeled "UART", i.e. the interface with the system console.
++ */
++&uart10 {
++	status = "okay";
 +};
 +
- static struct brcmstb_match_priv match_priv_7425 = {
- 	.flags = BRCMSTB_MATCH_FLAGS_NO_64BIT |
- 	BRCMSTB_MATCH_FLAGS_BROKEN_TIMEOUT,
-@@ -238,6 +299,7 @@ static struct brcmstb_match_priv match_priv_74165b0 = {
- };
- 
- static const struct of_device_id __maybe_unused sdhci_brcm_of_match[] = {
-+	{ .compatible = "brcm,bcm2712-sdhci", .data = &match_priv_2712 },
- 	{ .compatible = "brcm,bcm7425-sdhci", .data = &match_priv_7425 },
- 	{ .compatible = "brcm,bcm7445-sdhci", .data = &match_priv_7445 },
- 	{ .compatible = "brcm,bcm7216-sdhci", .data = &match_priv_7216 },
-@@ -370,6 +432,9 @@ static int sdhci_brcmstb_probe(struct platform_device *pdev)
- 	    (host->mmc->caps2 & MMC_CAP2_HS400_ES))
- 		host->mmc_host_ops.hs400_enhanced_strobe = match_priv->hs400es;
- 
-+	if (match_priv->cfginit)
-+		match_priv->cfginit(host);
++/* SDIO1 is used to drive the SD card */
++&sdio1 {
++	vqmmc-supply = <&sd_io_1v8_reg>;
++	vmmc-supply = <&sd_vcc_reg>;
++	bus-width = <4>;
++	sd-uhs-sdr50;
++	sd-uhs-ddr50;
++	sd-uhs-sdr104;
++};
+diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+new file mode 100644
+index 000000000000..71b0fa6c9594
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+@@ -0,0 +1,292 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++#include <dt-bindings/interrupt-controller/arm-gic.h>
 +
- 	/*
- 	 * Supply the existing CAPS, but clear the UHS modes. This
- 	 * will allow these modes to be specified by device tree
++/ {
++	compatible = "brcm,bcm2712";
++
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	interrupt-parent = <&gicv2>;
++
++	axi: axi@1000000000 {
++		compatible = "simple-bus";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges = <0x10 0x00000000  0x10 0x00000000  0x01 0x00000000>;
++
++		sdio1: mmc@1000fff000 {
++			compatible = "brcm,bcm2712-sdhci",
++				     "brcm,sdhci-brcmstb";
++			reg = <0x10 0x00fff000  0x0 0x260>,
++			      <0x10 0x00fff400  0x0 0x200>;
++			reg-names = "host", "cfg";
++			interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clk_emmc2>;
++			clock-names = "sw_sdio";
++			mmc-ddr-3_3v;
++		};
++
++		gicv2: interrupt-controller@107fff9000 {
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			compatible = "arm,gic-400";
++			reg = <0x10 0x7fff9000  0x0 0x1000>,
++			      <0x10 0x7fffa000  0x0 0x2000>,
++			      <0x10 0x7fffc000  0x0 0x2000>,
++			      <0x10 0x7fffe000  0x0 0x2000>;
++		};
++	};
++
++	clocks {
++		/* The oscillator is the root of the clock tree. */
++		clk_osc: clk-osc {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-output-names = "osc";
++			clock-frequency = <54000000>;
++		};
++
++		clk_vpu: clk-vpu {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <750000000>;
++			clock-output-names = "vpu-clock";
++		};
++
++		clk_uart: clk-uart {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <9216000>;
++			clock-output-names = "uart-clock";
++		};
++
++		clk_emmc2: clk-emmc2 {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <200000000>;
++			clock-output-names = "emmc2-clock";
++		};
++	};
++
++	cpus: cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		/* Source for L1 d/i cache-line-size, cache-sets, cache-size
++		 * https://developer.arm.com/documentation/100798/0401/L1-memory-system/About-the-L1-memory-system?lang=en
++		 * Source for L2 cache-line-size and cache-sets:
++		 * https://developer.arm.com/documentation/100798/0401/L2-memory-system/About-the-L2-memory-system?lang=en
++		 * and for cache-size:
++		 * https://www.raspberrypi.com/documentation/computers/processors.html#bcm2712
++		 */
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a76";
++			reg = <0x000>;
++			enable-method = "psci";
++			d-cache-size = <0x10000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
++			i-cache-size = <0x10000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
++			next-level-cache = <&l2_cache_l0>;
++
++			l2_cache_l0: l2-cache-l0 {
++				compatible = "cache";
++				cache-size = <0x80000>;
++				cache-line-size = <128>;
++				cache-sets = <1024>; //512KiB(size)/64(line-size)=8192ways/8-way set
++				cache-level = <2>;
++				cache-unified;
++				next-level-cache = <&l3_cache>;
++			};
++		};
++
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a76";
++			reg = <0x100>;
++			enable-method = "psci";
++			d-cache-size = <0x10000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
++			i-cache-size = <0x10000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
++			next-level-cache = <&l2_cache_l1>;
++
++			l2_cache_l1: l2-cache-l1 {
++				compatible = "cache";
++				cache-size = <0x80000>;
++				cache-line-size = <128>;
++				cache-sets = <1024>; //512KiB(size)/64(line-size)=8192ways/8-way set
++				cache-level = <2>;
++				cache-unified;
++				next-level-cache = <&l3_cache>;
++			};
++		};
++
++		cpu2: cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a76";
++			reg = <0x200>;
++			enable-method = "psci";
++			d-cache-size = <0x10000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
++			i-cache-size = <0x10000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
++			next-level-cache = <&l2_cache_l2>;
++
++			l2_cache_l2: l2-cache-l2 {
++				compatible = "cache";
++				cache-size = <0x80000>;
++				cache-line-size = <128>;
++				cache-sets = <1024>; //512KiB(size)/64(line-size)=8192ways/8-way set
++				cache-level = <2>;
++				cache-unified;
++				next-level-cache = <&l3_cache>;
++			};
++		};
++
++		cpu3: cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a76";
++			reg = <0x300>;
++			enable-method = "psci";
++			d-cache-size = <0x10000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
++			i-cache-size = <0x10000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
++			next-level-cache = <&l2_cache_l3>;
++
++			l2_cache_l3: l2-cache-l3 {
++				compatible = "cache";
++				cache-size = <0x80000>;
++				cache-line-size = <128>;
++				cache-sets = <1024>; //512KiB(size)/64(line-size)=8192ways/8-way set
++				cache-level = <2>;
++				cache-unified;
++				next-level-cache = <&l3_cache>;
++			};
++		};
++
++		/* Source for cache-line-size and cache-sets:
++		 * https://developer.arm.com/documentation/100453/0401/L3-cache?lang=en
++		 * Source for cache-size:
++		 * https://www.raspberrypi.com/documentation/computers/processors.html#bcm2712
++		 */
++		l3_cache: l3-cache {
++			compatible = "cache";
++			cache-size = <0x200000>;
++			cache-line-size = <64>;
++			cache-sets = <2048>; // 2MiB(size)/64(line-size)=32768ways/16-way set
++			cache-level = <3>;
++			cache-unified;
++		};
++	};
++
++	psci {
++		method = "smc";
++		compatible = "arm,psci-1.0", "arm,psci-0.2";
++	};
++
++	rmem: reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		atf@0 {
++			reg = <0x0 0x0 0x0 0x80000>;
++			no-map;
++		};
++
++		cma: linux,cma {
++			compatible = "shared-dma-pool";
++			size = <0x0 0x4000000>; /* 64MB */
++			reusable;
++			linux,cma-default;
++			alloc-ranges = <0x0 0x00000000 0x0 0x40000000>;
++		};
++	};
++
++	soc: soc@107c000000 {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		ranges     = <0x7c000000  0x10 0x7c000000  0x04000000>;
++		/* Emulate a contiguous 30-bit address range for DMA */
++		dma-ranges = <0xc0000000  0x00 0x00000000  0x40000000>,
++			     <0x7c000000  0x10 0x7c000000  0x04000000>;
++
++		system_timer: timer@7c003000 {
++			compatible = "brcm,bcm2835-system-timer";
++			reg = <0x7c003000 0x1000>;
++			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++			clock-frequency = <1000000>;
++		};
++
++		mailbox: mailbox@7c013880 {
++			compatible = "brcm,bcm2835-mbox";
++			reg = <0x7c013880 0x40>;
++			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <0>;
++		};
++
++		local_intc: local-intc@7cd00000 {
++			compatible = "brcm,bcm2836-l1-intc";
++			reg = <0x7cd00000 0x100>;
++		};
++
++		uart10: serial@7d001000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x7d001000 0x200>;
++			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clk_uart>, <&clk_vpu>;
++			clock-names = "uartclk", "apb_pclk";
++			arm,primecell-periphid = <0x00241011>;
++			status = "disabled";
++		};
++
++		interrupt-controller@7d517000 {
++			compatible = "brcm,bcm7271-l2-intc";
++			reg = <0x7d517000 0x10>;
++			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-controller;
++			#interrupt-cells = <1>;
++		};
++
++		gio_aon: gpio@7d517c00 {
++			compatible = "brcm,bcm7445-gpio", "brcm,brcmstb-gpio";
++			reg = <0x7d517c00 0x40>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			// Don't use GIO_AON as an interrupt controller because it will
++			// clash with the firmware monitoring the PMIC interrupt via the VPU.
++			brcm,gpio-bank-widths = <17 6>;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
++					  IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) |
++					  IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) |
++					  IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) |
++					  IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 12 (GIC_CPU_MASK_SIMPLE(4) |
++					  IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
 -- 
 2.35.3
 
