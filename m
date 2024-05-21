@@ -1,146 +1,87 @@
-Return-Path: <linux-kernel+bounces-185179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F1A8CB19F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:46:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF17B8CB197
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A46401C2198A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:46:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 816551F21519
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0995314430B;
-	Tue, 21 May 2024 15:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA8D1448DA;
+	Tue, 21 May 2024 15:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pn39ud18"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KWU2y3RX"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C831FBB;
-	Tue, 21 May 2024 15:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143078C1A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716306367; cv=none; b=LQngton6/Wy9yLvaLuf4JuQQJaFEJtFkiUscIOgAMYYVIw9Du9dEyfu/KN4v7HYpDfDWvSL/RqYUpB93LovrHt2WGAA6lpv9Aw7mK85bSk0V7FuuOHW8RuDhozDJRLSWOrjOXykhGN7klUA/bUrF1QAM619nPS1rpsEO7a9OzRk=
+	t=1716306346; cv=none; b=mgJtTnbxMBo+MXQ3Edc98TftOt5FeEvRNfHHj+HvFNSdNZP1jRAWa17vGwX5542kZY2Jv7jQbc9ewuEtfGk3dLaqRZ+d/iSSqR0wBxgFTviOsjqE/57MpB9mPVaFjiU5JbOKdo1WXD4Kf3afGhoSwW2m4ovYQMONyc39CdhSL/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716306367; c=relaxed/simple;
-	bh=MOYqpIyTHcQhEowSXCmF5d6zPRCuQIn/+Gsq0JSaqfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMoyORLubVmtZTjUyMttxc3qYbEWvGtg5kCXppvgIUhCYUmu2eibmJu/63JCv3fEkd84eMgj1DHqtpf7PJ/DN16ZsOQt//uJdHwo7x/P6YYkF0jo/KJV67k1bhbfR3PVtD7pnYDRqUBETYjKhNFBH+gD5qQ3S6/uBKzpKdly9gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pn39ud18; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716306363; x=1747842363;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MOYqpIyTHcQhEowSXCmF5d6zPRCuQIn/+Gsq0JSaqfI=;
-  b=Pn39ud188BRP0FsKIF2nLa9SIIEWQ/UDjZwRaV0aI3CncpubvLHvQDa2
-   XYS6ZedRtY/TpuxY4g9lTfD8UgQsFNjiDEWttitqmR0PVdFjwM6z8s58j
-   t7whGvTgzUWdjntAD8FqMiCrgd+3NKPe3AjBoyZzo/1N1ZYLEqPTItjsM
-   U/m2Ah1uHMQDT/Nvcq1j8CPGSSHBrsFK/NuTQ5luHBjlnaQnwKz9gck5b
-   ifjBYBXL314dVGyKhQRbAezU8CkKzP0WQ5ov7Hf4q4J2J4wK2znVbrkBO
-   eWSL9fAUXMk66pZ/0lgL4FyStqXaM1a8hPDtQgjZqaBe6fQ03jQIMIlss
-   A==;
-X-CSE-ConnectionGUID: gEJXe1QEREeQ0xe7hzU2lw==
-X-CSE-MsgGUID: Ldfq0+gKTp2wF0qgwMU1PQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="15459798"
-X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
-   d="scan'208";a="15459798"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 08:46:02 -0700
-X-CSE-ConnectionGUID: NDMP6qFGSFq7XsAgJ6OJ3g==
-X-CSE-MsgGUID: Ldro2/GCQ6mYjf2suJvVkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
-   d="scan'208";a="63793459"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 21 May 2024 08:45:57 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s9RgY-0000UQ-1Q;
-	Tue, 21 May 2024 15:45:54 +0000
-Date: Tue, 21 May 2024 23:44:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vidya Sagar <vidyas@nvidia.com>, corbet@lwn.net, bhelgaas@google.com,
-	galshalom@nvidia.com, leonro@nvidia.com, jgg@nvidia.com,
-	treding@nvidia.com, jonathanh@nvidia.com
-Cc: oe-kbuild-all@lists.linux.dev, mmoshrefjava@nvidia.com,
-	shahafs@nvidia.com, vsethi@nvidia.com, sdonthineni@nvidia.com,
-	jan@nvidia.com, tdave@nvidia.com, linux-doc@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kthota@nvidia.com, mmaddireddy@nvidia.com, vidyas@nvidia.com,
-	sagar.tv@gmail.com
-Subject: Re: [PATCH V2] PCI: Extend ACS configurability
-Message-ID: <202405212300.S6fsze09-lkp@intel.com>
-References: <20240521110925.3876786-1-vidyas@nvidia.com>
+	s=arc-20240116; t=1716306346; c=relaxed/simple;
+	bh=JiQ17E0QBTkV+Se7Q96uFdgZdo8+hkE/n9fXzqqZ01o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=clYhTDpuD0AAceXNdGcxrC25bcUqaijWRmrBwnIqaeyWe5SQ5Zl5+mFRx8mEubgPfVgpr3tk6hOMcrbHAvsiXKEhL9xC/PWrLKFe4ru6vFa36+UJYM4JNIfcDGbaFS8gkBK+lcvLGR/QLc4qwrcU2t1haCKh0EWbr7q5wbx3510=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KWU2y3RX; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: tytso@mit.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716306342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fBSyg5xRMAlmaP9c4FGvfzgdGgjv2gN6Yl2qAEyO8/w=;
+	b=KWU2y3RXle5w5DQrOGIUA55HkhlSzeJ+aT33D2WOjXE2K5EgYhXclGFG5zIsNn4cF9YM6P
+	pu3AM5I8Y45KnyU89OmpTl4oE1UJenu49KnBfvtH9G/YTY04MtJxoP/MeDGcX3eMynAEpf
+	B8kiWgxF2ok1fKiMxUR/aTD61mWvOro=
+X-Envelope-To: jack@suse.com
+X-Envelope-To: linux-ext4@vger.kernel.org
+X-Envelope-To: luis.henriques@linux.dev
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: adilger@dilger.ca
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+To: Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger@dilger.ca>,
+	Jan Kara <jack@suse.com>
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+Subject: [RFC PATCH 0/2] ext4: two small fast commit fixes
+Date: Tue, 21 May 2024 16:45:33 +0100
+Message-ID: <20240521154535.12911-1-luis.henriques@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521110925.3876786-1-vidyas@nvidia.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Vidya,
+Hi!
 
-kernel test robot noticed the following build warnings:
+I've spent some time investigating an fstest failure when running it using
+'-O fast_commit'.  As a result, I'm sending two patches that hopefully fix
+this failure.  The first patch is the actual bug fix for the generic/047
+fstest.  The second patch was just something I saw through code inspection.
 
-[auto build test WARNING on pci/next]
-[also build test WARNING on pci/for-linus linus/master v6.9 next-20240521]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Note that this generic/047 test also requires the fix I sent before[1], for
+a different fstest failure.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vidya-Sagar/PCI-Extend-ACS-configurability/20240521-191317
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20240521110925.3876786-1-vidyas%40nvidia.com
-patch subject: [PATCH V2] PCI: Extend ACS configurability
-config: parisc-defconfig (https://download.01.org/0day-ci/archive/20240521/202405212300.S6fsze09-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240521/202405212300.S6fsze09-lkp@intel.com/reproduce)
+[1] https://lore.kernel.org/all/20240515082857.32730-1-luis.henriques@linux.dev
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405212300.S6fsze09-lkp@intel.com/
+Luis Henriques (SUSE) (2):
+  ext4: fix fast commit inode enqueueing during a full journal commit
+  jbd2: reset fast commit offset only after fs cleanup is done
 
-All warnings (new ones prefixed by >>):
+ fs/ext4/fast_commit.c | 19 +++++++++++++------
+ fs/jbd2/commit.c      |  2 +-
+ 2 files changed, 14 insertions(+), 7 deletions(-)
 
->> drivers/pci/pci.c:1044: warning: Function parameter or struct member 'caps' not described in 'pci_std_enable_acs'
-
-
-vim +1044 drivers/pci/pci.c
-
-cbe420361f92a31 Rajat Jain      2020-07-07  1038  
-cbe420361f92a31 Rajat Jain      2020-07-07  1039  /**
-cbe420361f92a31 Rajat Jain      2020-07-07  1040   * pci_std_enable_acs - enable ACS on devices using standard ACS capabilities
-cbe420361f92a31 Rajat Jain      2020-07-07  1041   * @dev: the PCI device
-cbe420361f92a31 Rajat Jain      2020-07-07  1042   */
-a0bcc944f0e307a Vidya Sagar     2024-05-21  1043  static void pci_std_enable_acs(struct pci_dev *dev, struct pci_acs *caps)
-cbe420361f92a31 Rajat Jain      2020-07-07 @1044  {
-cbe420361f92a31 Rajat Jain      2020-07-07  1045  	/* Source Validation */
-a0bcc944f0e307a Vidya Sagar     2024-05-21  1046  	caps->ctrl |= (caps->cap & PCI_ACS_SV);
-cbe420361f92a31 Rajat Jain      2020-07-07  1047  
-cbe420361f92a31 Rajat Jain      2020-07-07  1048  	/* P2P Request Redirect */
-a0bcc944f0e307a Vidya Sagar     2024-05-21  1049  	caps->ctrl |= (caps->cap & PCI_ACS_RR);
-cbe420361f92a31 Rajat Jain      2020-07-07  1050  
-cbe420361f92a31 Rajat Jain      2020-07-07  1051  	/* P2P Completion Redirect */
-a0bcc944f0e307a Vidya Sagar     2024-05-21  1052  	caps->ctrl |= (caps->cap & PCI_ACS_CR);
-cbe420361f92a31 Rajat Jain      2020-07-07  1053  
-cbe420361f92a31 Rajat Jain      2020-07-07  1054  	/* Upstream Forwarding */
-a0bcc944f0e307a Vidya Sagar     2024-05-21  1055  	caps->ctrl |= (caps->cap & PCI_ACS_UF);
-cbe420361f92a31 Rajat Jain      2020-07-07  1056  
-7cae7849fccee81 Alex Williamson 2021-06-18  1057  	/* Enable Translation Blocking for external devices and noats */
-7cae7849fccee81 Alex Williamson 2021-06-18  1058  	if (pci_ats_disabled() || dev->external_facing || dev->untrusted)
-a0bcc944f0e307a Vidya Sagar     2024-05-21  1059  		caps->ctrl |= (caps->cap & PCI_ACS_TB);
-cbe420361f92a31 Rajat Jain      2020-07-07  1060  }
-cbe420361f92a31 Rajat Jain      2020-07-07  1061  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
