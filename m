@@ -1,53 +1,46 @@
-Return-Path: <linux-kernel+bounces-185079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37358CB03B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:19:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 537E68CB03C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46031C219C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:19:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB9A9B25A02
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7727B127B40;
-	Tue, 21 May 2024 14:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E0C86243;
+	Tue, 21 May 2024 14:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eZc1qmfA"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O18sUH7C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68395127E2F;
-	Tue, 21 May 2024 14:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A8F128372;
+	Tue, 21 May 2024 14:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716301167; cv=none; b=Lo36q2foZXE4g/lXjPSBMsyWew+wyKFwrFZnZOi9/Uidb1pEvDkgdQVLOtYyG3PGvBoceIQB6wvfJpEy+LWBjJ5Ny5gNVkT9e5ooaj6HeZF66VHxd5w4r+Rn9YcJ0HBt1f1swHMZ48Emu2qsZLvUNvOu1juU9MBMrO0zkxTo1M0=
+	t=1716301165; cv=none; b=tRxi6171C92ZL46jCydstaeQzeDwwtJwbzSeep6v0xQa9jCfg7RioobhnfdOfuV1zy9hyK9uKeVmBk+YpQ3lWBLXesqiMebXtqGZDPn3J7tAoGIU4QABSB+Cb/AJipAhGbxj5DkgcEsNaJUxSqUVaofuokjf81JAv+mkVFzJGIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716301167; c=relaxed/simple;
-	bh=azKC0Vfzh32+CSfRP2wDq5OaQ3ELUVlycMEY4NkDgU0=;
+	s=arc-20240116; t=1716301165; c=relaxed/simple;
+	bh=a99dFJz0zAqNSJJLTt4AqoroUPKj1Nnsd1gHD1g7ONQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tO+viTeAlk5NhIqO0qooacHk9kS+g7y3IidcOgkjt+Vvg4xCXeFdSrw+/mWeWlIOpW50br1NjhT1158hvXgyaD2tb+G6lI1PlYCzFBaWbZperTZvo3Dq4z9/vg4pgF5QBndf/V6ABEmXg3BCMi4AUbm4iJkAfDScMzjG5cMDbk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eZc1qmfA; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716301161;
-	bh=azKC0Vfzh32+CSfRP2wDq5OaQ3ELUVlycMEY4NkDgU0=;
+	 In-Reply-To:Content-Type; b=PNxqUG2hNVHxpgQv8wx5Pe3aUH0FlsQahvCx+BPBcGpw2s6zFBziv/XQQBlVmoRaMCPk0AcAtQKDWp5M1ZiJ7eJQ4a8prPi1uXP2mfskVL8UHwDROpSU0mA0Ub5lyX1wMBiVeLDHAuttialcediqRp1LApiYxkCGY1WikiT4hOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O18sUH7C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 453EAC2BD11;
+	Tue, 21 May 2024 14:19:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716301164;
+	bh=a99dFJz0zAqNSJJLTt4AqoroUPKj1Nnsd1gHD1g7ONQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eZc1qmfAiQAaUmlDqAvO0MSkWkwr2IA9QonlE5eg8HeZqqeA3GfTJq7mUjPkKNtsS
-	 +QpkrquKWAYUXmDvsGAqBjOtYqz/Flpuzf8XhIZM5fCcxUcZqrJZcdvfFNkNyPShQ8
-	 VEymr8zDhfZE4lI7ufMIzoOqphgAJYU/p9JjP6PBxzHDNPpEpPsTNaHy7YhZE3ZXjr
-	 EgUbppA0xwqCxflZhyjhiAAJssRDVbI1mEyJJSx9PY3OByttbJUL8OiyNhNOb3TKLe
-	 2SZlpmoSEMq6VU4LYo/UvJzOEilVMMRQi9fjwq68seTj7c1uG7DTKfAEWWZo2/4ZHs
-	 69PvrMfxnbYdw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8B65F3782137;
-	Tue, 21 May 2024 14:19:20 +0000 (UTC)
-Message-ID: <ff12e104-da8b-4800-bfbe-a006ffe1b840@collabora.com>
+	b=O18sUH7Ckp21o3/gg6nsbYDJcDNcGXZ+dOkLFZMa3RWgLIQVBg9hCgInaXzcFhWEb
+	 sUpC45PIsSObf3/X66uYM7cgJp0yXcI2hjZlIZBHz3IOZ+0FDfTEnaDGluDYZlDRC7
+	 4cKsDeMtDvjTLvJHFE4IW2yfVUanD9F6UBKPnE/EkqekymhsYO7+lgPMYorDlo0F96
+	 Tx7wc+dyZJJCURZnGeex4AUF40ppkw4nj/uckVCshlyGF97IUHbQYiMVRiLdIqBUs0
+	 to2KrjEnbgDK6xB2rGh66YWUGerADUn5uXUnw5+owVvkftGc+u8zwhkjV1zkLaDjl+
+	 MzMKXnO8yyULQ==
+Message-ID: <b7a5e9c2-d2b3-4c99-8628-f48581f5d1ad@kernel.org>
 Date: Tue, 21 May 2024 16:19:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,120 +49,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] arm64: dts: mediatek: mt8188: add default thermal
- zones
-To: Julien Panis <jpanis@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Nicolas Pitre <npitre@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240521-mtk-thermal-mt818x-dtsi-v4-0-b91ee678411c@baylibre.com>
- <20240521-mtk-thermal-mt818x-dtsi-v4-4-b91ee678411c@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v4 1/1] PCI: dwc: Fix index 0 incorrectly being
+ interpreted as a free ATU slot
+To: Bjorn Helgaas <helgaas@kernel.org>, Niklas Cassel <cassel@kernel.org>
+Cc: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ bhelgaas@google.com, mani@kernel.org, Frank Li <Frank.Li@nxp.com>,
+ imx@lists.linux.dev, jdmason@kudzu.us, jingoohan1@gmail.com,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ lpieralisi@kernel.org, robh@kernel.org
+References: <20240521141431.GA25673@bhelgaas>
 Content-Language: en-US
-In-Reply-To: <20240521-mtk-thermal-mt818x-dtsi-v4-4-b91ee678411c@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20240521141431.GA25673@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Il 21/05/24 16:05, Julien Panis ha scritto:
-> From: Nicolas Pitre <npitre@baylibre.com>
+On 2024/05/21 16:14, Bjorn Helgaas wrote:
+> On Tue, May 21, 2024 at 12:16:55PM +0200, Niklas Cassel wrote:
+>> On Sat, May 18, 2024 at 02:06:50AM +0900, Krzysztof Wilczyński wrote:
+>>> Hello,
+>>>
+>>>> When PERST# assert and deassert happens on the PERST# supported platforms,
+>>>> the both iATU0 and iATU6 will map inbound window to BAR0. DMA will access
+>>>> to the area that was previously allocated (iATU0) for BAR0, instead of the
+>>>> new area (iATU6) for BAR0.
+>>>>
+>>>> Right now, we dodge the bullet because both iATU0 and iATU6 should
+>>>> currently translate inbound accesses to BAR0 to the same allocated memory
+>>>> area. However, having two separate inbound mappings for the same BAR is a
+>>>> disaster waiting to happen.
+>>>>
+>>>> The mapping between PCI BAR and iATU inbound window are maintained in the
+>>>> dw_pcie_ep::bar_to_atu[] array. While allocating a new inbound iATU map for
+>>>> a BAR, dw_pcie_ep_inbound_atu() API will first check for the availability
+>>>> of the existing mapping in the array and if it is not found (i.e., value in
+>>>> the array indexed by the BAR is found to be 0), then it will allocate a new
+>>>> map value using find_first_zero_bit().
+>>>>
+>>>> The issue here is, the existing logic failed to consider the fact that the
+>>>> map value '0' is a valid value for BAR0. Because, find_first_zero_bit()
+>>>> will return '0' as the map value for BAR0 (note that it returns the first
+>>>> zero bit position).
+>>>>
+>>>> Due to this, when PERST# assert + deassert happens on the PERST# supported
+>>>> platforms, the inbound window allocation restarts from BAR0 and the
+>>>> existing logic to find the BAR mapping will return '6' for BAR0 instead of
+>>>> '0' due to the fact that it considers '0' as an invalid map value.
+>>>>
+>>>> So fix this issue by always incrementing the map value before assigning to
+>>>> bar_to_atu[] array and then decrementing it while fetching. This will make
+>>>> sure that the map value '0' always represents the invalid mapping."
+>>>
+>>> Applied to controller/dwc, thank you!
+>>>
+>>> [1/1] PCI: dwc: Fix index 0 incorrectly being interpreted as a free ATU slot
+>>>       https://git.kernel.org/pci/pci/c/cd3c2f0fff46
+>>>
+>>> 	Krzysztof
+>>
+>> Hello PCI maintainers,
+>>
+>> There was a message sent out that this patch was applied, yet the patch does
+>> not appear to be part of the pull request that was sent out yesterday:
+>> https://lore.kernel.org/linux-pci/20240520222943.GA7973@bhelgaas/T/#u
+>>
+>> In fact, there seems to be many PCI patches that have been reviewed and ready
+>> to be included (some of them for months) that is not part of the pull request.
+>>
+>> Looking at pci/next, these patches do not appear there either, so I assume
+>> that these patches will also not be included in a follow-up pull request.
+>>
+>> Some of these patches are actual fixes, like the patch in $subject, and do not
+>> appear to depend on any other patches, so what is the reason for not including
+>> them in the PCI pull request?
 > 
-> Inspired by the vendor kernel but adapted to the upstream thermal
-> driver version.
+> The problem was that we didn't get these applied soon enough for them
+> to get any time in linux-next before the merge window opened.  I don't
+> like to add non-trivial things during the merge window, so I deferred
+> most of these.  I plan to get them in linux-next as soon as v6.10-rc1
+> is tagged.
+
+We understand that, and we agree with this. However, the point was more about
+WHY these patches were not applied earlier as many of them were fully reviewed
+for several weeks. We have more patches to send out that depend on all these
+deferred patches, and this deferring is delaying us as well. It would be great
+if going forward, a more timely processing & applying of reviewed patches
+happened. Thank you.
+
 > 
-> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
-> Signed-off-by: Julien Panis <jpanis@baylibre.com>
-> ---
->   arch/arm64/boot/dts/mediatek/mt8188.dtsi | 432 +++++++++++++++++++++++++++++++
->   1 file changed, 432 insertions(+)
+> If we can make a case for post-merge window fixes, e.g., to fix a
+> regression in the pull request or other serious issue, that's always a
+> possibility.
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> index a9f1b9db54a6..2b0f3e03acc1 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> @@ -12,6 +12,8 @@
->   #include <dt-bindings/pinctrl/mediatek,mt8188-pinfunc.h>
->   #include <dt-bindings/power/mediatek,mt8188-power.h>
->   #include <dt-bindings/reset/mt8188-resets.h>
-> +#include <dt-bindings/thermal/thermal.h>
-> +#include <dt-bindings/thermal/mediatek,lvts-thermal.h>
->   
->   / {
->   	compatible = "mediatek,mt8188";
+> Bjorn
 
-.snip..
-
-> +
-> +		gpu1-thermal {
-
-You forgot to implement my feedback to Nicolas - this must be gpu-thermal
-
-> +			polling-delay = <1000>;
-> +			polling-delay-passive = <250>;
-> +			thermal-sensors = <&lvts_ap MT8188_AP_GPU1>;
-> +
-> +			trips {
-> +				gpu1_alert0: trip-alert0 {
-> +					temperature = <85000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				gpu1_alert1: trip-alert1 {
-> +					temperature = <95000>;
-> +					hysteresis = <2000>;
-> +					type = "hot";
-> +				};
-> +
-> +				gpu1_crit: trip-crit {
-> +					temperature = <100000>;
-> +					hysteresis = <0>;
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
-> +
-> +		gpu2-thermal {
-
-..and for consistency with the other SoCs, this must be gpu1-thermal.
-
-> +			polling-delay = <1000>;
-> +			polling-delay-passive = <250>;
-> +			thermal-sensors = <&lvts_ap MT8188_AP_GPU2>;
-> +
-> +			trips {
-> +				gpu2_alert0: trip-alert0 {
-> +					temperature = <85000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				gpu2_alert1: trip-alert1 {
-> +					temperature = <95000>;
-> +					hysteresis = <2000>;
-> +					type = "hot";
-> +				};
-> +
-> +				gpu2_crit: trip-crit {
-> +					temperature = <100000>;
-> +					hysteresis = <0>;
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
-> +
-> +		soc1-thermal {
-
-Any idea of what can "soc1" ever be? What measurement point is that?
-
-VPU? IMG? INFRA?
-
-soc1, soc2, soc3 make little sense.
-
-Regards,
-Angelo
-
+-- 
+Damien Le Moal
+Western Digital Research
 
 
