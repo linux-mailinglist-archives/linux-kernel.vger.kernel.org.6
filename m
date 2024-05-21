@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-184443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C8C8CA6EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:22:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33598CA6ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54FC11C20291
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:22:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B4E8B22CF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C52745E4;
-	Tue, 21 May 2024 03:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F72763FD;
+	Tue, 21 May 2024 03:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="JM+FM1Hu"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="mGjjDAX2"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2146D1B0
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41F273171
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716261458; cv=none; b=S8SBRPIxRiB887cse14gQRK3OXTzHOn7TyM28MVwlsOtFC2p1cF7ATeCF1TnTImP8/AXLDoWf04j56U3NmnRxr54mhg9nsGOmWqXWUDX4zjiQ8RAhdBrXf7hXqHCJvwKLmbYUpODcjqj9A3LSAB1uVnBrHWn65Hl72jDLzE9/zw=
+	t=1716261460; cv=none; b=Qt1zAtPNcfXvebdw35ig+x9JRI8RVzRiTKGX41ogJKzZm52F0NDDzze8kOSbLHhnfhCUUFhuJAzH6WM2jw8bFVs9XqJXlZf2YiaK/FEcUWtfxu3Mam4SY77g6fEozWld1oIzCcc0Q/MGg1r4UAIwC9F/YJQz+z0ttqr5a2aO5jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716261458; c=relaxed/simple;
-	bh=vOlhyRJiwMlcqMkjgh8ZqeWXUxY6D61pDutdGqwl5CY=;
+	s=arc-20240116; t=1716261460; c=relaxed/simple;
+	bh=hPJRM/f0cWl7W+m4SCd0UK0MHAt/7KX6y+yPnva3ddY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=t6wo2FzmGAexU3ITN9h1vzomREA5Ofjcx2iH/c97AIBwD/p74ZF3lbwlMuyrLnP8QN5CjhpMAgGk4FHo61VO7ej7lcztOVojgSEX4MKYR+r0Sk0q9l+hJ7P5cCM9/0YuqoDwshjERZaM/6tE6Wy4lh1K84LsJkBcoZs25e8rMz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=JM+FM1Hu; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=CiG+P9RlZM0V8zr0ZXwcXjEFeFcYfc6pt8qtdvykTjMv7tDhlQd3P/zeWSxAUYvTI4I/YqVlZMvtmAKkhdJWNQGctGdU9AqUN6AG9ezEilntGN0HWbswEBZ1gpSnJhUMKeUEAcb6vr59G7wjWnVCUpsxKPgNiziDsXqztnKZm/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=mGjjDAX2; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1edc696df2bso30589315ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:17:36 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1ecddf96313so81731035ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 20:17:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=darkphysics.net; s=google; t=1716261456; x=1716866256; darn=vger.kernel.org;
+        d=darkphysics.net; s=google; t=1716261457; x=1716866257; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vIGSQ3C/BdvZT98agea7mQnapaDbDhw1o6G8ocniTTE=;
-        b=JM+FM1HukvOhiVVfpaBzpqrpMhTCy2bh0Monq8xoWuWFx4DKq63gr9YXu3yGvYvMLU
-         3T228LHr/qwuHJdfYP3LPd9RpUyaht/PPXDwDRKPoXKE1gE8q/Fh5SWkGXqan7gf352F
-         KSdYIINB5MAqiotW1VDrmmyGyNYZ568/NsnNF8ubFV1SAW72fkBWvtJowp3XQ7Iq6hYL
-         dEasRh2wl+SPNc/mkYnmJdn8b5EaDFu5sUu7vZaq7fP9cSpRbiOJAh/LwPHTHfXF9uAE
-         Ym321F2b0mmNVlhfUbwZlEyjDhqpuAskfxUqpZrKp2Gs34n5WpkMXi+4yltMR9YpxV1O
-         aWFQ==
+        bh=tzmRGVhra0vqV7ClBDZ8LpQ88upOg0kiLsBQjRBVvpA=;
+        b=mGjjDAX2i8YCuT2+fbLDgOFjO2hMKh/5ocvjmHCvweRusZ/qmDUIw5wGByYY5AJzNv
+         HWBy50GtWVj4JuUskB3vVfFEx/nAHQBbhn8TThIvuyEpjjwaF/Mlq6+NFpiqF7fqJivT
+         Zv2GrthjZzWc/jrs3RtfapuY3X8auKHbkexiINbQ2SGa7yGZosKSsuuyAvaz0ekyUDlt
+         6u70CaohVk87W/LoGMQwK78UKi2sO26cm6EDhGA0rej767ufo/cS1qKWSDAlALIo42S3
+         rzdV/LjjpffFe5HpSagsPoLUfy8aZtEmCKNoQ58Z7OI6g/bK07qg76rcPw3SZ9EIiWKu
+         SWxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716261456; x=1716866256;
+        d=1e100.net; s=20230601; t=1716261457; x=1716866257;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vIGSQ3C/BdvZT98agea7mQnapaDbDhw1o6G8ocniTTE=;
-        b=Xj072Ch0W3+sEdG2J+lu0f/nUdl3Xwp9fn7YzRFU10ykOsy5y+9BoMq183YnbgRL4b
-         ZnnJRbNsFcDCUOuYGN2AjP4M8YeXTJdEMToRcKotoYKom5sqVNzXkAGmCiaK+uNtWpx0
-         VECDg9ehA0lOy3EoN4vHzIdrt6MleayOtg/vuBklXLo9UM/MXjulmqjjlU9xqkTFkCcE
-         CfuqKacX3iTAXBO1yWe1AtzXQWuxmMiYjyh7JWkBljYBam24d1qaeeWM1x0EzBlqs/SC
-         cShs5BdmBX/n5sht/3tsxh6kfkFJyBfBmNP0nsLONB3roCAQDIHoDI9KqdAfmVTU0u+c
-         nCAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVw1Jc3TufMdI6LdI6He8KJoRKy/7+uVyBLxMfuwpGVibIEDQGekpJN2IjmLbQhpJBQJUdgaJV6VK/odTEI6z84tse20oxHENJu7XHa
-X-Gm-Message-State: AOJu0YyJ5AQT6g68dVB1Axvqveh8HliCOJY8/zja5OA7xTEENQScXF7A
-	t9HIqIXGRIV5vn0bjuIRu3zMzodgwoVoMlHLBbHHdfv24vagr4bCfOwc+BtqBfletoCPZq4yPOb
-	5
-X-Google-Smtp-Source: AGHT+IHCEk90C+Vq4CiPohjEvBRo0vWIF3yzHeFHSZPkzH/iMjxz0YZfmHGO49DF9SNeggUgvFn79A==
-X-Received: by 2002:a17:902:6b82:b0:1e3:dfdc:6972 with SMTP id d9443c01a7336-1ef43d15755mr316580525ad.9.1716261456179;
+        bh=tzmRGVhra0vqV7ClBDZ8LpQ88upOg0kiLsBQjRBVvpA=;
+        b=PaXyBxqYQGC1vXVAvIuMkE9btWgrJuRoYf2qupM4BHmoqneilriuU1LyDWZUii/URo
+         CWk+bLiM3A9FPw03C76zMc7i1wjk2mejx89oowoBUmTmb9730YN/qzy1PojtYC1G9xg+
+         6+fbopZPXWl9Jf8+GfnITyKoSVDQLvIJi/ru/9LlDO0w6ouZZAroSEweeUhSj5j/WynK
+         HES1vksHj9Nadssbe+whlF+vWINR1RyheONIVi6K3wWKFscfbGB64Oz0yzATGrtucAd0
+         epvFV9sq3OeNv44u7XD0NcXJEK/0DBZ4EpttOg317fTCl2bWe70eL7Ea8ETq+jWFplUr
+         ZkKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUvnoNHlq9o3YQKBZqGoa4dVuiP61QFy668dXKUTkZVQyrufHlbynB1pQOaUgdkMDGsy6u1D3lz+VQLV1zt5qL5rJ+nFJZUQtEFg5r
+X-Gm-Message-State: AOJu0Yxg3oXyUgflKxT6dpRu6Da0mK0aJ3UbG9loenySCk0JnYdf+z77
+	RB78uDJau4/IcajK1yfYmH+dD2GCXggNOXNA26LIl3lMnf29ul/TuD24+ceWWAo=
+X-Google-Smtp-Source: AGHT+IG3xZPcwhNaTmcektbIQRrzEBZS1fMMUdZ5TEtlnDulIxt5qmDUML9L7SII1MpSR5noRKJh/Q==
+X-Received: by 2002:a17:902:6b44:b0:1e2:81c1:b35e with SMTP id d9443c01a7336-1ef43f4e417mr364559355ad.54.1716261456986;
         Mon, 20 May 2024 20:17:36 -0700 (PDT)
 Received: from lunchbox.darkphysics (c-76-146-178-2.hsd1.wa.comcast.net. [76.146.178.2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf31a93sm214885415ad.134.2024.05.20.20.17.35
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf31a93sm214885415ad.134.2024.05.20.20.17.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 20:17:35 -0700 (PDT)
+        Mon, 20 May 2024 20:17:36 -0700 (PDT)
 From: Tree Davies <tdavies@darkphysics.net>
 To: gregkh@linuxfoundation.org,
 	philipp.g.hortmann@gmail.com
@@ -74,9 +73,9 @@ Cc: dan.carpenter@linaro.org,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Tree Davies <tdavies@darkphysics.net>
-Subject: [PATCH v2 19/31] Staging: rtl8192e: Remove variable ChkLength
-Date: Mon, 20 May 2024 20:17:06 -0700
-Message-Id: <20240521031718.17852-20-tdavies@darkphysics.net>
+Subject: [PATCH v2 20/31] Staging: rtl8192e: Rename variable WinEnd
+Date: Mon, 20 May 2024 20:17:07 -0700
+Message-Id: <20240521031718.17852-21-tdavies@darkphysics.net>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20240521031718.17852-1-tdavies@darkphysics.net>
 References: <20240521031718.17852-1-tdavies@darkphysics.net>
@@ -88,38 +87,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove variable ChkLength which fixes warning Avoid CamelCase,
-and use llc_offset in its place.
+Rename variable WinEnd to win_end
+to fix checkpatch warning Avoid CamelCase.
 
 Signed-off-by: Tree Davies <tdavies@darkphysics.net>
 ---
-v2: Delete ChkLength, and use llc_offset instead.
- drivers/staging/rtl8192e/rtllib_rx.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+v2: No change.
+ drivers/staging/rtl8192e/rtllib_rx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
-index 52fbbbaf30b0..3a637731506c 100644
+index 3a637731506c..ab2aa1a86c51 100644
 --- a/drivers/staging/rtl8192e/rtllib_rx.c
 +++ b/drivers/staging/rtl8192e/rtllib_rx.c
-@@ -729,7 +729,6 @@ static u8 parse_subframe(struct rtllib_device *ieee, struct sk_buff *skb,
- 	u16		fc = le16_to_cpu(hdr->frame_control);
+@@ -527,7 +527,7 @@ static void rx_reorder_indicate_packet(struct rtllib_device *ieee,
+ 	struct rt_hi_throughput *ht_info = ieee->ht_info;
+ 	struct rx_reorder_entry *pReorderEntry = NULL;
+ 	u8 WinSize = ht_info->rx_reorder_win_size;
+-	u16 WinEnd = 0;
++	u16 win_end = 0;
+ 	u8 index = 0;
+ 	bool bMatchWinStart = false, bPktInBuf = false;
+ 	unsigned long flags;
+@@ -538,7 +538,7 @@ static void rx_reorder_indicate_packet(struct rtllib_device *ieee,
  
- 	u16		llc_offset = sizeof(struct ieee80211_hdr_3addr);
--	u16		ChkLength;
- 	bool		is_aggregate_frame = false;
- 	u16		nSubframe_Length;
- 	u8		pad_len = 0;
-@@ -746,9 +745,7 @@ static u8 parse_subframe(struct rtllib_device *ieee, struct sk_buff *skb,
- 	if (rx_stats->contain_htc)
- 		llc_offset += sHTCLng;
+ 	spin_lock_irqsave(&(ieee->reorder_spinlock), flags);
  
--	ChkLength = llc_offset;
--
--	if (skb->len <= ChkLength)
-+	if (skb->len <= llc_offset)
- 		return 0;
+-	WinEnd = (ts->rx_indicate_seq + WinSize - 1) % 4096;
++	win_end = (ts->rx_indicate_seq + WinSize - 1) % 4096;
+ 	/* Rx Reorder initialize condition.*/
+ 	if (ts->rx_indicate_seq == 0xffff)
+ 		ts->rx_indicate_seq = SeqNum;
+@@ -563,12 +563,12 @@ static void rx_reorder_indicate_packet(struct rtllib_device *ieee,
  
- 	skb_pull(skb, llc_offset);
+ 	/* Sliding window manipulation. Conditions includes:
+ 	 * 1. Incoming SeqNum is equal to WinStart =>Window shift 1
+-	 * 2. Incoming SeqNum is larger than the WinEnd => Window shift N
++	 * 2. Incoming SeqNum is larger than the win_end => Window shift N
+ 	 */
+ 	if (SN_EQUAL(SeqNum, ts->rx_indicate_seq)) {
+ 		ts->rx_indicate_seq = (ts->rx_indicate_seq + 1) % 4096;
+ 		bMatchWinStart = true;
+-	} else if (SN_LESS(WinEnd, SeqNum)) {
++	} else if (SN_LESS(win_end, SeqNum)) {
+ 		if (SeqNum >= (WinSize - 1))
+ 			ts->rx_indicate_seq = SeqNum + 1 - WinSize;
+ 		else
 -- 
 2.30.2
 
