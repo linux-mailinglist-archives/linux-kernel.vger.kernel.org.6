@@ -1,183 +1,165 @@
-Return-Path: <linux-kernel+bounces-184414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5236A8CA6AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:12:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 848D98CA6A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 086A3282479
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:12:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E50A6B217CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C4418641;
-	Tue, 21 May 2024 03:12:12 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADB417758;
+	Tue, 21 May 2024 03:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYxRUIlL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D14317545;
-	Tue, 21 May 2024 03:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512A712E71;
+	Tue, 21 May 2024 03:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716261132; cv=none; b=JlKKnGJX49Agx5DLv61e6d21ELo0IUUeOkzhus3ocfWVPHwwlx+uE5Ed8M7RBzgBniAb4wouB1yoQD3AxwzMOpGxFWzAIYgrkaI1gSiAKM1BJES/dxTNe1I/lpWBaJR8pmyoBVK4Qh1JZO9mUl8srKxgfFR2Icj6Ttc645UNFRk=
+	t=1716260850; cv=none; b=SqmiMNqYhbznDiqzVhUmSTmmybbOX1Apd0Wyfcyjj1OqRbIwG8CaMS5vI6UTt+VyXHVD4iIU9C2re+n9ytjumqXbAZEzbAqtkmgKb0kAnjlt1r/JpJz2cGk/LgUUXcBkxqX1iBfN6jjatNvgiPE96E3iQ5g5jP4jlXBVP49oDL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716261132; c=relaxed/simple;
-	bh=Ztp8tWwtYacrLH0tcn1Oo/H+gJbLpHCIaW8drioba/4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=n1A3A495LVHFPTBei+V3JoxcmdncmaXorqDFpPTV0hXaxEiIHZgUfjpPkBKDHx1ua+xG47/ft9YouYsvPdF++ZG+8co42NhlyeqWafuM+SI4pJC2R7+1+7KFoeluF6J6g/OfkdDn9v9PJYItVmPxlgihf9FjE649y1d5C/LArGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VjzxH6Nlzz4f3m7J;
-	Tue, 21 May 2024 11:11:47 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 51BE71A0E8C;
-	Tue, 21 May 2024 11:11:58 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgBHZQ75EExm7Yj4NA--.50760S3;
-	Tue, 21 May 2024 11:11:55 +0800 (CST)
-Subject: Re: [PATCH md-6.10 5/9] md: replace sysfs api sync_action with new
- helpers
-To: Oliver Sang <oliver.sang@intel.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-raid@vger.kernel.org,
- agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
- xni@redhat.com, dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <202405202204.4e3dc662-oliver.sang@intel.com>
- <c9406496-7b97-a3c5-b48c-32f8248cee39@huaweicloud.com>
- <ZkwOpD8rjYeb+4eT@xsang-OptiPlex-9020>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <e822d3bb-ec27-5bc8-e9c2-bef6d0454918@huaweicloud.com>
-Date: Tue, 21 May 2024 11:11:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1716260850; c=relaxed/simple;
+	bh=vEd79klzMu+zXxA36ZyoEIFWyZeEXCjN1gTxWpfDYJU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AIXbh5GYkgD1nBorSdHjgt3k2ZMq/+tCBWod065/5IHEpq1CBMjL1MYf1utgSsjsKKTrN5Q0g9SZ/xiw2ewF5RR1h1EAOMQQc5YjpkH7uVDVHyAFZDHvvA8h2D0xIc4ejObdfC2ERGXd83sxrgJOavLebCN4WVf43WwKniy8M9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYxRUIlL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8382C2BD10;
+	Tue, 21 May 2024 03:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716260849;
+	bh=vEd79klzMu+zXxA36ZyoEIFWyZeEXCjN1gTxWpfDYJU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tYxRUIlLUxfTbilHW90OZgh2Xy8TfUn8o4d+bzDudrtGoRKJ/JKL6yZfxmkMCVNpm
+	 hKL8FonW62Eckn0/htLchsqLx8uCj8Vg/PLSo9/07g8gKYh7vp7jJPIB1gDcDqmaEF
+	 SZQi38uvtnSOTm+yB4poxiUKCWxlye22zgyBCwUTjNaNpiczlcSvPYA086coivSkTe
+	 rUL6lPOz0ay2wf9VGe5s2pb8hdz+0k+NqULCm5U+Cr+TSd3TDvgmRKQKCpRw/XMTJx
+	 KaA6kUbrn1hCv1JSsL/kQtjLkUVFpYnPO8jqfUgWfZ0Ym9CAwqXd1LDhhcgbQZClqd
+	 gZ7Es71EHMYFw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tanmay Shah <tanmay.shah@amd.com>,
+	Luca Weiss <luca@z3ntu.xyz>,
+	Olivia Wen <olivia.wen@mediatek.com>,
+	Beleswar Padhi <b-padhi@ti.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Apurva Nandan <a-nandan@ti.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	"Ricardo B . Marliere" <ricardo@marliere.net>
+Subject: [GIT PULL] remoteproc updates for v6.10
+Date: Mon, 20 May 2024 20:12:20 -0700
+Message-ID: <20240521031222.236250-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZkwOpD8rjYeb+4eT@xsang-OptiPlex-9020>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHZQ75EExm7Yj4NA--.50760S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxCFW7CF45tFyDGFy8Wr1UAwb_yoWrWw45pw
-	4kX3Z0yF4rJFn0yF48Kw40va4Yqa1fJrn8W34DG340ya1qyrySyr1Sqr1a9r9FkrZ093y2
-	v3ykXry3Kw4qg3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3
-	Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
 
-在 2024/05/21 11:01, Oliver Sang 写道:
-> hi, Yu Kuai,
-> 
-> On Tue, May 21, 2024 at 10:20:54AM +0800, Yu Kuai wrote:
->> Hi,
->>
->> 在 2024/05/20 23:01, kernel test robot 写道:
->>>
->>>
->>> Hello,
->>>
->>> kernel test robot noticed "mdadm-selftests.07reshape5intr.fail" on:
->>>
->>> commit: 18effaab5f57ef44763e537c782f905e06f6c4f5 ("[PATCH md-6.10 5/9] md: replace sysfs api sync_action with new helpers")
->>> url: https://github.com/intel-lab-lkp/linux/commits/Yu-Kuai/md-rearrange-recovery_flage/20240509-093248
->>> base: https://git.kernel.org/cgit/linux/kernel/git/device-mapper/linux-dm.git for-next
->>> patch link: https://lore.kernel.org/all/20240509011900.2694291-6-yukuai1@huaweicloud.com/
->>> patch subject: [PATCH md-6.10 5/9] md: replace sysfs api sync_action with new helpers
->>>
->>> in testcase: mdadm-selftests
->>> version: mdadm-selftests-x86_64-5f41845-1_20240412
->>> with following parameters:
->>>
->>> 	disk: 1HDD
->>> 	test_prefix: 07reshape5intr
->>>
->>>
->>>
->>> compiler: gcc-13
->>> test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-4790T CPU @ 2.70GHz (Haswell) with 16G memory
->>>
->>> (please refer to attached dmesg/kmsg for entire log/backtrace)
->>>
->>>
->>>
->>>
->>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->>> the same patch/commit), kindly add following tags
->>> | Reported-by: kernel test robot <oliver.sang@intel.com>
->>> | Closes: https://lore.kernel.org/oe-lkp/202405202204.4e3dc662-oliver.sang@intel.com
->>>
->>> 2024-05-14 21:36:26 mkdir -p /var/tmp
->>> 2024-05-14 21:36:26 mke2fs -t ext3 -b 4096 -J size=4 -q /dev/sda1
->>> 2024-05-14 21:36:57 mount -t ext3 /dev/sda1 /var/tmp
->>> sed -e 's/{DEFAULT_METADATA}/1.2/g' \
->>> -e 's,{MAP_PATH},/run/mdadm/map,g'  mdadm.8.in > mdadm.8
->>> /usr/bin/install -D -m 644 mdadm.8 /usr/share/man/man8/mdadm.8
->>> /usr/bin/install -D -m 644 mdmon.8 /usr/share/man/man8/mdmon.8
->>> /usr/bin/install -D -m 644 md.4 /usr/share/man/man4/md.4
->>> /usr/bin/install -D -m 644 mdadm.conf.5 /usr/share/man/man5/mdadm.conf.5
->>> /usr/bin/install -D -m 644 udev-md-raid-creating.rules /lib/udev/rules.d/01-md-raid-creating.rules
->>> /usr/bin/install -D -m 644 udev-md-raid-arrays.rules /lib/udev/rules.d/63-md-raid-arrays.rules
->>> /usr/bin/install -D -m 644 udev-md-raid-assembly.rules /lib/udev/rules.d/64-md-raid-assembly.rules
->>> /usr/bin/install -D -m 644 udev-md-clustered-confirm-device.rules /lib/udev/rules.d/69-md-clustered-confirm-device.rules
->>> /usr/bin/install -D  -m 755 mdadm /sbin/mdadm
->>> /usr/bin/install -D  -m 755 mdmon /sbin/mdmon
->>> Testing on linux-6.9.0-rc2-00012-g18effaab5f57 kernel
->>> /lkp/benchmarks/mdadm-selftests/tests/07reshape5intr... FAILED - see /var/tmp/07reshape5intr.log and /var/tmp/fail07reshape5intr.log for detail
->> [root@fedora mdadm]# ./test --dev=loop --tests=07reshape5intr
->> test: skipping tests for multipath, which is removed in upstream 6.8+
->> kernels
->> test: skipping tests for linear, which is removed in upstream 6.8+ kernels
->> Testing on linux-6.9.0-rc2-00023-gf092583596a2 kernel
->> /root/mdadm/tests/07reshape5intr... FAILED - see /var/tmp/07reshape5intr.log
->> and /var/tmp/fail07reshape5intr.log for details
->>    (KNOWN BROKEN TEST: always fails)
->>
->> So, since this test is marked BROKEN.
->>
->> Please share the whole log, and is it possible to share the two logs?
-> 
-> 
-> we only captured one log as attached log-18effaab5f.
-> also attached parent log FYI.
-I mean please ignore the BROKEN test, and next time attach the two logs
-if possible:
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-/var/tmp/07reshape5intr.log and /var/tmp/fail07reshape5intr.log
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
 
-Thanks for the test, we really need a per patch CI.
-Kuai
+are available in the Git repository at:
 
-> 
-> 
->>
->> Thanks,
->> Kuai
->>
->>>
->>>
->>>
->>> The kernel config and materials to reproduce are available at:
->>> https://download.01.org/0day-ci/archive/20240520/202405202204.4e3dc662-oliver.sang@intel.com
->>>
->>>
->>>
->>
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.10
 
+for you to fetch changes up to 4d5ba6ead1dc9fa298d727e92db40cd98564d1ac:
+
+  dt-bindings: remoteproc: qcom,sdm845-adsp-pil: Fix qcom,halt-regs definition (2024-05-06 19:41:38 -0700)
+
+----------------------------------------------------------------
+remoteproc updates for v6.10
+
+This makes the remoteproc core rproc_class const.
+
+DeviceTree bindings for a few different Qualcomm remoteprocs are updated
+to remove a range of validation warnings/errors.  The Qualcomm SMD
+binding marks qcom,ipc deprecated, in favor or the mailbox interface.
+
+The TI K3 R5 remoteproc driver is updated to ensure that cores are
+powered up in the appropriate order. The driver also see a couple of
+fixes related to cleanups in error paths during probe.
+
+The Mediatek remoteproc driver is extended to support the MT8188 SCP
+core 1. Support for varying DRAM and IPI shared buffer sizes are
+introduced. This together with a couple of bug fixes and improvements to
+the driver.
+
+Support for the AMD-Xilinx Versal and Versal-NET platforms are added.
+Coredump support and support for parsing TCM information from DeviceTree
+is added to the Xilinx R5F remoteproc driver.
+
+----------------------------------------------------------------
+AngeloGioacchino Del Regno (1):
+      remoteproc: mediatek: Make sure IPI buffer fits in L2TCM
+
+Apurva Nandan (1):
+      remoteproc: k3-r5: Wait for core0 power-up before powering up core1
+
+Beleswar Padhi (2):
+      remoteproc: k3-r5: Do not allow core1 to power up before core0 via sysfs
+      remoteproc: k3-r5: Jump to error handling labels in start/stop errors
+
+Dan Carpenter (1):
+      remoteproc: mediatek: Fix error code in scp_rproc_init()
+
+Dmitry Baryshkov (1):
+      dt-bindings: remoteproc: qcom,msm8996-mss-pil: allow glink-edge on msm8996
+
+Leonard Crestez (1):
+      remoteproc: zynqmp: Add coredump support
+
+Luca Weiss (4):
+      dt-bindings: remoteproc: qcom,smd-edge: Mark qcom,ipc as deprecated
+      dt-bindings: remoteproc: qcom,qcs404-cdsp-pil: Fix qcom,halt-regs definition
+      dt-bindings: remoteproc: qcom,sc7280-wpss-pil: Fix qcom,halt-regs definition
+      dt-bindings: remoteproc: qcom,sdm845-adsp-pil: Fix qcom,halt-regs definition
+
+Olivia Wen (4):
+      dt-bindings: remoteproc: mediatek: Support MT8188 dual-core SCP
+      remoteproc: mediatek: Support MT8188 SCP core 1
+      remoteproc: mediatek: Support setting DRAM and IPI shared buffer sizes
+      remoteproc: mediatek: Add IMGSYS IPI command
+
+Radhey Shyam Pandey (1):
+      dt-bindings: remoteproc: Add Tightly Coupled Memory (TCM) bindings
+
+Ricardo B. Marliere (1):
+      remoteproc: Make rproc_class constant
+
+Tanmay Shah (5):
+      remoteproc: zynqmp: fix lockstep mode memory region
+      remoteproc: zynqmp: parse TCM from device tree
+      drivers: remoteproc: xlnx: Add Versal and Versal-NET support
+      drivers: remoteproc: xlnx: Fix uninitialized variable use
+      drivers: remoteproc: xlnx: Fix uninitialized tcm mode
+
+ .../devicetree/bindings/remoteproc/mtk,scp.yaml    |   2 +
+ .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml  |   1 -
+ .../bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml  |   6 +-
+ .../bindings/remoteproc/qcom,sc7280-wpss-pil.yaml  |   6 +-
+ .../bindings/remoteproc/qcom,sdm845-adsp-pil.yaml  |   6 +-
+ .../bindings/remoteproc/qcom,smd-edge.yaml         |   3 +-
+ .../bindings/remoteproc/xlnx,zynqmp-r5fss.yaml     | 279 +++++++++++++++--
+ drivers/remoteproc/mtk_common.h                    |  11 +-
+ drivers/remoteproc/mtk_scp.c                       | 241 +++++++++++++--
+ drivers/remoteproc/mtk_scp_ipi.c                   |   7 +-
+ drivers/remoteproc/remoteproc_internal.h           |   2 +-
+ drivers/remoteproc/remoteproc_sysfs.c              |   2 +-
+ drivers/remoteproc/ti_k3_r5_remoteproc.c           |  58 +++-
+ drivers/remoteproc/xlnx_r5_remoteproc.c            | 329 ++++++++++-----------
+ include/linux/remoteproc/mtk_scp.h                 |   1 +
+ 15 files changed, 721 insertions(+), 233 deletions(-)
 
