@@ -1,237 +1,210 @@
-Return-Path: <linux-kernel+bounces-184544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79BD88CA859
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D8D8CA86C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D36F1C213A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:03:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6D971C214AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2E04F205;
-	Tue, 21 May 2024 07:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F368A4D131;
+	Tue, 21 May 2024 07:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQxvh4Uf"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MSxYHJac";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="y/rS6S/4";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MSxYHJac";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="y/rS6S/4"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED41F482EE;
-	Tue, 21 May 2024 07:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B0D40BE3;
+	Tue, 21 May 2024 07:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716275014; cv=none; b=W01/DiQ3c+6inOA4VYa1BlPqtYc4m6UtGDPN9zZ1siZSCmtj2ISc6khN6J94tndJvNvF64UjLcRa7X6QKwweMFzCfGutnosEEemCMiP8KkiTmvuHWuXz+9k8VUMNLwytNQYp6u/rbHNHG1xKfCjn0BkPxBnUlwy175PyoXNFP8s=
+	t=1716275248; cv=none; b=Uoom6epJpUVYj6wq9lHCScg1/5EEUc7BLPw631KGso1vRg5Eed/eR3PDNynM8EDDSWDq8wNN53pTG/5928Pf0VV0y2vTjpfFGw+jQXIeUMFOqALdtD+kJF/XxXZGNYQZe0a9t0N7iSd/y2f+AQQF28ML7ojLjpdKtbDCfAVtDbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716275014; c=relaxed/simple;
-	bh=W78xOUZOmKMQybBB10sYcYuLAnuxE6oCWILwuCswGSo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UpPFLhmcXNX5CBBKHGFphicQEUsqUntJnvKXo4Z+I/YN4oC2pNObXfjOr4R5siW7HjwpssYbtM8XsdfBnOXAnn4XvtYokb9k0JL6HSuGa7B+T/8VRSsii74OLbriP5LoO0RVkbjilp5XGe/2jaVS5nxNHftuDUp+mtJgKgLCNHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQxvh4Uf; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-56e1baf0380so8186708a12.3;
-        Tue, 21 May 2024 00:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716275011; x=1716879811; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=W78xOUZOmKMQybBB10sYcYuLAnuxE6oCWILwuCswGSo=;
-        b=RQxvh4UfoDO7eMq2LNyiZRuqzq5rOu8vbcinWfo8n3yrx2iMlxX9V23OWgt764QeRH
-         HMCcXL2CfPWnOxPM9arKIr27CtYYIgAW/jpdrH02cf6QoGGz/h9zwnehpFi/e6Ef1uGf
-         kG7mvXBQQGEhnoBtHtltbiTDeryKf3NWcDaG6e+uLqssJ690S13j2gLRSZgbb4wtpOXc
-         NC1nUgbIa96eJ4nXt6INYo0mEe6i2p+4CpfzpqemookUZT5wgTufaMZlSHBX6FKz1mmc
-         gh2lIB5N+7hvXVfFr/zchRX8DSwQAjX0aA29K/ESHpeZ58MbZj6vsEt973UIdxYEKWtP
-         eilQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716275011; x=1716879811;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W78xOUZOmKMQybBB10sYcYuLAnuxE6oCWILwuCswGSo=;
-        b=Ers/TdZ9aPdnQcaTypS3/ROM4u3NjIxRyPPy3/Q+xsSW/mNjhXWWt1afi5XOYshi7I
-         DwAbfcPGd3kXQK2f/EatTW/V8k2zZXY5sON3av7cgaz4RAwF09Z+tie0C7SOp43nr0WF
-         M5fmvlj2iFIwtIdI4wJbzrOlgpCn0fdJ4hiNrDug1U+WEEDUrEOyWZbJjWFaniZYgmFK
-         /wqWdqtCCKlDnRWPyLPAxcg8dlVftmHgIJnYM67dwzzxJrAoH0Y0C35SO4vuIvQNEYW4
-         beivepT7XhJVsWLNf/B3/ciD0ALRFNIUMGdU55k/Zz5WhSs2/+IJFLGMPb/EaOkYQ7dq
-         EloA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0BT1ifd0/1WbY93cUC+J8BwnUD5TwdQTcoQ4Bxx2B5oreokPSTRXgg5Ftb9rc128KCWvXyCSRpPlVokfPuKZ0BtjushFeqlEvzbg7fPHQGLj0WXpy1DfGdsNKtZvHGCjeHy3pfarwFyLFArR3gSujMgaG1MnNH8B9XXmsYRhOIdEdYA==
-X-Gm-Message-State: AOJu0YzvAFcij+CngUjsy8VkZOOHSCWKjZq5qR6o+shKLsPsf72Ngkya
-	RnYa0w3aiMUO8GAsvDYUpm3o1+ZYnb9kRlpbi8obFIWRpAT+GX5c
-X-Google-Smtp-Source: AGHT+IHP3aBOXM8g4YEaHEojj+mC+t8FVqMFj9KRZf01Rot23J/TsU0IchRswJMfRX/eknS+ziFrTA==
-X-Received: by 2002:a05:6402:3488:b0:578:2677:7fd with SMTP id 4fb4d7f45d1cf-57826770eafmr30315a12.36.1716275011005;
-        Tue, 21 May 2024 00:03:31 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:994e:fbde:478:1ce1? (p200300f6ef1cc500994efbde04781ce1.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:994e:fbde:478:1ce1])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c323866sm16109624a12.87.2024.05.21.00.03.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 00:03:30 -0700 (PDT)
-Message-ID: <4d226c3a3662374dca766b2a8f9f3479a63ddc39.camel@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: iio: dac: add docs for ad8460
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
- <jic23@kernel.org>
-Cc: Mariel Tinaco <Mariel.Tinaco@analog.com>, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter
- Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Marcelo Schmitt
- <marcelo.schmitt1@gmail.com>,  Dimitri Fedrau <dima.fedrau@gmail.com>,
- Guenter Roeck <linux@roeck-us.net>
-Date: Tue, 21 May 2024 09:07:14 +0200
-In-Reply-To: <CAMknhBE9mJUXsKYVwHb=6d3tVk9DiODWjqtzv9q+zSer5XqrqQ@mail.gmail.com>
-References: <20240510064053.278257-1-Mariel.Tinaco@analog.com>
-	 <20240510064053.278257-2-Mariel.Tinaco@analog.com>
-	 <CAMknhBFXk07HbP_pPg5wkW-9Ah2-66kGzZFvcvBNrbjfguHb4g@mail.gmail.com>
-	 <20240511172500.718fe12d@jic23-huawei>
-	 <CAMknhBE9mJUXsKYVwHb=6d3tVk9DiODWjqtzv9q+zSer5XqrqQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 
+	s=arc-20240116; t=1716275248; c=relaxed/simple;
+	bh=yciSffi5+xavGrSjPhk+Q0qUyrjp+1CupdGwXVMNAww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZP6+n3pTH97k4A59pbdWepXAcrE0ildjhzZPi80VLPaU+jF8cgHpKIc5n9asnR+tNYK4SMI2hRLvWLetGicdF9DRuxiA834AZruyDo0BQpDrT4bZNau1uIUY83hnZmRdsMOdqw8zItCZRoAV4iKRiStdN80tBypoqT2CD+f6BHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MSxYHJac; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=y/rS6S/4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MSxYHJac; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=y/rS6S/4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id ACEAB34580;
+	Tue, 21 May 2024 07:07:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716275244; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qL0jhB6ki3j+8SDnQXFIj9AcVAQWHp6uZSnkRqznJEs=;
+	b=MSxYHJace77WJIAILaUOK9xn/zgmqEMy6h97J5iyxhtqAmT0c4sGMJi+4MxF0JnsCtZxX2
+	oLGwzzQZzDmUk683y0CaOKK38hH1oDkHizQHjagmf3BL4yVFqMp0TSVRUqbbhEWv7CTMwb
+	SM9U6CJNn+4POQH+e+giGVETEFlHOYw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716275244;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qL0jhB6ki3j+8SDnQXFIj9AcVAQWHp6uZSnkRqznJEs=;
+	b=y/rS6S/43lQWXyps6ye8iPZyqZ8lGEwOAE274M4lxe9OOX1+NDuT7EnjLrlb08sFTNvTok
+	6uNlDvQDPJgB2nDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=MSxYHJac;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="y/rS6S/4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716275244; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qL0jhB6ki3j+8SDnQXFIj9AcVAQWHp6uZSnkRqznJEs=;
+	b=MSxYHJace77WJIAILaUOK9xn/zgmqEMy6h97J5iyxhtqAmT0c4sGMJi+4MxF0JnsCtZxX2
+	oLGwzzQZzDmUk683y0CaOKK38hH1oDkHizQHjagmf3BL4yVFqMp0TSVRUqbbhEWv7CTMwb
+	SM9U6CJNn+4POQH+e+giGVETEFlHOYw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716275244;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qL0jhB6ki3j+8SDnQXFIj9AcVAQWHp6uZSnkRqznJEs=;
+	b=y/rS6S/43lQWXyps6ye8iPZyqZ8lGEwOAE274M4lxe9OOX1+NDuT7EnjLrlb08sFTNvTok
+	6uNlDvQDPJgB2nDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5D19213A1E;
+	Tue, 21 May 2024 07:07:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MBjWEytITGZpZgAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 21 May 2024 07:07:23 +0000
+Message-ID: <93c16e7c-c64a-4077-9dbe-f40120848fd7@suse.de>
+Date: Tue, 21 May 2024 09:07:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 05/12] fs/read_write: Enable copy_file_range for block
+ device.
+Content-Language: en-US
+To: Nitesh Shetty <nj.shetty@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+ Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
+ damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
+ nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102917epcas5p1bda532309b9174bf2702081f6f58daf7@epcas5p1.samsung.com>
+ <20240520102033.9361-6-nj.shetty@samsung.com>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240520102033.9361-6-nj.shetty@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.50
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: ACEAB34580
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLghztw5pzjjmtx4kirkcu9cad)];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,acm.org,fromorbit.com,opensource.wdc.com,samsung.com,gmail.com,vger.kernel.org,lists.linux.dev,lists.infradead.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,samsung.com:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
 
-On Sat, 2024-05-11 at 13:47 -0500, David Lechner wrote:
-> On Sat, May 11, 2024 at 11:25=E2=80=AFAM Jonathan Cameron <jic23@kernel.o=
-rg> wrote:
-> >=20
-> > On Fri, 10 May 2024 12:28:19 -0500
-> > David Lechner <dlechner@baylibre.com> wrote:
-> >=20
-> > > On Fri, May 10, 2024 at 1:42=E2=80=AFAM Mariel Tinaco <Mariel.Tinaco@=
-analog.com>
-> > > wrote:
-> > > >=20
-> > > > This adds the bindings documentation for the 14-bit
-> > > > High Voltage, High Current, Waveform Generator
-> > > > Digital-to-Analog converter.
-> > > >=20
-> > > > Signed-off-by: Mariel Tinaco <Mariel.Tinaco@analog.com>
-> > > > ---
-> > > > =C2=A0.../bindings/iio/dac/adi,ad8460.yaml=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 67 +++++++++++++++++++
-> > > > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 |=C2=A0 7 ++
-> > > > =C2=A02 files changed, 74 insertions(+)
-> > > > =C2=A0create mode 100644
-> > > > Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml
-> > > >=20
-> > > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad8460.y=
-aml
-> > > > b/Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml
-> > > > new file mode 100644
-> > > > index 000000000..924f76209
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml
-> > > > @@ -0,0 +1,67 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > > +# Copyright 2024 Analog Devices Inc.
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/iio/dac/adi,ad8460.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Analog Devices AD8460 DAC
-> > > > +
-> > > > +maintainers:
-> > > > +=C2=A0 - Mariel Tinaco <mariel.tinaco@analog.com>
-> > > > +
-> > > > +description: |
-> > > > +=C2=A0 Analog Devices AD8460 110 V High Voltage, 1 A High Current,
-> > > > +=C2=A0 Arbitrary Waveform Generator with Integrated 14-Bit High Sp=
-eed DAC
-> > > > +=C2=A0
-> > > > https://www.analog.com/media/en/technical-documentation/data-sheets=
-/ad8460.pdf
-> > > > +
-> > > > +properties:
-> > > > +=C2=A0 compatible:
-> > > > +=C2=A0=C2=A0=C2=A0 enum:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - adi,ad8460
-> > > > +
-> > > > +=C2=A0 reg:
-> > > > +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > > > +
-> > > > +=C2=A0 spi-max-frequency:
-> > > > +=C2=A0=C2=A0=C2=A0 maximum: 20000000
-> > > > +
-> > > > +=C2=A0 vref-supply:
-> > >=20
-> > > It would be nice to make the property name match the pin name since
-> > > there is more than one reference voltage input.
-> > >=20
-> > > refio-1p2v-supply:
-> > >=20
-> > > > +=C2=A0=C2=A0=C2=A0 description: Drive voltage in the range of 1.2V=
- maximum to as low
-> > > > as
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 low as 0.12V through the REF_IO pin=
- to adjust full scale output
-> > > > span
-> > >=20
-> > > I don't seen anything in the datasheet named REF_IO. Is this a typo
-> > > and it should be REFIO_1P2V?
-> > >=20
-> > > > +
-> > > > +=C2=A0 clocks:
-> > > > +=C2=A0=C2=A0=C2=A0 description: The clock for the DAC. This is the=
- sync clock
-> > > > +
-> > > > +=C2=A0 adi,rset-ohms:
-> > > > +=C2=A0=C2=A0=C2=A0 description: Specify value of external resistor=
- connected to FS_ADJ
-> > > > pin
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to establish internal HVDAC's refer=
-ence current I_REF
-> > > > +=C2=A0=C2=A0=C2=A0 minimum: 2000
-> > > > +=C2=A0=C2=A0=C2=A0 maximum: 20000
-> > > > +
-> > >=20
-> > > I see lots more pins on the datasheet, many of which should be trivia=
-l
-> > > to add bindings for (we prefer to have the bindings as complete as
-> > > possible even if the driver doesn't implement everything). Potential
-> > > candidates:
-> > >=20
-> > > sdn-reset-gpios: (active high)
-> > > reset-gpios: (active low)
-> > > sdn-io-gpios: (active high)
-> > >=20
-> > > hvcc-supply:
-> > > hvee-supply:
-> > > vcc-5v-supply:
-> > > vref-5v-supply:
-> > > dvdd-3p3v-supply:
-> > > avdd-3p3v-supply:
-> > >=20
-> > > It also looks like there is a parallel interface for data, so I would
-> > > expect to see an io-backends property that links to the PHY used for
-> > > handling that.
-> > >=20
-> > Ultimately yes, but the parallel interface might require some decisions=
- on
-> > binding that are non obvious until it's actually implemented. So maybe
-> > don't need that bit from the start.=C2=A0 The rest I agree should be he=
-re.
-> >=20
-> >=20
->=20
-> Since the driver patch uses a DMA channel that isn't documented here,
-> I am assuming that the parallel interface is being used so we do need
-> to consider it now. :-)
+On 5/20/24 12:20, Nitesh Shetty wrote:
+> From: Anuj Gupta <anuj20.g@samsung.com>
+> 
+> This is a prep patch. Allow copy_file_range to work for block devices.
+> Relaxing generic_copy_file_checks allows us to reuse the existing infra,
+> instead of adding a new user interface for block copy offload.
+> Change generic_copy_file_checks to use ->f_mapping->host for both inode_in
+> and inode_out. Allow block device in generic_file_rw_checks.
+> 
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> ---
+>   fs/read_write.c | 8 +++++---
+>   1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index ef6339391351..31645ca5ed58 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1413,8 +1413,8 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
+>   				    struct file *file_out, loff_t pos_out,
+>   				    size_t *req_count, unsigned int flags)
+>   {
+> -	struct inode *inode_in = file_inode(file_in);
+> -	struct inode *inode_out = file_inode(file_out);
+> +	struct inode *inode_in = file_in->f_mapping->host;
+> +	struct inode *inode_out = file_out->f_mapping->host;
+>   	uint64_t count = *req_count;
+>   	loff_t size_in;
+>   	int ret;
+> @@ -1726,7 +1726,9 @@ int generic_file_rw_checks(struct file *file_in, struct file *file_out)
+>   	/* Don't copy dirs, pipes, sockets... */
+>   	if (S_ISDIR(inode_in->i_mode) || S_ISDIR(inode_out->i_mode))
+>   		return -EISDIR;
+> -	if (!S_ISREG(inode_in->i_mode) || !S_ISREG(inode_out->i_mode))
+> +	if (!S_ISREG(inode_in->i_mode) && !S_ISBLK(inode_in->i_mode))
+> +		return -EINVAL;
+> +	if ((inode_in->i_mode & S_IFMT) != (inode_out->i_mode & S_IFMT))
+>   		return -EINVAL;
+>   
+>   	if (!(file_in->f_mode & FMODE_READ) ||
 
-AFAIU, the way this is designed, the parallel interface is directly connect=
-ed to
-the DMA IP controller. So, at this point there's really no use for the DAC
-backend. We may have different designs in the future but no use case for no=
-w.
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-- Nuno S=C3=A1
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+
 
