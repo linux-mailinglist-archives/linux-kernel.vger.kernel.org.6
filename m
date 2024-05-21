@@ -1,155 +1,143 @@
-Return-Path: <linux-kernel+bounces-184934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489488CAE02
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:16:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09A0F8CAE0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFC2D1F2387C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:16:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8368BB23A83
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FBC78C85;
-	Tue, 21 May 2024 12:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7112F76057;
+	Tue, 21 May 2024 12:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rrBAZyoz"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NWsKLMmV"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC7477118;
-	Tue, 21 May 2024 12:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9113B757F7;
+	Tue, 21 May 2024 12:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716293741; cv=none; b=GwBwajtrtetFCS2uCQwWf1oZYqGbMI6YhPxm7ZERCqoBLlHUamqcUSEDtmqOqLE/x0i0+c+ChSD+jhfrI3u2IMrAzfGvs8Vt8dOBBf7Vp/Mqlh4KwS6FVljh+aTD7sXnnctZIpH1SBq+9q9miyWcF16XTQKXZyNKy+CToC6WZSA=
+	t=1716293876; cv=none; b=oduoCR+WQXoTkYzbYV5C2y8QLO5yzHxNwqRpcLQDGGDVdvX6HQ4JuLnpUoXULUmq+9cilEnNoNx/NQnHShKSGg3JM+ueYY2ki11HP1ETC+Nb9p5RNKcZll9Tl35dAKWtVLfIFEi2pHRWdGEhyoc4dsPpCQvZ+csSlrI13J+ADfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716293741; c=relaxed/simple;
-	bh=r6NUAZTvpLRwycDnLcFtYRyW2y8FYnVfEO5UQERDHKw=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=dVw6ZBgLVceZB/Hhsmq+fx4vTox43d5M0E+faIyOxA6KPGlrVuUVQleQyR1cOhTeAgYNvBcwRM5MnZJebljH8bWd/LnGce30mhq740ji1+IP9/9eBkxXibOWubhY1xN6zs/D5S2Vnl7KnXjg+KveNxygoMP/3m+o0haIb0kZu7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rrBAZyoz; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44LC3Fhg025469;
-	Tue, 21 May 2024 12:15:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : date : subject :
- content-type : message-id : references : in-reply-to : to : cc :
- content-transfer-encoding : mime-version; s=pp1;
- bh=Buw4eF8ZL2S9x7Ww4CLjvGShtmwTm3IYHiPIwey83ws=;
- b=rrBAZyoztA4t5GokwFz3tfE8lkXPoI+SdvtT6BhBG67A+L6T4L5DNryveAH1PDXYWuWx
- wnB3q+85QghQxCNFqDE3B1VsdFsvNz34ClB+B8HGHHC1iylLbWbBETKEEfqGM5qplBUj
- OWcToXGC0kEtYt/WVcq1KSXFiIbYisVzZwrewgln1VpCxjDKAl7UraStiZ00bZOToUYQ
- pRnEdQnlQmgXBx3qvyIm9Ux1h6zc3hja9h7kw++y24w0OPXAPGcrap0bPcInPckwP3Ck
- r3yayo7y4P8H6HYdbdGFXIWVbCDKkfWldwYRLmtxIb5mETZaXt44W7DDexSR48oI3m7+ cQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y8u92g1a1-1
+	s=arc-20240116; t=1716293876; c=relaxed/simple;
+	bh=nNkhGw3YG1Wk2LjkcE5/lhfywpxP0++zWLyUl2c3+Ow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RIwKATNj0GaJI+pJH7umJeq4m3fUpo8ToiUWtXIYNRK56o6WSuS/MfhviOqiEtGwTd5OLXPnj04dNcCcKcLzHPlOVzF5gzeaYtSJ622Y0Qx738iuntRni36y7LsmfyCila8LEvwbA2pZCIhjE2oddgsT6o77GyOhysruxVco6vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NWsKLMmV; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44LBRr0a019207;
+	Tue, 21 May 2024 14:17:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=NB18YDuzAPhccihOvrNVEn535LLvcSqVIm6q6GCowLk=; b=NW
+	sKLMmVnuP5no2/j0pXbYlId8pyR1WjzvXloM+f+9wc/2IXqZ01GrlUFcy4x8Dr8X
+	5mya/Z5J3547aeYnsSdQLyiIvWwiI3KD/gqvyqryUt1/Ip7/hSLJ6d/kZSGBCTjN
+	ebH2L2X8tIbDk4v9RZpMkPWNpyfigSzu5UVgG+6gLNO7wuWK3EgMbsOGL5LFcbGy
+	fa4BMItreNQq0G+KBfj381mzXyqU+OkdRAUIZ9NTpaqfpdToqjEEww33P2DQ1/Jn
+	o1v3YyV7fSKm6+vVtOeMlg9MBhk40o3Xih2T0qAbxls5c2bTaF79X/CLVT0Q6RZm
+	JIlMJm/Pc9wdARZT/ZWA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y75w0a23s-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 12:15:38 +0000
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44LCFbgB011685;
-	Tue, 21 May 2024 12:15:37 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y8u92g19x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 12:15:37 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44LBHFfV026447;
-	Tue, 21 May 2024 12:15:37 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y785mddjb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 21 May 2024 12:15:37 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44LCFXRF31851198
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 21 May 2024 12:15:36 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E44C158069;
-	Tue, 21 May 2024 12:15:33 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 21F555805D;
-	Tue, 21 May 2024 12:15:32 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 21 May 2024 12:15:31 +0000 (GMT)
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-Date: Tue, 21 May 2024 14:14:59 +0200
-Subject: [PATCH 3/3] vfio/pci: Enable VFIO_PCI_MMAP for s390
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20240521-vfio_pci_mmap-v1-3-2f6315e0054e@linux.ibm.com>
-References: <20240521-vfio_pci_mmap-v1-0-2f6315e0054e@linux.ibm.com>
-In-Reply-To: <20240521-vfio_pci_mmap-v1-0-2f6315e0054e@linux.ibm.com>
-To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, Niklas Schnelle <schnelle@linux.ibm.com>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1087;
- i=schnelle@linux.ibm.com; h=from:subject:message-id;
- bh=r6NUAZTvpLRwycDnLcFtYRyW2y8FYnVfEO5UQERDHKw=;
- b=owGbwMvMwCH2Wz534YHOJ2GMp9WSGNJ8JsROmrSjg9v4Vc2fCiYpgwT/nr21IveULA/+ZuoUb
- bYJWzyjo5SFQYyDQVZMkWVRl7PfuoIppnuC+jtg5rAygQxh4OIUgInEujAynN380stzYUT9gVh+
- 5TkMzkcmp/OlVHXcVb8q729qorhkLiPDoQ9G2aE7uvRiW3le35z4//UUg6nZdiYLTf5uW2WanLO
- LFwA=
-X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
- fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: wWG7Pd-2LYWqFNMnvba9PHpu2T7OhGcg
-X-Proofpoint-GUID: H6MTPEmJ4HJTX3Ccmqq9R31R2j9QU6SO
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	Tue, 21 May 2024 14:17:30 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B22CF4002D;
+	Tue, 21 May 2024 14:17:22 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0B82B2194DB;
+	Tue, 21 May 2024 14:16:58 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 21 May
+ 2024 14:16:57 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 21 May
+ 2024 14:16:57 +0200
+Message-ID: <498403f4-98ff-40ec-adfc-c0ffba6450aa@foss.st.com>
+Date: Tue, 21 May 2024 14:16:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/7] dt-bindings: remoteproc: Add compatibility for TEE
+ support
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20240521081001.2989417-1-arnaud.pouliquen@foss.st.com>
+ <20240521081001.2989417-3-arnaud.pouliquen@foss.st.com>
+ <dfb3c96e-0684-4e61-b1c9-5a83f61e0418@kernel.org>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <dfb3c96e-0684-4e61-b1c9-5a83f61e0418@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-21_07,2024-05-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- suspectscore=0 mlxlogscore=629 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 clxscore=1015 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405210091
+ definitions=2024-05-21_08,2024-05-21_01,2024-05-17_01
 
-With the introduction of memory I/O (MIO) instructions enbaled in commit
-71ba41c9b1d9 ("s390/pci: provide support for MIO instructions") s390
-gained support for direct user-space access to mapped PCI resources.
-Even without those however user-space can access mapped PCI resources
-via the s390 specific MMIO syscalls. Thus VFIO_PCI_MMAP can be enabled
-on all s390 systems with native PCI allowing vfio-pci user-space
-applications direct access to mapped resources.
 
-Link: https://lore.kernel.org/all/c5ba134a1d4f4465b5956027e6a4ea6f6beff969.camel@linux.ibm.com/
-Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
----
- drivers/vfio/pci/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 5/21/24 11:24, Krzysztof Kozlowski wrote:
+> On 21/05/2024 10:09, Arnaud Pouliquen wrote:
+>> The "st,stm32mp1-m4-tee" compatible is utilized in a system configuration
+>> where the Cortex-M4 firmware is loaded by the Trusted execution Environment
+>> (TEE).
+>> For instance, this compatible is used in both the Linux and OP-TEE
+>> device-tree:
+>> - In OP-TEE, a node is defined in the device tree with the
+>>   st,stm32mp1-m4-tee to support signed remoteproc firmware.
+>>   Based on DT properties, OP-TEE authenticates, loads, starts, and stops
+>>   the firmware.
+>> - On Linux, when the compatibility is set, the Cortex-M resets should not
+>>   be declared in the device tree.
+>>
+> 
+> Not tested.
+> 
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC. It might happen, that command when run on an older
+> kernel, gives you outdated entries. Therefore please be sure you base
+> your patches on recent Linux kernel.
+> 
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline), work on fork of kernel
+> (don't, instead use mainline) or you ignore some maintainers (really
+> don't). Just use b4 and everything should be fine, although remember
+> about `b4 prep --auto-to-cc` if you added new patches to the patchset.
+> 
+> You missed at least devicetree list (maybe more), so this won't be
+> tested by automated tooling. Performing review on untested code might be
+> a waste of time, thus I will skip this patch entirely till you follow
+> the process allowing the patch to be tested.
+> 
+> Please kindly resend and include all necessary To/Cc entries.
 
-diff --git a/drivers/vfio/pci/Kconfig b/drivers/vfio/pci/Kconfig
-index 15821a2d77d2..814aa0941d61 100644
---- a/drivers/vfio/pci/Kconfig
-+++ b/drivers/vfio/pci/Kconfig
-@@ -8,7 +8,7 @@ config VFIO_PCI_CORE
- 	select IRQ_BYPASS_MANAGER
- 
- config VFIO_PCI_MMAP
--	def_bool y if !S390
-+	def_bool y
- 	depends on VFIO_PCI_CORE
- 
- config VFIO_PCI_INTX
+I apologize for this oversight; I will resend the pull request and adding
+the missing CC and To.
 
--- 
-2.40.1
+Thanks!
+Arnaud
 
+> 
+> Best regards,
+> Krzysztof
+> 
 
