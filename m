@@ -1,137 +1,131 @@
-Return-Path: <linux-kernel+bounces-184543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D3E8CA856
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:03:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06568CA85A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB90282B29
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:03:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63CCAB210CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21679487AE;
-	Tue, 21 May 2024 07:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467F6482ED;
+	Tue, 21 May 2024 07:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="km+FGFD3"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zxTcwa2k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6C67F;
-	Tue, 21 May 2024 07:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F227F;
+	Tue, 21 May 2024 07:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716275012; cv=none; b=CeWm1g3IA/OE1ixwtZNqOSDkT0MqpwtLtdOXDpdb5WVs3ix1EsDf4I7WlnWWICdubtSdBoxSbWZh1xTpClqn1bMAieS/W00gwNFn5tM1KheXsizQK9eE9T4T7/D2ik8JpOc5Oi4U+a1/cD1X2+hTdoaacgJQHITDDd8S1vEgp8k=
+	t=1716275063; cv=none; b=lS1ty6VAN9CkrOVixig/P4F81d9wMfDVWNspmtNvEk63BL9SlLbRhvQzCi0uGmiME7d67n+DmWFV4XkGCqz9YsY6K/i/Vznz493EbVmCdEkPkx4A7KcqpilrflP1Vi2+41/oMCj1dIEFL2USBSZ5mml4LRCVYEEEZVo3aDHLv6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716275012; c=relaxed/simple;
-	bh=u3CzgZI3h6Zg9NQorYxVO1gGZ9hrIRBuBi4cULF3hrE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=l1BcXKiorylxirG3qQMXGgs3WrEM6dKiEEJjTjP75F6MuJp9Q9OhpgpzEWRiJrjJkt1E9Vl2s5b86b/6jO5aMO98fI/qhCSedzYdaXf205Bsw9A29O5lTsrPFce2wtQ56WFmA/5upEaAVDHjZ3e8zfLmeF/4mGfs3ysbBvLFa6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=km+FGFD3; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-420104e5336so17698565e9.1;
-        Tue, 21 May 2024 00:03:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716275009; x=1716879809; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WxF5n7qDkRueSSj0xKO3Ah7fjyguZUL6aRwMvg17H9s=;
-        b=km+FGFD3QgdAAZvciPVURock+M1T3QouCm4dS96CwsHJlaWnxMa6fQZIs1JAoFWeYO
-         54MNp2WMqSqzPRaqpzTqGSWPBiPUezzj+3+eZ/IkQMKSIJYSaDhwkuEB+dFDN8V3dn7t
-         xvXK5EdZ+R6NLIMCZOfhgd1AOyQ3z8+86ZDp6tL7dv6b2O7erfsHgLgkSt/RubC1M9ER
-         HYXyiw5B2EVWUkRUMawqcaPavuZxG8zM+k3H62NT8jPpmlRiS4IbgPap5LBEbTQ5M0oi
-         73Je/7CV+IpM1s8KLVcLqoa8eQRFgpdXl6v5eaTh/rn2z0Y38mkFskibaNz32l4sUOnN
-         BOjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716275009; x=1716879809;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WxF5n7qDkRueSSj0xKO3Ah7fjyguZUL6aRwMvg17H9s=;
-        b=RrclKuu14WpNro2dHv42cjhI/SB71gQfOyLxDGSi/nL153JjurH38bjYuE2ntcIij5
-         6jVUbxgJh8lpg8gAN4t4weldRavjC3fPEHWZXa90lvBGRpYFM2PWtzchs0za/Wmt+us5
-         la1QB65L72SSaLpUsw0dGzlrW8r7OM+2HIitWmQ91Sx7nVMrcDxxPF35+wEyzSD7ihBq
-         9TPuC3y6j5X74KdbLIAChYN0NirgmyzZoZ/atSuxedKlMdw1R7VU8njJ2mQxfFP0cahl
-         OTcAQ7X+kaD6mFbLuM47szAS/0bkvBd1eydl5waC94kqbVhNOu24uim2OVIJgQvfIRLK
-         gr8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWcbmTYEyJUiKfgAqpguZOsBJW33awQWe9+7mfDTKAWK67ZrouszgcyngGzpJSmekSiC4d+O8ySlxZJZIcJh1L8ZvN0I3s3iPXwaFEI1L7dTiPqtqF+inT81Dok/46Usy47/VOm5eV+4oQpN96q1FPZaiJPtSdjoglS7d6qQ2WkU2gRXQRPOX0f5QA5K2ejo9kfA7n0
-X-Gm-Message-State: AOJu0Yx8uio5O61foOe8qYZG0d0TgCuIL4febGhMtvhO8BJjSnR213xc
-	7geTXZuaqt2P9iI3+2NPzEQDGukOEI3pbO3/EI0/YpSTf2aChB/v
-X-Google-Smtp-Source: AGHT+IFaTrabiwR+w+lWFOxZDRlmiUnzq7DKLoUptWC+HaO1u/vttdXzcVKESVVjIhge8Io1WarqkA==
-X-Received: by 2002:a05:600c:1c90:b0:418:c6a:1765 with SMTP id 5b1f17b1804b1-420e1a2f67fmr73717055e9.16.1716275008983;
-        Tue, 21 May 2024 00:03:28 -0700 (PDT)
-Received: from ?IPv6:2001:8a0:e622:f700:5c54:f235:e62f:720e? ([2001:8a0:e622:f700:5c54:f235:e62f:720e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42016a511a7sm323822455e9.0.2024.05.21.00.03.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 00:03:28 -0700 (PDT)
-Message-ID: <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-From: Vitor Soares <ivitro@gmail.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org, James.Bottomley@HansenPartnership.com, Peter
- Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, Mimi Zohar
- <zohar@linux.ibm.com>,  David Howells <dhowells@redhat.com>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,  "Serge E. Hallyn"
- <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
- linux-security-module@vger.kernel.org
-Date: Tue, 21 May 2024 08:03:24 +0100
-In-Reply-To: <20240519235122.3380-2-jarkko@kernel.org>
-References: <20240519235122.3380-1-jarkko@kernel.org>
-	 <20240519235122.3380-2-jarkko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1716275063; c=relaxed/simple;
+	bh=jTFoWep9CrjPm1XdT0Ss5Vaisoeq5vLKtBQmSKNyKao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqHph/ma4rwEa8QkkL78KfcokPgquTByjspLNAZseHP0MZLO2/T+VUq6CgU8q1k2iziTKv8M1DyWZQumSw7n5lVkAq7YUtrXmvOhmTmmiI9tRUZLVPwqOf5sVp2v/zFMNrt4jE55bzxAb0QddTWk3h03aHxEJhiWybFM/swAZgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zxTcwa2k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4214C2BD11;
+	Tue, 21 May 2024 07:04:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716275063;
+	bh=jTFoWep9CrjPm1XdT0Ss5Vaisoeq5vLKtBQmSKNyKao=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zxTcwa2k5RLnNo+p6Ae7dMqqW/o/VXwgPrQ0pHPTb3Yz1qNn3vC2feW8/x0Q9so3+
+	 MdxDPBsuKTJXE8RgRs3zsFf2orypvFvyaGqWmUKqYKPIpEIfnZdsoEWa0PcRP2938d
+	 pI3lkNbE2zrUm2O6Yrpt9DG1tEc1FRNLGReRX8G8=
+Date: Tue, 21 May 2024 09:04:20 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Geoff Levand <geoff@infradead.org>, cve@kernel.org,
+	linux-kernel@vger.kernel.org, linux-cve-announce@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: CVE-2023-52665: powerpc/ps3_defconfig: Disable
+ PPC64_BIG_ENDIAN_ELF_ABI_V2
+Message-ID: <2024052108-observing-veteran-a175@gregkh>
+References: <2024051725-CVE-2023-52665-1d6f@gregkh>
+ <87zfslufoo.fsf@mail.lhotse>
+ <d8c56e37-38c6-454e-81be-a574b42c83be@infradead.org>
+ <2024052016-footnote-smelting-842e@gregkh>
+ <8734qc3v1m.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8734qc3v1m.fsf@mail.lhotse>
 
-Hi Jarkko,
+On Tue, May 21, 2024 at 09:47:33AM +1000, Michael Ellerman wrote:
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> > On Mon, May 20, 2024 at 05:35:32PM +0900, Geoff Levand wrote:
+> >> On 5/20/24 16:04, Michael Ellerman wrote:
+> >> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> >> >> Description
+> >> >> ===========
+> >> >>
+> >> >> In the Linux kernel, the following vulnerability has been resolved:
+> >> >>
+> >> >> powerpc/ps3_defconfig: Disable PPC64_BIG_ENDIAN_ELF_ABI_V2
+> >> >>
+> >> >> Commit 8c5fa3b5c4df ("powerpc/64: Make ELFv2 the default for big-endian
+> >> >> builds"), merged in Linux-6.5-rc1 changes the calling ABI in a way
+> >> >> that is incompatible with the current code for the PS3's LV1 hypervisor
+> >> >> calls.
+> >> >>
+> >> >> This change just adds the line '# CONFIG_PPC64_BIG_ENDIAN_ELF_ABI_V2 is not set'
+> >> >> to the ps3_defconfig file so that the PPC64_ELF_ABI_V1 is used.
+> >> >>
+> >> >> Fixes run time errors like these:
+> >> >>
+> >> >>   BUG: Kernel NULL pointer dereference at 0x00000000
+> >> >>   Faulting instruction address: 0xc000000000047cf0
+> >> >>   Oops: Kernel access of bad area, sig: 11 [#1]
+> >> >>   Call Trace:
+> >> >>   [c0000000023039e0] [c00000000100ebfc] ps3_create_spu+0xc4/0x2b0 (unreliable)
+> >> >>   [c000000002303ab0] [c00000000100d4c4] create_spu+0xcc/0x3c4
+> >> >>   [c000000002303b40] [c00000000100eae4] ps3_enumerate_spus+0xa4/0xf8
+> >> >>
+> >> >> The Linux kernel CVE team has assigned CVE-2023-52665 to this issue.
+> >> > 
+> >> > IMHO this doesn't warrant a CVE. The crash mentioned above happens at
+> >> > boot, so the system is not vulnerable it's just broken :)
+> >> 
+> >> As Greg says, with PPC64_BIG_ENDIAN_ELF_ABI_V2 enabled the system won't
+> >> boot, so there is no chance of a vulnerability.
+> >
+> > The definition of "vulnerability" from CVE.org is:
+> > 	An instance of one or more weaknesses in a Product that can be
+> > 	exploited, causing a negative impact to confidentiality, integrity, or
+> > 	availability; a set of conditions or behaviors that allows the
+> > 	violation of an explicit or implicit security policy.
+> >
+> > Having a system that does not boot is a "negative impact to
+> > availability", which is why this was selected for a CVE.  I.e. if a new
+> > kernel update has this problem in it, it would not allow the system to
+> > boot correctly.
+> 
+> I think the key word above is "exploited", implying some sort of
+> unauthorised action.
+> 
+> This bug can cause the system to not boot, but only by someone who
+> builds a new kernel and installs it - and if they have permission to do
+> that they can just replace the kernel with anything, they don't need a
+> bug.
+> 
+> > But, if the maintainer of the subsystem thinks this should not be
+> > assigned a CVE because of this fix, we'll be glad to revoke it.
+> >
+> > Michael, still want this revoked?
+> 
+> Yes please.
 
-On Mon, 2024-05-20 at 02:51 +0300, Jarkko Sakkinen wrote:
-> Causes performance drop in initialization so needs to be opt-in.
-> Distributors are capable of opt-in enabling this. Could be also handled b=
-y
-> kernel-command line in the future.
->=20
-> Reported-by: Vitor Soares <ivitro@gmail.com>
-> Closes:
-> https://lore.kernel.org/linux-integrity/bf67346ef623ff3c452c4f968b7d90091=
-1e250c3.camel@gmail.com/#t
-> Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> ---
-> =C2=A0drivers/char/tpm/Kconfig | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-> index e63a6a17793c..db41301e63f2 100644
-> --- a/drivers/char/tpm/Kconfig
-> +++ b/drivers/char/tpm/Kconfig
-> @@ -29,7 +29,7 @@ if TCG_TPM
-> =C2=A0
-> =C2=A0config TCG_TPM2_HMAC
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool "Use HMAC and encryp=
-ted transactions on the TPM bus"
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0default y
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0default n
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select CRYPTO_ECDH
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select CRYPTO_LIB_AESCFB
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select CRYPTO_LIB_SHA256
+Now rejected, thanks all for the review!
 
-I did the test on my side, and with TCG_TPM2_HMAC set to "n" the time to pr=
-obe
-tpm_tis_spi driver has reduced to:
-real    0m2.009s
-user    0m0.001s
-sys     0m0.019s
-
-Thanks for your help.
-
-Best regards,
-Vitor Soares
+greg k-h
 
