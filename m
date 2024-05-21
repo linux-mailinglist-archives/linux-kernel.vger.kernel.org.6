@@ -1,1879 +1,1985 @@
-Return-Path: <linux-kernel+bounces-184491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47EBA8CA766
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:33:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17158CA7F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC190282267
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:33:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDDA61C20BD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919342B9C0;
-	Tue, 21 May 2024 04:33:47 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2101.outbound.protection.partner.outlook.cn [139.219.146.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B71146B91;
+	Tue, 21 May 2024 06:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IiMYcg2I"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC462B9A4;
-	Tue, 21 May 2024 04:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716266025; cv=fail; b=SvggTGe+j/RQKeHLlvkvXPyLeOkoF/rnj9nUhH2/3sgfs9jXmjMRsEQh4Vyk3iLjbxNfu4ACG8ZteSu9AvUEmQ59TraEldGV8579jKK8Rp6mbFOyCmvPDl2ZMezjtWmQY9WD9pz7BnkBtIroSPW5SvaUD7S6eJBdVZIQeT07krA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716266025; c=relaxed/simple;
-	bh=DbsT0hNvGHT7EC/r/4hLD8+Lva7J7Yu+N3TONkPiIPA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=okLAGgbPT8KgMbqFnT81QtyKEgHsUq+zOl8ucxQ+Dv4aK5gx3otva+wBOGWY6IQpUKM7i+dm69a5C8+l+S1m1l5tciLLBgyGMkJafe/CdLNusXpCqHVZLbV2uIPddkJ+FEH/MRrFUyiMj/awyFL6omC8l3JPGfsV/K9IzK1znkg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ci08D7IUTqWZPlrjPlER646qHFWA7EPy0WGZv8ovit6cOJhggNhTOdZCaGdaeGtwJPARTcfFcTi/boTUL0SMl77KRE+K609IimUOew9Ma5TO4+Ev2y/KvZ135/b0y1RB+OEoJL4y16IbJOravIeVkA4neNj1zOGDSmtD4MLWwXOso9Xtq2LtCMGjueodtz1tz666Md33zCtl0S7RUZoGWKAnbitdqd8OJbEAUNxPw4iHCrRfDf+ah37ssP58TPLSSZaaxW6YaIquLyUymmNzpzz4T2NhxPLcZNmo6lncLmMuq3SJT0P3eXdwOctF7H1U6NJM3VW7DXOKmLykUy61Lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vtoJn6t7pvX80lMxrVsWfBiBB9KYSygPQjhD8HVQA3M=;
- b=J1CGecr5YKU7Wk3xFXB6zdoVaX2akjxdDNjyjeXjOMzwXg5LhCEO0F2qrG8kXuYo8F/DXVMKM8Gjbb3Puv+4KNzzQrnZhbDnPw5/4Wgd9W6fQd9WadhUnu2pW0BeG3n1pnjk7SRCXLNc+VkzjJTN1HIYsqD1XFF1Y8RgJLfS5FkE3qkd5QaJ+JAmGI0Mb+s72sPYI89NKyJNiTgpNNxjcXcGCApTYdooB2QEPgc01trzX8JNvZPNqiu/MPTWuhbWPjPNCsfqspT45YqOgldWgEkphtE4/Va/x/uB2UR3xsVFvjFS5g5R+y+prAjWKhfZfAmR9mwA67Gw97JpeVfSpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ0PR01MB1047.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:c::7) by ZQ0PR01MB1255.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:19::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Tue, 21 May
- 2024 02:58:28 +0000
-Received: from ZQ0PR01MB1047.CHNPR01.prod.partner.outlook.cn
- ([fe80::39be:8ed9:67b7:adc6]) by
- ZQ0PR01MB1047.CHNPR01.prod.partner.outlook.cn ([fe80::39be:8ed9:67b7:adc6%6])
- with mapi id 15.20.7472.044; Tue, 21 May 2024 02:58:28 +0000
-From: keith <keith.zhao@starfivetech.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	xingyu.wu@starfivetech.com,
-	p.zabel@pengutronix.de,
-	jack.zhu@starfivetech.com,
-	shengyang.chen@starfivetech.com
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	keith.zhao@starfivetech.com
-Subject: [PATCH v4 03/10] drm/rockchip:hdmi: migrate to use inno-hdmi bridge driver
-Date: Tue, 21 May 2024 18:58:10 +0800
-Message-Id: <20240521105817.3301-4-keith.zhao@starfivetech.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20240521105817.3301-1-keith.zhao@starfivetech.com>
-References: <20240521105817.3301-1-keith.zhao@starfivetech.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHXPR01CA0020.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:1b::29) To ZQ0PR01MB1047.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:c::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2550946433;
+	Tue, 21 May 2024 06:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716272285; cv=none; b=YvZaIS0IxjIAm00Exdny9QbuTwkEUJKTi50gupLkTK98ldK2Hy/Ga1GztzGG6hG95bdGJeX9UdZ+Vau2gU22FA+2688pIBAkSoZc47vziB8K7jOdjTbz9Uy2F2Rm6sVcJO7fFSE8CIMHQR991tLeCxEeY3T1z/Db/PLwiWaWSIo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716272285; c=relaxed/simple;
+	bh=vHJja9G7bei3XXjVLwtqAuh/nXuw7ba87gB6SsuicdM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=nwzbggHkyzD/cS04CyTHGDI1PeRnjWC0RzSGXgbJLLLwu6C3g6P4a19++ouk7c5iHoy2nPLBYuW4oHiPWi9S8Kr7l/D/DfoGXwz285p96Nvc+ZsUBcLd2B7yttf9Tu7Pkc1fd0agTFoTpYYxkRJPIPcd+eYgH63T5KLo1vXOLsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IiMYcg2I; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240521061757epoutp0226af95287935fb4db54fc6de0fa17b7e~RbIsgs0um2068420684epoutp02B;
+	Tue, 21 May 2024 06:17:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240521061757epoutp0226af95287935fb4db54fc6de0fa17b7e~RbIsgs0um2068420684epoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716272277;
+	bh=StMt8Sp8bSgme8ZpTNjyKGRPUo4IQcydUhc0PpcnO+Y=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=IiMYcg2IEZwbWBBoFt5Vtu11oT1E7gX4UM+9kUhXea+uu9LNQ7TSPEex2/FQczF3k
+	 EMzYLFv7uxXl0oEwDZQMjrHKEpjb4yFHFeHQUHKUEVsj6hSYpyymu69vXKtGq/tWBe
+	 8SNU+vO5zk+IuAJgwFmm2haukqn6eNy+QnyGP21s=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240521061757epcas5p14ce1250727234374d675898e75d6a459~RbIsC3nBt1880618806epcas5p18;
+	Tue, 21 May 2024 06:17:57 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	85.99.09688.49C3C466; Tue, 21 May 2024 15:17:56 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240521061553epcas5p1c7db70b37a70f599face675bc4dedda9~RbG4oeAcu0956609566epcas5p1C;
+	Tue, 21 May 2024 06:15:53 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240521061553epsmtrp213a7926713b9c41bad924cef8a4bfbcf~RbG4mfq2f1852018520epsmtrp2G;
+	Tue, 21 May 2024 06:15:53 +0000 (GMT)
+X-AuditID: b6c32a4a-837fa700000025d8-c8-664c3c94b8f5
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	25.AA.19234.81C3C466; Tue, 21 May 2024 15:15:53 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.109.224.44]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240521061539epsmtip230fa5c8b44778d8c615896d5d86a52cc~RbGrbh7dr1141011410epsmtip2M;
+	Tue, 21 May 2024 06:15:38 +0000 (GMT)
+From: Onkarnarth <onkarnath.1@samsung.com>
+To: bhelgaas@google.com, helgaas@kernel.org, vigneshr@ti.com,
+	s-vadapalli@ti.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	yue.wang@Amlogic.com, neil.armstrong@linaro.org, khilman@baylibre.com,
+	jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+	thomas.petazzoni@bootlin.com, shawn.guo@linaro.org, lchuanhua@maxlinear.com,
+	srikanth.thokala@intel.com, songxiaowei@hisilicon.com,
+	wangbinghui@hisilicon.com, manivannan.sadhasivam@linaro.org,
+	thierry.reding@gmail.com, jonathanh@nvidia.com,
+	hayashi.kunihiko@socionext.com, mhiramat@kernel.org, pali@kernel.org,
+	toan@os.amperecomputing.com, daire.mcnamara@microchip.com,
+	conor.dooley@microchip.com, marek.vasut+renesas@gmail.com,
+	shawn.lin@rock-chips.com, heiko@sntech.de, nirmal.patel@linux.intel.com,
+	jonathan.derrick@linux.dev, kishon@kernel.org, jdmason@kudzu.us,
+	dave.jiang@intel.com, rafael@kernel.org, lenb@kernel.org,
+	mahesh@linux.ibm.com, oohall@gmail.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org, r.thapliyal@samsung.com, Onkarnath
+	<onkarnath.1@samsung.com>, Maninder Singh <maninder1.s@samsung.com>
+Subject: [PATCH v2 1/1] PCI : Refactoring error log prints for better
+ readability
+Date: Tue, 21 May 2024 11:45:28 +0530
+Message-Id: <20240521061528.3559751-1-onkarnath.1@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1047:EE_|ZQ0PR01MB1255:EE_
-X-MS-Office365-Filtering-Correlation-Id: be952e03-a2ea-458e-3c23-08dc7941e428
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|366007|41320700004|1800799015|7416005|52116005|921011|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	RblV+Ix60hjj+OCxK44X4jK+tpZaw1qotgklFivwv51R+ih/KTVMADp+imRk+9lSTpyA9mdOWmjOceUuyue0A9va6kIs/f9KDxYpkdjJCzM8L5rrEm1paJ38zfeMGsnlNhGfilTmemIEb7b6s+sigCTgFBq/Su74dhxGirwtg7elRnJyZajr+I34obkQ1gKOEIzUNjwy/NA7aWomu57gtGr0p3eTU0i9XHI0FNjwlwf5jjRvEAUjvsnQbaU2GfY/Qd9QEBpLdDexkICnkYvHwaFu5S6kOQpozOJXRhHol9jpgPlCPWzx1+xM1UbNlGz2EGfkErceb7qpsNRtBYPfwQJZOxo/gJEB0GUWRjcbJUQiBsug5W2bPWGSsu/5C2UjYgVuvjeZoQSKvPXb/FMyR6O9pQcSwMbp+IU5fUSbYGAvWnvkGYbCxFORYxXsQQCpRnh9mJvmdASS+mH3PELIXAPMJR66oMVa5wbkvuL/BQqjrAgUFox0/RrmHPJpb+S1QVLOghpEif2pcPe8OwC4XsmdosTiYWumRKYU54wzvmHsdpVj6tKjY4vG0VwAdYxKHKCFc9Y44i0ttgNw3uDisNZNLqjeY4kO+wnXtNI3Ze69BOiOb7DgXNrdx9DMUwbeuZk4LEtUhrwHWXyzf2GIAQ==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1047.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(366007)(41320700004)(1800799015)(7416005)(52116005)(921011)(38350700005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bxJCVkwVEcOBWwXnEkfL9ysFRyEw2fKeJLdKu5jkIlfARfM1PWrRpTXTBYhh?=
- =?us-ascii?Q?qTvk9ALfGntl0UnFWYaNdu4QFdsd0NKmSxftEizLElKcrU96gBQd6pHXfOcg?=
- =?us-ascii?Q?ZSDtSbwaLwGNGtCLnOOJJJ4PWrFsbkQ6Kq0YPnHYAMgHuZtWLJDYAV5VAzXr?=
- =?us-ascii?Q?k6KKAhASHVNz0xxIC2ar74fvbYh2igg8yNuHvDACzsJVCG7RfH9xaDsc0t5k?=
- =?us-ascii?Q?yS2FcSLYN1eV9vx/1umcFx057e3kcN/5gQlHzaw4MTQ4OAOsZp+cuI7hdQBN?=
- =?us-ascii?Q?CePd5I6gxjEj2uxrkmGbcsLz8lrZgYXZXRYNunIi7sgg3jnEVPD6JKZ1oMf3?=
- =?us-ascii?Q?QV0gbVS6Th1Jq9pc8O2qG1Zz3BWJS/FY7isQGCuNkxd0KSgZ8WFRt9W67B1D?=
- =?us-ascii?Q?KEannAG13iezlA8Te5GVQy/gryTC0w1UNzlWw1hkErfDpdUpe+8RzM9WsWeA?=
- =?us-ascii?Q?rr8y9PcULUtpO5XeqC365NyOJ10IkLgKx7gEOpuIDR/HfkjRyTPFVkAaQPZ6?=
- =?us-ascii?Q?rcQgVOxnHr6Z42JENI58decsCChOunq0SccFS5QqUGrjL0GAaoE5JhAd8OoN?=
- =?us-ascii?Q?Wb2jPLy9UTsvu9U0bFiOp3Tvx66u+vRU7EOecZnm/exIlGg94o/Q91nNHkRV?=
- =?us-ascii?Q?XFsHqjswuFjHMogPC/SD3Uu1lCjdm774ttpRlAEzpHUWW4Og0Q0aH9sYg9pE?=
- =?us-ascii?Q?r0+i3PStDGqkjhP0mN1JVVDeNBq1ZtVqUZXaBLWdaGtnqDa5rQD1f5d7teRI?=
- =?us-ascii?Q?kKlggzgUXqVBRgMQmp6ue2Eagm9/655SthSygNslfheuqbQmhkByWJ5gmtGX?=
- =?us-ascii?Q?bsBUs6UPqfbRBzmHNEvyQlOK2lBqeYuJUV1mXRy3efRS+crEP5syOz33djwj?=
- =?us-ascii?Q?EsSAOz0JZClLIyWf5vO76w16/RgPIllm89g5rp7YO3zT7remEsgpMlcXgOXd?=
- =?us-ascii?Q?DWM4sh4vQDgn0CuE8voZx+gEb1IGaeQS/c6qt9aRZkn23Z5T2rH/mo1miKJo?=
- =?us-ascii?Q?Ch5dD4MhGjU50HGypfg6zOl636vkWFKYVlTLZfTVLfUjtJZFczj4tOJvVT56?=
- =?us-ascii?Q?9TGJTqg80g0tykNItc6WjK0HTMsZ67ZVdu0nHgidy2l0ju/906vYiQorgIKb?=
- =?us-ascii?Q?SA4oO/Fv3Pymc8FzpNeiS3axMKsiM9+PyzwIG/1mv8SDJux/Ysjj24EB3ebx?=
- =?us-ascii?Q?LRi3aUZGM3CIyb/MdpskUwq4ibN1M8hXIkgWwRqwYcKedypmMWqInfZEgWi9?=
- =?us-ascii?Q?KnA82hccLHJ6jqBrmH4T/W5fK8V5cP57CKvmVLFFfSVPa/sRsis/ehuRXouC?=
- =?us-ascii?Q?qljMtbkS1D8q+roSwurhCPQKAONdKzJw1JPBn2D6ZjFenDhz7FZHyBbAjyo1?=
- =?us-ascii?Q?ILUxXP8WnCXRhhDVduqSAHvVUaow3qVLsww6EOLk8QQ0V55WOwKEBAxZ93e7?=
- =?us-ascii?Q?GI/ssIeQcAZ8XMp0UD1bnioDqmkuAhlolnZuk6XUFcXRJt/onpl6YMdJRFDg?=
- =?us-ascii?Q?XGMQbu4l2a1ZwVNcXWM4XbYOaY5Ne9daCOOqylanWkxfBMD6hxfIzljrYcAo?=
- =?us-ascii?Q?jpo3Ro0J06z21g3GfL2xQ418PhoFpufCiasim2DvSWy5MFPsuVqU1ldcXNT9?=
- =?us-ascii?Q?Nw=3D=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be952e03-a2ea-458e-3c23-08dc7941e428
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1047.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 02:58:28.8600
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KWltm+oc/WbKreqc8VzEq94Gp3c3O67jBpIO08r/5y+kkI1uJPH0YxVOkCLsI0Uc0rJ84ZHzmrMYGbDEgT3w9KpdmvsxOB5uVbzJCZuiMbM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1255
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Te1BUdRTud+/de1eM5rLo9AtEJoImGEXJHH81ZE3mdIWGsQSbgQo3WB7x
+	jIUS0wBZCBgwGtmARWBhaUjiEQsSC7uAPOQhqCjILu2isLshbyY2E1bbWnYp//vO951zvu/8
+	cdg4J4dyYEfGJvISYrnRLqQN0dLj7rG3wPv9sP11moOo6nwEKpC2UqhzZQ5DA6o0EvUozwNk
+	mllgofnhOhItzvTiqPZ2JokuC6ZxJBBVEmj922YM9WWYcJSaa2ShR0UqgGTTSyQSl2xHUu1d
+	Fvq+c4RCd9oukaik6jsCjZT1kyjbICKR4LGAQBe66ijUU55JII0gm4WmL18i0LXKQQJJql9G
+	K7JJgO5U7EE/5a6y0MTkA4DE8uskapyKQqUGIY5M8n/zyoVdONLXV+FIrWtgocUNJY6EMiOF
+	1tvKCJS9uEyhscl6AplGVil0M6MIR1fbD7ztxfTW/gyYFWUGxZTVfs3IRBqKEUuTGH3+RYrR
+	ljZSjEQ+hzHSmmySETfoWIz6rpxkdGOFGFORKsSZ/MouwJQNfsA0VaUcdwi08Q7lRUd+yUvY
+	d/iUTYRYqaXijQLidJN4mkoFynI8B2xjQ/o1qHoywcoBNmwO3Q7gWN2vhKX4A0DDbDfrv+Jv
+	SR65NaLtKgUWQQbgemG6tTAAOG66RZi7SNoDFqm7MLOwg5ZTcKU9CzMLOD2MwbXeIzmAzban
+	T8DRe7vNNEG7QVNL7uasLX0YDugmMIubMyy+/Rdl4e3gYLGOsKxxhulXSnDzfkjLbKCidRxY
+	Bt6FhYNqK7aH8/3NlAU7wLVlhfWEOCgoEeHmDJA+C8f1bhb6LagbrWCZaZx2hw1t+yy0ExQO
+	1VvTPwfzjDprNFvYWraF3eBGgZCwYEd4z1hqdWJg7lTLZg+H/gSKh5uwfOAseuoa0VPXiP53
+	FgO8BrzAi+fHhPP4B+NfjeV95cnnxvCTYsM9Q+JipGDzXTx8WsH0/VXPboCxQTeAbNxlh620
+	+VgYxzaUm3yGlxAXnJAUzeN3A0c24fK87UJGaSiHDucm8qJ4vHhewpaKsbc5pGIflrsFN36e
+	NrQTe3j0z8cpRSFj6cbE9dcdnY67ip0bj579zKnqGZWvceaEOuXMqQOdy4pkZ23NySsbNwaw
+	95ya/JfSXun/5c1Hrt/4DZiygiIrPsodjHtSqX3gU9r/Q4ePVrKrwy+yOMn+kI/v74zG+1nH
+	4Km2ev1FTaY+cvbh1G+SwoXqoaigifnK2WPaC0dOnysODOoItNvZe3MpQ6PY+5L/7PLJ4U93
+	v4Mr5m7tklQq5wMU1855TnYk+2b5pexJn8/M3N/XDG701rj3qby2h6ljvTSBP/ov67/4ODTA
+	EGK3ps0W5bGzvZLWA9aqD8VDmSragMfdbx5daLvu8oYt5+rIi64uBD+C6+WBJ/C5/wCtRN+A
+	nQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTdxTG+d97e+8F1+VaGLuAGwGDUcI6GCw52YgzS+auRozwaVGndHAp
+	RFq6VpZN3UQouDKm6FaF8lagjIK8jPKidVU6YEMizEwI1I5CWmpAh9YwRBBHx0uW+O15nt9z
+	cs6HQ+OiFkEwnSE/zivlksxw0o/o6g0PfSsofl9a9PluBIbcdPjRdI2Cbs8DDG7dO0NCry0X
+	gdf1twAeDjaTMOvqw6HpbgEJDWonDmpdDQFLZzsw+C3fi0NO0bIAFkvuITA7H5GgL9sEpqlR
+	AVzoHqJg+Ho5CWWG8wQMVfaToJnXkaB+oSbgnLWZgt6qAgIcao0AnA3lBPxeM0BAbf028Jjt
+	CIaro8BY9EQAY/YZBHrLbRLaJo5BxbwWB69l9V6L1orD/RYDDuPuVgHMPrfhoDUvU7B0vZIA
+	zexjCkbsLQR4h55QcCe/BIdff4ndFcP1NV1BnMeWT3GVTSc5s85BcXpTNne/+AeKm6poo7ha
+	ywOMMzVqSE7f6hZw46MWknOPXMa46hwtzhXXWBFXOZDItRtOHwg+6BefymdmfMEr396Z7Jeu
+	t01RimU18WW73knlIFsVXoh8aZaJY6esFagQ+dEi5ipi1ZY+tAFC2LnhcmpD+7MNK9PURmkO
+	sVqzYR2QTCRbMm7F1kAAM0uxhXeGBWsGZ0Yx9uHzulVD0/5MIttcoFgbIJgI1ttVRKxpIbOT
+	veUewzY2hLKld59RG/lmdqDUvd7BV/O8zjK8GL2qewnpXkJ6hDWi13iFSiaVpShixCqJTJUt
+	l4pTsmQmtP5SkUnX0E+t/4p7EEajHsTSeHiA0NSxJ00kTJV8dYJXZh1VZmfyqh4UQhPhrwu3
+	ZmpSRYxUcpw/xvMKXvk/xWjf4BwsLnr00ntX6nijmYp2tRd5+uX7980N5JZH7Y79wy55950k
+	15+HZCm+QRP9n1R9V3rRJn8zOtlW6TmV9+JGnf0mzKhoxhwx4zq8uD1vU+M/W8Z3fTCfuH3L
+	uYAW51JtQYLDUTFYL37aQEx2lhviarMO/rW1Tf91oMf32chN3UcfBxonx9L8ohIc1I73w3x8
+	dgT+/Pj0yqnduUbw7hVRt6/GfnMy4cOONPeKcChoAVt02wYnPs2un07SvXFY0nrk89Bef7so
+	LII4G/yoc8K/h5WNPF2u9s4Vh13MJI8Yvz26/8Kl7330sqi9J8SfSUP2TGdoLvd1nfFdSH4l
+	O066OSB+IWfyRjihSpfEROJKleQ/t6vt9MEDAAA=
+X-CMS-MailID: 20240521061553epcas5p1c7db70b37a70f599face675bc4dedda9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20240521061553epcas5p1c7db70b37a70f599face675bc4dedda9
+References: <CGME20240521061553epcas5p1c7db70b37a70f599face675bc4dedda9@epcas5p1.samsung.com>
 
-Add the ROCKCHIP inno hdmi driver that uses the Inno DesignWare
-HDMI TX bridge and remove the old separate one.
+From: Onkarnath <onkarnath.1@samsung.com>
 
-Signed-off-by: keith <keith.zhao@starfivetech.com>
+As %pe is already introduced, it's better to use it in place of (%ld) or
+(%d) for printing error in logs. It will enhance readability of logs.
+
+Error print style is more consistent now.
+
+Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
+Co-developed-by: Maninder Singh <maninder1.s@samsung.com>
+Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+Signed-off-by: Onkarnath <onkarnath.1@samsung.com>
 ---
- drivers/gpu/drm/rockchip/Kconfig              |    1 +
- drivers/gpu/drm/rockchip/Makefile             |    2 +-
- drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c |  517 ++++++++
- .../{inno_hdmi.h => inno_hdmi-rockchip.h}     |   45 -
- drivers/gpu/drm/rockchip/inno_hdmi.c          | 1073 -----------------
- 5 files changed, 519 insertions(+), 1119 deletions(-)
- create mode 100644 drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c
- rename drivers/gpu/drm/rockchip/{inno_hdmi.h => inno_hdmi-rockchip.h} (85%)
- delete mode 100644 drivers/gpu/drm/rockchip/inno_hdmi.c
+Suggested by Bjorn Helgaas in below discussion
+https://patchwork.kernel.org/comment/25712288/
 
-diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
-index 1bf3e2829cd0..cc6cfd5a30d6 100644
---- a/drivers/gpu/drm/rockchip/Kconfig
-+++ b/drivers/gpu/drm/rockchip/Kconfig
-@@ -74,6 +74,7 @@ config ROCKCHIP_DW_MIPI_DSI
+v1 -> v2: Added suggested by tag
+
+ drivers/pci/bus.c                             |   2 +-
+ drivers/pci/controller/dwc/pci-dra7xx.c       |   2 +-
+ drivers/pci/controller/dwc/pci-meson.c        |  16 +--
+ drivers/pci/controller/dwc/pcie-armada8k.c    |   4 +-
+ drivers/pci/controller/dwc/pcie-histb.c       |   6 +-
+ drivers/pci/controller/dwc/pcie-intel-gw.c    |  10 +-
+ drivers/pci/controller/dwc/pcie-keembay.c     |   2 +-
+ drivers/pci/controller/dwc/pcie-kirin.c       |   6 +-
+ drivers/pci/controller/dwc/pcie-qcom-ep.c     |  18 +--
+ drivers/pci/controller/dwc/pcie-qcom.c        |  18 +--
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 132 +++++++++---------
+ drivers/pci/controller/dwc/pcie-uniphier-ep.c |   2 +-
+ drivers/pci/controller/pci-aardvark.c         |   6 +-
+ drivers/pci/controller/pci-ftpci100.c         |   2 +-
+ drivers/pci/controller/pci-tegra.c            |  86 ++++++------
+ drivers/pci/controller/pci-xgene.c            |   4 +-
+ drivers/pci/controller/pcie-microchip-host.c  |   2 +-
+ drivers/pci/controller/pcie-rcar-host.c       |  14 +-
+ drivers/pci/controller/pcie-rockchip.c        |  34 ++---
+ drivers/pci/controller/vmd.c                  |   2 +-
+ drivers/pci/doe.c                             |   4 +-
+ drivers/pci/endpoint/functions/pci-epf-mhi.c  |   8 +-
+ drivers/pci/endpoint/functions/pci-epf-ntb.c  |   2 +-
+ drivers/pci/endpoint/functions/pci-epf-test.c |   4 +-
+ drivers/pci/endpoint/functions/pci-epf-vntb.c |   2 +-
+ drivers/pci/endpoint/pci-ep-cfs.c             |  12 +-
+ drivers/pci/endpoint/pci-epf-core.c           |  16 +--
+ drivers/pci/hotplug/acpiphp_core.c            |   2 +-
+ drivers/pci/hotplug/pciehp_core.c             |   8 +-
+ drivers/pci/hotplug/shpchp_core.c             |   4 +-
+ drivers/pci/of.c                              |   6 +-
+ drivers/pci/pci-driver.c                      |   4 +-
+ drivers/pci/pcie/dpc.c                        |   4 +-
+ drivers/pci/quirks.c                          |   2 +-
+ drivers/pci/setup-bus.c                       |   2 +-
+ drivers/pci/slot.c                            |   4 +-
+ drivers/pci/vgaarb.c                          |   2 +-
+ 37 files changed, 227 insertions(+), 227 deletions(-)
+
+diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+index 826b5016a101..dbc16cf5a246 100644
+--- a/drivers/pci/bus.c
++++ b/drivers/pci/bus.c
+@@ -351,7 +351,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+ 	dev->match_driver = !dn || of_device_is_available(dn);
+ 	retval = device_attach(&dev->dev);
+ 	if (retval < 0 && retval != -EPROBE_DEFER)
+-		pci_warn(dev, "device attach failed (%d)\n", retval);
++		pci_warn(dev, "device attach failed: %pe\n", ERR_PTR(retval));
  
- config ROCKCHIP_INNO_HDMI
- 	bool "Rockchip specific extensions for Innosilicon HDMI"
-+	select DRM_INNO_HDMI
- 	help
- 	  This selects support for Rockchip SoC specific extensions
- 	  for the Innosilicon HDMI driver. If you want to enable
-diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip/Makefile
-index 3ff7b21c0414..4b2d0cba8db3 100644
---- a/drivers/gpu/drm/rockchip/Makefile
-+++ b/drivers/gpu/drm/rockchip/Makefile
-@@ -12,7 +12,7 @@ rockchipdrm-$(CONFIG_ROCKCHIP_ANALOGIX_DP) += analogix_dp-rockchip.o
- rockchipdrm-$(CONFIG_ROCKCHIP_CDN_DP) += cdn-dp-core.o cdn-dp-reg.o
- rockchipdrm-$(CONFIG_ROCKCHIP_DW_HDMI) += dw_hdmi-rockchip.o
- rockchipdrm-$(CONFIG_ROCKCHIP_DW_MIPI_DSI) += dw-mipi-dsi-rockchip.o
--rockchipdrm-$(CONFIG_ROCKCHIP_INNO_HDMI) += inno_hdmi.o
-+rockchipdrm-$(CONFIG_ROCKCHIP_INNO_HDMI) += inno_hdmi-rockchip.o
- rockchipdrm-$(CONFIG_ROCKCHIP_LVDS) += rockchip_lvds.o
- rockchipdrm-$(CONFIG_ROCKCHIP_RGB) += rockchip_rgb.o
- rockchipdrm-$(CONFIG_ROCKCHIP_RK3066_HDMI) += rk3066_hdmi.o
-diff --git a/drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c
-new file mode 100644
-index 000000000000..69d0e913e13b
---- /dev/null
-+++ b/drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c
-@@ -0,0 +1,517 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ *    Zheng Yang <zhengyang@rock-chips.com>
-+ *    Yakir Yang <ykk@rock-chips.com>
-+ */
-+
-+#include <linux/irq.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/hdmi.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/platform_device.h>
-+
-+#include <drm/bridge/inno_hdmi.h>
-+#include <drm/drm_atomic.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_edid.h>
-+#include <drm/drm_of.h>
-+#include <drm/drm_probe_helper.h>
-+#include <drm/drm_simple_kms_helper.h>
-+
-+#include "rockchip_drm_drv.h"
-+
-+#include "inno_hdmi-rockchip.h"
-+
-+#define INNO_HDMI_MIN_TMDS_CLOCK  25000000U
-+
-+struct rk_inno_hdmi {
-+	struct rockchip_encoder encoder;
-+	struct inno_hdmi inno_hdmi;
-+	struct clk *pclk;
-+	struct clk *refclk;
-+};
-+
-+static struct inno_hdmi *rk_encoder_to_inno_hdmi(struct drm_encoder *encoder)
-+{
-+	struct rockchip_encoder *rkencoder = to_rockchip_encoder(encoder);
-+	struct rk_inno_hdmi *rk_hdmi = container_of(rkencoder, struct rk_inno_hdmi, encoder);
-+
-+	return &rk_hdmi->inno_hdmi;
-+}
-+
-+enum {
-+	CSC_RGB_0_255_TO_ITU601_16_235_8BIT,
-+	CSC_RGB_0_255_TO_ITU709_16_235_8BIT,
-+	CSC_RGB_0_255_TO_RGB_16_235_8BIT,
-+};
-+
-+static const char coeff_csc[][24] = {
-+	/*
-+	 * RGB2YUV:601 SD mode:
-+	 *   Cb = -0.291G - 0.148R + 0.439B + 128
-+	 *   Y  = 0.504G  + 0.257R + 0.098B + 16
-+	 *   Cr = -0.368G + 0.439R - 0.071B + 128
-+	 */
-+	{
-+		0x11, 0x5f, 0x01, 0x82, 0x10, 0x23, 0x00, 0x80,
-+		0x02, 0x1c, 0x00, 0xa1, 0x00, 0x36, 0x00, 0x1e,
-+		0x11, 0x29, 0x10, 0x59, 0x01, 0x82, 0x00, 0x80
-+	},
-+	/*
-+	 * RGB2YUV:709 HD mode:
-+	 *   Cb = - 0.338G - 0.101R + 0.439B + 128
-+	 *   Y  = 0.614G   + 0.183R + 0.062B + 16
-+	 *   Cr = - 0.399G + 0.439R - 0.040B + 128
-+	 */
-+	{
-+		0x11, 0x98, 0x01, 0xc1, 0x10, 0x28, 0x00, 0x80,
-+		0x02, 0x74, 0x00, 0xbb, 0x00, 0x3f, 0x00, 0x10,
-+		0x11, 0x5a, 0x10, 0x67, 0x01, 0xc1, 0x00, 0x80
-+	},
-+	/*
-+	 * RGB[0:255]2RGB[16:235]:
-+	 *   R' = R x (235-16)/255 + 16;
-+	 *   G' = G x (235-16)/255 + 16;
-+	 *   B' = B x (235-16)/255 + 16;
-+	 */
-+	{
-+		0x00, 0x00, 0x03, 0x6F, 0x00, 0x00, 0x00, 0x10,
-+		0x03, 0x6F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10,
-+		0x00, 0x00, 0x00, 0x00, 0x03, 0x6F, 0x00, 0x10
-+	},
-+};
-+
-+static struct inno_hdmi_phy_config rk3036_hdmi_phy_configs[] = {
-+	{  74250000, 0x3f, 0xbb },
-+	{ 165000000, 0x6f, 0xbb },
-+	{      ~0UL, 0x00, 0x00 }
-+};
-+
-+static struct inno_hdmi_phy_config rk3128_hdmi_phy_configs[] = {
-+	{  74250000, 0x3f, 0xaa },
-+	{ 165000000, 0x5f, 0xaa },
-+	{      ~0UL, 0x00, 0x00 }
-+};
-+
-+static int inno_hdmi_find_phy_config(struct inno_hdmi *hdmi,
-+				     unsigned long pixelclk)
-+{
-+	const struct inno_hdmi_phy_config *phy_configs = hdmi->plat_data->phy_configs;
-+	int i;
-+
-+	for (i = 0; phy_configs[i].pixelclock != ~0UL; i++) {
-+		if (pixelclk <= phy_configs[i].pixelclock)
-+			return i;
-+	}
-+
-+	DRM_DEV_DEBUG(hdmi->dev, "No phy configuration for pixelclock %lu\n",
-+		      pixelclk);
-+
-+	return -EINVAL;
-+}
-+
-+static void inno_hdmi_standby(struct inno_hdmi *hdmi)
-+{
-+	inno_hdmi_sys_power(hdmi, false);
-+
-+	hdmi_writeb(hdmi, HDMI_PHY_DRIVER, 0x00);
-+	hdmi_writeb(hdmi, HDMI_PHY_PRE_EMPHASIS, 0x00);
-+	hdmi_writeb(hdmi, HDMI_PHY_CHG_PWR, 0x00);
-+	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x15);
-+};
-+
-+static void inno_hdmi_power_up(struct inno_hdmi *hdmi,
-+			       unsigned long mpixelclock)
-+{
-+	struct inno_hdmi_phy_config *phy_config;
-+	int ret = inno_hdmi_find_phy_config(hdmi, mpixelclock);
-+
-+	if (ret < 0) {
-+		phy_config = hdmi->plat_data->default_phy_config;
-+		DRM_DEV_ERROR(hdmi->dev,
-+			      "Using default phy configuration for TMDS rate %lu",
-+			      mpixelclock);
-+	} else {
-+		phy_config = &hdmi->plat_data->phy_configs[ret];
-+	}
-+
-+	inno_hdmi_sys_power(hdmi, false);
-+
-+	hdmi_writeb(hdmi, HDMI_PHY_PRE_EMPHASIS, phy_config->pre_emphasis);
-+	hdmi_writeb(hdmi, HDMI_PHY_DRIVER, phy_config->voltage_level_control);
-+	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x15);
-+	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x14);
-+	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x10);
-+	hdmi_writeb(hdmi, HDMI_PHY_CHG_PWR, 0x0f);
-+	hdmi_writeb(hdmi, HDMI_PHY_SYNC, 0x00);
-+	hdmi_writeb(hdmi, HDMI_PHY_SYNC, 0x01);
-+
-+	inno_hdmi_sys_power(hdmi, true);
-+};
-+
-+static void inno_hdmi_reset(struct inno_hdmi *hdmi)
-+{
-+	u32 val;
-+	u32 msk;
-+
-+	hdmi_modb(hdmi, HDMI_SYS_CTRL, m_RST_DIGITAL, v_NOT_RST_DIGITAL);
-+	udelay(100);
-+
-+	hdmi_modb(hdmi, HDMI_SYS_CTRL, m_RST_ANALOG, v_NOT_RST_ANALOG);
-+	udelay(100);
-+
-+	msk = m_REG_CLK_INV | m_REG_CLK_SOURCE | m_POWER | m_INT_POL;
-+	val = v_REG_CLK_INV | v_REG_CLK_SOURCE_SYS | v_PWR_ON | v_INT_POL_HIGH;
-+	hdmi_modb(hdmi, HDMI_SYS_CTRL, msk, val);
-+
-+	inno_hdmi_standby(hdmi);
-+}
-+
-+static int inno_hdmi_config_video_csc(struct inno_hdmi *hdmi)
-+{
-+	struct drm_connector *connector = &hdmi->connector;
-+	struct drm_connector_state *conn_state = connector->state;
-+	struct inno_hdmi_connector_state *inno_conn_state =
-+					to_inno_hdmi_conn_state(conn_state);
-+	int c0_c2_change = 0;
-+	int csc_enable = 0;
-+	int csc_mode = 0;
-+	int auto_csc = 0;
-+	int value;
-+	int i;
-+
-+	/* Input video mode is SDR RGB24bit, data enable signal from external */
-+	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL1, v_DE_EXTERNAL |
-+		    v_VIDEO_INPUT_FORMAT(VIDEO_INPUT_SDR_RGB444));
-+
-+	/* Input color hardcode to RGB, and output color hardcode to RGB888 */
-+	value = v_VIDEO_INPUT_BITS(VIDEO_INPUT_8BITS) |
-+		v_VIDEO_OUTPUT_COLOR(0) |
-+		v_VIDEO_INPUT_CSP(0);
-+	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL2, value);
-+
-+	if (inno_conn_state->enc_out_format == HDMI_COLORSPACE_RGB) {
-+		if (inno_conn_state->rgb_limited_range) {
-+			csc_mode = CSC_RGB_0_255_TO_RGB_16_235_8BIT;
-+			auto_csc = AUTO_CSC_DISABLE;
-+			c0_c2_change = C0_C2_CHANGE_DISABLE;
-+			csc_enable = v_CSC_ENABLE;
-+
-+		} else {
-+			value = v_SOF_DISABLE | v_COLOR_DEPTH_NOT_INDICATED(1);
-+			hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL3, value);
-+
-+			hdmi_modb(hdmi, HDMI_VIDEO_CONTRL,
-+				  m_VIDEO_AUTO_CSC | m_VIDEO_C0_C2_SWAP,
-+				  v_VIDEO_AUTO_CSC(AUTO_CSC_DISABLE) |
-+				  v_VIDEO_C0_C2_SWAP(C0_C2_CHANGE_DISABLE));
-+			return 0;
-+		}
-+	} else {
-+		if (inno_conn_state->colorimetry == HDMI_COLORIMETRY_ITU_601) {
-+			if (inno_conn_state->enc_out_format == HDMI_COLORSPACE_YUV444) {
-+				csc_mode = CSC_RGB_0_255_TO_ITU601_16_235_8BIT;
-+				auto_csc = AUTO_CSC_DISABLE;
-+				c0_c2_change = C0_C2_CHANGE_DISABLE;
-+				csc_enable = v_CSC_ENABLE;
-+			}
-+		} else {
-+			if (inno_conn_state->enc_out_format == HDMI_COLORSPACE_YUV444) {
-+				csc_mode = CSC_RGB_0_255_TO_ITU709_16_235_8BIT;
-+				auto_csc = AUTO_CSC_DISABLE;
-+				c0_c2_change = C0_C2_CHANGE_DISABLE;
-+				csc_enable = v_CSC_ENABLE;
-+			}
-+		}
-+	}
-+
-+	for (i = 0; i < 24; i++)
-+		hdmi_writeb(hdmi, HDMI_VIDEO_CSC_COEF + i,
-+			    coeff_csc[csc_mode][i]);
-+
-+	value = v_SOF_DISABLE | csc_enable | v_COLOR_DEPTH_NOT_INDICATED(1);
-+	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL3, value);
-+	hdmi_modb(hdmi, HDMI_VIDEO_CONTRL, m_VIDEO_AUTO_CSC |
-+		  m_VIDEO_C0_C2_SWAP, v_VIDEO_AUTO_CSC(auto_csc) |
-+		  v_VIDEO_C0_C2_SWAP(c0_c2_change));
-+
-+	return 0;
-+}
-+
-+static int inno_hdmi_setup(struct inno_hdmi *hdmi,
-+			   struct drm_display_mode *mode)
-+{
-+	struct drm_display_info *display = &hdmi->connector.display_info;
-+	unsigned long mpixelclock = mode->clock * 1000;
-+
-+	/* Mute video and audio output */
-+	hdmi_modb(hdmi, HDMI_AV_MUTE, m_AUDIO_MUTE | m_VIDEO_BLACK,
-+		  v_AUDIO_MUTE(1) | v_VIDEO_MUTE(1));
-+
-+	/* Set HDMI Mode */
-+	hdmi_writeb(hdmi, HDMI_HDCP_CTRL,
-+		    v_HDMI_DVI(display->is_hdmi));
-+
-+	inno_hdmi_config_video_timing(hdmi, mode);
-+
-+	inno_hdmi_config_video_csc(hdmi);
-+
-+	if (display->is_hdmi)
-+		inno_hdmi_config_video_avi(hdmi, mode);
-+
-+	/*
-+	 * When IP controller have configured to an accurate video
-+	 * timing, then the TMDS clock source would be switched to
-+	 * DCLK_LCDC, so we need to init the TMDS rate to mode pixel
-+	 * clock rate, and reconfigure the DDC clock.
-+	 */
-+	inno_hdmi_i2c_init(hdmi, mpixelclock);
-+
-+	/* Unmute video and audio output */
-+	hdmi_modb(hdmi, HDMI_AV_MUTE, m_AUDIO_MUTE | m_VIDEO_BLACK,
-+		  v_AUDIO_MUTE(0) | v_VIDEO_MUTE(0));
-+
-+	inno_hdmi_power_up(hdmi, mpixelclock);
-+
-+	return 0;
-+}
-+
-+static enum drm_mode_status rk_inno_hdmi_connector_mode_valid(struct drm_connector *connector,
-+							      struct drm_display_mode *mode)
-+{
-+	struct inno_hdmi *hdmi = connector_to_inno_hdmi(connector);
-+	struct rk_inno_hdmi *rk_hdmi = dev_get_drvdata(hdmi->dev);
-+
-+	unsigned long mpixelclk, max_tolerance;
-+	long rounded_refclk;
-+
-+	/* No support for double-clock modes */
-+	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
-+		return MODE_BAD;
-+
-+	mpixelclk = mode->clock * 1000;
-+
-+	if (mpixelclk < INNO_HDMI_MIN_TMDS_CLOCK)
-+		return MODE_CLOCK_LOW;
-+
-+	if (inno_hdmi_find_phy_config(hdmi, mpixelclk) < 0)
-+		return MODE_CLOCK_HIGH;
-+
-+	if (rk_hdmi->refclk) {
-+		rounded_refclk = clk_round_rate(rk_hdmi->refclk, mpixelclk);
-+		if (rounded_refclk < 0)
-+			return MODE_BAD;
-+
-+		/* Vesa DMT standard mentions +/- 0.5% max tolerance */
-+		max_tolerance = mpixelclk / 200;
-+		if (abs_diff((unsigned long)rounded_refclk, mpixelclk) > max_tolerance)
-+			return MODE_NOCLOCK;
-+	}
-+
-+	return MODE_OK;
-+}
-+
-+static void rk_inno_hdmi_encoder_enable(struct drm_encoder *encoder,
-+					struct drm_atomic_state *state)
-+{
-+	struct inno_hdmi *hdmi = rk_encoder_to_inno_hdmi(encoder);
-+	struct drm_connector_state *conn_state;
-+	struct drm_crtc_state *crtc_state;
-+
-+	conn_state = drm_atomic_get_new_connector_state(state, &hdmi->connector);
-+	if (WARN_ON(!conn_state))
-+		return;
-+
-+	crtc_state = drm_atomic_get_new_crtc_state(state, conn_state->crtc);
-+	if (WARN_ON(!crtc_state))
-+		return;
-+
-+	inno_hdmi_setup(hdmi, &crtc_state->adjusted_mode);
-+}
-+
-+static void rk_inno_hdmi_encoder_disable(struct drm_encoder *encoder,
-+					 struct drm_atomic_state *state)
-+{
-+	struct inno_hdmi *hdmi = rk_encoder_to_inno_hdmi(encoder);
-+
-+	inno_hdmi_standby(hdmi);
-+}
-+
-+static int
-+rk_inno_hdmi_encoder_atomic_check(struct drm_encoder *encoder,
-+				  struct drm_crtc_state *crtc_state,
-+				  struct drm_connector_state *conn_state)
-+{
-+	struct rockchip_crtc_state *s = to_rockchip_crtc_state(crtc_state);
-+	struct drm_display_mode *mode = &crtc_state->adjusted_mode;
-+	u8 vic = drm_match_cea_mode(mode);
-+	struct inno_hdmi_connector_state *inno_conn_state =
-+				   to_inno_hdmi_conn_state(conn_state);
-+
-+	s->output_mode = ROCKCHIP_OUT_MODE_P888;
-+	s->output_type = DRM_MODE_CONNECTOR_HDMIA;
-+
-+	if (vic == 6 || vic == 7 ||
-+	    vic == 21 || vic == 22 ||
-+	    vic == 2 || vic == 3 ||
-+	    vic == 17 || vic == 18)
-+		inno_conn_state->colorimetry = HDMI_COLORIMETRY_ITU_601;
-+	else
-+		inno_conn_state->colorimetry = HDMI_COLORIMETRY_ITU_709;
-+
-+	inno_conn_state->enc_out_format = HDMI_COLORSPACE_RGB;
-+	inno_conn_state->rgb_limited_range =
-+	   drm_default_rgb_quant_range(mode) == HDMI_QUANTIZATION_RANGE_LIMITED;
-+
-+	return  rk_inno_hdmi_connector_mode_valid(conn_state->connector,
-+			   &crtc_state->adjusted_mode) == MODE_OK ? 0 : -EINVAL;
-+}
-+
-+static const struct drm_encoder_helper_funcs rk_inno_encoder_helper_funcs = {
-+	.atomic_check   = rk_inno_hdmi_encoder_atomic_check,
-+	.atomic_enable  = rk_inno_hdmi_encoder_enable,
-+	.atomic_disable = rk_inno_hdmi_encoder_disable,
-+};
-+
-+static int rk_inno_hdmi_bind(struct device *dev, struct device *master, void *data)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct drm_device *drm = data;
-+	struct inno_hdmi *hdmi;
-+	int ret;
-+	struct rk_inno_hdmi *rk_hdmi;
-+
-+	rk_hdmi = devm_kzalloc(dev, sizeof(*rk_hdmi), GFP_KERNEL);
-+	if (!rk_hdmi)
-+		return -ENOMEM;
-+	hdmi = &rk_hdmi->inno_hdmi;
-+
-+	hdmi->dev = dev;
-+	hdmi->plat_data = (struct inno_hdmi_plat_data *)of_device_get_match_data(dev);
-+
-+	hdmi->regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(hdmi->regs))
-+		return PTR_ERR(hdmi->regs);
-+
-+	rk_hdmi->pclk = devm_clk_get(hdmi->dev, "pclk");
-+	if (IS_ERR(rk_hdmi->pclk)) {
-+		DRM_DEV_ERROR(hdmi->dev, "Unable to get HDMI pclk clk\n");
-+		return PTR_ERR(rk_hdmi->pclk);
-+	}
-+
-+	ret = clk_prepare_enable(rk_hdmi->pclk);
-+	if (ret) {
-+		DRM_DEV_ERROR(hdmi->dev,
-+			      "Cannot enable HDMI pclk clock: %d\n", ret);
-+		return ret;
-+	}
-+
-+	rk_hdmi->refclk = devm_clk_get_optional(hdmi->dev, "ref");
-+	if (IS_ERR(rk_hdmi->refclk)) {
-+		DRM_DEV_ERROR(hdmi->dev, "Unable to get HDMI reference clock\n");
-+		ret = PTR_ERR(rk_hdmi->refclk);
-+		goto err_disable_pclk;
-+	}
-+
-+	ret = clk_prepare_enable(rk_hdmi->refclk);
-+	if (ret) {
-+		DRM_DEV_ERROR(hdmi->dev,
-+			      "Cannot enable HDMI reference clock: %d\n", ret);
-+		goto err_disable_pclk;
-+	}
-+
-+	inno_hdmi_reset(hdmi);
-+	/*
-+	 * When the controller isn't configured to an accurate
-+	 * video timing and there is no reference clock available,
-+	 * then the TMDS clock source would be switched to PCLK_HDMI,
-+	 * so we need to init the TMDS rate to PCLK rate, and
-+	 * reconfigure the DDC clock.
-+	 */
-+	if (rk_hdmi->refclk)
-+		inno_hdmi_i2c_init(hdmi, clk_get_rate(rk_hdmi->refclk));
-+	else
-+		inno_hdmi_i2c_init(hdmi, clk_get_rate(rk_hdmi->pclk));
-+
-+	ret = inno_hdmi_bind(drm, hdmi, &rk_hdmi->encoder.encoder);
-+	if (ret)
-+		goto err_cleanup_hdmi;
-+
-+	dev_set_drvdata(dev, rk_hdmi);
-+
-+	return 0;
-+
-+err_cleanup_hdmi:
-+	rk_hdmi->encoder.encoder.funcs->destroy(&rk_hdmi->encoder.encoder);
-+	clk_disable_unprepare(rk_hdmi->refclk);
-+err_disable_pclk:
-+	clk_disable_unprepare(rk_hdmi->pclk);
-+	return ret;
-+}
-+
-+static void rk_inno_hdmi_unbind(struct device *dev, struct device *master, void *data)
-+{
-+	struct rk_inno_hdmi *rk_hdmi = dev_get_drvdata(dev);
-+	struct inno_hdmi *hdmi = &rk_hdmi->inno_hdmi;
-+
-+	rk_hdmi->encoder.encoder.funcs->destroy(&rk_hdmi->encoder.encoder);
-+	i2c_put_adapter(hdmi->ddc);
-+	clk_disable_unprepare(rk_hdmi->refclk);
-+	clk_disable_unprepare(rk_hdmi->pclk);
-+}
-+
-+static const struct component_ops inno_hdmi_ops = {
-+	.bind	= rk_inno_hdmi_bind,
-+	.unbind	= rk_inno_hdmi_unbind,
-+};
-+
-+static int inno_hdmi_probe(struct platform_device *pdev)
-+{
-+	return component_add(&pdev->dev, &inno_hdmi_ops);
-+}
-+
-+static void inno_hdmi_remove(struct platform_device *pdev)
-+{
-+	component_del(&pdev->dev, &inno_hdmi_ops);
-+}
-+
-+static const struct inno_hdmi_plat_data rk3036_inno_info = {
-+	.soc_type = RK3036_HDMI,
-+	.mode_valid = rk_inno_hdmi_connector_mode_valid,
-+	.helper_private = &rk_inno_encoder_helper_funcs,
-+	.phy_configs = rk3036_hdmi_phy_configs,
-+	.default_phy_config = &rk3036_hdmi_phy_configs[1],
-+};
-+
-+static const struct inno_hdmi_plat_data rk3128_inno_info = {
-+	.soc_type = RK3128_HDMI,
-+	.mode_valid = rk_inno_hdmi_connector_mode_valid,
-+	.helper_private = &rk_inno_encoder_helper_funcs,
-+	.phy_configs = rk3128_hdmi_phy_configs,
-+	.default_phy_config = &rk3128_hdmi_phy_configs[1],
-+};
-+
-+static const struct of_device_id inno_hdmi_dt_ids[] = {
-+	{ .compatible = "rockchip,rk3036-inno-hdmi",
-+	  .data = &rk3036_inno_info,
-+	},
-+	{ .compatible = "rockchip,rk3128-inno-hdmi",
-+	  .data = &rk3128_inno_info,
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, inno_hdmi_dt_ids);
-+
-+struct platform_driver inno_hdmi_driver = {
-+	.probe  = inno_hdmi_probe,
-+	.remove_new = inno_hdmi_remove,
-+	.driver = {
-+		.name = "innohdmi-rockchip",
-+		.of_match_table = inno_hdmi_dt_ids,
-+	},
-+};
-diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.h b/drivers/gpu/drm/rockchip/inno_hdmi-rockchip.h
-similarity index 85%
-rename from drivers/gpu/drm/rockchip/inno_hdmi.h
-rename to drivers/gpu/drm/rockchip/inno_hdmi-rockchip.h
-index a7edf3559e60..c90458d75378 100644
---- a/drivers/gpu/drm/rockchip/inno_hdmi.h
-+++ b/drivers/gpu/drm/rockchip/inno_hdmi-rockchip.h
-@@ -8,12 +8,6 @@
- #ifndef __INNO_HDMI_H__
- #define __INNO_HDMI_H__
+ 	pci_dev_assign_added(dev, true);
+ }
+diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+index d2d17d37d3e0..79b6cc7f0287 100644
+--- a/drivers/pci/controller/dwc/pci-dra7xx.c
++++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+@@ -801,7 +801,7 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
+ 	reset = devm_gpiod_get_optional(dev, NULL, GPIOD_OUT_HIGH);
+ 	if (IS_ERR(reset)) {
+ 		ret = PTR_ERR(reset);
+-		dev_err(&pdev->dev, "gpio request failed, ret %d\n", ret);
++		dev_err(&pdev->dev, "gpio request failed: %pe\n", ERR_PTR(ret));
+ 		goto err_gpio;
+ 	}
  
--#define DDC_SEGMENT_ADDR		0x30
--
--#define HDMI_SCL_RATE			(100*1000)
--#define DDC_BUS_FREQ_L			0x4b
--#define DDC_BUS_FREQ_H			0x4c
--
- #define HDMI_SYS_CTRL			0x00
- #define m_RST_ANALOG			(1 << 6)
- #define v_RST_ANALOG			(0 << 6)
-@@ -98,26 +92,6 @@ enum {
- #define v_AUDIO_MUTE(n)			(n << 1)
- #define v_VIDEO_MUTE(n)			(n << 0)
+diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+index 6477c83262c2..c449d7af9d5b 100644
+--- a/drivers/pci/controller/dwc/pci-meson.c
++++ b/drivers/pci/controller/dwc/pci-meson.c
+@@ -183,7 +183,7 @@ static inline struct clk *meson_pcie_probe_clock(struct device *dev,
+ 	if (rate) {
+ 		ret = clk_set_rate(clk, rate);
+ 		if (ret) {
+-			dev_err(dev, "set clk rate failed, ret = %d\n", ret);
++			dev_err(dev, "set clk rate failed: %pe\n", ERR_PTR(ret));
+ 			return ERR_PTR(ret);
+ 		}
+ 	}
+@@ -416,7 +416,7 @@ static int meson_pcie_probe(struct platform_device *pdev)
  
--#define HDMI_VIDEO_TIMING_CTL		0x08
--#define v_HSYNC_POLARITY(n)		(n << 3)
--#define v_VSYNC_POLARITY(n)		(n << 2)
--#define v_INETLACE(n)			(n << 1)
--#define v_EXTERANL_VIDEO(n)		(n << 0)
--
--#define HDMI_VIDEO_EXT_HTOTAL_L		0x09
--#define HDMI_VIDEO_EXT_HTOTAL_H		0x0a
--#define HDMI_VIDEO_EXT_HBLANK_L		0x0b
--#define HDMI_VIDEO_EXT_HBLANK_H		0x0c
--#define HDMI_VIDEO_EXT_HDELAY_L		0x0d
--#define HDMI_VIDEO_EXT_HDELAY_H		0x0e
--#define HDMI_VIDEO_EXT_HDURATION_L	0x0f
--#define HDMI_VIDEO_EXT_HDURATION_H	0x10
--#define HDMI_VIDEO_EXT_VTOTAL_L		0x11
--#define HDMI_VIDEO_EXT_VTOTAL_H		0x12
--#define HDMI_VIDEO_EXT_VBLANK		0x13
--#define HDMI_VIDEO_EXT_VDELAY		0x14
--#define HDMI_VIDEO_EXT_VDURATION	0x15
--
- #define HDMI_VIDEO_CSC_COEF		0x18
+ 	mp->phy = devm_phy_get(dev, "pcie");
+ 	if (IS_ERR(mp->phy)) {
+-		dev_err(dev, "get phy failed, %ld\n", PTR_ERR(mp->phy));
++		dev_err(dev, "get phy failed: %pe\n", mp->phy);
+ 		return PTR_ERR(mp->phy);
+ 	}
  
- #define HDMI_AUDIO_CTRL1		0x35
-@@ -202,14 +176,6 @@ enum {
- #define HDMI_AUDIO_CTS_M		0x46
- #define HDMI_AUDIO_CTS_L		0x47
+@@ -428,31 +428,31 @@ static int meson_pcie_probe(struct platform_device *pdev)
  
--#define HDMI_DDC_CLK_L			0x4b
--#define HDMI_DDC_CLK_H			0x4c
--
--#define HDMI_EDID_SEGMENT_POINTER	0x4d
--#define HDMI_EDID_WORD_ADDR		0x4e
--#define HDMI_EDID_FIFO_OFFSET		0x4f
--#define HDMI_EDID_FIFO_ADDR		0x50
--
- #define HDMI_PACKET_SEND_MANUAL		0x9c
- #define HDMI_PACKET_SEND_AUTO		0x9d
- #define m_PACKET_GCP_EN			(1 << 7)
-@@ -254,23 +220,12 @@ enum {
- #define m_HDMI_DVI			(1 << 1)
- #define v_HDMI_DVI(n)			(n << 1)
+ 	ret = meson_pcie_get_resets(mp);
+ 	if (ret) {
+-		dev_err(dev, "get reset resource failed, %d\n", ret);
++		dev_err(dev, "get reset resource failed: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
  
--#define HDMI_INTERRUPT_MASK1		0xc0
--#define HDMI_INTERRUPT_STATUS1		0xc1
--#define	m_INT_ACTIVE_VSYNC		(1 << 5)
--#define m_INT_EDID_READY		(1 << 2)
--
- #define HDMI_INTERRUPT_MASK2		0xc2
- #define HDMI_INTERRUPT_STATUS2		0xc3
- #define m_INT_HDCP_ERR			(1 << 7)
- #define m_INT_BKSV_FLAG			(1 << 6)
- #define m_INT_HDCP_OK			(1 << 4)
+ 	ret = meson_pcie_get_mems(pdev, mp);
+ 	if (ret) {
+-		dev_err(dev, "get memory resource failed, %d\n", ret);
++		dev_err(dev, "get memory resource failed: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
  
--#define HDMI_STATUS			0xc8
--#define m_HOTPLUG			(1 << 7)
--#define m_MASK_INT_HOTPLUG		(1 << 5)
--#define m_INT_HOTPLUG			(1 << 1)
--#define v_MASK_INT_HOTPLUG(n)		((n & 0x1) << 5)
--
- #define HDMI_COLORBAR                   0xc9
+ 	ret = meson_pcie_power_on(mp);
+ 	if (ret) {
+-		dev_err(dev, "phy power on failed, %d\n", ret);
++		dev_err(dev, "phy power on failed: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
  
- #define HDMI_PHY_SYNC			0xce
-diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.c b/drivers/gpu/drm/rockchip/inno_hdmi.c
-deleted file mode 100644
-index 3df2cfcf9998..000000000000
---- a/drivers/gpu/drm/rockchip/inno_hdmi.c
-+++ /dev/null
-@@ -1,1073 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-- *    Zheng Yang <zhengyang@rock-chips.com>
-- *    Yakir Yang <ykk@rock-chips.com>
-- */
--
--#include <linux/irq.h>
--#include <linux/clk.h>
--#include <linux/delay.h>
--#include <linux/err.h>
--#include <linux/hdmi.h>
--#include <linux/mod_devicetable.h>
--#include <linux/module.h>
--#include <linux/mutex.h>
--#include <linux/platform_device.h>
--
--#include <drm/drm_atomic.h>
--#include <drm/drm_atomic_helper.h>
--#include <drm/drm_edid.h>
--#include <drm/drm_of.h>
--#include <drm/drm_probe_helper.h>
--#include <drm/drm_simple_kms_helper.h>
--
--#include "rockchip_drm_drv.h"
--
--#include "inno_hdmi.h"
--
--#define INNO_HDMI_MIN_TMDS_CLOCK  25000000U
--
--struct inno_hdmi_phy_config {
--	unsigned long pixelclock;
--	u8 pre_emphasis;
--	u8 voltage_level_control;
--};
--
--struct inno_hdmi_variant {
--	struct inno_hdmi_phy_config *phy_configs;
--	struct inno_hdmi_phy_config *default_phy_config;
--};
--
--struct inno_hdmi_i2c {
--	struct i2c_adapter adap;
--
--	u8 ddc_addr;
--	u8 segment_addr;
--
--	struct mutex lock;
--	struct completion cmp;
--};
--
--struct inno_hdmi {
--	struct device *dev;
--
--	struct clk *pclk;
--	struct clk *refclk;
--	void __iomem *regs;
--
--	struct drm_connector	connector;
--	struct rockchip_encoder	encoder;
--
--	struct inno_hdmi_i2c *i2c;
--	struct i2c_adapter *ddc;
--
--	const struct inno_hdmi_variant *variant;
--};
--
--struct inno_hdmi_connector_state {
--	struct drm_connector_state	base;
--	unsigned int			enc_out_format;
--	unsigned int			colorimetry;
--	bool				rgb_limited_range;
--};
--
--static struct inno_hdmi *encoder_to_inno_hdmi(struct drm_encoder *encoder)
--{
--	struct rockchip_encoder *rkencoder = to_rockchip_encoder(encoder);
--
--	return container_of(rkencoder, struct inno_hdmi, encoder);
--}
--
--static struct inno_hdmi *connector_to_inno_hdmi(struct drm_connector *connector)
--{
--	return container_of(connector, struct inno_hdmi, connector);
--}
--
--#define to_inno_hdmi_conn_state(conn_state) \
--	container_of_const(conn_state, struct inno_hdmi_connector_state, base)
--
--enum {
--	CSC_RGB_0_255_TO_ITU601_16_235_8BIT,
--	CSC_RGB_0_255_TO_ITU709_16_235_8BIT,
--	CSC_RGB_0_255_TO_RGB_16_235_8BIT,
--};
--
--static const char coeff_csc[][24] = {
--	/*
--	 * RGB2YUV:601 SD mode:
--	 *   Cb = -0.291G - 0.148R + 0.439B + 128
--	 *   Y  = 0.504G  + 0.257R + 0.098B + 16
--	 *   Cr = -0.368G + 0.439R - 0.071B + 128
--	 */
--	{
--		0x11, 0x5f, 0x01, 0x82, 0x10, 0x23, 0x00, 0x80,
--		0x02, 0x1c, 0x00, 0xa1, 0x00, 0x36, 0x00, 0x1e,
--		0x11, 0x29, 0x10, 0x59, 0x01, 0x82, 0x00, 0x80
--	},
--	/*
--	 * RGB2YUV:709 HD mode:
--	 *   Cb = - 0.338G - 0.101R + 0.439B + 128
--	 *   Y  = 0.614G   + 0.183R + 0.062B + 16
--	 *   Cr = - 0.399G + 0.439R - 0.040B + 128
--	 */
--	{
--		0x11, 0x98, 0x01, 0xc1, 0x10, 0x28, 0x00, 0x80,
--		0x02, 0x74, 0x00, 0xbb, 0x00, 0x3f, 0x00, 0x10,
--		0x11, 0x5a, 0x10, 0x67, 0x01, 0xc1, 0x00, 0x80
--	},
--	/*
--	 * RGB[0:255]2RGB[16:235]:
--	 *   R' = R x (235-16)/255 + 16;
--	 *   G' = G x (235-16)/255 + 16;
--	 *   B' = B x (235-16)/255 + 16;
--	 */
--	{
--		0x00, 0x00, 0x03, 0x6F, 0x00, 0x00, 0x00, 0x10,
--		0x03, 0x6F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10,
--		0x00, 0x00, 0x00, 0x00, 0x03, 0x6F, 0x00, 0x10
--	},
--};
--
--static struct inno_hdmi_phy_config rk3036_hdmi_phy_configs[] = {
--	{  74250000, 0x3f, 0xbb },
--	{ 165000000, 0x6f, 0xbb },
--	{      ~0UL, 0x00, 0x00 }
--};
--
--static struct inno_hdmi_phy_config rk3128_hdmi_phy_configs[] = {
--	{  74250000, 0x3f, 0xaa },
--	{ 165000000, 0x5f, 0xaa },
--	{      ~0UL, 0x00, 0x00 }
--};
--
--static int inno_hdmi_find_phy_config(struct inno_hdmi *hdmi,
--				     unsigned long pixelclk)
--{
--	const struct inno_hdmi_phy_config *phy_configs =
--						hdmi->variant->phy_configs;
--	int i;
--
--	for (i = 0; phy_configs[i].pixelclock != ~0UL; i++) {
--		if (pixelclk <= phy_configs[i].pixelclock)
--			return i;
--	}
--
--	DRM_DEV_DEBUG(hdmi->dev, "No phy configuration for pixelclock %lu\n",
--		      pixelclk);
--
--	return -EINVAL;
--}
--
--static inline u8 hdmi_readb(struct inno_hdmi *hdmi, u16 offset)
--{
--	return readl_relaxed(hdmi->regs + (offset) * 0x04);
--}
--
--static inline void hdmi_writeb(struct inno_hdmi *hdmi, u16 offset, u32 val)
--{
--	writel_relaxed(val, hdmi->regs + (offset) * 0x04);
--}
--
--static inline void hdmi_modb(struct inno_hdmi *hdmi, u16 offset,
--			     u32 msk, u32 val)
--{
--	u8 temp = hdmi_readb(hdmi, offset) & ~msk;
--
--	temp |= val & msk;
--	hdmi_writeb(hdmi, offset, temp);
--}
--
--static void inno_hdmi_i2c_init(struct inno_hdmi *hdmi, unsigned long long rate)
--{
--	unsigned long long ddc_bus_freq = rate >> 2;
--
--	do_div(ddc_bus_freq, HDMI_SCL_RATE);
--
--	hdmi_writeb(hdmi, DDC_BUS_FREQ_L, ddc_bus_freq & 0xFF);
--	hdmi_writeb(hdmi, DDC_BUS_FREQ_H, (ddc_bus_freq >> 8) & 0xFF);
--
--	/* Clear the EDID interrupt flag and mute the interrupt */
--	hdmi_writeb(hdmi, HDMI_INTERRUPT_MASK1, 0);
--	hdmi_writeb(hdmi, HDMI_INTERRUPT_STATUS1, m_INT_EDID_READY);
--}
--
--static void inno_hdmi_sys_power(struct inno_hdmi *hdmi, bool enable)
--{
--	if (enable)
--		hdmi_modb(hdmi, HDMI_SYS_CTRL, m_POWER, v_PWR_ON);
--	else
--		hdmi_modb(hdmi, HDMI_SYS_CTRL, m_POWER, v_PWR_OFF);
--}
--
--static void inno_hdmi_standby(struct inno_hdmi *hdmi)
--{
--	inno_hdmi_sys_power(hdmi, false);
--
--	hdmi_writeb(hdmi, HDMI_PHY_DRIVER, 0x00);
--	hdmi_writeb(hdmi, HDMI_PHY_PRE_EMPHASIS, 0x00);
--	hdmi_writeb(hdmi, HDMI_PHY_CHG_PWR, 0x00);
--	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x15);
--};
--
--static void inno_hdmi_power_up(struct inno_hdmi *hdmi,
--			       unsigned long mpixelclock)
--{
--	struct inno_hdmi_phy_config *phy_config;
--	int ret = inno_hdmi_find_phy_config(hdmi, mpixelclock);
--
--	if (ret < 0) {
--		phy_config = hdmi->variant->default_phy_config;
--		DRM_DEV_ERROR(hdmi->dev,
--			      "Using default phy configuration for TMDS rate %lu",
--			      mpixelclock);
--	} else {
--		phy_config = &hdmi->variant->phy_configs[ret];
--	}
--
--	inno_hdmi_sys_power(hdmi, false);
--
--	hdmi_writeb(hdmi, HDMI_PHY_PRE_EMPHASIS, phy_config->pre_emphasis);
--	hdmi_writeb(hdmi, HDMI_PHY_DRIVER, phy_config->voltage_level_control);
--	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x15);
--	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x14);
--	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x10);
--	hdmi_writeb(hdmi, HDMI_PHY_CHG_PWR, 0x0f);
--	hdmi_writeb(hdmi, HDMI_PHY_SYNC, 0x00);
--	hdmi_writeb(hdmi, HDMI_PHY_SYNC, 0x01);
--
--	inno_hdmi_sys_power(hdmi, true);
--};
--
--static void inno_hdmi_reset(struct inno_hdmi *hdmi)
--{
--	u32 val;
--	u32 msk;
--
--	hdmi_modb(hdmi, HDMI_SYS_CTRL, m_RST_DIGITAL, v_NOT_RST_DIGITAL);
--	udelay(100);
--
--	hdmi_modb(hdmi, HDMI_SYS_CTRL, m_RST_ANALOG, v_NOT_RST_ANALOG);
--	udelay(100);
--
--	msk = m_REG_CLK_INV | m_REG_CLK_SOURCE | m_POWER | m_INT_POL;
--	val = v_REG_CLK_INV | v_REG_CLK_SOURCE_SYS | v_PWR_ON | v_INT_POL_HIGH;
--	hdmi_modb(hdmi, HDMI_SYS_CTRL, msk, val);
--
--	inno_hdmi_standby(hdmi);
--}
--
--static void inno_hdmi_disable_frame(struct inno_hdmi *hdmi,
--				    enum hdmi_infoframe_type type)
--{
--	struct drm_connector *connector = &hdmi->connector;
--
--	if (type != HDMI_INFOFRAME_TYPE_AVI) {
--		drm_err(connector->dev,
--			"Unsupported infoframe type: %u\n", type);
--		return;
--	}
--
--	hdmi_writeb(hdmi, HDMI_CONTROL_PACKET_BUF_INDEX, INFOFRAME_AVI);
--}
--
--static int inno_hdmi_upload_frame(struct inno_hdmi *hdmi,
--				  union hdmi_infoframe *frame, enum hdmi_infoframe_type type)
--{
--	struct drm_connector *connector = &hdmi->connector;
--	u8 packed_frame[HDMI_MAXIMUM_INFO_FRAME_SIZE];
--	ssize_t rc, i;
--
--	if (type != HDMI_INFOFRAME_TYPE_AVI) {
--		drm_err(connector->dev,
--			"Unsupported infoframe type: %u\n", type);
--		return 0;
--	}
--
--	inno_hdmi_disable_frame(hdmi, type);
--
--	rc = hdmi_infoframe_pack(frame, packed_frame,
--				 sizeof(packed_frame));
--	if (rc < 0)
--		return rc;
--
--	for (i = 0; i < rc; i++)
--		hdmi_writeb(hdmi, HDMI_CONTROL_PACKET_ADDR + i,
--			    packed_frame[i]);
--
--	return 0;
--}
--
--static int inno_hdmi_config_video_avi(struct inno_hdmi *hdmi,
--				      struct drm_display_mode *mode)
--{
--	struct drm_connector *connector = &hdmi->connector;
--	struct drm_connector_state *conn_state = connector->state;
--	struct inno_hdmi_connector_state *inno_conn_state =
--					to_inno_hdmi_conn_state(conn_state);
--	union hdmi_infoframe frame;
--	int rc;
--
--	rc = drm_hdmi_avi_infoframe_from_display_mode(&frame.avi,
--						      &hdmi->connector,
--						      mode);
--	if (rc) {
--		inno_hdmi_disable_frame(hdmi, HDMI_INFOFRAME_TYPE_AVI);
--		return rc;
--	}
--
--	if (inno_conn_state->enc_out_format == HDMI_COLORSPACE_YUV444)
--		frame.avi.colorspace = HDMI_COLORSPACE_YUV444;
--	else if (inno_conn_state->enc_out_format == HDMI_COLORSPACE_YUV422)
--		frame.avi.colorspace = HDMI_COLORSPACE_YUV422;
--	else
--		frame.avi.colorspace = HDMI_COLORSPACE_RGB;
--
--	if (inno_conn_state->enc_out_format == HDMI_COLORSPACE_RGB) {
--		drm_hdmi_avi_infoframe_quant_range(&frame.avi,
--						   connector, mode,
--						   inno_conn_state->rgb_limited_range ?
--						   HDMI_QUANTIZATION_RANGE_LIMITED :
--						   HDMI_QUANTIZATION_RANGE_FULL);
--	} else {
--		frame.avi.quantization_range = HDMI_QUANTIZATION_RANGE_DEFAULT;
--		frame.avi.ycc_quantization_range =
--			HDMI_YCC_QUANTIZATION_RANGE_LIMITED;
--	}
--
--	return inno_hdmi_upload_frame(hdmi, &frame, HDMI_INFOFRAME_TYPE_AVI);
--}
--
--static int inno_hdmi_config_video_csc(struct inno_hdmi *hdmi)
--{
--	struct drm_connector *connector = &hdmi->connector;
--	struct drm_connector_state *conn_state = connector->state;
--	struct inno_hdmi_connector_state *inno_conn_state =
--					to_inno_hdmi_conn_state(conn_state);
--	int c0_c2_change = 0;
--	int csc_enable = 0;
--	int csc_mode = 0;
--	int auto_csc = 0;
--	int value;
--	int i;
--
--	/* Input video mode is SDR RGB24bit, data enable signal from external */
--	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL1, v_DE_EXTERNAL |
--		    v_VIDEO_INPUT_FORMAT(VIDEO_INPUT_SDR_RGB444));
--
--	/* Input color hardcode to RGB, and output color hardcode to RGB888 */
--	value = v_VIDEO_INPUT_BITS(VIDEO_INPUT_8BITS) |
--		v_VIDEO_OUTPUT_COLOR(0) |
--		v_VIDEO_INPUT_CSP(0);
--	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL2, value);
--
--	if (inno_conn_state->enc_out_format == HDMI_COLORSPACE_RGB) {
--		if (inno_conn_state->rgb_limited_range) {
--			csc_mode = CSC_RGB_0_255_TO_RGB_16_235_8BIT;
--			auto_csc = AUTO_CSC_DISABLE;
--			c0_c2_change = C0_C2_CHANGE_DISABLE;
--			csc_enable = v_CSC_ENABLE;
--
--		} else {
--			value = v_SOF_DISABLE | v_COLOR_DEPTH_NOT_INDICATED(1);
--			hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL3, value);
--
--			hdmi_modb(hdmi, HDMI_VIDEO_CONTRL,
--				  m_VIDEO_AUTO_CSC | m_VIDEO_C0_C2_SWAP,
--				  v_VIDEO_AUTO_CSC(AUTO_CSC_DISABLE) |
--				  v_VIDEO_C0_C2_SWAP(C0_C2_CHANGE_DISABLE));
--			return 0;
--		}
--	} else {
--		if (inno_conn_state->colorimetry == HDMI_COLORIMETRY_ITU_601) {
--			if (inno_conn_state->enc_out_format == HDMI_COLORSPACE_YUV444) {
--				csc_mode = CSC_RGB_0_255_TO_ITU601_16_235_8BIT;
--				auto_csc = AUTO_CSC_DISABLE;
--				c0_c2_change = C0_C2_CHANGE_DISABLE;
--				csc_enable = v_CSC_ENABLE;
--			}
--		} else {
--			if (inno_conn_state->enc_out_format == HDMI_COLORSPACE_YUV444) {
--				csc_mode = CSC_RGB_0_255_TO_ITU709_16_235_8BIT;
--				auto_csc = AUTO_CSC_DISABLE;
--				c0_c2_change = C0_C2_CHANGE_DISABLE;
--				csc_enable = v_CSC_ENABLE;
--			}
--		}
--	}
--
--	for (i = 0; i < 24; i++)
--		hdmi_writeb(hdmi, HDMI_VIDEO_CSC_COEF + i,
--			    coeff_csc[csc_mode][i]);
--
--	value = v_SOF_DISABLE | csc_enable | v_COLOR_DEPTH_NOT_INDICATED(1);
--	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL3, value);
--	hdmi_modb(hdmi, HDMI_VIDEO_CONTRL, m_VIDEO_AUTO_CSC |
--		  m_VIDEO_C0_C2_SWAP, v_VIDEO_AUTO_CSC(auto_csc) |
--		  v_VIDEO_C0_C2_SWAP(c0_c2_change));
--
--	return 0;
--}
--
--static int inno_hdmi_config_video_timing(struct inno_hdmi *hdmi,
--					 struct drm_display_mode *mode)
--{
--	int value;
--
--	/* Set detail external video timing polarity and interlace mode */
--	value = v_EXTERANL_VIDEO(1);
--	value |= mode->flags & DRM_MODE_FLAG_PHSYNC ?
--		 v_HSYNC_POLARITY(1) : v_HSYNC_POLARITY(0);
--	value |= mode->flags & DRM_MODE_FLAG_PVSYNC ?
--		 v_VSYNC_POLARITY(1) : v_VSYNC_POLARITY(0);
--	value |= mode->flags & DRM_MODE_FLAG_INTERLACE ?
--		 v_INETLACE(1) : v_INETLACE(0);
--	hdmi_writeb(hdmi, HDMI_VIDEO_TIMING_CTL, value);
--
--	/* Set detail external video timing */
--	value = mode->htotal;
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_HTOTAL_L, value & 0xFF);
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_HTOTAL_H, (value >> 8) & 0xFF);
--
--	value = mode->htotal - mode->hdisplay;
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_HBLANK_L, value & 0xFF);
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_HBLANK_H, (value >> 8) & 0xFF);
--
--	value = mode->htotal - mode->hsync_start;
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_HDELAY_L, value & 0xFF);
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_HDELAY_H, (value >> 8) & 0xFF);
--
--	value = mode->hsync_end - mode->hsync_start;
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_HDURATION_L, value & 0xFF);
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_HDURATION_H, (value >> 8) & 0xFF);
--
--	value = mode->vtotal;
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_VTOTAL_L, value & 0xFF);
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_VTOTAL_H, (value >> 8) & 0xFF);
--
--	value = mode->vtotal - mode->vdisplay;
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_VBLANK, value & 0xFF);
--
--	value = mode->vtotal - mode->vsync_start;
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_VDELAY, value & 0xFF);
--
--	value = mode->vsync_end - mode->vsync_start;
--	hdmi_writeb(hdmi, HDMI_VIDEO_EXT_VDURATION, value & 0xFF);
--
--	hdmi_writeb(hdmi, HDMI_PHY_PRE_DIV_RATIO, 0x1e);
--	hdmi_writeb(hdmi, HDMI_PHY_FEEDBACK_DIV_RATIO_LOW, 0x2c);
--	hdmi_writeb(hdmi, HDMI_PHY_FEEDBACK_DIV_RATIO_HIGH, 0x01);
--
--	return 0;
--}
--
--static int inno_hdmi_setup(struct inno_hdmi *hdmi,
--			   struct drm_display_mode *mode)
--{
--	struct drm_display_info *display = &hdmi->connector.display_info;
--	unsigned long mpixelclock = mode->clock * 1000;
--
--	/* Mute video and audio output */
--	hdmi_modb(hdmi, HDMI_AV_MUTE, m_AUDIO_MUTE | m_VIDEO_BLACK,
--		  v_AUDIO_MUTE(1) | v_VIDEO_MUTE(1));
--
--	/* Set HDMI Mode */
--	hdmi_writeb(hdmi, HDMI_HDCP_CTRL,
--		    v_HDMI_DVI(display->is_hdmi));
--
--	inno_hdmi_config_video_timing(hdmi, mode);
--
--	inno_hdmi_config_video_csc(hdmi);
--
--	if (display->is_hdmi)
--		inno_hdmi_config_video_avi(hdmi, mode);
--
--	/*
--	 * When IP controller have configured to an accurate video
--	 * timing, then the TMDS clock source would be switched to
--	 * DCLK_LCDC, so we need to init the TMDS rate to mode pixel
--	 * clock rate, and reconfigure the DDC clock.
--	 */
--	inno_hdmi_i2c_init(hdmi, mpixelclock);
--
--	/* Unmute video and audio output */
--	hdmi_modb(hdmi, HDMI_AV_MUTE, m_AUDIO_MUTE | m_VIDEO_BLACK,
--		  v_AUDIO_MUTE(0) | v_VIDEO_MUTE(0));
--
--	inno_hdmi_power_up(hdmi, mpixelclock);
--
--	return 0;
--}
--
--static enum drm_mode_status inno_hdmi_display_mode_valid(struct inno_hdmi *hdmi,
--							 struct drm_display_mode *mode)
--{
--	unsigned long mpixelclk, max_tolerance;
--	long rounded_refclk;
--
--	/* No support for double-clock modes */
--	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
--		return MODE_BAD;
--
--	mpixelclk = mode->clock * 1000;
--
--	if (mpixelclk < INNO_HDMI_MIN_TMDS_CLOCK)
--		return MODE_CLOCK_LOW;
--
--	if (inno_hdmi_find_phy_config(hdmi, mpixelclk) < 0)
--		return MODE_CLOCK_HIGH;
--
--	if (hdmi->refclk) {
--		rounded_refclk = clk_round_rate(hdmi->refclk, mpixelclk);
--		if (rounded_refclk < 0)
--			return MODE_BAD;
--
--		/* Vesa DMT standard mentions +/- 0.5% max tolerance */
--		max_tolerance = mpixelclk / 200;
--		if (abs_diff((unsigned long)rounded_refclk, mpixelclk) > max_tolerance)
--			return MODE_NOCLOCK;
--	}
--
--	return MODE_OK;
--}
--
--static void inno_hdmi_encoder_enable(struct drm_encoder *encoder,
--				     struct drm_atomic_state *state)
--{
--	struct inno_hdmi *hdmi = encoder_to_inno_hdmi(encoder);
--	struct drm_connector_state *conn_state;
--	struct drm_crtc_state *crtc_state;
--
--	conn_state = drm_atomic_get_new_connector_state(state, &hdmi->connector);
--	if (WARN_ON(!conn_state))
--		return;
--
--	crtc_state = drm_atomic_get_new_crtc_state(state, conn_state->crtc);
--	if (WARN_ON(!crtc_state))
--		return;
--
--	inno_hdmi_setup(hdmi, &crtc_state->adjusted_mode);
--}
--
--static void inno_hdmi_encoder_disable(struct drm_encoder *encoder,
--				      struct drm_atomic_state *state)
--{
--	struct inno_hdmi *hdmi = encoder_to_inno_hdmi(encoder);
--
--	inno_hdmi_standby(hdmi);
--}
--
--static int
--inno_hdmi_encoder_atomic_check(struct drm_encoder *encoder,
--			       struct drm_crtc_state *crtc_state,
--			       struct drm_connector_state *conn_state)
--{
--	struct rockchip_crtc_state *s = to_rockchip_crtc_state(crtc_state);
--	struct inno_hdmi *hdmi = encoder_to_inno_hdmi(encoder);
--	struct drm_display_mode *mode = &crtc_state->adjusted_mode;
--	u8 vic = drm_match_cea_mode(mode);
--	struct inno_hdmi_connector_state *inno_conn_state =
--					to_inno_hdmi_conn_state(conn_state);
--
--	s->output_mode = ROCKCHIP_OUT_MODE_P888;
--	s->output_type = DRM_MODE_CONNECTOR_HDMIA;
--
--	if (vic == 6 || vic == 7 ||
--	    vic == 21 || vic == 22 ||
--	    vic == 2 || vic == 3 ||
--	    vic == 17 || vic == 18)
--		inno_conn_state->colorimetry = HDMI_COLORIMETRY_ITU_601;
--	else
--		inno_conn_state->colorimetry = HDMI_COLORIMETRY_ITU_709;
--
--	inno_conn_state->enc_out_format = HDMI_COLORSPACE_RGB;
--	inno_conn_state->rgb_limited_range =
--		drm_default_rgb_quant_range(mode) == HDMI_QUANTIZATION_RANGE_LIMITED;
--
--	return  inno_hdmi_display_mode_valid(hdmi,
--				&crtc_state->adjusted_mode) == MODE_OK ? 0 : -EINVAL;
--}
--
--static struct drm_encoder_helper_funcs inno_hdmi_encoder_helper_funcs = {
--	.atomic_check	= inno_hdmi_encoder_atomic_check,
--	.atomic_enable	= inno_hdmi_encoder_enable,
--	.atomic_disable	= inno_hdmi_encoder_disable,
--};
--
--static enum drm_connector_status
--inno_hdmi_connector_detect(struct drm_connector *connector, bool force)
--{
--	struct inno_hdmi *hdmi = connector_to_inno_hdmi(connector);
--
--	return (hdmi_readb(hdmi, HDMI_STATUS) & m_HOTPLUG) ?
--		connector_status_connected : connector_status_disconnected;
--}
--
--static int inno_hdmi_connector_get_modes(struct drm_connector *connector)
--{
--	struct inno_hdmi *hdmi = connector_to_inno_hdmi(connector);
--	const struct drm_edid *drm_edid;
--	int ret = 0;
--
--	if (!hdmi->ddc)
--		return 0;
--
--	drm_edid = drm_edid_read_ddc(connector, hdmi->ddc);
--	drm_edid_connector_update(connector, drm_edid);
--	ret = drm_edid_connector_add_modes(connector);
--	drm_edid_free(drm_edid);
--
--	return ret;
--}
--
--static enum drm_mode_status
--inno_hdmi_connector_mode_valid(struct drm_connector *connector,
--			       struct drm_display_mode *mode)
--{
--	struct inno_hdmi *hdmi = connector_to_inno_hdmi(connector);
--
--	return  inno_hdmi_display_mode_valid(hdmi, mode);
--}
--
--static void inno_hdmi_connector_destroy(struct drm_connector *connector)
--{
--	drm_connector_unregister(connector);
--	drm_connector_cleanup(connector);
--}
--
--static void
--inno_hdmi_connector_destroy_state(struct drm_connector *connector,
--				  struct drm_connector_state *state)
--{
--	struct inno_hdmi_connector_state *inno_conn_state =
--						to_inno_hdmi_conn_state(state);
--
--	__drm_atomic_helper_connector_destroy_state(&inno_conn_state->base);
--	kfree(inno_conn_state);
--}
--
--static void inno_hdmi_connector_reset(struct drm_connector *connector)
--{
--	struct inno_hdmi_connector_state *inno_conn_state;
--
--	if (connector->state) {
--		inno_hdmi_connector_destroy_state(connector, connector->state);
--		connector->state = NULL;
--	}
--
--	inno_conn_state = kzalloc(sizeof(*inno_conn_state), GFP_KERNEL);
--	if (!inno_conn_state)
--		return;
--
--	__drm_atomic_helper_connector_reset(connector, &inno_conn_state->base);
--
--	inno_conn_state->colorimetry = HDMI_COLORIMETRY_ITU_709;
--	inno_conn_state->enc_out_format = HDMI_COLORSPACE_RGB;
--	inno_conn_state->rgb_limited_range = false;
--}
--
--static struct drm_connector_state *
--inno_hdmi_connector_duplicate_state(struct drm_connector *connector)
--{
--	struct inno_hdmi_connector_state *inno_conn_state;
--
--	if (WARN_ON(!connector->state))
--		return NULL;
--
--	inno_conn_state = kmemdup(to_inno_hdmi_conn_state(connector->state),
--				  sizeof(*inno_conn_state), GFP_KERNEL);
--
--	if (!inno_conn_state)
--		return NULL;
--
--	__drm_atomic_helper_connector_duplicate_state(connector,
--						      &inno_conn_state->base);
--
--	return &inno_conn_state->base;
--}
--
--static const struct drm_connector_funcs inno_hdmi_connector_funcs = {
--	.fill_modes = drm_helper_probe_single_connector_modes,
--	.detect = inno_hdmi_connector_detect,
--	.destroy = inno_hdmi_connector_destroy,
--	.reset = inno_hdmi_connector_reset,
--	.atomic_duplicate_state = inno_hdmi_connector_duplicate_state,
--	.atomic_destroy_state = inno_hdmi_connector_destroy_state,
--};
--
--static struct drm_connector_helper_funcs inno_hdmi_connector_helper_funcs = {
--	.get_modes = inno_hdmi_connector_get_modes,
--	.mode_valid = inno_hdmi_connector_mode_valid,
--};
--
--static int inno_hdmi_register(struct drm_device *drm, struct inno_hdmi *hdmi)
--{
--	struct drm_encoder *encoder = &hdmi->encoder.encoder;
--	struct device *dev = hdmi->dev;
--
--	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
--
--	/*
--	 * If we failed to find the CRTC(s) which this encoder is
--	 * supposed to be connected to, it's because the CRTC has
--	 * not been registered yet.  Defer probing, and hope that
--	 * the required CRTC is added later.
--	 */
--	if (encoder->possible_crtcs == 0)
--		return -EPROBE_DEFER;
--
--	drm_encoder_helper_add(encoder, &inno_hdmi_encoder_helper_funcs);
--	drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_TMDS);
--
--	hdmi->connector.polled = DRM_CONNECTOR_POLL_HPD;
--
--	drm_connector_helper_add(&hdmi->connector,
--				 &inno_hdmi_connector_helper_funcs);
--	drm_connector_init_with_ddc(drm, &hdmi->connector,
--				    &inno_hdmi_connector_funcs,
--				    DRM_MODE_CONNECTOR_HDMIA,
--				    hdmi->ddc);
--
--	drm_connector_attach_encoder(&hdmi->connector, encoder);
--
--	return 0;
--}
--
--static irqreturn_t inno_hdmi_i2c_irq(struct inno_hdmi *hdmi)
--{
--	struct inno_hdmi_i2c *i2c = hdmi->i2c;
--	u8 stat;
--
--	stat = hdmi_readb(hdmi, HDMI_INTERRUPT_STATUS1);
--	if (!(stat & m_INT_EDID_READY))
--		return IRQ_NONE;
--
--	/* Clear HDMI EDID interrupt flag */
--	hdmi_writeb(hdmi, HDMI_INTERRUPT_STATUS1, m_INT_EDID_READY);
--
--	complete(&i2c->cmp);
--
--	return IRQ_HANDLED;
--}
--
--static irqreturn_t inno_hdmi_hardirq(int irq, void *dev_id)
--{
--	struct inno_hdmi *hdmi = dev_id;
--	irqreturn_t ret = IRQ_NONE;
--	u8 interrupt;
--
--	if (hdmi->i2c)
--		ret = inno_hdmi_i2c_irq(hdmi);
--
--	interrupt = hdmi_readb(hdmi, HDMI_STATUS);
--	if (interrupt & m_INT_HOTPLUG) {
--		hdmi_modb(hdmi, HDMI_STATUS, m_INT_HOTPLUG, m_INT_HOTPLUG);
--		ret = IRQ_WAKE_THREAD;
--	}
--
--	return ret;
--}
--
--static irqreturn_t inno_hdmi_irq(int irq, void *dev_id)
--{
--	struct inno_hdmi *hdmi = dev_id;
--
--	drm_helper_hpd_irq_event(hdmi->connector.dev);
--
--	return IRQ_HANDLED;
--}
--
--static int inno_hdmi_i2c_read(struct inno_hdmi *hdmi, struct i2c_msg *msgs)
--{
--	int length = msgs->len;
--	u8 *buf = msgs->buf;
--	int ret;
--
--	ret = wait_for_completion_timeout(&hdmi->i2c->cmp, HZ / 10);
--	if (!ret)
--		return -EAGAIN;
--
--	while (length--)
--		*buf++ = hdmi_readb(hdmi, HDMI_EDID_FIFO_ADDR);
--
--	return 0;
--}
--
--static int inno_hdmi_i2c_write(struct inno_hdmi *hdmi, struct i2c_msg *msgs)
--{
--	/*
--	 * The DDC module only support read EDID message, so
--	 * we assume that each word write to this i2c adapter
--	 * should be the offset of EDID word address.
--	 */
--	if ((msgs->len != 1) ||
--	    ((msgs->addr != DDC_ADDR) && (msgs->addr != DDC_SEGMENT_ADDR)))
--		return -EINVAL;
--
--	reinit_completion(&hdmi->i2c->cmp);
--
--	if (msgs->addr == DDC_SEGMENT_ADDR)
--		hdmi->i2c->segment_addr = msgs->buf[0];
--	if (msgs->addr == DDC_ADDR)
--		hdmi->i2c->ddc_addr = msgs->buf[0];
--
--	/* Set edid fifo first addr */
--	hdmi_writeb(hdmi, HDMI_EDID_FIFO_OFFSET, 0x00);
--
--	/* Set edid word address 0x00/0x80 */
--	hdmi_writeb(hdmi, HDMI_EDID_WORD_ADDR, hdmi->i2c->ddc_addr);
--
--	/* Set edid segment pointer */
--	hdmi_writeb(hdmi, HDMI_EDID_SEGMENT_POINTER, hdmi->i2c->segment_addr);
--
--	return 0;
--}
--
--static int inno_hdmi_i2c_xfer(struct i2c_adapter *adap,
--			      struct i2c_msg *msgs, int num)
--{
--	struct inno_hdmi *hdmi = i2c_get_adapdata(adap);
--	struct inno_hdmi_i2c *i2c = hdmi->i2c;
--	int i, ret = 0;
--
--	mutex_lock(&i2c->lock);
--
--	/* Clear the EDID interrupt flag and unmute the interrupt */
--	hdmi_writeb(hdmi, HDMI_INTERRUPT_MASK1, m_INT_EDID_READY);
--	hdmi_writeb(hdmi, HDMI_INTERRUPT_STATUS1, m_INT_EDID_READY);
--
--	for (i = 0; i < num; i++) {
--		DRM_DEV_DEBUG(hdmi->dev,
--			      "xfer: num: %d/%d, len: %d, flags: %#x\n",
--			      i + 1, num, msgs[i].len, msgs[i].flags);
--
--		if (msgs[i].flags & I2C_M_RD)
--			ret = inno_hdmi_i2c_read(hdmi, &msgs[i]);
--		else
--			ret = inno_hdmi_i2c_write(hdmi, &msgs[i]);
--
--		if (ret < 0)
--			break;
--	}
--
--	if (!ret)
--		ret = num;
--
--	/* Mute HDMI EDID interrupt */
--	hdmi_writeb(hdmi, HDMI_INTERRUPT_MASK1, 0);
--
--	mutex_unlock(&i2c->lock);
--
--	return ret;
--}
--
--static u32 inno_hdmi_i2c_func(struct i2c_adapter *adapter)
--{
--	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
--}
--
--static const struct i2c_algorithm inno_hdmi_algorithm = {
--	.master_xfer	= inno_hdmi_i2c_xfer,
--	.functionality	= inno_hdmi_i2c_func,
--};
--
--static struct i2c_adapter *inno_hdmi_i2c_adapter(struct inno_hdmi *hdmi)
--{
--	struct i2c_adapter *adap;
--	struct inno_hdmi_i2c *i2c;
--	int ret;
--
--	i2c = devm_kzalloc(hdmi->dev, sizeof(*i2c), GFP_KERNEL);
--	if (!i2c)
--		return ERR_PTR(-ENOMEM);
--
--	mutex_init(&i2c->lock);
--	init_completion(&i2c->cmp);
--
--	adap = &i2c->adap;
--	adap->owner = THIS_MODULE;
--	adap->dev.parent = hdmi->dev;
--	adap->dev.of_node = hdmi->dev->of_node;
--	adap->algo = &inno_hdmi_algorithm;
--	strscpy(adap->name, "Inno HDMI", sizeof(adap->name));
--	i2c_set_adapdata(adap, hdmi);
--
--	ret = i2c_add_adapter(adap);
--	if (ret) {
--		dev_warn(hdmi->dev, "cannot add %s I2C adapter\n", adap->name);
--		devm_kfree(hdmi->dev, i2c);
--		return ERR_PTR(ret);
--	}
--
--	hdmi->i2c = i2c;
--
--	DRM_DEV_INFO(hdmi->dev, "registered %s I2C bus driver\n", adap->name);
--
--	return adap;
--}
--
--static int inno_hdmi_bind(struct device *dev, struct device *master,
--				 void *data)
--{
--	struct platform_device *pdev = to_platform_device(dev);
--	struct drm_device *drm = data;
--	struct inno_hdmi *hdmi;
--	const struct inno_hdmi_variant *variant;
--	int irq;
--	int ret;
--
--	hdmi = devm_kzalloc(dev, sizeof(*hdmi), GFP_KERNEL);
--	if (!hdmi)
--		return -ENOMEM;
--
--	hdmi->dev = dev;
--
--	variant = of_device_get_match_data(hdmi->dev);
--	if (!variant)
--		return -EINVAL;
--
--	hdmi->variant = variant;
--
--	hdmi->regs = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(hdmi->regs))
--		return PTR_ERR(hdmi->regs);
--
--	hdmi->pclk = devm_clk_get(hdmi->dev, "pclk");
--	if (IS_ERR(hdmi->pclk)) {
--		DRM_DEV_ERROR(hdmi->dev, "Unable to get HDMI pclk clk\n");
--		return PTR_ERR(hdmi->pclk);
--	}
--
--	ret = clk_prepare_enable(hdmi->pclk);
--	if (ret) {
--		DRM_DEV_ERROR(hdmi->dev,
--			      "Cannot enable HDMI pclk clock: %d\n", ret);
--		return ret;
--	}
--
--	hdmi->refclk = devm_clk_get_optional(hdmi->dev, "ref");
--	if (IS_ERR(hdmi->refclk)) {
--		DRM_DEV_ERROR(hdmi->dev, "Unable to get HDMI reference clock\n");
--		ret = PTR_ERR(hdmi->refclk);
--		goto err_disable_pclk;
--	}
--
--	ret = clk_prepare_enable(hdmi->refclk);
--	if (ret) {
--		DRM_DEV_ERROR(hdmi->dev,
--			      "Cannot enable HDMI reference clock: %d\n", ret);
--		goto err_disable_pclk;
--	}
--
--	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		ret = irq;
--		goto err_disable_clk;
--	}
--
--	inno_hdmi_reset(hdmi);
--
--	hdmi->ddc = inno_hdmi_i2c_adapter(hdmi);
--	if (IS_ERR(hdmi->ddc)) {
--		ret = PTR_ERR(hdmi->ddc);
--		hdmi->ddc = NULL;
--		goto err_disable_clk;
--	}
--
--	/*
--	 * When the controller isn't configured to an accurate
--	 * video timing and there is no reference clock available,
--	 * then the TMDS clock source would be switched to PCLK_HDMI,
--	 * so we need to init the TMDS rate to PCLK rate, and
--	 * reconfigure the DDC clock.
--	 */
--	if (hdmi->refclk)
--		inno_hdmi_i2c_init(hdmi, clk_get_rate(hdmi->refclk));
--	else
--		inno_hdmi_i2c_init(hdmi, clk_get_rate(hdmi->pclk));
--
--	ret = inno_hdmi_register(drm, hdmi);
--	if (ret)
--		goto err_put_adapter;
--
--	dev_set_drvdata(dev, hdmi);
--
--	/* Unmute hotplug interrupt */
--	hdmi_modb(hdmi, HDMI_STATUS, m_MASK_INT_HOTPLUG, v_MASK_INT_HOTPLUG(1));
--
--	ret = devm_request_threaded_irq(dev, irq, inno_hdmi_hardirq,
--					inno_hdmi_irq, IRQF_SHARED,
--					dev_name(dev), hdmi);
--	if (ret < 0)
--		goto err_cleanup_hdmi;
--
--	return 0;
--err_cleanup_hdmi:
--	hdmi->connector.funcs->destroy(&hdmi->connector);
--	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
--err_put_adapter:
--	i2c_put_adapter(hdmi->ddc);
--err_disable_clk:
--	clk_disable_unprepare(hdmi->refclk);
--err_disable_pclk:
--	clk_disable_unprepare(hdmi->pclk);
--	return ret;
--}
--
--static void inno_hdmi_unbind(struct device *dev, struct device *master,
--			     void *data)
--{
--	struct inno_hdmi *hdmi = dev_get_drvdata(dev);
--
--	hdmi->connector.funcs->destroy(&hdmi->connector);
--	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
--
--	i2c_put_adapter(hdmi->ddc);
--	clk_disable_unprepare(hdmi->refclk);
--	clk_disable_unprepare(hdmi->pclk);
--}
--
--static const struct component_ops inno_hdmi_ops = {
--	.bind	= inno_hdmi_bind,
--	.unbind	= inno_hdmi_unbind,
--};
--
--static int inno_hdmi_probe(struct platform_device *pdev)
--{
--	return component_add(&pdev->dev, &inno_hdmi_ops);
--}
--
--static void inno_hdmi_remove(struct platform_device *pdev)
--{
--	component_del(&pdev->dev, &inno_hdmi_ops);
--}
--
--static const struct inno_hdmi_variant rk3036_inno_hdmi_variant = {
--	.phy_configs = rk3036_hdmi_phy_configs,
--	.default_phy_config = &rk3036_hdmi_phy_configs[1],
--};
--
--static const struct inno_hdmi_variant rk3128_inno_hdmi_variant = {
--	.phy_configs = rk3128_hdmi_phy_configs,
--	.default_phy_config = &rk3128_hdmi_phy_configs[1],
--};
--
--static const struct of_device_id inno_hdmi_dt_ids[] = {
--	{ .compatible = "rockchip,rk3036-inno-hdmi",
--	  .data = &rk3036_inno_hdmi_variant,
--	},
--	{ .compatible = "rockchip,rk3128-inno-hdmi",
--	  .data = &rk3128_inno_hdmi_variant,
--	},
--	{},
--};
--MODULE_DEVICE_TABLE(of, inno_hdmi_dt_ids);
--
--struct platform_driver inno_hdmi_driver = {
--	.probe  = inno_hdmi_probe,
--	.remove_new = inno_hdmi_remove,
--	.driver = {
--		.name = "innohdmi-rockchip",
--		.of_match_table = inno_hdmi_dt_ids,
--	},
--};
+ 	ret = meson_pcie_reset(mp);
+ 	if (ret) {
+-		dev_err(dev, "reset failed, %d\n", ret);
++		dev_err(dev, "reset failed: %pe\n", ERR_PTR(ret));
+ 		goto err_phy;
+ 	}
+ 
+ 	ret = meson_pcie_probe_clocks(mp);
+ 	if (ret) {
+-		dev_err(dev, "init clock resources failed, %d\n", ret);
++		dev_err(dev, "init clock resources failed: %pe\n", ERR_PTR(ret));
+ 		goto err_phy;
+ 	}
+ 
+@@ -460,7 +460,7 @@ static int meson_pcie_probe(struct platform_device *pdev)
+ 
+ 	ret = dw_pcie_host_init(&pci->pp);
+ 	if (ret < 0) {
+-		dev_err(dev, "Add PCIe port failed, %d\n", ret);
++		dev_err(dev, "Add PCIe port failed: %pe\n", ERR_PTR(ret));
+ 		goto err_phy;
+ 	}
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
+index b5c599ccaacf..581ed3e44d3b 100644
+--- a/drivers/pci/controller/dwc/pcie-armada8k.c
++++ b/drivers/pci/controller/dwc/pcie-armada8k.c
+@@ -134,7 +134,7 @@ static int armada8k_pcie_setup_phys(struct armada8k_pcie *pcie)
+ 
+ 	ret = armada8k_pcie_enable_phys(pcie);
+ 	if (ret)
+-		dev_err(dev, "Failed to initialize PHY(s) (%d)\n", ret);
++		dev_err(dev, "Failed to initialize PHY(s): %pe\n", ERR_PTR(ret));
+ 
+ 	return ret;
+ }
+@@ -251,7 +251,7 @@ static int armada8k_add_pcie_port(struct armada8k_pcie *pcie,
+ 
+ 	ret = dw_pcie_host_init(pp);
+ 	if (ret) {
+-		dev_err(dev, "failed to initialize host: %d\n", ret);
++		dev_err(dev, "failed to initialize host: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
+index 7a11c618b9d9..4dde61f79024 100644
+--- a/drivers/pci/controller/dwc/pcie-histb.c
++++ b/drivers/pci/controller/dwc/pcie-histb.c
+@@ -230,7 +230,7 @@ static int histb_pcie_host_enable(struct dw_pcie_rp *pp)
+ 	if (hipcie->vpcie) {
+ 		ret = regulator_enable(hipcie->vpcie);
+ 		if (ret) {
+-			dev_err(dev, "failed to enable regulator: %d\n", ret);
++			dev_err(dev, "failed to enable regulator: %pe\n", ERR_PTR(ret));
+ 			return ret;
+ 		}
+ 	}
+@@ -337,14 +337,14 @@ static int histb_pcie_probe(struct platform_device *pdev)
+ 						     GPIOD_OUT_HIGH);
+ 	ret = PTR_ERR_OR_ZERO(hipcie->reset_gpio);
+ 	if (ret) {
+-		dev_err(dev, "unable to request reset gpio: %d\n", ret);
++		dev_err(dev, "unable to request reset gpio: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+ 	ret = gpiod_set_consumer_name(hipcie->reset_gpio,
+ 				      "PCIe device power control");
+ 	if (ret) {
+-		dev_err(dev, "unable to set reset gpio name: %d\n", ret);
++		dev_err(dev, "unable to set reset gpio name: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
+index acbe4f6d3291..3a94feed4fbf 100644
+--- a/drivers/pci/controller/dwc/pcie-intel-gw.c
++++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+@@ -155,7 +155,7 @@ static int intel_pcie_ep_rst_init(struct intel_pcie *pcie)
+ 	if (IS_ERR(pcie->reset_gpio)) {
+ 		ret = PTR_ERR(pcie->reset_gpio);
+ 		if (ret != -EPROBE_DEFER)
+-			dev_err(dev, "Failed to request PCIe GPIO: %d\n", ret);
++			dev_err(dev, "Failed to request PCIe GPIO: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+@@ -214,7 +214,7 @@ static int intel_pcie_get_resources(struct platform_device *pdev)
+ 	if (IS_ERR(pcie->core_clk)) {
+ 		ret = PTR_ERR(pcie->core_clk);
+ 		if (ret != -EPROBE_DEFER)
+-			dev_err(dev, "Failed to get clks: %d\n", ret);
++			dev_err(dev, "Failed to get clks: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+@@ -222,7 +222,7 @@ static int intel_pcie_get_resources(struct platform_device *pdev)
+ 	if (IS_ERR(pcie->core_rst)) {
+ 		ret = PTR_ERR(pcie->core_rst);
+ 		if (ret != -EPROBE_DEFER)
+-			dev_err(dev, "Failed to get resets: %d\n", ret);
++			dev_err(dev, "Failed to get resets: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+@@ -239,7 +239,7 @@ static int intel_pcie_get_resources(struct platform_device *pdev)
+ 	if (IS_ERR(pcie->phy)) {
+ 		ret = PTR_ERR(pcie->phy);
+ 		if (ret != -EPROBE_DEFER)
+-			dev_err(dev, "Couldn't get pcie-phy: %d\n", ret);
++			dev_err(dev, "Couldn't get pcie-phy: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+@@ -295,7 +295,7 @@ static int intel_pcie_host_setup(struct intel_pcie *pcie)
+ 
+ 	ret = clk_prepare_enable(pcie->core_clk);
+ 	if (ret) {
+-		dev_err(pcie->pci.dev, "Core clock enable failed: %d\n", ret);
++		dev_err(pcie->pci.dev, "Core clock enable failed: %pe\n", ERR_PTR(ret));
+ 		goto clk_err;
+ 	}
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-keembay.c b/drivers/pci/controller/dwc/pcie-keembay.c
+index 98bbc83182b4..6b406d2e6e5d 100644
+--- a/drivers/pci/controller/dwc/pcie-keembay.c
++++ b/drivers/pci/controller/dwc/pcie-keembay.c
+@@ -377,7 +377,7 @@ static int keembay_pcie_add_pcie_port(struct keembay_pcie *pcie,
+ 	ret = dw_pcie_host_init(pp);
+ 	if (ret) {
+ 		keembay_ep_reset_assert(pcie);
+-		dev_err(dev, "Failed to initialize host: %d\n", ret);
++		dev_err(dev, "Failed to initialize host: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+index d5523f302102..cb0ab71b2fc7 100644
+--- a/drivers/pci/controller/dwc/pcie-kirin.c
++++ b/drivers/pci/controller/dwc/pcie-kirin.c
+@@ -421,7 +421,7 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+ 
+ 			ret = of_pci_get_devfn(child);
+ 			if (ret < 0) {
+-				dev_err(dev, "failed to parse devfn: %d\n", ret);
++				dev_err(dev, "failed to parse devfn: %pe\n", ERR_PTR(ret));
+ 				goto put_node;
+ 			}
+ 
+@@ -555,8 +555,8 @@ static int kirin_pcie_add_bus(struct pci_bus *bus)
+ 	for (i = 0; i < kirin_pcie->num_slots; i++) {
+ 		ret = gpio_direction_output(kirin_pcie->gpio_id_reset[i], 1);
+ 		if (ret) {
+-			dev_err(pci->dev, "PERST# %s error: %d\n",
+-				kirin_pcie->reset_names[i], ret);
++			dev_err(pci->dev, "PERST# %s error: %pe\n",
++				kirin_pcie->reset_names[i], ERR_PTR(ret));
+ 		}
+ 	}
+ 	usleep_range(PERST_2_ACCESS_MIN, PERST_2_ACCESS_MAX);
+diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+index 2fb8c15e7a91..be31a60bc693 100644
+--- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
++++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+@@ -296,8 +296,8 @@ static void qcom_pcie_ep_icc_update(struct qcom_pcie_ep *pcie_ep)
+ 
+ 	ret = icc_set_bw(pcie_ep->icc_mem, 0, width * QCOM_PCIE_LINK_SPEED_TO_BW(speed));
+ 	if (ret)
+-		dev_err(pci->dev, "failed to set interconnect bandwidth: %d\n",
+-			ret);
++		dev_err(pci->dev, "failed to set interconnect bandwidth: %pe\n",
++			ERR_PTR(ret));
+ }
+ 
+ static int qcom_pcie_enable_resources(struct qcom_pcie_ep *pcie_ep)
+@@ -334,8 +334,8 @@ static int qcom_pcie_enable_resources(struct qcom_pcie_ep *pcie_ep)
+ 	 */
+ 	ret = icc_set_bw(pcie_ep->icc_mem, 0, QCOM_PCIE_LINK_SPEED_TO_BW(1));
+ 	if (ret) {
+-		dev_err(pci->dev, "failed to set interconnect bandwidth: %d\n",
+-			ret);
++		dev_err(pci->dev, "failed to set interconnect bandwidth: %pe\n",
++			ERR_PTR(ret));
+ 		goto err_phy_off;
+ 	}
+ 
+@@ -368,7 +368,7 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
+ 
+ 	ret = qcom_pcie_enable_resources(pcie_ep);
+ 	if (ret) {
+-		dev_err(dev, "Failed to enable resources: %d\n", ret);
++		dev_err(dev, "Failed to enable resources: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+@@ -465,7 +465,7 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
+ 
+ 	ret = dw_pcie_ep_init_registers(&pcie_ep->pci.ep);
+ 	if (ret) {
+-		dev_err(dev, "Failed to complete initialization: %d\n", ret);
++		dev_err(dev, "Failed to complete initialization: %pe\n", ERR_PTR(ret));
+ 		goto err_disable_resources;
+ 	}
+ 
+@@ -591,7 +591,7 @@ static int qcom_pcie_ep_get_resources(struct platform_device *pdev,
+ 
+ 	ret = qcom_pcie_ep_get_io_resources(pdev, pcie_ep);
+ 	if (ret) {
+-		dev_err(dev, "Failed to get io resources %d\n", ret);
++		dev_err(dev, "Failed to get io resources: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+@@ -824,13 +824,13 @@ static int qcom_pcie_ep_probe(struct platform_device *pdev)
+ 
+ 	ret = qcom_pcie_enable_resources(pcie_ep);
+ 	if (ret) {
+-		dev_err(dev, "Failed to enable resources: %d\n", ret);
++		dev_err(dev, "Failed to enable resources: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+ 	ret = dw_pcie_ep_init(&pcie_ep->pci.ep);
+ 	if (ret) {
+-		dev_err(dev, "Failed to initialize endpoint: %d\n", ret);
++		dev_err(dev, "Failed to initialize endpoint: %pe\n", ERR_PTR(ret));
+ 		goto err_disable_resources;
+ 	}
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+index 14772edcf0d3..9aa78672f64d 100644
+--- a/drivers/pci/controller/dwc/pcie-qcom.c
++++ b/drivers/pci/controller/dwc/pcie-qcom.c
+@@ -931,7 +931,7 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
+ 
+ 	ret = reset_control_assert(res->rst);
+ 	if (ret) {
+-		dev_err(dev, "reset assert failed (%d)\n", ret);
++		dev_err(dev, "reset assert failed: %pe\n", ERR_PTR(ret));
+ 		goto err_disable_clocks;
+ 	}
+ 
+@@ -939,7 +939,7 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
+ 
+ 	ret = reset_control_deassert(res->rst);
+ 	if (ret) {
+-		dev_err(dev, "reset deassert failed (%d)\n", ret);
++		dev_err(dev, "reset deassert failed: %pe\n", ERR_PTR(ret));
+ 		goto err_disable_clocks;
+ 	}
+ 
+@@ -1135,7 +1135,7 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+ 
+ 	ret = reset_control_assert(res->rst);
+ 	if (ret) {
+-		dev_err(dev, "reset assert failed (%d)\n", ret);
++		dev_err(dev, "reset assert failed: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+@@ -1147,7 +1147,7 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+ 
+ 	ret = reset_control_deassert(res->rst);
+ 	if (ret) {
+-		dev_err(dev, "reset deassert failed (%d)\n", ret);
++		dev_err(dev, "reset deassert failed: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+@@ -1418,8 +1418,8 @@ static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
+ 	 */
+ 	ret = icc_set_bw(pcie->icc_mem, 0, QCOM_PCIE_LINK_SPEED_TO_BW(1));
+ 	if (ret) {
+-		dev_err(pci->dev, "failed to set interconnect bandwidth: %d\n",
+-			ret);
++		dev_err(pci->dev, "failed to set interconnect bandwidth: %pe\n",
++			ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+@@ -1448,8 +1448,8 @@ static void qcom_pcie_icc_update(struct qcom_pcie *pcie)
+ 
+ 	ret = icc_set_bw(pcie->icc_mem, 0, width * QCOM_PCIE_LINK_SPEED_TO_BW(speed));
+ 	if (ret) {
+-		dev_err(pci->dev, "failed to set interconnect bandwidth: %d\n",
+-			ret);
++		dev_err(pci->dev, "failed to set interconnect bandwidth: %pe\n",
++			ERR_PTR(ret));
+ 	}
+ }
+ 
+@@ -1610,7 +1610,7 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
+ 	 */
+ 	ret = icc_set_bw(pcie->icc_mem, 0, kBps_to_icc(1));
+ 	if (ret) {
+-		dev_err(dev, "Failed to set interconnect bandwidth: %d\n", ret);
++		dev_err(dev, "Failed to set interconnect bandwidth: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 93f5433c5c55..3c93bb11e068 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1114,38 +1114,38 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+ 
+ 	ret = of_property_read_u32(np, "nvidia,aspm-cmrt-us", &pcie->aspm_cmrt);
+ 	if (ret < 0) {
+-		dev_info(pcie->dev, "Failed to read ASPM T_cmrt: %d\n", ret);
++		dev_info(pcie->dev, "Failed to read ASPM T_cmrt: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+ 	ret = of_property_read_u32(np, "nvidia,aspm-pwr-on-t-us",
+ 				   &pcie->aspm_pwr_on_t);
+ 	if (ret < 0)
+-		dev_info(pcie->dev, "Failed to read ASPM Power On time: %d\n",
+-			 ret);
++		dev_info(pcie->dev, "Failed to read ASPM Power On time: %pe\n",
++			 ERR_PTR(ret));
+ 
+ 	ret = of_property_read_u32(np, "nvidia,aspm-l0s-entrance-latency-us",
+ 				   &pcie->aspm_l0s_enter_lat);
+ 	if (ret < 0)
+ 		dev_info(pcie->dev,
+-			 "Failed to read ASPM L0s Entrance latency: %d\n", ret);
++			 "Failed to read ASPM L0s Entrance latency: %pe\n", ERR_PTR(ret));
+ 
+ 	ret = of_property_read_u32(np, "num-lanes", &pcie->num_lanes);
+ 	if (ret < 0) {
+-		dev_err(pcie->dev, "Failed to read num-lanes: %d\n", ret);
++		dev_err(pcie->dev, "Failed to read num-lanes: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+ 	ret = of_property_read_u32_index(np, "nvidia,bpmp", 1, &pcie->cid);
+ 	if (ret) {
+-		dev_err(pcie->dev, "Failed to read Controller-ID: %d\n", ret);
++		dev_err(pcie->dev, "Failed to read Controller-ID: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+ 	ret = of_property_count_strings(np, "phy-names");
+ 	if (ret < 0) {
+-		dev_err(pcie->dev, "Failed to find PHY entries: %d\n",
+-			ret);
++		dev_err(pcie->dev, "Failed to find PHY entries: %pe\n",
++			ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 	pcie->phy_count = ret;
+@@ -1186,8 +1186,8 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+ 			level = KERN_DEBUG;
+ 
+ 		dev_printk(level, pcie->dev,
+-			   dev_fmt("Failed to get PERST GPIO: %d\n"),
+-			   err);
++			   dev_fmt("Failed to get PERST GPIO: %pe\n"),
++			   ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+@@ -1202,8 +1202,8 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+ 			level = KERN_DEBUG;
+ 
+ 		dev_printk(level, pcie->dev,
+-			   dev_fmt("Failed to get REFCLK select GPIOs: %d\n"),
+-			   err);
++			   dev_fmt("Failed to get REFCLK select GPIOs: %pe\n"),
++			   ERR_PTR(err));
+ 		pcie->pex_refclk_sel_gpiod = NULL;
+ 	}
+ 
+@@ -1336,7 +1336,7 @@ static int tegra_pcie_enable_slot_regulators(struct tegra_pcie_dw *pcie)
+ 		ret = regulator_enable(pcie->slot_ctl_3v3);
+ 		if (ret < 0) {
+ 			dev_err(pcie->dev,
+-				"Failed to enable 3.3V slot supply: %d\n", ret);
++				"Failed to enable 3.3V slot supply: %pe\n", ERR_PTR(ret));
+ 			return ret;
+ 		}
+ 	}
+@@ -1345,7 +1345,7 @@ static int tegra_pcie_enable_slot_regulators(struct tegra_pcie_dw *pcie)
+ 		ret = regulator_enable(pcie->slot_ctl_12v);
+ 		if (ret < 0) {
+ 			dev_err(pcie->dev,
+-				"Failed to enable 12V slot supply: %d\n", ret);
++				"Failed to enable 12V slot supply: %pe\n", ERR_PTR(ret));
+ 			goto fail_12v_enable;
+ 		}
+ 	}
+@@ -1383,14 +1383,14 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+ 	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, true);
+ 	if (ret) {
+ 		dev_err(pcie->dev,
+-			"Failed to enable controller %u: %d\n", pcie->cid, ret);
++			"Failed to enable controller %u: %pe\n", pcie->cid, ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+ 	if (pcie->enable_ext_refclk) {
+ 		ret = tegra_pcie_bpmp_set_pll_state(pcie, true);
+ 		if (ret) {
+-			dev_err(pcie->dev, "Failed to init UPHY: %d\n", ret);
++			dev_err(pcie->dev, "Failed to init UPHY: %pe\n", ERR_PTR(ret));
+ 			goto fail_pll_init;
+ 		}
+ 	}
+@@ -1401,20 +1401,20 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+ 
+ 	ret = regulator_enable(pcie->pex_ctl_supply);
+ 	if (ret < 0) {
+-		dev_err(pcie->dev, "Failed to enable regulator: %d\n", ret);
++		dev_err(pcie->dev, "Failed to enable regulator: %pe\n", ERR_PTR(ret));
+ 		goto fail_reg_en;
+ 	}
+ 
+ 	ret = clk_prepare_enable(pcie->core_clk);
+ 	if (ret) {
+-		dev_err(pcie->dev, "Failed to enable core clock: %d\n", ret);
++		dev_err(pcie->dev, "Failed to enable core clock: %pe\n", ERR_PTR(ret));
+ 		goto fail_core_clk;
+ 	}
+ 
+ 	ret = reset_control_deassert(pcie->core_apb_rst);
+ 	if (ret) {
+-		dev_err(pcie->dev, "Failed to deassert core APB reset: %d\n",
+-			ret);
++		dev_err(pcie->dev, "Failed to deassert core APB reset: %pe\n",
++			ERR_PTR(ret));
+ 		goto fail_core_apb_rst;
+ 	}
+ 
+@@ -1431,7 +1431,7 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+ 
+ 	ret = tegra_pcie_enable_phy(pcie);
+ 	if (ret) {
+-		dev_err(pcie->dev, "Failed to enable PHY: %d\n", ret);
++		dev_err(pcie->dev, "Failed to enable PHY: %pe\n", ERR_PTR(ret));
+ 		goto fail_phy;
+ 	}
+ 
+@@ -1503,32 +1503,32 @@ static void tegra_pcie_unconfig_controller(struct tegra_pcie_dw *pcie)
+ 
+ 	ret = reset_control_assert(pcie->core_rst);
+ 	if (ret)
+-		dev_err(pcie->dev, "Failed to assert \"core\" reset: %d\n", ret);
++		dev_err(pcie->dev, "Failed to assert \"core\" reset: %pe\n", ERR_PTR(ret));
+ 
+ 	tegra_pcie_disable_phy(pcie);
+ 
+ 	ret = reset_control_assert(pcie->core_apb_rst);
+ 	if (ret)
+-		dev_err(pcie->dev, "Failed to assert APB reset: %d\n", ret);
++		dev_err(pcie->dev, "Failed to assert APB reset: %pe\n", ERR_PTR(ret));
+ 
+ 	clk_disable_unprepare(pcie->core_clk);
+ 
+ 	ret = regulator_disable(pcie->pex_ctl_supply);
+ 	if (ret)
+-		dev_err(pcie->dev, "Failed to disable regulator: %d\n", ret);
++		dev_err(pcie->dev, "Failed to disable regulator: %pe\n", ERR_PTR(ret));
+ 
+ 	tegra_pcie_disable_slot_regulators(pcie);
+ 
+ 	if (pcie->enable_ext_refclk) {
+ 		ret = tegra_pcie_bpmp_set_pll_state(pcie, false);
+ 		if (ret)
+-			dev_err(pcie->dev, "Failed to deinit UPHY: %d\n", ret);
++			dev_err(pcie->dev, "Failed to deinit UPHY: %pe\n", ERR_PTR(ret));
+ 	}
+ 
+ 	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
+ 	if (ret)
+-		dev_err(pcie->dev, "Failed to disable controller %d: %d\n",
+-			pcie->cid, ret);
++		dev_err(pcie->dev, "Failed to disable controller %d: %pe\n",
++			pcie->cid, ERR_PTR(ret));
+ }
+ 
+ static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
+@@ -1545,7 +1545,7 @@ static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
+ 
+ 	ret = dw_pcie_host_init(pp);
+ 	if (ret < 0) {
+-		dev_err(pcie->dev, "Failed to add PCIe port: %d\n", ret);
++		dev_err(pcie->dev, "Failed to add PCIe port: %pe\n", ERR_PTR(ret));
+ 		goto fail_host_init;
+ 	}
+ 
+@@ -1652,20 +1652,20 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+ 
+ 	ret = pm_runtime_get_sync(dev);
+ 	if (ret < 0) {
+-		dev_err(dev, "Failed to get runtime sync for PCIe dev: %d\n",
+-			ret);
++		dev_err(dev, "Failed to get runtime sync for PCIe dev: %pe\n",
++			ERR_PTR(ret));
+ 		goto fail_pm_get_sync;
+ 	}
+ 
+ 	ret = pinctrl_pm_select_default_state(dev);
+ 	if (ret < 0) {
+-		dev_err(dev, "Failed to configure sideband pins: %d\n", ret);
++		dev_err(dev, "Failed to configure sideband pins: %pe\n", ERR_PTR(ret));
+ 		goto fail_pm_get_sync;
+ 	}
+ 
+ 	ret = tegra_pcie_init_controller(pcie);
+ 	if (ret < 0) {
+-		dev_err(dev, "Failed to initialize controller: %d\n", ret);
++		dev_err(dev, "Failed to initialize controller: %pe\n", ERR_PTR(ret));
+ 		goto fail_pm_get_sync;
+ 	}
+ 
+@@ -1713,7 +1713,7 @@ static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
+ 				 LTSSM_STATE_PRE_DETECT,
+ 				 1, LTSSM_TIMEOUT);
+ 	if (ret)
+-		dev_err(pcie->dev, "Failed to go Detect state: %d\n", ret);
++		dev_err(pcie->dev, "Failed to go Detect state: %pe\n", ERR_PTR(ret));
+ 
+ 	dw_pcie_ep_cleanup(&pcie->pci.ep);
+ 
+@@ -1730,13 +1730,13 @@ static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
+ 	if (pcie->enable_ext_refclk) {
+ 		ret = tegra_pcie_bpmp_set_pll_state(pcie, false);
+ 		if (ret)
+-			dev_err(pcie->dev, "Failed to turn off UPHY: %d\n",
+-				ret);
++			dev_err(pcie->dev, "Failed to turn off UPHY: %pe\n",
++				ERR_PTR(ret));
+ 	}
+ 
+ 	ret = tegra_pcie_bpmp_set_pll_state(pcie, false);
+ 	if (ret)
+-		dev_err(pcie->dev, "Failed to turn off UPHY: %d\n", ret);
++		dev_err(pcie->dev, "Failed to turn off UPHY: %pe\n", ERR_PTR(ret));
+ 
+ 	pcie->ep_state = EP_STATE_DISABLED;
+ 	dev_dbg(pcie->dev, "Uninitialization of endpoint is completed\n");
+@@ -1756,42 +1756,42 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+ 
+ 	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret < 0) {
+-		dev_err(dev, "Failed to get runtime sync for PCIe dev: %d\n",
+-			ret);
++		dev_err(dev, "Failed to get runtime sync for PCIe dev: %pe\n",
++			ERR_PTR(ret));
+ 		return;
+ 	}
+ 
+ 	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, true);
+ 	if (ret) {
+-		dev_err(pcie->dev, "Failed to enable controller %u: %d\n",
+-			pcie->cid, ret);
++		dev_err(pcie->dev, "Failed to enable controller %u: %pe\n",
++			pcie->cid, ERR_PTR(ret));
+ 		goto fail_set_ctrl_state;
+ 	}
+ 
+ 	if (pcie->enable_ext_refclk) {
+ 		ret = tegra_pcie_bpmp_set_pll_state(pcie, true);
+ 		if (ret) {
+-			dev_err(dev, "Failed to init UPHY for PCIe EP: %d\n",
+-				ret);
++			dev_err(dev, "Failed to init UPHY for PCIe EP: %pe\n",
++				ERR_PTR(ret));
+ 			goto fail_pll_init;
+ 		}
+ 	}
+ 
+ 	ret = clk_prepare_enable(pcie->core_clk);
+ 	if (ret) {
+-		dev_err(dev, "Failed to enable core clock: %d\n", ret);
++		dev_err(dev, "Failed to enable core clock: %pe\n", ERR_PTR(ret));
+ 		goto fail_core_clk_enable;
+ 	}
+ 
+ 	ret = reset_control_deassert(pcie->core_apb_rst);
+ 	if (ret) {
+-		dev_err(dev, "Failed to deassert core APB reset: %d\n", ret);
++		dev_err(dev, "Failed to deassert core APB reset: %pe\n", ERR_PTR(ret));
+ 		goto fail_core_apb_rst;
+ 	}
+ 
+ 	ret = tegra_pcie_enable_phy(pcie);
+ 	if (ret) {
+-		dev_err(dev, "Failed to enable PHY: %d\n", ret);
++		dev_err(dev, "Failed to enable PHY: %pe\n", ERR_PTR(ret));
+ 		goto fail_phy;
+ 	}
+ 
+@@ -1899,7 +1899,7 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+ 
+ 	ret = dw_pcie_ep_init_registers(ep);
+ 	if (ret) {
+-		dev_err(dev, "Failed to complete initialization: %d\n", ret);
++		dev_err(dev, "Failed to complete initialization: %pe\n", ERR_PTR(ret));
+ 		goto fail_init_complete;
+ 	}
+ 
+@@ -2044,14 +2044,14 @@ static int tegra_pcie_config_ep(struct tegra_pcie_dw *pcie,
+ 
+ 	ret = gpiod_set_debounce(pcie->pex_rst_gpiod, PERST_DEBOUNCE_TIME);
+ 	if (ret < 0) {
+-		dev_err(dev, "Failed to set PERST GPIO debounce time: %d\n",
+-			ret);
++		dev_err(dev, "Failed to set PERST GPIO debounce time: %pe\n",
++			ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+ 	ret = gpiod_to_irq(pcie->pex_rst_gpiod);
+ 	if (ret < 0) {
+-		dev_err(dev, "Failed to get IRQ for PERST GPIO: %d\n", ret);
++		dev_err(dev, "Failed to get IRQ for PERST GPIO: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 	pcie->pex_rst_irq = (unsigned int)ret;
+@@ -2073,7 +2073,7 @@ static int tegra_pcie_config_ep(struct tegra_pcie_dw *pcie,
+ 					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+ 					name, (void *)pcie);
+ 	if (ret < 0) {
+-		dev_err(dev, "Failed to request IRQ for PERST: %d\n", ret);
++		dev_err(dev, "Failed to request IRQ for PERST: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+@@ -2081,8 +2081,8 @@ static int tegra_pcie_config_ep(struct tegra_pcie_dw *pcie,
+ 
+ 	ret = dw_pcie_ep_init(ep);
+ 	if (ret) {
+-		dev_err(dev, "Failed to initialize DWC Endpoint subsystem: %d\n",
+-			ret);
++		dev_err(dev, "Failed to initialize DWC Endpoint subsystem: %pe\n",
++			ERR_PTR(ret));
+ 		pm_runtime_disable(dev);
+ 		return ret;
+ 	}
+@@ -2152,15 +2152,15 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pcie->pex_ctl_supply)) {
+ 		ret = PTR_ERR(pcie->pex_ctl_supply);
+ 		if (ret != -EPROBE_DEFER)
+-			dev_err(dev, "Failed to get regulator: %ld\n",
+-				PTR_ERR(pcie->pex_ctl_supply));
++			dev_err(dev, "Failed to get regulator: %pe\n",
++				pcie->pex_ctl_supply);
+ 		return ret;
+ 	}
+ 
+ 	pcie->core_clk = devm_clk_get(dev, "core");
+ 	if (IS_ERR(pcie->core_clk)) {
+-		dev_err(dev, "Failed to get core clock: %ld\n",
+-			PTR_ERR(pcie->core_clk));
++		dev_err(dev, "Failed to get core clock: %pe\n",
++			pcie->core_clk);
+ 		return PTR_ERR(pcie->core_clk);
+ 	}
+ 
+@@ -2177,8 +2177,8 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+ 
+ 	pcie->core_apb_rst = devm_reset_control_get(dev, "apb");
+ 	if (IS_ERR(pcie->core_apb_rst)) {
+-		dev_err(dev, "Failed to get APB reset: %ld\n",
+-			PTR_ERR(pcie->core_apb_rst));
++		dev_err(dev, "Failed to get APB reset: %pe\n",
++			pcie->core_apb_rst);
+ 		return PTR_ERR(pcie->core_apb_rst);
+ 	}
+ 
+@@ -2197,7 +2197,7 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+ 		if (IS_ERR(phys[i])) {
+ 			ret = PTR_ERR(phys[i]);
+ 			if (ret != -EPROBE_DEFER)
+-				dev_err(dev, "Failed to get PHY: %d\n", ret);
++				dev_err(dev, "Failed to get PHY: %pe\n", ERR_PTR(ret));
+ 			return ret;
+ 		}
+ 	}
+@@ -2219,8 +2219,8 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+ 
+ 	pcie->core_rst = devm_reset_control_get(dev, "core");
+ 	if (IS_ERR(pcie->core_rst)) {
+-		dev_err(dev, "Failed to get core reset: %ld\n",
+-			PTR_ERR(pcie->core_rst));
++		dev_err(dev, "Failed to get core reset: %pe\n",
++			pcie->core_rst);
+ 		return PTR_ERR(pcie->core_rst);
+ 	}
+ 
+@@ -2247,8 +2247,8 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+ 		ret = devm_request_irq(dev, pp->irq, tegra_pcie_rp_irq_handler,
+ 				       IRQF_SHARED, "tegra-pcie-intr", pcie);
+ 		if (ret) {
+-			dev_err(dev, "Failed to request IRQ %d: %d\n", pp->irq,
+-				ret);
++			dev_err(dev, "Failed to request IRQ %d: %pe\n", pp->irq,
++				ERR_PTR(ret));
+ 			goto fail;
+ 		}
+ 
+@@ -2266,8 +2266,8 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+ 						IRQF_SHARED | IRQF_ONESHOT,
+ 						"tegra-pcie-ep-intr", pcie);
+ 		if (ret) {
+-			dev_err(dev, "Failed to request IRQ %d: %d\n", pp->irq,
+-				ret);
++			dev_err(dev, "Failed to request IRQ %d: %pe\n", pp->irq,
++				ERR_PTR(ret));
+ 			goto fail;
+ 		}
+ 
+@@ -2364,7 +2364,7 @@ static int tegra_pcie_dw_resume_noirq(struct device *dev)
+ 
+ 	ret = tegra_pcie_dw_host_init(&pcie->pci.pp);
+ 	if (ret < 0) {
+-		dev_err(dev, "Failed to init host: %d\n", ret);
++		dev_err(dev, "Failed to init host: %pe\n", ERR_PTR(ret));
+ 		goto fail_host_init;
+ 	}
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-uniphier-ep.c b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
+index a2b844268e28..9a3d5445f181 100644
+--- a/drivers/pci/controller/dwc/pcie-uniphier-ep.c
++++ b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
+@@ -388,7 +388,7 @@ static int uniphier_pcie_ep_probe(struct platform_device *pdev)
+ 	priv->phy = devm_phy_optional_get(dev, "pcie-phy");
+ 	if (IS_ERR(priv->phy)) {
+ 		ret = PTR_ERR(priv->phy);
+-		dev_err(dev, "Failed to get phy (%d)\n", ret);
++		dev_err(dev, "Failed to get phy: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
+index 71ecd7ddcc8a..f34e0e163642 100644
+--- a/drivers/pci/controller/pci-aardvark.c
++++ b/drivers/pci/controller/pci-aardvark.c
+@@ -1743,14 +1743,14 @@ static int advk_pcie_setup_phy(struct advk_pcie *pcie)
+ 
+ 	/* Old bindings miss the PHY handle */
+ 	if (IS_ERR(pcie->phy)) {
+-		dev_warn(dev, "PHY unavailable (%ld)\n", PTR_ERR(pcie->phy));
++		dev_warn(dev, "PHY unavailable: %pe\n", pcie->phy);
+ 		pcie->phy = NULL;
+ 		return 0;
+ 	}
+ 
+ 	ret = advk_pcie_enable_phy(pcie);
+ 	if (ret)
+-		dev_err(dev, "Failed to initialize PHY (%d)\n", ret);
++		dev_err(dev, "Failed to initialize PHY: %pe\n", ERR_PTR(ret));
+ 
+ 	return ret;
+ }
+@@ -1863,7 +1863,7 @@ static int advk_pcie_probe(struct platform_device *pdev)
+ 	ret = PTR_ERR_OR_ZERO(pcie->reset_gpio);
+ 	if (ret) {
+ 		if (ret != -EPROBE_DEFER)
+-			dev_err(dev, "Failed to get reset-gpio: %i\n", ret);
++			dev_err(dev, "Failed to get reset-gpio: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/pci/controller/pci-ftpci100.c b/drivers/pci/controller/pci-ftpci100.c
+index ffdeed25e961..b5127dbdd313 100644
+--- a/drivers/pci/controller/pci-ftpci100.c
++++ b/drivers/pci/controller/pci-ftpci100.c
+@@ -502,7 +502,7 @@ static int faraday_pci_probe(struct platform_device *pdev)
+ 
+ 	ret = pci_scan_root_bus_bridge(host);
+ 	if (ret) {
+-		dev_err(dev, "failed to scan host: %d\n", ret);
++		dev_err(dev, "failed to scan host: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 	p->bus = host->bus;
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 038d974a318e..ead171db29b7 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -946,7 +946,7 @@ static int tegra_pcie_phy_enable(struct tegra_pcie *pcie)
+ 	/* wait for the PLL to lock */
+ 	err = tegra_pcie_pll_wait(pcie, 500);
+ 	if (err < 0) {
+-		dev_err(dev, "PLL failed to lock: %d\n", err);
++		dev_err(dev, "PLL failed to lock: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+@@ -997,7 +997,7 @@ static int tegra_pcie_port_phy_power_on(struct tegra_pcie_port *port)
+ 	for (i = 0; i < port->lanes; i++) {
+ 		err = phy_power_on(port->phys[i]);
+ 		if (err < 0) {
+-			dev_err(dev, "failed to power on PHY#%u: %d\n", i, err);
++			dev_err(dev, "failed to power on PHY#%u: %pe\n", i, ERR_PTR(err));
+ 			return err;
+ 		}
+ 	}
+@@ -1014,8 +1014,8 @@ static int tegra_pcie_port_phy_power_off(struct tegra_pcie_port *port)
+ 	for (i = 0; i < port->lanes; i++) {
+ 		err = phy_power_off(port->phys[i]);
+ 		if (err < 0) {
+-			dev_err(dev, "failed to power off PHY#%u: %d\n", i,
+-				err);
++			dev_err(dev, "failed to power off PHY#%u: %pe\n", i,
++				ERR_PTR(err));
+ 			return err;
+ 		}
+ 	}
+@@ -1036,7 +1036,7 @@ static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
+ 			err = tegra_pcie_phy_enable(pcie);
+ 
+ 		if (err < 0)
+-			dev_err(dev, "failed to power on PHY: %d\n", err);
++			dev_err(dev, "failed to power on PHY: %pe\n", ERR_PTR(err));
+ 
+ 		return err;
+ 	}
+@@ -1045,8 +1045,8 @@ static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
+ 		err = tegra_pcie_port_phy_power_on(port);
+ 		if (err < 0) {
+ 			dev_err(dev,
+-				"failed to power on PCIe port %u PHY: %d\n",
+-				port->index, err);
++				"failed to power on PCIe port %u PHY: %pe\n",
++				port->index, ERR_PTR(err));
+ 			return err;
+ 		}
+ 	}
+@@ -1067,7 +1067,7 @@ static int tegra_pcie_phy_power_off(struct tegra_pcie *pcie)
+ 			err = tegra_pcie_phy_disable(pcie);
+ 
+ 		if (err < 0)
+-			dev_err(dev, "failed to power off PHY: %d\n", err);
++			dev_err(dev, "failed to power off PHY: %pe\n", ERR_PTR(err));
+ 
+ 		return err;
+ 	}
+@@ -1076,8 +1076,8 @@ static int tegra_pcie_phy_power_off(struct tegra_pcie *pcie)
+ 		err = tegra_pcie_port_phy_power_off(port);
+ 		if (err < 0) {
+ 			dev_err(dev,
+-				"failed to power off PCIe port %u PHY: %d\n",
+-				port->index, err);
++				"failed to power off PCIe port %u PHY: %pe\n",
++				port->index, ERR_PTR(err));
+ 			return err;
+ 		}
+ 	}
+@@ -1167,7 +1167,7 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
+ 
+ 	err = regulator_bulk_disable(pcie->num_supplies, pcie->supplies);
+ 	if (err < 0)
+-		dev_warn(dev, "failed to disable regulators: %d\n", err);
++		dev_warn(dev, "failed to disable regulators: %pe\n", ERR_PTR(err));
+ }
+ 
+ static int tegra_pcie_power_on(struct tegra_pcie *pcie)
+@@ -1186,38 +1186,38 @@ static int tegra_pcie_power_on(struct tegra_pcie *pcie)
+ 	/* enable regulators */
+ 	err = regulator_bulk_enable(pcie->num_supplies, pcie->supplies);
+ 	if (err < 0)
+-		dev_err(dev, "failed to enable regulators: %d\n", err);
++		dev_err(dev, "failed to enable regulators: %pe\n", ERR_PTR(err));
+ 
+ 	if (!dev->pm_domain) {
+ 		err = tegra_powergate_power_on(TEGRA_POWERGATE_PCIE);
+ 		if (err) {
+-			dev_err(dev, "failed to power ungate: %d\n", err);
++			dev_err(dev, "failed to power ungate: %pe\n", ERR_PTR(err));
+ 			goto regulator_disable;
+ 		}
+ 		err = tegra_powergate_remove_clamping(TEGRA_POWERGATE_PCIE);
+ 		if (err) {
+-			dev_err(dev, "failed to remove clamp: %d\n", err);
++			dev_err(dev, "failed to remove clamp: %pe\n", ERR_PTR(err));
+ 			goto powergate;
+ 		}
+ 	}
+ 
+ 	err = clk_prepare_enable(pcie->afi_clk);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to enable AFI clock: %d\n", err);
++		dev_err(dev, "failed to enable AFI clock: %pe\n", ERR_PTR(err));
+ 		goto powergate;
+ 	}
+ 
+ 	if (soc->has_cml_clk) {
+ 		err = clk_prepare_enable(pcie->cml_clk);
+ 		if (err < 0) {
+-			dev_err(dev, "failed to enable CML clock: %d\n", err);
++			dev_err(dev, "failed to enable CML clock: %pe\n", ERR_PTR(err));
+ 			goto disable_afi_clk;
+ 		}
+ 	}
+ 
+ 	err = clk_prepare_enable(pcie->pll_e);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to enable PLLE clock: %d\n", err);
++		dev_err(dev, "failed to enable PLLE clock: %pe\n", ERR_PTR(err));
+ 		goto disable_cml_clk;
+ 	}
+ 
+@@ -1303,13 +1303,13 @@ static int tegra_pcie_phys_get_legacy(struct tegra_pcie *pcie)
+ 	pcie->phy = devm_phy_optional_get(dev, "pcie");
+ 	if (IS_ERR(pcie->phy)) {
+ 		err = PTR_ERR(pcie->phy);
+-		dev_err(dev, "failed to get PHY: %d\n", err);
++		dev_err(dev, "failed to get PHY: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+ 	err = phy_init(pcie->phy);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to initialize PHY: %d\n", err);
++		dev_err(dev, "failed to initialize PHY: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+@@ -1350,15 +1350,15 @@ static int tegra_pcie_port_get_phys(struct tegra_pcie_port *port)
+ 	for (i = 0; i < port->lanes; i++) {
+ 		phy = devm_of_phy_optional_get_index(dev, port->np, "pcie", i);
+ 		if (IS_ERR(phy)) {
+-			dev_err(dev, "failed to get PHY#%u: %ld\n", i,
+-				PTR_ERR(phy));
++			dev_err(dev, "failed to get PHY#%u: %pe\n", i,
++				phy);
+ 			return PTR_ERR(phy);
+ 		}
+ 
+ 		err = phy_init(phy);
+ 		if (err < 0) {
+-			dev_err(dev, "failed to initialize PHY#%u: %d\n", i,
+-				err);
++			dev_err(dev, "failed to initialize PHY#%u: %pe\n", i,
++				ERR_PTR(err));
+ 			return err;
+ 		}
+ 
+@@ -1396,7 +1396,7 @@ static void tegra_pcie_phys_put(struct tegra_pcie *pcie)
+ 	if (pcie->legacy_phy) {
+ 		err = phy_exit(pcie->phy);
+ 		if (err < 0)
+-			dev_err(dev, "failed to teardown PHY: %d\n", err);
++			dev_err(dev, "failed to teardown PHY: %pe\n", ERR_PTR(err));
+ 		return;
+ 	}
+ 
+@@ -1404,8 +1404,8 @@ static void tegra_pcie_phys_put(struct tegra_pcie *pcie)
+ 		for (i = 0; i < port->lanes; i++) {
+ 			err = phy_exit(port->phys[i]);
+ 			if (err < 0)
+-				dev_err(dev, "failed to teardown PHY#%u: %d\n",
+-					i, err);
++				dev_err(dev, "failed to teardown PHY#%u: %pe\n",
++					i, ERR_PTR(err));
+ 		}
+ 	}
+ }
+@@ -1420,20 +1420,20 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ 
+ 	err = tegra_pcie_clocks_get(pcie);
+ 	if (err) {
+-		dev_err(dev, "failed to get clocks: %d\n", err);
++		dev_err(dev, "failed to get clocks: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+ 	err = tegra_pcie_resets_get(pcie);
+ 	if (err) {
+-		dev_err(dev, "failed to get resets: %d\n", err);
++		dev_err(dev, "failed to get resets: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+ 	if (soc->program_uphy) {
+ 		err = tegra_pcie_phys_get(pcie);
+ 		if (err < 0) {
+-			dev_err(dev, "failed to get PHYs: %d\n", err);
++			dev_err(dev, "failed to get PHYs: %pe\n", ERR_PTR(err));
+ 			return err;
+ 		}
+ 	}
+@@ -1477,7 +1477,7 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ 
+ 	err = request_irq(pcie->irq, tegra_pcie_isr, IRQF_SHARED, "PCIE", pcie);
+ 	if (err) {
+-		dev_err(dev, "failed to register IRQ: %d\n", err);
++		dev_err(dev, "failed to register IRQ: %pe\n", ERR_PTR(err));
+ 		goto phys_put;
+ 	}
+ 
+@@ -2127,7 +2127,7 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+ 
+ 		err = of_pci_get_devfn(port);
+ 		if (err < 0) {
+-			dev_err(dev, "failed to parse address: %d\n", err);
++			dev_err(dev, "failed to parse address: %pe\n", ERR_PTR(err));
+ 			goto err_node_put;
+ 		}
+ 
+@@ -2143,8 +2143,8 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+ 
+ 		err = of_property_read_u32(port, "nvidia,num-lanes", &value);
+ 		if (err < 0) {
+-			dev_err(dev, "failed to parse # of lanes: %d\n",
+-				err);
++			dev_err(dev, "failed to parse # of lanes: %pe\n",
++				ERR_PTR(err));
+ 			goto err_node_put;
+ 		}
+ 
+@@ -2172,7 +2172,7 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+ 
+ 		err = of_address_to_resource(port, 0, &rp->regs);
+ 		if (err < 0) {
+-			dev_err(dev, "failed to parse address: %d\n", err);
++			dev_err(dev, "failed to parse address: %pe\n", ERR_PTR(err));
+ 			goto err_node_put;
+ 		}
+ 
+@@ -2640,20 +2640,20 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 
+ 	err = tegra_pcie_get_resources(pcie);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to request resources: %d\n", err);
++		dev_err(dev, "failed to request resources: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+ 	err = tegra_pcie_msi_setup(pcie);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to enable MSI support: %d\n", err);
++		dev_err(dev, "failed to enable MSI support: %pe\n", ERR_PTR(err));
+ 		goto put_resources;
+ 	}
+ 
+ 	pm_runtime_enable(pcie->dev);
+ 	err = pm_runtime_get_sync(pcie->dev);
+ 	if (err < 0) {
+-		dev_err(dev, "fail to enable pcie controller: %d\n", err);
++		dev_err(dev, "fail to enable pcie controller: %pe\n", ERR_PTR(err));
+ 		goto pm_runtime_put;
+ 	}
+ 
+@@ -2662,7 +2662,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 
+ 	err = pci_host_probe(host);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to register host: %d\n", err);
++		dev_err(dev, "failed to register host: %pe\n", ERR_PTR(err));
+ 		goto pm_runtime_put;
+ 	}
+ 
+@@ -2723,7 +2723,7 @@ static int tegra_pcie_pm_suspend(struct device *dev)
+ 	if (pcie->soc->program_uphy) {
+ 		err = tegra_pcie_phy_power_off(pcie);
+ 		if (err < 0)
+-			dev_err(dev, "failed to power off PHY(s): %d\n", err);
++			dev_err(dev, "failed to power off PHY(s): %pe\n", ERR_PTR(err));
+ 	}
+ 
+ 	reset_control_assert(pcie->pex_rst);
+@@ -2745,13 +2745,13 @@ static int tegra_pcie_pm_resume(struct device *dev)
+ 
+ 	err = tegra_pcie_power_on(pcie);
+ 	if (err) {
+-		dev_err(dev, "tegra pcie power on fail: %d\n", err);
++		dev_err(dev, "tegra pcie power on fail: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+ 	err = pinctrl_pm_select_default_state(dev);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to disable PCIe IO DPD: %d\n", err);
++		dev_err(dev, "failed to disable PCIe IO DPD: %pe\n", ERR_PTR(err));
+ 		goto poweroff;
+ 	}
+ 
+@@ -2763,7 +2763,7 @@ static int tegra_pcie_pm_resume(struct device *dev)
+ 
+ 	err = clk_prepare_enable(pcie->pex_clk);
+ 	if (err) {
+-		dev_err(dev, "failed to enable PEX clock: %d\n", err);
++		dev_err(dev, "failed to enable PEX clock: %pe\n", ERR_PTR(err));
+ 		goto pex_dpd_enable;
+ 	}
+ 
+@@ -2772,7 +2772,7 @@ static int tegra_pcie_pm_resume(struct device *dev)
+ 	if (pcie->soc->program_uphy) {
+ 		err = tegra_pcie_phy_power_on(pcie);
+ 		if (err < 0) {
+-			dev_err(dev, "failed to power on PHY(s): %d\n", err);
++			dev_err(dev, "failed to power on PHY(s): %pe\n", ERR_PTR(err));
+ 			goto disable_pex_clk;
+ 		}
+ 	}
+diff --git a/drivers/pci/controller/pci-xgene.c b/drivers/pci/controller/pci-xgene.c
+index 8e457fa450a2..9cdc0b24e00d 100644
+--- a/drivers/pci/controller/pci-xgene.c
++++ b/drivers/pci/controller/pci-xgene.c
+@@ -206,8 +206,8 @@ static int xgene_get_csr_resource(struct acpi_device *adev,
+ 				     acpi_dev_filter_resource_type_cb,
+ 				     (void *) flags);
+ 	if (ret < 0) {
+-		dev_err(dev, "failed to parse _CRS method, error code %d\n",
+-			ret);
++		dev_err(dev, "failed to parse _CRS method, error code %pe\n",
++			ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/pci/controller/pcie-microchip-host.c b/drivers/pci/controller/pcie-microchip-host.c
+index 137fb8570ba2..9670a31a02c8 100644
+--- a/drivers/pci/controller/pcie-microchip-host.c
++++ b/drivers/pci/controller/pcie-microchip-host.c
+@@ -1175,7 +1175,7 @@ static int mc_host_probe(struct platform_device *pdev)
+ 
+ 	ret = mc_pcie_init_clks(dev);
+ 	if (ret) {
+-		dev_err(dev, "failed to get clock resources, error %d\n", ret);
++		dev_err(dev, "failed to get clock resources, error: %pe\n", ERR_PTR(ret));
+ 		return -ENODEV;
+ 	}
+ 
+diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+index 996077ab7cfd..3dfe6729e3ed 100644
+--- a/drivers/pci/controller/pcie-rcar-host.c
++++ b/drivers/pci/controller/pcie-rcar-host.c
+@@ -78,7 +78,7 @@ static int rcar_pcie_wakeup(struct device *pcie_dev, void __iomem *pcie_base)
+ 		writel(L1IATN, pcie_base + PMCTLR);
+ 		ret = readl_poll_timeout_atomic(pcie_base + PMSR, val,
+ 						val & L1FAEG, 10, 1000);
+-		WARN(ret, "Timeout waiting for L1 link state, ret=%d\n", ret);
++		WARN(ret, "Timeout waiting for L1 link state, ret=%pe\n", ERR_PTR(ret));
+ 		writel(L1FAEG | PMEL1RX, pcie_base + PMSR);
+ 	}
+ 
+@@ -782,7 +782,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie_host *host)
+ 			       IRQF_SHARED | IRQF_NO_THREAD,
+ 			       rcar_msi_bottom_chip.name, host);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to request IRQ: %d\n", err);
++		dev_err(dev, "failed to request IRQ: %pe\n", ERR_PTR(err));
+ 		goto err;
+ 	}
+ 
+@@ -790,7 +790,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie_host *host)
+ 			       IRQF_SHARED | IRQF_NO_THREAD,
+ 			       rcar_msi_bottom_chip.name, host);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to request IRQ: %d\n", err);
++		dev_err(dev, "failed to request IRQ: %pe\n", ERR_PTR(err));
+ 		goto err;
+ 	}
+ 
+@@ -996,13 +996,13 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 
+ 	err = rcar_pcie_get_resources(host);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to request resources: %d\n", err);
++		dev_err(dev, "failed to request resources: %pe\n", ERR_PTR(err));
+ 		goto err_pm_put;
+ 	}
+ 
+ 	err = clk_prepare_enable(host->bus_clk);
+ 	if (err) {
+-		dev_err(dev, "failed to enable bus clock: %d\n", err);
++		dev_err(dev, "failed to enable bus clock: %pe\n", ERR_PTR(err));
+ 		goto err_unmap_msi_irqs;
+ 	}
+ 
+@@ -1031,8 +1031,8 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 		err = rcar_pcie_enable_msi(host);
+ 		if (err < 0) {
+ 			dev_err(dev,
+-				"failed to enable MSI support: %d\n",
+-				err);
++				"failed to enable MSI support: %pe\n",
++				ERR_PTR(err));
+ 			goto err_phy_shutdown;
+ 		}
+ 	}
+diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
+index 0ef2e622d36e..10bd6aec67bd 100644
+--- a/drivers/pci/controller/pcie-rockchip.c
++++ b/drivers/pci/controller/pcie-rockchip.c
+@@ -169,51 +169,51 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
+ 
+ 	err = reset_control_assert(rockchip->aclk_rst);
+ 	if (err) {
+-		dev_err(dev, "assert aclk_rst err %d\n", err);
++		dev_err(dev, "assert aclk_rst err: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+ 	err = reset_control_assert(rockchip->pclk_rst);
+ 	if (err) {
+-		dev_err(dev, "assert pclk_rst err %d\n", err);
++		dev_err(dev, "assert pclk_rst err: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+ 	err = reset_control_assert(rockchip->pm_rst);
+ 	if (err) {
+-		dev_err(dev, "assert pm_rst err %d\n", err);
++		dev_err(dev, "assert pm_rst err: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+ 	for (i = 0; i < MAX_LANE_NUM; i++) {
+ 		err = phy_init(rockchip->phys[i]);
+ 		if (err) {
+-			dev_err(dev, "init phy%d err %d\n", i, err);
++			dev_err(dev, "init phy%d err: %pe\n", i, ERR_PTR(err));
+ 			goto err_exit_phy;
+ 		}
+ 	}
+ 
+ 	err = reset_control_assert(rockchip->core_rst);
+ 	if (err) {
+-		dev_err(dev, "assert core_rst err %d\n", err);
++		dev_err(dev, "assert core_rst err: %pe\n", ERR_PTR(err));
+ 		goto err_exit_phy;
+ 	}
+ 
+ 	err = reset_control_assert(rockchip->mgmt_rst);
+ 	if (err) {
+-		dev_err(dev, "assert mgmt_rst err %d\n", err);
++		dev_err(dev, "assert mgmt_rst err: %pe\n", ERR_PTR(err));
+ 		goto err_exit_phy;
+ 	}
+ 
+ 	err = reset_control_assert(rockchip->mgmt_sticky_rst);
+ 	if (err) {
+-		dev_err(dev, "assert mgmt_sticky_rst err %d\n", err);
++		dev_err(dev, "assert mgmt_sticky_rst err: %pe\n", ERR_PTR(err));
+ 		goto err_exit_phy;
+ 	}
+ 
+ 	err = reset_control_assert(rockchip->pipe_rst);
+ 	if (err) {
+-		dev_err(dev, "assert pipe_rst err %d\n", err);
++		dev_err(dev, "assert pipe_rst err: %pe\n", ERR_PTR(err));
+ 		goto err_exit_phy;
+ 	}
+ 
+@@ -221,19 +221,19 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
+ 
+ 	err = reset_control_deassert(rockchip->pm_rst);
+ 	if (err) {
+-		dev_err(dev, "deassert pm_rst err %d\n", err);
++		dev_err(dev, "deassert pm_rst err: %pe\n", ERR_PTR(err));
+ 		goto err_exit_phy;
+ 	}
+ 
+ 	err = reset_control_deassert(rockchip->aclk_rst);
+ 	if (err) {
+-		dev_err(dev, "deassert aclk_rst err %d\n", err);
++		dev_err(dev, "deassert aclk_rst err: %pe\n", ERR_PTR(err));
+ 		goto err_exit_phy;
+ 	}
+ 
+ 	err = reset_control_deassert(rockchip->pclk_rst);
+ 	if (err) {
+-		dev_err(dev, "deassert pclk_rst err %d\n", err);
++		dev_err(dev, "deassert pclk_rst err: %pe\n", ERR_PTR(err));
+ 		goto err_exit_phy;
+ 	}
+ 
+@@ -257,7 +257,7 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
+ 	for (i = 0; i < MAX_LANE_NUM; i++) {
+ 		err = phy_power_on(rockchip->phys[i]);
+ 		if (err) {
+-			dev_err(dev, "power on phy%d err %d\n", i, err);
++			dev_err(dev, "power on phy%d err: %pe\n", i, ERR_PTR(err));
+ 			goto err_power_off_phy;
+ 		}
+ 	}
+@@ -268,7 +268,7 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
+ 				 RK_PHY_PLL_LOCK_SLEEP_US,
+ 				 RK_PHY_PLL_LOCK_TIMEOUT_US);
+ 	if (err) {
+-		dev_err(dev, "PHY PLLs could not lock, %d\n", err);
++		dev_err(dev, "PHY PLLs could not lock: %pe\n", ERR_PTR(err));
+ 		goto err_power_off_phy;
+ 	}
+ 
+@@ -278,25 +278,25 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
+ 	 */
+ 	err = reset_control_deassert(rockchip->mgmt_sticky_rst);
+ 	if (err) {
+-		dev_err(dev, "deassert mgmt_sticky_rst err %d\n", err);
++		dev_err(dev, "deassert mgmt_sticky_rst err: %pe\n", ERR_PTR(err));
+ 		goto err_power_off_phy;
+ 	}
+ 
+ 	err = reset_control_deassert(rockchip->core_rst);
+ 	if (err) {
+-		dev_err(dev, "deassert core_rst err %d\n", err);
++		dev_err(dev, "deassert core_rst err: %pe\n", ERR_PTR(err));
+ 		goto err_power_off_phy;
+ 	}
+ 
+ 	err = reset_control_deassert(rockchip->mgmt_rst);
+ 	if (err) {
+-		dev_err(dev, "deassert mgmt_rst err %d\n", err);
++		dev_err(dev, "deassert mgmt_rst err: %pe\n", ERR_PTR(err));
+ 		goto err_power_off_phy;
+ 	}
+ 
+ 	err = reset_control_deassert(rockchip->pipe_rst);
+ 	if (err) {
+-		dev_err(dev, "deassert pipe_rst err %d\n", err);
++		dev_err(dev, "deassert pipe_rst err: %pe\n", ERR_PTR(err));
+ 		goto err_power_off_phy;
+ 	}
+ 
+diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+index 87b7856f375a..7bc123865b1f 100644
+--- a/drivers/pci/controller/vmd.c
++++ b/drivers/pci/controller/vmd.c
+@@ -943,7 +943,7 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+ 					       struct pci_dev, bus_list);
+ 			ret = pci_reset_bus(dev);
+ 			if (ret)
+-				pci_warn(dev, "can't reset device: %d\n", ret);
++				pci_warn(dev, "can't reset device: %pe\n", ERR_PTR(ret));
+ 
+ 			break;
+ 		}
+diff --git a/drivers/pci/doe.c b/drivers/pci/doe.c
+index 652d63df9d22..8019a7140028 100644
+--- a/drivers/pci/doe.c
++++ b/drivers/pci/doe.c
+@@ -512,8 +512,8 @@ static struct pci_doe_mb *pci_doe_create_mb(struct pci_dev *pdev,
+ 	 */
+ 	rc = pci_doe_cache_protocols(doe_mb);
+ 	if (rc) {
+-		pci_err(pdev, "[%x] failed to cache protocols : %d\n",
+-			doe_mb->cap_offset, rc);
++		pci_err(pdev, "[%x] failed to cache protocols : %pe\n",
++			doe_mb->cap_offset, ERR_PTR(rc));
+ 		goto err_cancel;
+ 	}
+ 
+diff --git a/drivers/pci/endpoint/functions/pci-epf-mhi.c b/drivers/pci/endpoint/functions/pci-epf-mhi.c
+index 2c54d80107cf..78d64eecfa04 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-mhi.c
++++ b/drivers/pci/endpoint/functions/pci-epf-mhi.c
+@@ -738,14 +738,14 @@ static int pci_epf_mhi_core_init(struct pci_epf *epf)
+ 	ret = pci_epc_set_msi(epc, epf->func_no, epf->vfunc_no,
+ 			      order_base_2(info->msi_count));
+ 	if (ret) {
+-		dev_err(dev, "Failed to set MSI configuration: %d\n", ret);
++		dev_err(dev, "Failed to set MSI configuration: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+ 	ret = pci_epc_write_header(epc, epf->func_no, epf->vfunc_no,
+ 				   epf->header);
+ 	if (ret) {
+-		dev_err(dev, "Failed to set Configuration header: %d\n", ret);
++		dev_err(dev, "Failed to set Configuration header: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+@@ -768,7 +768,7 @@ static int pci_epf_mhi_link_up(struct pci_epf *epf)
+ 	if (info->flags & MHI_EPF_USE_DMA) {
+ 		ret = pci_epf_mhi_dma_init(epf_mhi);
+ 		if (ret) {
+-			dev_err(dev, "Failed to initialize DMA: %d\n", ret);
++			dev_err(dev, "Failed to initialize DMA: %pe\n", ERR_PTR(ret));
+ 			return ret;
+ 		}
+ 	}
+@@ -794,7 +794,7 @@ static int pci_epf_mhi_link_up(struct pci_epf *epf)
+ 	/* Register the MHI EP controller */
+ 	ret = mhi_ep_register_controller(mhi_cntrl, info->config);
+ 	if (ret) {
+-		dev_err(dev, "Failed to register MHI EP controller: %d\n", ret);
++		dev_err(dev, "Failed to register MHI EP controller: %pe\n", ERR_PTR(ret));
+ 		if (info->flags & MHI_EPF_USE_DMA)
+ 			pci_epf_mhi_dma_deinit(epf_mhi);
+ 		return ret;
+diff --git a/drivers/pci/endpoint/functions/pci-epf-ntb.c b/drivers/pci/endpoint/functions/pci-epf-ntb.c
+index e01a98e74d21..d807b0329805 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-ntb.c
++++ b/drivers/pci/endpoint/functions/pci-epf-ntb.c
+@@ -2129,7 +2129,7 @@ static int __init epf_ntb_init(void)
+ 	ret = pci_epf_register_driver(&epf_ntb_driver);
+ 	if (ret) {
+ 		destroy_workqueue(kpcintb_workqueue);
+-		pr_err("Failed to register pci epf ntb driver --> %d\n", ret);
++		pr_err("Failed to register pci epf ntb driver: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index 977fb79c1567..15e745dcdc40 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -167,7 +167,7 @@ static int pci_epf_test_data_transfer(struct pci_epf_test *epf_test,
+ 
+ 	ret = dma_submit_error(epf_test->transfer_cookie);
+ 	if (ret) {
+-		dev_err(dev, "Failed to do DMA tx_submit %d\n", ret);
++		dev_err(dev, "Failed to do DMA tx_submit: %pe\n", ERR_PTR(ret));
+ 		goto terminate;
+ 	}
+ 
+@@ -949,7 +949,7 @@ static int __init pci_epf_test_init(void)
+ 	ret = pci_epf_register_driver(&test_driver);
+ 	if (ret) {
+ 		destroy_workqueue(kpcitest_workqueue);
+-		pr_err("Failed to register pci epf test driver --> %d\n", ret);
++		pr_err("Failed to register pci epf test driver: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+index 8e779eecd62d..de52f0613078 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
++++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+@@ -1430,7 +1430,7 @@ static int __init epf_ntb_init(void)
+ 	ret = pci_epf_register_driver(&epf_ntb_driver);
+ 	if (ret) {
+ 		destroy_workqueue(kpcintb_workqueue);
+-		pr_err("Failed to register pci epf ntb driver --> %d\n", ret);
++		pr_err("Failed to register pci epf ntb driver: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
+index 3b21e28f9b59..a44437aaa4bc 100644
+--- a/drivers/pci/endpoint/pci-ep-cfs.c
++++ b/drivers/pci/endpoint/pci-ep-cfs.c
+@@ -727,8 +727,8 @@ static int __init pci_ep_cfs_init(void)
+ 
+ 	ret = configfs_register_subsystem(&pci_ep_cfs_subsys);
+ 	if (ret) {
+-		pr_err("Error %d while registering subsystem %s\n",
+-		       ret, root->cg_item.ci_namebuf);
++		pr_err("Error while registering subsystem %s: %pe\n",
++		       root->cg_item.ci_namebuf, ERR_PTR(ret));
+ 		goto err;
+ 	}
+ 
+@@ -736,8 +736,8 @@ static int __init pci_ep_cfs_init(void)
+ 							  &pci_functions_type);
+ 	if (IS_ERR(functions_group)) {
+ 		ret = PTR_ERR(functions_group);
+-		pr_err("Error %d while registering functions group\n",
+-		       ret);
++		pr_err("Error while registering functions group: %pe\n",
++		       ERR_PTR(ret));
+ 		goto err_functions_group;
+ 	}
+ 
+@@ -746,8 +746,8 @@ static int __init pci_ep_cfs_init(void)
+ 						&pci_controllers_type);
+ 	if (IS_ERR(controllers_group)) {
+ 		ret = PTR_ERR(controllers_group);
+-		pr_err("Error %d while registering controllers group\n",
+-		       ret);
++		pr_err("Error while registering controllers group: %pe\n",
++		       ERR_PTR(ret));
+ 		goto err_controllers_group;
+ 	}
+ 
+diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+index 323f2a60ab16..08146b5c5d01 100644
+--- a/drivers/pci/endpoint/pci-epf-core.c
++++ b/drivers/pci/endpoint/pci-epf-core.c
+@@ -77,8 +77,8 @@ int pci_epf_bind(struct pci_epf *epf)
+ 		vfunc_no = epf_vf->vfunc_no;
+ 
+ 		if (vfunc_no < 1) {
+-			dev_err(dev, "Invalid virtual function number\n");
+ 			ret = -EINVAL;
++			dev_err(dev, "Invalid virtual function number: %pe\n", ERR_PTR(ret));
+ 			goto ret;
+ 		}
+ 
+@@ -86,15 +86,15 @@ int pci_epf_bind(struct pci_epf *epf)
+ 		func_no = epf->func_no;
+ 		if (!IS_ERR_OR_NULL(epc)) {
+ 			if (!epc->max_vfs) {
+-				dev_err(dev, "No support for virt function\n");
+ 				ret = -EINVAL;
++				dev_err(dev, "No support for virt function: %pe\n", ERR_PTR(ret));
+ 				goto ret;
+ 			}
+ 
+ 			if (vfunc_no > epc->max_vfs[func_no]) {
+-				dev_err(dev, "PF%d: Exceeds max vfunc number\n",
+-					func_no);
+ 				ret = -EINVAL;
++				dev_err(dev, "PF%d: Exceeds max vfunc number: %pe\n",
++					func_no, ERR_PTR(ret));
+ 				goto ret;
+ 			}
+ 		}
+@@ -103,15 +103,15 @@ int pci_epf_bind(struct pci_epf *epf)
+ 		func_no = epf->sec_epc_func_no;
+ 		if (!IS_ERR_OR_NULL(epc)) {
+ 			if (!epc->max_vfs) {
+-				dev_err(dev, "No support for virt function\n");
+ 				ret = -EINVAL;
++				dev_err(dev, "No support for virt function: %pe\n", ERR_PTR(ret));
+ 				goto ret;
+ 			}
+ 
+ 			if (vfunc_no > epc->max_vfs[func_no]) {
+-				dev_err(dev, "PF%d: Exceeds max vfunc number\n",
+-					func_no);
+ 				ret = -EINVAL;
++				dev_err(dev, "PF%d: Exceeds max vfunc number: %pe\n",
++					func_no, ERR_PTR(ret));
+ 				goto ret;
+ 			}
+ 		}
+@@ -535,7 +535,7 @@ static int __init pci_epf_init(void)
+ 
+ 	ret = bus_register(&pci_epf_bus_type);
+ 	if (ret) {
+-		pr_err("failed to register pci epf bus --> %d\n", ret);
++		pr_err("failed to register pci epf bus: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/pci/hotplug/acpiphp_core.c b/drivers/pci/hotplug/acpiphp_core.c
+index 9dad14e80bcf..0f5523666e85 100644
+--- a/drivers/pci/hotplug/acpiphp_core.c
++++ b/drivers/pci/hotplug/acpiphp_core.c
+@@ -277,7 +277,7 @@ int acpiphp_register_hotplug_slot(struct acpiphp_slot *acpiphp_slot,
+ 	if (retval == -EBUSY)
+ 		goto error_slot;
+ 	if (retval) {
+-		pr_err("pci_hp_register failed with error %d\n", retval);
++		pr_err("pci_hp_register failed with error: %pe\n", ERR_PTR(retval));
+ 		goto error_slot;
+ 	}
+ 
+diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
+index ddd55ad97a58..c1ccff9c282e 100644
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -81,7 +81,7 @@ static int init_slot(struct controller *ctrl)
+ 	retval = pci_hp_initialize(&ctrl->hotplug_slot,
+ 				   ctrl->pcie->port->subordinate, 0, name);
+ 	if (retval) {
+-		ctrl_err(ctrl, "pci_hp_initialize failed: error %d\n", retval);
++		ctrl_err(ctrl, "pci_hp_initialize failed with error: %pe\n", ERR_PTR(retval));
+ 		kfree(ops);
+ 	}
+ 	return retval;
+@@ -210,21 +210,21 @@ static int pciehp_probe(struct pcie_device *dev)
+ 		if (rc == -EBUSY)
+ 			ctrl_warn(ctrl, "Slot already registered by another hotplug driver\n");
+ 		else
+-			ctrl_err(ctrl, "Slot initialization failed (%d)\n", rc);
++			ctrl_err(ctrl, "Slot initialization failed: %pe\n", ERR_PTR(rc));
+ 		goto err_out_release_ctlr;
+ 	}
+ 
+ 	/* Enable events after we have setup the data structures */
+ 	rc = pcie_init_notification(ctrl);
+ 	if (rc) {
+-		ctrl_err(ctrl, "Notification initialization failed (%d)\n", rc);
++		ctrl_err(ctrl, "Notification initialization failed: %d\n", rc);
+ 		goto err_out_free_ctrl_slot;
+ 	}
+ 
+ 	/* Publish to user space */
+ 	rc = pci_hp_add(&ctrl->hotplug_slot);
+ 	if (rc) {
+-		ctrl_err(ctrl, "Publication to user space failed (%d)\n", rc);
++		ctrl_err(ctrl, "Publication to user space failed: %pe\n", ERR_PTR(rc));
+ 		goto err_out_shutdown_notification;
+ 	}
+ 
+diff --git a/drivers/pci/hotplug/shpchp_core.c b/drivers/pci/hotplug/shpchp_core.c
+index 56c7795ed890..b4e3cef70bf6 100644
+--- a/drivers/pci/hotplug/shpchp_core.c
++++ b/drivers/pci/hotplug/shpchp_core.c
+@@ -104,8 +104,8 @@ static int init_slots(struct controller *ctrl)
+ 		retval = pci_hp_register(hotplug_slot,
+ 				ctrl->pci_dev->subordinate, slot->device, name);
+ 		if (retval) {
+-			ctrl_err(ctrl, "pci_hp_register failed with error %d\n",
+-				 retval);
++			ctrl_err(ctrl, "pci_hp_register failed with error: %pe\n",
++				 ERR_PTR(retval));
+ 			goto error_slotwq;
+ 		}
+ 
+diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+index 51e3dd0ea5ab..2163ee1eda46 100644
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -518,7 +518,7 @@ static int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *
+ 		pr_warn_once("%s: possibly some PCI slots don't have level triggered interrupts capability\n",
+ 			__func__);
+ 	} else {
+-		dev_err(&pdev->dev, "%s: failed with rc=%d\n", __func__, rc);
++		dev_err(&pdev->dev, "%s: failed with rc=%pe\n", __func__, ERR_PTR(rc));
+ 	}
+ 	return rc;
+ }
+@@ -573,8 +573,8 @@ static int pci_parse_request_of_pci_ranges(struct device *dev,
+ 		case IORESOURCE_IO:
+ 			err = devm_pci_remap_iospace(dev, res, iobase);
+ 			if (err) {
+-				dev_warn(dev, "error %d: failed to map resource %pR\n",
+-					 err, res);
++				dev_warn(dev, "failed to map resource %pR with error: %pe\n",
++					 res, ERR_PTR(err));
+ 				resource_list_destroy_entry(win);
+ 			}
+ 			break;
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index af2996d0d17f..bbe409ce5d97 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -1313,8 +1313,8 @@ static int pci_pm_runtime_suspend(struct device *dev)
+ 				pm->runtime_suspend, error);
+ 			return error;
+ 		} else if (error) {
+-			pci_err(pci_dev, "can't suspend (%ps returned %d)\n",
+-				pm->runtime_suspend, error);
++			pci_err(pci_dev, "can't suspend: %ps returned %pe)\n",
++				pm->runtime_suspend, ERR_PTR(error));
+ 			return error;
+ 		}
+ 	}
+diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+index a668820696dc..789c44d33b1b 100644
+--- a/drivers/pci/pcie/dpc.c
++++ b/drivers/pci/pcie/dpc.c
+@@ -427,8 +427,8 @@ static int dpc_probe(struct pcie_device *dev)
+ 					   dpc_handler, IRQF_SHARED,
+ 					   "pcie-dpc", pdev);
+ 	if (status) {
+-		pci_warn(pdev, "request IRQ%d failed: %d\n", dev->irq,
+-			 status);
++		pci_warn(pdev, "request IRQ%d failed: %pe\n", dev->irq,
++			 ERR_PTR(status));
+ 		return status;
+ 	}
+ 
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 568410e64ce6..cd856a42801e 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -6019,7 +6019,7 @@ static void quirk_reset_lenovo_thinkpad_p50_nvgpu(struct pci_dev *pdev)
+ 		pci_info(pdev, FW_BUG "GPU left initialized by EFI, resetting\n");
+ 		ret = pci_reset_bus(pdev);
+ 		if (ret < 0)
+-			pci_err(pdev, "Failed to reset GPU: %d\n", ret);
++			pci_err(pdev, "Failed to reset GPU: %pe\n", ERR_PTR(ret));
+ 	}
+ 
+ 	iounmap(map);
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 909e6a7c3cc3..75fdfdbadeef 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -2221,7 +2221,7 @@ void pci_assign_unassigned_bridge_resources(struct pci_dev *bridge)
+ enable_all:
+ 	retval = pci_reenable_device(bridge);
+ 	if (retval)
+-		pci_err(bridge, "Error reenabling bridge (%d)\n", retval);
++		pci_err(bridge, "Error reenabling bridge: %pe\n", ERR_PTR(retval));
+ 	pci_set_master(bridge);
+ }
+ EXPORT_SYMBOL_GPL(pci_assign_unassigned_bridge_resources);
+diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
+index 0f87cade10f7..638b5130215d 100644
+--- a/drivers/pci/slot.c
++++ b/drivers/pci/slot.c
+@@ -343,8 +343,8 @@ void pci_hp_create_module_link(struct pci_slot *pci_slot)
+ 		return;
+ 	ret = sysfs_create_link(&pci_slot->kobj, kobj, "module");
+ 	if (ret)
+-		dev_err(&pci_slot->bus->dev, "Error creating sysfs link (%d)\n",
+-			ret);
++		dev_err(&pci_slot->bus->dev, "Error creating sysfs link: %pe\n",
++			ERR_PTR(ret));
+ 	kobject_put(kobj);
+ }
+ EXPORT_SYMBOL_GPL(pci_hp_create_module_link);
+diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
+index 78748e8d2dba..4e3daf243cb5 100644
+--- a/drivers/pci/vgaarb.c
++++ b/drivers/pci/vgaarb.c
+@@ -1542,7 +1542,7 @@ static int __init vga_arb_device_init(void)
+ 
+ 	rc = misc_register(&vga_arb_device);
+ 	if (rc < 0)
+-		pr_err("error %d registering device\n", rc);
++		pr_err("error registering device: %pe\n", ERR_PTR(rc));
+ 
+ 	bus_register_notifier(&pci_bus_type, &pci_notifier);
+ 
 -- 
-2.27.0
+2.25.1
 
 
