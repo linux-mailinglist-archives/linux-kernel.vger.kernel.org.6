@@ -1,98 +1,157 @@
-Return-Path: <linux-kernel+bounces-184745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B6D8CAB5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:00:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527238CAB5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 621781C210C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 727261C21858
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC096BB54;
-	Tue, 21 May 2024 10:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FC856475;
+	Tue, 21 May 2024 10:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XyfMop+B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F+xJz5M1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93AF561664;
-	Tue, 21 May 2024 10:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70F98C06
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716285600; cv=none; b=b1rATSMgFrTyBL8lQroZyU7algCWRIUb1YCm3MKtmaW8lWJU1VaVrJthtKrzsCYlWuRuZyy0f1aRPCPVwkZJWh4wB9OWDetiVGj33F4+2Pk73IUC+yCFXQ0MtMYJSF8dFMAIEcRkZMb1YflGqdLlBVkaJY4TsIbHq+w1kLnjntc=
+	t=1716285629; cv=none; b=YS6smB4dxy1oI/uBWdMF5DSgh9+YPMw0d7Ml5Z8awLE7OibWt7juB1UudmOXhs2YijxkqP4fiw4RWfEG5myim75tBI/L5kSP7vYKxG+0DPaKyB6yCBaeByGTmqOVdmMDchED8eJXDCCv2NWu+3xLb1fo9oe+WJ3/dI1Ko3WuSGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716285600; c=relaxed/simple;
-	bh=1V+29lB8btSlk68MGRUu8mgqZi72yOl5RrQVg1+kexY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N9B/q/p0EajYritAlaOBoO3JHDQTM/ckvsVPGr7Lp0PQkELFGTobpG5hk81/k97tK6vOegkBX0ZdmvGixCtnOgwRSVdTqdWe/qCp5VyVwQMTtUUGffUR4f9fHc0LpfltTwcistaXem/SBSOiGdiV2nzAXNyXR4RaiJo1/xNHTn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XyfMop+B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C31C5C2BD11;
-	Tue, 21 May 2024 09:59:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716285600;
-	bh=1V+29lB8btSlk68MGRUu8mgqZi72yOl5RrQVg1+kexY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XyfMop+BD1EOaHMDOUcgxCjgGH4r0BVXE4kkuV9vX3spvPSyjikPXNRngWxSruEQF
-	 Fp8mI6YDGTv/v7LiRB1vLcaLntsQwG/BOk8Ywn0HUiXBo2PDwLqcUy0xQ/fZCwo2YQ
-	 YUhj1SLn0tavDdt3dd03SMM3IAubupU6w4QM0VczXp5us61s12Px/QLrNHzsS/1Q2l
-	 iKaNEaX6NUf7piEuuwFkYFDVyvoPIUqbR3n7R9F32bWn07cAgmMjdS2a/AMZ7NgJe9
-	 rzNFi792eS2R9KUkxgIrgUn5nzX/TGiAPPQStT0TykVpFo7ZdUElYS6e2WT+HVcz2E
-	 a54SjffkfzIDg==
-Date: Tue, 21 May 2024 11:59:57 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 2/2] rcu/tasks: Further comment ordering around current
- task snapshot on TASK-TRACE
-Message-ID: <ZkxwnZacvXqfHxZD@localhost.localdomain>
-References: <20240517152303.19689-1-frederic@kernel.org>
- <20240517152303.19689-3-frederic@kernel.org>
- <adf836b2-c660-4dc5-82dd-55d18596c803@paulmck-laptop>
- <Zku1kDj_LjK3WxaA@pavilion.home>
- <24467166-5f00-45f2-867f-40b8a836d085@paulmck-laptop>
+	s=arc-20240116; t=1716285629; c=relaxed/simple;
+	bh=/cSg/X7lYCuC/DVdfeWgjMrqIqKZwvLEauuDjW69f00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BTCOhvJXLttKkrj18zr7krT0WxzfBUU3pqFY9AMAVTtyMlHrPYNW6XRJJgaTvMBG5PzJmvX/O9Bw//vm70CdPK1OOz9Jq+y5ekbQIEtNp1BDNz/ZRpd6xR41pjrE/GCvSZimh5ah9R3Mvi5C8zGuN3/XtAR2bKqTXrRk3KG+cHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F+xJz5M1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716285626;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Pb8fw+9aQyPSDiTLXgjrr7cfHooJ3U4X4y8pjGc7LBY=;
+	b=F+xJz5M15pg3a3JdWA2zg4qvX1mSjkE2sh6+tnq6ivEZcWZMQbLFy1baSxE5tXNIZpm11X
+	MPQpNtUA65IN79A1JjC3yGs7lP341NZzENNDw+C6vhqACgQlLc0HHr7AQp9Bdz00yvak1+
+	jXmUIao4tdp5Bla/CBaVc0KXkF7yfvI=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-286-ycPk7RGgPt61ksvw2i0NwQ-1; Tue, 21 May 2024 06:00:25 -0400
+X-MC-Unique: ycPk7RGgPt61ksvw2i0NwQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-351c67dbc8dso4956352f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:00:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716285623; x=1716890423;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pb8fw+9aQyPSDiTLXgjrr7cfHooJ3U4X4y8pjGc7LBY=;
+        b=pS4MMNGL/3Dys8++PwMV0FXGS47QqCg/QpJP2hqSB7deKH+A5Hzcxlz6p9IEBDOCkE
+         heYHCq5v7apUKOKF1ptzL/O6I/Hab9K8qU5/lcgkKY0sEwAlZxufMZOALwqiMY/M8VPM
+         M1Moi9whmjM5BsNOR1CImKTQsysZaHuB0oSzo3hgxUvdISAAQxhOEOhyCTDEW3ylkhJW
+         2fo8+/bzGJSOsvZU7ZCG5uRmbWPSAxtQvdkx9Sjosvo4yed33dmosCZhp5dkWK84OC7O
+         d+vn/e26+2HJwJXxwO7VARPzS7fOiHifj/cPYG9HwEPCWu3ogKHsFI4Cg57NthiJsBON
+         cd+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWiD2vKBxh0J6QGRIfem2SyxYK7cC8kDm6nZKuTSqW5O+tLv357gzI+M0ubbVqqV66w+iQGXirNanLx2wB6IkiMLK9DxCA1kmH/g9WF
+X-Gm-Message-State: AOJu0YyKbbccFX5DdA6dADamFGCBBCRfIRWAq6MRSEWQX1f/N1JVOGM5
+	BWyR5QB2E6Kk50gNDbIBIyEHWLX2/8zFdILQpA79wRcdOm+pZSgbOvvaTGWgXKGSkWD1AbepQ4P
+	iJ1rUDGB+DhxYnUd4XAgQ5FbGcxpsJlRT54Mzv2zEctrBBaHBU+t0NHEq3f9qtg==
+X-Received: by 2002:a05:6000:440a:b0:354:c329:90c6 with SMTP id ffacd0b85a97d-354c3299350mr4398124f8f.49.1716285623472;
+        Tue, 21 May 2024 03:00:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEKPwbE25/7rQGMR4dDFK6s2a5AeqXuCCQ+EzA3+9RmQAz5ueLNbiNOtm2ADjDVsvtGaD61xA==
+X-Received: by 2002:a05:6000:440a:b0:354:c329:90c6 with SMTP id ffacd0b85a97d-354c3299350mr4398096f8f.49.1716285623056;
+        Tue, 21 May 2024 03:00:23 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-354bae5ef22sm8889057f8f.67.2024.05.21.03.00.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 03:00:22 -0700 (PDT)
+Message-ID: <c5bf7248-13ec-4164-8847-f0b2e22bd132@redhat.com>
+Date: Tue, 21 May 2024 12:00:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <24467166-5f00-45f2-867f-40b8a836d085@paulmck-laptop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/hugetlb: remove {Set,Clear}Hpage macros
+To: Sidhartha Kumar <sidhartha.kumar@oracle.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc: akpm@linux-foundation.org, vishal.moola@oracle.com,
+ muchun.song@linux.dev, peterx@redhat.com, osalvador@suse.de
+References: <20240520224407.110062-1-sidhartha.kumar@oracle.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240520224407.110062-1-sidhartha.kumar@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Le Mon, May 20, 2024 at 04:25:33PM -0700, Paul E. McKenney a écrit :
-> Good points!  How about the following?
+On 21.05.24 00:44, Sidhartha Kumar wrote:
+> All users have been converted to use the folio version of these macros,
+> we can safely remove the page based interface.
 > 
-> 		// Note that cpu_curr_snapshot() picks up the target
-> 		// CPU's current task while its runqueue is locked with
-> 		// an smp_mb__after_spinlock().  This ensures that either
-> 		// the grace-period kthread will see that task's read-side
-> 		// critical section or the task will see the updater's pre-GP
-> 		// accesses.  The trailng smp_mb() in cpu_curr_snapshot()
+> Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+> ---
 
-*trailing
 
-> 		// does not currently play a role other than simplify
-> 		// that function's ordering semantics.  If these simplified
-> 		// ordering semantics continue to be redundant, that smp_mb()
-> 		// might be removed.
-> 
-> Keeping in mind that the commit's log fully lays out the troublesome
-> scenario.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-Yep, looks very good!
+-- 
+Cheers,
 
-Thanks!
+David / dhildenb
 
-> 
-> 							Thanx, Paul
-> 
 
