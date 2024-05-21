@@ -1,103 +1,95 @@
-Return-Path: <linux-kernel+bounces-184863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC73E8CAD32
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:19:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E77F8CAD48
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CD541F21F51
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:19:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17217B229AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652AA6BB45;
-	Tue, 21 May 2024 11:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D737C6D5;
+	Tue, 21 May 2024 11:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WESx5rs/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWtljR7C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB91420B04
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1C975818;
+	Tue, 21 May 2024 11:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716290332; cv=none; b=tGNxpPsyMPypGjf50lyTZWCOIsX9+owqy5ZTjJAHK4UjLSuM551aHjEN8cSVxyJWpS5ufTAQFVbimFyPdDd8TDqY3Sc2ZmtF3sZ6eVHAmvkb/Em2Y1GA9Gi6Q1b7WVvS43lJ6qE9Vj1uX41VY9aDD7flzGs/eZkmFtPXc/r/CE0=
+	t=1716290441; cv=none; b=Zu8Z3X1t8DwH362/o45ZmLkB2Z/A1J2oX25BPzbgnJfyHjUUxmjCfjPQyZiX5S9x80L8dHrJVk/kYHoDSCquHWuLhcdtwaa4+I3gz6hyJh6xCiEKw0cXptC+APof/LgQ0+G9uco+myhO/il/7+aU20jIAu1LdkX74mI/CSolBhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716290332; c=relaxed/simple;
-	bh=A7Pxi147mbN7hWZK+r3Z3NFPs2zx6bs4DMDXT6cznWQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=O9LGqFhG0sD6edsiKc3PL1Rz7FCIYvWpJIM6Ha9kK7eJETS3X0aj4nmu8DCr+mVXdenl7bd9mcpqcS9c9slrj09JrZJWZn/Zssu14ImSYZZDHQLt+pLFotiXlUadieCvDL+WTBG3InBVgWw957DuFvTqygLcYBLP1oByeZmN+nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WESx5rs/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57100C2BD11;
-	Tue, 21 May 2024 11:18:51 +0000 (UTC)
+	s=arc-20240116; t=1716290441; c=relaxed/simple;
+	bh=wWzpBfqS6gfocOcYq61FVsITwdyGEdoO2FcMClgUahs=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=TWwHmQTlzrbpOMxIlULvswZu9etAxP84lxAVHKvL50gO11i+6S6SdYWjpqw5fboh53EXALcsUuRfqdtKilKnLETSyz2MtDDJWrtinvjK8iUuDz64D8xrTAFHP/Bgr1PLfM6ybHrwreT9bzAmO4QIWzfQAQezu7Z3Gitnxin/7Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWtljR7C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065A1C2BD11;
+	Tue, 21 May 2024 11:20:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716290332;
-	bh=A7Pxi147mbN7hWZK+r3Z3NFPs2zx6bs4DMDXT6cznWQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=WESx5rs/XKVkudIrGI9PywnYl6f37OCFlVevX8Eq6I0tWhewVTjxJG6z7BNhapUbM
-	 79c9d7upJLH761VqhN0fuqKcw09EAV/WnDUOuYavq0WiXzk9zOrdMDHaK5mRfvbPHi
-	 wgpvxbOoO2NRQ22nrKVr7z/Y1G+VTkUO/2FaMPuknzXwBbijwrtAlSe9+tcw8F/FfV
-	 JLPmWxrD4D+7jEv/50/A8tJ6p9eZOd9ZVkwVKXnxurvRbPLU6XXk+QNMIRJmMi+VnT
-	 o5Z5Cjv59n/OxaIAoyC4Zd6tp1MYQs8KS+4cs3mUbJqcGtyHSddD/vjR2tu6maguLv
-	 FKxlnElqGb0YA==
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>, 
- Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, 
- =?utf-8?q?M=C3=A5rten_Lindahl?= <marten.lindahl@axis.com>, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <ZktD50C5twF1EuKu@fedora>
-References: <ZktD50C5twF1EuKu@fedora>
-Subject: Re: [PATCH v2 2/2] regulator: tps6287x: Force writing VSEL bit
-Message-Id: <171629033106.30658.6765942472496824274.b4-ty@kernel.org>
-Date: Tue, 21 May 2024 12:18:51 +0100
+	s=k20201202; t=1716290441;
+	bh=wWzpBfqS6gfocOcYq61FVsITwdyGEdoO2FcMClgUahs=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=CWtljR7CkZBF4Vz4fhIRTYAUQb9nXzsdaXgTiYY4i+cO9p9i0Ii+LmMUI6DkJqRA1
+	 kFX4MIEXkRG6My5WjKY3emmLMRtADTjc2pydbnYdgpaCEZWSNSajpqQPXAUjCUIE54
+	 uFO2gp5AvOfYsgEfNKwsqnO7VpPH1y+Z1235QczQQwNv8akbiz+6Qtfm89GzT8Lj7x
+	 teHOHdwJHJ8TWg3JnwWacb+BEd5MKrS6dUiJK94dNDmTBu7YsBxcme1Fo5z7pxOvVd
+	 A5oG/3JYqLQPZUOiSebj4gdmVlv/EZYu9SwQ0ftwqZN1lya9nLaxtI1A314yObZ8qt
+	 lncBLEW8P6ZRQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: neil.armstrong@linaro.org,  Bjorn Andersson <andersson@kernel.org>,
+  Konrad Dybcio <konrad.dybcio@linaro.org>,  Loic Poulain
+ <loic.poulain@linaro.org>,  Mathieu Poirier <mathieu.poirier@linaro.org>,
+  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>,  linux-kernel@vger.kernel.org,
+  linux-arm-msm@vger.kernel.org,  wcn36xx@lists.infradead.org,
+  linux-wireless@vger.kernel.org,  linux-remoteproc@vger.kernel.org,
+  devicetree@vger.kernel.org,  Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 01/12] soc: qcom: add firmware name helper
+References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
+	<20240521-qcom-firmware-name-v1-1-99a6d32b1e5e@linaro.org>
+	<a45b53f3-b2a5-4094-af5a-1281e0f94d2f@linaro.org>
+	<CAA8EJprxYsoug0ipRHTmX45vaFLzJCUF0dQWOc=QLs4y6uZ1rA@mail.gmail.com>
+Date: Tue, 21 May 2024 14:20:36 +0300
+In-Reply-To: <CAA8EJprxYsoug0ipRHTmX45vaFLzJCUF0dQWOc=QLs4y6uZ1rA@mail.gmail.com>
+	(Dmitry Baryshkov's message of "Tue, 21 May 2024 13:01:45 +0300")
+Message-ID: <878r03csxn.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-621fa
+Content-Type: text/plain
 
-On Mon, 20 May 2024 15:36:55 +0300, Matti Vaittinen wrote:
-> The data-sheet for TPS6287x-Q1
-> https://www.ti.com/lit/ds/symlink/tps62873-q1.pdf
-> states at chapter 9.3.6.1 Output Voltage Range:
-> 
-> "Note that every change to the VRANGE[1:0] bits must be followed by a
-> write to the VSET register, even if the value of the VSET[7:0] bits does
-> not change."
-> 
-> [...]
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org> writes:
 
-Applied to
+> On Tue, 21 May 2024 at 12:52, <neil.armstrong@linaro.org> wrote:
+>>
+>> On 21/05/2024 11:45, Dmitry Baryshkov wrote:
+>> > Qualcomm platforms have different sets of the firmware files, which
+>> > differ from platform to platform (and from board to board, due to the
+>> > embedded signatures). Rather than listing all the firmware files,
+>> > including full paths, in the DT, provide a way to determine firmware
+>> > path based on the root DT node compatible.
+>>
+>> Ok this looks quite over-engineered but necessary to handle the legacy,
+>> but I really think we should add a way to look for a board-specific path
+>> first and fallback to those SoC specific paths.
+>
+> Again, CONFIG_FW_LOADER_USER_HELPER => delays.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+To me this also looks like very over-engineered, can you elaborate more
+why this is needed? Concrete examples would help to understand better.
 
-Thanks!
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-[2/2] regulator: tps6287x: Force writing VSEL bit
-      commit: 1ace99d7c7c4c801c0660246f741ff846a9b8e3c
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
