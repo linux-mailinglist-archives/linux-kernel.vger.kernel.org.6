@@ -1,151 +1,188 @@
-Return-Path: <linux-kernel+bounces-185078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537E68CB03C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:19:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D018CB03F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB9A9B25A02
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25B471F23B28
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E0C86243;
-	Tue, 21 May 2024 14:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176A012F38B;
+	Tue, 21 May 2024 14:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O18sUH7C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rO2eJGX2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RLmDzPRI";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rO2eJGX2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RLmDzPRI"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A8F128372;
-	Tue, 21 May 2024 14:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC7112EBE8
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716301165; cv=none; b=tRxi6171C92ZL46jCydstaeQzeDwwtJwbzSeep6v0xQa9jCfg7RioobhnfdOfuV1zy9hyK9uKeVmBk+YpQ3lWBLXesqiMebXtqGZDPn3J7tAoGIU4QABSB+Cb/AJipAhGbxj5DkgcEsNaJUxSqUVaofuokjf81JAv+mkVFzJGIg=
+	t=1716301239; cv=none; b=dTyGanhaeC2W18OwzPDYycEZj4Jim7hGjtwJFywBgJXxBsLHVmyLYfXFP1QW8vNzsgckTilajlSsYkXkcirx9KyQ9km7+eX77my3cK8m1rJetTDYHRPR8eN1vjNlPQsFkOrecYlVTvl0Lz+z30JzWiSyd72WF1LmrI72CiyxkVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716301165; c=relaxed/simple;
-	bh=a99dFJz0zAqNSJJLTt4AqoroUPKj1Nnsd1gHD1g7ONQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PNxqUG2hNVHxpgQv8wx5Pe3aUH0FlsQahvCx+BPBcGpw2s6zFBziv/XQQBlVmoRaMCPk0AcAtQKDWp5M1ZiJ7eJQ4a8prPi1uXP2mfskVL8UHwDROpSU0mA0Ub5lyX1wMBiVeLDHAuttialcediqRp1LApiYxkCGY1WikiT4hOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O18sUH7C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 453EAC2BD11;
-	Tue, 21 May 2024 14:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716301164;
-	bh=a99dFJz0zAqNSJJLTt4AqoroUPKj1Nnsd1gHD1g7ONQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O18sUH7Ckp21o3/gg6nsbYDJcDNcGXZ+dOkLFZMa3RWgLIQVBg9hCgInaXzcFhWEb
-	 sUpC45PIsSObf3/X66uYM7cgJp0yXcI2hjZlIZBHz3IOZ+0FDfTEnaDGluDYZlDRC7
-	 4cKsDeMtDvjTLvJHFE4IW2yfVUanD9F6UBKPnE/EkqekymhsYO7+lgPMYorDlo0F96
-	 Tx7wc+dyZJJCURZnGeex4AUF40ppkw4nj/uckVCshlyGF97IUHbQYiMVRiLdIqBUs0
-	 to2KrjEnbgDK6xB2rGh66YWUGerADUn5uXUnw5+owVvkftGc+u8zwhkjV1zkLaDjl+
-	 MzMKXnO8yyULQ==
-Message-ID: <b7a5e9c2-d2b3-4c99-8628-f48581f5d1ad@kernel.org>
-Date: Tue, 21 May 2024 16:19:19 +0200
+	s=arc-20240116; t=1716301239; c=relaxed/simple;
+	bh=su20utJpl4Q5+4WEWl0JIpZRFLQjyxPG8Dy7FgaLppQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKrUIZ5B7injx3V67OE6DrecbuMAqo+/A66Yp9tVQRzXoDYUzDhqe1hNC89MXyN6cUrAKmn4V6wwmJK4t9uiXz9h45wzO4QAXLLcjVKbHQESFoRtaiBh5v2nQ7llXH7I6ZEidW+FJ23ktS+KRXrY0eTy1KiQl+VsOKQsOokwTJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rO2eJGX2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RLmDzPRI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rO2eJGX2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RLmDzPRI; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 38F19342D8;
+	Tue, 21 May 2024 14:20:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716301234; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D2gl6IIKZoaIcIf/VQk1wtsxiVEKAJnwFVp8xEUBBLc=;
+	b=rO2eJGX2DCJrhuV+yZ3rMgnlKH+er2PdvSaY9aJKC/k8tQiX0sB1kwl5fRblWX1Lpm2Nlf
+	grAAgFgARm88tcvB9VMdVY52e5DDA07n+cAxv6yUz9gShNiBcXKpDbotyF/HMvfjt9EXvl
+	fBq/X2Kyo2xaVnUhaLJq1R6MyAbqgKM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716301234;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D2gl6IIKZoaIcIf/VQk1wtsxiVEKAJnwFVp8xEUBBLc=;
+	b=RLmDzPRIx+fhV+XYlKEzah51idE+LCMoIzIxbs59YgHiyMR7BXn6s/ds/Ll/ivLWuobT4k
+	UGFf0v2KQ4F3SXBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=rO2eJGX2;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RLmDzPRI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716301234; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D2gl6IIKZoaIcIf/VQk1wtsxiVEKAJnwFVp8xEUBBLc=;
+	b=rO2eJGX2DCJrhuV+yZ3rMgnlKH+er2PdvSaY9aJKC/k8tQiX0sB1kwl5fRblWX1Lpm2Nlf
+	grAAgFgARm88tcvB9VMdVY52e5DDA07n+cAxv6yUz9gShNiBcXKpDbotyF/HMvfjt9EXvl
+	fBq/X2Kyo2xaVnUhaLJq1R6MyAbqgKM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716301234;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D2gl6IIKZoaIcIf/VQk1wtsxiVEKAJnwFVp8xEUBBLc=;
+	b=RLmDzPRIx+fhV+XYlKEzah51idE+LCMoIzIxbs59YgHiyMR7BXn6s/ds/Ll/ivLWuobT4k
+	UGFf0v2KQ4F3SXBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D5DE13A1E;
+	Tue, 21 May 2024 14:20:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yy4lELGtTGaZAQAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 21 May 2024 14:20:33 +0000
+Date: Tue, 21 May 2024 16:20:31 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	David Hildenbrand <david@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	linux-riscv@lists.infradead.org,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Andrew Bresticker <abrestic@rivosinc.com>,
+	Chethan Seshadri <Chethan.Seshadri@catalinasystems.io>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Santosh Mamila <santosh.mamila@catalinasystems.io>,
+	Sivakumar Munnangi <siva.munnangi@catalinasystems.io>,
+	Sunil V L <sunilvl@ventanamicro.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v3 5/9] riscv: mm: Add memory hotplugging support
+Message-ID: <ZkytryG_cAhjLaQT@localhost.localdomain>
+References: <20240521114830.841660-1-bjorn@kernel.org>
+ <20240521114830.841660-6-bjorn@kernel.org>
+ <CAHVXubi_yQ6L5g4dODoHMNvgO6kHy8i6YskRXSPoTU4N2P8rUA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/1] PCI: dwc: Fix index 0 incorrectly being
- interpreted as a free ATU slot
-To: Bjorn Helgaas <helgaas@kernel.org>, Niklas Cassel <cassel@kernel.org>
-Cc: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- bhelgaas@google.com, mani@kernel.org, Frank Li <Frank.Li@nxp.com>,
- imx@lists.linux.dev, jdmason@kudzu.us, jingoohan1@gmail.com,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- lpieralisi@kernel.org, robh@kernel.org
-References: <20240521141431.GA25673@bhelgaas>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20240521141431.GA25673@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHVXubi_yQ6L5g4dODoHMNvgO6kHy8i6YskRXSPoTU4N2P8rUA@mail.gmail.com>
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 38F19342D8
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,eecs.berkeley.edu,redhat.com,dabbelt.com,sifive.com,lists.infradead.org,rivosinc.com,catalinasystems.io,gmail.com,ventanamicro.com,vger.kernel.org,kvack.org,lists.linux-foundation.org];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 
-On 2024/05/21 16:14, Bjorn Helgaas wrote:
-> On Tue, May 21, 2024 at 12:16:55PM +0200, Niklas Cassel wrote:
->> On Sat, May 18, 2024 at 02:06:50AM +0900, Krzysztof Wilczyński wrote:
->>> Hello,
->>>
->>>> When PERST# assert and deassert happens on the PERST# supported platforms,
->>>> the both iATU0 and iATU6 will map inbound window to BAR0. DMA will access
->>>> to the area that was previously allocated (iATU0) for BAR0, instead of the
->>>> new area (iATU6) for BAR0.
->>>>
->>>> Right now, we dodge the bullet because both iATU0 and iATU6 should
->>>> currently translate inbound accesses to BAR0 to the same allocated memory
->>>> area. However, having two separate inbound mappings for the same BAR is a
->>>> disaster waiting to happen.
->>>>
->>>> The mapping between PCI BAR and iATU inbound window are maintained in the
->>>> dw_pcie_ep::bar_to_atu[] array. While allocating a new inbound iATU map for
->>>> a BAR, dw_pcie_ep_inbound_atu() API will first check for the availability
->>>> of the existing mapping in the array and if it is not found (i.e., value in
->>>> the array indexed by the BAR is found to be 0), then it will allocate a new
->>>> map value using find_first_zero_bit().
->>>>
->>>> The issue here is, the existing logic failed to consider the fact that the
->>>> map value '0' is a valid value for BAR0. Because, find_first_zero_bit()
->>>> will return '0' as the map value for BAR0 (note that it returns the first
->>>> zero bit position).
->>>>
->>>> Due to this, when PERST# assert + deassert happens on the PERST# supported
->>>> platforms, the inbound window allocation restarts from BAR0 and the
->>>> existing logic to find the BAR mapping will return '6' for BAR0 instead of
->>>> '0' due to the fact that it considers '0' as an invalid map value.
->>>>
->>>> So fix this issue by always incrementing the map value before assigning to
->>>> bar_to_atu[] array and then decrementing it while fetching. This will make
->>>> sure that the map value '0' always represents the invalid mapping."
->>>
->>> Applied to controller/dwc, thank you!
->>>
->>> [1/1] PCI: dwc: Fix index 0 incorrectly being interpreted as a free ATU slot
->>>       https://git.kernel.org/pci/pci/c/cd3c2f0fff46
->>>
->>> 	Krzysztof
->>
->> Hello PCI maintainers,
->>
->> There was a message sent out that this patch was applied, yet the patch does
->> not appear to be part of the pull request that was sent out yesterday:
->> https://lore.kernel.org/linux-pci/20240520222943.GA7973@bhelgaas/T/#u
->>
->> In fact, there seems to be many PCI patches that have been reviewed and ready
->> to be included (some of them for months) that is not part of the pull request.
->>
->> Looking at pci/next, these patches do not appear there either, so I assume
->> that these patches will also not be included in a follow-up pull request.
->>
->> Some of these patches are actual fixes, like the patch in $subject, and do not
->> appear to depend on any other patches, so what is the reason for not including
->> them in the PCI pull request?
+On Tue, May 21, 2024 at 03:19:37PM +0200, Alexandre Ghiti wrote:
+> On Tue, May 21, 2024 at 1:49 PM Björn Töpel <bjorn@kernel.org> wrote:
+> > +       if (PageReserved(page)) {
+> > +               __ClearPageReserved(page);
 > 
-> The problem was that we didn't get these applied soon enough for them
-> to get any time in linux-next before the merge window opened.  I don't
-> like to add non-trivial things during the merge window, so I deferred
-> most of these.  I plan to get them in linux-next as soon as v6.10-rc1
-> is tagged.
+> What's the difference between __ClearPageReserved() and
+> ClearPageReserved()? Because it seems like free_reserved_page() calls
+> the latter already, so why would you need to call
+> __ClearPageReserved() on the first page?
 
-We understand that, and we agree with this. However, the point was more about
-WHY these patches were not applied earlier as many of them were fully reviewed
-for several weeks. We have more patches to send out that depend on all these
-deferred patches, and this deferring is delaying us as well. It would be great
-if going forward, a more timely processing & applying of reviewed patches
-happened. Thank you.
+__{Set,Clear}Page are the non-atomic version.
+Usually used when you know that no one else can fiddle with the page, which
+should be the case here since we are removing the memory.
 
-> 
-> If we can make a case for post-merge window fixes, e.g., to fix a
-> regression in the pull request or other serious issue, that's always a
-> possibility.
-> 
-> Bjorn
+As to why we have __ClearPageReserved and then having
+free_reserved_page() call ClearPageReserved I do not really know.
+Looking at the history, it has always been like this.
+
+I remember I looked at this a few years ago but I cannot remember the outcome
+of that.
+
+Maybe David remembers better, but I think we could remove that
+__ClearPageReserved.
+Looking at powerpc implementation code, it does not do the
+__ClearPageReserved and relies only on free_reserved_page().
+
+I will have a look.
 
 -- 
-Damien Le Moal
-Western Digital Research
-
+Oscar Salvador
+SUSE Labs
 
