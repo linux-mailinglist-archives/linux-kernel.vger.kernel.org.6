@@ -1,81 +1,124 @@
-Return-Path: <linux-kernel+bounces-185520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826208CB637
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:59:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C448CB63D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C177282947
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:59:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5475F1C21CE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E3C149E18;
-	Tue, 21 May 2024 22:59:48 +0000 (UTC)
-Received: from mail115-24.sinamail.sina.com.cn (mail115-24.sinamail.sina.com.cn [218.30.115.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD6514A4D7;
+	Tue, 21 May 2024 23:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNYTRCOy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C9858AC1
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 22:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74EA14A096;
+	Tue, 21 May 2024 23:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716332387; cv=none; b=gdLzsSok5t9G7jUMB98LRQ0JNCwm9Pesi5ET/JF4F7Bv0DfRblbJvrSBV0tUX9LPbm6lC5KcFgUcAxnZtSXAnGg2ht2DO5+gZz5XV1qGwzgogkYxT40NatGJh2n+MuA9tk/3b07muqvmxbkgxn8Nilv+RjvOmWT6Sp/rdT+BfHo=
+	t=1716332403; cv=none; b=Qc82HpKyMgWLR3CdxNKi6B3uAuqy+n08G/iavWxRAwizMjuqp3n8bATCIfa5Zw6rOQ1rOniOTTG3coNuieLwgfhKeKJegwZFGoM4KFjJeymsSynJl9IZypABv/Cv4VlxZlAPLnDZa9UpsK3w/EdWH0WSMRrkCJkJCsw9qBiVj6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716332387; c=relaxed/simple;
-	bh=I9pWAFXJ3AMw6DqR5IFHPFrnDHTvYEknL09DRYwfhrk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jNGlNoDk05LCmNmVkMcxXsuLHf9Yy8VaeOOm+cfRwFQwgTZUq2epe6j151jKw1ylu3edkr/Y5ICCOgpH6jA9dr3WZVDGUXx2TCs/McSpAIod768lPX/pt2K8hMPE77UmERYlTmQqIrQx4MYuQc4qD5MbDiMFzmXJgKP95gvoGRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.71.62])
-	by sina.com (10.75.12.45) with ESMTP
-	id 664D275000005F68; Tue, 22 May 2024 06:59:31 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 86682131457761
-X-SMAIL-UIID: 9AC7B9FBA6F44293AB002770D67E5E3C-20240522-065931-1
-From: Hillf Danton <hdanton@sina.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Eric Dumazet <edumazet@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf, sockmap: defer sk_psock_free_link() using RCU
-Date: Wed, 22 May 2024 06:59:18 +0800
-Message-Id: <20240521225918.2147-1-hdanton@sina.com>
-In-Reply-To: <CAADnVQKuPJv-GNH9SAWL-esSERMXJmSamWRe7AG3cW=NTnf51w@mail.gmail.com>
-References: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1716332403; c=relaxed/simple;
+	bh=iJA/F33R/LtZ4Uq9GOkWjVAyXoIG43uY1j5/qRey5p8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=Th2043Z4su3YFnOjaDbORBHbkUK0D3M26mujJRR8eAvLrvV+XBqBMhjmdb+qn2iUXhJ8jPB4BPjCdsv2h6C+m2mJfUbUayzt0fX/Rqa6jXbU4ldcK+ifSp3jx0miM5PHU0fcXhmvKQCr5oUlIx1dZXNe4osX+YqfonS7aMz0tRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNYTRCOy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DC9C2BD11;
+	Tue, 21 May 2024 22:59:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716332402;
+	bh=iJA/F33R/LtZ4Uq9GOkWjVAyXoIG43uY1j5/qRey5p8=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=qNYTRCOyd10U8Dr2Tzw965mydVoF/OGlzzJ5W/HyNMqxVBkWDVFKqoZ7fksXI+LQB
+	 mFEDpwCOG0p3F/8x+twrJZl5NPzq4k26K1y+SXj2Pozxb7kfirdV1PbuoPP/PK30QK
+	 H68apjdPEGtqD1XzySMrxVzvx5KXtFRQeDlxzaoUJjc4LNwXArvNuU3ggro0D+JPZi
+	 ySWzSgReIviOIq05uCA8Y0a1/COtseXeLrdAXZ7vCC05BdNmtZkmwQ/Ajep9Q8jib9
+	 M3C7OAcBXd+VZ6O5+LWtvlSfB7tSIQgcYD5VHDy1BOa1F6SEZUJzVESvVagccF1v+g
+	 LPYCZ+LEW55GA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 22 May 2024 01:59:56 +0300
+Message-Id: <D1FP21Y7J8QO.7JCTW22LRSXF@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "David Howells"
+ <dhowells@redhat.com>
+Cc: "Herbert Xu" <herbert@gondor.apana.org.au>,
+ <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <Andreas.Fuchs@infineon.com>, "James Prestwood" <prestwoj@gmail.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "Eric Biggers"
+ <ebiggers@kernel.org>, "David S. Miller" <davem@davemloft.net>, "open
+ list:CRYPTO API" <linux-crypto@vger.kernel.org>, "open list"
+ <linux-kernel@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "open list:SECURITY SUBSYSTEM"
+ <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 4/6] KEYS: trusted: Move tpm2_key_decode() to the TPM
+ driver
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <D1FMVEJWGLEW.14QGHPAYPHQG1@kernel.org>
+ <20240521031645.17008-1-jarkko@kernel.org>
+ <20240521031645.17008-5-jarkko@kernel.org>
+ <cc3d952f8295b52b052fbffe009b796ffb45707a.camel@HansenPartnership.com>
+ <336755.1716327854@warthog.procyon.org.uk>
+ <239a52eb5ed3a6c891382b63d08fe7b264850d38.camel@HansenPartnership.com>
+ <D1FOQSFNZ794.23R2JV1SD8X8W@kernel.org>
+In-Reply-To: <D1FOQSFNZ794.23R2JV1SD8X8W@kernel.org>
 
-On Tue, 21 May 2024 08:38:52 -0700 Alexei Starovoitov <alexei.starovoitov@gmail.com>
-> On Sun, May 12, 2024 at 12:22=E2=80=AFAM Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> > --- a/net/core/sock_map.c
-> > +++ b/net/core/sock_map.c
-> > @@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *sk,
-> >         bool strp_stop =3D false, verdict_stop =3D false;
-> >         struct sk_psock_link *link, *tmp;
+On Wed May 22, 2024 at 1:45 AM EEST, Jarkko Sakkinen wrote:
+> On Wed May 22, 2024 at 12:59 AM EEST, James Bottomley wrote:
+> > On Tue, 2024-05-21 at 22:44 +0100, David Howells wrote:
+> > > Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > >=20
+> > > > On Tue May 21, 2024 at 9:18 PM EEST, James Bottomley wrote:
+> > > > ...
+> > > > You don't save a single byte of memory with any constant that
+> > > > dictates the size requirements for multiple modules in two disjoint
+> > > > subsystems.
+> > >=20
+> > > I think James is just suggesting you replace your limit argument with
+> > > a constant not that you always allocate that amount of memory.
 > >
-> > +       rcu_read_lock();
-> >         spin_lock_bh(&psock->link_lock);
-> 
-> I think this is incorrect.
-> spin_lock_bh may sleep in RT and it won't be safe to do in rcu cs.
+> > Exactly.  All we use it for is the -E2BIG check to ensure user space
+> > isn't allowed to run away with loads of kernel memory.
+>
+> Not true.
+>
+> It did return -EINVAL. This patch changes it to -E2BIG.
+>
+> >
+> > > What the limit should be, OTOH, is up for discussion, but PAGE_SIZE
+> > > seems not unreasonable.
+> >
+> > A page is fine currently (MAX_BLOB_SIZE is 512).  However, it may be
+> > too small for some of the complex policies when they're introduced.=20
+> > I'm not bothered about what it currently is, I just want it to be able
+> > to be increased easily when the time comes.
+>
+> MAX_BLOB_SIZE would be used to cap key blob, not the policy.
+>
+> And you are ignoring it yourself too in the driver.
 
-Could you specify why it won't be safe in rcu cs if you are right?
-What does rcu look like in RT if not nothing?
-> 
-> pw-bot: cr
+Obviously policy is part of the key blob i.e. expected value for that.
+
+.. but that does not reduce space requirements to rsa asymmetric keys.
+It increases them but I think at this point 8192 is good starting point.
+And it cap can be scaled later.
+
+Being a parameter also allows to have even kernel-command line or sysfs
+parameter and stuff like that. It is robust not a bad choice.
+
+BR, Jarkko
 
