@@ -1,130 +1,146 @@
-Return-Path: <linux-kernel+bounces-184930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2D78CADF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:12:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB718CADF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12D8F1F23941
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:12:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 292D21F2358E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37872770E1;
-	Tue, 21 May 2024 12:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8C87603A;
+	Tue, 21 May 2024 12:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bZd2oRfu"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="eJjUE0HW"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BB075803;
-	Tue, 21 May 2024 12:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843F774C08
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716293552; cv=none; b=QpEpemPU22EpH2IBr1v0wJvNtFD6v063zDQ5jRPHxK2syYYYDRjoSTm1elL6SUgLv7K6QZoysEXkj2xEO4y5fEvo67O1rL9lXBC57gNEEPLK9TR0IpWjgTTD4tFTONledsNGerNx6GX3GgGy3zSZpSWEdUFXn4DnFsaHoUH/nfM=
+	t=1716293543; cv=none; b=mq3H2V5acPoqpqti+qTM7CRXqHQC0v16w1ESrEYD1FSKwVdkhflQrK1Y38ZLe8K/8yaxwnGpWAElSO5gLAtjJYvVRyUyboBdNrna86FG9Xp0e2SsvBVuIKOju4YHD+i0Zz7gHMoq0IReLol/iz5Sggmt1W1UaZdW+vxJg6n3pQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716293552; c=relaxed/simple;
-	bh=h0Oo0u4hQ+QRXSLJiXBTA++cyqDIus27IbVzDtn13Ng=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XSVMexL0LaZeXSdv4SLyVc/aKuiojoGpxmj/qWs0nTYY/qRgW886eTXCU2pw0Du3ptze3CcgkJaGAEXklfhxzKcjaEf8QjJ6u6b1wDy7O1Lf8wrMiYqiaUYfwmKp7wqO5qB26I9+tA/b+fh+sfmReFE4Q8mowU905qpMMEqfPVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bZd2oRfu; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44LCC5ng103274;
-	Tue, 21 May 2024 07:12:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716293525;
-	bh=VA+sG18CvzhI4DKfHZ9IEpAa6kujOkUdi/5UyYLhoRg=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=bZd2oRfuR9ZwysK9K94z5AOvJ8vnnOm2KUenLR/dXrockW9bL4C0jI5fv1bxCTlqx
-	 ngO5SibvjY8HtCeJ+CPYaOfgR1/d++E4w9EPe8/jfek5VzNMAT1+U3+zRQlseqZ9Vj
-	 0gBMA5xtN5sJ0oOus/rjGKFH9aqbQIWyiab8gZIg=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44LCC5Kl072918
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 21 May 2024 07:12:05 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 21
- May 2024 07:12:05 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 21 May 2024 07:12:05 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44LCC42T030983;
-	Tue, 21 May 2024 07:12:05 -0500
-Date: Tue, 21 May 2024 17:42:03 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <corbet@lwn.net>, <rogerq@kernel.org>, <danishanwar@ti.com>,
-        <vladimir.oltean@nxp.com>, <netdev@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <vigneshr@ti.com>,
-        <misael.lopez@ti.com>, <srk@ti.com>
-Subject: Re: [RFC PATCH net-next 01/28] docs: networking: ti: add driver doc
- for CPSW Proxy Client
-Message-ID: <0b0c1b07-756e-439e-bfc5-53824fd2a61c@ti.com>
-References: <20240518124234.2671651-1-s-vadapalli@ti.com>
- <20240518124234.2671651-2-s-vadapalli@ti.com>
- <642c8217-49fe-4c54-8d62-9550202c02c9@lunn.ch>
+	s=arc-20240116; t=1716293543; c=relaxed/simple;
+	bh=uYONIolNYJ2gxaECU5+g1gmjLl4stpl2JUxSp4z05AA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BCY7A7B40HMm6l5gpDZ5vA5zLaBsZsU/40V5M9dUfF45HNp6bmTO/UvlU0olYILB5Js6UqwazVmJaSuKk42TT5m37HKz3AMQwadbDvG8JqoJFG/CWCbZvDhnlPfeJg8AOb5SoqW5Kin8TrLlcEQhu/ViBQ7I+6PAu8JWMqM+Ljg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=eJjUE0HW; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5238b2ad2f6so551875e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 05:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1716293539; x=1716898339; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OxZi2jUdCHohJh9CFW9THnvKlpXtvUSrWlAxZCRE9qw=;
+        b=eJjUE0HW4cZ6l/1th05wD4UYAxEsRJGCWE6HEJ6Vhq/UUCdXra+gWfeoS9TGovRLD3
+         NfDAaBT/LQEtOP0YX6ssvtuRYjn+GUJTSdowfhfhQaTo7Telvpg6P+9MtDbWX3eUw6LN
+         AvjganHFSiNkOpie7J09u0eVrazQOGAVDycIo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716293539; x=1716898339;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxZi2jUdCHohJh9CFW9THnvKlpXtvUSrWlAxZCRE9qw=;
+        b=nO8nIs22aJc3zV6EXwyBmPgcj7W+aOH0I2GymW8szwVxkzsZ16pYW08MwP1vL9TJmU
+         /qUBNzVye6i+mws+8osOg1wbHVTLKZ+lntsZibRL1fewMjXLsnZpNl3Xgw5FNSbkWU4Y
+         L1vYFQ9hLiQFClhJirQy3pt0F8juqppYsy1+7NYGI7VwgQnk9tNOFnOuVf7HKWBSTK7w
+         lmzc4HAnOyNwcNecwJl8H3nTfLBOHB3ys0aaqK2edvJRBp4U92wf0Gbp6W5APYNVunc4
+         55xb6kuatrgl1oe/m2NO9yhU5MjdKajXv28of/44RxnQqTz6ita15Alxec/Dp2GbJ0tE
+         4tlg==
+X-Gm-Message-State: AOJu0Yw7NgIb/B0eqxPKdbrnrdcTM4XpkzlffAGWq+A887BXFinU6KWf
+	B0FbJ1lp2ubOEO2NRXezDyZd+QRLUBXgcg47XG/kc0TwuUY5xA04YSLQ1CkeK4I=
+X-Google-Smtp-Source: AGHT+IGRVhJKirVdP7yNCwkTehT+08uY6+K3fghXr0eHR1c/ui/sugCNgXZoZpMkjkoJQGkc0hNdyA==
+X-Received: by 2002:a19:f604:0:b0:51f:d82:8e07 with SMTP id 2adb3069b0e04-5220ff72b4cmr14733108e87.2.1716293539571;
+        Tue, 21 May 2024 05:12:19 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a615e5c1a3asm276777266b.71.2024.05.21.05.12.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 05:12:18 -0700 (PDT)
+Date: Tue, 21 May 2024 14:12:16 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: open list <linux-kernel@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	David Airlie <airlied@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	Oded Gabbay <ogabbay@kernel.org>, Olof Johansson <olof@lixom.net>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>
+Subject: Re: DRM Accel BoF at Linux Plumbers
+Message-ID: <ZkyPoIXBeBUqFJ48@phenom.ffwll.local>
+Mail-Followup-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+	open list <linux-kernel@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	David Airlie <airlied@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	Oded Gabbay <ogabbay@kernel.org>, Olof Johansson <olof@lixom.net>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>
+References: <CAAObsKAw174AhGaA13Hyw0ANW=TxJHpK10+OwQGNMVca85Urdg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <642c8217-49fe-4c54-8d62-9550202c02c9@lunn.ch>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CAAObsKAw174AhGaA13Hyw0ANW=TxJHpK10+OwQGNMVca85Urdg@mail.gmail.com>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-On Sun, May 19, 2024 at 05:31:16PM +0200, Andrew Lunn wrote:
-> On Sat, May 18, 2024 at 06:12:07PM +0530, Siddharth Vadapalli wrote:
-> > The CPSW Proxy Client driver interfaces with Ethernet Switch Firmware on
-> > a remote core to enable Ethernet functionality for applications running
-> > on Linux. The Ethernet Switch Firmware (EthFw) is in control of the CPSW
-> > Ethernet Switch on the SoC and acts as the Server, offering services to
-> > Clients running on various cores.
+On Sat, May 18, 2024 at 10:46:01AM +0200, Tomeu Vizoso wrote:
+> Hi,
 > 
-> I'm not sure we as a community what this architecture. We want Linux
-> to be driving the hardware, not firmware. So expect linux to be
-> running the server.
+> I would like to use the chance at the next Plumbers to discuss the
+> present challenges related to ML accelerators in mainline.
 > 
-> > +The "am65-cpsw-nuss.c" driver in Linux at:
-> > +drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> > +provides Ethernet functionality for applications on Linux.
-> > +It also handles both the control-path and data-path, namely:
-> > +Control => Configuration of the CPSW Peripheral
-> > +Data => Configuration of the DMA Channels to transmit/receive data
+> I'm myself more oriented towards edge-oriented deployments, and don't
+> know enough about how these accelerators are being used in the cloud
+> (and maybe desktop?) to tell if there is enough overlap to warrant a
+> common BoF.
 > 
-> So nuss is capable of controlling the hardware. nuss has an upper
-> interface which is switchdev, and a lower interface which somehow acts
-> on the hardware, maybe invoking RPCs into the firmware?
+> In any case, these are the topics I would like to discuss, some
+> probably more relevant to the edge than to the cloud or desktop:
 > 
-> So it is not too big a step to put the server functionality in Linux,
-> on top of the nuss driver.
+> * What is stopping vendors from mainlining their drivers?
+> 
+> * How could we make it easier for them?
+> 
+> * Userspace API: how close are we from a common API that we can ask
+> userspace drivers to implement? What can be done to further this goal?
+> 
+> * Automated testing: DRM CI can be used, but would be good to have a
+> common test suite to run there. This is probably dependent on a common
+> userspace API.
+> 
+> * Other shared userspace infrastructure (compiler, execution,
+> synchronization, virtualization, ...)
+> 
+> * Firmware-mediated IP: what should we do about it, if anything?
+> 
+> * Any standing issues in DRM infra (GEM, gpu scheduler, DMABuf, etc)
+> that are hurting accel drivers?
+> 
+> What do people think, should we have a drivers/accel-wide BoF at
+> Plumbers? If so, what other topics should we have in the agenda?
 
-Andrew,
+Yeah sounds good, and I'll try to at least attend lpc this year since it's
+rather close ... Might be good to explicitly ping teams of merged and
+in-flight drivers we have in accel already.
 
-Thank you for reviewing the patch and sharing your feedback. While I
-have come across other Switch Designs / Architecture, I am yet to go
-through the one you have mentioned below. I will go through it in detail
-and will follow up with my understanding in a future reply. This reply
-is intended to be an acknowledgment that I have read your feedback.
-I also wanted to clarify the use-case which this series targets. The
-requirements of the use-case are:
-1. Independent Ethernet Switch functionality: Switch operation and
-configuration when Linux is not functional (Fast startup, Low Power
-Mode, Safety use-cases).
-2. Dynamic Ethernet Switch configuration changes performed based on the
-applications which run on various cores.
+I think the topic list is at least a good starting point.
 
-[...]
-
-Regards,
-Siddharth.
+Cheers, Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
