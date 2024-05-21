@@ -1,246 +1,162 @@
-Return-Path: <linux-kernel+bounces-184568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987248CA8EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:31:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1C48CA8F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EC972811CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:31:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 278DCB2288C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F155D50277;
-	Tue, 21 May 2024 07:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3821A54277;
+	Tue, 21 May 2024 07:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIwUPfqh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Degd8G0m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208C017BA4
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFD553E0A
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716276658; cv=none; b=ahunwdGE0U52qlnCUIkvXdG1mFn4y6Jbve/FMPtpJMC0tn2sd/raerZWg1Kx/nQ+cEmxNZtTeDaEsHEfNsy+lnfsmtl6ziO44XRPx3Se8tXoOAgZuFWE9dUK6ghnaPur0NhndHfVs+A3GcOlRktfoZfkE2XnB3yw9jIuHsOxdoM=
+	t=1716276797; cv=none; b=hKMlx0FTGQLoqIWWDHwAKZ4X/yjdl377gdbsoRWgMPJcXqXQm+SD2BMliQLv1UjSz6ULSQuzDl2wu6P+cz2OswcujaDd6rrii6VQqESW0ek14f0Zgvsf5BuOQr2LAO81kRQgiA4zYaPJ8l0ZsslY51C/IAx0FHkmOqqHd99hYIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716276658; c=relaxed/simple;
-	bh=SnF23GOaDcRK71+h88Eqd4LUvUO/WlsaCrWdu7H+bpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WBvwBl3fMAYG4TQ3Dpcc8wHDVDfHZGICs82ouUyGdNMkhBUSMxqPe4xihDYq6e0Ua0UkRJ8BpOzbaRU3AIUDrNWHMFrGhlkSe7zB6PVdTSCm8L5YzoIxuWmF79/RC1qtVISE5TwzCYnybGyU+7+UDYHMVshIK+eUfY6Jm/vVoJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIwUPfqh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167FEC2BD11;
-	Tue, 21 May 2024 07:30:56 +0000 (UTC)
+	s=arc-20240116; t=1716276797; c=relaxed/simple;
+	bh=DvwhrxxsccQSrw9QTfMS9cC8aa8Ng49TDT7sFzlr740=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n+SgCjDUzo40xwyRQJPgfC6l/0ehA7nj4A77JS5Yu/g1iIgODWdJj/WXjS9lYOgB2QyL0JaFaBg95Fr0CjFbM3UUD0keIYDf9uejfV+BtgqUyqDuIlkGciU7fPOjvEqCmq2XwD6vkOnEk5h10rmV+81HmPd2aXZ6f/XRcmIrnLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Degd8G0m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996B0C4AF07;
+	Tue, 21 May 2024 07:33:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716276657;
-	bh=SnF23GOaDcRK71+h88Eqd4LUvUO/WlsaCrWdu7H+bpE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=aIwUPfqhXrQA/EwlL1vanNfFaANsQFEn92+tk3dgok+YDiqEilcvL7FXrLPjhJYgZ
-	 WsT9dLxFEZIrU6dkF0DRgy3gpvlcexDjGuxqntsOfs20o3TqcrWAIO8n/Elyj/VwvP
-	 ePkt/+8vrmHAsI/AAjCiBf4AjTURZqxGJLgS4w4W9bgjVaoyUK7kVlqZ6CiOfwdOZN
-	 DKq2MR4IoamdhZ+9R6+sNOyD3K89alRX2lNHlPsWKppU1keT0R7BxQtInGTwfLKBZi
-	 sb1470vNfnOhjuxNadUxp5x5+/HDpMJHU93alR2mE9ibpTGaEeIjf8xU3saeCFv2fB
-	 IuYhWZRkNlFDg==
-Date: Tue, 21 May 2024 13:00:53 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: dmaengine updates for v6.10
-Message-ID: <ZkxNrbkVaSGSWSA_@matsya>
+	s=k20201202; t=1716276797;
+	bh=DvwhrxxsccQSrw9QTfMS9cC8aa8Ng49TDT7sFzlr740=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Degd8G0mcC24obZPCioMA8GZLLkhmrbvq97vKhDminCEXOieMRtSfj16TjW1afYlu
+	 JeTfVFrYSgrfjhFw220IL/rvqfUbvGQts5I0aO6/hFOJ+vNhKT4aR4t9e6SvweYZms
+	 oZFmWsxKcB0LWLo2Zs9SdI1fAsBf6gAzSfE4hr2mDhNJVzHbzs1EL1p5oicA1hdfGg
+	 BCLD+XzW7sUumjHEQ6STLt4n7XXY6mChMkapkkGETW40yvV9WEUj8+z9cvHCYSrXSz
+	 iLRvo/R3UleCpZ14PLwqlumuhWfKzqpebWuQGZO+IIy+9rvbSRS+8Yvy4LDdp8LF1I
+	 1lyDUZaXn42iw==
+Date: Tue, 21 May 2024 10:31:31 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Jaewon Kim <jaewon31.kim@samsung.com>
+Cc: "vbabka@suse.cz" <vbabka@suse.cz>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jaewon31.kim@gmail.com" <jaewon31.kim@gmail.com>,
+	"tkjos@google.com" <tkjos@google.com>
+Subject: Re: [RESEND PATCH 00/10] memblock: introduce memsize showing
+ reserved memory
+Message-ID: <ZkxN0yQ7Fb0X26hT@kernel.org>
+References: <20240521023957.2587005-1-jaewon31.kim@samsung.com>
+ <CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcms1p6>
+ <20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QXtt0r7IPz6BO5L0"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
 
+On Tue, May 21, 2024 at 11:53:29AM +0900, Jaewon Kim wrote:
+> >--------- Original Message ---------
+> >Sender : 김재원 <jaewon31.kim@samsung.com>System Performance Lab.(MX)/삼성전자
+> >Date   : 2024-05-21 11:40 (GMT+9)
+> >Title  : [RESEND PATCH 00/10] memblock: introduce memsize showing reserved memory
+> >?
+> >Some of memory regions can be reserved for a specific purpose. They are
+> >usually defined through reserved-memory in device tree. If only size
+> >without address is specified in device tree, the address of the region
+> >will be determined at boot time.
+> >
+> >We may find the address of the memory regions through booting log, but
+> >it does not show all. And it could be hard to catch the very beginning
+> >log. The memblock_dump_all shows all memblock status but it does not
+> >show region name and its information is difficult to summarize.
+> >
+> >This patch introduce a debugfs node, memblock/memsize, to see reserved
+> >memory easily.
+> >
+> >Here's an example
+> >
+> >$ cat debugfs/memblock/memsize
+> >
+> >0x0000000000000000-0x0000000000000000 0x02000000 (?  32768 KB )?  map reusable linux,cma
+> >0x0000000000000000-0x0000000000000000 0x01000000 (?  16384 KB )?  map reusable vxxxxx
+> >...
+> >0x0000000000000000-0x0000000000000000 0x004e0000 (? ? 4992 KB ) nomap unusable unknown
+> >0x0000000000000000-0x0000000000000000 0x00400000 (? ? 4096 KB ) nomap unusable cxxxxx
+> >0x0000000000000000-0x0000000000000000 0x00e00000 (?  14336 KB ) nomap unusable gxxxxx
+> >
+> >Reserved? ? : 1223856 KB
+> > .kernel? ? :? 275208 KB
+> >? .text? ?  :?  16576 KB
+> >? .rwdata?  :? ? 1963 KB
+> >? .rodata?  :?  11920 KB
+> >? .bss? ? ? :? ? 2450 KB
+> >? .memmap?  :? 186368 KB
+> >? .etc? ? ? :?  55933 KB
+> > .unusable? :? 948648 KB
+> >System? ? ? : 11359056 KB
+> > .common? ? : 10306384 KB
+> > .reusable? : 1052672 KB
+> >Total? ? ?  : 12582912 KB ( 12288.00 MB )
+> >
+> >Jaewon Kim (10):
+> >? memblock: introduce memsize showing reserved memory
+> >? memblock: detect hidden memory hole size
+> >? memblock: handle overlapped reserved memory region
+> >? memblock: take a region intersecting an unknown region
+> >? memblock: track memblock changed at early param
+> >? memblock: recognize late freed size by checking PageReserved
+> >? memblock: track kernel size on memsize
+> >? memblock: print memsize summary information
+> >? memblock: print kernel internal size
+> >? memblock: support memsize reusable to consider as reusable
+> >
+> > drivers/of/fdt.c? ? ? ? ? ?  |? 11 +
+> > drivers/of/of_reserved_mem.c |? 12 +-
+> > include/linux/memblock.h? ?  |? 29 ++
+> > init/main.c? ? ? ? ? ? ? ? ? |? 13 +-
+> > kernel/dma/contiguous.c? ? ? |?  9 +-
+> > mm/Kconfig? ? ? ? ? ? ? ? ?  |? 16 ++
+> > mm/memblock.c? ? ? ? ? ? ? ? | 502 ++++++++++++++++++++++++++++++++++-
+> > mm/mm_init.c? ? ? ? ? ? ? ?  |?  6 +-
+> > mm/page_alloc.c? ? ? ? ? ? ? |? 10 +-
+> > 9 files changed, 597 insertions(+), 11 deletions(-)
+> >
+> >-- 
+> >2.25.1
+> 
+> Hello Mike 
+> 
+> This is actually RESEND as it was introduced 2 years ago.
+> Please refer to https://lore.kernel.org/linux-mm/YkQB6Ah603yPR3qf@kernel.org/#t
+> 
+> > But you never provided details about *why* you want this information exposed.
+> 
+> For your question, I'd like to say ;
+> We can see the same format and exact information between different version of kernel status.
+> 
+> 1) Internally we can check if the reserved memory changes.
+> 2) Externally we can communicate between chipset vendors and OEM, with a same format.
 
---QXtt0r7IPz6BO5L0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Why the existing debugfs interface is not sufficient?
+ 
+> This helps us to communitcate well, to easily detect changes or just to see differences.
+> 
+> Jaewon Kim
+> 
 
-Hello Linus,
-
-Back from Linaro Connect, time to send the pull requests. Here is the
-first one for dmaengine subsystem.
-This one has couple of new device support and updates in drivers
-
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
-
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
-aengine-6.10-rc1
-
-for you to fetch changes up to 28059ddbee0eb92730931a652e16a994499a7858:
-
-  MAINTAINERS: Update role for IDXD driver (2024-05-04 18:13:33 +0530)
-
-----------------------------------------------------------------
-dmaengine updates for v6.10
-
- New support:
-  - Freescale i.MX8ULP edma support in edma driver
-  - StarFive JH8100 DMA support in Synopsis axi-dmac driver
-
- Updates:
- - Tracing support for freescale edma driver, updates to dpaa2 driver
- - Remove unused QCom hidma DT support
- - Support for i2c dma in imx-sdma
- - Maintainers update for idxd and edma drivers
-
-----------------------------------------------------------------
-Baruch Siach (1):
-      dma: dw-axi-dmac: support per channel interrupt
-
-Chen Ni (1):
-      dmaengine: idma64: Add check for dma_set_max_seg_size
-
-Colin Ian King (1):
-      dmaengine: pch_dma: remove unused function chan2parent
-
-Dave Jiang (1):
-      MAINTAINERS: Update role for IDXD driver
-
-Erick Archer (1):
-      dmaengine: pl08x: Use kcalloc() instead of kzalloc()
-
-Fenghua Yu (1):
-      dmaengine: idxd: Avoid unnecessary destruction of file_ida
-
-Frank Li (15):
-      dmaengine: fsl-edma: remove 'slave_id' from fsl_edma_chan
-      dmaengine: fsl-edma: add safety check for 'srcid'
-      dmaengine: fsl-edma: clean up chclk and FSL_EDMA_DRV_HAS_CHCLK
-      dmaengine: fsl-dpaa2-qdma: clean up unused macro
-      dmaengine: fsl-dpaa2-qdma: Remove unused function dpdmai_create()
-      dmaengine: fsl-dpaa2-qdma: Add dpdmai_cmd_open
-      dmaengine: fsl-edma: fix miss mutex unlock at an error return path
-      dmaengine: fsl-dpaa2-qdma: Update DPDMAI interfaces to version 3
-      dt-bindings: fsl-imx-sdma: Add I2C peripheral types ID
-      dmaengine: imx-sdma: utilize compiler to calculate ADDRS_ARRAY_SIZE_V=
-<n>
-      dmaengine: fsl-dpaa2-qdma: Fix kernel-doc check warning
-      dt-bindings: dma: fsl-edma: remove 'clocks' from required
-      dt-bindings: dma: fsl-edma: allow 'power-domains' property
-      dmaengine: fsl-edma: add trace event support
-      dmaengine: fsl-edma: use _Generic to handle difference type
-
-Jerry Snitselaar (1):
-      dmaengine: idxd: Check for driver name match before sva user feature
-
-Joao Pinto (1):
-      Avoid hw_desc array overrun in dw-axi-dmac
-
-Joy Zou (4):
-      dt-bindings: dma: fsl-edma: add fsl,imx8ulp-edma compatible string
-      dmaengine: fsl-edma: add i.MX8ULP edma support
-      dmaengine: fsl-edma: clean up unused "fsl,imx8qm-adma" compatible str=
-ing
-      dt-bindings: fsl-dma: fsl-edma: clean up unused "fsl,imx8qm-adma" com=
-patible string
-
-Krzysztof Kozlowski (1):
-      dmaengine: xilinx: xdma: fix module autoloading
-
-Manivannan Sadhasivam (1):
-      MAINTAINERS: Drop Gustavo Pimentel as EDMA Reviewer
-
-Nicolin Chen (1):
-      dmaengine: imx-sdma: Support allocate memory from internal SRAM (iram)
-
-Nuno Sa (2):
-      dmaengine: axi-dmac: fix possible race in remove()
-      dmaengine: axi-dmac: move to device managed probe
-
-Rob Herring (1):
-      dt-bindings: dma: snps,dma-spear1340: Fix data{-,_}width schema
-
-Rob Herring (Arm) (2):
-      dmaengine: qcom: Drop hidma DT support
-      dt-bindings: dma: Drop unused QCom hidma binding
-
-Robin Gong (1):
-      dmaengine: imx-sdma: Add i2c dma support
-
-Sean Anderson (2):
-      dma: xilinx_dpdma: Remove unnecessary use of irqsave/restore
-      dma: Add lockdep asserts to virt-dma
-
-Shengjiu Wang (2):
-      dmaengine: imx-sdma: Support 24bit/3bytes for sg mode
-      dmaengine: imx-sdma: support dual fifo for DEV_TO_DEV
-
-Tan Chun Hau (2):
-      dt-bindings: dma: snps,dw-axi-dmac: Add JH8100 support
-      dmaengine: dw-axi-dmac: Add support for StarFive JH8100 DMA
-
- .../devicetree/bindings/dma/fsl,edma.yaml          | 139 ++++++++++++++---=
-----
- .../devicetree/bindings/dma/fsl,imx-sdma.yaml      |   1 +
- .../devicetree/bindings/dma/qcom_hidma_mgmt.txt    |  95 --------------
- .../bindings/dma/snps,dma-spear1340.yaml           |  42 +++----
- .../devicetree/bindings/dma/snps,dw-axi-dmac.yaml  |   1 +
- MAINTAINERS                                        |   3 +-
- drivers/dma/Makefile                               |   6 +-
- drivers/dma/amba-pl08x.c                           |   4 +-
- drivers/dma/dma-axi-dmac.c                         |  78 +++++-------
- drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c     |  38 ++++--
- drivers/dma/dw-axi-dmac/dw-axi-dmac.h              |   3 +-
- drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c            |  14 +--
- drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h            |   5 +-
- drivers/dma/fsl-dpaa2-qdma/dpdmai.c                | 113 +++++++----------
- drivers/dma/fsl-dpaa2-qdma/dpdmai.h                |  61 +++++----
- drivers/dma/fsl-edma-common.c                      |  25 ++--
- drivers/dma/fsl-edma-common.h                      | 110 ++++++++--------
- drivers/dma/fsl-edma-main.c                        |  50 +++++---
- drivers/dma/fsl-edma-trace.c                       |   4 +
- drivers/dma/fsl-edma-trace.h                       | 132 +++++++++++++++++=
-++
- drivers/dma/idma64.c                               |   4 +-
- drivers/dma/idxd/cdev.c                            |  18 +--
- drivers/dma/imx-sdma.c                             |  97 +++++++++++---
- drivers/dma/mcf-edma-main.c                        |   4 +-
- drivers/dma/pch_dma.c                              |   5 -
- drivers/dma/qcom/hidma.c                           |  11 --
- drivers/dma/qcom/hidma_mgmt.c                      | 109 +---------------
- drivers/dma/virt-dma.h                             |  10 ++
- drivers/dma/xilinx/xdma.c                          |   1 +
- drivers/dma/xilinx/xilinx_dpdma.c                  |  10 +-
- include/linux/dma/imx-dma.h                        |   1 +
- 31 files changed, 620 insertions(+), 574 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/dma/qcom_hidma_mgmt.t=
-xt
- create mode 100644 drivers/dma/fsl-edma-trace.c
- create mode 100644 drivers/dma/fsl-edma-trace.h
-
---=20
-~Vinod
-
---QXtt0r7IPz6BO5L0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmZMTa0ACgkQfBQHDyUj
-g0dtABAApJwuJgEKic6pOOEVlce1+m/njin7L2IGCbpzkpT3uC3RMMTUudCe7PmM
-1JyeyE7vXdMsia1tXOt0GJlUNyq2Bzyg4QNiL/DGocXV+aiKtO4tn+q5aeR5I02t
-ZDgeUhErDCAVWULeNh6dZicHwmzRtEVJksNyrB2oJzLHv6GI4QK/DZOfp2QSVequ
-AC+J0K+M6bn6kkBhUT1gqIztZfXgId/Db0wJBeFp9zxE4+ZtWquBPPRg0G1STnwu
-EOssmHGC6v/06e3TwQD244VdSyqXbiVVi30NjyifH5YZhfSQlzZ52UD+WvtBZAq5
-XrzED7foJemfIf266CLQiR4/Ow21owUZ774a58IiW4rC+EPbjr6XEIbVrXrxPvVz
-rZUTimiTB53RVZV57v4A0NSzdsFC/B5NLa8SwYJLrFs9HdyFGTJvU2LvPQnMTKZn
-Qo9fjjD+PtbkGsGeeCkQn9F+0XMock+jQQKvy1sLuWD3jF5bJQY39pTyyjStFzME
-zOXsF8eO8Jy7W69AMV9xTCoSNj26L7rQlzMpteG+fqsZLUEG77T47m5ZWsxTNJRX
-XRZQMwvYEfQ02S7xodZViMRdb9iMQtqFvqxisQFY1jJ724hbYFPpgEjuSiiX2+1T
-qJ3av9YZUd615B2XEuib9RC3Fku52D6mJd+1NquweD/BlRxnBbc=
-=B8tC
------END PGP SIGNATURE-----
-
---QXtt0r7IPz6BO5L0--
+-- 
+Sincerely yours,
+Mike.
 
