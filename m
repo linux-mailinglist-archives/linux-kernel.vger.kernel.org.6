@@ -1,119 +1,248 @@
-Return-Path: <linux-kernel+bounces-184984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E508CAEDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:06:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D0B8CAEF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F02E1C21845
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:06:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5920A1F22B8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53B654278;
-	Tue, 21 May 2024 13:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eG/KfFuE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F2F7FBC1;
+	Tue, 21 May 2024 13:06:06 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C617C6CC
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F7B7F487
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716296736; cv=none; b=XRKRPmvJzQq7lec1b0uxVGIv/CWrLyIrRzNSJ7J7lFNMIxo73GocQA+09q7N/wWxiM1//v/eyIjmOVQHsTMkvL1MBnw/hah/34qYW8cx/OMHcJ6RbAGIq0frUy1lvdlQQ7kvBtDrR7cRnQOgrnNHo4zxFgiaQjM6i7oM+MNRRbc=
+	t=1716296765; cv=none; b=hQu3zQ6f5LycCYOT5wimhm9dmN0Oco590vdX0YxC+8HKyD4LTeTvFlKf+Rg6Q0rijJZCT29Pn4owemMIfylVszK7Wn4zq6PMqqCQisjTQnXKYu3am1g0ribMXyppdQAdEEN650Yi1tsDYghl0NJNFwcQbti8u9sQ/kBvl09gees=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716296736; c=relaxed/simple;
-	bh=Rr/GkEedXfncMNSF/dyRDeEza5AsisB/vI8v19rE6Yc=;
+	s=arc-20240116; t=1716296765; c=relaxed/simple;
+	bh=Gm4Rfz371L48OCVFj/POrZrHcEmt4Wh36gFUtfw+L2A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJp4N6T5xdTwx+zPMzFYZtQL2n8CxnTbvA+PIZisIg1picLKUuOTmnNqgfgFJ0M7ZbSdIcH76ImkVORL3nn0fwvM3uyMIBYbmSjPeUaorHFnDW5r/B1ufztvuViPWqg+uDmfVcQl9948kdaY9OPW+MMJfQ726ZGF1OxsGl1VOx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eG/KfFuE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08E54C32786;
-	Tue, 21 May 2024 13:05:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716296735;
-	bh=Rr/GkEedXfncMNSF/dyRDeEza5AsisB/vI8v19rE6Yc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eG/KfFuEoBcpnCRX8QH0GBE7h95EK2gBtvNobaiURYktE5WUnN3+wo356Q1+ibYm7
-	 +lOBnDoAdPdh8Hrpi9rwapEAo9SF2LGGA6CsF6m2QGk5FAmTx7Kjzujv41exStb4W+
-	 YqFBAJhWm6KmaU77JY3sLy8XmmYWnatjMJFdi14gZ5UlOQkQDRTF0JnsicMQiiG0P2
-	 svdyYUfklf6WYvmT9y01j+ieqYEnLDBlcM9PF0NTNl4RSIErEd2v+eW1Nnrah7sdbj
-	 QBVsDMGbGdwWF+UW0raMxxbGq8hBDE3Jb34pQ9U/EITYkCC9SrVULw6mdyxylBIvjB
-	 1v8PMbhPbWMLw==
-Date: Tue, 21 May 2024 07:05:33 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: John Meneghini <jmeneghi@redhat.com>, hch@lst.de, sagi@grimberg.me,
-	emilne@redhat.com, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, jrani@purestorage.com,
-	randyj@purestorage.com, hare@kernel.org
-Subject: Re: [PATCH v3 1/1] nvme: multipath: Implemented new iopolicy
- "queue-depth"
-Message-ID: <ZkycHdlWgQtkCVer@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240520202045.427110-1-jmeneghi@redhat.com>
- <20240520202045.427110-2-jmeneghi@redhat.com>
- <945416af-3f8b-40b5-9681-49973beb2cb2@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SX43S6+2WMRF2pqMwIdLJ3TvczSkZVhDSReVJAoB568SccRxi7Osbps86zthmq/JD+VWdD4mzRTSB24tk4p/05xDeKeaEjs9p2iDBq8w8Qt/dAyelNPvz2BpAwPdkBIuigCHQEeI/q9uxRHYyJ4d4xKTjD8rFVlqAvTRafEYu7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s9PBi-0000Dp-Ik; Tue, 21 May 2024 15:05:54 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s9PBh-002OPX-SC; Tue, 21 May 2024 15:05:53 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s9PBh-009TFH-2X;
+	Tue, 21 May 2024 15:05:53 +0200
+Date: Tue, 21 May 2024 15:05:53 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Clark Wang <xiaoning.wang@nxp.com>
+Subject: Re: [PATCH 5/5] pwm: adp5585: Add Analog Devices ADP5585 support
+Message-ID: <xobmekjwqanow765yr42tsgknc5gc7szjublq6ywgbmoxovlr5@v3sofz5bmkol>
+References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
+ <20240520195942.11582-6-laurent.pinchart@ideasonboard.com>
+ <dl7a6puox5lc36fpto2fgyfgmpd3uboqc4lcfdtuaxzzsboqld@alw7vyi7pqjz>
+ <20240521100922.GF16345@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kumwfefmbg4urjq2"
 Content-Disposition: inline
-In-Reply-To: <945416af-3f8b-40b5-9681-49973beb2cb2@linux.ibm.com>
+In-Reply-To: <20240521100922.GF16345@pendragon.ideasonboard.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2024 at 02:18:09PM +0530, Nilay Shroff wrote:
-> On 5/21/24 01:50, John Meneghini wrote:
-> > @@ -140,8 +148,12 @@ void nvme_mpath_end_request(struct request *rq)
-> >  {
-> >  	struct nvme_ns *ns = rq->q->queuedata;
-> >  
-> > +	if ((nvme_req(rq)->flags & NVME_MPATH_CNT_ACTIVE))
-> > +		atomic_dec_if_positive(&ns->ctrl->nr_active);
-> > +
-> >  	if (!(nvme_req(rq)->flags & NVME_MPATH_IO_STATS))
-> >  		return;
-> > +
-> >  	bdev_end_io_acct(ns->head->disk->part0, req_op(rq),
-> >  			 blk_rq_bytes(rq) >> SECTOR_SHIFT,
-> >  			 nvme_req(rq)->start_time);
-> > @@ -330,6 +342,40 @@ static struct nvme_ns *nvme_round_robin_path(struct nvme_ns_head *head,
-> >  	return found;
-> >  }
-> >  
-> I think you may also want to reset nr_active counter if in case, in-flight nvme request 
-> is cancelled. If the request is cancelled then nvme_mpath_end_request() wouldn't be invoked.
-> So you may want to reset nr_active counter from nvme_cancel_request() as below:
-> 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index bf7615cb36ee..4fea7883ce8e 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -497,8 +497,9 @@ EXPORT_SYMBOL_GPL(nvme_host_path_error);
->  
->  bool nvme_cancel_request(struct request *req, void *data)
->  {
-> -       dev_dbg_ratelimited(((struct nvme_ctrl *) data)->device,
-> -                               "Cancelling I/O %d", req->tag);
-> +       struct nvme_ctrl *ctrl = (struct nvme_ctrl *)data;
-> +
-> +       dev_dbg_ratelimited(ctrl->device, "Cancelling I/O %d", req->tag);
->  
->         /* don't abort one completed or idle request */
->         if (blk_mq_rq_state(req) != MQ_RQ_IN_FLIGHT)
-> @@ -506,6 +507,8 @@ bool nvme_cancel_request(struct request *req, void *data)
->  
->         nvme_req(req)->status = NVME_SC_HOST_ABORTED_CMD;
->         nvme_req(req)->flags |= NVME_REQ_CANCELLED;
-> +       if ((nvme_req(rq)->flags & NVME_MPATH_CNT_ACTIVE))
-> +               atomic_dec(&ctrl->nr_active);
->         blk_mq_complete_request(req);
->         return true;
->  }
 
-The io stats wouldn't be right if that happened. And maybe it isn't
-right on a failover, but it needs to be. Would it work if
-nvme_failover_req() calls nvme_end_req() instead of directly calling
-blk_mq_end_req()?
+--kumwfefmbg4urjq2
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello,
+
+[dropping Alexandru Ardelean from Cc as their address bounces]
+
+On Tue, May 21, 2024 at 01:09:22PM +0300, Laurent Pinchart wrote:
+> On Tue, May 21, 2024 at 10:51:26AM +0200, Uwe Kleine-K=F6nig wrote:
+> > On Mon, May 20, 2024 at 10:59:41PM +0300, Laurent Pinchart wrote:
+> > > +	ret =3D regmap_update_bits(adp5585_pwm->regmap, ADP5585_GENERAL_CFG,
+> > > +				 ADP5585_OSC_EN, ADP5585_OSC_EN);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	return 0;
+> >=20
+> > The last four lines are equivalent to
+> >=20
+> > 	return ret;
+>=20
+> I prefer the existing code but can also change it.
+
+Well, I see the upside of your approach. If this was my only concern I
+wouldn't refuse to apply the patch.
+
+> > > +	regmap_update_bits(adp5585_pwm->regmap, ADP5585_GENERAL_CFG,
+> > > +			   ADP5585_OSC_EN, 0);
+> > > +}
+> > > +
+> > > +static int pwm_adp5585_apply(struct pwm_chip *chip,
+> > > +			     struct pwm_device *pwm,
+> > > +			     const struct pwm_state *state)
+> > > +{
+> > > +	struct adp5585_pwm_chip *adp5585_pwm =3D to_adp5585_pwm_chip(chip);
+> > > +	u32 on, off;
+> > > +	int ret;
+> > > +
+> > > +	if (!state->enabled) {
+> > > +		guard(mutex)(&adp5585_pwm->lock);
+> > > +
+> > > +		return regmap_update_bits(adp5585_pwm->regmap, ADP5585_PWM_CFG,
+> > > +					  ADP5585_PWM_EN, 0);
+> > > +	}
+> > > +
+> > > +	if (state->period < ADP5585_PWM_MIN_PERIOD_NS ||
+> > > +	    state->period > ADP5585_PWM_MAX_PERIOD_NS)
+> > > +		return -EINVAL;
+> >=20
+> > Make this:
+> >=20
+> > 	if (state->period < ADP5585_PWM_MIN_PERIOD_NS)
+> > 		return -EINVAL;
+> >=20
+> > 	period =3D min(ADP5585_PWM_MAX_PERIOD_NS, state->period)
+> > 	duty_cycle =3D min(period, state->period);
+>=20
+> I haven't been able to find documentation about the expected behaviour.
+> What's the rationale for returning an error if the period is too low,
+> but silently clamping it if it's too high ?
+
+Well, it's only implicitly documented in the implementation of
+PWM_DEBUG. The reasoning is a combination of the following thoughts:
+
+ - Requiring exact matches is hard to work with, so some deviation
+   between request and configured value should be allowed.
+ - Rounding in both directions has strange and surprising effects. The
+   corner cases (for all affected parties (=3Dconsumer, lowlevel driver
+   and pwm core)) are easier if you only round in one direction.
+   One ugly corner case in your suggested patch is:
+   ADP5585_PWM_MAX_PERIOD_NS corresponds to 0xffff clock ticks.
+   If the consumer requests period=3D64000.2 clock ticks, you configure
+   for 64000. If the consumer requests period=3D65535.2 clock ticks you
+   return -EINVAL.
+   Another strange corner case is: Consider a hardware that can
+   implement the following periods 499.7 ns, 500.2 ns, 500.3 ns and then
+   only values >502 ns.
+   If you configure for 501 ns, you'd get 500.3 ns. get_state() would
+   tell you it's running at 500 ns. If you then configure 500 ns you
+   won't get 500.3 ns any more.
+ - If you want to allow 66535.2 clock ticks (and return 65535), what
+   should be the maximal value that should yield 65535? Each cut-off
+   value is arbitrary, so using \infty looks reasonable (to me at
+   least).
+ - Rounding down is easier than rounding up, because that's what C's /
+   does. (Well, this is admittedly a bit arbitrary, because if you round
+   down in .apply() you have to round up in .get_state().)
+
+> > round-closest is wrong. Testing with PWM_DEBUG should point that out.
+> > The right algorithm is:
+> >=20
+> > 	on =3D duty_cycle / (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ)
+> > 	off =3D period / (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ) - on
+> >=20
+> >=20
+> > > +	if (state->polarity =3D=3D PWM_POLARITY_INVERSED)
+> > > +		swap(on, off);
+> >=20
+> > Uhh, no. Either you can do inverted polarity or you cannot. Don't claim
+> > you can.
+>=20
+> OK, but what's the rationale ? This is also an area where I couldn't
+> find documentation.
+
+I don't have a good rationale here. IMHO this inverted polarity stuff is
+only a convenience for consumers because the start of the period isn't
+visible from the output wave form (apart from (maybe) the moment where
+you change the configuration) and so
+
+	.period =3D 5000, duty_cycle =3D 1000, polarity =3D PWM_POLARITY_NORMAL
+
+isn't distinguishable from
+
+	.period =3D 5000, duty_cycle =3D 4000, polarity =3D PWM_POLARITY_INVERSED
+
+=2E But it's a historic assumption of the pwm core that there is a
+relevant difference between the two polarities and I want at least a
+consistent behaviour among the lowlevel drivers. BTW, this convenience
+is the reason I'm not yet clear how I want to implemement a duty_offset.
+
+> > > +	ret =3D devm_pwmchip_add(&pdev->dev, &adp5585_pwm->chip);
+> > > +	if (ret) {
+> > > +		mutex_destroy(&adp5585_pwm->lock);
+> > > +		return dev_err_probe(&pdev->dev, ret, "failed to add PWM chip\n");
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static void adp5585_pwm_remove(struct platform_device *pdev)
+> > > +{
+> > > +	struct adp5585_pwm_chip *adp5585_pwm =3D platform_get_drvdata(pdev);
+> > > +
+> > > +	mutex_destroy(&adp5585_pwm->lock);
+> >=20
+> > Huh, this is a bad idea. The mutex is gone while the pwmchip is still
+> > registered. AFAIK calling mutex_destroy() is optional, and
+> > adp5585_pwm_remove() can just be dropped. Ditto in the error paths of
+> > .probe().
+>=20
+> mutex_destroy() is a no-op when !CONFIG_DEBUG_MUTEXES. When the config
+> option is selected, it gets more useful. I would prefer moving away from
+> the devm_* registration, and unregister the pwm_chip in .remove()
+> manually, before destroying the mutex.
+
+In that case I'd prefer a devm_mutex_init()?!
+=20
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--kumwfefmbg4urjq2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZMnDAACgkQj4D7WH0S
+/k6cSgf9GGbNJK6nrF2obOZaaHxRDIpOYDcxw0EnZdOniUP0LlmCDHna8Awg+NAZ
+XMkcq0a60qCSMNDLSJqjm8mF4zwWmlUl9NLyRIjptLAM7g8D5N8MkPsxPIfXcA2o
+KeC8zxOriHRK5Pju5wMXdVg4Vkmre8i5GgWHqH4dGcJILfFtU+xiAy5J9S9RYfyU
+xI67jpvDLuAfknGQcNGpaHrS0Z1MkrcG7yr1IJdyfu6VTDiW7RvH6SUufd004lfL
+w1uO2vXMAHO9lmKgnTT8j6u2edjxyuWVLZPn71yVTqAZ5aPaWPAQCV5Qbyd3sgJY
+nTjKK/hJUb8bN5cFPij9tjhFMwlN2Q==
+=VRiY
+-----END PGP SIGNATURE-----
+
+--kumwfefmbg4urjq2--
 
