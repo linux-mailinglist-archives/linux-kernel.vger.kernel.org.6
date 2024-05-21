@@ -1,154 +1,222 @@
-Return-Path: <linux-kernel+bounces-185386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C703B8CB44F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:37:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4CC18CB451
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03DCD1C22263
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:37:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9918828226C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7328714900A;
-	Tue, 21 May 2024 19:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB52E148301;
+	Tue, 21 May 2024 19:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="5X8nQJ+M"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EF4FZQx3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07671DFE8;
-	Tue, 21 May 2024 19:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1C06FDC
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 19:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716320245; cv=none; b=ioKlIqWdpZeT0efNIbrYanUotGVRN8sPaqNO0eE7+Zk3B1DGcJqC80HoAcGH56PZeGsHyxYtZDBNs7XN5Rgu/vVf28kbqzb/VjLD+Sx4ONAyPR6KHgG5q9rCO0tCD8/8o3CyVtOLvvLcpNqYBK0GZoXj/kiNqzc3Ro8+mBAZnXg=
+	t=1716320337; cv=none; b=MAjGqSSDFwDo/eniAStMj+ZKhHAIsjOW1IOA9her5IXVT8MwcCmtcVm510nZpA5Xj7xTYKgiz0pmFaRkGe1sTZ/1s6IbboZuZQwUzyAwFR8ITD16PbOZH8T/xw5W954g+j96oJNhsi2sus50k9csa3WjZfEx9CDPnaiqiSLhhsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716320245; c=relaxed/simple;
-	bh=wXDcMa9BCYSyaXMMmTl9LN4ze2E6leCzM04dQwdFaRM=;
+	s=arc-20240116; t=1716320337; c=relaxed/simple;
+	bh=yM5jUBsUFVsKXfURl4V3IpmBHiXpMXsFD7O98BJGzzs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ObeN41Gc7xQyiaXkdT/Cp2UC5V48yl32HWeMY0R72cgxy1hSL7gX7M7rnn5Fqjc0qu/1G6WukNk+h0fFLPX/bF1PMWX5yMdzB9vw5toqtc/dUTgafi8Rf3lGl+RwtxX36dEu+mW8pZJvqvK8Ky8J36XOpR9TLLiVRnV9fpsqZHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=5X8nQJ+M; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716320241;
-	bh=wXDcMa9BCYSyaXMMmTl9LN4ze2E6leCzM04dQwdFaRM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=5X8nQJ+MU7gpqCnK/j2pEAXml/E84t8yPhv1xQpdLoc8LPYVDKPFa5+M6n38NzU80
-	 Z+j1/At6hOVYn8VmZls82EutWaY7Ehg2OYpdMykTy2cV7JvEzs8SqHBT2UpPRVDfNr
-	 5iFDu/JCq3KkmiDCMBioXP3XC4g4bvuLjbusOcohr88wASA9NJZ30Tep5/AIOq2M8h
-	 YTJZ0SWhHE+FDm5yZvE+Em2ioQ7ePT9r175ZagbbP6JMAxf0AnxGu0Jyb781LbEytZ
-	 GVvqgRbFNw8QaxI19BZXaYArrw9Eatwxu+YreHu91wPwTVdwtzjrvUXKdBLJ9Ln3Ix
-	 RKXLDTV7ZZCNQ==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 245963782183;
-	Tue, 21 May 2024 19:37:18 +0000 (UTC)
-Date: Tue, 21 May 2024 15:37:16 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Eric Biggers <ebiggers@kernel.org>, Jarkko Sakkinen <jarkko@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	regressions@lists.linux.dev, kernel@collabora.com,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Tejun Heo <tj@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [v2 PATCH] crypto: api - Do not load modules if called by async
- probing
-Message-ID: <07512097-8198-4a84-b166-ef9809c2913b@notapiano>
-References: <CAMj1kXHi4r8KY9GvX573kwqvLpMfX-J=K2hWiGAKkf5bnicwYQ@mail.gmail.com>
- <0d260c2f7a9f67ec8bd2305919636678d06000d1.camel@HansenPartnership.com>
- <CAMj1kXFE_R_x10BVkU+8vrMz0RHiX0+rz-ZL+w08FH2CLQHZXA@mail.gmail.com>
- <66ec985f3ee229135bf748f1b0874d5367a74d7f.camel@HansenPartnership.com>
- <dfb0d930-7cbe-46c5-be19-d132b4906ecf@notapiano>
- <D1C2NPOBHAHK.20O4IME8OK1FH@kernel.org>
- <20240518043115.GA53815@sol.localdomain>
- <ZkhS1zrobNwAuANI@gondor.apana.org.au>
- <00bcfa65-384d-46ae-ab8b-30f12487928b@notapiano>
- <ZkwMnrTR_CbXcjWe@gondor.apana.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WnkBLBe5bxXFFpjc63XUnI2K7i+xWGmmeYV+AudJ0oMpeI70IYyObN+YudSsYKiKS171cBl8MYT0TaK2N72H9hCzwqjtYh4ZtCXo6kYhx5UbRm17KHxgWVzW/DH5GJqxJ6Qx61MiaTXBDIeiq2rpAcbeih50mtd33D6h0ElG5qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EF4FZQx3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716320334;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MYYVmpxUTW1rvzvLb3yl7sd1KPPLyWa+9wqUfdTVkKQ=;
+	b=EF4FZQx3V0ABD6oznOVo6eBId9FDQvm74fOOJ1ao3pWcf31uL/nNfAZvuNjdbf9d2tJCOn
+	35ksuT4LrvNNfh8IwTJpsv8d85GhYP4qfR3qhaBuLWkaI+ApXdmafJ2adetFZ6a/lRhmUs
+	7oPORJGjMu2oq+Cwp1SZCa+Kb9sxjAo=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-327-QonVt4JhMWuf5H_IYsakow-1; Tue, 21 May 2024 15:38:50 -0400
+X-MC-Unique: QonVt4JhMWuf5H_IYsakow-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5b278f641e7so4249185eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:38:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716320330; x=1716925130;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MYYVmpxUTW1rvzvLb3yl7sd1KPPLyWa+9wqUfdTVkKQ=;
+        b=Lw5yDS4vWoOeEpepMiUAUyVKIKr7Fmr3JeBreCt5OZdjfrLqiGa5GWktquC0RX+fBW
+         W9BWjRlX7N6AKUnf4rBH0C0iDaN7w6+CE6yylSSwhKnoAzH2fhyrg6kErqMy68zxXtXJ
+         s/ogCcd/WtjL6v1GUXgoy78LYyxTMb9Xh6Mqa9yTtBnwX7bNkeDzKryw11sm8EMClKOv
+         +Wil8vC9EwAE1Y09X/cwXFXBzrGSdniuTx20MGhtHRpr2qutgmiDmuiekGi6pRDmQzWb
+         xw7RHDbmzUr8WXawiL/k+gutydEBWfYQIexFKUV1pqUuxxyzWpHO9gGgm+T0ZM67/EbM
+         EHAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7Ym3JyS7RlBGCqMUlQ8pH8d6AkdRzNjfiJ/iItZq4fwbW70JwmPA4Z/EmzK3TbnmN98N9mStR2tAIOcjZk7o9j4Cx7FDGkp6ATWgm
+X-Gm-Message-State: AOJu0YxFJHiq8vsgDxPZbozJHua66jqqEhZUzYKJhMt199c5vBTx86JU
+	ZXXs+tRRBUtx1orj2uAGuzv6P1RxTK6T4bnhI5/8Wimw96JP2ilhvjxxFkW+m1yFMqUTdWTQZGi
+	a2BoGCtqK4uAJTasif6nI5SkrXzxEWNRSnsNM7KWyEcncbcKU6OPAs6NYvb25/Q==
+X-Received: by 2002:a05:6870:ec92:b0:22e:d06b:5d8f with SMTP id 586e51a60fabf-24c68f1addemr73228fac.3.1716320329575;
+        Tue, 21 May 2024 12:38:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGuJRXiMDJJZEtnmzU9qzE6oDOn/TCBfN2Y35IEbikRKw/0W0UM2Vxc+OkccQ8gdSdHQwLz4A==
+X-Received: by 2002:a05:6870:ec92:b0:22e:d06b:5d8f with SMTP id 586e51a60fabf-24c68f1addemr73193fac.3.1716320328487;
+        Tue, 21 May 2024 12:38:48 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df54d6e47sm161791381cf.28.2024.05.21.12.38.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 12:38:47 -0700 (PDT)
+Date: Tue, 21 May 2024 15:38:45 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Michal Hocko <mhocko@suse.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: CVE-2024-36000: mm/hugetlb: fix missing hugetlb_lock for resv
+ uncharge
+Message-ID: <Zkz4RRgfwUHPbQ5z@x1n>
+References: <2024052023-CVE-2024-36000-cfc4@gregkh>
+ <Zkto8rbtAUBql-78@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZkwMnrTR_CbXcjWe@gondor.apana.org.au>
+In-Reply-To: <Zkto8rbtAUBql-78@tiehlicka>
 
-On Tue, May 21, 2024 at 10:53:18AM +0800, Herbert Xu wrote:
-> On Mon, May 20, 2024 at 11:49:56AM -0400, Nícolas F. R. A. Prado wrote:
-> >
-> > Unfortunately this patch didn't work either. The warning is still there
-> > unchanged.
-> 
-> OK perhaps we can do it by calling current_is_async ourselves.
-> But this is really a nasty hack because it basically defeats
-> the whole point of loading optional algorithm by module.
-> 
-> Linus/Tejun, is it time perhaps to remove the warning introduced
-> by commit 0fdff3ec6d87856cdcc99e69cf42143fdd6c56b4 since it's
-> been ten years since the warning caused a real problem?
-> 
-> For the Crypto API, if it is called by some random driver via the
-> async context, this warning stops us from loading any modules
-> without printing a nasty warning that isn't relevant as the Crypto
-> API never calls async_synchronize_full.
-> 
-> ---8<---
-> Do not call request_module if this is the case or a warning will
-> be printed.
-> 
-> Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> Reported-by: Eric Biggers <ebiggers@kernel.org>
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-> ---
->  crypto/api.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/crypto/api.c b/crypto/api.c
-> index 22556907b3bc..7c4b9f86c1ad 100644
-> --- a/crypto/api.c
-> +++ b/crypto/api.c
-> @@ -10,6 +10,7 @@
->   * and Nettle, by Niels Möller.
->   */
->  
-> +#include <linux/async.h>
->  #include <linux/err.h>
->  #include <linux/errno.h>
->  #include <linux/jump_label.h>
-> @@ -280,7 +281,8 @@ static struct crypto_alg *crypto_larval_lookup(const char *name, u32 type,
->  	mask &= ~(CRYPTO_ALG_LARVAL | CRYPTO_ALG_DEAD);
->  
->  	alg = crypto_alg_lookup(name, type, mask);
-> -	if (!alg && !(mask & CRYPTO_NOLOAD)) {
-> +	if (!alg && !(mask & CRYPTO_NOLOAD) &&
-> +	    (!IS_BUILTIN(CONFIG_CRYPTO) || !current_is_async())) {
->  		request_module("crypto-%s", name);
->  
->  		if (!((type ^ CRYPTO_ALG_NEED_FALLBACK) & mask &
-> -- 
-> 2.39.2
+On Mon, May 20, 2024 at 05:14:58PM +0200, Michal Hocko wrote:
+> Peter,
 
-FWIW this patch fixes the warning. So feel free to add
+Hi, Michal,
 
-Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> does b76b46902c2d ("mm/hugetlb: fix missing hugetlb_lock for resv
+> uncharge") really have any security implications? I fail to see any but
+> UFFD is not really my area so I might be missing something very easily.
 
-if you choose to apply this patch (I'm happy to help test other patches too). In
-any case, please also add the following trailers so the regression gets closed
-automatically in regzbot:
+AFAIU that issue wasn't userfault specific, but a generic issue for hugetlb
+- I believe that can also trigger in other paths whoever try to call
+alloc_hugetlb_folio(), and UFFDIO_COPY is one user of it.
 
-Fixes: 1b6d7f9eb150 ("tpm: add session encryption protection to tpm2_get_random()")
-Link: https://lore.kernel.org/r/119dc5ed-f159-41be-9dda-1a056f29888d@notapiano/
+I looked at that and provided a fix only because the report originated from
+the uffd report, so Andrew normally pointing those to me, and since I
+looked anyway I tried to fix that.
+
+Here in general what I can see is that the lock is needed since this
+commit:
+
+    commit 94ae8ba7176666d1e7d8bbb9f93670a27540b6a8
+    Author: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+    Date:   Tue Jul 31 16:42:35 2012 -0700
+
+    hugetlb/cgroup: assign the page hugetlb cgroup when we move the page to active list.
+
+That commit mentioned that we rely on the lock to make sure all hugetlb
+folios on the active list will have a valid memcg.  However I'm not sure
+whether it's still required now (after all that's 2012..), e.g., I'm
+looking at hugetlb_cgroup_css_offline(), and hugetlb_cgroup_move_parent()
+looks all safe to even take empty memcg folios with the latest code at
+least:
+
+	/*
+	 * We can have pages in active list without any cgroup
+	 * ie, hugepage with less than 3 pages. We can safely
+	 * ignore those pages.
+	 */
+	if (!page_hcg || page_hcg != h_cg)
+		goto out;
+
+In short, I don't know any further security implications on this problem
+besides LOCKDEP enabled.  But I don't think I fully understand the hugetlb
+reservation code, so please just take that with a grain of salt.  E.g.,
+right now we do the hugetlb_cgroup_uncharge_folio_rsvd(), then could it
+happen that this folio will still be used finally and got injected into the
+pgtables (after all, alloc_hugetlb_folio() will still return this folio to
+the caller with a success), and would that be a problem if this folio has
+its _hugetlb_cgroup_rsvd==NULL?  That looks like another question besides
+this specific problem, though..
 
 Thanks,
-Nícolas
+
+> 
+> On Mon 20-05-24 11:48:36, Greg KH wrote:
+> > Description
+> > ===========
+> > 
+> > In the Linux kernel, the following vulnerability has been resolved:
+> > 
+> > mm/hugetlb: fix missing hugetlb_lock for resv uncharge
+> > 
+> > There is a recent report on UFFDIO_COPY over hugetlb:
+> > 
+> > https://lore.kernel.org/all/000000000000ee06de0616177560@google.com/
+> > 
+> > 350:	lockdep_assert_held(&hugetlb_lock);
+> > 
+> > Should be an issue in hugetlb but triggered in an userfault context, where
+> > it goes into the unlikely path where two threads modifying the resv map
+> > together.  Mike has a fix in that path for resv uncharge but it looks like
+> > the locking criteria was overlooked: hugetlb_cgroup_uncharge_folio_rsvd()
+> > will update the cgroup pointer, so it requires to be called with the lock
+> > held.
+> > 
+> > The Linux kernel CVE team has assigned CVE-2024-36000 to this issue.
+> > 
+> > 
+> > Affected and fixed versions
+> > ===========================
+> > 
+> > 	Issue introduced in 5.10 with commit 79aa925bf239 and fixed in 6.1.91 with commit 4c806333efea
+> > 	Issue introduced in 5.10 with commit 79aa925bf239 and fixed in 6.6.30 with commit f6c5d21db16a
+> > 	Issue introduced in 5.10 with commit 79aa925bf239 and fixed in 6.8.9 with commit 538faabf31e9
+> > 	Issue introduced in 5.10 with commit 79aa925bf239 and fixed in 6.9 with commit b76b46902c2d
+> > 	Issue introduced in 5.9.7 with commit f87004c0b2bd
+> > 
+> > Please see https://www.kernel.org for a full list of currently supported
+> > kernel versions by the kernel community.
+> > 
+> > Unaffected versions might change over time as fixes are backported to
+> > older supported kernel versions.  The official CVE entry at
+> > 	https://cve.org/CVERecord/?id=CVE-2024-36000
+> > will be updated if fixes are backported, please check that for the most
+> > up to date information about this issue.
+> > 
+> > 
+> > Affected files
+> > ==============
+> > 
+> > The file(s) affected by this issue are:
+> > 	mm/hugetlb.c
+> > 
+> > 
+> > Mitigation
+> > ==========
+> > 
+> > The Linux kernel CVE team recommends that you update to the latest
+> > stable kernel version for this, and many other bugfixes.  Individual
+> > changes are never tested alone, but rather are part of a larger kernel
+> > release.  Cherry-picking individual commits is not recommended or
+> > supported by the Linux kernel community at all.  If however, updating to
+> > the latest release is impossible, the individual changes to resolve this
+> > issue can be found at these commits:
+> > 	https://git.kernel.org/stable/c/4c806333efea1000a2a9620926f560ad2e1ca7cc
+> > 	https://git.kernel.org/stable/c/f6c5d21db16a0910152ec8aa9d5a7aed72694505
+> > 	https://git.kernel.org/stable/c/538faabf31e9c53d8c870d114846fda958a0de10
+> > 	https://git.kernel.org/stable/c/b76b46902c2d0395488c8412e1116c2486cdfcb2
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
+> 
+
+-- 
+Peter Xu
+
 
