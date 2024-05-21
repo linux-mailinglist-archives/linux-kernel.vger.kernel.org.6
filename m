@@ -1,136 +1,184 @@
-Return-Path: <linux-kernel+bounces-185517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3778CB625
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E94BF8CB62A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68826282FA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:46:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0BE7283103
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748AB149C45;
-	Tue, 21 May 2024 22:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD1B149C40;
+	Tue, 21 May 2024 22:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="faE2gfKh"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PRxX5Y41"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D42168BD;
-	Tue, 21 May 2024 22:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2DF168BD;
+	Tue, 21 May 2024 22:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716331555; cv=none; b=JosxkVkezKlpKi3lNKlYY+XKZNbTsyNhjNKcF1DGpy35GEnebnZ46lB8VwlpJsrI6FBVreTyxTtAfaXnUEzi3F/R937BZcx/7X8d7ra8kRCTpigGKIezU+bgK1ozgJwxcKsiLfDp5znHqWaIrAaYQUpn2eRA/oKn0HYGb6HY5AU=
+	t=1716331835; cv=none; b=CWZ3Az0b27xgp1uMHzr6XOkAXVTKLLC3LqmP713pKCke5QyvJGgenT4rinV23uDfYpiCSjULoSE0yQdDJbciCgg1FCYdM+3mzpvcOuIZN21972mCkFR/vazz2Z9JXJkOknD4Ps8IHPqqTWWPprnUU6GsizR8QMXYytPWL9JQoxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716331555; c=relaxed/simple;
-	bh=1BzhDhIVxLRA0+ifPXNdd7o2JNabNbLm6gHUqOcjKTY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=ZpR00F7kjab20wtRodCnojjw/CkTBp9wwiYa1VtqswJF8zRPKfJBFMWXZmBRWaQDqZ2+zfxd1QXnCobZVSqpxk0NnWDsgljgDFSl0mh+8iUK4/wABGHZhLVYlqqbMYEbH41OAV2wZM7eMHzjicP6Bon5lzW+2C5Ui5bvAANzo6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=faE2gfKh; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4202cea9a2fso2270595e9.3;
-        Tue, 21 May 2024 15:45:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716331552; x=1716936352; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:content-language:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E8q6Zk5NTdr845I1qY5dBK8ovLOqZ4cN2xf7WTsdZC0=;
-        b=faE2gfKhEttn7wr/KcSyjnH/nAr/oCabjiMzoooaORzX02XqrNyAH5SLPZXTpAzBfw
-         NKapsI4cZDJyt07xFKxxVcBHMJShZv4F0Zv4iGf/x9sS72nW6alI4Nv6sxv/g6/5XHq6
-         XPD4hF7D1h2/hSyJKa5knUOMLsHggQ2l6p59hUJnC8QyfLXpFlQDh0qIdG9nenZra7/K
-         4blxcT7OMMoC7SuN9yx4kaYYcfV16GSsUneLrPeaPUIv4wR1a6EdYaVza7ri4FUXzcOf
-         J57DZbqGVH9nJQ4mhb/FnEGKMBHakO0vbATRRf3K1hPsMl38IZlmoJ0k71ZT1iP4WLtc
-         xjXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716331552; x=1716936352;
-        h=content-transfer-encoding:cc:to:content-language:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=E8q6Zk5NTdr845I1qY5dBK8ovLOqZ4cN2xf7WTsdZC0=;
-        b=vF5YDMEwisOhfsc3GK6dfh0XEss+o+Fe6Qwvyu5KbYewGV4sl4jSOwPRUkWQzUpeIj
-         v4x7Ur0e3SuNKxTtbbQ826uumJ0E9kdROV3AFj5IoxQ0oDPH4ZYuHuQcMsuNlFt7ymDz
-         r3cdbpoTqqbzliknNpToxzx3WcQpgmlgYlIK/YpStHSyKJVCFnDnCurhitkXyKals+10
-         hw+AtXc05BKo0do+Uf+5IXJ2xGO6FfTBqgG6FLURlicwf77rY9xKuchFwJByreHRQjIH
-         j+/lIE7rcM3O9pEOkLmvoJEnQevTg8pcPCFEAVHP/zAK1LE1WfeXtyrSN1CYO5nH/Paz
-         LCuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZWCXCZOSrGW7OUIGlkkSQMXlcAeFuI2hX828e0/+pQefWAIps1uMGwJkekvvWKhiZ3JuANjPvQs3nUSwRjPLyGQTpPzzZoRbxwZOm
-X-Gm-Message-State: AOJu0YxYPdIhfAtDFWMHEuEa0GwSmWf3DsTcSWwzpzjPkVxf1ZvSMcis
-	pVPdMkhN/+8WY16Zcw9S5aoRnQNip4fheTCgyYKXZDLS+is5S2PjwdF/aZ8f
-X-Google-Smtp-Source: AGHT+IHrI6baNRqkBSMeWuIdQ+rBcQ/nG9hiMm9ZzQmkhOuWNhD5XnDXDrPu6zxVGoLvuH9JrbM6vg==
-X-Received: by 2002:a05:600c:1c15:b0:418:5ed2:5aa6 with SMTP id 5b1f17b1804b1-420fd34d36bmr1639445e9.31.1716331552007;
-        Tue, 21 May 2024 15:45:52 -0700 (PDT)
-Received: from [192.168.1.227] (186.28.45.217.dyn.plus.net. [217.45.28.186])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41ff063d8cesm444085045e9.46.2024.05.21.15.45.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 15:45:51 -0700 (PDT)
-Message-ID: <27ead18b-c23d-4f49-a020-1fc482c5ac95@gmail.com>
-Date: Tue, 21 May 2024 23:45:50 +0100
+	s=arc-20240116; t=1716331835; c=relaxed/simple;
+	bh=1zvBhO11KU07W6//cXwWC2aMDcPdVMYA8rYU21wJ2M4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y9zaZPymeevxqTfxzLoLzYnFxi/wMLjNtZdhVwy/sAttpPMTrvZMb8z2++paHlNWqVq2cDvR0O3WUcJBAa48GrK4KPCzDTuYO/Q20KVnpnj3l/nivXkXOi4Drr1LxzDf/87P3ckwuSa5N50gkQ0OQrZRJis/tOKjkS5uhcUAC+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PRxX5Y41; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44LMGGvD024153;
+	Tue, 21 May 2024 22:50:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=6hQdQWIJQzQJKZkddUQqTAvsAlR93yaL2HeF+Kt++gM=;
+ b=PRxX5Y41b+1cpwHaM5OzrFc3C/VJkITTky0lGweUb/+kB+bW4/bnwnwPY7XrshP8xaX4
+ kYtrZoWqP6hPInuxZfA+BVQLNtTMxTD56JcAmYEqlxQ7dH8dI844YIpPMmpWbZxx3R0r
+ sSmLwu4Nf0rwwP6jehgW297GHwCCSMKyiwlmVGbz9OPiPWiO3oQZYd+gU/xE/zABk+Gj
+ F6sUG6L6cq2DmyQ/Xg+C/QLU26RoTVx5QYQjZ+uSN5ymRHxigmZnH8yxVHxJ/KL5XEZI
+ +QHEFjA6h1elPFV/bdfeKo5FdPcgM4rL4EXe63WgDI+LpVk+bJymZX1HfiJr4RceJhVh dQ== 
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y93s50509-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 May 2024 22:50:18 +0000
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44LKOxfM023469;
+	Tue, 21 May 2024 22:50:18 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y77np8hw4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 May 2024 22:50:18 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44LMoFnk16057072
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 21 May 2024 22:50:17 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 484915805A;
+	Tue, 21 May 2024 22:50:15 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C39D958051;
+	Tue, 21 May 2024 22:50:14 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 21 May 2024 22:50:14 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.ibm.com>
+To: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, lukas@wunner.de, jarkko@kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [REPOST PATCH v3] crypto: ecc - Prevent ecc_digits_from_bytes from reading too many bytes
+Date: Tue, 21 May 2024 18:50:06 -0400
+Message-ID: <20240521225006.207084-1-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ken Milmore <ken.milmore@gmail.com>
-Subject: [PATCH net v2] r8169: Fix possible ring buffer corruption on
- fragmented Tx packets.
-Content-Language: en-GB
-To: "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>, nic_swsd@realtek.com,
- "\"David S. Miller\",Eric Dumazet" <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: SBdtM7poBZMlZv-A0wM4h4X2aoRVcfBY
+X-Proofpoint-ORIG-GUID: SBdtM7poBZMlZv-A0wM4h4X2aoRVcfBY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-21_14,2024-05-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ mlxlogscore=999 clxscore=1011 priorityscore=1501 impostorscore=0
+ adultscore=0 lowpriorityscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405210173
 
-An issue was found on the RTL8125b when transmitting small fragmented
-packets, whereby invalid entries were inserted into the transmit ring
-buffer, subsequently leading to calls to dma_unmap_single() with a null
-address.
+Prevent ecc_digits_from_bytes from reading too many bytes from the input
+byte array in case an insufficient number of bytes is provided to fill the
+output digit array of ndigits. Therefore, initialize the most significant
+digits with 0 to avoid trying to read too many bytes later on. Convert the
+function into a regular function since it is getting too big for an inline
+function.
 
-This was caused by rtl8169_start_xmit() not noticing changes to nr_frags
-which may occur when small packets are padded (to work around hardware
-quirks) in rtl8169_tso_csum_v2().
+If too many bytes are provided on the input byte array the extra bytes
+are ignored since the input variable 'ndigits' limits the number of digits
+that will be filled.
 
-To fix this, postpone inspecting nr_frags until after any padding has been
-applied.
+Fixes: d67c96fb97b5 ("crypto: ecdsa - Convert byte arrays with key coordinates to digits")
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 
-Fixes: 9020845fb5d6 ("r8169: improve rtl8169_start_xmit")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ken Milmore <ken.milmore@gmail.com>
 ---
- drivers/net/ethernet/realtek/r8169_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v3:
+ - Applied Jarkko's tag
 
-diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
-index 86a6d4225bc..9b0ef00b99d 100644
---- a/drivers/net/ethernet/realtek/r8169_main.c
-+++ b/drivers/net/ethernet/realtek/r8169_main.c
-@@ -4337,11 +4337,11 @@ static void rtl8169_doorbell(struct rtl8169_private *tp)
- static netdev_tx_t rtl8169_start_xmit(struct sk_buff *skb,
- 				      struct net_device *dev)
+v2:
+ - un-inline function
+ - use memset
+---
+ crypto/ecc.c                  | 22 ++++++++++++++++++++++
+ include/crypto/internal/ecc.h | 15 ++-------------
+ 2 files changed, 24 insertions(+), 13 deletions(-)
+
+diff --git a/crypto/ecc.c b/crypto/ecc.c
+index c1d2e884be1e..fe761256e335 100644
+--- a/crypto/ecc.c
++++ b/crypto/ecc.c
+@@ -68,6 +68,28 @@ const struct ecc_curve *ecc_get_curve(unsigned int curve_id)
+ }
+ EXPORT_SYMBOL(ecc_get_curve);
+ 
++void ecc_digits_from_bytes(const u8 *in, unsigned int nbytes,
++			   u64 *out, unsigned int ndigits)
++{
++	int diff = ndigits - DIV_ROUND_UP(nbytes, sizeof(u64));
++	unsigned int o = nbytes & 7;
++	__be64 msd = 0;
++
++	/* diff > 0: not enough input bytes: set most significant digits to 0 */
++	if (diff > 0) {
++		ndigits -= diff;
++		memset(&out[ndigits - 1], 0, diff * sizeof(u64));
++	}
++
++	if (o) {
++		memcpy((u8 *)&msd + sizeof(msd) - o, in, o);
++		out[--ndigits] = be64_to_cpu(msd);
++		in += o;
++	}
++	ecc_swap_digits(in, out, ndigits);
++}
++EXPORT_SYMBOL(ecc_digits_from_bytes);
++
+ static u64 *ecc_alloc_digits_space(unsigned int ndigits)
  {
--	unsigned int frags = skb_shinfo(skb)->nr_frags;
- 	struct rtl8169_private *tp = netdev_priv(dev);
- 	unsigned int entry = tp->cur_tx % NUM_TX_DESC;
- 	struct TxDesc *txd_first, *txd_last;
- 	bool stop_queue, door_bell;
-+	unsigned int frags;
- 	u32 opts[2];
+ 	size_t len = ndigits * sizeof(u64);
+diff --git a/include/crypto/internal/ecc.h b/include/crypto/internal/ecc.h
+index 7ca1f463d1ec..f7e75e1e71f3 100644
+--- a/include/crypto/internal/ecc.h
++++ b/include/crypto/internal/ecc.h
+@@ -64,19 +64,8 @@ static inline void ecc_swap_digits(const void *in, u64 *out, unsigned int ndigit
+  * @out       Output digits array
+  * @ndigits:  Number of digits to create from byte array
+  */
+-static inline void ecc_digits_from_bytes(const u8 *in, unsigned int nbytes,
+-					 u64 *out, unsigned int ndigits)
+-{
+-	unsigned int o = nbytes & 7;
+-	__be64 msd = 0;
+-
+-	if (o) {
+-		memcpy((u8 *)&msd + sizeof(msd) - o, in, o);
+-		out[--ndigits] = be64_to_cpu(msd);
+-		in += o;
+-	}
+-	ecc_swap_digits(in, out, ndigits);
+-}
++void ecc_digits_from_bytes(const u8 *in, unsigned int nbytes,
++			   u64 *out, unsigned int ndigits);
  
- 	if (unlikely(!rtl_tx_slots_avail(tp))) {
-@@ -4364,6 +4364,7 @@ static netdev_tx_t rtl8169_start_xmit(struct sk_buff *skb,
- 
- 	txd_first = tp->TxDescArray + entry;
- 
-+	frags = skb_shinfo(skb)->nr_frags;
- 	if (frags) {
- 		if (rtl8169_xmit_frags(tp, skb, opts, entry))
- 			goto err_dma_1;
+ /**
+  * ecc_is_key_valid() - Validate a given ECDH private key
 -- 
-2.39.2
+2.43.0
 
 
