@@ -1,196 +1,173 @@
-Return-Path: <linux-kernel+bounces-184994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3008CAF08
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:09:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49428CADDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFDB41C219CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:09:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECB0CB2193D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA827CF16;
-	Tue, 21 May 2024 13:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF6D762FF;
+	Tue, 21 May 2024 12:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="doeRCQVb"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jbrtEksX"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D46C78C9D
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2099C524B4
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716296898; cv=none; b=fvwhgCaEWpmEo5kBVvr9MySg8Y+z+OXXIrX6f65Hj8inmqySyG+xZVhNtyJWfJXF4RBMV1fngOgio8y8N5zxsUxI5R5uN4lo9F3XX2hFQWi0EhOmTV5YOdbO42UVzmN/e7nQeexSusV4LOy7mKJWmmFXnjSQbk/5784E9wm2GVA=
+	t=1716293187; cv=none; b=rOddkMWVgAWIiWZCNDTSyzi+A5fQg/Nq/0YqJR3NvBbSSvzvct8Gv2Ct/zN2wwAcmLo/BvPgeXlvb2hFhVSzjl+HmTEbOcnFPJSBWh6cg/LZYv9gD/zuRbjYw79kUU1tyTkAdUYhPz4At4nA0SVz6d7tNYTKeaVJz/Bxyyu+TDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716296898; c=relaxed/simple;
-	bh=w4IzJBQom6e/eg+5ubWFpWqhEhfye03AL1iiFU9y0lM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=fCDXVIlARkI97U7MTkHfONFBlv30AFDMcSPt+HX14KSi4OhScjkMkuiwstcFMARjnvSfqFk+DhUOCn0IxwRblU+ywXRmlpmtdcc/ORZyQdqU4BHGrQX5PpXrDZvGi4INcXTif4az5wv5AckPSb7yJVfLIfL0g1Z7ZNAMc+Ln6Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=doeRCQVb; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240521130814epoutp048209a8a3848a086a47c91488c0cad56b~Rgu6NEPin2497624976epoutp04e
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:08:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240521130814epoutp048209a8a3848a086a47c91488c0cad56b~Rgu6NEPin2497624976epoutp04e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716296894;
-	bh=CUX2VqrjfI/EEDqyZU4uVkkHPh5azdlSMuCxpIfmh70=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=doeRCQVbnOIa2lzDpkAPTeARfiVfov5TkfHQYT5U8PQlcv79cBywDooEV3FKi7dUr
-	 CKyrhdn7KnfZsgCKbGhDkxkMJaIy1ezXABEkOLqxIC/+HsnCCkY0CFK0fDmvzsFfC/
-	 cL1kkhZt5GrA5PQhw484fri4pwPCf03SGCHiBcgA=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240521130813epcas5p4f33cd571cfdf2daa8ee1663f270202e2~Rgu5nUAr31546115461epcas5p4o;
-	Tue, 21 May 2024 13:08:13 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4VkF9R4XwQz4x9Pv; Tue, 21 May
-	2024 13:08:11 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	94.0C.09666.BBC9C466; Tue, 21 May 2024 22:08:11 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240521113644epcas5p49bfa818b6040f17bad23f24e303ad269~RffB5Asan0500905009epcas5p4Q;
-	Tue, 21 May 2024 11:36:44 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240521113644epsmtrp264154696bb143f8efc50b183487f8be0~RffB3y50X0882408824epsmtrp20;
-	Tue, 21 May 2024 11:36:44 +0000 (GMT)
-X-AuditID: b6c32a49-f53fa700000025c2-46-664c9cbb21d8
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	66.AF.08390.C478C466; Tue, 21 May 2024 20:36:44 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240521113640epsmtip2581da03f3a550f38dd151415706754e9~Rfe_OwQgG1086110861epsmtip2B;
-	Tue, 21 May 2024 11:36:40 +0000 (GMT)
-Date: Tue, 21 May 2024 16:59:42 +0530
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
-	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
-	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
-	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
-	<kch@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
-	Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
-	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
-	nitheshshetty@gmail.com, gost.dev@samsung.com, Vincent Fu
-	<vincent.fu@samsung.com>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 04/12] block: add emulation for copy
-Message-ID: <20240521112942.f23aael3qehi4gww@green245>
+	s=arc-20240116; t=1716293187; c=relaxed/simple;
+	bh=y6uf/C+i1B/yZlW5DIn/xIOBl/tE1YV+evnBt2Jjmkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=feC7vqVUTcChSt11zRzn/ODbdoLKeh/C9+F4yIr3NkbK6LNTybsq6Wh/Gu79GytTi6RbTcSIN4f+Qq77eitTex4e0WshFZ8Ew+lniIp56LYCxNKZinXqVfh/buYyV7ajRzWsXrcVksOSPKxF6UrmOtPHrkSq2fpHG7au+uQXPDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=jbrtEksX; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59d5b112ecso12885466b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 05:06:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1716293184; x=1716897984; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mJYdzH0pAsynv7wKO0qk2byjZJ72J8K30m6YCIFuLT4=;
+        b=jbrtEksX6Do3jWz9S8J7A2RiC3sJeIZUNewnDgHUsOqvPhzUKVaq8AceCPeNuUQJ/X
+         qaXHkIHF+TzKlSFThuYA7ZYi6F+DKhMIAigp49QE7J+eAd6j1hicu6UZoWc1bOM6cXkT
+         MKMkon/MdFVWaCbzK44Q7fqx+DczFafCf466s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716293184; x=1716897984;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mJYdzH0pAsynv7wKO0qk2byjZJ72J8K30m6YCIFuLT4=;
+        b=RgWGvZR+FmV6Qd7wWEPOtYhIh7NaSY2ucZLFB+Npuv85YNUNTKHCTyqWDjMMVGFvzh
+         t6PJ5obB8aUF9tC1Zik6Z9lmohadPXWhHr1KaKanMT0vhzI14t3hLWDHC246b905QwzQ
+         afvjo80OdLt4yrOYPC2/n+vuYPHyyurxKcAYX/OdD4C7Hu7obf+QIyA6gMNkhA9Arvl+
+         4/0PkRSMD4dJyyj+u77wNwT/ywJDJpPFu3wjAAVaV7LKH8Bg9TjSyYu1XFgXatHcDt3e
+         tQtnRoSsh2EqME9kv010uKv09dwzqiCz3/pukMRteh8FX18wTFuWUgCM+ZWuvWj/QgpR
+         ahQg==
+X-Forwarded-Encrypted: i=1; AJvYcCW40cb9DES0jqtdQnzXXR9Xeo1yUYCQjfwmz8CijnATW0VkHRN0D2A6lc1EOE4m91uxtmNKIlNBi9iI/9Aqf7hUuJim8jqH55N/tfvT
+X-Gm-Message-State: AOJu0Ywvg+im3EMIYbYIdnEnJK+dHncmaOFcQgXS8rQxFx1vEtM7fpfK
+	mt/rhfkZiWcPaqkXvvu7IRC6BPXVRTNN9iyoD/Bm7X7iUDe5ZE8v3dOA5fDMNOY=
+X-Google-Smtp-Source: AGHT+IGfWNF191WRUe0dOT+wxuFScDgLI5Opi7mIPWI0KL0XH3aj2MmoNzb6yDiPo3DHO/ZyoC6pQg==
+X-Received: by 2002:a17:906:3553:b0:a5a:893a:ad3d with SMTP id a640c23a62f3a-a5a893aae74mr1306089766b.7.1716293184252;
+        Tue, 21 May 2024 05:06:24 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7d14sm1605454566b.130.2024.05.21.05.06.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 05:06:21 -0700 (PDT)
+Date: Tue, 21 May 2024 14:06:19 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: John Stultz <jstultz@google.com>
+Cc: Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH 0/8] dma-buf: heaps: Support carved-out heaps and ECC
+ related-flags
+Message-ID: <ZkyOOwpM57HIiO3v@phenom.ffwll.local>
+Mail-Followup-To: John Stultz <jstultz@google.com>,
+	Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org
+References: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
+ <CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com>
+ <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
+ <CANDhNCo5hSC-sLwdkBi3e-Ja-MzdqcGGbn-4G3XNYwCzZUwscw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <cf6929e1-0dea-4216-bbc5-c00d963372f7@suse.de>
-User-Agent: NeoMutt/20171215
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TezBcZxT33bvuLtOVazE+guimnUTEYxO2n9SjUya9Bo2ZzLQNTXWH6zHW
-	7nbXIzE19ah6ZKzH5mUjraiWoMQjSjyarghWlVRIV0oy8RhliEeSFrWptWTy3+/8vt/vnPOd
-	M4eFc5qZ1qwYUTwtFQmEXMKY0dzl4ODUVhIY6VqwZIvq1HdxlF6wiaPq8XwCzXetAHRxaQ1H
-	U7ezANoYGMRR090JgErLrjKQ5nYrhtrLijB0vbobQ1cuZWCo++UCgYpUowBNjygx1DHmiK59
-	U85A7R19DDR8q4RA3/04zUQVPVoMFWaPYKhlKg2g2vmnDNQ7thdNnssGaHCzx/A9G2r4fgCl
-	LoNUq3KcSQ1O1DOo4YEEqqEqh6Aay7+iZhuLAdWmSSWo7+UKQyovY5GgWjMfGVLL02MM6mnn
-	CEHJm6oA9VvpHWawWUisZzQtiKCl9rQoXBwRI4ry4gacDPMNc+e78px4Hugdrr1IEEd7cf0C
-	g52Oxwi3JsS1TxQIE7aoYIFMxnXx9pSKE+Jp+2ixLN6LS0sihBI3ibNMECdLEEU5i+j4YzxX
-	1yPuW8LPY6OfKRS4ZIU8s/ZMwUgFV0xygRELkm7wz5liIhcYszhkG4DrqfWYPlgB8OHQBtCp
-	OOQLAFtnXznU5y7uiDoAfNQ4sBPMAPjTrAbTqRjk2zC3P5uZC1gsgnSE/S9ZOtqc5MLlLBVT
-	p8fJ3wmoqWjarmBGekJtxZNtzCb5UK44z9RjU9hXPMXQ5TEi34XDqx/qaAvSBl7+4TmuywPJ
-	CSNYsdBJ6Lvzg/eqd7EZnOtpYuqxNVxd7Njhk+D185WE3vw1gMoHSqB/8IGZ6nxch3EyGs6u
-	lOJ63hZeUNdiet4E5m1MYXqeDVu+3cX7YU1d6U4BKzj6TxqhaxqSFCysCdUPaBHA2aJsZgHY
-	p3ztb8rXyunxMZizlG6o3LLj5F5YoWXpoQOsu+VSCgyrgBUtkcVF0TJ3CU9EJ71aeLg4rgFs
-	H9Ah/xYw/njJWQUwFlAByMK55uyGJv9IDjtCcDaZlorDpAlCWqYC7lu7KsStLcLFWxcoig/j
-	uXm4uvH5fDePo3we15I9n3k1gkNGCeLpWJqW0NJdH8Yysk7FYo7u37zz5OSnv9jUlsRqQrRx
-	gkitKvig7VJe/yXtvsS1DxbfsGIP7UkKlf83Y/AgJsgxXzqigZV2g6PPB1bvvdnnNff3xycs
-	T7mY/So+m2LCyfGWj5oW35BXlR/2+cLloLzd0umvwMqaM1KxhVGEMcuA/yWOi5M37dZH/MW8
-	zy505uKJ5ZM32el7hKcOzI5HfTLeHNrX2UPdNAsJTgujsxcyFadfaPqvLXdYdJ1Qd8OaoAPF
-	FaNqXpbv4Q1nk8eqI3O8P9LzMjhFgpSw6p/HeydTmEGJ7cLkaFdT7Ud19x8OuXfHWq//62Pg
-	m1Ps5w3fUklu9HofL7ftqw+wu/y++emBIi5DFi3gHcKlMsH/dMWR5MkEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOIsWRmVeSWpSXmKPExsWy7bCSvK5Pu0+awYxf6hbrTx1jtmia8JfZ
-	YvXdfjaL14c/MVpM+/CT2eLJgXZGi99nzzNbbDl2j9FiwaK5LBY3D+xkstizaBKTxcrVR5ks
-	Zk9vZrI4+v8tm8WkQ9cYLZ5encVksfeWtsXCtiUsFnv2nmSxuLxrDpvF/GVP2S2WH//HZDGx
-	4yqTxY4njYwW616/Z7E4cUva4nF3B6PF+b/HWR1kPC5f8fY4tUjCY+esu+we5+9tZPG4fLbU
-	Y9OqTjaPzUvqPV5snsnosftmA5vH4r7JrB69ze/YPHa23mf1+Pj0FovH+31X2Tz6tqxi9Diz
-	4Ah7gHAUl01Kak5mWWqRvl0CV8aUxq/sBUv4Kg5tKG9gfM7dxcjJISFgInGqexpTFyMXh5DA
-	bkaJVVc/sEAkJCWW/T3CDGELS6z895wdougJo8T0V2vYQRIsAqoSXac7gGwODjYBbYnT/zlA
-	wiICShIf2w+B1TMLXGKTWL5wN9ggYQEbiX/LHzGC2LwCZhJ9k6dADX3HKNF8ZjsrREJQ4uTM
-	J2BXMAMVzdv8kBlkAbOAtMTyfxwgJqeAtcTlz34gFaICMhIzln5lnsAoOAtJ8ywkzbMQmhcw
-	Mq9ilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAhOG1paOxj3rPqgd4iRiYPxEKMEB7OS
-	CO+mLZ5pQrwpiZVVqUX58UWlOanFhxilOViUxHm/ve5NERJITyxJzU5NLUgtgskycXBKNTCV
-	+51k8X2sq169+fjktuiPcRIfOu96K9Qejnr0yG+ZI9/N1MgDEtcXXXApTZmxs+7TV36RzyGz
-	Q0L+BE+I/NIzaa6Au3GGSNTich6Lg1Pedl5dJTx9p8yLXD33niC5Dz+Tsy1DytvK9bpsdr/f
-	0KClNanQNMt6f47bn9kb9TyFJogU+M0q+DCl8cH5w20vWVMjUzTXr616qFPZ3+8YZF6p+NKW
-	v2HeZv5lxVOYGZSdfWsfB1Uanjy29ULul2fzIysFE0x4mNbN2lbTXfLBefHz2Yf1A4Qfzw7c
-	1bR8aVWJTVv20/Ul8mkLb8S9mPmHjXP6J042xrozYXv/X8zSjHtX4PxEdpml8lwt39+H05VY
-	ijMSDbWYi4oTAVGa+qWKAwAA
-X-CMS-MailID: 20240521113644epcas5p49bfa818b6040f17bad23f24e303ad269
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_159f3_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240520102906epcas5p15b5a0b3c8edd0bf3073030a792a328bb
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
-	<CGME20240520102906epcas5p15b5a0b3c8edd0bf3073030a792a328bb@epcas5p1.samsung.com>
-	<20240520102033.9361-5-nj.shetty@samsung.com>
-	<cf6929e1-0dea-4216-bbc5-c00d963372f7@suse.de>
-
-------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_159f3_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANDhNCo5hSC-sLwdkBi3e-Ja-MzdqcGGbn-4G3XNYwCzZUwscw@mail.gmail.com>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-On 21/05/24 09:06AM, Hannes Reinecke wrote:
->On 5/20/24 12:20, Nitesh Shetty wrote:
->>For the devices which does not support copy, copy emulation is added.
->>It is required for in-kernel users like fabrics, where file descriptor is
->>not available and hence they can't use copy_file_range.
->>Copy-emulation is implemented by reading from source into memory and
->>writing to the corresponding destination.
->>At present in kernel user of emulation is fabrics.
->>
->>Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
->>Signed-off-by: Vincent Fu <vincent.fu@samsung.com>
->>Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
->>---
->>  block/blk-lib.c        | 223 +++++++++++++++++++++++++++++++++++++++++
->>  include/linux/blkdev.h |   4 +
->>  2 files changed, 227 insertions(+)
->>
->Again, I'm not sure if we need this.
->After all, copy offload _is_optional, so we need to be prepared to 
->handle systems where it's not supported. In the end, the caller might
->decide to do something else entirely; having an in-kernel emulation 
->would defeat that.
->And with adding an emulation to nullblk we already have an emulation
->target to try if people will want to start experimenting.
->So I'd rather not have this but rather let the caller deal with the
->fact that copy offload is optional.
->
-Unlike previous iteration, blkdev_copy_offload doesn't fallback to emulation
-incase offload fails.
-This is one more option caller/user can leverage, if for some reason
-device copy offload is not supported/optimal.
-It is upto to the caller to decide, if it wants to use copy emulation.
-Moreover we found this is very useful for fabrics scenario, where this saves
-the network bandwidth, by sending offload over the network rather than
-read+write(when target doesn't support offload).
+On Thu, May 16, 2024 at 09:51:35AM -0700, John Stultz wrote:
+> On Thu, May 16, 2024 at 3:56 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> > On Wed, May 15, 2024 at 11:42:58AM -0700, John Stultz wrote:
+> > > But it makes me a little nervous to add a new generic allocation flag
+> > > for a feature most hardware doesn't support (yet, at least). So it's
+> > > hard to weigh how common the actual usage will be across all the
+> > > heaps.
+> > >
+> > > I apologize as my worry is mostly born out of seeing vendors really
+> > > push opaque feature flags in their old ion heaps, so in providing a
+> > > flags argument, it was mostly intended as an escape hatch for
+> > > obviously common attributes. So having the first be something that
+> > > seems reasonable, but isn't actually that common makes me fret some.
+> > >
+> > > So again, not an objection, just something for folks to stew on to
+> > > make sure this is really the right approach.
+> >
+> > Another good reason to go with full heap names instead of opaque flags on
+> > existing heaps is that with the former we can use symlinks in sysfs to
+> > specify heaps, with the latter we need a new idea. We haven't yet gotten
+> > around to implement this anywhere, but it's been in the dma-buf/heap todo
+> > since forever, and I like it as a design approach. So would be a good idea
+> > to not toss it. With that display would have symlinks to cma-ecc and cma,
+> > and rendering maybe cma-ecc, shmem, cma heaps (in priority order) for a
+> > SoC where the display needs contig memory for scanout.
+> 
+> So indeed that is a good point to keep in mind, but I also think it
+> might re-inforce the choice of having ECC as a flag here.
+> 
+> Since my understanding of the sysfs symlinks to heaps idea is about
+> being able to figure out a common heap from a collection of devices,
+> it's really about the ability for the driver to access the type of
+> memory. If ECC is just an attribute of the type of memory (as in this
+> patch series), it being on or off won't necessarily affect
+> compatibility of the buffer with the device.  Similarly "uncached"
+> seems more of an attribute of memory type and not a type itself.
+> Hardware that can access non-contiguous "system" buffers can access
+> uncached system buffers.
 
-Thank you
-Nitesh Shetty
+Yeah, but in graphics there's a wide band where "shit performance" is
+defacto "not useable (as intended at least)".
 
-------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_159f3_
-Content-Type: text/plain; charset="utf-8"
+So if we limit the symlink idea to just making sure zero-copy access is
+possible, then we might not actually solve the real world problem we need
+to solve. And so the symlinks become somewhat useless, and we need to
+somewhere encode which flags you need to use with each symlink.
 
+But I also see the argument that there's a bit a combinatorial explosion
+possible. So I guess the question is where we want to handle it ...
 
-------atUsqPFm-1W_PDIhMRaVeMNpJ8wr1jcbO3GdUizRktR65zpR=_159f3_--
+Also wondering whether we should get the symlink/allocator idea off the
+ground first, but given that that hasn't moved in a decade it might be too
+much. But then the question is, what userspace are we going to use for all
+these new heaps (or heaps with new flags)?
+
+Cheers, Sima
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
