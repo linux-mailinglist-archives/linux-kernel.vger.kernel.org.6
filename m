@@ -1,80 +1,84 @@
-Return-Path: <linux-kernel+bounces-184386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 640888CA64E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A956C8CA652
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5B4C1F2235C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 640D22813E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B8F1C68F;
-	Tue, 21 May 2024 02:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B525B14286;
+	Tue, 21 May 2024 02:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="keqqgJvR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UAKjnEZE"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7060D1078B
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB52A8C1A;
+	Tue, 21 May 2024 02:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716259353; cv=none; b=PN9xL2//Hf4YoAipIAnBP65MFUE9ymDL9i4K1/sFZKbDLCLlzVuZLRUc3oIG9lC/Wze7tkuHe0PloX4gBz71TdGIZBqsjay4RS2ibNgRZ2qRuS5OIkUTh14Q+MLQYhHqvPzGyNZ5jMWXqU509oAwitPxjUdfr8N6IPEbzPmM8qw=
+	t=1716259459; cv=none; b=FwPTfRYwrKF90YDuf45tMzqUiFQV+QV7UuVyS7tZsBnaykPPowL+8J8isjZV8FPvkCaHSU0nJpcvrz+getSJTnrueqSMkjdzRjHcToNu35Glh0kXNe0tWVJZ3p+2djG0SiTcJqsz5pNmyzt2wuk7qRWwwpvLpqQ74j2ppLUcOPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716259353; c=relaxed/simple;
-	bh=fGAA8TUZe+oNGXzN8qhMT1zSbd/pP9vuFfVMZnuOxrQ=;
+	s=arc-20240116; t=1716259459; c=relaxed/simple;
+	bh=K2M+WLPCL4VOQVVxul+gz3FtVryJLgsF51Ub5a5UJxg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VFfOnhwqVCwI4wm0R6YBBUOhSRBAFV2nBrKVayaoUrULap2NRG9JfY/yb23MnUwLwQ2kbuAMonBxT5e+FOyJBoiHv3DC2Z4p6klEE/aFKsC8IgiRK1hjwXmpQHrU7TtJXWlaun4VkmhV+jM0SuFg5+PJFhbEDaUETlC5nBtuj0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=keqqgJvR; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716259352; x=1747795352;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fGAA8TUZe+oNGXzN8qhMT1zSbd/pP9vuFfVMZnuOxrQ=;
-  b=keqqgJvRBnOjlSauZoPM4aL0oR3A1bIpmECXcymFjtc5xuMNVFg5cNzl
-   3l3H51Z9CshqhaFzXr5h/3/j6llDTamgh01xpjGrVKgj2SlGE50ShVZcz
-   mslHkjavWCxz2MDHO8MIBetln31LN8Xnl2q3u8BJ58+gMrVgAFPO8ecoP
-   y5nZ7Z7hgq8DEgENqWjN3l9jCY3L6KppWBXcLv53F8Oz/lgM2LBxgZl1r
-   DYrbFqUBLPZ3uI0LCEVND3cB6ezxCYKZRakcbpPkoWo0p8QZ35JTvn6w0
-   FMeM3zBJ0GGuwEgZZ7nknV2SqzDiq0s0yes3fF213xQyzt/UpCEIBVxs5
-   Q==;
-X-CSE-ConnectionGUID: 9UTpJB0HQO62vUsCaPwW/Q==
-X-CSE-MsgGUID: ++z5dc++TvCaIGYN7NpHgA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="37802626"
-X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="37802626"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 19:42:31 -0700
-X-CSE-ConnectionGUID: k1THX/lnT4OkERnsbOwhSA==
-X-CSE-MsgGUID: QwJMYa7nT7a6LbOH84D2HQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="32787799"
-Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 20 May 2024 19:42:27 -0700
-Received: from kbuild by 108735ec233b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s9FSL-0005SL-1t;
-	Tue, 21 May 2024 02:42:25 +0000
-Date: Tue, 21 May 2024 10:41:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yuanchu Xie <yuanchu@google.com>, Wei Liu <liuwe@microsoft.com>,
-	Rob Bradford <rbradford@rivosinc.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, Theodore Ts'o <tytso@mit.edu>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, virtualization@lists.linux.dev,
-	dev@lists.cloudhypervisor.org, Yuanchu Xie <yuanchu@google.com>
-Subject: Re: [PATCH v1 1/2] virt: pvmemcontrol: control guest physical memory
- properties
-Message-ID: <202405211027.WMBOgeYF-lkp@intel.com>
-References: <20240518072422.771698-1-yuanchu@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UFy1oEf6Rjakso+BNH7wqcifZno2p/6J83i8cfpio7CHs6YWQhz8cWQSWxuJY31dJLpmIXgT4gZcbC7qYOatRIf+C+Q4Uzg5qVktDjr+c2NAMjG1FBY+yN4m64NIDYFFNXsxwMg9WxqMoG7OLK/8/3VVhc/pUroS4WYUsyYhVsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UAKjnEZE; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3c9a820d7c1so545087b6e.1;
+        Mon, 20 May 2024 19:44:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716259457; x=1716864257; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yKWcTeR+u31MXEx70K6q7LJy0dqXYN3hgdkPeLlJHR8=;
+        b=UAKjnEZELISqp5C4M+/do5CVjJH0lw09ujLanMVEmYmBpG+fNRblnPr6LzFYA2TSTm
+         qM51oJOpt2+pe53thdmLa1PnRIDPqO7Vv1N+VomV1VSir4h33XonLD/tnaZDa6S3MsJT
+         FxiNZipvgwUCjG5fwtgpcuCa4+31c9lhqp7FDDWt2RzTCrIL7bLqY4N9ekoduA0Z6tU0
+         CLlDNP/9tBYYMkUNT5oWlSU6+GUlcUKsL4ooVbMBQEyqPUPbeuANlS+P6MurRSfqte8v
+         ifJ8544ErFM9yywf+1ghB3OQlQpcHXqCQ82J5P8Hwbx8fNO9/DUmq50BLJCtAMbf2uE9
+         k/Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716259457; x=1716864257;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yKWcTeR+u31MXEx70K6q7LJy0dqXYN3hgdkPeLlJHR8=;
+        b=sN0uQXDx67LjKY+KzySyhexRidp8qnbcISjikJryxdn0ZeL4VBX0rtVGRSz89xOxFG
+         8fSQyhABkuh4zl0RZsNsLG+3OMigCA4PaELZZTCMX9GEmYpFqt3PwWK9ZEIRk/6ymAGq
+         Lz1G4pA8gcP3B9kyr5eReeKGQKKivSJNJZcVhyn52ceyGUeW1DST4ApbHx4kB/o6guUH
+         vVZqRO3SsqV3ld0VJwK8k2Ogt7kfS2/TEIrX+tPRTBuanLn0UP7YIEyPL4675yArks0G
+         16DoLOrNXAFrU7iMhktTc6qDQ7ophzaRi0PHsloje5WD0HIQGzyr5hUA6az5IZhQADNO
+         jl0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVOT2dx6y67mDeFos8PieIyKwQc3/WVQ7C+ys+eQONIH8WSfD0JSd9E8+iQN4w+M35F202orZHC9Cxq0+9LPmmUEcnBuc68xkrh0B+BBi3HFBFeVAmlBVr6vkWJJjaHMbj9dVc6Hvxp9A==
+X-Gm-Message-State: AOJu0Yz0IBZw98gJFu/kleH1VOVfkaConAtTpglIcOlX3YfLm/r8I4wf
+	sTly05sMR+WCnoVCeG9vUdZ4dmf2clam+Z2a7HGow8/mngH3eNhmN/K+xg==
+X-Google-Smtp-Source: AGHT+IEeH66UR/uGEDM+DQsewf2HS3SA3zaKukq7QJjQBEqpX+Zc8yb4b7qEXZsNlDTd1225opJD7g==
+X-Received: by 2002:a05:6808:f03:b0:3c8:2be1:a65b with SMTP id 5614622812f47-3c996f53513mr38354075b6e.0.1716259456595;
+        Mon, 20 May 2024 19:44:16 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-65cfed58446sm6058924a12.74.2024.05.20.19.44.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 19:44:15 -0700 (PDT)
+Date: Tue, 21 May 2024 10:44:11 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>,
+	Coly Li <colyli@suse.de>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Matthew Mirvish <matthew@mm12.xyz>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: Re: linux-next: manual merge of the refactor-heap tree with the
+ block tree
+Message-ID: <ZkwKe15cyhgRP4Qy@visitorckw-System-Product-Name>
+References: <20240509152745.08af752f@canb.auug.org.au>
+ <20240521121803.399705b0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,123 +87,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240518072422.771698-1-yuanchu@google.com>
+In-Reply-To: <20240521121803.399705b0@canb.auug.org.au>
 
-Hi Yuanchu,
+On Tue, May 21, 2024 at 12:18:03PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Thu, 9 May 2024 15:27:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > 
+> > Today's linux-next merge of the refactor-heap tree got conflicts in:
+> > 
+> >   drivers/md/bcache/bset.c
+> >   drivers/md/bcache/bset.h
+> >   drivers/md/bcache/btree.c
+> >   drivers/md/bcache/writeback.c
+> > 
+> > between commit:
+> > 
+> >   3a861560ccb3 ("bcache: fix variable length array abuse in btree_iter")
+> > 
+> > from the block tree and commit:
+> > 
+> >   afa5721abaaa ("bcache: Remove heap-related macros and switch to generic min_heap")
+> > 
+> > from the refactor-heap tree.
+> > 
+> > Ok, these conflicts are too extensive, so I am dropping the refactor-heap
+> > tree for today.  I suggest you all get together and sort something out.
+> 
+> I am still dropping the refactor-heap tree ...
 
-kernel test robot noticed the following build errors:
+Hi Kent,
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.9 next-20240520]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Are you still planning to send the pull request in this merge window?
+I've sent the v5 patch series [1] to resolve the conflicts some time ago.
+Is there anything missing from my side?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yuanchu-Xie/virt-pvmemcontrol-add-Yuanchu-and-Pasha-as-maintainers/20240518-152618
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240518072422.771698-1-yuanchu%40google.com
-patch subject: [PATCH v1 1/2] virt: pvmemcontrol: control guest physical memory properties
-config: powerpc-randconfig-r133-20240521 (https://download.01.org/0day-ci/archive/20240521/202405211027.WMBOgeYF-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project fa9b1be45088dce1e4b602d451f118128b94237b)
-reproduce: (https://download.01.org/0day-ci/archive/20240521/202405211027.WMBOgeYF-lkp@intel.com/reproduce)
+[1]: https://lkml.kernel.org/20240514084724.557100-1-visitorckw@gmail.com
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405211027.WMBOgeYF-lkp@intel.com/
+Regards,
+Kuan-Wei
 
-All error/warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-   WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/kcsan/kcsan_test.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in mm/dmapool_test.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat_test.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp860.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp861.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp864.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp874.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp936.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-2.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp1255.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-9.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_utf8.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-greek.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-inuit.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/bcachefs/mean_and_variance_test.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/cramfs/cramfs.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/minix/minix.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/sysv/sysv.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/qnx4/qnx4.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in fs/pstore/pstore.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/curve25519-generic.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-gw-pld.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-pcf857x.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pci-host-common.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pci-host-generic.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/rt4831-backlight.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/qcom/hdma_mgmt.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/qcom/hdma.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/lp.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap-rng.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap3-rom-rng.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iommu/iova.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-kunit.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-ram.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-raw-ram.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-slimbus.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/qcom-pm8008.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/scsi_common.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cdrom/cdrom.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/hd44780_common.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/line-display.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/mISDN/l1oip.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/hfcpci.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/speedfax.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/mISDNipac.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/mISDNisar.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_simple.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_emmc.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/vpd-sysfs.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/crypto/atmel-sha204a.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vhost/vringh.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-light.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-log.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-loopback.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-raw.o
->> WARNING: modpost: drivers/virt/pvmemcontrol/pvmemcontrol: section mismatch in reference: pvmemcontrol_pci_driver+0xc (section: .data) -> pvmemcontrol_pci_remove (section: .exit.text)
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_simpleondemand.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/parport/parport.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/matrix-keymap.o
-   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rpmsg/rpmsg_char.o
->> ERROR: modpost: "per_cpu_ptr_to_phys" [drivers/virt/pvmemcontrol/pvmemcontrol.ko] undefined!
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for HOTPLUG_CPU
-   Depends on [n]: SMP [=y] && (PPC_PSERIES [=n] || PPC_PMAC [=n] || PPC_POWERNV [=n] || FSL_SOC_BOOKE [=n])
-   Selected by [y]:
-   - PM_SLEEP_SMP [=y] && SMP [=y] && (ARCH_SUSPEND_POSSIBLE [=n] || ARCH_HIBERNATION_POSSIBLE [=y]) && PM_SLEEP [=y]
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/virt/pvmemcontrol/pvmemcontrol.c:94:19: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [usertype] value @@     got restricted __le32 [usertype] @@
-   drivers/virt/pvmemcontrol/pvmemcontrol.c:94:19: sparse:     expected unsigned int [usertype] value
-   drivers/virt/pvmemcontrol/pvmemcontrol.c:94:19: sparse:     got restricted __le32 [usertype]
->> drivers/virt/pvmemcontrol/pvmemcontrol.c:100:16: sparse: sparse: cast to restricted __le32
->> drivers/virt/pvmemcontrol/pvmemcontrol.c:105:25: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned long long [usertype] val @@     got restricted __le64 [usertype] @@
-   drivers/virt/pvmemcontrol/pvmemcontrol.c:105:25: sparse:     expected unsigned long long [usertype] val
-   drivers/virt/pvmemcontrol/pvmemcontrol.c:105:25: sparse:     got restricted __le64 [usertype]
-   drivers/virt/pvmemcontrol/pvmemcontrol.c:111:16: sparse: sparse: cast to restricted __le32
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
