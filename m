@@ -1,137 +1,188 @@
-Return-Path: <linux-kernel+bounces-185431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08D898CB4D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:47:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37D48CB4DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2ED41F22DBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:47:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F5FCB22694
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E154D1494C5;
-	Tue, 21 May 2024 20:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9865D149C42;
+	Tue, 21 May 2024 20:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzYYGIFO"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AWGJg9jC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A1DD51E;
-	Tue, 21 May 2024 20:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E269D51E
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716324415; cv=none; b=rRIM+ONINqvkN/QNVQSK39nldnYfxvc152Oa3ksupPghLEbgzxMwPAlmoAJ0xzjVrBHiGohVv5RoGLOThyhSa+HvppeJbVT/M3IxrhoHnGmFaziw7U0gRCK3uMqBSkDUtjonsHSzjjwi1x8qoHVkAuNQdOM67tw2YwzhTbpbrHs=
+	t=1716324438; cv=none; b=Sl6wU1Rq+s9VspjW5F+xtIr+RTbg4oOafog4/Csuh5NVMupVKsnxGW/tDcxs+549NLTmoNWavv2skKMuEWajGyChbPEGnt57xYg75jjGJeH/9Xh4vFNl0I5xYG6ASD/vwKEZgzFo5k4GyRtrZpgZxKwUx9PDhC2t/Mr0/W4Xn58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716324415; c=relaxed/simple;
-	bh=RwCS/BKSDM1f7z64QrAXpA4rfh3F6s6yn7di6QgXgHU=;
+	s=arc-20240116; t=1716324438; c=relaxed/simple;
+	bh=/RrA+IkihiMWw6BwGKsHsXwxUySSG2WGe39iX7tOFL4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LoywmstoGkXFNky7ttAGyJnoHlV7sWDhVnsw0uujOfEu+5f+RCCLX+Ih+2Q/s4F57bS2DUEZKdSyER9Ch6ye/y9PuUn5eHqGTGEqqdRvod35T2MinO1a7ZPQc1BTLGszpLXyl/HWAQzhz8Rbnpp3XI0bxJKZ9Pw8KULfLconxts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AzYYGIFO; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4200ee78f35so26401285e9.1;
-        Tue, 21 May 2024 13:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716324412; x=1716929212; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RwCS/BKSDM1f7z64QrAXpA4rfh3F6s6yn7di6QgXgHU=;
-        b=AzYYGIFOfIYAdWflhdP3WFQQvZ6kfM1c+3bnsZWrq4ctQ58568thTSjjhyErKGFlYq
-         U+W0N9Wg456aeUUJtiOZGGQdnC3ip7xnpiBHkm0kFuJPSf9U0ex/w9qEULKpTUle1IOI
-         47xc3FIlhCkWxdCdJSe3WEJqiCf5DkTPkqN09Mz7U/dXPtJy9BA1qlcGRmkJbaoZdcvT
-         svoZvmw+TCa2U0lXxSk9M2RmVR4hijnn3e5+BHEDHA1Y1JRGipUtQS0zKboqFUMD45Rn
-         zRO0rP5e0ydoxuj6eYmejr/QeyxhHmRrDw6ZPNdJYfDbhwzVo3C/Wyp/E1auBx+bezwN
-         cwQw==
+	 To:Cc:Content-Type; b=n3S9ga87rdilABt5LoJk0SAt2wU5U2ohnbYXVKsxObxwaG7TTdeT91LD99nU+UgQ7wMxnhUwTOekQYUhY+ZhxfLPgiCOqF1lzYUCQE+oGyrE5u+VQgNeR4SJd8/qFZI8BXuSrGMQBozn1NWU233hVxmBMqc/e0WgD3eKNrQVD6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AWGJg9jC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716324435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ASHds6F2Qt89jBYBISFH+hUHw17yTjB7XJcTzPoZFHU=;
+	b=AWGJg9jCm43qJN+O+MwnI/NHrExeB8ga9rbW268BPYH5pqSxQN7rU+eX4fkBVASh4f+J+d
+	qtBGZhamze/OMwKcAk6Cvxb63CgToNY8c9oaOBCiTLSUjSzWvzW89OahpPMSzVz+VdVaoJ
+	9m0jzPQ29B87hcVjgpdybIYUe3aQRK4=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-155-wN027z-8Mjqw5tIxAoa0YQ-1; Tue, 21 May 2024 16:47:14 -0400
+X-MC-Unique: wN027z-8Mjqw5tIxAoa0YQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-34e08bdc701so9183903f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:47:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716324412; x=1716929212;
+        d=1e100.net; s=20230601; t=1716324433; x=1716929233;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RwCS/BKSDM1f7z64QrAXpA4rfh3F6s6yn7di6QgXgHU=;
-        b=D1cnBOorONL0sYJbE7/hD/B6qVoc0vCSG+QGIVRCensIvU8Lb4zGli5fJQNOSAcUAf
-         K1UAkJ4uIwJUisRntLv/84XEp6mWLVxZEll1fHNj1rhu8NsQFM8O/6XJ7ayqpT+a1d0M
-         qiO489QzEZ3gd8g8DVn3l7Brl1/35dqZIFN24Y2Gt7MNF4Ri+OwCT+iYYnWwe7aDckMD
-         OwNpNfJLQfM013FwvNfdakL2iekLukfQqAodiigp4kgg4nMumZDfDmRbhM1cCdhL4aVE
-         /YYSZ8T+mrQAayqpX+j0pyo4rtV4uLPAdJO8UyXki3guDRFu8qPZ5YI6XrtrZ/Asilf5
-         5/dA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNrivzw2bCR/W+xI+vK021QcnIlBdOhJ/9EJpgCW5JyEZBXAlXe1Exru8STedSGh+2BJ7YKLcdSA/RFlpus6QTVqJb4qKuMst79H9Gt1Q1549UjMz0XnY1U+b6eeG4GjGtMwbwF9Pe
-X-Gm-Message-State: AOJu0Yz/qCZJuvQELUmMkTflmyo7NBRIPxRZLWtLpV51Zm/JQ3bTfTPq
-	NyZzeIAOkHVHw2STc1tFAOCLlw5jA11iM6yjJLKUegkd6rhyehtMAZpiwMIvbYKl8TlViMRPIOX
-	6luJGd+MAfid4wtg6zIXaVfBmu8Q=
-X-Google-Smtp-Source: AGHT+IGcLrfBXeHBA92XbgnHbiKtGAUgfZhqxUuqLn9hCITg0wXgeu05E4oKOYBsbBo34+QofYiTzipnKVFp8jKBeXY=
-X-Received: by 2002:a7b:c30b:0:b0:41f:bcd7:303f with SMTP id
- 5b1f17b1804b1-420fd30e480mr156395e9.16.1716324411817; Tue, 21 May 2024
- 13:46:51 -0700 (PDT)
+        bh=ASHds6F2Qt89jBYBISFH+hUHw17yTjB7XJcTzPoZFHU=;
+        b=cUyLBdtAaWm5UZrkI3zHwgevOW1YlRfbR8plZ5waqbq5UZoeKPdb2bUZJFm1Zt+zzU
+         gPwfGKGtUxgYHoE/GhBCNp+WLPXmIl+bNnotgCh2kmqGye2n3zKZr41EazdlzIFhooWn
+         EWGK7ANbMAwxG/Rnh290KI4oCK9UbHVhBLo+gIESN1MZ8YqV9GZprsPKdHCLj0jtLpYV
+         7Cvk2/xpAh3f72Ys7+5jnrSsyWT0TWDj+hUXjI/2lTDF2qoX6BcF7FOmvcH2CMeLWsce
+         UxcoXmUKd3oO514p98Pi+IglgAdy+QcEFf5IIJXAbbiUYQwnNfXDdw1JO5bjxQzUIdJ2
+         atcA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/I5jnoUq47q+rtanGmXu7mhiDXoJxOSAyxJpFLRKa7z5vZhrcskiYcLJX3pJFGvtMv7k1adtv31urD66BovAhvQlPILAtFqtPltHI
+X-Gm-Message-State: AOJu0Yz07SBa61rW3kw8sdN7ThHmnjBHPX4y/MkbiB8aZVdZ2giqj0Eu
+	H+56qaLF4NP0ENx3lvDwHufgBxQ6AOGpVz8HQY7ZWhNfyisLKXYy4hfN41oHJrZSWgCVzJdWvvS
+	ibw98Xg0pmgdzwhgFenBdB/Rsq5VR/WiC7dYHWQTtDNIOei/YUBgo9exqWoG7Bk3R78Y1vHFBt2
+	Q6IRElRXB3yvmqSWoa3+Xaq5Re6tpGKgdeirEU
+X-Received: by 2002:adf:db44:0:b0:34b:9cd5:76ae with SMTP id ffacd0b85a97d-354d8cc8fbemr47428f8f.8.1716324433267;
+        Tue, 21 May 2024 13:47:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEciNx0iM19slNMQ4HXnGJhE7jgh7LrOK8zYmVZz4vNdplHjhoIh1dd/caJ/D7gzzYeXDIvXiE2C+R8w8AY4R0=
+X-Received: by 2002:adf:db44:0:b0:34b:9cd5:76ae with SMTP id
+ ffacd0b85a97d-354d8cc8fbemr47417f8f.8.1716324432865; Tue, 21 May 2024
+ 13:47:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520205856.162910-1-andrey.konovalov@linux.dev> <CACT4Y+bO03Efd48XW7V6F2D9FMUoWytV8L9BL8OK2DR8scJgmQ@mail.gmail.com>
-In-Reply-To: <CACT4Y+bO03Efd48XW7V6F2D9FMUoWytV8L9BL8OK2DR8scJgmQ@mail.gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Tue, 21 May 2024 22:46:40 +0200
-Message-ID: <CA+fCnZcd2nJ6XLmJcPfwVJf9wUcHqWjYnafDdV8pmm3HpjY7Wg@mail.gmail.com>
-Subject: Re: [PATCH] kcov, usb: disable interrupts in kcov_remote_start_usb_softirq
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: andrey.konovalov@linux.dev, Alan Stern <stern@rowland.harvard.edu>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marco Elver <elver@google.com>, 
-	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Tejun Heo <tj@kernel.org>, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240416050338.517-1-ravi.bangoria@amd.com> <ZjQnFO9Pf4OLZdLU@google.com>
+ <9252b68e-2b6a-6173-2e13-20154903097d@amd.com> <Zjp8AIorXJ-TEZP0@google.com>
+ <305b84aa-3897-40f4-873b-dc512a2da61f@amd.com> <ZkdqW8JGCrUUO3RA@google.com>
+ <b66ea07a-f57e-014c-68b4-729f893c2fbd@amd.com> <Zk0ErRQt3XH7xK6O@google.com>
+In-Reply-To: <Zk0ErRQt3XH7xK6O@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 21 May 2024 22:47:01 +0200
+Message-ID: <CABgObfaXAERePMQrrpWg8PqM1TOq8TJT65i3WgU0n0-vePDGNg@mail.gmail.com>
+Subject: Re: [PATCH v2] KVM: SEV-ES: Don't intercept MSR_IA32_DEBUGCTLMSR for
+ SEV-ES guests
+To: Sean Christopherson <seanjc@google.com>
+Cc: Ravi Bangoria <ravi.bangoria@amd.com>, thomas.lendacky@amd.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, michael.roth@amd.com, nikunj.dadhania@amd.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, santosh.shukla@amd.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2024 at 6:35=E2=80=AFAM Dmitry Vyukov <dvyukov@google.com> =
-wrote:
+On Tue, May 21, 2024 at 10:31=E2=80=AFPM Sean Christopherson <seanjc@google=
+com> wrote:
 >
-> On Mon, 20 May 2024 at 22:59, <andrey.konovalov@linux.dev> wrote:
+> On Mon, May 20, 2024, Ravi Bangoria wrote:
+> > On 17-May-24 8:01 PM, Sean Christopherson wrote:
+> > > On Fri, May 17, 2024, Ravi Bangoria wrote:
+> > >> On 08-May-24 12:37 AM, Sean Christopherson wrote:
+> > >>> So unless I'm missing something, the only reason to ever disable LB=
+RV would be
+> > >>> for performance reasons.  Indeed the original commits more or less =
+says as much:
+> > >>>
+> > >>>   commit 24e09cbf480a72f9c952af4ca77b159503dca44b
+> > >>>   Author:     Joerg Roedel <joerg.roedel@amd.com>
+> > >>>   AuthorDate: Wed Feb 13 18:58:47 2008 +0100
+> > >>>
+> > >>>     KVM: SVM: enable LBR virtualization
+> > >>>
+> > >>>     This patch implements the Last Branch Record Virtualization (LB=
+RV) feature of
+> > >>>     the AMD Barcelona and Phenom processors into the kvm-amd module=
+ It will only
+> > >>>     be enabled if the guest enables last branch recording in the DE=
+BUG_CTL MSR. So
+> > >>>     there is no increased world switch overhead when the guest does=
+n't use these
+> > >>>     MSRs.
+> > >>>
+> > >>> but what it _doesn't_ say is what the world switch overhead is when=
+ LBRV is
+> > >>> enabled.  If the overhead is small, e.g. 20 cycles?, then I see no =
+reason to
+> > >>> keep the dynamically toggling.
+> > >>>
+> > >>> And if we ditch the dynamic toggling, then this patch is unnecessar=
+y to fix the
+> > >>> LBRV issue.  It _is_ necessary to actually let the guest use the LB=
+Rs, but that's
+> > >>> a wildly different changelog and justification.
+> > >>
+> > >> The overhead might be less for legacy LBR. But upcoming hw also supp=
+orts
+> > >> LBR Stack Virtualization[1]. LBR Stack has total 34 MSRs (two contro=
+l and
+> > >> 16*2 stack). Also, Legacy and Stack LBR virtualization both are cont=
+rolled
+> > >> through the same VMCB bit. So I think I still need to keep the dynam=
+ic
+> > >> toggling for LBR Stack virtualization.
+> > >
+> > > Please get performance number so that we can make an informed decisio=
+n.  I don't
+> > > want to carry complexity because we _think_ the overhead would be too=
+ high.
 > >
-> > From: Andrey Konovalov <andreyknvl@gmail.com>
-> >
-> > After commit 8fea0c8fda30 ("usb: core: hcd: Convert from tasklet to BH
-> > workqueue"), usb_giveback_urb_bh() runs in the BH workqueue with
-> > interrupts enabled.
-> >
-> > Thus, the remote coverage collection section in usb_giveback_urb_bh()->
-> > __usb_hcd_giveback_urb() might be interrupted, and the interrupt handle=
-r
-> > might invoke __usb_hcd_giveback_urb() again.
-> >
-> > This breaks KCOV, as it does not support nested remote coverage collect=
-ion
-> > sections within the same context (neither in task nor in softirq).
-> >
-> > Update kcov_remote_start/stop_usb_softirq() to disable interrupts for t=
-he
-> > duration of the coverage collection section to avoid nested sections in
-> > the softirq context (in addition to such in the task context, which are
-> > already handled).
+> > LBR Virtualization overhead for guest entry + exit roundtrip is ~450 cy=
+cles* on
 >
-> Besides the issue pointed by the test robot:
+> Ouch.  Just to clearify, that's for LBR Stack Virtualization, correct?
+
+And they are all in the VMSA, triggered by LBR_CTL_ENABLE_MASK, for
+non SEV-ES guests?
+
+> Anyways, I agree that we need to keep the dynamic toggling.
+> But I still think we should delete the "lbrv" module param.  LBR Stack su=
+pport has
+> a CPUID feature flag, i.e. userspace can disable LBR support via CPUID in=
+ order
+> to avoid the overhead on CPUs with LBR Stack.
+
+The "lbrv" module parameter is only there to test the logic for
+processors (including nested virt) that don't have LBR virtualization.
+But the only effect it has is to drop writes to
+MSR_IA32_DEBUGCTL_MSR...
+
+>                 if (kvm_cpu_cap_has(X86_FEATURE_LBR_STACK) &&
+>                     !guest_cpuid_has(vcpu, X86_FEATURE_LBR_STACK)) {
+>                         kvm_pr_unimpl_wrmsr(vcpu, ecx, data);
+>                         break;
+>                 }
+
+.. and if you have this, adding an "!lbrv ||" is not a big deal, and
+allows testing the code on machines without LBR stack.
+
+Paolo
+
+>                 svm_get_lbr_vmcb(svm)->save.dbgctl =3D data;
+>                 svm_update_lbrv(vcpu);
+>                 break;
 >
-> Acked-by: Dmitry Vyukov <dvyukov@google.com>
->
-> Thanks for fixing this.
 
-Thanks for the ack!
-
-> This section of code does not rely on reentrancy, right? E.g. one
-> callback won't wait for completion of another callback?
-
-I think all should be good. Before the BH workqueue change, the code
-ran with interrupts disabled.
-
-> At some point we started seeing lots of "remote cover enable write
-> trace failed (errno 17)" errors while running syzkaller. Can these
-> errors be caused by this issue?
-
-This looks like a different issue. I also noticed this when I tried
-running a log with a bunch of USB programs via syz-execprog. Not sure
-why this happens, but I still see it with this patch applied.
-
-Thanks!
 
