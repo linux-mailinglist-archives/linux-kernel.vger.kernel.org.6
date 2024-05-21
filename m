@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-184852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192A38CAD07
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:05:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A928CAD05
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8752BB22A4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:04:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8525CB226B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EA66CDA9;
-	Tue, 21 May 2024 11:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA5E762F7;
+	Tue, 21 May 2024 11:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="a0abYcVE"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oVY+upUy"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F140B770E1
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB62612EB
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716289426; cv=none; b=jyq30i0Vd7YfaREH8u8FILMhZsgt3Pda+rRTSpTJe0Sx/h9PoWNAvTTKJwIll+kzf1VjuU/0qGvfPyToyX3bxl3YH/xpvEBnixDuETkNSPO8c+WZ71G+GODcVcam1VcAWLLP7DkzzbDbqbie1v83K+fSgN4l87M3IpftWCEKd88=
+	t=1716289423; cv=none; b=Wzb9fNTbJHeK1q3fsP5/mh6V7ioi8AJi/yJtSWslJM48px9BjOL/Il3dqEaCuKcRE7ds6X9DEjzbNeo2KRLGM5ffPfjyCEnG8txOJfsUNf/LkHI+jFpdojAvBqzGIZhCUinHce3EsgwBCAFyGU6ONtCJkWofdqi6sVoQ88YlCn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716289426; c=relaxed/simple;
-	bh=x55X4hb+WDGyX98I9cJOxVIp/SSeNLmmTlFy+aZV4Jo=;
+	s=arc-20240116; t=1716289423; c=relaxed/simple;
+	bh=QktWnmZza0+8gvOpDIgJiQ9JxnbnzLBik8mUH7+XnKQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S/NLvAU1Ood10InBiVVTA7BpKkY42inIKZbZno8AhB+b+oS34MNpLXU2dZavMuqAV4xDJErR47z6qKuHsO1lT6ur66BA3F0t5UmYCSN6Ff6SS30lgiA3HZ0yS94iyOOvyi3tVYRYgWMnEk8VZsz4vCSJ1jvbj8kj2a9MSF7RQRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=a0abYcVE; arc=none smtp.client-ip=115.124.30.131
+	 MIME-Version; b=QRl3RX6E0KvV8m5l3/gWwYrGw6ERdxaxqMsducs3IMsuI3ywj+Qeu5ieJQvInOSuaMm4vV0+IcO/fHkH3W9/HjEyG4KZLy+v93w+BbLKJUkXuKkUrX4wsPKHjz+t4LA6K6m0VBU+MMgGRI1uhTnxmtOBgOqbZAs7BkfKglsnIzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oVY+upUy; arc=none smtp.client-ip=115.124.30.119
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1716289417; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=ArTvZKlaOes4XoFtzrKMEwLUH8CHPrOqCRPSPeGMt/g=;
-	b=a0abYcVElqGnhHB+0BarctgCnQwfetl3e4cTU2SDMdZg6QXiM3aff4nrNph168S8acADzcyo7xn/8G4ZLvhYctlWrNMdKetxd6kr96VgLnCFf5jjrqcrrspsbk4ewqh9OQuVcYFhvn5Z70qdgDnppgNdXGWqMk4KYkCj/NTA6KY=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045075189;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0W6xeTCm_1716289415;
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W6xeTCm_1716289415)
+	t=1716289419; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=eLWM5LDYn4qmAcvClqJJz7Ry6ODVE2l8ecGnrwuiQN0=;
+	b=oVY+upUyau3AQlXbvwgwJy9gBbrTKIB2NAPxsZlcumizQeO0ndU8eaqP9jB7AlXnTaLq8n1TFWXbA0y4ezsBb0BnZw0xAat0wdSTXX5eHwWeGlQGzdBxehKlA2v0SRDpqZhLOG93CSVGys6ziT/166ghuf8Z6WcD3acwgLqVjFU=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R261e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0W6xeTDd_1716289416;
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W6xeTDd_1716289416)
           by smtp.aliyun-inc.com;
-          Tue, 21 May 2024 19:03:36 +0800
+          Tue, 21 May 2024 19:03:37 +0800
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
 To: akpm@linux-foundation.org,
 	hughd@google.com
@@ -57,9 +57,9 @@ Cc: willy@infradead.org,
 	baolin.wang@linux.alibaba.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 4/8] mm: shmem: support large folio allocation for shmem_replace_folio()
-Date: Tue, 21 May 2024 19:03:14 +0800
-Message-Id: <73d93136d8469658715388878c947e8952164c53.1716285099.git.baolin.wang@linux.alibaba.com>
+Subject: [RFC PATCH 5/8] mm: shmem: extend shmem_partial_swap_usage() to support large folio swap
+Date: Tue, 21 May 2024 19:03:15 +0800
+Message-Id: <e0009cd7362f64da08aea5883e753192e137da39.1716285099.git.baolin.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <cover.1716285099.git.baolin.wang@linux.alibaba.com>
 References: <cover.1716285099.git.baolin.wang@linux.alibaba.com>
@@ -71,47 +71,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To support large folio swapin for shmem in the following patches, add
-large folio allocation for the new replacement folio in shmem_replace_folio(),
-as well as updating statistics using the number of pages in the folio.
+To support shmem large folio swapout in the following patches, using
+xa_get_order() to get the order of the swap entry to calculate the swap
+usage of shmem.
 
 Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 ---
- mm/shmem.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ mm/shmem.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index daab124c3e61..74821a7031b8 100644
+index 74821a7031b8..bc099e8b9952 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -1901,8 +1901,7 @@ static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
- 	 * limit chance of success by further cpuset and node constraints.
- 	 */
- 	gfp &= ~GFP_CONSTRAINT_MASK;
--	VM_BUG_ON_FOLIO(folio_test_large(old), old);
--	new = shmem_alloc_folio(gfp, info, index);
-+	new = shmem_alloc_hugefolio(gfp, info, index, folio_order(old));
- 	if (!new)
- 		return -ENOMEM;
+@@ -865,13 +865,16 @@ unsigned long shmem_partial_swap_usage(struct address_space *mapping,
+ 	struct page *page;
+ 	unsigned long swapped = 0;
+ 	unsigned long max = end - 1;
++	int order;
  
-@@ -1923,11 +1922,13 @@ static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
- 	xa_lock_irq(&swap_mapping->i_pages);
- 	error = shmem_replace_entry(swap_mapping, swap_index, old, new);
- 	if (!error) {
-+		int nr_pages = folio_nr_pages(old);
-+
- 		mem_cgroup_migrate(old, new);
--		__lruvec_stat_mod_folio(new, NR_FILE_PAGES, 1);
--		__lruvec_stat_mod_folio(new, NR_SHMEM, 1);
--		__lruvec_stat_mod_folio(old, NR_FILE_PAGES, -1);
--		__lruvec_stat_mod_folio(old, NR_SHMEM, -1);
-+		__lruvec_stat_mod_folio(new, NR_FILE_PAGES, nr_pages);
-+		__lruvec_stat_mod_folio(new, NR_SHMEM, nr_pages);
-+		__lruvec_stat_mod_folio(old, NR_FILE_PAGES, -nr_pages);
-+		__lruvec_stat_mod_folio(old, NR_SHMEM, -nr_pages);
- 	}
- 	xa_unlock_irq(&swap_mapping->i_pages);
- 
+ 	rcu_read_lock();
+ 	xas_for_each(&xas, page, max) {
+ 		if (xas_retry(&xas, page))
+ 			continue;
+-		if (xa_is_value(page))
+-			swapped++;
++		if (xa_is_value(page)) {
++			order = xa_get_order(xas.xa, xas.xa_index);
++			swapped += 1 << order;
++		}
+ 		if (xas.xa_index == max)
+ 			break;
+ 		if (need_resched()) {
 -- 
 2.39.3
 
