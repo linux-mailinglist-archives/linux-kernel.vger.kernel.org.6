@@ -1,148 +1,146 @@
-Return-Path: <linux-kernel+bounces-184494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238A08CA779
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:43:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034F08CA77B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C5A41F21A7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:43:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6AA2281D86
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD9B3BB32;
-	Tue, 21 May 2024 04:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BAD2E85A;
+	Tue, 21 May 2024 04:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j/waz2XM"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cVz2pMIx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B014D51E
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 04:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DD46125
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 04:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716266614; cv=none; b=VtwtxP3ARy3d1iBXB0OliU8tQ1iMcGxRTtZ/HYmitn0vCSd/mv51KFiyA1JjAdZgcdopqxLFrOU9d2cGy9ldStaqNcy9oQaeKj+5QldL5mnT3E5h+7AXhSZWxSgO5ftw7972DefNCWb9fX5NGALZfexojVqltSG12TkzrWPKdo4=
+	t=1716266750; cv=none; b=j4yckhH4W20iLJtKDu9l9m+ghW5ESRIjDyBhdmPSwaY4WOpJ4A22P9eSW+TdqjxuCK5q92wySCZ12CkrMM1jdZtp3Hhaq6C1M7YcU2aR21vBqVkQE1QCmCl0W0svPCUQHw8H5SyvQZzbCxvWC9Z/Ys9qr7tskfhKS9G8SCrFwZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716266614; c=relaxed/simple;
-	bh=CB+j1bQwAIQQACQ11R1Vht+rgN6HlChnMRjVgrqXgKg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n0Cywunr40RdZiN3V9sSAx4mAN+Tk/NlXdEG3117UKfn7pqwr6S0QVQgJPoGB7rTB4+26AMtFGiaCEb9VzdW3uXSbe/IluP0Sjm4ppLzdjw/UuLmk9QB5WSe/9DmMF4nyabP6f0Bo/+AtQ/E6SwzCl6tc/xa00Z4bg6H9hg6vHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j/waz2XM; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5724736770cso21480a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 21:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716266611; x=1716871411; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OIZgyK26myZGOgK2O/gVC12eJCOj7y2cWrgpVuquN3A=;
-        b=j/waz2XMYWkOt3Y0j9yEjr++ZLEcqT2eUdLtfHbNEMwiv5qTI76yvj8xIu6ZpjXQyD
-         qmW9mWv5ezEE8eU8y7IA3tnPxaCZ0iSLhVnT/WZ8i3pXqXfpXDcfliod0aTh+d88V/6J
-         SoM3Qbs2RYhdHHzYYRtO8O8KDy9sJLIqQbPP6p/OQgNX8DDQ83vaKdKRUlHqDMKbnfaT
-         BrOnP0A0IRduqAzq2pqjdb/zS8RvXQTZgi/oX7U3gLwr0srR9nOBC8Z0453Zapo7n2+O
-         A2RUpFiepHhbKuX6CK5nDgaPBpINctG/nr6r2ZqNl5/HMskv2VdOuyE+d5hDY77eWfcP
-         2QKw==
+	s=arc-20240116; t=1716266750; c=relaxed/simple;
+	bh=p3Y9bg7d+YbBIYXEb4Y1aAsTwlznHdS3rV/1bUmAjz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NdDOkvAPzUsLJQIpyFBeQE/KjNK5BMLZySDpuqJI5iAQHe0mslPA7CkyCRAECSYEeLjTkduvln5ehxtdac4fDPb2EwRYUSXcmIB0j+1H7tpQId+KWVq53np2l5sQxH8qs5OiCdPnAy2SabrS0oDeN8nUWoACqZjuLCaZ6nxuC98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cVz2pMIx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716266747;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xr/Lj/QEJVokUuTusNqYmXna8XGFmwM2A2fm3gIEflI=;
+	b=cVz2pMIxJb0cB0PnrKC0N0sFci+0y3aAy5Iscx0kVcTlW5WQ3Q09IN9v+5i+/S84zNl0P1
+	miGUYqzPzOGjH+LrjqFuSD8xQD2KxsIXHRLjMlb3BEuV7fXdkjuTNH8eJ4ePvA0ZmOWOxX
+	6hVtDXFlBgWqGzObeLYlo9tfSxlJHE0=
+Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
+ [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-573-HPQAypqpO9ykYV4DnO_Pfw-1; Tue, 21 May 2024 00:45:46 -0400
+X-MC-Unique: HPQAypqpO9ykYV4DnO_Pfw-1
+Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-7fb1865f1c1so6126004241.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 21:45:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716266611; x=1716871411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OIZgyK26myZGOgK2O/gVC12eJCOj7y2cWrgpVuquN3A=;
-        b=LbtKBnRoONdKqJflH+WSycq8+2JXf0MA7sXSCnzR/0DHAVhzw0XWs5mmHwgLOcSgPW
-         t/KYLdGpLlY1dZk5FvyT8SMhBUbAofjdShpN+ZJntYpk8aUtJR0vBSsopLnGqDpi72VK
-         Cuyg7OAlPfzNcBXIiNTs50r5VVjo7uCHfSkirQK/YVmHai4jvhug3i6550OGYrqpm41h
-         blD34svnCHUS/0sOEysTvMgoGNVNDgKEMRLjbPC+zj4Q4CailqeSJdhEIQduizFTAA31
-         jfN3gy7S9v18AWT+MjQLk9dAC6eQpOoXGarCyT0fOezMID7T/riB7qjpB/J1QQJKZfex
-         wZhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ9u3UluRxKMJXeJBITkSEwxlp28Dd+5KbnJ9CfZKHXwMH2zyskBvi/dtjTlHDxvYbM8P4HHoNhiBCY0H8fBOETCWaVskU8N6w3bsk
-X-Gm-Message-State: AOJu0Yyq7PJ8iWVaOb1WTDnButx8NzgIUrGgjws8OXkk2xraC/95sDKz
-	r8jqW95ETEYlypQXuvDVLvYEiuRiqVkwPNMu+cI9enhF3UQ7YjOtiV0EIl3izHI+5RfSrVEulgR
-	yhJO53sHJC9fyrBJx5od4yMADqijds4Nc9rae
-X-Google-Smtp-Source: AGHT+IGX8Rncf2X5ll/LDcPy6e7NBCxzEjCBoxNwC/ZewP9Brf6v9SIFgZvkghI3vrvyJWD4EADtmpcT7pucGjRUQYo=
-X-Received: by 2002:a05:6402:8cd:b0:572:57d8:4516 with SMTP id
- 4fb4d7f45d1cf-5752a710019mr443481a12.2.1716266610661; Mon, 20 May 2024
- 21:43:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716266745; x=1716871545;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xr/Lj/QEJVokUuTusNqYmXna8XGFmwM2A2fm3gIEflI=;
+        b=gTQBptdwOMC2WT/Xx//1RM9KyR9WExcLkpFsQ30+foIRJ67hjYNUgwlj3j7g0o8yic
+         4F7q5LAN2rULL7/Ym0YMFaohq2wj0TCyhzZ0dNGK2Ai+LZkLtsCRqb7lGUPHZ3+9e95R
+         h745YZI5dS8KW7qyQDtFLPp+Rl+uiY5e25l53iUV4mPuJl6IJ35lk8n43XrlBl7q6c/X
+         GdKD7nl12MOBojNYmIFexeUcyYe8OLrll6aUraNPRQw7zphyporT42uGg9n8rhNIyE6y
+         yb6AwmdtVmyMW54vXus9FD3kbk1C2jcFEL6bB3FJrT98DX4Q7fJx17dQGrA9qm7YFNyO
+         obkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVR6ZGvdahZyHhct2Zpw72cGjm17y77ICOdoRQyIOIxAZ1RsS48BdlnIY/1fPDBlIAoMcGj7Mr8TphUJFBySZ2KI2QO4f0fMwOoS78I
+X-Gm-Message-State: AOJu0YzghWgtZ9Al9YraO1ql+cAaeqIGHoQob4pv6hBCjOYVGnM1v74C
+	RBUXFPTV2p8jaH81H9FEjJ8KaFbZOV03ylKma4jd/PrTepVctUnfcUD6JpH4y12FDBpFmRjWP6m
+	RC6APRyMkFdMd4n6a9xGZVloNJoWzcw2OOHv8YpA/LWt3Q5GcCvgiO5Kqkhj3+Q==
+X-Received: by 2002:a05:6102:f0c:b0:47e:f6f4:ff55 with SMTP id ada2fe7eead31-48077e0b862mr33274800137.20.1716266745673;
+        Mon, 20 May 2024 21:45:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZqTatzHAFDg1/LKoHiRtJSPbxNMP2E08/6y7nLNNsNstKTAorXNYaCEOr/mxCeVmpvaha5Q==
+X-Received: by 2002:a05:6102:f0c:b0:47e:f6f4:ff55 with SMTP id ada2fe7eead31-48077e0b862mr33274791137.20.1716266745335;
+        Mon, 20 May 2024 21:45:45 -0700 (PDT)
+Received: from localhost (ip98-179-76-110.ph.ph.cox.net. [98.179.76.110])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e25735ceesm99142321cf.11.2024.05.20.21.45.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 21:45:44 -0700 (PDT)
+Date: Mon, 20 May 2024 21:45:43 -0700
+From: Jerry Snitselaar <jsnitsel@redhat.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: joro@8bytes.org, iommu@lists.linux.dev, will@kernel.org, 
+	linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] iommu/dma: Fix domain init
+Message-ID: <jrzrf3vz2rhcrwazsxuljuyhru4mstyzuhjx4uawcfmjlmvipd@lu6usxz22ved>
+References: <721fa6baebb0924aa40db0b8fb86bcb4538434af.1716232484.git.robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0000000000007b02500614b66e31@google.com> <550cc81a3dffd07ec1235dc32fd7bbde22d9bf57.camel@sipsolutions.net>
- <CA+fCnZe_fuT2y4ryFeb8A49k19MY3Nct79JCoGwQh0hjcq6bqA@mail.gmail.com>
-In-Reply-To: <CA+fCnZe_fuT2y4ryFeb8A49k19MY3Nct79JCoGwQh0hjcq6bqA@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 21 May 2024 06:43:19 +0200
-Message-ID: <CACT4Y+ak6D2tY0b8JOFq4kKvfPRtv+GkFFE23jc6qTrx6mTqVw@mail.gmail.com>
-Subject: Re: [syzbot] [wireless?] WARNING in kcov_remote_start (3)
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, 
-	syzbot <syzbot+0438378d6f157baae1a2@syzkaller.appspotmail.com>, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <721fa6baebb0924aa40db0b8fb86bcb4538434af.1716232484.git.robin.murphy@arm.com>
 
-On Wed, 10 Apr 2024 at 12:56, Andrey Konovalov <andreyknvl@gmail.com> wrote=
-:
->
-> On Thu, Mar 28, 2024 at 12:45=E2=80=AFPM Johannes Berg
-> <johannes@sipsolutions.net> wrote:
-> >
-> > On Thu, 2024-03-28 at 04:00 -0700, syzbot wrote:
-> > >
-> > > ------------[ cut here ]------------
-> > > WARNING: CPU: 1 PID: 2400 at kernel/kcov.c:860 kcov_remote_start+0x54=
-9/0x7e0 kernel/kcov.c:860
-> >
-> > This is
-> >
-> >         /*
-> >          * Check that kcov_remote_start() is not called twice in backgr=
-ound
-> >          * threads nor called by user tasks (with enabled kcov).
-> >          */
-> >         mode =3D READ_ONCE(t->kcov_mode);
-> >         if (WARN_ON(in_task() && kcov_mode_enabled(mode))) {
-> >                 local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
-> >                 return;
-> >         }
-> >
-> > but I have no idea what that even means?
-> >
-> > > Workqueue: events_unbound cfg80211_wiphy_work
-> > > RIP: 0010:kcov_remote_start+0x549/0x7e0 kernel/kcov.c:860
-> > ...
-> > > Call Trace:
-> > >  <TASK>
-> > >  kcov_remote_start_common include/linux/kcov.h:48 [inline]
-> > >  ieee80211_iface_work+0x21f/0xf10 net/mac80211/iface.c:1654
-> > >  cfg80211_wiphy_work+0x221/0x260 net/wireless/core.c:437
-> > >  process_one_work kernel/workqueue.c:3218 [inline]
-> > >  process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3299
-> > >  worker_thread+0x86d/0xd70 kernel/workqueue.c:3380
-> >
-> > It's a worker thread. Was this not intended to be called in threads?
->
-> I think the problem is that the KCOV annotations in the NFC code are
-> buggy: kcov_remote_stop() is never called if the loop in nci_rx_work()
-> exits on one of the breaks. With the recent addition of the nci_plen()
-> check, this started happening often. But breaks existed in the loop
-> before that too.
->
-> We need to move kcov_remote_stop() into the loop and call it every
-> time the loop exits.
->
-> Dmitry, could you PTAL and confirm this? You added the annotation for
-> NFC, AFAICS.
+On Mon, May 20, 2024 at 08:14:44PM GMT, Robin Murphy wrote:
+> Despite carefully rewording the kerneldoc to describe the new direct
+> interaction with dma_range_map, it seems I managed to confuse myself in
+> removing the redundant force_aperture check and ended up making the code
+> not do that at all. This led to dma_range_maps inadvertently being able
+> to set iovad->start_pfn = 0, and all the nonsensical chaos which ensues
+> from there. Restore the correct behaviour of constraining base_pfn to
+> the domain aperture regardless of dma_range_map, and not trying to apply
+> dma_range_map constraints to the basic IOVA domain since they will be
+> properly handled with reserved regions later.
+> 
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> Fixes: e28a114243d1 ("iommu/dma: Make limit checks self-contained")
 
+I'm seeing this upstream as ad4750b07d34 ("iommu/dma: Make limit checks self-contained") now.
 
-Missed this before somehow.
-The other breaks seems to be from the switch, so should be fine:
-https://elixir.bootlin.com/linux/v6.9-rc6/source/net/nfc/nci/core.c#L1528
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
 
-Tetsuo, thanks for fixing it.
+Tested-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+
+>  drivers/iommu/dma-iommu.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index 89a53c2f2cf9..1ec89ca75c59 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -685,15 +685,15 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, struct device *dev
+>  
+>  	/* Check the domain allows at least some access to the device... */
+>  	if (map) {
+> -		dma_addr_t base = dma_range_map_min(map);
+> -		if (base > domain->geometry.aperture_end ||
+> +		if (dma_range_map_min(map) > domain->geometry.aperture_end ||
+>  		    dma_range_map_max(map) < domain->geometry.aperture_start) {
+>  			pr_warn("specified DMA range outside IOMMU capability\n");
+>  			return -EFAULT;
+>  		}
+> -		/* ...then finally give it a kicking to make sure it fits */
+> -		base_pfn = max(base, domain->geometry.aperture_start) >> order;
+>  	}
+> +	/* ...then finally give it a kicking to make sure it fits */
+> +	base_pfn = max_t(unsigned long, base_pfn,
+> +			 domain->geometry.aperture_start >> order);
+>  
+>  	/* start_pfn is always nonzero for an already-initialised domain */
+>  	mutex_lock(&cookie->mutex);
+> -- 
+> 2.39.2.101.g768bb238c484.dirty
+> 
+
 
