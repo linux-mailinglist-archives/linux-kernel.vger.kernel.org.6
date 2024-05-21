@@ -1,278 +1,138 @@
-Return-Path: <linux-kernel+bounces-185414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E258CB4AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:24:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E03C8CB4AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9B2F1C217E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:24:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C771F227DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E55149C57;
-	Tue, 21 May 2024 20:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B872149C55;
+	Tue, 21 May 2024 20:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKN2yFP/"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PHLE3FVL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B1C3FB8B;
-	Tue, 21 May 2024 20:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE967763F1
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716323077; cv=none; b=p5DiG7qPvdlDPi9gGGVJx02T4v6WhB7QCLvEs3GkLC8XmSDWiDrvIOvPcx16n7tPF/innPlq6O6dxUqGy2vTwT4Nk+Rg2ltiB40BDP4lwWHVJZG/djsKuJKeRxynxl7b9tA3seON06apEZ7y6eWgM25il/d7dsplCtGPx4hR7fM=
+	t=1716323139; cv=none; b=oKCPWyWTsEFndhbOb8s9VLOpKI+wU43cTo9HZ9gRZMbyczfxoT/VzObg6Uo3lzCo3LfAUF6rl4Xgf0qSUp7a0X08xZ0KVS5wTiLKEeDevP940PKLFwf9zAfDXawWsNeCQSZrYMOyuK8QlZbIjWHTrN/H8CI032RETomJz4zfCXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716323077; c=relaxed/simple;
-	bh=/UG2kuAuMTEuajL7u1UkPBllsxmrQaa1uMNhHwaSNKQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZYX8FkJnFlgfmDEdM4DT5cJRJ1jHtQWX4ziQ/sVw1NVid257a7w9cfczRgyW3GsWo1o6vPi+PHj5hib/LDPquPMxU4sYGgjbIu0b1ks2fF1ebHNrgXl1zvtrgPT62HKTw3S99emBRI2HXepCen51izSzIIe5cHJRHamGef4nrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKN2yFP/; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-574f7c0bab4so420744a12.0;
-        Tue, 21 May 2024 13:24:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716323074; x=1716927874; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OYnvnXcE3D/kvzMwZLCJA06YMqi27boOmTrkHntlVqc=;
-        b=HKN2yFP/lyi/+RWnO83w3FarOOZ5AwzDMNfV9eQ6XJHAnM9Spx7haut7ndYa/c322F
-         gwjwdXhPpoeMaQTPVlnfRSAeulOIQvAiGDSrPycFQgJZW/T2JNLQB8UA8Ocr7rDnewCk
-         F9Zf3YgOstAxA4B0kq2ziixP9GGeD48sH4BpmXmoopEWb4TJoDFo5a+U7eIwrW8Wba33
-         adr/tCB/9XKTudjAgvPT4ebo8WYqCujfkpfFHNOL0kUzXFJ1DGAH+4QSfJWwiX98oNL0
-         UdX0uSnUyI+0zLfs+UBb4uqTLGVcI38XMuCpeZahllEWLFxd8jPVgQ+Tdm0p/Gv8fy6d
-         jvwg==
+	s=arc-20240116; t=1716323139; c=relaxed/simple;
+	bh=TNbVzSZ4k9mDMCWPwnEnUO8KrwqMSnosmMil9nH2X8E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P3CRcnrYUygGxjNvKDVmf9cizdp/5p/7P755KdNt/ngRqDOY7rPYKIJNgvCa8TM+vLnHbQnv1DSz5/MntBQRE3R9a3IEQWeRVOMQ650un8q1+hG5MxMCyyMkPtzri7TP8hScxSepd5ZO+X09dPi82wVCJkve6N6rP1/fpOe/ASU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PHLE3FVL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716323136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uLQerxE5R+lMZTgLtYljE+62W5PtbMN9LPsnxzlTokY=;
+	b=PHLE3FVLxKxA0pBWfK5Bq1skq5iwtlKRiPnQeuqSaQd/cHZvXYMdQDmyU0IwWTjLqgaETm
+	jyvoCCbheEydbeOLUld2wAJue1tWVonsUE8FaV6k2JsItwDKv07OmAHUKAtjoIkOhEN1SN
+	RSrSg9ZZQcwzqqUBCn7begGcM6bc8Zo=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-605-Y_-iOLBFOQevA3L3NheJ6A-1; Tue, 21 May 2024 16:25:35 -0400
+X-MC-Unique: Y_-iOLBFOQevA3L3NheJ6A-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-34db1830d7cso116649f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:25:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716323074; x=1716927874;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OYnvnXcE3D/kvzMwZLCJA06YMqi27boOmTrkHntlVqc=;
-        b=SwyDfhpBXo06nlxACwqlQYy6T+bBwo9Vt/+0kPUYoeV9FPia3CdqSQTEvRaEJX4LLa
-         vvZ6sRHt+q1iTZhAMkueJtUm0DcdQRtzjjwgT/q6tBzwcPCtJwuabn8hikY5uBG2swcG
-         OuFxvlbjslvj9/jVEyQmwCUe89vw4kX/cxMKfPBAd6IUSeewVCpfszbpCUQdwrOuyg7f
-         G5aneuTVT42SnDwgMuyUziXhPsyoUhF2ovQ3HZhak4gBS8IOGiHxan4paJVVCj8AjaFs
-         t61Va39012UQvapsk/smlqYCfOPbFhOwA8ywbGLxDfFQMv/ov0PkkduUHTQhEm27Heh5
-         Bdjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWh82GU1Un3d1QzOFtcNCVD8YRNq0HKw2NaRqLg8XlRpDR4MsXSMZE+SVA5gy6BPYF+hXLJMT3qL9pC8XbD6RVkVQQbRHKojuJIVN8a6aPgsCZ022nfkr0jLTwul7Ssg4Y/ecijqVFHRkMl2LhNoRC/keCp5J7wKztNxe5rQ0WbwH324tF8drI44EHHbOZVlsHM9XHtybpr2NqgfVEGGTxnz4TwESZnzboXdiPHZkO79wYWHfFfk/aSVMZ0
-X-Gm-Message-State: AOJu0YzRrISSvPkbm6pZrnhV7d4Um2R5L+CoRk8NjiVP3kTde77W1WC7
-	6FZ6/pPzOJycXRb5NB59jbsp18An5jGF/lDFNK96gc7ZWXx6bmna
-X-Google-Smtp-Source: AGHT+IEiOq3YhqETpKwsUd1R/rNi0bETGeC8Gk4xXoSQWd28rw7Q0HtpnLbLaW3hdtGHuy7n+J5naQ==
-X-Received: by 2002:a50:d4d1:0:b0:575:17ca:7f7b with SMTP id 4fb4d7f45d1cf-57831140f4cmr129623a12.15.1716323073367;
-        Tue, 21 May 2024 13:24:33 -0700 (PDT)
-Received: from krava ([83.240.61.240])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733becfbd3sm17643868a12.44.2024.05.21.13.24.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 13:24:33 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 21 May 2024 22:24:30 +0200
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Alejandro Colomar <alx@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org,
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>
-Subject: Re: [PATCHv6 9/9] man2: Add uretprobe syscall page
-Message-ID: <Zk0C_vm3T2L79-_W@krava>
-References: <20240521104825.1060966-1-jolsa@kernel.org>
- <20240521104825.1060966-10-jolsa@kernel.org>
- <j6qxudmvwccpqnle4evabxbswdygmx35bgqwhemuzsjs5iuydv@fk2iumwucifx>
- <ZkyKKwfhNZxrGWsa@krava>
+        d=1e100.net; s=20230601; t=1716323133; x=1716927933;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uLQerxE5R+lMZTgLtYljE+62W5PtbMN9LPsnxzlTokY=;
+        b=XT3wti7yjU+SdvyM55b5bIMEPGvRz3rKMN7u1GC7ooFsNaJsO6P2ReVAdUND20Opjx
+         mFyCFQrnmQNoOVg0PqPQMZ4ERHe0kP6JK8h74ep21IujtrTUJN6THv33RnoC8pZtTgXT
+         98iS3VcUdd4wlfcAe2l79yaeZTabYHUgElalyEuDdzqB8RqC9szmeZ7kwhJrQcdSCgKe
+         f9TLV26qq24jyVv8tHXLBCnGxZUrXfBC1Q/7KmkEqhUZUEdeOaUl0cbK7q5oEm4XRQIQ
+         6r5uUM9f9BMw9rbfX6ElhWyVHuGMMRCWU1iCeEVp0IWbluLlhsrJoO4oImrA5izANwDE
+         3hfA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtNVVlh+hlELYPIJOD66ok5EGhq4Nc42d5jdS1MA5qkOLzl7rXKYwyU2UhN+kleSASsZuEMvsC36Rw2ql8QbtY/MghUYhQUH8w/sV6
+X-Gm-Message-State: AOJu0YyQxiAjyNXZjbh077ybey9QOy5sPifR4Qzpu7+7eYYOu9LuZImB
+	/oEJlnh/OsYpnebjJXyRbX+CQzSOaB1zKcA9YgBYxieBZ0Atr01BdyB3EfqWjapVBhdvFprDlng
+	6z88pa3TBFxwPv3aw8AKUB1fPDJjG9rvXu/pg7wXfpnBUTPpggirIEP976CeVPzwPAAq9IHUVv2
+	Kx7TK/QCZvqsX7iF/xqepGXkEp0uQV3IAHKK5cnRuOYfoY
+X-Received: by 2002:a5d:5510:0:b0:34d:ab1a:6384 with SMTP id ffacd0b85a97d-354d804f46emr119876f8f.13.1716323133081;
+        Tue, 21 May 2024 13:25:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHB55ZmrkK7joPCTYgDCxER7qka48DTWgOfjPLcKVDrzhqdCM29sdaEnBuS0/mwQSDsQgyxkw4J2nGXaX3dtf8=
+X-Received: by 2002:a5d:5510:0:b0:34d:ab1a:6384 with SMTP id
+ ffacd0b85a97d-354d804f46emr119864f8f.13.1716323132726; Tue, 21 May 2024
+ 13:25:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkyKKwfhNZxrGWsa@krava>
+References: <20240518000430.1118488-1-seanjc@google.com> <20240518000430.1118488-10-seanjc@google.com>
+ <CABgObfYo3jR7b4ZkkuwKWbon-xAAn+Lvfux7ifQUXpDWJds1hg@mail.gmail.com> <ZkzldN0SwEhstwEB@google.com>
+In-Reply-To: <ZkzldN0SwEhstwEB@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 21 May 2024 22:25:20 +0200
+Message-ID: <CABgObfaE+M5QuTfAZ01OjeB87vGmjRgDUH=rnNX8FHzc7t1Oag@mail.gmail.com>
+Subject: Re: [PATCH 9/9] KVM: x86: Disable KVM_INTEL_PROVE_VE by default
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2024 at 01:48:59PM +0200, Jiri Olsa wrote:
-> On Tue, May 21, 2024 at 01:36:25PM +0200, Alejandro Colomar wrote:
-> > Hi Jiri,
-> > 
-> > On Tue, May 21, 2024 at 12:48:25PM GMT, Jiri Olsa wrote:
-> > > Adding man page for new uretprobe syscall.
-> > > 
-> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > > ---
-> > >  man2/uretprobe.2 | 50 ++++++++++++++++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 50 insertions(+)
-> > >  create mode 100644 man2/uretprobe.2
-> > > 
-> > > diff --git a/man2/uretprobe.2 b/man2/uretprobe.2
-> > > new file mode 100644
-> > > index 000000000000..690fe3b1a44f
-> > > --- /dev/null
-> > > +++ b/man2/uretprobe.2
-> > > @@ -0,0 +1,50 @@
-> > > +.\" Copyright (C) 2024, Jiri Olsa <jolsa@kernel.org>
-> > > +.\"
-> > > +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> > > +.\"
-> > > +.TH uretprobe 2 (date) "Linux man-pages (unreleased)"
-> > > +.SH NAME
-> > > +uretprobe \- execute pending return uprobes
-> > > +.SH SYNOPSIS
-> > > +.nf
-> > > +.B int uretprobe(void)
-> > > +.fi
-> > 
-> > What header file provides this system call?
-> 
-> there's no header, it's used/called only by user space trampoline
-> provided by kernel, it's not expected to be called by user
-> 
-> > 
-> > > +.SH DESCRIPTION
-> > > +The
-> > > +.BR uretprobe ()
-> > > +syscall is an alternative to breakpoint instructions for
-> > > +triggering return uprobe consumers.
-> > > +.P
-> > > +Calls to
-> > > +.BR uretprobe ()
-> > > +suscall are only made from the user-space trampoline provided by the kernel.
-> > 
-> > s/suscall/system call/
-> 
-> ugh leftover sry
-> 
-> > 
-> > > +Calls from any other place result in a
-> > > +.BR SIGILL .
-> > 
-> > Maybe add an ERRORS section?
-> > 
-> > > +
-> > 
-> > We don't use blank lines; it causes a groff(1) warning, and other
-> > problems.  Instead, use '.P'.
-> > 
-> > > +.SH RETURN VALUE
-> > > +The
-> > > +.BR uretprobe ()
-> > > +syscall return value is architecture-specific.
-> > > +
-> > 
-> > .P
-> > 
-> > > +.SH VERSIONS
-> > > +This syscall is not specified in POSIX,
-> > 
-> > Redundant with "STANDARDS: None.".
-> > 
-> > > +and details of its behavior vary across systems.
-> > 
-> > Keep this.
-> 
-> ok
-> 
-> > 
-> > > +.SH STANDARDS
-> > > +None.
-> > > +.SH HISTORY
-> > > +TBD
-> > > +.SH NOTES
-> > > +The
-> > > +.BR uretprobe ()
-> > > +syscall was initially introduced for the x86_64 architecture where it was shown
-> > > +to be faster than breakpoint traps. It might be extended to other architectures.
-> > 
-> > Please use semantic newlines.
-> > 
-> > $ MANWIDTH=72 man man-pages | sed -n '/Use semantic newlines/,/^$/p'
-> >    Use semantic newlines
-> >      In the source of a manual page, new sentences should be started on
-> >      new lines, long sentences should be split  into  lines  at  clause
-> >      breaks  (commas,  semicolons, colons, and so on), and long clauses
-> >      should be split at phrase boundaries.  This convention,  sometimes
-> >      known as "semantic newlines", makes it easier to see the effect of
-> >      patches, which often operate at the level of individual sentences,
-> >      clauses, or phrases.
-> 
+On Tue, May 21, 2024 at 8:18=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+> > -          This should never be enabled in a production environment.
+> > +          Note that #VE trapping appears to be buggy on some CPUs.
+>
+> I see where you're coming from, but I don't think "trapping" is much bett=
+er,
+> e.g. it suggests there's something broken with the interception of #VEs. =
+ Ah,
+> the entire help text is weird.
 
-how about the change below?
+Yeah, I didn't want to say #VE is broken altogether - interception is
+where we saw issues, and #VE is used in production as far as I know
+(not just by TDX; at least Xen and maybe Hyper-V use it for
+anti-malware purposes?).
 
-thanks,
-jirka
+Maybe "Note: there appear to be bugs in some CPUs that will trigger
+the WARN, in particular with eptad=3D0 and/or nested virtualization"
+covers all bases.
 
+Paolo
 
----
-diff --git a/man/man2/uretprobe.2 b/man/man2/uretprobe.2
-new file mode 100644
-index 000000000000..959b7a47102b
---- /dev/null
-+++ b/man/man2/uretprobe.2
-@@ -0,0 +1,55 @@
-+.\" Copyright (C) 2024, Jiri Olsa <jolsa@kernel.org>
-+.\"
-+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-+.\"
-+.TH uretprobe 2 (date) "Linux man-pages (unreleased)"
-+.SH NAME
-+uretprobe \- execute pending return uprobes
-+.SH SYNOPSIS
-+.nf
-+.B int uretprobe(void)
-+.fi
-+.SH DESCRIPTION
-+The
-+.BR uretprobe ()
-+system call is an alternative to breakpoint instructions for triggering return
-+uprobe consumers.
-+.P
-+Calls to
-+.BR uretprobe ()
-+system call are only made from the user-space trampoline provided by the kernel.
-+Calls from any other place result in a
-+.BR SIGILL .
-+.SH RETURN VALUE
-+The
-+.BR uretprobe ()
-+system call return value is architecture-specific.
-+.SH ERRORS
-+.BR SIGILL
-+The
-+.BR uretprobe ()
-+system call was called by user.
-+.SH VERSIONS
-+Details of the
-+.BR uretprobe ()
-+system call behavior vary across systems.
-+.SH STANDARDS
-+None.
-+.SH HISTORY
-+TBD
-+.SH NOTES
-+The
-+.BR uretprobe ()
-+system call was initially introduced for the x86_64 architecture where it was shown
-+to be faster than breakpoint traps.
-+It might be extended to other architectures.
-+.P
-+The
-+.BR uretprobe ()
-+system call exists only to allow the invocation of return uprobe consumers.
-+It should
-+.B never
-+be called directly.
-+Details of the arguments (if any) passed to
-+.BR uretprobe ()
-+and the return value are architecture-specific.
+>
+> This?
+>
+> config KVM_INTEL_PROVE_VE
+>         bool "Verify guests do not receive unexpected EPT Violation #VEs"
+>         depends on KVM_INTEL && EXPERT
+>         help
+>           Enable EPT Violation #VEs (when supported) for all VMs, to veri=
+fy
+>           that KVM's EPT management code will not incorrectly result in a=
+ #VE
+>           (KVM is supposed to supress #VEs by default).  Unexpected #VEs =
+will
+>           be intercepted by KVM and will trigger a WARN, but are otherwis=
+e
+>           transparent to the guest.
+>
+>           Note, EPT Violation #VE support appears to be buggy on some CPU=
+s.
+>
+>           This should never be enabled in a production environment!
+>
+>           If unsure, say N.
+>
+
 
