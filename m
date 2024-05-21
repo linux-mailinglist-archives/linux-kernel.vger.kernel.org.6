@@ -1,103 +1,148 @@
-Return-Path: <linux-kernel+bounces-185443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 723B28CB4FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:56:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6478CB502
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 22:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0045DB22A5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:56:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69AFF1F22EBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A0C149C78;
-	Tue, 21 May 2024 20:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38449149DED;
+	Tue, 21 May 2024 20:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tiws/Mon"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a1luYuIv"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306AB1494D7
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EE7148820;
+	Tue, 21 May 2024 20:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716324966; cv=none; b=Rf6uFhI7u6b4uU58ScxgUpK2QH5DdIPf/8rX0Kv7SsRwXqPzs68b3GyBgLNb6gN+uOu3FxhRlD7pYvIOTR23CD0cvbHd1Jo+AyP/oGb8xMpu14DTn1f6V2KR++44iIyfgDINdQg4WcFMiUMdltLVCaFZqdCDYB11aZ4bfE6Wj8E=
+	t=1716325068; cv=none; b=N9NfLSqrH4WVjBOI6Gpv1jyOrlQ7X1C4fTOzlqEOtYFMfEvPjBozFENYya7SpcxKOmB7Irj/dENncNnkERFRsImzsxtjq/WlQVP6EyLXUimPfh4Z3DqnWW1eqwE/BWHb7AbqaMyqzaCPirqmo2CcEGPwu2O1ZBtppsHpTpQPwvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716324966; c=relaxed/simple;
-	bh=MJiaqEAU9sSWZ1B+ERJ2EzFdFTRMHtGeptWAmPSNdbc=;
+	s=arc-20240116; t=1716325068; c=relaxed/simple;
+	bh=XvVQOYneXy31VQpI3gd6Ge47sV41dqcKNHKiTVXFSHM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=q25a2nFWd1CZmZmkoOppwW4Dw73ZcEeSsr/KvjM3IjuxkG8mupZXDh7Kd5aE2DMcKsXpHl9PhqvxqQpEzM7ZOZoLPAzeI88uGXVx0wUtzgOgGF/wgCTBJn1CuLtnOcq5B+rc+7JuPXCO6HpEpHfWxy8wtE9NBYvq/5vQR0wZov0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Tiws/Mon; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-24c39cedc7bso1123519fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:56:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=J+k3U/I0xqQTF05S2IUa0sN6WFMfbnOS7SVpuXqyPHPMYMPYALX8rH9khL3VG5adjtPPR0PVpsGE0W+N/p1S1FkKf2s7Kr4zaf/i+pjcoScnaqQ8pwufyQYuHznNwwXpvRZhvPhDOKNWi4i2I7VdShP09HSZYho2m6W++kNH+Uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a1luYuIv; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-351ae94323aso107839f8f.0;
+        Tue, 21 May 2024 13:57:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716324963; x=1716929763; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1716325065; x=1716929865; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MJiaqEAU9sSWZ1B+ERJ2EzFdFTRMHtGeptWAmPSNdbc=;
-        b=Tiws/MonIon6cnbOMs+FdnaKxtRNYkO7DdF8WvLW6zJDCgjy/w3ikKcVuA4R1pf6yd
-         IaeAurCMkojwjWJOV05TodcuN75c9Ff5EsWi69WZzuXPIXTlargkQdcJtqzGgIbslOQr
-         8O8B+wn/3Hg+Zba5h63pQYdM/NiYo1t1n9E/0=
+        bh=XvVQOYneXy31VQpI3gd6Ge47sV41dqcKNHKiTVXFSHM=;
+        b=a1luYuIvlmbLWwWyv5RDPccdKQzJp2cPCcVDKn57bsIYvXwaZYGquvnFNCkP2TC/CA
+         YSdpHK254F0Dgp33Hf9UriNsmIFuHA+QCPZsx4MxpC6OtyWXhbGQYnW/OyQXIK06LOXQ
+         WGcHA/o89D6e8qKrVGhu+iHfEpwIUZQ/vUbi/5YcUOChjOGuWDf2bWTcriujHLaa9Rfo
+         D8QOlifsfKilG02btKLe/4HUvF0yGB4KUrCxMr/74JeiK2LuvuxHQukhXc7WJ91qjHpA
+         wrm+AQCIZXyVnW8UC2rUOggfO8bJmCGCjgxtkqWX8aLKBj74rdTVIKPYctkkt1CA/cNs
+         u6Ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716324963; x=1716929763;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1716325065; x=1716929865;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MJiaqEAU9sSWZ1B+ERJ2EzFdFTRMHtGeptWAmPSNdbc=;
-        b=xRn1MEUnz/iwDx0UWDT+lFYeJyE5D2EkOW3k5obKjLLX3f9XTYt2UThnona1A5Rh0R
-         gAmURMMwLC2Y6q8Qf4DYGNRMeJ2x9asEM4wbW7fxmKR9JXq6ks7aGtNvOapITWNZaM0p
-         U1JuTXafu689LJHk6ZGt7krB+lT0CoCh6YTzpydEVkL/j5MtrnFHJONWtipFCxCgKX3B
-         luqvc49mPiyepWx6xnmECv02zlc8rMhNlTQR9mKSFcx+0LqX96MOfHdihShaoxNWS4bM
-         cqA284vHjMgPWmQfrzOmRSPFxWRyuifn3dwSC8FmqZBixJx+Va0YNqEbHJAHJliVinHh
-         4Dzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUe3uXPqkcYpzrETNnlW6LBAPeAFbmCzDy2sSpeoTVf8DLR9M6hQS1U2fe951L4RQcFKXZiPi5puVMJPQ9RnsN6kMRx3wWSRxnfGOr5
-X-Gm-Message-State: AOJu0YxyTlOqC8j1WDyUFMQjxoDd4nXuTcllFapRVOXJ4fGfyPDQPHH5
-	vMsLVb6XKuwUnA+if2U9JNShhnFKrTcZfvcUFyaRrHB4L76aTLjePo8qwa/B9p3g8XU7R32tgcv
-	l2NVQtoYOhNCnD7dWmKULBLQdWVwXJKbnnlvF
-X-Google-Smtp-Source: AGHT+IFVKWZED7guJzc+MzWuGHfaHJUwnJp1kEX7pxfEdSQdnNlThEftDlYt/MqxHChTBxk0kLBrMDZyswbZxiDXzxE=
-X-Received: by 2002:a05:6870:b00e:b0:239:8687:d01 with SMTP id
- 586e51a60fabf-24c68aebafemr258687fac.6.1716324963212; Tue, 21 May 2024
- 13:56:03 -0700 (PDT)
+        bh=XvVQOYneXy31VQpI3gd6Ge47sV41dqcKNHKiTVXFSHM=;
+        b=l64dw9+ekuh45XV93eT7YbIF7tnB6NbCK9hVLO788JmA03K810ahsN3QLRe3IYvgHP
+         sF3AS1GtE9vD1dBvVTI96/Aj3DCcKq/FiiJu3y/IE6nCS21N73yf0Pz2gT3oPaEfJ3U7
+         QR8qoDNVQVUEFWzNTr2AHuG1gS8o0XJwBd5jVxX40HYrUctBodYcvuVxl1gNFWdQV3N2
+         fZsw+pdS2kDXyIeAb9pUeLCtb8gk6ciKU7wZFYwX0Z9j5YJZunRJ/+uW2LuhzA2e2AXl
+         O6RgMLlXB3AU4YalRkG788SZkbY+UyQEb8Xk0/mWTIMopwSK7t1ChTAA1iPtZYBDoerV
+         b90g==
+X-Forwarded-Encrypted: i=1; AJvYcCViMqwE+ff/ErO04LV2HRR0isIKCyMBXYSdZPPgx5SbVCjSoSKLISFbCR3VJkcSYPC47JyX/88hBNB2fcte6yoIGO2aB0J6p8XNjB4r5GnF3+11q9dpzn7CcGb1Pbi+amVcgTmyP7X7HLQ4ivfiVmY6u154Lks9r9WrQSoBEySv+lDUhLxCCxg+dFaltD/AIyZ9QOFmp7rEUvwvWGpoW4pdEOw0maszEVG8kKp0WA3aR03vTGePWjshxyxp
+X-Gm-Message-State: AOJu0YxpvnlLCE+r/vbk52NQiCyMwUG+l7F+xEWNZdvWbJsdeDROWtg/
+	lwFSvC6h8/DtSLrVgwZUL9tIAZXtkv4B+AeGSUCdXCLZfA0LzxlBhnsjKpzAPE/EKjM/SGJP5r2
+	bpW6/AzFfwUfoY8hBNvJqyzGMVwI=
+X-Google-Smtp-Source: AGHT+IFAgV+GWbFNqcaKR32yK6SKB8385j+pIi2sH0h+JACJbcr6SPrKTSjXHv3VoaWXb55zX1+6+g5xDwPZqg+gYxE=
+X-Received: by 2002:a7b:cb07:0:b0:418:f991:713f with SMTP id
+ 5b1f17b1804b1-420fd319981mr86955e9.23.1716325065000; Tue, 21 May 2024
+ 13:57:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240415163527.626541-1-jeffxu@chromium.org> <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
- <d46qb2rkfsagw22u6ishgagsvsmqsu5nrmf5up5mhi6xrwolyt@6ir6g2v63of7>
- <CABi2SkXBpL8qdSMTwe5njWasqidsWDkhme6xw2_38JARrhPRwA@mail.gmail.com>
- <3rpmzsxiwo5t2uq7xy5inizbtaasotjtzocxbayw5ntgk5a2rx@jkccjg5mbqqh>
- <CABi2SkVLqE7WD2MTYpksxA3+BfLLzjibHeJy9saYFvM-GRFy-w@mail.gmail.com> <khduyf47rifr5bmswkbju6l5itldhqaksjasvnkfhg4ig3ngdc@a4c2csfsdeqz>
-In-Reply-To: <khduyf47rifr5bmswkbju6l5itldhqaksjasvnkfhg4ig3ngdc@a4c2csfsdeqz>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Tue, 21 May 2024 13:55:51 -0700
-Message-ID: <CABi2SkU+6tSO6UASTW+7WNX4ySot5FPz5shnjE8b1OeXyJu-=w@mail.gmail.com>
-Subject: Re: [PATCH v10 0/5] Introduce mseal
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jeff Xu <jeffxu@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, keescook@chromium.org, jannh@google.com, 
-	sroettger@google.com, willy@infradead.org, gregkh@linuxfoundation.org, 
-	torvalds@linux-foundation.org, usama.anjum@collabora.com, corbet@lwn.net, 
-	surenb@google.com, merimus@google.com, rdunlap@infradead.org, 
-	jeffxu@google.com, jorgelo@chromium.org, groeck@chromium.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, pedro.falcato@gmail.com, dave.hansen@intel.com, 
-	linux-hardening@vger.kernel.org, deraadt@openbsd.org
+References: <20240521104825.1060966-1-jolsa@kernel.org> <Zk0IvZU834RQ7YKp@debug.ba.rivosinc.com>
+In-Reply-To: <Zk0IvZU834RQ7YKp@debug.ba.rivosinc.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 21 May 2024 13:57:33 -0700
+Message-ID: <CAADnVQ+2Q1992e9mRtWOavHfqKsFUxPp4f6MAAJg90TK_KTpew@mail.gmail.com>
+Subject: Re: [PATCHv6 bpf-next 0/9] uprobe: uretprobe speed up
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, Linux API <linux-api@vger.kernel.org>, 
+	linux-man <linux-man@vger.kernel.org>, X86 ML <x86@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	Andy Lutomirski <luto@kernel.org>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2024 at 9:00=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
+On Tue, May 21, 2024 at 1:49=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> w=
+rote:
 >
+> On Tue, May 21, 2024 at 12:48:16PM +0200, Jiri Olsa wrote:
+> >hi,
+> >as part of the effort on speeding up the uprobes [0] coming with
+> >return uprobe optimization by using syscall instead of the trap
+> >on the uretprobe trampoline.
 >
-> TL;DR for Andrew (and to save his page down key):
+> I understand this provides an optimization on x86. I believe primary reas=
+on
+> is syscall is straight-line microcode and short sequence while trap deliv=
+ery
+> still does all the GDT / IDT and segmentation checks and it makes deliver=
+y
+> of the trap slow.
 >
-> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> So doing syscall improves that. Although it seems x86 is going to get rid=
+ of
+> that as part of FRED [1, 2]. And linux kernel support for FRED is already=
+ upstream [2].
+> So I am imagining x86 hardware already exists with FRED support.
 >
-Many thanks!
+> On other architectures, I believe trap delivery for breakpoint instructio=
+n
+> is same as syscall instruction.
+>
+> Given that x86 trap delivery is pretty much going following the suit here=
+ and
+> intend to make trap delivery cost similar to syscall delivery.
+>
+> Sorry for being buzzkill here but ...
+> Is it worth introducing this syscall which otherwise has no use on other =
+arches
+> and x86 (and x86 kernel) has already taken steps to match trap delivery l=
+atency with
+> syscall latency would have similar cost?
+>
+> Did you do any study of this on FRED enabled x86 CPUs?
 
--Jeff
+afaik CPUs with FRED do not exist on the market and it's
+not clear when they will be available.
+And when they finally will be on the shelves
+the overhead of FRED vs int3 would still have to be measured.
+int3 with FRED might still be higher than syscall with FRED.
+
+>
+> [1] - https://www.intel.com/content/www/us/en/content-details/780121/flex=
+ible-return-and-event-delivery-fred-specification.html
+> [2] - https://docs.kernel.org/arch/x86/x86_64/fred.html
+>
+> >
+> >The speed up depends on instruction type that uprobe is installed
+> >and depends on specific HW type, please check patch 1 for details.
+> >
 
