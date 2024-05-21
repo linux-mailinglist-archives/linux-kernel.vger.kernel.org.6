@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-184737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26BCF8CAB42
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:50:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE9F8CAB4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A24A1C217BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:50:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4519C1C214E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EF95FBA0;
-	Tue, 21 May 2024 09:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3636BFAB;
+	Tue, 21 May 2024 09:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UlVEIXeF"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uh0DczXW"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD966EB41
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85259657A7
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 09:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716284991; cv=none; b=rvDaM3hvKlWpimYItdy3pa5dxVm6m4xawBa+qO1UStdPq9R0XD6Q8vLIDgvhE8O/buB7LUFm0ubge9I5bQFypQEuLafDgARURXLAomW58zoUDpUv/D1N+xpQ3bwIgyRdMK9sDTWeVOVefgBRIwHLkOsgNYk+g7D9jf5Gx2g0H1A=
+	t=1716285174; cv=none; b=QYVXEhSqT+RfkEg0yQwDvQouVijbxnhSq1G5BXSfKKKZSc1eZZWY8FcwDXAtEQN8VSbKcl8+5VFDWdT20e/YTii8WZrwX0zdKAfNmJJvssqBU50634b25+LLV30fvCs8hY/zbHpbeY10qOE+vfA1ixSxR9zpZpI616l8nD6B0uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716284991; c=relaxed/simple;
-	bh=cyctKyZ6xv3Jcv1nSJ8Y7GXV2A4M4LjyR/6XGLxRfIA=;
+	s=arc-20240116; t=1716285174; c=relaxed/simple;
+	bh=WDNsksPAPWELnAYXudqubJzqQX0axMbrLNKACc8Z69w=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RjiMG8lETTgwRSV0/fzCPXo4Ni7O6M4ekQNcNTlaqu/R3zj4M0q2JlCX1Tu31j8iaImz/7QdZqzXx8SzHpOFsj1u55GJRzcfj54ASjfsWXT11JP7L5/Yjb4Hn2O+BTc9ilFSPGlVHSwhCrn7CfZ73Pl6KbIBP7J7AFPuwd5Iob4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UlVEIXeF; arc=none smtp.client-ip=209.85.208.43
+	 In-Reply-To:Content-Type; b=MMMvXuiGW8+A64uCABqppB0a9eKelpqew128wAS2xkWeu5teEJCTW/tg/DAKx37X8oGU+eonEeY3NajIA3QkUh/8/xYWeeHXOah0A+FzvtnZYmpQTetrZkWDkFOt6Gk1gPeyCfRBYbZYFb6rRDSKap89LJ/2djutIC9MtfMk7Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uh0DczXW; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-56e6a1edecfso11840256a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:49:48 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51f40b5e059so5162995e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:52:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716284987; x=1716889787; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716285170; x=1716889970; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ttQWlXfImZ6VMs6eXr/g1fKwqzPLEk4Ki4n5JP6tD3U=;
-        b=UlVEIXeF9L9VmYBcySFxxm6Zn0A0DmUQkHGoAvQbuTBGaLKYQEQHUY594AhxtSM4Z4
-         t5ho59eXcPy5DlgX6V1bVXdaUw1fCpVI/2o5VdSa3mS/m5f09QiJXgrpzX5uZEePjYeE
-         O4suCcEynHh5bZ67boxxGQJ8N3uJkm7Y3HRtyPStgmGGpzKR0xprTP2udDQivbMvkprh
-         knZCtK5W0XBRIVYws0vYcKs09/U6SkfERQAvInThiv2xBq7LcyUYQAJSYgKQJkaFTPbJ
-         Gw0lMuqCOXyMcV8YtcZe7fYXPVFrgGnmL3l7v3rCLeB648pJmEDtnn4zD2Q2xEXCCuju
-         00Lg==
+        bh=AxNZmYdUy/J5wF9KOBHofLTNDbZCyaCYSUWokOsVSs8=;
+        b=uh0DczXWJzgWSVhTjFnS2Xg7PU5YtLEVPnqfjfQ9yaKhYWdW7u6iqu0tf7QpV+Gqil
+         S8gg5NiKUGGqzC9cx6XB8kSxPSX0TZK8O/+duRqsSEwWhLzIgw4TFMkANlSCaw5/TCY9
+         N6FSD48LsLL2/OOf24iMWwpIlXvySBgStxUT5b78g2IdHxlQrR5NnAL6ExDe2OUAqSct
+         fejAgeeIWNLtoQLttNobaJEcNiZkw3zwPol9Qu9j8IuHc0Ts/o4MqBUKSh9DImruDDBF
+         pbLutVXP2GggGxCFYcCYKP+CcuvV9OKUgBB25gUEZTucWihnbz3m5Yy7KvNrxcbYGpJk
+         0AZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716284987; x=1716889787;
+        d=1e100.net; s=20230601; t=1716285170; x=1716889970;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=ttQWlXfImZ6VMs6eXr/g1fKwqzPLEk4Ki4n5JP6tD3U=;
-        b=qmV1+RiukSaTXZoqcu8FEhqOj/yAzGkzpxA/8aUL6LVAmp1emw4PFfFSOC5sN6ZDhz
-         S7jyY2xbZs1wxEP2+JdzJGDCHqTaviOTZAzyF8H3AH+dKzVBo8Q8fe560G3e8MaHztbc
-         5mLq3dFkuJ+ZURXaAlRlcw+6KIANRdhMhuq6FwMiKnsQF/BeNv1ZE0G3iNFKYCFpAW9u
-         h9l8KktCygEJR1TP2bs7W3Bx2EMBXD32U/gtaNME6fuGSIRZtCoNH+VvmSBxdHU7NBxJ
-         U22M+vFo0BhcZoiUMw5udkfbanBvW4A6ur5fEivzriRXmBKh4La/q4PNQjoeRhn8dSZ2
-         ebBQ==
-X-Gm-Message-State: AOJu0Yy9Fih9KJxg3fFsfqo1SHY8RWtUcLaUNWG5Am6gvbSeEzD7VE9P
-	oc4iJjLM4LH3Pb6V/5ijNjJqQr6YZKACKP3/mSvMc3bsj/vZLgYCLDQ5KjdxL+Y=
-X-Google-Smtp-Source: AGHT+IGYZltjqowB77AWpArr9RoGUzhswwEoZofmoJx6mtx/FkQZFqOw8katShiW6munDZHWImZ4gg==
-X-Received: by 2002:a17:906:4a49:b0:a59:ba2b:590f with SMTP id a640c23a62f3a-a5a2d67806emr1778800866b.67.1716284987191;
-        Tue, 21 May 2024 02:49:47 -0700 (PDT)
+        bh=AxNZmYdUy/J5wF9KOBHofLTNDbZCyaCYSUWokOsVSs8=;
+        b=lfOoU779Fz4DiyJUq4zk+d0V9hzG/u6UJ1KWSz0rtYxlLY5eHQofOnzyNOJhI2ZC06
+         yKjXkN7abGECjJ9Z/p/1ZrFJctHJHf5n5Rou8PjTcCLRhfPY9+z4YQCfPxFBPz0fhPRC
+         Nxa2zgiJLZmr6ta2wY8GfbRYR4dtiWHFTOnGaiGyjwra5R/SNQcYFAiHTVNL9SdUaP+e
+         Vg+TKQAHmh90OvTHwYlxT0ZWjieco2vHJWGKnlI16vRjjjPy7N0R0ldEPr8dnCWELp8a
+         Tx1Cm52QxzK+AJ6Lvm1JLK32PKfvJjst4Nfpqz0FoXX979G/7rjXdU2+VM4sLjioLG5B
+         xYkA==
+X-Gm-Message-State: AOJu0YxgtQ87jB/eI6+s+vEwvaGkxxPAAa/SFlcPu5bWsinixvn/tWJo
+	ZVceWFbIMm8ACzdEHjCP6TUq/K7gqwTQ9MUIx6TZ6gZc5weQ/nXUeL+Ni+qdIDk=
+X-Google-Smtp-Source: AGHT+IFdXiXyrzoApQgOdDWpb6iIVuhPyfhIL43KtoWriiwoy5lQ1Rf66cgFBdKJV6REetd4ddGLnA==
+X-Received: by 2002:a05:6512:10cb:b0:524:43b2:d326 with SMTP id 2adb3069b0e04-52443b2d379mr4106211e87.37.1716285170365;
+        Tue, 21 May 2024 02:52:50 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:adf9:e5d:4c15:f725? ([2a01:e0a:982:cbb0:adf9:e5d:4c15:f725])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5d08d36feasm577491566b.15.2024.05.21.02.49.44
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-574ffe6d3f6sm7326896a12.0.2024.05.21.02.52.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 02:49:46 -0700 (PDT)
-Message-ID: <a314906d-b297-474d-910c-6634c8c23042@linaro.org>
-Date: Tue, 21 May 2024 11:49:42 +0200
+        Tue, 21 May 2024 02:52:50 -0700 (PDT)
+Message-ID: <a45b53f3-b2a5-4094-af5a-1281e0f94d2f@linaro.org>
+Date: Tue, 21 May 2024 11:52:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,8 +78,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: neil.armstrong@linaro.org
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 06/12] remoteproc: qcom_q6v5_pas: switch to mbn files by
- default
+Subject: Re: [PATCH 01/12] soc: qcom: add firmware name helper
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
  Bjorn Andersson <andersson@kernel.org>,
  Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -91,7 +90,7 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
  Arnd Bergmann <arnd@arndb.de>
 References: <20240521-qcom-firmware-name-v1-0-99a6d32b1e5e@linaro.org>
- <20240521-qcom-firmware-name-v1-6-99a6d32b1e5e@linaro.org>
+ <20240521-qcom-firmware-name-v1-1-99a6d32b1e5e@linaro.org>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -118,326 +117,169 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240521-qcom-firmware-name-v1-6-99a6d32b1e5e@linaro.org>
+In-Reply-To: <20240521-qcom-firmware-name-v1-1-99a6d32b1e5e@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 21/05/2024 11:45, Dmitry Baryshkov wrote:
-> We have been pushing userspace to use mbn files by default for ages.
-> As a preparation for making the firmware-name optional, make the driver
-> use .mbn instead of .mdt files by default.
+> Qualcomm platforms have different sets of the firmware files, which
+> differ from platform to platform (and from board to board, due to the
+> embedded signatures). Rather than listing all the firmware files,
+> including full paths, in the DT, provide a way to determine firmware
+> path based on the root DT node compatible.
 
-I think we should have a mechanism to fallback to .mdt since downstream
-uses split mdt on the devices filesystem.
-
-Perhaps only specify .firmware_name = "adsp" and add a list of allowed extension
-it will try in a loop ?
+Ok this looks quite over-engineered but necessary to handle the legacy,
+but I really think we should add a way to look for a board-specific path
+first and fallback to those SoC specific paths.
 
 Neil
 
 > 
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->   drivers/remoteproc/qcom_q6v5_pas.c | 76 +++++++++++++++++++-------------------
->   1 file changed, 38 insertions(+), 38 deletions(-)
+>   drivers/soc/qcom/Kconfig           |  5 +++
+>   drivers/soc/qcom/Makefile          |  1 +
+>   drivers/soc/qcom/qcom_fw_helper.c  | 86 ++++++++++++++++++++++++++++++++++++++
+>   include/linux/soc/qcom/fw_helper.h | 10 +++++
+>   4 files changed, 102 insertions(+)
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 54d8005d40a3..4694ec4f038d 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -812,7 +812,7 @@ static void adsp_remove(struct platform_device *pdev)
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index 5af33b0e3470..b663774d65f8 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -62,6 +62,11 @@ config QCOM_MDT_LOADER
+>   	tristate
+>   	select QCOM_SCM
 >   
->   static const struct adsp_data adsp_resource_init = {
->   	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> +	.firmware_name = "adsp.mbn",
->   	.pas_id = 1,
->   	.auto_boot = true,
->   	.ssr_name = "lpass",
-> @@ -822,7 +822,7 @@ static const struct adsp_data adsp_resource_init = {
->   
->   static const struct adsp_data sdm845_adsp_resource_init = {
->   	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> +	.firmware_name = "adsp.mbn",
->   	.pas_id = 1,
->   	.auto_boot = true,
->   	.load_state = "adsp",
-> @@ -833,7 +833,7 @@ static const struct adsp_data sdm845_adsp_resource_init = {
->   
->   static const struct adsp_data sm6350_adsp_resource = {
->   	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> +	.firmware_name = "adsp.mbn",
->   	.pas_id = 1,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -849,7 +849,7 @@ static const struct adsp_data sm6350_adsp_resource = {
->   
->   static const struct adsp_data sm6375_mpss_resource = {
->   	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> +	.firmware_name = "modem.mbn",
->   	.pas_id = 4,
->   	.minidump_id = 3,
->   	.auto_boot = false,
-> @@ -864,7 +864,7 @@ static const struct adsp_data sm6375_mpss_resource = {
->   
->   static const struct adsp_data sm8150_adsp_resource = {
->   	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> +	.firmware_name = "adsp.mbn",
->   	.pas_id = 1,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -879,7 +879,7 @@ static const struct adsp_data sm8150_adsp_resource = {
->   
->   static const struct adsp_data sm8250_adsp_resource = {
->   	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> +	.firmware_name = "adsp.mbn",
->   	.pas_id = 1,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -895,7 +895,7 @@ static const struct adsp_data sm8250_adsp_resource = {
->   
->   static const struct adsp_data sm8350_adsp_resource = {
->   	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> +	.firmware_name = "adsp.mbn",
->   	.pas_id = 1,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -911,7 +911,7 @@ static const struct adsp_data sm8350_adsp_resource = {
->   
->   static const struct adsp_data msm8996_adsp_resource = {
->   	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> +	.firmware_name = "adsp.mbn",
->   	.pas_id = 1,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -925,7 +925,7 @@ static const struct adsp_data msm8996_adsp_resource = {
->   
->   static const struct adsp_data cdsp_resource_init = {
->   	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> +	.firmware_name = "cdsp.mbn",
->   	.pas_id = 18,
->   	.auto_boot = true,
->   	.ssr_name = "cdsp",
-> @@ -935,7 +935,7 @@ static const struct adsp_data cdsp_resource_init = {
->   
->   static const struct adsp_data sdm845_cdsp_resource_init = {
->   	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> +	.firmware_name = "cdsp.mbn",
->   	.pas_id = 18,
->   	.auto_boot = true,
->   	.load_state = "cdsp",
-> @@ -946,7 +946,7 @@ static const struct adsp_data sdm845_cdsp_resource_init = {
->   
->   static const struct adsp_data sm6350_cdsp_resource = {
->   	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> +	.firmware_name = "cdsp.mbn",
->   	.pas_id = 18,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -962,7 +962,7 @@ static const struct adsp_data sm6350_cdsp_resource = {
->   
->   static const struct adsp_data sm8150_cdsp_resource = {
->   	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> +	.firmware_name = "cdsp.mbn",
->   	.pas_id = 18,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -977,7 +977,7 @@ static const struct adsp_data sm8150_cdsp_resource = {
->   
->   static const struct adsp_data sm8250_cdsp_resource = {
->   	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> +	.firmware_name = "cdsp.mbn",
->   	.pas_id = 18,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -992,7 +992,7 @@ static const struct adsp_data sm8250_cdsp_resource = {
->   
->   static const struct adsp_data sc8280xp_nsp0_resource = {
->   	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> +	.firmware_name = "cdsp.mbn",
->   	.pas_id = 18,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -1006,7 +1006,7 @@ static const struct adsp_data sc8280xp_nsp0_resource = {
->   
->   static const struct adsp_data sc8280xp_nsp1_resource = {
->   	.crash_reason_smem = 633,
-> -	.firmware_name = "cdsp.mdt",
-> +	.firmware_name = "cdsp.mbn",
->   	.pas_id = 30,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -1020,8 +1020,8 @@ static const struct adsp_data sc8280xp_nsp1_resource = {
->   
->   static const struct adsp_data x1e80100_adsp_resource = {
->   	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> -	.dtb_firmware_name = "adsp_dtb.mdt",
-> +	.firmware_name = "adsp.mbn",
-> +	.dtb_firmware_name = "adsp_dtb.mbn",
->   	.pas_id = 1,
->   	.dtb_pas_id = 0x24,
->   	.lite_pas_id = 0x1f,
-> @@ -1040,8 +1040,8 @@ static const struct adsp_data x1e80100_adsp_resource = {
->   
->   static const struct adsp_data x1e80100_cdsp_resource = {
->   	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.dtb_firmware_name = "cdsp_dtb.mdt",
-> +	.firmware_name = "cdsp.mbn",
-> +	.dtb_firmware_name = "cdsp_dtb.mbn",
->   	.pas_id = 18,
->   	.dtb_pas_id = 0x25,
->   	.minidump_id = 7,
-> @@ -1060,7 +1060,7 @@ static const struct adsp_data x1e80100_cdsp_resource = {
->   
->   static const struct adsp_data sm8350_cdsp_resource = {
->   	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> +	.firmware_name = "cdsp.mbn",
->   	.pas_id = 18,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -1076,7 +1076,7 @@ static const struct adsp_data sm8350_cdsp_resource = {
->   
->   static const struct adsp_data mpss_resource_init = {
->   	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> +	.firmware_name = "modem.mbn",
->   	.pas_id = 4,
->   	.minidump_id = 3,
->   	.auto_boot = false,
-> @@ -1093,7 +1093,7 @@ static const struct adsp_data mpss_resource_init = {
->   
->   static const struct adsp_data sc8180x_mpss_resource = {
->   	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> +	.firmware_name = "modem.mbn",
->   	.pas_id = 4,
->   	.auto_boot = false,
->   	.proxy_pd_names = (char*[]){
-> @@ -1108,7 +1108,7 @@ static const struct adsp_data sc8180x_mpss_resource = {
->   
->   static const struct adsp_data msm8996_slpi_resource_init = {
->   	.crash_reason_smem = 424,
-> -	.firmware_name = "slpi.mdt",
-> +	.firmware_name = "slpi.mbn",
->   	.pas_id = 12,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -1122,7 +1122,7 @@ static const struct adsp_data msm8996_slpi_resource_init = {
->   
->   static const struct adsp_data sdm845_slpi_resource_init = {
->   	.crash_reason_smem = 424,
-> -	.firmware_name = "slpi.mdt",
-> +	.firmware_name = "slpi.mbn",
->   	.pas_id = 12,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -1138,7 +1138,7 @@ static const struct adsp_data sdm845_slpi_resource_init = {
->   
->   static const struct adsp_data wcss_resource_init = {
->   	.crash_reason_smem = 421,
-> -	.firmware_name = "wcnss.mdt",
-> +	.firmware_name = "wcnss.mbn",
->   	.pas_id = 6,
->   	.auto_boot = true,
->   	.ssr_name = "mpss",
-> @@ -1148,7 +1148,7 @@ static const struct adsp_data wcss_resource_init = {
->   
->   static const struct adsp_data sdx55_mpss_resource = {
->   	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> +	.firmware_name = "modem.mbn",
->   	.pas_id = 4,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -1163,7 +1163,7 @@ static const struct adsp_data sdx55_mpss_resource = {
->   
->   static const struct adsp_data sm8450_mpss_resource = {
->   	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> +	.firmware_name = "modem.mbn",
->   	.pas_id = 4,
->   	.minidump_id = 3,
->   	.auto_boot = false,
-> @@ -1181,8 +1181,8 @@ static const struct adsp_data sm8450_mpss_resource = {
->   
->   static const struct adsp_data sm8550_adsp_resource = {
->   	.crash_reason_smem = 423,
-> -	.firmware_name = "adsp.mdt",
-> -	.dtb_firmware_name = "adsp_dtb.mdt",
-> +	.firmware_name = "adsp.mbn",
-> +	.dtb_firmware_name = "adsp_dtb.mbn",
->   	.pas_id = 1,
->   	.dtb_pas_id = 0x24,
->   	.minidump_id = 5,
-> @@ -1200,8 +1200,8 @@ static const struct adsp_data sm8550_adsp_resource = {
->   
->   static const struct adsp_data sm8550_cdsp_resource = {
->   	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.dtb_firmware_name = "cdsp_dtb.mdt",
-> +	.firmware_name = "cdsp.mbn",
-> +	.dtb_firmware_name = "cdsp_dtb.mbn",
->   	.pas_id = 18,
->   	.dtb_pas_id = 0x25,
->   	.minidump_id = 7,
-> @@ -1220,8 +1220,8 @@ static const struct adsp_data sm8550_cdsp_resource = {
->   
->   static const struct adsp_data sm8550_mpss_resource = {
->   	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> -	.dtb_firmware_name = "modem_dtb.mdt",
-> +	.firmware_name = "modem.mbn",
-> +	.dtb_firmware_name = "modem_dtb.mbn",
->   	.pas_id = 4,
->   	.dtb_pas_id = 0x26,
->   	.minidump_id = 3,
-> @@ -1243,7 +1243,7 @@ static const struct adsp_data sm8550_mpss_resource = {
->   
->   static const struct adsp_data sc7280_wpss_resource = {
->   	.crash_reason_smem = 626,
-> -	.firmware_name = "wpss.mdt",
-> +	.firmware_name = "wpss.mbn",
->   	.pas_id = 6,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
-> @@ -1259,8 +1259,8 @@ static const struct adsp_data sc7280_wpss_resource = {
->   
->   static const struct adsp_data sm8650_cdsp_resource = {
->   	.crash_reason_smem = 601,
-> -	.firmware_name = "cdsp.mdt",
-> -	.dtb_firmware_name = "cdsp_dtb.mdt",
-> +	.firmware_name = "cdsp.mbn",
-> +	.dtb_firmware_name = "cdsp_dtb.mbn",
->   	.pas_id = 18,
->   	.dtb_pas_id = 0x25,
->   	.minidump_id = 7,
-> @@ -1283,8 +1283,8 @@ static const struct adsp_data sm8650_cdsp_resource = {
->   
->   static const struct adsp_data sm8650_mpss_resource = {
->   	.crash_reason_smem = 421,
-> -	.firmware_name = "modem.mdt",
-> -	.dtb_firmware_name = "modem_dtb.mdt",
-> +	.firmware_name = "modem.mbn",
-> +	.dtb_firmware_name = "modem_dtb.mbn",
->   	.pas_id = 4,
->   	.dtb_pas_id = 0x26,
->   	.minidump_id = 3,
+> +config QCOM_FW_HELPER
+> +	tristate "NONE FW HELPER"
+> +	help
+> +	  Helpers to return platform-specific location for the firmware files.
+> +
+>   config QCOM_OCMEM
+>   	tristate "Qualcomm On Chip Memory (OCMEM) driver"
+>   	depends on ARCH_QCOM
+> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+> index ca0bece0dfff..e612bee5b955 100644
+> --- a/drivers/soc/qcom/Makefile
+> +++ b/drivers/soc/qcom/Makefile
+> @@ -6,6 +6,7 @@ obj-$(CONFIG_QCOM_GENI_SE) +=	qcom-geni-se.o
+>   obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
+>   obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
+>   obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
+> +obj-$(CONFIG_QCOM_FW_HELPER)	+= qcom_fw_helper.o
+>   obj-$(CONFIG_QCOM_OCMEM)	+= ocmem.o
+>   obj-$(CONFIG_QCOM_PDR_HELPERS)	+= pdr_interface.o
+>   obj-$(CONFIG_QCOM_PMIC_GLINK)	+= pmic_glink.o
+> diff --git a/drivers/soc/qcom/qcom_fw_helper.c b/drivers/soc/qcom/qcom_fw_helper.c
+> new file mode 100644
+> index 000000000000..13123c2514b8
+> --- /dev/null
+> +++ b/drivers/soc/qcom/qcom_fw_helper.c
+> @@ -0,0 +1,86 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Qualcomm Firmware loading data
+> + *
+> + * Copyright (C) 2024 Linaro Ltd
+> + */
+> +
+> +#include <linux/cleanup.h>
+> +#include <linux/device.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/soc/qcom/fw_helper.h>
+> +
+> +static DEFINE_MUTEX(qcom_fw_mutex);
+> +static const char *fw_path;
+> +
+> +static const struct of_device_id qcom_fw_paths[] = {
+> +	/* device-specific entries */
+> +	{ .compatible = "thundercomm,db845c", .data = "qcom/sdm845/Thundercomm/db845c", },
+> +	{ .compatible = "qcom,qrb5165-rb5", .data = "qcom/sm8250/Thundercomm/RB5", },
+> +	/* SoC default entries */
+> +	{ .compatible = "qcom,apq8016", .data = "qcom/apq8016", },
+> +	{ .compatible = "qcom,apq8096", .data = "qcom/apq8096", },
+> +	{ .compatible = "qcom,sdm845", .data = "qcom/sdm845", },
+> +	{ .compatible = "qcom,sm8250", .data = "qcom/sm8250", },
+> +	{ .compatible = "qcom,sm8350", .data = "qcom/sm8350", },
+> +	{ .compatible = "qcom,sm8450", .data = "qcom/sm8450", },
+> +	{ .compatible = "qcom,sm8550", .data = "qcom/sm8550", },
+> +	{ .compatible = "qcom,sm8650", .data = "qcom/sm8650", },
+> +	{},
+> +};
+> +
+> +static int qcom_fw_ensure_init(void)
+> +{
+> +	const struct of_device_id *match;
+> +	struct device_node *root;
+> +
+> +	if (fw_path)
+> +		return 0;
+> +
+> +	root = of_find_node_by_path("/");
+> +	if (!root)
+> +		return -ENODEV;
+> +
+> +	match = of_match_node(qcom_fw_paths, root);
+> +	of_node_put(root);
+> +	if (!match || !match->data) {
+> +		pr_notice("Platform not supported by qcom_fw_helper\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	fw_path = match->data;
+> +
+> +	return 0;
+> +}
+> +
+> +const char *qcom_get_board_fw(const char *firmware)
+> +{
+> +	if (strchr(firmware, '/'))
+> +		return kstrdup(firmware, GFP_KERNEL);
+> +
+> +	scoped_guard(mutex, &qcom_fw_mutex) {
+> +		if (!qcom_fw_ensure_init())
+> +			return kasprintf(GFP_KERNEL, "%s/%s", fw_path, firmware);
+> +	}
+> +
+> +	return kstrdup(firmware, GFP_KERNEL);
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_get_board_fw);
+> +
+> +const char *devm_qcom_get_board_fw(struct device *dev, const char *firmware)
+> +{
+> +	if (strchr(firmware, '/'))
+> +		return devm_kstrdup(dev, firmware, GFP_KERNEL);
+> +
+> +	scoped_guard(mutex, &qcom_fw_mutex) {
+> +		if (!qcom_fw_ensure_init())
+> +			return devm_kasprintf(dev, GFP_KERNEL, "%s/%s", fw_path, firmware);
+> +	}
+> +
+> +	return devm_kstrdup(dev, firmware, GFP_KERNEL);
+> +}
+> +EXPORT_SYMBOL_GPL(devm_qcom_get_board_fw);
+> +
+> +MODULE_DESCRIPTION("Firmware helpers for Qualcomm devices");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/soc/qcom/fw_helper.h b/include/linux/soc/qcom/fw_helper.h
+> new file mode 100644
+> index 000000000000..755645386bba
+> --- /dev/null
+> +++ b/include/linux/soc/qcom/fw_helper.h
+> @@ -0,0 +1,10 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __QCOM_FW_HELPER_H__
+> +#define __QCOM_FW_HELPER_H__
+> +
+> +struct device;
+> +
+> +const char *qcom_get_board_fw(const char *firmware);
+> +const char *devm_qcom_get_board_fw(struct device *dev, const char *firmware);
+> +
+> +#endif
 > 
 
 
