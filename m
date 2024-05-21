@@ -1,164 +1,90 @@
-Return-Path: <linux-kernel+bounces-184756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 346B58CAB87
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:10:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C7A08CAB89
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D35F1F22865
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:10:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A87EEB20910
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FA96BFA3;
-	Tue, 21 May 2024 10:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D54Y9xHE"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE906BFA3;
+	Tue, 21 May 2024 10:11:24 +0000 (UTC)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6854F88A
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634F556B7B
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 10:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716286224; cv=none; b=madMJuNQHU9fjwL8ajdGruyUCJsunsQCiqisrYTk8FNmW/eDsbe2SXPdu/NGeGYdoAmd4SBOnCJygu5ormMpsfk8vFsvH6fmyV5dfGRlk4oLv553CBdxLDpfKr/tfBmu4OFSHR1EP5H2xa7KWcNfwdl3VEdJU4QxERE8Mp4zMsg=
+	t=1716286283; cv=none; b=rJXbbQTHHDCg/6+ziYkoxKSqNBrgndvv82rrfT2VA9jFmt1d3y2AYewCRbfULPJDxFTi62tl0BoepsLQhjLW3dpn4+fwwzaZEtnBcu/HWe0ZRWWSDMjFxqo5MaqclNBvYshnOCUOBfkxySJu/OdpTBDPo75n9Xi8/d5gzm5VCHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716286224; c=relaxed/simple;
-	bh=lzP6WVfGnZ2gRAVw3Iw9YAiEUFJTomWHX1OVcSfqHoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pemHT8aO889Ato8LPmPRHPhmOoiMtpDF5v+XoN5kAxgPfNgjEafbG/ILZiqBRz3YH3vGZeQDPP9t5yNhQeTYe18ddQvFKjxhSXTyyHgxTHgxHqPpjGgFBwhMIcLQNg5omoJJmG2kfGH8OW4YEGi17CFGSbcm1nrrQ91Pi6IYTQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D54Y9xHE; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3504f34a086so2755813f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:10:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716286221; x=1716891021; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uqy/BrI0+zdFA8alFTtjRQNHBs3pPPaugw1diVg336k=;
-        b=D54Y9xHEgI0t0VCnnK/xk14UbrZCUHScdtld/LwLRO4Znoh55VGoYL6v5PwwgCAnnZ
-         yCc+Qybo2Q0P4B+XL3/mbkQAGqu9moo6gLFanhkyZRbLvezIr+bj0x9/Vi5T4/SZnX5V
-         bqCFyzcZLWdqWWBcCOZPRs2PnMSkPQAdmOpOluorQH7/N67YOG887jNetz2ODtL7SF30
-         7KrTWpxgUgPaObdGn1oiblHGwj0bJuLs37WVDEPbILJU4sjExSljr37NDwpjyN0/fxef
-         RrWm8g/ausKlydAh3F33Eymadfi0Jk02NkWK8QYf4u16x1tsniZC6xp7cy9gSm97WNEC
-         NoDA==
+	s=arc-20240116; t=1716286283; c=relaxed/simple;
+	bh=qW/pTB21gkgRrK+hJF+k9TNP6E/0yI22RXhiZtqv3aM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gsh4Y8yNeAA2alaA2QUtI1K11eErIC1u+Y24pK7aNrVMnzvA55ZsfNGBVBonTdRA0zNaOsAmFuytN1Jbh/fqUz/BbIMyyD3WQKryzo7oaWbCbE+k8sPH2G7aSIoWBoXZ4JJygqGE+C+VJd8Fch/qfDbflFgH7qfLkLKi4ueunI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-354c3b445bbso270295f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:11:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716286221; x=1716891021;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uqy/BrI0+zdFA8alFTtjRQNHBs3pPPaugw1diVg336k=;
-        b=KCUkRbjrIKSQd62U5AbrblwQw4D25X+gD52zPquyMo2OajWeXOZKE/0cdDXHnOd4NE
-         9YPCBUiyVHYxgRayYYcQeIcjPQz5uXkXJOQiJZFYBepp4VHypiqANHL5lUCafYWqG6Eh
-         igVIDHktY3FgPiPhyCRHk6OXQN2jZbFsb219mxAy2E19zCjOmEuslNYB3HxOEY1yeSH9
-         MT/jlg+N1X3jRYerGVBLC8tAsqwjPu+uUgk1fw6rRVX99sZm4ltDKDwpebVIAZ3qiUVb
-         ES9+bYlZ/W++KMwojnrYXkktZD3eimvYLvDood57wYnPdoMgF4Hf/IiN/VXA315dZVe4
-         iocA==
-X-Gm-Message-State: AOJu0YyIvQ/FGBTyHorTgzfDnRqh3l/aFRgCLXsbdGh1fGeaNO+zDmdB
-	cQdyWubDQFAHAf5McbGq5BH2oTEvGggj45b1v1+rujEtSHM7LI4An409Z3wemA==
-X-Google-Smtp-Source: AGHT+IEdiaPzj2fVXiCyAzh85qZvLoxFo3FQ3i9W9ds24I0Tn1nGrmo7cQoNrmxaf/0G40TEJfoY5A==
-X-Received: by 2002:a05:6000:e8d:b0:34a:5d79:dfe2 with SMTP id ffacd0b85a97d-3504a632e5emr22499956f8f.13.1716286220800;
-        Tue, 21 May 2024 03:10:20 -0700 (PDT)
-Received: from google.com (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b79bc3bsm31525781f8f.13.2024.05.21.03.10.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 03:10:20 -0700 (PDT)
-Date: Tue, 21 May 2024 11:10:16 +0100
-From: Vincent Donnefort <vdonnefort@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>, rostedt@goodmis.org
-Subject: Re: [PATCH v1 1/2] mm/memory: cleanly support zeropage in
- vm_insert_page*(), vm_map_pages*() and vmf_insert_mixed()
-Message-ID: <ZkxzCJBihAddyb4D@google.com>
-References: <20240430204044.52755-1-david@redhat.com>
- <20240430204044.52755-2-david@redhat.com>
- <Zkdys7YKC5pe1vAu@google.com>
- <3decc6c8-9035-44d6-89c6-8d42a5e0bc40@redhat.com>
- <ZkxkDPnPiQzPEm-0@google.com>
- <dde2f22d-c57f-44ac-9f2c-4a1790de084b@redhat.com>
+        d=1e100.net; s=20230601; t=1716286281; x=1716891081;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qW/pTB21gkgRrK+hJF+k9TNP6E/0yI22RXhiZtqv3aM=;
+        b=Hb+pbIx340FceJs0w01qZ7qYUIbO8fWTqciNZx//3tY9kGs0XjYlRI2CVGivhTp5wY
+         NDhwNHr4G+c6BWpHn3E5f/hV3tCgT25oSTJkAzo1z1ZgIG4JsTlpZqAjMh6z8g3gRslB
+         sI7vaQa1MlOdQjRr9jQFJKwnhLi1YDrvPh1i4q+guLAuQucyhuOM3i70mbNJbwHGzBS7
+         v2HFSRGBXWERVUxCrYL1RV9BtNFn4RNnr7KWvtJAik87pY7NQ7MQ9b2V0LTgxB5bSLdk
+         Ajtf/96BnQnPJDkjhCqwJyJmAYjRnwkhoYxJnPFC6ReGkP5tA6hlzWI9SohdGgUhShfh
+         uULw==
+X-Forwarded-Encrypted: i=1; AJvYcCUj4TLXNLASmIjnAwVYX1Iag4P0sBAYT1KGVb7CQsRLh69OMb4C1SZ13fOPSQYQ72kbrSBlVdGHsuaztcde+6nA4psUwr/VaLMfBQ7k
+X-Gm-Message-State: AOJu0YyCJRszrEugMPC1F/KTXAx8RfpnVCsYvENzgixXpIk/Ci7wvGmN
+	QUOZhEwCJdpqN0y87k5cQUHGWFh3G7q3oybr4sGMqPKd/+agFMwY
+X-Google-Smtp-Source: AGHT+IE3wknQTChsi66LlBnMZL0t4LfufqdO8o1Kvxz+hZ2bhhl3LudndZWEz+t/RK1UoNyFsGGqkg==
+X-Received: by 2002:a5d:69c5:0:b0:34d:a29d:a8d5 with SMTP id ffacd0b85a97d-3504a96c0d0mr21877968f8f.4.1716286280394;
+        Tue, 21 May 2024 03:11:20 -0700 (PDT)
+Received: from [10.100.102.74] (85.65.193.189.dynamic.barak-online.net. [85.65.193.189])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbbf20sm31412435f8f.93.2024.05.21.03.11.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 03:11:20 -0700 (PDT)
+Message-ID: <da35bc8b-6813-42c8-b446-8a07b08db156@grimberg.me>
+Date: Tue, 21 May 2024 13:11:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dde2f22d-c57f-44ac-9f2c-4a1790de084b@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] nvme: multipath: Implemented new iopolicy
+ "queue-depth"
+To: Nilay Shroff <nilay@linux.ibm.com>, John Meneghini <jmeneghi@redhat.com>,
+ kbusch@kernel.org, hch@lst.de, emilne@redhat.com
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ jrani@purestorage.com, randyj@purestorage.com, hare@kernel.org
+References: <20240520202045.427110-1-jmeneghi@redhat.com>
+ <20240520202045.427110-2-jmeneghi@redhat.com>
+ <945416af-3f8b-40b5-9681-49973beb2cb2@linux.ibm.com>
+ <3b8d33db-f2c3-469a-bfa0-8fc52594f243@grimberg.me>
+ <95fe3168-ec39-4932-b9fc-26484de49191@linux.ibm.com>
+Content-Language: he-IL, en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <95fe3168-ec39-4932-b9fc-26484de49191@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 21, 2024 at 11:18:41AM +0200, David Hildenbrand wrote:
-> On 21.05.24 11:06, Vincent Donnefort wrote:
-> > On Tue, May 21, 2024 at 10:25:43AM +0200, David Hildenbrand wrote:
-> > > On 17.05.24 17:07, Vincent Donnefort wrote:
-> > > > Hi David,
-> > > > 
-> > > > [...]
-> > > > 
-> > > > > -static int validate_page_before_insert(struct page *page)
-> > > > > +static bool vm_mixed_zeropage_allowed(struct vm_area_struct *vma)
-> > > > > +{
-> > > > > +	VM_WARN_ON_ONCE(vma->vm_flags & VM_PFNMAP);
-> > > > > +	/*
-> > > > > +	 * Whoever wants to forbid the zeropage after some zeropages
-> > > > > +	 * might already have been mapped has to scan the page tables and
-> > > > > +	 * bail out on any zeropages. Zeropages in COW mappings can
-> > > > > +	 * be unshared using FAULT_FLAG_UNSHARE faults.
-> > > > > +	 */
-> > > > > +	if (mm_forbids_zeropage(vma->vm_mm))
-> > > > > +		return false;
-> > > > > +	/* zeropages in COW mappings are common and unproblematic. */
-> > > > > +	if (is_cow_mapping(vma->vm_flags))
-> > > > > +		return true;
-> > > > > +	/* Mappings that do not allow for writable PTEs are unproblematic. */
-> > > > > +	if (!(vma->vm_flags & (VM_WRITE | VM_MAYWRITE)))
-> > > > > +		return false;
-> > > > 
-> > > > Shouldn't we return true here?
-> > > 
-> > > Indeed, thanks! I wish we would have user in the tree already that could
-> > > exercise that code path.
-> > 
-> > I have a patch ready to use this path from the memory map tracing! I can either
-> > send it once this one is picked-up or you can add it to your series?
-> 
-> Whatever works for you! To debug, it would be good if you could send me the
-> patch and simple instructions on how to test it (do we have a selftest as
-> well?).
 
-Of course, I'll share something with you today! It includes an update to the
-selftest to make sure we check the padding with the zero-page.
+>> Don't think this matters because cancellation only happens when we
+>> teardown the controller anyways...
+>>
+> I think in case if we reset the nvme controller then we don't teardown
+> controller, isn't it? In this case we cancel all pending requests, and
+> later restart the controller.
 
-> 
-> > 
-> > > 
-> > > [...]
-> > > 
-> > > > > @@ -2043,7 +2085,7 @@ static int insert_page_in_batch_locked(struct vm_area_struct *vma, pte_t *pte,
-> > > > >    	if (!page_count(page))
-> > > > >    		return -EINVAL;
-> > > > 
-> > > > This test here prevents inserting the zero-page.
-> > > 
-> > > You mean the existing page_count() check? or the (wrong) vma->vm_flags check
-> > > in vm_mixed_zeropage_allowed() ?
-> > 
-> > I meant this page_count() here. As a quick test, I removed that check (also fixed
-> > the vm_flags above) and the zero-page was properly mapped!
-> 
-> That's weird and might indicate another issue.
-> 
-> The refcount of the shared zeropage should be initialized to 1, just like
-> for any other reserved pages
-> (mm/mm_init.c:__init_single_page()->init_page_count())
-> 
-> Hm ...
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+Exactly, nvme_mpath_init_ctrl resets the counter.
 
