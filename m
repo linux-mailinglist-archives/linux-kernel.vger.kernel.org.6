@@ -1,56 +1,80 @@
-Return-Path: <linux-kernel+bounces-185393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85D68CB46A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 197728CB471
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8021F232EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:48:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7EF81F236B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 19:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E911494BB;
-	Tue, 21 May 2024 19:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D791B1494D3;
+	Tue, 21 May 2024 19:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="wel1bhgZ"
-Received: from mailo.com (msg-1.mailo.com [213.182.54.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NGK0mFdV"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF9F50A63;
-	Tue, 21 May 2024 19:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.182.54.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C11250A63
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 19:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716320902; cv=none; b=vCQLEfnKCJPkDTgl6qtpIRQEBtrJlpHfpl84m3BotXoNdBHy4BHYufMFkuSvKUonxQAhBwu5Tm/xNcB4+Vb2TFuqvJTvlW27xBduwaYnyJAUvAlBHvVshGtLvNN8ggwGzQ5i8PdcJfOaEHSIGSSOcdKNyAUvzXGwkkSdizNMfBs=
+	t=1716320963; cv=none; b=b0YDbKXQ3NznSvKTx956n5aGMN5hBJ4wRxVMtgVjSZu51V+uygzkia1GwEgAXzR3mmrXz7Bf97y4IcAk02c0KFW/Xrr7XOI9GWt5dLNf2ymzQp+eTlnZInjkD4epqXXgnCi/mmiOwz03WfwWmK8VTLDYjemHtzh+abPidTfKNcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716320902; c=relaxed/simple;
-	bh=ClE2otJoZ0W1kPDJn+Gcz9Z/ygh62gvIN22WEfn6lS0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Aw2pmIGKfp+Tuafy7KZt9sYfE7gtH1+Mnte4kEzBX/85Xx6oDnXa/Toza0ZmPyYaHCD1vFg3/mf9WdWPKDThomKKVfpWroSDY78lGZlrP9U0QfAFvsWnE3pPfQ2XjnDGB8km3PLm7aRbOV5EIkc6T9melV3dc5/Hed6vVN1Rv/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=triplefau.lt; dkim=pass (1024-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=wel1bhgZ; arc=none smtp.client-ip=213.182.54.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=triplefau.lt
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=triplefau.lt; s=mailo;
-	t=1716320791; bh=ClE2otJoZ0W1kPDJn+Gcz9Z/ygh62gvIN22WEfn6lS0=;
-	h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	b=wel1bhgZ6illp0Y0+5dESyQY1vo24sQjaYCHDieAvKWCxD9nwVheB4r355r1VH16s
-	 nmgl0yYDUPxqHkiNrG/JauiMAkm5f8bhCzergkJKVPJQ9eWgIqsO8zEmmxZ4HsY4oE
-	 E/FFPCjmLR2aUZE3HZUVl6dhOIpEp6K/+w4HMmnM=
-Received: by b221-6.in.mailobj.net [192.168.90.26] with ESMTP
-	via ip-20.mailobj.net [213.182.54.20]
-	Tue, 21 May 2024 21:46:31 +0200 (CEST)
-X-EA-Auth: bQE2EDSMvwGVfxBwseX4b44Ztx2HnbpDzWTXlEgnWwhFrT9EPv0yeeLkeMa513lQNbDJk9/wPHo/rdrayHYn7GQ9WckV+P8l
-From: Remi Pommarel <repk@triplefau.lt>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Remi Pommarel <repk@triplefau.lt>,
-	Nicolas Escande <nico.escande@gmail.com>,
-	Antonio Quartulli <a@unstable.cc>
-Subject: [PATCH v2] wifi: cfg80211: Lock wiphy in cfg80211_get_station
-Date: Tue, 21 May 2024 21:47:26 +0200
-Message-Id: <983b24a6a176e0800c01aedcd74480d9b551cb13.1716046653.git.repk@triplefau.lt>
-X-Mailer: git-send-email 2.40.0
+	s=arc-20240116; t=1716320963; c=relaxed/simple;
+	bh=/k9i+bfVHQ5K3f/3wFoNG5mKxEPQIrinng8NftWO7uc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ACmvA4U8ltKk8xHtNWxEB04nFqT1g7L7iONmyYeXTksxD/P79mjKNU0xC6WBvPjOM4q0lvzwDfnn00KffGZbtPsWgLOhLL0vV7e9kmIrXuWeQmxFwpr20Ftk6DIiG4WiOerqgZXHzmviEA8GT++IO6P/Q03J219KLO2pEzZ7cSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NGK0mFdV; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7930504b2e2so31323985a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:49:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716320958; x=1716925758; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Omfjln/bi5kI4Iv+VFCzVDHJ4DQuTKFJqorBA/dp30=;
+        b=NGK0mFdVmX7ocouW8/mnvxK23K1NNx26fmGEj5RNcMDJtmfZa2GD7tTHlbyLDlmSNv
+         bTM3zcqcYiFnFSo0MmgcWqOhgFSQXfXSRMWeAaskcruSAL0wuew37EVpBQbOF8Exvj1m
+         FUjRaDW6ob/imo8efxV0AIqqriNYlQsOqZVAgObfK47ivh+IpKLP+3BkF5zvZQurzSr4
+         sgIDif5mXWgN1FVpw513qw5FkcCRN5FW7716s/jxSxTt/L3XtdC51Tq4TfOTnm6f1xYk
+         yeVyjxjG3+igwdIxRF8RTvPUMG4FZnQmHYc7iogRQpMsvZGldya9ToP58KWF5eSqjE0G
+         YcsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716320958; x=1716925758;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2Omfjln/bi5kI4Iv+VFCzVDHJ4DQuTKFJqorBA/dp30=;
+        b=X7F6phAmgf4JOib3hgkc9/AQr9yNO+G13278J/swZEzJ2Q9o0udJCZbKunqg+sGG0L
+         LuDXsrczLmvnq8QKuZIq44f4I5LMIpwDNh562xIu2C12Lg7c2woWHKqGpCH2R0Kvdo1S
+         P8sFg4XYgzJrSGDe1ZIIi/ejyaarcbXhekIDzl2y7ID7oKk0p3nvAdjR2F6vM8fnMqmv
+         BvfNBwYkZOV2gwLovc4r79K2JUGo3xrSeabnMG9NbhDGdKHg5gvnheAXP/41zLr+OlSg
+         sPtlSTs8eBlmqnaBDjahe37MyzYmQHwzUceRwP2p/cw4F9ZXbmCvDXN/ATfcSltgomwc
+         uq8g==
+X-Gm-Message-State: AOJu0YyVIEBJOyKSVHO9sa0/PLx5ucjZAs8o2tXB4xqZgTi8YdDfU4kX
+	W38mDe32R1Sk1BM/wXB47+CWdWuB7AS/mPDgNHPhsVgJIbZdCGqH97q9hCFDScY=
+X-Google-Smtp-Source: AGHT+IHc4cDmfckFWlq+FyC07M3DyfM4aXioOiHBE6E7Qe1Oh791SLEDE6cXopgwbpDJ02CqXuS3lQ==
+X-Received: by 2002:a05:620a:4610:b0:793:343:6dba with SMTP id af79cd13be357-79303437183mr2084584485a.2.1716320958445;
+        Tue, 21 May 2024 12:49:18 -0700 (PDT)
+Received: from megalith.oryx-coho.ts.net (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df54d85a0sm161723611cf.23.2024.05.21.12.49.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 12:49:18 -0700 (PDT)
+From: Trevor Gamblin <tgamblin@baylibre.com>
+To: linux-pwm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	u.kleine-koenig@pengutronix.de,
+	michael.hennerich@analog.com,
+	nuno.sa@analog.com,
+	tgamblin@baylibre.com,
+	dlechner@baylibre.com
+Subject: [PATCH 0/2 v3] pwm: add support for duty_offset
+Date: Tue, 21 May 2024 15:49:14 -0400
+Message-ID: <20240521194916.1897909-1-tgamblin@baylibre.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,107 +83,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Wiphy should be locked before calling rdev_get_station() (see lockdep
-assert in ieee80211_get_station()).
+This series extends the PWM subsystem to support the duty_offset feature
+found on some PWM devices. It includes a patch to enable this feature
+for the axi-pwmgen driver, which can also serve as an example of how to
+implement it for other devices.
 
-This fixes the following kernel NULL dereference:
+The series was tested on actual hardware using a Zedboard. An
+oscilloscope was used to validate that the generated PWM signals matched
+the requested ones. 
 
- Unable to handle kernel NULL pointer dereference at virtual address 0000000000000050
- Mem abort info:
-   ESR = 0x0000000096000006
-   EC = 0x25: DABT (current EL), IL = 32 bits
-   SET = 0, FnV = 0
-   EA = 0, S1PTW = 0
-   FSC = 0x06: level 2 translation fault
- Data abort info:
-   ISV = 0, ISS = 0x00000006
-   CM = 0, WnR = 0
- user pgtable: 4k pages, 48-bit VAs, pgdp=0000000003001000
- [0000000000000050] pgd=0800000002dca003, p4d=0800000002dca003, pud=08000000028e9003, pmd=0000000000000000
- Internal error: Oops: 0000000096000006 [#1] SMP
- Modules linked in: netconsole dwc3_meson_g12a dwc3_of_simple dwc3 ip_gre gre ath10k_pci ath10k_core ath9k ath9k_common ath9k_hw ath
- CPU: 0 PID: 1091 Comm: kworker/u8:0 Not tainted 6.4.0-02144-g565f9a3a7911-dirty #705
- Hardware name: RPT (r1) (DT)
- Workqueue: bat_events batadv_v_elp_throughput_metric_update
- pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
- pc : ath10k_sta_statistics+0x10/0x2dc [ath10k_core]
- lr : sta_set_sinfo+0xcc/0xbd4
- sp : ffff000007b43ad0
- x29: ffff000007b43ad0 x28: ffff0000071fa900 x27: ffff00000294ca98
- x26: ffff000006830880 x25: ffff000006830880 x24: ffff00000294c000
- x23: 0000000000000001 x22: ffff000007b43c90 x21: ffff800008898acc
- x20: ffff00000294c6e8 x19: ffff000007b43c90 x18: 0000000000000000
- x17: 445946354d552d78 x16: 62661f7200000000 x15: 57464f445946354d
- x14: 0000000000000000 x13: 00000000000000e3 x12: d5f0acbcebea978e
- x11: 00000000000000e3 x10: 000000010048fe41 x9 : 0000000000000000
- x8 : ffff000007b43d90 x7 : 000000007a1e2125 x6 : 0000000000000000
- x5 : ffff0000024e0900 x4 : ffff800000a0250c x3 : ffff000007b43c90
- x2 : ffff00000294ca98 x1 : ffff000006831920 x0 : 0000000000000000
- Call trace:
-  ath10k_sta_statistics+0x10/0x2dc [ath10k_core]
-  sta_set_sinfo+0xcc/0xbd4
-  ieee80211_get_station+0x2c/0x44
-  cfg80211_get_station+0x80/0x154
-  batadv_v_elp_get_throughput+0x138/0x1fc
-  batadv_v_elp_throughput_metric_update+0x1c/0xa4
-  process_one_work+0x1ec/0x414
-  worker_thread+0x70/0x46c
-  kthread+0xdc/0xe0
-  ret_from_fork+0x10/0x20
- Code: a9bb7bfd 910003fd a90153f3 f9411c40 (f9402814)
+Note that in addition to the other patches in this series, the changes
+to the axi-pwmgen driver rely on [1], which hasn't been picked up yet.
 
-This happens because STA has time to disconnect and reconnect before
-batadv_v_elp_throughput_metric_update() delayed work gets scheduled. In
-this situation, ath10k_sta_state() can be in the middle of resetting
-arsta data when the work queue get chance to be scheduled and ends up
-accessing it. Locking wiphy prevents that.
+[1] https://lore.kernel.org/linux-pwm/20240424125850.4189116-1-tgamblin@baylibre.com/
 
-Fixes: 7406353d43c8 ("cfg80211: implement cfg80211_get_station cfg80211 API")
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-Reviewed-by: Nicolas Escande <nico.escande@gmail.com>
-Acked-by: Antonio Quartulli <a@unstable.cc>
 ---
-There are mainly no change since v1 it is only resent because both
-linux-wireless and linux-kernel vger mailing list dropped it.
+v3 changes:
+* rebased on top of latest pwm/for-next
+* removed changes related to cdev to match current pwm tree
+* fixed minor whitespace issue caught by checkpatch
 
-Full thread archive can be found here [0].
+Link to v2: https://lore.kernel.org/linux-pwm/20240409174126.1296318-1-tgamblin@baylibre.com/
 
-Tags from v1 has been added as well as a note on why this lock issue
-could end with NULL pointer derefence.
+v2 changes:
+* Address feedback for driver in v1:
+  * Remove supports_offset flag in pwm_chip struct, and references to it
+    in the axi-pwmgen driver patch
+  * Drop pwm_config_full patch entirely
+  * Don't return EINVAL when state->duty_offset + state->duty_cycle >
+    state->period in __pwm_apply(), since this is valid as long as
+    neither is greater than state->period on its own
+  * Add a check to disallow setting the PWM signal as inverse and a
+    nonzero duty_offset at the same time in __pwm_apply(), with a
+    comment explaining why
 
-[0]: https://patchwork.open-mesh.org/project/b.a.t.m.a.n./patch/983b24a6a176e0800c01aedcd74480d9b551cb13.1716046653.git.repk@triplefau.lt/
----
- net/wireless/util.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Link to v1 (RFC): https://lore.kernel.org/linux-pwm/20240405003025.739603-1-tgamblin@baylibre.com/
 
-diff --git a/net/wireless/util.c b/net/wireless/util.c
-index 2bde8a354631..082c6f9c5416 100644
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@ -2549,6 +2549,7 @@ int cfg80211_get_station(struct net_device *dev, const u8 *mac_addr,
- {
- 	struct cfg80211_registered_device *rdev;
- 	struct wireless_dev *wdev;
-+	int ret;
- 
- 	wdev = dev->ieee80211_ptr;
- 	if (!wdev)
-@@ -2560,7 +2561,11 @@ int cfg80211_get_station(struct net_device *dev, const u8 *mac_addr,
- 
- 	memset(sinfo, 0, sizeof(*sinfo));
- 
--	return rdev_get_station(rdev, dev, mac_addr, sinfo);
-+	wiphy_lock(&rdev->wiphy);
-+	ret = rdev_get_station(rdev, dev, mac_addr, sinfo);
-+	wiphy_unlock(&rdev->wiphy);
-+
-+	return ret;
- }
- EXPORT_SYMBOL(cfg80211_get_station);
- 
+Trevor Gamblin (2):
+  pwm: add duty offset support
+  pwm: axi-pwmgen: add duty offset support
+
+ drivers/pwm/core.c           | 79 +++++++++++++++++++++++++++++++++---
+ drivers/pwm/pwm-axi-pwmgen.c | 20 ++++++++-
+ include/linux/pwm.h          | 15 +++++++
+ include/trace/events/pwm.h   |  6 ++-
+ 4 files changed, 112 insertions(+), 8 deletions(-)
+
 -- 
-2.40.0
-
-
+2.45.1
 
 
