@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-184379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C348CA643
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:41:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A4E08CA642
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAB3FB220EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:41:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ABFC1C20FC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF6A208DA;
-	Tue, 21 May 2024 02:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492D91CD1B;
+	Tue, 21 May 2024 02:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AIUR1WPc"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GmWAPwUP"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468CF1BC46
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8858C1804E
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716259220; cv=none; b=SeTcukgX1ddiUqnFwJntj80tJ+isY9ulQxTBCCtHo8Al68t/yeJALGAutQmO/xIy7Lnqv9VK4Ud1svMtAeQX8qvTyd/ptZBbAFYLRaFcG99FHnve2gSTtteESLsTVtZMXCKDglaAGYHfh65eFwT3EaIykzYDU1oC3iPZEpEbazE=
+	t=1716259219; cv=none; b=jp4KNRxAzEq5axbqXXOlGJbLsMeVQw6zTnbA3FPZoQlhE0xPeRmqU7UzHwDq9zK4CYosWPtZWDel91SyS4mWEspgAGdzFikrFJq+vdq4zqo4hzW7ZLh7x2DV58JwqBjPiQU+R2Q5MrmzluKgkd9Gg6HjwK6GI6G6kdNKcavCV14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716259220; c=relaxed/simple;
-	bh=0y7TU7zTgAwawU3slZDhFZl+/pWY3tjCyYCRVxmknWs=;
+	s=arc-20240116; t=1716259219; c=relaxed/simple;
+	bh=J9ZU6uAMAQr4GiB6kIVgJAYCWN7pEacD/537CsbUQZ8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=nIrQHR784Btfh7EMp8kCt18iQEDpw9cmcJ17iQztrM7KhLsLCwI/v7L21W1SLFbBHC2XYBUfyuhlcScNvlr2k+skmYut5MPebAcoh/82pbopLHIdj2n6iCI3XN3ki9y/c27M6X1GMYi0dfYw7msHIX7FAA2PJf375i4LRezJbjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AIUR1WPc; arc=none smtp.client-ip=203.254.224.24
+	 Content-Type:References; b=nDOX+GwG9zS770JPp8T7N+YOIA7KPy1L/G2TJg6oEnH5zggLutqWxUt/Fl/JFs7NDnSby2WstA4Uj+iRZRUim6Ll0OzTd34jj//qchtxZWm+9l3wmhYgZ3KXGL7ANyu1zxopXk+yQlHH2x0a7FU0UXe1QoCtumJZvjm3YJX54/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GmWAPwUP; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240521024010epoutp01f53078ed7f15ce9b29ec93240571d226~RYKips9Bs1192611926epoutp01s
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240521024010epoutp03c01d9fc5ea1d9b04d74cf2e0b0184f15~RYKiXMgTg0915109151epoutp03K
 	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:40:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240521024010epoutp01f53078ed7f15ce9b29ec93240571d226~RYKips9Bs1192611926epoutp01s
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240521024010epoutp03c01d9fc5ea1d9b04d74cf2e0b0184f15~RYKiXMgTg0915109151epoutp03K
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
 	s=mail20170921; t=1716259210;
-	bh=3CfHcPoy4LZXqF1JfuCe7exgO9FOdW12+9aW417X+QU=;
+	bh=nc9ytWVtzu00a7dgwLwPEFskmN2vz5dkqC+Zm4IulfA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AIUR1WPc/vUs4bOffPOm5oSZU1OsaPGBqgVt0bmib7J75/fHxavdA4WMIfdmNzeDu
-	 p6B03zN9aWEcmwz1BcfFcG16UOfTtY6IHwFvCh94Vl2AIn84zcE36rL4dUWuRvQlIO
-	 QDzQrOEQlaRYgKxq/oo1wTISnF7WUCavpNnZtCts=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20240521024009epcas1p35a6821f1ae02a131f8d71e39773e8fd3~RYKiAz8Bn0314503145epcas1p3d;
+	b=GmWAPwUPJUumyIommwOd368ltzs6tEpcbknX9PM8XQAOHVWnJkt6n3/awC1sZxKBa
+	 uGIaHt3eL9jlpIWjc6TSETkoLd7hclQ6Dg8YZGcjFIon6PKX0EQE4AFBJAVEKG5jiw
+	 ULJWvMF7TcBLXhF/SoCUZfbXqqCmXcehj5Ly0Mgk=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+	20240521024009epcas1p4ae0afa00bd066e0581c51603cd14c1c5~RYKiDy1mA1450914509epcas1p4D;
 	Tue, 21 May 2024 02:40:09 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.38.242]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4VjzDn39p7z4x9QB; Tue, 21 May
+Received: from epsmges1p1.samsung.com (unknown [182.195.38.250]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4VjzDn3Btwz4x9Q0; Tue, 21 May
 	2024 02:40:09 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
 	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	AE.4F.09662.9890C466; Tue, 21 May 2024 11:40:09 +0900 (KST)
+	BE.4F.09662.9890C466; Tue, 21 May 2024 11:40:09 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240521024009epcas1p3e80e90863a453053d5aac901ef644070~RYKhVkSAh0309203092epcas1p3t;
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240521024009epcas1p152671a613e86fa83d840962ee3db50fb~RYKhZLuN42349123491epcas1p1a;
 	Tue, 21 May 2024 02:40:09 +0000 (GMT)
 Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240521024009epsmtrp276a000fb3675b0aa18a6053708976075~RYKhU_TN-2496124961epsmtrp2o;
+	20240521024009epsmtrp2ab32c1df17e1b63fac42592843b39454~RYKhYk-MV2496124961epsmtrp2p;
 	Tue, 21 May 2024 02:40:09 +0000 (GMT)
-X-AuditID: b6c32a35-053ff700000025be-a7-664c09892ffc
+X-AuditID: b6c32a35-2b3fa700000025be-a8-664c0989734b
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
 	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	55.D3.19234.8890C466; Tue, 21 May 2024 11:40:09 +0900 (KST)
+	E5.D3.19234.9890C466; Tue, 21 May 2024 11:40:09 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.253.104.99]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240521024008epsmtip279bc42a8e8f3048a6ffbd81990fd292b~RYKhMbR9s1233912339epsmtip2B;
-	Tue, 21 May 2024 02:40:08 +0000 (GMT)
+	20240521024009epsmtip23fed4a67c5d9cdc27984091a265bcdeb~RYKhPg7O11233912339epsmtip2C;
+	Tue, 21 May 2024 02:40:09 +0000 (GMT)
 From: Jaewon Kim <jaewon31.kim@samsung.com>
 To: rppt@kernel.org, vbabka@suse.cz, akpm@linux-foundation.org
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
 	jaewon31.kim@gmail.com, Jaewon Kim <jaewon31.kim@samsung.com>
-Subject: [RESEND PATCH 02/10] memblock: detect hidden memory hole size
-Date: Tue, 21 May 2024 11:39:49 +0900
-Message-Id: <20240521023957.2587005-3-jaewon31.kim@samsung.com>
+Subject: [RESEND PATCH 03/10] memblock: handle overlapped reserved memory
+ region
+Date: Tue, 21 May 2024 11:39:50 +0900
+Message-Id: <20240521023957.2587005-4-jaewon31.kim@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240521023957.2587005-1-jaewon31.kim@samsung.com>
 Precedence: bulk
@@ -83,154 +84,179 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdlhTX7eT0yfN4PMccYs569ewWXRvnslo
-	0fv+FZPF5V1z2CzurfnPanFk/XYmi9mNfYwO7B47Z91l99i0qpPNY9OnSeweJ2b8ZvHo27KK
-	0ePMgiPsHp83yQWwR2XbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoq
-	ufgE6Lpl5gAdpKRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMCvQK07MLS7NS9fL
-	Sy2xMjQwMDIFKkzIzph37hZTwV7Zin8vt7A2MJ4X72Lk4JAQMJFovOfexcjFISSwg1Fi28y5
-	zBDOJ0aJvtd3mOCci3PWMHYxcoJ19G88xAaR2MkoMftoM5TzmVHi+eszYFVsAtoS7xdMYgWx
-	RQTsJL7NPgBmMwuUSrx9c4IZxBYWcJO492sumM0ioCpx9PRisBpeAXuJ5zsWsEBsk5eYeek7
-	O4jNKeAgMX/KYnaIGkGJkzOfsEDMlJdo3job7G4JgY/sErvm9bFBNLtIzNqyggnCFpZ4dXwL
-	O4QtJfH53V6omnyJCxdfMUECo0Zi4URDiLC9xK6vM1hBwswCmhLrd+lDrOKTePe1hxWimlei
-	o00IolpNouXZV1YIW0bi779nULaHxKdTR1ghwTOZUaKn6z/jBEb5WUg+mIXkg1kI2xYwMq9i
-	FEstKM5NTy02LDCER2pyfu4mRnCa1DLdwTjx7Qe9Q4xMHIyHGCU4mJVEeDdt8UwT4k1JrKxK
-	LcqPLyrNSS0+xGgKDN+JzFKiyfnARJ1XEm9oYmlgYmZkYmFsaWymJM575kpZqpBAemJJanZq
-	akFqEUwfEwenVAPTeactofcaL6eUWc95v2dCS8zJw19jrJcsuGlx48HlG/vsT2hxPdJtucOc
-	Y8rbNe8Lw8nqMPNV7ee2WnzffeOvQOlbsdz+pYWpH/3WVc9x9mD851y9c075e7b3G+Qjcrw9
-	72ZPWcT/7khHrNiKhu2VZnaKnxm60+9VzM9Q6trKEZ8TP4V5vlfvOevFMkyv8/IVI65OedS6
-	7AuvdHrcySfVrII6W1i9dLM6VjjsmFbwXmKO2o6e/sSkwBOffTwidihPiDnez//w462jstn2
-	djax5zm0ffqYbzXd+KKj66+h6zbrwX0+F7eLp6T+v5EvXx64ZNrf6d+iud02axhs3hQSO5vn
-	xuv41JpOA9e93MlKLMUZiYZazEXFiQCTNZcPHAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsWy7bCSvG4np0+awb1pzBZz1q9hs+jePJPR
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTV7eT0yfN4HmvhMWc9WvYLLo3z2S0
+	6H3/isni8q45bBb31vxntTiyfjuTxezGPkYHdo+ds+6ye2xa1cnmsenTJHaPEzN+s3j0bVnF
+	6HFmwRF2j8+b5ALYo7JtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22V
+	XHwCdN0yc4AOUlIoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQUmBXoFSfmFpfmpevl
+	pZZYGRoYGJkCFSZkZzyY84WpoFeh4sW2sAbG55JdjJwcEgImEjN3HGHtYuTiEBLYwSjx4sl/
+	NgjnE6PEo+NtCM7rMysZYVomNd9lB7GFBHYyStx+zd3FyAFkf2aUWGoMEmYT0JZ4v2ASK4gt
+	ImAn8W32ATCbWaBU4u2bE8wg5cICQRKH9oBNYRFQlfi+8T4TiM0rYC9xtfcuG8QmeYmZl76D
+	1XAKOEjMn7KYHaJGUOLkzCcsECPlJZq3zmaGqP/ILrF9nhTIeAkBF4l1280hwsISr45vYYew
+	pSQ+v9sLNT5f4sLFV0wQ5TUSCycaQoTtJXZ9ncEKEmYW0JRYv0sfYhGfxLuvPawQ1bwSHW1C
+	ENVqEi3PvrJC2DISf/89g7I9JI509TJDgm8yo8THdd1sExjlZyG5fxaS+2chbFvAyLyKUSy1
+	oDg3PbXYsMAQHp3J+bmbGMGpUct0B+PEtx/0DjEycTAeYpTgYFYS4d20xTNNiDclsbIqtSg/
+	vqg0J7X4EKMpMHQnMkuJJucDk3NeSbyhiaWBiZmRiYWxpbGZkjjvmStlqUIC6YklqdmpqQWp
+	RTB9TBycUg1Me7Xq5DwTk8V/OltsnSazcOu8qcn87N8eLtxSLswt6RPhu/BnfKXuFdcmv1sL
+	5Hh9d81PlupoCF41YbngBddVmtsfqbzNUpm7fKL/gqPcoqXqDX+Nn11YJ2T8sup9xqOS18cm
+	nE200xRyMjHbkJVa6x6ecvbGsQ+p/3RKM/bVNjw/cKYn/cQpE06rF8G92xbkrND9kJ3i8P/r
+	dx4OX47wO7NmltpUTXzmbBZYr1WkdVrqZXnHdsnoha4HZn/dumn+CsXMn4lvRD8unHt3/UbW
+	b/pzqxdtXHMgWqr/yqmgC+Hhd5UMVf69uSjjqDSNi//5/ZNfLm9cOm+f0ueYcrODTUtOP3y7
+	4p71x03tqvN63yixFGckGmoxFxUnAgAmduORFgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsWy7bCSvG4np0+aweSpbBZz1q9hs+jePJPR
 	ovf9KyaLy7vmsFncW/Of1eLI+u1MFrMb+xgd2D12zrrL7rFpVSebx6ZPk9g9Tsz4zeLRt2UV
-	o8eZBUfYPT5vkgtgj+KySUnNySxLLdK3S+DKmHfuFlPBXtmKfy+3sDYwnhfvYuTkkBAwkejf
-	eIiti5GLQ0hgO6PEvR+PmSASMhJvzj9l6WLkALKFJQ4fLoao+cgoMXPjD2aQGjYBbYn3Cyax
-	gtgiAk4SG66sZgGxmQUqJf7dvgUWFxZwk7j3ay5YPYuAqsTR04vB4rwC9hLPdyxggdglLzHz
-	0nd2EJtTwEFi/pTFYLYQUM2ZS+eh6gUlTs58AjVfXqJ562zmCYwCs5CkZiFJLWBkWsUomlpQ
-	nJuem1xgqFecmFtcmpeul5yfu4kRHOBaQTsYl63/q3eIkYmD8RCjBAezkgjvpi2eaUK8KYmV
-	ValF+fFFpTmpxYcYpTlYlMR5lXM6U4QE0hNLUrNTUwtSi2CyTBycUg1MUze+fncvd/YxZe/y
-	889sLr9h5AxM91gpzrL5+fVy54UZ6w21rddsDVyl9VT/Ua7juqtcRUKCN7OYb3Itf9qnHP7u
-	8ddr4TvDd/+cwDNnw3EtqznbMnZX7j8lYnJh+ZzGddq7HR/9zODwq/R61bGL43DyTsOyvayb
-	NO+pJrOZNWRIvapQ+6V+TZpNK9OhbXutT0pUV/vL9SIfWYtmnDOQvOM5yeeuin6IV7t/64zW
-	DdejRZbG3RB93Dr/7McNe9+Wyah5PK4IfhXeKzcp+sh075QIw4yHR2bEm9+ZlC20bqfOv3C3
-	CvnkCHse782tWs0uQsHcnBXrH5z7oCrsvJRLMKD3glOyf2XAGQHTeU1KLMUZiYZazEXFiQBz
-	NwUD3wIAAA==
-X-CMS-MailID: 20240521024009epcas1p3e80e90863a453053d5aac901ef644070
+	o8eZBUfYPT5vkgtgj+KySUnNySxLLdK3S+DKeDDnC1NBr0LFi21hDYzPJbsYOTkkBEwkJjXf
+	Ze9i5OIQEtjOKDFh8Xc2iISMxJvzT1m6GDmAbGGJw4eLIWo+MkoseXGcBaSGTUBb4v2CSawg
+	toiAk8SGK6vB4swClRL/bt8CiwsLBEiceXaMEcRmEVCV+L7xPhOIzStgL3G19y7ULnmJmZe+
+	s4PYnAIOEvOnLAazhYBqzlw6zwpRLyhxcuYTqPnyEs1bZzNPYBSYhSQ1C0lqASPTKkbR1ILi
+	3PTc5AJDveLE3OLSvHS95PzcTYzg8NYK2sG4bP1fvUOMTByMhxglOJiVRHg3bfFME+JNSays
+	Si3Kjy8qzUktPsQozcGiJM6rnNOZIiSQnliSmp2aWpBaBJNl4uCUamAKePXBZLr5XaOJP65O
+	DdVXCF/E0SCz/NK9Jf4Oxxmu3p5cJvUy6C2n4+G8qnlXWttbJm3cGsUsUVaTYbDwqZ5Q+qSc
+	OSLzWOqi5PPyivt+e9op3dyn9Fi/ek/z19cmVtM+ZK5pX83Gruev3mArt9yp9lFq+PzXzwyL
+	TxnfXfpWTe7t5ofFdue/n5zxyOftyuK6NzyTXU+sd0p6tnt1qcrnBXOFlnBHHznIvGKxnrq9
+	Hpf4lb6nKaZfSyLFppVN+X09nlc9YcbBp43HXG9u0og2DGbleNDHZZ9/90vtGc9/OXZ2bLXq
+	zE38G5n3cakrc4lEblo549YGl99KewJ/um/sZz2lecen5qaT+LWVNvFKLMUZiYZazEXFiQA4
+	nBKK3gIAAA==
+X-CMS-MailID: 20240521024009epcas1p152671a613e86fa83d840962ee3db50fb
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240521024009epcas1p3e80e90863a453053d5aac901ef644070
+X-CMS-RootMailID: 20240521024009epcas1p152671a613e86fa83d840962ee3db50fb
 References: <20240521023957.2587005-1-jaewon31.kim@samsung.com>
-	<CGME20240521024009epcas1p3e80e90863a453053d5aac901ef644070@epcas1p3.samsung.com>
+	<CGME20240521024009epcas1p152671a613e86fa83d840962ee3db50fb@epcas1p1.samsung.com>
 
-Bootloader knows the actual memory size, but bootloader may reserve some
-memory for a specific purpose and pass the only remaining memory region
-to kernel.
+It is not common, but defining an overlapped region is possible.
+Actually memblock_add_range allows to overlap with existing ones.
 
-Even though kernel does not know what it is, we need to detect those
-regions to sum up all reserved memory. Let me call it memory hole. To
-expect the hole size, this patch assume two things. One is that each
-physical memory has 1GB aligned size and address. And the hole is less
-than 1GB. For the hole, let it be shown as unknown in memsize logic.
+The memsize currently does not handle this overlapped case. But this
+patch tries to handle one overlapped case.
 
-This is an example.
-0x0bf000000-0x0c0000000 0x01000000 (   16384 KB ) nomap unusable unknown
+Here's the case.
+
+There is an unknown memsize region, which means the region was removed
+and not passed at bootloader stage. And there is a reserved memory
+region defined in device tree which is overlapped with the unknown
+region.
+
+We expect that information in device tree make the unknown region clear.
+This patch handle the overlapped region with following conditions.
+
+1) The already existing overlapped region should be unknown and no-map.
+2) The newly added region should have a name, and its region should be
+same with or part of the existing one.
+
+Here is an example.
+
+Before this patch, memsize shows both overlapped region.
+
+0x0ea000000-0x0ed900000 0x03900000 (   58368 KB ) nomap unusable overlapped
+0x0ea000000-0x0f1400000 0x07400000 (  118784 KB ) nomap unusable unknown
+
+After this patch, the overlapped region is named.
+
+0x0ea000000-0x0ed900000 0x03900000 (   58368 KB ) nomap unusable overlapped
+0x0e9b00000-0x0ea000000 0x00500000 (    5120 KB ) nomap unusable unknown
 
 Signed-off-by: Jaewon Kim <jaewon31.kim@samsung.com>
 ---
- drivers/of/fdt.c         |  2 ++
- include/linux/memblock.h |  2 ++
- mm/memblock.c            | 45 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 49 insertions(+)
+ mm/memblock.c | 76 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 75 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index 605c7f471908..da82e5afed01 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -1194,6 +1194,8 @@ void __init early_init_dt_scan_nodes(void)
- 
- 	/* Handle linux,usable-memory-range property */
- 	early_init_dt_check_for_usable_mem_range();
-+
-+	memblock_memsize_detect_hole();
- }
- 
- bool __init early_init_dt_scan(void *params)
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index 9ccba9bb20cb..049313871059 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -617,10 +617,12 @@ static inline void memtest_report_meminfo(struct seq_file *m) { }
- extern void memblock_memsize_record(const char *name, phys_addr_t base,
- 				    phys_addr_t size, bool nomap,
- 				    bool reusable);
-+extern void memblock_memsize_detect_hole(void);
- #else
- static inline void memblock_memsize_record(const char *name, phys_addr_t base,
- 				    phys_addr_t size, bool nomap,
- 				    bool reusable) { }
-+static inline void memblock_memsize_detect_hole(void) { }
- #endif
- 
- #endif /* _LINUX_MEMBLOCK_H */
 diff --git a/mm/memblock.c b/mm/memblock.c
-index f05e7df2f8e1..5204ee71ae29 100644
+index 5204ee71ae29..4a0506e14025 100644
 --- a/mm/memblock.c
 +++ b/mm/memblock.c
-@@ -2084,6 +2084,51 @@ void __init_memblock memblock_memsize_record(const char *name, phys_addr_t base,
- 	memblock_dbg("%s %pa..%pa nomap:%d reusable:%d\n",
- 		     __func__, &base, &end, nomap, reusable);
+@@ -2060,6 +2060,73 @@ static void __init_memblock memsize_get_valid_name(char *valid_name, const char
+ 	valid_name[val_size] = '\0';
  }
-+
-+/* This function will be called to by early_init_dt_scan_nodes */
-+void __init memblock_memsize_detect_hole(void)
-+{
-+	phys_addr_t base, end;
-+	phys_addr_t prev_end, hole_sz;
-+	int idx;
-+	struct memblock_region *rgn;
-+	int memblock_cnt = (int)memblock.memory.cnt;
-+
-+	/* assume that the hole size is less than 1 GB */
-+	for_each_memblock_type(idx, (&memblock.memory), rgn) {
-+		prev_end = (idx == 0) ? round_down(rgn->base, SZ_1G) : end;
-+		base = rgn->base;
-+		end = rgn->base + rgn->size;
-+
-+		/* only for the last region, check a hole after the region */
-+		if (idx + 1 == memblock_cnt) {
-+			hole_sz = round_up(end, SZ_1G) - end;
-+			if (hole_sz)
-+				memblock_memsize_record(NULL, end, hole_sz,
-+							true, false);
-+		}
-+
-+		/* for each region, check a hole prior to the region */
-+		hole_sz = base - prev_end;
-+		if (!hole_sz)
-+			continue;
-+		if (hole_sz < SZ_1G) {
-+			memblock_memsize_record(NULL, prev_end, hole_sz, true,
-+						false);
-+		} else {
-+			phys_addr_t hole_sz1, hole_sz2;
-+
-+			hole_sz1 = round_up(prev_end, SZ_1G) - prev_end;
-+			if (hole_sz1)
-+				memblock_memsize_record(NULL, prev_end,
-+							hole_sz1, true, false);
-+			hole_sz2 = base % SZ_1G;
-+			if (hole_sz2)
-+				memblock_memsize_record(NULL, base - hole_sz2,
-+							hole_sz2, true, false);
-+		}
-+	}
-+}
- #endif /* MEMBLOCK_MEMSIZE */
  
- static void __init free_memmap(unsigned long start_pfn, unsigned long end_pfn)
++static inline struct memsize_rgn_struct * __init_memblock memsize_get_new_rgn(void)
++{
++	if (memsize_rgn_count == ARRAY_SIZE(memsize_rgn)) {
++		pr_err("not enough space on memsize_rgn\n");
++		return NULL;
++	}
++	return &memsize_rgn[memsize_rgn_count++];
++}
++
++static bool __init_memblock memsize_update_nomap_region(const char *name, phys_addr_t base,
++					phys_addr_t size, bool nomap)
++{
++	int i;
++	struct memsize_rgn_struct *rmem_rgn, *new_rgn;
++
++	if (!name)
++		return false;
++
++	for (i = 0; i < memsize_rgn_count; i++)	{
++		rmem_rgn = &memsize_rgn[i];
++
++		if (!rmem_rgn->nomap)
++			continue;
++		if (strcmp(rmem_rgn->name, "unknown"))
++			continue;
++		if (base < rmem_rgn->base)
++			continue;
++		if (base + size > rmem_rgn->base + rmem_rgn->size)
++			continue;
++
++		if (base == rmem_rgn->base && size == rmem_rgn->size) {
++			memsize_get_valid_name(rmem_rgn->name, name);
++			return true;
++		}
++
++		new_rgn = memsize_get_new_rgn();
++		if (!new_rgn)
++			return true;
++		new_rgn->base = base;
++		new_rgn->size = size;
++		new_rgn->nomap = nomap;
++		new_rgn->reusable = false;
++		memsize_get_valid_name(new_rgn->name, name);
++
++		if (base == rmem_rgn->base && size < rmem_rgn->size) {
++			rmem_rgn->base = base + size;
++			rmem_rgn->size -= size;
++		} else if (base + size == rmem_rgn->base + rmem_rgn->size) {
++			rmem_rgn->size -= size;
++		} else {
++			new_rgn = memsize_get_new_rgn();
++			if (!new_rgn)
++				return true;
++			new_rgn->base = base + size;
++			new_rgn->size = (rmem_rgn->base + rmem_rgn->size)
++					- (base + size);
++			new_rgn->nomap = nomap;
++			new_rgn->reusable = false;
++			strscpy(new_rgn->name, "unknown", sizeof(new_rgn->name));
++			rmem_rgn->size = base - rmem_rgn->base;
++		}
++		return true;
++	}
++
++	return false;
++}
++
+ void __init_memblock memblock_memsize_record(const char *name, phys_addr_t base,
+ 			     phys_addr_t size, bool nomap, bool reusable)
+ {
+@@ -2070,7 +2137,14 @@ void __init_memblock memblock_memsize_record(const char *name, phys_addr_t base,
+ 		pr_err("not enough space on memsize_rgn\n");
+ 		return;
+ 	}
+-	rgn = &memsize_rgn[memsize_rgn_count++];
++
++	if (memsize_update_nomap_region(name, base, size, nomap))
++		return;
++
++	rgn = memsize_get_new_rgn();
++	if (!rgn)
++		return;
++
+ 	rgn->base = base;
+ 	rgn->size = size;
+ 	rgn->nomap = nomap;
 -- 
 2.25.1
 
