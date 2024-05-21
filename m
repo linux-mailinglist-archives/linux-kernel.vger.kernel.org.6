@@ -1,152 +1,93 @@
-Return-Path: <linux-kernel+bounces-184364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4318F8CA623
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:25:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD28F8CA686
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C7EA1C20F36
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:25:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C0F1F223D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3648513FF9;
-	Tue, 21 May 2024 02:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEAC1BF47;
+	Tue, 21 May 2024 02:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UxpVGf3P"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="COX99QEW"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC079C2E9;
-	Tue, 21 May 2024 02:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213E2DDD7;
+	Tue, 21 May 2024 02:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716258308; cv=none; b=Kr4Ga6ddOl8iG0NkmOLt4S94S3Egnp+NUMw0Qxnca+YfIV95qRGgWJnmgsSS5xaUZEUsT1dwbnqg5A9hX/o1fXiCdoW3V/LSWc2tUeJLXUo7gZoKgoItemBJTo4hWXXK8Kahvo1qSGnCWP6vtEy1ac2Q6uuubIloUpkM0Kx5NFI=
+	t=1716260328; cv=none; b=YteJ6wtehQXCt0fQkh/UR7RDuaRIpPkSt0dZdR5rTqhn4UUHREZkzxhNU/nPPJtt96vzrZN0Et4+K+kNnePw/fyIIsk+iO/sxnCk6TJHUaBQVGI/os3xZ0vVA0aB6lfd+qglX0o4aWOF66qw6Ks+x3aovFFAq4ykTybnFVSQVzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716258308; c=relaxed/simple;
-	bh=2JQdNkN8Va5J2PBw3j2euQZnhUifo/T3OFWx1yC23Lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r5y3TbFOtsdQOjPavDKCZR/wIwgA2y7Kp7Z8+tu7FnnqAexrciVQmYdCF3yUyqa5sN9GxsQpR0+UmjxeeYrGCCFO8x8CH+BzJxkFiGjY/G1ZESFiQhorNXctJPrDrv695fddUE6s+3FZYscLUEn6EC+d/r22IhHonk9CjR+X2kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UxpVGf3P; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716258307; x=1747794307;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2JQdNkN8Va5J2PBw3j2euQZnhUifo/T3OFWx1yC23Lg=;
-  b=UxpVGf3PTSJVK29zOfryRhxuDGvC1xLCKHEHz6VnqcYarTf5eiMgJvg5
-   ZUkIXm0Uo0yPt/6v9LjFu1u3BVrXjqsiPex/CT3FhSi6BOEIVLpIKgUdn
-   7h1QE82Y16HIXDuUQVzSn2GFE7m4g3bjnKKSsf7zDO0R0WlAnuBSzpls7
-   /1P72UuY7qXAR/N60G3hSdbeDp4Uj/4dREFlRND7WbFp5YfYfHGeju0CT
-   uAXRu1v8aealBMHOh1tefaqgMEeZ1H+FkRokFqVgLztv4tNOHBZoc7fl1
-   u0CpLCrprHgRIJKKOtNETz0zizQIGfT7Y8rW0MZS/OkVODURtZVVRYelE
-   w==;
-X-CSE-ConnectionGUID: a2dR5rnNRnmjhbwLZVoTCg==
-X-CSE-MsgGUID: bga4bYxbQqOStw/XlJv8eQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="23563707"
-X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="23563707"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 19:25:06 -0700
-X-CSE-ConnectionGUID: HSKawQjaTIWB1uxViNhqyA==
-X-CSE-MsgGUID: /9AsGmROS4iOnBCH+sDvYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="32613622"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 19:25:05 -0700
-Date: Mon, 20 May 2024 19:25:05 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "Huang, Kai" <kai.huang@intel.com>,
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"sagis@google.com" <sagis@google.com>,
-	"isaku.yamahata@linux.intel.com" <isaku.yamahata@linux.intel.com>,
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
-	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"dmatlack@google.com" <dmatlack@google.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>
-Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
- TDP MMU
-Message-ID: <20240521022505.GB29916@ls.amr.corp.intel.com>
-References: <eb7417cccf1065b9ac5762c4215195150c114ef8.camel@intel.com>
- <20240516194209.GL168153@ls.amr.corp.intel.com>
- <ffd24fa5-b573-4334-95c6-42429fd9ee38@intel.com>
- <20240517081440.GM168153@ls.amr.corp.intel.com>
- <b6ca3e0a18d7a472d89eeb48aaa22f5b019a769c.camel@intel.com>
- <0d48522f37d75d63f09d2a5091e3fa91913531ee.camel@intel.com>
- <791ab3de8170d90909f3e053bf91485784d36c61.camel@intel.com>
- <20240520185817.GA22775@ls.amr.corp.intel.com>
- <91444be8576ac220fb66cd8546697912988c4a87.camel@intel.com>
- <2ee12c152c8db9f5e4acd131b95411bac0abb22c.camel@intel.com>
+	s=arc-20240116; t=1716260328; c=relaxed/simple;
+	bh=gKlBpkYXOTJwD4p+BNk74tb3Rj9czrLahPewgupALc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XVz42eZIJs2NvUqI4HYMJcMgZ+XrxDm3pWFvfLr3kccQk5CCmNYE0RzkSanEhd/sxmRE3jE7WE5kQZZMeI5+FGZ6zHHjliOoSDLv34kGFO7N7/A2fO1TDrsliB3/AzinQCnfnIQMo+AroJtbjIzh9gFyKV9TjmCUo8lwsrdtyZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=COX99QEW; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1716260322;
+	bh=7kHB/B7pdEbxFksZxcWfPUa01xxD95y0BrxFKM1OMoY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=COX99QEWSMbpjgoX/Hyr0QExd9jKANW/+lqZMj6opdUETQumAc+ytuURis6vetyrK
+	 8x9aqVarCqG97FIYFHRUcGo6hOz/ei/hyF1kvxLWx0x/puBoIQFqWoxBZgpMmuS5M9
+	 lwHkenJolSQosv5kl5/U5sef0Slpslszdjvqb+uWsV3dTfgvOBQS4zVy5IQVQRZ87d
+	 aH3npmjbNPVvGjbhDZ/NwiZ7gg2fd2pLAucO8GdGSP/vc4X7+piLQbG5LxTAiGY8bz
+	 hgbaBK05cg6tmRtIwegk8KpArgcuzXRSjuyEYZOUAzxG63PdA5S+kHUI4gpdPwlbdy
+	 d2n42LFwj6RgA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VjzfB4yz5z4wjF;
+	Tue, 21 May 2024 12:58:42 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: <linux-kselftest@vger.kernel.org>,
+	<skhan@linuxfoundation.org>
+Cc: <linux-kernel@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>
+Subject: [PATCH] selftests/overlayfs: Fix build error on ppc64
+Date: Tue, 21 May 2024 12:26:16 +1000
+Message-ID: <20240521022616.45240-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2ee12c152c8db9f5e4acd131b95411bac0abb22c.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 20, 2024 at 11:39:06PM +0000,
-"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> wrote:
+Fix build error on ppc64:
+  dev_in_maps.c: In function ‘get_file_dev_and_inode’:
+  dev_in_maps.c:60:59: error: format ‘%llu’ expects argument of type
+  ‘long long unsigned int *’, but argument 7 has type ‘__u64 *’ {aka ‘long
+  unsigned int *’} [-Werror=format=]
 
-> On Mon, 2024-05-20 at 12:02 -0700, Rick Edgecombe wrote:
-> > 
-> > reflect is a nice name. I'm trying this path right now. I'll share a branch.
-> 
-> Here is the branch:
-> https://github.com/rpedgeco/linux/commit/674cd68b6ba626e48fe2446797d067e38dca80e3
+By switching to unsigned long long for u64 for ppc64 builds.
 
-Thank you for sharing it. It makes it easy to create further patches on top of
-it.
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+---
+ tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-..
-
-> In this solution, the tdp_mmu.c doesn't have a concept of private vs shared EPT
-> or GPA aliases. It just knows KVM_PROCESS_PRIVATE/SHARED, and fault->is_private.
-> 
-> Based on the PROCESS enums or fault->is_private, helpers in mmu.h encapsulate
-> whether to operate on the normal "direct" roots or the mirrored roots. When
-> !TDX, it always operates on direct.
-> 
-> The code that does PTE setting/zapping etc, calls out the mirrored "reflect"
-> helper and does the extra atomicity stuff when it sees the mirrored role bit.
-> 
-> In Isaku's code to make gfn's never have shared bits, there was still the
-> concept of "shared" in the TDP MMU. But now since the TDP MMU focuses on
-> mirrored vs direct instead, an abstraction is introduced to just ask for the
-> mask for the root. For TDX the direct root is for shared memory, so instead the
-> kvm_gfn_direct_mask() gets applied when operating on the direct root.
-
-"direct" is better than "shared".  It might be confusing with the existing
-role.direct, but I don't think of better other name.
-
-I resorted to pass around kvm for gfn_direct_mask to the iterator.  Alternative
-way is to stash it in struct kvm_mmu_page of root somehow.  Then, we can strip
-kvm from the iterator and the related macros.
-
-
-> I think there are still some things to be polished in the branch, but overall it
-> does a good job of cleaning up the confusion about the connection between
-> private and mirrored. And also between this and the previous changes, improves
-> littering the generic MMU code with private/shared alias concepts.
-> 
-> At the same time, I think the abstractions have a small cost in clarity if you
-> are looking at the code from TDX's perspective. It probably wont raise any
-> eyebrows for people used to tracing nested EPT violations through paging_tmpl.h.
-> But compared to naming everything mirrored_private, there is more obfuscation of
-> the bits twiddled.
-
-The rename makes the code much less confusing.  I noticed that mirror and
-mirrored are mixed. I'm not sure whether it's intentional or accidental.
+diff --git a/tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c b/tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c
+index 759f86e7d263..2862aae58b79 100644
+--- a/tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c
++++ b/tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #define _GNU_SOURCE
++#define __SANE_USERSPACE_TYPES__ // Use ll64
+ 
+ #include <inttypes.h>
+ #include <unistd.h>
 -- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+2.45.1
+
 
