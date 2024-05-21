@@ -1,189 +1,140 @@
-Return-Path: <linux-kernel+bounces-184370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C64D8CA635
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:34:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDAEA8CA626
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9ACB8B2093D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:34:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F6F01F21FA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 02:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D1A125D5;
-	Tue, 21 May 2024 02:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4C212E71;
+	Tue, 21 May 2024 02:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ahepp.dev header.i=@ahepp.dev header.b="R+0IK7Ws"
-Received: from mail-108-mta85.mxroute.com (mail-108-mta85.mxroute.com [136.175.108.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U6UMxeLq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829D517C64
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75212134A9
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 02:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716258836; cv=none; b=UgB5Z7Pj5Rz1RI9jVsiFt78es6MuhqNHq5gAHCR4bR2oPPLK3bSv2IeWthh4w7S7w0dk7qjx4sN4GrPFSwIManTyVBLFIX1PQkolepsOe9J1KLxSJ4hk3Rwfhd9XpVkEWdWRFCjed3CXlfSwH4bbxHR5ZagGbJoYW4eEfmQza04=
+	t=1716258555; cv=none; b=aM7e/PwapK1UPDszA5qSq/1n3Elo7zCawu4GAHGuYM+73JS7O/xpHfiW3CiZeOjY7xRtd++QmzKvQzuRSV4TrPTu9GtQY87RkWS13qBpgc1mVcAVogW38OFIQMWcg7dTXD4/Sy9rDhLqQHw3ceK5QOnz/ztb6sdodb+w2XWQCPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716258836; c=relaxed/simple;
-	bh=zmXrS54sHl2ot3sb0GSDnnJCgcLWipCPzke2GVOr8Ds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MXJbDS9DTf/X6+zNUqpR1USBhkO+Moorp6rhlTsUN4ptLY1c78H/c5oYd/WCSuZVxBAeIDRzRDisLA1AZ+s1TkeNZdZStoIO4OWOkqhd/ZyZpbYKJGR8qFjtllRZfjyd/IZeYoiyzKdLSZ4AwQiNmnu/WnXJRJWtkUtoKWVUZBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ahepp.dev; spf=pass smtp.mailfrom=ahepp.dev; dkim=fail (0-bit key) header.d=ahepp.dev header.i=@ahepp.dev header.b=R+0IK7Ws reason="key not found in DNS"; arc=none smtp.client-ip=136.175.108.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ahepp.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ahepp.dev
-Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
- (Authenticated sender: mN4UYu2MZsgR)
- by mail-108-mta85.mxroute.com (ZoneMTA) with ESMTPSA id 18f98faac6c000efce.007
- for <linux-kernel@vger.kernel.org>
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
- Tue, 21 May 2024 02:28:36 +0000
-X-Zone-Loop: 4bc457d50bc189acf096ad054bd702988649ae685ef6
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=ahepp.dev;
-	s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:
-	To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=iWaHaAPhmhUih0P5E+3/squCGgKZImlbCGWTxIoVtmU=; b=R+0IK7Wsi9kaNB0UenGOVgeVnd
-	IK7juYKmsAkINgqylrSS/Na05o+Xd39u5o7GOgXoZBzroVuJTtD8HBFfbbG1BZcOExfyZD2MKnL/X
-	VUKl8kDeTHmIPPrRMcMZcifw4f8PIFYUkcfwni54ycK05PqwrGKanJAtv4LO4bbinCMahMUs2TiC6
-	WM4PoV5JY9TM/TsV953t56wl6SDsaxS7j8wbwkMq4cjHXuY24YUspHL1YyIYipPkixxSUCkhykMMT
-	OLO8QxiNnA6l6gGhED2xo7TbqczUZdZRwmDX6Uk+XM0BMj+qTMeU2MGdPNsZU0tGjlsQYg9f3bXD8
-	Yi95XZzg==;
-Message-ID: <23efcf4c-b5b2-d245-931f-0420e61701fe@ahepp.dev>
-Date: Mon, 20 May 2024 22:28:10 -0400
+	s=arc-20240116; t=1716258555; c=relaxed/simple;
+	bh=fHuz2izoRrXrdHAlUrSjhQX2YUje7YUBi+uJY+FIFow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rMxTmviRZbTSYHEophSSMhYvweRaTVEkXYgp9/IKVdhCjfB+FWS3tDgAaHU7wJP+yyDHgq9G5o5JTa/VN4GN0mPDlv5JCDnf3CZEvLGNKbA1o2voIhOcR6tPRBEkBrKKY56IPn0SU6j1KDqgd6nm/9QffjHQvl1wxveiFyxN5a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U6UMxeLq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716258552;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w/SMSLTAXFZZwyaLr5kA0B7cu9hCGbcKtCcSYK2/MZg=;
+	b=U6UMxeLqj/g244r0zOY7+I7RFOf2HAzZTcrIOhanm5KzQLnEI+LHkpu1yIdnJFgkKszaim
+	lNnbGb2CG7XRuK0+3f3Alcl/BK/V2yhZ44Xm1SotweippXOs9OFwZX2Cml+x1MsOaBYDSM
+	Vd/59X2MS4DoSZvcFE9rTD9gKiGHtys=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-368-8DZktjcVMpWbsHmFAzGJOA-1; Mon, 20 May 2024 22:29:10 -0400
+X-MC-Unique: 8DZktjcVMpWbsHmFAzGJOA-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2b4330e57b6so12201921a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 19:29:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716258549; x=1716863349;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w/SMSLTAXFZZwyaLr5kA0B7cu9hCGbcKtCcSYK2/MZg=;
+        b=YBZ/JlYDvk/LiRuuJPmabTz5bsxUl2tmYo9gNh9L1R8ahceIM9eLQWZcBrwG/U3AuJ
+         kG2mlAnNJL+1/oPAN4MyzEW3FNl/Wj8Mf+HCzV/5S/G36JCJMHwDEtXUMIduDWMPWnLk
+         SvdgBLoKkHiBdkM1hj7UfJddgh9v4ePes9LMUPvQ2Nv5rX3c8CNJ/UE+1RJJePxRIaoq
+         SbpgMsp1ZcJ7W+GMwbOCGslT4LVrlOt6qvqmcPD0i3MkC3dk/wuAnNuDngsoQ189wgTe
+         WsGSidl5DBpiZyrP8r+xCQIjpmM6/6UIHr+XRyxdtREwuIX7XvZSgTWPX9Q1fMQeNQeJ
+         fOlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGBV/LSLmCe5GAGvJCThS8CSR9PaDdJMqkKM1JVMyIblTNYtPAbynJONqabCxGZwCUsCgfAsZgo3JB2Yo/cVBeXgj8O5KIfq+q4Owv
+X-Gm-Message-State: AOJu0YwadAf5t8kJDAjzBcISdv9DHi4VafZF8LbzK+N/+Aesy71s4y7w
+	KRxDMdqMSTT99P0/iEt2LLjn+g2awxETWjCE6hjI44qtZ2z7qVnNv8lT9V56sVRji1sMU3mpXPY
+	pfOXTIJGwAypZoYYiG/OOhuOHoj/Ldn0k9WlXpk8iAlv7LBlB2Zbiep94/faAkTCtOMNaBgdLXF
+	FZHfTNt5pN+f7SdquD78si1KTjJ5lXw+6PYQ+o
+X-Received: by 2002:a17:90a:590e:b0:2bd:9319:3da1 with SMTP id 98e67ed59e1d1-2bd93193deemr634200a91.25.1716258549715;
+        Mon, 20 May 2024 19:29:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEo2Z7xohL05uhMNAfGrDbx9YpWpz1z4P9YFEzrqlUWpKPu7N+uZF6UrdhiOEzsxGwb66VvqwEqJFlwaQIRHdY=
+X-Received: by 2002:a17:90a:590e:b0:2bd:9319:3da1 with SMTP id
+ 98e67ed59e1d1-2bd93193deemr634190a91.25.1716258549414; Mon, 20 May 2024
+ 19:29:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.9.0
-Subject: Re: [PATCH v2 1/2] iio: temperature: mcp9600: Provide index for both
- channels
-Content-Language: en-US
-To: Jonathan Cameron <jic23@kernel.org>,
- Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Marcelo Schmitt <marcelo.schmitt1@gmail.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Nuno_S=c3=a1?= <nuno.sa@analog.com>
-References: <20240517081050.168698-1-dima.fedrau@gmail.com>
- <20240517081050.168698-2-dima.fedrau@gmail.com>
- <20240519171438.08810789@jic23-huawei>
-From: Andrew Hepp <andrew.hepp@ahepp.dev>
-In-Reply-To: <20240519171438.08810789@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Id: andrew.hepp@ahepp.dev
+References: <1716218462-84587-1-git-send-email-steven.sistare@oracle.com> <1716218462-84587-2-git-send-email-steven.sistare@oracle.com>
+In-Reply-To: <1716218462-84587-2-git-send-email-steven.sistare@oracle.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 21 May 2024 10:28:57 +0800
+Message-ID: <CACGkMEvhs_-wD4p-i2VCmQnmdNPLsH9FkhkGePB5LxZQf4B30A@mail.gmail.com>
+Subject: Re: [PATCH V3 1/3] vhost-vdpa: flush workers on suspend
+To: Steve Sistare <steven.sistare@oracle.com>
+Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	Eugenio Perez Martin <eperezma@redhat.com>, Xie Yongji <xieyongji@bytedance.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, May 20, 2024 at 11:21=E2=80=AFPM Steve Sistare
+<steven.sistare@oracle.com> wrote:
+>
+> Flush to guarantee no workers are running when suspend returns.
+>
+> Fixes: f345a0143b4d ("vhost-vdpa: uAPI to suspend the device")
+> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
+> Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> ---
+>  drivers/vhost/vdpa.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> index ba52d128aeb7..189596caaec9 100644
+> --- a/drivers/vhost/vdpa.c
+> +++ b/drivers/vhost/vdpa.c
+> @@ -594,6 +594,7 @@ static long vhost_vdpa_suspend(struct vhost_vdpa *v)
+>         struct vdpa_device *vdpa =3D v->vdpa;
+>         const struct vdpa_config_ops *ops =3D vdpa->config;
+>         int ret;
+> +       struct vhost_dev *vdev =3D &v->vdev;
+>
+>         if (!(ops->get_status(vdpa) & VIRTIO_CONFIG_S_DRIVER_OK))
+>                 return 0;
+> @@ -601,6 +602,8 @@ static long vhost_vdpa_suspend(struct vhost_vdpa *v)
+>         if (!ops->suspend)
+>                 return -EOPNOTSUPP;
+>
+> +       vhost_dev_flush(vdev);
 
-I attempted to send this yesterday, but I guess I leaked some HTML into 
-the message and it was rejected from the lists. I am resending it now as 
-plain text. Apologies for any inconvenience or confusion.
+vhost-vDPA doesn't use workers, see:
 
-On 5/19/24 12:14 PM, Jonathan Cameron wrote:
-> On Fri, 17 May 2024 10:10:49 +0200
-> Dimitri Fedrau <dima.fedrau@gmail.com> wrote:
-> 
->> The mapping from cold junction to ambient temperature is inaccurate. We
->> provide an index for hot and cold junction temperatures.
->>
->> Suggested-by: Jonathan Cameron <jic23@kernel.org>
->> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
-> Hi Dmitri,
-> 
-> I'm not sure you replied to the question in previous review of what
-> sysfs files exist for this device.  Whilst I am at least a little
-> open to changing the ABI, I'd like to fully understand what
-> is currently presented and why iio_info is having trouble with it.
-> 
-> I also want an ack from Andrew on this one given might break it existing
-> usage.
+        vhost_dev_init(dev, vqs, nvqs, 0, 0, 0, false,
+                       vhost_vdpa_process_iotlb_msg);
 
-I’m not actively using the cold junction temperature reading, so I would 
-be happy to see any deficiencies in the ABI corrected.
+So I wonder if this is a must.
 
-> 
-> The current interface is perhaps less than ideal, but I don't think it
-> is wrong as such. Whilst I wasn't particularly keen on the cold junction
-> == ambient I'm not sure moving to just indexed is an improvement.
-> Hence looking for input from Andrew. +CC Nuno as someone who is both
-> active in IIO and has written thermocouple front end drivers in
-> the past.
+Thanks
 
-The ABI docs state
+> +
+>         ret =3D ops->suspend(vdpa);
+>         if (!ret)
+>                 v->suspended =3D true;
+> --
+> 2.39.3
+>
 
-     The ambient and object modifiers distinguish between ambient 
-(reference) and distant temperatures for contactless measurements
-Reading more of the Linux Driver API docs, those say that .modified is 
-"used to indicate a physically unique characteristic of the channel”, 
-and that .indexed is "simply another instance”.
-
-I’m not sure whether measuring temperature at a different location meets 
-the bar of a “physically unique characteristic”. Maybe it does. But I 
-don’t think of the cold junction temperature as “simply another 
-instance”. Perhaps that’s a mistake on my behalf.
-
-Reviewing temperature drivers using IIO_MOD_TEMP_AMBIENT, they all seem 
-to be reporting die temperatures. Some are IR sensors, but there are a 
-couple other thermocouples like the MCP9600.
-
-Reviewing drivers using “.indexed”, one is an IR sensor and one is a 
-thermocouple. In both cases, the indexed channels seem to represent a 
-“full featured” channel. The IR sensor also reports 
-IIO_MOD_TEMP_AMBIENT, so they chose not to make it an additional index.
-
-It seems to me that using IIO_MOD_TEMP_AMBIENT is more in line with what 
-has been done in the past. But I may be misunderstanding something and I 
-am not opposed to using and index if it’s determined that is more correct.
-
-Thanks,
-Andrew
-
-> 
-> Jonathan
-> 
-> 
->> ---
->>   drivers/iio/temperature/mcp9600.c | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
->> index 46845804292b..22451d1d9e1f 100644
->> --- a/drivers/iio/temperature/mcp9600.c
->> +++ b/drivers/iio/temperature/mcp9600.c
->> @@ -14,6 +14,9 @@
->>   
->>   #include <linux/iio/iio.h>
->>   
->> +#define MCP9600_CHAN_HOT_JUNCTION	0
->> +#define MCP9600_CHAN_COLD_JUNCTION	1
->> +
->>   /* MCP9600 registers */
->>   #define MCP9600_HOT_JUNCTION 0x0
->>   #define MCP9600_COLD_JUNCTION 0x2
->> @@ -25,17 +28,19 @@
->>   static const struct iio_chan_spec mcp9600_channels[] = {
->>   	{
->>   		.type = IIO_TEMP,
->> +		.channel = MCP9600_CHAN_HOT_JUNCTION,
->>   		.address = MCP9600_HOT_JUNCTION,
->>   		.info_mask_separate =
->>   			BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
->> +		.indexed = 1,
->>   	},
->>   	{
->>   		.type = IIO_TEMP,
->> +		.channel = MCP9600_CHAN_COLD_JUNCTION,
->>   		.address = MCP9600_COLD_JUNCTION,
->> -		.channel2 = IIO_MOD_TEMP_AMBIENT,
->> -		.modified = 1,
->>   		.info_mask_separate =
->>   			BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
->> +		.indexed = 1,
->>   	},
->>   };
->>   
-> 
 
