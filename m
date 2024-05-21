@@ -1,128 +1,180 @@
-Return-Path: <linux-kernel+bounces-185097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E39738CB074
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:29:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100A18CB07A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72EDD286011
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:29:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939841F22C79
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE19130485;
-	Tue, 21 May 2024 14:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87EB1304BF;
+	Tue, 21 May 2024 14:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Hy0w0VSr"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jd4QOY9r"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C735112FF89
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7B81304AB
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716301744; cv=none; b=iOebCkWOZa4Kt37YnCDeqPJzVnYjBI6cotqmsVBqqdsirThd4jc6j8nDTxRhNSJIryFa9WiQKE29cCruJFYFIGm7sYVfhaLEGtWQoWjSEBJI58/TCtL+lPX9P2DylW15emGVCRfXSnWGphp4UbmACvUJudj4AYcDcFgJwcTEzCY=
+	t=1716301750; cv=none; b=Lamr6FmlRsMKy7u98hbZgWD8Dd1y1Ap23do6g7aLpA7OgokiPL5nuy5XXwjMcUXWXKIzY3jZGBlNw9uihWK8L0sEBBOayYF2e9CEqKovOMiwA3vAdpCdeCYa+Ux93FwtYsI2X9mGHRmo8iAaYA/i5SKJtwAaI3qauBRpetrSEzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716301744; c=relaxed/simple;
-	bh=YRYue5aSF5GPpqwooptAjIRHn3hTaLIxoJH1OJ3w9zE=;
-	h=Subject:Date:Message-ID:MIME-Version:Cc:From:To; b=lFB6fhsn7Cj9Fo94VXIErvCgejthVPLOoCMvHykCnBYblqZyVRKg85mPhKoA55lbYHjh8b1P33Lf+eeYafML3Bb14mbYz+3NjIqRutD7bciEc6SyAEHeY6bWDJhY02v++h9mlu9WFowQYv7bWFquwC4A6f45mjVXQFrYspoWDGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Hy0w0VSr; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-6f10092c8c7so2692240a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:29:02 -0700 (PDT)
+	s=arc-20240116; t=1716301750; c=relaxed/simple;
+	bh=6bvs+mRk3MZLeYn6zI390ca29lN3sm0nzPJxk6NmGEQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nQdFowmbWzUIAj3d8uVH2f/Miwn8gX14UvmF6T6q10rdQg+3xbnnopKElH3mmeWSBYyEEEkIxKF4zuxFsCFG0IuRkjV0E81LtZjCFxT+AFJsyPZSdY9hRgf83Y6do5UKMpcU5EFAhIi3Cv7U1Vu+WkjTIccJr7f9GL37sCzD2go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jd4QOY9r; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5238fe0cfc9so3647691e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 07:29:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716301742; x=1716906542; darn=vger.kernel.org;
-        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:to:cc:subject:date:message-id:reply-to;
-        bh=TwldfdL+T6NcWAidI3T3bL1Xd+CxsE6EH6dzBTpXKgU=;
-        b=Hy0w0VSry8FLfcJfPQoGSAQqPF628ivEXEY55OQSOHzsPP+igKSnGRuUux6EgaiCfO
-         tQ9fC2WcHJMEsdm2D5ItKMWyTSmO8/9T5Y60ZMj6/I1RgrrjUwuIDCUWE8Ds3ZiJHwz9
-         2JYuVKmg06tDKe3ndm0CHZXtoFuuB9Kc2gHmF/OUAChpPvpFJO5zwmAPCAhQPMkTCfwB
-         Xnms6y0F2oLPDBl2CzbEpXZ5CYkFSwha0FDiC4zjug2htecycLlQjLo9DfR5cJ74tISF
-         w0b+3cCf+VXPSWDGJWhr7AW14HDNykCzVV3C4mLQNfdG+KWtlQTc/I+Z8ieBEGi2XVLX
-         GVMw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716301746; x=1716906546; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r4ZT3mKlqYVZ6mtPyitnpgVHXRH+or+NPpHybAp4AHg=;
+        b=jd4QOY9rlOVYIG5PeJSaEYcBKtfKIK7cVt9XOuooRDdbEEURRQiuo3CnXxH3Kdw2AU
+         ddT+qZTIckAl+7FuB2qlal8wFwiyOLEVej7UsCDPWTFXK2a9bzRzpn6R0L46V7lBKnMv
+         YxBODTlQ0EOYzc4ElmCExwDmddVDWGBjxNP1Jq4SSrheeiKJfHOQIeMrwSlq0OSj55SC
+         SWS1Qs3jnOtn8Zp7/Ure431WQVwweQZBObk297Z68X/r6SZKQDhB7d/8te0S0bkDWtWs
+         sKoGXWI5+30AWYZGJHDOX/z5y80gdr01tzlynKdRQZPrD9qW9Ox3bZ0vVG9ZGnBpwqx2
+         tH8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716301742; x=1716906542;
-        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
-         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TwldfdL+T6NcWAidI3T3bL1Xd+CxsE6EH6dzBTpXKgU=;
-        b=XPm9gXjwnFACSnpYNKacn5S9teLTRmTmYYbYhi+8f3i5G8bNG8gnumfMWWksX5Vl2N
-         vKpfH6+vn2U7wJaeIFwTwZr1dLRUr5vNbd2b13+VI9Lxa2JnmyDtVkw5+YcBezkYlwW/
-         g+3EO+IsDhnxyGxVH/8LqLTtdRS+WrV0uQ6FRMAKFVBRio6j4P8F//cYbv2HwhZmJY+F
-         j73uH7lryQexrCEIeH7sGHriVwWrhbg+CJC1rFIX20H8i+w6ngz99bBxKhvWm2sUyK3M
-         y8w5BN5+sLwyyGqqoFKfJpwguxFNFAIwHySQUHnBrFun1w/ZYWe0PO2NpR9GEkWh/Dvm
-         xyjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9WPv6FPpVNkoGn2RFiHU23q0bpjC3zsb6Fq3+pay/dQ1eW9g50MkUj8zuQHvsoB16c43kED1vBqeMRXcp8D1biaxfdn2s2NJzZhN+
-X-Gm-Message-State: AOJu0YzJxQu4cX4iCqVW+nXl0mCvJNhsPZ48wdOR0cvu1eFutjUgWk6Z
-	n0u0B8JaNQ7rKX9L/+V5FOuPcXPJCzbBF331K3ibPEISxizYIxLR5EU/DCntgpI=
-X-Google-Smtp-Source: AGHT+IF+toXA1Nu3KEKk8hdXyTF86rbz9YOAD8q6l99vrilAUb3JIDxN2FfEB1nAafTrGIeh+79vhw==
-X-Received: by 2002:a05:6358:8a8:b0:186:12e6:42b4 with SMTP id e5c5f4694b2df-193bcfc56a2mr3916016555d.23.1716301741198;
-        Tue, 21 May 2024 07:29:01 -0700 (PDT)
-Received: from localhost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f6af98d9edsm3937397b3a.156.2024.05.21.07.29.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 07:29:00 -0700 (PDT)
-Subject: [PATCH] drm: xlnx: zynqmp_disp: Fix WARN_ON build warning
-Date: Tue, 21 May 2024 07:28:15 -0700
-Message-ID: <20240521142814.32145-2-palmer@rivosinc.com>
-X-Mailer: git-send-email 2.45.0
+        d=1e100.net; s=20230601; t=1716301746; x=1716906546;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r4ZT3mKlqYVZ6mtPyitnpgVHXRH+or+NPpHybAp4AHg=;
+        b=MIy7i/XdIxxkmQby1URaEYjWOvPIXwr49DeEKwtr84B4ShEzNybux9VfTUdonseVQq
+         ts5jfTATlCSG2Hsjdb0Is80koSP1X47suoQMr1JVwDAdfJ6N3cRDck4JQ2tntagoavP+
+         fCGQGAWCyXbYGA+t+XbpBJC0R7E2K8uhT0nhvs5zyZTaE3IaW7CcOm8CzgMBCcjgdoAM
+         DjBRk/MMXyFfJ7ENZprhQB16qk9qdw/UgjNfydM0mJHxqCkrw+IbGPUM3iFkedGYikps
+         DBEsDU5dWB5q3g/t7YHEmlBrzdw4w3gbjRrpGIrwJjDjEZtoqNCFEZtDH1dDsO9U2+Hu
+         oWQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUx3Y9V3lODSf8cdxB0N/XVZvOD5wLEDCM5j53nldoBaXIYtEDVA5VzPAjyTN9sVF2+MRkhYGqb8nQ73uHWMd5DTwNjB5DIQqvKDoUN
+X-Gm-Message-State: AOJu0YzyrDlPFLveVB6ISHdormPa9+w39+LmL2/HigTYgwojSlUT4Mau
+	ajal05llWiXqVrB/2haygf9tNYUr1wUsNb63LaEt+xrS8ADfQgHhaJz04D8QD2LFV3lvUB/Skop
+	trwlYhfV6o/C0fzSD+h3+HwTI4qlOsgFYktd+zw==
+X-Google-Smtp-Source: AGHT+IFX6ZAdS/VDH7ufsE0aYFcD/wjVEgzBDZy20u+xfwOGB8FvOPsKpMddmVaWBdAq8IKQDfFVjfJePYCyYDeQ2js=
+X-Received: by 2002:a05:6512:114d:b0:516:be0a:58b with SMTP id
+ 2adb3069b0e04-524079a820emr3827263e87.6.1716301746060; Tue, 21 May 2024
+ 07:29:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: laurent.pinchart@ideasonboard.com, maarten.lankhorst@linux.intel.com,
-  mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, michal.simek@amd.com,
-  dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-  Palmer Dabbelt <palmer@rivosinc.com>, kernel test robot <lkp@intel.com>
-From: Palmer Dabbelt <palmer@rivosinc.com>
-To: tomi.valkeinen@ideasonboard.com
+References: <20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com>
+ <20240510-dlech-mainline-spi-engine-offload-2-v2-6-8707a870c435@baylibre.com> <6c5fd2cef9a6412e63f2534243eda37c321ffcd2.camel@gmail.com>
+In-Reply-To: <6c5fd2cef9a6412e63f2534243eda37c321ffcd2.camel@gmail.com>
+From: David Lechner <dlechner@baylibre.com>
+Date: Tue, 21 May 2024 09:28:54 -0500
+Message-ID: <CAMknhBH9y=tOhHrhBCoMOSSVgZDRbX90cfzqX62m6wLYsKDhNg@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 6/8] spi: axi-spi-engine: add offload support
+To: =?UTF-8?B?TnVubyBTw6E=?= <noname.nuno@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	David Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Palmer Dabbelt <palmer@rivosinc.com>
+On Tue, May 21, 2024 at 7:27=E2=80=AFAM Nuno S=C3=A1 <noname.nuno@gmail.com=
+> wrote:
+>
+> On Fri, 2024-05-10 at 19:44 -0500, David Lechner wrote:
+> > This implements SPI offload support for the AXI SPI Engine. Currently,
+> > the hardware only supports triggering offload transfers with a hardware
+> > trigger so attempting to use an offload message in the regular SPI
+> > message queue will fail. Also, only allows streaming rx data to an
+> > external sink, so attempts to use a rx_buf in the offload message will
+> > fail.
+> >
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > ---
+> >
 
-Without this I get warnings along the lines of
+..
 
-    drivers/gpu/drm/xlnx/zynqmp_disp.c:949:14: error: logical not is only applied to the left hand side of this comparison [-Werror,-Wlogical-not-parentheses]
-      949 |         if (WARN_ON(!layer->mode == ZYNQMP_DPSUB_LAYER_NONLIVE)) {
-          |                     ^            ~~
-    arch/s390/include/asm/bug.h:54:25: note: expanded from macro 'WARN_ON'
-       54 |         int __ret_warn_on = !!(x);                      \
-          |                                ^
-    drivers/gpu/drm/xlnx/zynqmp_disp.c:949:14: note: add parentheses after the '!' to evaluate the comparison first
-    drivers/gpu/drm/xlnx/zynqmp_disp.c:949:14: note: add parentheses around left hand side expression to silence this warning
+> > +
+> > +static int spi_engine_offload_map_channel(struct spi_device *spi,
+> > +                                       unsigned int id,
+> > +                                       unsigned int channel)
+> > +{
+> > +     struct spi_controller *host =3D spi->controller;
+> > +     struct spi_engine *spi_engine =3D spi_controller_get_devdata(host=
+);
+> > +     struct spi_engine_offload *priv;
+> > +
+> > +     if (channel >=3D SPI_ENGINE_MAX_NUM_OFFLOADS)
+> > +             return -EINVAL;
+> > +
+> > +     priv =3D &spi_engine->offload_priv[channel];
+> > +
+> > +     if (priv->spi)
+> > +             return -EBUSY;
+>
+> I wonder if we need to be this strict? Is there any problem by having two
+> devices requesting the same offload engine? I would expect that having mu=
+ltiple
+> peripherals trying to actually use it at the same time (with the prepare(=
+)
+> callback) to be problematic but if they play along it could actually work=
+,
+> right? In reality that may never be a realistic usecase so this is likely=
+ fine.
+>
 
-which get promoted to errors in my test builds.  Adding the suggested
-parens elides those warnings.
+I guess not. But to keep it simple for now, yeah, let's wait until we
+have an actual use case.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202405080553.tfH9EmS8-lkp@intel.com/
-Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
----
-I couldn't find a patch for this in Linus' tree or on the lists, sorry
-if someone's already fixed it.  No rush on my end, I'll just stash this
-in a local branch for the tester.
----
- drivers/gpu/drm/xlnx/zynqmp_disp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+..
 
-diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers/gpu/drm/xlnx/zynqmp_disp.c
-index 13157da0089e..d37b4a9c99ea 100644
---- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
-+++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
-@@ -981,7 +981,7 @@ u32 *zynqmp_disp_layer_drm_formats(struct zynqmp_disp_layer *layer,
- 	unsigned int i;
- 	u32 *formats;
- 
--	if (WARN_ON(!layer->mode == ZYNQMP_DPSUB_LAYER_NONLIVE)) {
-+	if (WARN_ON((!layer->mode) == ZYNQMP_DPSUB_LAYER_NONLIVE)) {
- 		*num_formats = 0;
- 		return NULL;
- 	}
--- 
-2.45.0
+> > +
+> > +static const struct spi_controller_offload_ops spi_engine_offload_ops =
+=3D {
+> > +     .map_channel =3D spi_engine_offload_map_channel,
+> > +     .prepare =3D spi_engine_offload_prepare,
+> > +     .unprepare =3D spi_engine_offload_unprepare,
+> > +     .hw_trigger_enable =3D spi_engine_offload_enable,
+> > +     .hw_trigger_disable =3D spi_engine_offload_disable,
+>
+> I guess this is what you and Conor are already somehow discussing but I w=
+ould
+> expect this to be the actual offload trigger to play a spi transfer. As i=
+t
+> stands, it looks weird (or confusing) to have the enable/disable of the e=
+ngine
+> to act as a trigger...
 
+It isn't acting as the trigger, just configuring the offload instance
+for exclusive use by a hardware trigger.
+
+> Maybe these callbacks could be used to enable/disable the
+> actual trigger of the offload engine (in our current cases, the PWM)? So =
+this
+> would make it easy to move the trigger DT property where it belongs. The =
+DMA one
+> (given it's tight relation with IIO DMA buffers) is another (way more dif=
+ficult)
+> story I think.
+>
+
+One issue I have with making the actual hardware trigger part of the
+SPI controller is that in some cases, the peripheral could actually be
+the trigger. For example, in the case of a self-clocked ADC where
+there is just a RDY signal from the ADC when sample data is ready to
+be read. In this case would the peripheral have to register a trigger
+enable callback with the controller so that the controller can
+communicate with the peripheral to enable and disable sampling mode,
+and therefore the trigger?
 
