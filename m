@@ -1,293 +1,264 @@
-Return-Path: <linux-kernel+bounces-185493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB8E8CB584
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:50:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 838238CB586
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 23:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F0D81C20D88
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:50:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A73271C20BDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 21:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AC114A083;
-	Tue, 21 May 2024 21:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D16149C46;
+	Tue, 21 May 2024 21:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IHdzH6/7"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2040.outbound.protection.outlook.com [40.107.223.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i4mTF8ay"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0707A487B0;
-	Tue, 21 May 2024 21:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716328212; cv=fail; b=Xjh6FgbYibHBl9BGbvr0LUzoA0gJM/jNV4LEtFiCzJNLPIhXldPwfKigiFOk1qYJTvgxM8D2HBaNCIu21eqijE5fAljgvBDc0uyNomNK++7dfxI6kCiZtT9LBtgx6PiAL5Z1Fsn+f9u8l53e9nXNxg5YA61WLfoXfOdjtTGrwzE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716328212; c=relaxed/simple;
-	bh=1j9HU7TKWQG+XG6DmlOPfHSMDisJOt4ywq9VOWn8i5E=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hsJqAtqhivyUPcQTn63sOTU71KH2TmYri5YUD9oLIBRSoRgh0Syfuf2/HsXzO8mbo/5y+kllmqP4IsA9OqJvaQdMhvxQK0+m2I8D8dSOBaGMpJXxjufur/4AJiJOIQKNWldofgZ86WxLD9okXSme5t8zrhXnFGX7pYVnX8+Y3RM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IHdzH6/7; arc=fail smtp.client-ip=40.107.223.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gCccnwRW3fjLahBHYVw+c+4+kY3Y5HxYxlkL4mqKKfVGeEEWXWKv71Gro4kAHqPjgkr+1cG9lfywPjxe3FRHm6sDLI0d3a6v/ou8ss34eMa96pamzwxVoenRZBA6T0Xey5oCp1oyJv+DeSEUKuD5coksCIs+WAUy5XpDnOUgwoQwXbXovvjMVCskfKg+byRmaucKnxcXgog1iCCMQID/osYvuJ+/wINcCuE6AovVe+JykV0Jr3+U41cNufVh3+1V/kvfRSH7HF1XINtk2Tr0Pc4bP9FZ16pcyr4CJaAQwqfnJ7BhnBWIzJPTsfvzQ7kTriPPOBMNPuQpMXLYgc86DQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wBQhXSIf5/bV10qJtYQEWvygY5ww87h3UADznhCFS14=;
- b=L5OXYvLuM623l8vmQ1fXIgO/xUMrGKWLQaNsCHU1JASr4VcV29IhlG/ID1M1os/zRdgQ2u5Y68dZoe0FWqiE09TRQoWU9HvXyKywWNd+6dsrIWY76yYo0avsrwEUuNXpWPsnUFDTOVGBZRhD/izPHR/vtqm5utljrjQWVCydhoVwRxvgdjO7Wroba1dykUC9GalDQONM7V18OrpvG3kBcrpVo6jZi85kLWtxKWrtQp80Ve2KESNaP8CVqlPQc2vqBChJ1sx3MJcm/fLDdqXIQPPP3z7JQ7efUr9NaFhlqFmYIR7eOCH1XXZgPrEA0XOyzD3mFhq0OlQF6WKwN3m35g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wBQhXSIf5/bV10qJtYQEWvygY5ww87h3UADznhCFS14=;
- b=IHdzH6/7J0glGFeKrinC5LZm8/9yBbChp2cC+GCYIrqkBsOFlNsX3ZS9Hj/YJ53Y8YhFpvD6Bc1h46Eeo7evhBEwFP1n9lZVg9yt5jpck+AqEh1OpH7ofkYNWbWCPHPb9GPuEtGgPTv1C7+nIWjdixVZcDJacMl5TfrUUV/Shl8=
-Received: from CH0PR03CA0247.namprd03.prod.outlook.com (2603:10b6:610:e5::12)
- by MW4PR12MB6828.namprd12.prod.outlook.com (2603:10b6:303:209::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Tue, 21 May
- 2024 21:50:08 +0000
-Received: from CH2PEPF00000141.namprd02.prod.outlook.com
- (2603:10b6:610:e5:cafe::8f) by CH0PR03CA0247.outlook.office365.com
- (2603:10b6:610:e5::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19 via Frontend
- Transport; Tue, 21 May 2024 21:50:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH2PEPF00000141.mail.protection.outlook.com (10.167.244.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7611.14 via Frontend Transport; Tue, 21 May 2024 21:50:07 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 21 May
- 2024 16:50:07 -0500
-Date: Tue, 21 May 2024 16:49:52 -0500
-From: Michael Roth <michael.roth@amd.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<linux-coco@lists.linux.dev>, <linux-mm@kvack.org>,
-	<linux-crypto@vger.kernel.org>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<jroedel@suse.de>, <thomas.lendacky@amd.com>, <hpa@zytor.com>,
-	<ardb@kernel.org>, <seanjc@google.com>, <vkuznets@redhat.com>,
-	<jmattson@google.com>, <luto@kernel.org>, <dave.hansen@linux.intel.com>,
-	<slp@redhat.com>, <pgonda@google.com>, <peterz@infradead.org>,
-	<srinivas.pandruvada@linux.intel.com>, <rientjes@google.com>,
-	<dovmurik@linux.ibm.com>, <tobin@ibm.com>, <bp@alien8.de>, <vbabka@suse.cz>,
-	<kirill@shutemov.name>, <ak@linux.intel.com>, <tony.luck@intel.com>,
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, <alpergun@google.com>,
-	<jarkko@kernel.org>, <ashish.kalra@amd.com>, <nikunj.dadhania@amd.com>,
-	<pankaj.gupta@amd.com>, <liam.merwick@oracle.com>, Brijesh Singh
-	<brijesh.singh@amd.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>
-Subject: Re: [PATCH v15 09/20] KVM: SEV: Add support to handle MSR based Page
- State Change VMGEXIT
-Message-ID: <rczrxq3lhqguarwh4cwxwa35j5riiagbilcw32oaxd7aqpyaq7@6bqrqn6ontba>
-References: <20240501085210.2213060-1-michael.roth@amd.com>
- <20240501085210.2213060-10-michael.roth@amd.com>
- <84e8460d-f8e7-46d7-a274-90ea7aec2203@linux.intel.com>
- <CABgObfaXmMUYHEuK+D+2E9pybKMJqGZsKB033X1aOSQHSEqqVA@mail.gmail.com>
- <7d6a4320-89f5-48ce-95ff-54b00e7e9597@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC98487B0
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 21:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716328291; cv=none; b=Kmwsj/lflsmTvzwsIlb7dY4oXV6yy61ohcFuj70zhzSQ1mUKc5mwk/GpcHj8zVRC124ePQ4zKTjNyJwW4kQQ0IH+bLNZ65vcTlXakl0+YpQiPfqX+p83slq7qi8V2cIRjd6NYXEqGXxjU9rRFU68nh9E/09Nrh2S37n6S78ILWo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716328291; c=relaxed/simple;
+	bh=a2rFyee2fBpbZouMxQuPT31n33FPbjaQZfbBj7wzou8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YApyv9LR9DetmgOPdLHG1ZHhLcnac0s2ovVHyKXjgQo2jT2DZDA88l6/zGaby4gVHdKiYaZjCYmK+iiVjKqjxzUist9PdpdJZiT0JSjf0NWOaL5jJuXikms4cce0iEpnabjPldopnosu9mh0Wn+/G7Y6e/+BBFDqZOHz0yZCk38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i4mTF8ay; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2b9dcc745a4so1579581a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 14:51:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716328289; x=1716933089; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YzGwiMWKicO+U9PU45V7Oy7/ik9CdkBfeQ1fSiNtONg=;
+        b=i4mTF8ayRQdqcLCOZAPKetFkrEHw4Qd77Jy8Y1ADw+lpuDYnFI6BjeurRQTt/apurX
+         v1dU0KOso/m1PFHkmW9ct9F7bG9aHLx4q5SAFBmbSDylAAjU4Dx9Ww8hGdjSzeFOnEv8
+         MBmmCQRcvlqszx2AMeM9dc2eOpqWzDSUB8almpKLkM5ZTtsRX+24WevwIiZYjq+duOuQ
+         f+pr7EwMxHItcxcuh5nMttt3dkLGIUPFrIV96jbSaLdo/lLw3iYbCwlT4GLXj2f6kO1A
+         vN+8JV5K10tPDo/tUVYJTXan2yZ/F9q+K4pmYnbSBKSKFqSeGXdbihRZglQWopdYA18e
+         F9Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716328289; x=1716933089;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YzGwiMWKicO+U9PU45V7Oy7/ik9CdkBfeQ1fSiNtONg=;
+        b=bKPQfqWhXMlm/pui7QP7TOYNL7DsYMjh2O72yrDKfqU5HapQNf/IL4/epCcwlCuyjU
+         8mbbIRSLbaTxGeFzwY21nMyjeSAolptJ6/xz5bJqkpRy+0G4pjQD531M4nI0swHZ45bH
+         nY+TtwZhMrKlxcni2oScqsFqKk+O5RzEbYbcp8E4wXJxdpF9rF0LDjC2HPU4ETeU4fm5
+         30ScF/spVkbvWGN44wmlKPpt3Gzk2MYWsYHLbd03f6Iu0xHb4xrEPCqo7bfb1UX0rIX1
+         xUloLr9H77g3apwkT+vuu9WZPePO6N1Ya1Ym2kw7vjwoCDK4S8qxq4HVVw3DUToi75MB
+         y/fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgObGXZq2ZywE++TQs1iaCE2QbkYjIRaGa2mTEXYWU8xIZbB0bqBuntTfJON2x0jxL+Jgs5pNHPja952bMcYoummJTRROmgug0A7Al
+X-Gm-Message-State: AOJu0YwamHOvIzJlgk9kc/UQ+sS6bVGM6oHpM5dMi3cDUPYa1lT1rFMb
+	Pnn77ihT/JaOEzl5mm7bZi1VQoFI5DbTqUxOc661qLZ0dvfbdkziY1uyE5Yecd0+Rz5nqjLiKMN
+	FUBiByzz1fVJcweh/ezfQak8XYR8=
+X-Google-Smtp-Source: AGHT+IHZqaPQkPdZWSl9z29CGJIis2+ErhBN3A/J2WUph6DXN2PIWxcF7hyrEajPTWJIclj8xB/FhZfjtqr8l6YsjyE=
+X-Received: by 2002:a17:90a:bf05:b0:2af:2be3:89c5 with SMTP id
+ 98e67ed59e1d1-2bd9f48fe3dmr361892a91.29.1716328288992; Tue, 21 May 2024
+ 14:51:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7d6a4320-89f5-48ce-95ff-54b00e7e9597@linux.intel.com>
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000141:EE_|MW4PR12MB6828:EE_
-X-MS-Office365-Filtering-Correlation-Id: a71eca91-3d01-41f5-8e37-08dc79dffb2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|7416005|82310400017|1800799015|36860700004|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aVk2K0VhTVZ0OHN5WFExYWFuVlRySFRrZHdCa0g2VmthZk84SXNFSTdxVE9N?=
- =?utf-8?B?MW5PUzZhek5rTzA4MHJKU1Raclp6bzdNc0l1c3hjUjlFZFdMa0lUS0szTXo5?=
- =?utf-8?B?c3NXVmxja0NDdnF5TDhuc1A3SlhJdys1cFlhNS9EZ0pOTk9aSzY2UzIreDZE?=
- =?utf-8?B?VVM1S3BMaGZJbEVhbGVFbVkwRERtQmJMQXFtUnRtSTFvQmZkZmplN2g5UmRH?=
- =?utf-8?B?L2E2dWZ2QmZaN0NaSGZEVnJaRC80RzdRc3YyT3cxemZRS2MrOE1LdTJ2RU9Y?=
- =?utf-8?B?cC9WMmgwc1JOelg3NVpTdGhQa25LdGVGTFI5TXBmdy9VaDZsOWFjZUZ2NnNm?=
- =?utf-8?B?cFpaZmNlT0pLSitsSWlPM1hDRlVwdVY3MCs5VVorWEVicTd2anYrQ1owYXM5?=
- =?utf-8?B?anRTWlBPV2ZNV2hRYlB0Vkc4QXRoSDM2SlFpMWFqOTFEZ2JFYitKenBCRDVk?=
- =?utf-8?B?ZDBST1VSa0hXS2hXcTNFS2tOZ3FyNmhpUXo1U2l3WGpodmhvRExYTWtyNUtO?=
- =?utf-8?B?aGFlbTBMVTdTeXlnRkhQSUFrV1hlZkNlUGxuUE8wOE1PY0ZDSFNRSzRlSnRQ?=
- =?utf-8?B?U0JDREFLRWJSYXR6cjgzenZBU0NzMHArSEtZTkdSdUhvaXNoWFYvN3Bva1ZX?=
- =?utf-8?B?WGlQRmhHWi9GVGJtTTB4V243YW9tb3NkU0QxWGFDVFRPRjFMSjBMM3VQakdx?=
- =?utf-8?B?MU42N2R2b0pVdG5vTUgvMHZmYjlZK0xCanorWmlBcjI2YTA4RGxHcUdZZ3Vl?=
- =?utf-8?B?eFhBejFGaGJHd1c2Y2RQd2g2cU9waGYyTlAxSWtaZGRsamdROWt3cWNick5x?=
- =?utf-8?B?SjhDZnhDalQwRHFtQVZxMWpDR3JDZzI2UTZSeGFvOThtRk8xMEQ0Uk1hb1dy?=
- =?utf-8?B?clIzTjYxS0FvVG1qdGpjTkptdVJma3NUY2lyaW1obTJyZmtPdTJrTUF3Mk9x?=
- =?utf-8?B?N2RMY2pVOWJ4elI5Wnh3Ty9mUWJnMHJUM2V3YjlvUkN3QzRSN0xYd0JHSVk3?=
- =?utf-8?B?K3Bqczg1Yll3SXR1YUhnWkVaV2NFYXRmemZpeEpBSTNaanNPSHdaalZ3dEtC?=
- =?utf-8?B?WE9XbW5nVkV2dDkrOWNLc1YvRnBNRE1UYnoyWmFtdXV2OXZYMWFPaDQzbEFE?=
- =?utf-8?B?K2ZvZllBT1ZLbWZ1WnhkVFhNYmxwZ2pEeWtMQmxYVFVBWFdoWlFUWGVOY2pq?=
- =?utf-8?B?QjRUMEw5WC9hUGZvc1N3TGVFaVN6NWRVbXFhczdsaVM3Yy96Sks3Wml0ZXM4?=
- =?utf-8?B?NWFCMkVISmVvdlprYmZRQncxdFRCTEE0bmo3Z2YzWTZtNmtqdVJNWUxTc2hV?=
- =?utf-8?B?aWRmQmlBMXJkaHBXTkVRNW94c00rOUtzalVDOWYxSytCUUFDWDUxcWhESkJN?=
- =?utf-8?B?ZjRIa1ZZUnFzd2pybXpsTUVZL1cwbmRxVlE3OFEvSHoyVTJ2TXM2aTIraEJm?=
- =?utf-8?B?aG5RRGNEZ1VTbHJPUWNCbUc1eUVWQTUwVmY2SU5uOW5OMlM3MEhFRUVzWU1x?=
- =?utf-8?B?RWdXcUNCcXhQbUlMRzR4dnZZYmpKbmx5dmt6a0pKVUt2VnJXVVBQRzNMdTMz?=
- =?utf-8?B?dS83SW9IZGVSeFJqYTdHZFJEYTArU2EwVkVjRU9JZnJRZHE2Zk4vYyt4Nlo4?=
- =?utf-8?B?cUR2SUUvaHlSbm9GSzVXbVdpZ0hPcXpUd2VCQkw4d0hnU1A3NlpKcFNYU2Vm?=
- =?utf-8?B?dWphb2hIcnRrbDRYYndrTm91TW8wYU9zbFk0SDV4TloyeUs5SEF6QnhLWXVp?=
- =?utf-8?Q?ZhXQ+PGBq9xymVsVG098wwA48OAASNKBs4YIBdK?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(7416005)(82310400017)(1800799015)(36860700004)(376005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 21:50:07.7943
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a71eca91-3d01-41f5-8e37-08dc79dffb2e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000141.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6828
+References: <20240521011614.496421-1-aford173@gmail.com>
+In-Reply-To: <20240521011614.496421-1-aford173@gmail.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Tue, 21 May 2024 16:51:17 -0500
+Message-ID: <CAHCN7xLekU9u0auzB+bt7cRgv48qxH8bRY2e-_nK0nUhaLJagA@mail.gmail.com>
+Subject: Re: [PATCH] drm/bridge: adv7511: Fix Intermittent EDID failures
+To: dri-devel@lists.freedesktop.org
+Cc: dmitry.baryshkov@linaro.org, sui.jingfeng@linux.dev, 
+	aford@beaconembedded.com, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	linux-kernel@vger.kernel.org, Liu Ying <victor.liu@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2024 at 08:49:59AM +0800, Binbin Wu wrote:
-> 
-> 
-> On 5/17/2024 1:23 AM, Paolo Bonzini wrote:
-> > On Thu, May 16, 2024 at 10:29 AM Binbin Wu <binbin.wu@linux.intel.com> wrote:
-> > > 
-> > > 
-> > > On 5/1/2024 4:51 PM, Michael Roth wrote:
-> > > > SEV-SNP VMs can ask the hypervisor to change the page state in the RMP
-> > > > table to be private or shared using the Page State Change MSR protocol
-> > > > as defined in the GHCB specification.
-> > > > 
-> > > > When using gmem, private/shared memory is allocated through separate
-> > > > pools, and KVM relies on userspace issuing a KVM_SET_MEMORY_ATTRIBUTES
-> > > > KVM ioctl to tell the KVM MMU whether or not a particular GFN should be
-> > > > backed by private memory or not.
-> > > > 
-> > > > Forward these page state change requests to userspace so that it can
-> > > > issue the expected KVM ioctls. The KVM MMU will handle updating the RMP
-> > > > entries when it is ready to map a private page into a guest.
-> > > > 
-> > > > Use the existing KVM_HC_MAP_GPA_RANGE hypercall format to deliver these
-> > > > requests to userspace via KVM_EXIT_HYPERCALL.
-> > > > 
-> > > > Signed-off-by: Michael Roth <michael.roth@amd.com>
-> > > > Co-developed-by: Brijesh Singh <brijesh.singh@amd.com>
-> > > > Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-> > > > Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> > > > ---
-> > > >    arch/x86/include/asm/sev-common.h |  6 ++++
-> > > >    arch/x86/kvm/svm/sev.c            | 48 +++++++++++++++++++++++++++++++
-> > > >    2 files changed, 54 insertions(+)
-> > > > 
-> > > > diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
-> > > > index 1006bfffe07a..6d68db812de1 100644
-> > > > --- a/arch/x86/include/asm/sev-common.h
-> > > > +++ b/arch/x86/include/asm/sev-common.h
-> > > > @@ -101,11 +101,17 @@ enum psc_op {
-> > > >        /* GHCBData[11:0] */                            \
-> > > >        GHCB_MSR_PSC_REQ)
-> > > > 
-> > > > +#define GHCB_MSR_PSC_REQ_TO_GFN(msr) (((msr) & GENMASK_ULL(51, 12)) >> 12)
-> > > > +#define GHCB_MSR_PSC_REQ_TO_OP(msr) (((msr) & GENMASK_ULL(55, 52)) >> 52)
-> > > > +
-> > > >    #define GHCB_MSR_PSC_RESP           0x015
-> > > >    #define GHCB_MSR_PSC_RESP_VAL(val)                  \
-> > > >        /* GHCBData[63:32] */                           \
-> > > >        (((u64)(val) & GENMASK_ULL(63, 32)) >> 32)
-> > > > 
-> > > > +/* Set highest bit as a generic error response */
-> > > > +#define GHCB_MSR_PSC_RESP_ERROR (BIT_ULL(63) | GHCB_MSR_PSC_RESP)
-> > > > +
-> > > >    /* GHCB Hypervisor Feature Request/Response */
-> > > >    #define GHCB_MSR_HV_FT_REQ          0x080
-> > > >    #define GHCB_MSR_HV_FT_RESP         0x081
-> > > > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> > > > index e1ac5af4cb74..720775c9d0b8 100644
-> > > > --- a/arch/x86/kvm/svm/sev.c
-> > > > +++ b/arch/x86/kvm/svm/sev.c
-> > > > @@ -3461,6 +3461,48 @@ static void set_ghcb_msr(struct vcpu_svm *svm, u64 value)
-> > > >        svm->vmcb->control.ghcb_gpa = value;
-> > > >    }
-> > > > 
-> > > > +static int snp_complete_psc_msr(struct kvm_vcpu *vcpu)
-> > > > +{
-> > > > +     struct vcpu_svm *svm = to_svm(vcpu);
-> > > > +
-> > > > +     if (vcpu->run->hypercall.ret)
-> > > Do we have definition of ret? I didn't find clear documentation about it.
-> > > According to the code, 0 means succssful. Is there any other error codes
-> > > need to or can be interpreted?
-> > They are defined in include/uapi/linux/kvm_para.h
-> > 
-> > #define KVM_ENOSYS        1000
-> > #define KVM_EFAULT        EFAULT /* 14 */
-> > #define KVM_EINVAL        EINVAL /* 22 */
-> > #define KVM_E2BIG        E2BIG /* 7 */
-> > #define KVM_EPERM        EPERM /* 1*/
-> > #define KVM_EOPNOTSUPP        95
-> > 
-> > Linux however does not expect the hypercall to fail for SEV/SEV-ES; and
-> > it will terminate the guest if the PSC operation fails for SEV-SNP.  So
-> > it's best for userspace if the hypercall always succeeds. :)
-> Thanks for the info.
-> 
-> For TDX, it wants to restrict the size of memory range for conversion in one
-> hypercall to avoid a too long latency.
-> Previously, in TDX QEMU patchset v5, the limitation is in userspace and  if
-> the size is too big, the status_code will set to TDG_VP_VMCALL_RETRY and the
-> failed GPA for guest to retry is updated.
-> https://lore.kernel.org/all/20240229063726.610065-51-xiaoyao.li@intel.com/
-> 
-> When TDX converts TDVMCALL_MAP_GPA to KVM_HC_MAP_GPA_RANGE, do you think
-> which is more reasonable to set the restriction? In KVM (TDX specific code)
-> or userspace?
-> If userspace is preferred, then the interface needs to  be extended to
-> support it.
+On Mon, May 20, 2024 at 8:16=E2=80=AFPM Adam Ford <aford173@gmail.com> wrot=
+e:
+>
+> In the process of adding support for shared IRQ pins, a scenario
+> was accidentally created where adv7511_irq_process returned
+> prematurely causing the EDID to fail randomly.
+>
+> Since the interrupt handler is broken up into two main helper functions,
+> update both of them to treat the helper functions as IRQ handlers. These
+> IRQ routines process their respective tasks as before, but if they
+> determine that actual work was done, mark the respective IRQ status
+> accordingly, and delay the check until everything has been processed.
+>
+> This should guarantee the helper functions don't return prematurely
+> while still returning proper values of either IRQ_HANDLED or IRQ_NONE.
+>
+> Reported by: Liu Ying <victor.liu@nxp.com>
+> Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
+> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-With SNP we might get a batch of requests in a single GHCB request, and
-potentially each of those requests need to get set out to userspace as 
-a single KVM_HC_MAP_GPA_RANGE. The subsequent patch here handles that in
-a loop by issuing a new KVM_HC_MAP_GPA_RANGE via the completion handler.
-So we also sort of need to split large requests into multiple userspace
-requests in some cases.
++ Liu
 
-It seems like TDX should be able to do something similar by limiting the
-size of each KVM_HC_MAP_GPA_RANGE to TDX_MAP_GPA_MAX_LEN, and then
-returning TDG_VP_VMCALL_RETRY to guest if the original size was greater
-than TDX_MAP_GPA_MAX_LEN. But at that point you're effectively done with
-the entire request and can return to guest, so it actually seems a little
-more straightforward than the SNP case above. E.g. TDX has a 1:1 mapping
-between TDG_VP_VMCALL_MAP_GPA and KVM_HC_MAP_GPA_RANGE events. (And even
-similar names :))
-
-So doesn't seem like there's a good reason to expose any of these
-throttling details to userspace, in which case existing
-KVM_HC_MAP_GPA_RANGE interface seems like it should be sufficient.
-
--Mike
-
-> 
-> 
-> > 
-> > > For TDX, it may also want to use KVM_HC_MAP_GPA_RANGE hypercall  to
-> > > userspace via KVM_EXIT_HYPERCALL.
-> > Yes, definitely.
-> > 
-> > Paolo
-> > 
-> 
+Sorry about the e-mail address copy-paste error.
+>
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/b=
+ridge/adv7511/adv7511.h
+> index ea271f62b214..ec0b7f3d889c 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> @@ -401,7 +401,7 @@ struct adv7511 {
+>
+>  #ifdef CONFIG_DRM_I2C_ADV7511_CEC
+>  int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511);
+> -void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)=
+;
+> +int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
+>  #else
+>  static inline int adv7511_cec_init(struct device *dev, struct adv7511 *a=
+dv7511)
+>  {
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c b/drivers/gpu/d=
+rm/bridge/adv7511/adv7511_cec.c
+> index 44451a9658a3..4efb2cabf1b5 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+> @@ -119,7 +119,7 @@ static void adv7511_cec_rx(struct adv7511 *adv7511, i=
+nt rx_buf)
+>         cec_received_msg(adv7511->cec_adap, &msg);
+>  }
+>
+> -void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+> +int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>  {
+>         unsigned int offset =3D adv7511->info->reg_cec_offset;
+>         const u32 irq_tx_mask =3D ADV7511_INT1_CEC_TX_READY |
+> @@ -130,17 +130,21 @@ void adv7511_cec_irq_process(struct adv7511 *adv751=
+1, unsigned int irq1)
+>                                 ADV7511_INT1_CEC_RX_READY3;
+>         unsigned int rx_status;
+>         int rx_order[3] =3D { -1, -1, -1 };
+> -       int i;
+> +       int i, ret =3D 0;
+> +       int irq_status =3D IRQ_NONE;
+>
+> -       if (irq1 & irq_tx_mask)
+> +       if (irq1 & irq_tx_mask) {
+>                 adv_cec_tx_raw_status(adv7511, irq1);
+> +               irq_status =3D IRQ_HANDLED;
+> +       }
+>
+>         if (!(irq1 & irq_rx_mask))
+> -               return;
+> +               return irq_status;
+>
+> -       if (regmap_read(adv7511->regmap_cec,
+> -                       ADV7511_REG_CEC_RX_STATUS + offset, &rx_status))
+> -               return;
+> +       ret =3D regmap_read(adv7511->regmap_cec,
+> +                       ADV7511_REG_CEC_RX_STATUS + offset, &rx_status);
+> +       if (ret < 0)
+> +               return ret;
+>
+>         /*
+>          * ADV7511_REG_CEC_RX_STATUS[5:0] contains the reception order of=
+ RX
+> @@ -172,6 +176,8 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511,=
+ unsigned int irq1)
+>
+>                 adv7511_cec_rx(adv7511, rx_buf);
+>         }
+> +
+> +       return IRQ_HANDLED;
+>  }
+>
+>  static int adv7511_cec_adap_enable(struct cec_adapter *adap, bool enable=
+)
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/d=
+rm/bridge/adv7511/adv7511_drv.c
+> index 66ccb61e2a66..56dd2d5a0376 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> @@ -469,6 +469,8 @@ static int adv7511_irq_process(struct adv7511 *adv751=
+1, bool process_hpd)
+>  {
+>         unsigned int irq0, irq1;
+>         int ret;
+> +       int cec_status;
+> +       int irq_status =3D IRQ_NONE;
+>
+>         ret =3D regmap_read(adv7511->regmap, ADV7511_REG_INT(0), &irq0);
+>         if (ret < 0)
+> @@ -478,38 +480,41 @@ static int adv7511_irq_process(struct adv7511 *adv7=
+511, bool process_hpd)
+>         if (ret < 0)
+>                 return ret;
+>
+> -       /* If there is no IRQ to handle, exit indicating no IRQ data */
+> -       if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
+> -           !(irq1 & ADV7511_INT1_DDC_ERROR))
+> -               return -ENODATA;
+> -
+>         regmap_write(adv7511->regmap, ADV7511_REG_INT(0), irq0);
+>         regmap_write(adv7511->regmap, ADV7511_REG_INT(1), irq1);
+>
+> -       if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.enc=
+oder)
+> +       if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.enc=
+oder) {
+>                 schedule_work(&adv7511->hpd_work);
+> +               irq_status =3D IRQ_HANDLED;
+> +       }
+>
+>         if (irq0 & ADV7511_INT0_EDID_READY || irq1 & ADV7511_INT1_DDC_ERR=
+OR) {
+>                 adv7511->edid_read =3D true;
+>
+>                 if (adv7511->i2c_main->irq)
+>                         wake_up_all(&adv7511->wq);
+> +               irq_status =3D IRQ_HANDLED;
+>         }
+>
+>  #ifdef CONFIG_DRM_I2C_ADV7511_CEC
+> -       adv7511_cec_irq_process(adv7511, irq1);
+> +       cec_status =3D adv7511_cec_irq_process(adv7511, irq1);
+> +
+> +       if (cec_status < 0)
+> +               return cec_status;
+>  #endif
+>
+> -       return 0;
+> +       /* If there is no IRQ to handle, exit indicating no IRQ data */
+> +       if (irq_status =3D=3D IRQ_HANDLED || cec_status =3D=3D IRQ_HANDLE=
+D)
+> +               return IRQ_HANDLED;
+> +
+> +       return IRQ_NONE;
+>  }
+>
+>  static irqreturn_t adv7511_irq_handler(int irq, void *devid)
+>  {
+>         struct adv7511 *adv7511 =3D devid;
+> -       int ret;
+>
+> -       ret =3D adv7511_irq_process(adv7511, true);
+> -       return ret < 0 ? IRQ_NONE : IRQ_HANDLED;
+> +       return adv7511_irq_process(adv7511, true);
+>  }
+>
+>  /* ---------------------------------------------------------------------=
+--------
+> --
+> 2.43.0
+>
 
