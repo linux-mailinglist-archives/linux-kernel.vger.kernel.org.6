@@ -1,112 +1,131 @@
-Return-Path: <linux-kernel+bounces-185326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D478CB382
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:31:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE50A8CB386
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8209E283352
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:31:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AACC82832D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE76148FF0;
-	Tue, 21 May 2024 18:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8FA148FF1;
+	Tue, 21 May 2024 18:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRoKrGrQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWsp6MCx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59202B9A7;
-	Tue, 21 May 2024 18:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95C57C0A3;
+	Tue, 21 May 2024 18:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716316263; cv=none; b=hDq1sX2Id6iFDbluyCDf71XCWMsIjhiX5/mBYQute0FZe+8FrEb4y7Zafzt6S2BDU8VaJar//8SHiGyF684zYWF3omOyzjzsk/5mhX7edNft9XbIMOs6QmdezzRBS7kfino9TI0xW7TlZ2wjas0eI4gw8Vm7zMW1MzUBgzjq99Y=
+	t=1716316317; cv=none; b=OKIVX4+Wa3n44sfIrMki+lC9z2L41UV5dRK1I9sugl7f1rTi+5EiBfiXB66skLcCcMxL9adrQrcFJYcEOyrfpzG2AsOj7hOf/U1JZ6wgVngq2cs2JFnWsEdKYz8rMTzMmQC+lhapMLMOV0MDhwcLiPXBVZANVV4uwK7C7Dzlk4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716316263; c=relaxed/simple;
-	bh=UzsGdwJz/Brc2hgT0ha+Ss2WZxJOw4KDyYb7rLojnz8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=AH3gjtMWYbq/B0Gx3ehMv1GYqCfmBwrfs4iSflqrCImW0NnSmNcDd1sbK+LYBrW/OHkdymCAzx+c7ogNtedIo1116vj9qS8tr+zDQJrfXkRSBvmOqYX1m7eFWSAyWt2TLFqeOfg6415ZCXK1n0Q8n+JalE6m15Mmr5rChNTBStU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WRoKrGrQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 039D7C2BD11;
-	Tue, 21 May 2024 18:31:03 +0000 (UTC)
+	s=arc-20240116; t=1716316317; c=relaxed/simple;
+	bh=73vaEc2+Ila3l2dDk9+94NR4FaAuj1CJocbODWzqAFA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U3mKLRGfY3P79ScxyaQSvlmJfNVvcSeBbosLBGbNV2/WUSPQCpf2RFQJQRy4mkOiHFJ+Sstal6LuHhHtAQhmHUjf8w9Ko36F5qgT/C9xWAnFiqir95m4BIx9QCzxD2gQ2W9YfuEkK3K9K1C08jn97x5Xjd4TsnTGi5bROjARLqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWsp6MCx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C90C2BD11;
+	Tue, 21 May 2024 18:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716316263;
-	bh=UzsGdwJz/Brc2hgT0ha+Ss2WZxJOw4KDyYb7rLojnz8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=WRoKrGrQZOCjJuFjxcJt5qdA5n7OpRVziUqYEnc15RYyic+NZImF4s98u9PMiiuTr
-	 18QobjbvQ5vs3AFanAADzoy1LIYstrJzvc0/C6Njfd+a5R4fh37UvTTkuqI6OmFiVT
-	 icb0xlGuM60UbeMVWPXidJGp/jfAnC8IMbW/WMdXEzltAefy9iQr4Fkvm8JpS/sQJl
-	 DDEPefAJ6TqHnGo0svWlYl4uFYM2id8vG3EmN4MIRcwbzbf+i1xQjuqCjXJ/xZqE20
-	 a1UWn0bCGIMkXwJAqszVzB6888P7bULfz1rgq4kyi6yhHUzt5w8y9PsZKBT7bWe0pM
-	 zz7MSbWLDaOxw==
-Date: Tue, 21 May 2024 11:31:02 -0700 (PDT)
-From: Mat Martineau <martineau@kernel.org>
-To: Yunsheng Lin <linyunsheng@huawei.com>
-cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-    netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    Alexander Duyck <alexander.duyck@gmail.com>, 
-    Ayush Sawal <ayush.sawal@chelsio.com>, Eric Dumazet <edumazet@google.com>, 
-    Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-    Jason Wang <jasowang@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-    Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-    Vincent Guittot <vincent.guittot@linaro.org>, 
-    Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-    Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
-    Mel Gorman <mgorman@suse.de>, 
-    Daniel Bristot de Oliveira <bristot@redhat.com>, 
-    Valentin Schneider <vschneid@redhat.com>, 
-    John Fastabend <john.fastabend@gmail.com>, 
-    Jakub Sitnicki <jakub@cloudflare.com>, David Ahern <dsahern@kernel.org>, 
-    Matthieu Baerts <matttbe@kernel.org>, Geliang Tang <geliang@kernel.org>, 
-    Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, 
-    Jiri Pirko <jiri@resnulli.us>, Boris Pismenny <borisp@nvidia.com>, 
-    bpf@vger.kernel.org, mptcp@lists.linux.dev
-Subject: Re: [RFC v4 11/13] net: replace page_frag with page_frag_cache
-In-Reply-To: <20240515130932.18842-12-linyunsheng@huawei.com>
-Message-ID: <b405347e-3fde-8521-6541-c0afc6a48e3d@kernel.org>
-References: <20240515130932.18842-1-linyunsheng@huawei.com> <20240515130932.18842-12-linyunsheng@huawei.com>
+	s=k20201202; t=1716316317;
+	bh=73vaEc2+Ila3l2dDk9+94NR4FaAuj1CJocbODWzqAFA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EWsp6MCxzQpqz5SpHf3xVk0D/9iv7MMU9rMvhEOxMl8R74bdHXIcV+reNkhyrWM6c
+	 Z+aKJdfkvC1tS1A5kHVg6Yc0FjFl2SFERlC8So7+BWuBo//ANiyD6mZW5jkDHvjxiw
+	 EY0mTzmtEVh/3/7h+O7tNPpwgkgvOh5vYmMLbHm3dEz6DOaloLqtmq4uNT2Pr6PrMY
+	 EH06i/oI6jaZP8XLtEuRrDXB6Bpuu3waTR630XnR6ozYIV0ngU9xfgIJrT9u0vnsBt
+	 3530qbHyqCQ0vS193WSOHgHQtCdDHqp2qhMBe5A8Uj0JqyM1eP9YGUJDWF2oY99oK4
+	 iLyTMBabjaydQ==
+Date: Tue, 21 May 2024 19:31:51 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	linux-kernel@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/3] dt-bindings: display: vop2: Add VP clock resets
+Message-ID: <20240521-silver-exciting-bb3725dc495d@spud>
+References: <20240514152328.21415-1-detlev.casanova@collabora.com>
+ <20240515-risk-exes-13db315da6bb@spud>
+ <2182693.irdbgypaU6@diego>
+ <13628421.uLZWGnKmhe@arisu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="r8AEGgMh3QAZNC29"
+Content-Disposition: inline
+In-Reply-To: <13628421.uLZWGnKmhe@arisu>
 
-On Wed, 15 May 2024, Yunsheng Lin wrote:
 
-> Use the newly introduced prepare/probe/commit API to
-> replace page_frag with page_frag_cache for sk_page_frag().
->
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> ---
-> .../chelsio/inline_crypto/chtls/chtls.h       |   3 -
-> .../chelsio/inline_crypto/chtls/chtls_io.c    | 100 ++++---------
-> .../chelsio/inline_crypto/chtls/chtls_main.c  |   3 -
-> drivers/net/tun.c                             |  44 ++----
-> include/linux/sched.h                         |   4 +-
-> include/net/sock.h                            |  14 +-
-> kernel/exit.c                                 |   3 +-
-> kernel/fork.c                                 |   3 +-
-> net/core/skbuff.c                             |  59 +++++---
-> net/core/skmsg.c                              |  22 +--
-> net/core/sock.c                               |  46 ++++--
-> net/ipv4/ip_output.c                          |  33 +++--
-> net/ipv4/tcp.c                                |  35 ++---
-> net/ipv4/tcp_output.c                         |  28 ++--
-> net/ipv6/ip6_output.c                         |  33 +++--
-> net/kcm/kcmsock.c                             |  30 ++--
-> net/mptcp/protocol.c                          |  67 +++++----
-> net/sched/em_meta.c                           |   2 +-
-> net/tls/tls_device.c                          | 139 ++++++++++--------
-> 19 files changed, 349 insertions(+), 319 deletions(-)
->
+--r8AEGgMh3QAZNC29
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yunsheng -
+On Tue, May 21, 2024 at 01:15:46PM -0400, Detlev Casanova wrote:
+> On Wednesday, May 15, 2024 12:33:22 P.M. EDT Heiko St=FCbner wrote:
+> > Am Mittwoch, 15. Mai 2024, 18:19:29 CEST schrieb Conor Dooley:
+> > > On Tue, May 14, 2024 at 11:19:47AM -0400, Detlev Casanova wrote:
+> > > > Add the documentation for VOP2 video ports reset clocks.
+> > > > One reset can be set per video port.
+> > > >=20
+> > > > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > >=20
+> > > Are these resets valid for all VOPs or just the one on 3588?
+> >=20
+> > Not in that form.
+> > I.e. rk3588 has 4 video-ports (0-3), while rk3568 has 3 (0-2).
+> >=20
+> > So the binding should take into account that rk3568 also has the
+> > SRST_VOP0 ... SRST_VOP2.
+>=20
+> That is what is set in the example and the reason why I set minItems to 3=
+ in=20
+> the main bindings.
+> Then, the rk3588 specific part sets it to 4.
+>=20
+> Isn't that enough ?
 
-The MPTCP content looks ok to me. The MPTCP regression tests pass as well.
+Not quite - you need to restrict maxItems to 3 for the other devices if
+the clocks are not valid. What you've got says that 4 clocks are
+possible but not needed on !rk3588.
 
-Acked-by: Mat Martineau <martineau@kernel.org>
+Cheers,
+Conor.
+
+--r8AEGgMh3QAZNC29
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkzolwAKCRB4tDGHoIJi
+0n6OAP4wwXEM/mpcp22FOi2YHaUbxut8mO+9Vbudzw42lFwLEAD+LZI8reFtSZ0L
+4FVV8PWuTYl0PJwEL+Xc2KHa7boG/AE=
+=rTte
+-----END PGP SIGNATURE-----
+
+--r8AEGgMh3QAZNC29--
 
