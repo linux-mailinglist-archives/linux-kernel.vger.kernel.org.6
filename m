@@ -1,195 +1,98 @@
-Return-Path: <linux-kernel+bounces-184923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65B98CADD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:03:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488838CAD41
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A808B217D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:03:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8F841F21FCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 11:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1E176045;
-	Tue, 21 May 2024 12:03:06 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07136757FD;
+	Tue, 21 May 2024 11:20:36 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A518524B4
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858C2757FC
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716292985; cv=none; b=KfayTXJxhZVVnSpAAkxw1x0NLWw8pDRjHFXeVI4n3P2RHzk0HezxdAovVsQcOUBoYJ+srAQbAiliIKEGNkpShZTYG+yEJdn8AsYZZalqLetdD/FNlNDR2WT8UMyAKYRxjhGucVfYQ6cvf14mmlpMQyspW/xVdw2AcuVAllsB7VQ=
+	t=1716290435; cv=none; b=SGTXyNWFUbjvz4UwUFAVT5mxy9ajwSRFPfcX5qXAMcvvcphfGONJbu2ay/RKooMt3dm5hJWrsmpXhzK7OkKdZ6LI0PdGOHturx8MBi3UCN3HtTDkiOnbGT8JmZBrGF6+J7VcDHuCtBMVe6EJYBjXeneX1NUd6AiHGEXfC6eNCiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716292985; c=relaxed/simple;
-	bh=u3iIttHg9NASbB6DzCxhtGEaurumyZBrd5vYTbWrC9U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PkY6C4WMU40a6DKlUbBgm+Nyhgbj2xI3L5TmnNEJ3+jn9DpllQct6XpD1Wa0Fdo96F2yRUUjE+lNYd6Zxo8NhigYiRN6bLA2RC6o0ZLaw/4DuqGRqsBJAulF9afJXv7qAmc9lEuqM9JU06osffws1bW3F+JSm31Mdb26KdW7gQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7e1be009e6eso1298938539f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 05:03:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716292983; x=1716897783;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EuW1xXVlFP0pYy5SWrOSCxRjFQR2tPJVuYwPOncInug=;
-        b=KDEbc6OZI4qBpbEmXBNmWqWq6f0nxohApUeInyVu8+PDHMcoC4ZnHbK1MS5cq9klmb
-         Vrt7ACbWa6XeG/Pfb2O9orDCaPbN0RRf/0jICidjsjJJbtPf6gcHKD8UWFCt58PHygA4
-         JkHa+nQjEpkmuGy+LBqdevUR2tqAc7mDFMmI/h+FqME4vQlL2rKV1NIyZG8wS+SD3KWo
-         J83zECgi3aae9Qb2wex9Po0BWwKD8sczjTbmihdl9GDIyzSmL4+u1uuZplLhcU23HFQB
-         jVnas2WMiD0HimyflIz2nmYYdO9qlhWML3HQnPlB3T0Nt0d+kVIZeSEFVlY7MDMZrMbk
-         8UXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFahl6r2t0mcSbGv3B0ynPLZc9RaIzQNseXp2sZBZgBhsUDZ3HJB1WPC6LLQp3YXq2NZDtNwdXGSjTxdIVrndsKq2ucSATcQIR8sMr
-X-Gm-Message-State: AOJu0YwMP709iRDgaP5rtWJdcPHqNQu2migo75EnxreJXRNd3xoeo9eu
-	TAdqROeSIsvVdzMisffeU6CABY9A2ZatWTCzzn2/Sf0pNMlDpt9LFqcoeTLR6hps2TsWjw2F0pJ
-	G/lWE2v1OuGVAlWcnplABn/d6co635rgmPcJbjgumViuoQqE+GqrQOkQ=
-X-Google-Smtp-Source: AGHT+IFpQf/UUnB15kOQUyjZIBSC8oBVwHr2UqFbSdipg+k+Bml8AV7Cd4EpT2T+3Nr0XtQyNl0BZuHP2KTTkST4Vw8eOLq+NOlY
+	s=arc-20240116; t=1716290435; c=relaxed/simple;
+	bh=ZwX2hqA0fwlCMAqZczvL8zscRcUD52Nwjee5a/izVM8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lp0NI2PfY2bvua2ipWEoTM5BYC9KX1SiS6Kl2bi9JmsDPsyOQkYQ0N5zGImjHyU904cAy4BGUKOgAhSM9z8ZYmfgiUKKPr2m9fhkwMPOvqM/1phCcBqj/PAguUSlnNJij61NFcTNsKkxOeKBqR/jWZytOlZtNEJ0uAOvpDOfVKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VkBmx5jwbz4f3nJw
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 19:20:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 421931A0B45
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 19:20:28 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgBXKBF6g0xmG_0XNQ--.40701S4;
+	Tue, 21 May 2024 19:20:27 +0800 (CST)
+From: linan666@huaweicloud.com
+To: richard@nod.at,
+	miquel.raynal@bootlin.com,
+	vigneshr@ti.com,
+	axboe@kernel.dk,
+	chaitanya.kulkarni@wdc.com
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	chengzhihao1@huawei.com,
+	linan666@huaweicloud.com,
+	yukuai3@huawei.com,
+	yi.zhang@huawei.com,
+	houtao1@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v2 0/2] ubi block log bugfix and improvement
+Date: Wed, 22 May 2024 03:13:45 +0800
+Message-Id: <20240521191347.413578-1-linan666@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3f85:b0:7da:9d28:6578 with SMTP id
- ca18e2360f4ac-7e1b521c6famr117103939f.3.1716292983335; Tue, 21 May 2024
- 05:03:03 -0700 (PDT)
-Date: Tue, 21 May 2024 05:03:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009a4d470618f599f2@google.com>
-Subject: [syzbot] [btrfs?] general protection fault in put_pwq_unlocked
-From: syzbot <syzbot+bce6ef1d850c98d6d157@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBXKBF6g0xmG_0XNQ--.40701S4
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUOn7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JF
+	v_Gryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AK
+	xVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aV
+	AFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2vYz4IE04k24VAvwVAK
+	I4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6x
+	IIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_
+	Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8c
+	xan2IY04v7M4kE6xkIj40Ew7xC0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
+	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
+	kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
+	6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIx
+	AIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
+	KfnxnUUI43ZEXa7sREiiSDUUUUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-Hello,
+From: Li Nan <linan122@huawei.com>
 
-syzbot found the following issue on:
+v2:
+ - Split the patch into two. Provide a more detailed commit message. 
 
-HEAD commit:    8f6a15f095a6 Merge tag 'cocci-for-6.10' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1736b784980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6be91306a8917025
-dashboard link: https://syzkaller.appspot.com/bug?extid=bce6ef1d850c98d6d157
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Li Nan (2):
+  ubi: block: fix null-pointer-dereference in ubiblock_create()
+  ubi: block: improve error log before setting dev_name in
+    ubiblock_create()
 
-Unfortunately, I don't have any reproducer for this issue yet.
+ drivers/mtd/ubi/block.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f30c87f89d17/disk-8f6a15f0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3d73f0e35e13/vmlinux-8f6a15f0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3d524f6fb25b/bzImage-8f6a15f0.xz
+-- 
+2.39.2
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bce6ef1d850c98d6d157@syzkaller.appspotmail.com
-
-BTRFS info (device loop3): last unmount of filesystem c9fe44da-de57-406a-8241-57ec7d4412cf
-Oops: general protection fault, probably for non-canonical address 0xe01ffbf11002a143: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: maybe wild-memory-access in range [0x00ffff8880150a18-0x00ffff8880150a1f]
-CPU: 0 PID: 8186 Comm: syz-executor.3 Not tainted 6.9.0-syzkaller-10323-g8f6a15f095a6 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:__lock_acquire+0x6a/0x1fd0 kernel/locking/lockdep.c:5005
-Code: df 0f b6 04 30 84 c0 0f 85 4b 16 00 00 83 3d 28 c3 39 0e 00 0f 84 1c 11 00 00 83 3d 5f 8b ad 0c 00 74 2c 4c 89 e0 48 c1 e8 03 <80> 3c 30 00 74 12 4c 89 e7 e8 c8 42 86 00 48 be 00 00 00 00 00 fc
-RSP: 0000:ffffc900041bf790 EFLAGS: 00010002
-RAX: 001ffff11002a143 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 00ffff8880150a18
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
-R10: dffffc0000000000 R11: fffffbfff1f5818e R12: 00ffff8880150a18
-R13: 0000000000000001 R14: ffff88802658da00 R15: 0000000000000000
-FS:  00005555668d4480(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6558b0b000 CR3: 0000000067b3c000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
- _raw_spin_lock_irq+0xd3/0x120 kernel/locking/spinlock.c:170
- put_pwq_unlocked+0x42/0x190 kernel/workqueue.c:1662
- destroy_workqueue+0x9a4/0xc40 kernel/workqueue.c:5851
- btrfs_destroy_workqueue+0x45/0x260 fs/btrfs/async-thread.c:360
- btrfs_stop_all_workers+0x15a/0x2a0 fs/btrfs/disk-io.c:1797
- close_ctree+0x67d/0xd20 fs/btrfs/disk-io.c:4365
- generic_shutdown_super+0x136/0x2d0 fs/super.c:642
- kill_anon_super+0x3b/0x70 fs/super.c:1226
- btrfs_kill_super+0x41/0x50 fs/btrfs/super.c:2088
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
- task_work_run+0x24f/0x310 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
- do_syscall_64+0x102/0x240 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff305e7e217
-Code: b0 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007fff1d9a1428 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007ff305e7e217
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fff1d9a14e0
-RBP: 00007fff1d9a14e0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007fff1d9a25a0
-R13: 00007ff305ec8336 R14: 00000000000507f7 R15: 0000000000000006
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__lock_acquire+0x6a/0x1fd0 kernel/locking/lockdep.c:5005
-Code: df 0f b6 04 30 84 c0 0f 85 4b 16 00 00 83 3d 28 c3 39 0e 00 0f 84 1c 11 00 00 83 3d 5f 8b ad 0c 00 74 2c 4c 89 e0 48 c1 e8 03 <80> 3c 30 00 74 12 4c 89 e7 e8 c8 42 86 00 48 be 00 00 00 00 00 fc
-RSP: 0000:ffffc900041bf790 EFLAGS: 00010002
-RAX: 001ffff11002a143 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 00ffff8880150a18
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
-R10: dffffc0000000000 R11: fffffbfff1f5818e R12: 00ffff8880150a18
-R13: 0000000000000001 R14: ffff88802658da00 R15: 0000000000000000
-FS:  00005555668d4480(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6558b0b000 CR3: 0000000067b3c000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	df 0f                	fisttps (%rdi)
-   2:	b6 04                	mov    $0x4,%dh
-   4:	30 84 c0 0f 85 4b 16 	xor    %al,0x164b850f(%rax,%rax,8)
-   b:	00 00                	add    %al,(%rax)
-   d:	83 3d 28 c3 39 0e 00 	cmpl   $0x0,0xe39c328(%rip)        # 0xe39c33c
-  14:	0f 84 1c 11 00 00    	je     0x1136
-  1a:	83 3d 5f 8b ad 0c 00 	cmpl   $0x0,0xcad8b5f(%rip)        # 0xcad8b80
-  21:	74 2c                	je     0x4f
-  23:	4c 89 e0             	mov    %r12,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	80 3c 30 00          	cmpb   $0x0,(%rax,%rsi,1) <-- trapping instruction
-  2e:	74 12                	je     0x42
-  30:	4c 89 e7             	mov    %r12,%rdi
-  33:	e8 c8 42 86 00       	call   0x864300
-  38:	48                   	rex.W
-  39:	be 00 00 00 00       	mov    $0x0,%esi
-  3e:	00 fc                	add    %bh,%ah
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
