@@ -1,72 +1,73 @@
-Return-Path: <linux-kernel+bounces-185036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA6C8CAFAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:52:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F858CAFB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC8BA1C22065
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:52:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4083928459B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915AE7EF06;
-	Tue, 21 May 2024 13:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F837F464;
+	Tue, 21 May 2024 13:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aUEChHWN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GpT0XP6i"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FF955783;
-	Tue, 21 May 2024 13:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7C455783;
+	Tue, 21 May 2024 13:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716299562; cv=none; b=NJIxki9VHUIzv42FMnWk65PTamjdz0c0qmc212X8kjojw8yzX5+pVBBTVS+WvYnQYwWPiSx9ddptSXGWoaa7INuBth5eiBYfMxCDU2W4bv5E2SdeTfoGIbEv0dz5XN4N7YGE1mcFsVVgEro5GflnTkyh2JmvQ+ixROsOpm0aI3o=
+	t=1716299613; cv=none; b=qfEsS1DH1szGVh96bIjfqROk0sjviGnVxH+4baLnTfb/SMby/XHBDXEC0FaZ/2JCCwJGO+XtKvo9N2Vodmm11ELMxkA+y/Lt4Js0BbpjgFcvzOnRqY47a56L6cKY5tWLoYEdcVdn6a44ihEYTTRJBG5t0WGT9dfQ/5fZeZTlf+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716299562; c=relaxed/simple;
-	bh=k3vzM2ZPvvj3dFxZRjVEhzFtdv4Z6sdqsTExxgfobCE=;
+	s=arc-20240116; t=1716299613; c=relaxed/simple;
+	bh=oSPfbBS5fUMpH5podn+rXXCR+dtGnM4JAnkfz3GiD4Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdXZaUPS+MJRZT435H6+VoMIDF7nc9r/Mz7Vrk3ADqoN3h6GyPgjALhEUhXfyl0zOJzV+mncQVLNbW+qdy772OrlCpQXsSBCRS7wjNzSElg2x2VFDXzx3wNSxR/qqsYEjTzIT3+ILqhzso+VlyYSDBDAs8ri8AR6A5cymfdS7LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aUEChHWN; arc=none smtp.client-ip=192.198.163.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bx9yvfakb+rSL0Xng7rrfAu+YlgOwPPP/2rZnyxTux73P2AXUIKrX09/3GFXzabJLPX7w20QK8j6wpUAFWXS0rW4ktoKbW22FimDMD/dza6UBk0jOTuruO2eJdlAOQrzY/KDtT8Q7GL/ZgrOmAaGP0L9ZHrbiSpe3x1wrLSmNDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GpT0XP6i; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716299561; x=1747835561;
+  t=1716299612; x=1747835612;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=k3vzM2ZPvvj3dFxZRjVEhzFtdv4Z6sdqsTExxgfobCE=;
-  b=aUEChHWNIOwjT7aKZly6LfuDn6xBRiefIwII6nCJAqI9SD7YOoXcqeG8
-   ozk9BVlRHFon0Jm5uimK2X7MdC9HvO5BVlFgEEbDu6Pn5CtyhUyLCETdL
-   oI+aByepGE/eXpeuDLQQyhU9SxTxy63SrXVNTKE2VTL1HfCqfL6PPgWiC
-   Y2HdR95v2HtA75NHwgd7Ym3Vga2vrzomqOHYR+MtpoY85re2TVVk7d4qa
-   opSexD6oG7XGJHi2n0kLNl5cRwKd+VxdiIkBZBX5/zzwopiOmZGg/GxlR
-   AxmFPX7quWSnnM4+zghhBMPhio8mxEGOziTp9RNK8ChThoenkiz06ZTn+
-   w==;
-X-CSE-ConnectionGUID: XIEEdlZaSTOt51vrzzMy+Q==
-X-CSE-MsgGUID: MrGYEwQST6KaHYZxg9Ggfw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="23905604"
+  bh=oSPfbBS5fUMpH5podn+rXXCR+dtGnM4JAnkfz3GiD4Q=;
+  b=GpT0XP6inSN7RhdGu5W73jgeCjomltCqq5+2C4PDm6EyVHIC0TnOc+zU
+   +nv+uvhp4XLgAH9Av9LBxgOu/j5nN/C5tPSw9SY/ef8OagJkxsdEgbKCY
+   6XuJsizFWXAGS9/75ZzCuMaPLvJcBoRH2GeLl4+xCeLZaraXy5n6ubrxB
+   uurUZ7TbMAvdS4L/PsHG4IpVuxSt+x79x287Uhqu1UEs1dQSfJBqgWeih
+   ASgpeVnS4yninXmH4e21dItFdqavEer0RgNGde0ew1xK0izIV1darG2YN
+   Wlikqb00+nnd7ebfsA/PH9yyljvo2McFPG/jh87BphIQAWHukqy7/2ZJn
+   A==;
+X-CSE-ConnectionGUID: qIOkbHtUTPKlOG3QLknsOg==
+X-CSE-MsgGUID: fnpnCG7nSA+DCUH3ZJNYiw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12284429"
 X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="23905604"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 06:52:40 -0700
-X-CSE-ConnectionGUID: l2KgpjeHR3m1UtZGYCQAuw==
-X-CSE-MsgGUID: pl8uZ8z8Q+e5W5sioVk/+A==
+   d="scan'208";a="12284429"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 06:53:26 -0700
+X-CSE-ConnectionGUID: O2Tne72EQj+xBI6uM0ueqQ==
+X-CSE-MsgGUID: YH9JMsHxSgifuS1FwsUpmA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="56153774"
+   d="scan'208";a="63761966"
 Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmviesa002.fm.intel.com with SMTP; 21 May 2024 06:52:37 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 21 May 2024 16:52:36 +0300
-Date: Tue, 21 May 2024 16:52:36 +0300
+  by orviesa002.jf.intel.com with SMTP; 21 May 2024 06:53:23 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 21 May 2024 16:53:21 +0300
+Date: Tue, 21 May 2024 16:53:21 +0300
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc: gregkh@linuxfoundation.org, lk@c--e.de, u.kleine-koenig@pengutronix.de,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] usb: typec: ucsi_acpi: Add LG Gram quirk
-Message-ID: <ZkynJGchSsg8YQH7@kuha.fi.intel.com>
-References: <5qc55gruhn4pmutiukohauki5dehba6n2k22jgvpt7i3hafkon@v2ng2a33o7vv>
- <5fh2v2dcjjcgg3qgvbhlsf24kfigzzbv3sq5ykjuwyjodbqzsa@kf7crcyswm5y>
+To: Amit Sunil Dhamne <amitsd@google.com>
+Cc: linux@roeck-us.net, gregkh@linuxfoundation.org, megi@xff.cz,
+	badhri@google.com, rdbabiera@google.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v1] usb: typec: tcpm: fix use-after-free case in
+ tcpm_register_source_caps
+Message-ID: <ZkynURTFeB3fu8V6@kuha.fi.intel.com>
+References: <20240514220134.2143181-1-amitsd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,34 +76,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5fh2v2dcjjcgg3qgvbhlsf24kfigzzbv3sq5ykjuwyjodbqzsa@kf7crcyswm5y>
+In-Reply-To: <20240514220134.2143181-1-amitsd@google.com>
 
-On Thu, May 09, 2024 at 04:27:41PM +0100, Diogo Ivo wrote:
-> On Thu, May 09, 2024 at 12:50:36PM GMT, Diogo Ivo wrote:
-> > Some LG Gram laptops report a bogus connector change event after a
-> > GET_PDOS command for the partner's source PDOs, which disappears from
-> > the CCI after acknowledging the command. However, the subsequent
-> > GET_CONNECTOR_STATUS in ucsi_handle_connector_change() still reports
-> > this bogus change in bits 5 and 6, leading to the UCSI core re-checking
-> > the partner's source PDOs and thus to an infinite loop.
-> > 
-> > Fix this by adding a quirk that signals when a potentially buggy GET_PDOS
-> > command is used, checks the status change report and clears it if it is a
-> > bogus event before sending it to the UCSI core.
-> > 
-> > [Sending as RFC both to see if this is a good idea and so that more
-> > users can test it to gather all the models affected by this bug.]
-> > 
-> > Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-> > ---
+On Tue, May 14, 2024 at 03:01:31PM -0700, Amit Sunil Dhamne wrote:
+> There could be a potential use-after-free case in
+> tcpm_register_source_caps(). This could happen when:
+>  * new (say invalid) source caps are advertised
+>  * the existing source caps are unregistered
+>  * tcpm_register_source_caps() returns with an error as
+>    usb_power_delivery_register_capabilities() fails
 > 
-> I just realized that I should be using the {set, test, clear}_bit()
-> functions in the patch I sent, sorry for that. With this in mind it
-> would still be good to hear what you think about it.
+> This causes port->partner_source_caps to hold on to the now freed source
+> caps.
+> 
+> Reset port->partner_source_caps value to NULL after unregistering
+> existing source caps.
+> 
+> Fixes: 230ecdf71a64 ("usb: typec: tcpm: unregister existing source caps before re-registration")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
 
-The quirk looks reasonable to me.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-thanks,
+> ---
+>  drivers/usb/typec/tcpm/tcpm.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index 8a1af08f71b6..be4127ef84e9 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -3014,8 +3014,10 @@ static int tcpm_register_source_caps(struct tcpm_port *port)
+>  	memcpy(caps.pdo, port->source_caps, sizeof(u32) * port->nr_source_caps);
+>  	caps.role = TYPEC_SOURCE;
+>  
+> -	if (cap)
+> +	if (cap) {
+>  		usb_power_delivery_unregister_capabilities(cap);
+> +		port->partner_source_caps = NULL;
+> +	}
+>  
+>  	cap = usb_power_delivery_register_capabilities(port->partner_pd, &caps);
+>  	if (IS_ERR(cap))
+> 
+> base-commit: 51474ab44abf907023a8a875e799b07de461e466
+> -- 
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
 
 -- 
 heikki
