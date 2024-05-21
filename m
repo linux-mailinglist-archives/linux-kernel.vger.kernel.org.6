@@ -1,106 +1,168 @@
-Return-Path: <linux-kernel+bounces-185099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2FCD8CB07B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:29:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2462E8CB07F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D33E31C230A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:29:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F6091F23555
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845E2130A52;
-	Tue, 21 May 2024 14:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280BC13048F;
+	Tue, 21 May 2024 14:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfrQs7E9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="Z0k2WDlB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l/CTsexC"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8571304BA;
-	Tue, 21 May 2024 14:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0171612F392;
+	Tue, 21 May 2024 14:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716301750; cv=none; b=lI/SWp6zHYlX8KlPWpPxGCquwl5HU7lHuKxqwTfJvFS5IxL66pHAVPBlXUQly5RBR7iLhKKZDqnIPRw/6Anw2NPs24XglSI9cNygzAoWHynBaha0Udl62ri26mDtijDgp1zrjAEI20dhsXtShmp2P8ELpGLDpt5Q9xR5dzLAOjA=
+	t=1716301785; cv=none; b=utmNFzOnQwMzOWEVWSFxgJRNJb8WmwT4rZns/S4TdqiqBlPIkr/jwwBB96iD7Cn1IC5/gQdeds004zaWTh/kjQ0xJdttXHr+cL4i2JMTMdhl7qWo4qWqwyoDXAFqFmCnvFPfYo+0C0otTLVqAQZ1TgwJb3uowHmDIvMf0IHY+30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716301750; c=relaxed/simple;
-	bh=Fu9p9Il+lHWvAaKZCxwSLybjKw+hVxEYoGb2TSR6kTo=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=VXQ4ZGAJFgf3/ndSDITWNO0qgmKykgUdcQoGWx8nMdxXeAlZ4GZNfvNFKSXL0nZg5uCphFfTY1Uxv98N/Tremp07qoiscWeTWGrYlsrIjwj1k/mavQEfd1/s6fOLiZix4DAAu6pIU7GpiF6yLN2Oq+yae0ZdmU1uzEQ+BgbTWlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfrQs7E9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62829C2BD11;
-	Tue, 21 May 2024 14:29:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716301749;
-	bh=Fu9p9Il+lHWvAaKZCxwSLybjKw+hVxEYoGb2TSR6kTo=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=dfrQs7E9sX2oHjAle4ssovB93neL23QrrgNDQlGRBQ0NYcLBrcO6+eBBe0Wsrq2Vv
-	 DlHFnCuIbz90VOm+BvLPdFN+UfJFEUM8uf6McztWZm3mmhgKtJidsuxWsvv+p8FtIR
-	 eyVMhwgEHvPD4B3MFeu1x5hVMUU29FjqfAUzUH6LHT6o/Hm+2i0A3sNXvMdNNTjxt/
-	 d1ma3yuUh7vRuEKXolpggP+9VgQGkq3KhCu+hcPQNABHuhQYVC9z0Nod6ww9ZXQIBB
-	 OwzTllk0GQcnhtP8FdjRR36nayP3tLhGHBe2RFxw0wLXmdrrCGnc/MIDqTiSM2vhY7
-	 9E0rMpFAy3Siw==
-From: Kalle Valo <kvalo@kernel.org>
-To: Lin Ma <linma@zju.edu.cn>
-Cc: johannes@sipsolutions.net,  davem@davemloft.net,  edumazet@google.com,
-  kuba@kernel.org,  pabeni@redhat.com,  linux-wireless@vger.kernel.org,
-  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net] wifi: cfg80211: pmsr: use correct nla_get_uX
- functions
-References: <20240521075059.47999-1-linma@zju.edu.cn>
-Date: Tue, 21 May 2024 17:29:04 +0300
-In-Reply-To: <20240521075059.47999-1-linma@zju.edu.cn> (Lin Ma's message of
-	"Tue, 21 May 2024 15:50:59 +0800")
-Message-ID: <87jzjnnsr3.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1716301785; c=relaxed/simple;
+	bh=WeOEdQcoOh5D+TLCdjzZgp7upsvhmMlHiaHH2f4LL0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tp/6iYJnDtiLhrtMqZGutj4z6AM424YDdQvIxDdpolSAIzaaOIsrtnGMz5MAwzk+iKq9fZ4IgMJ16oIpZhPrsh3pjzawkKg0KjFQLCTtTJNLoJUzV2HHS2S9l5vUuPmvu/skleZcngjFm+ta/JLQFEpTPdrV9OxaK/nREabt9Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=Z0k2WDlB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l/CTsexC; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 1B42713823A7;
+	Tue, 21 May 2024 10:29:42 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Tue, 21 May 2024 10:29:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1716301782; x=1716388182; bh=WJ35C0s9XR
+	fN9d5AhSx5pIlmDJ+UA3xXuY4ZoQb5kZo=; b=Z0k2WDlBPJtbEv8GPwr8FfsyP4
+	pJIeCQNKqQIjkDgQKPtUeaot8Pa9gvdxffAqSAkli+e3b01EzrsLWuI6PMyKiE4c
+	u6ZiQUJCiNs8hAOEcNYTGOMw3oy1T3bHaXKPjLpyb936Rw+p/9Kc4XB4MnM3QEcP
+	xCTajLQP3xzzgNFnPQwbwDRe74eLaYuPnOCQFAeWl7sPH3MOFsiYcL6Kqgp0fVnO
+	HxOIVt6Il7I85Md8cCWoIu3BbCmhVwcMZTGsFfaXecEmyHloVLAuU9P72nf8IviP
+	aDXgTyShVvSa8nl7X2EjgZKUkkMkpXu6oBWFzEmWc0fNe/nNqBRnilIp/ELw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716301782; x=1716388182; bh=WJ35C0s9XRfN9d5AhSx5pIlmDJ+U
+	A3xXuY4ZoQb5kZo=; b=l/CTsexCnzGBBlebi1q7RXHziELQNQRDxqaLaNkSB8OZ
+	B1baizheqyfBAnopypCbi3ckVVoqwA89iczj1AruP+JzU7dhtJEq1wP0Ms85aUjp
+	uswnR6O4y4CpEK1MYjM4z2GtAz9fFKAFBSw695RPLS0ZwEP52I48DxnbmZYxEWs3
+	cT3MbpiAB7y7F4DGYrURp8Und9+PRCTO7i/HDhZ7f8R74oTEB+9kqStV4EwExeJt
+	wNe3vVja8pi2dLUfGEH4CUHOhIJpSy/bV9vzVd3+Io2PPnR/wjxNCbWb/5k0oeJW
+	OFNO70BB8+8XfZN9Rm37KlcZisyjD6yoFzR26XD1Hg==
+X-ME-Sender: <xms:1a9MZiNsgGjrDfCMxfBDrw6nSfmX-QIMHhGgL3K247l8R5mUi6_ZwA>
+    <xme:1a9MZg-ZDzLSFLZzi8tI3UMToKyCR9ZRhfxtJaJtb_RAZKqehDgAtqGU7TGU7AGFe
+    UQhKIjOfs0VlAG2xPs>
+X-ME-Received: <xmr:1a9MZpT9W2diIVdzR2Sv2TAKnkE-Y2hXlWXdeRn9TW9gasbBaFM4mYoiKRA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeivddgjeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghh
+    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
+    grthhtvghrnhepueettdetgfejfeffheffffekjeeuveeifeduleegjedutdefffetkeel
+    hfelleetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epthihtghhohesthihtghhohdrphhiiiiirg
+X-ME-Proxy: <xmx:1a9MZitcUQnNB3M_IrtoDN8gDR1y1Nfy0EpUn1Aspl-U4K7hoAhGyw>
+    <xmx:1a9MZqekWo7gkGiEkZed-8sCNf9dEGcL577bFKbmgv_-Wi0LtEsLMg>
+    <xmx:1a9MZm3BYCnCSWWYMp5mVZNIVsPIUwkeljr-F4kHaJ6JfyuYxY-vhQ>
+    <xmx:1a9MZu_aE9XQsdxTzs6Z1eTPNqfiB1GbBjGoFzsyaHssupudRQWTVg>
+    <xmx:1q9MZtuk9PJLI2PmPy-tjTOwp4g-7oCs77FEYQyR5lnd37v3IGhJoP0g>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 21 May 2024 10:29:38 -0400 (EDT)
+Date: Tue, 21 May 2024 08:29:35 -0600
+From: Tycho Andersen <tycho@tycho.pizza>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Jonathan Calmels <jcalmels@3xx0.net>, brauner@kernel.org,
+	ebiederm@xmission.com, Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	David Howells <dhowells@redhat.com>, containers@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
+Message-ID: <Zkyvz122pigJGgEw@tycho.pizza>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-4-jcalmels@3xx0.net>
+ <ZktQZi5iCwxcU0qs@tycho.pizza>
+ <ptixqmplbovxmqy3obybwphsie2xaybfj46xyafdnol7bme4z4@4kwdljmrkdpn>
+ <Zku8839xgFRAEcl+@tycho.pizza>
+ <D1ETFJFE9Y48.1T8I7SIPGFMQ2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D1ETFJFE9Y48.1T8I7SIPGFMQ2@kernel.org>
 
-Lin Ma <linma@zju.edu.cn> writes:
+On Tue, May 21, 2024 at 01:12:57AM +0300, Jarkko Sakkinen wrote:
+> On Tue May 21, 2024 at 12:13 AM EEST, Tycho Andersen wrote:
+> > On Mon, May 20, 2024 at 12:25:27PM -0700, Jonathan Calmels wrote:
+> > > On Mon, May 20, 2024 at 07:30:14AM GMT, Tycho Andersen wrote:
+> > > > there is an ongoing effort (started at [0]) to constify the first arg
+> > > > here, since you're not supposed to write to it. Your usage looks
+> > > > correct to me, so I think all it needs is a literal "const" here.
+> > > 
+> > > Will do, along with the suggestions from Jarkko
+> > > 
+> > > > > +	struct ctl_table t;
+> > > > > +	unsigned long mask_array[2];
+> > > > > +	kernel_cap_t new_mask, *mask;
+> > > > > +	int err;
+> > > > > +
+> > > > > +	if (write && (!capable(CAP_SETPCAP) ||
+> > > > > +		      !capable(CAP_SYS_ADMIN)))
+> > > > > +		return -EPERM;
+> > > > 
+> > > > ...why CAP_SYS_ADMIN? You mention it in the changelog, but don't
+> > > > explain why.
+> > > 
+> > > No reason really, I was hoping we could decide what we want here.
+> > > UMH uses CAP_SYS_MODULE, Serge mentioned adding a new cap maybe.
+> >
+> > I don't have a strong preference between SETPCAP and a new capability,
+> > but I do think it should be just one. SYS_ADMIN is already god mode
+> > enough, IMO.
+> 
+> Sometimes I think would it make more sense to invent something
+> completely new like capabilities but more modern and robust, instead of
+> increasing complexity of a broken mechanism (especially thanks to
+> CAP_MAC_ADMIN).
+> 
+> I kind of liked the idea of privilege tokens both in Symbian and Maemo
+> (have been involved professionally in both). Emphasis on the idea not
+> necessarily on implementation.
+> 
+> Not an LSM but like something that you could use in the place of POSIX
+> caps. Probably quite tedious effort tho because you would need to pull
+> the whole industry with the new thing...
 
-> The commit 9bb7e0f24e7e ("cfg80211: add peer measurement with FTM
-> initiator API") defines four attributes NL80211_PMSR_FTM_REQ_ATTR_
-> {NUM_BURSTS_EXP}/{BURST_PERIOD}/{BURST_DURATION}/{FTMS_PER_BURST} in
-> following ways.
->
-> static const struct nla_policy
-> nl80211_pmsr_ftm_req_attr_policy[NL80211_PMSR_FTM_REQ_ATTR_MAX + 1] = {
->     ...
->     [NL80211_PMSR_FTM_REQ_ATTR_NUM_BURSTS_EXP] =
->         NLA_POLICY_MAX(NLA_U8, 15),
->     [NL80211_PMSR_FTM_REQ_ATTR_BURST_PERIOD] = { .type = NLA_U16 },
->     [NL80211_PMSR_FTM_REQ_ATTR_BURST_DURATION] =
->         NLA_POLICY_MAX(NLA_U8, 15),
->     [NL80211_PMSR_FTM_REQ_ATTR_FTMS_PER_BURST] =
->         NLA_POLICY_MAX(NLA_U8, 31),
->     ...
-> };
->
-> That is, those attributes are expected to be NLA_U8 and NLA_U16 types.
-> However, the consumers of these attributes in `pmsr_parse_ftm` blindly
-> all use `nla_get_u32`, which is incorrect and causes functionality issues
-> on little-endian platforms. Hence, fix them with the correct `nla_get_u8`
-> and `nla_get_u16` functions.
->
-> Fixes: 9bb7e0f24e7e ("cfg80211: add peer measurement with FTM initiator API")
-> Signed-off-by: Lin Ma <linma@zju.edu.cn>
-> ---
-> V1->V2: add wifi prefix in title,
->         mention the policy that defines those attributes as suggested by johannes
->
->  net/wireless/pmsr.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+And then we have LSM hooks, (ns_)capable(), __secure_computing() plus
+a new set of hooks for this new thing sprinkled around. I guess
+kernel developers wouldn't be excited about it, let alone the rest of
+the industry :)
 
-wireless patches go to wireless or wireless-next trees, not net tree.
-But no need to resend because of this.
+Thinking out loud: I wonder if fixing the seccomp TOCTOU against
+pointers would help here. I guess you'd still have issues where your
+policy engine resolves a path arg to open() and that inode changes
+between the decision and the actual vfs access, you have just changed
+the TOCTOU.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Or even scarier: what if you could change the return value at any
+kprobe? :)
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Tycho
 
