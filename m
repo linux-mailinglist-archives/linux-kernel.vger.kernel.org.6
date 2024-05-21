@@ -1,146 +1,143 @@
-Return-Path: <linux-kernel+bounces-184472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F078CA727
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:51:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48DF28CA732
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84E281C20CEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 03:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0A5281FBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 04:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AA21F959;
-	Tue, 21 May 2024 03:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DiMe3lGB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A8425569;
+	Tue, 21 May 2024 04:02:39 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01AE9DDD7
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 03:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B0F6FDC
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 04:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716263469; cv=none; b=jHyDVtWghI4NHGQXICSzDhAzOHFd+gCGIuyaJhhXMNAkyzANvzaH61WS6jUZ0YHXs5LNwbMc/+oshYMHvyoE++3FKyhi6ls63Ed5fweOH8N07i+IxUudcIwP0WbCeWieZyIYte/Tqc6oTdrK0LRIntu2SgGCSF4SDR2JHzVdoug=
+	t=1716264158; cv=none; b=BCQcRNOUulnyfJDAubi10Ch5gro32lX6KaNL6tx3BiZq8h4rCOsNDU3qDIyC4JUSoPNsHcOa6t07IJmpMJ8tJkoV6DUtNvdtPgyPkjjLN5cg5y2C0H/tYTgj24hwQ6Mym2FuhvQlKJ/xeZvyT2Xp+oQs4oCew1yIy2X4jYbznnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716263469; c=relaxed/simple;
-	bh=BCjuTKMiV0cn4O5twtOwrfBUB/gPCarjL14EkA7FQJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g/M05UzTMpt0CftJRoQJTSa62CVkptdHCGrnEUX3dKlzdOTn/cxsC7hYvXvjLH2suLvgzt0Fi8lPMw/aOmu86Woz+z9WCNDcGelN4WdoMk5DJnR2vWoIw9XKKC8eyyg+p+EeQFymphhLoFl354ixF81RznJFz5XMiL4mV8R2Mqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DiMe3lGB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716263466;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+1//QAX2V35y7ue97weY5s6BlfgEJ/aIsjDY5//7erc=;
-	b=DiMe3lGBSS6hFwwho2bGK5dz8MFWj0FVGv2R4rJHZlSNRCAFC3ZF8iTjV4SsucHI6XzLEw
-	+uXF+BGpmGQUiNJmI2azTDmypkotxMTsxfIfRbVjA/4267+GMiaFQE0p51sdpasAb7a3Lc
-	gd8uOxXiYrKwVxIIuMMIIoDppXxCu3k=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-179-ASJivBHvNIG_K8643YWBYA-1; Mon,
- 20 May 2024 23:51:05 -0400
-X-MC-Unique: ASJivBHvNIG_K8643YWBYA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6448429AB3E2;
-	Tue, 21 May 2024 03:51:04 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.65])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 74E2551BF;
-	Tue, 21 May 2024 03:51:03 +0000 (UTC)
-Date: Tue, 21 May 2024 11:51:00 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
-	Milan Broz <gmazyland@gmail.com>,
-	Thomas Staudt <tstaudt@de.ibm.com>,
-	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>,
-	 Jan Pazdziora <jpazdziora@redhat.com>,
-	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Dave Hansen <dave.hansen@intel.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v3 7/7] x86/crash: make the page that stores the dm crypt
- keys inaccessible
-Message-ID: <ZkwZ+PubwfDzEQ4v@MiWiFi-R3L-srv>
-References: <20240425100434.198925-1-coxu@redhat.com>
- <20240425100434.198925-8-coxu@redhat.com>
+	s=arc-20240116; t=1716264158; c=relaxed/simple;
+	bh=jJbxgLd+YWO2Lg+/N7DnuDy51HfRFPtkPt4nTh+4MBA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QOJYXPOVuAALyUwqD4O8FtOllmJQCyQUncQEgdLu4SDd5dbQ7/GZz21P+jLC6lad7+BFsnVhTRGiHtlSSH4+/2wsb5FjOIU4KAzb+adHPhvJzx204K6N2fXwVd+LFmzO25jy2auXKSF4h87OwJX8mK6fS1RuBU5nPTzRD0CloSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7da52a99cbdso1380424939f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2024 21:02:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716264156; x=1716868956;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0yfAWJ5qhF41x1rSSrkKGC+wMZlFsEqb4/oAdzKKOC8=;
+        b=qB8p056NdrOlwStQMrEqjT3qY4OMhR52j4tkn3YsCerqwV0gumVL+eHwtDHwO0SEx+
+         tn04mq9O+HtTfXeEon6S/9FCyikKPfzQr8dt8+yBdJVd3kQO/xUKhbF6pNkYzPjXzKsY
+         v8l0uUZBfe5HCL8DRAWW7+ikQ3jlca8cAgz1k6kiEn/8sNJxYymDrYB5B1OxK7XBzp81
+         30qW8MA1m8t56gySZ4G9Z2Y/uhStyH4cG+Eves6bRXt97cxT9bp8rtP1qzKqSKVJSRGM
+         DZE6EwvaZA36ByMKdrXGamwBQBTubSdJyZqVnbO3V1U2XhhipiOPshbKelXGUqUA6YFm
+         MUxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdMS9i4dREThQh+H+081yzraE4TLoGFxa65FGIu4Vh5YtUqAZ1xsrsNkZh1r48gjlZu4qN6bieFLY+bRsuIDZpxjZrJ5rXA8GLGWOd
+X-Gm-Message-State: AOJu0YzZDKmSre823h3FbhJWc2KgXwkv5XTjZ46OoC9VzJKASqVHrGw5
+	KbgrB0xBvAv934zzrE+K64ao5kVyrQVW6mkWE8/Skz8ERVNKOBTrLqPe/fLakYLCmsA3o38eNN1
+	ZzTjoZBkEIKMvMpsVMKjp6AkhnBPmmAt2/tcB31Hwc9TTzoqf8cL9KXE=
+X-Google-Smtp-Source: AGHT+IEFT/zTHh4X7a2pzSbS/LiikWABh60nqRg30Ez6PJMC0zjbh413k4+WFmwKVpXjOgRUcJEJhKKnczaMTR2/evEVH85mX4Wm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240425100434.198925-8-coxu@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+X-Received: by 2002:a05:6638:7101:b0:488:77ea:f194 with SMTP id
+ 8926c6da1cb9f-4895903263emr2233675173.5.1716264156339; Mon, 20 May 2024
+ 21:02:36 -0700 (PDT)
+Date: Mon, 20 May 2024 21:02:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000612f290618eee3e5@google.com>
+Subject: [syzbot] [wireless?] WARNING in cfg80211_bss_color_notify
+From: syzbot <syzbot+d073f255508305ccb3fd@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 04/25/24 at 06:04pm, Coiby Xu wrote:
-> This adds an addition layer of protection for the saved copy of dm
-> crypt key. Trying to access the saved copy will cause page fault.
-> 
-> Suggested-by: Pingfan Liu <kernelfans@gmail.com>
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
-> ---
->  arch/x86/kernel/machine_kexec_64.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-> index b180d8e497c3..fc0a80f4254e 100644
-> --- a/arch/x86/kernel/machine_kexec_64.c
-> +++ b/arch/x86/kernel/machine_kexec_64.c
-> @@ -545,13 +545,34 @@ static void kexec_mark_crashkres(bool protect)
->  	kexec_mark_range(control, crashk_res.end, protect);
->  }
->  
-> +static void kexec_mark_dm_crypt_keys(bool protect)
-> +{
-> +	unsigned long start_paddr, end_paddr;
-> +	unsigned int nr_pages;
-> +
-> +	if (kexec_crash_image->dm_crypt_keys_addr) {
-> +		start_paddr = kexec_crash_image->dm_crypt_keys_addr;
-> +		end_paddr = start_paddr + kexec_crash_image->dm_crypt_keys_sz - 1;
-> +		nr_pages = (PAGE_ALIGN(end_paddr) - PAGE_ALIGN_DOWN(start_paddr))/PAGE_SIZE;
-> +		if (protect)
-> +			set_memory_np((unsigned long)phys_to_virt(start_paddr), nr_pages);
-> +		else
-> +			__set_memory_prot(
-> +				(unsigned long)phys_to_virt(start_paddr),
-> +				nr_pages,
-> +				__pgprot(_PAGE_PRESENT | _PAGE_NX | _PAGE_RW));
-> +	}
-> +}
-> +
->  void arch_kexec_protect_crashkres(void)
->  {
->  	kexec_mark_crashkres(true);
-> +	kexec_mark_dm_crypt_keys(true);
+Hello,
 
-Really? Are all x86 systems having this dm_crypt_keys and need be
-handled in kdump?
+syzbot found the following issue on:
 
->  }
->  
->  void arch_kexec_unprotect_crashkres(void)
->  {
-> +	kexec_mark_dm_crypt_keys(false);
->  	kexec_mark_crashkres(false);
->  }
->  #endif
-> -- 
-> 2.44.0
-> 
+HEAD commit:    f6f25eebe05f Merge branch 'wangxun-fixes'
+git tree:       net
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11696b5c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bddb81daac38d475
+dashboard link: https://syzkaller.appspot.com/bug?extid=d073f255508305ccb3fd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f9ec92980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1595fa84980000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/10564bcf8b3a/disk-f6f25eeb.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6ac9b53e5395/vmlinux-f6f25eeb.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/be417a358cca/bzImage-f6f25eeb.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d073f255508305ccb3fd@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 2855 at net/wireless/nl80211.c:19469 cfg80211_bss_color_notify+0x5f6/0x8b0 net/wireless/nl80211.c:19469
+Modules linked in:
+CPU: 0 PID: 2855 Comm: kworker/u8:9 Not tainted 6.9.0-syzkaller-05179-gf6f25eebe05f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Workqueue: phy3 ieee80211_color_collision_detection_work
+RIP: 0010:cfg80211_bss_color_notify+0x5f6/0x8b0 net/wireless/nl80211.c:19469
+Code: 00 e8 ee b8 b7 fe 48 83 c4 08 89 c1 c1 f8 1f 21 c8 e9 08 fd ff ff e8 09 96 ba f6 90 0f 0b 90 e9 71 fb ff ff e8 fb 95 ba f6 90 <0f> 0b 90 e9 38 fb ff ff e8 ed 95 ba f6 c6 05 46 6f bb 04 01 90 48
+RSP: 0018:ffffc9000ac37aa0 EFLAGS: 00010293
+RAX: ffffffff8adbc735 RBX: 0000000000000000 RCX: ffff88802b693c00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000ac37bb0 R08: ffffffff8adbc262 R09: 1ffffffff1f593bd
+R10: dffffc0000000000 R11: ffffffff8af73d80 R12: 1ffff92001586f5c
+R13: ffff888022f48000 R14: ffff888022f48cb0 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020001700 CR3: 0000000022822000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ process_one_work kernel/workqueue.c:3267 [inline]
+ process_scheduled_works+0xa10/0x17c0 kernel/workqueue.c:3348
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3429
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
