@@ -1,127 +1,101 @@
-Return-Path: <linux-kernel+bounces-185031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3288CAF9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:45:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A1C8CAF9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9B61C215F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:45:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDAD5283E84
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A097EF1B;
-	Tue, 21 May 2024 13:44:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF3471B48;
-	Tue, 21 May 2024 13:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D3C7EEED;
+	Tue, 21 May 2024 13:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="doSvk6gj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B054455783;
+	Tue, 21 May 2024 13:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716299096; cv=none; b=hkAH603DTHaZSg3PVACUvYIMWUIxDDF8rZE2c6D+3SQ4K3f/9c3arUOBaPNuElyeu/t9y7WfQh7SEWV+1POlUOe5ZzovMDuNlxDA3ySp2H2RTHc39HJpgtE3vSrYpfmEoRjHmzsaKGRataHZToewoSLpI6WJllZ0A7M/CxCaQNI=
+	t=1716299160; cv=none; b=ArVeStcguuuMxGfvVQepUPCB8wFB7abZSX80rwTbB7XFFLB9/y53LbPsLaIej88rd4d6ECVy4ELLrdvibanHg3dVjwm9tZVYkh6RZbzFJNZg+m7IDKKA/CK5VGo99y3ZNvA7/OrWim7+we+bGptZpseX3q2dleFKHFBaKHLeB/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716299096; c=relaxed/simple;
-	bh=H48cizhNNLDxjU+31xIZUJnQnKmSiED2ZFACjcWGzz8=;
+	s=arc-20240116; t=1716299160; c=relaxed/simple;
+	bh=FLQbbXjucJdpPz4isaAj7e59xfrG4oqG7uu7VlLroSY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L9oQofuP5h3u8Q9so1K7nIJ2RsmE4+AmNFr+19SF9OHBGcNPMD06vt8IpWbywDvUVINBpABtyoC/F4whbfUkQ42jZqARMVbl12stc+bx1PZ0E5kPqPdKLvcwY+Vj6i1hb65vShQb/5LK6nD8F23Hg3JubkpVgAVeImQsyIb15so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2DACDA7;
-	Tue, 21 May 2024 06:45:17 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB4663F641;
-	Tue, 21 May 2024 06:44:51 -0700 (PDT)
-Date: Tue, 21 May 2024 14:44:49 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	will@kernel.org, catalin.marinas@arm.com,
-	Mark Brown <broonie@kernel.org>, James Clark <james.clark@arm.com>,
-	Rob Herring <robh@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH V17 3/9] drivers: perf: arm_pmu: Add infrastructure for
- branch stack sampling
-Message-ID: <ZkylUT0R9lwseF4a@J2N7QTR9R3>
-References: <20240405024639.1179064-1-anshuman.khandual@arm.com>
- <20240405024639.1179064-4-anshuman.khandual@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bAoREYrUCUYRgBt+apnefKCquTQ6kj/dnpHK2YMjUUDzMLfAeM/ZqSvlSHW3ZyuSjyH2P18ljjDgOnehQbjoSZok2LXPtAl6PtZapZgK+KKm00+kj/9j9WI4W0zLvruryXxeyteG0d6Zv2F74mPFv3SUPamgtgiDK31R9OG3dPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=doSvk6gj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEEBBC2BD11;
+	Tue, 21 May 2024 13:45:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716299160;
+	bh=FLQbbXjucJdpPz4isaAj7e59xfrG4oqG7uu7VlLroSY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=doSvk6gjtGjiGe+wKSK27hcw9Yl6R5tpaY1HdJYxxTGuXN7EMEt064MbBRUw9Kf8q
+	 E+7V/3YB1xIyuTAqYPuCCXjKyM/9QsjdSSyqsGXjkwRKHlNrn4BqEDCCVWJgcnUWH8
+	 wFQvlANd0en80wsfSwEetQ+HyHW8YaWn6ygJuUZDBRSrZUMIORs/qtHdXce25/83SA
+	 3O9Pidt3H1pRv/3jSbcR32SNPqeVF3VqDWztDZ7PMUqhVygJQo6aQVviI1XXMeIMsA
+	 +gzV9rO74sH5kkGNT4QDbCFDPiA53dFgJediivdlNxDCRQDmhk6Qu8tDO/L5YbgGSU
+	 1mMaWsRf1Gijw==
+Date: Tue, 21 May 2024 15:45:42 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Alexander Aring <alex.aring@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] fhandle: expose u64 mount id to name_to_handle_at(2)
+Message-ID: <20240521-verplanen-fahrschein-392a610d9a0b@brauner>
+References: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240405024639.1179064-4-anshuman.khandual@arm.com>
+In-Reply-To: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
 
-On Fri, Apr 05, 2024 at 08:16:33AM +0530, Anshuman Khandual wrote:
-> In order to support the Branch Record Buffer Extension (BRBE), we need to
-> extend the arm_pmu framework with some basic infrastructure for the branch
-> stack sampling which arm_pmu drivers can opt-in using a new feature flag
-> called 'has_branch_stack'. Subsequent patches will use this to add support
-> for BRBE in the PMUv3 driver.
+On Mon, May 20, 2024 at 05:35:49PM -0400, Aleksa Sarai wrote:
+> Now that we have stabilised the unique 64-bit mount ID interface in
+> statx, we can now provide a race-free way for name_to_handle_at(2) to
+> provide a file handle and corresponding mount without needing to worry
+> about racing with /proc/mountinfo parsing.
+> 
+> As with AT_HANDLE_FID, AT_HANDLE_UNIQUE_MNT_ID reuses a statx AT_* bit
+> that doesn't make sense for name_to_handle_at(2).
+> 
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
 
-Please, just use ther *exact* wording I asked for last time:
+So I think overall this is probably fine (famous last words). If it's
+just about being able to retrieve the new mount id without having to
+take the hit of another statx system call it's indeed a bit much to
+add a revised system call for this. Althoug I did say earlier that I
+wouldn't rule that out.
 
-| In order to support the Branch Record Buffer Extension (BRBE), we need to
-| extend the arm_pmu framework with some basic infrastructure for branch stack
-| sampling which arm_pmu drivers can opt-in to using. Subsequent patches will
-| use this to add support for BRBE in the PMUv3 driver.
+But if we'd that then it'll be a long discussion on the form of the new
+system call and the information it exposes.
 
-At this point in the commit message, the 'has_branch_stack' flag doesn't
-matter, and dropping the 'to' after 'opt-in' makes this painful to read.
+For example, I lack the grey hair needed to understand why
+name_to_handle_at() returns a mount id at all. The pitch in commit
+990d6c2d7aee ("vfs: Add name to file handle conversion support") is that
+the (old) mount id can be used to "lookup file system specific
+information [...] in /proc/<pid>/mountinfo".
 
-> Branch stack sampling support i.e capturing branch records during execution
-> in core perf, rides along with normal HW events being scheduled on the PMU.
-> This prepares ARMV8 PMU framework for branch stack support on relevant PMUs
-> with required HW implementation.
+Granted, that's doable but it'll mean a lot of careful checking to avoid
+races for mount id recycling because they're not even allocated
+cyclically. With lots of containers it becomes even more of an issue. So
+it's doubtful whether exposing the mount id through name_to_handle_at()
+would be something that we'd still do.
 
-Please delete this paragraph.
+So really, if this is just about a use-case where you want to spare the
+additional system call for statx() and you need the mnt_id then
+overloading is probably ok.
 
-> With BRBE, the hardware records branches into a hardware FIFO, which will
-> be sampled by software when perf events overflow. A task may be context-
-> switched an arbitrary number of times between overflows, and to avoid
-> losing samples we need to save the current records when a task is context-
-> switched out. To do these we'll need to use the pmu::sched_task() callback,
-> and we'll also need to allocate some per-task storage space via event flag
-> PERF_ATTACH_TASK_DATA.
-
-[...]
-
->  /* The events for a given PMU register set. */
->  struct pmu_hw_events {
->  	/*
-> @@ -66,6 +78,17 @@ struct pmu_hw_events {
->  	struct arm_pmu		*percpu_pmu;
->  
->  	int irq;
-> +
-> +	struct branch_records	*branches;
-> +
-> +	/* Active context for task events */
-> +	void			*branch_context;
-> +
-> +	/* Active events requesting branch records */
-> +	unsigned int		branch_users;
-> +
-> +	/* Active branch sample type filters */
-> +	unsigned long		branch_sample_type;
->  };
-
-At this point in the series I understand why we have the 'branches' and
-'branch_users' fields, but the 'branch_context' and 'branch_sample_type'
-fields haven't been introduced and are not obvious.
-
-What exactly is branch_context, and why is that a 'void *' ?
-
-I can understand if that's a PMU-specific structure to track the active
-branch records, but if so I don't understand why 'branch_sample_type'
-isn't folded into that.
-
-Mark.
+But it remains an unpleasant thing to look at.
 
