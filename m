@@ -1,133 +1,143 @@
-Return-Path: <linux-kernel+bounces-185307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10988CB34B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:06:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB478CB34D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54CCD282E12
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:06:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 068D4282C9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725EA7F7CE;
-	Tue, 21 May 2024 18:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF6F3F8C7;
+	Tue, 21 May 2024 18:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EByw0BMn"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="N7iluzI5"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C77023775
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C449E23775
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716314780; cv=none; b=IhrSptMn5UcPGNDotVl4La9X6p0YOu/K2zYmgw1uSqGDH2TmWa0ObMj4O9lQ/0O05qxQLE1un6ztodeb/Iih57xm5+A24bYUse1bB7JddbLUpE9qRyt0FPov2F7WE/gtRncDQEyZ8xqkf5oG7ZoUE/LYKl8L4M8RHG2u0Rx/4hE=
+	t=1716314863; cv=none; b=OAU0OBSbfOBcc/rea5Rza3yAjU0GY51co2qGyjFg6qg8LbEsSooW6/jzhWHM11v/tVx7bblEh/Gjcff8AE5EtHeiKjuSF8U7mqiCcKtRbGvQdJYGFpaHWCt2pqD3Lpwttwd30S2sKvVJpxmE+SfDpHGUDwQy/PNg5odFkm9BSOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716314780; c=relaxed/simple;
-	bh=VESUA081O2BuGOzfM9+GtLIpJVbkrvttt9G2fR8/590=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JoOA8p0ws1Zx8N++dS1fvFP8lc33700DyT5cQ5H7Ym4YDoO4cXtIdg3yOFGG2cC78FNtgOeRskeaD42l01HQGqpPfnlprU+BoC3Ni/1zaY35lJHhvz5eqbGZc+fCmI01rUtdPUgU0wsatuscs7r016np5jdQbOde+apSJ37+81s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EByw0BMn; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e724bc466fso32294941fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:06:18 -0700 (PDT)
+	s=arc-20240116; t=1716314863; c=relaxed/simple;
+	bh=hKvqSaKigwC2kOJTZpuzetKFHumzoF4Vh0lRuiCiWp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZKygb6g4RZuSYRXBqKoRGzkxK+MDU9yCyM2aQecEVahi/2QoZUaLQ88tKbBIHXbCYJi6VnmGL2M5wquPjneH5I70VFX1oogEstYk4861hDkBfWkZZyKotz3V7nKOmCeGN00GahMGvKmdK3OTAeQP5es0LZzejyZH2Z6nvbAocug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=N7iluzI5; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-575070cff74so1396401a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:07:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1716314776; x=1716919576; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=whlt1Bnhny8LtS/uyW4M7JjDCz3FGkigD6pudiqezR8=;
-        b=EByw0BMnti4DbVy/XjlPhtW1y5PFzSQmqbUj9oz1k0/7IeeqwNAl1VlixzNZ9pypw/
-         SOBkVQrrcRAc153776SPCK0i9U6FBOGFUoZVWHZcQw6WfH+majyey69VlZiLKiazTOC7
-         8A6Qs+gFbLeTGXH6GRTVUXDdLQ4/sFJ4rtV3Y=
+        d=ffwll.ch; s=google; t=1716314860; x=1716919660; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HSHHqF9+86a45LMERrG9B7L07T4eSiePeVoVM2YlIps=;
+        b=N7iluzI5BB1YB40BlEH13P2pb+3KYe+o4br2uu4ha4oNsdOC7zUcp3LwMzCybf3EpH
+         3FpJHxB/2IdAW/511FWbiQQfqrUMejg+atSeGaL8734PSpJjVsq8nbtvqB8J8rDsnDy7
+         qS0iiyjyb1vUUYGlT0oD7EbOvVY5MTYNUZ8dM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716314776; x=1716919576;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=whlt1Bnhny8LtS/uyW4M7JjDCz3FGkigD6pudiqezR8=;
-        b=I7H5y0n9CI5RTf13hDZjhH2Zl4uT5nb78zT7tY5unFMNQp3Sb0BxsakNEmX4jEPc2k
-         SRnViT6ezz4UYs/Gdw6CrGSKoYXSevyvXRxU9tFX/RodkQCjyFFhsLg9S8RtEiD6skJG
-         41NrUwy28pO0QE4os02vrBC/wjFrT9WGah2G7Sp+rV6xCihNwLpMbuodTcuOMTRO31zx
-         9IdpDb6UoR4VhwUG0fG8bGdfNTB1dW4fUA9ojZWjmTnlD1kr1MUV/kv3V8BvJoNKdVZW
-         vowrHzs3vjvc79VIfjMeRjEzjW1mpPkpZWrj6Ho/fuzdhaItG8FwOwZ2/XkDQ9iaW7Bg
-         Af8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWmG+tgXCtHveE6Lt4pA79CVtuuYWGcbKX1sfyKPrn5yf8hjaYrEgGQbSEu8nrWxBcwm98GTKTYcCdpVAIjicR2gvdXqp0Gqr5p72NO
-X-Gm-Message-State: AOJu0YzZ1sx7Z2Mk6+DYfsHkVz9J7wXUQN44LUdCj8lZ78zWwkbjdepr
-	iEHuTHPBssgKM1XXDHmFjlzSjPiAS4FfHeS4EKd1fLw2KkLyQi7I2v3zWYbDaIljy4UfJwIqn/G
-	q6nJABA==
-X-Google-Smtp-Source: AGHT+IHgFvZM2Kj8lhUGjYeWTyiZK14gk4MWVonD9DpDMZ2u7yd+90saBdwFfV7MN++InMaicQca/A==
-X-Received: by 2002:a2e:751:0:b0:2e6:8b17:ca10 with SMTP id 38308e7fff4ca-2e68b17cd3bmr216526811fa.13.1716314776496;
-        Tue, 21 May 2024 11:06:16 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d0ce27d9sm37312001fa.40.2024.05.21.11.06.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 11:06:15 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51f71e4970bso6879214e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:06:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUh3xjrF3NPq/H3qxeL+dlPHlwdTxYANPCRvBfpnLnN3YgZ2GJkeRWFOQ4D3+QRtXut7s7lHvqzQ1LAFYAVj+piJxZuJIObpri2Qhvk
-X-Received: by 2002:ac2:494d:0:b0:51b:4df3:540e with SMTP id
- 2adb3069b0e04-52210277cfamr27576548e87.65.1716314775318; Tue, 21 May 2024
- 11:06:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716314860; x=1716919660;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HSHHqF9+86a45LMERrG9B7L07T4eSiePeVoVM2YlIps=;
+        b=nd1+WHFnWZFl1rx/p2cyrOzO4kizMc2IqJC8A1htWtqa4R54ALCTGuw+VIj7Thb/SE
+         rV1B2CpQCsGHrXJl+eUe5+MCJ14NyjidGuY2IzXhZkOM9VImJEYVLW5dGHj6W7hAxsau
+         GSBJuBlkWeIzkYkIXuGoOQ+cN78CLx4+QLmCnuU+9lY0EtLGzVs+X/0nrDxidVj+5NHu
+         Dy8I6PiTVhzU5yNSAsthJbnRg/aAMZ9yH86/YwoFTfBWqcjQy64EP9CwZqkjhqsMtKYL
+         3XFfzslMhkXhE6LUTQokXAEGFubUSoevEHVHu4HfxkHHZ5NofRmU8ys4r2hExhAJqFFc
+         HHlw==
+X-Gm-Message-State: AOJu0YwLuM71oo4MefKAGD9AR7vDVTSyBIIV7MYEkuIj65B6LF8I8eGC
+	HYlNB6xqAa7uzkyLjeWhOiaqHO34oowRGO6P/2Fu1BmjuhD9DFw7KAERelRwlW4=
+X-Google-Smtp-Source: AGHT+IFRKXct57H1SoEiiz3mRXHTN9XDhZ0JE7tJW8JJy+JXMmTBDEISGYZ5N+PBopuxsq318R4L+g==
+X-Received: by 2002:aa7:ce06:0:b0:575:96a:5ccc with SMTP id 4fb4d7f45d1cf-575096a5d0emr10470410a12.3.1716314859880;
+        Tue, 21 May 2024 11:07:39 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea6586sm17028153a12.14.2024.05.21.11.07.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 11:07:39 -0700 (PDT)
+Date: Tue, 21 May 2024 20:07:37 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Oded Gabbay <ogabbay@kernel.org>
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Jason Gunthorpe <jgg@nvidia.com>, Ofir Bitton <obitton@habana.ai>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Subject: Re: [PATCH 1/2] MAINTAINERS: Change habanalabs maintainer and git
+ repo path
+Message-ID: <Zkzi6WS90yHna7Lk@phenom.ffwll.local>
+Mail-Followup-To: Oded Gabbay <ogabbay@kernel.org>,
+	linux-kernel@vger.kernel.org, David Airlie <airlied@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Jason Gunthorpe <jgg@nvidia.com>, Ofir Bitton <obitton@habana.ai>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+References: <20240515162222.12958-1-ogabbay@kernel.org>
+ <20240515162222.12958-2-ogabbay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <o89373n4-3oq5-25qr-op7n-55p9657r96o8@vanv.qr> <CAHk-=wjxdtkFMB8BPYpU3JedjAsva3XXuzwxtzKoMwQ2e8zRzw@mail.gmail.com>
- <ZkvO-h7AsWnj4gaZ@slm.duckdns.org> <CALOAHbCYpV1ubO3Z3hjMWCQnSmGd9-KYARY29p9OnZxMhXKs4g@mail.gmail.com>
-In-Reply-To: <CALOAHbCYpV1ubO3Z3hjMWCQnSmGd9-KYARY29p9OnZxMhXKs4g@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 21 May 2024 11:05:58 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj9gFa31JiMhwN6aw7gtwpkbAJ76fYvT5wLL_tMfRF77g@mail.gmail.com>
-Message-ID: <CAHk-=wj9gFa31JiMhwN6aw7gtwpkbAJ76fYvT5wLL_tMfRF77g@mail.gmail.com>
-Subject: Re: [PATCH workqueue/for-6.10-fixes] workqueue: Refactor worker ID
- formatting and make wq_worker_comm() use full ID string
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>, Jan Engelhardt <jengelh@inai.de>, Craig Small <csmall@enc.com.au>, 
-	linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515162222.12958-2-ogabbay@kernel.org>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-On Mon, 20 May 2024 at 19:34, Yafang Shao <laoar.shao@gmail.com> wrote:
->
-> We discussed extending it to 24 characters several years ago [0], but
-> some userspace tools might break.
+On Wed, May 15, 2024 at 07:22:21PM +0300, Oded Gabbay wrote:
+> Because I left habana, Ofir Bitton is now the habanalabs driver
+> maintainer.
+> 
+> The git repo also changed location to the Habana GitHub website.
+> 
+> Signed-off-by: Oded Gabbay <ogabbay@kernel.org>
 
-Well, the fact that we already expose names longer than 16 bytes in
-/proc means that at least *that* side of it could use an extended
-comm[] array.
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Yes, some other interfaces might want to still use a 16-byte limit as
-the length for the buffers they use (tracing?) but I suspect we could
-make the comm[] array easily bigger.
+I'm assuming Ofir will include this in the first pr for drm.git.
+-Sima
 
-But what I suspect we should do *first* is to try to get rid of a lot
-of the "current->comm" users. One of the most common uses is purely
-for printing, and we could actually just add a new '%p' pointer for
-printing the current name. That would allow our vsprintf() code to not
-just use tsk->comm, but to use the full_name for threads etc.
+> ---
+>  MAINTAINERS | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index abd4dbe2c653..5bd45a919aff 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9431,11 +9431,11 @@ S:	Maintained
+>  F:	block/partitions/efi.*
+>  
+>  HABANALABS PCI DRIVER
+> -M:	Oded Gabbay <ogabbay@kernel.org>
+> +M:	Ofir Bitton <obitton@habana.ai>
+>  L:	dri-devel@lists.freedesktop.org
+>  S:	Supported
+>  C:	irc://irc.oftc.net/dri-devel
+> -T:	git https://git.kernel.org/pub/scm/linux/kernel/git/ogabbay/linux.git
+> +T:	git https://github.com/HabanaAI/drivers.accel.habanalabs.kernel.git
+>  F:	Documentation/ABI/testing/debugfs-driver-habanalabs
+>  F:	Documentation/ABI/testing/sysfs-driver-habanalabs
+>  F:	drivers/accel/habanalabs/
+> -- 
+> 2.34.1
+> 
 
-So instead of
-
-   printf("%s ..", tsk->comm..);
-
-we could have something like
-
-   printf("%pc ..", tsk);
-
-to print the name of the task.
-
-That would get rid of a lot of the bare ->comm[] uses, and then the
-rest should probably use proper wrappers for copying the data (ie
-using 'get_task_comm()' etc).
-
-That would not only pick up the better names for printk and oopses, it
-would also make future cleanups simpler (for example, I'd love to get
-rid of the 'comm' name entirely, and replace it with 'exe_name[24]'
-and have the compiler just notice when somebody is trying to access
-'comm' directly).
-
-            Linus
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
