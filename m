@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-184500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060708CA796
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:15:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E568CA79A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96FE1B22327
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:15:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53BD11F22871
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 05:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6244A405E6;
-	Tue, 21 May 2024 05:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AA2405E6;
+	Tue, 21 May 2024 05:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gzrO7glz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hdr1VATd"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E731BF31;
-	Tue, 21 May 2024 05:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF04256A;
+	Tue, 21 May 2024 05:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716268531; cv=none; b=n+zWvu0XYtYaAsLj/hjyt+Fh3zvbqQ7Ev8YnoL+pWHvcTR8FgWigpeg7qP7R3A1FEnzYpjirFeibdZj3HUl7Nr3HUmZl2oW2oZ7B0uiC3ehDgezfdQdw8jqiM59YZXFPBnVU8pymBG70pXLRe+uqQRjFL1GNrQ92+H+1Nt/PBd4=
+	t=1716268620; cv=none; b=LwlXm5gWZAXmkgRxeGfXGJNkyak0AOI39+P9O6hSNW+yRDEtGL/P06pZSshzA3LHxYijjFvrpypcMOkbDePWm5ZFAvL7ObZUJnnJBPaAoIjuZE7VTZngm3s+MnPBXPO1YJUisHGqC7+5xBFznspnjmhjnBr3jHcH1fdC142zxxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716268531; c=relaxed/simple;
-	bh=vFv6DJQbTNFYud7DjAOJ9Oiu/jUCZI9/sQAgG3QA0sc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nJ5k5YZKh6z9SC67zM6QcvJnACqeGv8vQuNMWCVmgOXqlZiYTc3uLdlZWYd4eThNwXDaLAVc5uKHpVJ+bx3M/i3c7mmripomaJlrKWjfSXp45Kwtk71daHHfREz75ocpygLilzsbQnB/3ndfopOl+zVIKvtJikoclpsZ/KGO0pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gzrO7glz; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716268531; x=1747804531;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vFv6DJQbTNFYud7DjAOJ9Oiu/jUCZI9/sQAgG3QA0sc=;
-  b=gzrO7glztyyA2exFIQGMCLlxNU1z6/Z4Cty1KZ0ts/tc0K2pjNMVQwzp
-   MrKrQTCd0iydVWPNTIH6mpVzwnLMJ/QzJOWdk4RisZjqoUbpGGd2Kx+yO
-   2PoNflUBTmdCC3xqg+eMJ8aKbgdjODIqdVob0tJQ8jI1JaLjIxEhheBOl
-   w3YTzgz/XeTHdsXSRgHZw/oyQXZCu7A2rWe+aIIXVIyeJloGE314IehTX
-   Jh4RMyGPJQYtW95UfkqhESRYiSBojOZ5Vhnb8AJu9Exg3RmDPPn993NzV
-   rgh2rTMYp+cfUctp6DgAHRjo/7FdDHEl0kViZaVui3IBK+WK6V4XInHn5
-   g==;
-X-CSE-ConnectionGUID: zuOhdeWRSIe4zDJ+ixQa/w==
-X-CSE-MsgGUID: 7XlTP8jfTwywCU0j3luDVQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="29958977"
-X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="29958977"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 22:15:30 -0700
-X-CSE-ConnectionGUID: wYlcXpOhRMagvsD64nYFdQ==
-X-CSE-MsgGUID: 6GmCX/kFRM6fGEXleLbasQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="37313660"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa003.fm.intel.com with ESMTP; 20 May 2024 22:15:26 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 8F675179; Tue, 21 May 2024 08:15:25 +0300 (EEST)
-Date: Tue, 21 May 2024 08:15:25 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Gia <giacomo.gio@gmail.com>
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"kernel@micha.zone" <kernel@micha.zone>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	Benjamin =?utf-8?Q?B=C3=B6hmke?= <benjamin@boehmke.net>,
-	"S, Sanath" <Sanath.S@amd.com>
-Subject: Re: [REGRESSION][BISECTED] "xHCI host controller not responding,
- assume dead" on stable kernel > 6.8.7
-Message-ID: <20240521051525.GL1421138@black.fi.intel.com>
-References: <CAHe5sWavQcUTg2zTYaryRsMywSBgBgETG=R1jRexg4qDqwCfdw@mail.gmail.com>
- <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
- <lqdpk7lopqq4jn22mycxgg6ps4yfs7hcca33tqb2oy6jxc2y7p@rhjjbzs6wigu>
- <611f8200-8e0e-40e4-aff4-cc2c55dc6354@amd.com>
- <CAHe5sWY_YJsyiuwf2TsfRTS9AoGoYh4+UxkkZZ0G9z2pXfbnzg@mail.gmail.com>
+	s=arc-20240116; t=1716268620; c=relaxed/simple;
+	bh=/s6qGPTiO3NdFoPJ8/vp10uRHmTzmRiDeMvPwnZ8c5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I4i9xNcKrJBO4hn8MWsSiq1KkOyyP19ieDLCM9ikauqSo4no0gsNGYfwcgKfJn5FOhuAZ3SmhPZhKBerf+XYpg8i/+TOFEU7TOPJ/0TD6a+MVUJo0VXFqAQK/42MpA+WIOyzIO01nBciMcN7BY5BxINYNj6knV7+7EfV0AfFqiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hdr1VATd; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716268594; x=1716873394; i=markus.elfring@web.de;
+	bh=hgUwu3svSa/mKw/B4ZxaOIDnZq+qTy2nIfXUeSQJiaw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=hdr1VATdqSfzqdqxwbRX6qFA7xw6+YPfKYJY39hNnw1C9+FhJfxLSaJw18zxGScm
+	 8ouY2p3XlX3q4ad3eT1kFSfbiRwFfF4HeeL5dseJF+8fB6MTfD1C0xoOsFThqC/Ws
+	 B7kBY3L3MxSSKVsYlMwtdqO8+BGNRNcKK7N44agWCWt/pQUgX3v4F5i3a9a5QiFuc
+	 aiTQHpXzSrlX/vyjYLlHpox8JhKoGik2LiJduA/3FGkLZVpX6wpXmRE5wESNhaNmG
+	 amCWJcwe0Fc91MHCFGngIWsWzwVCB9nw6uu4J3zpk6fU8iNq1b6IpSflxUs1RIM+l
+	 VrARuW8i8nfkW7uqhw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mr7eu-1svFS813mI-00oDwt; Tue, 21
+ May 2024 07:16:34 +0200
+Message-ID: <51368bcf-d2e3-42cc-a112-a1a485f29c73@web.de>
+Date: Tue, 21 May 2024 07:15:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHe5sWY_YJsyiuwf2TsfRTS9AoGoYh4+UxkkZZ0G9z2pXfbnzg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2] platform/x86: ISST: fix use-after-free in
+ tpmi_sst_dev_remove()
+To: Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Dan Carpenter <error27@gmail.com>
+References: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
+ <d5203ff5-8ed4-48ea-8e58-a2e6680b0542@web.de>
+ <6d1bf351-77cc-7fe9-2d62-8bd99789e4f1@linux.intel.com>
+ <d73fe99b-dea3-4792-aa1c-c3317f296003@web.de>
+ <5287fc2e-91c5-442b-b66c-6eb1fe334ce4@redhat.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <5287fc2e-91c5-442b-b66c-6eb1fe334ce4@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:t7NUvlE8czJwXU7Bpl/yyyB58A8Ut98ImsBGm7E04hmHCtuNbgN
+ 4MfJyi7qJtSUk0liZMfMjfw4Nd5s4AicD223LMbmD5W4p5lUd5JmAvCncdA+rfArMB09bId
+ cTNdTWZdc6qKrIszMGzQfMpTWWW7SW95S1iORJdhQHpRvHFBQC70VKfnJMKQZCWyy1OypSB
+ ND0a0yhmys61uVMfFKurw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7edThkPRkf0=;g2aiRURtDsylLBOGFMPs2cSvVjE
+ ZmTdV8DCJsVx1y9cVHUz3zWOexys94PikniTlsZUQ4eR7TzrmHEkYX1hhXvg4jom8OtgnSRa0
+ KJpz8ZfFUTrAU3fsCD17O39noWsaRuJDOoYBuYCCHms/mbbNWsVgEgBtzolbaKh3dT8eTLrpf
+ hHhEKIW4D8Th2+L8n23qPFLz2+mmFyINzsHSmqUk16Jqz+8y7Zlgfrn3q1Xsx5hDyfKaNcAiE
+ HDrDLfnrlVTkmnntGfXUOi9XgowS8tgm4nxwGsamu28EhbUeL2unigRYhddRo9a/BoP0suipY
+ vYRvZ1IIccAPPieCNx/DTeodVUthcbm0EQsvk43zQK1mJyFMDijaTFvCKjso+q6bQV/14Ef5b
+ ACjCPiZWeekFYny6rCKcyrlYS34bRZInaHtDafe5zdKKOVDBqlK2DgqrrC5ZPr/k/+kUHmasy
+ BtCSlnI5Zl38JdylnwaUUG8/LSgj2Z4n3VSWXmwJ1GwIyZsmLbItjWP1TIWr7+DaUqlqsXpdD
+ v5LXAfD3kxP0VUMhuStuixaE+G2qXQbLsQt7/xpRN7sHNh3PpyU9WSuhs+JmY7xC7maPkMyet
+ EuNNFbOQa8j0JHrb5ubx28yV0EwmaSL9GkM5VH5YGbFA9gLXpgthru7e0HkYLIQBlx5GB02vk
+ RXKyBuP+35V2Q+aCW6twP45h6E3lZl5EOtCMyM7TQIIlefKDqKR2zkvnxibfpLEA9CB2vMSEq
+ vY+spUyfjK5avAgiS+F5St/YuCyL8UokdKVAhIgtwG4CD7aRltzP2BV4l4g99Dtm4y1MeAjNh
+ TNVxgpQqWdCVhcQGkB+w+cmAnwAoWCqmL3Xuzfa9sb+vM=
 
-Hi,
+>>>> =E2=80=A6
+>>>>> Fix this by reordering the kfree() post the dereference.
+=E2=80=A6
+> The original wording of the commit message really is fine as is,
+> I see no need for Harshit to send a new version and I plan to
+> merge this as is.
 
-On Mon, May 20, 2024 at 05:57:42PM +0200, Gia wrote:
-> Hi Mario,
-> 
-> In my case in both cases the value for:
-> 
-> $ cat /sys/bus/thunderbolt/devices/domain0/iommu_dma_protection
-> 
-> is 0.
-> 
-> Output of sudo journalctl -k with kernel option thunderbolt.dyndbg=+p:
-> https://codeshare.io/qAXLoj
-> 
-> Output of sudo dmesg with kernel option thunderbolt.dyndbg=+p:
-> https://codeshare.io/zlPgRb
+Are there opportunities remaining to improve the discussed wording?
 
-I see you have "pcie_aspm=off" in the kernel command line. That kind of
-affects things. Can you drop that and see if it changes anything? And
-also provide a new full dmesg with "thunderbolt.dyndbg=+p" in the
-command line (dropping pcie_aspm_off)?
+1. https://en.wiktionary.org/wiki/post#Etymology_1
 
-Also is there any particular reason you have it there?
+2. https://en.wiktionary.org/wiki/reorder
+
+3. Function call indication?
+   https://elixir.bootlin.com/linux/v6.9.1/source/mm/slub.c#L4371
+
+4. Rephrasing of =E2=80=9CFix this by =E2=80=A6=E2=80=9D?
+
+5. https://en.wikipedia.org/wiki/Dangling_pointer#Cause_of_dangling_pointe=
+rs
+
+6. https://wiki.sei.cmu.edu/confluence/display/c/MEM30-C.+Do+not+access+fr=
+eed+memory#MEM30C.Donotaccessfreedmemory-AutomatedDetection
+
+7. https://en.wikipedia.org/wiki/Code_sanitizer#KernelAddressSanitizer
+
+
+Regards,
+Markus
 
