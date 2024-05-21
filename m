@@ -1,87 +1,147 @@
-Return-Path: <linux-kernel+bounces-185119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8D98CB0BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:50:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A01E8CB0BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 16:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BC14B23ED6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1652835E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499D2130A54;
-	Tue, 21 May 2024 14:50:08 +0000 (UTC)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898D114290C;
+	Tue, 21 May 2024 14:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=unstable.cc header.i=a@unstable.cc header.b="g1r8ZGJC"
+Received: from wilbur.contactoffice.com (wilbur.contactoffice.com [212.3.242.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827AC762E0;
-	Tue, 21 May 2024 14:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB831E87C;
+	Tue, 21 May 2024 14:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.3.242.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716303007; cv=none; b=q6DlGYAxerBE+cDdCTAWNzOk3qqw7QZtVhcAMSzo4Z+wI2sYSdq2P0aP+GhDaMX4bT0VIOgzbdaXN8W/hRlVvKqmcoGOnxqlfLsYmaWWEH+1I6Lk/T9dA4JKzZcOIcDaO1/xP/jDz9WUHq4oN4Gv2gzj0C8OzJzywELq4Dh18D8=
+	t=1716303036; cv=none; b=a/CZXYCqsJBfD0FgqGibQzskUx5XH1HiBkOT4cUOn6qAVlhYHz9w7kVOVGEzYjtbzfRgxicyvodCgVPHkMGldI67cs++AY3BUs62BQelCJWlLmlvYps4azWYHXO9MsnEmwHLeeXl6+/ZR7ZXrw5zEklHp+ivuVwh9l93EJguyr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716303007; c=relaxed/simple;
-	bh=pebubPRPXXfyFCR8L7jtLdsUm4lQUmAXpv6njO/hTno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i9pc6b1jjKhh9qU3YfPTCB06O4mcHk/ahpg7XL5LjGjo9xEadijKuR7atklEAR2ddnn3TWwoo6g+ecT9+TmjPDzrpose1bQOhywAVc8dxHnDxlEi4pUyqSh50luYXaIGDmHMDqYSYPTm/AVJdmf62PRpRWBwtBlAFcsLdtynv0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ecd9a81966so1819115ad.0;
-        Tue, 21 May 2024 07:50:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716303006; x=1716907806;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QwzjLH40P8V9E/pVlXPrZq55s5peR2Op7oBzdA+LPLM=;
-        b=bFKIQhh9Blu3TXGfUt9PmCzf/dn4x2nNzF2u2SLZqMER6xXB6Dg55xmCUR+ezlnP0C
-         3IleKloWBMW1EvbgZ/vk3xFwEfA/z+26ab/5GP3EKz7cv9xKhd6PtnRhb6N22cyEBCNP
-         EVYSb/8z/s3krblL54nVSHnH9L24xu0maPyngqcg2ndG0kSCk9YBztHfhH/+oWpyy7bu
-         CW300XjtB3UJSebyfWHoTXVu6t2BczOACimUxfkdLz6WJMba6J67RpcnOoTTJdfCWBYO
-         N9c7YoE+dt+tbASwRfBodT8Cr2SUI5V/S51jg7QjZr3WWudiYspfoi2y4Jm/WBQI9i+B
-         dqEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNJRugNOTGS1XwT8jNxzUuuCeaD+wwVlB24bnBjX+uvRYWk0x/QUshZ60wtKMy5D6kG0vOH6Fz06jLP0i+6U0dhGXhHdojgreublpWaOQFQnwtrH7xA+azDSmiNJ08XXM0G1lIjM8W
-X-Gm-Message-State: AOJu0Yy7akPTyi9fx18kOmykoKQ6h1+qX6UTotxgqd4INlvI1MDCbDB3
-	V+VwoSRyi+FpgyiA3SPwDBXL2DGfNEZHK6/dzAE5uoY683ZOG9YO
-X-Google-Smtp-Source: AGHT+IFqkbX9fcM93qNGYYELn9oB3kXdWgI0rAcxzTUvgY0Z1FuwpiabK9+9x9fAXjhm7RJagNFfkw==
-X-Received: by 2002:a17:902:f78a:b0:1f3:14c:c2c5 with SMTP id d9443c01a7336-1f3014cc5cfmr75332335ad.31.1716303005705;
-        Tue, 21 May 2024 07:50:05 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f2f9878c3fsm45998555ad.30.2024.05.21.07.50.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 07:50:05 -0700 (PDT)
-Date: Tue, 21 May 2024 23:50:03 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Niklas Cassel <cassel@kernel.org>,
-	bhelgaas@google.com, mani@kernel.org, Frank Li <Frank.Li@nxp.com>,
-	imx@lists.linux.dev, jdmason@kudzu.us, jingoohan1@gmail.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	lpieralisi@kernel.org, robh@kernel.org
-Subject: Re: [PATCH v4 1/1] PCI: dwc: Fix index 0 incorrectly being
- interpreted as a free ATU slot
-Message-ID: <20240521145003.GA241395@rocinante>
-References: <20240521141431.GA25673@bhelgaas>
- <b7a5e9c2-d2b3-4c99-8628-f48581f5d1ad@kernel.org>
+	s=arc-20240116; t=1716303036; c=relaxed/simple;
+	bh=m5joeQgS5ScfS+qukuUUac9hQNUzKQ5pTLsn+sKIlt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aKTbxAIU0LD3qqByBpGfEYi1ywAtd70Hylo+MVAjbSDa7PYPdZJSmxWpDqqy+YEVmU07vPuXVyIePwrZOnv/wVwfrLpgXVKKRLL7OBDXFHmkrheP/t6EPWTydPziM5JOPRz91TkivlBuA/zbBi9jXWYG/EOBX9rV9TjCzBtcvnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unstable.cc; spf=pass smtp.mailfrom=unstable.cc; dkim=pass (2048-bit key) header.d=unstable.cc header.i=a@unstable.cc header.b=g1r8ZGJC; arc=none smtp.client-ip=212.3.242.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unstable.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unstable.cc
+Received: from smtpauth2.co-bxl (smtpauth2.co-bxl [10.2.0.24])
+	by wilbur.contactoffice.com (Postfix) with ESMTP id 085FC8BB;
+	Tue, 21 May 2024 16:50:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1716303029;
+	s=20220809-q8oc; d=unstable.cc; i=a@unstable.cc;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	l=2420; bh=MTWDyIfN1nMlCSjPE8NjqxUc6JP4iiU+F5dmQzZPITE=;
+	b=g1r8ZGJCvPKEJVDzNsmbjEr/8t9llqk4+N4hhyd59SoskJ/tnKd4gw9bnZX1W6hg
+	cPhrz8+vGFbnC35LOKEaLPQKAWyhQgt7BfFJXtR0KmBaq7gQKcGwni4OWTnc58Apppv
+	IbRZkeccQZZNu3+5fcK2mC6sInP0giNjk3KIv03+uwMRRzzZg4lhbFezthDktl4QDXo
+	abDSwkVIRsKI0HcfHKtVobpCTvf6QgXBJzR4/XatSr93KNA7NvZduB9/mBvhaN5ps0x
+	Deod4iTikmSVuIUxgWdW1A5lTTJxiW9fL6HfHUibzLyWMfGEDJhhORiZRm1LRGW2QgG
+	/aLeLJILNQ==
+Received: by smtp.mailfence.com with ESMTPSA ; Tue, 21 May 2024 16:50:26 +0200 (CEST)
+Message-ID: <e9a67bc5-4abe-4a91-b2ca-26e64e2abac3@unstable.cc>
+Date: Tue, 21 May 2024 16:51:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7a5e9c2-d2b3-4c99-8628-f48581f5d1ad@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: cfg80211: Lock wiphy in cfg80211_get_station
+To: Remi Pommarel <repk@triplefau.lt>,
+ Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, b.a.t.m.a.n@lists.open-mesh.org,
+ linux-kernel@vger.kernel.org
+References: <983b24a6a176e0800c01aedcd74480d9b551cb13.1716046653.git.repk@triplefau.lt>
+ <cef03d6c-7be8-4527-b38b-eadca2789f9b@unstable.cc> <ZkyQfL6JjJBTHtwN@pilgrim>
+Content-Language: en-US
+From: Antonio Quartulli <a@unstable.cc>
+In-Reply-To: <ZkyQfL6JjJBTHtwN@pilgrim>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-ContactOffice-Account: com:375058688
 
-Hello,
+Hi,
 
-[...]
-> It would be great if going forward, a more timely processing & applying
-> of reviewed patches happened. Thank you.
+On 21/05/2024 14:15, Remi Pommarel wrote:
+> On Tue, May 21, 2024 at 09:43:56AM +0200, Antonio Quartulli wrote:
+>> Hi,
+>>
+>> On 18/05/2024 17:50, Remi Pommarel wrote:
+>>> Wiphy should be locked before calling rdev_get_station() (see lockdep
+>>> assert in ieee80211_get_station()).
+>>
+>> Adding the lock is fine as nowadays it is taken in pre_doit and released in
+>> post_doit (with some exceptions). Therefore when invoking .get_station from
+>> a side path the lock should be taken too.
+>>
+>> It was actually a05829a7222e9d10c416dd2dbbf3929fe6646b89 that introduced
+>> this requirement AFAICS.
+> 
+> IIUC lock requirement was already there before this commit, only it was on
+> rtnl lock to be taken instead of wiphy one.
 
-Agreed. I will see about improving this going forward. Sorry for troubles!
+You're right.
 
-	Krzysztof
+> 
+>>
+>>>
+>>> This fixes the following kernel NULL dereference:
+>>
+>> As already said by Johannes, I am not sure it truly fixes this NULL
+>> dereference though.
+>>
+>> Have you checked where in ath10k_sta_statistics this is exactly happening?
+>> Do you think some sta was partly released and thus fields were NULLified?
+> 
+> ath10k_sta_statistics+0x10 is associated with the arsta->arvif->ar
+> statement. It crashes because arsta->arvif is NULL.
+> 
+> Here is a scenario that explains the crash where the same sta
+> disconnects then reconnects quickly (e.g. OPEN network):
+> 
+> 
+> CPU0:                                       CPU1:
+> 
+> batadv_v_elp_periodic_work()
+>   queue_work(batadv_v_elp_get_throughput)
+> 
+>                                              ieee80211_del_station()
+>                                              ieee80211_add_station()
+>                                               sta_info_insert()
+>                                                list_add_tail_rcu()
+>                                                ath10k_sta_state()
+>                                                 memset(arsta, 0, sizeof(arsta))
+> batadv_v_elp_get_throughput()
+>   cfg80211_get_station()
+>    ieee80211_get_station() <-- Find sta with its MAC in list
+>     ath10k_sta_statistics()
+>      arsta->arvif->ar <-- arsta is still zeroed
+> 
+> 
+> In other words if the same sta has enough time to disconnect then
+> reconnect before batadv_v_elp_get_throughput get scheduled, sta could be
+> partially initialized when ath10k_sta_statistics() is called. Locking
+> the wiphy ensure sta is fully initialized if found.
+> 
+
+We were just wondering how you could get the arvif being NULL and your 
+explanation makes sense.
+
+This said, holding the lock is required when invoking get_station via 
+netlink, therefore it's meaningful to hold it even when side invoking it 
+from another module.
+
+Acked-by: Antonio Quartulli <a@unstable.cc>
+
+
+-- 
+Antonio Quartulli
 
