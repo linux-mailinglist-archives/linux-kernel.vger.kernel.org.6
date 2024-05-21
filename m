@@ -1,168 +1,215 @@
-Return-Path: <linux-kernel+bounces-184979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ED2C8CAECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:03:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD868CAECF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D01E41C212BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:03:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1786E283771
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E83757FC;
-	Tue, 21 May 2024 13:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A5A770F1;
+	Tue, 21 May 2024 13:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DvRDVTRg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DFh1aaYd";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pm8coJpp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6rL/LDG1"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RWVVMyNZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jzOG9bhU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0661E48B;
-	Tue, 21 May 2024 13:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F331E48B;
+	Tue, 21 May 2024 13:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716296593; cv=none; b=EaMlh8atEOhAzC73V5tCyhHayFq7Lh6Kb9bfSfXZRVLR1I3Ie3VLZVNL4XSDwtPIIAdljZsLUmElNyhsWMSPdXdn0nOhLqg9W8Sr5N5D9vbBrh/DCcgbutHgPhC6hPmVn/Pzh8VZj3+I+McFG4skIs502DSAkkKiYhfjzdNJjT8=
+	t=1716296657; cv=none; b=g4buZS8OLXpmMKScUWW5vqIpYkXXeRcvZo12XI/0xZLqjTRjTS32zJK7gboycIV6mPb9JQ+fyHMCY9LwGFx4yB07+BULzlZ9Aejcsf03aZHJUuzFnGoJBiIYkF9Bm0ex/pMEXFvY8LTAuzdn3tKI8nRh0Ssex+VROB29fj7mVCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716296593; c=relaxed/simple;
-	bh=TeuiLt5VwmzwVFG6iJ3tFjIJetQiid6c7HRyPxVGzqY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S5v0RZse93ezPO7Cvn6lFkoaqehWawj+JlSQzuOtO9U6fJqlTW16ggGDc4EFEXLo121XAi/Zp1B5LZxIDBRkJc8JaKQbqXd6SyHRQ2jRNDXQ5f8q6/YGoqb9NqsUuYyUb69c6gEcTaLKlPAAyImHaWoEioSfYSk+bOfXrR7WnEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DvRDVTRg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DFh1aaYd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pm8coJpp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6rL/LDG1; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D468721CC9;
-	Tue, 21 May 2024 13:03:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716296590; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1716296657; c=relaxed/simple;
+	bh=vwHfsvgjzbLzRecVm6LdMSMEjNnboRxXPQyX6cIb1/E=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Y1XM0wY/eoPZlq9MVvX3BoTeG2Fqpe4LsHAmT0b7tmbxgjh9sL8XL2fXCJUm2+aY5L9K1BGV5IJrkceJzJcOyAluOgWvFHv0/VCDspQwH7ODB3cJZg149hWhA51/92gYyJD75o9VACrscH6ZXuF27LDms9kQG29JtenMO6rtPOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RWVVMyNZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jzOG9bhU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 21 May 2024 13:04:11 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716296652;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HrUcyfZvkIGpNNtfWpPeamQ4DL5sODsh0kQZjJEmcrE=;
-	b=DvRDVTRgl2EEQvusXnq6P3faxboCaVptmw0yNFF3FiUfIdfey1qy3OyJzlmIY6nIV2wgFO
-	CH/pAvTvx4PtG+vpTS3TEopQAkzSHpR8tksXTQpdXiIZd1GG412iO3rWgmJ/9oNWb0oXqa
-	6Rp2YoeTZy7nIgjiNMv7SbDoItM/Vwo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716296590;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	bh=beGMZHUSz3A0CZk48/UyRVR7jbhwRb/Z/9EOHk+yFjA=;
+	b=RWVVMyNZwGoYBC4BUJpVIppk4LKHdGHX0y8FR5NpCiPI7/cDokNlfsN14eP8NLIIShayVL
+	UfCNVEAbOEIKTjM0QhNfhMT9d5Px8aH0fbTEIYigoNqv4KjlIjWN0fj+cyywF4nht4s9ja
+	KRytyEPY9KTTAiJgG91D3jBHDr41lkIWW0wVzN6d/1Cp447PTtTpz8ZuGIxIwm2llT8Ts+
+	FF2Zl/48+Y2gMTK0dUPck3gkYmP3/t02W7AfC6h5K0u2iDE+iQQb6n3Rd/AL0G+RUl6CWo
+	hQWr2Jjjh5GfUNv6f8GzA7ZF8i2z/KtGLHFTrQhZZLfKAjFUjuMC6iINN2h0lw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716296652;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HrUcyfZvkIGpNNtfWpPeamQ4DL5sODsh0kQZjJEmcrE=;
-	b=DFh1aaYdiCirBBOm46wsMCWhcNjc9LP+Phk4jXHy8wv++TWvSHtQ4/91EWmyjeJc57yLhH
-	v5wZyNspSWf/Q4DQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=pm8coJpp;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="6rL/LDG1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716296589; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HrUcyfZvkIGpNNtfWpPeamQ4DL5sODsh0kQZjJEmcrE=;
-	b=pm8coJppysesPPp6NsIZS/9JbP+MlQk4QbR7sVT2lv0yfcVtDFz5fzLdF67H9skm0qog7L
-	k5MGBEDbNSNiiAstvgnONg3wnHdlS3Un8gTZnNDwR49yRQYm3CKZomMcjqD/EW/4mgkh88
-	Fj253UH0X5ir7w4sU83mLXt3F7KP6kc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716296589;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HrUcyfZvkIGpNNtfWpPeamQ4DL5sODsh0kQZjJEmcrE=;
-	b=6rL/LDG164Al7RKrtPisUNkkVxtyclWWdo6LMG+bU8gTK2udqmoDLj2dZiQacbFPKdjmaL
-	yE8IrCSQ9xXRnhDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AA0EE13A1E;
-	Tue, 21 May 2024 13:03:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8cM3KI2bTGYgTgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 21 May 2024 13:03:09 +0000
-Date: Tue, 21 May 2024 15:03:28 +0200
-Message-ID: <87ed9v1fmn.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Jian-Hong Pan <jhp@endlessos.org>
-Cc: Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@endlessos.org
-Subject: Re: [PATCH] ALSA: hda/realtek: Enable headset mic of JP-IK LEAP W502 with ALC897
-In-Reply-To: <20240520055008.7083-2-jhp@endlessos.org>
-References: <20240520055008.7083-2-jhp@endlessos.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	bh=beGMZHUSz3A0CZk48/UyRVR7jbhwRb/Z/9EOHk+yFjA=;
+	b=jzOG9bhULiE+sD2kJq061YIevFE9R2xBckwGc96LotpFdmU0pj8yjsH8oCc8nvHQG3An5d
+	WeiEpJz4Yh7eKEBA==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/topology: Handle bogus ACPI tables correctly
+Cc: Carsten Tolkmit <ctolkmit@ennit.de>, Thomas Gleixner <tglx@linutronix.de>,
+ stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <87le48jycb.ffs@tglx>
+References: <87le48jycb.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.36 / 50.00];
-	BAYES_HAM(-2.85)[99.33%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: D468721CC9
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -5.36
+MIME-Version: 1.0
+Message-ID: <171629665158.10875.17651940971003547815.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, 20 May 2024 07:50:09 +0200,
-Jian-Hong Pan wrote:
-> 
-> JP-IK LEAP W502 laptop's headset mic is not enabled until
-> ALC897_FIXUP_HEADSET_MIC_PIN3 quirk is applied.
-> 
-> Here is the original pin node values:
-> 
-> 0x11 0x40000000
-> 0x12 0xb7a60130
-> 0x14 0x90170110
-> 0x15 0x411111f0
-> 0x16 0x411111f0
-> 0x17 0x411111f0
-> 0x18 0x411111f0
-> 0x19 0x411111f0
-> 0x1a 0x411111f0
-> 0x1b 0x03211020
-> 0x1c 0x411111f0
-> 0x1d 0x4026892d
-> 0x1e 0x411111f0
-> 0x1f 0x411111f0
-> 
-> Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+The following commit has been merged into the x86/urgent branch of tip:
 
-Thanks, applied now.
+Commit-ID:     9d22c96316ac59ed38e80920c698fed38717b91b
+Gitweb:        https://git.kernel.org/tip/9d22c96316ac59ed38e80920c698fed38717b91b
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Fri, 17 May 2024 16:40:36 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 21 May 2024 14:52:35 +02:00
 
+x86/topology: Handle bogus ACPI tables correctly
 
-Takashi
+The ACPI specification clearly states how the processors should be
+enumerated in the MADT:
+
+ "To ensure that the boot processor is supported post initialization,
+  two guidelines should be followed. The first is that OSPM should
+  initialize processors in the order that they appear in the MADT. The
+  second is that platform firmware should list the boot processor as the
+  first processor entry in the MADT.
+  ...
+  Failure of OSPM implementations and platform firmware to abide by
+  these guidelines can result in both unpredictable and non optimal
+  platform operation."
+
+The kernel relies on that ordering to detect the real BSP on crash kernels
+which is important to avoid sending a INIT IPI to it as that would cause a
+full machine reset.
+
+On a Dell XPS 16 9640 the BIOS ignores this rule and enumerates the CPUs in
+the wrong order. As a consequence the kernel falsely detects a crash kernel
+and disables the corresponding CPU.
+
+Prevent this by checking the IA32_APICBASE MSR for the BSP bit on the boot
+CPU. If that bit is set, then the MADT based BSP detection can be safely
+ignored. If the kernel detects a mismatch between the BSP bit and the first
+enumerated MADT entry then emit a firmware bug message.
+
+This obviously also has to be taken into account when the boot APIC ID and
+the first enumerated APIC ID match. If the boot CPU does not have the BSP
+bit set in the APICBASE MSR then there is no way for the boot CPU to
+determine which of the CPUs is the real BSP. Sending an INIT to the real
+BSP would reset the machine so the only sane way to deal with that is to
+limit the number of CPUs to one and emit a corresponding warning message.
+
+Fixes: 5c5682b9f87a ("x86/cpu: Detect real BSP on crash kernels")
+Reported-by: Carsten Tolkmit <ctolkmit@ennit.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Carsten Tolkmit <ctolkmit@ennit.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/87le48jycb.ffs@tglx
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218837
+---
+ arch/x86/kernel/cpu/topology.c | 53 +++++++++++++++++++++++++++++++--
+ 1 file changed, 50 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/topology.c b/arch/x86/kernel/cpu/topology.c
+index d17c9b7..621a151 100644
+--- a/arch/x86/kernel/cpu/topology.c
++++ b/arch/x86/kernel/cpu/topology.c
+@@ -128,6 +128,9 @@ static void topo_set_cpuids(unsigned int cpu, u32 apic_id, u32 acpi_id)
+ 
+ static __init bool check_for_real_bsp(u32 apic_id)
+ {
++	bool is_bsp = false, has_apic_base = boot_cpu_data.x86 >= 6;
++	u64 msr;
++
+ 	/*
+ 	 * There is no real good way to detect whether this a kdump()
+ 	 * kernel, but except on the Voyager SMP monstrosity which is not
+@@ -144,17 +147,61 @@ static __init bool check_for_real_bsp(u32 apic_id)
+ 	if (topo_info.real_bsp_apic_id != BAD_APICID)
+ 		return false;
+ 
++	/*
++	 * Check whether the enumeration order is broken by evaluating the
++	 * BSP bit in the APICBASE MSR. If the CPU does not have the
++	 * APICBASE MSR then the BSP detection is not possible and the
++	 * kernel must rely on the firmware enumeration order.
++	 */
++	if (has_apic_base) {
++		rdmsrl(MSR_IA32_APICBASE, msr);
++		is_bsp = !!(msr & MSR_IA32_APICBASE_BSP);
++	}
++
+ 	if (apic_id == topo_info.boot_cpu_apic_id) {
+-		topo_info.real_bsp_apic_id = apic_id;
+-		return false;
++		/*
++		 * If the boot CPU has the APIC BSP bit set then the
++		 * firmware enumeration is agreeing. If the CPU does not
++		 * have the APICBASE MSR then the only choice is to trust
++		 * the enumeration order.
++		 */
++		if (is_bsp || !has_apic_base) {
++			topo_info.real_bsp_apic_id = apic_id;
++			return false;
++		}
++		/*
++		 * If the boot APIC is enumerated first, but the APICBASE
++		 * MSR does not have the BSP bit set, then there is no way
++		 * to discover the real BSP here. Assume a crash kernel and
++		 * limit the number of CPUs to 1 as an INIT to the real BSP
++		 * would reset the machine.
++		 */
++		pr_warn("Enumerated BSP APIC %x is not marked in APICBASE MSR\n", apic_id);
++		pr_warn("Assuming crash kernel. Limiting to one CPU to prevent machine INIT\n");
++		set_nr_cpu_ids(1);
++		goto fwbug;
+ 	}
+ 
+-	pr_warn("Boot CPU APIC ID not the first enumerated APIC ID: %x > %x\n",
++	pr_warn("Boot CPU APIC ID not the first enumerated APIC ID: %x != %x\n",
+ 		topo_info.boot_cpu_apic_id, apic_id);
++
++	if (is_bsp) {
++		/*
++		 * The boot CPU has the APIC BSP bit set. Use it and complain
++		 * about the broken firmware enumeration.
++		 */
++		topo_info.real_bsp_apic_id = topo_info.boot_cpu_apic_id;
++		goto fwbug;
++	}
++
+ 	pr_warn("Crash kernel detected. Disabling real BSP to prevent machine INIT\n");
+ 
+ 	topo_info.real_bsp_apic_id = apic_id;
+ 	return true;
++
++fwbug:
++	pr_warn(FW_BUG "APIC enumeration order not specification compliant\n");
++	return false;
+ }
+ 
+ static unsigned int topo_unit_count(u32 lvlid, enum x86_topology_domains at_level,
 
