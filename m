@@ -1,124 +1,178 @@
-Return-Path: <linux-kernel+bounces-185165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD2F8CB177
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:35:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F248CB17D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 17:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBEB9282953
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:35:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E6E328152B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F65145340;
-	Tue, 21 May 2024 15:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h6CG0M1Q"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4C8143890;
-	Tue, 21 May 2024 15:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D1C1465B0;
+	Tue, 21 May 2024 15:36:20 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id E029C6BB5E
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 15:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716305701; cv=none; b=awmaQcyS1UjTfRPYjKNivYwm8f6uCE5Btb3U0tu4p3325hqSAJl4Ef5I7IC4cQmfu9dnMJKHI7C8I7rZD8yM2bM4HFPe63zUm7INikycEiM3ee7Bvnyx1kIa2M7H5EqdgWXvnPhaQrrcKxNxVhX2dOh885xP2C6VbU6CG8+STik=
+	t=1716305779; cv=none; b=E21vGkQrYb68uQKJgMEQjtfism1AXxqQrC3NvpgUCpWp9NC8w8pcG30j9Z+ggVF5Be/5m/i+QMxnvpLpZWmrXw90C0CW/v38x4o3m15uDA1ouNyF2hcQSYHM0lJGyBGVvKhPKGFSQPbHwlH2jgTiUwIt0CUJonW+MK/8GmrnGpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716305701; c=relaxed/simple;
-	bh=IhbufTRNj1fsqNMJmPo1i6lTZleZnqfHZ5ZVklTF00M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BI/Wa6vNBBYv/ahmkwlg7EQlHpOAZg4WzZOFwBuOmakpWfmNC+jbYVVFUBmc+9tspmSj5vLt6IfsOqZYqH9mYrgENbh87y14o72qiUO2jm4hsAaKIqD8s5x7rWl25pVUOJHkyHR85UGdKjj4l9smQWJrDZTxGFgztinmliIVsvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h6CG0M1Q; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4200ee78e56so31251185e9.3;
-        Tue, 21 May 2024 08:34:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716305698; x=1716910498; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z3RuTPxmjmQFVuJzzTgJATCtyYrNLyLjxNXWjIoUyj4=;
-        b=h6CG0M1Q1BPfxAuH+hKUPgNFnShaX/GzyWoWleENe2wVw53sbqYaTNptBuGL4EhSVF
-         V6mS6O84XiQOEveKT6TXhv+U4o6NiD2TfcYj6mpIhVIHse1AJqdtG1wWEsSXMC3+3VBq
-         ywMyieq8VX8MtW38mLHXrYc1C+AVcMIMLwHfjPlj9nzexT7XOZJEPZuXESPHWUBQlojv
-         JClRvCdX74yZL7loVku6U43v617cd89aNRDrElqtuzgiillpCnnouE8YNJID/UdFHuCb
-         OkJ+1WUX83r//Dt5rbPSMaxniPKtc9qjPTtz9xQtH1kWhEeiXdnjCmbNGrNzqjtc5Vev
-         f5DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716305698; x=1716910498;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z3RuTPxmjmQFVuJzzTgJATCtyYrNLyLjxNXWjIoUyj4=;
-        b=VYCT2X7icj0NJkftvEkIjkrhqRe+jxwLHYhAtIr0w1Pe/oQDfEPH5eHa2qeO21aaVx
-         /IK8JN6kp4Jgu3HaQfjuLqJ2OJHLKqXtLT3iLDcAAzNvk2DQcFj5cXHO2flujokFSF4k
-         P1I0fmwMoPHBFJhOVd1eR352dADWoeBKErogIoxl+xWNnSwwrpPffp7l3N4Q9ZIWJ2py
-         oBoK/AxD7QgryFqh4p85lCDb+kqEOx/I2KR8vs5T9KSFabcLKQnHtVnxDsin/Gheft/G
-         8zjdiz++UXzxK9Guxyu9AJ8gx707bRCne93iTW++Ngtx1HEKGcKHaEu2s6wYrwsmO3/I
-         sH5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXEUUyWQsV5w1kJmLiNDYpP4GeGOeraveiQ6NM0jD1ZHk8hLLBg2CFW1dI76xRpYVdRmcRneNKREq+G48r5eSuMTE22UWP7tpBnS36t
-X-Gm-Message-State: AOJu0YxTbpbdCZwrf6nfFJ5/kRMKSjo8Vvj2Gx+g7jEZyVAChYPZnlrg
-	26poKge0+21rBse29UV62Im4/D86vos2AajBleDBcFYheMpTcZTq6DPpP7UP
-X-Google-Smtp-Source: AGHT+IH5QKibLyDcTpAV+T6KJg6LGOZDcU+2pdVCXEiga1AgYpwzKY/iH/ItyXSKh1v2m6J1Ro+vOg==
-X-Received: by 2002:a05:600c:450e:b0:41b:d8ef:8dcd with SMTP id 5b1f17b1804b1-41feac59ea0mr240309145e9.28.1716305698403;
-        Tue, 21 May 2024 08:34:58 -0700 (PDT)
-Received: from [192.168.1.130] (51B6D146.unconfigured.pool.telekom.hu. [81.182.209.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42013c5fa61sm368737285e9.40.2024.05.21.08.34.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 08:34:57 -0700 (PDT)
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
-Date: Tue, 21 May 2024 17:34:53 +0200
-Subject: [PATCH 3/3] iio: light: stk3310: support more stk3311 variants
+	s=arc-20240116; t=1716305779; c=relaxed/simple;
+	bh=fIDHjv/NCpoLSHsJ8mBwHvur7uwCdXS242ClZn3xmmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nm5STf2dD9sDZQJiQhD7TAhkKdGJ45haHU+MiTKswWMZQe27DJ86Jx/BPY4bc8Qb6yzCqDvtqyVRF2XcedLQ3s/nwQkj+PW9K7Xmw9SGIuaw5aBAjGNvXJZoXBzMWaQtaAHwT15z2Wd/mXzOwFl1RsMbNcmFxzgud9c5tzWJfEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 457861 invoked by uid 1000); 21 May 2024 11:36:10 -0400
+Date: Tue, 21 May 2024 11:36:10 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
+  "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
+  linux-arch@vger.kernel.org, kernel-team@meta.com, parri.andrea@gmail.com,
+  boqun.feng@gmail.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+  Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: LKMM: Making RMW barriers explicit
+Message-ID: <4286e5b2-5954-4c77-a815-c1c2735d9509@rowland.harvard.edu>
+References: <72c804c8-2511-4349-a823-bc1de8bb729e@rowland.harvard.edu>
+ <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
+ <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
+ <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
+ <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240521-stk3311-v1-3-07a4966b355a@gmail.com>
-References: <20240521-stk3311-v1-0-07a4966b355a@gmail.com>
-In-Reply-To: <20240521-stk3311-v1-0-07a4966b355a@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
-X-Mailer: b4 0.13.0
+In-Reply-To: <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
 
-Add support for more stk3311 variants like stk3311-a
-and stk3311-s34, they are register compatible but they
-have different chip ids.
+On Tue, May 21, 2024 at 11:57:29AM +0200, Jonas Oberhauser wrote:
+> 
+> 
+> Am 5/18/2024 um 2:31 AM schrieb Alan Stern:
+> > On Thu, May 16, 2024 at 10:44:05AM +0200, Hernan Ponce de Leon wrote:
+> > > On 5/16/2024 10:31 AM, Jonas Oberhauser wrote:
+> > > > 
+> > > > 
+> > > > Am 5/16/2024 um 3:43 AM schrieb Alan Stern:
+> > > > > Hernan and Jonas:
+> > > > > 
+> > > > > Can you explain more fully the changes you want to make to herd7 and/or
+> > > > > the LKMM?† The goal is to make the memory barriers currently implicit in
+> > > > > RMW operations explicit, but I couldn't understand how you propose to do
+> > > > > this.
+> > > > > 
+> > > > > Are you going to change herd7 somehow, and if so, how?† It seems like
+> > > > > you should want to provide sufficient information so that the .bell
+> > > > > and .cat files can implement the appropriate memory barriers associated
+> > > > > with each RMW operation.† What additional information is needed?† And
+> > > > > how (explained in English, not by quoting source code) will the .bell
+> > > > > and .cat files make use of this information?
+> > > > > 
+> > > > > Alan
+> > > > 
+> > > > 
+> > > > I don't know whether herd7 needs to be changed. Probably, herd7 does the
+> > > > following:
+> > > > - if a tag called Mb appears on an rmw instruction (by instruction I
+> > > > mean things like xchg(), atomic_inc_return_relaxed()), replace it with
+> > > > one of those things:
+> > > >   † * full mb ; once (the rmw) ; full mb, if a value returning
+> > > > (successful) rmw
+> > > >   † * once (the rmw)†† otherwise
+> > > > - everything else gets translated 1:1 into some internal representation
+> > > 
+> > > This is my understanding from reading the source code of CSem.ml in herd7's
+> > > repo.
+> > > 
+> > > Also, this is exactly what dartagnan is currently doing.
+> > > 
+> > > > 
+> > > > What I'm proposing is:
+> > > > 1. remove this transpilation step,
+> > > > 2. and instead allow the Mb tag to actually appear on RMW instructions
+> > > > 3. change the cat file to explicitly define the behavior of the Mb tag
+> > > > on RMW instructions
+> > > 
+> > > These are the exact 3 things I changed in dartagnan for testing what Jonas
+> > > proposed.
+> > > 
+> > > I am not sure if further changes are needed for herd7.
 
-Signed-off-by: Barnab√°s Cz√©m√°n <trabarni@gmail.com>
----
- drivers/iio/light/stk3310.c | 4 ++++
- 1 file changed, 4 insertions(+)
+What about failed RMW instructions?  IIRC, herd7 generates just an R for 
+these, not both R and W, but won't it still be annotated with an mb tag? 
+And wasn't this matter of failed RMWs one of the issues that the two of 
+you specifically wanted to make explicit in the memory model, rather 
+than implicit in the operation of herd7?
 
-diff --git a/drivers/iio/light/stk3310.c b/drivers/iio/light/stk3310.c
-index 5b3fe98af9c9..2905c9feff1a 100644
---- a/drivers/iio/light/stk3310.c
-+++ b/drivers/iio/light/stk3310.c
-@@ -37,6 +37,8 @@
- 
- #define STK3310_CHIP_ID_VAL			0x13
- #define STK3311_CHIP_ID_VAL			0x1D
-+#define STK3311A_CHIP_ID_VAL			0x15
-+#define STK3311S34_CHIP_ID_VAL			0x1E
- #define STK3311X_CHIP_ID_VAL			0x12
- #define STK3335_CHIP_ID_VAL			0x51
- #define STK3310_PSINT_EN			0x01
-@@ -83,6 +85,8 @@ static const struct reg_field stk3310_reg_field_flag_nf =
- 
- static const u8 stk3310_chip_ids[] = {
- 	STK3310_CHIP_ID_VAL,
-+	STK3311A_CHIP_ID_VAL,
-+	STK3311S34_CHIP_ID_VAL,
- 	STK3311X_CHIP_ID_VAL,
- 	STK3311_CHIP_ID_VAL,
- 	STK3335_CHIP_ID_VAL,
+And wasn't another one of these issues the difference between 
+value-returning and non-value-returning RMWs?  As far as I can, nothing 
+in the .def file specifically mentions this.  There's the noreturn tag 
+in the .bell file, but nothing in the .def file says which instructions 
+it applies to.  Or are we supposed to know that it automatically applies 
+to all __atomic_op() instances?
 
--- 
-2.45.1
+> > Okay, good.  This answers the first part of what I asked.  What about
+> > the second part?  That is, how will the changes to the .def, .bell, and
+> > .cat files achieve your goals?
+> > 
+> > Alan
+> 
+> 
+> Firstly, we'd allow 'mb as a barrier mode in events, e.g.
 
+You mean as a mode in RMW events.  'mb already is a mode for F events.
+
+> instructions RMW[{'once,'acquire,'release,'mb}]
+> 
+> then the Mb tags would appear in the graph. And then I'd define the ordering
+> explicitly. One way is to say that an Mb tag orders all memory accesses
+> before(or at) the tag with all memory accesses after(or at) the tag, except
+> the accesses of the rmw with each other.
+
+I don't think you need to add very much.  The .cat file already defines 
+the mb relation as including the term:
+
+	([M] ; fencerel(Mb) ; [M])
+
+All that's needed is to replace the fencerel(Mb) with something more 
+general...
+
+> This is the same as the full fence before the read, which orders all memory
+> accesses before the read with every access after(or at) the read,
+> plus the full fence after the write, which orders all memory accesses
+> before(or at) the write with all accesses after the write.
+> 
+> That would be done by adding
+> 
+>      [M] ; (po \ rmw) & (po^?; [RMW_MB] ; po^?) ; [M]
+
+.. like this.
+
+> to ppo.
+
+You need to update the definition of mb, not ppo.  And the RMW_MB above 
+looks wrong; shouldn't it be just Mb?
+
+Also, is the "\ rmw" part really necessary?  I don't think it makes any 
+difference; the memory model already knows that the read part of an RMW 
+has to happen before the write part.
+
+> One could also split it into two rules to keep with the "two full fences"
+> analogy. Maybe a good way would be like this:
+> 
+>      [M] ; po; [RMW_MB & R] ; po^? ; [M]
+> 
+>      [M] ; po^?; [RMW_MB & W] ; po ; [M]
+
+My preference is for the first approach.
+
+Alan
 
