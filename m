@@ -1,168 +1,143 @@
-Return-Path: <linux-kernel+bounces-185002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E458CAF45
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:18:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73E78CAF47
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C921F2314A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:18:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72A10B218D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6BB6BB37;
-	Tue, 21 May 2024 13:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D70978C65;
+	Tue, 21 May 2024 13:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBygUZI6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JcB/QtWc"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658D12F5B
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E16C3D982
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 13:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716297519; cv=none; b=t0UP1f2O/R3S8e5UjPsDcdVdlDxt05Z5ntjO6iF0k+6InHPdXfdvrACOyN5BPCZz61/L4FZvTBlhWSIBnsd0cTW5w/75OvhVjMXq67ONfjtCHyB9MDYHEvvxTMBVzAMtpAc1p5EBWtiV3lucUcCjUQhTkfRBlfvk6X0kpzH0c7o=
+	t=1716297529; cv=none; b=egywfcQsy97p5xV3nrdXM3Ls6G5EOwHb+zMkItOMFmqGpRSmzGz9+Fcax0d11DIZACYbn+M+Esij27srK5LX6hA1PsGhCVWaLf+gm4d29p74ROHzeZ9EGkUdoZAfpJ/O5JTTywiFmyKteRc7R54dWTlc5Xt9W9xW6cWwRw83NP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716297519; c=relaxed/simple;
-	bh=jPyGMIbDpl3l7dFh6G+NEKdDAZJ/vPGjnYIHZdX+PQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SIQXuO6F4UVTxC6ceDSR2KZENlrvd2HVpiq99gRDhiy5D8lI0bl4DbgcYK4AawXyen+WKTDr9cZSnXAF2KrabJDOW1FXmSggs5ceFPUHbnfjJVjoYod7jWhhd+c4QBeGJQsYVfKQlYahFzb2D/Y2VYmsqH/Q9V9ZCq5N+2HQOUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBygUZI6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF5FC2BD11;
-	Tue, 21 May 2024 13:18:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716297519;
-	bh=jPyGMIbDpl3l7dFh6G+NEKdDAZJ/vPGjnYIHZdX+PQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JBygUZI6h3wiJ1r0fiMhwyPWz/g/VWy4zOKC6sY98d7k11DCB9bEZvrnfhNFgFCI7
-	 xONxkMque5q41YgEwatCLixrPwAQb+yO1jeqzd6Sxieebr9/gXaK6JDEfs9V5Ae/Wl
-	 4szb8FD7aIaqmJLvLO7K13LA1J3ce/5ROnaqV39R3yYl+JOU8/d8rMoGoreDS1v+K2
-	 e/y7kjUDLPdWlN4/NoXfaDBXH6Xl/3VFY8HgLrEVEjvCk4Jh1ZqIKyjd8AyuwmHXSG
-	 8xpf3GCNszw65mqGxSAzYOIthD8D4TBxcGBMxhK40ZirGTsC0wws5iWkm9XyiWTvCZ
-	 ADsTbJswppPkg==
-Date: Tue, 21 May 2024 15:18:36 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Aradhya Bhatia <a-bhatia1@ti.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, DRI Development List <dri-devel@lists.freedesktop.org>, 
-	Linux Kernel List <linux-kernel@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>, 
-	Thierry Reding <treding@nvidia.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>, Devarsh Thakkar <devarsht@ti.com>, 
-	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
-Subject: Re: [PATCH 1/7] drm/tidss: Add CRTC mode_fixup
-Message-ID: <20240521-lean-dragon-of-perfection-043fad@houat>
-References: <20240511153051.1355825-1-a-bhatia1@ti.com>
- <20240511153051.1355825-2-a-bhatia1@ti.com>
- <20240516-tuscan-mamba-of-debate-c4cddf@penduick>
- <1c4f5862-b1a2-4812-a109-987338ec3a72@ti.com>
+	s=arc-20240116; t=1716297529; c=relaxed/simple;
+	bh=Q3BzpxQzxgTGjpvVz0n6kxxufoCrf94YvT7kGwQ/znw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mJZnT4hjC/urV12IPBBPdYRqtHe+iL7Tnxqukn04xtjpbIYUEaCe5sb7Cy0Sg4VPAkbumgK9PgZ3qq/BZelqgsdgdcGQtcLSbDTy4ICPm05FUGvfuxjaRmME6rFxqGiQZmO0JOEPG6ymzIEn3c+CnD4EeZ7M1BB+JKP5RUJ3iDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JcB/QtWc; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so25597661fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 06:18:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1716297526; x=1716902326; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q1O/tA1X52KoacjGgYTBwOD/S3x5qNEiGtfQjLayBOw=;
+        b=JcB/QtWcjtBir8Rro4/nIV9Ne50n7BVk4xDecHzG3tluIFnC2J7U0rxyuGk6w1zR6N
+         Wels6fy8CYgDhoU+BHM5p1fTfs0AtJWI5J5ygEVt58QwqBPq5vQ4wPTzqu4iFWkt5ptH
+         yckpgqoXT2R8vS7IUPDTfSWiLa6y3F3xAwHOiGcs4AtF1KrF9jxQsPqsdn9qUHkugaDl
+         DpWlxHYPBHdK20v/3kcK4Y35Yv1SjLMf5vLyoEX5BG0LeRCdt1RlX9zamG3aM7nXf9wx
+         O0qaBcQrwRucPlhGO+WSIE90visTo1QduoYd0pmNicuWwiRzRIs44eggXFmsCZyBQVxs
+         CEsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716297526; x=1716902326;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q1O/tA1X52KoacjGgYTBwOD/S3x5qNEiGtfQjLayBOw=;
+        b=nGYKVL2q0+gruswezK3kDQFiOZcxmCailgUsgNat1MKmSTJhnXxzwto3oY4uLhXnOB
+         sgOS43gmt3GJbWECr/ayjls9ObsdUXxtpKmnjlHAM+zuoByEY6hw+C61jIF81zZ/kLO3
+         HEGhS0D4ei5A8svWY5GcWwlvEcPQOArgSv71uRBOQ+8acKnK16NnSeKXpHo2eNZqMjp1
+         cntqbEvrIQdLm93dYue/3Mm+J1dogbU1YQV7NhaRuxf4JJhCI6me4nbsKy3sqRK9rXQu
+         Z8pz03SLnrAjmsTjoqDIvusg1h2jJZHtYzOwvgjfA9BLwpFTDqIRWogeqqCAxvPLVTSM
+         cGrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxchgnDycMKtWWlRU586vUHL8njZVzamoFt6oRD5iA7ATHC9EcsEOT5QMBjKWLljLLsYH/GHHa03OfYgvox9c6wFcfITl/+tnPmLjg
+X-Gm-Message-State: AOJu0YyLEfbppe+9k6Vqyf8RJI+h4PBbVkLTI2n3KBwqWurUDSuyjL5U
+	6aRTZJ+F3mmfElIBM/ExyNVrkG0H4/acz8nezfCw35JJhbuWvyrLz0H0kcp0laudDaMzGeyUqQi
+	v
+X-Google-Smtp-Source: AGHT+IGt8DyB86CaoKzjdWfFeNKLu2gdXNrRsAo2Bzj8yuS9hbmTAVNJA1YHaPx/wWSZFwxB5Jqosw==
+X-Received: by 2002:a2e:bc1b:0:b0:2e7:3484:5236 with SMTP id 38308e7fff4ca-2e7348454d5mr24652261fa.15.1716297525639;
+        Tue, 21 May 2024 06:18:45 -0700 (PDT)
+Received: from ?IPV6:2001:a61:139b:bf01:e8eb:4d8f:8770:df82? ([2001:a61:139b:bf01:e8eb:4d8f:8770:df82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87b2653bsm497199255e9.4.2024.05.21.06.18.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 May 2024 06:18:45 -0700 (PDT)
+Message-ID: <f61cb0cb-8a74-494a-b191-8503b51897c5@suse.com>
+Date: Tue, 21 May 2024 15:18:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="qr4b63zzpq7nl4wu"
-Content-Disposition: inline
-In-Reply-To: <1c4f5862-b1a2-4812-a109-987338ec3a72@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: memory leakage in ncm_wrap_ntb() in USB ncm mode with kernel 5.15
+To: "nanfengwq@sina.com" <nanfengwq@sina.com>,
+ gregkh <gregkh@linuxfoundation.org>
+Cc: balbi <balbi@kernel.org>, linux-usb <linux-usb@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+References: <2024051922230825069112@sina.com>
+ <2024051901-gimmick-cosponsor-f2dd@gregkh> <202405202232198531894@sina.com>
+Content-Language: en-US
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <202405202232198531894@sina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---qr4b63zzpq7nl4wu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 16, 2024 at 04:33:40PM GMT, Aradhya Bhatia wrote:
-> Hi Maxime,
->=20
-> Thank you for reviewing the patches.
->=20
-> On 16/05/24 13:40, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Sat, May 11, 2024 at 09:00:45PM +0530, Aradhya Bhatia wrote:
-> >> Add support for mode_fixup for the tidss CRTC.
-> >>
-> >> Some bridges like the cdns-dsi consume the crtc_* timing parameters for
-> >> programming the blanking values. Allow for the normal timing parameters
-> >> to get copied to crtc_* timing params.
-> >>
-> >> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-> >> ---
-> >>  drivers/gpu/drm/tidss/tidss_crtc.c | 11 +++++++++++
-> >>  1 file changed, 11 insertions(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tids=
-s/tidss_crtc.c
-> >> index 94f8e3178df5..797ef53d9ad2 100644
-> >> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
-> >> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
-> >> @@ -309,12 +309,23 @@ enum drm_mode_status tidss_crtc_mode_valid(struc=
-t drm_crtc *crtc,
-> >>  	return dispc_vp_mode_valid(tidss->dispc, tcrtc->hw_videoport, mode);
-> >>  }
-> >> =20
-> >> +static
-> >> +bool tidss_crtc_mode_fixup(struct drm_crtc *crtc,
-> >> +			   const struct drm_display_mode *mode,
-> >> +			   struct drm_display_mode *adjusted_mode)
-> >> +{
-> >> +	drm_mode_set_crtcinfo(adjusted_mode, 0);
-> >> +
-> >> +	return true;
-> >> +}
-> >> +
-> >>  static const struct drm_crtc_helper_funcs tidss_crtc_helper_funcs =3D=
- {
-> >>  	.atomic_check =3D tidss_crtc_atomic_check,
-> >>  	.atomic_flush =3D tidss_crtc_atomic_flush,
-> >>  	.atomic_enable =3D tidss_crtc_atomic_enable,
-> >>  	.atomic_disable =3D tidss_crtc_atomic_disable,
-> >> =20
-> >> +	.mode_fixup =3D tidss_crtc_mode_fixup,
-> >>  	.mode_valid =3D tidss_crtc_mode_valid,
-> >>  };
-> >=20
-> > mode_fixup is deprecated for atomic drivers, so the solution must be
-> > different there.
-> >=20
-> > It's also not clear to me how it could change anything there:
-> > drm_mode_set_crtcinfo with no flags will make crtc_* field exactly
-> > identical to their !crtc counterparts.
-> >
->=20
-> I checked the flag options. There isn't any flag required. The only
-> reason to add this call is because cdns-dsi strictly requires the crtc_*
-> fields to be populated during the bridge enable.
->=20
-> Secondly, if mode_fixup is deprecated, I think the crtc_atomic_check
-> would be the next best place to add this call.
+On 20.05.24 16:32, nanfengwq@sina.com wrote:
+> hello:
+> In embedded devices with relatively small memory, if the transfer speed of ncm is fast and other programs occupy CPU memory, it is likely that the return value ncm ->skd_tx_data of alloc_skb() is NULL, and the code is likely to enter err. If skb2 is not processed in err, it will cause memory leakage.
 
-That would be better, yes, but we shouldn't even have to do that in the
-first place. AFAIK all the path that create a drm_display_mode will call
-drm_mode_set_crtcinfo on it to fill those fields. So if they are missing
-somewhere, that's what the actual bug is, not something we should work
-around of at the driver level.
+Hi,
 
-Maxime
+apart from the submission process, could you please explain how this
+condition may happem?
 
---qr4b63zzpq7nl4wu
-Content-Type: application/pgp-signature; name="signature.asc"
+         if (skb) {
 
------BEGIN PGP SIGNATURE-----
+[..]
+                 if (ncm->skb_tx_data
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkyfLAAKCRAnX84Zoj2+
-dnpoAX4kO2icxTnf/r4NWxn0+BU8veVEni74msZxDWSUcBWceEwWieQmjI55HRcW
-IqYQEtsBfAzAcuPszPO3YqPwyNvcfeoWh/YqtgrQ3Ml5B8ucnSi0wrdpq6fDaz93
-W2QAo5X+wQ==
-=s00g
------END PGP SIGNATURE-----
+We know ncm->skb_tx_data != NULL && skb != NULL
 
---qr4b63zzpq7nl4wu--
+                     && (ncm->ndp_dgram_count >= TX_MAX_NUM_DPE
+                     || (ncm->skb_tx_data->len +
+                     div + rem + skb->len +
+                     ncm->skb_tx_ndp->len + ndp_align + (2 * dgram_idx_len))
+                     > max_size)) {
+                         skb2 = package_for_tx(ncm);
+
+
+		if (!ncm->skb_tx_data) {
+
+We know ncm->skb_tx_data == NULL && skb != NULL
+
+                         /* Create a new skb for the NTH and datagrams. */
+                         ncm->skb_tx_data = alloc_skb(max_size, GFP_ATOMIC);
+                         if (!ncm->skb_tx_data)
+                                 goto err;
+
+It seems to me that either
+
+skb2 = package_for_tx(ncm);
+
+or
+
+ncm->skb_tx_data = alloc_skb(max_size, GFP_ATOMIC);
+
+can be executed. The code paths seem to be mutually exclusive.
+
+	Regards
+		Oliver
+
+
+
+
 
