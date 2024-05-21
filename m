@@ -1,173 +1,106 @@
-Return-Path: <linux-kernel+bounces-184924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49428CADDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:06:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D7AB8CADEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 14:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECB0CB2193D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:06:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 407001F236A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF6D762FF;
-	Tue, 21 May 2024 12:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3FE770E9;
+	Tue, 21 May 2024 12:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jbrtEksX"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSy9jzyo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2099C524B4
-	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 12:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447A176025;
+	Tue, 21 May 2024 12:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716293187; cv=none; b=rOddkMWVgAWIiWZCNDTSyzi+A5fQg/Nq/0YqJR3NvBbSSvzvct8Gv2Ct/zN2wwAcmLo/BvPgeXlvb2hFhVSzjl+HmTEbOcnFPJSBWh6cg/LZYv9gD/zuRbjYw79kUU1tyTkAdUYhPz4At4nA0SVz6d7tNYTKeaVJz/Bxyyu+TDA=
+	t=1716293428; cv=none; b=tduuuOWJFAK71XzQ9GUUO1KzulUqOuLR7zCU70XYPW5ffQYroLNv82N1qJoXmJW0plll1rI6HhYqlzu7xOMO079rXiu3OjFhhrfEi0yTpkFJwsp4878+ty5PGp9IBJZK3THzhk6yMxqSXvxTKf5MphNwOF1ZD+3OA2z1TR7PmmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716293187; c=relaxed/simple;
-	bh=y6uf/C+i1B/yZlW5DIn/xIOBl/tE1YV+evnBt2Jjmkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=feC7vqVUTcChSt11zRzn/ODbdoLKeh/C9+F4yIr3NkbK6LNTybsq6Wh/Gu79GytTi6RbTcSIN4f+Qq77eitTex4e0WshFZ8Ew+lniIp56LYCxNKZinXqVfh/buYyV7ajRzWsXrcVksOSPKxF6UrmOtPHrkSq2fpHG7au+uQXPDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=jbrtEksX; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59d5b112ecso12885466b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 05:06:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1716293184; x=1716897984; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mJYdzH0pAsynv7wKO0qk2byjZJ72J8K30m6YCIFuLT4=;
-        b=jbrtEksX6Do3jWz9S8J7A2RiC3sJeIZUNewnDgHUsOqvPhzUKVaq8AceCPeNuUQJ/X
-         qaXHkIHF+TzKlSFThuYA7ZYi6F+DKhMIAigp49QE7J+eAd6j1hicu6UZoWc1bOM6cXkT
-         MKMkon/MdFVWaCbzK44Q7fqx+DczFafCf466s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716293184; x=1716897984;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mJYdzH0pAsynv7wKO0qk2byjZJ72J8K30m6YCIFuLT4=;
-        b=RgWGvZR+FmV6Qd7wWEPOtYhIh7NaSY2ucZLFB+Npuv85YNUNTKHCTyqWDjMMVGFvzh
-         t6PJ5obB8aUF9tC1Zik6Z9lmohadPXWhHr1KaKanMT0vhzI14t3hLWDHC246b905QwzQ
-         afvjo80OdLt4yrOYPC2/n+vuYPHyyurxKcAYX/OdD4C7Hu7obf+QIyA6gMNkhA9Arvl+
-         4/0PkRSMD4dJyyj+u77wNwT/ywJDJpPFu3wjAAVaV7LKH8Bg9TjSyYu1XFgXatHcDt3e
-         tQtnRoSsh2EqME9kv010uKv09dwzqiCz3/pukMRteh8FX18wTFuWUgCM+ZWuvWj/QgpR
-         ahQg==
-X-Forwarded-Encrypted: i=1; AJvYcCW40cb9DES0jqtdQnzXXR9Xeo1yUYCQjfwmz8CijnATW0VkHRN0D2A6lc1EOE4m91uxtmNKIlNBi9iI/9Aqf7hUuJim8jqH55N/tfvT
-X-Gm-Message-State: AOJu0Ywvg+im3EMIYbYIdnEnJK+dHncmaOFcQgXS8rQxFx1vEtM7fpfK
-	mt/rhfkZiWcPaqkXvvu7IRC6BPXVRTNN9iyoD/Bm7X7iUDe5ZE8v3dOA5fDMNOY=
-X-Google-Smtp-Source: AGHT+IGfWNF191WRUe0dOT+wxuFScDgLI5Opi7mIPWI0KL0XH3aj2MmoNzb6yDiPo3DHO/ZyoC6pQg==
-X-Received: by 2002:a17:906:3553:b0:a5a:893a:ad3d with SMTP id a640c23a62f3a-a5a893aae74mr1306089766b.7.1716293184252;
-        Tue, 21 May 2024 05:06:24 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7d14sm1605454566b.130.2024.05.21.05.06.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 05:06:21 -0700 (PDT)
-Date: Tue, 21 May 2024 14:06:19 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: John Stultz <jstultz@google.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 0/8] dma-buf: heaps: Support carved-out heaps and ECC
- related-flags
-Message-ID: <ZkyOOwpM57HIiO3v@phenom.ffwll.local>
-Mail-Followup-To: John Stultz <jstultz@google.com>,
-	Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-References: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
- <CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com>
- <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
- <CANDhNCo5hSC-sLwdkBi3e-Ja-MzdqcGGbn-4G3XNYwCzZUwscw@mail.gmail.com>
+	s=arc-20240116; t=1716293428; c=relaxed/simple;
+	bh=f2GQ0va2lsLTO8nlzPzR6f1yERxb6qBUyy6szVB7sAM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=O4ArjDmpsKgt/5qLnnWgBtuUoFYgtbpIBPWcV3X6uCb6+FB+2jPyHFrqV285L70OGCu1ZFVH9AnazRgHrJmLEDwTx6IQenYgzkyFMHkbDg7WmhFqXvsgACjO4gi2jZolov80/TFIurImpFkBJKeEJheeks/mlJeqedefJsScNbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSy9jzyo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C839CC2BD11;
+	Tue, 21 May 2024 12:10:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716293427;
+	bh=f2GQ0va2lsLTO8nlzPzR6f1yERxb6qBUyy6szVB7sAM=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=tSy9jzyoijfqBI59lgA6oL+x4sNWOSz//Hs6yMCVWi5/gMBKScYRp6RaqM40s5wnB
+	 hUxxsP7i6vD8++xZSqE+kys/5mluxZs3KtAWe6pX3rl/haMDLZDex4uy9paPEtEGJ/
+	 mUXle1pXdMrizuolWU3tHnluXrnjKS3P7wVRENzT5PS+DoUkM2CVuGdXdZCxzOceZZ
+	 EFVLl0e7Ek+Q4t1qXjwAuXeaqUDNR8+UtVRSWv0N+KjXbzZeBTNZhWHD/WpnqOhf97
+	 uXvmGs5Nv7w6njANCPoSkzZNhAohpzD7gx9+962Jz7nCTmzMHdxnDoAWB9lMsws+Pm
+	 EZ6uxKYaSEO1g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B37F9C25B74;
+	Tue, 21 May 2024 12:10:27 +0000 (UTC)
+From: Joel Selvaraj via B4 Relay <devnull+joelselvaraj.oss.gmail.com@kernel.org>
+Subject: [PATCH 0/2] novatek-nvt-ts: add support for NT36672A touchscreen
+Date: Tue, 21 May 2024 07:09:44 -0500
+Message-Id: <20240521-nvt-ts-devicetree-regulator-support-v1-0-8d766c639dca@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCo5hSC-sLwdkBi3e-Ja-MzdqcGGbn-4G3XNYwCzZUwscw@mail.gmail.com>
-X-Operating-System: Linux phenom 6.8.9-amd64 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAiPTGYC/x2NwQqDMBAFf0X23AUj1mp/pfSQxqddKEnYjVIQ/
+ 72hx4Fh5iCDCozuzUGKXUxSrOAuDYW3jytY5srUtV3fXt3IcS9cjOfqBhQFWLFuH1+Ssm05Jy3
+ sw4R+et1G7waqpaxY5Pu/PJ7n+QNYFuZEdQAAAA==
+To: Hans de Goede <hdegoede@redhat.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Joel Selvaraj <joelselvaraj.oss@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716293427; l=1155;
+ i=joelselvaraj.oss@gmail.com; s=20240420; h=from:subject:message-id;
+ bh=f2GQ0va2lsLTO8nlzPzR6f1yERxb6qBUyy6szVB7sAM=;
+ b=RwjnyeMqeGDD586cQXkEIsoybnrUaiCO8HAys+wB2ry3yzDHXQjh8LXhO3b3RTvs2fuPPGF4w
+ XNDDR+VcijjD6awjhM6ZJsneWQ62X3ZMHBccN8iPQVlpoHccYsX2p3i
+X-Developer-Key: i=joelselvaraj.oss@gmail.com; a=ed25519;
+ pk=qT4gsuVtlPE0Dpr+tQA/Fumm7wzVP6qfeVaY+6pX04s=
+X-Endpoint-Received: by B4 Relay for joelselvaraj.oss@gmail.com/20240420
+ with auth_id=165
+X-Original-From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+Reply-To: joelselvaraj.oss@gmail.com
 
-On Thu, May 16, 2024 at 09:51:35AM -0700, John Stultz wrote:
-> On Thu, May 16, 2024 at 3:56 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> > On Wed, May 15, 2024 at 11:42:58AM -0700, John Stultz wrote:
-> > > But it makes me a little nervous to add a new generic allocation flag
-> > > for a feature most hardware doesn't support (yet, at least). So it's
-> > > hard to weigh how common the actual usage will be across all the
-> > > heaps.
-> > >
-> > > I apologize as my worry is mostly born out of seeing vendors really
-> > > push opaque feature flags in their old ion heaps, so in providing a
-> > > flags argument, it was mostly intended as an escape hatch for
-> > > obviously common attributes. So having the first be something that
-> > > seems reasonable, but isn't actually that common makes me fret some.
-> > >
-> > > So again, not an objection, just something for folks to stew on to
-> > > make sure this is really the right approach.
-> >
-> > Another good reason to go with full heap names instead of opaque flags on
-> > existing heaps is that with the former we can use symlinks in sysfs to
-> > specify heaps, with the latter we need a new idea. We haven't yet gotten
-> > around to implement this anywhere, but it's been in the dma-buf/heap todo
-> > since forever, and I like it as a design approach. So would be a good idea
-> > to not toss it. With that display would have symlinks to cma-ecc and cma,
-> > and rendering maybe cma-ecc, shmem, cma heaps (in priority order) for a
-> > SoC where the display needs contig memory for scanout.
-> 
-> So indeed that is a good point to keep in mind, but I also think it
-> might re-inforce the choice of having ECC as a flag here.
-> 
-> Since my understanding of the sysfs symlinks to heaps idea is about
-> being able to figure out a common heap from a collection of devices,
-> it's really about the ability for the driver to access the type of
-> memory. If ECC is just an attribute of the type of memory (as in this
-> patch series), it being on or off won't necessarily affect
-> compatibility of the buffer with the device.  Similarly "uncached"
-> seems more of an attribute of memory type and not a type itself.
-> Hardware that can access non-contiguous "system" buffers can access
-> uncached system buffers.
+Extend the novatek touchscreen driver to support NT36672A chip which
+is found in phones like Xiaomi Poco F1 [1]. Added devicetree support for
+the driver and used i2c chip data to handle the variation in chip id and
+wake type. Also added vcc and iovcc regulators which are used to power
+the touchscreen hardware.
 
-Yeah, but in graphics there's a wide band where "shit performance" is
-defacto "not useable (as intended at least)".
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-tianma.dts?h=v6.9
 
-So if we limit the symlink idea to just making sure zero-copy access is
-possible, then we might not actually solve the real world problem we need
-to solve. And so the symlinks become somewhat useless, and we need to
-somewhere encode which flags you need to use with each symlink.
+Signed-off-by: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+---
+Joel Selvaraj (2):
+      dt-bindings: input: document Novatek NVT touchscreen controller
+      Input: novatek-nvt-ts: add support for NT36672A touchscreen
 
-But I also see the argument that there's a bit a combinatorial explosion
-possible. So I guess the question is where we want to handle it ...
+ .../bindings/input/touchscreen/novatek,nvt-ts.yaml | 62 +++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ drivers/input/touchscreen/novatek-nvt-ts.c         | 78 ++++++++++++++++++++--
+ 3 files changed, 135 insertions(+), 6 deletions(-)
+---
+base-commit: 6578aac6a270bd6deb9f9319b991dd430de263dd
+change-id: 20240518-nvt-ts-devicetree-regulator-support-ac9e49b78a16
 
-Also wondering whether we should get the symlink/allocator idea off the
-ground first, but given that that hasn't moved in a decade it might be too
-much. But then the question is, what userspace are we going to use for all
-these new heaps (or heaps with new flags)?
-
-Cheers, Sima
-
+Best regards,
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Joel Selvaraj <joelselvaraj.oss@gmail.com>
+
+
 
