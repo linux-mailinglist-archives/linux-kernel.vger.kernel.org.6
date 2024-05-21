@@ -1,247 +1,545 @@
-Return-Path: <linux-kernel+bounces-185347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32BC78CB3C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:44:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C498C8CB3CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 20:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C29FB23208
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:44:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416731F20CC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 18:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E171494BF;
-	Tue, 21 May 2024 18:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N49a8HIA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB89148FF4;
+	Tue, 21 May 2024 18:44:28 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D864D1494A4;
-	Tue, 21 May 2024 18:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716316898; cv=fail; b=druY8YIEfYj0lvBrsXgTTNhdp1gLG0uIeiNykHHQ1G/lMY/mk/yK6ujMR3Ih4ZiUrbCybO5ky5oqeTC7bEpjlF60msRlTM9aAB9A1/dXprofKqqY1K1i0sq649RTjm7DEHFIXKdoUblFGwQW43rbCM/DO1QZa1tF7f8MDx+sVww=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716316898; c=relaxed/simple;
-	bh=nlGIUCbucXvKhQer48HHYqBp2BGQH1iKIGkZsHWbNbo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jjVAfNfPh1iENSslfDXJqR3rh5omDT4DYV+096FTlr6/3zRzso8Z5gOXZ3AL8PxjHeX0Dl4ftMJbOCzw6Df4IAeijC7oRKGob+oTzyarKK1Q/mryPvP0G5oZQfJv+41LrsAC8exDQRI+QVpp/Q67JQCaLM9g7a3XSLsfkLmZm8c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N49a8HIA; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716316897; x=1747852897;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=nlGIUCbucXvKhQer48HHYqBp2BGQH1iKIGkZsHWbNbo=;
-  b=N49a8HIAx2Cbe31g7ZQKeZDvN/rqoqiRHDVx4g/Adsg0Yiss+6HpxV6b
-   9oH+tIEoL2lrkFXikLJsV5VVOXz6rhlIyY2zKUJPyC5dEXmIKRX0t+Q+C
-   L4z//gE1geAHOVflICmhnx285cCD6XCi0Wz88vNUncDOK/VLY/FdDTsZV
-   VobIq+srDed+DdFQTFL+R7cCTc0o/08W3vA11zv9+ip5s7I76Ewhp3U7t
-   t/09XRd28Qy7JRpNN4wukbHjwrtPD6g1NMGNYDVyOIjTCZd6MyBLvh9Hg
-   PQLgaAW4lagnBro6oKTf87agcpr2hkM166F1T/+T3SOUMLmTim4pKwmht
-   Q==;
-X-CSE-ConnectionGUID: fyq68nooTaGwtg9/o8Z6MA==
-X-CSE-MsgGUID: KlV+qJImTLu1kDMBqckYCg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="37913685"
-X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
-   d="scan'208";a="37913685"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 11:41:36 -0700
-X-CSE-ConnectionGUID: FRv9g2X5QmSDHtdapumYyQ==
-X-CSE-MsgGUID: uBBkmSIsS+u5OaV/W8uURw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,178,1712646000"; 
-   d="scan'208";a="33039095"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 May 2024 11:41:34 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 21 May 2024 11:41:34 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 21 May 2024 11:41:34 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 21 May 2024 11:41:34 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.168)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 21 May 2024 11:41:34 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IDRRFMtg6U7CIvLF4OGXlUb4fvvT9p8cIvVZKoXUGYwjLeIRLZlEG/GlUxInoL1jKeyYDk3K+9SjIUg0mSm4uHBd9Mf6EvEL9aQFcazyaD8jgxFBUtQ80Z28WRpqV+ABeeco40+XwroJwK2DDIkC4gdCUFC+f21lSpJ9WHIzb4CLxTyZ+wmrr0WmHhdrBq1nvQ5m+rdxdIHkQiQbP19/5Gj+NRyZNVHkxVURTnUZcRGMn2Y8QZbRrdUk7xrcE5ylZMIG4vEcDYSDc4/3dd9zDy0GqFJblpuxq7HPsQpYoxkg1XGuKbXNTupxDfynvp0FenppJTvlfMJ6EajHrZKtAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nlGIUCbucXvKhQer48HHYqBp2BGQH1iKIGkZsHWbNbo=;
- b=bOukH6YrlQNWY9h2hupmSlqHC+zpuVqRjoQuzmJPnsI+06al/nHw4Bgk6ZgfeUbl1hCHWHc+Q89Ht6f8UtU688IZbYqz6it4Pf1vWJ58Zd8rESy+erEtvbaEETKDvixZ3m+eVDGoHP8mKLFoU80BPRteJZ8PdbrJIUn9dy85rZwr/kMgrSPl5kNJ0KmREGt15DbrPHluf93mZ1E1t1/zXZ1AqmzM69FykflTX4bqgtpJl05uX2PbB1rWW/AfNGI7OE4a8q1wX+1lIfV1gye/oKR8ZY4YSLtTXvLcnSFZeCLfmOka9PJwGXUhXbA372jEglQT1D1kX4h94xy5PisgOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by SA2PR11MB4953.namprd11.prod.outlook.com (2603:10b6:806:117::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Tue, 21 May
- 2024 18:41:32 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.7587.030; Tue, 21 May 2024
- 18:41:31 +0000
-Date: Tue, 21 May 2024 11:41:29 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Dongsheng Yang <dongsheng.yang@easystack.cn>, Jonathan Cameron
-	<Jonathan.Cameron@huawei.com>
-CC: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>,
-	Gregory Price <gregory.price@memverge.com>, <axboe@kernel.dk>,
-	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>
-Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
-Message-ID: <664cead8eb0b6_add32947d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-References: <8f373165-dd2b-906f-96da-41be9f27c208@easystack.cn>
- <wold3g5ww63cwqo7rlwevqcpmlen3fl3lbtbq3qrmveoh2hale@e7carkmumnub>
- <20240503105245.00003676@Huawei.com>
- <5b7f3700-aeee-15af-59a7-8e271a89c850@easystack.cn>
- <20240508131125.00003d2b@Huawei.com>
- <ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
- <20240508164417.00006c69@Huawei.com>
- <3d547577-e8f2-8765-0f63-07d1700fcefc@easystack.cn>
- <20240509132134.00000ae9@Huawei.com>
- <a571be12-2fd3-e0ee-a914-0a6e2c46bdbc@easystack.cn>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a571be12-2fd3-e0ee-a914-0a6e2c46bdbc@easystack.cn>
-X-ClientProxiedBy: MW4PR04CA0332.namprd04.prod.outlook.com
- (2603:10b6:303:8a::7) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF8114884F
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716317067; cv=none; b=KRmQmAIDbX8VXkGBiidI/K/MK3bP0CaH6CGiZwUhu2iRGTQ8UbjWBOKFcrRdFXYijzBAp4+FnvJak925XgxsOsiRygnidyUMr0uRqoYoW5fblo++eYy2s59Jp+WuARzPLbCUxMBSlTy4bRX1pIYfNNKfUC3A19oS2cE176MaxdM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716317067; c=relaxed/simple;
+	bh=t5oE24M4GTg2QTw2LuU0uX0+CQX/Kiv1ak8aO2QP52I=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oMtIXpK9Ycaga9fTkwDsn0RoyAjosfupGwARIZlK5Bly44VwGLGWObHfXjEwmI6wWKkgj7mGcIaE9HhN2K/9IxiFq+p/1E3qGyrVSX+p0blhEs6LT0bH9Mg4DN3bqUk2nbhDY1Pgh2zCpUmPwOyyv3ApzmS+zNpN/YYtJHw5El8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-36da6da1d98so85733765ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 11:44:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716317064; x=1716921864;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0ub1Qfgzyz16AXLqqFBWpaTqTT0gYsFl8TjucI1Nq20=;
+        b=waf3rcrum5wkoIO4FR3hl3Wb/r+vfUMcI4GB/8NLf/e0UefggH3jnN2N0IlRnY8a81
+         VBHN1j6xlDw1+1VSckunK6yvPJHLBQqsrUGq4AWz96su73eGeCOK0Usc3n000pw1Ubdr
+         Hgc0bV1IeUKh9TbFh2dHe8+FBpz22nbEK0mlKFWGIVAW/G6eG3h6pyTl8DxwdzrZlVE6
+         6M83PFPFV1eQyjUl1WZgHJGyn0qRLwD0O/t9khB5w36QhEcU7Mcs1QFdCavFhVneGvS1
+         O2hDzX22OADm3LrMzA9j9CfDUVA8qy8lXNfzodtjoVeuqEReqEBqdM0aoMFtJsfuEl1f
+         Uddw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfKbOpFV7XQgLM0jTR60PMouTA22NwMl9Lk9LscQilBUeVJ0WNwUJlz34N6SJyYnVsN3gikQUPMgJjumpwQJNQZMHnbp70yhxDKCt7
+X-Gm-Message-State: AOJu0YxAZSKxAGUeQROASrKn9XeLvd3kSOlua7IraXmB6CT/5Jg2kdom
+	SwVvX8PXi0wjWTVIbLUxKZ2rPaFilXqo+ioQpgqCV8V1g96jljDAHCeISjzObvgAXJkrdn7mMcs
+	clM5XaT22DQxMlyaRo8BbEJnlxo/y0RmhuKjMHwCuszREBDfugsTPnBQ=
+X-Google-Smtp-Source: AGHT+IHeNo4igSLmP3uCOEtcXzZKRn8zxye1hk4q5+EKwTdsl5++U0qyL9dehIre5pRVecd4b57reO7WL0+llhGc+1WBHLyh62mE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SA2PR11MB4953:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88ee82a5-e36b-4257-8731-08dc79c5a21e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?UVlxb1B1eGpQWUtTU28rRVdjemZiQ1VvOHlMWFV3clRKa2dvbko2Y05rcWZw?=
- =?utf-8?B?RnZydTcwcVBYb2IraFE2QVN5WU1HU01mSnZjZHNyYjV2cGFKbTMwTFcvR0pG?=
- =?utf-8?B?cHYvNDA5QklRWlB1Q1BCSHdmRVZ4L2lhVmVBaGhnV0NkZEMvUFN2NTU3UHhk?=
- =?utf-8?B?TERmalpueHFobVB6L0UxeHJZYko4V3pBblppeWUrdGJ6OE9xMTNKM3ZQQ1JO?=
- =?utf-8?B?VEoweHBldmw5SHlhc1cxQm5kMU5DRlhCS2M3ZlYxUXZnSXUrd0wyRGNnS01M?=
- =?utf-8?B?bkN2S2NlbkprQmhnNm9ZRkt2Y1VPK25tbHFPd0wyU1hoVEk2NDBIT1NLR3pv?=
- =?utf-8?B?YVpmcEgvY1hXdURPa2ZWYzRLdnZTM0dxQWJSNVFERXVNTFdCREw3NDZYWDI4?=
- =?utf-8?B?QWVKMnY1TzFzTlFXUEFPOGVpZlVsNEJVcXk0U1hqTFQ3RjJ4MHdFY2pQL051?=
- =?utf-8?B?U1cwWlRRZWNuaFk1eTlPNE5rZnlaaXZxenZ1amZwbGhKMmc2TDR3M3hLeTgz?=
- =?utf-8?B?SzhCWUViSk9YTzc0cENDRmJ0WnJ0bzc5N09KcTgyQXNtYkM1VzY2SitRVWNi?=
- =?utf-8?B?UnNVcFRXOTRlZW1IY0Y4dVFNTngrRkhRejlmc0V2RTFBbERXYnRkdkxSZ254?=
- =?utf-8?B?d0F5dHptWm05a3JReEIvTDN0RmtpUTFGOXNsV3c2a0hGSzhGQldLZHFmVVVj?=
- =?utf-8?B?QnJNUzc1QXhZSXJFdG52TXFsMW1zb1crNnBidGxHam5hOUxGSWxsOG9RQjBX?=
- =?utf-8?B?NnlsSnJ6RmFaR1R0MDQ5emlkNW11c3lCZ3NOL3RXVUhsbE9jS2xGMjVSK2tl?=
- =?utf-8?B?TzUzYThxUlQydGgxMnhLN05kbEx2NHVLcG52YlN4V2RZeEZHZlZTdnhFS2xB?=
- =?utf-8?B?UlhFSzFnVEMxcGMrQVJaREJwclE5R3FxUVJRVWlTL0tqb3Zic1pGZXpCb29h?=
- =?utf-8?B?b0o3YUZVNFZ0OHg4Ly9HWnNVZmRPUmFmQUdnODJKMSsyNHhEN3RYdWZMUTd2?=
- =?utf-8?B?MjZlUkNJK2d0V2x6REQ5UmoxMWg2Z1BTZlVFM1h1SFA2YmtDYmhubUxneXJm?=
- =?utf-8?B?aEN2MGdsVGVXcUkybzdsUmtPQ1BJSVJMQ2w1WXQ4VmRYcnZOakI5WDVzVm5V?=
- =?utf-8?B?dWNkTVVhMm93UWtNN3A5a0FpQTg3T1FETngrSFdHUzlYMHMzajk2SnF1VFVT?=
- =?utf-8?B?d2lFbE93a09HdHBrdkRPSVRnTU05Q0NEcjBWaTVJT01rbW1yWjQzbDVqK294?=
- =?utf-8?B?eGhBaHRIM1ZCeFMrak13eUF0NGZXK2dwOVZrTUxWVUtnNnJZSEdlYnViVktV?=
- =?utf-8?B?V0lsWUttWXByNGpkTHlnbmJQR3cyV2NPRVlLa3FQaFRIMlNFcDN2eEdldjhV?=
- =?utf-8?B?MlZMVmdnZEdGTVY5ZVlFL0dpaVF1cWxpSmlWc0xyZTdjbHQxZWFxblZBd1Zm?=
- =?utf-8?B?SzdrSkJNcEFJSHdEZU8wd0JjT2l4aTRBeWlIR29TeGlqUjNTRVNWK0FxZGxi?=
- =?utf-8?B?MUN0eGlMcnVnTWJ6eTFLeDZNd2VVdklnelZqWE4vSUpnV0tFbnJmZm9uVUpM?=
- =?utf-8?B?MUVBVzJHZ2RJdDJpRTd6Y0QrOUZmOGEvekpWVzFQTHRKdXYwSHkzaHRKTDF4?=
- =?utf-8?B?RUo1UUtPOS9BRjRFN2QrSGh6QkFWVGppMGZNYlRTRmRSalJtbElBWGMwQ3pU?=
- =?utf-8?B?WXF1Qk51QkNMcndFMytLRnJLNy90Vmk3SzBMeVZ3TmRaWHpmeCswSHp3PT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VzZpZWs2N3ZIb3ZJZ3pPRUQwbEZIdDQ0eEFybGdUYmtYVkVHOGJIYjhITmhu?=
- =?utf-8?B?QmREMXhQUzN1Z2VmM08yUE1ZL3I0cUs0S2E2NTQ2clpPMDJlMi9iak1ENng0?=
- =?utf-8?B?NVlTZko3em5JV1JuVlRRK2UvZk96dk9KdjNNVW5hU2R2NllqdnZGN2VYVzk2?=
- =?utf-8?B?N05lM2toR0pmU3ltdDk2M1Z1LzhKenpFZ3Z3d3o0ZE9HTmpJbXVRT0tKK0tB?=
- =?utf-8?B?SWdPQVVYaldpanBnTjd1K1VjU3A0L0Q1SE9MMjRZdms1bTcxUDk1aFZLZXVF?=
- =?utf-8?B?UWNjdG01NW4xR2pUalZJUEN4cTgrUXVDMXZ1QzJaMkJ2YmpGRzZMdDh0aFly?=
- =?utf-8?B?NkNRN3lXajArams5djNzakRPeHlPcEZtbEExcDdpT3QraFd2WjM4dDJlSjQ0?=
- =?utf-8?B?eHR0WHNOeHo2aWdkMlhwRWdGZHBiMmtRWVRQaElKK3Q2RVFSVEI5aTFHK0FL?=
- =?utf-8?B?ZnBhdWtMR1AvVXFjdDZZMHVYMFlucm5pN0ZaMkZ4RkFSaVVnVit0UGREKzk0?=
- =?utf-8?B?OUwraUZMR2VaQTBmMDd4eXJxdTN1RlBGa0o2UmRRdnFrdzNqdFBnN0FVdUQ5?=
- =?utf-8?B?SlFNeVpLejVvSU8yZk1UNll3Z3ZRRVgrczVTR0Q5SjVYRTRqcEdlWUZMTGJR?=
- =?utf-8?B?clZzUFJ6bGtLZUgwWGwwekx2QVQxVDFFeWV1QUxZakxOOFJBbkhLdVdJRlZI?=
- =?utf-8?B?bE1NQ3BnQXhLWS83aWpjb051UjdNcCtDLzhuajRZYUg3ZlRadkwvUER0aEQ3?=
- =?utf-8?B?Q2JYUXJTcXBvTTlud2pUemlRL0lUcU1zdU9wZExEYndQWkFCQmVXblVhdGpE?=
- =?utf-8?B?NTBwaG9MelNMNE9NK3lRWHZWTmJ3TEUzQWppd3BQR3VpaHpaZ0ExR0NabjdZ?=
- =?utf-8?B?THpnTjN2ZUNaZkk4UzlvTHg0REx6M0lkUEZSdEtLV3NENFpML1lXd3lhSlA3?=
- =?utf-8?B?UzFaS21PczNCWDY4V3phc2RTZ1F0eFFieGk0MGIvRHVWN0pDVXdMa2k3Y0Vt?=
- =?utf-8?B?ZHNJR05mMDdHR1RQQjJUbEF1MUd4THJsNHdCWk9CbHAxV2RDc0tPUDJYRmdv?=
- =?utf-8?B?L3d5cUI5ZUtuT1Vtei9mZlNWcHBkQU5CSWhNMlVLRUJnZW1KRTlEN3hUTEs1?=
- =?utf-8?B?Q3VQL2FEem5kSnJqS1Q5WGNIcStHZmJramFOazRHLzh3NWJJUG9Vc1FRTWhH?=
- =?utf-8?B?OWJJMFJWVXRDTVI2V1RFWUxvWHV3VER1VnpSZW5hdHk5Ulh5Umw3UE1sRklu?=
- =?utf-8?B?ZFVZaWY2WUcxbjRCTnllZUt4Y3A5UGNSSWRuVzZ2Nk92UjUzaCtNQWtnTHVQ?=
- =?utf-8?B?L1NmWEFaa3BoOU1BcmZURkRqMFBxRDluQjU3eG9wZ1JSNHpac3ZOazZtTkUx?=
- =?utf-8?B?bndRS0twVVpQK2R2N0dEV0RtL3puYWxNTHBEOUV0OEx0V3p2RHU3NTl4OGlC?=
- =?utf-8?B?NjZQWG9NU1YzOHNsNVJwMXVYT2UyWmNIc0p1WVI1aElXem9oLzkzemZ1VHZB?=
- =?utf-8?B?RHlKdG93WkNXNWQyNVZWSkhQMlFXSHBuNW5zRVRtUHY5WXBBSFVMRXlhVmhq?=
- =?utf-8?B?Z1hGc2wyYSswSEFod0czNktmTWdqNkNOUjc3cUk1QWJlc2RrV0pna0VzY2VB?=
- =?utf-8?B?UnMzUjRRZndNZy9SN1ltRlo0RU5ITDkycjVhd0JUZFE2bnFVWTF0N1RkazBK?=
- =?utf-8?B?dllnM09kckVwQ1poeU5oaytZSTR3V2E4MGF1dkhXbWhsK3NCREJTWm5rSC9X?=
- =?utf-8?B?OHdvRkp4RXkyOGFKa3lwZWQvcHdkaVVaNzRtdmdURTdnVXkwQVJVdkgzRW9v?=
- =?utf-8?B?V1d4VGplM09wZks3bHQvOXl6Vm1hUWd3cTk5SmljREExbVBuZmNrd3U5OEFK?=
- =?utf-8?B?R3V3V2FCOXZrS0VnVTVMWm9PYXo1ZmlWVGQ4VXZkWHBRbVdIZHByL2tRS25F?=
- =?utf-8?B?ZGxjWXhoS1NTczk2UDdIOEhGcTIzS0RFSEc0QkliVjltQVZtcWFVWkRjaWdj?=
- =?utf-8?B?K05aVzhOY1FPTzFxTUFSZDhNdEx5V2hTdzdkUGR3SzA0OVQvbUdVNURBd2lC?=
- =?utf-8?B?MzN1U2YxZXVMNEFqTkwwY0VHWGtHTmtWY1JkRnpTMm1TVnBIRXRjZEtuTGwr?=
- =?utf-8?B?NkU4UUtBTmdWM05BaUdabjY0SXBrekRkNGJuaXhXQ1c0c0Zwc3JrS3FVQmhi?=
- =?utf-8?B?eUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88ee82a5-e36b-4257-8731-08dc79c5a21e
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 18:41:31.7001
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wYIw724p4ah8Ki+za/rvg0YpVgMXqFKFKrDmhMpK6nFnju9cGKeTEaWU/ZDnrNOsXYasmfIOMS6UCB2ELpHE+vQhSzhgJNcBc3Cp4aZ/bLM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4953
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a92:d1c6:0:b0:36c:4cc9:5923 with SMTP id
+ e9e14a558f8ab-36cc1446f5emr5653125ab.2.1716317064444; Tue, 21 May 2024
+ 11:44:24 -0700 (PDT)
+Date: Tue, 21 May 2024 11:44:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f2cd940618fb34fd@google.com>
+Subject: [syzbot] [wireless?] INFO: rcu detected stall in sys_sendto (7)
+From: syzbot <syzbot+041bf9d823ca07fe3563@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	martin.lau@linux.dev, netdev@vger.kernel.org, sdf@google.com, song@kernel.org, 
+	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Dongsheng Yang wrote:
-> 在 2024/5/9 星期四 下午 8:21, Jonathan Cameron 写道:
-[..]
-> >> If we check and find that the "No clean writeback" bit in both CSDS and
-> >> DVSEC is set, can we then assume that software cache-coherency is
-> >> feasible, as outlined below:
-> >>
-> >> (1) Both the writer and reader ensure cache flushes. Since there are no
-> >> clean writebacks, there will be no background data writes.
-> >>
-> >> (2) The writer writes data to shared memory and then executes a cache
-> >> flush. If we trust the "No clean writeback" bit, we can assume that the
-> >> data in shared memory is coherent.
-> >>
-> >> (3) Before reading the data, the reader performs cache invalidation.
-> >> Since there are no clean writebacks, this invalidation operation will
-> >> not destroy the data written by the writer. Therefore, the data read by
-> >> the reader should be the data written by the writer, and since the
-> >> writer's cache is clean, it will not write data to shared memory during
-> >> the reader's reading process. Additionally, data integrity can be ensured.
+Hello,
 
-What guarantees this property? How does the reader know that its local
-cache invalidation is sufficient for reading data that has only reached
-global visibility on the remote peer? As far as I can see, there is
-nothing that guarantees that local global visibility translates to
-remote visibility. In fact, the GPF feature is counter-evidence of the
-fact that writes can be pending in buffers that are only flushed on a
-GPF event.
+syzbot found the following issue on:
 
-I remain skeptical that a software managed inter-host cache-coherency
-scheme can be made reliable with current CXL defined mechanisms.
+HEAD commit:    c75962170e49 Add linux-next specific files for 20240517
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12bcb182980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fba88766130220e8
+dashboard link: https://syzkaller.appspot.com/bug?extid=041bf9d823ca07fe3563
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1232f96c980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16054e3f180000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/21696f8048a3/disk-c7596217.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b8c71f928633/vmlinux-c7596217.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/350bfc6c0a6a/bzImage-c7596217.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+041bf9d823ca07fe3563@syzkaller.appspotmail.com
+
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1):
+ P4537/1:b..l
+ P5233/3:b..l
+ P5232/1:b..l
+
+rcu: 	(detected by 0, t=10505 jiffies, g=5897, q=114 ncpus=2)
+task:syz-executor142 state:R
+  running task     stack:26416 pid:5232  tgid:5232  ppid:5114   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a50 kernel/sched/core.c:6745
+ preempt_schedule_common+0x84/0xd0 kernel/sched/core.c:6924
+ preempt_schedule+0xe1/0xf0 kernel/sched/core.c:6948
+ preempt_schedule_thunk+0x1a/0x30 arch/x86/entry/thunk.S:12
+ __raw_spin_unlock include/linux/spinlock_api_smp.h:143 [inline]
+ _raw_spin_unlock+0x3e/0x50 kernel/locking/spinlock.c:186
+ spin_unlock include/linux/spinlock.h:391 [inline]
+ zap_pte_range mm/memory.c:1682 [inline]
+ zap_pmd_range mm/memory.c:1730 [inline]
+ zap_pud_range mm/memory.c:1759 [inline]
+ zap_p4d_range mm/memory.c:1780 [inline]
+ unmap_page_range+0x4206/0x4d00 mm/memory.c:1801
+ unmap_vmas+0x3cc/0x5f0 mm/memory.c:1891
+ exit_mmap+0x264/0xc80 mm/mmap.c:3341
+ __mmput+0x115/0x3c0 kernel/fork.c:1346
+ exit_mm+0x220/0x310 kernel/exit.c:565
+ do_exit+0x9aa/0x27e0 kernel/exit.c:861
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1023
+ get_signal+0x16a1/0x1740 kernel/signal.c:2909
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x102/0x240 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f089f6322ab
+RSP: 002b:00007fffee3373e0 EFLAGS: 00000246
+ ORIG_RAX: 0000000000000010
+RAX: fffffffffffffffc RBX: 0000000000000003 RCX: 00007f089f6322ab
+RDX: 00007fffee3384b0 RSI: 0000000080085502 RDI: 0000000000000003
+RBP: 00007fffee3384b0 R08: 0000000000000010 R09: 00322e6364755f79
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000800000000
+R13: 00007f089f6ab3c0 R14: 00007fffee337480 R15: 00007fffee339510
+ </TASK>
+task:syz-executor142 state:R
+  running task     stack:27088 pid:5233  tgid:5233  ppid:5115   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a50 kernel/sched/core.c:6745
+ preempt_schedule_common+0x84/0xd0 kernel/sched/core.c:6924
+ preempt_schedule+0xe1/0xf0 kernel/sched/core.c:6948
+ preempt_schedule_thunk+0x1a/0x30 arch/x86/entry/thunk.S:12
+ __raw_spin_unlock include/linux/spinlock_api_smp.h:143 [inline]
+ _raw_spin_unlock+0x3e/0x50 kernel/locking/spinlock.c:186
+ spin_unlock include/linux/spinlock.h:391 [inline]
+ filemap_map_pages+0x1707/0x1e70 mm/filemap.c:3655
+ do_fault_around mm/memory.c:4884 [inline]
+ do_read_fault mm/memory.c:4917 [inline]
+ do_fault mm/memory.c:5056 [inline]
+ do_pte_missing mm/memory.c:3903 [inline]
+ handle_pte_fault+0x3bff/0x70f0 mm/memory.c:5380
+ __handle_mm_fault mm/memory.c:5523 [inline]
+ handle_mm_fault+0x10df/0x1ba0 mm/memory.c:5688
+ do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0033:0x7f089f630433
+RSP: 002b:00007fffee3393f8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f089f630433
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 0000000000000000 R08: 0000000000000000 R09: 7fffffffffffffff
+R10: 0000555563b7f650 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fffee33950c R14: 00007fffee339520 R15: 00007fffee339510
+ </TASK>
+task:klogd           state:R  running task     stack:23672 pid:4537  tgid:4537  ppid:1      flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a50 kernel/sched/core.c:6745
+ preempt_schedule_irq+0xfb/0x1c0 kernel/sched/core.c:7067
+ irqentry_exit+0x5e/0x90 kernel/entry/common.c:354
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5758
+Code: 2b 00 74 08 4c 89 f7 e8 ca ad 89 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
+RSP: 0018:ffffc9000365f140 EFLAGS: 00000206
+RAX: 0000000000000001 RBX: 1ffff920006cbe34 RCX: 0000000000000001
+RDX: dffffc0000000000 RSI: ffffffff8bcacae0 RDI: ffffffff8c1fe400
+RBP: ffffc9000365f288 R08: ffffffff92fb8587 R09: 1ffffffff25f70b0
+R10: dffffc0000000000 R11: fffffbfff25f70b1 R12: 1ffff920006cbe30
+R13: dffffc0000000000 R14: ffffc9000365f1a0 R15: 0000000000000246
+ rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ is_bpf_text_address+0x46/0x2a0 kernel/bpf/core.c:768
+ kernel_text_address+0xa7/0xe0 kernel/extable.c:125
+ __kernel_text_address+0xd/0x40 kernel/extable.c:79
+ unwind_get_return_address+0x5d/0xc0 arch/x86/kernel/unwind_orc.c:369
+ arch_stack_walk+0x125/0x1b0 arch/x86/kernel/stacktrace.c:26
+ stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3940 [inline]
+ slab_alloc_node mm/slub.c:4000 [inline]
+ kmem_cache_alloc_node_noprof+0x16b/0x320 mm/slub.c:4043
+ __alloc_skb+0x1c3/0x440 net/core/skbuff.c:656
+ alloc_skb include/linux/skbuff.h:1308 [inline]
+ alloc_skb_with_frags+0xc3/0x770 net/core/skbuff.c:6504
+ sock_alloc_send_pskb+0x91a/0xa60 net/core/sock.c:2794
+ unix_dgram_sendmsg+0x6d3/0x1f80 net/unix/af_unix.c:1972
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ __sys_sendto+0x3a4/0x4f0 net/socket.c:2192
+ __do_sys_sendto net/socket.c:2204 [inline]
+ __se_sys_sendto net/socket.c:2200 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2200
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f564abe09b5
+RSP: 002b:00007ffc60f0d2f8 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f564abe09b5
+RDX: 0000000000000065 RSI: 000055a8742bdcb0 RDI: 0000000000000003
+RBP: 000055a8742b9910 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000004000 R11: 0000000000000246 R12: 0000000000000013
+R13: 00007f564ad6e212 R14: 00007ffc60f0d3f8 R15: 0000000000000000
+ </TASK>
+rcu: rcu_preempt kthread starved for 1165 jiffies! g5897 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:R
+  running task     stack:24880 pid:17    tgid:17    ppid:2      flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a50 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_timeout+0x1be/0x310 kernel/time/timer.c:2581
+ rcu_gp_fqs_loop+0x2df/0x1370 kernel/rcu/tree.c:2000
+ rcu_gp_kthread+0xa7/0x3b0 kernel/rcu/tree.c:2202
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+rcu: Stack dump where RCU GP kthread last ran:
+CPU: 0 PID: 4761 Comm: dhcpcd Not tainted 6.9.0-next-20240517-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:rcu_dynticks_curr_cpu_in_eqs include/linux/context_tracking.h:122 [inline]
+RIP: 0010:rcu_is_watching+0x3a/0xb0 kernel/rcu/tree.c:724
+Code: e8 ab d9 0e 0a 89 c3 83 f8 08 73 7a 49 bf 00 00 00 00 00 fc ff df 4c 8d 34 dd e0 b9 db 8d 4c 89 f0 48 c1 e8 03 42 80 3c 38 00 <74> 08 4c 89 f7 e8 fc bd 7f 00 48 c7 c3 08 7d 03 00 49 03 1e 48 89
+RSP: 0018:ffffc90002f9fcd0 EFLAGS: 00000246
+
+RAX: 1ffffffff1bb773c RBX: 0000000000000000 RCX: ffff88802aca0000
+RDX: dffffc0000000000 RSI: ffffffff8c1fe3e0 RDI: ffffffff8c1fe3a0
+RBP: ffffc90002f9fdf0 R08: ffffffff92fb8587 R09: 1ffffffff25f70b0
+R10: dffffc0000000000 R11: fffffbfff25f70b1 R12: dffffc0000000000
+R13: 0000000000000000 R14: ffffffff8ddbb9e0 R15: dffffc0000000000
+FS:  00007fc5d90f3740(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fffee3393f8 CR3: 000000002e10c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ </IRQ>
+ <TASK>
+ rcu_read_lock_held_common kernel/rcu/update.c:109 [inline]
+ rcu_read_lock_held+0x15/0x50 kernel/rcu/update.c:349
+ sched_mm_cid_remote_clear_old kernel/sched/core.c:11898 [inline]
+ task_mm_cid_work+0x438/0x7c0 kernel/sched/core.c:11957
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x102/0x240 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc5d91c1d49
+Code: 5c c3 48 8d 44 24 08 48 89 54 24 e0 48 89 44 24 c0 48 8d 44 24 d0 48 89 44 24 c8 b8 10 00 00 00 c7 44 24 b8 10 00 00 00 0f 05 <41> 89 c0 3d 00 f0 ff ff 76 10 48 8b 15 ae 60 0d 00 f7 d8 41 83 c8
+RSP: 002b:00007fffb1c3abb8 EFLAGS: 00000246
+ ORIG_RAX: 0000000000000010
+RAX: 0000000000000000 RBX: 000055f8670b3190 RCX: 00007fc5d91c1d49
+RDX: 00007fffb1c3abc0 RSI: 0000000000008921 RDI: 0000000000000011
+RBP: 0000000000000000 R08: 0000000000000008 R09: 0000000000000036
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffb1c3abc0
+R13: 000055f866e63f88 R14: 000055f8670b3190 R15: 000055f8670b9740
+ </TASK>
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+yealink 5-1:36.0: urb_irq_callback - urb status -71
+yealink 5-1:36.0: unexpected response 0
+yealink 5-1:36.0: urb_ctl_callback - urb status -71
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
