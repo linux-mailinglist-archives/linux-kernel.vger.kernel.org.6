@@ -1,363 +1,216 @@
-Return-Path: <linux-kernel+bounces-184558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8869D8CA89F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:13:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E04ED8CA89C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 09:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CE2E28293E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:13:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94EC7282B59
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 07:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82014DA11;
-	Tue, 21 May 2024 07:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C074950275;
+	Tue, 21 May 2024 07:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UdfD5H+g"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=bang-olufsen.dk header.i=@bang-olufsen.dk header.b="hDZzKOVK"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2096.outbound.protection.outlook.com [40.107.241.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE86050A63;
-	Tue, 21 May 2024 07:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716275600; cv=none; b=kg+a7jrwpc0RsE8zciuefYqnJ0xFmT+tMSdc6p/nlV3NmEnh/AfEtwpC0GWMuqdCssLUW1GK5wp3jl1r84MNdPQqcW/jaahq0vwtGKX3wVD6sLH8w6jfm+XuGld7l6JdGrSShcOIS+B+8AsO28YPyIbelqE1Ic/2LbKi0C0HKfI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716275600; c=relaxed/simple;
-	bh=qvDP1jRufMd2iN8O0kotoJkFNUCBvX8IE1LAXNkhM1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izLkAsWUUSCziqX7R4dtmeuJrOY/bnnmIn3//O8joaQqBD5+o3zKPb1P3EDddlhmRfz3pMmXmkxBTJxcQouglmouDNt12mjz/FS7wr9fuQzbKrB6Sja1lSvRHQxLiZ/WHX5n4jdEpA4kt+BEakHwbA+WPqe5X9u/Ihrm9ovmoG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UdfD5H+g; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716275598; x=1747811598;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qvDP1jRufMd2iN8O0kotoJkFNUCBvX8IE1LAXNkhM1g=;
-  b=UdfD5H+gd1jRdL0zYqehBSb9rMNH9ooi+ylXSAVW2OAJUepLzi4iEvsO
-   5e+OGQgHnUao74iVdqyg1Yb0JQYktKV1hN2JYF4zLicmmWsjcg0/S6ucL
-   FQyDsWehbNkpAscdPsDwWc6pMnZX6rNjrDuSwa74pMjjM0Nxq9dd3aBYT
-   cm8XK3Bo9VmyLG8J+JBzM7+5LGOefYwZL5uJ34cR8+ToGO6uyAhpLE4Xh
-   ilC124x0BNGYY1rHoziR/YU9n3agd0c0L2bXspZjbTW8W+ffi44WbSXyz
-   8w8F0j8I0/bo3Oyg/wtpqN3MD7xFOOpgwrfAy9FM261EtWELhlkZQGel2
-   Q==;
-X-CSE-ConnectionGUID: djKayKkGQei4osPDzYdgCw==
-X-CSE-MsgGUID: ZViJSLMCQcass4npX+EZ4Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="16286092"
-X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="16286092"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 00:13:17 -0700
-X-CSE-ConnectionGUID: OAN1HqFMQvCBENBKOgy+NQ==
-X-CSE-MsgGUID: 1Jnk6Zz3RkWsAysqIHuL5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="33416294"
-Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 21 May 2024 00:13:14 -0700
-Received: from kbuild by 108735ec233b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s9JgN-000636-1A;
-	Tue, 21 May 2024 07:13:11 +0000
-Date: Tue, 21 May 2024 15:12:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Ard Biesheuvel <ardb@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, linux-arch@vger.kernel.org
-Subject: Re: [PATCH 4/4] kbuild: remove PROVIDE() for kallsyms symbols
-Message-ID: <202405211448.fglQOQ9W-lkp@intel.com>
-References: <20240520124212.2351033-5-masahiroy@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C9250269;
+	Tue, 21 May 2024 07:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716275569; cv=fail; b=IKvxeUX0ptfgGpjLaHljUFpn9qhmk1QdCaMEIz3M3AO1WPBjYID83mi83JbhuVtojPYcixACo6Kuv3XQITrjjdRwceRnipEUQicWOeeeSPRJmK3oxROPGkyYmMmuaJPyXLYZF0KWHfZfI33G0UhHeB+hgoI3y/83k1BN+FBpP2M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716275569; c=relaxed/simple;
+	bh=IYou0lNjyKxyM21pEk/Qeh83k8VLNLYsTaQOz0YZdTs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=n7+Q21zcWIaSwPbfRre/Iw2R1Fux9ro+Xf8SMu1hp7qQPSi+ZJuDBycFJFkasfx6avrmwYR3BBKbDVGg99Z73QYZHfI7+6jKL+BgIn0CsvQslKet3GxXmqWLVr9aZZ8Np6iJBTNZkfqjY33R3UCReNX61c/eQFU8PIGlckClEXI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bang-olufsen.dk; spf=pass smtp.mailfrom=bang-olufsen.dk; dkim=pass (1024-bit key) header.d=bang-olufsen.dk header.i=@bang-olufsen.dk header.b=hDZzKOVK; arc=fail smtp.client-ip=40.107.241.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bang-olufsen.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bang-olufsen.dk
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IiKe2O6MFc+UoiiBtQD60rpH9BL74PhLmXfJ5ZwAHQVHvEoFkQyB4ejhQlsJhQ2bcnkJTjvBKaMaQZzjbhDa7+JMfiN1AQxbRUk+QMp5VRJ8ExZn9Xw4j9xp+3WMRA/7KgySknamXfMaFdMHu0nbMuxVpd1d9KfpoEWi68UI0dlc31S0TQXWOyyyYrYkGIobuLK2pFzuLdr3ZevxVviEseESJgH59r8TRa8rOb3xid7E+v+2v/S1foMJJ/lWN0Mor9nAyKiRe438zY0F0TBL9vKKvrjSEnLfdVYjauPSNTRyesFW2Loj8PLWgQptKMhTFdonCbzBZTjujcGx7Sb0lA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IYou0lNjyKxyM21pEk/Qeh83k8VLNLYsTaQOz0YZdTs=;
+ b=h55/oqrVOT+vuvFoXcPY2OT91P24Rdm4RGkiDZ1/f5OdGj6G/83cP35KVN1l6E5CyGieI9lxzi3PytUQEnppI77G5U3w29yYjFfATrDtjnZdHX/P94VsPpimV6CW4ci8LZIJflgHiaNwmlq1ig95eXySDirspHY73lOXj39d/G2+8yuq/tXupzR+6IQIN3b/cd722rvFfGcz1IB6ar939g5dWMTZ9D4GeWfKxVzkxPlOyVcda6sFKP79/tuRrWaGwWog+fGC2id36wjczxVSZNPDzoNOUhpQbcZoOiQkYTqP6mN52cl1FTG9FOp2TPsNivHjMV2Rw8Ujq/FIeRuhVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bang-olufsen.dk; dmarc=pass action=none
+ header.from=bang-olufsen.dk; dkim=pass header.d=bang-olufsen.dk; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bang-olufsen.dk;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IYou0lNjyKxyM21pEk/Qeh83k8VLNLYsTaQOz0YZdTs=;
+ b=hDZzKOVKBJYJ9/+yU/PkPpMdW6L5K3jngcW/ItSuXHvYZ+zOCE4nSt7zrVCrshKW/8qVX2gIZwC14baE7+kutRTw9NnOosTdIKjmkXKG36e/SlekhIjJ9Vi7B1bGD8G+t5hb8P6cgpdMOVMAFBNtucUhunnZK/cKN083hF1EHOw=
+Received: from AS8PR03MB8805.eurprd03.prod.outlook.com (2603:10a6:20b:53e::20)
+ by AS8PR03MB7046.eurprd03.prod.outlook.com (2603:10a6:20b:23e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.17; Tue, 21 May
+ 2024 07:12:44 +0000
+Received: from AS8PR03MB8805.eurprd03.prod.outlook.com
+ ([fe80::6ac3:b09a:9885:d014]) by AS8PR03MB8805.eurprd03.prod.outlook.com
+ ([fe80::6ac3:b09a:9885:d014%5]) with mapi id 15.20.7611.013; Tue, 21 May 2024
+ 07:12:44 +0000
+From: =?utf-8?B?QWx2aW4gxaBpcHJhZ2E=?= <ALSI@bang-olufsen.dk>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: =?utf-8?B?QWx2aW4gxaBpcHJhZ2E=?= <alvin@pqrs.dk>, Mark Brown
+	<broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+	<brgl@bgdev.pl>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela
+	<perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi Shyti
+	<andi.shyti@kernel.org>, Saravana Kannan <saravanak@google.com>, Emil
+ Abildgaard Svendsen <EMAS@bang-olufsen.dk>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-sound@vger.kernel.org"
+	<linux-sound@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH 11/13] dt-bindings: a2b: add compatible string for
+ Beosound Shape node
+Thread-Topic: [PATCH 11/13] dt-bindings: a2b: add compatible string for
+ Beosound Shape node
+Thread-Index: AQHaqFx0M4SAA47ntkWqHGkuPrwvmrGeclcAgALZfQA=
+Date: Tue, 21 May 2024 07:12:44 +0000
+Message-ID: <3mt6nziqmdrwl34hmt7ilwy5m2x5mtraiokimn742whc5agtpv@3z2hmpc3mmeh>
+References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
+ <20240517-a2b-v1-11-b8647554c67b@bang-olufsen.dk>
+ <2d311fd3-8d07-40df-bc91-e4df522efb99@kernel.org>
+In-Reply-To: <2d311fd3-8d07-40df-bc91-e4df522efb99@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bang-olufsen.dk;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR03MB8805:EE_|AS8PR03MB7046:EE_
+x-ms-office365-filtering-correlation-id: b4e86dd5-ba10-4807-ea32-08dc79656989
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230031|366007|7416005|376005|1800799015|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?M2FXRXprS0poQytHMEQ2TDlaWms4b0hzeTZYQzRsYXNESWNKRUtUS0xaWkF1?=
+ =?utf-8?B?aE1Fdy82a1VjOTZTYmtEZFd5Y3VWSzhGTnc5ZStic0cyaFFUSWwvREdjK0xE?=
+ =?utf-8?B?SlViR0ZiR1czYjd5bDZOQU10WkJVdlo4cFFhQjI0M1ZRUUpxZmx0K0xzMG5M?=
+ =?utf-8?B?eGlLOGRCaXJJUGJoUnl2WHY4ZzdzNjh5MVNPdjNXcUtFTVdUVTlrZWQ1L3A3?=
+ =?utf-8?B?eE41UTBSeDk3cHNjVGxzK2d1YnJ4KzBheDQxUzN6LytXRjdJempLOEg2M25l?=
+ =?utf-8?B?T0hhNGtCemkxWkRDT3dTVXlYZ05pcUQzOEZycFVlalFuVmkyZUZ3MzVDU3Ra?=
+ =?utf-8?B?NnpmMm4veTdlMEZ2b0dqSG5lYWVjaVFWWXJOWHYyWkJFNzdLaWNwT2VZbVdG?=
+ =?utf-8?B?Y3MyNVJCdHlrbWNmdy9ndURka2ZON0JPcUREeWlhUkRUZmhaekdZOHhPVHJW?=
+ =?utf-8?B?Q2FzWlFFSDAwVy94cTU1QmM0UHdJcTF1QSt6QlpkVHFkVHYrZ0d3ZkxCWlRj?=
+ =?utf-8?B?N3MxUmxzSlJiVk9RYjBFbU5kOVcwaDRHS1FpcTZOazdvUDB5blAzckFjT3Zv?=
+ =?utf-8?B?VXd0WThqQTFpMGpBRnZ1eDZBeGVySlk2SkpNUGtlSFBSblNZMDJsUFNPSExT?=
+ =?utf-8?B?QisxZDJWaW4yM05yM09zanJFdmlENFljNFUvaEIwcGZUNWl6cFJVQWtrSm5p?=
+ =?utf-8?B?VTNJYjJITHM1Rjc2SU50Zmh2NGJzRkt4RnhSMjE1c0JOUWJ2OXk2T3B5SkJz?=
+ =?utf-8?B?Uy9raHZpRlFKWjdSQk1yM2lqQ0VERkdPZ1I0RDZRU292SzhSR1Q0Y0E0SGpE?=
+ =?utf-8?B?YXc3YW9tVjFHenJiUUprenhORlNTeDRmZWpJcGVGR08rNXlBTkltMldScTNh?=
+ =?utf-8?B?TUVLNDVhQnhyVGF6SjcxanZhVjk2eEJuWSs4Mnd0Ni9seUhDR3p6cTUyTHpN?=
+ =?utf-8?B?Sk9WQWQ1QThwcmVlL0ZqUkFkU1NzSUpQOXJRTVhQb0xXbm1jMUZqL3M4SGow?=
+ =?utf-8?B?enhTT0ZCVENLVW5wSEREWHowUXRKeGRoTnUvalZ3ODBORWhrM1ZvTUp1aDcy?=
+ =?utf-8?B?eUV0V1pIcHVlQ2FIT1FUaWdaNG0xSkcrMFZEQ2NEdWJBTXdBc1JmKzJxODJl?=
+ =?utf-8?B?S2JKcHIreGxYY3pUc3AwdWJrdFdKQzdwMzBhcmpRVzNiSFIxYTY1ZVhsUXFR?=
+ =?utf-8?B?TzV2SHF2MzJSSWp5bWFOT0RoaGFyWGZITVFzeGlsOFl3VjMyUGQyLzdyaHZZ?=
+ =?utf-8?B?eWlyS05kS1hpK3JGVEU2RTVrK3NMOU85dmlhTGgzSFpkTktFczFXT1lFckEw?=
+ =?utf-8?B?QzYyVSttZGpqaVhxa2s5Z2ZkbVF3N0pQQ1ZVWHJzWlBONnpCM095NzZJMVg4?=
+ =?utf-8?B?WDRERlBFYXdwTDk3TnQxSG9ESUJ4am5iY2FOdlZ5ald1Nlg2R3dzcExkcis0?=
+ =?utf-8?B?RGh0dzk0YkxZKzhGMDl0MGY1UzZkMlp0cVhrbFUrY3ZIcWFTc0dSc3FLMXll?=
+ =?utf-8?B?WW5tbXhZVjZ5WnNONisxajltS09pRXVNQ2ZEMFdCUWliR3ByeGdLMkNESFJG?=
+ =?utf-8?B?aHNIbXdZYng4eWJrWjRPaDhyc1AzVkhIRHUrbnYwYnZmWmpnYkdqRUI3TFl0?=
+ =?utf-8?B?MVlJdDNxR295cU5xWGw4ck0wN1JwL2xpMUJnUmVtMTFxUjFRZjhYc1Y1MXVB?=
+ =?utf-8?B?UFU4ODhLUXVYdW1IaWR5NURDcWVvbko1ckw1Q3lHWkNnRXByUE5ONXNYTGdQ?=
+ =?utf-8?B?d0RHRXUwUVM2REVzQ2ptR0VKREpJeEZJNXA0ZG8wTFR6L2V2cU9mRGJlUXhs?=
+ =?utf-8?B?NURtS3VxV2F0YzVTVWdGZz09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB8805.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?QVB1TVhrYnJodXpWUHN5STk1bjUzcElnUUhBWXV5bWpHNkRLRGs5TVBFQ3BR?=
+ =?utf-8?B?d2llTUpFY242Nm53YWp3K3dkQnpEdTd6WmVQQ1l1bzRXSTRRdlFnM0VpYVpa?=
+ =?utf-8?B?c3dYU2xJbC9ERmxXM2NLUm83bmRBYUdVcU52QTMrOVI4MEthZmpBNEc2Zlcx?=
+ =?utf-8?B?VzJLZit0c25QZlRaNCs2Vko4K1N5YnExdkt0ZnJ4ank5bXovMWlBRHBxZWpO?=
+ =?utf-8?B?Q3MwaE84Ry80bkJhNWVNb2ZoRXJFMmxuTWprZE9NNEtXRkZyUTU3TFg4a1lh?=
+ =?utf-8?B?THI3MkMxdlFVbGF3dFNFdkUrOVI3bmpFSExrVkRpTC9SSmtuRC8zcXBkRnhu?=
+ =?utf-8?B?SlZFYWQwdEVoSGVvaSsydEFweFRoODZ2WUVTb0sxV0dXcFdOUHp1aE5ZWi9Y?=
+ =?utf-8?B?cFFZS1ZVM2s5Z3dFSGh4VFM5a2RWbUVCTmJJT214R2V3ODlOSzZLbVR5dEhR?=
+ =?utf-8?B?YlhJcnlRdE4vSUp0RHVWOU1iWG1leXlvaVVXYjF5OS9ic0NQbDVNbW1XTStC?=
+ =?utf-8?B?NWM2c2VQSXRXTFo1OWduSVQ3R0xZbDh3eWxyUTNkY0JZZUVIRisxTHlpcTBN?=
+ =?utf-8?B?UjZhKzhZZUFLb1lUdmtrd2tCaTFzR3o1YlRZeTZNRm1SZ2k3dkxmRklKT2ZW?=
+ =?utf-8?B?RGt4WUptQWQzNHNrTHNiZlVneUZsQ1FZZUpRby9RTU5ZckVIRlRpNHg2Q2hN?=
+ =?utf-8?B?OE1NUStvenY2NG5nVWxrMDVmNUhBWjl0ZkVqeFJVQmQ4VzJBanlyNFBDTXMr?=
+ =?utf-8?B?L0tQR2xEVldxcm9lY0daSEhZdW5IWXJGdm1hc1czaDE4enNxYnpMcHZPRGNW?=
+ =?utf-8?B?czk0Wkt3RW1MT2tQck01VEZXcGNZYUNNU1E3SVFwdTRmeit4NVU1ZGRqaXNR?=
+ =?utf-8?B?ZmhYdFdibGxQK1hoM2IwYndMclhxQ3lFTGpKejRQOGloQ2ZxdVVNcXJQa211?=
+ =?utf-8?B?ZFdVWVRwYjFZcWJBZHg0aEhiODFHeU5JK25yS3RnNy9zV3BQdjdRTUtKZ1c1?=
+ =?utf-8?B?eXBVejJlRi96WWRuVmxXOHBxN29XRmJtU1cwL1pKOTE5Yjk3RXNvRWdFajIw?=
+ =?utf-8?B?U1lTMlphMVdzMEhYKzVxdld0UGI0TnZ2WUw4SVY2OHh6TnJDdk80VnBLSEhv?=
+ =?utf-8?B?U3VRYXVsUWllVFFobGpPZyszT3pGT0xWQVk0RFVhVklFRitlN0MrU1ovV0pC?=
+ =?utf-8?B?S1NVM3FuU3hSSzdleUdUV2t2OFJDNVBmdXFYMzlLMVhELyt2aW9wQkUvV2Vp?=
+ =?utf-8?B?cUJtVTZZbTRwRjlsNWxSTENDZ3JTUldiSmFPZ3huZ1BlSlBtcFhJUGVmalJN?=
+ =?utf-8?B?d2RjbWp2ekpVcG9LQ00zNDJib2NBUGJCRklHUUY1T2xLdzMrZ1FjTWc4OUVB?=
+ =?utf-8?B?Q3dUSzBFbkcwWWpXVUZCMEpRQWdqdFpOeXZORkQ0bFVsU3Vja1RLZGpDb1pj?=
+ =?utf-8?B?UXNxdHZWSDVxVElkbkFpU2VSamJZckdBeHg5c0hyTjVUVnVqVXl0OHpPcWlr?=
+ =?utf-8?B?WDlyVk05dU5JNmY0aVZOZUIzemNseTVmYXJRZEg2SXZ1cmFjbXhMb0NYS1NZ?=
+ =?utf-8?B?TFNTOW1HN0kyemY4ZFhjYWVMZk8zK2IyT3hnY0Jvb1puZ2NkNHFwQkl5eHF1?=
+ =?utf-8?B?d2d6U3UxSHdYOFZ1bTZnUlZEVVl3YlNpL2F3UE1NUWNoeVIyNjFLUGdzZlRq?=
+ =?utf-8?B?aHRyWVM4QTVPbHAwbXVOK0ZoYUQyemVkYThxcURkYjBURktrWnc1VGE3d2lz?=
+ =?utf-8?B?cDY3WkIvVGhUOWRLYTZFTG9hUkVhczhnTFlsRW5QSTdUK1E1bkVtbWNNN0RH?=
+ =?utf-8?B?dFlVeUtwK3pQSWRoTVJKTkJSS2pFbFJBaHkwWlJOWWFoL29GT2s3L3YxWUIr?=
+ =?utf-8?B?VGRFTWRUN1gvbWRKZzQ3Y2ExbW5nakIxeGF6OWtuY1FKNGsyNDBhTFo4MElX?=
+ =?utf-8?B?YzA4VGxoMm8rVDF6QjRZSVd1MFYyeXlqWDN1L012Y1ZSS3pzTmo5WVNQNW01?=
+ =?utf-8?B?YTNOYmpoMXpQUVNCYmRGVlZSd1NwRlZGUy83alZUcE9BamNua3g2Y255NjY1?=
+ =?utf-8?B?SGxUSUluemZnUjQ2dVV5Z2MxVHVpZ0ZOaThxNnRsMThWOG8wTHNLR0x4MlJD?=
+ =?utf-8?B?aXVhM1pMVDNyQTRlUXRzMFRhay9aVm5DTHZ5VjhSbW4wZXM4S0h5U29HUDFn?=
+ =?utf-8?B?SWc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <30029EC6D6470546806CB1EE5A272E97@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520124212.2351033-5-masahiroy@kernel.org>
+X-OriginatorOrg: bang-olufsen.dk
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB8805.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4e86dd5-ba10-4807-ea32-08dc79656989
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2024 07:12:44.8960
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 210d08b8-83f7-470a-bc96-381193ca14a1
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /j+QBrw8nIqdZbykur3xYl/ydwshYnkg1bnQ1G7TsT+V6Rv5ycJHN6J0SecWs9rHfVJ+sUL+uw4rklIBXKd2GA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB7046
 
-Hi Masahiro,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on masahiroy-kbuild/for-next]
-[also build test ERROR on linus/master masahiroy-kbuild/fixes next-20240521]
-[cannot apply to v6.9]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Masahiro-Yamada/kbuild-avoid-unneeded-kallsyms-step-3/20240520-204508
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git for-next
-patch link:    https://lore.kernel.org/r/20240520124212.2351033-5-masahiroy%40kernel.org
-patch subject: [PATCH 4/4] kbuild: remove PROVIDE() for kallsyms symbols
-config: x86_64-rhel-8.3-bpf (https://download.01.org/0day-ci/archive/20240521/202405211448.fglQOQ9W-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240521/202405211448.fglQOQ9W-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405211448.fglQOQ9W-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   ld: vmlinux.o: in function `get_symbol_offset':
->> kernel/kallsyms.c:125:(.text+0x2111af): undefined reference to `kallsyms_markers'
->> ld: kernel/kallsyms.c:125:(.text+0x2111b5): undefined reference to `kallsyms_names'
-   ld: kernel/kallsyms.c:146:(.text+0x2111eb): undefined reference to `kallsyms_names'
-   ld: vmlinux.o: in function `get_symbol_pos':
->> kernel/kallsyms.c:330:(.text+0x211218): undefined reference to `kallsyms_relative_base'
->> ld: kernel/kallsyms.c:330:(.text+0x211226): undefined reference to `kallsyms_num_syms'
-   ld: vmlinux.o: in function `kallsyms_sym_address':
->> kernel/kallsyms.c:159:(.text+0x211245): undefined reference to `kallsyms_offsets'
->> ld: kernel/kallsyms.c:159:(.text+0x211285): undefined reference to `kallsyms_offsets'
-   ld: kernel/kallsyms.c:159:(.text+0x211296): undefined reference to `kallsyms_offsets'
-   ld: kernel/kallsyms.c:159:(.text+0x2112b7): undefined reference to `kallsyms_offsets'
-   ld: kernel/kallsyms.c:159:(.text+0x2112ec): undefined reference to `kallsyms_offsets'
-   ld: vmlinux.o: in function `get_ksymbol_mod':
->> kernel/kallsyms.c:623:(.text+0x211434): undefined reference to `kallsyms_num_syms'
-   ld: vmlinux.o: in function `kallsyms_expand_symbol':
->> kernel/kallsyms.c:50:(.text+0x21167d): undefined reference to `kallsyms_names'
-   ld: kernel/kallsyms.c:51:(.text+0x211684): undefined reference to `kallsyms_names'
->> ld: kernel/kallsyms.c:73:(.text+0x2116b6): undefined reference to `kallsyms_token_index'
->> ld: kernel/kallsyms.c:73:(.text+0x2116bf): undefined reference to `kallsyms_token_table'
-   ld: kernel/kallsyms.c:77:(.text+0x2116c6): undefined reference to `kallsyms_token_table'
-   ld: vmlinux.o: in function `update_iter':
-   kernel/kallsyms.c:740:(.text+0x211757): undefined reference to `kallsyms_num_syms'
-   ld: vmlinux.o: in function `kallsyms_sym_address':
-   kernel/kallsyms.c:159:(.text+0x211782): undefined reference to `kallsyms_offsets'
->> ld: kernel/kallsyms.c:163:(.text+0x211790): undefined reference to `kallsyms_relative_base'
-   ld: vmlinux.o: in function `kallsyms_get_symbol_type':
-   kernel/kallsyms.c:108:(.text+0x21179e): undefined reference to `kallsyms_names'
-   ld: kernel/kallsyms.c:108:(.text+0x2117aa): undefined reference to `kallsyms_token_index'
-   ld: vmlinux.o: in function `get_ksymbol_core':
->> kernel/kallsyms.c:693:(.text+0x2117b1): undefined reference to `kallsyms_token_table'
-   ld: vmlinux.o: in function `kallsyms_lookup_names':
-   kernel/kallsyms.c:218:(.text+0x211a48): undefined reference to `kallsyms_num_syms'
-   ld: vmlinux.o: in function `get_symbol_seq':
->> kernel/kallsyms.c:203:(.text+0x211a83): undefined reference to `kallsyms_seqs_of_names'
->> ld: kernel/kallsyms.c:203:(.text+0x211a90): undefined reference to `kallsyms_seqs_of_names'
-   ld: kernel/kallsyms.c:203:(.text+0x211a9c): undefined reference to `kallsyms_seqs_of_names'
-   ld: kernel/kallsyms.c:203:(.text+0x211af2): undefined reference to `kallsyms_seqs_of_names'
-   ld: kernel/kallsyms.c:203:(.text+0x211aff): undefined reference to `kallsyms_seqs_of_names'
-   ld: vmlinux.o:kernel/kallsyms.c:203: more undefined references to `kallsyms_seqs_of_names' follow
-   ld: vmlinux.o: in function `kallsyms_sym_address':
-   kernel/kallsyms.c:159:(.text+0x211fb0): undefined reference to `kallsyms_offsets'
-   ld: kernel/kallsyms.c:163:(.text+0x211fbe): undefined reference to `kallsyms_relative_base'
-   ld: vmlinux.o: in function `get_symbol_seq':
-   kernel/kallsyms.c:203:(.text+0x212049): undefined reference to `kallsyms_seqs_of_names'
-   ld: kernel/kallsyms.c:203:(.text+0x212056): undefined reference to `kallsyms_seqs_of_names'
-   ld: kernel/kallsyms.c:203:(.text+0x21205d): undefined reference to `kallsyms_seqs_of_names'
-   ld: vmlinux.o: in function `kallsyms_sym_address':
-   kernel/kallsyms.c:159:(.text+0x212071): undefined reference to `kallsyms_offsets'
-   ld: kernel/kallsyms.c:163:(.text+0x21207f): undefined reference to `kallsyms_relative_base'
-   ld: vmlinux.o: in function `kallsyms_on_each_symbol':
-   kernel/kallsyms.c:293:(.text+0x2120e5): undefined reference to `kallsyms_num_syms'
-   ld: vmlinux.o: in function `kallsyms_sym_address':
-   kernel/kallsyms.c:159:(.text+0x21214b): undefined reference to `kallsyms_offsets'
-   ld: kernel/kallsyms.c:163:(.text+0x212159): undefined reference to `kallsyms_relative_base'
-   ld: kernel/kallsyms.c:163:(.text+0x212224): undefined reference to `kallsyms_relative_base'
-   ld: vmlinux.o: in function `get_symbol_seq':
-   kernel/kallsyms.c:203:(.text+0x212239): undefined reference to `kallsyms_seqs_of_names'
-   ld: kernel/kallsyms.c:203:(.text+0x212240): undefined reference to `kallsyms_seqs_of_names'
-   ld: kernel/kallsyms.c:203:(.text+0x212253): undefined reference to `kallsyms_seqs_of_names'
-   ld: vmlinux.o: in function `kallsyms_sym_address':
-   kernel/kallsyms.c:159:(.text+0x21225f): undefined reference to `kallsyms_offsets'
-   ld: vmlinux.o: in function `crash_save_vmcoreinfo_init':
->> kernel/vmcore_info.c:214:(.init.text+0x429d6): undefined reference to `kallsyms_names'
->> ld: kernel/vmcore_info.c:215:(.init.text+0x429f0): undefined reference to `kallsyms_num_syms'
->> ld: kernel/vmcore_info.c:216:(.init.text+0x42a0a): undefined reference to `kallsyms_token_table'
->> ld: kernel/vmcore_info.c:217:(.init.text+0x42a24): undefined reference to `kallsyms_token_index'
->> ld: kernel/vmcore_info.c:219:(.init.text+0x42a3e): undefined reference to `kallsyms_offsets'
->> ld: kernel/vmcore_info.c:220:(.init.text+0x42a58): undefined reference to `kallsyms_relative_base'
-   pahole: .tmp_vmlinux.btf: Invalid argument
-   .btf.vmlinux.bin.o: file not recognized: file format not recognized
-
-
-vim +125 kernel/kallsyms.c
-
-^1da177e4c3f41 Linus Torvalds   2005-04-16   36  
-ad6ccfad6f759a Manish Katiyar   2009-05-12   37  /*
-ad6ccfad6f759a Manish Katiyar   2009-05-12   38   * Expand a compressed symbol data into the resulting uncompressed string,
-e3f26752f0f8a6 Chen Gang        2013-04-15   39   * if uncompressed string is too long (>= maxlen), it will be truncated,
-ad6ccfad6f759a Manish Katiyar   2009-05-12   40   * given the offset to where the symbol is in the compressed stream.
-ad6ccfad6f759a Manish Katiyar   2009-05-12   41   */
-e3f26752f0f8a6 Chen Gang        2013-04-15   42  static unsigned int kallsyms_expand_symbol(unsigned int off,
-e3f26752f0f8a6 Chen Gang        2013-04-15   43  					   char *result, size_t maxlen)
-^1da177e4c3f41 Linus Torvalds   2005-04-16   44  {
-^1da177e4c3f41 Linus Torvalds   2005-04-16   45  	int len, skipped_first = 0;
-cde26a6e17ec36 Masahiro Yamada  2020-02-02   46  	const char *tptr;
-cde26a6e17ec36 Masahiro Yamada  2020-02-02   47  	const u8 *data;
-^1da177e4c3f41 Linus Torvalds   2005-04-16   48  
-ad6ccfad6f759a Manish Katiyar   2009-05-12   49  	/* Get the compressed symbol length from the first symbol byte. */
-^1da177e4c3f41 Linus Torvalds   2005-04-16  @50  	data = &kallsyms_names[off];
-^1da177e4c3f41 Linus Torvalds   2005-04-16   51  	len = *data;
-^1da177e4c3f41 Linus Torvalds   2005-04-16   52  	data++;
-73bbb94466fd3f Miguel Ojeda     2021-04-05   53  	off++;
-73bbb94466fd3f Miguel Ojeda     2021-04-05   54  
-73bbb94466fd3f Miguel Ojeda     2021-04-05   55  	/* If MSB is 1, it is a "big" symbol, so needs an additional byte. */
-73bbb94466fd3f Miguel Ojeda     2021-04-05   56  	if ((len & 0x80) != 0) {
-73bbb94466fd3f Miguel Ojeda     2021-04-05   57  		len = (len & 0x7F) | (*data << 7);
-73bbb94466fd3f Miguel Ojeda     2021-04-05   58  		data++;
-73bbb94466fd3f Miguel Ojeda     2021-04-05   59  		off++;
-73bbb94466fd3f Miguel Ojeda     2021-04-05   60  	}
-^1da177e4c3f41 Linus Torvalds   2005-04-16   61  
-ad6ccfad6f759a Manish Katiyar   2009-05-12   62  	/*
-ad6ccfad6f759a Manish Katiyar   2009-05-12   63  	 * Update the offset to return the offset for the next symbol on
-ad6ccfad6f759a Manish Katiyar   2009-05-12   64  	 * the compressed stream.
-ad6ccfad6f759a Manish Katiyar   2009-05-12   65  	 */
-73bbb94466fd3f Miguel Ojeda     2021-04-05   66  	off += len;
-^1da177e4c3f41 Linus Torvalds   2005-04-16   67  
-ad6ccfad6f759a Manish Katiyar   2009-05-12   68  	/*
-ad6ccfad6f759a Manish Katiyar   2009-05-12   69  	 * For every byte on the compressed symbol data, copy the table
-ad6ccfad6f759a Manish Katiyar   2009-05-12   70  	 * entry for that byte.
-ad6ccfad6f759a Manish Katiyar   2009-05-12   71  	 */
-^1da177e4c3f41 Linus Torvalds   2005-04-16   72  	while (len) {
-^1da177e4c3f41 Linus Torvalds   2005-04-16  @73  		tptr = &kallsyms_token_table[kallsyms_token_index[*data]];
-^1da177e4c3f41 Linus Torvalds   2005-04-16   74  		data++;
-^1da177e4c3f41 Linus Torvalds   2005-04-16   75  		len--;
-^1da177e4c3f41 Linus Torvalds   2005-04-16   76  
-^1da177e4c3f41 Linus Torvalds   2005-04-16   77  		while (*tptr) {
-^1da177e4c3f41 Linus Torvalds   2005-04-16   78  			if (skipped_first) {
-e3f26752f0f8a6 Chen Gang        2013-04-15   79  				if (maxlen <= 1)
-e3f26752f0f8a6 Chen Gang        2013-04-15   80  					goto tail;
-^1da177e4c3f41 Linus Torvalds   2005-04-16   81  				*result = *tptr;
-^1da177e4c3f41 Linus Torvalds   2005-04-16   82  				result++;
-e3f26752f0f8a6 Chen Gang        2013-04-15   83  				maxlen--;
-^1da177e4c3f41 Linus Torvalds   2005-04-16   84  			} else
-^1da177e4c3f41 Linus Torvalds   2005-04-16   85  				skipped_first = 1;
-^1da177e4c3f41 Linus Torvalds   2005-04-16   86  			tptr++;
-^1da177e4c3f41 Linus Torvalds   2005-04-16   87  		}
-^1da177e4c3f41 Linus Torvalds   2005-04-16   88  	}
-^1da177e4c3f41 Linus Torvalds   2005-04-16   89  
-e3f26752f0f8a6 Chen Gang        2013-04-15   90  tail:
-e3f26752f0f8a6 Chen Gang        2013-04-15   91  	if (maxlen)
-^1da177e4c3f41 Linus Torvalds   2005-04-16   92  		*result = '\0';
-^1da177e4c3f41 Linus Torvalds   2005-04-16   93  
-ad6ccfad6f759a Manish Katiyar   2009-05-12   94  	/* Return to offset to the next symbol. */
-^1da177e4c3f41 Linus Torvalds   2005-04-16   95  	return off;
-^1da177e4c3f41 Linus Torvalds   2005-04-16   96  }
-^1da177e4c3f41 Linus Torvalds   2005-04-16   97  
-ad6ccfad6f759a Manish Katiyar   2009-05-12   98  /*
-ad6ccfad6f759a Manish Katiyar   2009-05-12   99   * Get symbol type information. This is encoded as a single char at the
-ad6ccfad6f759a Manish Katiyar   2009-05-12  100   * beginning of the symbol name.
-ad6ccfad6f759a Manish Katiyar   2009-05-12  101   */
-^1da177e4c3f41 Linus Torvalds   2005-04-16  102  static char kallsyms_get_symbol_type(unsigned int off)
-^1da177e4c3f41 Linus Torvalds   2005-04-16  103  {
-ad6ccfad6f759a Manish Katiyar   2009-05-12  104  	/*
-ad6ccfad6f759a Manish Katiyar   2009-05-12  105  	 * Get just the first code, look it up in the token table,
-ad6ccfad6f759a Manish Katiyar   2009-05-12  106  	 * and return the first char from this token.
-ad6ccfad6f759a Manish Katiyar   2009-05-12  107  	 */
-^1da177e4c3f41 Linus Torvalds   2005-04-16  108  	return kallsyms_token_table[kallsyms_token_index[kallsyms_names[off + 1]]];
-^1da177e4c3f41 Linus Torvalds   2005-04-16  109  }
-^1da177e4c3f41 Linus Torvalds   2005-04-16  110  
-^1da177e4c3f41 Linus Torvalds   2005-04-16  111  
-ad6ccfad6f759a Manish Katiyar   2009-05-12  112  /*
-ad6ccfad6f759a Manish Katiyar   2009-05-12  113   * Find the offset on the compressed stream given and index in the
-ad6ccfad6f759a Manish Katiyar   2009-05-12  114   * kallsyms array.
-ad6ccfad6f759a Manish Katiyar   2009-05-12  115   */
-^1da177e4c3f41 Linus Torvalds   2005-04-16  116  static unsigned int get_symbol_offset(unsigned long pos)
-^1da177e4c3f41 Linus Torvalds   2005-04-16  117  {
-aad094701c6355 Jan Beulich      2006-12-08  118  	const u8 *name;
-73bbb94466fd3f Miguel Ojeda     2021-04-05  119  	int i, len;
-^1da177e4c3f41 Linus Torvalds   2005-04-16  120  
-ad6ccfad6f759a Manish Katiyar   2009-05-12  121  	/*
-ad6ccfad6f759a Manish Katiyar   2009-05-12  122  	 * Use the closest marker we have. We have markers every 256 positions,
-ad6ccfad6f759a Manish Katiyar   2009-05-12  123  	 * so that should be close enough.
-ad6ccfad6f759a Manish Katiyar   2009-05-12  124  	 */
-^1da177e4c3f41 Linus Torvalds   2005-04-16 @125  	name = &kallsyms_names[kallsyms_markers[pos >> 8]];
-^1da177e4c3f41 Linus Torvalds   2005-04-16  126  
-ad6ccfad6f759a Manish Katiyar   2009-05-12  127  	/*
-ad6ccfad6f759a Manish Katiyar   2009-05-12  128  	 * Sequentially scan all the symbols up to the point we're searching
-ad6ccfad6f759a Manish Katiyar   2009-05-12  129  	 * for. Every symbol is stored in a [<len>][<len> bytes of data] format,
-ad6ccfad6f759a Manish Katiyar   2009-05-12  130  	 * so we just need to add the len to the current pointer for every
-ad6ccfad6f759a Manish Katiyar   2009-05-12  131  	 * symbol we wish to skip.
-ad6ccfad6f759a Manish Katiyar   2009-05-12  132  	 */
-73bbb94466fd3f Miguel Ojeda     2021-04-05  133  	for (i = 0; i < (pos & 0xFF); i++) {
-73bbb94466fd3f Miguel Ojeda     2021-04-05  134  		len = *name;
-73bbb94466fd3f Miguel Ojeda     2021-04-05  135  
-73bbb94466fd3f Miguel Ojeda     2021-04-05  136  		/*
-73bbb94466fd3f Miguel Ojeda     2021-04-05  137  		 * If MSB is 1, it is a "big" symbol, so we need to look into
-73bbb94466fd3f Miguel Ojeda     2021-04-05  138  		 * the next byte (and skip it, too).
-73bbb94466fd3f Miguel Ojeda     2021-04-05  139  		 */
-73bbb94466fd3f Miguel Ojeda     2021-04-05  140  		if ((len & 0x80) != 0)
-73bbb94466fd3f Miguel Ojeda     2021-04-05  141  			len = ((len & 0x7F) | (name[1] << 7)) + 1;
-73bbb94466fd3f Miguel Ojeda     2021-04-05  142  
-73bbb94466fd3f Miguel Ojeda     2021-04-05  143  		name = name + len + 1;
-73bbb94466fd3f Miguel Ojeda     2021-04-05  144  	}
-^1da177e4c3f41 Linus Torvalds   2005-04-16  145  
-^1da177e4c3f41 Linus Torvalds   2005-04-16  146  	return name - kallsyms_names;
-^1da177e4c3f41 Linus Torvalds   2005-04-16  147  }
-^1da177e4c3f41 Linus Torvalds   2005-04-16  148  
-30f3bb09778de6 Zhen Lei         2022-11-15  149  unsigned long kallsyms_sym_address(int idx)
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  150  {
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  151  	if (!IS_ENABLED(CONFIG_KALLSYMS_BASE_RELATIVE))
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  152  		return kallsyms_addresses[idx];
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  153  
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  154  	/* values are unsigned offsets if --absolute-percpu is not in effect */
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  155  	if (!IS_ENABLED(CONFIG_KALLSYMS_ABSOLUTE_PERCPU))
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  156  		return kallsyms_relative_base + (u32)kallsyms_offsets[idx];
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  157  
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  158  	/* ...otherwise, positive offsets are absolute values */
-2213e9a66bb87d Ard Biesheuvel   2016-03-15 @159  	if (kallsyms_offsets[idx] >= 0)
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  160  		return kallsyms_offsets[idx];
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  161  
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  162  	/* ...and negative offsets are relative to kallsyms_relative_base - 1 */
-2213e9a66bb87d Ard Biesheuvel   2016-03-15 @163  	return kallsyms_relative_base - 1 - kallsyms_offsets[idx];
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  164  }
-2213e9a66bb87d Ard Biesheuvel   2016-03-15  165  
-76903a9648744c Yonghong Song    2023-08-25  166  static void cleanup_symbol_name(char *s)
-8b8e6b5d3b013b Sami Tolvanen    2021-04-08  167  {
-8b8e6b5d3b013b Sami Tolvanen    2021-04-08  168  	char *res;
-8b8e6b5d3b013b Sami Tolvanen    2021-04-08  169  
-6eb4bd92c1cedc Nick Desaulniers 2021-10-04  170  	if (!IS_ENABLED(CONFIG_LTO_CLANG))
-76903a9648744c Yonghong Song    2023-08-25  171  		return;
-6eb4bd92c1cedc Nick Desaulniers 2021-10-04  172  
-6eb4bd92c1cedc Nick Desaulniers 2021-10-04  173  	/*
-6eb4bd92c1cedc Nick Desaulniers 2021-10-04  174  	 * LLVM appends various suffixes for local functions and variables that
-6eb4bd92c1cedc Nick Desaulniers 2021-10-04  175  	 * must be promoted to global scope as part of LTO.  This can break
-6eb4bd92c1cedc Nick Desaulniers 2021-10-04  176  	 * hooking of static functions with kprobes. '.' is not a valid
-8cc32a9bbf2934 Yonghong Song    2023-06-28  177  	 * character in an identifier in C. Suffixes only in LLVM LTO observed:
-6eb4bd92c1cedc Nick Desaulniers 2021-10-04  178  	 * - foo.llvm.[0-9a-f]+
-6eb4bd92c1cedc Nick Desaulniers 2021-10-04  179  	 */
-8cc32a9bbf2934 Yonghong Song    2023-06-28  180  	res = strstr(s, ".llvm.");
-76903a9648744c Yonghong Song    2023-08-25  181  	if (res)
-6eb4bd92c1cedc Nick Desaulniers 2021-10-04  182  		*res = '\0';
-6eb4bd92c1cedc Nick Desaulniers 2021-10-04  183  
-76903a9648744c Yonghong Song    2023-08-25  184  	return;
-8b8e6b5d3b013b Sami Tolvanen    2021-04-08  185  }
-8b8e6b5d3b013b Sami Tolvanen    2021-04-08  186  
-60443c88f3a89f Zhen Lei         2022-11-02  187  static int compare_symbol_name(const char *name, char *namebuf)
-60443c88f3a89f Zhen Lei         2022-11-02  188  {
-33f0467fe06934 Yonghong Song    2023-08-24  189  	/* The kallsyms_seqs_of_names is sorted based on names after
-33f0467fe06934 Yonghong Song    2023-08-24  190  	 * cleanup_symbol_name() (see scripts/kallsyms.c) if clang lto is enabled.
-33f0467fe06934 Yonghong Song    2023-08-24  191  	 * To ensure correct bisection in kallsyms_lookup_names(), do
-33f0467fe06934 Yonghong Song    2023-08-24  192  	 * cleanup_symbol_name(namebuf) before comparing name and namebuf.
-33f0467fe06934 Yonghong Song    2023-08-24  193  	 */
-33f0467fe06934 Yonghong Song    2023-08-24  194  	cleanup_symbol_name(namebuf);
-33f0467fe06934 Yonghong Song    2023-08-24  195  	return strcmp(name, namebuf);
-60443c88f3a89f Zhen Lei         2022-11-02  196  }
-60443c88f3a89f Zhen Lei         2022-11-02  197  
-19bd8981dc2ee3 Zhen Lei         2022-11-02  198  static unsigned int get_symbol_seq(int index)
-19bd8981dc2ee3 Zhen Lei         2022-11-02  199  {
-19bd8981dc2ee3 Zhen Lei         2022-11-02  200  	unsigned int i, seq = 0;
-19bd8981dc2ee3 Zhen Lei         2022-11-02  201  
-19bd8981dc2ee3 Zhen Lei         2022-11-02  202  	for (i = 0; i < 3; i++)
-19bd8981dc2ee3 Zhen Lei         2022-11-02 @203  		seq = (seq << 8) | kallsyms_seqs_of_names[3 * index + i];
-19bd8981dc2ee3 Zhen Lei         2022-11-02  204  
-19bd8981dc2ee3 Zhen Lei         2022-11-02  205  	return seq;
-19bd8981dc2ee3 Zhen Lei         2022-11-02  206  }
-19bd8981dc2ee3 Zhen Lei         2022-11-02  207  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+T24gU3VuLCBNYXkgMTksIDIwMjQgYXQgMDE6NDE6NDhQTSBHTVQsIEtyenlzenRvZiBLb3psb3dz
+a2kgd3JvdGU6DQo+IE9uIDE3LzA1LzIwMjQgMTU6MDIsIEFsdmluIMWgaXByYWdhIHdyb3RlOg0K
+PiA+IEZyb206IEFsdmluIMWgaXByYWdhIDxhbHNpQGJhbmctb2x1ZnNlbi5kaz4NCj4gPiANCj4g
+PiBUaGUgQmVvc291bmQgU2hhcGUgaGFzIHRoZSBzYW1lIGRldmljZSB0cmVlIGJpbmRpbmdzIGFz
+IGFuIEFEMjQyNSwgc28gaXQNCj4gPiBpcyBzdWZmaWNpZW50IHRvIGp1c3QgYWRkIGFuIGVudHJ5
+IHRvIHRoZSBjb21wYXRpYmxlIGVudW0uDQo+IA0KPiA/IElmIGl0IGhhcyB0aGUgc2FtZSwgdGhl
+biBkZXZpY2VzIGFyZSBjb21wYXRpYmxlIGJ1dCB5b3VyIGJpbmRpbmcgZGlkDQo+IG5vdCBleHBy
+ZXNzIGl0Lg0KDQpPSywgeW91J3JlIGJhc2ljYWxseSBzYXlpbmcgSSBzaG91bGQgYWRkIGl0IGFs
+bCBpbiBvbmUgcGF0Y2g/DQoNCj4gDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogQWx2aW4gxaBp
+cHJhZ2EgPGFsc2lAYmFuZy1vbHVmc2VuLmRrPg0KPiA+IC0tLQ0KPiA+ICBEb2N1bWVudGF0aW9u
+L2RldmljZXRyZWUvYmluZGluZ3MvYTJiL2FkaSxhZDI0eHgueWFtbCB8IDEgKw0KPiA+ICAxIGZp
+bGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2EyYi9hZGksYWQyNHh4LnlhbWwgYi9Eb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYTJiL2FkaSxhZDI0eHgueWFtbA0KPiA+IGluZGV4
+IGRjZGExNWU4MDMyYS4uYmVhMjlmODhkNTM1IDEwMDY0NA0KPiA+IC0tLSBhL0RvY3VtZW50YXRp
+b24vZGV2aWNldHJlZS9iaW5kaW5ncy9hMmIvYWRpLGFkMjR4eC55YW1sDQo+ID4gKysrIGIvRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2EyYi9hZGksYWQyNHh4LnlhbWwNCj4gPiBA
+QCAtODEsNiArODEsNyBAQCBwYXR0ZXJuUHJvcGVydGllczoNCj4gPiAgICAgICAgICAgIC0gYWRp
+LGFkMjQyNy1ub2RlDQo+ID4gICAgICAgICAgICAtIGFkaSxhZDI0Mjgtbm9kZQ0KPiA+ICAgICAg
+ICAgICAgLSBhZGksYWQyNDI5LW5vZGUNCj4gPiArICAgICAgICAgIC0gYmVvLHNoYXBlLW5vZGUN
+Cj4gDQo+IFlvdSBqdXN0IGFkZGVkIHRoaXMgYmluZGluZy4gQWRkIGVudGlyZSBiaW5kaW5nIGlu
+IG9uZSBwYXRjaC4NCg0KaS5lLiB0aGlzPw0KDQpUaGFua3M=
 
