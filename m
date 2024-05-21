@@ -1,99 +1,136 @@
-Return-Path: <linux-kernel+bounces-185000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072A48CAF3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:16:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA9C8CAF43
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 15:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98BE51F23455
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:16:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDFECB21666
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 13:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6482E770F2;
-	Tue, 21 May 2024 13:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A60E76410;
+	Tue, 21 May 2024 13:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zFDyqK+G"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qiWcp7U6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1297D1CD32;
-	Tue, 21 May 2024 13:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F782F5B;
+	Tue, 21 May 2024 13:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716297360; cv=none; b=IRgMuSfJYXFHoB/wqKzmSP1o1bFS91INyFGgRtWMJhJoIWoxAtsYrM+v3CRG4UmCpeF2WwDACgiKY6C/t1mfiBNAbMmgpwWiC0LuDHojbZKY0ve+cqQdz5y8DOEg8cVQshqise3D725hCpRkghtm15CPTs/PeliQb3UCog96fB0=
+	t=1716297424; cv=none; b=WqXPSMez3yYj4T8yJqq5MqG4vNDiVgsq+7PAQnI1YXXeuqatAYiTv+kdY3vrYds/pPyecctkIfGnGYxBUAkNDTjqUGiEyS/dRBzWYpo+yRL/cgH0faOzZzDQXR4SlmWIy+RfRtyOUltYtDmWDj8Yd4YLATgaGu44orK3MwQSD44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716297360; c=relaxed/simple;
-	bh=IOeI3hHTxpKJRxqMJz94Ukn6BOnC5xNHpbHdHmceGH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZ7Zt1Q2J7iwQjrIMcSU9gO29Rjvw67qzqrYQT2yAMD6Ch12QYXMvyTw86tTaurZterF9vXpyTCaOUruEHZfxuRpXLMus+mRWRLe5TUIxLQ31lQIDciohXwXvUStNil/RdgDXiceU3dGQOctFAyz7CuRhXFjpT7V5nLA9ngPAa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zFDyqK+G; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=BFRehB/GDW22WEVdSVIndBEfguGCbpOMzZOO/CrlY5Y=; b=zFDyqK+Gfj3rf8gORrZJRRY6b4
-	mfuVqCNU39JlBT6l5vhjeF+ZSDPOFpY4CAwAJ6rOIZf2R533tkFBYX0RvH1VM+rgG4tAua7x12BeJ
-	R7/YdlQAEpSyDNOj5WUQgYTkalfcPrBpr+NJeSYqj5qgvH9bFcYPgGMkUsfm+FxNT8Ss=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s9PLD-00FlFs-Hj; Tue, 21 May 2024 15:15:43 +0200
-Date: Tue, 21 May 2024 15:15:43 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v4 0/5] net: phy: mediatek: Introduce
- mtk-phy-lib and add 2.5Gphy support
-Message-ID: <80186a3c-8e9a-4a7e-9ead-6773c0bf0ebf@lunn.ch>
-References: <20240521101548.9286-1-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1716297424; c=relaxed/simple;
+	bh=Ai2UN0LumvAanxRSQJC3Es5pR8OR/INMnpLu0uelGtQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=b0Ha9pgxTqz1PcHAKI0tY2F/S6uJOguapp2i9Az7VCwnbHGSndcbVQewDEUpn6+eD+KcNB5MY5MvwWyeoI7ogaJR47tRuq8A1f+f6Exb5wC9n7L0goodcH0ZUttGO5/Rp/PhDbbm+dFrSlk853dwdJNHkCejUItdVPkoo98fKKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qiWcp7U6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69DCFC2BD11;
+	Tue, 21 May 2024 13:17:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716297424;
+	bh=Ai2UN0LumvAanxRSQJC3Es5pR8OR/INMnpLu0uelGtQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qiWcp7U6aaRusNrCfCcYq71aaFluW10yy7PaNxi4OgrN30vHaG2yCETzFMdhFsKrp
+	 u/5ZwIC7RPBou0hV3p9fnwEwSFXMAJJlyLonaYwbo+g/8+m+exzDCtF3wTOv7wsnya
+	 3FhQjJ4zRTSnQ4r34CI72aDK0gwr+ZCC9qaDuYhmFPG+P2mVkuwSjDqyAHBst1dlC/
+	 Cy0wUl91ydLlrPQV2m9PSbOsGyGf+7Ji0dD7V8lw8Afbq2/ehF0SIHOwKVPJSEdgAI
+	 0nhRt2/sGYCvt/b1NmQX5f/neMZRwdQ/d3RM56Cw1/X4XPD2bo25E4AMEai6vMZqYA
+	 4cepH/35woKBw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521101548.9286-1-SkyLake.Huang@mediatek.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 21 May 2024 16:16:59 +0300
+Message-Id: <D1FCNPSEPCC0.228MKP1CG12F0@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Vitor Soares" <ivitro@gmail.com>,
+ <linux-integrity@vger.kernel.org>
+Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
+ Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
+ Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
+X-Mailer: aerc 0.17.0
+References: <20240519235122.3380-1-jarkko@kernel.org>
+ <20240519235122.3380-2-jarkko@kernel.org>
+ <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
+ <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
+ <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
+ <D1FCAPJSYLTS.R9VC1CXDCIHH@kernel.org>
+ <D1FCJ71B0HAO.2CD8A7N7DR5DP@kernel.org>
+In-Reply-To: <D1FCJ71B0HAO.2CD8A7N7DR5DP@kernel.org>
 
-On Tue, May 21, 2024 at 06:15:43PM +0800, Sky Huang wrote:
-> From: "SkyLake.Huang" <skylake.huang@mediatek.com>
-> 
-> e-organize MTK ethernet phy drivers and integrate common manipulations
-> into mtk-phy-lib. Also, add support for build-in 2.5Gphy on MT7988.
-> 
-> v2:
-> - Apply correct PATCH tag.
-> - Break LED/Token ring/Extend-link-pulse-time features into 3 patches.
-> - Fix contents according to v1 comments.
-> 
-> v3:
-> - Fix patch 4/5 & 5/5. Please see changes in 4/5 & 5/5's commit log.
-> - Rebase code and now this patch series can apply to net-next tree.
-> 
-> v4:
-> - Fix patch 4/5 & 5/5. Please see changes in 4/5 & 5/5's commit log.
+On Tue May 21, 2024 at 4:11 PM EEST, Jarkko Sakkinen wrote:
+> On Tue May 21, 2024 at 4:00 PM EEST, Jarkko Sakkinen wrote:
+> > On Tue May 21, 2024 at 3:33 PM EEST, James Bottomley wrote:
+> > > On Tue, 2024-05-21 at 10:10 +0300, Jarkko Sakkinen wrote:
+> > > > This benchmark could be done in user space using /dev/tpm0.
+> > >
+> > > Let's actually try that.  If you have the ibmtss installed, the comma=
+nd
+> > > to time primary key generation from userspace on your tpm is
+> > >
+> > > time tsscreateprimary -hi n -ecc nistp256
+> > >
+> > >
+> > > And just for chuckles and grins, try it in the owner hierarchy as wel=
+l
+> > > (sometimes slow TPMs cache this)
+> > >
+> > > time tsscreateprimary -hi o -ecc nistp256
+> > >
+> > > And if you have tpm2 tools, the above commands should be:
+> > >
+> > > time tpm2_createprimary -C n -G ecc256
+> > > time tpm2_createprimary -C o -G ecc256
+> >
+> > Thanks, I definitely want to try these in my NUC7. I can try both
+> > stacks and it is pretty good test machine because it is old'ish
+> > and slow ;-)
+> >
+> > I'm also thinking differently than when I put out this pull request.
+> > I honestly think that it must be weird use case to use TPM with
+> > a machine that dies with a HMAC pipe. It makes no sense to me and
+> > I think we should focus on common sense here.
+> >
+> > I could imagine one use case: pre-production hardware that is not
+> > yet in ASIC. But in that case you would probably build your kernel
+> > picking exactly the right options. I mean it is only a default
+> > after all.
+> >
+> > I think we could add this:
+> >
+> > 	default X86 || ARM64
+> >
+> > This pretty covers the spectrum where HMAC does make sense by
+> > default. We can always relax it but this does not really take
+> > away the legit user base from the feature.
+> >
+> > It would be a huge bottleneck to make HMAC also opt-in because
+> > the stuff it adds makes a lot of sense when build on top. E.g.
+> > the asymmetric key patch set that I sent within early week was
+> > made possible by all this great work that you've done.
+> >
+> > So yeah, I'd like to send the above Kconfig changes, but that
+> > is all I want to do this at this point.
+>
+> Patch is out (lore link was not yet available):
+>
+> https://lkml.org/lkml/2024/5/21/583
 
-Please slow down. Discussion on the previous version has not come to a
-conclusion yet. Posting a new version just wastes reviewer time.
+Right also: TCG_TPM is neither default in x86 defconfig. So it would
+require two switches turned on to get basic TPM support ongoing. So
+yeah, I think we're in a sweet spot with above patch.
 
-Also, we are in the merge window at the moment, so nothing is going to
-get merged until it closes.
-
-	Andrew
+BR, Jarkko
 
