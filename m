@@ -1,260 +1,352 @@
-Return-Path: <linux-kernel+bounces-184670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C3C8CAA5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:50:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C988CAA5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25CB1C211D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:50:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D371F21AF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989195674A;
-	Tue, 21 May 2024 08:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nBMwhBWK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EC65647B;
+	Tue, 21 May 2024 08:51:36 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEA94CDE0;
-	Tue, 21 May 2024 08:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716281419; cv=fail; b=JjXV/funLewSiG3xRoAdr0clMQFhhr54M/NAHyXUBOk7sDFWEDHhFIf36XkmkLN9mRvglcjiaQnP31V2+KU2raaQQ2HhLKO7PkXxh0YuQlM8JOFgdNkl3bxoXB2jS37Px1+ffmJBHzS4UXETAhLI3+a7S4IdsDEH6lIm9OLktEs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716281419; c=relaxed/simple;
-	bh=/H4nF+ohEKCpXhLiayO3OrtEVH44yo/m1T7+v+sBJ60=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=iMkBaIy0QQi2IPL8bXGqE7scrMSC4meBQrJW2jLTJ3mDUtQJeaN9gy7x84EXxgosAkrpC7qy+lGiQgDK0EhHA9TnqkpBJkGefecnh5XKyHOnQ7zbSXly3v65AbIuxrGqcw131erjs2yJrSHnP1v9H0ovQhBI8KQD/KcXEXvR7Ys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nBMwhBWK; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716281417; x=1747817417;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=/H4nF+ohEKCpXhLiayO3OrtEVH44yo/m1T7+v+sBJ60=;
-  b=nBMwhBWKMPZ8TfRR9m3ppuLvCYmWqArM9ndXYl6qGu5lDVaRCmG2FVZE
-   2KVDc3Bxki3FCN/JsPKtRa6OJsMFGzz47f6nl1noEfu7SmNIPhfRc4D9L
-   xIfCezdi1lzqQLUdM5ynUAcXNHM5Ub3CCDVDGQCyV2oOgQrfFZfz4bWWf
-   2pnBBDw0Uv6X8U3kwuoAX/RJaJ8JOF3aYUlAJ6Q5wGDEnkzsXGXNMXP1e
-   YRBfPXGxARzrmkXYlQLLYuffv3xwR8NvNKlyxoD7XfvC1dUI9OYcOcefV
-   0+DRcXlKlusRuwEjT0EL12ETXwKc2YUuKmLpuPRJViw6YCVYafv8zVS4J
-   g==;
-X-CSE-ConnectionGUID: 7SnSZ6OdSBmKrF2jEd5rMg==
-X-CSE-MsgGUID: aKTJ+b+CTMq1WnDrTu3sjA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="23861219"
-X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="23861219"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 01:50:17 -0700
-X-CSE-ConnectionGUID: A8UAQ+I9RxaTGF9VhvxCsQ==
-X-CSE-MsgGUID: nAOXLrMzRpuTaf6ppSMtzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
-   d="scan'208";a="32966365"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 May 2024 01:50:17 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 21 May 2024 01:50:16 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 21 May 2024 01:50:16 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 21 May 2024 01:50:16 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dMVpaCafJsBQ3wWDJbssqVU/jcUH4YpOij909s+DUaP2UP3hhwIdgyz8DaS4gFMItFZOh22BtSDELpO+S+/Z4IMcYBurMhr3XBRuuLtrTk7W9238anlmG50vm4s8Rnb6Hq9VsBj6Uin5kdXrJYtusL7aD4ZRv/SNiipRmGMFDkbci1UeDV1x+jIlGDBx0ZRkIdHh//kuxrowO9qwap5y8fjUeAC5+rq7T1mMHoGCpV6OI0MRD+uw/WVA+Cvza04JQBZjYcWiEaXHe8F/fUEwUN88N9uk/bCgXAd7++Ex94UGsaAzvJa85SogJ+nAblTydqxWMIZVI47FAeW4wQoD8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lkkTuLYvjQcAkE8mxgP/rv3Agj+/Rtc9jYrLK+3jlig=;
- b=BOojMnk0y/hBXicoiqaa/RlNHOiID5M81JbwquXnP1tJWnJzDe2num+Fx+u5rNT67sLwuQWOc0UuHwSqOap7KqMA42AYOwAXPgkJ3nZkDAAfOXIX3W3aRbXHka0RAm0p9FjEoXHDAV0kwT7q4gpHmoWF81ebBZkmWvtfqk7X9AnH9MmTLKoEMjVY8sbPs8PbEmnvfYOwuCAR64TwZA/O7IM6KNWU7M4k4GeBpefwB8sHaLXEpFHqaFdhdYk9Z0H88uQkmvq8Ni0rEob26Q5inDEdo5wph44vpPB+Xl2XNoGN/n7LKCrOCPZy/u5+V3O7Sj4Adn9c/rvfNRuAjeDAVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by BL1PR11MB5224.namprd11.prod.outlook.com (2603:10b6:208:30a::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Tue, 21 May
- 2024 08:50:14 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%2]) with mapi id 15.20.7587.030; Tue, 21 May 2024
- 08:50:13 +0000
-Date: Tue, 21 May 2024 16:50:03 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, Shakeel Butt
-	<shakeel.butt@linux.dev>, Yosry Ahmed <yosryahmed@google.com>, "T.J. Mercier"
-	<tjmercier@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko
-	<mhocko@kernel.org>, Muchun Song <muchun.song@linux.dev>,
-	<cgroups@vger.kernel.org>, <linux-mm@kvack.org>, <oliver.sang@intel.com>
-Subject: [linus:master] [mm]  aab6103b97:
- kernel-selftests.cgroup.test_kmem.test_percpu_basic.fail
-Message-ID: <202405211653.efc447b0-oliver.sang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SG2P153CA0014.APCP153.PROD.OUTLOOK.COM (2603:1096::24) To
- LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD8538DC3
+	for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 08:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716281495; cv=none; b=lLJPTTqaDTGPLaN4RzVT8WYLLLk75eobdEdZMJBe5rHhEUcZqKKvB8Mp3XseHIzF1WXuayyTAuSTuzDW/FKdkqa3neIVSVub5uRaLk69jWgEZCjstuUILMeWbug0t2iI5vE80fr3RiIAplF0IT8FL6Yo693Ro8jqcOQ4cRvBiLU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716281495; c=relaxed/simple;
+	bh=rS3UVYhGZuhcoa6yECMf2xlQPlWNMlzpfZZdREAOwiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C4lwVCdVE8br0ghQvFqpByFrPFmYd3drlb0czdp5vCd7a96COhfn21VpzGVFbDdBLMO/hUt6AkZoBgzT/y05xKFPAvt2Y8ugYOCKPtRYNQwdQuwiRxWuA/hdZ+M3Cp4Fis/SQgpW/DO8RBtWdpQiKo6RONwFDfp1l77dXn2j55g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s9LDV-0004UJ-1r; Tue, 21 May 2024 10:51:29 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s9LDS-002MiS-Tt; Tue, 21 May 2024 10:51:26 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s9LDS-009MhI-2g;
+	Tue, 21 May 2024 10:51:26 +0200
+Date: Tue, 21 May 2024 10:51:26 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	Alexandru Ardelean <alexandru.ardelean@analog.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Clark Wang <xiaoning.wang@nxp.com>
+Subject: Re: [PATCH 5/5] pwm: adp5585: Add Analog Devices ADP5585 support
+Message-ID: <dl7a6puox5lc36fpto2fgyfgmpd3uboqc4lcfdtuaxzzsboqld@alw7vyi7pqjz>
+References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
+ <20240520195942.11582-6-laurent.pinchart@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|BL1PR11MB5224:EE_
-X-MS-Office365-Filtering-Correlation-Id: aae8b710-af7f-4812-ec2e-08dc79730772
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|1800799015|366007|376005;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?DF4N0YLdtdi3gw8H+fp5I8iUsGI6Vmw1Wwb/t/Cei1ZCHCZLRYwc604GwPkp?=
- =?us-ascii?Q?GUc4AYPiuzQJFtQyc+tPlbSdYyikVnDYAcvS7D1psbAGQTtkPjpB0kgIgBPS?=
- =?us-ascii?Q?P4uGTH10QJt0X8Px19NY/auI119m1T6OqlHvRdafx8OxZ9JyyhxX0XGRlIl8?=
- =?us-ascii?Q?Bs0UZrjCRwBMNz1giiypb5w9NAt8Za6p+ntdH7NjW85ipk2tGcWNUfJrGRav?=
- =?us-ascii?Q?pGMl9k/6MZXhQXIctWZmqTvS4wEKQOqPQdJooDc7mOSARKrZ9siwthcSY0F2?=
- =?us-ascii?Q?Jo1IDEWoiolE8nzrqYADRp1SZM9IcPSGPTMeT31cz2z6L47GrqWW+lsdN+cB?=
- =?us-ascii?Q?bWoRjTYTG96FrjETE1eluVWJqCjynXQ77AUDwd4yhKXDy+UOmuJO/gCzGBWd?=
- =?us-ascii?Q?Ql9KJYASl+KS5Z0BcIoANwRnlbd5f3o2SCP5JP5smoUPW3157Oeml4evtnFm?=
- =?us-ascii?Q?L0fiEZLJzyxng3joStl3TVKlqTET0Bp9Y4UDCRmJiaY6Z5RVOGe968KbKMjE?=
- =?us-ascii?Q?tZt+lONbJKMxbqfHChCccir/4hIEQFYTeqNLvPWX82qzGeFVUzm8LWmPQEy8?=
- =?us-ascii?Q?lEbj+EByL8WGelHdsJ92T5WoZ6Pdugs4RzdHVRBuv9+pDcLRGGzMjYL3t5Jr?=
- =?us-ascii?Q?zk0zWd14LQzAn5zWVQPiIMWRKQZqr6vzx9lwYY5iuuJGUeZKFh0HdhbkzfIz?=
- =?us-ascii?Q?rHe/iAN/XkgWoq4w7GUk+m+ENbJwbRhjylr2Vq1lziNC5ENzlcy4Qjh0Pwcs?=
- =?us-ascii?Q?0vxRIAr1Ta6r1zvHphisK8UM4+9R4kIeyqUmc4yMTQP/0TwzdPYy+DGqFlHp?=
- =?us-ascii?Q?88tvICfu7ZcvLCALESmhVfb3Vk3H8l4Ma2GrUx5iJd2XvcS8uhUm5PxwsKhb?=
- =?us-ascii?Q?tCtBtcSN89hZqmR94sPnLgtsWQN/BS3JQ/kojWiyXUqkKLROY+iLq4fJqZW5?=
- =?us-ascii?Q?THFnXyNmb9jSmc/6HHwvH484IibVlPpNGdhK6LDUrZ1z4u2Uy/H/PpEspRAz?=
- =?us-ascii?Q?R8Kzr6WljX5jS4u5sEovsQa0bNN4qhOnt6KEWOvQGnarkCDau6Jfl3kkyvVm?=
- =?us-ascii?Q?txfQynTQ5DLsiUbXYeFxdRxQIACzVExsx+0ZqAtyEz5eFTvlhWpxP9yWtMZu?=
- =?us-ascii?Q?d0HPTqtHjrrdWGSwCR/3Ec1etFwzfaBQyw4hPmSYHINF5zZP4tn11L3oiSmT?=
- =?us-ascii?Q?Gd5KUduIAnz2gascqU8YRIkoJ5ELlwanFE2XE0ioLJ3Bq/JnXzq8yLUvvAc?=
- =?us-ascii?Q?=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KQxIImQv6CLXMLtvZlrPsoE3rj47jxA0vGepG2XsZTN00tQv/ib7bQKJmcq+?=
- =?us-ascii?Q?2sQYnrMamVY7nezq9z45jLA5MgBin1zfr4Ut83Mp4wjH10Ybg6scPrKzqeCr?=
- =?us-ascii?Q?2p4VOZzTrYXKUCmKK37asDCznPvKb1rCyeEJ+to95YFTLIUEGw6h2AxsMk8O?=
- =?us-ascii?Q?yV/hAYZMZx/h3n+vsRBmeADovBjOxfgKzB1mOMU4PxnCV+fdUnrXF2X5RJTr?=
- =?us-ascii?Q?zuPrz13SL4ZF9+AeQLShb3pVtTp2O1+glyAx51D6LyFBC5R0v3sDktzFYYO2?=
- =?us-ascii?Q?Jv66oMZuJa1pmUTnFkBtQexpfIZ28losTctwryYnSaFS/VDRMebm9ON9iKyl?=
- =?us-ascii?Q?S/gK9cyOhnV2srYfs2bfVj1vDT0VOXwEQ737HaRv29zkOnREzpOmFc2twxDN?=
- =?us-ascii?Q?sKYB0jctkVxuLWy9w0T/IBeBoRbGJQ3djijf7JtJUcob74gsvEQCQPo5utCK?=
- =?us-ascii?Q?clkXspB+LaxV+pPQzocXoFsILJT5R83NJ2511I2bas/9ydnexPj/4/bgezui?=
- =?us-ascii?Q?aBmvIUrp/12ZhR6YkNpimMeeAbmXtItmJ9336JfNKjFqoFKN7AjRpMHXC5Ah?=
- =?us-ascii?Q?ijV2qEMgApbQOK1m8UYGe9ESxAPkUFJhyD6D496NTNibGb66s9QmVqIYgjhj?=
- =?us-ascii?Q?B6G38O1memH6QMGRC2BKLYnWnbe1sdirTieqwUfd9PQIARNCSN5ZUSxevcpZ?=
- =?us-ascii?Q?vsLox3URJCfFphV1zmstyUpRDaFB9Gi0znCs0GYtOGG4VrTgY9cL7GIG9BRY?=
- =?us-ascii?Q?N2nKOFdMnCtYlN+tX+sWkv5YRushFNiTL29p1H5LaHhijwD/6Ml9Ultx6ih7?=
- =?us-ascii?Q?gsQuu1lxzPc2BOv7J2ZLXGA+qLApWwbtnrtYX5ihkHJTVng6R2N9R3JPg9my?=
- =?us-ascii?Q?bzrREV/Fi92Act0q1flEABXd1Qs/lc0vyA/kvlE0hFmzb3n+vPq4le1j6cZe?=
- =?us-ascii?Q?EvF4fStaJ+JloZoOUcAeMRYRMmtWZ3gGqhoaxyr+RCNk1JH6sDUwBZy5WpAN?=
- =?us-ascii?Q?7BpfCH18AH5ZAE+pqhmkrsFDDrXwgKQto8UKoTSjgC9Ztks0uYAD8ALlWAUW?=
- =?us-ascii?Q?Ew258H9UfBL7UTufSEAueZxuS4a2QXJteLwiMGmL4dJhDqDMq3wWMbEhjjP3?=
- =?us-ascii?Q?I8IWYaa1s1KonVodN29u6Yi5KZNfQQlDCRGVdVQz4Lq3pGSwEmQCV2DXpmze?=
- =?us-ascii?Q?gaHPp483Cxg7xxoQ1Bq6kGaArNmXfwLuAQ7+HBmRNfHP0t385AlQrFytHCkn?=
- =?us-ascii?Q?QL8/ZQplILVv2xMx1SfDn4DUhGevAO8++8HzmA1eJyfEUl1e4llL2i04zVq2?=
- =?us-ascii?Q?b3t8CHQixGQxTQFYCgg4Yohozof3dslbyqEvVciFfFBH2Yc5GiocT7CDDiqD?=
- =?us-ascii?Q?cFlWeKsUgC+wJ+lrK4LMC4KrUT/SZWaj209so8VeJhjluc3iEVDXiCnr0umS?=
- =?us-ascii?Q?OJP2rqOEPcsTLevBDffTxgyTE3OU+II2fYbQgDEojkh9XscKnefo/WiAF7te?=
- =?us-ascii?Q?Tyftlejl6hug/pOuvyVt3Wc/Lv/+mlU4fDD56VNL3DOv3128yhtM9KnztxiD?=
- =?us-ascii?Q?og4LYgvz3H36QJ48PCCrAvpWRlpriJ+DDN17mXZQCFrfoX7yX1PN8f3i+mPL?=
- =?us-ascii?Q?bA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: aae8b710-af7f-4812-ec2e-08dc79730772
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2024 08:50:13.3707
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vLo/88JiHeyVsppKHGoz7YT79umBnxLv/HrTCxpCc+Wzdasd7quCaA0j30TXra0BRTMYZpiFOe5B3rH4FmzVYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB5224
-X-OriginatorOrg: intel.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="f7l4z7wuw4trzvr4"
+Content-Disposition: inline
+In-Reply-To: <20240520195942.11582-6-laurent.pinchart@ideasonboard.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--f7l4z7wuw4trzvr4
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hello Laurent,
 
-kernel test robot noticed "kernel-selftests.cgroup.test_kmem.test_percpu_basic.fail" on:
+On Mon, May 20, 2024 at 10:59:41PM +0300, Laurent Pinchart wrote:
+> diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
+> new file mode 100644
+> index 000000000000..709713d8f47a
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-adp5585.c
+> @@ -0,0 +1,230 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Analog Devices ADP5585 PWM driver
+> + *
+> + * Copyright 2022 NXP
+> + * Copyright 2024 Ideas on Board Oy
+> + */
 
-commit: aab6103b97f1c7ca6cf33e78d5e6916e53fc265c ("mm: memcg: account memory used for memcg vmstats and lruvec stats")
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+Please document some hardware properties here in the same format as many
+other PWM drivers. The things I'd like to read there are:
 
-in testcase: kernel-selftests
-version: kernel-selftests-x86_64-977d51cf-1_20240508
-with following parameters:
+ - Only supports normal polarity
+ - How does the output pin behave when the hardware is disabled
+   (typically "low" or "high-Z" or "freeze")
+ - Does changing parameters or disabling complete the currently running
+   period?
+ - Are there glitches in .apply()? E.g. when the new duty_cycle is
+   already written but the new period is not.
 
-	group: cgroup
+> +#include <linux/container_of.h>
+> +#include <linux/device.h>
+> +#include <linux/math.h>
+> +#include <linux/minmax.h>
+> +#include <linux/mfd/adp5585.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +#include <linux/regmap.h>
+> +#include <linux/time.h>
+
+Do you need these all? I wounder about time.h.
+
+> +#define ADP5585_PWM_CHAN_NUM		1
+> +
+> +#define ADP5585_PWM_OSC_FREQ_HZ		1000000U
+> +#define ADP5585_PWM_MIN_PERIOD_NS	(2ULL * NSEC_PER_SEC / ADP5585_PWM_OSC=
+_FREQ_HZ)
+> +#define ADP5585_PWM_MAX_PERIOD_NS	(2ULL * 0xffff * NSEC_PER_SEC / ADP558=
+5_PWM_OSC_FREQ_HZ)
+> +
+> +struct adp5585_pwm_chip {
+> +	struct pwm_chip chip;
+> +	struct regmap *regmap;
+> +	struct mutex lock;
+
+What does this mutex protect against? You can safely assume that there
+are no concurrent calls of the callbacks. (This isn't ensured yet, but I
+consider a consumer who does this buggy and it will soon be ensured.)
+
+> +	u8 pin_config_val;
+> +};
+> +
+> +static inline struct adp5585_pwm_chip *
+> +to_adp5585_pwm_chip(struct pwm_chip *chip)
+> +{
+> +	return container_of(chip, struct adp5585_pwm_chip, chip);
+> +}
+> +
+> +static int pwm_adp5585_request(struct pwm_chip *chip, struct pwm_device =
+*pwm)
+> +{
+> +	struct adp5585_pwm_chip *adp5585_pwm =3D to_adp5585_pwm_chip(chip);
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	guard(mutex)(&adp5585_pwm->lock);
+> +
+> +	ret =3D regmap_read(adp5585_pwm->regmap, ADP5585_PIN_CONFIG_C, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	adp5585_pwm->pin_config_val =3D val;
+> +
+> +	ret =3D regmap_update_bits(adp5585_pwm->regmap, ADP5585_PIN_CONFIG_C,
+> +				 ADP5585_R3_EXTEND_CFG_MASK,
+> +				 ADP5585_R3_EXTEND_CFG_PWM_OUT);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D regmap_update_bits(adp5585_pwm->regmap, ADP5585_GENERAL_CFG,
+> +				 ADP5585_OSC_EN, ADP5585_OSC_EN);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+
+The last four lines are equivalent to
+
+	return ret;
+
+What is the purpose of this function? Setup some kind of pinmuxing? The
+answer to that question goes into a code comment. If it's pinmuxing, is
+this a hint to use the pinctrl subsystem? (Maybe it's overkill, but if
+it's considered a good idea later, it might be hard to extend the dt
+bindings, so thinking about that now might be a good idea.)
+
+> +}
+> +
+> +static void pwm_adp5585_free(struct pwm_chip *chip, struct pwm_device *p=
+wm)
+> +{
+> +	struct adp5585_pwm_chip *adp5585_pwm =3D to_adp5585_pwm_chip(chip);
+> +
+> +	guard(mutex)(&adp5585_pwm->lock);
+> +
+> +	regmap_update_bits(adp5585_pwm->regmap, ADP5585_PIN_CONFIG_C,
+> +			   ADP5585_R3_EXTEND_CFG_MASK,
+> +			   adp5585_pwm->pin_config_val);
+
+I wonder if writing a deterministic value instead of whatever was in
+that register before .request() would be more robust and less
+surprising.
+
+> +	regmap_update_bits(adp5585_pwm->regmap, ADP5585_GENERAL_CFG,
+> +			   ADP5585_OSC_EN, 0);
+> +}
+> +
+> +static int pwm_adp5585_apply(struct pwm_chip *chip,
+> +			     struct pwm_device *pwm,
+> +			     const struct pwm_state *state)
+> +{
+> +	struct adp5585_pwm_chip *adp5585_pwm =3D to_adp5585_pwm_chip(chip);
+> +	u32 on, off;
+> +	int ret;
+> +
+> +	if (!state->enabled) {
+> +		guard(mutex)(&adp5585_pwm->lock);
+> +
+> +		return regmap_update_bits(adp5585_pwm->regmap, ADP5585_PWM_CFG,
+> +					  ADP5585_PWM_EN, 0);
+> +	}
+> +
+> +	if (state->period < ADP5585_PWM_MIN_PERIOD_NS ||
+> +	    state->period > ADP5585_PWM_MAX_PERIOD_NS)
+> +		return -EINVAL;
+
+Make this:
+
+	if (state->period < ADP5585_PWM_MIN_PERIOD_NS)
+		return -EINVAL;
+
+	period =3D min(ADP5585_PWM_MAX_PERIOD_NS, state->period)
+	duty_cycle =3D min(period, state->period);
+
+> +
+> +	/*
+> +	 * Compute the on and off time. As the internal oscillator frequency is
+> +	 * 1MHz, the calculation can be simplified without loss of precision.
+> +	 */
+> +	on =3D DIV_ROUND_CLOSEST_ULL(state->duty_cycle,
+> +				   NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ);
+> +	off =3D DIV_ROUND_CLOSEST_ULL(state->period - state->duty_cycle,
+> +				    NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ);
+
+round-closest is wrong. Testing with PWM_DEBUG should point that out.
+The right algorithm is:
+
+	on =3D duty_cycle / (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ)
+	off =3D period / (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ) - on
 
 
+> +	if (state->polarity =3D=3D PWM_POLARITY_INVERSED)
+> +		swap(on, off);
 
-compiler: gcc-13
-test machine: 4 threads 1 sockets Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz (Ivy Bridge) with 8G memory
+Uhh, no. Either you can do inverted polarity or you cannot. Don't claim
+you can.
 
-(please refer to attached dmesg/kmsg for entire log/backtrace)
+> [...]
+> +static int adp5585_pwm_probe(struct platform_device *pdev)
+> +{
+> +	struct adp5585_dev *adp5585 =3D dev_get_drvdata(pdev->dev.parent);
+> +	struct adp5585_pwm_chip *adp5585_pwm;
+> +	int ret;
+> +
+> +	adp5585_pwm =3D devm_kzalloc(&pdev->dev, sizeof(*adp5585_pwm), GFP_KERN=
+EL);
+> +	if (!adp5585_pwm)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, adp5585_pwm);
+> +
+> +	adp5585_pwm->regmap =3D adp5585->regmap;
+> +
+> +	mutex_init(&adp5585_pwm->lock);
+> +
+> +	adp5585_pwm->chip.dev =3D &pdev->dev;
+> +	adp5585_pwm->chip.ops =3D &adp5585_pwm_ops;
+> +	adp5585_pwm->chip.npwm =3D ADP5585_PWM_CHAN_NUM;
 
+That is wrong since commit
+05947224ff46 ("pwm: Ensure that pwm_chips are allocated using pwmchip_alloc=
+()")
 
+> +	ret =3D devm_pwmchip_add(&pdev->dev, &adp5585_pwm->chip);
+> +	if (ret) {
+> +		mutex_destroy(&adp5585_pwm->lock);
+> +		return dev_err_probe(&pdev->dev, ret, "failed to add PWM chip\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void adp5585_pwm_remove(struct platform_device *pdev)
+> +{
+> +	struct adp5585_pwm_chip *adp5585_pwm =3D platform_get_drvdata(pdev);
+> +
+> +	mutex_destroy(&adp5585_pwm->lock);
 
+Huh, this is a bad idea. The mutex is gone while the pwmchip is still
+registered. AFAIK calling mutex_destroy() is optional, and
+adp5585_pwm_remove() can just be dropped. Ditto in the error paths of
+=2Eprobe().
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202405211653.efc447b0-oliver.sang@intel.com
+> +}
+> +
+> +static const struct of_device_id adp5585_pwm_of_match[] =3D {
+> +	{ .compatible =3D "adi,adp5585-pwm" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, adp5585_pwm_of_match);
 
+Is it normal/usual for mfd drivers to use of stuff? I thought they use
+plain platform style binding, not sure though.
 
+> +static struct platform_driver adp5585_pwm_driver =3D {
+> +	.driver	=3D {
+> +		.name =3D "adp5585-pwm",
+> +		.of_match_table =3D adp5585_pwm_of_match,
+> +	},
+> +	.probe =3D adp5585_pwm_probe,
+> +	.remove_new =3D adp5585_pwm_remove,
+> +};
+> +module_platform_driver(adp5585_pwm_driver);
+> +
+> +MODULE_AUTHOR("Xiaoning Wang <xiaoning.wang@nxp.com>");
+> +MODULE_DESCRIPTION("ADP5585 PWM Driver");
+> +MODULE_LICENSE("GPL");
 
-# timeout set to 300
-# selftests: cgroup: test_kmem
-# not ok 1 test_kmem_basic
-# ok 2 test_kmem_memcg_deletion
-# ok 3 test_kmem_proc_kpagecgroup
-# ok 4 test_kmem_kernel_stacks
-# ok 5 test_kmem_dead_cgroups
-# memory.current 20549632
-# percpu 12096000
-# not ok 6 test_percpu_basic     <------
-not ok 2 selftests: cgroup: test_kmem # exit=1
+Best regards
+Uwe
 
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
-the case always pass on parent
+--f7l4z7wuw4trzvr4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-70a64b7919cbd6c1 aab6103b97f1c7ca6cf33e78d5e
----------------- ---------------------------
-       fail:runs  %reproduction    fail:runs
-           |             |             |
-           :6          100%           6:6     kernel-selftests.cgroup.test_kmem.test_percpu_basic.fail
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZMYI0ACgkQj4D7WH0S
+/k5o2ggAn5MfFbCQP7ri49/q/bz5rZE9zGc3gzfL9Bpoe58kY4ehkuNQU9nNNFLI
+Xzz7HWAKjj/kdl//C3bjDN2pxLGWicD0XQurcNncJ6eZJ8ZutQMkCDSGyDrDqge8
+s09gq0w5155lkVHQ7JlsubNTg6EjgnYJYeH0PDXd7KLUG8z6lvmHjsbtO+aK5RRy
+TiMmZYCiQL8vpP++Hxp49hYEWJEGlfcKuAms26DTBHY4rbZ5SuL8OVG4uK5AB2zF
+Tlh86xzjO4MaHHCSvGpJbyEgjpbFP2CFeIK2xTSxRXHpS88m7nRt2KAFyn7Tv/fB
+a92OAk1aCppi3eDqvWJKGFA6VGXd5w==
+=GkWI
+-----END PGP SIGNATURE-----
 
-below is the log from one parent run:
-
-# timeout set to 300
-# selftests: cgroup: test_kmem
-# not ok 1 test_kmem_basic
-# ok 2 test_kmem_memcg_deletion
-# ok 3 test_kmem_proc_kpagecgroup
-# ok 4 test_kmem_kernel_stacks
-# ok 5 test_kmem_dead_cgroups
-# ok 6 test_percpu_basic     <-------
-not ok 2 selftests: cgroup: test_kmem # exit=1
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20240521/202405211653.efc447b0-oliver.sang@intel.com
-
-
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+--f7l4z7wuw4trzvr4--
 
