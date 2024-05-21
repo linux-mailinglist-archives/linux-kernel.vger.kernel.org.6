@@ -1,102 +1,148 @@
-Return-Path: <linux-kernel+bounces-184536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8B58CA832
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:54:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB1478CA83C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 08:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB897B20D9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:54:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F852829EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 06:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1265481CE;
-	Tue, 21 May 2024 06:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECA6481CE;
+	Tue, 21 May 2024 06:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnu.org header.i=@gnu.org header.b="ozh+1Wpm"
-Received: from eggs.gnu.org (eggs.gnu.org [209.51.188.92])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="j8hBCfaC"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34354C12C;
-	Tue, 21 May 2024 06:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.51.188.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055E6C12C;
+	Tue, 21 May 2024 06:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716274481; cv=none; b=FRLv96eFnrLXLwLfxEZuX7ssh+nNUP3IAvSY28xONvY2qBnZwiiU8g73FLFoMwC2WvGSMO2s105SsbwM5fM2yK44R0o3WsCZe7AK/rz7iMFCcnJB1rtRFH2EkN4iiUVmL5k+0nQMWsXwybS0cHXpmgmeoaVKuklFSaPaz7RfcMk=
+	t=1716274602; cv=none; b=mEJA15nhDvc+nGS80LfvhIaYF8PwHXge/9ZnbHJZaVmuXzmMv7CdGcXVu+G7bUY41Q4YUUQ9uQ9B6+MVkMWPwewR+BrG6lIRpRGGFo8ULHuSEkriczq4HXSz6v3pqKWe+hWHk9wCXmuTbRMhE1oCANZ+sdTbgp8QaXtqLC1WmbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716274481; c=relaxed/simple;
-	bh=WtgR3bLQuAmZGGWX0wAEK013PqHleBU86WX+TrhdJMU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u/T8XGUlJzQnFpdiu7MuAk1l334rOAUXhO3zP2FcYEIZFN2xSqKv+wYbeaws7IDk2/YKxFm41YLypnCDbm0E8dPjj5PrufOrAlqRiNoqWmDIfHoDLzc9L24VwjEU+VViAtlW7CmoOp6MKu1/Ba5YBWwdMTfbCA1l2IKa1PVx0rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gnu.org; spf=pass smtp.mailfrom=gnu.org; dkim=pass (2048-bit key) header.d=gnu.org header.i=@gnu.org header.b=ozh+1Wpm; arc=none smtp.client-ip=209.51.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gnu.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnu.org
-Received: from fencepost.gnu.org ([2001:470:142:3::e])
-	by eggs.gnu.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.90_1)
-	(envelope-from <othacehe@gnu.org>)
-	id 1s9JOI-0005RQ-R5; Tue, 21 May 2024 02:54:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gnu.org;
-	s=fencepost-gnu-org; h=MIME-Version:Date:Subject:To:From:in-reply-to:
-	references; bh=At4Se3gmzXZDGmwHKvKP5TWbdoV3Trjfqo3NAyHAEuk=; b=ozh+1Wpmncnavt
-	AXFMGDLI3yCG9nqxjQi3xlHXRuhCzCApw8YnG8znPIHwDqpu5GrBy26vTZMzCufUViwsBtDh3BYxR
-	jTzIva7f2/3crqmJeA4/dY3PzI5uwCw0oMchnHKGXxUgFZifjKiqGM1390FwklEfehOtrQTfOZI37
-	WbO0AthpQZ49HleONx99rQZsIdIpY1pCU1SMI0gQIOCWxmZk+x9NzbKx4xDEZfSjyTjE94nvRhekB
-	Lh9MCGJEpp+UPBXlZmxO4HVKLy6HrR8Savea8k8hJ0dXWo6H+K9SZfsAQFvqG1pGBM319e3TD8lSD
-	/uyeuZ69LxWkr/W2qmuA==;
-From: Mathieu Othacehe <othacehe@gnu.org>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Florian Fainelli <f.fainelli@gmail.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mathieu Othacehe <othacehe@gnu.org>,
-	Karim Ben Houcine <karim.benhoucine@landisgyr.com>
-Subject: [PATCH] net: phy: micrel: set soft_reset callback to genphy_soft_reset for KSZ8061
-Date: Tue, 21 May 2024 08:54:06 +0200
-Message-ID: <20240521065406.4233-1-othacehe@gnu.org>
-X-Mailer: git-send-email 2.41.0
+	s=arc-20240116; t=1716274602; c=relaxed/simple;
+	bh=TfIOtUcqbwJkZ6notRudlNbUTFukk69iQGuDM3mE/MU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JAW9E/o0DjIlfImstIyhaaL6WBR8MGb18eAhRPZjclsJhWj6KxRNr1+qJ2CZqG8+U7RHXkzCP4GOWR8SGqMN6dnlkhvfpAvFkAtWjHoBLcA+joPQYmyNgr1tS5RAzGywx/7YFoTxhsE6YvKamMYycgXm87+kYa6c2JKniAhzeMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=j8hBCfaC; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716274598;
+	bh=TfIOtUcqbwJkZ6notRudlNbUTFukk69iQGuDM3mE/MU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=j8hBCfaCITG8b7pfUhoD1HKU00f770m7cYI7bu4vJH8rk/LXn0Yf+54WofcnvQcjO
+	 EBrwL0Jt2wDVrxrr+0JBpPbNrJOira99dUdCUm9/dP/GWui7vnBWQNV3pOEVCaXWfP
+	 KIkcTRj8vFjREo+/EPduJnkDhULrUqWVhWOHchgYqBE6VpSp3LlufdpcPgqZgmEoMb
+	 0Xi1EdMqEXTobHSa/oC9awjBJi9zI4qGB7izvFUBxKilyV71NgrBMi44w52x5Tklr3
+	 l7edZajr7e5ZeXhaq1i2UPch5QdDzhEK/PASHKWT3nl9DpEwW0izTYnOWML1e/u8Iq
+	 K8mL3G0ETrAaA==
+Received: from [100.66.96.193] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3B376378202E;
+	Tue, 21 May 2024 06:56:35 +0000 (UTC)
+Message-ID: <87fba814-eb5a-4b6a-800b-158987fca1d8@collabora.com>
+Date: Tue, 21 May 2024 12:26:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] drm/ci: generate testlist from build
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
+ helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
+ robdclark@gmail.com, david.heidelberg@collabora.com,
+ guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
+ mcanal@igalia.com, linux-mediatek@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org,
+ linux-kernel@vger.kernel.org
+References: <20240517092502.647420-1-vignesh.raman@collabora.com>
+ <20240517092502.647420-3-vignesh.raman@collabora.com>
+ <o363vir3dqz2znrnifo6enbdwudalmxqbigdkci2ykxf5qjbnx@2ngllflxotgk>
+From: Vignesh Raman <vignesh.raman@collabora.com>
+In-Reply-To: <o363vir3dqz2znrnifo6enbdwudalmxqbigdkci2ykxf5qjbnx@2ngllflxotgk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Following a similar reinstate for the KSZ8081 and KSZ9031.
+Hi Dmitry,
 
-Older kernels would use the genphy_soft_reset if the PHY did not implement
-a .soft_reset.
+On 20/05/24 16:30, Dmitry Baryshkov wrote:
+> On Fri, May 17, 2024 at 02:54:58PM +0530, Vignesh Raman wrote:
+>> Stop vendoring the testlist into the kernel. Instead, use the
+>> testlist from the IGT build to ensure we do not miss renamed
+>> or newly added tests.
+>>
+>> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+>> ---
+>>
+>> v2:
+>>    - Fix testlist generation for arm and arm64 builds.
+>>
+>> ---
+>>   drivers/gpu/drm/ci/build-igt.sh  |   34 +
+>>   drivers/gpu/drm/ci/igt_runner.sh |    9 +-
+>>   drivers/gpu/drm/ci/testlist.txt  | 2761 ------------------------------
+>>   3 files changed, 39 insertions(+), 2765 deletions(-)
+>>   delete mode 100644 drivers/gpu/drm/ci/testlist.txt
+>>
+>> diff --git a/drivers/gpu/drm/ci/build-igt.sh b/drivers/gpu/drm/ci/build-igt.sh
+>> index 7859554756c4..e62244728613 100644
+>> --- a/drivers/gpu/drm/ci/build-igt.sh
+>> +++ b/drivers/gpu/drm/ci/build-igt.sh
+> 
+> [...]
+> 
+>> @@ -26,6 +50,16 @@ meson build $MESON_OPTIONS $EXTRA_MESON_ARGS
+>>   ninja -C build -j${FDO_CI_CONCURRENT:-4} || ninja -C build -j 1
+>>   ninja -C build install
+>>   
+>> +if [[ "$KERNEL_ARCH" = "arm64" ]]; then
+>> +    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/igt/lib/aarch64-linux-gnu
+>> +elif [[ "$KERNEL_ARCH" = "arm" ]]; then
+>> +    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/igt/lib
+>> +else
+>> +    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/igt/lib64
+> 
+> Could you please clarify this part? The arm64 vs arm don't look logical
+> from my point of view.
+> 
+> The rest LGTM.
 
-The KSZ8061 errata described here:
-https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ8061-Errata-DS80000688B.pdf
-and worked around with 232ba3a51c ("net: phy: Micrel KSZ8061: link failure after cable connect")
-is back again without this soft reset.
+The libs are installed in the below path for different arch.
 
-Fixes: 6e2d85ec0559 ("net: phy: Stop with excessive soft reset")
-Tested-by: Karim Ben Houcine <karim.benhoucine@landisgyr.com>
-Signed-off-by: Mathieu Othacehe <othacehe@gnu.org>
----
- drivers/net/phy/micrel.c | 1 +
- 1 file changed, 1 insertion(+)
+ > find . -name libigt.so
+/x86/igt/lib64/libigt.so
+/arm64/igt/lib/aarch64-linux-gnu/libigt.so
+/arm/igt/lib/libigt.so
+~/igt-build
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 13e30ea7eec5..1d769322b059 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -5327,6 +5327,7 @@ static struct phy_driver ksphy_driver[] = {
- 	/* PHY_BASIC_FEATURES */
- 	.probe		= kszphy_probe,
- 	.config_init	= ksz8061_config_init,
-+	.soft_reset	= genphy_soft_reset,
- 	.config_intr	= kszphy_config_intr,
- 	.handle_interrupt = kszphy_handle_interrupt,
- 	.suspend	= kszphy_suspend,
--- 
-2.41.0
+So for arm64 it is 'lib/aarch64-linux-gnu' and arm it is 'lib'.
 
+s3.freedesktop.org/artifacts/vigneshraman/linux/1179691/arm64/igt.tar.gz
+s3.freedesktop.org/artifacts/vigneshraman/linux/1179691/arm/igt.tar.gz
+s3.freedesktop.org/artifacts/vigneshraman/linux/1179691/x86_64/igt.tar.gz
+
+Regards,
+Vignesh
+
+> 
+>> +fi
+>> +
+>> +generate_testlist
+>> +
+>>   mkdir -p artifacts/
+>>   tar -cf artifacts/igt.tar /igt
+>>   
 
