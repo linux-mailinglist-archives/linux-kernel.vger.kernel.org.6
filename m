@@ -1,189 +1,93 @@
-Return-Path: <linux-kernel+bounces-184761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-184809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7D18CAB9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:14:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EFB8CAC4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 12:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A79283228
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:14:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B250282582
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2024 10:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1396EB75;
-	Tue, 21 May 2024 10:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kiCXBoXC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66CB6CDD0;
+	Tue, 21 May 2024 10:34:14 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755D46CDD5;
-	Tue, 21 May 2024 10:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46A871B32;
+	Tue, 21 May 2024 10:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716286435; cv=none; b=adDdzT+1VLZRzXn8aJXsN4DrnjAM8huxi/nJ5l4fhGNpMd49acCx6cs9NqfwciHpuCslYvdFV6HQBZZOgv4uXmNRgCZlGabJAAp9GZKLQl5lvrNXQxnk6WY4CYQU0FDWH0Z1rp79hqB3nDDmau1uURXqaiWLiTpU/4YVJ8SZBws=
+	t=1716287654; cv=none; b=gKAgJaCNO8oYymZiGPGLoIx4dGtwaxgoVFkvVnvQmrQU0JiNr8fFjvM3ZTWlA70HWscFSeqiumjlXRd31eACqVmA1DyrrQowV72s0vFN+8IkFg/Y0VemsWpb6pvCaIUqpEb06Zb8122g4dEcHKAckBsJyJ6KddWfqfNWIAnd67Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716286435; c=relaxed/simple;
-	bh=mip2dTposQAfd+SqycxyXVPYbKW0NKtrqBLWMYUsIvY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sSezLmgkztkt2Uu3jGcYVop9Lu5oYwXp57U7q8brW0RNwUwpAfjogxsrK+xH+GWLAUlHc3XeqsYS5ScAwrfsfoxRaE5rXEKlaJ5cI0hiRW0LPIwV92YWxeJKhbufDIee9uH6FEk4Db77Ex7xmtfFNavCuxhCs7roxIdJ2+L94IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kiCXBoXC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02083C4AF07;
-	Tue, 21 May 2024 10:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716286435;
-	bh=mip2dTposQAfd+SqycxyXVPYbKW0NKtrqBLWMYUsIvY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=kiCXBoXCM1x2Kibir7F6UpR3jZg2Bwr9Vyts63hwl/VN4e3h30QDeyINSJJXaVctD
-	 Z094C1VMObOKa3KDYGsafE50uCRWO1wPw14x1PPHf0faFDK2r/4EyYIA8s/26dl9Bd
-	 li2oaZfGOT3/mYPKLdM1aG9BY7SNoQRH/YKZCYxl1PEiXhnS4grfuohzjjgkbDMNxl
-	 4ieyzL7cJ1N3d2mfnq9fXdoESU+rZEIyQvqEf8roCrsK9a1E90GJjxyB2HhjB9jAWi
-	 Z2lAuZeBQFyUNUIEhF7HAIvbet8+sz/MAZ5GXDKTXPyDNJdCcmHs5Rg7S/fONUuCOT
-	 s+VF8C16ZBIUA==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Tue, 21 May 2024 12:13:34 +0200
-Subject: [PATCH v14 01/28] drm/connector: Introduce an HDMI connector
- initialization function
+	s=arc-20240116; t=1716287654; c=relaxed/simple;
+	bh=1Jv1yuE9xzAE/z8EGE/kaVxPvVhA9WNP8EjeoYGlOPM=;
+	h=From:To:Subject:Date:Message-Id; b=r1dY+4MsS7QbS9+lfPwmIBOJeygnUxRIDBLlaBRzMJMLqKy/R6rqeE0QB0T8JMiv6SaIi3wsYXzm0bJafpmHVQpR+djdf5DbssLuWCAhGP8sAnVM+x/GSUzgoArSSsKJ+4XgLbw7CtgYYMO7LPFbdhLx1NbDl255tt8WfxG1l2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D026C200A2D;
+	Tue, 21 May 2024 12:34:04 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 621302008DD;
+	Tue, 21 May 2024 12:34:04 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 98E11180226C;
+	Tue, 21 May 2024 18:34:01 +0800 (+08)
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	shengjiu.wang@gmail.com,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xiubo.Lee@gmail.com,
+	festevam@gmail.com,
+	nicoleotsuka@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	alsa-devel@alsa-project.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v3 0/2] ASoC: fsl_xcvr: Support i.MX95 platform
+Date: Tue, 21 May 2024 18:13:34 +0800
+Message-Id: <1716286416-17621-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240521-kms-hdmi-connector-state-v14-1-51950db4fedb@kernel.org>
-References: <20240521-kms-hdmi-connector-state-v14-0-51950db4fedb@kernel.org>
-In-Reply-To: <20240521-kms-hdmi-connector-state-v14-0-51950db4fedb@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
- Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, 
- Sebastian Wick <sebastian.wick@redhat.com>, 
- =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, Maxime Ripard <mripard@kernel.org>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Sui Jingfeng <sui.jingfeng@linux.dev>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3844; i=mripard@kernel.org;
- h=from:subject:message-id; bh=mip2dTposQAfd+SqycxyXVPYbKW0NKtrqBLWMYUsIvY=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDGk+xRcaksyX7r8Z672EM2ib4OnvFrk5L87FPky5MqN+a
- nn2V56KjqksDMKcDLJiiixPZMJOL29fXOVgv/IHzBxWJpAhDFycAjCRw7sYG34k6Td8XRFYX7Ce
- Ywb3Z8abyvVsl16+C+YsXbt/0tdjk3+5pU5Z1PxXUU+udIsVh8EZPcaGnWvWOiacMyvdasz6sj+
- VjV/d6drKQ/tmzOAvLwwo6mupir/prHdI6Jdo52JTt7XV/ycCAA==
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-A lot of the various HDMI drivers duplicate some logic that depends on
-the HDMI spec itself and not really a particular hardware
-implementation.
+On i.MX95 wakeup domain, there is one instance of Audio XCVR
+supporting SPDIF mode with a connection to the Audio XCVR physical
+interface.
 
-Output BPC or format selection, infoframe generation are good examples
-of such areas.
+changes in v3:
+- refine the constraint for 'resets', 'clocks', 'interrupts' in document.
 
-This creates a lot of boilerplate, with a lot of variations, which makes
-it hard for userspace to rely on, and makes it difficult to get it right
-for drivers.
+changes in v2:
+- Merge patch 1&2, 3&4 from v1 together.
+- Add more comments in commit message
+- Add constaint for clocks used on i.mx95
+- Add 'select SND_SOC_FSL_UTILS' for compiling issue.
 
-In the next patches, we'll add a lot of infrastructure around the
-drm_connector and drm_connector_state structures, which will allow to
-abstract away the duplicated logic. This infrastructure comes with a few
-requirements though, and thus we need a new initialization function.
+Shengjiu Wang (2):
+  ASoC: dt-bindings: fsl,xcvr: Add compatible string for i.MX95
+  ASoC: fsl_xcvr: Add support for i.MX95 platform
 
-Hopefully, this will make drivers simpler to handle, and their behaviour
-more consistent.
-
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Reviewed-by: Sui Jingfeng <sui.jingfeng@linux.dev>
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
- drivers/gpu/drm/drm_connector.c | 39 +++++++++++++++++++++++++++++++++++++++
- include/drm/drm_connector.h     |  5 +++++
- 2 files changed, 44 insertions(+)
-
-diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-index b0516505f7ae..d9961cce8245 100644
---- a/drivers/gpu/drm/drm_connector.c
-+++ b/drivers/gpu/drm/drm_connector.c
-@@ -450,10 +450,49 @@ int drmm_connector_init(struct drm_device *dev,
- 
- 	return 0;
- }
- EXPORT_SYMBOL(drmm_connector_init);
- 
-+/**
-+ * drmm_connector_hdmi_init - Init a preallocated HDMI connector
-+ * @dev: DRM device
-+ * @connector: A pointer to the HDMI connector to init
-+ * @funcs: callbacks for this connector
-+ * @connector_type: user visible type of the connector
-+ * @ddc: optional pointer to the associated ddc adapter
-+ *
-+ * Initialises a preallocated HDMI connector. Connectors can be
-+ * subclassed as part of driver connector objects.
-+ *
-+ * Cleanup is automatically handled with a call to
-+ * drm_connector_cleanup() in a DRM-managed action.
-+ *
-+ * The connector structure should be allocated with drmm_kzalloc().
-+ *
-+ * Returns:
-+ * Zero on success, error code on failure.
-+ */
-+int drmm_connector_hdmi_init(struct drm_device *dev,
-+			     struct drm_connector *connector,
-+			     const struct drm_connector_funcs *funcs,
-+			     int connector_type,
-+			     struct i2c_adapter *ddc)
-+{
-+	int ret;
-+
-+	if (!(connector_type == DRM_MODE_CONNECTOR_HDMIA ||
-+	      connector_type == DRM_MODE_CONNECTOR_HDMIB))
-+		return -EINVAL;
-+
-+	ret = drmm_connector_init(dev, connector, funcs, connector_type, ddc);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(drmm_connector_hdmi_init);
-+
- /**
-  * drm_connector_attach_edid_property - attach edid property.
-  * @connector: the connector
-  *
-  * Some connector types like DRM_MODE_CONNECTOR_VIRTUAL do not get a
-diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-index fe88d7fc6b8f..4491c4c2fb6e 100644
---- a/include/drm/drm_connector.h
-+++ b/include/drm/drm_connector.h
-@@ -1902,10 +1902,15 @@ int drm_connector_init_with_ddc(struct drm_device *dev,
- int drmm_connector_init(struct drm_device *dev,
- 			struct drm_connector *connector,
- 			const struct drm_connector_funcs *funcs,
- 			int connector_type,
- 			struct i2c_adapter *ddc);
-+int drmm_connector_hdmi_init(struct drm_device *dev,
-+			     struct drm_connector *connector,
-+			     const struct drm_connector_funcs *funcs,
-+			     int connector_type,
-+			     struct i2c_adapter *ddc);
- void drm_connector_attach_edid_property(struct drm_connector *connector);
- int drm_connector_register(struct drm_connector *connector);
- void drm_connector_unregister(struct drm_connector *connector);
- int drm_connector_attach_encoder(struct drm_connector *connector,
- 				      struct drm_encoder *encoder);
+ .../devicetree/bindings/sound/fsl,xcvr.yaml   |  37 ++++-
+ sound/soc/fsl/Kconfig                         |   1 +
+ sound/soc/fsl/fsl_xcvr.c                      | 128 ++++++++++++------
+ sound/soc/fsl/fsl_xcvr.h                      |  91 +++++++++++++
+ 4 files changed, 213 insertions(+), 44 deletions(-)
 
 -- 
-2.45.0
+2.34.1
 
 
