@@ -1,126 +1,142 @@
-Return-Path: <linux-kernel+bounces-185891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158398CBC8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:00:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA8A8CBC8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0EFB282849
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:00:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31EC91F22305
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8BC7E785;
-	Wed, 22 May 2024 08:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1133D7E588;
+	Wed, 22 May 2024 08:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrqtgxHH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2+/g0JC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2779182DB;
-	Wed, 22 May 2024 08:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543E8182DB;
+	Wed, 22 May 2024 08:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716364831; cv=none; b=REXW1qs/mM0XltAZU00+q2crMRaU6e4HliHC6O/hc7pVyFsO51FeS3IdjTYtA2os0EbE7SqI4UkPjjUzesjtFeocp9OEH63wJoULMhyAASJ5L384AjeB0j3dYkBKs5klVtxVqlgOMEV+6b25iZCTH5XVZBBQBc91C5CjYZUQwoU=
+	t=1716364842; cv=none; b=Rsd4OJXHGwixoPpsKBD5y/dtx4TNwxl9CylgXPQbW+mEQciCB0dAotMucz5AU8CgunpzUNxYUvN0GWM275owSOW2gSimf6/rjv+pvCEUc+NDXgUJH6jWaUBK5caBS41ozR01fLWpjhpNaiK5YyrJyJDu+ATEe7lcPXiIkZKCehw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716364831; c=relaxed/simple;
-	bh=k03dfXKacAQksrmP4DO5pxvFhcvSvUfVXIXzKKP1VCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CSoyLtk/t3ggFtj4qehS0bj3PfhN6R84kAWAT8aBPzLYcTBW0Ua99iN/nCTZevp5Oe0Jjr2Y3z0xL4M+wqrRhPLP0j9pg0XrzjFNqof/zrzZHgUo9vbgnCvHnQDGsE5OZQMFJ5zVxiL7lUvNysKTJ9GE+NKW+FULD42qcgtd8jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrqtgxHH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ADC8C32781;
-	Wed, 22 May 2024 08:00:31 +0000 (UTC)
+	s=arc-20240116; t=1716364842; c=relaxed/simple;
+	bh=aV7NdtVB/SzBUj/d+kn2bUhxu2Qvmc8Xm3U4xn5YA3Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V3cIOO/p7ji+gnAh0VWNHY7IwmoX+wpnpJp1xCfPcQ/3AQzn6vRxXJIKeOEjObIylCaK7x4wPPL6PhDt3BvBF3gwY6fVqr/BhiG+/HpC1dhvTEme8avge3a9U+MjvZXUMdulpfOk7kU1mC/P32ntMUtP1uEuaxgXVL5JbiDd8iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2+/g0JC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C107C32781;
+	Wed, 22 May 2024 08:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716364831;
-	bh=k03dfXKacAQksrmP4DO5pxvFhcvSvUfVXIXzKKP1VCQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JrqtgxHHQ73jfB7ZtvLDnbb5gv1FpAQmvRfxfjthcoGCksvmVCrUoIeHItMSHtuxz
-	 6kFHJhJqOFcqar2hutAA0fITAM3V0kM3YXVes4g9QC+n/hnMyiTGuVPos1NGVCiswt
-	 9kl7cKXk5V1NpeQ+Eg5MUtE0FzsgOmybdopoJTrfAEj/mnABxEMIpsLQYdyeWQpXJv
-	 me6/pzaRIG/3F2SUElz5lNnSjm31LiYQkuDEq8wDYzlILW8Y/V+K0IV0auW/C5Ivu0
-	 FBnlQY8YW+ViIRqgcVYxPHO96fFaRbUZkva/Z+mY0FnT7zxBMTQjPMAlIp0n7WBPNI
-	 abYZxxfY72DoA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1s9gte-000000000fm-3hPm;
-	Wed, 22 May 2024 10:00:27 +0200
-Date: Wed, 22 May 2024 10:00:26 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Das Srinagesh <quic_gurus@quicinc.com>,
-	Satya Priya <quic_c_skakit@quicinc.com>,
-	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 11/13] mfd: pm8008: rework driver
-Message-ID: <Zk2mGpseH3DFqCjK@hovoldconsulting.com>
-References: <20240506150830.23709-1-johan+linaro@kernel.org>
- <20240506150830.23709-12-johan+linaro@kernel.org>
- <ZjktIrsZS-T7cm-A@surfacebook.localdomain>
- <ZjyafGz_1pY4J9C7@hovoldconsulting.com>
- <CAHp75VfP2AB45mn6gB3suCAO9iT3bOWZ=7m9U7E087Lac0P3gg@mail.gmail.com>
- <Zk2VX5JRzmePxG4N@hovoldconsulting.com>
- <CAHp75Vcs3DvBK3P058gU6L-24Q9PTrPg_hLujxaUGHNB=JCW0A@mail.gmail.com>
+	s=k20201202; t=1716364842;
+	bh=aV7NdtVB/SzBUj/d+kn2bUhxu2Qvmc8Xm3U4xn5YA3Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=k2+/g0JCirUhfOBiUEonbgEDaaTA+nXUollhqidvEQ+V0rOCM7bqkiEdg1d0mXeve
+	 NnhvCUndy/vQpprZQQZ9ZXrby+qNvJ65l9nnxXqfdLwxATBOWm5cJ4zsOXA4CD89H1
+	 6VVoaBc5S0m/7xE2FubaLEPr5E4Zx+su482GaoiAGq5GCVrkG9CATqFQkIZAkArPJc
+	 M2O5CwvGOUpoZYKYQYXn76tOWSIgJMt58BeURUcJVQEKazq1kPz2nKx8oEOIcB8Wnb
+	 RrVCPS173Z+uA1niHUqmf+7oN6018eJo1TinQB2++q2Rtq3Iab85c9muTGEemmlT9s
+	 0BAD+M4RwZnnw==
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-34d9c9f2cf0so530809f8f.3;
+        Wed, 22 May 2024 01:00:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVbUFKZjD+U3bK9afaEqpXx4+njt8196yWfWTAE6olDOIVR7xB+dLiV+UDTd/kdVSJ/NgqYOH+nkJCwZHx4zQU2RcMdTmJM/ABnHS6aOobuJPn+Pk6N8UpsMOtdA1wr1OdKTJ9c
+X-Gm-Message-State: AOJu0YylA8zSTz9pphnZKWMQPgTQF5B/nnSLTRIQHMeMIdsmWBamVVUW
+	GKxR1WZxz+i2dt2hJPLet0rsi4Fhii7dKrKIyZIL6PstaSEMwYFlb3YF1lTDdvgLXsiLdIFlW97
+	y04AkqeLnTjJc8K5VR+29/ubYvnU=
+X-Google-Smtp-Source: AGHT+IGB9BIS9Kop1kEq4bxJyatyF4JrT25siZ44mZDszmXdW0jKScK7W34sTieEYRDBfaV1TG/QovV0S90rAFTzvIM=
+X-Received: by 2002:a05:6000:bd0:b0:34c:71d0:1151 with SMTP id
+ ffacd0b85a97d-354d8c75e43mr1050070f8f.10.1716364840755; Wed, 22 May 2024
+ 01:00:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75Vcs3DvBK3P058gU6L-24Q9PTrPg_hLujxaUGHNB=JCW0A@mail.gmail.com>
+References: <20240522-loongarch-booting-fixes-v2-0-727edb96e548@flygoat.com> <20240522-loongarch-booting-fixes-v2-3-727edb96e548@flygoat.com>
+In-Reply-To: <20240522-loongarch-booting-fixes-v2-3-727edb96e548@flygoat.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Wed, 22 May 2024 16:00:29 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7+2BFEN4qgkJ0N48t8o7rixPK7_kn8jwowWPNHS7=Ohw@mail.gmail.com>
+Message-ID: <CAAhV-H7+2BFEN4qgkJ0N48t8o7rixPK7_kn8jwowWPNHS7=Ohw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] LoongArch: Fix entry point in image header
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 10:13:33AM +0300, Andy Shevchenko wrote:
-> On Wed, May 22, 2024 at 9:49 AM Johan Hovold <johan@kernel.org> wrote:
-> > On Fri, May 10, 2024 at 04:15:43PM +0300, Andy Shevchenko wrote:
-> > > On Thu, May 9, 2024 at 12:42 PM Johan Hovold <johan@kernel.org> wrote:
-> > > > On Mon, May 06, 2024 at 10:18:58PM +0300, Andy Shevchenko wrote:
-> > > > > Mon, May 06, 2024 at 05:08:28PM +0200, Johan Hovold kirjoitti:
+Hi, Jiaxun,
 
-> > > > > > +static void devm_irq_domain_fwnode_release(void *res)
-> > > > > > +{
-> > > > >
-> > > > > > +   struct fwnode_handle *fwnode = res;
-> > > > >
-> > > > > Unneeded line, can be
-> > > > >
-> > > > > static void devm_irq_domain_fwnode_release(void *fwnode)
-> > > > >
-> > > > > > +   irq_domain_free_fwnode(fwnode);
-> > > > > > +}
-> > > >
-> > > > I think I prefer it this way for clarity and for type safety in the
-> > > > unlikely even that the argument to irq_domain_free_fwnode() would ever
-> > > > change.
-> > >
-> > > If it ever changes, the allocation part most likely would need an
-> > > update and since devm_add_action() takes this type of function, I
-> > > don't believe the argument would ever change from void * to something
-> > > else. With this it just adds an additional burden on the conversion.
-> >
-> > I was referring to the irq_domain_free_fwnode() prototype.
-> 
-> And I also referred to that one. The release callback, i.e. the type
-> of the parameter, is solely defined by a caller of devm_add_action()
-> end friends, and in this case it means that if ever the type changes
-> (this is your argument why you want to have explicit line for that,
-> necessity of which I oppose) the devm_add_action() arguments also has
-> to be changed, it can't be done _just_ there, in
-> irq_domain_free_fwnode().
+On Wed, May 22, 2024 at 2:30=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoat.co=
+m> wrote:
+>
+> Currently kernel entry in head.S is in DMW address range,
+> firmware is instructed to jump to this address after loading
+> the image.
+>
+> However kernel should not make any assumption on firmware's
+> DMW setting, thus the entry point should be a physical address
+> falls into direct translation region.
+>
+> Fix by applying a calculation to the entry and amend entry
+> calculation logic in libstub accordingly.
+>
+> Note that due to relocation restriction TO_PHYS can't be used
+> in assembly, we can only do plus and minus here.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+> v2: Fix efistub
+> ---
+>  arch/loongarch/kernel/head.S             | 2 +-
+>  drivers/firmware/efi/libstub/loongarch.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
+> index c4f7de2e2805..1a83564023e1 100644
+> --- a/arch/loongarch/kernel/head.S
+> +++ b/arch/loongarch/kernel/head.S
+> @@ -22,7 +22,7 @@
+>  _head:
+>         .word   MZ_MAGIC                /* "MZ", MS-DOS header */
+>         .org    0x8
+> -       .dword  kernel_entry            /* Kernel entry point */
+> +       .dword  PHYS_LINK_KADDR + (kernel_entry - _head)        /* Kernel=
+ entry point */
+It could be better to calculate it in the link script, just as _kernel_asiz=
+e.
 
-No, not necessarily, but as I already wrote above this is unlikely to
-ever be of practical concern.
+Huacai
 
-Johan
+>         .dword  _kernel_asize           /* Kernel image effective size */
+>         .quad   PHYS_LINK_KADDR         /* Kernel image load offset from =
+start of RAM */
+>         .org    0x38                    /* 0x20 ~ 0x37 reserved */
+> diff --git a/drivers/firmware/efi/libstub/loongarch.c b/drivers/firmware/=
+efi/libstub/loongarch.c
+> index 684c9354637c..60c145121393 100644
+> --- a/drivers/firmware/efi/libstub/loongarch.c
+> +++ b/drivers/firmware/efi/libstub/loongarch.c
+> @@ -41,7 +41,7 @@ static efi_status_t exit_boot_func(struct efi_boot_memm=
+ap *map, void *priv)
+>  unsigned long __weak kernel_entry_address(unsigned long kernel_addr,
+>                 efi_loaded_image_t *image)
+>  {
+> -       return *(unsigned long *)(kernel_addr + 8) - VMLINUX_LOAD_ADDRESS=
+ + kernel_addr;
+> +       return *(unsigned long *)(kernel_addr + 8) - TO_PHYS(VMLINUX_LOAD=
+_ADDRESS) + kernel_addr;
+>  }
+>
+>  efi_status_t efi_boot_kernel(void *handle, efi_loaded_image_t *image,
+>
+> --
+> 2.43.0
+>
+>
 
