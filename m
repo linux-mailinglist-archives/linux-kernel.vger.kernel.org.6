@@ -1,115 +1,61 @@
-Return-Path: <linux-kernel+bounces-186140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600198CC047
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:30:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193188CC048
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16340281726
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:30:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1A081F21AA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BC582D62;
-	Wed, 22 May 2024 11:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83E682897;
+	Wed, 22 May 2024 11:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZ1oSmi1"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="BE1AGoj2"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD6D81ACA
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3149781ACA
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716377416; cv=none; b=rt/OkKrGU25g0mU82dGSoZ/5S9Aea9pYrb8sgb5ctXA0rfevy83Vt7WRzolX909hNI47789zaBZKiQsP5QAmFhMUUcKdi5xFwhe27autHzRA+k8L93C8NmMdLI3PgiqQcHb+EXlzo6t2/GyuVyXoP0d9Y3bGJp8k+k3YIph0PCY=
+	t=1716377425; cv=none; b=BGkcqgj4vswa1dX0uwVzpeP9RgQMkMav1S9qsZk+RkuYcKMVzD6U6KxsAGd0H3hq90Yps8jASPT2hxaVwK3axNln/O8c9sIv/5MSmjsESNepMVCcy7yi5g0Ky1dbOzCada6AgPwBTlxoY/j4pFkSyiW5cJAFYMv5rNDIKh5kD7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716377416; c=relaxed/simple;
-	bh=4CIO6artRJ4ZRunAE1h2kRB6vpyNhD0KsLJ2hd/Tayo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZYlqOopDW/E1QII8lP2wlFDETKRmnwF3SNOPm+QIpMrqa7QQk5MkkOyZ67rA4tXZiFvFXv/6JIZBDniPfLukH9oCVlZ0KYsO/GAdsT8rYAJWVgFcnVzelt3UwQdSDlzM9tnh6pQEsL2Qe2szBpXGcLmUFuUA92Re5+OFlcg16Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MZ1oSmi1; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-56e47843cc7so9232912a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 04:30:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716377413; x=1716982213; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mJNcJC3ubId/j8V3zKbBbmUpsocF9nZYwPjWMkiBbRI=;
-        b=MZ1oSmi15yjxcPzhQ7Q1d67WMSkwHlMGK49ImKXtOy5fUAJqQ/OhYrUQqwMyRwE5I4
-         cNZfiTEfGf5o57r8kVpvnAUuZgW4WdX2qL2hqhXp0mR8v3d8xk817AU+Ce95LYjs+lz4
-         pxxPY9jC8dBTWCiqWxzhKvN0FeL/mYLfd/E5EhyAZp4gU6dfOqq7EZUaTxX7aINMTY7W
-         bn7swuheVDpaCmcfEMuyu/CoA9BAeFg7U81iufasw0mjq3+UJnRobW/E35UC4RSyJENf
-         LNHcjqEQEOB04xe7RvSulmnwv2B270hEGpWNq3M9D51YlpnYcZYElyXCBXblyH35j0tj
-         FmnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716377413; x=1716982213;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mJNcJC3ubId/j8V3zKbBbmUpsocF9nZYwPjWMkiBbRI=;
-        b=ER68UQJcoEmMaqPywfC31lgaG/5V4pTXYknVlYrLJ+po4ZvVTlYFn45IyYriwTiU7p
-         6KPUxzhNVENRxLfKA/R3iOX9wkb+xIf4NWOm+TnR850LT2tluKEQ9WR478EAvhCbIWMB
-         pdP2OOV6cYqw9XHzh+/ylZACKhXWYCgYq3uyQN3I5kjVcqq7wL8SeYHU6IN3Fij7tMFj
-         AGyvmWyQjLMvu0k5AQswCOQwa78353c4b7abK8X06zHIZTdnAkNlL8TSffd3FlGoO+33
-         Y+yoI0udP/vKMAJhNM70e4coknnPmIjbwfo3xtsMlL+iShyHaKgz3pGjQBMGJD7elR99
-         gNaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzrjAhC31x4n2WakGX0IIsFoeNDXPNrIucZraLM5968Pm8anKoSGn/TJi7VcmfUXxCE3/3qunKv64UAUM/JYyTOSLjTJ17H8JxM7cg
-X-Gm-Message-State: AOJu0YwLj7/8Ou4pZmpskSkpdmp+EwU2KPO0SRKaYOIABJ+ULa64PSnO
-	ThmGsSK2+pzsFIQr6cSBGHFs9h2yKfqPqWMDxnGAe2+xR8SfxDk8/xi+tYVbsnU=
-X-Google-Smtp-Source: AGHT+IEzNDd0Cncky8DxksUpwFp2MAsZW2IdqX/pyaQ60q+kGtJRzL8vAfOsh7cZPyw5OgbfI7vWpg==
-X-Received: by 2002:a17:907:6016:b0:a59:af54:1651 with SMTP id a640c23a62f3a-a62281646d9mr96720166b.57.1716377412863;
-        Wed, 22 May 2024 04:30:12 -0700 (PDT)
-Received: from [127.0.1.1] ([2a00:f41:c55:53ae:4d0a:75f4:a9ea:5025])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01652sm1768363066b.167.2024.05.22.04.30.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 04:30:12 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Wed, 22 May 2024 13:30:05 +0200
-Subject: [PATCH 2/2] pinctrl: qcom: spmi: Add PMC8380
+	s=arc-20240116; t=1716377425; c=relaxed/simple;
+	bh=jWpNIoMiRvnsFUlR4kKFILBDq4Nfl5l7tOREgN5i0MA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=QIRCMcWKDxy3qSHiHk6/z874x8KX2EZmUSt/IQqebbxz9PyQQyhteQfnK2yNS3OcjkyS8JDdcNJfkKvvNMNt6i+vtaPkk1SkJewo0K3c+ya+lEsVTptBG91Rk9zQNZuT6RGgIny5pnKijKNQrWeSinA2B2rmjW8FCHBsO0J6O88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=BE1AGoj2; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc (unknown [10.10.165.15])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 4CBB14078501;
+	Wed, 22 May 2024 11:30:13 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 4CBB14078501
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1716377413;
+	bh=jWpNIoMiRvnsFUlR4kKFILBDq4Nfl5l7tOREgN5i0MA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=BE1AGoj2w4bjqQi2JQNiJnQ2FwlI8h//o5kvO6qmjr68qe3k29cBh78ynf3G1tobo
+	 G82P2gDC7sC5eQmjAw2L7kVOMRy85o7c1+w0OXUnLIfX5YKnOwGkoy90DXUn9ZuodN
+	 cTH+zvfBw+oc/5WyegGDaVv5Hfpz3n9Zx7FuC9o4=
+Date: Wed, 22 May 2024 14:30:06 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: syzbot+5205eb2f17de3e01946e@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: WARNING in vmk80xx_write_packet/usb_submit_urb
+Message-ID: <20240522-7737fa7827ec39328f23db8c-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240522-topic-pmc8380_gpio-v1-2-7298afa9e181@linaro.org>
-References: <20240522-topic-pmc8380_gpio-v1-0-7298afa9e181@linaro.org>
-In-Reply-To: <20240522-topic-pmc8380_gpio-v1-0-7298afa9e181@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14-dev
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <000000000000e617ad058d3eade5@google.com>
 
-PMC8380 is a new chip, featuring 10 GPIOs. Describe it.
-
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index 4e80c7204e5f..ce576149b7ae 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -1235,6 +1235,7 @@ static const struct of_device_id pmic_gpio_of_match[] = {
- 	{ .compatible = "qcom,pm8994-gpio", .data = (void *) 22 },
- 	{ .compatible = "qcom,pm8998-gpio", .data = (void *) 26 },
- 	{ .compatible = "qcom,pma8084-gpio", .data = (void *) 22 },
-+	{ .compatible = "qcom,pmc8380-gpio", .data = (void *) 10 },
- 	{ .compatible = "qcom,pmd8028-gpio", .data = (void *) 4 },
- 	{ .compatible = "qcom,pmi632-gpio", .data = (void *) 8 },
- 	{ .compatible = "qcom,pmi8950-gpio", .data = (void *) 2 },
-
--- 
-2.43.0
-
+#syz dup: [syzbot] WARNING in vmk80xx_auto_attach/usb_submit_urb
 
