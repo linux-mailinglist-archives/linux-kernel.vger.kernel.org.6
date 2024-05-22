@@ -1,132 +1,134 @@
-Return-Path: <linux-kernel+bounces-186607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A03B8CC634
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:18:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B73FC8CC637
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EE3D1F21AF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:18:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E9A02821B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D44E145B20;
-	Wed, 22 May 2024 18:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="iiQULoBj"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A8C1BF40;
-	Wed, 22 May 2024 18:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D14145B10;
+	Wed, 22 May 2024 18:20:51 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 86C201BF40
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 18:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716401921; cv=none; b=kUgUmylSBFF2MBULpbdJyOuxO4YtfzeNWE4Zbf3ERCteDfqF5oBvj03dA3uV6KiNfQNMJ7Z17OsqtFkYbg9qGRhFSU/NvdK+YsAd9nH106H7nnBcWqyok90oE8P1uyPv0V0KQNfMTlQOChInCdCQN/ArknHS/aMhXzVXWjXpkxc=
+	t=1716402051; cv=none; b=pt51zA3NEfYs/Xr8cuhk+a5CHB4n71PSYHkKJC47FRNVsjplOCMpkeQoAyZ4bjOoqrRtLlbw13Vkkg0jzAjnC2lAb9qWelpc+jrxDOMOfHkLdR59bG1Im7BNcAJaPTqpb5MByu7Yk4sbTle38Ko4kdcDck9zHClCo36zCiq1rBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716401921; c=relaxed/simple;
-	bh=xNPRpsPuVeB1807eoXlBMa6zFy2qwMHE8uh3XCXeDu4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YHEwLGKYUjMXIC7Qz4FNserxj4Vlor4vFcpFLToZSrxkplJHfGYyQoqtMjHYVdZTU5tVGW9ZKlc98vk3fnzgpxfJJzPc8BhfTmB1lTd6cFAZNOHvxGArt8SYotR4VhwPKrylfMeXBmGz9sB0er53hBDvYLFVk5AtuWyhuXsxDwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=iiQULoBj; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Vl01C66Nrz6Cnk98;
-	Wed, 22 May 2024 18:18:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1716401913; x=1718993914; bh=thEXQsTRDJ1Qfc6861WlvJl6
-	NVBIcBsBOUsg8V8uzR4=; b=iiQULoBjFntVjvuasDAhoo7SNCRPRlQ/P5j9eK1T
-	AM5tIzi+th0fMmoFxD/JSJr3KTzUT8S8x5PbX1d8py2vXpne9CPFxmDcz5e7cYUG
-	jxdGRE2/f6xUUedQFrwIQuHRwANlURNCIfmUJ39rDwOZ2Oc/B30mDEnnrTvbez+l
-	9jYiamz5IAGINaM+0xt5gABDMt4V6m5Lzzd9k624vGFgREPngf4CYVag5MQzjNZQ
-	wxcjMhUEdZNVt0W2m908Mq6UnktEDag+KecWGSc0CRIDJKh0fCSVLozBuEJxu/gZ
-	qztAd1VE3s2kniimTeJNZNEKn/5jZrnAfPwdDjP7161MFA==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id gDLaIP6kWfP7; Wed, 22 May 2024 18:18:33 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Vl0142Ml9z6Cnk8s;
-	Wed, 22 May 2024 18:18:31 +0000 (UTC)
-Message-ID: <2ec8a7a6-c2cd-4861-9a43-8a4652e0f116@acm.org>
-Date: Wed, 22 May 2024 11:18:31 -0700
+	s=arc-20240116; t=1716402051; c=relaxed/simple;
+	bh=uxu8FI2vtIphGSI3l0Rvcfu2ul4LYPisCRq5cmLblag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=akJuHr1d6RCNSLaI1cLTsSXmU499D0YpSYNiEOOf9/zENswYTEgFaOxPTu0uqf6d5XDLqNcplEBFw5aNua37c3VMSo8Cu3m1cZJEIKBkj8yHm8VsCkwulD4INnM4wBl3mRgMjEyDq8wEG4MRD4rxRTr/GhhXL0G9r18Bk4YjnOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 508150 invoked by uid 1000); 22 May 2024 14:20:42 -0400
+Date: Wed, 22 May 2024 14:20:42 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+  Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
+  "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
+  linux-arch@vger.kernel.org, kernel-team@meta.com, boqun.feng@gmail.com,
+  j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+  Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: LKMM: Making RMW barriers explicit
+Message-ID: <ba7120a5-9208-4506-bf99-2bfa165180c5@rowland.harvard.edu>
+References: <72c804c8-2511-4349-a823-bc1de8bb729e@rowland.harvard.edu>
+ <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
+ <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
+ <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
+ <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
+ <4286e5b2-5954-4c77-a815-c1c2735d9509@rowland.harvard.edu>
+ <58042cf3-e515-4e5f-ab48-1d0d6123c9e9@huaweicloud.com>
+ <6174fd09-b287-49ae-b117-c3a36ef3800a@rowland.harvard.edu>
+ <Zk4jQe7Vq3N2Vip0@andrea>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] scsi: ufs: qcom: Update the UIC Command Timeout
-To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>, quic_cang@quicinc.com,
- quic_nitirawa@quicinc.com, avri.altman@wdc.com, beanhuo@micron.com,
- adrian.hunter@intel.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- "James E.J. Bottomley" <jejb@linux.ibm.com>,
- "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <cover.1716359578.git.quic_nguyenb@quicinc.com>
- <8e5593feaac75660ff132d67ee5d9130e628fefb.1716359578.git.quic_nguyenb@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <8e5593feaac75660ff132d67ee5d9130e628fefb.1716359578.git.quic_nguyenb@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zk4jQe7Vq3N2Vip0@andrea>
 
-On 5/22/24 00:01, Bao D. Nguyen wrote:
-> Change the UIC command timeout to 2 seconds.
-> This extra time is to allow the uart occasionally print long
-> debug messages and logging from different modules during
-> product development. With the default hardcoded 500ms timeout,
-> the uart printing with interrupt disabled may cause the UIC command
-> interrupt get starved, resulting in a UIC command timeout and
-> eventually a watchdog timeout.
-> When a product development completes, the vendors may
-> select a different UIC command timeout as desired.
+On Wed, May 22, 2024 at 06:54:25PM +0200, Andrea Parri wrote:
+> Alan, all,
 > 
-> Signed-off-by: Bao D. Nguyen <quic_nguyenb@quicinc.com>
-> ---
->   drivers/ufs/host/ufs-qcom.c | 3 +++
->   1 file changed, 3 insertions(+)
+> ("randomly" picking a recent post in the thread, after having observed
+> this discussion for a while...)
 > 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 79f8cb3..4649e0f 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -49,6 +49,7 @@ enum {
->   
->   #define QCOM_UFS_MAX_GEAR 4
->   #define QCOM_UFS_MAX_LANE 2
-> +#define QCOM_UIC_CMD_TIMEOUT_MS 2000
->   
->   enum {
->   	MODE_MIN,
-> @@ -1111,6 +1112,8 @@ static int ufs_qcom_init(struct ufs_hba *hba)
->   		dev_warn(dev, "%s: failed to configure the testbus %d\n",
->   				__func__, err);
->   
-> +	hba->uic_cmd_timeout = QCOM_UIC_CMD_TIMEOUT_MS;
-> +
->   	return 0;
->   
->   out_variant_clear:
+> > It would be better if there was a way to tell herd7 not to add the 'mb 
+> > tag to failed instructions in the first place.  This approach is 
+> > brittle; see below.
+> 
+> AFAIU, changing the herd representation to generate mb-accesses in place
+> of certain mb-fences...
 
-Given the description of patch 1, the addressed issue is not specific to
-a single vendor. Is that correct?
+I believe herd7 already generates mb accesses (not fences) for certain 
+RMW operations.  But then it does some post-processing on them, and that 
+post-processing is what we are thinking of changing.
 
-Since the described issue is only encountered during development, why to
-modify the UIC command timeout unconditionally?
+> > If you do want to use this approach, it should be simplified.  All you 
+> > need is:
+> > 
+> > 	[M] ; po ; [RMW_MB]
+> > 
+> > 	[RMW_MB] ; po ; [M]
+> > 
+> > This is because events tagged with RMW_MB always are memory accesses, 
+> > and accesses that aren't part of the RMW are already covered by the 
+> > fencerel(Mb) thing above.
+> 
+> ... and updating the .cat file to the effects of something like
+> 
+>   -let mb = ([M] ; fencerel(Mb) ; [M]) |
+>   +let mb = (([M] ; po? ; [Mb] ; po? ; [M]) \ id) |
+> 
+> ... can hardly be called "making RMW barriers explicit".  (So much so
+> that the first commit in PR #865 was titled "Remove explicit barriers
+> from RMWs".  :-))
 
-Thanks,
+There is another point, something we didn't spell out explicitly in the 
+email discussion.  Namely, in linux-kernel.def there is a long list of 
+instructions along with corresponding herd7 implementation instructions, 
+and those instructions explicitly contain either {once}, {acquire}, 
+{release}, or {mb} tags.  So to a large extent, these barriers already 
+are explicit in the memory model.  Not in the .cat file, but in the .def 
+file.
 
-Bart.
+What is not so explicit is how the {mb} tag works.  Its operation isn't 
+as simple as the operation of the {acquire} and {release} tags; those 
+just modify the R or W access in the RMW pair as you would expect.  
+Instead, an {mb} tag says to insert strong memory barriers before the R 
+access and after the W access.  This is more or less what the 
+post-processing mentioned earlier does, and Jonas and Hernan want to 
+move this out of herd7 and into the memory model.
+
+> Overall, this discussion rather seems to confirm the close link between
+> tools/memory-model/ and herdtools7.  (After all, to what extent could
+> any putative RMW_MB be considered "explicit" without _knowing the under-
+> lying representation of the RMW operations...)  My understanding is that
+> this discussion was at least in part motivated by a desire to experiment
+> and familiarize with the current herd representation (that does indeed
+> require some getting-used-to...); this suggests, as some of you already
+> mentioned, to add some comments or a .txt in tools/memory-model/ in order
+> to document such representation and ameliorate that experience.  OTOH, I
+> must admit, I'm unable to see here sufficient motivation(tm) for changing
+> the current representation (and model): not the how, but the why...
+
+Well, it's not a big change.  And in my opinion, if something can be 
+moved out of herd7's innards and into the memory model files, then doing 
+so is generally a good idea.
+
+However, I do agree that there will still be a close link between 
+tools/memory-model/ and herdtools7.  This may be unavoidable, at least 
+to some extent, but any way to reduce it is worth considering.
+
+Alan
 
