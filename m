@@ -1,132 +1,185 @@
-Return-Path: <linux-kernel+bounces-186549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC70D8CC57C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:27:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E5E8CC582
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E7051C21722
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:27:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9197B21305
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9611422C2;
-	Wed, 22 May 2024 17:27:20 +0000 (UTC)
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F262B1422CA;
+	Wed, 22 May 2024 17:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HY+g04KC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6182B9C3;
-	Wed, 22 May 2024 17:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6735E2869B;
+	Wed, 22 May 2024 17:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716398840; cv=none; b=CgmdfmxnsV42fmXUTCwthQ7aAQYfxGmxtbPGZTulSsM2A76kAVJfQgHRjrrYD7q0JSJfL8GefvDTgfXDN4m0YBg9VNYG3/0JjQggFwZc7F2/kQ3yleZcBGQPsIHYB+4YDqNqAULIdiI8AeSdaUZD8tYDU/R3IYnjwMrnB662TA8=
+	t=1716398916; cv=none; b=QBlUyUWyUJ5Xp84mlRqmHoOx3hrTY7cbQcByijTYZ+V9lyY37bei4a+hm6jg+4pgR4lEy8DgGvxdjc6v+hTEpfxaqDVHT0Zh80e7D7pDupz+Mo2nCCscRn3Sg1IkvG5BEjVwlTvl54vPZ5LthxRHfc5/NfzeTrn20IkOV2Zx6bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716398840; c=relaxed/simple;
-	bh=isyLFE4nn9JkPj3yuYJLcuNMQfnvsjEH3eMkyQFFqJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DDPH0wZYEiHzjnzCmsNL/JE32HBq/59Ra0XaTXnbVuQejw7lXD/ucyq7vHQiaA3HOE4JQAy2LlxwvZxxG2YtrB2buWKYbdyLdJve0Mh4ZGMpVe3SoER3zK/mn3pJnMcEwh3oAEZxJ6kEG3ZUl37Cl786jZ39RWHuqzgmzUt/6jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f6bddf57f6so1865449b3a.0;
-        Wed, 22 May 2024 10:27:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716398838; x=1717003638;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F6RZqGC/IieWl5jEMbER/7byAZJN8EBKfaX/pw1gzjI=;
-        b=I7ytUdy7XtBHVAeRNEHcPDcrSXQG7gIWDYxva+XB0qqpXv6wDi6SmyqItIIKJzSs4P
-         a7RhOwr2U9Don2NyldSA+qG/rG33/HpATEHshcpUhnQjpW67STabglsnJS2l25Xyn0IC
-         wZDH6HecZvtNkFMRxAAZ4d4lW2u4WPKNanBhH8/XNP6l+dYgNpQCNYcdnpVg5ID2bQRc
-         RgftFha9NvUKa25iva1dWIkffatKTuQmXd1tSAZyhaGapJUvDqZfJq+JeqALW5aVhH4r
-         PT7zePdLR48qJ0YPg/Xl/euD80PMY5AeRhVsTa1xqXm5g0AGfG7WJyZrUNoAj9y/O/Hy
-         NFVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXT41XD81lBWYxbgCYemG/wGT7DoDSzgcpqPRvnwXYrxoWTcSU8eDLaOk35vrWv/LTfLgmPnEVgGOvj5s5mpPRPMQStYmxFhWHDoXux5lVAIxgH31zKh9oUzl69wd+buT4Rb8GsphO+g8shksSIfg==
-X-Gm-Message-State: AOJu0Yz7QTDaqo8bhBw2YjsrLis/C99KAIy+vX+OnqTPNEVAAi3u58A4
-	hsdcooXrQNmCjhRfewAA71JGfN1wc8jaQb3ZrRcw39fQAUi7yB97YKmqCav3mY7Q7gO54w+QSbc
-	yIPxn6NtQNr75QAv+lqc+MorbUg8=
-X-Google-Smtp-Source: AGHT+IH388lysTpiWY9ZpiHOtOthmG/5+kBxu8TK1z21CE5unFX2giv7x8Pxm6u55KapP2L9XGL01sjIoWN23mXp7OI=
-X-Received: by 2002:a17:90a:df10:b0:2ad:e004:76e6 with SMTP id
- 98e67ed59e1d1-2bd9f456db5mr2800809a91.7.1716398838039; Wed, 22 May 2024
- 10:27:18 -0700 (PDT)
+	s=arc-20240116; t=1716398916; c=relaxed/simple;
+	bh=6IAVb655Lal5k214BV1xTkv/4AhPMBgxi0xW4QePFvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VEKJQlHDfaVuU9spJAQBUxAh7ieX73FzzIjlEIXlt2IE27BC+TLtXviGCSWF5PB020x56383ntCV22dAPucVNmABLDoB+mYVcKq0QuD/FqKxrRpMbxDdlkY8pt8/bGF8irOhV2rMFF2NkwKz7/YdT7k9SjV4VgaiN3L0kGYA0PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HY+g04KC; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716398914; x=1747934914;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6IAVb655Lal5k214BV1xTkv/4AhPMBgxi0xW4QePFvc=;
+  b=HY+g04KC/d3tdwU0vkzlu7G8OSFGrTWNlP0DAFnHBZA4tp2oIvtJeGvZ
+   KkoFJmB9k09rFR2sNP3uDU73JMjIp3kMNdTzryvIPEuX5QzXSN5vjQxWb
+   lib+7xBJiqMl7XQVVCL4Nc4kvK0XiZRY05AIK2gj7MjhVsudm2kEvcTbz
+   OSU/IqvAGiEP3RSlq14B4p62lYmeuoGgSX8IWmUd36YiSGqIFzDBsQ7A4
+   JmGdrCZokh5De9P24MZZ4fszK6s9jBhd+6vFflF2tkulrlHlBzLJcMWoj
+   n4Wzur6AYGVevmCah/n9wk19kyr41C4birMHzlmFiFlMYANH2pV6j0ur5
+   A==;
+X-CSE-ConnectionGUID: F4tuFladQvqtlmclYMq7Iw==
+X-CSE-MsgGUID: 2FuEGPoWTDidzOtEFgeI7A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="12610632"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="12610632"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 10:28:34 -0700
+X-CSE-ConnectionGUID: uAOOS8q7T1qcbDdPM8/oqw==
+X-CSE-MsgGUID: b4OMRyvKR3Sbi/TYIEM54g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="33368874"
+Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.109.237]) ([10.125.109.237])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 10:28:33 -0700
+Message-ID: <64ec7628-4906-4f5f-81b3-8e25536214c2@intel.com>
+Date: Wed, 22 May 2024 10:28:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520083048.322863-1-sesse@google.com>
-In-Reply-To: <20240520083048.322863-1-sesse@google.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 22 May 2024 10:27:06 -0700
-Message-ID: <CAM9d7cgBZVfur8S3QC2woUA2C6O3Dme0YHP8PbFcwc_o0k-dWg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] perf report: Support LLVM for addr2line()
-To: "Steinar H. Gunderson" <sesse@google.com>
-Cc: acme@kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, irogers@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hello,
-
-Thanks a lot for the patches!
-
-On Mon, May 20, 2024 at 1:31=E2=80=AFAM Steinar H. Gunderson <sesse@google.=
-com> wrote:
->
-> In addition to the existing support for libbfd and calling out to
-> an external addr2line command, add support for using libllvm directly.
-> This is both faster than libbfd, and can be enabled in distro builds
-> (the LLVM license has an explicit provision for GPLv2 compatibility).
-> Thus, it is set as the primary choice if available.
->
-> As an example, running perf report on a medium-size profile with
-> DWARF-based backtraces took 58 seconds with LLVM, 78 seconds with
-> libbfd, 153 seconds with external llvm-addr2line, and I got tired
-> and aborted the test after waiting for 55 minutes with external
-> bfd addr2line (which is the default for perf as compiled by distributions
-> today). Evidently, for this case, the bfd addr2line process needs
-> 18 seconds (on a 5.2 GHz Zen 3) to load the .debug ELF in question,
-> hits the 1-second timeout and gets killed during initialization,
-> getting restarted anew every time. Having an in-process addr2line
-> makes this much more robust.
->
-> As future extensions, libllvm can be used in many other places where
-> we currently use libbfd or other libraries:
->
->  - Symbol enumeration (in particular, for PE binaries).
->  - Demangling (including non-Itanium demangling, e.g. Microsoft
->    or Rust).
->  - Disassembling (perf annotate).
-
-I think it should support other DWARF use cases like
-unwinding and type info?
-
->
-> However, these are much less pressing; most people don't profile
-> PE binaries, and perf has non-bfd paths for ELF. The same with
-> demangling; the default _cxa_demangle path works fine for most
-> users. Disassembling is coming in a later patch in the series;
-> however do note that while bfd objdump can be slow on large binaries,
-> it is possible to use --objdump=3Dllvm-objdump to get the speed benefits.
-
-I remember bfd objdump is sometimes faster than llvm-objdump
-especially when no line numbers are requested IIRC.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] efi/cper, cxl: Make definitions and structures global
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+ linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-cxl@vger.kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Yazen Ghannam <yazen.ghannam@amd.com>, Bowman Terry <terry.bowman@amd.com>
+References: <20240522150839.27578-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20240522150839.27578-2-Smita.KoralahalliChannabasappa@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240522150839.27578-2-Smita.KoralahalliChannabasappa@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-> (It appears LLVM-based demangling is very simple, should we want
-> that.)
->
-> Tested with LLVM 14, 15, 16, 18 and 19. For some reason, LLVM 12 was not
-> correctly detected using feature_check, and thus was not tested.
 
-Anyway, nice work.  Maybe we can implement other use cases
-using LLVM and reduce the dependencies.
+On 5/22/24 8:08 AM, Smita Koralahalli wrote:
+> In preparation to add tracepoint support, move protocol error UUID
+> definition to a common location and make CXL RAS capability struct
+> global for use across different modules.
+> 
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
 
-Thanks,
-Namhyung
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
->
-> Signed-off-by: Steinar H. Gunderson <sesse@google.com>
+> ---
+>  drivers/firmware/efi/cper_cxl.c | 11 -----------
+>  drivers/firmware/efi/cper_cxl.h |  7 ++-----
+>  include/linux/cper.h            |  4 ++++
+>  include/linux/cxl-event.h       | 11 +++++++++++
+>  4 files changed, 17 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/firmware/efi/cper_cxl.c b/drivers/firmware/efi/cper_cxl.c
+> index a55771b99a97..4fd8d783993e 100644
+> --- a/drivers/firmware/efi/cper_cxl.c
+> +++ b/drivers/firmware/efi/cper_cxl.c
+> @@ -18,17 +18,6 @@
+>  #define PROT_ERR_VALID_DVSEC			BIT_ULL(5)
+>  #define PROT_ERR_VALID_ERROR_LOG		BIT_ULL(6)
+>  
+> -/* CXL RAS Capability Structure, CXL v3.0 sec 8.2.4.16 */
+> -struct cxl_ras_capability_regs {
+> -	u32 uncor_status;
+> -	u32 uncor_mask;
+> -	u32 uncor_severity;
+> -	u32 cor_status;
+> -	u32 cor_mask;
+> -	u32 cap_control;
+> -	u32 header_log[16];
+> -};
+> -
+>  static const char * const prot_err_agent_type_strs[] = {
+>  	"Restricted CXL Device",
+>  	"Restricted CXL Host Downstream Port",
+> diff --git a/drivers/firmware/efi/cper_cxl.h b/drivers/firmware/efi/cper_cxl.h
+> index 86bfcf7909ec..6f8c00495708 100644
+> --- a/drivers/firmware/efi/cper_cxl.h
+> +++ b/drivers/firmware/efi/cper_cxl.h
+> @@ -7,14 +7,11 @@
+>   * Author: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+>   */
+>  
+> +#include <linux/cxl-event.h>
+> +
+>  #ifndef LINUX_CPER_CXL_H
+>  #define LINUX_CPER_CXL_H
+>  
+> -/* CXL Protocol Error Section */
+> -#define CPER_SEC_CXL_PROT_ERR						\
+> -	GUID_INIT(0x80B9EFB4, 0x52B5, 0x4DE3, 0xA7, 0x77, 0x68, 0x78,	\
+> -		  0x4B, 0x77, 0x10, 0x48)
+> -
+>  #pragma pack(1)
+>  
+>  /* Compute Express Link Protocol Error Section, UEFI v2.10 sec N.2.13 */
+> diff --git a/include/linux/cper.h b/include/linux/cper.h
+> index 265b0f8fc0b3..5c6d4d5b9975 100644
+> --- a/include/linux/cper.h
+> +++ b/include/linux/cper.h
+> @@ -89,6 +89,10 @@ enum {
+>  #define CPER_NOTIFY_DMAR						\
+>  	GUID_INIT(0x667DD791, 0xC6B3, 0x4c27, 0x8A, 0x6B, 0x0F, 0x8E,	\
+>  		  0x72, 0x2D, 0xEB, 0x41)
+> +/* CXL Protocol Error Section */
+> +#define CPER_SEC_CXL_PROT_ERR						\
+> +	GUID_INIT(0x80B9EFB4, 0x52B5, 0x4DE3, 0xA7, 0x77, 0x68, 0x78,	\
+> +		  0x4B, 0x77, 0x10, 0x48)
+>  
+>  /* CXL Event record UUIDs are formatted as GUIDs and reported in section type */
+>  /*
+> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
+> index 60b25020281f..f11e52ff565a 100644
+> --- a/include/linux/cxl-event.h
+> +++ b/include/linux/cxl-event.h
+> @@ -154,6 +154,17 @@ struct cxl_cper_event_rec {
+>  	union cxl_event event;
+>  } __packed;
+>  
+> +/* CXL RAS Capability Structure, CXL v3.0 sec 8.2.4.16 */
+> +struct cxl_ras_capability_regs {
+> +	u32 uncor_status;
+> +	u32 uncor_mask;
+> +	u32 uncor_severity;
+> +	u32 cor_status;
+> +	u32 cor_mask;
+> +	u32 cap_control;
+> +	u32 header_log[16];
+> +};
+> +
+>  struct cxl_cper_work_data {
+>  	enum cxl_event_type event_type;
+>  	struct cxl_cper_event_rec rec;
 
