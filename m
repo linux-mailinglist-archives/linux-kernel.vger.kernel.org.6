@@ -1,118 +1,112 @@
-Return-Path: <linux-kernel+bounces-186551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED978CC587
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:31:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB4D8CC58A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6ED2847A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:31:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A24BF1F22B99
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749EE1422C8;
-	Wed, 22 May 2024 17:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C2A537E9;
+	Wed, 22 May 2024 17:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mw7GoOCi"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="F/1Ut54e"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7182E5223;
-	Wed, 22 May 2024 17:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEB11411E0
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 17:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716399056; cv=none; b=B8pWS3TwLE6NfY47zPiMigvY5OS3DpFWf8QBdP8GUS6PICs9Jtab44lHjxZeXhFxhxHn2hiPo+P9o6IySYLQ6QQMp7lBeS4+COU+z3k0SWxIdRs0VobNB2VlWMdBQwpCeXfkolNqfVGoVooQzooTCC66SDoRw0GhiEeQ7w7X+dg=
+	t=1716399075; cv=none; b=W8OCJY8RoRtBZnKGQBrk+gLDgqJJT78hSLK5Dtbvvkfs/aXLevZGdBIVsoB7C+hTxuGAm9Uvld8BKBzxWgYRhycLsTpEThab7ljlsKpVYbN2eooSQmjSZLbxKuhM6cNvRIxxkub3EpDR6OcTPv5ZZsLZ5Ok5kFcSOuR3+gPRAN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716399056; c=relaxed/simple;
-	bh=pgVOtAMYcJLOL5rY1GuVX9oZsXUI0zjls9R+s3vhh7A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iYfg4ycMaqylDvux0z7VbxeBFhPwq8iKr28O6GgaJ3OPPNWFFMa8yBnJgyY3jz3REun0pUmlPNCmYirK4XKxZwdPyZiV8AF3fBwcZDyl4p/y1/z0YZUTNXhEc3z13PpkPkEbnwC475gA6kKMbiMjV9MKQaEilHHqHT4y4sbdo18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mw7GoOCi; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6ab83788bf5so4684846d6.0;
-        Wed, 22 May 2024 10:30:55 -0700 (PDT)
+	s=arc-20240116; t=1716399075; c=relaxed/simple;
+	bh=1B9dsnoCotJxFTrkGAZwC40Nz5IzOJrheW4eFVSuLL4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=r5Q0+sZImSZvIR5Ue8xUkSP5tLdLwuVQOKrGTYy8qhJxN+RvXxU4Ys7ObAe+VFlnWZq8B9VoXMrr4HXfF/H3Ee4FD42OGwO4LT+metXTFmWWfOlkdXvszglF8DNe8Z4YWM4G2RA0E6Fd6mRWcSjeoe3MPJT3+6BNKuPXC+82G5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=F/1Ut54e; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7e24aa659abso21713439f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:31:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716399054; x=1717003854; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oioJ37cLyddSrjaAU1ulmlInPWXjX5bMilUDK/7ET7s=;
-        b=Mw7GoOCi8VtCXmImr2tA/6ix4S3ak4ZuAwnP+Mre5QVLXx1E33jH/luFhyPbDvymhk
-         rEjhdmwMrdDvGCaxDVL2+fmrxounT70c2PfhDCKXdDAHJAOxjUggj4dBqGyLzBzBnLeN
-         +Fq/HOE5AKAEL0hp7XDqEOWcHFbHysUoZyxWZhXSFPOaZCZh0RU6jLfokMQNNuvL1D0s
-         cS4XTg1aZKEOS4vnugh/SC1xT68xm8m/kvoe5vt7phjFqV3IKEY5aMqPwSJKjeSCKj5d
-         BrMfGdAyYpjn8MCecI/hLVSmygcR/l6hIgkhKRiGfkQ7K24pmWf9mne/tZ8YHaUXJF+b
-         w7YQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716399072; x=1717003872; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZyoQ04pME4REpApsHBdNGyO5vz5nhCeO/3yT1CYUWSM=;
+        b=F/1Ut54evQVA/sNcBskksLJr3mLash2EAqtjclZRL8j9WZ1VFe8QogB2r7wBFBkEba
+         C18D9ewMvCpAWMsbHKN+B3ZHQe8OYpOCZyCM7nQ3uIJ+fGieQIqYeZ2Ca7Vee1HNqGrc
+         lNIQU2WnZr5mi+lRsnpOZFbMxbNby8Xy+lKR9Ogl9flW9BB6wtvAE8O1z20oU2K5CQCl
+         jSzUMwDTMvxOSjO3lA0eLDPbvQbva8i7yR3/rTzyu3J83B8p/HIRZXhGCjUWFGz4xNgk
+         6LS07pTxJxkb+v5MNY+2NvHOx5FpNWvgmi2K5J7bkXeMCSPV2+TzYTtZrmTKWB1AgwBq
+         3BxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716399054; x=1717003854;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oioJ37cLyddSrjaAU1ulmlInPWXjX5bMilUDK/7ET7s=;
-        b=mVzXFW3IWndlk9keAfX2XKMliwn7PdHdzhFbFOf0w24X8sSdW/cvF4LH5mCGxZGuFv
-         eIS8PReiGNydoXFKy6sPtulaTjUkeDBaiW0i8fAftpZMwN+TEY5zr3yIBERJtBc5BydK
-         4Ks3AdFIGXehmE/56ieynqp2aC7cbcWthyuyYeKl4X9aTGMa0NveVJIJ1bJItxq64haQ
-         rlpZ44EUXoLgTUNw6kyVn5pdU66LNfWH6h6rexID+pjrfU2ZcxrqhxSownJv+Pl08H9k
-         jv/UYpuHvND+vPqDqH79cqQibypmTr6mGSfeG6s9iM5AB97fURHgF1iKHaNGS/7qlStC
-         K0vw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQYaVCO9x3qJqekIdJ48DZa49cIw1EtWVPEHrE4gLIHAAlWGDbCUd8pYqdCR0D2eox4Maj7TGJo/rJQEpqMWqic2LHElzdHYlQ3hS4DYRI8kRhAslwNJHrqvWaFwyL0sDMzXuG3RBHvpx5RsyqMB52XKX37wVb4HcLZzqV1d+obHEx07gE
-X-Gm-Message-State: AOJu0YyXRtg1tqG0eaKCF2exiSRglhWlVkJpLqHlVH6mwnvJLWXy1UVJ
-	AOi4yp5/DRZ0vriVLf6cMaTLXNF8B5joKpzZ+OsUOHdCBt4SpX783ypwcSJ28JwiXgCUZ3aLmPc
-	eqFe/RVDTi85QhjVF+JdHxlnLvpU=
-X-Google-Smtp-Source: AGHT+IHDP1WY4e8aqcII+jTqWULSqgYOoJokIdckgEsVizApYaeJaCjXUQm46lslJCkiV7Iq2xd52mYFyZy6ndEuuwU=
-X-Received: by 2002:a05:6214:390a:b0:6aa:9bea:9302 with SMTP id
- 6a1803df08f44-6ab7f34efd5mr26235636d6.14.1716399054308; Wed, 22 May 2024
- 10:30:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716399072; x=1717003872;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZyoQ04pME4REpApsHBdNGyO5vz5nhCeO/3yT1CYUWSM=;
+        b=w994H3dblPEoVAOycfKbFOmCGcrBNFD5oidCl+aKuWqPXymCHak4jhAkMRfmWqPDHZ
+         iGjXQTrEAxAZB7hfC28oE/h/NhLshBSQPysiXaQEE1WUOc+b/9EAW47O0vYI5T+/0VGf
+         2bGEeNOGLTQAfUjV7bsZ+1eQGZKNNlWTTnx4LJEo0Gn59omYmnYviNwkKUnO0tj/vQDo
+         4A10gtaWD8ziPv1S49vexeLsEkOU5O6SdXpQUyngGYmtUWRrQPYdvbXwE2wmyJ3BYMbc
+         fN6rvq/KROlsiwVTQDHXk3+OKKoGh9kj3BTQ3HI/Gc2QfQD7LryXei0Zge9rHFEQRNeW
+         yoZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAgi0iuHO4be2K4MCz/2drxFztYdlihV3GA18vsRmUzC4SDN2jWv5rt2kwBO8niRuWsfygQMbq540ydxy+wNnJn8Wf3d6rjCJaQ0PA
+X-Gm-Message-State: AOJu0YwmlwcDrfH56SSC3zkFcy7d05PPnUs6Tr1RQv89pRv4sew75hlE
+	b9yIE+Lv3G/d7VVVerPuAkNmgf5FimSZEvewkqMl/Wq6cnaPPr6KbN/KlU+HOELPgde1wAQMUm7
+	Q
+X-Google-Smtp-Source: AGHT+IF/WI1FtilI6WWcWW4/jJALodFw4CgIslzmlQd2qik5wcTeLLwZMVKIhIz6ctQZ1GF6SAn4GQ==
+X-Received: by 2002:a05:6602:420a:b0:7de:b279:fb3e with SMTP id ca18e2360f4ac-7e37db353b9mr277689039f.1.1716399072236;
+        Wed, 22 May 2024 10:31:12 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489375c1a86sm7626823173.105.2024.05.22.10.31.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 10:31:11 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: tj@kernel.org, yukuai3@huawei.com, linux@treblig.org
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240522172458.334173-1-linux@treblig.org>
+References: <20240522172458.334173-1-linux@treblig.org>
+Subject: Re: [PATCH] blk-throttle: remove unused struct
+ 'avg_latency_bucket'
+Message-Id: <171639907112.82914.16265588567608443016.b4-ty@kernel.dk>
+Date: Wed, 22 May 2024 11:31:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522075245.388-1-bavishimithil@gmail.com> <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
- <4f722e53-011f-4176-b6af-080522165007@kernel.org> <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
- <3c6c5be1-fb8e-4bf0-9f58-cfb09672e8c1@kernel.org> <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
- <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org> <CAGzNGRm5i8zvnXiPzMg5=+tr9oyBcRA8LFvnmgGzE=MzSNTXug@mail.gmail.com>
- <e384272a-4dfe-4653-8983-6426f8803c84@kernel.org>
-In-Reply-To: <e384272a-4dfe-4653-8983-6426f8803c84@kernel.org>
-From: Mithil <bavishimithil@gmail.com>
-Date: Wed, 22 May 2024 23:00:40 +0530
-Message-ID: <CAGzNGRnsmRWzimUX5tEC2-Y44aa4i9Lbdp8YJ+oneV4ujs4qBA@mail.gmail.com>
-Subject: Re: [PATCH v5] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lopez Cruz <misael.lopez@ti.com>, linux-sound@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-> Binding needs to be adapted to match DTS or DTS has to be fixed to match
-> binding, depending which one is correct. Mention any changes done in the
-> binding which deviate from pure conversion of TXT->DT schema.
-The DTS is correct so will base the example on that (and get a better
-changelog in the next version)
-So the checks will be 1) dt_bindings_check and 2) dtbs_check
 
-> https://social.kernel.org/notice/Ai9hYRUKo8suzX3zNY
-Noted, but here I'd assume omap2plus_defconfig would be more relevant.
+On Wed, 22 May 2024 18:24:58 +0100, linux@treblig.org wrote:
+> 'avg_latency_bucket' is unused since
+> commit bf20ab538c81 ("blk-throttle: remove
+> CONFIG_BLK_DEV_THROTTLING_LOW")
+> 
+> Remove it.
+> 
+> 
+> [...]
 
-arch/arm/boot/dts/ti/omap/omap4-duovero-parlor.dtb: mcpdm@0:
-'ti,hwmods' is a required property
-        from schema $id:
-http://devicetree.org/schemas/sound/ti,omap4-mcpdm.yaml#
-We already have ti,hwmods still its asking for it?
+Applied, thanks!
 
-arch/arm/boot/dts/ti/omap/omap4-duovero-parlor.dtb: mcpdm@0:
-'dma-names', 'dmas', 'reg-names' do not match any of the regexes:
-'pinctrl-[0-9]+'
-        from schema $id:
-http://devicetree.org/schemas/sound/ti,omap4-mcpdm.yaml#
-It also requires a pinctrl subnode which isnt used anywhere, the
-parent node of mcpdm that is mcpdm_module has a pinctrl how would we
-go about implementing that?
+[1/1] blk-throttle: remove unused struct 'avg_latency_bucket'
+      commit: 4a482e691c8b8a188b1ea3d6a80180e9fa925fd0
 
+Best regards,
 -- 
-Best Regards,
-Mithil
+Jens Axboe
+
+
+
 
