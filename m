@@ -1,165 +1,362 @@
-Return-Path: <linux-kernel+bounces-186481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 672518CC4B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:12:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05C88CC4B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5101B22B62
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:12:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E1A428050A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3AE14198A;
-	Wed, 22 May 2024 16:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0541257CA6;
+	Wed, 22 May 2024 16:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Uaq/GF7R"
-Received: from AUS01-SY4-obe.outbound.protection.outlook.com (mail-sy4aus01olkn2169.outbound.protection.outlook.com [40.92.62.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ZNpa84gf"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B27D6CDA3;
-	Wed, 22 May 2024 16:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.62.169
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716394298; cv=fail; b=fQFHcESfk01WN5I0dtvU0AEXS3sDHhFJSlOIYI/34eANcX7jQzltW4YGAGBMwFjTgelfN9bkvQ5XaYaBUjVez88FyHNML5iSMeqtUbF8AyPlG4UZbZPH3L55eDqypT2EjFZRsOO+w0e2LRc1EefDQ6CWPH8vJL8zRCSOdG5yQ6Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716394298; c=relaxed/simple;
-	bh=KXFjCYbp9xs4bWdwZp5uarbw0wMWe6eYSMre5zg7XIk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=k6neos09EtwTqE9MoHmpOtAYPnCpFNHK2jcmiEm9JD+/FGLhlO1B2jJNlt6XJviiTD/YpOEeLodx5bQAC8GHLazqwW3XveT5GtzslLsqh+bm8mDHzDoLBXuIcKgz1rMU+C61fccnyO6JIH5NjTNseg/I2pp5RMdq74/MDD8EXgs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Uaq/GF7R; arc=fail smtp.client-ip=40.92.62.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Qy+6wIPZbJ7XLFkvjTBw0gI0JzFIetjiDbjt2tihCH0kQAdJ/G8ltn8uZCNCUEPQe/NnJ991uSSOqiBU6R89+2PX5DQf9zPnJdGpHlxDHYImBs2/3dOLiAz1QzEqBInUel+vJRmJ8qVC/1EZl4tj2CcL/t67mrK3QmERru8wPkO+XGVJerwn8T4WXFrw8vy40jIO+neeWVNOhQLL+6ixBYLHMJ+Peeqaz/KqJdxcb1nHk+9A19GDHfTBV8tEOjlXtvnCNCHcD9MXeYbKFUEc5t3aAC10MT4A9nSupOnpWcFZydPSPqVoMb+dFXXE393GyIL+DGbiisOulZqJCS7aEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KXFjCYbp9xs4bWdwZp5uarbw0wMWe6eYSMre5zg7XIk=;
- b=ITyE3r3zSgj2sB7nxF9H1HDs0mt7/VTReOgwMvZdQkj9+doZt1zQreDjrbv3hz5mo2qVLsaEv3i02SwaCaIoe5J5BUeH1f6W+XUBvK/4PZfYGk2/VSVIn8Vt/iFyxE1GWlxefCNoEkVKjUAByX+HmeFqAcv8Q4WjqYaIHnf/NgKR2Ho/BTG72w3g6d3A7M+bRKYyv24NiVEFyN0tU2vdp6E8sJPj5XA/r/29bMaGNmG+lw1KEP15QjURtMLHGvAolztYuQlogxYKaahpgRRNNkoz8pf44Yt10TTYYmzDgkv62V8ifRqrLuGdPgCYGb8ZE7e2g9IBZw1LuHBtQ3b3Hw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KXFjCYbp9xs4bWdwZp5uarbw0wMWe6eYSMre5zg7XIk=;
- b=Uaq/GF7RQ7bNX7sUumd82iM42Q1tBjSvbYL+WWioKuNZTcdQamMJq+YhfWHxE1WyHufWG0PtZpHtN/jzGmLrTwoC6lIZX32vUhlaYEb8eMC8B1ndnVFysUCekDOWpy4+IpGdw0BfMqTmTJQCnQ44mX4Hz6eHi5FnDinDg/wC9n38xIzk1usuANWKGzhpH5E3RPSfBKJSn9hjroXCnLpfk27IwnhJmNvKf8EnNFkdgzOKtLrB1SV7H13b7yDvApbP9usFONWch0+0k5z2fYqYighy9rLIhHi570brkzo+yR/YNpEIBnPot4jo4zLO/SlvekKFNmhxTBkcDi2BRlNELg==
-Received: from ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:228::21)
- by SY4P282MB3710.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:1c2::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
- 2024 16:11:32 +0000
-Received: from ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM
- ([fe80::d384:a02f:2370:f33e]) by ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM
- ([fe80::d384:a02f:2370:f33e%7]) with mapi id 15.20.7611.016; Wed, 22 May 2024
- 16:11:31 +0000
-From: Roland Xu <mu001999@outlook.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: "ojeda@kernel.org" <ojeda@kernel.org>, "boqun.feng@gmail.com"
-	<boqun.feng@gmail.com>, "rust-for-linux@vger.kernel.org"
-	<rust-for-linux@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] rust: kernel: make impl_has_work compatible with more
- generics
-Thread-Topic: [PATCH v2] rust: kernel: make impl_has_work compatible with more
- generics
-Thread-Index: AQHarF8coE4PoIOd2k6IcQOC1yqiIbGjaL8AgAABlAs=
-Date: Wed, 22 May 2024 16:11:31 +0000
-Message-ID:
- <ME0P282MB48903BD06ACC00C372A9602ACCEB2@ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM>
-References:
- <ME0P282MB489023110AAF1163F0A4B2E1CCEB2@ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM>
- <SY8P282MB48866A68C05C6444F0340A00CCEB2@SY8P282MB4886.AUSP282.PROD.OUTLOOK.COM>
- <2024052258-trifocals-engaged-8d80@gregkh>
-In-Reply-To: <2024052258-trifocals-engaged-8d80@gregkh>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn: [W4uqE9M4emq3hq2Ni6AwIobktTl56Q3769W7wgfQm9w=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ME0P282MB4890:EE_|SY4P282MB3710:EE_
-x-ms-office365-filtering-correlation-id: e3cdd099-bf60-4a4f-a798-08dc7a79d85c
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199019|102099023|3430499023|440099019|3412199016;
-x-microsoft-antispam-message-info:
- Qr9hFGK36dIHbbC8aEU8yonwQNpDYSuO13W6c41FGhXYbQx6F6y3hfkG+1yf+6p46Mld5i1cDiiY98VlXf+8V5vy/8EliHxOoach/1yHpUdJEt6FEhNb3C4dHqJTi3RZGGRO+sSWv/0tx+Zo5wd6MrxSHM0KbGN+BsDo44zflCTwyrnYl6v7QcfFpVEu8V6U7DgjTpoado88w00uiyEjzViz/df9QFYGeGseiKUnn8SjrvLDrflaCpHczUkkTKoYr9K0vEbh1nKRVD7CnZP5G2NdJY5509QRJpvl7BSpOCV3/2XtTyypAFyJjt1+x//Zzmv4/AT4VJhHGgC9CDTNBLZ0TJk8u3CYIWdo/TavO0AXi3j/JYCWBJOSJXljrxG+WRls4v43CXDM6g/wTNlol0W77uFOIJkE+Q7oVRaudn7eFGAeYDeEsftRRT0evaakoQDtGb3oZx5/VB5eTLZ+TdlIsxk5dRnIahcNW7KUOywrJbWIcTq5MkbKRIc7tj0Nvpb3JLO7xk53edMXo2dS4i9r659+n75Sp5ZY8iaCj5KnXPnxzo5m+CXIXOQfS/rV
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?lYgzBws4Gs53ay83WtXQh2spjqj9iaIonlrSBbg8QG5zTjuHk9TQCtENdHwR?=
- =?us-ascii?Q?oCKcxCPbod40H/UT/XRXKq3BM4biav/tOY5APBVm36Dgadiaq0ocOIHifPsS?=
- =?us-ascii?Q?VLlUaBxwlCB5dXaHD5xkXAy2SsGczOFgVWan86Dv2nBBUiuPoQdUuWiHfPyf?=
- =?us-ascii?Q?r/DuqB7mkADidQulfRWfnQYPd/oR4Of+S7fNXHbbxSeG7KU1FK+xOSx09tD3?=
- =?us-ascii?Q?8tL5ilGkApsyOx7YFmnZFwgCH/YTncmT2uEzq0aJn8IghpZ1E4bPdFigtpCN?=
- =?us-ascii?Q?7Jf7/cvfCvKA2KZn3h1f2rTNaSmV/wXV8BlVNEy1O5Z6w2u7o5sOt97CdH1v?=
- =?us-ascii?Q?OKeRHHHkSL3/aLCiEw3uQ/8UOOp2jiPeO4vH6ND/R7LOPpKpmXm2vuEU7wKn?=
- =?us-ascii?Q?1jPXPtDXFNiKPtUr1rXhb0ktPMJ743UVzhdiG/ehTuH5F8NBXBCitQeUV1FG?=
- =?us-ascii?Q?ash0BsqSyF4wwOz0uAZ5tP6bPz44HrlorDLb3HxqY34pLWSd/XSsqh61Z47L?=
- =?us-ascii?Q?VSIU3Ke9wvAYt1L3AYHtk9M6PhTDAO9ryJs608jjgzTdgwAEo8nrnGLm9HeI?=
- =?us-ascii?Q?t415gySwUe6JOfftitsjiKWRl5+ILEIp+RUm7skRY0xO24Z/jW9NUs7HnnIb?=
- =?us-ascii?Q?S2XvHTsOxaDsagDeZvCuw8eFUChtAJubLbAFPpRtuhNtVyfswiV/134nI5zL?=
- =?us-ascii?Q?Z3XRUn16oIrtvuqGhYurNLuy8bbA8mb6OecJ2cjAwj/cM4yWWBh4Ao3DqgDo?=
- =?us-ascii?Q?GLWgjuBFKYK00tATrz2wcwsXAywLUdEVVb1bSrW6MRrmlh7v1ihNXUNOXn/c?=
- =?us-ascii?Q?yQlwTQ+vZBWFhC6OcwgiDmmSyuF/DCTcQbSceY9VtwFfUBvfg6S3JnwIEU6v?=
- =?us-ascii?Q?R3+RqCj5SXCTaT/BFfYjVTuGY8qx0MdVoRPdCip6ih4uohIxOAQXkajIkkxl?=
- =?us-ascii?Q?2ePEXspK6sKp+Tm5cieKIh7SFxfBTew0uY26+LXRD6xMgl6s0Orog1pzSdn+?=
- =?us-ascii?Q?bgEUHoQmn59UbLSb4eQ0U8hAgjrQMhEuJ+Aqnctu76N+QVNahhNOYFHiOVSv?=
- =?us-ascii?Q?jtLNx5PFwQZYTisDdMG+9dwgqJBcyHg9SPzFpg6ifgcKoWIF8XDWeEQxiVj/?=
- =?us-ascii?Q?rxz5yxfufZzABCL40MF3sgulSURoB6BhIh++kchd0b4b4LOPjpxLKYuGpmEg?=
- =?us-ascii?Q?zu/LpRtPieecwHHihqIjtVgsHs3tZpgwF+1xHkLxOGESHZGrWMz2XkgkJuc?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A41B1F17B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716394414; cv=none; b=RM2qGjuQKA9l2H5WGRHKbCSaYFcaT4MxB4+fqTrHpVHpzYYYs76lOaCMRn9afLfPvY591itVJTYwiYRM96SwoJABfXRsWKUBcY6+uhV39RAkBDpG7mvSBI0XvQjsesDfFd9K1uu/FCi6N2FMsntGmdaMeInMpISky0kracaVhtw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716394414; c=relaxed/simple;
+	bh=58ockLmgsrUZMMZrH6nylZdylj4gAMkL3TV8TbAU9J8=;
+	h=Date:Subject:CC:From:To:Message-ID; b=t6J9jFZs8g1z7IBgc6eCsBeaQAq1aUvL7puzLUSQthm1Q1KNo0rMurYdEyaohQR/istUsvgbWZEV3lhP6iAPYp9Gk7eNwuTrLR4EuJgQL5ioZ9GyxPK8S3au/LlYvJcwLQF1fHfjztsVHBIj1h1LfXsl6s09UZXZROQ+WQrni0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ZNpa84gf; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-628a551d10cso2162404a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:13:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716394410; x=1716999210; darn=vger.kernel.org;
+        h=message-id:to:from:cc:subject:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TvJV5ZGsuu7yjPkuizDv1ykHrklgDvGswJrEOm3kD5A=;
+        b=ZNpa84gfZUsj4/tasahwaOIhjjs5ubA9uUcH7Erw+aMCZmH7U4aXj8mPSq4Sjvc7y+
+         ikz4pffKo2zsP6ReZpQWfoZGrGtWPIV4ZW+PxVCE12SlcmmQnP8GUU4ZESJmgFdWL/c/
+         XmIHa3M2+1QRRndF9DvUQ+Rem/sCWd4f2BNBfjDWGGKi4wZ6wk/vB5PHG2FQ/gayYCMU
+         gIY6imgMn/tBhzpHxj+yfxn4U3VuN+vqN1yPXn2JzUjYHOjUP/GtnmUfipz4lOFe/bsI
+         vS8H8ezeaHsEc+c+xialJoFB07mClf+iQHi2LHE1BBuZdEEIU0V9NKeqqkee0RYrNUq4
+         jr5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716394410; x=1716999210;
+        h=message-id:to:from:cc:subject:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TvJV5ZGsuu7yjPkuizDv1ykHrklgDvGswJrEOm3kD5A=;
+        b=kt7MZpV8ChLDve+vuEVJ4/AKiRjzcfwZ3Vs1tjV2jbTd9fDXELujqffq0zQnJI14Rx
+         q79AbLKJVwVe3xj9wfm3eTSihsE5npGv/nV4j3zoUsj31RXaDMMREHkK13fCI08rle1g
+         qRiCAxegywx+1qYeaGUvrRwCTlN6PaOSklk/pNcqtbC6k8fKpj4rt+hQAcPmaafwkV5a
+         N3gIQUc+YcqH9hw0pW5pvtOvzCSLeeg+VUK/mgyzdlDiQuh3zpT8j9+rhTuJCuuVchQy
+         jc3pMsj56uB6eY9sWEysMclzEnw7cKmC+GvP8Uw0Wmk/PmFqnofKRnlfKhPZ8jfmV4yi
+         yIWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvLw50EIc/9pbckmgXDB/WPLCDpV8TrHhn2QrWkKKEldhztK5otyc8su/GTgxFUdp0H3QRWiE93CYxfB202vcKYPoPr35KNWTUwEtR
+X-Gm-Message-State: AOJu0Yx0siIhJtB96DWyCHyaYK+3zaUMGdVe1zqXr4UkjbWXG1cVQj/z
+	P16m/1gIqTLkkoucOu/go8m9k+dcsM7ui/pSuo48NzQJ3u721vuRECq3zeXiHgQGNvY8SdjolL/
+	S
+X-Google-Smtp-Source: AGHT+IGIo1wZlSPwwSu9xw5c4I51qpXk7ZOigKsyxWm6T8IDrvSKigUlmUGe9S6Z4XUSv7E8Tg4RbA==
+X-Received: by 2002:a17:90a:5385:b0:2bd:9648:1fe with SMTP id 98e67ed59e1d1-2bd9f344e7cmr2642563a91.7.1716394409942;
+        Wed, 22 May 2024 09:13:29 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bd9099a4afsm3665730a91.8.2024.05.22.09.13.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 09:13:28 -0700 (PDT)
+Date: Wed, 22 May 2024 09:13:28 -0700 (PDT)
+X-Google-Original-Date: Wed, 22 May 2024 09:13:24 PDT (-0700)
+Subject: [GIT PULL] RISC-V Patches for the 6.10 Merge Window, Part 1
+CC:         linux-riscv@lists.infradead.org,        linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@rivosinc.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <mhng-e73e59bf-92fc-4122-9f9e-a329d20eba55@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3cdd099-bf60-4a4f-a798-08dc7a79d85c
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2024 16:11:31.9261
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY4P282MB3710
 
-Greg KH:
-> Columns are still not wrapped :(
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-Oh, sorry. I used `scripts/checkpatch.pl` and it only told me the commit ti=
-tle is too long, that's why I only change it.
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
 
-________________________________________
-From: Greg KH <gregkh@linuxfoundation.org>
-Sent: Wednesday, May 22, 2024 23:57
-To: Roland Xu
-Cc: ojeda@kernel.org; boqun.feng@gmail.com; rust-for-linux@vger.kernel.org;=
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] rust: kernel: make impl_has_work compatible with mo=
-re generics
+are available in the Git repository at:
 
-On Wed, May 22, 2024 at 11:45:33PM +0800, Roland Xu wrote:
-> v2: apply comments, wrap lines at 72 columns
-> ---
+  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.10-mw1
 
-That goes below the --- line.
+for you to fetch changes up to 92cce91949a497a8a4615f9ba5813b03f7a1f1d5:
 
-> Make the impl_has_work macro compatible with more complex generics such a=
-s lifetimes and const generic arguments.
+  riscv: defconfig: Enable CONFIG_CLK_SOPHGO_CV1800 (2024-05-13 14:26:34 -0700)
 
-Columns are still not wrapped :(
+----------------------------------------------------------------
+RISC-V Patches for the 6.10 Merge Window, Part 1
 
-Look at example submissions on the mailing list for how to structure
-this.
+* Support for byte/half-word compare-and-exchange, emulated via LR/SC
+  loops.
+* Support for Rust.
+* Support for Zihintpause in hwprobe.
+* Support for the PR_RISCV_SET_ICACHE_FLUSH_CTX prctl().
+* Support for lockless lockrefs.
 
-thanks,
+----------------------------------------------------------------
+This was really meant to be last week's PR, but due to a handful of small
+issues.  There's a pair of driver build fixes that are already on the lists and
+a report of a ftrace failure that might be triggered by the ftrace/AIA fix, but
+seems like we're better off with these than without.  I've got a few other
+smaller things queued up for Friday, but I figured it'd be best to get this
+moving because there's a handful of merge conflicts.
 
-greg k-h
+This first one isn't showing up in a in-flight merge `git diff`, but it looks
+pretty straight-forward
+
+    diff --git a/Documentation/rust/arch-support.rst b/Documentation/rust/arch-support.rst
+    index c9137710633a..4d1495ded2aa 100644
+    --- a/Documentation/rust/arch-support.rst
+    +++ b/Documentation/rust/arch-support.rst
+    @@ -16,7 +16,8 @@ support corresponds to ``S`` values in the ``MAINTAINERS`` file.
+     Architecture   Level of support  Constraints
+     =============  ================  ==============================================
+     ``arm64``      Maintained        Little Endian only.
+    -``loongarch``  Maintained        \-
+    +``loongarch``  Maintained        -
+    +``riscv``      Maintained        ``riscv64`` only.
+     ``um``         Maintained        ``x86_64`` only.
+     ``x86``        Maintained        ``x86_64`` only.
+     =============  ================  ==============================================
+
+There's also one in the IMSIC driver where there's really no way for git to
+pick up the conflict, as it's a far-away API change.  Here's my resolution,
+Anup likes it as well
+<https://lore.kernel.org/all/CAK9=C2UkTD0hYymjow-yHHfBDh4CtRv-G2BPt=ncstLRmpYgyg@mail.gmail.com/>:
+
+    diff --git a/drivers/irqchip/irq-riscv-imsic-early.c b/drivers/irqchip/irq-riscv-imsic-early.c
+    index 886418ec06cb..4fbb37074d29 100644
+    --- a/drivers/irqchip/irq-riscv-imsic-early.c
+    +++ b/drivers/irqchip/irq-riscv-imsic-early.c
+    @@ -49,7 +49,7 @@ static int __init imsic_ipi_domain_init(void)
+     		return virq < 0 ? virq : -ENOMEM;
+     
+     	/* Set vIRQ range */
+    -	riscv_ipi_set_virq_range(virq, IMSIC_NR_IPI, true);
+    +	riscv_ipi_set_virq_range(virq, IMSIC_NR_IPI);
+     
+     	/* Announce that IMSIC is providing IPIs */
+     	pr_info("%pfwP: providing IPIs using interrupt %d\n", imsic->fwnode, IMSIC_IPI_ID);
+
+The rest show up pretty normally, so here's the regular merge diff output from
+how I've resolved them:
+
+    diff --cc arch/riscv/Makefile
+    index 1e002d8003c5,321c057e2bdc..000000000000
+    --- a/arch/riscv/Makefile
+    +++ b/arch/riscv/Makefile
+    @@@ -151,20 -166,9 +166,9 @@@ endi
+      endif
+      
+      vdso-install-y			+= arch/riscv/kernel/vdso/vdso.so.dbg
+     -vdso-install-$(CONFIG_COMPAT)	+= arch/riscv/kernel/compat_vdso/compat_vdso.so.dbg:../compat_vdso/compat_vdso.so
+     +vdso-install-$(CONFIG_COMPAT)	+= arch/riscv/kernel/compat_vdso/compat_vdso.so.dbg
+      
+    - ifneq ($(CONFIG_XIP_KERNEL),y)
+    - ifeq ($(CONFIG_RISCV_M_MODE)$(CONFIG_SOC_CANAAN_K210),yy)
+    - KBUILD_IMAGE := $(boot)/loader.bin
+    - else
+    - ifeq ($(CONFIG_EFI_ZBOOT),)
+    - KBUILD_IMAGE := $(boot)/Image.gz
+    - else
+    - KBUILD_IMAGE := $(boot)/vmlinuz.efi
+    - endif
+    - endif
+    - endif
+    - BOOT_TARGETS := Image Image.gz loader loader.bin xipImage vmlinuz.efi
+    + BOOT_TARGETS := Image Image.gz Image.bz2 Image.lz4 Image.lzma Image.lzo Image.zst loader loader.bin xipImage vmlinuz.efi
+      
+      all:	$(notdir $(KBUILD_IMAGE))
+      
+    diff --cc include/uapi/linux/prctl.h
+    index 713d28788df7,524d546d697b..000000000000
+    --- a/include/uapi/linux/prctl.h
+    +++ b/include/uapi/linux/prctl.h
+    @@@ -306,20 -306,10 +306,26 @@@ struct prctl_mm_map 
+      # define PR_RISCV_V_VSTATE_CTRL_NEXT_MASK	0xc
+      # define PR_RISCV_V_VSTATE_CTRL_MASK		0x1f
+      
+    + #define PR_RISCV_SET_ICACHE_FLUSH_CTX	71
+    + # define PR_RISCV_CTX_SW_FENCEI_ON	0
+    + # define PR_RISCV_CTX_SW_FENCEI_OFF	1
+    + # define PR_RISCV_SCOPE_PER_PROCESS	0
+    + # define PR_RISCV_SCOPE_PER_THREAD	1
+    + 
+     +/* PowerPC Dynamic Execution Control Register (DEXCR) controls */
+     +#define PR_PPC_GET_DEXCR		72
+     +#define PR_PPC_SET_DEXCR		73
+     +/* DEXCR aspect to act on */
+     +# define PR_PPC_DEXCR_SBHE		0 /* Speculative branch hint enable */
+     +# define PR_PPC_DEXCR_IBRTPD		1 /* Indirect branch recurrent target prediction disable */
+     +# define PR_PPC_DEXCR_SRAPD		2 /* Subroutine return address prediction disable */
+     +# define PR_PPC_DEXCR_NPHIE		3 /* Non-privileged hash instruction enable */
+     +/* Action to apply / return */
+     +# define PR_PPC_DEXCR_CTRL_EDITABLE	 0x1 /* Aspect can be modified with PR_PPC_SET_DEXCR */
+     +# define PR_PPC_DEXCR_CTRL_SET		 0x2 /* Set the aspect for this process */
+     +# define PR_PPC_DEXCR_CTRL_CLEAR	 0x4 /* Clear the aspect for this process */
+     +# define PR_PPC_DEXCR_CTRL_SET_ONEXEC	 0x8 /* Set the aspect on exec */
+     +# define PR_PPC_DEXCR_CTRL_CLEAR_ONEXEC	0x10 /* Clear the aspect on exec */
+     +# define PR_PPC_DEXCR_CTRL_MASK		0x1f
+     +
+      #endif /* _LINUX_PRCTL_H */
+    diff --cc kernel/sys.c
+    index f9c95410278c,1b7bda0722ca..000000000000
+    --- a/kernel/sys.c
+    +++ b/kernel/sys.c
+    @@@ -146,13 -146,10 +146,15 @@@
+      #ifndef RISCV_V_GET_CONTROL
+      # define RISCV_V_GET_CONTROL()		(-EINVAL)
+      #endif
+    + #ifndef RISCV_SET_ICACHE_FLUSH_CTX
+    + # define RISCV_SET_ICACHE_FLUSH_CTX(a, b)	(-EINVAL)
+    + #endif
+     -
+     +#ifndef PPC_GET_DEXCR_ASPECT
+     +# define PPC_GET_DEXCR_ASPECT(a, b)	(-EINVAL)
+     +#endif
+     +#ifndef PPC_SET_DEXCR_ASPECT
+     +# define PPC_SET_DEXCR_ASPECT(a, b, c)	(-EINVAL)
+     +#endif
+    - 
+      /*
+       * this is where the system-wide overflow UID and GID are defined, for
+       * architectures that now have 32-bit UID/GID but didn't in the past
+
+
+----------------------------------------------------------------
+Alexandre Ghiti (2):
+      riscv: Remove superfluous smp_mb()
+      riscv: Fix text patching when IPI are used
+
+Charlie Jenkins (4):
+      riscv: Remove unnecessary irqflags processor.h include
+      riscv: Include riscv_set_icache_flush_ctx prctl
+      documentation: Document PR_RISCV_SET_ICACHE_FLUSH_CTX prctl
+      cpumask: Add assign cpu
+
+Clément Léger (2):
+      riscv: misaligned: remove CONFIG_RISCV_M_MODE specific code
+      riscv: hwprobe: export Zihintpause ISA extension
+
+Dawei Li (2):
+      riscv: Remove redundant CONFIG_64BIT from pgtable_l{4,5}_enabled
+      riscv: Annotate pgtable_l{4,5}_enabled with __ro_after_init
+
+Inochi Amaoto (1):
+      riscv: defconfig: Enable CONFIG_CLK_SOPHGO_CV1800
+
+Jisheng Zhang (4):
+      riscv: select ARCH_USE_CMPXCHG_LOCKREF
+      riscv: cmpxchg: implement arch_cmpxchg64_{relaxed|acquire|release}
+      riscv: mm: still create swiotlb buffer for kmalloc() bouncing if required
+      riscv: select ARCH_HAS_FAST_MULTIPLIER
+
+Leonardo Bras (5):
+      riscv/cmpxchg: Deduplicate xchg() asm functions
+      riscv/cmpxchg: Deduplicate cmpxchg() asm and macros
+      riscv/atomic.h : Deduplicate arch_atomic.*
+      riscv/cmpxchg: Implement cmpxchg for variables of size 1 and 2
+      riscv/cmpxchg: Implement xchg for variables of size 1 and 2
+
+Masahiro Yamada (2):
+      riscv: merge two if-blocks for KBUILD_IMAGE
+      export.h: remove include/asm-generic/export.h
+
+Miguel Ojeda (1):
+      RISC-V: enable building 64-bit kernels with rust support
+
+Palmer Dabbelt (6):
+      Merge patch series "Rework & improve riscv cmpxchg.h and atomic.h"
+      Merge patch series "riscv: 64-bit NOMMU fixes and enhancements"
+      Merge patch series "riscv: fix patching with IPI"
+      Merge patch series "riscv: Create and document PR_RISCV_SET_ICACHE_FLUSH_CTX prctl"
+      Merge patch series "riscv: enable lockless lockref implementation"
+      Merge patch series "riscv: ASID-related and UP-related TLB flush enhancements"
+
+Samuel Holland (18):
+      riscv: Fix TASK_SIZE on 64-bit NOMMU
+      riscv: Fix loading 64-bit NOMMU kernels past the start of RAM
+      riscv: Remove MMU dependency from Zbb and Zicboz
+      riscv: Allow NOMMU kernels to run in S-mode
+      riscv: Do not save the scratch CSR during suspend
+      riscv: Flush the instruction cache during SMP bringup
+      riscv: Factor out page table TLB synchronization
+      riscv: Use IPIs for remote cache/TLB flushes by default
+      riscv: mm: Broadcast kernel TLB flushes only when needed
+      riscv: Only send remote fences when some other CPU is online
+      riscv: mm: Combine the SMP and UP TLB flush code
+      riscv: Apply SiFive CIP-1200 workaround to single-ASID sfence.vma
+      riscv: Avoid TLB flush loops when affected by SiFive CIP-1200
+      riscv: mm: Introduce cntx2asid/cntx2version helper macros
+      riscv: mm: Use a fixed layout for the MM context ID
+      riscv: mm: Make asid_bits a local variable
+      riscv: mm: Preserve global TLB entries when switching contexts
+      riscv: mm: Always use an ASID to flush mm contexts
+
+Stafford Horne (1):
+      riscv: Remove unused asm/signal.h file
+
+Tanzir Hasan (1):
+      riscv: remove unused header
+
+Yangyu Chen (1):
+      RISC-V: only flush icache when it has VM_EXEC set
+
+ Documentation/arch/riscv/cmodx.rst    |  98 ++++++++
+ Documentation/arch/riscv/hwprobe.rst  |   4 +
+ Documentation/arch/riscv/index.rst    |   1 +
+ Documentation/rust/arch-support.rst   |   1 +
+ arch/riscv/Kconfig                    |  22 +-
+ arch/riscv/Makefile                   |  26 ++-
+ arch/riscv/configs/defconfig          |   1 +
+ arch/riscv/errata/sifive/errata.c     |   5 +
+ arch/riscv/include/asm/atomic.h       | 164 ++++++-------
+ arch/riscv/include/asm/cache.h        |   2 +-
+ arch/riscv/include/asm/cacheflush.h   |   7 +-
+ arch/riscv/include/asm/cmpxchg.h      | 422 ++++++++++++----------------------
+ arch/riscv/include/asm/errata_list.h  |  12 +-
+ arch/riscv/include/asm/irqflags.h     |   1 -
+ arch/riscv/include/asm/mmu.h          |   5 +
+ arch/riscv/include/asm/page.h         |   2 +-
+ arch/riscv/include/asm/patch.h        |   1 +
+ arch/riscv/include/asm/pgalloc.h      |  32 ++-
+ arch/riscv/include/asm/pgtable.h      |   2 +-
+ arch/riscv/include/asm/processor.h    |  10 +
+ arch/riscv/include/asm/sbi.h          |   4 +
+ arch/riscv/include/asm/signal.h       |  12 -
+ arch/riscv/include/asm/smp.h          |  15 +-
+ arch/riscv/include/asm/suspend.h      |   1 -
+ arch/riscv/include/asm/switch_to.h    |  23 ++
+ arch/riscv/include/asm/tlbflush.h     |  52 ++---
+ arch/riscv/include/uapi/asm/hwprobe.h |   1 +
+ arch/riscv/kernel/ftrace.c            |  44 +++-
+ arch/riscv/kernel/patch.c             |  17 +-
+ arch/riscv/kernel/sbi-ipi.c           |  11 +-
+ arch/riscv/kernel/smp.c               |  11 +-
+ arch/riscv/kernel/smpboot.c           |   7 +-
+ arch/riscv/kernel/suspend.c           |   3 +-
+ arch/riscv/kernel/sys_hwprobe.c       |   1 +
+ arch/riscv/kernel/sys_riscv.c         |   1 -
+ arch/riscv/kernel/traps_misaligned.c  | 106 ++-------
+ arch/riscv/mm/Makefile                |   5 +-
+ arch/riscv/mm/cacheflush.c            | 120 +++++++++-
+ arch/riscv/mm/context.c               |  42 ++--
+ arch/riscv/mm/init.c                  |  22 +-
+ arch/riscv/mm/tlbflush.c              |  75 ++----
+ drivers/clocksource/timer-clint.c     |   2 +-
+ include/asm-generic/export.h          |  11 -
+ include/linux/cpumask.h               |  16 ++
+ include/uapi/linux/prctl.h            |   6 +
+ kernel/sys.c                          |   6 +
+ scripts/generate_rust_target.rs       |   6 +
+ 47 files changed, 757 insertions(+), 681 deletions(-)
+ create mode 100644 Documentation/arch/riscv/cmodx.rst
+ delete mode 100644 arch/riscv/include/asm/signal.h
+ delete mode 100644 include/asm-generic/export.h
 
