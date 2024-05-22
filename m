@@ -1,77 +1,112 @@
-Return-Path: <linux-kernel+bounces-186370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A44E8CC34B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:36:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA8408CC359
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D64F1F24171
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:36:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EEAB2819C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE41D17556;
-	Wed, 22 May 2024 14:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3261C1A29A;
+	Wed, 22 May 2024 14:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UxnSEN+b"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2062.outbound.protection.outlook.com [40.107.92.62])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pdx8U0Xa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0C31B5A4;
-	Wed, 22 May 2024 14:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C078134AB;
+	Wed, 22 May 2024 14:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716388595; cv=fail; b=BwYV8SrMpAcYr19dnQiviD7Q+HyRnsKGM4n/HDu5XiH46VFNI5AMgh0oiF1u3aDZaf3drgZM73B/Vfbu8OIQu80NTzhGfF+67PTbPgbQ/jj9+5CFqI3Ipvz6gyRlMxqFqZE25ElWgmNKfzxKI10tbc9BaP4c+w7HXL88p/nZxIQ=
+	t=1716388693; cv=fail; b=ahucL93yfBYYeeQYPo2kb7uA87eZLaITPR2bxc7aTLP/wVBnfv204GkzNdIRNJFAQR9YtViGseUkaRddfKIHx82mAS7s+6LT6buhKXXayDTdnLrAfwMPzINklcas696T/TNkg7zwZcZnGkBiX7TNwF70NE+ZvORqzhgLxBWIDYk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716388595; c=relaxed/simple;
-	bh=5LN4lPhZW9+jjakJzVE7F9ckL5qdybcBmQsZCXM72lg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=r9S7kaTFJxFoYDbqp3BOv+QcyepXnucW8PknG1ekCTM2aUJGj3KmH4wdS8CR7J7o6Go3XpH3xD98fTJtn9obGt92rV/bl+N71OcJXuKebapv4N4rdz/6Z90citERVFzAA91263u8Urv9TRk6jITjYTG1xyZlt89O0Wm0DK+b8HA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UxnSEN+b; arc=fail smtp.client-ip=40.107.92.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1716388693; c=relaxed/simple;
+	bh=NaiDaKM3n2IX/Cw1nJrgTIRmkEf7UssXcbWEKjZPeWc=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=pqvdIhGdwFL/L6c5LbZ4IVeNW6vR/L5A0DyAkXe6+mhFT6yP/kJUyx1a8F8p7DRoURoc1TySCW9xCES/P/RLaxMXMltUjX+VZb1sEOrUpqeD+WcnqLUniH2dDpAMdci5FdnZRZPDdJtoCRxdbtEgHgz+S7+WNl14LQ8hL6jBZhQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pdx8U0Xa; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716388691; x=1747924691;
+  h=date:from:to:cc:subject:message-id:
+   content-transfer-encoding:mime-version;
+  bh=NaiDaKM3n2IX/Cw1nJrgTIRmkEf7UssXcbWEKjZPeWc=;
+  b=Pdx8U0XaBK8GzNAO2w9n9j3C8VwdBUeopBdvGH7dbJf+X61lI0bVFv7x
+   m0DHAwTTpYMMSKgDzb2wyfEGJnOZNqzr3pzyoe3iIl6u5kNyMxTzvGQd9
+   ZLB4HtgJPVnOgWelkMxWl34k0itRweICo0Sy9EwxR5vhWtpPWRD3B1tqc
+   jJe4nrb7q2TmsfFDeVF0Y5LDaLO7+G+SDUIUsrXKC4lIBkeKcrojVwaCf
+   Sy//oo9AX1TwiHcVh7BbT59z5q/wmN3GYBnqNeBw3kV4qOf8viePjtNoV
+   LTAo5xRUTXnGFxR3m6KORMjsZnfaGCZek07w6MqSjQxy9fG8wAvl89AuG
+   A==;
+X-CSE-ConnectionGUID: +v/+Nad/RZCgaOo3X2cM3w==
+X-CSE-MsgGUID: wbRTli9IRvqVoCWQSoAknQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="30177140"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="30177140"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 07:38:09 -0700
+X-CSE-ConnectionGUID: GkYbdPKbQI6Lsp29C67IJg==
+X-CSE-MsgGUID: 8immf/OnQpGrvHQSIhqoHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="64149755"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 May 2024 07:38:09 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 22 May 2024 07:38:08 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 22 May 2024 07:38:08 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.170)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 22 May 2024 07:38:08 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DfZsDMI+5nRtj7o80f0tW0Ml0t29ERvd2QfBRdIhqqc4EaWP0nrBSlAkU7EgkrZOKfKQvpe5sBjw8f4V4EfqORx6nnOM/NObDhiBTaA3jY40Lp0Ke4YXcAws9jMfDmvKNkfHTk5G/mdTSCGEuSV9UMoMEHWbR+3/3Rxh2lGVJWLAPbWsXIdxUvQfL5sVuZ4dsNcSl3BmEj2VFY6U3F35EreNEOt08mUy5vESi1W56G9d8qW8d714UKQEsZmMlzzWlwnZlqnLL1l3jeluO5Km63YEPNlSp3RJGKi4lpMeoWKHuBYrHWIr+ktpJYHt18SPbAROzu7lvyibtxxf9xRltA==
+ b=Ipluf/lnlw4vM4jvlMrjXxtGLotdmZPBVa2SD9XnYv9gkjFZbRouBHmJiQhlE+l7YT2cJWgXppJqg0m677snZmXBhz7KZMua3QirI5lTLsIJzw6JR55JBOmdfNfayvHrqyRGWJP7hD8TeSa9rwr7QJAt5j2K+4E6/HOCeLiBDmFfh+4E4kcFUJ0RjuiAM8PkRtFHWeJ2jBORRBrblcLF0i3LeDzLjgQQQs66NbfdeN4H9mSknj3UQNC2AFU7Rc1S0cI9lh0YJHzf8y1PwiA2J8oakDjNE4Se0o/nnkCjti6F/hpOJAGm5f80yltbNrnqFchY2gJVvpNjz3xiL7O9GQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RsxDGsLRFHPSJFWSuDeX4l6Gx7dntbk4th4jYSVtmlM=;
- b=RlYyS6L/gvLnS/SbOiWv6gpMV0o9NnjbFoe3u6TKdgvVlO4P46tC06841KkUjAXgqpl1pBmPOB7M08aApVpiURp6MJqnG3XSIY3M/NbHzgm7rWe0v6/n4nz9xb46lHduK8s/+J4723DlrtZKe/06y7P02J+EVmZU9iELbusmeYsj/a3DBYKroCEZvPsnvWzyI5UYJF5uxn0SmxXzE15jR/9348FdYbwSrpvcl0GlhDSQKprgeHDVyPZHSmYNws1SAbFL9HSS+8UtNwFTn39S1AbIRmP4TscPU0ohZ85O87UMZDJo6+XiINDL8xLL6MA38q5E9U/6IwbGxGDQLVYOEA==
+ bh=pNEcUWta3Fhyx6KWBGQzY6m/1zzAhJdVL34AqvDvZkE=;
+ b=cMWVsMThhXoOALFVB3EqfUBCmX/ytnl7AeokilIVZGY9exGEVe+OPZ6OlROuCrnwJPy+PcFI+95S0NIzBoWvFblSkMKtGomqkfLYhsez+jXLhM3Ut8VTzs7AWpUs8f14lNudxx5bMlO/71pFscgGLaxnRsU7/l79DcOc+rYYp9fX0KZ/RsQ6mOhPWnAg42FHwYwxniKfEAqdwZ7qYrCD4D7x0OsJQlO2CiRUvWBkaLGO5W7bRyNNDIO69ekm/OQPB7glN8DAFcNDFaztI6Cn0JCjuBnQi5/I+fKwQE5t6WvATQ8y0tf8bd+6GusalzFGdliq04vODPb5LKpS6ysfIg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RsxDGsLRFHPSJFWSuDeX4l6Gx7dntbk4th4jYSVtmlM=;
- b=UxnSEN+bf5sPM9oCFZnyr+G3F6G7GPtnGdCFosj6dW5Ae52cmTkD81gGSKAhMYGKVUdabHorpOCrKKLciz/3q/JW6OKbp12MHV0tP2/VcGYHjzncZoS1k3wF1Y2nB0fs4zSP1iW/DDNb8mjvR+H7PuHYYtfVB7z5VHlxzB/wB0k=
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17)
- by DM6PR12MB4187.namprd12.prod.outlook.com (2603:10b6:5:212::11) with
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by DS0PR11MB7288.namprd11.prod.outlook.com (2603:10b6:8:13b::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.20; Wed, 22 May
- 2024 14:36:28 +0000
-Received: from BL1PR12MB5874.namprd12.prod.outlook.com
- ([fe80::5a16:a4db:8bed:1f5d]) by BL1PR12MB5874.namprd12.prod.outlook.com
- ([fe80::5a16:a4db:8bed:1f5d%5]) with mapi id 15.20.7611.016; Wed, 22 May 2024
- 14:36:28 +0000
-Message-ID: <4046d7a9-7d6a-47d1-9435-90185e6d32af@amd.com>
-Date: Wed, 22 May 2024 09:36:26 -0500
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v2 1/2] drivers: remoteproc: xlnx: add attach detach
- support
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240511005126.1240430-1-tanmay.shah@amd.com>
- <20240511005126.1240430-2-tanmay.shah@amd.com> <ZkzgVn4+iTcrLEDT@p14s>
-Content-Language: en-US
-From: Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <ZkzgVn4+iTcrLEDT@p14s>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR01CA0017.prod.exchangelabs.com (2603:10b6:805:b6::30)
- To BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Wed, 22 May
+ 2024 14:38:04 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%2]) with mapi id 15.20.7611.016; Wed, 22 May 2024
+ 14:38:04 +0000
+Date: Wed, 22 May 2024 22:37:55 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Waiman Long <longman@redhat.com>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Tejun Heo <tj@kernel.org>, Valentin Schneider <vschneid@redhat.com>,
+	<cgroups@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<ying.huang@intel.com>, <feng.tang@intel.com>, <fengwei.yin@intel.com>,
+	<oliver.sang@intel.com>
+Subject: [linus:master] [cgroup/cpuset]  2125c0034c:
+ stress-ng.cpu-online.ops_per_sec 17.8% improvement
+Message-ID: <202405222215.d537a85f-oliver.sang@intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI1PR02CA0050.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::12) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,419 +114,181 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5874:EE_|DM6PR12MB4187:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2a161059-d165-4f7a-12d9-08dc7a6c90c9
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|DS0PR11MB7288:EE_
+X-MS-Office365-Filtering-Correlation-Id: 584a96d4-fc19-43ae-91ad-08dc7a6cca0a
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M2ZWZk9lM0RGaktkaCtMTWplZmZocHhrMUhNOG0rYzJFbDhRQXJiVU1HYWNZ?=
- =?utf-8?B?ZEZkZVNFN25yYy9Pa3Q2YlI2U2pOQVNJWjM5REgva3ozRDJvOE1yNjlvQi9W?=
- =?utf-8?B?WVFGRDd6VU94WmdnQmFxWEt0YmVvNllRVkpRVjFNQ2lmMGt6MWZBU25IQWdu?=
- =?utf-8?B?RXpWL0owaEs4dEVEa0hFUVV4dnNuWm9WN2x0ZUlBYnMrM0o1SVBLUkdUYkN1?=
- =?utf-8?B?cDYxN0ltZyt2aHVIdnZLZmt3Szh4U2swc2NYSkJWOHN1WFdPT1NlV0M3K1FW?=
- =?utf-8?B?Wklkb0FqZFdWQ3A4TUZvMmVPTnZpcEEraTZWTHZDYkFkdkd4c2s4VUJEb3p5?=
- =?utf-8?B?SzZGMUFVQXFnS2h1VUwvdnl0KzgyQTc0WFVYU3JSTWhZak1vSG1IY0dTZjFB?=
- =?utf-8?B?ckhrVGRNUndXdnN2dlE1eGpsT3RYUUJRQjExTTd0OFZTNFE3UGpYTUlYWXVz?=
- =?utf-8?B?L0ZFZ2laa2JMRC9aZjlLdkErenN0dm9IeGVEaDFtbW9KaEJMaGV5Z3pMMDV6?=
- =?utf-8?B?dU9TdldJZGtIUGVSOHNRTCt1MEp2eWVGMkJEdnk3a291QjZGQVBINlhDM01y?=
- =?utf-8?B?WGNJVEZDQWZjMXp1RTAvVHJ4VVR6UUJBM2tMamRQaWZhSURrSzY3d040bzBZ?=
- =?utf-8?B?MmRqWFA2azBCUnJ3elM3aHA5dU9YTUtBRHhQcCs5MVMwWFdrWWVGY1d3WS9q?=
- =?utf-8?B?d0FjaXk2ZFh5Vm1WNElrNldGK1lvdml1cVhLbkVMejhobGxDOHJmYzUwNXNy?=
- =?utf-8?B?WHE3QUZjZ2hLWE9hVHdTOHdVVVVNMXhjRndTUHNGQzBMdzVUMGYxcUFmTmtw?=
- =?utf-8?B?b1kvYkRQK3U5RkVnb2lTOGNqb3F3eWF1SFY4aENLSnhmYmF0TW1sMjF3N3J2?=
- =?utf-8?B?NEg1ZnVUbytqQ3hVTW9QQVlNRWxxaTNOTk5zNlQwUmxnZzdBNjlhNFlvRU14?=
- =?utf-8?B?bWQ0K1JJUmNpSGQyUkMxY1NpMG0vYTNRY05HNC90djk5Nmdkdy9jek1jdko1?=
- =?utf-8?B?Q1FnRVQyUHhJTU40UmtSVy8xZ1FJbEtEaWpBRnYwa1kzU0RCNWVPemRmV05E?=
- =?utf-8?B?N05zTjd5Y2kzVlVrM1c3TURvMGJmUGZ6N1BZdHlwR0RnSGVHWGZuSGs2RHBI?=
- =?utf-8?B?MXcyOUlZUkhnYW9VOURiSWcxVkJleWtUeFU4aEZqK01SYzVjWS8vQWlQMjN4?=
- =?utf-8?B?eEM1RmQvNWRMcFUvZjRPc2ZubEJoYlpRL0dYRHU4Z2dEYURnN05abm5ydTRI?=
- =?utf-8?B?bXh5SW1qQlhJZFc0cC9mTG44NGNmLzFoVXdPRjA3QjFzMHhuWmJMRTlpWXdD?=
- =?utf-8?B?L2ZPMklxUzQxSXViWXFiRWhTVXJxcHV6bDNBK3htYmtNZm5FNFlLSXF0NXZj?=
- =?utf-8?B?dkIwdXR3QTFEUEJ1MVRQWGxPQWRSY0JDYkxnVm1nbktWRUdySHl3VWZMOFJy?=
- =?utf-8?B?QXRaUWxmNlAwWkZMYVhibW5GOVUxT1lJVFhwTjU0L2htcHFoaTQyd2dwdUk2?=
- =?utf-8?B?Rml5VWc2aDhYVzVNQXRPNzNUbDh5ZFJERVZCQzlub2dyMXhJeFREeU1HUEtP?=
- =?utf-8?B?UlBMRUFMK2FPSnEwRnUwcEo2VDVsRVgzQnYzeVBqQzVkTUIzZmlVcVN3RXox?=
- =?utf-8?B?L2IwRUJkOXg3WEdKL0tQTENlczFETzh2ZFllMTgzKzE0WWhzRFNwbHQwS2ow?=
- =?utf-8?B?ZVdHMmtMeG93SW42bGlWYVB2aVJ1T1gwWGpsMGtBaHBhbjcrSE04dW9BPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5874.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?HazbhCaQbqvN9E0jbtv65yLwUoyo/EqlBH7rKVPvNtQC3n68NHW53O3ogf?=
+ =?iso-8859-1?Q?daA7e9A8zgt/GaIq7S49xqjDYwB7owm+PgeP2L6RLOjRMJxHecMb6IVr5b?=
+ =?iso-8859-1?Q?p3kUXX0jJ1F3rQD/s5/MpdhWrX3xuYf5Fuktk5iWK2vWO8XydLa14TRKUg?=
+ =?iso-8859-1?Q?ommYT6CGHT5uSRJHAArTAblt/TIsG7WEab9aA/qcIlV8KVrZnosC+2X1sD?=
+ =?iso-8859-1?Q?piVTmBbTNEEfXqd42LPHeKV6WiAri5ApKqzRgzCrYMfOW+wWMqcwJZ1NsP?=
+ =?iso-8859-1?Q?xTF0T0KNrfdsoJOgS5LVEPfh4c5NrZcbLVAr/S4AyfPNP9lQxNVO/HGMSn?=
+ =?iso-8859-1?Q?TQyJCAPwlCeLgBiBDDGMM/fhT2dYahMhljWrZ30ripl/wkWu/GxcYH8sLf?=
+ =?iso-8859-1?Q?vByKohpXJdertnPet1SLVNE2Qi0fMhMC9Q3Feaq0yRoe1vfsgE22/aqrNo?=
+ =?iso-8859-1?Q?gLlGWqayV0UPl28B2l03OCri8X7R9LlAs5R9RBhpH4ChYJA4jxhi5Mh0HN?=
+ =?iso-8859-1?Q?OFZ4TryWErzoldMIBnJg0Z/HDoZkPLv46uEVORVRfKc9bxpiQFvlkFrtks?=
+ =?iso-8859-1?Q?zQqCNWt2gZZrcscQG9a+2bj43ODhSCR2aZUKW79O5rWcGVR/5VTDhlm4bi?=
+ =?iso-8859-1?Q?Ic0SOyrb01y3v7mifBnkhBIKOOC5Th1dz3rYSYyIlTHlLUIcVohfvtRlZt?=
+ =?iso-8859-1?Q?uY9rxAeubW33xY/2jZQ0Ev1+oAE2bXT0iflffHRh1/lkhCDQmxW8rN0RSQ?=
+ =?iso-8859-1?Q?mUg0L/cZOhYI7IU5NCHEVqjKiQ1gpZ5kGP3+CVkb5lY7QXWK10eY5kAQ2s?=
+ =?iso-8859-1?Q?Hc6UVRpWQpAvhEXkdtKEqM2qkxUTt7ILkJ8SodCqyZNE2/gAxOn6bY2lhQ?=
+ =?iso-8859-1?Q?FrmpP6tGvNlxd3KqlDd33zHdAse9kAaO+0348ZuphZtCJXs/fe1/3fUqQT?=
+ =?iso-8859-1?Q?VbtfcsbU2q22aysqln5yYIUfw6YoFAElE7kOF50+x9zQ1iI8G5cAK+KqW4?=
+ =?iso-8859-1?Q?bSD4qjSE3BVoMlodh/+LzuLqWt2/+cwtf5o+dsuHsUNWLKPQICT8XH2kYM?=
+ =?iso-8859-1?Q?dpFAQdU+mBPHeUg0Jt0ZgCo63oqvpLDdnPSH8AUnpAlO5aA8rUgVJqBCyY?=
+ =?iso-8859-1?Q?EFL+VnKFdaDfc8l5RAbN1b/QTHBla5ayBFMsf3+XyAh2j4AngXB2p2n+y5?=
+ =?iso-8859-1?Q?Q2oljHPGsX7woYGT6RD9AStdZGg/9uuEFWyXPJtbB5sNosecOHae2GmoaB?=
+ =?iso-8859-1?Q?B17twO667LHMAFjm3ey4+ysA88psGXK3xGa5rC96o=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q1R2WEZidklQN01ndTUrUVFwNHFLd09EZ0c3b0ttQ2JNRGxJWit1SGEzVnBn?=
- =?utf-8?B?cGJvcEIrK0NVZFNBWU1iTHBkY0kyRkpUbUFsUmdJNDBPSlBsV2dVQytVU2xU?=
- =?utf-8?B?UlpVa28zYXpBRjdtUXhLSCtMZWJ5SXNGQlcza3JoZVJ0QzFJdW05K3RUY2Rx?=
- =?utf-8?B?UmZwTG1JWXBNdmZzVk01aXhTVVlCRGZyODMwVU0ramY5OHovcTQ5dFNaOVNv?=
- =?utf-8?B?a1lham1xUHZ5bm42eDlFS1ZHWDJBeEhDSkN3UXdtRzByTVBrNGJjMVdlQkh1?=
- =?utf-8?B?anp6Qm9yVXRWc2l5aWkyM05ZL1pQOFBmcy80enBGVmtYcStIZ0FsN2xKaklZ?=
- =?utf-8?B?Z2RHcUdmVm9TdUZYS1RPM25XYmVMNzQxU2RuNzRpU2tvZlNmMFQ4a1FuTzRl?=
- =?utf-8?B?QUkzWEF4TEtHcndiQkUzWldLZGZJVnZna1dLcUpkVzFQMHBkZFRzSXhnZXdQ?=
- =?utf-8?B?YUJoQ0JJUjNnbzV0Nk1TenFKL1hETVV3WmFHcDJ1ZXR3Z2RBZjZ6cDY4dHV0?=
- =?utf-8?B?UXhGT1VLSkxSKzRCWndyZmlhd25yRFdTVmV0TlcwZ0NSSkpoekcxL3phYThn?=
- =?utf-8?B?QzFpd0pVbk9Ga2RRUlA3UUlZamJsZ1dUWDY3QUo4R1NldUJaeUtkVlR3RnNr?=
- =?utf-8?B?ZFQwUlg4WlJka01vWUw1c1p1NTB0dExSbkNqRUttd3dGaVFPUDI3dFc5YTRi?=
- =?utf-8?B?WlgvUzNmTUpXQkNqN2xZa05VUnJVSWsySXJ6cFRoaXNLVEkzODBya2JyakUy?=
- =?utf-8?B?MWQrYXhYREF0bmx3ZXpnRVZDczY2YVRoeXlSazlqZ2lybEFTRGRLYUpYSDVX?=
- =?utf-8?B?UTFjWGFQcFh4ZGdzTXJEY1prOUZMYU5OU3BjUnB5dDluNmY0WlBkdEZBeDln?=
- =?utf-8?B?WE1zNDNQYkhtN0xoSHp4UTRtQTJHTFE1K2haQTlld0lneSt5ZG9LNFFsVVNt?=
- =?utf-8?B?WWd5YXk2amw1QTJneEViQUQ3OVlhSGJSZVlQUEE4cHJzTVI2T1hNLzlHN2lr?=
- =?utf-8?B?cGtiTE1mS1FodEhXNEdrOVV6YXZqZzlKTEgvUFFDRHhqck4vTWE5WHR4dlVx?=
- =?utf-8?B?Y0o2SVp3ekJyOHpqS3ViYnZyaG1FV3RmallKbE51cEVOMnZSM2doZlhFa2Fy?=
- =?utf-8?B?SEJJSm9QNGRmQUNiLzVRNFlTZ21EZWRyKzBvaTdvbytyRUhTMDdyN1J5bFEr?=
- =?utf-8?B?VnRJVjc3NTVuZ2Z6Smp3d2hwQm9OVE9wUWhINFQwTFhTdjhaWTVPenkycDU0?=
- =?utf-8?B?TkdSaktnSWhPZFpsUUdXRUxTaGpoZHVGSWpYTTFZVkVJWnduSmxqaFRIM3Rs?=
- =?utf-8?B?SVlwbXpmcWI3ZVdkdGprMHcyR0hEeDdpUDdscW5UNllnS2hLOUZlbFFLNlZ4?=
- =?utf-8?B?TUR5U1grSHlYdEpocjB3aWJ0T2lVL2JraUhOaWFnTzhPb21KN2pYQkJ1L1Va?=
- =?utf-8?B?NXVlYkRKQU5uYkQ5ZW56T2M5OGtReEcwN1dqa25RWklOcC9aYVA3VEVoSjJ5?=
- =?utf-8?B?Y2FhcHBIUzFiaVdnd0MxYStiYXI1T0RpMnhiTWRWeUJUWHJiaVM4MzBwVHlP?=
- =?utf-8?B?cVpBaER2Z1ZSZUkxbjhwNldmYjluSERIR3NSb1NCekFXUnl3dlVWWVVrNk81?=
- =?utf-8?B?Z1ZVZjliTjRLWUlydkh3OWFpRm1ocHVoMEhSSG5wekdpYjYvaGVpb3RUKytS?=
- =?utf-8?B?NXdKejJiWVQvZFNFYXpxd2RScnU3aEJLMW5CbFN5cjk3eWlocFhnOGdKZlpt?=
- =?utf-8?B?dDlUOStIRmRHQWh4MjV3OWowWHlJclZBbmczZitsYkl0NWI0RE45SWZZcE54?=
- =?utf-8?B?Q2lwbVVjdHdmek14YUNMYmVQYW44Y0ZUdW1ETWFERXgxa2lnVXZ4OEFsOWlF?=
- =?utf-8?B?bDFTOEluWUQvdUdJajVsWmFzak1JWjdWbmhLOThKanJPbFhyYVRINGcyM3hk?=
- =?utf-8?B?ak9BOGp3MUpVUFZaQzhIZkVCUkljalJRakV0YzZxK29CZG93WUdmdmZ3U3dZ?=
- =?utf-8?B?dFRGdUNkbldBbGl4SDBmVmluNkhveVUvOVpSNk9janNmaWdlVkFkc3NLN2F1?=
- =?utf-8?B?K2lxRnZMYlpzcjE0OW56b002U1Z1d3FtVjhMSGptSEJiajIzOStQZ0paR3pj?=
- =?utf-8?Q?x3hsSwhFIwbMgMQ6lHbVY/Wrb?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a161059-d165-4f7a-12d9-08dc7a6c90c9
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5874.namprd12.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?A8mxDFRrm+OzJh09AtKnQfhU6lpfYH5/PyWapV7LZ49N9+VM9X1pMF7RFG?=
+ =?iso-8859-1?Q?MhjXHs0UHRXjN0XQ3aXXMB3Tu3UmY9IZxinHdYx/IV5PZpEmxc1uqJZHyQ?=
+ =?iso-8859-1?Q?n71ZB56vyFt0m6QA5w/spy+JyveZtL3byxp7Ppgjo6scwoL2ElVo73qgdc?=
+ =?iso-8859-1?Q?VeisOSNt8wXbgE0V0tELhfL/YHiCIbiN4HOG3jC2cYugsRAbbOCcYWhkeI?=
+ =?iso-8859-1?Q?KoMO/2mEgNMVixZT+rtM+Rb41QA341MNlbp+MRbezgtiooijLjaM53eF9z?=
+ =?iso-8859-1?Q?3O15ZtZuSEYBaYEXAEgqUz1oJXgqo9Z5V39Jl4ix8LqAHsTFVPKqCZrO2c?=
+ =?iso-8859-1?Q?4N/cTbGPVOw2SO7NKh1zsT/e12poPZFKtaKdTEWm69e/dUyqlvaGEyuXj2?=
+ =?iso-8859-1?Q?cMpa7xHxg1hQroIDNtEQVob52i+OFRF+lw5WbLH0nPnqh7n5+4MGi+TgLz?=
+ =?iso-8859-1?Q?27ttk+00A/gn+YFvLBAR7ht9KxUvC2RYEnpl7YxkUwcMQdADfbuv+4ZkV3?=
+ =?iso-8859-1?Q?MH5G8teMG0/mpLZv/zQbsN1n48IMx+AYRWwD0XyqZ3J53MVf0t4q9tOft1?=
+ =?iso-8859-1?Q?bqBmK2mGX1VP2ciCxf5Yx7fYnb1pSspdva2jPd2fy58UFlWgTq6d2orzI2?=
+ =?iso-8859-1?Q?/XEwiDsH/XIgToBO7z4AWWSRQQad7WEj+Iy1MmajkY+piB92TieVygZ/Wt?=
+ =?iso-8859-1?Q?18pWxC2pd+XoAxjUzeuMpcSAxG6T9aD/P2DGqGd+UL43J35pmpmwdN86MI?=
+ =?iso-8859-1?Q?2XMCqE/E/ZJ+tsR9A7BAPd0uuBBVZBisqKaybsJFwQqcEWjUBB99xOMAkG?=
+ =?iso-8859-1?Q?MGIlGQ896EhSSM/ytUZdOPgPjTfzf40Fb79a9kjiKzor1kl/DkQsP5dJc/?=
+ =?iso-8859-1?Q?dCp7eDHaUueb8z9yTXnFrnDI8Ml6WJoyJ9SKTY1t0+wcOJb3IMX+q+Fv9X?=
+ =?iso-8859-1?Q?Pf7uyLtQNVSWmPRpIQAr1XJuJyHFHU8XfC//3WP78BE6TirDkxYXwKv5n1?=
+ =?iso-8859-1?Q?VmotGCS06bLmbxkTjj1T2+OzBld9Lo71dQvtvvCUlQCgOOEJgEVw7zhjZT?=
+ =?iso-8859-1?Q?lS9sfwBtnwk3phVYR3ZgqInlkQ5zkIJ12Vc+5f68OUKwSUuIKn62dLI3nr?=
+ =?iso-8859-1?Q?g+zvPej1zi8OfnKE0165h+AuMa6kjSrM8TiUy4Lc5JqA27+DgxPOuKV+B9?=
+ =?iso-8859-1?Q?Rbol4NVRPUYDZnt70chif9kO6jxW4pH55xK/TCbdXulV2+6XvrZXRODEv7?=
+ =?iso-8859-1?Q?VjvG0ytan7ptHeEJVIb2aVL+GzUYc0X295med2zfLztz6CNCLdkpgLF/L+?=
+ =?iso-8859-1?Q?DIBKtrQrSInTwejMfMZau4hwIDEfnaM8oXUqqOFkUx3BbOEeDAXloKywy2?=
+ =?iso-8859-1?Q?42mJR2iDFBwkv0v+uRrxI0v4k23SueB6zxGVLrzPHpLDUSLhhpYx+TDzLl?=
+ =?iso-8859-1?Q?aqfrdguMZUQxmKDD2XQaHkMf8PhkV2s/+a2ldU1FV8raZanIkbaCef4BB2?=
+ =?iso-8859-1?Q?FMglL2zDI1KVoXNyvDGgcYCXRZO7psbrVFX2JZis0oEKC2f2AZ6rFrk10K?=
+ =?iso-8859-1?Q?d1Hxv9fZbSCp6yIij/3+kDq3VnKxISLheEW6I51C0oThKBFRFlq9dzDoAx?=
+ =?iso-8859-1?Q?QHHFxOpHQHOvs8QgWDHNHnqCFSaOFXBz2VMhRYdcIJFrwcznUgfiQ8sA?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 584a96d4-fc19-43ae-91ad-08dc7a6cca0a
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 14:36:28.5590
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 14:38:04.7764
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jHVB/bEE8XKI/87V3NRtNaWWJ56Aj+XlgjqLxJWjRxRTEoVqMMUOSjn+8g95nxSW
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4187
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ev81BIKOv7vTQXA+MxE54R9jj+p5edi3n54p/RSxrhyT5nkhQrw4N9Pn0tzXp+RvF7bbbmpR+P7LxitF+XZhgQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7288
+X-OriginatorOrg: intel.com
 
 
 
-On 5/21/24 12:56 PM, Mathieu Poirier wrote:
-> Hi Tanmay,
-> 
-> On Fri, May 10, 2024 at 05:51:25PM -0700, Tanmay Shah wrote:
->> It is possible that remote processor is already running before
->> linux boot or remoteproc platform driver probe. Implement required
->> remoteproc framework ops to provide resource table address and
->> connect or disconnect with remote processor in such case.
->> 
->> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->> ---
->> 
->> Changes in v2:
->>   - Fix following sparse warnings
->> 
->> drivers/remoteproc/xlnx_r5_remoteproc.c:827:21: sparse:    expected struct rsc_tbl_data *rsc_data_va
->> drivers/remoteproc/xlnx_r5_remoteproc.c:844:18: sparse:    expected struct resource_table *rsc_addr
->> drivers/remoteproc/xlnx_r5_remoteproc.c:898:24: sparse:    expected void volatile [noderef] __iomem *addr
->> 
->>  drivers/remoteproc/xlnx_r5_remoteproc.c | 164 +++++++++++++++++++++++-
->>  1 file changed, 160 insertions(+), 4 deletions(-)
->> 
->> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
->> index 84243d1dff9f..039370cffa32 100644
->> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
->> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
->> @@ -25,6 +25,10 @@
->>  /* RX mailbox client buffer max length */
->>  #define MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
->>  				 sizeof(struct zynqmp_ipi_message))
->> +
->> +#define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
->> +				 (uint32_t)'m' << 8 | (uint32_t)'p')
->> +
->>  /*
->>   * settings for RPU cluster mode which
->>   * reflects possible values of xlnx,cluster-mode dt-property
->> @@ -73,6 +77,15 @@ struct mbox_info {
->>  	struct mbox_chan *rx_chan;
->>  };
->>  
->> +/* Xilinx Platform specific data structure */
->> +struct rsc_tbl_data {
->> +	const int version;
->> +	const u32 magic_num;
->> +	const u32 comp_magic_num;
-> 
-> Why is a complement magic number needed?
+Hello,
 
-Actually magic number is 64-bit. There is good chance that
-firmware can have 32-bit op-code or data same as magic number, but very less
-chance of its complement in the next address. So, we can assume magic number
-is 64-bit. 
+kernel test robot noticed a 17.8% improvement of stress-ng.cpu-online.ops_per_sec on:
 
-> 
->> +	const u32 rsc_tbl_size;
->> +	const uintptr_t rsc_tbl;
->> +} __packed;
->> +
->>  /*
->>   * Hardcoded TCM bank values. This will stay in driver to maintain backward
->>   * compatibility with device-tree that does not have TCM information.
->> @@ -95,20 +108,24 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
->>  /**
->>   * struct zynqmp_r5_core
->>   *
->> + * @rsc_tbl_va: resource table virtual address
->>   * @dev: device of RPU instance
->>   * @np: device node of RPU instance
->>   * @tcm_bank_count: number TCM banks accessible to this RPU
->>   * @tcm_banks: array of each TCM bank data
->>   * @rproc: rproc handle
->> + * @rsc_tbl_size: resource table size retrieved from remote
->>   * @pm_domain_id: RPU CPU power domain id
->>   * @ipi: pointer to mailbox information
->>   */
->>  struct zynqmp_r5_core {
->> +	struct resource_table *rsc_tbl_va;
-> 
-> Shouldn't this be of type "void __iomem *"?  Did sparse give you trouble on that
-> one?
 
-I fixed sparse warnings with typecast below [1].
+commit: 2125c0034c5dfd61171b494bd309bb7637bff6eb ("cgroup/cpuset: Make cpuset hotplug processing synchronous")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
 
-> 
->>  	struct device *dev;
->>  	struct device_node *np;
->>  	int tcm_bank_count;
->>  	struct mem_bank_data **tcm_banks;
->>  	struct rproc *rproc;
->> +	u32 rsc_tbl_size;
->>  	u32 pm_domain_id;
->>  	struct mbox_info *ipi;
->>  };
->> @@ -621,10 +638,19 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
->>  {
->>  	int ret;
->>  
->> -	ret = add_tcm_banks(rproc);
->> -	if (ret) {
->> -		dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
->> -		return ret;
->> +	/**
-> 
-> Using "/**" is for comments that will endup in the documentation, which I don't
-> think is needed here.  Please correct throughout the patch.
+testcase: stress-ng
+test machine: 64 threads 2 sockets Intel(R) Xeon(R) Gold 6346 CPU @ 3.10GHz (Ice Lake) with 256G memory
+parameters:
 
-Thanks. Ack, I will use only /* format.
+	nr_threads: 100%
+	testtime: 60s
+	test: cpu-online
+	cpufreq_governor: performance
 
-> 
->> +	 * For attach/detach use case, Firmware is already loaded so
->> +	 * TCM isn't really needed at all. Also, for security TCM can be
->> +	 * locked in such case and linux may not have access at all.
->> +	 * So avoid adding TCM banks. TCM power-domains requested during attach
->> +	 * callback.
->> +	 */
->> +	if (rproc->state != RPROC_DETACHED) {
->> +		ret = add_tcm_banks(rproc);
->> +		if (ret) {
->> +			dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
->> +			return ret;
->> +		}
->>  	}
->>  
->>  	ret = add_mem_regions_carveout(rproc);
->> @@ -662,6 +688,123 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
->>  	return 0;
->>  }
->>  
->> +static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc,
->> +							     size_t *size)
->> +{
->> +	struct zynqmp_r5_core *r5_core;
->> +
->> +	r5_core = rproc->priv;
->> +
->> +	*size = r5_core->rsc_tbl_size;
->> +
->> +	return r5_core->rsc_tbl_va;
->> +}
->> +
->> +static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
->> +{
->> +	struct device *dev = r5_core->dev;
->> +	struct rsc_tbl_data *rsc_data_va;
->> +	struct resource_table *rsc_addr;
->> +	struct resource res_mem;
->> +	struct device_node *np;
->> +	int ret;
->> +
->> +	/**
->> +	 * It is expected from remote processor firmware to provide resource
->> +	 * table address via struct rsc_tbl_data data structure.
->> +	 * Start address of first entry under "memory-region" property list
->> +	 * contains that data structure which holds resource table address, size
->> +	 * and some magic number to validate correct resource table entry.
->> +	 */
->> +	np = of_parse_phandle(r5_core->np, "memory-region", 0);
->> +	if (!np) {
->> +		dev_err(dev, "failed to get memory region dev node\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	ret = of_address_to_resource(np, 0, &res_mem);
->> +	if (ret) {
->> +		dev_err(dev, "failed to get memory-region resource addr\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	rsc_data_va = (struct rsc_tbl_data *)devm_ioremap_wc(dev, res_mem.start,
->> +							     sizeof(struct rsc_tbl_data));
-> 
-> There is no point in holding memory until the driver is unloaded.  Please use
-> ioremap_wc() and free at the end of the function.
-> 
 
-Ack.
+In addition to that, the commit also has significant impact on the following tests:
 
->> +	if (!rsc_data_va) {
->> +		dev_err(dev, "failed to map resource table data address\n");
->> +		return -EIO;
->> +	}
->> +
->> +	/**
->> +	 * If RSC_TBL_XLNX_MAGIC number and its complement isn't found then
->> +	 * do not consider resource table address valid and don't attach
->> +	 */
->> +	if (rsc_data_va->magic_num != RSC_TBL_XLNX_MAGIC ||
->> +	    rsc_data_va->comp_magic_num != ~RSC_TBL_XLNX_MAGIC) {
->> +		dev_dbg(dev, "invalid magic number, won't attach\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	rsc_addr = (struct resource_table *)ioremap_wc(rsc_data_va->rsc_tbl,
->> +						       rsc_data_va->rsc_tbl_size);
++------------------+---------------------------------------------------------------------------------------------+
+| testcase: change | stress-ng: stress-ng.cpu-online.ops_per_sec 13.1% improvement                               |
+| test machine     | 224 threads 2 sockets Intel(R) Xeon(R) Platinum 8480CTDX (Sapphire Rapids) with 512G memory |
+| test parameters  | cpufreq_governor=performance                                                                |
+|                  | nr_threads=100%                                                                             |
+|                  | test=cpu-online                                                                             |
+|                  | testtime=60s                                                                                |
++------------------+---------------------------------------------------------------------------------------------+
 
-[1] Here typecast is done.
 
->> +	if (!rsc_addr) {
->> +		dev_err(dev, "failed to get rsc_addr\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	/**
->> +	 * As of now resource table version 1 is expected. Don't fail to attach
->> +	 * but warn users about it.
->> +	 */
->> +	if (rsc_addr->ver != 1)
->> +		dev_warn(dev, "unexpected resource table version %d\n",
->> +			 rsc_addr->ver);
->> +
->> +	r5_core->rsc_tbl_size = rsc_data_va->rsc_tbl_size;
->> +	r5_core->rsc_tbl_va = rsc_addr;
->> +
->> +	return 0;
->> +}
->> +
->> +static int zynqmp_r5_attach(struct rproc *rproc)
->> +{
->> +	struct zynqmp_r5_core *r5_core = rproc->priv;
->> +	int i, pm_domain_id, ret;
->> +
->> +	/*
->> +	 * Firmware is loaded in TCM. Request TCM power domains to notify
->> +	 * platform management controller that TCM is in use. This will be
->> +	 * released during unprepare callback.
->> +	 */
->> +	for (i = 0; i < r5_core->tcm_bank_count; i++) {
->> +		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
->> +		ret = zynqmp_pm_request_node(pm_domain_id,
->> +					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
->> +					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
->> +		if (ret < 0)
->> +			pr_warn("TCM %d can't be requested\n", i);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int zynqmp_r5_detach(struct rproc *rproc)
->> +{
->> +	struct zynqmp_r5_core *r5_core = rproc->priv;
->> +
->> +	/*
->> +	 * Generate last notification to remote after clearing virtio flag.
->> +	 * Remote can avoid polling on virtio reset flag if kick is generated
->> +	 * during detach by host and check virtio reset flag on kick interrupt.
->> +	 */
->> +	zynqmp_r5_rproc_kick(rproc, 0);
->> +
->> +	iounmap((void __iomem *)r5_core->rsc_tbl_va);
->> +	r5_core->rsc_tbl_va = NULL;
-> 
-> This is puzzling...  What happens to ->tsc_tbl_va when the remote processor is
-> re-attached? 
 
-Actually I don't see re-attach in life cycle. I might be missing something.
-Following is lifecycle I have tested:
 
-1) During driver probe, if resource table is found in memory, then state is
-   moved to detach.
-2) Then user executes echo start > remoteproc* command, and state moved to attach.
-3) After work is done with remote, user executes echo stop > remoteproc* command,
-   and state is moved to offline.
+Details are as below:
+-------------------------------------------------------------------------------------------------->
 
-From here, remote is offline state, and I can't re-attach to it without loading
-firmware again. which is regular start/stop states. Please let me know if I am missing
-something.
 
-From here, load firmware, and executing echo start > remoteproc* moves
-rproc state to running. Load firmware loads resource table from elf.
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20240522/202405222215.d537a85f-oliver.sang@intel.com
 
-So, I believe attach is happening only during probe. And then, once r5 stops, user
-needs to load firmware and start R5. I think this use case is good for now.
- 
-> 
-> I will not look at the SRAM part.  Please re-submit when we are done with the
-> attach/detach feature.
-> 
+=========================================================================================
+compiler/cpufreq_governor/kconfig/nr_threads/rootfs/tbox_group/test/testcase/testtime:
+  gcc-13/performance/x86_64-rhel-8.3/100%/debian-12-x86_64-20240206.cgz/lkp-icl-2sp9/cpu-online/stress-ng/60s
 
-Okay sounds good to me.
-Reviews are still welcomed if anyone in the community decides to review it.
+commit: 
+  4793cb599b ("selftests: cgroup: skip test_cgcore_lesser_ns_open when cgroup2 mounted without nsdelegate")
+  2125c0034c ("cgroup/cpuset: Make cpuset hotplug processing synchronous")
 
-Thanks,
-Tanmay
- > Thanks,
-> Mathieu
-> 
->> +
->> +	return 0;
->> +}
->> +
->>  static const struct rproc_ops zynqmp_r5_rproc_ops = {
->>  	.prepare	= zynqmp_r5_rproc_prepare,
->>  	.unprepare	= zynqmp_r5_rproc_unprepare,
->> @@ -673,6 +816,9 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
->>  	.sanity_check	= rproc_elf_sanity_check,
->>  	.get_boot_addr	= rproc_elf_get_boot_addr,
->>  	.kick		= zynqmp_r5_rproc_kick,
->> +	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
->> +	.attach		= zynqmp_r5_attach,
->> +	.detach		= zynqmp_r5_detach,
->>  };
->>  
->>  /**
->> @@ -723,6 +869,16 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
->>  		goto free_rproc;
->>  	}
->>  
->> +	/*
->> +	 * Move rproc state to DETACHED to give one time opportunity to attach
->> +	 * if firmware is already available in the memory. This can happen if
->> +	 * firmware is loaded via debugger or by any other agent in the system.
->> +	 * If firmware isn't available in the memory and resource table isn't found,
->> +	 * then rproc state stay OFFLINE.
->> +	 */
->> +	if (!zynqmp_r5_get_rsc_table_va(r5_core))
->> +		r5_rproc->state = RPROC_DETACHED;
->> +
->>  	r5_core->rproc = r5_rproc;
->>  	return r5_core;
->>  
->> -- 
->> 2.25.1
->> 
+4793cb599b1bdc3d 2125c0034c5dfd61171b494bd30 
+---------------- --------------------------- 
+         %stddev     %change         %stddev
+             \          |                \  
+ 2.751e+09 ±  2%      -9.7%  2.483e+09 ±  2%  cpuidle..time
+      4.07 ± 12%     -20.6%       3.23 ± 11%  vmstat.procs.r
+      2.87            +0.5        3.34 ±  4%  mpstat.cpu.all.sys%
+     16.83 ± 37%     -68.3%       5.33 ± 64%  mpstat.max_utilization.seconds
+      1130 ± 23%     +72.3%       1948 ± 14%  numa-meminfo.node0.Active
+      1119 ± 24%     +69.2%       1894 ± 15%  numa-meminfo.node0.Active(anon)
+    280.28 ± 24%     +69.1%     474.04 ± 15%  numa-vmstat.node0.nr_active_anon
+    280.28 ± 24%     +69.1%     474.03 ± 15%  numa-vmstat.node0.nr_zone_active_anon
+      0.03 ± 63%    +202.3%       0.10 ± 65%  perf-stat.i.major-faults
+      0.03 ± 62%    +200.9%       0.09 ± 65%  perf-stat.ps.major-faults
+    171.45 ± 14%     -25.8%     127.20 ± 17%  sched_debug.cfs_rq:/.load_avg.avg
+    116.43 ± 10%     -31.4%      79.84 ± 23%  sched_debug.cfs_rq:/.removed.load_avg.avg
+    319.20 ±  4%     -16.3%     267.32 ± 10%  sched_debug.cfs_rq:/.removed.load_avg.stddev
+    111.20 ± 45%    +114.3%     238.25 ± 32%  stress-ng.cpu-online.millisecs_per_online_action
+    516.50           +14.8%     593.00 ±  3%  stress-ng.cpu-online.ops
+      7.72 ±  2%     +17.8%       9.09 ±  3%  stress-ng.cpu-online.ops_per_sec
+
+
+***************************************************************************************************
+lkp-spr-2sp4: 224 threads 2 sockets Intel(R) Xeon(R) Platinum 8480CTDX (Sapphire Rapids) with 512G memory
+=========================================================================================
+compiler/cpufreq_governor/kconfig/nr_threads/rootfs/tbox_group/test/testcase/testtime:
+  gcc-13/performance/x86_64-rhel-8.3/100%/debian-12-x86_64-20240206.cgz/lkp-spr-2sp4/cpu-online/stress-ng/60s
+
+commit: 
+  4793cb599b ("selftests: cgroup: skip test_cgcore_lesser_ns_open when cgroup2 mounted without nsdelegate")
+  2125c0034c ("cgroup/cpuset: Make cpuset hotplug processing synchronous")
+
+4793cb599b1bdc3d 2125c0034c5dfd61171b494bd30 
+---------------- --------------------------- 
+         %stddev     %change         %stddev
+             \          |                \  
+    -13.50           +34.6%     -18.17        sched_debug.cpu.nr_uninterruptible.min
+     59969            +5.2%      63066        vmstat.system.cs
+      0.54 ±  4%      +0.1        0.63 ±  2%  mpstat.cpu.all.irq%
+      0.17 ±  3%      +0.0        0.18 ±  2%  mpstat.cpu.all.usr%
+      1678 ±  5%     +13.9%       1912 ±  7%  perf-stat.i.cpu-migrations
+      1660 ±  5%     +13.9%       1890 ±  7%  perf-stat.ps.cpu-migrations
+    479.33 ±  4%      +7.5%     515.50        stress-ng.cpu-online.ops
+      4.86 ±  4%     +13.1%       5.50 ±  3%  stress-ng.cpu-online.ops_per_sec
+
+
+
+Disclaimer:
+Results have been estimated based on internal Intel analysis and are provided
+for informational purposes only. Any difference in system hardware or software
+design or configuration may affect actual performance.
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
