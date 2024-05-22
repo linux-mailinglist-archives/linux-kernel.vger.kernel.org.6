@@ -1,137 +1,219 @@
-Return-Path: <linux-kernel+bounces-186669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318F88CC734
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:33:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F588CC73C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0B66B2117A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:33:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CDF9B219AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622E5148848;
-	Wed, 22 May 2024 19:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C0B1465BE;
+	Wed, 22 May 2024 19:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KegHVOdk"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FYdDU9A0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CA2148314;
-	Wed, 22 May 2024 19:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A607B208C4
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 19:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716406130; cv=none; b=G9VEYih0YHoQrjU2QJ05/7IA1xIjDZ2zvnTWCLnuk6gjpcAYhGGEIDGMoB+ccYcyMb5cqdzD3GFoX5JrP+Y0u0k7IBcwl7DFlvanqhyYdm4QOvonB0yiRxkduJwC33ZnBKyc82+Sb+9NTahBCpY6l/Y4Q1vzPEEzLX8mpvxSMbA=
+	t=1716406539; cv=none; b=DhDkSoj1hUxsDggOyMbkVLn5YdQYczN36Wr6TenDE5nETPwkDlto8Iyc3DICh7x8KWDFGa2w9VOEq2ZzA0FHH/tvG75HZEhqTHQlkz6JSUEnbcbAStjAEjOW7Ch4unXSoZx8O9yyiIG6Mf6MueV9QS88MmU3rxO1+mG2SPprCGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716406130; c=relaxed/simple;
-	bh=asqTH8IVJLtiuy+OydqF1YSC4+AWx5xmAD1qinDcuos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M+lGwa+Sg8UM8mbNwRUYmlzbf1vt6XHxL9AFfeE85iKk/sfrm3f54aJKt57n7RwnsJCjaYaeR7FOyFuf5qcOCnq5ai467TBQzguhgvOadcuJN8DkBi3wUpugq9m5l6i//WuyS856y/GlsVmn5KLoRO/N3OAfAy1xefrUpIt6D1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KegHVOdk; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b31f2c6e52so2272434eaf.2;
-        Wed, 22 May 2024 12:28:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716406128; x=1717010928; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p9CpjKztRQ/VjY+lu7XUjYKlv0LD57wkTyNwyxdQqMc=;
-        b=KegHVOdkazxBTpoOfVnG/sjcnPDuE/pQUrxSc8AWVpdZGghcjHkRafW67LEHXWoT/c
-         TyomOsRuGEQ3n83O9g5i9TjbY7u/dywOr3RIgZ1yFdNONqDLHKwinpHbyLNU3h1wzXWb
-         WapdD2ae9cc4Qs3j3zPg+Kx3+M3Zr/iXweQv8qRP4nWuNxHu5qyD0ZT8UMvhiQrLhHEz
-         9+R5qEJrwYjNMajYTygu+yZ9S+ggaKN2zeKeSf2/x0Q98JsB9s7Cbt8OlVxeMspJy/I0
-         IglAxNCKsq+A28c6dKvcXKGMN6AzMHelzsB4Lx5Qtj/E0g0lO+xo6Y9I/apLY3goiBas
-         3hZg==
+	s=arc-20240116; t=1716406539; c=relaxed/simple;
+	bh=xav3iiKSeBipoGj+DLAI3WzYsOvexRoEj8bZu9vP+Gg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=S05itRYHlMVGlF0FH4tWpDP+2Zi5Ub3Ae9f2NxkXRnSMfHtd5t8+OeFaXvCpWQIWCwA8e+clLMxFxqPSntya2vtUiJSsyAQk4m+yoSlqR5U5qJDj02fMypuw3ZcvlbMSsx1iFuQUVPKHzx1wcZTvxMHP31kNJBcQt9QaKDpiQ+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FYdDU9A0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716406536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I1+GUtmZEMisQFH3yNqOkGsNRPJHqCdk4whL2W9DFJs=;
+	b=FYdDU9A0DjYgNfOzDvOBMiEqwP+yKeJiMnooGCcHN4xrj36WIBqOFqzsQfuV/VlSzEhJc/
+	Cbf6U5Z0uXXV2tECWh9k2dcVgNtLe9dEpnDc4OTdWTMx0scSW1+zTRtRNOjKGbb/kvfvaJ
+	upsSo0B04oxR7nYXUaj1ct4rf+0GJz0=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-458-cslL7RebNRCmhu0xlSDMdw-1; Wed, 22 May 2024 15:35:35 -0400
+X-MC-Unique: cslL7RebNRCmhu0xlSDMdw-1
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-627eb3fb46cso15353627b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:35:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716406128; x=1717010928;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p9CpjKztRQ/VjY+lu7XUjYKlv0LD57wkTyNwyxdQqMc=;
-        b=fDVEo2sXObOqIEhebqkGCmziHrRfAhQoIxJL5secRnv9bkcLLYbRu/P4XQemXIymcz
-         phAmt56wGzPZLK8GuSR1+6TYAwkkn8stoW4Y+MCy4uG7mZc1OCDvItMtdpMHUSP0Pd5v
-         oSLGc2BmjSqdGVNR0StKbp7ojDWkQ14t4vHAJt/MclM/uWi7gc6VdEm8raaurLvxmyWN
-         hyDP65+A2Jiqywp0TKMB32ch69IMwriyzWH018WnpqhpDak2OGghsYAp1+KhyYOb1Q9E
-         g6rnIpYZb22f8sJZhGQWlPA0ufImrqbLDnxNBomYnfSM6enwp6V7lHXAM+maJFni28C2
-         rUbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZvu8QVlrwaf+QUa4bh1yh1K3GjCH4uNLzCS5ASwUCEHT6+gh+0/wtqpH/wj6FytFj1kcA4hIns9YAmyuhhAo0TmJ0rECTFeeqwCoh
-X-Gm-Message-State: AOJu0YyDsFecU6AH4hOh/XPRlqejs6o6qdBbrxV3b7FLfvDcpijR0vLx
-	ngdKwEk3kJwHRG9Mlqip0W+n73aaep4Y4NYMZ7USTUaWLbwjJJpf
-X-Google-Smtp-Source: AGHT+IHuNrKoXEFiaRZX1E47Xdrl9Xv8ilNKbTR2scVi8VwkWewMUYlUC2tfGxuI8NqekB93CD5A4g==
-X-Received: by 2002:a05:6359:2d05:b0:18d:7b30:eec1 with SMTP id e5c5f4694b2df-19791f23572mr243689555d.19.1716406128041;
-        Wed, 22 May 2024 12:28:48 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:d9d8:1fc1:6a1c:984b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a819e7sm22826164b3a.56.2024.05.22.12.28.47
+        d=1e100.net; s=20230601; t=1716406535; x=1717011335;
+        h=mime-version:user-agent:content-transfer-encoding:organization
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I1+GUtmZEMisQFH3yNqOkGsNRPJHqCdk4whL2W9DFJs=;
+        b=ISeTaUg8OzKuaYRxc0Os9WWdXrAtwXluXrV9lqdMmheIjTbz2yeNJ5b1/SuJ/fFCXO
+         9uH21lN6qoGOgrXV9RKMHBTbusPWzi2m0W5DdS6tqcyySlLM+XHbhTa+31SHiWqe0/vc
+         1yZjmI1gP0Gu0lFBFl9oy8hDPsWvJVdk7yyhqjUqm0avWeXGLzLPt2s2WvXFp4E8ajXh
+         y5HioKhd5xoj5if2PS8jE7IUpCg7Dc2ovQFE2NZPwmOaNGvNjmRbfBZ8ncQ00tmLp7TW
+         sD7xz92GJzSkwOgFARIAynRkRfSq80HRMGMWwtgsj2u8Wz6auKoB3lysDA109ZbZhLE+
+         i9Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBEgRmJ1MK0sMgyumYJuld+JHkpE9bRGgaDr0l/kr3mdnX6QJl4Fok65v5zdl91TD1LvhUI1d2dk6530nkq23p62Mq3k0Yr+oPd8VK
+X-Gm-Message-State: AOJu0YxObQpbfCDLSRKnPA9RCggEJgrAGbAilhNuqGsy5+7a227p+PMs
+	DRzjVL0JZBBhpfJz5ko3ZadC7FxVkMGXFLPJMzS8bYO40EehyEfXlTRet/e/PBJ+b/Fx+TgUIaF
+	TYxhJUj/MIykCOinlz4OY1ToI8QMw75wpjZNIgY0/iVxb4wg5Jbz7Kbwpg7i8vw==
+X-Received: by 2002:a05:690c:ec8:b0:622:d6af:2555 with SMTP id 00721157ae682-627e46c99dfmr37663627b3.2.1716406534934;
+        Wed, 22 May 2024 12:35:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGkeKHMpWK8NcbIqif3cn71ot7RxQSe8rSsBapJOvWCPrePt7YrMQWmfal+XiT4DcmQGYyAUw==
+X-Received: by 2002:a05:690c:ec8:b0:622:d6af:2555 with SMTP id 00721157ae682-627e46c99dfmr37663307b3.2.1716406534434;
+        Wed, 22 May 2024 12:35:34 -0700 (PDT)
+Received: from ?IPv6:2600:4040:5c6c:a300:d6d6:453d:2844:4388? ([2600:4040:5c6c:a300:d6d6:453d:2844:4388])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a62014446fsm53408446d6.31.2024.05.22.12.35.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 12:28:47 -0700 (PDT)
-Date: Wed, 22 May 2024 12:28:45 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: John Keeping <jkeeping@inmusicbrands.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: ili210x - fix ili251x_read_touch_data() return
- value
-Message-ID: <Zk5HbaC7FbIia3RV@google.com>
-References: <20240522100341.1650842-1-jkeeping@inmusicbrands.com>
+        Wed, 22 May 2024 12:35:33 -0700 (PDT)
+Message-ID: <d4496b4ed8a8a7bb34cf12e4cce65a6ad6705bc0.camel@redhat.com>
+Subject: Re: Early boot regression from f0551af0213 ("x86/topology: Ignore
+ non-present APIC IDs in a present package")
+From: Lyude Paul <lyude@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>, "Linux regression tracking
+ (Thorsten Leemhuis)" <regressions@leemhuis.info>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Mario Limonciello
+	 <mario.limonciello@amd.com>, Borislav Petkov <bp@alien8.de>, Linux kernel
+ regressions list <regressions@lists.linux.dev>
+Date: Wed, 22 May 2024 15:35:21 -0400
+In-Reply-To: <87wmntkhak.ffs@tglx>
+References: <3d77cb89857ee43a9c31249f4eab7196013bc4b4.camel@redhat.com>
+	 <20240418082703.GCZiDZVyra7qOQbyqn@fat_crate.local>
+	 <fd040809d95b3e12b2fdc78a2409e187716bc66f.camel@redhat.com>
+	 <87plumxz4x.ffs@tglx>
+	 <abbb7d7ca781f6c664e4c5b1dffc19394ac79691.camel@redhat.com>
+	 <87le59vw1y.ffs@tglx>
+	 <3a0afe545747e5314a9cb6bbaa9ce90b259ddfac.camel@redhat.com>
+	 <87edautcmz.ffs@tglx>
+	 <3b1d16e357c1f9badeef405366492f05af26c085.camel@redhat.com>
+	 <878r11t8zu.ffs@tglx> <016902d9-3858-4c65-b3ec-f7a5103af63c@amd.com>
+	 <51d0dff8-2888-463c-95ab-71b491f12a8f@leemhuis.info> <877cg4ppd5.ffs@tglx>
+	 <ea927dad269cc21de1d0baf3d6c9f66ee025b862.camel@redhat.com>
+	 <d2c6f335a6eb5892b0d894d5df4a6e713fa013b5.camel@redhat.com>
+	 <87jzjxn6s5.ffs@tglx>
+	 <d3fe5278e7cd5af6c62b470b281b547b67e3959a.camel@redhat.com>
+	 <97bd95480a8b9951edc9ee2d2648d1b9c574e3b0.camel@redhat.com>
+	 <87bk58n6le.ffs@tglx>
+	 <2fd6009d21d606d13f0c472dbaa754a21f3105d9.camel@redhat.com>
+	 <87wmntkhak.ffs@tglx>
+Organization: Red Hat Inc.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522100341.1650842-1-jkeeping@inmusicbrands.com>
 
-On Wed, May 22, 2024 at 11:03:41AM +0100, John Keeping wrote:
-> The caller of this function treats all non-zero values as an error, so
-> the return value of i2c_master_recv() cannot be returned directly.
-> Follow the same pattern as ili211x_read_touch_data() to return zero when
-> the correct number of bytes is read and a negative error code otherwise.
-> 
-> This fixes touch reporting when there are more than 6 active touches.
-> 
-> Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
+Awesome! This patch does seem to make the system boot, thank you for your h=
+elp
+<3
+
+Tested-by: Lyude Paul <lyude@redhat.com>
+
+On Thu, 2024-05-16 at 15:38 +0200, Thomas Gleixner wrote:
+> Lyude!
+>=20
+> On Wed, May 15 2024 at 19:15, Lyude Paul wrote:
+> > On Tue, 2024-05-14 at 10:25 +0200, Thomas Gleixner wrote:
+> > >=20
+> > > Which one of the debug patches did you use?
+> >=20
+> > The one you sent on 4/18, when you also asked me for the output of
+> > /sys/kernel/debug/x86/topo/
+> >=20
+> > (I thought I remembered that patch not booting on previous kernels but =
+maybe
+> > I'm misremembering)
+>=20
+> It booted with the -rc kernel too. :)
+>=20
+> I found an interesting and probably related difference in the boot logs
+> though. Up to 8 possible CPUs the kernel uses logical destination mode
+> for the APIC. With more than 8 it uses physical destination mode.
+>=20
+> Can you please test the patch below on top of 6.9 and validate that it
+> boots w/o any magic command line parameter?
+>=20
+> Thanks,
+>=20
+>         tglx
 > ---
->  drivers/input/touchscreen/ili210x.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/ili210x.c b/drivers/input/touchscreen/ili210x.c
-> index 31ffdc2a93f35..8846c6d10fc0d 100644
-> --- a/drivers/input/touchscreen/ili210x.c
-> +++ b/drivers/input/touchscreen/ili210x.c
-> @@ -255,14 +255,15 @@ static int ili251x_read_reg(struct i2c_client *client,
->  static int ili251x_read_touch_data(struct i2c_client *client, u8 *data)
+> diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+> index 66fd4b2a37a3..db5e93a7c194 100644
+> --- a/arch/x86/kernel/apic/apic.c
+> +++ b/arch/x86/kernel/apic/apic.c
+> @@ -1883,6 +1883,8 @@ static inline void try_to_enable_x2apic(int remap_m=
+ode) { }
+>  static inline void __x2apic_enable(void) { }
+>  #endif /* !CONFIG_X86_X2APIC */
+> =20
+> +int irq_remap_mode =3D -1;
+> +
+>  void __init enable_IR_x2apic(void)
 >  {
->  	int error;
-> +	int ret;
->  
->  	error = ili251x_read_reg_common(client, REG_TOUCHDATA,
->  					data, ILI251X_DATA_SIZE1, 0);
->  	if (!error && data[0] == 2) {
-> -		error = i2c_master_recv(client, data + ILI251X_DATA_SIZE1,
-> -					ILI251X_DATA_SIZE2);
-> -		if (error >= 0 && error != ILI251X_DATA_SIZE2)
-> -			error = -EIO;
+>  	unsigned long flags;
+> @@ -1915,6 +1917,8 @@ void __init enable_IR_x2apic(void)
+> =20
+>  	if (ir_stat < 0)
+>  		restore_ioapic_entries();
+> +	else
+> +		irq_remap_mode =3D ir_stat;
+>  	legacy_pic->restore_mask();
+>  	local_irq_restore(flags);
+>  }
+> diff --git a/arch/x86/kernel/apic/apic_flat_64.c b/arch/x86/kernel/apic/a=
+pic_flat_64.c
+> index f37ad3392fec..5cc386db3557 100644
+> --- a/arch/x86/kernel/apic/apic_flat_64.c
+> +++ b/arch/x86/kernel/apic/apic_flat_64.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/export.h>
+>  #include <linux/acpi.h>
+> =20
+> +#include <asm/irq_remapping.h>
+>  #include <asm/jailhouse_para.h>
+>  #include <asm/apic.h>
+> =20
+> @@ -130,7 +131,8 @@ static int physflat_acpi_madt_oem_check(char *oem_id,=
+ char *oem_table_id)
+> =20
+>  static int physflat_probe(void)
+>  {
+> -	return apic =3D=3D &apic_physflat || num_possible_cpus() > 8 || jailhou=
+se_paravirt();
+> +	return apic =3D=3D &apic_physflat || irq_remap_mode =3D=3D IRQ_REMAP_XA=
+PIC_MODE ||
+> +		num_possible_cpus() > 8 || jailhouse_paravirt();
+>  }
+> =20
+>  static struct apic apic_physflat __ro_after_init =3D {
+> diff --git a/arch/x86/kernel/apic/local.h b/arch/x86/kernel/apic/local.h
+> index 842fe28496be..f633ab6dfa9f 100644
+> --- a/arch/x86/kernel/apic/local.h
+> +++ b/arch/x86/kernel/apic/local.h
+> @@ -22,6 +22,8 @@ void x2apic_send_IPI_allbutself(int vector);
+>  void x2apic_send_IPI_self(int vector);
+>  extern u32 x2apic_max_apicid;
+> =20
+> +extern int irq_remap_mode;
+> +
+>  /* IPI */
+> =20
+>  DECLARE_STATIC_KEY_FALSE(apic_use_ipi_shorthand);
+>=20
 
-Thanks for noticing this. Can we say
+--=20
+Cheers,
+ Lyude Paul (she/her)
+ Software Engineer at Red Hat
 
-		if (error >= 0)
-			error = error != ILI251X_DATA_SIZE2 ? -EIO : 0;
-
-> +		ret = i2c_master_recv(client, data + ILI251X_DATA_SIZE1,
-> +				      ILI251X_DATA_SIZE2);
-> +		if (ret != ILI251X_DATA_SIZE2)
-> +			error = ret < 0 ? ret : -EIO;
->  	}
->  
->  	return error;
-> -- 
-> 2.45.1
-> 
-
-Thanks.
-
--- 
-Dmitry
 
