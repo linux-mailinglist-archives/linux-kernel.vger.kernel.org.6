@@ -1,128 +1,103 @@
-Return-Path: <linux-kernel+bounces-186406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48DAF8CC3CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:08:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B718CC3D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 038482847AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:08:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31D4E284E0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB72328E34;
-	Wed, 22 May 2024 15:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F7B3CF63;
+	Wed, 22 May 2024 15:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k8eE1/mp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IUBB4+ZW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F4C22F0D;
-	Wed, 22 May 2024 15:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4753CF5E;
+	Wed, 22 May 2024 15:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716390483; cv=none; b=SySQKtm4XinClsFyKqgGjlTveXwzaD4aHSEnid0UuKUpC0F3RDO949ZUGvOysjVDJSPSQdSv32vblRS4FSTAtHSDVQqkfzuDHm5mI1MKYRPaF23e6/D8jBdpuEQ36DthsZYhc0KRBjm69SlWfcZZHNBt8CYG8FKQxBfUwV560IM=
+	t=1716390488; cv=none; b=GjB8buRxE6HlJRxQnCM4Vp6W5+W+rRE9g5nNfcz8M/Ae1ggfbyFmdme1YppCNTpvT/igLILmkhLpAhyiZUPOd7FLYQGElse3hldIOFxP9XpxeWmz0ajG3pzo0J3Wov7dU1zBT2D1g5upCt6C3TJHQjCbsoDFs77hf/LJvGlqFWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716390483; c=relaxed/simple;
-	bh=PpZwJfjlRA2zGPwkwSl4YW9dyiXTZREZRpX0Vrwmr6Q=;
+	s=arc-20240116; t=1716390488; c=relaxed/simple;
+	bh=6IRdBy3FEtebXbSzks+rilS62GNYMlbFebw5/l+vRl4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDGfD6J5Yn4fai7db81ZBRm8ykHjeJi1hSCtMjYxJHy8lMROH0nbR3M+NGNm7rDfz1yOOHW11Ohc0txAdLtDtetePguOgwpiPduGOI0EOVJyq+U2Z53zdF0K3NZUlUZKAZnxOtlqBpOvO+GDJFQQ4A9oYWOQYHRFwIBk9bn0w2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k8eE1/mp; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=mij528UALMr5N9puwyCRmbZIkwf9jP/Q+k+6EaoqBbiIKb2+qxe/3SBknLvUKhkt53fK5sVnRA1xea9h6WGEKOpg1kUx6oAj6xSWoTGlDM3r9deGcT89Efl3EhAVUN8YC/hYQUKee2c232JVDMX4IaqpcPcyAThzJRXGwumESwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IUBB4+ZW; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716390482; x=1747926482;
+  t=1716390487; x=1747926487;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=PpZwJfjlRA2zGPwkwSl4YW9dyiXTZREZRpX0Vrwmr6Q=;
-  b=k8eE1/mp39J/YmpqtQ9LaphY1bDzux2ZbeGmGdiwHUwiNxi7zN9wd7ja
-   2BaHupOs4gvzEN3HCqNzaE/1DKjILSlC0dtlB2rvoO9iEfpFpPl0AWzCJ
-   xq1WrUIF+imgSzZ4xzALRl49WKskU2c60KB19cUo7c3MOTudW9UdCU2CX
-   x23/rZkeq+7U0KvhuD/hhRlidrUc5ViolO+UlZpCMmFnMKjDKi1gabSXL
-   +uzy8HOC85FXr9waf4evAcJCjLiCU2nV/cFORhFE3Wt/xGuJdbApSqOcN
-   tmx7otIvvSsvir+2LNQ7v5pTTPeg5hYylDMDDBS/FBzqfFZdr4Wkqzvg2
+   mime-version:in-reply-to;
+  bh=6IRdBy3FEtebXbSzks+rilS62GNYMlbFebw5/l+vRl4=;
+  b=IUBB4+ZWUUkyu1gvKppEDBFac3eyP+iwYpV0F1D4mBnGWP97OYBN4dyu
+   ix9lzDLcaoNbG5HglHOSMiWeKSRHXToox9jvg3lS3sPKU/lFERCkEJe7t
+   ecrFPH/ftFfuDLdn1TIQiMWmefko+81gwfJwsh7/xPRw9PNmEVYDSCbjQ
+   ZZZcZWw2C0t0sMtbn+mSMxDW2n6ZHOwYgM/ztmSgPFWxSqTDrSmE1kDI1
+   v11jZNHqQdNVdzGJjIoQIygBd4EMie4mSGn1LHPVb93HQzRFVy+7dXg0B
+   bhgzSrUsJ8NS2U4hE+Z+2Kc49q9fLXQNYVq3ClEwT0PdvR2fb/bF75B2C
    g==;
-X-CSE-ConnectionGUID: /zR2jcxeSUqRenXsgesckg==
-X-CSE-MsgGUID: uIyE62anSniEfZZaL7MfLA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="12525513"
+X-CSE-ConnectionGUID: p+xX7/wdR1y0+8WtZZVsXw==
+X-CSE-MsgGUID: hmJ/5HicRle1dZaFEp8/ww==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="11647743"
 X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="12525513"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 08:08:01 -0700
-X-CSE-ConnectionGUID: G21mYBgcRDqZgfLR7pEdNQ==
-X-CSE-MsgGUID: t6qIuYpyR866F9sRIsACQw==
+   d="scan'208";a="11647743"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 08:08:07 -0700
+X-CSE-ConnectionGUID: 0SSeRQuvTpC/UP3YNlEMWA==
+X-CSE-MsgGUID: xeVkXVYZRAeIRpaBlWDSrA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="33233067"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 08:07:57 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s9nZK-0000000A0m8-3RXe;
-	Wed, 22 May 2024 18:07:54 +0300
-Date: Wed, 22 May 2024 18:07:54 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Nechita, Ramona" <Ramona.Nechita@analog.com>
-Cc: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
-	Maksim Kiselev <bigunclemax@gmail.com>,
-	Ivan Mikhaylov <fr0st61te@gmail.com>,
-	Marcus Folkesson <marcus.folkesson@gmail.com>,
-	Liam Beguin <liambeguin@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drivers: iio: adc: add support for ad777x family
-Message-ID: <Zk4KSlZ7NFgYx2Co@smile.fi.intel.com>
-References: <20240522120005.18197-1-ramona.nechita@analog.com>
- <9c19faf6ee186f144a705f458da83ea25f7a3a34.camel@gmail.com>
- <SN6PR03MB4320549F56148C13C4BDBBA1F3EB2@SN6PR03MB4320.namprd03.prod.outlook.com>
+   d="scan'208";a="37797831"
+Received: from ttiasha-mobl1.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.68.11])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 08:08:07 -0700
+Date: Wed, 22 May 2024 08:08:04 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] cxl/events: Use a common struct for DRAM and General
+ Media events
+Message-ID: <Zk4KVLG7zQfesBAE@aschofie-mobl2>
+References: <20240521140750.26035-1-fabio.m.de.francesco@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <SN6PR03MB4320549F56148C13C4BDBBA1F3EB2@SN6PR03MB4320.namprd03.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240521140750.26035-1-fabio.m.de.francesco@linux.intel.com>
 
-On Wed, May 22, 2024 at 03:01:52PM +0000, Nechita, Ramona wrote:
-> Hello Nuno,
+On Tue, May 21, 2024 at 04:05:08PM +0200, Fabio M. De Francesco wrote:
+> cxl_event_common was an unfortunate naming choice and caused confusion with
+> the existing Common Event Record. Furthermore, its fields didn't map all
+> the common information between DRAM and General Media Events.
 > 
-> I apologize, I accidentally submitted the updated version that I used for the
-> project, instead of the one without axi. I will fix it and resend the patch
-> asap.
+> Remove cxl_event_common and introduce cxl_event_media_hdr to record common
+> information between DRAM and General Media events.
+> 
+> cxl_event_media_hdr, which is embedded in both cxl_event_gen_media and
+> cxl_event_dram, leverages the commonalities between the two events to
+> simplify their respective handling.
+> 
+> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
 
-First of all, do not top-post!
+Reviewed-by: Alison Schofield <alison.schofield@intel.com>
 
-Second, don't do ASAP, take your time, read the comments given for this version
-and address the same / similar issues in any code you are possessing before
-sending.
-
-> -----Original Message-----
-> From: Nuno Sá <noname.nuno@gmail.com> 
-> Sent: Wednesday, May 22, 2024 5:36 PM
-> On Wed, 2024-05-22 at 14:59 +0300, ranechita wrote:
-> > Added support for ad7770,ad7771,ad7779 ADCs. The data is streamed only 
-> > on the spi-mode, without using the data lines.
-
-> Is this even compiling? This is definitely not code to be upstreamed since it
-> relies on the our out-of-tree/legacy driver for the adi-axi-adc. You need to
-> convert this to use the IIO backend framework (adding new interfaces if
-> needed).
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> ---
+> 
 
