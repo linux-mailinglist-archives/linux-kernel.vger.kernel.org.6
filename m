@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-185773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3B498CBAAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:33:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBAD78CBAB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CB561F22578
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 05:33:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44E9B1F22707
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 05:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A27768F0;
-	Wed, 22 May 2024 05:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8B27710B;
+	Wed, 22 May 2024 05:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nK6tyone"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScWb5upx"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DF433CA;
-	Wed, 22 May 2024 05:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B321103;
+	Wed, 22 May 2024 05:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716355987; cv=none; b=HJSR9bF3SrqKifk3egT+JKAu4wrb1Dt7pj/qPmF5aNRerwDFwKdShW+wseUvE/uSMWwsYuX6exqE/ufMwPfSDPSL/ccv5eR4ajAXGDUrIbA1dXpUIVEs+LqGvnCErCyupLV8cd1W0ecmEq7JXYvu9kR7Z42wtb9FgdAQVcxxdys=
+	t=1716356109; cv=none; b=pDYElhrt6VelaQvf/aZHtuOd5xqQzK7ZPd6Zil9tuJbouzc+8JgzeDxJE1gNHCS2lg+D9aXLt8pwOWDETGaX7DOjhZO5MTXItMwI2lpojtImIKllQWK278mcjn4ysPREynRiQ2MUeB9z3cTCv/UVKUTbS3Jgv6/htMfNGlNjMx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716355987; c=relaxed/simple;
-	bh=OO0I4/Keq6NDvf7HsiwmfjVb0XHvauGZWUoT3EbqoMg=;
+	s=arc-20240116; t=1716356109; c=relaxed/simple;
+	bh=IeIDVNL0556RdHCQpN6cPx4tg7Y+U1PylG3a1OAcmJo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IeS8C5sWAbAHypTsWT0Z+X87+Q4aV14NGAyfkcbYQUnM0zVPHq0WZc7e84P9IaQMalcRFy+0LTV4KoBgMl9HfSrk+Z5qLmHLvh03yuWIbgVmdqlXUtvP+ZQoLmPqBk+seOl/p9e5SzoJFMVC6Pl1H795BR4zcBxSF2Ry6UE0ah4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nK6tyone; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:Content-Type; b=EXT6bzpLjhbOS+DgonGwko0V0ZymQ0XcDsPUdo4bfQwLd9CTrnSnq8KrXHWNOwhSXZVSdZkejGntAAIOWsH286dSw9JWThqROZK6ed+Eh9ZaEMLT8XQPoo6JktJFFB6Jd7w/TlOsj0dT84du27L5I+Xx6m3n2NZAw/HaP9M3t9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScWb5upx; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-420104e5336so1862035e9.1;
-        Tue, 21 May 2024 22:33:05 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-420180b59b7so3659825e9.0;
+        Tue, 21 May 2024 22:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716355984; x=1716960784; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716356107; x=1716960907; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=IO8VtBkSuEHF59QWLoIGkPY6IJWTHpo8HEzyRNqu+NA=;
-        b=nK6tyone08/goE7/6rUaiw+IkP2OeOi8WbCmwX7k/YotylVL+UnB7eyYJW41thOlcD
-         wRvWIdqq0iPhSG63uxiE8YFBSKe0kFQroSxeJFBgVhgd0uqVfvdUhAr8VtwOoylPFfX/
-         X7GgURA1Dfd9PFZh0p3DbQJLPUWPwNZJyKI5Nbao/Vnn7k8Y53BnGGuzLIo0ZChBj5LP
-         pwJpJoYLopUlwadcXSjWberrKLqboAsa4ZTpxsy7Hi2YLvEFqt2OpMOyFDC140K4p1gm
-         PwZt30HhQrAnm9o3xhlff196qgAgI2RLamewB4Jx2gcZIGJEEO+mxy4kl67JjuZDMAVo
-         5Hug==
+        bh=hnqQb7U4e4IijacHkvjFFWOyOsyI3cgB/ooNZw5ifrU=;
+        b=ScWb5upx1ixoQioeXw53A/M3bRhdyYG+s0FQOTx9QPOZSTsEZVUNkaPLQx8gWOGYvZ
+         Hl2y7Uyu0Q5xaK1zxEEFbUqOJneh+z0fb2TSA4zbPjIugw24kyjr6aTknUTQzsNYQo4R
+         2gyArX17YrEZBBZ0gF1XbNMAmwQQS5yZOkD0WKxUkvL5yOkkKsrFz6N6BzK6NtDSeL3w
+         ilVukoFJ2Muo75URQOEIuzdeyS9igZjLulBLj3IEBcL+mhcSNF81H8c2kHDENQ+Ypedj
+         VWJudY0/1HFSmBCJjdLLoa+W6iiLcXnQ/yTpaPVZB8zExFdAGf61TNT5ezNB4b0IZCZw
+         S3Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716355984; x=1716960784;
+        d=1e100.net; s=20230601; t=1716356107; x=1716960907;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IO8VtBkSuEHF59QWLoIGkPY6IJWTHpo8HEzyRNqu+NA=;
-        b=W+hHL8mP1g6OpHaYbnxkW3DFnsrcEp5L2G9Ri5iT6cDlU16JqfPRpRJEjV5h/twBQE
-         n/HjiJ3G741SjOZPQlt1XJ7BkY7WJFPIjoadpXpY0vAODb/S+7w8MSGb7DfSkr/9tAXd
-         6OaXxhzLcu0XjGft/n5ownQwBRgZYMKRlZ9SMw/3P5Oc7d1Qso8OCWYYOM30wL8y3WzY
-         KBXi3BSkInP6jb8EH9nEuojc4d0nm5U8/zi8ppNT/b4YLz2y85iW79I0l5y+rM7am8tG
-         qCkKjmM8HT9m/NA3qxaRp6aVYCFssT77TsyRgxm1pvdwCawT/PjSOK5W0N6/qtN2wkHQ
-         bbyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXefVJb0vgck452Xx0RqOSOK55UvNLDTR5JH3gFMKJit08YgO9a3Id/0881RGA8oKwJL/wwfLZkm6nXwIAd7ICfk7cKwvvEzVIshInGSbvr5dEl1zkGRsjyULgn0c24zBwilOLH1fNVoQ==
-X-Gm-Message-State: AOJu0Yz1uBu57jE0WObEAnE9I/5MdQSv4oUzV6Nm8I5qUuJ6HRTsCIDU
-	piscL5e1d9qv5022WlxxS18PHyGOAfapXDdrXBP6zOhqgubIXSKlzW70/w==
-X-Google-Smtp-Source: AGHT+IHU6ak2v/ZJeLRQ2rOaTKI01x1WVA+mYiy2/J+DGJP9VqnpYMQuZ506FzzpmBAeLtAzUFdo8Q==
-X-Received: by 2002:a05:600c:3508:b0:420:f0c3:8672 with SMTP id 5b1f17b1804b1-420fce6d67dmr7705845e9.7.1716355983769;
-        Tue, 21 May 2024 22:33:03 -0700 (PDT)
+        bh=hnqQb7U4e4IijacHkvjFFWOyOsyI3cgB/ooNZw5ifrU=;
+        b=OaW1YU4Lmfzfc0eM5CxHZuXXcgKLj1xQpVyzwql72N0nSrawa8sClbGMCP2hvmFLfg
+         W2cr3QX3ccwB7QhDFyXAqN0gQlFhcBdUeHMTID11I0E/qpT99JMegRut3L8PlUMv+Tnq
+         6YvBI+iL1YLgxc8UA+obiTRyZ+ZjAnao9lhNrS/tF4IyNVFyIJW20xXbqOTgOWhm6Ki4
+         XzQlVzRtYmnDD+4xTNmpX2IN8Oe0yNTvr5kif+zNZsp6JF9REQMFbWIq7ek7MpNvY7jN
+         gHV7KKVLaD39yKF+AFQ03niF5Yp9k9bjznP12odOCQQycW2ertLhWH9RwGHd29UYLowd
+         2gyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVepwh48Qm8UxdE2C5SUSzcHc/uAZX6NLDxyLipD7Xm3ecuZ4fjJRTX3nJrGGREobLCkGvKbFwJVQ9GjSzSLaoULIvbyNMZaDDS2h8nbiMkn7rfaARyp0VcRCE1Gn4nKXqwCLkW
+X-Gm-Message-State: AOJu0Yw+y1OEQIoSdB/BE5chFttdXXAEiXJFmsPGMxzbhPBTPN6Jdr3z
+	Zxt/VPVLaFFBlFh2Nw3Hv29L4x+uWLIA+dhk26KANfTcnDXYNuO1
+X-Google-Smtp-Source: AGHT+IHs6ItXVDo4qBIwoQzgmUjLFR4UNqssRmD39BcGlIRQLI/YbiGWZAQB/5FmBSGh0Cvor6FHLg==
+X-Received: by 2002:a05:600c:2109:b0:41b:e0e5:a525 with SMTP id 5b1f17b1804b1-420fd3225afmr5309555e9.17.1716356106701;
+        Tue, 21 May 2024 22:35:06 -0700 (PDT)
 Received: from ?IPV6:2a01:c22:77fe:7c00:3433:dfdd:9df2:1fca? (dynamic-2a01-0c22-77fe-7c00-3433-dfdd-9df2-1fca.c22.pool.telefonica.de. [2a01:c22:77fe:7c00:3433:dfdd:9df2:1fca])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4201c3f8032sm336870145e9.28.2024.05.21.22.33.02
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41fe004eae9sm473415605e9.1.2024.05.21.22.35.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 22:33:03 -0700 (PDT)
-Message-ID: <c0cd58d3-f01a-4852-bf8b-fee4c865e4e2@gmail.com>
-Date: Wed, 22 May 2024 07:33:03 +0200
+        Tue, 21 May 2024 22:35:06 -0700 (PDT)
+Message-ID: <36887d73-46a1-45d8-b55e-50e574f72aeb@gmail.com>
+Date: Wed, 22 May 2024 07:35:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,14 +76,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the i2c-host tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Andi Shyti <andi.shyti@kernel.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- Kenneth Feng <kenneth.feng@amd.com>, Likun Gao <Likun.Gao@amd.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20240522104128.37c646af@canb.auug.org.au>
+Subject: Re: [PATCH net v2] r8169: Fix possible ring buffer corruption on
+ fragmented Tx packets.
+To: Ken Milmore <ken.milmore@gmail.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: nic_swsd@realtek.com, "\"David S. Miller\",Eric Dumazet"
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
+References: <27ead18b-c23d-4f49-a020-1fc482c5ac95@gmail.com>
 Content-Language: en-US
 From: Heiner Kallweit <hkallweit1@gmail.com>
 Autocrypt: addr=hkallweit1@gmail.com; keydata=
@@ -129,34 +129,29 @@ Autocrypt: addr=hkallweit1@gmail.com; keydata=
  H/0Z53okMykVs3a8tECPHIxnre2UxKdTbCEkjkR4V6JyplTS47oWMw3zyI7zkaadfzVFBxk2
  lo/Tny+FX1Azea3Ce7oOnRUEZtWSsUidtIjmL8YUQFZYm+JUIgfRmSpMFq8JP4VH43GXpB/S
  OCrl+/xujzvoUBFV/cHKjEQYBxo+MaiQa1U54ykM2W4DnHb1UiEf5xDkFd4=
-In-Reply-To: <20240522104128.37c646af@canb.auug.org.au>
+In-Reply-To: <27ead18b-c23d-4f49-a020-1fc482c5ac95@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22.05.2024 02:41, Stephen Rothwell wrote:
-> Hi all,
+On 22.05.2024 00:45, Ken Milmore wrote:
+> An issue was found on the RTL8125b when transmitting small fragmented
+> packets, whereby invalid entries were inserted into the transmit ring
+> buffer, subsequently leading to calls to dma_unmap_single() with a null
+> address.
 > 
-> After merging the i2c-host tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> This was caused by rtl8169_start_xmit() not noticing changes to nr_frags
+> which may occur when small packets are padded (to work around hardware
+> quirks) in rtl8169_tso_csum_v2().
 > 
-> drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu14/smu_v14_0_2_ppt.c: In function 'smu_v14_0_2_i2c_control_init':
-> drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu14/smu_v14_0_2_ppt.c:1565:34: error: 'I2C_CLASS_SPD' undeclared (first use in this function); did you mean 'I2C_CLASS_HWMON'?
->  1565 |                 control->class = I2C_CLASS_SPD;
->       |                                  ^~~~~~~~~~~~~
->       |                                  I2C_CLASS_HWMON
+> To fix this, postpone inspecting nr_frags until after any padding has been
+> applied.
 > 
-> Caused by commit
-> 
->   49b33f4b3a9e ("i2c: Remove I2C_CLASS_SPD")
-> 
-> interacting with commit
-> 
->   3e55845c3983 ("drm/amd/swsmu: add smu v14_0_2 support")
-> 
-> from Linus' tree (in the current merge window).
-> 
-> I have used the i2c-host tree from next-20240521 for today.
-> 
-This conflict has been resolved by:
-e22e0e483b2c ("drm/amd/pm: remove deprecated I2C_CLASS_SPD support from newly added SMU_14_0_2")
+> Fixes: 9020845fb5d6 ("r8169: improve rtl8169_start_xmit")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Ken Milmore <ken.milmore@gmail.com>
+> ---
+
+Reviewed-by: Heiner Kallweit <hkallweit1@gmail.com>
+
+
 
