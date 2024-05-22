@@ -1,278 +1,168 @@
-Return-Path: <linux-kernel+bounces-186466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83938CC48B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:54:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0CB8CC48E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C3F52831C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:54:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25C81F22D51
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9F213D63A;
-	Wed, 22 May 2024 15:54:06 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAB013D88D;
+	Wed, 22 May 2024 15:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="mMkcNsv/"
+Received: from AUS01-ME3-obe.outbound.protection.outlook.com (mail-me3aus01olkn2144.outbound.protection.outlook.com [40.92.63.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7F625753
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716393246; cv=none; b=edgXonb6ns2UuhPAQkaQ1Fk8BCsOX7V2Tkd+picx7nhhxPxpRKnCbokJhOWYXufS0LflaJGeIxUsrKgzZ3fBMjty7NGW7/QYaJzUxHqg7XAKQf3oJQka5SDle06LakCu8BApBl33tBzxxAgvYw0+pyU8gOPtWT5vsWN1PHl/9pQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716393246; c=relaxed/simple;
-	bh=to0sQNlWsC0XK/kopHRIttkU4lEn+bubnkhzZoOrXdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oraM/885VtadTZygFoG7P1Ehp4GGoowIyu2Ob6cglqCACoVbh+7Ljt0M9rVp5tQ/xPfM10aP2gMoVRAItGl5KFKbkRLLDODPE1v1rKHk3qvPU1oRphlAyBNOAEHWZDs9QZmQpt3UFPzDWR97P0kRZq/I1kxwUrim+Xi3dv/PcRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1s9oHq-0003du-9h; Wed, 22 May 2024 17:53:54 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1s9oHp-002XrX-EB; Wed, 22 May 2024 17:53:53 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1s9oHp-00A7aZ-19;
-	Wed, 22 May 2024 17:53:53 +0200
-Date: Wed, 22 May 2024 17:53:53 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Trevor Gamblin <tgamblin@baylibre.com>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	michael.hennerich@analog.com, nuno.sa@analog.com, dlechner@baylibre.com
-Subject: Re: [PATCH 1/2 v3] pwm: add duty offset support
-Message-ID: <73y7ovftjv35gw3sjeu3jisg7feplhyebmcnldqvszuofqnn7q@eh4lyicuhfmq>
-References: <20240521194916.1897909-1-tgamblin@baylibre.com>
- <20240521194916.1897909-2-tgamblin@baylibre.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38E825753;
+	Wed, 22 May 2024 15:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.63.144
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716393306; cv=fail; b=aEXmmZQucNvBXRNaBjkPXidiKMLw0TOKMTzSb9lEfDSa5l1F6pfBbkWhTrK4HzQ/b6YpwRI1var6CMQSuhhNiNtJHG42WtmF84OFrmthLvmSdbE+aM7AIKBlCLvynIRhICQm6uVKMqV2WqovM7l5+ovyLRXLWrAIHOykJ9NqGug=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716393306; c=relaxed/simple;
+	bh=tsPlzEXbIWJqPtZe7ckeocGXxRTNF3/J/88vAjKEQjg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qmIETpG6TsR9mREkjF88c93hTZPth5dUIxSuAxzWxzWeBpvkqTpzn1TJb3w6PTIQxbB5iV3YfaVLuNNwQCP1y5WaDtYPezXogOIlX+zgAGL5c1bMbrelvQlZ0LSSptyVdE3xOEVtnUAZSmUwLfBPCE5wDUDpNNBtuEq+DqinKnk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=mMkcNsv/; arc=fail smtp.client-ip=40.92.63.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=m4Au8ODQNv9NBG6UeCaBKpCrhfGz2zhOGxbIccon/vVGv4+XmcVOi+sM3DEqBmHVVrLtZ2m69p8tI6lFMv4n5K8cyucpe/iHh/sm7wuvtACaW4y+ubsNXTn1rOTFZRpxvxR/gXK3Tooyzvg8a6AD1TrsAq11MtEM+iistIh/uHPnCdvb/uqgGMzehRlEW+m/YVzVcLgfSQ/QUzKwPom7I7U94pvCS4x9M9VFMffeo9Kca5+5ZkxyTzBh5ayNj1Df+f5rRrk8axFwiNHdC+rWZVAUrY5X+ku3Tu7I2By9Y6ZkR2YoGDx3YTLvxCfpkqJi3rW8Sv/yeUwSPF0WUqJs9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tsPlzEXbIWJqPtZe7ckeocGXxRTNF3/J/88vAjKEQjg=;
+ b=hmSJHjmjxfd49ZOXRycTiPlVWUoZvo61vEriPw1jUtTNhPyogXX9Ut1I2Q3XfBI9UjvwsCpXTuWjL7QGRtIAzG8kbgHGjHZehtgH9H9vccZMCG9qbjJb5PukEeNBHjMHd15853+SP376YHrDA/G3BpWsChoBtPS4TDhsLyk6z7nCqpf6Omwmo2A7F2pj2lppvsyIMJAZMl9VqLtqB6X9oOys+v9GxM5u9xwugZThLJH1SXUtKeBuKdY6LyMFQJ2jEW4/b9wK1J9jG9EtACqq54+WQ6ABL4kGqBUMXackqbOMknzvsKAsSW+ewOnMZIhAvnjl4Ax6m1vpiJOmh7YTVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tsPlzEXbIWJqPtZe7ckeocGXxRTNF3/J/88vAjKEQjg=;
+ b=mMkcNsv/KAMPJZ7Ic55VhXZrgM0IdRN47IhTzSCLFv5Mtf28cZln9U26gQN7ZZszN+AFgMU/g277QNE7RgFPzyQw4hpOQfXSAVM3VHhUUTLqqcso86W/139lZXSJqw51397Ai/DkMnYiFs040oCCsyt8oDz3BeLxhbb2uaD9OB2s0I6JlzSGmKpplxSM2d31zn9/eCnqfOhssWkmh8QoyzmbWkSolMDzAkFL4hOqUuS6N4nba6Yz0RVPNlt69vqpMirlLexocz1bILwkz3nmxZlyBtISirszzWA4GHB61HdMwW4Sa9V1l+pebEquR35OBt179wz6TyPmjoBUJ2yWHg==
+Received: from ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:228::21)
+ by MEYP282MB1816.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:c6::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
+ 2024 15:55:01 +0000
+Received: from ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::d384:a02f:2370:f33e]) by ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::d384:a02f:2370:f33e%7]) with mapi id 15.20.7611.016; Wed, 22 May 2024
+ 15:55:01 +0000
+From: Roland Xu <mu001999@outlook.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: "ojeda@kernel.org" <ojeda@kernel.org>, "boqun.feng@gmail.com"
+	<boqun.feng@gmail.com>, "rust-for-linux@vger.kernel.org"
+	<rust-for-linux@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: kernel: make impl_has_work compatible with more
+ complex generics
+Thread-Topic: [PATCH] rust: kernel: make impl_has_work compatible with more
+ complex generics
+Thread-Index: AQHarEpnKGVgPPoxHUmAHGalEiJC2bGjVUWAgAASSU8=
+Date: Wed, 22 May 2024 15:55:01 +0000
+Message-ID:
+ <ME0P282MB4890167E8316FECBA35D7533CCEB2@ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM>
+References:
+ <ME0P282MB489023110AAF1163F0A4B2E1CCEB2@ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM>
+ <2024052213-uninjured-stricken-cc20@gregkh>
+In-Reply-To: <2024052213-uninjured-stricken-cc20@gregkh>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn: [W2KJyF4mR8nhOszsp0GeA1QnenaKLcMhnfDSuTWd1IM=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ME0P282MB4890:EE_|MEYP282MB1816:EE_
+x-ms-office365-filtering-correlation-id: 7da71135-bb88-4b31-93b1-08dc7a7789c3
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199019|3430499023|102099023|3412199016|440099019|1602099003;
+x-microsoft-antispam-message-info:
+ OO3jobWqOQzX6p7wBvzG5FIXybmq5+vzEsKcsshah1uWRhXCphVxF3uuIkm2GZ1Z5GEFojAy0HpyJCsHTZznBmjH1uhACCLW+JCruna++F/oktfoNsTL17yG56kNRFS3wXegA4pomOYfBsm2lbejDJBPvNamaqsIuTi0iIRf/6/sxb8seBjXaUiB9wvj1UnPGLP3atxhMKupszCwqgTXzbjdXzLbgVG+OoSxEjFD+tjckl/ZYxEn0fU5QSFXrGfHPmnhNgPCv7sOQCbC9cnZZJpqCTC3f+CGmQzB6jH8AiVeJyvlaoTtHVJbsgW8onb7XbIC8ft012q0gkek4A1ass7RIfy2+SnrqJoxWZPmOR0yFg6M6spP2ri4LMfhxlEt20GzYWazA6ULT9Fj5JR0eb5m0XoL23w4312IBudKrCxxUC0botndvfqhg7o1XOUPp5aTTNMQst+erQSZZtDSREa/iVBpx/hVv18H5ZvqXmxY6Z4dV8bF97DRIBhjFIeCo7wfYC4yQI9J6GEJN/5731uXX9WlwoPjcTdDehOXovCArMa4J2pibLPekccMgpvB+JUh+6mM4rsnvv/XcGJ2Wb7iuBtpLZeZE1hrrIscpPlXA/nXdoK4U0xtbZyHxIFn9apIzJmmOAORJwMRBbmALIGJMf+bjdgBPLR0iGw+8OI=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?RLrOMJ8epMguv/NKyfQ7w74Mp+lQpGWwNsMMBKyx8ywCzpHUGsqOiYZiPPw6?=
+ =?us-ascii?Q?HL1WXvL3f7HoUKUjrxPYt5PME8RQRnq5L/i0rGSpot9F8olPGmbGoRiZI41f?=
+ =?us-ascii?Q?9hyIbb9I9yMk1mM7iat+XqViexa7vIUDTIDEu3L2yjldQbI880qk9jizwD+4?=
+ =?us-ascii?Q?AxrUlx46SyBqN3FPJ0nMzstOgdxLkSMyJLtcnqd+nkCO5zAzBuC0IpHrF06h?=
+ =?us-ascii?Q?2QPbtzqprKjzRqN7DB2zG03NvpmerxGXfrjdFY+dbU0GvUaZmDaA6LF59gEk?=
+ =?us-ascii?Q?UpCeSTZ+pOc78L4VO9KVd+0xkPV/Aw9WMZZk49z0nkn22v2jhAFLG/SPsUbw?=
+ =?us-ascii?Q?UoYvNXgjeIoGuo97qbOfiesKbepQPry8cCZo3B9wyyQBRDnNH2a1fbuNpN2s?=
+ =?us-ascii?Q?I/0Jpb1FqojgFW7lFQ/u6DiE1zWuxGmpHDAIMoKMiH6O166N2+PNttTTeuh7?=
+ =?us-ascii?Q?wBqUlN6SFVH7AOlt3Sla6U+yUrM6IlJ7vCZj+jgd6xIIBvmgRv+NGCo03fsm?=
+ =?us-ascii?Q?kJz5pxj/mT/Qkb+eeMqEqDt0457bXn8iYgxlFt7oiel9HwYXjOpqxZcdSXXc?=
+ =?us-ascii?Q?14vRDLpzcAFhAqHPLV/k+eIpltBEhbHDhbAAifxv9nubjHTKNZQNBIk2lNaB?=
+ =?us-ascii?Q?gNlsrke3KRnwh0ZLJrjq9ufp3SGIioEx6XZ86p/I6pwxa3/Ax2c/8xahy4JL?=
+ =?us-ascii?Q?EO1yv6MmknoInUiXkK+rq+PCWSR3eAS/9aS9uN3ZaC0/ks5BvNdqRu5RWU5B?=
+ =?us-ascii?Q?UotadqYH3huVaBe2M0+kTTejZk1KUaGWp+WOQ0adqLmfET1ahYnSSGfB7kc5?=
+ =?us-ascii?Q?Nh7F0kJi8o+O76QySPCSCcGNID9aq3UrMJnRqsQ7txay4cGnxKYpvWbWgsiE?=
+ =?us-ascii?Q?6ofzHlX+2ZXxm/uEF00YnQxwj++/FJIWW3uk2p2uKZP9Yit21ey58HPOiWdT?=
+ =?us-ascii?Q?5BeA66Lj56UV8s2QDk6tDHFqq4aX5pnSPtx0UB19CfUTSwh23l4L4E3eaL27?=
+ =?us-ascii?Q?oi2jleP5oVnGEoQt3yMxgzAA6PR6n5pVJBsSva7S7Wg84T6SICIzj05tcx17?=
+ =?us-ascii?Q?zbV8QHVVwINfN9/Nmw4qBBqMub40zuBQaBgshhLC1sj3kBHHsv+jpLpq6mBw?=
+ =?us-ascii?Q?zW1LtSCvnegVosGyLyFTQyeBsz5HUBTGA4myEwSWBRFarsZ1rvaryF9f+DN8?=
+ =?us-ascii?Q?IFUkuWNV378Nm+x505UMJEOmiej80G3wKZgPVTzgbiljyKqp1JQn/0X+c+E?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rv7d2yo4lgaqszb2"
-Content-Disposition: inline
-In-Reply-To: <20240521194916.1897909-2-tgamblin@baylibre.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7da71135-bb88-4b31-93b1-08dc7a7789c3
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2024 15:55:01.0425
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MEYP282MB1816
 
+Fixes these in the v2 patch, thanks!
 
---rv7d2yo4lgaqszb2
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Greg KH:
+> Can you wrap your lines at 72 columns like checkpatch asks for?
 
-Hello Trevor,
+Greg KH:
+> Please don't point to external sites for "more information", include it
+here in the changelog text as this is where it is going to live for
+"forever", random external sites hosted by others usually have short
+lifespans.
 
-On Tue, May 21, 2024 at 03:49:15PM -0400, Trevor Gamblin wrote:
-> Some PWM chips support a "phase" or "duty_offset" feature. This patch
-> continues adding support for configuring this property in the PWM
-> subsystem.
->=20
-> Functions duty_offset_show(), duty_offset_store(), and
-> pwm_get_duty_offset() are added to match what exists for duty_cycle.
->=20
-> Add a check to disallow applying a state with both inversed polarity and
-> a nonzero duty_offset.
->=20
-> Also add duty_offset to TP_printk in include/trace/events/pwm.h so that
-> it is reported with other properties when using the event tracing pipe
-> for debug.
->=20
-> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
-> ---
-> v3 changes:
-> * rebased on top of latest pwm/for-next
-> * removed changes related to cdev to match current pwm tree
-> * fixed minor whitespace issue caught by checkpatch
->=20
-> v2 changes:
-> * Address feedback for driver in v1:
->   * Remove line setting supports_offset flag in pwm_chip, since that has
->     been removed from the struct in core.c.
->=20
-> ---
->  drivers/pwm/core.c         | 79 +++++++++++++++++++++++++++++++++++---
->  include/linux/pwm.h        | 15 ++++++++
->  include/trace/events/pwm.h |  6 ++-
->  3 files changed, 93 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index 18574857641e..2ebfc7f3de8a 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -62,6 +62,7 @@ static void pwm_apply_debug(struct pwm_device *pwm,
->  	 */
->  	if (s1.enabled && s1.polarity !=3D state->polarity) {
->  		s2.polarity =3D state->polarity;
-> +		s2.duty_offset =3D s1.duty_cycle;
+________________________________________
+From: Greg KH <gregkh@linuxfoundation.org>
+Sent: Wednesday, May 22, 2024 22:47
+To: Roland Xu
+Cc: ojeda@kernel.org; boqun.feng@gmail.com; rust-for-linux@vger.kernel.org;=
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: kernel: make impl_has_work compatible with more =
+complex generics
 
-s/duty_cycle/duty_offset/
+On Wed, May 22, 2024 at 09:16:33PM +0800, Roland Xu wrote:
+> Make the impl_has_work macro compatible with more complex generics such a=
+s lifetimes and const generic arguments.
 
->  		s2.duty_cycle =3D s1.period - s1.duty_cycle;
->  		s2.period =3D s1.period;
->  		s2.enabled =3D s1.enabled;
-> @@ -103,6 +104,23 @@ static void pwm_apply_debug(struct pwm_device *pwm,
->  			 state->duty_cycle, state->period,
->  			 s2.duty_cycle, s2.period);
-> =20
-> +	if (state->enabled &&
-> +	    last->polarity =3D=3D state->polarity &&
-> +	    last->period =3D=3D s2.period &&
-> +	    last->duty_offset > s2.duty_offset &&
-> +	    last->duty_offset <=3D state->duty_offset)
-> +		dev_warn(pwmchip_parent(chip),
-> +			 ".apply didn't pick the best available duty offset (requested: %llu/=
-%llu, applied: %llu/%llu, possible: %llu/%llu)\n",
-> +			 state->duty_offset, state->period,
+Can you wrap your lines at 72 columns like checkpatch asks for?
 
-Does it make sense to emit $duty_offset/$period here? Establishing a
-consistent way to write this would be nice. Something like:
+> See more in https://github.com/Rust-for-Linux/linux/issues/1077
 
-	$duty_cycle/$period [+$duty_offset]
+Please don't point to external sites for "more information", include it
+here in the changelog text as this is where it is going to live for
+"forever", random external sites hosted by others usually have short
+lifespans.
 
-maybe?
+thanks,
 
-> +			 s2.duty_offset, s2.period,
-> +			 last->duty_offset, last->period);
-> +
-> +	if (state->enabled && state->duty_offset < s2.duty_offset)
-> +		dev_warn(pwmchip_parent(chip),
-> +			 ".apply is supposed to round down duty_offset (requested: %llu/%llu,=
- applied: %llu/%llu)\n",
-> +			 state->duty_offset, state->period,
-> +			 s2.duty_offset, s2.period);
-> +
->  	if (!state->enabled && s2.enabled && s2.duty_cycle > 0)
->  		dev_warn(pwmchip_parent(chip),
->  			 "requested disabled, but yielded enabled with duty > 0\n");
-> @@ -126,12 +144,13 @@ static void pwm_apply_debug(struct pwm_device *pwm,
->  	if (s1.enabled !=3D last->enabled ||
->  	    s1.polarity !=3D last->polarity ||
->  	    (s1.enabled && s1.period !=3D last->period) ||
-> +	    (s1.enabled && s1.duty_offset !=3D last->duty_offset) ||
->  	    (s1.enabled && s1.duty_cycle !=3D last->duty_cycle)) {
->  		dev_err(pwmchip_parent(chip),
-> -			".apply is not idempotent (ena=3D%d pol=3D%d %llu/%llu) -> (ena=3D%d =
-pol=3D%d %llu/%llu)\n",
-> +			".apply is not idempotent (ena=3D%d pol=3D%d %llu/%llu/%llu) -> (ena=
-=3D%d pol=3D%d %llu/%llu/%llu)\n",
->  			s1.enabled, s1.polarity, s1.duty_cycle, s1.period,
-> -			last->enabled, last->polarity, last->duty_cycle,
-> -			last->period);
-> +			s1.duty_offset, last->enabled, last->polarity,
-> +			last->duty_cycle, last->period, last->duty_offset);
->  	}
->  }
-> =20
-> @@ -146,13 +165,24 @@ static int __pwm_apply(struct pwm_device *pwm, cons=
-t struct pwm_state *state)
->  	int err;
-> =20
->  	if (!pwm || !state || !state->period ||
-> -	    state->duty_cycle > state->period)
-> +	    state->duty_cycle > state->period ||
-> +	    state->duty_offset > state->period)
->  		return -EINVAL;
-> =20
->  	chip =3D pwm->chip;
-> =20
-> +	/*
-> +	 * There is no need to set duty_offset with inverse polarity,
-> +	 * since signals with duty_offset values greater than 0.5 *
-> +	 * period can equivalently be represented by an inverted signal
-> +	 * without offset.
-
-This isn't exact. The equation is:
-
-	state_with_offset.period =3D inverted_state.period
-	state_with_offset.duty_cycle =3D inverted_state.period - inverted_state.du=
-ty_cycle
-	state_with_offset.duty_offset =3D inverted_state.duty_cycle
-
-And with duty_offset you can express more wave-forms than with
-inversion.
-
-> +	 */
-> +	if (state->polarity =3D=3D PWM_POLARITY_INVERSED && state->duty_offset)
-> +		return -EINVAL;
-> +
->  	if (state->period =3D=3D pwm->state.period &&
->  	    state->duty_cycle =3D=3D pwm->state.duty_cycle &&
-> +	    state->duty_offset =3D=3D pwm->state.duty_offset &&
->  	    state->polarity =3D=3D pwm->state.polarity &&
->  	    state->enabled =3D=3D pwm->state.enabled &&
->  	    state->usage_power =3D=3D pwm->state.usage_power)
-
-While I like the added expressiveness of having .duty_offset, I think we
-shouldn't let the low-level drivers face both .duty_offset and
-=2Epolarity.
-
-I suggest to add a new callback similar to .apply that gets passed a
-variant of pwm_state that only has
-
-	u64 period
-	u64 duty_cycle
-	u64 duty_offset
-
-period =3D 0 then signals disable. Implementers are then supposed to first
-round down period to a possible period (> 0), then duty_cycle to a
-possible duty_cycle for the picked period and then duty_offset to a
-possible duty_offset with the picked period and duty_cycle.
-
-Then there is a single code location that handles the translation
-between state with polarity and state with duty_offset in the core,
-instead of case switching in each lowlevel driver. And I wouldn't
-add .duty_offset to the sysfs interface, to lure people into using the
-character device support which has several advantages over the sysfs
-API. (One reasonable justification is that we cannot remove polarity
-there, and we also cannot report polarity =3D normal + some duty_offset
-without possibly breaking assumptions in sysfs users.)
-
-What is missing in my plan is a nice name for the new struct pwm_state
-and the .apply() (and matching .get_state()) callback. Maybe pwm_nstate,
-=2Eapply_nstate() and .get_nstate()? n for "new", which however won't age
-nicely. Maybe it also makes sense to add a .round_nstate() in the same
-go. We'd have to touch all drivers anyhow and implementing a rounding
-callback (that has similar semantics to clk_round_rate() for clocks,
-i.e. it reports what would be configured for a given (n)state) isn't
-much more work. With rounding in place we could also request that
-=2Eapply_nstate() only succeeds if rounding down decrements the values by
-less than 1, which gives still more control. (The more lax variant can
-then be implemented by first passing an nstate to .round_nstate and then
-=2Eapply_nstate that one.)
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---rv7d2yo4lgaqszb2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZOFRAACgkQj4D7WH0S
-/k4EFggApvBQ7BUAVSvRWmjJxQJ7WuGh6x2wdqla96igaBRP+5lPqmsYZ8XXSZAm
-f+/DLkMm42gwrxL0Y1B/7gyIfpH2Mv5VJCoyh1E4RHTnxl5Tnd9RD4a00HsHv45j
-00Jrb9o6yG/cjRLXPwVCnk81+m8hMFkI5BNGcR9j5ffSvqLJBjUEd+hBVugiwykd
-LX2fDaNhx8HIBkRZmEKDTSWo1xocyPapGlykK31LRpgr1m85mpyMuqHhI5lLcn/n
-Qxu3LIr07rUCy3oNTOKhikRGwvc2NYKNTZof3lhFHdoYHKwIm0WdWLTWICzthWy/
-ZwktP1K4Ej0ISOqlwwES9l8frZJkDQ==
-=Zc/O
------END PGP SIGNATURE-----
-
---rv7d2yo4lgaqszb2--
+greg k-h
 
