@@ -1,264 +1,285 @@
-Return-Path: <linux-kernel+bounces-185819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A678CBB7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:45:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30EB58CBBA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43B031F22DAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:45:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6F8E1F21650
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E37B79950;
-	Wed, 22 May 2024 06:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5477A158;
+	Wed, 22 May 2024 06:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="JOS00aaP"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1PieJV5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CE61CD13
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 06:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA51459147;
+	Wed, 22 May 2024 06:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716360298; cv=none; b=UK28tLJ9zKXqlbQcy55wp/ldE0wCxQJTYnni+7n34u/YwrCDw8gfP9Qa15HYX1PZ9CfbDoJPlAWGhfXvMmMTN4ZEEJHNBUkT+L/qpwNxjguJK382wW+UYGHmWJW9Q6fW6lXX7LkGEL5qvka8DmNuZ8AMvzWmOzTmA6lSxgo2y9c=
+	t=1716361082; cv=none; b=giIJbHW5kqG5T1M7TWvGhhS15uBqEwcGBbeYH3ZtvSqTW/hVGs/9hTus7+8KcxXysBlxtoFPSYyZwOhYfwqquW1O67+FG+VtwZO1j3uvCJM3oHn0WF6odPGZpqDO53/gq5NoXIoC3b4Yw8tNAk/Wz/HlIiziCyqkcn4s2mKGEBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716360298; c=relaxed/simple;
-	bh=AO3Vpd1ntrpjK0UR4Wr2RGOzPY45HzszITItSO8PJ5Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dPZ1Wq/3T+7cXieyq0iGK0qboW4zKCOFiOXx+qZumdwMPum5PP7MjxG/BjlzOYPxQWC4OheRHRAilU6acz7OIZfht28tUWZQY9JLusPzA8EHN+Ss23ncHxdc0ZVbNRqaHwVnWZ7gSzYmflIkE8A6L2fTeEpIW3lxR/9wCCBol/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=JOS00aaP reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=6nFM5+jD8FPIWS5lx1usPnsN259GSLpHjZwehXdlMKs=;
-  b=JOS00aaPE4CT0fteQfnoggHdkejoYoWDhsh1pJMZsaWHXq/Ksu+T0AOq
-   JbedFtP7foifB9D8S0zgWIcCxo7bdkxwr/vXdZ/C8VK974L8Y9eneMcyn
-   zjYevz4Jd0fRwwoW4GNKKP6WNF1MQkl7Phmkae+DsrqtTWIqtlabVZ2Cn
-   e0niKbi7bbXL4zazwuH/49qneBKqvyZLEyyw8sMe6W3V3TRFrgDwbL+Gw
-   n/1RjkOyx+Y+DgEgpDURoC8r1x63D1tyDM/y+SnYvEZYuUP71233/c56k
-   8Po6iqCY13Hwm80THAFNeBJjdNAb2jpGIqcAMHN6DuZfq4Dv7osQWQFJO
-   w==;
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 22 May 2024 14:44:52 +0800
-Received: from CSBMAIL1.internal.ite.com.tw (CSBMAIL1.internal.ite.com.tw [192.168.65.58])
-	by mse.ite.com.tw with ESMTP id 44M6iku5018988;
-	Wed, 22 May 2024 14:44:46 +0800 (GMT-8)
-	(envelope-from kuro.chung@ite.com.tw)
-Received: from ite-XPS-13-9360.internal.ite.com.tw (192.168.72.42) by
- CSBMAIL1.internal.ite.com.tw (192.168.65.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 22 May 2024 14:44:45 +0800
-From: kuro <kuro.chung@ite.com.tw>
-To: Pin-yen Lin <treapking@chromium.org>,
-        Kenneth Haung
-	<kenneth.hung@ite.com.tw>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil
- Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman
-	<jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        AngeloGioacchino Del
- Regno <angelogioacchino.delregno@collabora.com>,
-        Hermes Wu
-	<hermes.wu@ite.com.tw>, Allen Chen <allen.chen@ite.com.tw>,
-        "open list:DRM
- DRIVERS" <dri-devel@lists.freedesktop.org>,
-        open list
-	<linux-kernel@vger.kernel.org>
-CC: Kuro Chung <kuro.chung@ite.com.tw>
-Subject: [PATCH v13] drm/bridge: it6505: fix hibernate to resume no display issue
-Date: Wed, 22 May 2024 14:55:28 +0800
-Message-ID: <20240522065528.1053439-1-kuro.chung@ite.com.tw>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1716361082; c=relaxed/simple;
+	bh=zW4bTdJWK81AR2+O8wSlEJaH4FcFXtOYcg1BuXGhn9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JnE3x6GWmoiV60MZPJ8XfMMgJyv/GRdXqhHSmDHUPRW1nNxgge87CsB4i/ut1avsvTGIP/mFZQH3dGg9pSq+OCsj2JgNB7foavYly8NCjRqt8xF8vzNGlPeLuHN8mb3vYOCdUGpMk/pi5MUa3k9I79NNAP2ZnQcXedrAFsdjzQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1PieJV5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39181C2BD11;
+	Wed, 22 May 2024 06:57:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716361082;
+	bh=zW4bTdJWK81AR2+O8wSlEJaH4FcFXtOYcg1BuXGhn9k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n1PieJV5GQxwoN6cinS+3f6pE72OKEoAUIa0NA8eOl045vEbW4KG+TBaS2FLMcYFi
+	 hoqtJXIJlLu+b+t5lpPtYujk/3HCY2Fle1dMrj8uRb539SUzWdygSg1Yd3pbOvqDkG
+	 iAX4e5Rb7riYGqZIn03i2wAw11jlIeI9ecCoLuVmmBAiuMEeikrei2v3hbVDD+NqBm
+	 rMN/z0Rqa5VSedNhqlvReMqTxzLPHt2ku5HHHezgDJbRQ+12h35sIY8Wovxme2sxwN
+	 BUq8mBLYvm4xjLetB8qhJsIG9MW2SPyJ3xqVqcUTwlo8X52/Le62oYdYS7r16QozJz
+	 yzi7UEd3B1c/g==
+Message-ID: <075f5a03-f288-4dfb-a293-3a6c0675881b@kernel.org>
+Date: Wed, 22 May 2024 08:57:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CSBMAIL1.internal.ite.com.tw (192.168.65.58) To
- CSBMAIL1.internal.ite.com.tw (192.168.65.58)
-X-TM-SNTS-SMTP:
-	127722F295CCAE5EF0417517ECBD90D34AEFDB3A3085AF0F931D0C303D6848E62002:8
-X-MAIL:mse.ite.com.tw 44M6iku5018988
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: Add bindings for the Analog Devices
+ ADP5585
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+ Alexandru Ardelean <alexandru.ardelean@analog.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
+ <20240520195942.11582-3-laurent.pinchart@ideasonboard.com>
+ <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
+ <20240521194309.GA8863@pendragon.ideasonboard.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240521194309.GA8863@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Kuro Chung <kuro.chung@ite.com.tw>
+On 21/05/2024 21:43, Laurent Pinchart wrote:
+> Hi Krzysztof,
+> 
+> On Tue, May 21, 2024 at 09:05:50PM +0200, Krzysztof Kozlowski wrote:
+>> On 20/05/2024 21:59, Laurent Pinchart wrote:
+>>> The ADP5585 is a 10/11 input/output port expander with a built in keypad
+>>> matrix decoder, programmable logic, reset generator, and PWM generator.
+>>> These bindings model the device as an MFD, and support the GPIO expander
+>>> and PWM functions.
+>>>
+>>> These bindings support the GPIO and PWM functions.
+>>>
+>>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>>> ---
+>>> I've limited the bindings to GPIO and PWM as I lack hardware to design,
+>>> implement and test the rest of the features the chip supports.
+>>> ---
+>>>  .../bindings/gpio/adi,adp5585-gpio.yaml       |  36 ++++++
+>>>  .../devicetree/bindings/mfd/adi,adp5585.yaml  | 117 ++++++++++++++++++
+>>>  .../bindings/pwm/adi,adp5585-pwm.yaml         |  35 ++++++
+>>>  MAINTAINERS                                   |   7 ++
+>>>  4 files changed, 195 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+>>>  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+>>>  create mode 100644 Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+>>> new file mode 100644
+>>> index 000000000000..210e4d53e764
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+>>> @@ -0,0 +1,36 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/gpio/adi,adp5585-gpio.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Analog Devices ADP5585 GPIO Expander
+>>> +
+>>> +maintainers:
+>>> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>>> +
+>>> +description: |
+>>> +  The Analog Devices ADP5585 has up to 11 GPIOs represented by a "gpio" child
+>>> +  node of the parent MFD device. See
+>>> +  Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further details as
+>>> +  well as an example.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: adi,adp5585-gpio
+>>> +
+>>> +  gpio-controller: true
+>>> +
+>>> +  '#gpio-cells':
+>>> +    const: 2
+>>> +
+>>> +  gpio-reserved-ranges: true
+>>
+>> There are no resources here, so new compatible is not really warranted.
+>> Squash the node into parent.
+> 
+> Child nodes seem (to me) to be the standard way to model functions in
+> MFD devices. Looking at mfd_add_device(), for OF-based systems, the
+> function iterates over child nodes. I don't mind going a different
 
-When the system power resumes, the TTL input of IT6505 may experience
-some noise before the video signal stabilizes, necessitating a video
-reset. This patch is implemented to prevent a loop of video error
-interrupts, which can occur when a video reset in the video FIFO error
-interrupt triggers another such interrupt. The patch processes the SCDT
-and FIFO error interrupts simultaneously and ignores any video FIFO
-error interrupts caused by a video reset.
+Only to assign of node, which could be skipped as well.
 
-Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-Signed-off-by: Kuro Chung <kuro.chung@ite.com.tw>
-Signed-off-by: Hermes Wu <hermes.wu@ite.com.tw>
----
-V1->V3: update MAINTAINERS mail list
-V3->V4: remove function it6505_irq_video_fifo_error,it6505_irq_io_latch_fifo_overflow
-V4->V5: customer feedback again, update again, kernel build pass
-V5->V6: remove unrelated patch change, split into another patch
-V6->V7: modify code 0x02 to TX_FIFO_RESET by macro define
-V7->V8: fix merge conflict, change mail from 'cc' to 'to'
-V8->V9: modify patch description, patch summary
-V9->V10: modify patch summary, add Fixes
-V10->V11: modify patch description, add Signed-off-by
-V11->V12: moidfy patch description.
-V12->V13: fix code checkpatch.pl warning
+> routes, could you indicate what you have in mind, perhaps pointing to an
+> existing driver as an example ?
 
----
- drivers/gpu/drm/bridge/ite-it6505.c | 73 +++++++++++++++++++----------
- 1 file changed, 49 insertions(+), 24 deletions(-)
+Most of them? OK, let's take the last added driver in MFD directory:
+cirrus,cs42l43
+It has three children and only two nodes, because only these two devices
+actually need/use/benefit the subnodes.
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-index 469157341f3ab..cd1b5057ddfb4 100644
---- a/drivers/gpu/drm/bridge/ite-it6505.c
-+++ b/drivers/gpu/drm/bridge/ite-it6505.c
-@@ -1307,9 +1307,15 @@ static void it6505_video_reset(struct it6505 *it6505)
- 	it6505_link_reset_step_train(it6505);
- 	it6505_set_bits(it6505, REG_DATA_MUTE_CTRL, EN_VID_MUTE, EN_VID_MUTE);
- 	it6505_set_bits(it6505, REG_INFOFRAME_CTRL, EN_VID_CTRL_PKT, 0x00);
--	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET);
-+
-+	it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, TX_FIFO_RESET);
-+	it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, 0x00);
-+
- 	it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, RST_501_FIFO);
- 	it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, 0x00);
-+
-+	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET);
-+	usleep_range(1000, 2000);
- 	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, 0x00);
- }
- 
-@@ -2245,12 +2251,11 @@ static void it6505_link_training_work(struct work_struct *work)
- 	if (ret) {
- 		it6505->auto_train_retry = AUTO_TRAIN_RETRY;
- 		it6505_link_train_ok(it6505);
--		return;
- 	} else {
- 		it6505->auto_train_retry--;
-+		it6505_dump(it6505);
- 	}
- 
--	it6505_dump(it6505);
- }
- 
- static void it6505_plugged_status_to_codec(struct it6505 *it6505)
-@@ -2471,31 +2476,53 @@ static void it6505_irq_link_train_fail(struct it6505 *it6505)
- 	schedule_work(&it6505->link_works);
- }
- 
--static void it6505_irq_video_fifo_error(struct it6505 *it6505)
-+static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
- {
--	struct device *dev = it6505->dev;
--
--	DRM_DEV_DEBUG_DRIVER(dev, "video fifo overflow interrupt");
--	it6505->auto_train_retry = AUTO_TRAIN_RETRY;
--	flush_work(&it6505->link_works);
--	it6505_stop_hdcp(it6505);
--	it6505_video_reset(it6505);
-+	return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
- }
- 
--static void it6505_irq_io_latch_fifo_overflow(struct it6505 *it6505)
-+static void it6505_irq_video_handler(struct it6505 *it6505, const int *int_status)
- {
- 	struct device *dev = it6505->dev;
-+	int reg_0d, reg_int03;
- 
--	DRM_DEV_DEBUG_DRIVER(dev, "IO latch fifo overflow interrupt");
--	it6505->auto_train_retry = AUTO_TRAIN_RETRY;
--	flush_work(&it6505->link_works);
--	it6505_stop_hdcp(it6505);
--	it6505_video_reset(it6505);
--}
-+	/*
-+	 * When video SCDT change with video not stable,
-+	 * Or video FIFO error, need video reset
-+	 */
- 
--static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
--{
--	return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
-+	if ((!it6505_get_video_status(it6505) &&
-+	     (it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *)int_status))) ||
-+	    (it6505_test_bit(BIT_INT_IO_FIFO_OVERFLOW,
-+			     (unsigned int *)int_status)) ||
-+	    (it6505_test_bit(BIT_INT_VID_FIFO_ERROR,
-+			     (unsigned int *)int_status))) {
-+		it6505->auto_train_retry = AUTO_TRAIN_RETRY;
-+		flush_work(&it6505->link_works);
-+		it6505_stop_hdcp(it6505);
-+		it6505_video_reset(it6505);
-+
-+		usleep_range(10000, 11000);
-+
-+		/*
-+		 * Clear FIFO error IRQ to prevent fifo error -> reset loop
-+		 * HW will trigger SCDT change IRQ again when video stable
-+		 */
-+
-+		reg_int03 = it6505_read(it6505, INT_STATUS_03);
-+		reg_0d = it6505_read(it6505, REG_SYSTEM_STS);
-+
-+		reg_int03 &= (BIT(INT_VID_FIFO_ERROR) | BIT(INT_IO_LATCH_FIFO_OVERFLOW));
-+		it6505_write(it6505, INT_STATUS_03, reg_int03);
-+
-+		DRM_DEV_DEBUG_DRIVER(dev, "reg08 = 0x%02x", reg_int03);
-+		DRM_DEV_DEBUG_DRIVER(dev, "reg0D = 0x%02x", reg_0d);
-+
-+		return;
-+	}
-+
-+	if (it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *)int_status))
-+		it6505_irq_scdt(it6505);
- }
- 
- static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
-@@ -2508,15 +2535,12 @@ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
- 	} irq_vec[] = {
- 		{ BIT_INT_HPD, it6505_irq_hpd },
- 		{ BIT_INT_HPD_IRQ, it6505_irq_hpd_irq },
--		{ BIT_INT_SCDT, it6505_irq_scdt },
- 		{ BIT_INT_HDCP_FAIL, it6505_irq_hdcp_fail },
- 		{ BIT_INT_HDCP_DONE, it6505_irq_hdcp_done },
- 		{ BIT_INT_AUX_CMD_FAIL, it6505_irq_aux_cmd_fail },
- 		{ BIT_INT_HDCP_KSV_CHECK, it6505_irq_hdcp_ksv_check },
- 		{ BIT_INT_AUDIO_FIFO_ERROR, it6505_irq_audio_fifo_error },
- 		{ BIT_INT_LINK_TRAIN_FAIL, it6505_irq_link_train_fail },
--		{ BIT_INT_VID_FIFO_ERROR, it6505_irq_video_fifo_error },
--		{ BIT_INT_IO_FIFO_OVERFLOW, it6505_irq_io_latch_fifo_overflow },
- 	};
- 	int int_status[3], i;
- 
-@@ -2546,6 +2570,7 @@ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
- 			if (it6505_test_bit(irq_vec[i].bit, (unsigned int *)int_status))
- 				irq_vec[i].handler(it6505);
- 		}
-+		it6505_irq_video_handler(it6505, (unsigned int *)int_status);
- 	}
- 
- 	pm_runtime_put_sync(dev);
--- 
-2.25.1
+
+> 
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - gpio-controller
+>>> +  - "#gpio-cells"
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +...
+>>> diff --git a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+>>> new file mode 100644
+>>> index 000000000000..217c038b2842
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+>>> @@ -0,0 +1,117 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/mfd/adi,adp5585.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Analog Devices ADP5585 Keypad Decoder and I/O Expansion
+>>> +
+>>> +maintainers:
+>>> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>>> +
+>>> +description: |
+>>
+>> Do not need '|' unless you need to preserve formatting.
+>>
+>>> +  The ADP5585 is a 10/11 input/output port expander with a built in keypad
+>>> +  matrix decoder, programmable logic, reset generator, and PWM generator.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - enum:
+>>> +          - adi,adp5585-00  # Default
+>>> +          - adi,adp5585-01  # 11 GPIOs
+>>> +          - adi,adp5585-02  # No pull-up resistors by default on special pins
+>>> +          - adi,adp5585-03  # Alternate I2C address
+>>> +          - adi,adp5585-04  # Pull-down resistors on all pins by default
+>>> +      - const: adi,adp5585
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 1
+>>> +
+>>> +  vdd-supply: true
+>>> +
+>>> +  gpio:
+>>> +    $ref: /schemas/gpio/adi,adp5585-gpio.yaml
+>>> +
+>>> +  pwm:
+>>> +    $ref: /schemas/pwm/adi,adp5585-pwm.yaml
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - gpio
+>>> +  - pwm
+>>> +
+>>> +allOf:
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          contains:
+>>> +            const: adi,adp5585-01
+>>> +    then:
+>>> +      properties:
+>>> +        gpio:
+>>> +          properties:
+>>> +            gpio-reserved-ranges: false
+>>
+>> This also points to fact your child node is pointless. It does not stand
+>> on its own...
+> 
+> That doesn't make the child pointless just for that reason. There are
+> numerous examples of child nodes that don't stand on their own.
+
+No, your if-then must be in the schema defining it. This is just
+unmaintianable code. It proves that child's compatible means nothing. If
+you cannot use child's compatible to make any meaningful choices, then
+it is useless.
+
+
+Best regards,
+Krzysztof
 
 
