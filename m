@@ -1,144 +1,118 @@
-Return-Path: <linux-kernel+bounces-186123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB158CC010
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:16:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D54E8CC012
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF53EB2288C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF1811C210EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9D7824B0;
-	Wed, 22 May 2024 11:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YY5D39vj"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFF5824AA;
+	Wed, 22 May 2024 11:17:13 +0000 (UTC)
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D881680C07;
-	Wed, 22 May 2024 11:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6097BB17;
+	Wed, 22 May 2024 11:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716376595; cv=none; b=funwipJ/ovDwnwi45jUguxxS//GSeORv93HfAbsP5p6KmGSs2th9VhXHTPIbX1y4kWiI1BdCn2ue18Kw+1h7uM92mLr2E8Z1BQGbQF6TfTPMQVD3gWLNWdei/coTQf2M2TfoIiaXCOA8Bx1Q4O4x0uEffifBGubd4rMSrhXHw3c=
+	t=1716376633; cv=none; b=elSUWCm/ZTD0vZJOi5ztw3VTfMh3ZQI6AwLrpCfRvLPemKRx4Pz5eU2b8N9TBMJK90o2NBEjrMQslMq6UjckP8l8mnPW6IHpJP6uQX6SxrcCM8HOSSFHJyanCCVHz382DZ4QHYT60lfxwDId1qaWUfpfAdIRu+XGSWg4lfBDiHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716376595; c=relaxed/simple;
-	bh=q83AOrxhjHdDtbOcVJNIw+dm8Yj5lnBFmVhmfjLn9IA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sBd+7x1ii0B5Moz/s6bzup7Ud3/unpm5UKl9L2+Edj4QogBDbs9DFshVi8zbq8HN9xk0b6W7JVq8gI1CXmAuBtpCISnUxd49BIPgo8qS47sis9oHWNFIw3yo6pPGRj0Tb6cCi+Z6yIBR+KT2+VcIHAeY96Ts7mG1WKBv8upwiHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YY5D39vj; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id ED5DCD49;
-	Wed, 22 May 2024 13:16:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716376579;
-	bh=q83AOrxhjHdDtbOcVJNIw+dm8Yj5lnBFmVhmfjLn9IA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YY5D39vjYu90YM40AKH7ctfUmXDtAh3vruu9Dqw2jQ0NLNg+p6WrLmo9V7u80L71G
-	 ULiTQnW/MDSY/YmaYPNEkMMkY14OWGsTrZo+WvhbojfStattNgZP5ollUYzcsHdSof
-	 gSbVh5HKYAenHcnPeB8iJ3mhIXdBV6fvJtxyM+zw=
-Date: Wed, 22 May 2024 14:16:22 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Yunfei Dong <yunfei.dong@mediatek.com>
-Cc: Jeffrey Kardatzke <jkardatzke@google.com>,
-	=?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>,
-	Nathan Hebert <nhebert@chromium.org>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Chen-Yu Tsai <wenst@chromium.org>, Yong Wu <yong.wu@mediatek.com>,
-	Hsin-Yi Wang <hsinyi@chromium.org>,
-	Fritz Koenig <frkoenig@chromium.org>,
-	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T . J . Mercier" <tjmercier@google.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v6,04/24] v4l: add documentation for restricted memory
- flag
-Message-ID: <20240522111622.GA31185@pendragon.ideasonboard.com>
-References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
- <20240516122102.16379-5-yunfei.dong@mediatek.com>
+	s=arc-20240116; t=1716376633; c=relaxed/simple;
+	bh=CPEqhqyGm2UZF8UZo0VoyFgQT3dnqGYzpOjGsl/H4IE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hz34u17DKb3a7SFS1xXzII4J3LINXUNjuh4bem41a7LeE4igEtUXcF4vTEV1aHjoT7c5NnR23ZVd7it9cGUMVG/aZEWd/sZkjNKFhTFONxGXoM4zwfT2Aa0EfrwyxOaPkk8DGpV3972nuEKl0t8c1v0j1RbYZ+PeZ1tYyiLEOCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F3A84240008;
+	Wed, 22 May 2024 11:16:57 +0000 (UTC)
+Message-ID: <35bf5362-ae70-4fbe-acff-691bfe4a9e34@ghiti.fr>
+Date: Wed, 22 May 2024 13:16:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240516122102.16379-5-yunfei.dong@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] riscv: force PAGE_SIZE linear mapping if
+ debug_pagealloc is enabled
+To: Nam Cao <namcao@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <cover.1715750938.git.namcao@linutronix.de>
+ <2e391fa6c6f9b3fcf1b41cefbace02ee4ab4bf59.1715750938.git.namcao@linutronix.de>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <2e391fa6c6f9b3fcf1b41cefbace02ee4ab4bf59.1715750938.git.namcao@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-Hi Jefrey,
+Hi Nam,
 
-Thank you for the patch.
-
-On Thu, May 16, 2024 at 08:20:42PM +0800, Yunfei Dong wrote:
-> From: Jeffrey Kardatzke <jkardatzke@google.com>
-> 
-> Adds documentation for V4L2_MEMORY_FLAG_RESTRICTED.
-> 
-> Signed-off-by: Jeffrey Kardatzke <jkardatzke@google.com>
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+On 15/05/2024 07:50, Nam Cao wrote:
+> debug_pagealloc is a debug feature which clears the valid bit in page table
+> entry for freed pages to detect illegal accesses to freed memory.
+>
+> For this feature to work, virtual mapping must have PAGE_SIZE resolution.
+> (No, we cannot map with huge pages and split them only when needed; because
+> pages can be allocated/freed in atomic context and page splitting cannot be
+> done in atomic context)
+>
+> Force linear mapping to use small pages if debug_pagealloc is enabled.
+>
+> Note that it is not necessary to force the entire linear mapping, but only
+> those that are given to memory allocator. Some parts of memory can keep
+> using huge page mapping (for example, kernel's executable code). But these
+> parts are minority, so keep it simple. This is just a debug feature, some
+> extra overhead should be acceptable.
+>
+> Fixes: 5fde3db5eb02 ("riscv: add ARCH_SUPPORTS_DEBUG_PAGEALLOC support")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> Cc: stable@vger.kernel.org
 > ---
->  Documentation/userspace-api/media/v4l/buffer.rst | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/userspace-api/media/v4l/buffer.rst b/Documentation/userspace-api/media/v4l/buffer.rst
-> index 52bbee81c080..807e43bfed2b 100644
-> --- a/Documentation/userspace-api/media/v4l/buffer.rst
-> +++ b/Documentation/userspace-api/media/v4l/buffer.rst
-> @@ -696,7 +696,7 @@ enum v4l2_memory
->  
->  .. _memory-flags:
->  
-> -Memory Consistency Flags
-> +Memory Flags
->  ------------------------
->  
->  .. raw:: latex
-> @@ -728,6 +728,14 @@ Memory Consistency Flags
->  	only if the buffer is used for :ref:`memory mapping <mmap>` I/O and the
->  	queue reports the :ref:`V4L2_BUF_CAP_SUPPORTS_MMAP_CACHE_HINTS
->  	<V4L2-BUF-CAP-SUPPORTS-MMAP-CACHE-HINTS>` capability.
-> +    * .. _`V4L2-MEMORY-FLAG-RESTRICTED`:
+> Interestingly this feature somehow still worked when first introduced.
+> My guess is that back then only 2MB page size is used. When a 4KB page is
+> freed, the entire 2MB will be (incorrectly) invalidated by this feature.
+> But 2MB is quite small, so no one else happen to use other 4KB pages in
+> this 2MB area. In other words, it used to work by luck.
+>
+> Now larger page sizes are used, so this feature invalidate large chunk of
+> memory, and the probability that someone else access this chunk and
+> trigger a page fault is much higher.
+>
+>   arch/riscv/mm/init.c | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index 2574f6a3b0e7..73914afa3aba 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -682,6 +682,9 @@ void __init create_pgd_mapping(pgd_t *pgdp,
+>   static uintptr_t __init best_map_size(phys_addr_t pa, uintptr_t va,
+>   				      phys_addr_t size)
+>   {
+> +	if (debug_pagealloc_enabled())
+> +		return PAGE_SIZE;
 > +
-> +      - ``V4L2_MEMORY_FLAG_RESTRICTED``
-> +      - 0x00000002
-> +      - The queued buffers are expected to be in restricted memory. If not, an
-> +	error will be returned. This flag can only be used with ``V4L2_MEMORY_DMABUF``.
-> +	Typically restricted buffers are allocated using a restricted dma-heap. This flag
-> +	can only be specified if the ``V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM`` is set.
+>   	if (pgtable_l5_enabled &&
+>   	    !(pa & (P4D_SIZE - 1)) && !(va & (P4D_SIZE - 1)) && size >= P4D_SIZE)
+>   		return P4D_SIZE;
 
-Why is this flag needed ? Given that the usage model requires the V4L2
-device to be a dma buf importer, why would userspace set the
-V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM flag and pass a non-restricted
-buffer to the device ?
 
-The V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM flag also needs to be
-documented in the relevant section, I don't think that's done in this
-series.
+You can add:
 
->  
->  .. raw:: latex
->  
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
--- 
-Regards,
+Thanks,
 
-Laurent Pinchart
+Alex
+
 
