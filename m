@@ -1,272 +1,228 @@
-Return-Path: <linux-kernel+bounces-186258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6928CC1CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:09:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C5E8CC1CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FCCF1C21BCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:09:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B561F247F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B3513E027;
-	Wed, 22 May 2024 13:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED71013E40F;
+	Wed, 22 May 2024 13:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XHhWAFA5"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5VlRJaU"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6583413DDC4
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757DE13E05B;
+	Wed, 22 May 2024 13:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716383345; cv=none; b=uvwIiCJEggQn49H66Z4mFuDJUJExTEI1IGPZJ7M6Twfcz2UHosVFgNl/6wZZW4fEygAnZgA6YzmcRa6+1EsGkc/gVFldMjdTAfCfNbz0LDMnvpCw7qo8AbAU3RA8L6SvZiQ9G8d5AW6AajDIzcrcC8sdlE3/J6FAkbJ4/tY0qvY=
+	t=1716383336; cv=none; b=CIWY4+qYtkqM9HzqSfqr2pYJB3p0j6PLwdJZYcMuJ6wvW/8l4IFfCK5nE5F2aR4GheMGALhv2LCXKn4vBv5USKdjxUzngKoDkyT8yP7OVcWbq5Lp+gwqStHrvaqWiHCTmCSHejxUkYUC4D8NIJqmEjO2g48DiT9AsBZs7N0NpZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716383345; c=relaxed/simple;
-	bh=WS7882mzHgfs2gNdKan30wkPOWoctxrHpnRRZJBBj+Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kJpd9I3K4KXCTYRrI//WEeBhKYsQOP7htZpZuPd8HkpPeWjYOsr7FZEC6wyYKs33M6/GS8KxzIUiZfeE53O0qyRgWylCIlDLn+qCcJVgUbKFrDUEhrJVbJQWX1KnfQs9Ms0ykv0oia3TzVziMM3FnM8j686I9reIgaUwluqeWW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XHhWAFA5; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2b9fe8fc695so2084947a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 06:09:04 -0700 (PDT)
+	s=arc-20240116; t=1716383336; c=relaxed/simple;
+	bh=OYm801HITH2QnowaSNTgsAkykOoI7JCJmmQS3LVh7XE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HEuBRRiYx4I1Dk6Hy700n/lRmR8KFJ8BqGEWxFD4c1jfN7rTNOXlv8nvhoMwZdD/DebOA43d0EutjWk8TwLieQiXlIRcgTr8WPauuGA0T9+dM6P8VVpIXZX5YaocPGnTT5S3AyuJYvz3u2vYHJ0ibng7wmAWn6DWbzgsSLxH96A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5VlRJaU; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-574b3d6c0f3so11170332a12.0;
+        Wed, 22 May 2024 06:08:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716383344; x=1716988144; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1716383333; x=1716988133; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vjQG+ZVRqA/OwyUtRk8c53CTAn1WGq4lEjgouxEuyEA=;
-        b=XHhWAFA5VoeY691VBB15vt0nyBEvac353DKTQrz7n6s9H0Yb1cAP1CCAGubtXINYkS
-         P/hSlL1atErlOqv1MXnOCMe/bkXhHEgGaJoqsLLC6tcAyH6eUuJcWXMD+oYsl5X5lmve
-         RElVEjw/kWn6q8qKD/1fMsVvOfFynRmtpZGga5FWeMf/MAfL9CbXD4urvUxUA/8pghdQ
-         2J19Bm9IczyDUmdxD+zZz0CtPBkkezbrdILM1eNCncA/2DFJAVb6dl4sc1NNIjbmCkD2
-         u24pNHQ4aXJ2EQ7GQtdQXDe173vYELAmeIdKyFJaJAIm/ZjV+kSFNBh3qzN02j1+qyU/
-         ptww==
+        bh=qpYJjP79K9HnDkgb6oM0qzQ0M2yNWOSh/VG5MLDKm2s=;
+        b=i5VlRJaU7D+ixYKHpMEpgidOLNKJIvUNGTDQ7cWBZTIfSE3HlSJxLSI9MBbY14J8Gh
+         xqwDs6qvfRFsEZjMiPOJ0nsOS+FltrZnzl29+FmPeeXROQ5wpTJAj6oixLji9mZYm66Q
+         bvK8FAFU/50ogYixCWpxoU+EH9I10HL1uacNB8lkjq2U4QN7r5wUiEROGfL7iZtqD20I
+         UNCMPStmtoYtnzNtRFN/7hRQah0z32Rxdp+lbZqnuWmuTLtI7RdReba+8NJD1YZKc7wV
+         qbZIhbVDAit7CE2ij+Rm8XQE4mmtfQ2iQuBq1z7UOdgSvDvrsQz6T1AsgxCZ7wT2cDGL
+         qmrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716383344; x=1716988144;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vjQG+ZVRqA/OwyUtRk8c53CTAn1WGq4lEjgouxEuyEA=;
-        b=YOj2GTaE42LrJHQTq43e62q/8xgG4+bfUBCnybty8E5HcemE96a94Wm5bX+d66+yEn
-         HK4S09Ov+UleIhSsIVK1qN4GfjBdLRjNycCxHbPzOvNujNVFKfddgrX5xFYO+leQIetR
-         12ressWyQWDkmhgP1bbC5oxIxWXxi2a28YYxC2qQArtmzkOhx37SzxR7hCjoGyzTQKcz
-         vGklgDg0zEZnRTXnZdjt4ZQlDra01QuQKEp6xDq8K+OhuBuidPL50c6dj2/5zFTrBhpy
-         fO/HbNwfRZ6QP+1FmP8jVnCro99PWFNdOAzL5Oz3Sn2MBMjHn9/obCU76H2qWWJfveS6
-         HeHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtUrzqTapjagk7K3ReiuHJv2F6BRvRbw1vATZ/g/V9t5IBp6DGPHGem/X/LLWRPPYJRdc4MXmFf/RtvsQodVkEsKTU2Q07tEnoeVmz
-X-Gm-Message-State: AOJu0YwWI0iCfl2A8zBrdnF/Bvl7hgiYWmSmcmxeNRC+uyFrYFMUOM92
-	5LAIoqd/vsHaphs6TyfH62S0gFjqyHyBZecTxvP2a6Qt/Rdt2E3StDnkeZHv8Dd5ouEXE92ZLhs
-	vEtzmAt5rItIersy47/3EXMEAzMTnvwBb0L4krA==
-X-Google-Smtp-Source: AGHT+IGGteJsHxgR3EWxIPX4ekmF8FFLzH3yrNtdNkSNiZJoTME0Oi9hJJmhsEioHBJpUK2qncr9PxTJchD7QRrbI6c=
-X-Received: by 2002:a17:90a:5982:b0:2bd:8aed:740a with SMTP id
- 98e67ed59e1d1-2bd9f483e65mr1871328a91.23.1716383343671; Wed, 22 May 2024
- 06:09:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716383333; x=1716988133;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=qpYJjP79K9HnDkgb6oM0qzQ0M2yNWOSh/VG5MLDKm2s=;
+        b=CsqZ70OYx4n/wH2D/+Pr7c+xR0K9b6Pyr+PxX1cdtqACE6Yc53+piy8hEE0fgxsASA
+         rtpzOTQbBEdNSJF3sxjfSJXzU0x50TA9iJrHnBSFUDIw+5LwjiBy0x49Sk9bPUAzeMnf
+         5dT9q4KFv3vZWlYTHdp4cpC4aSQcfANbyDicA6rBSnrpzLfrNVQ2CFvWxuvFNm47NrIg
+         XEFWwVINTgyHOURm5iD7Scckd6wG6y/iy43T/4TI5sF4ufwsOlfoDDW5xCPEqW/ksR58
+         qMGW0bRneC+80beL+n29bTp7GoAOqQbPTmenz+rnwdPVk2Djpm52Hj59FP8gJinxRouJ
+         oAng==
+X-Forwarded-Encrypted: i=1; AJvYcCX5jHOb9fvhtoNohP8UaX3/ujK3HTNmrWvKIWV/9onhsDFjFW9H40neY1jZSwB/8JsZ7aDsS8Rorhh3bK4qPEsmh8mx05pdrOxzLX3k/rbiWBU2qoR/hb3cNjy3xFLDPX1oliAjQP6VCkWDRdoVWJ4SyyV8iwZNwvL5ITCQSIXHECRztf0=
+X-Gm-Message-State: AOJu0YyoUepVFyDxzB0PVz91JV9RG9gGVKjGN0idyIYxZll6itCmBgDS
+	tMWGK/HpOS5XnUKynYP0wzGoTnoe2E2hedBrtLubVWFko0tBukE7
+X-Google-Smtp-Source: AGHT+IEqsYmWjn5Jt3QaVT4z9TWEuLnJ1HcJm/NnrnS8PIxx/a5S6igkM7OpPCPL3yIwOhcuec+2Ug==
+X-Received: by 2002:a50:8ac8:0:b0:573:58a6:5a4d with SMTP id 4fb4d7f45d1cf-57832c46aaemr1247776a12.35.1716383332437;
+        Wed, 22 May 2024 06:08:52 -0700 (PDT)
+Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-574f2f50e73sm10624236a12.68.2024.05.22.06.08.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 06:08:52 -0700 (PDT)
+Message-ID: <fc29f19a1ecbceef64bf219a9441eb5b9f09503a.camel@gmail.com>
+Subject: Re: [PATCH 1/2] drivers: hwmon: max31827: Add PEC support
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Radu Sabau <radu.sabau@analog.com>, Jean Delvare <jdelvare@suse.com>, 
+ Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
+ linux-hwmon@vger.kernel.org,  linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Wed, 22 May 2024 15:08:51 +0200
+In-Reply-To: <20240522123923.22320-2-radu.sabau@analog.com>
+References: <20240522123923.22320-1-radu.sabau@analog.com>
+	 <20240522123923.22320-2-radu.sabau@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522-topic-lemans-iot-remoteproc-v1-0-af9fab7b27f0@linaro.org>
- <20240522-topic-lemans-iot-remoteproc-v1-1-af9fab7b27f0@linaro.org>
- <e89c3270-e51f-4d5b-87db-09ff8f0961e6@linaro.org> <CAMRc=MczvfcXnEae__LJh47T=vCTbCz9EHOrNP+QmpTDvdarZw@mail.gmail.com>
- <42ba8472-9d63-4125-b538-39d8090203b4@linaro.org>
-In-Reply-To: <42ba8472-9d63-4125-b538-39d8090203b4@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 22 May 2024 15:08:49 +0200
-Message-ID: <CAMRc=Mcd4qoF-BtHdpHSy5DEDDKYV7RK2hCgegf7_63eRoahTQ@mail.gmail.com>
-Subject: Re: [PATCH 1/5] dt-bindings: remoteproc: qcom,sm8550-pas: Document
- the SA8775p ADSP, CDSP and GPDSP
-To: neil.armstrong@linaro.org
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Tengfei Fan <quic_tengfan@quicinc.com>, 
-	Srini Kandagatla <srinivas.kandagatla@linaro.org>, Alex Elder <elder@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 3:06=E2=80=AFPM <neil.armstrong@linaro.org> wrote:
->
-> On 22/05/2024 15:04, Bartosz Golaszewski wrote:
-> > On Wed, May 22, 2024 at 2:42=E2=80=AFPM <neil.armstrong@linaro.org> wro=
-te:
-> >>
-> >> On 22/05/2024 14:08, Bartosz Golaszewski wrote:
-> >>> From: Tengfei Fan <quic_tengfan@quicinc.com>
-> >>>
-> >>> Document the compatibles for the components used to boot the ADSP, CD=
-SP0,
-> >>> CDSP1, GPDSP0 and GPDSP1 on the SA8775p SoC.
-> >>>
-> >>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> >>> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>> ---
-> >>>    .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 76 ++++++++++=
-+++++++++++-
-> >>>    1 file changed, 75 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550=
--pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.ya=
-ml
-> >>> index 73fda7565cd1..9d3a862c39e1 100644
-> >>> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.ya=
-ml
-> >>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.ya=
-ml
-> >>> @@ -16,6 +16,11 @@ description:
-> >>>    properties:
-> >>>      compatible:
-> >>>        enum:
-> >>> +      - qcom,sa8775p-adsp-pas
-> >>> +      - qcom,sa8775p-cdsp0-pas
-> >>> +      - qcom,sa8775p-cdsp1-pas
-> >>> +      - qcom,sa8775p-gpdsp0-pas
-> >>> +      - qcom,sa8775p-gpdsp1-pas
-> >>>          - qcom,sm8550-adsp-pas
-> >>>          - qcom,sm8550-cdsp-pas
-> >>>          - qcom,sm8550-mpss-pas
-> >>> @@ -44,12 +49,13 @@ properties:
-> >>>
-> >>>      firmware-name:
-> >>>        $ref: /schemas/types.yaml#/definitions/string-array
-> >>> +    minItems: 1
-> >>
-> >> This will allow a single firmware name for all compatible,
-> >> which is wrong
-> >>
-> >
-> > So increasing the limit from the default under allOf doesn't seem to
-> > work, should I instead keep this and make the lower limit stricter for
-> > all other models?
->
-> Yes add minItems in all the allOf:if: and add the missing allOf:if: for
-> the new compatibles to set the minItems, same for memory-region.
->
-> Or you may simply spin off a new yaml, this one is getting quite large.
->
+On Wed, 2024-05-22 at 15:39 +0300, Radu Sabau wrote:
+> Add support for PEC by attaching PEC attribute to the i2c device.
+> Add pec_store and pec_show function for accesing the "pec" file.
+>=20
+> Signed-off-by: Radu Sabau <radu.sabau@analog.com>
+> ---
+> =C2=A0Documentation/hwmon/max31827.rst | 13 ++++-
+> =C2=A0drivers/hwmon/max31827.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 95 +++++++++++++++++++++++++++-----
+> =C2=A02 files changed, 92 insertions(+), 16 deletions(-)
+>=20
+> diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31=
+827.rst
+> index 44ab9dc064cb..9c11a9518c67 100644
+> --- a/Documentation/hwmon/max31827.rst
+> +++ b/Documentation/hwmon/max31827.rst
+> @@ -131,7 +131,14 @@ The Fault Queue bits select how many consecutive tem=
+perature
+> faults must occur
+> =C2=A0before overtemperature or undertemperature faults are indicated in =
+the
+> =C2=A0corresponding status bits.
+> =C2=A0
+> -Notes
+> ------
+> +PEC Support
+> +-----------
+> +
+> +When reading a register value, the PEC byte is computed and sent by the =
+chip.
+> +
+> +PEC on word data transaction respresents a signifcant increase in bandwi=
+tdh
+> +usage (+33% for both write and reads) in normal conditions.
+> =C2=A0
+> -PEC is not implemented.
+> +Since this operation implies there will be an extra delay to each
+> +transaction, PEC can be disabled or enabled through sysfs.
+> +Just write 1=C2=A0 to the "pec" file for enabling PEC and 0 for disablin=
+g it.
+> diff --git a/drivers/hwmon/max31827.c b/drivers/hwmon/max31827.c
+> index f8a13b30f100..16a1524413db 100644
+> --- a/drivers/hwmon/max31827.c
+> +++ b/drivers/hwmon/max31827.c
+> @@ -11,19 +11,20 @@
+> =C2=A0#include <linux/hwmon.h>
+> =C2=A0#include <linux/i2c.h>
+> =C2=A0#include <linux/mutex.h>
+> -#include <linux/of_device.h>
+> =C2=A0#include <linux/regmap.h>
+> =C2=A0#include <linux/regulator/consumer.h>
+> +#include <linux/of_device.h>
+> =C2=A0
 
-Yeah, maybe that's a better idea.
+Looks like unrelated change...
+> -#define MAX31827_T_REG			0x0
+> +#define MAX31827_T_REG	0x0
+> =C2=A0#define MAX31827_CONFIGURATION_REG	0x2
+> -#define MAX31827_TH_REG			0x4
+> -#define MAX31827_TL_REG			0x6
+> -#define MAX31827_TH_HYST_REG		0x8
+> -#define MAX31827_TL_HYST_REG		0xA
+> +#define MAX31827_TH_REG	0x4
+> +#define MAX31827_TL_REG 0x6
+> +#define MAX31827_TH_HYST_REG	0x8
+> +#define MAX31827_TL_HYST_REG	0xA
 
-Bart
+ditto for all the other places
 
-> Neil
->
-> >
-> > Bart
-> >
-> >>>        items:
-> >>>          - description: Firmware name of the Hexagon core
-> >>>          - description: Firmware name of the Hexagon Devicetree
-> >>>
-> >>>      memory-region:
-> >>> -    minItems: 2
-> >>> +    minItems: 1
-> >>
-> >> Same here
-> >>
-> >>>        items:
-> >>>          - description: Memory region for main Firmware authenticatio=
-n
-> >>>          - description: Memory region for Devicetree Firmware authent=
-ication
-> >>> @@ -81,6 +87,21 @@ allOf:
-> >>>              maxItems: 5
-> >>>            memory-region:
-> >>>              maxItems: 2
-> >>> +  - if:
-> >>> +      properties:
-> >>> +        compatible:
-> >>> +          enum:
-> >>> +            - qcom,sa8775p-adsp-pas
-> >>> +            - qcom,sa8775p-cdsp0-pas
-> >>> +            - qcom,sa8775p-cdsp1-pas
-> >>> +            - qcom,sa8775p-gpdsp0-pas
-> >>> +            - qcom,sa8775p-gpdsp1-pas
-> >>> +    then:
-> >>> +      properties:
-> >>> +        interrupts:
-> >>> +          maxItems: 5
-> >>> +        interrupt-names:
-> >>> +          maxItems: 5
-> >>>      - if:
-> >>>          properties:
-> >>>            compatible:
-> >>> @@ -128,6 +149,7 @@ allOf:
-> >>>          properties:
-> >>>            compatible:
-> >>>              enum:
-> >>> +            - qcom,sa8775p-adsp-pas
-> >>>                - qcom,sm8550-adsp-pas
-> >>>                - qcom,sm8650-adsp-pas
-> >>>                - qcom,x1e80100-adsp-pas
-> >>> @@ -177,6 +199,58 @@ allOf:
-> >>>                - const: cx
-> >>>                - const: mxc
-> >>>                - const: nsp
-> >>> +  - if:
-> >>> +      properties:
-> >>> +        compatible:
-> >>> +          enum:
-> >>> +            - qcom,sa8775p-cdsp-pas
-> >>> +    then:
-> >>> +      properties:
-> >>> +        power-domains:
-> >>> +          items:
-> >>> +            - description: CX power domain
-> >>> +            - description: MXC power domain
-> >>> +            - description: NSP0 power domain
-> >>> +        power-domain-names:
-> >>> +          items:
-> >>> +            - const: cx
-> >>> +            - const: mxc
-> >>> +            - const: nsp0
-> >>> +
-> >>> +  - if:
-> >>> +      properties:
-> >>> +        compatible:
-> >>> +          enum:
-> >>> +            - qcom,sa8775p-cdsp1-pas
-> >>> +    then:
-> >>> +      properties:
-> >>> +        power-domains:
-> >>> +          items:
-> >>> +            - description: CX power domain
-> >>> +            - description: MXC power domain
-> >>> +            - description: NSP1 power domain
-> >>> +        power-domain-names:
-> >>> +          items:
-> >>> +            - const: cx
-> >>> +            - const: mxc
-> >>> +            - const: nsp1
-> >>> +
-> >>> +  - if:
-> >>> +      properties:
-> >>> +        compatible:
-> >>> +          enum:
-> >>> +            - qcom,sa8775p-gpdsp0-pas
-> >>> +            - qcom,sa8775p-gpdsp1-pas
-> >>> +    then:
-> >>> +      properties:
-> >>> +        power-domains:
-> >>> +          items:
-> >>> +            - description: CX power domain
-> >>> +            - description: MXC power domain
-> >>> +        power-domain-names:
-> >>> +          items:
-> >>> +            - const: cx
-> >>> +            - const: mxc
-> >>>
-> >>>    unevaluatedProperties: false
-> >>>
-> >>>
-> >>
->
+..
+
+> =C2=A0
+> +static ssize_t pec_show(struct device *dev, struct device_attribute *dev=
+attr,
+> +			char *buf)
+> +{
+> +	struct i2c_client *client =3D to_i2c_client(dev);
+> +
+> +	return scnprintf(buf, PAGE_SIZE, "%d\n", !!(client->flags &
+> I2C_CLIENT_PEC));
+
+sysfs_emit()
+
+> +}
+> +
+> +static ssize_t pec_store(struct device *dev, struct device_attribute *de=
+vattr,
+> +			 const char *buf, size_t count)
+> +{
+> +	struct max31827_state *st =3D dev_get_drvdata(dev);
+> +	struct i2c_client *client =3D to_i2c_client(dev);
+> +	unsigned int val, val2;
+> +	int err;
+> +
+> +	err =3D kstrtouint(buf, 10, &val);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	val2 =3D FIELD_PREP(MAX31827_CONFIGURATION_PEC_EN_MASK, !!val);
+> +
+
+Why not just val?
+
+> +	switch (val) {
+> +	case 0:
+> +		err =3D regmap_update_bits(st->regmap, MAX31827_CONFIGURATION_REG,
+> +					 MAX31827_CONFIGURATION_PEC_EN_MASK,
+> +					 val2);
+> +		if (err)
+> +			return err;
+> +
+> +		client->flags &=3D ~I2C_CLIENT_PEC;
+> +		break;
+> +	case 1:
+> +		err =3D regmap_update_bits(st->regmap, MAX31827_CONFIGURATION_REG,
+> +					 MAX31827_CONFIGURATION_PEC_EN_MASK,
+> +					 val2);
+> +		if (err)
+> +			return err;
+> +
+> +		client->flags |=3D I2C_CLIENT_PEC;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return count;
+> +}
+> +static DEVICE_ATTR_RW(pec);
+> +
+> =C2=A0static struct attribute *max31827_attrs[] =3D {
+> =C2=A0	&dev_attr_temp1_resolution.attr,
+> +	&dev_attr_pec.attr,
+
+Do we need it in here??
+
+
+- Nuno S=C3=A1
 
