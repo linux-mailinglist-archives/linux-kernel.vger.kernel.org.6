@@ -1,297 +1,291 @@
-Return-Path: <linux-kernel+bounces-186476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D778CC4A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:10:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 506648CC4AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F902832F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:10:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A611D283FA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6F720DF4;
-	Wed, 22 May 2024 16:10:22 +0000 (UTC)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5649E1411EB;
+	Wed, 22 May 2024 16:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PCG4Q8Zo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C031E517
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E8813FD69
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716394222; cv=none; b=Pc0r++ZyvIcxsbfiej5B1nWalQoutPDVi457OBYeXl1UidKMCdlaeDTKfCb0a27A/ye/ULhighDF0Cnx7BRGPzbdBBsMKDez98wMEURkyGBDf0Mb8SpIGwSj6yXPJh/5+7saHE5SrvD8MOTs4IVyeW50XvL7IQTKKltzgd/FJsc=
+	t=1716394242; cv=none; b=PVK+JO2s3TByUfG6VHVZWfOfcw2aE9ppRRe1fh6bP2FvkFo/eBEX81c3lOHR4y87PnhtZ+sDhfmG6AIHhAtPlTCIPWz1JW/xn2yt5J7FRo/z9ii3klpSUeYjRHzVeFirMBS4oTgj0B8c7XqlRk2GGv7nwxG29dp/8ueHkg/ZHJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716394222; c=relaxed/simple;
-	bh=vIA3o5CDNg2W1Q7Es/uuPPV0r3thdTYoBWXCd12Z1w8=;
+	s=arc-20240116; t=1716394242; c=relaxed/simple;
+	bh=uBeDvBz4SmoSnzUiJZx6fIHggb6bOPmQBiMe7UuT1I8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ivHfkTI9BOoaa0ooi8O7iLuBvYhfS1IzmNK7kXj8XZVpAx2IUHSqBtkGTPzzRS+vSeY4UbGjWQY45n5+ZTyg5MbfrHRhDPHIkb4qcuDt+IhSHLh6CFtF57Jkhh7GIQOUDCBcckSm7lKUwBucnWRupU9k1Y4jpWKTptMi6NWv3QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=snitzer.net; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=snitzer.net
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6a0ffaa079dso7391716d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:10:19 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HZpC5SmwHDAzFjyIKpqhXrN3XCGpeZGt9LAWXS6Jaqix5C5qGWj9s/ye7RnFxMmCQiSJ6OnkisQiVkQ8MESNdY8wK41I8uzl7LPUrlnyyWQ3ET0GAQwmkr+uRVE8nDC2lAXj+rxKPhUexDbTZtlNB8OG4msG/LJG+NqmscIutHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PCG4Q8Zo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716394239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FOdt5cQ8YRHRDrpgBgiRS2WyBE/dtaEagvf3T0KeDxg=;
+	b=PCG4Q8ZozEPGR1ModsUPe+Kx0duKYwsKm7uSOmRB+JBnPKab4Eqt83dG/TNNbRJILqQ3BZ
+	JIaXd9SZCmbGw4MiQR4JmkbMYVH+rg3LR59BN2df/9FtO7wXYLH4jHAx2qbOMbcq+ulvwe
+	l5oYt6S7YFimpLU94uw0ZeRQd3W7Mfg=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-104-EraKuSdeMPuOmI5l4F-f-A-1; Wed, 22 May 2024 12:10:35 -0400
+X-MC-Unique: EraKuSdeMPuOmI5l4F-f-A-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5b278f641e7so110975eaf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:10:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716394219; x=1716999019;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pnUnYOodm15w+vcbjW3XrSJhRreyDxJQSwZnRb8cVP0=;
-        b=HEsZWQKWoSqFMHyZZB/AgeFY2DKzTviOfgryJdwUJbXtI1pcS+d5sqTmu+rjKxUuJm
-         5sS7LJhDdXza3GFNgNdRbseix7iNCAh40J8eIEMaTsrF3IsGk00qJ9IFuRt+Qos34ajD
-         zBNb+vpoKP9dgpf+FTarQ3BkB0aoK7y14snpmYNcga+5n7uQN3kR3Fa1QKIrRjBZUoxL
-         u6/WBJE7ebut+oL+yj6n+o7ZISh3xt8Ui2ksvD61HxadYwLSi9DjmCRXi0Ga3VDaXwZs
-         PAwKlqh3DBX03Twy83cAfcrIehx6GXdnNXVeAm0FN3ZfjiG43wc07s4Ziq+wedxRP+we
-         P4/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWBkNMo8672xlH07+WFdVEPEZJLBarNfmaZP2u6Bkkl+3DSJ59VHNZVxoS4fQk2w5Xw475bhrbLeP0q0vCs54iQmj7XSrV57LJXBuuw
-X-Gm-Message-State: AOJu0YypS6NevOmfJFvqoFzTlihT4QK9ijwke5ENTyRRm+RLFLxygIfz
-	mftSQMwrswS0DrEJsyRZ5dsiPWPk4Ab+7Q7iGNq6cfTRd59okgX6f6gdnkAtg1Y=
-X-Google-Smtp-Source: AGHT+IGvT/RPF8joSYz7Z55ErMWVmiFrPIpbi5XcMJQVWlYahMVe5C7vSV9FYIsjR9dcEoJU1BrTDA==
-X-Received: by 2002:ad4:5942:0:b0:6ab:7b2a:c922 with SMTP id 6a1803df08f44-6ab7b2acc9bmr58159796d6.7.1716394218527;
-        Wed, 22 May 2024 09:10:18 -0700 (PDT)
-Received: from localhost (pool-68-160-141-91.bstnma.fios.verizon.net. [68.160.141.91])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7930b43aaccsm642907585a.114.2024.05.22.09.10.17
+        d=1e100.net; s=20230601; t=1716394234; x=1716999034;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FOdt5cQ8YRHRDrpgBgiRS2WyBE/dtaEagvf3T0KeDxg=;
+        b=LE802jkVNl4R7PiXCGlhAwoce9aqhK2PdsVrjd3OpXrFIjNUE6R3GPezDx225XNGf1
+         FSCTYD4uRIW3mr7SIaWLqVOHm2jmS/Sxxgea5BwEqyliUysnYIEoXRxiP+AzgrpYEyJS
+         t03HU1V/gPUBwxsXrdoWJ4xdXr9dtccs5XEo2PdC8xBFjDQJVXYzaJT059DBJcdkkKE9
+         FPSMTw2mmICi8WDHMKaXwiKgPLzpMuiDMDo+QRVjH+BJ+oUakQcb/1HCBsdMIm2zYWF9
+         TkqgSWPSE6lkrvp92v5v++Lcox/nX+EtX0GNnXDaiNPpf8+PWui8KsI5b3f/BdHK9qLh
+         9p6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVrKrKb8XDWYt5ZcPbEgFdkJfD6uh10skHszsmXpoLPrqkYeykQEBTP0rvdDQKw9NSfNGuX9M4VofOen98lUBwzEKGz0xK3ju9IBjG1
+X-Gm-Message-State: AOJu0YxgJf0obGdbVLQsA8vDdZg192sLzHA0GlrJBDpQyktKaLXONPco
+	g4QXWnvpVPFZcKt6x+TA5BLMVjLKAyBiN7BQ4ViIEto1lzhofFpDqJcbK15/ZmDOFavXlh8j4y+
+	zXpYPviuHXpzfrWbNkFLnyOc+7ZfVIfqvGk3ekq3vW+j8SyK6GkTofo/FiNaijQ==
+X-Received: by 2002:a05:6870:d10a:b0:24c:5871:a16b with SMTP id 586e51a60fabf-24c68baaeb0mr2653315fac.2.1716394234080;
+        Wed, 22 May 2024 09:10:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZVy3DQlVuU9nmcdCoRNi+3OXluZNJWNWvWpvE4VxiUMTXr+5glEVfMoElaUEpC1shbZd41A==
+X-Received: by 2002:a05:6870:d10a:b0:24c:5871:a16b with SMTP id 586e51a60fabf-24c68baaeb0mr2653265fac.2.1716394233255;
+        Wed, 22 May 2024 09:10:33 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ab88a234b0sm4525296d6.42.2024.05.22.09.10.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 09:10:18 -0700 (PDT)
-Date: Wed, 22 May 2024 12:10:16 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Benjamin Marzinski <bmarzins@redhat.com>,
-	Yang Yang <yang.yang@vivo.com>, Alasdair Kergon <agk@redhat.com>,
-	dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: dm: optimize flushes
-Message-ID: <Zk4Y6DMgK71UuoKd@kernel.org>
-References: <20240514090445.2847-1-yang.yang@vivo.com>
- <20240514090445.2847-4-yang.yang@vivo.com>
- <ZkTXzG1yrPmW64Z6@redhat.com>
- <60bd4b9-8edd-7e22-ce8b-e5d0e43da195@redhat.com>
- <90f4beb-2e15-3f9-4bc2-0d13872e8ea@redhat.com>
+        Wed, 22 May 2024 09:10:32 -0700 (PDT)
+Date: Wed, 22 May 2024 12:10:30 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+	Pavel Tatashin <pasha.tatashin@soleen.com>,
+	axelrasmussen@google.com, nadav.amit@gmail.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: 6.10/bisected/regression - commit 8430557fc584 cause warning at
+ mm/page_table_check.c:198 __page_table_check_ptes_set+0x306
+Message-ID: <Zk4Y9tU7pOzU0lw1@x1n>
+References: <CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com>
+ <Zk0HxVODITGKqYCw@x1n>
+ <CABXGCsNbcMn0Z0RudFrBW78rZPE+cDY+f9r+yKf_AZwJZUOrQg@mail.gmail.com>
+ <Zk0UA6wABOB9X_Dx@x1n>
+ <CABXGCsOZnxrSHd0y6QrFhzAiY-uTJiRSmo__C_P8Y2qjFV6bRA@mail.gmail.com>
+ <Zk0h0V8kvZRKu6F4@x1n>
+ <a3d54407-87aa-4f59-adac-c9b79fe1ecef@redhat.com>
+ <Zk4MsGxhP5x5aURG@x1n>
+ <03faa624-1685-4a21-81fc-cc9e8b760e97@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <90f4beb-2e15-3f9-4bc2-0d13872e8ea@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <03faa624-1685-4a21-81fc-cc9e8b760e97@redhat.com>
 
-On Thu, May 16, 2024 at 10:49:55PM +0200, Mikulas Patocka wrote:
-> Device mapper sends flush bios to all the targets and the targets send it
-> to the underlying device. That may be inefficient, for example if a table
-> contains 10 linear targets pointing to the same physical device, then
-> device mapper would send 10 flush bios to that device - despite the fact
-> that only one bio would be sufficient.
+On Wed, May 22, 2024 at 05:34:21PM +0200, David Hildenbrand wrote:
+> On 22.05.24 17:18, Peter Xu wrote:
+> > On Wed, May 22, 2024 at 09:48:51AM +0200, David Hildenbrand wrote:
+> > > On 22.05.24 00:36, Peter Xu wrote:
+> > > > On Wed, May 22, 2024 at 03:21:04AM +0500, Mikhail Gavrilov wrote:
+> > > > > On Wed, May 22, 2024 at 2:37 AM Peter Xu <peterx@redhat.com> wrote:
+> > > > > > Hmm I still cannot reproduce.  Weird.
+> > > > > > 
+> > > > > > Would it be possible for you to identify which line in debug_vm_pgtable.c
+> > > > > > triggered that issue?
+> > > > > > 
+> > > > > > I think it should be some set_pte_at() but I'm not sure, as there aren't a
+> > > > > > lot and all of them look benign so far.  It could be that I missed
+> > > > > > something important.
+> > > > > 
+> > > > > I hope it's helps:
+> > > > 
+> > > > Thanks for offering this, it's just that it doesn't look coherent with what
+> > > > was reported for some reason.
+> > > > 
+> > > > > 
+> > > > > > sh /usr/src/kernels/(uname -r)/scripts/faddr2line /lib/debug/lib/modules/(uname -r)/vmlinux debug_vm_pgtable+0x1c04
+> > > > > debug_vm_pgtable+0x1c04/0x3360:
+> > > > > native_ptep_get_and_clear at arch/x86/include/asm/pgtable_64.h:94
+> > > > > (inlined by) ptep_get_and_clear at arch/x86/include/asm/pgtable.h:1262
+> > > > > (inlined by) ptep_clear at include/linux/pgtable.h:509
+> > > > 
+> > > > This is a pte_clear(), and pte_clear() shouldn't even do the set() checks,
+> > > > and shouldn't stumble over what I added.
+> > > > 
+> > > > IOW, it doesn't match with the real stack dump previously:
+> > > > 
+> > > > [    5.581003]  ? __page_table_check_ptes_set+0x306/0x3c0
+> > > > [    5.581274]  ? __pfx___page_table_check_ptes_set+0x10/0x10
+> > > > [    5.581544]  ? __pfx_check_pgprot+0x10/0x10
+> > > > [    5.581806]  set_ptes.constprop.0+0x66/0xd0
+> > > > [    5.582072]  ? __pfx_set_ptes.constprop.0+0x10/0x10
+> > > > [    5.582333]  ? __pfx_pte_val+0x10/0x10
+> > > > [    5.582595]  debug_vm_pgtable+0x1c04/0x3360
+> > > > 
+> > > 
+> > > Staring at pte_clear_tests():
+> > > 
+> > > #ifndef CONFIG_RISCV
+> > > 	pte = __pte(pte_val(pte) | RANDOM_ORVALUE);
+> > > #endif
+> > > 	set_pte_at(args->mm, args->vaddr, args->ptep, pte);
+> > > 
+> > > So we set random PTE bits, probably setting the present, uffd and write bit
+> > > at the same time. That doesn't make too much sense when we want to perform
+> > > that such combinations cannot exist.
+> > 
+> > Here the issue is I don't think it should set W bit anyway, as we init
+> > page_prot to be RWX but !shared:
+> > 
+> > 	args->page_prot          = vm_get_page_prot(VM_ACCESS_FLAGS);
+> > 
+> > On x86_64 (Mikhail's system) it should have W bit cleared afaict, meanwhile
+> > the RANDOM_ORVALUE won't touch bit W due to S390_SKIP_MASK (which contains
+> > bit W / bit 1, which is another "accident"..).  Then even if with that it
+> > should not trigger..  I think that's also why I cannot reproduce this
+> > problem locally.
 > 
-> This commit optimizes the flush behavior. It introduces a per-target
-> variable flush_pass_around - it is set when the target supports flush
-> optimization - currently, the dm-linear and dm-stripe targets support it.
-> When all the targets in a table have flush_pass_around, flush_pass_around
-> on the table is set. __send_empty_flush tests if the table has
-> flush_pass_around - and if it has, no flush bios are sent to the targets
-> and the list dm_table->devices is iterated and the flush bios are sent to
-> each member of the list.
-
-What does "pass around" mean?  Seems like an awkward name for this.
-(Naming can be hard, I don't have better suggestions at the moment.)
-
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> Reported-by: Yang Yang <yang.yang@vivo.com>
+> Why oh why are skip mask applied independently of the architecture.
 > 
-> ---
->  drivers/md/dm-core.h          |    4 ++-
->  drivers/md/dm-linear.c        |    1 
->  drivers/md/dm-stripe.c        |    1 
->  drivers/md/dm-table.c         |    4 +++
->  drivers/md/dm.c               |   47 +++++++++++++++++++++++++++++-------------
->  include/linux/device-mapper.h |    5 ++++
->  6 files changed, 47 insertions(+), 15 deletions(-)
+> While _PAGE_RW should indeed be masked out by RANDOM_ORVALUE.
 > 
-> Index: linux-2.6/drivers/md/dm-core.h
-> ===================================================================
-> --- linux-2.6.orig/drivers/md/dm-core.h	2024-05-15 16:56:49.000000000 +0200
-> +++ linux-2.6/drivers/md/dm-core.h	2024-05-15 16:56:49.000000000 +0200
-> @@ -206,7 +206,9 @@ struct dm_table {
->  
->  	bool integrity_supported:1;
->  	bool singleton:1;
-> -	unsigned integrity_added:1;
-> +	bool integrity_added:1;
-> +	/* set if all the targets in the table have "flush_pass_around" set */
-> +	bool flush_pass_around:1;
->  
->  	/*
->  	 * Indicates the rw permissions for the new logical device.  This
-> Index: linux-2.6/drivers/md/dm-linear.c
-> ===================================================================
-> --- linux-2.6.orig/drivers/md/dm-linear.c	2024-05-15 16:56:49.000000000 +0200
-> +++ linux-2.6/drivers/md/dm-linear.c	2024-05-15 16:56:49.000000000 +0200
-> @@ -62,6 +62,7 @@ static int linear_ctr(struct dm_target *
->  	ti->num_discard_bios = 1;
->  	ti->num_secure_erase_bios = 1;
->  	ti->num_write_zeroes_bios = 1;
-> +	ti->flush_pass_around = true;
->  	ti->private = lc;
->  	return 0;
->  
-> Index: linux-2.6/drivers/md/dm-stripe.c
-> ===================================================================
-> --- linux-2.6.orig/drivers/md/dm-stripe.c	2024-05-15 16:56:49.000000000 +0200
-> +++ linux-2.6/drivers/md/dm-stripe.c	2024-05-15 16:56:49.000000000 +0200
-> @@ -157,6 +157,7 @@ static int stripe_ctr(struct dm_target *
->  	ti->num_discard_bios = stripes;
->  	ti->num_secure_erase_bios = stripes;
->  	ti->num_write_zeroes_bios = stripes;
-> +	ti->flush_pass_around = true;
->  
->  	sc->chunk_size = chunk_size;
->  	if (chunk_size & (chunk_size - 1))
-> Index: linux-2.6/drivers/md/dm-table.c
-> ===================================================================
-> --- linux-2.6.orig/drivers/md/dm-table.c	2024-05-15 16:56:49.000000000 +0200
-> +++ linux-2.6/drivers/md/dm-table.c	2024-05-15 16:56:49.000000000 +0200
-> @@ -160,6 +160,7 @@ int dm_table_create(struct dm_table **re
->  	t->type = DM_TYPE_NONE;
->  	t->mode = mode;
->  	t->md = md;
-> +	t->flush_pass_around = 1;
->  	*result = t;
->  	return 0;
->  }
-
-Should be: t->flush_pass_around = true;
-
-> @@ -738,6 +739,9 @@ int dm_table_add_target(struct dm_table
->  	if (ti->limit_swap_bios && !static_key_enabled(&swap_bios_enabled.key))
->  		static_branch_enable(&swap_bios_enabled);
->  
-> +	if (!ti->flush_pass_around)
-> +		t->flush_pass_around = false;
-> +
->  	return 0;
->  
->   bad:
-> Index: linux-2.6/include/linux/device-mapper.h
-> ===================================================================
-> --- linux-2.6.orig/include/linux/device-mapper.h	2024-05-15 16:56:49.000000000 +0200
-> +++ linux-2.6/include/linux/device-mapper.h	2024-05-15 16:56:49.000000000 +0200
-> @@ -397,6 +397,11 @@ struct dm_target {
->  	 * bio_set_dev(). NOTE: ideally a target should _not_ need this.
->  	 */
->  	bool needs_bio_set_dev:1;
-> +
-> +	/*
-> +	 * Set if the target supports flush optimization
-> +	 */
-> +	bool flush_pass_around:1;
->  };
-
-How does a developer _know_ if a target can set this flag?  Please
-elaborate on the requirements in this code comment.
-
->  
->  void *dm_per_bio_data(struct bio *bio, size_t data_size);
-> Index: linux-2.6/drivers/md/dm.c
-> ===================================================================
-> --- linux-2.6.orig/drivers/md/dm.c	2024-05-15 16:56:49.000000000 +0200
-> +++ linux-2.6/drivers/md/dm.c	2024-05-16 20:06:32.000000000 +0200
-> @@ -645,7 +645,7 @@ static struct bio *alloc_tio(struct clon
->  
->  	/* Set default bdev, but target must bio_set_dev() before issuing IO */
->  	clone->bi_bdev = md->disk->part0;
-> -	if (unlikely(ti->needs_bio_set_dev))
-> +	if (likely(ti != NULL) && unlikely(ti->needs_bio_set_dev))
->  		bio_set_dev(clone, md->disk->part0);
->  
->  	if (len) {
-> @@ -1107,7 +1107,7 @@ static void clone_endio(struct bio *bio)
->  	blk_status_t error = bio->bi_status;
->  	struct dm_target_io *tio = clone_to_tio(bio);
->  	struct dm_target *ti = tio->ti;
-> -	dm_endio_fn endio = ti->type->end_io;
-> +	dm_endio_fn endio = likely(ti != NULL) ? ti->type->end_io : NULL;
->  	struct dm_io *io = tio->io;
->  	struct mapped_device *md = io->md;
->  
-> @@ -1154,7 +1154,7 @@ static void clone_endio(struct bio *bio)
->  	}
->  
->  	if (static_branch_unlikely(&swap_bios_enabled) &&
-> -	    unlikely(swap_bios_limit(ti, bio)))
-> +	    likely(ti != NULL) && unlikely(swap_bios_limit(ti, bio)))
->  		up(&md->swap_bios_semaphore);
->  
->  	free_tio(bio);
-
-What is it about this commit that makes it important to verify ti
-isn't NULL in the above 3 hunks?
-
-Should these NULL checks be factored out as a separate fix?
-
-Or can these hunks be dropped?
-
-> @@ -1566,17 +1566,36 @@ static void __send_empty_flush(struct cl
->  	ci->sector_count = 0;
->  	ci->io->tio.clone.bi_iter.bi_size = 0;
->  
-> -	for (unsigned int i = 0; i < t->num_targets; i++) {
-> -		unsigned int bios;
-> -		struct dm_target *ti = dm_table_get_target(t, i);
-> -
-> -		if (unlikely(ti->num_flush_bios == 0))
-> -			continue;
-> -
-> -		atomic_add(ti->num_flush_bios, &ci->io->io_count);
-> -		bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
-> -					     NULL, GFP_NOWAIT);
-> -		atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
-> +	if (!t->flush_pass_around) {
-> +		for (unsigned int i = 0; i < t->num_targets; i++) {
-> +			unsigned int bios;
-> +			struct dm_target *ti = dm_table_get_target(t, i);
-> +
-> +			if (unlikely(ti->num_flush_bios == 0))
-> +				continue;
-> +
-> +			atomic_add(ti->num_flush_bios, &ci->io->io_count);
-> +			bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
-> +						     NULL, GFP_NOWAIT);
-> +			atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
-> +		}
-> +	} else {
-> +		/*
-> +		 * Note that there's no need to grab t->devices_lock here
-> +		 * because the targets that support flush pass-around don't
-> +		 * modify the list of devices.
-> +		 */
-> +		struct list_head *devices = dm_table_get_devices(t);
-> +		unsigned int len = 0;
-> +		struct dm_dev_internal *dd;
-> +		list_for_each_entry(dd, devices, list) {
-> +			struct bio *clone;
-> +			clone = alloc_tio(ci, NULL, 0, &len, GFP_NOIO);
-> +			atomic_add(1, &ci->io->io_count);
-> +			bio_set_dev(clone, dd->dm_dev->bdev);
-> +			clone->bi_end_io = clone_endio;
-> +			dm_submit_bio_remap(clone, NULL);
-> +		}
->  	}
->  
->  	/*
+> But with shadow stacks we consider a PTE writable (see
+> pte_write()->pte_shstk()) if
+> (1) X86_FEATURE_SHSTK is enabled
+> (2) _PAGE_RW is clear
+> (3) _PAGE_DIRTY is set
 > 
+> _PAGE_DIRTY is bit 6.
 > 
+> Likely your CPU does not support shadow stacks.
 
-Still missing what "pass-around" is meant to convey given that you
-aren't passing around the same flush... you're cloning a new flush and
-issuing one per device.  Probably worth explaining that's what you
-mean by "flush_pass_around" (both in commit header and elaborate in
-code)?
+Good point.  My host has it, but I tested in the VM which doesn't.  I
+suppose we can wait and double check whether Mikhail should see the issue
+went away with that patch provided.
 
-Also, you're issuing a flush to _all_ devices in a table. Not just
-the data devices.  .iterate_devices returns only the data devices.
-If/when there is a need to extend this feature to targets that have
-metadata devices (e.g. dm-thin, cache, etc): would it make sense to
-filter out non-data devices (by stepping through each target in the
-table and using iterate_devices)?
+In this case, instead of keep fiddling with random bits to apply and
+further work on top of per-arch random bits, I'd hope we can simply drop
+that random mechanism as I don't think it'll be pxx_none() now.  I attached
+a patch I plan to post. Does it look reasonable?
 
-Mike
+I also copied Anshuman, Gavin and Aneesh.
+
+Thanks,
+
+===8<===
+From c10cde00b14d2d305390dd418a8a8855d3e6437f Mon Sep 17 00:00:00 2001
+From: Peter Xu <peterx@redhat.com>
+Date: Wed, 22 May 2024 12:04:33 -0400
+Subject: [PATCH] drop RANDOM_ORVALUE bits
+
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ mm/debug_vm_pgtable.c | 30 ++++--------------------------
+ 1 file changed, 4 insertions(+), 26 deletions(-)
+
+diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+index f1c9a2c5abc0..b5d7be05063a 100644
+--- a/mm/debug_vm_pgtable.c
++++ b/mm/debug_vm_pgtable.c
+@@ -40,22 +40,7 @@
+  * Please refer Documentation/mm/arch_pgtable_helpers.rst for the semantics
+  * expectations that are being validated here. All future changes in here
+  * or the documentation need to be in sync.
+- *
+- * On s390 platform, the lower 4 bits are used to identify given page table
+- * entry type. But these bits might affect the ability to clear entries with
+- * pxx_clear() because of how dynamic page table folding works on s390. So
+- * while loading up the entries do not change the lower 4 bits. It does not
+- * have affect any other platform. Also avoid the 62nd bit on ppc64 that is
+- * used to mark a pte entry.
+  */
+-#define S390_SKIP_MASK		GENMASK(3, 0)
+-#if __BITS_PER_LONG == 64
+-#define PPC64_SKIP_MASK		GENMASK(62, 62)
+-#else
+-#define PPC64_SKIP_MASK		0x0
+-#endif
+-#define ARCH_SKIP_MASK (S390_SKIP_MASK | PPC64_SKIP_MASK)
+-#define RANDOM_ORVALUE (GENMASK(BITS_PER_LONG - 1, 0) & ~ARCH_SKIP_MASK)
+ #define RANDOM_NZVALUE	GENMASK(7, 0)
+ 
+ struct pgtable_debug_args {
+@@ -511,8 +496,7 @@ static void __init pud_clear_tests(struct pgtable_debug_args *args)
+ 		return;
+ 
+ 	pr_debug("Validating PUD clear\n");
+-	pud = __pud(pud_val(pud) | RANDOM_ORVALUE);
+-	WRITE_ONCE(*args->pudp, pud);
++	WARN_ON(pud_none(pud));
+ 	pud_clear(args->pudp);
+ 	pud = READ_ONCE(*args->pudp);
+ 	WARN_ON(!pud_none(pud));
+@@ -548,8 +532,7 @@ static void __init p4d_clear_tests(struct pgtable_debug_args *args)
+ 		return;
+ 
+ 	pr_debug("Validating P4D clear\n");
+-	p4d = __p4d(p4d_val(p4d) | RANDOM_ORVALUE);
+-	WRITE_ONCE(*args->p4dp, p4d);
++	WARN_ON(p4d_none(p4d));
+ 	p4d_clear(args->p4dp);
+ 	p4d = READ_ONCE(*args->p4dp);
+ 	WARN_ON(!p4d_none(p4d));
+@@ -582,8 +565,7 @@ static void __init pgd_clear_tests(struct pgtable_debug_args *args)
+ 		return;
+ 
+ 	pr_debug("Validating PGD clear\n");
+-	pgd = __pgd(pgd_val(pgd) | RANDOM_ORVALUE);
+-	WRITE_ONCE(*args->pgdp, pgd);
++	WARN_ON(pgd_none(pgd));
+ 	pgd_clear(args->pgdp);
+ 	pgd = READ_ONCE(*args->pgdp);
+ 	WARN_ON(!pgd_none(pgd));
+@@ -634,9 +616,6 @@ static void __init pte_clear_tests(struct pgtable_debug_args *args)
+ 	if (WARN_ON(!args->ptep))
+ 		return;
+ 
+-#ifndef CONFIG_RISCV
+-	pte = __pte(pte_val(pte) | RANDOM_ORVALUE);
+-#endif
+ 	set_pte_at(args->mm, args->vaddr, args->ptep, pte);
+ 	flush_dcache_page(page);
+ 	barrier();
+@@ -650,8 +629,7 @@ static void __init pmd_clear_tests(struct pgtable_debug_args *args)
+ 	pmd_t pmd = READ_ONCE(*args->pmdp);
+ 
+ 	pr_debug("Validating PMD clear\n");
+-	pmd = __pmd(pmd_val(pmd) | RANDOM_ORVALUE);
+-	WRITE_ONCE(*args->pmdp, pmd);
++	WARN_ON(pmd_none(pmd));
+ 	pmd_clear(args->pmdp);
+ 	pmd = READ_ONCE(*args->pmdp);
+ 	WARN_ON(!pmd_none(pmd));
+-- 
+2.45.0
+
+-- 
+Peter Xu
+
 
