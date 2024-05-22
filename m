@@ -1,125 +1,96 @@
-Return-Path: <linux-kernel+bounces-186792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86FA28CC93B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:53:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F6A8CC93F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3AEBB21C15
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:53:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B26671F221A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B818F1494A7;
-	Wed, 22 May 2024 22:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53781494A8;
+	Wed, 22 May 2024 22:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cYGB4NaX"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="kIbM1Rko"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E49146A71
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044A07CF30
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716418424; cv=none; b=K6Mm8GwJUwCWy2x1w4eCls5HKrfg+TxzvnWdEyfbXlea6UCbsx5sXyKHe4avH+ba9gW/JQV0cibrvdDQTdYb0/tbYIz5o1ShwJIa5lbxWNEyIUsLMrjNMMQJskVFE1/vLSt3GbLPdNm+U+In20Q/wPQS/hljOmn+aLHsGLEayz4=
+	t=1716418603; cv=none; b=OJfm/h6PB45axOZsCCwYrOxCxq4agT1uGkNBjh1gDLojjmwxt85gt0l6OuD4UFBXolJ49to/9ghrO/I1MLiUrZFvlnzmm3McxuxV82i9EysgtvMD53Q4yUYqzkXQiEl708RuezwJJidkX5zHsNo8+k5OG0QrzZhaZ9crdXgO7tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716418424; c=relaxed/simple;
-	bh=s+AFZiWYdfo9LHxXiFDhhaTaz5In1NnrT6e/kTcTOec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A793TuUOnylTDdutjFmLJVf6sGxCnbhXZh/azWnfxcf+e+NJ81HWWBSBiTvOlzsnVY5Tg038kFyUmQjbeDmgevIdXDV3EVUGLp0ET7bSM16AK7h3qSCcOJ1U6+/tTUcyBReg+JPcqBygWB633g1ERH2eqsW5IXYV80D6/dL8gIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cYGB4NaX; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a5a5c930cf6so1067335566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:53:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1716418420; x=1717023220; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5pQI3o2sJHQ9VDDihE2wM0f+XoWWITjrXXHCRcKXU50=;
-        b=cYGB4NaXjHoGhca3ct5DdOYiHDbjeYgf/lCZgYEQVXHA4Fd/2rhq6+ihkXNLqF1Vol
-         NC60TUEV3/o7Cx0ouNwYyRVjZrvx3ioRVS5Zyzyk5+8acNKiXgb9B6xUj6jbxZl37MsV
-         BQv7jYJxwnztR/fVhohWau7RZvr9VvsMl8qlI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716418420; x=1717023220;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5pQI3o2sJHQ9VDDihE2wM0f+XoWWITjrXXHCRcKXU50=;
-        b=gj9nMSASjoMDIbiU13SptyOpVHnd3VRow7nGCT6uzPElySZ7bMn88OoaLXgOQTIuur
-         N3emLIbxsAoieniHM41OXb3bYg3ifxU3aIBKU2dS/1yChSTYU63jOQqU/d8O50HS4b5K
-         39D4NwDua22/xLRKT2I4YjXO4IiOTvkzBwOGC5Kl9p7sjiloP6DjUeC9lCnoriZBpo5R
-         anZzLUI4lJZfGmJ7ZJM7fnaC19H+ajUd7BC3vsjFekqtad43FgAsnIxlt5/pBo9Flkl1
-         HndVHSVPJKb8/cuUOhuAW9IPhJxo7REkG6iSlKG4KCdbEzvklP9wjQXHysxIOylTYjbS
-         PLUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfIVRjxBQ/B+wLBEDMcdLUE/GLL5HtZbtvJuEo14Pup2tGYOFbE/4tbmF8WvIanUEp8Szq0br5McXJTLXx0zHbYq3uMeCl4Rc+LnPl
-X-Gm-Message-State: AOJu0YwKin8YSx4cj2mcrsRri4dQHZR+GBFzGbZnJSvdUGh9/Xlqw6IF
-	9GV4hgIvVtSPYmZpEwEdkSzkQs2XwSIwuLbGt/G3BF5XqP7ke1rOodyzAI+pqP9Jsfsy3AonKgT
-	nVi+FiQ==
-X-Google-Smtp-Source: AGHT+IHIKrbZ3tAdnyJaDxItxKWbNavySLH3OjcdECQmXepNSvHRG5z6zZE2bbfp6kU4ruF+PsaEeQ==
-X-Received: by 2002:a17:906:b251:b0:a62:2e8b:2ca9 with SMTP id a640c23a62f3a-a622e8b2dafmr161714266b.67.1716418420536;
-        Wed, 22 May 2024 15:53:40 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7f78sm1828748366b.133.2024.05.22.15.53.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 15:53:39 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59cc765c29so147140666b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:53:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1ECfKa3gYR5QdfLOK0a1JYC1Vq3//QqbExzBGgzkH/4KrwBNy8Tpv49tdqW3nayqKY+6POTIeRnXQ5vu3uwgeDDa1nN3hklPim2jn
-X-Received: by 2002:a17:906:6945:b0:a5c:df23:c9c6 with SMTP id
- a640c23a62f3a-a62281673cemr222082266b.47.1716418419345; Wed, 22 May 2024
- 15:53:39 -0700 (PDT)
+	s=arc-20240116; t=1716418603; c=relaxed/simple;
+	bh=5AT5vl3T88JpLt0rz9YSRvOvlMXsZmaBQLa/LMKnRcQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=gdgQP5PIH3Yjc4eyATSUUgLhGqdoYpHqTNhGSszKN1CFFbTWLy9QZUSgsgt5DDcIrEStROn2a2yIdXL2g09go2vrvOn8/UWwHFrKptPTc8GgUh1hH2MBhj147iXrhbl1IjSfyTfdPv4dB+UYxGqqCquVFemWvGucAv2kS1glo8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=kIbM1Rko; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0113EC2BBFC;
+	Wed, 22 May 2024 22:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1716418602;
+	bh=5AT5vl3T88JpLt0rz9YSRvOvlMXsZmaBQLa/LMKnRcQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kIbM1RkovF/daLUCUG4Lj5ojXFRKBEbLrYsAdEO0AYnDNiQOPsIuooTetl8mDXbWy
+	 DWUbNJyH4fhaF+XiZnVzeyEroIuUf3apLFR64UlpMNAHUUZpatLMc5RD11DIJM4xy9
+	 st7Ex5hKhDVytxeZoakQYr7EkqEjFGoBAqp0PbEY=
+Date: Wed, 22 May 2024 15:56:41 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel_team@skhynix.com, ying.huang@intel.com, vernhao@tencent.com,
+ mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
+ david@redhat.com, peterz@infradead.org, luto@kernel.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, rjgolo@gmail.com
+Subject: Re: [RESEND PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb
+ numbers over 90%
+Message-Id: <20240522155641.a726c5cd3b25aa23e861045d@linux-foundation.org>
+In-Reply-To: <20240520021734.21527-1-byungchul@sk.com>
+References: <20240520021734.21527-1-byungchul@sk.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <0d260c2f7a9f67ec8bd2305919636678d06000d1.camel@HansenPartnership.com>
- <CAMj1kXFE_R_x10BVkU+8vrMz0RHiX0+rz-ZL+w08FH2CLQHZXA@mail.gmail.com>
- <66ec985f3ee229135bf748f1b0874d5367a74d7f.camel@HansenPartnership.com>
- <dfb0d930-7cbe-46c5-be19-d132b4906ecf@notapiano> <D1C2NPOBHAHK.20O4IME8OK1FH@kernel.org>
- <20240518043115.GA53815@sol.localdomain> <ZkhS1zrobNwAuANI@gondor.apana.org.au>
- <00bcfa65-384d-46ae-ab8b-30f12487928b@notapiano> <ZkwMnrTR_CbXcjWe@gondor.apana.org.au>
- <07512097-8198-4a84-b166-ef9809c2913b@notapiano> <Zk2Eso--FVsZ5AF3@gondor.apana.org.au>
-In-Reply-To: <Zk2Eso--FVsZ5AF3@gondor.apana.org.au>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 22 May 2024 15:53:23 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi7vwgzD4hdBzMrt1u3L2JyoctB91B7NLq-kVHrYXoTGA@mail.gmail.com>
-Message-ID: <CAHk-=wi7vwgzD4hdBzMrt1u3L2JyoctB91B7NLq-kVHrYXoTGA@mail.gmail.com>
-Subject: Re: [v3 PATCH] hwrng: core - Remove add_early_randomness
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, linux-integrity@vger.kernel.org, 
-	keyrings@vger.kernel.org, regressions@lists.linux.dev, kernel@collabora.com, 
-	Tejun Heo <tj@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 21 May 2024 at 22:38, Herbert Xu <herbert@gondor.apana.org.au> wrote:
->
-> In this particular configuration, the deadlock doesn't exist because
-> the warning triggered at a point before modules were even available.
-> However, the deadlock can be real because any module loaded would
-> invoke async_synchronize_full.
+On Mon, 20 May 2024 11:17:22 +0900 Byungchul Park <byungchul@sk.com> wrote:
 
-I think this crapectomy is good regardless of any deadlock - the
-"register this driver" should not just blindly call back into the
-driver.
+> While I'm working with a tiered memory system e.g. CXL memory, I have
+> been facing migration overhead esp. tlb shootdown on promotion or
+> demotion between different tiers.  Yeah..  most tlb shootdowns on
+> migration through hinting fault can be avoided thanks to Huang Ying's
+> work, commit 4d4b6d66db ("mm,unmap: avoid flushing tlb in batch if PTE
+> is inaccessible").  See the following link for more information:
+> 
+> https://lore.kernel.org/lkml/20231115025755.GA29979@system.software.com/
+> 
+> However, it's only for migration through hinting fault.  I thought it'd
+> be much better if we have a general mechanism to reduce all the tlb
+> numbers that we can apply to any unmap code, that we normally believe
+> tlb flush should be followed.
+> 
+> I'm suggesting a new mechanism, LUF(Lazy Unmap Flush), defers tlb flush
+> until folios that have been unmapped and freed, eventually get allocated
+> again.  It's safe for folios that had been mapped read-only and were
+> unmapped, since the contents of the folios don't change while staying in
+> pcp or buddy so we can still read the data through the stale tlb entries.
 
-That said, looking at the code in question, there are other oddities
-going on. Even the "we found a favorite new rng" case looks rather
-strange. The thread we use - nice and asynchronous - seems to sleep
-only if the randomness source is emptied.
+Version 10 and no reviewed-by's or acked-by's.  Reviewing the review
+history isn't helped by the change in the naming of the patch series.
 
-What if you have a really good source of hw randomness? That looks
-like a busy loop to me, but hopefully I'm missing something obvious.
+Seems that you're measuring a ~5% overall speedup in a realistic
+workload?  That's nice.
 
-So I think this hw_random code has other serious issues, and I get the
-feeling there might be more code that needs looking at..
+I'll defer this for a week or so to see what reviewers have to say.  If
+"nothing", please poke me and I guess I'll merge it up to see what
+happens ;)
 
-              Linus
 
