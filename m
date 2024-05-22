@@ -1,81 +1,146 @@
-Return-Path: <linux-kernel+bounces-186293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2E98CC24F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:40:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E5C8CC244
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7A331F24368
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:40:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534FB1F22F36
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A358414038F;
-	Wed, 22 May 2024 13:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA5714038F;
+	Wed, 22 May 2024 13:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b="yvIGFZrS"
-Received: from mail-4323.proton.ch (mail-4323.proton.ch [185.70.43.23])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FFv7Gb93"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CAF13F44F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3364F13D639;
+	Wed, 22 May 2024 13:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716385246; cv=none; b=mM9U1JvUbS5DDgvxC88yYVWBhEGW5Dp/n4+GAmzxKs1pEs6osyH22zIp22NKTf/kARpucrqWWCtHqnqa/isVsp37muVJW7bOAtBz9V3dkpNuOgq6a5CztVuvIh505lHz2jIYR9Q2PTSr9zvlJdddaG5m5w8lyjgQnphlsLRNzJ8=
+	t=1716385145; cv=none; b=sWGrySG6mc1YMeP1U+kW5vWxrBHlQIo3mpc2KMpLwQbLS+UbleYqXfGcXo5IF+q0rT+CKe4MjxN2QWIP7FrIHohFlWbkQfqd7cDplk81BFgDSwEcpQrbvcLv4yZZOYM7obOPvkrPal4qdb8tygFKLrpcf+3neG8wTAyjMVaf0zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716385246; c=relaxed/simple;
-	bh=wtv5GehB0RNRrwKNMSpWWR1rBRSVtWsYLFCegIScuU4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sinQ9GoWblbH/R+1Q5faNReEntG7GGCOTxBMeIr+W6yLLNTcEvtGQuP+fPqAZF/kx86cy/d7FD7ZHU+WkphB5xQHZNHp/N5O3Zz9cv4ogiL2Y/Ysu3Qm+wflpI/uY1d2dBtvcuZfXSNreL8mATQpoCbPoll8yvpBKqQmgZysDYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr; spf=pass smtp.mailfrom=emersion.fr; dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b=yvIGFZrS; arc=none smtp.client-ip=185.70.43.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emersion.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
-	s=protonmail3; t=1716385240; x=1716644440;
-	bh=wtv5GehB0RNRrwKNMSpWWR1rBRSVtWsYLFCegIScuU4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=yvIGFZrSL3iRU85LAzfwzh+uq0jLCjADU6LMEGnjMcGt++u5/NLIlJG88CSeTIRcf
-	 GPHdN9aBbDdIBmDReF13JTw6whWLxrYdcN0y0DLD7b2XyIHFcoIZu112gaPWkTiop9
-	 9N/28V7OxshKIW5zjoaUo7dYNXP58prPUvRtEW7bF2Byi1O5XQxLpTE7v+vsMmhMsj
-	 S37g+lawcenjPzcgC6vZF2FwovTw1QBhHXJfxIhw+z3hFV3y2SxlBqrYoipBcVUhNg
-	 OI0R4GzDpatz7CDja0Q6bd8q7alaWZx2gzFAzSx0rMeyvVOMOJdesZW+WO+q2m2yRg
-	 cCT7AA126qLgA==
-Date: Wed, 22 May 2024 13:40:36 +0000
-To: Mario Limonciello <mario.limonciello@amd.com>
-From: Simon Ser <contact@emersion.fr>
-Cc: =?utf-8?Q?Rino_Andr=C3=A9_Johnsen?= <rinoandrejohnsen@gmail.com>, =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, alexander.deucher@amd.com, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Aurabindo Pillai <aurabindo.pillai@amd.com>, Hersen Wu <hersenxs.wu@amd.com>, Hamza Mahfooz <hamza.mahfooz@amd.com>, Wayne Lin <wayne.lin@amd.com>, Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>, Fangzhi Zuo <jerry.zuo@amd.com>, Tom Chung <chiahsuan.chung@amd.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/amd/display: Add pixel encoding info to debugfs
-Message-ID: <1XiLpoWd2E_COrHNl9BYkmCXkUKK6Bv1wibdFxiw3Vi6AQOPAIhrIMPNEZmmKAp9yxC8Er4DEMqOqjshMgRqtpV3UkS7MN2OjCsDjllvdRE=@emersion.fr>
-In-Reply-To: <666e36b7-5379-46ef-a16b-00ec499fb42c@amd.com>
-References: <fa885eca-d7e6-415a-8a08-9103b002c6bb@amd.com> <20240521051140.30509-1-rinoandrejohnsen@gmail.com> <17782a6e-db84-4c20-874a-342b9655ffc5@amd.com> <CAACkh=-B-jH6g7KY7Nn_7Y_+gHPQ7G5Z5AZ0=a=_ifjcmsorcw@mail.gmail.com> <86410711-9b88-448c-9148-109f81b1ca55@amd.com> <CAACkh=9hY7eg_uuH7Psm=XJfSzwQTvzs8bvOXQ=wwkMPrC44SA@mail.gmail.com> <666e36b7-5379-46ef-a16b-00ec499fb42c@amd.com>
-Feedback-ID: 1358184:user:proton
-X-Pm-Message-ID: b585325d54e6bc294fd23a41f27306f095acabbc
+	s=arc-20240116; t=1716385145; c=relaxed/simple;
+	bh=C8wYKhP4GRxxZY3i0yCo7CFRPS3l6ZJ3JinPO2lbw20=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:Content-Type; b=nvGXbibSr/8BiEZCRZiMwx462XE0UHQoc4MC+h4h2fgeuAxXQF+uCRpKWcLMjQFUOgOXJ6xnkc3lhbtuVpZ116vuvpGl4ezCmK+oZgQwpeycjGqNwFIM7wViKNus8ywE7ryXAk662VcZeVKovM2V6bD4OG9iBv96fvlwIG0Lfic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FFv7Gb93; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716385143; x=1747921143;
+  h=message-id:date:mime-version:to:cc:references:from:
+   subject:in-reply-to:content-transfer-encoding;
+  bh=C8wYKhP4GRxxZY3i0yCo7CFRPS3l6ZJ3JinPO2lbw20=;
+  b=FFv7Gb93EYT0mol22xB8e3SpFqjuxcCHpgnKicp9+2uc9FSk2txrMaWQ
+   rJ9ezFsgDocRdrL3wxKQotV0365ufDfGtJHEdaBBQE3dnh98M3moCCbMC
+   eWA/DUfwh4/9I4Goa/z5Ly3s2QBQdYqPBCg6d1Uc7XsM26LO5960r/dQV
+   UxtkulQRgKmqXB1QvFHvHcxkomAE+eZujWFpERwM3it//+T8qJJUFknMO
+   nhUObk0HRKNJzcCBWIT9peXdzSw1dnkgLTWK0chrY76vSqrBhQnCkxdML
+   jmaNpSJSVjnj6OJMejJd0PqtTQ2glNnLjQhYhgh1s95/3VYCWKWK9dYMG
+   w==;
+X-CSE-ConnectionGUID: r9x1sCngRBCoedXUinYusg==
+X-CSE-MsgGUID: NnH8BbrBReGOFzE8laldVQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="24049568"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="24049568"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 06:39:02 -0700
+X-CSE-ConnectionGUID: 9nh8CNNKSm6IHeUlWBgVFw==
+X-CSE-MsgGUID: eCXBNuQGS2yGRpZkl0HwMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="37768842"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.199]) ([10.237.72.199])
+  by fmviesa003.fm.intel.com with ESMTP; 22 May 2024 06:39:00 -0700
+Message-ID: <6a4767b5-1e2f-dbec-58ca-c44eb0fca6f1@linux.intel.com>
+Date: Wed, 22 May 2024 16:40:56 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.13.0
+Content-Language: en-US
+To: Daehwan Jung <dh10.jung@samsung.com>,
+ Mathias Nyman <mathias.nyman@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "open list:USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+References: <CGME20240522010409epcas2p457b2fcb4f423f2500305053f44ae3199@epcas2p4.samsung.com>
+ <1716339839-44022-1-git-send-email-dh10.jung@samsung.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: [RFC] usb: host: xhci-mem: Write high first on erst base of
+ secondary interrupter
+In-Reply-To: <1716339839-44022-1-git-send-email-dh10.jung@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wednesday, May 22nd, 2024 at 15:36, Mario Limonciello <mario.limonciello=
-@amd.com> wrote:
+On 22.5.2024 4.03, Daehwan Jung wrote:
+> ERSTBA_HI should be written first on secondary interrupter.
+> That's why secondary interrupter could be set while Host Controller
+> is already running.
+> 
+> [Synopsys]- The host controller was design to support ERST setting
+> during the RUN state. But since there is a limitation in controller
+> in supporting separate ERSTBA_HI and ERSTBA_LO programming,
+> It is supported when the ERSTBA is programmed in 64bit,
+> or in 32 bit mode ERSTBA_HI before ERSTBA_LO
 
-> > To be perfectly honest with you, I haven't given that much though. I
-> > used the 'bpc' and 'colorspace' property in debugfs, since I could not
-> > find that information anywhere else. And since I also needed to verify
-> > the pixel encoding being used, I added it where those other values
-> > were. That made for a simple and easy addition for this property.
-> >=20
-> > If you want me to do this differently, let me know. And please point
-> > me to the standardized DRM property where I should expose the values.
+xHCI specification 5.1 "Register Conventions "states that 64 bit
+registers should be written in low-high order
 
-FWIW, there is a patch from Andri to add a similar (?) property:
-https://lore.kernel.org/dri-devel/20240115160554.720247-1-andri@yngvason.is=
-/
+> 
+> [Synopsys]- The internal initialization of event ring fetches
+> the "Event Ring Segment Table Entry" based on the indication of
+> ERSTBA_LO written.
+> 
 
-The patch also allows user-space to set the "pixel encoding".
+Any idea if this is a common issue with this host?
+Should other 64 bit registers also be written in reverse order.
+
+> Signed-off-by: Daehwan Jung <dh10.jung@samsung.com>
+> ---
+>   drivers/usb/host/xhci-mem.c | 5 ++++-
+>   drivers/usb/host/xhci.h     | 6 ++++++
+>   2 files changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+> index 3100219..36ee704 100644
+> --- a/drivers/usb/host/xhci-mem.c
+> +++ b/drivers/usb/host/xhci-mem.c
+> @@ -2325,7 +2325,10 @@ xhci_add_interrupter(struct xhci_hcd *xhci, struct xhci_interrupter *ir,
+>   	erst_base = xhci_read_64(xhci, &ir->ir_set->erst_base);
+>   	erst_base &= ERST_BASE_RSVDP;
+>   	erst_base |= ir->erst.erst_dma_addr & ~ERST_BASE_RSVDP;
+> -	xhci_write_64(xhci, erst_base, &ir->ir_set->erst_base);
+> +	if (intr_num == 0)
+> +		xhci_write_64(xhci, erst_base, &ir->ir_set->erst_base);
+> +	else
+> +		xhci_write_64_r(xhci, erst_base, &ir->ir_set->erst_base);
+
+This may cause issues with other hosts expecting low-high order as stated
+in the specification.
+
+If all 64 bit registers should be written in high-low order for this host then
+maybe set a quirk flag and change xhci_write_64()instead.
+
+xhci_write_64(...)
+{
+	if (xhci->quirks & XHCI_WRITE_64_HI_LO)
+		hi_lo_writeq(val, regs);
+	else
+		lo_hi_writeq(val, regs);
+}
+	
+
+Thanks
+Mathias
 
