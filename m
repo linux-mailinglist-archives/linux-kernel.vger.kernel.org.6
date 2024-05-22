@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-186849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70ED28CC9EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:53:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9F7E8CC9E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB124B221F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:53:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62C4BB221EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CB914F12A;
-	Wed, 22 May 2024 23:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E2D14D6E6;
+	Wed, 22 May 2024 23:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbmiGK1u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+rwHtvC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C66314D29B
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F248B1487C6;
+	Wed, 22 May 2024 23:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716421908; cv=none; b=b4jeCniVNvXt+f1fTh2LrEYkmt6KzTtz4IS80KaM4rh8jPK7tE/ccGUTgPMeOlj2kTzNEmpDvDur5NzqgopgbyfOJEMVw+3nY3THyNAUaspAbn0LlWcGmfyYBuiIdxFauKx+5Sok1vfILJZRuKDd369f2rmRBSeUkyQeLz30q5c=
+	t=1716421908; cv=none; b=stxfW22OsGUW5eQXn3pRk3yjJFgJmOWvs3kMV5ovG6csMrPXJ+fnlHXjbZ7mHn1hE2rjdlgxrxraUhz/+0Wnz5e2tU3cBVVND0MDmssYi70vIbQzdCYbpYbv8zXcYSmCjHfcF9l/IcB2CfTZJyhsVaw5oegXLygfVTmCQ/UUSU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716421908; c=relaxed/simple;
-	bh=n9A8B2bi1boYYZUvXlGtFezy2ShJanph4rjH8GXQdoA=;
+	bh=TDaB1nKc+MxBvpO+Za9PJH0cIp+1S891erTFOL0RME0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=afowRudNxMPFBtn2rTq+QzY3r2CRoo8BWRU44VOjHKILfRqyRPEUpVKsvxNvy2M4qJE0pixevjvGeKXNSgZmxaopJepQqTI6y+x7zTAuE+eg8kO+FzMIzsyyRoPgdfssn9AKh6NxELkaCx5OaNYoVGr6HxzlWxtbi14ixbcAQsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rbmiGK1u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DD314C4AF10;
+	 In-Reply-To:To:Cc; b=RqWHCvB2kvGEgwlRJ4piX6agLm0G/Mg0q9fBU/staB0DK9fRFvznxBaNS/W7/2uscKTTwL0b4KVLYckR9E+C7hhCDDowY0TwwiYsbrBw7MsDZb25oB71Wv/xyeZD1Bj+zNSM8EedG9kqNRv0BGqVRRsFlWFnPWnN8zIGgENNhrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+rwHtvC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B399FC4AF08;
 	Wed, 22 May 2024 23:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1716421907;
-	bh=n9A8B2bi1boYYZUvXlGtFezy2ShJanph4rjH8GXQdoA=;
+	bh=TDaB1nKc+MxBvpO+Za9PJH0cIp+1S891erTFOL0RME0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rbmiGK1u/ss/abz9OJF4XgUBvyZvlMriaHA12q4Ru1tBpxNiObC7nvN+jkcz5MlkI
-	 lLACip46Q71mta/ConRPspZkpppHTyAGCHWZQ/1lDYmdmpEaDp9bAX0LzgAN1HyLHc
-	 iMocukrXukSwUa0u6ruWOgEvWT6pzrT48ucfSoS99kqjmm22fbjcKlsehGmS5kaaEg
-	 fFNlQ6Ynj+IX+9GCo2/Cdlas7cn2dpIZU+xh+/wC/kGw9Ety/V9rsMoNTEXHsXAVLp
-	 6F6OkoR2Vbth821mLFGpoJtbYOxw/kVnBUWOKWpy7dCIxyZOjWtl6EZKZEmt3iT8Fx
-	 wH5C5iiFc4mNw==
+	b=D+rwHtvCdJh9jv2oAUness9TQVv+cysyk/nNly+t/EoeeHAhLstDeY5ELWWJunzbS
+	 bT9X8seWwsieQw4inJczsbHHHT9Aap9ZpIj3KmsqVSAVvrwUXFnw+v7ZOQ4Ln3swYL
+	 qs/pJrd4YZmqgkwi3HiTe7C/8FgDu57XnSfKI6gFkrGOrp16Qg0geYm15wMcq5FMVL
+	 YAtvpxmxDMYFF3FBPpwPuCumgaZJaJwKqjllc5pC//MdgqsPZEviF00iP5WFoBriSv
+	 P/fTgnI4SwXytPaA8cW5bfQqFaz43YtIBhG+ucoVqCYe4C0T4h1j+3rGasi5o+wi99
+	 UwldgHMC+O42Q==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D1A5FC43619;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A1C43C43619;
 	Wed, 22 May 2024 23:51:47 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,38 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv: uaccess: Allow the last potential unrolled copy
+Subject: Re: [PATCH] riscv: selftests: Add signal handling vector tests
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <171642190785.9409.1593588970269968258.git-patchwork-notify@kernel.org>
+ <171642190765.9409.15264560939296767259.git-patchwork-notify@kernel.org>
 Date: Wed, 22 May 2024 23:51:47 +0000
-References: <20240313103334.4036554-1-xiao.w.wang@intel.com>
-In-Reply-To: <20240313103334.4036554-1-xiao.w.wang@intel.com>
-To: Xiao Wang <xiao.w.wang@intel.com>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, jerry.shih@sifive.com,
- nick.knight@sifive.com, ajones@ventanamicro.com, bjorn@rivosinc.com,
- andy.chiu@sifive.com, viro@zeniv.linux.org.uk, cleger@rivosinc.com,
- alexghiti@rivosinc.com, haicheng.li@intel.com, akira.tsukamoto@gmail.com,
- linux-kernel@vger.kernel.org
+References: <20240403-vector_sigreturn_tests-v1-1-2e68b7a3b8d7@rivosinc.com>
+In-Reply-To: <20240403-vector_sigreturn_tests-v1-1-2e68b7a3b8d7@rivosinc.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, shuah@kernel.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ andy.chiu@sifive.com, bjorn@kernel.org, vineetg@rivosinc.com,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
 
 Hello:
 
 This patch was applied to riscv/linux.git (for-next)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Wed, 13 Mar 2024 18:33:34 +0800 you wrote:
-> When the dst buffer pointer points to the last accessible aligned addr, we
-> could still run another iteration of unrolled copy.
+On Wed, 03 Apr 2024 16:50:29 -0700 you wrote:
+> Add two tests to check vector save/restore when a signal is received
+> during a vector routine. One test ensures that a value is not clobbered
+> during signal handling. The other verifies that vector registers
+> modified in the signal handler are properly reflected when the signal
+> handling is complete.
 > 
-> Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
-> ---
->  arch/riscv/lib/uaccess.S | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> 
+> [...]
 
 Here is the summary with links:
-  - riscv: uaccess: Allow the last potential unrolled copy
-    https://git.kernel.org/riscv/c/74362d66a416
+  - riscv: selftests: Add signal handling vector tests
+    https://git.kernel.org/riscv/c/b2a2e892cdbc
 
 You are awesome, thank you!
 -- 
