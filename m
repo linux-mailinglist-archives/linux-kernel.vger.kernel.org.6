@@ -1,304 +1,193 @@
-Return-Path: <linux-kernel+bounces-185648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B93008CB865
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:28:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5588CB866
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 426551F26F6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:28:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C4AD1C20C29
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDE428FD;
-	Wed, 22 May 2024 01:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dgs3tjRg"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537FE1C01;
+	Wed, 22 May 2024 01:17:42 +0000 (UTC)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486BE2595
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A47B4C6D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716340442; cv=none; b=T+f8XcUfFn5sR9hjSTebxIJIX6GDqS8VOkw1mOj0xhz2sQcq4TSSjefhEUf9IbAcRZjLLzS3YVag8q7gcPRKr3YFl8Gh1U2ac0xeQUbZnqAzeLVW2iysfmVWfbBl+4RDj+1X2tyeZAbRMvArjl7udBo0AnHpyUVfOzXcI1L/BIg=
+	t=1716340661; cv=none; b=KhVRymlNB4VImUuWjmHk4T6g7z3OptSHsOGph/YB7Mid8b4oJLYFrSXKvhgr5vceJu9lc3T4QUYGgyEk1T/QrH/8P/dMl7ubjng71YKpa4vFWspGH+Tx4/xZCYbbGQkH24/jDbawUXzSaz/9h2FlTDyPS4xCHFYvsVgHiz0jThY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716340442; c=relaxed/simple;
-	bh=uN7XbyMTKTaRAXmKpGXJuIFdZa1b9x/JGdk1uuzJQTA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=BI/cKVwKHw4POlOYRw4s6ki8AKbVSv6r34+ufiBTEAtc88Jg1JOk3F2eTXb42qqFxYYtf/UCoxukmbvVOezl3BRDd7bBFvTIK3w/7LytMCFSUSJAlGLGEaUVc+a3w5c87h8zj/8FyHyGsPjM4CzoBxqVQFeeOCq/vIWk9z9Z5uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dgs3tjRg; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1716340661; c=relaxed/simple;
+	bh=uRpBN6UVpNLAoxjshnQFTBd8cdW3OrJlZ0XpdiT/xgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r9ViHlOSjAkoINXAP+Q2qhLjOFKZ1VMMOlixjk6R/6il26+bcRIjBPg7rr0gb+gyOo0Kxx+Yotiz+gQXIfNIdiDezRmF0LMrrWMjYrd3iWYm1bSk0HnKh/sE9B02CXN4cN/SgoDjr3ARRLEEnYUnhXineioFX8Oj5n5l/YKLcwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f44b390d5fso849443b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:14:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716340440; x=1716945240; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Ucokp0AAkm1JrdVm50A3xJsq/C1UNhIjxFEJPxYe7E=;
-        b=Dgs3tjRglG/DIdSl3dHHuXpz9xy3MveqQpbSYJ2CiP6djQ2uhUJmYSpv/3Mswgd7lC
-         /g9jhSUtP6pNnCw7DfMSkbfQOu75GnrQuUVjKptxID8hCnEFYa2xZzsLdqAop7SOdHGD
-         +r0v3Ygw8PKrxg+VoF2KYWgPvk0r9wQa/qnHKWTfJjSYHTCeuYEKQdIdROFCKp3tVIoL
-         4JLb4cy8KdYxlyR9Zz2EVrPL9OzHd6iw9ERUbP0uPqz5bH8cvvBDsbXcUpwYmUnBj7iL
-         SUdzylGjcPklmg81IR9choXJ/4obAZkFsihMj7Xw+7xmCctCgodA6Hypg7tWVmhAxUFT
-         eezA==
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4affeacaff9so95075e0c.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:17:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716340440; x=1716945240;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2Ucokp0AAkm1JrdVm50A3xJsq/C1UNhIjxFEJPxYe7E=;
-        b=R0WW+meE6YYoeZcBgX0qMXKp9v8Ui1WLf/p4/geo8jhRIJ/Az6+r0eCKLQT4TF3cV4
-         i/wvxunUpu3axgXHlor3NjsmxudEDW20c4t5l4lAGf+e7Z2dl9nVTxyqsIGMaN2j2K2o
-         Y6tRmXilMqhhqep30EJmWsjg1T76jxAOkVrsptMRo7stDxJBeaJvAkzoOaH0PQ1GHAtc
-         IhduMzztvwW158wjYUJDAO4jiTh60QmfETfFtylhVk7BiwHsh9Oq3fVug6//5YkOtEbR
-         JsZHlfL6xZq4U0VJb3/YTLYTNAENMSDegzH4E2QKJEHF7gB8MTetoJ/20JoGrqpU/hDO
-         l+ng==
-X-Gm-Message-State: AOJu0YzNAOA/LfIImayQRIgh5qHCYiE8xDrFJ8l24gUT0lyHLM3Txoet
-	1GGGbEb79OpJkvI5KSBaX35oc+L3QUuRmb3PQ/zw1nila0avdpb/
-X-Google-Smtp-Source: AGHT+IEeVFE7TfOpUrd1nI8e4z4RKvVMRMKWzoj8PEjSm761mXEMfBxfjcGLSveVOlL3LkbU11N+RQ==
-X-Received: by 2002:a05:6a20:c909:b0:1b0:1025:2d5 with SMTP id adf61e73a8af0-1b1f88a6e1fmr780915637.36.1716340440370;
-        Tue, 21 May 2024 18:14:00 -0700 (PDT)
-Received: from localhost (110-175-65-7.tpgi.com.au. [110.175.65.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bd930a3bf0sm1972833a91.5.2024.05.21.18.13.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 18:13:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716340659; x=1716945459;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uULwFZNVMvuZLMIcl/Jj9q31bH6KvSTXLcBzFppjdEQ=;
+        b=tUwB1thhVT5/qsUQStnBNm9pxxoRkUdJ8/Tx1kJwpsNF0L4ZrDMzWws83F/Ih/WeHU
+         xvDGMbpqPY9DTaKiatYt2wDaZxgRuaVv/Zj9ty8f9zOAmO5MDqUfff03As2N3TAQsII3
+         lgBXG8EeMPqGC93qAbEYHlXXq9wvSZIOJQYEmgek+Uc3UfP5FdpqQaxFS6YhoqZxRVrh
+         6z7bdhMzDx0Y5Z39r35dZi4PDw4xO+gV5lbzbLHXeyGVSne12Veulj+NxNi9/qY0cKbH
+         KJpWyEj0sHnUufcAmIqtOnsVtATWuXsorjYYwJpBmWeRwHgslybpP/42H4HlANFIXfHA
+         1CtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVy/NLnoBQj/r6XLDzuk21YMvb3F9BRcfEB2xAzv5jc1E5GUhlsEvjDuP0eZ3nA6lK34WzGi1U+1KUnxAD/HtRth0kBsr/53IJ+LSOi
+X-Gm-Message-State: AOJu0YyEhTfEK3tRvkWr0vv08n1OE8Y/g6LZoMPNq3pv9D+FGQK4soWA
+	9E0H5TgodtH7UdGpM84r00/pbV+a2/JqlFdCnMn3qbPLsUfi/uL/
+X-Google-Smtp-Source: AGHT+IHhSdROKgvMV8hFVSNBhuhEqQ6/xSpoi2IcBAFa+l3fdjSN+49znDGLKI2DlOgM2BkACSghJw==
+X-Received: by 2002:a05:6122:368b:b0:4df:2b08:f217 with SMTP id 71dfb90a1353d-4e218510d67mr540985e0c.6.1716340658805;
+        Tue, 21 May 2024 18:17:38 -0700 (PDT)
+Received: from snowbird ([165.225.8.163])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ab840e24eesm266616d6.135.2024.05.21.18.17.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 18:17:38 -0700 (PDT)
+Date: Tue, 21 May 2024 18:17:36 -0700
+From: Dennis Zhou <dennis@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: tj@kernel.org, hughd@google.com, akpm@linux-foundation.org,
+	vbabka@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v3] percpu_counter: add a cmpxchg-based _add_batch variant
+Message-ID: <Zk1HsDYKwxpzeBjq@snowbird>
+References: <20240521233100.358002-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 May 2024 11:13:53 +1000
-Message-Id: <D1FRWM5DHHOT.3EAJGCLO0YTND@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>, "linuxppc-dev@lists.ozlabs.org"
- <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [RFC PATCH v2 18/20] powerpc/64s: Use contiguous PMD/PUD
- instead of HUGEPD
-From: "Nicholas Piggin" <npiggin@gmail.com>
-To: "Christophe Leroy" <christophe.leroy@csgroup.eu>, "Andrew Morton"
- <akpm@linux-foundation.org>, "Jason Gunthorpe" <jgg@nvidia.com>, "Peter Xu"
- <peterx@redhat.com>, "Oscar Salvador" <osalvador@suse.de>, "Michael
- Ellerman" <mpe@ellerman.id.au>
-X-Mailer: aerc 0.17.0
-References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
- <ac9f4f2d6e571e4579a8125b81eaa88fbddd6187.1715971869.git.christophe.leroy@csgroup.eu> <D1EHK0STZ19E.3CTOAWG7LVBPK@gmail.com> <99575c2c-7840-4fa4-b84e-aaddc7fef4cb@csgroup.eu>
-In-Reply-To: <99575c2c-7840-4fa4-b84e-aaddc7fef4cb@csgroup.eu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240521233100.358002-1-mjguzik@gmail.com>
 
-On Tue May 21, 2024 at 2:43 AM AEST, Christophe Leroy wrote:
->
->
-> Le 20/05/2024 =C3=A0 14:54, Nicholas Piggin a =C3=A9crit=C2=A0:
-> > On Sat May 18, 2024 at 5:00 AM AEST, Christophe Leroy wrote:
-> >> On book3s/64, the only user of hugepd is hash in 4k mode.
-> >>
-> >> All other setups (hash-64, radix-4, radix-64) use leaf PMD/PUD.
-> >>
-> >> Rework hash-4k to use contiguous PMD and PUD instead.
-> >>
-> >> In that setup there are only two huge page sizes: 16M and 16G.
-> >>
-> >> 16M sits at PMD level and 16G at PUD level.
-> >>
-> >> pte_update doesn't know page size, lets use the same trick as
-> >> hpte_need_flush() to get page size from segment properties. That's
-> >> not the most efficient way but let's do that until callers of
-> >> pte_update() provide page size instead of just a huge flag.
-> >>
-> >> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> >> ---
-> >>   arch/powerpc/include/asm/book3s/64/hash-4k.h  | 15 --------
-> >>   arch/powerpc/include/asm/book3s/64/hash.h     | 38 +++++++++++++++--=
---
-> >>   arch/powerpc/include/asm/book3s/64/hugetlb.h  | 38 -----------------=
---
-> >>   .../include/asm/book3s/64/pgtable-4k.h        | 34 -----------------
-> >>   .../include/asm/book3s/64/pgtable-64k.h       | 20 ----------
-> >>   arch/powerpc/include/asm/hugetlb.h            |  4 ++
-> >>   .../include/asm/nohash/32/hugetlb-8xx.h       |  4 --
-> >>   .../powerpc/include/asm/nohash/hugetlb-e500.h |  4 --
-> >>   arch/powerpc/include/asm/page.h               |  8 ----
-> >>   arch/powerpc/mm/book3s64/hash_utils.c         | 11 ++++--
-> >>   arch/powerpc/mm/book3s64/pgtable.c            | 12 ------
-> >>   arch/powerpc/mm/hugetlbpage.c                 | 19 ----------
-> >>   arch/powerpc/mm/pgtable.c                     |  2 +-
-> >>   arch/powerpc/platforms/Kconfig.cputype        |  1 -
-> >>   14 files changed, 43 insertions(+), 167 deletions(-)
-> >>
-> >> diff --git a/arch/powerpc/include/asm/book3s/64/hash-4k.h b/arch/power=
-pc/include/asm/book3s/64/hash-4k.h
-> >> index 6472b08fa1b0..c654c376ef8b 100644
-> >> --- a/arch/powerpc/include/asm/book3s/64/hash-4k.h
-> >> +++ b/arch/powerpc/include/asm/book3s/64/hash-4k.h
-> >> @@ -74,21 +74,6 @@
-> >>   #define remap_4k_pfn(vma, addr, pfn, prot)	\
-> >>   	remap_pfn_range((vma), (addr), (pfn), PAGE_SIZE, (prot))
-> >>  =20
-> >> -#ifdef CONFIG_HUGETLB_PAGE
-> >> -static inline int hash__hugepd_ok(hugepd_t hpd)
-> >> -{
-> >> -	unsigned long hpdval =3D hpd_val(hpd);
-> >> -	/*
-> >> -	 * if it is not a pte and have hugepd shift mask
-> >> -	 * set, then it is a hugepd directory pointer
-> >> -	 */
-> >> -	if (!(hpdval & _PAGE_PTE) && (hpdval & _PAGE_PRESENT) &&
-> >> -	    ((hpdval & HUGEPD_SHIFT_MASK) !=3D 0))
-> >> -		return true;
-> >> -	return false;
-> >> -}
-> >> -#endif
-> >> -
-> >>   /*
-> >>    * 4K PTE format is different from 64K PTE format. Saving the hash_s=
-lot is just
-> >>    * a matter of returning the PTE bits that need to be modified. On 6=
-4K PTE,
-> >> diff --git a/arch/powerpc/include/asm/book3s/64/hash.h b/arch/powerpc/=
-include/asm/book3s/64/hash.h
-> >> index faf3e3b4e4b2..509811ca7695 100644
-> >> --- a/arch/powerpc/include/asm/book3s/64/hash.h
-> >> +++ b/arch/powerpc/include/asm/book3s/64/hash.h
-> >> @@ -4,6 +4,7 @@
-> >>   #ifdef __KERNEL__
-> >>  =20
-> >>   #include <asm/asm-const.h>
-> >> +#include <asm/book3s/64/slice.h>
-> >>  =20
-> >>   /*
-> >>    * Common bits between 4K and 64K pages in a linux-style PTE.
-> >> @@ -161,14 +162,10 @@ extern void hpte_need_flush(struct mm_struct *mm=
-, unsigned long addr,
-> >>   			    pte_t *ptep, unsigned long pte, int huge);
-> >>   unsigned long htab_convert_pte_flags(unsigned long pteflags, unsigne=
-d long flags);
-> >>   /* Atomic PTE updates */
-> >> -static inline unsigned long hash__pte_update(struct mm_struct *mm,
-> >> -					 unsigned long addr,
-> >> -					 pte_t *ptep, unsigned long clr,
-> >> -					 unsigned long set,
-> >> -					 int huge)
-> >> +static inline unsigned long hash__pte_update_one(pte_t *ptep, unsigne=
-d long clr,
-> >> +						 unsigned long set)
-> >>   {
-> >>   	__be64 old_be, tmp_be;
-> >> -	unsigned long old;
-> >>  =20
-> >>   	__asm__ __volatile__(
-> >>   	"1:	ldarx	%0,0,%3		# pte_update\n\
-> >> @@ -182,11 +179,38 @@ static inline unsigned long hash__pte_update(str=
-uct mm_struct *mm,
-> >>   	: "r" (ptep), "r" (cpu_to_be64(clr)), "m" (*ptep),
-> >>   	  "r" (cpu_to_be64(H_PAGE_BUSY)), "r" (cpu_to_be64(set))
-> >>   	: "cc" );
-> >> +
-> >> +	return be64_to_cpu(old_be);
-> >> +}
-> >> +
-> >> +static inline unsigned long hash__pte_update(struct mm_struct *mm,
-> >> +					 unsigned long addr,
-> >> +					 pte_t *ptep, unsigned long clr,
-> >> +					 unsigned long set,
-> >> +					 int huge)
-> >> +{
-> >> +	unsigned long old;
-> >> +
-> >> +	old =3D hash__pte_update_one(ptep, clr, set);
-> >> +
-> >> +	if (huge && IS_ENABLED(CONFIG_PPC_4K_PAGES)) {
-> >> +		unsigned int psize =3D get_slice_psize(mm, addr);
-> >> +		int nb, i;
-> >> +
-> >> +		if (psize =3D=3D MMU_PAGE_16M)
-> >> +			nb =3D SZ_16M / PMD_SIZE;
-> >> +		else if (psize =3D=3D MMU_PAGE_16G)
-> >> +			nb =3D SZ_16G / PUD_SIZE;
-> >> +		else
-> >> +			nb =3D 1;
-> >> +
-> >> +		for (i =3D 1; i < nb; i++)
-> >> +			hash__pte_update_one(ptep + i, clr, set);
-> >> +	}
-> >>   	/* huge pages use the old page table lock */
-> >>   	if (!huge)
-> >>   		assert_pte_locked(mm, addr);
-> >>  =20
-> >> -	old =3D be64_to_cpu(old_be);
-> >>   	if (old & H_PAGE_HASHPTE)
-> >>   		hpte_need_flush(mm, addr, ptep, old, huge);
-> >>  =20
-> >=20
-> > Nice series, I don't know this hugepd code very well but I'll try.
-> > Why do you have to replicate the PTE entry here? The hash table refill
-> > should always be working on the first PTE of the page otherwise we have
-> > bigger problems.
->
-> I don't know how book3s/64 works exactly, but on nohash, when you get a=
-=20
-> TLB miss exception the only thing you have is the address and you don't=
-=20
-> know yes it is a hugepage so you get the PTE as if it was a 4k page and=
-=20
-> it is only when you read that PTE that you know it is a hugepage.
->
-> Ok, on book3s/64 the page size seems to be encoded inside the segment so=
-=20
-> maybe it is a bit different but anyway the TLB miss exception (or DSI ?)=
-=20
-> can happen at any address.
+Hi Mateusz,
 
-Right.
+On Wed, May 22, 2024 at 01:31:00AM +0200, Mateusz Guzik wrote:
+> Interrupt disable/enable trips are quite expensive on x86-64 compared to
+> a mere cmpxchg (note: no lock prefix!) and percpu counters are used
+> quite often.
+> 
+> With this change I get a bump of 1% ops/s for negative path lookups,
+> plugged into will-it-scale:
+> 
+> void testcase(unsigned long long *iterations, unsigned long nr)
+> {
+>         while (1) {
+>                 int fd = open("/tmp/nonexistent", O_RDONLY);
+>                 assert(fd == -1);
+> 
+>                 (*iterations)++;
+>         }
+> }
+> 
+> The win would be higher if it was not for other slowdowns, but one has
+> to start somewhere.
 
-If you think of the hash page table as a software loaded TLB (which
-is how Linux kind of thinks of it), then DSI is a TLB miss. hash_page_x
-calls find the Linux pte and load that translation into hash page table.
+This is cool!
 
-One of the hard parts is keeping them coherent with low overhead. This
-requires pte bits H_PAGE_BUSY as a lock and H_PAGE_HASHPTE which means
-it might be in the hash table. So Linux PTE and hash PTE have to be
-1:1 in general.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+> 
+> v3:
+> - add a missing word to the new comment
+> 
+> v2:
+> - dodge preemption
+> - use this_cpu_try_cmpxchg
+> - keep the old variant depending on CONFIG_HAVE_CMPXCHG_LOCAL
+> 
+>  lib/percpu_counter.c | 44 +++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 39 insertions(+), 5 deletions(-)
+> 
+> diff --git a/lib/percpu_counter.c b/lib/percpu_counter.c
+> index 44dd133594d4..c3140276bb36 100644
+> --- a/lib/percpu_counter.c
+> +++ b/lib/percpu_counter.c
+> @@ -73,17 +73,50 @@ void percpu_counter_set(struct percpu_counter *fbc, s64 amount)
+>  EXPORT_SYMBOL(percpu_counter_set);
+>  
+>  /*
+> - * local_irq_save() is needed to make the function irq safe:
+> - * - The slow path would be ok as protected by an irq-safe spinlock.
+> - * - this_cpu_add would be ok as it is irq-safe by definition.
+> - * But:
+> - * The decision slow path/fast path and the actual update must be atomic, too.
+> + * Add to a counter while respecting batch size.
+> + *
+> + * There are 2 implementations, both dealing with the following problem:
+> + *
+> + * The decision slow path/fast path and the actual update must be atomic.
+>   * Otherwise a call in process context could check the current values and
+>   * decide that the fast path can be used. If now an interrupt occurs before
+>   * the this_cpu_add(), and the interrupt updates this_cpu(*fbc->counters),
+>   * then the this_cpu_add() that is executed after the interrupt has completed
+>   * can produce values larger than "batch" or even overflows.
+>   */
+> +#ifdef CONFIG_HAVE_CMPXCHG_LOCAL
+> +/*
+> + * Safety against interrupts is achieved in 2 ways:
+> + * 1. the fast path uses local cmpxchg (note: no lock prefix)
+> + * 2. the slow path operates with interrupts disabled
+> + */
+> +void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
+> +{
+> +	s64 count;
+> +	unsigned long flags;
+> +
+> +	count = this_cpu_read(*fbc->counters);
 
-There are probably cases where we could get away from 1:1, but I would
-much prefer not to. Maybe read-only access would be okay though. But
-the hash_page will have to always operate on the 0th pte, which I think
-we get via segment size masking, same for any set / update / clear of
-the pte.
+Should this_cpu_read() be inside the do {} while in case the extreme
+case that we get preempted after the read and before the cmpxchg AND
+count + amount < batch on both the previous and next cpu?
 
-> >=20
-> > What paths look at the N > 0 PTEs of a contiguous page entry?
-> >=20
->
-> pte_offset_kernel() or pte_offset_map_lock() will land on any contiguous=
-=20
-> PTE based on the address handed to pte_index(), as if it was a standard=
-=20
-> (4k or 64k) page.
->
-> pte_index() doesn't know it is a hugepage, that's the reason why we need=
-=20
-> to duplicate the entry.
-
-From the mm/ side of things, hugetlb page tables are always walked via
-the huge vma which knows the page size and could align address... I
-guess except for fast gup? Which should be read-only. So okay you do
-need to replicate huge ptes for fast gup at least. Any others?
-
-There's going to need to be a little more to it. __hash_page_huge sets
-PTE accessed and dirty for example, so if we allow any PTE readers to
-check the non-0th pte we would have to do something about that.
-
-How do you deal with dirty/accessed bits for other subarchs?
-
-We could just remove the hash_page setting of those bits and just cause
-a fault and require Linux mm to set them. At least for hugepages we
-could do that probably without any real performance worry.
+> +	do {
+> +		if (unlikely(abs(count + amount)) >= batch) {
+> +			raw_spin_lock_irqsave(&fbc->lock, flags);
+> +			/*
+> +			 * Note: by now we might have migrated to another CPU
+> +			 * or the value might have changed.
+> +			 */
+> +			count = __this_cpu_read(*fbc->counters);
+> +			fbc->count += count + amount;
+> +			__this_cpu_sub(*fbc->counters, count);
+> +			raw_spin_unlock_irqrestore(&fbc->lock, flags);
+> +			return;
+> +		}
+> +	} while (!this_cpu_try_cmpxchg(*fbc->counters, &count, count + amount));
+> +}
+> +#else
+> +/*
+> + * local_irq_save() is used to make the function irq safe:
+> + * - The slow path would be ok as protected by an irq-safe spinlock.
+> + * - this_cpu_add would be ok as it is irq-safe by definition.
+> + */
+>  void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
+>  {
+>  	s64 count;
+> @@ -101,6 +134,7 @@ void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, s32 batch)
+>  	}
+>  	local_irq_restore(flags);
+>  }
+> +#endif
+>  EXPORT_SYMBOL(percpu_counter_add_batch);
+>  
+>  /*
+> -- 
+> 2.39.2
+> 
 
 Thanks,
-Nick
+Dennis
 
