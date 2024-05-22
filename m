@@ -1,304 +1,229 @@
-Return-Path: <linux-kernel+bounces-186053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC118CBF40
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:27:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A714A8CBF2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 735C11C2105B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:27:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B89F282913
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109808248E;
-	Wed, 22 May 2024 10:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED1F81ADB;
+	Wed, 22 May 2024 10:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="w3+b34rk"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b="cFxJXPvw"
+Received: from PR0P264CU014.outbound.protection.outlook.com (mail-francecentralazon11022018.outbound.protection.outlook.com [52.101.167.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4387E572;
-	Wed, 22 May 2024 10:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716373648; cv=none; b=BtwQoGmEFlrVDFXMX9hHySKdt/n0A9bV94iyQCcruB3sTNgynMOkRqDO4CSsA3MgfdkxTKD/wvgmwMtM3UdSqRkW89kb+bMGR2qIkaonT65sYcrC3GywXmgBhBkl1Jfe/VShLk4akF/TqJqquFMcPab8nXvzXPuz/Wh6UmM/nsY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716373648; c=relaxed/simple;
-	bh=BGow7okZGcg/eNL8kDS+sDuLj9yt/LLirTZf2nzuoSY=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To:
-	 Content-Type; b=vChFY2IPkU9k/32x6EmUAXmf3uqndOCV0rEcFtHAzTjy+Ik66QgvUKfb7doktcGA37PNbG1pdOOeVLXqpD+uEm2DW2ZxeyrPSFIEeZRybeMIDGq94pB7mAQVNlE97VXdDoDbyIbihWpKeqXgu4sD7OYY+Rqmg56xTh7U0H1k2r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=w3+b34rk; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716373643; h=Message-ID:Subject:Date:From:To:Content-Type;
-	bh=CZa1vwlpN3cgeuEVtqfIKQvnmcbxrbOVL95160NFLDw=;
-	b=w3+b34rkRfNjGwXLT/C9Cut4Pj7QgnU4R7xj7h0GTISe+oc6Da4pxwtmdaR2tYzV/6PbTNSdWC1tDhj2aHcKD53f7UHqJRwPIIbfeVtlRPjUEFXvXGQgg1NdeIkByZvAKcq0xHcabbR1O39oBWI1m65lYL+elutvyq0dLG21Y34=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033022160150;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=32;SR=0;TI=SMTPD_---0W7.LTFe_1716373640;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0W7.LTFe_1716373640)
-          by smtp.aliyun-inc.com;
-          Wed, 22 May 2024 18:27:21 +0800
-Message-ID: <1716373365.1499481-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [GIT PULL] virtio: features, fixes, cleanups
-Date: Wed, 22 May 2024 18:22:45 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org,
- netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- anton.yakovlev@opensynergy.com,
- bartosz.golaszewski@linaro.org,
- christophe.jaillet@wanadoo.fr,
- dave.jiang@intel.com,
- david@redhat.com,
- eperezma@redhat.com,
- herbert@gondor.apana.org.au,
- jasowang@redhat.com,
- jiri@nvidia.com,
- jiri@resnulli.us,
- johannes@sipsolutions.net,
- krzysztof.kozlowski@linaro.org,
- lingshan.zhu@intel.com,
- linus.walleij@linaro.org,
- lizhijian@fujitsu.com,
- martin.petersen@oracle.com,
- maxime.coquelin@redhat.com,
- michael.christie@oracle.com,
- mst@redhat.com,
- sgarzare@redhat.com,
- stevensd@chromium.org,
- sudeep.holla@arm.com,
- syzbot+98edc2df894917b3431f@syzkaller.appspotmail.com,
- u.kleine-koenig@pengutronix.de,
- viresh.kumar@linaro.org,
- yuxue.liu@jaguarmicro.com,
- Srujana Challa <schalla@marvell.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <20240522060301-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240522060301-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760FC405CC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.167.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716373370; cv=fail; b=G11kShef3v67iE7WyalKyNWsO0M942FSsF2npIontyd8Tb9r/6j7u3J5rcQToEqdN3tzJE5hQFnMoPkzXnj+EibyaFbUQajefHiIIV+rXz6hHl3BFxDYx2rCq8YI9ATcAot5Bjr5KH04ILvWBxT+xjrLKPWxbk3610NtpAkZOiU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716373370; c=relaxed/simple;
+	bh=R+UbT5AXiHsAYa7heigH8V6la913V73KBy1+D5W1qYE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=opHNXtSwLpuq5bi3B+5sKEyndfK9XAD3bHOMiUheCTJUwIBXtxdLkQbkFLyw0NHPOadWNs+O14SUU19+KACzfsvID6gIxKf0Hc1dMe9AHRgOgyzCi1s5/CHqI6JFSVLJVFZpsLNV1lfOVxGptFE3ExG3FloyXk4f1T8el5WXvUA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b=cFxJXPvw; arc=fail smtp.client-ip=52.101.167.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QPtJ7NWhvf/33kyx5pUWIMnDrEr7MyaQ70ZJhjO2/u6UgntPJds1Mq0dad/AZb9SUvlNZBynkUHtIwCciKhQu47oBteicUo9NFs4uebxWMTmoq8Tt7gb6ukA55cW6NFqvQ6iav0+lsWhWswfEOYYQs+UMYbd0VF8Wmb7uBrZl8Jvq/wyS8acEzoYWSKqUe9wfWWtLS0D/NmwefFW8geK/t47s1YyWqq9rrjqGhCgn9CSpPLKQmT2XkMVXcpN70sfkdgGufXV1quG48Bsz/RfYHA/RQaXjBrtEfor5k74jOdfvEyp1C0HOzkpDHxtL7tUgt4OadObemEpVA2OqZXh1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=R+UbT5AXiHsAYa7heigH8V6la913V73KBy1+D5W1qYE=;
+ b=WKDgPW1TAwGKiET3OuHjamPnWq6CFnNeKmMZp2wQnTRf9pb9pjR8v8wXjHRpO7govV8r7TVUhi74tuPc2M98PDxl0zhluFUuBdSNnMxzdZBvbGhqjoMmuO876IsF/8AVzxq0wERA6QXHpm7hj75EDLyL/5wMw/69BQWTOb0jLThjw09Xerw+K4p3yBzP/mfG/dsTImS139Uo02yBWhr2LIoOpfggyUEY1/dw9RfaZMx+eZkt0aw42BFXEbJTlI6azBaJ/KqE752wTt/p61PgVbhkfAFAqaFQ9P1X6AAdbXdrT1WhMgX+1Bk1qWEhEGhqAH0f70lW/YE+Yn/Loqmieg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=csgroup.eu; dmarc=pass action=none header.from=csgroup.eu;
+ dkim=pass header.d=csgroup.eu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=csgroup.eu;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R+UbT5AXiHsAYa7heigH8V6la913V73KBy1+D5W1qYE=;
+ b=cFxJXPvw9eIX1MAqP9OA9+uS0XF+cu3Y2/iJtH/mcM4ivl0H+TVqs9lOzZEY356Lwp5sg09P5fIL7MbO42KdELFptqW7EY/UrlpdpM6EsjodJaZEoF4u5YQwD2rag5I4jiGz+cYV7tNdJTIEaBCFOC0OCrl8imHufMAh300ZGTZHyLAVBrLosOUNhiEwU/kdAk42S0KRHqxZnOPH1xz7lSFwameFpmorjDDQgmmSjuIM19oc7pOGHfEOnJyxEde7iQ5gSE4/Djf+mjQ2aZxIxdHRzQZo8esIKl7UcmL195gZRrX4f7CFB5YOMmsoFfM0DPk1WVIZ/m3BJflJCfCd/g==
+Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:31::15)
+ by PARP264MB4586.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:42d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
+ 2024 10:22:45 +0000
+Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::96ff:7284:1fa1:b02a]) by MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::96ff:7284:1fa1:b02a%4]) with mapi id 15.20.7611.016; Wed, 22 May 2024
+ 10:22:45 +0000
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Oscar Salvador <osalvador@suse.de>
+CC: Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe
+	<jgg@nvidia.com>, Peter Xu <peterx@redhat.com>, Michael Ellerman
+	<mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linuxppc-dev@lists.ozlabs.org"
+	<linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [RFC PATCH v2 03/20] mm: Provide pmd to pte_leaf_size()
+Thread-Topic: [RFC PATCH v2 03/20] mm: Provide pmd to pte_leaf_size()
+Thread-Index: AQHaqIxwS0Sp+Ej9bkO5xpTFqDtxcrGhdHAAgAGebgA=
+Date: Wed, 22 May 2024 10:22:45 +0000
+Message-ID: <268458e9-0204-4b88-974e-a23fc9c86205@csgroup.eu>
+References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
+ <ab93995d27055f055249e1e8770b22f89c980322.1715971869.git.christophe.leroy@csgroup.eu>
+ <ZkxrzrD5aJbqTq2Z@localhost.localdomain>
+In-Reply-To: <ZkxrzrD5aJbqTq2Z@localhost.localdomain>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=csgroup.eu;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MRZP264MB2988:EE_|PARP264MB4586:EE_
+x-ms-office365-filtering-correlation-id: e4c167ca-9c5c-4d6c-c120-08dc7a491f15
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?NEpBOTZpdVB5Wk93czNWcytMSmFBSWFKU1VVMG1KYVNObGxPcnNndSt3UDNT?=
+ =?utf-8?B?MVYyZ2h6UGNwa24wYTg2bEozME14TFNVVmthelMxZVJPa1JHekFkVUtvQlA0?=
+ =?utf-8?B?QXhxU3ZhSzBxcnMyTk9QckRTNzRoRGRzU0puT09oZUxYWElOU1NFNkF0c2Ey?=
+ =?utf-8?B?REwxVGJCRFBWSVZXZnJ2enpLVVFIY2dNRVVTMmFYUDNWSVoyVmFTWm0zcG9F?=
+ =?utf-8?B?NDAwNFpXcmFaMDhlT1gwelpnTURhNGtSbUlDNTBFTEhzenA0RmQwQmVxNmFW?=
+ =?utf-8?B?Wk1JUWllZC9iZE9kRzVQQ3BiQy9NdnFsNlFpNWpyRitlOEhESW5qL0I5cVBD?=
+ =?utf-8?B?ZFR4MEFDcXFqdWptUWlqTFhzU1RuV29hN1hXczZLN2crRmJGamRzeDgxaGhM?=
+ =?utf-8?B?cVpJbVVLcmo5eGxMQ0Y0cEZDaTcxYll1UE9ET3N3am9iNGVwZjc5bGU4bzVW?=
+ =?utf-8?B?V2c4bWh5eUNIalV0RUc1enhrU0dqVk0xS1doREVkMllIbEVOUWp6V1FpUGM3?=
+ =?utf-8?B?RXFobm5ZUFh4U0huQ25qaGJlOHpqaXpoZzQrOGsvRnhYOFI5dkdIcmJxYWU5?=
+ =?utf-8?B?UU1CZlNwdmJJMklySDNoZDJDa1k3cWRxUExMdTkxTmRmNU1mYjhYR3dQaGtu?=
+ =?utf-8?B?Z3h6UEJNUFl3cnRsME1wcHRnZjluaDcxNzlLalUrd3EvV3dQYU83dFpCMGE2?=
+ =?utf-8?B?TGJwdFgrbEVLaitlMmMyRG9QK0dLTWsyTVhlN21mMVVaR1RZQUJUVVFFK2Vq?=
+ =?utf-8?B?dzBYTVUzeHRDWjdJNkp5bjBIN3RnNExUZUNSdlNkSW9BY2tRcU1MRG05Zlpn?=
+ =?utf-8?B?UGRqR1RHQnIwRXlsTTkrT1hyNWpTdUNjTWU0TE10a2dZaTFMNFdvS2IwdXZP?=
+ =?utf-8?B?eDdjbFJQdDRWYnVaT1hjRThldzdBOFZWeEdOWFFlOWVDRzlPb3pvVDY1Y0Ew?=
+ =?utf-8?B?ZTAwTHNwd2ltUVg0T2wrRGVFcEJOYk1CSklITEN1d3kwaE5JOFdmRURaQ1BF?=
+ =?utf-8?B?OGVhZlBPSWVVRlVzNm9xRlRlUUJockh0QlZhdkdUUk5zclhxSnllZ1c0QTVy?=
+ =?utf-8?B?bkdERXdhNDJKRVcxeitqWmY1d1d2STB3N05ZOFp6dnpiM0ZIZHNxdGU1V1Uz?=
+ =?utf-8?B?WHg4TnN6RXZpQkxtU2hnbitCaGlQYWEycThFN2JVUzNDRkR6NnlRTUc3Rnpk?=
+ =?utf-8?B?dWY1bnNPSklLUEFvdCtpN2NYYmoraU5ldGc1UytwRlRUM05TdVQ4c1VEYm9H?=
+ =?utf-8?B?N040ejFoOGdnaFdQdjRTQnRtWjAyYlNkSHJLRjFaUFB1YVBELzZVZkJZN2d4?=
+ =?utf-8?B?TWlVQ0ZvVi8zdFVLdGdQVXZkY3NjRHVhOXgwMHlYRzNoazM3b1kxME4xODdD?=
+ =?utf-8?B?QzRSeFIyT1M5cnJWRkNwVnpIUWZCbzFXZU9UbGRjSXVpNzdFRWYvSnVXUk5S?=
+ =?utf-8?B?dUZQOVFvaWQrRHpTZG9qZ0FvazVLbTgyTjJ4SThQN2JvdkJic0EvUWs2Y2dK?=
+ =?utf-8?B?UEVXUStGK0lVdmVOSkdHL1dEVWxDTkU1ZEdJMGxvTFpJMHJpWDBLUHZVb2RY?=
+ =?utf-8?B?NHZJbmRmRnNxWnpoYjBDSFY5MTk0L1cvVmVCNUV6dVUrdWF4ZWx3TkxvRXBl?=
+ =?utf-8?B?TlJTbDVSVVAycDBHSnRteVVLTXIxd2VBR09SSzNiaUZ3amRpdnZTb1N1L3kr?=
+ =?utf-8?B?WjBEMmM2TDhOYzRQUnUzUm9xdWJmTmNOUXF6eXdQZFl3b2lWVU5jOGZleXBV?=
+ =?utf-8?B?ZXVYdkRkSE5hZnBudW5CZFp5ZHdFQXBUMTBESC9pY3lOYXBrUlFmYTI4Wm91?=
+ =?utf-8?B?M244eHBsY0s2c0crNkhTdz09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?UUFwRDgrWW9FQVAwSmxuMy90MHdjNW1hcVZUWElIR2orczQ3ZnB1SXlob1JQ?=
+ =?utf-8?B?UmxhYkVWQnlkeFVnVGV0eXlNNEZnSi9JQVFkZmpWN1RVTlUzdEpDWlBiMEdL?=
+ =?utf-8?B?cExPVHZDcjlRTjFDY0V4cWhhR0g5R1EvVUc4eENIMWtkUkM1Qmd3cmloM0ZX?=
+ =?utf-8?B?N1lCUTNiODVpZEJUNU4xUjEyVW51MmlCZGxqS01yN2FuM1M0VGVHZlF5ZFZh?=
+ =?utf-8?B?MWIyYnhEQkdHQ1hxK2w5dUIyL0tXclovSlhvWGVmZTllajR2SDFCYStiOHZE?=
+ =?utf-8?B?VEJJVlhCR05zU0lxMGovdzFqNGNua1lQNkl0bloyRDVidzlBand1WTRzSWFp?=
+ =?utf-8?B?bnByRXZiZ2VZUmNhOGZYSTlkUjh5d3dLUzB2MFhmRko0OU50alBDcjZlRElk?=
+ =?utf-8?B?R1BTdlc1WE45Y3BIVzhyZWpLREwwSHZwWk0zRk1WbWFLV3djVUZ2dmdrdnBa?=
+ =?utf-8?B?eEpqWE1lMGU0c3pUT1VTRjllVGMwOXo2S1dpVndFeVFEYzdsRDh1TDF5NmYv?=
+ =?utf-8?B?MFlVTzFPUFAxSk9zRU0vMU12YXVkMUZoT2NWUmxVYjdiL01CaVVicUwxRGJY?=
+ =?utf-8?B?WGtCQk9BSnNMUnE2RS9rWnpUa1N4NDNNRVBueWZEMUhCaytBd2cyR2MzSEo0?=
+ =?utf-8?B?bERsSXY5ODV2TlNLY2lENE41V1BlNm8ycGJrM0hEc2RwZXRnbEhqUWNVZzlV?=
+ =?utf-8?B?cEJvYWFYd0cyNVpsSmtVdnZTTHFXVm5CYUxWOFlNVXdHUXJpYnZVbkxhZEpT?=
+ =?utf-8?B?UW04c1pNamVIVVYyd2gwcXQxZ2p1RzlHVmVVY1hkUFpETHdpV1VPZk5PNER0?=
+ =?utf-8?B?dmJkTkljbmNvQmpPU3lNUXR5dW1Ea0c4L3RnODNidEw5c2htRStaemZvekZK?=
+ =?utf-8?B?SU5ZRDRQQVo0V2VzVG9ySVZxcnZzZ0FGTTFENGYxaTJ3NmNCTWFoUG1OTmdP?=
+ =?utf-8?B?cFBQK3ZDVWZlQlB1T1dMZS95eldIVkdyNGZxMklwdlByWi8vZ2lhbzNOUzhW?=
+ =?utf-8?B?ZnlMb2J4dEgwb3Z1YkRpZkE5VDdBbCtGdmFpRnY5ZFZMaUlVTnNRVzJQUWVN?=
+ =?utf-8?B?L0pkT1pTbUhMVWhZbHZOcWU0elIwZ0JjalRqRmRUNkszOFQvOWlJVEhjZHZJ?=
+ =?utf-8?B?clp5TnBxVzk5YzdzZlV3Ui95NUZ1c2tjaHEzeHdxUmZFWGZ6K3JDbEdPbnBK?=
+ =?utf-8?B?cnFIYytVM2pyekxQazFLSlZTbmI2Z2VNcmVXQko0WWQ5bTNUcXBHTmtSb2R5?=
+ =?utf-8?B?UGNhRzVlcFI2UnVyNkhiZGx6ZWFJVkhnZ2F5QWdtUUJ4N1g1SlUvWTFuZEFv?=
+ =?utf-8?B?ckNQeHFvdzFnNXkzMUIzTjJIbXlEVEtyUlN1SVdKL1NwQm9TZ0JieVpKODls?=
+ =?utf-8?B?UGlPc0hQQ3Y5Sk5HeWQwcU9PaHdNVDA2TVAvQkx2c0dCelp6VlRseGJpVitp?=
+ =?utf-8?B?c0xQcVZWYVBaSGhqMjRwZjJwVTA5NGdCcEI1THUyUjQwZzZYYjBGaU1MVlhJ?=
+ =?utf-8?B?U09YMjhpRGhKNnYzOWI0TXpTZHlBRHdVcHVoQ1RIcld0NWVSY3lEWTI3Zk1D?=
+ =?utf-8?B?SzlqSkczaW8vdGttbUs2N2R3b3o1WFdpWGw2TEtsazkzWFlySTZvK3ExcVFa?=
+ =?utf-8?B?NmdtVEVZZ2xWeFdnVHMzNGRqbjlmRG44ZnlHTlRCd2FFQStWZU5NUTRlZ0py?=
+ =?utf-8?B?cUtkV2ZVTnh2Z3dPWTNSOThrQnQxWGNGcmU5akNDWG5ZcWhQS1l4VDc3OTFY?=
+ =?utf-8?B?WEl6alFQcjFhcGNTanB2L2I2bldtejg5d09OdlMwWW1XQ0dCOGRScE5xcGJh?=
+ =?utf-8?B?MWI1U2ExU1FCd3dIckVNekJKL1JqT1lKTlMyRkFyZjc5ajM2N0lvbEZQcW1s?=
+ =?utf-8?B?TGtTYUEycFFBODJxazBRSDg2R1RLNkxhVjVzZ2hGaE1hYldFY1BLL1AzR3dB?=
+ =?utf-8?B?QUEyTDh2aXNsTm5KOW1Fblg0SUxIMElPbm1tV2RRbjhuTWI2NUZTMGova1Vj?=
+ =?utf-8?B?MUhMWElWZ1RscjZXWkRidWtva29OL21VNzZDdVN5VHdVSjRoTERoazNqUFZZ?=
+ =?utf-8?B?N1BzdWM0UUEvMzFVUzdPVUtybndaWGpoaDFuRjFpY2RSQWgySG9BNDdGbE1w?=
+ =?utf-8?Q?jVnODRU3YtTsJ4d+A6edONrAV?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B2A0B0520E73A34AA882303A1725ED12@FRAP264.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-OriginatorOrg: csgroup.eu
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4c167ca-9c5c-4d6c-c120-08dc7a491f15
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2024 10:22:45.2464
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 9914def7-b676-4fda-8815-5d49fb3b45c8
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LHYBpoJ1hS2q31+Kg5iCqV4olbaJkfsp1X44UfeHSH2R6NgiHQKxk/BYN67OOcLASdOnPvsAfejOTetBN9h65rLrYIDFTGwRTMawzoKG3sk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PARP264MB4586
 
-On Wed, 22 May 2024 06:03:01 -0400, "Michael S. Tsirkin" <mst@redhat.com> w=
-rote:
-> Things to note here:
->
-> - the new Marvell OCTEON DPU driver is not here: latest v4 keeps causing
->   build failures on mips. I deferred the pull hoping to get it in
->   and I might merge a new version post rc1
->   (supposed to be ok for new drivers as they can't cause regressions),
->   but we'll see.
-> - there are also a couple bugfixes under review, to be merged after rc1
-> - I merged a trivial patch (removing a comment) that also got
->   merged through net.
->   git handles this just fine and it did not seem worth it
->   rebasing to drop it.
-> - there is a trivial conflict in the header file. Shouldn't be any
->   trouble to resolve, but fyi the resolution by Stephen is here
-> 	diff --cc drivers/virtio/virtio_mem.c
-> 	index e8355f55a8f7,6d4dfbc53a66..000000000000
-> 	--- a/drivers/virtio/virtio_mem.c
-> 	+++ b/drivers/virtio/virtio_mem.c
-> 	@@@ -21,7 -21,7 +21,8 @@@
-> 	  #include <linux/bitmap.h>
-> 	  #include <linux/lockdep.h>
-> 	  #include <linux/log2.h>
-> 	 +#include <linux/vmalloc.h>
-> 	+ #include <linux/suspend.h>
->   Also see it here:
->   https://lore.kernel.org/all/20240423145947.142171f6@canb.auug.org.au/
->
->
->
-> The following changes since commit 18daea77cca626f590fb140fc11e3a43c5d413=
-54:
->
->   Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm (202=
-4-04-30 12:40:41 -0700)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_=
-linus
->
-> for you to fetch changes up to 0b8dbbdcf2e42273fbac9b752919e2e5b2abac21:
->
->   Merge tag 'for_linus' into vhost (2024-05-12 08:15:28 -0400)
->
-> ----------------------------------------------------------------
-> virtio: features, fixes, cleanups
->
-> Several new features here:
->
-> - virtio-net is finally supported in vduse.
->
-> - Virtio (balloon and mem) interaction with suspend is improved
->
-> - vhost-scsi now handles signals better/faster.
->
-> - virtio-net now supports premapped mode by default,
->   opening the door for all kind of zero copy tricks.
->
-> Fixes, cleanups all over the place.
->
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
->
-> ----------------------------------------------------------------
-> Christophe JAILLET (1):
->       vhost-vdpa: Remove usage of the deprecated ida_simple_xx() API
->
-> David Hildenbrand (1):
->       virtio-mem: support suspend+resume
->
-> David Stevens (2):
->       virtio_balloon: Give the balloon its own wakeup source
->       virtio_balloon: Treat stats requests as wakeup events
->
-> Eugenio P=C3=A9rez (2):
->       MAINTAINERS: add Eugenio P=C3=A9rez as reviewer
->       MAINTAINERS: add Eugenio P=C3=A9rez as reviewer
->
-> Jiri Pirko (1):
->       virtio: delete vq in vp_find_vqs_msix() when request_irq() fails
->
-> Krzysztof Kozlowski (24):
->       virtio: balloon: drop owner assignment
->       virtio: input: drop owner assignment
->       virtio: mem: drop owner assignment
->       um: virt-pci: drop owner assignment
->       virtio_blk: drop owner assignment
->       bluetooth: virtio: drop owner assignment
->       hwrng: virtio: drop owner assignment
->       virtio_console: drop owner assignment
->       crypto: virtio - drop owner assignment
->       firmware: arm_scmi: virtio: drop owner assignment
->       gpio: virtio: drop owner assignment
->       drm/virtio: drop owner assignment
->       iommu: virtio: drop owner assignment
->       misc: nsm: drop owner assignment
->       net: caif: virtio: drop owner assignment
->       net: virtio: drop owner assignment
->       net: 9p: virtio: drop owner assignment
->       vsock/virtio: drop owner assignment
->       wifi: mac80211_hwsim: drop owner assignment
->       nvdimm: virtio_pmem: drop owner assignment
->       rpmsg: virtio: drop owner assignment
->       scsi: virtio: drop owner assignment
->       fuse: virtio: drop owner assignment
->       sound: virtio: drop owner assignment
->
-> Li Zhijian (1):
->       vdpa: Convert sprintf/snprintf to sysfs_emit
->
-> Maxime Coquelin (6):
->       vduse: validate block features only with block devices
->       vduse: Temporarily fail if control queue feature requested
->       vduse: enable Virtio-net device type
->       vduse: validate block features only with block devices
->       vduse: Temporarily fail if control queue feature requested
->       vduse: enable Virtio-net device type
->
-> Michael S. Tsirkin (2):
->       Merge tag 'stable/vduse-virtio-net' into vhost
->       Merge tag 'for_linus' into vhost
->
-> Mike Christie (9):
->       vhost-scsi: Handle vhost_vq_work_queue failures for events
->       vhost-scsi: Handle vhost_vq_work_queue failures for cmds
->       vhost-scsi: Use system wq to flush dev for TMFs
->       vhost: Remove vhost_vq_flush
->       vhost_scsi: Handle vhost_vq_work_queue failures for TMFs
->       vhost: Use virtqueue mutex for swapping worker
->       vhost: Release worker mutex during flushes
->       vhost_task: Handle SIGKILL by flushing work and exiting
->       kernel: Remove signal hacks for vhost_tasks
->
-> Uwe Kleine-K=C3=B6nig (1):
->       virtio-mmio: Convert to platform remove callback returning void
->
-> Xuan Zhuo (7):
->       virtio_ring: introduce dma map api for page
->       virtio_ring: enable premapped mode whatever use_dma_api
->       virtio_net: replace private by pp struct inside page
->       virtio_net: big mode support premapped
->       virtio_net: enable premapped by default
->       virtio_net: rx remove premapped failover code
->       virtio_net: remove the misleading comment
-
-Hi Michael,
-
-As we discussed here:
-
-	http://lore.kernel.org/all/CACGkMEuyeJ9mMgYnnB42=3Dhw6umNuo=3Dagn7VBqBqYPd=
-7GN=3D+39Q@mail.gmail.com
-
-This patch set has been abandoned.
-
-And you miss
-
-	https://lore.kernel.org/all/20240424091533.86949-1-xuanzhuo@linux.alibaba.=
-com/
-
-Thanks.
-
->
-> Yuxue Liu (2):
->       vp_vdpa: Fix return value check vp_vdpa_request_irq
->       vp_vdpa: don't allocate unused msix vectors
->
-> Zhu Lingshan (1):
->       MAINTAINERS: apply maintainer role of Intel vDPA driver
->
->  MAINTAINERS                                   |  10 +-
->  arch/um/drivers/virt-pci.c                    |   1 -
->  drivers/block/virtio_blk.c                    |   1 -
->  drivers/bluetooth/virtio_bt.c                 |   1 -
->  drivers/char/hw_random/virtio-rng.c           |   1 -
->  drivers/char/virtio_console.c                 |   2 -
->  drivers/crypto/virtio/virtio_crypto_core.c    |   1 -
->  drivers/firmware/arm_scmi/virtio.c            |   1 -
->  drivers/gpio/gpio-virtio.c                    |   1 -
->  drivers/gpu/drm/virtio/virtgpu_drv.c          |   1 -
->  drivers/iommu/virtio-iommu.c                  |   1 -
->  drivers/misc/nsm.c                            |   1 -
->  drivers/net/caif/caif_virtio.c                |   1 -
->  drivers/net/virtio_net.c                      | 248 +++++++++++++++++---=
-------
->  drivers/net/wireless/virtual/mac80211_hwsim.c |   1 -
->  drivers/nvdimm/virtio_pmem.c                  |   1 -
->  drivers/rpmsg/virtio_rpmsg_bus.c              |   1 -
->  drivers/scsi/virtio_scsi.c                    |   1 -
->  drivers/vdpa/vdpa.c                           |   2 +-
->  drivers/vdpa/vdpa_user/vduse_dev.c            |  24 ++-
->  drivers/vdpa/virtio_pci/vp_vdpa.c             |  27 ++-
->  drivers/vhost/scsi.c                          |  70 +++++---
->  drivers/vhost/vdpa.c                          |   6 +-
->  drivers/vhost/vhost.c                         | 130 ++++++++++----
->  drivers/vhost/vhost.h                         |   3 +-
->  drivers/virtio/virtio_balloon.c               |  85 +++++----
->  drivers/virtio/virtio_input.c                 |   1 -
->  drivers/virtio/virtio_mem.c                   |  69 ++++++-
->  drivers/virtio/virtio_mmio.c                  |   6 +-
->  drivers/virtio/virtio_pci_common.c            |   4 +-
->  drivers/virtio/virtio_ring.c                  |  59 +++++-
->  fs/coredump.c                                 |   4 +-
->  fs/fuse/virtio_fs.c                           |   1 -
->  include/linux/sched/vhost_task.h              |   3 +-
->  include/linux/virtio.h                        |   7 +
->  include/uapi/linux/virtio_mem.h               |   2 +
->  kernel/exit.c                                 |   5 +-
->  kernel/signal.c                               |   4 +-
->  kernel/vhost_task.c                           |  53 ++++--
->  net/9p/trans_virtio.c                         |   1 -
->  net/vmw_vsock/virtio_transport.c              |   1 -
->  sound/virtio/virtio_card.c                    |   1 -
->  42 files changed, 578 insertions(+), 265 deletions(-)
->
+DQoNCkxlIDIxLzA1LzIwMjQgw6AgMTE6MzksIE9zY2FyIFNhbHZhZG9yIGEgw6ljcml0wqA6DQo+
+IE9uIEZyaSwgTWF5IDE3LCAyMDI0IGF0IDA4OjU5OjU3UE0gKzAyMDAsIENocmlzdG9waGUgTGVy
+b3kgd3JvdGU6DQo+PiBPbiBwb3dlcnBjIDh4eCwgd2hlbiBhIHBhZ2UgaXMgOE0gc2l6ZSwgdGhl
+IGluZm9ybWF0aW9uIGlzIGluIHRoZSBQTUQNCj4+IGVudHJ5LiBTbyBwcm92aWRlIGl0IHRvIHB0
+ZV9sZWFmX3NpemUoKS4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGhlIExlcm95IDxj
+aHJpc3RvcGhlLmxlcm95QGNzZ3JvdXAuZXU+DQo+IA0KPiBPdmVyYWxsIGxvb2tzIGdvb2QgdG8g
+bWUuDQo+IA0KPiBXb3VsZCBiZSBuaWNlciBpZiB3ZSBjb3VsZCBsZWZ0IHRoZSBhcmNoIGNvZGUg
+dW50b3VjaGVkLg0KPiBJIHdhbnRlZCB0byBzZWUgaG93IHRoaXMgd291bGQgYmUgaWYgd2UgZ28g
+ZG93biB0aGF0IHJvYWQgYW5kIGZvY3VzIG9ubHkNCj4gb24gOHh4IGF0IHRoZSByaXNrIG9mIGJl
+aW5nIG1vcmUgZXNvdGVyaWMuDQo+IHBtZF9wdGVfbGVhZl9zaXplKCkgaXMgYSBuYW1lIG9mIGhl
+bGwsIGJ1dCBjb3VsZCBiZSByZXBsYWNlZA0KPiB3aXRoIF9fcHRlX2xlYWZfc2l6ZSBmb3IgZXhh
+bXBsZS4NCj4gDQo+IFdvcnRoIGl0PyBNYXliZSBub3QsIGFueXdheSwganVzdCB3YW50ZWQgdG8g
+Z2l2ZSBpdCBhIGdvOg0KDQpJIGxpa2UgdGhlIGlkZWEsIGl0IGRvZXNuJ3QgbG9vayB0aGF0IGJh
+ZCBhZnRlciBhbGwsIGl0IGF2b2lkcyBjaGFuZ2VzIA0KdG8gb3RoZXIgYXJjaGVzLg0KDQo+IA0K
+PiANCj4gICBkaWZmIC0tZ2l0IGEvYXJjaC9wb3dlcnBjL2luY2x1ZGUvYXNtL25vaGFzaC8zMi9w
+dGUtOHh4LmggYi9hcmNoL3Bvd2VycGMvaW5jbHVkZS9hc20vbm9oYXNoLzMyL3B0ZS04eHguaA0K
+PiAgIGluZGV4IDEzN2RjM2M4NGU0NS4uOWUzZmU2ZTEwODNmIDEwMDY0NA0KPiAgIC0tLSBhL2Fy
+Y2gvcG93ZXJwYy9pbmNsdWRlL2FzbS9ub2hhc2gvMzIvcHRlLTh4eC5oDQo+ICAgKysrIGIvYXJj
+aC9wb3dlcnBjL2luY2x1ZGUvYXNtL25vaGFzaC8zMi9wdGUtOHh4LmgNCj4gICBAQCAtMTUxLDcg
+KzE1MSw3IEBAIHN0YXRpYyBpbmxpbmUgdW5zaWduZWQgbG9uZyBwZ2RfbGVhZl9zaXplKHBnZF90
+IHBnZCkNCj4gICANCj4gICAgI2RlZmluZSBwZ2RfbGVhZl9zaXplIHBnZF9sZWFmX3NpemUNCj4g
+ICANCj4gICAtc3RhdGljIGlubGluZSB1bnNpZ25lZCBsb25nIHB0ZV9sZWFmX3NpemUocHRlX3Qg
+cHRlKQ0KPiAgICtzdGF0aWMgaW5saW5lIHVuc2lnbmVkIGxvbmcgcG1kX3B0ZV9sZWFmX3NpemUo
+cHRlX3QgcHRlKQ0KPiAgICB7DQo+ICAgICAgICAgICBwdGVfYmFzaWNfdCB2YWwgPSBwdGVfdmFs
+KHB0ZSk7DQo+ICAgDQo+ICAgQEAgLTE2Miw3ICsxNjIsNyBAQCBzdGF0aWMgaW5saW5lIHVuc2ln
+bmVkIGxvbmcgcHRlX2xlYWZfc2l6ZShwdGVfdCBwdGUpDQo+ICAgICAgICAgICByZXR1cm4gU1pf
+NEs7DQo+ICAgIH0NCj4gICANCj4gICAtI2RlZmluZSBwdGVfbGVhZl9zaXplIHB0ZV9sZWFmX3Np
+emUNCj4gICArI2RlZmluZSBwbWRfcHRlX2xlYWZfc2l6ZSBwbWRfcHRlX2xlYWZfc2l6ZQ0KPiAg
+IA0KPiAgICAvKg0KPiAgICAgKiBPbiB0aGUgOHh4LCB0aGUgcGFnZSB0YWJsZXMgYXJlIGEgYml0
+IHNwZWNpYWwuIEZvciAxNmsgcGFnZXMsIHdlIGhhdmUNCj4gICBkaWZmIC0tZ2l0IGEvaW5jbHVk
+ZS9saW51eC9wZ3RhYmxlLmggYi9pbmNsdWRlL2xpbnV4L3BndGFibGUuaA0KPiAgIGluZGV4IDE4
+MDE5ZjAzN2JhZS4uMmJjMmZlM2IyYjUzIDEwMDY0NA0KPiAgIC0tLSBhL2luY2x1ZGUvbGludXgv
+cGd0YWJsZS5oDQo+ICAgKysrIGIvaW5jbHVkZS9saW51eC9wZ3RhYmxlLmgNCj4gICBAQCAtMTg5
+MSw2ICsxODkxLDkgQEAgdHlwZWRlZiB1bnNpZ25lZCBpbnQgcGd0YmxfbW9kX21hc2s7DQo+ICAg
+ICNpZm5kZWYgcHRlX2xlYWZfc2l6ZQ0KPiAgICAjZGVmaW5lIHB0ZV9sZWFmX3NpemUoeCkgUEFH
+RV9TSVpFDQo+ICAgICNlbmRpZg0KPiAgICsjaWZuZGVmIHBtZF9wdGVfbGVhZl9zaXplDQo+ICAg
+KyNkZWZpbmUgcG1kX3B0ZV9sZWFmX3NpemUoeCwgeSkgcHRlX2xlYWZfc2l6ZSh5KQ0KPiAgICsj
+ZW5kaWYNCj4gICANCj4gICAgLyoNCj4gICAgICogV2UgYWx3YXlzIGRlZmluZSBwbWRfcGZuIGZv
+ciBhbGwgYXJjaHMgYXMgaXQncyB1c2VkIGluIGxvdHMgb2YgZ2VuZXJpYw0KPiAgIGRpZmYgLS1n
+aXQgYS9rZXJuZWwvZXZlbnRzL2NvcmUuYyBiL2tlcm5lbC9ldmVudHMvY29yZS5jDQo+ICAgaW5k
+ZXggZjAxMjhjNWZmMjc4Li5lOTBhNTQ3ZDJmYjIgMTAwNjQ0DQo+ICAgLS0tIGEva2VybmVsL2V2
+ZW50cy9jb3JlLmMNCj4gICArKysgYi9rZXJuZWwvZXZlbnRzL2NvcmUuYw0KPiAgIEBAIC03NTk2
+LDcgKzc1OTYsNyBAQCBzdGF0aWMgdTY0IHBlcmZfZ2V0X3BndGFibGVfc2l6ZShzdHJ1Y3QgbW1f
+c3RydWN0ICptbSwgdW5zaWduZWQgbG9uZyBhZGRyKQ0KPiAgIA0KPiAgICAgICAgICAgcHRlID0g
+cHRlcF9nZXRfbG9ja2xlc3MocHRlcCk7DQo+ICAgICAgICAgICBpZiAocHRlX3ByZXNlbnQocHRl
+KSkNCj4gICAtICAgICAgICAgICAgICAgc2l6ZSA9IHB0ZV9sZWFmX3NpemUocHRlKTsNCj4gICAr
+ICAgICAgICAgICAgICAgc2l6ZSA9IHBtZF9wdGVfbGVhZl9zaXplKHBtZCwgcHRlKTsNCj4gICAg
+ICAgICAgIHB0ZV91bm1hcChwdGVwKTsNCj4gICAgI2VuZGlmIC8qIENPTkZJR19IQVZFX0dVUF9G
+QVNUICovDQo+IA0KPiAgIA0KPiANCg==
 
