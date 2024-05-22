@@ -1,159 +1,198 @@
-Return-Path: <linux-kernel+bounces-185800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 927DA8CBB0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:16:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2550E8CBB21
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8520B213E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:16:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D00FC281EF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB72578B50;
-	Wed, 22 May 2024 06:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1B879945;
+	Wed, 22 May 2024 06:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DM52PygH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BlUpopu7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="USJvkhZ0";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BlUpopu7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="USJvkhZ0"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB10C156;
-	Wed, 22 May 2024 06:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C7D76405;
+	Wed, 22 May 2024 06:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716358567; cv=none; b=J5ReG5Nn07TcLyihmMUr/xm8ZRDcw3FsbbPbLympXjxLQhhVolLK5LjB4uEDzXW2Nb/UJB4NI3Yl5vsRODENk+Z1+M/rbRcVjZarB1IRxxbqoI/TO6PSVwalfW1hl2GiC7jwRhQy4gVmb2U/zT8stSu+on6fqKpfYzUWvw1BIeQ=
+	t=1716358960; cv=none; b=J3qEqm07kYNsm/O+EgBTf6uNE3P8VEuOW53S7zGzJIRdFQ4JaIpR16DrNrUdYw8uNSbVpFMrxJzB8kAd/C4iynhgP7o8yOzyEi1sK7HzQTmF+CRnux39SD7hOXmzN1xwqP0rHXlDsrgukQLQ7qzikyj5vsBwdRBVpAWeXk/gUv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716358567; c=relaxed/simple;
-	bh=bAI2wltaiLvKpldNLmwJZda6OtxNcsGjBpSXqrdzk40=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQ4dzbqNzimM2ZP2s5qAythBDkC8bKdlA4vhjzyZ/eaepYfb0nb3LGnK0gWICNM2fG2J0RKOadURGj87t9oiDLl1dNqemRvpbFG6UmZ0Oc0S4nHo/V1lNTn2zilMjFmrBNGqxDzKv7L8uxRffzUIDrOXGDe/7EYfK3mWvpQH+L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DM52PygH; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716358564; x=1747894564;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bAI2wltaiLvKpldNLmwJZda6OtxNcsGjBpSXqrdzk40=;
-  b=DM52PygH/ovZmX4RUphdmwtmNEKnEVi2rKQ7H65hEYxzInWjzG1P7OCT
-   yGFfViSxAUtvd57iOomTxihBBtL51asP5hRqEoFUfN2ORFUH/GsPeTJt6
-   UDSj50pRi0hq7KGqZl6pT/7i3l0LYouSMD+Dm5RiFzoLkams5L2UPrlSP
-   ZSNgGlgSKeag14TSMkGSeLtzCRovj8HSbuyIFvbnqXCBp9h33dNQCIGSE
-   OHplC97T5RrezWXa+noS9ut5rIeNsZvKDunWYIgAvWE1w0bpibb3oZVIp
-   CX9phi5T5uc2TgEvaRV7Roeq0eoNPf+DKOZaZuY149P3Ha3b2mqLfwzDf
-   Q==;
-X-CSE-ConnectionGUID: J2jG1mVjSDiTOhJKqob5rg==
-X-CSE-MsgGUID: QrmQSAoZS/ykGX0+Efz14w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="12529464"
-X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
-   d="scan'208";a="12529464"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 23:16:03 -0700
-X-CSE-ConnectionGUID: kx/bK4ONSrGeWpdf16IfMg==
-X-CSE-MsgGUID: +ABB6sSGRnaJeR7aC5AHIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
-   d="scan'208";a="33291027"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 21 May 2024 23:16:00 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s9fGY-00016P-0A;
-	Wed, 22 May 2024 06:15:58 +0000
-Date: Wed, 22 May 2024 14:15:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bibo Mao <maobibo@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Juergen Gross <jgross@suse.com>,
-	kvm@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH v3 1/2] LoongArch: KVM: Add steal time support in kvm side
-Message-ID: <202405221317.LCtBJH1F-lkp@intel.com>
-References: <20240521024556.419436-2-maobibo@loongson.cn>
+	s=arc-20240116; t=1716358960; c=relaxed/simple;
+	bh=dWFbD0hyjBTnHZSjDxti4iwBSEqTJCgP6oKdO+DHDtM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aZOQrolNsIVhkS3GOD3qtuDAXKd6v9hcJMxL4U/iiHenjpBVc1vJosaC6jnGb3A2QbFlAuLm//9kb2hCj7Cwux05LIL4C0malcAVbdtIjVDLX8nj1uEKlJFIF79bdHCUGUONksrYzxZWwFgUDmf12Y+i4MsueDD1AXPL3FrWqmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BlUpopu7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=USJvkhZ0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BlUpopu7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=USJvkhZ0; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 43DE65C678;
+	Wed, 22 May 2024 06:22:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716358957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RxcsE1xFuEdCcsKm6YBMU0O/FCyQsR2TEf5Wkf0+zNc=;
+	b=BlUpopu7lfFzGuVYtey10hAI09jmAuC31yfW6GvvmDn9RQMWyaubtSHkaVrj5Bej4Weexg
+	uDE4uRzvaJwypMdbUPGEQ3yUhK1muvUiKd5ArSLeWLy9NLdwHl8+VkfOVlaOGwUOrzuQxZ
+	FxjncxhnRRYHDzf74v+5jq7Yml+KHFY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716358957;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RxcsE1xFuEdCcsKm6YBMU0O/FCyQsR2TEf5Wkf0+zNc=;
+	b=USJvkhZ0rAe5SKW+Hevkq3gRvCInKHPvDgudvGa0YY9rv3HIinKlhd8tE5ei4I/5cDSgp3
+	XqEXzO025UO1QGCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716358957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RxcsE1xFuEdCcsKm6YBMU0O/FCyQsR2TEf5Wkf0+zNc=;
+	b=BlUpopu7lfFzGuVYtey10hAI09jmAuC31yfW6GvvmDn9RQMWyaubtSHkaVrj5Bej4Weexg
+	uDE4uRzvaJwypMdbUPGEQ3yUhK1muvUiKd5ArSLeWLy9NLdwHl8+VkfOVlaOGwUOrzuQxZ
+	FxjncxhnRRYHDzf74v+5jq7Yml+KHFY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716358957;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RxcsE1xFuEdCcsKm6YBMU0O/FCyQsR2TEf5Wkf0+zNc=;
+	b=USJvkhZ0rAe5SKW+Hevkq3gRvCInKHPvDgudvGa0YY9rv3HIinKlhd8tE5ei4I/5cDSgp3
+	XqEXzO025UO1QGCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 62EE213A1E;
+	Wed, 22 May 2024 06:22:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NKF0FiyPTWY+AQAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 22 May 2024 06:22:36 +0000
+Message-ID: <0f29bcc1-e708-47cc-a562-0d1e69be6b03@suse.de>
+Date: Wed, 22 May 2024 08:22:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521024556.419436-2-maobibo@loongson.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 09/12] dm: Add support for copy offload
+Content-Language: en-US
+To: Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, martin.petersen@oracle.com, bvanassche@acm.org,
+ david@fromorbit.com, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+ joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520103004epcas5p4a18f3f6ba0f218d57b0ab4bb84c6ff18@epcas5p4.samsung.com>
+ <20240520102033.9361-10-nj.shetty@samsung.com>
+ <41228a01-9d0c-415d-9fef-a3d2600b1dfa@suse.de>
+ <20240521140850.m6ppy2sxv457gxgs@green245>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240521140850.m6ppy2sxv457gxgs@green245>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.29
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.dk,lwn.net,redhat.com,kernel.org,lst.de,grimberg.me,nvidia.com,zeniv.linux.org.uk,suse.cz,oracle.com,acm.org,fromorbit.com,opensource.wdc.com,samsung.com,gmail.com,vger.kernel.org,lists.linux.dev,lists.infradead.org];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLhytspa9b8ghbrab87o1fjg5u)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email]
 
-Hi Bibo,
+On 5/21/24 16:08, Nitesh Shetty wrote:
+> On 21/05/24 09:11AM, Hannes Reinecke wrote:
+>> On 5/20/24 12:20, Nitesh Shetty wrote:
+>>> Before enabling copy for dm target, check if underlying devices and
+>>> dm target support copy. Avoid split happening inside dm target.
+>>> Fail early if the request needs split, currently splitting copy
+>>> request is not supported.
+>>>
+>>> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+>>> ---
+>>> @@ -397,6 +397,9 @@ struct dm_target {
+>>>       * bio_set_dev(). NOTE: ideally a target should _not_ need this.
+>>>       */
+>>>      bool needs_bio_set_dev:1;
+>>> +
+>>> +    /* copy offload is supported */
+>>> +    bool copy_offload_supported:1;
+>>>  };
+>>>  void *dm_per_bio_data(struct bio *bio, size_t data_size);
+>>
+>> Errm. Not sure this will work. DM tables might be arbitrarily, 
+>> requiring us to _split_ the copy offload request according to the 
+>> underlying component devices. But we explicitly disallowed a split in 
+>> one of the earlier patches.
+>> Or am I wrong?
+>>
+> Yes you are right w.r.to split, we disallow split.
+> But this flag indicates whether we support copy offload in dm-target or
+> not. At present we support copy offload only in dm-linear.
+> For other dm-target, eventhough underlaying device supports copy
+> offload, dm-target based on it wont support copy offload.
+> If the present series get merged, we can test and integrate more
+> targets.
+> 
+But dm-linear can be concatenated, too; you can easily use dm-linear
+to tie several devices together.
+Which again would require a copy-offload range to be split.
+Hmm?
 
-kernel test robot noticed the following build errors:
+Cheers,
 
-[auto build test ERROR on 3c999d1ae3c75991902a1a7dad0cb62c2a3008b4]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Bibo-Mao/LoongArch-KVM-Add-steal-time-support-in-kvm-side/20240521-104902
-base:   3c999d1ae3c75991902a1a7dad0cb62c2a3008b4
-patch link:    https://lore.kernel.org/r/20240521024556.419436-2-maobibo%40loongson.cn
-patch subject: [PATCH v3 1/2] LoongArch: KVM: Add steal time support in kvm side
-config: loongarch-randconfig-r051-20240522 (https://download.01.org/0day-ci/archive/20240522/202405221317.LCtBJH1F-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240522/202405221317.LCtBJH1F-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405221317.LCtBJH1F-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arch/loongarch/kvm/exit.c: In function 'kvm_save_notify':
->> arch/loongarch/kvm/exit.c:711:63: error: 'struct sched_info' has no member named 'run_delay'
-     711 |                 vcpu->arch.st.last_steal = current->sched_info.run_delay;
-         |                                                               ^
---
-   arch/loongarch/kvm/vcpu.c: In function 'kvm_update_stolen_time':
->> arch/loongarch/kvm/vcpu.c:67:37: error: 'struct sched_info' has no member named 'run_delay'
-      67 |         steal += current->sched_info.run_delay -
-         |                                     ^
-   arch/loongarch/kvm/vcpu.c:69:55: error: 'struct sched_info' has no member named 'run_delay'
-      69 |         vcpu->arch.st.last_steal = current->sched_info.run_delay;
-         |                                                       ^
-   arch/loongarch/kvm/vcpu.c: In function 'kvm_loongarch_pvtime_set_attr':
-   arch/loongarch/kvm/vcpu.c:138:63: error: 'struct sched_info' has no member named 'run_delay'
-     138 |                 vcpu->arch.st.last_steal = current->sched_info.run_delay;
-         |                                                               ^
-
-
-vim +711 arch/loongarch/kvm/exit.c
-
-   692	
-   693	static long kvm_save_notify(struct kvm_vcpu *vcpu)
-   694	{
-   695		unsigned long id, data;
-   696	
-   697		id   = kvm_read_reg(vcpu, LOONGARCH_GPR_A1);
-   698		data = kvm_read_reg(vcpu, LOONGARCH_GPR_A2);
-   699		switch (id) {
-   700		case KVM_FEATURE_STEAL_TIME:
-   701			if (!kvm_pvtime_supported())
-   702				return KVM_HCALL_INVALID_CODE;
-   703	
-   704			if (data & ~(KVM_STEAL_PHYS_MASK | KVM_STEAL_PHYS_VALID))
-   705				return KVM_HCALL_INVALID_PARAMETER;
-   706	
-   707			vcpu->arch.st.guest_addr = data;
-   708			if (!(data & KVM_STEAL_PHYS_VALID))
-   709				break;
-   710	
- > 711			vcpu->arch.st.last_steal = current->sched_info.run_delay;
-   712			kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
-   713			break;
-   714		default:
-   715			break;
-   716		};
-   717	
-   718		return 0;
-   719	};
-   720	
-
+Hannes
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+
 
